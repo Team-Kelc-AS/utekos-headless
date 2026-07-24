@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { shippingReturnsFaqItems } from '@/app/frakt-og-retur/data/shippingReturnsContent'
 import {
   assistantSourceSchema,
   type AssistantChatRequest,
@@ -242,6 +243,81 @@ test('Shopify results with forbidden inventory fields fail closed before stock o
   )
 })
 
+test('Shopify-valid long strings remain compatible with product help', async () => {
+  const longTitle = `Utekos TechDown ${'varm '.repeat(45)}`
+  const longOptionValue = 'v'.repeat(255)
+  const product = createProduct({
+    id: 'product-techdown-long',
+    handle: 'utekos-techdown',
+    title: longTitle,
+    variants: [
+      {
+        id: 'variant-techdown-long',
+        title: 'Langt gyldig valg',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Tilpasning', value: longOptionValue }
+        ]
+      }
+    ]
+  })
+
+  const outcome = await answerAssistantRequest(
+    createRequest({ text: 'Jeg skal bruke den i båt og fukt.' }),
+    context,
+    createAdapters({ fetchProducts: async () => [product] })
+  )
+
+  assert.equal(outcome.failureCode, 'none')
+  assert.equal(
+    outcome.recommendations[0]?.product.title,
+    longTitle
+  )
+  assert.equal(
+    outcome.recommendations[0]?.product.variants[0]
+      ?.selectedOptions[0]?.value,
+    longOptionValue
+  )
+})
+
+test('a long Shopify product title does not invalidate stock source output', async () => {
+  const longTitle = `Utekos TechDown ${'produkt '.repeat(30)}`
+  const product = createProduct({
+    handle: 'utekos-techdown',
+    title: longTitle,
+    variants: [
+      {
+        id: 'variant-techdown-stock-long',
+        title: 'Tilgjengelig valg',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Tilpasning', value: 'v'.repeat(255) }
+        ]
+      }
+    ]
+  })
+
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'Er den tilgjengelig?',
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({ fetchProducts: async () => [product] })
+  )
+
+  assert.equal(outcome.failureCode, 'none')
+  assert.equal(outcome.text, `${longTitle} er tilgjengelig.`)
+  assert.equal(outcome.sources[0]?.title, 'Produktside')
+  outcome.sources.forEach(source =>
+    assistantSourceSchema.parse(source)
+  )
+})
+
 test('shipping and returns uses the current FAQ and emits its canonical source', async () => {
   const outcome = await answerAssistantRequest(
     createRequest({
@@ -269,45 +345,96 @@ test('shipping and returns uses the current FAQ and emits its canonical source',
 })
 
 test('shipping FAQ distinguishes delivery duration from the return window', async () => {
-  const deliveryOutcome = await answerAssistantRequest(
+  const deliveryAnswer =
+    'Leveringstiden er normalt 2-5 virkedager. Bestillinger som gjøres før klokken 16 sendes samme dag, med unntak av søndag.'
+  const returnWindowAnswer =
+    'Vi opererer med lovbestemt 14 dagers angrerett fra dagen kunden mottar produktet. Fraktkostnader knyttet til retur betales av sender.'
+
+  for (const question of [
+    'Hvor lenge er leveringstiden?',
+    'Hvor lang tid tar frakten?',
+    'Når kan jeg forvente pakken?'
+  ]) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'shipping_returns',
+        text: question
+      }),
+      context,
+      createAdapters()
+    )
+
+    assert.equal(outcome.text, deliveryAnswer, question)
+    assert.doesNotMatch(outcome.text, /14 dagers angrerett/iu)
+  }
+
+  for (const question of [
+    'Hvor lenge har jeg angrerett?',
+    'Hvor lang er angreretten?',
+    'Hvor lenge kan jeg returnere varen?',
+    'Hvor lenge kan jeg sende varen tilbake?',
+    'Kan jeg fortsatt returnere etter 14 dager?'
+  ]) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'shipping_returns',
+        text: question
+      }),
+      context,
+      createAdapters()
+    )
+
+    assert.equal(outcome.text, returnWindowAnswer, question)
+    assert.doesNotMatch(outcome.text, /2-5 virkedager/iu)
+  }
+})
+
+test('shipping FAQ preserves explicit return-process routing', async () => {
+  const outcome = await answerAssistantRequest(
     createRequest({
       intent: 'shipping_returns',
-      text: 'Hvor lenge er leveringstiden?'
-    }),
-    context,
-    createAdapters()
-  )
-  const returnOutcome = await answerAssistantRequest(
-    createRequest({
-      intent: 'shipping_returns',
-      text: 'Hvor lenge har jeg angrerett?'
-    }),
-    context,
-    createAdapters()
-  )
-  const naturalReturnOutcome = await answerAssistantRequest(
-    createRequest({
-      intent: 'shipping_returns',
-      text: 'Hvor lenge kan jeg returnere varen?'
+      text: 'Hvordan returnerer jeg en vare?'
     }),
     context,
     createAdapters()
   )
 
   assert.equal(
-    deliveryOutcome.text,
-    'Leveringstiden er normalt 2-5 virkedager. Bestillinger som gjøres før klokken 16 sendes samme dag, med unntak av søndag.'
+    outcome.text,
+    'Send en e-post til kundeservice@utekos.no med fullt navn, adresse, ordrenummer og hvilke produkter returen gjelder. Pakk varen forsvarlig og bruk en sendingsmetode med sporing.'
   )
-  assert.doesNotMatch(
-    deliveryOutcome.text,
-    /14 dagers angrerett/iu
+})
+
+test('ambiguous shipping intent uses one grounded overview instead of shipping cost', async () => {
+  const calls: string[] = []
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'shipping_returns',
+      text: 'Kan dere forklare frakt og retur?'
+    }),
+    context,
+    createAdapters({
+      supportKnowledge: {
+        answer: async input => {
+          calls.push(input.question)
+          return staticSupportKnowledgeAdapter.answer(input)
+        }
+      }
+    })
   )
+
+  assert.deepEqual(calls, [
+    'Gi en oversikt over frakt og retur hos Utekos.'
+  ])
+  assert.equal(outcome.failureCode, 'none')
+  assert.equal(outcome.confidence, 'high')
   assert.equal(
-    returnOutcome.text,
-    'Vi opererer med lovbestemt 14 dagers angrerett fra dagen kunden mottar produktet. Fraktkostnader knyttet til retur betales av sender.'
+    outcome.sources[0]?.url,
+    'https://utekos.no/frakt-og-retur'
   )
-  assert.doesNotMatch(returnOutcome.text, /2-5 virkedager/iu)
-  assert.equal(naturalReturnOutcome.text, returnOutcome.text)
+  for (const faqItem of shippingReturnsFaqItems) {
+    assert.ok(outcome.text.includes(faqItem.answer))
+  }
 })
 
 test('size help emits the guarded size-guide answer without promising fit', async () => {
@@ -372,16 +499,17 @@ test('explicit support intents constrain vague questions with one knowledge call
     createAdapters({ supportKnowledge })
   )
 
-  assert.deepEqual(calls, ['Hva koster frakten hos Utekos?'])
+  assert.deepEqual(calls, [
+    'Gi en oversikt over frakt og retur hos Utekos.'
+  ])
   assert.equal(shippingOutcome.failureCode, 'none')
   assert.equal(
     shippingOutcome.sources[0]?.url,
     'https://utekos.no/frakt-og-retur'
   )
-  assert.equal(
-    shippingOutcome.text,
-    'Vi tilbyr fri frakt på alle bestillinger over 999 kr i hele Norge. For bestillinger under dette beløpet har vi fraktkostnad på 99 kr.'
-  )
+  for (const faqItem of shippingReturnsFaqItems) {
+    assert.ok(shippingOutcome.text.includes(faqItem.answer))
+  }
 })
 
 test('vague explicit support intent still maps a knowledge failure safely with one call', async () => {

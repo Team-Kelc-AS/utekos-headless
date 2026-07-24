@@ -239,7 +239,7 @@ async function answerStockHelp(
       variant => variant.availableForSale
     )
     const source = assistantSourceSchema.parse({
-      title: product.title,
+      title: 'Produktside',
       url: `https://utekos.no/produkter/${product.handle}`
     })
 

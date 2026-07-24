@@ -22,6 +22,20 @@ const sizeGuideSource = assistantSourceSchema.parse({
 const sizeQuestionPattern =
   /\b(?:størrelse|størrelsen|størrelsesguide|passform|mål)\b/u
 
+const shippingReturnsOverviewQuestion =
+  'Gi en oversikt over frakt og retur hos Utekos.'
+const normalizedShippingReturnsOverviewQuestion =
+  normalizeAssistantText(shippingReturnsOverviewQuestion)
+
+const returnWindowPattern =
+  /\b(?:angrerett(?:en)?|returfrist(?:en)?|fortsatt\s+returnere|returnere\s+etter\s+\d+\s+dager)\b|\bhvor\s+(?:lenge|lang(?:\s+tid)?)[^.!?]{0,80}\b(?:returnere|angre|sende(?:\s+\S+){0,3}\s+tilbake)\b/u
+const returnProcessPattern =
+  /\b(?:hvordan\s+(?:returnerer|sender)|returnere|returprosess|sende\s+tilbake)\b/u
+const deliveryTimePattern =
+  /\b(?:leveringstid(?:en)?|levering|leveres|sendes|kommer)\b|\bhvor\s+lang\s+tid[^.!?]{0,80}\bfrakt(?:en)?\b|\bnår[^.!?]{0,80}\bforvente[^.!?]{0,80}\bpakke(?:n)?\b/u
+const shippingCostPattern =
+  /\b(?:fraktkostnad(?:en)?|porto|koster|kostnad(?:en)?|pris(?:en)?|fri\s+frakt)\b/u
+
 const faqMatchers: ReadonlyArray<{
   id: (typeof shippingReturnsFaqItems)[number]['id']
   pattern: RegExp
@@ -30,24 +44,15 @@ const faqMatchers: ReadonlyArray<{
     id: 'return-exceptions',
     pattern: /\b(?:unntak|forsegling|forseglet|hygiene|brutt)\b/u
   },
-  {
-    id: 'return-window',
-    pattern:
-      /\b(?:angrerett|returfrist)\b|\bhvor\s+lenge(?:\s+\S+){0,5}\s+(?:returnere|angre)\b/u
-  },
-  {
-    id: 'return-process',
-    pattern:
-      /\b(?:hvordan\s+(?:returnerer|sender)|returnere|returprosess|sende\s+tilbake)\b/u
-  },
+  { id: 'return-window', pattern: returnWindowPattern },
+  { id: 'return-process', pattern: returnProcessPattern },
   {
     id: 'Merchant-C-Delivery-Time',
-    pattern:
-      /\b(?:leveringstid(?:en)?|levering|leveres|sendes|kommer)\b/u
+    pattern: deliveryTimePattern
   },
   {
     id: 'Merchant-Center-Shopping-Cost',
-    pattern: /\b(?:frakt|fraktkostnad|porto|koster)\b/u
+    pattern: shippingCostPattern
   }
 ]
 
@@ -56,13 +61,9 @@ function findShippingReturnsFaq(question: string) {
   const matchedId = faqMatchers.find(({ pattern }) =>
     pattern.test(normalizedQuestion)
   )?.id
-  const fallbackId =
-    /\b(?:retur|returnere)\b/u.test(normalizedQuestion) ?
-      'return-process'
-    : null
 
   return shippingReturnsFaqItems.find(
-    item => item.id === (matchedId ?? fallbackId)
+    item => item.id === matchedId
   )
 }
 
@@ -86,7 +87,7 @@ export function resolveSupportKnowledgeQuestion({
     intent === 'shipping_returns' &&
     !findShippingReturnsFaq(normalizedQuestion)
   ) {
-    return 'Hva koster frakten hos Utekos?'
+    return shippingReturnsOverviewQuestion
   }
 
   return question
@@ -95,6 +96,19 @@ export function resolveSupportKnowledgeQuestion({
 function answerShippingReturns(
   question: string
 ): SupportKnowledgeResult | null {
+  if (
+    normalizeAssistantText(question) ===
+    normalizedShippingReturnsOverviewQuestion
+  ) {
+    return {
+      text: shippingReturnsFaqItems
+        .map(item => `${item.question} ${item.answer}`)
+        .join('\n\n'),
+      confidence: 'high',
+      sources: [shippingReturnsSource]
+    }
+  }
+
   const faqItem = findShippingReturnsFaq(question)
 
   return faqItem ?
