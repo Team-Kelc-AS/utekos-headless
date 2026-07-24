@@ -63,8 +63,22 @@ export const assistantProductProfiles: readonly ProductProfile[] =
 
 const cueBoundary = '[^\\p{L}\\p{N}]'
 
+const cueExtensions = new Map<string, readonly string[]>([
+  ['båt', ['båttur']],
+  ['hytte', ['hyttetur']],
+  ['regn', ['regnvær']],
+  ['hundelufting', ['hundeluftingen']]
+])
+
 function escapeRegularExpression(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function createCueFormPattern(cueForm: string) {
+  return cueForm
+    .split(/\s+/u)
+    .map(escapeRegularExpression)
+    .join('\\s+')
 }
 
 const cuePatterns = new Map(
@@ -73,7 +87,12 @@ const cuePatterns = new Map(
     .map(cue => [
       cue,
       new RegExp(
-        `(?:^|${cueBoundary})${escapeRegularExpression(cue)}(?=$|${cueBoundary})`,
+        `(?:^|${cueBoundary})(?:${[
+          cue,
+          ...(cueExtensions.get(cue) ?? [])
+        ]
+          .map(createCueFormPattern)
+          .join('|')})(?=$|${cueBoundary})`,
         'u'
       )
     ])

@@ -50,19 +50,7 @@ function countAssistantQuestions(
 export function resolveAssistantClarification(
   messages: AssistantChatRequest['messages']
 ): string | null {
-  if (countAssistantQuestions(messages) >= 3) {
-    return null
-  }
-
   const userText = getUserText(messages)
-  const hasUseCue = useCues.some(cue =>
-    matchesAssistantCue(userText, cue)
-  )
-
-  if (!hasUseCue) {
-    return useQuestion
-  }
-
   const highestProfileCueCount = Math.max(
     ...assistantProductProfiles.map(profile =>
       countAssistantProfileCues(userText, profile)
@@ -71,6 +59,18 @@ export function resolveAssistantClarification(
 
   if (highestProfileCueCount >= 2) {
     return null
+  }
+
+  if (countAssistantQuestions(messages) >= 3) {
+    return null
+  }
+
+  const hasUseCue = useCues.some(cue =>
+    matchesAssistantCue(userText, cue)
+  )
+
+  if (!hasUseCue) {
+    return useQuestion
   }
 
   return priorityQuestion

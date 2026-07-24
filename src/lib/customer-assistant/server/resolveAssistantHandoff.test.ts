@@ -20,6 +20,7 @@ const inflectionCases = [
   ['Jeg trenger hjelp med fakturaen', 'payment'],
   ['Jeg vil følge opp reklamasjonen', 'complaint'],
   ['Her er e-postadressen min', 'personal_data'],
+  ['E-postadressen min er kunde@example.no', 'personal_data'],
   ['Kontakt meg på 400 00 000', 'personal_data']
 ] as const
 
@@ -55,6 +56,24 @@ test('does not escalate longer unrelated words', () => {
       'Fakturering og reklamasjonsrett er generelle temaer.',
       0
     ),
+    null
+  )
+})
+
+test('requires customer-sharing context for general personal-data shapes', () => {
+  assert.equal(
+    resolveAssistantHandoff(
+      'Har dere varen med produktnummer 12345678?',
+      0
+    ),
+    null
+  )
+  assert.equal(
+    resolveAssistantHandoff('Her er produktnummer 12345678.', 0),
+    null
+  )
+  assert.equal(
+    resolveAssistantHandoff('Hva er adressen til butikken?', 0),
     null
   )
 })

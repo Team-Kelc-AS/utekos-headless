@@ -174,3 +174,36 @@ test('normalizes canonical Norwegian text and rejects substring cues', () => {
   )
   assert.equal(assistantProductProfiles.length, 4)
 })
+
+const compoundCueCases = [
+  ['hyttetur', 'utekos-dun'],
+  ['båttur', 'utekos-techdown'],
+  ['regnvær', 'comfyrobe'],
+  ['hundeluftingen', 'comfyrobe']
+] as const
+
+for (const [text, handle] of compoundCueCases) {
+  test(`matches the explicit Norwegian cue form ${text}`, () => {
+    assert.equal(
+      matchAssistantProducts({
+        products,
+        lastUserText: text,
+        intent: 'product_help',
+        currentProductHandle: null
+      })[0]?.product.handle,
+      handle
+    )
+  })
+}
+
+test('accepts flexible whitespace inside locked multi-word cues', () => {
+  assert.equal(
+    matchAssistantProducts({
+      products,
+      lastUserText: 'mest\tvarme\nper  gram',
+      intent: 'product_help',
+      currentProductHandle: null
+    })[0]?.product.handle,
+    'utekos-dun'
+  )
+})

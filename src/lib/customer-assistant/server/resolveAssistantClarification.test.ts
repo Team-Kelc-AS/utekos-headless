@@ -29,6 +29,20 @@ test('asks for a use case when no use cue is recognized', () => {
   )
 })
 
+test('recommends once one profile has two cues before asking for use', () => {
+  assert.equal(
+    resolveAssistantClarification(
+      messages([
+        {
+          role: 'user',
+          text: 'Jeg trenger mest varme per gram.'
+        }
+      ])
+    ),
+    null
+  )
+})
+
 test('asks for a weather or priority when only a use cue is recognized', () => {
   assert.equal(
     resolveAssistantClarification(
@@ -102,6 +116,15 @@ test('normalizes decomposed Norwegian use cues', () => {
   assert.equal(
     resolveAssistantClarification(
       messages([{ role: 'user', text: 'BÅT' }])
+    ),
+    priorityQuestion
+  )
+})
+
+test('uses the shared matcher for explicit Norwegian cue forms', () => {
+  assert.equal(
+    resolveAssistantClarification(
+      messages([{ role: 'user', text: 'Jeg skal på hyttetur.' }])
     ),
     priorityQuestion
   )
