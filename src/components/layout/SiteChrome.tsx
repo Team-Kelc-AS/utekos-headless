@@ -1,6 +1,5 @@
 'use client'
 
-import { CustomerAssistant } from '@/components/customer-assistant/CustomerAssistant'
 import {
   isAssistantExcludedPathname,
   resolveAssistantClientExposure,
@@ -8,8 +7,17 @@ import {
   type AssistantExposure
 } from '@/lib/customer-assistant/assistantRollout'
 import { NavigationProgress } from './NavigationProgress'
+import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+
+const CustomerAssistant = dynamic(
+  () =>
+    import('@/components/customer-assistant/CustomerAssistant').then(
+      module => module.CustomerAssistant
+    ),
+  { ssr: false }
+)
 
 type SiteChromeProps = {
   assistantRolloutPercent: number

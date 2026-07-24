@@ -4,6 +4,7 @@ import {
   type Page,
   type Route
 } from 'playwright/test'
+import { observeAssistantTransportGraph } from './assistantTransportGraph'
 
 const BASE_URL = 'http://localhost:3217'
 const ASSISTANT_API_PATH = '/api/customer-assistant/chat'
@@ -180,6 +181,7 @@ test('uses the exact local preview environment', () => {
 test('shows the accessible launcher, stable bucket, and quick actions', async ({
   page
 }) => {
+  const assistantGraph = observeAssistantTransportGraph(page)
   await page.goto(SAFE_PAGE_PATH)
 
   const launcher = page.getByRole('button', {
@@ -187,6 +189,12 @@ test('shows the accessible launcher, stable bucket, and quick actions', async ({
     exact: true
   })
   await expect(launcher).toBeVisible()
+  await expect
+    .poll(async () => {
+      await assistantGraph.settle()
+      return assistantGraph.paths.size
+    })
+    .toBeGreaterThan(0)
   await expect(launcher).toHaveAttribute(
     'aria-expanded',
     'false'
@@ -431,6 +439,7 @@ test('shows a safe contact fallback when the assistant API fails', async ({
 test('does not mount on design or checkout-like routes', async ({
   page
 }) => {
+  const assistantGraph = observeAssistantTransportGraph(page)
   const launcher = page.getByRole('button', {
     name: 'Kjøpshjelp',
     exact: true
@@ -438,6 +447,8 @@ test('does not mount on design or checkout-like routes', async ({
 
   await page.goto('/design')
   await expect(launcher).toHaveCount(0)
+  await assistantGraph.settle()
+  expect([...assistantGraph.paths]).toEqual([])
   expect(
     await page.evaluate(
       key => localStorage.getItem(key),
@@ -447,6 +458,8 @@ test('does not mount on design or checkout-like routes', async ({
 
   await page.goto('/kjop/fullfort')
   await expect(launcher).toHaveCount(0)
+  await assistantGraph.settle()
+  expect([...assistantGraph.paths]).toEqual([])
   expect(
     await page.evaluate(
       key => localStorage.getItem(key),
