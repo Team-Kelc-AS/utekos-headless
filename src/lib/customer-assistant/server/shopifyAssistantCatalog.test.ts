@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  __TEST_ONLY__,
   fetchAssistantProducts,
   normalizeAssistantProduct
 } from './shopifyAssistantCatalog'
@@ -26,7 +27,9 @@ const rawProduct = {
           selectedOptions: [
             { name: 'Size', value: 'Small' },
             { name: 'Color', value: 'Navy' }
-          ]
+          ],
+          quantityAvailable: 3,
+          sku: 'TECHDOWN-S-NAVY'
         }
       },
       {
@@ -37,7 +40,9 @@ const rawProduct = {
           selectedOptions: [
             { name: 'Size', value: 'Large' },
             { name: 'Color', value: 'Navy' }
-          ]
+          ],
+          quantityAvailable: 0,
+          price: { amount: '2490.00', currencyCode: 'NOK' }
         }
       }
     ]
@@ -78,15 +83,6 @@ test('normalizes the minimum product truth without inventory quantities', () => 
       }
     ]
   })
-
-  assert.equal(
-    'quantityAvailable' in product.variants[0]!,
-    false
-  )
-  assert.equal(
-    'quantityAvailable' in product.variants[1]!,
-    false
-  )
 })
 
 test('normalizes a missing featured image as null', () => {
@@ -99,43 +95,55 @@ test('normalizes a missing featured image as null', () => {
   )
 })
 
-test('passes an explicit buyer IP and bounded handle query to Shopify', async () => {
+test('uses documented product handle lookups with buyer context', async () => {
   let request: unknown
-
-  const products = await fetchAssistantProducts(
-    {
-      buyerIp: '203.0.113.8',
-      handles: ['utekos-techdown', 'comfyrobe']
-    },
-    async input => {
+  const fetchProducts =
+    __TEST_ONLY__.createFetchAssistantProducts(async input => {
       request = input
       return {
         success: true,
-        body: { products: { edges: [{ node: rawProduct }] } }
+        body: {
+          product0: rawProduct,
+          product1: {
+            ...rawProduct,
+            id: 'gid://shopify/Product/2',
+            handle: 'comfyrobe',
+            title: 'Comfyrobe'
+          }
+        }
       }
-    }
-  )
+    })
 
-  assert.equal(products.length, 1)
+  const products = await fetchProducts({
+    buyerIp: '203.0.113.8',
+    handles: ['utekos-techdown', 'comfyrobe', 'utekos-techdown']
+  })
+
+  assert.deepEqual(
+    products.map(product => product.handle),
+    ['utekos-techdown', 'comfyrobe']
+  )
   assert.deepEqual(
     (
       request as {
         headers?: HeadersInit
-        variables: { first: number; query: string | undefined }
+        variables: Record<string, string | number>
       }
     ).headers,
     { 'Shopify-Storefront-Buyer-IP': '203.0.113.8' }
   )
   assert.deepEqual(
-    (
-      request as {
-        variables: { first: number; query: string | undefined }
-      }
-    ).variables,
-    {
-      first: 20,
-      query: 'handle:utekos-techdown OR handle:comfyrobe'
-    }
+    (request as { variables: Record<string, string | number> })
+      .variables,
+    { handle0: 'utekos-techdown', handle1: 'comfyrobe' }
+  )
+  assert.match(
+    (request as { query: string }).query,
+    /product0: product\(handle: \$handle0\)/
+  )
+  assert.match(
+    (request as { query: string }).query,
+    /product1: product\(handle: \$handle1\)/
   )
   assert.doesNotMatch(
     (request as { query: string }).query,
@@ -143,24 +151,57 @@ test('passes an explicit buyer IP and bounded handle query to Shopify', async ()
   )
 })
 
-test('does not send a buyer IP header when it is absent', async () => {
+test('lists up to twenty products without a buyer IP header when handles are absent', async () => {
   let request: unknown
+  const fetchProducts =
+    __TEST_ONLY__.createFetchAssistantProducts(async input => {
+      request = input
+      return { success: true, body: { products: { edges: [] } } }
+    })
 
-  await fetchAssistantProducts({}, async input => {
-    request = input
-    return { success: true, body: { products: { edges: [] } } }
-  })
+  await fetchProducts({})
 
   assert.equal(
     'headers' in (request as Record<string, unknown>),
     false
   )
   assert.deepEqual(
-    (
-      request as {
-        variables: { first: number; query: string | undefined }
-      }
-    ).variables,
-    { first: 20, query: undefined }
+    (request as { variables: Record<string, string | number> })
+      .variables,
+    { first: 20 }
   )
+  assert.match(
+    (request as { query: string }).query,
+    /products\(first: \$first\)/
+  )
+})
+
+test('normalizes Storefront transport failures to the safe catalog error', async () => {
+  const fetchProducts =
+    __TEST_ONLY__.createFetchAssistantProducts(async () => {
+      throw new Error('Missing Shopify storefront access token.')
+    })
+
+  await assert.rejects(fetchProducts({}), {
+    message: 'shopify_assistant_catalog_unavailable'
+  })
+})
+
+test('rejects invalid handles before they reach Shopify', async () => {
+  let called = false
+  const fetchProducts =
+    __TEST_ONLY__.createFetchAssistantProducts(async () => {
+      called = true
+      return { success: true, body: { products: { edges: [] } } }
+    })
+
+  await assert.rejects(
+    fetchProducts({ handles: ['NOT-VALID'] }),
+    { message: 'shopify_assistant_catalog_unavailable' }
+  )
+  assert.equal(called, false)
+})
+
+test('exports a one-argument catalog API', () => {
+  assert.equal(fetchAssistantProducts.length, 1)
 })
