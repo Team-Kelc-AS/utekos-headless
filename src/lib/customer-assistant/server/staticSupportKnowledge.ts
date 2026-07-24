@@ -27,40 +27,76 @@ const shippingReturnsOverviewQuestion =
 const normalizedShippingReturnsOverviewQuestion =
   normalizeAssistantText(shippingReturnsOverviewQuestion)
 
-const returnWindowPattern =
-  /\b(?:angrerett(?:en)?|returfrist(?:en)?|fortsatt\s+returnere|returnere\s+etter\s+\d+\s+dager)\b|\bhvor\s+(?:lenge|lang(?:\s+tid)?)[^.!?]{0,80}\b(?:returnere|angre|sende(?:\s+\S+){0,3}\s+tilbake)\b/u
-const returnProcessPattern =
-  /\b(?:hvordan\s+(?:returnerer|sender)|returnere|returprosess|sende\s+tilbake)\b/u
-const deliveryTimePattern =
-  /\b(?:leveringstid(?:en)?|levering|leveres|sendes|kommer)\b|\bhvor\s+lang\s+tid[^.!?]{0,80}\bfrakt(?:en)?\b|\bnår[^.!?]{0,80}\bforvente[^.!?]{0,80}\bpakke(?:n)?\b/u
-const shippingCostPattern =
-  /\b(?:fraktkostnad(?:en)?|porto|koster|kostnad(?:en)?|pris(?:en)?|fri\s+frakt)\b/u
+type ShippingReturnsFaqId =
+  (typeof shippingReturnsFaqItems)[number]['id']
 
-const faqMatchers: ReadonlyArray<{
-  id: (typeof shippingReturnsFaqItems)[number]['id']
-  pattern: RegExp
-}> = [
-  {
-    id: 'return-exceptions',
-    pattern: /\b(?:unntak|forsegling|forseglet|hygiene|brutt)\b/u
-  },
-  { id: 'return-window', pattern: returnWindowPattern },
-  { id: 'return-process', pattern: returnProcessPattern },
-  {
-    id: 'Merchant-C-Delivery-Time',
-    pattern: deliveryTimePattern
-  },
-  {
-    id: 'Merchant-Center-Shopping-Cost',
-    pattern: shippingCostPattern
+function classifyShippingReturnsQuestion(
+  normalizedQuestion: string
+): ShippingReturnsFaqId | null {
+  const hasReturnContext =
+    /\b(?:retur(?:en)?|returner(?:e|er|t)?|tilbake|angrerett(?:en)?)\b/u.test(
+      normalizedQuestion
+    )
+  const hasCanonicalReturnWindow = /\bangrerett(?:en)?\b/u.test(
+    normalizedQuestion
+  )
+  const hasReturnDeadlineContext =
+    /\b(?:hvor\s+(?:mange\s+dager|lang\s+tid|lenge)|frist(?:en)?|har\s+jeg\s+på\s+å|(?:etter|innen)\s+\d+\s+dager)\b/u.test(
+      normalizedQuestion
+    ) ||
+    /\bnår\b[^.!?]{0,80}\bsenest\b/u.test(normalizedQuestion)
+  const hasReturnProcessContext =
+    /\b(?:hvordan|fremgangsmåte(?:n)?|returprosess(?:en)?|måte(?:n)?)\b/u.test(
+      normalizedQuestion
+    )
+  const hasDeliveryContext =
+    /\b(?:levering(?:en)?|leveringstid(?:en)?|frakt(?:en)?|pakke(?:n)?)\b/u.test(
+      normalizedQuestion
+    )
+  const hasDeliveryTimingContext =
+    /\b(?:hvor\s+(?:mange\s+dager|lang\s+tid|lenge)|når|forvente|leveringstid(?:en)?|kommer)\b/u.test(
+      normalizedQuestion
+    )
+  const hasShippingCostContext =
+    /\b(?:fraktkostnad(?:en)?|porto|koster|kostnad(?:en)?|pris(?:en)?|fri\s+frakt)\b/u.test(
+      normalizedQuestion
+    )
+  const hasReturnExceptionContext =
+    /\b(?:unntak|forsegling|forseglet|hygiene|brutt)\b/u.test(
+      normalizedQuestion
+    )
+
+  if (hasReturnExceptionContext) {
+    return 'return-exceptions'
   }
-]
+
+  if (
+    hasCanonicalReturnWindow ||
+    (hasReturnContext && hasReturnDeadlineContext)
+  ) {
+    return 'return-window'
+  }
+
+  if (hasReturnContext && hasReturnProcessContext) {
+    return 'return-process'
+  }
+
+  if (hasDeliveryContext && hasDeliveryTimingContext) {
+    return 'Merchant-C-Delivery-Time'
+  }
+
+  if (hasShippingCostContext) {
+    return 'Merchant-Center-Shopping-Cost'
+  }
+
+  return null
+}
 
 function findShippingReturnsFaq(question: string) {
   const normalizedQuestion = normalizeAssistantText(question)
-  const matchedId = faqMatchers.find(({ pattern }) =>
-    pattern.test(normalizedQuestion)
-  )?.id
+  const matchedId = classifyShippingReturnsQuestion(
+    normalizedQuestion
+  )
 
   return shippingReturnsFaqItems.find(
     item => item.id === matchedId

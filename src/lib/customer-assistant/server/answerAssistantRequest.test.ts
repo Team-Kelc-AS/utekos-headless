@@ -373,7 +373,10 @@ test('shipping FAQ distinguishes delivery duration from the return window', asyn
     'Hvor lang er angreretten?',
     'Hvor lenge kan jeg returnere varen?',
     'Hvor lenge kan jeg sende varen tilbake?',
-    'Kan jeg fortsatt returnere etter 14 dager?'
+    'Kan jeg fortsatt returnere etter 14 dager?',
+    'Hvor mange dager har jeg på å returnere?',
+    'Hvor lang tid har jeg på å sende varen i retur?',
+    'Når må jeg senest sende varen tilbake?'
   ]) {
     const outcome = await answerAssistantRequest(
       createRequest({
@@ -390,19 +393,25 @@ test('shipping FAQ distinguishes delivery duration from the return window', asyn
 })
 
 test('shipping FAQ preserves explicit return-process routing', async () => {
-  const outcome = await answerAssistantRequest(
-    createRequest({
-      intent: 'shipping_returns',
-      text: 'Hvordan returnerer jeg en vare?'
-    }),
-    context,
-    createAdapters()
-  )
+  for (const question of [
+    'Hvordan returnerer jeg en vare?',
+    'Hvordan sendes returen?'
+  ]) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'shipping_returns',
+        text: question
+      }),
+      context,
+      createAdapters()
+    )
 
-  assert.equal(
-    outcome.text,
-    'Send en e-post til kundeservice@utekos.no med fullt navn, adresse, ordrenummer og hvilke produkter returen gjelder. Pakk varen forsvarlig og bruk en sendingsmetode med sporing.'
-  )
+    assert.equal(
+      outcome.text,
+      'Send en e-post til kundeservice@utekos.no med fullt navn, adresse, ordrenummer og hvilke produkter returen gjelder. Pakk varen forsvarlig og bruk en sendingsmetode med sporing.',
+      question
+    )
+  }
 })
 
 test('ambiguous shipping intent uses one grounded overview instead of shipping cost', async () => {
@@ -428,6 +437,37 @@ test('ambiguous shipping intent uses one grounded overview instead of shipping c
   ])
   assert.equal(outcome.failureCode, 'none')
   assert.equal(outcome.confidence, 'high')
+  assert.equal(
+    outcome.sources[0]?.url,
+    'https://utekos.no/frakt-og-retur'
+  )
+  for (const faqItem of shippingReturnsFaqItems) {
+    assert.ok(outcome.text.includes(faqItem.answer))
+  }
+})
+
+test('a shipping-method question does not trigger return-process or delivery claims', async () => {
+  const calls: string[] = []
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'shipping_returns',
+      text: 'Hvordan sender dere pakken?'
+    }),
+    context,
+    createAdapters({
+      supportKnowledge: {
+        answer: async input => {
+          calls.push(input.question)
+          return staticSupportKnowledgeAdapter.answer(input)
+        }
+      }
+    })
+  )
+
+  assert.deepEqual(calls, [
+    'Gi en oversikt over frakt og retur hos Utekos.'
+  ])
+  assert.equal(outcome.failureCode, 'none')
   assert.equal(
     outcome.sources[0]?.url,
     'https://utekos.no/frakt-og-retur'
