@@ -26,50 +26,55 @@ export const TechDownFeatureSection = () => {
 
     const q = (selector: string) =>
       Array.from(root.querySelectorAll<HTMLElement>(selector))
-    const reduced = window.matchMedia(
+    const prefersReducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches
-    if (reduced) return
 
-    const revealTargets = q(
-      '.motion-visual, .motion-content, .motion-feature-item'
-    )
+    const visualTargets = q('.motion-visual')
+    const contentTargets = q('.motion-content')
+    const featureTargets = q('.motion-feature-item')
+    const revealTargets = [
+      ...visualTargets,
+      ...contentTargets,
+      ...featureTargets
+    ]
+    const glowTargets = q('.motion-glow')
+
+    if (prefersReducedMotion) return
+
     revealTargets.forEach(target => {
       target.style.opacity = '0'
       target.style.willChange = 'transform, opacity'
     })
 
-    let played = false
+    let stopRevealAnimation = () => {}
     const stopReveal = inView(
       root,
       () => {
-        if (played) return
-        played = true
-
         const controls = animate(
           [
             [
-              q('.motion-visual'),
+              visualTargets,
               { opacity: [0, 1], x: [-50, 0], scale: [0.95, 1] },
-              { duration: 0.9, ease: [0.22, 1, 0.36, 1] }
+              { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
             ],
             [
-              q('.motion-content'),
+              contentTargets,
               { opacity: [0, 1], y: [30, 0] },
               {
-                duration: 0.72,
-                at: 0.28,
-                delay: stagger(0.1),
+                duration: 0.65,
+                at: 0.22,
+                delay: stagger(0.08),
                 ease: [0.22, 1, 0.36, 1]
               }
             ],
             [
-              q('.motion-feature-item'),
+              featureTargets,
               { opacity: [0, 1], x: [20, 0] },
               {
-                duration: 0.5,
-                at: 0.5,
-                delay: stagger(0.1),
+                duration: 0.45,
+                at: 0.42,
+                delay: stagger(0.08),
                 ease: [0.34, 1.56, 0.64, 1]
               }
             ]
@@ -83,22 +88,37 @@ export const TechDownFeatureSection = () => {
           })
         })
 
-        return () => controls.stop()
+        stopRevealAnimation = () => controls.stop()
       },
       { margin: '0px 0px -18% 0px', amount: 0.16 }
     )
 
-    const loopControls = q('.motion-glow').map(element =>
-      animate(
-        element,
-        { opacity: [1, 0.3, 1], scale: [1, 1.2, 1] },
-        { duration: 4, ease: 'easeInOut', repeat: Infinity }
-      )
+    let stopGlowAnimations = () => {}
+    const stopGlowObserver = inView(
+      root,
+      () => {
+        const controls = glowTargets.map(element =>
+          animate(
+            element,
+            { opacity: [1, 0.3, 1], scale: [1, 1.2, 1] },
+            { duration: 4, ease: 'easeInOut', repeat: Infinity }
+          )
+        )
+
+        stopGlowAnimations = () => {
+          controls.forEach(control => control.cancel())
+        }
+
+        return stopGlowAnimations
+      },
+      { margin: '160px 0px' }
     )
 
     return () => {
       stopReveal()
-      loopControls.forEach(control => control.stop())
+      stopRevealAnimation()
+      stopGlowObserver()
+      stopGlowAnimations()
     }
   }, [])
 
