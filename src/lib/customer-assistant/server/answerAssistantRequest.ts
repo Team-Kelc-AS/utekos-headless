@@ -7,6 +7,7 @@ import {
   type AssistantSource
 } from '../assistantProtocol'
 import {
+  assistantProductsResultSchema,
   commerceRecommendationResultSchema,
   staticCommerceRecommendationAdapter,
   supportKnowledgeResultSchema,
@@ -17,7 +18,10 @@ import { matchAssistantProducts } from './matchAssistantProducts'
 import { resolveAssistantClarification } from './resolveAssistantClarification'
 import { resolveAssistantHandoff } from './resolveAssistantHandoff'
 import { fetchAssistantProducts } from './shopifyAssistantCatalog'
-import { staticSupportKnowledgeAdapter } from './staticSupportKnowledge'
+import {
+  resolveSupportKnowledgeQuestion,
+  staticSupportKnowledgeAdapter
+} from './staticSupportKnowledge'
 
 export type AssistantOutcome = {
   text: string
@@ -145,8 +149,8 @@ async function answerProductHelp(
   let products
 
   try {
-    products = await adapters.fetchProducts(
-      createCatalogInput(context)
+    products = assistantProductsResultSchema.parse(
+      await adapters.fetchProducts(createCatalogInput(context))
     )
   } catch {
     return safeFailure('shopify_unavailable')
@@ -218,8 +222,10 @@ async function answerStockHelp(
   }
 
   try {
-    const products = await adapters.fetchProducts(
-      createCatalogInput(context, [productHandle])
+    const products = assistantProductsResultSchema.parse(
+      await adapters.fetchProducts(
+        createCatalogInput(context, [productHandle])
+      )
     )
     const product = products.find(
       candidate => candidate.handle === productHandle
@@ -255,9 +261,13 @@ async function answerSupportQuestion(
   adapters: AssistantAdapters
 ): Promise<AssistantOutcome> {
   try {
+    const question = resolveSupportKnowledgeQuestion({
+      intent: request.intent,
+      question: getLastUserText(request.messages)
+    })
     const result = supportKnowledgeResultSchema.parse(
       await adapters.supportKnowledge.answer({
-        question: getLastUserText(request.messages),
+        question,
         productHandle: request.pageContext.productHandle
       })
     )

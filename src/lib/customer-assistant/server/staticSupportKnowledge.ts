@@ -1,5 +1,8 @@
 import { shippingReturnsFaqItems } from '@/app/frakt-og-retur/data/shippingReturnsContent'
-import { assistantSourceSchema } from '../assistantProtocol'
+import {
+  assistantSourceSchema,
+  type AssistantIntent
+} from '../assistantProtocol'
 import { normalizeAssistantText } from '../assistantProductProfiles'
 import type {
   SupportKnowledgeAdapter,
@@ -16,6 +19,9 @@ const sizeGuideSource = assistantSourceSchema.parse({
   url: 'https://utekos.no/handlehjelp/storrelsesguide'
 })
 
+const sizeQuestionPattern =
+  /\b(?:størrelse|størrelsen|størrelsesguide|passform|mål)\b/u
+
 const faqMatchers: ReadonlyArray<{
   id: (typeof shippingReturnsFaqItems)[number]['id']
   pattern: RegExp
@@ -25,18 +31,19 @@ const faqMatchers: ReadonlyArray<{
     pattern: /\b(?:unntak|forsegling|forseglet|hygiene|brutt)\b/u
   },
   {
+    id: 'return-window',
+    pattern:
+      /\b(?:angrerett|returfrist)\b|\bhvor\s+lenge(?:\s+\S+){0,5}\s+(?:returnere|angre)\b/u
+  },
+  {
     id: 'return-process',
     pattern:
       /\b(?:hvordan\s+(?:returnerer|sender)|returnere|returprosess|sende\s+tilbake)\b/u
   },
   {
-    id: 'return-window',
-    pattern: /\b(?:angrerett|returfrist|hvor\s+lenge)\b/u
-  },
-  {
     id: 'Merchant-C-Delivery-Time',
     pattern:
-      /\b(?:leveringstid|levering|leveres|sendes|kommer)\b/u
+      /\b(?:leveringstid(?:en)?|levering|leveres|sendes|kommer)\b/u
   },
   {
     id: 'Merchant-Center-Shopping-Cost',
@@ -44,21 +51,51 @@ const faqMatchers: ReadonlyArray<{
   }
 ]
 
-function answerShippingReturns(
-  question: string
-): SupportKnowledgeResult | null {
+function findShippingReturnsFaq(question: string) {
   const normalizedQuestion = normalizeAssistantText(question)
   const matchedId = faqMatchers.find(({ pattern }) =>
     pattern.test(normalizedQuestion)
   )?.id
-
   const fallbackId =
     /\b(?:retur|returnere)\b/u.test(normalizedQuestion) ?
       'return-process'
     : null
-  const faqItem = shippingReturnsFaqItems.find(
+
+  return shippingReturnsFaqItems.find(
     item => item.id === (matchedId ?? fallbackId)
   )
+}
+
+export function resolveSupportKnowledgeQuestion({
+  intent,
+  question
+}: {
+  intent: AssistantIntent
+  question: string
+}) {
+  const normalizedQuestion = normalizeAssistantText(question)
+
+  if (
+    intent === 'size_help' &&
+    !sizeQuestionPattern.test(normalizedQuestion)
+  ) {
+    return 'Hvilken størrelse bør jeg velge?'
+  }
+
+  if (
+    intent === 'shipping_returns' &&
+    !findShippingReturnsFaq(normalizedQuestion)
+  ) {
+    return 'Hva koster frakten hos Utekos?'
+  }
+
+  return question
+}
+
+function answerShippingReturns(
+  question: string
+): SupportKnowledgeResult | null {
+  const faqItem = findShippingReturnsFaq(question)
 
   return faqItem ?
       {
@@ -74,11 +111,7 @@ function answerSize(
 ): SupportKnowledgeResult | null {
   const normalizedQuestion = normalizeAssistantText(question)
 
-  if (
-    !/\b(?:størrelse|størrelsen|størrelsesguide|passform|mål)\b/u.test(
-      normalizedQuestion
-    )
-  ) {
+  if (!sizeQuestionPattern.test(normalizedQuestion)) {
     return null
   }
 

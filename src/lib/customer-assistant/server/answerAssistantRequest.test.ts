@@ -167,6 +167,81 @@ test('stock help reports only available or unavailable without quantity claims',
   }
 })
 
+test('malformed Shopify product results fail closed before product matching', async () => {
+  let recommendationCalls = 0
+  const malformedProduct = {
+    ...createProduct({
+      handle: 'utekos-techdown',
+      title: 'Utekos TechDown'
+    }),
+    variants: null
+  }
+
+  const outcome = await answerAssistantRequest(
+    createRequest({ text: 'Jeg skal bruke den i båt og fukt.' }),
+    context,
+    createAdapters({
+      fetchProducts: async () =>
+        [malformedProduct] as unknown as AssistantProduct[],
+      commerceRecommendation: {
+        recommend: async () => {
+          recommendationCalls += 1
+          return []
+        }
+      }
+    })
+  )
+
+  assert.equal(recommendationCalls, 0)
+  assert.equal(outcome.failureCode, 'shopify_unavailable')
+  assert.equal(outcome.handoff?.reason, 'uncertain')
+  assert.deepEqual(outcome.recommendations, [])
+  assert.deepEqual(outcome.sources, [])
+  assert.doesNotMatch(
+    outcome.text,
+    /TechDown|Dun|Mikrofiber|Comfyrobe|pris|lager|tilgjengelig/iu
+  )
+})
+
+test('Shopify results with forbidden inventory fields fail closed before stock output', async () => {
+  const product = createProduct({
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown'
+  })
+  const malformedProduct = {
+    ...product,
+    variants: product.variants.map(variant => ({
+      ...variant,
+      quantityAvailable: 17
+    }))
+  }
+
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'Er den på lager?',
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({
+      fetchProducts: async () =>
+        [malformedProduct] as AssistantProduct[]
+    })
+  )
+
+  assert.equal(outcome.failureCode, 'shopify_unavailable')
+  assert.equal(outcome.handoff?.reason, 'uncertain')
+  assert.deepEqual(outcome.recommendations, [])
+  assert.deepEqual(outcome.sources, [])
+  assert.doesNotMatch(
+    outcome.text,
+    /17|TechDown|lager|tilgjengelig/iu
+  )
+})
+
 test('shipping and returns uses the current FAQ and emits its canonical source', async () => {
   const outcome = await answerAssistantRequest(
     createRequest({
@@ -193,6 +268,48 @@ test('shipping and returns uses the current FAQ and emits its canonical source',
   )
 })
 
+test('shipping FAQ distinguishes delivery duration from the return window', async () => {
+  const deliveryOutcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'shipping_returns',
+      text: 'Hvor lenge er leveringstiden?'
+    }),
+    context,
+    createAdapters()
+  )
+  const returnOutcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'shipping_returns',
+      text: 'Hvor lenge har jeg angrerett?'
+    }),
+    context,
+    createAdapters()
+  )
+  const naturalReturnOutcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'shipping_returns',
+      text: 'Hvor lenge kan jeg returnere varen?'
+    }),
+    context,
+    createAdapters()
+  )
+
+  assert.equal(
+    deliveryOutcome.text,
+    'Leveringstiden er normalt 2-5 virkedager. Bestillinger som gjøres før klokken 16 sendes samme dag, med unntak av søndag.'
+  )
+  assert.doesNotMatch(
+    deliveryOutcome.text,
+    /14 dagers angrerett/iu
+  )
+  assert.equal(
+    returnOutcome.text,
+    'Vi opererer med lovbestemt 14 dagers angrerett fra dagen kunden mottar produktet. Fraktkostnader knyttet til retur betales av sender.'
+  )
+  assert.doesNotMatch(returnOutcome.text, /2-5 virkedager/iu)
+  assert.equal(naturalReturnOutcome.text, returnOutcome.text)
+})
+
 test('size help emits the guarded size-guide answer without promising fit', async () => {
   const outcome = await answerAssistantRequest(
     createRequest({
@@ -216,6 +333,85 @@ test('size help emits the guarded size-guide answer without promising fit', asyn
     }
   ])
   assert.equal(outcome.failureCode, 'none')
+})
+
+test('explicit support intents constrain vague questions with one knowledge call', async () => {
+  const calls: string[] = []
+  const supportKnowledge: AssistantAdapters['supportKnowledge'] =
+    {
+      answer: async input => {
+        calls.push(input.question)
+        return staticSupportKnowledgeAdapter.answer(input)
+      }
+    }
+
+  const sizeOutcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'size_help',
+      text: 'Hvilken passer meg best?'
+    }),
+    context,
+    createAdapters({ supportKnowledge })
+  )
+
+  assert.deepEqual(calls, ['Hvilken størrelse bør jeg velge?'])
+  assert.equal(sizeOutcome.failureCode, 'none')
+  assert.match(sizeOutcome.text, /kan ikke garantere/iu)
+  assert.equal(
+    sizeOutcome.sources[0]?.url,
+    'https://utekos.no/handlehjelp/storrelsesguide'
+  )
+
+  calls.length = 0
+  const shippingOutcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'shipping_returns',
+      text: 'Kan dere hjelpe meg?'
+    }),
+    context,
+    createAdapters({ supportKnowledge })
+  )
+
+  assert.deepEqual(calls, ['Hva koster frakten hos Utekos?'])
+  assert.equal(shippingOutcome.failureCode, 'none')
+  assert.equal(
+    shippingOutcome.sources[0]?.url,
+    'https://utekos.no/frakt-og-retur'
+  )
+  assert.equal(
+    shippingOutcome.text,
+    'Vi tilbyr fri frakt på alle bestillinger over 999 kr i hele Norge. For bestillinger under dette beløpet har vi fraktkostnad på 99 kr.'
+  )
+})
+
+test('vague explicit support intent still maps a knowledge failure safely with one call', async () => {
+  let knowledgeCalls = 0
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'size_help',
+      text: 'Hvilken passer meg best?'
+    }),
+    context,
+    createAdapters({
+      supportKnowledge: {
+        answer: async () => {
+          knowledgeCalls += 1
+          throw new Error(
+            'customer text and unsafe provider detail'
+          )
+        }
+      }
+    })
+  )
+
+  assert.equal(knowledgeCalls, 1)
+  assert.equal(outcome.failureCode, 'knowledge_unavailable')
+  assert.equal(outcome.handoff?.reason, 'uncertain')
+  assert.deepEqual(outcome.sources, [])
+  assert.equal(
+    outcome.text,
+    'Jeg fikk ikke hentet et sikkert svar. Kundeservice kan hjelpe deg videre.'
+  )
 })
 
 test('restricted intents return handoff without querying providers', async () => {
