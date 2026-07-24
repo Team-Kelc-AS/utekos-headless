@@ -1,4 +1,8 @@
-import { assistantProductProfiles } from '../assistantProductProfiles'
+import {
+  assistantProductProfiles,
+  countAssistantProfileCues,
+  normalizeAssistantText
+} from '../assistantProductProfiles'
 import type {
   AssistantIntent,
   AssistantProduct,
@@ -10,10 +14,6 @@ type MatchAssistantProductsInput = {
   lastUserText: string
   intent: AssistantIntent
   currentProductHandle: string | null
-}
-
-function normalizeAssistantText(text: string) {
-  return text.trim().toLocaleLowerCase('nb-NO')
 }
 
 export function matchAssistantProducts({
@@ -29,18 +29,18 @@ export function matchAssistantProducts({
   return assistantProductProfiles
     .map((profile, profileIndex) => {
       const product = productsByHandle.get(profile.handle)
-      const matchedCueCount = profile.cues.filter(cue =>
-        normalizedText.includes(cue)
-      ).length
+      const matchedCueCount = countAssistantProfileCues(
+        normalizedText,
+        profile
+      )
 
       return {
         product,
         profile,
         profileIndex,
         matchedCueCount,
-        score:
-          matchedCueCount +
-          (profile.handle === currentProductHandle ? 1 : 0)
+        matchesCurrentProduct:
+          profile.handle === currentProductHandle
       }
     })
     .filter(
@@ -51,7 +51,7 @@ export function matchAssistantProducts({
         profile: (typeof assistantProductProfiles)[number]
         profileIndex: number
         matchedCueCount: number
-        score: number
+        matchesCurrentProduct: boolean
       } =>
         candidate.product !== undefined &&
         candidate.matchedCueCount > 0 &&
@@ -61,7 +61,9 @@ export function matchAssistantProducts({
     )
     .sort(
       (left, right) =>
-        right.score - left.score ||
+        right.matchedCueCount - left.matchedCueCount ||
+        Number(right.matchesCurrentProduct) -
+          Number(left.matchesCurrentProduct) ||
         left.profileIndex - right.profileIndex
     )
     .slice(0, 3)

@@ -12,6 +12,12 @@ const messages = (
     parts: [{ type: 'text', text: entry.text }]
   }))
 
+const useQuestion =
+  'Hvor ser du først og fremst for deg å bruke plagget – for eksempel på hytta, i båten, i bobilen eller i hverdagen?'
+
+const priorityQuestion =
+  'Hva er viktigst for deg: mest mulig varme, lav vekt, værbeskyttelse eller enkelt vedlikehold?'
+
 test('asks for a use case when no use cue is recognized', () => {
   assert.equal(
     resolveAssistantClarification(
@@ -19,7 +25,7 @@ test('asks for a use case when no use cue is recognized', () => {
         { role: 'user', text: 'Jeg trenger noe varmt.' }
       ])
     ),
-    'Hvor ser du først og fremst for deg å bruke plagget – for eksempel på hytta, i båten, i bobilen eller i hverdagen?'
+    useQuestion
   )
 })
 
@@ -30,7 +36,7 @@ test('asks for a weather or priority when only a use cue is recognized', () => {
         { role: 'user', text: 'Jeg trenger noe til båt.' }
       ])
     ),
-    'Hva er viktigst for deg: mest mulig varme, lav vekt, værbeskyttelse eller enkelt vedlikehold?'
+    priorityQuestion
   )
 })
 
@@ -39,18 +45,40 @@ test('uses all active user text and stops once a profile has two cues', () => {
     resolveAssistantClarification(
       messages([
         { role: 'user', text: 'Jeg trenger noe til båt.' },
-        {
-          role: 'assistant',
-          text: 'Hva er viktigst for deg: mest mulig varme, lav vekt, værbeskyttelse eller enkelt vedlikehold?'
-        },
-        { role: 'user', text: 'Det blir ofte fuktig.' }
+        { role: 'assistant', text: priorityQuestion },
+        { role: 'user', text: 'Det blir ofte fukt.' }
       ])
     ),
     null
   )
 })
 
-test('stops after three previous assistant questions', () => {
+test('continues clarification when cues belong to different profiles', () => {
+  assert.equal(
+    resolveAssistantClarification(
+      messages([
+        { role: 'user', text: 'Jeg trenger noe til båt i regn.' }
+      ])
+    ),
+    priorityQuestion
+  )
+})
+
+test('stops after three exact locked clarification questions', () => {
+  assert.equal(
+    resolveAssistantClarification(
+      messages([
+        { role: 'user', text: 'Jeg trenger noe til båt.' },
+        { role: 'assistant', text: useQuestion },
+        { role: 'assistant', text: priorityQuestion },
+        { role: 'assistant', text: useQuestion }
+      ])
+    ),
+    null
+  )
+})
+
+test('does not count unrelated assistant questions toward the cap', () => {
   assert.equal(
     resolveAssistantClarification(
       messages([
@@ -66,6 +94,15 @@ test('stops after three previous assistant questions', () => {
         { role: 'assistant', text: 'Hva er viktigst for deg?' }
       ])
     ),
-    null
+    priorityQuestion
+  )
+})
+
+test('normalizes decomposed Norwegian use cues', () => {
+  assert.equal(
+    resolveAssistantClarification(
+      messages([{ role: 'user', text: 'BÅT' }])
+    ),
+    priorityQuestion
   )
 })

@@ -5,9 +5,9 @@ export type AssistantProductHandle =
   | 'comfyrobe'
 
 export type ProductProfile = {
-  handle: AssistantProductHandle
-  cues: readonly string[]
-  reason: string
+  readonly handle: AssistantProductHandle
+  readonly cues: readonly string[]
+  readonly reason: string
 }
 
 export const assistantProductProfiles: readonly ProductProfile[] =
@@ -60,3 +60,41 @@ export const assistantProductProfiles: readonly ProductProfile[] =
         'Comfyrobe kombinerer værbeskyttelse med en romslig allværs-passform.'
     }
   ] as const
+
+const cueBoundary = '[^\\p{L}\\p{N}]'
+
+function escapeRegularExpression(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+const cuePatterns = new Map(
+  assistantProductProfiles
+    .flatMap(profile => profile.cues)
+    .map(cue => [
+      cue,
+      new RegExp(
+        `(?:^|${cueBoundary})${escapeRegularExpression(cue)}(?=$|${cueBoundary})`,
+        'u'
+      )
+    ])
+)
+
+export function normalizeAssistantText(text: string) {
+  return text.normalize('NFC').trim().toLocaleLowerCase('nb-NO')
+}
+
+export function matchesAssistantCue(
+  normalizedText: string,
+  cue: string
+) {
+  return cuePatterns.get(cue)?.test(normalizedText) ?? false
+}
+
+export function countAssistantProfileCues(
+  normalizedText: string,
+  profile: ProductProfile
+) {
+  return profile.cues.filter(cue =>
+    matchesAssistantCue(normalizedText, cue)
+  ).length
+}

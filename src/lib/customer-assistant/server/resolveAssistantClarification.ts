@@ -1,7 +1,12 @@
-import { assistantProductProfiles } from '../assistantProductProfiles'
+import {
+  assistantProductProfiles,
+  countAssistantProfileCues,
+  matchesAssistantCue,
+  normalizeAssistantText
+} from '../assistantProductProfiles'
 import type { AssistantChatRequest } from '../assistantProtocol'
 
-const useCues = new Set([
+const useCues = [
   'båt',
   'kyst',
   'hytte',
@@ -10,17 +15,13 @@ const useCues = new Set([
   'hundelufting',
   'sidelinje',
   'isbading'
-])
+] as const
 
 const useQuestion =
   'Hvor ser du først og fremst for deg å bruke plagget – for eksempel på hytta, i båten, i bobilen eller i hverdagen?'
 
 const priorityQuestion =
   'Hva er viktigst for deg: mest mulig varme, lav vekt, værbeskyttelse eller enkelt vedlikehold?'
-
-function normalizeAssistantText(text: string) {
-  return text.trim().toLocaleLowerCase('nb-NO')
-}
 
 function getUserText(
   messages: AssistantChatRequest['messages']
@@ -39,7 +40,11 @@ function countAssistantQuestions(
   return messages
     .filter(message => message.role === 'assistant')
     .flatMap(message => message.parts)
-    .filter(part => part.text.includes('?')).length
+    .filter(
+      part =>
+        part.text === useQuestion ||
+        part.text === priorityQuestion
+    ).length
 }
 
 export function resolveAssistantClarification(
@@ -50,10 +55,8 @@ export function resolveAssistantClarification(
   }
 
   const userText = getUserText(messages)
-  const hasUseCue = assistantProductProfiles.some(profile =>
-    profile.cues.some(
-      cue => useCues.has(cue) && userText.includes(cue)
-    )
+  const hasUseCue = useCues.some(cue =>
+    matchesAssistantCue(userText, cue)
   )
 
   if (!hasUseCue) {
@@ -61,9 +64,8 @@ export function resolveAssistantClarification(
   }
 
   const highestProfileCueCount = Math.max(
-    ...assistantProductProfiles.map(
-      profile =>
-        profile.cues.filter(cue => userText.includes(cue)).length
+    ...assistantProductProfiles.map(profile =>
+      countAssistantProfileCues(userText, profile)
     )
   )
 
@@ -71,12 +73,5 @@ export function resolveAssistantClarification(
     return null
   }
 
-  const hasWeatherOrPriorityCue = assistantProductProfiles.some(
-    profile =>
-      profile.cues.some(
-        cue => !useCues.has(cue) && userText.includes(cue)
-      )
-  )
-
-  return hasWeatherOrPriorityCue ? null : priorityQuestion
+  return priorityQuestion
 }
