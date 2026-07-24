@@ -2,17 +2,15 @@ import { ipAddress } from '@vercel/functions'
 import { answerAssistantRequest } from '@/lib/customer-assistant/server/answerAssistantRequest'
 import {
   createAssistantRouteHandler,
-  createProcessLocalAssistantRateLimiter
+  createProcessLocalAssistantRateLimiter,
+  resolveAssistantRequestsPerMinute
 } from '@/lib/customer-assistant/server/createAssistantRouteHandler'
 
-const PREVIEW_REQUESTS_PER_MINUTE = 12
-const PRODUCTION_REQUESTS_PER_MINUTE = 0
 const now = () => Date.now()
 const checkRateLimit = createProcessLocalAssistantRateLimiter({
-  limit:
-    process.env.VERCEL_ENV === 'production' ?
-      PRODUCTION_REQUESTS_PER_MINUTE
-    : PREVIEW_REQUESTS_PER_MINUTE,
+  limit: resolveAssistantRequestsPerMinute(
+    process.env.VERCEL_ENV
+  ),
   now
 })
 const handleAssistantRequest = createAssistantRouteHandler({

@@ -9,6 +9,7 @@ import type { AssistantOutcome } from './answerAssistantRequest'
 import {
   createAssistantRouteHandler,
   createProcessLocalAssistantRateLimiter,
+  resolveAssistantRequestsPerMinute,
   type AssistantRouteDependencies
 } from './createAssistantRouteHandler'
 
@@ -171,6 +172,21 @@ test('the direct AI SDK 6 message type is compatible with the installed React cl
   assert.equal(clientMessageTypeIsCompatible, true)
 })
 
+test('route composition exposes requests only in verified Vercel previews', () => {
+  assert.equal(resolveAssistantRequestsPerMinute('preview'), 12)
+
+  for (const vercelEnv of [
+    'production',
+    undefined,
+    'development',
+    'staging',
+    'PREVIEW',
+    ' preview '
+  ]) {
+    assert.equal(resolveAssistantRequestsPerMinute(vercelEnv), 0)
+  }
+})
+
 test('rejects requests without the JSON media type', async () => {
   const handler = createAssistantRouteHandler(
     createDependencies()
@@ -198,6 +214,30 @@ test('accepts a case-insensitive JSON media type with parameters', async () => {
   await response.text()
 })
 
+test('rejects folded or malformed JSON media types', async t => {
+  const handler = createAssistantRouteHandler(
+    createDependencies()
+  )
+
+  for (const contentType of [
+    'application/json; charset=utf-8, text/plain',
+    'application/json, text/plain',
+    'application/json; charset',
+    'application/json; charset =utf-8',
+    'application/json; charset=',
+    'application/json; charset="utf-8',
+    'application/json;'
+  ]) {
+    await t.test(contentType, async () => {
+      await assertErrorResponse(
+        await handler(createRequest({ contentType })),
+        415,
+        'unsupported_media_type'
+      )
+    })
+  }
+})
+
 test('rejects declared and actual bodies over 24 KiB', async t => {
   const handler = createAssistantRouteHandler(
     createDependencies()
@@ -220,6 +260,29 @@ test('rejects declared and actual bodies over 24 KiB', async t => {
       'payload_too_large'
     )
   })
+})
+
+test('rejects malformed Content-Length values as invalid requests', async t => {
+  const handler = createAssistantRouteHandler(
+    createDependencies()
+  )
+
+  for (const declaredLength of [
+    '24577, 1',
+    '-1',
+    '+1',
+    '1.5',
+    'not-a-number',
+    '9007199254740992'
+  ]) {
+    await t.test(declaredLength, async () => {
+      await assertErrorResponse(
+        await handler(createRequest({ declaredLength })),
+        400,
+        'invalid_request'
+      )
+    })
+  }
 })
 
 test('maps invalid JSON and schema input to invalid_request', async t => {

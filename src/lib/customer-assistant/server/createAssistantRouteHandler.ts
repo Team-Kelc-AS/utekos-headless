@@ -14,6 +14,7 @@ import {
 const MAX_BODY_BYTES = 24 * 1024
 const RATE_LIMIT_WINDOW_MS = 60_000
 const MAX_TRACKED_SESSIONS = 10_000
+const PREVIEW_REQUESTS_PER_MINUTE = 12
 const SAFE_STREAM_ERROR =
   'Jeg fikk ikke hentet et sikkert svar. Du kan kontakte kundeservice.'
 const NO_STORE_HEADERS = {
@@ -51,13 +52,116 @@ function errorResponse(
 }
 
 function hasJsonMediaType(request: Request) {
+  const value = request.headers.get('content-type')
+  if (value === null) return false
+
+  let index = skipOptionalWhitespace(value, 0)
+  const typeStart = index
+  index = readToken(value, index)
+  const type = value.slice(typeStart, index)
+
+  if (value[index] !== '/') return false
+  index += 1
+
+  const subtypeStart = index
+  index = readToken(value, index)
+  const subtype = value.slice(subtypeStart, index)
+
+  if (
+    type.toLowerCase() !== 'application' ||
+    subtype.toLowerCase() !== 'json'
+  ) {
+    return false
+  }
+
+  while (true) {
+    index = skipOptionalWhitespace(value, index)
+    if (index === value.length) return true
+    if (value[index] !== ';') return false
+    index = skipOptionalWhitespace(value, index + 1)
+
+    const parameterNameStart = index
+    index = readToken(value, index)
+    if (index === parameterNameStart || value[index] !== '=') {
+      return false
+    }
+    index += 1
+
+    if (value[index] === '"') {
+      const quotedStringEnd = readQuotedString(value, index)
+      if (quotedStringEnd === null) return false
+      index = quotedStringEnd
+    } else {
+      const parameterValueStart = index
+      index = readToken(value, index)
+      if (index === parameterValueStart) return false
+    }
+  }
+}
+
+function isTokenCharacter(character: string | undefined) {
   return (
-    request.headers
-      .get('content-type')
-      ?.split(';', 1)[0]
-      ?.trim()
-      .toLowerCase() === 'application/json'
+    character !== undefined &&
+    /^[!#$%&'*+\-.^_`|~0-9A-Za-z]$/u.test(character)
   )
+}
+
+function readToken(value: string, start: number) {
+  let index = start
+  while (isTokenCharacter(value[index])) index += 1
+  return index
+}
+
+function skipOptionalWhitespace(value: string, start: number) {
+  let index = start
+  while (value[index] === ' ' || value[index] === '\t')
+    index += 1
+  return index
+}
+
+function isQuotedTextCharacter(codePoint: number) {
+  return (
+    codePoint === 9 ||
+    codePoint === 32 ||
+    codePoint === 33 ||
+    (codePoint >= 35 && codePoint <= 91) ||
+    (codePoint >= 93 && codePoint <= 126) ||
+    (codePoint >= 128 && codePoint <= 255)
+  )
+}
+
+function isQuotedPairCharacter(codePoint: number) {
+  return (
+    codePoint === 9 ||
+    codePoint === 32 ||
+    (codePoint >= 33 && codePoint <= 126) ||
+    (codePoint >= 128 && codePoint <= 255)
+  )
+}
+
+function readQuotedString(value: string, start: number) {
+  let index = start + 1
+
+  while (index < value.length) {
+    const character = value[index]
+    if (character === '"') return index + 1
+
+    if (character === '\\') {
+      index += 1
+      if (
+        index >= value.length ||
+        !isQuotedPairCharacter(value.charCodeAt(index))
+      ) {
+        return null
+      }
+    } else if (!isQuotedTextCharacter(value.charCodeAt(index))) {
+      return null
+    }
+
+    index += 1
+  }
+
+  return null
 }
 
 function hasSameOrigin(request: Request) {
@@ -73,6 +177,8 @@ function hasSameOrigin(request: Request) {
       parsedOrigin.pathname === '/' &&
       parsedOrigin.search === '' &&
       parsedOrigin.hash === '' &&
+      // This relies on Vercel/Next carrying the trusted public origin in the
+      // Request URL. Self-hosting requires a trusted canonical/preview allowlist.
       parsedOrigin.origin === new URL(request.url).origin
     )
   } catch {
@@ -80,17 +186,21 @@ function hasSameOrigin(request: Request) {
   }
 }
 
-function exceedsDeclaredBodyLimit(request: Request) {
+function parseDeclaredBodyLength(request: Request) {
   const value = request.headers.get('content-length')
-  if (value === null || !/^\d+$/u.test(value.trim())) {
-    return false
+  if (value === null) return { status: 'absent' as const }
+
+  const normalizedValue = value.trim()
+  if (!/^\d+$/u.test(normalizedValue)) {
+    return { status: 'invalid' as const }
   }
 
-  try {
-    return BigInt(value.trim()) > BigInt(MAX_BODY_BYTES)
-  } catch {
-    return false
+  const byteLength = Number(normalizedValue)
+  if (!Number.isSafeInteger(byteLength)) {
+    return { status: 'invalid' as const }
   }
+
+  return { status: 'valid' as const, byteLength }
 }
 
 async function readBoundedBody(request: Request) {
@@ -192,6 +302,14 @@ export function createProcessLocalAssistantRateLimiter({
   }
 }
 
+export function resolveAssistantRequestsPerMinute(
+  vercelEnvironment: string | undefined
+) {
+  return vercelEnvironment === 'preview' ?
+      PREVIEW_REQUESTS_PER_MINUTE
+    : 0
+}
+
 export function createAssistantRouteHandler(
   dependencies: AssistantRouteDependencies
 ) {
@@ -207,7 +325,15 @@ export function createAssistantRouteHandler(
       return errorResponse('unsupported_media_type', 415)
     }
 
-    if (exceedsDeclaredBodyLimit(request)) {
+    const declaredBodyLength = parseDeclaredBodyLength(request)
+    if (declaredBodyLength.status === 'invalid') {
+      return errorResponse('invalid_request', 400)
+    }
+
+    if (
+      declaredBodyLength.status === 'valid' &&
+      declaredBodyLength.byteLength > MAX_BODY_BYTES
+    ) {
       return errorResponse('payload_too_large', 413)
     }
 
