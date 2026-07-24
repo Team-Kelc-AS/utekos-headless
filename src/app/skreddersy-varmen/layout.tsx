@@ -9,17 +9,6 @@ export default function LandingPageLayout({
   return (
     <>
       <SkreddersyVarmenJsonLd />
-      <style>
-        {`
-          #chatbase-bubble-button,
-          #chatbase-bubble-window,
-          iframe[src*="chatbase.co"],
-          iframe[id^="chatbase"] {
-            display: none !important;
-          }
-        `}
-      </style>
-
       {children}
     </>
   )

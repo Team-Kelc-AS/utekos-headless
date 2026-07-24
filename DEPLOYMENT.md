@@ -518,6 +518,63 @@ deployed until production has:
 
 ## Vercel Production Gate
 
+### Customer assistant zero-default preview gate
+
+The customer assistant is mounted behind the private server value
+`CUSTOMER_ASSISTANT_ROLLOUT_PERCENT`. The accepted values are canonical
+integers from `0` through `100`; a missing, malformed, fractional, signed or
+out-of-range value resolves to `0`. The current release does not add or change
+this value in Vercel, so the production surface remains absent by default.
+
+For a positive rollout, the browser keeps one random bucket in
+`utekos_assistant_bucket_v1`. The server-supplied percent remains authoritative.
+At zero percent the client does not read or create that storage key. Conversation,
+feedback and session state remain memory-only and are lost on reload; no
+transcript is sent to analytics or persisted by the route.
+
+`POST /api/customer-assistant/chat` owns the bounded request and typed AI SDK
+stream response. It accepts same-origin JSON only, rate limits by the transient
+session ID, and logs only session ID, intent, outcome code and latency. Exact
+`VERCEL_ENV=preview` is also required for its 12-request-per-minute process-local
+preview limit. Production, development, missing or unexpected environment values
+resolve to a zero API request limit until the durable privacy-preserving Release
+3 limiter is approved.
+
+Product and availability facts come from a dedicated uncached Shopify Storefront
+query for the current response. It reads `availableForSale`, never exact inventory
+quantity, and cannot mutate Shopify. Approved static Utekos content owns size,
+shipping and returns guidance. Static content is not used as a fallback for live
+price or availability; Shopify or knowledge failure produces bounded safe text
+and the existing contact handoff instead of an invented commercial claim.
+
+Preview enablement requires explicit approval before changing the Vercel Preview
+environment. Set only the rollout value there, redeploy, and complete the browser
+gate before exposing it to reviewers:
+
+```text
+CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=<approved integer 1-100>
+```
+
+Vercel supplies the reserved `VERCEL_ENV=preview` value automatically for Preview
+deployments; do not try to configure it. The local Playwright gate simulates both
+values only in its test and web-server processes with
+`CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=100` and exact `VERCEL_ENV=preview`; it does
+not write Vercel state. Roll back exposure by removing the rollout value or
+setting it to `0`, then redeploying the affected Vercel environment. Both the
+environment change and any production deployment require explicit approval.
+Production must not be enabled while its request limit is intentionally zero.
+
+Required release evidence:
+
+- complete assistant unit suite, focused ESLint and a successful production build;
+- Playwright proof for launcher/accessibility, quick actions, keyboard focus,
+  deterministic product and failure streams, restricted handoff, feedback/live
+  announcements, mobile cart/header clearance and excluded routes;
+- a zero-value production-mode runtime proof showing no launcher and no
+  `utekos_assistant_bucket_v1` storage entry;
+- no Vercel environment mutation, provider mutation, telemetry change or deploy
+  unless each action is separately approved.
+
 ### Shopify catalog Runtime Cache release
 
 The Runtime Cache release uses `@vercel/functions@3.7.5` with namespace

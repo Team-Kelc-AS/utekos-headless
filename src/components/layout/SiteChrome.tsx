@@ -1,9 +1,18 @@
 'use client'
 
+import { CustomerAssistant } from '@/components/customer-assistant/CustomerAssistant'
+import {
+  isAssistantExcludedPathname,
+  resolveAssistantClientExposure,
+  resolveAssistantProductHandle,
+  type AssistantExposure
+} from '@/lib/customer-assistant/assistantRollout'
 import { NavigationProgress } from './NavigationProgress'
 import { usePathname } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
 type SiteChromeProps = {
+  assistantRolloutPercent: number
   children: React.ReactNode
   header: React.ReactNode
   footer: React.ReactNode
@@ -19,7 +28,48 @@ function isDesignRoute(pathname: string | null) {
   )
 }
 
+function AssistantRolloutMount({
+  pathname,
+  rolloutPercent
+}: {
+  pathname: string | null
+  rolloutPercent: number
+}) {
+  const [exposure, setExposure] =
+    useState<AssistantExposure>('holdout')
+  const memoryBucketRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    let storage: Storage | null = null
+
+    try {
+      storage = window.localStorage
+    } catch {}
+
+    setExposure(
+      resolveAssistantClientExposure(
+        rolloutPercent,
+        storage,
+        () => {
+          memoryBucketRef.current ??= Math.random()
+          return memoryBucketRef.current
+        }
+      )
+    )
+  }, [rolloutPercent])
+
+  if (exposure !== 'assistant') return null
+
+  return (
+    <CustomerAssistant
+      rolloutPercent={rolloutPercent}
+      productHandle={resolveAssistantProductHandle(pathname)}
+    />
+  )
+}
+
 export function SiteChrome({
+  assistantRolloutPercent,
   children,
   header,
   footer
@@ -36,6 +86,13 @@ export function SiteChrome({
       {header}
       <main>{children}</main>
       {footer}
+      {assistantRolloutPercent > 0 &&
+        !isAssistantExcludedPathname(pathname) && (
+          <AssistantRolloutMount
+            pathname={pathname}
+            rolloutPercent={assistantRolloutPercent}
+          />
+        )}
     </>
   )
 }

@@ -24,6 +24,44 @@ kundechatbot ligger i
 
 ## Kort fasit
 
+### AI-kjøpshjelp: intern preview med null som standard
+
+Den nye kjøpshjelpen er en separat, ikke-telemetrisk brukerflyt. Root layout
+leser den private serververdien `CUSTOMER_ASSISTANT_ROLLOUT_PERCENT`; manglende
+eller ugyldig verdi gir `0` og monterer ingen klientflate. Ved et godkjent
+positivt preview velger klienten en stabil bøtte i
+`utekos_assistant_bucket_v1`. Samtalen, sesjons-ID-en og tilbakemeldingen lever
+bare i minnet og forsvinner ved reload. Ingen samtaletekst går til Supabase,
+PostHog, GTM, Vercel Analytics eller annen analyse/persistens.
+
+Den avgrensede request-/response-flyten er:
+
+1. Klienten sender maksimalt 12 tekstmeldinger sammen med transient sesjons-ID,
+   aktivt hjelpeformål, pathname og eventuelt produkthåndtak til
+   `POST /api/customer-assistant/chat`.
+2. Route Handleren eier same-origin-, innholdstype-, 24 KiB-, schema- og
+   rate-limit-grensene. Bare eksakt `VERCEL_ENV=preview` gir previewgrensen på
+   12 forespørsler per minutt per sesjon; øvrige miljøer har grense `0` i denne
+   releasen.
+3. Ordre, betaling, reklamasjon og persondata går direkte til det eksisterende
+   kontaktskjemaet, e-post og telefon uten Shopify- eller modellkall.
+4. Produkt-, pris- og tilgjengelighetsinformasjon leses live og ukachet fra
+   Shopify Storefront for det aktuelle svaret. Kun `availableForSale` brukes;
+   eksakt beholdning vises aldri, og utilgjengelige varianter presenteres ikke
+   som kjøpbare.
+5. Størrelsesguide, frakt og retur kommer fra de godkjente statiske Utekos-
+   kildene. Statisk innhold erstatter aldri en mislykket live pris- eller
+   lagersjekk. Ved Shopify-/kunnskapsfeil returneres trygg tekst og menneskelig
+   handoff uten oppdiktede kommersielle fakta.
+6. Svaret strømmes som typede tekst-, anbefalings-, kilde-, handoff- og
+   statusdeler. Klienten renderer bare validerte deler og logger ikke
+   samtaleinnhold.
+
+Rollback er å fjerne rolloutverdien eller sette den til `0` og redeploye det
+berørte Vercel-miljøet. Vercel-env-endring og production deploy krever hver sin
+eksplisitte godkjenning. Task 7 gjør ingen Vercel-, Shopify-, GCP-, Supabase-,
+GTM-, tracking- eller produksjonsmutasjon.
+
 Tracking ble bevisst nullstilt 2026-07-15. Den aktive appflaten etter
 resetten består kun av:
 
