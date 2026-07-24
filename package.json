@@ -149,6 +149,7 @@
     "@adobe/leonardo-contrast-colors": "^1.1.0",
     "@ai-sdk/devtools": "^0.0.18",
     "@ai-sdk/openai": "^3.0.67",
+    "@ai-sdk/react": "4.0.40",
     "@base-ui/react": "^1.5.0",
     "@cfworker/json-schema": "^4.1.1",
     "@flags-sdk/vercel": "^1.3.0",
