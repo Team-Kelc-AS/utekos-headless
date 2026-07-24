@@ -414,6 +414,114 @@ test('shipping FAQ preserves explicit return-process routing', async () => {
   }
 })
 
+test('shipping intent canonicalizes mixed size wording to the return process', async () => {
+  const calls: string[] = []
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'shipping_returns',
+      text: 'Hvordan returnerer jeg varen fordi størrelsen er feil?'
+    }),
+    context,
+    createAdapters({
+      supportKnowledge: {
+        answer: async input => {
+          calls.push(input.question)
+          return staticSupportKnowledgeAdapter.answer(input)
+        }
+      }
+    })
+  )
+
+  assert.deepEqual(calls, ['Hvordan returnerer jeg en vare?'])
+  assert.equal(
+    outcome.text,
+    'Send en e-post til kundeservice@utekos.no med fullt navn, adresse, ordrenummer og hvilke produkter returen gjelder. Pakk varen forsvarlig og bruk en sendingsmetode med sporing.'
+  )
+  assert.deepEqual(outcome.sources, [
+    {
+      title: 'Frakt og retur',
+      url: 'https://utekos.no/frakt-og-retur'
+    }
+  ])
+})
+
+test('size intent always sends the canonical size question in one knowledge call', async () => {
+  const calls: string[] = []
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'size_help',
+      text: 'Hvilken størrelse gjelder når frakten returneres?'
+    }),
+    context,
+    createAdapters({
+      supportKnowledge: {
+        answer: async input => {
+          calls.push(input.question)
+          return staticSupportKnowledgeAdapter.answer(input)
+        }
+      }
+    })
+  )
+
+  assert.deepEqual(calls, ['Hvilken størrelse bør jeg velge?'])
+  assert.match(outcome.text, /kan ikke garantere/iu)
+  assert.equal(
+    outcome.sources[0]?.url,
+    'https://utekos.no/handlehjelp/storrelsesguide'
+  )
+})
+
+test('shipping classifier pairs return subtopics and forwards canonical FAQ questions', async () => {
+  const cases = [
+    {
+      question: 'Er det unntak fra fri frakt?',
+      canonicalQuestion: 'Hva koster frakten hos Utekos?',
+      answerPattern: /fraktkostnad på 99 kr/iu,
+      excludedPattern: /hygieniske årsaker/iu
+    },
+    {
+      question: 'Hvordan returnerer jeg under angreretten?',
+      canonicalQuestion: 'Hvordan returnerer jeg en vare?',
+      answerPattern: /kundeservice@utekos\.no/iu,
+      excludedPattern: /14 dagers angrerett/iu
+    },
+    {
+      question: 'Hva koster det å returnere varen?',
+      canonicalQuestion: 'Hvor lang er angreretten?',
+      answerPattern: /retur betales av sender/iu,
+      excludedPattern: /fraktkostnad på 99 kr/iu
+    }
+  ] as const
+
+  for (const {
+    question,
+    canonicalQuestion,
+    answerPattern,
+    excludedPattern
+  } of cases) {
+    const calls: string[] = []
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'shipping_returns',
+        text: question
+      }),
+      context,
+      createAdapters({
+        supportKnowledge: {
+          answer: async input => {
+            calls.push(input.question)
+            return staticSupportKnowledgeAdapter.answer(input)
+          }
+        }
+      })
+    )
+
+    assert.deepEqual(calls, [canonicalQuestion], question)
+    assert.match(outcome.text, answerPattern, question)
+    assert.doesNotMatch(outcome.text, excludedPattern, question)
+  }
+})
+
 test('ambiguous shipping intent uses one grounded overview instead of shipping cost', async () => {
   const calls: string[] = []
   const outcome = await answerAssistantRequest(

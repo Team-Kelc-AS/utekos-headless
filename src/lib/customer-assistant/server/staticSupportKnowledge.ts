@@ -21,6 +21,7 @@ const sizeGuideSource = assistantSourceSchema.parse({
 
 const sizeQuestionPattern =
   /\b(?:størrelse|størrelsen|størrelsesguide|passform|mål)\b/u
+const canonicalSizeQuestion = 'Hvilken størrelse bør jeg velge?'
 
 const shippingReturnsOverviewQuestion =
   'Gi en oversikt over frakt og retur hos Utekos.'
@@ -66,8 +67,16 @@ function classifyShippingReturnsQuestion(
       normalizedQuestion
     )
 
-  if (hasReturnExceptionContext) {
+  if (hasReturnContext && hasReturnExceptionContext) {
     return 'return-exceptions'
+  }
+
+  if (hasReturnContext && hasShippingCostContext) {
+    return 'return-window'
+  }
+
+  if (hasReturnContext && hasReturnProcessContext) {
+    return 'return-process'
   }
 
   if (
@@ -77,15 +86,11 @@ function classifyShippingReturnsQuestion(
     return 'return-window'
   }
 
-  if (hasReturnContext && hasReturnProcessContext) {
-    return 'return-process'
-  }
-
   if (hasDeliveryContext && hasDeliveryTimingContext) {
     return 'Merchant-C-Delivery-Time'
   }
 
-  if (hasShippingCostContext) {
+  if (hasDeliveryContext && hasShippingCostContext) {
     return 'Merchant-Center-Shopping-Cost'
   }
 
@@ -110,20 +115,15 @@ export function resolveSupportKnowledgeQuestion({
   intent: AssistantIntent
   question: string
 }) {
-  const normalizedQuestion = normalizeAssistantText(question)
-
-  if (
-    intent === 'size_help' &&
-    !sizeQuestionPattern.test(normalizedQuestion)
-  ) {
-    return 'Hvilken størrelse bør jeg velge?'
+  if (intent === 'size_help') {
+    return canonicalSizeQuestion
   }
 
-  if (
-    intent === 'shipping_returns' &&
-    !findShippingReturnsFaq(normalizedQuestion)
-  ) {
-    return shippingReturnsOverviewQuestion
+  if (intent === 'shipping_returns') {
+    return (
+      findShippingReturnsFaq(question)?.question ??
+      shippingReturnsOverviewQuestion
+    )
   }
 
   return question
