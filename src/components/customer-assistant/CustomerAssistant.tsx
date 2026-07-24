@@ -2,7 +2,6 @@
 
 import { useChat } from '@ai-sdk/react'
 import {
-  projectTextOnlyMessages,
   type AssistantIntent,
   type AssistantUIMessage
 } from '@/lib/customer-assistant/assistantProtocol'
@@ -11,7 +10,16 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
 import { CustomerAssistantLauncher } from './CustomerAssistantLauncher'
 import { CustomerAssistantPanel } from './CustomerAssistantPanel'
-import { allowsAssistantSurface } from './assistantViewModel'
+import { AssistantLiveAnnouncer } from './AssistantMessageList'
+import {
+  allowsAssistantSurface,
+  createAssistantRequestBody,
+  createCompletedAssistantAnnouncement,
+  recordAssistantFeedback,
+  resolveAssistantAnnouncementText,
+  type AssistantFeedbackState,
+  type AssistantFeedbackValue
+} from './assistantViewModel'
 
 type CustomerAssistantProps = {
   rolloutPercent: number
@@ -30,6 +38,10 @@ function CustomerAssistantRuntime({
   const [intent, setIntent] =
     useState<AssistantIntent>('product_help')
   const [input, setInput] = useState('')
+  const [feedback, setFeedback] =
+    useState<AssistantFeedbackState>({})
+  const [suppressedAnnouncementId, setSuppressedAnnouncementId] =
+    useState<string | null>(null)
   const sessionIdRef = useRef<string | null>(null)
   const launcherRef = useRef<HTMLButtonElement>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -50,40 +62,71 @@ function CustomerAssistantRuntime({
           messages: nextMessages
         }) => {
           return {
-            body: {
+            body: createAssistantRequestBody({
               id,
               sessionId: body?.sessionId,
               intent: body?.intent,
-              messages: projectTextOnlyMessages(nextMessages),
-              pageContext: {
-                pathname: pathname || '/',
-                productHandle
-              }
-            }
+              messages: nextMessages,
+              pathname: pathname || '/',
+              productHandle
+            })
           }
         }
       })
     })
+  const latestAssistantMessageId =
+    messages.findLast(message => message.role === 'assistant')
+      ?.id ?? null
+  const completedAnnouncement =
+    createCompletedAssistantAnnouncement(messages, status)
+  const announcementText = resolveAssistantAnnouncementText(
+    completedAnnouncement,
+    isOpen,
+    suppressedAnnouncementId
+  )
 
   useEffect(() => {
     if (isOpen) {
       hasOpenedRef.current = true
       headingRef.current?.focus()
-
-      function closeOnEscape(event: KeyboardEvent) {
-        if (event.key === 'Escape') setIsOpen(false)
-      }
-
-      document.addEventListener('keydown', closeOnEscape)
-      return () =>
-        document.removeEventListener('keydown', closeOnEscape)
+      return
     }
 
     if (hasOpenedRef.current) launcherRef.current?.focus()
   }, [isOpen])
 
+  useEffect(() => {
+    if (!isOpen) return
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return
+
+      setSuppressedAnnouncementId(latestAssistantMessageId)
+      setIsOpen(false)
+    }
+
+    document.addEventListener('keydown', closeOnEscape)
+    return () =>
+      document.removeEventListener('keydown', closeOnEscape)
+  }, [isOpen, latestAssistantMessageId])
+
   function closePanel() {
+    setSuppressedAnnouncementId(latestAssistantMessageId)
     setIsOpen(false)
+  }
+
+  function openPanel() {
+    setSuppressedAnnouncementId(latestAssistantMessageId)
+    setIsOpen(true)
+  }
+
+  function selectFeedback(
+    responseId: string,
+    value: AssistantFeedbackValue
+  ) {
+    setFeedback(current =>
+      recordAssistantFeedback(current, responseId, value)
+    )
   }
 
   async function sendText(
@@ -122,9 +165,11 @@ function CustomerAssistantRuntime({
 
   return (
     <>
+      <AssistantLiveAnnouncer text={announcementText} />
       {isOpen && (
         <CustomerAssistantPanel
           error={error}
+          feedback={feedback}
           firstActionRef={firstActionRef}
           headingId={headingId}
           headingRef={headingRef}
@@ -135,6 +180,7 @@ function CustomerAssistantRuntime({
           panelId={panelId}
           status={status}
           onClose={closePanel}
+          onFeedbackSelect={selectFeedback}
           onInputChange={setInput}
           onIntentSelect={selectIntent}
           onSubmit={() => void sendText(input)}
@@ -144,7 +190,7 @@ function CustomerAssistantRuntime({
         controls={panelId}
         expanded={isOpen}
         launcherRef={launcherRef}
-        onClick={() => setIsOpen(current => !current)}
+        onClick={isOpen ? closePanel : openPanel}
       />
     </>
   )

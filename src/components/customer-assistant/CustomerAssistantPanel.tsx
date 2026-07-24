@@ -14,6 +14,8 @@ import {
 import { AssistantQuickActions } from './AssistantQuickActions'
 import {
   createHandoffSummary,
+  type AssistantFeedbackState,
+  type AssistantFeedbackValue,
   type AssistantHandoffRow
 } from './assistantViewModel'
 
@@ -28,6 +30,7 @@ const errorHandoff: AssistantHandoffRow['handoff'] = {
 
 type CustomerAssistantPanelProps = {
   error: Error | undefined
+  feedback: AssistantFeedbackState
   firstActionRef: RefObject<HTMLButtonElement | null>
   headingId: string
   headingRef: RefObject<HTMLHeadingElement | null>
@@ -38,6 +41,10 @@ type CustomerAssistantPanelProps = {
   panelId: string
   status: AssistantChatStatus
   onClose: () => void
+  onFeedbackSelect: (
+    responseId: string,
+    value: AssistantFeedbackValue
+  ) => void
   onInputChange: (value: string) => void
   onIntentSelect: (
     intent: AssistantIntent,
@@ -48,6 +55,7 @@ type CustomerAssistantPanelProps = {
 
 export function CustomerAssistantPanel({
   error,
+  feedback,
   firstActionRef,
   headingId,
   headingRef,
@@ -58,6 +66,7 @@ export function CustomerAssistantPanel({
   panelId,
   status,
   onClose,
+  onFeedbackSelect,
   onInputChange,
   onIntentSelect,
   onSubmit
@@ -130,8 +139,10 @@ export function CustomerAssistantPanel({
             onSelect={onIntentSelect}
           />
         : <AssistantMessageList
+            feedback={feedback}
             messages={messages}
             status={status}
+            onFeedbackSelect={onFeedbackSelect}
           />
         }
 

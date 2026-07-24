@@ -1,8 +1,9 @@
 'use client'
 
 import { ThumbsDownIcon, ThumbsUpIcon } from 'lucide-react'
+import type { AssistantFeedbackValue } from './assistantViewModel'
 
-export type AssistantFeedbackValue = 'helpful' | 'not_helpful'
+export type { AssistantFeedbackValue } from './assistantViewModel'
 
 type AssistantFeedbackProps = {
   responseId: string

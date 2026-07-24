@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
-  projectTextOnlyMessages,
+  parseAssistantChatRequest,
   type AssistantUIMessage
 } from '@/lib/customer-assistant/assistantProtocol'
 import { Chat } from '@ai-sdk/react'
@@ -10,10 +10,21 @@ import {
   createUIMessageStreamResponse,
   DefaultChatTransport
 } from 'ai'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import {
+  AssistantLiveAnnouncer,
+  AssistantMessageList
+} from './AssistantMessageList'
 import {
   allowsAssistantSurface,
+  createAssistantRequestBody,
   createAssistantViewRows,
-  createHandoffSummary
+  createCompletedAssistantAnnouncement,
+  createHandoffSummary,
+  recordAssistantFeedback,
+  resolveAssistantAnnouncementText,
+  type AssistantFeedbackState
 } from './assistantViewModel'
 
 const recommendation = {
@@ -271,6 +282,195 @@ test('redacts email, phone, order-looking and payment-looking values from the su
   assert.doesNotMatch(summary, /4242[\s-]*4242/iu)
 })
 
+test('redacts exact Norwegian order labels with short numbers while preserving useful context', () => {
+  const summary = createHandoffSummary([
+    {
+      id: 'order-labels',
+      role: 'user',
+      parts: [
+        {
+          type: 'text',
+          text: 'Fargen er blå. Ordrenummer: 12345 gjelder retur. Ordrenr. 67890 gjelder bytte.'
+        }
+      ]
+    }
+  ])
+
+  assert.match(summary, /Fargen er blå/u)
+  assert.match(summary, /gjelder retur/u)
+  assert.match(summary, /gjelder bytte/u)
+  assert.doesNotMatch(summary, /Ordrenummer:\s*12345/iu)
+  assert.doesNotMatch(summary, /Ordrenr\.\s*67890/iu)
+  assert.doesNotMatch(summary, /\b(?:12345|67890)\b/u)
+})
+
+test('builds a receiving-schema-safe request from projected UI messages and page context', () => {
+  const oversizedMessages: AssistantUIMessage[] = Array.from(
+    { length: 14 },
+    (_, index) => ({
+      id: `message-${index}`,
+      role: index % 2 === 0 ? 'user' : 'assistant',
+      parts: [
+        { type: 'text', text: '   ' },
+        { type: 'text', text: 'A'.repeat(1_200) },
+        { type: 'text', text: 'Andre del' },
+        { type: 'text', text: 'Tredje del' },
+        { type: 'text', text: 'Fjerde del' },
+        { type: 'text', text: 'Femte del skal utelates' }
+      ]
+    })
+  )
+
+  const request = createAssistantRequestBody({
+    id: `request-${'x'.repeat(120)}`,
+    sessionId: 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7',
+    intent: 'product_help',
+    messages: oversizedMessages,
+    pathname: `/${'p'.repeat(400)}`,
+    productHandle: 'Ugyldig Handle'
+  })
+
+  assert.deepEqual(parseAssistantChatRequest(request), request)
+  assert.equal(request.id?.length, 100)
+  assert.equal(request.messages.length, 12)
+  assert.equal(request.pageContext.pathname.length, 300)
+  assert.equal(request.pageContext.productHandle, null)
+  for (const message of request.messages) {
+    assert.equal(message.parts.length, 4)
+    assert.ok(
+      message.parts.every(part => part.text.trim().length > 0)
+    )
+    assert.ok(
+      message.parts.every(part => part.text.length <= 800)
+    )
+  }
+
+  const fallbackContext = createAssistantRequestBody({
+    sessionId: 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7',
+    intent: 'product_help',
+    messages: oversizedMessages.slice(-1),
+    pathname: 'produkter/comfyrobe',
+    productHandle: 'comfyrobe'
+  })
+  assert.deepEqual(fallbackContext.pageContext, {
+    pathname: '/',
+    productHandle: 'comfyrobe'
+  })
+})
+
+test('keeps feedback one-shot when controlled conversation state is rendered again', () => {
+  const initial: AssistantFeedbackState = {}
+  const selected = recordAssistantFeedback(
+    initial,
+    'message-assistant',
+    'helpful'
+  )
+  const unchanged = recordAssistantFeedback(
+    selected,
+    'message-assistant',
+    'not_helpful'
+  )
+
+  assert.deepEqual(selected, { 'message-assistant': 'helpful' })
+  assert.strictEqual(unchanged, selected)
+
+  function renderFeedback(feedback: AssistantFeedbackState) {
+    return renderToStaticMarkup(
+      createElement(AssistantMessageList, {
+        feedback,
+        messages: [
+          {
+            id: 'message-assistant',
+            role: 'assistant',
+            parts: [
+              { type: 'text', text: 'Et ferdig svar.' },
+              {
+                type: 'data-status',
+                data: { confidence: 'high', failureCode: 'none' }
+              }
+            ]
+          }
+        ],
+        status: 'ready',
+        onFeedbackSelect: () => undefined
+      })
+    )
+  }
+
+  const selectedHtml = renderFeedback(selected)
+  const remountedHtml = renderFeedback(selected)
+  assert.match(selectedHtml, /aria-pressed="true"/u)
+  assert.equal(selectedHtml.match(/disabled=""/gu)?.length, 2)
+  assert.equal(remountedHtml, selectedHtml)
+})
+
+test('announces only the newest completed response and suppresses stale reopen content', () => {
+  const announcementMessages: AssistantUIMessage[] = [
+    {
+      id: 'old-answer',
+      role: 'assistant',
+      parts: [
+        { type: 'text', text: 'Gammelt svar.' },
+        {
+          type: 'data-status',
+          data: { confidence: 'high', failureCode: 'none' }
+        }
+      ]
+    },
+    {
+      id: 'latest-answer',
+      role: 'assistant',
+      parts: [
+        { type: 'text', text: 'Nyeste svar.' },
+        { type: 'text', text: 'Kun dette skal annonseres.' },
+        {
+          type: 'data-status',
+          data: { confidence: 'medium', failureCode: 'none' }
+        }
+      ]
+    }
+  ]
+  const completed = createCompletedAssistantAnnouncement(
+    announcementMessages,
+    'ready'
+  )
+
+  assert.deepEqual(completed, {
+    messageId: 'latest-answer',
+    text: 'Kjøpshjelp: Nyeste svar. Kun dette skal annonseres.'
+  })
+  assert.equal(
+    createCompletedAssistantAnnouncement(
+      announcementMessages,
+      'streaming'
+    ),
+    null
+  )
+  assert.equal(
+    resolveAssistantAnnouncementText(completed, false, null),
+    ''
+  )
+  assert.equal(
+    resolveAssistantAnnouncementText(
+      completed,
+      true,
+      'latest-answer'
+    ),
+    ''
+  )
+  assert.equal(
+    resolveAssistantAnnouncementText(completed, true, null),
+    completed?.text
+  )
+
+  const emptyLiveRegion = renderToStaticMarkup(
+    createElement(AssistantLiveAnnouncer, { text: '' })
+  )
+  assert.match(emptyLiveRegion, /aria-live="polite"/u)
+  assert.match(emptyLiveRegion, /aria-atomic="true"/u)
+  assert.doesNotMatch(emptyLiveRegion, /Gammelt|Nyeste/u)
+})
+
 test('fails closed for invalid rollout values without choosing an exposure bucket', () => {
   for (const rolloutPercent of [
     Number.NaN,
@@ -288,44 +488,49 @@ test('fails closed for invalid rollout values without choosing an exposure bucke
   }
 })
 
-test('parses AI SDK 6 UI chunks through the public React SDK chat runtime', async () => {
-  let requestBody: unknown
-  const response = createUIMessageStreamResponse({
-    stream: createUIMessageStream<AssistantUIMessage>({
-      execute: ({ writer }) => {
-        writer.write({ type: 'text-start', id: 'answer' })
-        writer.write({
-          type: 'text-delta',
-          id: 'answer',
-          delta: 'Jeg fant et relevant produkt.'
-        })
-        writer.write({ type: 'text-end', id: 'answer' })
-        writer.write({
-          type: 'data-status',
-          data: { confidence: 'high', failureCode: 'none' }
-        })
-      }
-    })
-  })
+test('bounds a long first answer in a valid two-turn public chat transport request', async () => {
+  const requestBodies: unknown[] = []
+  const longAnswer = 'V'.repeat(2_000)
   const chat = new Chat<AssistantUIMessage>({
-    id: 'cross-major-runtime-test',
+    id: 'two-turn-runtime-test',
     transport: new DefaultChatTransport<AssistantUIMessage>({
       api: '/api/customer-assistant/chat',
       fetch: async (_input, init) => {
-        requestBody = JSON.parse(String(init?.body))
-        return response
+        requestBodies.push(JSON.parse(String(init?.body)))
+        const answer =
+          requestBodies.length === 1 ? longAnswer : 'Andre svar.'
+
+        return createUIMessageStreamResponse({
+          stream: createUIMessageStream<AssistantUIMessage>({
+            execute: ({ writer }) => {
+              writer.write({ type: 'text-start', id: 'answer' })
+              writer.write({
+                type: 'text-delta',
+                id: 'answer',
+                delta: answer
+              })
+              writer.write({ type: 'text-end', id: 'answer' })
+              writer.write({
+                type: 'data-status',
+                data: { confidence: 'high', failureCode: 'none' }
+              })
+            }
+          })
+        })
       },
       prepareSendMessagesRequest: ({
         body,
         id,
         messages: nextMessages
       }) => ({
-        body: {
+        body: createAssistantRequestBody({
           id,
           sessionId: body?.sessionId,
           intent: body?.intent,
-          messages: projectTextOnlyMessages(nextMessages)
-        }
+          messages: nextMessages,
+          pathname: '/produkter/comfyrobe',
+          productHandle: 'comfyrobe'
+        })
       })
     })
   })
@@ -340,32 +545,36 @@ test('parses AI SDK 6 UI chunks through the public React SDK chat runtime', asyn
     }
   )
 
-  assert.equal(chat.status, 'ready')
-  assert.deepEqual(requestBody, {
-    id: 'cross-major-runtime-test',
-    sessionId: 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7',
-    intent: 'product_help',
-    messages: [
-      {
-        id: chat.messages[0]?.id,
-        role: 'user',
-        parts: [{ type: 'text', text: 'Finn noe varmt.' }]
-      }
-    ]
-  })
+  const firstAssistantText = chat.messages
+    .at(-1)
+    ?.parts.find(part => part.type === 'text')
+  assert.equal(firstAssistantText?.text.length, 2_000)
 
-  const assistantMessage = chat.messages.at(-1)
-  assert.equal(assistantMessage?.role, 'assistant')
-  assert.deepEqual(assistantMessage?.parts, [
+  await chat.sendMessage(
+    { text: 'Hva med størrelse?' },
     {
-      type: 'text',
-      text: 'Jeg fant et relevant produkt.',
-      providerMetadata: undefined,
-      state: 'done'
-    },
-    {
-      type: 'data-status',
-      data: { confidence: 'high', failureCode: 'none' }
+      body: {
+        sessionId: 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7',
+        intent: 'size_help'
+      }
     }
-  ])
+  )
+
+  assert.equal(chat.status, 'ready')
+  assert.equal(requestBodies.length, 2)
+  const secondRequest = parseAssistantChatRequest(
+    requestBodies[1]
+  )
+  assert.deepEqual(secondRequest.pageContext, {
+    pathname: '/produkter/comfyrobe',
+    productHandle: 'comfyrobe'
+  })
+  assert.equal(secondRequest.intent, 'size_help')
+  assert.equal(secondRequest.messages.length, 3)
+  const projectedAnswer = secondRequest.messages.find(
+    message => message.role === 'assistant'
+  )
+  assert.equal(projectedAnswer?.parts.length, 1)
+  assert.equal(projectedAnswer?.parts[0]?.text.length, 800)
+  assert.equal(projectedAnswer?.parts[0]?.text, 'V'.repeat(800))
 })

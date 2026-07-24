@@ -2,59 +2,57 @@
 
 import type { AssistantUIMessage } from '@/lib/customer-assistant/assistantProtocol'
 import { ExternalLinkIcon } from 'lucide-react'
-import { useState } from 'react'
-import {
-  AssistantFeedback,
-  type AssistantFeedbackValue
-} from './AssistantFeedback'
+import { AssistantFeedback } from './AssistantFeedback'
 import { AssistantHandoff } from './AssistantHandoff'
 import { AssistantProductRecommendation } from './AssistantProductRecommendation'
 import {
   createAssistantViewRows,
-  createHandoffSummary
+  createHandoffSummary,
+  type AssistantChatStatus,
+  type AssistantFeedbackState,
+  type AssistantFeedbackValue
 } from './assistantViewModel'
 
-export type AssistantChatStatus =
-  | 'submitted'
-  | 'streaming'
-  | 'ready'
-  | 'error'
+export type { AssistantChatStatus } from './assistantViewModel'
 
 type AssistantMessageListProps = {
+  feedback: AssistantFeedbackState
   messages: AssistantUIMessage[]
   status: AssistantChatStatus
+  onFeedbackSelect: (
+    responseId: string,
+    value: AssistantFeedbackValue
+  ) => void
+}
+
+type AssistantLiveAnnouncerProps = { text: string }
+
+export function AssistantLiveAnnouncer({
+  text
+}: AssistantLiveAnnouncerProps) {
+  return (
+    <p className='sr-only' aria-live='polite' aria-atomic='true'>
+      {text}
+    </p>
+  )
 }
 
 export function AssistantMessageList({
+  feedback,
   messages,
-  status
+  status,
+  onFeedbackSelect
 }: AssistantMessageListProps) {
-  const [feedback, setFeedback] = useState<
-    Record<string, AssistantFeedbackValue>
-  >({})
   const lastAssistantMessage = messages.findLast(
     message => message.role === 'assistant'
   )
   const summary = createHandoffSummary(messages)
-
-  function selectFeedback(
-    responseId: string,
-    value: AssistantFeedbackValue
-  ) {
-    setFeedback(current => {
-      if (current[responseId]) return current
-      return { ...current, [responseId]: value }
-    })
-  }
 
   return (
     <ol aria-label='Samtale' className='space-y-5'>
       {messages.map(message => {
         const rows = createAssistantViewRows([message])
         const statusRow = rows.find(row => row.kind === 'status')
-        const isLatestAssistantResponse =
-          message.role === 'assistant' &&
-          message.id === lastAssistantMessage?.id
         const isCompletedAssistantResponse =
           message.role === 'assistant' &&
           statusRow?.kind === 'status' &&
@@ -75,20 +73,7 @@ export function AssistantMessageList({
               : undefined
             }
           >
-            <div
-              aria-live={
-                isLatestAssistantResponse ? 'polite' : undefined
-              }
-              aria-atomic={
-                isLatestAssistantResponse ? 'false' : undefined
-              }
-              aria-relevant={
-                isLatestAssistantResponse ? 'additions text' : (
-                  undefined
-                )
-              }
-              className='space-y-3'
-            >
+            <div className='space-y-3'>
               {rows.map(row => {
                 if (row.kind === 'text') {
                   return (
@@ -161,7 +146,7 @@ export function AssistantMessageList({
               <AssistantFeedback
                 responseId={message.id}
                 value={feedback[message.id] ?? null}
-                onSelect={selectFeedback}
+                onSelect={onFeedbackSelect}
               />
             )}
           </li>

@@ -1,5 +1,8 @@
 import {
   assistantSourceSchema,
+  parseAssistantChatRequest,
+  projectTextOnlyMessages,
+  type AssistantChatRequest,
   type AssistantHandoff,
   type AssistantRecommendation,
   type AssistantSource,
@@ -8,13 +11,20 @@ import {
 import { z } from 'zod'
 
 const MAX_SUMMARY_CHARACTERS = 1_000
+const MAX_REQUEST_MESSAGES = 12
+const MAX_REQUEST_PARTS = 4
+const MAX_REQUEST_TEXT_CHARACTERS = 800
+const MAX_REQUEST_ID_CHARACTERS = 100
+const MAX_PATHNAME_CHARACTERS = 300
+const MAX_PRODUCT_HANDLE_CHARACTERS = 160
 const HANDLE_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u
+const PAGE_HANDLE_PATTERN = /^[a-z0-9-]+$/u
 const EMAIL_PATTERN =
   /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/giu
 const PAYMENT_NUMBER_PATTERN =
   /(?<![\p{L}\p{N}])(?:\d[\s-]?){12,18}\d(?![\p{L}\p{N}])/gu
 const ORDER_NUMBER_PATTERN =
-  /\b(?:ord(?:er)?|ordre(?:nummer|nr)?|bestilling(?:snummer|snr)?)[\s:#-]*[A-Z0-9-]{4,}\b/giu
+  /\b(?:bestilling(?:snummer|snr)?|ordre(?:nummer|nr)?|ord(?:er)?)(?:[\s.:#-]+)(?=[A-Z0-9-]*\d)[A-Z0-9-]{4,}\b/giu
 const HASHED_NUMBER_PATTERN =
   /(?<![\p{L}\p{N}])#[A-Z0-9-]{4,}\b/giu
 const PHONE_NUMBER_PATTERN =
@@ -149,12 +159,116 @@ export type AssistantViewRow =
   | AssistantHandoffRow
   | AssistantStatusRow
 
+export type AssistantChatStatus =
+  | 'submitted'
+  | 'streaming'
+  | 'ready'
+  | 'error'
+
+export type AssistantFeedbackValue = 'helpful' | 'not_helpful'
+
+export type AssistantFeedbackState = Readonly<
+  Record<string, AssistantFeedbackValue>
+>
+
+export type CompletedAssistantAnnouncement = {
+  messageId: string
+  text: string
+}
+
+type AssistantRequestBoundaryInput = {
+  id?: unknown
+  sessionId: unknown
+  intent: unknown
+  messages: AssistantUIMessage[]
+  pathname: unknown
+  productHandle: unknown
+}
+
 export function allowsAssistantSurface(rolloutPercent: number) {
   return (
     Number.isFinite(rolloutPercent) &&
     rolloutPercent > 0 &&
     rolloutPercent <= 100
   )
+}
+
+function createBoundedRequestId(value: unknown) {
+  if (typeof value !== 'string') return undefined
+
+  const id = value.trim().slice(0, MAX_REQUEST_ID_CHARACTERS)
+  return id || undefined
+}
+
+function createBoundedPathname(value: unknown) {
+  if (typeof value !== 'string') return '/'
+
+  const pathname = value.trim()
+  if (!pathname.startsWith('/')) return '/'
+
+  return pathname.slice(0, MAX_PATHNAME_CHARACTERS)
+}
+
+function createValidatedProductHandle(value: unknown) {
+  if (
+    typeof value !== 'string' ||
+    value.length === 0 ||
+    value.length > MAX_PRODUCT_HANDLE_CHARACTERS ||
+    !PAGE_HANDLE_PATTERN.test(value)
+  ) {
+    return null
+  }
+
+  return value
+}
+
+export function createAssistantRequestBody(
+  input: AssistantRequestBoundaryInput
+): AssistantChatRequest {
+  const messages = projectTextOnlyMessages(input.messages)
+    .slice(-MAX_REQUEST_MESSAGES)
+    .flatMap(message => {
+      const id = message.id
+        .trim()
+        .slice(0, MAX_REQUEST_ID_CHARACTERS)
+      const parts = message.parts
+        .flatMap(part => {
+          const text = part.text
+            .trim()
+            .slice(0, MAX_REQUEST_TEXT_CHARACTERS)
+            .trimEnd()
+
+          return text ? [{ type: 'text' as const, text }] : []
+        })
+        .slice(0, MAX_REQUEST_PARTS)
+
+      return id && parts.length > 0 ?
+          [{ id, role: message.role, parts }]
+        : []
+    })
+
+  return parseAssistantChatRequest({
+    id: createBoundedRequestId(input.id),
+    sessionId: input.sessionId,
+    intent: input.intent,
+    messages,
+    pageContext: {
+      pathname: createBoundedPathname(input.pathname),
+      productHandle: createValidatedProductHandle(
+        input.productHandle
+      )
+    }
+  })
+}
+
+export function recordAssistantFeedback(
+  current: AssistantFeedbackState,
+  responseId: string,
+  value: AssistantFeedbackValue
+): AssistantFeedbackState {
+  if (!responseId || current[responseId]) return current
+
+  return { ...current, [responseId]: value }
 }
 
 function createRow(
@@ -254,6 +368,52 @@ export function createAssistantViewRows(
       return row ? [row] : []
     })
   )
+}
+
+export function createCompletedAssistantAnnouncement(
+  messages: AssistantUIMessage[],
+  status: AssistantChatStatus
+): CompletedAssistantAnnouncement | null {
+  if (status !== 'ready') return null
+
+  const message = messages.findLast(
+    candidate => candidate.role === 'assistant'
+  )
+  if (!message) return null
+
+  const rows = createAssistantViewRows([message])
+  const hasCompletionStatus = rows.some(
+    row => row.kind === 'status'
+  )
+  if (!hasCompletionStatus) return null
+
+  const text = rows
+    .flatMap(row =>
+      row.kind === 'text' && row.role === 'assistant' ?
+        [row.text.trim()]
+      : []
+    )
+    .filter(Boolean)
+    .join(' ')
+  if (!text) return null
+
+  return { messageId: message.id, text: `Kjøpshjelp: ${text}` }
+}
+
+export function resolveAssistantAnnouncementText(
+  announcement: CompletedAssistantAnnouncement | null,
+  isOpen: boolean,
+  suppressedMessageId: string | null
+) {
+  if (
+    !isOpen ||
+    !announcement ||
+    announcement.messageId === suppressedMessageId
+  ) {
+    return ''
+  }
+
+  return announcement.text
 }
 
 function redactPrivateValues(value: string) {
