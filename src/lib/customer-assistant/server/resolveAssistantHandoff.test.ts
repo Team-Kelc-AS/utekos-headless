@@ -73,7 +73,36 @@ test('requires customer-sharing context for general personal-data shapes', () =>
     null
   )
   assert.equal(
+    resolveAssistantHandoff(
+      'Send meg varen med produktnummer 12345678.',
+      0
+    ),
+    null
+  )
+  assert.equal(
     resolveAssistantHandoff('Hva er adressen til butikken?', 0),
     null
   )
+  assert.equal(
+    resolveAssistantHandoff(
+      'Hva er adressen til butikken der varen min kan hentes?',
+      0
+    ),
+    null
+  )
 })
+
+const directSharingCases = [
+  ['Du kan kontakte meg på kunde@example.no.', 'personal_data'],
+  ['Du kan ringe meg på 400 00 000.', 'personal_data'],
+  [
+    'Kan du sende meg e-post på kunde@example.no?',
+    'personal_data'
+  ]
+] as const
+
+for (const [text, reason] of directSharingCases) {
+  test(`escalates direct personal sharing: ${text}`, () => {
+    assert.equal(resolveAssistantHandoff(text, 0), reason)
+  })
+}

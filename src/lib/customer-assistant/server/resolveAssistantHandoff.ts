@@ -21,16 +21,11 @@ const specificHandoffPatterns: ReadonlyArray<
   ]
 ]
 
-const personalDataLabelPattern =
-  /\b(?:telefonnummer(?:et)?|e-post(?:adresse(?:n)?)?|epost(?:adresse(?:n)?)?|adresse(?:n)?|fødselsnummer|personnummer)\b/u
+const labeledPersonalSharingPattern =
+  /\b(?:telefonnummer(?:et)?|e-post(?:adresse(?:n)?)?|epost(?:adresse(?:n)?)?|adresse(?:n)?|fødselsnummer|personnummer)\b(?:\s+(?:er|:))?\s+(?:min|mitt|mine)\b|\b(?:min|mitt|mine)\s+(?:telefonnummer(?:et)?|e-post(?:adresse(?:n)?)?|epost(?:adresse(?:n)?)?|adresse(?:n)?|fødselsnummer|personnummer)\b/u
 
-const personalDataValuePattern =
-  /\b(?:\d{8}|\d{3}\s\d{2}\s\d{3})\b|[\p{L}\p{N}._%+-]+@[\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)+/u
-
-const personalPossessivePattern = /\b(?:min|mitt|mine)\b/u
-
-const personalContactActionPattern =
-  /\b(?:kontakt\s+meg|nå\s+meg|send\s+meg|ring\s+meg)\b/u
+const directPersonalSharingPattern =
+  /\b(?:(?:du\s+kan|kan\s+du)\s+)?(?:kontakte|kontakt|ringe|ring|sende|send)\s+meg(?:\s+(?:telefonnummer(?:et)?|e-post(?:adresse(?:n)?)?|epost(?:adresse(?:n)?)))?\s+(?:på|via|til)\s+(?:\d{8}|\d{3}\s\d{2}\s\d{3}|[\p{L}\p{N}._%+-]+@[\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)+)\b/u
 
 export function resolveAssistantHandoff(
   text: string,
@@ -46,10 +41,8 @@ export function resolveAssistantHandoff(
   }
 
   if (
-    (personalDataLabelPattern.test(normalizedText) &&
-      personalPossessivePattern.test(normalizedText)) ||
-    (personalDataValuePattern.test(normalizedText) &&
-      personalContactActionPattern.test(normalizedText))
+    labeledPersonalSharingPattern.test(normalizedText) ||
+    directPersonalSharingPattern.test(normalizedText)
   ) {
     return 'personal_data'
   }
