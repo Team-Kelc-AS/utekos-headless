@@ -60,6 +60,9 @@ const VERCEL_LIVE_ORIGINS = [
   'https://vercel.live'
 ] as const
 
+/** Privacy-enhanced YouTube embeds used by the storefront video. */
+const VIDEO_FRAME_ORIGINS = ['https://www.youtube-nocookie.com'] as const
+
 function joinOrigins(origins: readonly string[]): string {
   return origins.join(' ')
 }
@@ -111,6 +114,7 @@ export function buildReportOnlyCsp(): string {
     ...KLARNA_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...META_PIXEL_FRAME_ORIGINS,
+    ...VIDEO_FRAME_ORIGINS,
     ...VERCEL_LIVE_ORIGINS
   ]
 

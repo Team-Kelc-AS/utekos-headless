@@ -49,6 +49,7 @@ test('permits the third-party scripts and frames observed during report-only rol
   assert.match(csp, /img-src[^;]*https:\/\/c\.bing\.com/)
   assert.match(csp, /img-src[^;]*https:\/\/www\.facebook\.com/)
   assert.match(csp, /frame-src[^;]*https:\/\/www\.facebook\.com/)
+  assert.match(csp, /frame-src[^;]*https:\/\/www\.youtube-nocookie\.com/)
   assert.match(csp, /frame-src[^;]*https:\/\/vercel\.live/)
   assert.doesNotMatch(
     csp,
