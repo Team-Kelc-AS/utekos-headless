@@ -24,6 +24,7 @@ import {
   createHandoffSummary,
   recordAssistantFeedback,
   resolveAssistantAnnouncementText,
+  resolveCompletedAssistantSuppressionId,
   type AssistantFeedbackState
 } from './assistantViewModel'
 
@@ -469,6 +470,118 @@ test('announces only the newest completed response and suppresses stale reopen c
   assert.match(emptyLiveRegion, /aria-live="polite"/u)
   assert.match(emptyLiveRegion, /aria-atomic="true"/u)
   assert.doesNotMatch(emptyLiveRegion, /Gammelt|Nyeste/u)
+})
+
+test('suppresses completed responses without hiding a streaming response that finishes after reopen', () => {
+  const streamingMessages: AssistantUIMessage[] = [
+    {
+      id: 'streaming-answer',
+      role: 'assistant',
+      parts: [{ type: 'text', text: 'Nytt svar pågår.' }]
+    }
+  ]
+  const streamingAnnouncement =
+    createCompletedAssistantAnnouncement(
+      streamingMessages,
+      'streaming'
+    )
+
+  // Close while streaming and reopen before completion: suppress nothing.
+  const suppressedOnStreamingClose =
+    resolveCompletedAssistantSuppressionId(streamingAnnouncement)
+  const suppressedOnStreamingReopen =
+    resolveCompletedAssistantSuppressionId(streamingAnnouncement)
+  assert.equal(suppressedOnStreamingClose, null)
+  assert.equal(suppressedOnStreamingReopen, null)
+
+  const completedStreamingAnswer =
+    createCompletedAssistantAnnouncement(
+      [
+        {
+          ...streamingMessages[0],
+          parts: [
+            { type: 'text', text: 'Nytt svar er ferdig.' },
+            {
+              type: 'data-status',
+              data: { confidence: 'high', failureCode: 'none' }
+            }
+          ]
+        }
+      ],
+      'ready'
+    )
+  assert.equal(
+    resolveAssistantAnnouncementText(
+      completedStreamingAnswer,
+      true,
+      suppressedOnStreamingReopen
+    ),
+    'Kjøpshjelp: Nytt svar er ferdig.'
+  )
+
+  // Completion while closed is suppressed when the panel later opens.
+  assert.equal(
+    resolveAssistantAnnouncementText(
+      completedStreamingAnswer,
+      false,
+      suppressedOnStreamingClose
+    ),
+    ''
+  )
+  const suppressedAfterHiddenCompletion =
+    resolveCompletedAssistantSuppressionId(
+      completedStreamingAnswer
+    )
+  assert.equal(
+    suppressedAfterHiddenCompletion,
+    'streaming-answer'
+  )
+  assert.equal(
+    resolveAssistantAnnouncementText(
+      completedStreamingAnswer,
+      true,
+      suppressedAfterHiddenCompletion
+    ),
+    ''
+  )
+
+  // A completed visible response stays suppressed after close/reopen.
+  const visibleCompletion = {
+    messageId: 'visible-answer',
+    text: 'Kjøpshjelp: Synlig ferdig svar.'
+  }
+  assert.equal(
+    resolveAssistantAnnouncementText(
+      visibleCompletion,
+      true,
+      suppressedAfterHiddenCompletion
+    ),
+    visibleCompletion.text
+  )
+  const suppressedVisibleCompletion =
+    resolveCompletedAssistantSuppressionId(visibleCompletion)
+  assert.equal(
+    resolveAssistantAnnouncementText(
+      visibleCompletion,
+      true,
+      suppressedVisibleCompletion
+    ),
+    ''
+  )
+
+  // A later, different completed response still announces normally.
+  const laterCompletion = {
+    messageId: 'later-answer',
+    text: 'Kjøpshjelp: Senere ferdig svar.'
+  }
+  assert.equal(
+    resolveAssistantAnnouncementText(
+      laterCompletion,
+      true,
+      suppressedVisibleCompletion
+    ),
+    laterCompletion.text
+  )
 })
 
 test('fails closed for invalid rollout values without choosing an exposure bucket', () => {

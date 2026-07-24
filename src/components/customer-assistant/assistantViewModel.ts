@@ -416,6 +416,12 @@ export function resolveAssistantAnnouncementText(
   return announcement.text
 }
 
+export function resolveCompletedAssistantSuppressionId(
+  announcement: CompletedAssistantAnnouncement | null
+) {
+  return announcement?.messageId ?? null
+}
+
 function redactPrivateValues(value: string) {
   return value
     .replace(EMAIL_PATTERN, REDACTION)

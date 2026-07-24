@@ -17,6 +17,7 @@ import {
   createCompletedAssistantAnnouncement,
   recordAssistantFeedback,
   resolveAssistantAnnouncementText,
+  resolveCompletedAssistantSuppressionId,
   type AssistantFeedbackState,
   type AssistantFeedbackValue
 } from './assistantViewModel'
@@ -74,11 +75,10 @@ function CustomerAssistantRuntime({
         }
       })
     })
-  const latestAssistantMessageId =
-    messages.findLast(message => message.role === 'assistant')
-      ?.id ?? null
   const completedAnnouncement =
     createCompletedAssistantAnnouncement(messages, status)
+  const completedAnnouncementId =
+    resolveCompletedAssistantSuppressionId(completedAnnouncement)
   const announcementText = resolveAssistantAnnouncementText(
     completedAnnouncement,
     isOpen,
@@ -101,22 +101,22 @@ function CustomerAssistantRuntime({
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key !== 'Escape') return
 
-      setSuppressedAnnouncementId(latestAssistantMessageId)
+      setSuppressedAnnouncementId(completedAnnouncementId)
       setIsOpen(false)
     }
 
     document.addEventListener('keydown', closeOnEscape)
     return () =>
       document.removeEventListener('keydown', closeOnEscape)
-  }, [isOpen, latestAssistantMessageId])
+  }, [completedAnnouncementId, isOpen])
 
   function closePanel() {
-    setSuppressedAnnouncementId(latestAssistantMessageId)
+    setSuppressedAnnouncementId(completedAnnouncementId)
     setIsOpen(false)
   }
 
   function openPanel() {
-    setSuppressedAnnouncementId(latestAssistantMessageId)
+    setSuppressedAnnouncementId(completedAnnouncementId)
     setIsOpen(true)
   }
 
