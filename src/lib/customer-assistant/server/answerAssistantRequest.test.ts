@@ -1966,6 +1966,36 @@ test('restricted intents return handoff without querying providers', async () =>
   assert.deepEqual(outcome.sources, [])
 })
 
+test('explicit human support request returns contact handoff without querying providers', async () => {
+  let providerCalls = 0
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'other',
+      text: 'Jeg vil snakke med kundeservice.'
+    }),
+    context,
+    createAdapters({
+      supportKnowledge: {
+        answer: async () => {
+          providerCalls += 1
+          return {
+            text: 'Skal ikke brukes',
+            confidence: 'high',
+            sources: []
+          }
+        }
+      }
+    })
+  )
+
+  assert.equal(providerCalls, 0)
+  assert.equal(outcome.handoff?.reason, 'uncertain')
+  assert.equal(outcome.handoff?.contactPath, '/kontaktskjema')
+  assert.equal(outcome.handoff?.email, 'kundeservice@utekos.no')
+  assert.equal(outcome.handoff?.phone, '+4740216343')
+  assert.equal(outcome.failureCode, 'none')
+})
+
 test('Shopify failure returns safe support and handoff without a product claim or leaked log data', async () => {
   const logged: unknown[][] = []
   const originalError = console.error

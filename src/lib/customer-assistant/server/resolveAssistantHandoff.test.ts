@@ -40,6 +40,20 @@ test('escalates after two failures', () => {
   )
 })
 
+test('routes an explicit request for human customer service directly to handoff', () => {
+  for (const text of [
+    'Jeg vil snakke med kundeservice.',
+    'Kan jeg få menneskelig hjelp?',
+    'Jeg vil snakke med en medarbeider.'
+  ]) {
+    assert.equal(
+      resolveAssistantHandoff(text, 0),
+      'uncertain',
+      text
+    )
+  }
+})
+
 test('does not escalate an ordinary product question', () => {
   assert.equal(
     resolveAssistantHandoff(

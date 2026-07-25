@@ -45,6 +45,9 @@ const labeledPersonalSharingPattern =
 const directPersonalSharingPattern =
   /\b(?:(?:du\s+kan|kan\s+du)\s+)?(?:kontakte|kontakt|ringe|ring|sende|send)\s+meg(?:\s+(?:telefonnummer(?:et)?|e-post(?:adresse(?:n)?)?|epost(?:adresse(?:n)?)))?\s+(?:på|via|til)\s+(?:\d{8}|\d{3}\s\d{2}\s\d{3}|[\p{L}\p{N}._%+-]+@[\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)+)\b/u
 
+const explicitHumanHandoffPattern =
+  /\b(?:kundeservice|menneskelig\s+(?:hjelp|kundeservice)|snakke\s+med\s+(?:en\s+)?(?:person|medarbeider)|snakke\s+med\s+et\s+menneske)\b/u
+
 function passesLuhnCheck(value: string) {
   let sum = 0
   let doubleDigit = false
@@ -231,6 +234,10 @@ export function resolveAssistantHandoff(
 
   if (matchedReason) {
     return matchedReason
+  }
+
+  if (explicitHumanHandoffPattern.test(normalizedText)) {
+    return 'uncertain'
   }
 
   const restrictedCandidates =
