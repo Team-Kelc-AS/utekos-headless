@@ -2,14 +2,19 @@
 
 import { isGraphQLErrorResponse } from '@/api/graphql/response/isGraphQLErrorResponse'
 import { isGraphQLSuccessResponse } from '@/api/graphql/response/isGraphQLSuccessResponse'
-import { getShopifyEndpoint, getShopifyToken } from '@/db/config/shopify.config'
+import {
+  getShopifyEndpoint,
+  getShopifyToken
+} from '@/db/config/shopify.config'
 import type {
   ExtractVariables,
   ShopifyFetchResult,
   ShopifyOperation
 } from '@types'
 
-export async function shopifyFetch<T extends ShopifyOperation<any, any>>({
+export async function shopifyFetch<
+  T extends ShopifyOperation<unknown, object>
+>({
   headers,
   query,
   signal,
@@ -35,7 +40,7 @@ export async function shopifyFetch<T extends ShopifyOperation<any, any>>({
         'X-Shopify-Storefront-Access-Token': token,
         ...headers
       },
-      signal,
+      ...(signal ? { signal } : {}),
       body: JSON.stringify({
         ...(query && { query }),
         ...(variables && { variables })
@@ -45,21 +50,20 @@ export async function shopifyFetch<T extends ShopifyOperation<any, any>>({
     const body: unknown = await response.json()
 
     if (isGraphQLSuccessResponse<T['data']>(body)) {
-      return {
-        success: true,
-        body: body.data
-      }
+      return { success: true, body: body.data }
     }
 
     if (isGraphQLErrorResponse(body)) {
-      console.error('Shopify API Error:', JSON.stringify(body.errors, null, 2))
-      return {
-        success: false,
-        error: body
-      }
+      console.error(
+        'Shopify API Error:',
+        JSON.stringify(body.errors, null, 2)
+      )
+      return { success: false, error: body }
     }
 
-    throw new Error('Unknown response structure from Shopify API.')
+    throw new Error(
+      'Unknown response structure from Shopify API.'
+    )
   } catch (e) {
     console.error('Fetch operation failed:', e)
     throw e

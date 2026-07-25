@@ -290,7 +290,8 @@ test('stock help asks a bounded question for an unknown or mixed variant selecti
 
   for (const question of [
     'Har dere størrelse XL?',
-    'Har dere størrelse M?'
+    'Har dere størrelse M?',
+    'Er den tilgjengelig?'
   ]) {
     const outcome = await answerAssistantRequest(
       createRequest({
@@ -392,7 +393,8 @@ test('Shopify results with forbidden inventory fields fail closed before stock o
 })
 
 test('Shopify-valid long strings remain compatible with product help', async () => {
-  const longTitle = `Utekos TechDown ${'varm '.repeat(45)}`.trim()
+  const longTitle =
+    `Utekos TechDown ${'varm '.repeat(45)}`.trim()
   const longOptionValue = 'v'.repeat(255)
   const product = createProduct({
     id: 'product-techdown-long',
@@ -429,7 +431,8 @@ test('Shopify-valid long strings remain compatible with product help', async () 
 })
 
 test('a long Shopify product title does not invalidate stock source output', async () => {
-  const longTitle = `Utekos TechDown ${'produkt '.repeat(30)}`.trim()
+  const longTitle =
+    `Utekos TechDown ${'produkt '.repeat(30)}`.trim()
   const product = createProduct({
     handle: 'utekos-techdown',
     title: longTitle,
@@ -1020,7 +1023,10 @@ test('completes the full clarification flow using all user turns', async () => {
     }
   ]
   const second = await answerAssistantRequest(
-    createRequest({ text: 'På hytta.', messages: secondMessages }),
+    createRequest({
+      text: 'På hytta.',
+      messages: secondMessages
+    }),
     context,
     adapters
   )
@@ -1035,16 +1041,12 @@ test('completes the full clarification flow using all user turns', async () => {
         {
           id: 'assistant-priority',
           role: 'assistant',
-          parts: [
-            { type: 'text', text: priorityQuestion }
-          ]
+          parts: [{ type: 'text', text: priorityQuestion }]
         },
         {
           id: 'user-priority',
           role: 'user',
-          parts: [
-            { type: 'text', text: 'Mest mulig varme.' }
-          ]
+          parts: [{ type: 'text', text: 'Mest mulig varme.' }]
         }
       ]
     }),

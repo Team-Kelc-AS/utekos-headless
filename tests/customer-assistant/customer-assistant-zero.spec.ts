@@ -33,7 +33,7 @@ test.beforeEach(async ({ page }) => {
 
 test('optimized production does not request the assistant transport graph when rollout is absent', async ({
   page
-}) => {
+}, testInfo) => {
   const assistantGraph = observeAssistantTransportGraph(page)
 
   expect(
@@ -46,6 +46,17 @@ test('optimized production does not request the assistant transport graph when r
     page.getByRole('button', { name: 'Kjøpshjelp', exact: true })
   ).toHaveCount(0)
   await assistantGraph.settle()
+
+  await testInfo.attach('assistant-graph-production-zero.json', {
+    body: Buffer.from(
+      JSON.stringify(
+        { paths: [...assistantGraph.paths] },
+        null,
+        2
+      )
+    ),
+    contentType: 'application/json'
+  })
 
   expect([...assistantGraph.paths]).toEqual([])
   expect(

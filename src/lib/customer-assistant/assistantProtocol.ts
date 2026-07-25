@@ -67,9 +67,7 @@ const assistantProductImageSchema = z
 export const assistantProductSchema = z
   .strictObject({
     id: z.string().trim().min(1),
-    handle: z
-      .string()
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u),
+    handle: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u),
     title: z.string().trim().min(1),
     href: z.string().startsWith('/produkter/'),
     availableForSale: z.boolean(),
@@ -81,8 +79,7 @@ export const assistantProductSchema = z
     variants: z.array(assistantVariantSchema)
   })
   .refine(
-    product =>
-      product.href === `/produkter/${product.handle}`,
+    product => product.href === `/produkter/${product.handle}`,
     'Product href must match its canonical handle path'
   )
 

@@ -5,13 +5,21 @@ import type {
   AssistantChatRequest,
   AssistantUIMessage
 } from '../assistantProtocol'
-import type { AssistantOutcome } from './answerAssistantRequest'
+import { createAssistantViewRows } from '@/components/customer-assistant/assistantViewModel'
+import {
+  answerAssistantRequest,
+  type AssistantOutcome
+} from './answerAssistantRequest'
 import {
   createAssistantRouteHandler,
   createProcessLocalAssistantRateLimiter,
   resolveAssistantRequestsPerMinute,
   type AssistantRouteDependencies
 } from './createAssistantRouteHandler'
+import {
+  __TEST_ONLY__,
+  normalizeAssistantProduct
+} from './shopifyAssistantCatalog'
 
 const sessionId = 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7'
 const question = 'Jeg trenger noe til båten.'
@@ -201,7 +209,10 @@ test('route composition exposes requests only in verified Vercel previews', () =
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
     }
   ]) {
-    assert.equal(resolveAssistantRequestsPerMinute(environment), 0)
+    assert.equal(
+      resolveAssistantRequestsPerMinute(environment),
+      0
+    )
   }
 })
 
@@ -481,6 +492,158 @@ test('validates recommendation products before writing any stream content', asyn
   } finally {
     console.info = originalInfo
   }
+})
+
+test('preserves one strict product shape from Shopify normalization through stream and client parsing', async () => {
+  const longTitle =
+    `Utekos TechDown ${'varm '.repeat(80)}`.trim()
+  const longOption = 'tilpasning-'.repeat(40)
+  const product = normalizeAssistantProduct({
+    id: 'gid://shopify/Product/boundary',
+    handle: 'utekos-techdown',
+    title: longTitle,
+    availableForSale: true,
+    featuredImage: {
+      altText: null,
+      url: 'https://cdn.shopify.com/s/files/boundary.webp'
+    },
+    priceRange: {
+      minVariantPrice: {
+        amount: '2499.0000',
+        currencyCode: 'NOK'
+      }
+    },
+    variants: {
+      pageInfo: { hasNextPage: false, endCursor: null },
+      edges: [
+        {
+          node: {
+            id: 'gid://shopify/ProductVariant/boundary',
+            title: longOption,
+            availableForSale: true,
+            selectedOptions: [
+              { name: 'Tilpasning', value: longOption }
+            ]
+          }
+        }
+      ]
+    }
+  })
+  const handler = createAssistantRouteHandler(
+    createDependencies({
+      answer: async () => ({
+        ...outcome,
+        recommendations: [
+          {
+            product,
+            rank: 1,
+            reason: 'Passer til båt og fukt.',
+            isPrimary: true
+          }
+        ]
+      })
+    })
+  )
+  const chunks = parseSseChunks(
+    await (await handler(createRequest())).text()
+  )
+  const recommendation = chunks.find(
+    chunk => chunk.type === 'data-recommendation'
+  )
+  const rows = createAssistantViewRows([
+    {
+      id: 'boundary-message',
+      role: 'assistant',
+      parts: [
+        {
+          type: 'data-recommendation',
+          data: recommendation?.data
+        }
+      ]
+    } as AssistantUIMessage
+  ])
+  const row = rows.find(
+    candidate => candidate.kind === 'recommendation'
+  )
+
+  assert.equal(row?.kind, 'recommendation')
+  if (row?.kind !== 'recommendation') return
+  assert.equal(row.recommendation.product.title, longTitle)
+  assert.equal(row.recommendation.product.image?.alt, longTitle)
+  assert.equal(
+    row.recommendation.product.variants[0]?.selectedOptions[0]
+      ?.value,
+    longOption
+  )
+})
+
+test('streams the safe Shopify timeout handoff after the catalog aborts', async () => {
+  let signal: AbortSignal | undefined
+  const fetchProducts =
+    __TEST_ONLY__.createFetchAssistantProducts(
+      async input => {
+        signal = input.signal
+
+        return await new Promise((_, reject) => {
+          input.signal?.addEventListener(
+            'abort',
+            () =>
+              reject(
+                new Error('private provider timeout detail')
+              ),
+            { once: true }
+          )
+        })
+      },
+      { deadlineMs: 5 }
+    )
+  const handler = createAssistantRouteHandler(
+    createDependencies({
+      answer: (request, context) =>
+        answerAssistantRequest(request, context, {
+          fetchProducts,
+          supportKnowledge: {
+            answer: async () => ({
+              text: 'unused',
+              confidence: 'high',
+              sources: []
+            })
+          },
+          commerceRecommendation: { recommend: async () => [] }
+        })
+    })
+  )
+  const timeoutPayload = {
+    ...validPayload,
+    messages: [
+      {
+        id: 'message-timeout',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: 'Jeg trenger noe til båt og fukt.'
+          }
+        ]
+      }
+    ]
+  }
+  const startedAt = performance.now()
+  const body = await (
+    await handler(
+      createRequest({ body: JSON.stringify(timeoutPayload) })
+    )
+  ).text()
+
+  assert.equal(signal?.aborted, true)
+  assert.ok(performance.now() - startedAt < 5_000)
+  assert.match(body, /shopify_unavailable/u)
+  assert.match(body, /data-handoff/u)
+  assert.match(
+    body,
+    /Jeg fikk ikke kontrollert produktinformasjonen akkurat nå/u
+  )
+  assert.doesNotMatch(body, /private provider timeout detail/u)
 })
 
 test('uses a safe stream error without exposing question, IP, or thrown text', async () => {

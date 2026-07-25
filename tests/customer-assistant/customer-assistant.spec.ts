@@ -180,13 +180,43 @@ test.beforeEach(async ({ page }, testInfo) => {
   if (
     testInfo.title.includes('storage is unavailable across SPA')
   ) {
-    await page.addInitScript(() => {
+    await page.addInitScript(key => {
       let randomCalls = 0
+      let randomValue = 0.1
+      const nativeStorage = window.localStorage
+      const assistantStorage = new Proxy(nativeStorage, {
+        get(target, property) {
+          if (property === 'getItem') {
+            return (storageKey: string) => {
+              if (storageKey === key) {
+                throw new Error(
+                  'assistant bucket storage read disabled'
+                )
+              }
+              return target.getItem(storageKey)
+            }
+          }
+
+          if (property === 'setItem') {
+            return (storageKey: string, value: string) => {
+              if (storageKey === key) {
+                throw new Error(
+                  'assistant bucket storage write disabled'
+                )
+              }
+              target.setItem(storageKey, value)
+            }
+          }
+
+          const value = Reflect.get(target, property, target)
+          return typeof value === 'function' ?
+              value.bind(target)
+            : value
+        }
+      })
       Object.defineProperty(window, 'localStorage', {
         configurable: true,
-        get() {
-          throw new Error('storage disabled for assistant test')
-        }
+        value: assistantStorage
       })
       Object.defineProperty(window, '__assistantRandomCalls', {
         configurable: true,
@@ -194,15 +224,27 @@ test.beforeEach(async ({ page }, testInfo) => {
           return randomCalls
         }
       })
+      Object.defineProperty(
+        window,
+        '__setAssistantRandomValue',
+        {
+          configurable: true,
+          value(value: number) {
+            randomValue = value
+          }
+        }
+      )
       Math.random = () => {
         randomCalls += 1
-        return randomCalls === 1 ? 0.1 : 0.9
+        return randomValue
       }
-    })
+    }, ASSISTANT_BUCKET_STORAGE_KEY)
     return
   }
 
-  if (testInfo.title.includes('design or checkout-like routes')) {
+  if (
+    testInfo.title.includes('design or checkout-like routes')
+  ) {
     return
   }
 
@@ -233,7 +275,7 @@ test('uses the exact local preview environment', () => {
 
 test('shows the accessible launcher, stable bucket, and quick actions', async ({
   page
-}) => {
+}, testInfo) => {
   const assistantGraph = observeAssistantTransportGraph(page)
   await page.goto(SAFE_PAGE_PATH)
 
@@ -248,6 +290,16 @@ test('shows the accessible launcher, stable bucket, and quick actions', async ({
       return assistantGraph.paths.size
     })
     .toBeGreaterThan(0)
+  await testInfo.attach('assistant-graph-positive.json', {
+    body: Buffer.from(
+      JSON.stringify(
+        { paths: [...assistantGraph.paths] },
+        null,
+        2
+      )
+    ),
+    contentType: 'application/json'
+  })
   await expect(launcher).toHaveAttribute(
     'aria-expanded',
     'false'
@@ -514,7 +566,11 @@ test('recovers from a failed assistant request with an explicit retry', async ({
 
   await page.getByRole('button', { name: 'Prøv igjen' }).click()
 
-  await expect(page.getByText(PRODUCT_ANSWER)).toBeVisible()
+  await expect(
+    page
+      .locator('ol[aria-label="Samtale"] p.whitespace-pre-wrap')
+      .filter({ hasText: PRODUCT_ANSWER })
+  ).toBeVisible()
   await expect(
     page.getByRole('dialog').getByRole('alert')
   ).toHaveCount(0)
@@ -567,17 +623,23 @@ test('sends the current product handle and clears it on a non-product path', asy
   await page
     .getByRole('textbox', { name: 'Skriv spørsmålet ditt' })
     .fill('Er den tilgjengelig?')
-  await page.getByRole('button', { name: 'Send spørsmål' }).click()
+  await page
+    .getByRole('button', { name: 'Send spørsmål' })
+    .click()
   await expect.poll(() => requestBodies.length).toBe(1)
 
   await page.evaluate(pathname => {
     window.history.pushState(null, '', pathname)
   }, SAFE_PAGE_PATH)
-  await expect(page).toHaveURL(new RegExp(`${SAFE_PAGE_PATH}$`, 'u'))
+  await expect(page).toHaveURL(
+    new RegExp(`${SAFE_PAGE_PATH}$`, 'u')
+  )
   await page
     .getByRole('textbox', { name: 'Skriv spørsmålet ditt' })
     .fill('Hva med denne siden?')
-  await page.getByRole('button', { name: 'Send spørsmål' }).click()
+  await page
+    .getByRole('button', { name: 'Send spørsmål' })
+    .click()
   await expect.poll(() => requestBodies.length).toBe(2)
 
   expect(
@@ -600,6 +662,13 @@ test('keeps a memory bucket stable when storage is unavailable across SPA route 
 
   await page.goto(SAFE_PAGE_PATH)
   await expect(launcher).toBeVisible()
+  await page.evaluate(() => {
+    ;(
+      window as unknown as Window & {
+        __setAssistantRandomValue(value: number): void
+      }
+    ).__setAssistantRandomValue(0.9)
+  })
 
   await page.evaluate(() => {
     window.history.pushState(null, '', '/design')
@@ -610,23 +679,15 @@ test('keeps a memory bucket stable when storage is unavailable across SPA route 
   await page.evaluate(pathname => {
     window.history.pushState(null, '', pathname)
   }, SAFE_PAGE_PATH)
-  await expect(page).toHaveURL(new RegExp(`${SAFE_PAGE_PATH}$`, 'u'))
+  await expect(page).toHaveURL(
+    new RegExp(`${SAFE_PAGE_PATH}$`, 'u')
+  )
   await expect(launcher).toBeVisible()
-  expect(
-    await page.evaluate(
-      () =>
-        (
-          window as Window & {
-            __assistantRandomCalls: number
-          }
-        ).__assistantRandomCalls
-    )
-  ).toBe(1)
 })
 
 test('keeps a positive preview holdout free of the assistant transport graph', async ({
   page
-}) => {
+}, testInfo) => {
   const assistantGraph = observeAssistantTransportGraph(page)
 
   await page.goto(SAFE_PAGE_PATH)
@@ -634,6 +695,17 @@ test('keeps a positive preview holdout free of the assistant transport graph', a
     page.getByRole('button', { name: 'Kjøpshjelp', exact: true })
   ).toHaveCount(0)
   await assistantGraph.settle()
+
+  await testInfo.attach('assistant-graph-holdout.json', {
+    body: Buffer.from(
+      JSON.stringify(
+        { paths: [...assistantGraph.paths] },
+        null,
+        2
+      )
+    ),
+    contentType: 'application/json'
+  })
 
   expect([...assistantGraph.paths]).toEqual([])
   expect(
@@ -646,7 +718,7 @@ test('keeps a positive preview holdout free of the assistant transport graph', a
 
 test('does not mount on design or checkout-like routes', async ({
   page
-}) => {
+}, testInfo) => {
   const assistantGraph = observeAssistantTransportGraph(page)
   const launcher = page.getByRole('button', {
     name: 'Kjøpshjelp',
@@ -656,6 +728,16 @@ test('does not mount on design or checkout-like routes', async ({
   await page.goto('/design')
   await expect(launcher).toHaveCount(0)
   await assistantGraph.settle()
+  await testInfo.attach('assistant-graph-excluded.json', {
+    body: Buffer.from(
+      JSON.stringify(
+        { paths: [...assistantGraph.paths] },
+        null,
+        2
+      )
+    ),
+    contentType: 'application/json'
+  })
   expect([...assistantGraph.paths]).toEqual([])
   expect(
     await page.evaluate(

@@ -244,25 +244,26 @@ test('fails closed when Shopify reports more variants than the bounded query ret
 
 test('aborts a stalled Shopify catalog read at the adapter deadline', async () => {
   let signal: AbortSignal | undefined
-  const fetchProducts = __TEST_ONLY__.createFetchAssistantProducts(
-    async input => {
-      signal = input.signal
+  const fetchProducts =
+    __TEST_ONLY__.createFetchAssistantProducts(
+      async input => {
+        signal = input.signal
 
-      return await new Promise((_, reject) => {
-        if (!input.signal) {
-          reject(new Error('missing abort signal'))
-          return
-        }
+        return await new Promise((_, reject) => {
+          if (!input.signal) {
+            reject(new Error('missing abort signal'))
+            return
+          }
 
-        input.signal.addEventListener(
-          'abort',
-          () => reject(input.signal?.reason),
-          { once: true }
-        )
-      })
-    },
-    { deadlineMs: 5 }
-  )
+          input.signal.addEventListener(
+            'abort',
+            () => reject(input.signal?.reason),
+            { once: true }
+          )
+        })
+      },
+      { deadlineMs: 5 }
+    )
 
   await assert.rejects(fetchProducts({}), {
     message: 'shopify_assistant_catalog_unavailable'

@@ -529,27 +529,43 @@ this value in Vercel, so the production surface remains absent by default.
 For a positive rollout, the browser keeps one random bucket in
 `utekos_assistant_bucket_v1`. The server-supplied percent remains authoritative.
 At zero percent the client does not read or create that storage key. Conversation,
-feedback and session state remain memory-only and are lost on reload; no
-transcript is sent to analytics or persisted by the route.
+feedback and browser conversation state remain memory-only and are lost on
+reload. The pseudonymous UUID session ID is generated in memory, transmitted on
+each chat request, and written to structured operational logs with intent,
+outcome code and latency. No transcript or customer text is sent to analytics,
+Supabase or application logs in this release. Supabase structured outcomes remain
+deferred to Release 3.
 
 `POST /api/customer-assistant/chat` owns the bounded request and typed AI SDK
 stream response. It accepts same-origin JSON only, rate limits by the transient
 session ID, and logs only session ID, intent, outcome code and latency. Exact
-`VERCEL_ENV=preview` is also required for its 12-request-per-minute process-local
-preview limit. Production, development, missing or unexpected environment values
-resolve to a zero API request limit until the durable privacy-preserving Release
-3 limiter is approved.
+`VERCEL_ENV=preview` and a positive, strictly parsed
+`CUSTOMER_ASSISTANT_ROLLOUT_PERCENT` are both required for its
+12-request-per-minute process-local preview limit. Preview rollout `0`, an absent
+or malformed rollout, production, development, and unexpected environments all
+resolve to a zero API request limit.
+
+The process-local session limiter is preview containment only. Public exposure or
+paid-provider activation requires the durable daily-rotating IP-HMAC plus session
+limiter owned by Measurement Task 5. Before either activation, operators must
+verify and document access controls and retention for the structured operational
+logs. This document does not claim that a retention period is already configured.
 
 Product and availability facts come from a dedicated uncached Shopify Storefront
 query for the current response. It reads `availableForSale`, never exact inventory
-quantity, and cannot mutate Shopify. Approved static Utekos content owns size,
-shipping and returns guidance. Static content is not used as a fallback for live
-price or availability; Shopify or knowledge failure produces bounded safe text
-and the existing contact handoff instead of an invented commercial claim.
+quantity, and cannot mutate Shopify. Variant details request the Storefront limit
+of 250 plus `pageInfo` and fail closed if Shopify reports another page. A real
+eight-second abort signal stays below the route's 30-second ceiling. Approved
+static Utekos content owns size, shipping and returns guidance. Static content is
+not used as a fallback for live price or availability; Shopify or knowledge
+failure produces bounded safe text and the existing contact handoff instead of
+an invented commercial claim.
 
 Preview enablement requires explicit approval before changing the Vercel Preview
-environment. Set only the rollout value there, redeploy, and complete the browser
-gate before exposing it to reviewers:
+environment. Vercel Deployment Protection must be verified as enabled for the
+target preview before any positive rollout is exposed to reviewers; this code
+change does not alter that Vercel setting. Set only the rollout value there,
+redeploy, and complete the browser gate:
 
 ```text
 CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=<approved integer 1-100>
@@ -558,7 +574,7 @@ CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=<approved integer 1-100>
 Vercel supplies the reserved `VERCEL_ENV=preview` value automatically for Preview
 deployments; do not try to configure it. The local Playwright gate simulates both
 values only in its test and web-server processes with
-`CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=100` and exact `VERCEL_ENV=preview`; it does
+`CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=50` and exact `VERCEL_ENV=preview`; it does
 not write Vercel state. Roll back exposure by removing the rollout value or
 setting it to `0`, then redeploying the affected Vercel environment. Both the
 environment change and any production deployment require explicit approval.
@@ -569,7 +585,9 @@ Required release evidence:
 - complete assistant unit suite, focused ESLint and a successful production build;
 - Playwright proof for launcher/accessibility, quick actions, keyboard focus,
   deterministic product and failure streams, restricted handoff, feedback/live
-  announcements, mobile cart/header clearance and excluded routes;
+  announcements, retry recovery, product/non-product request context, persistent
+  storage-failure exposure, mobile viewport/cart/header clearance, excluded
+  routes, and a positive-percent holdout with no assistant graph request;
 - a zero-value production-mode runtime proof showing no launcher and no
   `utekos_assistant_bucket_v1` storage entry;
 - no Vercel environment mutation, provider mutation, telemetry change or deploy

@@ -63,7 +63,9 @@ function passesLuhnCheck(value: string) {
 }
 
 function containsPaymentNumber(text: string) {
-  for (const match of text.matchAll(paymentNumberCandidatePattern)) {
+  for (const match of text.matchAll(
+    paymentNumberCandidatePattern
+  )) {
     const digits = match[0].replace(/\D/gu, '')
     if (digits.length < 13 || digits.length > 19) continue
 

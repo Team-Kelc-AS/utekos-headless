@@ -160,10 +160,9 @@ function includesExactOptionValue(
   optionValue: string
 ) {
   const normalizedValue = normalizeAssistantText(optionValue)
-  const pattern = escapeRegularExpression(normalizedValue).replace(
-    /\s+/gu,
-    '\\s+'
-  )
+  const pattern = escapeRegularExpression(
+    normalizedValue
+  ).replace(/\s+/gu, '\\s+')
 
   return new RegExp(
     `(?:^|[^\\p{L}\\p{N}])${pattern}(?=$|[^\\p{L}\\p{N}])`,
@@ -176,20 +175,18 @@ function resolveStockAvailability(
   question: string
 ):
   | { kind: 'product'; availableForSale: boolean }
-  | {
-      kind: 'variant'
-      availableForSale: boolean
-      label: string
-    }
+  | { kind: 'variant'; availableForSale: boolean; label: string }
   | { kind: 'clarify' } {
   const normalizedQuestion = normalizeAssistantText(question)
   const matchedValues = [
     ...new Set(
       product.variants.flatMap(variant =>
         variant.selectedOptions.flatMap(option =>
-          includesExactOptionValue(
-            normalizedQuestion,
-            option.value
+          (
+            includesExactOptionValue(
+              normalizedQuestion,
+              option.value
+            )
           ) ?
             [option.value]
           : []
@@ -199,7 +196,14 @@ function resolveStockAvailability(
   ]
 
   if (matchedValues.length === 0) {
-    return variantQuestionPattern.test(normalizedQuestion) ?
+    const availability = new Set(
+      product.variants.map(variant => variant.availableForSale)
+    )
+
+    return (
+        variantQuestionPattern.test(normalizedQuestion) ||
+          availability.size > 1
+      ) ?
         { kind: 'clarify' }
       : {
           kind: 'product',

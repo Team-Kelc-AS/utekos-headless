@@ -50,6 +50,7 @@ type CustomerAssistantPanelProps = {
     intent: AssistantIntent,
     prompt: string
   ) => void
+  onRetry: () => void
   onSubmit: () => void
 }
 
@@ -69,6 +70,7 @@ export function CustomerAssistantPanel({
   onFeedbackSelect,
   onInputChange,
   onIntentSelect,
+  onRetry,
   onSubmit
 }: CustomerAssistantPanelProps) {
   const isBusy = status === 'submitted' || status === 'streaming'
@@ -164,6 +166,13 @@ export function CustomerAssistantPanel({
               Jeg fikk ikke hentet et sikkert svar. Du kan
               kontakte kundeservice.
             </p>
+            <button
+              type='button'
+              onClick={onRetry}
+              className='inline-flex min-h-11 items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
+            >
+              Prøv igjen
+            </button>
             <AssistantHandoff
               handoff={errorHandoff}
               summary={createHandoffSummary(messages)}

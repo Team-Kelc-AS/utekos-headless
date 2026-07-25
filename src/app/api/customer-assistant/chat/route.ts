@@ -8,9 +8,7 @@ import {
 
 const now = () => Date.now()
 const checkRateLimit = createProcessLocalAssistantRateLimiter({
-  limit: resolveAssistantRequestsPerMinute(
-    process.env
-  ),
+  limit: resolveAssistantRequestsPerMinute(process.env),
   now
 })
 const handleAssistantRequest = createAssistantRouteHandler({

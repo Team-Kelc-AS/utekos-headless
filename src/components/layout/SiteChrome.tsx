@@ -37,15 +37,16 @@ function isDesignRoute(pathname: string | null) {
 }
 
 function AssistantRolloutMount({
+  memoryBucketRef,
   pathname,
   rolloutPercent
 }: {
+  memoryBucketRef: { current: number | null }
   pathname: string | null
   rolloutPercent: number
 }) {
   const [exposure, setExposure] =
     useState<AssistantExposure>('holdout')
-  const memoryBucketRef = useRef<number | null>(null)
 
   useEffect(() => {
     let storage: Storage | null = null
@@ -64,7 +65,7 @@ function AssistantRolloutMount({
         }
       )
     )
-  }, [rolloutPercent])
+  }, [memoryBucketRef, rolloutPercent])
 
   if (exposure !== 'assistant') return null
 
@@ -83,6 +84,7 @@ export function SiteChrome({
   footer
 }: SiteChromeProps) {
   const pathname = usePathname()
+  const assistantMemoryBucketRef = useRef<number | null>(null)
 
   if (isDesignRoute(pathname)) {
     return children
@@ -97,6 +99,7 @@ export function SiteChrome({
       {assistantRolloutPercent > 0 &&
         !isAssistantExcludedPathname(pathname) && (
           <AssistantRolloutMount
+            memoryBucketRef={assistantMemoryBucketRef}
             pathname={pathname}
             rolloutPercent={assistantRolloutPercent}
           />

@@ -30,9 +30,12 @@ Den nye kjøpshjelpen er en separat, ikke-telemetrisk brukerflyt. Root layout
 leser den private serververdien `CUSTOMER_ASSISTANT_ROLLOUT_PERCENT`; manglende
 eller ugyldig verdi gir `0` og monterer ingen klientflate. Ved et godkjent
 positivt preview velger klienten en stabil bøtte i
-`utekos_assistant_bucket_v1`. Samtalen, sesjons-ID-en og tilbakemeldingen lever
-bare i minnet og forsvinner ved reload. Ingen samtaletekst går til Supabase,
-PostHog, GTM, Vercel Analytics eller annen analyse/persistens.
+`utekos_assistant_bucket_v1`. Samtalen, tilbakemeldingen og browserens lokale
+samtaletilstand lever bare i minnet og forsvinner ved reload. En pseudonym UUID-
+sesjons-ID opprettes i minnet, men sendes med hver chat-request og skrives sammen
+med intent, resultatkode og latency i strukturerte operasjonelle logger. Ingen
+samtaletekst går til Supabase, PostHog, GTM, Vercel Analytics eller logger.
+Supabase-resultater er utsatt til Release 3.
 
 Den avgrensede request-/response-flyten er:
 
@@ -40,9 +43,10 @@ Den avgrensede request-/response-flyten er:
    aktivt hjelpeformål, pathname og eventuelt produkthåndtak til
    `POST /api/customer-assistant/chat`.
 2. Route Handleren eier same-origin-, innholdstype-, 24 KiB-, schema- og
-   rate-limit-grensene. Bare eksakt `VERCEL_ENV=preview` gir previewgrensen på
-   12 forespørsler per minutt per sesjon; øvrige miljøer har grense `0` i denne
-   releasen.
+   rate-limit-grensene. Bare eksakt `VERCEL_ENV=preview` sammen med en positiv,
+   strengt validert `CUSTOMER_ASSISTANT_ROLLOUT_PERCENT` gir previewgrensen på
+   12 forespørsler per minutt per sesjon; øvrige kombinasjoner har grense `0` i
+   denne releasen.
 3. Ordre, betaling, reklamasjon og persondata går direkte til det eksisterende
    kontaktskjemaet, e-post og telefon uten Shopify- eller modellkall.
 4. Produkt-, pris- og tilgjengelighetsinformasjon leses live og ukachet fra
@@ -56,6 +60,14 @@ Den avgrensede request-/response-flyten er:
 6. Svaret strømmes som typede tekst-, anbefalings-, kilde-, handoff- og
    statusdeler. Klienten renderer bare validerte deler og logger ikke
    samtaleinnhold.
+
+Før et positivt preview kan åpnes for anmeldere, skal Vercel Deployment
+Protection være verifisert for preview-deploymenten. Før provideraktivering eller
+offentlig eksponering skal tilgang til og retention for de operasjonelle loggene
+være eksplisitt verifisert. Ingen allerede konfigurert retentionperiode hevdes
+her. Offentlig eksponering krever i tillegg den varige IP-HMAC- og
+sesjonslimiteren som eies av Measurement Task 5; den prosesslokale
+previewlimiteren er ikke tilstrekkelig.
 
 Rollback er å fjerne rolloutverdien eller sette den til `0` og redeploye det
 berørte Vercel-miljøet. Vercel-env-endring og production deploy krever hver sin

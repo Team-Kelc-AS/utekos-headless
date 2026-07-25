@@ -25,7 +25,10 @@ import type { TrackingEnvironment } from '@/lib/analytics/pageViewEvent'
 import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
 
 const googleTagGatewayOrigin =
-  process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_URL ?
+  (
+    process.env.VERCEL_ENV === 'preview' &&
+    process.env.VERCEL_URL
+  ) ?
     `https://${process.env.VERCEL_URL}`
   : process.env.NODE_ENV === 'development' ?
     'http://localhost:3000'
@@ -38,7 +41,8 @@ const googleTagGatewayUrl = new URL(
 
 function getTrackingEnvironment(): TrackingEnvironment {
   if (process.env.NODE_ENV === 'test') return 'test'
-  if (process.env.VERCEL_ENV === 'production') return 'production'
+  if (process.env.VERCEL_ENV === 'production')
+    return 'production'
   if (process.env.VERCEL_ENV === 'preview') return 'preview'
   return 'development'
 }
@@ -120,14 +124,15 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSans.variable}`}
     >
-  
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
-     <GoogleTagManager
-        gtmId='GTM-5TWMJQFP'
-        gtmScriptUrl={googleTagGatewayUrl}
-      />
+        <GoogleTagManager
+          gtmId='GTM-5TWMJQFP'
+          gtmScriptUrl={googleTagGatewayUrl}
+        />
         <Suspense fallback={null}>
-          <PageViewObserver environment={getTrackingEnvironment()} />
+          <PageViewObserver
+            environment={getTrackingEnvironment()}
+          />
           <ScrollDepthObserver />
         </Suspense>
 

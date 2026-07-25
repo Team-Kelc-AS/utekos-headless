@@ -52,29 +52,35 @@ function CustomerAssistantRuntime({
   const headingId = useId()
   const inputId = useId()
 
-  const { messages, sendMessage, status, error } =
-    useChat<AssistantUIMessage>({
-      transport: new DefaultChatTransport<AssistantUIMessage>({
-        api: '/api/customer-assistant/chat',
-        credentials: 'same-origin',
-        prepareSendMessagesRequest: ({
-          body,
-          id,
-          messages: nextMessages
-        }) => {
-          return {
-            body: createAssistantRequestBody({
-              id,
-              sessionId: body?.sessionId,
-              intent: body?.intent,
-              messages: nextMessages,
-              pathname: pathname || '/',
-              productHandle
-            })
-          }
+  const {
+    clearError,
+    error,
+    messages,
+    regenerate,
+    sendMessage,
+    status
+  } = useChat<AssistantUIMessage>({
+    transport: new DefaultChatTransport<AssistantUIMessage>({
+      api: '/api/customer-assistant/chat',
+      credentials: 'same-origin',
+      prepareSendMessagesRequest: ({
+        body,
+        id,
+        messages: nextMessages
+      }) => {
+        return {
+          body: createAssistantRequestBody({
+            id,
+            sessionId: body?.sessionId,
+            intent: body?.intent,
+            messages: nextMessages,
+            pathname: pathname || '/',
+            productHandle
+          })
         }
-      })
+      }
     })
+  })
   const completedAnnouncement =
     createCompletedAssistantAnnouncement(messages, status)
   const completedAnnouncementId =
@@ -163,6 +169,17 @@ function CustomerAssistantRuntime({
     void sendText(prompt, nextIntent)
   }
 
+  function retryLastResponse() {
+    if (!error || status !== 'error' || !sessionIdRef.current) {
+      return
+    }
+
+    clearError()
+    void regenerate({
+      body: { sessionId: sessionIdRef.current, intent }
+    })
+  }
+
   return (
     <>
       <AssistantLiveAnnouncer text={announcementText} />
@@ -183,6 +200,7 @@ function CustomerAssistantRuntime({
           onFeedbackSelect={selectFeedback}
           onInputChange={setInput}
           onIntentSelect={selectIntent}
+          onRetry={retryLastResponse}
           onSubmit={() => void sendText(input)}
         />
       )}

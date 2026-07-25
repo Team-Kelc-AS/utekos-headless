@@ -350,6 +350,15 @@ Commercial guidance is useful but not manipulative. The assistant should reduce 
 
 ## 8. Data minimization and privacy
 
+Current core-release status: transcript, feedback, and browser conversation
+state are memory-only. The pseudonymous session ID is nevertheless transmitted
+with chat requests and written to structured operational logs together with
+intent, outcome code, and latency; customer text is not logged. Supabase outcome
+storage and the retention controls below remain Release 3 design, not deployed
+current state. Operational-log access and retention must be verified and
+documented before provider activation; no already-configured retention period is
+assumed.
+
 ### 8.1 Runtime messages
 
 Messages are processed to answer the active conversation. They are not written to GA4, PostHog, GTM, ad platforms, URLs, browser storage, or application logs.
@@ -358,7 +367,7 @@ The browser holds active conversation state in memory. Closing or refreshing the
 
 ### 8.2 Structured session outcomes
 
-Supabase stores only:
+In Release 3, Supabase stores only:
 
 - pseudonymous assistant session ID;
 - timestamps;
@@ -375,7 +384,10 @@ Supabase stores only:
 
 It does not store customer names, email addresses, telephone numbers, addresses, order numbers, payment data, or full chat transcripts.
 
-Structured session outcomes are deleted automatically after 180 days. Non-identifying aggregate counts may be retained for longer-term commercial measurement.
+The Release 3 retention design deletes structured session outcomes automatically
+after 180 days. That policy is not current production configuration until the
+approved migration and purge schedule are applied and verified. Non-identifying
+aggregate counts may be retained for longer-term commercial measurement.
 
 ### 8.3 Restricted knowledge-gap samples
 
@@ -579,7 +591,9 @@ Use deterministic fixtures and approved knowledge snapshots. No production provi
 
 ### Stage 1: internal preview
 
-Deploy to an authorized Vercel preview. Only Utekos reviewers receive the feature flag. Read-only live Shopify checks may be used.
+Deploy to an authorized Vercel preview with Vercel Deployment Protection verified
+as enabled. Only Utekos reviewers receive the feature flag. Read-only live
+Shopify checks may be used.
 
 ### Stage 2: limited production experiment
 
