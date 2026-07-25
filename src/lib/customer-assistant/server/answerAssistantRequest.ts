@@ -55,6 +55,49 @@ function createHandoff(
   }
 }
 
+const SAFE_SUPPORT_KNOWLEDGE_ERROR_CODES = new Set([
+  'EAI_AGAIN',
+  'ECONNREFUSED',
+  'ECONNRESET',
+  'ENOTFOUND',
+  'ETIMEDOUT',
+  'INTERNAL',
+  'PERMISSION_DENIED',
+  'UNAUTHENTICATED',
+  'UNAVAILABLE',
+  'UNKNOWN'
+])
+
+function getSafeSupportKnowledgeFailureCode(error: unknown) {
+  if (
+    !error ||
+    typeof error !== 'object' ||
+    !('code' in error)
+  ) {
+    return 'unknown'
+  }
+
+  const code = error.code
+
+  if (
+    typeof code === 'number' &&
+    Number.isInteger(code) &&
+    code >= 0 &&
+    code <= 16
+  ) {
+    return code
+  }
+
+  if (
+    typeof code === 'string' &&
+    SAFE_SUPPORT_KNOWLEDGE_ERROR_CODES.has(code)
+  ) {
+    return code
+  }
+
+  return 'unknown'
+}
+
 function safeFailure(
   failureCode: Extract<
     AssistantOutcome['failureCode'],
@@ -354,7 +397,11 @@ async function answerSupportQuestion(
       handoff: null,
       failureCode: 'none'
     }
-  } catch {
+  } catch (error) {
+    console.warn(
+      'customer_assistant_support_knowledge_failure',
+      { code: getSafeSupportKnowledgeFailureCode(error) }
+    )
     return safeFailure('knowledge_unavailable')
   }
 }

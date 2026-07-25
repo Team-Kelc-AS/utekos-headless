@@ -1863,7 +1863,24 @@ test('knowledge failure hands off without inventing an answer or leaking thrown 
       outcome.text,
       'Jeg fikk ikke hentet et sikkert svar. Kundeservice kan hjelpe deg videre.'
     )
-    assert.deepEqual(logged, [])
+    assert.deepEqual(logged, [
+      [
+        'customer_assistant_support_knowledge_failure',
+        { code: 'unknown' }
+      ]
+    ])
+    assert.equal(
+      logged.some(values =>
+        values.join(' ').includes('Når kommer pakken?')
+      ),
+      false
+    )
+    assert.equal(
+      logged.some(values =>
+        values.join(' ').includes('provider detail')
+      ),
+      false
+    )
   } finally {
     console.warn = originalWarn
   }
