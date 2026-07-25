@@ -15,7 +15,7 @@ import { staticSupportKnowledgeAdapter } from './staticSupportKnowledge'
 
 const sessionId = 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7'
 const useQuestion =
-  'Hvor ser du først og fremst for deg å bruke plagget – for eksempel på hytta, i båten, i bobilen eller i hverdagen?'
+  'Hvor ser du først og fremst for deg å bruke plagget – for eksempel på hytten, i båten, i bobilen eller i hverdagen?'
 const priorityQuestion =
   'Hva er viktigst for deg: mest mulig varme, lav vekt, værbeskyttelse eller enkelt vedlikehold?'
 
@@ -249,6 +249,111 @@ test('stock help reports only available or unavailable without quantity claims',
     )
     assert.equal(outcome.failureCode, 'none')
   }
+})
+
+test('stock help resolves a product and variant through live Shopify outside a product page', async () => {
+  let catalogCalls = 0
+  const adapters = createAdapters({
+    fetchProducts: async input => {
+      catalogCalls += 1
+      assert.deepEqual(input, { buyerIp: context.buyerIp })
+      return [
+        createProduct({
+          handle: 'utekos-techdown',
+          title: 'Utekos TechDown™',
+          variants: [
+            {
+              id: 'variant-medium',
+              title: 'Havdyp / Middels',
+              availableForSale: true,
+              selectedOptions: [
+                { name: 'Farge', value: 'Havdyp' },
+                { name: 'Størrelse', value: 'Middels' }
+              ]
+            },
+            {
+              id: 'variant-large',
+              title: 'Havdyp / Stor',
+              availableForSale: false,
+              selectedOptions: [
+                { name: 'Farge', value: 'Havdyp' },
+                { name: 'Størrelse', value: 'Stor' }
+              ]
+            }
+          ]
+        })
+      ]
+    }
+  })
+
+  const initial = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'Hjelp meg å sjekke lagerstatus.'
+    }),
+    context,
+    adapters
+  )
+
+  assert.equal(catalogCalls, 0)
+  assert.match(initial.text, /Hvilket produkt/iu)
+  assert.equal(initial.handoff, null)
+
+  const resolved = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'TechDown i Middels og Havdyp',
+      messages: [
+        {
+          id: 'message-1',
+          role: 'user',
+          parts: [
+            {
+              type: 'text',
+              text: 'Hjelp meg å sjekke lagerstatus.'
+            }
+          ]
+        },
+        {
+          id: 'message-2',
+          role: 'assistant',
+          parts: [
+            {
+              type: 'text',
+              text: 'Hvilket produkt vil du sjekke?'
+            }
+          ]
+        },
+        {
+          id: 'message-3',
+          role: 'user',
+          parts: [
+            {
+              type: 'text',
+              text: 'TechDown i Middels og Havdyp'
+            }
+          ]
+        }
+      ]
+    }),
+    context,
+    adapters
+  )
+
+  assert.equal(catalogCalls, 1)
+  assert.equal(
+    resolved.text,
+    'Utekos TechDown™ i Havdyp / Middels er tilgjengelig.'
+  )
+  assert.doesNotMatch(
+    resolved.text,
+    /\b\d+\s+(?:igjen|på lager)\b/u
+  )
+  assert.equal(resolved.failureCode, 'none')
+  assert.equal(
+    resolved.sources[0]?.url,
+    'https://utekos.no/produkter/utekos-techdown'
+  )
 })
 
 test('whole-product stock uses Shopify product availability rather than inferring from variants', async () => {
@@ -1414,6 +1519,38 @@ test('shipping and returns uses the current FAQ and emits its canonical source',
   )
 })
 
+test('support answers remove markdown markers before streaming to the UI', async () => {
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'shipping_returns',
+      text: 'Hva koster frakten?'
+    }),
+    context,
+    createAdapters({
+      supportKnowledge: {
+        async answer() {
+          return {
+            confidence: 'high',
+            sources: [
+              {
+                title: 'Frakt og retur',
+                url: 'https://utekos.no/frakt-og-retur'
+              }
+            ],
+            text: '**Fraktkostnader**\nFri frakt over 999 kr.'
+          }
+        }
+      }
+    })
+  )
+
+  assert.equal(
+    outcome.text,
+    'Fraktkostnader\nFri frakt over 999 kr.'
+  )
+  assert.doesNotMatch(outcome.text, /\*\*/u)
+})
+
 test('shipping FAQ distinguishes delivery duration from the return window', async () => {
   const deliveryAnswer =
     'Leveringstiden er normalt 2-5 virkedager. Bestillinger som gjøres før klokken 16 sendes samme dag, med unntak av søndag.'
@@ -1515,7 +1652,7 @@ test('shipping intent canonicalizes mixed size wording to the return process', a
   ])
 })
 
-test('size intent always sends the canonical size question in one knowledge call', async () => {
+test('size intent starts the grounded local guide without a knowledge call', async () => {
   const calls: string[] = []
   const outcome = await answerAssistantRequest(
     createRequest({
@@ -1533,8 +1670,8 @@ test('size intent always sends the canonical size question in one knowledge call
     })
   )
 
-  assert.deepEqual(calls, ['Hvilken størrelse bør jeg velge?'])
-  assert.match(outcome.text, /kan ikke garantere/iu)
+  assert.deepEqual(calls, [])
+  assert.match(outcome.text, /Hvilket produkt/iu)
   assert.equal(
     outcome.sources[0]?.url,
     'https://utekos.no/handlehjelp/storrelsesguide'
@@ -1655,18 +1792,48 @@ test('a shipping-method question does not trigger return-process or delivery cla
   }
 })
 
-test('size help emits the guarded size-guide answer without promising fit', async () => {
+test('size help uses follow-up answers and never promises fit', async () => {
   const outcome = await answerAssistantRequest(
     createRequest({
       intent: 'size_help',
-      text: 'Hvilken størrelse passer meg?'
+      text: 'Jeg er 176 cm og ønsker tettere passform.',
+      messages: [
+        {
+          id: 'message-1',
+          role: 'user',
+          parts: [
+            { type: 'text', text: 'Det gjelder TechDown.' }
+          ]
+        },
+        {
+          id: 'message-2',
+          role: 'assistant',
+          parts: [
+            {
+              type: 'text',
+              text: 'Hvor høy er du, og hvilken passform ønsker du?'
+            }
+          ]
+        },
+        {
+          id: 'message-3',
+          role: 'user',
+          parts: [
+            {
+              type: 'text',
+              text: 'Jeg er 176 cm og ønsker tettere passform.'
+            }
+          ]
+        }
+      ]
     }),
     context,
     createAdapters()
   )
 
   assert.match(outcome.text, /sammenlign målene/iu)
-  assert.match(outcome.text, /kan ikke garantere/iu)
+  assert.match(outcome.text, /Medium \(M\)/u)
+  assert.match(outcome.text, /ikke en garanti/iu)
   assert.doesNotMatch(
     outcome.text,
     /(?:garantert|vil|kommer til å) passe/iu
@@ -1680,7 +1847,7 @@ test('size help emits the guarded size-guide answer without promising fit', asyn
   assert.equal(outcome.failureCode, 'none')
 })
 
-test('explicit support intents constrain vague questions with one knowledge call', async () => {
+test('explicit support intents keep size local and shipping grounded', async () => {
   const calls: string[] = []
   const supportKnowledge: AssistantAdapters['supportKnowledge'] =
     {
@@ -1699,9 +1866,9 @@ test('explicit support intents constrain vague questions with one knowledge call
     createAdapters({ supportKnowledge })
   )
 
-  assert.deepEqual(calls, ['Hvilken størrelse bør jeg velge?'])
+  assert.deepEqual(calls, [])
   assert.equal(sizeOutcome.failureCode, 'none')
-  assert.match(sizeOutcome.text, /kan ikke garantere/iu)
+  assert.match(sizeOutcome.text, /Hvilket produkt/iu)
   assert.equal(
     sizeOutcome.sources[0]?.url,
     'https://utekos.no/handlehjelp/storrelsesguide'
@@ -1730,12 +1897,12 @@ test('explicit support intents constrain vague questions with one knowledge call
   }
 })
 
-test('vague explicit support intent still maps a knowledge failure safely with one call', async () => {
+test('vague shipping intent still maps a knowledge failure safely with one call', async () => {
   let knowledgeCalls = 0
   const outcome = await answerAssistantRequest(
     createRequest({
-      intent: 'size_help',
-      text: 'Hvilken passer meg best?'
+      intent: 'shipping_returns',
+      text: 'Kan dere hjelpe meg?'
     }),
     context,
     createAdapters({
@@ -1906,10 +2073,7 @@ test('underspecified product help asks the next bounded clarification without pr
   )
 
   assert.equal(providerCalls, 0)
-  assert.equal(
-    outcome.text,
-    'Hvor ser du først og fremst for deg å bruke plagget – for eksempel på hytta, i båten, i bobilen eller i hverdagen?'
-  )
+  assert.equal(outcome.text, useQuestion)
   assert.equal(outcome.failureCode, 'none')
   assert.equal(outcome.handoff, null)
 })

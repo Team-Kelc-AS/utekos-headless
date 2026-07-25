@@ -15,9 +15,12 @@ import {
   type AssistantRequestContext
 } from './assistantAdapters'
 import { matchAssistantProducts } from './matchAssistantProducts'
+import { normalizeAssistantResponseText } from './normalizeAssistantResponseText'
 import { resolveAssistantClarification } from './resolveAssistantClarification'
 import { resolveAssistantHandoff } from './resolveAssistantHandoff'
+import { resolveAssistantSizeHelp } from './resolveAssistantSizeHelp'
 import { resolveAssistantStockAvailability } from './resolveAssistantStockAvailability'
+import { resolveAssistantStockProduct } from './resolveAssistantStockProduct'
 import { fetchAssistantProducts } from './shopifyAssistantCatalog'
 import {
   resolveSupportKnowledgeQuestion,
@@ -310,23 +313,50 @@ async function answerStockHelp(
   adapters: AssistantAdapters
 ): Promise<AssistantOutcome> {
   const productHandle = request.pageContext.productHandle
+  const lastUserText = getLastUserText(request.messages).trim()
 
-  if (!productHandle) {
-    return noGroundedAnswer()
+  if (
+    !productHandle &&
+    lastUserText === 'Hjelp meg å sjekke lagerstatus.'
+  ) {
+    return {
+      text: 'Hvilket produkt vil du sjekke lagerstatus for? Du kan for eksempel skrive Utekos Dun, Mikrofiber, TechDown, Stapper eller Comfyrobe.',
+      confidence: 'medium',
+      recommendations: [],
+      sources: [],
+      handoff: null,
+      failureCode: 'none'
+    }
   }
 
   try {
     const products = assistantProductsResultSchema.parse(
       await adapters.fetchProducts(
-        createCatalogInput(context, [productHandle])
+        createCatalogInput(
+          context,
+          productHandle ? [productHandle] : undefined
+        )
       )
     )
-    const product = products.find(
-      candidate => candidate.handle === productHandle
-    )
+    const product =
+      productHandle ?
+        products.find(
+          candidate => candidate.handle === productHandle
+        )
+      : resolveAssistantStockProduct({
+          messages: request.messages,
+          products
+        })
 
     if (!product) {
-      return noGroundedAnswer()
+      return {
+        text: 'Hvilket produkt vil du sjekke lagerstatus for? Skriv gjerne hele produktnavnet.',
+        confidence: 'medium',
+        recommendations: [],
+        sources: [],
+        handoff: null,
+        failureCode: 'none'
+      }
     }
 
     const availability = resolveAssistantStockAvailability(
@@ -366,6 +396,25 @@ async function answerStockHelp(
   }
 }
 
+function answerSizeHelp(
+  request: AssistantChatRequest
+): AssistantOutcome {
+  const result = resolveAssistantSizeHelp(request)
+  const source = assistantSourceSchema.parse({
+    title: 'Størrelsesguide',
+    url: 'https://utekos.no/handlehjelp/storrelsesguide'
+  })
+
+  return {
+    text: result.text,
+    confidence: result.kind === 'answer' ? 'high' : 'medium',
+    recommendations: [],
+    sources: [source],
+    handoff: null,
+    failureCode: 'none'
+  }
+}
+
 async function answerSupportQuestion(
   request: AssistantChatRequest,
   adapters: AssistantAdapters
@@ -390,7 +439,7 @@ async function answerSupportQuestion(
     }
 
     return {
-      text: result.text,
+      text: normalizeAssistantResponseText(result.text),
       confidence: result.confidence,
       recommendations: [],
       sources: result.sources,
@@ -433,6 +482,10 @@ export async function answerAssistantRequest(
 
   if (request.intent === 'stock_help') {
     return answerStockHelp(request, context, adapters)
+  }
+
+  if (request.intent === 'size_help') {
+    return answerSizeHelp(request)
   }
 
   return answerSupportQuestion(request, adapters)

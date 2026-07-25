@@ -346,6 +346,33 @@ function removeTextMatches(text: string, matches: TextMatch[]) {
     )
 }
 
+function removeProductMentions(
+  normalizedText: string,
+  product: AssistantProduct
+) {
+  const normalizedTitle = normalizeAssistantText(
+    product.title.replace(/[™®]/gu, '')
+  )
+  const normalizedHandle = normalizeAssistantText(
+    product.handle.replace(/[-_]+/gu, ' ')
+  )
+  const aliases = new Set(
+    [normalizedTitle, normalizedHandle]
+      .flatMap(value => [
+        value,
+        value.replace(/^utekos\s+/u, '')
+      ])
+      .filter(value => value.length >= 3)
+  )
+  const matches = [...aliases].flatMap(alias =>
+    findExactTextMatches(normalizedText, alias)
+  )
+
+  return removeTextMatches(normalizedText, matches)
+    .replace(/\s+/gu, ' ')
+    .trim()
+}
+
 function containsOnlyBareOptionSyntax(
   normalizedText: string,
   valueMentions: StockValueMention[]
@@ -712,7 +739,7 @@ function resolveStockChoices(
       message.parts.map(part => part.text).join('\n')
     )
     const turnStates = resolveStockTurnStates(
-      normalizedText,
+      removeProductMentions(normalizedText, product),
       dimensions,
       getPreviousAssistantContext(
         messages,

@@ -25,11 +25,6 @@ const quickActions: Array<{
     intent: 'shipping_returns',
     label: 'Frakt og retur',
     prompt: 'Hva bør jeg vite om frakt og retur?'
-  },
-  {
-    intent: 'other',
-    label: 'Noe annet',
-    prompt: 'Jeg trenger hjelp med noe annet.'
   }
 ]
 
@@ -53,14 +48,7 @@ export function AssistantQuickActions({
       </legend>
       <ul className='grid grid-cols-1 gap-2 sm:grid-cols-2'>
         {quickActions.map((action, index) => (
-          <li
-            key={action.intent}
-            className={
-              index === quickActions.length - 1 ?
-                'sm:col-span-2'
-              : undefined
-            }
-          >
+          <li key={action.intent}>
             <button
               ref={index === 0 ? firstActionRef : undefined}
               type='button'
