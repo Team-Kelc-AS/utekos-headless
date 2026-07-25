@@ -17,6 +17,7 @@ import {
   DiscoverySupportKnowledgeConfigurationError,
   type DiscoverySupportKnowledgeDependencies
 } from './discoverySupportKnowledge'
+import type { GoogleCloudClientOptions } from '@/lib/google/auth/createGoogleCloudClientOptions'
 import { buildAssistantKnowledgeDocuments } from './knowledgeManifest'
 
 const validEnvironment = {
@@ -63,7 +64,8 @@ function createAdapterHarness({
         }
       }
     },
-    createGoogleCloudClientOptions: () => undefined
+    createGoogleCloudClientOptions: () => undefined,
+    fetch: globalThis.fetch
   }
 
   const adapter = new DiscoverySupportKnowledge(
@@ -168,7 +170,8 @@ test('missing or invalid configuration fails closed before client construction',
             clientConstructionCount += 1
             throw new Error('unexpected_client_construction')
           },
-          createGoogleCloudClientOptions: () => undefined
+          createGoogleCloudClientOptions: () => undefined,
+          fetch: globalThis.fetch
         }),
       error => {
         assert.ok(
@@ -185,6 +188,88 @@ test('missing or invalid configuration fails closed before client construction',
     )
     assert.equal(clientConstructionCount, 0)
   }
+})
+
+test('uses the documented REST answer endpoint with Vercel Google credentials', async () => {
+  const calls: Array<{
+    input: RequestInfo | URL
+    init: RequestInit | undefined
+  }> = []
+  let clientConstructionCount = 0
+  const authClient = {
+    async getRequestHeaders() {
+      return new Headers({
+        authorization: 'Bearer test-access-token'
+      })
+    }
+  } as unknown as GoogleCloudClientOptions['authClient']
+  const adapter = new DiscoverySupportKnowledge(
+    validEnvironment,
+    {
+      buildKnowledgeDocuments: buildAssistantKnowledgeDocuments,
+      createClient: () => {
+        clientConstructionCount += 1
+        throw new Error(
+          'sdk_client_must_not_be_used_with_vercel_auth'
+        )
+      },
+      createGoogleCloudClientOptions: () => ({
+        authClient,
+        projectId: 'utekos-production'
+      }),
+      async fetch(input, init) {
+        calls.push({ input, init })
+        return Response.json(approvedAnswer)
+      }
+    }
+  )
+
+  const result = await adapter.answer({
+    productHandle: null,
+    question: 'Hva koster frakt?'
+  })
+
+  assert.equal(clientConstructionCount, 0)
+  assert.deepEqual(result, {
+    confidence: 'medium',
+    sources: [
+      {
+        title: 'Frakt og retur',
+        url: 'https://utekos.no/frakt-og-retur'
+      }
+    ],
+    text: 'Godkjent, dokumentert svar.'
+  })
+  assert.equal(calls.length, 1)
+  assert.equal(
+    calls[0]?.input,
+    'https://discoveryengine.googleapis.com/v1/projects/utekos-production/locations/global/collections/default_collection/engines/utekos-customer-assistant-v1/servingConfigs/default_serving_config:answer'
+  )
+  assert.equal(
+    new Headers(calls[0]?.init?.headers).get('authorization'),
+    'Bearer test-access-token'
+  )
+  assert.equal(
+    new Headers(calls[0]?.init?.headers).get('content-type'),
+    'application/json'
+  )
+  assert.equal(calls[0]?.init?.method, 'POST')
+  assert.equal(calls[0]?.init?.cache, 'no-store')
+  assert.deepEqual(JSON.parse(String(calls[0]?.init?.body)), {
+    answerGenerationSpec: {
+      ignoreAdversarialQuery: true,
+      ignoreJailBreakingQuery: true,
+      ignoreLowRelevantContent: true,
+      ignoreNonAnswerSeekingQuery: true,
+      includeCitations: true
+    },
+    query: { text: 'Hva koster frakt?' },
+    safetySpec: { enable: true },
+    servingConfig:
+      'projects/utekos-production/locations/global/collections/default_collection/engines/utekos-customer-assistant-v1/servingConfigs/default_serving_config',
+    session:
+      'projects/utekos-production/locations/global/collections/default_collection/engines/utekos-customer-assistant-v1/sessions/-'
+  })
 })
 
 test('normalizes approved unstructured, structured and chunk references', async () => {

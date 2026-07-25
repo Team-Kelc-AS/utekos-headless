@@ -42,6 +42,7 @@ export type DiscoverySupportKnowledgeDependencies = {
   createGoogleCloudClientOptions: (
     environment: Environment
   ) => GoogleCloudClientOptions | undefined
+  fetch: typeof fetch
 }
 
 export type DiscoverySupportKnowledgeConfig = {
@@ -135,7 +136,8 @@ const defaultDependencies: DiscoverySupportKnowledgeDependencies =
         }
       }
     },
-    createGoogleCloudClientOptions
+    createGoogleCloudClientOptions,
+    fetch
   }
 
 export class DiscoverySupportKnowledgeConfigurationError extends Error {
@@ -225,6 +227,53 @@ function getReferenceUris(
   ]
 }
 
+function createDiscoveryRestClient({
+  apiEndpoint,
+  authClient,
+  fetch: request
+}: GoogleCloudClientOptions & {
+  apiEndpoint: string
+  fetch: typeof fetch
+}): DiscoveryAnswerQueryClient {
+  return {
+    async answerQuery(answerRequest, { timeout }) {
+      const headers = new Headers(
+        await authClient.getRequestHeaders()
+      )
+      headers.set('content-type', 'application/json')
+
+      const servingConfig = answerRequest.servingConfig
+
+      if (!servingConfig) {
+        throw new Error('Discovery serving config is required')
+      }
+
+      const response = await request(
+        `https://${apiEndpoint}/v1/${servingConfig}:answer`,
+        {
+          body: JSON.stringify(answerRequest),
+          cache: 'no-store',
+          headers,
+          method: 'POST',
+          signal: AbortSignal.timeout(timeout)
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error(
+          `Discovery answer request failed with status ${response.status}`
+        )
+      }
+
+      return [
+        (await response.json()) as AnswerQueryResponse,
+        undefined,
+        undefined
+      ]
+    }
+  }
+}
+
 export class DiscoverySupportKnowledge implements SupportKnowledgeAdapter {
   readonly #approvedSources: ReadonlyMap<
     string,
@@ -265,19 +314,14 @@ export class DiscoverySupportKnowledge implements SupportKnowledgeAdapter {
         'discoveryengine.googleapis.com'
       : `${this.#config.location}-discoveryengine.googleapis.com`
 
-    const clientOptions: ConcreteDiscoveryClientOptions =
+    this.#client =
       googleCloudOptions ?
-        {
+        createDiscoveryRestClient({
+          ...googleCloudOptions,
           apiEndpoint,
-          authClient:
-            googleCloudOptions.authClient as unknown as NonNullable<
-              ConcreteDiscoveryClientOptions['authClient']
-            >,
-          projectId: googleCloudOptions.projectId
-        }
-      : { apiEndpoint }
-
-    this.#client = this.#dependencies.createClient(clientOptions)
+          fetch: this.#dependencies.fetch
+        })
+      : this.#dependencies.createClient({ apiEndpoint })
 
     return this.#client
   }
