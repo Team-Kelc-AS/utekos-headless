@@ -75,6 +75,21 @@ const answerReferenceSchema = z
     unstructuredDocumentInfo: optionalUriSchema
   })
   .passthrough()
+  .superRefine((reference, context) => {
+    const populatedMembers = [
+      reference.chunkInfo,
+      reference.structuredDocumentInfo,
+      reference.unstructuredDocumentInfo
+    ].filter(member => member !== null && member !== undefined)
+
+    if (populatedMembers.length !== 1) {
+      context.addIssue({
+        code: 'custom',
+        message:
+          'Discovery reference must contain exactly one content member'
+      })
+    }
+  })
 
 const discoveryAnswerResponseSchema = z
   .object({
@@ -85,10 +100,7 @@ const discoveryAnswerResponseSchema = z
           .nullable()
           .optional(),
         answerText: z.string().nullable().optional(),
-        references: z
-          .array(answerReferenceSchema)
-          .nullable()
-          .optional(),
+        references: z.array(z.unknown()).nullable().optional(),
         safetyRatings: z
           .array(
             z
@@ -282,11 +294,13 @@ export class DiscoverySupportKnowledge implements SupportKnowledgeAdapter {
       {
         answerGenerationSpec: {
           ignoreAdversarialQuery: true,
+          ignoreJailBreakingQuery: true,
           ignoreLowRelevantContent: true,
           ignoreNonAnswerSeekingQuery: true,
           includeCitations: true
         },
         query: { text: question },
+        safetySpec: { enable: true },
         servingConfig,
         session
       },
@@ -319,7 +333,14 @@ export class DiscoverySupportKnowledge implements SupportKnowledgeAdapter {
     const sources = []
     const seenUrls = new Set<string>()
 
-    for (const reference of answer.references ?? []) {
+    for (const rawReference of answer.references ?? []) {
+      const parsedReference =
+        answerReferenceSchema.safeParse(rawReference)
+
+      if (!parsedReference.success) continue
+
+      const reference = parsedReference.data
+
       for (const uri of getReferenceUris(reference)) {
         if (!uri || seenUrls.has(uri)) continue
 

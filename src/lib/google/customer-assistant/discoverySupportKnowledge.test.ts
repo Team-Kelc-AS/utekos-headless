@@ -131,11 +131,13 @@ test('uses the fixed serving config, automatic session and exact safe request', 
       request: {
         answerGenerationSpec: {
           ignoreAdversarialQuery: true,
+          ignoreJailBreakingQuery: true,
           ignoreLowRelevantContent: true,
           ignoreNonAnswerSeekingQuery: true,
           includeCitations: true
         },
         query: { text: 'Hva koster frakt?' },
+        safetySpec: { enable: true },
         servingConfig:
           'projects/utekos-production/locations/global/collections/default_collection/engines/utekos-customer-assistant-v1/servingConfigs/default_serving_config',
         session:
@@ -291,6 +293,66 @@ test('filters foreign, same-origin unreviewed, malformed and duplicate reference
     }
   ])
   assert.equal(result.confidence, 'medium')
+})
+
+test('rejects malformed protobuf oneof references with mixed approved and unapproved members', async () => {
+  const malformedReference = {
+    structuredDocumentInfo: {
+      uri: 'https://utekos.no/produkter/utekos-dun'
+    },
+    unstructuredDocumentInfo: {
+      uri: 'https://utekos.no/frakt-og-retur'
+    }
+  }
+  const harnessWithValidReference = createAdapterHarness({
+    response: {
+      answer: {
+        answerText: 'Svar med én gyldig referanse.',
+        references: [
+          malformedReference,
+          {
+            chunkInfo: {
+              documentMetadata: {
+                uri: 'https://utekos.no/handlehjelp/vask-og-vedlikehold'
+              }
+            }
+          }
+        ]
+      }
+    }
+  })
+
+  const groundedResult =
+    await harnessWithValidReference.adapter.answer({
+      productHandle: null,
+      question: 'Hvordan vasker jeg produktet?'
+    })
+
+  assert.deepEqual(groundedResult.sources, [
+    {
+      title: 'Vask og vedlikehold',
+      url: 'https://utekos.no/handlehjelp/vask-og-vedlikehold'
+    }
+  ])
+
+  const harnessWithOnlyMalformedReference = createAdapterHarness(
+    {
+      response: {
+        answer: {
+          answerText: 'Svar som ikke skal brukes.',
+          references: [malformedReference]
+        }
+      }
+    }
+  )
+
+  assert.deepEqual(
+    await harnessWithOnlyMalformedReference.adapter.answer({
+      productHandle: null,
+      question: 'Hva koster frakt?'
+    }),
+    safeNoAnswer
+  )
 })
 
 test('caps approved sources at five in provider order', async () => {
