@@ -8,7 +8,7 @@ import {
   type AssistantUIMessage
 } from '../assistantProtocol'
 import {
-  resolveAssistantPreviewRolloutPercent,
+  resolveAssistantDeploymentRolloutPercent,
   type AssistantRolloutEnvironment
 } from '../assistantRollout'
 import {
@@ -310,9 +310,11 @@ export function createProcessLocalAssistantRateLimiter({
 export function resolveAssistantRequestsPerMinute(
   environment: AssistantRolloutEnvironment
 ) {
-  return resolveAssistantPreviewRolloutPercent(environment) > 0 ?
-      PREVIEW_REQUESTS_PER_MINUTE
-    : 0
+  if (resolveAssistantDeploymentRolloutPercent(environment) > 0) {
+    return PREVIEW_REQUESTS_PER_MINUTE
+  }
+
+  return 0
 }
 
 export function createAssistantRouteHandler(

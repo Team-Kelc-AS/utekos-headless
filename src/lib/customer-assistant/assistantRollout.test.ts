@@ -4,6 +4,7 @@ import {
   ASSISTANT_BUCKET_STORAGE_KEY,
   isAssistantExcludedPathname,
   resolveAssistantClientExposure,
+  resolveAssistantDeploymentRolloutPercent,
   resolveAssistantExposure,
   resolveAssistantProductHandle,
   resolveAssistantPreviewRolloutPercent,
@@ -85,6 +86,44 @@ test('enables the server rollout only for an exact preview with a positive safe 
   ]) {
     assert.equal(
       resolveAssistantPreviewRolloutPercent(environment),
+      0
+    )
+  }
+})
+
+test('enables the customer-facing rollout only in Vercel preview or production', () => {
+  assert.equal(
+    resolveAssistantDeploymentRolloutPercent({
+      VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
+    }),
+    25
+  )
+  assert.equal(
+    resolveAssistantDeploymentRolloutPercent({
+      VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
+    }),
+    25
+  )
+
+  for (const environment of [
+    {
+      VERCEL_ENV: 'development',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
+    },
+    {
+      VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '0'
+    },
+    {
+      VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: 'invalid'
+    },
+    { VERCEL_ENV: 'production' }
+  ]) {
+    assert.equal(
+      resolveAssistantDeploymentRolloutPercent(environment),
       0
     )
   }

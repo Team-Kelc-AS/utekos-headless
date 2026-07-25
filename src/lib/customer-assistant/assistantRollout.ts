@@ -58,6 +58,20 @@ export function resolveAssistantPreviewRolloutPercent(
   return percent > 0 ? percent : 0
 }
 
+export function resolveAssistantDeploymentRolloutPercent(
+  environment: AssistantRolloutEnvironment
+) {
+  if (
+    environment.VERCEL_ENV !== 'preview' &&
+    environment.VERCEL_ENV !== 'production'
+  ) {
+    return 0
+  }
+
+  const percent = resolveAssistantRolloutPercent(environment)
+  return percent > 0 ? percent : 0
+}
+
 export function resolveAssistantExposure(
   percent: number,
   bucket: number

@@ -22,7 +22,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { SITE_URL } from '@/constants'
 import type { Metadata } from 'next'
 import type { TrackingEnvironment } from '@/lib/analytics/pageViewEvent'
-import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
+import { resolveAssistantDeploymentRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
 
 const googleTagGatewayOrigin =
   (
@@ -115,7 +115,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const assistantRolloutPercent =
-    resolveAssistantPreviewRolloutPercent(process.env)
+    resolveAssistantDeploymentRolloutPercent(process.env)
 
   return (
     <html

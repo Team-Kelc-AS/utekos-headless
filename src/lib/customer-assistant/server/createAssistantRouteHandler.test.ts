@@ -181,7 +181,7 @@ test('the direct AI SDK 6 message type is compatible with the installed React cl
   assert.equal(clientMessageTypeIsCompatible, true)
 })
 
-test('route composition exposes requests only in verified Vercel previews', () => {
+test('route composition exposes requests only in configured Vercel deployments', () => {
   assert.equal(
     resolveAssistantRequestsPerMinute({
       VERCEL_ENV: 'preview',
@@ -190,9 +190,17 @@ test('route composition exposes requests only in verified Vercel previews', () =
     12
   )
 
+  assert.equal(
+    resolveAssistantRequestsPerMinute({
+      VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
+    }),
+    12
+  )
+
   for (const environment of [
     {
-      VERCEL_ENV: 'production',
+      VERCEL_ENV: 'development',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
     },
     {
