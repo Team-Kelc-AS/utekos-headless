@@ -112,6 +112,8 @@ const directRestrictedCases = [
   ['+47 400 00 000', 'personal_data'],
   ['400 00 000', 'personal_data'],
   ['4111 1111 1111 1111', 'personal_data'],
+  ['#12345', 'order'],
+  ['UTE-12345', 'order'],
   ['Bestilling UTE-12345 har ikke kommet', 'order'],
   ['Pakken min mangler fortsatt', 'order'],
   ['Kortet mitt blir avvist', 'payment'],
@@ -131,6 +133,28 @@ test('keeps product-number and store-address questions outside restricted routin
     'Her er produktnummer 12345678.',
     'Hva er adressen til butikken?',
     'Hvor ligger butikken deres?'
+  ]) {
+    assert.equal(resolveAssistantHandoff(text, 0), null, text)
+  }
+})
+
+test('keeps labelled product identifiers outside restricted routing', () => {
+  for (const text of [
+    'Produktnummer 400 00 000',
+    'Varenummer 400-00-000',
+    'Artikkelnummer 400.00.000',
+    'SKU UTE-12345',
+    'Modellnummer #12345'
+  ]) {
+    assert.equal(resolveAssistantHandoff(text, 0), null, text)
+  }
+})
+
+test('does not classify unlabelled short numbers as orders', () => {
+  for (const text of [
+    '12345',
+    'Har dere størrelse 42?',
+    'Jeg trenger 2 produkter.'
   ]) {
     assert.equal(resolveAssistantHandoff(text, 0), null, text)
   }

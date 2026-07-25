@@ -1145,6 +1145,8 @@ test('restricted text never reaches Shopify, knowledge, or recommendation adapte
     ['other', '4111 1111 1111 1111', 'personal_data'],
     ['shipping_returns', 'Bestillingen min mangler', 'order'],
     ['shipping_returns', 'Pakken har ikke kommet', 'order'],
+    ['product_help', '#12345', 'order'],
+    ['other', 'UTE-12345', 'order'],
     ['other', 'Kortet blir avvist', 'payment'],
     ['product_help', 'Plagget er skadet', 'complaint'],
     ['product_help', 'Varen er defekt', 'complaint']
@@ -1184,6 +1186,68 @@ test('restricted text never reaches Shopify, knowledge, or recommendation adapte
     assert.deepEqual(outcome.recommendations, [], text)
     assert.deepEqual(outcome.sources, [], text)
   }
+})
+
+test('a restricted token in an earlier user turn never reaches adapters', async () => {
+  let providerCalls = 0
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'product_help',
+      text: 'Hvilken modell passer til båt?',
+      messages: [
+        {
+          id: 'message-1',
+          role: 'user',
+          parts: [{ type: 'text', text: 'UTE-12345' }]
+        },
+        {
+          id: 'message-2',
+          role: 'assistant',
+          parts: [
+            { type: 'text', text: 'Hvordan kan jeg hjelpe?' }
+          ]
+        },
+        {
+          id: 'message-3',
+          role: 'user',
+          parts: [
+            {
+              type: 'text',
+              text: 'Hvilken modell passer til båt?'
+            }
+          ]
+        }
+      ]
+    }),
+    context,
+    createAdapters({
+      fetchProducts: async () => {
+        providerCalls += 1
+        return []
+      },
+      supportKnowledge: {
+        answer: async () => {
+          providerCalls += 1
+          return {
+            text: 'Skal ikke brukes',
+            confidence: 'high',
+            sources: []
+          }
+        }
+      },
+      commerceRecommendation: {
+        recommend: async () => {
+          providerCalls += 1
+          return []
+        }
+      }
+    })
+  )
+
+  assert.equal(providerCalls, 0)
+  assert.equal(outcome.handoff?.reason, 'order')
+  assert.deepEqual(outcome.recommendations, [])
+  assert.deepEqual(outcome.sources, [])
 })
 
 test('recommendation provider failure preserves deterministic products with a stable code', async () => {
