@@ -171,6 +171,9 @@ scripts/mcp/*
 !/scripts/mcp/doctor-utekos-source-insight-server.mjs
 !/scripts/mcp/utekos-css-insight-server.mjs
 !/scripts/mcp/doctor-utekos-css-insight-server.mjs
+!/scripts/mcp/build-config.ts
+!/scripts/mcp/doctor.ts
+!/scripts/mcp/lib.ts
 !/scripts/mcp/run-server.mjs
 !/scripts/mcp/utekos-shopify-readonly-server.mjs
 !/scripts/mcp/doctor-utekos-shopify-readonly-server.mjs

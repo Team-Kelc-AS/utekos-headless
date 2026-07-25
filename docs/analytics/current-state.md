@@ -275,8 +275,15 @@ Live constraints:
 
 `planCanonicalEventDispatch` reads the active catalog. It creates
 only active, supported outbox intents for which required consent
-exists. Google rows without `client_id` are persisted as terminal
-`skipped_unqualified` with `skip_reason='missing_client_id'`.
+exists. Non-purchase Google rows without `client_id` are persisted
+as terminal `skipped_unqualified` with
+`skip_reason='missing_client_id'`. Google purchase accepts
+`clientId`, consent-permitted GCLID, or consent-permitted User-ID;
+hashed `userData` alone is not qualifying. A purchase without all
+three uses `missing_google_analytics_identifier`. Purchases older
+than 72 hours use `google_event_outside_72h`; purchases between 48
+and 72 hours remain eligible and are measured as
+`late_within_window`.
 
 ### Claim and locking
 

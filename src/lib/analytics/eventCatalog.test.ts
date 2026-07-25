@@ -238,6 +238,25 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   )
 })
 
+test('declares Shopify Customer Events and Data Manager as the two purchase sources', () => {
+  const googlePurchase = eventCatalog.purchase.providers.google
+
+  assert.equal(
+    googlePurchase.transport.browser,
+    'shopify_customer_events'
+  )
+  assert.equal(
+    googlePurchase.transport.server,
+    'google_data_manager'
+  )
+  assert.ok(
+    googlePurchase.requiredParameters.includes(
+      'one_of(client_id,gclid,user_id)'
+    )
+  )
+  assert.equal(googlePurchase.dedupeField, 'transaction_id')
+})
+
 test('records Shopify Admin order payment as the sole Purchase owner with reconciliation recovery', () => {
   const purchase = eventCatalog.purchase
 

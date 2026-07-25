@@ -1,10 +1,21 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { buildProductOtherMetadata } from './buildProductOtherMetadata'
+import type { Money } from 'types/commerce/Money'
 import type { ShopifyProduct } from 'types/product'
 
-function money(amount: string, currencyCode = 'NOK') {
+function money(
+  amount: string,
+  currencyCode: Money['currencyCode'] = 'NOK'
+): Money {
   return { amount, currencyCode }
+}
+
+function malformedMoney(
+  amount: string,
+  currencyCode: string
+): Money {
+  return { amount, currencyCode } as Money
 }
 
 function product(
@@ -85,8 +96,8 @@ test('emits paired price amount and ISO currency from variants when selectedOrFi
 test('omits price metas when currency cannot be normalized to ISO 4217', () => {
   const broken = product({
     priceRange: {
-      minVariantPrice: money('1790.0', 'nok '),
-      maxVariantPrice: money('1790.0', 'nok ')
+      minVariantPrice: malformedMoney('1790.0', 'nok '),
+      maxVariantPrice: malformedMoney('1790.0', 'nok ')
     },
     variants: {
       edges: [{
@@ -95,7 +106,7 @@ test('omits price metas when currency cannot be normalized to ISO 4217', () => {
           title: 'Default',
           availableForSale: true,
           currentlyNotInStock: false,
-          price: money('1790.0', 'kr'),
+          price: malformedMoney('1790.0', 'kr'),
           compareAtPrice: null,
           selectedOptions: [],
           image: null,

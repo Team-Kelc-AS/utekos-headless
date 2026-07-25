@@ -41,6 +41,18 @@ npm run mcp:tunnel:check
   `mcp.json` / `.vscode/mcp.json` or Docker Desktop client
   wiring.
 
+### Google Developer Knowledge
+
+`google-developer-knowledge` authenticates only with a restricted
+`X-Goog-Api-Key`. Generated client files start the pinned
+`mcp-remote@0.1.38` bridge through `scripts/mcp/run-server.mjs`,
+which reads the key from `.env.mcp.local` at runtime. The
+generated files must never contain the key. Do not add Google
+credential auth or a quota-project header to this server.
+
+Context7 is an optional documentation fallback and may be
+supplied by the installed connector instead of a local API key.
+
 ## Shadcn Access
 
 Use two complementary MCP surfaces for local clients, and one

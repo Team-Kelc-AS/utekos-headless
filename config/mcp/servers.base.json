@@ -303,13 +303,16 @@
       "autoApprove": []
     },
     "google-developer-knowledge": {
-      "authProviderType": "google_credentials",
-      "url": "https://developerknowledge.googleapis.com/mcp",
-      "type": "http",
-      "headers": {
-        "X-Goog-Api-Key": "${GOOGLE_DEVELOPER_KNOWLEDGE_API_KEY}",
-        "X-goog-user-project": "${GOOGLE_CLOUD_QUOTA_PROJECT}"
-      },
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.1.38",
+        "https://developerknowledge.googleapis.com/mcp",
+        "--header",
+        "X-Goog-Api-Key:${GOOGLE_DEVELOPER_KNOWLEDGE_API_KEY}",
+        "--silent"
+      ],
       "tools": ["answer_query", "get_documents", "search_documents"],
       "autoApprove": []
     },

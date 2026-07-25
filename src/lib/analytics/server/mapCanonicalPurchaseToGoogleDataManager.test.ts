@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { protos } from '@google-ads/datamanager'
-import type { CanonicalPurchase } from '../purchaseEvent'
 import {
+  canonicalPurchaseSchema,
   deterministicPurchaseEventId,
-  shopifyPurchaseTransactionId
+  shopifyPurchaseTransactionId,
+  type CanonicalPurchase
 } from '../purchaseEvent'
 import { mapCanonicalPurchaseToGoogleDataManager } from './mapCanonicalPurchaseToGoogleDataManager'
 
@@ -123,6 +124,68 @@ test('requires granted analytics consent', () => {
         })
       ),
     /granted analytics consent/
+  )
+})
+
+test('accepts GCLID as the only Google Analytics identifier', () => {
+  const mapped = normalize(
+    mapCanonicalPurchaseToGoogleDataManager(
+      purchase({
+        browser_id: undefined,
+        external_id: undefined,
+        click_id: { gclid: 'google-click-id' }
+      })
+    )
+  )
+
+  assert.equal(mapped.clientId, undefined)
+  assert.equal(mapped.userId, undefined)
+  assert.deepEqual(mapped.adIdentifiers, {
+    gclid: 'google-click-id'
+  })
+})
+
+test('accepts User-ID as the only Google Analytics identifier', () => {
+  const mapped = normalize(
+    mapCanonicalPurchaseToGoogleDataManager(
+      purchase({
+        browser_id: undefined,
+        click_id: undefined,
+        external_id: 'shopify_customer_123'
+      })
+    )
+  )
+
+  assert.equal(mapped.clientId, undefined)
+  assert.equal(mapped.userId, 'shopify_customer_123')
+  assert.equal(mapped.adIdentifiers, undefined)
+})
+
+test('rejects hashed userData as the only identifier', () => {
+  assert.throws(
+    () =>
+      mapCanonicalPurchaseToGoogleDataManager(
+        purchase({
+          browser_id: undefined,
+          click_id: undefined,
+          external_id: undefined,
+          user_data: { email_sha256: [emailHash] }
+        })
+      ),
+    /clientId, GCLID, or User-ID/
+  )
+})
+
+test('rejects an empty purchase item list', () => {
+  const event = purchase()
+
+  assert.throws(
+    () =>
+      canonicalPurchaseSchema.parse({
+        ...event,
+        custom_data: { ...event.custom_data, items: [] }
+      }),
+    /Too small/
   )
 })
 

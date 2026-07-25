@@ -19,7 +19,8 @@ function client(
               },
               productDestinationId: 'G-FCES3L0M9M'
             },
-            requestStatus: requestStatus as never
+            requestStatus: requestStatus as never,
+            eventsIngestionStatus: { recordCount: 1 }
           }
         ]
       }
@@ -36,6 +37,9 @@ test('normalizes a provider-confirmed success', async () => {
   assert.equal(result.requestId, 'request-1')
   assert.equal(result.overallStatus, 'SUCCESS')
   assert.deepEqual(result.destinationStatuses, ['SUCCESS'])
+  assert.equal(result.recordCount, 1)
+  assert.deepEqual(result.errorCounts, [])
+  assert.deepEqual(result.warningCounts, [])
   assert.deepEqual(result.response.requestStatusPerDestination, [
     {
       destination: {
@@ -45,7 +49,61 @@ test('normalizes a provider-confirmed success', async () => {
         },
         productDestinationId: 'G-FCES3L0M9M'
       },
-      requestStatus: 'SUCCESS'
+      requestStatus: 'SUCCESS',
+      eventsIngestionStatus: { recordCount: '1' }
+    }
+  ])
+})
+
+test('extracts event record count, errorInfo, and warningInfo', async () => {
+  const result = await retrieveGoogleDataManagerRequestStatus(
+    'request-with-diagnostics',
+    {
+      createClient: () => ({
+        ingestEvents: async () => [{}],
+        retrieveRequestStatus: async () => [
+          {
+            requestStatusPerDestination: [
+              {
+                requestStatus: 'SUCCESS' as never,
+                eventsIngestionStatus: { recordCount: 1 },
+                errorInfo: {
+                  errorCounts: [
+                    {
+                      reason:
+                        'PROCESSING_ERROR_REASON_INVALID_EVENT' as never,
+                      recordCount: 1
+                    }
+                  ]
+                },
+                warningInfo: {
+                  warningCounts: [
+                    {
+                      reason:
+                        'PROCESSING_WARNING_REASON_INTERNAL_ERROR' as never,
+                      recordCount: 2
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      })
+    }
+  )
+
+  assert.equal(result.recordCount, 1)
+  assert.deepEqual(result.errorCounts, [
+    {
+      reason: 'PROCESSING_ERROR_REASON_INVALID_EVENT',
+      recordCount: 1
+    }
+  ])
+  assert.deepEqual(result.warningCounts, [
+    {
+      reason: 'PROCESSING_WARNING_REASON_INTERNAL_ERROR',
+      recordCount: 2
     }
   ])
 })

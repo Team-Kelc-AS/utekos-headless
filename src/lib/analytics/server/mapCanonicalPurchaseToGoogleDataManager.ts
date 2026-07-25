@@ -11,9 +11,9 @@ import {
   mapGoogleDataManagerEventLocation,
   mapGoogleDataManagerTimestamp,
   mapGoogleDataManagerUserData,
-  normalizeGoogleReferrerUrl,
-  resolveGoogleClientId
+  normalizeGoogleReferrerUrl
 } from './googleDataManagerSharedMapping'
+import { findGoogleClientId } from './findGoogleClientId'
 
 type DataManagerItem =
   protos.google.ads.datamanager.v1.IItem
@@ -85,19 +85,40 @@ export function mapCanonicalPurchaseToGoogleDataManager(
 
   const marketingGranted =
     event.consent.marketing === 'granted'
+  const clientId = findGoogleClientId(event.browser_id)
   const adIdentifiers = mapGoogleDataManagerAdIdentifiers(event)
+  const userId =
+    marketingGranted && event.external_id ?
+      event.external_id
+    : undefined
   const userData = mapGoogleDataManagerUserData(event)
   const eventDeviceInfo = mapGoogleDataManagerDeviceInfo(event)
   const eventLocation = mapGoogleDataManagerEventLocation(event)
+
+  if (!clientId && !adIdentifiers?.gclid && !userId) {
+    throw new Error(
+      'Google Data Manager purchase requires clientId, GCLID, or User-ID'
+    )
+  }
+  if (!event.custom_data.transaction_id.trim()) {
+    throw new Error(
+      'Google Data Manager purchase requires transactionId'
+    )
+  }
+  if (event.custom_data.items.length === 0) {
+    throw new Error(
+      'Google Data Manager purchase requires non-empty cartData.items'
+    )
+  }
 
   return DataManagerEvent.create({
     eventName: 'purchase',
     transactionId: event.custom_data.transaction_id,
     eventTimestamp: mapGoogleDataManagerTimestamp(event.event_time),
     eventSource: EventSource.WEB,
-    clientId: resolveGoogleClientId(event.browser_id),
-    ...(marketingGranted && event.external_id ?
-      { userId: event.external_id }
+    ...(clientId ? { clientId } : {}),
+    ...(userId ?
+      { userId }
     : {}),
     currency: event.custom_data.currency,
     conversionValue:

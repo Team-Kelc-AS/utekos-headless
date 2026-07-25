@@ -11,7 +11,8 @@ function claim(index: number): GoogleDataManagerStatusClaim {
   return {
     attemptId: `attempt-${index}`,
     leaseToken: `lease-${index}`,
-    requestId: `request-${index}`
+    requestId: `request-${index}`,
+    statusCheckAttempts: 1
   }
 }
 
@@ -19,16 +20,28 @@ function result(
   claimed: GoogleDataManagerStatusClaim,
   status: 'SUCCESS' | 'PROCESSING'
 ): GoogleDataManagerStatusOutcome {
-  return {
+  const base = {
     claim: claimed,
     latencyMs: 10,
     result: {
       destinationStatuses: [status],
+      errorCounts: [],
       overallStatus: status,
+      recordCount: 1,
       requestId: claimed.requestId,
-      response: {}
-    },
-    status: status === 'SUCCESS' ? 'succeeded' : 'processing'
+      response: {},
+      warningCounts: []
+    }
+  }
+
+  if (status === 'SUCCESS') {
+    return { ...base, status: 'succeeded' }
+  }
+
+  return {
+    ...base,
+    nextCheckAt: '2026-07-25T12:39:00.000Z',
+    status: 'processing'
   }
 }
 
@@ -39,7 +52,8 @@ test('claims, reconciles and completes a bounded batch', async () => {
     claimNext: async () => queue.shift() ?? null,
     complete: async outcome => {
       completed.push(outcome)
-    }
+    },
+    expireStale: async () => 2
   }
 
   const summary = await runGoogleDataManagerStatusReconciliation(
@@ -63,6 +77,8 @@ test('claims, reconciles and completes a bounded batch', async () => {
     processing: 1,
     retried: 0,
     succeeded: 1,
+    succeededWithWarnings: 0,
+    timedOut: 2,
     unknown: 0
   })
   assert.deepEqual(
@@ -74,7 +90,8 @@ test('claims, reconciles and completes a bounded batch', async () => {
 test('rejects invalid batch sizes', async () => {
   const store: GoogleDataManagerStatusStore = {
     claimNext: async () => null,
-    complete: async () => undefined
+    complete: async () => undefined,
+    expireStale: async () => 0
   }
 
   for (const maxItems of [0, 1.5, 101]) {

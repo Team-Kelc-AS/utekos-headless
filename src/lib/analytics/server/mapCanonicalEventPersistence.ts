@@ -6,6 +6,11 @@ type UserDataQuality = {
   phone_sha256_count: number
 }
 
+type ProviderDataQuality = UserDataQuality & {
+  google_event_freshness?:
+    CanonicalEventStoreInput['dispatches'][number]['google_event_freshness']
+}
+
 export type CanonicalLedgerInsert = {
   consent: CanonicalEventStoreInput['event']['consent']
   event_id: string
@@ -20,7 +25,7 @@ export type CanonicalLedgerInsert = {
 
 export type ProviderDispatchInsert = {
   consent_basis: CanonicalEventStoreInput['event']['consent']
-  data_quality: UserDataQuality
+  data_quality: ProviderDataQuality
   dispatch_mode: 'server_retry'
   event_id: string
   event_name: CanonicalEventStoreInput['event']['event_name']
@@ -28,8 +33,10 @@ export type ProviderDispatchInsert = {
   payload: CanonicalEventStoreInput['event']
   provider: CanonicalEventStoreInput['dispatches'][number]['provider']
   skip_reason?:
+    | 'google_event_outside_72h'
     | 'missing_capi_token'
     | 'missing_client_id'
+    | 'missing_google_analytics_identifier'
     | 'missing_msclkid'
   status: 'pending' | 'skipped_unqualified'
 }
@@ -66,10 +73,20 @@ export function mapCanonicalEventPersistence(
       user_data_quality: dataQuality
     },
     dispatches: input.dispatches.map(dispatch => {
+      const providerDataQuality: ProviderDataQuality = {
+        ...dataQuality,
+        ...(dispatch.google_event_freshness ?
+          {
+            google_event_freshness:
+              dispatch.google_event_freshness
+          }
+        : {})
+      }
+
       if ('status' in dispatch) {
         return {
           consent_basis: input.event.consent,
-          data_quality: dataQuality,
+          data_quality: providerDataQuality,
           dispatch_mode: dispatch.dispatch_mode,
           event_id: input.event.event_id,
           event_name: input.event.event_name,
@@ -83,7 +100,7 @@ export function mapCanonicalEventPersistence(
 
       return {
         consent_basis: input.event.consent,
-        data_quality: dataQuality,
+        data_quality: providerDataQuality,
         dispatch_mode: dispatch.dispatch_mode,
         event_id: input.event.event_id,
         event_name: input.event.event_name,

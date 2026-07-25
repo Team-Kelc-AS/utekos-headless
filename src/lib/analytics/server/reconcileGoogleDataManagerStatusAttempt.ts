@@ -3,14 +3,17 @@ import type {
   GoogleDataManagerStatusOutcome
 } from './googleDataManagerStatusTypes'
 import { retrieveGoogleDataManagerRequestStatus } from './retrieveGoogleDataManagerRequestStatus'
+import { computeGoogleDataManagerStatusDelayMs } from './googleDataManagerStatusPollingPolicy'
 
 type Dependencies = {
   now: () => number
+  random: () => number
   retrieveStatus: typeof retrieveGoogleDataManagerRequestStatus
 }
 
 const defaultDependencies: Dependencies = {
   now: Date.now,
+  random: Math.random,
   retrieveStatus: retrieveGoogleDataManagerRequestStatus
 }
 
@@ -19,6 +22,19 @@ function summarizeError(error: unknown) {
     error instanceof Error ? error.message : String(error)
 
   return message.slice(0, 1_000)
+}
+
+function nextCheckAt(
+  claim: GoogleDataManagerStatusClaim,
+  checkedAt: number,
+  random: () => number
+) {
+  const delayMs = computeGoogleDataManagerStatusDelayMs(
+    claim.statusCheckAttempts,
+    random
+  )
+
+  return new Date(checkedAt + delayMs).toISOString()
 }
 
 export async function reconcileGoogleDataManagerStatusAttempt(
@@ -31,10 +47,30 @@ export async function reconcileGoogleDataManagerStatusAttempt(
     const result = await dependencies.retrieveStatus(
       claim.requestId
     )
-    const latencyMs = Math.max(0, dependencies.now() - startedAt)
+    const finishedAt = dependencies.now()
+    const latencyMs = Math.max(0, finishedAt - startedAt)
 
     switch (result.overallStatus) {
       case 'SUCCESS':
+        if (
+          result.recordCount !== 1 ||
+          result.errorCounts.length > 0
+        ) {
+          return {
+            claim,
+            latencyMs,
+            result,
+            status: 'processing_failure'
+          }
+        }
+        if (result.warningCounts.length > 0) {
+          return {
+            claim,
+            latencyMs,
+            result,
+            status: 'succeeded_with_warnings'
+          }
+        }
         return { claim, latencyMs, result, status: 'succeeded' }
       case 'FAILED':
         return { claim, latencyMs, result, status: 'failed' }
@@ -46,15 +82,42 @@ export async function reconcileGoogleDataManagerStatusAttempt(
           status: 'partial_success'
         }
       case 'PROCESSING':
-        return { claim, latencyMs, result, status: 'processing' }
+        return {
+          claim,
+          latencyMs,
+          nextCheckAt: nextCheckAt(
+            claim,
+            finishedAt,
+            dependencies.random
+          ),
+          result,
+          status: 'processing'
+        }
       default:
-        return { claim, latencyMs, result, status: 'unknown' }
+        return {
+          claim,
+          latencyMs,
+          nextCheckAt: nextCheckAt(
+            claim,
+            finishedAt,
+            dependencies.random
+          ),
+          result,
+          status: 'unknown'
+        }
     }
   } catch (error) {
+    const finishedAt = dependencies.now()
+
     return {
       claim,
       errorMessage: summarizeError(error),
-      latencyMs: Math.max(0, dependencies.now() - startedAt),
+      latencyMs: Math.max(0, finishedAt - startedAt),
+      nextCheckAt: nextCheckAt(
+        claim,
+        finishedAt,
+        dependencies.random
+      ),
       status: 'retry'
     }
   }
