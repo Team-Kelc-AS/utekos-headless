@@ -193,3 +193,16 @@ test('contact content uses approved handoff channels without order lookup', () =
     /ikke del sensitive opplysninger/iu
   )
 })
+
+test('size content uses the rendered Comfyrobe size labels', () => {
+  const sizeGuide = buildAssistantKnowledgeDocuments().find(
+    document => document.id === 'size-guide'
+  )
+
+  assert.ok(sizeGuide)
+  assert.match(
+    sizeGuide.content,
+    /Comfyrobe vises i Small, Medium og Large/u
+  )
+  assert.doesNotMatch(sizeGuide.content, /XS|M\/L|L\/XL/u)
+})
