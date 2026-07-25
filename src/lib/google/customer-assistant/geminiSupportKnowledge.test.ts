@@ -6,6 +6,7 @@ import {
   CUSTOMER_ASSISTANT_GEMINI_MODEL,
   GeminiSupportKnowledge,
   GeminiSupportKnowledgeConfigurationError,
+  GeminiSupportKnowledgeProviderError,
   readGeminiSupportKnowledgeConfig,
   type GeminiSupportKnowledgeDependencies
 } from './geminiSupportKnowledge'
@@ -183,8 +184,8 @@ test('constructs the client lazily and sends the exact stateless grounded reques
     true
   )
   assert.deepEqual(call.options, {
-    maxRetries: 0,
-    timeout: 8_000
+    retries: { strategy: 'none' },
+    timeout_ms: 8_000
   })
 })
 
@@ -337,7 +338,9 @@ test('lets provider failures reach the route fail-closed handling', async () => 
     buildKnowledgeDocuments: buildAssistantKnowledgeDocuments,
     createClient: () => ({
       async create() {
-        throw new Error('provider_unavailable')
+        throw Object.assign(new Error('provider_unavailable'), {
+          statusCode: 503
+        })
       }
     }),
     createGoogleCloudClientOptions: () => undefined
@@ -352,7 +355,41 @@ test('lets provider failures reach the route fail-closed handling', async () => 
       productHandle: null,
       question: 'Hva koster frakt?'
     }),
-    /provider_unavailable/u
+    error => {
+      assert.ok(
+        error instanceof GeminiSupportKnowledgeProviderError
+      )
+      assert.equal(error.code, 503)
+      assert.equal(error.message, 'gcp_gemini_provider_error')
+      return true
+    }
+  )
+})
+
+test('maps provider failures without a safe HTTP status to UNKNOWN', async () => {
+  const adapter = new GeminiSupportKnowledge(validEnvironment, {
+    buildKnowledgeDocuments: buildAssistantKnowledgeDocuments,
+    createClient: () => ({
+      async create() {
+        throw new Error('sensitive_provider_detail')
+      }
+    }),
+    createGoogleCloudClientOptions: () => undefined
+  })
+
+  await assert.rejects(
+    adapter.answer({
+      productHandle: null,
+      question: 'Hva koster frakt?'
+    }),
+    error => {
+      assert.ok(
+        error instanceof GeminiSupportKnowledgeProviderError
+      )
+      assert.equal(error.code, 'UNKNOWN')
+      assert.equal(error.message.includes('sensitive'), false)
+      return true
+    }
   )
 })
 

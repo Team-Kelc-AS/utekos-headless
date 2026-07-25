@@ -47,7 +47,10 @@ type GeminiInteractionRequest = {
 type GeminiInteractionClient = {
   create(
     request: GeminiInteractionRequest,
-    options: { maxRetries: number; timeout: number }
+    options: {
+      retries: { strategy: 'none' }
+      timeout_ms: number
+    }
   ): Promise<unknown>
 }
 
@@ -111,6 +114,16 @@ export class GeminiSupportKnowledgeConfigurationError extends Error {
   constructor() {
     super('gcp_gemini_not_configured')
     this.name = 'GeminiSupportKnowledgeConfigurationError'
+  }
+}
+
+export class GeminiSupportKnowledgeProviderError extends Error {
+  readonly code: number | 'UNKNOWN'
+
+  constructor(code: number | 'UNKNOWN') {
+    super('gcp_gemini_provider_error')
+    this.code = code
+    this.name = 'GeminiSupportKnowledgeProviderError'
   }
 }
 
@@ -227,6 +240,22 @@ function usesExpectedModel(model: string) {
   )
 }
 
+function getSafeProviderErrorCode(error: unknown) {
+  if (
+    error &&
+    typeof error === 'object' &&
+    'statusCode' in error &&
+    typeof error.statusCode === 'number' &&
+    Number.isInteger(error.statusCode) &&
+    error.statusCode >= 400 &&
+    error.statusCode <= 599
+  ) {
+    return error.statusCode
+  }
+
+  return 'UNKNOWN' as const
+}
+
 export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
   readonly #approvedSources: ReadonlyMap<
     string,
@@ -294,25 +323,37 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
   }: Parameters<
     SupportKnowledgeAdapter['answer']
   >[0]): Promise<SupportKnowledgeResult> {
-    const rawInteraction = await this.#getClient().create(
-      {
-        generation_config: {
-          max_output_tokens: 600,
-          thinking_level: 'low'
+    const client = this.#getClient()
+    let rawInteraction: unknown
+
+    try {
+      rawInteraction = await client.create(
+        {
+          generation_config: {
+            max_output_tokens: 600,
+            thinking_level: 'low'
+          },
+          input: createInteractionInput(
+            this.#documents,
+            question,
+            productHandle
+          ),
+          model: this.#config.model,
+          response_format: createResponseFormat(this.#documents),
+          response_modalities: ['text'],
+          store: false,
+          system_instruction: createSystemInstruction()
         },
-        input: createInteractionInput(
-          this.#documents,
-          question,
-          productHandle
-        ),
-        model: this.#config.model,
-        response_format: createResponseFormat(this.#documents),
-        response_modalities: ['text'],
-        store: false,
-        system_instruction: createSystemInstruction()
-      },
-      { maxRetries: 0, timeout: INTERACTION_TIMEOUT_MS }
-    )
+        {
+          retries: { strategy: 'none' },
+          timeout_ms: INTERACTION_TIMEOUT_MS
+        }
+      )
+    } catch (error) {
+      throw new GeminiSupportKnowledgeProviderError(
+        getSafeProviderErrorCode(error)
+      )
+    }
     const interaction =
       interactionEnvelopeSchema.safeParse(rawInteraction)
 
