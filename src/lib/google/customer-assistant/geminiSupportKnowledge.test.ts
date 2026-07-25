@@ -133,7 +133,6 @@ test('constructs the client lazily and sends the exact stateless grounded reques
   await harness.adapter.answer({ productHandle: null, question })
   assert.equal(harness.clientConstructionCount, 1)
   assert.deepEqual(harness.clientOptions, {
-    authClient: undefined,
     location: 'global',
     projectId: 'utekos-production'
   })

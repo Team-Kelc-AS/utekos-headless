@@ -89,7 +89,9 @@ const defaultDependencies: GeminiSupportKnowledgeDependencies = {
     const client = new GoogleGenAI({
       apiVersion: 'v1',
       enterprise: true,
-      googleAuthOptions: authClient ? { authClient } : undefined,
+      ...(authClient ?
+        { googleAuthOptions: { authClient } }
+      : {}),
       location,
       project: projectId
     })
@@ -276,7 +278,9 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
     }
 
     this.#client = this.#dependencies.createClient({
-      authClient: googleCloudOptions?.authClient,
+      ...(googleCloudOptions ?
+        { authClient: googleCloudOptions.authClient }
+      : {}),
       location: this.#config.location,
       projectId: this.#config.projectId
     })
