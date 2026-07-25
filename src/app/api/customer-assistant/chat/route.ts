@@ -12,9 +12,9 @@ import {
 } from '@/lib/customer-assistant/server/createAssistantRouteHandler'
 import { fetchAssistantProducts } from '@/lib/customer-assistant/server/shopifyAssistantCatalog'
 import {
-  DiscoverySupportKnowledge,
-  readDiscoverySupportKnowledgeConfig
-} from '@/lib/google/customer-assistant/discoverySupportKnowledge'
+  GeminiSupportKnowledge,
+  readGeminiSupportKnowledgeConfig
+} from '@/lib/google/customer-assistant/geminiSupportKnowledge'
 
 type Environment = Readonly<Record<string, string | undefined>>
 
@@ -29,7 +29,7 @@ const defaultAnswerDependencies: CustomerAssistantAnswerDependencies =
   {
     answer: answerAssistantRequest,
     createSupportKnowledge: environment =>
-      new DiscoverySupportKnowledge(environment)
+      new GeminiSupportKnowledge(environment)
   }
 
 export function createCustomerAssistantAnswer(
@@ -37,7 +37,7 @@ export function createCustomerAssistantAnswer(
   dependencies: CustomerAssistantAnswerDependencies = defaultAnswerDependencies
 ): typeof answerAssistantRequest {
   try {
-    readDiscoverySupportKnowledgeConfig(environment)
+    readGeminiSupportKnowledgeConfig(environment)
   } catch {
     return dependencies.answer
   }

@@ -651,14 +651,10 @@ function createRouteDependencies() {
   }
 }
 
-test('route preserves the default answer path when Discovery config is absent or invalid', () => {
+test('route preserves the default answer path when Gemini config is absent or invalid', () => {
   for (const environment of [
     {},
-    { GCP_PROJECT_ID: 'utekos-production' },
-    {
-      ...validEnvironment,
-      GCP_DISCOVERY_LOCATION: 'europe-west1'
-    }
+    { ...validEnvironment, GCP_GEMINI_LOCATION: 'europe-west1' }
   ]) {
     const harness = createRouteDependencies()
 
@@ -673,7 +669,7 @@ test('route preserves the default answer path when Discovery config is absent or
   }
 })
 
-test('route replaces only support knowledge when Discovery config is valid', async () => {
+test('route replaces only support knowledge when Gemini config is valid', async () => {
   const harness = createRouteDependencies()
   const answer = createCustomerAssistantAnswer(
     validEnvironment,
