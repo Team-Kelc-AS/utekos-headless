@@ -40,7 +40,6 @@ test('builds cloud-platform workload identity options on Vercel', async () => {
     '//iam.googleapis.com/projects/123456789/locations/global/workloadIdentityPools/vercel/providers/vercel'
   const externalAuthClient = {} as BaseExternalAccountClient
   let externalOptions: IdentityPoolClientOptions | undefined
-  let oidcAudience: string | undefined
 
   const options = createGoogleCloudClientOptions(
     {
@@ -56,11 +55,7 @@ test('builds cloud-platform workload identity options on Vercel', async () => {
 
         return externalAuthClient
       },
-      getOidcToken: async candidate => {
-        oidcAudience = candidate.audience
-
-        return 'vercel-oidc-token'
-      }
+      getOidcToken: async () => 'vercel-oidc-token'
     }
   )
 
@@ -94,7 +89,6 @@ test('builds cloud-platform workload identity options on Vercel', async () => {
     await supplier.getSubjectToken(undefined as never),
     'vercel-oidc-token'
   )
-  assert.equal(oidcAudience, audience)
 })
 
 test('uses an explicit provider scope policy on Vercel', () => {

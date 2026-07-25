@@ -10,8 +10,6 @@ const CLOUD_PLATFORM_SCOPE =
 
 type Environment = Readonly<Record<string, string | undefined>>
 
-type OidcTokenOptions = { audience: string }
-
 export type GoogleCloudAuthConfig = {
   audience: string
   projectId: string
@@ -22,7 +20,7 @@ export type GoogleCloudAuthDependencies = {
   createExternalAccountClient: (
     options: IdentityPoolClientOptions
   ) => BaseExternalAccountClient | null
-  getOidcToken: (options: OidcTokenOptions) => Promise<string>
+  getOidcToken: () => Promise<string>
 }
 
 export type GoogleCloudClientOptions = {
@@ -114,8 +112,7 @@ export function createGoogleCloudClientOptions(
     service_account_impersonation_url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${config.serviceAccountEmail}:generateAccessToken`,
     scopes: [...scopePolicy.scopes],
     subject_token_supplier: {
-      getSubjectToken: () =>
-        dependencies.getOidcToken({ audience: config.audience })
+      getSubjectToken: dependencies.getOidcToken
     }
   })
 
