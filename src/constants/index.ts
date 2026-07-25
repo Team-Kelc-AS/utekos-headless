@@ -1,12 +1,12 @@
 // Path: src/constants/index.ts
 export type ModelKey = keyof typeof PRODUCT_VARIANTS
-export const TAGS = {
-  products: 'products',
-  cart: 'cart'
-}
+export const TAGS = { products: 'products', cart: 'cart' }
 export const FREE_SHIPPING_THRESHOLD = 999
 
-export const SIZE_GUIDANCE: Record<string, { height: string; tips: string[] }> = {
+export const SIZE_GUIDANCE: Record<
+  string,
+  { height: string; tips: string[] }
+> = {
   'Liten': {
     height: 'Opptil 170 cm',
     tips: [
@@ -107,7 +107,11 @@ export const PRODUCT_VARIANTS = {
         body: 'Lett, vindtett og vannavstøtende ytre. Bygget for samme situasjoner som flaggskipet — bare lettere.'
       }
     ],
-    features: ['Hurtigtørkende', 'Mest kompakt', 'Allergivennlig'],
+    features: [
+      'Hurtigtørkende',
+      'Mest kompakt',
+      'Allergivennlig'
+    ],
     colors: [{ name: 'Fjellblå', hex: '#020244' }],
     sizes: ['Medium', 'Large'],
     images: [
@@ -120,9 +124,10 @@ export const PRODUCT_VARIANTS = {
 }
 
 export const VIDEO_YOUTUBE_ID = 'GRr_r3mhR04'
-export const VIDEO_URL = `https://www.youtube.com/shorts/GRr_r3mhR04`
+export const VIDEO_URL =
+  'https://www.youtube.com/shorts/GRr_r3mhR04'
 export const VIDEO_THUMBNAIL_URL = `https://i.ytimg.com/vi/${VIDEO_YOUTUBE_ID}/maxresdefault.jpg`
-export const VIDEO_POSTER_URL = VIDEO_THUMBNAIL_URL
+export const VIDEO_POSTER_URL = '/video-poster-bg.webp'
 export const VIDEO_EMBED_URL = `https://www.youtube-nocookie.com/embed/${VIDEO_YOUTUBE_ID}?rel=0&playsinline=1`
 
 export const SITE_URL = 'https://utekos.no'
