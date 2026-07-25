@@ -3,9 +3,14 @@ import {
   createUIMessageStreamResponse
 } from 'ai'
 import {
+  assistantRecommendationSchema,
   parseAssistantChatRequest,
   type AssistantUIMessage
 } from '../assistantProtocol'
+import {
+  resolveAssistantPreviewRolloutPercent,
+  type AssistantRolloutEnvironment
+} from '../assistantRollout'
 import {
   answerAssistantRequest,
   type AssistantOutcome
@@ -303,9 +308,9 @@ export function createProcessLocalAssistantRateLimiter({
 }
 
 export function resolveAssistantRequestsPerMinute(
-  vercelEnvironment: string | undefined
+  environment: AssistantRolloutEnvironment
 ) {
-  return vercelEnvironment === 'preview' ?
+  return resolveAssistantPreviewRolloutPercent(environment) > 0 ?
       PREVIEW_REQUESTS_PER_MINUTE
     : 0
 }
@@ -380,6 +385,10 @@ export function createAssistantRouteHandler(
             ...context,
             failureCount: 0
           })
+          const recommendations = outcome.recommendations.map(
+            recommendation =>
+              assistantRecommendationSchema.parse(recommendation)
+          )
           const textId = crypto.randomUUID()
 
           writer.write({ type: 'text-start', id: textId })
@@ -390,7 +399,7 @@ export function createAssistantRouteHandler(
           })
           writer.write({ type: 'text-end', id: textId })
 
-          for (const recommendation of outcome.recommendations) {
+          for (const recommendation of recommendations) {
             writer.write({
               type: 'data-recommendation',
               data: recommendation

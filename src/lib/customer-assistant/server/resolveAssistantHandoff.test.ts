@@ -106,3 +106,32 @@ for (const [text, reason] of directSharingCases) {
     assert.equal(resolveAssistantHandoff(text, 0), reason)
   })
 }
+
+const directRestrictedCases = [
+  ['kunde@example.no', 'personal_data'],
+  ['+47 400 00 000', 'personal_data'],
+  ['400 00 000', 'personal_data'],
+  ['4111 1111 1111 1111', 'personal_data'],
+  ['Bestilling UTE-12345 har ikke kommet', 'order'],
+  ['Pakken min mangler fortsatt', 'order'],
+  ['Kortet mitt blir avvist', 'payment'],
+  ['Varen kom skadet', 'complaint'],
+  ['Sømmen er defekt', 'complaint']
+] as const
+
+for (const [text, reason] of directRestrictedCases) {
+  test(`detects common direct restricted input: ${text}`, () => {
+    assert.equal(resolveAssistantHandoff(text, 0), reason)
+  })
+}
+
+test('keeps product-number and store-address questions outside restricted routing', () => {
+  for (const text of [
+    'Har dere produktnummer 12345678?',
+    'Her er produktnummer 12345678.',
+    'Hva er adressen til butikken?',
+    'Hvor ligger butikken deres?'
+  ]) {
+    assert.equal(resolveAssistantHandoff(text, 0), null, text)
+  }
+})

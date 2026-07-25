@@ -8,7 +8,7 @@ export type AssistantBucketStorage = {
   setItem(key: string, value: string): void
 }
 
-type AssistantRolloutEnvironment = Readonly<
+export type AssistantRolloutEnvironment = Readonly<
   Record<string, string | undefined>
 >
 
@@ -47,6 +47,15 @@ export function resolveAssistantRolloutPercent(
   if (!value || !ROLLOUT_PERCENT_PATTERN.test(value)) return 0
 
   return Number(value)
+}
+
+export function resolveAssistantPreviewRolloutPercent(
+  environment: AssistantRolloutEnvironment
+) {
+  if (environment.VERCEL_ENV !== 'preview') return 0
+
+  const percent = resolveAssistantRolloutPercent(environment)
+  return percent > 0 ? percent : 0
 }
 
 export function resolveAssistantExposure(

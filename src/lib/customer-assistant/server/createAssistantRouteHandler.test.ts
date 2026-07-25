@@ -48,6 +48,7 @@ const outcome: AssistantOutcome = {
         handle: 'utekos-techdown',
         title: 'Utekos TechDown',
         href: '/produkter/utekos-techdown',
+        availableForSale: true,
         image: null,
         price: { amount: '2499.00', currencyCode: 'NOK' },
         variants: []
@@ -173,17 +174,34 @@ test('the direct AI SDK 6 message type is compatible with the installed React cl
 })
 
 test('route composition exposes requests only in verified Vercel previews', () => {
-  assert.equal(resolveAssistantRequestsPerMinute('preview'), 12)
+  assert.equal(
+    resolveAssistantRequestsPerMinute({
+      VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
+    }),
+    12
+  )
 
-  for (const vercelEnv of [
-    'production',
-    undefined,
-    'development',
-    'staging',
-    'PREVIEW',
-    ' preview '
+  for (const environment of [
+    {
+      VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
+    },
+    {
+      VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '0'
+    },
+    {
+      VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: 'invalid'
+    },
+    { VERCEL_ENV: 'preview' },
+    {
+      VERCEL_ENV: 'PREVIEW',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
+    }
   ]) {
-    assert.equal(resolveAssistantRequestsPerMinute(vercelEnv), 0)
+    assert.equal(resolveAssistantRequestsPerMinute(environment), 0)
   }
 })
 
@@ -425,6 +443,41 @@ test('streams typed text and data parts with only safe structured completion log
     const serializedLogs = JSON.stringify(logged)
     assert.doesNotMatch(serializedLogs, /Jeg trenger/u)
     assert.doesNotMatch(serializedLogs, /203\.0\.113\.8/u)
+  } finally {
+    console.info = originalInfo
+  }
+})
+
+test('validates recommendation products before writing any stream content', async () => {
+  const logged: unknown[][] = []
+  const originalInfo = console.info
+  console.info = (...values: unknown[]) => logged.push(values)
+
+  try {
+    const unsafeOutcome = {
+      ...outcome,
+      recommendations: [
+        {
+          ...outcome.recommendations[0],
+          product: {
+            ...outcome.recommendations[0]?.product,
+            quantityAvailable: 17
+          }
+        }
+      ]
+    } as unknown as AssistantOutcome
+    const handler = createAssistantRouteHandler(
+      createDependencies({ answer: async () => unsafeOutcome })
+    )
+
+    const body = await (await handler(createRequest())).text()
+
+    assert.match(body, /Jeg fikk ikke hentet et sikkert svar/u)
+    assert.doesNotMatch(
+      body,
+      /Jeg anbefaler Utekos TechDown|quantityAvailable|\b17\b/u
+    )
+    assert.match(JSON.stringify(logged), /stream_error/u)
   } finally {
     console.info = originalInfo
   }

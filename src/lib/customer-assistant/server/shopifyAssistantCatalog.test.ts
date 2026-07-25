@@ -10,6 +10,7 @@ const rawProduct = {
   id: 'gid://shopify/Product/1',
   handle: 'utekos-techdown',
   title: 'Utekos TechDown',
+  availableForSale: true,
   featuredImage: {
     altText: 'TechDown på bryggen',
     url: 'https://cdn.shopify.com/techdown.jpg'
@@ -18,6 +19,7 @@ const rawProduct = {
     minVariantPrice: { amount: '2490.00', currencyCode: 'NOK' }
   },
   variants: {
+    pageInfo: { hasNextPage: false, endCursor: null },
     edges: [
       {
         node: {
@@ -57,6 +59,7 @@ test('normalizes the minimum product truth without inventory quantities', () => 
     handle: 'utekos-techdown',
     title: 'Utekos TechDown',
     href: '/produkter/utekos-techdown',
+    availableForSale: true,
     image: {
       alt: 'TechDown på bryggen',
       url: 'https://cdn.shopify.com/techdown.jpg'
@@ -92,6 +95,22 @@ test('normalizes a missing featured image as null', () => {
       featuredImage: null
     }).image,
     null
+  )
+})
+
+test('uses the product title when Shopify has no image alt text', () => {
+  assert.deepEqual(
+    normalizeAssistantProduct({
+      ...rawProduct,
+      featuredImage: {
+        ...rawProduct.featuredImage,
+        altText: null
+      }
+    }).image,
+    {
+      alt: 'Utekos TechDown',
+      url: 'https://cdn.shopify.com/techdown.jpg'
+    }
   )
 })
 
@@ -149,6 +168,18 @@ test('uses documented product handle lookups with buyer context', async () => {
     (request as { query: string }).query,
     /quantityAvailable/
   )
+  assert.match(
+    (request as { query: string }).query,
+    /\bavailableForSale\b/
+  )
+  assert.match(
+    (request as { query: string }).query,
+    /variants\(first:\s*250\)/
+  )
+  assert.match(
+    (request as { query: string }).query,
+    /pageInfo\s*{\s*hasNextPage/
+  )
 })
 
 test('lists up to twenty products without a buyer IP header when handles are absent', async () => {
@@ -185,6 +216,58 @@ test('normalizes Storefront transport failures to the safe catalog error', async
   await assert.rejects(fetchProducts({}), {
     message: 'shopify_assistant_catalog_unavailable'
   })
+})
+
+test('fails closed when Shopify reports more variants than the bounded query returned', async () => {
+  const fetchProducts =
+    __TEST_ONLY__.createFetchAssistantProducts(async () => ({
+      success: true,
+      body: {
+        product0: {
+          ...rawProduct,
+          variants: {
+            ...rawProduct.variants,
+            pageInfo: {
+              hasNextPage: true,
+              endCursor: 'variant-cursor'
+            }
+          }
+        }
+      }
+    }))
+
+  await assert.rejects(
+    fetchProducts({ handles: ['utekos-techdown'] }),
+    { message: 'shopify_assistant_catalog_unavailable' }
+  )
+})
+
+test('aborts a stalled Shopify catalog read at the adapter deadline', async () => {
+  let signal: AbortSignal | undefined
+  const fetchProducts = __TEST_ONLY__.createFetchAssistantProducts(
+    async input => {
+      signal = input.signal
+
+      return await new Promise((_, reject) => {
+        if (!input.signal) {
+          reject(new Error('missing abort signal'))
+          return
+        }
+
+        input.signal.addEventListener(
+          'abort',
+          () => reject(input.signal?.reason),
+          { once: true }
+        )
+      })
+    },
+    { deadlineMs: 5 }
+  )
+
+  await assert.rejects(fetchProducts({}), {
+    message: 'shopify_assistant_catalog_unavailable'
+  })
+  assert.equal(signal?.aborted, true)
 })
 
 test('rejects invalid handles before they reach Shopify', async () => {

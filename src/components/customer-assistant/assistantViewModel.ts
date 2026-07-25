@@ -1,4 +1,5 @@
 import {
+  assistantRecommendationSchema,
   assistantSourceSchema,
   parseAssistantChatRequest,
   projectTextOnlyMessages,
@@ -17,7 +18,6 @@ const MAX_REQUEST_TEXT_CHARACTERS = 800
 const MAX_REQUEST_ID_CHARACTERS = 100
 const MAX_PATHNAME_CHARACTERS = 300
 const MAX_PRODUCT_HANDLE_CHARACTERS = 160
-const HANDLE_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u
 const PAGE_HANDLE_PATTERN = /^[a-z0-9-]+$/u
 const EMAIL_PATTERN =
   /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/giu
@@ -30,53 +30,6 @@ const HASHED_NUMBER_PATTERN =
 const PHONE_NUMBER_PATTERN =
   /(?<![\p{L}\p{N}])\+?(?:\d[\s().-]?){6,14}\d(?![\p{L}\p{N}])/gu
 const REDACTION = '[opplysning fjernet]'
-
-const imageSchema = z
-  .strictObject({
-    alt: z.string().trim().min(1).max(200),
-    url: z.string().url()
-  })
-  .refine(
-    image =>
-      new URL(image.url).origin === 'https://cdn.shopify.com',
-    'Product images must use the Shopify CDN origin'
-  )
-
-const productSchema = z.strictObject({
-  id: z.string().min(1).max(200),
-  handle: z.string().regex(HANDLE_PATTERN).max(160),
-  title: z.string().trim().min(1).max(200),
-  href: z.string().startsWith('/produkter/').max(220),
-  image: imageSchema.nullable(),
-  price: z.strictObject({
-    amount: z.string().regex(/^\d+(?:\.\d{1,2})?$/u),
-    currencyCode: z.string().regex(/^[A-Z]{3}$/u)
-  }),
-  variants: z
-    .array(
-      z.strictObject({
-        id: z.string().min(1).max(200),
-        title: z.string().trim().min(1).max(160),
-        availableForSale: z.boolean(),
-        selectedOptions: z
-          .array(
-            z.strictObject({
-              name: z.string().trim().min(1).max(80),
-              value: z.string().trim().min(1).max(100)
-            })
-          )
-          .max(6)
-      })
-    )
-    .max(50)
-})
-
-const recommendationSchema = z.strictObject({
-  product: productSchema,
-  rank: z.union([z.literal(1), z.literal(2), z.literal(3)]),
-  reason: z.string().trim().min(1).max(500),
-  isPrimary: z.boolean()
-})
 
 const handoffSchema = z.strictObject({
   contactPath: z.literal('/kontaktskjema'),
@@ -295,7 +248,9 @@ function createRow(
   }
 
   if (part.type === 'data-recommendation') {
-    const parsed = recommendationSchema.safeParse(part.data)
+    const parsed = assistantRecommendationSchema.safeParse(
+      part.data
+    )
     if (!parsed.success) return null
 
     return {

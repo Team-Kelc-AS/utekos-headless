@@ -55,9 +55,7 @@ export function matchAssistantProducts({
       } =>
         candidate.product !== undefined &&
         candidate.matchedCueCount > 0 &&
-        candidate.product.variants.some(
-          variant => variant.availableForSale
-        )
+        candidate.product.availableForSale
     )
     .sort(
       (left, right) =>

@@ -37,6 +37,7 @@ const recommendation = {
     handle: 'comfyrobe',
     title: 'Comfyrobe',
     href: '/produkter/comfyrobe',
+    availableForSale: true,
     image: {
       alt: 'Comfyrobe i blått',
       url: 'https://cdn.shopify.com/s/files/1/comfyrobe.webp'
@@ -498,7 +499,7 @@ test('suppresses completed responses without hiding a streaming response that fi
     createCompletedAssistantAnnouncement(
       [
         {
-          ...streamingMessages[0],
+          ...streamingMessages[0]!,
           parts: [
             { type: 'text', text: 'Nytt svar er ferdig.' },
             {

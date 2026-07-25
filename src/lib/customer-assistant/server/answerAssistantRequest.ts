@@ -6,6 +6,7 @@ import {
   type AssistantRecommendation,
   type AssistantSource
 } from '../assistantProtocol'
+import { normalizeAssistantText } from '../assistantProductProfiles'
 import {
   assistantProductsResultSchema,
   commerceRecommendationResultSchema,
@@ -84,6 +85,27 @@ function noGroundedAnswer(): AssistantOutcome {
   }
 }
 
+function clarificationExhausted(): AssistantOutcome {
+  return {
+    text: 'Jeg har ikke nok sikre opplysninger til å anbefale et produkt. Kundeservice kan hjelpe deg videre.',
+    confidence: 'low',
+    recommendations: [],
+    sources: [],
+    handoff: createHandoff('uncertain'),
+    failureCode: 'no_grounded_answer'
+  }
+}
+
+function getAllUserText(
+  messages: AssistantChatRequest['messages']
+) {
+  return messages
+    .filter(message => message.role === 'user')
+    .flatMap(message => message.parts.map(part => part.text))
+    .join('\n')
+    .trim()
+}
+
 function createCatalogInput(
   context: AssistantRequestContext,
   handles?: string[]
@@ -126,6 +148,89 @@ function reorderEligibleAlternatives(
   )
 }
 
+const variantQuestionPattern =
+  /\b(?:størrelse|storrelse|str|size|farge|farve|variant|modell)\b/u
+
+function escapeRegularExpression(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function includesExactOptionValue(
+  normalizedText: string,
+  optionValue: string
+) {
+  const normalizedValue = normalizeAssistantText(optionValue)
+  const pattern = escapeRegularExpression(normalizedValue).replace(
+    /\s+/gu,
+    '\\s+'
+  )
+
+  return new RegExp(
+    `(?:^|[^\\p{L}\\p{N}])${pattern}(?=$|[^\\p{L}\\p{N}])`,
+    'u'
+  ).test(normalizedText)
+}
+
+function resolveStockAvailability(
+  product: AssistantRecommendation['product'],
+  question: string
+):
+  | { kind: 'product'; availableForSale: boolean }
+  | {
+      kind: 'variant'
+      availableForSale: boolean
+      label: string
+    }
+  | { kind: 'clarify' } {
+  const normalizedQuestion = normalizeAssistantText(question)
+  const matchedValues = [
+    ...new Set(
+      product.variants.flatMap(variant =>
+        variant.selectedOptions.flatMap(option =>
+          includesExactOptionValue(
+            normalizedQuestion,
+            option.value
+          ) ?
+            [option.value]
+          : []
+        )
+      )
+    )
+  ]
+
+  if (matchedValues.length === 0) {
+    return variantQuestionPattern.test(normalizedQuestion) ?
+        { kind: 'clarify' }
+      : {
+          kind: 'product',
+          availableForSale: product.availableForSale
+        }
+  }
+
+  const variants = product.variants.filter(variant =>
+    matchedValues.every(value =>
+      variant.selectedOptions.some(
+        option =>
+          normalizeAssistantText(option.value) ===
+          normalizeAssistantText(value)
+      )
+    )
+  )
+  const availability = new Set(
+    variants.map(variant => variant.availableForSale)
+  )
+
+  if (variants.length === 0 || availability.size !== 1) {
+    return { kind: 'clarify' }
+  }
+
+  return {
+    kind: 'variant',
+    availableForSale: variants[0]?.availableForSale ?? false,
+    label: matchedValues.join(' / ')
+  }
+}
+
 async function answerProductHelp(
   request: AssistantChatRequest,
   context: AssistantRequestContext,
@@ -135,15 +240,19 @@ async function answerProductHelp(
     request.messages
   )
 
-  if (clarification) {
+  if (clarification.kind === 'ask') {
     return {
-      text: clarification,
+      text: clarification.question,
       confidence: 'medium',
       recommendations: [],
       sources: [],
       handoff: null,
       failureCode: 'none'
     }
+  }
+
+  if (clarification.kind === 'exhausted') {
+    return clarificationExhausted()
   }
 
   let products
@@ -158,7 +267,7 @@ async function answerProductHelp(
 
   const recommendations = matchAssistantProducts({
     products,
-    lastUserText: getLastUserText(request.messages),
+    lastUserText: getAllUserText(request.messages),
     intent: request.intent,
     currentProductHandle: request.pageContext.productHandle
   })
@@ -235,16 +344,32 @@ async function answerStockHelp(
       return noGroundedAnswer()
     }
 
-    const available = product.variants.some(
-      variant => variant.availableForSale
+    const availability = resolveStockAvailability(
+      product,
+      getLastUserText(request.messages)
     )
+
+    if (availability.kind === 'clarify') {
+      return {
+        text: 'Hvilken størrelse, farge eller variant vil du sjekke?',
+        confidence: 'medium',
+        recommendations: [],
+        sources: [],
+        handoff: null,
+        failureCode: 'none'
+      }
+    }
+
     const source = assistantSourceSchema.parse({
       title: 'Produktside',
       url: `https://utekos.no/produkter/${product.handle}`
     })
 
     return {
-      text: `${product.title} er ${available ? 'tilgjengelig' : 'ikke tilgjengelig'}.`,
+      text:
+        availability.kind === 'variant' ?
+          `${product.title} i ${availability.label} er ${availability.availableForSale ? 'tilgjengelig' : 'ikke tilgjengelig'}.`
+        : `${product.title} er ${availability.availableForSale ? 'tilgjengelig' : 'ikke tilgjengelig'}.`,
       confidence: 'high',
       recommendations: [],
       sources: [source],
@@ -297,7 +422,7 @@ export async function answerAssistantRequest(
   context: AssistantRequestContext,
   adapters: AssistantAdapters = defaultAdapters
 ): Promise<AssistantOutcome> {
-  const lastUserText = getLastUserText(request.messages)
+  const lastUserText = getAllUserText(request.messages)
   const restrictedReason = resolveAssistantHandoff(
     lastUserText,
     context.failureCount

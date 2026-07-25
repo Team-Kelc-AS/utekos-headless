@@ -4,7 +4,7 @@ const baseURL = 'http://localhost:3217'
 const isProductionZeroProof =
   process.env.CUSTOMER_ASSISTANT_E2E_MODE === 'production-zero'
 const assistantPreviewEnvironment = {
-  CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100',
+  CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '50',
   VERCEL_ENV: 'preview'
 } as const
 

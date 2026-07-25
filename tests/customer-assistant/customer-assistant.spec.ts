@@ -43,6 +43,7 @@ function createProductStream() {
           handle: 'utekos-techdown',
           title: 'Utekos TechDown',
           href: '/produkter/utekos-techdown',
+          availableForSale: true,
           image: null,
           price: { amount: '2499.00', currencyCode: 'NOK' },
           variants: [
@@ -141,7 +142,17 @@ function boxesOverlap(
   )
 }
 
-test.beforeEach(async ({ page }) => {
+function expectBoxWithinViewport(
+  box: { x: number; y: number; width: number; height: number },
+  viewport: { width: number; height: number }
+) {
+  expect(box.x).toBeGreaterThanOrEqual(0)
+  expect(box.y).toBeGreaterThanOrEqual(0)
+  expect(box.x + box.width).toBeLessThanOrEqual(viewport.width)
+  expect(box.y + box.height).toBeLessThanOrEqual(viewport.height)
+}
+
+test.beforeEach(async ({ page }, testInfo) => {
   const errors: string[] = []
   runtimeErrors.set(page, errors)
   page.on('pageerror', error =>
@@ -165,6 +176,48 @@ test.beforeEach(async ({ page }) => {
   })
 
   await isolateBrowserNetwork(page)
+
+  if (
+    testInfo.title.includes('storage is unavailable across SPA')
+  ) {
+    await page.addInitScript(() => {
+      let randomCalls = 0
+      Object.defineProperty(window, 'localStorage', {
+        configurable: true,
+        get() {
+          throw new Error('storage disabled for assistant test')
+        }
+      })
+      Object.defineProperty(window, '__assistantRandomCalls', {
+        configurable: true,
+        get() {
+          return randomCalls
+        }
+      })
+      Math.random = () => {
+        randomCalls += 1
+        return randomCalls === 1 ? 0.1 : 0.9
+      }
+    })
+    return
+  }
+
+  if (testInfo.title.includes('design or checkout-like routes')) {
+    return
+  }
+
+  const bucket =
+    testInfo.title.includes('positive preview holdout') ?
+      '0.9'
+    : '0.1'
+  await page.addInitScript(
+    ({ key, value }) => {
+      try {
+        localStorage.setItem(key, value)
+      } catch {}
+    },
+    { key: ASSISTANT_BUCKET_STORAGE_KEY, value: bucket }
+  )
 })
 
 test.afterEach(async ({ page }) => {
@@ -173,7 +226,7 @@ test.afterEach(async ({ page }) => {
 
 test('uses the exact local preview environment', () => {
   expect(process.env.CUSTOMER_ASSISTANT_ROLLOUT_PERCENT).toBe(
-    '100'
+    '50'
   )
   expect(process.env.VERCEL_ENV).toBe('preview')
 })
@@ -204,8 +257,7 @@ test('shows the accessible launcher, stable bucket, and quick actions', async ({
     key => localStorage.getItem(key),
     ASSISTANT_BUCKET_STORAGE_KEY
   )
-  expect(Number(firstBucket)).toBeGreaterThanOrEqual(0)
-  expect(Number(firstBucket)).toBeLessThan(1)
+  expect(firstBucket).toBe('0.1')
 
   await launcher.focus()
   await page.keyboard.press('Enter')
@@ -395,26 +447,51 @@ test('keeps the mobile header and cart action unobscured', async ({
   const launcherBox = await launcher.boundingBox()
   expect(cartBox).not.toBeNull()
   expect(launcherBox).not.toBeNull()
+  expectBoxWithinViewport(cartBox!, { width: 390, height: 844 })
+  expectBoxWithinViewport(launcherBox!, {
+    width: 390,
+    height: 844
+  })
   expect(boxesOverlap(cartBox!, launcherBox!)).toBe(false)
 
   await launcher.click()
   const panel = page.getByRole('dialog', { name: 'Kjøpshjelp' })
+  await expect(panel).toBeVisible()
+  const currentCartBox = await cart.boundingBox()
   const panelBox = await panel.boundingBox()
+  expect(currentCartBox).not.toBeNull()
   expect(panelBox).not.toBeNull()
-  expect(boxesOverlap(cartBox!, panelBox!)).toBe(false)
+  expectBoxWithinViewport(currentCartBox!, {
+    width: 390,
+    height: 844
+  })
+  expectBoxWithinViewport(panelBox!, { width: 390, height: 844 })
+  expect(boxesOverlap(currentCartBox!, panelBox!)).toBe(false)
   await expect(cart).toBeVisible()
 })
 
-test('shows a safe contact fallback when the assistant API fails', async ({
+test('recovers from a failed assistant request with an explicit retry', async ({
   page
 }) => {
   expectedHttpConsoleStatuses.set(page, new Set([503]))
+  let requestCount = 0
+  const requestBodies: Array<Record<string, unknown>> = []
   await page.route(`**${ASSISTANT_API_PATH}`, async route => {
-    await route.fulfill({
-      status: 503,
-      contentType: 'application/json',
-      body: JSON.stringify({ error: 'preview_failure' })
-    })
+    requestCount += 1
+    requestBodies.push(
+      route.request().postDataJSON() as Record<string, unknown>
+    )
+
+    if (requestCount === 1) {
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'preview_failure' })
+      })
+      return
+    }
+
+    await fulfillAssistantStream(route, createProductStream())
   })
   await page.goto(SAFE_PAGE_PATH)
   await openAssistant(page)
@@ -434,6 +511,137 @@ test('shows a safe contact fallback when the assistant API fails', async ({
   await expect(
     page.getByRole('heading', { name: 'Snakk med kundeservice' })
   ).toBeVisible()
+
+  await page.getByRole('button', { name: 'Prøv igjen' }).click()
+
+  await expect(page.getByText(PRODUCT_ANSWER)).toBeVisible()
+  await expect(
+    page.getByRole('dialog').getByRole('alert')
+  ).toHaveCount(0)
+  await expect(
+    page.getByRole('heading', { name: 'Snakk med kundeservice' })
+  ).toHaveCount(0)
+  expect(requestCount).toBe(2)
+  expect(requestBodies[1]?.sessionId).toBe(
+    requestBodies[0]?.sessionId
+  )
+  expect(requestBodies[1]?.intent).toBe(requestBodies[0]?.intent)
+})
+
+test('sends the current product handle and clears it on a non-product path', async ({
+  page
+}) => {
+  const requestBodies: Array<Record<string, unknown>> = []
+  await page.route(`**${ASSISTANT_API_PATH}`, async route => {
+    requestBodies.push(
+      route.request().postDataJSON() as Record<string, unknown>
+    )
+    await fulfillAssistantStream(
+      route,
+      createAssistantStream([
+        { type: 'text-start', id: 'context-answer' },
+        {
+          type: 'text-delta',
+          id: 'context-answer',
+          delta: 'Kontekst mottatt.'
+        },
+        { type: 'text-end', id: 'context-answer' },
+        {
+          type: 'data-status',
+          data: { confidence: 'high', failureCode: 'none' }
+        }
+      ])
+    )
+  })
+  await page.goto(SAFE_PAGE_PATH)
+  await openAssistant(page)
+
+  await page.evaluate(() => {
+    window.history.pushState(
+      null,
+      '',
+      '/produkter/utekos-techdown'
+    )
+  })
+  await expect(page).toHaveURL(/\/produkter\/utekos-techdown$/u)
+  await page
+    .getByRole('textbox', { name: 'Skriv spørsmålet ditt' })
+    .fill('Er den tilgjengelig?')
+  await page.getByRole('button', { name: 'Send spørsmål' }).click()
+  await expect.poll(() => requestBodies.length).toBe(1)
+
+  await page.evaluate(pathname => {
+    window.history.pushState(null, '', pathname)
+  }, SAFE_PAGE_PATH)
+  await expect(page).toHaveURL(new RegExp(`${SAFE_PAGE_PATH}$`, 'u'))
+  await page
+    .getByRole('textbox', { name: 'Skriv spørsmålet ditt' })
+    .fill('Hva med denne siden?')
+  await page.getByRole('button', { name: 'Send spørsmål' }).click()
+  await expect.poll(() => requestBodies.length).toBe(2)
+
+  expect(
+    (requestBodies[0]?.pageContext as Record<string, unknown>)
+      .productHandle
+  ).toBe('utekos-techdown')
+  expect(
+    (requestBodies[1]?.pageContext as Record<string, unknown>)
+      .productHandle
+  ).toBeNull()
+})
+
+test('keeps a memory bucket stable when storage is unavailable across SPA route exclusions', async ({
+  page
+}) => {
+  const launcher = page.getByRole('button', {
+    name: 'Kjøpshjelp',
+    exact: true
+  })
+
+  await page.goto(SAFE_PAGE_PATH)
+  await expect(launcher).toBeVisible()
+
+  await page.evaluate(() => {
+    window.history.pushState(null, '', '/design')
+  })
+  await expect(page).toHaveURL(/\/design$/u)
+  await expect(launcher).toHaveCount(0)
+
+  await page.evaluate(pathname => {
+    window.history.pushState(null, '', pathname)
+  }, SAFE_PAGE_PATH)
+  await expect(page).toHaveURL(new RegExp(`${SAFE_PAGE_PATH}$`, 'u'))
+  await expect(launcher).toBeVisible()
+  expect(
+    await page.evaluate(
+      () =>
+        (
+          window as Window & {
+            __assistantRandomCalls: number
+          }
+        ).__assistantRandomCalls
+    )
+  ).toBe(1)
+})
+
+test('keeps a positive preview holdout free of the assistant transport graph', async ({
+  page
+}) => {
+  const assistantGraph = observeAssistantTransportGraph(page)
+
+  await page.goto(SAFE_PAGE_PATH)
+  await expect(
+    page.getByRole('button', { name: 'Kjøpshjelp', exact: true })
+  ).toHaveCount(0)
+  await assistantGraph.settle()
+
+  expect([...assistantGraph.paths]).toEqual([])
+  expect(
+    await page.evaluate(
+      key => localStorage.getItem(key),
+      ASSISTANT_BUCKET_STORAGE_KEY
+    )
+  ).toBe('0.9')
 })
 
 test('does not mount on design or checkout-like routes', async ({

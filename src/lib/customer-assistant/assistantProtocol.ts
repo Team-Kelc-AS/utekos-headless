@@ -41,27 +41,65 @@ export type AssistantChatRequest = z.infer<
   typeof assistantChatRequestSchema
 >
 
-export type AssistantProduct = {
-  id: string
-  handle: string
-  title: string
-  href: string
-  image: { alt: string; url: string } | null
-  price: { amount: string; currencyCode: string }
-  variants: Array<{
-    id: string
-    title: string
-    availableForSale: boolean
-    selectedOptions: Array<{ name: string; value: string }>
-  }>
-}
+const assistantSelectedOptionSchema = z.strictObject({
+  name: z.string().trim().min(1),
+  value: z.string().trim().min(1)
+})
 
-export type AssistantRecommendation = {
-  product: AssistantProduct
-  rank: 1 | 2 | 3
-  reason: string
-  isPrimary: boolean
-}
+const assistantVariantSchema = z.strictObject({
+  id: z.string().trim().min(1),
+  title: z.string().trim().min(1),
+  availableForSale: z.boolean(),
+  selectedOptions: z.array(assistantSelectedOptionSchema)
+})
+
+const assistantProductImageSchema = z
+  .strictObject({
+    alt: z.string().trim().min(1),
+    url: z.string().url()
+  })
+  .refine(
+    image =>
+      new URL(image.url).origin === 'https://cdn.shopify.com',
+    'Product images must use the Shopify CDN origin'
+  )
+
+export const assistantProductSchema = z
+  .strictObject({
+    id: z.string().trim().min(1),
+    handle: z
+      .string()
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u),
+    title: z.string().trim().min(1),
+    href: z.string().startsWith('/produkter/'),
+    availableForSale: z.boolean(),
+    image: assistantProductImageSchema.nullable(),
+    price: z.strictObject({
+      amount: z.string().regex(/^\d+(?:\.\d+)?$/u),
+      currencyCode: z.string().regex(/^[A-Z]{3}$/u)
+    }),
+    variants: z.array(assistantVariantSchema)
+  })
+  .refine(
+    product =>
+      product.href === `/produkter/${product.handle}`,
+    'Product href must match its canonical handle path'
+  )
+
+export type AssistantProduct = z.infer<
+  typeof assistantProductSchema
+>
+
+export const assistantRecommendationSchema = z.strictObject({
+  product: assistantProductSchema,
+  rank: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  reason: z.string().trim().min(1).max(500),
+  isPrimary: z.boolean()
+})
+
+export type AssistantRecommendation = z.infer<
+  typeof assistantRecommendationSchema
+>
 
 export type AssistantHandoff = {
   contactPath: '/kontaktskjema'

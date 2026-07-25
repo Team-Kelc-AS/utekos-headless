@@ -9,7 +9,7 @@ import {
 const now = () => Date.now()
 const checkRateLimit = createProcessLocalAssistantRateLimiter({
   limit: resolveAssistantRequestsPerMinute(
-    process.env.VERCEL_ENV
+    process.env
   ),
   now
 })

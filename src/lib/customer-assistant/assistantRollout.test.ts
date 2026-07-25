@@ -6,6 +6,7 @@ import {
   resolveAssistantClientExposure,
   resolveAssistantExposure,
   resolveAssistantProductHandle,
+  resolveAssistantPreviewRolloutPercent,
   resolveAssistantRolloutPercent,
   type AssistantBucketStorage
 } from './assistantRollout'
@@ -49,6 +50,41 @@ test('fails closed for unsafe values', () => {
       resolveAssistantRolloutPercent({
         CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: value
       }),
+      0
+    )
+  }
+})
+
+test('enables the server rollout only for an exact preview with a positive safe percentage', () => {
+  assert.equal(
+    resolveAssistantPreviewRolloutPercent({
+      VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
+    }),
+    25
+  )
+
+  for (const environment of [
+    {
+      VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
+    },
+    {
+      VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '0'
+    },
+    {
+      VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: ' 25 '
+    },
+    {
+      VERCEL_ENV: 'PREVIEW',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
+    },
+    { VERCEL_ENV: 'preview' }
+  ]) {
+    assert.equal(
+      resolveAssistantPreviewRolloutPercent(environment),
       0
     )
   }

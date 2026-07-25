@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import {
+  assistantProductSchema,
   assistantSourceSchema,
   type AssistantProduct,
   type AssistantSource
@@ -38,34 +39,6 @@ export type AssistantAdapters = {
   supportKnowledge: SupportKnowledgeAdapter
   commerceRecommendation: CommerceRecommendationAdapter
 }
-
-const selectedOptionSchema = z.strictObject({
-  name: z.string(),
-  value: z.string()
-})
-
-const assistantVariantSchema = z.strictObject({
-  id: z.string(),
-  title: z.string(),
-  availableForSale: z.boolean(),
-  selectedOptions: z.array(selectedOptionSchema)
-})
-
-const assistantProductSchema: z.ZodType<AssistantProduct> =
-  z.strictObject({
-    id: z.string(),
-    handle: z.string(),
-    title: z.string(),
-    href: z.string(),
-    image: z
-      .strictObject({ alt: z.string(), url: z.string() })
-      .nullable(),
-    price: z.strictObject({
-      amount: z.string(),
-      currencyCode: z.string()
-    }),
-    variants: z.array(assistantVariantSchema)
-  })
 
 export const assistantProductsResultSchema = z.array(
   assistantProductSchema

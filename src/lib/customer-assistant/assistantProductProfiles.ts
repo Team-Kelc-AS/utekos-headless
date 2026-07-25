@@ -29,6 +29,7 @@ export const assistantProductProfiles: readonly ProductProfile[] =
       cues: [
         'tørr kulde',
         'mest varme',
+        'mest mulig varme',
         'varme per gram',
         'hytte'
       ],
@@ -41,8 +42,10 @@ export const assistantProductProfiles: readonly ProductProfile[] =
         'bobil',
         'reise',
         'lett',
+        'lav vekt',
         'rask tørk',
-        'enkel vask'
+        'enkel vask',
+        'enkelt vedlikehold'
       ],
       reason:
         'Utekos Mikrofiber er lett, pakkbar og enkel å vaske og tørke.'
@@ -51,6 +54,8 @@ export const assistantProductProfiles: readonly ProductProfile[] =
       handle: 'comfyrobe',
       cues: [
         'regn',
+        'værbeskyttelse',
+        'hverdag',
         'hundelufting',
         'sidelinje',
         'isbading',
@@ -64,8 +69,16 @@ export const assistantProductProfiles: readonly ProductProfile[] =
 const cueBoundary = '[^\\p{L}\\p{N}]'
 
 const cueExtensions = new Map<string, readonly string[]>([
-  ['båt', ['båttur']],
-  ['hytte', ['hyttetur']],
+  ['båt', ['båten', 'båter', 'båttur']],
+  ['hytte', ['hytta', 'hytten', 'hytter', 'hyttetur']],
+  ['bobil', ['bobilen', 'bobiler']],
+  ['hverdag', ['hverdagen', 'hverdags', 'hverdagsbruk']],
+  ['lav vekt', ['lavere vekt']],
+  ['værbeskyttelse', ['værbeskyttet']],
+  [
+    'enkelt vedlikehold',
+    ['enkel vedlikehold', 'enkel å vedlikeholde']
+  ],
   ['regn', ['regnvær']],
   ['hundelufting', ['hundeluftingen']]
 ])

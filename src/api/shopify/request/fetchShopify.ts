@@ -12,10 +12,12 @@ import type {
 export async function shopifyFetch<T extends ShopifyOperation<any, any>>({
   headers,
   query,
+  signal,
   variables
 }: {
   headers?: HeadersInit
   query: string
+  signal?: AbortSignal
   variables?: ExtractVariables<T>
 }): Promise<ShopifyFetchResult<T['data']>> {
   const endpoint = getShopifyEndpoint()
@@ -33,6 +35,7 @@ export async function shopifyFetch<T extends ShopifyOperation<any, any>>({
         'X-Shopify-Storefront-Access-Token': token,
         ...headers
       },
+      signal,
       body: JSON.stringify({
         ...(query && { query }),
         ...(variables && { variables })

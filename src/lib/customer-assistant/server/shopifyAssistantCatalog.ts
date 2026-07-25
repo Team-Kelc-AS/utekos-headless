@@ -1,7 +1,10 @@
 import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
-import type { Connection, ShopifyOperation } from '@types'
+import type { ShopifyOperation } from '@types'
 import { z } from 'zod'
-import type { AssistantProduct } from '../assistantProtocol'
+import {
+  assistantProductSchema,
+  type AssistantProduct
+} from '../assistantProtocol'
 
 type AssistantProductVariant =
   AssistantProduct['variants'][number]
@@ -10,14 +13,19 @@ type RawAssistantProduct = {
   id: string
   handle: string
   title: string
+  availableForSale: boolean
   featuredImage: { altText: string | null; url: string } | null
   priceRange: { minVariantPrice: AssistantProduct['price'] }
-  variants: Connection<AssistantProductVariant>
+  variants: {
+    edges: Array<{ node: AssistantProductVariant }>
+    pageInfo: { hasNextPage: boolean; endCursor: string | null }
+  }
 }
 
 type AssistantCatalogRequest = {
   headers?: HeadersInit
   query: string
+  signal?: AbortSignal
   variables: Record<string, string | number>
 }
 
@@ -43,6 +51,7 @@ const rawAssistantProductSchema = z.object({
   id: z.string(),
   handle: z.string(),
   title: z.string(),
+  availableForSale: z.boolean(),
   featuredImage: z
     .object({ altText: z.string().nullable(), url: z.string() })
     .nullable(),
@@ -53,6 +62,10 @@ const rawAssistantProductSchema = z.object({
     })
   }),
   variants: z.object({
+    pageInfo: z.object({
+      hasNextPage: z.boolean(),
+      endCursor: z.string().nullable()
+    }),
     edges: z.array(
       z.object({
         node: z.object({
@@ -90,11 +103,14 @@ const shopifyFetchResultSchema = z.union([
   })
 ])
 
+const DEFAULT_CATALOG_DEADLINE_MS = 8_000
+
 const assistantProductFragment = /* GraphQL */ `
   fragment assistantProduct on Product {
     id
     handle
     title
+    availableForSale
     featuredImage {
       altText
       url
@@ -105,7 +121,11 @@ const assistantProductFragment = /* GraphQL */ `
         currencyCode
       }
     }
-    variants(first: 20) {
+    variants(first: 250) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       edges {
         node {
           id
@@ -183,15 +203,22 @@ async function fetchShopifyAssistantCatalog(
 export function normalizeAssistantProduct(
   product: RawAssistantProduct
 ): AssistantProduct {
-  return {
+  if (product.variants.pageInfo.hasNextPage) {
+    normalizeAssistantCatalogFailure()
+  }
+
+  return assistantProductSchema.parse({
     id: product.id,
     handle: product.handle,
     title: product.title,
     href: `/produkter/${product.handle}`,
+    availableForSale: product.availableForSale,
     image:
       product.featuredImage ?
         {
-          alt: product.featuredImage.altText ?? '',
+          alt:
+            product.featuredImage.altText?.trim() ||
+            product.title,
           url: product.featuredImage.url
         }
       : null,
@@ -204,11 +231,12 @@ export function normalizeAssistantProduct(
         ({ name, value }) => ({ name, value })
       )
     }))
-  }
+  })
 }
 
 function createFetchAssistantProducts(
-  fetchCatalog: AssistantCatalogFetch
+  fetchCatalog: AssistantCatalogFetch,
+  options: { deadlineMs?: number } = {}
 ) {
   return async function fetchAssistantProductsWithCatalog(input: {
     buyerIp?: string
@@ -222,10 +250,14 @@ function createFetchAssistantProducts(
     }
 
     const handles = [...new Set(parsedInput.data.handles ?? [])]
+    const deadlineMs =
+      options.deadlineMs ?? DEFAULT_CATALOG_DEADLINE_MS
+    const signal = AbortSignal.timeout(deadlineMs)
     const request =
       handles.length ?
         {
           query: createAssistantProductsByHandleQuery(handles),
+          signal,
           variables: Object.fromEntries(
             handles.map((handle, index) => [
               `handle${index}`,
@@ -243,6 +275,7 @@ function createFetchAssistantProducts(
         }
       : {
           query: assistantProductsQuery,
+          signal,
           variables: { first: 20 },
           ...(parsedInput.data.buyerIp ?
             {

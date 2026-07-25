@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  assistantProductSchema,
+  assistantRecommendationSchema,
   assistantSourceSchema,
   getLastUserText,
   parseAssistantChatRequest,
@@ -133,6 +135,7 @@ test('projects only text parts before the next request', () => {
               handle: 'comfyrobe',
               title: 'Comfyrobe',
               href: '/produkter/comfyrobe',
+              availableForSale: true,
               image: null,
               price: { amount: '2499.00', currencyCode: 'NOK' },
               variants: []
@@ -177,4 +180,84 @@ test('projects only text parts before the next request', () => {
       parts: [{ type: 'text', text: 'Jeg anbefaler Comfyrobe.' }]
     }
   ])
+})
+
+test('accepts Shopify-valid long product strings at the shared boundary', () => {
+  const longTitle = `Comfyrobe ${'varm '.repeat(100)}`.trim()
+  const longOptionValue = 'v'.repeat(500)
+
+  const parsed = assistantProductSchema.parse({
+    id: 'gid://shopify/Product/1',
+    handle: 'comfyrobe',
+    title: longTitle,
+    href: '/produkter/comfyrobe',
+    availableForSale: true,
+    image: {
+      alt: longTitle,
+      url: 'https://cdn.shopify.com/s/files/comfyrobe.jpg'
+    },
+    price: { amount: '2499.0000', currencyCode: 'NOK' },
+    variants: [
+      {
+        id: 'gid://shopify/ProductVariant/1',
+        title: longOptionValue,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Tilpasning', value: longOptionValue }
+        ]
+      }
+    ]
+  })
+
+  assert.equal(parsed.title, longTitle)
+  assert.equal(
+    parsed.variants[0]?.selectedOptions[0]?.value,
+    longOptionValue
+  )
+})
+
+test('strict shared product and recommendation schemas reject extra inventory truth', () => {
+  const product = {
+    id: 'gid://shopify/Product/1',
+    handle: 'comfyrobe',
+    title: 'Comfyrobe',
+    href: '/produkter/comfyrobe',
+    availableForSale: true,
+    image: null,
+    price: { amount: '2499.00', currencyCode: 'NOK' },
+    variants: [
+      {
+        id: 'gid://shopify/ProductVariant/1',
+        title: 'Medium',
+        availableForSale: true,
+        selectedOptions: [{ name: 'Størrelse', value: 'M' }],
+        quantityAvailable: 17
+      }
+    ]
+  }
+
+  assert.throws(() => assistantProductSchema.parse(product))
+  assert.throws(() =>
+    assistantRecommendationSchema.parse({
+      product,
+      rank: 1,
+      reason: 'Varm og enkel.',
+      isPrimary: true
+    })
+  )
+})
+
+test('shared product schema binds canonical href to the handle', () => {
+  assert.throws(() =>
+    assistantProductSchema.parse({
+      id: 'gid://shopify/Product/1',
+      handle: 'comfyrobe',
+      title: 'Comfyrobe',
+      href: '/produkter/utekos-dun',
+      availableForSale: true,
+      image: null,
+      price: { amount: '2499.00', currencyCode: 'NOK' },
+      variants: []
+    })
+  )
 })

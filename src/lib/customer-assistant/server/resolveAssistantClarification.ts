@@ -6,15 +6,13 @@ import {
 } from '../assistantProductProfiles'
 import type { AssistantChatRequest } from '../assistantProtocol'
 
-const useCues = [
-  'båt',
-  'kyst',
-  'hytte',
-  'bobil',
-  'reise',
-  'hundelufting',
-  'sidelinje',
-  'isbading'
+const useCues = ['båt', 'hytte', 'bobil', 'hverdag'] as const
+const priorityCues = [
+  'mest varme',
+  'mest mulig varme',
+  'lav vekt',
+  'værbeskyttelse',
+  'enkelt vedlikehold'
 ] as const
 
 const useQuestion =
@@ -47,9 +45,18 @@ function countAssistantQuestions(
     ).length
 }
 
+export type AssistantClarificationResult =
+  | {
+      kind: 'ask'
+      category: 'use' | 'priority'
+      question: string
+    }
+  | { kind: 'ready' }
+  | { kind: 'exhausted' }
+
 export function resolveAssistantClarification(
   messages: AssistantChatRequest['messages']
-): string | null {
+): AssistantClarificationResult {
   const userText = getUserText(messages)
   const highestProfileCueCount = Math.max(
     ...assistantProductProfiles.map(profile =>
@@ -58,20 +65,35 @@ export function resolveAssistantClarification(
   )
 
   if (highestProfileCueCount >= 2) {
-    return null
+    return { kind: 'ready' }
   }
 
   if (countAssistantQuestions(messages) >= 3) {
-    return null
+    return { kind: 'exhausted' }
   }
 
   const hasUseCue = useCues.some(cue =>
     matchesAssistantCue(userText, cue)
   )
+  const hasPriorityCue = priorityCues.some(cue =>
+    matchesAssistantCue(userText, cue)
+  )
 
   if (!hasUseCue) {
-    return useQuestion
+    return {
+      kind: 'ask',
+      category: 'use',
+      question: useQuestion
+    }
   }
 
-  return priorityQuestion
+  if (!hasPriorityCue) {
+    return {
+      kind: 'ask',
+      category: 'priority',
+      question: priorityQuestion
+    }
+  }
+
+  return { kind: 'exhausted' }
 }

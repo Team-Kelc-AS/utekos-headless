@@ -42,6 +42,7 @@ const product = (
   handle,
   title: handle,
   href: `/produkter/${handle}`,
+  availableForSale,
   image: null,
   price: { amount: '2490.00', currencyCode: 'NOK' },
   variants: [

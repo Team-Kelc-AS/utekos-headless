@@ -14,6 +14,10 @@ import { answerAssistantRequest } from './answerAssistantRequest'
 import { staticSupportKnowledgeAdapter } from './staticSupportKnowledge'
 
 const sessionId = 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7'
+const useQuestion =
+  'Hvor ser du først og fremst for deg å bruke plagget – for eksempel på hytta, i båten, i bobilen eller i hverdagen?'
+const priorityQuestion =
+  'Hva er viktigst for deg: mest mulig varme, lav vekt, værbeskyttelse eller enkelt vedlikehold?'
 
 function createRequest(
   input: Partial<AssistantChatRequest> & { text: string }
@@ -46,6 +50,8 @@ function createProduct(
     handle: input.handle,
     title: input.title ?? input.handle,
     href: input.href ?? `/produkter/${input.handle}`,
+    availableForSale:
+      input.availableForSale ?? input.available ?? true,
     image: input.image ?? null,
     price: input.price ?? {
       amount: '2499.00',
@@ -168,6 +174,148 @@ test('stock help reports only available or unavailable without quantity claims',
   }
 })
 
+test('whole-product stock uses Shopify product availability rather than inferring from variants', async () => {
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'Er den tilgjengelig?',
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({
+      fetchProducts: async () => [
+        createProduct({
+          handle: 'utekos-techdown',
+          title: 'Utekos TechDown',
+          availableForSale: false,
+          variants: [
+            {
+              id: 'variant-m',
+              title: 'Medium',
+              availableForSale: true,
+              selectedOptions: [
+                { name: 'Størrelse', value: 'M' }
+              ]
+            }
+          ]
+        })
+      ]
+    })
+  )
+
+  assert.equal(
+    outcome.text,
+    'Utekos TechDown er ikke tilgjengelig.'
+  )
+  assert.equal(outcome.failureCode, 'none')
+})
+
+test('stock help resolves an explicitly requested variant option exactly', async () => {
+  const product = createProduct({
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown',
+    availableForSale: true,
+    variants: [
+      {
+        id: 'variant-m',
+        title: 'Medium',
+        availableForSale: false,
+        selectedOptions: [{ name: 'Størrelse', value: 'M' }]
+      },
+      {
+        id: 'variant-l',
+        title: 'Large',
+        availableForSale: true,
+        selectedOptions: [{ name: 'Størrelse', value: 'L' }]
+      }
+    ]
+  })
+
+  for (const [question, option, availability] of [
+    ['Har dere M på lager?', 'M', 'ikke tilgjengelig'],
+    ['Er størrelse L tilgjengelig?', 'L', 'tilgjengelig']
+  ] as const) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'stock_help',
+        text: question,
+        pageContext: {
+          pathname: '/produkter/utekos-techdown',
+          productHandle: 'utekos-techdown'
+        }
+      }),
+      context,
+      createAdapters({ fetchProducts: async () => [product] })
+    )
+
+    assert.equal(
+      outcome.text,
+      `Utekos TechDown i ${option} er ${availability}.`,
+      question
+    )
+    assert.equal(outcome.confidence, 'high', question)
+    assert.equal(outcome.failureCode, 'none', question)
+  }
+})
+
+test('stock help asks a bounded question for an unknown or mixed variant selection', async () => {
+  const product = createProduct({
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown',
+    availableForSale: true,
+    variants: [
+      {
+        id: 'variant-m-blue',
+        title: 'Medium / Blue',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Størrelse', value: 'M' },
+          { name: 'Farge', value: 'Blå' }
+        ]
+      },
+      {
+        id: 'variant-m-black',
+        title: 'Medium / Black',
+        availableForSale: false,
+        selectedOptions: [
+          { name: 'Størrelse', value: 'M' },
+          { name: 'Farge', value: 'Svart' }
+        ]
+      }
+    ]
+  })
+
+  for (const question of [
+    'Har dere størrelse XL?',
+    'Har dere størrelse M?'
+  ]) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'stock_help',
+        text: question,
+        pageContext: {
+          pathname: '/produkter/utekos-techdown',
+          productHandle: 'utekos-techdown'
+        }
+      }),
+      context,
+      createAdapters({ fetchProducts: async () => [product] })
+    )
+
+    assert.equal(
+      outcome.text,
+      'Hvilken størrelse, farge eller variant vil du sjekke?',
+      question
+    )
+    assert.equal(outcome.confidence, 'medium', question)
+    assert.equal(outcome.failureCode, 'none', question)
+    assert.deepEqual(outcome.sources, [], question)
+  }
+})
+
 test('malformed Shopify product results fail closed before product matching', async () => {
   let recommendationCalls = 0
   const malformedProduct = {
@@ -244,7 +392,7 @@ test('Shopify results with forbidden inventory fields fail closed before stock o
 })
 
 test('Shopify-valid long strings remain compatible with product help', async () => {
-  const longTitle = `Utekos TechDown ${'varm '.repeat(45)}`
+  const longTitle = `Utekos TechDown ${'varm '.repeat(45)}`.trim()
   const longOptionValue = 'v'.repeat(255)
   const product = createProduct({
     id: 'product-techdown-long',
@@ -281,7 +429,7 @@ test('Shopify-valid long strings remain compatible with product help', async () 
 })
 
 test('a long Shopify product title does not invalidate stock source output', async () => {
-  const longTitle = `Utekos TechDown ${'produkt '.repeat(30)}`
+  const longTitle = `Utekos TechDown ${'produkt '.repeat(30)}`.trim()
   const product = createProduct({
     handle: 'utekos-techdown',
     title: longTitle,
@@ -825,6 +973,215 @@ test('underspecified product help asks the next bounded clarification without pr
   )
   assert.equal(outcome.failureCode, 'none')
   assert.equal(outcome.handoff, null)
+})
+
+test('completes the full clarification flow using all user turns', async () => {
+  const products = [
+    createProduct({
+      id: 'product-dun',
+      handle: 'utekos-dun',
+      title: 'Utekos Dun'
+    })
+  ]
+  let providerCalls = 0
+  const adapters = createAdapters({
+    fetchProducts: async () => {
+      providerCalls += 1
+      return products
+    },
+    commerceRecommendation: {
+      recommend: async () => {
+        providerCalls += 1
+        return []
+      }
+    }
+  })
+
+  const first = await answerAssistantRequest(
+    createRequest({ text: 'Jeg trenger hjelp til å velge.' }),
+    context,
+    adapters
+  )
+  assert.equal(first.text, useQuestion)
+  assert.equal(providerCalls, 0)
+
+  const secondMessages = [
+    ...createRequest({ text: 'Jeg trenger hjelp til å velge.' })
+      .messages,
+    {
+      id: 'assistant-use',
+      role: 'assistant' as const,
+      parts: [{ type: 'text' as const, text: useQuestion }]
+    },
+    {
+      id: 'user-use',
+      role: 'user' as const,
+      parts: [{ type: 'text' as const, text: 'På hytta.' }]
+    }
+  ]
+  const second = await answerAssistantRequest(
+    createRequest({ text: 'På hytta.', messages: secondMessages }),
+    context,
+    adapters
+  )
+  assert.equal(second.text, priorityQuestion)
+  assert.equal(providerCalls, 0)
+
+  const third = await answerAssistantRequest(
+    createRequest({
+      text: 'Mest mulig varme.',
+      messages: [
+        ...secondMessages,
+        {
+          id: 'assistant-priority',
+          role: 'assistant',
+          parts: [
+            { type: 'text', text: priorityQuestion }
+          ]
+        },
+        {
+          id: 'user-priority',
+          role: 'user',
+          parts: [
+            { type: 'text', text: 'Mest mulig varme.' }
+          ]
+        }
+      ]
+    }),
+    context,
+    adapters
+  )
+
+  assert.equal(third.confidence, 'high')
+  assert.equal(third.failureCode, 'none')
+  assert.equal(third.handoff, null)
+  assert.equal(
+    third.recommendations[0]?.product.handle,
+    'utekos-dun'
+  )
+  assert.equal(providerCalls, 2)
+})
+
+test('three exhausted clarifications produce a low-confidence uncertain handoff without providers', async () => {
+  let providerCalls = 0
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      text: 'Det er alt.',
+      messages: [
+        {
+          id: 'user-1',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Jeg trenger hjelp.' }]
+        },
+        {
+          id: 'assistant-1',
+          role: 'assistant',
+          parts: [{ type: 'text', text: useQuestion }]
+        },
+        {
+          id: 'user-2',
+          role: 'user',
+          parts: [{ type: 'text', text: 'I båten.' }]
+        },
+        {
+          id: 'assistant-2',
+          role: 'assistant',
+          parts: [{ type: 'text', text: priorityQuestion }]
+        },
+        {
+          id: 'user-3',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Lav vekt.' }]
+        },
+        {
+          id: 'assistant-3',
+          role: 'assistant',
+          parts: [{ type: 'text', text: useQuestion }]
+        },
+        {
+          id: 'user-4',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Det er alt.' }]
+        }
+      ]
+    }),
+    context,
+    createAdapters({
+      fetchProducts: async () => {
+        providerCalls += 1
+        return []
+      },
+      supportKnowledge: {
+        answer: async () => {
+          providerCalls += 1
+          return {
+            text: 'Skal ikke brukes',
+            confidence: 'high',
+            sources: []
+          }
+        }
+      },
+      commerceRecommendation: {
+        recommend: async () => {
+          providerCalls += 1
+          return []
+        }
+      }
+    })
+  )
+
+  assert.equal(providerCalls, 0)
+  assert.equal(outcome.confidence, 'low')
+  assert.equal(outcome.handoff?.reason, 'uncertain')
+  assert.deepEqual(outcome.recommendations, [])
+})
+
+test('restricted text never reaches Shopify, knowledge, or recommendation adapters', async () => {
+  const cases = [
+    ['other', 'kunde@example.no', 'personal_data'],
+    ['other', '+47 400 00 000', 'personal_data'],
+    ['other', '4111 1111 1111 1111', 'personal_data'],
+    ['shipping_returns', 'Bestillingen min mangler', 'order'],
+    ['shipping_returns', 'Pakken har ikke kommet', 'order'],
+    ['other', 'Kortet blir avvist', 'payment'],
+    ['product_help', 'Plagget er skadet', 'complaint'],
+    ['product_help', 'Varen er defekt', 'complaint']
+  ] as const
+
+  for (const [intent, text, reason] of cases) {
+    let providerCalls = 0
+    const outcome = await answerAssistantRequest(
+      createRequest({ intent, text }),
+      context,
+      createAdapters({
+        fetchProducts: async () => {
+          providerCalls += 1
+          return []
+        },
+        supportKnowledge: {
+          answer: async () => {
+            providerCalls += 1
+            return {
+              text: 'Skal ikke brukes',
+              confidence: 'high',
+              sources: []
+            }
+          }
+        },
+        commerceRecommendation: {
+          recommend: async () => {
+            providerCalls += 1
+            return []
+          }
+        }
+      })
+    )
+
+    assert.equal(providerCalls, 0, text)
+    assert.equal(outcome.handoff?.reason, reason, text)
+    assert.deepEqual(outcome.recommendations, [], text)
+    assert.deepEqual(outcome.sources, [], text)
+  }
 })
 
 test('recommendation provider failure preserves deterministic products with a stable code', async () => {
