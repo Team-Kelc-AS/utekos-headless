@@ -1,7 +1,10 @@
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { protos, v1 } from '@google-cloud/discoveryengine'
-import { buildAssistantKnowledgeDocuments } from '../../src/lib/google/customer-assistant/knowledgeManifest'
+import {
+  buildAssistantKnowledgeDocuments,
+  computeAssistantKnowledgeChecksum
+} from '../../src/lib/google/customer-assistant/knowledgeManifest'
 import {
   createDiscoveryClientOptions,
   desiredDiscoveryResources,
@@ -13,14 +16,60 @@ import {
 } from './plan-discovery-resources'
 
 const APPROVAL_TOKEN = 'approved-utekos-assistant-v1'
-const REVIEWED_DOCUMENT_IDS = [
-  'compare-models',
-  'comfyrobe-faq',
-  'shipping-returns',
-  'size-guide',
-  'materials',
-  'care',
-  'contact'
+const REVIEWED_DOCUMENTS = [
+  {
+    id: 'compare-models',
+    canonicalUrl:
+      'https://utekos.no/handlehjelp/sammenlign-modeller',
+    checksum:
+      '74f2718c9c54dcbf8e9158ac4092ce8c7f283671bdea09fdf0d2b553d393fc5f',
+    title: 'Sammenlign Utekos-modellene'
+  },
+  {
+    id: 'comfyrobe-faq',
+    canonicalUrl: 'https://utekos.no/comfyrobe',
+    checksum:
+      '17656be159f972d787b5071662686827a7d615db77cae5fe6885e02976aab6e9',
+    title: 'Comfyrobe – vanlige spørsmål'
+  },
+  {
+    id: 'shipping-returns',
+    canonicalUrl: 'https://utekos.no/frakt-og-retur',
+    checksum:
+      '24d9347559a43bc1c72a119ca8a33b6b97e5325b850c54deacc4b6ccd27abf11',
+    title: 'Frakt og retur'
+  },
+  {
+    id: 'size-guide',
+    canonicalUrl:
+      'https://utekos.no/handlehjelp/storrelsesguide',
+    checksum:
+      '8a640a78959669c66e33722f0c8356b8f6e7c292590c10e0efc18ae42c2778e4',
+    title: 'Størrelsesguide'
+  },
+  {
+    id: 'materials',
+    canonicalUrl:
+      'https://utekos.no/handlehjelp/teknologi-materialer',
+    checksum:
+      'c8ed6a5e8df225f2d61b4918fc884285a5432bd7f274c8a78859b54937f2d377',
+    title: 'Teknologi og materialer'
+  },
+  {
+    id: 'care',
+    canonicalUrl:
+      'https://utekos.no/handlehjelp/vask-og-vedlikehold',
+    checksum:
+      '0ba6f5c2ef884175eb33d83cbb414ab8607b6c8c8c7bc999cd64b577edebca23',
+    title: 'Vask og vedlikehold'
+  },
+  {
+    id: 'contact',
+    canonicalUrl: 'https://utekos.no/kontaktskjema',
+    checksum:
+      'd7b91931af4221198d174d22cd3877b199794dd7457af0f347dc568cf6231d92',
+    title: 'Kontakt Utekos kundeservice'
+  }
 ] as const
 
 type ApplyEnvironment = Readonly<
@@ -29,6 +78,7 @@ type ApplyEnvironment = Readonly<
 
 type ImportDocument = {
   canonicalUrl: `https://utekos.no/${string}`
+  checksum: string
   content: string
   id: string
 }
@@ -144,18 +194,26 @@ function importSummary(result: unknown, metadata: unknown) {
 function validateReviewedDocuments(
   documents: readonly ImportDocument[]
 ) {
-  if (
-    documents.length !== REVIEWED_DOCUMENT_IDS.length ||
-    documents.some(
-      (document, index) =>
-        document.id !== REVIEWED_DOCUMENT_IDS[index] ||
-        !document.canonicalUrl.startsWith(
-          'https://utekos.no/'
-        ) ||
-        !document.content.trim()
-    )
-  ) {
+  if (documents.length !== REVIEWED_DOCUMENTS.length) {
     throw new Error('gcp_discovery_reviewed_documents_invalid')
+  }
+
+  for (const [index, document] of documents.entries()) {
+    const reviewed = REVIEWED_DOCUMENTS[index]
+
+    if (
+      !reviewed ||
+      document.id !== reviewed.id ||
+      document.canonicalUrl !== reviewed.canonicalUrl ||
+      document.checksum !== reviewed.checksum ||
+      computeAssistantKnowledgeChecksum({
+        title: reviewed.title,
+        canonicalUrl: reviewed.canonicalUrl,
+        content: document.content
+      }) !== reviewed.checksum
+    ) {
+      throw new Error('gcp_discovery_reviewed_documents_invalid')
+    }
   }
 }
 
@@ -311,6 +369,9 @@ export async function runDiscoveryResourceApply(
   // or provider code may be reached before both explicit gates pass.
   assertApplyGate(argv, environment)
 
+  const documents = dependencies.buildDocuments()
+  validateReviewedDocuments(documents)
+
   const clients = dependencies.createClients()
   const names = discoveryResourceNames()
   const dataStore = await clients.getDataStore()
@@ -381,8 +442,6 @@ export async function runDiscoveryResourceApply(
     dependencies.log(JSON.stringify({ resource: names.engine }))
   }
 
-  const documents = dependencies.buildDocuments()
-  validateReviewedDocuments(documents)
   const importOperation = await clients.importDocuments({
     parent: names.branch,
     reconciliationMode: 'INCREMENTAL',

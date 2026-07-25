@@ -6,6 +6,7 @@ import {
   readDiscoveryResourceSnapshot
 } from './plan-discovery-resources'
 import { runDiscoveryResourceApply } from './apply-discovery-resources'
+import { buildAssistantKnowledgeDocuments } from '../../src/lib/google/customer-assistant/knowledgeManifest'
 
 const collectionName =
   'projects/project-c683eb2c-20ae-4ec2-ac3/locations/global/collections/default_collection'
@@ -22,6 +23,15 @@ const reviewedIds = [
   'care',
   'contact'
 ]
+const reviewedDocuments = buildAssistantKnowledgeDocuments().map(
+  ({ canonicalUrl, checksum, content, id, title }) => ({
+    canonicalUrl,
+    checksum,
+    content,
+    id,
+    title
+  })
+)
 
 const matchingDataStore = {
   contentConfig: 'CONTENT_REQUIRED',
@@ -236,12 +246,7 @@ test('approved apply creates absent dedicated resources, waits, then incremental
         'approved-utekos-assistant-v1'
     },
     {
-      buildDocuments: () =>
-        reviewedIds.map(id => ({
-          canonicalUrl: `https://utekos.no/${id}` as const,
-          content: `Reviewed ${id}`,
-          id
-        })),
+      buildDocuments: () => reviewedDocuments,
       createClients: () => ({
         async createDataStore(request) {
           calls.push('createDataStore')
@@ -323,8 +328,64 @@ test('approved apply creates absent dedicated resources, waits, then incremental
     assert.ok(document.content.rawBytes instanceof Uint8Array)
     assert.equal(
       document.structData.fields.uri.stringValue,
-      `https://utekos.no/${document.id}`
+      reviewedDocuments.find(
+        reviewed => reviewed.id === document.id
+      )?.canonicalUrl
     )
+  }
+})
+
+test('approved apply rejects wrong URI, checksum, or changed content before client construction', async () => {
+  const invalidDocuments = [
+    [
+      reviewedDocuments[1]!,
+      reviewedDocuments[0]!,
+      ...reviewedDocuments.slice(2)
+    ],
+    reviewedDocuments.map((document, index) =>
+      index === 0 ?
+        {
+          ...document,
+          canonicalUrl: 'https://utekos.no/feil-side' as const
+        }
+      : document
+    ),
+    reviewedDocuments.map((document, index) =>
+      index === 0 ?
+        { ...document, checksum: '0'.repeat(64) }
+      : document
+    ),
+    reviewedDocuments.map((document, index) =>
+      index === 0 ?
+        { ...document, content: `${document.content}\nEndret.` }
+      : document
+    )
+  ]
+
+  for (const documents of invalidDocuments) {
+    let clientCalls = 0
+
+    await assert.rejects(
+      runDiscoveryResourceApply(
+        ['--apply'],
+        {
+          ASSISTANT_GCP_APPLY_APPROVAL:
+            'approved-utekos-assistant-v1'
+        },
+        {
+          buildDocuments: () => documents,
+          createClients() {
+            clientCalls += 1
+            throw new Error('clients_must_not_be_created')
+          },
+          log() {
+            throw new Error('log_must_not_be_called')
+          }
+        }
+      ),
+      { message: 'gcp_discovery_reviewed_documents_invalid' }
+    )
+    assert.equal(clientCalls, 0)
   }
 })
 
@@ -339,7 +400,7 @@ test('approved apply refuses dedicated resource drift and performs no import', a
           'approved-utekos-assistant-v1'
       },
       {
-        buildDocuments: () => [],
+        buildDocuments: () => reviewedDocuments,
         createClients: () => ({
           async createDataStore() {
             throw new Error('must_not_create')
