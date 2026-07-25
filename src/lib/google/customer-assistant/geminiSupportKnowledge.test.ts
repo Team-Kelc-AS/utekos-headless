@@ -159,11 +159,7 @@ test('constructs the client lazily and sends the exact stateless grounded reques
     options: unknown
   }
   const responseFormat = call.request.response_format as {
-    mime_type: string
-    schema: {
-      properties: { source_urls: { items: { enum: string[] } } }
-    }
-    type: string
+    properties: { source_urls: { items: { enum: string[] } } }
   }
 
   assert.equal(call.request.model, 'gemini-3.6-flash')
@@ -174,10 +170,12 @@ test('constructs the client lazily and sends the exact stateless grounded reques
     thinking_level: 'low'
   })
   assert.equal('tools' in call.request, false)
-  assert.equal(responseFormat.type, 'text')
-  assert.equal(responseFormat.mime_type, 'application/json')
+  assert.equal(
+    call.request.response_mime_type,
+    'application/json'
+  )
   assert.deepEqual(
-    responseFormat.schema.properties.source_urls.items.enum,
+    responseFormat.properties.source_urls.items.enum,
     approvedDocuments.map(document => document.canonicalUrl)
   )
   assert.match(

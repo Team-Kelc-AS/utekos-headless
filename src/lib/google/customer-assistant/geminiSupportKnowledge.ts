@@ -36,11 +36,8 @@ type GeminiInteractionRequest = {
   }
   input: string
   model: typeof CUSTOMER_ASSISTANT_GEMINI_MODEL
-  response_format: {
-    mime_type: 'application/json'
-    schema: Record<string, unknown>
-    type: 'text'
-  }
+  response_format: Record<string, unknown>
+  response_mime_type: 'application/json'
   response_modalities: ['text']
   store: false
   system_instruction: string
@@ -239,27 +236,21 @@ function createResponseFormat(
   documents: readonly AssistantKnowledgeDocument[]
 ): GeminiInteractionRequest['response_format'] {
   return {
-    type: 'text',
-    mime_type: 'application/json',
-    schema: {
-      type: 'object',
-      additionalProperties: false,
-      properties: {
-        answer: { type: 'string', maxLength: MAX_ANSWER_LENGTH },
-        answerable: { type: 'boolean' },
-        source_urls: {
-          type: 'array',
-          maxItems: MAX_SOURCE_COUNT,
-          items: {
-            type: 'string',
-            enum: documents.map(
-              document => document.canonicalUrl
-            )
-          }
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      answer: { type: 'string', maxLength: MAX_ANSWER_LENGTH },
+      answerable: { type: 'boolean' },
+      source_urls: {
+        type: 'array',
+        maxItems: MAX_SOURCE_COUNT,
+        items: {
+          type: 'string',
+          enum: documents.map(document => document.canonicalUrl)
         }
-      },
-      required: ['answer', 'answerable', 'source_urls']
-    }
+      }
+    },
+    required: ['answer', 'answerable', 'source_urls']
   }
 }
 
@@ -408,6 +399,7 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
           ),
           model: this.#config.model,
           response_format: createResponseFormat(this.#documents),
+          response_mime_type: 'application/json',
           response_modalities: ['text'],
           store: false,
           system_instruction: createSystemInstruction()
