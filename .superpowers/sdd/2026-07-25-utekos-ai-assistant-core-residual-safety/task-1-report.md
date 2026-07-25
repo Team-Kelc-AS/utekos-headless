@@ -115,3 +115,71 @@ Result: exit 0; all matched files use Prettier code style.
 
 None. The shell defaulted to Node 26 for initial exploratory commands, so final
 verification was rerun explicitly under the repository's Node 24.17.0 runtime.
+
+## Fix round 1 of 5: `variantnummer` product-identifier guard
+
+### Finding
+
+`variantnummer` was absent from both candidate-local product-identifier label
+patterns. Consequently, a labelled `UTE-12345` or `#12345` variant identifier
+could be treated as a concrete order token, and a formatted numeric variant
+identifier could be treated as a telephone number.
+
+### RED
+
+Command:
+
+```text
+task_node_bin=/Users/kristofferohnstadhjelmeland/.nvm/versions/node/v24.17.0/bin; PATH="$task_node_bin:$PATH" pnpm exec tsx --test src/lib/customer-assistant/server/resolveAssistantHandoff.test.ts
+```
+
+Result: exit 1; 30 passed, 1 failed. The expected failing assertion was
+`Variantnummer UTE-12345`: actual `order`, expected `null`.
+
+### Change
+
+Added `variantnummer` to the prefix and suffix candidate-local product-label
+patterns. The regression table covers both prefix and suffix forms of
+`Variantnummer UTE-12345` and `Variantnummer #12345`, plus prefix and suffix
+formatted numeric values (`400 00 000`). All remain outside order and
+personal-data routing.
+
+### GREEN
+
+```text
+task_node_bin=/Users/kristofferohnstadhjelmeland/.nvm/versions/node/v24.17.0/bin; PATH="$task_node_bin:$PATH" pnpm exec tsx --test src/lib/customer-assistant/server/resolveAssistantHandoff.test.ts src/lib/customer-assistant/server/answerAssistantRequest.test.ts
+```
+
+Result: exit 0; 62 passed, 0 failed.
+
+```text
+task_node_bin=/Users/kristofferohnstadhjelmeland/.nvm/versions/node/v24.17.0/bin; PATH="$task_node_bin:$PATH" pnpm exec tsc --noEmit -p tsconfig.customer-assistant.json
+```
+
+Result: exit 0.
+
+```text
+task_node_bin=/Users/kristofferohnstadhjelmeland/.nvm/versions/node/v24.17.0/bin; PATH="$task_node_bin:$PATH" pnpm exec eslint src/lib/customer-assistant/server/resolveAssistantHandoff.ts src/lib/customer-assistant/server/resolveAssistantHandoff.test.ts
+```
+
+Result: exit 0.
+
+```text
+task_node_bin=/Users/kristofferohnstadhjelmeland/.nvm/versions/node/v24.17.0/bin; PATH="$task_node_bin:$PATH" pnpm exec prettier --check src/lib/customer-assistant/server/resolveAssistantHandoff.ts src/lib/customer-assistant/server/resolveAssistantHandoff.test.ts
+```
+
+Result: exit 0; all matched files use Prettier code style.
+
+### Files and self-review
+
+- `src/lib/customer-assistant/server/resolveAssistantHandoff.ts`
+- `src/lib/customer-assistant/server/resolveAssistantHandoff.test.ts`
+
+The change is limited to the shared candidate-local label vocabulary, so it
+applies consistently to order-token, formatted-phone, and existing Luhn-bounded
+payment candidates. Existing unlabelled token handling remains fail-closed. No
+external state was accessed or mutated; unrelated dirty files remain untouched.
+
+### Commit
+
+`84f6a9b86` — `fix(assistant): guard variant identifiers`
