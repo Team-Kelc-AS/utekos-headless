@@ -33,6 +33,7 @@ export function QuantitySelector() {
       </Button>
 
       <Input
+        aria-label='Antall'
         type='text'
         inputMode='numeric'
         pattern='[0-9]*'

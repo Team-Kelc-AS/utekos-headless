@@ -18,7 +18,8 @@ export function AddToCart({
   product,
   selectedVariant,
   additionalLine,
-  additionalProductData
+  additionalProductData,
+  checkoutPresentation = 'balanced'
 }: ExtendedAddToCartProps) {
   const {
     performGoToCheckout,
@@ -51,6 +52,7 @@ export function AddToCart({
       isPending={isPending}
       isCheckoutPending={isCheckoutPending}
       isAvailable={isAvailable}
+      checkoutPresentation={checkoutPresentation}
     />
   )
 }

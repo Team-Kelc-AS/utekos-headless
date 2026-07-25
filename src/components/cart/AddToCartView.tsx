@@ -1,4 +1,5 @@
 import { Form } from '@/components/ui/form'
+import { cn } from '@/lib/utils/className'
 import { ModalSubmitButton } from './ModalSubmitButton'
 import { QuantitySelector } from './QuantitySelector'
 import type { AddToCartViewProps } from 'types/cart'
@@ -11,7 +12,8 @@ export function AddToCartView({
   onCheckout,
   isPending,
   isCheckoutPending,
-  isAvailable
+  isAvailable,
+  checkoutPresentation = 'balanced'
 }: AddToCartViewProps) {
   const quantity = form.watch('quantity')
 
@@ -22,7 +24,12 @@ export function AddToCartView({
         className='flex flex-col gap-4'
       >
         <div className='space-y-2'>
-          <label className='block text-sm font-semibold tracking-wide text-foreground uppercase'>
+          <label
+            className={cn(
+              'block text-sm font-semibold tracking-wide text-foreground',
+              checkoutPresentation === 'balanced' && 'uppercase'
+            )}
+          >
             Antall
           </label>
           <QuantitySelector />
@@ -35,6 +42,7 @@ export function AddToCartView({
           isDisabled={!isAvailable || isPending}
           availableForSale={isAvailable}
           onCheckout={form.handleSubmit(onCheckout)}
+          checkoutPresentation={checkoutPresentation}
         />
       </form>
     </Form>

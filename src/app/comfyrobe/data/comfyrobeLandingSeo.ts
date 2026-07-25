@@ -16,9 +16,9 @@ export const COMFYROBE_LANDING_IMAGE =
 
 export const COMFYROBE_LANDING_FAQ = [
   {
-    question: 'Er Comfyrobe™ vanntett?',
+    question: 'Hvilken størrelse bør jeg velge?',
     answer:
-      'Comfyrobe™ har et værbeskyttende skall med 8 000 mm vannsøyle, pustende membran og tapede sømmer. Den er utviklet for regn, vind og skiftende norsk hverdagsvær.'
+      'Velg størrelsen du vanligvis bruker, men husk at Comfyrobe™ er laget for å sitte romslig. Se den komplette størrelsesguiden for mål og anbefalinger.'
   },
   {
     question: 'Hvordan er passformen?',
@@ -26,9 +26,19 @@ export const COMFYROBE_LANDING_FAQ = [
       'Passformen er bevisst romslig og unisex, slik at kåpen enkelt kan brukes over vanlige klær eller flere lag. Sidesplitter gir ekstra bevegelsesfrihet.'
   },
   {
-    question: 'Hvilken størrelse bør jeg velge?',
+    question: 'Er Comfyrobe™ vanntett?',
     answer:
-      'Velg størrelsen du vanligvis bruker, men husk at Comfyrobe™ er laget for å sitte romslig. Se den komplette størrelsesguiden for mål og anbefalinger.'
+      'Comfyrobe™ har et værbeskyttende skall med 8 000 mm vannsøyle, pustende membran og tapede sømmer. Den er utviklet for regn, vind og skiftende norsk hverdagsvær.'
+  },
+  {
+    question: 'Hvor varm er Comfyrobe™?',
+    answer:
+      'Innsiden er fôret med myk SherpaCore™ 250 GSM. Den gir lun komfort på kalde og vindfulle dager, samtidig som den pustende membranen slipper ut overskuddsvarme i aktivitet.'
+  },
+  {
+    question: 'Kan jeg returnere Comfyrobe™?',
+    answer:
+      'Ja. Du har 14 dagers returrett. Prøv passformen hjemme og følg returinstruksjonene dersom størrelsen ikke blir riktig.'
   },
   {
     question: 'Kan den brukes som vanlig jakke?',

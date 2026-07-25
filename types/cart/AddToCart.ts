@@ -11,6 +11,10 @@ export type AddToCartButtonProps = {
   isDisabled: boolean
 }
 
+export type CheckoutPresentation =
+  | 'balanced'
+  | 'standard-primary'
+
 export type PrepareAddToCartInput = {
   product: ShopifyProduct
   selectedVariant: ShopifyProductVariant
@@ -28,6 +32,7 @@ export type AddToCartProps = {
   product: ShopifyProduct
   selectedVariant: ShopifyProductVariant | null
   additionalLine?: { variantId: string; quantity: number } | undefined
+  checkoutPresentation?: CheckoutPresentation
 }
 
 export type AddToCartViewProps = {
@@ -39,6 +44,7 @@ export type AddToCartViewProps = {
   isPending: boolean
   isCheckoutPending: boolean
   isAvailable: boolean
+  checkoutPresentation?: CheckoutPresentation
 }
 
 export type CheckoutPanelProps = {
