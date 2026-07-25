@@ -5,138 +5,84 @@ import type {
   IdentityPoolClientOptions
 } from 'google-auth-library'
 import {
-  createGoogleDataManagerIngestionClient,
-  readGoogleDataManagerAuthConfig,
-  type GoogleDataManagerAuthDependencies,
-  type GoogleDataManagerIngestionClient
-} from './createGoogleDataManagerIngestionClient'
+  createGoogleCloudClientOptions,
+  readGoogleCloudAuthConfig,
+  type GoogleCloudAuthDependencies
+} from './createGoogleCloudClientOptions'
 
-function ingestionClient(): GoogleDataManagerIngestionClient {
-  return {
-    ingestEvents: async () => [{}],
-    retrieveRequestStatus: async () => [
-      { requestStatusPerDestination: [] }
-    ]
-  }
-}
-
-test('uses local Application Default Credentials outside Vercel', () => {
-  const localClient = ingestionClient()
+test('allows Google ADC outside Vercel', () => {
   let externalAccountCount = 0
   let oidcTokenCount = 0
 
-  const dependencies: GoogleDataManagerAuthDependencies = {
+  const dependencies: GoogleCloudAuthDependencies = {
     createExternalAccountClient: () => {
       externalAccountCount += 1
 
       return {} as BaseExternalAccountClient
     },
-
-    createIngestionClient: options => {
-      assert.equal(options, undefined)
-
-      return localClient
-    },
-
     getOidcToken: async () => {
       oidcTokenCount += 1
 
       return 'unexpected'
-    },
-
-    readLocalServiceAccountCredentials: () => undefined
+    }
   }
 
-  const client = createGoogleDataManagerIngestionClient(
-    {},
-    dependencies
+  assert.equal(
+    createGoogleCloudClientOptions({}, dependencies),
+    undefined
   )
-
-  assert.equal(client, localClient)
   assert.equal(externalAccountCount, 0)
   assert.equal(oidcTokenCount, 0)
 })
 
-test('builds a scoped external account client on Vercel', async () => {
+test('builds cloud-platform workload identity options on Vercel', async () => {
   const audience =
     '//iam.googleapis.com/projects/123456789/locations/global/workloadIdentityPools/vercel/providers/vercel'
-
   const externalAuthClient = {} as BaseExternalAccountClient
-
-  const vercelClient = ingestionClient()
-
   let externalOptions: IdentityPoolClientOptions | undefined
-
-  let ingestionOptions:
-    | {
-        authClient: BaseExternalAccountClient
-        projectId: string
-      }
-    | undefined
-
   let oidcAudience: string | undefined
 
-  const dependencies: GoogleDataManagerAuthDependencies = {
-    createExternalAccountClient: options => {
-      externalOptions = options
-
-      return externalAuthClient
-    },
-
-    createIngestionClient: options => {
-      ingestionOptions = options
-
-      return vercelClient
-    },
-
-    getOidcToken: async options => {
-      oidcAudience = options.audience
-
-      return 'vercel-oidc-token'
-    },
-
-    readLocalServiceAccountCredentials: () => undefined
-  }
-
-  const client = createGoogleDataManagerIngestionClient(
+  const options = createGoogleCloudClientOptions(
     {
       GCP_AUDIENCE: audience,
       GCP_PROJECT_ID: 'utekos-production',
       GCP_SERVICE_ACCOUNT_EMAIL:
-        'vercel-data-manager@utekos-production.iam.gserviceaccount.com',
+        'vercel-assistant@utekos-production.iam.gserviceaccount.com',
       VERCEL: '1'
     },
-    dependencies
+    {
+      createExternalAccountClient: candidate => {
+        externalOptions = candidate
+
+        return externalAuthClient
+      },
+      getOidcToken: async candidate => {
+        oidcAudience = candidate.audience
+
+        return 'vercel-oidc-token'
+      }
+    }
   )
 
-  assert.equal(client, vercelClient)
-
-  assert.deepEqual(ingestionOptions, {
+  assert.deepEqual(options, {
     authClient: externalAuthClient,
     projectId: 'utekos-production'
   })
-
   assert.ok(externalOptions)
-
   assert.equal(externalOptions.type, 'external_account')
-
   assert.equal(externalOptions.audience, audience)
-
   assert.equal(
     externalOptions.subject_token_type,
     'urn:ietf:params:oauth:token-type:jwt'
   )
-
   assert.equal(
     externalOptions.token_url,
     'https://sts.googleapis.com/v1/token'
   )
-
   assert.equal(
     externalOptions.service_account_impersonation_url,
-    'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/vercel-data-manager@utekos-production.iam.gserviceaccount.com:generateAccessToken'
+    'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/vercel-assistant@utekos-production.iam.gserviceaccount.com:generateAccessToken'
   )
-
   assert.deepEqual(externalOptions.scopes, [
     'https://www.googleapis.com/auth/cloud-platform'
   ])
@@ -144,29 +90,27 @@ test('builds a scoped external account client on Vercel', async () => {
   const supplier = externalOptions.subject_token_supplier
 
   assert.ok(supplier)
-
   assert.equal(
     await supplier.getSubjectToken(undefined as never),
     'vercel-oidc-token'
   )
-
   assert.equal(oidcAudience, audience)
 })
 
 test('rejects incomplete or unsafe Vercel auth configuration', () => {
   assert.throws(
-    () => readGoogleDataManagerAuthConfig({ VERCEL: '1' }),
+    () => readGoogleCloudAuthConfig({ VERCEL: '1' }),
     /GCP_PROJECT_ID/
   )
 
   assert.throws(
     () =>
-      readGoogleDataManagerAuthConfig({
+      readGoogleCloudAuthConfig({
         GCP_AUDIENCE:
           'https://iam.googleapis.com/projects/123/locations/global/workloadIdentityPools/vercel/providers/vercel',
         GCP_PROJECT_ID: 'utekos-production',
         GCP_SERVICE_ACCOUNT_EMAIL:
-          'vercel-data-manager@utekos-production.iam.gserviceaccount.com',
+          'vercel-assistant@utekos-production.iam.gserviceaccount.com',
         VERCEL: '1'
       }),
     /GCP_AUDIENCE/
@@ -174,7 +118,7 @@ test('rejects incomplete or unsafe Vercel auth configuration', () => {
 
   assert.throws(
     () =>
-      readGoogleDataManagerAuthConfig({
+      readGoogleCloudAuthConfig({
         GCP_AUDIENCE:
           '//iam.googleapis.com/projects/123/locations/global/workloadIdentityPools/vercel/providers/vercel',
         GCP_PROJECT_ID: 'utekos-production',
@@ -182,5 +126,26 @@ test('rejects incomplete or unsafe Vercel auth configuration', () => {
         VERCEL: '1'
       }),
     /GCP_SERVICE_ACCOUNT_EMAIL/
+  )
+})
+
+test('fails closed when Google cannot create an external account client', () => {
+  assert.throws(
+    () =>
+      createGoogleCloudClientOptions(
+        {
+          GCP_AUDIENCE:
+            '//iam.googleapis.com/projects/123/locations/global/workloadIdentityPools/vercel/providers/vercel',
+          GCP_PROJECT_ID: 'utekos-production',
+          GCP_SERVICE_ACCOUNT_EMAIL:
+            'vercel-assistant@utekos-production.iam.gserviceaccount.com',
+          VERCEL: '1'
+        },
+        {
+          createExternalAccountClient: () => null,
+          getOidcToken: async () => 'vercel-oidc-token'
+        }
+      ),
+    /Could not create Google external account client/
   )
 })

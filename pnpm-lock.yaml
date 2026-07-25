@@ -41,6 +41,12 @@ importers:
       '@google-analytics/data':
         specifier: ^6.1.0
         version: 6.1.0(supports-color@8.1.1)
+      '@google-cloud/discoveryengine':
+        specifier: 2.9.0
+        version: 2.9.0(supports-color@8.1.1)
+      '@google-cloud/retail':
+        specifier: 4.4.0
+        version: 4.4.0(supports-color@8.1.1)
       '@google/genai':
         specifier: ^2.10.0
         version: 2.10.0(@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1)
@@ -1838,6 +1844,14 @@ packages:
 
   '@google-analytics/data@6.1.0':
     resolution: {integrity: sha512-72sICGmThvOuy1yVlaVRvWgUZ+4VvAlmkIlDgzo1SSSRl2MvbNJavnMTG7uGhNnlgwuHNwReKrm6R/7gAKo4hw==}
+    engines: {node: '>=18'}
+
+  '@google-cloud/discoveryengine@2.9.0':
+    resolution: {integrity: sha512-0W5rdfVFCxULuLLsqB5kOmWLuxVJX5FRZj2mdLKrd6yemvgS61vMxPsNiwYNDUH5d57f2/M/JRRekj+6zYc+bA==}
+    engines: {node: '>=18'}
+
+  '@google-cloud/retail@4.4.0':
+    resolution: {integrity: sha512-v4MxScgsfA6hv/NvhZZ7Q5Q7GYod1tstkMsRj3n4Z9pbS8im+0iYCGYDkGcHbL/VZ7oHi60GWAWCx3fCS4ZPBA==}
     engines: {node: '>=18'}
 
   '@google/genai@2.10.0':
@@ -10846,6 +10860,18 @@ snapshots:
       - supports-color
 
   '@google-analytics/data@6.1.0(supports-color@8.1.1)':
+    dependencies:
+      google-gax: 5.0.7(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@google-cloud/discoveryengine@2.9.0(supports-color@8.1.1)':
+    dependencies:
+      google-gax: 5.0.7(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@google-cloud/retail@4.4.0(supports-color@8.1.1)':
     dependencies:
       google-gax: 5.0.7(supports-color@8.1.1)
     transitivePeerDependencies:

@@ -13,6 +13,10 @@ import {
   type IdentityPoolClientOptions
 } from 'google-auth-library'
 import { z } from 'zod'
+import {
+  createGoogleCloudClientOptions,
+  readGoogleCloudAuthConfig
+} from '@/lib/google/auth/createGoogleCloudClientOptions'
 
 const DATA_MANAGER_SCOPES = [
   'https://www.googleapis.com/auth/datamanager',
@@ -150,21 +154,6 @@ function readLocalDevServiceAccountCredentials():
   }
 }
 
-function requiredEnvironmentValue(
-  environment: Environment,
-  name: string
-) {
-  const value = environment[name]?.trim()
-
-  if (!value) {
-    throw new Error(
-      `Missing required Google Data Manager auth configuration: ${name}`
-    )
-  }
-
-  return value
-}
-
 export function readGoogleDataManagerAuthConfig(
   environment: Environment = process.env,
   dependencies: Pick<
@@ -183,40 +172,8 @@ export function readGoogleDataManagerAuthConfig(
     return { mode: 'local_adc' }
   }
 
-  const projectId = requiredEnvironmentValue(
-    environment,
-    'GCP_PROJECT_ID'
-  )
-
-  const serviceAccountEmail = requiredEnvironmentValue(
-    environment,
-    'GCP_SERVICE_ACCOUNT_EMAIL'
-  )
-
-  const audience = requiredEnvironmentValue(
-    environment,
-    'GCP_AUDIENCE'
-  )
-
-  if (
-    !/^\/\/iam\.googleapis\.com\/projects\/\d+\/locations\/global\/workloadIdentityPools\/[A-Za-z0-9._-]+\/providers\/[A-Za-z0-9._-]+$/.test(
-      audience
-    )
-  ) {
-    throw new Error(
-      'GCP_AUDIENCE must be a canonical Google Workload Identity provider resource name'
-    )
-  }
-
-  if (
-    !/^[A-Za-z0-9._-]+@[a-z0-9-]+\.iam\.gserviceaccount\.com$/.test(
-      serviceAccountEmail
-    )
-  ) {
-    throw new Error(
-      'GCP_SERVICE_ACCOUNT_EMAIL must be a Google service account email'
-    )
-  }
+  const { audience, projectId, serviceAccountEmail } =
+    readGoogleCloudAuthConfig(environment)
 
   return {
     audience,
@@ -253,27 +210,16 @@ export function createGoogleDataManagerIngestionClient(
     })
   }
 
-  const authClient = dependencies.createExternalAccountClient({
-    type: 'external_account',
-    audience: config.audience,
-    subject_token_type: 'urn:ietf:params:oauth:token-type:jwt',
-    token_url: 'https://sts.googleapis.com/v1/token',
-    service_account_impersonation_url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${config.serviceAccountEmail}:generateAccessToken`,
-    scopes: [...DATA_MANAGER_SCOPES],
-    subject_token_supplier: {
-      getSubjectToken: () =>
-        dependencies.getOidcToken({ audience: config.audience })
-    }
-  })
+  const googleCloudOptions = createGoogleCloudClientOptions(
+    environment,
+    dependencies
+  )
 
-  if (!authClient) {
+  if (!googleCloudOptions) {
     throw new Error(
-      'Could not create Google external account client'
+      'Could not create Google Cloud client options on Vercel'
     )
   }
 
-  return dependencies.createIngestionClient({
-    authClient,
-    projectId: config.projectId
-  })
+  return dependencies.createIngestionClient(googleCloudOptions)
 }
