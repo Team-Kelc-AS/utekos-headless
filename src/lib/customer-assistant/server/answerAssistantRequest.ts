@@ -6,7 +6,6 @@ import {
   type AssistantRecommendation,
   type AssistantSource
 } from '../assistantProtocol'
-import { normalizeAssistantText } from '../assistantProductProfiles'
 import {
   assistantProductsResultSchema,
   commerceRecommendationResultSchema,
@@ -18,6 +17,7 @@ import {
 import { matchAssistantProducts } from './matchAssistantProducts'
 import { resolveAssistantClarification } from './resolveAssistantClarification'
 import { resolveAssistantHandoff } from './resolveAssistantHandoff'
+import { resolveAssistantStockAvailability } from './resolveAssistantStockAvailability'
 import { fetchAssistantProducts } from './shopifyAssistantCatalog'
 import {
   resolveSupportKnowledgeQuestion,
@@ -106,6 +106,31 @@ function getAllUserText(
     .trim()
 }
 
+function resolveRequestHandoff(
+  messages: AssistantChatRequest['messages'],
+  failureCount: number
+) {
+  for (const message of messages) {
+    if (message.role !== 'user') {
+      continue
+    }
+
+    const reason = resolveAssistantHandoff(
+      message.parts
+        .map(part => part.text)
+        .join('\n')
+        .trim(),
+      0
+    )
+
+    if (reason) {
+      return reason
+    }
+  }
+
+  return resolveAssistantHandoff('', failureCount)
+}
+
 function createCatalogInput(
   context: AssistantRequestContext,
   handles?: string[]
@@ -146,175 +171,6 @@ function reorderEligibleAlternatives(
       isPrimary: index === 0
     })
   )
-}
-
-const variantQuestionPattern =
-  /\b(?:størrelse|storrelse|str|size|farge|farve|variant|modell)\b/u
-
-function escapeRegularExpression(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-}
-
-function includesExactOptionValue(
-  normalizedText: string,
-  optionValue: string
-) {
-  const normalizedValue = normalizeAssistantText(optionValue)
-  const pattern = escapeRegularExpression(
-    normalizedValue
-  ).replace(/\s+/gu, '\\s+')
-
-  return new RegExp(
-    `(?:^|[^\\p{L}\\p{N}])${pattern}(?=$|[^\\p{L}\\p{N}])`,
-    'u'
-  ).test(normalizedText)
-}
-
-type StockOptionChoice = {
-  normalizedName: string
-  value: string
-  normalizedValue: string
-  order: number
-}
-
-function getStockOptionDimensions(
-  product: AssistantRecommendation['product']
-) {
-  const dimensions = new Map<
-    string,
-    { name: string; order: number; values: Map<string, string> }
-  >()
-  let order = 0
-
-  for (const variant of product.variants) {
-    for (const option of variant.selectedOptions) {
-      const normalizedName = normalizeAssistantText(option.name)
-      const normalizedValue = normalizeAssistantText(
-        option.value
-      )
-      const dimension = dimensions.get(normalizedName)
-
-      if (dimension) {
-        if (!dimension.values.has(normalizedValue)) {
-          dimension.values.set(normalizedValue, option.value)
-        }
-        continue
-      }
-
-      dimensions.set(normalizedName, {
-        name: option.name,
-        order,
-        values: new Map([[normalizedValue, option.value]])
-      })
-      order += 1
-    }
-  }
-
-  return dimensions
-}
-
-function resolveStockChoices(
-  product: AssistantRecommendation['product'],
-  messages: AssistantChatRequest['messages']
-): StockOptionChoice[] | null {
-  const dimensions = getStockOptionDimensions(product)
-  const choices = new Map<string, StockOptionChoice>()
-
-  for (const message of messages) {
-    if (message.role !== 'user') {
-      continue
-    }
-
-    const normalizedText = normalizeAssistantText(
-      message.parts.map(part => part.text).join('\n')
-    )
-
-    for (const [normalizedName, dimension] of dimensions) {
-      const matches = [...dimension.values].filter(([, value]) =>
-        includesExactOptionValue(normalizedText, value)
-      )
-
-      if (matches.length > 1) {
-        return null
-      }
-
-      const [match] = matches
-
-      if (!match) {
-        continue
-      }
-
-      const [normalizedValue, value] = match
-      choices.set(normalizedName, {
-        normalizedName,
-        value,
-        normalizedValue,
-        order: dimension.order
-      })
-    }
-  }
-
-  return [...choices.values()].toSorted(
-    (left, right) => left.order - right.order
-  )
-}
-
-function resolveStockAvailability(
-  product: AssistantRecommendation['product'],
-  messages: AssistantChatRequest['messages']
-):
-  | { kind: 'product'; availableForSale: boolean }
-  | { kind: 'variant'; availableForSale: boolean; label: string }
-  | { kind: 'clarify' } {
-  const choices = resolveStockChoices(product, messages)
-  const normalizedQuestion = normalizeAssistantText(
-    getLastUserText(messages)
-  )
-
-  if (!choices) {
-    return { kind: 'clarify' }
-  }
-
-  if (choices.length === 0) {
-    const availability = new Set(
-      product.variants.map(variant => variant.availableForSale)
-    )
-
-    return (
-        variantQuestionPattern.test(normalizedQuestion) ||
-          availability.size > 1
-      ) ?
-        { kind: 'clarify' }
-      : {
-          kind: 'product',
-          availableForSale: product.availableForSale
-        }
-  }
-
-  const variants = product.variants.filter(variant =>
-    choices.every(choice =>
-      variant.selectedOptions.some(
-        option =>
-          normalizeAssistantText(option.name) ===
-            choice.normalizedName &&
-          normalizeAssistantText(option.value) ===
-            choice.normalizedValue
-      )
-    )
-  )
-  const availability = new Set(
-    variants.map(variant => variant.availableForSale)
-  )
-
-  if (variants.length === 0 || availability.size !== 1) {
-    return { kind: 'clarify' }
-  }
-
-  return {
-    kind: 'variant',
-    availableForSale: variants[0]?.availableForSale ?? false,
-    label: choices.map(choice => choice.value).join(' / ')
-  }
 }
 
 async function answerProductHelp(
@@ -430,7 +286,7 @@ async function answerStockHelp(
       return noGroundedAnswer()
     }
 
-    const availability = resolveStockAvailability(
+    const availability = resolveAssistantStockAvailability(
       product,
       request.messages
     )
@@ -508,9 +364,8 @@ export async function answerAssistantRequest(
   context: AssistantRequestContext,
   adapters: AssistantAdapters = defaultAdapters
 ): Promise<AssistantOutcome> {
-  const lastUserText = getAllUserText(request.messages)
-  const restrictedReason = resolveAssistantHandoff(
-    lastUserText,
+  const restrictedReason = resolveRequestHandoff(
+    request.messages,
     context.failureCount
   )
 

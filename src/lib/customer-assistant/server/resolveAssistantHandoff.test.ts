@@ -110,6 +110,10 @@ for (const [text, reason] of directSharingCases) {
 const directRestrictedCases = [
   ['kunde@example.no', 'personal_data'],
   ['+47 400 00 000', 'personal_data'],
+  ['+4740000000', 'personal_data'],
+  ['+4740216343', 'personal_data'],
+  ['004740000000', 'personal_data'],
+  ['004740216343', 'personal_data'],
   ['400 00 000', 'personal_data'],
   ['4111 1111 1111 1111', 'personal_data'],
   ['#12345', 'order'],
@@ -118,6 +122,7 @@ const directRestrictedCases = [
   ['Pakken min mangler fortsatt', 'order'],
   ['Kortet mitt blir avvist', 'payment'],
   ['Varen kom skadet', 'complaint'],
+  ['Varen er ødelagt', 'complaint'],
   ['Sømmen er defekt', 'complaint']
 ] as const
 
@@ -150,8 +155,38 @@ test('keeps labelled product identifiers outside restricted routing', () => {
     'Variantnummer #12345',
     '#12345 variantnummer',
     'Variantnummer 400 00 000',
-    '400 00 000 variantnummer'
+    '400 00 000 variantnummer',
+    'Produktnummeret er UTE-12345',
+    'Varenummeret er 400 00 000',
+    'Artikkelnummeret: #12345',
+    'Modellnummeret - UTE-12345',
+    'Variantnummeret = #12345',
+    'SKU = #12345',
+    'UTE-12345 (SKU)',
+    '#12345, produktnummer',
+    'Produktnummeret er +4740000000',
+    '004740000000 (SKU)'
   ]) {
+    assert.equal(resolveAssistantHandoff(text, 0), null, text)
+  }
+})
+
+test('a product label exempts only its associated candidate', () => {
+  for (const [text, reason] of [
+    ['UTE-12345 (SKU), #67890', 'order'],
+    ['SKU = #12345, 400 00 000', 'personal_data'],
+    [
+      'Varenummeret er 400 00 000, 4111 1111 1111 1111',
+      'personal_data'
+    ],
+    ['#12345, SKU = +4740000000', 'order']
+  ] as const) {
+    assert.equal(resolveAssistantHandoff(text, 0), reason, text)
+  }
+})
+
+test('formatted phone boundaries treat Unicode numbers as numeric context', () => {
+  for (const text of ['١400 00 000٢', '١+4740000000٢']) {
     assert.equal(resolveAssistantHandoff(text, 0), null, text)
   }
 })

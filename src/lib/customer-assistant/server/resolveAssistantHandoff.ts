@@ -20,7 +20,7 @@ const specificHandoffPatterns: ReadonlyArray<
   ],
   [
     'complaint',
-    /\b(?:reklamere|reklamasjon(?:en)?|klage(?:n)?|skade(?:t|de)?|ødelagt|defekt(?:e)?|produksjonsfeil)\b/u
+    /(?<![\p{L}\p{N}])(?:reklamere|reklamasjon(?:en)?|klage(?:n)?|skade(?:t|de)?|ødelagt(?:e)?|defekt(?:e)?|produksjonsfeil)(?![\p{L}\p{N}])/u
   ]
 ]
 
@@ -28,7 +28,7 @@ const rawEmailPattern =
   /(?<![\p{L}\p{N}._%+-])[\p{L}\p{N}._%+-]+@[\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)+(?![\p{L}\p{N}._%+-])/u
 
 const formattedPhoneCandidatePattern =
-  /(?<!\d)(?:(?:\+|00)47[\s.-]?)?(?:\d{3}[\s.-]\d{2}[\s.-]\d{3}|\d{2}(?:[\s.-]\d{2}){3})(?!\d)/gu
+  /(?<!\p{N})(?:(?:\+47|0047)[\s.-]?(?:[0-9]{8}|[0-9]{3}[\s.-][0-9]{2}[\s.-][0-9]{3}|[0-9]{2}(?:[\s.-][0-9]{2}){3})|[0-9]{3}[\s.-][0-9]{2}[\s.-][0-9]{3}|[0-9]{2}(?:[\s.-][0-9]{2}){3})(?!\p{N})/gu
 
 const concreteOrderTokenPattern =
   /(?<![\p{L}\p{N}])(?:#\d{5,}|ute-\d{5,})(?![\p{L}\p{N}])/gu
@@ -36,11 +36,8 @@ const concreteOrderTokenPattern =
 const paymentNumberCandidatePattern =
   /(?<![\p{L}\p{N}])(?:\d[\s-]?){12,18}\d(?![\p{L}\p{N}])/gu
 
-const productNumberLabelBeforeCandidatePattern =
-  /\b(?:produktnummer|varenummer|artikkelnummer|sku|modellnummer|variantnummer)\b(?:\s+er)?[\s:#-]*$/u
-
-const productNumberLabelAfterCandidatePattern =
-  /^[\s:#-]*(?:produktnummer|varenummer|artikkelnummer|sku|modellnummer|variantnummer)\b/u
+const productIdentifierLabelPattern =
+  /(?<![\p{L}\p{N}])(?:produktnummer(?:et)?|varenummer(?:et)?|artikkelnummer(?:et)?|sku(?:-en)?|modellnummer(?:et)?|variantnummer(?:et)?)(?![\p{L}\p{N}])/gu
 
 const labeledPersonalSharingPattern =
   /\b(?:telefonnummer(?:et)?|e-post(?:adresse(?:n)?)?|epost(?:adresse(?:n)?)?|adresse(?:n)?|fødselsnummer|personnummer)\b(?:\s+(?:er|:))?\s+(?:min|mitt|mine)\b|\b(?:min|mitt|mine)\s+(?:telefonnummer(?:et)?|e-post(?:adresse(?:n)?)?|epost(?:adresse(?:n)?)?|adresse(?:n)?|fødselsnummer|personnummer)\b/u
@@ -68,86 +65,159 @@ function passesLuhnCheck(value: string) {
   return sum % 10 === 0
 }
 
-function hasNearbyProductIdentifierLabel(
+type RestrictedCandidate = {
+  kind: 'order' | 'phone' | 'payment'
+  start: number
+  end: number
+}
+
+type ProductIdentifierLabel = { start: number; end: number }
+
+function collectPatternCandidates(
   text: string,
-  matchIndex: number,
-  matchLength: number
-) {
-  const prefix = text.slice(
-    Math.max(0, matchIndex - 48),
-    matchIndex
-  )
-  const suffix = text.slice(
-    matchIndex + matchLength,
-    matchIndex + matchLength + 48
-  )
+  pattern: RegExp,
+  kind: RestrictedCandidate['kind']
+): RestrictedCandidate[] {
+  return [...text.matchAll(pattern)].map(match => {
+    const start = match.index ?? 0
 
+    return { kind, start, end: start + match[0].length }
+  })
+}
+
+function collectRestrictedCandidates(
+  text: string
+): RestrictedCandidate[] {
+  const paymentCandidates = [
+    ...text.matchAll(paymentNumberCandidatePattern)
+  ].flatMap(match => {
+    const digits = match[0].replace(/[^0-9]/gu, '')
+
+    if (
+      digits.length < 13 ||
+      digits.length > 19 ||
+      !passesLuhnCheck(digits)
+    ) {
+      return []
+    }
+
+    const start = match.index ?? 0
+    return [
+      {
+        kind: 'payment' as const,
+        start,
+        end: start + match[0].length
+      }
+    ]
+  })
+
+  return [
+    ...collectPatternCandidates(
+      text,
+      concreteOrderTokenPattern,
+      'order'
+    ),
+    ...collectPatternCandidates(
+      text,
+      formattedPhoneCandidatePattern,
+      'phone'
+    ),
+    ...paymentCandidates
+  ].toSorted((left, right) => left.start - right.start)
+}
+
+function isBoundedProductLabelConnector(connector: string) {
   return (
-    productNumberLabelBeforeCandidatePattern.test(prefix) ||
-    productNumberLabelAfterCandidatePattern.test(suffix)
+    connector.length <= 48 &&
+    /^(?:[\s,:=()#-]*|[\s,:=()#-]*\ber\b[\s,:=()#-]*)$/u.test(
+      connector
+    )
   )
 }
 
-function containsFormattedPhone(text: string) {
-  for (const match of text.matchAll(
-    formattedPhoneCandidatePattern
-  )) {
-    const matchIndex = match.index ?? 0
-
-    if (
-      !hasNearbyProductIdentifierLabel(
-        text,
-        matchIndex,
-        match[0].length
-      )
-    ) {
-      return true
-    }
-  }
-
-  return false
+function isParenthesizedRange(
+  text: string,
+  start: number,
+  end: number
+) {
+  return (
+    /\(\s*$/u.test(text.slice(0, start)) &&
+    /^\s*\)/u.test(text.slice(end))
+  )
 }
 
-function containsConcreteOrderToken(text: string) {
-  for (const match of text.matchAll(concreteOrderTokenPattern)) {
-    const matchIndex = match.index ?? 0
+function getProductLabelAssociationScore(
+  text: string,
+  label: ProductIdentifierLabel,
+  candidate: RestrictedCandidate
+) {
+  const labelBeforeCandidate = label.end <= candidate.start
+  const connector =
+    labelBeforeCandidate ?
+      text.slice(label.end, candidate.start)
+    : text.slice(candidate.end, label.start)
 
-    if (
-      !hasNearbyProductIdentifierLabel(
-        text,
-        matchIndex,
-        match[0].length
-      )
-    ) {
-      return true
-    }
+  if (!isBoundedProductLabelConnector(connector)) {
+    return null
   }
 
-  return false
+  const hasForwardConnector = /\ber\b|[=:]/u.test(connector)
+  const labelIsParenthesized = isParenthesizedRange(
+    text,
+    label.start,
+    label.end
+  )
+  const candidateIsParenthesized = isParenthesizedRange(
+    text,
+    candidate.start,
+    candidate.end
+  )
+  const directionScore =
+    labelBeforeCandidate && hasForwardConnector ? 0
+    : !labelBeforeCandidate && labelIsParenthesized ? 0
+    : labelBeforeCandidate && candidateIsParenthesized ? 0
+    : labelBeforeCandidate && labelIsParenthesized ? 2
+    : 1
+
+  return directionScore * 100 + connector.length
 }
 
-function containsPaymentNumber(text: string) {
-  for (const match of text.matchAll(
-    paymentNumberCandidatePattern
-  )) {
-    const digits = match[0].replace(/\D/gu, '')
-    if (digits.length < 13 || digits.length > 19) continue
+function findProductLabeledCandidates(
+  text: string,
+  candidates: RestrictedCandidate[]
+) {
+  const labeledCandidates = new Set<RestrictedCandidate>()
+  const labels = [
+    ...text.matchAll(productIdentifierLabelPattern)
+  ].map(match => {
+    const start = match.index ?? 0
 
-    const matchIndex = match.index ?? 0
-    if (
-      hasNearbyProductIdentifierLabel(
-        text,
-        matchIndex,
-        match[0].length
-      )
-    ) {
-      continue
+    return { start, end: start + match[0].length }
+  })
+
+  for (const label of labels) {
+    const association = candidates
+      .flatMap(candidate => {
+        const score = getProductLabelAssociationScore(
+          text,
+          label,
+          candidate
+        )
+
+        return score === null ? [] : [{ candidate, score }]
+      })
+      .toSorted(
+        (left, right) =>
+          left.score - right.score ||
+          left.candidate.start - right.candidate.start
+      )[0]
+
+    if (association) {
+      labeledCandidates.add(association.candidate)
     }
-
-    if (passesLuhnCheck(digits)) return true
   }
 
-  return false
+  return labeledCandidates
 }
 
 export function resolveAssistantHandoff(
@@ -163,14 +233,28 @@ export function resolveAssistantHandoff(
     return matchedReason
   }
 
-  if (containsConcreteOrderToken(normalizedText)) {
+  const restrictedCandidates =
+    collectRestrictedCandidates(normalizedText)
+  const productLabeledCandidates = findProductLabeledCandidates(
+    normalizedText,
+    restrictedCandidates
+  )
+  const containsUnlabeledCandidate = (
+    ...kinds: RestrictedCandidate['kind'][]
+  ) =>
+    restrictedCandidates.some(
+      candidate =>
+        kinds.includes(candidate.kind) &&
+        !productLabeledCandidates.has(candidate)
+    )
+
+  if (containsUnlabeledCandidate('order')) {
     return 'order'
   }
 
   if (
     rawEmailPattern.test(normalizedText) ||
-    containsFormattedPhone(normalizedText) ||
-    containsPaymentNumber(normalizedText) ||
+    containsUnlabeledCandidate('phone', 'payment') ||
     labeledPersonalSharingPattern.test(normalizedText) ||
     directPersonalSharingPattern.test(normalizedText)
   ) {

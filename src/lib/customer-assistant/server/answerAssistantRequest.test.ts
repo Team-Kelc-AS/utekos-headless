@@ -84,6 +84,30 @@ function createAdapters(
   }
 }
 
+function createObservedAdapters(products: AssistantProduct[]) {
+  const calls = { shopify: 0, knowledge: 0, recommendation: 0 }
+  const adapters = createAdapters({
+    fetchProducts: async () => {
+      calls.shopify += 1
+      return products
+    },
+    supportKnowledge: {
+      answer: async input => {
+        calls.knowledge += 1
+        return staticSupportKnowledgeAdapter.answer(input)
+      }
+    },
+    commerceRecommendation: {
+      recommend: async () => {
+        calls.recommendation += 1
+        return []
+      }
+    }
+  })
+
+  return { adapters, calls }
+}
+
 test('product help reads Shopify, applies matching, and emits product recommendations', async () => {
   const catalogCalls: unknown[] = []
   const recommendationCalls: unknown[] = []
@@ -236,6 +260,7 @@ test('stock help resolves an explicitly requested variant option exactly', async
 
   for (const [question, option, availability] of [
     ['Har dere M på lager?', 'M', 'ikke tilgjengelig'],
+    ['Jeg ønsker M', 'M', 'ikke tilgjengelig'],
     ['Er størrelse L tilgjengelig?', 'L', 'tilgjengelig']
   ] as const) {
     const outcome = await answerAssistantRequest(
@@ -428,6 +453,493 @@ test('stock help replaces earlier option choices and clarifies same-turn conflic
   assert.equal(conflict.confidence, 'medium')
   assert.equal(conflict.failureCode, 'none')
   assert.deepEqual(conflict.sources, [])
+})
+
+test('a later explicit choice resolves an earlier same-dimension ambiguity', async () => {
+  const product = createProduct({
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown',
+    variants: [
+      {
+        id: 'variant-m-blue',
+        title: 'Medium / Blue',
+        availableForSale: false,
+        selectedOptions: [
+          { name: 'Størrelse', value: 'M' },
+          { name: 'Farge', value: 'Blå' }
+        ]
+      },
+      {
+        id: 'variant-l-blue',
+        title: 'Large / Blue',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Størrelse', value: 'L' },
+          { name: 'Farge', value: 'Blå' }
+        ]
+      }
+    ]
+  })
+
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'M',
+      messages: [
+        {
+          id: 'message-1',
+          role: 'user',
+          parts: [{ type: 'text', text: 'M eller L i blå?' }]
+        },
+        {
+          id: 'message-2',
+          role: 'assistant',
+          parts: [
+            {
+              type: 'text',
+              text: 'Hvilken størrelse, farge eller variant vil du sjekke?'
+            }
+          ]
+        },
+        {
+          id: 'message-3',
+          role: 'user',
+          parts: [{ type: 'text', text: 'M' }]
+        }
+      ],
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({ fetchProducts: async () => [product] })
+  )
+
+  assert.equal(
+    outcome.text,
+    'Utekos TechDown i M / Blå er ikke tilgjengelig.'
+  )
+  assert.equal(outcome.confidence, 'high')
+  assert.equal(outcome.failureCode, 'none')
+})
+
+test('shared option values never populate multiple unnamed dimensions', async () => {
+  const product = createProduct({
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown',
+    variants: [
+      {
+        id: 'variant-blue-blue',
+        title: 'Blue / Blue',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Hovedfarge', value: 'Blå' },
+          { name: 'Detaljfarge', value: 'Blå' }
+        ]
+      },
+      {
+        id: 'variant-blue-white',
+        title: 'Blue / White',
+        availableForSale: false,
+        selectedOptions: [
+          { name: 'Hovedfarge', value: 'Blå' },
+          { name: 'Detaljfarge', value: 'Hvit' }
+        ]
+      },
+      {
+        id: 'variant-black-blue',
+        title: 'Black / Blue',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Hovedfarge', value: 'Svart' },
+          { name: 'Detaljfarge', value: 'Blå' }
+        ]
+      }
+    ]
+  })
+
+  for (const question of [
+    'Blå',
+    'Hovedfarge Blå',
+    'Jeg vil ha blå hovedfarge, men ikke blå detaljfarge',
+    'Blå hovedfarge vil jeg ikke ha, detaljfarge hvit',
+    'Hovedfarge blå ønsker jeg ikke, detaljfarge hvit',
+    'Hovedfarge blå eller detaljfarge hvit'
+  ]) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'stock_help',
+        text: question,
+        pageContext: {
+          pathname: '/produkter/utekos-techdown',
+          productHandle: 'utekos-techdown'
+        }
+      }),
+      context,
+      createAdapters({ fetchProducts: async () => [product] })
+    )
+
+    assert.equal(
+      outcome.text,
+      'Hvilken størrelse, farge eller variant vil du sjekke?',
+      question
+    )
+    assert.equal(outcome.confidence, 'medium', question)
+  }
+})
+
+test('explicit Shopify option names bind shared values to the named dimensions', async () => {
+  const product = createProduct({
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown',
+    variants: [
+      {
+        id: 'variant-blue-blue',
+        title: 'Blue / Blue',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Hovedfarge', value: 'Blå' },
+          { name: 'Detaljfarge', value: 'Blå' }
+        ]
+      },
+      {
+        id: 'variant-blue-white',
+        title: 'Blue / White',
+        availableForSale: false,
+        selectedOptions: [
+          { name: 'Hovedfarge', value: 'Blå' },
+          { name: 'Detaljfarge', value: 'Hvit' }
+        ]
+      },
+      {
+        id: 'variant-black-blue',
+        title: 'Black / Blue',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Hovedfarge', value: 'Svart' },
+          { name: 'Detaljfarge', value: 'Blå' }
+        ]
+      }
+    ]
+  })
+
+  for (const question of [
+    'Hovedfarge Blå og detaljfarge Hvit',
+    'Hovedfarge: blå, detaljfarge: hvit'
+  ]) {
+    const namedPair = await answerAssistantRequest(
+      createRequest({
+        intent: 'stock_help',
+        text: question,
+        pageContext: {
+          pathname: '/produkter/utekos-techdown',
+          productHandle: 'utekos-techdown'
+        }
+      }),
+      context,
+      createAdapters({ fetchProducts: async () => [product] })
+    )
+
+    assert.equal(
+      namedPair.text,
+      'Utekos TechDown i Blå / Hvit er ikke tilgjengelig.',
+      question
+    )
+    assert.equal(namedPair.confidence, 'high', question)
+  }
+
+  const directNamedReply = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'Blå',
+      messages: [
+        {
+          id: 'message-1',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Er den tilgjengelig?' }]
+        },
+        {
+          id: 'message-2',
+          role: 'assistant',
+          parts: [
+            {
+              type: 'text',
+              text: 'Hvilken detaljfarge vil du sjekke?'
+            }
+          ]
+        },
+        {
+          id: 'message-3',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Blå' }]
+        }
+      ],
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({ fetchProducts: async () => [product] })
+  )
+
+  assert.equal(
+    directNamedReply.text,
+    'Utekos TechDown i Blå er tilgjengelig.'
+  )
+  assert.equal(directNamedReply.confidence, 'high')
+})
+
+test('irrelevant historical prose cannot become a stock option choice', async () => {
+  const product = createProduct({
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown',
+    variants: [
+      {
+        id: 'variant-m-blue',
+        title: 'Medium / Blue',
+        availableForSale: false,
+        selectedOptions: [
+          { name: 'Størrelse', value: 'M' },
+          { name: 'Farge', value: 'Blå' }
+        ]
+      },
+      {
+        id: 'variant-l-blue',
+        title: 'Large / Blue',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Størrelse', value: 'L' },
+          { name: 'Farge', value: 'Blå' }
+        ]
+      },
+      {
+        id: 'variant-m-sand',
+        title: 'Medium / Sand',
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Størrelse', value: 'M' },
+          { name: 'Farge', value: 'Sand' }
+        ]
+      },
+      {
+        id: 'variant-l-sand',
+        title: 'Large / Sand',
+        availableForSale: false,
+        selectedOptions: [
+          { name: 'Størrelse', value: 'L' },
+          { name: 'Farge', value: 'Sand' }
+        ]
+      }
+    ]
+  })
+
+  for (const earlierText of [
+    'Jeg er 1,80 m høy. Farge kan vi sjekke senere.',
+    'Jeg er 1,80 m høy, farge kan vi sjekke senere.',
+    'Jeg er 1,80 m høy og vil sjekke blå farge.'
+  ]) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'stock_help',
+        text: 'Er blå tilgjengelig?',
+        messages: [
+          {
+            id: 'message-1',
+            role: 'user',
+            parts: [{ type: 'text', text: earlierText }]
+          },
+          {
+            id: 'message-2',
+            role: 'assistant',
+            parts: [
+              {
+                type: 'text',
+                text: 'Hvilken farge vil du sjekke?'
+              }
+            ]
+          },
+          {
+            id: 'message-3',
+            role: 'user',
+            parts: [
+              { type: 'text', text: 'Er blå tilgjengelig?' }
+            ]
+          }
+        ],
+        pageContext: {
+          pathname: '/produkter/utekos-techdown',
+          productHandle: 'utekos-techdown'
+        }
+      }),
+      context,
+      createAdapters({ fetchProducts: async () => [product] })
+    )
+
+    assert.equal(
+      outcome.text,
+      'Hvilken størrelse, farge eller variant vil du sjekke?',
+      earlierText
+    )
+    assert.equal(outcome.confidence, 'medium', earlierText)
+  }
+
+  for (const earlierText of [
+    'Jeg går mye på sand og vil sjekke størrelse senere.',
+    'Jeg vil ha sand i hagen.'
+  ]) {
+    const terrainOutcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'stock_help',
+        text: 'M',
+        messages: [
+          {
+            id: 'message-1',
+            role: 'user',
+            parts: [{ type: 'text', text: earlierText }]
+          },
+          {
+            id: 'message-2',
+            role: 'assistant',
+            parts: [
+              {
+                type: 'text',
+                text: 'Hvilken størrelse vil du sjekke?'
+              }
+            ]
+          },
+          {
+            id: 'message-3',
+            role: 'user',
+            parts: [{ type: 'text', text: 'M' }]
+          }
+        ],
+        pageContext: {
+          pathname: '/produkter/utekos-techdown',
+          productHandle: 'utekos-techdown'
+        }
+      }),
+      context,
+      createAdapters({ fetchProducts: async () => [product] })
+    )
+
+    assert.equal(
+      terrainOutcome.text,
+      'Hvilken størrelse, farge eller variant vil du sjekke?',
+      earlierText
+    )
+    assert.equal(
+      terrainOutcome.confidence,
+      'medium',
+      earlierText
+    )
+  }
+
+  const verboseClarificationReply = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'Jeg har sand i hagen.',
+      messages: [
+        {
+          id: 'message-1',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Jeg vil ha M.' }]
+        },
+        {
+          id: 'message-2',
+          role: 'assistant',
+          parts: [
+            {
+              type: 'text',
+              text: 'Hvilken farge vil du sjekke?'
+            }
+          ]
+        },
+        {
+          id: 'message-3',
+          role: 'user',
+          parts: [
+            { type: 'text', text: 'Jeg har sand i hagen.' }
+          ]
+        }
+      ],
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({ fetchProducts: async () => [product] })
+  )
+
+  assert.equal(
+    verboseClarificationReply.text,
+    'Hvilken størrelse, farge eller variant vil du sjekke?'
+  )
+  assert.equal(verboseClarificationReply.confidence, 'medium')
+})
+
+test('a bare value directly answers the bounded stock clarification safely', async () => {
+  const product = createProduct({
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown',
+    variants: [
+      {
+        id: 'variant-m',
+        title: 'Medium',
+        availableForSale: false,
+        selectedOptions: [{ name: 'Størrelse', value: 'M' }]
+      },
+      {
+        id: 'variant-l',
+        title: 'Large',
+        availableForSale: true,
+        selectedOptions: [{ name: 'Størrelse', value: 'L' }]
+      }
+    ]
+  })
+
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'M',
+      messages: [
+        {
+          id: 'message-1',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Er den tilgjengelig?' }]
+        },
+        {
+          id: 'message-2',
+          role: 'assistant',
+          parts: [
+            {
+              type: 'text',
+              text: 'Hvilken størrelse, farge eller variant vil du sjekke?'
+            }
+          ]
+        },
+        {
+          id: 'message-3',
+          role: 'user',
+          parts: [{ type: 'text', text: 'M' }]
+        }
+      ],
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({ fetchProducts: async () => [product] })
+  )
+
+  assert.equal(
+    outcome.text,
+    'Utekos TechDown i M er ikke tilgjengelig.'
+  )
+  assert.equal(outcome.confidence, 'high')
 })
 
 test('stock help asks a bounded question for an unknown or mixed variant selection', async () => {
@@ -1318,6 +1830,7 @@ test('restricted text never reaches Shopify, knowledge, or recommendation adapte
     ['other', 'UTE-12345', 'order'],
     ['other', 'Kortet blir avvist', 'payment'],
     ['product_help', 'Plagget er skadet', 'complaint'],
+    ['product_help', 'Varen er ødelagt', 'complaint'],
     ['product_help', 'Varen er defekt', 'complaint']
   ] as const
 
@@ -1354,6 +1867,124 @@ test('restricted text never reaches Shopify, knowledge, or recommendation adapte
     assert.equal(outcome.handoff?.reason, reason, text)
     assert.deepEqual(outcome.recommendations, [], text)
     assert.deepEqual(outcome.sources, [], text)
+  }
+})
+
+test('product labels never cross user-turn boundaries for restricted candidates', async () => {
+  const product = createProduct({
+    id: 'product-techdown',
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown'
+  })
+  const cases = [
+    {
+      earlier: 'Jeg skal i båt og fukt. SKU',
+      later: '#12345',
+      reason: 'order'
+    },
+    {
+      earlier: '#12345',
+      later: 'SKU. Jeg skal i båt og fukt.',
+      reason: 'order'
+    },
+    {
+      earlier: 'Jeg skal i båt og fukt. Varenummer',
+      later: '400 00 000',
+      reason: 'personal_data'
+    },
+    {
+      earlier: '400 00 000',
+      later: 'Varenummer. Jeg skal i båt og fukt.',
+      reason: 'personal_data'
+    },
+    {
+      earlier: 'Jeg skal i båt og fukt. Produktnummer',
+      later: '4111 1111 1111 1111',
+      reason: 'personal_data'
+    },
+    {
+      earlier: '4111 1111 1111 1111',
+      later: 'Produktnummer. Jeg skal i båt og fukt.',
+      reason: 'personal_data'
+    }
+  ] as const
+
+  for (const { earlier, later, reason } of cases) {
+    const { adapters, calls } = createObservedAdapters([product])
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'product_help',
+        text: later,
+        messages: [
+          {
+            id: 'message-1',
+            role: 'user',
+            parts: [{ type: 'text', text: earlier }]
+          },
+          {
+            id: 'message-2',
+            role: 'assistant',
+            parts: [
+              { type: 'text', text: 'Hvordan kan jeg hjelpe?' }
+            ]
+          },
+          {
+            id: 'message-3',
+            role: 'user',
+            parts: [{ type: 'text', text: later }]
+          }
+        ]
+      }),
+      context,
+      adapters
+    )
+
+    assert.deepEqual(
+      calls,
+      { shopify: 0, knowledge: 0, recommendation: 0 },
+      `${earlier} / ${later}`
+    )
+    assert.equal(
+      outcome.handoff?.reason,
+      reason,
+      `${earlier} / ${later}`
+    )
+    assert.deepEqual(outcome.recommendations, [])
+    assert.deepEqual(outcome.sources, [])
+  }
+})
+
+test('compact Norwegian E.164 numbers never reach any adapter', async () => {
+  const product = createProduct({
+    id: 'product-techdown',
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown'
+  })
+
+  for (const phone of [
+    '+4740000000',
+    '+4740216343',
+    '004740000000',
+    '004740216343'
+  ]) {
+    const { adapters, calls } = createObservedAdapters([product])
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'product_help',
+        text: `Jeg skal i båt og fukt. ${phone}`
+      }),
+      context,
+      adapters
+    )
+
+    assert.deepEqual(
+      calls,
+      { shopify: 0, knowledge: 0, recommendation: 0 },
+      phone
+    )
+    assert.equal(outcome.handoff?.reason, 'personal_data', phone)
+    assert.deepEqual(outcome.recommendations, [], phone)
+    assert.deepEqual(outcome.sources, [], phone)
   }
 })
 
