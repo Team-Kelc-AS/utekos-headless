@@ -170,32 +170,112 @@ function includesExactOptionValue(
   ).test(normalizedText)
 }
 
+type StockOptionChoice = {
+  normalizedName: string
+  value: string
+  normalizedValue: string
+  order: number
+}
+
+function getStockOptionDimensions(
+  product: AssistantRecommendation['product']
+) {
+  const dimensions = new Map<
+    string,
+    { name: string; order: number; values: Map<string, string> }
+  >()
+  let order = 0
+
+  for (const variant of product.variants) {
+    for (const option of variant.selectedOptions) {
+      const normalizedName = normalizeAssistantText(option.name)
+      const normalizedValue = normalizeAssistantText(
+        option.value
+      )
+      const dimension = dimensions.get(normalizedName)
+
+      if (dimension) {
+        if (!dimension.values.has(normalizedValue)) {
+          dimension.values.set(normalizedValue, option.value)
+        }
+        continue
+      }
+
+      dimensions.set(normalizedName, {
+        name: option.name,
+        order,
+        values: new Map([[normalizedValue, option.value]])
+      })
+      order += 1
+    }
+  }
+
+  return dimensions
+}
+
+function resolveStockChoices(
+  product: AssistantRecommendation['product'],
+  messages: AssistantChatRequest['messages']
+): StockOptionChoice[] | null {
+  const dimensions = getStockOptionDimensions(product)
+  const choices = new Map<string, StockOptionChoice>()
+
+  for (const message of messages) {
+    if (message.role !== 'user') {
+      continue
+    }
+
+    const normalizedText = normalizeAssistantText(
+      message.parts.map(part => part.text).join('\n')
+    )
+
+    for (const [normalizedName, dimension] of dimensions) {
+      const matches = [...dimension.values].filter(([, value]) =>
+        includesExactOptionValue(normalizedText, value)
+      )
+
+      if (matches.length > 1) {
+        return null
+      }
+
+      const [match] = matches
+
+      if (!match) {
+        continue
+      }
+
+      const [normalizedValue, value] = match
+      choices.set(normalizedName, {
+        normalizedName,
+        value,
+        normalizedValue,
+        order: dimension.order
+      })
+    }
+  }
+
+  return [...choices.values()].toSorted(
+    (left, right) => left.order - right.order
+  )
+}
+
 function resolveStockAvailability(
   product: AssistantRecommendation['product'],
-  question: string
+  messages: AssistantChatRequest['messages']
 ):
   | { kind: 'product'; availableForSale: boolean }
   | { kind: 'variant'; availableForSale: boolean; label: string }
   | { kind: 'clarify' } {
-  const normalizedQuestion = normalizeAssistantText(question)
-  const matchedValues = [
-    ...new Set(
-      product.variants.flatMap(variant =>
-        variant.selectedOptions.flatMap(option =>
-          (
-            includesExactOptionValue(
-              normalizedQuestion,
-              option.value
-            )
-          ) ?
-            [option.value]
-          : []
-        )
-      )
-    )
-  ]
+  const choices = resolveStockChoices(product, messages)
+  const normalizedQuestion = normalizeAssistantText(
+    getLastUserText(messages)
+  )
 
-  if (matchedValues.length === 0) {
+  if (!choices) {
+    return { kind: 'clarify' }
+  }
+
+  if (choices.length === 0) {
     const availability = new Set(
       product.variants.map(variant => variant.availableForSale)
     )
@@ -212,11 +292,13 @@ function resolveStockAvailability(
   }
 
   const variants = product.variants.filter(variant =>
-    matchedValues.every(value =>
+    choices.every(choice =>
       variant.selectedOptions.some(
         option =>
+          normalizeAssistantText(option.name) ===
+            choice.normalizedName &&
           normalizeAssistantText(option.value) ===
-          normalizeAssistantText(value)
+            choice.normalizedValue
       )
     )
   )
@@ -231,7 +313,7 @@ function resolveStockAvailability(
   return {
     kind: 'variant',
     availableForSale: variants[0]?.availableForSale ?? false,
-    label: matchedValues.join(' / ')
+    label: choices.map(choice => choice.value).join(' / ')
   }
 }
 
@@ -350,7 +432,7 @@ async function answerStockHelp(
 
     const availability = resolveStockAvailability(
       product,
-      getLastUserText(request.messages)
+      request.messages
     )
 
     if (availability.kind === 'clarify') {
