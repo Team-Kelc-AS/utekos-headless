@@ -19,21 +19,23 @@ const validEnvironment = {
 const approvedDocuments = buildAssistantKnowledgeDocuments()
 const approvedSourceUrl = 'https://utekos.no/frakt-og-retur'
 
-function interactionWithText(
+function generateContentWithText(
   text: string,
   overrides: Record<string, unknown> = {}
 ) {
   return {
-    model: CUSTOMER_ASSISTANT_GEMINI_MODEL,
-    status: 'completed',
-    steps: [
-      { content: [{ text, type: 'text' }], type: 'model_output' }
+    candidates: [
+      {
+        content: { parts: [{ text }], role: 'model' },
+        finishReason: 'STOP'
+      }
     ],
+    modelVersion: CUSTOMER_ASSISTANT_GEMINI_MODEL,
     ...overrides
   }
 }
 
-const approvedAnswer = interactionWithText(
+const approvedAnswer = generateContentWithText(
   JSON.stringify({
     answer: 'Fri frakt gjelder over 999 kr.',
     answerable: true,
@@ -148,7 +150,7 @@ test('constructs the client lazily and sends the exact stateless grounded reques
   assert.equal(harness.clientConstructionCount, 1)
   assert.deepEqual(harness.clientOptions, {
     endpoint:
-      'https://aiplatform.googleapis.com/v1beta1/projects/utekos-production/locations/global/interactions',
+      'https://aiplatform.googleapis.com/v1/projects/utekos-production/locations/global/publishers/google/models/gemini-3.6-flash:generateContent',
     location: 'global',
     projectId: 'utekos-production'
   })
@@ -158,41 +160,54 @@ test('constructs the client lazily and sends the exact stateless grounded reques
     request: Record<string, unknown>
     options: unknown
   }
-  const responseFormat = call.request.response_format as {
+  const generationConfig = call.request.generationConfig as {
+    maxOutputTokens: number
+    responseMimeType: string
+    responseSchema: {
+      properties: { source_urls: { items: { enum: string[] } } }
+    }
+    thinkingConfig: { thinkingLevel: string }
+  }
+  const contents = call.request.contents as Array<{
+    parts: Array<{ text: string }>
+    role: string
+  }>
+  const systemInstruction = call.request.systemInstruction as {
+    parts: Array<{ text: string }>
+  }
+  const responseFormat = generationConfig.responseSchema as {
     properties: { source_urls: { items: { enum: string[] } } }
   }
 
-  assert.equal(call.request.model, 'gemini-3.6-flash')
-  assert.equal(call.request.store, false)
-  assert.deepEqual(call.request.response_modalities, ['text'])
-  assert.deepEqual(call.request.generation_config, {
-    max_output_tokens: 600,
-    thinking_level: 'low'
+  assert.deepEqual(generationConfig, {
+    maxOutputTokens: 600,
+    responseMimeType: 'application/json',
+    responseSchema: responseFormat,
+    thinkingConfig: { thinkingLevel: 'LOW' }
   })
   assert.equal('tools' in call.request, false)
-  assert.equal(
-    call.request.response_mime_type,
-    'application/json'
-  )
+  assert.equal('store' in call.request, false)
   assert.deepEqual(
     responseFormat.properties.source_urls.items.enum,
     approvedDocuments.map(document => document.canonicalUrl)
   )
   assert.match(
-    String(call.request.system_instruction),
+    systemInstruction.parts[0]?.text ?? '',
     /uten Markdown/u
   )
   assert.match(
-    String(call.request.input),
+    contents[0]?.parts[0]?.text ?? '',
     /GODKJENTE UTEKOS-KILDER/u
   )
   assert.match(
-    String(call.request.input),
+    contents[0]?.parts[0]?.text ?? '',
     new RegExp(question, 'u')
   )
   assert.equal(
     approvedDocuments.every(document =>
-      String(call.request.input).includes(document.content)
+      (contents[0]?.parts[0]?.text ?? '').includes(
+        document.content
+      )
     ),
     true
   )
@@ -224,7 +239,7 @@ test('forwards the validated OIDC client and rejects project mismatch', async ()
   assert.deepEqual(harness.clientOptions, {
     authClient,
     endpoint:
-      'https://aiplatform.googleapis.com/v1beta1/projects/utekos-production/locations/global/interactions',
+      'https://aiplatform.googleapis.com/v1/projects/utekos-production/locations/global/publishers/google/models/gemini-3.6-flash:generateContent',
     location: 'global',
     projectId: 'utekos-production'
   })
@@ -257,14 +272,14 @@ test('forwards the validated OIDC client and rejects project mismatch', async ()
 
 test('maps a valid structured answer and de-duplicates approved sources', async () => {
   const harness = createAdapterHarness({
-    response: interactionWithText(
+    response: generateContentWithText(
       JSON.stringify({
         answer: 'Fri frakt gjelder over 999 kr.',
         answerable: true,
         source_urls: [approvedSourceUrl, approvedSourceUrl]
       }),
       {
-        model:
+        modelVersion:
           'projects/utekos-production/locations/global/models/gemini-3.6-flash'
       }
     )
@@ -290,38 +305,49 @@ test('returns the safe fallback for invalid or ungrounded provider output', asyn
   const responses: unknown[] = [
     null,
     {},
-    { ...approvedAnswer, status: 'in_progress' },
-    { ...approvedAnswer, model: 'gemini-3.5-flash' },
-    interactionWithText('not-json'),
-    interactionWithText(
+    {
+      ...approvedAnswer,
+      candidates: [
+        {
+          content: {
+            parts: [{ text: '{"answer":"Svar"}' }],
+            role: 'model'
+          },
+          finishReason: 'MAX_TOKENS'
+        }
+      ]
+    },
+    { ...approvedAnswer, modelVersion: 'gemini-3.5-flash' },
+    generateContentWithText('not-json'),
+    generateContentWithText(
       JSON.stringify({
         answer: 'Svar',
         answerable: false,
         source_urls: [approvedSourceUrl]
       })
     ),
-    interactionWithText(
+    generateContentWithText(
       JSON.stringify({
         answer: 'Svar',
         answerable: true,
         source_urls: []
       })
     ),
-    interactionWithText(
+    generateContentWithText(
       JSON.stringify({
         answer: 'Svar',
         answerable: true,
         source_urls: ['https://example.com/foreign']
       })
     ),
-    interactionWithText(
+    generateContentWithText(
       JSON.stringify({
         answer: oversizedAnswer,
         answerable: true,
         source_urls: [approvedSourceUrl]
       })
     ),
-    interactionWithText(
+    generateContentWithText(
       JSON.stringify({
         answer: 'Svar',
         answerable: true,

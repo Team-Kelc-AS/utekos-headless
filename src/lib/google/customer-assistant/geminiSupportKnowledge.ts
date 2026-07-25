@@ -20,7 +20,7 @@ export const CUSTOMER_ASSISTANT_GEMINI_MODEL =
 export const CUSTOMER_ASSISTANT_GEMINI_LOCATION =
   'global' as const
 
-const INTERACTION_TIMEOUT_MS = 8_000
+const GENERATE_CONTENT_TIMEOUT_MS = 8_000
 const MAX_ANSWER_LENGTH = 2_000
 const MAX_OUTPUT_LENGTH = 8_000
 const MAX_SOURCE_COUNT = 5
@@ -29,23 +29,20 @@ const SAFE_NO_ANSWER_TEXT =
 const CLOUD_PLATFORM_SCOPE =
   'https://www.googleapis.com/auth/cloud-platform'
 
-type GeminiInteractionRequest = {
-  generation_config: {
-    max_output_tokens: number
-    thinking_level: 'low'
+type GeminiGenerateContentRequest = {
+  contents: [{ parts: [{ text: string }]; role: 'user' }]
+  generationConfig: {
+    maxOutputTokens: number
+    responseMimeType: 'application/json'
+    responseSchema: Record<string, unknown>
+    thinkingConfig: { thinkingLevel: 'LOW' }
   }
-  input: string
-  model: typeof CUSTOMER_ASSISTANT_GEMINI_MODEL
-  response_format: Record<string, unknown>
-  response_mime_type: 'application/json'
-  response_modalities: ['text']
-  store: false
-  system_instruction: string
+  systemInstruction: { parts: [{ text: string }] }
 }
 
-type GeminiInteractionClient = {
+type GeminiGenerateContentClient = {
   create(
-    request: GeminiInteractionRequest,
+    request: GeminiGenerateContentRequest,
     options: {
       retries: { strategy: 'none' }
       timeout_ms: number
@@ -60,7 +57,7 @@ export type GeminiSupportKnowledgeDependencies = {
     endpoint: string
     location: typeof CUSTOMER_ASSISTANT_GEMINI_LOCATION
     projectId: string
-  }) => GeminiInteractionClient
+  }) => GeminiGenerateContentClient
   createGoogleCloudClientOptions: (
     environment: Environment
   ) => GoogleCloudClientOptions | undefined
@@ -72,11 +69,30 @@ export type GeminiSupportKnowledgeConfig = {
   projectId: string
 }
 
-const interactionEnvelopeSchema = z
+const generateContentEnvelopeSchema = z
   .object({
-    model: z.string(),
-    steps: z.array(z.unknown()),
-    status: z.literal('completed')
+    candidates: z
+      .array(
+        z
+          .object({
+            content: z
+              .object({
+                parts: z.array(
+                  z
+                    .object({
+                      text: z.string().max(MAX_OUTPUT_LENGTH)
+                    })
+                    .passthrough()
+                ),
+                role: z.literal('model')
+              })
+              .passthrough(),
+            finishReason: z.literal('STOP')
+          })
+          .passthrough()
+      )
+      .length(1),
+    modelVersion: z.string()
   })
   .passthrough()
 
@@ -117,7 +133,7 @@ const defaultDependencies: GeminiSupportKnowledgeDependencies = {
 
         if (!response.ok) {
           throw Object.assign(
-            new Error('gcp_gemini_interactions_http_error'),
+            new Error('gcp_gemini_generate_content_http_error'),
             { statusCode: response.status }
           )
         }
@@ -179,10 +195,10 @@ export function readGeminiSupportKnowledgeConfig(
   }
 }
 
-export function createGeminiInteractionsEndpoint(
+export function createGeminiGenerateContentEndpoint(
   projectId: string
 ) {
-  return `https://aiplatform.googleapis.com/v1beta1/projects/${encodeURIComponent(projectId)}/locations/${CUSTOMER_ASSISTANT_GEMINI_LOCATION}/interactions`
+  return `https://aiplatform.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/locations/${CUSTOMER_ASSISTANT_GEMINI_LOCATION}/publishers/google/models/${CUSTOMER_ASSISTANT_GEMINI_MODEL}:generateContent`
 }
 
 function lowConfidenceResult(): SupportKnowledgeResult {
@@ -208,7 +224,7 @@ function createSystemInstruction() {
   ].join('\n')
 }
 
-function createInteractionInput(
+function createGenerateContentInput(
   documents: readonly AssistantKnowledgeDocument[],
   question: string,
   productHandle: string | null
@@ -234,18 +250,17 @@ function createInteractionInput(
 
 function createResponseFormat(
   documents: readonly AssistantKnowledgeDocument[]
-): GeminiInteractionRequest['response_format'] {
+): GeminiGenerateContentRequest['generationConfig']['responseSchema'] {
   return {
-    type: 'object',
-    additionalProperties: false,
+    type: 'OBJECT',
     properties: {
-      answer: { type: 'string', maxLength: MAX_ANSWER_LENGTH },
-      answerable: { type: 'boolean' },
+      answer: { type: 'STRING' },
+      answerable: { type: 'BOOLEAN' },
       source_urls: {
-        type: 'array',
+        type: 'ARRAY',
         maxItems: MAX_SOURCE_COUNT,
         items: {
-          type: 'string',
+          type: 'STRING',
           enum: documents.map(document => document.canonicalUrl)
         }
       }
@@ -277,35 +292,10 @@ function getSafeProviderErrorCode(error: unknown) {
   return 'UNKNOWN' as const
 }
 
-function extractInteractionOutputText(
-  steps: readonly unknown[]
+function extractGenerateContentOutputText(
+  parts: readonly { text: string }[]
 ) {
-  const textParts: string[] = []
-
-  for (const step of steps) {
-    const parsedStep = z
-      .object({
-        content: z.array(
-          z
-            .object({
-              text: z.string().max(MAX_OUTPUT_LENGTH),
-              type: z.literal('text')
-            })
-            .passthrough()
-        ),
-        type: z.literal('model_output')
-      })
-      .passthrough()
-      .safeParse(step)
-
-    if (!parsedStep.success) continue
-
-    for (const content of parsedStep.data.content) {
-      textParts.push(content.text)
-    }
-  }
-
-  const outputText = textParts.join('')
+  const outputText = parts.map(part => part.text).join('')
 
   return outputText.length <= MAX_OUTPUT_LENGTH ?
       outputText
@@ -321,7 +311,7 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
   readonly #dependencies: GeminiSupportKnowledgeDependencies
   readonly #documents: readonly AssistantKnowledgeDocument[]
   readonly #environment: Environment
-  #client: GeminiInteractionClient | undefined
+  #client: GeminiGenerateContentClient | undefined
 
   constructor(
     environment: Environment = process.env,
@@ -366,7 +356,7 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
       ...(googleCloudOptions ?
         { authClient: googleCloudOptions.authClient }
       : {}),
-      endpoint: createGeminiInteractionsEndpoint(
+      endpoint: createGeminiGenerateContentEndpoint(
         this.#config.projectId
       ),
       location: this.#config.location,
@@ -383,30 +373,40 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
     SupportKnowledgeAdapter['answer']
   >[0]): Promise<SupportKnowledgeResult> {
     const client = this.#getClient()
-    let rawInteraction: unknown
+    let rawResponse: unknown
 
     try {
-      rawInteraction = await client.create(
+      rawResponse = await client.create(
         {
-          generation_config: {
-            max_output_tokens: 600,
-            thinking_level: 'low'
+          contents: [
+            {
+              parts: [
+                {
+                  text: createGenerateContentInput(
+                    this.#documents,
+                    question,
+                    productHandle
+                  )
+                }
+              ],
+              role: 'user'
+            }
+          ],
+          generationConfig: {
+            maxOutputTokens: 600,
+            responseMimeType: 'application/json',
+            responseSchema: createResponseFormat(
+              this.#documents
+            ),
+            thinkingConfig: { thinkingLevel: 'LOW' }
           },
-          input: createInteractionInput(
-            this.#documents,
-            question,
-            productHandle
-          ),
-          model: this.#config.model,
-          response_format: createResponseFormat(this.#documents),
-          response_mime_type: 'application/json',
-          response_modalities: ['text'],
-          store: false,
-          system_instruction: createSystemInstruction()
+          systemInstruction: {
+            parts: [{ text: createSystemInstruction() }]
+          }
         },
         {
           retries: { strategy: 'none' },
-          timeout_ms: INTERACTION_TIMEOUT_MS
+          timeout_ms: GENERATE_CONTENT_TIMEOUT_MS
         }
       )
     } catch (error) {
@@ -414,18 +414,21 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
         getSafeProviderErrorCode(error)
       )
     }
-    const interaction =
-      interactionEnvelopeSchema.safeParse(rawInteraction)
+    const response =
+      generateContentEnvelopeSchema.safeParse(rawResponse)
 
     if (
-      !interaction.success ||
-      !usesExpectedModel(interaction.data.model)
+      !response.success ||
+      !usesExpectedModel(response.data.modelVersion)
     ) {
       return lowConfidenceResult()
     }
 
-    const outputText = extractInteractionOutputText(
-      interaction.data.steps
+    const candidate = response.data.candidates[0]
+    if (!candidate) return lowConfidenceResult()
+
+    const outputText = extractGenerateContentOutputText(
+      candidate.content.parts
     )
 
     if (!outputText) return lowConfidenceResult()
