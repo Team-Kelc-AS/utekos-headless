@@ -86,8 +86,6 @@ type IngestionClientOptions = {
   projectId: string
 }
 
-type OidcTokenOptions = { audience: string }
-
 export type GoogleDataManagerAuthDependencies = {
   createExternalAccountClient: (
     options: IdentityPoolClientOptions
@@ -95,7 +93,7 @@ export type GoogleDataManagerAuthDependencies = {
   createIngestionClient: (
     options?: IngestionClientOptions
   ) => GoogleDataManagerIngestionClient
-  getOidcToken: (options: OidcTokenOptions) => Promise<string>
+  getOidcToken: () => Promise<string>
   readLocalServiceAccountCredentials: () =>
     | LocalServiceAccountCredentials
     | undefined

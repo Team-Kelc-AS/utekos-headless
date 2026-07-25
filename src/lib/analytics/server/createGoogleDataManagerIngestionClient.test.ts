@@ -123,8 +123,6 @@ test('builds a scoped external account client on Vercel', async () => {
       }
     | undefined
 
-  let oidcAudience: string | undefined
-
   const dependencies: GoogleDataManagerAuthDependencies = {
     createExternalAccountClient: options => {
       externalOptions = options
@@ -138,11 +136,7 @@ test('builds a scoped external account client on Vercel', async () => {
       return vercelClient
     },
 
-    getOidcToken: async options => {
-      oidcAudience = options.audience
-
-      return 'vercel-oidc-token'
-    },
+    getOidcToken: async () => 'vercel-oidc-token',
 
     readLocalServiceAccountCredentials: () => undefined
   }
@@ -199,8 +193,6 @@ test('builds a scoped external account client on Vercel', async () => {
     await supplier.getSubjectToken(undefined as never),
     'vercel-oidc-token'
   )
-
-  assert.equal(oidcAudience, audience)
 })
 
 test('rejects incomplete or unsafe Vercel auth configuration', () => {
