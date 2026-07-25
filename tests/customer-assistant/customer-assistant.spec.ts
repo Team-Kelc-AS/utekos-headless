@@ -4,7 +4,10 @@ import {
   type Page,
   type Route
 } from 'playwright/test'
-import { observeAssistantTransportGraph } from './assistantTransportGraph'
+import {
+  attachAssistantTransportGraph,
+  observeAssistantTransportGraph
+} from './assistantTransportGraph'
 
 const BASE_URL = 'http://localhost:3217'
 const ASSISTANT_API_PATH = '/api/customer-assistant/chat'
@@ -290,16 +293,11 @@ test('shows the accessible launcher, stable bucket, and quick actions', async ({
       return assistantGraph.paths.size
     })
     .toBeGreaterThan(0)
-  await testInfo.attach('assistant-graph-positive.json', {
-    body: Buffer.from(
-      JSON.stringify(
-        { paths: [...assistantGraph.paths] },
-        null,
-        2
-      )
-    ),
-    contentType: 'application/json'
-  })
+  await attachAssistantTransportGraph(
+    testInfo,
+    'assistant-graph-positive.json',
+    assistantGraph.paths
+  )
   await expect(launcher).toHaveAttribute(
     'aria-expanded',
     'false'
@@ -696,16 +694,11 @@ test('keeps a positive preview holdout free of the assistant transport graph', a
   ).toHaveCount(0)
   await assistantGraph.settle()
 
-  await testInfo.attach('assistant-graph-holdout.json', {
-    body: Buffer.from(
-      JSON.stringify(
-        { paths: [...assistantGraph.paths] },
-        null,
-        2
-      )
-    ),
-    contentType: 'application/json'
-  })
+  await attachAssistantTransportGraph(
+    testInfo,
+    'assistant-graph-holdout.json',
+    assistantGraph.paths
+  )
 
   expect([...assistantGraph.paths]).toEqual([])
   expect(
@@ -728,16 +721,11 @@ test('does not mount on design or checkout-like routes', async ({
   await page.goto('/design')
   await expect(launcher).toHaveCount(0)
   await assistantGraph.settle()
-  await testInfo.attach('assistant-graph-excluded.json', {
-    body: Buffer.from(
-      JSON.stringify(
-        { paths: [...assistantGraph.paths] },
-        null,
-        2
-      )
-    ),
-    contentType: 'application/json'
-  })
+  await attachAssistantTransportGraph(
+    testInfo,
+    'assistant-graph-excluded.json',
+    assistantGraph.paths
+  )
   expect([...assistantGraph.paths]).toEqual([])
   expect(
     await page.evaluate(

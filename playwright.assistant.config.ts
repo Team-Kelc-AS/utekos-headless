@@ -33,10 +33,14 @@ export default defineConfig({
     isProductionZeroProof ?
       'customer-assistant-zero.spec.ts'
     : 'customer-assistant.spec.ts',
-  outputDir: './output/playwright/test-results',
+  outputDir:
+    isProductionZeroProof ?
+      './output/playwright/assistant-production-zero'
+    : './output/playwright/assistant-preview',
   fullyParallel: false,
   workers: 1,
   retries: 0,
+  preserveOutput: 'always',
   timeout: 45_000,
   expect: { timeout: 10_000 },
   reporter: [['list']],

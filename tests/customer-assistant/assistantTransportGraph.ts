@@ -1,14 +1,32 @@
 import {
   expect,
   type Page,
-  type Response
+  type Response,
+  type TestInfo
 } from 'playwright/test'
+import { writeFile } from 'node:fs/promises'
 
 const BASE_URL = 'http://localhost:3217'
 const ASSISTANT_TRANSPORT_GRAPH_MARKERS = [
   '/api/customer-assistant/chat',
   'prepareSendMessagesRequest'
 ] as const
+
+export async function attachAssistantTransportGraph(
+  testInfo: TestInfo,
+  name: string,
+  paths: Iterable<string>
+) {
+  const artifactPath = testInfo.outputPath(name)
+  await writeFile(
+    artifactPath,
+    JSON.stringify({ paths: [...paths] }, null, 2)
+  )
+  await testInfo.attach(name, {
+    path: artifactPath,
+    contentType: 'application/json'
+  })
+}
 
 export function observeAssistantTransportGraph(page: Page) {
   const paths = new Set<string>()

@@ -4,7 +4,10 @@ import {
   type Page,
   type Route
 } from 'playwright/test'
-import { observeAssistantTransportGraph } from './assistantTransportGraph'
+import {
+  attachAssistantTransportGraph,
+  observeAssistantTransportGraph
+} from './assistantTransportGraph'
 
 const BASE_URL = 'http://localhost:3217'
 const ASSISTANT_BUCKET_STORAGE_KEY = 'utekos_assistant_bucket_v1'
@@ -47,16 +50,11 @@ test('optimized production does not request the assistant transport graph when r
   ).toHaveCount(0)
   await assistantGraph.settle()
 
-  await testInfo.attach('assistant-graph-production-zero.json', {
-    body: Buffer.from(
-      JSON.stringify(
-        { paths: [...assistantGraph.paths] },
-        null,
-        2
-      )
-    ),
-    contentType: 'application/json'
-  })
+  await attachAssistantTransportGraph(
+    testInfo,
+    'assistant-graph-production-zero.json',
+    assistantGraph.paths
+  )
 
   expect([...assistantGraph.paths]).toEqual([])
   expect(
