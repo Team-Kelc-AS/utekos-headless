@@ -212,7 +212,8 @@ export function createGoogleDataManagerIngestionClient(
 
   const googleCloudOptions = createGoogleCloudClientOptions(
     environment,
-    dependencies
+    dependencies,
+    { scopes: DATA_MANAGER_SCOPES }
   )
 
   if (!googleCloudOptions) {

@@ -4,6 +4,7 @@ import type {
   BaseExternalAccountClient,
   IdentityPoolClientOptions
 } from 'google-auth-library'
+import { JWT } from 'google-auth-library'
 import {
   createGoogleDataManagerIngestionClient,
   readGoogleDataManagerAuthConfig,
@@ -55,6 +56,54 @@ test('uses local Application Default Credentials outside Vercel', () => {
   assert.equal(client, localClient)
   assert.equal(externalAccountCount, 0)
   assert.equal(oidcTokenCount, 0)
+})
+
+test('preserves the local JSON service-account scope contract', () => {
+  const localClient = ingestionClient()
+  let ingestionOptions:
+    | {
+        authClient: BaseExternalAccountClient
+        projectId: string
+      }
+    | undefined
+
+  const dependencies: GoogleDataManagerAuthDependencies = {
+    createExternalAccountClient: () => {
+      throw new Error('unexpected external account construction')
+    },
+    createIngestionClient: options => {
+      ingestionOptions = options
+
+      return localClient
+    },
+    getOidcToken: async () => {
+      throw new Error('unexpected OIDC token request')
+    },
+    readLocalServiceAccountCredentials: () => ({
+      clientEmail:
+        'local-data-manager@utekos-production.iam.gserviceaccount.com',
+      privateKey:
+        '-----BEGIN PRIVATE KEY-----\nfake-test-key\n-----END PRIVATE KEY-----',
+      projectId: 'utekos-production'
+    })
+  }
+
+  const client = createGoogleDataManagerIngestionClient(
+    {},
+    dependencies
+  )
+
+  assert.equal(client, localClient)
+  assert.ok(ingestionOptions)
+  assert.equal(ingestionOptions.projectId, 'utekos-production')
+
+  const authClient =
+    ingestionOptions.authClient as unknown as JWT
+
+  assert.deepEqual(authClient.scopes, [
+    'https://www.googleapis.com/auth/datamanager',
+    'https://www.googleapis.com/auth/cloud-platform'
+  ])
 })
 
 test('builds a scoped external account client on Vercel', async () => {
@@ -138,6 +187,7 @@ test('builds a scoped external account client on Vercel', async () => {
   )
 
   assert.deepEqual(externalOptions.scopes, [
+    'https://www.googleapis.com/auth/datamanager',
     'https://www.googleapis.com/auth/cloud-platform'
   ])
 

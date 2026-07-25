@@ -30,6 +30,14 @@ export type GoogleCloudClientOptions = {
   projectId: string
 }
 
+export type GoogleCloudScopePolicy = {
+  scopes: readonly string[]
+}
+
+const defaultScopePolicy: GoogleCloudScopePolicy = {
+  scopes: [CLOUD_PLATFORM_SCOPE]
+}
+
 const defaultDependencies: GoogleCloudAuthDependencies = {
   createExternalAccountClient: options =>
     ExternalAccountClient.fromJSON(options),
@@ -92,7 +100,8 @@ export function readGoogleCloudAuthConfig(
 
 export function createGoogleCloudClientOptions(
   environment: Environment = process.env,
-  dependencies: GoogleCloudAuthDependencies = defaultDependencies
+  dependencies: GoogleCloudAuthDependencies = defaultDependencies,
+  scopePolicy: GoogleCloudScopePolicy = defaultScopePolicy
 ): GoogleCloudClientOptions | undefined {
   if (environment.VERCEL !== '1') return undefined
 
@@ -103,7 +112,7 @@ export function createGoogleCloudClientOptions(
     subject_token_type: 'urn:ietf:params:oauth:token-type:jwt',
     token_url: 'https://sts.googleapis.com/v1/token',
     service_account_impersonation_url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${config.serviceAccountEmail}:generateAccessToken`,
-    scopes: [CLOUD_PLATFORM_SCOPE],
+    scopes: [...scopePolicy.scopes],
     subject_token_supplier: {
       getSubjectToken: () =>
         dependencies.getOidcToken({ audience: config.audience })

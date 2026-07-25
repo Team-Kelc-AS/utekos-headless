@@ -97,6 +97,40 @@ test('builds cloud-platform workload identity options on Vercel', async () => {
   assert.equal(oidcAudience, audience)
 })
 
+test('uses an explicit provider scope policy on Vercel', () => {
+  let externalOptions: IdentityPoolClientOptions | undefined
+
+  createGoogleCloudClientOptions(
+    {
+      GCP_AUDIENCE:
+        '//iam.googleapis.com/projects/123456789/locations/global/workloadIdentityPools/vercel/providers/vercel',
+      GCP_PROJECT_ID: 'utekos-production',
+      GCP_SERVICE_ACCOUNT_EMAIL:
+        'vercel-data-manager@utekos-production.iam.gserviceaccount.com',
+      VERCEL: '1'
+    },
+    {
+      createExternalAccountClient: candidate => {
+        externalOptions = candidate
+
+        return {} as BaseExternalAccountClient
+      },
+      getOidcToken: async () => 'vercel-oidc-token'
+    },
+    {
+      scopes: [
+        'https://www.googleapis.com/auth/datamanager',
+        'https://www.googleapis.com/auth/cloud-platform'
+      ]
+    }
+  )
+
+  assert.deepEqual(externalOptions?.scopes, [
+    'https://www.googleapis.com/auth/datamanager',
+    'https://www.googleapis.com/auth/cloud-platform'
+  ])
+})
+
 test('rejects incomplete or unsafe Vercel auth configuration', () => {
   assert.throws(
     () => readGoogleCloudAuthConfig({ VERCEL: '1' }),
