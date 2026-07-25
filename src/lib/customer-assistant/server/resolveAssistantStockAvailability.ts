@@ -34,6 +34,16 @@ type StockDimensionMention = TextMatch & {
   dimension: StockOptionDimension
 }
 
+type ExplicitMentionResolution =
+  | { kind: 'none' }
+  | { kind: 'selected'; dimension: StockOptionDimension }
+  | { kind: 'ambiguous'; dimensions: StockOptionDimension[] }
+
+type ExplicitMentionScore = {
+  connectorRank: number
+  distance: number
+}
+
 type StockOptionState =
   | { kind: 'selected'; choice: StockOptionChoice }
   | { kind: 'ambiguous' }
@@ -195,6 +205,24 @@ function isNegatedValueMention(
   )
 }
 
+function getExplicitConnectorRank(connector: string) {
+  if (/\ber\b|[:=/#-]|\(/u.test(connector)) {
+    return 0
+  }
+
+  return connector.includes(',') ? 2 : 1
+}
+
+function compareExplicitMentionScores(
+  left: ExplicitMentionScore,
+  right: ExplicitMentionScore
+) {
+  return (
+    left.connectorRank - right.connectorRank ||
+    left.distance - right.distance
+  )
+}
+
 function getExplicitMentionScore(
   normalizedText: string,
   dimensionMention: StockDimensionMention,
@@ -230,14 +258,17 @@ function getExplicitMentionScore(
     return null
   }
 
-  return (dimensionBeforeValue ? 0 : 100) + connector.length
+  return {
+    connectorRank: getExplicitConnectorRank(connector),
+    distance: connector.length
+  }
 }
 
 function findExplicitMentionDimension(
   normalizedText: string,
   valueMention: StockValueMention,
   dimensionMentions: StockDimensionMention[]
-) {
+): ExplicitMentionResolution {
   const candidates = dimensionMentions
     .filter(({ dimension }) =>
       dimension.values.has(valueMention.normalizedValue)
@@ -251,22 +282,44 @@ function findExplicitMentionDimension(
 
       return score === null ? [] : [{ mention, score }]
     })
-    .toSorted((left, right) => left.score - right.score)
+    .toSorted((left, right) =>
+      compareExplicitMentionScores(left.score, right.score)
+    )
 
   const closest = candidates[0]
-  const next = candidates[1]
 
-  if (
-    !closest ||
-    (next &&
-      next.score === closest.score &&
-      next.mention.dimension.normalizedName !==
-        closest.mention.dimension.normalizedName)
-  ) {
-    return null
+  if (!closest) {
+    return { kind: 'none' } satisfies ExplicitMentionResolution
   }
 
-  return closest.mention.dimension
+  const closestDimensions = [
+    ...new Map(
+      candidates
+        .filter(
+          candidate =>
+            compareExplicitMentionScores(
+              candidate.score,
+              closest.score
+            ) === 0
+        )
+        .map(({ mention: { dimension } }) => [
+          dimension.normalizedName,
+          dimension
+        ])
+    ).values()
+  ]
+
+  if (closestDimensions.length > 1) {
+    return { kind: 'ambiguous', dimensions: closestDimensions }
+  }
+
+  const [dimension] = closestDimensions
+
+  if (!dimension) {
+    return { kind: 'none' }
+  }
+
+  return { kind: 'selected', dimension }
 }
 
 function removeTextMatches(text: string, matches: TextMatch[]) {
@@ -509,14 +562,16 @@ function resolveStockTurnStates(
   const addAmbiguousMentionDimensions = (
     valueMention: StockValueMention
   ) => {
-    const explicitDimension = findExplicitMentionDimension(
+    const explicitResolution = findExplicitMentionDimension(
       normalizedText,
       valueMention,
       dimensionMentions
     )
     const ambiguousMentionDimensions =
-      explicitDimension ?
-        [explicitDimension]
+      explicitResolution.kind === 'selected' ?
+        [explicitResolution.dimension]
+      : explicitResolution.kind === 'ambiguous' ?
+        explicitResolution.dimensions
       : valueMention.dimensions
 
     for (const dimension of ambiguousMentionDimensions) {
@@ -564,17 +619,25 @@ function resolveStockTurnStates(
   }
 
   for (const valueMention of valueMentions) {
-    const explicitDimension = findExplicitMentionDimension(
+    const explicitResolution = findExplicitMentionDimension(
       normalizedText,
       valueMention,
       dimensionMentions
     )
 
-    if (explicitDimension) {
+    if (explicitResolution.kind === 'selected') {
       addSelectedValue(
-        explicitDimension,
+        explicitResolution.dimension,
         valueMention.normalizedValue
       )
+      explicitlyBoundMentions.add(valueMention)
+      continue
+    }
+
+    if (explicitResolution.kind === 'ambiguous') {
+      for (const dimension of explicitResolution.dimensions) {
+        ambiguousDimensions.add(dimension.normalizedName)
+      }
       explicitlyBoundMentions.add(valueMention)
       continue
     }

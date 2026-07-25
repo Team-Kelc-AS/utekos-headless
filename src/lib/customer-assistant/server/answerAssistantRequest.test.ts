@@ -68,6 +68,59 @@ function createProduct(
   }
 }
 
+function createSharedColorProduct({
+  reverseCatalogAndDimensionOrder = false,
+  uniformAvailability = false
+}: {
+  reverseCatalogAndDimensionOrder?: boolean
+  uniformAvailability?: boolean
+} = {}): AssistantProduct {
+  const variants: AssistantProduct['variants'] = [
+    {
+      id: 'variant-blue-blue',
+      title: 'Blue / Blue',
+      availableForSale: true,
+      selectedOptions: [
+        { name: 'Hovedfarge', value: 'Blå' },
+        { name: 'Detaljfarge', value: 'Blå' }
+      ]
+    },
+    {
+      id: 'variant-blue-white',
+      title: 'Blue / White',
+      availableForSale: uniformAvailability,
+      selectedOptions: [
+        { name: 'Hovedfarge', value: 'Blå' },
+        { name: 'Detaljfarge', value: 'Hvit' }
+      ]
+    },
+    {
+      id: 'variant-black-blue',
+      title: 'Black / Blue',
+      availableForSale: true,
+      selectedOptions: [
+        { name: 'Hovedfarge', value: 'Svart' },
+        { name: 'Detaljfarge', value: 'Blå' }
+      ]
+    }
+  ]
+  const orderedVariants =
+    reverseCatalogAndDimensionOrder ?
+      variants
+        .toReversed()
+        .map(variant => ({
+          ...variant,
+          selectedOptions: variant.selectedOptions.toReversed()
+        }))
+    : variants
+
+  return createProduct({
+    handle: 'utekos-techdown',
+    title: 'Utekos TechDown',
+    variants: orderedVariants
+  })
+}
+
 const context: AssistantRequestContext = {
   buyerIp: '203.0.113.8',
   failureCount: 0
@@ -586,6 +639,191 @@ test('shared option values never populate multiple unnamed dimensions', async ()
       question
     )
     assert.equal(outcome.confidence, 'medium', question)
+  }
+})
+
+test('a shared value binds to the nearest explicit option name regardless of direction', async () => {
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'Detaljfarge, Blå hovedfarge',
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({
+      fetchProducts: async () => [createSharedColorProduct()]
+    })
+  )
+
+  assert.equal(
+    outcome.text,
+    'Hvilken størrelse, farge eller variant vil du sjekke?'
+  )
+  assert.equal(outcome.confidence, 'medium')
+  assert.equal(outcome.failureCode, 'none')
+  assert.deepEqual(outcome.sources, [])
+})
+
+test('explicit connector specificity outranks a closer plain postposed name', async () => {
+  const questions = [
+    'Hovedfarge: Blå Detaljfarge',
+    'Hovedfarge = Blå Detaljfarge',
+    'Hovedfarge er Blå Detaljfarge',
+    'Hovedfarge ( Blå) Detaljfarge'
+  ]
+  const actual = []
+
+  for (const question of questions) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'stock_help',
+        text: question,
+        pageContext: {
+          pathname: '/produkter/utekos-techdown',
+          productHandle: 'utekos-techdown'
+        }
+      }),
+      context,
+      createAdapters({
+        fetchProducts: async () => [createSharedColorProduct()]
+      })
+    )
+
+    actual.push({
+      confidence: outcome.confidence,
+      question,
+      text: outcome.text
+    })
+  }
+
+  assert.deepEqual(
+    actual,
+    questions.map(question => ({
+      confidence: 'medium',
+      question,
+      text: 'Hvilken størrelse, farge eller variant vil du sjekke?'
+    }))
+  )
+})
+
+test('explicit connector pairs keep shared values on the correct dimensions', async () => {
+  const questions = [
+    'Hovedfarge: Blå Detaljfarge: Hvit',
+    'Hovedfarge ( Blå) Detaljfarge (Hvit)'
+  ]
+  const actual = []
+
+  for (const question of questions) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'stock_help',
+        text: question,
+        pageContext: {
+          pathname: '/produkter/utekos-techdown',
+          productHandle: 'utekos-techdown'
+        }
+      }),
+      context,
+      createAdapters({
+        fetchProducts: async () => [createSharedColorProduct()]
+      })
+    )
+
+    actual.push({
+      confidence: outcome.confidence,
+      question,
+      text: outcome.text
+    })
+  }
+
+  assert.deepEqual(
+    actual,
+    questions.map(question => ({
+      confidence: 'high',
+      question,
+      text: 'Utekos TechDown i Blå / Hvit er ikke tilgjengelig.'
+    }))
+  )
+})
+
+test('a value-before-name shared option control keeps mixed availability unresolved', async () => {
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'Blå hovedfarge',
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({
+      fetchProducts: async () => [createSharedColorProduct()]
+    })
+  )
+
+  assert.equal(
+    outcome.text,
+    'Hvilken størrelse, farge eller variant vil du sjekke?'
+  )
+  assert.equal(outcome.confidence, 'medium')
+})
+
+test('mixed-direction exact named pairs resolve the correct Shopify variant', async () => {
+  const outcome = await answerAssistantRequest(
+    createRequest({
+      intent: 'stock_help',
+      text: 'Detaljfarge Hvit, Blå hovedfarge',
+      pageContext: {
+        pathname: '/produkter/utekos-techdown',
+        productHandle: 'utekos-techdown'
+      }
+    }),
+    context,
+    createAdapters({
+      fetchProducts: async () => [createSharedColorProduct()]
+    })
+  )
+
+  assert.equal(
+    outcome.text,
+    'Utekos TechDown i Blå / Hvit er ikke tilgjengelig.'
+  )
+  assert.equal(outcome.confidence, 'high')
+  assert.equal(outcome.failureCode, 'none')
+})
+
+test('equal-proximity shared-option ties fail closed independent of catalog order', async () => {
+  for (const reverseCatalogAndDimensionOrder of [false, true]) {
+    const outcome = await answerAssistantRequest(
+      createRequest({
+        intent: 'stock_help',
+        text: 'Detaljfarge Blå Hovedfarge',
+        pageContext: {
+          pathname: '/produkter/utekos-techdown',
+          productHandle: 'utekos-techdown'
+        }
+      }),
+      context,
+      createAdapters({
+        fetchProducts: async () => [
+          createSharedColorProduct({
+            reverseCatalogAndDimensionOrder,
+            uniformAvailability: true
+          })
+        ]
+      })
+    )
+
+    assert.equal(
+      outcome.text,
+      'Hvilken størrelse, farge eller variant vil du sjekke?',
+      `reverseCatalogAndDimensionOrder=${reverseCatalogAndDimensionOrder}`
+    )
+    assert.equal(outcome.confidence, 'medium')
   }
 })
 
