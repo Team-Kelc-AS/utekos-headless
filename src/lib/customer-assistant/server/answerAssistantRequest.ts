@@ -83,7 +83,7 @@ function getSafeSupportKnowledgeFailureCode(error: unknown) {
     typeof code === 'number' &&
     Number.isInteger(code) &&
     code >= 0 &&
-    code <= 16
+    code <= 599
   ) {
     return code
   }

@@ -260,8 +260,9 @@ function createDiscoveryRestClient({
       )
 
       if (!response.ok) {
-        throw new Error(
-          `Discovery answer request failed with status ${response.status}`
+        throw Object.assign(
+          new Error('Discovery answer request failed'),
+          { code: response.status }
         )
       }
 
