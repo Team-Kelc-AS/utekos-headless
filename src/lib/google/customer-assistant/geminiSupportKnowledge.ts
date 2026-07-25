@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai'
+import { GoogleAuth } from 'google-auth-library'
 import { z } from 'zod'
 import type {
   SupportKnowledgeAdapter,
@@ -26,6 +26,8 @@ const MAX_OUTPUT_LENGTH = 8_000
 const MAX_SOURCE_COUNT = 5
 const SAFE_NO_ANSWER_TEXT =
   'Jeg fant ikke et sikkert svar i det godkjente Utekos-innholdet.'
+const CLOUD_PLATFORM_SCOPE =
+  'https://www.googleapis.com/auth/cloud-platform'
 
 type GeminiInteractionRequest = {
   generation_config: {
@@ -58,6 +60,7 @@ export type GeminiSupportKnowledgeDependencies = {
   buildKnowledgeDocuments: () => AssistantKnowledgeDocument[]
   createClient: (options: {
     authClient?: GoogleCloudClientOptions['authClient']
+    endpoint: string
     location: typeof CUSTOMER_ASSISTANT_GEMINI_LOCATION
     projectId: string
   }) => GeminiInteractionClient
@@ -75,7 +78,7 @@ export type GeminiSupportKnowledgeConfig = {
 const interactionEnvelopeSchema = z
   .object({
     model: z.string(),
-    output_text: z.string().max(MAX_OUTPUT_LENGTH),
+    steps: z.array(z.unknown()),
     status: z.literal('completed')
   })
   .passthrough()
@@ -88,20 +91,41 @@ const groundedAnswerSchema = z.strictObject({
 
 const defaultDependencies: GeminiSupportKnowledgeDependencies = {
   buildKnowledgeDocuments: buildAssistantKnowledgeDocuments,
-  createClient: ({ authClient, location, projectId }) => {
-    const client = new GoogleGenAI({
-      apiVersion: 'v1',
-      enterprise: true,
-      ...(authClient ?
-        { googleAuthOptions: { authClient } }
-      : {}),
-      location,
-      project: projectId
-    })
+  createClient: ({ authClient, endpoint }) => {
+    const googleAuth =
+      authClient ? undefined : (
+        new GoogleAuth({ scopes: [CLOUD_PLATFORM_SCOPE] })
+      )
 
     return {
       async create(request, options) {
-        return client.interactions.create(request, options)
+        const requestAuthClient =
+          authClient ?? (await googleAuth!.getClient())
+        const authHeaders =
+          await requestAuthClient.getRequestHeaders(endpoint)
+        const headers = new Headers()
+
+        for (const [name, value] of authHeaders) {
+          headers.set(name, value)
+        }
+        headers.set('Accept', 'application/json')
+        headers.set('Content-Type', 'application/json')
+
+        const response = await fetch(endpoint, {
+          body: JSON.stringify(request),
+          headers,
+          method: 'POST',
+          signal: AbortSignal.timeout(options.timeout_ms)
+        })
+
+        if (!response.ok) {
+          throw Object.assign(
+            new Error('gcp_gemini_interactions_http_error'),
+            { statusCode: response.status }
+          )
+        }
+
+        return response.json()
       }
     }
   },
@@ -156,6 +180,12 @@ export function readGeminiSupportKnowledgeConfig(
     model: CUSTOMER_ASSISTANT_GEMINI_MODEL,
     projectId
   }
+}
+
+export function createGeminiInteractionsEndpoint(
+  projectId: string
+) {
+  return `https://aiplatform.googleapis.com/v1beta1/projects/${encodeURIComponent(projectId)}/locations/${CUSTOMER_ASSISTANT_GEMINI_LOCATION}/interactions`
 }
 
 function lowConfidenceResult(): SupportKnowledgeResult {
@@ -256,6 +286,41 @@ function getSafeProviderErrorCode(error: unknown) {
   return 'UNKNOWN' as const
 }
 
+function extractInteractionOutputText(
+  steps: readonly unknown[]
+) {
+  const textParts: string[] = []
+
+  for (const step of steps) {
+    const parsedStep = z
+      .object({
+        content: z.array(
+          z
+            .object({
+              text: z.string().max(MAX_OUTPUT_LENGTH),
+              type: z.literal('text')
+            })
+            .passthrough()
+        ),
+        type: z.literal('model_output')
+      })
+      .passthrough()
+      .safeParse(step)
+
+    if (!parsedStep.success) continue
+
+    for (const content of parsedStep.data.content) {
+      textParts.push(content.text)
+    }
+  }
+
+  const outputText = textParts.join('')
+
+  return outputText.length <= MAX_OUTPUT_LENGTH ?
+      outputText
+    : null
+}
+
 export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
   readonly #approvedSources: ReadonlyMap<
     string,
@@ -310,6 +375,9 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
       ...(googleCloudOptions ?
         { authClient: googleCloudOptions.authClient }
       : {}),
+      endpoint: createGeminiInteractionsEndpoint(
+        this.#config.projectId
+      ),
       location: this.#config.location,
       projectId: this.#config.projectId
     })
@@ -364,9 +432,15 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
       return lowConfidenceResult()
     }
 
+    const outputText = extractInteractionOutputText(
+      interaction.data.steps
+    )
+
+    if (!outputText) return lowConfidenceResult()
+
     let rawAnswer: unknown
     try {
-      rawAnswer = JSON.parse(interaction.data.output_text)
+      rawAnswer = JSON.parse(outputText)
     } catch {
       return lowConfidenceResult()
     }

@@ -18,15 +18,28 @@ const validEnvironment = {
 
 const approvedDocuments = buildAssistantKnowledgeDocuments()
 const approvedSourceUrl = 'https://utekos.no/frakt-og-retur'
-const approvedAnswer = {
-  model: CUSTOMER_ASSISTANT_GEMINI_MODEL,
-  output_text: JSON.stringify({
+
+function interactionWithText(
+  text: string,
+  overrides: Record<string, unknown> = {}
+) {
+  return {
+    model: CUSTOMER_ASSISTANT_GEMINI_MODEL,
+    status: 'completed',
+    steps: [
+      { content: [{ text, type: 'text' }], type: 'model_output' }
+    ],
+    ...overrides
+  }
+}
+
+const approvedAnswer = interactionWithText(
+  JSON.stringify({
     answer: 'Fri frakt gjelder over 999 kr.',
     answerable: true,
     source_urls: [approvedSourceUrl]
-  }),
-  status: 'completed'
-}
+  })
+)
 const safeNoAnswer = {
   confidence: 'low',
   sources: [],
@@ -134,6 +147,8 @@ test('constructs the client lazily and sends the exact stateless grounded reques
   await harness.adapter.answer({ productHandle: null, question })
   assert.equal(harness.clientConstructionCount, 1)
   assert.deepEqual(harness.clientOptions, {
+    endpoint:
+      'https://aiplatform.googleapis.com/v1beta1/projects/utekos-production/locations/global/interactions',
     location: 'global',
     projectId: 'utekos-production'
   })
@@ -210,6 +225,8 @@ test('forwards the validated OIDC client and rejects project mismatch', async ()
   })
   assert.deepEqual(harness.clientOptions, {
     authClient,
+    endpoint:
+      'https://aiplatform.googleapis.com/v1beta1/projects/utekos-production/locations/global/interactions',
     location: 'global',
     projectId: 'utekos-production'
   })
@@ -242,16 +259,17 @@ test('forwards the validated OIDC client and rejects project mismatch', async ()
 
 test('maps a valid structured answer and de-duplicates approved sources', async () => {
   const harness = createAdapterHarness({
-    response: {
-      ...approvedAnswer,
-      model:
-        'projects/utekos-production/locations/global/models/gemini-3.6-flash',
-      output_text: JSON.stringify({
+    response: interactionWithText(
+      JSON.stringify({
         answer: 'Fri frakt gjelder over 999 kr.',
         answerable: true,
         source_urls: [approvedSourceUrl, approvedSourceUrl]
-      })
-    }
+      }),
+      {
+        model:
+          'projects/utekos-production/locations/global/models/gemini-3.6-flash'
+      }
+    )
   })
 
   assert.deepEqual(
@@ -276,48 +294,43 @@ test('returns the safe fallback for invalid or ungrounded provider output', asyn
     {},
     { ...approvedAnswer, status: 'in_progress' },
     { ...approvedAnswer, model: 'gemini-3.5-flash' },
-    { ...approvedAnswer, output_text: 'not-json' },
-    {
-      ...approvedAnswer,
-      output_text: JSON.stringify({
+    interactionWithText('not-json'),
+    interactionWithText(
+      JSON.stringify({
         answer: 'Svar',
         answerable: false,
         source_urls: [approvedSourceUrl]
       })
-    },
-    {
-      ...approvedAnswer,
-      output_text: JSON.stringify({
+    ),
+    interactionWithText(
+      JSON.stringify({
         answer: 'Svar',
         answerable: true,
         source_urls: []
       })
-    },
-    {
-      ...approvedAnswer,
-      output_text: JSON.stringify({
+    ),
+    interactionWithText(
+      JSON.stringify({
         answer: 'Svar',
         answerable: true,
         source_urls: ['https://example.com/foreign']
       })
-    },
-    {
-      ...approvedAnswer,
-      output_text: JSON.stringify({
+    ),
+    interactionWithText(
+      JSON.stringify({
         answer: oversizedAnswer,
         answerable: true,
         source_urls: [approvedSourceUrl]
       })
-    },
-    {
-      ...approvedAnswer,
-      output_text: JSON.stringify({
+    ),
+    interactionWithText(
+      JSON.stringify({
         answer: 'Svar',
         answerable: true,
         extra: 'not-allowed',
         source_urls: [approvedSourceUrl]
       })
-    }
+    )
   ]
 
   for (const response of responses) {
