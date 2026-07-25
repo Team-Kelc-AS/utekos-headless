@@ -144,7 +144,13 @@ test('keeps labelled product identifiers outside restricted routing', () => {
     'Varenummer 400-00-000',
     'Artikkelnummer 400.00.000',
     'SKU UTE-12345',
-    'Modellnummer #12345'
+    'Modellnummer #12345',
+    'Variantnummer UTE-12345',
+    'UTE-12345 variantnummer',
+    'Variantnummer #12345',
+    '#12345 variantnummer',
+    'Variantnummer 400 00 000',
+    '400 00 000 variantnummer'
   ]) {
     assert.equal(resolveAssistantHandoff(text, 0), null, text)
   }

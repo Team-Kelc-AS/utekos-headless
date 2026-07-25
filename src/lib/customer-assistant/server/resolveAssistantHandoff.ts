@@ -37,10 +37,10 @@ const paymentNumberCandidatePattern =
   /(?<![\p{L}\p{N}])(?:\d[\s-]?){12,18}\d(?![\p{L}\p{N}])/gu
 
 const productNumberLabelBeforeCandidatePattern =
-  /\b(?:produktnummer|varenummer|artikkelnummer|sku|modellnummer)\b(?:\s+er)?[\s:#-]*$/u
+  /\b(?:produktnummer|varenummer|artikkelnummer|sku|modellnummer|variantnummer)\b(?:\s+er)?[\s:#-]*$/u
 
 const productNumberLabelAfterCandidatePattern =
-  /^[\s:#-]*(?:produktnummer|varenummer|artikkelnummer|sku|modellnummer)\b/u
+  /^[\s:#-]*(?:produktnummer|varenummer|artikkelnummer|sku|modellnummer|variantnummer)\b/u
 
 const labeledPersonalSharingPattern =
   /\b(?:telefonnummer(?:et)?|e-post(?:adresse(?:n)?)?|epost(?:adresse(?:n)?)?|adresse(?:n)?|fødselsnummer|personnummer)\b(?:\s+(?:er|:))?\s+(?:min|mitt|mine)\b|\b(?:min|mitt|mine)\s+(?:telefonnummer(?:et)?|e-post(?:adresse(?:n)?)?|epost(?:adresse(?:n)?)?|adresse(?:n)?|fødselsnummer|personnummer)\b/u
