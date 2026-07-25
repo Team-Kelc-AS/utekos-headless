@@ -599,22 +599,42 @@ Required release evidence:
   aliased to `utekos.no`, and has `CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=0`. The
   delivered root payload contains `assistantRolloutPercent: 0`, and a valid
   same-origin assistant request returns HTTP 429 with `rate_limited`.
-- Protected Preview deployment `dpl_2LBHBmZL91Ln2wthpgnaQaqYBGUn` is `READY`
-  with `CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=100`. Its delivered root payload
-  contains `assistantRolloutPercent: 100`, and protected CLI runtime smokes
-  passed for product clarification, live Shopify availability without quantity,
-  size-guide follow-up, and plain-text shipping output.
+- Protected Preview deployment `dpl_BBGbYsXsKzisTsHdbcSGhMRpj1w9` at
+  `https://utekos-headless-rg3qn2oeq-utekos-marketing-group.vercel.app` is
+  `READY` with `CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=100`. Deployment Protection
+  remains enabled. Its Node 24 build passed compilation, TypeScript and all 126
+  generated pages. Protected runtime smokes passed for exact
+  `gemini-3.6-flash` support answers, approved-source citations, live Shopify
+  availability without quantity, two-step size-guide clarification, plain-text
+  shipping output without Markdown, and explicit handoff to the contact form,
+  email and phone. The relevant final regression suite passed 134 of 134 tests,
+  and no support-knowledge provider failure appeared in the final Preview logs.
 - Enterprise browser policy blocked visual access to the protected Preview URL.
   Code, unit, type, lint, build, deployment-state, payload and protected runtime
   evidence passed, but visual browser proof remains explicitly unverified.
-- Generative support answers still use Discovery Engine Agent Search with the
-  omitted `modelVersion`, which means Google's moving `stable` alias. As of this
-  verification, `stable` resolves to `gemini-2.5-flash/answer_gen/v1`.
-  `gemini-3.6-flash` is available in Gemini Enterprise Agent Platform but is not
-  an accepted Agent Search Answer API `modelVersion`; do not insert that model ID
-  into the existing `servingConfigs:answer` request. Exact adoption requires a
-  separately reviewed migration that preserves approved-source grounding,
-  citations, safety, fail-closed behavior and transcript privacy.
+- Generative support answers now call the GA `gemini-3.6-flash` model in
+  `global` through the v1 `publishers/google/models/...:generateContent`
+  endpoint. A direct provider probe proved that the same model returns
+  `Unsupported model interaction` from the experimental Interactions endpoint,
+  so the active adapter must not be moved back there. Requests are stateless,
+  contain no tools or external search, use structured JSON output, include only
+  the seven approved Utekos knowledge documents and are not logged with the raw
+  customer question. Malformed output, wrong model versions, missing citations,
+  timeouts and provider errors all fail closed to the existing handoff.
+- Preview authentication uses the dedicated
+  `genai-app-runner@project-c683eb2c-20ae-4ec2-ac3.iam.gserviceaccount.com`
+  service account. Its Workload Identity binding is limited to the Vercel
+  Preview principal; the production/Data Manager service account was not
+  changed. The model documents Standard PayGo support, but applicability of the
+  `Trial credit for GenAI App Builder` promotional SKU is not yet verified and
+  must not be claimed from model availability alone.
+- Recommendations AI catalog preparation is recorded in
+  `docs/customer-assistant/retail-resource-manifest.md`: 19 real Shopify-derived
+  Retail records were imported successfully. Similar Items remains deliberately
+  blocked at 14 real variants versus Google's 100-SKU minimum, so no synthetic
+  data, model, serving config or storefront prediction adapter is active. The
+  assistant continues to use bounded, stock-aware deterministic ranking until
+  that eligibility gate is genuinely met.
 
 ### Shopify catalog Runtime Cache release
 
