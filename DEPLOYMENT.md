@@ -523,8 +523,8 @@ deployed until production has:
 The customer assistant is mounted behind the private server value
 `CUSTOMER_ASSISTANT_ROLLOUT_PERCENT`. The accepted values are canonical
 integers from `0` through `100`; a missing, malformed, fractional, signed or
-out-of-range value resolves to `0`. The current release does not add or change
-this value in Vercel, so the production surface remains absent by default.
+out-of-range value resolves to `0`. Production must keep this value at `0` while
+the assistant is restricted to a protected Preview deployment.
 
 For a positive rollout, the browser keeps one random bucket in
 `utekos_assistant_bucket_v1`. The server-supplied percent remains authoritative.
@@ -592,6 +592,29 @@ Required release evidence:
   `utekos_assistant_bucket_v1` storage entry;
 - no Vercel environment mutation, provider mutation, telemetry change or deploy
   unless each action is separately approved.
+
+#### Temporary assistant runtime state (2026-07-25)
+
+- Production deployment `dpl_7qpjdUaja8qp22obVteyv78tR2ht` is `READY`, is
+  aliased to `utekos.no`, and has `CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=0`. The
+  delivered root payload contains `assistantRolloutPercent: 0`, and a valid
+  same-origin assistant request returns HTTP 429 with `rate_limited`.
+- Protected Preview deployment `dpl_2LBHBmZL91Ln2wthpgnaQaqYBGUn` is `READY`
+  with `CUSTOMER_ASSISTANT_ROLLOUT_PERCENT=100`. Its delivered root payload
+  contains `assistantRolloutPercent: 100`, and protected CLI runtime smokes
+  passed for product clarification, live Shopify availability without quantity,
+  size-guide follow-up, and plain-text shipping output.
+- Enterprise browser policy blocked visual access to the protected Preview URL.
+  Code, unit, type, lint, build, deployment-state, payload and protected runtime
+  evidence passed, but visual browser proof remains explicitly unverified.
+- Generative support answers still use Discovery Engine Agent Search with the
+  omitted `modelVersion`, which means Google's moving `stable` alias. As of this
+  verification, `stable` resolves to `gemini-2.5-flash/answer_gen/v1`.
+  `gemini-3.6-flash` is available in Gemini Enterprise Agent Platform but is not
+  an accepted Agent Search Answer API `modelVersion`; do not insert that model ID
+  into the existing `servingConfigs:answer` request. Exact adoption requires a
+  separately reviewed migration that preserves approved-source grounding,
+  citations, safety, fail-closed behavior and transcript privacy.
 
 ### Shopify catalog Runtime Cache release
 
