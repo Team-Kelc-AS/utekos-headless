@@ -37,7 +37,7 @@ import {
 
 const initialState: ActionState = { status: 'idle', message: '' }
 
-const OPEN_DELAY_MS = 500
+const OPEN_DELAY_MS = 3500
 const DEVELOPMENT_INITIAL_DELAY_MS = 1500
 const DEVELOPMENT_POLL_INTERVAL_MS = 500
 

@@ -12,7 +12,8 @@ export const NEWSLETTER_MODAL_SUPPRESSION_MS =
 
 const EXCLUDED_NEWSLETTER_MODAL_PATHS = [
   '/design',
-  '/produkter/utekos-dun'
+  '/produkter/utekos-dun',
+  '/skreddersy-varmen'
 ] as const
 
 export type NewsletterModalStorageMode = 'local' | 'session'
