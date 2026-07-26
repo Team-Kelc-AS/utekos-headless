@@ -5,6 +5,7 @@ import type { NextRequest } from 'next/server'
 import { isKlarnaFeedHost } from '@/lib/merchant-feeds/klarna/klarnaFeedHost'
 import { isBlockedUserAgent } from '@/lib/security/isBlockedUserAgent'
 import { buildReportOnlyCsp } from '@/lib/security/buildReportOnlyCsp'
+import { isMagazineViewTransitionPreviewEnabled } from '@/app/magasinet/utils/isMagazineViewTransitionPreviewEnabled'
 
 const allowedReferrers = new Set(['nbocc.no', 'bergenhordaland.nbocc.no'])
 
@@ -12,6 +13,12 @@ const NBCC_DESTINATION_PATH = '/nbcc'
 
 const MAGASINET_UPGRADE_ENABLED = true
 const MAGASINET_UPGRADE_PATH = '/magasinet/oppgradering'
+const MAGASINET_VIEW_TRANSITION_PREVIEW_ENABLED =
+  isMagazineViewTransitionPreviewEnabled({
+    VERCEL_ENV: process.env.VERCEL_ENV,
+    MAGAZINE_VIEW_TRANSITIONS_PREVIEW_ENABLED:
+      process.env.MAGAZINE_VIEW_TRANSITIONS_PREVIEW_ENABLED
+  })
 const KLARNA_FEED_PATH = '/klarna-feed.xml'
 
 function isAllowedNboccReferrer(request: NextRequest) {
@@ -78,7 +85,11 @@ export async function proxy(request: NextRequest) {
     return withReportOnlyCsp(NextResponse.redirect(redirectUrl, 307))
   }
 
-  if (MAGASINET_UPGRADE_ENABLED && pathname.startsWith('/magasinet')) {
+  if (
+    MAGASINET_UPGRADE_ENABLED
+    && !MAGASINET_VIEW_TRANSITION_PREVIEW_ENABLED
+    && pathname.startsWith('/magasinet')
+  ) {
     if (
       pathname === MAGASINET_UPGRADE_PATH
       || pathname.startsWith(`${MAGASINET_UPGRADE_PATH}/`)

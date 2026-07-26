@@ -105,6 +105,7 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 180,
 
   experimental: {
+    viewTransition: true,
     turbopackFileSystemCacheForDev: false,
     turbopackFileSystemCacheForBuild: true,
     webVitalsAttribution: ['CLS', 'INP', 'LCP'],

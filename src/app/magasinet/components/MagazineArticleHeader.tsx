@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { CalendarDays, Clock, PencilLine } from 'lucide-react'
 import type { MagazineArticle } from '../types'
 import { formatMagazineArticleDate } from '../utils/formatMagazineArticleDate'
+import { MagazineHeroViewTransition } from './MagazineHeroViewTransition'
 
 type MagazineArticleHeaderProps = { article: MagazineArticle }
 
@@ -38,26 +39,28 @@ export function MagazineArticleHeader({
     <header className='bg-magazine-header text-foreground'>
       <div className='container mx-auto px-4 pt-6 sm:pt-8 md:px-2 lg:px-0'>
         <h1 className='sr-only'>{article.title}</h1>
-        <figure className='overflow-hidden rounded-lg'>
-          <Image
-            src={mobileImage.src}
-            alt={mobileImage.alt}
-            width={mobileImage.width}
-            height={mobileImage.height}
-            sizes='100vw'
-            className='h-auto w-full object-cover md:hidden'
-            priority
-          />
-          <Image
-            src={desktopImage.src}
-            alt={desktopImage.alt}
-            width={desktopImage.width}
-            height={desktopImage.height}
-            sizes='(max-width: 1023px) calc(100vw - 16px), (max-width: 1280px) 100vw, 1200px'
-            className='hidden h-auto w-full object-cover md:block'
-            priority
-          />
-        </figure>
+        <MagazineHeroViewTransition slug={article.slug}>
+          <figure className='overflow-hidden rounded-lg'>
+            <Image
+              src={mobileImage.src}
+              alt={mobileImage.alt}
+              width={mobileImage.width}
+              height={mobileImage.height}
+              sizes='100vw'
+              className='h-auto w-full object-cover md:hidden'
+              priority
+            />
+            <Image
+              src={desktopImage.src}
+              alt={desktopImage.alt}
+              width={desktopImage.width}
+              height={desktopImage.height}
+              sizes='(max-width: 1023px) calc(100vw - 16px), (max-width: 1280px) 100vw, 1200px'
+              className='hidden h-auto w-full object-cover md:block'
+              priority
+            />
+          </figure>
+        </MagazineHeroViewTransition>
         <div className='flex flex-wrap items-center gap-x-5 gap-y-3 py-4 text-sm leading-4 text-foreground/80'>
           <span className='inline-flex items-center gap-2'>
             <CalendarDays className='size-4' aria-hidden />

@@ -4,7 +4,12 @@ import Link from 'next/link'
 import type { Route } from 'next'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import type { MagazineArticle } from '../types'
+import {
+  getMagazineHeroTransitionName,
+  MAGAZINE_DETAIL_TRANSITION_TYPE
+} from '../utils/getMagazineHeroTransitionName'
 import { MagazineCategoryBadge } from './MagazineCategoryBadge'
+import { MagazineHeroViewTransition } from './MagazineHeroViewTransition'
 
 type MagazineGridProps = { articles: MagazineArticle[] }
 
@@ -106,6 +111,8 @@ function MagazineArticleCard({
 }) {
   const usesTechDownBanner =
     article.slug === TECHDOWN_LAUNCH_SLUG
+  const heroTransitionName =
+    getMagazineHeroTransitionName(article.slug)
 
   if (usesTechDownBanner) {
     return (
@@ -162,15 +169,24 @@ function MagazineArticleCard({
         href={`/magasinet/${article.slug}` as Route}
         className='group flex h-full flex-col overflow-hidden rounded-lg bg-card transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
         data-track='MagazineGridClick'
+        {...(heroTransitionName ?
+          {
+            transitionTypes: [
+              MAGAZINE_DETAIL_TRANSITION_TYPE
+            ]
+          }
+        : {})}
       >
-        <Image
-          src={article.heroImage.src}
-          alt={article.heroImage.alt}
-          width={article.heroImage.width}
-          height={article.heroImage.height}
-          sizes='(max-width: 768px) calc(100vw - 32px), (max-width: 1200px) 45vw, 30vw'
-          className='aspect-16/10 h-auto w-full shrink-0 object-cover'
-        />
+        <MagazineHeroViewTransition slug={article.slug}>
+          <Image
+            src={article.heroImage.src}
+            alt={article.heroImage.alt}
+            width={article.heroImage.width}
+            height={article.heroImage.height}
+            sizes='(max-width: 768px) calc(100vw - 32px), (max-width: 1200px) 45vw, 30vw'
+            className='aspect-16/10 h-auto w-full shrink-0 object-cover'
+          />
+        </MagazineHeroViewTransition>
         <div className='flex flex-1 flex-col bg-muted p-5 text-foreground'>
           <div className='mb-4'>
             <MagazineCategoryBadge category={article.category} />
