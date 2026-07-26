@@ -143,7 +143,7 @@ export function AboutCarousel() {
                       key={index}
                       className='md:basis-1/3 lg:basis-1/4'
                     >
-                      <div className='group  dark:bg-dark-background relative overflow-hidden rounded-[1.25rem] border border-border bg-background'>
+                      <div className='group bg-background relative overflow-hidden rounded-[1.25rem] border border-border'>
                         <AspectRatio ratio={1 / 1}>
                           <Image
                             src={image.src}
@@ -152,7 +152,7 @@ export function AboutCarousel() {
                             className='object-cover transition-transform duration-1000 ease-out group-hover:scale-105'
                             sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw'
                           />
-                          <div className='dark:from-dark-background/62 absolute inset-0 bg-linear-to-t from-background/62 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100' />
+                          <div className='absolute inset-0 bg-linear-to-t from-background/62 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100' />
                         </AspectRatio>
                       </div>
                     </CarouselItem>
@@ -160,8 +160,8 @@ export function AboutCarousel() {
                 </CarouselContent>
 
                 <div className='hidden md:block'>
-                  <CarouselPrevious className=' dark:bg-dark-background dark:hover:border-dark-primary dark:hover:bg-dark-primary dark:hover:text-dark-background left-8 border-border bg-background text-foreground backdrop-blur-md hover:border-primary hover:bg-primary hover:text-background' />
-                  <CarouselNext className=' dark:bg-dark-background dark:hover:border-dark-primary dark:hover:bg-dark-primary dark:hover:text-dark-background right-8 border-border bg-background text-foreground backdrop-blur-md hover:border-primary hover:bg-primary hover:text-background' />
+                  <CarouselPrevious className='left-8 border-border bg-background text-foreground backdrop-blur-md hover:border-primary hover:bg-primary hover:text-background' />
+                  <CarouselNext className='right-8 border-border bg-background text-foreground backdrop-blur-md hover:border-primary hover:bg-primary hover:text-background' />
                 </div>
               </Carousel>
 

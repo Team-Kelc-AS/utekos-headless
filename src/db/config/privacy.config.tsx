@@ -231,8 +231,9 @@ export function createPrivacySections({
             ikke-nødvendige tagger er kategori-gatet.
           </PolicyItem>
           <PolicyItem title='YouTube'>
-            Videoavspilling. YouTube-innhold og tilhørende lagring aktiveres
-            først i kategorien som er angitt i Cookiebot-erklæringen.
+            Videoavspilling. Cookiebot klassifiserer den innebygde
+            YouTube-tjenesten som markedsføring, og iframe og tilhørende
+            lagring aktiveres derfor først med markedsføringssamtykke.
           </PolicyItem>
         </ul>
         <p>
@@ -291,7 +292,17 @@ export function createPrivacySections({
           cookies i nettleseren; nødvendige funksjoner som handlekurv og
           checkout kan da slutte å virke.
         </p>
-        {includeCookieDeclaration ? <CookieDeclaration /> : null}
+        {includeCookieDeclaration ?
+          <CookieDeclaration />
+        : <p>
+            Den dynamiske Cookiebot-erklæringen vises på{' '}
+            <ExternalLink href='https://utekos.no/personvern#cookies'>
+              utekos.no/personvern
+            </ExternalLink>
+            . Der finner du den til enhver tid oppdaterte listen og kan endre
+            valgene dine.
+          </p>
+        }
       </>
     )
   },

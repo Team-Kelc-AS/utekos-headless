@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   buildShopifyTrackingConsent,
+  hasCookiebotMarketingConsent,
   hasCookiebotStatisticsConsent,
   mapCookiebotConsentToShopify
 } from './cookiebotConsent'
@@ -13,7 +14,25 @@ test('consent gates fail closed before Cookiebot has a response', () => {
   }
 
   assert.equal(hasCookiebotStatisticsConsent(cookiebot), false)
+  assert.equal(hasCookiebotMarketingConsent(cookiebot), false)
   assert.equal(mapCookiebotConsentToShopify(cookiebot), null)
+})
+
+test('YouTube marketing gate follows the resolved Cookiebot choice', () => {
+  assert.equal(
+    hasCookiebotMarketingConsent({
+      hasResponse: true,
+      consent: { marketing: true }
+    }),
+    true
+  )
+  assert.equal(
+    hasCookiebotMarketingConsent({
+      hasResponse: true,
+      consent: { marketing: false }
+    }),
+    false
+  )
 })
 
 test('Shopify headless consent uses the verified storefront domains', () => {

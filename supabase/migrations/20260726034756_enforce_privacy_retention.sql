@@ -7,14 +7,16 @@ create table if not exists analytics.daily_privacy_safe_event_metrics (
   metric_date date not null,
   event_name text not null,
   event_count bigint not null check (event_count >= 0),
-  first_occurred_at timestamptz not null,
-  last_occurred_at timestamptz not null,
   aggregated_at timestamptz not null default statement_timestamp(),
   primary key (metric_date, event_name)
 );
 
+alter table analytics.daily_privacy_safe_event_metrics
+  drop column if exists first_occurred_at,
+  drop column if exists last_occurred_at;
+
 comment on table analytics.daily_privacy_safe_event_metrics is
-  'Anonymous daily event totals. Direct identifiers, URLs, click ids, consent payloads and dimensions that permit singling out are forbidden.';
+  'Anonymous daily event totals. Event names are allowlisted into fixed categories; direct identifiers, precise event times, URLs, click ids, consent payloads and dimensions that permit singling out are forbidden.';
 
 alter table analytics.daily_privacy_safe_event_metrics enable row level security;
 alter table analytics.daily_privacy_safe_event_metrics force row level security;
@@ -95,15 +97,20 @@ begin
   get diagnostics v_count = row_count;
   v_result := v_result || jsonb_build_object('expired_exceptions_deleted', v_count);
 
-  with aggregate_source as (
-    select ledger.id, ledger.event_name, ledger.occurred_at
+  with aggregate_candidates as (
+    select ledger.event_name, ledger.occurred_at
     from marketing.event_ledger ledger
     where ledger.occurred_at < v_now - interval '14 months'
       and not ops.has_active_privacy_retention_exception(
         'marketing', 'event_ledger', ledger.id::text, v_now
       )
+      and not exists (
+        select 1
+        from marketing.canonical_event_source_evidence evidence
+        where evidence.canonical_idempotency_key = ledger.idempotency_key
+      )
     union all
-    select archive.id, archive.event_name, archive.occurred_at
+    select archive.event_name, archive.occurred_at
     from analytics.event_ledger_archive archive
     where archive.occurred_at < v_now - interval '14 months'
       and not exists (
@@ -113,43 +120,70 @@ begin
         'analytics', 'event_ledger_archive', archive.id::text, v_now
       )
   ),
+  aggregate_source as (
+    select
+      case
+        when event_name in (
+          'page_view',
+          'view_item_list',
+          'select_item',
+          'view_item',
+          'add_to_wishlist',
+          'add_to_cart',
+          'remove_from_cart',
+          'view_cart',
+          'begin_checkout',
+          'add_shipping_info',
+          'add_payment_info',
+          'purchase',
+          'refund',
+          'search',
+          'view_search_results',
+          'view_promotion',
+          'select_promotion',
+          'generate_lead',
+          'form_start',
+          'form_submit',
+          'form_error',
+          'filter_apply',
+          'sort_apply',
+          'variant_select',
+          'size_guide_view',
+          'checkout_error',
+          'payment_error',
+          'scroll_depth',
+          'view_category',
+          'hero_interact',
+          'video_progress'
+        ) then event_name
+        else 'other'
+      end as event_name,
+      occurred_at
+    from aggregate_candidates
+  ),
   daily as (
     select
-      occurred_at::date as metric_date,
+      (occurred_at at time zone 'UTC')::date as metric_date,
       event_name,
-      count(*)::bigint as event_count,
-      min(occurred_at) as first_occurred_at,
-      max(occurred_at) as last_occurred_at
+      count(*)::bigint as event_count
     from aggregate_source
-    group by occurred_at::date, event_name
+    group by (occurred_at at time zone 'UTC')::date, event_name
   )
   insert into analytics.daily_privacy_safe_event_metrics (
     metric_date,
     event_name,
     event_count,
-    first_occurred_at,
-    last_occurred_at,
     aggregated_at
   )
   select
     metric_date,
     event_name,
     event_count,
-    first_occurred_at,
-    last_occurred_at,
     v_now
   from daily
   on conflict (metric_date, event_name) do update
   set
     event_count = analytics.daily_privacy_safe_event_metrics.event_count + excluded.event_count,
-    first_occurred_at = least(
-      analytics.daily_privacy_safe_event_metrics.first_occurred_at,
-      excluded.first_occurred_at
-    ),
-    last_occurred_at = greatest(
-      analytics.daily_privacy_safe_event_metrics.last_occurred_at,
-      excluded.last_occurred_at
-    ),
     aggregated_at = excluded.aggregated_at;
   get diagnostics v_count = row_count;
   v_result := v_result || jsonb_build_object('daily_metric_rows_upserted', v_count);
@@ -531,7 +565,7 @@ end;
 $$;
 
 comment on function ops.purge_expired_privacy_data() is
-  'Aggregates anonymous daily counts, redacts payloads at 30/90-day boundaries, and deletes personal data at documented retention limits in FK-safe order.';
+  'Aggregates allowlisted anonymous daily counts, redacts payloads at 30/90-day boundaries, and deletes personal data at documented retention limits in FK-safe order.';
 
 revoke execute on function ops.purge_expired_privacy_data()
   from public, anon, authenticated;
@@ -560,8 +594,5 @@ begin
       $cron$select ops.purge_expired_privacy_data();$cron$
     );
   end if;
-exception
-  when others then
-    raise notice 'purge_expired_privacy_data cron schedule skipped: %', sqlerrm;
 end
 $schedule_privacy_purge$;

@@ -19,7 +19,7 @@ export function AboutCta() {
             Oppdag vår kolleksjon
           </AboutBadge>
           <h2 className='font-utekos-text-medium text-4xl leading-tight text-inherit sm:text-5xl'>
-            Klar til å ta kvelden tilbake?
+            Klar til å skreddersy varmen?
           </h2>
           <p className='mx-auto mt-5 max-w-2xl text-lg leading-8 text-inherit/80'>
             Opplev hvordan gjennomtenkt funksjon og tidløs

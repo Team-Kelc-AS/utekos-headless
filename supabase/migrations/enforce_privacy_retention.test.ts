@@ -31,6 +31,7 @@ test('privacy purge is protected and scheduled idempotently', async () => {
     /revoke execute on function ops\.purge_expired_privacy_data\(\)[\s\S]*from public, anon, authenticated/i
   )
   assert.match(sql, /where jobname = 'purge_expired_privacy_data'/)
+  assert.doesNotMatch(sql, /cron schedule skipped/i)
   assert.match(sql, /ops\.privacy_retention_exceptions/)
   assert.match(
     sql,
@@ -47,7 +48,12 @@ test('anonymous aggregate excludes direct and pseudonymous dimensions', async ()
   assert.ok(tableDefinition)
   assert.doesNotMatch(
     tableDefinition,
-    /email|phone|anonymous_id|external_id|source_url|click|payload/i
+    /email|phone|anonymous_id|external_id|source_url|click|payload|first_occurred_at|last_occurred_at/i
+  )
+  assert.match(sql, /else 'other'\s+end as event_name/i)
+  assert.match(
+    sql,
+    /from marketing\.event_ledger ledger[\s\S]*not exists \([\s\S]*canonical_event_source_evidence evidence[\s\S]*canonical_idempotency_key = ledger\.idempotency_key[\s\S]*union all/i
   )
 })
 

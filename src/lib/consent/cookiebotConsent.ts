@@ -34,6 +34,15 @@ export function hasCookiebotStatisticsConsent(
   )
 }
 
+export function hasCookiebotMarketingConsent(
+  cookiebot: CookiebotApi | undefined
+): boolean {
+  return (
+    cookiebot?.hasResponse === true &&
+    cookiebot.consent?.marketing === true
+  )
+}
+
 export function mapCookiebotConsentToShopify(
   cookiebot: CookiebotApi | undefined
 ): {

@@ -29,7 +29,7 @@ export function ProductCardFooter({
             data-track='ProductCardFooterAddToCartClick'
             disabled={isPending}
             variant='checkout'
-            className={`${actionButtonClassName} border-commerce-primary focus-visible:outline-commerce-primary-foreground dark:border-dark-commerce-primary dark:focus-visible:outline-dark-commerce-primary-foreground border disabled:opacity-70`}
+            className={`${actionButtonClassName} focus-visible:outline-commerce-primary-foreground focus-visible:outline-dark-commerce-primary-foreground disabled:opacity-70`}
           >
             {isPending ?
               <Loader2 className='size-4 animate-spin' />
