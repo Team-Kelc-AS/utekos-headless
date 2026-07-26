@@ -20,6 +20,7 @@ import { GoogleTagManager } from '@next/third-parties/google'
 import { SITE_URL } from '@/constants'
 import type { Metadata } from 'next'
 import type { TrackingEnvironment } from '@/lib/analytics/pageViewEvent'
+import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
 import { Google_Sans_Flex } from 'next/font/google'
 
 const googleSansFlex = Google_Sans_Flex({
@@ -123,6 +124,8 @@ export default function RootLayout({
 }) {
   const storefrontAccessToken =
     process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
+  const assistantRolloutPercent =
+    resolveAssistantPreviewRolloutPercent(process.env)
 
   return (
     <html
@@ -147,6 +150,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <CartProviderLoader>
             <SiteChrome
+              assistantRolloutPercent={assistantRolloutPercent}
               header={<Header menu={mainMenu} />}
               footer={<Footer />}
             >
