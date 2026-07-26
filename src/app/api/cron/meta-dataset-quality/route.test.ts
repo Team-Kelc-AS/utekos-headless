@@ -69,6 +69,42 @@ test('rejects an unauthorized Meta quality cron', async () => {
   ])
 })
 
+test('finishes a thrown auth evaluation as error without masking the original failure', async () => {
+  const checkIns: unknown[] = []
+  const expectedError = new Error('secret store unavailable')
+
+  await assert.rejects(
+    handleMetaDatasetQualityCron(
+      request('Bearer correct-secret'),
+      dependencies({
+        checkIn: async input => {
+          checkIns.push(input)
+          if (checkIns.length === 2) {
+            throw new Error('Sentry unavailable')
+          }
+          return 'check-in-id'
+        },
+        getCronSecret: () => {
+          throw expectedError
+        },
+        sync: async () => {
+          throw new Error('sync must not run')
+        }
+      })
+    ),
+    expectedError
+  )
+
+  assert.deepEqual(checkIns, [
+    { runKind: 'primary', status: 'in_progress' },
+    {
+      checkInId: 'check-in-id',
+      runKind: 'primary',
+      status: 'error'
+    }
+  ])
+})
+
 test('runs the authorized Meta quality sync', async () => {
   let syncCount = 0
   const cronDependencies = dependencies({

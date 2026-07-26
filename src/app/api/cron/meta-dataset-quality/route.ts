@@ -46,10 +46,22 @@ export async function handleMetaDatasetQualityCron(
     runKind,
     status: 'in_progress'
   })
-  const authorized = hasValidCronAuthorization(
-    request.headers.get('authorization'),
-    dependencies.getCronSecret()
-  )
+  let authorized: boolean
+  try {
+    authorized = hasValidCronAuthorization(
+      request.headers.get('authorization'),
+      dependencies.getCronSecret()
+    )
+  } catch (error) {
+    if (checkInId) {
+      await safelyCaptureCheckIn(dependencies, {
+        checkInId,
+        runKind,
+        status: 'error'
+      })
+    }
+    throw error
+  }
 
   if (!authorized) {
     if (checkInId) {
