@@ -56,7 +56,7 @@ Production evidence:
 | Representative canonical event IDs | `ViewItemList` `5d162e4f-9416-4883-aad0-2787b4601a53`; `OpenQuickView` `74cec7fd-81f6-4a7b-95b1-0b1c65d7cd01`; `InteractWithAccordion` `d51aa3ea-a427-4f8a-9098-005f77007626`; 3→2 `RemoveFromCart` `cb48d8fb-0fbb-416e-8d57-f83715a42a59` |
 | Meta/Google receipts | Every controlled Meta attempt returned `events_received=1`; Google requests were executed with `validate_only=false`, with the first representative new-event requests later reconciled to `SUCCESS` |
 | Browser/server dedupe contract | Captured Pixel POST `InteractWithAccordion` used the same `d51aa3ea-a427-4f8a-9098-005f77007626` as CAPI; CAPI trace `A_2GZMmmYF3z8AlGEUWrcaV`, 250 ms |
-| Provider health | 190 accepted samples, p95 ACK `5 750 ms`, zero initial pending >2m, zero recent dead letters, zero canonical events without attempts |
+| Provider health | First scheduled `/api/cron/provider-dispatch-health` completed `200` at `2026-07-26T15:45:30Z`; direct snapshot: 190 accepted samples, p95 ACK `5 750 ms`, zero initial pending >2m, zero recent dead letters, zero canonical events without attempts |
 | External Meta freshness | Dataset browser `2026-07-26T15:40:07Z`; server `2026-07-26T15:41:17Z`; event-level dashboard aggregation can lag these receipt times |
 | 7-day / 14-day quality result | Pending elapsed observation windows; due 2026-08-02 and 2026-08-09 |
 

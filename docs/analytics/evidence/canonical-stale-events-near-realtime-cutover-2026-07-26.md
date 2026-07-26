@@ -135,7 +135,7 @@ delivery or production evidence.
 | Browser owner / duplicate protection | Same-origin `/analytics/meta-pixel-canonical-v1.js` initializes `fbq`, observes future canonical dataLayer entries, and shares `window.__utekosMetaPixelState.sent` with the GTM template. This was added after production proved that the GTM Custom HTML tag did not execute even though the live mapping was present. |
 | Google Data Manager request IDs/status | Every controlled event created a validated executed request (`validate_only=false`). The first representative list/category/hero/quick-view/accordion requests were subsequently reconciled to provider `SUCCESS`; newer rows remain `accepted_unverified` until the existing status job confirms them. |
 | Events Manager freshness/dedupe/source result | Meta's dataset API advanced browser freshness to `2026-07-26T15:40:07Z` and server freshness to `2026-07-26T15:41:17Z`. Event-level aggregate/Events Manager UI remained delayed at the immediate check. Matching name/ID is wire-proven; numeric overlap/dedupe UI remains a 7-/14-day verification gate. |
-| Provider ACK p95 ≤60s; fallback ≤5m | Green production sample: 190 accepted rows, p95 `5,750 ms`; zero initial pending rows over two minutes, zero recent dead letters and zero canonical events without an attempt. |
+| Provider ACK p95 ≤60s; fallback ≤5m | First scheduled health cron returned `200` at `2026-07-26T15:45:30Z`. Green production sample: 190 accepted rows, p95 `5,750 ms`; zero initial pending rows over two minutes, zero recent dead letters and zero canonical events without an attempt. |
 | 7-day quality result | Pending observation window; due 2026-08-02 |
 | 14-day quality result | Pending observation window; due 2026-08-09 |
 

@@ -51,7 +51,7 @@ additional-consent setting. Application deployment
 | Google Data Manager | 28 registered workers including both new canonical events | Executed (`validate_only=false`) request IDs stored; representative first requests reconciled to `SUCCESS` |
 | Immediate delivery | Post-commit Vercel Queue wake-up with exact attempt claim, seven-day retention and 15-second infrastructure redelivery | Queue consumer returned `200`; completed attempts precede the five-minute fallback window |
 | Fallback | Existing five-minute provider cron retained; stale-processing reclaim aligned to fallback window | Retained and not needed for the representative immediate dispatches |
-| Health | 15-minute Sentry health route for missing attempts, publish failures, pending age, dead letters and p95 ACK | 190-sample p95 `5 750 ms`; zero initial pending >2m, recent dead letters or canonical events without an attempt |
+| Health | 15-minute Sentry health route for missing attempts, publish failures, pending age, dead letters and p95 ACK | First scheduled run returned `200` at `2026-07-26T15:45:30Z`; 190-sample p95 `5 750 ms`; zero initial pending >2m, recent dead letters or canonical events without an attempt |
 | Remove from cart | Shopify response is authoritative for full deletion and actual positive quantity delta, including 3→2 | Genuine 3→2 event `cb48d8fb-0fbb-416e-8d57-f83715a42a59`; Meta `events_received=1` |
 
 The release does not change the database schema, Purchase contract,
