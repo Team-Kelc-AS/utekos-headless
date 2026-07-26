@@ -54,8 +54,8 @@ export function AboutCarousel() {
 
   return (
     <SectionBox
-      bgcolor='bg-background dark:bg-dark-background'
-      className=' border-b border-border'
+      bgcolor='bg-background'
+      className='border-b border-border'
     >
       <article ref={containerRef} className='relative'>
         <div className='pointer-events-none absolute inset-0 -z-10'>
@@ -81,7 +81,7 @@ export function AboutCarousel() {
               <BrandBadge
                 backgroundColor='var(--color-primary)'
                 textColor='var(--foreground)'
-                className='font-utekos-text-medium! mb-12 gap-2 shadow-[0_18px_44px_-28px_color-mix(in_oklab,var(--color-primary)_80%,transparent)]'
+                className='mb-12 gap-2 font-utekos-text-medium! shadow-[0_18px_44px_-28px_color-mix(in_oklab,var(--color-primary)_80%,transparent)]'
               >
                 <Camera className='size-5' strokeWidth={1.6} />
                 <span>Livet med Utekos</span>
@@ -94,7 +94,7 @@ export function AboutCarousel() {
                 duration: 0.75,
                 ease: [0.22, 1, 0.36, 1]
               }}
-              className='mb-6 font-sans text-4xl font-extrabold text-foreground md:text-5xl lg:text-6xl'
+              className='font-google-sans mb-6 text-4xl font-extrabold text-foreground md:text-5xl lg:text-6xl'
             >
               Et glimt av opplevelsen
             </motion.h2>
@@ -105,7 +105,7 @@ export function AboutCarousel() {
                 duration: 0.75,
                 ease: [0.22, 1, 0.36, 1]
               }}
-              className='font-utekos-text-medium mx-auto text-foreground'
+              className='font-utekos-text-medium text-foreground'
             >
               Se hvordan kompromissløs komfort gir liv til dine
               favorittøyeblikk utendørs.
@@ -122,7 +122,7 @@ export function AboutCarousel() {
               ease: [0.22, 1, 0.36, 1]
             }}
           >
-            <div className=' relative max-w-6xl overflow-hidden rounded-[1.75rem] border border-border bg-[color-mix(in_oklab,var(--foreground)_8%,transparent)] p-3 shadow-2xl shadow-black/35 backdrop-blur-sm md:p-5'>
+            <div className='relative max-w-6xl overflow-hidden rounded-[1.75rem] border border-border bg-[color-mix(in_oklab,var(--foreground)_8%,transparent)] p-3 shadow-2xl shadow-black/35 backdrop-blur-sm md:p-5'>
               <div className='dark:via-dark-primary/55 absolute top-0 right-0 left-0 h-px bg-linear-to-r from-transparent via-primary/55 to-transparent' />
 
               <Carousel
@@ -143,7 +143,7 @@ export function AboutCarousel() {
                       key={index}
                       className='md:basis-1/3 lg:basis-1/4'
                     >
-                      <div className='group bg-background relative overflow-hidden rounded-[1.25rem] border border-border'>
+                      <div className='group relative overflow-hidden rounded-[1.25rem] border border-border bg-background'>
                         <AspectRatio ratio={1 / 1}>
                           <Image
                             src={image.src}
