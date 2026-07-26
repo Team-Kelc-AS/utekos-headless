@@ -11,6 +11,8 @@ const TAG_GATEWAY_ORIGINS = [
   ...COOKIEBOT_ORIGINS
 ] as const
 
+/* eslint-disable quotes -- CSP keywords require ASCII single quotes inside JavaScript string literals. */
+
 const KLARNA_ORIGINS = [
   'https://js.klarna.com',
   'https://x.klarnacdn.net',
@@ -34,7 +36,9 @@ const META_PIXEL_EVENT_ORIGINS = [
 ] as const
 
 /** Meta Pixel (fbevents) creates a hidden iframe to www.facebook.com. */
-const META_PIXEL_FRAME_ORIGINS = ['https://www.facebook.com'] as const
+const META_PIXEL_FRAME_ORIGINS = [
+  'https://www.facebook.com'
+] as const
 
 const GOOGLE_ADS_ORIGINS = [
   'https://ad.doubleclick.net',
@@ -56,8 +60,11 @@ const GA4_ADVERTISING_ORIGINS = [
 
 const KLARNA_ASSET_ORIGINS = ['https://x.klarnacdn.net'] as const
 
-const VERCEL_LIVE_ORIGINS = [
-  'https://vercel.live'
+const VERCEL_LIVE_ORIGINS = ['https://vercel.live'] as const
+
+/** Privacy-enhanced YouTube embeds used by the storefront video. */
+const VIDEO_FRAME_ORIGINS = [
+  'https://www.youtube-nocookie.com'
 ] as const
 
 function joinOrigins(origins: readonly string[]): string {
@@ -66,9 +73,9 @@ function joinOrigins(origins: readonly string[]): string {
 
 export function buildReportOnlyCsp(): string {
   const scriptSrc = [
-    '\'self\'',
-    '\'unsafe-inline\'',
-    '\'unsafe-eval\'',
+    "'self'",
+    "'unsafe-inline'",
+    "'unsafe-eval'",
     ...KLARNA_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...MICROSOFT_TRACKING_ORIGINS,
@@ -78,7 +85,7 @@ export function buildReportOnlyCsp(): string {
   ]
 
   const connectSrc = [
-    '\'self\'',
+    "'self'",
     ...KLARNA_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...MICROSOFT_TRACKING_ORIGINS,
@@ -93,7 +100,7 @@ export function buildReportOnlyCsp(): string {
   ]
 
   const imgSrc = [
-    '\'self\'',
+    "'self'",
     'data:',
     'blob:',
     ...TAG_GATEWAY_ORIGINS,
@@ -107,25 +114,26 @@ export function buildReportOnlyCsp(): string {
   ]
 
   const frameSrc = [
-    '\'self\'',
+    "'self'",
     ...KLARNA_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...META_PIXEL_FRAME_ORIGINS,
+    ...VIDEO_FRAME_ORIGINS,
     ...VERCEL_LIVE_ORIGINS
   ]
 
   return [
-    'default-src \'self\'',
+    "default-src 'self'",
     `script-src ${joinOrigins(scriptSrc)}`,
-    `style-src ${joinOrigins(['\'self\'', '\'unsafe-inline\'', ...KLARNA_ASSET_ORIGINS])}`,
-    `font-src ${joinOrigins(['\'self\'', 'data:', ...KLARNA_ASSET_ORIGINS])}`,
-    'object-src \'none\'',
-    'base-uri \'self\'',
-    'frame-ancestors \'none\'',
+    `style-src ${joinOrigins(["'self'", "'unsafe-inline'", ...KLARNA_ASSET_ORIGINS])}`,
+    `font-src ${joinOrigins(["'self'", 'data:', ...KLARNA_ASSET_ORIGINS])}`,
+    "object-src 'none'",
+    "base-uri 'self'",
+    "frame-ancestors 'none'",
     `connect-src ${joinOrigins(connectSrc)}`,
     `img-src ${joinOrigins(imgSrc)}`,
     `frame-src ${joinOrigins(frameSrc)}`,
-    'worker-src \'self\' blob:',
+    "worker-src 'self' blob:",
     'report-uri /api/security/csp-report'
   ].join('; ')
 }
