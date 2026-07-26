@@ -196,10 +196,10 @@ test('granted lead persists once and returns canonical browser evidence for its 
 
 test('lead without page URL persists once and emits one validated skip without tracking', async () => {
   resetSpies()
+  const input = baseInput()
+  delete input.trackingContext
 
-  const result = await recordLeadSubmission(
-    baseInput({ trackingContext: undefined })
-  )
+  const result = await recordLeadSubmission(input)
 
   assert.equal(insertCalls.length, 1)
   assert.equal(recordCalls.length, 0)
