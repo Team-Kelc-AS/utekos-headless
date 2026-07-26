@@ -16,7 +16,7 @@ const TRACKING_SOURCE_PREFIX = 'tracking:'
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const HOUR_MS = 60 * 60 * 1000
 const PROVIDER_REPLAY_WINDOW_MS = {
-  google: 72 * HOUR_MS,
+  google: 48 * HOUR_MS,
   meta: 7 * 24 * HOUR_MS,
   microsoft_uet: 7 * 24 * HOUR_MS
 }
@@ -36,6 +36,7 @@ const deadLetterReplayRowSchema = z.object({
   event_name: z.string().nullable().optional(),
   last_error: z.string().nullable().optional(),
   skip_reason: z.string().nullable().optional(),
+  attempt_payload: z.unknown().optional(),
   attempt_updated_at: z.unknown().optional()
 })
 
@@ -130,18 +131,38 @@ function toTime(value) {
   return null
 }
 
-function isOutsideProviderReplayWindow(provider, createdAt, generatedAt) {
+function getCanonicalEventTime(payload) {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return { classification: 'missing_canonical_event_time', time: null }
+  }
+
+  const value = payload.event_time
+  if (value === undefined || value === null || value === '') {
+    return { classification: 'missing_canonical_event_time', time: null }
+  }
+
+  const parsed = z.string().datetime({ offset: true }).safeParse(value)
+  if (!parsed.success) {
+    return { classification: 'invalid_canonical_event_time', time: null }
+  }
+
+  const time = Date.parse(parsed.data)
+  return Number.isFinite(time)
+    ? { classification: null, time }
+    : { classification: 'invalid_canonical_event_time', time: null }
+}
+
+function isOutsideProviderReplayWindow(provider, eventTime, generatedAt) {
   const replayWindowMs = PROVIDER_REPLAY_WINDOW_MS[provider]
   if (!replayWindowMs) {
     return false
   }
 
-  const createdTime = toTime(createdAt)
-  if (createdTime === null) {
+  if (eventTime === null) {
     return false
   }
 
-  return generatedAt.getTime() - createdTime > replayWindowMs
+  return generatedAt.getTime() - eventTime > replayWindowMs
 }
 
 function classifyReplayRow(row, generatedAt = new Date()) {
@@ -221,6 +242,28 @@ function classifyReplayRow(row, generatedAt = new Date()) {
     }
   }
 
+  const canonicalEventTime = provider === 'google'
+    ? getCanonicalEventTime(parsed.attempt_payload)
+    : null
+
+  if (canonicalEventTime?.classification === 'missing_canonical_event_time') {
+    return {
+      ...base,
+      eligible: false,
+      classification: 'missing_canonical_event_time',
+      requiredAction: 'Do not replay Google rows without canonical event_time; resolve or repair the canonical payload first.'
+    }
+  }
+
+  if (canonicalEventTime?.classification === 'invalid_canonical_event_time') {
+    return {
+      ...base,
+      eligible: false,
+      classification: 'invalid_canonical_event_time',
+      requiredAction: 'Do not replay Google rows with invalid canonical event_time; repair the canonical payload first.'
+    }
+  }
+
   if (
     provider === 'google'
     && hasMissingClientIdReason(parsed.reason, skipReason, lastError)
@@ -251,7 +294,11 @@ function classifyReplayRow(row, generatedAt = new Date()) {
     }
   }
 
-  if (isOutsideProviderReplayWindow(provider, parsed.created_at, generatedAt)) {
+  const replayEventTime = provider === 'google'
+    ? canonicalEventTime.time
+    : toTime(parsed.created_at)
+
+  if (isOutsideProviderReplayWindow(provider, replayEventTime, generatedAt)) {
     return {
       ...base,
       eligible: false,
@@ -416,6 +463,7 @@ async function queryReplayPlanRows(warehouseUrl, limit) {
         attempts.event_name,
         attempts.last_error,
         attempts.skip_reason,
+        attempts.payload as attempt_payload,
         attempts.updated_at as attempt_updated_at
       from ops.dead_letter_events as dead_letters
       left join ops.provider_dispatch_attempts as attempts
