@@ -28,7 +28,7 @@ export const COMFYROBE_LANDING_FAQ = [
   {
     question: 'Er Comfyrobe™ vanntett?',
     answer:
-      'Comfyrobe™ har et værbeskyttende skall med 8 000 mm vannsøyle, pustende membran og tapede sømmer. Den er utviklet for regn, vind og skiftende norsk hverdagsvær.'
+      'Comfyrobe™ har et værbeskyttende skall med 8 000 mm vannsøyle og pustende membran. Den er utviklet for regn, vind og skiftende norsk hverdagsvær.'
   },
   {
     question: 'Hvor varm er Comfyrobe™?',

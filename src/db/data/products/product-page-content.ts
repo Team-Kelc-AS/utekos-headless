@@ -631,7 +631,7 @@ export const PRODUCT_PAGE_CONTENT = {
         },
         {
           paragraphs: [
-            'Det slitesterke ytterstoffet i HydroGuard™ er både vanntett og vindtett, med tapede sømmer som holder vær og vind ute. Pustende egenskaper transporterer overskuddsfuktighet bort fra kroppen slik at du unngår klamhet.'
+            'Det slitesterke ytterstoffet i HydroGuard™ er både vanntett og vindtett. Pustende egenskaper transporterer overskuddsfuktighet bort fra kroppen slik at du unngår klamhet.'
           ]
         },
         {
@@ -692,7 +692,7 @@ export const PRODUCT_PAGE_CONTENT = {
           {
             title: 'Vanntett og vindtett',
             paragraphs: [
-              'Med minimum 8000 mm vannsøyle, pustende membran og tapede sømmer holder Comfyrobe™ deg tørr i regn og skjermer effektivt mot vind uten klamhet.'
+              'Med minimum 8000 mm vannsøyle og pustende membran holder Comfyrobe™ deg tørr i regn og skjermer effektivt mot vind uten klamhet.'
             ]
           },
           {

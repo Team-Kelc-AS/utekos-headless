@@ -7,7 +7,7 @@ export function ShippingReturnsHeader() {
       <header className='container mx-auto w-full items-start px-8 text-left'>
         <BrandBadge
           label='Fri frakt over 999 kr'
-          backgroundColor='var(--card)'
+          backgroundColor='var(--green-900)'
           textColor='var(--foreground)'
           className='mb-6 border border-foreground/6 px-8 py-4 text-left text-sm md:text-base'
         />

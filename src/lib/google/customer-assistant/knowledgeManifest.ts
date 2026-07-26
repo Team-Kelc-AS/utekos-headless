@@ -179,7 +179,7 @@ Se alle aktuelle produktmål: https://utekos.no/handlehjelp/storrelsesguide`,
 
 Utekos TechDown bruker CloudWeave, en syntetisk isolasjon utviklet for dunlignende loft og kompresjon, og et vannavvisende nylonskall. Utekos Dun bruker dun med fillpower 650 og et lett nylonstoff med DWR-behandling. Utekos Mikrofiber bruker hurtigtørkende syntetisk mikrofiber og et 20D/380T nylonstoff som er vindtett og sterkt vannavvisende.
 
-Comfyrobe har et 130 GSM polyesterskall med pustende PU-membran, tapede sømmer og oppgitt vannsøyle på 8 000 mm. Innsiden har 250 GSM Sherpa Fleece. Utekos Dun, Mikrofiber og TechDown har justering mellom fullengde, oppjustert og parkas, samt et to-spors glidelåssystem.
+Comfyrobe har et 130 GSM polyesterskall med pustende PU-membran, og vannsøyle på 8 000 mm. Innsiden har 250 GSM Sherpa Fleece. Utekos Dun, Mikrofiber og TechDown har justering mellom fullengde, oppjustert og parkas, samt et to-spors glidelåssystem.
 
 Les full materialbeskrivelse: https://utekos.no/handlehjelp/teknologi-materialer`,
       published: true

@@ -12,9 +12,9 @@ const guaranteeIconClassName =
 export function InfoSidebar() {
   return (
     <aside className='w-full lg:col-span-4'>
-      <div className='sticky top-28 flex min-w-0 flex-col rounded-2xl bg-muted/40 p-2'>
-        <div className='flex flex-col items-start rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm ring-1 ring-border sm:p-8'>
-          <h3 className='mb-8 text-left font-sans font-utekos-text-medium text-xl leading-tight text-card-foreground'>
+      <div className='sticky top-28 flex min-w-0 mt-4 flex-col rounded-2xl bg-green-1000 p-2'>
+        <div className='flex flex-col items-start rounded-xl border border-border bg-green-900 p-6 text-card-foreground shadow-sm ring-1 ring-border sm:p-8'>
+          <h3 className='mb-8 text-left font-utekos-text-medium text-xl leading-tight text-card-foreground'>
             Dine trygghetsgarantier
           </h3>
 
@@ -28,7 +28,7 @@ export function InfoSidebar() {
                 />
               </div>
               <div className='flex flex-col items-start'>
-                <span className='font-sans font-utekos-text-medium text-base text-card-foreground'>
+                <span className='font-utekos-text-medium text-base text-card-foreground'>
                   14 dagers angrerett
                 </span>
                 <span className='mt-1 text-left font-utekos-text text-sm leading-relaxed text-card-foreground/90'>
@@ -46,7 +46,7 @@ export function InfoSidebar() {
                 />
               </div>
               <div className='flex flex-col items-start'>
-                <span className='font-sans font-utekos-text-medium text-base text-card-foreground'>
+                <span className='font-utekos-text-medium text-base text-card-foreground'>
                   Fri frakt over 999 kr
                 </span>
                 <span className='mt-1 text-left font-utekos-text text-sm leading-relaxed text-card-foreground/90'>
@@ -64,7 +64,7 @@ export function InfoSidebar() {
                 />
               </div>
               <div className='flex flex-col items-start'>
-                <span className='font-sans font-utekos-text-medium text-base text-card-foreground'>
+                <span className='font-utekos-text-medium text-base text-card-foreground'>
                   Retur
                 </span>
                 <address className='mt-1 not-italic'>
@@ -80,13 +80,13 @@ export function InfoSidebar() {
           <hr className='my-8 w-full border-t border-border' />
 
           <div className='flex w-full flex-col items-start'>
-            <h4 className='mb-4 text-left font-sans font-utekos-text-medium text-base text-card-foreground'>
+            <h4 className='mb-4 text-left font-utekos-text-medium text-base text-card-foreground'>
               Har du andre spørsmål?
             </h4>
             <Link
               href='/kontaktskjema'
               data-track='ShippingReturnsContactClick'
-              className='font-google-sans flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-secondary/30 bg-secondary px-6 py-3 font-sans text-base font-bold text-secondary-foreground shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card focus-visible:outline-none'
+              className='font-utekos-text-medium flex min-h-12 w-full bg-primary items-center justify-center gap-2 rounded-3xl border border-secondary/30  px-6 py-3 text-base font-bold text-secondary-foreground shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card focus-visible:outline-none'
             >
               <Mail className='size-5' aria-hidden='true' />
               Kontakt oss

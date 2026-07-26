@@ -15,7 +15,7 @@ import { ArrowRight, Mail } from 'lucide-react'
 import { toast } from 'sonner'
 import { H2 } from '@/components/typography/TypographyH2'
 import { P } from '@/components/typography/TypographyP'
-
+import {Button} from "@/components/ui/button"
 const initialState: ActionState = { status: 'idle', message: '' }
 
 export function NewsletterForm() {
@@ -46,7 +46,7 @@ export function NewsletterForm() {
     <article className='mx-auto w-full'>
       <section
         aria-labelledby='newsletter-heading'
-        className='w-full overflow-hidden rounded-[1.25rem] bg-teal-900 px-5 py-8 text-white sm:px-10 sm:py-10'
+        className='w-full overflow-hidden rounded-[1.25rem] bg-green-900 px-5 py-8 text-white sm:px-10 sm:py-10'
       >
         <div className='mx-auto flex w-full max-w-2xl flex-col items-start gap-4 text-left'>
           <hgroup className='flex flex-col gap-3'>
@@ -67,11 +67,11 @@ export function NewsletterForm() {
 
             <div className='flex flex-col gap-1.5 text-white/86'>
               <P
-                Text='Som medlem i vår kundeklubb får du personlige tilbud og tilgang til salg og kampanjer først.'
+                Text='Som medlem i vår kundeklubb får du personlige varsler om tilbud, salg og kampanjer.'
                 className='not-first:mt-0'
               />
               <P
-                Text='Du får også masse tips og inspirasjon rett inn i innboksen din.'
+                Text='Du får også tips, inspirasjon og nye artikler fra Utekos-magasinet.'
                 className='not-first:mt-0'
               />
             </div>
@@ -101,17 +101,17 @@ export function NewsletterForm() {
 
             <BrandBadge
               asChild
-              className='hover:bg-primary-hover dark:hover:bg-dark-primary-hover h-12 w-full shrink-0 bg-teal-500 px-6 py-0 font-utekos-text-medium text-base text-[#001212] transition-colors duration-300 sm:w-auto dark:bg-teal-500 dark:text-[#001212]'
+              className='hover:bg-primary-hover h-12 w-full shrink-0 px-6 py-0 font-utekos-text-medium text-base text-foreground transition-colors duration-300 sm:w-auto'
             >
-              <button
+              <Button
                 type='submit'
                 disabled={isPending}
                 aria-busy={isPending}
-                className='group dark:focus-visible:outline-dark-ring focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-60'
+                className='group dark:focus-visible:outline-dark-ring cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-60'
               >
                 {isPending ? 'Sender…' : 'Meld meg inn'}
                 <ArrowRight className='ml-2 size-5 transition-transform duration-300 group-hover:translate-x-1' />
-              </button>
+              </Button>
             </BrandBadge>
           </form>
         </div>

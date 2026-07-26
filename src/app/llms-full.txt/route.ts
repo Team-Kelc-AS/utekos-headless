@@ -73,7 +73,7 @@ Buff™ og Stapper™.
 | Utekos TechDown™   | Teknisk allrounder med syntetisk isolasjon og høy komfort i varierende vær | Ja    | YKK® Dual V-Zip™     | Luméa™ Shell, CloudWave™ Insulation, Taffeta innerfôr                                                             | Norsk kystklima, terrasse, hytte, bålplass, skiftende vær             | Skånsom vask 30°C, mildt vaskemiddel, unngå skyllemiddel, lufttørk                                                               |
 | Utekos Mikrofiber™ | Lett og robust modell med enkelt vedlikehold og rask tørk                  | Ja    | YKK® Dual V-Zip™     | DuraLite™ Nylon 20D/380T, hurtigtørkende fiber, DWR Performance Nylon, Taffeta innerfôr                           | Allsidig bruk, fuktige forhold, reise, enkel pakking                  | Skånsom vask 30°C, mild såpe, unngå blekemiddel, tøymykner og tørketrommel                                                       |
 | Utekos Dun™        | Maksimal varme i forhold til vekt med klassisk dunfølelse                  | Ja    | YKK® Dual V-Zip™     | 650 fillpower dun, DWR Performance Nylon, Taffeta innerfôr                                                        | Kalde og tørre kvelder, maksimal varmefølelse, stasjonær hygge        | Skånsom vask 30°C, dunsåpe, lukk glidelåser, lav tørketrommel med 2–3 baller til plagget er helt tørt                            |
-| Comfyrobe™         | Værbeskyttende robe for før og etter aktivitet                             | Nei   | YKK® to-veisglidelås | HydroGuard™ Shell 8000 mm, pustende PU-membran ~3000 g/m²/24 t, SherpaCore™ Thermal Lining 250 GSM, tapede sømmer | Isbading, bading, surfing, svømming, kald ankomst til hytte eller båt | Skånsom vask 40°C, mildt vaskemiddel, unngå blekemiddel, kjemisk rens, stryking og høy tørketrommelvarme; re-impregner ved behov |
+| Comfyrobe™         | Værbeskyttende robe for før og etter aktivitet                             | Nei   | YKK® to-veisglidelås | HydroGuard™ Shell 8000 mm, pustende PU-membran ~3000 g/m²/24 t, SherpaCore™ Thermal Lining 250 GSM | Isbading, bading, surfing, svømming, kald ankomst til hytte eller båt | Skånsom vask 40°C, mildt vaskemiddel, unngå blekemiddel, kjemisk rens, stryking og høy tørketrommelvarme; re-impregner ved behov |
 | Utekos Stapper™    | Kompresjonsbag for mer effektiv pakking                                    |       |                      | Slitesterkt kompresjonsstoff, fire justerbare strammestropper, ultralett konstruksjon                             | Bobil, båt, tursekk, lagring og transport                             | Ingen egen vedlikeholdsguide publisert i repoet                                                                                  |
 
 ## Product profiles
@@ -124,7 +124,7 @@ spenst og hindre klumping.
 Comfyrobe™ skiller seg fra de tre Utekos-modellene ved å være en
 værbeskyttende robe i stedet for et 3-i-1-plagg. Den kombinerer
 HydroGuard™ Shell med 8000 mm vannsøyle, pustende membran på
-omtrent 3000 g/m²/24 t, SherpaCore™-fôr og tapede sømmer.
+omtrent 3000 g/m²/24 t og SherpaCore™.
 Produktet er laget for overgangssoner: før og etter isbad,
 bading, surfing, svømming og ved ankomst til kalde omgivelser.
 

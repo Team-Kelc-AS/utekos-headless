@@ -9,7 +9,7 @@ export function MomentsSection() {
     <PageSection
       as='section'
       background='muted'
-      className={cn('mx-auto')}
+      className={cn('mx-auto relative overflow-hidden rounded-xl')}
     >
       <article className={cn('relative w-full overflow-hidden')}>
         <TypographyMomentsH3 />

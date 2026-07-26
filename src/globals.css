@@ -8,6 +8,14 @@
   --font-utekos-text-medium: var(--font-utekos-text-medium);
   --color-alternate: var(--alternate);
   --color-teal-25: var(--teal-25);
+  --color-green-300: oklch(0.8017 0.0772 182.11);
+  --color-green-400: #38B49E;
+  --color-green-500: #00957A;
+  --color-green-600: #037D67;
+  --color-green-700: #00685E;
+  --color-green-800: #00453E;
+  --color-green-900: #012622;
+  --color-green-1000: #001A18;
   --color-alternate-button: var(--alternate-button);
   --color-badge: var(--badge);
   --color-background: var(--background);
@@ -18,6 +26,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
+  --color-jungle: #012622;
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
@@ -103,6 +112,14 @@
   --color-network-pill: oklch(0.8017 0.0772 182.11);
   --background: oklch(0.1645 0.0284 190.51);
   --foreground: oklch(0.985 0 0);
+  --green-300: oklch(0.8017 0.0772 182.11);
+  --green-400: #38B49E;
+  --green-500: #00957A;
+  --green-600: #037D67;
+  --green-700: #00685E;
+  --green-800: #00453E;
+  --green-900: #012622;
+  --green-1000: #001A18;
   --badge: oklch(0.2357 0.0402 194.77);
   --card: #003434;
   --teal-25: oklch(0.9569 0.014 185.95);
@@ -178,6 +195,7 @@
   --magazine-article-card: oklch(0.350674 0.062274 183.5177);
   --magazine-header: oklch(0.2419 0.0418 184.31);
   --card: oklch(0.325 0.0503 194.96);
+  --jungle: #012622;
   --ceramic: oklch(0.6678 0.1141 194.02);
   --alternate: oklch(0.2943 0.0502 194.77);
   --alternate-button: oklch(0.4999 0.0853 194.77);
@@ -190,7 +208,7 @@
   --secondary: oklch(0.4999 0.0853 194.77);
   --secondary-foreground: oklch(0.985 0 0);
   --sidebar-secondary: oklch(0.2991 0.0528 214.92);
-  --muted: oklch(0.2633 0.0417 194.92);
+  --muted: oklch(0.1956 0.0279 190.99);
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.3393 0.0496 187);
   --accent-foreground: oklch(0.985 0 0);

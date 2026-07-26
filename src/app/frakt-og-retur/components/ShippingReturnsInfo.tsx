@@ -25,17 +25,17 @@ export function ShippingReturnsInfo() {
           className='will-animate-fade-in-up h-full'
           delay='0.2s'
         >
-          <article className='dark:bg-dark-foreground/5 flex h-full min-w-0 flex-col rounded-2xl bg-foreground/5 p-2'>
-            <div className='dark:ring-dark-border flex h-full flex-col items-start rounded-xl bg-card p-6 shadow-sm ring-1 ring-border sm:p-8'>
+          <article className='bg-green-1000 mt-4 flex h-full min-w-0 flex-col rounded-2xl p-2'>
+            <div className='dark:ring-dark-border flex h-full flex-col items-start rounded-xl bg-green-900 p-6 shadow-sm ring-1 ring-border sm:p-8'>
               <header className='mb-4 flex flex-col items-start gap-4'>
-                <div className='dark:ring-dark-border/50 dark:bg-dark-foreground/5 flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
+                <div className='dark:ring-dark-border/50 flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
                   <Truck
                     className='size-6'
                     strokeWidth={1.8}
                     aria-hidden='true'
                   />
                 </div>
-                <h2 className='text-left font-sans font-utekos-text-medium text-xl leading-tight text-foreground'>
+                <h2 className='text-left font-utekos-text-medium text-xl leading-tight text-foreground'>
                   Frakt og levering
                 </h2>
               </header>
@@ -73,17 +73,17 @@ export function ShippingReturnsInfo() {
           className='will-animate-fade-in-up h-full'
           delay='0.4s'
         >
-          <article className='dark:bg-dark-foreground/5 flex h-full min-w-0 flex-col rounded-2xl bg-foreground/5 p-2'>
-            <div className='dark:ring-dark-border flex h-full flex-col items-start rounded-xl bg-card p-6 shadow-sm ring-1 ring-border sm:p-8'>
+          <article className='flex h-full min-w-0 mt-4 flex-col rounded-2xl bg-green-1000 p-2'>
+            <div className='dark:ring-dark-border flex h-full flex-col items-start rounded-xl bg-green-900 p-6 shadow-sm ring-1 ring-border sm:p-8'>
               <header className='mb-4 flex flex-col items-start gap-4'>
-                <div className='dark:ring-dark-border/50 dark:bg-dark-foreground/5 flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
+                <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
                   <Undo2
                     className='size-6'
                     strokeWidth={1.8}
                     aria-hidden='true'
                   />
                 </div>
-                <h2 className='text-left font-sans font-utekos-text-medium text-xl leading-tight text-foreground'>
+                <h2 className='text-left font-utekos-text-medium text-xl leading-tight text-foreground'>
                   Retur og angrerett
                 </h2>
               </header>
