@@ -118,7 +118,6 @@ const nextConfig: NextConfig = {
       'xstate',
       '@xstate/react',
       'motion',
-      'framer-motion',
       'cmdk',
       'embla-carousel-react',
       'embla-carousel-accessibility',

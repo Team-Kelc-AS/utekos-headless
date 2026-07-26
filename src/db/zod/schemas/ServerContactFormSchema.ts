@@ -18,7 +18,9 @@ export const ServerContactFormSchema = z.object({
 
   privacy: z
     .boolean()
-    .refine(v => v === true, { message: 'Du må godta personvernerklæringen.' })
+    .refine(v => v === true, {
+      message: 'Du må bekrefte at du har lest personvernerklæringen.'
+    })
 })
 
 export type ServerContactFormData = z.infer<typeof ServerContactFormSchema>

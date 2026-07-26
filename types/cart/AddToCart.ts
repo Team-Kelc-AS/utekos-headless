@@ -42,6 +42,7 @@ export type AddToCartProps = {
     | { variantId: string; quantity: number }
     | undefined
   checkoutPresentation?: CheckoutPresentation
+  isSelectionPending?: boolean
 }
 
 export type AddToCartViewProps = {

@@ -12,8 +12,14 @@ import type {
   ProductAccordionSection,
   ProductDescriptionContent
 } from '@/db/data/products/product-page-content'
+import type { UtekosProductOptionValue } from '@/lib/shopify/product-options/types'
 export type OptionButtonProps = {
   isSelected: boolean
+  isAvailable?: boolean
+  disabled?: boolean
+  ariaLabel?: string
+  optionName?: string
+  optionValue?: string
   onClick: () => void
   children: ReactNode
 }
@@ -71,7 +77,9 @@ export type SizeSelectorProps = {
   variants: ShopifyProductVariant[]
   selectedVariant: ShopifyProductVariant
   onSelect: (_optionName: string, _value: string) => void
-  productHandle: string // <-- LEGG TIL DENNE LINJEN
+  productHandle: string
+  optionValues: UtekosProductOptionValue[]
+  isSelectionDisabled: boolean
 }
 export type Dimension = { value: number; unit: string } | null
 
@@ -82,6 +90,8 @@ export type ColorSelectorProps = {
   colorHexMap: Map<string, string>
   selectedVariant: ShopifyProductVariant
   onSelect: (optionName: string, value: string) => void
+  optionValues: UtekosProductOptionValue[]
+  isSelectionDisabled: boolean
 }
 
 export type SmartRealTimeActivityProps = { baseViewers: number }

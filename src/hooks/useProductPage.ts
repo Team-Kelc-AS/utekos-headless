@@ -2,63 +2,43 @@
 
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { productOptions } from '@/api/lib/products/productOptions'
-import { useVariantState } from '@/hooks/useVariantState'
-import { reshapeProductWithMetafields } from '@/hooks/useProductWithMetafields'
-import { createSwatchColorMap } from '@/hooks/createSwatchColorMap'
+import { useProductPageData } from '@/hooks/useProductPageData'
+import { useVariantSelection } from '@/hooks/useVariantSelection'
 import { computeVariantImages } from '@/lib/utils/computeVariantImages'
-import { getProductWithoutSmallSize } from '@/components/products/getProductWithoutSmallSize'
-import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
+import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
+import type { ShopifyProduct } from 'types/product'
 
 export function useProductPage(
   handle: string,
   initialRelatedProducts: ShopifyProduct[],
-  initialVariantId: string | null = null
+  productOptions: UtekosProductOptions
 ) {
-  const {
-    data: productData,
-    error: productError,
-    isFetching: isProductFetching,
-    isLoading: isProductLoading,
-    refetch
-  } = useQuery(productOptions(handle))
-
-  const productWithMetafields = reshapeProductWithMetafields(productData)
-  const displayProduct =
-    productWithMetafields?.handle === 'utekos-techdown' ?
-      getProductWithoutSmallSize(productWithMetafields)
-    : productWithMetafields
-
-  const { variantState, updateVariant, allVariants } = useVariantState(
-    displayProduct,
-    true,
-    initialVariantId
+  const productPageData = useProductPageData(
+    handle,
+    initialRelatedProducts
   )
-
-  const relatedProducts = initialRelatedProducts
-  const swatchColorMap = createSwatchColorMap(displayProduct)
-
-  const selectedVariant: ShopifyProductVariant | null =
-    variantState.status === 'selected' ? variantState.variant : null
-
-  const variantImages =
-    displayProduct ?
-      computeVariantImages(displayProduct, selectedVariant)
-    : []
+  const {
+    allVariants,
+    selectedVariant,
+    updateVariant,
+    isVariantNavigationPending
+  } = useVariantSelection({
+    product: productPageData.productData,
+    productOptions
+  })
 
   return {
-    productData: displayProduct,
+    ...productPageData,
     selectedVariant,
     allVariants,
-    variantImages,
+    variantImages:
+      productPageData.productData ?
+        computeVariantImages(
+          productPageData.productData,
+          selectedVariant
+        )
+      : [],
     updateVariant,
-    relatedProducts,
-    swatchColorMap,
-    productError,
-    refetch,
-    isFetching: isProductFetching,
-    isLoading: isProductLoading,
-    isUpdating: !isProductLoading && variantState.status !== 'selected'
+    isVariantNavigationPending
   }
 }

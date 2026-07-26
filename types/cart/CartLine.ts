@@ -12,7 +12,7 @@ export type CartLine = {
   merchandise: CartProductVariant
 }
 
-export type CartLineInput = {
+export type AddCartLineInput = {
   variantId: string
   quantity: number
   discountCode?: string

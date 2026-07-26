@@ -1,3 +1,4 @@
+import { flattenConnection } from '@shopify/hydrogen-react'
 import type { ShopifyProduct } from 'types/product'
 import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
 import type { MetadataOther } from '../types'
@@ -11,10 +12,10 @@ function resolveMetadataVariant(
     return product.selectedOrFirstAvailableVariant
   }
 
-  const edges = product.variants?.edges ?? []
-  const available = edges.find(edge => edge.node.availableForSale)
+  const variants = flattenConnection(product.variants)
+  const available = variants.find(variant => variant.availableForSale)
 
-  return available?.node ?? edges[0]?.node
+  return available ?? variants[0]
 }
 
 function normalizeIsoCurrency(value: string | undefined): string | null {

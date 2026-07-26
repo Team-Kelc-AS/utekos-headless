@@ -10,7 +10,7 @@ import {
   DialogDescription
 } from '@/components/ui/dialog'
 
-import { useVariantState } from '@/hooks/useVariantState'
+import { useLocalVariantSelection } from '@/hooks/useLocalVariantSelection'
 import type { ShopifyProduct } from 'types/product'
 import Image from 'next/image'
 import { useEffect, useState, useEffectEvent } from 'react'
@@ -35,10 +35,8 @@ export function QuickViewModal({
     useState<ShopifyProduct | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const { variantState, updateVariant } = useVariantState(
-    productData ?? undefined,
-    false
-  )
+  const { selectedVariant, updateVariant } =
+    useLocalVariantSelection(productData ?? undefined)
 
   const handleFetchError = useEffectEvent(() => {
     toast.error(
@@ -69,10 +67,6 @@ export function QuickViewModal({
     fetchMainProduct()
   }, [isOpen, productHandle, productData])
 
-  const selectedVariant =
-    variantState.status === 'selected' ?
-      variantState.variant
-    : null
   const featuredImage =
     selectedVariant?.image ?? productData?.featuredImage
 

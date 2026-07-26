@@ -15,7 +15,7 @@ test('accepts a valid Utekos Dun waitlist submission', () => {
   assert.equal(result.success, true)
 })
 
-test('requires contact consent and the expected product handle', () => {
+test('requires privacy acknowledgement and the expected product handle', () => {
   const result = ProductWaitlistSchema.safeParse({
     name: 'Kari Nordmann',
     phone: '+47 123 45 678',

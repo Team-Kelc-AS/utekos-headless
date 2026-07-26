@@ -2,18 +2,19 @@
 'use server'
 
 import { mutationCartLinesRemove } from '@/api/graphql/mutations/cart'
+import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
 import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
+import { getCartFromMutationPayload } from '@/lib/actions/cart/getCartFromMutationPayload'
 import type { ShopifyRemoveFromCartOperation } from '@types'
-import type { CartResponse, RemoveCartLineInput } from 'types/cart'
 
 export const performCartLinesRemoveMutation = async (
   cartId: string,
-  input: RemoveCartLineInput
-): Promise<CartResponse | null> => {
+  lineIds: string[]
+): Promise<StorefrontCart> => {
   const result = await shopifyFetch<ShopifyRemoveFromCartOperation>({
     query: mutationCartLinesRemove,
-    variables: { cartId, lineIds: [input.lineId] }
+    variables: { cartId, lineIds }
   })
 
   if (!result.success) {
@@ -23,5 +24,8 @@ export const performCartLinesRemoveMutation = async (
     )
   }
 
-  return result.body.cartLinesRemove.cart ?? null
+  return getCartFromMutationPayload(
+    'cartLinesRemove',
+    result.body.cartLinesRemove
+  )
 }

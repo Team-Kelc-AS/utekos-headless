@@ -1,9 +1,26 @@
 // Path: types/api.types.ts
 
-import type { Cart, CartResponse, ShopifyCart } from 'types/cart'
+import type { Cart } from 'types/cart'
 import type { GraphQLErrorResponse } from './graphql.types'
 import type { DehydratedState } from '@tanstack/react-query'
 import type { ShopifyProduct } from 'types/product'
+import type {
+  StorefrontAttributeInput,
+  StorefrontCart,
+  StorefrontCartAttributesUpdatePayload,
+  StorefrontCartCreateInput,
+  StorefrontCartCreatePayload,
+  StorefrontCartDiscountCodesUpdatePayload,
+  StorefrontCartLineInput,
+  StorefrontCartLinesAddPayload,
+  StorefrontCartLinesRemovePayload,
+  StorefrontCartLinesUpdatePayload,
+  StorefrontCartLineUpdateInput,
+  StorefrontProduct,
+  StorefrontProductConnection,
+  StorefrontProductQueryVariables,
+  StorefrontProductsQueryVariables
+} from '@/api/shopify/types/storefrontApi'
 
 export interface ProvidersProps {
   children: React.ReactNode
@@ -41,18 +58,12 @@ export type ShopifyErrorDetail = {
 }
 
 export type ShopifyCartOperation = ShopifyOperation<
-  { cart: ShopifyCart },
+  { cart: StorefrontCart | null },
   { cartId: string }
 >
 export type ShopifyDiscountCodesUpdateOperation = ShopifyOperation<
   {
-    cartDiscountCodesUpdate: {
-      cart: ShopifyCart
-      userErrors?: {
-        field: string
-        message: string
-      }[]
-    }
+    cartDiscountCodesUpdate: StorefrontCartDiscountCodesUpdatePayload
   },
   {
     cartId: string
@@ -61,47 +72,38 @@ export type ShopifyDiscountCodesUpdateOperation = ShopifyOperation<
 >
 
 export type ShopifyAddToCartOperation = ShopifyOperation<
-  { cartLinesAdd: { cart: ShopifyCart } },
+  { cartLinesAdd: StorefrontCartLinesAddPayload },
   {
     cartId: string
-    lines: { merchandiseId: string; quantity: number }[]
+    lines: StorefrontCartLineInput[]
   }
 >
 
 export type ShopifyCreateCartOperation = ShopifyOperation<
-  { cartCreate: { cart: CartResponse } },
-  {
-    lines: { merchandiseId: string; quantity: number }[]
-    attributes?: { key: string; value: string }[]
-  }
+  { cartCreate: StorefrontCartCreatePayload },
+  StorefrontCartCreateInput
 >
 
 export type ShopifyCartAttributesUpdateOperation = ShopifyOperation<
   {
-    cartAttributesUpdate: {
-      cart: ShopifyCart
-      userErrors?: {
-        field: string[] | null
-        message: string
-      }[]
-    }
+    cartAttributesUpdate: StorefrontCartAttributesUpdatePayload
   },
   {
     cartId: string
-    attributes: { key: string; value: string }[]
+    attributes: StorefrontAttributeInput[]
   }
 >
 
 export type ShopifyRemoveFromCartOperation = ShopifyOperation<
-  { cartLinesRemove: { cart: ShopifyCart } },
+  { cartLinesRemove: StorefrontCartLinesRemovePayload },
   { cartId: string; lineIds: string[] }
 >
 
 export type ShopifyUpdateCartLineQuantityOperation = ShopifyOperation<
-  { cartLinesUpdate: { cart: ShopifyCart } },
+  { cartLinesUpdate: StorefrontCartLinesUpdatePayload },
   {
     cartId: string
-    lines: { id: string; quantity: number }[]
+    lines: StorefrontCartLineUpdateInput[]
   }
 >
 
@@ -118,21 +120,16 @@ export type ShopifyErrorDetailInput = {
 }
 
 export type ShopifyProductOperation = ShopifyOperation<
-  { product: ShopifyProduct },
-  { handle: string }
+  { product: StorefrontProduct | null },
+  StorefrontProductQueryVariables
 >
 
 export type ShopifyProductsOperation = ShopifyOperation<
-  { products: Connection<ShopifyProduct> },
-  { query?: string; reverse?: boolean; sortKey?: string }
+  { products: StorefrontProductConnection },
+  StorefrontProductsQueryVariables
 >
 
-export type GetProductsParams = {
-  query?: string
-  reverse?: boolean
-  sortKey?: string
-  first?: number
-}
+export type GetProductsParams = StorefrontProductsQueryVariables
 
 export type GetProductsResponse = {
   success: boolean

@@ -15,6 +15,16 @@ export type CookiebotApi = {
   hasResponse?: boolean
 }
 
+export type ShopifyTrackingConsent = {
+  analytics: boolean
+  marketing: boolean
+  preferences: boolean
+  headlessStorefront: true
+  checkoutRootDomain: 'kasse.utekos.no'
+  storefrontRootDomain: 'utekos.no'
+  storefrontAccessToken: string
+}
+
 export function hasCookiebotStatisticsConsent(
   cookiebot: CookiebotApi | undefined
 ): boolean {
@@ -37,5 +47,21 @@ export function mapCookiebotConsentToShopify(
     analytics: cookiebot.consent?.statistics === true,
     marketing: cookiebot.consent?.marketing === true,
     preferences: cookiebot.consent?.preferences === true
+  }
+}
+
+export function buildShopifyTrackingConsent({
+  consent,
+  storefrontAccessToken
+}: {
+  consent: NonNullable<ReturnType<typeof mapCookiebotConsentToShopify>>
+  storefrontAccessToken: string
+}): ShopifyTrackingConsent {
+  return {
+    ...consent,
+    headlessStorefront: true,
+    checkoutRootDomain: 'kasse.utekos.no',
+    storefrontRootDomain: 'utekos.no',
+    storefrontAccessToken
   }
 }

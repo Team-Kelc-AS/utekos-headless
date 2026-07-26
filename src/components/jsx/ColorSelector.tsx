@@ -9,15 +9,34 @@ export function ColorSelector({
   variants,
   selectedVariant,
   onSelect,
-  colorHexMap
+  colorHexMap,
+  optionValues,
+  isSelectionDisabled = false
 }: ColorSelectorProps) {
   const selectedSize = selectedVariant.selectedOptions.find(
     opt => opt.name.toLowerCase() === 'størrelse'
   )?.value
 
   return (
-    <div className='space-y-3'>
+    <div
+      className='space-y-3'
+      role='radiogroup'
+      aria-label={optionName}
+    >
       {values.map(colorValue => {
+        const optionValue = optionValues?.find(
+          candidate => candidate.name === colorValue
+        )
+        const exists = optionValue?.exists ?? true
+        const isDifferentProduct =
+          optionValue?.isDifferentProduct ?? false
+        const hasTargetVariant =
+          optionValue ? Boolean(optionValue.variantId) : true
+        const isDisabled =
+          isSelectionDisabled ||
+          !exists ||
+          !hasTargetVariant ||
+          isDifferentProduct
         const variantForProperties = variants.find(variant => {
           const hasColor = variant.selectedOptions.some(
             opt => opt.value === colorValue
@@ -42,15 +61,51 @@ export function ColorSelector({
         const isSelected = selectedVariant.selectedOptions.some(
           opt => opt.value === colorValue
         )
+        const isAvailable =
+          isSelected ?
+            selectedVariant.availableForSale
+          : (optionValue?.variantAvailableForSale ?? true)
 
         return (
           <OptionButton
             key={colorValue}
             isSelected={isSelected}
+            isAvailable={isAvailable}
+            disabled={isDisabled}
+            ariaLabel={`${colorLabel}${
+              (
+                !exists ||
+                !hasTargetVariant ||
+                isDifferentProduct
+              ) ?
+                ', ikke tilgjengelig'
+              : !isAvailable ? ', utsolgt'
+              : ''
+            }`}
+            optionName={optionName}
+            optionValue={colorValue}
             onClick={() => onSelect(optionName, colorValue)}
           >
-            <span className='font-utekos-text-medium text-foreground'>
-              {colorLabel}
+            <span className='flex items-center gap-2 text-foreground'>
+              <span className='font-utekos-text-medium'>
+                {colorLabel}
+              </span>
+              {(
+                !exists ||
+                !hasTargetVariant ||
+                isDifferentProduct ||
+                !isAvailable
+              ) ?
+                <span className='text-xs font-normal text-foreground/70'>
+                  {(
+                    !exists ||
+                    !hasTargetVariant ||
+                    isDifferentProduct
+                  ) ?
+                    'Ikke tilgjengelig'
+                  : 'Utsolgt'}
+                </span>
+              : null}
             </span>
             <div
               className='color-swatch-container text-foreground'

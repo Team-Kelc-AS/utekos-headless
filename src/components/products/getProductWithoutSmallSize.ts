@@ -23,7 +23,9 @@ export function getProductWithoutSmallSize(product: ShopifyProduct): ShopifyProd
 
   return {
     ...product,
-    selectedOrFirstAvailableVariant,
+    ...(selectedOrFirstAvailableVariant
+      ? { selectedOrFirstAvailableVariant }
+      : {}),
     options: product.options.map(option => {
       if (!isSizeOption(option.name)) return option
 

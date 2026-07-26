@@ -24,7 +24,8 @@ export const ProductWaitlistSchema = z.object({
   privacy: z
     .boolean()
     .refine(value => value, {
-      message: 'Du må godta at vi kontakter deg om ventelisten.'
+      message:
+        'Du må bekrefte at du har lest hvordan vi behandler ventelisteopplysningene.'
     }),
   website: z.string().max(200).optional()
 })

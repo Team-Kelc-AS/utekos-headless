@@ -19,6 +19,7 @@ type KlarnaProductExpressCheckoutProps = {
   product: ShopifyProduct
   selectedVariant: ShopifyProductVariant | null
   quantity?: number
+  disabled?: boolean
   className?: string
   buttonContainerClassName?: string
 }
@@ -27,6 +28,7 @@ export function KlarnaProductExpressCheckout({
   product,
   selectedVariant,
   quantity = 1,
+  disabled = false,
   className,
   buttonContainerClassName
 }: KlarnaProductExpressCheckoutProps) {
@@ -56,11 +58,16 @@ export function KlarnaProductExpressCheckout({
   }
 
   return (
-    <div className={cn('flex h-full min-h-0 w-full items-stretch', className)}>
+    <div
+      className={cn(
+        'flex h-full min-h-0 w-full items-stretch',
+        className
+      )}
+    >
       <KlarnaExpressCheckoutButton
         key={`${selectedVariant.id}-${quantity}-${orderPayload.order_amount}`}
         orderPayload={orderPayload}
-        disabled={!selectedVariant.availableForSale}
+        disabled={disabled || !selectedVariant.availableForSale}
         className='h-full min-h-0'
         {...(buttonContainerClassName ?
           { buttonContainerClassName }
@@ -70,8 +77,8 @@ export function KlarnaProductExpressCheckout({
             return null
           }
 
-          const prepared = await prepareKlarnaExpressBeginCheckout(
-            {
+          const prepared =
+            await prepareKlarnaExpressBeginCheckout({
               product,
               variant: selectedVariant,
               quantity,
@@ -80,8 +87,7 @@ export function KlarnaProductExpressCheckout({
               getCartIdFromCookie,
               reportAddToCart: reportCanonicalAddToCart,
               reportBeginCheckout: reportCanonicalBeginCheckout
-            }
-          )
+            })
 
           if (!prepared.ok) {
             setErrorMessage(prepared.message)

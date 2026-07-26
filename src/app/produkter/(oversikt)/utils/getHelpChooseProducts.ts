@@ -3,6 +3,7 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { TAGS } from '@/api/constants'
 import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { flattenConnection } from '@shopify/hydrogen-react'
 import type { Connection, ShopifyOperation } from '@types'
 import type { Money } from 'types/commerce/Money'
 import type { Image } from 'types/media'
@@ -227,5 +228,7 @@ export async function getHelpChooseProducts() {
     return []
   }
 
-  return response.body.products.edges.map(edge => normalizeHelpChooseProduct(edge.node))
+  return flattenConnection(response.body.products).map(
+    normalizeHelpChooseProduct
+  )
 }

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://utekos.no'),
   title: 'Personvernerklæring | Utekos',
   description:
-    'Les hvordan Utekos samler inn, bruker og beskytter dine personopplysninger i samsvar med gjeldende lover (GDPR). Din trygghet er viktig for oss.',
+    'Se hvilke personopplysninger KELC AS behandler for Utekos, hvorfor de brukes, hvem de deles med, lagringstidene og rettighetene dine.',
   keywords: [
     'Personvern',
     'GDPR',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Personvernerklæring | Utekos',
     description:
-      'Din trygghet er viktig for oss. Se hvordan vi håndterer dine data.',
+      'Formål, behandlingsgrunnlag, leverandører, cookies, lagringstider og rettigheter hos Utekos.',
     url: '/personvern',
     siteName: 'Utekos',
     images: [

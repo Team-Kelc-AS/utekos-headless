@@ -1,9 +1,10 @@
 // Path: src/lib/helpers/normalizers/normalizeProductImage.ts
 
+import type { StorefrontImage } from '@/api/shopify/types/storefrontApi'
 import type { Image } from 'types/media'
 
 export const normalizeProductImage = (
-  image: Image | null,
+  image: Image | StorefrontImage | null,
   fallbackTitle: string
 ): Image => ({
   url: image?.url ?? '/placeholder-image.png',

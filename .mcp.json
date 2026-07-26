@@ -57,6 +57,10 @@
       "next-devtools-mcp@latest"
     ]
   },
+  "rsuite": {
+    "command": "npx",
+    "args": ["-y", "@rsuite/mcp@latest"]
+  },
   "playwright": {
     "command": "npx",
     "args": [

@@ -60,7 +60,10 @@ export function ProductPageView({
   variantImages,
   onOptionChange,
   relatedProducts,
-  colorHexMap
+  colorHexMap,
+  productOptions,
+  isVariantNavigationPending,
+  hasVariantSelectionError
 }: ProductPageViewProps) {
   const [additionalLine] = useState<
     { variantId: string; quantity: number } | undefined
@@ -251,6 +254,7 @@ export function ProductPageView({
               delay='0.13s'
             >
               <div
+                role='region'
                 aria-label='Betalingsinformasjon fra Klarna'
                 className='mt-4 overflow-hidden'
               >
@@ -266,7 +270,10 @@ export function ProductPageView({
               className='will-animate-fade-in-right'
               delay='0.16s'
             >
-              <article aria-labelledby='product-options'>
+              <article
+                aria-labelledby='product-options'
+                aria-busy={isVariantNavigationPending}
+              >
                 <h2 id='product-options' className='sr-only'>
                   Produktvalg
                 </h2>
@@ -281,9 +288,25 @@ export function ProductPageView({
                         selectedVariant,
                         onOptionChange,
                         colorHexMap,
-                        productHandle: productData.handle
+                        productHandle: productData.handle,
+                        productOptions,
+                        isVariantNavigationPending,
+                        hasVariantSelectionError
                       })
                   )}
+                </div>
+                <div
+                  className='mt-3 min-h-5 text-sm text-foreground/72'
+                  role={
+                    hasVariantSelectionError ? 'alert' : 'status'
+                  }
+                  aria-live='polite'
+                >
+                  {hasVariantSelectionError ?
+                    'Variantvalg er midlertidig utilgjengelig. Oppdater siden for å prøve igjen.'
+                  : isVariantNavigationPending ?
+                    'Oppdaterer variant…'
+                  : null}
                 </div>
                 <TrustSignals />
                 <div className='mt-8 flex flex-col gap-4'>
@@ -291,6 +314,10 @@ export function ProductPageView({
                     <AddToCart
                       product={productData}
                       selectedVariant={selectedVariant}
+                      isSelectionPending={
+                        isVariantNavigationPending ||
+                        hasVariantSelectionError
+                      }
                       {...(additionalLine && { additionalLine })}
                     />
                   </Activity>

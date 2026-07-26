@@ -3,11 +3,11 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Check, Ruler, ShoppingBag } from 'lucide-react'
+import { flattenConnection } from '@shopify/hydrogen-react'
 import { AddToCart } from '@/components/cart/AddToCart'
-import { useVariantState } from '@/hooks/useVariantState'
+import { useLocalVariantSelection } from '@/hooks/useLocalVariantSelection'
 import { reportCanonicalViewItem } from '@/lib/analytics/viewItemReporter'
 import { createViewItemReportKey } from '@/lib/analytics/viewItemReportKey'
-import { flattenVariants } from '@/lib/utils/flattenVariants'
 import { ComfyrobePurchaseImageCarousel } from './ComfyrobePurchaseImageCarousel'
 import { formatComfyrobeMoney } from '../lib/buildComfyrobeOfferSummary'
 import { reportComfyrobePurchaseSelection } from '../lib/reportComfyrobePurchaseSelection'
@@ -64,26 +64,20 @@ export function ComfyrobePurchaseClient({
 }: {
   product: ShopifyProduct
 }) {
-  const variants = flattenVariants(product)
+  const variants = flattenConnection(product.variants)
   const initialAvailableVariant =
     variants.find(variant => variant.availableForSale) ??
     variants[0] ??
     null
-  const { variantState, updateVariant, allVariants } =
-    useVariantState(
+  const { selectedVariant, updateVariant, allVariants } =
+    useLocalVariantSelection(
       product,
-      false,
       initialAvailableVariant?.id ?? null
     )
   const reportedViewItemKey = useRef<string | null>(null)
   const sizeButtonRefs = useRef<Array<HTMLButtonElement | null>>(
     []
   )
-  const selectedVariant =
-    variantState.status === 'selected' ?
-      variantState.variant
-    : initialAvailableVariant
-
   useEffect(() => {
     if (!selectedVariant) return
 

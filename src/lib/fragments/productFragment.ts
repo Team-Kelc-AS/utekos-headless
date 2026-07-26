@@ -12,6 +12,7 @@ const product = /* GraphQL */ `
     updatedAt
     productType
     vendor
+    description
     collections(first: 10) {
       nodes {
         id
@@ -92,6 +93,7 @@ const product = /* GraphQL */ `
           sku
           barcode
           weight
+          weightUnit
           metafield(
             namespace: "bridgeFor"
             key: "VariantHandler"

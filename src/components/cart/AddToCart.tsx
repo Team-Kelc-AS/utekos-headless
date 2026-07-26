@@ -25,7 +25,8 @@ export function AddToCart({
   selectedVariant,
   additionalLine,
   additionalProductData,
-  checkoutPresentation = 'balanced'
+  checkoutPresentation = 'balanced',
+  isSelectionPending = false
 }: ExtendedAddToCartProps) {
   const { performGoToCheckout, isPending, isCheckoutPending } =
     useAddToCartAction({
@@ -52,7 +53,7 @@ export function AddToCart({
       selectedVariant={selectedVariant}
       onSubmit={() => undefined}
       onCheckout={onCheckout}
-      isPending={isPending}
+      isPending={isPending || isSelectionPending}
       isCheckoutPending={isCheckoutPending}
       isAvailable={isAvailable}
       checkoutPresentation={checkoutPresentation}

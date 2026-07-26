@@ -1,4 +1,4 @@
-import { lastUpdated } from '@/db/config/privacy.config'
+import { lastUpdatedIso } from '@/db/config/privacy.config'
 import { cacheLife, cacheTag } from 'next/cache'
 import type { WebPage, WithContext } from 'schema-dts'
 
@@ -15,7 +15,7 @@ export async function PrivacyPolicyJsonLd() {
       'Juridisk informasjon om hvordan Utekos samler inn, bruker og beskytter dine personopplysninger i henhold til GDPR.',
     'url': 'https://utekos.no/personvern',
     'inLanguage': 'nb-NO',
-    'dateModified': lastUpdated,
+    'dateModified': lastUpdatedIso,
     'publisher': {
       '@id': 'https://utekos.no/#organization'
     },

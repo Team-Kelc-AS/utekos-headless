@@ -3,6 +3,7 @@
 import { useAddToCartAction } from '@/hooks/useAddToCartAction'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
+import { flattenConnection } from '@shopify/hydrogen-react'
 import { AnimatePresence, motion } from 'motion/react'
 import {
   ArrowUpRight,
@@ -37,8 +38,8 @@ function normalizeVariants(
 ): ShopifyProductVariant[] {
   const v = product.variants as ProductVariantsShape
   if (Array.isArray(v)) return v
-  if (v?.nodes) return v.nodes
-  if (v?.edges) return v.edges.map(edge => edge.node)
+  if (v?.nodes) return flattenConnection({ nodes: v.nodes })
+  if (v?.edges) return flattenConnection({ edges: v.edges })
   return []
 }
 
