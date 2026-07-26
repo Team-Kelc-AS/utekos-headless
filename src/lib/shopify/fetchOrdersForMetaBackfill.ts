@@ -1,6 +1,6 @@
 import type { OrderPaid } from 'types/commerce/order/OrderPaid'
 
-const API_VERSION = '2026-04'
+const API_VERSION = '2026-07'
 const ORDER_PAGE_SIZE = 50
 
 type ShopifyMailingAddress = {

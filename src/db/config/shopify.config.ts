@@ -1,5 +1,5 @@
 // Path: src/db/config/shopify.config.ts
-const SHOPIFY_API_VERSION = '2025-10'
+const SHOPIFY_API_VERSION = '2026-07'
 export const shopifyConfig = {
   storeDomain: process.env.SHOPIFY_STORE_DOMAIN,
   storefrontAccessToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,

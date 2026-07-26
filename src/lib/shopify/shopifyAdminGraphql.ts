@@ -1,7 +1,7 @@
 const SHOPIFY_ADMIN_API_TOKEN =
   process.env.SHOPIFY_ADMIN_API_TOKEN
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN
-export const SHOPIFY_ADMIN_API_VERSION = '2026-04'
+export const SHOPIFY_ADMIN_API_VERSION = '2026-07'
 
 type ShopifyAdminGraphqlError = { message: string }
 

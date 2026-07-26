@@ -43,7 +43,7 @@ test('returns request configuration when both credentials exist', () => {
     {
       accessToken: 'test-token',
       graphqlUrl:
-        'https://test-shop.myshopify.com/admin/api/2026-04/graphql.json'
+        'https://test-shop.myshopify.com/admin/api/2026-07/graphql.json'
     }
   )
 })
