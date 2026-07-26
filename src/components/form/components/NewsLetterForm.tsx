@@ -15,7 +15,8 @@ import { ArrowRight, Mail } from 'lucide-react'
 import { toast } from 'sonner'
 import { H2 } from '@/components/typography/TypographyH2'
 import { P } from '@/components/typography/TypographyP'
-import {Button} from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
+import { NewsletterFormFeedback } from '@/components/form/components/NewsletterFormFeedback'
 const initialState: ActionState = { status: 'idle', message: '' }
 
 export function NewsletterForm() {
@@ -114,6 +115,8 @@ export function NewsletterForm() {
               </Button>
             </BrandBadge>
           </form>
+
+          <NewsletterFormFeedback state={state} />
         </div>
       </section>
     </article>

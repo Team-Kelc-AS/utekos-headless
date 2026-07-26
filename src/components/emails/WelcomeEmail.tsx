@@ -27,11 +27,13 @@ interface WelcomeEmailProps {
   email?: string
 }
 
-const siteUrl = (
-  process.env.NEXT_PUBLIC_APP_URL ?? 'https://utekos.no'
-).replace(/\/$/, '')
+const siteUrl = 'https://utekos.no'
 
-const comfyrobeHref = `${siteUrl}/comfyrobe`
+const comfyrobeHref = `${siteUrl}/comfyrobe?utm_source=newsletter&utm_medium=email&utm_campaign=staycomfy`
+
+const logoSrc = `${siteUrl}/icon.png?v=staycomfy-v2`
+
+const heroSrc = `${siteUrl}/WelcomeMailComfy.jpg?v=staycomfy-v2`
 
 const unsubscribeHref =
   'mailto:kundeservice@utekos.no?subject=Avmelding%20fra%20nyhetsbrev'
@@ -46,11 +48,11 @@ export function WelcomeEmail({ email }: WelcomeEmailProps) {
 
         <Preview>{previewText}</Preview>
 
-        <Body className='m-0 bg-[#001211] px-3 py-8 font-sans text-foreground'>
+        <Body className='m-0 bg-[#001211] px-3 py-8 font-sans text-[#f0eee9]'>
           <Container className='mx-auto max-w-150 overflow-hidden rounded-[24px] bg-[#001A18]'>
-            <Section className='bg-background px-9 py-10 text-center'>
+            <Section className='bg-[#012622] px-9 py-10 text-center'>
               <Img
-                src={`${siteUrl}/icon.png`}
+                src={logoSrc}
                 width='120'
                 height='120'
                 alt='Utekos logo'
@@ -72,43 +74,41 @@ export function WelcomeEmail({ email }: WelcomeEmailProps) {
             </Section>
 
             <Img
-              src={`${siteUrl}/WelcomeMailComfy.jpg`}
+              src={heroSrc}
               width='600'
               height='315'
               alt='To venner som nyter en varm stund ute i Utekos'
               className='block h-auto w-full'
             />
 
-            <Section className='bg-[#001A18] px-9 pb-10 pt-4 text-center'>
-
+            <Section className='bg-[#001A18] px-9 pt-4 pb-10 text-center'>
               <Heading
                 as='h2'
-                className='font-utekos-text mb-5 text-[18px] leading-9 tracking-normal text-[#f0eee9]'
+                className='mb-5 font-utekos-text text-[18px] leading-9 tracking-normal text-[#f0eee9]'
               >
-                Bruk rabattkoden i feltet under ved utsjekk i kassen
+                Bruk rabattkoden i feltet under ved utsjekk i
+                kassen
               </Heading>
-              
-              <Section className='mx-auto mb-6 max-w-90 rounded-[14px] border border-[#001A18] bg-[#001211] px-5 py-4.5'>
 
-                <Text className='font-utekos-text-medium my-2 text-[28px] leading-8.5 font-bold tracking-[3px] text-[#f0eee9]'>
+              <Section className='mx-auto mb-6 max-w-90 rounded-[14px] border border-[#001A18] bg-[#001211] px-5 py-4.5'>
+                <Text className='my-2 font-utekos-text-medium text-[28px] leading-8.5 font-bold tracking-[3px] text-[#f0eee9]'>
                   {NEWSLETTER_DISCOUNT_CODE}
                 </Text>
-                
               </Section>
 
               <Button
                 href={comfyrobeHref}
-                className='font-utekos-text-medium font-bold box-border block w-full mt-8! rounded-[12px] bg-[#bb4d0f]  px-2 p-4 text-center text-[16px] leading-5.5 text-[#f0eee9] no-underline'
+                target='_blank'
+                className='mt-8 box-border block w-full rounded-[12px] bg-[#bb4d0f] px-6 py-4 text-center font-utekos-text-medium text-[16px] leading-5.5 font-bold text-[#f0eee9] no-underline'
               >
                 Bruk rabattkoden
               </Button>
-
             </Section>
 
             <Section className='px-9 py-10'>
               <Heading
                 as='h2'
-                className='font-utekos-text-medium m-0 mb-2.5 text-[26px] leading-8 font-bold tracking-[-0.4px] text-[#f0eee9]'
+                className='m-0 mb-2.5 font-utekos-text-medium text-[26px] leading-8 font-bold tracking-[-0.4px] text-[#f0eee9]'
               >
                 Dette kan du glede deg til
               </Heading>
@@ -120,13 +120,13 @@ export function WelcomeEmail({ email }: WelcomeEmailProps) {
 
               <Row>
                 <Column className='w-12 align-top'>
-                  <Text className='font-utekos-text-medium m-0 text-[20px] leading-7 font-bold text-[#f0eee9]'>
+                  <Text className='m-0 font-utekos-text-medium text-[20px] leading-7 font-bold text-[#f0eee9]'>
                     01
                   </Text>
                 </Column>
 
                 <Column className='align-top'>
-                  <Text className='font-utekos-text-medium m-0 text-[16px] leading-6 font-bold text-[#f0eee9]'>
+                  <Text className='m-0 font-utekos-text-medium text-[16px] leading-6 font-bold text-[#f0eee9]'>
                     Inspirasjon til flere stunder ute
                   </Text>
 
@@ -141,13 +141,13 @@ export function WelcomeEmail({ email }: WelcomeEmailProps) {
 
               <Row>
                 <Column className='w-12 align-top'>
-                  <Text className='font-utekos-text-medium m-0 text-[20px] leading-7 font-bold text-[#f0eee9]'>
+                  <Text className='m-0 font-utekos-text-medium text-[20px] leading-7 font-bold text-[#f0eee9]'>
                     02
                   </Text>
                 </Column>
 
                 <Column className='align-top'>
-                  <Text className='font-utekos-text-medium m-0 text-[16px] leading-6 font-bold text-[#f0eee9]'>
+                  <Text className='m-0 font-utekos-text-medium text-[16px] leading-6 font-bold text-[#f0eee9]'>
                     Nyheter og gode produktråd
                   </Text>
 
@@ -162,7 +162,7 @@ export function WelcomeEmail({ email }: WelcomeEmailProps) {
             <Section className='bg-[#012622] px-9 py-8'>
               <Heading
                 as='h2'
-                className='font-utekos-text-medium m-0 text-[22px] leading-7 font-bold text-[#f0eee9]'
+                className='m-0 font-utekos-text-medium text-[22px] leading-7 font-bold text-[#f0eee9]'
               >
                 Lurer du på noe?
               </Heading>
@@ -195,7 +195,7 @@ export function WelcomeEmail({ email }: WelcomeEmailProps) {
                   Personvern
                 </Link>
 
-                <span className='text-#f0eee9]'> · </span>
+                <span className='text-[#f0eee9]'> · </span>
 
                 <Link
                   href={unsubscribeHref}
