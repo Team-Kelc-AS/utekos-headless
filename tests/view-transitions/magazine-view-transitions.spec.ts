@@ -152,7 +152,8 @@ test('morphs the enabled magazine hero without changing navigation semantics', a
     'href',
     ARTICLE_PATH
   )
-  await articleLink.press('Enter')
+  await expect(articleLink).toBeVisible()
+  await articleLink.click()
 
   await expect(page).toHaveURL(ARTICLE_PATH)
   await expect(
