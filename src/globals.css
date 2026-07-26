@@ -219,6 +219,14 @@
   --color-green-noir: oklch(0.1625 0.0279 207.93);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
+  --color-green-300: oklch(0.8017 0.0772 182.11);
+  --color-green-400: #38B49E;
+  --color-green-500: #00957A;
+  --color-green-600: #037D67;
+  --color-green-700: #00685E;
+  --color-green-800: #00453E;
+  --color-green-900: #012622;
+  --color-green-1000: #001A18;
   --ring: oklch(0.556 0 0);
   --sidebar: oklch(0.5279 0.071 195.22);
   --sidebar-foreground: oklch(0.985 0 0);
