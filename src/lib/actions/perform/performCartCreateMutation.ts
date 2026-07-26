@@ -1,15 +1,16 @@
 'use server'
 
 import { mutationCartCreate } from '@/api/graphql/mutations/cart'
+import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
 import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
-import type { CartResponse } from 'types/cart'
+import { getCartFromMutationPayload } from '@/lib/actions/cart/getCartFromMutationPayload'
 import type { ShopifyCreateCartOperation } from '@types'
 
 export const performCartCreateMutation = async (
   lines: { variantId: string; quantity: number }[],
-  discountCode?: string // <--- Ny valgfri parameter
-): Promise<CartResponse | null> => {
+  discountCode?: string
+): Promise<StorefrontCart> => {
   const result = await shopifyFetch<ShopifyCreateCartOperation>({
     query: mutationCartCreate,
     variables: {
@@ -28,5 +29,5 @@ export const performCartCreateMutation = async (
     )
   }
 
-  return result.body.cartCreate.cart ?? null
+  return getCartFromMutationPayload('cartCreate', result.body.cartCreate)
 }

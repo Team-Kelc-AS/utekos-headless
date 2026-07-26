@@ -2,8 +2,7 @@
 
 import { cartStore } from '@/lib/state/cartStore'
 import type { CartUserInterfaceContext } from 'types/cart'
-import type { StoreSnapshot } from '@xstate/store'
-import { useSelector } from '@xstate/store/react'
+import { useSelector, type StoreSnapshot } from '@xstate/store-react'
 
 /**
  * A selector function to extract the `pending` state from the cart store snapshot.

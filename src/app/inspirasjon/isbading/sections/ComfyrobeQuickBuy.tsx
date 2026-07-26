@@ -2,6 +2,7 @@
 'use client'
 
 import { useState } from 'react'
+import { flattenConnection } from '@shopify/hydrogen-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
@@ -27,7 +28,7 @@ interface Props {
 }
 
 export function ComfyrobeQuickBuy({ product }: Props) {
-  const variants = product.variants.edges.map(e => e.node)
+  const variants = flattenConnection(product.variants)
   const [selectedVariantId, setSelectedVariantId] = useState<
     string | null
   >(variants.find(v => v.availableForSale)?.id || null)
@@ -60,9 +61,7 @@ export function ComfyrobeQuickBuy({ product }: Props) {
     })()
   }
 
-  const images = product.images.edges
-    .map(e => e.node)
-    .slice(0, 5)
+  const images = flattenConnection(product.images).slice(0, 5)
   const getSizeName = (title: string) => {
     const parts = title.split(' / ')
     if (parts.length > 1) {

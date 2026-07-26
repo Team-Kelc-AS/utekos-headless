@@ -1,5 +1,5 @@
 // Path: src/app/produkter/[handle]/utils/resolveInitialVariant.ts
-import { flattenVariants } from '@/lib/utils/flattenVariants'
+import { flattenConnection } from '@shopify/hydrogen-react'
 import { findVariantFromReadableParams } from './findVariantFromReadableParams'
 import { toURLSearchParams } from './toURLSearchParams'
 import { getFirstSearchParamValue } from './getFirstSearchParamValue'
@@ -7,7 +7,7 @@ import type { SearchParamsRecord } from '../types'
 import type { ShopifyProduct } from 'types/product'
 
 export function resolveInitialVariant(product: ShopifyProduct, searchParams: SearchParamsRecord) {
-  const allVariants = flattenVariants(product) || []
+  const allVariants = flattenConnection(product.variants)
   if (!allVariants.length) return null
 
   const variantId = getFirstSearchParamValue(searchParams.variant)

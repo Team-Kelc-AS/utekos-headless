@@ -12,12 +12,14 @@ export function SizeSelector({
   variants,
   selectedVariant,
   onSelect,
-  productHandle
+  productHandle,
+  optionValues,
+  isSelectionDisabled = false
 }: SizeSelectorProps) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
-  const optionButtonRefs = useRef<Array<HTMLButtonElement | null>>(
-    []
-  )
+  const optionButtonRefs = useRef<
+    Array<HTMLButtonElement | null>
+  >([])
 
   const handlesToHideGuide = ['utekos-buff', 'utekos-stapper']
 
@@ -29,6 +31,19 @@ export function SizeSelector({
         className='grid grid-cols-3 gap-2 md:flex md:flex-col md:gap-3'
       >
         {values.map((sizeValue, index) => {
+          const optionValue = optionValues?.find(
+            candidate => candidate.name === sizeValue
+          )
+          const exists = optionValue?.exists ?? true
+          const isDifferentProduct =
+            optionValue?.isDifferentProduct ?? false
+          const hasTargetVariant =
+            optionValue ? Boolean(optionValue.variantId) : true
+          const isDisabled =
+            isSelectionDisabled ||
+            !exists ||
+            !hasTargetVariant ||
+            isDifferentProduct
           const representativeVariant = variants.find(v =>
             v.selectedOptions.some(
               opt =>
@@ -62,6 +77,10 @@ export function SizeSelector({
                 opt.name === optionName &&
                 opt.value === sizeValue
             )
+          const isAvailable =
+            isSelected ?
+              selectedVariant.availableForSale
+            : (optionValue?.variantAvailableForSale ?? true)
 
           return (
             <button
@@ -71,24 +90,46 @@ export function SizeSelector({
                 optionButtonRefs.current[index] = element
               }}
               onClick={() => onSelect(optionName, sizeValue)}
+              disabled={isDisabled}
               onKeyDown={event => {
+                const enabledIndices =
+                  optionButtonRefs.current.flatMap(
+                    (button, buttonIndex) =>
+                      button && !button.disabled ?
+                        [buttonIndex]
+                      : []
+                  )
+
+                if (!enabledIndices.length) return
+
+                const enabledPosition =
+                  enabledIndices.indexOf(index)
                 let nextIndex: number | undefined
 
                 if (
                   event.key === 'ArrowRight' ||
                   event.key === 'ArrowDown'
                 ) {
-                  nextIndex = (index + 1) % values.length
+                  nextIndex =
+                    enabledIndices[
+                      (enabledPosition + 1) %
+                        enabledIndices.length
+                    ]
                 } else if (
                   event.key === 'ArrowLeft' ||
                   event.key === 'ArrowUp'
                 ) {
                   nextIndex =
-                    (index - 1 + values.length) % values.length
+                    enabledIndices[
+                      (enabledPosition -
+                        1 +
+                        enabledIndices.length) %
+                        enabledIndices.length
+                    ]
                 } else if (event.key === 'Home') {
-                  nextIndex = 0
+                  nextIndex = enabledIndices[0]
                 } else if (event.key === 'End') {
-                  nextIndex = values.length - 1
+                  nextIndex = enabledIndices.at(-1)
                 }
 
                 if (nextIndex === undefined) {
@@ -107,12 +148,41 @@ export function SizeSelector({
               }}
               role='radio'
               aria-checked={isSelected}
+              aria-label={`${sizeValue}${
+                (
+                  !exists ||
+                  !hasTargetVariant ||
+                  isDifferentProduct
+                ) ?
+                  ', ikke tilgjengelig'
+                : !isAvailable ? ', utsolgt'
+                : ''
+              }`}
+              data-product-option-name={optionName}
+              data-product-option-value={sizeValue}
               tabIndex={isSelected ? 0 : -1}
               data-selected={isSelected}
-              className='dark:border-dark-card-foreground/24 dark:hover:border-dark-card-foreground/45 dark:focus-visible:ring-dark-card-foreground/45 data-[selected=true]:border-foreground data-[selected=true]:bg-background data-[selected=true]:text-foreground data-[selected=true]:ring-foreground/55 flex min-h-12 cursor-pointer items-center justify-center rounded-2xl border border-card-foreground/24 bg-card px-3 py-3 text-center text-sm text-card-foreground transition-all duration-200 ease-in-out hover:border-card-foreground/45 focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none data-[selected=true]:shadow-[0_14px_32px_-24px_color-mix(in_oklch,var(--foreground)_72%,transparent)] data-[selected=true]:ring-2 md:w-full md:justify-between md:p-4 md:text-left md:text-base'
+              data-available={isAvailable}
+              className='dark:border-dark-card-foreground/24 dark:hover:border-dark-card-foreground/45 dark:focus-visible:ring-dark-card-foreground/45 flex min-h-12 cursor-pointer items-center justify-center rounded-2xl border border-card-foreground/24 bg-card px-3 py-3 text-center text-sm text-card-foreground transition-all duration-200 ease-in-out hover:border-card-foreground/45 focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45 data-[available=false]:border-dashed data-[selected=true]:border-foreground data-[selected=true]:bg-background data-[selected=true]:text-foreground data-[selected=true]:shadow-[0_14px_32px_-24px_color-mix(in_oklch,var(--foreground)_72%,transparent)] data-[selected=true]:ring-2 data-[selected=true]:ring-foreground/55 md:w-full md:justify-between md:p-4 md:text-left md:text-base'
             >
-              <span className='inline-flex items-center gap-2 font-sans'>
-                {sizeValue}
+              <span className='inline-flex flex-wrap items-center justify-center gap-2 font-sans md:justify-start'>
+                <span>{sizeValue}</span>
+                {(
+                  !exists ||
+                  !hasTargetVariant ||
+                  isDifferentProduct ||
+                  !isAvailable
+                ) ?
+                  <span className='text-xs text-card-foreground/70'>
+                    {(
+                      !exists ||
+                      !hasTargetVariant ||
+                      isDifferentProduct
+                    ) ?
+                      'Ikke tilgjengelig'
+                    : 'Utsolgt'}
+                  </span>
+                : null}
                 {isSelected ?
                   <Check
                     className='size-4 shrink-0'
@@ -148,7 +218,7 @@ export function SizeSelector({
         <div className='dark:border-dark-card-foreground/24 flex w-full flex-col rounded-2xl border border-card-foreground/24 bg-card p-4 text-left transition-colors'>
           <button
             onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-            className='font-utekos-text-medium dark:focus-visible:ring-dark-card-foreground/45 flex w-full cursor-pointer justify-between p-0 text-card-foreground transition-colors focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none'
+            className='dark:focus-visible:ring-dark-card-foreground/45 flex w-full cursor-pointer justify-between p-0 font-utekos-text-medium text-card-foreground transition-colors focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none'
             aria-expanded={isDetailsOpen}
             aria-controls='size-details'
           >

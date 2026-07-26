@@ -5,6 +5,7 @@ import type { ShopifyProduct } from './ShopifyProduct'
 import type { ShopifyProductVariant } from './ShopifyProductVariant'
 import type { ColorVariant, ProductConfig } from './ProductTypes'
 import type { ModelKey } from '@/api/constants'
+import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 
 export type ProductPageViewProps = {
   productData: ShopifyProduct
@@ -14,6 +15,9 @@ export type ProductPageViewProps = {
   relatedProducts: ShopifyProduct[]
   colorHexMap: Map<string, string>
   onOptionChange: (_optionName: string, _value: string) => void
+  productOptions: UtekosProductOptions
+  isVariantNavigationPending: boolean
+  hasVariantSelectionError: boolean
 }
 
 export type PurchaseClientViewProps = {

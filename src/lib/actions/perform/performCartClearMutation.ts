@@ -1,29 +1,68 @@
-// Path: src/lib/actions/perform/performCartClearMutation.ts
 'use server'
 
-import { mutationCartLinesUpdate } from '@/api/graphql/mutations/cart'
+import { getCartLineIdsQuery } from '@/api/graphql/queries/cart/getCartLineIdsQuery'
+import { getCartQuery } from '@/api/graphql/queries/cart/getCartQuery'
+import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
 import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { performCartLinesRemoveMutation } from '@/lib/actions/perform/performCartLinesRemoveMutation'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
-import type { CartResponse } from 'types/cart'
-import type { ShopifyUpdateCartLineQuantityOperation } from '@types'
+import type { ShopifyCartOperation, ShopifyOperation } from '@types'
 
-export const performCartClearMutation = async (
+type CartLineIdsOperation = ShopifyOperation<
+  {
+    cart: {
+      lines: {
+        nodes: Array<{ id: string }>
+      }
+    } | null
+  },
+  { cartId: string }
+>
+
+export async function performCartClearMutation(
   cartId: string
-): Promise<CartResponse | null> => {
-  const result = await shopifyFetch<ShopifyUpdateCartLineQuantityOperation>({
-    query: mutationCartLinesUpdate,
-    variables: {
-      cartId,
-      lines: []
-    }
+): Promise<StorefrontCart> {
+  const lineIdsResult = await shopifyFetch<CartLineIdsOperation>({
+    query: getCartLineIdsQuery,
+    variables: { cartId }
   })
 
-  if (!result.success) {
+  if (!lineIdsResult.success) {
     throw new ShopifyApiError(
-      'Failed to clear cart in performCartClearMutation.',
-      result.error.errors
+      'Failed to read cart lines in performCartClearMutation.',
+      lineIdsResult.error.errors
     )
   }
 
-  return result.body.cartLinesUpdate.cart ?? null
+  const cart = lineIdsResult.body.cart
+  if (!cart) {
+    throw new ShopifyApiError('Handlekurven finnes ikke lenger.')
+  }
+
+  const lineIds = cart.lines.nodes.map(line => line.id)
+  if (lineIds.length > 0) {
+    const clearedCart = await performCartLinesRemoveMutation(cartId, lineIds)
+    if (!clearedCart) {
+      throw new ShopifyApiError('Tømming av handlekurven returnerte ingen data.')
+    }
+    return clearedCart
+  }
+
+  const cartResult = await shopifyFetch<ShopifyCartOperation>({
+    query: getCartQuery,
+    variables: { cartId }
+  })
+
+  if (!cartResult.success) {
+    throw new ShopifyApiError(
+      'Failed to read empty cart in performCartClearMutation.',
+      cartResult.error.errors
+    )
+  }
+
+  if (!cartResult.body.cart) {
+    throw new ShopifyApiError('Handlekurven finnes ikke lenger.')
+  }
+
+  return cartResult.body.cart
 }

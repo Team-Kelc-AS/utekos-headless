@@ -3,8 +3,8 @@
 import 'server-only'
 import { getProductsQuery } from '@/api/graphql/queries/products'
 import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
-import { removeEdgesAndNodes } from '@/lib/utils/removeEdgesAndNodes'
 import { reshapeProducts } from '@/lib/utils/reshapeProducts'
+import { flattenConnection } from '@shopify/hydrogen-react'
 import type {
   GetProductsParams,
   GetProductsResponse,
@@ -32,7 +32,7 @@ export async function fetchProducts(
     throw new Error('Invalid response structure')
   }
 
-  return reshapeProducts(removeEdgesAndNodes(res.body.products))
+  return reshapeProducts(flattenConnection(res.body.products))
 }
 
 export async function getProducts(

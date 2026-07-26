@@ -1,7 +1,7 @@
 // Path: src/lib/state/cartStore.ts
 'use client'
 
-import { createStore, type EventPayloadMap } from '@xstate/store'
+import { createStore, type EventPayloadMap } from '@xstate/store-react'
 import { removeZeroQuantityLines } from '@/lib/helpers/cart/removeZeroQuantityLines'
 import type {
   CartUserInterfaceContext,

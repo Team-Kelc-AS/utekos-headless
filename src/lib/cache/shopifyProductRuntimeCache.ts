@@ -35,7 +35,12 @@ export const shopifyRuntimeCachedProductSchema = z.looseObject({
     maxVariantPrice: moneySchema
   }),
   images: z.looseObject({
-    edges: z.array(z.looseObject({ node: imageSchema }))
+    edges: z.array(z.looseObject({
+      node: z.looseObject({
+        id: z.string(),
+        image: imageSchema
+      })
+    }))
   }),
   options: z.array(z.looseObject({
     name: z.string(),

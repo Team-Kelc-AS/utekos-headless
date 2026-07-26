@@ -12,10 +12,16 @@ export function renderOptionComponent(
     option,
     selectedVariant,
     colorHexMap,
-    productHandle
+    productHandle,
+    productOptions,
+    isVariantNavigationPending,
+    hasVariantSelectionError
   } = props
 
   const optionName = option.name.toLowerCase()
+  const mappedOption = productOptions?.options.find(
+    candidate => candidate.name === option.name
+  )
   const componentProps = {
     onSelect: onOptionChange,
     optionName: option.name,
@@ -23,14 +29,20 @@ export function renderOptionComponent(
     values: option.optionValues.map(v => v.name),
     variants: allVariants,
     colorHexMap,
-    productHandle
+    productHandle,
+    optionValues: mappedOption?.optionValues ?? [],
+    isSelectionDisabled: Boolean(
+      isVariantNavigationPending || hasVariantSelectionError
+    )
   }
 
   if (optionName === 'størrelse') {
     return <SizeSelector key={option.name} {...componentProps} />
   }
   if (optionName === 'farge') {
-    return <ColorSelector key={option.name} {...componentProps} />
+    return (
+      <ColorSelector key={option.name} {...componentProps} />
+    )
   }
   return null
 }

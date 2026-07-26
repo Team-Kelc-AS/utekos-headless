@@ -16,11 +16,13 @@ export async function shopifyFetch<
   T extends ShopifyOperation<unknown, object>
 >({
   headers,
+  cache,
   query,
   signal,
   variables
 }: {
   headers?: HeadersInit
+  cache?: RequestCache
   query: string
   signal?: AbortSignal
   variables?: ExtractVariables<T>
@@ -35,6 +37,7 @@ export async function shopifyFetch<
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
+      ...(cache ? { cache } : {}),
       headers: {
         'Content-Type': 'application/json',
         'X-Shopify-Storefront-Access-Token': token,

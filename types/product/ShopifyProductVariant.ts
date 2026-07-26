@@ -19,7 +19,7 @@ export type ShopifyProductVariant = {
   price: Money
   image: Image | null
   compareAtPrice: Money | null
-  product: ShopifyProduct
+  product?: ShopifyProduct
   metafield: Metafield | null
   sku: string | undefined
   variantProfile: VariantProfileReference | null

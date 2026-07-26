@@ -1,7 +1,7 @@
 // Path: types/cart/CartUser.ts
 
 import type { OptimisticCartLines, LastOperation } from './CartActions'
-import type { EventPayloadMap } from '@xstate/store'
+import type { EventPayloadMap } from '@xstate/store-react'
 
 export type CartUserInterfaceContext = {
   open: boolean

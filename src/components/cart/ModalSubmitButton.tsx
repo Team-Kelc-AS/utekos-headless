@@ -50,6 +50,7 @@ export function ModalSubmitButton({
           product={product}
           selectedVariant={selectedVariant}
           quantity={quantity}
+          disabled={isDisabled}
           className='w-full min-w-0'
           buttonContainerClassName='h-14 min-h-14'
         />
@@ -63,6 +64,7 @@ export function ModalSubmitButton({
         product={product}
         selectedVariant={selectedVariant}
         quantity={quantity}
+        disabled={isDisabled}
         className='w-full min-w-0'
         buttonContainerClassName='h-14 min-h-14'
       />

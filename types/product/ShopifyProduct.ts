@@ -38,7 +38,7 @@ export type ShopifyProduct = {
   relatedProducts: ShopifyProduct[]
   metafield?: Metafield | null
   quantityAvailable?: number | null
-  category: {
+  category?: {
     id: string
     name: string
     ancestors: {
@@ -46,13 +46,13 @@ export type ShopifyProduct = {
       name: string
       ancestors: string
     }
-  }
+  } | null
   variantProfile?: MetaobjectReference | null
   seo: {
     title: string | null
     description: string | null
   }
-  selectedOrFirstAvailableVariant: ShopifyProductVariant
+  selectedOrFirstAvailableVariant?: ShopifyProductVariant
   variants: ProductVariantConnection
-  weight: WeightUnit
+  weight?: WeightUnit
 }

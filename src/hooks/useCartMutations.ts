@@ -1,9 +1,11 @@
 // Path: src/hooks/useCartMutations.ts
 import { CartMutationContext } from '@/lib/context/CartMutationContext'
 import { createMutationPromise } from '@/lib/utils/createMutationPromise'
-import type { CartActionsResult, CartLineInput } from 'types/cart'
+import type { AddCartLineInput, CartActionsResult } from 'types/cart'
 
-type AddLinesPayload = CartLineInput[] | { lines: CartLineInput[]; discountCode?: string }
+type AddLinesPayload =
+  | AddCartLineInput[]
+  | { lines: AddCartLineInput[]; discountCode?: string }
 
 export function useCartMutations() {
   const actor = CartMutationContext.useActorRef()

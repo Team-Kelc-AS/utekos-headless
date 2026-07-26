@@ -1,4 +1,5 @@
 import { getProduct } from '@/api/lib/products/getProduct'
+import { flattenConnection } from '@shopify/hydrogen-react'
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
@@ -53,7 +54,7 @@ export async function NbccProductSection() {
             const variants =
               shopifyProduct ?
                 resolveVariantsForSizes(
-                  shopifyProduct.variants.edges.map(e => e.node),
+                  flattenConnection(shopifyProduct.variants),
                   product.sizes,
                   product.color
                 )

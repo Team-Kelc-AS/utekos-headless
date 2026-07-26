@@ -3,9 +3,11 @@
 import Script from 'next/script'
 import { useEffect, useRef, useState } from 'react'
 import {
+  buildShopifyTrackingConsent,
   COOKIEBOT_CONSENT_EVENTS,
   mapCookiebotConsentToShopify,
-  type CookiebotApi
+  type CookiebotApi,
+  type ShopifyTrackingConsent
 } from '@/lib/consent/cookiebotConsent'
 
 const SHOPIFY_CUSTOMER_PRIVACY_SRC =
@@ -19,12 +21,7 @@ type ShopifyConsent = {
 
 type ShopifyCustomerPrivacyApi = {
   setTrackingConsent: (
-    consent: ShopifyConsent & {
-      headlessStorefront: true
-      checkoutRootDomain: string
-      storefrontRootDomain: string
-      storefrontAccessToken: string
-    },
+    consent: ShopifyTrackingConsent,
     callback: (error?: unknown) => void
   ) => void
 }
@@ -46,13 +43,7 @@ function submitShopifyConsent({
   if (!api) return
 
   api.setTrackingConsent(
-    {
-      ...consent,
-      headlessStorefront: true,
-      checkoutRootDomain: 'kasse.utekos.no',
-      storefrontRootDomain: 'utekos.no',
-      storefrontAccessToken
-    },
+    buildShopifyTrackingConsent({ consent, storefrontAccessToken }),
     error => {
       if (error && process.env.NODE_ENV !== 'production') {
         console.warn(

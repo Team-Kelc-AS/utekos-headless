@@ -105,6 +105,7 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 180,
 
   experimental: {
+    viewTransition: true,
     turbopackFileSystemCacheForDev: false,
     turbopackFileSystemCacheForBuild: true,
     webVitalsAttribution: ['CLS', 'INP', 'LCP'],
@@ -117,7 +118,6 @@ const nextConfig: NextConfig = {
       'xstate',
       '@xstate/react',
       'motion',
-      'framer-motion',
       'cmdk',
       'embla-carousel-react',
       'embla-carousel-accessibility',

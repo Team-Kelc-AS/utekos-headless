@@ -1,6 +1,7 @@
 import { isValidationErrorLike } from 'zod-validation-error'
 import { isShopifyErrorResponse } from '@/lib/errors/isShopifyErrorResponse'
 import { MissingCartIdError } from '@/lib/errors/MissingCartIdError'
+import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
 import { extractCartErrorMessage } from './extractCartErrorMessage'
 import { formatShopifyErrorResponse } from './formatShopifyErrorResponse'
 import {
@@ -21,6 +22,8 @@ export function mapThrownErrorToActionResult(
     errorCode = CartErrorCode.VALIDATION_ERROR
   } else if (thrown instanceof MissingCartIdError) {
     errorCode = CartErrorCode.MISSING_CART_ID
+  } else if (thrown instanceof ShopifyApiError) {
+    errorCode = CartErrorCode.API_ERROR
   } else {
     errorCode = CartErrorCode.UNEXPECTED_SERVER_ERROR
   }

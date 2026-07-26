@@ -52,7 +52,22 @@ function createProduct(handle = 'utekos-techdown'): ShopifyProduct {
       minVariantPrice: { amount: '1790.00', currencyCode: 'NOK' },
       maxVariantPrice: { amount: '1790.00', currencyCode: 'NOK' }
     },
-    images: { edges: [] },
+    images: {
+      edges: [
+        {
+          node: {
+            id: 'gid://shopify/ProductImage/789',
+            image: {
+              id: 'gid://shopify/ProductImage/789',
+              url: 'https://cdn.shopify.com/product.jpg',
+              altText: 'Utekos TechDown',
+              width: 1200,
+              height: 1500
+            }
+          }
+        }
+      ]
+    },
     options: [],
     variants: { edges: [] }
   } as unknown as ShopifyProduct

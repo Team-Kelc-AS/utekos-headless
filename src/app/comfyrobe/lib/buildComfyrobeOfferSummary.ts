@@ -1,4 +1,5 @@
 import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
+import { flattenConnection } from '@shopify/hydrogen-react'
 import type { Money } from 'types/commerce/Money'
 
 type ComfyrobeOfferVariantSource = {
@@ -41,7 +42,7 @@ export function buildComfyrobeOfferSummary(
 ): ComfyrobeOfferSummary | null {
   if (!product) return null
 
-  const variants = product.variants.edges.map(edge => edge.node)
+  const variants = flattenConnection(product.variants)
   const variant =
     variants.find(item => item.availableForSale) ??
     variants[0] ??

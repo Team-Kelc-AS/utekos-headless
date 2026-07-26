@@ -2,15 +2,16 @@
 'use server'
 
 import { mutationCartLinesAdd } from '@/api/graphql/mutations/cart'
+import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
 import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
+import { getCartFromMutationPayload } from '@/lib/actions/cart/getCartFromMutationPayload'
 import type { ShopifyAddToCartOperation } from '@types'
-import type { CartResponse } from 'types/cart'
 
 export const performCartLinesAddMutation = async (
   cartId: string,
   lines: { variantId: string; quantity: number }[]
-): Promise<CartResponse | null> => {
+): Promise<StorefrontCart> => {
   const result = await shopifyFetch<ShopifyAddToCartOperation>({
     query: mutationCartLinesAdd,
     variables: {
@@ -29,5 +30,5 @@ export const performCartLinesAddMutation = async (
     )
   }
 
-  return result.body.cartLinesAdd.cart ?? null
+  return getCartFromMutationPayload('cartLinesAdd', result.body.cartLinesAdd)
 }

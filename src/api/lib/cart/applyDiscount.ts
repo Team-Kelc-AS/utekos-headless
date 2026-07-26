@@ -6,7 +6,7 @@ import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
 import type { ShopifyDiscountCodesUpdateOperation } from '@types'
 import { updateTag } from 'next/cache'
 import { TAGS } from '@/api/constants'
-import { normalizeCart } from '@/lib/helpers/normalizers/normalizeCart' // Ny import
+import { normalizeCart } from '@/lib/helpers/normalizers/normalizeCart'
 
 export async function applyDiscount(cartId: string, discountCode: string) {
   if (!cartId) {
@@ -39,9 +39,12 @@ export async function applyDiscount(cartId: string, discountCode: string) {
       throw new Error(msg)
     }
 
+    if (!cart) {
+      throw new Error('Shopify returnerte ingen handlekurv etter rabattoppdateringen.')
+    }
+
     updateTag(TAGS.cart)
 
-    // Endring: Normaliserer og returnerer ferdig cart-objekt
     return normalizeCart(cart)
   } catch (error) {
     console.error('[applyDiscount] CRITICAL ERROR:', error)
@@ -51,4 +54,3 @@ export async function applyDiscount(cartId: string, discountCode: string) {
     throw new Error(message)
   }
 }
-

@@ -2,6 +2,8 @@
 
 import productFragment from '@/lib/fragments/productFragment'
 
+export { getProductOptionsQuery } from './getProductOptionsQuery'
+
 export const getProductQuery = /* GraphQL */ `
   query getProduct($handle: String!) {
     product(handle: $handle) {

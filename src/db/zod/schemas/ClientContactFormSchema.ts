@@ -17,7 +17,9 @@ export const ClientContactFormSchema = z.object({
   privacy: z
     .boolean()
     .check(
-      z.refine(v => v === true, { error: 'Du må godta personvernerklæringen.' })
+      z.refine(v => v === true, {
+        error: 'Du må bekrefte at du har lest personvernerklæringen.'
+      })
     )
 })
 
