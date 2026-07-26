@@ -8,12 +8,20 @@ import {
   type MetaDatasetQualitySnapshotInput
 } from './insertMetaDatasetQualitySnapshot'
 import type { MetaDatasetQualityResponse } from './metaDatasetQualitySchema'
+import {
+  requiredMetaDatasetQualityEvents,
+  type RequiredMetaDatasetQualityEvent
+} from '../metaDatasetQualityRequiredEvents'
+
+export type { RequiredMetaDatasetQualityEvent } from '../metaDatasetQualityRequiredEvents'
 
 export type MetaDatasetQualitySyncResult = {
+  complete: boolean
   datasetId: string
   eventCount: number
   insertedCount: number
   measuredAt: string
+  missingRequiredEvents: RequiredMetaDatasetQualityEvent[]
 }
 
 export type MetaDatasetQualitySyncDependencies = {
@@ -40,6 +48,12 @@ export async function syncMetaDatasetQuality(
   const config = dependencies.getConfig()
   const quality = await dependencies.fetchQuality(config)
   const measuredAt = dependencies.getNow()
+  const eventNames = new Set(
+    quality.web.map(event => event.event_name)
+  )
+  const missingRequiredEvents = requiredMetaDatasetQualityEvents.filter(
+    eventName => !eventNames.has(eventName)
+  )
   const insertedCount = await dependencies.insertSnapshot({
     datasetId: config.datasetId,
     events: quality.web,
@@ -47,9 +61,11 @@ export async function syncMetaDatasetQuality(
   })
 
   return {
+    complete: missingRequiredEvents.length === 0,
     datasetId: config.datasetId,
     eventCount: quality.web.length,
     insertedCount,
-    measuredAt: measuredAt.toISOString()
+    measuredAt: measuredAt.toISOString(),
+    missingRequiredEvents
   }
 }

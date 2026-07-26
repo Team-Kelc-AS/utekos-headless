@@ -26,3 +26,33 @@ test('event-specific app log contracts accept minimal operational fields', () =>
 
   assert.deepEqual(result.data, { reasonCode: 'disabled' })
 })
+
+test('Meta Dataset Quality warning accepts only PII-free snapshot fields', () => {
+  const parsed = appLogInputSchema.parse({
+    context: {},
+    data: {
+      datasetId: '1092362672918571',
+      missingRequiredEvents: ['Lead'],
+      snapshotDate: '2026-07-24'
+    },
+    event: 'meta_dataset_quality.incomplete',
+    level: 'WARN'
+  })
+
+  assert.deepEqual(parsed.data, {
+    datasetId: '1092362672918571',
+    missingRequiredEvents: ['Lead'],
+    snapshotDate: '2026-07-24'
+  })
+
+  assert.equal(
+    appLogInputSchema.safeParse({
+      ...parsed,
+      data: {
+        ...parsed.data,
+        email: 'customer@example.no'
+      }
+    }).success,
+    false
+  )
+})
