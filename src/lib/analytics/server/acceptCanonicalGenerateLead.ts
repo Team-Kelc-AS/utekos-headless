@@ -1,4 +1,3 @@
-import type { CanonicalGenerateLead } from '../generateLeadEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalGenerateLead,
@@ -40,6 +39,7 @@ export async function acceptCanonicalGenerateLead(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

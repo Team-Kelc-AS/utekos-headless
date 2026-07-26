@@ -11,6 +11,14 @@ import type {
 import { handleCanonicalViewItemRequest } from './handleCanonicalViewItemRequest'
 
 const endpoint = 'https://utekos.no/api/events/view-item'
+const insertedAcceptance = {
+  createdDispatchAttempts: [],
+  status: 'inserted' as const
+}
+const duplicateAcceptance = {
+  createdDispatchAttempts: [],
+  status: 'duplicate' as const
+}
 
 const commerce: CanonicalViewItemCommerce = {
   currency: 'NOK',
@@ -100,7 +108,8 @@ function request(
 }
 
 function dependencies(
-  accept: CanonicalEventStore['accept'] = async () => 'inserted'
+  accept: CanonicalEventStore['accept'] = async () =>
+    insertedAcceptance
 ) {
   return {
     getRequestContext: () => ({
@@ -148,7 +157,7 @@ test('does not persist a fully denied event', async () => {
     request(JSON.stringify(viewItem('denied', 'denied'))),
     dependencies(async () => {
       writes += 1
-      return 'inserted'
+      return insertedAcceptance
     })
   )
 
@@ -162,7 +171,7 @@ test('strips marketing identifiers without marketing consent', async () => {
     request(JSON.stringify(viewItem('granted', 'denied'))),
     dependencies(async input => {
       storedInput = input
-      return 'inserted'
+      return insertedAcceptance
     })
   )
 
@@ -188,7 +197,7 @@ test('preserves identifiers and replaces client network context', async () => {
     request(JSON.stringify(viewItem())),
     dependencies(async input => {
       storedInput = input
-      return 'inserted'
+      return insertedAcceptance
     })
   )
 
@@ -227,7 +236,7 @@ test('preserves identifiers and replaces client network context', async () => {
 test('returns an idempotent duplicate response', async () => {
   const response = await handleCanonicalViewItemRequest(
     request(JSON.stringify(viewItem())),
-    dependencies(async () => 'duplicate')
+    dependencies(async () => duplicateAcceptance)
   )
 
   assert.equal(response.status, 200)

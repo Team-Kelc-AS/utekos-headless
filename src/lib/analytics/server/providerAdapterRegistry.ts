@@ -24,6 +24,8 @@ import { googleDataManagerViewItemProviderAdapter } from './providerAdapters/goo
 import { googleDataManagerViewItemListProviderAdapter } from './providerAdapters/googleDataManagerViewItemListProviderAdapter'
 import { googleDataManagerViewPromotionProviderAdapter } from './providerAdapters/googleDataManagerViewPromotionProviderAdapter'
 import { googleDataManagerViewSearchResultsProviderAdapter } from './providerAdapters/googleDataManagerViewSearchResultsProviderAdapter'
+import { googleDataManagerInteractWithAccordionProviderAdapter } from './providerAdapters/googleDataManagerInteractWithAccordionProviderAdapter'
+import { googleDataManagerOpenQuickViewProviderAdapter } from './providerAdapters/googleDataManagerOpenQuickViewProviderAdapter'
 import { metaAddToCartProviderAdapter } from './providerAdapters/metaAddToCartProviderAdapter'
 import { metaAddToWishlistProviderAdapter } from './providerAdapters/metaAddToWishlistProviderAdapter'
 import { metaBeginCheckoutProviderAdapter } from './providerAdapters/metaBeginCheckoutProviderAdapter'
@@ -34,6 +36,13 @@ import { metaRemoveFromCartProviderAdapter } from './providerAdapters/metaRemove
 import { metaSearchProviderAdapter } from './providerAdapters/metaSearchProviderAdapter'
 import { metaSelectItemProviderAdapter } from './providerAdapters/metaSelectItemProviderAdapter'
 import { metaViewItemProviderAdapter } from './providerAdapters/metaViewItemProviderAdapter'
+import { metaHeroInteractProviderAdapter } from './providerAdapters/metaHeroInteractProviderAdapter'
+import { metaInteractWithAccordionProviderAdapter } from './providerAdapters/metaInteractWithAccordionProviderAdapter'
+import { metaOpenQuickViewProviderAdapter } from './providerAdapters/metaOpenQuickViewProviderAdapter'
+import { metaScrollDepthProviderAdapter } from './providerAdapters/metaScrollDepthProviderAdapter'
+import { metaViewCartProviderAdapter } from './providerAdapters/metaViewCartProviderAdapter'
+import { metaViewCategoryProviderAdapter } from './providerAdapters/metaViewCategoryProviderAdapter'
+import { metaViewItemListProviderAdapter } from './providerAdapters/metaViewItemListProviderAdapter'
 import { microsoftUetAddToCartProviderAdapter } from './providerAdapters/microsoftUetAddToCartProviderAdapter'
 import { microsoftUetBeginCheckoutProviderAdapter } from './providerAdapters/microsoftUetBeginCheckoutProviderAdapter'
 import { microsoftUetPurchaseProviderAdapter } from './providerAdapters/microsoftUetPurchaseProviderAdapter'
@@ -50,6 +59,9 @@ export const providerAdapterRegistry = {
   'google:form_submit': googleDataManagerFormSubmitProviderAdapter,
   'google:generate_lead': googleDataManagerGenerateLeadProviderAdapter,
   'google:hero_interact': googleDataManagerHeroInteractProviderAdapter,
+  'google:interact_with_accordion':
+    googleDataManagerInteractWithAccordionProviderAdapter,
+  'google:open_quick_view': googleDataManagerOpenQuickViewProviderAdapter,
   'google:purchase': googleDataManagerPurchaseProviderAdapter,
   'google:refund': googleDataManagerRefundProviderAdapter,
   'google:remove_from_cart': googleDataManagerRemoveFromCartProviderAdapter,
@@ -72,12 +84,20 @@ export const providerAdapterRegistry = {
   'meta:add_to_wishlist': metaAddToWishlistProviderAdapter,
   'meta:begin_checkout': metaBeginCheckoutProviderAdapter,
   'meta:generate_lead': metaGenerateLeadProviderAdapter,
+  'meta:hero_interact': metaHeroInteractProviderAdapter,
+  'meta:interact_with_accordion':
+    metaInteractWithAccordionProviderAdapter,
+  'meta:open_quick_view': metaOpenQuickViewProviderAdapter,
   'meta:page_view': metaPageViewProviderAdapter,
   'meta:purchase': metaPurchaseProviderAdapter,
   'meta:remove_from_cart': metaRemoveFromCartProviderAdapter,
+  'meta:scroll_depth': metaScrollDepthProviderAdapter,
   'meta:search': metaSearchProviderAdapter,
   'meta:select_item': metaSelectItemProviderAdapter,
   'meta:view_item': metaViewItemProviderAdapter,
+  'meta:view_cart': metaViewCartProviderAdapter,
+  'meta:view_category': metaViewCategoryProviderAdapter,
+  'meta:view_item_list': metaViewItemListProviderAdapter,
   'microsoft_uet:add_to_cart': microsoftUetAddToCartProviderAdapter,
   'microsoft_uet:begin_checkout':
     microsoftUetBeginCheckoutProviderAdapter,

@@ -72,7 +72,7 @@ const CLAIM_NEXT_QUERY = `
         or (
           status = 'processing'
           and coalesce(last_attempt_started_at, updated_at)
-            <= now() - interval '10 minutes'
+            <= now() - interval '5 minutes'
         )
       )
     order by
@@ -81,6 +81,49 @@ const CLAIM_NEXT_QUERY = `
       created_at
     for update skip locked
     limit 1
+  )
+  update ops.provider_dispatch_attempts as attempt
+  set
+    status = 'processing',
+    attempt_count = attempt.attempt_count + 1,
+    next_attempt_at = null,
+    last_attempt_started_at = now(),
+    updated_at = now()
+  from candidate
+  where attempt.id = candidate.id
+  returning
+    attempt.id::text as attempt_id,
+    attempt.attempt_count,
+    attempt.payload
+`
+
+const CLAIM_BY_ID_QUERY = `
+  with candidate as (
+    select id
+    from ops.provider_dispatch_attempts
+    where id = $1::uuid
+      and provider = $2
+      and event_name = $3
+      and dispatch_mode = 'server_retry'
+      and (
+        $4::timestamptz is null
+        or created_at >= $4::timestamptz
+      )
+      and (
+        (
+          status in ('pending', 'retry_scheduled')
+          and (
+            next_attempt_at is null
+            or next_attempt_at <= now()
+          )
+        )
+        or (
+          status = 'processing'
+          and coalesce(last_attempt_started_at, updated_at)
+            <= now() - interval '15 seconds'
+        )
+      )
+    for update skip locked
   )
   update ops.provider_dispatch_attempts as attempt
   set
@@ -241,6 +284,16 @@ export function createPostgresProviderOutboxDatabase<
   executeQuery: ProviderOutboxQueryExecutor = executePostgresQuery
 ): ProviderOutboxDatabase<R> {
   return {
+    claimById: async attemptId => {
+      const rows = await executeQuery(CLAIM_BY_ID_QUERY, [
+        attemptId,
+        adapter.provider,
+        adapter.eventName,
+        adapter.claimNotBefore ?? null
+      ])
+
+      return parseClaimedRow(rows[0])
+    },
     claimNext: async () => {
       const rows = await executeQuery(CLAIM_NEXT_QUERY, [
         adapter.provider,

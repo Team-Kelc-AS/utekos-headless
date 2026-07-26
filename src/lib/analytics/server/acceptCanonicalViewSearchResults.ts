@@ -1,4 +1,3 @@
-import type { CanonicalViewSearchResults } from '../viewSearchResultsEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalViewSearchResults,
@@ -40,6 +39,7 @@ export async function acceptCanonicalViewSearchResults(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

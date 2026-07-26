@@ -1,4 +1,3 @@
-import type { CanonicalAddToWishlist } from '../addToWishlistEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalAddToWishlist,
@@ -40,6 +39,7 @@ export async function acceptCanonicalAddToWishlist(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

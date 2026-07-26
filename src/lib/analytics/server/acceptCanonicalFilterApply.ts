@@ -1,4 +1,3 @@
-import type { CanonicalFilterApply } from '../filterApplyEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalFilterApply,
@@ -40,6 +39,7 @@ export async function acceptCanonicalFilterApply(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

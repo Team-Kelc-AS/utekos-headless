@@ -39,6 +39,8 @@ export async function ProductCarousel({
   return (
     <SharedProductCarousel
       products={featuredProducts}
+      itemListId='frontpage_featured_products'
+      itemListName='Kundenes favoritter'
       navigationClassName='bg-card '
       {...cardStyleProps}
     />

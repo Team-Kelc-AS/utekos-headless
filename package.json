@@ -206,6 +206,7 @@
     "@vercel/functions": "^3.7.5",
     "@vercel/oidc": "3.8.0",
     "@vercel/otel": "^2.1.2",
+    "@vercel/queue": "^0.4.0",
     "@vercel/speed-insights": "^2.0.0",
     "@xstate/react": "^6.1.0",
     "@xstate/store-react": "^2.0.0",
@@ -268,6 +269,7 @@
     "typescript-eslint": "^8.60.1",
     "uuid": "^13.0.0",
     "vaul": "^1.1.2",
+    "workflow": "^4.6.2",
     "xstate": "^5.32.0",
     "zod": "^4.4.3",
     "zod-validation-error": "^4.0.1"

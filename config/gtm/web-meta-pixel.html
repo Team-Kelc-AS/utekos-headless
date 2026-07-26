@@ -6,6 +6,7 @@
   var EXTERNAL_ID_COOKIE = 'utekos_external_id';
   var EVENT_NAMES = {
     page_view: 'PageView',
+    view_item_list: 'ViewItemList',
     view_item: 'ViewContent',
     select_item: 'SelectItem',
     add_to_wishlist: 'AddToWishlist',
@@ -18,7 +19,9 @@
     // Existing Meta custom event name; canonical app contract is scroll_depth.
     scroll_depth: 'LandingScrollDepth',
     view_category: 'ViewCategory',
-    hero_interact: 'HeroInteract'
+    hero_interact: 'HeroInteract',
+    interact_with_accordion: 'InteractWithAccordion',
+    open_quick_view: 'OpenQuickView'
   };
   var state = w.__utekosMetaPixelState || {
     initialized: false,
@@ -135,6 +138,7 @@
     var index;
     var currency;
     var value;
+    var numItems = 0;
 
     if (!items || !items.length) return null;
 
@@ -156,6 +160,7 @@
 
       contentIds.push(id);
       contents.push(content);
+      if (finiteNumber(item.quantity)) numItems += item.quantity;
     }
 
     if (!contentIds.length) return null;
@@ -164,7 +169,8 @@
     var result = {
       content_ids: contentIds,
       contents: contents,
-      content_type: 'product'
+      content_type: 'product',
+      num_items: numItems
     };
 
     currency = isoCurrency(customData.currency);
@@ -183,6 +189,39 @@
       result.content_category = primary.item_category || primary.product_type;
     }
 
+    var customFields = [
+      'accordion_id',
+      'accordion_title',
+      'cart_id',
+      'gross_value',
+      'impression_sequence',
+      'interaction_sequence',
+      'interaction_type',
+      'item_list_id',
+      'item_list_name',
+      'open_sequence',
+      'source_surface',
+      'tax_value',
+      'total_item_count',
+      'view_sequence'
+    ];
+
+    for (index = 0; index < customFields.length; index += 1) {
+      var field = customFields[index];
+      var fieldValue = customData[field];
+
+      if (
+        (typeof fieldValue === 'string' && fieldValue) ||
+        finiteNumber(fieldValue)
+      ) {
+        result[field] = fieldValue;
+      }
+    }
+
+    if (finiteNumber(customData.value)) {
+      result.net_value = customData.value;
+    }
+
     return result;
   }
 
@@ -191,12 +230,15 @@
 
     if (
       eventName === 'view_item' ||
+      eventName === 'view_item_list' ||
       eventName === 'select_item' ||
       eventName === 'add_to_wishlist' ||
       eventName === 'add_to_cart' ||
       eventName === 'remove_from_cart' ||
       eventName === 'view_cart' ||
-      eventName === 'begin_checkout'
+      eventName === 'begin_checkout' ||
+      eventName === 'interact_with_accordion' ||
+      eventName === 'open_quick_view'
     ) {
       return commerceData(customData);
     }
@@ -227,9 +269,11 @@
 
       if (customData.category_id) {
         category.content_category = customData.category_id;
+        category.category_id = customData.category_id;
       }
       if (customData.category_name) {
         category.content_name = customData.category_name;
+        category.category_name = customData.category_name;
       }
       if (finiteNumber(customData.view_sequence)) {
         category.view_sequence = customData.view_sequence;
@@ -243,9 +287,11 @@
 
       if (customData.cta_id) {
         hero.content_name = customData.cta_id;
+        hero.cta_id = customData.cta_id;
       }
       if (customData.destination_path) {
         hero.content_category = customData.destination_path;
+        hero.destination_path = customData.destination_path;
       }
       if (finiteNumber(customData.click_sequence)) {
         hero.click_sequence = customData.click_sequence;

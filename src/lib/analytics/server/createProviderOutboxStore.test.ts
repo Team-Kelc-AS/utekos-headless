@@ -80,6 +80,14 @@ function fakeDatabase(attempts: RawProviderOutboxAttempt[]) {
   let claims = 0
 
   const database: ProviderOutboxDatabase<Receipt> = {
+    claimById: async attemptId => {
+      claims += 1
+      const index = queue.findIndex(
+        attempt => attempt.attemptId === attemptId
+      )
+      if (index < 0) return null
+      return queue.splice(index, 1)[0] ?? null
+    },
     claimNext: async () => {
       claims += 1
       return queue.shift() ?? null
@@ -110,6 +118,22 @@ function fakeDatabase(attempts: RawProviderOutboxAttempt[]) {
     retries
   }
 }
+
+test('claims only the requested attempt primary key', async () => {
+  const first = rawAttempt(
+    '7bcd24a4-190c-4eca-a834-5c9854bd54ea'
+  )
+  const requested = rawAttempt(
+    '3387a158-165f-498e-a968-d75b833f86fb'
+  )
+  const fake = fakeDatabase([first, requested])
+  const store = createProviderOutboxStore(adapter, fake.database)
+
+  const claimed = await store.claimById?.(requested.attemptId)
+
+  assert.equal(claimed?.attemptId, requested.attemptId)
+  assert.deepEqual(fake.queue, [first])
+})
 
 test('dead-letters an invalid payload and continues to a valid row', async () => {
   const invalidAttempt = rawAttempt('attempt-invalid', {

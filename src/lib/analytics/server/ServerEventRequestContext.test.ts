@@ -71,7 +71,7 @@ test('native request context preserves canonical identifiers and adds the builde
   )
 })
 
-test('native request context fills missing identifiers and URLs', () => {
+test('native request context never fabricates missing fbc or fbp', () => {
   const event = {
     schema_version: 1,
     event_name: 'page_view',
@@ -95,19 +95,13 @@ test('native request context fills missing identifiers and URLs', () => {
     event_source_url: string
     user_data: {
       client_ip_address: string
-      fbc: string
-      fbp: string
+      fbc?: string
+      fbp?: string
     }
   }
 
-  assert.match(
-    payload.user_data.fbc,
-    /^fb\.1\.\d+\.server-query-click\.[A-Za-z0-9]{8}$/
-  )
-  assert.match(
-    payload.user_data.fbp,
-    /^fb\.1\.\d+\.\d+\.[A-Za-z0-9]{8}$/
-  )
+  assert.equal(payload.user_data.fbc, undefined)
+  assert.equal(payload.user_data.fbp, undefined)
   assert.match(
     payload.user_data.client_ip_address,
     /^203\.0\.113\.9\.[A-Za-z0-9]{8}$/

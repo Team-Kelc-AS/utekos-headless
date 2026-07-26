@@ -4,6 +4,14 @@ import type { CanonicalPageViewStore } from './acceptCanonicalPageView'
 import { handleCanonicalPageViewRequest } from './handleCanonicalPageViewRequest'
 
 const endpoint = 'https://utekos.no/api/events/page-view'
+const insertedAcceptance = {
+  createdDispatchAttempts: [],
+  status: 'inserted' as const
+}
+const duplicateAcceptance = {
+  createdDispatchAttempts: [],
+  status: 'duplicate' as const
+}
 
 function pageView(
   analytics: 'denied' | 'granted' = 'granted',
@@ -45,7 +53,8 @@ function request(
 }
 
 function dependencies(
-  accept: CanonicalPageViewStore['accept'] = async () => 'inserted'
+  accept: CanonicalPageViewStore['accept'] = async () =>
+    insertedAcceptance
 ) {
   return {
     getRequestContext: () => ({
@@ -107,7 +116,7 @@ test('does not persist a fully denied event', async () => {
     request(JSON.stringify(pageView('denied', 'denied'))),
     dependencies(async () => {
       writes += 1
-      return 'inserted'
+      return insertedAcceptance
     })
   )
 
@@ -131,7 +140,7 @@ test('returns accepted after atomic persistence', async () => {
 test('returns an idempotent duplicate response', async () => {
   const response = await handleCanonicalPageViewRequest(
     request(JSON.stringify(pageView())),
-    dependencies(async () => 'duplicate')
+    dependencies(async () => duplicateAcceptance)
   )
 
   assert.equal(response.status, 200)

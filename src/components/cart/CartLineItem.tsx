@@ -27,6 +27,7 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { reportCanonicalRemoveFromCart } from '@/lib/analytics/removeFromCartReporter'
 import { mapShopifyRemoveFromCart } from '@/lib/analytics/shopifyRemoveFromCartCommerce'
+import { resolveSuccessfulCartRemovalQuantity } from '@/lib/analytics/resolveSuccessfulCartRemovalQuantity'
 import type { Cart } from 'types/cart'
 import type { ShopifyProduct } from 'types/product'
 import { AlertDialogTitle } from './AlertDialogen'
@@ -45,6 +46,8 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
     number | null
   >(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isUpdatingQuantity, setIsUpdatingQuantity] =
+    useState(false)
   const updateTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
@@ -72,11 +75,15 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
 
     const queryKey = ['cart', cartId] as const
     let previousCart: Cart | null | undefined
-    const removedQuantity = line.quantity
+    let previousQuantity = line.quantity
 
     if (cartId) {
       await queryClient.cancelQueries({ queryKey })
       previousCart = queryClient.getQueryData<Cart | null>(queryKey)
+      previousQuantity =
+        previousCart?.lines.find(
+          cartLine => cartLine.id === line.id
+        )?.quantity ?? line.quantity
 
       queryClient.setQueryData<Cart | null>(queryKey, oldCart => {
         if (!oldCart) return oldCart ?? null
@@ -84,7 +91,8 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
         const removedLine = oldCart.lines.find(
           cartLine => cartLine.id === line.id
         )
-        const quantityDelta = removedLine?.quantity ?? removedQuantity
+        const quantityDelta =
+          removedLine?.quantity ?? previousQuantity
 
         return {
           ...oldCart,
@@ -118,10 +126,15 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
       queryClient.setQueryData(['cart', result.cart.id], result.cart)
     }
 
+    const removedQuantity = resolveSuccessfulCartRemovalQuantity({
+      lineId: line.id,
+      previousQuantity,
+      result
+    })
     const resolvedCartId = result.cart?.id ?? cartId
     const product = line.merchandise.product as ShopifyProduct | undefined
 
-    if (resolvedCartId && product) {
+    if (resolvedCartId && product && removedQuantity > 0) {
       const eventTime = new Date().toISOString()
       reportCanonicalRemoveFromCart({
         customData: mapShopifyRemoveFromCart({
@@ -137,9 +150,14 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
     if (cartId) {
       await queryClient.invalidateQueries({ queryKey })
     }
+
+    setIsDeleting(false)
+    setQuantityOverride(null)
   }
 
   const handleUpdateQuantity = (newQuantity: number) => {
+    if (isUpdatingQuantity) return
+
     if (updateTimerRef.current) {
       clearTimeout(updateTimerRef.current)
     }
@@ -151,11 +169,51 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
 
     setQuantityOverride(newQuantity)
 
-    updateTimerRef.current = setTimeout(() => {
-      cartActor.send({
+    const previousQuantity = line.quantity
+
+    updateTimerRef.current = setTimeout(async () => {
+      updateTimerRef.current = null
+      setIsUpdatingQuantity(true)
+
+      const snapshot = await createMutationPromise({
         type: 'UPDATE_LINE',
         input: { lineId: line.id, quantity: newQuantity }
+      }, cartActor)
+      const result = snapshot.context.lastResult
+
+      if (!result?.success || !result.cart) {
+        setQuantityOverride(null)
+        setIsUpdatingQuantity(false)
+        return
+      }
+
+      const removedQuantity = resolveSuccessfulCartRemovalQuantity({
+        lineId: line.id,
+        previousQuantity,
+        result
       })
+
+      if (removedQuantity > 0) {
+        const product = line.merchandise.product as
+          | ShopifyProduct
+          | undefined
+
+        if (product) {
+          const eventTime = new Date().toISOString()
+          reportCanonicalRemoveFromCart({
+            customData: mapShopifyRemoveFromCart({
+              cartId: result.cart.id,
+              mutationTimestamp: eventTime,
+              product,
+              quantity: removedQuantity,
+              variant: line.merchandise
+            })
+          })
+        }
+      }
+
+      setQuantityOverride(null)
+      setIsUpdatingQuantity(false)
     }, 300)
   }
 
@@ -232,7 +290,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
             <AlertDialog>
               <AlertDialogTrigger
                 aria-label={`Fjern ${productTitle} fra handlekurven`}
-                disabled={isDeleting}
+                disabled={isDeleting || isUpdatingQuantity}
                 data-track='CartRemoveItemOpen'
                 className={cn(
                   buttonVariants({
@@ -288,7 +346,11 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
                 onClick={() =>
                   handleUpdateQuantity(localQuantity - 1)
                 }
-                disabled={localQuantity < 1 || isDeleting}
+                disabled={
+                  localQuantity < 1 ||
+                  isDeleting ||
+                  isUpdatingQuantity
+                }
                 aria-label={`Reduser antall for ${productTitle}`}
               >
                 <Minus className='size-3' />
@@ -305,7 +367,11 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
                 onClick={() =>
                   handleUpdateQuantity(localQuantity + 1)
                 }
-                disabled={isDeleting || localQuantity >= 99}
+                disabled={
+                  isDeleting ||
+                  isUpdatingQuantity ||
+                  localQuantity >= 99
+                }
               >
                 <Plus className='size-3' />
               </Button>

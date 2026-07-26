@@ -82,6 +82,7 @@ test('one canonical event_id creates one row and one stable provider dedupe key 
           key: `${row.provider}:${row.idempotency_key}`,
           payload: row.payload
         })
+        return `00000000-0000-4000-8000-00000000000${dispatchRows.length}`
       }
     })
   )
@@ -95,10 +96,17 @@ test('one canonical event_id creates one row and one stable provider dedupe key 
     store.accept(input)
   ])
 
-  assert.deepEqual(acceptResults.sort(), [
+  assert.deepEqual(acceptResults.map(result => result.status).sort(), [
     'duplicate',
     'inserted'
   ])
+  assert.equal(
+    acceptResults.reduce(
+      (sum, result) => sum + result.createdDispatchAttempts.length,
+      0
+    ),
+    2
+  )
   assert.equal(ledgerKeys.size, 1)
   assert.equal(dispatchRows.length, 2)
   assert.deepEqual(

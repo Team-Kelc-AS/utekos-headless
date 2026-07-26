@@ -38,13 +38,12 @@ export function HyttePricingBuyButton({
         Kjøp nå
       </Button>
 
-      {isModalOpen && (
-        <QuickViewModal
-          productHandle={productHandle}
-          isOpen={isModalOpen}
-          onOpenChange={setIsModalOpen}
-        />
-      )}
+      <QuickViewModal
+        productHandle={productHandle}
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        sourceSurface='hytte_pricing'
+      />
     </>
   )
 }

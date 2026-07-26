@@ -159,6 +159,7 @@ test('webhook and reconciliation converge on one attributed Refund ledger row an
           dispatchKeys.push(
             `${row.provider}:${row.idempotency_key}`
           )
+          return '00000000-0000-4000-8000-000000000001'
         },
         upsertSourceEvidence: async row => {
           sourceMethods.push(row.source_method)
@@ -245,6 +246,7 @@ test('missing Purchase linkage accepts operationally without fabricating attribu
           dispatchKeys.push(
             `${row.provider}:${row.idempotency_key}`
           )
+          return '00000000-0000-4000-8000-000000000001'
         },
         upsertSourceEvidence: async () => {}
       })

@@ -7,10 +7,12 @@ import {
   deterministicPurchaseEventId,
   shopifyPurchaseTransactionId
 } from '../purchaseEvent'
+import type { CanonicalEvent } from '../canonicalEvent'
 import {
   deterministicRefundEventId,
   shopifyRefundRecordId
 } from '../refundEvent'
+import type { CanonicalEventStore } from './canonicalEventStore'
 import type {
   ShopifyCommerceReconciliationOrder,
   ShopifyCommerceReconciliationRefund
@@ -200,15 +202,22 @@ function acquiredLease(
 
 function createStoreTracker() {
   const accepted = new Set<string>()
+  const accept: CanonicalEventStore['accept'] = async input => {
+    if (accepted.has(input.event.event_id)) {
+      return {
+        createdDispatchAttempts: [],
+        status: 'duplicate'
+      }
+    }
+    accepted.add(input.event.event_id)
+    return {
+      createdDispatchAttempts: [],
+      status: 'inserted'
+    }
+  }
 
   return {
-    accept: async (input: { event: { event_id: string } }) => {
-      if (accepted.has(input.event.event_id)) {
-        return 'duplicate' as const
-      }
-      accepted.add(input.event.event_id)
-      return 'inserted' as const
-    },
+    accept,
     accepted
   }
 }
@@ -248,25 +257,27 @@ function baseDependencies(
       acceptPurchase: async input => {
         purchaseAcceptanceInputs.push(input)
         const result = await storeTracker.accept({
-          event: input.payload as { event_id: string }
+          dispatches: [],
+          event: input.payload as CanonicalEvent
         })
         return {
           event_id: (input.payload as { event_id: string })
             .event_id,
           status:
-            result === 'inserted' ? 'accepted' : 'duplicate'
+            result.status === 'inserted' ? 'accepted' : 'duplicate'
         }
       },
       acceptRefund: async input => {
         refundAcceptanceInputs.push(input)
         const result = await storeTracker.accept({
-          event: input.payload as { event_id: string }
+          dispatches: [],
+          event: input.payload as CanonicalEvent
         })
         return {
           event_id: (input.payload as { event_id: string })
             .event_id,
           status:
-            result === 'inserted' ? 'accepted' : 'duplicate'
+            result.status === 'inserted' ? 'accepted' : 'duplicate'
         }
       },
       mapPurchase: orderNode => ({
@@ -766,7 +777,7 @@ test('accept mode passes provider-neutral reconciliation evidence for purchases 
     source_topic: 'orders/paid',
     source_delivery_id: null,
     source_event_id: null,
-    source_api_version: '2026-04',
+    source_api_version: '2026-07',
     source_triggered_at: '2026-07-01T10:00:00.000Z',
     source_observed_at: '2026-07-01T12:00:00.000Z'
   })
@@ -779,7 +790,7 @@ test('accept mode passes provider-neutral reconciliation evidence for purchases 
     source_topic: 'refunds/create',
     source_delivery_id: null,
     source_event_id: null,
-    source_api_version: '2026-04',
+    source_api_version: '2026-07',
     source_triggered_at: '2026-07-01T11:00:00.000Z',
     source_observed_at: '2026-07-01T12:00:00.000Z'
   })

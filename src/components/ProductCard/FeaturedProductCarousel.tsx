@@ -32,5 +32,11 @@ export function FeaturedProductCarousel() {
     return null
   }
 
-  return <SharedProductCarousel products={products} />
+  return (
+    <SharedProductCarousel
+      products={products}
+      itemListId='featured_products'
+      itemListName='Utvalgte produkter'
+    />
+  )
 }

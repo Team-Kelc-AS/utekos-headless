@@ -1,4 +1,3 @@
-import type { CanonicalBeginCheckout } from '../beginCheckoutEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalBeginCheckout,
@@ -40,6 +39,7 @@ export async function acceptCanonicalBeginCheckout(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

@@ -18,12 +18,16 @@ interface SharedProductCarouselProps {
   products: ShopifyProduct[]
   navigationClassName?: string
   cardClassName?: string
+  itemListId: string
+  itemListName: string
 }
 
 export function SharedProductCarousel({
   products,
   navigationClassName,
-  cardClassName
+  cardClassName,
+  itemListId,
+  itemListName
 }: SharedProductCarouselProps) {
   if (products.length === 0) {
     return null
@@ -57,6 +61,9 @@ export function SharedProductCarousel({
                 colorHexMap={colorHexMap}
                 initialOptions={initialOptions}
                 compactMobile
+                itemListId={itemListId}
+                itemListName={itemListName}
+                itemListTotalCount={products.length}
                 {...(cardClassName ? { cardClassName } : {})}
               />
             </CarouselItem>

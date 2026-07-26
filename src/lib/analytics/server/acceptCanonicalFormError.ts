@@ -1,4 +1,3 @@
-import type { CanonicalFormError } from '../formErrorEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalFormError,
@@ -39,6 +38,7 @@ export async function acceptCanonicalFormError(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

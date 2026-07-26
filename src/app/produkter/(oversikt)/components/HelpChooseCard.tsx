@@ -1,6 +1,7 @@
 'use client'
 
 import { useAddToCartAction } from '@/hooks/useAddToCartAction'
+import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductListVisibility'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
 import { flattenConnection } from '@shopify/hydrogen-react'
@@ -14,7 +15,7 @@ import {
 import type { Route } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type {
   ShopifyProduct,
   ShopifyProductVariant
@@ -24,6 +25,7 @@ interface HelpChooseCardProps {
   product: ShopifyProduct
   index: number
   glowColor: string
+  totalItemCount: number
 }
 
 type ProductVariantsShape =
@@ -58,8 +60,10 @@ function getDefaultColor(
 export function HelpChooseCard({
   product,
   index,
-  glowColor
+  glowColor,
+  totalItemCount
 }: HelpChooseCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null)
   const variants = normalizeVariants(product)
   const defaultColor = getDefaultColor(variants)
 
@@ -158,6 +162,15 @@ export function HelpChooseCard({
     null
   const productUrl = `/produkter/${product.handle}` as Route
 
+  useCanonicalProductListVisibility({
+    elementRef: cardRef,
+    itemListId: 'help_choose_carousel',
+    itemListName: 'Hjelp meg å velge',
+    product,
+    totalItemCount,
+    variant: selectItemVariant
+  })
+
   const handleViewProduct = () => {
     const destinationUrl =
       typeof window === 'undefined' ? productUrl : (
@@ -174,6 +187,7 @@ export function HelpChooseCard({
 
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}

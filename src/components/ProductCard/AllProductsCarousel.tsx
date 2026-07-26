@@ -33,6 +33,8 @@ export function AllProductsCarousel() {
   return (
     <SharedProductCarousel
       products={sortedProducts}
+      itemListId='all_products'
+      itemListName='Alle produkter'
     />
   )
 }

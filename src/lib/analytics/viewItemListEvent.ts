@@ -3,13 +3,24 @@ import { canonicalCommerceItemSchema, canonicalCommerceValueSchema } from './can
 import { canonicalEventEnvelopeSchema, type CanonicalEventEnvelope, type ConsentSnapshot } from './canonicalEventEnvelope'
 import { mapEventDeviceInfo } from './mapEventDeviceInfo'
 
-export const canonicalViewItemListCustomDataSchema = z.strictObject({
-  item_list_id: z.string().min(1),
-  impression_sequence: z.number().int().positive(),
-  currency: z.string().regex(/^[A-Z]{3}$/).optional(),
-  value: z.number().finite().nonnegative().optional(),
-  items: z.array(canonicalCommerceItemSchema).min(1)
-})
+export const canonicalViewItemListCustomDataSchema =
+  canonicalCommerceValueSchema
+    .extend({
+      impression_sequence: z.number().int().positive(),
+      item_list_id: z.string().min(1),
+      item_list_name: z.string().min(1),
+      items: z.array(canonicalCommerceItemSchema).min(1).max(20),
+      total_item_count: z.number().int().positive()
+    })
+    .superRefine((value, context) => {
+      if (value.total_item_count < value.items.length) {
+        context.addIssue({
+          code: 'custom',
+          message: 'total_item_count cannot be less than items.length',
+          path: ['total_item_count']
+        })
+      }
+    })
 
 export type CanonicalViewItemListCustomData = z.infer<
   typeof canonicalViewItemListCustomDataSchema

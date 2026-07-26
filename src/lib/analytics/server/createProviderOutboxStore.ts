@@ -48,7 +48,47 @@ export function createProviderOutboxStore<
   adapter: ProviderAdapter<E, R>,
   database: ProviderOutboxDatabase<R>
 ): ProviderOutboxStore<E, R> {
+  async function parseClaimedAttempt(
+    claimed: Awaited<
+      ReturnType<ProviderOutboxDatabase<R>['claimNext']>
+    >
+  ) {
+    if (!claimed) return null
+
+    const parsed = adapter.schema.safeParse(
+      parseStoredPayload(claimed.payload)
+    )
+
+    if (parsed.success) {
+      return {
+        attemptCount: claimed.attemptCount,
+        attemptId: claimed.attemptId,
+        event: parsed.data
+      }
+    }
+
+    await database.markInvalidPayload({
+      attemptCount: claimed.attemptCount,
+      attemptId: claimed.attemptId,
+      errorMessage: summarizeInvalidPayload(
+        adapter.eventName,
+        parsed.error
+      )
+    })
+
+    return null
+  }
+
   return {
+    claimById: async attemptId => {
+      if (!database.claimById) {
+        throw new Error('targeted_provider_claim_not_supported')
+      }
+
+      return parseClaimedAttempt(
+        await database.claimById(attemptId)
+      )
+    },
     claimNext: async () => {
       for (
         let invalidRows = 0;
@@ -58,26 +98,9 @@ export function createProviderOutboxStore<
         const claimed = await database.claimNext()
         if (!claimed) return null
 
-        const parsed = adapter.schema.safeParse(
-          parseStoredPayload(claimed.payload)
-        )
+        const parsed = await parseClaimedAttempt(claimed)
 
-        if (parsed.success) {
-          return {
-            attemptCount: claimed.attemptCount,
-            attemptId: claimed.attemptId,
-            event: parsed.data
-          }
-        }
-
-        await database.markInvalidPayload({
-          attemptCount: claimed.attemptCount,
-          attemptId: claimed.attemptId,
-          errorMessage: summarizeInvalidPayload(
-            adapter.eventName,
-            parsed.error
-          )
-        })
+        if (parsed) return parsed
       }
 
       return null

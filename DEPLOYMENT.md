@@ -1,6 +1,6 @@
 # Deployment And Migration Checklist
 
-Status date: 2026-07-19
+Status date: 2026-07-26
 
 This is the mandatory release checklist for Utekos Headless. Use it
 before every deploy, production mutation, provider change, GTM publish,
@@ -9,6 +9,49 @@ tracking change, database migration, or operational tooling change.
 The purpose is simple: no runtime change should reach production before
 its required database, provider, environment, and verification steps are
 known and completed in the correct order.
+
+## Activating Meta stale-event / near-real-time release 2026-07-26
+
+Web-GTM version `133` is published from isolated workspace `141`; its only
+changes are tag `153` and trigger `152`. The application candidate is not yet
+deployed. It has no database migration and does not change Purchase,
+destination IDs, campaign settings, budgets, conversion goals or historical
+events. The configured Meta pixel/dataset remains `1092362672918571`.
+
+Required activation order, each mutation separately approved:
+
+1. Create/verify an isolated web-GTM workspace from
+   `config/gtm/web-meta-pixel.html`, then publish only the approved mapping
+   diff. Record the resulting GTM version; the previous published version is
+   the GTM rollback.
+2. Deploy the application candidate with the queue trigger for
+   `canonical-provider-dispatch-v1` and the 15-minute
+   `/api/cron/provider-dispatch-health` schedule. Record exact Git SHA and
+   deployment ID; the previous READY deployment is runtime rollback.
+3. Perform only genuine, controlled, consented actions for every affected
+   event. Do not use heartbeat events or blind historical replay.
+4. Correlate each action through `dataLayer`, collector 2xx, ledger, exact
+   provider-attempt, queue consumer, provider receipt and external UI/API.
+   Meta requires the exact same PascalCase name and canonical UUID in Pixel
+   `eventID` and CAPI `event_id`.
+5. Record normal p95 ACK ≤60 seconds and fallback ≤5 minutes. Recheck Dataset
+   Quality, dedupe, match keys and freshness after 7 and 14 days.
+
+Queue messages contain no PII and use `${adapter_key}:${attempt_id}`
+idempotency with seven-day retention. A publish failure after database commit
+must preserve collector `202`, alert Sentry and let the cron recover. Microsoft
+CAPI expansion is excluded until `pageLoadId`, VID/ID sync and `msclkid` pass a
+separate quality gate.
+
+The live-proof fields are intentionally blank until activation:
+
+| Evidence | Value |
+| -------- | ----- |
+| Published GTM version | `133`; rollback `132`; source SHA-256 `3cb06efffdeef4240549b3b110063e3f829a40cccff1091cf88d669584e8ce0b` |
+| Vercel deployment ID / Git SHA | Pending explicit approval |
+| Representative canonical event IDs | Pending genuine production actions |
+| Meta/Google receipts | Pending deployment |
+| 7-day / 14-day quality result | Pending elapsed observation window |
 
 ## Golden Rules
 

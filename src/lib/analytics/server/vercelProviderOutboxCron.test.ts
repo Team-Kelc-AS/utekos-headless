@@ -22,6 +22,10 @@ test('schedules provider dispatch and quality reconciliation', () => {
       schedule: '*/5 * * * *'
     },
     {
+      path: '/api/cron/provider-dispatch-health',
+      schedule: '*/15 * * * *'
+    },
+    {
       path: '/api/cron/meta-dataset-quality',
       schedule: '17 3 * * *'
     },

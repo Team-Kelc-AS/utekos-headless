@@ -44,7 +44,9 @@ export type PriceActivityPanelProps = {
 }
 
 export type ProductPageAccordionProps = {
+  product: ShopifyProduct
   sections: ProductAccordionSection[] | undefined
+  selectedVariant: ShopifyProductVariant
 }
 
 export type ProductControllerProps = {

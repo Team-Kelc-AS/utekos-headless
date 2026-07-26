@@ -4,6 +4,7 @@ allowBuilds:
   '@sentry/cli': true
   '@swc/core': true
   '@vygruppen/spor-react': true
+  cbor-extract: false
   core-js: false
   esbuild: true
   protobufjs: true

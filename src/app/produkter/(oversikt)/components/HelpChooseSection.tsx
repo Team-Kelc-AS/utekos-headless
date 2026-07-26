@@ -103,6 +103,7 @@ export async function HelpChooseSection() {
                   product={product}
                   index={index}
                   glowColor={config.glowColor}
+                  totalItemCount={cards.length}
                 />
               </CarouselItem>
             ))}

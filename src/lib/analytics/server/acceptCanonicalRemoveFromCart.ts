@@ -1,4 +1,3 @@
-import type { CanonicalRemoveFromCart } from '../removeFromCartEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import type { CanonicalEventSourceEvidence } from './canonicalEventSourceEvidence'
 import {
@@ -48,6 +47,7 @@ export async function acceptCanonicalRemoveFromCart(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

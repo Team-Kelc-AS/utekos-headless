@@ -5,6 +5,7 @@ import {
   createCanonicalEventStore,
   type CanonicalEventTransactionRunner
 } from './createCanonicalEventStore'
+import { publishCanonicalProviderDispatchAttempts } from './canonicalProviderDispatchQueue'
 import type {
   CanonicalEventLookup,
   CanonicalEventStore
@@ -128,7 +129,7 @@ const runPostgresTransaction: CanonicalEventTransactionRunner =
           }
         },
         insertDispatch: async row => {
-          await sql`
+          const inserted = await sql`
             insert into ops.provider_dispatch_attempts (
               idempotency_key,
               provider,
@@ -165,7 +166,17 @@ const runPostgresTransaction: CanonicalEventTransactionRunner =
               end
             )
             on conflict (provider, idempotency_key) do nothing
+            returning id::text as attempt_id
           `
+
+          const attemptId = inserted[0]?.attempt_id
+
+          if (attemptId === undefined) return null
+          if (typeof attemptId !== 'string') {
+            throw new Error('invalid_provider_attempt_id')
+          }
+
+          return attemptId
         }
       })
     )
@@ -196,8 +207,19 @@ async function findCanonicalEvent(input: CanonicalEventLookup) {
   return event
 }
 
+const transactionalCanonicalEventStore =
+  createCanonicalEventStore(runPostgresTransaction)
+
 export const postgresCanonicalEventStore: CanonicalEventStore = {
-  ...createCanonicalEventStore(runPostgresTransaction),
+  accept: async input => {
+    const result = await transactionalCanonicalEventStore.accept(input)
+
+    await publishCanonicalProviderDispatchAttempts(
+      result.createdDispatchAttempts
+    )
+
+    return result
+  },
   find: findCanonicalEvent
 }
 

@@ -111,6 +111,7 @@ export type NbccProductCardActionsProps = {
   href: Route
   productTitle: string
   tracking: NbccTrackingData
+  totalItemCount: number
 }
 
 export type NbccProductCarouselImage = {

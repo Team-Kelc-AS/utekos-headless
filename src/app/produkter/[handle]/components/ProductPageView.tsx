@@ -334,7 +334,9 @@ export function ProductPageView({
 
         <div className='mt-16 sm:mt-24'></div>
         <ProductPageAccordion
+          product={productData}
           sections={productPageContent?.accordion}
+          selectedVariant={selectedVariant}
         />
         {relatedProducts && relatedProducts.length > 0 && (
           <RelatedProducts products={relatedProducts} />

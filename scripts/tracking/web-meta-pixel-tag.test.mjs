@@ -123,6 +123,8 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
   const commerce = {
     currency: 'NOK',
     gross_value: 1790,
+    tax_value: 358,
+    value: 1432,
     items: [{
       variant_id: 'gid://shopify/ProductVariant/47123456789012',
       item_name: 'Utekos TechDown',
@@ -134,6 +136,13 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
 
   runtime.window.dataLayer.push(
     canonicalEvent('page_view', 'page-event'),
+    canonicalEvent('view_item_list', 'list-event', {
+      ...commerce,
+      impression_sequence: 1,
+      item_list_id: 'all_products',
+      item_list_name: 'Alle produkter',
+      total_item_count: 1
+    }),
     canonicalEvent('view_item', 'view-event', commerce),
     canonicalEvent('select_item', 'select-event', commerce),
     canonicalEvent('add_to_wishlist', 'wishlist-event', commerce),
@@ -156,6 +165,18 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
       cta_id: 'read_more_hero',
       destination_path: '/skreddersy-varmen',
       click_sequence: 1
+    }),
+    canonicalEvent('interact_with_accordion', 'accordion-event', {
+      ...commerce,
+      accordion_id: 'materials',
+      accordion_title: 'Materialer',
+      interaction_sequence: 1,
+      interaction_type: 'open'
+    }),
+    canonicalEvent('open_quick_view', 'quick-view-event', {
+      ...commerce,
+      open_sequence: 1,
+      source_surface: 'homepage_techdown_campaign'
     }),
     canonicalEvent('generate_lead', 'lead-event', { currency: 'NOK', value: 1 })
   )
@@ -181,6 +202,7 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     eventCalls.map(call => [call[2], call[4].eventID]),
     [
       ['PageView', 'page-event'],
+      ['ViewItemList', 'list-event'],
       ['ViewContent', 'view-event'],
       ['SelectItem', 'select-event'],
       ['AddToWishlist', 'wishlist-event'],
@@ -192,18 +214,44 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
       ['LandingScrollDepth', 'scroll-depth-event'],
       ['ViewCategory', 'view-category-event'],
       ['HeroInteract', 'hero-interact-event'],
+      ['InteractWithAccordion', 'accordion-event'],
+      ['OpenQuickView', 'quick-view-event'],
       ['Lead', 'lead-event']
     ]
   )
-  assert.deepEqual(eventCalls[1][3], {
+  assert.deepEqual(eventCalls[2][3], {
     content_ids: ['47123456789012'],
     contents: [{ id: '47123456789012', quantity: 1, item_price: 1790 }],
     content_type: 'product',
+    num_items: 1,
     currency: 'NOK',
     value: 1790,
     content_name: 'Utekos TechDown',
-    content_category: 'Uteklær'
+    content_category: 'Uteklær',
+    gross_value: 1790,
+    tax_value: 358,
+    net_value: 1432
   })
+  assert.deepEqual(
+    eventCalls.find(call => call[2] === 'ViewItemList')?.[3],
+    {
+      content_ids: ['47123456789012'],
+      contents: [{ id: '47123456789012', quantity: 1, item_price: 1790 }],
+      content_type: 'product',
+      num_items: 1,
+      currency: 'NOK',
+      value: 1790,
+      content_name: 'Utekos TechDown',
+      content_category: 'Uteklær',
+      gross_value: 1790,
+      impression_sequence: 1,
+      item_list_id: 'all_products',
+      item_list_name: 'Alle produkter',
+      tax_value: 358,
+      total_item_count: 1,
+      net_value: 1432
+    }
+  )
   assert.deepEqual(
     eventCalls.find(call => call[2] === 'LandingScrollDepth')?.[3],
     {
@@ -217,6 +265,8 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     {
       content_category: 'produkter',
       content_name: 'Kolleksjonen',
+      category_id: 'produkter',
+      category_name: 'Kolleksjonen',
       view_sequence: 1
     }
   )
@@ -225,6 +275,8 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     {
       content_name: 'read_more_hero',
       content_category: '/skreddersy-varmen',
+      cta_id: 'read_more_hero',
+      destination_path: '/skreddersy-varmen',
       click_sequence: 1
     }
   )

@@ -5,6 +5,15 @@ import {
   type CanonicalPageViewStore
 } from './acceptCanonicalPageView'
 
+const insertedAcceptance = {
+  createdDispatchAttempts: [],
+  status: 'inserted' as const
+}
+const duplicateAcceptance = {
+  createdDispatchAttempts: [],
+  status: 'duplicate' as const
+}
+
 function pageView(
   analytics: 'denied' | 'granted',
   marketing: 'denied' | 'granted'
@@ -34,7 +43,7 @@ test('rejects fully denied events without calling storage', async () => {
   const store: CanonicalPageViewStore = {
     accept: async () => {
       calls += 1
-      return 'inserted'
+      return insertedAcceptance
     }
   }
 
@@ -59,7 +68,7 @@ test('accepts the event and its provider intents through one storage call', asyn
   const store: CanonicalPageViewStore = {
     accept: async input => {
       writes.push(input)
-      return 'inserted'
+      return insertedAcceptance
     }
   }
 
@@ -88,7 +97,7 @@ test('mints fbp and fbc from landing page_url fbclid before persist', async () =
   const store: CanonicalPageViewStore = {
     accept: async input => {
       writes.push(input)
-      return 'inserted'
+      return insertedAcceptance
     }
   }
 
@@ -119,7 +128,7 @@ test('mints fbp and fbc from landing page_url fbclid before persist', async () =
 
 test('reports an idempotent duplicate returned by storage', async () => {
   const store: CanonicalPageViewStore = {
-    accept: async () => 'duplicate'
+    accept: async () => duplicateAcceptance
   }
 
   const result = await acceptCanonicalPageView({

@@ -107,7 +107,7 @@ test('awaits a bounded batch for an authorized cron request', async () => {
 
   assert.equal(response.status, 200)
   assert.equal(response.headers.get('cache-control'), 'no-store')
-  assert.deepEqual(fake.calls, [1])
+  assert.deepEqual(fake.calls, [10])
   assert.equal(body.ok, true)
   assert.deepEqual(body['google:view_item'], {
     acceptedUnverified: 1,

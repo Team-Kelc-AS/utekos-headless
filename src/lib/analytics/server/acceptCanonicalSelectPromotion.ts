@@ -1,4 +1,3 @@
-import type { CanonicalSelectPromotion } from '../selectPromotionEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalSelectPromotion,
@@ -40,6 +39,7 @@ export async function acceptCanonicalSelectPromotion(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

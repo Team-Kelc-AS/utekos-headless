@@ -1,6 +1,6 @@
 # FLOW - tracking, observability og kommersiell innsikt
 
-Statusdato: 2026-07-18.
+Statusdato: 2026-07-26.
 
 Dette dokumentet er den operative flytbeskrivelsen for hvordan
 Utekos skal samle inn, lagre, levere og bruke analytics-,
@@ -23,6 +23,45 @@ kundechatbot ligger i
 [COMMERCIAL_INTELLIGENCE_PLAN.md](COMMERCIAL_INTELLIGENCE_PLAN.md).
 
 ## Kort fasit
+
+### Meta-/provider-release 2026-07-26 — GTM v133 live, app ikke deployert
+
+Repositoryet inneholder nå en ferdig releasekandidat for de manglende og
+forsinkede canonical-eventene. Web-GTM v133 er publisert fra isolert workspace
+141 med kun tagg 153 og trigger 152 endret; v132 er rollback. Appen er ennå
+ikke deployert, og ingen ekte provider-receipt er registrert for kandidaten.
+
+Releasekandidaten gjør følgende:
+
+- aktiverer ekte `view_item_list` etter minst 50 % sammenhengende synlighet i
+  ett sekund, én gang per variantgruppe og sidevisning, med maks 20 varer per
+  event og sekvensbasert chunking;
+- legger til komplette ende-til-ende-kontrakter for
+  `interact_with_accordion` og `open_quick_view`;
+- legger Meta CAPI til `view_item_list`, `view_cart`, `scroll_depth`,
+  `view_category`, `hero_interact`, `interact_with_accordion` og
+  `open_quick_view`, med identisk canonical UUID og Meta-navn i Pixel og CAPI;
+- rapporterer `remove_from_cart` først etter godkjent Shopify-respons, også for
+  en reell antallsreduksjon som 3 → 2;
+- publiserer bare nyopprettede provider-attempt-ID-er etter databasecommit til
+  Vercel Queue-topic `canonical-provider-dispatch-v1`. Consumeren claimer kun
+  den eksakte primærnøkkelen; femminutterscronen forblir retry og fallback;
+- kjører en 15-minutters helsejobb for manglende forsøk, køpubliseringsfeil,
+  initial pending-alder over to minutter, dead letters og p95 ACK-latens over
+  60 sekunder. Fravær av sjeldne brukerhandlinger er ikke en alarm.
+
+Queue-meldingen inneholder kun `schema_version`, `attempt_id` og
+`adapter_key`; ingen PII. Meta-mappingen bruker bare lovlig tilgjengelige
+signaler og konstruerer ikke manglende `_fbc`, `_fbp` eller kontaktdata.
+`Purchase`, destination-ID-er, kampanjer, budsjetter og historiske events er
+urørt. Microsoft-serverutvidelsen er eksplisitt utsatt til en egen
+`pageLoadId`/VID/`msclkid`-kvalitetsport.
+
+Aktivering krever i denne rekkefølgen: godkjent og publisert GTM-mapping,
+godkjent Vercel-deploy med queue-trigger, genuine samtykkede brukerhandlinger,
+og korrelert bevis i dataLayer, collector, ledger, eksakt attempt, provider-
+receipt og eksternt dashboard. Se
+[release-evidensen](docs/analytics/evidence/canonical-stale-events-near-realtime-cutover-2026-07-26.md).
 
 ### AI-kjøpshjelp: intern preview med null som standard
 
@@ -183,10 +222,15 @@ flowchart TD
   api --> ledger[Supabase marketing.event_ledger]
   api --> queue[Supabase ops.provider_dispatch_attempts]
   ledger --> archive[analytics.event_ledger_archive]
+  queue --> vercelQueue[Vercel Queue canonical-provider-dispatch-v1]
+  vercelQueue --> targeted[Targeted attempt consumer]
   queue --> retry[/api/cron/provider-outbox-dispatch]
   queue --> deadletter[ops.dead_letter_events]
   deadletter --> replay[/api/cron/replay-dead-letter]
 
+  targeted --> meta[Meta CAPI]
+  targeted --> google[Google Data Manager API]
+  targeted --> microsoft[Microsoft UET CAPI]
   retry --> meta[Meta CAPI]
   retry --> google[Google Data Manager API]
   retry --> microsoft[Microsoft UET CAPI]
@@ -216,7 +260,8 @@ Den ønskede flyten er enkel:
 2. Nettleseren sender kun samtykkede events til riktige
    klientflater.
 3. Førsteparts-API-et normaliserer og aksepterer tracking-events.
-4. Supabase lagrer fasit, kø, provider-respons og revisjonsspor.
+4. Supabase lagrer fasit, kø, provider-respons og revisjonsspor;
+   Vercel Queue vekker det eksakte provider-forsøket nær sanntid.
 5. Providerne mottar kvalifiserte events for attribusjon og
    budoptimalisering.
 6. PostHog bygger produktforståelse og CRO-innsikt fra trygge,
@@ -429,7 +474,7 @@ coverage og purchase match rate, ikke radtall.
 | P0        | Microsoft UET CAPI purchase-adapter reintrodusert i kode | Purchase-serverworker er registrert (`microsoft_uet:purchase`) med fail-closed skip for `missing_msclkid` / `missing_capi_token`. Øvrige Microsoft-events forblir `blocked_no_worker`. | Produksjonsdeploy + samtykket Microsoft-klikkreise purchase smoke som viser Microsoft-rad `accepted_unverified`/`succeeded` (ikke bare lokal unit test). | Ny kvalifisert purchase med `msclkid` og UET ApiToken i Vercel Production viser Microsoft UET CAPI-leveranse, eller skip_reason er eksplisitt. |
 | P0        | Merchant policy / feed ownership        | Merchant API preflight OK, men policy-status ikke ferskt bevist grønn                                                    | Verifiser Merchant Center policy og avklar API source vs autofeed                                                                           | Merchant UI/API policy evidence lagres i runbook                                                         |
 | P1        | PostHog CRO-loop mangler                | Data finnes, men få `utekos_*` commerce-events og ingen dedikerte dashboards funnet                                      | Bygg dashboards/funnels for landing, product, checkout, campaign og replay shortlist                                                        | Ukentlig innsiktsflate kan svare på hvor og hvorfor brukere faller fra                                   |
-| P1        | Supabase-operasjonalisering             | Warehouse fylles, men rapporter er fortsatt for manuelle                                                                 | Lag alert/dashboard for queue, fail rate, dead letters, purchases, consent og web vitals                                                    | Varsel eller dashboard brukes som fast beslutningsflate                                                  |
+| P1        | Supabase-operasjonalisering             | Lokal releasekandidat har 15-minutters Sentry-health for manglende attempts, publiseringsfeil, pending-alder, dead letters og p95 ACK; produksjonseffekt er ikke verifisert | Deploy etter godkjenning, bekreft første cronkjøring og koble alertene til fast operativ oppfølging                                         | Varsel/rapport viser korrekt tilstand uten lavvolums-heartbeats eller PII                                 |
 | P1        | Commercial intelligence-plan            | Ny styringsplan er opprettet, men read models, agentfunn og workflows er ikke implementert                               | Følg [COMMERCIAL_INTELLIGENCE_PLAN.md](COMMERCIAL_INTELLIGENCE_PLAN.md) og bygg ett verifisert spor av gangen                               | Supabase/PostHog/MCP-flater viser konkrete beslutninger, ikke bare datainnsamling                        |
 | P1        | GA4 BigQuery -> Supabase                | `npm run ops:ga4-bigquery-readiness` bekrefter `ga4_bigquery_dataset_missing`; `analytics_489598217` finnes ikke ennå     | Rerun readiness-gaten til dataset og `events_*` finnes; først da bygg read-only wrapper/read models                                          | Kuraterte read models finnes; rå GA4-dump er ikke app-avhengighet                                        |
 | P1        | Google Ads API read-only prober         | GA4, public sGTM og GTM API workspace er grønne, men flere Google Ads-spørringer returnerer fortsatt strukturerte credential/scope-feil | Rett credentials/scopes eller dokumenter blokkering | Prober skiller tydelig mellom teknisk feil og manglende tilgang |
@@ -517,15 +562,19 @@ Punkter som fortsatt ikke kan markeres løst uten ny kontroll:
 
 ## 10. Neste praktiske rekkefølge
 
-1. Observer en godkjent betalt Klarna Express-reise og følg den aktive Meta
-   Dataset Quality-snapshotserien etter 7 og 14 dager.
-2. Vent på og verifiser GA4 BigQuery-datasettet, deretter bygg
+1. Etter separat godkjenning: publiser den upubliserte GTM-mappingen, deploy
+   queue-/runtime-kandidaten og bevis genuine events ende til ende med samme
+   Meta-navn og ID. Oppdater evidensnotatet med GTM-versjon, deployment-ID,
+   event-ID-er og receipts.
+2. Følg Meta Dataset Quality-snapshotserien etter 7 og 14 dager og observer en
+   godkjent betalt Klarna Express-reise uten syntetisk betaling.
+3. Vent på og verifiser GA4 BigQuery-datasettet, deretter bygg
    kuraterte Supabase read models.
-3. Verifiser Merchant Center policy og kildeeierskap.
-4. Bygg PostHog CRO-/commerce-dashboard og koble til ukentlig
+4. Verifiser Merchant Center policy og kildeeierskap.
+5. Bygg PostHog CRO-/commerce-dashboard og koble til ukentlig
    analyseflyt.
-5. Løft Supabase provider health til fast alert/dashboard.
-6. Rydd credential-gated MCP-prober slik at agentlaget kan skille
+6. Løft Supabase provider health til fast alert/dashboard.
+7. Rydd credential-gated MCP-prober slik at agentlaget kan skille
    tilgangsfeil fra reelle trackingfeil.
-7. Reintroduser Microsoft UET CAPI som en separat, dokumentert release.
-8. Ta beslutning om Sentry Replay med korrekt Cookiebot-gate.
+8. Reintroduser Microsoft UET CAPI som en separat, dokumentert release.
+9. Ta beslutning om Sentry Replay med korrekt Cookiebot-gate.

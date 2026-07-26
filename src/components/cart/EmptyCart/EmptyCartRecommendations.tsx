@@ -29,7 +29,11 @@ export function EmptyCartRecommendations() {
       </h4>
       <div className='space-y-4'>
         {products.map(product => (
-          <RecommendedItem key={product.id} product={product} />
+          <RecommendedItem
+            key={product.id}
+            product={product}
+            totalItemCount={products.length}
+          />
         ))}
       </div>
     </div>

@@ -11,9 +11,20 @@ import {
 } from '@/components/ui/dialog'
 
 import { useLocalVariantSelection } from '@/hooks/useLocalVariantSelection'
+import { reportCanonicalOpenQuickView } from '@/lib/analytics/openQuickViewReporter'
+import { mapShopifyViewItem } from '@/lib/analytics/shopifyViewItemCommerce'
+import {
+  advanceQuickViewReportingState,
+  initialQuickViewReportingState
+} from '@/lib/analytics/quickViewReportingState'
 import type { ShopifyProduct } from 'types/product'
 import Image from 'next/image'
-import { useEffect, useState, useEffectEvent } from 'react'
+import {
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState
+} from 'react'
 import { toast } from 'sonner'
 import { VariantSelectors } from './VariantSelectors'
 import { Price } from '../jsx/Price'
@@ -24,13 +35,16 @@ interface QuickViewModalProps {
   productHandle: string
   isOpen: boolean
   onOpenChange: (isOpen: boolean) => void
+  sourceSurface: string
 }
 
 export function QuickViewModal({
   productHandle,
   isOpen,
-  onOpenChange
+  onOpenChange,
+  sourceSurface
 }: QuickViewModalProps) {
+  const reportingState = useRef(initialQuickViewReportingState)
   const [productData, setProductData] =
     useState<ShopifyProduct | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -69,6 +83,33 @@ export function QuickViewModal({
 
   const featuredImage =
     selectedVariant?.image ?? productData?.featuredImage
+
+  useEffect(() => {
+    const transition = advanceQuickViewReportingState(
+      reportingState.current,
+      {
+        isOpen,
+        isResolved: Boolean(productData && selectedVariant)
+      }
+    )
+    reportingState.current = transition.nextState
+
+    if (
+      transition.reportSequence === null ||
+      !productData ||
+      !selectedVariant
+    ) return
+
+    const commerce = mapShopifyViewItem({
+      product: productData,
+      variant: selectedVariant
+    })
+    reportCanonicalOpenQuickView({
+      ...commerce,
+      open_sequence: transition.reportSequence,
+      source_surface: sourceSurface
+    })
+  }, [isOpen, productData, selectedVariant, sourceSurface])
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

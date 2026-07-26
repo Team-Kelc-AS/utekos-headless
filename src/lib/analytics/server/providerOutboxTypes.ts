@@ -55,6 +55,9 @@ type DeadLetteredProviderAttempt<R> = Extract<
 >
 
 export type ProviderOutboxDatabase<R> = {
+  claimById?: (
+    attemptId: string
+  ) => Promise<RawProviderOutboxAttempt | null>
   claimNext: () => Promise<RawProviderOutboxAttempt | null>
   markAcceptedUnverified: (
     outcome: SucceededProviderAttempt<R>
@@ -76,6 +79,9 @@ export type ProviderOutboxStore<
   E extends CanonicalEvent,
   R
 > = {
+  claimById?: (
+    attemptId: string
+  ) => Promise<ClaimedProviderOutboxAttempt<E> | null>
   claimNext: () => Promise<ClaimedProviderOutboxAttempt<E> | null>
   complete: (outcome: ProviderAttemptOutcome<R>) => Promise<void>
 }

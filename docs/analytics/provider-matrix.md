@@ -2,6 +2,32 @@
 
 **Evidence freeze:** 2026-07-20.
 
+**Activating release:** 2026-07-26. Web-GTM v133 is published from isolated
+workspace 141 with only tag 153 and trigger 152 changed; v132 is rollback.
+The application deployment and live provider receipts remain pending.
+
+## Near-real-time dispatch release candidate
+
+- **Durable wake-up:** each newly inserted pending provider attempt is
+  published after database commit to Vercel Queue topic
+  `canonical-provider-dispatch-v1`.
+- **Payload:** only `{schema_version, attempt_id, adapter_key}`; no canonical
+  payload, identifiers or PII.
+- **Targeting/idempotency:** `${adapter_key}:${attempt_id}` and an exact
+  primary-key/provider claim. A consumer cannot claim another event.
+- **Retention/region:** seven days; Vercel region auto-resolution (`arn1` in
+  the configured project).
+- **Failure ownership:** provider-classified retry/dead-letter outcomes are
+  persisted and acknowledged. Infrastructure failures throw for 15-second
+  Vercel redelivery. A queue publish failure is reported to Sentry while the
+  collector retains `202` because the transaction is durable.
+- **Fallback:** `/api/cron/provider-outbox-dispatch` remains authoritative
+  retry/catastrophe fallback every five minutes.
+- **Health:** `/api/cron/provider-dispatch-health` runs every 15 minutes and
+  checks missing expected attempts, queue-publish failures, initial pending
+  age, dead letters and p95 ACK latency. It does not require low-volume
+  user actions to occur.
+
 ## Google Analytics
 
 - **Owner:** Web GTM/Google tag and sGTM for browser analytics.
@@ -33,7 +59,7 @@
 
 - **Owner:** canonical server outbox and Google request-status
   cron.
-- **Transport:** 24 `(google,event)` workers using
+- **Transport:** 28 `(google,event)` workers in the local candidate using
   `@google-ads/datamanager`.
 - **Events:** all active catalog events except `page_view`;
   blocked-source events excluded.
@@ -54,6 +80,8 @@
   remains pending.
 - **Diagnostics:** response, `request_id`, validation result and
   per-request status stored. No `request_id` index.
+- **Candidate delta:** adds `interact_with_accordion` and `open_quick_view`
+  adapters with canonical transaction IDs and full commerce/custom context.
 - **Status:** application integration active; Production
   `GOOGLE_DATA_MANAGER_VALIDATE_ONLY` is executed mode (`false`)
   per live `validation_result` and `DEPLOYMENT.md`. Treat
@@ -63,27 +91,34 @@
 
 - **Owner:** browser web GTM for pixel events and canonical
   outbox for CAPI-supported events.
-- **Transport:** Meta Pixel in published web container; eight
-  Meta CAPI workers. Browser pixel routes through Meta CAPI
+- **Transport:** Meta Pixel in the published web container; historical
+  production freeze has eight Meta CAPI workers, while the local candidate
+  registers 17. Browser pixel routes through Meta CAPI
   Gateway (openbridge3, `mpc2-prod-25-...run.app` with AWS ECS
   fallback), not `facebook.com/tr`; both gateway hosts are
   allowed in the production CSP.
-- **Events:** `PageView`, `ViewContent`, `AddToCart`,
+- **Production-freeze events:** `PageView`, `ViewContent`, `AddToCart`,
   `AddToWishlist`, `InitiateCheckout`, `Purchase`, `Search`,
   `Lead`. Live 7-day dataset window contains only these
   PascalCase names (verified via Graph API 2026-07-20).
+- **Candidate events added:** `ViewItemList`, `ViewCart`,
+  `LandingScrollDepth`, `ViewCategory`, `HeroInteract`,
+  `InteractWithAccordion` and `OpenQuickView`. Pixel and CAPI mappings use
+  those exact names and the same canonical UUID.
 - **Destination:** `1092362672918571` in published web payload,
   source/config **and** the live receiving dataset
   (`last_fired_time` fresh; 7d SERVER 3959 / BROWSER 1838).
 - **Identifiers:** same canonical `event_id`; `external_id`,
   `fbp`, `fbc`, consent-gated hashed contact data, server IP/user
-  agent where approved. Live match keys 7d: `external_id` 7461,
+  agent where approved. The candidate never manufactures absent `fbc`, `fbp`
+  or contact data. Live match keys 7d: `external_id` 7461,
   `email` 59, `phone` 47.
 - **Dedupe:** source mappers set identical canonical event ID.
   Meta requires both provider event name and ID to match between
   browser and server; the numeric live dedupe rate is still
   unavailable from the `/stats` aggregations used.
-- **Retry:** generic outbox retry/jitter/dead-letter.
+- **Retry:** targeted Vercel Queue wake-up plus generic outbox
+  retry/jitter/dead-letter; five-minute cron is fallback.
 - **Finality:** successful API receipt becomes
   `accepted_unverified`; no repository reconciliation poller.
 - **Diagnostics:** daily dataset-quality snapshot/retry code
@@ -93,7 +128,9 @@
   Deduplication tab reports setup missing; Graph omits
   `dedupe_key_feedback` (DEV-020). Live console warning: invalid
   currency parameter format (DEV-019).
-- **Status:** browser and server delivery verified at the
+- **Candidate status:** code and contract tests verified locally; GTM mapping
+  is intentionally unpublished and no production event/receipt is claimed.
+- **Production status:** browser and server delivery verified at the
   dataset. Server GTM has no Meta CAPI Gateway tag (v29 = GA4 +
   Conversion Linker); browser uses openbridge3 outside sGTM.
 
@@ -144,6 +181,9 @@
   resend the same event.
 - **Finality:** ledger insertion is atomic with dispatch attempt
   planning.
+- **Candidate immediate path:** `accept` returns only attempt IDs inserted by
+  that transaction after commit; duplicates publish nothing. Those IDs wake
+  exact targeted claims through Vercel Queue without a database migration.
 - **Diagnostics:** provider health/dead-letter views, attempt
   response/request/status fields.
 - **Status:** live and ingesting. RLS enabled, no public
@@ -159,7 +199,11 @@
   verified published.
 - **Consent:** Cookiebot `implementation=gtm`, default denied,
   redaction and URL passthrough.
-- **Status:** verified published and reachable. Prior
+- **Candidate:** `config/gtm/web-meta-pixel.html` includes exact mappings for
+  the seven added Meta events and reuses `event_id` as Pixel `eventID`; the
+  workspace/container is not published by this implementation task.
+- **Status:** verified published and reachable at the historical production
+  freeze. Prior
   `GTM-WZ4R3PQL` claim refuted.
 
 ## GTM server
@@ -225,6 +269,7 @@
 | --------------------------- | ------------------------------------ | ---------------------------- | ----------------------- | --------------------------------- |
 | Google Data Manager         | Ingest/validate receipt + request ID | `accepted_unverified`        | Yes                     | `succeeded` or dead letter        |
 | Meta CAPI                   | API receipt                          | `accepted_unverified`        | No repository poller    | Not represented separately        |
+| Vercel Queue wake-up        | Queue callback/consumer execution    | Existing provider attempt    | Five-minute cron fallback | Provider-specific state remains authoritative |
 | Microsoft UET browser       | Browser request/queue                | Not canonical server attempt | No                      | Not represented                   |
 | Microsoft UET CAPI purchase | HTTP 200 / adapter receipt           | `accepted_unverified`        | No repository poller    | Not represented separately        |
 | Supabase                    | Transaction commit                   | Ledger + attempts            | Not applicable          | Commit is terminal locally        |

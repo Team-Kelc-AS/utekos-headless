@@ -312,7 +312,7 @@ function plannedProviders(
           support: 'supported',
           eventName: input.meta.eventName,
           transport: {
-            browser: null,
+            browser: 'meta_pixel',
             server: 'meta_conversions_api'
           },
           requiredParameters: [
@@ -447,7 +447,7 @@ function activeEventProviders(
           support: 'supported',
           eventName: input.meta.eventName,
           transport: {
-            browser: null,
+            browser: 'meta_pixel',
             server: 'meta_conversions_api'
           },
           requiredParameters: [
@@ -1178,6 +1178,17 @@ const eventCatalogBase = {
         'item_list_id',
         'items'
       ],
+      meta: {
+        eventName: 'ViewItemList',
+        requiredParameters: [
+          'content_ids',
+          'contents',
+          'currency',
+          'value',
+          'item_list_id',
+          'item_list_name'
+        ]
+      },
       microsoft: {
         eventName: 'view_item_list',
         requiredParameters: ['items']
@@ -1395,6 +1406,15 @@ const eventCatalogBase = {
         'value',
         'items'
       ],
+      meta: {
+        eventName: 'ViewCart',
+        requiredParameters: [
+          'content_ids',
+          'contents',
+          'currency',
+          'value'
+        ]
+      },
       microsoft: {
         eventName: 'view_cart',
         requiredParameters: ['items', 'currency', 'value']
@@ -2015,6 +2035,14 @@ const eventCatalogBase = {
     providers: activeEventProviders('scroll_depth', {
       googleRequired: ['percent_scrolled'],
       firstPartyRequired: ['page_view_id', 'threshold'],
+      meta: {
+        eventName: 'LandingScrollDepth',
+        requiredParameters: [
+          'threshold',
+          'percent_scrolled',
+          'document_height'
+        ]
+      },
       posthog: true
     })
   },
@@ -2051,6 +2079,14 @@ const eventCatalogBase = {
         'category_name',
         'view_sequence'
       ],
+      meta: {
+        eventName: 'ViewCategory',
+        requiredParameters: [
+          'category_id',
+          'category_name',
+          'view_sequence'
+        ]
+      },
       posthog: true
     })
   },
@@ -2087,6 +2123,123 @@ const eventCatalogBase = {
         'destination_path',
         'click_sequence'
       ],
+      meta: {
+        eventName: 'HeroInteract',
+        requiredParameters: [
+          'cta_id',
+          'destination_path',
+          'click_sequence'
+        ]
+      },
+      posthog: true
+    })
+  },
+  interact_with_accordion: {
+    version: 1,
+    name: 'interact_with_accordion',
+    lifecycle: 'active',
+    owner: 'product_details_accordion',
+    trigger: {
+      description:
+        'Create after a user opens a previously closed PDP product-details accordion.',
+      sources: ['browser'],
+      repeatability:
+        'Each user-triggered closed-to-open transition receives a new interaction sequence.',
+      eventTime: 'The user-triggered open timestamp.',
+      prerequisites: [
+        'page_view_id',
+        'resolved product and variant',
+        'accordion_id',
+        'accordion title',
+        'interaction_sequence'
+      ]
+    },
+    dedupe: dedupe(
+      'page_view_id + product_id + variant_id + accordion_id + interaction_sequence',
+      'A later closed-to-open interaction receives a new event_id.',
+      retain30Days
+    ),
+    consent: behaviorConsent,
+    providers: activeEventProviders('interact_with_accordion', {
+      commerce: true,
+      firstPartyRequired: [
+        'page_view_id',
+        'accordion_id',
+        'interaction_type',
+        'items'
+      ],
+      googleRequired: [
+        'accordion_id',
+        'accordion_title',
+        'interaction_type',
+        'items'
+      ],
+      meta: {
+        eventName: 'InteractWithAccordion',
+        requiredParameters: [
+          'content_ids',
+          'contents',
+          'accordion_id',
+          'accordion_title',
+          'interaction_type'
+        ]
+      },
+      microsoft: {
+        eventName: 'interact_with_accordion',
+        requiredParameters: ['items', 'accordion_id']
+      },
+      posthog: true
+    })
+  },
+  open_quick_view: {
+    version: 1,
+    name: 'open_quick_view',
+    lifecycle: 'active',
+    owner: 'product_quick_view_dialog',
+    trigger: {
+      description:
+        'Create only after the quick-view dialog is open and its product and selected variant are resolved.',
+      sources: ['browser'],
+      repeatability:
+        'Each successfully opened, resolved dialog receives a new open sequence.',
+      eventTime: 'The resolved open-dialog timestamp.',
+      prerequisites: [
+        'page_view_id',
+        'source_surface',
+        'open_sequence',
+        'resolved product and selected variant'
+      ]
+    },
+    dedupe: dedupe(
+      'page_view_id + source_surface + product_id + variant_id + open_sequence',
+      'A later successful dialog open receives a new event_id.',
+      retain30Days
+    ),
+    consent: behaviorConsent,
+    providers: activeEventProviders('open_quick_view', {
+      commerce: true,
+      firstPartyRequired: [
+        'page_view_id',
+        'source_surface',
+        'open_sequence',
+        'items'
+      ],
+      googleRequired: ['source_surface', 'open_sequence', 'items'],
+      meta: {
+        eventName: 'OpenQuickView',
+        requiredParameters: [
+          'content_ids',
+          'contents',
+          'currency',
+          'value',
+          'source_surface',
+          'open_sequence'
+        ]
+      },
+      microsoft: {
+        eventName: 'open_quick_view',
+        requiredParameters: ['items', 'source_surface']
+      },
       posthog: true
     })
   },
@@ -2162,6 +2315,8 @@ export const eventSignalProfiles = {
   scroll_depth: 'website',
   view_category: 'website',
   hero_interact: 'website',
+  interact_with_accordion: 'website',
+  open_quick_view: 'website',
   video_progress: 'website'
 } as const satisfies {
   readonly [K in keyof typeof eventCatalogBase]: EventSignalProfile

@@ -38,13 +38,12 @@ export function NewProductLaunchSection({
         selectedVariant={selectedVariant}
       />
 
-      {isModalOpen ?
-        <QuickViewModal
-          productHandle={productHandle}
-          isOpen={isModalOpen}
-          onOpenChange={setIsModalOpen}
-        />
-      : null}
+      <QuickViewModal
+        productHandle={productHandle}
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        sourceSurface='homepage_techdown_campaign'
+      />
     </>
   )
 }

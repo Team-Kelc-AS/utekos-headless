@@ -47,7 +47,13 @@ function buildContent(item: CanonicalCommerceItem) {
   return content
 }
 
-function buildCustomData(event: MetaCommerceEvent) {
+function buildCustomData(
+  event: MetaCommerceEvent,
+  customProperties?: Record<
+    string,
+    boolean | number | string
+  >
+) {
   const items = event.custom_data.items
   const contentIds = items.map(item =>
     getMetaContentId(item.variant_id)
@@ -60,6 +66,13 @@ function buildCustomData(event: MetaCommerceEvent) {
     .setContentIds(contentIds)
     .setContents(contents)
     .setContentType('product')
+    .setNumItems(
+      items.reduce((sum, item) => sum + item.quantity, 0)
+    )
+
+  if (customProperties) {
+    customData.setCustomProperties(customProperties)
+  }
 
   if (primaryItem) {
     customData.setContentName(primaryItem.item_name)
@@ -74,7 +87,8 @@ function buildCustomData(event: MetaCommerceEvent) {
 
 export function mapCanonicalCommerceEventToMeta(
   event: MetaCommerceEvent,
-  metaEventName: string
+  metaEventName: string,
+  customProperties?: Record<string, boolean | number | string>
 ): ServerEvent {
   if (event.consent.marketing !== 'granted') {
     throw new Error(
@@ -95,7 +109,7 @@ export function mapCanonicalCommerceEventToMeta(
     .setEventName(metaEventName)
     .setEventTime(eventTime)
     .setUserData(buildMetaUserData(event))
-    .setCustomData(buildCustomData(event))
+    .setCustomData(buildCustomData(event, customProperties))
     .setActionSource('website')
     .setEventId(event.event_id)
 

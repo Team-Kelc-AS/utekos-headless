@@ -5,13 +5,14 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { useCanonicalAddToCart } from '@/hooks/useCanonicalAddToCart'
+import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductListVisibility'
 import type { ProductCardProps } from '@types'
 import { ShoppingBagIcon } from 'lucide-react'
 import type { Route } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import type React from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { findMatchingVariant } from '@/components/ProductCard/findMatchingVariant'
 import { getInitialOptionsForProduct } from '@/components/ProductCard/getInitialOptionsForProduct'
@@ -21,14 +22,17 @@ import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSe
 interface ExtendedProductCardProps extends ProductCardProps {
   isPriority?: boolean
   initialOptions?: Record<string, string>
+  itemListTotalCount?: number
 }
 
 export function ProductGridCard({
   product,
   isPriority = false,
   initialOptions,
-  itemListId = 'gaveguide_grid'
+  itemListId = 'gaveguide_grid',
+  itemListTotalCount = 1
 }: ExtendedProductCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null)
   const [selectedOptions] = useState(
     () => initialOptions ?? getInitialOptionsForProduct(product)
   )
@@ -39,6 +43,15 @@ export function ProductGridCard({
     product,
     selectedOptions
   )
+
+  useCanonicalProductListVisibility({
+    elementRef: cardRef,
+    itemListId,
+    itemListName: 'Gaveguide',
+    product,
+    totalItemCount: itemListTotalCount,
+    variant: selectedVariant
+  })
 
   const fallbackImage = product.featuredImage
 
@@ -94,7 +107,10 @@ export function ProductGridCard({
   }
 
   return (
-    <Card className='group relative flex h-full flex-col overflow-hidden border-none bg-transparent shadow-none'>
+    <Card
+      ref={cardRef}
+      className='group relative flex h-full flex-col overflow-hidden border-none bg-transparent shadow-none'
+    >
       <div className='relative overflow-hidden rounded-lg'>
         <div className='absolute top-3 left-3'>
           <Link

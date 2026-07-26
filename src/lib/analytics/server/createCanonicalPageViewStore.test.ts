@@ -54,6 +54,7 @@ test('writes the ledger and every dispatch inside one transaction callback', asy
     },
     insertDispatch: async dispatch => {
       calls.push(dispatch.provider)
+      return `00000000-0000-4000-8000-00000000000${calls.length}`
     }
   }
   const store = createCanonicalPageViewStore(async work => {
@@ -63,7 +64,8 @@ test('writes the ledger and every dispatch inside one transaction callback', asy
 
   const result = await store.accept(input())
 
-  assert.equal(result, 'inserted')
+  assert.equal(result.status, 'inserted')
+  assert.equal(result.createdDispatchAttempts.length, 2)
   assert.equal(transactions, 1)
   assert.deepEqual(calls, ['ledger', 'meta', 'microsoft_uet'])
 })
@@ -82,6 +84,7 @@ test('records source evidence but returns duplicate without writing dispatches w
     },
     insertDispatch: async () => {
       dispatchWrites += 1
+      return '00000000-0000-4000-8000-000000000001'
     }
   }
   const store = createCanonicalPageViewStore(work =>
@@ -106,9 +109,46 @@ test('records source evidence but returns duplicate without writing dispatches w
     }
   })
 
-  assert.equal(result, 'duplicate')
+  assert.deepEqual(result, {
+    createdDispatchAttempts: [],
+    status: 'duplicate'
+  })
   assert.equal(evidenceWrites, 1)
   assert.equal(dispatchWrites, 0)
+})
+
+test('returns only newly inserted pending attempts for queue publication', async () => {
+  const transaction: CanonicalPageViewTransaction = {
+    insertLedger: async () => true,
+    upsertSourceEvidence: async () => {},
+    insertDispatch: async dispatch =>
+      dispatch.provider === 'meta' ?
+        '7bcd24a4-190c-4eca-a834-5c9854bd54ea'
+      : '3387a158-165f-498e-a968-d75b833f86fb'
+  }
+  const store = createCanonicalPageViewStore(work =>
+    work(transaction)
+  )
+  const eventInput = input()
+
+  const result = await store.accept({
+    ...eventInput,
+    dispatches: [
+      eventInput.dispatches[0]!,
+      {
+        ...eventInput.dispatches[1]!,
+        skip_reason: 'missing_msclkid',
+        status: 'skipped_unqualified'
+      }
+    ]
+  })
+
+  assert.deepEqual(result.createdDispatchAttempts, [
+    {
+      adapterKey: 'meta:page_view',
+      attemptId: '7bcd24a4-190c-4eca-a834-5c9854bd54ea'
+    }
+  ])
 })
 
 test('writes ledger, source evidence and dispatches in one transaction callback', async () => {
@@ -128,6 +168,7 @@ test('writes ledger, source evidence and dispatches in one transaction callback'
     },
     insertDispatch: async dispatch => {
       calls.push(dispatch.provider)
+      return `00000000-0000-4000-8000-00000000000${calls.length}`
     }
   }
   const store = createCanonicalPageViewStore(work =>
@@ -151,7 +192,7 @@ test('writes ledger, source evidence and dispatches in one transaction callback'
     }
   })
 
-  assert.equal(result, 'inserted')
+  assert.equal(result.status, 'inserted')
   assert.deepEqual(calls, [
     'ledger',
     'source-evidence',
@@ -172,6 +213,7 @@ test('rejects mismatched source evidence before any transaction write', async ()
     },
     insertDispatch: async () => {
       writes += 1
+      return '00000000-0000-4000-8000-000000000001'
     }
   }
   const store = createCanonicalPageViewStore(work =>

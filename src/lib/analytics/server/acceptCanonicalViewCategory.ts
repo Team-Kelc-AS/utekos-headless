@@ -1,4 +1,3 @@
-import type { CanonicalViewCategory } from '../viewCategoryEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalViewCategory,
@@ -40,6 +39,7 @@ export async function acceptCanonicalViewCategory(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

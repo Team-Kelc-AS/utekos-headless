@@ -1,4 +1,3 @@
-import type { CanonicalFormSubmit } from '../formSubmitEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalFormSubmit,
@@ -40,6 +39,7 @@ export async function acceptCanonicalFormSubmit(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

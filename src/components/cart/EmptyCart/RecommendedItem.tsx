@@ -5,6 +5,7 @@ import { findMatchingVariant } from '@/components/ProductCard/findMatchingVarian
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Button } from '@/components/ui/button'
 import { useCanonicalAddToCart } from '@/hooks/useCanonicalAddToCart'
+import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductListVisibility'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
 import { cartStore } from '@/lib/state/cartStore'
 import { formatPrice } from '@/lib/utils/formatPrice'
@@ -12,18 +13,31 @@ import type { ShopifyProduct } from 'types/product'
 import type { Route } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRef } from 'react'
 
 export function RecommendedItem({
-  product
+  product,
+  totalItemCount
 }: {
   product: ShopifyProduct
+  totalItemCount: number
 }) {
+  const itemRef = useRef<HTMLDivElement>(null)
   const { addToCart, isPending } = useCanonicalAddToCart()
   const selectedOptions = getInitialAvailableOptions(product)
   const selectedVariant = findMatchingVariant(
     product,
     selectedOptions
   )
+
+  useCanonicalProductListVisibility({
+    elementRef: itemRef,
+    itemListId: 'cart_recommended',
+    itemListName: 'Anbefalt i tom handlekurv',
+    product,
+    totalItemCount,
+    variant: selectedVariant
+  })
 
   const handleAddToCart = () => {
     if (!selectedVariant) return
@@ -54,7 +68,7 @@ export function RecommendedItem({
   }
 
   return (
-    <div className='flex items-center gap-4'>
+    <div ref={itemRef} className='flex items-center gap-4'>
       <Link
         href={productUrl}
         data-track='CartRecommendedItemClick'

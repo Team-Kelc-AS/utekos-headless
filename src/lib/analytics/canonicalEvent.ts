@@ -26,6 +26,8 @@ import { canonicalScrollDepthSchema } from './scrollDepthEvent'
 import { canonicalViewCategorySchema } from './viewCategoryEvent'
 import { canonicalHeroInteractSchema } from './heroInteractEvent'
 import { canonicalVideoProgressSchema } from './videoProgressEvent'
+import { canonicalInteractWithAccordionSchema } from './interactWithAccordionEvent'
+import { canonicalOpenQuickViewSchema } from './openQuickViewEvent'
 
 export const canonicalEventSchema = z.discriminatedUnion(
   'event_name',
@@ -56,6 +58,8 @@ export const canonicalEventSchema = z.discriminatedUnion(
     canonicalScrollDepthSchema,
     canonicalViewCategorySchema,
     canonicalHeroInteractSchema,
+    canonicalInteractWithAccordionSchema,
+    canonicalOpenQuickViewSchema,
     canonicalVideoProgressSchema
   ]
 )

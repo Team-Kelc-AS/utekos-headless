@@ -12,6 +12,10 @@ import type {
   ProductAccordionSectionId
 } from '@/db/data/products/product-page-content'
 import { ProductDetailsAccordionSection } from './ProductDetailsAccordionSection'
+import { reportCanonicalInteractWithAccordion } from '@/lib/analytics/interactWithAccordionReporter'
+import { mapShopifyViewItem } from '@/lib/analytics/shopifyViewItemCommerce'
+import { useRef, useState } from 'react'
+import { getNewlyOpenedAccordionIds } from '@/lib/analytics/getNewlyOpenedAccordionIds'
 
 const sectionIcons = {
   materialer: Layers3,
@@ -32,7 +36,14 @@ function mapAccordionSection(section: ProductAccordionSection): AccordionSection
   }
 }
 
-export function ProductPageAccordion({ sections }: ProductPageAccordionProps) {
+export function ProductPageAccordion({
+  product,
+  sections,
+  selectedVariant
+}: ProductPageAccordionProps) {
+  const [openSectionIds, setOpenSectionIds] = useState<string[]>([])
+  const interactionSequence = useRef(0)
+
   if (!sections || sections.length === 0) {
     return null
   }
@@ -54,7 +65,37 @@ export function ProductPageAccordion({ sections }: ProductPageAccordionProps) {
           </BrandBadge>
         </AnimatedBlock>
 
-        <Accordion className='w-full'>
+        <Accordion
+          className='w-full'
+          value={openSectionIds}
+          onValueChange={nextOpenSectionIds => {
+            const newlyOpenedIds = getNewlyOpenedAccordionIds(
+              openSectionIds,
+              nextOpenSectionIds
+            )
+
+            setOpenSectionIds(nextOpenSectionIds)
+
+            for (const accordionId of newlyOpenedIds) {
+              const openedSection = sectionData.find(
+                section => section.id === accordionId
+              )
+              if (!openedSection) continue
+
+              interactionSequence.current += 1
+              reportCanonicalInteractWithAccordion({
+                ...mapShopifyViewItem({
+                  product,
+                  variant: selectedVariant
+                }),
+                accordion_id: openedSection.id,
+                accordion_title: openedSection.title,
+                interaction_sequence: interactionSequence.current,
+                interaction_type: 'open'
+              })
+            }
+          }}
+        >
           {sectionData.map(section => (
             <ProductDetailsAccordionSection key={section.id} sectionData={section} />
           ))}

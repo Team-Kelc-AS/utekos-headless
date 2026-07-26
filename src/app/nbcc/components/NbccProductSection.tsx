@@ -63,6 +63,7 @@ export async function NbccProductSection() {
             return (
               <Card
                 key={product.title}
+                data-nbcc-product-card
                 data-nbcc-reveal
                 data-nbcc-animate
                 className='group dark:border-dark-foreground/60 /80 overflow-hidden rounded-lg border-foreground/60 bg-card/80 py-0 shadow-none'
@@ -85,6 +86,7 @@ export async function NbccProductSection() {
                         href={product.href}
                         productTitle={product.title}
                         tracking={product.tracking}
+                        totalItemCount={nbccProducts.length}
                       />
                     : <p className='text-sm text-muted-foreground'>
                         Produktet er midlertidig utilgjengelig.

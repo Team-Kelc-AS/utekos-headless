@@ -119,7 +119,7 @@ test('atomically claims only the adapter provider and event', async () => {
   )
   assert.match(
     fake.calls[0]?.query ?? '',
-    /status = 'processing'[\s\S]*interval '10 minutes'/i
+    /status = 'processing'[\s\S]*interval '5 minutes'/i
   )
   assert.match(
     fake.calls[0]?.query ?? '',
@@ -152,6 +152,46 @@ test('applies an adapter cutover without replaying older rows', async () => {
     'page_view',
     '2026-07-18T13:13:10.000Z'
   ])
+})
+
+test('targeted claim includes the exact attempt primary key and cannot take another row', async () => {
+  const fake = fakeExecutor([
+    [
+      {
+        attempt_count: 1,
+        attempt_id: '7bcd24a4-190c-4eca-a834-5c9854bd54ea',
+        payload: { event_name: 'page_view' }
+      }
+    ]
+  ])
+  const database = createPostgresProviderOutboxDatabase(
+    adapter,
+    fake.execute
+  )
+
+  const claimed = await database.claimById?.(
+    '7bcd24a4-190c-4eca-a834-5c9854bd54ea'
+  )
+
+  assert.equal(
+    claimed?.attemptId,
+    '7bcd24a4-190c-4eca-a834-5c9854bd54ea'
+  )
+  assert.deepEqual(fake.calls[0]?.parameters, [
+    '7bcd24a4-190c-4eca-a834-5c9854bd54ea',
+    'meta',
+    'page_view',
+    null
+  ])
+  assert.match(fake.calls[0]?.query ?? '', /where id = \$1::uuid/i)
+  assert.match(
+    fake.calls[0]?.query ?? '',
+    /provider = \$2[\s\S]*event_name = \$3/i
+  )
+  assert.doesNotMatch(
+    fake.calls[0]?.query ?? '',
+    /order by[\s\S]*limit 1/i
+  )
 })
 
 test('projects provider acceptance into accepted_unverified fields', async () => {

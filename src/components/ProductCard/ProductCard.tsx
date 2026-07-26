@@ -6,6 +6,7 @@ import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { useCanonicalAddToCart } from '@/hooks/useCanonicalAddToCart'
+import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductListVisibility'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { cn } from '@/lib/utils/className'
 import type { ProductCardProps } from '@types'
@@ -13,7 +14,7 @@ import type { Route } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import type React from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { findMatchingVariant } from './findMatchingVariant'
 import { getInitialOptionsForProduct } from './getInitialOptionsForProduct'
@@ -31,6 +32,8 @@ interface ExtendedProductCardProps extends ProductCardProps {
   initialOptions?: Record<string, string>
   compactMobile?: boolean
   cardClassName?: string
+  itemListName?: string
+  itemListTotalCount?: number
 }
 
 export function ProductCard({
@@ -40,8 +43,11 @@ export function ProductCard({
   initialOptions,
   compactMobile = false,
   cardClassName,
-  itemListId = 'product_card'
+  itemListId = 'product_card',
+  itemListName = 'Produktkort',
+  itemListTotalCount = 1
 }: ExtendedProductCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null)
   const [selectedOptions, setSelectedOptions] = useState(
     () => initialOptions ?? getInitialOptionsForProduct(product)
   )
@@ -52,6 +58,15 @@ export function ProductCard({
     product,
     selectedOptions
   )
+
+  useCanonicalProductListVisibility({
+    elementRef: cardRef,
+    itemListId,
+    itemListName,
+    product,
+    totalItemCount: itemListTotalCount,
+    variant: selectedVariant
+  })
 
   const fallbackPrice = product.priceRange.minVariantPrice
   const fallbackImage = product.featuredImage
@@ -239,6 +254,7 @@ export function ProductCard({
 
   return (
     <Card
+      ref={cardRef}
       className={cn(
         'group flex h-full flex-col gap-0 overflow-hidden border border-border bg-card p-0 text-card-foreground shadow-[0_18px_56px_-42px_rgba(8,10,24,0.85)]',
         cardClassName

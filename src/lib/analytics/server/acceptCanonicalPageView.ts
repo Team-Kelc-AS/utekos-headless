@@ -92,7 +92,8 @@ export async function acceptCanonicalPageView(
     dispatches: planCanonicalEventDispatch(event),
     event
   })
-  const status = result === 'inserted' ? 'accepted' : 'duplicate'
+  const status =
+    result.status === 'inserted' ? 'accepted' : 'duplicate'
 
   console.info(
     '[tracking] page_view store result',

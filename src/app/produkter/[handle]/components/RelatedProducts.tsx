@@ -53,6 +53,9 @@ export function RelatedProducts({
                   isPriority={index < 4}
                   initialOptions={initialOptions ?? {}}
                   compactMobile
+                  itemListId='related_products'
+                  itemListName='Relaterte produkter'
+                  itemListTotalCount={products.length}
                 />
               </CarouselItem>
             )

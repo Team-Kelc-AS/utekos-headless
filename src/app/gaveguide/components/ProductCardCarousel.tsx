@@ -47,6 +47,7 @@ export function ProductCarousel() {
                 product={product}
                 initialOptions={initialOptions}
                 isPriority={index < 3} // Prioriter lasting av de første bildene
+                itemListTotalCount={products.length}
                 colorHexMap={new Map<string, string>()}
               />
             </CarouselItem>

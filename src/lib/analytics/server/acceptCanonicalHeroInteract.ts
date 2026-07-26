@@ -1,4 +1,3 @@
-import type { CanonicalHeroInteract } from '../heroInteractEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalHeroInteract,
@@ -40,6 +39,7 @@ export async function acceptCanonicalHeroInteract(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }

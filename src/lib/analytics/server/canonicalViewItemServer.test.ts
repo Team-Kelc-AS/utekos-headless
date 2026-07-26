@@ -11,6 +11,11 @@ import { handleCanonicalViewItemRequest } from './handleCanonicalViewItemRequest
 import { mapCanonicalPageViewPersistence } from './mapCanonicalPageViewPersistence'
 import { normalizeCanonicalViewItem } from './normalizeCanonicalViewItem'
 
+const insertedAcceptance = {
+  createdDispatchAttempts: [],
+  status: 'inserted' as const
+}
+
 const commerce = {
   currency: 'NOK',
   value: 100,
@@ -110,7 +115,7 @@ test('rejects view_item when all collection purposes are denied', async () => {
   const store: CanonicalEventStore = {
     accept: async () => {
       accepted = true
-      return 'inserted'
+      return insertedAcceptance
     }
   }
 
@@ -167,7 +172,7 @@ test('accepts a same-origin JSON view_item request', async () => {
       store: {
         accept: async input => {
           accepted.push(input.event as CanonicalViewItem)
-          return 'inserted'
+          return insertedAcceptance
         }
       }
     }
@@ -199,7 +204,7 @@ test('rejects a cross-origin view_item request', async () => {
     request,
     {
       getRequestContext: () => ({}),
-      store: { accept: async () => 'inserted' }
+      store: { accept: async () => insertedAcceptance }
     }
   )
 

@@ -3,10 +3,11 @@
 import { MoveRightIcon } from '@/components/animate-icons/icons/move-right'
 import { Button } from '@/components/ui/button'
 import { useCanonicalAddToCart } from '@/hooks/useCanonicalAddToCart'
+import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductListVisibility'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import type { NbccProductCardActionsProps } from '../types'
 
@@ -15,8 +16,10 @@ export function NbccProductCardActions({
   variants,
   href,
   productTitle,
-  tracking
+  tracking,
+  totalItemCount
 }: NbccProductCardActionsProps) {
+  const actionsRef = useRef<HTMLDivElement>(null)
   const [selectedLabel, setSelectedLabel] = useState(
     variants[0]?.label ?? ''
   )
@@ -29,6 +32,19 @@ export function NbccProductCardActions({
   const isAvailable = selectedVariant?.availableForSale ?? false
   const price =
     selectedVariant?.price ?? variants[0]?.price ?? ''
+  const shopifyVariant = product.variants.edges
+    .map(edge => edge.node)
+    .find(variant => variant.id === selectedVariant?.variantId)
+
+  useCanonicalProductListVisibility({
+    closestSelector: '[data-nbcc-product-card]',
+    elementRef: actionsRef,
+    itemListId: 'nbcc_products',
+    itemListName: 'NBCC-produkter',
+    product,
+    totalItemCount,
+    variant: shopifyVariant
+  })
 
   const handleAddToCart = () => {
     if (!selectedVariant?.variantId) {
@@ -39,10 +55,6 @@ export function NbccProductCardActions({
       toast.warning('Denne størrelsen er dessverre utsolgt.')
       return
     }
-
-    const shopifyVariant = product.variants.edges
-      .map(edge => edge.node)
-      .find(variant => variant.id === selectedVariant.variantId)
 
     if (!shopifyVariant) {
       toast.error('Kunne ikke finne valgt variant. Prøv igjen.')
@@ -81,13 +93,13 @@ export function NbccProductCardActions({
     reportProductListSelectItem({
       product,
       variant: shopifyVariant,
-      itemListId: 'nbcc_product_card',
+      itemListId: 'nbcc_products',
       destinationUrl
     })
   }
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div ref={actionsRef} className='flex flex-col gap-4'>
       <div>
         <p className='mb-2 text-xs font-medium tracking-widest text-foreground uppercase'>
           Størrelse

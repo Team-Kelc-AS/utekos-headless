@@ -32,6 +32,33 @@ Status vocabulary:
 - **Refuted:** current primary evidence contradicts the prior
   claim.
 
+## Activating release after the production freeze — 2026-07-26
+
+The historical production evidence above remains unchanged. Web-GTM version
+`133` is now published from isolated workspace `141`; only tag `153` and
+trigger `152` changed, and version `132` is the rollback. The application
+candidate closes the stale-event source and dispatch gaps identified after
+that freeze but is not deployed yet:
+
+| Candidate surface | Repository state | Production evidence |
+| ----------------- | ---------------- | ------------------- |
+| Canonical catalog | 33 events: 29 active and four `blocked_source`; adds `interact_with_accordion` and `open_quick_view` | Pending deploy |
+| Product-list impressions | 50% continuous visibility for 1s, per-page variant dedupe, ≤20-item chunking and named surfaces | Pending genuine browser action |
+| Meta CAPI | 17 registered workers; adds exact `ViewItemList`, `ViewCart`, `LandingScrollDepth`, `ViewCategory`, `HeroInteract`, `InteractWithAccordion`, `OpenQuickView` mappings | GTM v133 published; no candidate server receipts yet |
+| Google Data Manager | 28 registered workers; adds both new canonical events | No candidate receipts yet |
+| Immediate delivery | Post-commit Vercel Queue wake-up with exact attempt claim, seven-day retention and 15-second infrastructure redelivery | Queue trigger not deployed |
+| Fallback | Existing five-minute provider cron retained; stale-processing reclaim aligned to fallback window | Existing cron remains production baseline |
+| Health | New 15-minute Sentry health route for missing attempts, publish failures, pending age, dead letters and p95 ACK | Cron not deployed |
+| Remove from cart | Shopify response is authoritative for full deletion and actual positive quantity delta, including 3→2 | Pending genuine cart mutation |
+
+The candidate does not change the database schema, Purchase contract,
+destination IDs, campaigns, budgets, conversion goals or historical rows.
+Missing PII/`fbc`/`fbp` is not synthesized. Microsoft CAPI expansion remains a
+separate quality-gated release. No Vercel deploy, Supabase mutation or
+synthetic replay has occurred yet.
+Activation evidence is tracked in
+[canonical-stale-events-near-realtime-cutover-2026-07-26.md](evidence/canonical-stale-events-near-realtime-cutover-2026-07-26.md).
+
 ## Executive summary
 
 The project already has a substantial canonical architecture. It

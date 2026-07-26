@@ -1,4 +1,3 @@
-import type { CanonicalVideoProgress } from '../videoProgressEvent'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalVideoProgress,
@@ -40,6 +39,7 @@ export async function acceptCanonicalVideoProgress(
 
   return {
     event_id: event.event_id,
-    status: result === 'inserted' ? 'accepted' : 'duplicate'
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   }
 }
