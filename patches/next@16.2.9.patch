@@ -122,7 +122,7 @@ index 5c34c5cfecedf5d583812ddd0dbe01724371b270..622b1152dd95f2948c39f10edb96bd94
 +export function decompressBody(body, contentEncoding, maxOutputLength) {
 +    const maxLen = maxOutputLength ?? MAX_OUTPUT_LENGTH_DEFAULT;
 +    const encoding = Array.isArray(contentEncoding) ? contentEncoding[0] : contentEncoding;
-+    if (encoding) {
++    if (encoding && hasGzipMagic(body)) {
 +        switch(encoding){
 +            case 'deflate':
 +                return inflateSync(body, { maxOutputLength: maxLen });
@@ -206,7 +206,7 @@ index 41027be598bfb7e9f8afbf84ae22e65c44e93feb..156e16187648f3cd3cc83b036b6cbe26
 +function decompressBody(body, contentEncoding, maxOutputLength) {
 +    const maxLen = maxOutputLength ?? MAX_OUTPUT_LENGTH_DEFAULT;
 +    const encoding = Array.isArray(contentEncoding) ? contentEncoding[0] : contentEncoding;
-+    if (encoding) {
++    if (encoding && hasGzipMagic(body)) {
 +        switch(encoding){
 +            case 'deflate':
 +                return inflateSync(body, {
