@@ -10,7 +10,7 @@ export async function QualitySection() {
   'use cache'
 
   const cardClasses =
-    'relative overflow-hidden rounded-[1.5rem] border border-border  bg-card  text-card-foreground  backdrop-blur-2xl transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-2xl'
+    'relative overflow-hidden rounded-[1.5rem] border border-border bg-green-900 text-card-foreground  backdrop-blur-2xl transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-2xl'
 
   return (
     <PageSection as='section' background='default'>
@@ -24,7 +24,7 @@ export async function QualitySection() {
             <div
               className={cn(
                 cardClasses,
-                'group flex h-full flex-col justify-center bg-card p-8 sm:p-12 lg:p-16'
+                'group flex h-full flex-col justify-center bg-green-900 p-8 sm:p-12 lg:p-16'
               )}
             >
               <div
@@ -57,11 +57,11 @@ export async function QualitySection() {
             <div
               className={cn(
                 cardClasses,
-                'group flex h-full flex-col justify-start bg-card p-6 sm:p-8'
+                'group flex h-full flex-col justify-start bg-green-900 p-6 sm:p-8'
               )}
             >
               <div className='mb-4 flex min-w-0 items-center gap-4'>
-                <div className='dark:bg-dark-primary dark:shadow-dark-card-foreground/10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border bg-primary text-primary-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shadow-card-foreground/10 transition-transform duration-500 group-hover:scale-110'>
+                <div className='bg-green-800 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border  text-primary-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shadow-card-foreground/10 transition-transform duration-500 group-hover:scale-110'>
                   <Feather className='size-5 stroke-[1.5]' />
                 </div>
                 <H3 className='min-w-0 pb-0 font-utekos-text-medium text-2xl leading-none tracking-normal text-card-foreground'>
@@ -83,11 +83,11 @@ export async function QualitySection() {
             <div
               className={cn(
                 cardClasses,
-                'group flex h-full flex-col justify-start bg-card p-6 sm:p-8'
+                'group flex h-full flex-col justify-start bg-green-900 p-6 sm:p-8'
               )}
             >
               <div className='mb-4 flex min-w-0 items-center gap-4'>
-                <div className='dark:bg-dark-primary dark:shadow-dark-card-foreground/10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border bg-primary text-primary-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shadow-card-foreground/10 transition-transform duration-500 group-hover:scale-110'>
+                <div className='bg-green-800 dark:shadow-dark-card-foreground/10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border duration-500 group-hover:scale-110'>
                   <ShieldCheckIcon className='size-5 stroke-[1.5]' />
                 </div>
                 <H3 className='min-w-0 pb-0 font-utekos-text-medium text-2xl leading-none tracking-normal text-card-foreground'>

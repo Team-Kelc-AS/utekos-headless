@@ -2,7 +2,7 @@ import { H1 } from '@/components/typography/TypographyH1'
 
 export function ProductSpecPageHeader() {
   return (
-    <header className='mx-auto max-w-4xl px-4 text-left'>
+    <header className='mx-auto max-w-4xl bg-green-900 px-4 text-left'>
       <H1 Text='Kvalitet i hver fiber' ID='ProductSpecHeader' />
       <div className='my-2'></div>
       <p className='font-utekos-text text-xl'>
