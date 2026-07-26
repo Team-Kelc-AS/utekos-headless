@@ -22,6 +22,7 @@ import type { Metadata } from 'next'
 import type { TrackingEnvironment } from '@/lib/analytics/pageViewEvent'
 import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
 import { Google_Sans_Flex } from 'next/font/google'
+import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 
 const googleSansFlex = Google_Sans_Flex({
   subsets: ['latin'],
@@ -135,10 +136,12 @@ export default function RootLayout({
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
-        <GoogleTagManager
-          gtmId='GTM-5TWMJQFP'
-          gtmScriptUrl={googleTagGatewayUrl}
-        />
+        {shouldLoadGoogleTagManager(process.env.VERCEL_ENV) ?
+          <GoogleTagManager
+            gtmId='GTM-5TWMJQFP'
+            gtmScriptUrl={googleTagGatewayUrl}
+          />
+        : null}
         <Suspense fallback={null}>
           <PageViewObserver
             environment={getTrackingEnvironment()}

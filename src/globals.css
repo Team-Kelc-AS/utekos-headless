@@ -101,7 +101,7 @@
   --radius: 0.625rem;
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
   --color-network-pill: oklch(0.8017 0.0772 182.11);
-  --background: oklch(0.165 0.0282 194.77);
+  --background: oklch(0.1645 0.0284 190.51);
   --foreground: oklch(0.985 0 0);
   --badge: oklch(0.2357 0.0402 194.77);
   --card: #003434;
@@ -170,7 +170,7 @@
 }
 
 .dark {
-  --background: oklch(0.165 0.0282 194.77);
+  --background: oklch(0.1645 0.0284 190.51);
   --foreground: oklch(0.985 0 0);
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
   --teal-25: oklch(0.9569 0.014 185.95);
