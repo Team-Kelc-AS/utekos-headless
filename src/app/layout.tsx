@@ -17,6 +17,7 @@ import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
 import { ConsentGatedVercelTelemetry } from '@/components/analytics/ConsentGatedVercelTelemetry'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
 import { GoogleTagManager } from '@next/third-parties/google'
+import Script from 'next/script'
 import { SITE_URL } from '@/constants'
 import type { Metadata } from 'next'
 import type { TrackingEnvironment } from '@/lib/analytics/pageViewEvent'
@@ -127,6 +128,8 @@ export default function RootLayout({
     process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
   const assistantRolloutPercent =
     resolveAssistantPreviewRolloutPercent(process.env)
+  const shouldLoadMarketingScripts =
+    shouldLoadGoogleTagManager(process.env.VERCEL_ENV)
 
   return (
     <html
@@ -136,11 +139,18 @@ export default function RootLayout({
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
-        {shouldLoadGoogleTagManager(process.env.VERCEL_ENV) ?
-          <GoogleTagManager
-            gtmId='GTM-5TWMJQFP'
-            gtmScriptUrl={googleTagGatewayUrl}
-          />
+        {shouldLoadMarketingScripts ?
+          <>
+            <GoogleTagManager
+              gtmId='GTM-5TWMJQFP'
+              gtmScriptUrl={googleTagGatewayUrl}
+            />
+            <Script
+              id='meta-pixel-canonical-browser'
+              src='/analytics/meta-pixel-canonical-v1.js'
+              strategy='afterInteractive'
+            />
+          </>
         : null}
         <Suspense fallback={null}>
           <PageViewObserver

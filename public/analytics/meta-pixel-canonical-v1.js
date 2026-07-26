@@ -1,4 +1,3 @@
-<script>
 (function(w, d) {
   'use strict';
 
@@ -438,4 +437,3 @@
   if (state.timer === null) run(0);
   startPolling();
 })(window, document);
-</script>

@@ -8,8 +8,16 @@ const html = readFileSync(
   'utf8'
 )
 const script = html.match(/^<script>\n([\s\S]+)\n<\/script>\n?$/)?.[1]
+const publicScript = readFileSync(
+  new URL(
+    '../../public/analytics/meta-pixel-canonical-v1.js',
+    import.meta.url
+  ),
+  'utf8'
+).trimEnd()
 
 assert.ok(script, 'Expected one executable script block')
+assert.equal(publicScript, script, 'GTM and app Pixel code must stay identical')
 
 function canonicalEvent(eventName, eventId, customData = {}) {
   return {
@@ -27,6 +35,7 @@ function canonicalEvent(eventName, eventId, customData = {}) {
 
 function createRuntime({ marketing = true } = {}) {
   const insertedScripts = []
+  const intervals = []
   const document = {
     cookie: [
       'utekos_external_id=anon_550e8400-e29b-41d4-a716-446655440000',
@@ -50,12 +59,21 @@ function createRuntime({ marketing = true } = {}) {
     location: new URL(
       'https://utekos.no/produkter/utekos-techdown?fbclid=click-1'
     ),
+    setInterval: handler => {
+      intervals.push(handler)
+      return intervals.length
+    },
     setTimeout: () => 1
   }
 
   window.window = window
 
-  return { context: vm.createContext({ document, window }), insertedScripts, window }
+  return {
+    context: vm.createContext({ document, window }),
+    insertedScripts,
+    intervals,
+    window
+  }
 }
 
 function queuedCalls(window) {
@@ -115,6 +133,42 @@ test('installs pixel without waiting for _fbp cookie', () => {
       .filter(call => call[0] === 'trackSingle')
       .map(call => [call[2], call[4].eventID]),
     [['PageView', 'page-no-fbp']]
+  )
+})
+
+test('dispatches canonical events added after the app bridge loads', () => {
+  const runtime = createRuntime({ marketing: true })
+
+  vm.runInContext(publicScript, runtime.context)
+  runtime.window.dataLayer.push(canonicalEvent('page_view', 'future-page'))
+  runtime.intervals[0]()
+
+  assert.deepEqual(
+    queuedCalls(runtime.window)
+      .filter(call => call[0] === 'trackSingle')
+      .map(call => [call[2], call[4].eventID]),
+    [['PageView', 'future-page']]
+  )
+})
+
+test('does not replay events that occurred before marketing consent', () => {
+  const runtime = createRuntime({ marketing: false })
+  runtime.window.addEventListener = () => {}
+
+  vm.runInContext(publicScript, runtime.context)
+  runtime.window.dataLayer.push(canonicalEvent('page_view', 'before-consent'))
+  runtime.intervals[0]()
+
+  runtime.window.Cookiebot.consent.marketing = true
+  runtime.intervals[0]()
+  runtime.window.dataLayer.push(canonicalEvent('page_view', 'after-consent'))
+  runtime.intervals[0]()
+
+  assert.deepEqual(
+    queuedCalls(runtime.window)
+      .filter(call => call[0] === 'trackSingle')
+      .map(call => [call[2], call[4].eventID]),
+    [['PageView', 'after-consent']]
   )
 })
 
