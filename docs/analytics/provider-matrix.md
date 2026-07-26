@@ -2,7 +2,7 @@
 
 **Evidence freeze:** 2026-07-20.
 
-**Active release:** 2026-07-26. Web-GTM v134 and application deployment
+**Active release:** 2026-07-26. Web-GTM v135 and application deployment
 `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` are live. The deployment was built from
 exact Git SHA `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2`; controlled production
 events have correlated queue and provider receipts.

@@ -35,9 +35,11 @@ Status vocabulary:
 ## Active release after the production freeze — 2026-07-26
 
 The historical production evidence above remains a freeze, but the current
-runtime has advanced. Web-GTM v134 is live; v133 introduced the canonical
-mapping from workspace 141 and v134 changed only the redundant GTM
-additional-consent setting. Application deployment
+runtime has advanced. Web-GTM v135 is live; v133 introduced the canonical
+mapping from workspace 141, v134 changed only the redundant GTM
+additional-consent setting, and v135 changed only tag 153 to initialize on
+page load and poll future canonical `dataLayer` entries with the app bridge's
+shared duplicate guard. Application deployment
 `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` from exact SHA
 `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` is `READY` and owns
 `utekos.no`:

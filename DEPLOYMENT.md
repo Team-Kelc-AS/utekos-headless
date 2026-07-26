@@ -12,10 +12,13 @@ known and completed in the correct order.
 
 ## Active Meta stale-event / near-real-time release 2026-07-26
 
-Web-GTM v134 is live. Version 133 introduced the canonical mapping from
+Web-GTM v135 is live. Version 133 introduced the canonical mapping from
 isolated workspace 141 with only tag 153 and trigger 152 changed; v134 changed
 only GTM's redundant additional-consent setting while the tag's explicit
-Cookiebot marketing guard remained fail-closed. Application deployment
+Cookiebot marketing guard remained fail-closed. Version 135 was created from
+workspace 143 and changed only tag 153 to initialize on page load and poll
+future canonical `dataLayer` entries while sharing the app bridge's duplicate
+guard. Application deployment
 `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` from exact Git SHA
 `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` is `READY` and owns
 `utekos.no`. It required no database migration and did not change Purchase,
@@ -51,7 +54,7 @@ Production evidence:
 
 | Evidence | Value |
 | -------- | ----- |
-| Published GTM version | `134`; immediate rollback `133`; pre-cutover rollback `132` |
+| Published GTM version | `135`; immediate rollback `134`; pre-cutover rollback `132` |
 | Vercel deployment ID / Git SHA | `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` / `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2`; `READY`, aliased |
 | Representative canonical event IDs | `ViewItemList` `5d162e4f-9416-4883-aad0-2787b4601a53`; `OpenQuickView` `74cec7fd-81f6-4a7b-95b1-0b1c65d7cd01`; `InteractWithAccordion` `d51aa3ea-a427-4f8a-9098-005f77007626`; 3→2 `RemoveFromCart` `cb48d8fb-0fbb-416e-8d57-f83715a42a59` |
 | Meta/Google receipts | Every controlled Meta attempt returned `events_received=1`; Google requests were executed with `validate_only=false`, with the first representative new-event requests later reconciled to `SUCCESS` |
@@ -60,13 +63,14 @@ Production evidence:
 | External Meta freshness | Dataset browser `2026-07-26T15:40:07Z`; server `2026-07-26T15:41:17Z`; event-level dashboard aggregation can lag these receipt times |
 | 7-day / 14-day quality result | Pending elapsed observation windows; due 2026-08-02 and 2026-08-09 |
 
-Production proved that the mapped GTM Custom HTML tag did not execute. The
-same-origin `/analytics/meta-pixel-canonical-v1.js` bridge therefore owns the
-browser channel deterministically. It and the GTM template share the same
-mapping and `window.__utekosMetaPixelState.sent` duplicate guard. Direct app
-CAPI remains the sole Meta server owner. Polling parity is saved in GTM draft
-workspace 143, but publishing that draft is blocked until the expired GTM
-OAuth token is refreshed; the live app bridge does not depend on it.
+Production proved that v134's event-triggered GTM Custom HTML tag did not
+execute for the controlled event. The same-origin
+`/analytics/meta-pixel-canonical-v1.js` bridge therefore remains the
+deterministic browser fallback. GTM v135 now initializes tag 153 on page load
+and polls future canonical `dataLayer` entries; both implementations share the
+same mapping and `window.__utekosMetaPixelState.sent` duplicate guard. Direct
+app CAPI remains the sole Meta server owner. Workspace 143 was versioned and
+published as v135 after GTM authorization recovered.
 
 ## Golden Rules
 

@@ -13,9 +13,11 @@
 - **Mutations performed:** isolated GTM workspace 141 changed only tag 153 and
   trigger 152, published as v133; v134 then removed GTM's redundant additional
   consent requirement while the tag's explicit Cookiebot marketing gate
-  remained fail-closed. The app and queue runtime were deployed. No Supabase
-  schema mutation, historical replay, campaign change or synthetic event was
-  performed.
+  remained fail-closed. Workspace 143 changed only tag 153 to initialize on
+  page load and poll future canonical `dataLayer` entries with the app bridge's
+  shared duplicate guard, published as v135. The app and queue runtime were
+  deployed. No Supabase schema mutation, historical replay, campaign change or
+  synthetic event was performed.
 
 This file intentionally separates local correctness from provider freshness.
 An old Events Manager timestamp for a low-volume genuine action is not itself a
@@ -121,10 +123,11 @@ delivery or production evidence.
 
 | Required evidence | Current value |
 | ----------------- | ------------- |
-| Published web-GTM version | `134`; v133 introduced the canonical mapping and v134 changed only the redundant GTM additional-consent setting. The in-tag Cookiebot gate remains authoritative. |
-| GTM workspace / exact diff | Mapping: workspace `141`, tag `153`, trigger `152`. Polling parity is saved in draft workspace `143`; publication was blocked by an expired GTM OAuth token. The production app bridge does not depend on that draft. |
+| Published web-GTM version | `135`; v133 introduced the canonical mapping, v134 changed only the redundant GTM additional-consent setting, and v135 added page-load initialization plus future `dataLayer` polling to tag 153. The in-tag Cookiebot gate remains authoritative. |
+| GTM workspace / exact diff | Mapping: workspace `141`, tag `153`, trigger `152`. Polling parity: workspace `143`, only tag `153` changed; created and published as v135 after GTM authorization recovered. |
+| GTM live readback / CDN | GTM's live-version API returns container version `135`. The production `gtm.js` payload contains `__utekosMetaPixelState`, `ViewItemList`, `OpenQuickView` and `InteractWithAccordion`. |
 | Current repository hashes | `config/gtm/web-meta-pixel.html`: `894f52dd3efd351431f980b9e34ff74d6ba759f1891c66a45500217b3e87d3fc`; `public/analytics/meta-pixel-canonical-v1.js`: `a4a150d44b1d91827d364045f5c41b3af96e590b48062fa4ab05bbc276a58fed` |
-| GTM rollback version | `133` is the immediate live-container rollback; `132` is the pre-cutover rollback. |
+| GTM rollback version | `134` is the immediate live-container rollback; `132` is the complete pre-cutover rollback. |
 | Vercel deployment ID and exact Git SHA | `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W`; `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2`; `READY`; aliased to `utekos.no`. |
 | Previous READY deployment rollback | Immediate prior deployment `dpl_GYqWAxQA9WjrFKFFCjgmXXZt9Ty4`; server-only cutover baseline `dpl_6nJFntbtN7gVN6Wrz4EKgo6nQkkB`. |
 | Queue trigger visible and first callback | Production logs show repeated `POST /api/queues/canonical-provider-dispatch 200`; exact rows completed seconds after collector acceptance, before the five-minute fallback window. |
@@ -141,7 +144,7 @@ delivery or production evidence.
 
 ## Rollback and safety
 
-- GTM rollback is v133 (or v132 for the complete pre-cutover state).
+- GTM rollback is v134 (or v132 for the complete pre-cutover state).
 - Runtime rollback is `dpl_GYqWAxQA9WjrFKFFCjgmXXZt9Ty4`; the known
   server-only cutover baseline is `dpl_6nJFntbtN7gVN6Wrz4EKgo6nQkkB`.
 - The queue trigger can be disabled without losing accepted events because the

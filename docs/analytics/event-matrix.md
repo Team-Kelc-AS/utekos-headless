@@ -3,8 +3,10 @@
 **Freeze:** 2026-07-20 refresh at `ed16dfd06` / production
 `dpl_3Pe1KmJSj5unFh1jD7VytiPvFr5H`.
 
-**Active release:** 2026-07-26. Web-GTM v134 is live; v133 introduced the
-canonical mappings from isolated workspace 141 and is the immediate rollback.
+**Active release:** 2026-07-26. Web-GTM v135 is live; v133 introduced the
+canonical mappings from isolated workspace 141, v134 removed the redundant
+additional-consent setting, and v135 added future `dataLayer` polling to tag
+153. Version 134 is the immediate GTM rollback.
 Application deployment `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` from
 `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` is `READY`. Controlled genuine
 events have correlated collector, ledger, queue, Google and Meta receipts.
