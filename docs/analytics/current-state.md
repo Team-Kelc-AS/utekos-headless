@@ -32,30 +32,33 @@ Status vocabulary:
 - **Refuted:** current primary evidence contradicts the prior
   claim.
 
-## Activating release after the production freeze — 2026-07-26
+## Active release after the production freeze — 2026-07-26
 
-The historical production evidence above remains unchanged. Web-GTM version
-`133` is now published from isolated workspace `141`; only tag `153` and
-trigger `152` changed, and version `132` is the rollback. The application
-candidate closes the stale-event source and dispatch gaps identified after
-that freeze but is not deployed yet:
+The historical production evidence above remains a freeze, but the current
+runtime has advanced. Web-GTM v134 is live; v133 introduced the canonical
+mapping from workspace 141 and v134 changed only the redundant GTM
+additional-consent setting. Application deployment
+`dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` from exact SHA
+`3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` is `READY` and owns
+`utekos.no`:
 
-| Candidate surface | Repository state | Production evidence |
-| ----------------- | ---------------- | ------------------- |
-| Canonical catalog | 33 events: 29 active and four `blocked_source`; adds `interact_with_accordion` and `open_quick_view` | Pending deploy |
-| Product-list impressions | 50% continuous visibility for 1s, per-page variant dedupe, ≤20-item chunking and named surfaces | Pending genuine browser action |
-| Meta CAPI | 17 registered workers; adds exact `ViewItemList`, `ViewCart`, `LandingScrollDepth`, `ViewCategory`, `HeroInteract`, `InteractWithAccordion`, `OpenQuickView` mappings | GTM v133 published; no candidate server receipts yet |
-| Google Data Manager | 28 registered workers; adds both new canonical events | No candidate receipts yet |
-| Immediate delivery | Post-commit Vercel Queue wake-up with exact attempt claim, seven-day retention and 15-second infrastructure redelivery | Queue trigger not deployed |
-| Fallback | Existing five-minute provider cron retained; stale-processing reclaim aligned to fallback window | Existing cron remains production baseline |
-| Health | New 15-minute Sentry health route for missing attempts, publish failures, pending age, dead letters and p95 ACK | Cron not deployed |
-| Remove from cart | Shopify response is authoritative for full deletion and actual positive quantity delta, including 3→2 | Pending genuine cart mutation |
+| Release surface | Repository state | Production evidence |
+| --------------- | ---------------- | ------------------- |
+| Canonical catalog | 33 events: 29 active and four `blocked_source`; includes `interact_with_accordion` and `open_quick_view` | Both new routes accepted genuine production actions |
+| Product-list impressions | 50% continuous visibility for 1s, per-page variant dedupe, ≤20-item chunking and named surfaces | `view_item_list` `5d162e4f-9416-4883-aad0-2787b4601a53`; Meta `events_received=1`, Google later `SUCCESS` |
+| Meta CAPI | 17 registered workers with exact new PascalCase mappings | Every controlled stale-event request returned `events_received=1`; adapter latency 127–304 ms |
+| Meta browser | Same-origin bridge and GTM template share mapping and duplicate-suppression state | `InteractWithAccordion` `d51aa3ea-a427-4f8a-9098-005f77007626` captured with identical Pixel `eid` and CAPI `event_id` |
+| Google Data Manager | 28 registered workers including both new canonical events | Executed (`validate_only=false`) request IDs stored; representative first requests reconciled to `SUCCESS` |
+| Immediate delivery | Post-commit Vercel Queue wake-up with exact attempt claim, seven-day retention and 15-second infrastructure redelivery | Queue consumer returned `200`; completed attempts precede the five-minute fallback window |
+| Fallback | Existing five-minute provider cron retained; stale-processing reclaim aligned to fallback window | Retained and not needed for the representative immediate dispatches |
+| Health | 15-minute Sentry health route for missing attempts, publish failures, pending age, dead letters and p95 ACK | 190-sample p95 `5 750 ms`; zero initial pending >2m, recent dead letters or canonical events without an attempt |
+| Remove from cart | Shopify response is authoritative for full deletion and actual positive quantity delta, including 3→2 | Genuine 3→2 event `cb48d8fb-0fbb-416e-8d57-f83715a42a59`; Meta `events_received=1` |
 
-The candidate does not change the database schema, Purchase contract,
+The release does not change the database schema, Purchase contract,
 destination IDs, campaigns, budgets, conversion goals or historical rows.
 Missing PII/`fbc`/`fbp` is not synthesized. Microsoft CAPI expansion remains a
-separate quality-gated release. No Vercel deploy, Supabase mutation or
-synthetic replay has occurred yet.
+separate quality-gated release. The deployment did not change the Supabase
+schema and performed no synthetic or historical replay.
 Activation evidence is tracked in
 [canonical-stale-events-near-realtime-cutover-2026-07-26.md](evidence/canonical-stale-events-near-realtime-cutover-2026-07-26.md).
 

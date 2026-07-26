@@ -10,21 +10,25 @@ The purpose is simple: no runtime change should reach production before
 its required database, provider, environment, and verification steps are
 known and completed in the correct order.
 
-## Activating Meta stale-event / near-real-time release 2026-07-26
+## Active Meta stale-event / near-real-time release 2026-07-26
 
-Web-GTM version `133` is published from isolated workspace `141`; its only
-changes are tag `153` and trigger `152`. The application candidate is not yet
-deployed. It has no database migration and does not change Purchase,
+Web-GTM v134 is live. Version 133 introduced the canonical mapping from
+isolated workspace 141 with only tag 153 and trigger 152 changed; v134 changed
+only GTM's redundant additional-consent setting while the tag's explicit
+Cookiebot marketing guard remained fail-closed. Application deployment
+`dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` from exact Git SHA
+`3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` is `READY` and owns
+`utekos.no`. It required no database migration and did not change Purchase,
 destination IDs, campaign settings, budgets, conversion goals or historical
 events. The configured Meta pixel/dataset remains `1092362672918571`.
 
-Required activation order, each mutation separately approved:
+Activation was executed in this order, with each mutation separately approved:
 
 1. Create/verify an isolated web-GTM workspace from
    `config/gtm/web-meta-pixel.html`, then publish only the approved mapping
    diff. Record the resulting GTM version; the previous published version is
    the GTM rollback.
-2. Deploy the application candidate with the queue trigger for
+2. Deploy the application release with the queue trigger for
    `canonical-provider-dispatch-v1` and the 15-minute
    `/api/cron/provider-dispatch-health` schedule. Record exact Git SHA and
    deployment ID; the previous READY deployment is runtime rollback.
@@ -43,15 +47,26 @@ must preserve collector `202`, alert Sentry and let the cron recover. Microsoft
 CAPI expansion is excluded until `pageLoadId`, VID/ID sync and `msclkid` pass a
 separate quality gate.
 
-The live-proof fields are intentionally blank until activation:
+Production evidence:
 
 | Evidence | Value |
 | -------- | ----- |
-| Published GTM version | `133`; rollback `132`; source SHA-256 `3cb06efffdeef4240549b3b110063e3f829a40cccff1091cf88d669584e8ce0b` |
-| Vercel deployment ID / Git SHA | Pending explicit approval |
-| Representative canonical event IDs | Pending genuine production actions |
-| Meta/Google receipts | Pending deployment |
-| 7-day / 14-day quality result | Pending elapsed observation window |
+| Published GTM version | `134`; immediate rollback `133`; pre-cutover rollback `132` |
+| Vercel deployment ID / Git SHA | `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` / `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2`; `READY`, aliased |
+| Representative canonical event IDs | `ViewItemList` `5d162e4f-9416-4883-aad0-2787b4601a53`; `OpenQuickView` `74cec7fd-81f6-4a7b-95b1-0b1c65d7cd01`; `InteractWithAccordion` `d51aa3ea-a427-4f8a-9098-005f77007626`; 3→2 `RemoveFromCart` `cb48d8fb-0fbb-416e-8d57-f83715a42a59` |
+| Meta/Google receipts | Every controlled Meta attempt returned `events_received=1`; Google requests were executed with `validate_only=false`, with the first representative new-event requests later reconciled to `SUCCESS` |
+| Browser/server dedupe contract | Captured Pixel POST `InteractWithAccordion` used the same `d51aa3ea-a427-4f8a-9098-005f77007626` as CAPI; CAPI trace `A_2GZMmmYF3z8AlGEUWrcaV`, 250 ms |
+| Provider health | 190 accepted samples, p95 ACK `5 750 ms`, zero initial pending >2m, zero recent dead letters, zero canonical events without attempts |
+| External Meta freshness | Dataset browser `2026-07-26T15:40:07Z`; server `2026-07-26T15:41:17Z`; event-level dashboard aggregation can lag these receipt times |
+| 7-day / 14-day quality result | Pending elapsed observation windows; due 2026-08-02 and 2026-08-09 |
+
+Production proved that the mapped GTM Custom HTML tag did not execute. The
+same-origin `/analytics/meta-pixel-canonical-v1.js` bridge therefore owns the
+browser channel deterministically. It and the GTM template share the same
+mapping and `window.__utekosMetaPixelState.sent` duplicate guard. Direct app
+CAPI remains the sole Meta server owner. Polling parity is saved in GTM draft
+workspace 143, but publishing that draft is blocked until the expired GTM
+OAuth token is refreshed; the live app bridge does not depend on it.
 
 ## Golden Rules
 

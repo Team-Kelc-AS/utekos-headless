@@ -6,18 +6,23 @@
   Meta Business SDK/Parameter Builder contracts, Vercel Queue 0.4.0, Next.js
   16.2, Shopify Storefront Cart API, Google Data Manager and the current
   Microsoft UET CAPI guide.
-- **Implementation state:** release candidate; web-GTM mapping activated.
-- **Production state:** GTM v133 live; application not deployed.
+- **Implementation state:** deployed and production-verified.
+- **Production state:** application deployment
+  `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` is `READY`, owns `utekos.no`, and was
+  built from exact Git SHA `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2`.
 - **Mutations performed:** isolated GTM workspace 141 changed only tag 153 and
-  trigger 152, then published as v133. No Vercel deployment, Supabase
-  schema/data mutation, event replay, campaign change or synthetic event.
+  trigger 152, published as v133; v134 then removed GTM's redundant additional
+  consent requirement while the tag's explicit Cookiebot marketing gate
+  remained fail-closed. The app and queue runtime were deployed. No Supabase
+  schema mutation, historical replay, campaign change or synthetic event was
+  performed.
 
 This file intentionally separates local correctness from provider freshness.
 An old Events Manager timestamp for a low-volume genuine action is not itself a
 delivery failure. The production gate requires a deliberately triggered real
 action and a correlated chain of evidence.
 
-## Root causes closed in the candidate
+## Root causes closed in the release
 
 | Finding | Implemented correction |
 | ------- | ---------------------- |
@@ -82,7 +87,7 @@ their prior stale timestamps can legitimately reflect low user volume.
 | Node runtime | Node.js 24.17.0 bundled project runtime |
 | TypeScript | Passed: `tsc --noEmit` |
 | Changed-file lint | Passed with zero errors/warnings for all changed and new TS/TSX/MJS files |
-| Full repository lint | Existing baseline failure outside this candidate: 55,426 findings, dominated by vendored `.agents/skills`, generated UI/Supabase files and pre-existing utilities. No candidate lint finding remains. |
+| Full repository lint | Existing baseline failure outside this release: 55,426 findings, dominated by vendored `.agents/skills`, generated UI/Supabase files and pre-existing utilities. No release lint finding remains. |
 | Visibility/schema/sequence tests | Passed, including 50%/1s cancellation, re-entry dedupe and 21→20+1 chunking |
 | Quick-view/accordion state tests | Passed |
 | Remove-from-cart tests | Passed for full delete, 1→0, 3→2, rapid decrements and Shopify failure |
@@ -90,7 +95,7 @@ their prior stale timestamps can legitimately reflect low user volume.
 | Meta exact-name/event-ID/consent/identifier tests | Passed |
 | Google new-event mapping tests | Passed |
 | Health-job tests | Passed |
-| GTM template contract tests | Passed |
+| GTM/app Pixel contract tests | Passed: 7/7; the app bridge and GTM template share the same inner mapping, including future dataLayer polling, consent gating and shared duplicate suppression |
 | Full analytics regression suite | Passed: 147 client + 399 server + 25 API route tests = 571/571 |
 | GTM template contract suite | Passed: 5/5 (576 total tracking-related automated tests) |
 | Production build | Passed: Next.js 16.2.9, 130 static/PPR pages; new routes and queue handler included |
@@ -116,27 +121,29 @@ delivery or production evidence.
 
 | Required evidence | Current value |
 | ----------------- | ------------- |
-| Published web-GTM version | `133` — `Meta canonical realtime cutover - 2026-07-26` |
-| GTM workspace / exact diff | `141`; only tag `153` and trigger `152`; Quick Preview compiled successfully |
-| GTM template SHA-256 | `3cb06efffdeef4240549b3b110063e3f829a40cccff1091cf88d669584e8ce0b` |
-| Previous GTM rollback version | `132` |
-| Vercel deployment ID and exact Git SHA | Pending explicit deploy approval |
-| Previous READY deployment rollback | Resolve immediately before approved deploy |
-| Queue trigger visible and first callback | Pending deploy |
-| Representative event IDs | Pending genuine consented user actions |
-| Collector / ledger / exact-attempt correlation | Pending deploy |
-| Meta `events_received=1`, trace and no messages | Pending deploy |
-| Pixel/CAPI identical Meta name and ID | Pending deploy |
-| Google Data Manager request IDs/status | Pending deploy |
-| Events Manager freshness/dedupe/source result | Pending deploy and dashboard latency |
-| Provider ACK p95 ≤60s; fallback ≤5m | Pending production sample |
-| 7-day quality result | Pending deployment + 7 days |
-| 14-day quality result | Pending deployment + 14 days |
+| Published web-GTM version | `134`; v133 introduced the canonical mapping and v134 changed only the redundant GTM additional-consent setting. The in-tag Cookiebot gate remains authoritative. |
+| GTM workspace / exact diff | Mapping: workspace `141`, tag `153`, trigger `152`. Polling parity is saved in draft workspace `143`; publication was blocked by an expired GTM OAuth token. The production app bridge does not depend on that draft. |
+| Current repository hashes | `config/gtm/web-meta-pixel.html`: `894f52dd3efd351431f980b9e34ff74d6ba759f1891c66a45500217b3e87d3fc`; `public/analytics/meta-pixel-canonical-v1.js`: `a4a150d44b1d91827d364045f5c41b3af96e590b48062fa4ab05bbc276a58fed` |
+| GTM rollback version | `133` is the immediate live-container rollback; `132` is the pre-cutover rollback. |
+| Vercel deployment ID and exact Git SHA | `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W`; `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2`; `READY`; aliased to `utekos.no`. |
+| Previous READY deployment rollback | Immediate prior deployment `dpl_GYqWAxQA9WjrFKFFCjgmXXZt9Ty4`; server-only cutover baseline `dpl_6nJFntbtN7gVN6Wrz4EKgo6nQkkB`. |
+| Queue trigger visible and first callback | Production logs show repeated `POST /api/queues/canonical-provider-dispatch 200`; exact rows completed seconds after collector acceptance, before the five-minute fallback window. |
+| Representative event IDs | `scroll_depth` `707ac256-5699-45c7-a12e-6b5a480be13a`; `view_item_list` `5d162e4f-9416-4883-aad0-2787b4601a53`; `hero_interact` `b4216733-4644-423e-a7b5-40c7b585f731`; `view_category` `83f52d06-ab78-4a5e-a195-310b888d0da1`; `open_quick_view` `74cec7fd-81f6-4a7b-95b1-0b1c65d7cd01`; `interact_with_accordion` `95a22a5a-225c-4136-9f49-d4ff8a31deb6`; `view_cart` `8768c4c1-1778-4396-a99b-b21eab9c9f67`; 3→2 `remove_from_cart` `cb48d8fb-0fbb-416e-8d57-f83715a42a59`; `add_to_wishlist` `5d4c93ff-f8c5-4e97-a3ef-0c09b5a77e82`; `select_item` `2e07216e-1b98-4a8e-a75d-ec4b1e09fd74`. |
+| Collector / ledger / exact-attempt correlation | All controlled events returned collector `202`, exist once in `marketing.event_ledger`, and have the expected exact Google/Meta attempts. No canonical event in the post-cutover health window lacked an attempt. |
+| Meta `events_received=1`, trace and no messages | Every representative Meta attempt returned `events_received=1` on attempt one. Measured adapter latencies were 127–304 ms for the representative stale-event set. |
+| Pixel/CAPI identical Meta name and ID | Live app-owned bridge proof: genuine PDP Materialer open emitted `InteractWithAccordion` with UUID `d51aa3ea-a427-4f8a-9098-005f77007626`; the captured `facebook.com/tr` POST had the same name and `eid`, complete commerce/accordion fields, while CAPI returned `events_received=1` with trace `A_2GZMmmYF3z8AlGEUWrcaV` in 250 ms. |
+| Browser owner / duplicate protection | Same-origin `/analytics/meta-pixel-canonical-v1.js` initializes `fbq`, observes future canonical dataLayer entries, and shares `window.__utekosMetaPixelState.sent` with the GTM template. This was added after production proved that the GTM Custom HTML tag did not execute even though the live mapping was present. |
+| Google Data Manager request IDs/status | Every controlled event created a validated executed request (`validate_only=false`). The first representative list/category/hero/quick-view/accordion requests were subsequently reconciled to provider `SUCCESS`; newer rows remain `accepted_unverified` until the existing status job confirms them. |
+| Events Manager freshness/dedupe/source result | Meta's dataset API advanced browser freshness to `2026-07-26T15:40:07Z` and server freshness to `2026-07-26T15:41:17Z`. Event-level aggregate/Events Manager UI remained delayed at the immediate check. Matching name/ID is wire-proven; numeric overlap/dedupe UI remains a 7-/14-day verification gate. |
+| Provider ACK p95 ≤60s; fallback ≤5m | Green production sample: 190 accepted rows, p95 `5,750 ms`; zero initial pending rows over two minutes, zero recent dead letters and zero canonical events without an attempt. |
+| 7-day quality result | Pending observation window; due 2026-08-02 |
+| 14-day quality result | Pending observation window; due 2026-08-09 |
 
 ## Rollback and safety
 
-- GTM rollback is the previously published container version.
-- Runtime rollback is the previous READY Vercel deployment.
+- GTM rollback is v133 (or v132 for the complete pre-cutover state).
+- Runtime rollback is `dpl_GYqWAxQA9WjrFKFFCjgmXXZt9Ty4`; the known
+  server-only cutover baseline is `dpl_6nJFntbtN7gVN6Wrz4EKgo6nQkkB`.
 - The queue trigger can be disabled without losing accepted events because the
   Supabase outbox and five-minute cron remain authoritative.
 - No blind historical replay is permitted. No heartbeat events are permitted.

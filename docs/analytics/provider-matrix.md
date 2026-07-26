@@ -2,11 +2,12 @@
 
 **Evidence freeze:** 2026-07-20.
 
-**Activating release:** 2026-07-26. Web-GTM v133 is published from isolated
-workspace 141 with only tag 153 and trigger 152 changed; v132 is rollback.
-The application deployment and live provider receipts remain pending.
+**Active release:** 2026-07-26. Web-GTM v134 and application deployment
+`dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` are live. The deployment was built from
+exact Git SHA `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2`; controlled production
+events have correlated queue and provider receipts.
 
-## Near-real-time dispatch release candidate
+## Near-real-time dispatch
 
 - **Durable wake-up:** each newly inserted pending provider attempt is
   published after database commit to Vercel Queue topic
@@ -59,7 +60,7 @@ The application deployment and live provider receipts remain pending.
 
 - **Owner:** canonical server outbox and Google request-status
   cron.
-- **Transport:** 28 `(google,event)` workers in the local candidate using
+- **Transport:** 28 `(google,event)` workers in production using
   `@google-ads/datamanager`.
 - **Events:** all active catalog events except `page_view`;
   blocked-source events excluded.
@@ -80,8 +81,8 @@ The application deployment and live provider receipts remain pending.
   remains pending.
 - **Diagnostics:** response, `request_id`, validation result and
   per-request status stored. No `request_id` index.
-- **Candidate delta:** adds `interact_with_accordion` and `open_quick_view`
-  adapters with canonical transaction IDs and full commerce/custom context.
+- **Production delta:** `interact_with_accordion` and `open_quick_view`
+  adapters use canonical transaction IDs and full commerce/custom context.
 - **Status:** application integration active; Production
   `GOOGLE_DATA_MANAGER_VALIDATE_ONLY` is executed mode (`false`)
   per live `validation_result` and `DEPLOYMENT.md`. Treat
@@ -89,50 +90,52 @@ The application deployment and live provider receipts remain pending.
 
 ## Meta
 
-- **Owner:** browser web GTM for pixel events and canonical
-  outbox for CAPI-supported events.
-- **Transport:** Meta Pixel in the published web container; historical
-  production freeze has eight Meta CAPI workers, while the local candidate
-  registers 17. Browser pixel routes through Meta CAPI
-  Gateway (openbridge3, `mpc2-prod-25-...run.app` with AWS ECS
-  fallback), not `facebook.com/tr`; both gateway hosts are
-  allowed in the production CSP.
+- **Owner:** same-origin app Pixel bridge for deterministic browser events;
+  the published web-GTM mapping is a shared-state backup. The canonical
+  application outbox is the only Meta server owner.
+- **Transport:** `/analytics/meta-pixel-canonical-v1.js` initializes the Meta
+  Pixel after marketing consent and polls future canonical dataLayer entries;
+  17 Meta CAPI workers are active. Live CDP evidence captured the resulting
+  `facebook.com/tr` POST. The app and GTM template share
+  `window.__utekosMetaPixelState.sent`, preventing a second send if GTM's
+  Custom HTML tag later executes.
 - **Production-freeze events:** `PageView`, `ViewContent`, `AddToCart`,
   `AddToWishlist`, `InitiateCheckout`, `Purchase`, `Search`,
   `Lead`. Live 7-day dataset window contains only these
   PascalCase names (verified via Graph API 2026-07-20).
-- **Candidate events added:** `ViewItemList`, `ViewCart`,
+- **Events added:** `ViewItemList`, `ViewCart`,
   `LandingScrollDepth`, `ViewCategory`, `HeroInteract`,
   `InteractWithAccordion` and `OpenQuickView`. Pixel and CAPI mappings use
   those exact names and the same canonical UUID.
-- **Destination:** `1092362672918571` in published web payload,
-  source/config **and** the live receiving dataset
-  (`last_fired_time` fresh; 7d SERVER 3959 / BROWSER 1838).
+- **Destination:** `1092362672918571` in the live bridge, published web
+  payload, source/config and receiving dataset. The post-cutover dataset API
+  advanced browser freshness to `2026-07-26T15:40:07Z` and server freshness
+  to `2026-07-26T15:41:17Z`.
 - **Identifiers:** same canonical `event_id`; `external_id`,
   `fbp`, `fbc`, consent-gated hashed contact data, server IP/user
-  agent where approved. The candidate never manufactures absent `fbc`, `fbp`
+  agent where approved. The release never manufactures absent `fbc`, `fbp`
   or contact data. Live match keys 7d: `external_id` 7461,
   `email` 59, `phone` 47.
-- **Dedupe:** source mappers set identical canonical event ID.
-  Meta requires both provider event name and ID to match between
-  browser and server; the numeric live dedupe rate is still
-  unavailable from the `/stats` aggregations used.
+- **Dedupe:** source mappers and the browser bridge set the identical canonical
+  event ID and exact Meta name. The genuine Materialer accordion open used
+  `InteractWithAccordion` / `d51aa3ea-a427-4f8a-9098-005f77007626` in both
+  Pixel and CAPI; CAPI returned `events_received=1`. Numeric Events Manager
+  overlap remains unavailable from the dataset stats endpoint and is still a
+  7-/14-day quality gate.
 - **Retry:** targeted Vercel Queue wake-up plus generic outbox
   retry/jitter/dead-letter; five-minute cron is fallback.
 - **Finality:** successful API receipt becomes
   `accepted_unverified`; no repository reconciliation poller.
-- **Diagnostics:** daily dataset-quality snapshot/retry code
-  exists. Events Manager activity/source split/match keys
-  verified via Graph API; numeric EMQ live (upper funnel 6.1,
-  Purchase 9.3). **Dedupe: NOT OK / not proven** — ViewContent
-  Deduplication tab reports setup missing; Graph omits
-  `dedupe_key_feedback` (DEV-020). Live console warning: invalid
-  currency parameter format (DEV-019).
-- **Candidate status:** code and contract tests verified locally; GTM mapping
-  is intentionally unpublished and no production event/receipt is claimed.
-- **Production status:** browser and server delivery verified at the
-  dataset. Server GTM has no Meta CAPI Gateway tag (v29 = GA4 +
-  Conversion Linker); browser uses openbridge3 outside sGTM.
+- **Diagnostics:** daily dataset-quality snapshot/retry code exists. Current
+  API quality shows upper-funnel EMQ 6.1 where reported and Purchase 8.8;
+  `external_id`, `fbp`, IP and user-agent coverage are 100% on the newly
+  reported `LandingScrollDepth` quality row. Numeric dedupe feedback remains
+  unexposed, so matching name/ID is proven but the overlap UI is not claimed.
+- **Production status:** browser and server delivery are live. Representative
+  stale-event Meta adapter latency was 127–304 ms, every controlled request
+  returned `events_received=1`, and the one-hour provider health sample had
+  p95 ACK 5.75 seconds with zero recent dead letters or initial pending rows
+  over two minutes. Server GTM remains GA4 + Conversion Linker only.
 
 ## Microsoft
 
