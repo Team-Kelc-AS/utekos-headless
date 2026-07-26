@@ -30,3 +30,19 @@ test('renders newsletter errors as an alert', () => {
   assert.match(html, /role="alert"/)
   assert.match(html, /Prøv igjen\./)
 })
+
+test('explains when the email address is already registered', () => {
+  const html = renderToStaticMarkup(
+    <NewsletterFormFeedback
+      state={{
+        status: 'error',
+        message:
+          'Denne e-postadressen er allerede registrert. Rabattmailen er sendt tidligere.'
+      }}
+    />
+  )
+
+  assert.match(html, /role="alert"/)
+  assert.match(html, /allerede registrert/)
+  assert.doesNotMatch(html, /Vi klarte ikke å sende/)
+})

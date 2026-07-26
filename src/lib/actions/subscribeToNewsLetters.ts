@@ -83,6 +83,16 @@ export async function subscribeToNewsletter(
     if (welcomeEmailResult.status === 'rejected') {
       welcomeEmailFailure = String(welcomeEmailResult.reason)
     } else if (!welcomeEmailResult.value.ok) {
+      if (
+        welcomeEmailResult.value.reason === 'already_registered'
+      ) {
+        return {
+          status: 'error',
+          message:
+            'Denne e-postadressen er allerede registrert. Rabattmailen er sendt tidligere – sjekk innboksen og søppelpostmappen.'
+        }
+      }
+
       welcomeEmailFailure = welcomeEmailResult.value.message
     }
 

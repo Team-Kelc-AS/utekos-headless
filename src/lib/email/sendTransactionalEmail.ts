@@ -4,6 +4,7 @@ import type { ReactElement } from 'react'
 
 import { getResendClient } from '@/lib/email/client'
 import type { SendTransactionalEmailResult } from '@/lib/email/emailTypes'
+import { getTransactionalEmailFailureReason } from '@/lib/email/getTransactionalEmailFailureReason'
 
 type SendTransactionalEmailInput = {
   from: string
@@ -11,15 +12,7 @@ type SendTransactionalEmailInput = {
   subject: string
   idempotencyKey: string
   replyTo?: string
-} & (
-  | {
-      react: ReactElement
-    }
-  | {
-      html: string
-      text: string
-    }
-)
+} & ({ react: ReactElement } | { html: string; text: string })
 
 export async function sendTransactionalEmail(
   input: SendTransactionalEmailInput
@@ -36,9 +29,7 @@ export async function sendTransactionalEmail(
           ...(input.replyTo ? { replyTo: input.replyTo } : {}),
           react: input.react
         },
-        {
-          idempotencyKey: input.idempotencyKey
-        }
+        { idempotencyKey: input.idempotencyKey }
       )
     : await resend.emails.send(
         {
@@ -49,27 +40,24 @@ export async function sendTransactionalEmail(
           html: input.html,
           text: input.text
         },
-        {
-          idempotencyKey: input.idempotencyKey
-        }
+        { idempotencyKey: input.idempotencyKey }
       )
 
   if (error) {
     return {
       ok: false,
-      message: error.message
+      message: error.message,
+      reason: getTransactionalEmailFailureReason(error)
     }
   }
 
   if (!data?.id) {
     return {
       ok: false,
-      message: 'Resend returned no email id'
+      message: 'Resend returned no email id',
+      reason: 'provider_rejected'
     }
   }
 
-  return {
-    ok: true,
-    id: data.id
-  }
+  return { ok: true, id: data.id }
 }
