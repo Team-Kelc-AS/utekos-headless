@@ -437,7 +437,7 @@ export default async function ChristmasLocalDelivery() {
             href='/handlehjelp/storrelsesguide'
             className='group hover:bg-card-hover -hover flex flex-col items-center rounded-xl bg-card p-8 text-center text-card-foreground transition-colors'
           >
-            <div className='mb-4 rounded-full bg-green-900/20 p-4 transition-transform group-hover:scale-110'>
+            <div className='mb-4 rounded-full bg-jungle/20 p-4 transition-transform group-hover:scale-110'>
               <Calendar className='h-8 w-8 text-green-400' />
             </div>
             <h3 className='font-utekos-text-medium text-lg'>

@@ -2082,8 +2082,8 @@
         },
         {
           "shade": "300",
-          "cssVar": "--color-light-green-300",
-          "token": "light-green-300",
+          "cssVar": "--color-light-light-teal",
+          "token": "light-light-teal",
           "oklch": "oklch(85.68% 0.184 145.74)",
           "hex": "#76ef82"
         },
@@ -2117,15 +2117,15 @@
         },
         {
           "shade": "800",
-          "cssVar": "--color-light-green-800",
-          "token": "light-green-800",
+          "cssVar": "--color-light-dark-teal",
+          "token": "light-dark-teal",
           "oklch": "oklch(41.12% 0.127 143.84)",
           "hex": "#0b5b13"
         },
         {
           "shade": "900",
-          "cssVar": "--color-light-green-900",
-          "token": "light-green-900",
+          "cssVar": "--color-light-jungle",
+          "token": "light-jungle",
           "oklch": "oklch(26.41% 0.077 144.55)",
           "hex": "#052e09"
         },
@@ -2490,8 +2490,8 @@
         },
         {
           "shade": "300",
-          "cssVar": "--color-mineral-green-300",
-          "token": "mineral-green-300",
+          "cssVar": "--color-mineral-light-teal",
+          "token": "mineral-light-teal",
           "oklch": "oklch(0.7736 0.0618 142.75)",
           "hex": "#9fc09c"
         },
@@ -3962,8 +3962,8 @@
         },
         {
           "shade": "300",
-          "cssVar": "--color-vibrant-green-300",
-          "token": "vibrant-green-300",
+          "cssVar": "--color-vibrant-light-teal",
+          "token": "vibrant-light-teal",
           "oklch": "oklch(0.681 0.13 144.74)",
           "hex": "#61ad64"
         },
@@ -3997,15 +3997,15 @@
         },
         {
           "shade": "800",
-          "cssVar": "--color-vibrant-green-800",
-          "token": "vibrant-green-800",
+          "cssVar": "--color-vibrant-dark-teal",
+          "token": "vibrant-dark-teal",
           "oklch": "oklch(0.731 0.13 144.74)",
           "hex": "#71bd73"
         },
         {
           "shade": "900",
-          "cssVar": "--color-vibrant-green-900",
-          "token": "vibrant-green-900",
+          "cssVar": "--color-vibrant-jungle",
+          "token": "vibrant-jungle",
           "oklch": "oklch(0.741 0.13 144.74)",
           "hex": "#74c176"
         }

@@ -23430,9 +23430,9 @@
           ]
         },
         {
-          "id": "mountain-view-mineral-green-300-512",
-          "cssVar": "--color-mineral-green-300",
-          "name": "mineral-green-300",
+          "id": "mountain-view-mineral-light-teal-512",
+          "cssVar": "--color-mineral-light-teal",
+          "name": "mineral-light-teal",
           "label": "Mineral Green 300",
           "value": "oklch(0.7736 0.0618 142.75)",
           "resolvedValue": "oklch(0.7736 0.0618 142.75)",
@@ -25410,9 +25410,9 @@
           ]
         },
         {
-          "id": "mountain-view-light-green-300-557",
-          "cssVar": "--color-light-green-300",
-          "name": "light-green-300",
+          "id": "mountain-view-light-light-teal-557",
+          "cssVar": "--color-light-light-teal",
+          "name": "light-light-teal",
           "label": "Light Green 300",
           "value": "oklch(85.68% 0.184 145.74)",
           "resolvedValue": "oklch(85.68% 0.184 145.74)",
@@ -25630,9 +25630,9 @@
           ]
         },
         {
-          "id": "mountain-view-light-green-800-562",
-          "cssVar": "--color-light-green-800",
-          "name": "light-green-800",
+          "id": "mountain-view-light-dark-teal-562",
+          "cssVar": "--color-light-dark-teal",
+          "name": "light-dark-teal",
           "label": "Light Green 800",
           "value": "oklch(41.12% 0.127 143.84)",
           "resolvedValue": "oklch(41.12% 0.127 143.84)",
@@ -25674,9 +25674,9 @@
           ]
         },
         {
-          "id": "mountain-view-light-green-900-563",
-          "cssVar": "--color-light-green-900",
-          "name": "light-green-900",
+          "id": "mountain-view-light-jungle-563",
+          "cssVar": "--color-light-jungle",
+          "name": "light-jungle",
           "label": "Light Green 900",
           "value": "oklch(26.41% 0.077 144.55)",
           "resolvedValue": "oklch(26.41% 0.077 144.55)",

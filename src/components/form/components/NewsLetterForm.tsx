@@ -46,7 +46,7 @@ export function NewsletterForm() {
     <article className='mx-auto w-full'>
       <section
         aria-labelledby='newsletter-heading'
-        className='w-full overflow-hidden rounded-[1.25rem] bg-green-900 px-5 py-8 text-white sm:px-10 sm:py-10'
+        className='w-full overflow-hidden rounded-[1.25rem] bg-jungle px-5 py-8 text-white sm:px-10 sm:py-10'
       >
         <div className='mx-auto flex w-full max-w-2xl flex-col items-start gap-4 text-left'>
           <hgroup className='flex flex-col gap-3'>

@@ -60,9 +60,9 @@ export function FunctionalityPageThreeModesSection() {
           </div>
 
           <div
-            className={`${modeCardClassName} hover:border-green-300/40`}
+            className={`${modeCardClassName} hover:border-light-teal/40`}
           >
-            <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-green-900/30 text-green-300'>
+            <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-jungle/30 text-light-teal'>
               <Move className='size-6' aria-hidden />
             </div>
             <h3 className='font-google-sans mb-3 text-xl font-bold text-foreground'>

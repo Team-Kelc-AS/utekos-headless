@@ -12,8 +12,8 @@ const guaranteeIconClassName =
 export function InfoSidebar() {
   return (
     <aside className='w-full lg:col-span-4'>
-      <div className='sticky top-28 flex min-w-0 mt-4 flex-col rounded-2xl bg-green-1000 p-2'>
-        <div className='flex flex-col items-start rounded-xl border border-border bg-green-900 p-6 text-card-foreground shadow-sm ring-1 ring-border sm:p-8'>
+      <div className='sticky top-28 flex min-w-0 mt-4 flex-col rounded-2xl bg-night p-2'>
+        <div className='flex flex-col items-start rounded-xl border border-border bg-jungle p-6 text-card-foreground shadow-sm ring-1 ring-border sm:p-8'>
           <h3 className='mb-8 text-left font-utekos-text-medium text-xl leading-tight text-card-foreground'>
             Dine trygghetsgarantier
           </h3>
