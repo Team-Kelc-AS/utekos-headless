@@ -73,7 +73,7 @@ export const technologyGroups: readonly TechnologyGroup[] = [
         title: 'HydroGuard™ Shell (8000mm)',
         iconColor: 'text-teal-600',
         content:
-          'Et høytpresterende 130 GSM polyester-skall laminert med en pustende PU-membran. Med tapede sømmer og en vannsøyle på 8000mm, leverer Comfyrobe™ fullstendig værbeskyttelse mot kraftig regn og vind, samtidig som membranen slipper ut overskuddsvarme (3000 g/m²/24t) for å forhindre klamhet.',
+          'Et høytpresterende 130 GSM polyester-skall laminert med en pustende PU-membran. Med vannsøyle på 8000mm leverer Comfyrobe™ fullstendig værbeskyttelse mot kraftig regn og vind, samtidig som membranen slipper ut overskuddsvarme (3000 g/m²/24t) for å forhindre klamhet.',
         products: ['Comfyrobe™']
       },
       {
@@ -89,7 +89,7 @@ export const technologyGroups: readonly TechnologyGroup[] = [
         title: 'Teknisk konstruksjon',
         iconColor: 'text-teal-600',
         content:
-          'Designet for funksjon. Inkluderer to-veis YKK®-glidelås for enkel betjening, tapede sømmer for vanntetthet, og refleksdetaljer for synlighet. Ermekantene har justerbare borrelåsstropper for å forsegle varmen eller tilpasse seg hansker. Splitt i sidene sikrer uhindret mobilitet.',
+          'Designet for funksjon. Inkluderer to-veis YKK®-glidelås for enkel betjening, 8 000 mm vannsøyle og refleksdetaljer for synlighet. Ermekantene har justerbare borrelåsstropper for å forsegle varmen eller tilpasse seg hansker. Splitt i sidene sikrer uhindret mobilitet.',
         products: ['Comfyrobe™']
       }
     ]

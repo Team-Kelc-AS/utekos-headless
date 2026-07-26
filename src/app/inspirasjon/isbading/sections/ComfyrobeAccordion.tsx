@@ -26,8 +26,7 @@ const items: ComfyrobeAccordionItem[] = [
         <p>
           Tøff mot været, komfortabel for deg – Comfyrobe™
           forener teknisk funksjon med tidløst design.
-          HydroGuard™-ytterstoffet er vanntett og vindtett med
-          tapede sømmer, mens pustende egenskaper slipper fukt ut
+          HydroGuard™-ytterstoffet er vanntett og vindtett, mens pustende egenskaper slipper fukt ut
           og forhindrer klamhet. Skapt for å holde deg varm, tørr
           og beskyttet – enten på hytteterrassen, ved bobilen,
           etter isbading eller til hverdagslige ærend.
@@ -91,8 +90,8 @@ const items: ComfyrobeAccordionItem[] = [
             Vanntett og vindtett
           </strong>
           <p className='leading-text-paragraph text-sm tracking-normal'>
-            Med minimum 8000 mm vannsøyle, pustende membran
-            (~3000 g/m²/24 t) og tapede sømmer holder Comfyrobe™
+            Med minimum 8000 mm vannsøyle og pustende membran
+            (~3000 g/m²/24 t) holder Comfyrobe™
             deg tørr i regn og skjermer effektivt mot vind – uten
             klamhet.
           </p>

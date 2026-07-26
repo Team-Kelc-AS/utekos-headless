@@ -24,7 +24,7 @@ export const iceBathingFaqItems = [
   {
     question: 'Er den vindtett?',
     answer:
-      'Ytterstoffet av HydroGuard™ har en vannsøyle på 80000 mm og pustende membran (~3000 g/m²/24 t) og tapede sømmer.'
+      'Ytterstoffet av HydroGuard™ har en vannsøyle på 80000 mm og pustende membran (~3000 g/m²/24 t).'
   }
 ] as const
 

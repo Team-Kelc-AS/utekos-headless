@@ -23,7 +23,7 @@ const demoSteps = [
     eyebrow: 'Regnet ute',
     title: 'Skjermet når været snur.',
     description:
-      'HydroGuard™-skallet kombinerer 8 000 mm vannsøyle, tapede sømmer og en pustende membran for skiftende regn og vind.',
+      'HydroGuard™-skallet kombinerer 8 000 mm vannsøyle og en pustende membran for skiftende regn og vind.',
     image: '/comfy_rainy.webp',
     imageAlt: 'Person med mørk Comfyrobe ute i regnvær',
     imageClassName: 'object-cover object-center',
@@ -91,7 +91,7 @@ export function ComfyrobeGuidedDemo() {
         </m.p>
         <m.h2
           id='product-demo-heading'
-          className='font-google-sans mt-3 font-sans text-4xl leading-[0.94] font-bold tracking-[-0.025em] md:text-6xl'
+          className='font-google-sans mt-3 font-sans text-4xl leading-[0.94] font-bold tracking-tight md:text-6xl'
           variants={comfyrobeRevealItem}
         >
           Beskyttelse utenpå. Ro inni.
@@ -226,7 +226,7 @@ export function ComfyrobeGuidedDemo() {
                     </span>
                   </m.div>
                   <m.h3
-                    className='font-google-sans mt-5 font-sans text-5xl leading-[0.92] font-bold tracking-[-0.025em] 2xl:text-6xl'
+                    className='font-google-sans mt-5 font-sans text-5xl leading-[0.92] font-bold tracking-tight 2xl:text-6xl'
                     variants={comfyrobeRevealItem}
                   >
                     {step.title}

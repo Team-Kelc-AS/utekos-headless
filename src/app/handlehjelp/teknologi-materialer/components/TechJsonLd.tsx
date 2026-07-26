@@ -80,7 +80,7 @@ export async function TechJsonLd() {
         'acceptedAnswer': {
           '@type': 'Answer',
           'text':
-            'Ja, produkter med HydroGuard™ Shell har en vannsøyle på minimum 8000mm, tapede sømmer og en pustende membran som beskytter mot kraftig regn og vind.'
+            'Ja, produkter med HydroGuard™ Shell har en vannsøyle på minimum 8000mm og pustende membran som beskytter mot kraftig regn og vind.'
         }
       },
       {
