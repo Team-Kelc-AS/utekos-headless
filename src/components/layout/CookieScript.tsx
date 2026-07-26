@@ -1,6 +1,5 @@
 export const CONSENT_MODE_DEFAULTS = `
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ 'gtm.blocklist': ['sandboxedScripts'] });
   window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
   window.gtag('consent', 'default', {
     ad_personalization: 'denied',
@@ -27,7 +26,6 @@ export const CONSENT_MODE_DEFAULTS = `
     }
   };
   window.addEventListener('load', function() {
-    window.dataLayer.push({ 'gtm.blocklist': [] });
     if (window.Cookiebot && window.Cookiebot.consent) {
       window.dataLayer.push({ event: 'cookie_consent_update' });
     }
