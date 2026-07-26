@@ -27,10 +27,10 @@ export async function CTASection() {
 
       <div className='relative container mx-auto px-4'>
         <AnimatedBlock className='will-animate-fade-in-scale mb-12 text-center'>
-          <h2 className='text-fluid-display mb-4 leading-[0.95] font-bold tracking-normal text-foreground'>
+          <h2 className='text-fluid-display font-google-sans mb-4 leading-[0.95] font-bold tracking-normal text-foreground'>
             Sikre deg varmen nå
           </h2>
-          <p className='leading-text-paragraph text-ancient-water mx-auto max-w-2xl text-xl tracking-normal'>
+          <p className='leading-text-paragraph mx-auto max-w-2xl text-xl tracking-normal text-ancient-water'>
             Gjør som hundrevis av andre isbadere. Bestill din
             Comfyrobe i dag og kjenn forskjellen.
           </p>

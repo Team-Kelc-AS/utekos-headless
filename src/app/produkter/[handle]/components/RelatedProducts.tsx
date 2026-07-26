@@ -25,7 +25,7 @@ export function RelatedProducts({
   return (
     <article className='mt-8 rounded-[1.75rem] bg-transparent px-6 py-12 md:py-16'>
       <div className='mb-8 text-left md:mb-12 lg:mb-16'>
-        <h2 className='font-sans text-6xl font-bold text-foreground md:text-7xl'>
+        <h2 className='font-google-sans font-sans text-6xl font-bold text-foreground md:text-7xl'>
           Favoritter blant andre livsnytere
         </h2>
       </div>

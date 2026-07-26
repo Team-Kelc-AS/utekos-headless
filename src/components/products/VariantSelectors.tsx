@@ -34,14 +34,14 @@ export function VariantSelectors({
           if (option.optionValues.length === 1) {
             return (
               <div key={option.name} className='space-y-2'>
-                <h3 className='text-sm font-semibold tracking-wide text-foreground uppercase'>
+                <h3 className='font-utekos-text-medium text-sm tracking-wide text-foreground uppercase'>
                   {option.name}
                 </h3>
                 <p className='flex items-center gap-2 text-base font-medium text-foreground'>
                   {isColorOption && (
                     <span
                       aria-hidden='true'
-                      className='bg-havdyp size-3 rounded-full border border-foreground/35 shadow-[0_0_0_2px_color-mix(in_oklab,var(--foreground)_12%,transparent)]'
+                      className='size-3 rounded-full border border-foreground/35 bg-havdyp shadow-[0_0_0_2px_color-mix(in_oklab,var(--foreground)_12%,transparent)]'
                     />
                   )}
                   {currentSelectedValue}
@@ -52,7 +52,7 @@ export function VariantSelectors({
 
           return (
             <div key={option.name} className='space-y-3'>
-              <h3 className='text-sm font-semibold tracking-wide text-foreground uppercase'>
+              <h3 className='font-utekos-text-medium text-sm tracking-wide text-foreground uppercase'>
                 {option.name}
               </h3>
 
@@ -79,7 +79,7 @@ export function VariantSelectors({
                       {isColorOption && (
                         <span
                           aria-hidden='true'
-                          className='bg-havdyp size-3 rounded-full border border-background/25 shadow-[0_0_0_2px_color-mix(in_oklab,var(--foreground)_35%,transparent)]'
+                          className='size-3 rounded-full border border-background/25 bg-havdyp shadow-[0_0_0_2px_color-mix(in_oklab,var(--foreground)_35%,transparent)]'
                         />
                       )}
                       {value}

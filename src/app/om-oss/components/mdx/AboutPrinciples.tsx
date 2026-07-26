@@ -30,10 +30,10 @@ export function AboutPrinciples() {
       <div className='mx-auto flex w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8'>
         <div className='mb-12 flex max-w-3xl flex-col items-start pt-6 pb-6 md:pt-8 lg:mb-16 lg:pt-10'>
           <AboutBadge className='mb-6'>Vårt DNA</AboutBadge>
-          <h2 className='text-left font-sans text-4xl leading-tight font-bold text-inherit sm:text-5xl'>
+          <h2 className='font-google-sans text-left font-sans text-4xl leading-tight font-bold text-inherit sm:text-5xl'>
             Kjernen i alt vi gjør
           </h2>
-          <p className='font-utekos-text-medium mt-6 max-w-prose text-left text-lg leading-relaxed text-inherit/90'>
+          <p className='mt-6 max-w-prose text-left font-utekos-text-medium text-lg leading-relaxed text-inherit/90'>
             Fire ufravikelige prinsipper som sikrer at du alltid
             får den opplevelsen du fortjener.
           </p>
@@ -54,12 +54,12 @@ export function AboutPrinciples() {
                       strokeWidth={1.8}
                     />
                   </div>
-                  <h3 className='text-left font-sans text-xl leading-tight font-semibold sm:text-2xl'>
+                  <h3 className='text-left font-sans font-utekos-text-medium text-xl leading-tight sm:text-2xl'>
                     {item.title}
                   </h3>
                 </div>
 
-                <p className='font-utekos-text mt-auto max-w-prose text-left text-base leading-relaxed text-foreground/90'>
+                <p className='mt-auto max-w-prose text-left font-utekos-text text-base leading-relaxed text-foreground/90'>
                   {item.text}
                 </p>
               </div>

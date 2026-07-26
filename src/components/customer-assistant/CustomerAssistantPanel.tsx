@@ -103,23 +103,23 @@ export function CustomerAssistantPanel({
       aria-modal='false'
       aria-labelledby={headingId}
       onKeyDown={handleKeyDown}
-      className='animate-in fade-in-0 slide-in-from-bottom-3 fixed inset-x-4 top-20 bottom-20 z-40 flex flex-col overflow-hidden rounded-3xl border border-border bg-popover text-popover-foreground shadow-2xl duration-200 motion-reduce:transform-none motion-reduce:animate-none motion-reduce:transition-none sm:inset-x-auto sm:top-auto sm:right-6 sm:bottom-22 sm:max-h-[min(42rem,calc(100svh-7rem))] sm:w-[26rem]'
+      className='animate-in fade-in-0 slide-in-from-bottom-3 fixed inset-x-4 top-20 bottom-20 z-40 flex flex-col overflow-hidden rounded-3xl border border-border bg-popover text-popover-foreground shadow-2xl duration-200 motion-reduce:transform-none motion-reduce:animate-none motion-reduce:transition-none sm:inset-x-auto sm:top-auto sm:right-6 sm:bottom-22 sm:max-h-[min(42rem,calc(100svh-7rem))] sm:w-104'
     >
       <header className='flex items-start justify-between gap-4 border-b border-border px-5 py-4'>
         <div>
-          <p className='text-xs font-semibold tracking-wide text-popover-foreground/65 uppercase'>
+          <p className='font-utekos-text-medium text-xs tracking-wide text-popover-foreground/65 uppercase'>
             Utekos
           </p>
           <h2
             ref={headingRef}
             id={headingId}
             tabIndex={-1}
-            className='mt-1 text-xl leading-tight font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring'
+            className='mt-1 font-utekos-text-medium text-xl leading-tight outline-none focus-visible:ring-2 focus-visible:ring-ring'
           >
             Kjøpshjelp
           </h2>
           <p className='mt-1 text-sm text-popover-foreground/70'>
-            Praktisk hjelp før du velger.
+            Skreddersy varmen.
           </p>
         </div>
         <button
@@ -169,7 +169,7 @@ export function CustomerAssistantPanel({
             <button
               type='button'
               onClick={onRetry}
-              className='inline-flex min-h-11 items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
+              className='inline-flex min-h-11 items-center justify-center rounded-xl border border-border bg-background px-4 py-2 font-utekos-text-medium text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
             >
               Prøv igjen
             </button>

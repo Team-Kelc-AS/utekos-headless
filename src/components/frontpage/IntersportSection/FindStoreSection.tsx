@@ -32,11 +32,11 @@ export function FindInStoreSection() {
             <div className='flex flex-col items-start text-left'>
               <div className='mb-4 flex items-center gap-3 rounded-full border border-red-500/30 bg-red-700 px-4 py-2'>
                 <MapPin className='text-access/90 h-5 w-5' />
-                <span className='text-acess/800 font-semibold'>
+                <span className='text-acess/800 font-utekos-text-medium'>
                   Fysisk butikk i Bergen
                 </span>
               </div>
-              <h2 className='text-3xl font-bold text-balance text-white sm:text-4xl'>
+              <h2 className='font-google-sans text-3xl font-bold text-balance text-white sm:text-4xl'>
                 Opplev Utekos i fysisk butikk
               </h2>
               <p className='/85 mt-4 max-w-lg text-lg text-balance text-foreground/85'>

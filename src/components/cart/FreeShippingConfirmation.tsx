@@ -11,7 +11,7 @@ export function FreeShippingConfirmation() {
           className='h-5 w-5 text-secondary'
           aria-hidden='true'
         />
-        <span className='font-semibold'>
+        <span className='font-utekos-text-medium'>
           Gratulerer, du har fått fri frakt!
         </span>
       </div>

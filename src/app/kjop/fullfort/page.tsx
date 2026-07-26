@@ -17,7 +17,7 @@ export default async function KjopFullfortPage({
 
   return (
     <main className='mx-auto flex min-h-[50vh] max-w-2xl flex-col justify-center px-4 py-16'>
-      <h1 className='text-3xl font-semibold tracking-tight text-foreground'>
+      <h1 className='font-utekos-text-medium text-3xl tracking-tight text-foreground'>
         Takk for kjøpet
       </h1>
       <p className='mt-4 text-base text-foreground'>
@@ -43,7 +43,7 @@ export default async function KjopFullfortPage({
         </Link>
         <Link
           href='/'
-          className=' inline-flex min-h-11 items-center justify-center rounded-md border border-border px-5 py-2 text-sm font-medium text-foreground'
+          className='inline-flex min-h-11 items-center justify-center rounded-md border border-border px-5 py-2 text-sm font-medium text-foreground'
         >
           Til forsiden
         </Link>

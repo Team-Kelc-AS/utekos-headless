@@ -24,7 +24,7 @@ export const ListItem = React.forwardRef<
           className
         )}
       >
-        <div className='text-[0.9375rem] leading-4 font-semibold tracking-[0.01em] text-foreground'>
+        <div className='font-utekos-text-medium text-[0.9375rem] leading-4 tracking-[0.01em] text-foreground'>
           {title}
         </div>
         {children && (

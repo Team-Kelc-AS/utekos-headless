@@ -20,19 +20,33 @@ export function NameCursor({
 }) {
   return (
     <motion.div
-      className={cn('absolute z-10 will-change-transform', className)}
+      className={cn(
+        'absolute z-10 will-change-transform',
+        className
+      )}
       animate={{ x: [0, 4, -3, -5, 0], y: [0, -3, 5, -3, 0] }}
-      transition={{ duration: 4.8, ease: 'easeInOut', repeat: Infinity }}
+      transition={{
+        duration: 4.8,
+        ease: 'easeInOut',
+        repeat: Infinity
+      }}
       aria-hidden
     >
       <motion.div
         className='flex items-center gap-1.5'
-        animate={{ scale: [1, 1.025, 1], opacity: [0.9, 1, 0.9] }}
-        transition={{ duration: 2.4, ease: 'easeInOut', repeat: Infinity }}
+        animate={{
+          scale: [1, 1.025, 1],
+          opacity: [0.9, 1, 0.9]
+        }}
+        transition={{
+          duration: 2.4,
+          ease: 'easeInOut',
+          repeat: Infinity
+        }}
       >
         <CursorIcon side={side} style={{ color }} />
         <span
-          className='rounded-md px-2 py-0.5 text-xs font-semibold shadow-sm'
+          className='rounded-md px-2 py-0.5 font-utekos-text-medium text-xs shadow-sm'
           style={{ backgroundColor: color, color: foreground }}
         >
           {name}

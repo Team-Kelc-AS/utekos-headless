@@ -76,7 +76,7 @@ const textViewport = {
 } as const
 
 const textBlockClassName =
-  'mx-auto flex w-full max-w-[18ch] flex-col items-center justify-center gap-1 text-center font-[family-name:var(--font-google-sans)] text-[1.5rem] leading-[0.96] font-bold tracking-normal text-card-foreground  min-[390px]:text-[1.75rem] sm:text-4xl lg:text-[2.5rem] xl:text-5xl'
+  'mx-auto flex w-full max-w-[18ch] flex-col items-center justify-center gap-1 text-center font-[family-name:var(--font-google-sans)] text-[1.5rem] leading-[0.96] font-google-sans font-bold tracking-normal text-card-foreground  min-[390px]:text-[1.75rem] sm:text-4xl lg:text-[2.5rem] xl:text-5xl'
 
 const textLineClassName = 'block max-w-full whitespace-nowrap'
 

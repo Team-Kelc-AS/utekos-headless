@@ -26,8 +26,8 @@ export function LandingProductHighlightsPanel({
         'bg-card text-card-foreground shadow-[0_12px_40px_rgba(0,0,0,0.28)]'
       )}
     >
-      <div className='border-border border-b px-5 py-4 sm:px-6 sm:py-5'>
-        <h3 className='text-base font-bold tracking-tight sm:text-lg'>
+      <div className='border-b border-border px-5 py-4 sm:px-6 sm:py-5'>
+        <h3 className='font-google-sans text-base font-bold tracking-tight sm:text-lg'>
           Dette gjør {modelName} spesiell
         </h3>
         <p className='mt-1 text-sm text-card-foreground/80'>
@@ -35,16 +35,19 @@ export function LandingProductHighlightsPanel({
         </p>
       </div>
 
-      <Accordion key={`highlights-${selectedModel}`} className='w-full'>
+      <Accordion
+        key={`highlights-${selectedModel}`}
+        className='w-full'
+      >
         {highlights.map((highlight, index) => (
           <AccordionItem
             key={highlight.title}
             value={highlight.title}
-            className='border-border border-b last:border-b-0'
+            className='border-b border-border last:border-b-0'
           >
             <AccordionTrigger
               className={cn(
-                'px-5 py-4 text-left text-sm font-semibold sm:px-6 sm:text-base',
+                'px-5 py-4 text-left font-utekos-text-medium text-sm sm:px-6 sm:text-base',
                 'text-card-foreground hover:text-primary hover:no-underline',
                 'data-[state=open]:text-primary'
               )}
@@ -52,11 +55,13 @@ export function LandingProductHighlightsPanel({
               <span className='flex min-w-0 items-center gap-3'>
                 <span
                   aria-hidden
-                  className='bg-primary text-primary-foreground flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums'
+                  className='font-google-sans flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground tabular-nums'
                 >
                   {index + 1}
                 </span>
-                <span className='min-w-0'>{highlight.title}</span>
+                <span className='min-w-0'>
+                  {highlight.title}
+                </span>
               </span>
             </AccordionTrigger>
             <AccordionContent

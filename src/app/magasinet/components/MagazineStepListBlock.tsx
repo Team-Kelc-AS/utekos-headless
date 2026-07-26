@@ -12,7 +12,7 @@ export function MagazineStepListBlock({
       {(block.title || block.intro) && (
         <header className='mb-8'>
           {block.title && (
-            <h2 className='font-sans text-4xl leading-[0.95] font-bold text-balance text-foreground sm:text-5xl'>
+            <h2 className='font-google-sans font-sans text-4xl leading-[0.95] font-bold text-balance text-foreground sm:text-5xl'>
               {block.title}
             </h2>
           )}
@@ -29,11 +29,11 @@ export function MagazineStepListBlock({
             key={step.title}
             className='dark:border-dark-background/10 grid gap-4 rounded-lg border border-background/10 bg-foreground p-5 sm:grid-cols-[3rem_1fr]'
           >
-            <div className='dark:bg-dark-background flex size-11 items-center justify-center rounded-lg bg-background font-sans text-lg leading-none font-bold text-foreground'>
+            <div className='dark:bg-dark-background font-google-sans flex size-11 items-center justify-center rounded-lg bg-background font-sans text-lg leading-none font-bold text-foreground'>
               {index + 1}
             </div>
             <div>
-              <h3 className='font-sans text-2xl leading-[0.95] font-bold text-background'>
+              <h3 className='font-google-sans font-sans text-2xl leading-[0.95] font-bold text-background'>
                 {step.title}
               </h3>
               <p className='mt-3 text-base leading-[1.55] text-background/80'>

@@ -18,20 +18,20 @@ import { cn } from '@/lib/utils/className'
 import type { Technology } from '../types'
 
 const iconMap: { [key: string]: React.ElementType } = {
-  thermometer: Thermometer,
-  feather: Feather,
-  weight: Weight,
-  gem: Gem,
-  shield: Shield,
-  layers: Layers,
-  flame: Flame,
-  cloud: Cloud,
-  droplet: Droplet,
-  sun: Sun,
-  zap: Zap,
-  wind: Wind,
+  'thermometer': Thermometer,
+  'feather': Feather,
+  'weight': Weight,
+  'gem': Gem,
+  'shield': Shield,
+  'layers': Layers,
+  'flame': Flame,
+  'cloud': Cloud,
+  'droplet': Droplet,
+  'sun': Sun,
+  'zap': Zap,
+  'wind': Wind,
   'maximize-2': Maximize2,
-  shirt: Shirt
+  'shirt': Shirt
 }
 
 export const TechnologyBlock = ({
@@ -66,7 +66,7 @@ export const TechnologyBlock = ({
         </div>
         <h3
           className={cn(
-            'text-xl font-bold transition-colors',
+            'font-google-sans text-xl font-bold transition-colors',
             isActive ?
               'text-card-foreground'
             : 'text-muted-foreground'

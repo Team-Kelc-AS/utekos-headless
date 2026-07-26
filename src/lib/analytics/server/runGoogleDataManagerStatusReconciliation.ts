@@ -16,6 +16,8 @@ export type GoogleDataManagerStatusBatchSummary = {
   processing: number
   retried: number
   succeeded: number
+  succeededWithWarnings: number
+  timedOut: number
   unknown: number
 }
 
@@ -51,11 +53,15 @@ function countOutcome(
     case 'succeeded':
       summary.succeeded += 1
       break
+    case 'succeeded_with_warnings':
+      summary.succeededWithWarnings += 1
+      break
     case 'processing':
       summary.processing += 1
       break
     case 'failed':
     case 'partial_success':
+    case 'processing_failure':
       summary.deadLettered += 1
       break
     case 'retry':
@@ -73,6 +79,8 @@ export async function runGoogleDataManagerStatusReconciliation(
 ): Promise<GoogleDataManagerStatusBatchSummary> {
   validateBatchSize(input.maxItems)
 
+  const timedOut = await dependencies.store.expireStale()
+
   const claims: GoogleDataManagerStatusClaim[] = []
 
   while (claims.length < input.maxItems) {
@@ -88,6 +96,8 @@ export async function runGoogleDataManagerStatusReconciliation(
     processing: 0,
     retried: 0,
     succeeded: 0,
+    succeededWithWarnings: 0,
+    timedOut,
     unknown: 0
   }
 

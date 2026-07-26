@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { protos } from '@google-ads/datamanager'
-import type { CanonicalPurchase } from '../purchaseEvent'
 import {
+  canonicalPurchaseSchema,
   deterministicPurchaseEventId,
-  shopifyPurchaseTransactionId
+  shopifyPurchaseTransactionId,
+  type CanonicalPurchase
 } from '../purchaseEvent'
 import { mapCanonicalPurchaseToGoogleDataManager } from './mapCanonicalPurchaseToGoogleDataManager'
 
@@ -45,12 +46,8 @@ function purchase(
       source: 'cookiebot',
       version: '1'
     },
-    browser_id: {
-      ga_client_id: '1773610784.1784104343'
-    },
-    click_id: {
-      fbclid: 'meta-click-id'
-    },
+    browser_id: { ga_client_id: '1773610784.1784104343' },
+    click_id: { fbclid: 'meta-click-id' },
     external_id: 'customer-123',
     client_ip_address: '46.15.198.87',
     event_device_info: {
@@ -64,15 +61,14 @@ function purchase(
       region_code: '07',
       source: 'ip_geolocation'
     },
-    user_data: {
-      email_sha256: [emailHash]
-    },
+    user_data: { email_sha256: [emailHash] },
     custom_data: {
       currency: 'NOK',
       value: 1969.1,
       tax_value: 0,
       shipping_value: 0,
-      transaction_id: shopifyPurchaseTransactionId(orderLegacyId),
+      transaction_id:
+        shopifyPurchaseTransactionId(orderLegacyId),
       order_name: '1859',
       items: [
         {
@@ -105,7 +101,10 @@ test('maps a canonical purchase to a Google Data Manager event', () => {
   assert.deepEqual(mapped.userData, {
     userIdentifiers: [{ emailAddress: emailHash }]
   })
-  assert.equal(mapped.cartData?.items?.[0]?.itemId, '43959919051000')
+  assert.equal(
+    mapped.cartData?.items?.[0]?.itemId,
+    '43959919051000'
+  )
 })
 
 test('requires granted analytics consent', () => {
@@ -123,6 +122,68 @@ test('requires granted analytics consent', () => {
         })
       ),
     /granted analytics consent/
+  )
+})
+
+test('accepts GCLID as the only Google Analytics identifier', () => {
+  const mapped = normalize(
+    mapCanonicalPurchaseToGoogleDataManager(
+      purchase({
+        browser_id: undefined,
+        external_id: undefined,
+        click_id: { gclid: 'google-click-id' }
+      })
+    )
+  )
+
+  assert.equal(mapped.clientId, undefined)
+  assert.equal(mapped.userId, undefined)
+  assert.deepEqual(mapped.adIdentifiers, {
+    gclid: 'google-click-id'
+  })
+})
+
+test('accepts User-ID as the only Google Analytics identifier', () => {
+  const mapped = normalize(
+    mapCanonicalPurchaseToGoogleDataManager(
+      purchase({
+        browser_id: undefined,
+        click_id: undefined,
+        external_id: 'shopify_customer_123'
+      })
+    )
+  )
+
+  assert.equal(mapped.clientId, undefined)
+  assert.equal(mapped.userId, 'shopify_customer_123')
+  assert.equal(mapped.adIdentifiers, undefined)
+})
+
+test('rejects hashed userData as the only identifier', () => {
+  assert.throws(
+    () =>
+      mapCanonicalPurchaseToGoogleDataManager(
+        purchase({
+          browser_id: undefined,
+          click_id: undefined,
+          external_id: undefined,
+          user_data: { email_sha256: [emailHash] }
+        })
+      ),
+    /clientId, GCLID, or User-ID/
+  )
+})
+
+test('rejects an empty purchase item list', () => {
+  const event = purchase()
+
+  assert.throws(
+    () =>
+      canonicalPurchaseSchema.parse({
+        ...event,
+        custom_data: { ...event.custom_data, items: [] }
+      }),
+    /Too small/
   )
 })
 
@@ -147,7 +208,9 @@ test('maps documented cart discounts, coupon and item revenue', () => {
 
   assert.equal(mapped.conversionValue, 0)
   assert.equal(mapped.cartData?.transactionDiscount, 1592)
-  assert.deepEqual(mapped.cartData?.couponCodes, ['FULLDISCOUNT'])
+  assert.deepEqual(mapped.cartData?.couponCodes, [
+    'FULLDISCOUNT'
+  ])
   assert.equal(mapped.cartData?.items?.[0]?.unitPrice, 0)
   assert.deepEqual(
     mapped.cartData?.items?.[0]?.additionalItemParameters,

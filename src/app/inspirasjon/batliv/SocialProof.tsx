@@ -6,7 +6,7 @@ export function SocialProof() {
         <div className='mx-auto max-w-3xl text-center'>
           <h2 className='mb-8 pb-8'>Skippere elsker Utekos</h2>
 
-          <Card className='  border-border bg-card text-card-foreground'>
+          <Card className='border-border bg-card text-card-foreground'>
             <CardContent className='p-12'>
               <blockquote className='mb-6 text-xl text-card-foreground italic'>
                 &quot;Som mangeårig seiler er Utekos det beste
@@ -18,7 +18,7 @@ export function SocialProof() {
               <div className='flex items-center justify-center gap-4'>
                 <div className='dark:bg-dark-secondary h-12 w-12 rounded-full bg-secondary' />
                 <div className='text-left'>
-                  <p className='font-semibold'>
+                  <p className='font-utekos-text-medium'>
                     Kjell-Arne Larsen
                   </p>
                   <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>

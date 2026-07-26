@@ -4,6 +4,7 @@ import {
   deterministicPurchaseEventId,
   shopifyPurchaseTransactionId
 } from '../purchaseEvent'
+import { hashCustomerMatchIdentifier } from '@/lib/google/data-manager/hashCustomerMatchIdentifier'
 import { shopifyGraphqlOrderToCanonicalPurchase } from './shopifyGraphqlOrderToCanonicalPurchase'
 import type { ShopifyCommerceReconciliationOrder } from './shopifyCommerceReconciliationGraphqlSchema'
 
@@ -60,6 +61,7 @@ function paidOrder(
     },
     shippingAddress: {
       city: 'Oslo',
+      phone: null,
       provinceCode: '03',
       zip: '0150',
       countryCodeV2: 'NO'
@@ -131,4 +133,41 @@ test('shopifyGraphqlOrderToCanonicalPurchase fails closed without order name', (
       ),
     /requires a name/
   )
+})
+
+test('falls through invalid and blank higher-priority phones to a normalized shipping-address phone', () => {
+  const order = paidOrder()
+  order.phone = 'not-a-phone'
+  order.customer!.defaultPhoneNumber = { phoneNumber: ' ' }
+  order.shippingAddress = {
+    ...order.shippingAddress!,
+    phone: '9999 9999'
+  }
+
+  const event = shopifyGraphqlOrderToCanonicalPurchase(order)
+
+  assert.deepEqual(event.user_data?.phone_sha256, [
+    hashCustomerMatchIdentifier('+4799999999')
+  ])
+  assert.doesNotMatch(JSON.stringify(event), /9999 9999/)
+})
+
+test('uses the billing-address phone only when higher-precedence phone sources are absent', () => {
+  const order = paidOrder({
+    shippingAddress: null,
+    billingAddress: {
+      city: 'Oslo',
+      phone: '0047 9999 9999',
+      provinceCode: '03',
+      zip: '0150',
+      countryCodeV2: 'NO'
+    }
+  })
+
+  const event = shopifyGraphqlOrderToCanonicalPurchase(order)
+
+  assert.deepEqual(event.user_data?.phone_sha256, [
+    hashCustomerMatchIdentifier('+4799999999')
+  ])
+  assert.doesNotMatch(JSON.stringify(event), /0047 9999 9999/)
 })

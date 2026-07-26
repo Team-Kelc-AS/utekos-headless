@@ -7,7 +7,7 @@ import { TableCellContent } from './TableCellContent'
 
 export function ComparisonTable() {
   return (
-    <div className='dark:border-dark-card-foreground  max-w-full overflow-x-auto rounded-xl border border-card-foreground bg-card text-card-foreground contain-[paint]'>
+    <div className='dark:border-dark-card-foreground max-w-full overflow-x-auto rounded-xl border border-card-foreground bg-card text-card-foreground contain-[paint]'>
       <table className='w-full min-w-[880px] border-collapse text-left'>
         <caption className='sr-only'>
           Sammenligning av Utekos Dun, Utekos Mikrofiber og
@@ -17,7 +17,7 @@ export function ComparisonTable() {
           <tr className='bg-featured dark:bg-dark-featured text-foreground'>
             <th
               scope='col'
-              className='w-[20%] p-5 font-sans text-base font-bold tracking-[-0.01em]'
+              className='font-google-sans w-[20%] p-5 font-sans text-base font-bold tracking-[-0.01em]'
             >
               Egenskap
             </th>
@@ -25,7 +25,7 @@ export function ComparisonTable() {
               <th
                 key={model.key}
                 scope='col'
-                className='w-[26.6%] p-5 text-center font-sans text-base font-bold tracking-[-0.01em]'
+                className='font-google-sans w-[26.6%] p-5 text-center font-sans text-base font-bold tracking-[-0.01em]'
               >
                 {model.name}
               </th>
@@ -40,7 +40,7 @@ export function ComparisonTable() {
             >
               <th
                 scope='row'
-                className='p-5 align-top font-sans text-base leading-[1.05] font-bold tracking-[-0.01em] text-card-foreground'
+                className='font-google-sans p-5 align-top font-sans text-base leading-[1.05] font-bold tracking-[-0.01em] text-card-foreground'
               >
                 <span>{row.feature}</span>
                 <span className='dark:text-dark-muted-foreground mt-2 block text-xs leading-[1.35] font-medium text-muted-foreground'>

@@ -19,6 +19,7 @@ const pageInfoSchema = z.object({
 const addressSchema = z
   .object({
     city: z.string().nullable().optional(),
+    phone: z.string().nullable().optional(),
     provinceCode: z.string().nullable().optional(),
     zip: z.string().nullable().optional(),
     countryCodeV2: z.string().nullable().optional()
@@ -290,12 +291,14 @@ query ShopifyCommerceReconciliation(
       }
       shippingAddress {
         city
+        phone
         provinceCode
         zip
         countryCodeV2
       }
       billingAddress {
         city
+        phone
         provinceCode
         zip
         countryCodeV2

@@ -3,6 +3,7 @@ import {
   CHROME_EXTENSION_URL_PATTERN,
   isIgnorableClientError
 } from '@/lib/observability/client/isIgnorableClientError'
+import { describeUnhandledRejection } from '@/lib/observability/client/describeUnhandledRejection'
 import type { LogPayload } from 'types/observability/log/LogPayload'
 
 /**
@@ -22,7 +23,9 @@ import type { LogPayload } from 'types/observability/log/LogPayload'
  */
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
-const SENTRY_DSN = process.env.NEXT_PUBLIC_PERFORMANCE_SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN
+const SENTRY_DSN =
+  process.env.NEXT_PUBLIC_PERFORMANCE_SENTRY_DSN ??
+  process.env.NEXT_PUBLIC_SENTRY_DSN
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -38,25 +41,15 @@ Sentry.init({
 const MAX_REPORTED_ERRORS = 10
 const reportedSignatures = new Set<string>()
 
-function beaconError(event: string, data: Record<string, unknown>) {
+function beaconError(payload: LogPayload) {
   if (reportedSignatures.size >= MAX_REPORTED_ERRORS) return
 
-  const signature = `${event}:${String(data.message ?? '')}:${String(data.source ?? '')}`
+  const signature = JSON.stringify(payload)
   if (reportedSignatures.has(signature)) return
   reportedSignatures.add(signature)
 
-  const payload: LogPayload = {
-    event,
-    level: 'error',
-    data,
-    context: {
-      pathname: window.location.pathname,
-      href: window.location.href
-    }
-  }
-
   if (!IS_PRODUCTION) {
-    console.error(`[instrumentation-client] ${event}`, payload)
+    console.error(`[instrumentation-client] ${payload.event}`)
     return
   }
 
@@ -64,7 +57,10 @@ function beaconError(event: string, data: Record<string, unknown>) {
     const body = JSON.stringify(payload)
 
     if (navigator.sendBeacon) {
-      navigator.sendBeacon('/api/log', new Blob([body], { type: 'application/json' }))
+      navigator.sendBeacon(
+        '/api/log',
+        new Blob([body], { type: 'application/json' })
+      )
       return
     }
 
@@ -83,53 +79,43 @@ try {
   performance.mark('app-init')
 
   window.addEventListener('error', event => {
-    // #region agent log
-    if (
-      event.message.includes('cannot be a descendant') ||
-      event.message.includes('Hydration failed')
-    ) {
-      fetch('http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4c1e91' },
-        body: JSON.stringify({
-          sessionId: '4c1e91',
-          location: 'instrumentation-client.ts:error',
-          message: 'hydration_or_nesting_error',
-          data: {
-            pathname: window.location.pathname,
-            errorMessage: event.message,
-            line: event.lineno
-          },
-          timestamp: Date.now(),
-          hypothesisId: 'A'
-        })
-      }).catch(() => {})
-    }
-    // #endregion
-
-    const stack = event.error instanceof Error ? event.error.stack : undefined
+    const stack =
+      event.error instanceof Error ?
+        event.error.stack
+      : undefined
     if (
       isIgnorableClientError({
         message: event.message,
         source: event.filename,
         stack
       })
-    ) return
+    )
+      return
 
-    beaconError('client_error', {
-      message: event.message,
-      source: event.filename,
-      line: event.lineno,
-      column: event.colno,
-      stack
+    beaconError({
+      event: 'client_error',
+      level: 'error',
+      data: {
+        source: 'window_error',
+        ...(event.lineno ? { line: event.lineno } : {}),
+        ...(event.colno ? { column: event.colno } : {})
+      },
+      context: { pathname: window.location.pathname }
     })
   })
 
   window.addEventListener('unhandledrejection', event => {
-    const reason = event.reason
-    beaconError('client_unhandled_rejection', {
-      message: reason instanceof Error ? reason.message : String(reason),
-      stack: reason instanceof Error ? reason.stack : undefined
+    beaconError({
+      event: 'client_unhandled_rejection',
+      level: 'error',
+      data: {
+        source: 'unhandled_rejection',
+        ...describeUnhandledRejection(
+          event.reason,
+          event.promise
+        )
+      },
+      context: { pathname: window.location.pathname }
     })
   })
 } catch {
@@ -141,11 +127,15 @@ try {
  * Adds a Performance mark so SPA transition timing is visible in dev tools
  * and Real User Monitoring, without emitting any runtime console noise.
  */
-export function onRouterTransitionStart(url: string, navigationType: 'push' | 'replace' | 'traverse') {
-  Sentry.captureRouterTransitionStart(url, navigationType)
+export function onRouterTransitionStart(
+  url: string,
+  navigationType: 'push' | 'replace' | 'traverse'
+) {
+  const pathname = new URL(url, window.location.origin).pathname
+  Sentry.captureRouterTransitionStart(pathname, navigationType)
 
   try {
-    performance.mark(`nav-start:${navigationType}:${url}`)
+    performance.mark(`nav-start:${navigationType}:${pathname}`)
   } catch {
     // Marking is best-effort.
   }

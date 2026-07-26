@@ -7,6 +7,7 @@ import {
 } from '@/lib/analytics/leadFormTrackingContext'
 import { getLeadRequestContextFromHeaders } from '@/lib/analytics/server/getLeadRequestContextFromHeaders'
 import { recordAcceptedGenerateLead } from '@/lib/analytics/server/recordAcceptedGenerateLead'
+import { classifyOperationalFailure } from '@/lib/observability/logging/appLogContract'
 import { logToAppLogs } from '@/lib/utils/logToAppLogs'
 import type {
   LeadFormId,
@@ -77,26 +78,28 @@ export async function recordLeadSubmission(
       }
     })
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : 'Unknown error'
-    await logToAppLogs(
-      'ERROR',
-      'Marketing Lead Persist Failed',
-      {
-        error: message,
-        formId: input.formId,
-        leadId: input.leadId
-      }
-    )
+    await logToAppLogs({
+      event: 'lead.persist_failed',
+      level: 'ERROR',
+      data: {
+        reasonCode: classifyOperationalFailure(error),
+        formId: input.formId
+      },
+      context: {}
+    })
     return { leadId: input.leadId }
   }
 
   const pageUrl = input.trackingContext?.page_url
   if (!pageUrl) {
-    await logToAppLogs('ERROR', 'Generate Lead Record Skipped', {
-      reason: 'missing_page_url',
-      formId: input.formId,
-      leadId: input.leadId
+    await logToAppLogs({
+      event: 'lead.record_skipped',
+      level: 'ERROR',
+      data: {
+        reasonCode: 'missing_page_url',
+        formId: input.formId
+      },
+      context: {}
     })
     return { leadId: input.leadId }
   }
@@ -131,12 +134,14 @@ export async function recordLeadSubmission(
       dataLayerEvent: result.dataLayerEvent
     }
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : 'Unknown error'
-    await logToAppLogs('ERROR', 'Generate Lead Record Failed', {
-      error: message,
-      formId: input.formId,
-      leadId: input.leadId
+    await logToAppLogs({
+      event: 'lead.record_failed',
+      level: 'ERROR',
+      data: {
+        reasonCode: classifyOperationalFailure(error),
+        formId: input.formId
+      },
+      context: {}
     })
     return { leadId: input.leadId }
   }

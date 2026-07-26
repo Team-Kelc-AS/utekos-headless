@@ -23,7 +23,7 @@ export function SectionSocialProof() {
     <SkreddersyMotionProvider>
       <article
         aria-labelledby='socialproof-heading'
-        className='dark:border-dark-background/20  relative w-full max-w-full overflow-hidden border-t border-background/20 bg-card py-20 text-foreground md:py-28'
+        className='dark:border-dark-background/20 relative w-full max-w-full overflow-hidden border-t border-background/20 bg-card py-20 text-foreground md:py-28'
       >
         <div
           aria-hidden
@@ -63,14 +63,14 @@ export function SectionSocialProof() {
                   strokeWidth={0}
                 />
               </span>
-              <span className='font-semibold text-foreground'>
+              <span className='font-utekos-text-medium text-foreground'>
                 {averageRating}
               </span>
             </m.div>
 
             <m.h2
               id='socialproof-heading'
-              className='mx-auto max-w-[18ch] font-sans text-[clamp(1.75rem,7vw,3.75rem)] leading-[0.95] font-semibold tracking-[-0.01em] text-balance wrap-break-word text-foreground sm:max-w-[22ch] md:max-w-5xl'
+              className='mx-auto max-w-[18ch] font-sans font-utekos-text-medium text-[clamp(1.75rem,7vw,3.75rem)] leading-[0.95] tracking-[-0.01em] text-balance wrap-break-word text-foreground sm:max-w-[22ch] md:max-w-5xl'
               variants={revealItem}
             >
               Livsnytere som tok kvelden tilbake

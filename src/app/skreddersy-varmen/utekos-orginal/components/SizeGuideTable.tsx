@@ -11,7 +11,7 @@ import { TableRow } from './TableRow'
 export function SizeGuideTable() {
   return (
     <article
-      className='w-full border-t border-[#F4F1EA]/5 bg-[#1F2421] py-24'
+      className='w-full border-t border-[#F4F1EA]/5 bg-background py-24'
       id='size-guide'
     >
       <div className='mx-auto max-w-5xl px-6'>

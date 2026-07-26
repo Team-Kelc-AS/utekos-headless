@@ -21,13 +21,13 @@ export async function LandingFaq() {
           </p>
           <h2
             id='landing-faq-heading'
-            className='max-w-[12ch] font-sans text-4xl leading-[0.95] font-bold tracking-normal text-foreground md:text-5xl'
+            className='font-google-sans max-w-[12ch] font-sans text-4xl leading-[0.95] font-bold tracking-normal text-foreground md:text-5xl'
           >
             FAQ
           </h2>
           <Link
             href={'/handlehjelp/sammenlign-modeller' as Route}
-            className='dark:hover:text-dark-primary mt-6 inline-flex text-sm font-semibold text-foreground underline underline-offset-4 transition-colors hover:text-primary'
+            className='dark:hover:text-dark-primary mt-6 inline-flex font-utekos-text-medium text-sm text-foreground underline underline-offset-4 transition-colors hover:text-primary'
           >
             Sammenlign modellene
           </Link>
@@ -36,7 +36,7 @@ export async function LandingFaq() {
         <div className='dark:divide-dark-foreground/14 dark:border-dark-foreground/14 divide-y divide-foreground/14 border-y border-foreground/14'>
           {LANDING_FAQ_ENTRIES.map(entry => (
             <details key={entry.question} className='group py-5'>
-              <summary className='dark:hover:text-dark-primary dark:focus-visible:text-dark-primary dark:focus-visible:outline-dark-primary cursor-pointer list-none font-sans text-lg leading-[1.1] font-semibold tracking-normal text-foreground transition-colors outline-none marker:hidden hover:text-primary focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary md:text-xl'>
+              <summary className='dark:hover:text-dark-primary dark:focus-visible:text-dark-primary dark:focus-visible:outline-dark-primary cursor-pointer list-none font-sans font-utekos-text-medium text-lg leading-[1.1] tracking-normal text-foreground transition-colors outline-none marker:hidden hover:text-primary focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary md:text-xl'>
                 <span className='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4'>
                   <span>{entry.question}</span>
                   <span

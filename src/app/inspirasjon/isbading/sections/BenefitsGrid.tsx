@@ -44,10 +44,10 @@ export function BenefitsGrid({
     <article className='dark:bg-dark-background bg-background py-24 text-foreground'>
       <div className='container mx-auto px-4'>
         <div className='mx-auto mb-16 max-w-2xl text-center'>
-          <h2 className='text-fluid-display font-bold tracking-normal'>
+          <h2 className='text-fluid-display font-google-sans font-bold tracking-normal'>
             Spesiallaget for det ekstreme
           </h2>
-          <p className='text-ancient-water mt-4 text-lg'>
+          <p className='mt-4 text-lg text-ancient-water'>
             Isbading krever utstyr du kan stole på. Vi har
             fjernet barrierene slik at du kan fokusere på
             opplevelsen.
@@ -66,10 +66,10 @@ export function BenefitsGrid({
                   className={`size-8 ${benefit.color}`}
                 />
               </div>
-              <h3 className='mb-2 text-lg font-semibold'>
+              <h3 className='mb-2 font-utekos-text-medium text-lg'>
                 {benefit.title}
               </h3>
-              <p className='text-ancient-water text-sm'>
+              <p className='text-sm text-ancient-water'>
                 {benefit.description}
               </p>
             </AnimatedBlock>

@@ -42,10 +42,10 @@ export function ProductCareHeader() {
           textColor='var(--foreground)'
           className='dark:border-dark-foreground/12 mb-4 border border-foreground/12 px-5 py-2.5 font-sans text-base tracking-wide text-foreground sm:px-8 sm:py-3'
         />
-        <h1 className='py-4 text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'>
+        <h1 className='font-google-sans py-4 text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'>
           Produktvedlikehold
         </h1>
-        <p className='font-utekos-text /90 mt-5 max-w-2xl text-lg leading-relaxed text-foreground/90'>
+        <p className='/90 mt-5 max-w-2xl font-utekos-text text-lg leading-relaxed text-foreground/90'>
           Du har investert i komfort og kvalitet som er ment å
           vare, men ingen plagg opprettholder ytelsen over tid
           uten vedlikehold.

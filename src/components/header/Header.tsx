@@ -43,7 +43,7 @@ export default function Header({ menu }: { menu: MenuItem[] }) {
           <Link
             href={'/kontaktskjema' as Route}
             data-track='HeaderCustomerServiceClick'
-            className='dark:focus-visible:ring-dark-ring hidden h-11 min-w-31 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex dark:hover:bg-accent'
+            className='dark:focus-visible:ring-dark-ring hidden h-11 min-w-31 items-center justify-center gap-2 rounded-md px-3 font-utekos-text-medium text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex dark:hover:bg-accent'
           >
             <HeadphonesIcon className='size-4' aria-hidden />
             <span>Kundeservice</span>

@@ -5,14 +5,14 @@ export function FunctionalityPageVideoSection() {
   return (
     <section className='dark:border-dark-foreground/20 border-t border-foreground/20'>
       <div className='container mx-auto px-4 py-12 sm:py-16'>
-        <div className='dark:border-dark-foreground/12  dark:ring-dark-foreground/12 overflow-hidden rounded-3xl border border-foreground/12 bg-card text-foreground shadow-2xl ring-1 ring-foreground/12'>
+        <div className='dark:border-dark-foreground/12 dark:ring-dark-foreground/12 overflow-hidden rounded-3xl border border-foreground/12 bg-card text-foreground shadow-2xl ring-1 ring-foreground/12'>
           <div className='grid lg:grid-cols-2'>
             <div className='flex flex-col justify-center p-8 lg:p-16'>
               <div className='dark:border-dark-foreground/20 dark:bg-dark-foreground/10 mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-foreground/20 bg-foreground/10 px-4 py-1.5 text-sm backdrop-blur-md'>
                 <PlayCircle className='size-4' aria-hidden />
                 <span>Se demonstrasjon</span>
               </div>
-              <h2 className='text-3xl font-bold sm:text-4xl'>
+              <h2 className='font-google-sans text-3xl font-bold sm:text-4xl'>
                 Slik fungerer det i praksis
               </h2>
               <p className='/80 mt-4 text-foreground/80'>
@@ -24,7 +24,7 @@ export function FunctionalityPageVideoSection() {
 
               <Link
                 href='/produkter/utekos-techdown'
-                className='mt-8 inline-flex items-center text-lg font-semibold text-foreground hover:text-sky-300 hover:underline'
+                className='mt-8 inline-flex items-center font-utekos-text-medium text-lg text-foreground hover:text-sky-300 hover:underline'
               >
                 Utforsk kolleksjonen
                 <ArrowRight

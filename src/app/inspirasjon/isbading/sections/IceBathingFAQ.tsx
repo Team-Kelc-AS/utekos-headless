@@ -30,9 +30,9 @@ export const iceBathingFaqItems = [
 
 export function IceBathingFAQ() {
   return (
-    <article className='bg-overcast border-t border-foreground/12 py-24'>
+    <article className='border-t border-foreground/12 bg-overcast py-24'>
       <div className='container mx-auto max-w-3xl px-4'>
-        <h2 className='dark:text-dark-background mb-12 text-center text-3xl leading-[1.05] font-bold tracking-normal text-background'>
+        <h2 className='dark:text-dark-background font-google-sans mb-12 text-center text-3xl leading-[1.05] font-bold tracking-normal text-background'>
           Ofte stilte spørsmål
         </h2>
 
@@ -46,7 +46,7 @@ export function IceBathingFAQ() {
               <AccordionTrigger className='dark:text-dark-background text-left leading-[1.35] tracking-normal text-background'>
                 {item.question}
               </AccordionTrigger>
-              <AccordionContent className='text-havdyp leading-normal tracking-normal'>
+              <AccordionContent className='leading-normal tracking-normal text-havdyp'>
                 {item.answer}
               </AccordionContent>
             </AccordionItem>

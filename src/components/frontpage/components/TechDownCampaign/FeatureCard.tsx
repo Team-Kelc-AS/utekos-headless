@@ -80,7 +80,7 @@ export function FeatureCard({
         <div className='min-w-0'>
           <H3
             className={cn(
-              'm-0 pb-0 text-lg leading-tight font-semibold tracking-normal text-balance wrap-break-word text-card-foreground sm:text-xl lg:text-2xl',
+              'm-0 pb-0 font-utekos-text-medium text-lg leading-tight tracking-normal text-balance wrap-break-word text-card-foreground sm:text-xl lg:text-2xl',
               titleClassName
             )}
           >

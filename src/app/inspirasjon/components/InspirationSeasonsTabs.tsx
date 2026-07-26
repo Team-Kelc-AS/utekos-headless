@@ -164,7 +164,7 @@ export function InspirationSeasonsTabs({
                         : 'dark:text-dark-muted-foreground text-muted-foreground'
                       ]
                     : [
-                        'font-sans font-bold tracking-[-0.01em]',
+                        'font-google-sans font-sans font-bold tracking-[-0.01em]',
                         isActive ? activeClassName : (
                           inactiveClassName
                         )
@@ -251,7 +251,7 @@ export function InspirationSeasonsTabs({
                     </div>
                     <P
                       className={cn(
-                        'text-ancient-water text-left text-lg leading-relaxed not-first:mt-0',
+                        'text-left text-lg leading-relaxed text-ancient-water not-first:mt-0',
                         contentTextClassName
                       )}
                     >

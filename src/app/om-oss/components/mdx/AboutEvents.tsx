@@ -33,7 +33,7 @@ export function AboutEvents() {
       <div className='mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8'>
         <div>
           <AboutBadge className='mb-6'>Møteplasser</AboutBadge>
-          <h2 className='text-4xl leading-tight font-semibold text-foreground sm:text-5xl'>
+          <h2 className='font-utekos-text-medium text-4xl leading-tight text-foreground sm:text-5xl'>
             Der du har møtt oss
           </h2>
           <p className='/80 mt-5 text-lg leading-8 text-foreground/80'>
@@ -55,7 +55,7 @@ export function AboutEvents() {
                   />
                 </div>
                 <div>
-                  <h3 className='text-lg font-semibold text-foreground'>
+                  <h3 className='font-utekos-text-medium text-lg text-foreground'>
                     {event.name}
                   </h3>
                   <p className='/72 text-sm leading-6 text-foreground/72'>

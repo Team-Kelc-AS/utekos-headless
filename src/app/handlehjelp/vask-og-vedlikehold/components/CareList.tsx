@@ -26,7 +26,7 @@ export function CareList({
         >
           <Icon className='size-[1.05rem]' strokeWidth={2.4} />
         </span>
-        <h4 className='text-base font-semibold text-foreground sm:text-lg'>
+        <h4 className='font-utekos-text-medium text-base text-foreground sm:text-lg'>
           {title}
         </h4>
       </div>

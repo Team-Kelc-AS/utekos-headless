@@ -1,4 +1,7 @@
-import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
+import type {
+  ShopifyProduct,
+  ShopifyProductVariant
+} from 'types/product'
 import type { UseFormReturn } from 'react-hook-form'
 import type { SizeOptionKey } from '@/app/inspirasjon/isbading/sizeSelectorData'
 import type { LucideIcon } from 'lucide-react'
@@ -11,23 +14,34 @@ export type AddToCartButtonProps = {
   isDisabled: boolean
 }
 
+export type CheckoutPresentation =
+  | 'balanced'
+  | 'standard-primary'
+
 export type PrepareAddToCartInput = {
   product: ShopifyProduct
   selectedVariant: ShopifyProductVariant
   quantity: number
-  additionalLine?: { variantId: string; quantity: number } | undefined
+  additionalLine?:
+    | { variantId: string; quantity: number }
+    | undefined
 }
 
 export type UseAddToCartActionProps = {
   product: ShopifyProduct
   selectedVariant: ShopifyProductVariant | null
-  additionalLine?: { variantId: string; quantity: number } | undefined
+  additionalLine?:
+    | { variantId: string; quantity: number }
+    | undefined
 }
 
 export type AddToCartProps = {
   product: ShopifyProduct
   selectedVariant: ShopifyProductVariant | null
-  additionalLine?: { variantId: string; quantity: number } | undefined
+  additionalLine?:
+    | { variantId: string; quantity: number }
+    | undefined
+  checkoutPresentation?: CheckoutPresentation
 }
 
 export type AddToCartViewProps = {
@@ -39,6 +53,7 @@ export type AddToCartViewProps = {
   isPending: boolean
   isCheckoutPending: boolean
   isAvailable: boolean
+  checkoutPresentation?: CheckoutPresentation
 }
 
 export type CheckoutPanelProps = {
@@ -57,18 +72,14 @@ export type ProductOffer = {
   features: string[]
 }
 
-export type OfferProductProps = {
-  product: ProductOffer
-}
+export type OfferProductProps = { product: ProductOffer }
 
 export type OfferSectionProps = {
   productImageSrc: string
   selectedSize: SizeOptionKey
 }
 
-export type SizeInfoPanelProps = {
-  profile: SizeProfile
-}
+export type SizeInfoPanelProps = { profile: SizeProfile }
 
 export type SizeProfile = {
   id: SizeOptionKey
@@ -80,10 +91,7 @@ export type SizeProfile = {
   icon: LucideIcon
   imageSrc?: string
   visualScale: number
-  benefits: {
-    title: string
-    desc: string
-  }[]
+  benefits: { title: string; desc: string }[]
 }
 
 export type OfferGalleryProps = {

@@ -50,7 +50,7 @@ export default function TermsPage() {
 
           <div className='p-8 sm:p-12 lg:p-16'>
             <header className='text-center'>
-              <h1 className='mx-auto text-4xl font-bold sm:text-5xl'>
+              <h1 className='font-google-sans mx-auto text-4xl font-bold sm:text-5xl'>
                 Vilkår og betingelser
               </h1>
               <p className='mt-4 text-white/70'>

@@ -4,12 +4,20 @@ import { useAddToCartAction } from '@/hooks/useAddToCartAction'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowUpRight, Loader2, ShoppingBag, X } from 'lucide-react'
+import {
+  ArrowUpRight,
+  Loader2,
+  ShoppingBag,
+  X
+} from 'lucide-react'
 import type { Route } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
+import type {
+  ShopifyProduct,
+  ShopifyProductVariant
+} from 'types/product'
 
 interface HelpChooseCardProps {
   product: ShopifyProduct
@@ -24,7 +32,9 @@ type ProductVariantsShape =
       edges?: Array<{ node: ShopifyProductVariant }>
     }
 
-function normalizeVariants(product: ShopifyProduct): ShopifyProductVariant[] {
+function normalizeVariants(
+  product: ShopifyProduct
+): ShopifyProductVariant[] {
   const v = product.variants as ProductVariantsShape
   if (Array.isArray(v)) return v
   if (v?.nodes) return v.nodes
@@ -32,7 +42,9 @@ function normalizeVariants(product: ShopifyProduct): ShopifyProductVariant[] {
   return []
 }
 
-function getDefaultColor(variants: ShopifyProductVariant[]): string | null {
+function getDefaultColor(
+  variants: ShopifyProductVariant[]
+): string | null {
   for (const variant of variants) {
     const color = variant.selectedOptions.find(
       o => o.name === 'Color' || o.name === 'Farge'
@@ -147,9 +159,9 @@ export function HelpChooseCard({
 
   const handleViewProduct = () => {
     const destinationUrl =
-      typeof window === 'undefined' ?
-        productUrl
-      : new URL(productUrl, window.location.origin).toString()
+      typeof window === 'undefined' ? productUrl : (
+        new URL(productUrl, window.location.origin).toString()
+      )
 
     reportProductListSelectItem({
       product,
@@ -198,7 +210,8 @@ export function HelpChooseCard({
                   loading='lazy'
                   fetchPriority='low'
                   className={`object-cover transition-transform duration-700 will-change-transform ${
-                    isSelectingSize ? 'scale-105 blur-[2px]'
+                    isSelectingSize ?
+                      'scale-105 blur-[2px]'
                     : 'group-hover:scale-105'
                   }`}
                 />
@@ -209,7 +222,7 @@ export function HelpChooseCard({
 
           <div className='absolute top-0 left-0 z-30 flex w-full items-start justify-between p-3'>
             <div className='flex items-center justify-center rounded-full border border-white/10 bg-black/20 px-2 py-0.5 backdrop-blur-md md:px-2.5 md:py-1'>
-              <span className='text-[9px] font-semibold tracking-wider text-white/90 uppercase md:text-[10px]'>
+              <span className='font-utekos-text-medium text-[9px] tracking-wider text-white/90 uppercase md:text-[10px]'>
                 Unisex
               </span>
             </div>
@@ -217,11 +230,11 @@ export function HelpChooseCard({
 
           <div className='relative z-10 mt-auto flex flex-col p-3 pb-3 md:p-4 md:pb-4'>
             <div className='mb-3'>
-              <h3 className='font-heading text-base leading-tight font-bold text-white md:text-xl'>
+              <h3 className='font-heading font-google-sans text-base leading-tight font-bold text-white md:text-xl'>
                 {product.title}
               </h3>
               <div className='mt-0.5 flex items-baseline gap-2'>
-                <span className='text-sm font-bold text-white/90 md:text-base'>
+                <span className='font-google-sans text-sm font-bold text-white/90 md:text-base'>
                   {formattedPrice}
                 </span>
               </div>
@@ -239,7 +252,7 @@ export function HelpChooseCard({
                     className='grid grid-cols-[1fr_auto] gap-2'
                   >
                     <div className='flex h-10 items-center justify-center gap-2 rounded-full bg-white/10 backdrop-blur-md transition-colors duration-300 md:group-hover:bg-white/20'>
-                      <span className='text-xs font-semibold text-white'>
+                      <span className='font-utekos-text-medium text-xs text-white'>
                         Les mer
                       </span>
                       <ArrowUpRight className='h-3.5 w-3.5 text-white/80' />
@@ -253,10 +266,12 @@ export function HelpChooseCard({
                       }`}
                     >
                       {isOutOfStock ?
-                        <span className='text-[10px] font-bold'>TOMT</span>
+                        <span className='font-google-sans text-[10px] font-bold'>
+                          TOMT
+                        </span>
                       : <>
                           <ShoppingBag className='h-4 w-4 md:mr-2' />
-                          <span className='hidden text-xs font-bold md:block'>
+                          <span className='font-google-sans hidden text-xs font-bold md:block'>
                             Kjøp nå
                           </span>
                         </>
@@ -291,12 +306,14 @@ export function HelpChooseCard({
                             handleSizeSelect(e, size.variant)
                           }
                           disabled={isPending}
-                          className='flex h-8 max-w-17 min-w-9 flex-1 items-center justify-center overflow-hidden rounded-full bg-black px-2 text-xs font-bold text-white transition-transform active:scale-95'
+                          className='font-google-sans flex h-8 max-w-17 min-w-9 flex-1 items-center justify-center overflow-hidden rounded-full bg-black px-2 text-xs font-bold text-white transition-transform active:scale-95'
                           aria-label={`Velg størrelse ${size.title}`}
                           title={size.title}
                         >
-                          {isPending &&
-                          selectedVariant?.id === size.id ?
+                          {(
+                            isPending &&
+                            selectedVariant?.id === size.id
+                          ) ?
                             <Loader2 className='h-3 w-3 animate-spin' />
                           : <span className='min-w-0 truncate whitespace-nowrap'>
                               {size.title}
@@ -306,7 +323,7 @@ export function HelpChooseCard({
                       ))}
 
                       {availableSizes.length === 0 && (
-                        <div className='flex h-8 items-center justify-center rounded-full bg-neutral-200 px-3 text-[11px] font-semibold whitespace-nowrap text-black'>
+                        <div className='flex h-8 items-center justify-center rounded-full bg-neutral-200 px-3 font-utekos-text-medium text-[11px] whitespace-nowrap text-black'>
                           Ingen størrelser
                         </div>
                       )}
@@ -328,7 +345,11 @@ export function HelpChooseCard({
       </Link>
       <WishlistButton
         product={product}
-        variant={selectedVariant ?? availableSizes[0]?.variant ?? variants[0]}
+        variant={
+          selectedVariant ??
+          availableSizes[0]?.variant ??
+          variants[0]
+        }
         productTitle={product.title}
         returnTo={`/produkter/${product.handle}`}
         className='absolute top-3 right-3 z-50 size-11 rounded-xl md:top-3 md:right-3 md:size-12 md:rounded-2xl'

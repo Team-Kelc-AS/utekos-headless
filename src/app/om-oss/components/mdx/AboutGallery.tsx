@@ -40,11 +40,13 @@ export function AboutGallery() {
     <article className='bg-card px-8 py-20 text-card-foreground sm:py-28 md:px-12 lg:px-16'>
       <div className='max-w-360 px-4 text-left sm:px-6 lg:px-8'>
         <div className='mb-10 max-w-3xl text-left'>
-          <AboutBadge className='mb-6'>Livet med Utekos</AboutBadge>
-          <h2 className='text-left font-sans text-5xl leading-[0.95] font-bold text-inherit sm:text-5xl'>
+          <AboutBadge className='mb-6'>
+            Livet med Utekos
+          </AboutBadge>
+          <h2 className='font-google-sans text-left font-sans text-5xl leading-[0.95] font-bold text-inherit sm:text-5xl'>
             Et glimt av opplevelsen
           </h2>
-          <p className='font-utekos-text-medium mt-5 max-w-2xl text-left text-lg leading-8 text-inherit/80'>
+          <p className='mt-5 max-w-2xl text-left font-utekos-text-medium text-lg leading-8 text-inherit/80'>
             Se hvordan kompromissløs komfort gir liv til dine
             favorittøyeblikk utendørs.
           </p>

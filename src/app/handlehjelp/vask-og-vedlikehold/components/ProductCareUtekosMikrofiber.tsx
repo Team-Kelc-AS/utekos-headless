@@ -10,7 +10,7 @@ export function ProductCareUtekosMikrofiber() {
   return (
     <TabsContent value='mikrofiber' className='mt-8'>
       <div className='mb-7 max-w-3xl sm:mb-8'>
-        <h3 className='text-2xl font-semibold text-foreground'>
+        <h3 className='font-utekos-text-medium text-2xl text-foreground'>
           Utekos Mikrofiber™
         </h3>
         <p className='/90 mt-3 text-base leading-relaxed text-foreground/90'>

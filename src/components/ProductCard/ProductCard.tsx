@@ -135,9 +135,9 @@ export function ProductCard({
 
   const handleViewProduct = () => {
     const destinationUrl =
-      typeof window === 'undefined' ?
-        productUrl
-      : new URL(productUrl, window.location.origin).toString()
+      typeof window === 'undefined' ? productUrl : (
+        new URL(productUrl, window.location.origin).toString()
+      )
 
     reportProductListSelectItem({
       product,
@@ -209,7 +209,7 @@ export function ProductCard({
               onClick={handleViewProduct}
               className='dark:focus-visible:outline-dark-card-foreground min-w-0 flex-1 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
             >
-              <h3 className='truncate text-base leading-6 font-semibold tracking-tight text-card-foreground md:text-lg md:leading-7'>
+              <h3 className='truncate font-utekos-text-medium text-base leading-6 tracking-tight text-card-foreground md:text-lg md:leading-7'>
                 {product.title}
               </h3>
             </Link>
@@ -224,7 +224,7 @@ export function ProductCard({
               />
             : null}
           </div>
-          <InlineText className='text-sm leading-5 font-bold text-card-foreground md:text-lg md:leading-6'>
+          <InlineText className='font-google-sans text-sm leading-5 font-bold text-card-foreground md:text-lg md:leading-6'>
             {price}
           </InlineText>
           <ProductCardCompactVariantSelector

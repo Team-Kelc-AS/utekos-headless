@@ -19,9 +19,11 @@ export function TechHero() {
             Skapt for komfort
           </BrandBadge>
 
-          <h1 className='text-5xl font-bold text-foreground sm:text-7xl md:text-8xl'>
+          <h1 className='font-google-sans text-5xl font-bold text-foreground sm:text-7xl md:text-8xl'>
             Ett plagg. <br />
-            <span className='text-foreground'>Tre opplevelser.</span>
+            <span className='text-foreground'>
+              Tre opplevelser.
+            </span>
           </h1>
 
           <p className='mx-auto max-w-2xl text-lg leading-relaxed text-foreground/90 md:text-xl'>

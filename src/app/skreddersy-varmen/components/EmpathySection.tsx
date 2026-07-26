@@ -31,7 +31,7 @@ export function EmpathySection() {
     <SkreddersyMotionProvider>
       <m.article
         aria-labelledby='empathy-heading'
-        className='relative w-full overflow-hidden bg-foreground dark:bg-dark-foreground py-16 text-background dark:text-dark-background md:py-24 lg:py-28'
+        className='dark:bg-dark-foreground dark:text-dark-background relative w-full overflow-hidden bg-foreground py-16 text-background md:py-24 lg:py-28'
         initial='hidden'
         whileInView='visible'
         viewport={skreddersyViewport}
@@ -43,18 +43,18 @@ export function EmpathySection() {
               className='relative mb-4 inline-flex items-end overflow-hidden pb-1.5'
               variants={revealItemLeft}
             >
-              <span className='font-utekos-text-medium text-sm leading-4 text-background dark:text-dark-background'>
+              <span className='dark:text-dark-background font-utekos-text-medium text-sm leading-4 text-background'>
                 Det du kjenner igjen
               </span>
               <m.span
                 aria-hidden
-                className='absolute bottom-0 left-0 h-px w-full origin-left bg-background dark:bg-dark-background'
+                className='dark:bg-dark-background absolute bottom-0 left-0 h-px w-full origin-left bg-background'
                 variants={scaleXReveal}
               />
             </m.div>
             <h2
               id='empathy-heading'
-              className='mb-5 max-w-[11ch] font-sans text-4xl leading-[0.92] font-bold tracking-[-0.01em] text-background dark:text-dark-background sm:text-4xl md:text-5xl'
+              className='font-google-sans dark:text-dark-background mb-5 max-w-[11ch] font-sans text-4xl leading-[0.92] font-bold tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
             >
               <span className='block overflow-hidden pb-[0.08em]'>
                 <m.span
@@ -75,7 +75,7 @@ export function EmpathySection() {
               </span>
             </h2>
 
-            <div className='leading-text-paragraph max-w-none text-base text-background dark:text-dark-background'>
+            <div className='leading-text-paragraph dark:text-dark-background max-w-none text-base text-background'>
               <m.p
                 className='relative max-w-136'
                 variants={revealItem}
@@ -88,11 +88,11 @@ export function EmpathySection() {
               <div className='relative my-7 py-1.5'>
                 <m.span
                   aria-hidden
-                  className='absolute top-4 bottom-4 left-0 w-0.75 origin-top bg-primary dark:bg-dark-primary'
+                  className='dark:bg-dark-primary absolute top-4 bottom-4 left-0 w-0.75 origin-top bg-primary'
                   variants={scaleYReveal}
                 />
                 <m.p
-                  className='ml-5 font-sans text-xl leading-[0.95] font-bold tracking-normal text-background dark:text-dark-background italic md:ml-7 md:text-3xl'
+                  className='font-google-sans dark:text-dark-background ml-5 font-sans text-xl leading-[0.95] font-bold tracking-normal text-background italic md:ml-7 md:text-3xl'
                   variants={revealItemRight}
                 >
                   &ldquo;Det begynner å bli kaldt. <br />
@@ -100,7 +100,7 @@ export function EmpathySection() {
                 </m.p>
               </div>
               <m.p
-                className='mt-6 max-w-136 text-background dark:text-dark-background'
+                className='dark:text-dark-background mt-6 max-w-136 text-background'
                 variants={revealItem}
               >
                 Med Utekos® blir svaret enkelt. Tilpass passform,
@@ -110,7 +110,7 @@ export function EmpathySection() {
                 Helt uavbrutt.
                 <br />
                 <br />
-                <span className='font-medium text-background dark:text-dark-background italic'>
+                <span className='dark:text-dark-background font-medium text-background italic'>
                   Juster, form og nyt.
                 </span>
               </m.p>
@@ -122,7 +122,7 @@ export function EmpathySection() {
               <BrandBadge
                 asChild
                 tone='commerce-secondary'
-                className='h-12 bg-primary px-5 py-0 text-sm leading-none font-semibold tracking-normal text-primary-foreground shadow-sm transition-[filter,transform] hover:bg-primary-hover hover:text-primary-foreground hover:brightness-110 active:scale-[0.98] dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary-hover dark:hover:text-dark-primary-hover-foreground md:h-14 md:px-6 md:text-base'
+                className='hover:bg-primary-hover dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary-hover dark:hover:text-dark-primary-hover-foreground h-12 bg-primary px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal text-primary-foreground shadow-sm transition-[filter,transform] hover:text-primary-foreground hover:brightness-110 active:scale-[0.98] md:h-14 md:px-6 md:text-base'
               >
                 <button
                   type='button'
@@ -146,7 +146,7 @@ export function EmpathySection() {
             variants={revealScale}
           >
             <div className='relative aspect-4/5 w-full md:aspect-square'>
-              <div className='relative size-full overflow-hidden rounded-sm shadow-2xl shadow-background/20 dark:shadow-dark-background/20'>
+              <div className='dark:shadow-dark-background/20 relative size-full overflow-hidden rounded-sm shadow-2xl shadow-background/20'>
                 <div className='absolute inset-x-0 -inset-y-14'>
                   <Image
                     src='https://cdn.shopify.com/s/files/1/0634/2154/6744/files/skreddersdy-varmen-balpanne.jpg?v=1780812470'
@@ -170,7 +170,7 @@ export function EmpathySection() {
                   <p className='mb-1.5 text-sm leading-4 font-medium tracking-normal text-white/85'>
                     Stemning
                   </p>
-                  <p className='font-sans text-lg leading-[0.95] font-bold tracking-normal italic drop-shadow-md md:text-2xl'>
+                  <p className='font-google-sans font-sans text-lg leading-[0.95] font-bold tracking-normal italic drop-shadow-md md:text-2xl'>
                     &ldquo;Klokken er 23:15.
                     <br />
                     Ingen vil gå inn.&rdquo;
@@ -180,7 +180,7 @@ export function EmpathySection() {
 
               <div
                 aria-hidden
-                className='absolute -right-6 -bottom-6 -z-10 hidden size-full rounded-sm border-2 border-background/10 dark:border-dark-background/10 md:block'
+                className='dark:border-dark-background/10 absolute -right-6 -bottom-6 -z-10 hidden size-full rounded-sm border-2 border-background/10 md:block'
               />
             </div>
           </m.div>

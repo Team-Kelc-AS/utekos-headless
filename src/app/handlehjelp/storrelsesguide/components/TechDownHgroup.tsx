@@ -5,12 +5,13 @@ export function TechDownHgroup() {
   return (
     <SizeGuideSectionShell
       id='tech-down-details'
-      surface='background'
+      surface='muted'
       ariaLabelledby='tech-down-details-heading'
+      className='my-4 rounded-lg'
     >
       <h2
         id='tech-down-details-heading'
-        className='mb-4 max-w-4xl font-sans text-4xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
+        className='font-google-sans mb-4 max-w-4xl font-sans text-4xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
       >
         Gjennomtenkte detaljer
       </h2>

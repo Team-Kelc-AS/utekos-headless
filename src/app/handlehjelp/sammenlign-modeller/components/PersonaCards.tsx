@@ -50,7 +50,7 @@ export function PersonaCards() {
                     tone='neutral'
                     className='mb-6 px-5 py-2 text-sm'
                   />
-                  <h3 className='font-sans text-3xl leading-[0.95] font-bold tracking-[-0.01em] text-sidebar-foreground'>
+                  <h3 className='font-google-sans font-sans text-3xl leading-[0.95] font-bold tracking-[-0.01em] text-sidebar-foreground'>
                     {model.name}
                   </h3>
                   <p className='mt-3 text-lg leading-[1.35] font-medium text-sidebar-foreground'>

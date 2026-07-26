@@ -68,7 +68,7 @@ export function BenefitsGrid({
             />
           </div>
 
-          <div className=' grid grid-cols-1 gap-8 rounded-3xl bg-card py-8 text-card-foreground md:grid-cols-2 md:py-12 lg:grid-cols-4'>
+          <div className='grid grid-cols-1 gap-8 rounded-3xl bg-card py-8 text-card-foreground md:grid-cols-2 md:py-12 lg:grid-cols-4'>
             {benefits.map((benefit, benefitIndex) => (
               <AnimatedBlock
                 key={benefit.title}
@@ -77,7 +77,7 @@ export function BenefitsGrid({
                 threshold={0.2}
               >
                 <div
-                  className={` mx-auto mb-4 flex size-16 items-center justify-center rounded-full border border-border ${benefit.iconBackground}`}
+                  className={`mx-auto mb-4 flex size-16 items-center justify-center rounded-full border border-border ${benefit.iconBackground}`}
                 >
                   <benefit.icon
                     className='size-8 text-card-foreground'
@@ -86,11 +86,11 @@ export function BenefitsGrid({
                 </div>
                 <H3
                   Text={benefit.title}
-                  className='font-utekos-text-medium mb-2 text-lg leading-[1.15] font-bold tracking-[-0.01em] text-foreground'
+                  className='font-google-sans mb-2 font-utekos-text-medium text-lg leading-[1.15] font-bold tracking-[-0.01em] text-foreground'
                 ></H3>
                 <P
                   Text={benefit.description}
-                  className='font-utekos-text mx-auto px-8 text-center text-base tracking-[-0.02em] text-balance text-foreground md:text-lg'
+                  className='mx-auto px-8 text-center font-utekos-text text-base tracking-[-0.02em] text-balance text-foreground md:text-lg'
                 ></P>
               </AnimatedBlock>
             ))}

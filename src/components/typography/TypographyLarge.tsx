@@ -1,3 +1,5 @@
 export function Large({ Text }: { Text: string }) {
-  return <div className="text-lg font-utekos-text-medium font-semibold">{Text}</div>
+  return (
+    <div className='font-utekos-text-medium text-lg'>{Text}</div>
+  )
 }

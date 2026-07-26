@@ -7,10 +7,10 @@ export function ProductCareUtekosDun() {
   return (
     <TabsContent value='dun' className='mt-8'>
       <div className='mb-7 max-w-3xl sm:mb-8'>
-        <h3 className='text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'>
+        <h3 className='font-google-sans text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'>
           Utekos Dun™
         </h3>
-        <p className='font-utekos-text-medium /90 mt-5 text-left text-lg leading-8 text-foreground/90'>
+        <p className='/90 mt-5 text-left font-utekos-text-medium text-lg leading-8 text-foreground/90'>
           Skånsom behandling bevarer den luftige varmen. Dun er
           et naturmateriale som belønner tålmodighet og straffer
           hastverk.

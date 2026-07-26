@@ -25,13 +25,11 @@ export function MagazineCalloutBlock({
       className={`my-14 rounded-lg border p-6 sm:p-8 ${calloutClassByTone[block.tone]}`}
     >
       {block.title && (
-        <h3 className='font-sans text-2xl leading-[0.95] font-bold sm:text-3xl'>
+        <h3 className='font-google-sans font-sans text-2xl leading-[0.95] font-bold sm:text-3xl'>
           {block.title}
         </h3>
       )}
-      <p className='mt-4 text-lg leading-[1.55]'>
-        {block.text}
-      </p>
+      <p className='mt-4 text-lg leading-[1.55]'>{block.text}</p>
     </aside>
   )
 }

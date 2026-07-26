@@ -41,10 +41,10 @@ export function PopularSpotsGrid({
     <article className='dark:bg-dark-background bg-background py-24 text-foreground'>
       <div className='container mx-auto px-4'>
         <div className='mx-auto mb-16 max-w-2xl text-center'>
-          <h2 className='text-fluid-display font-bold tracking-normal'>
+          <h2 className='text-fluid-display font-google-sans font-bold tracking-normal'>
             Hvor tar du ditt neste dykk?
           </h2>
-          <p className='text-ancient-water mt-4 text-lg'>
+          <p className='mt-4 text-lg text-ancient-water'>
             Fra urbane badstuer til øde fjellvann – Utekos er med
             deg der vannet er kaldt.
           </p>
@@ -60,17 +60,17 @@ export function PopularSpotsGrid({
               <Card className='dark:bg-dark-background/58 dark:hover:bg-dark-background border-foreground/12 bg-background/58 transition-colors hover:bg-background'>
                 <CardContent className='p-6'>
                   <div className='mb-3 flex items-start justify-between'>
-                    <h3 className='text-lg font-semibold'>
+                    <h3 className='font-utekos-text-medium text-lg'>
                       {destination.name}
                     </h3>
                     <MapPinIcon
                       className={`size-5 ${destination.color}`}
                     />
                   </div>
-                  <p className='text-overcast mb-2 text-sm'>
+                  <p className='mb-2 text-sm text-overcast'>
                     {destination.season}
                   </p>
-                  <p className='text-ancient-water text-sm'>
+                  <p className='text-sm text-ancient-water'>
                     {destination.highlight}
                   </p>
                 </CardContent>

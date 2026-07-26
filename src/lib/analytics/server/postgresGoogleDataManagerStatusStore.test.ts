@@ -18,7 +18,8 @@ type QueryCall = {
 const claim: GoogleDataManagerStatusClaim = {
   attemptId: '7bcd24a4-190c-4eca-a834-5c9854bd54ea',
   leaseToken: '86e9ab13-2900-4322-a6cf-c616881ed21b',
-  requestId: 'google-request-1'
+  requestId: 'google-request-1',
+  statusCheckAttempts: 1
 }
 
 function result(
@@ -26,13 +27,16 @@ function result(
 ): GoogleDataManagerRequestStatusResult {
   return {
     destinationStatuses: [overallStatus],
+    errorCounts: [],
     overallStatus,
+    recordCount: 1,
     requestId: claim.requestId,
     response: {
       requestStatusPerDestination: [
         { requestStatus: overallStatus }
       ]
-    }
+    },
+    warningCounts: []
   }
 }
 
@@ -59,7 +63,8 @@ test('claims only executed accepted Google requests with a lease', async () => {
       {
         attempt_id: claim.attemptId,
         lease_token: claim.leaseToken,
-        request_id: claim.requestId
+        request_id: claim.requestId,
+        status_check_attempts: 1
       }
     ]
   ])
@@ -84,6 +89,11 @@ test('claims only executed accepted Google requests with a lease', async () => {
     fake.calls[0]?.query ?? '',
     /statusCheckAttempts/i
   )
+  assert.match(
+    fake.calls[0]?.query ?? '',
+    /interval '30 minutes'/i
+  )
+  assert.match(fake.calls[0]?.query ?? '', /nextStatusCheckAt/i)
   assert.match(fake.calls[0]?.query ?? '', /statusCheckLease/i)
 })
 
@@ -114,7 +124,8 @@ test('promotes provider-confirmed success to succeeded', async () => {
     'SUCCESS',
     'succeeded',
     'provider_confirmed_success',
-    125
+    125,
+    null
   ])
 })
 
@@ -127,6 +138,7 @@ test('keeps processing rows accepted and eligible for another poll', async () =>
   await store.complete({
     claim,
     latencyMs: 80,
+    nextCheckAt: '2026-07-25T12:39:00.000Z',
     result: result('PROCESSING'),
     status: 'processing'
   })
@@ -139,6 +151,10 @@ test('keeps processing rows accepted and eligible for another poll', async () =>
   assert.match(
     fake.calls[0]?.query ?? '',
     /validation_result - 'provider_confirmed'/i
+  )
+  assert.equal(
+    fake.calls[0]?.parameters.at(-1),
+    '2026-07-25T12:39:00.000Z'
   )
 })
 
@@ -176,12 +192,85 @@ test('retains transient status lookup failures for retry', async () => {
     claim,
     errorMessage: 'temporary',
     latencyMs: 100,
+    nextCheckAt: '2026-07-25T12:39:00.000Z',
     status: 'retry'
   })
 
   assert.match(
     fake.calls[0]?.query ?? '',
     /provider_status_check_retry/i
+  )
+  assert.doesNotMatch(
+    fake.calls[0]?.query ?? '',
+    /status = 'dead_lettered'/i
+  )
+  assert.match(fake.calls[0]?.query ?? '', /nextStatusCheckAt/i)
+})
+
+test('records warning-bearing success without marking it green', async () => {
+  const fake = fakeExecutor([[{ id: claim.attemptId }]])
+  const store = createPostgresGoogleDataManagerStatusStore(
+    fake.execute
+  )
+
+  await store.complete({
+    claim,
+    latencyMs: 125,
+    result: {
+      ...result('SUCCESS'),
+      warningCounts: [
+        {
+          reason: 'PROCESSING_WARNING_REASON_INTERNAL_ERROR',
+          recordCount: 1
+        }
+      ]
+    },
+    status: 'succeeded_with_warnings'
+  })
+
+  assert.ok(
+    fake.calls[0]?.parameters.includes(
+      'provider_confirmed_success_with_warnings'
+    )
+  )
+  assert.ok(
+    fake.calls[0]?.parameters.includes('accepted_unverified')
+  )
+})
+
+test('dead-letters provider processing mismatches without replay', async () => {
+  const fake = fakeExecutor([[{ id: 'dead-letter-1' }]])
+  const store = createPostgresGoogleDataManagerStatusStore(
+    fake.execute
+  )
+
+  await store.complete({
+    claim,
+    latencyMs: 125,
+    result: { ...result('SUCCESS'), recordCount: 2 },
+    status: 'processing_failure'
+  })
+
+  assert.equal(
+    fake.calls[0]?.parameters.at(-1),
+    'google_data_manager_request_processing_mismatch'
+  )
+})
+
+test('expires status checks after 24 hours as accepted unverified', async () => {
+  const fake = fakeExecutor([[{ expired_count: '2' }]])
+  const store = createPostgresGoogleDataManagerStatusStore(
+    fake.execute
+  )
+
+  assert.equal(await store.expireStale(), 2)
+  assert.match(
+    fake.calls[0]?.query ?? '',
+    /interval '24 hours'/i
+  )
+  assert.match(
+    fake.calls[0]?.query ?? '',
+    /provider_status_timeout/i
   )
   assert.doesNotMatch(
     fake.calls[0]?.query ?? '',

@@ -17,11 +17,11 @@ export function ProductCareFaq() {
       <div className='mb-8 text-left'>
         <h2
           id='faq-heading'
-          className='text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'
+          className='font-google-sans text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'
         >
           Vanlige spørsmål
         </h2>
-        <p className='font-utekos-text-medium /90 mt-5 text-left text-lg leading-8 text-foreground/90'>
+        <p className='/90 mt-5 text-left font-utekos-text-medium text-lg leading-8 text-foreground/90'>
           Svar på det kundene våre oftest lurer på om vask og
           vedlikehold.
         </p>
@@ -37,10 +37,10 @@ export function ProductCareFaq() {
             value={`faq-${index + 1}`}
             className='rounded-xl border-t border-border bg-background p-4'
           >
-            <AccordionTrigger className='py-4 text-left font-sans text-base font-semibold text-foreground hover:no-underline **:data-[slot=accordion-trigger-icon]:text-primary sm:py-5 sm:text-lg'>
+            <AccordionTrigger className='py-4 text-left font-sans font-utekos-text-medium text-base text-foreground hover:no-underline **:data-[slot=accordion-trigger-icon]:text-primary sm:py-5 sm:text-lg'>
               {faq.question}
             </AccordionTrigger>
-            <AccordionContent className='font-utekos-text-medium /90 pb-4 text-left text-base leading-relaxed text-foreground/90 sm:pb-5'>
+            <AccordionContent className='/90 pb-4 text-left font-utekos-text-medium text-base leading-relaxed text-foreground/90 sm:pb-5'>
               {faq.answer}
             </AccordionContent>
           </AccordionItem>

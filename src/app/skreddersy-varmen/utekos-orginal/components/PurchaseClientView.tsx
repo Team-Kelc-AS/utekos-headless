@@ -108,7 +108,7 @@ export function PurchaseClientView({
             <span className='dark:bg-dark-accent absolute inline-flex size-full animate-ping rounded-full bg-accent *:opacity-60' />
             <span className='dark:bg-dark-accent relative inline-flex h-1.5 w-1.5 rounded-full bg-accent' />
           </span>
-          <span className='dark:text-dark-background text-[10px] font-bold tracking-wider text-background uppercase'>
+          <span className='dark:text-dark-background font-google-sans text-[10px] font-bold tracking-wider text-background uppercase'>
             {currentConfig.badge}
           </span>
         </div>
@@ -209,7 +209,7 @@ export function PurchaseClientView({
               delay='0.05s'
               threshold={0.15}
             >
-              <h2 className='dark:text-dark-background mb-4 font-sans text-4xl leading-[1.1] font-semibold text-background lg:text-7xl'>
+              <h2 className='dark:text-dark-background mb-4 font-sans font-utekos-text-medium text-4xl leading-[1.1] text-background lg:text-7xl'>
                 {currentConfig.title}
               </h2>
             </AnimatedBlock>
@@ -247,13 +247,13 @@ export function PurchaseClientView({
               >
                 <div className='dark:border-dark-card/20 dark:from-dark-card/5 mt-8 flex items-center gap-4 rounded-lg border-2 border-card/20 bg-linear-to-br from-card/5 to-transparent p-4 shadow-sm'>
                   <div className='/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-card/10'>
-                    <Gift className=' h-5 w-5 text-card' />
+                    <Gift className='h-5 w-5 text-card' />
                   </div>
                   <div>
-                    <h3 className=' font-semibold text-card'>
+                    <h3 className='font-utekos-text-medium text-card'>
                       Sommertilbud
                     </h3>
-                    <p className=' text-sm text-card'>
+                    <p className='text-sm text-card'>
                       10% rabatt + Gratis Buff™ (verdi 249,-)
                       legges til i kurven.
                     </p>
@@ -308,7 +308,7 @@ export function PurchaseClientView({
             >
               <div className='bg-very-white dark:border-dark-background/10 rounded-md border border-background/10 px-4'>
                 <div className='dark:border-dark-background/10 flex items-center justify-between border-b border-background/10 py-3'>
-                  <span className='dark:text-dark-background/60 text-[11px] font-bold tracking-wider text-background/60 uppercase'>
+                  <span className='dark:text-dark-background/60 font-google-sans text-[11px] font-bold tracking-wider text-background/60 uppercase'>
                     Hva gjør{' '}
                     {currentConfig.title.replace('Utekos ', '')}{' '}
                     spesiell
@@ -328,7 +328,7 @@ export function PurchaseClientView({
                       value={highlight.title}
                       className='dark:border-dark-background/10 border-b border-background/10 last:border-b-0'
                     >
-                      <AccordionTrigger className='dark:text-dark-background dark:hover:text-dark-accent py-3 text-left text-sm font-semibold text-background hover:text-accent hover:no-underline'>
+                      <AccordionTrigger className='dark:text-dark-background dark:hover:text-dark-accent py-3 text-left font-utekos-text-medium text-sm text-background hover:text-accent hover:no-underline'>
                         {highlight.title}
                       </AccordionTrigger>
                       <AccordionContent className='leading-text-paragraph dark:text-dark-background/70 pt-0 pb-3 text-sm text-background/70'>
@@ -341,11 +341,11 @@ export function PurchaseClientView({
             </AnimatedBlock>
           </div>
 
-          <div className=' mb-12 h-px w-full bg-card' />
+          <div className='mb-12 h-px w-full bg-card' />
           <div className='mb-12 space-y-12'>
             <div>
               <div className='mb-4 flex items-center justify-between'>
-                <span className='dark:text-dark-background text-sm font-bold tracking-widest text-background'>
+                <span className='dark:text-dark-background font-google-sans text-sm font-bold tracking-widest text-background'>
                   Størrelse
                 </span>
                 <Link
@@ -438,7 +438,7 @@ export function PurchaseClientView({
                   <div className='dark:bg-dark-background relative overflow-hidden rounded-md bg-background p-5'>
                     <div className='dark:border-dark-background mb-3 flex items-center gap-2 border-b border-background pb-3'>
                       <Ruler className='dark:text-dark-primary h-4 w-4 text-primary' />
-                      <span className='text-sm font-bold tracking-wider text-foreground'>
+                      <span className='font-google-sans text-sm font-bold tracking-wider text-foreground'>
                         Passer best for deg som er{' '}
                         {guidance.height}
                       </span>
@@ -489,22 +489,22 @@ export function PurchaseClientView({
               data-track='🔔🛒 AddToCartSkreddersyVarmen 🛒🔔'
               disabled={isPending}
               className={cn(
-                'bg-commerce-primary dark:bg-dark-commerce-primary text-commerce-primary-foreground dark:text-dark-commerce-primary-foreground hover:bg-commerce-primary-hover dark:hover:bg-dark-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:hover:text-dark-commerce-primary-hover-foreground flex h-full flex-1 flex-row items-center justify-center gap-3 rounded-sm px-2 shadow-xl transition-all active:scale-[0.98]',
+                'flex h-full flex-1 flex-row items-center justify-center gap-3 rounded-sm bg-commerce-primary px-2 text-commerce-primary-foreground shadow-xl transition-all hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground active:scale-[0.98] dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground',
                 isPending && 'cursor-not-allowed opacity-80'
               )}
             >
               {isPending ?
                 <>
                   <Loader2 className='h-6 w-6 animate-spin' />
-                  <span className='text-lg font-bold tracking-wider whitespace-nowrap'>
+                  <span className='font-google-sans text-lg font-bold tracking-wider whitespace-nowrap'>
                     Legger til...
                   </span>
                 </>
               : <>
-                  <span className='text-lg font-bold tracking-wider whitespace-nowrap md:text-xl'>
+                  <span className='font-google-sans text-lg font-bold tracking-wider whitespace-nowrap md:text-xl'>
                     Legg i kurv
                   </span>
-                  <div className='bg-commerce-primary-foreground/40 dark:bg-dark-commerce-primary-foreground/40 hidden h-8 w-px md:block' />
+                  <div className='hidden h-8 w-px bg-commerce-primary-foreground/40 md:block dark:bg-dark-commerce-primary-foreground/40' />
                   <span className='hidden text-xl font-normal whitespace-nowrap opacity-100 md:inline'>
                     {currentConfig.price * quantity},-
                   </span>
@@ -520,7 +520,7 @@ export function PurchaseClientView({
               aria-label='Gå til kassen'
               disabled={isPending || !handleGoToCheckout}
               className={cn(
-                'dark:border-dark-background/25 dark:bg-dark-background dark:text-dark-foreground dark:hover:bg-dark-background/90 flex h-14 w-full items-center justify-center gap-2 rounded-sm border border-background/25 bg-background px-4 text-base font-bold tracking-wider text-foreground shadow-md transition-all active:scale-[0.98]',
+                'dark:border-dark-background/25 dark:bg-dark-background dark:text-dark-foreground dark:hover:bg-dark-background/90 font-google-sans flex h-14 w-full items-center justify-center gap-2 rounded-sm border border-background/25 bg-background px-4 text-base font-bold tracking-wider text-foreground shadow-md transition-all active:scale-[0.98]',
                 (isPending || !handleGoToCheckout) &&
                   'cursor-not-allowed opacity-80'
               )}
@@ -553,7 +553,7 @@ export function PurchaseClientView({
                       className='dark:text-dark-accent mt-0.5 shrink-0 text-accent'
                     />
                     <div className='min-w-0'>
-                      <p className='dark:text-dark-background text-sm font-semibold text-background'>
+                      <p className='dark:text-dark-background font-utekos-text-medium text-sm text-background'>
                         Rask levering 2–5 dager
                       </p>
                       <p className='dark:text-dark-background/65 mt-0.5 text-xs leading-snug text-background/65'>
@@ -568,7 +568,7 @@ export function PurchaseClientView({
                       className='dark:text-dark-accent mt-0.5 shrink-0 text-accent'
                     />
                     <div className='min-w-0'>
-                      <p className='dark:text-dark-background text-sm font-semibold text-background'>
+                      <p className='dark:text-dark-background font-utekos-text-medium text-sm text-background'>
                         14 dagers åpent kjøp
                       </p>
                       <p className='dark:text-dark-background/65 mt-0.5 text-xs leading-snug text-background/65'>
@@ -582,7 +582,7 @@ export function PurchaseClientView({
                       className='dark:text-dark-accent mt-0.5 shrink-0 text-accent'
                     />
                     <div className='min-w-0'>
-                      <p className='dark:text-dark-background text-sm font-semibold text-background'>
+                      <p className='dark:text-dark-background font-utekos-text-medium text-sm text-background'>
                         På lager i Bergen
                       </p>
                       <p className='dark:text-dark-background/65 mt-0.5 text-xs leading-snug text-background/65'>

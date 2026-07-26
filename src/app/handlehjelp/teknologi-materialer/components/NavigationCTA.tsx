@@ -31,7 +31,7 @@ function NavigationCtaCard({
       <div className={ctaIconClassName}>
         <Icon className='h-8 w-8' aria-hidden />
       </div>
-      <h3 className='mb-2 font-sans text-2xl font-bold text-card-foreground group-hover:text-secondary-foreground'>
+      <h3 className='font-google-sans mb-2 font-sans text-2xl font-bold text-card-foreground group-hover:text-secondary-foreground'>
         {title}
       </h3>
       <p className='mb-8 max-w-sm text-card-foreground/90 group-hover:text-secondary-foreground/90'>

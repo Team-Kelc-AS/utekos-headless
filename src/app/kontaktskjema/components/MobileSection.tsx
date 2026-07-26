@@ -11,9 +11,9 @@ export function MobileSection() {
           label='Kundeservice'
           backgroundColor='var(--secondary)'
           textColor='var(--secondary-foreground)'
-          className='mb-5 border border-current px-4 py-2 text-sm leading-4 font-semibold tracking-normal'
+          className='mb-5 border border-current px-4 py-2 font-utekos-text-medium text-sm leading-4 tracking-normal'
         />
-        <h1 className='text-3xl leading-[0.95] font-bold tracking-normal text-foreground'>
+        <h1 className='font-google-sans text-3xl leading-[0.95] font-bold tracking-normal text-foreground'>
           Snakk med Utekos
         </h1>
         <p className='leading-text-paragraph mt-3 text-base tracking-normal text-foreground'>
@@ -22,9 +22,9 @@ export function MobileSection() {
 
         <ul className='mt-6 space-y-6'>
           <li className='flex items-start gap-3'>
-            <HelpCircle className='text-ancient-water h-5 w-5 shrink-0' />
+            <HelpCircle className='h-5 w-5 shrink-0 text-ancient-water' />
             <div>
-              <h3 className='text-sm leading-[1.3] font-semibold tracking-normal text-foreground'>
+              <h3 className='font-utekos-text-medium text-sm leading-[1.3] tracking-normal text-foreground'>
                 Få personlig veiledning
               </h3>
               <p className='leading-text-paragraph mt-1 text-sm tracking-normal text-foreground'>
@@ -34,9 +34,9 @@ export function MobileSection() {
             </div>
           </li>
           <li className='flex items-start gap-3'>
-            <Package className='text-ancient-water h-5 w-5 shrink-0' />
+            <Package className='h-5 w-5 shrink-0 text-ancient-water' />
             <div>
-              <h3 className='text-sm leading-[1.3] font-semibold tracking-normal text-foreground'>
+              <h3 className='font-utekos-text-medium text-sm leading-[1.3] tracking-normal text-foreground'>
                 Hjelp med din bestilling
               </h3>
               <p className='leading-text-paragraph mt-1 text-sm tracking-normal text-foreground'>
@@ -54,7 +54,7 @@ export function MobileSection() {
       <div className='border-t border-foreground/12'>
         <div className='grid grid-cols-2'>
           <div className='border-r border-foreground/12 p-6'>
-            <h4 className='flex items-start gap-1.5 text-xs leading-[1.3] font-semibold tracking-normal text-foreground'>
+            <h4 className='flex items-start gap-1.5 font-utekos-text-medium text-xs leading-[1.3] tracking-normal text-foreground'>
               <span aria-hidden>🇳🇴</span>
               For norske forhold
             </h4>
@@ -66,7 +66,7 @@ export function MobileSection() {
             </p>
           </div>
           <div className='p-6'>
-            <h4 className='flex items-start gap-1.5 text-xs leading-[1.3] font-semibold tracking-normal text-foreground'>
+            <h4 className='flex items-start gap-1.5 font-utekos-text-medium text-xs leading-[1.3] tracking-normal text-foreground'>
               <Leaf className='text-soft-warm h-4 w-4' />
               Investering i komfort
             </h4>
@@ -83,7 +83,7 @@ export function MobileSection() {
           komfortplagg av ypperste kvalitet som lar deg forlenge
           de gode stundene utendørs, uansett vær.&rdquo;
         </blockquote>
-        <p className='mt-3 text-sm leading-[1.3] font-semibold tracking-normal text-foreground'>
+        <p className='mt-3 font-utekos-text-medium text-sm leading-[1.3] tracking-normal text-foreground'>
           - Utekos Teamet
         </p>
       </div>

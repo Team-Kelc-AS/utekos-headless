@@ -26,7 +26,7 @@ export function ShippingReturnsInfo() {
           delay='0.2s'
         >
           <article className='dark:bg-dark-foreground/5 flex h-full min-w-0 flex-col rounded-2xl bg-foreground/5 p-2'>
-            <div className='dark:ring-dark-border  flex h-full flex-col items-start rounded-xl bg-card p-6 shadow-sm ring-1 ring-border sm:p-8'>
+            <div className='dark:ring-dark-border flex h-full flex-col items-start rounded-xl bg-card p-6 shadow-sm ring-1 ring-border sm:p-8'>
               <header className='mb-4 flex flex-col items-start gap-4'>
                 <div className='dark:ring-dark-border/50 dark:bg-dark-foreground/5 flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
                   <Truck
@@ -35,11 +35,11 @@ export function ShippingReturnsInfo() {
                     aria-hidden='true'
                   />
                 </div>
-                <h2 className='text-left font-sans text-xl leading-tight font-semibold text-foreground'>
+                <h2 className='text-left font-sans font-utekos-text-medium text-xl leading-tight text-foreground'>
                   Frakt og levering
                 </h2>
               </header>
-              <p className='font-utekos-text /80 mb-6 max-w-prose text-left text-base leading-relaxed text-foreground/80'>
+              <p className='/80 mb-6 max-w-prose text-left font-utekos-text text-base leading-relaxed text-foreground/80'>
                 Tiden avhenger av hvor i landet pakken skal
                 sendes, hvor den sendes fra, tid på døgnet og
                 ukedag.
@@ -74,7 +74,7 @@ export function ShippingReturnsInfo() {
           delay='0.4s'
         >
           <article className='dark:bg-dark-foreground/5 flex h-full min-w-0 flex-col rounded-2xl bg-foreground/5 p-2'>
-            <div className='dark:ring-dark-border  flex h-full flex-col items-start rounded-xl bg-card p-6 shadow-sm ring-1 ring-border sm:p-8'>
+            <div className='dark:ring-dark-border flex h-full flex-col items-start rounded-xl bg-card p-6 shadow-sm ring-1 ring-border sm:p-8'>
               <header className='mb-4 flex flex-col items-start gap-4'>
                 <div className='dark:ring-dark-border/50 dark:bg-dark-foreground/5 flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
                   <Undo2
@@ -83,11 +83,11 @@ export function ShippingReturnsInfo() {
                     aria-hidden='true'
                   />
                 </div>
-                <h2 className='text-left font-sans text-xl leading-tight font-semibold text-foreground'>
+                <h2 className='text-left font-sans font-utekos-text-medium text-xl leading-tight text-foreground'>
                   Retur og angrerett
                 </h2>
               </header>
-              <p className='font-utekos-text /80 mb-6 max-w-prose text-left text-base leading-relaxed text-foreground/80'>
+              <p className='/80 mb-6 max-w-prose text-left font-utekos-text text-base leading-relaxed text-foreground/80'>
                 Du har 14 dagers angrerett fra dagen du mottar
                 varen.
               </p>
@@ -124,16 +124,16 @@ export function ShippingReturnsInfo() {
         delay='0.6s'
       >
         <div className='mb-6 flex flex-col items-start'>
-          <h2 className='text-left font-sans text-2xl leading-tight font-bold text-foreground sm:text-3xl'>
+          <h2 className='font-google-sans text-left font-sans text-2xl leading-tight font-bold text-foreground sm:text-3xl'>
             Slik fungerer returprosessen
           </h2>
         </div>
-        <Accordion className=' w-full border-t border-border **:data-[slot=accordion-content]:animate-none!'>
+        <Accordion className='w-full border-t border-border **:data-[slot=accordion-content]:animate-none!'>
           {shippingReturnsFaqItems.map(item => (
             <AccordionItem
               key={item.id}
               value={item.id}
-              className=' border-border'
+              className='border-border'
             >
               <AccordionTrigger
                 data-track={`ShippingReturns-${item.id}-Click`}
@@ -148,7 +148,7 @@ export function ShippingReturnsInfo() {
                     <a
                       href='mailto:kundeservice@utekos.no'
                       data-track='ShippingReturnsEmailClick'
-                      className='dark:decoration-dark-foreground/30 dark:hover:decoration-dark-foreground font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground'
+                      className='dark:decoration-dark-foreground/30 dark:hover:decoration-dark-foreground font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground'
                     >
                       kundeservice@utekos.no
                     </a>{' '}

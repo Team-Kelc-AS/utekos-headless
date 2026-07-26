@@ -63,7 +63,7 @@ function ColorSwatch({
         className='dark:border-dark-foreground/10 dark:group-hover:ring-dark-foreground/30 dark:group-focus-visible:ring-dark-foreground/50 aspect-[1.05] min-h-16 w-full rounded-md border border-foreground/10 transition group-hover:ring-2 group-hover:ring-foreground/30 group-focus-visible:ring-2 group-focus-visible:ring-foreground/50 sm:min-h-19 lg:min-h-20'
         style={{ backgroundColor: step.oklch }}
       />
-      <span className='font-utekos-text /55 dark:group-hover:text-dark-foreground/80 truncate text-xs text-foreground/55 group-hover:text-foreground/80'>
+      <span className='/55 dark:group-hover:text-dark-foreground/80 truncate font-utekos-text text-xs text-foreground/55 group-hover:text-foreground/80'>
         {familyId}-{step.shade}
       </span>
     </button>
@@ -117,14 +117,14 @@ export function ColorPaletteViewer({
       <header className='dark:border-dark-foreground/10 space-y-4 border-b border-foreground/10 pb-8'>
         <div className='flex flex-wrap items-end justify-between gap-4'>
           <div className='space-y-2'>
-            <p className='font-utekos-text /50 text-xs tracking-wide text-foreground/50'>
+            <p className='/50 font-utekos-text text-xs tracking-wide text-foreground/50'>
               <BrandBadge
                 label='Utekos Brand'
                 backgroundColor='var(--card)'
                 textColor='var(--primary)'
               />
             </p>
-            <h1 className='text-3xl font-semibold tracking-tight text-foreground md:text-4xl'>
+            <h1 className='font-utekos-text-medium text-3xl tracking-tight text-foreground md:text-4xl'>
               Farger i alle formater
             </h1>
             <p className='/65 max-w-2xl text-sm leading-relaxed text-foreground/65'>
@@ -168,7 +168,7 @@ export function ColorPaletteViewer({
           </div>
         </div>
 
-        <p className='font-utekos-text /45 text-xs text-foreground/45'>
+        <p className='/45 font-utekos-text text-xs text-foreground/45'>
           {families.length} familier · synket{' '}
           {generatedAtDisplay}
         </p>

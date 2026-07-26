@@ -91,7 +91,7 @@ export function QuickViewModal({
           </div>
         : <>
             <DialogHeader className='space-y-3 py-2 pr-10'>
-              <DialogTitle className='text-3xl font-bold text-popover-foreground'>
+              <DialogTitle className='font-google-sans text-3xl font-bold text-popover-foreground'>
                 {productData.title}
               </DialogTitle>
               {productData.description && (
@@ -108,7 +108,7 @@ export function QuickViewModal({
             <div className='grid grid-cols-1 gap-10 pb-2 lg:grid-cols-2 lg:gap-12'>
               <div className='relative'>
                 <div className='sticky top-6'>
-                  <div className='bg-havdyp relative aspect-square w-full overflow-hidden rounded-2xl shadow-lg'>
+                  <div className='relative aspect-square w-full overflow-hidden rounded-2xl bg-havdyp shadow-lg'>
                     {featuredImage && (
                       <Image
                         src={featuredImage.url}
@@ -131,7 +131,7 @@ export function QuickViewModal({
                   <p className='text-sm tracking-wide text-popover-foreground/75 uppercase'>
                     Pris
                   </p>
-                  <div className='text-3xl font-bold text-popover-foreground'>
+                  <div className='font-google-sans text-3xl font-bold text-popover-foreground'>
                     <Price
                       amount={selectedVariant.price.amount}
                       currencyCode={

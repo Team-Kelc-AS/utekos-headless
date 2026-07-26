@@ -35,7 +35,7 @@ export default function InspirationPage() {
         />
       </div>
       <div className='container mx-auto max-w-4xl px-4 text-center'>
-        <h1 className='text-4xl leading-[0.95] font-bold tracking-normal sm:text-5xl lg:text-6xl'>
+        <h1 className='font-google-sans text-4xl leading-[0.95] font-bold tracking-normal sm:text-5xl lg:text-6xl'>
           Inspirasjon for mer utekos
         </h1>
         <p className='leading-text-paragraph /90 mx-auto mt-6 max-w-2xl text-lg tracking-normal text-foreground/90'>
@@ -48,14 +48,14 @@ export default function InspirationPage() {
           <BrandBadge
             asChild
             tone='commerce-primary'
-            className='dark:border-dark-primary/24 border border-primary/24 px-7 py-3 text-base leading-4 font-semibold tracking-normal shadow-[0_18px_38px_-30px_rgba(49,42,18,0.58)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105'
+            className='dark:border-dark-primary/24 border border-primary/24 px-7 py-3 font-utekos-text-medium text-base leading-4 tracking-normal shadow-[0_18px_38px_-30px_rgba(49,42,18,0.58)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105'
           >
             <Link href='/produkter'>Se produktene</Link>
           </BrandBadge>
           <BrandBadge
             asChild
             tone='commerce-secondary'
-            className='dark:border-dark-background/18 border border-background/18 px-7 py-3 text-base leading-4 font-semibold tracking-normal shadow-[0_18px_38px_-32px_rgba(14,18,35,0.7)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-110'
+            className='dark:border-dark-background/18 border border-background/18 px-7 py-3 font-utekos-text-medium text-base leading-4 tracking-normal shadow-[0_18px_38px_-32px_rgba(14,18,35,0.7)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-110'
           >
             <Link href='/handlehjelp/storrelsesguide'>
               Finn riktig størrelse

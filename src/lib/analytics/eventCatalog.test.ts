@@ -219,23 +219,46 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   assert.ok(activeOutboxes.includes('meta:search'))
   assert.ok(activeOutboxes.includes('microsoft_uet:purchase'))
   assert.ok(activeOutboxes.includes('microsoft_uet:add_to_cart'))
-  assert.ok(activeOutboxes.includes('microsoft_uet:begin_checkout'))
+  assert.ok(
+    activeOutboxes.includes('microsoft_uet:begin_checkout')
+  )
   assert.equal(
     eventCatalog.page_view.providers.meta.serverOutbox,
     'active'
   )
   assert.equal(
-    eventCatalog.add_to_cart.providers.microsoft_uet.serverOutbox,
+    eventCatalog.add_to_cart.providers.microsoft_uet
+      .serverOutbox,
     'active'
   )
   assert.equal(
-    eventCatalog.begin_checkout.providers.microsoft_uet.serverOutbox,
+    eventCatalog.begin_checkout.providers.microsoft_uet
+      .serverOutbox,
     'active'
   )
   assert.equal(
     eventCatalog.purchase.providers.microsoft_uet.serverOutbox,
     'active'
   )
+})
+
+test('declares Shopify Customer Events and Data Manager as the two purchase sources', () => {
+  const googlePurchase = eventCatalog.purchase.providers.google
+
+  assert.equal(
+    googlePurchase.transport.browser,
+    'shopify_customer_events'
+  )
+  assert.equal(
+    googlePurchase.transport.server,
+    'google_data_manager'
+  )
+  assert.ok(
+    googlePurchase.requiredParameters.includes(
+      'one_of(client_id,gclid,user_id)'
+    )
+  )
+  assert.equal(googlePurchase.dedupeField, 'transaction_id')
 })
 
 test('records Shopify Admin order payment as the sole Purchase owner with reconciliation recovery', () => {

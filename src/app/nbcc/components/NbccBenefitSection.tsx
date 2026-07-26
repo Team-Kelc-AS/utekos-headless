@@ -15,7 +15,7 @@ export function NbccBenefitSection() {
           >
             Medlemsfordel for NBCC-medlemmer
           </Badge>
-          <h2 className='mt-6 max-w-2xl text-3xl font-semibold tracking-normal text-balance text-foreground sm:text-4xl'>
+          <h2 className='mt-6 max-w-2xl font-utekos-text-medium text-3xl tracking-normal text-balance text-foreground sm:text-4xl'>
             En varm fordel for de lange utekveldene.
           </h2>
         </div>
@@ -51,7 +51,7 @@ export function NbccBenefitSection() {
             aria-hidden
           />
           <div>
-            <h3 className='font-semibold text-foreground'>
+            <h3 className='font-utekos-text-medium text-foreground'>
               Din NBCC-fordel
             </h3>
             <p className='dark:text-dark-muted-foreground mt-2 text-sm leading-6 text-muted-foreground'>
@@ -68,7 +68,7 @@ export function NbccBenefitSection() {
             aria-hidden
           />
           <div>
-            <h3 className='font-semibold text-foreground'>
+            <h3 className='font-utekos-text-medium text-foreground'>
               Bred campingrelevans
             </h3>
             <p className='dark:text-dark-muted-foreground mt-2 text-sm leading-6 text-muted-foreground'>
@@ -85,7 +85,7 @@ export function NbccBenefitSection() {
             aria-hidden
           />
           <div>
-            <h3 className='font-semibold text-foreground'>
+            <h3 className='font-utekos-text-medium text-foreground'>
               Klar for neste samling
             </h3>
             <p className='dark:text-dark-muted-foreground mt-2 text-sm leading-6 text-muted-foreground'>

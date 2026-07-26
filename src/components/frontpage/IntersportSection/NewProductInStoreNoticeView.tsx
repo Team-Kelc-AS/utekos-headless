@@ -86,7 +86,7 @@ export function NewProductInStoreNoticeView({
           >
             <H2
               ID='intersport-laksevag-heading'
-              className='pb-0 text-left text-3xl leading-tight font-bold tracking-normal text-foreground md:text-4xl lg:text-5xl'
+              className='font-google-sans pb-0 text-left text-3xl leading-tight font-bold tracking-normal text-foreground md:text-4xl lg:text-5xl'
             >
               Sjekk ut Utekos på Intersport Laksevåg!
             </H2>
@@ -95,7 +95,7 @@ export function NewProductInStoreNoticeView({
               Se, prøve og kjenne på{' '}
               <InlineText
                 as='strong'
-                className='font-semibold text-foreground'
+                className='font-utekos-text-medium text-foreground'
               >
                 Utekos TechDown™
               </InlineText>{' '}
@@ -113,7 +113,7 @@ export function NewProductInStoreNoticeView({
               <Link
                 href={mapsUrl as Route}
                 target='_blank'
-                className='font-utekos-text flex items-center gap-2'
+                className='flex items-center gap-2 font-utekos-text'
               >
                 <InlineText>Vis vei til butikken</InlineText>
               </Link>

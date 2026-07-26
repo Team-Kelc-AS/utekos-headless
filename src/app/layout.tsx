@@ -2,7 +2,6 @@
 
 import '../globals.css'
 import {
-  googleSans,
   utekosText,
   utekosTextMedium
 } from '@/app/fonts/font.config'
@@ -15,14 +14,22 @@ import { OnlineStoreJsonLd } from './OnlineStoreJsonLd'
 import { CartProviderLoader } from '@/components/providers/CartProviderLoader'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
-import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { ConsentGatedVercelTelemetry } from '@/components/analytics/ConsentGatedVercelTelemetry'
+import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
 import { GoogleTagManager } from '@next/third-parties/google'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import { SITE_URL } from '@/constants'
 import type { Metadata } from 'next'
 import type { TrackingEnvironment } from '@/lib/analytics/pageViewEvent'
-import { resolveAssistantDeploymentRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
+import { Google_Sans_Flex } from 'next/font/google'
+
+const googleSansFlex = Google_Sans_Flex({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-google-sans',
+  preload: false,
+  fallback: ['system-ui', 'sans-serif'],
+  axes: ['ROND', 'GRAD', 'wdth', 'opsz', 'slnt']
+})
 
 const googleTagGatewayOrigin =
   (
@@ -114,15 +121,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const assistantRolloutPercent =
-    resolveAssistantDeploymentRolloutPercent(process.env)
+  const storefrontAccessToken =
+    process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
 
   return (
     <html
       lang='no'
       translate='no'
       suppressHydrationWarning
-      className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSans.variable}`}
+      className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
         <GoogleTagManager
@@ -135,30 +142,24 @@ export default function RootLayout({
           />
           <ScrollDepthObserver />
         </Suspense>
+        <OnlineStoreJsonLd />
 
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='dark'
-          forcedTheme='dark'
-          enableColorScheme
-          disableTransitionOnChange
-        >
-          <OnlineStoreJsonLd />
-
-          <Suspense fallback={null}>
-            <CartProviderLoader>
-              <SiteChrome
-                assistantRolloutPercent={assistantRolloutPercent}
-                header={<Header menu={mainMenu} />}
-                footer={<Footer />}
-              >
-                {children}
-              </SiteChrome>
-            </CartProviderLoader>
-          </Suspense>
-        </ThemeProvider>
-        <Analytics />
-        <SpeedInsights />
+        <Suspense fallback={null}>
+          <CartProviderLoader>
+            <SiteChrome
+              header={<Header menu={mainMenu} />}
+              footer={<Footer />}
+            >
+              {children}
+            </SiteChrome>
+          </CartProviderLoader>
+        </Suspense>
+        <ShopifyCustomerPrivacyBridge
+          {...(storefrontAccessToken ?
+            { storefrontAccessToken }
+          : {})}
+        />
+        <ConsentGatedVercelTelemetry />
       </body>
     </html>
   )

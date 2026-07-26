@@ -4,8 +4,14 @@ import { useAddToCartAction } from '@/hooks/useAddToCartAction'
 import { useAddToCartForm } from '@/hooks/useAddToCartForm'
 import { useCartErrorMonitoring } from '@/hooks/useCartErrorMonitoring'
 import { AddToCartView } from './AddToCartView'
-import type { AddToCartFormValues, AddToCartProps } from 'types/cart'
-import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
+import type {
+  AddToCartFormValues,
+  AddToCartProps
+} from 'types/cart'
+import type {
+  ShopifyProduct,
+  ShopifyProductVariant
+} from 'types/product'
 
 interface ExtendedAddToCartProps extends AddToCartProps {
   additionalProductData?: {
@@ -18,18 +24,16 @@ export function AddToCart({
   product,
   selectedVariant,
   additionalLine,
-  additionalProductData
+  additionalProductData,
+  checkoutPresentation = 'balanced'
 }: ExtendedAddToCartProps) {
-  const {
-    performGoToCheckout,
-    isPending,
-    isCheckoutPending
-  } = useAddToCartAction({
-    product,
-    selectedVariant,
-    additionalLine,
-    ...(additionalProductData ? { additionalProductData } : {})
-  })
+  const { performGoToCheckout, isPending, isCheckoutPending } =
+    useAddToCartAction({
+      product,
+      selectedVariant,
+      additionalLine,
+      ...(additionalProductData ? { additionalProductData } : {})
+    })
 
   const form = useAddToCartForm(selectedVariant)
 
@@ -51,6 +55,7 @@ export function AddToCart({
       isPending={isPending}
       isCheckoutPending={isCheckoutPending}
       isAvailable={isAvailable}
+      checkoutPresentation={checkoutPresentation}
     />
   )
 }

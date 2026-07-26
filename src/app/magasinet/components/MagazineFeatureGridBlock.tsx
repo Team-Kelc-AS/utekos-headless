@@ -13,7 +13,7 @@ export function MagazineFeatureGridBlock({
       {(block.title || block.intro) && (
         <header className='mx-auto mb-8 max-w-3xl text-left'>
           {block.title && (
-            <h2 className='font-sans text-4xl leading-[0.95] font-bold text-balance text-foreground sm:text-5xl'>
+            <h2 className='font-google-sans font-sans text-4xl leading-[0.95] font-bold text-balance text-foreground sm:text-5xl'>
               {block.title}
             </h2>
           )}
@@ -39,7 +39,7 @@ export function MagazineFeatureGridBlock({
               />
             </div>
 
-            <h3 className='font-sans text-2xl leading-[0.95] font-bold text-background'>
+            <h3 className='font-google-sans font-sans text-2xl leading-[0.95] font-bold text-background'>
               {item.title}
             </h3>
 

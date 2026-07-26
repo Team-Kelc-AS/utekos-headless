@@ -3,6 +3,8 @@
 import crypto from 'node:crypto'
 
 import { z } from 'zod'
+
+import { NEWSLETTER_DISCOUNT_CODE } from '@/components/newsletter-modal/newsletterModalConfig'
 import type { GenerateLeadDataLayerEvent } from '@/lib/analytics/generateLeadEvent'
 import { parseLeadFormTrackingContext } from '@/lib/analytics/leadFormTrackingContext'
 import { sendWelcomeEmail } from '@/lib/email/sendWelcomeEmail'
@@ -12,6 +14,7 @@ import {
   LEAD_TYPES
 } from '@/lib/leads/leadFormIds'
 import { recordLeadSubmission } from '@/lib/leads/recordLeadSubmission'
+import { classifyOperationalFailure } from '@/lib/observability/logging/appLogContract'
 import { syncSubscriberToShopify } from '@/lib/shopify/syncSubscriberToShopify'
 import { logToAppLogs } from '@/lib/utils/logToAppLogs'
 
@@ -22,59 +25,87 @@ export type ActionState = {
   dataLayerEvent?: GenerateLeadDataLayerEvent
 }
 
+const emailSchema = z
+  .string()
+  .trim()
+  .email({
+    message: 'Vennligst skriv inn en gyldig e-postadresse.'
+  })
+
 export async function subscribeToNewsletter(
   _prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const emailSchema = z.string().email({
-    message: 'Vennligst skriv inn en gyldig e-postadresse.'
-  })
+  const emailResult = emailSchema.safeParse(
+    formData.get('email')
+  )
 
-  const result = emailSchema.safeParse(formData.get('email'))
+  if (!emailResult.success) {
+    const message =
+      emailResult.error.issues[0]?.message ??
+      'Det oppstod en valideringsfeil.'
 
-  if (!result.success) {
-    const errorMessage =
-      result.error.issues[0]?.message || 'Det oppstod en valideringsfeil.'
-    return { status: 'error', message: errorMessage }
+    return { status: 'error', message }
   }
 
-  const email = result.data
+  const email = emailResult.data.toLowerCase()
+
   const trackingContext = parseLeadFormTrackingContext(
     formData.get('leadTrackingContext')
   )
+
   const leadId = crypto.randomUUID()
 
   try {
-    const results = await Promise.allSettled([
-      sendWelcomeEmail(email),
-      syncSubscriberToShopify(email)
-    ])
+    const [welcomeEmailResult, shopifySyncResult] =
+      await Promise.allSettled([
+        sendWelcomeEmail(email),
+        syncSubscriberToShopify(email)
+      ])
 
-    const emailResult = results[0]
-    const shopifyResult = results[1]
-    if (shopifyResult.status === 'rejected') {
-      console.error('Shopify Sync failed:', shopifyResult.reason)
-      await logToAppLogs('ERROR', 'Newsletter Shopify Sync Failed', {
-        error: String(shopifyResult.reason)
-      })
-    }
-    if (emailResult.status === 'fulfilled' && !emailResult.value.ok) {
-      console.warn('Welcome Email failed:', emailResult.value.message)
-      await logToAppLogs('ERROR', 'Newsletter Welcome Email Failed', {
-        error: emailResult.value.message
-      })
-    }
-    if (emailResult.status === 'rejected') {
-      console.warn('Welcome Email failed:', emailResult.reason)
-      await logToAppLogs('ERROR', 'Newsletter Welcome Email Failed', {
-        error: String(emailResult.reason)
+    if (shopifySyncResult.status === 'rejected') {
+      console.error('Newsletter Shopify sync failed')
+
+      await logToAppLogs({
+        event: 'newsletter.shopify_sync_failed',
+        level: 'ERROR',
+        data: {
+          reasonCode: classifyOperationalFailure(
+            shopifySyncResult.reason
+          )
+        },
+        context: {}
       })
     }
 
-    await logToAppLogs('INFO', 'Newsletter Subscription Flow Completed', {
-      emailPresent: true,
-      leadId
-    })
+    let welcomeEmailFailure: string | null = null
+
+    if (welcomeEmailResult.status === 'rejected') {
+      welcomeEmailFailure = String(welcomeEmailResult.reason)
+    } else if (!welcomeEmailResult.value.ok) {
+      welcomeEmailFailure = welcomeEmailResult.value.message
+    }
+
+    if (welcomeEmailFailure) {
+      console.error('Newsletter welcome email failed')
+
+      await logToAppLogs({
+        event: 'newsletter.welcome_email_failed',
+        level: 'ERROR',
+        data: {
+          reasonCode: classifyOperationalFailure(
+            welcomeEmailFailure
+          )
+        },
+        context: {}
+      })
+
+      return {
+        status: 'error',
+        message:
+          'Vi klarte ikke å sende rabattmailen. Prøv igjen om litt.'
+      }
+    }
 
     const leadResult = await recordLeadSubmission({
       leadId,
@@ -85,16 +116,32 @@ export async function subscribeToNewsletter(
       ...(trackingContext ? { trackingContext } : {})
     })
 
+    await logToAppLogs({
+      event: 'newsletter.completed',
+      level: 'INFO',
+      data: {},
+      context: {}
+    })
+
     return {
       status: 'success',
-      message: 'Takk! Velkomstmail er på vei til din innboks.',
-      ...(leadResult.eventId ? { eventId: leadResult.eventId } : {}),
+      message: `Takk! Rabattkoden ${NEWSLETTER_DISCOUNT_CODE} er klar til bruk og på vei til innboksen din.`,
+      ...(leadResult.eventId ?
+        { eventId: leadResult.eventId }
+      : {}),
       ...(leadResult.dataLayerEvent ?
         { dataLayerEvent: leadResult.dataLayerEvent }
       : {})
     }
   } catch (error: unknown) {
-    console.error('Critical Newsletter Error:', error)
+    console.error('Critical newsletter error')
+
+    await logToAppLogs({
+      event: 'newsletter.exception',
+      level: 'ERROR',
+      data: { reasonCode: classifyOperationalFailure(error) },
+      context: {}
+    })
 
     return {
       status: 'error',

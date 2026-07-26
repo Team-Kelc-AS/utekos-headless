@@ -12,7 +12,7 @@ export function ProductShowcase() {
   return (
     <article
       id='section-solution'
-      className='w-full bg-[#1F2421] py-24 text-[#F4F1EA]'
+      className='w-full bg-background py-24 text-[#F4F1EA]'
     >
       <div className='mx-auto max-w-7xl px-6 md:px-12'>
         <div className='grid grid-cols-1 items-center gap-16 lg:grid-cols-2'>

@@ -38,7 +38,8 @@ const surfaceStyles: Record<
   },
   orange: {
     background: 'var(--promo)',
-    borderColor: 'color-mix(in oklch, var(--promo-foreground) 28%, transparent)',
+    borderColor:
+      'color-mix(in oklch, var(--promo-foreground) 28%, transparent)',
     textColor: 'var(--promo-foreground)',
     descriptionColor: 'var(--promo-foreground)'
   },
@@ -51,12 +52,15 @@ const surfaceStyles: Record<
   }
 }
 
-export function BenefitCard({ benefit, delay }: BenefitCardProps) {
+export function BenefitCard({
+  benefit,
+  delay
+}: BenefitCardProps) {
   const surface = surfaceStyles[benefit.surface ?? 'orange']
 
   return (
     <li
-      className='animate-fade-in-on-scroll group relative overflow-hidden rounded-[1.05rem] border     shadow-[0_18px_44px_-36px_color-mix(in_oklch,var(--background)_82%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+      className='animate-fade-in-on-scroll group relative overflow-hidden rounded-[1.05rem] border shadow-[0_18px_44px_-36px_color-mix(in_oklch,var(--background)_82%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
       style={
         {
           '--animation-delay': `${delay}s`,
@@ -69,7 +73,8 @@ export function BenefitCard({ benefit, delay }: BenefitCardProps) {
       <div
         className='pointer-events-none absolute -inset-x-8 -top-20 h-44 opacity-[0.14] blur-3xl transition-opacity duration-300 group-hover:opacity-[0.22]'
         style={{
-          background: 'radial-gradient(120% 120% at 50% 0%, transparent 38%, var(--benefit-accent) 100%)'
+          background:
+            'radial-gradient(120% 120% at 50% 0%, transparent 38%, var(--benefit-accent) 100%)'
         }}
       />
 
@@ -84,18 +89,26 @@ export function BenefitCard({ benefit, delay }: BenefitCardProps) {
           <Check
             className='size-5'
             style={{
-              color: surface.iconColor ?? 'var(--sidebar-primary-foreground)'
+              color:
+                surface.iconColor ??
+                'var(--sidebar-primary-foreground)'
             }}
             aria-hidden='true'
           />
         </div>
 
-        <div className='flex-1  '>
-          <span className='font-semibold' style={{ color: surface.textColor }}>
+        <div className='flex-1'>
+          <span
+            className='font-utekos-text-medium'
+            style={{ color: surface.textColor }}
+          >
             {benefit.label}
           </span>
           {benefit.description && (
-            <span style={{ color: surface.descriptionColor }}> {benefit.description}</span>
+            <span style={{ color: surface.descriptionColor }}>
+              {' '}
+              {benefit.description}
+            </span>
           )}
         </div>
       </div>

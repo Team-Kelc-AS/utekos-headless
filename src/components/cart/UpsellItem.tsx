@@ -73,14 +73,14 @@ export function UpsellItem({
                       product.priceRange.minVariantPrice
                     )}
                   </span>
-                  <span className='font-bold text-foreground'>
+                  <span className='font-google-sans font-bold text-foreground'>
                     {formatPrice({
                       amount: discountedPrice.toString(),
                       currencyCode: 'NOK'
                     })}
                   </span>
                 </>
-              : <span className='font-bold text-foreground'>
+              : <span className='font-google-sans font-bold text-foreground'>
                   {formatPrice(
                     product.priceRange.minVariantPrice
                   )}
@@ -102,8 +102,11 @@ export function UpsellItem({
       </div>
 
       {showDiscountHint && (
-        <div className='flex items-center justify-center border-t border-secondary/20 pt-2 text-xs font-semibold text-secondary'>
-          <PercentIcon className='mr-1.5 h-3 w-3' aria-hidden='true' />
+        <div className='flex items-center justify-center border-t border-secondary/20 pt-2 font-utekos-text-medium text-xs text-secondary'>
+          <PercentIcon
+            className='mr-1.5 h-3 w-3'
+            aria-hidden='true'
+          />
           Du får 10% rabatt på dette produktet!
         </div>
       )}

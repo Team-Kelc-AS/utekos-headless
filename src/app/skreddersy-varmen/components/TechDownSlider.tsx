@@ -36,14 +36,22 @@ const content = {
     title: 'Maksimal isolasjon',
     desc: 'Slik ser Utekos TechDown™ ut under ideelle forhold. Tusenvis av mikroskopiske luftlommer fanger kroppsvarmen din og skaper en lun, beskyttende barriere mot omgivelsene.',
     icon: (
-      <ShieldCheck className='size-6 text-accent dark:text-dark-accent' aria-hidden />
+      <ShieldCheck
+        className='dark:text-dark-accent size-6 text-accent'
+        aria-hidden
+      />
     ) // Varm farge for tørt klima
   },
   wet: {
     label: 'Fuktig klima',
     title: 'Uendret beskyttelse',
     desc: 'Her skiller teknologien seg fra tradisjonell dun. Under fuktige forhold og når regnet treffer, kollapser ikke fibrene. De er hydrofobe (vannavstøtende) og fortsetter å isolere deg.',
-    icon: <Waves className='size-6 text-primary dark:text-dark-primary' aria-hidden /> // Kald/fuktig farge for vått klima
+    icon: (
+      <Waves
+        className='dark:text-dark-primary size-6 text-primary'
+        aria-hidden
+      />
+    ) // Kald/fuktig farge for vått klima
   }
 } as const
 
@@ -142,7 +150,7 @@ export function TechDownSlider() {
     <SkreddersyMotionProvider>
       <article
         aria-labelledby='techdown-heading'
-        className='w-full border-t border-background/10 dark:border-dark-background/10 bg-foreground dark:bg-dark-foreground py-24 text-background dark:text-dark-background'
+        className='dark:border-dark-background/10 dark:bg-dark-foreground dark:text-dark-background w-full border-t border-background/10 bg-foreground py-24 text-background'
       >
         <div className='mx-auto max-w-5xl px-6'>
           <m.div
@@ -153,20 +161,20 @@ export function TechDownSlider() {
             variants={revealGroup}
           >
             <m.span
-              className='mb-3 inline-block font-utekos-text-medium leading-4 text-accent dark:text-dark-accent'
+              className='dark:text-dark-accent mb-3 inline-block font-utekos-text-medium leading-4 text-accent'
               variants={revealItemLeft}
             >
               Teknologi
             </m.span>
             <m.h2
               id='techdown-heading'
-              className='leading-heading-level-two mb-6 font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-background dark:text-dark-background md:text-5xl lg:text-6xl'
+              className='leading-heading-level-two font-google-sans dark:text-dark-background mb-6 font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-background md:text-5xl lg:text-6xl'
               variants={revealScale}
             >
               Når været snur, består varmen
             </m.h2>
             <m.p
-              className='leading-text-paragraph mx-auto max-w-2xl font-utekos-text-medium text-base text-background/85 dark:text-dark-background/85 md:text-lg'
+              className='leading-text-paragraph dark:text-dark-background/85 mx-auto max-w-2xl font-utekos-text-medium text-base text-background/85 md:text-lg'
               variants={revealItem}
             >
               Dra linjen for å se forskjellen på hvordan vanlig
@@ -175,7 +183,7 @@ export function TechDownSlider() {
           </m.div>
 
           <m.div
-            className='mb-5 flex flex-col gap-3 rounded-sm border border-background/10 dark:border-dark-background/10 bg-foreground dark:bg-dark-foreground p-4 font-utekos-text tracking-normal! text-background dark:text-dark-background md:flex-row md:items-center md:justify-between'
+            className='dark:border-dark-background/10 dark:bg-dark-foreground dark:text-dark-background mb-5 flex flex-col gap-3 rounded-sm border border-background/10 bg-foreground p-4 font-utekos-text tracking-normal! text-background md:flex-row md:items-center md:justify-between'
             initial='hidden'
             whileInView='visible'
             viewport={skreddersyViewport}
@@ -201,12 +209,12 @@ export function TechDownSlider() {
                   )
                 )
               }
-              className='h-2 w-full accent-primary dark:accent-dark-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary dark:focus-visible:outline-dark-primary md:max-w-sm'
+              className='dark:accent-dark-primary dark:focus-visible:outline-dark-primary h-2 w-full accent-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary md:max-w-sm'
             />
           </m.div>
 
           <m.div
-            className='relative rounded-sm border border-background/5 dark:border-dark-background/5 bg-foreground dark:bg-dark-foreground p-2 shadow-2xl md:p-4'
+            className='dark:border-dark-background/5 dark:bg-dark-foreground relative rounded-sm border border-background/5 bg-foreground p-2 shadow-2xl md:p-4'
             initial='hidden'
             whileInView='visible'
             viewport={skreddersyViewport}
@@ -214,7 +222,7 @@ export function TechDownSlider() {
           >
             <div
               ref={sliderImageRef}
-              className='relative aspect-4/3 w-full cursor-ew-resize touch-none overflow-hidden rounded-sm bg-background dark:bg-dark-background select-none md:aspect-21/9'
+              className='dark:bg-dark-background relative aspect-4/3 w-full cursor-ew-resize touch-none overflow-hidden rounded-sm bg-background select-none md:aspect-21/9'
               style={sliderStyle}
               onPointerDown={startDrag}
               onPointerMove={moveDrag}
@@ -238,7 +246,7 @@ export function TechDownSlider() {
               </div>
 
               <div
-                className='absolute inset-0 z-20 overflow-hidden border-r-2 border-foreground/50 dark:border-dark-foreground/50'
+                className='dark:border-dark-foreground/50 absolute inset-0 z-20 overflow-hidden border-r-2 border-foreground/50'
                 style={{
                   clipPath:
                     'inset(0 var(--techdown-clip-right) 0 0)'
@@ -274,12 +282,12 @@ export function TechDownSlider() {
               </div>
 
               <div
-                className='absolute top-0 bottom-0 z-40 flex w-1 cursor-ew-resize items-center justify-center bg-foreground dark:bg-dark-foreground shadow-[0_0_30px_rgba(0,0,0,0.5)]'
+                className='dark:bg-dark-foreground absolute top-0 bottom-0 z-40 flex w-1 cursor-ew-resize items-center justify-center bg-foreground shadow-[0_0_30px_rgba(0,0,0,0.5)]'
                 style={{ left: 'var(--techdown-position)' }}
               >
                 <m.div
                   className={[
-                    'flex size-16 -translate-x-1/2 transform items-center justify-center rounded-full border border-background/10 dark:border-dark-background/10 bg-foreground dark:bg-dark-foreground text-primary dark:text-dark-primary shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-transform duration-200 hover:scale-110 active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100',
+                    'dark:border-dark-background/10 dark:bg-dark-foreground dark:text-dark-primary flex size-16 -translate-x-1/2 transform items-center justify-center rounded-full border border-background/10 bg-foreground text-primary shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-transform duration-200 hover:scale-110 active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100',
                     isDragging ? 'scale-105' : ''
                   ].join(' ')}
                   whileTap={{ scale: 0.95 }}
@@ -294,7 +302,7 @@ export function TechDownSlider() {
           </m.div>
 
           <m.div
-            className='mt-12 rounded-sm border border-background/5 dark:border-dark-background/5 bg-foreground dark:bg-dark-foreground p-8 shadow-xl md:p-12'
+            className='dark:border-dark-background/5 dark:bg-dark-foreground mt-12 rounded-sm border border-background/5 bg-foreground p-8 shadow-xl md:p-12'
             initial='hidden'
             whileInView='visible'
             viewport={skreddersyViewport}
@@ -330,32 +338,32 @@ export function TechDownSlider() {
                     textColor='var(--color-background)'
                     className='mb-4 flex items-center gap-3 px-[30px] text-xs leading-none font-medium shadow-sm sm:px-8'
                   >
-                    <span className='flex w-full items-center gap-2 text-left font-utekos-text-medium text-base leading-4 text-balance text-background dark:text-dark-background'>
+                    <span className='dark:text-dark-background flex w-full items-center gap-2 text-left font-utekos-text-medium text-base leading-4 text-balance text-background'>
                       {currentContent.icon}{' '}
                       {currentContent.label}
                     </span>
                   </BrandBadge>
 
-                  <h3 className='font-sans text-3xl leading-[0.95] font-bold tracking-[-0.01em] text-background dark:text-dark-background'>
+                  <h3 className='font-google-sans dark:text-dark-background font-sans text-3xl leading-[0.95] font-bold tracking-[-0.01em] text-background'>
                     {currentContent.title}
                   </h3>
                 </div>
 
                 <div className='md:w-2/3'>
-                  <p className='mb-8 pb-2 font-utekos-text! text-lg text-background/90 dark:text-dark-background/90'>
+                  <p className='dark:text-dark-background/90 mb-8 pb-2 font-utekos-text! text-lg text-background/90'>
                     {currentContent.desc}
                   </p>
 
-                  <div className='border-t border-background/10 dark:border-dark-background/10 pt-6'>
+                  <div className='dark:border-dark-background/10 border-t border-background/10 pt-6'>
                     <div className='mb-2 flex items-end justify-between'>
-                      <span className='font-utekos-text-medium text-sm leading-4 text-background dark:text-dark-background'>
+                      <span className='dark:text-dark-background font-utekos-text-medium text-sm leading-4 text-background'>
                         Isolasjonsevne
                       </span>
-                      <span className='font-sans text-xl leading-[0.95] font-bold tracking-[-0.01em] text-background dark:text-dark-background'>
+                      <span className='font-google-sans dark:text-dark-background font-sans text-xl leading-[0.95] font-bold tracking-[-0.01em] text-background'>
                         {isDryView ? '100%' : '98%'}
                       </span>
                     </div>
-                    <div className='h-1.5 w-full overflow-hidden rounded-full bg-foreground dark:bg-dark-foreground'>
+                    <div className='dark:bg-dark-foreground h-1.5 w-full overflow-hidden rounded-full bg-foreground'>
                       <m.div
                         className='h-full origin-left'
                         initial={false}
@@ -372,7 +380,7 @@ export function TechDownSlider() {
                         }}
                       />
                     </div>
-                    <p className='leading-text-paragraph mt-3 font-utekos-text text-xs text-background/75 dark:text-dark-background/75 italic'>
+                    <p className='leading-text-paragraph dark:text-dark-background/75 mt-3 font-utekos-text text-xs text-background/75 italic'>
                       *Beholder nær full effekt selv i ekstrem
                       fuktighet.
                     </p>

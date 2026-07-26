@@ -12,7 +12,7 @@ function Card({
       data-slot='card'
       data-size={size}
       className={cn(
-        'group/card  dark:ring-dark-foreground/10 flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground shadow-xs ring-1 ring-foreground/10 [--card-spacing:--spacing(6)] has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(4)] *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl',
+        'group/card dark:ring-dark-foreground/10 flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground shadow-xs ring-1 ring-foreground/10 [--card-spacing:--spacing(6)] has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(4)] *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl',
         className
       )}
       {...props}
@@ -44,7 +44,7 @@ function CardTitle({
     <div
       data-slot='card-title'
       className={cn(
-        'leading-normal font-semibold tracking-normal text-wrap text-foreground group-data-[size=sm]/card:text-sm md:text-pretty',
+        'font-utekos-text-medium leading-normal tracking-normal text-wrap text-foreground group-data-[size=sm]/card:text-sm md:text-pretty',
         className
       )}
       {...props}

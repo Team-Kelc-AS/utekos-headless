@@ -18,7 +18,7 @@ export function ProductsPageHeader() {
 
         <div className='absolute top-0 left-1/2 h-200 w-250 -translate-x-1/2 opacity-30 mix-blend-screen'>
           <div
-            className='motion-spotlight from-sidebar-primary via-primary/20 size-full bg-linear-to-b to-transparent blur-[120px] will-change-transform'
+            className='motion-spotlight size-full bg-linear-to-b from-sidebar-primary via-primary/20 to-transparent blur-[120px] will-change-transform'
             style={{ transform: 'translate(0, 0)' }}
           />
         </div>
@@ -55,7 +55,7 @@ export function ProductsPageHeader() {
           </BrandBadge>
         </div>
 
-        <h1 className='perspective-1000 mx-auto max-w-5xl font-sans text-3xl font-bold text-foreground sm:text-5xl md:text-7xl'>
+        <h1 className='perspective-1000 font-google-sans mx-auto max-w-5xl font-sans text-3xl font-bold text-foreground sm:text-5xl md:text-7xl'>
           <span className='block overflow-hidden'>
             <span className='motion-title-line block'>
               Kolleksjonen for

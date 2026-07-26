@@ -10,7 +10,7 @@ export function PreFooterNavigation() {
     <article className='dark:from-dark-background dark:to-dark-card w-full max-w-full bg-linear-to-b from-background to-card py-16 text-foreground md:py-24'>
       <div className='mx-auto max-w-5xl px-6'>
         <div className='mb-12 text-center'>
-          <h2 className='leading-heading-level-two mb-4 font-sans text-5xl font-semibold text-foreground md:text-6xl'>
+          <h2 className='leading-heading-level-two mb-4 font-sans font-utekos-text-medium text-5xl text-foreground md:text-6xl'>
             Utforsk mer av Utekos
           </h2>
         </div>

@@ -184,12 +184,12 @@ export function SupportForm({
                       name={field.name}
                       value={field.value ?? ''}
                     />
-                    <SelectTrigger className='dark:border-dark-foreground  dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35 dark:data-placeholder:text-dark-muted-foreground dark:[&_svg:not([class*=text-])]:text-dark-card-foreground h-12 w-full rounded-none border-foreground bg-card tracking-normal text-card-foreground focus-visible:border-primary focus-visible:ring-primary/35 data-placeholder:text-muted-foreground [&_svg:not([class*=text-])]:text-card-foreground'>
+                    <SelectTrigger className='dark:border-dark-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35 dark:data-placeholder:text-dark-muted-foreground dark:[&_svg:not([class*=text-])]:text-dark-card-foreground h-12 w-full rounded-none border-foreground bg-card tracking-normal text-card-foreground focus-visible:border-primary focus-visible:ring-primary/35 data-placeholder:text-muted-foreground [&_svg:not([class*=text-])]:text-card-foreground'>
                       <SelectValue placeholder='Velg ditt land' />
                     </SelectTrigger>
                   </div>
                 </FormControl>
-                <SelectContent className='dark:border-dark-foreground  border-foreground bg-card text-card-foreground'>
+                <SelectContent className='dark:border-dark-foreground border-foreground bg-card text-card-foreground'>
                   {countries.map(country => (
                     <SelectItem
                       key={country.value}
@@ -250,7 +250,7 @@ export function SupportForm({
                         form.clearErrors('message')
                       }
                     }}
-                    className='dark:border-dark-foreground  dark:placeholder:text-dark-muted-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35 min-h-40 rounded-none border-foreground bg-card tracking-normal text-card-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
+                    className='dark:border-dark-foreground dark:placeholder:text-dark-muted-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35 min-h-40 rounded-none border-foreground bg-card tracking-normal text-card-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
                   />
                 </FormControl>
                 <div className='leading-text-paragraph mt-1 flex items-center justify-between text-xs tracking-normal text-foreground'>
@@ -281,21 +281,21 @@ export function SupportForm({
           control={form.control}
           name='privacy'
           render={({ field }) => (
-            <FormItem className='dark:border-dark-foreground  relative flex flex-row items-center justify-between rounded-none border border-foreground bg-card p-4 text-card-foreground'>
+            <FormItem className='dark:border-dark-foreground relative flex flex-row items-center justify-between rounded-none border border-foreground bg-card p-4 text-card-foreground'>
               <div className='flex-1 space-y-0.5 pr-4'>
                 <FormLabel className='leading-text-paragraph text-base tracking-normal text-foreground'>
                   Personvern
                 </FormLabel>
                 <FormDescription className='leading-text-paragraph tracking-normal text-card-foreground'>
-                  Jeg godtar at Utekos behandler mine data, som
-                  beskrevet i{' '}
+                  Jeg bekrefter at jeg har lest{' '}
                   <Link
                     href='/personvern'
                     className='dark:hover:text-dark-primary text-card-foreground underline underline-offset-4 hover:text-primary'
                   >
-                    Personvernerklæringen
+                    personvernerklæringen
                   </Link>
-                  .
+                  , som forklarer hvordan opplysningene behandles
+                  for å besvare henvendelsen.
                 </FormDescription>
               </div>
               <FormControl>

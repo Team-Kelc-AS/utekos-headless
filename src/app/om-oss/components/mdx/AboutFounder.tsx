@@ -15,15 +15,13 @@ export function AboutFounder() {
       <div className='mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16'>
         {/* Kolonne 1: Tekstseksjon */}
         <div className='flex flex-col items-start'>
-          <AboutBadge className='mb-6'>
-            Vår historie
-          </AboutBadge>
+          <AboutBadge className='mb-6'>Vår historie</AboutBadge>
 
-          <h2 className='font-sans text-4xl leading-tight font-bold text-foreground sm:text-5xl'>
+          <h2 className='font-google-sans font-sans text-4xl leading-tight font-bold text-foreground sm:text-5xl'>
             Fra idé til virkelighet
           </h2>
 
-          <blockquote className='dark:border-dark-card/30  my-10 w-full rounded-2xl border border-card/30 bg-card p-6 shadow-sm sm:p-8'>
+          <blockquote className='dark:border-dark-card/30 my-10 w-full rounded-2xl border border-card/30 bg-card p-6 shadow-sm sm:p-8'>
             <div className='flex items-start gap-5 sm:gap-6'>
               <div className='bg-accent-primary dark:text-dark-background mt-1 flex size-12 shrink-0 items-center justify-center rounded-xl text-background'>
                 <Quote
@@ -39,7 +37,7 @@ export function AboutFounder() {
             </div>
           </blockquote>
 
-          <div className='font-utekos-text-medium /90 space-y-6 text-lg leading-relaxed text-foreground/90'>
+          <div className='/90 space-y-6 font-utekos-text-medium text-lg leading-relaxed text-foreground/90'>
             {storyParagraphs.map(paragraph => (
               <p key={paragraph} className='max-w-prose'>
                 {paragraph}
@@ -51,7 +49,7 @@ export function AboutFounder() {
         {/* Kolonne 2: Bildeseksjon */}
         <div className='flex w-full flex-col items-start lg:items-end'>
           <figure className='w-full max-w-md lg:max-w-none'>
-            <div className='dark:border-dark-card/30  relative aspect-4/5 w-full overflow-hidden rounded-2xl border border-card/30 bg-card shadow-sm'>
+            <div className='dark:border-dark-card/30 relative aspect-4/5 w-full overflow-hidden rounded-2xl border border-card/30 bg-card shadow-sm'>
               <Image
                 src={founderImage}
                 alt='Portrett av Erling Holthe, grunnlegger av Utekos'
@@ -62,7 +60,7 @@ export function AboutFounder() {
               />
             </div>
             <figcaption className='mt-5 flex flex-col items-start'>
-              <span className='font-sans text-lg font-bold text-foreground'>
+              <span className='font-google-sans font-sans text-lg font-bold text-foreground'>
                 Erling Holthe
               </span>
               <span className='dark:text-dark-primary font-sans text-sm font-medium tracking-wider text-primary uppercase'>

@@ -22,7 +22,7 @@ export function DottedGlowBackgroundSection() {
         <div>
           <h2 className='text-center text-4xl font-normal tracking-tight text-foreground sm:text-5xl md:text-left'>
             Klar til å kjøpe{' '}
-            <span className='font-bold dark:text-white'>
+            <span className='font-google-sans font-bold dark:text-white'>
               Utekos
             </span>
             ?

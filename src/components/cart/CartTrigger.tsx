@@ -62,7 +62,7 @@ export function CartTrigger({
       variant='outline'
       className={cn(
         'dark:bg-dark-background relative flex size-11 items-center justify-center gap-2 rounded-md bg-background text-foreground',
-        ' dark:hover:bg-dark-accent border border-border transition-colors hover:bg-accent hover:text-accent-foreground',
+        'dark:hover:bg-dark-accent border border-border transition-colors hover:bg-accent hover:text-accent-foreground',
         'p-0',
         className
       )}
@@ -71,7 +71,9 @@ export function CartTrigger({
     >
       <ShoppingCartIcon className='size-4 transition-all ease-in-out hover:scale-110' />
       {showLabel ?
-        <span className='text-sm font-semibold'>Handlekurv</span>
+        <span className='font-utekos-text-medium text-sm'>
+          Handlekurv
+        </span>
       : null}
 
       {itemCount > 0 && (

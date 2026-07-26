@@ -1,11 +1,23 @@
 import {
+  ArrowDown,
+  Check,
   Expand,
   Footprints,
   GitCommitVertical,
-  PackageOpen
+  PackageOpen,
+  Ruler
 } from 'lucide-react'
 
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
 import { comfyrobeData } from '../utils/data'
 import { SizeGuideSectionShell } from './SizeGuideSectionShell'
 
@@ -36,12 +48,46 @@ const comfyrobeFeatures = [
   }
 ]
 
+const comfyrobeSizeCards = [
+  {
+    id: 'xs',
+    sizeCode: 'XS',
+    heading: 'Velg XS hvis...',
+    measurementGuide: '97 cm total lengde, 65 cm brystbredde.',
+    fitGuidance: [
+      'Du bruker vanligvis small og vil beholde den korteste og minst voluminøse Comfyrobe-passformen.',
+      'Du ønsker romslig komfort, men uten ekstra lengde og bredde.'
+    ]
+  },
+  {
+    id: 'm/l',
+    sizeCode: 'ML',
+    heading: 'Velg M hvis...',
+    measurementGuide: '105 cm total lengde, 71 cm brystbredde.',
+    fitGuidance: [
+      'Du bruker vanligvis medium og ønsker den mest balanserte allværs-passformen.',
+      'Du vil bruke Comfyrobe uten behov for et ekstra lag med klær under'
+    ]
+  },
+  {
+    id: 'xl',
+    sizeCode: 'XL',
+    heading: 'Velg XL hvis...',
+    measurementGuide: '113 cm total lengde, 77 cm brystbredde.',
+    fitGuidance: [
+      'Du bruker vanligvis large, eller bevisst ønsker en mer overdimensjonert følelse.',
+      'Du prioriterer maksimal dekning rundt kropp, skuldre og hette.'
+    ]
+  }
+] as const
+
 export function ComfyrobeSizeGuide() {
   return (
     <SizeGuideSectionShell
       id='comfyrobe-size-guide'
-      surface='background'
+      surface='muted'
       ariaLabelledby='comfyrobe-size-guide-heading'
+      className='my-4 rounded-lg'
     >
       <div className='max-w-5xl'>
         <BrandBadge
@@ -52,7 +98,7 @@ export function ComfyrobeSizeGuide() {
         />
         <h2
           id='comfyrobe-size-guide-heading'
-          className='text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
+          className='font-google-sans text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
         >
           Størrelsesguide for Comfyrobe™
         </h2>
@@ -91,7 +137,102 @@ export function ComfyrobeSizeGuide() {
         ))}
       </div>
 
-      <div className='mt-12 w-full'>
+      <div className='mt-14 grid w-full grid-cols-1 items-stretch gap-5 lg:grid-cols-3 lg:gap-6'>
+        {comfyrobeSizeCards.map(card => (
+          <Card
+            key={card.id}
+            aria-labelledby={`comfyrobe-size-${card.id}-heading`}
+            className='relative isolate h-full gap-0 overflow-hidden border border-border bg-background py-0 text-foreground shadow-[0_24px_64px_-48px_color-mix(in_oklab,var(--foreground)_30%,transparent)] ring-0 transition-[border-color,box-shadow] duration-300 hover:border-foreground/20 hover:shadow-[0_28px_72px_-50px_color-mix(in_oklab,var(--foreground)_42%,transparent)]'
+          >
+            <CardHeader className='gap-3 border-b border-border bg-background px-5 pt-7 pb-6 sm:px-6'>
+              <CardAction>
+                <span
+                  aria-hidden='true'
+                  className='font-google-sans flex size-11 items-center justify-center rounded-full border border-foreground/15 bg-[color-mix(in_oklch,var(--background)_88%,var(--foreground)_12%)] font-sans text-lg leading-none font-bold text-foreground shadow-xs'
+                >
+                  {card.sizeCode}
+                </span>
+              </CardAction>
+
+              <p className='font-utekos-text-medium text-sm leading-none font-medium tracking-tight text-foreground/65'>
+                Comfyrobe™
+              </p>
+
+              <CardTitle className='font-google-sans font-sans text-2xl leading-[1.05] font-bold text-foreground md:text-3xl'>
+                <h3 id={`comfyrobe-size-${card.id}-heading`}>
+                  {card.heading}
+                </h3>
+              </CardTitle>
+
+              <CardDescription className='mt-1 flex items-start gap-2 font-utekos-text text-sm leading-relaxed tracking-normal text-foreground/75'>
+                <Ruler
+                  aria-hidden='true'
+                  className='mt-0.5 size-4 shrink-0 text-foreground/65'
+                />
+
+                <span>
+                  <span className='font-utekos-text-medium font-medium text-foreground'>
+                    Målreferanse:
+                  </span>{' '}
+                  {card.measurementGuide}
+                </span>
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className='flex flex-1 flex-col px-5 py-6 sm:px-6'>
+              <p className='font-utekos-text-medium text-sm leading-snug font-medium text-foreground'>
+                Passer særlig godt når:
+              </p>
+
+              <ul role='list' className='mt-4 space-y-4'>
+                {card.fitGuidance.map(item => (
+                  <li
+                    key={item}
+                    className='flex items-start gap-3 font-utekos-text text-base leading-relaxed text-foreground/90'
+                  >
+                    <span className='mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-[color-mix(in_oklch,var(--background)_88%,var(--foreground)_12%)] text-foreground'>
+                      <Check
+                        aria-hidden='true'
+                        className='size-3.5'
+                        strokeWidth={2.5}
+                      />
+                    </span>
+
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+
+            <CardFooter className='mt-auto bg-[color-mix(in_oklch,var(--background)_88%,var(--foreground)_12%)] px-5 py-0 sm:px-6'>
+              <div className='w-full border-t border-border py-3'>
+                <a
+                  href='#comfyrobe-measurements'
+                  className='group/link inline-flex min-h-11 w-full items-center justify-between gap-3 rounded-md font-utekos-text-medium text-sm font-medium text-foreground underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-foreground/60 focus-visible:ring-offset-4 focus-visible:ring-offset-background focus-visible:outline-none'
+                >
+                  <span className='inline-flex items-center gap-2'>
+                    <Ruler
+                      aria-hidden='true'
+                      className='size-4'
+                    />
+                    Se måletabellen
+                  </span>
+
+                  <ArrowDown
+                    aria-hidden='true'
+                    className='size-4 transition-transform group-hover/link:translate-y-0.5 motion-reduce:transition-none'
+                  />
+                </a>
+              </div>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+
+      <div
+        id='comfyrobe-measurements'
+        className='mt-12 w-full scroll-mt-24'
+      >
         <div
           className='w-full overflow-x-auto rounded-lg focus-visible:ring-2 focus-visible:ring-foreground/80 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none'
           role='region'
@@ -105,25 +246,25 @@ export function ComfyrobeSizeGuide() {
                   <tr>
                     <th
                       scope='col'
-                      className='py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-6'
+                      className='py-3.5 pr-3 pl-4 text-left font-utekos-text-medium text-sm sm:pl-6'
                     >
                       Måling
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center text-sm font-semibold'
+                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Small
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center text-sm font-semibold'
+                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Medium
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center text-sm font-semibold'
+                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Large
                     </th>

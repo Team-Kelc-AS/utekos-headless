@@ -53,7 +53,7 @@ export function ProductCardHeader({
           {...productViewClickProps}
           title={title}
           className={cn(
-            'font-utekos-text-medium dark:focus-visible:outline-dark-card-foreground w-full min-w-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
+            'dark:focus-visible:outline-dark-card-foreground w-full min-w-0 rounded-sm font-utekos-text-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
           )}
         >
           <CardTitle
@@ -64,7 +64,7 @@ export function ProductCardHeader({
           >
             <H3
               className={cn(
-                'truncate pb-0 text-xl leading-8 font-semibold text-card-foreground',
+                'truncate pb-0 font-utekos-text-medium text-xl leading-8 text-card-foreground',
                 compactMobile &&
                   'text-[0.82rem] leading-5 md:text-xl md:leading-8'
               )}
@@ -91,7 +91,7 @@ export function ProductCardHeader({
       </div>
       <InlineText
         className={cn(
-          'text-2xl leading-none font-bold text-card-foreground',
+          'font-google-sans text-2xl leading-none font-bold text-card-foreground',
           compactMobile && 'text-base md:text-2xl'
         )}
       >

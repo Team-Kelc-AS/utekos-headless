@@ -55,10 +55,10 @@ export function BenefitsGrid() {
                 className='boat-benefits-card text-center'
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <div className=' dark:bg-dark-secondary dark:text-dark-secondary-foreground mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground'>
+                <div className='dark:bg-dark-secondary dark:text-dark-secondary-foreground mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground'>
                   <Icon className={`h-8 w-8 ${benefit.color}`} />
                 </div>
-                <h3 className='mb-2 text-lg font-semibold'>
+                <h3 className='mb-2 font-utekos-text-medium text-lg'>
                   {benefit.title}
                 </h3>
                 <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>

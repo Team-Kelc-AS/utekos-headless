@@ -16,10 +16,10 @@ export function NbccHowToUseSection() {
       <div className='mx-auto max-w-7xl'>
         <div className='grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start'>
           <div data-nbcc-reveal data-nbcc-animate>
-            <p className='dark:text-dark-background text-sm font-semibold tracking-[0.18em] text-background uppercase'>
+            <p className='dark:text-dark-background font-utekos-text-medium text-sm tracking-[0.18em] text-background uppercase'>
               NBCC MEDLEMSFORDEL
             </p>
-            <h2 className='dark:text-dark-background mt-4 max-w-xl text-3xl font-semibold tracking-normal text-balance text-background sm:text-4xl'>
+            <h2 className='dark:text-dark-background mt-4 max-w-xl font-utekos-text-medium text-3xl tracking-normal text-balance text-background sm:text-4xl'>
               Fra medlemskode til ekte Utekos.
             </h2>
             <p className='dark:text-dark-background mt-5 max-w-xl text-base text-background'>
@@ -61,7 +61,7 @@ export function NbccHowToUseSection() {
                   key={step.title}
                   className='grid gap-5 sm:grid-cols-[3rem_1fr]'
                 >
-                  <span className=' flex size-12 items-center justify-center rounded-md bg-card text-white'>
+                  <span className='flex size-12 items-center justify-center rounded-md bg-card text-white'>
                     <CheckIcon
                       size={22}
                       animate='default'
@@ -70,10 +70,10 @@ export function NbccHowToUseSection() {
                     />
                   </span>
                   <div>
-                    <p className='dark:text-dark-background text-sm font-semibold text-background'>
+                    <p className='dark:text-dark-background font-utekos-text-medium text-sm text-background'>
                       Steg {index + 1}
                     </p>
-                    <h3 className='dark:text-dark-background mt-1 text-xl font-semibold text-background'>
+                    <h3 className='dark:text-dark-background mt-1 font-utekos-text-medium text-xl text-background'>
                       {step.title}
                     </h3>
                     <p className='dark:text-dark-background mt-2 text-sm leading-7 text-background'>

@@ -62,7 +62,7 @@ export function BenefitCard({
         <div className='min-w-0 flex-1 text-sm'>
           <InlineText
             as='strong'
-            className='font-semibold text-foreground'
+            className='font-utekos-text-medium text-foreground'
           >
             {benefit.label}
           </InlineText>

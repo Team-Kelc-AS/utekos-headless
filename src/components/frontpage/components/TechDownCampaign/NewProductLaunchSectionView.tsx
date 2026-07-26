@@ -47,7 +47,7 @@ export function NewProductLaunchSectionView({
 
               <H2
                 ID='techdown-launch-heading'
-                className='mb-7 max-w-3xl pb-2 text-[1.7rem] leading-[0.94] font-bold text-foreground min-[360px]:text-[1.8rem] sm:mb-8 sm:text-[2.5rem] md:text-5xl md:leading-[0.96] lg:text-6xl lg:leading-[0.94]'
+                className='font-google-sans mb-7 max-w-3xl pb-2 text-[1.7rem] leading-[0.94] font-bold text-foreground min-[360px]:text-[1.8rem] sm:mb-8 sm:text-[2.5rem] md:text-5xl md:leading-[0.96] lg:text-6xl lg:leading-[0.94]'
               >
                 <InlineText className='block overflow-visible font-sans whitespace-nowrap'>
                   {productName}
@@ -57,7 +57,7 @@ export function NewProductLaunchSectionView({
                 </InlineText>
               </H2>
 
-              <div className='font-utekos-text mb-8 w-full space-y-3 text-foreground sm:space-y-4'>
+              <div className='mb-8 w-full space-y-3 font-utekos-text text-foreground sm:space-y-4'>
                 {newProductFeatures.map(feature => (
                   <TechDownFeatureCard
                     key={feature.title}
@@ -70,13 +70,13 @@ export function NewProductLaunchSectionView({
                 <div className='border-featured-border dark:border-dark-featured-border flex w-full flex-col gap-6 border-t pt-6'>
                   <div className='flex flex-col gap-3'>
                     <div className='flex flex-wrap items-baseline gap-3'>
-                      <InlineText className='text-4xl leading-none font-bold tracking-normal text-foreground sm:text-5xl lg:text-6xl'>
+                      <InlineText className='font-google-sans text-4xl leading-none font-bold tracking-normal text-foreground sm:text-5xl lg:text-6xl'>
                         {currentPrice},-
                       </InlineText>
                       <InlineText className='text-sm text-foreground'>
                         inkl. mva
                       </InlineText>
-                      <InlineText className='bg-featured-foreground/10 dark:bg-dark-featured-foreground/10 decoration-featured-foreground/80 dark:decoration-dark-featured-foreground/80 ring-featured-border dark:ring-dark-featured-border rounded-full px-3 py-1 text-sm font-bold text-foreground line-through decoration-2 ring-1'>
+                      <InlineText className='bg-featured-foreground/10 dark:bg-dark-featured-foreground/10 decoration-featured-foreground/80 dark:decoration-dark-featured-foreground/80 ring-featured-border dark:ring-dark-featured-border font-google-sans rounded-full px-3 py-1 text-sm font-bold text-foreground line-through decoration-2 ring-1'>
                         {originalPrice},-
                       </InlineText>
                     </div>

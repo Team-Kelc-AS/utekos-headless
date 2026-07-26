@@ -40,17 +40,17 @@ export function AssistantProductRecommendation({
       <div className='space-y-4 p-4'>
         <div className='flex items-start justify-between gap-4'>
           <div>
-            <p className='mb-1 text-xs font-semibold tracking-wide text-card-foreground/70 uppercase'>
+            <p className='mb-1 font-utekos-text-medium text-xs tracking-wide text-card-foreground/70 uppercase'>
               {recommendation.isPrimary ?
                 'Vårt forslag'
               : 'Alternativ'}
             </p>
-            <h3 className='text-lg leading-tight font-semibold'>
+            <h3 className='font-utekos-text-medium text-lg leading-tight'>
               {product.title}
             </h3>
           </div>
           <p
-            className='shrink-0 font-semibold'
+            className='shrink-0 font-utekos-text-medium'
             aria-label={`Pris ${formattedPrice}`}
           >
             {formattedPrice}
@@ -83,7 +83,7 @@ export function AssistantProductRecommendation({
         <div className='flex flex-col gap-2 sm:flex-row'>
           <Link
             href={productHref}
-            className='hover:bg-primary-hover inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
+            className='hover:bg-primary-hover inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 font-utekos-text-medium text-sm text-primary-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
           >
             Se produkt
             <ArrowRightIcon
@@ -93,7 +93,7 @@ export function AssistantProductRecommendation({
           </Link>
           <Link
             href={'/handlehjelp/storrelsesguide' as Route}
-            className='inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
+            className='inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 font-utekos-text-medium text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
           >
             <RulerIcon className='size-4' aria-hidden='true' />
             Størrelsesguide

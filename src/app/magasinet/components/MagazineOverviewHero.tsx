@@ -9,7 +9,7 @@ export function MagazineOverviewHero({
     <article className='bg-muted py-10 text-foreground sm:py-14'>
       <div className='container mx-auto px-4'>
         <div className='max-w-5xl'>
-          <span className='font-utekos-text-medium inline-flex items-center rounded-2xl bg-magazine-article-card px-5 py-3.5 text-xl leading-none tracking-[-0.01em] text-white drop-shadow-lg/50 sm:px-6 sm:py-4 sm:text-2xl'>
+          <span className='inline-flex items-center rounded-2xl bg-magazine-article-card px-5 py-3.5 font-utekos-text-medium text-xl leading-none tracking-[-0.01em] text-white drop-shadow-lg/50 sm:px-6 sm:py-4 sm:text-2xl'>
             <span className='inline-flex items-center gap-1 sm:gap-1.5'>
               <span>Magasinet for</span>
               <span
@@ -21,7 +21,7 @@ export function MagazineOverviewHero({
               <span className='sr-only'>Utekos</span>
             </span>
           </span>
-          <h1 className='mt-7 max-w-4xl font-sans text-5xl leading-[0.9] font-bold text-balance sm:text-6xl lg:text-7xl'>
+          <h1 className='font-google-sans mt-7 max-w-4xl font-sans text-5xl leading-[0.9] font-bold text-balance sm:text-6xl lg:text-7xl'>
             Inspirasjon for gode stunder ute
           </h1>
           <p className='mt-6 max-w-3xl text-xl text-foreground/86 sm:text-2xl'>

@@ -244,7 +244,7 @@ function UtekosCardTitle({
     <h3
       data-slot='utekos-card-title'
       className={cn(
-        'bg-transparent font-sans text-xl leading-[1.05] font-semibold tracking-normal text-balance text-current md:text-2xl',
+        'bg-transparent font-sans font-utekos-text-medium text-xl leading-[1.05] tracking-normal text-balance text-current md:text-2xl',
         className
       )}
       {...props}
@@ -335,7 +335,7 @@ function UtekosCardStat({
       className={cn('flex flex-col gap-1', className)}
       {...props}
     >
-      <span className='font-sans text-3xl leading-none font-bold tracking-normal'>
+      <span className='font-google-sans font-sans text-3xl leading-none font-bold tracking-normal'>
         {value}
       </span>
       <span className='text-sm leading-snug text-current opacity-75'>

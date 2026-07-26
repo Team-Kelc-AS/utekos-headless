@@ -20,7 +20,7 @@ export function AspectRatioCustom({
 }
 
 const justerFormNytLineClassName =
-  'block max-w-full font-bold font-[family-name:var(--font-google-sans)] text-[clamp(2.5rem,min(10vw,9cqi),9rem)] leading-none tracking-tight'
+  'block max-w-full font-google-sans font-bold font-[family-name:var(--font-google-sans)] text-[clamp(2.5rem,min(10vw,9cqi),9rem)] leading-none tracking-tight'
 
 export function CardAspectRatioCustomContent({
   className

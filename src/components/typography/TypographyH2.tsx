@@ -16,7 +16,7 @@ export function H2({
     <h2
       id={ID}
       className={cn(
-        'scroll-m-20 pb-4 font-sans text-4xl font-semibold tracking-tight first:mt-0 md:text-5xl lg:text-6xl',
+        'scroll-m-20 pb-4 font-sans font-utekos-text-medium text-4xl tracking-tight first:mt-0 md:text-5xl lg:text-6xl',
         className ?? ''
       )}
     >

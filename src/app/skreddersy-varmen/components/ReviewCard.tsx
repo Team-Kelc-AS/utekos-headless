@@ -31,7 +31,7 @@ export function ReviewCard({ review }: { review: Review }) {
           )}
         </div>
         {/* Verifisert-badge: Bruker accent for en beroligende, organisk og troverdig grønnfarge */}
-        <span className='leading-text-paragraph dark:text-dark-primary inline-flex shrink-0 items-center gap-1 text-[10px] font-semibold tracking-[-0.01em] text-primary'>
+        <span className='leading-text-paragraph dark:text-dark-primary inline-flex shrink-0 items-center gap-1 font-utekos-text-medium text-[10px] tracking-[-0.01em] text-primary'>
           <BadgeCheck size={12} aria-hidden />
           Verifisert
         </span>
@@ -51,12 +51,12 @@ export function ReviewCard({ review }: { review: Review }) {
       <footer className='dark:border-dark-foreground/10 flex items-center gap-3 border-t border-foreground/10 pt-4'>
         <div
           aria-hidden
-          className='dark:border-dark-foreground/15 dark:bg-dark-foreground/5 dark:group-hover:border-dark-primary/40 dark:group-hover:bg-dark-primary/10 dark:group-hover:text-dark-foreground flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 text-sm font-semibold text-foreground transition-colors duration-400 group-hover:border-primary/40 group-hover:bg-primary/10 group-hover:text-foreground'
+          className='dark:border-dark-foreground/15 dark:bg-dark-foreground/5 dark:group-hover:border-dark-primary/40 dark:group-hover:bg-dark-primary/10 dark:group-hover:text-dark-foreground flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 font-utekos-text-medium text-sm text-foreground transition-colors duration-400 group-hover:border-primary/40 group-hover:bg-primary/10 group-hover:text-foreground'
         >
           {initialsFrom(review.name)}
         </div>
         <div className='min-w-0'>
-          <p className='leading-text-paragraph truncate text-sm font-semibold tracking-[-0.01em] text-foreground'>
+          <p className='leading-text-paragraph truncate font-utekos-text-medium text-sm tracking-[-0.01em] text-foreground'>
             {review.name}
           </p>
           {(review.role || review.location) && (

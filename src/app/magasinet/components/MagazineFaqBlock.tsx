@@ -10,7 +10,7 @@ export function MagazineFaqBlock({
   return (
     <article className='my-16'>
       {block.title && (
-        <h2 className='font-sans text-4xl leading-[0.95] font-bold text-balance text-foreground sm:text-5xl'>
+        <h2 className='font-google-sans font-sans text-4xl leading-[0.95] font-bold text-balance text-foreground sm:text-5xl'>
           {block.title}
         </h2>
       )}
@@ -20,7 +20,7 @@ export function MagazineFaqBlock({
             key={item.question}
             className='dark:border-dark-background/10 rounded-lg border border-background/10 bg-foreground p-5'
           >
-            <dt className='font-sans text-xl leading-[1.05] font-bold text-background'>
+            <dt className='font-google-sans font-sans text-xl leading-[1.05] font-bold text-background'>
               {item.question}
             </dt>
             <dd className='mt-3 text-base leading-[1.55] text-background/80'>

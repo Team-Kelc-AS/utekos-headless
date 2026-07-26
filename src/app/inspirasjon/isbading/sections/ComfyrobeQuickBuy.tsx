@@ -127,36 +127,36 @@ export function ComfyrobeQuickBuy({ product }: Props) {
 
       <div className='flex flex-col gap-6 text-left'>
         <div>
-          <h2 className='mb-2 text-3xl leading-[0.95] font-bold tracking-normal text-foreground md:text-4xl'>
+          <h2 className='font-google-sans mb-2 text-3xl leading-[0.95] font-bold tracking-normal text-foreground md:text-4xl'>
             {product.title}
           </h2>
           <div className='flex items-center gap-4'>
-            <span className='text-2xl leading-[1.15] font-semibold tracking-normal text-foreground'>
+            <span className='font-utekos-text-medium text-2xl leading-[1.15] tracking-normal text-foreground'>
               {price},-
             </span>
             <BrandBadge
               label='På lager'
               backgroundColor='var(--ancient-water)'
               textColor='var(--background)'
-              className='border border-foreground/14 px-3 py-1.5 text-xs leading-4 font-semibold tracking-normal'
+              className='border border-foreground/14 px-3 py-1.5 font-utekos-text-medium text-xs leading-4 tracking-normal'
             />
           </div>
         </div>
 
         <div className='flex gap-4'>
           <div className='flex-1 space-y-2'>
-            <label className='leading-text-paragraph text-overcast text-sm font-medium tracking-normal'>
+            <label className='leading-text-paragraph text-sm font-medium tracking-normal text-overcast'>
               Farge
             </label>
-            <div className='border-havdyp/35 bg-ancient-water dark:text-dark-background ring-havdyp/20 flex h-10 cursor-default items-center justify-center rounded-md border text-sm leading-4 font-medium tracking-normal text-background ring-1'>
+            <div className='dark:text-dark-background flex h-10 cursor-default items-center justify-center rounded-md border border-havdyp/35 bg-ancient-water text-sm leading-4 font-medium tracking-normal text-background ring-1 ring-havdyp/20'>
               Fjellnatt
             </div>
           </div>
           <div className='flex-1 space-y-2'>
-            <label className='leading-text-paragraph text-overcast text-sm font-medium tracking-normal'>
+            <label className='leading-text-paragraph text-sm font-medium tracking-normal text-overcast'>
               Modell
             </label>
-            <div className='border-havdyp/35 bg-ancient-water dark:text-dark-background ring-havdyp/20 flex h-10 cursor-default items-center justify-center rounded-md border text-sm leading-4 font-medium tracking-normal text-background ring-1'>
+            <div className='dark:text-dark-background flex h-10 cursor-default items-center justify-center rounded-md border border-havdyp/35 bg-ancient-water text-sm leading-4 font-medium tracking-normal text-background ring-1 ring-havdyp/20'>
               Unisex
             </div>
           </div>
@@ -165,12 +165,12 @@ export function ComfyrobeQuickBuy({ product }: Props) {
         {/* Størrelsevelger */}
         <div className='space-y-3'>
           <div className='flex items-center justify-between'>
-            <label className='leading-text-paragraph text-overcast text-sm font-medium tracking-normal'>
+            <label className='leading-text-paragraph text-sm font-medium tracking-normal text-overcast'>
               Velg størrelse
             </label>
             <Link
               href='/handlehjelp/storrelsesguide'
-              className='leading-text-paragraph text-overcast decoration-overcast/45 dark:hover:text-dark-foreground text-xs tracking-normal underline underline-offset-4 hover:text-foreground'
+              className='leading-text-paragraph dark:hover:text-dark-foreground text-xs tracking-normal text-overcast underline decoration-overcast/45 underline-offset-4 hover:text-foreground'
             >
               Størrelsesguide
             </Link>
@@ -193,9 +193,9 @@ export function ComfyrobeQuickBuy({ product }: Props) {
                     'relative flex h-12 items-center justify-center rounded-md border text-sm leading-4 font-medium tracking-normal transition-all',
                     isSelected ?
                       'dark:border-dark-primary/60 dark:bg-dark-primary dark:text-dark-background dark:ring-dark-primary/35 border-primary/60 bg-primary text-background ring-1 ring-primary/35'
-                    : 'dark:bg-dark-background/58 text-overcast dark:hover:text-dark-foreground border-foreground/14 bg-background/58 hover:border-foreground/28 hover:text-foreground',
+                    : 'dark:bg-dark-background/58 dark:hover:text-dark-foreground border-foreground/14 bg-background/58 text-overcast hover:border-foreground/28 hover:text-foreground',
                     !isAvailable &&
-                      'dark:bg-dark-background/45 text-overcast/55 cursor-not-allowed border-foreground/10 bg-background/45 box-decoration-slice line-through opacity-60'
+                      'dark:bg-dark-background/45 cursor-not-allowed border-foreground/10 bg-background/45 box-decoration-slice text-overcast/55 line-through opacity-60'
                   )}
                 >
                   {displayName}
@@ -214,12 +214,14 @@ export function ComfyrobeQuickBuy({ product }: Props) {
             asChild
             backgroundColor='var(--primary)'
             textColor='var(--background)'
-            className='dark:border-dark-primary/24 min-h-14 w-full border border-primary/24 px-8 py-4 text-lg leading-[1.35] font-bold tracking-normal shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105 disabled:pointer-events-none disabled:opacity-60'
+            className='dark:border-dark-primary/24 font-google-sans min-h-14 w-full border border-primary/24 px-8 py-4 text-lg leading-[1.35] font-bold tracking-normal shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105 disabled:pointer-events-none disabled:opacity-60'
           >
             <button
               type='button'
               onClick={handleAddToCart}
-              disabled={!selectedVariant || isAdding || isPending}
+              disabled={
+                !selectedVariant || isAdding || isPending
+              }
             >
               {isAdding ?
                 <span className='animate-pulse'>

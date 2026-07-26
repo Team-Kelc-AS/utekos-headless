@@ -20,6 +20,7 @@ export const CardProduct = () => {
   return (
     <div className='relative max-w-md rounded-xl bg-linear-to-r from-neutral-600 to-violet-300 shadow-lg'>
       <div className='flex h-60 items-center justify-center'>
+        {/* eslint-disable-next-line @next/next/no-img-element -- This isolated design demo uses an external, non-production asset host. */}
         <img
           src='https://cdn.shadcnstudio.com/ss-assets/components/card/image-11.png?width=300&format=auto'
           alt='Shoes'
@@ -29,10 +30,10 @@ export const CardProduct = () => {
       <Button
         size='icon'
         onClick={() => setLiked(!liked)}
-        className='absolute top-4 right-4 rounded-full bg-primary/10 dark:bg-dark-primary/10 hover:bg-primary/20 dark:hover:bg-dark-primary/20'
+        className='dark:bg-dark-primary/10 dark:hover:bg-dark-primary/20 absolute top-4 right-4 rounded-full bg-primary/10 hover:bg-primary/20'
       >
         {liked ?
-          <Heart className='fill-destructive dark:fill-dark-destructive stroke-destructive dark:stroke-dark-destructive' />
+          <Heart className='dark:fill-dark-destructive dark:stroke-dark-destructive fill-destructive stroke-destructive' />
         : <Heart className='stroke-white' />}
         <span className='sr-only'>Like</span>
       </Button>
@@ -54,7 +55,9 @@ export const CardProduct = () => {
             <span className='text-sm font-medium uppercase'>
               Pris
             </span>
-            <span className='text-xl font-semibold'>$69.99</span>
+            <span className='font-utekos-text-medium text-xl'>
+              $69.99
+            </span>
           </div>
           <Button size='lg'>Legg i handlekurv</Button>
         </CardFooter>

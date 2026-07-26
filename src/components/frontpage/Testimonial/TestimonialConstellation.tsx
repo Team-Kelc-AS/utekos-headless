@@ -92,7 +92,7 @@ export function TestimonialConstellation() {
             >
               <H2
                 ID='testimonial-heading'
-                className='mb-6 pb-0 text-left text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
+                className='font-google-sans mb-6 pb-0 text-left text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
               >
                 Hva sier andre{' '}
                 <InlineText className='font-sans text-primary dark:text-ceramic'>

@@ -11,7 +11,7 @@ import { UsageGroup } from './UsageGroup'
 import { Leaf, ShieldCheck, Waves, Info } from 'lucide-react'
 
 const triggerClassName =
-  'font-sans text-left text-lg font-semibold text-background dark:text-dark-background hover:text-card dark:hover:text-dark-card hover:no-underline [&>svg]:text-background dark:svg]:text-dark-background md:text-xl'
+  'font-sans text-left text-lg font-utekos-text-medium text-background dark:text-dark-background hover:text-card dark:hover:text-dark-card hover:no-underline [&>svg]:text-background dark:svg]:text-dark-background md:text-xl'
 
 const itemClassName =
   'border-background/20 dark:border-dark-background/20'
@@ -25,9 +25,9 @@ export async function ProductDetailsAccordion() {
   )
 
   return (
-    <article className='bg-foreground-muted dark:text-dark-background w-full px-6 pt-6 pb-24 text-background'>
+    <article className='w-full bg-background px-6 pt-6 pb-24 text-foreground'>
       <div className='mx-auto max-w-3xl'>
-        <h2 className='dark:text-dark-background my-8 text-center font-sans text-4xl leading-[0.95] font-bold tracking-normal text-background md:text-5xl'>
+        <h2 className='font-google-sans my-8 text-center font-sans text-4xl leading-[0.95] font-bold tracking-normal text-foreground md:text-5xl'>
           Alt du trenger å vite
         </h2>
 
@@ -101,11 +101,11 @@ export async function ProductDetailsAccordion() {
               <ul className='space-y-6 p-2'>
                 <li className='flex gap-4'>
                   <Waves
-                    className=' mt-1 shrink-0 text-card'
+                    className='mt-1 shrink-0 text-card'
                     size={20}
                   />
                   <div>
-                    <h4 className='dark:text-dark-background mb-1 text-base font-bold text-background'>
+                    <h4 className='dark:text-dark-background font-google-sans mb-1 text-base font-bold text-background'>
                       Håndterer fuktige forhold
                     </h4>
                     <p className='dark:text-dark-background/82 text-background/82'>
@@ -119,11 +119,11 @@ export async function ProductDetailsAccordion() {
                 </li>
                 <li className='flex gap-4'>
                   <Leaf
-                    className=' mt-1 shrink-0 text-card'
+                    className='mt-1 shrink-0 text-card'
                     size={20}
                   />
                   <div>
-                    <h4 className='dark:text-dark-background mb-1 text-base font-bold text-background'>
+                    <h4 className='dark:text-dark-background font-google-sans mb-1 text-base font-bold text-background'>
                       Allergivennlig
                     </h4>
                     <p className='dark:text-dark-background/82 text-background/82'>
@@ -136,11 +136,11 @@ export async function ProductDetailsAccordion() {
                 </li>
                 <li className='flex gap-4'>
                   <ShieldCheck
-                    className=' mt-1 shrink-0 text-card'
+                    className='mt-1 shrink-0 text-card'
                     size={20}
                   />
                   <div>
-                    <h4 className='dark:text-dark-background mb-1 text-base font-bold text-background'>
+                    <h4 className='dark:text-dark-background font-google-sans mb-1 text-base font-bold text-background'>
                       Robust og allsidig
                     </h4>
                     <p className='dark:text-dark-background/82 text-background/82'>
@@ -221,7 +221,7 @@ export async function ProductDetailsAccordion() {
                   en luftig, beskyttende parkas til en tett og
                   varmende kokong.
                 </p>
-                <p className='leading-text-paragraph dark:border-dark-foreground/15  rounded-2xl border border-foreground/15 bg-card p-4 text-sm text-foreground'>
+                <p className='leading-text-paragraph dark:border-dark-foreground/15 rounded-2xl border border-foreground/15 bg-card p-4 text-sm text-foreground'>
                   <strong>Tips:</strong> Bruk linken ved
                   størrelsevelgeren og i menyen over for å se de
                   nøyaktige målene i tabellen.
@@ -240,7 +240,7 @@ export async function ProductDetailsAccordion() {
                   <li>Maskinvask på maks 30°C</li>
                   <li>Bruk mild såpe</li>
                   <li>
-                    <span className='dark:text-dark-background font-bold text-background'>
+                    <span className='dark:text-dark-background font-google-sans font-bold text-background'>
                       Unngå tørketrommelen
                     </span>
                   </li>
@@ -248,10 +248,10 @@ export async function ProductDetailsAccordion() {
                   <li>Unngå stryking og bleking</li>
                 </ul>
 
-                <div className='dark:border-dark-primary  mt-4 flex gap-3 rounded-2xl border-l-4 border-primary bg-card p-4 text-foreground'>
+                <div className='dark:border-dark-primary mt-4 flex gap-3 rounded-2xl border-l-4 border-primary bg-card p-4 text-foreground'>
                   <Info className='dark:text-dark-primary shrink-0 text-primary' />
                   <div className='leading-text-paragraph text-sm'>
-                    <span className='mb-1 block font-bold'>
+                    <span className='font-google-sans mb-1 block font-bold'>
                       Viktig om oppbevaring
                     </span>
                     Oppbevares tørt. Materialet vil absorbere

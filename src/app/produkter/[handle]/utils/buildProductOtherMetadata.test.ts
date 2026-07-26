@@ -1,10 +1,21 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { buildProductOtherMetadata } from './buildProductOtherMetadata'
+import type { Money } from 'types/commerce/Money'
 import type { ShopifyProduct } from 'types/product'
 
-function money(amount: string, currencyCode = 'NOK') {
+function money(
+  amount: string,
+  currencyCode: Money['currencyCode'] = 'NOK'
+): Money {
   return { amount, currencyCode }
+}
+
+function malformedMoney(
+  amount: string,
+  currencyCode: string
+): Money {
+  return { amount, currencyCode } as Money
 }
 
 function product(
@@ -56,9 +67,7 @@ function product(
     },
     seo: { title: null, description: null },
     selectedOrFirstAvailableVariant: undefined as never,
-    variants: {
-      edges: [{ node: variant as never }]
-    },
+    variants: { edges: [{ node: variant as never }] },
     weight: 'KILOGRAMS' as never,
     ...overrides
   }
@@ -79,33 +88,38 @@ test('emits paired price amount and ISO currency from variants when selectedOrFi
   )
   assert.equal(other['product:availability'], 'in stock')
   assert.equal(other['product:condition'], 'new')
-  assert.equal(other['product:variant:compare_at_price'], '1990.0')
+  assert.equal(
+    other['product:variant:compare_at_price'],
+    '1990.0'
+  )
 })
 
 test('omits price metas when currency cannot be normalized to ISO 4217', () => {
   const broken = product({
     priceRange: {
-      minVariantPrice: money('1790.0', 'nok '),
-      maxVariantPrice: money('1790.0', 'nok ')
+      minVariantPrice: malformedMoney('1790.0', 'nok '),
+      maxVariantPrice: malformedMoney('1790.0', 'nok ')
     },
     variants: {
-      edges: [{
-        node: {
-          id: 'gid://shopify/ProductVariant/111',
-          title: 'Default',
-          availableForSale: true,
-          currentlyNotInStock: false,
-          price: money('1790.0', 'kr'),
-          compareAtPrice: null,
-          selectedOptions: [],
-          image: null,
-          quantityAvailable: 1,
-          sku: 'SKU',
-          barcode: null,
-          weight: 1,
-          taxable: true
-        } as never
-      }]
+      edges: [
+        {
+          node: {
+            id: 'gid://shopify/ProductVariant/111',
+            title: 'Default',
+            availableForSale: true,
+            currentlyNotInStock: false,
+            price: malformedMoney('1790.0', 'kr'),
+            compareAtPrice: null,
+            selectedOptions: [],
+            image: null,
+            quantityAvailable: 1,
+            sku: 'SKU',
+            barcode: null,
+            weight: 1,
+            taxable: true
+          } as never
+        }
+      ]
     }
   })
 
@@ -113,5 +127,8 @@ test('omits price metas when currency cannot be normalized to ISO 4217', () => {
 
   assert.equal('product:price:amount' in other, false)
   assert.equal('product:price:currency' in other, false)
-  assert.equal('product:variant:compare_at_price' in other, false)
+  assert.equal(
+    'product:variant:compare_at_price' in other,
+    false
+  )
 })

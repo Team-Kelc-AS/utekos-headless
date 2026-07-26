@@ -50,7 +50,7 @@ export function ProductVariantSelector({
               {!isSizeOption ?
                 <InlineText
                   className={cn(
-                    'font-sans text-sm font-semibold tracking-wide text-card-foreground uppercase',
+                    'font-sans font-utekos-text-medium text-sm tracking-wide text-card-foreground uppercase',
                     compactMobile && 'text-[0.68rem] md:text-sm'
                   )}
                 >

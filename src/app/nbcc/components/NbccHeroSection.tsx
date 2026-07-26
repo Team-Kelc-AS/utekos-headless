@@ -53,7 +53,7 @@ export function NbccHeroSection() {
               className='h-8 w-px bg-neutral-300'
               aria-hidden
             />
-            <span className='text-sm font-semibold text-[#17130f]'>
+            <span className='font-utekos-text-medium text-sm text-[#17130f]'>
               Medlemsfordel
             </span>
           </span>
@@ -68,7 +68,7 @@ export function NbccHeroSection() {
           data-nbcc-hero
           data-nbcc-animate
           data-nbcc-hero-content
-          className='text-5xl leading-[1.08] font-semibold tracking-[-0.02em] text-balance text-foreground sm:text-6xl sm:leading-[1.06] lg:col-start-1 lg:text-7xl lg:leading-[1.05]'
+          className='font-utekos-text-medium text-5xl leading-[1.08] tracking-[-0.02em] text-balance text-foreground sm:text-6xl sm:leading-[1.06] lg:col-start-1 lg:text-7xl lg:leading-[1.05]'
         >
           NBCC-medlemsfordel hos Utekos
         </motion.h1>
@@ -127,7 +127,7 @@ export function NbccHeroSection() {
             asChild
             size='lg'
             variant='commerce-primary'
-            className='h-12 w-full justify-center rounded-md px-6 text-[15px] font-semibold sm:w-auto'
+            className='h-12 w-full justify-center rounded-md px-6 font-utekos-text-medium text-[15px] sm:w-auto'
           >
             <Link
               href='#produkter'
@@ -152,7 +152,7 @@ export function NbccHeroSection() {
             trackingData={nbccHeroTracking.secondary}
             containerClassName='min-w-0 w-full'
             panelClassName='w-full sm:max-w-[32rem]'
-            buttonClassName='h-12 w-full justify-center gap-2 rounded-md border border-commerce-secondary dark:border-dark-commerce-secondary bg-commerce-secondary dark:bg-dark-commerce-secondary px-6 text-[15px] font-semibold text-commerce-secondary-foreground dark:text-dark-commerce-secondary-foreground hover:bg-commerce-secondary-hover dark:hover:bg-dark-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground dark:hover:text-dark-commerce-secondary-hover-foreground sm:w-auto'
+            buttonClassName='h-12 w-full justify-center gap-2 rounded-md border border-commerce-secondary dark:border-dark-commerce-secondary bg-commerce-secondary dark:bg-dark-commerce-secondary px-6 text-[15px] font-utekos-text-medium text-commerce-secondary-foreground dark:text-dark-commerce-secondary-foreground hover:bg-commerce-secondary-hover dark:hover:bg-dark-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground dark:hover:text-dark-commerce-secondary-hover-foreground sm:w-auto'
           />
         </motion.div>
 

@@ -54,11 +54,11 @@ export default function MagazineUpgradePage() {
       />
       <article className='container mx-auto flex min-h-[72vh] items-center px-4 py-20 sm:py-28'>
         <div className='mx-auto max-w-5xl text-center'>
-          <p className='dark:text-dark-secondary text-sm font-semibold tracking-[0.18em] text-secondary'>
+          <p className='dark:text-dark-secondary font-utekos-text-medium text-sm tracking-[0.18em] text-secondary'>
             Utekos Magasinet
           </p>
 
-          <h1 className='mx-auto mt-5 max-w-4xl font-sans text-5xl leading-[0.92] font-bold text-balance sm:text-6xl lg:text-7xl'>
+          <h1 className='font-google-sans mx-auto mt-5 max-w-4xl font-sans text-5xl leading-[0.92] font-bold text-balance sm:text-6xl lg:text-7xl'>
             Utekos Magasinet er under oppgradering
           </h1>
 
@@ -73,7 +73,7 @@ export default function MagazineUpgradePage() {
           <div className='mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row'>
             <Link
               href='/produkter'
-              className='dark:bg-dark-primary hover:bg-primary-hover dark:hover:bg-dark-primary-hover inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 py-3 text-base leading-[1.35] font-semibold text-primary-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+              className='dark:bg-dark-primary hover:bg-primary-hover dark:hover:bg-dark-primary-hover inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 py-3 font-utekos-text-medium text-base leading-[1.35] text-primary-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
             >
               Se produktene
               <ArrowRight className='size-4' aria-hidden />
@@ -81,7 +81,7 @@ export default function MagazineUpgradePage() {
 
             <Link
               href='/inspirasjon'
-              className='dark:bg-dark-secondary dark:text-dark-secondary-foreground hover:bg-secondary-hover inline-flex min-h-12 items-center justify-center rounded-full bg-secondary px-7 py-3 text-base leading-[1.35] font-semibold text-secondary-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+              className='dark:bg-dark-secondary dark:text-dark-secondary-foreground hover:bg-secondary-hover inline-flex min-h-12 items-center justify-center rounded-full bg-secondary px-7 py-3 font-utekos-text-medium text-base leading-[1.35] text-secondary-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
             >
               Gå til inspirasjon
             </Link>
@@ -95,13 +95,13 @@ export default function MagazineUpgradePage() {
                 <Link
                   key={link.href}
                   href={link.href as Route}
-                  className='group dark:border-dark-foreground  rounded-lg border border-foreground bg-card p-5 text-card-foreground shadow-[0_22px_62px_-54px_color-mix(in_oklch,var(--foreground)_35%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+                  className='group dark:border-dark-foreground rounded-lg border border-foreground bg-card p-5 text-card-foreground shadow-[0_22px_62px_-54px_color-mix(in_oklch,var(--foreground)_35%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
                 >
                   <div className='dark:bg-dark-primary mb-4 flex size-11 items-center justify-center rounded-lg bg-primary text-primary-foreground'>
                     <Icon className='size-5' aria-hidden />
                   </div>
 
-                  <h2 className='font-sans text-2xl leading-[0.95] font-bold text-card-foreground'>
+                  <h2 className='font-google-sans font-sans text-2xl leading-[0.95] font-bold text-card-foreground'>
                     {link.label}
                   </h2>
 
@@ -109,7 +109,7 @@ export default function MagazineUpgradePage() {
                     {link.description}
                   </p>
 
-                  <span className='dark:text-dark-secondary mt-5 inline-flex items-center gap-2 text-sm font-semibold text-secondary'>
+                  <span className='dark:text-dark-secondary mt-5 inline-flex items-center gap-2 font-utekos-text-medium text-sm text-secondary'>
                     Gå videre
                     <ArrowRight
                       className='size-4 transition-transform group-hover:translate-x-1'

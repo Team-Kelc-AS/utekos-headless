@@ -12,8 +12,8 @@ export default function TestNewsletterPage() {
   )
 
   return (
-    <div className='  mx-auto mt-20 max-w-md rounded border border-border bg-card p-6 text-card-foreground shadow-lg'>
-      <h1 className='mb-4 text-2xl font-bold'>
+    <div className='mx-auto mt-20 max-w-md rounded border border-border bg-card p-6 text-card-foreground shadow-lg'>
+      <h1 className='font-google-sans mb-4 text-2xl font-bold'>
         Test Nyhetsbrev Flyt
       </h1>
 
@@ -38,7 +38,7 @@ export default function TestNewsletterPage() {
         <button
           type='submit'
           disabled={isPending}
-          className='bg-commerce-primary dark:bg-dark-commerce-primary text-commerce-primary-foreground dark:text-dark-commerce-primary-foreground hover:bg-commerce-primary-hover dark:hover:bg-dark-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:hover:text-dark-commerce-primary-hover-foreground rounded px-4 py-2 disabled:opacity-50'
+          className='rounded bg-commerce-primary px-4 py-2 text-commerce-primary-foreground hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground disabled:opacity-50 dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground'
         >
           {isPending ? 'Kjører...' : 'Test Påmelding'}
         </button>
@@ -46,9 +46,9 @@ export default function TestNewsletterPage() {
 
       {state.message && (
         <div
-          className={`mt-4 rounded p-3 ${state.status === 'error' ? 'dark:bg-dark-destructive text-destructive-foreground dark:text-dark-destructive-foreground bg-destructive' : 'bg-promo dark:bg-dark-promo text-promo-foreground dark:text-dark-promo-foreground'}`}
+          className={`mt-4 rounded p-3 ${state.status === 'error' ? 'dark:bg-dark-destructive dark:text-dark-destructive-foreground bg-destructive text-destructive-foreground' : 'bg-promo dark:bg-dark-promo text-promo-foreground dark:text-dark-promo-foreground'}`}
         >
-          <p className='font-bold'>
+          <p className='font-google-sans font-bold'>
             {state.status === 'success' ? 'Suksess!' : 'Feil:'}
           </p>
           <p>{state.message}</p>

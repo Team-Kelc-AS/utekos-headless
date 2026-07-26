@@ -43,7 +43,7 @@ export function ProductCardSoldOut() {
             className='border-disabled/10 mt-1 rounded-full border'
           />
           <div className='space-y-1'>
-            <H3 className='pb-0 text-sm font-semibold text-foreground'>
+            <H3 className='pb-0 font-utekos-text-medium text-sm text-foreground'>
               Utsolgt for denne kombinasjonen
             </H3>
             <P className='/75 text-sm text-foreground/75 not-first:mt-0'>

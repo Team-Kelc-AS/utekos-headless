@@ -81,13 +81,13 @@ export function UseCasesGrid({
               delay={`${useCaseIndex * 0.1}s`}
               threshold={0.2}
             >
-              <Card className='group   relative h-full overflow-hidden border-border bg-card text-card-foreground'>
+              <Card className='group relative h-full overflow-hidden border-border bg-card text-card-foreground'>
                 <div
                   className={`absolute inset-0 bg-linear-to-br ${useCase.color} to-transparent opacity-20 transition-opacity group-hover:opacity-30`}
                 />
                 <CardContent className='relative p-8'>
                   <div className='mb-6 flex items-center gap-4'>
-                    <div className=' dark:bg-dark-secondary dark:text-dark-secondary-foreground flex h-12 w-12 items-center justify-center rounded-lg border border-border bg-secondary text-secondary-foreground'>
+                    <div className='dark:bg-dark-secondary dark:text-dark-secondary-foreground flex h-12 w-12 items-center justify-center rounded-lg border border-border bg-secondary text-secondary-foreground'>
                       <useCase.icon
                         className={`h-6 w-6 ${useCase.iconColor}`}
                       />
@@ -101,7 +101,7 @@ export function UseCasesGrid({
                       </p>
                     </div>
                   </div>
-                  <h3 className='mb-2 text-xl font-semibold'>
+                  <h3 className='mb-2 font-utekos-text-medium text-xl'>
                     {useCase.title}
                   </h3>
                   <p className='dark:text-dark-muted-foreground text-muted-foreground'>

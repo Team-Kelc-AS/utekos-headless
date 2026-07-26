@@ -74,9 +74,9 @@ export function NbccProductCardActions({
         ) ?? product.variants.edges[0]?.node
 
     const destinationUrl =
-      typeof window === 'undefined' ?
-        href
-      : new URL(href, window.location.origin).toString()
+      typeof window === 'undefined' ? href : (
+        new URL(href, window.location.origin).toString()
+      )
 
     reportProductListSelectItem({
       product,
@@ -115,7 +115,7 @@ export function NbccProductCardActions({
       </div>
 
       <div className='flex items-center justify-between'>
-        <span className='text-xl font-semibold text-foreground'>
+        <span className='font-utekos-text-medium text-xl text-foreground'>
           {price}
         </span>
         <span className='border-promo-foreground/20 dark:border-dark-promo-foreground/20 bg-promo dark:bg-dark-promo text-promo-foreground dark:text-dark-promo-foreground rounded-full border px-2 py-0.5 text-xs'>

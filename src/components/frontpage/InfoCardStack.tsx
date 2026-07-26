@@ -47,7 +47,7 @@ export function InfoCardStack() {
         <div className='mt-6 flex items-start gap-3'>
           <ShoppingBag className='dark:text-dark-secondary-foreground h-4 w-4 shrink-0 text-secondary-foreground sm:h-5 sm:w-5' />
           <div>
-            <h3 className='dark:text-dark-secondary-foreground text-sm font-semibold text-secondary-foreground sm:text-base'>
+            <h3 className='dark:text-dark-secondary-foreground font-utekos-text-medium text-sm text-secondary-foreground sm:text-base'>
               En trygg handel
             </h3>
             <p className='dark:text-dark-secondary-foreground/85 mt-1 text-xs text-secondary-foreground/85 sm:text-sm'>
@@ -83,7 +83,7 @@ export function InfoCardStack() {
           <div className='mt-6 flex items-start gap-3'>
             <Lock className='h-4 w-4 shrink-0 text-primary-foreground sm:h-5 sm:w-5' />
             <div>
-              <h3 className='text-sm font-semibold text-primary-foreground sm:text-base'>
+              <h3 className='font-utekos-text-medium text-sm text-primary-foreground sm:text-base'>
                 Ditt personvern
               </h3>
               <p className='/85 mt-1 text-xs text-primary-foreground/85 sm:text-sm'>

@@ -17,6 +17,39 @@ const consent = {
   version: '1'
 }
 
+function purchase(
+  overrides: Record<string, unknown> = {}
+): CanonicalEvent {
+  return canonicalPurchaseSchema.parse({
+    schema_version: 1,
+    event_name: 'purchase',
+    event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+    event_time: '2026-07-24T10:00:00.000Z',
+    source: 'webhook',
+    environment: 'test',
+    browser_id: { ga_client_id: '123456789.1784201643' },
+    consent,
+    custom_data: {
+      currency: 'NOK',
+      value: 100,
+      transaction_id: 'shopify_order_1',
+      order_name: '#1',
+      items: [
+        {
+          item_id: '1',
+          item_name: 'Item',
+          quantity: 1,
+          unit_price: 100
+        }
+      ]
+    },
+    ...overrides
+  })
+}
+
+const purchasePlanningNow = () =>
+  Date.parse('2026-07-25T10:00:00.000Z')
+
 function pageView(): CanonicalEvent {
   return canonicalPageViewSchema.parse({
     schema_version: 1,
@@ -198,23 +231,29 @@ test('routes consented purchase with msclkid and UET token to Microsoft outbox',
       }
     })
 
-    assert.deepEqual(planCanonicalEventDispatch(event), [
-      {
-        dispatch_mode: 'server_retry',
-        event_id: event.event_id,
-        provider: 'google'
-      },
-      {
-        dispatch_mode: 'server_retry',
-        event_id: event.event_id,
-        provider: 'meta'
-      },
-      {
-        dispatch_mode: 'server_retry',
-        event_id: event.event_id,
-        provider: 'microsoft_uet'
-      }
-    ])
+    assert.deepEqual(
+      planCanonicalEventDispatch(event, {
+        now: () => Date.parse('2026-07-17T10:06:00.000Z')
+      }),
+      [
+        {
+          dispatch_mode: 'server_retry',
+          event_id: event.event_id,
+          google_event_freshness: 'within_48h',
+          provider: 'google'
+        },
+        {
+          dispatch_mode: 'server_retry',
+          event_id: event.event_id,
+          provider: 'meta'
+        },
+        {
+          dispatch_mode: 'server_retry',
+          event_id: event.event_id,
+          provider: 'microsoft_uet'
+        }
+      ]
+    )
   } finally {
     if (previous === undefined) {
       delete process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
@@ -254,9 +293,9 @@ test('skips Microsoft purchase without msclkid as unqualified', () => {
       }
     })
 
-    const microsoft = planCanonicalEventDispatch(event).find(
-      intent => intent.provider === 'microsoft_uet'
-    )
+    const microsoft = planCanonicalEventDispatch(event, {
+      now: () => Date.parse('2026-07-17T10:06:00.000Z')
+    }).find(intent => intent.provider === 'microsoft_uet')
 
     assert.deepEqual(microsoft, {
       dispatch_mode: 'server_retry',
@@ -272,6 +311,102 @@ test('skips Microsoft purchase without msclkid as unqualified', () => {
       process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = previous
     }
   }
+})
+
+test('qualifies purchase for Google with client ID, GCLID, or User-ID separately', () => {
+  const cases = [
+    purchase(),
+    purchase({
+      browser_id: undefined,
+      click_id: { gclid: 'google-click-id' }
+    }),
+    purchase({
+      browser_id: undefined,
+      external_id: 'shopify_customer_1'
+    })
+  ]
+
+  for (const event of cases) {
+    const google = planCanonicalEventDispatch(event, {
+      now: purchasePlanningNow
+    }).find(intent => intent.provider === 'google')
+
+    assert.deepEqual(google, {
+      dispatch_mode: 'server_retry',
+      event_id: event.event_id,
+      google_event_freshness: 'within_48h',
+      provider: 'google'
+    })
+  }
+})
+
+test('does not qualify purchase for Google with userData alone', () => {
+  const event = purchase({
+    browser_id: undefined,
+    user_data: { email_sha256: ['a'.repeat(64)] }
+  })
+
+  const google = planCanonicalEventDispatch(event, {
+    now: purchasePlanningNow
+  }).find(intent => intent.provider === 'google')
+
+  assert.deepEqual(google, {
+    dispatch_mode: 'server_retry',
+    event_id: event.event_id,
+    google_event_freshness: 'within_48h',
+    provider: 'google',
+    skip_reason: 'missing_google_analytics_identifier',
+    status: 'skipped_unqualified'
+  })
+})
+
+test('does not create a Google purchase dispatch when analytics consent is denied', () => {
+  const event = purchase({
+    consent: { ...consent, analytics: 'denied' }
+  })
+
+  assert.equal(
+    planCanonicalEventDispatch(event, {
+      now: purchasePlanningNow
+    }).find(intent => intent.provider === 'google'),
+    undefined
+  )
+})
+
+test('marks purchase between 48 and 72 hours as late but eligible', () => {
+  const event = purchase({
+    event_time: '2026-07-22T22:00:00.000Z'
+  })
+
+  const google = planCanonicalEventDispatch(event, {
+    now: purchasePlanningNow
+  }).find(intent => intent.provider === 'google')
+
+  assert.deepEqual(google, {
+    dispatch_mode: 'server_retry',
+    event_id: event.event_id,
+    google_event_freshness: 'late_within_window',
+    provider: 'google'
+  })
+})
+
+test('skips purchase outside the 72-hour Google event window', () => {
+  const event = purchase({
+    event_time: '2026-07-22T09:59:59.999Z'
+  })
+
+  const google = planCanonicalEventDispatch(event, {
+    now: purchasePlanningNow
+  }).find(intent => intent.provider === 'google')
+
+  assert.deepEqual(google, {
+    dispatch_mode: 'server_retry',
+    event_id: event.event_id,
+    google_event_freshness: 'outside_72h',
+    provider: 'google',
+    skip_reason: 'google_event_outside_72h',
+    status: 'skipped_unqualified'
+  })
 })
 
 test('itemless refund plans at most one attempt per eligible provider', () => {

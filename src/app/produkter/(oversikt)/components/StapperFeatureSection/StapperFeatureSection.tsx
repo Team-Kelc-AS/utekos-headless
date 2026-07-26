@@ -56,7 +56,7 @@ export function StapperFeatureSection() {
             </AnimatedBlock>
 
             <AnimatedBlock className='will-animate-fade-in-up'>
-              <h2 className='text-4xl leading-[0.96] font-bold text-foreground max-sm:text-left sm:text-5xl lg:text-[4.35rem]'>
+              <h2 className='font-google-sans text-4xl leading-[0.96] font-bold text-foreground max-sm:text-left sm:text-5xl lg:text-[4.35rem]'>
                 Mer plass. Mindre stress.
               </h2>
             </AnimatedBlock>
@@ -115,7 +115,7 @@ export function StapperFeatureSection() {
                 />
               </div>
               <div>
-                <h3 className='text-base leading-tight font-semibold text-foreground'>
+                <h3 className='font-utekos-text-medium text-base leading-tight text-foreground'>
                   {feature.title}
                 </h3>
                 <p className='/90 mt-2 text-sm leading-relaxed text-foreground/90'>

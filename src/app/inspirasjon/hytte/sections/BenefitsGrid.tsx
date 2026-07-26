@@ -56,7 +56,7 @@ export function BenefitsGrid({
     <article className='border-featured-border dark:border-dark-featured-border bg-featured dark:bg-dark-featured w-full min-w-0 overflow-x-clip border-t py-24 text-foreground'>
       <div className='container mx-auto px-4'>
         <div className='mb-20 max-w-3xl text-left lg:max-w-4xl'>
-          <h2 className='text-fluid-display font-bold tracking-normal text-foreground'>
+          <h2 className='text-fluid-display font-google-sans font-bold tracking-normal text-foreground'>
             Designet for hyttelivet
           </h2>
           <p className='mt-5 text-lg leading-relaxed text-foreground'>
@@ -81,7 +81,7 @@ export function BenefitsGrid({
                   aria-hidden
                 />
               </div>
-              <h3 className='mb-3 font-sans text-xl font-bold tracking-[-0.01em]'>
+              <h3 className='font-google-sans mb-3 font-sans text-xl font-bold tracking-[-0.01em]'>
                 {benefit.title}
               </h3>
               <p className='mx-auto max-w-65 text-base leading-relaxed text-foreground'>

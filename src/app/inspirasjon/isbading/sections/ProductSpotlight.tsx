@@ -30,13 +30,13 @@ export function ProductSpotlight() {
               fill
               className='object-cover'
             />
-            <div className='bg-mountain-view absolute top-4 right-4 rounded-full px-4 py-2 text-sm font-bold text-foreground'>
+            <div className='font-google-sans absolute top-4 right-4 rounded-full bg-mountain-view px-4 py-2 text-sm font-bold text-foreground'>
               Følgesvenn
             </div>
           </AnimatedBlock>
           <div className='space-y-8'>
             <AnimatedBlock delay='0.2s'>
-              <h2 className='mb-4 text-4xl leading-[0.95] font-bold tracking-normal md:text-5xl'>
+              <h2 className='font-google-sans mb-4 text-4xl leading-[0.95] font-bold tracking-normal md:text-5xl'>
                 Comfyrobe™
               </h2>
               <p className='leading-text-paragraph text-xl tracking-normal text-foreground'>
@@ -52,7 +52,7 @@ export function ProductSpotlight() {
                   delay={`${0.3 + i * 0.1}s`}
                   className='flex items-center gap-3'
                 >
-                  <div className='bg-mountain-view flex size-6 shrink-0 items-center justify-center rounded-full border border-foreground/16'>
+                  <div className='flex size-6 shrink-0 items-center justify-center rounded-full border border-foreground/16 bg-mountain-view'>
                     <Check className='size-4 text-foreground' />
                   </div>
                   <span className='leading-text-paragraph text-lg tracking-normal'>
@@ -71,7 +71,7 @@ export function ProductSpotlight() {
                 backgroundColor='var(--primary)'
                 textColor='var(--background)'
                 data-track='comfyrobe-icebath-campaign-buy-now'
-                className='min-h-14 w-full px-8 py-4 text-lg leading-[1.35] font-bold tracking-normal shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105 sm:w-auto'
+                className='font-google-sans min-h-14 w-full px-8 py-4 text-lg leading-[1.35] font-bold tracking-normal shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105 sm:w-auto'
               >
                 <Link
                   href='/produkter/comfyrobe'

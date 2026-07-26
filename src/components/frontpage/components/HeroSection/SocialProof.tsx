@@ -43,7 +43,7 @@ export function SocialProof() {
             <div className='relative z-10 text-left'>
               <H2
                 ID='social-proof-heading'
-                className='font-sans text-5xl font-bold text-card-foreground md:text-6xl lg:text-7xl'
+                className='font-google-sans font-sans text-5xl font-bold text-card-foreground md:text-6xl lg:text-7xl'
               >
                 <span className='block'>Juster,</span>
                 <span className='block'>form</span>

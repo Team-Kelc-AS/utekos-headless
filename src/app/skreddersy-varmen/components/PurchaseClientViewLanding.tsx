@@ -90,14 +90,14 @@ export function PurchaseClientViewLanding({
               }
             />
             <div key={`hero-${selectedModel}`} className='mb-10'>
-              <h2 className='mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-background min-[1280px]:text-7xl'>
+              <h2 className='font-google-sans mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-background min-[1280px]:text-7xl'>
                 <span className='sr-only'>Utekos </span>
                 <UtekosWordmark
                   aria-hidden
                   className='h-[0.82em] w-auto translate-y-[0.04em]'
                   style={{ color: 'var(--color-background)' }}
                 />
-                <span className='font-sans font-bold tracking-[-0.015em]'>
+                <span className='font-google-sans font-sans font-bold tracking-[-0.015em]'>
                   {modelName}
                 </span>
               </h2>
@@ -107,7 +107,7 @@ export function PurchaseClientViewLanding({
               </p>
 
               <div className='space-y-4'>
-                <p className='text-4xl font-bold tracking-tight text-background tabular-nums min-[900px]:text-5xl min-[1280px]:text-6xl min-[1280px]:leading-none'>
+                <p className='font-google-sans text-4xl font-bold tracking-tight text-background tabular-nums min-[900px]:text-5xl min-[1280px]:text-6xl min-[1280px]:leading-none'>
                   {currentConfig.price},-
                 </p>
                 <KlarnaCheckoutImage className='min-[900px]:max-w-md' />
@@ -119,7 +119,7 @@ export function PurchaseClientViewLanding({
                     <Gift className='size-5 text-accent' />
                   </div>
                   <div>
-                    <h3 className='font-semibold text-background'>
+                    <h3 className='font-utekos-text-medium text-background'>
                       Sommertilbud
                     </h3>
                     <p className='text-sm text-background/80'>
@@ -159,7 +159,7 @@ export function PurchaseClientViewLanding({
                       key={feature}
                       className={cn(
                         choicePillClass,
-                        'border border-border bg-muted font-bold text-foreground shadow-sm'
+                        'font-google-sans border border-border bg-muted font-bold text-foreground shadow-sm'
                       )}
                     >
                       {feature}
@@ -187,7 +187,7 @@ export function PurchaseClientViewLanding({
             <div className='mb-12 space-y-12'>
               <div>
                 <div className='mb-4 flex items-center justify-between'>
-                  <span className='text-sm font-bold tracking-normal text-background'>
+                  <span className='font-google-sans text-sm font-bold tracking-normal text-background'>
                     Størrelse
                   </span>
                   <Link
@@ -253,7 +253,7 @@ export function PurchaseClientViewLanding({
                     <div className='relative overflow-hidden rounded-2xl border border-primary/20 bg-card p-4 text-foreground shadow-md'>
                       <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
                         <Ruler className='size-4 text-primary' />
-                        <span className='text-sm font-bold tracking-normal text-foreground'>
+                        <span className='font-google-sans text-sm font-bold tracking-normal text-foreground'>
                           Passer best for deg som er{' '}
                           {guidance.height}
                         </span>
@@ -278,7 +278,7 @@ export function PurchaseClientViewLanding({
                     role='radiogroup'
                     aria-label='Velg farge'
                   >
-                    <span className='mb-2 block text-xs font-semibold tracking-normal text-background/80'>
+                    <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-background/80'>
                       Farge
                     </span>
 
@@ -290,8 +290,9 @@ export function PurchaseClientViewLanding({
                           const isInteractive =
                             currentConfig.colors.length > 1
                           const colorPillClassName = cn(
-                            'inline-flex h-10 min-w-0 items-center justify-start gap-2 rounded-full border border-background/15 bg-foreground px-3 text-sm font-semibold text-background transition',
-                            isInteractive && 'hover:bg-background/5',
+                            'inline-flex h-10 min-w-0 items-center justify-start gap-2 rounded-full border border-background/15 bg-foreground px-3 font-utekos-text-medium text-sm text-background transition',
+                            isInteractive &&
+                              'hover:bg-background/5',
                             !isInteractive && 'cursor-default',
                             isActive &&
                               'border-background shadow-sm ring-1 ring-background',
@@ -346,7 +347,7 @@ export function PurchaseClientViewLanding({
                   </div>
 
                   <div className='shrink-0'>
-                    <span className='mb-2 block text-xs font-semibold tracking-normal text-background/80'>
+                    <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-background/80'>
                       Antall
                     </span>
 
@@ -364,7 +365,7 @@ export function PurchaseClientViewLanding({
                       </button>
 
                       <span
-                        className='w-9 text-center text-base font-semibold text-background tabular-nums'
+                        className='w-9 text-center font-utekos-text-medium text-base text-background tabular-nums'
                         aria-live='polite'
                         aria-atomic='true'
                       >
@@ -395,7 +396,7 @@ export function PurchaseClientViewLanding({
                 asChild
                 tone='commerce-primary'
                 className={cn(
-                  'h-14 w-full min-w-0 bg-primary px-4 py-0 text-sm font-bold tracking-normal text-primary-foreground shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:bg-primary-hover hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] sm:text-base md:h-16 md:px-6 md:text-lg',
+                  'font-google-sans hover:bg-primary-hover h-14 w-full min-w-0 bg-primary px-4 py-0 text-sm font-bold tracking-normal text-primary-foreground shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] sm:text-base md:h-16 md:px-6 md:text-lg',
                   isPending && 'cursor-not-allowed opacity-80'
                 )}
               >
@@ -430,7 +431,7 @@ export function PurchaseClientViewLanding({
                       Legg i handlekurv
                     </span>
                     <span className='hidden h-5 w-px bg-background/20 sm:block' />
-                    <span className='hidden font-bold whitespace-nowrap sm:inline'>
+                    <span className='font-google-sans hidden font-bold whitespace-nowrap sm:inline'>
                       {currentConfig.price * quantity},-
                     </span>
                   </button>

@@ -66,7 +66,7 @@ export function ComfyrobeFeatureSection() {
                   >
                     <h2
                       id='comfyrobe-feature-heading'
-                      className='max-w-2xl font-sans text-3xl leading-[0.95] font-bold text-balance text-foreground sm:text-4xl lg:text-5xl'
+                      className='font-google-sans max-w-2xl font-sans text-3xl leading-[0.95] font-bold text-balance text-foreground sm:text-4xl lg:text-5xl'
                     >
                       Forleng utekosen.
                       <br />
@@ -94,7 +94,7 @@ export function ComfyrobeFeatureSection() {
                     delay='0.5s'
                   >
                     <div className='mt-8 flex w-full flex-col items-start gap-4 sm:flex-row sm:items-center'>
-                      <p className='shrink-0 font-sans text-4xl leading-none font-bold whitespace-nowrap text-foreground'>
+                      <p className='font-google-sans shrink-0 font-sans text-4xl leading-none font-bold whitespace-nowrap text-foreground'>
                         NOK 990,-
                       </p>
 
@@ -102,7 +102,7 @@ export function ComfyrobeFeatureSection() {
                         asChild
                         variant='seeProduct'
                         size='lg'
-                        className='group min-h-12 w-full gap-2 rounded-full px-6 py-3 text-base leading-[1.35] font-semibold whitespace-normal shadow-[0_18px_40px_-28px_color-mix(in_oklch,var(--sidebar-primary)_70%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto sm:whitespace-nowrap'
+                        className='group min-h-12 w-full gap-2 rounded-full px-6 py-3 font-utekos-text-medium text-base leading-[1.35] whitespace-normal shadow-[0_18px_40px_-28px_color-mix(in_oklch,var(--sidebar-primary)_70%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto sm:whitespace-nowrap'
                       >
                         <Link
                           href={'/produkter/comfyrobe' as Route}

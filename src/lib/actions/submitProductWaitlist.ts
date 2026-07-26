@@ -17,6 +17,7 @@ import {
   LEAD_TYPES
 } from '@/lib/leads/leadFormIds'
 import { recordLeadSubmission } from '@/lib/leads/recordLeadSubmission'
+import { classifyOperationalFailure } from '@/lib/observability/logging/appLogContract'
 import { logToAppLogs } from '@/lib/utils/logToAppLogs'
 import { z } from 'zod'
 
@@ -64,31 +65,32 @@ export async function submitProductWaitlist(
   const leadId = crypto.randomUUID()
 
   try {
-    const sendResult = await sendProductWaitlistNotification(result.data)
+    const sendResult = await sendProductWaitlistNotification(
+      result.data
+    )
 
     if (!sendResult.ok) {
       throw new Error(sendResult.message)
     }
 
-    await logToAppLogs(
-      'INFO',
-      'Product Waitlist Submitted',
-      {
-        productHandle: result.data.productHandle,
-        email: result.data.email,
-        resendId: sendResult.id,
-        leadId
-      },
-      {
-        source: 'Server Action: submitProductWaitlist'
-      }
-    )
+    await logToAppLogs({
+      event: 'waitlist.submitted',
+      level: 'INFO',
+      data: { productHandle: result.data.productHandle },
+      context: {}
+    })
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
+    const message =
+      error instanceof Error ? error.message : 'Unknown error'
 
-    await logToAppLogs('ERROR', 'Product Waitlist Send Failed', {
-      error: message,
-      productHandle: result.data.productHandle
+    await logToAppLogs({
+      event: 'waitlist.send_failed',
+      level: 'ERROR',
+      data: {
+        reasonCode: classifyOperationalFailure(error),
+        productHandle: result.data.productHandle
+      },
+      context: {}
     })
 
     if (
@@ -125,7 +127,9 @@ export async function submitProductWaitlist(
     status: 'success',
     message:
       'Takk! Du står nå på ventelisten. Vi kontakter deg når Utekos Dun er tilbake.',
-    ...(leadResult.eventId ? { eventId: leadResult.eventId } : {}),
+    ...(leadResult.eventId ?
+      { eventId: leadResult.eventId }
+    : {}),
     ...(leadResult.dataLayerEvent ?
       { dataLayerEvent: leadResult.dataLayerEvent }
     : {})

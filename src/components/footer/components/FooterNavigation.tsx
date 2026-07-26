@@ -7,7 +7,7 @@ export function FooterNavigation() {
     <div className='grid grid-cols-1 gap-8 md:grid-cols-4'>
       {footerConfig.map(section => (
         <div key={section.title}>
-          <h3 className='mb-4 text-lg font-semibold'>
+          <h3 className='mb-4 font-utekos-text-medium text-lg'>
             {section.title}
           </h3>
           <nav aria-label={`${section.title} navigasjon`}>
@@ -16,7 +16,7 @@ export function FooterNavigation() {
                 <li key={link.path}>
                   <Link
                     href={link.path}
-                    className='font-utekos-text text-base transition-colors hover:text-foreground dark:hover:text-dark-foreground'
+                    className='dark:hover:text-dark-foreground font-utekos-text text-base transition-colors hover:text-foreground'
                     {...(link.external && {
                       target: '_blank',
                       rel: 'noopener noreferrer'

@@ -26,7 +26,9 @@
   --color-muted: var(--muted);
   --color-network-pill: oklch(0.8017 0.0772 182.11);
   --color-muted-foreground: var(--muted-foreground);
-  --color-magazine-article-card-pill: var(--magazine-article-card-pill);
+  --color-magazine-article-card-pill: var(
+    --magazine-article-card-pill
+  );
   --color-magazine-header: var(--magazine-header);
   --color-havdyp: var(--havdyp);
   --color-overcast: var(--overcast);
@@ -67,8 +69,12 @@
   --color-commerce-primary-hover: oklch(0.3477 0.0369 195.59);
   --color-commerce-primary-hover-foreground: oklch(1 0 0);
   --color-dark-commerce-primary: oklch(0.7294 0.0907 188.98);
-  --color-dark-commerce-primary-foreground: oklch(0.2413 0.0374 194.96);
-  --color-dark-commerce-primary-hover: oklch(0.8161 0.0904 189.31);
+  --color-dark-commerce-primary-foreground: oklch(
+    0.2413 0.0374 194.96
+  );
+  --color-dark-commerce-primary-hover: oklch(
+    0.8161 0.0904 189.31
+  );
   --color-dark-commerce-primary-hover-foreground: oklch(
     0.2413 0.0374 194.96
   );
@@ -96,7 +102,7 @@
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
   --color-network-pill: oklch(0.8017 0.0772 182.11);
   --background: oklch(0.165 0.0282 194.77);
-  --foreground:  oklch(0.985 0 0);
+  --foreground: oklch(0.985 0 0);
   --badge: oklch(0.2357 0.0402 194.77);
   --card: #003434;
   --teal-25: oklch(0.9569 0.014 185.95);
@@ -140,16 +146,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-
-  /*
-    Commerce CTA pairs (WCAG 2.2 AA). Explicit dark-* tokens match
-    BrandBadge `dark:bg-dark-commerce-*` usage; values align with
-    src/tokens/semantic.{light,dark}.css.
-    light primary: white on ink ~16.2:1; hover white on tone-25 ~11.2:1
-    light secondary: white on fresh-sky-800 ~9.3:1; hover ~6.5:1
-    dark primary: ink on teal-70 ~7.0:1; hover ink on teal-80
-    dark secondary: white on fresh-sky-700 ~5.4:1; hover lighter sky
-  */
   --commerce-primary: oklch(0.2413 0.0374 194.96);
   --commerce-primary-foreground: oklch(1 0 0);
   --commerce-primary-hover: oklch(0.3477 0.0369 195.59);
@@ -159,7 +155,9 @@
   --commerce-secondary-hover: oklch(0.5203 0.1038 230.1);
   --commerce-secondary-hover-foreground: oklch(1 0 0);
   --dark-commerce-primary: oklch(0.7294 0.0907 188.98);
-  --dark-commerce-primary-foreground: oklch(0.2413 0.0374 194.96);
+  --dark-commerce-primary-foreground: oklch(
+    0.2413 0.0374 194.96
+  );
   --dark-commerce-primary-hover: oklch(0.8161 0.0904 189.31);
   --dark-commerce-primary-hover-foreground: oklch(
     0.2413 0.0374 194.96
@@ -172,7 +170,7 @@
 }
 
 .dark {
-  --background: #001212;
+  --background: oklch(0.165 0.0282 194.77);
   --foreground: oklch(0.985 0 0);
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
   --teal-25: oklch(0.9569 0.014 185.95);
@@ -220,6 +218,6 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-utekos-text text-foreground;
   }
 }

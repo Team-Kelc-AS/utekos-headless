@@ -186,7 +186,7 @@ export function NbccAiSummaryButton({
                     aria-hidden
                   />
                   <div>
-                    <p className='text-[11px] font-bold tracking-[0.18em] text-[#f0c36a] uppercase'>
+                    <p className='font-google-sans text-[11px] font-bold tracking-[0.18em] text-[#f0c36a] uppercase'>
                       Henter veiledning
                     </p>
                     <p className='mt-1 text-sm text-[#f5efe4]/75'>
@@ -203,14 +203,14 @@ export function NbccAiSummaryButton({
             : payload ?
               <>
                 <header className='border-b border-white/10 bg-white/[0.035] px-5 py-4'>
-                  <div className='flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] text-[#f0c36a] uppercase'>
+                  <div className='font-google-sans flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] text-[#f0c36a] uppercase'>
                     <SparklesIcon
                       className='h-3.5 w-3.5'
                       aria-hidden
                     />
                     {payload.kicker}
                   </div>
-                  <h3 className='mt-2 text-base leading-snug font-semibold text-white sm:text-lg'>
+                  <h3 className='mt-2 font-utekos-text-medium text-base leading-snug text-white sm:text-lg'>
                     {payload.title}
                   </h3>
                 </header>
@@ -226,7 +226,7 @@ export function NbccAiSummaryButton({
                         key={section.title}
                         className='rounded-lg border border-white/10 bg-white/3 px-4 py-4'
                       >
-                        <h4 className='text-sm font-semibold text-white'>
+                        <h4 className='font-utekos-text-medium text-sm text-white'>
                           {section.title}
                         </h4>
 
@@ -247,7 +247,7 @@ export function NbccAiSummaryButton({
                         href={
                           '/handlehjelp/storrelsesguide' as Route
                         }
-                        className='font-semibold text-[#f0c36a] underline decoration-[#f0c36a]/40 underline-offset-4 hover:text-[#ffd886]'
+                        className='font-utekos-text-medium text-[#f0c36a] underline decoration-[#f0c36a]/40 underline-offset-4 hover:text-[#ffd886]'
                       >
                         størrelsesguiden vår
                       </Link>

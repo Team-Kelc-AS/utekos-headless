@@ -3,26 +3,41 @@
 import type { Metadata } from 'next'
 
 import { IceBathingHeroSection } from './sections/IceBathingHeroSection'
-import { BenefitsGrid, benefitsData } from './sections/BenefitsGrid'
-import { UseCasesGrid, useCasesData } from './sections/UseCasesGrid'
+import {
+  BenefitsGrid,
+  benefitsData
+} from './sections/BenefitsGrid'
+import {
+  UseCasesGrid,
+  useCasesData
+} from './sections/UseCasesGrid'
 import { SeasonsSection } from './sections/SeasonsSection'
-import { PopularSpotsGrid, popularSpotsData } from './sections/PopularSpotsGrid'
+import {
+  PopularSpotsGrid,
+  popularSpotsData
+} from './sections/PopularSpotsGrid'
 import { SocialProof } from './sections/SocialProof'
 import { CTASection } from './sections/CTASection'
 import Link from 'next/link'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { ProductSpotlight } from './sections/ProductSpotlight'
-import { IceBathingFAQ, iceBathingFaqItems } from './sections/IceBathingFAQ'
+import { IceBathingFAQ } from './sections/IceBathingFAQ'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://utekos.no'),
-  title: 'Isbading og Utekos | Varmen du trenger etter kuldesjokket',
+  title:
+    'Isbading og Utekos | Varmen du trenger etter kuldesjokket',
   description:
     'Gjør isbadingen til en komfortabel opplevelse. Fra det kalde dykket til den varme omfavnelsen etterpå – Utekos er isbaderens viktigste utstyr.',
-  keywords: ['isbading', 'vinterbading', 'helårsbading', 'badekåpe isbading', 'skifteponcho', 'utekos'],
-  alternates: {
-    canonical: '/inspirasjon/isbading'
-  },
+  keywords: [
+    'isbading',
+    'vinterbading',
+    'helårsbading',
+    'badekåpe isbading',
+    'skifteponcho',
+    'utekos'
+  ],
+  alternates: { canonical: '/inspirasjon/isbading' },
   openGraph: {
     title: 'Comfyrobe™ | Forleng følelsen av mestring',
     description:
@@ -62,14 +77,16 @@ export default function IceBathingInspirationPage() {
 
       <CTASection />
 
-      <div className='fixed bottom-4 left-4 right-4 z-50 md:hidden animate-in slide-in-from-bottom-10 fade-in duration-700'>
+      <div className='animate-in slide-in-from-bottom-10 fade-in fixed right-4 bottom-4 left-4 z-50 duration-700 md:hidden'>
         <BrandBadge
           asChild
           backgroundColor='var(--primary)'
           textColor='var(--background)'
-          className='min-h-14 w-full border border-primary/24 dark:border-dark-primary/24 px-6 py-3 text-base leading-4 font-bold tracking-normal shadow-2xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105'
+          className='dark:border-dark-primary/24 font-google-sans min-h-14 w-full border border-primary/24 px-6 py-3 text-base leading-4 font-bold tracking-normal shadow-2xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105'
         >
-          <Link href='/produkter/comfyrobe'>Kjøp Comfyrobe™</Link>
+          <Link href='/produkter/comfyrobe'>
+            Kjøp Comfyrobe™
+          </Link>
         </BrandBadge>
       </div>
     </article>

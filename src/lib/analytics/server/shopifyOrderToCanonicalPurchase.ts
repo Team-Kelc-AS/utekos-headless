@@ -24,13 +24,19 @@ function hashEmail(email: string | null | undefined) {
     : undefined
 }
 
-function hashPhone(phone: string | null | undefined) {
-  if (!phone) return undefined
+function hashPhone(
+  ...phoneCandidates: Array<string | null | undefined>
+) {
+  for (const phone of phoneCandidates) {
+    if (!phone) continue
 
-  const normalized = normalizeCustomerMatchPhone(phone)
-  return normalized ?
-      hashCustomerMatchIdentifier(normalized)
-    : undefined
+    const normalized = normalizeCustomerMatchPhone(phone)
+    if (normalized) {
+      return hashCustomerMatchIdentifier(normalized)
+    }
+  }
+
+  return undefined
 }
 
 function readClientUserAgent(order: OrderPaid) {
@@ -74,9 +80,13 @@ export function shopifyOrderToCanonicalPurchase(
   const orderLegacyId = String(order.id)
   const email =
     order.email ?? order.contact_email ?? order.customer?.email
-  const phone = order.phone ?? order.customer?.phone
   const emailHash = hashEmail(email)
-  const phoneHash = hashPhone(phone)
+  const phoneHash = hashPhone(
+    order.phone,
+    order.customer?.phone,
+    order.shipping_address?.phone,
+    order.billing_address?.phone
+  )
   const userAgent = readClientUserAgent(order)
   const attribution = parseOrderAttributionFromNoteAttributes(
     order.note_attributes

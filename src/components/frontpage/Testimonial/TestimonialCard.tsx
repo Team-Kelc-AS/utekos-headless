@@ -60,7 +60,7 @@ export function TestimonialCard({
 
           <footer className='mt-auto flex items-center justify-between border-t border-foreground/25 pt-6'>
             <div className='flex flex-col gap-2'>
-              <InlineText className='text-sm font-bold tracking-wide text-foreground'>
+              <InlineText className='font-google-sans text-sm font-bold tracking-wide text-foreground'>
                 {testimonial.name}
               </InlineText>
 

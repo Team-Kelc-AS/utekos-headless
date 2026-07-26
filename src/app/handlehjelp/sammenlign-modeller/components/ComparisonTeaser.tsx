@@ -69,7 +69,7 @@ export function ComparisonTeaser() {
         </div>
 
         <div className='p-6 text-center max-sm:text-left md:p-16'>
-          <h2 className='font-sans text-4xl font-bold text-foreground sm:text-5xl md:text-6xl'>
+          <h2 className='font-google-sans font-sans text-4xl font-bold text-foreground sm:text-5xl md:text-6xl'>
             Usikker på hvilken Utekos du skal velge?
           </h2>
 
@@ -108,7 +108,7 @@ export function ComparisonTeaser() {
                   </div>
                   <h3
                     className={cn(
-                      'font-sans text-lg font-bold transition-colors',
+                      'font-google-sans font-sans text-lg font-bold transition-colors',
                       model.textClass
                     )}
                   >

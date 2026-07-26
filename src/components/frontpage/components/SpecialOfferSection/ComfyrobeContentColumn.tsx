@@ -62,7 +62,7 @@ export function ComfyrobeContentColumn() {
         }
       >
         <Shield className='size-4 text-foreground' />
-        <InlineText className='text-sm font-semibold text-foreground'>
+        <InlineText className='font-utekos-text-medium text-sm text-foreground'>
           Comfyrobe™
         </InlineText>
       </div>
@@ -127,11 +127,9 @@ export function ComfyrobeContentColumn() {
           asChild
           variant='default'
           size='lg'
-          className='group font-utekos-text-medium mt-6 w-full rounded-3xl! px-8! py-6! shadow-[0_18px_40px_-28px_color-mix(in_oklch,var(--primary)_55%,transparent)] transition-all duration-300 hover:scale-105! sm:w-auto xl:mt-8'
+          className='group mt-6 w-full rounded-3xl! px-8! py-6! font-utekos-text-medium shadow-[0_18px_40px_-28px_color-mix(in_oklch,var(--primary)_55%,transparent)] transition-all duration-300 hover:scale-105! sm:w-auto xl:mt-8'
         >
-          <Link
-            href='/produkter/comfyrobe'
-          >
+          <Link href='/comfyrobe'>
             <InlineText>Utforsk Comfyrobe™</InlineText>
             <ArrowRight className='ml-2 size-4 transition-transform duration-300 group-hover/button:translate-x-1' />
           </Link>

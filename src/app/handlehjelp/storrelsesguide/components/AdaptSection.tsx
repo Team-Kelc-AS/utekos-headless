@@ -8,10 +8,11 @@ export function AdaptSection() {
       id='utekos-measurements'
       surface='card'
       ariaLabelledby='utekos-measurements-heading'
+      className='rounded-lg'
     >
       <h2
         id='utekos-measurements-heading'
-        className='max-w-4xl font-sans text-4xl leading-[1.05] font-bold text-inherit md:text-5xl lg:text-6xl'
+        className='font-google-sans max-w-4xl font-sans text-4xl leading-[1.05] font-bold text-inherit md:text-5xl lg:text-6xl'
       >
         Skapt for å tilpasses
       </h2>
@@ -54,19 +55,19 @@ export function AdaptSection() {
                   <tr>
                     <th
                       scope='col'
-                      className='py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-6'
+                      className='py-3.5 pr-3 pl-4 text-left font-utekos-text-medium text-sm sm:pl-6'
                     >
                       Måling
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center text-sm font-semibold'
+                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Medium
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center text-sm font-semibold'
+                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Large
                     </th>
@@ -78,7 +79,7 @@ export function AdaptSection() {
                       key={item.measurement}
                       className='transition-colors hover:bg-muted/35'
                     >
-                      <td className='py-4 pr-3 pl-4 text-left text-sm font-semibold whitespace-nowrap text-foreground sm:pl-6'>
+                      <td className='py-4 pr-3 pl-4 text-left font-utekos-text-medium text-sm whitespace-nowrap text-foreground sm:pl-6'>
                         {item.measurement}
                       </td>
                       <td className='px-3 py-4 text-center text-sm font-medium whitespace-nowrap text-foreground'>

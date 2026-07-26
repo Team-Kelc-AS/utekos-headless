@@ -9,27 +9,28 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        alternate:
+        'alternate':
           'bg-alternate-button text-foreground hover:scale-104 hover:bg-[#12403C]',
-        checkout:
+        'checkout':
           'bg-primary text-foreground hover:text-foreground/90 dark:bg-primary dark:text-foreground',
         'commerce-primary':
-          'bg-commerce-primary dark:bg-dark-commerce-primary text-commerce-primary-foreground dark:text-dark-commerce-primary-foreground hover:bg-commerce-primary-hover dark:hover:bg-dark-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:hover:text-dark-commerce-primary-hover-foreground',
+          'bg-commerce-primary text-commerce-primary-foreground hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground',
         'commerce-secondary':
-          'border-commerce-secondary dark:border-dark-commerce-secondary bg-commerce-secondary dark:bg-dark-commerce-secondary text-commerce-secondary-foreground dark:text-dark-commerce-secondary-foreground hover:bg-commerce-secondary-hover dark:hover:bg-dark-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground dark:hover:text-dark-commerce-secondary-hover-foreground',
-        default:
+          'border-commerce-secondary bg-commerce-secondary text-commerce-secondary-foreground hover:bg-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground dark:border-dark-commerce-secondary dark:bg-dark-commerce-secondary dark:text-dark-commerce-secondary-foreground dark:hover:bg-dark-commerce-secondary-hover dark:hover:text-dark-commerce-secondary-hover-foreground',
+        'default':
           'hover:bg-primary-hover bg-primary text-primary-foreground dark:bg-primary',
-        outline:
-          'border-input dark:border-dark-input bg-background dark:bg-dark-background hover:bg-accent dark:hover:bg-dark-accent hover:text-accent-foreground dark:hover:text-dark-accent-foreground',
-        seeProduct:
+        'outline':
+          'dark:border-dark-input dark:bg-dark-background dark:hover:bg-dark-accent dark:hover:text-dark-accent-foreground border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        'seeProduct':
           'border-border bg-sidebar-primary text-foreground shadow-xs aria-expanded:bg-accent aria-expanded:text-accent-foreground dark:border-border dark:bg-sidebar-primary dark:aria-expanded:bg-accent dark:aria-expanded:text-accent-foreground',
-        secondary:
+        'secondary':
           'dark:aria-expanded:text-dark-secondary-foreground bg-secondary text-secondary-foreground aria-expanded:bg-secondary aria-expanded:text-secondary-foreground dark:bg-secondary dark:aria-expanded:bg-secondary',
-        ghost:
+        'ghost':
           'dark:aria-expanded:bg-dark-accent dark:aria-expanded:text-dark-accent-foreground text-foreground hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent aria-expanded:text-accent-foreground dark:hover:bg-accent',
-        destructive:
-          'text-destructive-foreground dark:text-destructive-foreground dark:hover:bg-dark-destructive/90 dark:focus-visible:border-dark-destructive dark:focus-visible:ring-dark-destructive/30 bg-destructive hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-destructive/30 dark:bg-destructive',
-        link: 'text-primary underline-offset-4 hover:underline dark:text-primary'
+        'destructive':
+          'dark:hover:bg-dark-destructive/90 dark:focus-visible:border-dark-destructive dark:focus-visible:ring-dark-destructive/30 bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-destructive/30 dark:bg-destructive dark:text-destructive-foreground',
+        'link':
+          'text-primary underline-offset-4 hover:underline dark:text-primary'
       },
       size: {
         'default':
@@ -96,7 +97,7 @@ function AddToCartButton() {
   return (
     <button
       className={cn(
-        'font-utekos-text transform rounded-full px-12 py-4 font-bold tracking-normal transition-colors duration-200 hover:scale-105'
+        'font-google-sans transform rounded-full px-12 py-4 font-utekos-text font-bold tracking-normal transition-colors duration-200 hover:scale-105'
       )}
     >
       Legg i handlekurv

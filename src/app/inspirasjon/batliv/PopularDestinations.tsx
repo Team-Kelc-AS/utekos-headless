@@ -60,7 +60,7 @@ export function PopularDestinations({
               <Card className='hover:bg-card-hover -hover border-border bg-card text-card-foreground transition-colors'>
                 <CardContent className='p-6'>
                   <div className='mb-3 flex items-start justify-between'>
-                    <h3 className='text-lg font-semibold'>
+                    <h3 className='font-utekos-text-medium text-lg'>
                       {destination.name}
                     </h3>
                     <MapPinIcon

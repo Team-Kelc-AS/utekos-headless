@@ -18,7 +18,7 @@ export function AboutCta() {
           <AboutBadge className='mb-6'>
             Oppdag vår kolleksjon
           </AboutBadge>
-          <h2 className='text-4xl leading-tight font-semibold text-inherit sm:text-5xl'>
+          <h2 className='font-utekos-text-medium text-4xl leading-tight text-inherit sm:text-5xl'>
             Klar til å ta kvelden tilbake?
           </h2>
           <p className='mx-auto mt-5 max-w-2xl text-lg leading-8 text-inherit/80'>
@@ -30,7 +30,7 @@ export function AboutCta() {
           <Link
             href={'/produkter' as Route}
             data-track='AboutUsShopAllProductsClick'
-            className='mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-3xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring'
+            className='hover:bg-primary-hover mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-3xl bg-primary px-8 py-4 font-utekos-text-medium text-base text-primary-foreground transition-colors focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring'
           >
             Se alle produkter
             <ArrowRight

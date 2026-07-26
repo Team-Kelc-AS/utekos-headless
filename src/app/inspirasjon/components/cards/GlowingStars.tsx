@@ -41,7 +41,16 @@ export const GlowingStarsDescription = ({
   className?: string
   children?: React.ReactNode
 }) => {
-  return <p className={cn('max-w-[16rem] text-base text-white', className)}>{children}</p>
+  return (
+    <p
+      className={cn(
+        'max-w-[16rem] text-base text-white',
+        className
+      )}
+    >
+      {children}
+    </p>
+  )
 }
 
 export const GlowingStarsTitle = ({
@@ -51,10 +60,23 @@ export const GlowingStarsTitle = ({
   className?: string
   children?: React.ReactNode
 }) => {
-  return <h2 className={cn('text-2xl font-bold text-[#eaeaea]', className)}>{children}</h2>
+  return (
+    <h2
+      className={cn(
+        'font-google-sans text-2xl font-bold text-[#eaeaea]',
+        className
+      )}
+    >
+      {children}
+    </h2>
+  )
 }
 
-export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
+export const Illustration = ({
+  mouseEnter
+}: {
+  mouseEnter: boolean
+}) => {
   const stars = 108
   const columns = 18
 
@@ -64,7 +86,9 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      highlightedStars.current = Array.from({ length: 5 }, () => Math.floor(Math.random() * stars))
+      highlightedStars.current = Array.from({ length: 5 }, () =>
+        Math.floor(Math.random() * stars)
+      )
       setGlowingStars([...highlightedStars.current])
     }, 3000)
 
@@ -77,7 +101,7 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap: `1px`
+        gap: '1px'
       }}
     >
       {[...Array(stars)].map((_, starIdx) => {
@@ -85,10 +109,18 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
         const delay = (starIdx % 10) * 0.1
         const staticDelay = starIdx * 0.01
         return (
-          <div key={`matrix-col-${starIdx}}`} className='relative flex items-center justify-center'>
-            <Star isGlowing={mouseEnter ? true : isGlowing} delay={mouseEnter ? staticDelay : delay} />
+          <div
+            key={`matrix-col-${starIdx}}`}
+            className='relative flex items-center justify-center'
+          >
+            <Star
+              isGlowing={mouseEnter ? true : isGlowing}
+              delay={mouseEnter ? staticDelay : delay}
+            />
             {mouseEnter && <Glow delay={staticDelay} />}
-            <AnimatePresence mode='wait'>{isGlowing && <Glow delay={delay} />}</AnimatePresence>
+            <AnimatePresence mode='wait'>
+              {isGlowing && <Glow delay={delay} />}
+            </AnimatePresence>
           </div>
         )
       })}
@@ -96,13 +128,17 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
   )
 }
 
-const Star = ({ isGlowing, delay }: { isGlowing: boolean; delay: number }) => {
+const Star = ({
+  isGlowing,
+  delay
+}: {
+  isGlowing: boolean
+  delay: number
+}) => {
   return (
     <motion.div
       key={delay}
-      initial={{
-        scale: 1
-      }}
+      initial={{ scale: 1 }}
       animate={{
         scale: isGlowing ? [1, 1.2, 2.5, 2.2, 1.5] : 1,
         background: isGlowing ? '#fff' : '#666'
@@ -112,7 +148,9 @@ const Star = ({ isGlowing, delay }: { isGlowing: boolean; delay: number }) => {
         ease: 'easeInOut',
         delay: delay
       }}
-      className={cn('relative z-20 h-px w-px rounded-full bg-[#666]')}
+      className={cn(
+        'relative z-20 h-px w-px rounded-full bg-[#666]'
+      )}
     ></motion.div>
   )
 }
@@ -120,20 +158,14 @@ const Star = ({ isGlowing, delay }: { isGlowing: boolean; delay: number }) => {
 const Glow = ({ delay }: { delay: number }) => {
   return (
     <motion.div
-      initial={{
-        opacity: 0
-      }}
-      animate={{
-        opacity: 1
-      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{
         duration: 2,
         ease: 'easeInOut',
         delay: delay
       }}
-      exit={{
-        opacity: 0
-      }}
+      exit={{ opacity: 0 }}
       className='absolute left-1/2 z-10 h-[4px] w-[4px] -translate-x-1/2 rounded-full bg-blue-500 shadow-2xl shadow-blue-400 blur-[1px]'
     />
   )

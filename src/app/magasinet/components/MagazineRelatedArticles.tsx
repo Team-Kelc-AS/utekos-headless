@@ -18,10 +18,10 @@ export function MagazineRelatedArticles({
     <article className='dark:border-dark-background/10 border-t border-background/10 bg-muted py-16 text-foreground'>
       <div className='container mx-auto px-4'>
         <header className='mb-8 max-w-2xl'>
-          <p className='text-magazine-article-card-pill text-sm leading-4 font-semibold'>
+          <p className='font-utekos-text-medium text-sm leading-4 text-magazine-article-card-pill'>
             Les videre
           </p>
-          <h2 className='mt-2 font-sans text-4xl leading-[0.95] font-bold text-foreground'>
+          <h2 className='font-google-sans mt-2 font-sans text-4xl leading-[0.95] font-bold text-foreground'>
             Flere guider fra magasinet
           </h2>
         </header>
@@ -30,7 +30,7 @@ export function MagazineRelatedArticles({
             <li key={article.slug} className='h-full'>
               <Link
                 href={`/magasinet/${article.slug}` as Route}
-                className='group bg-overcast flex h-full flex-col overflow-hidden rounded-lg transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+                className='group flex h-full flex-col overflow-hidden rounded-lg bg-overcast transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
               >
                 <Image
                   src={article.heroImage.src}
@@ -41,10 +41,10 @@ export function MagazineRelatedArticles({
                   className='aspect-16/10 h-auto w-full shrink-0 object-cover'
                 />
                 <div className='flex flex-1 flex-col bg-background p-5'>
-                  <h3 className='group-hover:text-magazine-article-card-pill font-sans text-2xl leading-[0.98] font-bold text-foreground transition-colors'>
+                  <h3 className='font-google-sans font-sans text-2xl leading-[0.98] font-bold text-foreground transition-colors group-hover:text-magazine-article-card-pill'>
                     {article.title}
                   </h3>
-                  <p className='font-utekos-text mt-3 flex-1 text-sm leading-[1.3] tracking-normal text-foreground'>
+                  <p className='mt-3 flex-1 font-utekos-text text-sm leading-[1.3] tracking-normal text-foreground'>
                     {article.excerpt}
                   </p>
                 </div>

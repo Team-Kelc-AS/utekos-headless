@@ -1,50 +1,34 @@
-// Path: src/lib/utils/logToAppLogs.ts
-import { writeAppLogToRedis } from '@/lib/observability/logging/writeAppLogToRedis'
 import crypto from 'crypto'
+import {
+  appLogInputSchema,
+  type AppLogInput
+} from '@/lib/observability/logging/appLogContract'
 import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
-import type {
-  AppLogEntry,
-  AppLogLevel
-} from 'types/observability/log/AppLogEntry'
-
-type LogToAppLogsOptions = {
-  persist?: boolean
-}
+import type { AppLogEntry } from 'types/observability/log/AppLogEntry'
 
 export async function logToAppLogs(
-  level: AppLogLevel,
-  event: string,
-  data?: Record<string, unknown>,
-  context?: Record<string, unknown>,
-  options: LogToAppLogsOptions = {}
+  input: AppLogInput
 ): Promise<AppLogEntry> {
+  const parsedInput = appLogInputSchema.parse(input)
   const timestamp = new Date().toISOString()
   const logId = crypto.randomUUID()
 
   const logEntry = {
-    event,
+    event: parsedInput.event,
     id: logId,
     timestamp,
-    level,
-    data: data || {},
+    level: parsedInput.level,
+    data: parsedInput.data,
     context: {
-      ...(context || {}),
+      ...parsedInput.context,
       runtime: getVercelRuntimeContext()
     }
   }
 
-  if (level === 'ERROR') {
+  if (parsedInput.level === 'ERROR') {
     console.error(JSON.stringify(logEntry))
   } else {
     console.log(JSON.stringify(logEntry))
-  }
-
-  if (options.persist !== false) {
-    void writeAppLogToRedis(logEntry).catch(error => {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn('Failed to push log to Redis:', error)
-      }
-    })
   }
 
   return logEntry

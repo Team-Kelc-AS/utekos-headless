@@ -16,7 +16,7 @@ export function WarmSince2020() {
           strokeWidth={2.4}
         />
       </span>
-      <InlineText className='font-sans text-xs leading-none font-semibold tracking-normal whitespace-nowrap text-card-foreground sm:text-sm'>
+      <InlineText className='font-sans font-utekos-text-medium text-xs leading-none tracking-normal whitespace-nowrap text-card-foreground sm:text-sm'>
         Funksjonell varme siden 2020
       </InlineText>
     </aside>

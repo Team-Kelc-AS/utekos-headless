@@ -28,7 +28,7 @@ export function ShippingAndReturnComponent() {
               aria-hidden
             />
             <div className='min-w-0'>
-              <p className='text-sm font-semibold text-foreground'>
+              <p className='font-utekos-text-medium text-sm text-foreground'>
                 Rask levering 2–5 dager
               </p>
               <p className={pointSubtextClass}>
@@ -44,7 +44,7 @@ export function ShippingAndReturnComponent() {
               aria-hidden
             />
             <div className='min-w-0'>
-              <p className='text-sm font-semibold text-foreground'>
+              <p className='font-utekos-text-medium text-sm text-foreground'>
                 14 dagers åpent kjøp
               </p>
               <p className={pointSubtextClass}>
@@ -60,7 +60,7 @@ export function ShippingAndReturnComponent() {
               aria-hidden
             />
             <div className='min-w-0'>
-              <p className='text-sm font-semibold text-foreground'>
+              <p className='font-utekos-text-medium text-sm text-foreground'>
                 Fleksible betalingsmuligheter
               </p>
               <p className={pointSubtextClass}>

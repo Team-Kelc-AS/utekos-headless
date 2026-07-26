@@ -17,9 +17,18 @@ export async function POST(req: NextRequest) {
       (body as { order_id: string }).order_id
     : null)
 
-  await logToAppLogs('INFO', 'klarna.express.notification', {
-    klarnaOrderId,
-    body
+  await logToAppLogs({
+    event: 'klarna.notification_received',
+    level: 'INFO',
+    data: {
+      hasOrderId: Boolean(klarnaOrderId),
+      bodyShape:
+        body === null ? 'null'
+        : Array.isArray(body) ? 'array'
+        : typeof body === 'object' ? 'object'
+        : 'primitive'
+    },
+    context: {}
   })
 
   return NextResponse.json({ received: true })

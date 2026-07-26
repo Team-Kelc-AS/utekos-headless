@@ -11,8 +11,12 @@ function PolicyItem({
 }) {
   return (
     <li>
-      <span className='block font-semibold text-foreground'>{title}</span>
-      <span className='block text-muted-foreground'>{children}</span>
+      <span className='block font-utekos-text-medium text-foreground'>
+        {title}
+      </span>
+      <span className='block text-muted-foreground'>
+        {children}
+      </span>
     </li>
   )
 }
@@ -26,36 +30,42 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Dette nettstedet drives av KELC AS. I hele nettstedet viser «vi»,
-          «oss» og «vår» til KELC AS. KELC AS tilbyr dette nettstedet, inkludert
-          all informasjon, verktøy og tjenester som er tilgjengelige her, til
-          deg som bruker, under forutsetning av at du aksepterer alle vilkår,
-          betingelser, retningslinjer og meldinger som fremgår her.
+          Dette nettstedet drives av KELC AS. I hele nettstedet
+          viser «vi», «oss» og «vår» til KELC AS. KELC AS tilbyr
+          dette nettstedet, inkludert all informasjon, verktøy og
+          tjenester som er tilgjengelige her, til deg som bruker,
+          under forutsetning av at du aksepterer alle vilkår,
+          betingelser, retningslinjer og meldinger som fremgår
+          her.
         </p>
         <p>
-          Ved å besøke nettstedet vårt og/eller kjøpe noe fra oss, tar du i bruk
-          «Tjenesten» og samtykker i å være bundet av disse vilkårene
-          («Vilkår»). Dette inkluderer tilleggsvilkår og retningslinjer det
-          refereres til her og/eller via lenke. Vilkårene gjelder for alle
-          brukere av nettstedet.
+          Ved å besøke nettstedet vårt og/eller kjøpe noe fra
+          oss, tar du i bruk «Tjenesten» og samtykker i å være
+          bundet av disse vilkårene («Vilkår»). Dette inkluderer
+          tilleggsvilkår og retningslinjer det refereres til her
+          og/eller via lenke. Vilkårene gjelder for alle brukere
+          av nettstedet.
         </p>
         <p>
-          Les vilkårene nøye før bruk. Ved å bruke noen del av nettstedet godtar
-          du vilkårene. Dersom du ikke godtar vilkårene, kan du ikke bruke
-          nettstedet eller tjenestene. Dersom disse vilkårene anses som et
-          tilbud, er aksept uttrykkelig begrenset til disse vilkårene.
+          Les vilkårene nøye før bruk. Ved å bruke noen del av
+          nettstedet godtar du vilkårene. Dersom du ikke godtar
+          vilkårene, kan du ikke bruke nettstedet eller
+          tjenestene. Dersom disse vilkårene anses som et tilbud,
+          er aksept uttrykkelig begrenset til disse vilkårene.
         </p>
         <p>
-          Nye funksjoner eller verktøy i butikken omfattes også av vilkårene. Du
-          kan når som helst se den nyeste versjonen på denne siden. Vi kan
-          oppdatere, endre eller erstatte deler av vilkårene ved å publisere
-          oppdateringer. Det er ditt ansvar å sjekke siden periodisk. Fortsatt
-          bruk etter endringer innebærer aksept.
+          Nye funksjoner eller verktøy i butikken omfattes også
+          av vilkårene. Du kan når som helst se den nyeste
+          versjonen på denne siden. Vi kan oppdatere, endre eller
+          erstatte deler av vilkårene ved å publisere
+          oppdateringer. Det er ditt ansvar å sjekke siden
+          periodisk. Fortsatt bruk etter endringer innebærer
+          aksept.
         </p>
         <p>
-          Frontenden er utviklet i Next.js og hostes på Vercel. Produktkatalog,
-          kasse og ordrebehandling leveres av Shopify, som fungerer som vår
-          handelsplattform.
+          Frontenden er utviklet i Next.js og hostes på Vercel.
+          Produktkatalog, kasse og ordrebehandling leveres av
+          Shopify, som fungerer som vår handelsplattform.
         </p>
       </>
     )
@@ -67,20 +77,22 @@ export const termsSections: Section[] = [
       <>
         <ul className='space-y-4'>
           <PolicyItem title='Myndighetsalder'>
-            Du bekrefter at du er myndig i din jurisdiksjon, eller at du er
-            myndig og har gitt samtykke til at mindreårige du har ansvar for kan
-            bruke nettstedet.
+            Du bekrefter at du er myndig i din jurisdiksjon,
+            eller at du er myndig og har gitt samtykke til at
+            mindreårige du har ansvar for kan bruke nettstedet.
           </PolicyItem>
           <PolicyItem title='Lovlydig bruk'>
-            Du skal ikke bruke produktene til ulovlige eller uautoriserte
-            formål, og du skal ikke bryte gjeldende lover ved bruk av tjenesten,
-            inkludert opphavsrett.
+            Du skal ikke bruke produktene til ulovlige eller
+            uautoriserte formål, og du skal ikke bryte gjeldende
+            lover ved bruk av tjenesten, inkludert opphavsrett.
           </PolicyItem>
           <PolicyItem title='Skadelig kode'>
-            Du må ikke overføre ormer, virus eller annen destruktiv kode.
+            Du må ikke overføre ormer, virus eller annen
+            destruktiv kode.
           </PolicyItem>
           <PolicyItem title='Brudd'>
-            Brudd på vilkårene kan medføre umiddelbar avslutning av tjenestene.
+            Brudd på vilkårene kan medføre umiddelbar avslutning
+            av tjenestene.
           </PolicyItem>
         </ul>
       </>
@@ -93,21 +105,22 @@ export const termsSections: Section[] = [
       <>
         <ul className='space-y-4'>
           <PolicyItem title='Rett til å nekte tjeneste'>
-            Vi kan nekte tjeneste til hvem som helst, av hvilken som helst
-            grunn, når som helst.
+            Vi kan nekte tjeneste til hvem som helst, av hvilken
+            som helst grunn, når som helst.
           </PolicyItem>
           <PolicyItem title='Overføring av innhold'>
-            Innholdet ditt (ikke kredittkortdata) kan overføres ukryptert over
-            nettverk og tilpasses tekniske krav. Kredittkortdata krypteres
-            alltid under overføring.
+            Innholdet ditt (ikke kredittkortdata) kan overføres
+            ukryptert over nettverk og tilpasses tekniske krav.
+            Kredittkortdata krypteres alltid under overføring.
           </PolicyItem>
           <PolicyItem title='Utnyttelse av tjenesten'>
-            Uten skriftlig tillatelse kan du ikke reprodusere, kopiere, selge,
-            videreselge eller utnytte tjenesten, tilgang til den eller kontakter
-            på nettstedet.
+            Uten skriftlig tillatelse kan du ikke reprodusere,
+            kopiere, selge, videreselge eller utnytte tjenesten,
+            tilgang til den eller kontakter på nettstedet.
           </PolicyItem>
           <PolicyItem title='Overskrifter'>
-            Overskrifter er kun for bekvemmelighet og begrenser ikke vilkårene.
+            Overskrifter er kun for bekvemmelighet og begrenser
+            ikke vilkårene.
           </PolicyItem>
         </ul>
       </>
@@ -119,14 +132,16 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Informasjon på nettstedet kan være unøyaktig, ufullstendig eller
-          utdatert. Materialet er kun for generell informasjon og skal ikke
-          brukes alene som beslutningsgrunnlag. Bruk skjer på egen risiko.
+          Informasjon på nettstedet kan være unøyaktig,
+          ufullstendig eller utdatert. Materialet er kun for
+          generell informasjon og skal ikke brukes alene som
+          beslutningsgrunnlag. Bruk skjer på egen risiko.
         </p>
         <p>
-          Nettstedet kan inneholde historisk informasjon. Vi kan endre innholdet
-          når som helst, men er ikke forpliktet til å oppdatere. Du har ansvar
-          for å overvåke endringer.
+          Nettstedet kan inneholde historisk informasjon. Vi kan
+          endre innholdet når som helst, men er ikke forpliktet
+          til å oppdatere. Du har ansvar for å overvåke
+          endringer.
         </p>
       </>
     )
@@ -137,13 +152,17 @@ export const termsSections: Section[] = [
     content: (
       <>
         <ul className='space-y-4'>
-          <PolicyItem title='Priser'>Priser kan endres uten varsel.</PolicyItem>
+          <PolicyItem title='Priser'>
+            Priser kan endres uten varsel.
+          </PolicyItem>
           <PolicyItem title='Endringer'>
-            Vi kan endre eller avvikle tjenesten når som helst uten varsel.
+            Vi kan endre eller avvikle tjenesten når som helst
+            uten varsel.
           </PolicyItem>
           <PolicyItem title='Ansvarsfraskrivelse'>
-            Vi er ikke ansvarlige overfor deg eller tredjeparter for slike
-            endringer, prisendringer, suspensjon eller avvikling.
+            Vi er ikke ansvarlige overfor deg eller tredjeparter
+            for slike endringer, prisendringer, suspensjon eller
+            avvikling.
           </PolicyItem>
         </ul>
       </>
@@ -156,22 +175,24 @@ export const termsSections: Section[] = [
       <>
         <ul className='space-y-4'>
           <PolicyItem title='Tilgjengelighet og retur'>
-            Enkelte produkter/tjenester er kun tilgjengelige på nett og kan ha
-            begrensede antall. Retur/bytte følger vår refusjonspolicy:{' '}
+            Enkelte produkter/tjenester er kun tilgjengelige på
+            nett og kan ha begrensede antall. Retur/bytte følger
+            vår refusjonspolicy:{' '}
             <Link href='/frakt-og-retur'>Frakt og retur</Link>
           </PolicyItem>
           <PolicyItem title='Farger og bilder'>
-            Vi forsøker å vise farger/bilder nøyaktig, men kan ikke garantere at
-            skjermen din gjengir korrekt.
+            Vi forsøker å vise farger/bilder nøyaktig, men kan
+            ikke garantere at skjermen din gjengir korrekt.
           </PolicyItem>
           <PolicyItem title='Begrensninger'>
-            Vi kan begrense salg per person/region/jurisdiksjon og mengder, og
-            endre produktbeskrivelser eller priser uten varsel. Vi kan avvikle
-            produkter når som helst. Tilbud er ugyldige der forbudt.
+            Vi kan begrense salg per person/region/jurisdiksjon
+            og mengder, og endre produktbeskrivelser eller priser
+            uten varsel. Vi kan avvikle produkter når som helst.
+            Tilbud er ugyldige der forbudt.
           </PolicyItem>
           <PolicyItem title='Kvalitet og feil'>
-            Vi garanterer ikke at kvaliteten oppfyller forventninger eller at
-            feil i tjenesten blir rettet.
+            Vi garanterer ikke at kvaliteten oppfyller
+            forventninger eller at feil i tjenesten blir rettet.
           </PolicyItem>
         </ul>
       </>
@@ -183,14 +204,16 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Vi kan avslå bestillinger og begrense/annullere kvanta per kunde,
-          husholdning eller ordre, inkludert etter konto, kort eller adresse. Vi
-          kan varsle via e-post og/eller oppgitt kontaktinfo. Vi kan forby
-          bestillinger som fremstår som fra forhandlere/videreselgere.
+          Vi kan avslå bestillinger og begrense/annullere kvanta
+          per kunde, husholdning eller ordre, inkludert etter
+          konto, kort eller adresse. Vi kan varsle via e-post
+          og/eller oppgitt kontaktinfo. Vi kan forby bestillinger
+          som fremstår som fra forhandlere/videreselgere.
         </p>
         <p>
           Du skal gi oppdatert, fullstendig og korrekt kjøps- og
-          kontoinformasjon og oppdatere e-post og kortdetaljer ved behov.
+          kontoinformasjon og oppdatere e-post og kortdetaljer
+          ved behov.
         </p>
         <p>
           Se også vår refusjonspolicy:{' '}
@@ -205,10 +228,11 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Vi kan gi tilgang til tredjepartsverktøy «som de er» og «som
-          tilgjengelig» uten garantier eller godkjenning. Bruk skjer på eget
-          ansvar og etter gjeldende vilkår hos tredjepart. Nye funksjoner/
-          tjenester på nettstedet vil også være underlagt disse vilkårene.
+          Vi kan gi tilgang til tredjepartsverktøy «som de er» og
+          «som tilgjengelig» uten garantier eller godkjenning.
+          Bruk skjer på eget ansvar og etter gjeldende vilkår hos
+          tredjepart. Nye funksjoner/ tjenester på nettstedet vil
+          også være underlagt disse vilkårene.
         </p>
       </>
     )
@@ -219,32 +243,37 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Innhold/produkter/tjenester kan inkludere materiale fra tredjeparter.
-          Lenker kan føre til eksterne nettsteder vi ikke er tilknyttet. Vi
-          garanterer ikke for innhold eller nøyaktighet og er ikke ansvarlige
-          for transaksjoner med tredjeparter. Les tredjepartens vilkår og
-          retningslinjer før du handler. Klager må rettes til tredjeparten.
+          Innhold/produkter/tjenester kan inkludere materiale fra
+          tredjeparter. Lenker kan føre til eksterne nettsteder
+          vi ikke er tilknyttet. Vi garanterer ikke for innhold
+          eller nøyaktighet og er ikke ansvarlige for
+          transaksjoner med tredjeparter. Les tredjepartens
+          vilkår og retningslinjer før du handler. Klager må
+          rettes til tredjeparten.
         </p>
       </>
     )
   },
   {
     id: '9-kommentarer-tilbakemeldinger',
-    title: 'Brukerkommentarer, tilbakemeldinger og andre innspill',
+    title:
+      'Brukerkommentarer, tilbakemeldinger og andre innspill',
     content: (
       <>
         <p>
-          Ved innsending av ideer, forslag eller annet materiale («kommentarer»)
-          godtar du at vi kan redigere, kopiere, publisere, distribuere,
-          oversette og bruke dem uten begrensning. Vi har ingen plikt til
-          konfidensialitet, kompensasjon eller å svare.
+          Ved innsending av ideer, forslag eller annet materiale
+          («kommentarer») godtar du at vi kan redigere, kopiere,
+          publisere, distribuere, oversette og bruke dem uten
+          begrensning. Vi har ingen plikt til konfidensialitet,
+          kompensasjon eller å svare.
         </p>
         <p>
-          Vi kan overvåke, redigere eller fjerne innhold som er ulovlig,
-          krenkende mv. Du bekrefter at kommentarer ikke krenker tredjeparts
-          rettigheter, ikke er ærekrenkende eller ulovlige, og ikke inneholder
-          malware. Du kan ikke villede om opprinnelsen. Du er alene ansvarlig
-          for kommentarene.
+          Vi kan overvåke, redigere eller fjerne innhold som er
+          ulovlig, krenkende mv. Du bekrefter at kommentarer ikke
+          krenker tredjeparts rettigheter, ikke er ærekrenkende
+          eller ulovlige, og ikke inneholder malware. Du kan ikke
+          villede om opprinnelsen. Du er alene ansvarlig for
+          kommentarene.
         </p>
       </>
     )
@@ -255,7 +284,8 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Innsending av personopplysninger reguleres av vår personvernerklæring:
+          Innsending av personopplysninger reguleres av vår
+          personvernerklæring:
           <Link href='/personvern'>Personvern</Link>
         </p>
       </>
@@ -267,15 +297,17 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Det kan forekomme trykkfeil, unøyaktigheter eller utelatelser knyttet
-          til beskrivelser, priser, kampanjer, frakt, levering og
-          tilgjengelighet. Vi kan rette, oppdatere eller kansellere bestillinger
-          uten varsel også etter innsending.
+          Det kan forekomme trykkfeil, unøyaktigheter eller
+          utelatelser knyttet til beskrivelser, priser,
+          kampanjer, frakt, levering og tilgjengelighet. Vi kan
+          rette, oppdatere eller kansellere bestillinger uten
+          varsel også etter innsending.
         </p>
         <p>
-          Vi har ingen plikt til å oppdatere informasjon i tjenesten eller på
-          relaterte nettsteder, med mindre lov krever det. Angitt
-          oppdateringsdato indikerer ikke at all informasjon er endret.
+          Vi har ingen plikt til å oppdatere informasjon i
+          tjenesten eller på relaterte nettsteder, med mindre lov
+          krever det. Angitt oppdateringsdato indikerer ikke at
+          all informasjon er endret.
         </p>
       </>
     )
@@ -286,13 +318,16 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Forbudt bruk inkluderer blant annet: ulovlige formål; oppfordring til
-          ulovlige handlinger; brudd på lover/regler; krenkelse av immaterielle
-          rettigheter; trakassering eller diskriminering; falsk/misvisende
-          informasjon; opplasting av skadelig kode; innsamling/sporing av
-          personopplysninger; spam, phishing, pharming, pretexting, crawling,
-          scraping; uanstendige eller umoralske formål; å forstyrre eller omgå
-          sikkerhetsfunksjoner. Brudd kan medføre avslutning.
+          Forbudt bruk inkluderer blant annet: ulovlige formål;
+          oppfordring til ulovlige handlinger; brudd på
+          lover/regler; krenkelse av immaterielle rettigheter;
+          trakassering eller diskriminering; falsk/misvisende
+          informasjon; opplasting av skadelig kode;
+          innsamling/sporing av personopplysninger; spam,
+          phishing, pharming, pretexting, crawling, scraping;
+          uanstendige eller umoralske formål; å forstyrre eller
+          omgå sikkerhetsfunksjoner. Brudd kan medføre
+          avslutning.
         </p>
       </>
     )
@@ -303,19 +338,21 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Vi garanterer ikke uavbrutt, tidsriktig, sikker eller feilfri tjeneste
-          eller pålitelige resultater. Tjenesten kan fjernes midlertidig eller
-          kanselleres uten varsel. Bruk skjer på eget ansvar. Tjenesten og
-          produkter leveres «som de er» og «som tilgjengelig» uten uttrykkelige
-          eller underforståtte garantier.
+          Vi garanterer ikke uavbrutt, tidsriktig, sikker eller
+          feilfri tjeneste eller pålitelige resultater. Tjenesten
+          kan fjernes midlertidig eller kanselleres uten varsel.
+          Bruk skjer på eget ansvar. Tjenesten og produkter
+          leveres «som de er» og «som tilgjengelig» uten
+          uttrykkelige eller underforståtte garantier.
         </p>
         <p>
-          Under ingen omstendigheter skal KELC AS eller våre tilknyttede parter
-          være ansvarlige for direkte eller indirekte tap, herunder tapt
-          fortjeneste, inntekt, besparelser, data, erstatningskostnader eller
-          andre følgeskader, selv om vi er varslet om muligheten. Der lov
-          begrenser slik ansvarsfraskrivelse, begrenses vårt ansvar til lovens
-          maksimum.
+          Under ingen omstendigheter skal KELC AS eller våre
+          tilknyttede parter være ansvarlige for direkte eller
+          indirekte tap, herunder tapt fortjeneste, inntekt,
+          besparelser, data, erstatningskostnader eller andre
+          følgeskader, selv om vi er varslet om muligheten. Der
+          lov begrenser slik ansvarsfraskrivelse, begrenses vårt
+          ansvar til lovens maksimum.
         </p>
       </>
     )
@@ -326,10 +363,11 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Du samtykker i å holde KELC AS og tilknyttede parter skadesløse for
-          krav fra tredjeparter, inkludert rimelige advokathonorarer, som følge
-          av ditt brudd på vilkårene, refererte dokumenter, lov eller
-          tredjeparts rettigheter.
+          Du samtykker i å holde KELC AS og tilknyttede parter
+          skadesløse for krav fra tredjeparter, inkludert
+          rimelige advokathonorarer, som følge av ditt brudd på
+          vilkårene, refererte dokumenter, lov eller tredjeparts
+          rettigheter.
         </p>
       </>
     )
@@ -340,9 +378,10 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Dersom en bestemmelse er ulovlig, ugyldig eller ikke-håndhevbar, skal
-          den håndheves så langt loven tillater. Den ikke-håndhevbare delen
-          anses skilt ut uten å påvirke øvrige bestemmelser.
+          Dersom en bestemmelse er ulovlig, ugyldig eller
+          ikke-håndhevbar, skal den håndheves så langt loven
+          tillater. Den ikke-håndhevbare delen anses skilt ut
+          uten å påvirke øvrige bestemmelser.
         </p>
       </>
     )
@@ -353,11 +392,12 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Forpliktelser pådratt før oppsigelsesdatoen består. Vilkårene gjelder
-          til de sies opp av deg eller oss. Du kan si opp ved å avslutte bruk av
-          tjenestene og varsle oss. Ved brudd kan vi si opp uten varsel, og du
-          er ansvarlig for beløp til og med oppsigelsesdatoen. Vi kan nekte
-          videre tilgang.
+          Forpliktelser pådratt før oppsigelsesdatoen består.
+          Vilkårene gjelder til de sies opp av deg eller oss. Du
+          kan si opp ved å avslutte bruk av tjenestene og varsle
+          oss. Ved brudd kan vi si opp uten varsel, og du er
+          ansvarlig for beløp til og med oppsigelsesdatoen. Vi
+          kan nekte videre tilgang.
         </p>
       </>
     )
@@ -368,10 +408,12 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Manglende håndheving er ikke frafallelse. Disse vilkårene, sammen med
-          publiserte retningslinjer/driftsregler, utgjør hele avtalen og
-          erstatter tidligere eller samtidige avtaler og kommunikasjon. Uklarhet
-          i tolkning skal ikke tolkes mot den som utformet teksten.
+          Manglende håndheving er ikke frafallelse. Disse
+          vilkårene, sammen med publiserte
+          retningslinjer/driftsregler, utgjør hele avtalen og
+          erstatter tidligere eller samtidige avtaler og
+          kommunikasjon. Uklarhet i tolkning skal ikke tolkes mot
+          den som utformet teksten.
         </p>
       </>
     )
@@ -391,10 +433,11 @@ export const termsSections: Section[] = [
     content: (
       <>
         <p>
-          Du kan når som helst se gjeldende versjon på denne siden. Vi kan
-          oppdatere, endre eller erstatte deler av vilkårene ved å publisere
-          endringer. Du må sjekke nettstedet periodisk. Fortsatt bruk etter
-          endringer innebærer aksept.
+          Du kan når som helst se gjeldende versjon på denne
+          siden. Vi kan oppdatere, endre eller erstatte deler av
+          vilkårene ved å publisere endringer. Du må sjekke
+          nettstedet periodisk. Fortsatt bruk etter endringer
+          innebærer aksept.
         </p>
       </>
     )
@@ -404,7 +447,10 @@ export const termsSections: Section[] = [
     title: 'Kontaktinformasjon',
     content: (
       <>
-        <p>Spørsmål om vilkårene sendes til kundeservice@utekos.no.</p>
+        <p>
+          Spørsmål om vilkårene sendes til
+          kundeservice@utekos.no.
+        </p>
       </>
     )
   }

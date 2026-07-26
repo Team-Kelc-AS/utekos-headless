@@ -114,7 +114,7 @@ test('mints fbp and fbc from landing page_url fbclid before persist', async () =
     writes[0]?.event.click_id?.fbclid,
     'IwAR2F4-dbP0l7Mn1IawQQGCINEz7PYXQvwjNwB_qa2ofrHyiLjcbCRxTDMgk'
   )
-  assert.ok(result.status !== 'rejected' && result.cookiesToSet.length >= 1)
+  assert.ok(result.cookiesToSet.length >= 1)
 })
 
 test('reports an idempotent duplicate returned by storage', async () => {
@@ -130,7 +130,7 @@ test('reports an idempotent duplicate returned by storage', async () => {
 
   assert.equal(result.status, 'duplicate')
   assert.equal(
-    result.status !== 'rejected' && result.event_id,
+    result.event_id,
     '61c2ef59-6e6f-4f56-a63a-567ca398f9de'
   )
 })

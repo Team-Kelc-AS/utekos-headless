@@ -136,7 +136,7 @@ export function ProductLayersVisual({
             <div className='rounded-full bg-secondary/20 p-2 text-secondary'>
               <Zap className='h-6 w-6' aria-hidden />
             </div>
-            <div className='text-sm font-bold tracking-wider text-secondary'>
+            <div className='font-google-sans text-sm font-bold tracking-wider text-secondary'>
               System
             </div>
             <div className='h-16 w-0.5 bg-linear-to-b from-secondary/50 to-transparent' />
@@ -214,13 +214,13 @@ export function MobileProductLayersVisual({
         <div className='min-w-0 flex-1'>
           <div
             className={cn(
-              'text-sm font-bold tracking-widest',
+              'font-google-sans text-sm font-bold tracking-widest',
               theme.text
             )}
           >
             Active Layer
           </div>
-          <div className='truncate text-lg font-bold text-card-foreground'>
+          <div className='font-google-sans truncate text-lg font-bold text-card-foreground'>
             {current.title}
           </div>
         </div>
@@ -283,11 +283,7 @@ function MaterialCard({
         className={cn(
           'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition-colors duration-300',
           isActive ?
-            cn(
-              theme.border,
-              'bg-card-foreground/10',
-              theme.text
-            )
+            cn(theme.border, 'bg-card-foreground/10', theme.text)
           : 'border-card-foreground/10 bg-muted text-muted-foreground'
         )}
       >
@@ -297,7 +293,7 @@ function MaterialCard({
       <div className='flex flex-col'>
         <span
           className={cn(
-            'text-xs font-bold tracking-widest uppercase transition-colors',
+            'font-google-sans text-xs font-bold tracking-widest uppercase transition-colors',
             isActive ? theme.text : 'text-muted-foreground'
           )}
         >
@@ -305,7 +301,7 @@ function MaterialCard({
         </span>
         <span
           className={cn(
-            'text-lg font-semibold transition-colors',
+            'font-utekos-text-medium text-lg transition-colors',
             isActive ?
               'text-card-foreground'
             : 'text-muted-foreground'

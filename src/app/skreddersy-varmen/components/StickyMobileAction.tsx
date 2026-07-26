@@ -194,7 +194,7 @@ export function StickyMobileAction() {
                 <span className='truncate font-utekos-text-medium text-[11px] tracking-normal text-foreground sm:text-xs'>
                   Utekos
                 </span>
-                <span className='truncate text-[11px] font-semibold tracking-normal text-foreground sm:text-xs'>
+                <span className='truncate font-utekos-text-medium text-[11px] tracking-normal text-foreground sm:text-xs'>
                   TechDown™
                 </span>
               </span>
@@ -208,7 +208,7 @@ export function StickyMobileAction() {
               bgColor='var(--primary)'
               fgColor='var(--primary-foreground)'
               className={cn(
-                'hover:bg-primary-hover h-11 shrink-0 gap-1.5 px-3.5 py-0 text-xs font-bold tracking-normal shadow-[0_4px_15px_rgba(255,180,120,0.15)] transition-[filter,transform,box-shadow] hover:text-primary-foreground hover:brightness-105 active:scale-[0.985] sm:px-5 sm:text-sm',
+                'hover:bg-primary-hover font-google-sans h-11 shrink-0 gap-1.5 px-3.5 py-0 text-xs font-bold tracking-normal shadow-[0_4px_15px_rgba(255,180,120,0.15)] transition-[filter,transform,box-shadow] hover:text-primary-foreground hover:brightness-105 active:scale-[0.985] sm:px-5 sm:text-sm',
                 focusRing
               )}
             >

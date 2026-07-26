@@ -1,11 +1,15 @@
-import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
+import { ComfyrobeFaqSection } from './components/ComfyrobeFaqSection'
+import { ComfyrobeFinalCta } from './components/ComfyrobeFinalCta'
+import { ComfyrobeGuidedDemo } from './components/ComfyrobeGuidedDemo'
 import { ComfyrobeLandingClient } from './components/ComfyrobeLandingClient'
-import { ComfyrobePurchaseFallback } from './components/ComfyrobePurchaseFallback'
+import { ComfyrobeMotionProvider } from './components/ComfyrobeMotionProvider'
+import { ComfyrobeProofBridge } from './components/ComfyrobeProofBridge'
 import { ComfyrobePurchaseSection } from './components/ComfyrobePurchaseSection'
+import { ComfyrobeStickyPurchase } from './components/ComfyrobeStickyPurchase'
 import { getComfyrobeLandingProduct } from './lib/getComfyrobeLandingProduct'
+import { buildComfyrobeOfferSummary } from './lib/buildComfyrobeOfferSummary'
 import {
   COMFYROBE_LANDING_DESCRIPTION,
   COMFYROBE_LANDING_IMAGE,
@@ -40,38 +44,44 @@ export const metadata: Metadata = {
 
 export default async function ComfyrobeLandingPage() {
   const product = await getComfyrobeLandingProduct()
-  const price =
-    product?.selectedOrFirstAvailableVariant?.price ??
-    product?.priceRange?.minVariantPrice
-  const klarnaPurchaseAmount =
-    price ?
-      (getKlarnaMinorUnitAmount({
-        amount: price.amount ?? '0',
-        currencyCode: price.currencyCode
-      }) ?? '')
-    : ''
+  const offer = buildComfyrobeOfferSummary(product)
 
   return (
     <article className='flex min-h-screen w-full flex-col overflow-x-clip bg-background text-foreground'>
-      <ComfyrobeLandingClient
-        klarnaPurchaseAmount={klarnaPurchaseAmount}
-      />
-      <PromotionImpression
-        promotionId='comfyrobe-purchase'
-        promotionName='Comfyrobe'
-        creativeName='Purchase'
-        creativeSlot='purchase'
-        className='w-full'
-      >
-        <div
-          id='purchase-section'
-          className='w-full scroll-mt-20'
+      <ComfyrobeMotionProvider>
+        <ComfyrobeLandingClient offer={offer} />
+        <ComfyrobeProofBridge />
+
+        <PromotionImpression
+          promotionId='comfyrobe-purchase'
+          promotionName='Comfyrobe'
+          creativeName='Purchase'
+          creativeSlot='purchase'
+          className='w-full'
         >
-          <Suspense fallback={<ComfyrobePurchaseFallback />}>
-            <ComfyrobePurchaseSection />
-          </Suspense>
-        </div>
-      </PromotionImpression>
+          <div
+            id='purchase-section'
+            className='w-full scroll-mt-20'
+          >
+            <ComfyrobePurchaseSection product={product} />
+          </div>
+        </PromotionImpression>
+
+        <ComfyrobeGuidedDemo />
+        <ComfyrobeFaqSection />
+
+        <PromotionImpression
+          promotionId='comfyrobe-purchase'
+          promotionName='Comfyrobe'
+          creativeName='Final CTA'
+          creativeSlot='final_cta'
+          className='w-full'
+        >
+          <ComfyrobeFinalCta offer={offer} />
+        </PromotionImpression>
+
+        <ComfyrobeStickyPurchase offer={offer} />
+      </ComfyrobeMotionProvider>
     </article>
   )
 }

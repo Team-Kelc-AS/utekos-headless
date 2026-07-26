@@ -19,20 +19,20 @@ export default function TechTeaserSection() {
     >
       <div className='container mx-auto max-w-7xl px-4'>
         <div className='relative overflow-hidden rounded-3xl border border-foreground bg-card p-8 shadow-2xl md:p-12 lg:p-20'>
-          <div className='bg-mountain-view pointer-events-none absolute top-0 left-[-10%] size-150 -translate-y-1/2 rounded-full blur-[120px]' />
-          <div className='bg-overcast pointer-events-none absolute right-0 bottom-0 size-125 translate-y-1/3 rounded-full blur-[100px]' />
+          <div className='pointer-events-none absolute top-0 left-[-10%] size-150 -translate-y-1/2 rounded-full bg-mountain-view blur-[120px]' />
+          <div className='pointer-events-none absolute right-0 bottom-0 size-125 translate-y-1/3 rounded-full bg-overcast blur-[100px]' />
 
           <div className='relative grid items-center gap-12 lg:grid-cols-2 lg:gap-20'>
             <div className='space-y-4'>
-              <div className='motion-content border-mountain-view/20 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-sm'>
+              <div className='motion-content inline-flex items-center gap-2 rounded-full border border-mountain-view/20 px-4 py-1.5 backdrop-blur-sm'>
                 <div className='relative flex h-2 w-2'>
-                  <span className='bg-mountain-view absolute inline-flex size-full animate-pulse rounded-full opacity-75' />
-                  <span className='bg-mountain-view relative inline-flex h-2 w-2 rounded-full' />
+                  <span className='absolute inline-flex size-full animate-pulse rounded-full bg-mountain-view opacity-75' />
+                  <span className='relative inline-flex h-2 w-2 rounded-full bg-mountain-view' />
                 </div>
               </div>
 
               <div className='space-y-6'>
-                <h2 className='motion-content text-4xl font-bold text-foreground sm:text-5xl md:text-6xl'>
+                <h2 className='motion-content font-google-sans text-4xl font-bold text-foreground sm:text-5xl md:text-6xl'>
                   Vitenskapen bak <br />
                   <span className='dark:from-dark-primary dark:to-dark-primary bg-linear-to-r from-primary via-yellow-500 to-primary bg-clip-text text-transparent'>
                     din komfort
@@ -87,10 +87,10 @@ export default function TechTeaserSection() {
                       <item.icon className='size-5' />
                     </div>
                     <div>
-                      <span className='group-hover:text-ancient-water block text-base font-semibold text-foreground transition-colors'>
+                      <span className='block font-utekos-text-medium text-base text-foreground transition-colors group-hover:text-ancient-water'>
                         {item.title}
                       </span>
-                      <span className='group-hover:text-barely-blue text-ancient-water block text-sm transition-colors'>
+                      <span className='group-hover:text-barely-blue block text-sm text-ancient-water transition-colors'>
                         {item.desc}
                       </span>
                     </div>
@@ -104,7 +104,7 @@ export default function TechTeaserSection() {
                     '/handlehjelp/teknologi-materialer' as Route
                   }
                   data-track='TechTeaserSectionExploreTechClick'
-                  className='group inline-flex h-12 items-center gap-2 rounded-full bg-white px-8 text-sm font-bold text-neutral-950 transition-all hover:scale-105 hover:bg-sky-50 active:scale-95'
+                  className='group font-google-sans inline-flex h-12 items-center gap-2 rounded-full bg-white px-8 text-sm font-bold text-neutral-950 transition-all hover:scale-105 hover:bg-sky-50 active:scale-95'
                 >
                   Utforsk teknologien
                   <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-1' />
@@ -137,8 +137,8 @@ export default function TechTeaserSection() {
                   >
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md'>
-                        <Cpu className='text-havdyp h-3.5 w-3.5' />
-                        <span className='text-[10px] font-bold tracking-widest text-white uppercase'>
+                        <Cpu className='h-3.5 w-3.5 text-havdyp' />
+                        <span className='font-google-sans text-[10px] font-bold tracking-widest text-white uppercase'>
                           Core Tech
                         </span>
                       </div>
@@ -147,14 +147,14 @@ export default function TechTeaserSection() {
 
                     <div>
                       <div className='mb-4 space-y-1.5 opacity-60'>
-                        <div className='bg-ancient-water h-1 w-12 rounded-full' />
+                        <div className='h-1 w-12 rounded-full bg-ancient-water' />
                         <div className='bg-chocolate-plum h-1 w-8 rounded-full' />
                       </div>
 
-                      <h3 className='text-3xl font-bold text-foreground'>
+                      <h3 className='font-google-sans text-3xl font-bold text-foreground'>
                         SherpaCore™
                       </h3>
-                      <p className='text-ancient-water text-sm font-medium'>
+                      <p className='text-sm font-medium text-ancient-water'>
                         Thermal Lining System
                       </p>
                     </div>
@@ -163,10 +163,10 @@ export default function TechTeaserSection() {
 
                 <div className='motion-inner-parallax dark:bg-dark-background absolute -right-6 -bottom-6 flex h-24 w-24 translate-z-10 items-center justify-center rounded-full border border-white/10 bg-background shadow-2xl'>
                   <div className='text-center'>
-                    <span className='block text-2xl font-bold text-foreground'>
+                    <span className='font-google-sans block text-2xl font-bold text-foreground'>
                       8K
                     </span>
-                    <span className='text-ancient-water text-[10px] font-bold tracking-wider uppercase'>
+                    <span className='font-google-sans text-[10px] font-bold tracking-wider text-ancient-water uppercase'>
                       Vannsøyle
                     </span>
                   </div>

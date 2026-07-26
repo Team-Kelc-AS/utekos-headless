@@ -27,7 +27,8 @@ function FeaturedArticleCard({
 }: {
   article: MagazineArticle
 }) {
-  const usesPortraitHero = article.heroImage.src === '/med-utekos.png'
+  const usesPortraitHero =
+    article.heroImage.src === '/med-utekos.png'
 
   return (
     <article className='bg-background py-14 text-foreground sm:py-20'>
@@ -74,16 +75,16 @@ function FeaturedArticleCard({
                 category={article.category}
               />
             </div>
-            <h2 className='font-utekos-text-medium group-hover:text-magazine-article-card-pill text-4xl leading-[0.95] font-bold text-balance transition-colors sm:text-5xl'>
+            <h2 className='font-google-sans font-utekos-text-medium text-4xl leading-[0.95] font-bold text-balance transition-colors group-hover:text-magazine-article-card-pill sm:text-5xl'>
               {article.title}
             </h2>
-            <p className='font-utekos-text mt-5 text-lg leading-[1.3] tracking-normal text-foreground/86'>
+            <p className='mt-5 font-utekos-text text-lg leading-[1.3] tracking-normal text-foreground/86'>
               {article.excerpt}
             </p>
             <BrandBadge
               backgroundColor='var(--color-magazine-article-card-pill)'
               textColor='var(--background)'
-              className='font-utekos-text-medium mt-8 w-fit gap-2 rounded-lg border border-background/15 px-4 py-2 text-sm leading-[1.35] tracking-tight'
+              className='mt-8 w-fit gap-2 rounded-lg border border-background/15 px-4 py-2 font-utekos-text-medium text-sm leading-[1.35] tracking-tight'
             >
               <span>Les hele saken</span>
               <ArrowRight
@@ -139,12 +140,14 @@ function MagazineArticleCard({
           />
           <div className='flex flex-1 flex-col bg-muted p-5 text-foreground'>
             <div className='mb-4'>
-              <MagazineCategoryBadge category={article.category} />
+              <MagazineCategoryBadge
+                category={article.category}
+              />
             </div>
-            <h3 className='font-utekos-text-medium group-hover:text-magazine-article-card-pill text-lg leading-[0.98] font-bold tracking-normal transition-colors'>
+            <h3 className='font-google-sans font-utekos-text-medium text-lg leading-[0.98] font-bold tracking-normal transition-colors group-hover:text-magazine-article-card-pill'>
               {article.title}
             </h3>
-            <p className='font-utekos-text mt-3 flex-1 text-sm leading-[1.3] tracking-normal text-foreground/86'>
+            <p className='mt-3 flex-1 font-utekos-text text-sm leading-[1.3] tracking-normal text-foreground/86'>
               {article.excerpt}
             </p>
           </div>
@@ -172,10 +175,10 @@ function MagazineArticleCard({
           <div className='mb-4'>
             <MagazineCategoryBadge category={article.category} />
           </div>
-          <h3 className='font-utekos-text-medium group-hover:text-magazine-article-card-pill text-lg leading-[0.98] font-bold tracking-normal transition-colors'>
+          <h3 className='font-google-sans font-utekos-text-medium text-lg leading-[0.98] font-bold tracking-normal transition-colors group-hover:text-magazine-article-card-pill'>
             {article.title}
           </h3>
-          <p className='font-utekos-text mt-3 flex-1 text-sm leading-[1.3] tracking-normal text-foreground/86'>
+          <p className='mt-3 flex-1 font-utekos-text text-sm leading-[1.3] tracking-normal text-foreground/86'>
             {article.excerpt}
           </p>
         </div>
@@ -189,7 +192,7 @@ export function MagazineGrid({ articles }: MagazineGridProps) {
 
   if (!featuredArticle) {
     return (
-      <article className='bg-overcast dark:text-dark-background py-16 text-background'>
+      <article className='dark:text-dark-background bg-overcast py-16 text-background'>
         <div className='container mx-auto px-4'>
           <p className='text-lg leading-[1.55]'>
             Ingen artikler er publisert ennå.
@@ -208,12 +211,12 @@ export function MagazineGrid({ articles }: MagazineGridProps) {
       >
         <div className='container mx-auto px-6 sm:px-4'>
           <header className='mb-8 max-w-2xl'>
-            <p className='text-magazine-article-card-pill text-sm leading-4 font-semibold'>
+            <p className='font-utekos-text-medium text-sm leading-4 text-magazine-article-card-pill'>
               Siste fra magasinet
             </p>
             <h2
               id='magazine-latest-heading'
-              className='mt-2 font-sans text-4xl leading-[0.95] font-bold sm:text-5xl'
+              className='font-google-sans mt-2 font-sans text-4xl leading-[0.95] font-bold sm:text-5xl'
             >
               Flere guider og historier
             </h2>

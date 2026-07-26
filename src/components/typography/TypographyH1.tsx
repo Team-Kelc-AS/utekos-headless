@@ -16,7 +16,7 @@ export function TypographyH1({
     <h1
       id={ID}
       className={cn(
-        'huge:text-[120px] relative mx-auto mb-2 w-full scroll-m-20 overflow-hidden px-2 text-center font-sans text-4xl font-bold tracking-normal text-foreground md:text-5xl lg:text-7xl xl:text-[100px]',
+        'huge:text-[120px] font-google-sans relative mx-auto mb-2 w-full scroll-m-20 overflow-hidden px-2 text-center font-sans text-4xl font-bold tracking-normal text-foreground md:text-5xl lg:text-7xl xl:text-[100px]',
         className ?? ''
       )}
       aria-label={Text}

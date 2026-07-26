@@ -29,7 +29,7 @@ export function HeroActions() {
           asChild
           bgColor='var(--primary)'
           fgColor='var(--primary-foreground)'
-          className='h-12 w-full px-5 py-0 text-sm leading-none font-semibold tracking-normal shadow-xl transition-[filter,transform] hover:brightness-105 active:scale-[0.97] md:h-14 md:text-base'
+          className='h-12 w-full px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-xl transition-[filter,transform] hover:brightness-105 active:scale-[0.97] md:h-14 md:text-base'
         >
           <button
             type='button'
@@ -54,7 +54,7 @@ export function HeroActions() {
           asChild
           bgColor='var(--secondary)'
           fgColor='var(--secondary-foreground)'
-          className='h-12 w-full px-5 py-0 text-sm leading-none font-semibold tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.97] md:h-14 md:text-base'
+          className='h-12 w-full px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.97] md:h-14 md:text-base'
         >
           <button
             type='button'
@@ -86,7 +86,7 @@ export function HeroActions() {
         aria-label='Bla videre'
         className='absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-foreground/75 transition-[opacity,transform] duration-300 hover:translate-y-1 hover:text-foreground hover:opacity-100 md:flex'
       >
-        <span className='text-[10px] font-semibold tracking-normal'>
+        <span className='font-utekos-text-medium text-[10px] tracking-normal'>
           Bla videre
         </span>
         <ChevronDown

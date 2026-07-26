@@ -15,7 +15,7 @@ function AccordionGroup({
   return (
     <article className='space-y-3'>
       {group.title && (
-        <h3 className='font-sans text-lg leading-[1.2] font-semibold tracking-normal text-card-foreground'>
+        <h3 className='font-sans font-utekos-text-medium text-lg leading-[1.2] tracking-normal text-card-foreground'>
           {group.title}
         </h3>
       )}
@@ -25,9 +25,9 @@ function AccordionGroup({
           {group.rows.map(row => (
             <div
               key={row.label}
-              className=' dark:bg-dark-background/40 rounded-lg border border-border bg-background/40 p-3'
+              className='dark:bg-dark-background/40 rounded-lg border border-border bg-background/40 p-3'
             >
-              <dt className='text-sm leading-[1.35] font-semibold tracking-normal text-foreground'>
+              <dt className='font-utekos-text-medium text-sm leading-[1.35] tracking-normal text-foreground'>
                 {row.label}
               </dt>
               <dd className='/82 mt-1 text-sm leading-normal tracking-normal text-foreground/82'>
@@ -61,8 +61,8 @@ function AccordionGroup({
       )}
 
       {group.note && (
-        <div className=' dark:bg-dark-background/55 rounded-lg border border-border bg-background/55 p-4 text-foreground'>
-          <h4 className='font-sans text-base leading-tight font-semibold tracking-normal'>
+        <div className='dark:bg-dark-background/55 rounded-lg border border-border bg-background/55 p-4 text-foreground'>
+          <h4 className='font-sans font-utekos-text-medium text-base leading-tight tracking-normal'>
             {group.note.title}
           </h4>
           <p className='/86 mt-2 text-sm leading-[1.6] tracking-normal text-foreground/86'>
@@ -81,7 +81,7 @@ export function AccordionContentRenderer({
 }) {
   return (
     <AccordionContent className='relative z-10 px-6 pb-6 sm:pl-20'>
-      <div className='font-utekos-text max-w-prose space-y-6'>
+      <div className='max-w-prose space-y-6 font-utekos-text'>
         {content.groups.map((group, index) => (
           <AccordionGroup
             key={`${group.title ?? content.id}-${index}`}

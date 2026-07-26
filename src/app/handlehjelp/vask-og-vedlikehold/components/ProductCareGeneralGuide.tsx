@@ -64,11 +64,11 @@ export function ProductCareGeneralGuide() {
       <div className='mb-10 text-center'>
         <h2
           id='generell-guide-heading'
-          className='text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'
+          className='font-google-sans text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'
         >
           Slik tar du vare på plagget
         </h2>
-        <p className='font-utekos-text-medium /90 mt-5 text-left text-lg leading-8 text-foreground/90'>
+        <p className='/90 mt-5 text-left font-utekos-text-medium text-lg leading-8 text-foreground/90'>
           Fire steg som gjelder for alle Utekos-plagg.
           Materialspesifikke detaljer finner du lenger ned.
         </p>

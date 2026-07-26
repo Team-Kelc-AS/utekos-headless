@@ -2,6 +2,10 @@ import assert from 'node:assert/strict'
 import Module from 'node:module'
 import { createRequire } from 'node:module'
 import test from 'node:test'
+import type {
+  ShopifyCartSnapshot,
+  ShopifyCartSnapshotStore
+} from './shopifyCartSnapshotStore'
 
 const moduleWithLoad = Module as typeof Module & {
   _load: (
@@ -56,7 +60,10 @@ function line(quantity: number) {
     vendor: 'Utekos',
     price_set: {
       shop_money: { amount: '1590.00', currency_code: 'NOK' },
-      presentment_money: { amount: '1590.00', currency_code: 'NOK' }
+      presentment_money: {
+        amount: '1590.00',
+        currency_code: 'NOK'
+      }
     }
   }
 }
@@ -92,13 +99,13 @@ function createRequest(body: string, hmac = 'valid-hmac') {
 
 function memorySnapshotStore(
   initial: Map<string, unknown> = new Map()
-) {
+): ShopifyCartSnapshotStore & { store: Map<string, unknown> } {
   return {
     store: initial,
     async get(cartToken: string) {
       return (initial.get(cartToken) as never) ?? null
     },
-    async set(snapshot: { cart_token: string }) {
+    async set(snapshot: ShopifyCartSnapshot) {
       initial.set(snapshot.cart_token, snapshot)
     }
   }
@@ -130,7 +137,7 @@ test('missing prior cart stores snapshot and invents no removals', async () => {
       {
         verifyWebhook: () => true,
         snapshotStore,
-        acceptRemoveFromCart: async input => {
+        acceptRemoveFromCart: async (input: unknown) => {
           acceptCalls.push(input)
           return { event_id: 'x', status: 'accepted' }
         }
@@ -176,7 +183,8 @@ test('quantity decrease accepts remove_from_cart', async () => {
         verifyWebhook: () => true,
         snapshotStore,
         createSourceEvidence: () => ({
-          canonical_event_id: '00000000-0000-4000-8000-000000000001',
+          canonical_event_id:
+            '00000000-0000-4000-8000-000000000001',
           source_system: 'shopify',
           source_method: 'webhook',
           source_object_type: 'cart',
@@ -188,7 +196,7 @@ test('quantity decrease accepts remove_from_cart', async () => {
           source_triggered_at: UPDATED_AT,
           source_observed_at: UPDATED_AT
         }),
-        acceptRemoveFromCart: async input => {
+        acceptRemoveFromCart: async (input: unknown) => {
           acceptCalls.push(input)
           return {
             event_id: (

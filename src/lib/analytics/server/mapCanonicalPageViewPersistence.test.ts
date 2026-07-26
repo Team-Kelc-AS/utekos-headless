@@ -132,3 +132,24 @@ test('persists a non-qualified Google row without scheduling it', () => {
     status: 'skipped_unqualified'
   })
 })
+
+test('persists Google event freshness as provider data quality', () => {
+  const result = mapCanonicalPageViewPersistence({
+    event,
+    dispatches: [
+      {
+        dispatch_mode: 'server_retry',
+        event_id: event.event_id,
+        google_event_freshness: 'late_within_window',
+        provider: 'google'
+      }
+    ]
+  })
+
+  assert.deepEqual(result.dispatches[0]?.data_quality, {
+    email_sha256_count: 1,
+    google_event_freshness: 'late_within_window',
+    has_external_id: true,
+    phone_sha256_count: 0
+  })
+})

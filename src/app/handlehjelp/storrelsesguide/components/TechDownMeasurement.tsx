@@ -7,10 +7,11 @@ export function TechDownMeasurement() {
       id='tech-down-measurements'
       surface='card'
       ariaLabelledby='tech-down-measurements-heading'
+      className='rounded-lg'
     >
       <h2
         id='tech-down-measurements-heading'
-        className='max-w-4xl font-sans text-4xl leading-[1.05] font-bold text-inherit md:text-5xl lg:text-6xl'
+        className='font-google-sans max-w-5xl rounded-lg font-sans text-4xl leading-[1.05] font-bold text-inherit md:text-5xl lg:text-6xl'
       >
         Måletabell for TechDown™
       </h2>
@@ -33,25 +34,25 @@ export function TechDownMeasurement() {
                   <tr>
                     <th
                       scope='col'
-                      className='py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-6'
+                      className='py-3.5 pr-3 pl-4 text-left font-utekos-text-medium text-sm sm:pl-6'
                     >
                       Måling
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center text-sm font-semibold'
+                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Liten
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center text-sm font-semibold'
+                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Middels
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center text-sm font-semibold'
+                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Stor
                     </th>

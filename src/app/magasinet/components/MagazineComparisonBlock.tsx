@@ -9,7 +9,7 @@ export function MagazineComparisonBlock({
 }: MagazineComparisonBlockProps) {
   return (
     <article className='my-16'>
-      <h2 className='font-sans text-4xl leading-[0.95] font-bold text-balance text-foreground sm:text-5xl'>
+      <h2 className='font-google-sans font-sans text-4xl leading-[0.95] font-bold text-balance text-foreground sm:text-5xl'>
         {block.title}
       </h2>
       <div className='mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3'>
@@ -18,7 +18,7 @@ export function MagazineComparisonBlock({
             key={column.title}
             className='dark:border-dark-background/10 rounded-lg border border-background/10 bg-foreground p-5'
           >
-            <h3 className='font-sans text-2xl leading-[0.95] font-bold text-background'>
+            <h3 className='font-google-sans font-sans text-2xl leading-[0.95] font-bold text-background'>
               {column.title}
             </h3>
             {column.text && (

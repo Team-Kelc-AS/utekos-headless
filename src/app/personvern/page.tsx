@@ -52,10 +52,10 @@ const SectionWrapper = ({
     <GridCross className='top-15 -left-4 hidden lg:block' />
     <GridCross className='top-15 -right-4 hidden lg:block' />
     <div className='absolute inset-x-0 top-18.75 hidden h-px border-t border-dashed border-white/10 lg:block' />
-    <h2 className='text-2xl font-semibold sm:text-3xl'>
+    <h2 className='font-utekos-text-medium text-2xl sm:text-3xl'>
       {title}
     </h2>
-    <div className='prose mt-6 max-w-none text-white/80 prose-invert'>
+    <div className='prose prose-invert mt-6 max-w-none text-white/80'>
       {children}
     </div>
   </article>
@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
 
           <div className='p-8 sm:p-12 lg:p-16'>
             <header className='text-center'>
-              <h1 className='mx-auto text-center text-4xl font-bold text-white sm:text-5xl'>
+              <h1 className='font-google-sans mx-auto text-center text-4xl font-bold text-white sm:text-5xl'>
                 Personvern
               </h1>
               <p className='mt-4 text-white/70'>

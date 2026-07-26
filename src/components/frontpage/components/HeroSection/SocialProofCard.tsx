@@ -47,7 +47,7 @@ export function SocialProofCard({
           <Icon className={`size-5 ${iconColorClass}`} />
         </div>
         <InlineText
-          className={`text-lg leading-[0.95] font-bold tracking-normal ${titleClass ?? 'text-foreground'}`}
+          className={`font-google-sans text-lg leading-[0.95] font-bold tracking-normal ${titleClass ?? 'text-foreground'}`}
         >
           {title}
         </InlineText>

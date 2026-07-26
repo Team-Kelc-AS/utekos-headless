@@ -34,7 +34,7 @@ export function DeepDiveSection() {
                 <p className='dark:text-dark-muted-foreground text-sm font-medium text-muted-foreground'>
                   {section.eyebrow}
                 </p>
-                <h3 className='mt-4 font-sans text-3xl leading-[0.98] font-bold text-foreground sm:text-4xl'>
+                <h3 className='font-google-sans mt-4 font-sans text-3xl leading-[0.98] font-bold text-foreground sm:text-4xl'>
                   {section.title}
                 </h3>
 

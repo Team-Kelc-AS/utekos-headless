@@ -87,3 +87,27 @@ test('different Shopify orders retain different deterministic event IDs', () => 
 
   assert.notEqual(first.event_id, second.event_id)
 })
+
+test('removes hashed user data and marketing identifiers when marketing consent is denied', () => {
+  const event = normalizeCanonicalPurchase(
+    {
+      ...purchase('100'),
+      browser_id: {
+        fbc: 'fb.1.1784368700000.meta-click',
+        fbp: 'fb.1.1784368600000.123456789'
+      },
+      click_id: { fbclid: 'meta-click', gclid: 'google-click' },
+      external_id: 'shopify_customer_100',
+      user_data: {
+        email_sha256: ['a'.repeat(64)],
+        phone_sha256: ['b'.repeat(64)]
+      }
+    },
+    {}
+  )
+
+  assert.equal(event.browser_id, undefined)
+  assert.equal(event.click_id, undefined)
+  assert.equal(event.external_id, undefined)
+  assert.equal(event.user_data, undefined)
+})

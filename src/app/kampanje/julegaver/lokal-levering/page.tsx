@@ -66,7 +66,7 @@ export default async function ChristmasLocalDelivery() {
             </span>
           </div>
 
-          <h1 className='mt-8 text-4xl font-bold text-card-foreground sm:text-6xl'>
+          <h1 className='font-google-sans mt-8 text-4xl font-bold text-card-foreground sm:text-6xl'>
             <span className='relative inline-block'>
               Utekos leverer julegavene
               <SantaHat className='absolute -top-8 -left-6 h-16 w-16 -rotate-12 drop-shadow-xl md:-top-10 md:-left-8 md:h-20 md:w-20' />
@@ -105,7 +105,7 @@ export default async function ChristmasLocalDelivery() {
                 <Car className='h-6 w-6 text-red-400' />
               </div>
               <div>
-                <h3 className='font-semibold text-foreground'>
+                <h3 className='font-utekos-text-medium text-foreground'>
                   Lokal hjemlevering
                 </h3>
                 <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
@@ -121,7 +121,7 @@ export default async function ChristmasLocalDelivery() {
                 <ShieldCheck className='h-6 w-6 text-red-400' />
               </div>
               <div>
-                <h3 className='font-semibold text-foreground'>
+                <h3 className='font-utekos-text-medium text-foreground'>
                   Utvidet bytterett
                 </h3>
                 <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
@@ -135,7 +135,7 @@ export default async function ChristmasLocalDelivery() {
                 <CreditCard className='h-6 w-6 text-red-400' />
               </div>
               <div>
-                <h3 className='font-semibold text-foreground'>
+                <h3 className='font-utekos-text-medium text-foreground'>
                   Sikker betaling
                 </h3>
                 <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
@@ -151,7 +151,7 @@ export default async function ChristmasLocalDelivery() {
       <article className='container mx-auto mt-12 px-4'>
         <div className='rounded-2xl border border-border bg-card p-6 text-card-foreground md:p-10'>
           <div className='text-center'>
-            <h3 className='text-2xl font-bold text-card-foreground'>
+            <h3 className='font-google-sans text-2xl font-bold text-card-foreground'>
               Slik fungerer julegave-ekspressen:
             </h3>
             <p className='dark:text-dark-muted-foreground mt-2 text-sm text-muted-foreground'>
@@ -162,10 +162,10 @@ export default async function ChristmasLocalDelivery() {
           <div className='mt-8 grid gap-8 md:grid-cols-3'>
             {/* Steg 1 */}
             <div className='flex flex-col items-center text-center'>
-              <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-red-800 text-lg font-bold text-white shadow-lg shadow-red-900/50'>
+              <div className='font-google-sans mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-red-800 text-lg font-bold text-white shadow-lg shadow-red-900/50'>
                 1
               </div>
-              <h4 className='font-semibold text-card-foreground'>
+              <h4 className='font-utekos-text-medium text-card-foreground'>
                 Fyll handlekurven
               </h4>
               <p className='dark:text-dark-muted-foreground mt-2 text-sm text-muted-foreground'>
@@ -175,10 +175,10 @@ export default async function ChristmasLocalDelivery() {
             </div>
 
             <div className='relative flex flex-col items-center text-center'>
-              <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-red-800 text-lg font-bold text-white shadow-lg shadow-red-900/50'>
+              <div className='font-google-sans mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-red-800 text-lg font-bold text-white shadow-lg shadow-red-900/50'>
                 2
               </div>
-              <h4 className='font-semibold text-card-foreground'>
+              <h4 className='font-utekos-text-medium text-card-foreground'>
                 Fyll inn adressen din
               </h4>
               <p className='dark:text-dark-muted-foreground mt-2 text-sm text-muted-foreground'>
@@ -192,10 +192,10 @@ export default async function ChristmasLocalDelivery() {
             </div>
 
             <div className='flex flex-col items-center text-center'>
-              <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-red-800 text-lg font-bold text-white shadow-lg shadow-red-900/50'>
+              <div className='font-google-sans mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-red-800 text-lg font-bold text-white shadow-lg shadow-red-900/50'>
                 3
               </div>
-              <h4 className='font-semibold text-card-foreground'>
+              <h4 className='font-utekos-text-medium text-card-foreground'>
                 Skreddersydd levering?
               </h4>
               <p className='dark:text-dark-muted-foreground mt-2 text-sm text-muted-foreground'>
@@ -212,7 +212,7 @@ export default async function ChristmasLocalDelivery() {
         className='container mx-auto mt-16 px-4'
       >
         <div className='mb-12 text-center'>
-          <h2 className='text-3xl font-bold'>
+          <h2 className='font-google-sans text-3xl font-bold'>
             Våre mest populære gaver
           </h2>
           <p className='dark:text-dark-muted-foreground mt-2 text-muted-foreground'>
@@ -222,8 +222,8 @@ export default async function ChristmasLocalDelivery() {
         </div>
 
         <div className='grid gap-8 md:grid-cols-2 lg:gap-12'>
-          <div className='group hover:border-commerce-primary/40 dark:hover:border-dark-commerce-primary/40 relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all'>
-            <div className='absolute top-4 right-4 z-10 rounded-full bg-red-800 px-3 py-1 text-xs font-bold text-white shadow-lg'>
+          <div className='group relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all hover:border-commerce-primary/40 dark:hover:border-dark-commerce-primary/40'>
+            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-red-800 px-3 py-1 text-xs font-bold text-white shadow-lg'>
               JULERABATT
             </div>
 
@@ -238,7 +238,7 @@ export default async function ChristmasLocalDelivery() {
             </div>
 
             <div className='p-6'>
-              <h3 className='text-2xl font-bold'>
+              <h3 className='font-google-sans text-2xl font-bold'>
                 Utekos TechDown™
               </h3>
               <p className='dark:text-dark-muted-foreground mt-2 text-muted-foreground'>
@@ -247,7 +247,7 @@ export default async function ChristmasLocalDelivery() {
                 tilbakemeldinger.
               </p>
               <div className='mt-4 flex items-baseline gap-3'>
-                <span className='text-xl font-bold text-foreground'>
+                <span className='font-google-sans text-xl font-bold text-foreground'>
                   1 790 kr
                 </span>
                 <span className='dark:text-dark-muted-foreground text-sm text-muted-foreground line-through'>
@@ -256,15 +256,15 @@ export default async function ChristmasLocalDelivery() {
               </div>
               <Link
                 href='/produkter/utekos-techdown'
-                className='bg-commerce-primary dark:bg-dark-commerce-primary text-commerce-primary-foreground dark:text-dark-commerce-primary-foreground hover:bg-commerce-primary-hover dark:hover:bg-dark-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:hover:text-dark-commerce-primary-hover-foreground mt-6 block w-full rounded-lg py-3 text-center font-semibold transition-colors'
+                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-utekos-text-medium text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground'
               >
                 Kjøp TechDown™
               </Link>
             </div>
           </div>
 
-          <div className='group hover:border-commerce-primary/40 dark:hover:border-dark-commerce-primary/40 relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all'>
-            <div className='absolute top-4 right-4 z-10 rounded-full bg-blue-900 px-3 py-1 text-xs font-bold text-white shadow-lg'>
+          <div className='group relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all hover:border-commerce-primary/40 dark:hover:border-dark-commerce-primary/40'>
+            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-blue-900 px-3 py-1 text-xs font-bold text-white shadow-lg'>
               BESTSELGER
             </div>
 
@@ -279,7 +279,7 @@ export default async function ChristmasLocalDelivery() {
             </div>
 
             <div className='p-6'>
-              <h3 className='text-2xl font-bold'>
+              <h3 className='font-google-sans text-2xl font-bold'>
                 Utekos Mikrofiber™
               </h3>
               <p className='dark:text-dark-muted-foreground mt-2 text-muted-foreground'>
@@ -287,7 +287,7 @@ export default async function ChristmasLocalDelivery() {
                 følelsen av dun med ekstra fordeler.
               </p>
               <div className='mt-4 flex items-baseline gap-3'>
-                <span className='text-xl font-bold text-foreground'>
+                <span className='font-google-sans text-xl font-bold text-foreground'>
                   1 590 kr
                 </span>
                 <span className='dark:text-dark-muted-foreground text-sm text-muted-foreground line-through'>
@@ -296,15 +296,15 @@ export default async function ChristmasLocalDelivery() {
               </div>
               <Link
                 href='/produkter/utekos-mikrofiber'
-                className='bg-commerce-primary dark:bg-dark-commerce-primary text-commerce-primary-foreground dark:text-dark-commerce-primary-foreground hover:bg-commerce-primary-hover dark:hover:bg-dark-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:hover:text-dark-commerce-primary-hover-foreground mt-6 block w-full rounded-lg py-3 text-center font-semibold transition-colors'
+                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-utekos-text-medium text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground'
               >
                 Kjøp Mikrofiber
               </Link>
             </div>
           </div>
 
-          <div className='group hover:border-commerce-primary/40 dark:hover:border-dark-commerce-primary/40 relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all'>
-            <div className='absolute top-4 right-4 z-10 rounded-full bg-orange-900 px-3 py-1 text-xs font-bold text-white shadow-lg'>
+          <div className='group relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all hover:border-commerce-primary/40 dark:hover:border-dark-commerce-primary/40'>
+            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-orange-900 px-3 py-1 text-xs font-bold text-white shadow-lg'>
               FÅ IGJEN
             </div>
 
@@ -319,12 +319,14 @@ export default async function ChristmasLocalDelivery() {
             </div>
 
             <div className='p-6'>
-              <h3 className='text-2xl font-bold'>Utekos Dun™</h3>
+              <h3 className='font-google-sans text-2xl font-bold'>
+                Utekos Dun™
+              </h3>
               <p className='dark:text-dark-muted-foreground mt-2 text-muted-foreground'>
                 Klassisk dun-kvalitet for de kaldeste dagene.
               </p>
               <div className='mt-4 flex items-baseline gap-3'>
-                <span className='text-xl font-bold text-foreground'>
+                <span className='font-google-sans text-xl font-bold text-foreground'>
                   1 990 kr
                 </span>
                 <span className='dark:text-dark-muted-foreground text-sm text-muted-foreground line-through'>
@@ -333,15 +335,15 @@ export default async function ChristmasLocalDelivery() {
               </div>
               <Link
                 href='/produkter/utekos-dun'
-                className='bg-commerce-primary dark:bg-dark-commerce-primary text-commerce-primary-foreground dark:text-dark-commerce-primary-foreground hover:bg-commerce-primary-hover dark:hover:bg-dark-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:hover:text-dark-commerce-primary-hover-foreground mt-6 block w-full rounded-lg py-3 text-center font-semibold transition-colors'
+                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-utekos-text-medium text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground'
               >
                 Kjøp Dun
               </Link>
             </div>
           </div>
 
-          <div className='group hover:border-commerce-primary/40 dark:hover:border-dark-commerce-primary/40 relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all'>
-            <div className='absolute top-4 right-4 z-10 rounded-full bg-neutral-800 px-3 py-1 text-xs font-bold text-white shadow-lg'>
+          <div className='group relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all hover:border-commerce-primary/40 dark:hover:border-dark-commerce-primary/40'>
+            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-neutral-800 px-3 py-1 text-xs font-bold text-white shadow-lg'>
               ALLROUNDER
             </div>
 
@@ -356,13 +358,15 @@ export default async function ChristmasLocalDelivery() {
             </div>
 
             <div className='p-6'>
-              <h3 className='text-2xl font-bold'>Comfyrobe™</h3>
+              <h3 className='font-google-sans text-2xl font-bold'>
+                Comfyrobe™
+              </h3>
               <p className='dark:text-dark-muted-foreground mt-2 text-muted-foreground'>
                 Den ultimate skifteroben. Vindtett, vanntett og
                 foret.
               </p>
               <div className='mt-4 flex items-baseline gap-3'>
-                <span className='text-xl font-bold text-foreground'>
+                <span className='font-google-sans text-xl font-bold text-foreground'>
                   1 290 kr
                 </span>
                 <span className='dark:text-dark-muted-foreground text-sm text-muted-foreground line-through'>
@@ -371,7 +375,7 @@ export default async function ChristmasLocalDelivery() {
               </div>
               <Link
                 href='/produkter/comfyrobe'
-                className='bg-commerce-primary dark:bg-dark-commerce-primary text-commerce-primary-foreground dark:text-dark-commerce-primary-foreground hover:bg-commerce-primary-hover dark:hover:bg-dark-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:hover:text-dark-commerce-primary-hover-foreground mt-6 block w-full rounded-lg py-3 text-center font-semibold transition-colors'
+                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-utekos-text-medium text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground'
               >
                 Kjøp Comfyrobe™
               </Link>
@@ -382,7 +386,7 @@ export default async function ChristmasLocalDelivery() {
 
       <article className='container mx-auto mt-24 mb-6 px-4'>
         <div className='mb-12 text-center'>
-          <h2 className='text-3xl font-bold'>
+          <h2 className='font-google-sans text-3xl font-bold'>
             Sjekk om du kan få levering på døren
           </h2>
           <p className='dark:text-dark-muted-foreground mt-2 text-muted-foreground'>
@@ -406,7 +410,9 @@ export default async function ChristmasLocalDelivery() {
             <div className='mb-4 rounded-full bg-red-900/20 p-4 transition-transform group-hover:scale-110'>
               <Gift className='h-8 w-8 text-red-400' />
             </div>
-            <h3 className='text-lg font-semibold'>Lær mer</h3>
+            <h3 className='font-utekos-text-medium text-lg'>
+              Lær mer
+            </h3>
             <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
               Lær mer om funksjonaliteten.
             </p>
@@ -419,7 +425,7 @@ export default async function ChristmasLocalDelivery() {
             <div className='mb-4 rounded-full bg-blue-900/20 p-4 transition-transform group-hover:scale-110'>
               <Truck className='h-8 w-8 text-blue-400' />
             </div>
-            <h3 className='text-lg font-semibold'>
+            <h3 className='font-utekos-text-medium text-lg'>
               Spørsmål om levering?
             </h3>
             <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
@@ -434,7 +440,7 @@ export default async function ChristmasLocalDelivery() {
             <div className='mb-4 rounded-full bg-green-900/20 p-4 transition-transform group-hover:scale-110'>
               <Calendar className='h-8 w-8 text-green-400' />
             </div>
-            <h3 className='text-lg font-semibold'>
+            <h3 className='font-utekos-text-medium text-lg'>
               Usikker på størrelse?
             </h3>
             <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>

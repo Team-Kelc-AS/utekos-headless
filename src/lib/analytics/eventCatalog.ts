@@ -40,6 +40,7 @@ type ProviderProductionStatus =
 
 type BrowserTransport =
   | 'google_tag_manager'
+  | 'shopify_customer_events'
   | 'meta_pixel'
   | 'microsoft_uet'
   | 'posthog_browser'
@@ -987,10 +988,13 @@ const purchaseProviders = {
   google: providerMapping({
     support: 'supported',
     eventName: 'purchase',
-    transport: { browser: null, server: 'google_data_manager' },
+    transport: {
+      browser: 'shopify_customer_events',
+      server: 'google_data_manager'
+    },
     requiredParameters: [
       ...baseProviderParameters,
-      'client_id',
+      'one_of(client_id,gclid,user_id)',
       'transaction_id',
       'currency',
       'value',
@@ -1001,7 +1005,7 @@ const purchaseProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'Data Manager purchase outbox is active when checkout analytics consent was granted.',
+      'Shopify Customer Events is the browser source and the Data Manager purchase outbox is the supplementary server source when checkout analytics consent was granted. Both use transaction_id for GA4 deduplication.',
     serverOutbox: 'active'
   }),
   meta: providerMapping({

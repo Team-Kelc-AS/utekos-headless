@@ -76,13 +76,13 @@ export default function ProductSpecsPage() {
               <div className={modeIconClassName}>
                 <Maximize2 className='h-6 w-6' aria-hidden />
               </div>
-              <h3 className='mb-2 text-xl font-bold text-card-foreground'>
+              <h3 className='font-google-sans mb-2 text-xl font-bold text-card-foreground'>
                 1. Fullengdemodus
               </h3>
-              <p className='mb-4 pb-2 text-xl font-bold text-card-foreground md:text-2xl'>
+              <p className='font-google-sans mb-4 pb-2 text-xl font-bold text-card-foreground md:text-2xl'>
                 Maksimal isolasjon
               </p>
-              <p className='leading-text-paragraph font-utekos-text! mt-2 tracking-wide text-card-foreground/90 md:text-xl!'>
+              <p className='leading-text-paragraph mt-2 font-utekos-text! tracking-wide text-card-foreground/90 md:text-xl!'>
                 Utgangspunktet for selve utekosen. Plagget henger
                 i full lengde som en isolerende kokong. Perfekt
                 for solveggen, hengekøyen eller lange kvelder på
@@ -100,10 +100,10 @@ export default function ProductSpecsPage() {
               <div className={modeIconClassName}>
                 <Coffee className='h-6 w-6' aria-hidden />
               </div>
-              <h3 className='mb-2 font-sans text-xl font-bold text-card-foreground'>
+              <h3 className='font-google-sans mb-2 font-sans text-xl font-bold text-card-foreground'>
                 2. Oppjustert modus
               </h3>
-              <p className='mb-4 text-sm font-bold tracking-wider text-card-foreground'>
+              <p className='font-google-sans mb-4 text-sm font-bold tracking-wider text-card-foreground'>
                 Umiddelbar mobilitet
               </p>
               <p className='text-card-foreground/90'>
@@ -125,10 +125,10 @@ export default function ProductSpecsPage() {
               <div className={modeIconClassName}>
                 <Move className='h-6 w-6' aria-hidden />
               </div>
-              <h3 className='mb-2 font-sans text-xl font-bold text-card-foreground'>
+              <h3 className='font-google-sans mb-2 font-sans text-xl font-bold text-card-foreground'>
                 3. Parkasmodus
               </h3>
-              <p className='mb-4 text-sm font-bold tracking-wider text-card-foreground'>
+              <p className='font-google-sans mb-4 text-sm font-bold tracking-wider text-card-foreground'>
                 Aktiv utendørs
               </p>
               <p className='text-card-foreground/90'>

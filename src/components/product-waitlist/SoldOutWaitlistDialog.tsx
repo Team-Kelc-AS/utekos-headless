@@ -66,7 +66,7 @@ export function SoldOutWaitlistDialog() {
               <Clock3 className='size-7' aria-hidden='true' />
             </div>
             <DialogHeader className='pr-8'>
-              <DialogTitle className='text-2xl leading-tight font-semibold text-card-foreground sm:text-3xl'>
+              <DialogTitle className='font-utekos-text-medium text-2xl leading-tight text-card-foreground sm:text-3xl'>
                 Utsolgt akkurat nå
               </DialogTitle>
               <DialogDescription className='text-base leading-7 text-card-foreground/80 dark:text-card-foreground/80'>
@@ -86,7 +86,7 @@ export function SoldOutWaitlistDialog() {
                 <span className='flex size-14 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground'>
                   <Check className='size-7' aria-hidden='true' />
                 </span>
-                <h2 className='text-xl font-semibold'>
+                <h2 className='font-utekos-text-medium text-xl'>
                   Du står på ventelisten
                 </h2>
                 <p className='dark:text-dark-muted-foreground leading-6 text-muted-foreground'>
@@ -232,16 +232,17 @@ export function SoldOutWaitlistDialog() {
                     className='mt-1 size-4 shrink-0 accent-primary'
                   />
                   <span className='text-sm leading-6'>
-                    Jeg godtar at Utekos bruker opplysningene til
-                    å kontakte meg om Utekos Dun. Dette er ikke
-                    påmelding til markedsføring. Les{' '}
+                    Jeg bekrefter at jeg har lest{' '}
                     <Link
                       href='/personvern'
                       className='font-medium underline underline-offset-4'
                     >
                       personvernerklæringen
                     </Link>
-                    .
+                    , som forklarer hvordan Utekos bruker
+                    opplysningene til å kontakte meg om Utekos
+                    Dun. Dette er ikke påmelding til
+                    markedsføring.
                   </span>
                 </label>
                 {state.errors?.privacy?.[0] ?

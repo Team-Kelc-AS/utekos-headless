@@ -1,26 +1,44 @@
+export type TechDownSizeCardData = {
+  id: 'liten' | 'medium' | 'large'
+  size: 'Liten' | 'Medium' | 'Large'
+  sizeCode: 'S' | 'M' | 'L'
+  heading: string
+  heightGuide: string
+  fitGuidance: readonly string[]
+  importantNote?: string
+}
+
 export const techDownSizeCards = [
   {
-    title: 'Velg Liten hvis...',
-    items: [
-      'Du er opptil 165-170 cm høy.',
-      'Eller noe lavere og ønsker ekstra romslig følelse.',
-      'Eller du er noe høyere, men ønsker nettere silhuett uten overflødig volum.'
+    id: 'liten',
+    size: 'Liten',
+    sizeCode: 'S',
+    heading: 'Velg liten hvis...',
+    heightGuide: 'Opptil ca. 165–170 cm',
+    fitGuidance: [
+      'Du er noe lavere og ønsker en ekstra romslig følelse.',
+      'Du er noe høyere, men ønsker en nettere silhuett uten overflødig volum.'
     ]
   },
   {
-    title: 'Velg Medium hvis...',
-    items: [
-      'Du er opptil 175-180 cm høy.',
-      'Eller noe lavere og ønsker ekstra romslig passform.',
-      'Eller noe høyere, men ønsker kroppsnær passform.'
+    id: 'medium',
+    size: 'Medium',
+    sizeCode: 'M',
+    heading: 'Velg medium hvis...',
+    heightGuide: 'Opptil ca. 175–180 cm',
+    fitGuidance: [
+      'Du er noe lavere og ønsker ekstra romslig passform.',
+      'Du er noe høyere og ønsker en mer kroppsnær passform.'
     ]
   },
   {
-    title: 'Velg Large hvis...',
-    items: [
-      'Du er over 180-185 cm høy.',
-      'Eller noe lavere og ønsker ekstra romslig passform.',
-      'Er du over 195 cm vil størrelsen være for liten.'
+    id: 'large',
+    size: 'Large',
+    sizeCode: 'L',
+    heading: 'Velg large hvis...',
+    heightGuide: 'Fra ca. 180–185 cm',
+    fitGuidance: [
+      'Du er noe lavere og ønsker ekstra romslig passform.'
     ]
   }
-]
+] as const satisfies readonly TechDownSizeCardData[]

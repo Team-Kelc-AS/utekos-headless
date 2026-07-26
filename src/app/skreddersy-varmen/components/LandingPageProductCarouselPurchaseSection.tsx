@@ -26,27 +26,35 @@ export function LandingPageProductCarouselPurchaseSection({
   currentConfig
 }: LandingPageProductCarouselPurchaseSectionProps) {
   return (
-    <div className='relative flex w-full flex-col items-center justify-center bg-background dark:bg-dark-background min-[900px]:sticky min-[900px]:top-0 min-[900px]:h-svh min-[900px]:self-start min-[900px]:p-8 min-[1280px]:p-12'>
+    <div className='dark:bg-dark-background relative flex w-full flex-col items-center justify-center bg-background min-[900px]:sticky min-[900px]:top-0 min-[900px]:h-svh min-[900px]:self-start min-[900px]:p-8 min-[1280px]:p-12'>
       <BrandBadge
         key={`badge-${selectedModel}`}
         tone='promo'
-        className='absolute left-4 top-4 z-20 animate-in bg-primary px-4 py-1.5 text-xs font-semibold tracking-normal text-primary-foreground shadow-lg fade-in slide-in-from-left-2 duration-500 dark:bg-dark-primary dark:text-dark-primary-foreground min-[900px]:left-8 min-[900px]:top-8 min-[1280px]:left-12 min-[1280px]:top-12'
+        className='animate-in fade-in slide-in-from-left-2 dark:bg-dark-primary dark:text-dark-primary-foreground absolute top-4 left-4 z-20 bg-primary px-4 py-1.5 font-utekos-text-medium text-xs tracking-normal text-primary-foreground shadow-lg duration-500 min-[900px]:top-8 min-[900px]:left-8 min-[1280px]:top-12 min-[1280px]:left-12'
       >
-        <span className='whitespace-nowrap'>{currentConfig.badge}</span>
+        <span className='whitespace-nowrap'>
+          {currentConfig.badge}
+        </span>
       </BrandBadge>
 
       <Carousel
         key={selectedModel}
         slideCount={currentConfig.images.length}
         ssr={CAROUSEL_SSR.fullWidth(currentConfig.images.length)}
-        opts={{ loop: currentConfig.images.length > 1, duration: 35 }}
+        opts={{
+          loop: currentConfig.images.length > 1,
+          duration: 35
+        }}
         plugins={currentConfig.images.length > 1 ? [Fade()] : []}
         className='relative w-full min-[900px]:max-w-xl'
       >
         <CarouselContent className='ml-0'>
           {currentConfig.images.map((src, i) => (
-            <CarouselItem key={src} className='relative aspect-4/5 pl-0'>
-              <div className='relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10 dark:min-[900px]:ring-dark-background/10'>
+            <CarouselItem
+              key={src}
+              className='relative aspect-4/5 pl-0'
+            >
+              <div className='dark:min-[900px]:ring-dark-background/10 relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10'>
                 <Image
                   src={src}
                   alt={`${currentConfig.title} – bilde ${i + 1}`}
@@ -65,14 +73,14 @@ export function LandingPageProductCarouselPurchaseSection({
             <CarouselPrevious
               aria-label='Forrige bilde'
               className={cn(
-                'left-2 size-10 border-background/15 dark:border-dark-background/15 bg-foreground/90 dark:bg-dark-foreground/90 text-background dark:text-dark-background shadow-md backdrop-blur-md hover:bg-foreground dark:hover:bg-dark-foreground hover:text-primary dark:hover:text-dark-primary md:left-4 md:size-11',
+                'dark:border-dark-background/15 dark:bg-dark-foreground/90 dark:text-dark-background dark:hover:bg-dark-foreground dark:hover:text-dark-primary left-2 size-10 border-background/15 bg-foreground/90 text-background shadow-md backdrop-blur-md hover:bg-foreground hover:text-primary md:left-4 md:size-11',
                 focusRing
               )}
             />
             <CarouselNext
               aria-label='Neste bilde'
               className={cn(
-                'right-2 size-10 border-background/15 dark:border-dark-background/15 bg-foreground/90 dark:bg-dark-foreground/90 text-background dark:text-dark-background shadow-md backdrop-blur-md hover:bg-foreground dark:hover:bg-dark-foreground hover:text-primary dark:hover:text-dark-primary md:right-4 md:size-11',
+                'dark:border-dark-background/15 dark:bg-dark-foreground/90 dark:text-dark-background dark:hover:bg-dark-foreground dark:hover:text-dark-primary right-2 size-10 border-background/15 bg-foreground/90 text-background shadow-md backdrop-blur-md hover:bg-foreground hover:text-primary md:right-4 md:size-11',
                 focusRing
               )}
             />

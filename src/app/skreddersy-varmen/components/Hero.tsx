@@ -61,12 +61,12 @@ export function Hero() {
           </div>
           <h1
             id='hero-headline'
-            className='text-left font-sans text-4xl leading-[0.92] font-bold tracking-[-0.01em] drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl'
+            className='font-google-sans text-left font-sans text-4xl leading-[0.92] font-bold tracking-[-0.01em] drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl'
           >
             <span className='block whitespace-nowrap text-foreground'>
               Skreddersy varmen.
             </span>
-            <span className='dark:text-dark-primary mt-3 block max-w-4xl text-left font-sans text-3xl font-bold text-primary italic sm:text-4xl md:text-5xl lg:text-6xl'>
+            <span className='dark:text-dark-primary font-google-sans mt-3 block max-w-4xl text-left font-sans text-3xl font-bold text-primary italic sm:text-4xl md:text-5xl lg:text-6xl'>
               Forleng kvelden.
             </span>
           </h1>
@@ -84,7 +84,7 @@ export function Hero() {
           >
             {/* Sørg for at <HeroStars /> komponenten i seg selv f.eks. bruker tekstfargen 'accent' internt for stjernene, slik at de ser gyldne ut */}
             <HeroStars />
-            <span className='font-semibold text-foreground'>
+            <span className='font-utekos-text-medium text-foreground'>
               4.8/5
             </span>
           </div>

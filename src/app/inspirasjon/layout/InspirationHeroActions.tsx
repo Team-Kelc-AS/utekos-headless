@@ -28,7 +28,7 @@ export function InspirationHeroActions({
   secondaryHref = '#bruksomrader'
 }: InspirationHeroActionsProps) {
   const baseClassName =
-    'border px-7 py-3 text-base leading-4 font-semibold tracking-[-0.01em] transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+    'border px-7 py-3 text-base leading-4 font-utekos-text-medium tracking-[-0.01em] transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0'
 
   return (
     <>
@@ -36,7 +36,11 @@ export function InspirationHeroActions({
         asChild
         backgroundColor={primaryStyle.backgroundColor}
         textColor={primaryStyle.textColor}
-        className={cn('group', baseClassName, primaryStyle.className)}
+        className={cn(
+          'group',
+          baseClassName,
+          primaryStyle.className
+        )}
       >
         <Link href={primaryHref as Route}>
           {primaryLabel}
@@ -49,7 +53,9 @@ export function InspirationHeroActions({
         textColor={secondaryStyle.textColor}
         className={cn(baseClassName, secondaryStyle.className)}
       >
-        <Link href={secondaryHref as Route}>{secondaryLabel}</Link>
+        <Link href={secondaryHref as Route}>
+          {secondaryLabel}
+        </Link>
       </BrandBadge>
     </>
   )

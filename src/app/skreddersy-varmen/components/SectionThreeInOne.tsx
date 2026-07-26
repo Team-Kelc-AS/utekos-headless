@@ -54,7 +54,7 @@ export function SectionThreeInOne() {
           </m.span>
           <m.h2
             id='threeinone-heading'
-            className='mb-6 font-sans text-[clamp(2rem,7.5vw,4rem)] leading-[0.92] font-bold tracking-[-0.01em] text-foreground'
+            className='font-google-sans mb-6 font-sans text-[clamp(2rem,7.5vw,4rem)] leading-[0.92] font-bold tracking-[-0.01em] text-foreground'
             variants={revealScale}
           >
             Friheten til å velge
@@ -64,7 +64,7 @@ export function SectionThreeInOne() {
             variants={revealItem}
           >
             Det unike med Utekos
-            <span className='dark:text-dark-primary font-bold text-primary'>
+            <span className='dark:text-dark-primary font-google-sans font-bold text-primary'>
               ®
             </span>{' '}
             er transformasjonen. Fra en isolerende kokong til en
@@ -86,7 +86,7 @@ export function SectionThreeInOne() {
               custom={index}
             >
               <m.div
-                className='dark:border-dark-foreground/10  relative aspect-square w-full overflow-hidden border-y border-foreground/10 bg-card'
+                className='dark:border-dark-foreground/10 relative aspect-square w-full overflow-hidden border-y border-foreground/10 bg-card'
                 variants={revealScale}
               >
                 <Image
@@ -123,7 +123,7 @@ export function SectionThreeInOne() {
                   </span>
                 </m.div>
                 <m.h3
-                  className='mb-3 font-sans text-3xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-4xl'
+                  className='font-google-sans mb-3 font-sans text-3xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-4xl'
                   variants={revealItem}
                 >
                   {step.title}
@@ -140,7 +140,7 @@ export function SectionThreeInOne() {
         </div>
 
         <div className='hidden w-full xl:flex'>
-          <div className='dark:border-dark-foreground/10  sticky top-0 flex h-screen w-1/2 items-center justify-center overflow-hidden border-r border-foreground/10 bg-card'>
+          <div className='dark:border-dark-foreground/10 sticky top-0 flex h-screen w-1/2 items-center justify-center overflow-hidden border-r border-foreground/10 bg-card'>
             {Steps.map((step, index) => (
               <m.div
                 key={step.id}
@@ -219,7 +219,7 @@ export function SectionThreeInOne() {
                   </m.div>
 
                   <m.h3
-                    className='mb-6 font-sans text-5xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-6xl'
+                    className='font-google-sans mb-6 font-sans text-5xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-6xl'
                     variants={revealItem}
                   >
                     {step.title}

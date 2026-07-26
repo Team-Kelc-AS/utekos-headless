@@ -5,6 +5,7 @@ import {
   checkoutAttributionSnapshotToShopifyAttributes,
   createCheckoutAttributionSnapshot
 } from '../checkoutAttributionSnapshot'
+import { hashCustomerMatchIdentifier } from '@/lib/google/data-manager/hashCustomerMatchIdentifier'
 import { shopifyOrderToCanonicalPurchase } from './shopifyOrderToCanonicalPurchase'
 
 function orderPaid(): OrderPaid {
@@ -50,7 +51,10 @@ function orderPaid(): OrderPaid {
         name: 'Utekos TechDown',
         price: '1990.00',
         price_set: {
-          shop_money: { amount: '1990.00', currency_code: 'NOK' },
+          shop_money: {
+            amount: '1990.00',
+            currency_code: 'NOK'
+          },
           presentment_money: {
             amount: '1990.00',
             currency_code: 'NOK'
@@ -91,7 +95,10 @@ function orderPaid(): OrderPaid {
     total_price: '1990.00',
     total_price_set: {
       shop_money: { amount: '1990.00', currency_code: 'NOK' },
-      presentment_money: { amount: '1990.00', currency_code: 'NOK' }
+      presentment_money: {
+        amount: '1990.00',
+        currency_code: 'NOK'
+      }
     },
     total_shipping_price_set: {
       shop_money: { amount: '0.00', currency_code: 'NOK' },
@@ -99,7 +106,10 @@ function orderPaid(): OrderPaid {
     },
     total_tax_set: {
       shop_money: { amount: '398.00', currency_code: 'NOK' },
-      presentment_money: { amount: '398.00', currency_code: 'NOK' }
+      presentment_money: {
+        amount: '398.00',
+        currency_code: 'NOK'
+      }
     },
     total_tax: '398.00'
   } as unknown as OrderPaid
@@ -167,12 +177,12 @@ test('derives fbclid from appendix-bearing fbc when click_id is missing', () => 
   )
   const order = orderPaid()
   order.note_attributes =
-    checkoutAttributionSnapshotToShopifyAttributes(attribution).map(
-      attribute => ({
-        name: attribute.key,
-        value: attribute.value
-      })
-    )
+    checkoutAttributionSnapshotToShopifyAttributes(
+      attribution
+    ).map(attribute => ({
+      name: attribute.key,
+      value: attribute.value
+    }))
 
   const event = shopifyOrderToCanonicalPurchase(order)
 
@@ -195,6 +205,44 @@ test('uses a namespaced Shopify customer id only without first-party external_id
   )
 })
 
+test('falls through invalid and blank higher-priority phones to a normalized shipping-address phone', () => {
+  const order = orderPaid()
+  order.phone = 'not-a-phone'
+  order.customer!.phone = ' '
+  order.shipping_address = {
+    ...order.shipping_address!,
+    phone: '9999 9999'
+  }
+
+  const event = shopifyOrderToCanonicalPurchase(order)
+
+  assert.deepEqual(event.user_data?.phone_sha256, [
+    hashCustomerMatchIdentifier('+4799999999')
+  ])
+  assert.doesNotMatch(JSON.stringify(event), /9999 9999/)
+})
+
+test('uses the billing-address phone only when higher-precedence phone sources are absent', () => {
+  const order = orderPaid()
+  order.phone = null
+  order.customer!.phone = null
+  order.shipping_address = null
+  order.billing_address = {
+    city: 'Oslo',
+    country_code: 'NO',
+    province_code: '03',
+    zip: '0150',
+    phone: '0047 9999 9999'
+  } as OrderPaid['billing_address']
+
+  const event = shopifyOrderToCanonicalPurchase(order)
+
+  assert.deepEqual(event.user_data?.phone_sha256, [
+    hashCustomerMatchIdentifier('+4799999999')
+  ])
+  assert.doesNotMatch(JSON.stringify(event), /0047 9999 9999/)
+})
+
 test('maps item-scoped Shopify discounts to net item revenue', () => {
   const order = orderPaid()
   const lineItem = order.line_items[0]!
@@ -207,7 +255,11 @@ test('maps item-scoped Shopify discounts to net item revenue', () => {
     }
   ] as OrderPaid['discount_applications']
   order.discount_codes = [
-    { code: 'FULLDISCOUNT', amount: '1990.00', type: 'percentage' }
+    {
+      code: 'FULLDISCOUNT',
+      amount: '1990.00',
+      type: 'percentage'
+    }
   ]
   order.total_price_set = {
     shop_money: { amount: '0.00', currency_code: 'NOK' },
@@ -236,7 +288,9 @@ test('maps item-scoped Shopify discounts to net item revenue', () => {
   assert.equal(event.custom_data.value, 0)
   assert.equal(event.custom_data.item_revenue, 0)
   assert.equal(event.custom_data.transaction_discount, 1592)
-  assert.deepEqual(event.custom_data.coupon_codes, ['FULLDISCOUNT'])
+  assert.deepEqual(event.custom_data.coupon_codes, [
+    'FULLDISCOUNT'
+  ])
   assert.deepEqual(event.custom_data.items[0], {
     item_id: '48249962135800',
     item_name: 'Utekos TechDown',
@@ -286,7 +340,10 @@ test('keeps presentment currency and transaction-level discounts coherent', () =
       amount: '230.00',
       amount_set: {
         shop_money: { amount: '230.00', currency_code: 'NOK' },
-        presentment_money: { amount: '20.00', currency_code: 'EUR' }
+        presentment_money: {
+          amount: '20.00',
+          currency_code: 'EUR'
+        }
       },
       discount_application_index: 0
     }

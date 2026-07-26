@@ -168,7 +168,7 @@ function LayoutTestBox() {
         </div>
         <hr className='my-6 w-full border-(--pattern-fg)' />
         <p className='mb-3'>Want to dig deeper into Tailwind?</p>
-        <p className='font-semibold'>
+        <p className='font-utekos-text-medium'>
           <a
             href='https://tailwindcss.com/docs'
             className='text-gray-950 underline decoration-sky-400 underline-offset-3 hover:decoration-2 dark:text-white'

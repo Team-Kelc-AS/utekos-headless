@@ -19,6 +19,8 @@ const emptySummary = {
   processing: 0,
   retried: 0,
   succeeded: 0,
+  succeededWithWarnings: 0,
+  timedOut: 0,
   unknown: 0
 }
 
@@ -59,5 +61,24 @@ test('reconciles twenty requests within its own cron budget', async () => {
   assert.deepEqual(await response.json(), {
     ...emptySummary,
     ok: true
+  })
+})
+
+test('returns a failing cron response when provider status times out', async () => {
+  const dependencies: GoogleDataManagerStatusCronDependencies = {
+    getCronSecret: () => 'correct-secret',
+    runBatch: async () => ({ ...emptySummary, timedOut: 1 })
+  }
+
+  const response = await handleGoogleDataManagerStatusCron(
+    request('Bearer correct-secret'),
+    dependencies
+  )
+
+  assert.equal(response.status, 503)
+  assert.deepEqual(await response.json(), {
+    ...emptySummary,
+    ok: false,
+    timedOut: 1
   })
 })

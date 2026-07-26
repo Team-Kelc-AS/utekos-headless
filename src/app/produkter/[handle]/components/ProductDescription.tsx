@@ -20,7 +20,7 @@ function ProductDescriptionBlockView({
   return (
     <article className='space-y-3'>
       {block.title && (
-        <h3 className='font-sans text-xl leading-[1.15] font-semibold tracking-normal text-card-foreground sm:text-2xl'>
+        <h3 className='font-sans font-utekos-text-medium text-xl leading-[1.15] tracking-normal text-card-foreground sm:text-2xl'>
           {block.title}
         </h3>
       )}
@@ -69,7 +69,7 @@ export function ProductDescription({
   return (
     <article
       aria-labelledby='product-description-heading'
-      className='font-utekos-text dark:shadow-dark-background/20 mt-12 rounded-[1.25rem] border border-border bg-card p-5 text-card-foreground shadow-lg shadow-background/20 sm:p-6'
+      className='dark:shadow-dark-background/20 mt-12 rounded-[1.25rem] border border-border bg-card p-5 font-utekos-text text-card-foreground shadow-lg shadow-background/20 sm:p-6'
     >
       <div
         id='product-description-content'
@@ -78,7 +78,7 @@ export function ProductDescription({
         <div className='space-y-3'>
           <h2
             id='product-description-heading'
-            className='font-sans text-2xl leading-[1.1] font-semibold tracking-normal text-card-foreground sm:text-3xl'
+            className='font-sans font-utekos-text-medium text-2xl leading-[1.1] tracking-normal text-card-foreground sm:text-3xl'
           >
             {description.title}
           </h2>
@@ -109,7 +109,7 @@ export function ProductDescription({
             onClick={() =>
               setIsDescriptionExpanded(prev => !prev)
             }
-            className='min-h-11 cursor-pointer p-0 text-base font-semibold tracking-normal text-card-foreground underline-offset-4 hover:text-card-foreground hover:underline'
+            className='min-h-11 cursor-pointer p-0 font-utekos-text-medium text-base tracking-normal text-card-foreground underline-offset-4 hover:text-card-foreground hover:underline'
           >
             {isDescriptionExpanded ? 'Vis mindre' : 'Les mer'}
           </Button>

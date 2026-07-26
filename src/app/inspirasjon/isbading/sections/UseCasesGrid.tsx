@@ -47,10 +47,10 @@ export function UseCasesGrid({
     <article id='bruksomrader' className='bg-overcast py-24'>
       <div className='container mx-auto px-4'>
         <div className='mx-auto mb-16 max-w-2xl text-center'>
-          <h2 className='text-fluid-display dark:text-dark-background font-bold tracking-normal text-background'>
+          <h2 className='text-fluid-display dark:text-dark-background font-google-sans font-bold tracking-normal text-background'>
             Fra forberedelse til varmen
           </h2>
-          <p className='text-ancient-water mt-4 text-lg'>
+          <p className='mt-4 text-lg text-ancient-water'>
             Isbading handler om ritualer. Utekos gjør hvert steg
             i prosessen mer behagelig.
           </p>
@@ -75,7 +75,7 @@ export function UseCasesGrid({
                       />
                     </div>
                     <div>
-                      <p className='text-ancient-water text-sm'>
+                      <p className='text-sm text-ancient-water'>
                         {useCase.time}
                       </p>
                       <p className='text-sm font-medium text-foreground'>
@@ -83,7 +83,7 @@ export function UseCasesGrid({
                       </p>
                     </div>
                   </div>
-                  <h3 className='mb-2 text-xl font-semibold text-foreground'>
+                  <h3 className='mb-2 font-utekos-text-medium text-xl text-foreground'>
                     {useCase.title}
                   </h3>
                   <p className='text-ancient-water'>

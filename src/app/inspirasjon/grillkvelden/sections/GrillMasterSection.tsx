@@ -38,10 +38,10 @@ export function GrillMasterSection() {
                   className='size-12 rounded-full object-cover'
                 />
                 <div className='text-left'>
-                  <p className='leading-tight font-semibold tracking-[-0.01em] text-foreground'>
+                  <p className='font-utekos-text-medium leading-tight tracking-[-0.01em] text-foreground'>
                     Hans Åge
                   </p>
-                  <p className='leading-text-paragraph text-ancient-water text-sm tracking-[-0.02em]'>
+                  <p className='leading-text-paragraph text-sm tracking-[-0.02em] text-ancient-water'>
                     Hobby-grillmester og livsnyter
                   </p>
                 </div>

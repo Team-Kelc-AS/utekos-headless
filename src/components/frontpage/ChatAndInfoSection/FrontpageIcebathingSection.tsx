@@ -110,9 +110,9 @@ export function FrontpageIceBathingSection() {
       <div className='container mx-auto max-w-7xl px-4'>
         <div className='grid items-center gap-12 lg:grid-cols-2 lg:gap-24'>
           <div className='order-2 flex flex-col justify-center lg:order-1'>
-            <div className='motion-content  mb-8 inline-flex items-center self-start rounded-full bg-card px-4 py-1.5 opacity-0 backdrop-blur-md'>
+            <div className='motion-content mb-8 inline-flex items-center self-start rounded-full bg-card px-4 py-1.5 opacity-0 backdrop-blur-md'>
               <span className='relative mr-3 flex h-2 w-2'>
-                <span className='motion-badge-pulse  absolute inline-flex size-full rounded-full bg-card opacity-75'></span>
+                <span className='motion-badge-pulse absolute inline-flex size-full rounded-full bg-card opacity-75'></span>
                 <span className='dark:bg-dark-foreground relative inline-flex h-2 w-2 rounded-full bg-foreground'></span>
               </span>
               <span className='text-foreground outline-hidden'>
@@ -120,7 +120,7 @@ export function FrontpageIceBathingSection() {
               </span>
             </div>
 
-            <h2 className='motion-content outline-hiddenfont-bold mb-6 bg-linear-to-r from-slate-900 via-slate-500 to-slate-900 bg-clip-text text-4xl text-white opacity-0 sm:text-5xl lg:text-6xl'>
+            <h2 className='motion-content outline-hiddenfont-google-sans mb-6 bg-linear-to-r from-slate-900 via-slate-500 to-slate-900 bg-clip-text text-4xl font-bold text-white opacity-0 sm:text-5xl lg:text-6xl'>
               Vi rydder plass til <br />
               <span className='dark:from-dark-primary dark:via-dark-accent dark:to-dark-primary bg-linear-to-r from-primary via-accent to-primary bg-clip-text text-left text-transparent'>
                 sesongens nyheter
@@ -170,7 +170,7 @@ export function FrontpageIceBathingSection() {
                     />
                   </div>
                   <div>
-                    <h3 className='mb-0.5 text-base font-semibold text-white transition-colors group-hover:text-amber-100'>
+                    <h3 className='mb-0.5 font-utekos-text-medium text-base text-white transition-colors group-hover:text-amber-100'>
                       {item.title}
                     </h3>
                     <p className='text-foreground-muted dark:group-hover:text-dark-foreground text-sm transition-colors group-hover:text-foreground'>

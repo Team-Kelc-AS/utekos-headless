@@ -37,7 +37,7 @@ export function MicrofiberView({
               sizes='(max-width: 768px) 100vw, 50vw'
               quality={95}
             />
-            <div className='absolute top-4 left-4 rounded-full bg-promo dark:bg-dark-promo px-3 py-1.5 text-xs font-bold tracking-wider text-promo-foreground dark:text-dark-promo-foreground uppercase shadow-sm'>
+            <div className='bg-promo dark:bg-dark-promo font-google-sans text-promo-foreground dark:text-dark-promo-foreground absolute top-4 left-4 rounded-full px-3 py-1.5 text-xs font-bold tracking-wider uppercase shadow-sm'>
               Bestselger
             </div>
           </AnimatedBlock>
@@ -52,7 +52,7 @@ export function MicrofiberView({
                 laget for å vare, sesong etter sesong.
               </p>
               <div className='mb-8 flex items-baseline gap-3 border-b border-[#2C2420]/10 pb-6'>
-                <span className='text-3xl font-bold text-[#2C2420]'>
+                <span className='font-google-sans text-3xl font-bold text-[#2C2420]'>
                   {productConfig.price},-
                 </span>
                 <span className='text-sm text-[#2C2420]/50'>
@@ -61,7 +61,7 @@ export function MicrofiberView({
               </div>
 
               <div className='mb-8'>
-                <label className='mb-3 block text-sm font-bold tracking-wider text-[#2C2420]/60 uppercase'>
+                <label className='font-google-sans mb-3 block text-sm font-bold tracking-wider text-[#2C2420]/60 uppercase'>
                   Velg Farge:{' '}
                   <span className='ml-1 text-[#2C2420]'>
                     {
@@ -98,7 +98,7 @@ export function MicrofiberView({
 
               <div className='mb-10'>
                 <div className='mb-3 flex items-center justify-between'>
-                  <label className='block text-sm font-bold tracking-wider text-[#2C2420]/60 uppercase'>
+                  <label className='font-google-sans block text-sm font-bold tracking-wider text-[#2C2420]/60 uppercase'>
                     Velg Størrelse
                   </label>
                   <button
@@ -125,9 +125,7 @@ export function MicrofiberView({
                         : 'border-[#2C2420]/10 bg-white hover:border-[#2C2420]/30'
                       } `}
                     >
-                      <span
-                        className='mb-1 block text-base font-bold text-[#2C2420] md:text-lg'
-                      >
+                      <span className='font-google-sans mb-1 block text-base font-bold text-[#2C2420] md:text-lg'>
                         {s.name}
                       </span>
                       <span className='block text-xs leading-tight text-[#2C2420]/60'>
@@ -142,7 +140,7 @@ export function MicrofiberView({
                 onClick={handleAddToCart}
                 data-track='❗🛒❗SkreddersyUtekosOrginalAddToCartClick ❗🛒❗'
                 disabled={isPending}
-                className='flex w-full items-center justify-center gap-3 rounded-full bg-commerce-primary dark:bg-dark-commerce-primary py-4 text-lg font-bold text-commerce-primary-foreground dark:text-dark-commerce-primary-foreground shadow-xl transition-all duration-200 hover:-translate-y-1 hover:bg-commerce-primary-hover dark:hover:bg-dark-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:hover:text-dark-commerce-primary-hover-foreground hover:shadow-2xl active:scale-[0.98] disabled:transform-none disabled:cursor-not-allowed disabled:opacity-70 md:py-5'
+                className='font-google-sans flex w-full items-center justify-center gap-3 rounded-full bg-commerce-primary py-4 text-lg font-bold text-commerce-primary-foreground shadow-xl transition-all duration-200 hover:-translate-y-1 hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground hover:shadow-2xl active:scale-[0.98] disabled:transform-none disabled:cursor-not-allowed disabled:opacity-70 md:py-5 dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground'
               >
                 {isPending ?
                   <>

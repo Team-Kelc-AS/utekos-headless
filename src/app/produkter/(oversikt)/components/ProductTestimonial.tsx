@@ -16,7 +16,7 @@ export function ProductTestimonial() {
               hytten om høsten. Kvaliteten er helt fantastisk.
               Anbefales på det varmeste!&quot;
             </blockquote>
-            <p className='mt-6 font-semibold'>
+            <p className='mt-6 font-utekos-text-medium'>
               - Anne, hytteeier
             </p>
           </CardContent>

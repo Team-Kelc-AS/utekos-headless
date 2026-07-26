@@ -16,10 +16,7 @@ import { toast } from 'sonner'
 import { H2 } from '@/components/typography/TypographyH2'
 import { P } from '@/components/typography/TypographyP'
 
-const initialState: ActionState = {
-  status: 'idle',
-  message: ''
-}
+const initialState: ActionState = { status: 'idle', message: '' }
 
 export function NewsletterForm() {
   const [state, formAction, isPending] = useActionState(
@@ -104,7 +101,7 @@ export function NewsletterForm() {
 
             <BrandBadge
               asChild
-              className='font-utekos-text-medium hover:bg-primary-hover dark:hover:bg-dark-primary-hover h-12 w-full shrink-0 bg-teal-500 px-6 py-0 text-base text-primary-foreground transition-colors duration-300 sm:w-auto dark:bg-teal-500'
+              className='hover:bg-primary-hover dark:hover:bg-dark-primary-hover h-12 w-full shrink-0 bg-teal-500 px-6 py-0 font-utekos-text-medium text-base text-[#001212] transition-colors duration-300 sm:w-auto dark:bg-teal-500 dark:text-[#001212]'
             >
               <button
                 type='submit'

@@ -16,8 +16,8 @@ const BLOCKED_SUGGESTION_HANDLES = new Set<string>()
 
 function isSuggestionEligible(product: ShopifyProduct): boolean {
   if (
-    BLOCKED_SUGGESTION_PRODUCT_IDS.has(product.id)
-    || BLOCKED_SUGGESTION_HANDLES.has(product.handle)
+    BLOCKED_SUGGESTION_PRODUCT_IDS.has(product.id) ||
+    BLOCKED_SUGGESTION_HANDLES.has(product.handle)
   ) {
     return false
   }
@@ -27,14 +27,16 @@ function isSuggestionEligible(product: ShopifyProduct): boolean {
   }
 
   if (
-    typeof product.totalInventory === 'number'
-    && product.totalInventory <= 0
+    typeof product.totalInventory === 'number' &&
+    product.totalInventory <= 0
   ) {
     return false
   }
 
   return (
-    product.variants?.edges?.some(edge => edge.node.availableForSale) ?? false
+    product.variants?.edges?.some(
+      edge => edge.node.availableForSale
+    ) ?? false
   )
 }
 
@@ -43,12 +45,16 @@ export function SmartCartSuggestions({
 }: {
   cart: Cart | null | undefined
 }) {
-  const { data: recommendedProducts = [] } = useQuery<ShopifyProduct[]>({
+  const { data: recommendedProducts = [] } = useQuery<
+    ShopifyProduct[]
+  >({
     queryKey: ['products', 'recommended'],
     queryFn: getRecommendedProducts
   })
 
-  const { data: accessoryProducts = [] } = useQuery<ShopifyProduct[]>({
+  const { data: accessoryProducts = [] } = useQuery<
+    ShopifyProduct[]
+  >({
     queryKey: ['products', 'accessory'],
     queryFn: getAccessoryProducts
   })
@@ -62,10 +68,12 @@ export function SmartCartSuggestions({
     cart.lines.map(line => line.merchandise.product.id)
   )
 
-  const eligibleAccessoryProducts =
-    accessoryProducts.filter(isSuggestionEligible)
-  const eligibleRecommendedProducts =
-    recommendedProducts.filter(isSuggestionEligible)
+  const eligibleAccessoryProducts = accessoryProducts.filter(
+    isSuggestionEligible
+  )
+  const eligibleRecommendedProducts = recommendedProducts.filter(
+    isSuggestionEligible
+  )
 
   if (subtotal < FREE_SHIPPING_THRESHOLD) {
     const remainingAmount = FREE_SHIPPING_THRESHOLD - subtotal
@@ -75,12 +83,18 @@ export function SmartCartSuggestions({
     ]
 
     const availableSuggestions = [
-      ...new Map(allPotential.map(product => [product.id, product])).values()
+      ...new Map(
+        allPotential.map(product => [product.id, product])
+      ).values()
     ].filter(product => !cartLineProductIds.has(product.id))
 
     const sorted = [...availableSuggestions].sort((a, b) => {
-      const priceA = parseFloat(a.priceRange.minVariantPrice.amount)
-      const priceB = parseFloat(b.priceRange.minVariantPrice.amount)
+      const priceA = parseFloat(
+        a.priceRange.minVariantPrice.amount
+      )
+      const priceB = parseFloat(
+        b.priceRange.minVariantPrice.amount
+      )
       const aIsBridge = priceA >= remainingAmount
       const bIsBridge = priceB >= remainingAmount
 
@@ -103,7 +117,7 @@ export function SmartCartSuggestions({
         <div className='text-center text-foreground'>
           <p>
             Du er kun{' '}
-            <span className='font-bold text-foreground'>
+            <span className='font-google-sans font-bold text-foreground'>
               {formatNOK(remainingAmount)}
             </span>{' '}
             unna fri frakt!
@@ -155,7 +169,7 @@ export function SmartCartSuggestions({
     <div className='border-t border-border bg-background p-6'>
       <FreeShippingConfirmation />
       <div className='mt-6'>
-        <h3 className='text-center text-sm font-semibold text-foreground'>
+        <h3 className='text-center font-utekos-text-medium text-sm text-foreground'>
           {title}
         </h3>
         <div className='mt-4 space-y-4'>

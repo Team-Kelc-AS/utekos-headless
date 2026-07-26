@@ -142,7 +142,7 @@ export function MobileMenuPanel({
           render={
             <Button
               variant='outline'
-              className='dark:hover:bg-dark-accent h-11 min-w-[5.75rem] rounded-md border-transparent bg-transparent px-3 text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground'
+              className='dark:hover:bg-dark-accent h-11 min-w-[5.75rem] rounded-md border-transparent bg-transparent px-3 font-utekos-text-medium text-sm text-foreground hover:bg-accent hover:text-accent-foreground'
               aria-label='Åpne meny'
               data-track='MobileMenuClick'
             />
@@ -169,7 +169,7 @@ export function MobileMenuPanel({
           <div className='mb-2 flex items-start justify-between gap-3'>
             <div className='flex items-center gap-2'>
               <HeaderLogo />
-              <SheetTitle className='ml-2 text-xl leading-[0.95] font-bold tracking-[-0.01em] text-foreground'>
+              <SheetTitle className='font-google-sans ml-2 text-xl leading-[0.95] font-bold tracking-[-0.01em] text-foreground'>
                 Meny
               </SheetTitle>
             </div>

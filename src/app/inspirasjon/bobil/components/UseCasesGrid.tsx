@@ -107,7 +107,7 @@ export function UseCasesGrid({
 
                       <H3
                         Text={useCase.title}
-                        className='leading-[0.95] font-bold text-foreground'
+                        className='font-google-sans leading-[0.95] font-bold text-foreground'
                       />
                       <P
                         Text={useCase.description}

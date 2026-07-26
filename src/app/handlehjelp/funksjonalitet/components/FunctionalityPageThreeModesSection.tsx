@@ -21,13 +21,13 @@ export function FunctionalityPageThreeModesSection() {
             <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-sky-900/30 text-foreground'>
               <Maximize2 className='size-6' aria-hidden />
             </div>
-            <h3 className='mb-3 text-xl font-bold text-foreground'>
+            <h3 className='font-google-sans mb-3 text-xl font-bold text-foreground'>
               1. Fullengdemodus
             </h3>
             <p className='mb-4 pb-2 text-foreground md:text-2xl'>
               For maksimal varme og ro
             </p>
-            <p className='font-utekos-text! /90 mt-2 tracking-wide text-foreground/90 md:text-xl!'>
+            <p className='/90 mt-2 font-utekos-text! tracking-wide text-foreground/90 md:text-xl!'>
               Dette er utgangspunktet for selve utekosen. Her
               henger plagget i sin fulle lengde og fungerer som
               en isolerende kokong. Perfekt når du sitter i
@@ -43,7 +43,7 @@ export function FunctionalityPageThreeModesSection() {
             <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-orange-900/30 text-orange-300'>
               <Coffee className='size-6' aria-hidden />
             </div>
-            <h3 className='mb-3 text-xl font-bold text-foreground'>
+            <h3 className='font-google-sans mb-3 text-xl font-bold text-foreground'>
               2. Oppjustert modus
             </h3>
             <p className='mb-4 text-sm font-medium text-foreground'>
@@ -65,7 +65,7 @@ export function FunctionalityPageThreeModesSection() {
             <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-green-900/30 text-green-300'>
               <Move className='size-6' aria-hidden />
             </div>
-            <h3 className='mb-3 text-xl font-bold text-foreground'>
+            <h3 className='font-google-sans mb-3 text-xl font-bold text-foreground'>
               3. Parkasmodus
             </h3>
             <p className='mb-4 text-sm font-medium text-foreground'>

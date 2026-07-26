@@ -14,7 +14,7 @@ export function ConclusionSection() {
               tone='featured'
               className='mb-6 px-6 py-3 text-sm'
             />
-            <h2 className='font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-foreground sm:text-6xl'>
+            <h2 className='font-google-sans font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-foreground sm:text-6xl'>
               Et trygt valg på under ett minutt
             </h2>
             <p className='leading-text-paragraph dark:text-dark-muted-foreground mt-6 text-lg text-muted-foreground sm:text-xl'>
@@ -59,7 +59,7 @@ export function ConclusionSection() {
                 key={item.question}
                 className='group py-6'
               >
-                <summary className='cursor-pointer list-none font-sans text-xl leading-[1.05] font-bold tracking-[-0.01em] text-foreground marker:hidden'>
+                <summary className='font-google-sans cursor-pointer list-none font-sans text-xl leading-[1.05] font-bold tracking-[-0.01em] text-foreground marker:hidden'>
                   <span className='inline-flex w-full items-center justify-between gap-6'>
                     {item.question}
                     <span className='dark:text-dark-muted-foreground text-2xl leading-none text-muted-foreground transition-transform duration-300 group-open:rotate-45'>

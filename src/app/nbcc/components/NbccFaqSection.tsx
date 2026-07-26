@@ -12,7 +12,7 @@ export function NbccFaqSection() {
     <article className='dark:bg-dark-background bg-background px-4 py-20 sm:px-6 lg:px-8'>
       <div className='mx-auto grid w-full max-w-4xl gap-10'>
         <div data-nbcc-reveal data-nbcc-animate>
-          <p className='mx-auto text-sm font-semibold tracking-[0.18em] text-foreground uppercase md:text-2xl'>
+          <p className='mx-auto font-utekos-text-medium text-sm tracking-[0.18em] text-foreground uppercase md:text-2xl'>
             Spørsmål og svar
           </p>
         </div>
@@ -20,7 +20,7 @@ export function NbccFaqSection() {
         <Accordion
           data-nbcc-reveal
           data-nbcc-animate
-          className='  rounded-lg border border-border bg-card px-5 text-card-foreground'
+          className='rounded-lg border border-border bg-card px-5 text-card-foreground'
         >
           {nbccFaqItems.map(item => (
             <AccordionItem

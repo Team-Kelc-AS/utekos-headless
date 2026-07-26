@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 
 export default function SizeGuidePage() {
   return (
-    <article>
+    <article className='mx-auto lg:max-w-7xl!'>
       <SizeGuideHero />
       <TechDownSizeGuide />
       <TechDownHgroup />

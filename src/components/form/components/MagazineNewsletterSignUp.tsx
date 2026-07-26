@@ -6,7 +6,7 @@ export function MagazineNewsletterSignup() {
   return (
     <article className='bg-transparent'>
       <div className='container mx-auto max-w-5xl px-4 py-16 text-center sm:py-24'>
-        <h2 className='text-3xl font-bold sm:text-4xl'>
+        <h2 className='font-google-sans text-3xl font-bold sm:text-4xl'>
           Likte du det du leste?
         </h2>
 

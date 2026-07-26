@@ -7,7 +7,7 @@ const tiers = [
     href: '#',
     priceMonthly: '$29',
     description:
-      "The perfect plan if you're just getting started with our product.",
+      'The perfect plan if you’re just getting started with our product.',
     features: [
       '25 products',
       'Up to 10,000 subscribers',
@@ -55,10 +55,10 @@ export default function PricingSection() {
         />
       </div>
       <div className='mx-auto max-w-4xl text-center'>
-        <h2 className='text-base/7 font-semibold text-indigo-400'>
+        <h2 className='font-utekos-text-medium text-base/7 text-indigo-400'>
           Pricing
         </h2>
-        <p className='mt-2 text-5xl font-semibold tracking-tight text-balance text-white sm:text-6xl'>
+        <p className='mt-2 font-utekos-text-medium text-5xl tracking-tight text-balance text-white sm:text-6xl'>
           Choose the right plan for you
         </p>
       </div>
@@ -88,7 +88,7 @@ export default function PricingSection() {
                 tier.featured ?
                   'text-indigo-400'
                 : 'text-indigo-400',
-                'text-base/7 font-semibold'
+                'font-utekos-text-medium text-base/7'
               )}
             >
               {tier.name}
@@ -97,7 +97,7 @@ export default function PricingSection() {
               <span
                 className={classNames(
                   tier.featured ? 'text-white' : 'text-white',
-                  'text-5xl font-semibold tracking-tight'
+                  'font-utekos-text-medium text-5xl tracking-tight'
                 )}
               >
                 {tier.priceMonthly}
@@ -154,7 +154,7 @@ export default function PricingSection() {
                 tier.featured ?
                   'bg-indigo-500 text-white hover:bg-indigo-400 focus-visible:outline-indigo-500'
                 : 'bg-white/10 text-white inset-ring inset-ring-white/5 hover:bg-white/20 focus-visible:outline-white/75',
-                'mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10'
+                'mt-8 block rounded-md px-3.5 py-2.5 text-center font-utekos-text-medium text-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10'
               )}
             >
               Get started today

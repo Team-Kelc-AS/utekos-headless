@@ -13,7 +13,7 @@ export function AboutBadge({
   return (
     <span
       className={cn(
-        'inline-flex min-h-12 items-center justify-center rounded-full bg-secondary px-8 py-4 text-base leading-6 font-semibold text-secondary-foreground sm:text-lg',
+        'inline-flex min-h-12 items-center justify-center rounded-full bg-secondary px-8 py-4 font-utekos-text-medium text-base leading-6 text-secondary-foreground sm:text-lg',
         className
       )}
     >

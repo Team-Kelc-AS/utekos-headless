@@ -42,11 +42,14 @@ export function WishlistButton({
   const [syncDialogOpen, setSyncDialogOpen] = useState(false)
 
   useEffect(() => {
-    if (!variant?.id) {
-      setIsWished(false)
-      return
-    }
-    setIsWished(hasWishlistVariant(variant.id))
+    const variantId = variant?.id
+    const syncTimer = window.setTimeout(() => {
+      setIsWished(
+        variantId ? hasWishlistVariant(variantId) : false
+      )
+    }, 0)
+
+    return () => window.clearTimeout(syncTimer)
   }, [variant?.id])
 
   const loginHref = buildCustomerLoginHref({
@@ -61,11 +64,16 @@ export function WishlistButton({
 
   function handleWishlistClick() {
     if (!variant) {
-      toast.error('Velg en variant før du legger til i ønskelisten')
+      toast.error(
+        'Velg en variant før du legger til i ønskelisten'
+      )
       return
     }
 
-    const result = persistAndReportAddToWishlist({ product, variant })
+    const result = persistAndReportAddToWishlist({
+      product,
+      variant
+    })
 
     if (result.emitted) {
       setIsWished(true)
@@ -101,7 +109,7 @@ export function WishlistButton({
         className={cn(
           'border border-white/70 bg-cyan-500 text-[#172744] shadow-[0_12px_30px_-16px_rgba(0,0,0,0.85)] hover:bg-cyan-400 hover:text-[#172744] focus-visible:border-white focus-visible:ring-white/70 dark:bg-cyan-500 dark:text-[#172744] dark:hover:bg-cyan-400 dark:hover:text-[#172744]',
           isLabelled ?
-            'h-11 rounded-full px-4 text-sm font-semibold'
+            'h-11 rounded-full px-4 font-utekos-text-medium text-sm'
           : 'size-12 rounded-2xl',
           className
         )}
@@ -114,7 +122,9 @@ export function WishlistButton({
           aria-hidden='true'
         />
         {isLabelled ?
-          <span>{isWished ? 'I ønskelisten' : 'Ønskeliste'}</span>
+          <span>
+            {isWished ? 'I ønskelisten' : 'Ønskeliste'}
+          </span>
         : <span className='sr-only'>
             {isWished ?
               `${productTitle} er i ønskelisten`
@@ -123,7 +133,10 @@ export function WishlistButton({
         }
       </Button>
 
-      <Dialog open={syncDialogOpen} onOpenChange={setSyncDialogOpen}>
+      <Dialog
+        open={syncDialogOpen}
+        onOpenChange={setSyncDialogOpen}
+      >
         <DialogContent className='overflow-hidden p-0 sm:max-w-lg'>
           <div className='bg-card px-6 pt-7 pb-6 text-card-foreground sm:px-8'>
             <div className='mb-5 flex size-14 items-center justify-center rounded-2xl bg-cyan-500 text-[#172744]'>
@@ -133,12 +146,13 @@ export function WishlistButton({
               />
             </div>
             <DialogHeader className='pr-8'>
-              <DialogTitle className='text-2xl leading-tight font-semibold text-card-foreground'>
+              <DialogTitle className='font-utekos-text-medium text-2xl leading-tight text-card-foreground'>
                 Lagret lokalt — synk med konto?
               </DialogTitle>
               <DialogDescription className='text-base leading-7 text-card-foreground/80 dark:text-card-foreground/80'>
-                Varene er lagret i denne nettleseren. Logg inn hvis du vil
-                synke ønskelisten med kontoen din senere.
+                Varene er lagret i denne nettleseren. Logg inn
+                hvis du vil synke ønskelisten med kontoen din
+                senere.
               </DialogDescription>
             </DialogHeader>
           </div>
@@ -150,8 +164,9 @@ export function WishlistButton({
                 aria-hidden='true'
               />
               <p className='text-sm leading-6 text-muted-foreground dark:text-popover-foreground'>
-                Innlogging håndteres sikkert av Shopify. Åpning av
-                innlogging sender ikke et nytt analytics-event.
+                Innlogging håndteres sikkert av Shopify. Åpning
+                av innlogging sender ikke et nytt
+                analytics-event.
               </p>
             </div>
 
@@ -162,7 +177,10 @@ export function WishlistButton({
                 size='lg'
                 className='min-h-12 rounded-full bg-cyan-500 px-6 text-base text-[#172744] shadow-sm hover:bg-cyan-400 hover:text-[#172744] dark:bg-cyan-500 dark:text-[#172744] dark:hover:bg-cyan-400 dark:hover:text-[#172744]'
               >
-                <Link href={loginHref} data-track='WishlistLoginClick'>
+                <Link
+                  href={loginHref}
+                  data-track='WishlistLoginClick'
+                >
                   Logg inn
                 </Link>
               </Button>

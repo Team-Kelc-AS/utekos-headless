@@ -147,6 +147,14 @@ test('Shopify reconciliation query keeps the frozen nested limits and local paid
     SHOPIFY_COMMERCE_RECONCILIATION_QUERY,
     /transactions\(first: 50\)/
   )
+  assert.match(
+    SHOPIFY_COMMERCE_RECONCILIATION_QUERY,
+    /shippingAddress \{\s+city\s+phone/
+  )
+  assert.match(
+    SHOPIFY_COMMERCE_RECONCILIATION_QUERY,
+    /billingAddress \{\s+city\s+phone/
+  )
   assert.doesNotMatch(
     SHOPIFY_COMMERCE_RECONCILIATION_QUERY,
     /financial_status/

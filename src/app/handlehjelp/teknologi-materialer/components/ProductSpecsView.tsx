@@ -61,7 +61,7 @@ export function ProductSpecsView({
       <div className='space-y-24 pb-24'>
         {technologyGroups.map(group => (
           <article key={group.groupTitle}>
-            <h2 className='mb-8 border-b border-border pb-4 text-sm font-bold tracking-widest text-muted-foreground'>
+            <h2 className='font-google-sans mb-8 border-b border-border pb-4 text-sm font-bold tracking-widest text-muted-foreground'>
               {group.groupTitle}
             </h2>
             <div className='space-y-8'>

@@ -19,20 +19,20 @@ function Section({
   return (
     <AccordionItem
       value={section.id}
-      className='  rounded-xl border border-border bg-card px-4'
+      className='rounded-xl border border-border bg-card px-4'
     >
-      <AccordionTrigger className='dark:hover:text-dark-foreground dark:focus-visible:ring-dark-foreground/45 min-h-14 text-left font-sans text-lg font-semibold tracking-normal text-foreground transition-colors hover:text-foreground hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground/45 md:text-xl'>
+      <AccordionTrigger className='dark:hover:text-dark-foreground dark:focus-visible:ring-dark-foreground/45 min-h-14 text-left font-sans font-utekos-text-medium text-lg tracking-normal text-foreground transition-colors hover:text-foreground hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground/45 md:text-xl'>
         {section.title}
       </AccordionTrigger>
       <AccordionContent className='pt-2 pb-6'>
-        <div className='font-utekos-text max-w-prose space-y-6'>
+        <div className='max-w-prose space-y-6 font-utekos-text'>
           {section.groups.map((group, index) => (
             <article
               key={`${group.title ?? section.id}-${index}`}
               className='space-y-3'
             >
               {group.title && (
-                <h3 className='font-sans text-lg leading-[1.2] font-semibold tracking-normal text-foreground'>
+                <h3 className='font-sans font-utekos-text-medium text-lg leading-[1.2] tracking-normal text-foreground'>
                   {group.title}
                 </h3>
               )}
@@ -41,9 +41,9 @@ function Section({
                   {group.rows.map(row => (
                     <div
                       key={row.label}
-                      className=' dark:bg-dark-background/40 rounded-lg border border-border bg-background/40 p-3'
+                      className='dark:bg-dark-background/40 rounded-lg border border-border bg-background/40 p-3'
                     >
-                      <dt className='text-sm leading-[1.35] font-semibold tracking-normal text-foreground'>
+                      <dt className='font-utekos-text-medium text-sm leading-[1.35] tracking-normal text-foreground'>
                         {row.label}
                       </dt>
                       <dd className='/82 mt-1 text-sm leading-normal tracking-normal text-foreground/82'>
@@ -74,8 +74,8 @@ function Section({
                 </ul>
               )}
               {group.note && (
-                <div className='google-sans-flex  dark:bg-dark-background/55 rounded-lg border border-border bg-background/55 p-4 text-foreground'>
-                  <h4 className='font-sans text-base leading-tight font-semibold tracking-normal'>
+                <div className='google-sans-flex dark:bg-dark-background/55 rounded-lg border border-border bg-background/55 p-4 text-foreground'>
+                  <h4 className='font-sans font-utekos-text-medium text-base leading-tight tracking-normal'>
                     {group.note.title}
                   </h4>
                   <p className='utekos-text /86 mt-2 text-sm leading-[1.6] tracking-normal text-foreground/86'>
@@ -110,7 +110,7 @@ export function ProductDetailsAccordion({
       aria-live='polite'
     >
       <div className='mx-auto max-w-3xl px-4'>
-        <h2 className='mx-auto my-8 max-w-[90%] text-left font-sans text-3xl font-semibold tracking-normal text-foreground sm:text-center sm:text-5xl md:max-w-4xl'>
+        <h2 className='mx-auto my-8 max-w-[90%] text-left font-sans font-utekos-text-medium text-3xl tracking-normal text-foreground sm:text-center sm:text-5xl md:max-w-4xl'>
           Produktdetaljer
         </h2>
 

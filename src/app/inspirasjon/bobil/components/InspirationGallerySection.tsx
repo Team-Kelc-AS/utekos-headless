@@ -41,7 +41,7 @@ export function InspirationGallerySection() {
                 className='pl-4 md:basis-1/2 lg:basis-1/3'
               >
                 <div className='group flex h-full flex-col p-1'>
-                  <div className='  relative aspect-square shrink-0 overflow-hidden rounded-lg border border-border bg-card'>
+                  <div className='relative aspect-square shrink-0 overflow-hidden rounded-lg border border-border bg-card'>
                     <Image
                       src={image.src}
                       alt={image.alt}
@@ -51,7 +51,7 @@ export function InspirationGallerySection() {
                     />
                   </div>
                   <div className='flex-1 pt-4 text-left'>
-                    <h3 className='font-sans leading-[0.95] font-bold text-foreground'>
+                    <h3 className='font-google-sans font-sans leading-[0.95] font-bold text-foreground'>
                       {image.title}
                     </h3>
                     <p className='leading-text-paragraph dark:text-dark-muted-foreground mt-2 text-sm text-muted-foreground'>
@@ -64,11 +64,11 @@ export function InspirationGallerySection() {
           </CarouselContent>
           <CarouselPrevious
             aria-label='Forrige bilde'
-            className=' dark:bg-dark-background/90 dark:hover:bg-dark-background dark:focus-visible:ring-dark-ring dark:focus-visible:ring-offset-dark-background left-2 hidden border-border bg-background/90 text-foreground hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex'
+            className='dark:bg-dark-background/90 dark:hover:bg-dark-background dark:focus-visible:ring-dark-ring dark:focus-visible:ring-offset-dark-background left-2 hidden border-border bg-background/90 text-foreground hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex'
           />
           <CarouselNext
             aria-label='Neste bilde'
-            className=' dark:bg-dark-background/90 dark:hover:bg-dark-background dark:focus-visible:ring-dark-ring dark:focus-visible:ring-offset-dark-background right-2 hidden border-border bg-background/90 text-foreground hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex'
+            className='dark:bg-dark-background/90 dark:hover:bg-dark-background dark:focus-visible:ring-dark-ring dark:focus-visible:ring-offset-dark-background right-2 hidden border-border bg-background/90 text-foreground hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex'
           />
         </Carousel>
       </div>

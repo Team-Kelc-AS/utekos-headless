@@ -19,10 +19,10 @@ export function AboutPromise() {
     <article className='bg-background px-8 py-20 text-left text-foreground sm:py-28 md:px-12 lg:px-16'>
       <div className='max-w-5xl px-4 text-left sm:px-6 lg:px-8'>
         <AboutBadge className='mb-6'>Vårt løfte</AboutBadge>
-        <h2 className='text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'>
+        <h2 className='font-google-sans text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'>
           Vårt løfte til deg
         </h2>
-        <p className='font-utekos-text-medium mt-5 max-w-2xl text-left text-xl leading-8 text-foreground'>
+        <p className='mt-5 max-w-2xl text-left font-utekos-text-medium text-xl leading-8 text-foreground'>
           Komforten skal merkes med en gang, og kvaliteten skal
           fortsette å bære øyeblikkene ute.
         </p>
@@ -41,7 +41,7 @@ export function AboutPromise() {
                     strokeWidth={1.8}
                   />
                 </span>
-                <h3 className='text-2xl font-semibold text-inherit'>
+                <h3 className='font-utekos-text-medium text-2xl text-inherit'>
                   {item.title}
                 </h3>
               </div>

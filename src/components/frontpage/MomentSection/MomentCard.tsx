@@ -64,7 +64,7 @@ export function MomentCard({ moment }: { moment: Moment }) {
           <CardTitle className='min-w-0 text-foreground'>
             <H3
               ID={titleId}
-              className='pb-0 text-2xl leading-tight font-semibold tracking-normal text-balance text-foreground'
+              className='pb-0 font-utekos-text-medium text-2xl leading-tight tracking-normal text-balance text-foreground'
             >
               {moment.title}
             </H3>

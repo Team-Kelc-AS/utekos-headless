@@ -41,7 +41,7 @@ export default function ProductHeader({
             </BrandBadge>
           )}
 
-          <h1 className='mx-0 text-left font-sans text-4xl font-bold text-foreground'>
+          <h1 className='font-google-sans mx-0 text-left font-sans text-4xl font-bold text-foreground'>
             {productTitle}
           </h1>
 

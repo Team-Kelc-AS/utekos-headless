@@ -16,17 +16,17 @@ export function ProductCareGuideCard({
       <p className='text-left font-sans text-xs font-medium text-card-foreground'>
         {eyebrow}
       </p>
-      <h3 className='mt-1 text-left font-sans text-lg font-semibold text-card-foreground sm:text-xl xl:text-lg'>
+      <h3 className='mt-1 text-left font-sans font-utekos-text-medium text-lg text-card-foreground sm:text-xl xl:text-lg'>
         {title}
       </h3>
       <ul
         role='list'
-        className='font-utekos-text mt-5 space-y-2.5 text-left text-card-foreground'
+        className='mt-5 space-y-2.5 text-left font-utekos-text text-card-foreground'
       >
         {items.map(item => (
           <li key={item} className='flex min-w-0'>
             <ProductCareCheckIcon />
-            <p className='font-utekos-text ml-2.5 min-w-0 text-left text-base/6'>
+            <p className='ml-2.5 min-w-0 text-left font-utekos-text text-base/6'>
               {item}
             </p>
           </li>

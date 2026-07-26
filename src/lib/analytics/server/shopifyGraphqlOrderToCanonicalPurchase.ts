@@ -26,13 +26,19 @@ function hashEmail(email: string | null | undefined) {
     : undefined
 }
 
-function hashPhone(phone: string | null | undefined) {
-  if (!phone) return undefined
+function hashPhone(
+  ...phoneCandidates: Array<string | null | undefined>
+) {
+  for (const phone of phoneCandidates) {
+    if (!phone) continue
 
-  const normalized = normalizeCustomerMatchPhone(phone)
-  return normalized ?
-      hashCustomerMatchIdentifier(normalized)
-    : undefined
+    const normalized = normalizeCustomerMatchPhone(phone)
+    if (normalized) {
+      return hashCustomerMatchIdentifier(normalized)
+    }
+  }
+
+  return undefined
 }
 
 function mapCustomAttributesToNoteAttributes(
@@ -79,12 +85,13 @@ export function shopifyGraphqlOrderToCanonicalPurchase(
     order.email ??
     order.customer?.defaultEmailAddress?.emailAddress ??
     undefined
-  const phone =
-    order.phone ??
-    order.customer?.defaultPhoneNumber?.phoneNumber ??
-    undefined
   const emailHash = hashEmail(email)
-  const phoneHash = hashPhone(phone)
+  const phoneHash = hashPhone(
+    order.phone,
+    order.customer?.defaultPhoneNumber?.phoneNumber,
+    order.shippingAddress?.phone,
+    order.billingAddress?.phone
+  )
   const attribution = parseOrderAttributionFromNoteAttributes(
     mapCustomAttributesToNoteAttributes(order)
   )

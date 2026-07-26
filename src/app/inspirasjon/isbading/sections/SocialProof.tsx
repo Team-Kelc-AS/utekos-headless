@@ -54,7 +54,7 @@ export function SocialProof() {
     <article className='py-24'>
       <div className='container mx-auto px-4'>
         <div className='mx-auto max-w-3xl text-center'>
-          <h2 className='text-fluid-display mb-4 font-bold tracking-normal'>
+          <h2 className='text-fluid-display font-google-sans mb-4 font-bold tracking-normal'>
             Ekte kulde, ekte varme
           </h2>
         </div>
@@ -88,10 +88,10 @@ export function SocialProof() {
                     />
                   </AspectRatio>
                   <div className='pt-4 text-left'>
-                    <h4 className='font-semibold'>
+                    <h4 className='font-utekos-text-medium'>
                       {image.title}
                     </h4>
-                    <p className='text-overcast text-sm'>
+                    <p className='text-sm text-overcast'>
                       {image.description}
                     </p>
                   </div>
