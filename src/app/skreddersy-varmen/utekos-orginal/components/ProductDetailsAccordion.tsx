@@ -11,7 +11,7 @@ import { UsageGroup } from './UsageGroup'
 import { Leaf, ShieldCheck, Waves, Info } from 'lucide-react'
 
 const triggerClassName =
-  'font-sans text-left text-lg font-utekos-text-medium text-background dark:text-dark-background hover:text-card dark:hover:text-dark-card hover:no-underline [&>svg]:text-background dark:svg]:text-dark-background md:text-xl'
+  'font-sans text-left text-lg font-utekos-text-medium text-foreground [&>svg]:text-foreground hover:text-foreground dark:hover:text-foreground hover:no-underline md:text-xl'
 
 const itemClassName =
   'border-background/20 dark:border-dark-background/20'

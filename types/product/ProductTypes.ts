@@ -74,6 +74,8 @@ export type MicrofiberLogicProps = {
   size: MicrofiberSize
   setSize: (size: MicrofiberSize) => void
   activeImage: string | undefined
+  product: ShopifyProduct | null
+  selectedVariant: ShopifyProductVariant | null
   handleAddToCart: () => void
   scrollToSizeGuide: () => void
   isPending: boolean

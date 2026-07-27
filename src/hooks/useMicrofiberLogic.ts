@@ -7,6 +7,7 @@ import { productConfig } from '@/app/skreddersy-varmen/utekos-orginal/utils/prod
 import { useCanonicalAddToCart } from '@/hooks/useCanonicalAddToCart'
 import type {
   ShopifyProduct,
+  ShopifyProductVariant,
   MicrofiberColor,
   MicrofiberSize
 } from 'types/product'
@@ -19,6 +20,13 @@ export function useMicrofiberLogic(product: ShopifyProduct | null) {
   const activeImage = productConfig.colors.find(
     c => c.id === (color as unknown)
   )?.image
+  const variantIdRaw = variantMap[color]?.[size]
+  const selectedVariant: ShopifyProductVariant | null =
+    product && variantIdRaw ?
+      product.variants.edges
+        .map(edge => edge.node)
+        .find(variant => variant.id === `${GID_PREFIX}${variantIdRaw}`) ?? null
+    : null
 
   const scrollToSizeGuide = () => {
     void scrollToElement('size-guide', { offsetY: 96 })
@@ -32,17 +40,10 @@ export function useMicrofiberLogic(product: ShopifyProduct | null) {
       return
     }
 
-    const variantIdRaw = variantMap[color]?.[size]
-
     if (!variantIdRaw) {
       toast.error('Kunne ikke finne varianten. Prøv en annen kombinasjon.')
       return
     }
-
-    const variantId = `${GID_PREFIX}${variantIdRaw}`
-    const selectedVariant = product.variants.edges
-      .map(edge => edge.node)
-      .find(variant => variant.id === variantId)
 
     if (!selectedVariant) {
       toast.error('Kunne ikke finne valgt variant. Prøv igjen.')
@@ -69,6 +70,8 @@ export function useMicrofiberLogic(product: ShopifyProduct | null) {
     size,
     setSize,
     activeImage,
+    product,
+    selectedVariant,
     handleAddToCart,
     scrollToSizeGuide,
     isPending: isPending || !product

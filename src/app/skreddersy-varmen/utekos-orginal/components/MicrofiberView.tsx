@@ -7,7 +7,9 @@ import {
   Loader2
 } from 'lucide-react'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
+import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { productConfig } from '@/app/skreddersy-varmen/utekos-orginal/utils/productConfig'
+import { KlarnaLandingExpressCheckout } from '@/app/skreddersy-varmen/components/KlarnaLandingExpressCheckout'
 import type {
   MicrofiberLogicProps,
   MicrofiberColor,
@@ -20,6 +22,8 @@ export function MicrofiberView({
   size,
   setSize,
   activeImage,
+  product,
+  selectedVariant,
   handleAddToCart,
   scrollToSizeGuide,
   isPending
@@ -136,23 +140,36 @@ export function MicrofiberView({
                 </div>
               </div>
 
-              <button
-                onClick={handleAddToCart}
-                data-track='❗🛒❗SkreddersyUtekosOrginalAddToCartClick ❗🛒❗'
-                disabled={isPending}
-                className='font-google-sans flex w-full items-center justify-center gap-3 rounded-full bg-commerce-primary py-4 text-lg font-bold text-commerce-primary-foreground shadow-xl transition-all duration-200 hover:-translate-y-1 hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground hover:shadow-2xl active:scale-[0.98] disabled:transform-none disabled:cursor-not-allowed disabled:opacity-70 md:py-5 dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground'
+              <BrandBadge
+                asChild
+                tone='commerce-primary'
+                className='bg-primary text-foreground hover:-translate-y-1 hover:bg-primary-hover hover:text-foreground hover:shadow-2xl active:scale-[0.98] disabled:transform-none disabled:cursor-not-allowed disabled:opacity-70 dark:bg-primary dark:text-foreground dark:hover:bg-primary-hover dark:hover:text-foreground'
               >
-                {isPending ?
-                  <>
-                    <Loader2 className='animate-spin' /> Legger
-                    til...
-                  </>
-                : <>
-                    <ShoppingCart size={20} /> Legg i handlekurv
-                    — {productConfig.price},-
-                  </>
-                }
-              </button>
+                <button
+                  onClick={handleAddToCart}
+                  data-track='❗🛒❗SkreddersyUtekosOrginalAddToCartClick ❗🛒❗'
+                  disabled={isPending}
+                  className='font-google-sans flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:py-5'
+                >
+                  {isPending ?
+                    <>
+                      <Loader2 className='animate-spin' /> Legger
+                      til...
+                    </>
+                  : <>
+                      <ShoppingCart size={20} /> Legg i handlekurv
+                      — {productConfig.price},-
+                    </>
+                  }
+                </button>
+              </BrandBadge>
+
+              <KlarnaLandingExpressCheckout
+                product={product}
+                selectedVariant={selectedVariant}
+                quantity={1}
+                className='mt-4'
+              />
 
               <div className='mt-6 grid grid-cols-2 gap-2 text-xs text-[#2C2420]/60 md:mt-8 md:gap-4 md:text-sm'>
                 <div className='flex items-center gap-2'>
