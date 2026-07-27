@@ -37,7 +37,10 @@ export function HeroSection() {
 
       <div className='relative z-10 flex h-full w-full flex-col items-center justify-start px-6 pt-32 md:justify-center md:pt-0'>
         <h1 className='mb-4 text-center text-4xl leading-[0.95] tracking-[-0.01em] text-balance text-foreground drop-shadow-xl md:mb-6 md:text-7xl'>
-          Skreddersy varmen <br className='hidden md:block' />
+          <span className='font-google-sans font-bold tracking-tight'>
+            Skreddersy varmen
+          </span>{' '}
+          <br className='hidden md:block' />
           <span className='mt-2 block text-2xl leading-[0.95] font-light tracking-[-0.01em] text-foreground italic opacity-90 md:text-6xl'>
             Forleng de gode stundene
           </span>

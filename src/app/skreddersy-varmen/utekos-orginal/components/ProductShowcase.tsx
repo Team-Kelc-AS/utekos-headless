@@ -6,7 +6,7 @@ import {
   CloudRain,
   type LucideIcon
 } from 'lucide-react'
-import ProductMain from '@public/kokong-edited-4-5.webp'
+import ProductMain from '@public/UtekosMikrofiberVert.webp'
 
 export function ProductShowcase() {
   return (
@@ -18,13 +18,13 @@ export function ProductShowcase() {
         <div className='grid grid-cols-1 items-center gap-16 lg:grid-cols-2'>
           <div className='space-y-8'>
             <div className='space-y-4'>
-              <h2 className='font-serif text-4xl leading-tight text-[#E07A5F] md:text-5xl'>
+              <h2 className='font-serif text-4xl leading-tight text-primary dark:text-dark-primary md:text-5xl'>
                 Utekos®
-                <span className='mt-2 block text-2xl text-[#F4F1EA] md:text-3xl'>
+                <span className='font-utekos-text-medium mt-2 block text-2xl text-[#F4F1EA] md:text-3xl'>
                   Lettvekt møter kompromissløs varme.
                 </span>
               </h2>
-              <p className='max-w-xl text-lg leading-relaxed font-light text-[#F4F1EA]/80'>
+              <p className='font-utekos-text max-w-xl text-lg leading-relaxed font-light text-[#F4F1EA]/80'>
                 Designet for nordiske forhold. Med smart hulfiber
                 får du følelsen av dun, men med egenskapene som
                 kreves når været skifter. Robust nok for
@@ -80,14 +80,14 @@ function FeatureItem({
 }) {
   return (
     <div className='flex items-start gap-4'>
-      <div className='mt-1 rounded-full bg-[#E07A5F]/10 p-2 text-[#E07A5F]'>
+      <div className='mt-1 rounded-full bg-primary/10 p-2 text-primary dark:bg-dark-primary/10 dark:text-dark-primary'>
         <Icon size={20} />
       </div>
       <div>
-        <h3 className='text-lg font-medium text-[#F4F1EA]'>
+        <h3 className='font-utekos-text-medium text-lg text-[#F4F1EA]'>
           {title}
         </h3>
-        <p className='text-sm leading-snug text-[#F4F1EA]/60'>
+        <p className='font-utekos-text text-sm leading-snug text-[#F4F1EA]/60'>
           {desc}
         </p>
       </div>
