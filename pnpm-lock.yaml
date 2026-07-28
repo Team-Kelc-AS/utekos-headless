@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  next@16.2.9: bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc
+  next@16.2.9: 656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597
 
 importers:
 
@@ -31,7 +31,7 @@ importers:
         version: 4.1.1
       '@flags-sdk/vercel':
         specifier: ^1.3.0
-        version: 1.4.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
+        version: 1.4.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
       '@fontsource-variable/google-sans':
         specifier: ^5.2.1
         version: 5.2.1
@@ -94,7 +94,7 @@ importers:
         version: 16.2.9(@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20)))(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7))
       '@next/third-parties':
         specifier: ^16.2.9
-        version: 16.2.9(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 16.2.9(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@openfeature/server-sdk':
         specifier: ^1.18.0
         version: 1.18.0(@openfeature/core@1.11.0)
@@ -127,7 +127,7 @@ importers:
         version: 10.56.0
       '@sentry/nextjs':
         specifier: 10.56.0
-        version: 10.56.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))
+        version: 10.56.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))
       '@sentry/profiling-node':
         specifier: 10.56.0
         version: 10.56.0(supports-color@8.1.1)
@@ -163,10 +163,10 @@ importers:
         version: 1.38.0
       '@vercel/analytics':
         specifier: ^2.0.1
-        version: 2.0.1(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 2.0.1(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@vercel/flags-core':
         specifier: ^1.4.0
-        version: 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
+        version: 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
       '@vercel/functions':
         specifier: ^3.7.5
         version: 3.7.5(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)
@@ -181,7 +181,7 @@ importers:
         version: 0.4.0(@opentelemetry/api@1.9.1)
       '@vercel/speed-insights':
         specifier: ^2.0.0
-        version: 2.0.0(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 2.0.0(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@xstate/react':
         specifier: ^6.1.0
         version: 6.1.0(@types/react@19.2.17)(react@19.2.7)(xstate@5.32.1)
@@ -196,7 +196,7 @@ importers:
         version: 4.12.1
       botid:
         specifier: ^1.5.11
-        version: 1.5.11(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 1.5.11(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       capi-param-builder-nodejs:
         specifier: ^1.3.1
         version: 1.3.1
@@ -244,7 +244,7 @@ importers:
         version: 0.1.2(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)
       flags:
         specifier: ^4.1.0
-        version: 4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       google-auth-library:
         specifier: ^10.6.2
         version: 10.7.0(supports-color@8.1.1)
@@ -268,7 +268,7 @@ importers:
         version: 12.40.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       next:
         specifier: ^16.2.9
-        version: 16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -367,7 +367,7 @@ importers:
         version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       workflow:
         specifier: ^4.6.2
-        version: 4.6.2(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(typescript@6.0.3)(ws@8.21.0)
+        version: 4.6.2(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(typescript@6.0.3)(ws@8.21.0)
       xstate:
         specifier: ^5.32.0
         version: 5.32.1
@@ -12091,10 +12091,10 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
-  '@flags-sdk/vercel@1.4.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
+  '@flags-sdk/vercel@1.4.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
     dependencies:
-      '@vercel/flags-core': 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
-      flags: 4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vercel/flags-core': 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
+      flags: 4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     transitivePeerDependencies:
       - '@aws-sdk/credential-provider-web-identity'
       - '@openfeature/server-sdk'
@@ -12817,9 +12817,9 @@ snapshots:
   '@next/swc-win32-x64-msvc@16.2.9':
     optional: true
 
-  '@next/third-parties@16.2.9(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@next/third-parties@16.2.9(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
     dependencies:
-      next: 16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
       third-party-capital: 1.0.20
 
@@ -13626,7 +13626,7 @@ snapshots:
 
   '@sentry/core@10.56.0': {}
 
-  '@sentry/nextjs@10.56.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))':
+  '@sentry/nextjs@10.56.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/semantic-conventions': 1.41.1
@@ -13639,7 +13639,7 @@ snapshots:
       '@sentry/react': 10.56.0(react@19.2.7)
       '@sentry/vercel-edge': 10.56.0
       '@sentry/webpack-plugin': 5.3.0(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))
-      next: 16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       rollup: 4.62.2
       stacktrace-parser: 0.1.11
     transitivePeerDependencies:
@@ -14406,9 +14406,9 @@ snapshots:
     dependencies:
       uncrypto: 0.1.3
 
-  '@vercel/analytics@2.0.1(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@vercel/analytics@2.0.1(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
     optionalDependencies:
-      next: 16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
 
   '@vercel/cli-auth@0.0.1':
@@ -14427,7 +14427,7 @@ snapshots:
     dependencies:
       execa: 5.1.1
 
-  '@vercel/flags-core@1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
+  '@vercel/flags-core@1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
     dependencies:
       '@vercel/functions': 3.7.5(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)
       '@vercel/oidc': 3.5.0
@@ -14435,7 +14435,7 @@ snapshots:
       js-xxhash: 4.0.0
     optionalDependencies:
       '@openfeature/server-sdk': 1.18.0(@openfeature/core@1.11.0)
-      next: 16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     transitivePeerDependencies:
       - '@aws-sdk/credential-provider-web-identity'
       - ws
@@ -14483,9 +14483,9 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
 
-  '@vercel/speed-insights@2.0.0(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@vercel/speed-insights@2.0.0(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
     optionalDependencies:
-      next: 16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
 
   '@visulima/boxen@2.0.10': {}
@@ -14754,7 +14754,7 @@ snapshots:
       - supports-color
       - ws
 
-  '@workflow/next@4.1.2(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(ws@8.21.0)':
+  '@workflow/next@4.1.2(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(ws@8.21.0)':
     dependencies:
       '@swc/core': 1.15.3
       '@workflow/builders': 4.1.3(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
@@ -14763,7 +14763,7 @@ snapshots:
       semver: 7.7.4
       watchpack: 2.5.1
     optionalDependencies:
-      next: 16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - '@swc/helpers'
@@ -16333,9 +16333,9 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  botid@1.5.11(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
+  botid@1.5.11(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
     optionalDependencies:
-      next: 16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
 
   bowser@2.14.1: {}
@@ -17865,13 +17865,13 @@ snapshots:
 
   first-match@0.0.1: {}
 
-  flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
       '@edge-runtime/cookies': 5.0.2
       jose: 5.10.0
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
-      next: 16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
@@ -19691,7 +19691,7 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
       '@next/env': 16.2.9
       '@swc/helpers': 0.5.15
@@ -22226,14 +22226,14 @@ snapshots:
 
   wordwrap@1.0.0: {}
 
-  workflow@4.6.2(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(typescript@6.0.3)(ws@8.21.0):
+  workflow@4.6.2(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(typescript@6.0.3)(ws@8.21.0):
     dependencies:
       '@workflow/astro': 4.0.13(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/cli': 4.3.2(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/core': 4.6.2(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/errors': 4.1.5
       '@workflow/nest': 4.0.14(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(supports-color@8.1.1)(ws@8.21.0)
-      '@workflow/next': 4.1.2(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=bae23667c12c47bd5fc2d1f041341eef3f2a19d39b8baa9e451369cbf7680acc)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(ws@8.21.0)
+      '@workflow/next': 4.1.2(@opentelemetry/api@1.9.1)(next@16.2.9(patch_hash=656da874f74a11b4d5c3094ce615c823d30e10b7d6124c16f53f66bd34d9b597)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/nitro': 4.1.4(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/nuxt': 4.0.14(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/rollup': 4.0.13(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)

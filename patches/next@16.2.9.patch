@@ -101,7 +101,7 @@ index e5b451434c439db5dec974d3ada0dda683d49db5..959e4908f2cd13bfef5905d318142206
                      }
                      // If the request is a next data request and it has a postponed state,
 diff --git a/dist/esm/server/lib/postponed-request-body.js b/dist/esm/server/lib/postponed-request-body.js
-index 5c34c5cfecedf5d583812ddd0dbe01724371b270..622b1152dd95f2948c39f10edb96bd94c28b169e 100644
+index 5c34c5cfecedf5d583812ddd0dbe01724371b270..4b0920602dab471fc6693ab96e588cb00d1cde29 100644
 --- a/dist/esm/server/lib/postponed-request-body.js
 +++ b/dist/esm/server/lib/postponed-request-body.js
 @@ -1,3 +1,4 @@
@@ -109,7 +109,7 @@ index 5c34c5cfecedf5d583812ddd0dbe01724371b270..622b1152dd95f2948c39f10edb96bd94
  import { DEFAULT_MAX_POSTPONED_STATE_SIZE, parseMaxPostponedStateSize } from '../../shared/lib/size-limit';
  const INVALID_MAX_POSTPONED_STATE_SIZE_ERROR_MESSAGE = 'maxPostponedStateSize must be a valid number (bytes) or filesize format string (e.g., "5mb")';
  export function getMaxPostponedStateSize(configuredMaxPostponedStateSize) {
-@@ -21,6 +22,36 @@ export function getPostponedStateExceededErrorMessage(maxPostponedStateSize) {
+@@ -21,6 +22,43 @@ export function getPostponedStateExceededErrorMessage(maxPostponedStateSize) {
  function toBuffer(chunk) {
      return Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
  }
@@ -122,25 +122,32 @@ index 5c34c5cfecedf5d583812ddd0dbe01724371b270..622b1152dd95f2948c39f10edb96bd94
 +export function decompressBody(body, contentEncoding, maxOutputLength) {
 +    const maxLen = maxOutputLength ?? MAX_OUTPUT_LENGTH_DEFAULT;
 +    const encoding = Array.isArray(contentEncoding) ? contentEncoding[0] : contentEncoding;
-+    if (encoding && hasGzipMagic(body)) {
-+        switch(encoding){
-+            case 'deflate':
-+                return inflateSync(body, { maxOutputLength: maxLen });
-+            case 'gzip':
-+                return gunzipSync(body, { maxOutputLength: maxLen });
-+            case 'br':
-+                return brotliDecompressSync(body, { maxOutputLength: maxLen });
-+            default:
-+                return body;
++    try {
++        if (encoding && hasGzipMagic(body)) {
++            switch(encoding){
++                case 'deflate':
++                    return inflateSync(body, { maxOutputLength: maxLen });
++                case 'gzip':
++                    return gunzipSync(body, { maxOutputLength: maxLen });
++                case 'br':
++                    return brotliDecompressSync(body, { maxOutputLength: maxLen });
++                default:
++                    return body;
++            }
 +        }
++        // The PPR resume chain contract does not carry Content-Encoding, but
++        // infrastructure (e.g. Vercel's router) may gzip the body without setting
++        // the header. Auto-detect by checking the gzip magic number.
++        if (hasGzipMagic(body)) {
++            return gunzipSync(body, { maxOutputLength: maxLen });
++        }
++        return body;
++    } catch {
++        // Truncated or corrupt compressed resume bodies must not crash the
++        // request handler. Returning the raw body lets parsePostponedState
++        // fail closed into Next's existing dynamic-render fallback path.
++        return body;
 +    }
-+    // The PPR resume chain contract does not carry Content-Encoding, but
-+    // infrastructure (e.g. Vercel's router) may gzip the body without setting
-+    // the header. Auto-detect by checking the gzip magic number.
-+    if (hasGzipMagic(body)) {
-+        return gunzipSync(body, { maxOutputLength: maxLen });
-+    }
-+    return body;
 +}
 +
  export async function readBodyWithSizeLimit(body, maxBodySizeBytes) {
@@ -161,7 +168,7 @@ index 2239b167c768148f199d4b117ba92c855e73930d..2e7898001f912ec02b8386721324ab00
                      }
                      // If the request is a next data request and it has a postponed state,
 diff --git a/dist/server/lib/postponed-request-body.js b/dist/server/lib/postponed-request-body.js
-index 41027be598bfb7e9f8afbf84ae22e65c44e93feb..156e16187648f3cd3cc83b036b6cbe26052bc174 100644
+index 41027be598bfb7e9f8afbf84ae22e65c44e93feb..8bba6b4b6bf256a515ac4e2d487dd36c8ba4c339 100644
 --- a/dist/server/lib/postponed-request-body.js
 +++ b/dist/server/lib/postponed-request-body.js
 @@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", {
@@ -190,7 +197,7 @@ index 41027be598bfb7e9f8afbf84ae22e65c44e93feb..156e16187648f3cd3cc83b036b6cbe26
  const _sizelimit = require("../../shared/lib/size-limit");
  const INVALID_MAX_POSTPONED_STATE_SIZE_ERROR_MESSAGE = 'maxPostponedStateSize must be a valid number (bytes) or filesize format string (e.g., "5mb")';
  function getMaxPostponedStateSize(configuredMaxPostponedStateSize) {
-@@ -47,6 +52,47 @@ function getPostponedStateExceededErrorMessage(maxPostponedStateSize) {
+@@ -47,6 +52,54 @@ function getPostponedStateExceededErrorMessage(maxPostponedStateSize) {
  function toBuffer(chunk) {
      return Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
  }
@@ -206,33 +213,40 @@ index 41027be598bfb7e9f8afbf84ae22e65c44e93feb..156e16187648f3cd3cc83b036b6cbe26
 +function decompressBody(body, contentEncoding, maxOutputLength) {
 +    const maxLen = maxOutputLength ?? MAX_OUTPUT_LENGTH_DEFAULT;
 +    const encoding = Array.isArray(contentEncoding) ? contentEncoding[0] : contentEncoding;
-+    if (encoding && hasGzipMagic(body)) {
-+        switch(encoding){
-+            case 'deflate':
-+                return inflateSync(body, {
-+                    maxOutputLength: maxLen
-+                });
-+            case 'gzip':
-+                return gunzipSync(body, {
-+                    maxOutputLength: maxLen
-+                });
-+            case 'br':
-+                return brotliDecompressSync(body, {
-+                    maxOutputLength: maxLen
-+                });
-+            default:
-+                return body;
++    try {
++        if (encoding && hasGzipMagic(body)) {
++            switch(encoding){
++                case 'deflate':
++                    return inflateSync(body, {
++                        maxOutputLength: maxLen
++                    });
++                case 'gzip':
++                    return gunzipSync(body, {
++                        maxOutputLength: maxLen
++                    });
++                case 'br':
++                    return brotliDecompressSync(body, {
++                        maxOutputLength: maxLen
++                    });
++                default:
++                    return body;
++            }
 +        }
++        // The PPR resume chain contract does not carry Content-Encoding, but
++        // infrastructure (e.g. Vercel's router) may gzip the body without setting
++        // the header. Auto-detect by checking the gzip magic number.
++        if (hasGzipMagic(body)) {
++            return gunzipSync(body, {
++                maxOutputLength: maxLen
++            });
++        }
++        return body;
++    } catch  {
++        // Truncated or corrupt compressed resume bodies must not crash the
++        // request handler. Returning the raw body lets parsePostponedState
++        // fail closed into Next's existing dynamic-render fallback path.
++        return body;
 +    }
-+    // The PPR resume chain contract does not carry Content-Encoding, but
-+    // infrastructure (e.g. Vercel's router) may gzip the body without setting
-+    // the header. Auto-detect by checking the gzip magic number.
-+    if (hasGzipMagic(body)) {
-+        return gunzipSync(body, {
-+            maxOutputLength: maxLen
-+        });
-+    }
-+    return body;
 +}
 +
  async function readBodyWithSizeLimit(body, maxBodySizeBytes) {
