@@ -10,7 +10,6 @@ import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { PreFooterNavigation } from './components/PreFooterNavigation'
 import { SkreddersyVarmenBreadcrumbs } from './components/SkreddersyVarmenBreadcrumbs'
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 
 export const metadata: Metadata = {
   title:
@@ -61,9 +60,7 @@ export const metadata: Metadata = {
   }
 }
 
-export default async function LandingPage() {
-  await connection()
-
+export default function LandingPage() {
   return (
     <article className='dark:bg-dark-background flex min-h-screen w-full flex-col items-center justify-start overflow-x-clip bg-background'>
       <StickyMobileAction />
