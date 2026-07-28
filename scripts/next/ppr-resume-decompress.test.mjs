@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { gunzipSync, gzipSync } from 'node:zlib'
 import test from 'node:test'
@@ -65,4 +66,47 @@ test('decompressBody fails soft for corrupt gzip bytes', () => {
   const body = Buffer.from([0x1f, 0x8b, 0x00, 0xff, 0x00])
   const result = decompressBody(body, 'gzip', 1024 * 1024)
   assert.equal(Buffer.compare(result, body), 0)
+})
+
+test('gzip postponed state can be decoded without consuming the following action body', () => {
+  const postponed = postponedState(64)
+  const compressedPostponed = gzipSync(postponed)
+  const actionBody = Buffer.from(
+    '------next-action\r\nContent-Disposition: form-data; name="0"\r\n\r\n[]\r\n',
+    'utf8'
+  )
+  const combinedBody = Buffer.concat([compressedPostponed, actionBody])
+  const stateLength = compressedPostponed.length
+
+  const decodedPostponed = decompressBody(
+    combinedBody.subarray(0, stateLength),
+    'gzip',
+    1024 * 1024
+  )
+  const preservedActionBody = combinedBody.subarray(stateLength)
+
+  assert.equal(decodedPostponed.toString('utf8'), postponed.toString('utf8'))
+  assert.equal(Buffer.compare(preservedActionBody, actionBody), 0)
+})
+
+test('server actions split the raw action body before decompressing postponed state', () => {
+  const templatePath = require.resolve('next/dist/build/templates/app-page.js')
+  const template = readFileSync(templatePath, 'utf8')
+
+  assert.match(
+    template,
+    /const compressedPostponedState = fullBody\.subarray\(0, stateLength\)/
+  )
+  assert.match(
+    template,
+    /decompressBody\)\(compressedPostponedState, req\.headers\['content-encoding'\]/
+  )
+  assert.match(
+    template,
+    /const actionBody = fullBody\.subarray\(stateLength\)/
+  )
+  assert.doesNotMatch(
+    template,
+    /decompressBody\)\(fullBody, req\.headers\['content-encoding'\]/
+  )
 })

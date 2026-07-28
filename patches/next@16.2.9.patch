@@ -7,19 +7,17 @@ index e0e16e8cdcb98beb66af51c924921b6d2e2fa904..12c3b4198cc306d946ece057de57ce40
                  return null;
              }
 -            if (fullBody.length >= stateLength) {
-+            const decompressedFullBody = (0, _postponedrequestbody.decompressBody)(fullBody, req.headers['content-encoding'], maxTotalBodySize * 5);
-+            if (decompressedFullBody.length >= stateLength) {
++            if (fullBody.length >= stateLength) {
                  // Extract postponed state from the beginning
 -                const postponedState = fullBody.subarray(0, stateLength).toString('utf8');
-+                const postponedState = decompressedFullBody.subarray(0, stateLength).toString('utf8');
++                const compressedPostponedState = fullBody.subarray(0, stateLength);
++                const postponedState = (0, _postponedrequestbody.decompressBody)(compressedPostponedState, req.headers['content-encoding'], maxTotalBodySize * 5).toString('utf8');
                  (0, _requestmeta.addRequestMeta)(req, 'postponed', postponedState);
                  // Store the remaining action body for the action handler
--                const actionBody = fullBody.subarray(stateLength);
-+                const actionBody = decompressedFullBody.subarray(stateLength);
+                 const actionBody = fullBody.subarray(stateLength);
                  (0, _requestmeta.addRequestMeta)(req, 'actionBody', actionBody);
              } else {
--                throw Object.defineProperty(new Error(`invariant: expected ${stateLength} bytes of postponed state but only received ${fullBody.length} bytes`), "__NEXT_ERROR_CODE", {
-+                throw Object.defineProperty(new Error(`invariant: expected ${stateLength} bytes of postponed state but only received ${decompressedFullBody.length} bytes`), "__NEXT_ERROR_CODE", {
+                 throw Object.defineProperty(new Error(`invariant: expected ${stateLength} bytes of postponed state but only received ${fullBody.length} bytes`), "__NEXT_ERROR_CODE", {
                      value: "E979",
                      enumerable: false,
                      configurable: true
@@ -51,19 +49,17 @@ index 0cec08429603871865933de0a5ae4dd8f0d9a0d3..43bb582b066e6b7bfdbbefa2b403f7d1
                  return null;
              }
 -            if (fullBody.length >= stateLength) {
-+            const decompressedFullBody = decompressBody(fullBody, req.headers['content-encoding'], maxTotalBodySize * 5);
-+            if (decompressedFullBody.length >= stateLength) {
++            if (fullBody.length >= stateLength) {
                  // Extract postponed state from the beginning
 -                const postponedState = fullBody.subarray(0, stateLength).toString('utf8');
-+                const postponedState = decompressedFullBody.subarray(0, stateLength).toString('utf8');
++                const compressedPostponedState = fullBody.subarray(0, stateLength);
++                const postponedState = decompressBody(compressedPostponedState, req.headers['content-encoding'], maxTotalBodySize * 5).toString('utf8');
                  addRequestMeta(req, 'postponed', postponedState);
                  // Store the remaining action body for the action handler
--                const actionBody = fullBody.subarray(stateLength);
-+                const actionBody = decompressedFullBody.subarray(stateLength);
+                 const actionBody = fullBody.subarray(stateLength);
                  addRequestMeta(req, 'actionBody', actionBody);
              } else {
--                throw Object.defineProperty(new Error(`invariant: expected ${stateLength} bytes of postponed state but only received ${fullBody.length} bytes`), "__NEXT_ERROR_CODE", {
-+                throw Object.defineProperty(new Error(`invariant: expected ${stateLength} bytes of postponed state but only received ${decompressedFullBody.length} bytes`), "__NEXT_ERROR_CODE", {
+                 throw Object.defineProperty(new Error(`invariant: expected ${stateLength} bytes of postponed state but only received ${fullBody.length} bytes`), "__NEXT_ERROR_CODE", {
                      value: "E979",
                      enumerable: false,
                      configurable: true
