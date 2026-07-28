@@ -148,7 +148,9 @@
     "validate:klarna-docs": "node scripts/klarna-docs/validate.mjs",
     "index:klarna-docs": "node scripts/klarna-docs/fix-drift.mjs && node scripts/klarna-docs/generate-llms-index.mjs",
     "inject:klarna-docs": "node scripts/klarna-docs/inject-ts-headers.mjs && node scripts/klarna-docs/inject-json-metadata.mjs",
-    "mcp:css-insight:dev-ngrok": "node scripts/mcp/dev-ngrok-widget.mjs"
+    "mcp:css-insight:dev-ngrok": "node scripts/mcp/dev-ngrok-widget.mjs",
+    "test:ppr-rsc-probe": "node --test scripts/next/ppr-rsc-probe.test.mjs",
+    "ppr:rsc:probe": "node scripts/next/ppr-rsc-probe.mjs"
   },
   "dependencies": {
     "@adobe/leonardo-contrast-colors": "^1.1.0",
