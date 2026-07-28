@@ -1,19 +1,30 @@
 # env / credentials
 .env*
 mcp.json
+.mcp.json
+.vscode/mcp.json
 .vscode/settings.json
+.codex/
+.agent-artifacts/
 src/api/constants/service-account.json
 src/api/lib/cloud-credentials/
 *.service-account.json
 service-account.json
 *oauth-credentials*.json
 *tag-manager-credentials*.json
+credentials.json
+token.json
+**/application_default_credentials.json
 
 # local MCP / tooling output
 .agents/
 .agents/skills/
 .playwright-mcp/
 playwright-mcp/
+.playwright-cli/
+**/.playwright-cli.json
+supabase/.branches/
+supabase/.temp/
 
 # local docs / reports / planning
 ga_docs/

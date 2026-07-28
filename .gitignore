@@ -1,233 +1,108 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# See https://git-scm.com/docs/gitignore for pattern semantics.
 
-### NextJS ###
-# dependencies
-/node_modules
+### Next.js and package managers ###
 /.pnp
 .pnp.js
+.pnp.*
 **/node_modules/
 /alpha
-/docs
-/.pnp
-.pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-# next.js
+# Tests, builds, and generated types
+/coverage/
 /.next/
 /out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-.devtools/
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# local env files
-.env*.local
-.agent-artifacts/
-.agents/gcp.json
-
-# vercel
-.vercel
-
-# typescript
+/build/
 *.tsbuildinfo
 next-env.d.ts
 
-*/mcp.json
-.playwright/*
-.playwright-report/
-playwright-report/
-.playwright-mcp/
-playwright-mcp/
-.cursor/*
-docs/*
-.claude/*
-.vscode/*
-.vscode/settings.json
-.vscode/settings.json
-.cursorignore
-CLAUDE.md
-devproxyrc.json
-.devproxyrc.json
-# mcp config (may contain local secrets/tokens)
-.codex/
-.devcontainer/
-.dockerignore
-.env.mcp.example
-.env.tunnel.example
-config/mcp/
-public-scan-result.md
-scripts/mcp/
-scripts/public/scan-unused-assets.ts
-mcp.json
-*/mcp.json
-.env.mcp.local
-.vscode/mcp.json
-knip.json
-tsconfig.tsbuildinfo/
+# Local environment files and secret stores
+.env
+.env.*
+!.env.example
+!.env.*.example
+/env.local
+/.npmrc
+/.yarnrc.local.yml
+/.vercel/
 
-# vscode settings (may contain MCP secrets/tokens)
-.vscode/settings.json
-knip.json
+# Certificates, private keys, infrastructure state, and local databases
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.*
+/.terraform/
+*.sqlite
+*.sqlite-*
+
+# Git-only local agent/provider state. These paths remain readable to agents
+# because they are intentionally not listed in .cursorignore.
+/.codex/config.toml
+/.codex/.env
+/.codex/auth.json
+/.codex/screenshots/
+/.agent-artifacts/
+/.worktrees/
+/.playwright-cli/
+**/.playwright-cli.json
+/supabase/.branches/
+/supabase/.temp/
+
+# Local provider credentials (templates/examples stay commit-safe)
+/src/api/lib/cloud-credentials/*.json
+!/src/api/lib/cloud-credentials/*.example.json
+/credentials.json
+/token.json
+/service-account.json
+/*.service-account.json
+/*oauth-credentials*.json
+/*tag-manager-credentials*.json
+**/application_default_credentials.json
+
+# Generated MCP client configurations may interpolate local credentials.
+# config/mcp/ remains tracked as the committed template source.
+/mcp.json
+/.vscode/mcp.json
+/.cursor/mcp.json
+/.devcontainer/
+/public-scan-result.md
+/scripts/public/scan-unused-assets.ts
+
+# Local editor and analysis output
 /knip
 /knip.json
 .prettierignore
 /prettierignore
 /prettierignore.json
-/prettierignore.json
-/tsconfig.tsbuildinfo
-tsconfig.tsbuildinfo
+/.gemini/
+/gemini-status
+/summary
+summary
+*/playwright-mcp/
 
-# production
-/build
+# Accidental local SDK and tooling trees
+/merchant-api-samples/
+/gcloud components install alpha beta skaffold minikube kubectl gke-gcloud-auth-plugin/
+/output/
+/.vc-config.json
+/types/codex-log.md
 
-# misc
+# OS and debug output
 .DS_Store
-*.pem
+.devtools/
 .hintrc
-
-
-# debug
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# Klarna local agent doc mirror (disk-only for agents; not GitHub/Vercel)
-src/components/klarna/dev/
-src/components/klarna/llms.md
-src/components/klarna/klarna-sitemap.md
-src/components/klarna/README.md
-
-# docs
-
-/copilot-instructions
-/gemini-status
-/project_info
-/summary
-summary
-# github
-.github
-/.githubnode_modules
-.next
-.env*.local
-*.env.local
-/env.local
-!/.github/
-!/.github/dependabot.yml
-.playwright-report/
-playwright-report/
-/playwright
-*/playwright-report/
-.playwright-mcp/
-playwright-mcp/
-/playwright-mcp
-*/playwright-mcp
-
-# safe agent-insight fabric sources
-!/AGENTS.md
-!/docs/
-!/docs/agent-operating-contract.md
-!/docs/agent-context-map.md
-!/docs/context-bundle/
-!/docs/context-bundle/index.md
-!/docs/context-bundle/manifest.json
-!/config/
-!/config/mcp/
-config/mcp/*
-!/config/mcp/README.md
-!/config/mcp/chatgpt-profiles.json
-!/config/mcp/servers.base.json
-!/scripts/
-!/scripts/mcp/
-scripts/mcp/*
-!/scripts/mcp/openai-tunnel.mjs
-!/scripts/mcp/apply-chatgpt-profiles.mjs
-!/scripts/mcp/doctor-chatgpt-profiles.mjs
-!/scripts/mcp/utekos-source-insight-server.mjs
-!/scripts/mcp/doctor-utekos-source-insight-server.mjs
-!/scripts/mcp/utekos-css-insight-server.mjs
-!/scripts/mcp/doctor-utekos-css-insight-server.mjs
-!/scripts/mcp/build-config.ts
-!/scripts/mcp/doctor.ts
-!/scripts/mcp/lib.ts
-!/scripts/mcp/run-server.mjs
-!/scripts/mcp/utekos-shopify-readonly-server.mjs
-!/scripts/mcp/doctor-utekos-shopify-readonly-server.mjs
-!/scripts/mcp/configure-shopify-readonly-credentials.mjs
-!/scripts/mcp/utekos-codex-bridge-server.mjs
-!/scripts/mcp/doctor-utekos-codex-bridge-server.mjs
-!/scripts/mcp/accept-chatgpt-codex-bridge.mjs
-!/scripts/mcp/doctor-google-analytics-mcp.mjs
-!/scripts/mcp/utekos-google-analytics-server.mjs
-!/scripts/mcp/doctor-utekos-google-analytics-server.mjs
-!/scripts/mcp/login-google-ads-adc.mjs
-!/.env.mcp.example
-!/.env.tunnel.example
-.agents/
-/.agents/
-/agents/
-# keep generated MCP outputs and local secrets ignored after safe unignore rules
-mcp.json
-*/mcp.json
-.vscode/mcp.json
-.cursor/mcp.json
-.env*.local
-*.env.local
-src/api/lib/cloud-credentials/
-supabase/md.md
-
-# Keep local agent/editor/documentation payloads out of GitHub/Vercel source.
-.agent/skills/
-/.agent/skills/
-.agents/
-/.agents/
-.cursor/
-/.cursor/
-.gemini/
-/.gemini/
-docs/
-/docs/
-!docs/
-!docs/analytics/
-!docs/analytics/**
-.env.docker.example
-/.env.docker.example
-.env.local.incomplete.backup
-/.env.local.incomplete.backup
-
-# accidental local SDK / tooling trees
-merchant-api-samples/
-gcloud components install alpha beta skaffold minikube kubectl gke-gcloud-auth-plugin/
-/output/
-.playwright-cli/
-.vc-config.json
-/types/codex-log.md
-
-# Local OAuth client for gtm-mcp (never commit)
-credentials.json
-
-token.json
