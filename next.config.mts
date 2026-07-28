@@ -107,7 +107,11 @@ const nextConfig: NextConfig = {
   experimental: {
     viewTransition: true,
     turbopackFileSystemCacheForDev: false,
-    turbopackFileSystemCacheForBuild: true,
+    // Disabled: restored turbopack build caches have been correlated with
+    // truncated PPR HTML shells (blank page + "Connection closed") under
+    // cacheComponents. Prefer clean prerenders until upstream is fixed.
+    // See docs/cache-components-ppr-stabilization.md and vercel/next.js#94371.
+    turbopackFileSystemCacheForBuild: false,
     webVitalsAttribution: ['CLS', 'INP', 'LCP'],
     optimizePackageImports: [
       'zod',
