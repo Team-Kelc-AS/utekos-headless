@@ -8,7 +8,8 @@ import { normalizeCart } from '@/lib/helpers/normalizers/normalizeCart'
 import type { CartActionsResult, CartCommand } from 'types/cart'
 
 export async function runCartCommand(
-  command: CartCommand
+  command: CartCommand,
+  invalidateCart: (cartId: string) => void = invalidateCartCache
 ): Promise<CartActionsResult> {
   await validateCartCommand(command)
 
@@ -19,7 +20,7 @@ export async function runCartCommand(
     await setCartIdInCookie(rawCart.id)
   }
 
-  invalidateCartCache(rawCart.id)
+  invalidateCart(rawCart.id)
 
   return {
     success: true,

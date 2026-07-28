@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { executeCartCommand } from '@/lib/actions/cart/executeCartCommand'
+import { executeCartCommandFromRoute } from '@/lib/actions/cart/executeCartCommandFromRoute'
 import { addCartLinesRequestSchema } from '@/lib/cart/addCartLinesRequestSchema'
 
 const NO_STORE_HEADERS = {
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const result = await executeCartCommand({
+  const result = await executeCartCommandFromRoute({
     type: 'add-lines',
     lines: parsed.data.lines,
     ...(parsed.data.discountCode ?

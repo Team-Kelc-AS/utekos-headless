@@ -33,30 +33,36 @@ test('decompressBody gunzips complete bodies with Content-Encoding gzip', () => 
   assert.equal(result.toString('utf8'), plaintext.toString('utf8'))
 })
 
-test('decompressBody does not throw on truncated gzip and returns raw body', () => {
+test('decompressBody recovers gzip with a truncated trailer', () => {
   const plaintext = postponedState(64)
   const compressed = gzipSync(plaintext)
-  const truncated = compressed.subarray(0, Math.max(8, compressed.length - 12))
+  const truncated = compressed.subarray(0, compressed.length - 8)
 
   assert.throws(() => gunzipSync(truncated), { code: 'Z_BUF_ERROR' })
 
   const result = decompressBody(truncated, undefined, 1024 * 1024)
-  assert.equal(Buffer.compare(result, truncated), 0)
+  assert.equal(result.toString('utf8'), plaintext.toString('utf8'))
 })
 
-test('decompressBody does not throw on truncated gzip with Content-Encoding', () => {
+test('decompressBody recovers truncated gzip despite a mismatched header', () => {
   const plaintext = postponedState(48)
   const compressed = gzipSync(plaintext)
-  const truncated = compressed.subarray(0, Math.max(8, compressed.length - 20))
+  const truncated = compressed.subarray(0, compressed.length - 8)
 
   assert.throws(() => gunzipSync(truncated), { code: 'Z_BUF_ERROR' })
 
-  const result = decompressBody(truncated, 'gzip', 1024 * 1024)
-  assert.equal(Buffer.compare(result, truncated), 0)
+  const result = decompressBody(truncated, 'deflate', 1024 * 1024)
+  assert.equal(result.toString('utf8'), plaintext.toString('utf8'))
 })
 
 test('decompressBody ignores Content-Encoding when gzip magic is absent', () => {
   const body = postponedState(20)
+  const result = decompressBody(body, 'gzip', 1024 * 1024)
+  assert.equal(Buffer.compare(result, body), 0)
+})
+
+test('decompressBody fails soft for corrupt gzip bytes', () => {
+  const body = Buffer.from([0x1f, 0x8b, 0x00, 0xff, 0x00])
   const result = decompressBody(body, 'gzip', 1024 * 1024)
   assert.equal(Buffer.compare(result, body), 0)
 })
