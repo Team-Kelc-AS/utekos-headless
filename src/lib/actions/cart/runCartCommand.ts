@@ -15,7 +15,7 @@ export async function runCartCommand(
   const existingCartId = await getCartIdFromCookie()
   const rawCart = await performCartCommand(command, existingCartId)
 
-  if (!existingCartId) {
+  if (rawCart.id !== existingCartId) {
     await setCartIdInCookie(rawCart.id)
   }
 
