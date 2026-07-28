@@ -1,0 +1,78 @@
+{
+  "commit": "9a6452c46683a5017499c115534b9b568246b1c5",
+  "capturedAt": "2026-07-28T08:50:35.395Z",
+  "entry": "src/app/produkter/[handle]/page.tsx",
+  "clientModuleCount": 203,
+  "clientBytes": 496270,
+  "boundaryModules": [
+    "src/app/produkter/[handle]/components/ProductPageController.tsx",
+    "src/components/frontpage/IntersportSection/NewProductInStoreNotice.tsx"
+  ],
+  "clientThirdPartyPackages": [
+    "@base-ui/react",
+    "@hookform/resolvers",
+    "@next/third-parties",
+    "@radix-ui/react-label",
+    "@radix-ui/react-slot",
+    "@sentry/nextjs",
+    "@shopify/hydrogen-react",
+    "@tanstack/react-query",
+    "@xstate/react",
+    "@xstate/store-react",
+    "class-variance-authority",
+    "clsx",
+    "embla-carousel-accessibility",
+    "embla-carousel-class-names",
+    "embla-carousel-react",
+    "embla-carousel-ssr",
+    "lucide-react",
+    "motion",
+    "next",
+    "node:crypto",
+    "react",
+    "react-hook-form",
+    "sonner",
+    "tailwind-merge",
+    "xstate",
+    "zod",
+    "zod-validation-error"
+  ],
+  "gateViolations": [
+    {
+      "gate": "server-action-as-queryfn",
+      "file": "src/api/lib/products/productOptions.ts",
+      "line": 8,
+      "detail": "queryFn calls the Server Action getProductAction from '@/api/lib/products/actions'"
+    },
+    {
+      "gate": "server-action-as-queryfn",
+      "file": "src/api/lib/products/productOptions.ts",
+      "line": 20,
+      "detail": "queryFn calls the Server Action getProductsAction from '@/api/lib/products/actions'"
+    },
+    {
+      "gate": "dehydrated-product-query",
+      "file": "src/app/produkter/[handle]/components/AsyncProductContent.tsx",
+      "line": 3,
+      "detail": "imports dehydrate, HydrationBoundary on the PDP graph"
+    },
+    {
+      "gate": "product-query-client",
+      "file": "src/app/produkter/[handle]/components/AsyncProductContent.tsx",
+      "line": 7,
+      "detail": "constructs a QueryClient on the PDP graph"
+    },
+    {
+      "gate": "full-product-into-client",
+      "file": "src/app/produkter/[handle]/components/ProductPageController.tsx",
+      "line": 12,
+      "detail": "client prop 'initialRelatedProducts' carries ShopifyProduct[] across the boundary"
+    },
+    {
+      "gate": "client-product-refetch",
+      "file": "src/hooks/useProductPageData.ts",
+      "line": 3,
+      "detail": "client module refetches server-owned data with useQuery"
+    }
+  ]
+}
