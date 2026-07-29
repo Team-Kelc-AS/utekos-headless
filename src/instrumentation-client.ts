@@ -35,7 +35,15 @@ Sentry.init({
   sendDefaultPii: false,
   enableLogs: true,
   tracesSampleRate: 0,
-  denyUrls: [CHROME_EXTENSION_URL_PATTERN]
+  denyUrls: [CHROME_EXTENSION_URL_PATTERN],
+  beforeSend(event) {
+    const message = event.exception?.values?.[0]?.value ?? ''
+    const stack = event.exception?.values?.[0]?.stacktrace?.frames
+      ?.map(f => f.abs_path ?? '')
+      .join('\n') ?? ''
+    if (isIgnorableClientError({ message, stack })) return null
+    return event
+  }
 })
 
 const MAX_REPORTED_ERRORS = 10
