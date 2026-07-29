@@ -29,6 +29,7 @@ const googleSansFlex = Google_Sans_Flex({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-google-sans',
+  weight: 'variable',
   preload: false,
   fallback: ['system-ui', 'sans-serif'],
   axes: ['ROND', 'GRAD', 'wdth', 'opsz', 'slnt']
