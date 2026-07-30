@@ -7,7 +7,6 @@ import { CartMutationContext } from '@/lib/context/CartMutationContext'
 import { CartIdContext } from '@/lib/context/CartIdContext'
 import { cartStore } from '@/lib/state/cartStore'
 import { useCartMutations } from '@/hooks/useCartMutations'
-import { getCartIdFromCookie } from '@/lib/actions/getCartIdFromCookie'
 import {
   useOptimisticCartUpdate,
   type OptimisticItemInput
@@ -60,7 +59,7 @@ export function useAddToCartAction({
     }
 
     try {
-      let cartId = contextCartId || (await getCartIdFromCookie())
+      let cartId = contextCartId
 
       if (cartId) {
         const itemsToUpdate: OptimisticItemInput[] = []
@@ -109,8 +108,6 @@ export function useAddToCartAction({
       if (resultCart?.id) {
         cartId = resultCart.id
         queryClient.setQueryData(['cart', resultCart.id], resultCart)
-      } else if (!cartId) {
-        cartId = await getCartIdFromCookie()
       }
 
       if (cartId && selectedVariant) {
@@ -167,7 +164,7 @@ export function useAddToCartAction({
       console.error('Feil under legg-i-kurv operasjon:', mutationError)
       toast.error('Kunne ikke legge varen(e) i handlekurven. Prøv igjen.')
 
-      const cartId = contextCartId || (await getCartIdFromCookie())
+      const cartId = contextCartId
       if (cartId) {
         queryClient.invalidateQueries({ queryKey: ['cart', cartId] })
       }
