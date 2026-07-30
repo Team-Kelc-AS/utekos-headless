@@ -1237,6 +1237,21 @@
       ],
       "autoApprove": []
     },
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=hkoawfbomhnzupcsdggb&read_only=true&features=branching%2Cdatabase%2Cdebugging%2Cdocs",
+      "tools": [
+        "execute_sql",
+        "get_advisors",
+        "get_logs",
+        "list_branches",
+        "list_extensions",
+        "list_migrations",
+        "list_tables",
+        "search_docs"
+      ],
+      "autoApprove": []
+    },
     "shadcn": {
       "command": "npx",
       "args": [
