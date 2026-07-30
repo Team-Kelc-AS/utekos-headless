@@ -1,9 +1,9 @@
 {
-  "commit": "cb44ec3dae284d73947bf2c569666addbc3dc2cc",
-  "capturedAt": "2026-07-30T21:06:29.771Z",
+  "commit": "c18cd86e3b38ec6c9c46a9219c4ac716c6c6de81",
+  "capturedAt": "2026-07-30T21:23:52.909Z",
   "entry": "src/app/produkter/[handle]/page.tsx",
   "clientModuleCount": 206,
-  "clientBytes": 499221,
+  "clientBytes": 499173,
   "boundaryModules": [
     "src/app/produkter/[handle]/components/ProductPageController.tsx",
     "src/components/frontpage/IntersportSection/NewProductInStoreNotice.tsx"
@@ -39,15 +39,21 @@
   ],
   "gateViolations": [
     {
+      "gate": "product-query-client",
+      "file": "src/api/lib/makeQueryClient.ts",
+      "line": 1,
+      "detail": "constructs a QueryClient on the PDP graph"
+    },
+    {
       "gate": "server-action-as-queryfn",
       "file": "src/api/lib/products/productOptions.ts",
-      "line": 8,
+      "line": 11,
       "detail": "queryFn calls the Server Action getProductAction from '@/api/lib/products/actions'"
     },
     {
       "gate": "server-action-as-queryfn",
       "file": "src/api/lib/products/productOptions.ts",
-      "line": 20,
+      "line": 23,
       "detail": "queryFn calls the Server Action getProductsAction from '@/api/lib/products/actions'"
     },
     {
@@ -55,12 +61,6 @@
       "file": "src/app/produkter/[handle]/components/AsyncProductContent.tsx",
       "line": 3,
       "detail": "imports dehydrate, HydrationBoundary on the PDP graph"
-    },
-    {
-      "gate": "product-query-client",
-      "file": "src/app/produkter/[handle]/components/AsyncProductContent.tsx",
-      "line": 7,
-      "detail": "constructs a QueryClient on the PDP graph"
     },
     {
       "gate": "full-product-into-client",

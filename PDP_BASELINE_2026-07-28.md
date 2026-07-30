@@ -14,12 +14,15 @@ saken.
 > samples før KRI-11.
 
 > Statisk guardrail revidert 2026-07-30:
-> `scripts/pdp/baseline.json` er re-seedet fra produksjonscommit
-> `cb44ec3` etter PR #88. Tre nye cart-sikkerhetsmoduler gir +2,9
-> KiB i klientgrafen, mens boundary entry points,
-> tredjepartspakker og alle seks kjente PDP-brudd er uendret. De
-> historiske browsermålingene og ytelsesbudsjettene under er ikke
-> endret.
+> `scripts/pdp/baseline.json` ble først re-seedet fra
+> produksjonscommit `cb44ec3` etter PR #88. Tre nye
+> cart-sikkerhetsmoduler gir omtrent +2,8 KiB netto i
+> klientgrafen. KRI-19-kandidaten `c18cd86e3` flytter det
+> eksisterende `product-query-client`-bruddet til den delte
+> `makeQueryClient`-helperen og reduserer klientkildene med 48
+> bytes. Boundary entry points, tredjepartspakker og antallet
+> seks kjente PDP-brudd er uendret. De historiske
+> browsermålingene og ytelsesbudsjettene under er ikke endret.
 
 ## Miljø
 
