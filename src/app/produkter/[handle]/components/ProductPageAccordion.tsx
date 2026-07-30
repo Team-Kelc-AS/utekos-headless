@@ -1,21 +1,15 @@
 // Path: src/app/produkter/[handle]/ProductPageView/components/ProductPageAccordion.tsx
-'use client'
-
 import { Activity, Info, Layers3, Ruler, TableProperties, WashingMachine, Waypoints } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
-import { Accordion } from '@/components/ui/accordion'
 import type { AccordionSectionData, ProductPageAccordionProps } from '@types'
 import type {
   ProductAccordionSection,
   ProductAccordionSectionId
 } from '@/db/data/products/product-page-content'
 import { ProductDetailsAccordionSection } from './ProductDetailsAccordionSection'
-import { reportCanonicalInteractWithAccordion } from '@/lib/analytics/interactWithAccordionReporter'
-import { mapShopifyViewItem } from '@/lib/analytics/shopifyViewItemCommerce'
-import { useRef, useState } from 'react'
-import { getNewlyOpenedAccordionIds } from '@/lib/analytics/getNewlyOpenedAccordionIds'
+import { ProductAccordionInteractionReporter } from './ProductAccordionInteractionReporter'
 
 const sectionIcons = {
   materialer: Layers3,
@@ -41,20 +35,24 @@ export function ProductPageAccordion({
   sections,
   selectedVariant
 }: ProductPageAccordionProps) {
-  const [openSectionIds, setOpenSectionIds] = useState<string[]>([])
-  const interactionSequence = useRef(0)
-
   if (!sections || sections.length === 0) {
     return null
   }
 
   const sectionData = sections.map(mapAccordionSection)
+  const containerId = `product-details-${product.handle}`
 
   return (
     <article
+      id={containerId}
       className='relative overflow-hidden rounded-[1.75rem] py-6'
       aria-labelledby='product-details-heading'
     >
+      <ProductAccordionInteractionReporter
+        containerId={containerId}
+        product={product}
+        selectedVariant={selectedVariant}
+      />
       <div className='mx-auto text-left'>
         <AnimatedBlock className='will-animate-fade-in-scale mb-6' delay='0s' threshold={0.3}>
           <BrandBadge tone='neutral' className='gap-2 text-left'>
@@ -65,41 +63,11 @@ export function ProductPageAccordion({
           </BrandBadge>
         </AnimatedBlock>
 
-        <Accordion
-          className='w-full'
-          value={openSectionIds}
-          onValueChange={nextOpenSectionIds => {
-            const newlyOpenedIds = getNewlyOpenedAccordionIds(
-              openSectionIds,
-              nextOpenSectionIds
-            )
-
-            setOpenSectionIds(nextOpenSectionIds)
-
-            for (const accordionId of newlyOpenedIds) {
-              const openedSection = sectionData.find(
-                section => section.id === accordionId
-              )
-              if (!openedSection) continue
-
-              interactionSequence.current += 1
-              reportCanonicalInteractWithAccordion({
-                ...mapShopifyViewItem({
-                  product,
-                  variant: selectedVariant
-                }),
-                accordion_id: openedSection.id,
-                accordion_title: openedSection.title,
-                interaction_sequence: interactionSequence.current,
-                interaction_type: 'open'
-              })
-            }
-          }}
-        >
+        <div className='flex w-full flex-col'>
           {sectionData.map(section => (
             <ProductDetailsAccordionSection key={section.id} sectionData={section} />
           ))}
-        </Accordion>
+        </div>
       </div>
     </article>
   )

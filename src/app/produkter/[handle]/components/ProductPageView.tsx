@@ -1,9 +1,5 @@
-'use client'
-import { Activity, useState } from 'react'
 import { ProductPageAccordion } from '@/app/produkter/[handle]/components/ProductPageAccordion'
-import { renderOptionComponent } from '@/app/produkter/[handle]/utils/renderOptionComponent'
 import { RelatedProducts } from '@/app/produkter/[handle]/components/RelatedProducts'
-import { AddToCart } from '@/components/cart/AddToCart'
 import { GalleryColumn } from '@/components/jsx/GalleryColumn'
 import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/KlarnaCreditPromotionAutoSize'
@@ -13,63 +9,47 @@ import { ProductPageGrid } from '@/components/jsx/ProductPageGrid'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
 import { productMetadata } from '@/db/config/product-metadata.config'
 import { getProductPageContent } from '@/db/data/products/product-page-content'
-import { getSortedOptions } from '@/lib/helpers/async/getSortedOptions'
-import dynamic from 'next/dynamic'
 import ProductHeader from './ProductHeader'
 import ProductGalleryCard from './ProductGalleryCard'
 import PriceActivityPanel from './PriceActivityPanel'
 import { ProductDescription } from './ProductDescription'
 import { KlarnaDesktopPromo } from './KlarnaDesktopPromo'
-import { TrustSignals } from './TrustSignals'
 import { resolveProductGalleryImages } from '../utils/resolveProductGalleryImages'
 import { STOCK_THRESHOLD } from '../utils/resolveProductGalleryImages'
-import type { ProductPageViewProps } from 'types/product/PageProps'
-import type { ShopifyProduct } from 'types/product'
+import type {
+  ProductCardModel,
+  ProductPurchaseModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import type { Image } from 'types/media'
 import { DesktopBreadcrump } from './DesktopBreadcrump'
 import { PRODUCT_GALLERY_IMAGE_OVERRIDES } from '../utils/gallery-images/productGalleryImageOverrides'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { ProductGalleryGrid } from './ProductGalleryGrid'
 import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
+import { SmartRealTimeActivity } from './SmartRealTimeActivity'
+import { ProductGalleryClient } from './ProductGalleryClient'
+import { ProductPurchaseIsland } from './ProductPurchaseIsland'
+import { ProductViewItemReporter } from './ProductViewItemReporter'
+import { computeVariantImages } from '@/lib/utils/computeVariantImages'
+import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 
-const SmartRealTimeActivity = dynamic(
-  () =>
-    import('@/app/produkter/[handle]/components/SmartRealTimeActivity').then(
-      mod => mod.SmartRealTimeActivity
-    ),
-  { ssr: false, loading: () => <div className='h-6' /> }
-)
-
-const ProductGallery = dynamic(
-  () =>
-    import('@/components/jsx/ProductGallery').then(
-      mod => mod.ProductGallery
-    ),
-  {
-    loading: () => (
-      <div className='relative aspect-9/16 w-full overflow-hidden rounded-none' />
-    ),
-    ssr: false
-  }
-)
+type ProductPageViewProps = {
+  productData: ProductPurchaseModel
+  selectedVariant: ProductPurchaseVariant
+  relatedProducts: ProductCardModel[]
+  productOptions: UtekosProductOptions
+  hasVariantSelectionError: boolean
+}
 
 export function ProductPageView({
   productData,
   selectedVariant,
-  allVariants,
-  variantImages,
-  onOptionChange,
   relatedProducts,
-  colorHexMap,
   productOptions,
-  isVariantNavigationPending,
   hasVariantSelectionError
 }: ProductPageViewProps) {
-  const [additionalLine] = useState<
-    { variantId: string; quantity: number } | undefined
-  >(undefined)
-
-  const { title, options } = productData
+  const { title } = productData
   const selectedVariantProfile =
     selectedVariant.variantProfileData
   const productSubtitle =
@@ -78,12 +58,6 @@ export function ProductPageView({
     : undefined
   const productPageContent = getProductPageContent(
     productData.handle
-  )
-
-  const optionOrderPreference = ['Størrelse', 'Farge']
-  const sortedProductOptions = getSortedOptions(
-    options,
-    optionOrderPreference
   )
 
   const currentProductMetadata =
@@ -104,6 +78,10 @@ export function ProductPageView({
 
   const overrideImages =
     PRODUCT_GALLERY_IMAGE_OVERRIDES[productData.handle]
+  const variantImages = computeVariantImages(
+    productData,
+    selectedVariant
+  )
   const fallbackGalleryImages = variantImages.map(
     (image: Image) => ({
       id: image.id,
@@ -152,6 +130,10 @@ export function ProductPageView({
 
   return (
     <article className='dark:bg-dark-background ! relative isolate overflow-x-clip bg-background py-0 text-foreground! md:py-6'>
+      <ProductViewItemReporter
+        product={productData}
+        variant={selectedVariant}
+      />
       {productData.handle === 'utekos-dun' ?
         <SoldOutWaitlistDialog />
       : null}
@@ -186,13 +168,13 @@ export function ProductPageView({
                             />
                           </div>
                           <div className='size-full md:hidden'>
-                            <ProductGallery
+                            <ProductGalleryClient
                               title={title}
                               images={galleryImages}
                             />
                           </div>
                         </>
-                      : <ProductGallery
+                      : <ProductGalleryClient
                           title={title}
                           images={galleryImages}
                           {...(useCompactGallery ?
@@ -266,69 +248,17 @@ export function ProductPageView({
               </div>
             </AnimatedBlock>
 
-            <AnimatedBlock
-              className='will-animate-fade-in-right'
-              delay='0.16s'
-            >
-              <article
-                aria-labelledby='product-options'
-                aria-busy={isVariantNavigationPending}
-              >
-                <h2 id='product-options' className='sr-only'>
-                  Produktvalg
-                </h2>
-                <div className='mt-5 flex flex-col gap-8'>
-                  {sortedProductOptions.map(
-                    (
-                      productOption: ShopifyProduct['options'][number]
-                    ) =>
-                      renderOptionComponent({
-                        option: productOption,
-                        allVariants,
-                        selectedVariant,
-                        onOptionChange,
-                        colorHexMap,
-                        productHandle: productData.handle,
-                        productOptions,
-                        isVariantNavigationPending,
-                        hasVariantSelectionError
-                      })
-                  )}
-                </div>
-                <div
-                  className='mt-3 min-h-5 text-sm text-foreground/72'
-                  role={
-                    hasVariantSelectionError ? 'alert' : 'status'
-                  }
-                  aria-live='polite'
-                >
-                  {hasVariantSelectionError ?
-                    'Variantvalg er midlertidig utilgjengelig. Oppdater siden for å prøve igjen.'
-                  : isVariantNavigationPending ?
-                    'Oppdaterer variant…'
-                  : null}
-                </div>
-                <TrustSignals />
-                <div className='mt-8 flex flex-col gap-4'>
-                  <Activity>
-                    <AddToCart
-                      product={productData}
-                      selectedVariant={selectedVariant}
-                      isSelectionPending={
-                        isVariantNavigationPending ||
-                        hasVariantSelectionError
-                      }
-                      {...(additionalLine && { additionalLine })}
-                    />
-                  </Activity>
-                </div>
-
-                <ProductDescription
-                  description={productPageContent?.description}
-                />
-                <KlarnaDesktopPromo />
-              </article>
-            </AnimatedBlock>
+            <ProductPurchaseIsland
+              product={productData}
+              productOptions={productOptions}
+              hasVariantSelectionError={
+                hasVariantSelectionError
+              }
+            />
+            <ProductDescription
+              description={productPageContent?.description}
+            />
+            <KlarnaDesktopPromo />
           </OptionsColumn>
         </ProductPageGrid>
 

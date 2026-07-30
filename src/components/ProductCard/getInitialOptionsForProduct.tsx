@@ -1,14 +1,14 @@
 // Path: src/components/ProductCard/getInitialOptionsForProduct.tsx
 
 import { getInitialAvailableOptions } from './getInitialAvailableOptions'
-import type { ShopifyProduct } from 'types/product'
+import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 import { FORCED_COLORS } from '@/constants/forced-colors'
 
 interface ProductContext {
   usedColors?: Set<string>
 }
 export function getInitialOptionsForProduct(
-  product: ShopifyProduct,
+  product: ProductCardModel,
   context?: ProductContext
 ): Record<string, string> {
   const variants = product.variants?.edges

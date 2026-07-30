@@ -12,12 +12,14 @@ import { reportCanonicalBeginCheckout } from '@/lib/analytics/beginCheckoutRepor
 import { CartIdContext } from '@/lib/context/CartIdContext'
 import { useCartMutations } from '@/hooks/useCartMutations'
 import { cn } from '@/lib/utils/className'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 type KlarnaProductExpressCheckoutProps = {
-  product: ShopifyProduct
-  selectedVariant: ShopifyProductVariant | null
+  product: ProductCartModel
+  selectedVariant: ProductPurchaseVariant | null
   quantity?: number
   disabled?: boolean
   className?: string

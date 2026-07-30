@@ -9,15 +9,17 @@ import {
 } from './addToCartEvent'
 import { startAddToCartCollectorTransport } from './addToCartCollectorTransport'
 import { mapShopifyAddToCart } from './shopifyAddToCartCommerce'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type ReportCanonicalAddToCartInput = {
   cartId: string
   cartUpdatedAt?: string
-  product: ShopifyProduct
+  product: ProductCommerceModel
   quantity: number
-  variant: ShopifyProductVariant
+  variant: ProductPurchaseVariant
 }
 
 export function reportCanonicalAddToCart(

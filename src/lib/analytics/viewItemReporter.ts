@@ -24,8 +24,10 @@ import type {
   ConsentSnapshot,
   TrackingEnvironment
 } from './pageViewEvent'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 type ViewItemDeviceInfo = {
   language?: string
@@ -66,8 +68,8 @@ type ViewItemReporterDependencies = {
   pageViewSession: PageViewSessionPort
   readClientContext: () => ViewItemClientContext
   mapCommerce(input: {
-    product: ShopifyProduct
-    variant: ShopifyProductVariant
+    product: ProductCommerceModel
+    variant: ProductPurchaseVariant
   }): CanonicalViewItemCommerce
   createEvent: typeof createCanonicalViewItem
   createEventId: () => string
@@ -77,8 +79,8 @@ type ViewItemReporterDependencies = {
 }
 
 export type ReportCanonicalViewItemInput = {
-  product: ShopifyProduct
-  variant: ShopifyProductVariant
+  product: ProductCommerceModel
+  variant: ProductPurchaseVariant
   onEmitted?: () => void
 }
 

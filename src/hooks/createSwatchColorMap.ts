@@ -1,14 +1,19 @@
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
+import type { ProductPurchaseModel } from 'types/product/ProductPurchaseModel'
+import type { ShopifyProduct } from 'types/product'
 
 export function createSwatchColorMap(
-  product: ShopifyProduct | undefined
+  product: ProductPurchaseModel | ShopifyProduct | undefined
 ): Map<string, string> {
   const map = new Map<string, string>()
 
-  if (!product?.variants?.edges) return map
+  if (!product?.variants) return map
 
-  for (const edge of product.variants.edges) {
-    const variant = edge.node
+  const variants =
+    Array.isArray(product.variants) ? product.variants : (
+      product.variants.edges.map(edge => edge.node)
+    )
+
+  for (const variant of variants) {
     const colorOption = variant.selectedOptions.find(
       option => option.name.toLowerCase() === 'farge'
     )

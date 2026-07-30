@@ -53,7 +53,7 @@ export function SizeSelector({
           )
 
           const variantProfileRef =
-            representativeVariant?.variantProfile?.reference
+            representativeVariant?.variantProfileData
           const lengthJson = variantProfileRef?.length?.value
           const centerToWristJson =
             variantProfileRef?.centerToWrist?.value

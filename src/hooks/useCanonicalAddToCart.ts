@@ -9,12 +9,14 @@ import { getCartIdFromCookie } from '@/lib/actions/getCartIdFromCookie'
 import { useCartMutations } from '@/hooks/useCartMutations'
 import { addProductLineAndReportAddToCart } from '@/lib/analytics/addProductLineAndReportAddToCart'
 import { reportCanonicalAddToCart } from '@/lib/analytics/addToCartReporter'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type CanonicalAddToCartParams = {
-  product: ShopifyProduct
-  variant: ShopifyProductVariant
+  product: ProductCartModel
+  variant: ProductPurchaseVariant
   quantity: number
   openCart: boolean
 }

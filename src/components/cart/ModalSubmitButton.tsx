@@ -3,13 +3,15 @@
 import { SoldOutButton } from './SoldOutButton'
 import { QuickCheckoutButton } from './QuickCheckoutButton'
 import { KlarnaProductExpressCheckout } from '@/components/klarna/components/KlarnaProductExpressCheckout'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import type { CheckoutPresentation } from 'types/cart'
 
 interface ModalSubmitButtonProps {
-  product: ShopifyProduct
-  selectedVariant: ShopifyProductVariant | null
+  product: ProductCartModel
+  selectedVariant: ProductPurchaseVariant | null
   quantity: number
   availableForSale: boolean
   isCheckoutPending: boolean

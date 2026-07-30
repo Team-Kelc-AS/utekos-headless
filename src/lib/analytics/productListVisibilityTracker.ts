@@ -2,8 +2,10 @@ import type { CanonicalCommerceItem } from './canonicalCommerceItem'
 import { browserPageViewSession } from './pageViewSession'
 import { reportCanonicalViewItemList } from './viewItemListReporter'
 import { mapShopifyViewItem } from './shopifyViewItemCommerce'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export const PRODUCT_LIST_VISIBILITY_RATIO = 0.5
 export const PRODUCT_LIST_VISIBILITY_DURATION_MS = 1_000
@@ -14,9 +16,9 @@ export type ProductListVisibilityRegistration = {
   element: Element
   itemListId: string
   itemListName: string
-  product: ShopifyProduct
+  product: ProductCommerceModel
   totalItemCount: number
-  variant: ShopifyProductVariant
+  variant: ProductPurchaseVariant
 }
 
 type QualifiedProduct = Omit<

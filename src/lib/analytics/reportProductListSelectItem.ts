@@ -1,14 +1,16 @@
 'use client'
 
 import { reportCanonicalSelectItem } from './selectItemReporter'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type ReportProductListSelectItemInput = {
   destinationUrl: string
   itemListId: string
-  product: ShopifyProduct
-  variant: ShopifyProductVariant | null | undefined
+  product: ProductCommerceModel
+  variant: ProductPurchaseVariant | null | undefined
 }
 
 export function reportProductListSelectItem(

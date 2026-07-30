@@ -1,7 +1,9 @@
 // Path: src/lib/analytics/shopifyViewItemCommerce.ts
 
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import type { Money } from 'types/commerce/Money'
 
 export type ShopifyPriceContext = {
@@ -63,8 +65,8 @@ export type CanonicalViewItemCommerce = {
 }
 
 export type MapShopifyViewItemInput = {
-  product: ShopifyProduct
-  variant: ShopifyProductVariant
+  product: ProductCommerceModel
+  variant: ProductPurchaseVariant
   quantity?: number
   priceContext?: ShopifyPriceContext
 }
@@ -248,7 +250,7 @@ function calculatePriceBreakdown(
   return { net, gross, tax: roundMoney(gross - net) }
 }
 
-function getCategories(product: ShopifyProduct): string[] {
+function getCategories(product: ProductCommerceModel): string[] {
   const candidates = [
     product.productType,
     ...product.collections.nodes.map(

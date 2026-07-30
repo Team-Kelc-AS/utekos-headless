@@ -2,10 +2,11 @@
 
 import type { MetaobjectReference } from './MetaobjectReference'
 import type { ShopifyProduct } from './ShopifyProduct'
+import type { ProductCardModel } from './ProductPurchaseModel'
 import type { ShopifyProductVariant } from './ShopifyProductVariant'
 
 export type RelatedProductsProps = {
-  products: ShopifyProduct[]
+  products: ProductCardModel[]
 }
 
 export type WeightUnit = {

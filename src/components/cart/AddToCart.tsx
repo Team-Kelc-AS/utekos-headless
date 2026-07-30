@@ -9,14 +9,14 @@ import type {
   AddToCartProps
 } from 'types/cart'
 import type {
-  ShopifyProduct,
-  ShopifyProductVariant
-} from 'types/product'
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 interface ExtendedAddToCartProps extends AddToCartProps {
   additionalProductData?: {
-    product: ShopifyProduct
-    variant: ShopifyProductVariant
+    product: ProductCartModel
+    variant: ProductPurchaseVariant
   }
 }
 

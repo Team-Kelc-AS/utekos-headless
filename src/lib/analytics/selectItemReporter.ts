@@ -11,16 +11,18 @@ import {
   type CanonicalSelectItem
 } from './selectItemEvent'
 import { startSelectItemCollectorTransport } from './selectItemCollectorTransport'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type ReportCanonicalSelectItemInput = {
   destinationUrl?: string
   itemListId: string
   pageViewId?: string
-  product: ShopifyProduct
+  product: ProductCommerceModel
   quantity?: number
-  variant: ShopifyProductVariant
+  variant: ProductPurchaseVariant
 }
 
 export function reportCanonicalSelectItem(

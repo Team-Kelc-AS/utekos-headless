@@ -1,8 +1,4 @@
 // Path: src/app/produkter/[handle]/ProductPageView/components/ProductDescription.tsx
-'use client'
-
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import type {
   ProductDescriptionBlock,
   ProductDescriptionContent
@@ -51,9 +47,6 @@ function ProductDescriptionBlockView({
 export function ProductDescription({
   description
 }: ProductDescriptionProps) {
-  const [isDescriptionExpanded, setIsDescriptionExpanded] =
-    useState(false)
-
   if (!description) {
     return null
   }
@@ -61,10 +54,13 @@ export function ProductDescription({
   const collapsedBlockCount = 1
   const canExpand =
     description.blocks.length > collapsedBlockCount
-  const visibleBlocks =
-    canExpand && !isDescriptionExpanded ?
-      description.blocks.slice(0, collapsedBlockCount)
-    : description.blocks
+  const initialBlocks = description.blocks.slice(
+    0,
+    collapsedBlockCount
+  )
+  const additionalBlocks = description.blocks.slice(
+    collapsedBlockCount
+  )
 
   return (
     <article
@@ -89,8 +85,8 @@ export function ProductDescription({
           )}
         </div>
 
-        <div className='space-y-6' aria-live='polite'>
-          {visibleBlocks.map((block, index) => (
+        <div className='space-y-6'>
+          {initialBlocks.map((block, index) => (
             <ProductDescriptionBlockView
               key={`${block.title ?? 'block'}-${index}`}
               block={block}
@@ -99,22 +95,24 @@ export function ProductDescription({
         </div>
       </div>
 
-      {canExpand && (
-        <div className='mt-5'>
-          <Button
-            type='button'
-            variant='link'
-            aria-expanded={isDescriptionExpanded}
-            aria-controls='product-description-content'
-            onClick={() =>
-              setIsDescriptionExpanded(prev => !prev)
-            }
-            className='min-h-11 cursor-pointer p-0 font-utekos-text-medium text-base tracking-normal text-card-foreground underline-offset-4 hover:text-card-foreground hover:underline'
-          >
-            {isDescriptionExpanded ? 'Vis mindre' : 'Les mer'}
-          </Button>
-        </div>
-      )}
+      {canExpand ?
+        <details className='group mt-5'>
+          <summary className='flex min-h-11 cursor-pointer list-none items-center font-utekos-text-medium text-base tracking-normal text-card-foreground underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring [&::-webkit-details-marker]:hidden'>
+            <span className='group-open:hidden'>Les mer</span>
+            <span className='hidden group-open:inline'>
+              Vis mindre
+            </span>
+          </summary>
+          <div className='mt-6 max-w-prose space-y-6'>
+            {additionalBlocks.map((block, index) => (
+              <ProductDescriptionBlockView
+                key={`${block.title ?? 'block'}-${index + collapsedBlockCount}`}
+                block={block}
+              />
+            ))}
+          </div>
+        </details>
+      : null}
     </article>
   )
 }

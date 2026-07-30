@@ -1,18 +1,16 @@
 // src/app/produkter/[handle]/components/AsyncProductContent.tsx
 
-import {
-  dehydrate,
-  HydrationBoundary
-} from '@tanstack/react-query'
 import { notFound } from 'next/navigation'
-import { getQueryClient } from '@/api/lib/getQueryClient'
-import { productOptions } from '@/api/lib/products/productOptions'
-import { ProductPageController } from './ProductPageController'
+import { ProductPageView } from './ProductPageView'
 import { getCachedProductPageData } from '../utils/getCachedProductPageData'
 import { reshapeProductWithMetafields } from '@/hooks/useProductWithMetafields'
 import { resolveInitialVariant } from '../utils/resolveInitialVariant'
 import { getProductWithoutSmallSize } from '@/components/products/getProductWithoutSmallSize'
 import { fetchProductOptions } from '@/api/lib/products/fetchProductOptions'
+import {
+  buildProductCardModel,
+  buildProductPurchaseModel
+} from '@/lib/shopify/buildProductPurchaseModel'
 import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 import type { SearchParamsPromise } from '../types'
 
@@ -76,19 +74,22 @@ export async function AsyncProductContent({
     notFound()
   }
 
-  const queryClient = getQueryClient()
-  const productQueryOptions = productOptions(handle)
+  const purchaseModel = buildProductPurchaseModel(displayProduct)
+  const selectedPurchaseVariant = purchaseModel.variants.find(
+    variant => variant.id === initialVariant?.id
+  )
 
-  queryClient.setQueryData(productQueryOptions.queryKey, product)
+  if (!selectedPurchaseVariant) {
+    notFound()
+  }
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProductPageController
-        handle={handle}
-        initialRelatedProducts={relatedProducts}
-        productOptions={mappedProductOptions}
-        hasVariantSelectionError={hasVariantSelectionError}
-      />
-    </HydrationBoundary>
+    <ProductPageView
+      productData={purchaseModel}
+      selectedVariant={selectedPurchaseVariant}
+      relatedProducts={relatedProducts.map(buildProductCardModel)}
+      productOptions={mappedProductOptions}
+      hasVariantSelectionError={hasVariantSelectionError}
+    />
   )
 }
