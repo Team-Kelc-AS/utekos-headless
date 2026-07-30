@@ -1,5 +1,5 @@
 // Path: src/lib/redis.ts
-import { createClient } from 'redis'
+import { createClient, type RedisClientType } from 'redis'
 import { logRedisClientError } from '@/lib/redis/logRedisClientError'
 import {
   REDIS_COMMAND_TIMEOUT_MS,
@@ -7,7 +7,13 @@ import {
 } from '@/lib/redis/redisConnectionConfig'
 import { shouldStopRedisReconnect } from '@/lib/redis/shouldStopRedisReconnect'
 
-type UtekosRedisClient = ReturnType<typeof createClient>
+type EmptyRedisExtension = Record<never, never>
+type UtekosRedisClient = RedisClientType<
+  EmptyRedisExtension,
+  EmptyRedisExtension,
+  EmptyRedisExtension,
+  2
+>
 
 let _client: UtekosRedisClient | null = null
 let _connectPromise: Promise<UtekosRedisClient> | null = null
@@ -24,6 +30,7 @@ export async function getRedis(): Promise<UtekosRedisClient> {
 
     const client = createClient({
       url,
+      RESP: 2,
       commandOptions: {
         timeout: REDIS_COMMAND_TIMEOUT_MS
       },
