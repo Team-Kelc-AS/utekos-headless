@@ -29,8 +29,4 @@ export type Color2ScaleStep = z.infer<
 export type Color2ScaleFamily = z.infer<
   typeof color2ScaleFamilySchema
 >
-export type Color2ScalesFile = z.infer<
-  typeof color2ScalesFileSchema
->
-
 export const color2Scales = color2ScalesFileSchema.parse(raw)

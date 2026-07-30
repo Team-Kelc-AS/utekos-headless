@@ -16,7 +16,7 @@ allowedDeprecatedVersions:
   tsconfck: 3.1.6
 
 patchedDependencies:
-  next@16.2.9: patches/next@16.2.9.patch
+  next@16.2.12: patches/next@16.2.12.patch
 
 peerDependencyRules:
   allowedVersions:

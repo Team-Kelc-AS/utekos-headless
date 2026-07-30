@@ -1,7 +1,5 @@
 export const KLARNA_FEED_HOST = 'feed.utekos.no'
 
-export const KLARNA_FEED_PUBLIC_URL = `https://${KLARNA_FEED_HOST}`
-
 export function isKlarnaFeedHost(hostname: string): boolean {
   const normalizedHost = hostname.trim().toLowerCase().replace(/\.$/, '')
 

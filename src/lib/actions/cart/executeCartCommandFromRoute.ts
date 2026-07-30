@@ -2,6 +2,7 @@ import { invalidateCartCacheFromRoute } from '@/lib/actions/cart/invalidateCartC
 import { runCartCommand } from '@/lib/actions/cart/runCartCommand'
 import { mapThrownErrorToActionResult } from '@/lib/errors/mapThrownErrorToActionResult'
 import type { CartActionsResult, CartCommand } from 'types/cart'
+import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
 
 export async function executeCartCommandFromRoute(
   command: CartCommand
@@ -12,7 +13,10 @@ export async function executeCartCommandFromRoute(
       invalidateCartCacheFromRoute
     )
   } catch (error) {
-    console.error(`Cart route command ${command.type} failed.`, error)
+    console.error(
+      `Cart route command ${command.type} failed.`,
+      getRedactedErrorSummary(error)
+    )
     return mapThrownErrorToActionResult(error)
   }
 }

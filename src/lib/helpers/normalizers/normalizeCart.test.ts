@@ -39,13 +39,11 @@ function createStorefrontProduct(): StorefrontProduct {
 
 test('normalizes Storefront cart data without replacing Utekos cart models', () => {
   const storefrontCart: StorefrontCart = {
-    id: 'gid://shopify/Cart/1',
-    checkoutUrl: 'https://example.myshopify.com/checkouts/1',
+    id: 'gid://shopify/Cart/opaque?key=server-secret',
+    checkoutUrl:
+      'https://example.myshopify.com/checkouts/1?key=checkout-key',
     totalQuantity: 1,
-    cost: {
-      totalAmount: money,
-      subtotalAmount: money
-    },
+    cost: { totalAmount: money, subtotalAmount: money },
     lines: {
       edges: [
         {
@@ -57,7 +55,9 @@ test('normalizes Storefront cart data without replacing Utekos cart models', () 
               id: 'gid://shopify/ProductVariant/1',
               title: 'Medium',
               availableForSale: true,
-              selectedOptions: [{ name: 'Størrelse', value: 'Medium' }],
+              selectedOptions: [
+                { name: 'Størrelse', value: 'Medium' }
+              ],
               price: money,
               compareAtPrice: null,
               image: null,
@@ -72,6 +72,14 @@ test('normalizes Storefront cart data without replacing Utekos cart models', () 
   const cart = normalizeCart(storefrontCart)
 
   assert.equal(cart.cost.totalAmount.currencyCode, 'NOK')
-  assert.equal(cart.lines[0]?.merchandise.product.featuredImage.url, '/placeholder-image.png')
-  assert.equal(cart.lines[0]?.merchandise.product.relatedProducts.length, 0)
+  assert.equal(cart.id, 'gid://shopify/Cart/opaque')
+  assert.equal(cart.checkoutUrl, '/api/cart/checkout')
+  assert.equal(
+    cart.lines[0]?.merchandise.product.featuredImage.url,
+    '/placeholder-image.png'
+  )
+  assert.equal(
+    cart.lines[0]?.merchandise.product.relatedProducts.length,
+    0
+  )
 })

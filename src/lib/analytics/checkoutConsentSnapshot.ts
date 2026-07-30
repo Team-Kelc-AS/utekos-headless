@@ -1,7 +1,8 @@
-import { performCartAttributesUpdateMutation } from '@/lib/actions/perform/performCartAttributesUpdateMutation'
+import { updateCartAttributesAction } from '@/lib/actions/updateCartAttributesAction'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 
-const CHECKOUT_CONSENT_SESSION_PREFIX = 'utekos:checkout_consent:'
+const CHECKOUT_CONSENT_SESSION_PREFIX =
+  'utekos:checkout_consent:'
 const CART_CONSENT_ATTRIBUTE_KEY = 'utekos_consent'
 const DEFAULT_CONSENT_VERSION = '1'
 
@@ -26,11 +27,17 @@ function sessionStorageKey(cartId: string) {
   return `${CHECKOUT_CONSENT_SESSION_PREFIX}${cartId}`
 }
 
-function parseConsentValue(value: unknown): ConsentValue | undefined {
-  return value === 'granted' || value === 'denied' ? value : undefined
+function parseConsentValue(
+  value: unknown
+): ConsentValue | undefined {
+  return value === 'granted' || value === 'denied' ?
+      value
+    : undefined
 }
 
-function parseConsentPayload(raw: unknown): ConsentSnapshot | undefined {
+function parseConsentPayload(
+  raw: unknown
+): ConsentSnapshot | undefined {
   if (typeof raw !== 'object' || raw === null) return undefined
 
   const payload = raw as ParsedConsentPayload
@@ -41,7 +48,10 @@ function parseConsentPayload(raw: unknown): ConsentSnapshot | undefined {
   if (!analytics || !marketing || !preferences) return undefined
 
   const version =
-    typeof payload.version === 'string' && payload.version.length > 0 ?
+    (
+      typeof payload.version === 'string' &&
+      payload.version.length > 0
+    ) ?
       payload.version
     : DEFAULT_CONSENT_VERSION
 
@@ -60,7 +70,9 @@ export function readCheckoutConsentSnapshot(
   if (typeof window === 'undefined') return null
 
   try {
-    const raw = window.sessionStorage.getItem(sessionStorageKey(cartId))
+    const raw = window.sessionStorage.getItem(
+      sessionStorageKey(cartId)
+    )
     if (!raw) return null
 
     return parseConsentPayload(JSON.parse(raw)) ?? null
@@ -86,7 +98,10 @@ export function persistCheckoutConsentSnapshot(
     return
   }
 
-  void persistCheckoutConsentCartAttribute(cartId, serializedConsent)
+  void persistCheckoutConsentCartAttribute(
+    cartId,
+    serializedConsent
+  )
 }
 
 async function persistCheckoutConsentCartAttribute(
@@ -94,7 +109,7 @@ async function persistCheckoutConsentCartAttribute(
   serializedConsent: string
 ) {
   try {
-    await performCartAttributesUpdateMutation(cartId, [
+    await updateCartAttributesAction(cartId, [
       {
         key: CART_CONSENT_ATTRIBUTE_KEY,
         value: serializedConsent
@@ -112,13 +127,14 @@ export function parseOrderConsentFromNoteAttributes(
     attribute => attribute.name === CART_CONSENT_ATTRIBUTE_KEY
   )
 
-  if (!consentAttribute?.value) return { ...deniedConsentSnapshot }
+  if (!consentAttribute?.value)
+    return { ...deniedConsentSnapshot }
 
   try {
     return (
-      parseConsentPayload(JSON.parse(consentAttribute.value)) ?? {
-        ...deniedConsentSnapshot
-      }
+      parseConsentPayload(
+        JSON.parse(consentAttribute.value)
+      ) ?? { ...deniedConsentSnapshot }
     )
   } catch {
     return { ...deniedConsentSnapshot }

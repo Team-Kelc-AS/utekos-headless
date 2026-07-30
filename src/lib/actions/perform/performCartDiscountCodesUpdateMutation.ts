@@ -1,4 +1,4 @@
-'use server'
+import 'server-only'
 
 import { mutationCartDiscountCodesUpdate } from '@/api/graphql/mutations/cart'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
@@ -11,10 +11,11 @@ export async function performCartDiscountCodesUpdateMutation(
   cartId: string,
   discountCodes: string[]
 ): Promise<StorefrontCart> {
-  const result = await shopifyFetch<ShopifyDiscountCodesUpdateOperation>({
-    query: mutationCartDiscountCodesUpdate,
-    variables: { cartId, discountCodes }
-  })
+  const result =
+    await shopifyFetch<ShopifyDiscountCodesUpdateOperation>({
+      query: mutationCartDiscountCodesUpdate,
+      variables: { cartId, discountCodes }
+    })
 
   if (!result.success) {
     throw new ShopifyApiError(

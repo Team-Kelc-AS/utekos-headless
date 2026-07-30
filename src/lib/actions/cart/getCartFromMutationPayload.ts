@@ -4,6 +4,7 @@ import type {
   StorefrontCartWarning
 } from '@/api/shopify/types/storefrontApi'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
+import { redactShopifyCartSecrets } from '@/lib/cart/redactShopifyCartSecrets'
 
 type CartMutationPayload = {
   cart: StorefrontCart | null
@@ -17,23 +18,26 @@ export function getCartFromMutationPayload(
 ): StorefrontCart {
   if (payload.userErrors.length > 0) {
     throw new ShopifyApiError(
-      payload.userErrors[0]?.message ?? `${operation} ble avvist av Shopify.`,
+      payload.userErrors[0]?.message ??
+        `${operation} ble avvist av Shopify.`,
       payload.userErrors.map(error => ({
         message: error.message,
-        extensions: {
-          code: error.code,
-          field: error.field
-        }
+        extensions: { code: error.code, field: error.field }
       }))
     )
   }
 
   if (payload.warnings.length > 0) {
-    console.warn(`Shopify cart warnings from ${operation}:`, payload.warnings)
+    console.warn(
+      `Shopify cart warnings from ${operation}:`,
+      redactShopifyCartSecrets(JSON.stringify(payload.warnings))
+    )
   }
 
   if (!payload.cart) {
-    throw new ShopifyApiError(`${operation} returnerte ingen handlekurv.`)
+    throw new ShopifyApiError(
+      `${operation} returnerte ingen handlekurv.`
+    )
   }
 
   return payload.cart

@@ -1,4 +1,4 @@
-'use server'
+import 'server-only'
 
 import { getCartLineIdsQuery } from '@/api/graphql/queries/cart/getCartLineIdsQuery'
 import { getCartQuery } from '@/api/graphql/queries/cart/getCartQuery'
@@ -6,26 +6,22 @@ import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
 import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
 import { performCartLinesRemoveMutation } from '@/lib/actions/perform/performCartLinesRemoveMutation'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
-import type { ShopifyCartOperation, ShopifyOperation } from '@types'
+import type {
+  ShopifyCartOperation,
+  ShopifyOperation
+} from '@types'
 
 type CartLineIdsOperation = ShopifyOperation<
-  {
-    cart: {
-      lines: {
-        nodes: Array<{ id: string }>
-      }
-    } | null
-  },
+  { cart: { lines: { nodes: Array<{ id: string }> } } | null },
   { cartId: string }
 >
 
 export async function performCartClearMutation(
   cartId: string
 ): Promise<StorefrontCart> {
-  const lineIdsResult = await shopifyFetch<CartLineIdsOperation>({
-    query: getCartLineIdsQuery,
-    variables: { cartId }
-  })
+  const lineIdsResult = await shopifyFetch<CartLineIdsOperation>(
+    { query: getCartLineIdsQuery, variables: { cartId } }
+  )
 
   if (!lineIdsResult.success) {
     throw new ShopifyApiError(
@@ -41,9 +37,14 @@ export async function performCartClearMutation(
 
   const lineIds = cart.lines.nodes.map(line => line.id)
   if (lineIds.length > 0) {
-    const clearedCart = await performCartLinesRemoveMutation(cartId, lineIds)
+    const clearedCart = await performCartLinesRemoveMutation(
+      cartId,
+      lineIds
+    )
     if (!clearedCart) {
-      throw new ShopifyApiError('Tømming av handlekurven returnerte ingen data.')
+      throw new ShopifyApiError(
+        'Tømming av handlekurven returnerte ingen data.'
+      )
     }
     return clearedCart
   }
