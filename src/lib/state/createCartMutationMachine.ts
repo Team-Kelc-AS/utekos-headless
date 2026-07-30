@@ -1,12 +1,22 @@
 // Path: src/lib/state/createCartMutationMachine.ts
-import { assign, fromPromise, setup, type ErrorActorEvent } from 'xstate'
+import {
+  assign,
+  fromPromise,
+  setup,
+  type ErrorActorEvent
+} from 'xstate'
 import { extractCartErrorMessage } from '@/lib/errors/extractCartErrorMessage'
-import type { Cart, CartActions, CartActionsResult, CartMutationContext, CartMutationEvent } from 'types/cart'
+import type {
+  Cart,
+  CartActions,
+  CartActionsResult,
+  CartMutationContext,
+  CartMutationEvent
+} from 'types/cart'
 
 export const createCartMutationMachine = (
   serverActions: CartActions,
-  updateCartCache: (cart: Cart) => void,
-  setCartId: (cartId: string) => void
+  adoptCart: (cart: Cart) => void
 ) =>
   setup({
     types: {
@@ -14,7 +24,10 @@ export const createCartMutationMachine = (
       events: {} as CartMutationEvent
     },
     actors: {
-      cartMutator: fromPromise<CartActionsResult, CartMutationEvent>(async ({ input: event }) => {
+      cartMutator: fromPromise<
+        CartActionsResult,
+        CartMutationEvent
+      >(async ({ input: event }) => {
         switch (event.type) {
           case 'ADD_LINES': {
             let lines: { variantId: string; quantity: number }[]
@@ -32,7 +45,9 @@ export const createCartMutationMachine = (
           }
 
           case 'UPDATE_LINE':
-            return serverActions.updateCartLineQuantity(event.input)
+            return serverActions.updateCartLineQuantity(
+              event.input
+            )
 
           case 'REMOVE_LINE':
             return serverActions.removeCartLine(event.input)
@@ -41,7 +56,9 @@ export const createCartMutationMachine = (
             return serverActions.clearCart()
 
           default:
-            throw new Error('Unhandled event type in cartMutator')
+            throw new Error(
+              'Unhandled event type in cartMutator'
+            )
         }
       })
     }
@@ -52,9 +69,7 @@ export const createCartMutationMachine = (
     states: {
       idle: {
         entry: assign({ error: null }),
-        on: {
-          '*': 'mutating'
-        }
+        on: { '*': 'mutating' }
       },
       mutating: {
         entry: assign({ error: null, lastResult: null }),
@@ -66,7 +81,9 @@ export const createCartMutationMachine = (
               guard: ({ event }) => !event.output.success,
               target: 'idle',
               actions: assign({
-                error: ({ event }) => event.output.message || 'En uventet feil oppstod',
+                error: ({ event }) =>
+                  event.output.message ||
+                  'En uventet feil oppstod',
                 lastResult: ({ event }) => event.output
               })
             },
@@ -81,8 +98,7 @@ export const createCartMutationMachine = (
                   const newCart = event.output.cart
 
                   if (newCart?.id) {
-                    setCartId(newCart.id)
-                    updateCartCache(newCart)
+                    adoptCart(newCart)
                   }
                 }
               ]
@@ -93,7 +109,8 @@ export const createCartMutationMachine = (
             actions: assign({
               error: ({ event }: { event: ErrorActorEvent }) => {
                 try {
-                  const serverActionResult = event.error as CartActionsResult
+                  const serverActionResult =
+                    event.error as CartActionsResult
 
                   if (serverActionResult?.message) {
                     return serverActionResult.message
@@ -101,7 +118,10 @@ export const createCartMutationMachine = (
 
                   return extractCartErrorMessage(event.error)
                 } catch (extractionError) {
-                  console.error('Error extracting cart error message:', extractionError)
+                  console.error(
+                    'Error extracting cart error message:',
+                    extractionError
+                  )
 
                   return 'En uventet feil oppstod under behandling av handlekurven'
                 }

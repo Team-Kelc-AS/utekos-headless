@@ -11,6 +11,8 @@ import type {
   ShopifyFetchResult,
   ShopifyOperation
 } from '@types'
+import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
+import { redactShopifyCartSecrets } from '@/lib/cart/redactShopifyCartSecrets'
 
 export async function shopifyFetch<
   T extends ShopifyOperation<unknown, object>
@@ -59,7 +61,7 @@ export async function shopifyFetch<
     if (isGraphQLErrorResponse(body)) {
       console.error(
         'Shopify API Error:',
-        JSON.stringify(body.errors, null, 2)
+        redactShopifyCartSecrets(JSON.stringify(body.errors))
       )
       return { success: false, error: body }
     }
@@ -68,7 +70,10 @@ export async function shopifyFetch<
       'Unknown response structure from Shopify API.'
     )
   } catch (e) {
-    console.error('Fetch operation failed:', e)
+    console.error(
+      'Fetch operation failed:',
+      getRedactedErrorSummary(e)
+    )
     throw e
   }
 }

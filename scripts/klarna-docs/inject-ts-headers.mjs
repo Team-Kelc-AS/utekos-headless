@@ -45,7 +45,7 @@ function injectFile(filePath, rel, meta) {
 
   if (agentBlock.test(content)) {
     content = content.replace(agentBlock, `${doc}\n`)
-  } else if (content.startsWith("'use client'") || content.startsWith('"use client"')) {
+  } else if (content.startsWith('\'use client\'') || content.startsWith('"use client"')) {
     const end = content.indexOf('\n') + 1
     content = `${content.slice(0, end)}\n${doc}\n${content.slice(end)}`
   } else {

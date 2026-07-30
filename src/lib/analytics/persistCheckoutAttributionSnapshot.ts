@@ -1,6 +1,6 @@
 'use client'
 
-import { performCartAttributesUpdateMutation } from '@/lib/actions/perform/performCartAttributesUpdateMutation'
+import { updateCartAttributesAction } from '@/lib/actions/updateCartAttributesAction'
 import {
   checkoutAttributionSnapshotToShopifyAttributes,
   type CheckoutAttributionSnapshot
@@ -22,7 +22,7 @@ export async function persistCheckoutAttributionSnapshot(
     // Shopify cart attributes remain the cross-domain source of truth.
   }
 
-  await performCartAttributesUpdateMutation(
+  await updateCartAttributesAction(
     cartId,
     checkoutAttributionSnapshotToShopifyAttributes(snapshot)
   )

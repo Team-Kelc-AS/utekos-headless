@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import { CART_CHECKOUT_PATH } from '@/lib/cart/cartCheckoutPath'
+import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
 
 const moneySchema = z
   .object({
@@ -21,11 +23,7 @@ const cartLineSchema = z
   .object({
     id: z.string(),
     quantity: z.number().int().nonnegative(),
-    cost: z
-      .object({
-        totalAmount: moneySchema
-      })
-      .strict(),
+    cost: z.object({ totalAmount: moneySchema }).strict(),
     merchandise: z
       .object({
         id: z.string(),
@@ -36,10 +34,7 @@ const cartLineSchema = z
         compareAtPrice: moneySchema.nullable(),
         selectedOptions: z.array(
           z
-            .object({
-              name: z.string(),
-              value: z.string()
-            })
+            .object({ name: z.string(), value: z.string() })
             .strict()
         ),
         product: z
@@ -57,8 +52,8 @@ const cartLineSchema = z
 
 const cartSchema = z
   .object({
-    id: z.string(),
-    checkoutUrl: z.string().url(),
+    id: shopifyPublicCartIdSchema,
+    checkoutUrl: z.literal(CART_CHECKOUT_PATH),
     totalQuantity: z.number().int().nonnegative(),
     cost: z
       .object({

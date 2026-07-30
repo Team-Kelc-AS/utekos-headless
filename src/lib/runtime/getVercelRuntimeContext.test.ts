@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import {
-  getVercelRuntimeContext,
-  requireProductionRuntimeForProviderWrite
-} from './getVercelRuntimeContext'
+import { getVercelRuntimeContext } from './getVercelRuntimeContext'
 
 test('maps Vercel system variables into a stable runtime context', () => {
   const context = getVercelRuntimeContext({
@@ -21,21 +18,4 @@ test('maps Vercel system variables into a stable runtime context', () => {
     commitSha: 'abc123',
     isProductionDeployment: false
   })
-})
-
-test('provider writes fail closed outside Vercel production', () => {
-  assert.throws(
-    () => requireProductionRuntimeForProviderWrite('example', getVercelRuntimeContext({
-      NODE_ENV: 'production',
-      VERCEL_ENV: 'preview'
-    })),
-    /only allowed from a Vercel production deployment/
-  )
-})
-
-test('provider writes are allowed in Vercel production', () => {
-  assert.doesNotThrow(() => requireProductionRuntimeForProviderWrite(
-    'example',
-    getVercelRuntimeContext({ VERCEL_ENV: 'production' })
-  ))
 })

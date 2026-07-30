@@ -33,23 +33,20 @@ const withMDX = createMDX({
 const STATIC_ASSET_CACHE_CONTROL =
   'public, max-age=31536000, immutable'
 const SENTRY_AUTH_TOKEN =
-  process.env.PERFORMANCE_SENTRY_AUTH_TOKEN
-  || process.env.SENTRY_AUTH_TOKEN
+  process.env.PERFORMANCE_SENTRY_AUTH_TOKEN ||
+  process.env.SENTRY_AUTH_TOKEN
 const SENTRY_ORG =
   process.env.PERFORMANCE_SENTRY_ORG || process.env.SENTRY_ORG
 const SENTRY_PROJECT =
-  process.env.PERFORMANCE_SENTRY_PROJECT
-  || process.env.SENTRY_PROJECT
+  process.env.PERFORMANCE_SENTRY_PROJECT ||
+  process.env.SENTRY_PROJECT
 const ENABLE_DOCKER_STANDALONE_OUTPUT =
   process.env.NEXT_OUTPUT_STANDALONE === '1'
 const ENABLE_DOCKER_POLLING =
   process.env.NEXT_DEV_POLLING === '1'
 
 const staticAssetHeaders = [
-  {
-    key: 'Cache-Control',
-    value: STATIC_ASSET_CACHE_CONTROL
-  }
+  { key: 'Cache-Control', value: STATIC_ASSET_CACHE_CONTROL }
 ]
 
 const serverlessTraceExcludes = [
@@ -66,12 +63,8 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   reactCompiler: true,
   cacheComponents: true,
-  turbopack: {
-    root: process.cwd()
-  },
-  outputFileTracingExcludes: {
-    '*': serverlessTraceExcludes
-  },
+  turbopack: { root: process.cwd() },
+  outputFileTracingExcludes: { '*': serverlessTraceExcludes },
   ...(ENABLE_DOCKER_STANDALONE_OUTPUT ?
     { output: 'standalone' }
   : {}),
@@ -80,21 +73,9 @@ const nextConfig: NextConfig = {
   : {}),
 
   cacheLife: {
-    products: {
-      stale: 300,
-      revalidate: 900,
-      expire: 3600
-    },
-    collections: {
-      stale: 600,
-      revalidate: 1800,
-      expire: 7200
-    },
-    content: {
-      stale: 3600,
-      revalidate: 86400,
-      expire: 604800
-    },
+    products: { stale: 300, revalidate: 900, expire: 3600 },
+    collections: { stale: 600, revalidate: 1800, expire: 7200 },
+    content: { stale: 3600, revalidate: 86400, expire: 604800 },
     marketing: {
       stale: 86400,
       revalidate: 604800,
@@ -106,6 +87,10 @@ const nextConfig: NextConfig = {
 
   experimental: {
     viewTransition: true,
+    // Bound synchronous PPR resume decompression. Current control-route
+    // artifacts are well below this ceiling; Preview verifies the measured
+    // headroom before production acceptance.
+    maxPostponedStateSize: '5 MB',
     turbopackFileSystemCacheForDev: false,
     // Disabled: restored turbopack build caches have been correlated with
     // truncated PPR HTML shells (blank page + "Connection closed") under
@@ -137,10 +122,7 @@ const nextConfig: NextConfig = {
   ...(process.env.NODE_ENV === 'development' ?
     {
       logging: {
-        fetches: {
-          fullUrl: true,
-          hmrRefreshes: false
-        }
+        fetches: { fullUrl: true, hmrRefreshes: false }
       }
     }
   : {}),
@@ -171,10 +153,7 @@ const nextConfig: NextConfig = {
       {
         source: '/:path*',
         headers: [
-          {
-            key: 'Document-Policy',
-            value: 'js-profiling'
-          },
+          { key: 'Document-Policy', value: 'js-profiling' },
           {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin'
@@ -185,18 +164,9 @@ const nextConfig: NextConfig = {
       {
         source: `${SERVER_TAG_MANAGER_PATH}/:path*`,
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-store, max-age=0'
-          },
-          {
-            key: 'CDN-Cache-Control',
-            value: 'no-store'
-          },
-          {
-            key: 'Vercel-CDN-Cache-Control',
-            value: 'no-store'
-          }
+          { key: 'Cache-Control', value: 'no-store, max-age=0' },
+          { key: 'CDN-Cache-Control', value: 'no-store' },
+          { key: 'Vercel-CDN-Cache-Control', value: 'no-store' }
         ]
       },
 
@@ -205,10 +175,7 @@ const nextConfig: NextConfig = {
           '/:path*.:extension(png|jpg|jpeg|webp|avif|gif|svg|ico|otf|woff2)',
         headers: staticAssetHeaders
       },
-      {
-        source: '/videos/:path*',
-        headers: staticAssetHeaders
-      }
+      { source: '/videos/:path*', headers: staticAssetHeaders }
     ]
   },
 
@@ -241,6 +208,11 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      {
+        source: '/discount/NBCC128',
+        destination: '/nbcc',
+        permanent: true
+      },
       {
         source: '/policies/refund-policy',
         destination: '/frakt-og-retur',
@@ -287,14 +259,8 @@ const sentryOptions = {
   silent: !process.env.CI,
   telemetry: false,
   widenClientFileUpload: true,
-  sourcemaps: {
-    disable: !process.env.CI
-  },
-  webpack: {
-    treeshake: {
-      removeDebugLogging: true
-    }
-  }
+  sourcemaps: { disable: !process.env.CI },
+  webpack: { treeshake: { removeDebugLogging: true } }
 }
 
 const configuredNextConfig = withBotId(withMDX(nextConfig))

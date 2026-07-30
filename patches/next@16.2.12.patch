@@ -1,0 +1,424 @@
+diff --git a/dist/build/templates/app-page.js b/dist/build/templates/app-page.js
+index e0e16e8cdcb98beb66af51c924921b6d2e2fa904..86bba4765a6a2d5ee45d5163c6ef553113b997af 100644
+--- a/dist/build/templates/app-page.js
++++ b/dist/build/templates/app-page.js
+@@ -257,7 +257,8 @@ async function handler(req, res, ctx) {
+             }
+             if (fullBody.length >= stateLength) {
+                 // Extract postponed state from the beginning
+-                const postponedState = fullBody.subarray(0, stateLength).toString('utf8');
++                const compressedPostponedState = fullBody.subarray(0, stateLength);
++                const postponedState = (0, _postponedrequestbody.decompressBody)(compressedPostponedState, req.headers['content-encoding'], maxPostponedStateSizeBytes).toString('utf8');
+                 (0, _requestmeta.addRequestMeta)(req, 'postponed', postponedState);
+                 // Store the remaining action body for the action handler
+                 const actionBody = fullBody.subarray(stateLength);
+@@ -283,7 +284,8 @@ async function handler(req, res, ctx) {
+             ctx.waitUntil == null ? void 0 : ctx.waitUntil.call(ctx, Promise.resolve());
+             return null;
+         }
+-        const postponed = body.toString('utf8');
++        const decompressed = (0, _postponedrequestbody.decompressBody)(body, req.headers['content-encoding'], maxPostponedStateSizeBytes);
++        const postponed = decompressed.toString('utf8');
+         (0, _requestmeta.addRequestMeta)(req, 'postponed', postponed);
+     }
+     // When enabled, this will allow the use of the `?__nextppronly` query to
+diff --git a/dist/esm/build/templates/app-page.js b/dist/esm/build/templates/app-page.js
+index 0cec08429603871865933de0a5ae4dd8f0d9a0d3..7b7b712e428f5579c279d85ef56c0af2832dde17 100644
+--- a/dist/esm/build/templates/app-page.js
++++ b/dist/esm/build/templates/app-page.js
+@@ -79,7 +79,7 @@ import { NoFallbackError } from '../../shared/lib/no-fallback-error.external' wi
+ import { parseMaxPostponedStateSize } from '../../shared/lib/size-limit' with {
+     'turbopack-transition': 'next-server-utility'
+ };
+-import { getMaxPostponedStateSize, getPostponedStateExceededErrorMessage, readBodyWithSizeLimit } from '../../server/lib/postponed-request-body' with {
++import { decompressBody, getMaxPostponedStateSize, getPostponedStateExceededErrorMessage, readBodyWithSizeLimit } from '../../server/lib/postponed-request-body' with {
+     'turbopack-transition': 'next-server-utility'
+ };
+ import { parseUrl } from '../../lib/url';
+@@ -248,7 +248,8 @@ export async function handler(req, res, ctx) {
+             }
+             if (fullBody.length >= stateLength) {
+                 // Extract postponed state from the beginning
+-                const postponedState = fullBody.subarray(0, stateLength).toString('utf8');
++                const compressedPostponedState = fullBody.subarray(0, stateLength);
++                const postponedState = decompressBody(compressedPostponedState, req.headers['content-encoding'], maxPostponedStateSizeBytes).toString('utf8');
+                 addRequestMeta(req, 'postponed', postponedState);
+                 // Store the remaining action body for the action handler
+                 const actionBody = fullBody.subarray(stateLength);
+@@ -274,7 +275,8 @@ export async function handler(req, res, ctx) {
+             ctx.waitUntil == null ? void 0 : ctx.waitUntil.call(ctx, Promise.resolve());
+             return null;
+         }
+-        const postponed = body.toString('utf8');
++        const decompressed = decompressBody(body, req.headers['content-encoding'], maxPostponedStateSizeBytes);
++        const postponed = decompressed.toString('utf8');
+         addRequestMeta(req, 'postponed', postponed);
+     }
+     // When enabled, this will allow the use of the `?__nextppronly` query to
+diff --git a/dist/esm/server/base-server.js b/dist/esm/server/base-server.js
+index e5b451434c439db5dec974d3ada0dda683d49db5..3b1d18e0a69c9f7acfcf48faabe2830e7ec79daa 100644
+--- a/dist/esm/server/base-server.js
++++ b/dist/esm/server/base-server.js
+@@ -59,7 +59,7 @@ import { fixMojibake } from './lib/fix-mojibake';
+ import { setCacheBustingSearchParamWithHash } from '../client/components/router-reducer/set-cache-busting-search-param';
+ import { createOpaqueFallbackRouteParams } from './request/fallback-params';
+ import { RouteKind } from './route-kind';
+-import { getMaxPostponedStateSize, getPostponedStateExceededErrorMessage, readBodyWithSizeLimit } from './lib/postponed-request-body';
++import { decompressBody, getMaxPostponedStateSize, getPostponedStateExceededErrorMessage, readBodyWithSizeLimit } from './lib/postponed-request-body';
+ import { computeCacheBustingSearchParam, computeLegacyCacheBustingSearchParam } from '../shared/lib/router/utils/cache-busting-search-param';
+ // Internal wrapper around build errors at development
+ // time, to prevent us from propagating or logging them
+@@ -563,7 +563,8 @@ export default class Server {
+                             res.body(getPostponedStateExceededErrorMessage(maxPostponedStateSize)).send();
+                             return;
+                         }
+-                        const postponed = body.toString('utf8');
++                        const decompressed = decompressBody(body, req.headers['content-encoding'], maxPostponedStateSizeBytes);
++                        const postponed = decompressed.toString('utf8');
+                         addRequestMeta(req, 'postponed', postponed);
+                     }
+                     // If the request is a next data request and it has a postponed state,
+diff --git a/dist/esm/server/lib/postponed-request-body.js b/dist/esm/server/lib/postponed-request-body.js
+index 5c34c5cfecedf5d583812ddd0dbe01724371b270..af8ff136229cc143cb8a538c87ccf0c3e2884a2b 100644
+--- a/dist/esm/server/lib/postponed-request-body.js
++++ b/dist/esm/server/lib/postponed-request-body.js
+@@ -1,3 +1,4 @@
++import { brotliDecompressSync, constants, crc32, gunzipSync, inflateSync } from "zlib";
+ import { DEFAULT_MAX_POSTPONED_STATE_SIZE, parseMaxPostponedStateSize } from '../../shared/lib/size-limit';
+ const INVALID_MAX_POSTPONED_STATE_SIZE_ERROR_MESSAGE = 'maxPostponedStateSize must be a valid number (bytes) or filesize format string (e.g., "5mb")';
+ export function getMaxPostponedStateSize(configuredMaxPostponedStateSize) {
+@@ -21,6 +22,143 @@ export function getPostponedStateExceededErrorMessage(maxPostponedStateSize) {
+ function toBuffer(chunk) {
+     return Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+ }
++
++const MAX_OUTPUT_LENGTH_DEFAULT = 100 * 1024 * 1024;
++const GZIP_MAGIC_BYTES = [0x1f, 0x8b];
++function hasGzipMagic(body) {
++    return body.length >= 2 && body[0] === GZIP_MAGIC_BYTES[0] && body[1] === GZIP_MAGIC_BYTES[1];
++}
++function normalizeContentEncodings(contentEncoding) {
++    const values = Array.isArray(contentEncoding) ? contentEncoding : [
++        contentEncoding
++    ];
++    return values.flatMap((value)=>typeof value === 'string' ? value.split(',') : []).map((value)=>value.trim().toLowerCase()).filter((value)=>value && value !== 'identity');
++}
++function reportDecompressionFailure(contentEncoding, activeEncoding, error) {
++    console.warn('[next-ppr-resume] postponed-state decompression failed; using raw body', {
++        contentEncoding: contentEncoding || 'none',
++        activeEncoding,
++        code: typeof error?.code === 'string' ? error.code : 'UNKNOWN'
++    });
++}
++function reportTruncatedTrailerRecovery(contentEncoding) {
++    console.warn('[next-ppr-resume] recovered gzip with a truncated trailer', {
++        contentEncoding: contentEncoding || 'none',
++        activeEncoding: 'gzip',
++        code: 'Z_BUF_ERROR'
++    });
++}
++function recoverGzipWithTruncatedTrailer(body, maxOutputLength) {
++    let candidate;
++    try {
++        candidate = gunzipSync(body, {
++            finishFlush: constants.Z_SYNC_FLUSH,
++            maxOutputLength
++        });
++    } catch  {
++        return null;
++    }
++    const trailer = Buffer.allocUnsafe(8);
++    trailer.writeUInt32LE(crc32(candidate), 0);
++    trailer.writeUInt32LE(candidate.byteLength >>> 0, 4);
++    try {
++        const recovered = gunzipSync(Buffer.concat([
++            body,
++            trailer
++        ]), {
++            maxOutputLength
++        });
++        return recovered.equals(candidate) ? recovered : null;
++    } catch  {
++        return null;
++    }
++}
++function decodeBody(body, encodings, maxOutputLength) {
++    let decoded = body;
++    let recoveredTruncatedTrailer = false;
++    for(let index = encodings.length - 1; index >= 0; index--){
++        const encoding = encodings[index];
++        try {
++            switch(encoding){
++                case 'gzip': {
++                    if (!hasGzipMagic(decoded)) {
++                        const error = new Error('gzip magic bytes are missing');
++                        error.code = 'INVALID_GZIP_MAGIC';
++                        throw error;
++                    }
++                    try {
++                        decoded = gunzipSync(decoded, {
++                            maxOutputLength
++                        });
++                    } catch (error) {
++                        if (error?.code !== 'Z_BUF_ERROR') throw error;
++                        const recovered = recoverGzipWithTruncatedTrailer(decoded, maxOutputLength);
++                        if (!recovered) throw error;
++                        decoded = recovered;
++                        recoveredTruncatedTrailer = true;
++                    }
++                    break;
++                }
++                case 'br':
++                    decoded = brotliDecompressSync(decoded, {
++                        maxOutputLength
++                    });
++                    break;
++                case 'deflate':
++                    decoded = inflateSync(decoded, {
++                        maxOutputLength
++                    });
++                    break;
++                default: {
++                    const error = new Error(`unsupported Content-Encoding: ${encoding}`);
++                    error.code = 'UNSUPPORTED_CONTENT_ENCODING';
++                    throw error;
++                }
++            }
++        } catch (error) {
++            error.activeEncoding = encoding;
++            throw error;
++        }
++    }
++    return {
++        decoded,
++        recoveredTruncatedTrailer
++    };
++}
++export function decompressBody(body, contentEncoding, maxOutputLength) {
++    const maxLen = maxOutputLength ?? MAX_OUTPUT_LENGTH_DEFAULT;
++    let requestedEncodings = normalizeContentEncodings(contentEncoding);
++    const requestedEncoding = requestedEncodings.join(', ');
++    if (!body.length) {
++        return body;
++    }
++    if (hasGzipMagic(body) && requestedEncodings.at(-1) !== 'gzip') {
++        requestedEncodings = [
++            'gzip'
++        ];
++    } else if (!requestedEncodings.length) {
++        return body;
++    } else if (requestedEncodings.length === 1 && requestedEncodings[0] === 'gzip' && !hasGzipMagic(body)) {
++        return body;
++    }
++    try {
++        const result = decodeBody(body, requestedEncodings, maxLen);
++        if (result.recoveredTruncatedTrailer) {
++            reportTruncatedTrailerRecovery(requestedEncoding);
++        }
++        return result.decoded;
++    } catch (error) {
++        const activeEncoding = error?.activeEncoding || requestedEncodings.at(-1) || 'unknown';
++        reportDecompressionFailure(requestedEncoding, activeEncoding, error);
++        return body;
++    }
++}
++
++// Content-Encoding values are decoded in reverse application order. Gzip
++// magic overrides a missing or rewritten outer encoding. A Z_SYNC_FLUSH
++// candidate is accepted only when appending one complete, reconstructed
++// 8-byte trailer produces a gzip stream that passes its CRC32 and ISIZE checks.
++
+ export async function readBodyWithSizeLimit(body, maxBodySizeBytes) {
+     const chunks = [];
+     let size = 0;
+diff --git a/dist/server/base-server.js b/dist/server/base-server.js
+index 2239b167c768148f199d4b117ba92c855e73930d..59a37937adca6217348fdf010baf03b6bca8857c 100644
+--- a/dist/server/base-server.js
++++ b/dist/server/base-server.js
+@@ -628,7 +628,8 @@ class Server {
+                             res.body((0, _postponedrequestbody.getPostponedStateExceededErrorMessage)(maxPostponedStateSize)).send();
+                             return;
+                         }
+-                        const postponed = body.toString('utf8');
++                        const decompressed = (0, _postponedrequestbody.decompressBody)(body, req.headers['content-encoding'], maxPostponedStateSizeBytes);
++                        const postponed = decompressed.toString('utf8');
+                         (0, _requestmeta.addRequestMeta)(req, 'postponed', postponed);
+                     }
+                     // If the request is a next data request and it has a postponed state,
+diff --git a/dist/server/lib/postponed-request-body.js b/dist/server/lib/postponed-request-body.js
+index 41027be598bfb7e9f8afbf84ae22e65c44e93feb..d6f76430cbbbd37bf0a7d14d0129be91034e8187 100644
+--- a/dist/server/lib/postponed-request-body.js
++++ b/dist/server/lib/postponed-request-body.js
+@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", {
+     value: true
+ });
+ 0 && (module.exports = {
++    decompressBody: null,
+     getMaxPostponedStateSize: null,
+     getPostponedStateExceededErrorMessage: null,
+     readBodyWithSizeLimit: null
+@@ -14,6 +15,9 @@ function _export(target, all) {
+     });
+ }
+ _export(exports, {
++    decompressBody: function() {
++        return decompressBody;
++    },
+     getMaxPostponedStateSize: function() {
+         return getMaxPostponedStateSize;
+     },
+@@ -24,6 +28,7 @@ _export(exports, {
+         return readBodyWithSizeLimit;
+     }
+ });
++const { brotliDecompressSync, constants, crc32, gunzipSync, inflateSync } = require("zlib");
+ const _sizelimit = require("../../shared/lib/size-limit");
+ const INVALID_MAX_POSTPONED_STATE_SIZE_ERROR_MESSAGE = 'maxPostponedStateSize must be a valid number (bytes) or filesize format string (e.g., "5mb")';
+ function getMaxPostponedStateSize(configuredMaxPostponedStateSize) {
+@@ -47,6 +52,146 @@ function getPostponedStateExceededErrorMessage(maxPostponedStateSize) {
+ function toBuffer(chunk) {
+     return Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+ }
++
++const MAX_OUTPUT_LENGTH_DEFAULT = 100 * 1024 * 1024;
++const GZIP_MAGIC_BYTES = [
++    0x1f,
++    0x8b
++];
++function hasGzipMagic(body) {
++    return body.length >= 2 && body[0] === GZIP_MAGIC_BYTES[0] && body[1] === GZIP_MAGIC_BYTES[1];
++}
++function normalizeContentEncodings(contentEncoding) {
++    const values = Array.isArray(contentEncoding) ? contentEncoding : [
++        contentEncoding
++    ];
++    return values.flatMap((value)=>typeof value === 'string' ? value.split(',') : []).map((value)=>value.trim().toLowerCase()).filter((value)=>value && value !== 'identity');
++}
++function reportDecompressionFailure(contentEncoding, activeEncoding, error) {
++    console.warn('[next-ppr-resume] postponed-state decompression failed; using raw body', {
++        contentEncoding: contentEncoding || 'none',
++        activeEncoding,
++        code: typeof error?.code === 'string' ? error.code : 'UNKNOWN'
++    });
++}
++function reportTruncatedTrailerRecovery(contentEncoding) {
++    console.warn('[next-ppr-resume] recovered gzip with a truncated trailer', {
++        contentEncoding: contentEncoding || 'none',
++        activeEncoding: 'gzip',
++        code: 'Z_BUF_ERROR'
++    });
++}
++function recoverGzipWithTruncatedTrailer(body, maxOutputLength) {
++    let candidate;
++    try {
++        candidate = gunzipSync(body, {
++            finishFlush: constants.Z_SYNC_FLUSH,
++            maxOutputLength
++        });
++    } catch  {
++        return null;
++    }
++    const trailer = Buffer.allocUnsafe(8);
++    trailer.writeUInt32LE(crc32(candidate), 0);
++    trailer.writeUInt32LE(candidate.byteLength >>> 0, 4);
++    try {
++        const recovered = gunzipSync(Buffer.concat([
++            body,
++            trailer
++        ]), {
++            maxOutputLength
++        });
++        return recovered.equals(candidate) ? recovered : null;
++    } catch  {
++        return null;
++    }
++}
++function decodeBody(body, encodings, maxOutputLength) {
++    let decoded = body;
++    let recoveredTruncatedTrailer = false;
++    for(let index = encodings.length - 1; index >= 0; index--){
++        const encoding = encodings[index];
++        try {
++            switch(encoding){
++                case 'gzip': {
++                    if (!hasGzipMagic(decoded)) {
++                        const error = new Error('gzip magic bytes are missing');
++                        error.code = 'INVALID_GZIP_MAGIC';
++                        throw error;
++                    }
++                    try {
++                        decoded = gunzipSync(decoded, {
++                            maxOutputLength
++                        });
++                    } catch (error) {
++                        if (error?.code !== 'Z_BUF_ERROR') throw error;
++                        const recovered = recoverGzipWithTruncatedTrailer(decoded, maxOutputLength);
++                        if (!recovered) throw error;
++                        decoded = recovered;
++                        recoveredTruncatedTrailer = true;
++                    }
++                    break;
++                }
++                case 'br':
++                    decoded = brotliDecompressSync(decoded, {
++                        maxOutputLength
++                    });
++                    break;
++                case 'deflate':
++                    decoded = inflateSync(decoded, {
++                        maxOutputLength
++                    });
++                    break;
++                default: {
++                    const error = new Error(`unsupported Content-Encoding: ${encoding}`);
++                    error.code = 'UNSUPPORTED_CONTENT_ENCODING';
++                    throw error;
++                }
++            }
++        } catch (error) {
++            error.activeEncoding = encoding;
++            throw error;
++        }
++    }
++    return {
++        decoded,
++        recoveredTruncatedTrailer
++    };
++}
++function decompressBody(body, contentEncoding, maxOutputLength) {
++    const maxLen = maxOutputLength ?? MAX_OUTPUT_LENGTH_DEFAULT;
++    let requestedEncodings = normalizeContentEncodings(contentEncoding);
++    const requestedEncoding = requestedEncodings.join(', ');
++    if (!body.length) {
++        return body;
++    }
++    if (hasGzipMagic(body) && requestedEncodings.at(-1) !== 'gzip') {
++        requestedEncodings = [
++            'gzip'
++        ];
++    } else if (!requestedEncodings.length) {
++        return body;
++    } else if (requestedEncodings.length === 1 && requestedEncodings[0] === 'gzip' && !hasGzipMagic(body)) {
++        return body;
++    }
++    try {
++        const result = decodeBody(body, requestedEncodings, maxLen);
++        if (result.recoveredTruncatedTrailer) {
++            reportTruncatedTrailerRecovery(requestedEncoding);
++        }
++        return result.decoded;
++    } catch (error) {
++        const activeEncoding = error?.activeEncoding || requestedEncodings.at(-1) || 'unknown';
++        reportDecompressionFailure(requestedEncoding, activeEncoding, error);
++        return body;
++    }
++}
++
++// Content-Encoding values are decoded in reverse application order. Gzip
++// magic overrides a missing or rewritten outer encoding. A Z_SYNC_FLUSH
++// candidate is accepted only when appending one complete, reconstructed
++// 8-byte trailer produces a gzip stream that passes its CRC32 and ISIZE checks.
++
+ async function readBodyWithSizeLimit(body, maxBodySizeBytes) {
+     const chunks = [];
+     let size = 0;

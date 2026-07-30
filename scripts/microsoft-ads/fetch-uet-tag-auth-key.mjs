@@ -19,7 +19,7 @@ function readEnvFile(relativePath) {
     const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/)
     if (!match) continue
     let value = match[2].trim()
-    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith('\'') && value.endsWith('\''))) {
       value = value.slice(1, -1)
     }
     values.set(match[1], value)
@@ -118,7 +118,7 @@ async function fetchUetTagAuthKey(config, accessToken) {
   })
 
   const text = await response.text()
-  let data = {}
+  let data
   try {
     data = text ? JSON.parse(text) : {}
   } catch {
@@ -158,7 +158,7 @@ async function main() {
     tokenEnvKey,
     tokenLength: authKey.length,
     updatedFiles: ['.env.local', '.env.mcp.local'],
-    api: 'CampaignManagement/v13/UetTagAuthKey/Query',
+    api: 'CampaignManagement/v13/UetTagAuthKey/Query'
   }, null, 2))
   console.log('Next: copy the same env key to Vercel Production, redeploy, then verify purchase dispatch.')
 }

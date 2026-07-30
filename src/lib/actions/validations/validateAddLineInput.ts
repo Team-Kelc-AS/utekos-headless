@@ -1,5 +1,4 @@
 // Path: src/lib/helpers/validations/validateAddLineInput.ts
-'use server'
 import 'server-only'
 
 import { AddToCartSchema } from '@/db/zod/schemas/AddToCartSchema'

@@ -1,7 +1,7 @@
-import type { ActorRef, EventObject, MachineSnapshot } from 'xstate'
+import type { ActorRef, AnyMachineSnapshot, EventObject } from 'xstate'
 
 export function createMutationPromise<
-  TSnapshot extends MachineSnapshot<any, any, any, any, any, any, any, any>,
+  TSnapshot extends AnyMachineSnapshot,
   TEvent extends EventObject
 >(event: TEvent, actor: ActorRef<TSnapshot, TEvent>): Promise<TSnapshot> {
   return new Promise(resolve => {

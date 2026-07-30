@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { Project, SyntaxKind } from 'ts-morph'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -40,7 +38,9 @@ for (const sourceFile of project.getSourceFiles()) {
   for (const node of textNodes) {
     // HELIKOPTERSYN: Sikrer at vi KUN endrer strenger inni en JSX 'className' prop
     const jsxAttribute = node.getFirstAncestorByKind(SyntaxKind.JsxAttribute)
-    if (!jsxAttribute || jsxAttribute.getName() !== 'className') continue
+    if (!jsxAttribute || jsxAttribute.getNameNode().getText() !== 'className') {
+      continue
+    }
 
     const originalText = node.getLiteralText()
     let newText = originalText
@@ -78,12 +78,12 @@ if (filesModified > 0) {
   console.log(
     `\n[Resultat]: Fant og korrigerte ${totalViolations} brudd på Tailwind v4-syntaks fordelt på ${filesModified} filer.`
   )
-  console.log(`[Lagrer]: Skriver endringene permanent til disk...`)
+  console.log('[Lagrer]: Skriver endringene permanent til disk...')
 
   // Deferrering er over. Utfører filsystemoperasjonen.
   project.saveSync()
 
-  console.log(`[Fullført]: Koden er nå 100% compliant og klar for kompilering.`)
+  console.log('[Fullført]: Koden er nå 100% compliant og klar for kompilering.')
 } else {
-  console.log(`\n[Resultat]: Null avvik funnet. Kodebasen overholder ufravikelig kanonisk syntaks.`)
+  console.log('\n[Resultat]: Null avvik funnet. Kodebasen overholder ufravikelig kanonisk syntaks.')
 }

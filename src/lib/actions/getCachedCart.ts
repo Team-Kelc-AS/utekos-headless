@@ -2,22 +2,16 @@
 'use server'
 
 import { CartNotFoundError } from '@/lib/errors/CartNotFoundError'
-import { fetchCart } from '@/lib/helpers/cart/fetchCart'
+import { parseShopifyCartId } from '@/lib/cart/parseShopifyCartId'
+import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
 import type { Cart } from 'types/cart'
-import { cacheTag, cacheLife } from 'next/cache'
 
-export async function getCachedCart(
-  cartId: string | null
+async function getCartById(
+  cartId: string
 ): Promise<Cart | null> {
-  'use cache'
-  cacheLife('seconds')
-  cacheTag('cart', `cart-${cartId}`)
-
-  if (!cartId) {
-    return null
-  }
-
   try {
+    const { fetchCart } =
+      await import('@/lib/helpers/cart/fetchCart')
     const cart = await fetchCart(cartId)
     return cart
   } catch (error) {
@@ -25,5 +19,43 @@ export async function getCachedCart(
       return null
     }
     throw error
+  }
+}
+
+export type CachedCartReadResult =
+  | { status: 'ready'; cartId: string; cart: Cart | null }
+  | {
+      status: 'identity-changed'
+      cartId: string | null
+      cart: null
+    }
+
+export async function getCachedCart(
+  expectedPublicCartId: string
+): Promise<CachedCartReadResult> {
+  const expected = shopifyPublicCartIdSchema.safeParse(
+    expectedPublicCartId
+  )
+  const { readCartIdCookie } =
+    await import('@/lib/cart/readCartIdCookie')
+  const cartId = await readCartIdCookie()
+  const identity = parseShopifyCartId(cartId)
+
+  if (
+    !expected.success ||
+    !identity ||
+    identity.publicId !== expected.data
+  ) {
+    return {
+      status: 'identity-changed',
+      cartId: identity?.publicId ?? null,
+      cart: null
+    }
+  }
+
+  return {
+    status: 'ready',
+    cartId: identity.publicId,
+    cart: await getCartById(identity.fullId)
   }
 }

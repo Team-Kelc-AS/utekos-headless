@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { checkoutAttributionSnapshotSchema } from '@/lib/analytics/checkoutAttributionSnapshot'
+import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
 
 const klarnaOrderLineTypeSchema = z.enum([
   'physical',
@@ -90,7 +91,7 @@ export const klarnaCreateOrderRequestSchema = z.object({
   authorizationToken: z.string().min(1),
   orderPayload: klarnaExpressOrderPayloadSchema,
   collectedShippingAddress: klarnaCollectedShippingAddressSchema,
-  shopifyCartId: z.string().optional(),
+  shopifyCartId: shopifyPublicCartIdSchema,
   attribution: checkoutAttributionSnapshotSchema.optional()
 })
 
