@@ -4,6 +4,7 @@ import {
   isIgnorableClientError
 } from '@/lib/observability/client/isIgnorableClientError'
 import { describeUnhandledRejection } from '@/lib/observability/client/describeUnhandledRejection'
+import { filterSentryClientEvent } from '@/lib/observability/client/filterSentryClientEvent'
 import type { LogPayload } from 'types/observability/log/LogPayload'
 
 /**
@@ -35,7 +36,8 @@ Sentry.init({
   sendDefaultPii: false,
   enableLogs: true,
   tracesSampleRate: 0,
-  denyUrls: [CHROME_EXTENSION_URL_PATTERN]
+  denyUrls: [CHROME_EXTENSION_URL_PATTERN],
+  beforeSend: filterSentryClientEvent
 })
 
 const MAX_REPORTED_ERRORS = 10
