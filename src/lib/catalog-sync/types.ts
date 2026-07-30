@@ -1,15 +1,3 @@
-export const CATALOG_CUSTOM_LABEL_KEYS = [
-  'custom_label_0',
-  'custom_label_1',
-  'custom_label_2',
-  'custom_label_3',
-  'custom_label_4'
-] as const
-
-export type CatalogCustomLabelKey = (typeof CATALOG_CUSTOM_LABEL_KEYS)[number]
-
-export type CatalogCustomLabels = Partial<Record<CatalogCustomLabelKey, string>>
-
 export type CatalogSyncWeightUnit = 'g' | 'kg' | 'lb' | 'oz'
 
 export type CatalogMetafieldValue = {

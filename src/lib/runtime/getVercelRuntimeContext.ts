@@ -33,14 +33,3 @@ export function getVercelRuntimeContext(
     isProductionDeployment: vercelEnvironment === 'production'
   }
 }
-
-export function requireProductionRuntimeForProviderWrite(
-  operation: string,
-  runtimeContext = getVercelRuntimeContext()
-): void {
-  if (!runtimeContext.isProductionDeployment) {
-    throw new Error(
-      `Provider write "${operation}" is only allowed from a Vercel production deployment`
-    )
-  }
-}

@@ -435,10 +435,6 @@ export async function getAllProductsForCatalogSync(): Promise<CatalogSyncProduct
   }
 }
 
-export async function getAllProductsForMetaSync() {
-  return getAllProductsForCatalogSync()
-}
-
 export async function getCustomerMatchCustomers(limit = 10000) {
   try {
     const customers: ShopifyCustomerMatchCustomer[] = []

@@ -3,7 +3,6 @@ import type { SearchGroup, SearchItem } from '@/app/api/search-index/types'
 import { rawMagazineArticles } from '@/app/magasinet/data/magazineArticles'
 import { validateMagazineArticles } from '@/app/magasinet/utils/validateMagazineArticles'
 import { SEARCH_CONFIG, GROUP_LABELS } from './searchConfig'
-export type ClientSearchItem = SearchItem
 
 function normalizeText(text: string): string {
   return text
