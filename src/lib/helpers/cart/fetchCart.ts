@@ -1,4 +1,5 @@
 // Path: src/lib/helpers/cart/fetchCart.ts
+import 'server-only'
 
 import { getCartQuery } from '@/api/graphql/queries/cart/getCartQuery'
 import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
@@ -6,22 +7,42 @@ import { CartNotFoundError } from '@/lib/errors/CartNotFoundError'
 import { normalizeCart } from '@/lib/helpers/normalizers/normalizeCart'
 import type { ShopifyCartOperation } from '@types'
 import type { Cart } from 'types/cart'
+import { getShopifyCartLogReference } from '@/lib/cart/getShopifyCartCacheTag'
+import { redactShopifyCartSecrets } from '@/lib/cart/redactShopifyCartSecrets'
+import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
 
-export const fetchCart = async (cartId: string): Promise<Cart | null> => {
+export const fetchRawCart = async (
+  cartId: string
+): Promise<StorefrontCart | null> => {
   const res = await shopifyFetch<ShopifyCartOperation>({
     query: getCartQuery,
     variables: { cartId }
   })
 
   if (!res.success) {
-    console.error('Failed to fetch cart:', res.error.errors)
+    console.error(
+      `Failed to fetch ${getShopifyCartLogReference(cartId)}:`,
+      redactShopifyCartSecrets(JSON.stringify(res.error.errors))
+    )
     return null
   }
 
   if (!res.body.cart) {
-    console.warn(new CartNotFoundError(`Cart with ID ${cartId} was not found.`))
+    console.warn(
+      new CartNotFoundError(
+        `${getShopifyCartLogReference(cartId)} was not found.`
+      )
+    )
     return null
   }
 
-  return normalizeCart(res.body.cart)
+  return res.body.cart
+}
+
+export const fetchCart = async (
+  cartId: string
+): Promise<Cart | null> => {
+  const cart = await fetchRawCart(cartId)
+
+  return cart ? normalizeCart(cart) : null
 }

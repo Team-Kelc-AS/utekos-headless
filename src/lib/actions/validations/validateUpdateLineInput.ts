@@ -1,5 +1,4 @@
 // Path: src/lib/helpers/validations/validateUpdateLineInput.ts
-'use server'
 import 'server-only'
 
 import { fromZodError } from 'zod-validation-error'

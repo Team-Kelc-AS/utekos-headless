@@ -1,5 +1,5 @@
 // Path: src/lib/actions/perform/performCartLinesAddMutation.ts
-'use server'
+import 'server-only'
 
 import { mutationCartLinesAdd } from '@/api/graphql/mutations/cart'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
@@ -30,5 +30,8 @@ export const performCartLinesAddMutation = async (
     )
   }
 
-  return getCartFromMutationPayload('cartLinesAdd', result.body.cartLinesAdd)
+  return getCartFromMutationPayload(
+    'cartLinesAdd',
+    result.body.cartLinesAdd
+  )
 }

@@ -11,7 +11,7 @@ type CompleteKlarnaExpressCheckoutInput = {
   authorizationToken: string
   orderPayload: KlarnaExpressOrderPayload
   collectedShippingAddress: KlarnaCollectedShippingAddress
-  shopifyCartId?: string
+  shopifyCartId: string
 }
 
 type CompleteKlarnaExpressCheckoutResult = {
