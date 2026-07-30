@@ -1,13 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { RecommendedItem } from './RecommendedItem'
-import type { ShopifyProduct } from 'types/product'
-import { getRecommendedProducts } from '@/api/lib/products/getRecommendedProducts'
+import { recommendedProductsOptions } from '@/api/lib/products/cartSuggestionOptions'
 
 export function EmptyCartRecommendations() {
-  const { data: products } = useQuery<ShopifyProduct[]>({
-    queryKey: ['products', 'recommended'],
-    queryFn: getRecommendedProducts
-  })
+  const { data: products } = useQuery(recommendedProductsOptions)
 
   if (!products || products.length === 0) {
     return (

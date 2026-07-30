@@ -1,13 +1,11 @@
 'use client'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { HydrationBoundary } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
-import { makeQueryClient } from '@/api/lib/makeQueryClient'
+import { getQueryClient } from '@/api/lib/getQueryClient'
 import { CartMutationProvider } from '@/clients/CartMutationProvider'
 import { serverActions } from '@/constants/serverActions'
 import { CartIdProvider } from '@/components/providers/CartIdProvider'
-import type { DehydratedState } from '@tanstack/react-query'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { getCartIdFromCookie } from '@/lib/actions/getCartIdFromCookie'
 import {
@@ -36,15 +34,13 @@ const ReactQueryDevtools =
 interface ProvidersProps {
   children: React.ReactNode
   cartId: string | null
-  dehydratedState: DehydratedState
 }
 
 export default function Providers({
   children,
-  cartId: initialCartId,
-  dehydratedState
+  cartId: initialCartId
 }: ProvidersProps) {
-  const [queryClient] = useState(makeQueryClient)
+  const queryClient = getQueryClient()
   const [cartId, setCartId] = useState<string | null>(
     initialCartId
   )
@@ -125,20 +121,18 @@ export default function Providers({
         enableColorScheme
       >
         <QueryClientProvider client={queryClient}>
-          <HydrationBoundary state={dehydratedState}>
-            <CartIdProvider value={cartId}>
-              <CartIdentityActionsContext.Provider
-                value={{ adoptCartIdentity }}
+          <CartIdProvider value={cartId}>
+            <CartIdentityActionsContext.Provider
+              value={{ adoptCartIdentity }}
+            >
+              <CartMutationProvider
+                actions={serverActions}
+                adoptCartIdentity={adoptCartIdentity}
               >
-                <CartMutationProvider
-                  actions={serverActions}
-                  adoptCartIdentity={adoptCartIdentity}
-                >
-                  {children}
-                </CartMutationProvider>
-              </CartIdentityActionsContext.Provider>
-            </CartIdProvider>
-          </HydrationBoundary>
+                {children}
+              </CartMutationProvider>
+            </CartIdentityActionsContext.Provider>
+          </CartIdProvider>
           {ReactQueryDevtools ?
             <ReactQueryDevtools initialIsOpen={false} />
           : null}

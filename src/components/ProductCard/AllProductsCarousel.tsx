@@ -2,20 +2,11 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getProductsAction } from '@/api/lib/products/actions'
+import { allProductsOptions } from '@/api/lib/products/productOptions'
 import { SharedProductCarousel } from './SharedProductCarousel'
 
 export function AllProductsCarousel() {
-  const { data: products } = useQuery({
-    queryKey: ['products', 'all'],
-    queryFn: async () => {
-      const response = await getProductsAction()
-      if (!response.success || !response.body) {
-        return []
-      }
-      return response.body
-    }
-  })
+  const { data: products } = useQuery(allProductsOptions())
 
   const sortedProducts =
     !products ?

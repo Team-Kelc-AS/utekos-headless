@@ -2,8 +2,10 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { FREE_SHIPPING_THRESHOLD } from '@/api/constants'
-import { getAccessoryProducts } from '@/api/lib/products/getAccessoryProducts'
-import { getRecommendedProducts } from '@/api/lib/products/getRecommendedProducts'
+import {
+  accessoryProductsOptions,
+  recommendedProductsOptions
+} from '@/api/lib/products/cartSuggestionOptions'
 import { Progress } from '@/components/ui/progress'
 import { formatNOK } from '@/lib/utils/formatters/formatNOK'
 import type { ShopifyProduct } from 'types/product'
@@ -45,19 +47,13 @@ export function SmartCartSuggestions({
 }: {
   cart: Cart | null | undefined
 }) {
-  const { data: recommendedProducts = [] } = useQuery<
-    ShopifyProduct[]
-  >({
-    queryKey: ['products', 'recommended'],
-    queryFn: getRecommendedProducts
-  })
+  const { data: recommendedProducts = [] } = useQuery(
+    recommendedProductsOptions
+  )
 
-  const { data: accessoryProducts = [] } = useQuery<
-    ShopifyProduct[]
-  >({
-    queryKey: ['products', 'accessory'],
-    queryFn: getAccessoryProducts
-  })
+  const { data: accessoryProducts = [] } = useQuery(
+    accessoryProductsOptions
+  )
 
   if (!cart || cart.totalQuantity === 0) {
     return null
