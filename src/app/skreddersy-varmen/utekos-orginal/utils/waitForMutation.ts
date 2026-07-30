@@ -1,9 +1,9 @@
-import type { ActorRef, StateFrom } from 'xstate'
+import type { ActorRefFrom, EventFrom } from 'xstate'
 import type { CartMutationMachine } from '@/lib/context/CartMutationContext'
 
 export const waitForMutation = (
-  event: any,
-  actor: ActorRef<StateFrom<CartMutationMachine>, any>
+  event: EventFrom<CartMutationMachine>,
+  actor: ActorRefFrom<CartMutationMachine>
 ): Promise<void> => {
   return new Promise(resolve => {
     let isInitial = true

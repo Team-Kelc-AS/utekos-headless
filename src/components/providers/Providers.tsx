@@ -1,7 +1,7 @@
 'use client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { HydrationBoundary } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { makeQueryClient } from '@/api/lib/makeQueryClient'
 import { CartMutationProvider } from '@/clients/CartMutationProvider'
@@ -9,6 +9,18 @@ import { serverActions } from '@/constants/serverActions'
 import { CartIdProvider } from '@/components/providers/CartIdProvider'
 import type { DehydratedState } from '@tanstack/react-query'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { getCartIdFromCookie } from '@/lib/actions/getCartIdFromCookie'
+import {
+  CartBootstrapContext,
+  type CartBootstrapStatus
+} from '@/lib/context/CartBootstrapContext'
+import { resolveBootstrappedCartId } from '@/lib/cart/resolveBootstrappedCartId'
+import { migrateLegacyCartSessionStorageKeys } from '@/lib/cart/migrateLegacyCartSessionStorageKeys'
+import { CartIdentityActionsContext } from '@/lib/context/CartIdentityActionsContext'
+import { adoptAuthoritativeCartIdentity } from '@/lib/cart/adoptAuthoritativeCartIdentity'
+import type { Cart as CartModel } from 'types/cart'
+
+const CART_BOOTSTRAP_TIMEOUT_MS = 3000
 
 const ReactQueryDevtools =
   process.env.NODE_ENV === 'development' ?
@@ -36,31 +48,102 @@ export default function Providers({
   const [cartId, setCartId] = useState<string | null>(
     initialCartId
   )
+  const [cartBootstrapStatus, setCartBootstrapStatus] =
+    useState<CartBootstrapStatus>('pending')
+  const adoptCartIdentity = (
+    authoritativeCartId: string | null,
+    cart: CartModel | null
+  ) => {
+    adoptAuthoritativeCartIdentity(authoritativeCartId, cart, {
+      setCartId,
+      setCartCache: (nextCartId, nextCart) => {
+        queryClient.setQueryData(['cart', nextCartId], nextCart)
+      },
+      removeOtherCartCaches: nextCartId => {
+        queryClient.removeQueries({
+          predicate: query =>
+            query.queryKey[0] === 'cart' &&
+            query.queryKey[1] !== nextCartId
+        })
+      }
+    })
+  }
+
+  useEffect(() => {
+    let isActive = true
+
+    try {
+      migrateLegacyCartSessionStorageKeys(window.sessionStorage)
+    } catch {
+      // Storage can be unavailable in privacy-restricted browsers.
+    }
+
+    const timeoutId = setTimeout(() => {
+      if (isActive) setCartBootstrapStatus('ready')
+    }, CART_BOOTSTRAP_TIMEOUT_MS)
+
+    void getCartIdFromCookie()
+      .then(persistedCartId => {
+        if (!isActive || !persistedCartId) return
+
+        setCartId(currentCartId =>
+          resolveBootstrappedCartId(
+            currentCartId,
+            persistedCartId
+          )
+        )
+      })
+      .catch(error => {
+        console.warn(
+          '[cart-cookie-bootstrap] Cookie read failed',
+          {
+            errorName:
+              error instanceof Error ?
+                error.name
+              : 'UnknownError'
+          }
+        )
+      })
+      .finally(() => {
+        clearTimeout(timeoutId)
+        if (isActive) setCartBootstrapStatus('ready')
+      })
+
+    return () => {
+      isActive = false
+      clearTimeout(timeoutId)
+    }
+  }, [])
 
   return (
-    <ThemeProvider
-      attribute='class'
-      defaultTheme='dark'
-      forcedTheme='dark'
-      disableTransitionOnChange
-      enableColorScheme
-    >
-      <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={dehydratedState}>
-          <CartIdProvider value={cartId}>
-            <CartMutationProvider
-              actions={serverActions}
-              cartId={cartId}
-              setCartId={setCartId}
-            >
-              {children}
-            </CartMutationProvider>
-          </CartIdProvider>
-        </HydrationBoundary>
-        {ReactQueryDevtools ?
-          <ReactQueryDevtools initialIsOpen={false} />
-        : null}
-      </QueryClientProvider>
-    </ThemeProvider>
+    <CartBootstrapContext.Provider value={cartBootstrapStatus}>
+      <ThemeProvider
+        attribute='class'
+        defaultTheme='dark'
+        forcedTheme='dark'
+        disableTransitionOnChange
+        enableColorScheme
+      >
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary state={dehydratedState}>
+            <CartIdProvider value={cartId}>
+              <CartIdentityActionsContext.Provider
+                value={{ adoptCartIdentity }}
+              >
+                <CartMutationProvider
+                  actions={serverActions}
+                  adoptCartIdentity={adoptCartIdentity}
+                >
+                  {children}
+                </CartMutationProvider>
+              </CartIdentityActionsContext.Provider>
+            </CartIdProvider>
+          </HydrationBoundary>
+          {ReactQueryDevtools ?
+            <ReactQueryDevtools initialIsOpen={false} />
+          : null}
+        </QueryClientProvider>
+      </ThemeProvider>
+    </CartBootstrapContext.Provider>
   )
 }

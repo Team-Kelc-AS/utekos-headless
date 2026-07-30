@@ -296,7 +296,7 @@ function serializeFrontmatter(yaml) {
     if (yaml[key] === undefined || yaml[key] === '') continue
     const val = yaml[key]
     if (key === 'ai_directive' || key === 'description' || key === 'title') {
-      lines.push(`${key}: '${val.replace(/'/g, "''")}'`)
+      lines.push(`${key}: '${val.replace(/'/g, '\'\'')}'`)
     } else {
       lines.push(`${key}: '${val}'`)
     }

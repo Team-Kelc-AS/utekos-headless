@@ -400,7 +400,7 @@ async function main() {
       check(
         checks,
         'read_resource:file',
-        fileResource.contents?.[0]?.text?.includes("@import 'tailwindcss'") === true,
+        fileResource.contents?.[0]?.text?.includes('@import \'tailwindcss\'') === true,
         'src/globals.css content'
       )
 

@@ -44,12 +44,7 @@ if (!response.ok) {
   process.exit(1)
 }
 
-let payload = ''
-try {
-  payload = await response.text()
-} catch {
-  payload = ''
-}
+const payload = await response.text().catch(() => '')
 
 console.log(
   payload ?

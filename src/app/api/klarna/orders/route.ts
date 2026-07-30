@@ -2,7 +2,6 @@ import {
   klarnaCreateOrderRequestSchema,
   type KlarnaCreateOrderRequest
 } from '@/components/klarna/schemas/klarnaExpressOrderSchema'
-import { getCartIdFromCookie } from '@/lib/actions/getCartIdFromCookie'
 import { fetchCart } from '@/lib/helpers/cart/fetchCart'
 import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { createKlarnaOrderFromAuthorization } from '@/lib/klarna/createKlarnaOrderFromAuthorization'
@@ -10,43 +9,30 @@ import { createOrderFromKlarnaExpress } from '@/lib/shopify/createOrderFromKlarn
 import { KLARNA_EXPRESS_SESSION_KEY } from '@/components/klarna/constants/sessionStorage'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { readCartIdCookie } from '@/lib/cart/readCartIdCookie'
+import { resolveFullShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 
 async function verifyCartOwnership(
-  shopifyCartId: string | undefined,
+  shopifyCartId: string,
   orderPayload: KlarnaCreateOrderRequest['orderPayload']
 ) {
-  const cookieCartId = await getCartIdFromCookie()
-  const cartId = shopifyCartId ?? cookieCartId
+  const fullCartId = resolveFullShopifyCartId(
+    shopifyCartId,
+    await readCartIdCookie()
+  )
 
-  if (!cartId) {
-    return null
-  }
-
-  if (
-    shopifyCartId &&
-    cookieCartId &&
-    shopifyCartId !== cookieCartId
-  ) {
+  if (!fullCartId) {
     throw new Error('Cart ownership verification failed')
   }
 
-  if (
-    orderPayload.merchant_reference1 &&
-    orderPayload.merchant_reference1 !== cartId
-  ) {
-    return null
+  if (orderPayload.merchant_reference1 !== shopifyCartId) {
+    throw new Error('Cart reference verification failed')
   }
 
-  const cart = await fetchCart(cartId)
+  const cart = await fetchCart(fullCartId)
 
   if (!cart) {
-    if (shopifyCartId) {
-      throw new Error(
-        'Cart not found for Klarna express checkout'
-      )
-    }
-
-    return null
+    throw new Error('Cart not found for Klarna express checkout')
   }
 
   const cartAmountMinor = getKlarnaMinorUnitAmount({
@@ -58,16 +44,9 @@ async function verifyCartOwnership(
     !cartAmountMinor ||
     Number(cartAmountMinor) !== orderPayload.order_amount
   ) {
-    if (
-      shopifyCartId ||
-      orderPayload.merchant_reference1 === cartId
-    ) {
-      throw new Error(
-        'Cart amount does not match Klarna order payload'
-      )
-    }
-
-    return null
+    throw new Error(
+      'Cart amount does not match Klarna order payload'
+    )
   }
 
   return cart

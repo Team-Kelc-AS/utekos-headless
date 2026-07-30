@@ -174,6 +174,13 @@ export function KlarnaExpressCheckoutButton({
                       return
                     }
 
+                    if (!authorizeCartId) {
+                      onErrorRef.current?.(
+                        'Klarna-kassen mangler handlekurvreferanse'
+                      )
+                      return
+                    }
+
                     try {
                       const completion =
                         await completeKlarnaExpressCheckout({
@@ -182,9 +189,7 @@ export function KlarnaExpressCheckoutButton({
                           orderPayload: authorizePayload,
                           collectedShippingAddress:
                             parsedAddress.data,
-                          ...(authorizeCartId ?
-                            { shopifyCartId: authorizeCartId }
-                          : {})
+                          shopifyCartId: authorizeCartId
                         })
 
                       window.location.assign(
@@ -231,7 +236,10 @@ export function KlarnaExpressCheckoutButton({
 
   return (
     <div
-      className={cn('flex h-full w-full items-stretch justify-center', className)}
+      className={cn(
+        'flex h-full w-full items-stretch justify-center',
+        className
+      )}
       aria-busy={disabled}
     >
       <div

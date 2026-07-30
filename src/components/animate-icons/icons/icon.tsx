@@ -221,6 +221,8 @@ function AnimateIcon<T extends string>({
 
   React.useEffect(() => {
     if (animate) {
+      // Prop changes intentionally synchronize Motion controls and timer state.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       startAnimation(animate)
       return clearTimers
     }

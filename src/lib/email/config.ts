@@ -2,10 +2,7 @@ import 'server-only'
 
 import { z } from 'zod'
 
-import {
-  resolveResendApiKey,
-  resendApiKeyEnvNames
-} from '@/lib/email/resolveResendApiKey'
+import { resolveResendApiKey } from '@/lib/email/resolveResendApiKey'
 
 const EmailEnvSchema = z.object({
   apiKey: z.string().min(1),
@@ -68,8 +65,4 @@ export function requireInternalNotificationRecipient(): string {
   }
 
   return contactFormSendToEmail
-}
-
-export function getResendApiKeyConfigurationError(): string {
-  return `Missing Resend API key. Set ${resendApiKeyEnvNames.join(' or ')}.`
 }

@@ -317,14 +317,14 @@ function generateEventSchema(event) {
     page_url: z.string().url().optional(),`
 
   const imports = [
-    "import { z } from 'zod'",
+    'import { z } from \'zod\'',
     event.commerce && event.customDataSchema.includes('canonicalCommerceValueSchema') ?
-      "import { canonicalCommerceValueSchema } from './canonicalCommerceItem'"
+      'import { canonicalCommerceValueSchema } from \'./canonicalCommerceItem\''
     : event.commerce ?
-      "import { canonicalCommerceItemSchema, canonicalCommerceValueSchema } from './canonicalCommerceItem'"
+      'import { canonicalCommerceItemSchema, canonicalCommerceValueSchema } from \'./canonicalCommerceItem\''
     : '',
-    "import { canonicalEventEnvelopeSchema, type CanonicalEventEnvelope, type ConsentSnapshot } from './canonicalEventEnvelope'",
-    "import { mapEventDeviceInfo } from './mapEventDeviceInfo'"
+    'import { canonicalEventEnvelopeSchema, type CanonicalEventEnvelope, type ConsentSnapshot } from \'./canonicalEventEnvelope\'',
+    'import { mapEventDeviceInfo } from \'./mapEventDeviceInfo\''
   ]
     .filter(Boolean)
     .join('\n')
@@ -439,7 +439,7 @@ function generateReporter(event) {
     `// ${event.reporterOnly}\n`
   : event.wired ?
     ''
-  : `// Reporter exported for later wiring.\n`
+  : '// Reporter exported for later wiring.\n'
 
   return `'use client'
 

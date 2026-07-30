@@ -1,22 +1,22 @@
-"use client"
+'use client'
 
-import { Switch as SwitchPrimitive } from "@base-ui/react/switch"
+import { Switch as SwitchPrimitive } from '@base-ui/react/switch'
 
-import { cn } from "@/lib/utils/className"
+import { cn } from '@/lib/utils/className'
 
 function Switch({
   className,
-  size = "default",
+  size = 'default',
   ...props
 }: SwitchPrimitive.Root.Props & {
-  size?: "sm" | "default"
+  size?: 'sm' | 'default'
 }) {
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
       data-size={size}
       className={cn(
-        "peer group/switch relative inline-flex shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring dark:focus-visible:border-dark-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:focus-visible:ring-dark-ring/50 aria-invalid:border-destructive dark:aria-invalid:border-dark-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-dark-destructive/20 data-[size=default]:h-[18.4px] data-[size=default]:w-[32px] data-[size=sm]:h-[14px] data-[size=sm]:w-[24px] dark:aria-invalid:border-dark-destructive/50 dark:aria-invalid:ring-dark-destructive/40 data-checked:bg-primary dark:data-checked:bg-dark-primary data-unchecked:bg-input dark:data-unchecked:bg-dark-input dark:data-unchecked:bg-dark-input/80 data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        'peer group/switch relative inline-flex shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring dark:focus-visible:border-dark-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:focus-visible:ring-dark-ring/50 aria-invalid:border-destructive dark:aria-invalid:border-dark-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-dark-destructive/20 data-[size=default]:h-[18.4px] data-[size=default]:w-[32px] data-[size=sm]:h-[14px] data-[size=sm]:w-[24px] dark:aria-invalid:border-dark-destructive/50 dark:aria-invalid:ring-dark-destructive/40 data-checked:bg-primary dark:data-checked:bg-dark-primary data-unchecked:bg-input dark:data-unchecked:bg-dark-input dark:data-unchecked:bg-dark-input/80 data-disabled:cursor-not-allowed data-disabled:opacity-50',
         className
       )}
       {...props}
