@@ -1,6 +1,6 @@
 {
-  "commit": "10467280ca084a83d5368bfa2310bfafae7551f8",
-  "capturedAt": "2026-07-30T22:31:01.132Z",
+  "commit": "f19d055fa2ec71d12dbfe53cb90b84bbf17c8824",
+  "capturedAt": "2026-07-30T22:33:00.756Z",
   "entry": "src/app/produkter/[handle]/page.tsx",
   "clientModuleCount": 172,
   "clientBytes": 394142,
