@@ -4,15 +4,25 @@ Baseline date: 2026-07-28
 
 Reviewed against `origin/main`: 2026-07-30
 
-Baseline commit: `9a6452c46683a5017499c115534b9b568246b1c5`
+Historisk runtime-baseline commit:
+`9a6452c46683a5017499c115534b9b568246b1c5`
+
+Gjeldende statisk guardrail-seed:
+`c18cd86e3b38ec6c9c46a9219c4ac716c6c6de81` (samlet
+releasekandidat etter KRI-19, basert på PR #88)
 
 Entry route: `src/app/produkter/[handle]/page.tsx`
 
 This is the locked guardrail for the PDP server-first work
-package (KRI-5). It records the statically measurable cost of the
-product page before refactoring, so KRI-7 through KRI-10 can be
-proved rather than asserted. No production code is changed by
-this baseline.
+package (KRI-5). Runtime measurements remain anchored to the
+historical pre-refactor commit. The static source-graph snapshot
+was first seeded from the production PPR commit so unrelated,
+reviewed cart-security modules did not make the guardrail fail.
+It was then advanced to the KRI-19 release candidate to record
+the existing QueryClient gate's move into the shared lifecycle
+helper. KRI-7 through KRI-10 must still remove all six PDP
+hard-gate violations. No production code is changed by this
+baseline.
 
 ## Måleverktøy
 
@@ -48,14 +58,28 @@ again after revert.
 
 ## Baseline-tall
 
-| Målepunkt                                         | Baseline |
-| ------------------------------------------------- | -------- |
-| Server modules reachable from the route           | 62       |
-| Client modules reachable from the route           | 203      |
-| Client source bytes (uncompressed, pre-bundling)  | 484.6 kB |
-| Server → client boundary entry points             | 2        |
-| Distinct third-party packages on the client graph | 27       |
-| Hard-gate violations                              | 6        |
+| Målepunkt                                         | Historisk KRI-6 | Gjeldende guardrail |
+| ------------------------------------------------- | --------------- | ------------------- |
+| Server modules reachable from the route           | 62              | 66                  |
+| Client modules reachable from the route           | 203             | 206                 |
+| Client source bytes (uncompressed, pre-bundling)  | 484.6 kB        | 487.5 kB            |
+| Server → client boundary entry points             | 2               | 2                   |
+| Distinct third-party packages on the client graph | 27              | 27                  |
+| Hard-gate violations                              | 6               | 6                   |
+
+Forskjellen på tre klientmoduler og omtrent 2,8 KiB netto skyldes
+PR #88s validering av Shopify cart-ID-er og feilgrense:
+
+- `src/lib/cart/parseShopifyCartId.ts`
+- `src/lib/cart/shopifyPublicCartIdSchema.ts`
+- `src/lib/errors/ShopifyApiError.ts`
+
+KRI-19 legger til to servermoduler for den delte QueryClient-
+livssyklusen og reduserer klientkildene med 48 bytes. Det
+eksisterende `product-query-client`-bruddet flyttes fra
+`AsyncProductContent.tsx` til `makeQueryClient.ts`; antallet
+brudd er fortsatt seks. Dette er ikke PDP-refaktorering. Boundary
+entry points og tredjepartssettet er uendret.
 
 Boundary entry points today:
 
@@ -86,7 +110,7 @@ it.
 | Gate                       | Location                                                                    | Owner         |
 | -------------------------- | --------------------------------------------------------------------------- | ------------- |
 | `dehydrated-product-query` | `AsyncProductContent.tsx:3`                                                 | KRI-7         |
-| `product-query-client`     | `AsyncProductContent.tsx:7`                                                 | KRI-7         |
+| `product-query-client`     | `makeQueryClient.ts:1`                                                      | KRI-7         |
 | `client-product-refetch`   | `useProductPageData.ts:3`                                                   | KRI-7         |
 | `server-action-as-queryfn` | `productOptions.ts:8` (`getProductAction`)                                  | KRI-7         |
 | `server-action-as-queryfn` | `productOptions.ts:20` (`getProductsAction`)                                | KRI-7         |
@@ -148,11 +172,13 @@ Steering targets, which require runtime measurement:
 
 ## Runtime verification status
 
-The original static baseline remains locked to its recorded
-commit. On 2026-07-30 the analyzer was rerun on the latest
-`origin/main`: 14 analyzer tests passed, the same 203 client
-modules and six hard-gate violations were found, and client
-source bytes moved slightly down from 496,270 to 496,059.
+The historical browser/runtime baseline remains locked to its
+recorded commit and production deployment. On 2026-07-30 the
+static analyzer was rerun on release-candidate commit
+`c18cd86e3`: all 14 analyzer tests passed, 206 client modules and
+the same six hard-gate violations were found, and the
+source-graph snapshot was re-seeded at 499,173 bytes.
+`pnpm pdp:baseline:check` passes against that candidate seed.
 
 The current environment can render the PDP with Storefront
 credentials and a browser. Runtime measurements are handled by
@@ -164,12 +190,12 @@ instrumentation on a controlled Preview deployment.
 
 ## Rekkefølge
 
-KRI-12 is now implemented on `main` through PR #81: PPR resume
-decompression is hardened, Server Action bodies are preserved,
-and `turbopackFileSystemCacheForBuild` is disabled. PR #74 must
-therefore not be merged separately. The remaining server-first
-sequence is KRI-7 → KRI-8 → KRI-9 → KRI-10, then KRI-11 for
-combined verification and controlled rollout.
+KRI-12 is implemented and production-verified through PR #88: PPR
+resume decompression, cart identity/cookie ownership and the
+Server Action boundary are hardened. PR #74 must therefore not be
+merged separately. The remaining server-first sequence is KRI-7 →
+KRI-8 → KRI-9 → KRI-10, then KRI-11 for combined verification and
+controlled rollout.
 
 ## Rollback
 

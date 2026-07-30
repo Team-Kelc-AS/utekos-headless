@@ -8,8 +8,10 @@ import { cartStore } from '@/lib/state/cartStore'
 import { cn } from '@/lib/utils/className'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { useQueryClient } from '@tanstack/react-query'
-import { getRecommendedProducts } from '@/api/lib/products/getRecommendedProducts'
-import { getAccessoryProducts } from '@/api/lib/products/getAccessoryProducts'
+import {
+  accessoryProductsOptions,
+  recommendedProductsOptions
+} from '@/api/lib/products/cartSuggestionOptions'
 
 const getOptimisticCount = (
   lines: Record<string, unknown> | undefined
@@ -40,14 +42,8 @@ export function CartTrigger({
     optimisticCount > 0 ? optimisticCount : serverCount
 
   const handlePrefetch = () => {
-    queryClient.prefetchQuery({
-      queryKey: ['products', 'recommended'],
-      queryFn: getRecommendedProducts
-    })
-    queryClient.prefetchQuery({
-      queryKey: ['products', 'accessory'],
-      queryFn: getAccessoryProducts
-    })
+    queryClient.prefetchQuery(recommendedProductsOptions)
+    queryClient.prefetchQuery(accessoryProductsOptions)
   }
 
   const handleOpen = () => {

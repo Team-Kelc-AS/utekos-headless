@@ -54,7 +54,7 @@ export function EmpathySection() {
             </m.div>
             <h2
               id='empathy-heading'
-              className='font-google-sans dark:text-dark-background mb-5 max-w-[11ch] font-sans text-4xl leading-[0.92] font-bold tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
+              className='font-utekos-text-medium dark:text-dark-background mb-5 max-w-[11ch] text-4xl leading-[0.92] tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
             >
               <span className='block overflow-hidden pb-[0.08em]'>
                 <m.span
@@ -77,7 +77,7 @@ export function EmpathySection() {
 
             <div className='leading-text-paragraph dark:text-dark-background max-w-none text-base text-background'>
               <m.p
-                className='relative max-w-136'
+                className='font-utekos-text relative max-w-136'
                 variants={revealItem}
               >
                 Du kjenner følelsen. Praten går lett rundt
@@ -100,7 +100,7 @@ export function EmpathySection() {
                 </m.p>
               </div>
               <m.p
-                className='dark:text-dark-background mt-6 max-w-136 text-background'
+                className='font-utekos-text dark:text-dark-background mt-6 max-w-136 text-background'
                 variants={revealItem}
               >
                 Med Utekos® blir svaret enkelt. Tilpass passform,

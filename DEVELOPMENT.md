@@ -4,8 +4,8 @@ This project supports both direct local development and Docker-based development
 
 ## Prerequisites
 
-- Node.js `24.14.0`
-- pnpm `11.8.x`
+- Node.js `24.17.0`
+- pnpm `11.17.0`
 - Docker Desktop or Docker Engine with Compose
 
 Use `.nvmrc` or `.node-version` to align the host Node version.

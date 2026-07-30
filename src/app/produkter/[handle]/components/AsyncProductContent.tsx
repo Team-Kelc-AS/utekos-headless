@@ -4,8 +4,8 @@ import {
   dehydrate,
   HydrationBoundary
 } from '@tanstack/react-query'
-import { QueryClient } from '@tanstack/react-query'
 import { notFound } from 'next/navigation'
+import { getQueryClient } from '@/api/lib/getQueryClient'
 import { productOptions } from '@/api/lib/products/productOptions'
 import { ProductPageController } from './ProductPageController'
 import { getCachedProductPageData } from '../utils/getCachedProductPageData'
@@ -76,7 +76,7 @@ export async function AsyncProductContent({
     notFound()
   }
 
-  const queryClient = new QueryClient()
+  const queryClient = getQueryClient()
   const productQueryOptions = productOptions(handle)
 
   queryClient.setQueryData(productQueryOptions.queryKey, product)

@@ -39,7 +39,7 @@ export function ThreeInOneDemo() {
                   onClick={() => setActiveMode(mode.id)}
                   className={`relative flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium whitespace-nowrap transition-all duration-300 ease-out md:flex-none md:gap-2 md:px-6 md:py-3 md:text-base ${
                     isActive ?
-                      'scale-100 bg-commerce-primary text-commerce-primary-foreground shadow-lg dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground'
+                      'dark:bg-dark-primary dark:text-dark-primary-foreground scale-100 bg-primary text-primary-foreground shadow-lg'
                     : 'text-[#F4F1EA]/60 hover:bg-white/5 hover:text-[#F4F1EA]'
                   } `}
                 >
@@ -57,7 +57,7 @@ export function ThreeInOneDemo() {
           className='animate-on-scroll mx-auto w-full max-w-sm md:max-w-5xl'
           delay='0.2s'
         >
-          <div className='relative aspect-9/16 w-full overflow-hidden rounded-2xl border border-[#F4F1EA]/10 bg-[#1F2421] shadow-2xl transition-[aspect-ratio] duration-300 md:aspect-video'>
+          <div className='relative aspect-9/16 w-full overflow-hidden rounded-2xl border border-[#F4F1EA]/10 bg-night shadow-2xl transition-[aspect-ratio] duration-300 md:aspect-video'>
             {modes.map(mode => {
               const isActive = activeMode === mode.id
 

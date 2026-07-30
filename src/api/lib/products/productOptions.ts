@@ -1,5 +1,8 @@
 import { queryOptions } from '@tanstack/react-query'
-import { getProductsAction, getProductAction } from '@/api/lib/products/actions'
+import {
+  getProductsAction,
+  getProductAction
+} from '@/api/lib/products/actions'
 
 export const productOptions = (handle: string) =>
   queryOptions({
@@ -20,7 +23,7 @@ export const allProductsOptions = () =>
       const response = await getProductsAction()
 
       if (!response.success || !response.body) {
-        throw new Error(response.error ?? 'Failed to fetch products')
+        return []
       }
 
       return response.body

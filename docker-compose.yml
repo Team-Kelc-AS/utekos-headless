@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
       target: development
       args:
-        NODE_VERSION: ${NODE_VERSION:-24.14.0-slim}
+        NODE_VERSION: ${NODE_VERSION:-24.17.0-slim}
     image: utekos-headless:dev
     init: true
     ports:
@@ -58,7 +58,7 @@ services:
       dockerfile: Dockerfile
       target: runner
       args:
-        NODE_VERSION: ${NODE_VERSION:-24.14.0-slim}
+        NODE_VERSION: ${NODE_VERSION:-24.17.0-slim}
       secrets:
         - app_env
     image: utekos-headless:prod

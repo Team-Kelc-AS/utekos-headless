@@ -631,7 +631,7 @@ Dato: 2026-06-19
 
 Dato: 2026-06-15
 
-- Node-baseline er låst til `24.14.0` via `.nvmrc`,
+- Node-baseline er låst til `24.17.0` via `.nvmrc`,
   `.node-version` og Docker ARG default.
 - Docker dev bruker Next.js dev-server på `0.0.0.0:3000`, bind
   mount av repoet, navngitte volum for `node_modules`, `.next` og
