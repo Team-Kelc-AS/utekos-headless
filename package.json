@@ -290,7 +290,7 @@
     "@next/bundle-analyzer": "16.2.12",
     "@ngrok/ngrok": "^1.7.0",
     "@react-email/ui": "^6.6.3",
-    "@tailwindcss/postcss": "^4.3.0",
+    "@tailwindcss/postcss": "^4.3.3",
     "@tanstack/react-query-devtools": "^5.100.14",
     "@ts-morph/bootstrap": "^0.29.0",
     "@types/facebook-nodejs-business-sdk": "^24.0.0",
