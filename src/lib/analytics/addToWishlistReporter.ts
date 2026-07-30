@@ -10,14 +10,16 @@ import {
   type CanonicalAddToWishlist
 } from './addToWishlistEvent'
 import { startAddToWishlistCollectorTransport } from './addToWishlistCollectorTransport'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type ReportCanonicalAddToWishlistInput = {
   pageViewId?: string
-  product: ShopifyProduct
+  product: ProductCommerceModel
   quantity?: number
-  variant: ShopifyProductVariant
+  variant: ProductPurchaseVariant
   wishlistMutationId: string
 }
 

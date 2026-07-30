@@ -6,8 +6,10 @@ import {
 import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { getKlarnaSiteOrigin } from '@/components/klarna/utils/getKlarnaSiteOrigin'
 import type { Cart } from 'types/cart'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 type BuildLineInput = {
   name: string
@@ -104,8 +106,8 @@ export function buildKlarnaExpressOrderPayloadFromCart(
 }
 
 type ProductLineInput = {
-  product: ShopifyProduct
-  variant: ShopifyProductVariant
+  product: ProductCartModel
+  variant: ProductPurchaseVariant
   quantity: number
   merchantReference1?: string
 }

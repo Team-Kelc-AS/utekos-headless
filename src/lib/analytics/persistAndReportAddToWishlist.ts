@@ -5,13 +5,15 @@ import {
   addWishlistItem,
   type StorageLike
 } from '@/lib/wishlist/wishlistStore'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type PersistAndReportAddToWishlistInput = {
-  product: ShopifyProduct
+  product: ProductCartModel
   storage?: StorageLike
-  variant: ShopifyProductVariant | null | undefined
+  variant: ProductPurchaseVariant | null | undefined
 }
 
 export type PersistAndReportAddToWishlistResult = {

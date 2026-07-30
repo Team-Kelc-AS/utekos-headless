@@ -1,9 +1,9 @@
 // Path: src/components/ProductCard/initializeCarouselProducts.ts
-import type { ShopifyProduct } from 'types/product'
+import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 import { getInitialOptionsForProduct } from './getInitialOptionsForProduct'
 
 export function initializeCarouselProducts(
-  products: ShopifyProduct[]
+  products: ProductCardModel[]
 ): Map<string, Record<string, string>> {
   const usedColors = new Set<string>()
   const productOptions = new Map<string, Record<string, string>>()

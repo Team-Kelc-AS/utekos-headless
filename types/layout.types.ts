@@ -3,9 +3,13 @@ import type React from 'react'
 import type { ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import type {
-  ShopifyProduct,
-  ShopifyProductVariant
+  ShopifyProduct
 } from 'types/product'
+import type {
+  ProductCardModel,
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import type { Image } from 'types/media/Image'
 import type { RootNode } from '@types'
 import type {
@@ -44,9 +48,9 @@ export type PriceActivityPanelProps = {
 }
 
 export type ProductPageAccordionProps = {
-  product: ShopifyProduct
+  product: ProductCommerceModel
   sections: ProductAccordionSection[] | undefined
-  selectedVariant: ShopifyProductVariant
+  selectedVariant: ProductPurchaseVariant
 }
 
 export type ProductControllerProps = {
@@ -76,8 +80,8 @@ export type QuantitySelectorProps = {
 export type SizeSelectorProps = {
   optionName: string
   values: string[]
-  variants: ShopifyProductVariant[]
-  selectedVariant: ShopifyProductVariant
+  variants: ProductPurchaseVariant[]
+  selectedVariant: ProductPurchaseVariant
   onSelect: (_optionName: string, _value: string) => void
   productHandle: string
   optionValues: UtekosProductOptionValue[]
@@ -88,9 +92,9 @@ export type Dimension = { value: number; unit: string } | null
 export type ColorSelectorProps = {
   optionName: string
   values: string[]
-  variants: ShopifyProductVariant[]
+  variants: ProductPurchaseVariant[]
   colorHexMap: Map<string, string>
-  selectedVariant: ShopifyProductVariant
+  selectedVariant: ProductPurchaseVariant
   onSelect: (optionName: string, value: string) => void
   optionValues: UtekosProductOptionValue[]
   isSelectionDisabled: boolean
@@ -112,7 +116,7 @@ export type ProductCarouselProps = { products: ShopifyProduct[] }
 export type SizeLabelProps = { className?: string }
 
 export type ProductCardProps = {
-  product: ShopifyProduct
+  product: ProductCardModel
   preferredColor?: string
   colorHexMap: Map<string, string>
   itemListId?: string

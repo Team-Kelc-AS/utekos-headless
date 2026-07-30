@@ -50,7 +50,7 @@ export function ColorSelector({
         })
 
         const variantProfileRef =
-          variantForProperties?.variantProfile?.reference
+          variantForProperties?.variantProfileData
 
         const colorLabel =
           variantProfileRef?.colorLabel?.value || colorValue

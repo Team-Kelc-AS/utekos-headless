@@ -2,17 +2,19 @@
 
 import { registerCanonicalProductListVisibility } from '@/lib/analytics/productListVisibilityTracker'
 import { useEffect, type RefObject } from 'react'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 type UseCanonicalProductListVisibilityInput = {
   elementRef: RefObject<Element | null>
   closestSelector?: string
   itemListId: string
   itemListName: string
-  product: ShopifyProduct
+  product: ProductCommerceModel
   totalItemCount: number
-  variant: ShopifyProductVariant | null | undefined
+  variant: ProductPurchaseVariant | null | undefined
 }
 
 export function useCanonicalProductListVisibility(

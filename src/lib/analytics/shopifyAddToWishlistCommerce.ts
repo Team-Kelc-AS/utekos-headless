@@ -1,12 +1,14 @@
 import type { CanonicalAddToWishlistCustomData } from './addToWishlistEvent'
 import { mapShopifyViewItem } from './shopifyViewItemCommerce'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type MapShopifyAddToWishlistInput = {
-  product: ShopifyProduct
+  product: ProductCommerceModel
   quantity?: number
-  variant: ShopifyProductVariant
+  variant: ProductPurchaseVariant
   wishlistMutationId: string
 }
 
@@ -15,8 +17,8 @@ export type MapShopifyAddToWishlistInput = {
  * to taxable so Meta/Google commerce values stay consistent with view_item.
  */
 function withTaxableDefault(
-  variant: ShopifyProductVariant
-): ShopifyProductVariant {
+  variant: ProductPurchaseVariant
+): ProductPurchaseVariant {
   if (typeof variant.taxable === 'boolean') return variant
   return { ...variant, taxable: true }
 }

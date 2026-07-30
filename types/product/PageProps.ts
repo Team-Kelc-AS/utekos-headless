@@ -2,15 +2,19 @@
 
 import type { Image } from 'types/media'
 import type { ShopifyProduct } from './ShopifyProduct'
+import type {
+  ProductPurchaseModel,
+  ProductPurchaseVariant
+} from './ProductPurchaseModel'
 import type { ShopifyProductVariant } from './ShopifyProductVariant'
 import type { ColorVariant, ProductConfig } from './ProductTypes'
 import type { ModelKey } from '@/api/constants'
 import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 
 export type ProductPageViewProps = {
-  productData: ShopifyProduct
-  selectedVariant: ShopifyProductVariant
-  allVariants: ShopifyProductVariant[]
+  productData: ProductPurchaseModel
+  selectedVariant: ProductPurchaseVariant
+  allVariants: ProductPurchaseVariant[]
   variantImages: Image[]
   relatedProducts: ShopifyProduct[]
   colorHexMap: Map<string, string>

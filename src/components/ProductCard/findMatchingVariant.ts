@@ -1,12 +1,12 @@
 // Path: src/components/ProductCard/findMatchingVariant.ts
 
-import type { ShopifyProductVariant } from 'types/product'
+import type { ProductPurchaseVariant } from 'types/product/ProductPurchaseModel'
 import type { ProductCardProps } from '@types'
 
 export function findMatchingVariant(
   product: ProductCardProps['product'],
   selectedOptions: Record<string, string>
-): ShopifyProductVariant | undefined {
+): ProductPurchaseVariant | undefined {
   if (!product.variants.edges?.length) return undefined
 
   return product.variants.edges.find(edge => {

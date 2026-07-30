@@ -1,7 +1,7 @@
 import type {
-  ShopifyProduct,
-  ShopifyProductVariant
-} from 'types/product'
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import type { UseFormReturn } from 'react-hook-form'
 import type { SizeOptionKey } from '@/app/inspirasjon/isbading/sizeSelectorData'
 import type { LucideIcon } from 'lucide-react'
@@ -19,8 +19,8 @@ export type CheckoutPresentation =
   | 'standard-primary'
 
 export type PrepareAddToCartInput = {
-  product: ShopifyProduct
-  selectedVariant: ShopifyProductVariant
+  product: ProductCartModel
+  selectedVariant: ProductPurchaseVariant
   quantity: number
   additionalLine?:
     | { variantId: string; quantity: number }
@@ -28,16 +28,16 @@ export type PrepareAddToCartInput = {
 }
 
 export type UseAddToCartActionProps = {
-  product: ShopifyProduct
-  selectedVariant: ShopifyProductVariant | null
+  product: ProductCartModel
+  selectedVariant: ProductPurchaseVariant | null
   additionalLine?:
     | { variantId: string; quantity: number }
     | undefined
 }
 
 export type AddToCartProps = {
-  product: ShopifyProduct
-  selectedVariant: ShopifyProductVariant | null
+  product: ProductCartModel
+  selectedVariant: ProductPurchaseVariant | null
   additionalLine?:
     | { variantId: string; quantity: number }
     | undefined
@@ -47,8 +47,8 @@ export type AddToCartProps = {
 
 export type AddToCartViewProps = {
   form: UseFormReturn<AddToCartFormValues>
-  product: ShopifyProduct
-  selectedVariant: ShopifyProductVariant | null
+  product: ProductCartModel
+  selectedVariant: ProductPurchaseVariant | null
   onSubmit: (values: AddToCartFormValues) => void
   onCheckout: (values: AddToCartFormValues) => void
   isPending: boolean

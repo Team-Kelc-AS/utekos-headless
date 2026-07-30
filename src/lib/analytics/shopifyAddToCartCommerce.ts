@@ -1,16 +1,18 @@
 import { createHash } from 'node:crypto'
 import { mapShopifyViewItem } from './shopifyViewItemCommerce'
 import type { CanonicalAddToCartCommerce } from './addToCartEvent'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type MapShopifyAddToCartInput = {
   cartId: string
   cartUpdatedAt?: string
   mutationTimestamp: string
-  product: ShopifyProduct
+  product: ProductCommerceModel
   quantity: number
-  variant: ShopifyProductVariant
+  variant: ProductPurchaseVariant
 }
 
 export function createCartMutationId(input: {

@@ -17,13 +17,15 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import { buildCustomerLoginHref } from './buildCustomerLoginHref'
 
 type WishlistButtonProps = {
-  product: ShopifyProduct
-  variant: ShopifyProductVariant | null | undefined
+  product: ProductCartModel
+  variant: ProductPurchaseVariant | null | undefined
   productTitle: string
   returnTo: string
   buttonVariant?: 'icon' | 'labelled'

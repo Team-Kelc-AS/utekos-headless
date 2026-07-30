@@ -1,15 +1,17 @@
 import type { CanonicalSelectItemCustomData } from './selectItemEvent'
 import { mapShopifyViewItem } from './shopifyViewItemCommerce'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCommerceModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type MapShopifySelectItemInput = {
   destinationUrl?: string
   interactionId: string
   itemListId: string
-  product: ShopifyProduct
+  product: ProductCommerceModel
   quantity?: number
-  variant: ShopifyProductVariant
+  variant: ProductPurchaseVariant
 }
 
 /**
@@ -18,8 +20,8 @@ export type MapShopifySelectItemInput = {
  * view_item / add_to_cart.
  */
 function withTaxableDefault(
-  variant: ShopifyProductVariant
-): ShopifyProductVariant {
+  variant: ProductPurchaseVariant
+): ProductPurchaseVariant {
   if (typeof variant.taxable === 'boolean') return variant
   return { ...variant, taxable: true }
 }

@@ -2,12 +2,14 @@ import { AnimatedBlock } from '@/components/AnimatedBlock'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { Sparkles } from 'lucide-react'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export interface ProductHeaderProps {
-  product: ShopifyProduct
-  selectedVariant: ShopifyProductVariant
+  product: ProductCartModel
+  selectedVariant: ProductPurchaseVariant
   productHandle: string
   productTitle: string
   productSubtitle: string

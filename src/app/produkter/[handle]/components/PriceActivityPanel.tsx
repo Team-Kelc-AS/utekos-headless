@@ -1,5 +1,3 @@
-'use client'
-
 import { Price } from '@/components/jsx/Price'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { ShieldAlert, Star } from 'lucide-react'

@@ -31,13 +31,15 @@ test('the featured server section does not prefetch an unconsumed query', () => 
   )
 })
 
-test('the PDP retains hydration for its matching product query consumer', () => {
+test('the PDP keeps product data server-side and passes a compact purchase model', () => {
   const source = readSource(
     '../../app/produkter/[handle]/components/AsyncProductContent.tsx'
   )
 
-  assert.match(source, /productOptions\(handle\)/)
-  assert.match(source, /setQueryData/)
-  assert.match(source, /HydrationBoundary/)
-  assert.match(source, /dehydrate\(queryClient\)/)
+  assert.doesNotMatch(
+    source,
+    /HydrationBoundary|dehydrate|getQueryClient|productOptions\(/
+  )
+  assert.match(source, /buildProductPurchaseModel/)
+  assert.match(source, /ProductPageView/)
 })

@@ -1,11 +1,14 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { createOptimisticLineItem } from '@/lib/helpers/cart/createOptimisticLineItem'
-import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import type { Cart } from 'types/cart'
 
 export interface OptimisticItemInput {
-  product: ShopifyProduct
-  variant: ShopifyProductVariant
+  product: ProductCartModel
+  variant: ProductPurchaseVariant
   quantity: number
   customPrice?: number
 }

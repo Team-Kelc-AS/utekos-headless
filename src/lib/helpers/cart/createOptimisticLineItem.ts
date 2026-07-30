@@ -1,9 +1,12 @@
-import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import type { CartLine } from 'types/cart'
 
 export function createOptimisticLineItem(
-  product: ShopifyProduct,
-  variant: ShopifyProductVariant,
+  product: ProductCartModel,
+  variant: ProductPurchaseVariant,
   quantity: number,
   customPrice?: number
 ): CartLine {

@@ -3,12 +3,14 @@ import type {
   Cart,
   CartActionsResult
 } from 'types/cart'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 export type AddProductLineAndReportInput = {
-  product: ShopifyProduct
-  variant: ShopifyProductVariant
+  product: ProductCartModel
+  variant: ProductPurchaseVariant
   quantity: number
   contextCartId: string | null
   addLines: (

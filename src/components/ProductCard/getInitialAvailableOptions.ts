@@ -1,9 +1,9 @@
 // Path: src/components/ProductCard/getInitialAvailableOptions.ts
 
-import type { ShopifyProduct } from 'types/product'
+import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 import { buildFallbackOptions } from './buildFallbackOptions'
 export function getInitialAvailableOptions(
-  product: ShopifyProduct
+  product: ProductCardModel
 ): Record<string, string> {
   const variants = product.variants?.edges
   if (!variants?.length) {

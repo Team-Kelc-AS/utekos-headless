@@ -1,4 +1,4 @@
-import type { ShopifyProduct } from 'types/product'
+import type { ProductPurchaseModel } from 'types/product/ProductPurchaseModel'
 import type { ProductPageViewProps } from 'types/product/PageProps'
 export type RenderOptionComponentProps = Pick<
   ProductPageViewProps,
@@ -10,6 +10,6 @@ export type RenderOptionComponentProps = Pick<
   | 'isVariantNavigationPending'
   | 'hasVariantSelectionError'
 > & {
-  option: ShopifyProduct['options'][number]
+  option: ProductPurchaseModel['options'][number]
   productHandle: string
 }

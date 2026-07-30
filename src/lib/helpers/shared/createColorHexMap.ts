@@ -1,6 +1,6 @@
-import type { ShopifyProduct } from 'types/product'
+import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 export function createColorHexMap(
-  product: ShopifyProduct
+  product: ProductCardModel
 ): Map<string, string> {
   const map = new Map<string, string>()
   if (!product?.variants?.edges) {

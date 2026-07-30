@@ -15,13 +15,16 @@ import { handlePostAddToCartCampaigns } from '@/lib/campaigns/cart/handlePostAdd
 import { reportCanonicalAddToCart } from '@/lib/analytics/addToCartReporter'
 import { reportCanonicalBeginCheckout } from '@/lib/analytics/beginCheckoutReporter'
 import type { UseAddToCartActionProps, Cart } from 'types/cart'
-import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 interface ExtendedAddToCartProps extends UseAddToCartActionProps {
   additionalProductData?:
     | {
-        product: ShopifyProduct
-        variant: ShopifyProductVariant
+        product: ProductCartModel
+        variant: ProductPurchaseVariant
       }
     | undefined
 }

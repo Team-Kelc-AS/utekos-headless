@@ -2,15 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { flattenConnection } from '@shopify/hydrogen-react'
 import { createVariantSelectionUrl } from '@/lib/shopify/product-options/createVariantSelectionUrl'
 import { reportCanonicalVariantSelect } from '@/lib/analytics/variantSelectReporter'
 import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 import type { Route } from 'next'
 import type {
-  ShopifyProduct,
-  ShopifyProductVariant
-} from 'types/product'
+  ProductPurchaseModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 type PendingSelection = {
   sourceVariantId: string
@@ -21,7 +20,7 @@ type PendingSelection = {
 }
 
 type UseVariantSelectionInput = {
-  product: ShopifyProduct | undefined
+  product: ProductPurchaseModel
   productOptions: UtekosProductOptions
 }
 
@@ -35,8 +34,7 @@ export function useVariantSelection({
     useState<PendingSelection | null>(null)
   const navigationLockRef = useRef(false)
 
-  const allVariants =
-    product ? flattenConnection(product.variants) : []
+  const allVariants = product.variants
   const isVariantNavigationPending = Boolean(
     pendingSelection &&
     pendingSelection.sourceVariantId ===
@@ -53,7 +51,7 @@ export function useVariantSelection({
   const domainVariant = allVariants.find(
     variant => variant.id === selectedVariantId
   )
-  const selectedVariant: ShopifyProductVariant | null =
+  const selectedVariant: ProductPurchaseVariant | null =
     domainVariant ?
       {
         ...domainVariant,
@@ -86,7 +84,6 @@ export function useVariantSelection({
 
   function updateVariant(optionName: string, value: string) {
     if (
-      !product ||
       isVariantNavigationPending ||
       navigationLockRef.current ||
       !selectedVariant

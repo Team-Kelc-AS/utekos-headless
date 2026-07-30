@@ -3,10 +3,10 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AddToCartSchemaClient } from '@/db/zod/schemas/AddToCartSchema.client'
-import type { ShopifyProductVariant } from 'types/product'
+import type { ProductPurchaseVariant } from 'types/product/ProductPurchaseModel'
 
 export const createAddToCartFormConfig = (
-  selectedVariant: ShopifyProductVariant | null
+  selectedVariant: ProductPurchaseVariant | null
 ) => ({
   resolver: zodResolver(AddToCartSchemaClient),
   defaultValues: {
