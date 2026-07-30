@@ -79,7 +79,7 @@ test('normalizes Storefront cart data without replacing Utekos cart models', () 
     '/placeholder-image.png'
   )
   assert.equal(
-    cart.lines[0]?.merchandise.product.relatedProducts.length,
-    0
+    'relatedProducts' in cart.lines[0]!.merchandise.product,
+    false
   )
 })

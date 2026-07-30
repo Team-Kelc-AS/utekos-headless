@@ -11,6 +11,7 @@ import { normalizeProductImage } from './normalizeProductImage'
 import { normalizeStorefrontMoney } from './normalizeStorefrontMoney'
 import { parseShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { CART_CHECKOUT_PATH } from '@/lib/cart/cartCheckoutPath'
+import type { ProductCartModel } from 'types/product/ProductPurchaseModel'
 
 const normalizeCartLine = (
   node: StorefrontCartLine
@@ -20,6 +21,20 @@ const normalizeCartLine = (
     product.featuredImage,
     product.title
   )
+  const cartProduct = {
+    id: product.id,
+    title: product.title,
+    handle: product.handle,
+    productType: product.productType,
+    vendor: product.vendor,
+    collections: {
+      nodes: product.collections.nodes.map(collection => ({
+        id: collection.id,
+        title: collection.title
+      }))
+    },
+    featuredImage
+  } satisfies ProductCartModel
 
   return {
     id: node.id,
@@ -48,7 +63,7 @@ const normalizeCartLine = (
           )
         : null,
       selectedOptions: node.merchandise.selectedOptions,
-      product: { ...product, featuredImage }
+      product: cartProduct
     }
   }
 }
