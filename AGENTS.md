@@ -52,6 +52,14 @@ tracking or diagnostics are not acceptable.
 
 ## Learned Workspace Facts
 
+- The repository's local Node baseline is exactly `24.17.0`, declared by
+  `.nvmrc` and `.node-version`; Docker defaults must stay aligned to the same
+  patch release. `package.json` intentionally uses `24.x` because Vercel
+  selects Node by major version.
+- Before running Node or pnpm commands, activate the repository runtime with
+  `source "$HOME/.nvm/nvm.sh" && nvm use --silent`. A bootstrap shell may report
+  a system Node version; do not report a repository mismatch until `.nvmrc`
+  has been activated. Use Corepack for the pinned pnpm version.
 - `FLOW.md` is the canonical prioritized map for tracking,
   observability, analytics, gap remediation, and MCP status.
 - Google Merchant work must use Merchant API, not the deprecated
