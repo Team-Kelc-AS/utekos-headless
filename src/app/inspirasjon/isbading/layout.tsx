@@ -16,6 +16,7 @@ export default async function IceBathingPageJsonLd() {
   }
   return (
     <Script
+      id='isbading-faq-json-ld'
       type='application/ld+json'
       dangerouslySetInnerHTML={{ __html: JSON.stringify(IceBathingFAQJsonLd).replace(/</g, '\\u003c') }}
     />

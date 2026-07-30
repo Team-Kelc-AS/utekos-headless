@@ -178,21 +178,21 @@ function readLocalImplementation() {
   const providerQueue = readProjectSourceFile('src/lib/tracking/warehouse/getProvidersForAcceptedTrackingEvent.ts')
   const orderTracking = readProjectSourceFile('src/lib/tracking/services/processOrderTrackingWithDependencies.ts')
 
-  const addToCartAction = eventMap.content.includes("AddToCart: 'add_to_cart'") ? 'add_to_cart' : 'unknown'
-  const beginCheckoutAction = eventMap.content.includes("InitiateCheckout: 'begin_checkout'") ? 'begin_checkout' : 'unknown'
-  const beginCheckoutCompatibilityAction = browserUet.content.includes("eventAction: 'AutoEvent_begin_checkout'") ? 'AutoEvent_begin_checkout' : 'unknown'
-  const purchaseAction = eventMap.content.includes("Purchase: 'purchase'") ? 'purchase' : 'unknown'
-  const productPurchaseCompatibilityAction = browserUet.content.includes("eventAction: 'PRODUCT_PURCHASE'") ? 'PRODUCT_PURCHASE' : 'unknown'
-  const productPurchaseCompatibilityPageType = browserUet.content.includes("pageType: 'PURCHASE'") ? 'PURCHASE' : 'unknown'
-  const productPurchaseHelperEventName = browserUet.content.includes("eventName: 'PRODUCT_PURCHASE'") ? 'PRODUCT_PURCHASE' : 'unknown'
-  const productPurchaseHelperPageType = browserUet.content.includes("pageType: 'PURCHASE'") ? 'PURCHASE' : 'unknown'
-  const inlinePurchaseEventName = uetTag.content.includes("window.uetq.push('event', 'PRODUCT_PURCHASE', payload)") ? 'PRODUCT_PURCHASE' : 'unknown'
-  const inlinePurchasePageType = uetTag.content.includes("ecomm_pagetype: 'PURCHASE'") ? 'PURCHASE' : 'unknown'
-  const serverCapiPurchaseEventName = capiEventBuilder.content.includes("eventName: 'PRODUCT_PURCHASE'") ? 'PRODUCT_PURCHASE' : 'unknown'
-  const serverCapiPurchasePageType = capiEventBuilder.content.includes("pageType: 'purchase'") ? 'purchase' : 'unknown'
-  const cApiRequiresToken = capiPurchase.content.includes('if (!config.apiToken)') && capiPurchase.content.includes("reason: 'missing_capi_token'")
-  const cApiRequiresMsclkid = capiPurchase.content.includes('getMicrosoftClickId(attribution)') && capiPurchase.content.includes("reason: 'missing_msclkid'")
-  const outboundClickLabelScrubbed = uetTag.content.includes("return `${parsed.origin}${parsed.pathname}`")
+  const addToCartAction = eventMap.content.includes('AddToCart: \'add_to_cart\'') ? 'add_to_cart' : 'unknown'
+  const beginCheckoutAction = eventMap.content.includes('InitiateCheckout: \'begin_checkout\'') ? 'begin_checkout' : 'unknown'
+  const beginCheckoutCompatibilityAction = browserUet.content.includes('eventAction: \'AutoEvent_begin_checkout\'') ? 'AutoEvent_begin_checkout' : 'unknown'
+  const purchaseAction = eventMap.content.includes('Purchase: \'purchase\'') ? 'purchase' : 'unknown'
+  const productPurchaseCompatibilityAction = browserUet.content.includes('eventAction: \'PRODUCT_PURCHASE\'') ? 'PRODUCT_PURCHASE' : 'unknown'
+  const productPurchaseCompatibilityPageType = browserUet.content.includes('pageType: \'PURCHASE\'') ? 'PURCHASE' : 'unknown'
+  const productPurchaseHelperEventName = browserUet.content.includes('eventName: \'PRODUCT_PURCHASE\'') ? 'PRODUCT_PURCHASE' : 'unknown'
+  const productPurchaseHelperPageType = browserUet.content.includes('pageType: \'PURCHASE\'') ? 'PURCHASE' : 'unknown'
+  const inlinePurchaseEventName = uetTag.content.includes('window.uetq.push(\'event\', \'PRODUCT_PURCHASE\', payload)') ? 'PRODUCT_PURCHASE' : 'unknown'
+  const inlinePurchasePageType = uetTag.content.includes('ecomm_pagetype: \'PURCHASE\'') ? 'PURCHASE' : 'unknown'
+  const serverCapiPurchaseEventName = capiEventBuilder.content.includes('eventName: \'PRODUCT_PURCHASE\'') ? 'PRODUCT_PURCHASE' : 'unknown'
+  const serverCapiPurchasePageType = capiEventBuilder.content.includes('pageType: \'purchase\'') ? 'purchase' : 'unknown'
+  const cApiRequiresToken = capiPurchase.content.includes('if (!config.apiToken)') && capiPurchase.content.includes('reason: \'missing_capi_token\'')
+  const cApiRequiresMsclkid = capiPurchase.content.includes('getMicrosoftClickId(attribution)') && capiPurchase.content.includes('reason: \'missing_msclkid\'')
+  const outboundClickLabelScrubbed = uetTag.content.includes('return `${parsed.origin}${parsed.pathname}`')
   const outboundClickEmitterFound = [
     eventMap.content,
     browserUet.content,
@@ -217,13 +217,13 @@ function readLocalImplementation() {
       addToCartAction,
       beginCheckoutAction,
       beginCheckoutCompatibilityAction,
-      beginCheckoutPageType: browserUet.content.includes("case 'begin_checkout'") && browserUet.content.includes("return 'cart'") ? 'cart' : 'unknown',
+      beginCheckoutPageType: browserUet.content.includes('case \'begin_checkout\'') && browserUet.content.includes('return \'cart\'') ? 'cart' : 'unknown',
       purchaseAction,
       productPurchaseCompatibilityAction,
       productPurchaseCompatibilityPageType,
       productPurchaseHelperEventName,
       productPurchaseHelperPageType,
-      queuePushPattern: browserUet.content.includes("getMicrosoftUetQueue().push('event', eventAction, payload)") ? "uetq.push('event', action, payload)" : 'unknown'
+      queuePushPattern: browserUet.content.includes('getMicrosoftUetQueue().push(\'event\', eventAction, payload)') ? 'uetq.push(\'event\', action, payload)' : 'unknown'
     },
     productPurchaseGoal: {
       documentedEventAction: 'PRODUCT_PURCHASE',
@@ -240,11 +240,11 @@ function readLocalImplementation() {
       cApiRequiresMsclkid
     },
     providerQueue: {
-      serverQueueIncludesMicrosoft: providerQueue.content.includes("'microsoft'") || providerQueue.content.includes("'microsoft_uet'"),
-      serverDirectOrderAuditPresent: orderTracking.content.includes("provider: 'microsoft_uet'") && orderTracking.content.includes("dispatchMode: 'server_direct'"),
+      serverQueueIncludesMicrosoft: providerQueue.content.includes('\'microsoft\'') || providerQueue.content.includes('\'microsoft_uet\''),
+      serverDirectOrderAuditPresent: orderTracking.content.includes('provider: \'microsoft_uet\'') && orderTracking.content.includes('dispatchMode: \'server_direct\''),
       skippedPurchaseLogPresent: orderTracking.content.includes('Microsoft UET Purchase Skipped'),
-      providerTypeDeclaration: providerQueue.content.includes("export type TrackingProvider = 'meta' | 'google'")
-        ? "export type TrackingProvider = 'meta' | 'google'"
+      providerTypeDeclaration: providerQueue.content.includes('export type TrackingProvider = \'meta\' | \'google\'')
+        ? 'export type TrackingProvider = \'meta\' | \'google\''
         : 'unknown'
     },
     missingEmitters: {
@@ -266,7 +266,7 @@ function readEnvFile(relativePath) {
     if (!match) continue
 
     let value = match[2].trim()
-    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith('\'') && value.endsWith('\''))) {
       value = value.slice(1, -1)
     }
     values.set(match[1], value)
@@ -716,7 +716,7 @@ async function campaignPost(pathname, headers, body) {
 async function jsonFetch(url, options) {
   const response = await fetch(url, options)
   const text = await response.text()
-  let data = {}
+  let data
   try {
     data = text ? JSON.parse(text) : {}
   } catch {
