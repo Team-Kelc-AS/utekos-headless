@@ -3,7 +3,9 @@
 import { createActorContext } from '@xstate/react'
 import { createCartMutationMachine } from '@/lib/state/createCartMutationMachine'
 import type { CartActions } from 'types/cart'
-export type CartMutationMachine = ReturnType<typeof createCartMutationMachine>
+export type CartMutationMachine = ReturnType<
+  typeof createCartMutationMachine
+>
 
 export const dummyServerActions: CartActions = {
   addCartLine: async () => {
@@ -28,15 +30,9 @@ export const dummyServerActions: CartActions = {
   }
 }
 
-export const CartMutationContext = createActorContext<CartMutationMachine>(
-  createCartMutationMachine(
-    dummyServerActions,
-    () => {
-      // The placeholder for revalidateCart should also be explicit.
-      // It shouldn't do anything, as it will be provided for real.
-    },
-    () => {
-      // Placeholder for setCartId.
-    }
+export const CartMutationContext =
+  createActorContext<CartMutationMachine>(
+    createCartMutationMachine(dummyServerActions, () => {
+      // Runtime provider adopts successful cart mutations.
+    })
   )
-)

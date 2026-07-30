@@ -1,0 +1,57 @@
+'use server'
+
+import { z } from 'zod'
+
+import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
+import { resolveFullShopifyCartId } from '@/lib/cart/parseShopifyCartId'
+import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
+
+const cartAttributesSchema = z
+  .array(
+    z
+      .object({
+        key: z.string().min(1).max(255),
+        value: z.string().max(65_535)
+      })
+      .strict()
+  )
+  .max(100)
+
+export async function updateCartAttributesAction(
+  publicCartIdInput: string,
+  attributesInput: Array<{ key: string; value: string }>
+): Promise<{ success: true }> {
+  const publicCartId = shopifyPublicCartIdSchema.parse(
+    publicCartIdInput
+  )
+  const attributes = cartAttributesSchema.parse(attributesInput)
+  const [
+    { readCartIdCookie },
+    { performCartAttributesUpdateMutation }
+  ] = await Promise.all([
+    import('@/lib/cart/readCartIdCookie'),
+    import('@/lib/actions/perform/performCartAttributesUpdateMutation')
+  ])
+  const fullCartId = resolveFullShopifyCartId(
+    publicCartId,
+    await readCartIdCookie()
+  )
+
+  if (!fullCartId) {
+    throw new Error('Cart ownership verification failed.')
+  }
+
+  try {
+    await performCartAttributesUpdateMutation(
+      fullCartId,
+      attributes
+    )
+    return { success: true }
+  } catch (error) {
+    console.error(
+      'Shopify cart attributes update failed.',
+      getRedactedErrorSummary(error)
+    )
+    throw new Error('Kunne ikke oppdatere handlekurven.')
+  }
+}

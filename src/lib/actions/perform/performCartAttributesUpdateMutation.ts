@@ -1,5 +1,4 @@
-// Path: src/lib/actions/perform/performCartAttributesUpdateMutation.ts
-'use server'
+import 'server-only'
 
 import { mutationCartAttributesUpdate } from '@/api/graphql/mutations/cart'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
@@ -8,10 +7,7 @@ import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
 import { getCartFromMutationPayload } from '@/lib/actions/cart/getCartFromMutationPayload'
 import type { ShopifyCartAttributesUpdateOperation } from '@types'
 
-type CartAttribute = {
-  key: string
-  value: string
-}
+type CartAttribute = { key: string; value: string }
 
 export const performCartAttributesUpdateMutation = async (
   cartId: string,
@@ -24,10 +20,7 @@ export const performCartAttributesUpdateMutation = async (
   const result =
     await shopifyFetch<ShopifyCartAttributesUpdateOperation>({
       query: mutationCartAttributesUpdate,
-      variables: {
-        cartId,
-        attributes
-      }
+      variables: { cartId, attributes }
     })
 
   if (!result.success) {

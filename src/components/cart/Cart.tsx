@@ -2,15 +2,17 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useSyncExternalStore } from 'react'
+import { useContext, useSyncExternalStore } from 'react'
 import { CartTrigger } from '@/components/cart/CartTrigger'
 import { useCartOpen } from '@/hooks/useCartOpen'
+import { CartBootstrapContext } from '@/lib/context/CartBootstrapContext'
 
 const CartDrawer = dynamic(
-  () => import('./CartDrawer/CartDrawer').then(module => module.CartDrawer),
-  {
-    ssr: false
-  }
+  () =>
+    import('./CartDrawer/CartDrawer').then(
+      module => module.CartDrawer
+    ),
+  { ssr: false }
 )
 
 const subscribeToClientSnapshot = () => () => {}
@@ -29,9 +31,10 @@ export function Cart({
     getClientSnapshot,
     getServerSnapshot
   )
+  const cartBootstrapStatus = useContext(CartBootstrapContext)
   const open = useCartOpen()
 
-  if (!isMounted) {
+  if (!isMounted || cartBootstrapStatus === 'pending') {
     return (
       <div
         aria-hidden
@@ -43,7 +46,9 @@ export function Cart({
   return (
     <>
       <CartTrigger className={className} showLabel={showLabel} />
-      {open ? <CartDrawer /> : null}
+      {open ?
+        <CartDrawer />
+      : null}
     </>
   )
 }

@@ -1,5 +1,5 @@
 // Path: src/lib/actions/perform/performCartLinesRemoveMutation.ts
-'use server'
+import 'server-only'
 
 import { mutationCartLinesRemove } from '@/api/graphql/mutations/cart'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
@@ -12,10 +12,11 @@ export const performCartLinesRemoveMutation = async (
   cartId: string,
   lineIds: string[]
 ): Promise<StorefrontCart> => {
-  const result = await shopifyFetch<ShopifyRemoveFromCartOperation>({
-    query: mutationCartLinesRemove,
-    variables: { cartId, lineIds }
-  })
+  const result =
+    await shopifyFetch<ShopifyRemoveFromCartOperation>({
+      query: mutationCartLinesRemove,
+      variables: { cartId, lineIds }
+    })
 
   if (!result.success) {
     throw new ShopifyApiError(

@@ -1,10 +1,10 @@
 import {
   Marker,
   MarkerContent,
-  MarkerIcon,
-} from "@/components/ui/marker"
-import { Spinner } from "@/components/ui/spinner"
-import type { TextShimmerProps } from "@/components/ai-elements/Shimmer"
+  MarkerIcon
+} from '@/components/ui/marker'
+import { Spinner } from '@/components/ui/spinner'
+import type { TextShimmerProps } from '@/components/ai-elements/Shimmer'
 
 
 export function ShimmerMarker({ children }: TextShimmerProps) {

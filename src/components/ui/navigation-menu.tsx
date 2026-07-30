@@ -140,7 +140,7 @@ function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot='navigation-menu-link'
       className={cn(
-        "dark:hover:bg-dark-muted dark:focus:bg-dark-muted dark:focus-visible:ring-dark-ring/50 dark:data-[active=true]:bg-dark-muted/50 dark:data-[active=true]:hover:bg-dark-muted dark:data-[active=true]:focus:bg-dark-muted flex items-center gap-1.5 rounded-md p-2 text-sm transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1 in-data-[slot=navigation-menu-content]:rounded-sm data-[active=true]:bg-muted/50 data-[active=true]:hover:bg-muted data-[active=true]:focus:bg-muted [&_svg:not([class*='size-'])]:size-4",
+        'dark:hover:bg-dark-muted dark:focus:bg-dark-muted dark:focus-visible:ring-dark-ring/50 dark:data-[active=true]:bg-dark-muted/50 dark:data-[active=true]:hover:bg-dark-muted dark:data-[active=true]:focus:bg-dark-muted flex items-center gap-1.5 rounded-md p-2 text-sm transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1 in-data-[slot=navigation-menu-content]:rounded-sm data-[active=true]:bg-muted/50 data-[active=true]:hover:bg-muted data-[active=true]:focus:bg-muted [&_svg:not([class*=\'size-\'])]:size-4',
         className
       )}
       {...props}

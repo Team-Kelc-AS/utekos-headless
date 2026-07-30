@@ -1,4 +1,4 @@
-'use server'
+import 'server-only'
 
 import { mutationCartCreate } from '@/api/graphql/mutations/cart'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
@@ -29,5 +29,8 @@ export const performCartCreateMutation = async (
     )
   }
 
-  return getCartFromMutationPayload('cartCreate', result.body.cartCreate)
+  return getCartFromMutationPayload(
+    'cartCreate',
+    result.body.cartCreate
+  )
 }

@@ -4,7 +4,7 @@
 
 import ComfyRainy from '@public/comfy_rainy.webp'
 import Image from 'next/image'
-import { useRef } from 'react'
+import { useState } from 'react'
 import Fade from 'embla-carousel-fade'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
@@ -13,12 +13,12 @@ const COMFYROBE_PRIMARY_IMAGE =
   'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Comfyrobe-Kvinne-1600x1600.png?v=1784824903'
 
 export function ComfyrobeImageCarousel() {
-  const fadePlugin = useRef(Fade())
+  const [fadePlugin] = useState(() => Fade())
 
   return (
     <AnimatedBlock className='will-animate-fade-in-left mx-auto flex w-full justify-center'>
       <Carousel
-        plugins={[fadePlugin.current]}
+        plugins={[fadePlugin]}
         slideCount={2}
         opts={{ loop: true, align: 'center' }}
         className='relative mx-auto aspect-square w-full max-w-full overflow-hidden rounded-[1.35rem] bg-background/60 shadow-[0_24px_70px_-48px_color-mix(in_oklch,var(--background)_90%,transparent)] dark:bg-dark-background/60'

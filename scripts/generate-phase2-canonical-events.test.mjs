@@ -20,7 +20,7 @@ const REQUIRED_FRAGMENTS = [
   'collect:',
   'getRequestContext:',
   'store: postgresCanonicalEventStore',
-  "from '@vercel/functions'"
+  'from \'@vercel/functions\''
 ]
 
 async function loadGenerator() {

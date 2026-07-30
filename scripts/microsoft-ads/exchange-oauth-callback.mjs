@@ -23,7 +23,7 @@ function readEnvFile(relativePath) {
     const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/)
     if (!match) continue
     let value = match[2].trim()
-    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith('\'') && value.endsWith('\''))) {
       value = value.slice(1, -1)
     }
     values.set(match[1], value)
@@ -77,13 +77,13 @@ const body = new URLSearchParams({
   code,
   grant_type: 'authorization_code',
   redirect_uri: redirectUri,
-  scope: 'https://ads.microsoft.com/msads.manage offline_access',
+  scope: 'https://ads.microsoft.com/msads.manage offline_access'
 })
 
 const response = await fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
   method: 'POST',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  body,
+  body
 })
 
 const data = await response.json()

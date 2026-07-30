@@ -1,5 +1,5 @@
 // Path: src/lib/actions/perform/performCartLinesUpdateMutation.ts
-'use server'
+import 'server-only'
 
 import { mutationCartLinesUpdate } from '@/api/graphql/mutations/cart'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
@@ -15,13 +15,11 @@ export const performCartLinesUpdateMutation = async (
 ): Promise<StorefrontCart> => {
   const lines = [{ id: input.lineId, quantity: input.quantity }]
 
-  const result = await shopifyFetch<ShopifyUpdateCartLineQuantityOperation>({
-    query: mutationCartLinesUpdate,
-    variables: {
-      cartId,
-      lines
-    }
-  })
+  const result =
+    await shopifyFetch<ShopifyUpdateCartLineQuantityOperation>({
+      query: mutationCartLinesUpdate,
+      variables: { cartId, lines }
+    })
 
   if (!result.success) {
     throw new ShopifyApiError(

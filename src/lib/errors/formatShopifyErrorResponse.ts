@@ -3,20 +3,19 @@
 import { CartErrorCode } from '@/constants/CartErrorCode'
 import type { ResponseErrors } from '@shopify/graphql-client'
 import type { CartActionsResult } from 'types/cart/CartActions'
+import { redactShopifyCartSecrets } from '@/lib/cart/redactShopifyCartSecrets'
 
 export function formatShopifyErrorResponse(
   errors: ResponseErrors
 ): CartActionsResult {
-  const topLevelMessage =
-    Array.isArray(errors.graphQLErrors) && errors.graphQLErrors[0]?.message ?
-      errors.graphQLErrors[0].message
-    : 'An error occurred while communicating with Shopify.'
-
-  console.error('Shopify API Errors:', JSON.stringify(errors, null, 2))
+  console.error(
+    'Shopify API Errors:',
+    redactShopifyCartSecrets(JSON.stringify(errors))
+  )
 
   return {
     success: false,
-    message: topLevelMessage,
+    message: 'En feil oppstod ved kommunikasjon med Shopify.',
     error: CartErrorCode.API_ERROR
   }
 }
