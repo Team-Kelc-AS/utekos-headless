@@ -151,12 +151,19 @@ utelukkende formidles via farge.
 This file is the authoritative operating contract for all agents
 working in this repository. Read this file first, then `PLAN.md`,
 `DEPLOYMENT.md`,
-`/Users/kristofferohnstadhjelmeland/main-documentation/agents.txt`,
-`/Users/kristofferohnstadhjelmeland/main-documentation/sitemap.xml`
-`/Users/kristofferohnstadhjelmeland/main-documentation/README.md`,
-`/Users/kristofferohnstadhjelmeland/main-documentation/llms.txt`,
+`.codex/docs/main-documentation/agents.txt`,
+`.codex/docs/main-documentation/sitemap.xml`,
+`.codex/docs/main-documentation/README.md`,
+`.codex/docs/main-documentation/llms.txt`,
 and the relevant local documentation before changing code or
 giving architectural recommendations.
+
+The files under `.codex/docs/main-documentation/` are portable
+repository snapshots of the Utekos documentation entry points. Use
+them to locate the relevant subject area, then verify volatile API and
+framework behavior against current official documentation. Never
+depend on an operator-specific absolute filesystem path in local,
+worktree, CI, or Codex Cloud environments.
 
 Every user-facing response must include `Dokumentasjonsstatus:`
 and explicitly say whether the current work has enough updated
@@ -166,16 +173,16 @@ before implementation.
 
 ### `Zero-Assumption Protocol`
 
-See .codex/rules/
+See [`.codex/rules/`](.codex/rules/).
 
 - Do not assume current APIs, framework behavior, provider
   requirements, tracking semantics, or deployment state.
 - Final delivery must list verification performed and any blocked
   verification. Uverified UI, tracking, provider, deployment, or
   data-flow changes are not acceptable deliverables.
-- If any folders or paths seems missing, tell the user and never
-  continue the task before its found. The reason for not seeing
-  it may be beacuse its hidden under .gitognore or .cursorignore.
+- If a required folder or path is missing, tell the user and do not
+  continue until it is found or restored. Check whether ignore rules
+  hide the path before concluding that the source is unavailable.
 
 Code and architecture rules:
 
