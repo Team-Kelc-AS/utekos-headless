@@ -1,9 +1,9 @@
 {
-  "commit": "9a6452c46683a5017499c115534b9b568246b1c5",
-  "capturedAt": "2026-07-28T08:50:35.395Z",
+  "commit": "cb44ec3dae284d73947bf2c569666addbc3dc2cc",
+  "capturedAt": "2026-07-30T21:06:29.771Z",
   "entry": "src/app/produkter/[handle]/page.tsx",
-  "clientModuleCount": 203,
-  "clientBytes": 496270,
+  "clientModuleCount": 206,
+  "clientBytes": 499221,
   "boundaryModules": [
     "src/app/produkter/[handle]/components/ProductPageController.tsx",
     "src/components/frontpage/IntersportSection/NewProductInStoreNotice.tsx"

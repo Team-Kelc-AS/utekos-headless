@@ -4,15 +4,22 @@ Baseline date: 2026-07-28
 
 Reviewed against `origin/main`: 2026-07-30
 
-Baseline commit: `9a6452c46683a5017499c115534b9b568246b1c5`
+Historisk runtime-baseline commit:
+`9a6452c46683a5017499c115534b9b568246b1c5`
+
+Gjeldende statisk guardrail-seed:
+`cb44ec3dae284d73947bf2c569666addbc3dc2cc` (PR #88, produksjon)
 
 Entry route: `src/app/produkter/[handle]/page.tsx`
 
 This is the locked guardrail for the PDP server-first work
-package (KRI-5). It records the statically measurable cost of the
-product page before refactoring, so KRI-7 through KRI-10 can be
-proved rather than asserted. No production code is changed by
-this baseline.
+package (KRI-5). Runtime measurements remain anchored to the
+historical pre-refactor commit. The static source-graph snapshot
+is seeded from the production PPR commit so unrelated, reviewed
+cart-security modules do not make the guardrail fail before the
+PDP work starts. KRI-7 through KRI-10 must still remove all six
+PDP hard-gate violations. No production code is changed by this
+baseline.
 
 ## Måleverktøy
 
@@ -48,14 +55,24 @@ again after revert.
 
 ## Baseline-tall
 
-| Målepunkt                                         | Baseline |
-| ------------------------------------------------- | -------- |
-| Server modules reachable from the route           | 62       |
-| Client modules reachable from the route           | 203      |
-| Client source bytes (uncompressed, pre-bundling)  | 484.6 kB |
-| Server → client boundary entry points             | 2        |
-| Distinct third-party packages on the client graph | 27       |
-| Hard-gate violations                              | 6        |
+| Målepunkt                                         | Historisk KRI-6 | Gjeldende guardrail |
+| ------------------------------------------------- | --------------- | ------------------- |
+| Server modules reachable from the route           | 62              | 64                  |
+| Client modules reachable from the route           | 203             | 206                 |
+| Client source bytes (uncompressed, pre-bundling)  | 484.6 kB        | 487.5 kB            |
+| Server → client boundary entry points             | 2               | 2                   |
+| Distinct third-party packages on the client graph | 27              | 27                  |
+| Hard-gate violations                              | 6               | 6                   |
+
+Forskjellen på tre klientmoduler og 2,9 KiB skyldes utelukkende
+PR #88s validering av Shopify cart-ID-er og feilgrense:
+
+- `src/lib/cart/parseShopifyCartId.ts`
+- `src/lib/cart/shopifyPublicCartIdSchema.ts`
+- `src/lib/errors/ShopifyApiError.ts`
+
+Dette er ikke PDP-refaktorering. Boundary entry points,
+tredjepartssettet og de seks kjente PDP-bruddene er uendret.
 
 Boundary entry points today:
 
@@ -148,11 +165,13 @@ Steering targets, which require runtime measurement:
 
 ## Runtime verification status
 
-The original static baseline remains locked to its recorded
-commit. On 2026-07-30 the analyzer was rerun on the latest
-`origin/main`: 14 analyzer tests passed, the same 203 client
-modules and six hard-gate violations were found, and client
-source bytes moved slightly down from 496,270 to 496,059.
+The historical browser/runtime baseline remains locked to its
+recorded commit and production deployment. On 2026-07-30 the
+static analyzer was rerun on production commit `cb44ec3`: all 14
+analyzer tests passed, 206 client modules and the same six
+hard-gate violations were found, and the source-graph snapshot
+was re-seeded at 499,221 bytes. `pnpm pdp:baseline:check` passes
+against that production seed.
 
 The current environment can render the PDP with Storefront
 credentials and a browser. Runtime measurements are handled by
@@ -164,12 +183,12 @@ instrumentation on a controlled Preview deployment.
 
 ## Rekkefølge
 
-KRI-12 is now implemented on `main` through PR #81: PPR resume
-decompression is hardened, Server Action bodies are preserved,
-and `turbopackFileSystemCacheForBuild` is disabled. PR #74 must
-therefore not be merged separately. The remaining server-first
-sequence is KRI-7 → KRI-8 → KRI-9 → KRI-10, then KRI-11 for
-combined verification and controlled rollout.
+KRI-12 is implemented and production-verified through PR #88: PPR
+resume decompression, cart identity/cookie ownership and the
+Server Action boundary are hardened. PR #74 must therefore not be
+merged separately. The remaining server-first sequence is KRI-7 →
+KRI-8 → KRI-9 → KRI-10, then KRI-11 for combined verification and
+controlled rollout.
 
 ## Rollback
 
