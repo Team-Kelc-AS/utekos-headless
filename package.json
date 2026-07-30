@@ -34,6 +34,12 @@
     "clean": "rm -rf .next",
     "sync": "f() { git add . && git commit -m \"$1\" && git push; }; f",
     "knip": "knip",
+    "pdp:baseline": "tsx scripts/pdp/baseline.ts",
+    "pdp:baseline:write": "tsx scripts/pdp/baseline.ts --write",
+    "pdp:baseline:check": "tsx scripts/pdp/baseline.ts --check",
+    "pdp:baseline:test": "tsx --test scripts/pdp/analyzePdpBoundary.test.ts",
+    "pdp:perf:baseline": "node scripts/perf/measure-pdp-baseline.mjs",
+    "pdp:perf:test": "node --test scripts/perf/measure-pdp-baseline.test.mjs",
     "tracking:gateway:smoke": "node scripts/tracking/verify-tracking-gateway.mjs",
     "tracking:meta-pixel:smoke": "node scripts/tracking/verify-meta-pixel-parity.mjs",
     "tracking:view-item:transaction-id": "node scripts/tracking/verify-view-item-transaction-id.mjs",
@@ -150,7 +156,9 @@
     "inject:klarna-docs": "node scripts/klarna-docs/inject-ts-headers.mjs && node scripts/klarna-docs/inject-json-metadata.mjs",
     "mcp:css-insight:dev-ngrok": "node scripts/mcp/dev-ngrok-widget.mjs",
     "test:ppr-resume-decompress": "node --test scripts/next/ppr-resume-decompress.test.mjs",
-    "ppr:shell:smoke": "node scripts/next/verify-ppr-shell-integrity.mjs"
+    "ppr:shell:smoke": "node scripts/next/verify-ppr-shell-integrity.mjs",
+    "test:ppr-rsc-probe": "node --test scripts/next/ppr-rsc-probe.test.mjs",
+    "ppr:rsc:probe": "node scripts/next/ppr-rsc-probe.mjs"
   },
   "dependencies": {
     "@adobe/leonardo-contrast-colors": "^1.1.0",
