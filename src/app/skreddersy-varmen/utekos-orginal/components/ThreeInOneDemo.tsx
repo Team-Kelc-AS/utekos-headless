@@ -15,7 +15,7 @@ export function ThreeInOneDemo() {
     <article className='w-full overflow-hidden bg-[#2C2420] py-16 text-[#F4F1EA] md:py-24'>
       <div className='mx-auto max-w-6xl px-4 text-center md:px-6'>
         <AnimatedBlock className='animate-on-scroll mb-6 md:mb-12'>
-          <span className='font-google-sans mb-3 block text-xs font-bold tracking-[0.2em] text-primary dark:text-dark-primary uppercase md:text-sm'>
+          <span className='font-google-sans mb-3 block text-xs font-bold tracking-[0.2em] text-[#E07A5F] uppercase md:text-sm'>
             Modulært system
           </span>
           <h3 className='mb-4 font-serif text-3xl md:mb-6 md:text-5xl'>
@@ -39,7 +39,7 @@ export function ThreeInOneDemo() {
                   onClick={() => setActiveMode(mode.id)}
                   className={`relative flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium whitespace-nowrap transition-all duration-300 ease-out md:flex-none md:gap-2 md:px-6 md:py-3 md:text-base ${
                     isActive ?
-                      'scale-100 bg-primary text-primary-foreground shadow-lg dark:bg-dark-primary dark:text-dark-primary-foreground'
+                      'dark:bg-dark-primary dark:text-dark-primary-foreground scale-100 bg-primary text-primary-foreground shadow-lg'
                     : 'text-[#F4F1EA]/60 hover:bg-white/5 hover:text-[#F4F1EA]'
                   } `}
                 >
