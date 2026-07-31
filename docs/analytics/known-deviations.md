@@ -509,6 +509,35 @@
   after release.
 - **Target task:** SAFE — begin_checkout UI remediations.
 
+## DEV-025
+
+- **Priority:** P1
+- **Status:** CODE_FIXED_REPO_ARTIFACT; SHOPIFY_PIXEL_PUBLISH_BLOCKED
+  (2026-07-31)
+- **Description:** Repoets historiske Shopify Customer Events-piksel mappet
+  `payment_info_submitted` direkte til canonical `add_payment_info`, selv om
+  eventkatalogen krever et akseptert betalingssteg og har
+  `lifecycle='blocked_source'`.
+- **Evidence:** Shopify dokumenterer bare at betalingsinformasjon er sendt inn.
+  Dokumentasjonen garanterer ikke validering, aksept, autorisasjon eller
+  vellykket checkout. GA4 Data API returnerte ingen `add_payment_info`- eller
+  `add_shipping_info`-rader for 2026-07-24–2026-07-31. Dagens Shopify
+  Admin-tilkobling mangler `read_pixels`, og den tilgjengelige nettleserøkten
+  var ikke autentisert.
+- **Consequence:** Hvis den historiske pikselkoden fortsatt er publisert, kan
+  en innsending bli rapportert som canonical `add_payment_info` før Utekos sin
+  postcondition er sann.
+- **Resolution:** `payment_info_submitted`-abonnementet er fjernet fra repoets
+  pikselartefakt. Kontrakttesten krever nå at både betalings- og
+  frakthendelsen er uten abonnement. Eventkatalog, matrise og evidens beholder
+  begge eventer fail-closed.
+- **Remaining limitation:** Repoendringen endrer ikke en manuelt publisert
+  Shopify-piksel. Autentisert sammenligning og eventuell publisering av den
+  fail-closed pikselkoden er en separat Shopify-mutasjon som krever eksplisitt
+  godkjenning.
+- **Systems:** Shopify Customer Events, GA4, canonical event catalog.
+- **Target task:** KRI-24 kodekonsistens; separat Shopify-pikseloppgave.
+
 ## Previously requested hypotheses
 
 | Hypothesis                                               | Verdict                                                                                                       |

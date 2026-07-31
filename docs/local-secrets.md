@@ -1,0 +1,78 @@
+# Local secrets and MCP configuration
+
+This repository generates local MCP client files from committed
+templates. Secrets belong in ignored local files and must never
+be written to generated or committed configuration.
+
+## Files and precedence
+
+| Layer                    | Path                                   | Committed | Purpose                                                    |
+| ------------------------ | -------------------------------------- | --------- | ---------------------------------------------------------- |
+| Server source            | `config/mcp/servers.base.json`         | yes       | Canonical server definitions and `${ENV_VAR}` placeholders |
+| Credential manifest      | `config/mcp/credentials.manifest.json` | yes       | Credential ownership and optional/required classification  |
+| Editor overrides         | `config/mcp/vscode-overrides.json`     | yes       | VS Code-only transport overrides                           |
+| MCP secrets              | `.env.mcp.local`                       | no        | Primary MCP credential source                              |
+| App secrets              | `.env.local`                           | no        | Next.js runtime values and MCP fallback                    |
+| Generated Cursor config  | `mcp.json`                             | no        | Generated output                                           |
+| Generated VS Code config | `.vscode/mcp.json`                     | no        | Generated output                                           |
+| Cursor link              | `.cursor/mcp.json`                     | no        | Symlink to `mcp.json`                                      |
+
+`.env.mcp.local` wins over `.env.local`. Empty fallback values
+are ignored. Credential JSON files remain under ignored
+`src/api/lib/cloud-credentials/` or the documented agent-artifact
+path.
+
+## Setup
+
+```bash
+cp .env.mcp.example .env.mcp.local
+npm run mcp:build
+npm run mcp:doctor
+```
+
+Activate the repository runtime first:
+
+```bash
+source "$HOME/.nvm/nvm.sh"
+nvm use --silent
+corepack enable
+```
+
+Reload the MCP client after generation.
+
+## Safety rules
+
+- Never hand-edit `mcp.json`, `.vscode/mcp.json`, or
+  `.cursor/mcp.json`.
+- Never commit `.env.mcp.local`, `.env.local`, generated MCP
+  files, access tokens, OAuth codes, service-account JSON, DSNs
+  with credentials, or local identity metadata.
+- Keep placeholders in `config/mcp/servers.base.json`; the
+  generated runner resolves secret-bearing stdio arguments at
+  process start.
+- `SENTRY_ACCESS_TOKEN` is the documented token name for the
+  Sentry MCP. `SENTRY_ORG_TOKEN` is the optional org-scoped
+  companion for org-wide reads. `SENTRY_AUTH_TOKEN` remains
+  separate for application/SDK workflows. All three are declared
+  in `credentials.manifest.json` under `optionalEnv`, so a
+  missing value degrades that server only and never the build.
+- Remote OAuth servers keep OAuth state in the client. Do not
+  copy cached tokens into repository files.
+- `facebook-ads` (`https://mcp.facebook.com/ads`) disables OAuth
+  Dynamic Client Registration, so a client that tries to register
+  itself never receives a `client_id` and its authenticate action
+  hangs without opening a browser. The server therefore declares
+  a static `auth.CLIENT_ID` bound to `${META_APP_ID}`. The Meta
+  app must carry the "Create & manage ads with ads MCP server"
+  use case, which is what grants the `ads_mcp_management` scope;
+  a System User token cannot hold that scope. While the app is in
+  development mode Meta auto-allows `http://localhost` redirects,
+  so Cursor's `http://localhost:8787/callback` needs no allowlist
+  entry. `https://mcp.facebook.com/devtools` does support dynamic
+  registration and needs no static client id.
+- A successful build proves configuration generation only.
+  Restart the client and run a safe read tool before reporting a
+  provider MCP as usable.
+
+See `config/mcp/README.md` for profiles, tunnel operations and
+server-specific doctors.

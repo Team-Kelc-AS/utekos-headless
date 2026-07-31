@@ -181,21 +181,6 @@
     return parameters
   }
 
-  function sendPaymentInfo(event) {
-    if (!analyticsAllowed()) return
-
-    var eventKey = 'add_payment_info:' + (event && event.id)
-    if (sent[eventKey]) return
-
-    var parameters = checkoutParameters(event)
-    if (!parameters.currency || parameters.items.length === 0)
-      return
-
-    initializeGoogleTag()
-    gtag('event', 'add_payment_info', parameters)
-    sent[eventKey] = true
-  }
-
   function sendPurchase(event) {
     if (!analyticsAllowed()) return
 
@@ -240,7 +225,6 @@
     }
   )
 
-  analytics.subscribe('payment_info_submitted', sendPaymentInfo)
   analytics.subscribe('checkout_completed', sendPurchase)
   initializeGoogleTag()
 })()

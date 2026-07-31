@@ -188,6 +188,32 @@ test('keeps blocked_source events isolated from active lifecycle', () => {
   ])
 })
 
+test('keeps Shopify checkout-step candidates fail-closed', () => {
+  const shipping = eventCatalog.add_shipping_info
+  const payment = eventCatalog.add_payment_info
+
+  assert.equal(shipping.lifecycle, 'blocked_source')
+  assert.equal(payment.lifecycle, 'blocked_source')
+  assert.match(
+    shipping.trigger.description,
+    /checkout_shipping_info_submitted proves only that a rate was chosen/
+  )
+  assert.match(
+    payment.trigger.description,
+    /payment_info_submitted proves submission only/
+  )
+  assert.ok(
+    Object.values(shipping.providers).every(
+      provider => provider.serverOutbox !== 'active'
+    )
+  )
+  assert.ok(
+    Object.values(payment.providers).every(
+      provider => provider.serverOutbox !== 'active'
+    )
+  )
+})
+
 test('marks all non-blocked catalog events as active', () => {
   const inactiveEvents = canonicalEventNames.filter(
     name => eventCatalog[name].lifecycle !== 'active'
