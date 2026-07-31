@@ -1,6 +1,6 @@
 # EVENT_CATALOG v1
 
-Statusdato: 2026-07-17
+Statusdato: 2026-07-31
 
 Dette er Utekos sin autoritative beslutnings- og revisjonsflate for
 canonical events. Den maskinlesbare allowlisten ligger i
@@ -10,6 +10,10 @@ utenfor denne katalogen.
 
 En oppføring med `planned` eller `blocked_source` er en beslutning, ikke en
 påstand om at detector, schema, routing eller levering finnes i produksjon.
+
+Gjeldende v1-inventar er **33 canonical events: 29 `active` og fire
+`blocked_source`**. De fire blokkerte er `add_shipping_info`,
+`add_payment_info`, `checkout_error` og `payment_error`.
 
 ## Ufravikelige runtime-regler
 
@@ -25,10 +29,9 @@ påstand om at detector, schema, routing eller levering finnes i produksjon.
    `serverOutbox: active`.
 6. Aktive server-outbox-kombinasjoner styres av
    `serverOutbox: active` i katalogen og må matche
-   `providerAdapterRegistry` + `providerOutboxWorkerRegistry`
-   (commerce-funnel: Google/Meta for `view_item`, `add_to_cart`,
-   `begin_checkout`, `purchase`; Google for `refund`; pluss øvrige
-   aktive Google/Meta-par for atferds-/lead-events).
+   `providerAdapterRegistry` + `providerOutboxWorkerRegistry`. Gjeldende
+   register har 48 aktive provider/event-par: 28 Google, 17 Meta og tre
+   Microsoft UET CAPI (`add_to_cart`, `begin_checkout`, `purchase`).
 7. Events utenfor katalogen kan ikke skrives til canonical ledger eller
    eksporteres av canonical router.
 8. Ledger og outbox er internt idempotente. Providertransport er
@@ -86,6 +89,7 @@ samtykkepolicyen tillater det.
 | -----------------------| ----------------| ------------------------------------------------------------------------------------| --------------------------------------------------------------------------------------------| ----------| -----------|
 | `page_view`           | active         | Next-router etter initial canonical view eller fullført navigasjon med endelig URL | `navigation_id`; ny ved neste fullførte navigasjon                                         | C1       | R30       |
 | `view_item_list`      | active         | Produktliste når navngitt liste og løste items faktisk er synlige                  | `page_view_id + item_list_id + impression_sequence`; ny synlig sekvens                     | C2       | R30       |
+| `view_category`       | active         | Kategori-/collectionflate når den faktisk er synlig                                | `page_view_id + category_id + view_sequence`; ny kvalifiserende visningssekvens            | C2       | R30       |
 | `select_item`         | active         | Produktlenken når et akseptert valg starter navigasjon                             | `interaction_id`; ny akseptert interaksjon                                                 | C2       | R30       |
 | `view_item`           | active         | Produktvisningen når produkt og valgt variant er løst og synlig                    | `page_view_id + product_id + variant_id + view_sequence`; ny visning eller variantkontekst | C2       | R30       |
 | `add_to_wishlist`     | active         | Wishlist-store etter bekreftet persistens                                          | `wishlist_mutation_id`; ny vellykket mutasjon                                              | C3       | R90       |
@@ -112,6 +116,9 @@ samtykkepolicyen tillater det.
 | `checkout_error`      | blocked_source | Godkjent autoritativ kilde ved definitiv checkout-feil                             | `checkout_attempt_id`; nytt feilet forsøk                                                  | C6       | R90       |
 | `payment_error`       | blocked_source | Godkjent autoritativ kilde ved definitiv betalingsfeil                             | `payment_attempt_id`; nytt feilet forsøk                                                   | C6       | R90       |
 | `scroll_depth`        | active         | Scroll-observer ved første passering av 25/50/75/90 % per sidevisning              | `page_view_id + threshold`; ny side eller terskel                                          | C2       | R30       |
+| `hero_interact`       | active         | Forsidens hero-CTA når brukeren klikker «Se mer»                                   | `page_view_id + cta_id + click_sequence`; ny kvalifiserende CTA-interaksjon                 | C2       | R30       |
+| `interact_with_accordion` | active    | PDP-detalj når brukeren åpner et tidligere lukket accordion etter produkt-/variantoppløsning | `page_view_id + product_id + variant_id + accordion_id + interaction_sequence`; ny lukket→åpen-interaksjon | C2 | R30 |
+| `open_quick_view`     | active         | Quick-view når dialogen er åpen og produkt og valgt variant er løst                | `page_view_id + source_surface + product_id + variant_id + open_sequence`; ny vellykket åpning | C2    | R30       |
 | `video_progress`      | active         | Video-controller ved første passering av 10/25/50/75/90/100 %                      | `page_view_id + video_id + milestone`; ny side, video eller milepæl                        | C2       | R30       |
 
 `add_shipping_info` og `add_payment_info` forblir `blocked_source` til en
@@ -128,13 +135,13 @@ provider-dedupefelt, bortsett fra Google `view_item`, som bruker canonical
 `transaction_id`. Eventspesifikke krav er eksplisitt angitt i
 `eventCatalog.ts`.
 
-### Aktiv produksjonssannhet
+### Aktiv produksjonssannhet 2026-07-31
 
 | Event/provider | Support | Providernavn | Transport | Produksjon | Server-outbox |
 | --- | --- | --- | --- | --- | --- |
 | `page_view` / Supabase | supported | `page_view` | first-party API | active | disabled |
 | `page_view` / Google | supported | `page_view` | GTM + sGTM | active | disabled |
-| `page_view` / Meta | blocked | `PageView` | CAPI | blocked | `blocked_no_worker` |
+| `page_view` / Meta | supported | `PageView` | Pixel + CAPI | active | **active** |
 | `page_view` / Microsoft | supported | `page_view` | browser UET + UET CAPI | browser active, server blocked | `blocked_no_worker` |
 | `page_view` / PostHog | planned | `page_view` | browser/server | not implemented | disabled |
 | `view_item` / Supabase | supported | `view_item` | first-party API | active | disabled |
@@ -143,12 +150,18 @@ provider-dedupefelt, bortsett fra Google `view_item`, som bruker canonical
 | `view_item` / Microsoft | supported | `view_item` | browser UET + UET CAPI | browser active, server blocked | `blocked_no_worker` |
 | `view_item` / PostHog | planned | `view_item` | browser/server | not implemented | disabled |
 
-Det finnes historiske pending `page_view`-rader for Meta og Microsoft uten
-en godkjent `page_view`-worker. De skal ikke replayes eller brukes som
-grunnlag for nye rader før mapping, worker og replay-policy er eksplisitt
+Det finnes historiske pending `page_view`-rader fra før gjeldende
+claimant-cutover. Historiske Meta-rader må fortsatt ikke replayes blindt, selv
+om nye canonical `page_view` har en aktiv Meta-worker. Microsoft-radene mangler
+fortsatt en godkjent serverworker og skal ikke replayes eller brukes som
+grunnlag for nye serverrader før mapping og replay-policy er eksplisitt
 godkjent.
 
-### Planlagte mappinger
+### Historical — superseded providerplan fra 2026-07-17
+
+Tabellen under beholdes som revisjonsspor for planstatusen 2026-07-17. Den er
+ikke gjeldende runtimefasit; [event-matrisen](docs/analytics/event-matrix.md) og
+den maskinlesbare katalogen eier nåværende providerstatus.
 
 Tabellkodene er komplette statusprofiler:
 
@@ -158,9 +171,9 @@ Tabellkodene er komplette statusprofiler:
   `disabled`.
 - Meta `P(name)`: supported CAPI-mapping, production `planned`, outbox
   `disabled`; `—` er `not_relevant`.
-- Microsoft `P(name)`: supported browser UET/UET CAPI-mapping. Production
-  `purchase` server outbox is `active` (UET CAPI worker registered 2026-07-20);
-  other Microsoft events remain `blocked_no_worker` until expanded. `—` er
+- Microsoft `P(name)`: historisk planprofil. I gjeldende runtime er
+  `add_to_cart`, `begin_checkout` og `purchase` aktive server-outbox-par;
+  øvrige Microsoft-events er fortsatt uten godkjent serverworker. `—` er
   `not_relevant`.
 - PostHog `P`: planned browser/server-mapping, production `not_implemented`,
   outbox `disabled`; `—` er `not_relevant`.
@@ -236,8 +249,11 @@ denne nettverksverifikasjonen ikke kan gjennomføres.
 - [Set up Consent Mode on websites](https://developers.google.com/tag-platform/security/guides/consent)
 - [Meta Conversions API server-event parameters](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event)
 - [Microsoft Advertising UET Conversions API guide](https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration?view=bingads-13)
+- [Vercel Queue SDK](https://vercel.com/docs/queues/sdk)
+- [Vercel Cron Jobs](https://vercel.com/docs/cron-jobs)
 
-Kildene ble kontrollert 2026-07-17. De underbygger GA-navn,
+Provider-/consentkildene ble samlet kontrollert 2026-07-17; Vercel Queue- og
+cronsemantikken ble kontrollert på nytt 2026-07-31. Kildene underbygger GA-navn,
 Enhanced Measurement-triggerne, GA-avledede systemevents,
 ecommerce-parametere, Consent Mode-adferd og Meta sin bruk av
 `event_name` + `event_id` til deduplisering. Microsoft-kilden

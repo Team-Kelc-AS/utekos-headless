@@ -2,22 +2,29 @@
 
 ## DEV-001
 
-- **Priority:** P0
-- **Description:** Every accepted browser event and transaction
-  webhook schedules a full provider registry drain.
-- **Evidence:** `createBrowserEventRouteHandler.ts:16-29`;
-  `runRegisteredProviderOutboxBatch.ts:21-39`; registered
-  provider-event workers in `providerOutboxWorkerRegistry.ts`
-  (includes `microsoft_uet:purchase` as of 2026-07-20).
-- **Consequence:** One request can claim unrelated backlog,
-  execute every registered worker claim, compete with cron and
-  move queue drainage into the request deployment lifecycle.
+- **Priority:** Closed P0
+- **Status:** **Superseded/closed 2026-07-26.** The description below is
+  retained as historical audit evidence.
+- **Historical description:** Every accepted browser event and transaction
+  webhook scheduled a full provider registry drain.
+- **Historical evidence:** the former `createBrowserEventRouteHandler` wiring
+  invoked `runRegisteredProviderOutboxBatch`; registered workers could claim
+  unrelated provider/event rows.
+- **Historical consequence:** One request could claim unrelated backlog,
+  execute every registered worker claim, compete with cron, and move queue
+  drainage into the request deployment lifecycle.
 - **Systems:** All `/api/events/*`, purchase/refund webhooks,
   Vercel functions, Supabase outbox.
-- **Recommended next action:** Make request-path dispatch
-  targeted to the attempt IDs created by that transaction, or
-  remove immediate dispatch and rely on cron.
-- **Target task:** Oppgave 1, first code change.
+- **Resolution evidence:** After database commit, only newly created attempt
+  primary keys are published to `canonical-provider-dispatch-v1`. The strict
+  PII-free envelope contains exact `attempt_id` plus `adapter_key`; the consumer
+  calls `claimById`, whose SQL also constrains provider, event name,
+  `server_retry`, due state, and claimant cutover. The route no longer starts a
+  registry batch.
+- **Retry boundary:** `retry_scheduled`/`dead_lettered` are database outcomes
+  and ACK the Queue message. Only thrown infrastructure errors trigger Vercel
+  Queue redelivery after 15 seconds. The five-minute cron is recovery/fallback.
+- **Target task:** Closed by the 2026-07-26 targeted Queue release.
 
 ## DEV-002
 
@@ -104,6 +111,10 @@
 - **Priority:** P1
 - **Description:** Google diagnostics claim scans lack a
   request-ID index; outbox claim lacks event-name alignment.
+- **Scope clarification:** The outbox scan concern applies to the generic
+  five-minute fallback `claimNext` path. Targeted Queue delivery uses
+  `claimById` with the exact attempt primary key and does not perform that
+  shared backlog scan.
 - **Evidence:** Live `pg_indexes` and safe EXPLAIN.
 - **Consequence:** Status polling and multi-worker backlog
   processing scale through avoidable scans.
@@ -115,41 +126,46 @@
 
 ## DEV-007
 
-- **Priority:** P2 (downgraded from P1 on 2026-07-20 after
-  purchase journey proof)
-- **Description:** Microsoft UET CAPI is purchase-only;
-  non-purchase Microsoft server events remain
-  `blocked_no_worker`.
-- **Evidence:** Purchase journey `#6ULWCDZT5` / event
-  `cdd83f38-3b67-4aac-9142-1bb42cea45ab` → `microsoft_uet`
-  `accepted_unverified`. Catalog non-purchase Microsoft still
-  blocked; 222 historical skipped rows remain historical.
-- **Consequence:** Full-funnel Microsoft server coverage is
-  incomplete; purchase CAPI path is proven.
+- **Priority:** P2
+- **Status:** **Superseded in part 2026-07-22.** The purchase-only description
+  was accurate on 2026-07-20 but is no longer current.
+- **Current description:** Microsoft UET CAPI server workers are active for
+  `add_to_cart`, `begin_checkout`, and `purchase`. Earlier funnel events such
+  as `page_view` and `view_item` remain `blocked_no_worker` on the server.
+- **Evidence:** Read-only production data at 2026-07-31T01:04:19Z shows
+  `accepted_unverified` for exact attempts
+  `6d35806a-fe96-474d-a8b3-a9057ddd2e48` (`add_to_cart`),
+  `8cf42314-450b-4441-b53c-9b19bba2462e` (`begin_checkout`), and
+  `f8a584d8-359d-4584-923a-325a18a5ad52` (`purchase`). Each used
+  `dispatch_mode='server_retry'` and `attempt_count=1`.
+- **Consequence:** The three approved lower-funnel server paths have provider
+  API acceptance evidence, but `accepted_unverified` is not final attribution.
+  Current rows without `msclkid` correctly remain `skipped_unqualified`.
 - **Systems:** Microsoft UET/CAPI, catalog, outbox.
-- **Recommended next action:** Decide whether to expand beyond
-  purchase; keep ApiToken env healthy.
-- **Target task:** Separate Microsoft funnel expansion after
-  Oppgave 1.
+- **Recommended next action:** Keep ApiToken and `msclkid` coverage healthy;
+  treat expansion beyond the three approved workers as a separate release.
+- **Target task:** Ongoing quality gate, not a missing-worker task for the three
+  active events.
 
 ## DEV-008
 
 - **Priority:** P1
-- **Description:** The app owning `SHOPIFY_ADMIN_API_TOKEN` has
-  zero app-scoped webhook subscriptions, yet purchases keep
-  reaching the ledger (including the verified Stapper journey via
-  browser/webhook path that produced ledger + outbox rows).
-- **Evidence:** Shopify Admin GraphQL 2025-07
-  `webhookSubscriptions(first:50)` empty (2026-07-20). Purchase
-  `#6ULWCDZT5` produced ledger + google/meta/microsoft_uet
-  attempts at 2026-07-20T21:45Z — proves purchase ingestion, not
-  which transport (browser vs webhook).
-- **Consequence:** Webhook routes may receive little/no
-  production traffic; capture may depend on browser path.
+- **Status:** **Partially resolved.** Live `orders-paid` delivery is proven;
+  subscription ownership and `refunds-create` delivery remain open.
+- **Description:** The inspected Admin token returns zero shop-specific
+  webhook subscriptions, while Shopify notification delivery reaches the
+  authoritative `orders-paid` route.
+- **Evidence:** Vercel observed 14 production requests to
+  `/api/shopify/webhooks/orders-paid` in seven days (12 HTTP 202, two HTTP 200),
+  corroborated by ledger/attempt evidence. `refunds-create` had no matching
+  traffic. App-specific notification subscriptions are not visible through the
+  shop-specific GraphQL/REST query.
+- **Consequence:** Purchase webhook delivery is not missing, but the owning
+  Shopify app/configuration is unknown and refund delivery is not proven.
 - **Systems:** Shopify app configuration, purchase/refund routes.
-- **Recommended next action:** Check Vercel access logs for
-  `/api/shopify/webhooks/*` / `/api/webhooks/*`, then register
-  subscriptions deliberately or document browser-only capture.
+- **Recommended next action:** Identify and document the Shopify notification
+  owner without creating a duplicate subscription; separately verify
+  `refunds-create` delivery.
 - **Target task:** Ops prerequisite (not Oppgave 1 code blocker).
 
 ## DEV-009
@@ -240,9 +256,15 @@
 ## DEV-015
 
 - **Priority:** P2
-- **Description:** Dead-letter total fell by 47 relative to the
-  previous observation.
-- **Evidence:** Prior 1,174 versus live 1,127.
+- **Status:** **Historical audit-count discrepancy.** This is not an unresolved
+  dead-letter count.
+- **Description:** The 2026-07-20 dead-letter audit total had fallen by 47
+  relative to the previous observation.
+- **Evidence:** Prior 1,174 versus 1,127 on 2026-07-20. At
+  2026-07-31T01:04:19Z, `ops.dead_letter_events` contained 1,281 historical
+  rows, all resolved; unresolved count was 0. Separately,
+  `ops.provider_dispatch_attempts` contained 144 historical rows with status
+  `dead_lettered`.
 - **Consequence:** Retention/deletion/admin cleanup provenance is
   unknown.
 - **Systems:** `ops.dead_letter_events`, audit controls.
@@ -478,10 +500,10 @@
 | Hypothesis                                               | Verdict                                                                                                       |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | Generic store in page-view-named file                    | Confirmed                                                                                                     |
-| Global outbox dispatch from request path                 | Confirmed                                                                                                     |
+| Global outbox dispatch from request path                 | Historical: confirmed in the 2026-07-20 freeze; superseded by exact-attempt Vercel Queue dispatch on 2026-07-26 |
 | Common `accepted_unverified`                             | Confirmed                                                                                                     |
 | Google permanent-error history                           | Confirmed and currently resolved/classified                                                                   |
 | Meta destination mismatch                                | Refuted (web payload/dataset agree; sGTM has no Meta CAPI Gateway tag; browser uses openbridge3)              |
 | Mixed event naming                                       | Confirmed in warehouse history; refuted for the live 7-day Meta provider window (PascalCase only)             |
 | Open Data Manager PR                                     | Confirmed open; superseded/conflicting                                                                        |
-| Missing shop-scoped subscriptions prove missing webhooks | Refuted as a valid inference; app-scoped list now verified empty for this app token, delivery path unresolved |
+| Missing shop-scoped subscriptions prove missing webhooks | Refuted; live `orders-paid` traffic is proven. Shopify notification ownership and `refunds-create` delivery remain unresolved |
