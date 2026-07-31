@@ -396,29 +396,59 @@ index was added in this audit.
 
 ## Status and finality
 
-Live allowed statuses:
+Finality has three independent axes: local attempt status, provider delivery
+and external attribution/dedupe. The complete decision matrix and operator
+trace are in
+[`provider-finality-runbook.md`](provider-finality-runbook.md).
 
-| Status                | Set by                                     |                  Terminal | Meaning                                                   |
-| --------------------- | ------------------------------------------ | ------------------------: | --------------------------------------------------------- |
-| `pending`             | Persistence plan                           |                        No | Eligible for initial claim                                |
-| `processing`          | Claim/reclaim query                        |                        No | Leased; targeted reclaim after 15s, fallback reclaim after 5m |
-| `retry_scheduled`     | Generic worker                             |                        No | Retryable failure with due time                           |
-| `accepted_unverified` | Generic worker completion                  |        Provider-dependent | Adapter call returned a receipt; finality not proven      |
-| `succeeded`           | Google reconciliation or historical repair |                       Yes | Provider-confirmed or administratively classified success |
-| `failed`              | Historical schema state                    |   No current writer found | Legacy/non-current                                        |
-| `dead_lettered`       | Worker or Google reconciliation            | Yes until explicit replay | Permanent/exhausted/invalid/provider-confirmed failure    |
-| `skipped_unqualified` | Dispatch planning/repair                   |                       Yes | Provider prerequisites absent or adapter unavailable      |
+Live allowed attempt statuses:
 
-The worker outcome `succeeded` is always persisted through a
-method named `markAcceptedUnverified`, so both Google and Meta
-successful adapter calls first become `accepted_unverified`.
-Google has a separate reconciler: request IDs are leased and
-statuses map `SUCCESS` to `succeeded`, `FAILED`/`PARTIAL_SUCCESS`
-to dead letter, and `PROCESSING`/unknown back to
-`accepted_unverified`. Meta has no equivalent reconciliation
-worker in the repository. Generic acceptance therefore overstates
-neither finality nor provider equality, but the shared
-name/status is too coarse for operational decisions.
+| Status                | Set by                                      | Local terminality              | Provider meaning                                                        |
+| --------------------- | ------------------------------------------- | ------------------------------ | ----------------------------------------------------------------------- |
+| `pending`             | Persistence plan                            | No                             | No send proven                                                          |
+| `processing`          | Claim/reclaim query                         | No                             | Unknown                                                                 |
+| `retry_scheduled`     | Generic worker                              | No                             | Retryable local failure; provider outcome can still be unknown          |
+| `accepted_unverified` | Generic worker completion                   | Yes for that send attempt      | Expected receipt observed; not provider-confirmed terminal delivery     |
+| `succeeded`           | Google reconciliation or historical repair | Yes                            | Confirmed only with Google reconciliation evidence; older rows can be administrative history |
+| `failed`              | Historical schema state                     | No current writer found        | Legacy/non-current; unknown                                             |
+| `dead_lettered`       | Worker or Google reconciliation             | Yes until explicit repair      | Local terminal failure; provider rejection only when receipt semantics prove it |
+| `skipped_unqualified` | Dispatch planning/repair                    | Yes; no send                   | Not attempted; a specific `skip_reason` is required                     |
+
+The worker outcome named `succeeded` is persisted through
+`markAcceptedUnverified`, so every successful generic adapter call first
+becomes `accepted_unverified`. Google alone has a repository reconciliation
+path: `SUCCESS` with exactly one record and no processing errors becomes
+`succeeded`; `SUCCESS` with warnings stops polling but remains
+`accepted_unverified` with warning semantics; `FAILED`/`PARTIAL_SUCCESS`
+becomes a provider-evidenced dead letter; `PROCESSING`, unknown status,
+polling errors and timeouts remain unconfirmed. Meta and Microsoft have no
+authoritative per-attempt reconciliation path and therefore remain
+`accepted_unverified`.
+
+No attempt status proves that the provider deduplicated the event, matched it
+to a person, attributed it to an ad or used it for optimization. Those effects
+require separate provider evidence at the grain actually exposed.
+
+### KRI-23 read-only finality trace
+
+At `2026-07-31T01:51:42Z`, representative production joins from ledger to
+attempt and embedded receipt showed:
+
+- Google `4c5cf358-6a11-4259-bc69-7a500492f1f3`: provider status
+  `SUCCESS`, one record, `provider_confirmed=true`, and
+  `response_semantics=provider_confirmed_success`.
+- Google `8faba95a-7b80-4b1d-930e-0bb6cd11beb8`: provider status
+  `PROCESSING`; correctly remained `accepted_unverified`.
+- Meta `a01ecb9b-8d89-4593-a439-a6db14be3096`:
+  `events_received=1`; correctly remained `accepted_unverified`.
+- Microsoft `6d35806a-fe96-474d-a8b3-a9057ddd2e48`: HTTP 200 with no
+  request ID; correctly remained `accepted_unverified`.
+- Microsoft `89193dc6-d777-496c-ac33-1275d9c0f701`:
+  `skipped_unqualified`, `missing_msclkid`, zero attempts.
+
+All five had a correlated ledger row. The first is confirmed provider
+processing; the next two provider receipts are observed but unconfirmed; the
+skip was not attempted. Attribution and dedupe remain unknown for every sample.
 
 ## Provider state
 

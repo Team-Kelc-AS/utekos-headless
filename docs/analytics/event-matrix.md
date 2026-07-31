@@ -26,6 +26,25 @@ delivery. Vercel logs for the current deployment show the cron returning `200`
 at five-minute intervals; no current-deployment queue callback appeared in the
 inspected log window.
 
+## How to read provider evidence
+
+The destination columns describe intended/active mappings, not final delivery.
+For every row, evaluate three separate axes using
+[`provider-finality-runbook.md`](provider-finality-runbook.md):
+
+- local attempt state in `ops.provider_dispatch_attempts`;
+- provider delivery evidence from the embedded receipt and any authoritative
+  reconciliation;
+- external attribution/dedupe evidence at the provider's actual reporting
+  grain.
+
+Google ingest, Meta `events_received=1` and Microsoft HTTP 200 all start as
+`accepted_unverified`. Only the existing Google request-status reconciliation
+can promote an individual attempt to provider-confirmed `succeeded`.
+Meta/Microsoft remain `accepted_unverified`; matching IDs, aggregate event
+counts, EMQ, goal status or conversion reporting must be stated separately and
+must never be inferred from this matrix.
+
 Legend: `G` = Google Data Manager server outbox active; `M` =
 Meta server outbox active; `MS-B` = Microsoft browser UET
 catalogued/active; `MS-S` = Microsoft server UET CAPI worker
