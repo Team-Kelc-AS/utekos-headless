@@ -66,21 +66,35 @@
 
 ## DEV-004
 
-- **Priority:** P1
-- **Description:** Generic success always persists
-  `accepted_unverified`, although provider finality differs.
+- **Priority:** Closed documentation/governance gap; schema follow-up remains
+  separately gated.
+- **Status:** **Resolved for KRI-23 on 2026-07-31.**
+- **Historical description:** Generic success always persisted
+  `accepted_unverified`, while the documentation did not define how provider
+  finality differs.
 - **Evidence:** `runProviderOutboxWorker.ts:45-58`;
   `markAcceptedUnverified`; only Google has status
   reconciliation.
-- **Consequence:** Meta/Microsoft API acceptance and Google
-  pending diagnostics are operationally indistinguishable until
-  secondary fields are inspected.
+- **Resolution:** [`provider-finality-runbook.md`](provider-finality-runbook.md)
+  defines independent attempt, provider-delivery and attribution/dedupe axes.
+  Only Google `SUCCESS` through the existing reconciliation path is
+  provider-confirmed terminal processing. Meta/Microsoft receipts remain
+  `accepted_unverified`. Qualified skip, retry, dead letter and
+  unknown/blocked provider status now have explicit meanings.
+- **Read-only production evidence:** Google `SUCCESS` and `PROCESSING`, Meta
+  `events_received=1`, Microsoft HTTP 200 and a `missing_msclkid` qualified
+  skip were each traced from ledger to attempt/embedded receipt on
+  2026-07-31. No row was promoted or replayed.
+- **Remaining limitation:** `status` plus free-form `response_semantics` cannot
+  query the three axes independently or preserve the authority/grain of
+  aggregate attribution/dedupe evidence.
 - **Systems:** Outbox status model, dashboards, alerts.
-- **Recommended next action:** Add provider-owned completion
-  semantics such as pending diagnostics, accepted terminal and
-  provider-confirmed success without rewriting the generic
-  worker.
-- **Target task:** Oppgave 1 after dispatch isolation.
+- **Recommended next action:** Create the separately approved schema issue
+  proposed in the finality runbook. It must preserve the local attempt
+  lifecycle and add append-only provider-delivery and attribution/dedupe
+  observations without historical status promotion.
+- **Target task:** KRI-23 documentation complete; migration explicitly outside
+  scope.
 
 ## DEV-005
 

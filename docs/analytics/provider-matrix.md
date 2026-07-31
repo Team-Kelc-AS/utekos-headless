@@ -1,11 +1,15 @@
 # Provider matrix
 
-**Evidence freeze:** 2026-07-20.
+**Evidence freeze:** 2026-07-31.
 
-**Active release:** 2026-07-26. Web-GTM v135 and application deployment
-`dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` are live. The deployment was built from
-exact Git SHA `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2`; controlled production
-events have correlated queue and provider receipts.
+**Current production:** deployment `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL` is
+`READY`, owns `utekos.no`, and runs exact main SHA
+`7a9f19ed3f94cc08ee3140ddb4c99afe4af3d564`.
+
+**Historical tracking release:** 2026-07-26. Web-GTM v135 and application
+deployment `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` from exact Git SHA
+`3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` established the controlled
+production events with correlated queue and provider receipts.
 
 ## Near-real-time dispatch
 
@@ -76,9 +80,12 @@ events have correlated queue and provider receipts.
 - **Retry:** adapter-defined maximum/delays with positive jitter;
   retryable failures scheduled in the outbox.
 - **Finality:** ingest receipt -> `accepted_unverified`;
-  request-status reconciliation maps SUCCESS to `succeeded`,
-  FAILED/PARTIAL_SUCCESS to dead letter, PROCESSING/unknown
-  remains pending.
+  request-status reconciliation maps `SUCCESS` with exactly one
+  record and no errors to provider-confirmed `succeeded`,
+  `FAILED`/`PARTIAL_SUCCESS` to a provider-evidenced dead letter,
+  while `PROCESSING`, unknown, retry and timeout remain
+  unconfirmed. `SUCCESS` with warnings stops polling but remains
+  `accepted_unverified` with explicit warning semantics.
 - **Diagnostics:** response, `request_id`, validation result and
   per-request status stored. No `request_id` index.
 - **Production delta:** `interact_with_accordion` and `open_quick_view`
@@ -125,9 +132,12 @@ events have correlated queue and provider receipts.
 - **Retry:** targeted Vercel Queue wake-up plus generic outbox
   retry/jitter/dead-letter; five-minute cron is fallback.
 - **Finality:** successful API receipt becomes
-  `accepted_unverified`; no repository reconciliation poller.
+  `accepted_unverified`; no authoritative repository
+  reconciliation poller. `events_received=1`, a trace ID,
+  aggregate event volume and Dataset Quality are observed
+  evidence, not row-level terminal delivery.
 - **Diagnostics:** daily dataset-quality snapshot/retry code exists. Current
-  API quality shows upper-funnel EMQ 6.1 where reported and Purchase 8.8;
+  API quality shows upper-funnel EMQ 6.1 where reported and Purchase 9.3;
   `external_id`, `fbp`, IP and user-agent coverage are 100% on the newly
   reported `LandingScrollDepth` quality row. Numeric dedupe feedback remains
   unexposed, so matching name/ID is proven but the overlap UI is not claimed.
@@ -140,13 +150,14 @@ events have correlated queue and provider receipts.
 ## Microsoft
 
 - **Owner:** Web GTM for browser UET; analytics server outbox for
-  UET CAPI `purchase` and `add_to_cart`.
+  UET CAPI `purchase`, `add_to_cart` and `begin_checkout`.
 - **Transport:** browser UET + server Conversions API
-  (`capi.uet.microsoft.com`) for `purchase` and `add_to_cart`.
+  (`capi.uet.microsoft.com`) for the three approved lower-funnel
+  events.
 - **Events:** canonical Microsoft names in the catalog; live
-  published container contains UET. Server workers registered for
-  `purchase` and `add_to_cart`; other Microsoft `serverOutbox`
-  values remain `blocked_no_worker`.
+  published container contains UET. Server workers are registered for
+  `purchase`, `add_to_cart` and `begin_checkout`; other Microsoft
+  `serverOutbox` values remain `blocked_no_worker`.
 - **Destination:** UET tag `97247724`.
 - **Auth:** UET tag ApiToken (`MICROSOFT_UET_CAPI_*` aliases),
   not Ads OAuth.
@@ -156,16 +167,18 @@ events have correlated queue and provider receipts.
 - **Retry:** provider outbox retry for CAPI HTTP/network
   failures; qualification skips are terminal.
 - **Finality:** CAPI HTTP 200 → generic
-  `accepted_unverified`; missing `msclkid`/token →
-  `skipped_unqualified`.
+  `accepted_unverified`; no authoritative per-attempt reconciliation
+  exists. Missing `msclkid`/token → `skipped_unqualified` without a
+  provider attempt. UET/event-goal reporting is separate aggregate evidence
+  and cannot promote an attempt row.
 - **Diagnostics:** Microsoft Ads audit green 2026-07-20; browser
   smoke verified UET `97247724` fires `pageLoad` + custom
   `view_item` post-consent only (`asc=G`), Clarity `wupwleuv2e`
   linked.
 - **Status:** browser verified; purchase CAPI production-verified
-  2026-07-20 (`#6ULWCDZT5` → `accepted_unverified`). `add_to_cart`
-  CAPI worker code-contract proven pending production deploy.
-  Remaining non-purchase events (e.g. `page_view`, `view_item`)
+  2026-07-20 (`#6ULWCDZT5` → `accepted_unverified`).
+  `add_to_cart` and `begin_checkout` have production HTTP 200 receipts and
+  remain `accepted_unverified`. Remaining events (e.g. `page_view`, `view_item`)
   still `blocked_no_worker`.
 
 ## Supabase
@@ -268,11 +281,15 @@ events have correlated queue and provider receipts.
 
 ## Provider status comparison
 
-| Provider                    | Immediate receipt                    | Stored state                 | Separate reconciliation | Provider-confirmed terminal state |
-| --------------------------- | ------------------------------------ | ---------------------------- | ----------------------- | --------------------------------- |
-| Google Data Manager         | Ingest/validate receipt + request ID | `accepted_unverified`        | Yes                     | `succeeded` or dead letter        |
-| Meta CAPI                   | API receipt                          | `accepted_unverified`        | No repository poller    | Not represented separately        |
-| Vercel Queue wake-up        | Queue callback/consumer execution    | Existing provider attempt    | Five-minute cron fallback | Provider-specific state remains authoritative |
-| Microsoft UET browser       | Browser request/queue                | Not canonical server attempt | No                      | Not represented                   |
-| Microsoft UET CAPI purchase | HTTP 200 / adapter receipt           | `accepted_unverified`        | No repository poller    | Not represented separately        |
-| Supabase                    | Transaction commit                   | Ledger + attempts            | Not applicable          | Commit is terminal locally        |
+Read this table together with the full
+[`provider-finality-runbook.md`](provider-finality-runbook.md). “Terminal”
+below refers only to the named axis.
+
+| Provider/surface | Local attempt | Provider delivery | Attribution/dedupe | Authoritative terminal evidence |
+| --- | --- | --- | --- | --- |
+| Google Data Manager | Ingest receipt → `accepted_unverified` | Request status is reconciled | Separate and unknown from request success | `SUCCESS`, one record, no processing errors → `succeeded`; failure/partial → provider-evidenced dead letter |
+| Meta CAPI | API receipt → `accepted_unverified` | Receipt and aggregate provider observations only | Separate Events Manager/Dataset Quality evidence at its reported grain | None for an individual attempt |
+| Microsoft UET CAPI | HTTP 200 → `accepted_unverified` | Endpoint acceptance and separate dashboard/report observations only | Separate reporting evidence at its reported grain | None for an individual attempt |
+| Qualified skip | `skipped_unqualified` | Not attempted | Not applicable | Specific `skip_reason` is terminal locally |
+| Vercel Queue wake-up | Executes an existing attempt | No provider claim | No claim | Queue ACK/HTTP 200 is terminal only for the wake-up |
+| Supabase | Transaction commit | No provider claim | No claim | Commit is terminal only for local persistence |

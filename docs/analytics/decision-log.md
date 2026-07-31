@@ -583,6 +583,50 @@ docs-only stop commit
 - **Godkjent av:** Prosjekteier (startordre 2026-07-22 PageView
   fbp/fbc + «gå videre» for PR)
 
+## DEC-016 — Providerspesifikk finalitet har tre uavhengige akser
+
+- **Dato:** 2026-07-31
+- **Status:** `APPROVED`
+- **Berører:** KRI-23; DEV-004; `ops.provider_dispatch_attempts`;
+  Google Data Manager; Meta CAPI; Microsoft UET CAPI
+- **Tidligere beslutning, hvis relevant:** DEC-001 beholder én
+  generisk provider-outbox. Denne beslutningen presiserer
+  evidenssemantikken uten å endre den runtimearkitekturen.
+- **Nytt funn og primærevidens:** Generisk adaptersuksess lagres
+  som `accepted_unverified`. Google har en autoritativ
+  request-statusbane som skiller `SUCCESS`, `PROCESSING`,
+  `FAILED` og `PARTIAL_SUCCESS`. Meta returnerer
+  `events_received`/trace, og Microsoft returnerer HTTP-status,
+  men ingen av dem har en autoritativ per-attempt reconciliation
+  i repositoryet. Read-only produksjonsspor 2026-07-31
+  bekreftet alle tre mønstrene.
+- **Beslutning:** Hver statusrapport skal oppgi tre separate
+  akser: (1) lokal attemptstatus, (2) providerlevering og (3)
+  attribusjon/dedupe. `accepted_unverified` er lokalt avsluttet
+  adaptersend, men ikke providerbekreftet terminal levering.
+  Bare Google `SUCCESS` gjennom eksisterende reconciliation kan
+  kalles providerbekreftet terminal prosessering. Meta og
+  Microsoft forblir `accepted_unverified` uten en fremtidig,
+  autoritativ providerbane. Ingen leveringsstatus gir i seg selv
+  dedupe- eller attribusjonsbevis.
+- **Alternativer:** behandle alle 2xx/kvitteringer som
+  `succeeded` (avvist); behandle Meta/Microsoft-dashboards som
+  radfinalitet (avvist på grunn av aggregert/annen grain); endre
+  schema og historiske rader i samme oppgave (avvist som
+  migrasjons- og replayrisiko).
+- **Begrunnelse:** API-aksept, providerprosessering og kommersiell
+  effekt er forskjellige fakta med forskjellig autoritet og
+  tidsforsinkelse. Sammenblanding gir falsk trygghet i
+  provider-health, budsignaler og kapitalallokering.
+- **Konsekvens for roadmap/DoD:** Operatører bruker
+  `provider-finality-runbook.md`. Current schema beholdes i
+  KRI-23; et separat issue skal designe append-only
+  providerleverings- og attribusjon/dedupe-observasjoner,
+  historisk kompatibilitet, RLS, retention og rollout. Ingen
+  schemaendring, statuspromotering, providerwrite, replay eller
+  deploy er autorisert av denne beslutningen.
+- **Godkjent av:** Prosjekteier gjennom KRI-23-oppdraget
+
 ## Mal for ny beslutning
 
 ```text

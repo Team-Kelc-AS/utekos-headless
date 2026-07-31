@@ -139,6 +139,7 @@ stateDiagram-v2
   pending --> skipped_unqualified: prerequisite absent at planning
 
   accepted_unverified --> succeeded: Google status SUCCESS
+  accepted_unverified --> accepted_unverified: Google SUCCESS with warnings
   accepted_unverified --> accepted_unverified: Google PROCESSING/unknown
   accepted_unverified --> dead_lettered: Google FAILED/PARTIAL_SUCCESS
 
@@ -147,5 +148,11 @@ stateDiagram-v2
   dead_lettered --> [*]
 ```
 
-Meta currently stops at `accepted_unverified` unless a later
-administrative/data repair changes the row.
+The state diagram is the **local attempt lifecycle**. It does not
+describe attribution or dedupe. Meta and Microsoft currently stop
+at `accepted_unverified`; an administrative/data repair is
+historical classification, not provider confirmation. Google can
+reach provider-confirmed `succeeded` only through its
+request-status reconciliation. See
+[`provider-finality-runbook.md`](provider-finality-runbook.md)
+for the three-axis model and evidence requirements.
