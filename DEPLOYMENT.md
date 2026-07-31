@@ -495,7 +495,7 @@ Run these before deciding the release order:
 | Supabase history | `SUPABASE_NO_TELEMETRY=1 npx supabase migration list --linked` | Know exactly which local migrations are missing remote and which remote migrations are missing local. |
 | Supabase schema proof | `SUPABASE_NO_TELEMETRY=1 npx supabase db dump --linked --schema ops,marketing --file /tmp/utekos-linked-ops-marketing-schema.sql` | Confirm production has the columns, constraints, tables, and views the runtime will use. |
 | MCP config | `npm run mcp:build && npm run mcp:doctor` | Generated MCP output is derived from templates and has no inline secret findings. |
-| Commerce MCP | `npm run mcp:commerce-tracking:doctor` | Read-only provider diagnostics and docs map are coherent. |
+| Commerce MCP | Removed; do not run until the surface is deliberately reintroduced. | Not a current release gate; use `mcp:build`, `mcp:doctor` and the relevant active server doctor. |
 | Typecheck | `pnpm exec tsc --noEmit` | Runtime types pass. |
 | Targeted tests | Use the tests touching changed runtime modules. | Changed behavior is covered. |
 | Lint | `npm run lint` | Run when useful, but document existing unrelated repo debt if it is not a clean gate. |

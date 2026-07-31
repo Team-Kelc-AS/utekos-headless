@@ -267,35 +267,29 @@ test('rejects checkout purchases without a Shopify order legacy id', () => {
   )
 })
 
-test('maps payment_info_submitted to add_payment_info', () => {
+test('keeps blocked Shopify checkout-step events unsubscribed', () => {
   const harness = createHarness(true)
-  const paymentInfoSubmitted = harness.eventSubscribers.get(
-    'payment_info_submitted'
-  )
 
-  paymentInfoSubmitted(checkoutEvent())
-
-  const paymentCommands = commands(harness).filter(
-    command =>
-      command[0] === 'event' && command[1] === 'add_payment_info'
-  )
-
-  assert.equal(paymentCommands.length, 1)
-  assert.equal(paymentCommands[0][2].currency, 'NOK')
   assert.equal(
-    paymentCommands[0][2].items[0].item_id,
-    '48249962135800'
+    harness.eventSubscribers.has('payment_info_submitted'),
+    false
+  )
+  assert.equal(
+    harness.eventSubscribers.has(
+      'checkout_shipping_info_submitted'
+    ),
+    false
   )
 })
 
 test('revoking analytics consent updates the Google tag and blocks events', () => {
   const harness = createHarness(true)
-  const paymentInfoSubmitted = harness.eventSubscribers.get(
-    'payment_info_submitted'
+  const checkoutCompleted = harness.eventSubscribers.get(
+    'checkout_completed'
   )
 
   harness.revokeAnalytics()
-  paymentInfoSubmitted(checkoutEvent())
+  checkoutCompleted(checkoutEvent())
 
   const consentUpdates = commands(harness).filter(
     command =>

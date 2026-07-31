@@ -121,8 +121,13 @@ samtykkepolicyen tillater det.
 | `open_quick_view`     | active         | Quick-view når dialogen er åpen og produkt og valgt variant er løst                | `page_view_id + source_surface + product_id + variant_id + open_sequence`; ny vellykket åpning | C2    | R30       |
 | `video_progress`      | active         | Video-controller ved første passering av 10/25/50/75/90/100 %                      | `page_view_id + video_id + milestone`; ny side, video eller milepæl                        | C2       | R30       |
 
-`add_shipping_info` og `add_payment_info` forblir `blocked_source` til en
-autoritativ Shopify Customer Events/Web Pixels-kilde er valgt.
+`add_shipping_info` og `add_payment_info` forblir `blocked_source`.
+`checkout_shipping_info_submitted` dokumenterer at kunden velger en fraktrate,
+men ikke en stabil lagret fraktrevisjon.
+`payment_info_submitted` dokumenterer innsending, men ikke et akseptert
+betalingssteg. Ingen av kandidatene oppfyller derfor canonical postcondition
+eller dedupekontrakten. Se
+[KRI-24-kildebeslutningen](docs/analytics/evidence/kri-24-shopify-checkout-step-source-decision-2026-07-31.md).
 `checkout_error` og `payment_error` forblir `blocked_source` til den
 autoritative feilflaten er valgt og verifisert.
 

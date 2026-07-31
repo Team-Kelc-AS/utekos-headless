@@ -1,5 +1,13 @@
 # GA4- og Data Manager-revisjon — 24. juli 2026
 
+> **Statuspresisering 2026-07-31:** Påstanden under om å mappe
+> `payment_info_submitted` til `add_payment_info` er erstattet av
+> [KRI-24-kildebeslutningen](kri-24-shopify-checkout-step-source-decision-2026-07-31.md).
+> Shopify dokumenterer innsending, ikke et akseptert betalingssteg. Repoets
+> pikselartefakt holder derfor eventet fail-closed. Historisk
+> Shopify-konfigurasjon er ikke ferskt produksjonsbevis og ble ikke publisert
+> eller endret i KRI-24.
+
 ## Konklusjon
 
 Google Analytics brukes i dag til innsamling, attribusjon,

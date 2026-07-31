@@ -1451,14 +1451,14 @@ const eventCatalogBase = {
     owner: 'shopify_checkout_event_source',
     trigger: {
       description:
-        'Create only after an authoritative Shopify checkout event confirms that the shipping choice was saved.',
+        'Create only after an authoritative Shopify checkout event confirms that a shipping revision was saved; checkout_shipping_info_submitted proves only that a rate was chosen.',
       sources: ['browser', 'server'],
       repeatability: 'Each saved shipping revision is new.',
       eventTime: 'The authoritative saved-shipping timestamp.',
       prerequisites: [
-        'approved Shopify Customer Events or Web Pixels source',
+        'approved source that proves a saved shipping revision',
         'checkout_id',
-        'shipping revision',
+        'stable shipping revision distinct from Shopify event seq',
         'shipping tier',
         'items'
       ]
@@ -1489,15 +1489,15 @@ const eventCatalogBase = {
     owner: 'shopify_checkout_event_source',
     trigger: {
       description:
-        'Create only after an authoritative Shopify checkout event confirms an accepted payment step.',
+        'Create only after an authoritative Shopify checkout event confirms an accepted payment revision; payment_info_submitted proves submission only.',
       sources: ['browser', 'server'],
       repeatability: 'Each accepted payment revision is new.',
       eventTime:
         'The authoritative accepted-payment-step timestamp.',
       prerequisites: [
-        'approved Shopify Customer Events or Web Pixels source',
+        'approved source that proves an accepted payment revision',
         'checkout_id',
-        'payment revision',
+        'stable payment revision distinct from Shopify event seq',
         'payment type',
         'items'
       ]

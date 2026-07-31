@@ -526,7 +526,6 @@ eller observability.
 ```bash
 npm run mcp:build
 npm run mcp:doctor
-npm run mcp:commerce-tracking:doctor
 npm run ops:identifier-coverage-report -- --json
 npm run ops:identifier-coverage-report -- --fail-on-alerts
 npm run ops:provider-dispatch-report -- --json
@@ -534,6 +533,10 @@ npm run ops:provider-dispatch-report -- --fail-on-alerts
 node scripts/ops/dead-letter-replay-plan.mjs --limit=40
 npm run merchant:preflight
 ```
+
+Den tidligere `mcp:commerce-tracking:doctor` er fjernet og er ikke en aktiv
+gate. Bruk den først igjen dersom den kanoniske Commerce/Tracking-flaten
+reintroduseres sammen med et faktisk `package.json`-script.
 
 Ved nettleser-/produksjonssmoke må følgende bevises før endring
 regnes som ferdig:
