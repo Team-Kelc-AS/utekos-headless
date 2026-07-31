@@ -25,7 +25,3 @@ export function claimPageViewNavigation(input: {
   lastClaimedPageUrl = navigation.pageUrl
   return navigation
 }
-
-export function resetClaimedPageViewNavigationForTests() {
-  lastClaimedPageUrl = null
-}

@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { registeredProviderAdapterKeys } from '@/lib/analytics/server/providerAdapterRegistry'
+import {
+  providerAdapterRegistry,
+  type RegisteredProviderAdapterKey
+} from '@/lib/analytics/server/providerAdapterRegistry'
 import {
   handleProviderOutboxCron,
   type ProviderOutboxCronDependencies
@@ -14,9 +17,13 @@ const emptySummary = {
   retryScheduled: 0
 }
 
+const providerAdapterKeys = Object.keys(
+  providerAdapterRegistry
+) as RegisteredProviderAdapterKey[]
+
 function emptyBatchResult() {
   return Object.fromEntries(
-    registeredProviderAdapterKeys.map(key => [key, emptySummary])
+    providerAdapterKeys.map(key => [key, emptySummary])
   ) as Awaited<
     ReturnType<NonNullable<ProviderOutboxCronDependencies['runBatch']>>
   >

@@ -1,19 +1,12 @@
 import type { CookieSettings } from 'capi-param-builder-nodejs'
-import type { CanonicalPageView } from '../pageViewEvent'
 import { ensureCanonicalMetaBrowserIds } from './ensureCanonicalMetaBrowserIds'
 import {
   normalizeCanonicalPageView,
   type CanonicalPageViewRequestContext
 } from './normalizeCanonicalPageView'
 import { planCanonicalEventDispatch } from './planCanonicalEventDispatch'
-import type {
-  CanonicalEventStore,
-  CanonicalEventStoreInput
-} from './canonicalEventStore'
+import type { CanonicalEventStore } from './canonicalEventStore'
 import { canonicalPageViewSchema } from '../pageViewEvent'
-
-export type CanonicalPageViewStoreInput =
-  CanonicalEventStoreInput & { event: CanonicalPageView }
 
 export type CanonicalPageViewStore = CanonicalEventStore
 

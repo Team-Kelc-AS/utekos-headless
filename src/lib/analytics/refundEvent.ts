@@ -26,10 +26,6 @@ export const canonicalRefundSchema =
     custom_data: canonicalRefundCommerceSchema
   })
 
-export type CanonicalRefundCommerce = z.infer<
-  typeof canonicalRefundCommerceSchema
->
-
 export type CanonicalRefund = z.infer<
   typeof canonicalRefundSchema
 >

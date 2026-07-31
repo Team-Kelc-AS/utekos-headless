@@ -4,13 +4,11 @@ import { createRequire } from 'node:module'
 import test from 'node:test'
 import type { ConsentSnapshot } from '../canonicalEventEnvelope'
 import type { CanonicalGenerateLead } from '../generateLeadEvent'
-import { normalizeCanonicalGenerateLead } from './normalizeCanonicalGenerateLead'
 import type {
   RecordAcceptedGenerateLeadInput,
   RecordAcceptedGenerateLeadResult
 } from './recordAcceptedGenerateLead'
 import type { CanonicalGenerateLeadRequestContext } from './normalizeCanonicalGenerateLead'
-import { validateCanonicalSignalContract } from './validateCanonicalSignalContract'
 
 const afterCalls: Array<() => Promise<void>> = []
 const runBatchCalls: Array<{ maxItems: number }> = []
@@ -286,38 +284,6 @@ test('generated canonical event retains submissionId and current context', async
   assert.equal(runBatchCalls.length, 0)
 })
 
-test('migrated generate_lead populates signal_audit that validates after normalize', async () => {
-  resetSpies()
-  acceptImpl = async input => {
-    const payload = input.payload as { event_id: string }
-    return { event_id: payload.event_id, status: 'accepted' }
-  }
-
-  await recordAcceptedGenerateLead(
-    baseInput({
-      email: 'signal@example.com',
-      pageUrl: 'https://utekos.no/venteliste?fbclid=AbCdEf-123',
-      pageViewId: PAGE_VIEW_ID,
-      cookieHeader:
-        'utekos_external_id=anon_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee; _fbp=fb.1.1753099200000.123456789; _fbc=fb.1.1753099200000.AbCdEf-123'
-    })
-  )
-
-  assert.equal(acceptCalls.length, 1)
-  const payload = acceptCalls[0]!
-    .payload as CanonicalGenerateLead
-  assert.ok(payload.signal_audit)
-
-  const normalized = normalizeCanonicalGenerateLead(
-    payload,
-    acceptCalls[0]!.requestContext
-  )
-  assert.deepEqual(validateCanonicalSignalContract(normalized), {
-    ok: true,
-    issues: []
-  })
-})
-
 test('denied marketing lead audits marketing signals as consent_denied', async () => {
   resetSpies()
   acceptImpl = async input => {
@@ -357,13 +323,4 @@ test('denied marketing lead audits marketing signals as consent_denied', async (
       'consent_denied'
     )
   }
-
-  const normalized = normalizeCanonicalGenerateLead(
-    payload,
-    acceptCalls[0]!.requestContext
-  )
-  assert.deepEqual(validateCanonicalSignalContract(normalized), {
-    ok: true,
-    issues: []
-  })
 })

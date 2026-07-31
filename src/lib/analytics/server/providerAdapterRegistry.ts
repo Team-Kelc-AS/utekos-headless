@@ -106,9 +106,3 @@ export const providerAdapterRegistry = {
 
 export type RegisteredProviderAdapterKey =
   keyof typeof providerAdapterRegistry
-
-export const registeredProviderAdapterKeys = Object.freeze(
-  Object.keys(
-    providerAdapterRegistry
-  ) as RegisteredProviderAdapterKey[]
-)

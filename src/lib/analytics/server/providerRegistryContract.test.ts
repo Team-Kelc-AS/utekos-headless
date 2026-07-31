@@ -7,7 +7,7 @@ import {
 } from '../eventCatalog'
 import {
   providerAdapterRegistry,
-  registeredProviderAdapterKeys
+  type RegisteredProviderAdapterKey
 } from './providerAdapterRegistry'
 import { providerOutboxWorkerRegistry } from './providerOutboxWorkerRegistry'
 
@@ -19,6 +19,10 @@ const providerIds = [
   'posthog'
 ] as const satisfies readonly CatalogProviderId[]
 
+const providerAdapterKeys = Object.keys(
+  providerAdapterRegistry
+) as RegisteredProviderAdapterKey[]
+
 test('keeps catalog, adapters, and workers in one active-outbox allowlist', () => {
   const catalogKeys = canonicalEventNames.flatMap(eventName =>
     providerIds.flatMap(providerId =>
@@ -28,7 +32,7 @@ test('keeps catalog, adapters, and workers in one active-outbox allowlist', () =
       : []
     )
   )
-  const adapterKeys = [...registeredProviderAdapterKeys]
+  const adapterKeys = [...providerAdapterKeys]
   const workerKeys = Object.keys(providerOutboxWorkerRegistry)
 
   assert.deepEqual(

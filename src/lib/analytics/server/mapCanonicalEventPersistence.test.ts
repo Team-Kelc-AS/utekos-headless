@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import type { CanonicalPageView } from '../pageViewEvent'
-import { mapCanonicalPageViewPersistence } from './mapCanonicalPageViewPersistence'
+import { mapCanonicalEventPersistence } from './mapCanonicalEventPersistence'
 
 const event: CanonicalPageView = {
   schema_version: 1,
@@ -29,7 +29,7 @@ const event: CanonicalPageView = {
 }
 
 test('maps one canonical ledger row with stable idempotency and quality metadata', () => {
-  const result = mapCanonicalPageViewPersistence({
+  const result = mapCanonicalEventPersistence({
     event,
     dispatches: []
   })
@@ -53,7 +53,7 @@ test('maps one canonical ledger row with stable idempotency and quality metadata
 })
 
 test('maps canonical Meta and Microsoft outbox rows without provider renaming', () => {
-  const result = mapCanonicalPageViewPersistence({
+  const result = mapCanonicalEventPersistence({
     event,
     dispatches: [
       {
@@ -101,7 +101,7 @@ test('maps canonical Meta and Microsoft outbox rows without provider renaming', 
 })
 
 test('persists a non-qualified Google row without scheduling it', () => {
-  const result = mapCanonicalPageViewPersistence({
+  const result = mapCanonicalEventPersistence({
     event,
     dispatches: [
       {
@@ -134,7 +134,7 @@ test('persists a non-qualified Google row without scheduling it', () => {
 })
 
 test('persists Google event freshness as provider data quality', () => {
-  const result = mapCanonicalPageViewPersistence({
+  const result = mapCanonicalEventPersistence({
     event,
     dispatches: [
       {

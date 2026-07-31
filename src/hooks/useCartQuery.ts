@@ -5,7 +5,7 @@ import { useCartId } from '@/hooks/useCartId'
 import {
   getCachedCart,
   type CachedCartReadResult
-} from '@/lib/actions/getCachedCart'
+} from '@/lib/actions/cart/getCachedCart'
 import { CartIdentityActionsContext } from '@/lib/context/CartIdentityActionsContext'
 import { cartQueryPolicy } from '@/lib/cart/cartQueryPolicy'
 import type { Cart } from 'types/cart'

@@ -5,9 +5,6 @@ export const MICROSOFT_UET_CAPI_TOKEN_ENV_KEYS = [
   'MICROSOFT_ADS_UET_CAPI_TOKEN'
 ] as const
 
-export type MicrosoftUetCapiTokenEnvKey =
-  (typeof MICROSOFT_UET_CAPI_TOKEN_ENV_KEYS)[number]
-
 /**
  * Microsoft UET tag ApiToken for Conversions API authorization.
  *
@@ -29,15 +26,4 @@ export function resolveMicrosoftUetCapiTokenFromEnv(
   }
 
   return undefined
-}
-
-export function getMicrosoftUetCapiTokenEnvPresence(
-  env: NodeJS.ProcessEnv = process.env
-): Record<MicrosoftUetCapiTokenEnvKey, boolean> {
-  return Object.fromEntries(
-    MICROSOFT_UET_CAPI_TOKEN_ENV_KEYS.map(key => [
-      key,
-      Boolean(env[key]?.trim())
-    ])
-  ) as Record<MicrosoftUetCapiTokenEnvKey, boolean>
 }

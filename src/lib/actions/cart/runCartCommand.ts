@@ -1,4 +1,4 @@
-import { setCartIdInCookie } from '@/lib/actions/setCartIdInCookie'
+import { setCartIdInCookie } from '@/lib/actions/cart/setCartIdInCookie'
 import { getCartCommandSuccessMessage } from '@/lib/actions/cart/getCartCommandSuccessMessage'
 import { invalidateCartCache } from '@/lib/actions/cart/invalidateCartCache'
 import { performCartCommand } from '@/lib/actions/cart/performCartCommand'

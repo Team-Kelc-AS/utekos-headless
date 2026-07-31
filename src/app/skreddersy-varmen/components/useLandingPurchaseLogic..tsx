@@ -1,7 +1,7 @@
 // Path: src/app/skreddersy-varmen/components/useLandingPurchaseLogic.ts
 'use client'
 
-import { useContext, useMemo, useRef, useState, useTransition } from 'react'
+import { useContext, useRef, useState, useTransition } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { CartIdContext } from '@/lib/context/CartIdContext'
@@ -9,7 +9,7 @@ import { CartMutationContext } from '@/lib/context/CartMutationContext'
 import { cartStore } from '@/lib/state/cartStore'
 import { useCartMutations } from '@/hooks/useCartMutations'
 import { useOptimisticCartUpdate } from '@/hooks/useOptimisticCartUpdate'
-import { getCartIdFromCookie } from '@/lib/actions/getCartIdFromCookie'
+import { getCartIdFromCookie } from '@/lib/actions/cart/getCartIdFromCookie'
 import { reportCanonicalAddToCart } from '@/lib/analytics/addToCartReporter'
 import { reportCanonicalVariantSelect } from '@/lib/analytics/variantSelectReporter'
 import { getVariants } from '@/app/skreddersy-varmen/utekos-orginal/utils/getVariants'
@@ -204,15 +204,7 @@ export function useLandingPurchaseLogic({ products }: UseLandingPurchaseLogicPro
     }
   }
 
-  const resolvedCheckout = useMemo(
-    () => resolveSelectedVariant({ silent: true }),
-    [
-      currentColor,
-      currentConfig.title,
-      currentShopifyProduct,
-      safeSelectedSize
-    ]
-  )
+  const resolvedCheckout = resolveSelectedVariant({ silent: true })
 
   const handleAddToCart = () => {
     if (isPendingFromMachine || isTransitioning) {

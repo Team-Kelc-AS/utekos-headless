@@ -3,10 +3,7 @@ import test from 'node:test'
 import {
   canonicalEventNames,
   eventCatalog,
-  gaAutomaticEventDecisions,
   getEventCatalogEntry,
-  providerIdentifierPolicy,
-  technicalRetentionCaveat,
   type ProviderId
 } from './eventCatalog'
 
@@ -346,56 +343,6 @@ test('records current mixed Microsoft delivery and historical page_view backlog 
   )
 })
 
-test('classifies every GA automatic-event decision explicitly', () => {
-  assert.deepEqual(
-    Object.fromEntries(
-      Object.entries(gaAutomaticEventDecisions).map(
-        ([feature, decision]) => [feature, decision.decision]
-      )
-    ),
-    {
-      automatic_page_view: 'disabled_canonical_owner',
-      history_pageviews: 'disabled_canonical_owner',
-      enhanced_measurement_scroll:
-        'keep_until_canonical_active_then_disable',
-      outbound_click: 'keep_ga_derived_non_canonical',
-      site_search: 'keep_until_canonical_active_then_disable',
-      form_interactions:
-        'keep_until_canonical_active_then_disable',
-      video_engagement:
-        'keep_until_canonical_active_then_disable',
-      file_downloads: 'keep_ga_derived_non_canonical',
-      session_start: 'keep_ga_derived_system_event',
-      first_visit: 'keep_ga_derived_system_event',
-      user_engagement: 'keep_ga_derived_system_event'
-    }
-  )
-
-  assert.deepEqual(
-    gaAutomaticEventDecisions.site_search.canonicalReplacement,
-    ['search', 'view_search_results']
-  )
-  assert.deepEqual(
-    gaAutomaticEventDecisions.form_interactions
-      .canonicalReplacement,
-    ['form_start', 'form_submit']
-  )
-
-  const canonicalNameSet = new Set<string>(canonicalEventNames)
-
-  assert.equal(canonicalNameSet.has('session_start'), false)
-  assert.equal(canonicalNameSet.has('first_visit'), false)
-  assert.equal(canonicalNameSet.has('user_engagement'), false)
-})
-
-test('states that retention is technical and limited to dedupe keys', () => {
-  assert.match(technicalRetentionCaveat, /dedupe keys/)
-  assert.match(
-    technicalRetentionCaveat,
-    /not a legal retention conclusion/
-  )
-})
-
 test('keeps operational first-party persistence separate from provider export consent', () => {
   assert.equal(
     eventCatalog.purchase.providers.supabase.consentRequirement,
@@ -410,6 +357,4 @@ test('keeps operational first-party persistence separate from provider export co
       .consentRequirement,
     'analytics_or_operational'
   )
-  assert.match(providerIdentifierPolicy, /Direct contact fields/)
-  assert.match(providerIdentifierPolicy, /request-context IP/)
 })

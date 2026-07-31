@@ -13,8 +13,6 @@ export const CLICK_ID_PARAMETERS = [
   'wbraid'
 ] as const
 
-export type ClickIdParameter = (typeof CLICK_ID_PARAMETERS)[number]
-
 type StorageLike = {
   getItem(key: string): string | null
   setItem(key: string, value: string): void

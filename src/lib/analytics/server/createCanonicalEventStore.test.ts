@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { CanonicalPageViewStoreInput } from './acceptCanonicalPageView'
+import type { CanonicalPageView } from '../pageViewEvent'
+import type { CanonicalEventStoreInput } from './canonicalEventStore'
 import {
-  createCanonicalPageViewStore,
-  type CanonicalPageViewTransaction
-} from './createCanonicalPageViewStore'
+  createCanonicalEventStore,
+  type CanonicalEventTransaction
+} from './createCanonicalEventStore'
 
-function input(): CanonicalPageViewStoreInput {
+function input(): CanonicalEventStoreInput & {
+  event: CanonicalPageView
+} {
   return {
     event: {
       schema_version: 1,
@@ -44,7 +47,7 @@ function input(): CanonicalPageViewStoreInput {
 test('writes the ledger and every dispatch inside one transaction callback', async () => {
   const calls: string[] = []
   let transactions = 0
-  const transaction: CanonicalPageViewTransaction = {
+  const transaction: CanonicalEventTransaction = {
     insertLedger: async () => {
       calls.push('ledger')
       return true
@@ -57,7 +60,7 @@ test('writes the ledger and every dispatch inside one transaction callback', asy
       return `00000000-0000-4000-8000-00000000000${calls.length}`
     }
   }
-  const store = createCanonicalPageViewStore(async work => {
+  const store = createCanonicalEventStore(async work => {
     transactions += 1
     return work(transaction)
   })
@@ -73,7 +76,7 @@ test('writes the ledger and every dispatch inside one transaction callback', asy
 test('records source evidence but returns duplicate without writing dispatches when the ledger conflicts', async () => {
   let dispatchWrites = 0
   let evidenceWrites = 0
-  const transaction: CanonicalPageViewTransaction = {
+  const transaction: CanonicalEventTransaction = {
     insertLedger: async () => false,
     upsertSourceEvidence: async evidence => {
       evidenceWrites += 1
@@ -87,7 +90,7 @@ test('records source evidence but returns duplicate without writing dispatches w
       return '00000000-0000-4000-8000-000000000001'
     }
   }
-  const store = createCanonicalPageViewStore(work =>
+  const store = createCanonicalEventStore(work =>
     work(transaction)
   )
 
@@ -118,7 +121,7 @@ test('records source evidence but returns duplicate without writing dispatches w
 })
 
 test('returns only newly inserted pending attempts for queue publication', async () => {
-  const transaction: CanonicalPageViewTransaction = {
+  const transaction: CanonicalEventTransaction = {
     insertLedger: async () => true,
     upsertSourceEvidence: async () => {},
     insertDispatch: async dispatch =>
@@ -126,7 +129,7 @@ test('returns only newly inserted pending attempts for queue publication', async
         '7bcd24a4-190c-4eca-a834-5c9854bd54ea'
       : '3387a158-165f-498e-a968-d75b833f86fb'
   }
-  const store = createCanonicalPageViewStore(work =>
+  const store = createCanonicalEventStore(work =>
     work(transaction)
   )
   const eventInput = input()
@@ -154,7 +157,7 @@ test('returns only newly inserted pending attempts for queue publication', async
 test('writes ledger, source evidence and dispatches in one transaction callback', async () => {
   const calls: string[] = []
   const eventInput = input()
-  const transaction: CanonicalPageViewTransaction = {
+  const transaction: CanonicalEventTransaction = {
     insertLedger: async () => {
       calls.push('ledger')
       return true
@@ -171,7 +174,7 @@ test('writes ledger, source evidence and dispatches in one transaction callback'
       return `00000000-0000-4000-8000-00000000000${calls.length}`
     }
   }
-  const store = createCanonicalPageViewStore(work =>
+  const store = createCanonicalEventStore(work =>
     work(transaction)
   )
 
@@ -203,7 +206,7 @@ test('writes ledger, source evidence and dispatches in one transaction callback'
 
 test('rejects mismatched source evidence before any transaction write', async () => {
   let writes = 0
-  const transaction: CanonicalPageViewTransaction = {
+  const transaction: CanonicalEventTransaction = {
     insertLedger: async () => {
       writes += 1
       return true
@@ -216,7 +219,7 @@ test('rejects mismatched source evidence before any transaction write', async ()
       return '00000000-0000-4000-8000-000000000001'
     }
   }
-  const store = createCanonicalPageViewStore(work =>
+  const store = createCanonicalEventStore(work =>
     work(transaction)
   )
   const eventInput = input()

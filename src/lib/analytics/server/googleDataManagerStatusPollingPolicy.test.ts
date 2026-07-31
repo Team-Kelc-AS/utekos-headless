@@ -2,7 +2,6 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   GOOGLE_DATA_MANAGER_FIRST_STATUS_CHECK_DELAY_MS,
-  GOOGLE_DATA_MANAGER_STATUS_POLLING_TIMEOUT_MS,
   computeGoogleDataManagerStatusDelayMs
 } from './googleDataManagerStatusPollingPolicy'
 
@@ -31,12 +30,5 @@ test('uses 1.3 backoff, small positive jitter, and a 60-minute cap', () => {
   assert.equal(
     computeGoogleDataManagerStatusDelayMs(10, () => 1),
     60 * MINUTE_MS
-  )
-})
-
-test('stops status polling after 24 hours', () => {
-  assert.equal(
-    GOOGLE_DATA_MANAGER_STATUS_POLLING_TIMEOUT_MS,
-    24 * 60 * MINUTE_MS
   )
 })

@@ -714,7 +714,6 @@ export async function acceptCanonical${Pascal}(
 
 function generateHandleRequest(event) {
   const Pascal = pascalFromSnake(event.name)
-  const camel = camelFromSnake(event.name)
 
   return `import { acceptCanonical${Pascal} } from './acceptCanonical${Pascal}'
 import { createBrowserEventRequestHandler } from './createBrowserEventRequestHandler'
@@ -1119,12 +1118,6 @@ ${metaAdapters},
 
 export type RegisteredProviderAdapterKey =
   keyof typeof providerAdapterRegistry
-
-export const registeredProviderAdapterKeys = Object.freeze(
-  Object.keys(
-    providerAdapterRegistry
-  ) as RegisteredProviderAdapterKey[]
-)
 `
   )
 

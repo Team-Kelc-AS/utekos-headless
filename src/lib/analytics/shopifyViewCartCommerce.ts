@@ -25,7 +25,3 @@ export function nextViewCartSequence() {
   viewSequenceCounter += 1
   return viewSequenceCounter
 }
-
-export function resetViewCartSequenceForTests() {
-  viewSequenceCounter = 0
-}

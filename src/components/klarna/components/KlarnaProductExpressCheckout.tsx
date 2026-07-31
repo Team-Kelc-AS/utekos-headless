@@ -6,7 +6,7 @@ import { KlarnaExpressCheckoutButton } from '@/components/klarna/components/Klar
 import { buildKlarnaExpressOrderPayloadFromProductLine } from '@/components/klarna/utils/buildKlarnaExpressOrderPayload'
 import { prepareKlarnaExpressBeginCheckout } from '@/components/klarna/utils/prepareKlarnaExpressBeginCheckout'
 import type { KlarnaExpressOrderPayload } from '@/components/klarna/schemas/klarnaExpressOrderSchema'
-import { getCartIdFromCookie } from '@/lib/actions/getCartIdFromCookie'
+import { getCartIdFromCookie } from '@/lib/actions/cart/getCartIdFromCookie'
 import { reportCanonicalAddToCart } from '@/lib/analytics/addToCartReporter'
 import { reportCanonicalBeginCheckout } from '@/lib/analytics/beginCheckoutReporter'
 import { CartIdContext } from '@/lib/context/CartIdContext'

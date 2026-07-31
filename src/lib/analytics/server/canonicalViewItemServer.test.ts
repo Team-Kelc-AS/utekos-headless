@@ -8,7 +8,7 @@ import {
 import { acceptCanonicalViewItem } from './acceptCanonicalViewItem'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import { handleCanonicalViewItemRequest } from './handleCanonicalViewItemRequest'
-import { mapCanonicalPageViewPersistence } from './mapCanonicalPageViewPersistence'
+import { mapCanonicalEventPersistence } from './mapCanonicalEventPersistence'
 import { normalizeCanonicalViewItem } from './normalizeCanonicalViewItem'
 
 const insertedAcceptance = {
@@ -137,7 +137,7 @@ test('rejects view_item when all collection purposes are denied', async () => {
 
 test('persists view_item with an event-specific idempotency key', () => {
   const event = viewItem()
-  const result = mapCanonicalPageViewPersistence({
+  const result = mapCanonicalEventPersistence({
     dispatches: [],
     event
   })

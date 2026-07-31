@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { registeredProviderAdapterKeys } from './providerAdapterRegistry'
+import {
+  providerAdapterRegistry,
+  type RegisteredProviderAdapterKey
+} from './providerAdapterRegistry'
 import { runRegisteredProviderOutboxBatch } from './runRegisteredProviderOutboxBatch'
 import type { RegisteredProviderOutboxBatchDependencies } from './runRegisteredProviderOutboxBatch'
 
@@ -12,11 +15,15 @@ const summary = {
   retryScheduled: 0
 }
 
+const providerAdapterKeys = Object.keys(
+  providerAdapterRegistry
+) as RegisteredProviderAdapterKey[]
+
 function stubWorkers(
   calls: string[]
 ): RegisteredProviderOutboxBatchDependencies {
   return Object.fromEntries(
-    registeredProviderAdapterKeys.map(key => [
+    providerAdapterKeys.map(key => [
       key,
       async (input: { maxItems: number }) => {
         calls.push(`${key}:${input.maxItems}`)
@@ -33,8 +40,8 @@ test('runs every registered provider-event worker without event-specific orchest
     stubWorkers(calls)
   )
 
-  assert.equal(calls.length, registeredProviderAdapterKeys.length)
-  for (const key of registeredProviderAdapterKeys) {
+  assert.equal(calls.length, providerAdapterKeys.length)
+  for (const key of providerAdapterKeys) {
     assert.ok(calls.includes(`${key}:3`))
     assert.deepEqual(result[key], summary)
   }
