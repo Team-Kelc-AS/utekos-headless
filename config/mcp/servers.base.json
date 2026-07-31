@@ -516,6 +516,18 @@
     "facebook-ads": {
       "type": "http",
       "url": "https://mcp.facebook.com/ads",
+      "auth": {
+        "CLIENT_ID": "${META_APP_ID}",
+        "scopes": [
+          "ads_mcp_management",
+          "ads_read",
+          "ads_management",
+          "catalog_management",
+          "business_management",
+          "pages_show_list",
+          "instagram_basic"
+        ]
+      },
       "tools": [
         "ads_account_get_activity_logs",
         "ads_activate_entity",
@@ -526,12 +538,17 @@
         "ads_catalog_create_product_feed_upload_session",
         "ads_catalog_create_product_set",
         "ads_catalog_delete_product",
+        "ads_catalog_event_source_connect",
+        "ads_catalog_event_source_disconnect",
+        "ads_catalog_event_source_get",
+        "ads_catalog_event_source_get_catalogs",
+        "ads_catalog_event_source_get_health",
+        "ads_catalog_event_source_get_recommendations",
         "ads_catalog_get_catalogs",
         "ads_catalog_get_data_sources",
         "ads_catalog_get_details",
         "ads_catalog_get_diagnostics",
         "ads_catalog_get_dynamic_ads_health",
-        "ads_catalog_get_event_source_catalogs",
         "ads_catalog_get_feed_rules",
         "ads_catalog_get_product_details",
         "ads_catalog_get_product_feed_details",
@@ -540,6 +557,10 @@
         "ads_catalog_get_product_set_details",
         "ads_catalog_get_product_set_products",
         "ads_catalog_get_product_sets",
+        "ads_catalog_product_create",
+        "ads_catalog_product_feed_delete",
+        "ads_catalog_product_feed_delete_rule",
+        "ads_catalog_product_set_delete",
         "ads_catalog_search_product",
         "ads_catalog_update_catalog",
         "ads_catalog_update_product",
@@ -669,7 +690,9 @@
         "devtools_app_review",
         "devtools_compliance",
         "devtools_discovery",
-        "devtools_webhook_list"
+        "devtools_webhook_list",
+        "devtools_webhook_manage",
+        "devtools_webhook_test"
       ],
       "autoApprove": []
     },

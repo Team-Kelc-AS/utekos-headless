@@ -379,9 +379,9 @@ provider-replay eller syntetisk trafikk.
 | Dead letters          | Read-only snapshot 2026-07-31T01:04:19Z: `ops.dead_letter_events` har 1 281 historiske rader, alle løst, og 0 unresolved. `ops.provider_dispatch_attempts` har separat 144 historiske `dead_lettered`-rader. De 48 Google `page_location`-radene fra 2026-07-14 er historisk klassifisering, ikke aktiv feil eller replay-kandidat. |
 | Migrasjonshistorikk   | Fem produksjonsmigrasjoner som manglet i `origin/main` er hentet tilbake som lokale SQL-filer og committed i release-kandidaten uten Supabase-mutasjon. Fire av dem hadde ligget ucommittet i en separat worktree; den femte var den allerede verifiserte ACL-herdingen for arkivfunksjonen.                                                                                                                                                                                                                                                                     |
 | Klientfeilstøy        | Vercel-loggen dokumenterte 17 `DataCloneError`-poster fra 16 extension-id-er; alle hadde `chrome-extension://.../src/setup.js` som `ErrorEvent.filename`, mens 9 også hadde Clarity dypere i stacken. Lokal filtergrense bruker den verifiserte extension-origin-en i både egen beacon og Sentry; identisk feil fra førsteparts-URL beholdes.                                                                                                                                                                                                                                                     |
-| Commerce/tracking MCP | `npm run mcp:commerce-tracking:doctor` passerte tool-surface-gaten med 28 read-only tools.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| Live provider-prober  | Shopify, GA4, Vercel, public sGTM/GTM, autentisert GTM API workspace, Meta Dataset Quality, Microsoft UET endpoint, Microsoft Ads auth/account/campaign/ad insight, Microsoft Shopping Content og Microsoft Clarity var OK i siste doctor-kjøring. |
-| Fail-closed prober    | Merchant Center MCP-proben, Google Ads-prober, PostHog project/event status i lokal commerce MCP og Sentry hadde fortsatt credential/scope-gated fail-closed status. |
+| Commerce/tracking MCP | Historisk evidens: i den historiske Commerce/Tracking-doctor-kjøringen passerte `npm run mcp:commerce-tracking:doctor` tool-surface-gaten med 28 read-only tools. Kommandoen er ikke en aktiv releaseport i dag; det finnes ikke noe tilsvarende `package.json`-script.                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Live provider-prober  | Shopify, GA4, Vercel, public sGTM/GTM, autentisert GTM API workspace, Meta Dataset Quality, Microsoft UET endpoint, Microsoft Ads auth/account/campaign/ad insight, Microsoft Shopping Content og Microsoft Clarity var OK i den historiske Commerce/Tracking-doctor-kjøringen. |
+| Fail-closed prober    | Merchant Center MCP-proben, Google Ads-prober, PostHog project/event status og Sentry hadde fortsatt credential/scope-gated fail-closed status i den historiske Commerce/Tracking-doctor-kjøringen. |
 | Merchant preflight    | Merchant API virker. API primary product source og autofeed er synlige. 16 managed products, 15 med GTIN. Kontopolicy må likevel verifiseres separat.                                                                                                                                                                                                                                                                                                                                                                                                              |
 | PostHog plugin        | Aktivt prosjekt har event-inntak. Siste 30 dager viste mye `$pageview` og `$web_vitals`, men få eksplisitte `utekos_*` commerce-events og ingen dedikerte Utekos CRO-/checkout-dashboard funnet i søk.                                                                                                                                                                                                                                                                                                                                                             |
 | Sentry                | Server/edge/global error-instrumentering finnes i kode. Client replay er ikke aktivert, og lokal Sentry-probe er fail-closed.                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -534,9 +534,19 @@ node scripts/ops/dead-letter-replay-plan.mjs --limit=40
 npm run merchant:preflight
 ```
 
-Den tidligere `mcp:commerce-tracking:doctor` er fjernet og er ikke en aktiv
-gate. Bruk den først igjen dersom den kanoniske Commerce/Tracking-flaten
-reintroduseres sammen med et faktisk `package.json`-script.
+Den historiske, aggregerte `mcp:commerce-tracking:doctor`-kommandoen
+er ikke en aktiv releaseport fordi det ikke finnes et tilsvarende
+`package.json`-script eller en aktiv aggregert Commerce/Tracking-
+serverkontrakt.
+
+Ved commerce- eller trackingendringer skal `mcp:build`,
+`mcp:doctor`, relevante aktive målrettede MCP-doctors,
+tracking-smoke og eventkontrakttester kjøres ut fra den berørte
+flaten.
+
+Den aggregerte kommandoen kan først gjeninnføres når server,
+script, tester, dokumentert verktøykontrakt og runbook blir
+gjenopprettet samlet.
 
 Ved nettleser-/produksjonssmoke må følgende bevises før endring
 regnes som ferdig:
@@ -564,11 +574,12 @@ evidens:
   foreldet. Siste produksjons-HTML-sjekk viste Cookiebot og ingen
   Usercentrics-runtime.
 - "Vercel deployment status probe er ikke verifisert" er foreldet
-  for siste commerce doctor. Vercel-proben var OK.
+  i den historiske Commerce/Tracking-doctor-kjøringen.
+  Vercel-proben var OK.
 - "Microsoft Ads account/campaign/ad insight er ikke verifisert"
-  er foreldet for siste commerce doctor. Microsoft Ads auth
-  readiness, account access, campaign status og Ad Insight var
-  OK.
+  er foreldet i den historiske Commerce/Tracking-doctor-kjøringen.
+  Microsoft Ads auth readiness, account access, campaign status og
+  Ad Insight var OK.
 - Gamle resolved Meta-token-expired rows skal ikke telles som
   aktive feil uten unresolved status.
 - De 382 radene fra 2026-07-08 og de 48 Google `page_location`-

@@ -51,10 +51,25 @@ Reload the MCP client after generation.
   generated runner resolves secret-bearing stdio arguments at
   process start.
 - `SENTRY_ACCESS_TOKEN` is the documented token name for the
-  Sentry MCP. `SENTRY_AUTH_TOKEN` remains separate for
-  application/SDK workflows.
+  Sentry MCP. `SENTRY_ORG_TOKEN` is the optional org-scoped
+  companion for org-wide reads. `SENTRY_AUTH_TOKEN` remains
+  separate for application/SDK workflows. All three are declared
+  in `credentials.manifest.json` under `optionalEnv`, so a
+  missing value degrades that server only and never the build.
 - Remote OAuth servers keep OAuth state in the client. Do not
   copy cached tokens into repository files.
+- `facebook-ads` (`https://mcp.facebook.com/ads`) disables OAuth
+  Dynamic Client Registration, so a client that tries to register
+  itself never receives a `client_id` and its authenticate action
+  hangs without opening a browser. The server therefore declares a
+  static `auth.CLIENT_ID` bound to `${META_APP_ID}`. The Meta app
+  must carry the "Create & manage ads with ads MCP server" use
+  case, which is what grants the `ads_mcp_management` scope; a
+  System User token cannot hold that scope. While the app is in
+  development mode Meta auto-allows `http://localhost` redirects,
+  so Cursor's `http://localhost:8787/callback` needs no allowlist
+  entry. `https://mcp.facebook.com/devtools` does support dynamic
+  registration and needs no static client id.
 - A successful build proves configuration generation only.
   Restart the client and run a safe read tool before reporting a
   provider MCP as usable.
