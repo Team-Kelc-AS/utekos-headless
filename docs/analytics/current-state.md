@@ -1,14 +1,16 @@
 # Canonical analytics architecture: current state
 
-**Evidence freeze:** 2026-07-20T21:46Z (docs refresh after UET
-CAPI purchase journey) **Repository baseline:**
-`utekos-brand/utekos-headless` at
-`ed16dfd06ecddf1bea37e3f710c40f2bbfd76abc` (feat `490f33126`)
-**Production deployment:** `dpl_3Pe1KmJSj5unFh1jD7VytiPvFr5H`,
-READY, owns `utekos.no`, `arn1`, Node.js 24.x **Branch:** `main`
-**Live snapshots:** Supabase pink-lens `hkoawfbomhnzupcsdggb`
-queried 2026-07-20T21:45Z; GTM Admin inventory 2026-07-20; Meta
-Graph/EMQ 2026-07-20; Microsoft Ads audit 2026-07-20
+**Current evidence:** 2026-07-31T01:04:19Z. **Repository baseline:** newest
+`main` at `7a9f19ed3f94cc08ee3140ddb4c99afe4af3d564`. **Production
+deployment:** `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL`, `READY`, owns
+`utekos.no`, exact same SHA, `arn1`, Node.js 24.x. **Live snapshots:** read-only
+Supabase `pink-lens` (`hkoawfbomhnzupcsdggb`) and Vercel runtime/deployment
+queried 2026-07-31.
+
+**Historical evidence freeze:** the 2026-07-20 audit at `ed16dfd06` /
+`dpl_3Pe1KmJSj5unFh1jD7VytiPvFr5H`, including its GTM, Meta, Microsoft, and
+Supabase snapshots, is retained below for audit value and is not current
+deployment state.
 
 ## Documentation status
 
@@ -32,17 +34,39 @@ Status vocabulary:
 - **Refuted:** current primary evidence contradicts the prior
   claim.
 
-## Active release after the production freeze — 2026-07-26
+## Current production contract — 2026-07-31
 
-The historical production evidence above remains a freeze, but the current
-runtime has advanced. Web-GTM v135 is live; v133 introduced the canonical
+- Canonical inventory: 33 total, 29 active, four `blocked_source`.
+- Active provider/event registry: 48 workers — 28 Google, 17 Meta, three
+  Microsoft UET CAPI.
+- Accepted events persist ledger plus provider attempts atomically. Only newly
+  inserted attempt primary keys are published after commit to Vercel Queue.
+- The strict message contains `schema_version`, exact `attempt_id`, and
+  `adapter_key`. The consumer calls `claimById`; SQL constrains the exact ID,
+  provider, event name, `server_retry`, due state, and claimant cutover.
+- Provider-classified `retry_scheduled`/`dead_lettered` outcomes acknowledge
+  the Queue message. Only thrown infrastructure errors are redelivered by
+  Vercel Queue after 15 seconds. Database retry follows `next_attempt_at`.
+- `/api/cron/provider-outbox-dispatch` is scheduled every five minutes for
+  recovery, due retry, and stale-claim fallback. Vercel logs on the current
+  deployment showed recurring `200` responses at that cadence; it is not the
+  primary delivery wake-up. A post-commit Queue publish failure leaves the
+  durable attempt pending for this fallback.
+- Microsoft server workers are active and have production API-acceptance
+  history for `add_to_cart`, `begin_checkout`, and `purchase`. Missing
+  `msclkid`/ApiToken remains fail-closed as `skipped_unqualified`.
+
+## Historical tracking release — 2026-07-26
+
+This section retains the 2026-07-26 tracking activation freeze. Web-GTM v135
+is live; v133 introduced the canonical
 mapping from workspace 141, v134 changed only the redundant GTM
 additional-consent setting, and v135 changed only tag 153 to initialize on
 page load and poll future canonical `dataLayer` entries with the app bridge's
 shared duplicate guard. Application deployment
 `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` from exact SHA
-`3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` is `READY` and owns
-`utekos.no`:
+`3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` was `READY` and owned
+`utekos.no` at activation time:
 
 | Release surface | Repository state | Production evidence |
 | --------------- | ---------------- | ------------------- |
@@ -58,39 +82,35 @@ shared duplicate guard. Application deployment
 
 The release does not change the database schema, Purchase contract,
 destination IDs, campaigns, budgets, conversion goals or historical rows.
-Missing PII/`fbc`/`fbp` is not synthesized. Microsoft CAPI expansion remains a
-separate quality-gated release. The deployment did not change the Supabase
+Missing PII/`fbc`/`fbp` is not synthesized. At this release point, Microsoft
+CAPI expansion was a separate quality gate; all three approved lower-funnel
+workers were production-accepted by 2026-07-22. The deployment did not change the Supabase
 schema and performed no synthetic or historical replay.
 Activation evidence is tracked in
 [canonical-stale-events-near-realtime-cutover-2026-07-26.md](evidence/canonical-stale-events-near-realtime-cutover-2026-07-26.md).
 
 ## Executive summary
 
-The project already has a substantial canonical architecture. It
-has a typed event catalog, a shared consent-aware browser
-collector, 23 first-party event routes, Zod validation, atomic
-ledger/outbox persistence, a generic `SKIP LOCKED` outbox, 33
-provider workers (24 Google, 8 Meta, 1 Microsoft UET purchase),
-provider retries/dead letters, Google request-status
+The project has a typed 33-event catalog, a shared consent-aware browser
+collector, 27 first-party event routes, Zod validation, atomic ledger/outbox
+persistence, exact-attempt Vercel Queue wake-up, a generic `SKIP LOCKED`
+database fallback, and 48 provider workers (28 Google, 17 Meta, three
+Microsoft UET CAPI). It also has provider retries/dead letters, Google request-status
 reconciliation, intended Shopify webhook purchase/refund routes
 with verified browser/backfill purchase ingestion, Cookiebot
 Consent Mode and first-party GTM/sGTM routing.
 
-The principal problem is not absence of a canonical pipeline. It
-is coexistence with historical naming/data, overly broad
-immediate dispatch (DEV-001 / Oppgave 1), generic acceptance
-semantics and remaining provider gaps. A successful browser
-request schedules all registered provider-event workers, each
-with `maxItems: 1`; it can therefore claim unrelated backlog and
-compete with the five-minute cron. The live warehouse has 19,043
-ledger rows and 21,588 attempts, no active backlog and no
-duplicate canonical IDs, but contains both canonical snake_case
-and legacy/provider PascalCase names. Google finality is
-reconciled via status cron; Meta success remains
-`accepted_unverified` with browser/server dedupe not proven
-(DEV-020). Microsoft browser UET is live; purchase UET CAPI is
-production-verified (`accepted_unverified`, not `missing_msclkid`
-/ `missing_capi_token`).
+The principal remaining problems are coexistence with historical naming/data,
+generic acceptance semantics, and provider-specific quality gaps. DEV-001's
+full-registry request-path drain is closed by exact-attempt Queue dispatch. At
+2026-07-31T01:04:19Z, the live warehouse had 36,591 ledger rows and 43,705
+attempts, with no `pending`, `processing`, `retry_scheduled`, or `failed`
+backlog, but still contains both canonical snake_case and legacy/provider
+PascalCase names. Google finality is
+reconciled via status cron; Meta success remains `accepted_unverified`.
+Browser/server shared-`event_id` parity is wire-proven, while Events Manager
+Overlap UI remains unverified (DEV-020). Microsoft browser UET is live; `add_to_cart`, `begin_checkout`, and
+`purchase` UET CAPI each have `accepted_unverified` production evidence.
 
 ## System boundaries
 
@@ -112,18 +132,17 @@ Klarna Search & Compare is a commerce/feed experiment, not a
 registered canonical event provider. PostHog is catalogued but
 the storefront integration is currently not implemented.
 
-## Repository and production freeze
+## Repository and deployment state
 
-| Item              | Current state                                    | Evidence                                          |
-| ----------------- | ------------------------------------------------ | ------------------------------------------------- |
-| Default branch    | `main`                                           | Git remote HEAD                                   |
-| Docs refresh HEAD | `ed16dfd06ecddf1bea37e3f710c40f2bbfd76abc`       | Git; UET CAPI feat `490f33126`                    |
-| Latest production | READY, owns `utekos.no`                          | Vercel `dpl_3Pe1KmJSj5unFh1jD7VytiPvFr5H`         |
-| Runtime region    | `arn1`                                           | `.vercel/project.json`, `vercel.json`, Vercel API |
-| Node.js           | 24.x                                             | `package.json`, Vercel project                    |
-| PR 44             | Open, conflicting/dirty, functionally superseded | GitHub PR and main source                         |
+| Item | Current state | Evidence |
+| --- | --- | --- |
+| Default branch / HEAD | `main` / `7a9f19ed3f94cc08ee3140ddb4c99afe4af3d564` | Git remote HEAD |
+| Current production | `READY`, owns `utekos.no`, exact same SHA | Vercel `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL` |
+| Historical tracking release | Targeted Queue activation evidence | `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` / `3799e58a` |
+| Runtime region | `arn1` | Vercel API |
+| Node.js | 24.x | `package.json`, Vercel project |
 
-PR 44 adds a ten-identifier cap and positive retry jitter to
+**Historical PR note:** PR 44 added a ten-identifier cap and positive retry jitter to
 pre-refactor files. The same intent is already on `main`:
 `googleDataManagerSharedMapping.ts` centralizes
 `MAX_USER_IDENTIFIERS = 10`, deduplication and interleaving,
@@ -134,7 +153,7 @@ Oppgave 0 did not change it.
 
 ## Canonical event model
 
-`src/lib/analytics/eventCatalog.ts` declares 29 events: 25 active
+`src/lib/analytics/eventCatalog.ts` declares 33 events: 29 active
 and four `blocked_source`. `src/lib/analytics/canonicalEvent.ts`
 defines the implemented Zod discriminated union. Each active
 event declares an owner, trigger, dedupe policy, consent policy
@@ -252,10 +271,11 @@ Cookiebot consent, hashed-contact shapes, identifier maps, URLs
 and optional location/device context. `canonicalEventSchema`
 dispatches by `event_name`.
 
-There are 23 browser event routes under `src/app/api/events`.
-Each route delegates collection to the event-specific canonical
-handler and wires `runRegisteredProviderOutboxBatch` through
-`after()`. Intended authoritative purchase/refund sources are the
+There are 27 event routes under `src/app/api/events`.
+Each route delegates collection to the event-specific canonical handler. After
+an accepted transaction commits, the store publishes only the exact newly
+created provider-attempt IDs to Vercel Queue; event routes do not start a
+full-registry `after()` batch. Intended authoritative purchase/refund sources are the
 Shopify `orders-paid` and `refunds-create` webhook routes;
 verified active purchase ingestion is the browser purchase route
 plus Meta purchase-backfill (webhook production delivery is
@@ -263,10 +283,10 @@ unverified). `generate_lead` and `form_submit` are server-owned
 even though event API routes also exist for their canonical
 collection path.
 
-Duplicate canonical events return the existing event outcome
-without inserting new dispatch rows. Live production has 19,043
-distinct event IDs and idempotency keys across 19,043 ledger
-rows.
+Duplicate canonical events return the existing event outcome without inserting
+new dispatch rows. The 2026-07-31 live snapshot had 36,591 ledger rows; the 36
+distinct stored event-name spellings include history and are not the 33-event
+catalog inventory.
 
 ## Persistence and atomicity
 
@@ -319,13 +339,19 @@ measured as `late_within_window`.
 
 ### Claim and locking
 
-Each adapter owns a `(provider, event_name)` claimant. The claim
-query:
+There are two related claim paths:
+
+1. Targeted Queue delivery uses `claimById`. It requires exact attempt primary
+   key, provider, event name, `server_retry`, due/cutover state, and uses
+   `FOR UPDATE SKIP LOCKED`. A `processing` row becomes eligible for targeted
+   reclaim after 15 seconds.
+2. The five-minute recovery cron uses generic `claimNext` per
+   `(provider, event_name)`. It:
 
 - selects `server_retry` rows;
 - claims `pending`/`retry_scheduled` rows whose `next_attempt_at`
   is due;
-- reclaims `processing` rows stale for ten minutes;
+- reclaims `processing` rows stale for five minutes;
 - orders stale processing first;
 - uses `FOR UPDATE SKIP LOCKED`;
 - atomically updates the row to `processing` and increments
@@ -342,20 +368,21 @@ query:
   happen in one SQL statement.
 - Invalid payloads are dead-lettered without provider dispatch.
 
-### Immediate and cron dispatch
+### Targeted Queue and cron fallback
 
-Both `/api/cron/provider-outbox-dispatch` and
-`/api/cron/google-data-manager-status` run every five minutes.
-The dispatch cron uses one item per worker. Browser routes and
-Shopify transaction webhooks also schedule
-`runRegisteredProviderOutboxBatch({maxItems: 1})` after
-successful acceptance.
+`/api/cron/provider-outbox-dispatch` and
+`/api/cron/google-data-manager-status` run every five minutes. The dispatch
+cron invokes all 48 registered provider/event workers with `maxItems: 10` as
+recovery, due-retry, and stale-processing fallback.
 
-`runRegisteredProviderOutboxBatch` executes every registry entry
-in `Promise.all`. There are 33 workers: 24 Google, 8 Meta, and 1
-Microsoft UET purchase. Thus `maxItems: 1` means one item **per
-worker**, not one item for the accepted event. This confirms the
-P0 isolation defect.
+Primary post-commit delivery publishes one PII-free Queue message per newly
+created attempt. Idempotency is `${adapterKey}:${attemptId}`; the consumer runs only
+that adapter and calls `claimById` for that exact attempt. Provider-classified
+`retry_scheduled` and `dead_lettered` outcomes return normally and ACK the
+message. Only unclassified infrastructure exceptions are thrown for Vercel
+Queue redelivery after 15 seconds. Database retries remain governed by
+`next_attempt_at`; Queue redelivery and database retry are not the same state
+transition. DEV-001 is closed.
 
 ### Index alignment
 
@@ -374,7 +401,7 @@ Live allowed statuses:
 | Status                | Set by                                     |                  Terminal | Meaning                                                   |
 | --------------------- | ------------------------------------------ | ------------------------: | --------------------------------------------------------- |
 | `pending`             | Persistence plan                           |                        No | Eligible for initial claim                                |
-| `processing`          | Claim/reclaim query                        |                        No | Leased/being processed; reclaim after ten minutes         |
+| `processing`          | Claim/reclaim query                        |                        No | Leased; targeted reclaim after 15s, fallback reclaim after 5m |
 | `retry_scheduled`     | Generic worker                             |                        No | Retryable failure with due time                           |
 | `accepted_unverified` | Generic worker completion                  |        Provider-dependent | Adapter call returned a receipt; finality not proven      |
 | `succeeded`           | Google reconciliation or historical repair |                       Yes | Provider-confirmed or administratively classified success |
@@ -433,7 +460,7 @@ than a direct application `mp/collect` adapter.
 
 ### Google Data Manager
 
-Google Data Manager server outbox exists for 24 active events.
+Google Data Manager server outbox exists for 28 active events.
 Mappings:
 
 - require a GA client ID for active dispatch;
@@ -517,12 +544,20 @@ openbridge3 CAPI Gateway outside sGTM.
   including the UET CAPI token name; values were not read in the
   original audit. Local `.env.mcp.local` / `.env.local` hold
   ApiToken aliases for agents.
-- **Purchase server worker (2026-07-20):**
-  `microsoft_uet:purchase` registered; catalog
-  `serverOutbox: active`. Fail-closed plan skips:
-  `missing_msclkid`, `missing_capi_token`. Other Microsoft events
-  remain `blocked_no_worker`.
-- **Production purchase journey verified 2026-07-20T21:45Z:**
+- **Current server workers:** `microsoft_uet:add_to_cart`,
+  `microsoft_uet:begin_checkout`, and `microsoft_uet:purchase` are registered
+  with catalog `serverOutbox: active`. Fail-closed plan skips include
+  `missing_msclkid` and `missing_capi_token`. Other Microsoft events remain
+  `blocked_no_worker` on the server.
+- **Current read-only evidence (queried 2026-07-31T01:04:19Z):** the three
+  latest accepted attempt IDs are
+  `6d35806a-fe96-474d-a8b3-a9057ddd2e48` (`add_to_cart`),
+  `8cf42314-450b-4441-b53c-9b19bba2462e` (`begin_checkout`), and
+  `f8a584d8-359d-4584-923a-325a18a5ad52` (`purchase`). All are
+  `server_retry`, `attempt_count=1`, `accepted_unverified`. Counts were 4/1/1
+  accepted respectively, plus 93/59/18 `missing_msclkid` skips. These receipts
+  prove provider API acceptance, not final attribution.
+- **Historical production purchase journey verified 2026-07-20T21:45Z:**
   Shopify order `#6ULWCDZT5` (Stapper, `KRISTOFFERTESTRABATT`,
   synthetic `msclkid=14428fb9-9d65-4b7e-8027-c290d49c142e`).
   Ledger purchase
@@ -531,10 +566,10 @@ openbridge3 CAPI Gateway outside sGTM.
   (latency 209 ms); **not** `missing_msclkid` /
   `missing_capi_token`. Artifact:
   `.agent-artifacts/analytics/microsoft-uet-capi-purchase-journey-2026-07-20.json`.
-- Historical Microsoft rows: 222 prior `skipped_unqualified`
-  remain; new qualified purchases use the active worker.
+- Historical Microsoft rows remain audit history; new qualified lower-funnel
+  events use the three active workers.
 
-Live conversion goals (2026-07-20 audit): UET Active; Add To
+Historical conversion-goal audit (2026-07-20): UET Active; Add To
 Cart, Begin Checkout, PageView Active. Browser smoke verified UET
 `pageLoad` + custom `view_item` post-consent.
 
@@ -546,21 +581,22 @@ registry.
 
 ## Shopify webhooks
 
-**Intended authoritative source:** Shopify `orders-paid` →
-canonical `purchase`; `refunds-create` → canonical `refund`.
+**Authoritative source contract:** Shopify `orders-paid` → canonical
+`purchase`; `refunds-create` → canonical `refund`.
 Product webhooks (`products-create` / `update` / `delete`) are
 cache invalidation only.
 
-**Verified active ingestion:** Browser purchase route and Meta
-purchase-backfill (`meta-purchase-replay` / related backfill
-keys). Purchases reach the ledger; they are not production-proven
-as webhook-owned.
+**Verified live delivery:** production Vercel received 14
+`/api/shopify/webhooks/orders-paid` requests in the inspected seven-day window
+(12 HTTP 202, two HTTP 200), and ledger/attempt evidence proves passive
+orders-paid ingestion. Historical browser/backfill purchase rows remain in the
+warehouse. No matching `refunds-create` runtime traffic was observed.
 
-**Unverified:** Whether production traffic actually reaches the
-webhook routes. The app owning `SHOPIFY_ADMIN_API_TOKEN` has
-**zero** app-scoped `webhookSubscriptions` (Shopify Admin GraphQL
-2025-07). No `shopify.app.toml` registration was found. Delivery
-by any other app/custom subscriber remains unknown (DEV-008).
+**Configuration ownership unknown:** the inspected Admin token returned zero
+shop-specific GraphQL/REST subscriptions, but app-specific Shopify notification
+subscriptions are not visible through that query. Live `orders-paid` delivery
+therefore must not be described as missing; the owning app/configuration and
+the unobserved `refunds-create` delivery remain open (DEV-008).
 
 Webhook HMAC is verified fail-closed against the raw body with
 SHA-256 and constant-time comparison. Purchase/refund IDs are
@@ -569,6 +605,28 @@ refund object was created; it does not prove settlement or
 financial reconciliation.
 
 ## Production data snapshot
+
+### Current read-only snapshot — 2026-07-31T01:04:19Z
+
+| Measure | Value |
+| --- | ---: |
+| Ledger rows | 36,591 |
+| Distinct historical/current ledger spellings | 36 |
+| Provider attempts | 43,705 |
+| `succeeded` | 31,722 |
+| `accepted_unverified` | 10,187 |
+| `skipped_unqualified` | 1,652 |
+| Historical attempt rows with `dead_lettered` status | 144 |
+| `pending` / `processing` / `retry_scheduled` / `failed` | 0 / 0 / 0 / 0 |
+| Historical `ops.dead_letter_events` rows | 1,281 |
+| Resolved / unresolved dead-letter audit rows | 1,281 / **0** |
+
+The 36 stored names include historical/provider aliases and do not redefine
+the code-owned 33-event catalog. Likewise, 144 historical attempt rows with
+status `dead_lettered` and 1,281 historical dead-letter audit rows do not mean
+there are active dead letters; the unresolved count is zero.
+
+### Historical snapshot — 2026-07-20
 
 | Measure                                         | 2026-07-20 value |
 | ----------------------------------------------- | ---------------: |
@@ -613,9 +671,14 @@ permanent-error runtime group appeared in the last seven days.
 
 ## Production logs
 
-Both five-minute crons are active and predominantly return 200.
-Neither appears in seven-day Vercel error groups. Relevant
-project-wide errors:
+On current deployment `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL`, Vercel runtime
+logs showed `/api/cron/provider-outbox-dispatch` returning `200` at five-minute
+intervals from 2026-07-30T23:10Z through 2026-07-31T01:01Z. No Queue callback
+appeared in the inspected current-deployment window, so near-real-time callback
+evidence remains the historical 2026-07-26 release proof. The cron log proves
+the fallback is running, not that it was the claimant for a particular attempt.
+
+Historical project-wide errors:
 
 - Supabase `EMAXCONNSESSION` for web-vitals and consent
   snapshots: indirectly relevant to warehouse write reliability.
@@ -627,7 +690,7 @@ project-wide errors:
   inspected server error groups; browser-console verification
   remains blocked.
 
-## Tests and baseline validation
+## Historical tests and baseline validation — 2026-07-20
 
 | Command                                                            | Exit | Result                                                                                                              |
 | ------------------------------------------------------------------ | ---: | ------------------------------------------------------------------------------------------------------------------- |
@@ -647,28 +710,27 @@ was changed to repair baseline failures.
 
 ## Principal risks
 
-1. A request-path event drains the entire registry and can
-   process unrelated backlog.
-2. Meta browser/server event_id parity and deduplication overlap
-   remain unproven.
-3. Historical/provider names coexist with canonical names; older
+1. Meta shared-`event_id` browser/server parity is proven; Events Manager
+   Overlap UI remains unverified.
+2. Historical/provider names coexist with canonical names; older
    rows are not uniformly claimable by current workers.
-4. Generic accepted status does not express Meta and Google
+3. Generic accepted status does not express Meta, Google, and Microsoft
    finality equally.
-5. Google diagnostics lookups lack an aligned request-ID index;
-   main claims lack an event-name-aligned index.
-6. Data Manager executed ingestion is live
+4. Google diagnostics lookups lack an aligned request-ID index; the generic
+   fallback claim lacks an event-name-aligned index. Exact-ID Queue claims do
+   not share this scan risk.
+5. Data Manager executed ingestion is live
    (`GOOGLE_DATA_MANAGER_VALIDATE_ONLY=false`); still treat
    `accepted_unverified` as pre-reconciliation until status cron
    maps SUCCESS → `succeeded` (P0/P1 env watch — do not flip
    validate-only without approval).
-7. Microsoft UET CAPI purchase is production-verified for one
-   qualified journey; non-purchase Microsoft server events remain
-   open.
-8. App-scoped Shopify webhook subscriptions are empty; webhook
-   delivery path for the routes remains unproven (browser +
-   backfill still fill purchases).
-9. Consent snapshots stop after the 2026-07-15 reset; this is
+6. Microsoft UET CAPI has API-acceptance evidence for `add_to_cart`,
+   `begin_checkout`, and `purchase`; final attribution and identifier coverage
+   remain open, and other Microsoft server events remain blocked.
+7. Live `orders-paid` route delivery is proven, but the owning Shopify
+   notification subscription/app configuration is unknown and
+   `refunds-create` traffic remains unobserved.
+8. Consent snapshots stop after the 2026-07-15 reset; this is
    consistent with the reset but must not be described as an
    active snapshot writer.
 
@@ -690,13 +752,28 @@ was changed to repair baseline failures.
   <https://shopify.dev/docs/apps/build/webhooks/verify-deliveries>
 - Next.js `after`:
   <https://nextjs.org/docs/app/api-reference/functions/after>
+- Vercel Queue SDK and callback acknowledgement/redelivery:
+  <https://vercel.com/docs/queues/sdk>
 - Vercel cron jobs: <https://vercel.com/docs/cron-jobs>
 - PostgreSQL `SELECT` locking:
   <https://www.postgresql.org/docs/current/sql-select.html>
 
 ## Areas blocked from verification
 
-Updated 2026-07-20 (evening) after agent credential repair:
+Current KRI-22 boundaries:
+
+- No Queue callback occurred in the inspected window for current deployment
+  `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL`. Exact callback evidence therefore comes
+  from the historical 2026-07-26 tracking release, while current deployment
+  proves the same code SHA and a live five-minute cron.
+- Supabase does not record whether Queue or cron owned a particular claim.
+  Attempt rows alone cannot prove claimant identity or distinguish Queue
+  redelivery from database retry.
+- Microsoft `accepted_unverified` receipts do not prove final Ads dashboard
+  attribution. No replay, synthetic traffic, provider write, or new checkout
+  was authorized for this documentation task.
+
+**Historical access record — 2026-07-20 after credential repair:**
 
 - **Resolved:** GTM Admin for web + server. Project `gtm-mcp`
   OAuth token refreshed; `list_gtm_accounts` returns both
@@ -731,11 +808,10 @@ Updated 2026-07-20 (evening) after agent credential repair:
     unrelated UI hit never shares an ID; production dedupe
     requires one app-minted UUID on Pixel `eventID` and CAPI
     `event_id` for the same action.
-  - Do not claim browser/server Meta dedupe OK until Events
-    Manager shows Overlap for `event_id` (or Dataset Quality
-    returns non-omitted `dedupe_key_feedback`) on ViewContent and
-    the parsing events. Collector stores omitted feedback as
-    `{ status: 'omitted_by_provider' }` instead of coercing to
+  - **Historical/Superseded:** wire-level shared-`event_id` parity is now
+    proven. Do not claim the separate Events Manager Overlap UI as verified
+    until that provider surface is observable. Collector stores omitted
+    feedback as `{ status: 'omitted_by_provider' }` instead of coercing to
     `[]`.
 - **Resolved:** Microsoft live conversion goals + UET tag via
   `npm run microsoft-ads:audit` after Entra OAuth refresh (keep
@@ -746,14 +822,18 @@ Updated 2026-07-20 (evening) after agent credential repair:
 - **Resolved:** Microsoft UET CAPI purchase journey 2026-07-20 —
   order `#6ULWCDZT5`, attempt `accepted_unverified`, deploy
   `dpl_3Pe1KmJSj5unFh1jD7VytiPvFr5H` (`490f33126`). Auth/gateway
-  smoke previously green. Non-purchase Microsoft events remain
-  `blocked_no_worker`.
+  smoke previously green. **Historical/Superseded:** at that snapshot,
+  non-purchase Microsoft events were `blocked_no_worker`; `add_to_cart` and
+  `begin_checkout` joined `purchase` as active workers by 2026-07-22.
 - **Resolved earlier:** Meta Events Manager activity/source
   split/match keys; Shopify app-scoped subscriptions empty;
   browser console/network smoke SMOKE-001..007.
 - **Partially resolved:** Google Ads destination `AW-18180376403`
   observed in browser smoke; per-request Data Manager diagnostics
   beyond stored application responses remain limited.
-- **Still open:** Meta dedupe Overlap (DEV-020); Shopify webhook
-  delivery source (DEV-008); Oppgave 1 dispatch isolation
-  (DEV-001).
+- **Historical open set:** Meta dedupe Overlap (DEV-020); Shopify webhook
+  delivery source (DEV-008); Oppgave 1 dispatch isolation (DEV-001).
+  **Current correction:** shared-`event_id` parity and live `orders-paid`
+  delivery are proven; Overlap UI, Shopify configuration ownership,
+  `refunds-create`, and the other DEV-008 boundaries remain open. DEV-001 is
+  closed by exact-attempt Queue dispatch.

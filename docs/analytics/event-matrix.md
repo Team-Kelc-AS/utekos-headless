@@ -1,15 +1,30 @@
 # Canonical event and destination matrix
 
-**Freeze:** 2026-07-20 refresh at `ed16dfd06` / production
-`dpl_3Pe1KmJSj5unFh1jD7VytiPvFr5H`.
+**Current production:** verified 2026-07-31. Deployment
+`dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL` is `READY`, owns `utekos.no`, and runs
+exact `main` SHA `7a9f19ed3f94cc08ee3140ddb4c99afe4af3d564`.
 
-**Active release:** 2026-07-26. Web-GTM v135 is live; v133 introduced the
+**Historical freeze:** the 2026-07-20 refresh at `ed16dfd06` / deployment
+`dpl_3Pe1KmJSj5unFh1jD7VytiPvFr5H` is retained as audit history.
+
+**Historical tracking release:** 2026-07-26. Web-GTM v135 is live; v133 introduced the
 canonical mappings from isolated workspace 141, v134 removed the redundant
 additional-consent setting, and v135 added future `dataLayer` polling to tag
 153. Version 134 is the immediate GTM rollback.
 Application deployment `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` from
 `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` is `READY`. Controlled genuine
 events have correlated collector, ledger, queue, Google and Meta receipts.
+
+The current code publishes only newly created provider-attempt primary keys
+after database commit. Queue messages contain only `schema_version`, exact
+`attempt_id`, and `adapter_key`; the consumer claims that exact ID together
+with its provider/event pair. Provider-classified retry is stored as
+`retry_scheduled` with `next_attempt_at`. Only thrown infrastructure failures
+are eligible for Vercel Queue redelivery after 15 seconds. The five-minute
+provider cron is recovery/fallback and due-retry processing, not primary
+delivery. Vercel logs for the current deployment show the cron returning `200`
+at five-minute intervals; no current-deployment queue callback appeared in the
+inspected log window.
 
 Legend: `G` = Google Data Manager server outbox active; `M` =
 Meta server outbox active; `MS-B` = Microsoft browser UET
@@ -29,7 +44,7 @@ the source column says webhook/server.
 | `add_to_cart`         | active         | Successful Shopify cart mutation                                                     | browser/server `/api/events/add-to-cart`                                     | `add_to_cart`                          | `add_to_cart` G                       | `AddToCart` M            | `add_to_cart` MS-B; MS-S UET CAPI when msclkid | cart mutation ID                   | post-mutation; provider-specific                                                 |
 | `remove_from_cart`    | active         | Successful Shopify cart response; full deletion, 1→0 and positive quantity decrease use actual returned delta | browser `/api/events/remove-from-cart`; webhook `carts/update` → `/api/shopify/webhooks/remove-from-cart` | `remove_from_cart`                     | `remove_from_cart` G                  | `RemoveFromCart` M       | `remove_from_cart` MS-B; MS-S blocked | cart mutation ID                   | post-mutation; provider-specific; Storefront response authoritative for browser change; Meta CAPI + Pixel dedupe via event_id |
 | `view_cart`           | active         | Cart surface visible                                                                 | browser `/api/events/view-cart`                                              | `view_cart`                            | `view_cart` G                         | `ViewCart` M             | `view_cart` MS-B; MS-S blocked        | page/cart/view sequence            | analytics or marketing                                                           |
-| `begin_checkout`      | active         | Authoritative checkout creation                                                      | browser/server `/api/events/begin-checkout`                                  | `begin_checkout`                       | `begin_checkout` G                    | `InitiateCheckout` M     | `begin_checkout` MS-B; MS-S blocked   | checkout ID/revision               | post-mutation; provider-specific                                                 |
+| `begin_checkout`      | active         | Authoritative checkout creation                                                      | browser/server `/api/events/begin-checkout`                                  | `begin_checkout`                       | `begin_checkout` G                    | `InitiateCheckout` M     | `begin_checkout` MS-B; MS-S UET CAPI when msclkid | checkout ID/revision               | post-mutation; provider-specific                                                 |
 | `add_shipping_info`   | blocked_source | Missing authoritative checkout source                                                | none                                                                         | declared only                          | disabled                              | -                        | disabled                              | checkout/shipping revision         | not active                                                                       |
 | `add_payment_info`    | blocked_source | Missing authoritative checkout source                                                | none                                                                         | declared only                          | disabled                              | `AddPaymentInfo` planned | disabled                              | checkout/payment revision          | not active                                                                       |
 | `purchase`            | active         | Shopify Admin Order payment notification; reconciliation is missed-delivery recovery | webhook `/api/shopify/webhooks/orders-paid`; Shopify Admin reconciliation    | `purchase`; no browser dataLayer owner | `purchase` G                          | `Purchase` M             | `purchase` MS-S active                | deterministic order legacy ID      | operational ledger; provider consent from checkout attribution                   |
@@ -92,9 +107,32 @@ Direct application CAPI remains the only Meta server owner.
 - No file was proven unused solely from naming; no deletion is
   authorized by this freeze.
 
+## Production warehouse snapshot — 2026-07-31T01:04:19Z
+
+The catalog inventory is code-owned: **33 total / 29 active / four
+`blocked_source`**. It must not be inferred from historical warehouse names.
+Read-only `pink-lens` data contained 36 distinct historical/current ledger
+spellings across 36,591 rows and 43,705 provider attempts. Attempt status was
+31,722 `succeeded`, 10,187 `accepted_unverified`, 1,652
+`skipped_unqualified`, and 144 historical `dead_lettered`; there were zero
+`pending`, `processing`, `retry_scheduled`, and `failed` rows.
+
+`ops.dead_letter_events` contained 1,281 historical audit rows, all resolved,
+so the operational unresolved count was **0**. Historical `dead_lettered`
+attempt rows and unresolved dead letters are different measures.
+
+Microsoft UET CAPI has production acceptance history for all three active
+workers: `add_to_cart` attempt
+`6d35806a-fe96-474d-a8b3-a9057ddd2e48`, `begin_checkout` attempt
+`8cf42314-450b-4441-b53c-9b19bba2462e`, and `purchase` attempt
+`f8a584d8-359d-4584-923a-325a18a5ad52`. Each is `server_retry`,
+`attempt_count=1`, and `accepted_unverified`. This proves provider API
+acceptance, not final attribution. More recent unqualified rows correctly use
+`skip_reason='missing_msclkid'`.
+
 ## Naming conflicts observed in production data
 
-The live ledger has 27 distinct historical/current names.
+The 2026-07-31 live ledger has 36 distinct historical/current names.
 Canonical snake_case coexists with provider/legacy names
 including `PageView`, `ViewContent`, `AddToCart`,
 `InitiateCheckout`, `Purchase`, `Lead`, `LandingScrollDepth`,

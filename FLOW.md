@@ -1,6 +1,6 @@
 # FLOW - tracking, observability og kommersiell innsikt
 
-Statusdato: 2026-07-26.
+Statusdato: 2026-07-31.
 
 Dette dokumentet er den operative flytbeskrivelsen for hvordan
 Utekos skal samle inn, lagre, levere og bruke analytics-,
@@ -24,16 +24,29 @@ kundechatbot ligger i
 
 ## Kort fasit
 
-### Meta-/provider-release 2026-07-26 — produksjonsverifisert
+### Nåværende produksjon — 2026-07-31
 
-Releasen for de manglende og forsinkede canonical-eventene er aktiv i
-produksjon. Web-GTM v135 er live; v133 introduserte mappingen fra isolert
+Vercel-deployment `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL` er `READY`, eier
+`utekos.no` og kjører nyeste `main`, eksakt SHA
+`7a9f19ed3f94cc08ee3140ddb4c99afe4af3d564`. Dette er dagens
+produksjonsdeployment. Trackingreleasen under er et historisk
+aktiveringsbevis, ikke nåværende deployment-ID.
+
+Katalogfasiten er 33 canonical events: 29 aktive og fire
+`blocked_source` (`add_shipping_info`, `add_payment_info`, `checkout_error`,
+`payment_error`). Registeret har 48 aktive provider/event-par: 28 Google, 17
+Meta og tre Microsoft UET CAPI.
+
+### Historical tracking release 2026-07-26 — produksjonsverifisert
+
+Releasen for de manglende og forsinkede canonical-eventene aktiverte den
+gjeldende trackingkontrakten. Web-GTM v135 er live; v133 introduserte mappingen fra isolert
 workspace 141, v134 fjernet GTMs redundante additional-consent-krav, og v135
 aktiverte sideinitialisering og polling av fremtidige canonical
 `dataLayer`-events i tag 153 med delt duplikatvern mot app-broen.
 Appdeployment `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` fra eksakt SHA
-`3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` er `READY` og eier
-`utekos.no`.
+`3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` var `READY` og eide
+`utekos.no` ved aktivering. Dagens alias-eier er dokumentert over.
 
 Releasen gjør følgende:
 
@@ -58,8 +71,10 @@ Queue-meldingen inneholder kun `schema_version`, `attempt_id` og
 `adapter_key`; ingen PII. Meta-mappingen bruker bare lovlig tilgjengelige
 signaler og konstruerer ikke manglende `_fbc`, `_fbp` eller kontaktdata.
 `Purchase`, destination-ID-er, kampanjer, budsjetter og historiske events er
-urørt. Microsoft-serverutvidelsen er eksplisitt utsatt til en egen
-`pageLoadId`/VID/`msclkid`-kvalitetsport.
+urørt. På dette releasetidspunktet var videre Microsoft-utvidelse en separat
+kvalitetsport. Gjeldende kode og produksjonsdata har senere aktivert og bevist
+API-aksept for `add_to_cart`, `begin_checkout` og `purchase`; utvidelse utover
+disse tre er fortsatt separat.
 
 Aktiveringen er korrelert gjennom genuine samtykkede brukerhandlinger,
 dataLayer, collector, ledger, eksakte attempts, queue-callback og
@@ -122,8 +137,8 @@ berørte Vercel-miljøet. Vercel-env-endring og production deploy krever hver si
 eksplisitte godkjenning. Task 7 gjør ingen Vercel-, Shopify-, GCP-, Supabase-,
 GTM-, tracking- eller produksjonsmutasjon.
 
-Tracking ble bevisst nullstilt 2026-07-15. Den aktive appflaten etter
-resetten består kun av:
+**Historical reset baseline — Superseded:** Tracking ble bevisst nullstilt
+2026-07-15. Appflaten umiddelbart etter resetten bestod kun av:
 
 - Cookiebot lastet én gang av den publiserte GTM-taggen `126`.
 - Synkrone Consent Mode v2-defaults satt til `denied` før GTM.
@@ -141,8 +156,9 @@ ikke-blokkerte katalogevents:
 - `purchase` og `refund` kommer fra Shopify-webhooks
   (`orders-paid`, `refunds-create`) med operativ ledger og
   consent-gated provider-export.
-- Provider-outbox for aktive Google/Meta-par kjøres via registrerte
-  workere og `/api/cron/provider-outbox-dispatch`.
+- Provider-outbox for aktive Google/Meta/Microsoft-par vekkes primært med
+  Vercel Queue og eksakt attempt-ID. `/api/cron/provider-outbox-dispatch`
+  kjører hvert femte minutt som recovery/fallback og database-retry.
 - `generate_lead` produseres server-side etter akseptert
   produktventeliste (`product_waitlist_utekos_dun`) og nyhetsbrev
   (`newsletter_signup`): rad i `marketing.leads`, deretter ledger +
@@ -161,7 +177,8 @@ Historiske PageView-rader er beskyttet av claimant-cutover og replayes ikke
 automatisk. Se
 [audit og releasegater](META_ATTRIBUTION_AUDIT_2026-07-18.md).
 
-Produksjonssettet på 628 Google Data Manager-dead letters er ferdig
+**Historical dead-letter remediation:** Produksjonssettet på 628 Google Data
+Manager-dead letters er ferdig
 klassifisert. 593 av 594 over-lengde-rader ble akseptert etter kontrollert
 replay; den siste var historisk payload-inkompatibel. 29 manglet gyldig GA
 client ID og 5 var utenfor provider-vinduet; alle ble lukket fail-closed uten
@@ -172,6 +189,13 @@ requests rekonsileres separat via `request_id`: ved kontroll
 ikke-terminale og 60 av disse sist var `PROCESSING`. Historiske
 `validate_only=true`-rader er ikke kandidater. Purchase-requesten for betalt
 ordre `1866` nådde terminal `SUCCESS` på statusforsøk 4 kl. 21:31:06Z.
+
+Read-only produksjonssnapshot 2026-07-31T01:04:19Z skiller historikk fra
+operativ tilstand: `ops.dead_letter_events` har 1 281 historiske rader, alle
+løst, mens uløst antall er 0. `ops.provider_dispatch_attempts` har separat 144
+historiske rader med status `dead_lettered`; `pending`, `processing`,
+`retry_scheduled` og `failed` er alle 0. Historiske rader skal ikke omtales som
+uløste feil.
 
 Meta Dataset Quality har igjen en aktiv, avgrenset snapshot-flyt uten
 provider-skriverett. `/api/cron/meta-dataset-quality` leser Meta `v25.0`
@@ -194,15 +218,19 @@ CMP-loaderen og skal beholdes. Live runtime viste nøyaktig én `uc.js`
 med `implementation=gtm`, Consent Mode fra `G100` til `G111` etter
 aksept og ingen app-eid duplikatloader.
 
-Følgende tidligere appimplementasjoner er fortsatt fjernet og skal behandles
-som åpne gap, ikke som aktive eller verifiserte flater:
+**Historical reset inventory — Superseded where stated:** Følgende tidligere
+appimplementasjoner ble fjernet i resetten. Listen beholdes som revisjonsspor,
+men dagens canonical `/api/events/*`-flyt og de tre Microsoft-workerne er
+senere reintrodusert:
 
 - browser tracking hub, direkte Meta/Microsoft/PostHog-klientkode og
   produkt-/kampanje-trackere;
 - den tidligere `/api/tracking-events`-huben, consent snapshots, tracking
   receipts og analytics-ruter; ny checkout-attribusjon bruker validerte
   Shopify cart-/draft-order-attributter;
-- direkte GA4 Measurement Protocol-transport og Microsoft UET CAPI-adapter;
+- direkte GA4 Measurement Protocol-transport er fortsatt fjernet. Den tidligere
+  Microsoft-adapteren var også fjernet da; gjeldende spesialiserte UET CAPI-
+  workere er aktive for `add_to_cart`, `begin_checkout` og `purchase`;
 - tidligere parallelle trackinghuber og transportlag som ikke inngår i dagens
   kanoniske `/api/events/*` + ledger/outbox-flyt.
 
@@ -297,7 +325,7 @@ kapitalallokering.
 | GA4 / sGTM                    | Google-måling og consent-gated browser tagging         | Browser- og server-events                                                               | GA4/Google Ads-import, datalayer-sjekk, Google-optimalisering                     | Ukritisk dobbelttelling med Ads native tags                 | sGTM v29 er live uten legacy MP-tag; Data Manager kjører utførende med kanonisk `transaction_id`, og separat status-cron rekonsilerer request-ID-er til providerbekreftet resultat |
 | BigQuery                      | Tung GA4-/ads-/batchanalyse                            | GA4 BigQuery Export, senere andre batchkilder                                           | Kuraterte Supabase read models for session, campaign, landing page og attribution | Live runtime-avhengighet eller rådump i appflyten           | GA4-link er aktiv, men `analytics_489598217` finnes ikke ennå                                                                                    |
 | Meta Pixel / CAPI             | Meta-attribusjon og budoptimalisering                  | Kanoniske Pixel/CAPI-events, purchase og samtykkede IDs                                 | Event Match Quality, Dataset Quality, ads learning                                | Automatisk/inferred eventtaksonomi eller skriverett uten godkjenning | Web-GTM v135, app-eid Pixel-bro og 17 Meta CAPI-adaptere er live. Identisk navn/UUID er wire-verifisert for `InteractWithAccordion`; Meta svarte `events_received=1`, og bro/GTM deler duplicate-suppression. |
-| Microsoft Ads / UET / Clarity | Bing/Microsoft attribusjon, UET CAPI, Clarity          | UET browser/CAPI, consent, Clarity state                                                | Ads readiness, campaign/ad insight, Clarity diagnose                              | Kun en "UET endpoint" uten Ads-kontekst                     | Read-only Ads-flate er verifisert, men UET CAPI-serveradapter er ikke aktiv etter resetten; historiske kø-rader er lukket fail-closed            |
+| Microsoft Ads / UET / Clarity | Bing/Microsoft attribusjon, UET CAPI, Clarity          | UET browser/CAPI, consent, Clarity state                                                | Ads readiness, campaign/ad insight, Clarity diagnose                              | Kun en "UET endpoint" uten Ads-kontekst                     | Read-only Ads-flate og browser UET er verifisert. UET CAPI-serverworkere er aktive med historisk produksjonsaksept for `add_to_cart`, `begin_checkout` og `purchase`; manglende `msclkid` lagres fail-closed som `skipped_unqualified`. Øvrige eventtyper har ingen godkjent Microsoft-serverworker. |
 | Google Merchant Center        | Produktfeed og Shopping-kvalitet                       | Shopify-katalog, GTIN, bilder, kategorier                                               | Product status, Shopping eligibility, feedkvalitet                                | Tracking-lager                                              | Merchant API og API source er OK; kontopolicy må fortsatt verifiseres                                                                            |
 | Sentry                        | Feilsporing og teknisk årsak                           | Server/edge/global/client errors                                                        | Issues, request errors, stack traces                                              | Produktanalyse eller session replay uten consent-oppsett    | Server/edge aktiv; Replay er ikke aktivert; Sentry MCP-probe fail-closed                                                                         |
 | Vercel                        | Deploy, runtime, produksjonsstatus og egen Web Analytics | Deployment metadata, runtime status og førsteparts sidevisninger                       | Deploy-verifikasjon, produksjonsdiagnostikk og uavhengig trafikksjekk              | Provider-fasit eller erstatning for GA4/Supabase-eventer     | Web Analytics og tracking-runtime er produksjonsdeployert og kontrollert mot eksakt Git-SHA                                                       |
@@ -320,18 +348,17 @@ kapitalallokering.
 
 ## 4. Nåværende verifisert status
 
-Grunnstatus verifisert 2026-07-08 og hendelsesstatus supplert
-2026-07-18 med lokale kontroller, MCP/plugin-lesing,
-Vercel-logger og Supabase-rapporter. Den godkjente
-dead-letter-klassifiseringen var en Supabase dataendring; ingen
-skjemaendring eller provider-replay ble utført.
+Grunnstatusen fra 2026-07-08 og releasebevisene fra 2026-07-18/26 beholdes som
+historikk. Nåværende deployment, femminutters cronlogg og read-only Supabase-
+snapshot ble kontrollert 2026-07-31. KRI-22 utførte ingen schemaendring,
+provider-replay eller syntetisk trafikk.
 
 | Område                | Funn                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Meta browser/server-paritet | Web-GTM v135 og appens samme-origin Pixel-bro er live. En ekte Materialer-åpning sendte `InteractWithAccordion` med UUID `d51aa3ea-a427-4f8a-9098-005f77007626` både som Pixel `eid` og CAPI `event_id`; browserpayloaden hadde komplett commerce-/accordionkontekst og CAPI svarte `events_received=1` på 250 ms. Broen og GTM-templaten deler duplicate-suppression. Meta dataset-freshness flyttet seg til 15:40:07Z browser / 15:41:17Z server; numerisk Overlap-UI avventes. |
 | Meta Dataset Quality | Første nye read-only Supabase-snapshot er lagret for seks eventtyper. Full providerrespons valideres før lagring; samme-dags retry er idempotent. Post-cutover-kildefordelingen 20:20Z–21:12Z var PageView 75 server/51 browser, ViewContent 75/38 og 2/1 for AddToCart, InitiateCheckout og Purchase. Dette er baseline, ikke ferdig trend. |
 | Produksjons-CMP       | `https://utekos.no` returnerte 200 med normal browser headers. HTML inneholdt Cookiebot og ingen Usercentrics-runtime-treff i sjekken.                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| Produksjonsdeploy     | `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` fra SHA `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` er `READY` og eier `utekos.no`. Runtime-loggene viser collector `202`, queue-consumer `200` og den samme releasens Pixel-bro levert med `200`. |
+| Produksjonsdeploy     | Nåværende: `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL`, SHA `7a9f19ed3f94cc08ee3140ddb4c99afe4af3d564`, `READY`, eier `utekos.no`. Vercel-loggene viser `/api/cron/provider-outbox-dispatch` `200` hvert femte minutt. Historical tracking release: `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` / `3799e58a`, der collector `202`, queue-consumer `200` og Pixel-bro ble bevist. Ingen queue-callback fantes i loggvinduet for dagens deployment. |
 | Release-preview       | Vercel deployment `dpl_2kJH2QCPpsaaxx5oDBKD9SuhUt6j` er `READY`. Smoken beviste at Klarna SDK-en initialiserte og rendret en knapp i den gamle produktsideplasseringen; den beviste ikke den tilsiktede flyttingen til produktkort. Preview-domenet er ikke autorisert i Cookiebot og gir derfor forventet preview-varsel; ingen CMP-konfigurasjon ble endret. |
 | Klarna-kandidat       | `codex/release-klarna-product-cards` flytter Express Checkout til tilgjengelige produktkort og bruker én delt, idempotent SDK-loader per dokument. En kontrollert browser-smoke med lokal SDK-stub viste tre knapper ved både 390 px og 1440 px, én `<script>`-node og tre container-loads. Read-only Vercel CLI bekrefter at `NEXT_PUBLIC_KLARNA_CLIENT_ID` finnes som sensitiv variabel for både Preview og Production uten at verdien ble eksponert. Dette beviser ikke Klarna-providerens aksept; allowed origins og synlig knapp må fortsatt verifiseres i Git-triggered Preview. Vercel-build feiler lukket dersom identifikatoren mangler. |
 | Storefront-kandidat   | `codex/release-storefront-accessibility` retter størrelsevelger, modal-/popover-tokens, alert-dialog-lag, responsiv knappelayout og optimistisk handlekurvfjerning. Browser-smoke på 390 og 1440 px beviste roving tastaturfokus og valgt-markør, stablede mobilknapper, desktopknapper på samme rad, 17,1:1 mørk og 18,0:1 lys modal-kontrast, tilgjengelig navn på fjernknappen, avbryt uten sletting og bekreftet sletting uten applikasjonsfeil. Cookiebot ga kun det forventede localhost-varselet. |
@@ -345,11 +372,11 @@ skjemaendring eller provider-replay ble utført.
 | GA4 BigQuery          | `npm run ops:ga4-bigquery-readiness` 2026-07-08T20:48Z er read-only og bekrefter at `project-c683eb2c-20ae-4ec2-ac3:analytics_489598217` fortsatt ikke finnes/ikke er lesbart. Ingen Supabase BigQuery-wrapper eller GA4-read-models skal bygges før dataset og `events_*`/`events_intraday_*` finnes.                                                                                                                                                                                                                                                                           |
 | sGTM                  | Syv offentlige loaderendepunkter, inkludert health, Cookiebot-signaler, GTM, noscript, begge Google-tagloadere og Google Ads, returnerte 200. Releasekandidaten er likevel ikke produksjonsklar før migrasjon `20260712120000`, receipt-secret/Vercel-env, Cloud Run-hardening og koordinert GTM-publisering er godkjent og verifisert. Lokal GTM-smoke viser at appens Cookiebot-loader og den ennå publiserte GTM-taggen `126` laster CMP dobbelt; den planlagte slettingen av GTM-taggen må derfor inngå i den koordinerte releasen. |
 | Replay route          | Den feilkonfigurerte tilbakevendende Vercel-cronen er fjernet i produksjon. `/api/cron/replay-dead-letter` beholdes som secret- og godkjenningsgated manuell engangskjøring; 2026-07-14-planen var read-only og fant 0 kandidater.                                                                                                                                                                                                                                                                                                                                      |
-| Supabase volum        | `marketing.event_ledger` ca. 10 584 rader, `ops.provider_dispatch_attempts` ca. 12 023, `ops.web_vitals` ca. 12 792, `marketing.consent_snapshots` ca. 9 717, `marketing.website_visitor_events` ca. 6 122.                                                                                                                                                                                                                                                                                                                                                        |
-| Ledger siste 7 dager  | Ca. 923 events. Størst volum: `PageView`, `ViewContent`, `ViewItemList`, `LandingScrollDepth`, `LandingSectionView`, `LandingCTAClick`, `AddToCart`, `InitiateCheckout`, `Purchase`.                                                                                                                                                                                                                                                                                                                                                                               |
-| Identifier coverage   | `npm run ops:identifier-coverage-report` 2026-07-08T20:42Z viser 804 historiske Shopify-ordre, 269 med GA client id, 370 med Meta browser ids, 8 med paid click id, 1 checkout snapshot og 4 ordre `ready_for_provider_repair`. Snapshot-dekningen for den nye smoke-raden er 100% for GA client/session id, Meta `fbp`, external id, Microsoft `msclkid` og paid click id.                                                                                                                                                                                                 |
-| Provider health       | Første planlagte health-cron kjørte 15:45:30Z med HTTP 200. Cutover-kontrollen viste 190 `accepted_unverified`-samples, p95 ACK `5 750 ms`, 0 initial-pending over to minutter, 0 nye dead letters og 0 canonical events uten provider-attempt. Google `PROCESSING` forblir korrekt ikke-terminalt til statusjobben bekrefter `SUCCESS`. |
-| Dead letters          | De 48 Google `page_location`-radene ble 2026-07-14 klassifisert `historical_ga4_page_location_payload_bug` og lukket uten replay. Alle var utenfor Googles 72-timers replayvindu, den scoped produksjonsrettingen hadde ingen nye tilsvarende feil, og read-only replay-planen viser nå 0 unresolved og 0 kandidater.                                                                                                                                                                                                                                                |
+| Supabase volum        | Current 2026-07-31T01:04:19Z: `marketing.event_ledger` 36 591 og `ops.provider_dispatch_attempts` 43 705. Tallene for `ops.web_vitals`, consent og visitor events i den tidligere 2026-07-08-baselinen er historiske og ble ikke målt på nytt i KRI-22. |
+| Ledger-observasjon    | Current cutover-vindu fra 2026-07-26T15:00Z: 5 187 ledger-rader med 19 observerte navn. Dette er runtimeobservasjon, ikke kataloginventar; katalogen har 33 beslutninger. Den tidligere sju-dagersfordelingen fra 2026-07-08 er Historical. |
+| Identifier coverage   | Historical 2026-07-08/20: tidligere coverage- og smoke-tall beholdes som revisjonsspor. KRI-22 kjørte ingen ny syntetisk trafikk; current Microsoft-rader uten `msclkid` klassifiseres eksplisitt som `skipped_unqualified`. |
+| Provider health       | Current snapshot har 0 `pending`, `processing`, `retry_scheduled` og `failed`. Siste 24 timer hadde Meta 598 accepted-samples med p95 2 826 ms og Google ett sample på 4 021 ms; siste én-time hadde ingen samples og gir derfor ingen p95-konklusjon. Historical cutover-kontroll hadde p95 5 750 ms. Google `accepted_unverified` forblir ikke-terminalt til statusjobben bekrefter `SUCCESS`. |
+| Dead letters          | Read-only snapshot 2026-07-31T01:04:19Z: `ops.dead_letter_events` har 1 281 historiske rader, alle løst, og 0 unresolved. `ops.provider_dispatch_attempts` har separat 144 historiske `dead_lettered`-rader. De 48 Google `page_location`-radene fra 2026-07-14 er historisk klassifisering, ikke aktiv feil eller replay-kandidat. |
 | Migrasjonshistorikk   | Fem produksjonsmigrasjoner som manglet i `origin/main` er hentet tilbake som lokale SQL-filer og committed i release-kandidaten uten Supabase-mutasjon. Fire av dem hadde ligget ucommittet i en separat worktree; den femte var den allerede verifiserte ACL-herdingen for arkivfunksjonen.                                                                                                                                                                                                                                                                     |
 | Klientfeilstøy        | Vercel-loggen dokumenterte 17 `DataCloneError`-poster fra 16 extension-id-er; alle hadde `chrome-extension://.../src/setup.js` som `ErrorEvent.filename`, mens 9 også hadde Clarity dypere i stacken. Lokal filtergrense bruker den verifiserte extension-origin-en i både egen beacon og Sentry; identisk feil fra førsteparts-URL beholdes.                                                                                                                                                                                                                                                     |
 | Commerce/tracking MCP | `npm run mcp:commerce-tracking:doctor` passerte tool-surface-gaten med 28 read-only tools.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -364,11 +391,11 @@ skjemaendring eller provider-replay ble utført.
 | Steg                 | Hva som fungerer nå                                                                | Avvik / svakhet                                                                                                                                                                                                                                            | Hvorfor det betyr noe                                                                                                  | Lukkekriterium                                                                                                                           |
 | -------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | 0. Consent           | Cookiebot er aktiv i produksjon og kode oppdaterer Google, UET og Clarity consent. | Full produksjons-smoke må fortsatt validere alle service-navn mot Cookiebot admin og provider behavior.                                                                                                                                                    | Feil service-navn kan gi enten tapt tracking eller uønsket tracking.                                                   | Browser-smoke viser korrekt denied/accepted for Google, Meta, Microsoft, Clarity, PostHog og Sentry Replay før endring regnes som trygg. |
-| 1. Browser capture   | Den kanoniske eventklienten sender samtykkegatet dataLayer, first-party events og Meta Pixel-paritet. | PostHog og Microsoft-klientflaten er ikke reintrodusert som full aktiv storefrontflyt. | Produktanalyse og Microsoft-dekning er svakere enn den verifiserte Meta/Google-flyten. | Hver gjeninnført klientflate har eksplisitt consent-, network- og providerbevis. |
+| 1. Browser capture   | Den kanoniske eventklienten sender samtykkegatet dataLayer, first-party events og Meta Pixel-paritet; Microsoft browser UET er aktiv. | PostHog er ikke reintrodusert som aktiv storefrontflyt, og Microsoft-serverdekning er avgrenset til tre godkjente events. | Produktanalyse og Microsoft-dekning er smalere enn den verifiserte Meta/Google-flyten. | Hver gjeninnført klient-/serverflate har eksplisitt consent-, network- og providerbevis. |
 | 2. Førsteparts API   | Supabase får accepted events og provider rows.                                     | Kvaliteten på identifier-capture er ikke god nok for alle provider-dispatcher.                                                                                                                                                                             | Historiske Google-rader med manglende `client_id` og Microsoft-skips viser at events ikke alltid kan optimalisere bidding. | Missing identifier rates synker til avtalt terskel og kvalifiseres som `skipped_unqualified` der det er forventet.                       |
 | 3. Supabase ledger   | Ledger, queue, health views, dead-letter views og arkiv finnes.                    | Supabase-data brukes for lite som løpende operasjonell alarmflate.                                                                                                                                                                                         | Data samles inn, men for sent eller manuelt omsatt til handling.                                                       | Ekstern alert/dashboard finnes for queue, dead letters, provider fail rate, purchase delivery og web vitals.                             |
-| 4. Provider dispatch | Meta/Google er aktive; Data Manager-radgjeld og historiske Meta/Microsoft-kørader er klassifisert og lukket uten blind replay. | Google/Meta har 0 failed/dead-lettered og 0 uløste dead letters. Utførte Google-requests med `PROCESSING` er korrekt ikke-terminale; Microsoft-adapteren er fortsatt fraværende. | `PROCESSING` må ikke fremstilles som levert, og et tomt feiltall må ikke forveksles med Microsoft-levering. | La statuscronen flytte bare `SUCCESS` til providerbekreftet, behold Meta/Google på null feil og reintroduser Microsoft-adapter eksplisitt før Microsoft serverlevering markeres grønn. |
-| 5. Shopify purchase  | En ekte, samtykket Meta-klikkreise har bevist standard Shopify checkout → betalt Purchase med identisk `external_id`, `_fbp`, `_fbc` og `fbclid` i checkout, Shopify-attributter og webhook-event. Meta mottok eventet på første forsøk, og Google bekreftet samme Purchase som terminal `SUCCESS`. | Betalt Klarna Express er ikke observert, og Microsoft UET CAPI-adapter er ikke aktiv. | Purchase-events er de viktigste signalene for budoptimalisering og kapitalallokering. | Observer en separat betalt Klarna-reise og reintroduser/verifiser Microsoft UET CAPI før full tre-provider-dekning hevdes. |
+| 4. Provider dispatch | Meta/Google er aktive; Microsoft UET CAPI er aktiv for `add_to_cart`, `begin_checkout` og `purchase`. Nye attempts vekkes målrettet med eksakt ID; femminutterscronen er recovery/fallback. | `accepted_unverified` beviser API-aksept, ikke endelig attribusjon. Nyere Microsoft-rader uten `msclkid` er korrekt `skipped_unqualified`; øvrige Microsoft-events mangler serverworker. | Operatører må skille Queue-redelivery fra database-retry og API-aksept fra providerbekreftet levering. | Behold exact-attempt-kontrakten, overvåk kvalifiseringsgrad og providerstatus, og utvid Microsoft bare gjennom egen godkjent release. |
+| 5. Shopify purchase  | En ekte, samtykket Meta-klikkreise har bevist standard Shopify checkout → betalt Purchase med identisk `external_id`, `_fbp`, `_fbc` og `fbclid` i checkout, Shopify-attributter og webhook-event. Meta mottok eventet på første forsøk, Google bekreftet terminal `SUCCESS`, og Microsoft purchase har separat `accepted_unverified`-evidens. | Betalt Klarna Express er ikke observert; Microsoft-kvitteringen er ikke endelig attribusjonsbevis. | Purchase-events er de viktigste signalene for budoptimalisering og kapitalallokering. | Observer en separat betalt Klarna-reise og behold eksplisitt providerfinalitet per kanal. |
 | 6. PostHog innsikt   | PostHog mottar pageviews og web vitals, og init er consent-gated/masket.           | Dedikerte CRO-, checkout-, UTM- og revenue-flater er ikke etablert. Lokal commerce MCP har PostHog fail-closed.                                                                                                                                            | Data blir liggende som rå analyse i stedet for å drive beslutninger.                                                   | PostHog project/event-prober er grønne, og dashboards/funnels brukes i ukentlig CRO-/trackinggjennomgang.                                |
 | 7. Produktfeed       | Merchant API pr eflight er grønn, API source og autofeed er synlige.               | Kontopolicy/Misrepresentation-status er ikke bevist grønn i fersk kontroll, og dual source kan fortsatt gi styringsrisiko.                                                                                                                                 | Shopping-eligibility og produktdistribusjon kan være begrenset selv om feeden teknisk prosesseres.                     | Merchant UI/API-policystatus dokumenteres grønn, og ønsket kildeeierskap mellom API source og autofeed er avklart.                       |
 | 8. Observability     | Sentry server/edge/global error finnes; Vercel-proben er grønn.                    | Sentry Replay er ikke aktivert og issue-probe er fail-closed.                                                                                                                                                                                              | Kritiske frontend-/checkoutfeil kan mangle replay-kontekst.                                                            | Sentry org/project/issue-probe er grønn, og Replay er enten bevisst aktivert med Cookiebot-gate eller eksplisitt parkert.                |
@@ -480,7 +507,7 @@ coverage og purchase match rate, ikke radtall.
 | Prioritet | Gap                                     | Nåværende evidens                                                                                                        | Neste handling                                                                                                                              | Gate                                                                                                     |
 | --------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Lukket 2026-07-14 | Google `page_location` dead letters | 48 historiske rader er klassifisert/lukket uten replay; sentral sanitizer er deployet, og etterdeploy-rapporten har 0 failed/dead-lettered, 0 unresolved og 0 alerts | Overvåk samme rapportgate og alarmér på nye avvisninger | Fortsatt 0 nye feil med samme grunn og grønn `--fail-on-alerts` |
-| P0        | Microsoft UET CAPI purchase-adapter reintrodusert i kode | Purchase-serverworker er registrert (`microsoft_uet:purchase`) med fail-closed skip for `missing_msclkid` / `missing_capi_token`. Øvrige Microsoft-events forblir `blocked_no_worker`. | Produksjonsdeploy + samtykket Microsoft-klikkreise purchase smoke som viser Microsoft-rad `accepted_unverified`/`succeeded` (ikke bare lokal unit test). | Ny kvalifisert purchase med `msclkid` og UET ApiToken i Vercel Production viser Microsoft UET CAPI-leveranse, eller skip_reason er eksplisitt. |
+| Lukket 2026-07-22 | Microsoft UET CAPI for godkjent lower funnel | Serverworkere er aktive og produksjonsakseptert for `add_to_cart`, `begin_checkout` og `purchase`; eksakte siste aksepterte attempts er dokumentert i `docs/analytics/event-matrix.md`. `accepted_unverified` er ikke endelig attribusjon, og nyere manglende `msclkid` gir korrekt skip. | Overvåk ApiToken/`msclkid`-coverage; behandle eventuell utvidelse utover de tre som separat release. | Ingen aktiv/retry/dead-letter-backlog; eksplisitt skip_reason eller providerkvittering per kvalifisert event. |
 | P0        | Merchant policy / feed ownership        | Merchant API preflight OK, men policy-status ikke ferskt bevist grønn                                                    | Verifiser Merchant Center policy og avklar API source vs autofeed                                                                           | Merchant UI/API policy evidence lagres i runbook                                                         |
 | P1        | PostHog CRO-loop mangler                | Data finnes, men få `utekos_*` commerce-events og ingen dedikerte dashboards funnet                                      | Bygg dashboards/funnels for landing, product, checkout, campaign og replay shortlist                                                        | Ukentlig innsiktsflate kan svare på hvor og hvorfor brukere faller fra                                   |
 | P1        | Supabase-operasjonalisering             | 15-minutters Sentry-health er deployert; første planlagte kjøring returnerte 200, og direkte kontroll viser p95 5,75 s og null pending/dead-letter/manglende attempt | Koble Sentry-varslene til fast operativ oppfølging                                         | Varsel/rapport viser korrekt tilstand uten lavvolums-heartbeats eller PII                                 |
@@ -546,6 +573,13 @@ evidens:
   provider-replay. Dead-letter-registeret er igjen grønt med 0
   unresolved. Replay-ruten forblir secret- og godkjenningsgated og
   ligger ikke i Vercels tilbakevendende cronplan.
+- DEV-001s globale request-path-drain er historisk og superseded. Bare
+  nyopprettede attempt-ID-er publiseres etter commit; consumeren claimer eksakt
+  ID. Providerklassifisert database-retry ACK-er Queue-meldingen, mens kun
+  ukategoriserte infrastrukturfeil utløser Queue-redelivery.
+- "Microsoft UET CAPI er purchase-only" er foreldet. `add_to_cart`,
+  `begin_checkout` og `purchase` har aktive workere og produksjonsaksept;
+  utvidelse utover disse tre er fortsatt åpen.
 - "Supabase checkout snapshot-fallback er ikke live før Vercel deploy" er
   foreldet. Standard Shopify checkout er bevist med `_fbp`, `_fbc`, `fbclid`
   og `external_id` i cart attributes. Betalt ordre `1866` beviste de samme
@@ -563,7 +597,6 @@ Punkter som fortsatt ikke kan markeres løst uten ny kontroll:
 - Google Ads API credentials/scopes.
 - En godkjent betalt Klarna Express-reise gjennom Shopify-webhooken.
 - Sentry issue-probe og eventuell Sentry Replay.
-- Microsoft UET CAPI purchase etter at serveradapteren er reintrodusert.
 - Dataset Quality-trend etter 7 og 14 daglige snapshots for events med lavt
   etterreleasevolum; første baseline er lagret.
 - PostHog-dashboards/funnels som faktisk brukes til CRO og
@@ -571,10 +604,10 @@ Punkter som fortsatt ikke kan markeres løst uten ny kontroll:
 
 ## 10. Neste praktiske rekkefølge
 
-1. Etter separat godkjenning: publiser den upubliserte GTM-mappingen, deploy
-   queue-/runtime-kandidaten og bevis genuine events ende til ende med samme
-   Meta-navn og ID. Oppdater evidensnotatet med GTM-versjon, deployment-ID,
-   event-ID-er og receipts.
+1. **Completed/Superseded 2026-07-26:** GTM-mapping og targeted Queue-runtime
+   ble publisert/deployet og genuine events ble korrelert ende til ende. Behold
+   [release-evidensen](docs/analytics/evidence/canonical-stale-events-near-realtime-cutover-2026-07-26.md)
+   som historisk aktiveringsbevis; bruk dagens Vercel-deployment som current.
 2. Følg Meta Dataset Quality-snapshotserien etter 7 og 14 dager og observer en
    godkjent betalt Klarna Express-reise uten syntetisk betaling.
 3. Vent på og verifiser GA4 BigQuery-datasettet, deretter bygg
@@ -585,5 +618,6 @@ Punkter som fortsatt ikke kan markeres løst uten ny kontroll:
 6. Løft Supabase provider health til fast alert/dashboard.
 7. Rydd credential-gated MCP-prober slik at agentlaget kan skille
    tilgangsfeil fra reelle trackingfeil.
-8. Reintroduser Microsoft UET CAPI som en separat, dokumentert release.
+8. Overvåk de tre aktive Microsoft UET CAPI-workerne og planlegg eventuell
+   utvidelse utover dem som en separat, dokumentert release.
 9. Ta beslutning om Sentry Replay med korrekt Cookiebot-gate.

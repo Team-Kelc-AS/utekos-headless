@@ -1,19 +1,24 @@
 # Canonical events
 
-Status date: 2026-07-17
+Status date: 2026-07-31
 
 The application owns event meaning. GTM and sGTM are delivery
 adapters, not the event inventory or source of truth.
 
 ## Active inventory
 
+The v1 inventory contains **33 canonical events: 29 active and four
+`blocked_source`**. The blocked events are `add_shipping_info`,
+`add_payment_info`, `checkout_error`, and `payment_error`. The machine-readable
+catalog and its contract tests are authoritative for the exact list.
+
 | Event | Owner | Detection | Delivery | Status |
 | --- | --- | --- | --- | --- |
-| `page_view` | Next.js application | Initial render and App Router URL change | `dataLayer` -> web GTM -> `/__sgtm` -> GA4, plus consent-aware first-party collection | Active; ledger only (no server outbox) |
+| `page_view` | Next.js application | Initial render and App Router URL change | `dataLayer` -> web GTM -> `/__sgtm` -> GA4, plus consent-aware first-party collection and qualified Meta CAPI | Active; Meta server outbox active, Microsoft server blocked |
 | `view_item` | Next.js application | Resolved product and selected variant on a product page or landing purchase context (`/skreddersy-varmen`) | GTM/sGTM + ledger + Google Data Manager + Meta CAPI | Active |
-| `add_to_cart` | Shopify cart service | After accepted cart mutation | GTM/sGTM + ledger + Google Data Manager + Meta CAPI | Active |
-| `begin_checkout` | Shopify checkout service | Before checkout redirect with valid checkout URL | GTM/sGTM + ledger + Google Data Manager + Meta CAPI; persists checkout consent snapshot | Active |
-| `purchase` | Shopify orders-paid webhook | Verified order-paid webhook | Ledger (operational) + Google Data Manager + Meta CAPI when checkout consent granted | Active |
+| `add_to_cart` | Shopify cart service | After accepted cart mutation | GTM/sGTM + ledger + Google Data Manager + Meta CAPI + qualified Microsoft UET CAPI | Active |
+| `begin_checkout` | Shopify checkout service | Before checkout redirect with valid checkout URL | GTM/sGTM + ledger + Google Data Manager + Meta CAPI + qualified Microsoft UET CAPI; persists checkout consent snapshot | Active |
+| `purchase` | Shopify orders-paid webhook | Verified order-paid webhook | Ledger (operational) + Google Data Manager + Meta CAPI + qualified Microsoft UET CAPI when checkout consent permits | Active |
 | `refund` | Shopify refunds-create webhook | Verified refund webhook | Ledger (operational) + Google Data Manager | Active |
 | Remaining behavior/commerce/lead/form/UX events | Storefront detectors / reporters | See `EVENT_CATALOG.md` | First-party API + Google Data Manager; Meta where catalog specifies | Active (schemas, collectors, adapters); some detectors still reporter-only |
 | `add_shipping_info`, `add_payment_info`, `checkout_error`, `payment_error` | — | — | — | `blocked_source` until Shopify Customer Events/Web Pixels source is chosen |
@@ -48,6 +53,37 @@ Existing browser identifiers are read only when the matching
 Cookiebot category is already granted. The event does not create
 identifier cookies.
 
+## Current production dispatch contract
+
+Ledger insertion and provider-attempt creation are one idempotent database
+transaction. After commit, only the primary keys of attempts created by that
+transaction are published to Vercel Queue topic
+`canonical-provider-dispatch-v1`. The PII-free envelope contains only
+`schema_version`, `attempt_id`, and `adapter_key`, with idempotency key
+`${adapterKey}:${attemptId}` and seven-day retention.
+
+The Queue consumer validates both fields and invokes the matching registered
+worker. Its SQL claim is constrained by the exact attempt primary key,
+provider, canonical event name, `dispatch_mode='server_retry'`, due state, and
+claim cutover. It cannot claim unrelated backlog.
+
+Provider-classified outcomes such as `retry_scheduled` and `dead_lettered` are
+stored in PostgreSQL and acknowledge the Queue message. Only uncategorized
+infrastructure exceptions are rethrown for Vercel Queue redelivery, configured
+after 15 seconds. Provider retries follow the database row's `next_attempt_at`.
+If post-commit publishing fails before a Queue message exists, the database
+attempt remains pending and the failure is reported; the cron later recovers
+that row.
+The authenticated `/api/cron/provider-outbox-dispatch` runs every five minutes
+as recovery, due-retry, and stale-claim fallback; it is not the primary wake-up
+for newly accepted events.
+
+The current registry contains 48 active provider/event pairs: 28 Google, 17
+Meta, and three Microsoft UET CAPI workers. Microsoft server delivery is active
+for `add_to_cart`, `begin_checkout`, and `purchase`; missing ApiToken or
+`msclkid` is recorded fail-closed as `skipped_unqualified`. A provider API
+receipt remains `accepted_unverified`, not proof of final dashboard attribution.
+
 ## Server ingestion foundation
 
 The server ingestion foundation includes tested first-party Route
@@ -78,31 +114,29 @@ The Route Handler requires same-origin JSON, rejects bodies over
 and coarse location with `@vercel/functions`. Raw database errors
 and event payloads are not returned or logged.
 
-The deployed planner can still create legacy Meta/Microsoft server rows for
-`page_view` and a Microsoft row for `view_item`; no approved worker may replay
-those rows. The local foundation changes routing so `page_view` creates no
-server-outbox rows and a qualified `view_item` creates only the catalog-owned
-Google Data Manager and Meta CAPI rows. Google and Meta consume the same
-canonical payload but retain independent attempt counts, statuses and retry
+Historical Microsoft `page_view`/`view_item` rows have no approved server
+worker and must not be blindly replayed. Historical Meta `page_view` rows from
+before claimant cutover must also remain separated from current canonical
+traffic. New qualified events create only the outbox pairs owned by the current
+catalog. Provider attempts keep independent counts, statuses, and retry
 histories.
 
-The deployed route currently starts the combined Meta/Google batch through
-Next.js `after()`. The local foundation replaces this with registered generic
-workers and configures the authenticated
-`/api/cron/provider-outbox-dispatch` route every five minutes. That schedule
-is not present in the currently deployed `vercel.json`; it becomes the durable
-retry path only after this foundation is shipped and verified.
+**Historical — Superseded 2026-07-26:** the 2026-07-17 deployment started a
+combined Meta/Google registry batch through Next.js `after()`, while the
+five-minute cron existed only in the local foundation. The targeted Vercel
+Queue contract above replaced that request-path full-registry drain in
+production. The five-minute cron is now deployed and retained as fallback.
 Google authenticates with Vercel OIDC and Google Workload Identity
 Federation, then sends to Data Manager with
 `GOOGLE_DATA_MANAGER_VALIDATE_ONLY=false`. An accepted response is
 stored as `accepted_unverified`, including request and validation
 metadata. The adapter caps `additionalItemParameters` at the live
 provider limit of 24; the canonical ledger retains every source
-field. The local patch maps canonical `event_id` to browser
+field. The shipped mapping uses canonical `event_id` as browser
 `transaction_id` and Data Manager's top-level `transactionId`, which Google
 documents as the cross-source deduplication field. It also omits request IP
 unless server-derived country is known and outside the EEA, UK and
-Switzerland. Neither local correction is deployed yet.
+Switzerland.
 
 The production event
 `a28a8f3c-ba90-4006-9dd8-429072a3c772` reached Meta and Google on
@@ -146,22 +180,21 @@ boundary.
 
 [`EVENT_CATALOG.md`](EVENT_CATALOG.md) and
 `src/lib/analytics/eventCatalog.ts` are the authoritative human- and
-machine-readable allowlists for all 29 v1 decisions. All non-blocked
+machine-readable allowlists for all 33 v1 decisions. All 29 active
 catalog events now have implemented schemas in the discriminated
 canonical union. The four `blocked_source` entries remain decisions
 without runtime detectors until an authoritative checkout source is
 approved.
 
-This foundation is implemented locally and is not deployed. Provider routing
-reads the catalog and can enqueue only an explicitly
+Provider routing reads the deployed catalog and can enqueue only an explicitly
 active provider/event pair. A registry invariant test requires the
 catalog's active outbox pairs, adapter keys and worker keys to be
 identical. Queue claim, retry, receipt, dead-letter and Postgres logic
 are generic; a new event therefore adds its detector, schema, provider
 mappings/adapters and tests without a new queue or retry architecture.
-The existing Supabase/Postgres outbox remains the durable queue;
-Vercel Workflow and Vercel Queues are deliberately not added as a
-second delivery system.
+The Supabase/Postgres outbox remains the durable attempt and retry truth;
+Vercel Queue is the targeted wake-up transport, not a second provider-status
+ledger. Vercel Workflow is not part of this dispatch path.
 
 Ledger insertion and provider-row creation are transactionally
 idempotent. Completion is guarded by the claimed attempt generation so a
