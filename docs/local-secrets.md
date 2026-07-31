@@ -61,11 +61,11 @@ Reload the MCP client after generation.
 - `facebook-ads` (`https://mcp.facebook.com/ads`) disables OAuth
   Dynamic Client Registration, so a client that tries to register
   itself never receives a `client_id` and its authenticate action
-  hangs without opening a browser. The server therefore declares a
-  static `auth.CLIENT_ID` bound to `${META_APP_ID}`. The Meta app
-  must carry the "Create & manage ads with ads MCP server" use
-  case, which is what grants the `ads_mcp_management` scope; a
-  System User token cannot hold that scope. While the app is in
+  hangs without opening a browser. The server therefore declares
+  a static `auth.CLIENT_ID` bound to `${META_APP_ID}`. The Meta
+  app must carry the "Create & manage ads with ads MCP server"
+  use case, which is what grants the `ads_mcp_management` scope;
+  a System User token cannot hold that scope. While the app is in
   development mode Meta auto-allows `http://localhost` redirects,
   so Cursor's `http://localhost:8787/callback` needs no allowlist
   entry. `https://mcp.facebook.com/devtools` does support dynamic
