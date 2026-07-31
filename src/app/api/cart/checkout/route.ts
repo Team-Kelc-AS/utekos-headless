@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { clearCartIdCookie } from '@/lib/actions/setCartIdInCookie'
+import { clearCartIdCookie } from '@/lib/actions/cart/setCartIdInCookie'
 import { readCartIdCookie } from '@/lib/cart/readCartIdCookie'
 import { resolveShopifyCheckoutUrl } from '@/lib/cart/resolveShopifyCheckoutUrl'
 import { fetchRawCart } from '@/lib/helpers/cart/fetchCart'

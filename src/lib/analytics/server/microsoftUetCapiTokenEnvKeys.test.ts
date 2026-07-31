@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
-  getMicrosoftUetCapiTokenEnvPresence,
   MICROSOFT_UET_CAPI_TOKEN_ENV_KEYS,
   resolveMicrosoftUetCapiTokenFromEnv
 } from './microsoftUetCapiTokenEnvKeys'
@@ -68,15 +67,4 @@ test('resolveMicrosoftUetCapiTokenFromEnv falls back through aliases', () => {
       )
     }
   )
-})
-
-test('presence helper ignores MICROSOFT_ADS_ACCESS_TOKEN', () => {
-  const presence = getMicrosoftUetCapiTokenEnvPresence({
-    NODE_ENV: 'test',
-    MICROSOFT_ADS_ACCESS_TOKEN: 'oauth-token',
-    MICROSOFT_UET_CAPI_TOKEN: 'uet-token'
-  })
-
-  assert.equal(presence.MICROSOFT_UET_CAPI_TOKEN, true)
-  assert.equal(presence.MICROSOFT_UET_CAPI_ACCESS_TOKEN, false)
 })

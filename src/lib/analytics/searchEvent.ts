@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { canonicalEventEnvelopeSchema, type CanonicalEventEnvelope, type ConsentSnapshot } from './canonicalEventEnvelope'
-import { mapEventDeviceInfo } from './mapEventDeviceInfo'
+import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 
 export const canonicalSearchCustomDataSchema = z.strictObject({
   search_id: z.string().min(1),
@@ -8,85 +7,14 @@ export const canonicalSearchCustomDataSchema = z.strictObject({
   result_state: z.enum(['results', 'empty', 'error']).optional()
 })
 
-export type CanonicalSearchCustomData = z.infer<
-  typeof canonicalSearchCustomDataSchema
->
-
 export const canonicalSearchSchema = canonicalEventEnvelopeSchema.extend({
   event_name: z.literal('search'),
   source: z.literal('web'),
-    page_url: z.string().url(),
-    referrer_url: z.string().url().optional(),
-    page_title: z.string().min(1),
+  page_url: z.string().url(),
+  referrer_url: z.string().url().optional(),
+  page_title: z.string().min(1),
   page_view_id: z.string().uuid().optional(),
   custom_data: canonicalSearchCustomDataSchema
 })
 
 export type CanonicalSearch = z.infer<typeof canonicalSearchSchema>
-
-type CreateCanonicalSearchInput = {
-  browserId?: Record<string, string>
-  clickId?: Record<string, string>
-  consent: ConsentSnapshot
-  customData: CanonicalSearchCustomData
-  environment: CanonicalEventEnvelope['environment']
-  eventDeviceInfo?: Parameters<typeof mapEventDeviceInfo>[0]
-  eventId: string
-  eventTime: string
-  externalId?: string
-  impressionId?: string
-  pageTitle?: string
-  pageUrl?: string
-  pageViewId?: string
-  referrerUrl?: string
-}
-
-export type SearchDataLayerEvent = {
-  event: 'search'
-  event_id: string
-  event_time: string
-  source: 'web'
-  page_view_id?: string
-  custom_data: CanonicalSearchCustomData
-  canonical_event: CanonicalSearch
-}
-
-export function createCanonicalSearch(
-  input: CreateCanonicalSearchInput
-): CanonicalSearch {
-  const eventDeviceInfo = mapEventDeviceInfo(input.eventDeviceInfo)
-
-  return canonicalSearchSchema.parse({
-    schema_version: 1,
-    event_name: 'search',
-    event_id: input.eventId,
-    event_time: input.eventTime,
-    source: 'web',
-    environment: input.environment,
-    ...(input.pageUrl ? { page_url: input.pageUrl } : {}),
-    ...(input.pageViewId ? { page_view_id: input.pageViewId } : {}),
-    ...(input.referrerUrl ? { referrer_url: input.referrerUrl } : {}),
-    ...(input.pageTitle ? { page_title: input.pageTitle } : {}),
-    consent: input.consent,
-    custom_data: input.customData,
-    ...(input.browserId ? { browser_id: input.browserId } : {}),
-    ...(input.clickId ? { click_id: input.clickId } : {}),
-    ...(input.externalId ? { external_id: input.externalId } : {}),
-    ...(input.impressionId ? { impression_id: input.impressionId } : {}),
-    ...(eventDeviceInfo ? { event_device_info: eventDeviceInfo } : {})
-  })
-}
-
-export function buildSearchDataLayerEvent(
-  event: CanonicalSearch
-): SearchDataLayerEvent {
-  return {
-    event: 'search',
-    event_id: event.event_id,
-    event_time: event.event_time,
-    source: event.source,
-    ...(event.page_view_id ? { page_view_id: event.page_view_id } : {}),
-    custom_data: event.custom_data,
-    canonical_event: event
-  }
-}

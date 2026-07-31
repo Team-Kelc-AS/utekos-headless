@@ -7,7 +7,7 @@ import { CartMutationProvider } from '@/clients/CartMutationProvider'
 import { serverActions } from '@/constants/serverActions'
 import { CartIdProvider } from '@/components/providers/CartIdProvider'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
-import { getCartIdFromCookie } from '@/lib/actions/getCartIdFromCookie'
+import { getCartIdFromCookie } from '@/lib/actions/cart/getCartIdFromCookie'
 import {
   CartBootstrapContext,
   type CartBootstrapStatus

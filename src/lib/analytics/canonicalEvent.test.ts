@@ -4,7 +4,7 @@ import {
   parseCanonicalEvent,
   type ImplementedCanonicalEventName
 } from './canonicalEvent'
-import { activeCanonicalEventNames } from './eventCatalog'
+import { canonicalEventNames, eventCatalog } from './eventCatalog'
 import { createCanonicalPageView } from './pageViewEvent'
 import { canonicalRefundSchema } from './refundEvent'
 import { createCanonicalViewItem } from './viewItemEvent'
@@ -50,7 +50,9 @@ test('implemented union covers every active catalog event', () => {
     'video_progress'
   ])
 
-  for (const name of activeCanonicalEventNames) {
+  for (const name of canonicalEventNames.filter(
+    eventName => eventCatalog[eventName].lifecycle === 'active'
+  )) {
     assert.ok(
       implemented.has(name as ImplementedCanonicalEventName),
       `active catalog event ${name} must be in the implemented union`

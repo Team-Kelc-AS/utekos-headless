@@ -8,7 +8,7 @@ export async function getCartIdFromCookie(): Promise<
   const [{ readRawCartIdCookie }, cookieActions] =
     await Promise.all([
       import('@/lib/cart/readCartIdCookie'),
-      import('@/lib/actions/setCartIdInCookie')
+      import('@/lib/actions/cart/setCartIdInCookie')
     ])
   const cartId = await readRawCartIdCookie()
   if (!cartId) return null

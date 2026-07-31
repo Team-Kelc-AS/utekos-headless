@@ -1,8 +1,5 @@
 import { enrichCanonicalEventWithGoogleAnalyticsIds } from './googleAnalyticsBrowserIds'
-import {
-  createCanonicalCollectorTransport,
-  sendCanonicalCollectorEvent
-} from './createCanonicalCollectorTransport'
+import { sendCanonicalCollectorEvent } from './createCanonicalCollectorTransport'
 import type { CanonicalBeginCheckout } from './beginCheckoutEvent'
 
 async function enrichBeginCheckout(
@@ -16,11 +13,6 @@ const beginCheckoutCollectorInput = {
   endpoint: '/api/events/begin-checkout',
   enrichEvent: enrichBeginCheckout
 } as const
-
-export const startBeginCheckoutCollectorTransport =
-  createCanonicalCollectorTransport<CanonicalBeginCheckout>({
-    ...beginCheckoutCollectorInput
-  })
 
 export function collectCanonicalBeginCheckout(
   event: CanonicalBeginCheckout

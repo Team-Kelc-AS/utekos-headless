@@ -137,12 +137,6 @@ type EventCatalogEntry = {
 
 type EventCatalogEntryBase = Omit<EventCatalogEntry, 'signals'>
 
-export const technicalRetentionCaveat =
-  'Retention values apply only to minimal, non-PII dedupe keys. They are a technical proposal, not a legal retention conclusion for event payloads, consent snapshots, or provider data.'
-
-export const providerIdentifierPolicy =
-  'Direct contact fields and free text are forbidden. Hashed contact identifiers, external IDs, browser/click IDs, and request-context IP addresses may be present only when required by an approved provider mapping and gated by the documented consent policy. Every eligible provider mapping must emit every available signal declared by its eventCatalog signalDelivery contract; unavailable signals must retain an explicit audited reason and must never be fabricated.'
-
 const analyticsExport = ['analytics'] as const
 const marketingExport = ['marketing'] as const
 const noMarketingExport = [] as const
@@ -2333,98 +2327,8 @@ export const canonicalEventNames = Object.freeze(
   Object.keys(eventCatalog) as CatalogEventName[]
 )
 
-export const activeCanonicalEventNames = Object.freeze(
-  canonicalEventNames.filter(
-    name => eventCatalog[name].lifecycle === 'active'
-  )
-)
-
 export function getEventCatalogEntry(
   name: CatalogEventName
 ): (typeof eventCatalog)[CatalogEventName] {
   return eventCatalog[name]
 }
-
-export const gaAutomaticEventDecisions = {
-  automatic_page_view: {
-    gaEvents: ['page_view'],
-    decision: 'disabled_canonical_owner',
-    canonicalReplacement: ['page_view'],
-    rationale:
-      'The canonical Next.js page_view is the only page-view owner.'
-  },
-  history_pageviews: {
-    gaEvents: ['page_view'],
-    decision: 'disabled_canonical_owner',
-    canonicalReplacement: ['page_view'],
-    rationale:
-      'History-state pageviews would duplicate the canonical router event.'
-  },
-  enhanced_measurement_scroll: {
-    gaEvents: ['scroll'],
-    decision: 'keep_until_canonical_active_then_disable',
-    canonicalReplacement: ['scroll_depth'],
-    rationale:
-      'Keep the GA-derived 90 percent signal only until canonical threshold tracking is active.'
-  },
-  outbound_click: {
-    gaEvents: ['click'],
-    decision: 'keep_ga_derived_non_canonical',
-    canonicalReplacement: [],
-    rationale:
-      'The v1 catalog has no canonical outbound-click event, so this remains GA-derived and cannot enter the canonical ledger.'
-  },
-  site_search: {
-    gaEvents: ['view_search_results'],
-    decision: 'keep_until_canonical_active_then_disable',
-    canonicalReplacement: ['search', 'view_search_results'],
-    rationale:
-      'Disable URL-query inference when the resolved canonical search events are active.'
-  },
-  form_interactions: {
-    gaEvents: ['form_start', 'form_submit'],
-    decision: 'keep_until_canonical_active_then_disable',
-    canonicalReplacement: ['form_start', 'form_submit'],
-    rationale:
-      'Disable DOM-derived form events when success-aware canonical form events are active.'
-  },
-  video_engagement: {
-    gaEvents: [
-      'video_start',
-      'video_progress',
-      'video_complete'
-    ],
-    decision: 'keep_until_canonical_active_then_disable',
-    canonicalReplacement: ['video_progress'],
-    rationale:
-      'Disable the YouTube-only automatic detector when canonical milestone tracking is active.'
-  },
-  file_downloads: {
-    gaEvents: ['file_download'],
-    decision: 'keep_ga_derived_non_canonical',
-    canonicalReplacement: [],
-    rationale:
-      'The v1 catalog has no canonical file-download event, so this remains GA-derived and cannot enter the canonical ledger.'
-  },
-  session_start: {
-    gaEvents: ['session_start'],
-    decision: 'keep_ga_derived_system_event',
-    canonicalReplacement: [],
-    rationale:
-      'GA owns session derivation; this is not a canonical event.'
-  },
-  first_visit: {
-    gaEvents: ['first_visit'],
-    decision: 'keep_ga_derived_system_event',
-    canonicalReplacement: [],
-    rationale:
-      'GA owns first-visit derivation; this is not a canonical event.'
-  },
-  user_engagement: {
-    gaEvents: ['user_engagement'],
-    decision: 'keep_ga_derived_system_event',
-    canonicalReplacement: [],
-    rationale:
-      'GA owns engagement derivation; this is not a canonical event.'
-  }
-} as const

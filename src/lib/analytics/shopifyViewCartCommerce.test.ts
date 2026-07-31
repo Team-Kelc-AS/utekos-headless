@@ -2,8 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   mapShopifyViewCart,
-  nextViewCartSequence,
-  resetViewCartSequenceForTests
+  nextViewCartSequence
 } from './shopifyViewCartCommerce'
 import type { Cart } from 'types/cart'
 
@@ -69,9 +68,6 @@ test('mapShopifyViewCart carries cart_id and view_sequence onto commerce', () =>
 })
 
 test('nextViewCartSequence increments monotonically', () => {
-  resetViewCartSequenceForTests()
   assert.equal(nextViewCartSequence(), 1)
   assert.equal(nextViewCartSequence(), 2)
-  resetViewCartSequenceForTests()
-  assert.equal(nextViewCartSequence(), 1)
 })

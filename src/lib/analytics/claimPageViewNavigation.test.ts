@@ -1,13 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import {
-  claimPageViewNavigation,
-  resetClaimedPageViewNavigationForTests
-} from './claimPageViewNavigation'
+import { claimPageViewNavigation } from './claimPageViewNavigation'
 
-test('claims the first page once and ignores remount with the same URL', () => {
-  resetClaimedPageViewNavigationForTests()
-
+test('claims navigations once and ignores same-resource remounts', () => {
   const first = claimPageViewNavigation({
     currentUrl: 'https://utekos.no/',
     documentReferrer: 'https://www.google.com/'
@@ -20,17 +15,6 @@ test('claims the first page once and ignores remount with the same URL', () => {
   assert.equal(first?.pageUrl, 'https://utekos.no/')
   assert.equal(first?.referrerUrl, 'https://www.google.com/')
   assert.equal(remount, null)
-})
-
-test('claims SPA navigation once even when previousUrl would have been null', () => {
-  resetClaimedPageViewNavigationForTests()
-
-  assert.ok(
-    claimPageViewNavigation({
-      currentUrl: 'https://utekos.no/',
-      documentReferrer: ''
-    })
-  )
 
   const navigation = claimPageViewNavigation({
     currentUrl: 'https://utekos.no/kundeservice',
@@ -44,10 +28,6 @@ test('claims SPA navigation once even when previousUrl would have been null', ()
   assert.equal(navigation?.pageUrl, 'https://utekos.no/kundeservice')
   assert.equal(navigation?.referrerUrl, 'https://utekos.no/')
   assert.equal(remountAfterSpa, null)
-})
-
-test('ignores query-only changes on the same page resource', () => {
-  resetClaimedPageViewNavigationForTests()
 
   assert.ok(
     claimPageViewNavigation({

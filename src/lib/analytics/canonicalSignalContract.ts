@@ -133,24 +133,6 @@ export type ProviderSignalDeliveryPolicy = Readonly<
   Record<CanonicalSignalName, ProviderSignalDeliveryRule>
 >
 
-export const canonicalSignalValuesSchema = z.strictObject({
-  event_id: z.string().uuid(),
-  event_name: z.string().min(1),
-  event_time: z.string().datetime({ offset: true }),
-  event_source_url: z.string().url().optional(),
-  client_ip_address: z.string().min(1).optional(),
-  client_user_agent: z.string().min(1).optional(),
-  external_id: z.string().min(1).optional(),
-  click_ids: canonicalClickIdsSchema.optional(),
-  fbclid: z.string().min(1).optional(),
-  fbc: z.string().min(1).optional(),
-  fbp: z.string().min(1).optional()
-})
-
-export type CanonicalSignalValues = z.infer<
-  typeof canonicalSignalValuesSchema
->
-
 export function presentCanonicalSignal(
   source: CanonicalSignalSource,
   capturedAt: string

@@ -1,16 +1,9 @@
-import type { CanonicalViewItem } from '../viewItemEvent'
-import type {
-  CanonicalEventStore,
-  CanonicalEventStoreInput
-} from './canonicalEventStore'
+import type { CanonicalEventStore } from './canonicalEventStore'
 import {
   normalizeCanonicalViewItem,
   type CanonicalViewItemRequestContext
 } from './normalizeCanonicalViewItem'
 import { planCanonicalEventDispatch } from './planCanonicalEventDispatch'
-
-export type CanonicalViewItemStoreInput =
-  CanonicalEventStoreInput & { event: CanonicalViewItem }
 
 export type CanonicalViewItemStore = CanonicalEventStore
 

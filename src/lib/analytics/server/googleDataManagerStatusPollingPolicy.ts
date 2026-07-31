@@ -6,9 +6,6 @@ const POSITIVE_JITTER_RATIO = 0.05
 export const GOOGLE_DATA_MANAGER_FIRST_STATUS_CHECK_DELAY_MS =
   30 * MINUTE_MS
 
-export const GOOGLE_DATA_MANAGER_STATUS_POLLING_TIMEOUT_MS =
-  24 * 60 * MINUTE_MS
-
 export function computeGoogleDataManagerStatusDelayMs(
   completedChecks: number,
   random: () => number = Math.random

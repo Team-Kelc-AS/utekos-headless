@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { registeredProviderAdapterKeys } from '@/lib/analytics/server/providerAdapterRegistry'
+import {
+  providerAdapterRegistry,
+  type RegisteredProviderAdapterKey
+} from '@/lib/analytics/server/providerAdapterRegistry'
 import {
   handleMetaViewItemOutboxCron,
   type MetaViewItemOutboxCronDependencies
@@ -17,12 +20,16 @@ const emptySummary = {
   retryScheduled: 0
 }
 
+const providerAdapterKeys = Object.keys(
+  providerAdapterRegistry
+) as RegisteredProviderAdapterKey[]
+
 function emptyBatchResult(
   overrides: Partial<Record<string, typeof emptySummary>> = {}
 ) {
   return {
     ...Object.fromEntries(
-      registeredProviderAdapterKeys.map(key => [key, emptySummary])
+      providerAdapterKeys.map(key => [key, emptySummary])
     ),
     ...overrides
   } as Awaited<

@@ -33,10 +33,6 @@ export const canonicalPurchaseSchema =
     custom_data: canonicalPurchaseCommerceSchema
   })
 
-export type CanonicalPurchaseCommerce = z.infer<
-  typeof canonicalPurchaseCommerceSchema
->
-
 export type CanonicalPurchase = z.infer<
   typeof canonicalPurchaseSchema
 >
