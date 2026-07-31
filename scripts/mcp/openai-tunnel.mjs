@@ -620,7 +620,7 @@ function listTargets() {
 
 function usage() {
   console.log(
-    'Usage: node scripts/mcp/openai-tunnel.mjs <bootstrap-env|check|init|doctor|gateway|run|start|status|stop|list-targets> [--target insight|source-insight|browser|shadcn|live-ops|commerce-tracking|shopify-readonly|codex-bridge|google-analytics]'
+    'Usage: node scripts/mcp/openai-tunnel.mjs <bootstrap-env|check|init|doctor|gateway|run|start|status|stop|list-targets> [--target insight|source-insight|browser|shadcn|live-ops|shopify-readonly|codex-bridge|google-analytics]'
   )
 }
 

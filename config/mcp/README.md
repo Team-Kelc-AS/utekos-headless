@@ -170,8 +170,8 @@ npm run mcp:chatgpt:accept:insight
 npm run mcp:tunnel:stop:insight
 ```
 
-Other targets: `browser`, `shadcn`, `live-ops`,
-`commerce-tracking`, `shopify-readonly`, `codex-bridge`.
+Other active targets: `browser`, `shadcn`, `live-ops`,
+`shopify-readonly`, `codex-bridge`.
 
 `utekos_chatgpt_insight` uses the local canonical server:
 
@@ -342,8 +342,9 @@ account ids in `.env.mcp.local`; do not copy the refresh token
 into chat, documentation, generated MCP JSON, or a tracked env
 file.
 
-`utekos_chatgpt_commerce_tracking` uses the local canonical
-Commerce/Tracking server:
+**Historical — removed:** `utekos_chatgpt_commerce_tracking` used
+the local canonical Commerce/Tracking server. The commands below
+are retained for audit value and are not active runbooks:
 
 ```bash
 npm run mcp:commerce-tracking:doctor
@@ -353,7 +354,7 @@ npm run mcp:tunnel:run:commerce-tracking
 npm run mcp:tunnel:stop:commerce-tracking
 ```
 
-It exposes 28 canonical read-only tools, including schema-bound
+It exposed 28 canonical read-only tools, including schema-bound
 provider probes for provider credential readiness, provider
 access remediation, Shopify Admin catalog reads, Shopify
 Storefront product/variant/SKU reads, GA4 event-status reads,
@@ -646,12 +647,12 @@ using the `*_SOURCE_INSIGHT` names documented in
 the OpenAI admin key as tunnel runtime auth. Assign the dedicated
 tunnel ID to `CONTROL_PLANE_TUNNEL_ID_SOURCE_INSIGHT`.
 
-The insight, browser, and commerce-tracking tunnel profiles use
-stdio and let `tunnel-client` start local Utekos canonical MCP
-servers directly. The live-ops target still uses Docker MCP
-gateway profiles unless replaced by a future Utekos bridge
-server. The older HTTP/proxy path is still available for
-debugging, but it is not the recommended ChatGPT connector path.
+The active insight and browser tunnel profiles use stdio and let
+`tunnel-client` start local Utekos canonical MCP servers
+directly. The live-ops target still uses Docker MCP gateway
+profiles unless replaced by a future Utekos bridge server. The
+older HTTP/proxy path is still available for debugging, but it is
+not the recommended ChatGPT connector path.
 
 For local development, run `tunnel-client` on the host beside
 Docker Desktop. Prefer `npm run mcp:tunnel:start:<target>` for

@@ -219,14 +219,6 @@ export function cursorToVscodeServer(
   delete vscodeConfig.oauth
   delete vscodeConfig.timeout
 
-  if (name === 'upstash-context7') {
-    return {
-      command: 'npx',
-      args: ['-y', '@upstash/context7-mcp'],
-      env: vscodeConfig.env ?? {}
-    }
-  }
-
   return vscodeConfig
 }
 

@@ -23,6 +23,7 @@ next-env.d.ts
 # Local environment files and secret stores
 .env
 .env.*
+.env.mcp.local
 !.env.example
 !.env.*.example
 /env.local
