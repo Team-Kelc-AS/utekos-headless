@@ -580,6 +580,36 @@ deployed until production has:
 
 ## Vercel Production Gate
 
+### Magazine View Transition Preview gate
+
+The Magasinet View Transition pilot is fail-closed behind the private server
+value `MAGAZINE_VIEW_TRANSITIONS_PREVIEW_ENABLED`. The pilot is reachable only
+when that value is exactly `1` and Vercel supplies exact
+`VERCEL_ENV=preview`. Missing, malformed, development, production, and
+unexpected environments keep the existing `/magasinet/oppgradering` redirect.
+Setting the pilot value in Production does not open Magasinet.
+
+Preview enablement requires explicit approval before changing the Vercel
+Preview environment. Verify Deployment Protection for the target Preview,
+set only the pilot value there, and redeploy:
+
+```text
+MAGAZINE_VIEW_TRANSITIONS_PREVIEW_ENABLED=1
+```
+
+Required release evidence is a successful production build, the dedicated
+View Transition unit and Playwright suites, browser proof for Chromium and
+WebKit, unsupported-API fallback, reduced-motion behavior, and confirmation
+that the shared hero transition uses one unique name on each side. Firefox
+must be verified in Preview or CI when the local Playwright runtime cannot
+launch it. No tracking event, provider write, database migration, GTM publish,
+Shopify mutation, or Production deploy is part of this pilot.
+
+Roll back Preview exposure by removing the pilot value or setting it to a
+value other than exact `1`, then redeploying the affected Preview. Opening
+Magasinet in Production is a separate release decision and requires an
+explicit code and deployment approval.
+
 ### Customer assistant zero-default preview gate
 
 The customer assistant is mounted behind the private server value
