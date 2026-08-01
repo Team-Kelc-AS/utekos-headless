@@ -9,9 +9,12 @@ import { isMagazineViewTransitionPreviewEnabled } from '@/app/magasinet/utils/is
 import {
   LANDING_EDGE_AUTH_SERVER_TIMING_NAME,
   LANDING_EDGE_CORRELATION_COOKIE_NAME,
-  LANDING_EDGE_SERVER_TIMING_NAME
+  LANDING_EDGE_SERVER_TIMING_NAME,
+  LANDING_SYNTHETIC_CORRELATION_COOKIE_NAME,
+  readLandingSyntheticCorrelationCookie
 } from '@/lib/analytics/landingEdgeCorrelation'
 import { createLandingEdgeCorrelationToken } from '@/lib/analytics/landingEdgeCorrelationToken'
+import { hasVerifiedSyntheticSignature } from '@/lib/analytics/syntheticTrafficSignature'
 import { deriveLandingEdgeRequestId } from '../supabase/functions/_shared/landing-edge-request-id'
 
 const allowedReferrers = new Set([
@@ -51,7 +54,9 @@ function isDocumentNavigation(request: NextRequest) {
 }
 
 type LandingEdgeCorrelation = {
+  clearSynthetic: boolean
   edgeRequestId: string
+  synthetic: boolean
   token?: string
 }
 
@@ -67,6 +72,16 @@ async function createLandingEdgeCorrelation(
   console.info(
     `[landing-edge] ${JSON.stringify({ edge_request_id: edgeRequestId })}`
   )
+  const synthetic = await hasVerifiedSyntheticSignature(
+    request,
+    process.env,
+    Math.floor(Date.now() / 1000)
+  )
+  const clearSynthetic = Boolean(
+    readLandingSyntheticCorrelationCookie(
+      request.headers.get('cookie') ?? ''
+    )
+  )
 
   const secret =
     process.env.LANDING_OBSERVABILITY_SIGNING_SECRET?.trim()
@@ -74,7 +89,11 @@ async function createLandingEdgeCorrelation(
     console.error(
       '[landing-edge] correlation signing unavailable'
     )
-    return { edgeRequestId }
+    return {
+      clearSynthetic,
+      edgeRequestId,
+      synthetic: false
+    }
   }
 
   try {
@@ -84,12 +103,21 @@ async function createLandingEdgeCorrelation(
       secret
     })
 
-    return { edgeRequestId, token }
+    return {
+      clearSynthetic,
+      edgeRequestId,
+      synthetic,
+      token
+    }
   } catch {
     console.error(
       '[landing-edge] correlation signing unavailable'
     )
-    return { edgeRequestId }
+    return {
+      clearSynthetic,
+      edgeRequestId,
+      synthetic: false
+    }
   }
 }
 
@@ -117,6 +145,20 @@ function withLandingEdgeCorrelation<T extends NextResponse>(
       secure: true,
       value: `${correlation.edgeRequestId}.${correlation.token}`
     })
+    if (correlation.synthetic || correlation.clearSynthetic) {
+      response.cookies.set({
+        httpOnly: true,
+        maxAge: correlation.synthetic ? 30 * 60 : 0,
+        name: LANDING_SYNTHETIC_CORRELATION_COOKIE_NAME,
+        path: '/',
+        sameSite: 'lax',
+        secure: true,
+        value:
+          correlation.synthetic ?
+            `${correlation.edgeRequestId}.${correlation.token}`
+          : ''
+      })
+    }
   }
   return response
 }

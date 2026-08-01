@@ -1,11 +1,12 @@
-import { createHmac, timingSafeEqual } from 'node:crypto'
 import { checkBotId } from 'botid/server'
-
-const SYNTHETIC_TIMESTAMP_HEADER =
-  'x-utekos-synthetic-timestamp'
-const SYNTHETIC_SIGNATURE_HEADER =
-  'x-utekos-synthetic-signature'
-const MAX_SYNTHETIC_CLOCK_SKEW_SECONDS = 5 * 60
+import { readLandingSyntheticCorrelationCookie } from '../landingEdgeCorrelation'
+import { verifyLandingEdgeCorrelationToken } from '../landingEdgeCorrelationToken'
+import {
+  hasVerifiedSyntheticSignature,
+  SYNTHETIC_SIGNATURE_HEADER,
+  SYNTHETIC_TIMESTAMP_HEADER,
+  syntheticSignaturePayload
+} from '../syntheticTrafficSignature'
 
 type BrowserEventTrafficClass =
   | 'automated_bot'
@@ -38,57 +39,25 @@ const defaultDependencies: BrowserEventTrafficDependencies = {
   nowSeconds: () => Math.floor(Date.now() / 1000)
 }
 
-function syntheticSignaturePayload(
-  request: Request,
-  timestamp: string
-) {
-  return [
-    request.method.toUpperCase(),
-    new URL(request.url).pathname,
-    timestamp
-  ].join('\n')
-}
-
-function hasVerifiedSyntheticSignature(
+async function hasVerifiedSyntheticCorrelation(
   request: Request,
   dependencies: BrowserEventTrafficDependencies
 ) {
   const secret =
-    dependencies.environment.UTEKOS_SYNTHETIC_TRAFFIC_SECRET
+    dependencies.environment.LANDING_OBSERVABILITY_SIGNING_SECRET
       ?.trim()
-  const timestamp = request.headers.get(
-    SYNTHETIC_TIMESTAMP_HEADER
-  )
-  const provided = request.headers.get(
-    SYNTHETIC_SIGNATURE_HEADER
+  const correlation = readLandingSyntheticCorrelationCookie(
+    request.headers.get('cookie') ?? ''
   )
 
-  if (!secret || !timestamp || !provided) return false
-  if (!/^\d{10}$/.test(timestamp)) return false
+  if (!secret || !correlation) return false
 
-  const timestampSeconds = Number(timestamp)
-  if (
-    Math.abs(dependencies.nowSeconds() - timestampSeconds) >
-    MAX_SYNTHETIC_CLOCK_SKEW_SECONDS
-  ) {
-    return false
-  }
-
-  const expected = createHmac('sha256', secret)
-    .update(syntheticSignaturePayload(request, timestamp))
-    .digest()
-  let actual: Buffer
-
-  try {
-    actual = Buffer.from(provided, 'hex')
-  } catch {
-    return false
-  }
-
-  return (
-    actual.length === expected.length &&
-    timingSafeEqual(actual, expected)
-  )
+  return verifyLandingEdgeCorrelationToken({
+    edgeRequestId: correlation.edgeRequestId,
+    nowSeconds: dependencies.nowSeconds(),
+    secret,
+    token: correlation.token
+  })
 }
 
 export async function classifyBrowserEventTraffic(
@@ -96,7 +65,17 @@ export async function classifyBrowserEventTraffic(
   dependencies: BrowserEventTrafficDependencies =
     defaultDependencies
 ): Promise<BrowserEventTrafficVerdict> {
-  if (hasVerifiedSyntheticSignature(request, dependencies)) {
+  if (
+    (await hasVerifiedSyntheticSignature(
+      request,
+      dependencies.environment,
+      dependencies.nowSeconds()
+    )) ||
+    (await hasVerifiedSyntheticCorrelation(
+      request,
+      dependencies
+    ))
+  ) {
     return {
       classification: 'synthetic',
       excludeFromMarketingDispatch: true

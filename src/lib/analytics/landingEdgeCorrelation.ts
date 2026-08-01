@@ -2,6 +2,8 @@ const LANDING_EDGE_SERVER_TIMING_NAME = 'utekos_edge'
 const LANDING_EDGE_AUTH_SERVER_TIMING_NAME = 'utekos_edge_auth'
 const LANDING_EDGE_CORRELATION_COOKIE_NAME =
   '__Host-utekos-edge-correlation'
+const LANDING_SYNTHETIC_CORRELATION_COOKIE_NAME =
+  '__Host-utekos-synthetic-correlation'
 
 type ServerTimingEntryLike = {
   description: string
@@ -22,18 +24,17 @@ function isUuid(value: string) {
 const correlationCookieValuePattern =
   /^([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\.(\d{10}\.[A-Za-z0-9_-]{43})$/iu
 
-export function readLandingEdgeCorrelationCookie(
-  cookieHeader: string
+function readCorrelationCookie(
+  cookieHeader: string,
+  cookieName: string
 ) {
   const value = cookieHeader
     .split(';')
     .map(cookie => cookie.trim())
     .find(cookie =>
-      cookie.startsWith(
-        `${LANDING_EDGE_CORRELATION_COOKIE_NAME}=`
-      )
+      cookie.startsWith(`${cookieName}=`)
     )
-    ?.slice(LANDING_EDGE_CORRELATION_COOKIE_NAME.length + 1)
+    ?.slice(cookieName.length + 1)
 
   if (!value) return undefined
 
@@ -52,6 +53,24 @@ export function readLandingEdgeCorrelationCookie(
   if (!edgeRequestId || !token) return undefined
 
   return { edgeRequestId, token }
+}
+
+export function readLandingEdgeCorrelationCookie(
+  cookieHeader: string
+) {
+  return readCorrelationCookie(
+    cookieHeader,
+    LANDING_EDGE_CORRELATION_COOKIE_NAME
+  )
+}
+
+export function readLandingSyntheticCorrelationCookie(
+  cookieHeader: string
+) {
+  return readCorrelationCookie(
+    cookieHeader,
+    LANDING_SYNTHETIC_CORRELATION_COOKIE_NAME
+  )
 }
 
 export function readLandingEdgeRequestId(
@@ -156,5 +175,6 @@ export function readBrowserLandingEdgeCorrelation(
 export {
   LANDING_EDGE_AUTH_SERVER_TIMING_NAME,
   LANDING_EDGE_CORRELATION_COOKIE_NAME,
-  LANDING_EDGE_SERVER_TIMING_NAME
+  LANDING_EDGE_SERVER_TIMING_NAME,
+  LANDING_SYNTHETIC_CORRELATION_COOKIE_NAME
 }

@@ -68,11 +68,29 @@ and Instagram in-app browser runs on iOS and Android have not been
 performed. Chromium user-agent probes passed, including redirect
 query preservation, but do not close that gate. The controlled
 browser displayed the Cookiebot widget and exactly one GTM-owned
-`uc.js` URL with `implementation=gtm`; consent-state interaction was
-inconclusive in that environment. Klarna also emitted repeated
-`KPSDK has already been configured` client errors on
-`/skreddersy-varmen`; Vercel showed no corresponding server runtime
-error. The Trace Drain receiver was upgraded to version 3 with
+`uc.js` URL with `implementation=gtm`. A follow-up in the page's main
+JavaScript world verified the Cookiebot API object, `hasResponse=true`,
+explicit granted consent for every category, and working widget
+open/close methods. The earlier `undefined` observation came from an
+isolated evaluation world and is not Cookiebot runtime evidence.
+
+The repeated `KPSDK has already been configured` client message on
+`/skreddersy-varmen` is Vercel BotID/Kasada, not Klarna. The BotID
+1.5.11 `client/core` loader used a `loaded` boolean without sharing an
+in-flight Promise, so simultaneous protected startup requests could
+register multiple `kpsdk-load` handlers and call `KPSDK.configure`
+more than once after a single `p.js` response. The local release
+candidate patches both the ESM and CJS `client/core` exports to share
+one pending load and to remove a failed `p.js` element before a later
+retry. Its focused behavior test proves three concurrent calls share
+one configure and completion, and that three callers can jointly
+retry after a failed first script load. This patch is not production
+evidence until deployed and rechecked. Klarna's own SDK loaded once,
+completed once and rendered the Express Checkout control; no payment
+authorization or order was attempted, so this is integration
+rendering evidence rather than payment proof. Vercel showed no
+corresponding server runtime error. The Trace Drain receiver was
+upgraded to version 3 with
 PII-free rejection counters and OTLP partial-success handling. Live
 warnings classified the remaining HTTP 400 responses as fully
 unscoped batches whose resources lacked both documented Vercel
