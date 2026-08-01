@@ -215,8 +215,8 @@ Version 8 is active with bundle hash
 bounded nested classifier distinguishes authentication, connection, TLS,
 permission, schema and connection-exhaustion families without logging raw
 SQLSTATE, message, SQL, host, stack or connection URL. In the first production
-window through 21:14 UTC, v8 returned five scoped HTTP 200, thirteen deliberate
-unscoped HTTP 400 and zero HTTP 503. It wrote or updated 36 trace rows across
+window through 21:15 UTC, v8 returned twelve scoped HTTP 200, seventeen
+deliberate unscoped HTTP 400 and zero HTTP 503. It inserted 38 trace rows across
 the production deployment after cutover. The same post-cutover window had zero
 Postgres ERROR/FATAL/PANIC and zero connection-exhaustion records. The scoped
 database-write gate is therefore production-proven; the upstream unscoped

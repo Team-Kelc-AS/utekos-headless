@@ -544,8 +544,8 @@ its value. Version 8 is `ACTIVE`, has bundle SHA-256
 `d37aae6f781d5995d68aa1ddbb32ee14c913eaaeb023a8deaac936aad5b729b8`, and
 adds bounded nested classification for authentication, connection, TLS,
 permission and schema failure families. The first v8 production window through
-21:14 UTC recorded five scoped HTTP 200, thirteen deliberate unscoped HTTP 400
-and zero HTTP 503. It wrote or updated 36 trace rows across the production
+21:15 UTC recorded twelve scoped HTTP 200, seventeen deliberate unscoped HTTP
+400 and zero HTTP 503. It inserted 38 trace rows across the production
 deployment after cutover; the same window had zero Postgres
 ERROR/FATAL/PANIC and zero connection-exhaustion records. This closes the
 database-write remediation gate while leaving the upstream unscoped-resource
