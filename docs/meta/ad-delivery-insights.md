@@ -80,8 +80,13 @@ Sentry SDK flushing is application evidence that the queued alert was handed
 off before the cron response. The correct existing `SENTRY_ACCESS_TOKEN`
 returned HTTP 200 from the official project Issues API and exposed the
 unresolved `meta_edge_click_id_coverage_below_98_percent` issue with ten
-occurrences from 14:45 through 20:45 UTC. This proves external issue ingestion,
-not email or mobile-notification delivery. The separate Sentry cron monitor
+occurrences from 14:45 through 20:45 UTC. The official Workflows API also
+returned enabled workflow `612443`, configured for new and existing
+high-priority issues with an active email action for issue owners and an
+active-member fallback. Its `lastTriggered` timestamp was 20:46:05 UTC, eleven
+seconds after the issue's latest occurrence. This proves external issue
+ingestion, workflow evaluation and an active email action, but not final mailbox
+delivery or message opening. The separate Sentry cron monitor
 `utekos-meta-ad-delivery-insights` is currently `disabled` with no environment
 check-ins. An attempted activation was rejected by Sentry because the account
 lacked pay-as-you-go capacity for the required seat, so activating that monitor

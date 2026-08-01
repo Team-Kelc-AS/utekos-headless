@@ -55,10 +55,16 @@ returns false. Production returned `alert_delivery_flushed=true`.
 The correct existing `SENTRY_ACCESS_TOKEN` returned HTTP 200 from
 Sentry's official project Issues API and exposed the unresolved
 click-ID-coverage issue with ten occurrences from 14:45 through
-20:45 UTC. This proves SDK flushing and external issue ingestion,
-not email or mobile-notification delivery. The separate Insights
-cron monitor is still disabled because Sentry rejected activation
-for insufficient pay-as-you-go seat capacity.
+20:45 UTC. The same token returned HTTP 200 from the official
+organization Workflows API. Workflow `612443` is enabled for new
+and existing high-priority issues, has an active email action for
+issue owners with active-member fallback, and reports
+`lastTriggered=2026-08-01T20:46:05.419094Z`, eleven seconds after
+the issue's latest occurrence. This proves SDK flushing, external
+issue ingestion, workflow evaluation and an active email action;
+it does not prove mailbox delivery or message opening. The
+separate Insights cron monitor is still disabled because Sentry
+rejected activation for insufficient pay-as-you-go seat capacity.
 
 A subsequent bounded audit identified five of the six no-`fbclid`
 rows as controlled Utekos probes from their exact timestamps,
@@ -132,21 +138,30 @@ only the unauthenticated gate; scheduler execution and the
 corresponding database refresh remain open until that time.
 
 Remaining release evidence is deliberately open. Physical iOS
-evidence is partial. Facebook and Instagram in-app browser runs
-have been performed, but they do not yet form a complete
-two-app-by-three-route matrix. Android remains untested as a
-complete, controlled physical or approved device-cloud matrix.
-Production observation contains human-or-unknown Android IAB
-traffic on `/skreddersy-varmen`: seven Facebook landings reached
-edge and consent, four continued to canonical PageView and
-`accepted_unverified`, while one Instagram Android landing
+evidence from earlier deployments is partial, but no controlled
+cell may be carried forward as proof of the current deployment's
+late-consent behavior. A fresh read through 21:56:34 UTC found
+zero edge, consent, canonical PageView or Meta-dispatch rows after
+the `dpl_5mg` cutover in all twelve app-by-OS-by-route cells:
+Facebook and Instagram on iOS and Android across
+`/skreddersy-varmen`, `/comfyrobe` and
+`/skreddersy-varmen/utekos-orginal`. One separate iOS landing at
+21:42:19 UTC reached edge, granted consent, canonical PageView and
+`accepted_unverified`, but had `in_app_browser='none'` and no
+`fbclid`, UTM or ad signal. It remains unattributed observational
+traffic and cannot close any physical IAB cell.
+
+Earlier production observation contains human-or-unknown Android
+IAB traffic on `/skreddersy-varmen`: seven Facebook landings
+reached edge and consent, four continued to canonical PageView
+and `accepted_unverified`, while one Instagram Android landing
 reached edge and consent without PageView or dispatch. There is
-no Android evidence for `/comfyrobe` or
+no earlier Android evidence for `/comfyrobe` or
 `/skreddersy-varmen/utekos-orginal`. Those observational rows do
-not replace the controlled two-app-by-three-route Android gate.
-Chromium user-agent probes passed, including redirect query
-preservation, but also do not close that gate. The controlled
-browser displayed the Cookiebot widget and exactly one GTM-owned
+not replace the controlled current-deployment gate. Chromium
+user-agent probes passed, including redirect query preservation,
+but also do not close that gate. The controlled browser displayed
+the Cookiebot widget and exactly one GTM-owned
 `uc.js` URL with `implementation=gtm`. A follow-up in the page's
 main JavaScript world verified the Cookiebot API object,
 `hasResponse=true`, explicit granted consent for every category,
@@ -154,7 +169,7 @@ and working widget open/close methods. The earlier `undefined`
 observation came from an isolated evaluation world and is not
 Cookiebot runtime evidence.
 
-The physical Instagram iOS run covered the profile landing,
+The earlier physical Instagram iOS run covered the profile landing,
 internal navigation to `/skreddersy-varmen` and `/comfyrobe`, and
 a direct-message landing on `/skreddersy-varmen/utekos-orginal`.
 The direct-message link also produced separate Instagram
@@ -170,11 +185,10 @@ and was therefore excluded from the tester's chain. This is
 physical in-app-browser evidence, but it is not an ad-click proof
 for the tester.
 
-The open physical gates are the current-production Facebook
-late-consent flow without refresh, Facebook coverage of
-`/comfyrobe` and `/skreddersy-varmen/utekos-orginal`, and all
-three required destinations in both Facebook and Instagram on
-physical or approved device-cloud Android.
+The open current-deployment physical gate is therefore the entire
+twelve-cell matrix, including the Facebook late-consent flow
+without refresh. Earlier physical runs remain useful diagnostic
+evidence but are not current-release acceptance evidence.
 
 The missing PageView after a denied-to-granted transition was
 traced to the browser transport clearing its pending PageView on
