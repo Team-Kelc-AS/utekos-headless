@@ -322,6 +322,43 @@ test('classifies connection exhaustion without logging database details', async 
   }
 })
 
+test('classifies a nested pooler authentication failure without logging details', async () => {
+  const errors: string[] = []
+  const originalError = console.error
+  console.error = value => errors.push(String(value))
+
+  try {
+    const databaseError = new AggregateError(
+      [
+        Object.assign(new Error('secret authentication message'), {
+          code: '28P01',
+          detail: 'secret pooler detail'
+        })
+      ],
+      'secret aggregate message'
+    )
+    const handler = createVercelTraceDrainHandler({
+      config,
+      upsertObservations: () => Promise.reject(databaseError)
+    })
+
+    const response = await handler(
+      signedRequest(JSON.stringify(envelope()))
+    )
+
+    assert.equal(response.status, 503)
+    assert.deepEqual(JSON.parse(errors[0]!), {
+      component: 'vercel-trace-drain',
+      error_category: 'authentication_failed',
+      event: 'database_write_failed'
+    })
+    assert.equal(errors[0]!.includes('secret'), false)
+    assert.equal(errors[0]!.includes('28P01'), false)
+  } finally {
+    console.error = originalError
+  }
+})
+
 test('uses a bounded fallback for unknown database failures', async () => {
   const errors: string[] = []
   const originalError = console.error

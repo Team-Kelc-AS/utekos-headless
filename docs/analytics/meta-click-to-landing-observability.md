@@ -187,12 +187,40 @@ scope key or `scope.name=vercel`. There were no invalid spans, timestamps,
 trace conflicts or project mismatches in this invalid set. A separate 339
 `partial_trace_scope` warnings represented mixed batches whose valid
 observations were retained with HTTP 200 partial success. Invocation logs for
-the same window recorded 3,915 HTTP 200, 5,323 HTTP 400 and 81 HTTP 503
-responses. No custom `database write failed` function message was present, so
-the 503 responses cannot be attributed conclusively to the handler's database
-catch. Function console logs and invocation logs are asynchronously ingested;
-the aggregates are classification evidence, not a one-to-one warning/request
-join or proof of why Vercel emits these unscoped resources.
+the same window initially recorded 3,915 HTTP 200 and 5,323 HTTP 400. A full
+Log Explorer query corrected the 503 sample to 83 app-level responses. All 83
+used the handler's sole 503 path and occurred in the same three minutes as 270
+Postgres FATAL records, all SQLSTATE `53300` (`too_many_connections`). There
+were no boot, timeout, resource-limit or Edge Function rate-limit signals.
+This proves connection exhaustion as the supported trigger for the database
+catch, while the v4 log cannot join the SQLSTATE to each request individually.
+Function console logs and invocation logs are asynchronously ingested; the
+aggregates are not a one-to-one warning/request join and do not explain why
+Vercel emits the separate unscoped resources.
+
+Supabase's current connection guidance identifies the default Edge Function
+`SUPABASE_DB_URL` as direct and recommends transaction-mode pooling on port
+6543 for edge/serverless clients. Trace Drain therefore requires a separate
+`VERCEL_TRACE_DRAIN_DATABASE_URL`, validates the 6543 port and keeps
+`prepare:false`. The v6 pooler cutover exposed a second issue rather than
+closing the gate: all scoped v6 deliveries returned HTTP 503, with no HTTP 200.
+The same `postgres@3.4.9` driver reproduced SQLSTATE `28P01` against the
+existing local pooler URL, while the canonical direct URL and an in-memory
+pooler URL rebuilt with the canonical password both passed `select 1`. The
+dedicated production secret was replaced from that validated value without
+printing or writing it.
+
+Version 8 is active with bundle hash
+`d37aae6f781d5995d68aa1ddbb32ee14c913eaaeb023a8deaac936aad5b729b8`. Its
+bounded nested classifier distinguishes authentication, connection, TLS,
+permission, schema and connection-exhaustion families without logging raw
+SQLSTATE, message, SQL, host, stack or connection URL. In the first production
+window through 21:14 UTC, v8 returned five scoped HTTP 200, thirteen deliberate
+unscoped HTTP 400 and zero HTTP 503. It wrote or updated 36 trace rows across
+the production deployment after cutover. The same post-cutover window had zero
+Postgres ERROR/FATAL/PANIC and zero connection-exhaustion records. The scoped
+database-write gate is therefore production-proven; the upstream unscoped
+resources remain separately classified and rejected fail-closed.
 
 The same production release also closes the synthetic-browser
 propagation gap. `UTEKOS_SYNTHETIC_TRAFFIC_SECRET` is encrypted in

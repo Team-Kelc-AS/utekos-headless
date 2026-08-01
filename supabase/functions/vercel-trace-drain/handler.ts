@@ -29,17 +29,45 @@ function logTraceDrainRejection(
   )
 }
 
+const databaseFailureCategories = new Map<string, string>([
+  ['28P01', 'authentication_failed'],
+  ['3D000', 'invalid_database'],
+  ['42501', 'insufficient_privilege'],
+  ['42P01', 'undefined_table'],
+  ['53300', 'too_many_connections'],
+  ['57P03', 'cannot_connect_now'],
+  ['CERT_HAS_EXPIRED', 'tls_certificate_error'],
+  ['DEPTH_ZERO_SELF_SIGNED_CERT', 'tls_certificate_error'],
+  ['ECONNREFUSED', 'connection_refused'],
+  ['ECONNRESET', 'connection_reset'],
+  ['EHOSTUNREACH', 'host_unreachable'],
+  ['ENOTFOUND', 'host_not_found'],
+  ['ETIMEDOUT', 'connection_timeout'],
+  ['UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'tls_certificate_error']
+])
+
 function databaseFailureCategory(error: unknown): string {
-  if (!error || typeof error !== 'object' || !('code' in error)) {
-    return 'database_error'
+  const pending: unknown[] = [error]
+  const seen = new Set<object>()
+
+  while (pending.length > 0 && seen.size < 16) {
+    const candidate = pending.shift()
+    if (!candidate || typeof candidate !== 'object') continue
+    if (seen.has(candidate)) continue
+    seen.add(candidate)
+
+    const code = 'code' in candidate ? candidate.code : undefined
+    if (typeof code === 'string') {
+      const category = databaseFailureCategories.get(code)
+      if (category) return category
+      if (code.startsWith('08')) return 'connection_exception'
+    }
+
+    if ('cause' in candidate) pending.push(candidate.cause)
+    if ('errors' in candidate && Array.isArray(candidate.errors)) {
+      pending.push(...candidate.errors.slice(0, 8))
+    }
   }
-
-  const code = error.code
-  if (typeof code !== 'string') return 'database_error'
-
-  if (code === '53300') return 'too_many_connections'
-  if (code === '57P03') return 'cannot_connect_now'
-  if (code.startsWith('08')) return 'connection_exception'
 
   return 'database_error'
 }

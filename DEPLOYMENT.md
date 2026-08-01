@@ -518,11 +518,38 @@ stable post-v4 window 2026-08-01 15:58–20:00 UTC, 5,408
 rejected spans. Every invalid resource had `service.name`; none had either
 required Vercel project/deployment scope key, and none had
 `scope.name=vercel`. The receiver therefore rejects a fully unscoped resource
-deliberately. Separate invocation logs recorded 3,915 HTTP 200, 5,323 HTTP 400
-and 81 HTTP 503 responses. No custom `database write failed` function log was
-present, so the 503 responses cannot be assigned conclusively to the
-receiver's database catch. These aggregates prove receiver classification,
-not why the upstream Vercel exporter emits the unscoped resources.
+deliberately. A full Log Explorer query corrected the initial bounded sample:
+separate invocation logs recorded 3,915 HTTP 200, 5,323 HTTP 400 and 83 HTTP
+503 responses. All 83 were app-level executions from the handler's sole 503
+path. They occurred in the same three minutes as 270 Postgres FATAL records,
+all SQLSTATE `53300` (`too_many_connections`), with zero boot, timeout,
+resource-limit or Edge Function rate-limit signals. Connection exhaustion is
+therefore the supported trigger for the receiver's database catch; the v4
+catch did not retain enough error classification for a request-by-request
+SQLSTATE join.
+
+Supabase documents the default Edge Function `SUPABASE_DB_URL` as a direct
+database connection and recommends transaction-mode pooling on port 6543 for
+serverless and edge workloads. Trace Drain now requires the dedicated
+`VERCEL_TRACE_DRAIN_DATABASE_URL`, validates port 6543 and retains
+`prepare:false`; it no longer falls back to the direct default. Database
+failures log only an allowlisted category, never SQL, host, message, stack or
+connection string. The first pooler cutover in v6 was not successful: its
+scoped deliveries returned HTTP 503, with no HTTP 200, because the existing
+local pooler URL contained stale credentials. The same Postgres driver
+reproduced SQLSTATE `28P01` locally, while the canonical direct URL and a
+pooler URL rebuilt in memory with that canonical password both passed
+`select 1`. The dedicated secret was then replaced without printing or writing
+its value. Version 8 is `ACTIVE`, has bundle SHA-256
+`d37aae6f781d5995d68aa1ddbb32ee14c913eaaeb023a8deaac936aad5b729b8`, and
+adds bounded nested classification for authentication, connection, TLS,
+permission and schema failure families. The first v8 production window through
+21:14 UTC recorded five scoped HTTP 200, thirteen deliberate unscoped HTTP 400
+and zero HTTP 503. It wrote or updated 36 trace rows across the production
+deployment after cutover; the same window had zero Postgres
+ERROR/FATAL/PANIC and zero connection-exhaustion records. This closes the
+database-write remediation gate while leaving the upstream unscoped-resource
+classification as a separate, fail-closed HTTP 400 behavior.
 
 A later privacy-bounded audit found that five of the six no-`fbclid` rows in
 the 24-hour Meta-signal denominator were controlled Utekos HTTP/browser probes.
