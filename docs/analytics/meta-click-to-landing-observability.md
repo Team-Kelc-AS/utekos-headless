@@ -91,12 +91,14 @@ not an ad-click proof for the tester.
 
 The missing PageView after a denied-to-granted transition was traced to
 the browser transport clearing its pending PageView on explicit denial.
-The release candidate retains at most the latest/current PageView while
+Production deployment `dpl_H8fmEoav8QH15VxbBjiroYwbC4X9` retains at most the
+latest/current PageView while
 denied and flushes it on Cookiebot consent events. Multiple denied SPA
 navigations do not replay historical pages, and existing event-id,
 in-flight and completed-event guards keep the late flush idempotent.
-This behavior is locally verified but must be re-proved after production
-deployment without a manual refresh.
+The implementation has 50 green related unit tests plus green lint,
+type generation and TypeScript checks. It must still be re-proved in the
+physical Facebook browser without a manual refresh after consent is granted.
 
 The repeated `KPSDK has already been configured` client message on
 `/skreddersy-varmen` is Vercel BotID/Kasada, not Klarna. The BotID

@@ -491,14 +491,19 @@ idempotent local tests. Intermittent unclassified Trace Drain 400s and the
 Klarna duplicate-configuration client error remain explicitly open. No GTM
 publish or Meta write mutation was part of this release.
 
-The next application release must also preserve the already-live anonymous
+Application deployment `dpl_H8fmEoav8QH15VxbBjiroYwbC4X9` is `READY` on
+commit `599013fb5d2e1cc841093170a5a30ee6fdfc2cab` and owns `utekos.no`,
+`www.utekos.no` and `feed.utekos.no`. It preserves the already-live anonymous
 Vercel telemetry component exactly as `VercelTelemetry`: root-layout rendering
 of `Analytics` from `@vercel/analytics/next` and `SpeedInsights` from
 `@vercel/speed-insights/next`, without the superseded Cookiebot wrapper.
-Production deployment `dpl_6g6MsWyccfzxjVGYqvS4A6KWARhJ` is `READY` for the
-preceding main-branch change; carrying the same component in the consent-fix
-release prevents a branch-based rollback. This requires no Supabase migration,
-GTM publish, provider mutation or environment change.
+Both first-party telemetry scripts returned HTTP 200 after promotion. The
+release also carries the bounded late-consent PageView queue described above.
+It required no Supabase migration, GTM publish, provider mutation or
+environment change. Post-deploy gateway smoke was green, and Vercel reported
+no runtime-error cluster for the three scoped Meta landing routes in the
+30-minute read. Automated HTML curl requests were rejected by BotID with 403;
+they are automation-blocking evidence rather than application-route status.
 
 ### Local integration audit 2026-07-14
 
