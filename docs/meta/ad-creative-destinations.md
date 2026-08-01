@@ -7,9 +7,8 @@ The storage contract is based on the official Meta Marketing API
 reviewed on 2026-08-01. The approved Supabase production
 migration was applied to the pink-lens tracking project and read
 back with active RLS, no public or Data API role grants, an active
-retention job and zero initial rows. The application runtime
-remains pending until its exact-SHA Vercel release and two
-idempotency syncs are verified.
+retention job and zero initial rows. The application runtime was
+released and production-verified on 2026-08-01.
 
 Primary Meta sources:
 
@@ -78,9 +77,42 @@ Rows expire 14 months after `observed_through`, unless
 exception. The retention migration fails closed if `pg_cron` is
 unavailable.
 
-## Release verification
+## Production verification
 
-Before the snapshot can be described as active:
+The clean `codex/meta-click-to-landing` commit
+`cbfa60f6f946bf2290a08f6a5f3ee848939289c7` was built as Vercel
+deployment `dpl_2byUaVfETVh1fTFyEkrDdZtTC7BH` and promoted to
+`utekos.no` on 2026-08-01. The Vercel build passed TypeScript and
+generated 134 of 134 static pages. Post-promotion checks returned
+HTTP 200 for `/skreddersy-varmen`, `/comfyrobe`,
+`/skreddersy-varmen/utekos-orginal` and a product route, with no
+deployment error logs or 5xx request logs in the release window.
+
+`src/components/analytics/VercelTelemetry.tsx` remained unchanged
+in the release. Its checked SHA-256 was
+`1aec7e5c586a29baa55e4bc7e191317e309a201ca85e3f8246d32b81c9499938`.
+Both `/_vercel/insights/script.js` and
+`/_vercel/speed-insights/script.js` returned HTTP 200 before and
+after promotion.
+
+Two authorized production syncs completed at
+`2026-08-01T15:20:19.054Z` and `2026-08-01T15:20:34.192Z`. Each
+returned 437 Insights rows and 14 creative-destination
+observations. The Supabase readback contained 14 rows and 14
+unique observations across five ads and five creatives. All rows
+retained the first timestamp in `observed_from`, advanced
+`observed_through` to the second timestamp and remained open with
+`observed_until IS NULL`.
+
+Ad `120246491016410788` produced two active asset-feed observations
+for creative `2134034140490187`. Both normalized to
+`https://utekos.no/skreddersy-varmen`. This proves the sampled Meta
+creative configuration, not the destination delivered for any
+historical impression or click.
+
+## Release verification contract
+
+The active release is governed by these checks:
 
 1. Apply the migration through the approved Supabase deployment
    gate.
