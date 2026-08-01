@@ -84,6 +84,16 @@ check-ins. An attempted activation was rejected by Sentry because the account
 lacked pay-as-you-go capacity for the required seat, so activating that monitor
 remains a billing/capacity decision rather than an application-code defect.
 
+The later edge audit preserved but reclassified five controlled Utekos probes
+as non-human test traffic after proving they had zero consent, canonical
+PageView and provider-attempt rows. The next authorized health read reported
+138 of 139 qualifying human-or-unknown Meta landings with `fbclid`
+(99.28 percent), 100-percent `fbc | fbclid`, 100-percent Meta API acceptance,
+no dead letters and `healthy=true`. The only remaining no-`fbclid` observation
+is a physical iOS landing with denied consent and no dispatch; Insights cannot
+prove whether its missing click ID originated at Meta, an upstream redirect or
+in-app navigation.
+
 ## Purpose and boundaries
 
 `/api/cron/meta-ad-delivery-insights` reads daily, ad-level Meta delivery data

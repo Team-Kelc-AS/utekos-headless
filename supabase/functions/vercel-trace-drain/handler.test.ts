@@ -282,3 +282,70 @@ test('accepts the scoped portion of a mixed batch with OTLP partial success', as
     console.warn = originalWarn
   }
 })
+
+test('classifies connection exhaustion without logging database details', async () => {
+  const errors: string[] = []
+  const originalError = console.error
+  console.error = value => errors.push(String(value))
+
+  try {
+    const databaseError = Object.assign(
+      new Error('secret database message'),
+      {
+        code: '53300',
+        detail: 'secret database detail',
+        query: 'select secret_value'
+      }
+    )
+    const handler = createVercelTraceDrainHandler({
+      config,
+      upsertObservations: () => Promise.reject(databaseError)
+    })
+
+    const response = await handler(
+      signedRequest(JSON.stringify(envelope()))
+    )
+
+    assert.equal(response.status, 503)
+    assert.deepEqual(await response.json(), {
+      code: 'database_unavailable'
+    })
+    assert.deepEqual(JSON.parse(errors[0]!), {
+      component: 'vercel-trace-drain',
+      error_category: 'too_many_connections',
+      event: 'database_write_failed'
+    })
+    assert.equal(errors[0]!.includes('secret'), false)
+    assert.equal(errors[0]!.includes('53300'), false)
+  } finally {
+    console.error = originalError
+  }
+})
+
+test('uses a bounded fallback for unknown database failures', async () => {
+  const errors: string[] = []
+  const originalError = console.error
+  console.error = value => errors.push(String(value))
+
+  try {
+    const handler = createVercelTraceDrainHandler({
+      config,
+      upsertObservations: () =>
+        Promise.reject(new Error('must-not-be-logged'))
+    })
+
+    const response = await handler(
+      signedRequest(JSON.stringify(envelope()))
+    )
+
+    assert.equal(response.status, 503)
+    assert.deepEqual(JSON.parse(errors[0]!), {
+      component: 'vercel-trace-drain',
+      error_category: 'database_error',
+      event: 'database_write_failed'
+    })
+    assert.equal(errors[0]!.includes('must-not-be-logged'), false)
+  } finally {
+    console.error = originalError
+  }
+})

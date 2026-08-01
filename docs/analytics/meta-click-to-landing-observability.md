@@ -45,6 +45,20 @@ receives HTTP 403 from the Issues endpoint. The separate Insights cron monitor
 is still disabled because Sentry rejected activation for insufficient
 pay-as-you-go seat capacity.
 
+A subsequent bounded audit identified five of the six no-`fbclid` rows as
+controlled Utekos probes from their exact timestamps, routes, marketing
+parameters and surrounding Vercel runtime activity. A fail-closed precheck
+found five edge observations and zero consent observations, canonical ledger
+events or provider attempts. The rows were retained as audit evidence and
+reclassified as two `synthetic_client` and three `browser_automation`
+observations. The authorized production health read then reported 138 of 139
+qualifying human-or-unknown Meta landings with `fbclid` (99.28 percent),
+100-percent `fbc | fbclid`, 100-percent Meta API acceptance, no dead letters
+and `healthy=true`. The remaining no-`fbclid` row is a physical iOS landing on
+`/skreddersy-varmen` with an active-ad signal, explicit denied consent, no
+canonical PageView and no provider dispatch. It remains human-or-unknown and
+must not be attributed more narrowly from the available evidence.
+
 The final application deployment is
 `dpl_CqHhnFYQMn5PjYFWNeq3g9g84faN`, built from commit
 `f3cb219ebe9b5280bfee1b2849e2ad3cfa28daec` and active on

@@ -524,6 +524,21 @@ present, so the 503 responses cannot be assigned conclusively to the
 receiver's database catch. These aggregates prove receiver classification,
 not why the upstream Vercel exporter emits the unscoped resources.
 
+A later privacy-bounded audit found that five of the six no-`fbclid` rows in
+the 24-hour Meta-signal denominator were controlled Utekos HTTP/browser probes.
+The exact-window precheck found five edge rows and zero consent, ledger or
+provider-attempt rows. The observations were preserved for audit and
+reclassified in place as two `synthetic_client` and three
+`browser_automation` rows. No canonical or provider data was deleted or
+replayed. The authorized post-check reported 138 of 139 qualifying human-or-
+unknown Meta landings with `fbclid` (99.28 percent), 100-percent
+`fbc | fbclid`, 100-percent Meta API acceptance, no dead letters and
+`healthy=true`. The one remaining no-`fbclid` row is a physical iOS landing
+with explicitly denied consent and no canonical PageView or provider dispatch.
+Future controlled production browser runs must use the existing signed
+synthetic-document contract so they are excluded at ingestion instead of
+requiring an audit classification.
+
 Application deployment `dpl_H8fmEoav8QH15VxbBjiroYwbC4X9` is `READY` on
 commit `599013fb5d2e1cc841093170a5a30ee6fdfc2cab` and owns `utekos.no`,
 `www.utekos.no` and `feed.utekos.no`. It preserves the already-live anonymous

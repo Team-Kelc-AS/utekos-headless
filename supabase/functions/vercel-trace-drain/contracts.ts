@@ -8,6 +8,14 @@ const traceIdSchema = z.string().regex(/^[0-9a-fA-F]{32}$/)
 const spanIdSchema = z.string().regex(/^[0-9a-fA-F]{16}$/)
 const unixNanosecondsSchema = z.string().regex(/^\d{1,20}$/)
 
+function usesTransactionPoolerPort(value: string): boolean {
+  try {
+    return new URL(value).port === '6543'
+  } catch {
+    return false
+  }
+}
+
 const otlpAttributeSchema = z
   .object({
     key: z.string().min(1).max(256),
@@ -88,7 +96,11 @@ export const traceDrainRuntimeConfigSchema = z.object({
         value.startsWith('postgres://') ||
         value.startsWith('postgresql://'),
       'Expected a Postgres connection URL'
-    ),
+    )
+    .refine(usesTransactionPoolerPort, {
+      message:
+        'Expected a Postgres transaction-pooler URL on port 6543'
+    }),
   signatureSecret: z.string().min(32).max(512),
   projectId: boundedIdentifierSchema,
   environment: z.literal('production')

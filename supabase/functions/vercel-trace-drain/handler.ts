@@ -29,6 +29,21 @@ function logTraceDrainRejection(
   )
 }
 
+function databaseFailureCategory(error: unknown): string {
+  if (!error || typeof error !== 'object' || !('code' in error)) {
+    return 'database_error'
+  }
+
+  const code = error.code
+  if (typeof code !== 'string') return 'database_error'
+
+  if (code === '53300') return 'too_many_connections'
+  if (code === '57P03') return 'cannot_connect_now'
+  if (code.startsWith('08')) return 'connection_exception'
+
+  return 'database_error'
+}
+
 function traceScopeCounts(
   result: ReturnType<typeof sanitizeVercelTraceEnvelope>
 ): Record<string, number> {
@@ -147,8 +162,14 @@ export function createVercelTraceDrainHandler({
       }
 
       return jsonDrainResponse({}, 200)
-    } catch {
-      console.error('[vercel-trace-drain] database write failed')
+    } catch (error) {
+      console.error(
+        JSON.stringify({
+          component: 'vercel-trace-drain',
+          error_category: databaseFailureCategory(error),
+          event: 'database_write_failed'
+        })
+      )
       return jsonDrainResponse(
         { code: 'database_unavailable' },
         503

@@ -85,3 +85,21 @@ overview](https://vercel.com/docs/botid).
   returned HTTP 200, `no-store`, and no Vercel cache hit.
 - Vercel reported zero error-level log rows for the deployment during
   the completion window.
+
+## Follow-up controlled-probe classification
+
+A later 24-hour health read contained six Meta-signal edge documents without
+`fbclid`. Exact-time correlation with Vercel runtime activity identified five
+as Utekos-controlled HTTP or browser probes. Before mutation, a bounded query
+proved exactly five candidate edge rows and zero matching consent, ledger or
+provider-attempt rows. The five observations were retained and reclassified as
+two `synthetic_client` and three `browser_automation` rows; no canonical event,
+provider row or trace was deleted or replayed.
+
+The post-check returned 138 of 139 qualifying human-or-unknown Meta landings
+with `fbclid` (99.28 percent), 100-percent `fbc | fbclid`, 100-percent Meta API
+acceptance, no dead letters and `healthy=true`. The remaining no-`fbclid` row
+is a physical iOS landing with explicit denied consent and no PageView or
+dispatch. This cleanup is not a substitute for signing future test documents:
+all controlled production browser runs must use the cryptographic contract
+above so classification is correct at ingestion.
