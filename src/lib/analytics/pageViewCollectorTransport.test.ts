@@ -103,6 +103,108 @@ test('does not send when analytics and marketing are denied', async () => {
   assert.equal(context.sent.length, 0)
 })
 
+test('sends the pending current page_view once after late consent grant', async () => {
+  const context = harness({
+    declined: true,
+    hasResponse: true,
+    consent: {
+      marketing: false,
+      preferences: false,
+      statistics: false
+    }
+  })
+  const event = pageView()
+
+  assert.equal(await context.transport.queue(event), 'skipped')
+  assert.equal(context.sent.length, 0)
+
+  context.setCookiebot({
+    consented: true,
+    hasResponse: true,
+    consent: {
+      marketing: true,
+      preferences: false,
+      statistics: true
+    }
+  })
+
+  assert.deepEqual(
+    await Promise.all([
+      context.transport.flush(),
+      context.transport.flush(),
+      context.transport.queue(event)
+    ]),
+    ['sent', 'skipped', 'skipped']
+  )
+  assert.equal(context.sent.length, 1)
+  assert.equal(context.sent[0]?.event_id, event.event_id)
+  assert.equal(context.sent[0]?.page_view_id, event.page_view_id)
+  assert.equal(context.sent[0]?.event_time, event.event_time)
+  assert.equal(context.sent[0]?.consent.analytics, 'granted')
+  assert.equal(context.sent[0]?.consent.marketing, 'granted')
+  assert.deepEqual(context.sent[0]?.click_id, event.click_id)
+  assert.deepEqual(context.sent[0]?.browser_id, {
+    fbc: 'fb.1.456',
+    fbp: 'fb.1.123',
+    ga_client: 'GA1.1.123.456'
+  })
+  assert.equal(await context.transport.flush(), 'skipped')
+  assert.equal(context.sent.length, 1)
+})
+
+test('late grant sends only the latest page viewed while denied', async () => {
+  const context = harness({
+    declined: true,
+    hasResponse: true,
+    consent: {
+      marketing: false,
+      preferences: false,
+      statistics: false
+    }
+  })
+
+  await context.transport.queue(
+    pageView(
+      '11111111-1111-4111-8111-111111111111',
+      '22222222-2222-4222-8222-222222222222',
+      'https://utekos.no/skreddersy-varmen'
+    )
+  )
+  await context.transport.queue(
+    pageView(
+      '33333333-3333-4333-8333-333333333333',
+      '44444444-4444-4444-8444-444444444444',
+      'https://utekos.no/produkter'
+    )
+  )
+
+  context.setCookiebot({
+    consented: true,
+    hasResponse: true,
+    consent: {
+      marketing: true,
+      preferences: false,
+      statistics: true
+    }
+  })
+
+  assert.equal(await context.transport.flush(), 'sent')
+  assert.deepEqual(
+    context.sent.map(event => ({
+      eventId: event.event_id,
+      pageUrl: event.page_url,
+      pageViewId: event.page_view_id
+    })),
+    [
+      {
+        eventId: '33333333-3333-4333-8333-333333333333',
+        pageUrl: 'https://utekos.no/produkter',
+        pageViewId: '44444444-4444-4444-8444-444444444444'
+      }
+    ]
+  )
+})
+
 test('sends after analytics-only consent without marketing identifiers', async () => {
   const context = harness({
     hasResponse: true,

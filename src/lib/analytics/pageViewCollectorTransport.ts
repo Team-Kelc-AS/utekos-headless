@@ -86,6 +86,20 @@ export function createPageViewCollectorTransport(
   const inFlightEventIds = new Set<string>()
   const pendingEvents = new Map<string, CanonicalPageView>()
 
+  function retainLatestPendingEvent() {
+    let latestEvent: CanonicalPageView | undefined
+
+    for (const event of pendingEvents.values()) {
+      latestEvent = event
+    }
+
+    pendingEvents.clear()
+
+    if (latestEvent) {
+      pendingEvents.set(latestEvent.event_id, latestEvent)
+    }
+  }
+
   async function flush(): Promise<PageViewCollectorResult> {
     if (pendingEvents.size === 0) return 'skipped'
 
@@ -101,7 +115,7 @@ export function createPageViewCollectorTransport(
       consent.marketing === 'granted'
 
     if (!hasPermittedPurpose) {
-      pendingEvents.clear()
+      retainLatestPendingEvent()
       return 'skipped'
     }
 

@@ -64,15 +64,39 @@ attempts, but those receipts remain `accepted_unverified` and do not
 prove provider finality.
 
 Remaining release evidence is deliberately open. Physical Facebook
-and Instagram in-app browser runs on iOS and Android have not been
-performed. Chromium user-agent probes passed, including redirect
-query preservation, but do not close that gate. The controlled
+and Instagram in-app browser runs have now been performed on iOS;
+Android remains untested on a physical or approved device-cloud
+browser. Chromium user-agent probes passed, including redirect query
+preservation, but do not close the Android gate. The controlled
 browser displayed the Cookiebot widget and exactly one GTM-owned
 `uc.js` URL with `implementation=gtm`. A follow-up in the page's main
 JavaScript world verified the Cookiebot API object, `hasResponse=true`,
 explicit granted consent for every category, and working widget
 open/close methods. The earlier `undefined` observation came from an
 isolated evaluation world and is not Cookiebot runtime evidence.
+
+The physical Instagram iOS run covered the profile landing, internal
+navigation to `/skreddersy-varmen` and `/comfyrobe`, and a direct-message
+landing on `/skreddersy-varmen/utekos-orginal`. The direct-message link
+also produced separate Instagram preview-bot requests; those requests
+created no canonical PageView or provider dispatch. The physical
+Facebook iOS run proved a direct organic profile landing with denied
+consent, no PageView and no dispatch, followed by granted consent and
+a PageView only after refresh. A later Facebook navigation to
+`/skreddersy-varmen` retained prior browser identifiers but lacked a
+deterministic PageView-to-edge join, while a simultaneous paid landing
+had different privacy-safe identifiers and was therefore excluded from
+the tester's chain. This is physical in-app-browser evidence, but it is
+not an ad-click proof for the tester.
+
+The missing PageView after a denied-to-granted transition was traced to
+the browser transport clearing its pending PageView on explicit denial.
+The release candidate retains at most the latest/current PageView while
+denied and flushes it on Cookiebot consent events. Multiple denied SPA
+navigations do not replay historical pages, and existing event-id,
+in-flight and completed-event guards keep the late flush idempotent.
+This behavior is locally verified but must be re-proved after production
+deployment without a manual refresh.
 
 The repeated `KPSDK has already been configured` client message on
 `/skreddersy-varmen` is Vercel BotID/Kasada, not Klarna. The BotID
@@ -278,6 +302,13 @@ probes measured 74-125 ms time to first byte and 331-559 ms total
 time. These are small diagnostic samples, not production latency
 distributions; the Trace Drain is needed for a continuous
 server-side distribution.
+
+At 2026-08-01 14:26 UTC, Vercel's grouped runtime-error read returned
+no error clusters during the preceding 24 hours for
+`/skreddersy-varmen`, `/comfyrobe` or
+`/skreddersy-varmen/utekos-orginal`. Grouped log counts included
+successful 200/202 responses and some 4xx traffic, but the wide 4xx
+detail query timed out and is not classified as a route failure.
 
 Do not compare Meta's broad `fbc` percentage across every event
 with `fbc | fbclid`. The first includes Google, Bing, direct and

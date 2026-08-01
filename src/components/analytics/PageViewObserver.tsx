@@ -25,16 +25,11 @@ import {
   type TrackingEnvironment
 } from '@/lib/analytics/pageViewEvent'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
+import { subscribeToCookiebotPageViewUpdates } from '@/lib/analytics/subscribeToCookiebotPageViewUpdates'
 
 type PageViewObserverProps = { environment: TrackingEnvironment }
 
 type CookiebotWindow = Window & { Cookiebot?: CookiebotState }
-
-const COOKIEBOT_CONSENT_EVENTS = [
-  'CookiebotOnConsentReady',
-  'CookiebotOnAccept',
-  'CookiebotOnDecline'
-] as const
 
 function getCookiebotState() {
   return (window as CookiebotWindow).Cookiebot
@@ -74,26 +69,16 @@ export function PageViewObserver({
       })
     }
 
-    const handleConsentUpdate = () => {
-      observeConsent()
-      void browserPageViewCollectorTransport.flush()
-    }
-
-    for (const eventName of COOKIEBOT_CONSENT_EVENTS) {
-      window.addEventListener(eventName, handleConsentUpdate)
-    }
+    const unsubscribe = subscribeToCookiebotPageViewUpdates({
+      eventTarget: window,
+      flush: () => browserPageViewCollectorTransport.flush(),
+      observeConsent
+    })
 
     observeConsent()
     void browserPageViewCollectorTransport.flush()
 
-    return () => {
-      for (const eventName of COOKIEBOT_CONSENT_EVENTS) {
-        window.removeEventListener(
-          eventName,
-          handleConsentUpdate
-        )
-      }
-    }
+    return unsubscribe
   }, [])
 
   useEffect(() => {

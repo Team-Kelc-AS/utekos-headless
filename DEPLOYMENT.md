@@ -482,10 +482,23 @@ found no runtime-error clusters for the scoped landing/product routes.
 
 The operational click-to-edge alert remains unavailable, rather than green or
 red, until at least three complete post-Drain account days exist. Physical
-iOS/Android Facebook and Instagram in-app browser verification, the controlled
-Cookiebot interaction ambiguity, intermittent unclassified Trace Drain 400s,
-and the Klarna duplicate-configuration client error remain explicitly open.
-No GTM publish or Meta write mutation was part of this release.
+iOS Facebook and Instagram in-app browser verification is recorded in the
+observability guide. Android remains open. The iOS Facebook run exposed a
+denied-to-granted PageView gap: production required a refresh before the
+PageView was collected. The follow-up application release retains only the
+latest denied PageView and flushes it on Cookiebot accept, with bounded and
+idempotent local tests. Intermittent unclassified Trace Drain 400s and the
+Klarna duplicate-configuration client error remain explicitly open. No GTM
+publish or Meta write mutation was part of this release.
+
+The next application release must also preserve the already-live anonymous
+Vercel telemetry component exactly as `VercelTelemetry`: root-layout rendering
+of `Analytics` from `@vercel/analytics/next` and `SpeedInsights` from
+`@vercel/speed-insights/next`, without the superseded Cookiebot wrapper.
+Production deployment `dpl_6g6MsWyccfzxjVGYqvS4A6KWARhJ` is `READY` for the
+preceding main-branch change; carrying the same component in the consent-fix
+release prevents a branch-based rollback. This requires no Supabase migration,
+GTM publish, provider mutation or environment change.
 
 ### Local integration audit 2026-07-14
 
