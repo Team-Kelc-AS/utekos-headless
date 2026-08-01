@@ -128,3 +128,133 @@ test('rejects a signed envelope outside the configured project scope', async () 
   })
   assert.equal(writeCount, 0)
 })
+
+test('logs only a bounded code for request-envelope rejection', async () => {
+  const warnings: string[] = []
+  const originalWarn = console.warn
+  console.warn = value => warnings.push(String(value))
+
+  try {
+    const handler = createVercelTraceDrainHandler({
+      config,
+      upsertObservations: () => Promise.resolve(0)
+    })
+    const response = await handler(
+      signedRequest(JSON.stringify({ resourceSpans: [] }))
+    )
+
+    assert.equal(response.status, 400)
+    assert.equal(warnings.length, 1)
+    assert.deepEqual(JSON.parse(warnings[0]!), {
+      code: 'invalid_trace_envelope',
+      component: 'vercel-trace-drain',
+      event: 'request_rejected',
+      schema_issue_count: 2
+    })
+  } finally {
+    console.warn = originalWarn
+  }
+})
+
+test('logs aggregate scope counters without payload identifiers', async () => {
+  const warnings: string[] = []
+  const originalWarn = console.warn
+  console.warn = value => warnings.push(String(value))
+
+  try {
+    const scopedEnvelope = envelope()
+    scopedEnvelope.resourceSpans[0]!.resource.attributes = []
+    const handler = createVercelTraceDrainHandler({
+      config,
+      upsertObservations: () => Promise.resolve(0)
+    })
+    const response = await handler(
+      signedRequest(JSON.stringify(scopedEnvelope))
+    )
+
+    assert.equal(response.status, 400)
+    assert.equal(warnings.length, 1)
+    const warning = JSON.parse(warnings[0]!)
+    assert.deepEqual(warning, {
+      code: 'invalid_trace_scope',
+      component: 'vercel-trace-drain',
+      conflicting_trace_id_count: 0,
+      event: 'request_rejected',
+      invalid_resource_count: 1,
+      invalid_span_count: 0,
+      invalid_timestamp_span_count: 0,
+      mismatched_project_id_resource_count: 0,
+      missing_deployment_id_resource_count: 1,
+      missing_project_id_resource_count: 1,
+      observation_count: 0,
+      received_span_count: 1,
+      rejected_span_count: 1
+    })
+    assert.equal(warnings[0]!.includes(config.projectId), false)
+    assert.equal(warnings[0]!.includes('dpl_current'), false)
+    assert.equal(
+      warnings[0]!.includes('00112233445566778899aabbccddeeff'),
+      false
+    )
+  } finally {
+    console.warn = originalWarn
+  }
+})
+
+test('accepts the scoped portion of a mixed batch with OTLP partial success', async () => {
+  const warnings: string[] = []
+  const writes: VercelTraceObservation[][] = []
+  const originalWarn = console.warn
+  console.warn = value => warnings.push(String(value))
+
+  try {
+    const valid = envelope()
+    const unscoped = envelope()
+    unscoped.resourceSpans[0]!.resource.attributes = []
+    unscoped.resourceSpans[0]!.scopeSpans[0]!.spans[0]!.traceId =
+      'ffeeddccbbaa99887766554433221100'
+    const body = JSON.stringify({
+      resourceSpans: [
+        valid.resourceSpans[0],
+        unscoped.resourceSpans[0]
+      ]
+    })
+    const handler = createVercelTraceDrainHandler({
+      config,
+      upsertObservations: observations => {
+        writes.push(observations)
+        return Promise.resolve(observations.length)
+      }
+    })
+
+    const response = await handler(signedRequest(body))
+
+    assert.equal(response.status, 200)
+    assert.deepEqual(await response.json(), {
+      partialSuccess: {
+        errorMessage: 'Unscoped or invalid spans were rejected',
+        rejectedSpans: '1'
+      }
+    })
+    assert.equal(writes.length, 1)
+    assert.equal(writes[0]?.length, 1)
+    assert.equal(warnings.length, 1)
+    assert.deepEqual(JSON.parse(warnings[0]!), {
+      code: 'partial_trace_scope',
+      component: 'vercel-trace-drain',
+      conflicting_trace_id_count: 0,
+      event: 'request_rejected',
+      invalid_resource_count: 1,
+      invalid_span_count: 0,
+      invalid_timestamp_span_count: 0,
+      mismatched_project_id_resource_count: 0,
+      missing_deployment_id_resource_count: 1,
+      missing_project_id_resource_count: 1,
+      observation_count: 1,
+      received_span_count: 2,
+      rejected_span_count: 1
+    })
+  } finally {
+    console.warn = originalWarn
+  }
+})

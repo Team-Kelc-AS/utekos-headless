@@ -2,10 +2,11 @@
 
 Status date: 2026-08-01
 
-Release state: local release candidate only. The migration has
-not been applied, the Edge Functions have not been deployed, no
-Supabase secret has been changed, and no Vercel Drain has been
-created.
+Release state: active in production. The migrations, signed Edge
+Function receivers and project-scoped Vercel Log and Trace Drains
+were released and verified on 2026-08-01. The Trace Drain receiver
+is active as version 3 with bounded rejection classification and
+OTLP partial-success handling.
 
 ## Purpose and boundary
 
@@ -270,6 +271,33 @@ verified:
 - project: only the exact Utekos Vercel project;
 - sampling rule: `production`, 100 percent while computing
   latency distributions and click-to-edge rates.
+
+Rejected trace deliveries emit one structured warning containing
+only a static rejection code and bounded aggregate counts. Scope
+failure counts distinguish missing project/deployment attributes,
+project mismatch, invalid timestamps and conflicting trace IDs.
+Raw payloads, URLs, attribute values, project/deployment/trace/span
+IDs and validation messages are never logged. Use these warnings to
+classify recurring HTTP 400 responses before changing the
+fail-closed receiver contract.
+
+A fully unscoped or invalid batch remains fail-closed with HTTP 400.
+When one OTLP envelope contains both correctly scoped observations
+and resource spans without the required Vercel project/deployment
+attributes, the receiver writes only the valid observations and
+returns HTTP 200 with OTLP `partialSuccess.rejectedSpans`. This follows
+the OTLP/HTTP no-retry contract for partial acceptance without storing
+any unscoped span.
+
+The first production warnings after enabling the bounded counters
+classified the recurring 400 responses as resources missing both
+documented Vercel project and deployment attributes. They had no
+project mismatch, invalid timestamp or conflicting trace ID. Some
+pre-version-3 envelopes also contained correctly scoped observations;
+rejecting those entire mixed batches was the concrete receiver defect
+fixed by the partial-success response. Post-version-3 400 warnings
+observed so far contain no valid observation and remain intentionally
+fail-closed. Their upstream Vercel emission cause is not yet proven.
 
 Sampling below 100 percent invalidates the raw click-to-edge
 denominator unless the rate is incorporated explicitly into every

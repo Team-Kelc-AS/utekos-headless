@@ -85,6 +85,7 @@ test('aggregates the exact OTLP trace envelope without retaining span details', 
 
   assert.equal(result.invalidResourceCount, 0)
   assert.equal(result.invalidSpanCount, 0)
+  assert.equal(result.rejectedSpanCount, 0)
   assert.equal(result.receivedSpanCount, 2)
   assert.ok(result.observations[0])
   assert.deepEqual(result.observations, [
@@ -120,6 +121,7 @@ test('fails closed on a wrong project resource scope', () => {
 
   assert.equal(result.receivedSpanCount, 2)
   assert.equal(result.invalidResourceCount, 1)
+  assert.equal(result.rejectedSpanCount, 2)
   assert.deepEqual(result.observations, [])
 })
 
@@ -135,5 +137,6 @@ test('rejects one trace id reused across deployments', () => {
   )
 
   assert.equal(result.invalidSpanCount, 1)
+  assert.equal(result.rejectedSpanCount, 4)
   assert.deepEqual(result.observations, [])
 })

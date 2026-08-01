@@ -21,6 +21,12 @@ export interface SanitizeTraceResult {
   receivedSpanCount: number
   invalidResourceCount: number
   invalidSpanCount: number
+  missingProjectIdResourceCount: number
+  missingDeploymentIdResourceCount: number
+  mismatchedProjectIdResourceCount: number
+  invalidTimestampSpanCount: number
+  conflictingTraceIdCount: number
+  rejectedSpanCount: number
 }
 
 function readStringAttribute(
@@ -62,10 +68,16 @@ export function sanitizeVercelTraceEnvelope(
   config: TraceDrainRuntimeConfig
 ): SanitizeTraceResult {
   const traces = new Map<string, MutableTraceObservation>()
+  const traceSpanTotals = new Map<string, number>()
   const conflictingTraceIds = new Set<string>()
   let receivedSpanCount = 0
   let invalidResourceCount = 0
   let invalidSpanCount = 0
+  let missingProjectIdResourceCount = 0
+  let missingDeploymentIdResourceCount = 0
+  let mismatchedProjectIdResourceCount = 0
+  let invalidTimestampSpanCount = 0
+  let rejectedSpanCount = 0
 
   for (const resourceSpans of envelope.resourceSpans) {
     const projectId = readStringAttribute(
@@ -82,12 +94,14 @@ export function sanitizeVercelTraceEnvelope(
     )
     receivedSpanCount += resourceSpanCount
 
-    if (
-      !projectId ||
-      !deploymentId ||
-      projectId !== config.projectId
-    ) {
+    if (!projectId) missingProjectIdResourceCount += 1
+    if (!deploymentId) missingDeploymentIdResourceCount += 1
+    if (projectId && projectId !== config.projectId)
+      mismatchedProjectIdResourceCount += 1
+
+    if (!projectId || !deploymentId || projectId !== config.projectId) {
       invalidResourceCount += 1
+      rejectedSpanCount += resourceSpanCount
       continue
     }
 
@@ -102,10 +116,16 @@ export function sanitizeVercelTraceEnvelope(
           toIsoTimestamp(endTime) === null
         ) {
           invalidSpanCount += 1
+          invalidTimestampSpanCount += 1
+          rejectedSpanCount += 1
           continue
         }
 
         const existing = traces.get(traceId)
+        traceSpanTotals.set(
+          traceId,
+          (traceSpanTotals.get(traceId) ?? 0) + 1
+        )
         if (!existing) {
           traces.set(traceId, {
             deploymentId,
@@ -142,6 +162,7 @@ export function sanitizeVercelTraceEnvelope(
   for (const traceId of conflictingTraceIds) {
     traces.delete(traceId)
     invalidSpanCount += 1
+    rejectedSpanCount += traceSpanTotals.get(traceId) ?? 0
   }
 
   return {
@@ -160,6 +181,12 @@ export function sanitizeVercelTraceEnvelope(
     })),
     invalidResourceCount,
     invalidSpanCount,
+    missingProjectIdResourceCount,
+    missingDeploymentIdResourceCount,
+    mismatchedProjectIdResourceCount,
+    invalidTimestampSpanCount,
+    conflictingTraceIdCount: conflictingTraceIds.size,
+    rejectedSpanCount,
     receivedSpanCount
   }
 }

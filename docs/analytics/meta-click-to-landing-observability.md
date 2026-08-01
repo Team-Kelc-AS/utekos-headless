@@ -72,10 +72,17 @@ browser displayed the Cookiebot widget and exactly one GTM-owned
 inconclusive in that environment. Klarna also emitted repeated
 `KPSDK has already been configured` client errors on
 `/skreddersy-varmen`; Vercel showed no corresponding server runtime
-error. Interleaved Trace Drain HTTP 400 responses remain
-unclassified because the safe receiver logs expose neither the
-response body nor a bounded error class, although valid OTLP
-deliveries continue to return 200.
+error. The Trace Drain receiver was upgraded to version 3 with
+PII-free rejection counters and OTLP partial-success handling. Live
+warnings classified the remaining HTTP 400 responses as fully
+unscoped batches whose resources lacked both documented Vercel
+project and deployment attributes and contained no valid observation.
+Mixed batches no longer discard correctly scoped observations: the
+receiver persists those observations and returns HTTP 200 with
+`partialSuccess.rejectedSpans`. Valid OTLP deliveries and trace joins
+continue to work. The upstream reason Vercel emits fully unscoped
+resources remains unknown, but their receiver response is now
+classified and deliberately fail-closed.
 
 ## Metric contract
 
@@ -150,8 +157,9 @@ through 2026-07-28 window was 1,579 to 965, or 61.11 percent. A
 view, which is provider-attribution evidence to investigate
 rather than a mathematically meaningful conversion rate.
 
-The ten post-2026-07-22 UTM/ad-signal PageViews without `fbclid`
-and `fbc` shared the same bounded pattern: `/skreddersy-varmen`,
+The ten PageViews from 2026-07-24 13:34 UTC through 2026-07-27
+15:26 UTC with UTM/ad signal but without `fbclid` and `fbc` shared
+the same bounded pattern: `/skreddersy-varmen`,
 Facebook source, the audited ad identifier in campaign content,
 iPhone Safari/WebKit, mobile, `fbp` present, no referrer, granted
 marketing consent, and no bot/headless classification. This
@@ -159,6 +167,27 @@ establishes that the click identifier was absent when the
 canonical PageView arrived; it does not by itself identify
 whether Meta, an in-app navigation, a redirect before Utekos, or
 the original destination URL removed it.
+
+A separate read-only Graph API v25 investigation closes the
+configuration side of that uncertainty for ad
+`120246491016410788`, including the dates of the ten rows. Meta's
+activity history records a creative change on 2026-07-28 at 13:59
+UTC from creative `4608432669479938` to `2134034140490187`. The old
+creative therefore covers the 2026-07-24 through 2026-07-27 window;
+both old and current creatives have exactly two link URL assets,
+and every asset uses `https://utekos.no/skreddersy-varmen` as
+`website_url`. Every placement customization rule selects one of
+those link assets, and both creatives' `url_tags` include the same
+ad identifier as `hsa_ad`. The historical configured Meta
+destination was consequently the canonical landing page, without
+an upstream Utekos redirect.
+
+This direct creative and activity evidence is separate from
+Insights metrics. It proves configuration history, not the exact
+URL Meta delivered for each impression or click, and it does not
+identify where the ten historical click identifiers were lost. It
+also says nothing about collector acceptance, dispatch acceptance
+or provider finality.
 
 On the 2026-08-01 completion recheck, ad `120246491016410788` had
 effective status `CAMPAIGN_PAUSED`. The configured account's only
