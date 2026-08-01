@@ -113,6 +113,17 @@ referrer URL, destination URL, request body or arbitrary log
 message column. The function must not print an incoming body or
 parsed entry to its own logs.
 
+The receiver keeps only first-arrival candidates. It rejects
+Next.js RSC requests carrying `_rsc` and any request whose
+normalized referrer is an allowed Utekos host. Those requests are
+client navigation, prefetch or same-site subrequests rather than a
+new paid-media landing. A bounded `codex_*` or `edgeidprobe_*`
+campaign marker classifies controlled release canaries as
+`synthetic_client`, even when the canary intentionally uses a
+mobile in-app user agent. Verified bot, automation and synthetic
+classes remain excluded from marketing dispatch and health-rate
+denominators.
+
 The required click HMAC secret must be different from the Vercel
 Drain signature secret. HMAC permits equality joins without
 making an opaque click id available to readers. The read model

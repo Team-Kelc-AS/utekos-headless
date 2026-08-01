@@ -181,6 +181,20 @@ test('rejects wrong project, environment, host, method and non-document paths', 
       id: 'background',
       proxy: { ...baseProxy, pathType: 'background_func' }
     }),
+    validEntry({
+      id: 'rsc',
+      proxy: {
+        ...baseProxy,
+        path: '/produkter/utekos-dun?_rsc=abc123'
+      }
+    }),
+    validEntry({
+      id: 'same-site',
+      proxy: {
+        ...baseProxy,
+        referer: 'https://utekos.no/skreddersy-varmen'
+      }
+    }),
     validEntry({ id: 'build', source: 'build' })
   ]
 
@@ -218,8 +232,8 @@ test('normalizes Instagram Android, redirects and known automation classes', asy
     id: 'synthetic',
     proxy: {
       ...baseProxy,
-      path: '/produkter/utekos-techdown',
-      userAgent: ['curl/8.12.1']
+      path: '/produkter/utekos-techdown?utm_campaign=codex_join_canary_1',
+      userAgent: ['Mozilla/5.0 (Macintosh; Intel Mac OS X)']
     }
   })
 

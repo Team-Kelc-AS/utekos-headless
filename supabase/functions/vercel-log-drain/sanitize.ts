@@ -149,13 +149,15 @@ interface UserAgentClassification {
 }
 
 function classifyUserAgent(
-  userAgents: string[]
+  userAgents: string[],
+  verifiedSyntheticMarker: boolean
 ): UserAgentClassification {
   const userAgent = userAgents.join(' ').trim()
   const normalized = userAgent.toLowerCase()
 
   const automationClass: UserAgentClassification['automationClass'] =
-    (
+    verifiedSyntheticMarker ? 'synthetic_client'
+    : (
       /googlebot|bingbot|duckduckbot|baiduspider|yandexbot|facebookexternalhit|facebot|twitterbot|slackbot|linkedinbot|pinterestbot|applebot|bytespider|semrushbot|ahrefsbot|mj12bot/.test(
         normalized
       )
@@ -224,7 +226,23 @@ async function mapEntryToObservation(
 
   const documentUrl = readDocumentUrl(proxy.path)
   const statusCode = proxy.statusCode ?? entry.statusCode
-  if (!documentUrl || statusCode === undefined) return null
+  if (
+    !documentUrl ||
+    documentUrl.searchParams.has('_rsc') ||
+    statusCode === undefined
+  )
+    return null
+
+  const referrerHost = readReferrerHost(proxy.referer)
+  if (referrerHost && config.allowedHosts.includes(referrerHost))
+    return null
+
+  const utmCampaign = readSafeMarketingToken(
+    documentUrl.searchParams,
+    'utm_campaign'
+  )
+  const verifiedSyntheticMarker =
+    /^(?:codex|edgeidprobe)[_-]/i.test(utmCampaign ?? '')
 
   const fbclid = documentUrl.searchParams.get('fbclid')?.trim()
   const fbclidPresent = Boolean(fbclid)
@@ -236,7 +254,10 @@ async function mapEntryToObservation(
         'SHA-256'
       )
     : null
-  const userAgent = classifyUserAgent(proxy.userAgent)
+  const userAgent = classifyUserAgent(
+    proxy.userAgent,
+    verifiedSyntheticMarker
+  )
 
   return {
     vercel_log_id: entry.id,
@@ -271,7 +292,7 @@ async function mapEntryToObservation(
     execution_region: entry.executionRegion ?? null,
     lambda_region: proxy.lambdaRegion ?? null,
     response_bytes: proxy.responseByteSize ?? null,
-    referrer_host: readReferrerHost(proxy.referer),
+    referrer_host: referrerHost,
     in_app_browser: userAgent.inAppBrowser,
     device_class: userAgent.deviceClass,
     os_class: userAgent.osClass,
@@ -286,10 +307,7 @@ async function mapEntryToObservation(
       documentUrl.searchParams,
       'utm_medium'
     ),
-    utm_campaign: readSafeMarketingToken(
-      documentUrl.searchParams,
-      'utm_campaign'
-    ),
+    utm_campaign: utmCampaign,
     utm_content: readSafeMarketingToken(
       documentUrl.searchParams,
       'utm_content'
