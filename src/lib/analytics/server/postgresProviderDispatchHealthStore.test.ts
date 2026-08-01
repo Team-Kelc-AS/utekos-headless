@@ -142,6 +142,10 @@ test('reads the bounded ledger, problem, and ACK-latency windows', async () => {
   assert.match(queries[6] ?? '', /baseline_rate/i)
   assert.match(
     queries[6] ?? '',
+    /outbound_clicks >= 50 and edge_documents > 0/i
+  )
+  assert.match(
+    queries[6] ?? '',
     /ops\.meta_landing_observability/i
   )
   assert.match(queries[6] ?? '', /is_first_fbclid_observation/i)

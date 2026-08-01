@@ -136,6 +136,20 @@ reloads do not inflate it. Meta-signal primary requests without
 regardless of status, then report 2xx/3xx success separately.
 Inspect all ranked rows for redirect/error diagnosis.
 
+Vercel sends `x-vercel-id` to the application, while Log Drain v1
+provides a runtime `requestId`. A controlled production probe
+verified that the final `x-vercel-id` segment equaled the drained
+`requestId`. The proxy and receiver normalize that segment and
+derive the same UUIDv5 from it. This makes browser-to-drain
+correlation independent of whether the structured console message
+and proxy envelope arrive in the same Log Drain record or batch.
+The strict `[landing-edge]` message remains a rolling-release
+compatibility source and takes precedence when present.
+`proxy.vercelId` is not the correlation contract: it is optional
+in Log Drain v1 and can be absent on middleware rows. Every release
+must repeat the exact header-to-drain canary before marking the join
+verified.
+
 ## Trace-stage contract
 
 `ops.vercel_trace_observations` is keyed by the same 32-character
@@ -292,6 +306,7 @@ Targeted local tests:
 ```bash
 source "$HOME/.nvm/nvm.sh" && nvm use --silent
 corepack pnpm exec tsx --test \
+  supabase/functions/_shared/landing-edge-request-id.test.ts \
   supabase/functions/vercel-log-drain/*.test.ts \
   supabase/functions/vercel-trace-drain/*.test.ts \
   supabase/migrations/vercel_landing_observability.test.ts

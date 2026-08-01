@@ -4,6 +4,7 @@ import test from 'node:test'
 import type { DrainRuntimeConfig } from './contracts.ts'
 import { computeHmacHex } from './crypto.ts'
 import { sanitizeVercelLogBatch } from './sanitize.ts'
+import { deriveLandingEdgeRequestId } from '../_shared/landing-edge-request-id.ts'
 
 const config: DrainRuntimeConfig = {
   allowedHosts: ['utekos.no', 'www.utekos.no'],
@@ -106,18 +107,22 @@ test('parses edge_request_id only from the exact strict structured message', asy
   const variants = [
     validEntry({
       id: 'log-extra',
+      requestId: undefined,
       message: `[landing-edge] {"edge_request_id":"${edgeRequestId}","extra":true}`
     }),
     validEntry({
       id: 'log-prefix',
+      requestId: undefined,
       message: `prefix [landing-edge] {"edge_request_id":"${edgeRequestId}"}`
     }),
     validEntry({
       id: 'log-invalid',
+      requestId: undefined,
       message: '[landing-edge] {"edge_request_id":"not-a-uuid"}'
     }),
     validEntry({
       id: 'log-valid',
+      requestId: undefined,
       message: `[landing-edge] {"edge_request_id":"${edgeRequestId}"}`
     })
   ]
@@ -128,6 +133,19 @@ test('parses edge_request_id only from the exact strict structured message', asy
       observation => observation.edge_request_id
     ),
     [null, null, null, edgeRequestId]
+  )
+})
+
+test('derives edge_request_id from the Log Drain request id when the proxy row has no structured message', async () => {
+  const requestId = 'cdwvz-1785574222361-9968da94ed15'
+  const result = await sanitizeVercelLogBatch(
+    [validEntry({ message: undefined, requestId })],
+    config
+  )
+
+  assert.equal(
+    result.observations[0]?.edge_request_id,
+    await deriveLandingEdgeRequestId(requestId)
   )
 })
 

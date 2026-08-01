@@ -12,6 +12,7 @@ import {
   LANDING_EDGE_SERVER_TIMING_NAME
 } from '@/lib/analytics/landingEdgeCorrelation'
 import { createLandingEdgeCorrelationToken } from '@/lib/analytics/landingEdgeCorrelationToken'
+import { deriveLandingEdgeRequestId } from '../supabase/functions/_shared/landing-edge-request-id'
 
 const allowedReferrers = new Set([
   'nbocc.no',
@@ -59,7 +60,10 @@ async function createLandingEdgeCorrelation(
 ): Promise<LandingEdgeCorrelation | undefined> {
   if (!isDocumentNavigation(request)) return undefined
 
-  const edgeRequestId = crypto.randomUUID()
+  const edgeRequestId =
+    (await deriveLandingEdgeRequestId(
+      request.headers.get('x-vercel-id')
+    )) ?? crypto.randomUUID()
   console.info(
     `[landing-edge] ${JSON.stringify({ edge_request_id: edgeRequestId })}`
   )

@@ -270,9 +270,13 @@ const META_CLICK_TO_EDGE_QUERY = `
   ),
   baseline as (
     select
-      count(*) filter (where outbound_clicks >= 50)::integer
+      count(*) filter (
+        where outbound_clicks >= 50 and edge_documents > 0
+      )::integer
         as baseline_day_count,
-      avg(click_to_edge_rate) filter (where outbound_clicks >= 50)
+      avg(click_to_edge_rate) filter (
+        where outbound_clicks >= 50 and edge_documents > 0
+      )
         as baseline_rate
     from daily_rates
     where insight_date < (select insight_date from current_day)

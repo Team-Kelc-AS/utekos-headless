@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { NextRequest } from 'next/server'
+import { deriveLandingEdgeRequestId } from '../supabase/functions/_shared/landing-edge-request-id'
 
 async function loadProductionProxy() {
   const originalVercelEnvironment = process.env.VERCEL_ENV
@@ -91,7 +92,9 @@ test('correlates a document request without logging its landing query', async ()
         {
           headers: {
             'accept': 'text/html',
-            'sec-fetch-dest': 'document'
+            'sec-fetch-dest': 'document',
+            'x-vercel-id':
+              'arn1::cdwvz-1785574222361-9968da94ed15'
           }
         }
       )
@@ -101,7 +104,12 @@ test('correlates a document request without logging its landing query', async ()
       message.slice('[landing-edge] '.length)
     ).edge_request_id as string
 
-    assert.match(edgeRequestId, /^[0-9a-f-]{36}$/i)
+    assert.equal(
+      edgeRequestId,
+      await deriveLandingEdgeRequestId(
+        'cdwvz-1785574222361-9968da94ed15'
+      )
+    )
     assert.equal(message.includes('secret-click'), false)
     assert.equal(message.includes('utm_source'), false)
     assert.equal(

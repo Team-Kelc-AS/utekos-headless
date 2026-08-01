@@ -7,6 +7,7 @@ import {
   vercelLogEntrySchema
 } from './contracts.ts'
 import { computeHmacHex } from './crypto.ts'
+import { deriveLandingEdgeRequestId } from '../_shared/landing-edge-request-id.ts'
 
 const EDGE_MESSAGE_PREFIX = '[landing-edge] '
 const MAX_EDGE_MESSAGE_LENGTH = 96
@@ -240,7 +241,10 @@ async function mapEntryToObservation(
 
   return {
     vercel_log_id: entry.id,
-    edge_request_id: parseEdgeRequestId(entry.message),
+    edge_request_id:
+      parseEdgeRequestId(entry.message) ??
+      (await deriveLandingEdgeRequestId(entry.requestId)) ??
+      null,
     deployment_id: entry.deploymentId,
     project_id: entry.projectId,
     environment: entry.environment,
