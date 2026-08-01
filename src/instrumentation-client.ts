@@ -35,6 +35,10 @@ initBotId({
     {
       method: 'POST',
       path: '/api/observability/landing-consent'
+    },
+    {
+      method: 'POST',
+      path: '/api/observability/page-view-dispatch'
     }
   ]
 })

@@ -44,6 +44,10 @@ alter table ops.vercel_trace_observations enable row level security;
 alter table ops.vercel_trace_observations force row level security;
 alter table ops.landing_consent_observations enable row level security;
 alter table ops.landing_consent_observations force row level security;
+alter table ops.tagging_observations enable row level security;
+alter table ops.tagging_observations force row level security;
+alter table ops.privacy_retention_exceptions enable row level security;
+alter table ops.privacy_retention_exceptions force row level security;
 
 revoke all on table ops.vercel_edge_request_observations
   from public, anon, authenticated, service_role;
@@ -51,10 +55,17 @@ revoke all on table ops.vercel_trace_observations
   from public, anon, authenticated, service_role;
 revoke all on table ops.landing_consent_observations
   from public, anon, authenticated, service_role;
+revoke all on table ops.tagging_observations
+  from public, anon, authenticated, service_role;
+revoke all on table ops.privacy_retention_exceptions
+  from public, anon, authenticated, service_role;
 revoke all on table ops.meta_landing_observability
   from public, anon, authenticated, service_role;
 grant usage on schema ops to service_role;
 grant select, insert on table ops.vercel_edge_request_observations to service_role;
 grant select, insert, update on table ops.vercel_trace_observations to service_role;
 grant select, insert, update on table ops.landing_consent_observations to service_role;
+grant select, insert on table ops.tagging_observations to service_role;
+grant select, insert, update, delete on table ops.privacy_retention_exceptions
+  to service_role;
 grant select on table ops.meta_landing_observability to service_role;

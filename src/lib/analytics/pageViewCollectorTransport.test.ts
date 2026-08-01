@@ -20,9 +20,11 @@ const deniedConsent = {
 function pageView(
   eventId = '11111111-1111-4111-8111-111111111111',
   pageViewId = '22222222-2222-4222-8222-222222222222',
-  pageUrl = 'https://utekos.no/'
+  pageUrl = 'https://utekos.no/',
+  edgeRequestId?: string
 ) {
   return createCanonicalPageView({
+    ...(edgeRequestId ? { edgeRequestId } : {}),
     environment: 'test',
     eventId,
     pageViewId,
@@ -290,6 +292,90 @@ test('the same event_id is attempted at most once', async () => {
   await context.transport.queue(event)
 
   assert.equal(context.sent.length, 1)
+})
+
+test('starts a signed browser receipt before collector send after consent', async () => {
+  const order: string[] = []
+  const observations: unknown[] = []
+  const edgeRequestId = '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
+  const token =
+    '1754029200.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq'
+  const transport = createPageViewCollectorTransport({
+    getCookiebot: () => ({
+      hasResponse: true,
+      consent: {
+        marketing: false,
+        preferences: false,
+        statistics: true
+      }
+    }),
+    getCookieHeader: () => '',
+    observeDispatch: async observation => {
+      order.push('browser_dispatch')
+      observations.push(observation)
+    },
+    send: async () => {
+      order.push('collector_send')
+    }
+  })
+  const event = pageView(
+    undefined,
+    undefined,
+    undefined,
+    edgeRequestId
+  )
+
+  assert.equal(
+    await transport.queue(event, { edgeRequestId, token }),
+    'sent'
+  )
+  await new Promise<void>(resolve => setImmediate(resolve))
+
+  assert.deepEqual(order, ['browser_dispatch', 'collector_send'])
+  assert.deepEqual(observations, [
+    {
+      correlation_token: token,
+      edge_request_id: edgeRequestId,
+      event_id: event.event_id,
+      event_name: 'page_view',
+      page_view_id: event.page_view_id
+    }
+  ])
+})
+
+test('collector send continues when browser receipt fails', async () => {
+  let sends = 0
+  const edgeRequestId = '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
+  const transport = createPageViewCollectorTransport({
+    getCookiebot: () => ({
+      hasResponse: true,
+      consent: {
+        marketing: false,
+        preferences: false,
+        statistics: true
+      }
+    }),
+    getCookieHeader: () => '',
+    observeDispatch: async () => {
+      throw new Error('receipt unavailable')
+    },
+    send: async () => {
+      sends += 1
+    }
+  })
+
+  assert.equal(
+    await transport.queue(
+      pageView(undefined, undefined, undefined, edgeRequestId),
+      {
+        edgeRequestId,
+        token:
+          '1754029200.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq'
+      }
+    ),
+    'sent'
+  )
+  assert.equal(sends, 1)
 })
 
 test('retries a failed page_view on a later flush', async () => {

@@ -493,10 +493,14 @@ The application proxy creates an opaque UUID for each document
 request, logs only that UUID, forwards it in
 `x-utekos-edge-request-id`, and exposes it to the browser through
 the `utekos_edge` Server-Timing entry. A separate
-`utekos_edge_auth` entry carries a 30-minute HMAC token bound to
-that UUID. The token authorizes only the terminal consent
-observation and is never stored. The proxy does not log the
-incoming URL, query or token.
+`utekos_edge_auth` entry carries an HMAC token bound to that
+UUID. The browser fallback cookie expires after 30 minutes, while
+the already-loaded document token verifies for up to 24 hours so
+a backgrounded in-app browser can still report late consent and
+the PageView dispatch receipt. The token authorizes only these
+bounded observability writes and is never stored in the
+warehouse. The proxy does not log the incoming URL, query or
+token.
 
 The signed Vercel Log Drain receiver is the pre-consent source of
 truth for HTTP status, route, deployment, cache, region and
@@ -526,6 +530,23 @@ valid. One UUID is immutable to one `page_view_id` and accepts at
 most four terminal state writes. Pending consent is deliberately
 not persisted as a guessed decision. A denied decision does not
 create a canonical collector event.
+
+Only the initial document navigation may use the edge
+correlation. Later SPA navigations do not fall back to the
+document correlation cookie, so their PageViews cannot be
+attributed to the original Meta landing request.
+
+After a permitted consent purpose exists, the browser starts a
+separate signed PageView dispatch-receipt request before starting
+the canonical collector request. The receipt has three bounded
+attempts and never blocks the collector. The collector captures
+its receipt time before canonical validation, then schedules the
+privacy-bounded database write with Next.js `after`, outside the
+response path. The read model selects one landing PageView
+identity per edge request and requires the browser receipt,
+collector receipt and canonical ledger row to share the exact
+`event_id` and `page_view_id`. Receipt timestamps are server
+observation times; they do not prove strict network ordering.
 
 ## Attribution and breakdowns
 

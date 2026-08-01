@@ -111,9 +111,12 @@ export function PageViewObserver({
       searchParams.get('impression_id') ??
       searchParams.get('impressionId') ??
       undefined
-    const edgeRequestId = readBrowserLandingEdgeRequestId(
+    const landingCorrelation = readBrowserLandingEdgeCorrelation(
       navigation.pageUrl
     )
+    const edgeRequestId =
+      landingCorrelation?.edgeRequestId ??
+      readBrowserLandingEdgeRequestId(navigation.pageUrl)
 
     const event = createCanonicalPageView({
       environment,
@@ -144,7 +147,10 @@ export function PageViewObserver({
     })
 
     emitCanonicalPageView(event)
-    void browserPageViewCollectorTransport.queue(event)
+    void browserPageViewCollectorTransport.queue(
+      event,
+      landingCorrelation
+    )
   }, [environment, pathname, search])
 
   return null

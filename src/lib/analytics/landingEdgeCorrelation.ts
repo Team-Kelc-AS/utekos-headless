@@ -15,6 +15,33 @@ type NavigationTimingLike = {
   serverTiming: readonly ServerTimingEntryLike[]
 }
 
+function isMatchingDocumentNavigation(
+  currentUrl: string,
+  entry: NavigationTimingLike
+) {
+  try {
+    const entryUrl = new URL(entry.name)
+    const current = new URL(currentUrl)
+
+    return (
+      entryUrl.origin === current.origin &&
+      entryUrl.pathname === current.pathname &&
+      entryUrl.search === current.search
+    )
+  } catch {
+    return false
+  }
+}
+
+function findDocumentNavigation(
+  currentUrl: string,
+  navigationEntries: readonly NavigationTimingLike[]
+) {
+  return navigationEntries.find(entry =>
+    isMatchingDocumentNavigation(currentUrl, entry)
+  )
+}
+
 function isUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
     value
@@ -31,9 +58,7 @@ function readCorrelationCookie(
   const value = cookieHeader
     .split(';')
     .map(cookie => cookie.trim())
-    .find(cookie =>
-      cookie.startsWith(`${cookieName}=`)
-    )
+    .find(cookie => cookie.startsWith(`${cookieName}=`))
     ?.slice(cookieName.length + 1)
 
   if (!value) return undefined
@@ -77,19 +102,10 @@ export function readLandingEdgeRequestId(
   currentUrl: string,
   navigationEntries: readonly NavigationTimingLike[]
 ) {
-  const navigation = navigationEntries.find(entry => {
-    try {
-      const entryUrl = new URL(entry.name)
-      const current = new URL(currentUrl)
-
-      return (
-        entryUrl.origin === current.origin &&
-        entryUrl.pathname === current.pathname
-      )
-    } catch {
-      return false
-    }
-  })
+  const navigation = findDocumentNavigation(
+    currentUrl,
+    navigationEntries
+  )
   const edgeTiming = navigation?.serverTiming.find(
     entry => entry.name === LANDING_EDGE_SERVER_TIMING_NAME
   )
@@ -108,19 +124,10 @@ export function readLandingEdgeCorrelation(
   )
   if (!edgeRequestId) return undefined
 
-  const navigation = navigationEntries.find(entry => {
-    try {
-      const entryUrl = new URL(entry.name)
-      const current = new URL(currentUrl)
-
-      return (
-        entryUrl.origin === current.origin &&
-        entryUrl.pathname === current.pathname
-      )
-    } catch {
-      return false
-    }
-  })
+  const navigation = findDocumentNavigation(
+    currentUrl,
+    navigationEntries
+  )
   const token = navigation?.serverTiming
     .find(
       entry =>
@@ -140,14 +147,21 @@ export function readBrowserLandingEdgeRequestId(
 ) {
   if (typeof performance === 'undefined') return undefined
 
+  const navigationEntries = performance.getEntriesByType(
+    'navigation'
+  ) as unknown as PerformanceNavigationTiming[]
   const timingRequestId = readLandingEdgeRequestId(
     currentUrl,
-    performance.getEntriesByType(
-      'navigation'
-    ) as unknown as PerformanceNavigationTiming[]
+    navigationEntries
   )
 
   if (timingRequestId) return timingRequestId
+  if (
+    navigationEntries.length > 0 &&
+    !findDocumentNavigation(currentUrl, navigationEntries)
+  ) {
+    return undefined
+  }
   if (typeof document === 'undefined') return undefined
 
   return readLandingEdgeCorrelationCookie(document.cookie)
@@ -159,14 +173,21 @@ export function readBrowserLandingEdgeCorrelation(
 ) {
   if (typeof performance === 'undefined') return undefined
 
+  const navigationEntries = performance.getEntriesByType(
+    'navigation'
+  ) as unknown as PerformanceNavigationTiming[]
   const timingCorrelation = readLandingEdgeCorrelation(
     currentUrl,
-    performance.getEntriesByType(
-      'navigation'
-    ) as unknown as PerformanceNavigationTiming[]
+    navigationEntries
   )
 
   if (timingCorrelation) return timingCorrelation
+  if (
+    navigationEntries.length > 0 &&
+    !findDocumentNavigation(currentUrl, navigationEntries)
+  ) {
+    return undefined
+  }
   if (typeof document === 'undefined') return undefined
 
   return readLandingEdgeCorrelationCookie(document.cookie)

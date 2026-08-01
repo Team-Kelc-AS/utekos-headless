@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import type { CanonicalPageViewStore } from './acceptCanonicalPageView'
 import { handleCanonicalPageViewRequest } from './handleCanonicalPageViewRequest'
+import type { PageViewFunnelObservationIdentity } from './pageViewFunnelObservationStore'
 
 const endpoint = 'https://utekos.no/api/events/page-view'
 const insertedAcceptance = {
@@ -45,7 +46,7 @@ function request(
     body,
     headers: {
       'content-type': 'application/json',
-      origin: 'https://utekos.no',
+      'origin': 'https://utekos.no',
       ...headers
     },
     method: 'POST'
@@ -54,7 +55,10 @@ function request(
 
 function dependencies(
   accept: CanonicalPageViewStore['accept'] = async () =>
-    insertedAcceptance
+    insertedAcceptance,
+  scheduleCollectorReceipt?: (
+    identity: PageViewFunnelObservationIdentity
+  ) => void
 ) {
   return {
     getRequestContext: () => ({
@@ -62,6 +66,9 @@ function dependencies(
       countryCode: 'NO',
       userAgent: 'test-agent'
     }),
+    ...(scheduleCollectorReceipt ?
+      { scheduleCollectorReceipt }
+    : {}),
     store: { accept }
   }
 }
@@ -75,7 +82,10 @@ test('rejects a request from another origin', async () => {
   )
 
   assert.equal(response.status, 403)
-  assert.match(response.headers.get('cache-control') ?? '', /no-store/)
+  assert.match(
+    response.headers.get('cache-control') ?? '',
+    /no-store/
+  )
 })
 
 test('requires a JSON media type', async () => {
@@ -137,6 +147,77 @@ test('returns accepted after atomic persistence', async () => {
   })
 })
 
+test('schedules collector receipt before canonical acceptance', async () => {
+  const order: string[] = []
+  const receipts: PageViewFunnelObservationIdentity[] = []
+  const payload = {
+    ...pageView(),
+    edge_request_id: '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
+  }
+  const response = await handleCanonicalPageViewRequest(
+    request(JSON.stringify(payload)),
+    dependencies(
+      async () => {
+        order.push('canonical_acceptance')
+        return insertedAcceptance
+      },
+      identity => {
+        order.push('collector_receipt')
+        receipts.push(identity)
+      }
+    )
+  )
+
+  assert.equal(response.status, 202)
+  assert.deepEqual(order, [
+    'collector_receipt',
+    'canonical_acceptance'
+  ])
+  assert.match(
+    receipts[0]?.observedAt ?? '',
+    /^\d{4}-\d{2}-\d{2}T/u
+  )
+  assert.deepEqual(receipts, [
+    {
+      edgeRequestId: payload.edge_request_id,
+      eventId: payload.event_id,
+      observedAt: receipts[0]?.observedAt,
+      pageViewId: payload.page_view_id
+    }
+  ])
+})
+
+test('collector acceptance continues when receipt scheduling fails', async () => {
+  let accepts = 0
+  const originalWarn = console.warn
+  console.warn = () => undefined
+
+  try {
+    const response = await handleCanonicalPageViewRequest(
+      request(
+        JSON.stringify({
+          ...pageView(),
+          edge_request_id: '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
+        })
+      ),
+      dependencies(
+        async () => {
+          accepts += 1
+          return insertedAcceptance
+        },
+        () => {
+          throw new Error('receipt scheduler unavailable')
+        }
+      )
+    )
+
+    assert.equal(response.status, 202)
+    assert.equal(accepts, 1)
+  } finally {
+    console.warn = originalWarn
+  }
+})
+
 test('redacts PageView queries from logs without changing the persisted payload', async () => {
   const pageUrl =
     'https://utekos.no/skreddersy-varmen?fbclid=AbC-123&utm_source=facebook#bestill'
@@ -150,7 +231,9 @@ test('redacts PageView queries from logs without changing the persisted payload'
 
   try {
     const response = await handleCanonicalPageViewRequest(
-      request(JSON.stringify({ ...pageView(), page_url: pageUrl })),
+      request(
+        JSON.stringify({ ...pageView(), page_url: pageUrl })
+      ),
       dependencies(async input => {
         persistedPageUrl = input.event.page_url
         return insertedAcceptance
@@ -165,8 +248,14 @@ test('redacts PageView queries from logs without changing the persisted payload'
   assert.equal(persistedPageUrl, pageUrl)
 
   const serializedLogs = JSON.stringify(logCalls)
-  assert.match(serializedLogs, /https:\/\/utekos\.no\/skreddersy-varmen/)
-  assert.doesNotMatch(serializedLogs, /fbclid|utm_source|bestill/)
+  assert.match(
+    serializedLogs,
+    /https:\/\/utekos\.no\/skreddersy-varmen/
+  )
+  assert.doesNotMatch(
+    serializedLogs,
+    /fbclid|utm_source|bestill/
+  )
 })
 
 test('returns an idempotent duplicate response', async () => {

@@ -1,7 +1,9 @@
 import { geolocation, ipAddress } from '@vercel/functions'
+import { after } from 'next/server'
 import { handleCanonicalPageViewRequest } from '@/lib/analytics/server/handleCanonicalPageViewRequest'
 import { handleCanonicalPageViewRoute } from '@/lib/analytics/server/handleCanonicalPageViewRoute'
 import { postgresCanonicalPageViewStore } from '@/lib/analytics/server/postgresCanonicalPageViewStore'
+import { postgresPageViewFunnelObservationStore } from '@/lib/analytics/server/postgresPageViewFunnelObservationStore'
 
 export const maxDuration = 60
 
@@ -31,6 +33,23 @@ export function POST(request: Request) {
             requestUrl: requestWithContext.url,
             ...(userAgent ? { userAgent } : {})
           }
+        },
+        scheduleCollectorReceipt: identity => {
+          after(async () => {
+            try {
+              await postgresPageViewFunnelObservationStore.recordCollectorReceipt(
+                identity
+              )
+            } catch {
+              console.warn(
+                '[tracking] page_view collector receipt observation failed',
+                {
+                  event_id: identity.eventId,
+                  page_view_id: identity.pageViewId
+                }
+              )
+            }
+          })
         },
         store: postgresCanonicalPageViewStore
       })

@@ -73,6 +73,46 @@ test('rejects malformed ids and an unrelated navigation resource', () => {
   )
 })
 
+test('does not correlate an SPA route to the original document navigation', () => {
+  const navigation = [
+    {
+      name: 'https://utekos.no/skreddersy-varmen',
+      serverTiming: [
+        {
+          description: '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd',
+          name: 'utekos_edge'
+        },
+        {
+          description: correlationToken,
+          name: 'utekos_edge_auth'
+        }
+      ]
+    }
+  ]
+
+  assert.equal(
+    readLandingEdgeRequestId(
+      'https://utekos.no/comfyrobe',
+      navigation
+    ),
+    undefined
+  )
+  assert.equal(
+    readLandingEdgeCorrelation(
+      'https://utekos.no/comfyrobe',
+      navigation
+    ),
+    undefined
+  )
+  assert.equal(
+    readLandingEdgeCorrelation(
+      'https://utekos.no/skreddersy-varmen?variant=ny',
+      navigation
+    ),
+    undefined
+  )
+})
+
 test('requires a well-formed authentication token for consent correlation', () => {
   assert.equal(
     readLandingEdgeCorrelation(
