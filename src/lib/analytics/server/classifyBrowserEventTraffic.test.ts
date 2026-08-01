@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict'
 import { createHmac } from 'node:crypto'
 import test from 'node:test'
-import { createLandingEdgeCorrelationToken } from '../landingEdgeCorrelationToken'
+import {
+  createLandingEdgeCorrelationToken,
+  LANDING_EDGE_CORRELATION_TOKEN_MAX_AGE_SECONDS
+} from '../landingEdgeCorrelationToken'
 import { LANDING_SYNTHETIC_CORRELATION_COOKIE_NAME } from '../landingEdgeCorrelation'
 import {
   classifyBrowserEventTraffic,
@@ -131,7 +134,10 @@ test('does not trust an expired synthetic correlation cookie', async () => {
     '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
   const token = await createLandingEdgeCorrelationToken({
     edgeRequestId,
-    issuedAtSeconds: nowSeconds - 30 * 60 - 1,
+    issuedAtSeconds:
+      nowSeconds -
+      LANDING_EDGE_CORRELATION_TOKEN_MAX_AGE_SECONDS -
+      1,
     secret
   })
   let botChecks = 0

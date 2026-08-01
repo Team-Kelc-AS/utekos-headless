@@ -31,14 +31,20 @@ const SENTRY_DSN =
 
 initBotId({
   protect: [
-    { method: 'POST', path: '/api/events/*' },
     {
       method: 'POST',
-      path: '/api/observability/landing-consent'
+      path: '/api/events/*',
+      advancedOptions: { checkLevel: 'basic' }
     },
     {
       method: 'POST',
-      path: '/api/observability/page-view-dispatch'
+      path: '/api/observability/landing-consent',
+      advancedOptions: { checkLevel: 'basic' }
+    },
+    {
+      method: 'POST',
+      path: '/api/observability/page-view-dispatch',
+      advancedOptions: { checkLevel: 'basic' }
     }
   ]
 })
