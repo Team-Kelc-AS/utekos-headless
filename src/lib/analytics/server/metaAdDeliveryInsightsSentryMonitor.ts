@@ -16,7 +16,7 @@ const defaultDependencies: MetaAdDeliveryInsightsSentryMonitorDependencies = {
   flush: Sentry.flush
 }
 
-export const META_AD_DELIVERY_INSIGHTS_CRON_SCHEDULE = '17 5 * * *'
+export const META_AD_DELIVERY_INSIGHTS_CRON_SCHEDULE = '17 10 * * *'
 
 const monitorSlug = 'utekos-meta-ad-delivery-insights'
 

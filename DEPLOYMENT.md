@@ -430,8 +430,9 @@ not a trend.
 
 This release restores read-only Meta ad-delivery aggregates and
 adds privacy-bounded request, consent and provider-stage
-correlation. The new `/api/cron/meta-ad-delivery-insights` route
-runs at `17 5 * * *` UTC and writes five independent daily ad
+correlation. The `/api/cron/meta-ad-delivery-insights` route runs at
+`17 10 * * *` UTC, after midnight in the Meta account's
+`America/Los_Angeles` timezone, and writes five independent daily ad
 grains to `marketing.meta_ad_delivery_insights`. It refetches the
 seven most recent completed dates in the live Meta account
 timezone; the current partial account day is excluded. Required

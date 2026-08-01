@@ -35,7 +35,7 @@ test('schedules provider dispatch, quality, and delivery reconciliation', () => 
     },
     {
       path: '/api/cron/meta-ad-delivery-insights',
-      schedule: '17 5 * * *'
+      schedule: '17 10 * * *'
     }
   ])
 })

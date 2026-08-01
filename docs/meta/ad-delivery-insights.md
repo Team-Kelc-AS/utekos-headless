@@ -6,7 +6,7 @@ Implementation and production contract verified on 2026-08-01 against Meta Marke
 `v25.0` field semantics, the live Utekos ad-account read surface, the vendored
 official Meta Node SDK `25.0.3`, current Next.js 16.2 route-handler guidance,
 current Vercel cron authorization behavior, and current Supabase RLS/Data API
-guidance. The approved production migration, application deployment, two
+guidance. The approved production migration, application deployment, three
 authorized same-window syncs, and database readback are complete. The next
 scheduled execution and external Sentry check-in remain unobserved.
 
@@ -76,13 +76,24 @@ therefore remained red on the click-ID threshold while the click-to-edge metric
 remained unavailable.
 
 Sentry SDK flushing is application evidence that the queued alert was handed
-off before the cron response. It is not external Sentry issue or notification
-finality: the available read token still receives HTTP 403 from the Issues
-endpoint. The separate Sentry cron monitor
+off before the cron response. The correct existing `SENTRY_ACCESS_TOKEN`
+returned HTTP 200 from the official project Issues API and exposed the
+unresolved `meta_edge_click_id_coverage_below_98_percent` issue with ten
+occurrences from 14:45 through 20:45 UTC. This proves external issue ingestion,
+not email or mobile-notification delivery. The separate Sentry cron monitor
 `utekos-meta-ad-delivery-insights` is currently `disabled` with no environment
 check-ins. An attempted activation was rejected by Sentry because the account
 lacked pay-as-you-go capacity for the required seat, so activating that monitor
 remains a billing/capacity decision rather than an application-code defect.
+
+The third authorized sync at 21:22:59 UTC returned HTTP 200 and refreshed the
+same complete 437-row window for 2026-07-25 through 2026-07-31: 23 overall,
+52 publisher, 185 placement, 65 device-platform and 112 impression-device
+rows. Creative-destination observation was refreshed in the same run. The
+previous `17 5 * * *` UTC schedule occurred at 22:17 on the preceding Meta
+account date and therefore introduced a one-account-day lag. The release
+schedule is `17 10 * * *` UTC, after midnight in Los Angeles in both standard
+and daylight-saving time.
 
 The later edge audit preserved but reclassified five controlled Utekos probes
 as non-human test traffic after proving they had zero consent, canonical
@@ -159,7 +170,7 @@ unavailable provider data into apparent performance.
 Before marking the release active:
 
 1. Apply the migration through the approved Supabase deployment gate.
-2. Deploy the app and confirm the new Vercel cron at `17 5 * * *` UTC.
+2. Deploy the app and confirm the Vercel cron at `17 10 * * *` UTC.
 3. Confirm unauthenticated access returns `401` and `Cache-Control: no-store`.
 4. Run one authorized sync and verify all five grains for the seven-day window.
 5. Confirm retries update the unique rows rather than inserting duplicates.

@@ -39,11 +39,13 @@ click-ID-threshold result while click-to-edge remains unavailable.
 
 The provider-health route now calls `Sentry.flush(1500)` before returning an
 unhealthy response and fails visibly if flushing returns false. Production
-returned `alert_delivery_flushed=true`. This proves SDK queue flushing, not an
-externally visible Sentry issue or notification: the available read token
-receives HTTP 403 from the Issues endpoint. The separate Insights cron monitor
-is still disabled because Sentry rejected activation for insufficient
-pay-as-you-go seat capacity.
+returned `alert_delivery_flushed=true`. The correct existing
+`SENTRY_ACCESS_TOKEN` returned HTTP 200 from Sentry's official project Issues
+API and exposed the unresolved click-ID-coverage issue with ten occurrences
+from 14:45 through 20:45 UTC. This proves SDK flushing and external issue
+ingestion, not email or mobile-notification delivery. The separate Insights
+cron monitor is still disabled because Sentry rejected activation for
+insufficient pay-as-you-go seat capacity.
 
 A subsequent bounded audit identified five of the six no-`fbclid` rows as
 controlled Utekos probes from their exact timestamps, routes, marketing
