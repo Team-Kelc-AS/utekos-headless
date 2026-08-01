@@ -79,6 +79,19 @@ unavailable.
 
 ## Production verification
 
+The complete current release is Vercel deployment
+`dpl_5mgNh6toa3fVtuNV8Dx3Wg5o2NHn` from commit
+`d35fe5d6eff6b0ba164bcae29b47d11ec2e11460`. It is `READY` and owns
+`utekos.no`, `www.utekos.no` and `feed.utekos.no`. The release preserves
+`src/components/analytics/VercelTelemetry.tsx` at SHA-256
+`1aec7e5c586a29baa55e4bc7e191317e309a201ca85e3f8246d32b81c9499938`;
+both Vercel telemetry scripts returned HTTP 200 after promotion.
+Fresh browser documents for all three Meta landing routes and the product route
+returned HTTP 200 with complete DOM and heading, no application console errors,
+no runtime exceptions and no duplicate KPSDK configuration. `window.va` and
+`window.si` were initialized, but the pass did not capture the telemetry script
+nodes or requests, so actual per-route telemetry delivery remains unproven.
+
 The follow-up provider-health release was promoted as Vercel deployment
 `dpl_CTUfdAuSz5mJRS1Uce1gFs2G77xg` from commit
 `ad92bda52565bfb6e1b772379fe81afc4f4977a0`. It did not change creative

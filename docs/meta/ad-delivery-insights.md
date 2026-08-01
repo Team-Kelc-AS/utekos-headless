@@ -7,8 +7,9 @@ Implementation and production contract verified on 2026-08-01 against Meta Marke
 official Meta Node SDK `25.0.3`, current Next.js 16.2 route-handler guidance,
 current Vercel cron authorization behavior, and current Supabase RLS/Data API
 guidance. The approved production migration, application deployment, three
-authorized same-window syncs, and database readback are complete. The next
-scheduled execution and external Sentry check-in remain unobserved.
+authorized same-window syncs, and database readback are complete. External
+Sentry issue ingestion is proven. The first scheduled execution after the
+10:17 UTC cutover remains unobserved.
 
 Primary Meta sources:
 
@@ -104,6 +105,25 @@ no dead letters and `healthy=true`. The only remaining no-`fbclid` observation
 is a physical iOS landing with denied consent and no dispatch; Insights cannot
 prove whether its missing click ID originated at Meta, an upstream redirect or
 in-app navigation.
+
+The complete late-consent and schedule release is Vercel deployment
+`dpl_5mgNh6toa3fVtuNV8Dx3Wg5o2NHn` from commit
+`d35fe5d6eff6b0ba164bcae29b47d11ec2e11460`. It became `READY` at
+2026-08-01T21:34:17.493Z and owns all three production aliases. Vercel reports
+the Insights job enabled at `17 10 * * *` with no undeployed or modified jobs.
+The first possible scheduled invocation after this promotion is
+2026-08-02T10:17:00Z; an unauthenticated `401` after promotion proves only the
+authorization gate. The production tracking-gateway smoke returned GTM and
+sGTM HTTP 200, `Cache-Control: no-store` on sGTM health, and no Vercel cache
+hit. A bounded post-release log window contained no scoped route errors or
+deployment 5xx responses. Fresh browser documents for `/skreddersy-varmen`,
+`/comfyrobe`, `/skreddersy-varmen/utekos-orginal` and
+`/produkter/utekos-dun` returned HTTP 200 with complete DOM and heading, no
+application console errors, no runtime exceptions and no duplicate KPSDK
+configuration. The two Vercel telemetry endpoints returned HTTP 200 and the
+page initialized `window.va` and `window.si`, but the capture did not observe
+the script nodes or requests. Actual per-route telemetry delivery therefore
+remains partial evidence rather than a completed runtime proof.
 
 ## Purpose and boundaries
 
