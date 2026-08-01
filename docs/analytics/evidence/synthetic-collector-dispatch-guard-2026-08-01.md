@@ -62,5 +62,26 @@ overview](https://vercel.com/docs/botid).
 - Targeted ESLint: passed.
 - TypeScript `tsc --noEmit`: passed.
 - The BotID loader patch behavior test passed for both ESM and CJS.
-- Production deployment and a new provider smoke were not performed
-  in this work unit.
+- Vercel production deployment
+  `dpl_9DiA1WQgtNj6XYh5d7keRWy1Wfkv` completed and was aliased to
+  `utekos.no`. Its cloud build compiled, typechecked and generated all
+  134 static pages.
+- The encrypted synthetic signing secret is configured for Vercel
+  Production and Preview. It was generated and passed directly to
+  Vercel without being printed or written to a repository file.
+- A production signed-document canary returned HTTP 200 and the
+  synthetic-correlation cookie. The following protected PageView
+  request returned HTTP 204, `synthetic`, and `no-store`.
+- Warehouse verification found one edge row, one trace row and zero
+  consent, ledger or provider rows for that canary. The two
+  observations were deleted after verification.
+- A consent-denied production browser reload completed with the
+  expected title and H1, one BotID `p.js` resource at HTTP 200, KPSDK
+  present, Cookiebot explicit, and one Klarna API resource. Sentry had
+  zero KPSDK issues seen since the deployment.
+- All active product handles and the three active Meta destinations
+  returned HTTP 200. Both HTTP/`www` redirect chains preserved the
+  synthetic `fbclid` and UTM values. The production GTM/sGTM smoke
+  returned HTTP 200, `no-store`, and no Vercel cache hit.
+- Vercel reported zero error-level log rows for the deployment during
+  the completion window.
