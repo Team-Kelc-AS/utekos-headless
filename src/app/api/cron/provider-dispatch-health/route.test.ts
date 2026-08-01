@@ -40,6 +40,9 @@ const healthyResult = {
 
 test('rejects health cron requests without the configured secret', async () => {
   const dependencies: ProviderDispatchHealthCronDependencies = {
+    flush: async () => {
+      throw new Error('must not flush')
+    },
     getCronSecret: () => 'correct-secret',
     runHealthCheck: async () => {
       throw new Error('must not run')
@@ -57,6 +60,9 @@ test('rejects health cron requests without the configured secret', async () => {
 
 test('returns only aggregate, PII-free health results', async () => {
   const dependencies: ProviderDispatchHealthCronDependencies = {
+    flush: async () => {
+      throw new Error('must not flush healthy result')
+    },
     getCronSecret: () => 'correct-secret',
     runHealthCheck: async () => healthyResult
   }
@@ -69,6 +75,7 @@ test('returns only aggregate, PII-free health results', async () => {
   assert.equal(response.status, 200)
   assert.deepEqual(await response.json(), {
     ack_sample_size: 3,
+    alert_delivery_flushed: null,
     click_to_edge_baseline_day_count: 7,
     click_to_edge_baseline_rate: 0.7,
     click_to_edge_current_click_id_count: 65,
@@ -93,4 +100,52 @@ test('returns only aggregate, PII-free health results', async () => {
     ok: true,
     p95_ack_latency_ms: 1_500
   })
+})
+
+test('flushes captured alerts before returning an unhealthy result', async () => {
+  const flushTimeouts: number[] = []
+  const dependencies: ProviderDispatchHealthCronDependencies = {
+    flush: async timeout => {
+      flushTimeouts.push(timeout ?? 0)
+      return true
+    },
+    getCronSecret: () => 'correct-secret',
+    runHealthCheck: async () => ({
+      ...healthyResult,
+      edgeMetaClickIdCoverage: 0.93,
+      healthy: false
+    })
+  }
+
+  const response = await handleProviderDispatchHealthCron(
+    request('Bearer correct-secret'),
+    dependencies
+  )
+
+  assert.equal(response.status, 200)
+  assert.deepEqual(flushTimeouts, [1_500])
+  assert.equal(
+    (await response.json()).alert_delivery_flushed,
+    true
+  )
+})
+
+test('fails visibly when an unhealthy alert cannot be flushed', async () => {
+  const dependencies: ProviderDispatchHealthCronDependencies = {
+    flush: async () => false,
+    getCronSecret: () => 'correct-secret',
+    runHealthCheck: async () => ({
+      ...healthyResult,
+      edgeMetaClickIdCoverage: 0.93,
+      healthy: false
+    })
+  }
+
+  await assert.rejects(
+    handleProviderDispatchHealthCron(
+      request('Bearer correct-secret'),
+      dependencies
+    ),
+    /alert flush timed out/i
+  )
 })

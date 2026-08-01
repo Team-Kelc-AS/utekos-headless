@@ -265,6 +265,7 @@ const META_CLICK_TO_EDGE_QUERY = `
   current_day as (
     select *
     from daily_rates
+    where edge_documents > 0
     order by insight_date desc
     limit 1
   ),

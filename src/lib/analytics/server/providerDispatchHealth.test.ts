@@ -172,5 +172,7 @@ test('does not alert merely because no low-volume event occurred', async () => {
   })
 
   assert.equal(result.healthy, true)
+  assert.equal(result.clickToEdgeCurrentDate, null)
+  assert.equal(result.clickToEdgeRate, null)
   assert.deepEqual(messages, [])
 })

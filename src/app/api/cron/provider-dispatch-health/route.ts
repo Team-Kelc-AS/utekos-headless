@@ -6,12 +6,14 @@ import { runProviderDispatchHealthCheck } from '@/lib/analytics/server/providerD
 export const maxDuration = 60
 
 export type ProviderDispatchHealthCronDependencies = {
+  flush: typeof Sentry.flush
   getCronSecret: () => string | undefined
   runHealthCheck: typeof runProviderDispatchHealthCheck
 }
 
 const defaultDependencies: ProviderDispatchHealthCronDependencies =
   {
+    flush: Sentry.flush,
     getCronSecret: () => process.env.CRON_SECRET,
     runHealthCheck: dependencies =>
       runProviderDispatchHealthCheck(dependencies)
@@ -37,10 +39,16 @@ export async function handleProviderDispatchHealthCron(
     captureMessage: Sentry.captureMessage,
     store: postgresProviderDispatchHealthStore
   })
+  const alertDeliveryFlushed =
+    result.healthy ? null : await dependencies.flush(1_500)
+  if (alertDeliveryFlushed === false) {
+    throw new Error('Sentry provider-health alert flush timed out')
+  }
 
   return Response.json(
     {
       ack_sample_size: result.ackSampleSize,
+      alert_delivery_flushed: alertDeliveryFlushed,
       click_to_edge_baseline_day_count:
         result.clickToEdgeBaselineDayCount,
       click_to_edge_baseline_rate:
