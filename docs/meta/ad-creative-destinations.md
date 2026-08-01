@@ -79,6 +79,16 @@ unavailable.
 
 ## Production verification
 
+The follow-up provider-health release was promoted as Vercel deployment
+`dpl_CTUfdAuSz5mJRS1Uce1gFs2G77xg` from commit
+`ad92bda52565bfb6e1b772379fe81afc4f4977a0`. It did not change creative
+collection. The production build generated 134 of 134 pages, and browser
+verification returned HTTP 200 for the three configured landing routes and a
+product route without console warnings or errors. The release preserved
+`src/components/analytics/VercelTelemetry.tsx` at SHA-256
+`1aec7e5c586a29baa55e4bc7e191317e309a201ca85e3f8246d32b81c9499938`;
+both mounted Vercel telemetry scripts returned HTTP 200.
+
 The clean `codex/meta-click-to-landing` commit
 `cbfa60f6f946bf2290a08f6a5f3ee848939289c7` was built as Vercel
 deployment `dpl_2byUaVfETVh1fTFyEkrDdZtTC7BH` and promoted to

@@ -496,6 +496,34 @@ deployment attributes are present. The upstream source of those fully unscoped
 resources remains open. No GTM publish or Meta write mutation was part of this
 release.
 
+The provider-health follow-up was deployed from clean isolated branch commit
+`ad92bda52565bfb6e1b772379fe81afc4f4977a0` as Vercel deployment
+`dpl_CTUfdAuSz5mJRS1Uce1gFs2G77xg` and promoted to `utekos.no`. The build
+generated 134 of 134 pages. Fresh browser reads returned HTTP 200 for
+`/skreddersy-varmen`, `/comfyrobe`, `/skreddersy-varmen/utekos-orginal` and
+`/produkter/utekos-dun`, with no captured console warnings or errors. The
+release makes a missing overlapping click-to-edge day explicit as `NULL`,
+flushes an unhealthy Sentry alert before responding, and preserves
+`src/components/analytics/VercelTelemetry.tsx` at SHA-256
+`1aec7e5c586a29baa55e4bc7e191317e309a201ca85e3f8246d32b81c9499938`.
+The first authorized production health read reported 100-percent
+`fbc | fbclid`, 100-percent Meta API acceptance, 95.71-percent edge Meta
+click-ID coverage, no dead letters and `alert_delivery_flushed=true`.
+API acceptance remains `accepted_unverified`, and a successful SDK flush is
+not external Sentry issue or notification finality.
+
+Trace Drain v4 diagnostics classify the remaining HTTP 400 responses. In the
+stable post-v4 window 2026-08-01 15:58–20:00 UTC, 5,408
+`invalid_trace_scope` warnings represented 8,116 invalid resources and 27,470
+rejected spans. Every invalid resource had `service.name`; none had either
+required Vercel project/deployment scope key, and none had
+`scope.name=vercel`. The receiver therefore rejects a fully unscoped resource
+deliberately. Separate invocation logs recorded 3,915 HTTP 200, 5,323 HTTP 400
+and 81 HTTP 503 responses. No custom `database write failed` function log was
+present, so the 503 responses cannot be assigned conclusively to the
+receiver's database catch. These aggregates prove receiver classification,
+not why the upstream Vercel exporter emits the unscoped resources.
+
 Application deployment `dpl_H8fmEoav8QH15VxbBjiroYwbC4X9` is `READY` on
 commit `599013fb5d2e1cc841093170a5a30ee6fdfc2cab` and owns `utekos.no`,
 `www.utekos.no` and `feed.utekos.no`. It preserves the already-live anonymous

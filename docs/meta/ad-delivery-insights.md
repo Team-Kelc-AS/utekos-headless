@@ -6,9 +6,9 @@ Implementation and production contract verified on 2026-08-01 against Meta Marke
 `v25.0` field semantics, the live Utekos ad-account read surface, the vendored
 official Meta Node SDK `25.0.3`, current Next.js 16.2 route-handler guidance,
 current Vercel cron authorization behavior, and current Supabase RLS/Data API
-guidance. The approved production migration, deployment, one authorized sync,
-and database readback are complete. The next scheduled execution and external
-Sentry check-in remain unobserved.
+guidance. The approved production migration, application deployment, two
+authorized same-window syncs, and database readback are complete. The next
+scheduled execution and external Sentry check-in remain unobserved.
 
 Primary Meta sources:
 
@@ -54,6 +54,35 @@ Creative destinations belong to the separate
 slowly changing snapshot. A temporal join can prove observed configuration,
 but not the exact destination Meta delivered for an individual impression or
 click.
+
+The follow-up application deployment
+`dpl_CTUfdAuSz5mJRS1Uce1gFs2G77xg` is `READY` on commit
+`ad92bda52565bfb6e1b772379fe81afc4f4977a0` and owns `utekos.no`.
+It changes provider-health availability and Sentry alert flushing; it does not
+change the Meta Insights request or storage contract. The production build
+generated 134 of 134 pages. Browser verification returned HTTP 200 documents
+for `/skreddersy-varmen`, `/comfyrobe`,
+`/skreddersy-varmen/utekos-orginal` and a product route with no captured
+console warnings or errors. Vercel returned no error-level or 5xx logs in the
+release window.
+
+The first post-release provider-health read correctly returned `NULL` for the
+click-to-edge current date and rate because the newest completed Meta account
+date still does not overlap the post-Drain edge window. It must not be plotted
+as zero. The same read reported 100-percent `fbc | fbclid`, 100-percent Meta API
+acceptance, 95.71-percent edge Meta click-ID coverage across 140 qualifying
+landings, no dead letters, and `alert_delivery_flushed=true`. The health result
+therefore remained red on the click-ID threshold while the click-to-edge metric
+remained unavailable.
+
+Sentry SDK flushing is application evidence that the queued alert was handed
+off before the cron response. It is not external Sentry issue or notification
+finality: the available read token still receives HTTP 403 from the Issues
+endpoint. The separate Sentry cron monitor
+`utekos-meta-ad-delivery-insights` is currently `disabled` with no environment
+check-ins. An attempted activation was rejected by Sentry because the account
+lacked pay-as-you-go capacity for the required seat, so activating that monitor
+remains a billing/capacity decision rather than an application-code defect.
 
 ## Purpose and boundaries
 

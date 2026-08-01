@@ -10,6 +10,41 @@ No GTM publish or Meta write mutation was performed.
 
 ## Production release evidence
 
+The latest follow-up application deployment is
+`dpl_CTUfdAuSz5mJRS1Uce1gFs2G77xg`, built from clean branch commit
+`ad92bda52565bfb6e1b772379fe81afc4f4977a0` and promoted to
+`utekos.no` on 2026-08-01. It preserves
+`src/components/analytics/VercelTelemetry.tsx` at SHA-256
+`1aec7e5c586a29baa55e4bc7e191317e309a201ca85e3f8246d32b81c9499938`.
+The Vercel production build generated 134 of 134 pages. A fresh in-app-browser
+read returned HTTP 200 documents for `/skreddersy-varmen`, `/comfyrobe`,
+`/skreddersy-varmen/utekos-orginal` and `/produkter/utekos-dun`, with no
+captured console warnings or errors. The rendered root included
+`@vercel/analytics/next` 2.0.1 and `@vercel/speed-insights/next` 2.0.0;
+both first-party scripts and the Analytics `/view` request returned HTTP 200.
+The production sGTM/GTM smoke was green, and Vercel returned no error-level or
+5xx request logs in the release window.
+
+The same release makes click-to-edge availability fail explicit: the daily
+store selects a current comparison day only when at least one edge document
+exists. The first post-release health read therefore returned `NULL` for
+`click_to_edge_current_date`, `click_to_edge_rate` and
+`click_to_edge_success_rate`, rather than the former misleading zero based on
+99 provider clicks and no overlapping edge day. The read reported 191
+PageViews with `fbclid`, 100-percent `fbc | fbclid`, 100-percent Meta API
+acceptance across 71 eligible attempts, 95.71-percent edge Meta click-ID
+coverage across 140 landings, p95 collector ACK latency 5,997 ms, no missing
+provider attempts and no dead letters. `healthy=false` is therefore a real
+click-ID-threshold result while click-to-edge remains unavailable.
+
+The provider-health route now calls `Sentry.flush(1500)` before returning an
+unhealthy response and fails visibly if flushing returns false. Production
+returned `alert_delivery_flushed=true`. This proves SDK queue flushing, not an
+externally visible Sentry issue or notification: the available read token
+receives HTTP 403 from the Issues endpoint. The separate Insights cron monitor
+is still disabled because Sentry rejected activation for insufficient
+pay-as-you-go seat capacity.
+
 The final application deployment is
 `dpl_CqHhnFYQMn5PjYFWNeq3g9g84faN`, built from commit
 `f3cb219ebe9b5280bfee1b2849e2ad3cfa28daec` and active on
@@ -57,11 +92,9 @@ was redeployed after each change.
 The click-to-edge baseline is intentionally unavailable at release:
 the Drain began on 2026-08-01 while the newest completed Insights
 date was 2026-07-31, so zero prior days satisfy the three-day
-baseline contract. `healthy=true` from provider health must not be
-read as a green click-to-edge result while that metric is
-unavailable. Meta API acceptance was 100 percent across 58 eligible
-attempts, but those receipts remain `accepted_unverified` and do not
-prove provider finality.
+baseline contract. Provider health now exposes the metric as `NULL` rather
+than allowing it to influence the health result as a false zero. Meta API
+acceptance remains `accepted_unverified` and does not prove provider finality.
 
 Remaining release evidence is deliberately open. Physical Facebook
 and Instagram in-app browser runs have now been performed on iOS;
@@ -130,6 +163,22 @@ receiver persists those observations and returns HTTP 200 with
 continue to work. The upstream reason Vercel emits fully unscoped
 resources remains unknown, but their receiver response is now
 classified and deliberately fail-closed.
+
+Trace Drain v4 adds a second-level classification without storing attribute
+values. In the stable post-v4 window 2026-08-01 15:58–20:00 UTC, function
+console logs contained 5,408 `invalid_trace_scope` warnings representing
+8,116 invalid resources and 27,470 rejected spans. All 8,116 resources had
+`service.name`, while none had a Vercel project scope key, a Vercel deployment
+scope key or `scope.name=vercel`. There were no invalid spans, timestamps,
+trace conflicts or project mismatches in this invalid set. A separate 339
+`partial_trace_scope` warnings represented mixed batches whose valid
+observations were retained with HTTP 200 partial success. Invocation logs for
+the same window recorded 3,915 HTTP 200, 5,323 HTTP 400 and 81 HTTP 503
+responses. No custom `database write failed` function message was present, so
+the 503 responses cannot be attributed conclusively to the handler's database
+catch. Function console logs and invocation logs are asynchronously ingested;
+the aggregates are classification evidence, not a one-to-one warning/request
+join or proof of why Vercel emits these unscoped resources.
 
 The same production release also closes the synthetic-browser
 propagation gap. `UTEKOS_SYNTHETIC_TRAFFIC_SECRET` is encrypted in
