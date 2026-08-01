@@ -2,238 +2,285 @@
 
 Status date: 2026-08-01
 
-Release state: active in production. The application, two
-Supabase migrations, two signed Edge Function receivers, the
-dedicated Vercel environment secret, and project-scoped 100-percent
-Log and Trace Drains were released and verified on 2026-08-01.
-No GTM publish or Meta write mutation was performed.
+Release state: the implementation is active in production. The
+application, two Supabase migrations, two signed Edge Function
+receivers, the dedicated Vercel environment secret and
+project-scoped 100-percent Log and Trace Drains were released and
+verified on 2026-08-01. The physical Meta in-app-browser matrix,
+the first scheduled post-cutover Insights run and the
+overlapping-day baseline remain incomplete. No GTM publish or
+Meta write mutation was performed.
 
 ## Production release evidence
 
-The latest follow-up application deployment is
-`dpl_CTUfdAuSz5mJRS1Uce1gFs2G77xg`, built from clean branch commit
-`ad92bda52565bfb6e1b772379fe81afc4f4977a0` and promoted to
-`utekos.no` on 2026-08-01. It preserves
-`src/components/analytics/VercelTelemetry.tsx` at SHA-256
+The current application deployment is
+`dpl_5mgNh6toa3fVtuNV8Dx3Wg5o2NHn`, built from clean branch
+commit `d35fe5d6eff6b0ba164bcae29b47d11ec2e11460`, `READY` at
+2026-08-01T21:34:17.493Z and promoted to all three production
+aliases. It includes the late-consent repair, the BotID
+concurrency patch and the 10:17 UTC Insights schedule. It
+preserves `src/components/analytics/VercelTelemetry.tsx` at
+SHA-256
 `1aec7e5c586a29baa55e4bc7e191317e309a201ca85e3f8246d32b81c9499938`.
-The Vercel production build generated 134 of 134 pages. A fresh in-app-browser
-read returned HTTP 200 documents for `/skreddersy-varmen`, `/comfyrobe`,
-`/skreddersy-varmen/utekos-orginal` and `/produkter/utekos-dun`, with no
-captured console warnings or errors. The rendered root included
-`@vercel/analytics/next` 2.0.1 and `@vercel/speed-insights/next` 2.0.0;
-both first-party scripts and the Analytics `/view` request returned HTTP 200.
-The production sGTM/GTM smoke was green, and Vercel returned no error-level or
-5xx request logs in the release window.
+The Vercel production build generated 134 of 134 pages. A fresh
+browser read returned HTTP 200 documents for
+`/skreddersy-varmen`, `/comfyrobe`,
+`/skreddersy-varmen/utekos-orginal` and `/produkter/utekos-dun`,
+with no application console errors, runtime exceptions or
+duplicate KPSDK configuration. A CDP capture identified the
+deployment-generated base paths, both injected script nodes,
+`@vercel/analytics/next` 2.0.1 and `@vercel/speed-insights/next`
+2.0.0. Both first-party scripts and Analytics `/view` returned
+HTTP 200 on `/skreddersy-varmen` and `/comfyrobe`; a separate
+Speed Insights `vitals` submission was not observed in the short
+sample. The production sGTM/GTM smoke was green, and Vercel
+returned no error-level or 5xx request logs in the release
+window.
 
-The same release makes click-to-edge availability fail explicit: the daily
-store selects a current comparison day only when at least one edge document
-exists. The first post-release health read therefore returned `NULL` for
-`click_to_edge_current_date`, `click_to_edge_rate` and
-`click_to_edge_success_rate`, rather than the former misleading zero based on
-99 provider clicks and no overlapping edge day. The read reported 191
-PageViews with `fbclid`, 100-percent `fbc | fbclid`, 100-percent Meta API
-acceptance across 71 eligible attempts, 95.71-percent edge Meta click-ID
-coverage across 140 landings, p95 collector ACK latency 5,997 ms, no missing
-provider attempts and no dead letters. `healthy=false` is therefore a real
-click-ID-threshold result while click-to-edge remains unavailable.
+The same release makes click-to-edge availability fail explicit:
+the daily store selects a current comparison day only when at
+least one edge document exists. The latest health read therefore
+returned `NULL` for `click_to_edge_current_date`,
+`click_to_edge_rate` and `click_to_edge_success_rate`, rather
+than a misleading zero while the newest completed Insights date
+still does not overlap the edge window. After the bounded
+controlled-traffic reclassification, the same read reported 138
+of 139 qualifying landings with `fbclid` (99.28 percent),
+100-percent `fbc | fbclid`, 100-percent Meta API acceptance, no
+dead letters and `healthy=true`.
 
-The provider-health route now calls `Sentry.flush(1500)` before returning an
-unhealthy response and fails visibly if flushing returns false. Production
-returned `alert_delivery_flushed=true`. The correct existing
-`SENTRY_ACCESS_TOKEN` returned HTTP 200 from Sentry's official project Issues
-API and exposed the unresolved click-ID-coverage issue with ten occurrences
-from 14:45 through 20:45 UTC. This proves SDK flushing and external issue
-ingestion, not email or mobile-notification delivery. The separate Insights
-cron monitor is still disabled because Sentry rejected activation for
-insufficient pay-as-you-go seat capacity.
+The provider-health route now calls `Sentry.flush(1500)` before
+returning an unhealthy response and fails visibly if flushing
+returns false. Production returned `alert_delivery_flushed=true`.
+The correct existing `SENTRY_ACCESS_TOKEN` returned HTTP 200 from
+Sentry's official project Issues API and exposed the unresolved
+click-ID-coverage issue with ten occurrences from 14:45 through
+20:45 UTC. This proves SDK flushing and external issue ingestion,
+not email or mobile-notification delivery. The separate Insights
+cron monitor is still disabled because Sentry rejected activation
+for insufficient pay-as-you-go seat capacity.
 
-A subsequent bounded audit identified five of the six no-`fbclid` rows as
-controlled Utekos probes from their exact timestamps, routes, marketing
-parameters and surrounding Vercel runtime activity. A fail-closed precheck
-found five edge observations and zero consent observations, canonical ledger
-events or provider attempts. The rows were retained as audit evidence and
-reclassified as two `synthetic_client` and three `browser_automation`
-observations. The authorized production health read then reported 138 of 139
-qualifying human-or-unknown Meta landings with `fbclid` (99.28 percent),
-100-percent `fbc | fbclid`, 100-percent Meta API acceptance, no dead letters
-and `healthy=true`. The remaining no-`fbclid` row is a physical iOS landing on
-`/skreddersy-varmen` with an active-ad signal, explicit denied consent, no
-canonical PageView and no provider dispatch. It remains human-or-unknown and
-must not be attributed more narrowly from the available evidence.
-
-The final application deployment is
-`dpl_CqHhnFYQMn5PjYFWNeq3g9g84faN`, built from commit
-`f3cb219ebe9b5280bfee1b2849e2ad3cfa28daec` and active on
-`utekos.no`. Later commits `3bf6b9580` and `94d0a4aaf` changed only
-the Log Drain Edge Function and documentation; the Edge Function
-was redeployed after each change.
+A subsequent bounded audit identified five of the six no-`fbclid`
+rows as controlled Utekos probes from their exact timestamps,
+routes, marketing parameters and surrounding Vercel runtime
+activity. A fail-closed precheck found five edge observations and
+zero consent observations, canonical ledger events or provider
+attempts. The rows were retained as audit evidence and
+reclassified as two `synthetic_client` and three
+`browser_automation` observations. The authorized production
+health read then reported 138 of 139 qualifying human-or-unknown
+Meta landings with `fbclid` (99.28 percent), 100-percent
+`fbc | fbclid`, 100-percent Meta API acceptance, no dead letters
+and `healthy=true`. The remaining no-`fbclid` row is a physical
+iOS landing on `/skreddersy-varmen` with an active-ad signal,
+explicit denied consent, no canonical PageView and no provider
+dispatch. It remains human-or-unknown and must not be attributed
+more narrowly from the available evidence.
 
 - Supabase migrations `20260801062712` and `20260801062912` are
   applied to pink-lens. The landing, consent, trace and Meta
   delivery tables have deny-by-default RLS, bounded grants and
   active retention jobs.
-- Vercel Log Drain `drn_oje49nFh1Hj93CZO` is enabled for all seven
-  production log sources with no sampling. Trace Drain
+- Vercel Log Drain `drn_oje49nFh1Hj93CZO` is enabled for all
+  seven production log sources with no sampling. Trace Drain
   `drn_J0LeFWHHSeHpo5Bb` is enabled as OTLP/HTTP JSON with head
   sampling `1`.
 - A signed production canary proved that the UUIDv5 derived from
-  the application's final `x-vercel-id` segment exactly matched the
-  Log Drain `requestId`; the same row joined to the Vercel trace.
-  The synthetic rows were deleted after verification.
-- In the final 30-minute verification window, the receivers stored
-  221 edge observations and 531 trace observations; 200 edge rows
-  joined to a stored trace. This is receiver and correlation
+  the application's final `x-vercel-id` segment exactly matched
+  the Log Drain `requestId`; the same row joined to the Vercel
+  trace. The synthetic rows were deleted after verification.
+- Trace Drain Edge Function version 8 is active with
+  transaction-pooler port 6543 and prepared statements disabled.
+  From 21:13 through 21:36 UTC it returned 202 scoped HTTP 200,
+  257 deliberate unscoped HTTP 400 and zero HTTP 503, without
+  `database_write_failed`. This is receiver and persistence
   evidence, not proof of browser completion.
 - Vercel reported no runtime-error cluster for
-  `/skreddersy-varmen`, `/comfyrobe` and the selected active product
-  routes in the final 30-minute window. The final deployment had
-  successful HTTP 200 observations for `/skreddersy-varmen` and
-  `/produkter/utekos-stapper`. Routes without a request in that
-  bounded window are not inferred healthy from absence alone.
+  `/skreddersy-varmen`, `/comfyrobe` and the selected active
+  product routes in the final 30-minute window. The final
+  deployment had successful HTTP 200 observations for
+  `/skreddersy-varmen` and `/produkter/utekos-stapper`. Routes
+  without a request in that bounded window are not inferred
+  healthy from absence alone.
 - Controlled same-site navigation and `_rsc` canaries produced no
   landing rows after drain delivery. Controlled campaigns are
   classified as synthetic; verified bots, recognized automation
   and signed synthetic collector traffic are excluded before
   marketing dispatch.
-- The Meta sync returned HTTP 200 and stored 437 rows for all five
-  independent grains over 2026-07-25 through 2026-07-31 in
+- The Meta sync returned HTTP 200 and stored 437 rows for all
+  five independent grains over 2026-07-25 through 2026-07-31 in
   `America/Los_Angeles`. There were no duplicate keys or metric
   availability violations.
-- The current 24-hour health read found 120 consented PageViews with
-  `fbclid` and 100-percent `fbc | fbclid` coverage. Seven strong
-  Meta-signal edge landings also had 100-percent click-ID coverage.
-  No human-or-unknown landing with a numeric Meta ad signal or
-  Meta UTM source lacked `fbclid` in that bounded read.
+- The current qualifying edge read found 138 of 139
+  human-or-unknown Meta landings with `fbclid` and 100-percent
+  `fbc | fbclid` coverage. The one remaining no-`fbclid`
+  observation had denied consent, no canonical PageView and no
+  provider dispatch.
 
-The click-to-edge baseline is intentionally unavailable at release:
-the Drain began on 2026-08-01 while the newest completed Insights
-date was 2026-07-31, so zero prior days satisfy the three-day
-baseline contract. Provider health now exposes the metric as `NULL` rather
-than allowing it to influence the health result as a false zero. Meta API
-acceptance remains `accepted_unverified` and does not prove provider finality.
+The click-to-edge baseline is intentionally unavailable at
+release: the Drain began on 2026-08-01 while the newest completed
+Insights date was 2026-07-31, so zero prior days satisfy the
+three-day baseline contract. Provider health now exposes the
+metric as `NULL` rather than allowing it to influence the health
+result as a false zero. Meta API acceptance remains
+`accepted_unverified` and does not prove provider finality.
+Vercel lists the Insights cron enabled at `17 10 * * *` UTC with
+no undeployed or modified jobs. Because the current deployment
+became ready at 21:34 UTC, the first possible scheduled execution
+is 2026-08-02T10:17:00Z. The observed post-release `401` proves
+only the unauthenticated gate; scheduler execution and the
+corresponding database refresh remain open until that time.
 
-Remaining release evidence is deliberately open. Physical Facebook
-and Instagram in-app browser runs have now been performed on iOS;
-Android remains untested on a physical or approved device-cloud
-browser. Chromium user-agent probes passed, including redirect query
-preservation, but do not close the Android gate. The controlled
+Remaining release evidence is deliberately open. Physical iOS
+evidence is partial. Facebook and Instagram in-app browser runs
+have been performed, but they do not yet form a complete
+two-app-by-three-route matrix. Android remains untested as a
+complete, controlled physical or approved device-cloud matrix.
+Production observation contains human-or-unknown Android IAB
+traffic on `/skreddersy-varmen`: seven Facebook landings reached
+edge and consent, four continued to canonical PageView and
+`accepted_unverified`, while one Instagram Android landing
+reached edge and consent without PageView or dispatch. There is
+no Android evidence for `/comfyrobe` or
+`/skreddersy-varmen/utekos-orginal`. Those observational rows do
+not replace the controlled two-app-by-three-route Android gate.
+Chromium user-agent probes passed, including redirect query
+preservation, but also do not close that gate. The controlled
 browser displayed the Cookiebot widget and exactly one GTM-owned
-`uc.js` URL with `implementation=gtm`. A follow-up in the page's main
-JavaScript world verified the Cookiebot API object, `hasResponse=true`,
-explicit granted consent for every category, and working widget
-open/close methods. The earlier `undefined` observation came from an
-isolated evaluation world and is not Cookiebot runtime evidence.
+`uc.js` URL with `implementation=gtm`. A follow-up in the page's
+main JavaScript world verified the Cookiebot API object,
+`hasResponse=true`, explicit granted consent for every category,
+and working widget open/close methods. The earlier `undefined`
+observation came from an isolated evaluation world and is not
+Cookiebot runtime evidence.
 
-The physical Instagram iOS run covered the profile landing, internal
-navigation to `/skreddersy-varmen` and `/comfyrobe`, and a direct-message
-landing on `/skreddersy-varmen/utekos-orginal`. The direct-message link
-also produced separate Instagram preview-bot requests; those requests
-created no canonical PageView or provider dispatch. The physical
-Facebook iOS run proved a direct organic profile landing with denied
-consent, no PageView and no dispatch, followed by granted consent and
-a PageView only after refresh. A later Facebook navigation to
-`/skreddersy-varmen` retained prior browser identifiers but lacked a
-deterministic PageView-to-edge join, while a simultaneous paid landing
-had different privacy-safe identifiers and was therefore excluded from
-the tester's chain. This is physical in-app-browser evidence, but it is
-not an ad-click proof for the tester.
+The physical Instagram iOS run covered the profile landing,
+internal navigation to `/skreddersy-varmen` and `/comfyrobe`, and
+a direct-message landing on `/skreddersy-varmen/utekos-orginal`.
+The direct-message link also produced separate Instagram
+preview-bot requests; those requests created no canonical
+PageView or provider dispatch. The physical Facebook iOS run
+proved a direct organic profile landing with denied consent, no
+PageView and no dispatch, followed by granted consent and a
+PageView only after refresh. A later Facebook navigation to
+`/skreddersy-varmen` retained prior browser identifiers but
+lacked a deterministic PageView-to-edge join, while a
+simultaneous paid landing had different privacy-safe identifiers
+and was therefore excluded from the tester's chain. This is
+physical in-app-browser evidence, but it is not an ad-click proof
+for the tester.
 
-The missing PageView after a denied-to-granted transition was traced to
-the browser transport clearing its pending PageView on explicit denial.
-Production deployment `dpl_H8fmEoav8QH15VxbBjiroYwbC4X9` retains at most the
-latest/current PageView while
-denied and flushes it on Cookiebot consent events. Multiple denied SPA
-navigations do not replay historical pages, and existing event-id,
-in-flight and completed-event guards keep the late flush idempotent.
-The implementation has 50 green related unit tests plus green lint,
-type generation and TypeScript checks. It must still be re-proved in the
-physical Facebook browser without a manual refresh after consent is granted.
+The open physical gates are the current-production Facebook
+late-consent flow without refresh, Facebook coverage of
+`/comfyrobe` and `/skreddersy-varmen/utekos-orginal`, and all
+three required destinations in both Facebook and Instagram on
+physical or approved device-cloud Android.
 
-The repeated `KPSDK has already been configured` client message on
-`/skreddersy-varmen` is Vercel BotID/Kasada, not Klarna. The BotID
-1.5.11 `client/core` loader used a `loaded` boolean without sharing an
-in-flight Promise, so simultaneous protected startup requests could
-register multiple `kpsdk-load` handlers and call `KPSDK.configure`
-more than once after a single `p.js` response. The production release
-patches both the ESM and CJS `client/core` exports to share one pending
-load and to remove a failed `p.js` element before a later retry. Its
-focused behavior test proves three concurrent calls share one
-configure and completion, and that three callers can jointly retry
-after a failed first script load. Deployment
-`dpl_9DiA1WQgtNj6XYh5d7keRWy1Wfkv` completed successfully, and a fresh
-production browser navigation loaded one BotID `p.js` response with
-HTTP 200 and exposed one configured KPSDK runtime. Sentry reported no
-KPSDK issue with `lastSeen` at or after the deployment. Klarna's own
-SDK loaded once, completed once and rendered the Express Checkout
-control; no payment authorization or order was attempted, so this is
-integration rendering evidence rather than payment proof. Vercel
-showed no corresponding server runtime error. The Trace Drain receiver
-was upgraded to version 3 with
-PII-free rejection counters and OTLP partial-success handling. Live
-warnings classified the remaining HTTP 400 responses as fully
-unscoped batches whose resources lacked both documented Vercel
-project and deployment attributes and contained no valid observation.
-Mixed batches no longer discard correctly scoped observations: the
+The missing PageView after a denied-to-granted transition was
+traced to the browser transport clearing its pending PageView on
+explicit denial. Current production deployment
+`dpl_5mgNh6toa3fVtuNV8Dx3Wg5o2NHn` retains at most the
+latest/current PageView while denied and flushes it on Cookiebot
+consent events. Multiple denied SPA navigations do not replay
+historical pages, and existing event-id, in-flight and
+completed-event guards keep the late flush idempotent. The
+implementation has 50 green related unit tests plus green lint,
+type generation and TypeScript checks. It must still be re-proved
+in the physical Facebook browser without a manual refresh after
+consent is granted.
+
+The repeated `KPSDK has already been configured` client message
+on `/skreddersy-varmen` is Vercel BotID/Kasada, not Klarna. The
+BotID 1.5.11 `client/core` loader used a `loaded` boolean without
+sharing an in-flight Promise, so simultaneous protected startup
+requests could register multiple `kpsdk-load` handlers and call
+`KPSDK.configure` more than once after a single `p.js` response.
+The current production release patches both the ESM and CJS
+`client/core` exports to share one pending load and to remove a
+failed `p.js` element before a later retry. Its focused behavior
+test proves three concurrent calls share one configure and
+completion, and that three callers can jointly retry after a
+failed first script load. A fresh browser pass against deployment
+`dpl_5mgNh6toa3fVtuNV8Dx3Wg5o2NHn` loaded one BotID `c.js` and
+one `p.js` response with HTTP 200 on each of the four routes,
+with no duplicate KPSDK configuration or corresponding Vercel
+runtime error. Klarna's own SDK loaded once, completed once and
+rendered the Express Checkout control; no payment authorization
+or order was attempted, so this is integration rendering evidence
+rather than payment proof. Vercel showed no corresponding server
+runtime error. Trace Drain version 8 retains PII-free rejection
+counters and OTLP partial-success handling. Live warnings
+classified the remaining HTTP 400 responses as fully unscoped
+batches whose resources lacked both documented Vercel project and
+deployment attributes and contained no valid observation. Mixed
+batches no longer discard correctly scoped observations: the
 receiver persists those observations and returns HTTP 200 with
-`partialSuccess.rejectedSpans`. Valid OTLP deliveries and trace joins
-continue to work. The upstream reason Vercel emits fully unscoped
-resources remains unknown, but their receiver response is now
-classified and deliberately fail-closed.
+`partialSuccess.rejectedSpans`. Valid OTLP deliveries and trace
+joins continue to work. The upstream reason Vercel emits fully
+unscoped resources remains unknown, but their receiver response
+is now classified and deliberately fail-closed.
 
-Trace Drain v4 adds a second-level classification without storing attribute
-values. In the stable post-v4 window 2026-08-01 15:58–20:00 UTC, function
-console logs contained 5,408 `invalid_trace_scope` warnings representing
-8,116 invalid resources and 27,470 rejected spans. All 8,116 resources had
-`service.name`, while none had a Vercel project scope key, a Vercel deployment
-scope key or `scope.name=vercel`. There were no invalid spans, timestamps,
-trace conflicts or project mismatches in this invalid set. A separate 339
-`partial_trace_scope` warnings represented mixed batches whose valid
-observations were retained with HTTP 200 partial success. Invocation logs for
-the same window initially recorded 3,915 HTTP 200 and 5,323 HTTP 400. A full
-Log Explorer query corrected the 503 sample to 83 app-level responses. All 83
-used the handler's sole 503 path and occurred in the same three minutes as 270
-Postgres FATAL records, all SQLSTATE `53300` (`too_many_connections`). There
-were no boot, timeout, resource-limit or Edge Function rate-limit signals.
-This proves connection exhaustion as the supported trigger for the database
-catch, while the v4 log cannot join the SQLSTATE to each request individually.
-Function console logs and invocation logs are asynchronously ingested; the
-aggregates are not a one-to-one warning/request join and do not explain why
+Trace Drain v4 adds a second-level classification without storing
+attribute values. In the stable post-v4 window 2026-08-01
+15:58–20:00 UTC, function console logs contained 5,408
+`invalid_trace_scope` warnings representing 8,116 invalid
+resources and 27,470 rejected spans. All 8,116 resources had
+`service.name`, while none had a Vercel project scope key, a
+Vercel deployment scope key or `scope.name=vercel`. There were no
+invalid spans, timestamps, trace conflicts or project mismatches
+in this invalid set. A separate 339 `partial_trace_scope`
+warnings represented mixed batches whose valid observations were
+retained with HTTP 200 partial success. Invocation logs for the
+same window initially recorded 3,915 HTTP 200 and 5,323 HTTP 400.
+A full Log Explorer query corrected the 503 sample to 83
+app-level responses. All 83 used the handler's sole 503 path and
+occurred in the same three minutes as 270 Postgres FATAL records,
+all SQLSTATE `53300` (`too_many_connections`). There were no
+boot, timeout, resource-limit or Edge Function rate-limit
+signals. This proves connection exhaustion as the supported
+trigger for the database catch, while the v4 log cannot join the
+SQLSTATE to each request individually. Function console logs and
+invocation logs are asynchronously ingested; the aggregates are
+not a one-to-one warning/request join and do not explain why
 Vercel emits the separate unscoped resources.
 
-Supabase's current connection guidance identifies the default Edge Function
-`SUPABASE_DB_URL` as direct and recommends transaction-mode pooling on port
-6543 for edge/serverless clients. Trace Drain therefore requires a separate
-`VERCEL_TRACE_DRAIN_DATABASE_URL`, validates the 6543 port and keeps
-`prepare:false`. The v6 pooler cutover exposed a second issue rather than
-closing the gate: all scoped v6 deliveries returned HTTP 503, with no HTTP 200.
-The same `postgres@3.4.9` driver reproduced SQLSTATE `28P01` against the
-existing local pooler URL, while the canonical direct URL and an in-memory
-pooler URL rebuilt with the canonical password both passed `select 1`. The
-dedicated production secret was replaced from that validated value without
-printing or writing it.
+Supabase's current connection guidance identifies the default
+Edge Function `SUPABASE_DB_URL` as direct and recommends
+transaction-mode pooling on port 6543 for edge/serverless
+clients. Trace Drain therefore requires a separate
+`VERCEL_TRACE_DRAIN_DATABASE_URL`, validates the 6543 port and
+keeps `prepare:false`. The v6 pooler cutover exposed a second
+issue rather than closing the gate: all scoped v6 deliveries
+returned HTTP 503, with no HTTP 200. The same `postgres@3.4.9`
+driver reproduced SQLSTATE `28P01` against the existing local
+pooler URL, while the canonical direct URL and an in-memory
+pooler URL rebuilt with the canonical password both passed
+`select 1`. The dedicated production secret was replaced from
+that validated value without printing or writing it.
 
 Version 8 is active with bundle hash
-`d37aae6f781d5995d68aa1ddbb32ee14c913eaaeb023a8deaac936aad5b729b8`. Its
-bounded nested classifier distinguishes authentication, connection, TLS,
-permission, schema and connection-exhaustion families without logging raw
-SQLSTATE, message, SQL, host, stack or connection URL. In the first production
-window through 21:15 UTC, v8 returned twelve scoped HTTP 200, seventeen
-deliberate unscoped HTTP 400 and zero HTTP 503. It inserted 38 trace rows across
-the production deployment after cutover. The same post-cutover window had zero
-Postgres ERROR/FATAL/PANIC and zero connection-exhaustion records. The scoped
-database-write gate is therefore production-proven; the upstream unscoped
-resources remain separately classified and rejected fail-closed.
+`d37aae6f781d5995d68aa1ddbb32ee14c913eaaeb023a8deaac936aad5b729b8`.
+Its bounded nested classifier distinguishes authentication,
+connection, TLS, permission, schema and connection-exhaustion
+families without logging raw SQLSTATE, message, SQL, host, stack
+or connection URL. In the stable production window from 21:13
+through 21:36 UTC, v8 returned 202 scoped HTTP 200, 257
+deliberate unscoped HTTP 400 and zero HTTP 503, without
+`database_write_failed`. The scoped database-write gate is
+therefore production-proven; the upstream unscoped resources
+remain separately classified and rejected fail-closed.
 
 The same production release also closes the synthetic-browser
-propagation gap. `UTEKOS_SYNTHETIC_TRAFFIC_SECRET` is encrypted in
-Vercel Production and Preview. A signed document canary returned HTTP
-200 and a separate server-signed synthetic correlation cookie; its
-protected PageView collector returned HTTP 204 with classification
-`synthetic` and `Cache-Control: no-store`. The warehouse recorded one
-edge row and one trace row, with zero consent, ledger and provider
-rows. Those two canary observations were then deleted. This proves
-exclusion before marketing persistence and dispatch without treating
-UTM text as a trusted synthetic signal.
+propagation gap. `UTEKOS_SYNTHETIC_TRAFFIC_SECRET` is encrypted
+in Vercel Production and Preview. A signed document canary
+returned HTTP 200 and a separate server-signed synthetic
+correlation cookie; its protected PageView collector returned
+HTTP 204 with classification `synthetic` and
+`Cache-Control: no-store`. The warehouse recorded one edge row
+and one trace row, with zero consent, ledger and provider rows.
+Those two canary observations were then deleted. This proves
+exclusion before marketing persistence and dispatch without
+treating UTM text as a trusted synthetic signal.
 
 ## Metric contract
 
@@ -309,10 +356,10 @@ view, which is provider-attribution evidence to investigate
 rather than a mathematically meaningful conversion rate.
 
 The ten PageViews from 2026-07-24 13:34 UTC through 2026-07-27
-15:26 UTC with UTM/ad signal but without `fbclid` and `fbc` shared
-the same bounded pattern: `/skreddersy-varmen`,
-Facebook source, the audited ad identifier in campaign content,
-iPhone Safari/WebKit, mobile, `fbp` present, no referrer, granted
+15:26 UTC with UTM/ad signal but without `fbclid` and `fbc`
+shared the same bounded pattern: `/skreddersy-varmen`, Facebook
+source, the audited ad identifier in campaign content, iPhone
+Safari/WebKit, mobile, `fbp` present, no referrer, granted
 marketing consent, and no bot/headless classification. This
 establishes that the click identifier was absent when the
 canonical PageView arrived; it does not by itself identify
@@ -323,22 +370,26 @@ A separate read-only Graph API v25 investigation closes the
 configuration side of that uncertainty for ad
 `120246491016410788`, including the dates of the ten rows. Meta's
 activity history records a creative change on 2026-07-28 at 13:59
-UTC from creative `4608432669479938` to `2134034140490187`. The old
-creative therefore covers the 2026-07-24 through 2026-07-27 window;
-both old and current creatives have exactly two link URL assets,
-and every asset uses `https://utekos.no/skreddersy-varmen` as
-`website_url`. Every placement customization rule selects one of
-those link assets, and both creatives' `url_tags` include the same
-ad identifier as `hsa_ad`. The historical configured Meta
-destination was consequently the canonical landing page, without
-an upstream Utekos redirect.
+UTC from creative `4608432669479938` to `2134034140490187`. The
+old creative therefore covers the 2026-07-24 through 2026-07-27
+window; both old and current creatives have exactly two link URL
+assets, and every asset uses
+`https://utekos.no/skreddersy-varmen` as `website_url`. Every
+placement customization rule selects one of those link assets,
+and both creatives' `url_tags` include the same ad identifier as
+`hsa_ad`. The historical configured Meta destination was
+consequently the canonical landing page, without an upstream
+Utekos redirect.
 
 This direct creative and activity evidence is separate from
 Insights metrics. It proves configuration history, not the exact
 URL Meta delivered for each impression or click, and it does not
 identify where the ten historical click identifiers were lost. It
 also says nothing about collector acceptance, dispatch acceptance
-or provider finality.
+or provider finality. The Insights table does not contain a
+destination URL. Destination configuration is supported only by
+the separate Graph API creative and activity-history evidence,
+not by Insights rows.
 
 On the 2026-08-01 completion recheck, ad `120246491016410788` had
 effective status `CAMPAIGN_PAUSED`. The configured account's only
@@ -361,12 +412,12 @@ preservation, not Meta in-app browser rendering or a real user's
 completed landing.
 
 The same three final routes rendered to
-`document.readyState='complete'` in the in-app Chromium browser
-with their expected title and H1 and no captured console errors.
-The active Meta creative should nevertheless be updated to
-canonical `https://utekos.no/...` destinations after separate
-provider-write approval, eliminating two avoidable network
-transitions from paid clicks.
+`document.readyState='complete'` in controlled Chromium using
+Meta user-agent profiles with their expected title and H1 and no
+captured console errors. The active Meta creative should
+nevertheless be updated to canonical `https://utekos.no/...`
+destinations after separate provider-write approval, eliminating
+two avoidable network transitions from paid clicks.
 
 ### Vercel route investigation
 
@@ -398,12 +449,24 @@ time. These are small diagnostic samples, not production latency
 distributions; the Trace Drain is needed for a continuous
 server-side distribution.
 
-At 2026-08-01 14:26 UTC, Vercel's grouped runtime-error read returned
-no error clusters during the preceding 24 hours for
+At 2026-08-01 14:26 UTC, Vercel's grouped runtime-error read
+returned no error clusters during the preceding 24 hours for
 `/skreddersy-varmen`, `/comfyrobe` or
 `/skreddersy-varmen/utekos-orginal`. Grouped log counts included
-successful 200/202 responses and some 4xx traffic, but the wide 4xx
-detail query timed out and is not classified as a route failure.
+successful 200/202 responses and some 4xx traffic, but the wide
+4xx detail query timed out and is not classified as a route
+failure.
+
+On 2026-08-01 at 21:36–21:38 UTC, current deployment
+`dpl_5mgNh6toa3fVtuNV8Dx3Wg5o2NHn` returned HTTP 200 for
+`/skreddersy-varmen`, `/comfyrobe`,
+`/skreddersy-varmen/utekos-orginal` and `/produkter/utekos-dun`.
+Controlled-browser documents reached complete state with their
+expected H1, and exact Vercel GET logs returned HTTP 200 for all
+four routes. No scoped 5xx, route runtime error or KPSDK
+duplicate was observed in the bounded window. These successful
+samples do not prove that historical intermittent failures can
+never recur.
 
 Do not compare Meta's broad `fbc` percentage across every event
 with `fbc | fbclid`. The first includes Google, Bing, direct and
@@ -428,8 +491,8 @@ addresses, user agents, raw referrers, arbitrary messages and raw
 `fbclid`. The `fbclid_hmac` uses a required dedicated secret and
 may only be used for equality/deduplication. The read model
 projects only whether a row is the first document observation for
-that digest, so redirects and reloads cannot inflate the
-strong click-ID stratum of the click-to-edge numerator.
+that digest, so redirects and reloads cannot inflate the strong
+click-ID stratum of the click-to-edge numerator.
 
 The signed Vercel Trace Drain receiver stores a bounded
 server-side trace duration keyed by the documented `trace_id`.
@@ -444,12 +507,11 @@ with bounded backoff at most three times for the exact consent
 state; subsequent Cookiebot events cannot make the attempts
 unbounded. States are serialized per edge request and PageView,
 so a newer decision is always sent after any older in-flight
-retry. The server fails closed unless
-the UUID-bound token is valid. One UUID is immutable to one
-`page_view_id` and accepts at most four terminal state writes.
-Pending consent is deliberately not persisted as a guessed
-decision. A denied decision does not create a canonical collector
-event.
+retry. The server fails closed unless the UUID-bound token is
+valid. One UUID is immutable to one `page_view_id` and accepts at
+most four terminal state writes. Pending consent is deliberately
+not persisted as a guessed decision. A denied decision does not
+create a canonical collector event.
 
 ## Attribution and breakdowns
 
@@ -552,6 +614,9 @@ Follow `DEPLOYMENT.md`. The required order is:
 8. Observe at least three complete Meta account days before
    enabling the baseline click-to-edge alert as an operational
    signal.
+
+The current partial iOS matrix, observational Android traffic and
+synthetic Android user-agent probes do not satisfy gate 7.
 
 Production deploys, Supabase mutations, Vercel Drain creation,
 provider secrets and Meta/GTM changes require explicit operator
