@@ -58,8 +58,8 @@ export function readMetaDatasetQualityConfig(
 ): MetaDatasetQualityConfig {
   return {
     accessToken: firstEnvironmentValue(environment, [
-      'META_ACCESS_TOKEN',
-      'META_SYSTEM_USER_TOKEN'
+      'META_SYSTEM_USER_TOKEN',
+      'META_ACCESS_TOKEN'
     ]),
     datasetId: firstEnvironmentValue(environment, [
       'META_PIXEL_ID',

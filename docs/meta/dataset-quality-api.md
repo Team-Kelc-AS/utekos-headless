@@ -27,7 +27,8 @@ production artifact and verification gates.
 
 ## Required Access
 
-- `META_ACCESS_TOKEN` or `META_SYSTEM_USER_TOKEN`
+- `META_SYSTEM_USER_TOKEN` is the preferred Dataset Quality read credential.
+- `META_ACCESS_TOKEN` is a fallback only when the CAPI token also has Dataset Quality read access.
 - `META_PIXEL_ID` or `NEXT_PUBLIC_META_PIXEL_ID`
 - Token must have access to the relevant Dataset/Pixel and Dataset Quality read surface.
 - Writes, campaign edits, creative changes, audience changes, and dataset mutations are forbidden in default diagnostics.

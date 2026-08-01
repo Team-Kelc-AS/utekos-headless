@@ -40,10 +40,21 @@ const qualityResponse = {
 test('reads the preferred Meta Dataset Quality environment values', () => {
   assert.deepEqual(
     readMetaDatasetQualityConfig({
-      META_ACCESS_TOKEN: ' token ',
+      META_ACCESS_TOKEN: ' capi-token ',
+      META_SYSTEM_USER_TOKEN: ' system-user-token ',
       META_PIXEL_ID: ' 123 '
     }),
-    { accessToken: 'token', datasetId: '123' }
+    { accessToken: 'system-user-token', datasetId: '123' }
+  )
+})
+
+test('falls back to the CAPI token for Dataset Quality reads', () => {
+  assert.deepEqual(
+    readMetaDatasetQualityConfig({
+      META_ACCESS_TOKEN: ' capi-token ',
+      NEXT_PUBLIC_META_PIXEL_ID: ' 123 '
+    }),
+    { accessToken: 'capi-token', datasetId: '123' }
   )
 })
 
