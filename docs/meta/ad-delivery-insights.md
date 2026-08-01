@@ -2,12 +2,13 @@
 
 ## Documentation status
 
-Implementation contract verified on 2026-08-01 against Meta Marketing API
+Implementation and production contract verified on 2026-08-01 against Meta Marketing API
 `v25.0` field semantics, the live Utekos ad-account read surface, the vendored
 official Meta Node SDK `25.0.3`, current Next.js 16.2 route-handler guidance,
 current Vercel cron authorization behavior, and current Supabase RLS/Data API
-guidance. Production deployment, migration application, scheduled execution,
-and database readback remain unverified until an approved release.
+guidance. The approved production migration, deployment, one authorized sync,
+and database readback are complete. The next scheduled execution and external
+Sentry check-in remain unobserved.
 
 Primary Meta sources:
 
@@ -22,8 +23,31 @@ the publisher field, so it was not sufficient evidence for raw Graph response
 shape. A direct read-only run through the application Graph client then returned
 187 placement rows for 2026-07-24 through 2026-07-30 with both dimensions
 present in every row. The application still fails validation if either
-dimension is missing. Production scheduled execution and database readback
-remain release gates.
+dimension is missing.
+
+## Production verification 2026-08-01
+
+The production route returned `401` with `Cache-Control: no-store` without
+authorization. One authorized call returned `200`, refetched completed account
+dates 2026-07-25 through 2026-07-31 in `America/Los_Angeles`, and upserted 437
+rows. Readback showed 23 overall, 52 publisher-platform, 185
+publisher-platform-plus-placement, 65 device-platform and 112
+impression-device rows across eight ads. There were zero duplicate unique keys,
+zero ambiguous placement rows and zero availability-semantic violations. The
+retention cron is active.
+
+Ad `120246491016410788` had 98 rows across all five grains. Its overall rows
+for 2026-07-25 through 2026-07-29 reported 46,603 impressions, 1,081 clicks,
+824 link clicks, 824 outbound clicks on dates where that field was available,
+and 507 landing-page views on the same dates: 61.53 percent outbound-to-LPV.
+The 2026-07-29 row reported zero impressions and clicks, one landing-page view,
+and unavailable outbound clicks. It is retained as provider output and treated
+as a possible reporting adjustment, not coerced into a rate.
+
+This table has no destination-URL field, so the Insights readback alone cannot
+prove that the ad landed on `/skreddersy-varmen`. API/storage acceptance,
+Insights visibility, event-dispatch `accepted_unverified`, attribution and
+provider finality remain separate evidence classes.
 
 ## Purpose and boundaries
 

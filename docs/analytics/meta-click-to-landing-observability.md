@@ -2,10 +2,80 @@
 
 Status date: 2026-08-01
 
-Release state: local release candidate only. No application
-deploy, Supabase migration, Edge Function deploy, Vercel Drain,
-environment change, GTM publish or Meta mutation has been
-performed.
+Release state: active in production. The application, two
+Supabase migrations, two signed Edge Function receivers, the
+dedicated Vercel environment secret, and project-scoped 100-percent
+Log and Trace Drains were released and verified on 2026-08-01.
+No GTM publish or Meta write mutation was performed.
+
+## Production release evidence
+
+The final application deployment is
+`dpl_CqHhnFYQMn5PjYFWNeq3g9g84faN`, built from commit
+`f3cb219ebe9b5280bfee1b2849e2ad3cfa28daec` and active on
+`utekos.no`. Later commits `3bf6b9580` and `94d0a4aaf` changed only
+the Log Drain Edge Function and documentation; the Edge Function
+was redeployed after each change.
+
+- Supabase migrations `20260801062712` and `20260801062912` are
+  applied to pink-lens. The landing, consent, trace and Meta
+  delivery tables have deny-by-default RLS, bounded grants and
+  active retention jobs.
+- Vercel Log Drain `drn_oje49nFh1Hj93CZO` is enabled for all seven
+  production log sources with no sampling. Trace Drain
+  `drn_J0LeFWHHSeHpo5Bb` is enabled as OTLP/HTTP JSON with head
+  sampling `1`.
+- A signed production canary proved that the UUIDv5 derived from
+  the application's final `x-vercel-id` segment exactly matched the
+  Log Drain `requestId`; the same row joined to the Vercel trace.
+  The synthetic rows were deleted after verification.
+- In the final 30-minute verification window, the receivers stored
+  221 edge observations and 531 trace observations; 200 edge rows
+  joined to a stored trace. This is receiver and correlation
+  evidence, not proof of browser completion.
+- Vercel reported no runtime-error cluster for
+  `/skreddersy-varmen`, `/comfyrobe` and the selected active product
+  routes in the final 30-minute window. The final deployment had
+  successful HTTP 200 observations for `/skreddersy-varmen` and
+  `/produkter/utekos-stapper`. Routes without a request in that
+  bounded window are not inferred healthy from absence alone.
+- Controlled same-site navigation and `_rsc` canaries produced no
+  landing rows after drain delivery. Controlled campaigns are
+  classified as synthetic; verified bots, recognized automation
+  and signed synthetic collector traffic are excluded before
+  marketing dispatch.
+- The Meta sync returned HTTP 200 and stored 437 rows for all five
+  independent grains over 2026-07-25 through 2026-07-31 in
+  `America/Los_Angeles`. There were no duplicate keys or metric
+  availability violations.
+- The current 24-hour health read found 120 consented PageViews with
+  `fbclid` and 100-percent `fbc | fbclid` coverage. Seven strong
+  Meta-signal edge landings also had 100-percent click-ID coverage.
+  No human-or-unknown landing with a numeric Meta ad signal or
+  Meta UTM source lacked `fbclid` in that bounded read.
+
+The click-to-edge baseline is intentionally unavailable at release:
+the Drain began on 2026-08-01 while the newest completed Insights
+date was 2026-07-31, so zero prior days satisfy the three-day
+baseline contract. `healthy=true` from provider health must not be
+read as a green click-to-edge result while that metric is
+unavailable. Meta API acceptance was 100 percent across 58 eligible
+attempts, but those receipts remain `accepted_unverified` and do not
+prove provider finality.
+
+Remaining release evidence is deliberately open. Physical Facebook
+and Instagram in-app browser runs on iOS and Android have not been
+performed. Chromium user-agent probes passed, including redirect
+query preservation, but do not close that gate. The controlled
+browser displayed the Cookiebot widget and exactly one GTM-owned
+`uc.js` URL with `implementation=gtm`; consent-state interaction was
+inconclusive in that environment. Klarna also emitted repeated
+`KPSDK has already been configured` client errors on
+`/skreddersy-varmen`; Vercel showed no corresponding server runtime
+error. Interleaved Trace Drain HTTP 400 responses remain
+unclassified because the safe receiver logs expose neither the
+response body nor a bounded error class, although valid OTLP
+deliveries continue to return 200.
 
 ## Metric contract
 
@@ -120,7 +190,7 @@ transitions from paid clicks.
 
 ### Vercel route investigation
 
-The active deployment `dpl_e5cmT5y8QLKckXGoTYtm6LsY6yyW` at
+The pre-release deployment `dpl_e5cmT5y8QLKckXGoTYtm6LsY6yyW` at
 commit `aa5415cfa8a969766f5a35b8363fc7c352aa45cc` returned 200
 for both landing pages and every active product handle in Safari,
 Facebook iOS and Instagram Android HTTP probes. Chromium browser

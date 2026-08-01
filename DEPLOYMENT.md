@@ -469,6 +469,24 @@ states. Physical Facebook and Instagram in-app tests on iOS and
 Android remain a post-deploy release gate; Chromium user-agent
 emulation does not close it.
 
+The approved 2026-08-01 production release completed the two pink-lens
+migrations, both signed Supabase Edge Function deployments, the dedicated
+Vercel environment secret, application deployment
+`dpl_CqHhnFYQMn5PjYFWNeq3g9g84faN`, Log Drain
+`drn_oje49nFh1Hj93CZO`, and OTLP/HTTP Trace Drain
+`drn_J0LeFWHHSeHpo5Bb`. Signed canaries proved exact Vercel request-to-edge UUID
+correlation, trace joining, idempotent/sanitized storage and the expected
+same-site/`_rsc` exclusions; the synthetic rows were then removed. The
+authorized Meta sync stored 437 rows for all five grains. Final route checks
+found no runtime-error clusters for the scoped landing/product routes.
+
+The operational click-to-edge alert remains unavailable, rather than green or
+red, until at least three complete post-Drain account days exist. Physical
+iOS/Android Facebook and Instagram in-app browser verification, the controlled
+Cookiebot interaction ambiguity, intermittent unclassified Trace Drain 400s,
+and the Klarna duplicate-configuration client error remain explicitly open.
+No GTM publish or Meta write mutation was part of this release.
+
 ### Local integration audit 2026-07-14
 
 The isolated Git operations, Microsoft Merchant, PostHog SDK, Klarna
