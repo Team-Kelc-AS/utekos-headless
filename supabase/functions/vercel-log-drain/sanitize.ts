@@ -183,9 +183,8 @@ function classifyUserAgent(
 
   const deviceClass: UserAgentClassification['deviceClass'] =
     automationClass === 'known_bot_user_agent' ? 'bot'
-    : /ipad|tablet|android(?!.*mobile)/i.test(userAgent) ?
-      'tablet'
-    : /iphone|ipod|mobile|android/i.test(userAgent) ? 'mobile'
+    : /iphone|ipod|mobile/i.test(userAgent) ? 'mobile'
+    : /ipad|tablet|android/i.test(userAgent) ? 'tablet'
     : /windows|macintosh|x11|linux/i.test(userAgent) ? 'desktop'
     : 'unknown'
 

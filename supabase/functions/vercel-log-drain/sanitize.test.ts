@@ -198,7 +198,7 @@ test('normalizes Instagram Android, redirects and known automation classes', asy
       path: '/comfyrobe',
       statusCode: 307,
       userAgent: [
-        'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 Instagram 390.0.0.0 Android'
+        'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 Mobile Safari/537.36 Instagram 390.0.0.0 Android'
       ]
     },
     source: 'redirect'
@@ -231,6 +231,7 @@ test('normalizes Instagram Android, redirects and known automation classes', asy
     result.observations[0]?.in_app_browser,
     'instagram'
   )
+  assert.equal(result.observations[0]?.device_class, 'mobile')
   assert.equal(result.observations[0]?.os_class, 'android')
   assert.equal(
     result.observations[0]?.observation_type,
