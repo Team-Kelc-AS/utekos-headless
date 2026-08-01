@@ -37,9 +37,15 @@ npm run mcp:tunnel:check
   `http://host.docker.internal:8812/mcp`.
 - Gordon: mapped to `utekos_core_safe` in Docker MCP profile
   config.
-- Cursor, Claude Desktop, Gemini, and VS Code can use generated
-  `mcp.json` / `.vscode/mcp.json` or Docker Desktop client
-  wiring.
+- Cursor uses the generated remote-only `.cursor/mcp.remote.json`
+  profile through `.cursor/mcp.json`. This prevents each editor
+  window from starting the complete local stdio catalog. The full
+  generated catalog remains in `mcp.json` for explicit/on-demand
+  clients. VS Code uses `.vscode/mcp.json`; Docker Desktop
+  clients can use their dedicated wiring.
+- `cursor-runtime.json` keeps remote servers with persistent
+  background failures out of Cursor startup while retaining them
+  in the full generated catalog.
 
 ### Google Developer Knowledge
 

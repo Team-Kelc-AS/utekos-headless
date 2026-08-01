@@ -514,20 +514,16 @@
       "autoApprove": []
     },
     "facebook-ads": {
-      "type": "http",
-      "url": "https://mcp.facebook.com/ads",
-      "auth": {
-        "CLIENT_ID": "${META_APP_ID}",
-        "scopes": [
-          "ads_mcp_management",
-          "ads_read",
-          "ads_management",
-          "catalog_management",
-          "business_management",
-          "pages_show_list",
-          "instagram_basic"
-        ]
-      },
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.1.38",
+        "https://mcp.facebook.com/ads",
+        "--header",
+        "Authorization:Bearer ${META_APP_USER_TOKEN}",
+        "--silent"
+      ],
       "tools": [
         "ads_account_get_activity_logs",
         "ads_activate_entity",
@@ -682,6 +678,13 @@
     "meta-developer-tools": {
       "type": "http",
       "url": "https://mcp.facebook.com/devtools",
+      "auth": {
+        "CLIENT_ID": "${META_DEVTOOLS_MCP_CLIENT_ID}",
+        "scopes": [
+          "developer_tools_mcp_app_read",
+          "developer_tools_mcp_app_management"
+        ]
+      },
       "tools": [
         "devtools_api_changelog",
         "devtools_api_usage",
@@ -1060,6 +1063,27 @@
       "type": "http",
       "url": "https://merchantapi.googleapis.com/devdocs/mcp/"
     },
+    "data-manager-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "scripts/mcp/data-manager-mcp-server.mjs"
+      ],
+      "env": {
+        "GOOGLE_ADS_CUSTOMER_ID": "${GOOGLE_ADS_CUSTOMER_ID}",
+        "GOOGLE_ADS_LOGIN_CUSTOMER_ID": "${GOOGLE_ADS_LOGIN_CUSTOMER_ID}",
+        "GOOGLE_ADS_CUSTOMER_MATCH_USER_LIST_ID": "${GOOGLE_ADS_CUSTOMER_MATCH_USER_LIST_ID}",
+        "GOOGLE_DATA_MANAGER_VALIDATE_ONLY": "${GOOGLE_DATA_MANAGER_VALIDATE_ONLY}",
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GOOGLE_APPLICATION_CREDENTIALS}",
+        "GOOGLE_ADS_APPLICATION_CREDENTIALS": "${GOOGLE_ADS_APPLICATION_CREDENTIALS}"
+      },
+      "tools": [
+        "data_manager_get_config",
+        "data_manager_whoami",
+        "data_manager_retrieve_request_status"
+      ],
+      "autoApprove": []
+    },
     "merchant-data-mcp": {
       "command": "npx",
       "args": [
@@ -1157,6 +1181,71 @@
         "run",
         "--profile",
         "utekos_research_browser"
+      ],
+      "autoApprove": []
+    },
+    "resend": {
+      "type": "http",
+      "url": "https://mcp.resend.com/mcp",
+      "tools": [
+        "get-automation",
+        "get-automation-runs",
+        "get-broadcast",
+        "get-contact",
+        "get-contact-import",
+        "get-contact-property",
+        "get-domain",
+        "get-domain-claim",
+        "get-email",
+        "get-log",
+        "get-received-email",
+        "get-received-email-attachment",
+        "get-segment",
+        "get-sent-email-attachment",
+        "get-suppression",
+        "get-template",
+        "get-topic",
+        "get-webhook",
+        "list-api-keys",
+        "list-broadcasts",
+        "list-contact-imports",
+        "list-contact-properties",
+        "list-contact-segments",
+        "list-contact-topics",
+        "list-contacts",
+        "list-domains",
+        "list-emails",
+        "list-logs",
+        "list-oauth-grants",
+        "list-received-email-attachments",
+        "list-received-emails",
+        "list-segments",
+        "list-sent-email-attachments",
+        "list-suppressions",
+        "list-templates",
+        "list-topics",
+        "list-webhooks"
+      ],
+      "autoApprove": []
+    },
+    "docs-mcp-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@arabold/docs-mcp-server@latest"
+      ],
+      "type": "stdio",
+      "tools": [
+        "cancel_job",
+        "fetch_url",
+        "find_version",
+        "get_job_info",
+        "list_jobs",
+        "list_libraries",
+        "refresh_version",
+        "remove_docs",
+        "scrape_docs",
+        "search_docs"
       ],
       "autoApprove": []
     }

@@ -5,10 +5,13 @@ import process from 'node:process'
 import {
   PATHS,
   collectPlaceholders,
+  isRemoteMcpServer,
+  loadCursorRuntimePolicy,
   loadEnvMap,
   loadJson,
   loadManifest,
-  toAbsolutePathIfRelative
+  toAbsolutePathIfRelative,
+  type McpServers
 } from './lib'
 
 type DoctorIssue = { level: 'error' | 'warn'; message: string }
@@ -20,12 +23,14 @@ const nonSecretInlineEnv = new Set([
   'GTM_PROJECT_ID',
   'META_APP_ID',
   'META_AUTO_REFRESH',
-  'META_BUSINESS_ID'
+  'META_BUSINESS_ID',
+  'META_DEVTOOLS_MCP_CLIENT_ID'
 ])
 
 function main() {
   const issues: DoctorIssue[] = []
   const manifest = loadManifest()
+  const cursorRuntimePolicy = loadCursorRuntimePolicy()
 
   if (!fs.existsSync(PATHS.envMcp)) {
     issues.push({
@@ -35,12 +40,50 @@ function main() {
   }
 
   const env = loadEnvMap()
-  const base = loadJson<{ mcpServers: Record<string, unknown> }>(
-    PATHS.base
-  )
+  const base = loadJson<{ mcpServers: McpServers }>(PATHS.base)
   const placeholders = [
     ...collectPlaceholders(base.mcpServers)
   ].sort()
+
+  for (const serverName of Object.keys(
+    cursorRuntimePolicy.excludedServers
+  )) {
+    const server = base.mcpServers[serverName]
+    if (!server) {
+      issues.push({
+        level: 'error',
+        message: `Unknown Cursor runtime exclusion: ${serverName}`
+      })
+      continue
+    }
+
+    if (!isRemoteMcpServer(server)) {
+      issues.push({
+        level: 'error',
+        message: `Cursor runtime exclusion must reference a remote server: ${serverName}`
+      })
+    }
+  }
+
+  for (const serverName of Object.keys(
+    cursorRuntimePolicy.includedLocalServers
+  )) {
+    const server = base.mcpServers[serverName]
+    if (!server) {
+      issues.push({
+        level: 'error',
+        message: `Unknown Cursor runtime local include: ${serverName}`
+      })
+      continue
+    }
+
+    if (isRemoteMcpServer(server)) {
+      issues.push({
+        level: 'error',
+        message: `Cursor runtime local include must reference a non-remote server: ${serverName}`
+      })
+    }
+  }
 
   for (const [key, meta] of Object.entries(
     manifest.requiredEnv
@@ -99,7 +142,35 @@ function main() {
     })
   }
 
-  const generatedOutputs = [PATHS.cursorOut, PATHS.vscodeOut]
+  if (!fs.existsSync(PATHS.cursorRuntimeOut)) {
+    issues.push({
+      level: 'warn',
+      message:
+        'Generated .cursor/mcp.remote.json missing — run npm run mcp:build'
+    })
+  }
+
+  const expectedCursorTarget = path.relative(
+    path.dirname(PATHS.cursorSymlink),
+    PATHS.cursorRuntimeOut
+  )
+  if (
+    !fs.existsSync(PATHS.cursorSymlink) ||
+    !fs.lstatSync(PATHS.cursorSymlink).isSymbolicLink() ||
+    fs.readlinkSync(PATHS.cursorSymlink) !== expectedCursorTarget
+  ) {
+    issues.push({
+      level: 'error',
+      message:
+        'Generated .cursor/mcp.json must link to .cursor/mcp.remote.json — run npm run mcp:build'
+    })
+  }
+
+  const generatedOutputs = [
+    PATHS.cursorOut,
+    PATHS.cursorRuntimeOut,
+    PATHS.vscodeOut
+  ]
   const sensitiveKeys = new Set([
     ...Object.keys(manifest.requiredEnv),
     ...Object.keys(manifest.optionalEnv)

@@ -3,11 +3,16 @@ import path from 'node:path'
 import process from 'node:process'
 
 import dotenv from 'dotenv'
+import { z } from 'zod/v4'
 
 export const ROOT = process.cwd()
 
 export const PATHS = {
   base: path.join(ROOT, 'config/mcp/servers.base.json'),
+  cursorRuntimePolicy: path.join(
+    ROOT,
+    'config/mcp/cursor-runtime.json'
+  ),
   vscodeOverrides: path.join(
     ROOT,
     'config/mcp/vscode-overrides.json'
@@ -19,6 +24,7 @@ export const PATHS = {
   envMcp: path.join(ROOT, '.env.mcp.local'),
   envApp: path.join(ROOT, '.env.local'),
   cursorOut: path.join(ROOT, 'mcp.json'),
+  cursorRuntimeOut: path.join(ROOT, '.cursor/mcp.remote.json'),
   vscodeOut: path.join(ROOT, '.vscode/mcp.json'),
   cursorSymlink: path.join(ROOT, '.cursor/mcp.json')
 } as const
@@ -40,6 +46,19 @@ export type CredentialsManifest = {
   pathEnvDefaults: Record<string, string>
 }
 
+const cursorRuntimePolicySchema = z
+  .object({
+    excludedServers: z.record(z.string(), z.string().min(1)).default({}),
+    includedLocalServers: z
+      .record(z.string(), z.string().min(1))
+      .default({})
+  })
+  .strict()
+
+export type CursorRuntimePolicy = z.infer<
+  typeof cursorRuntimePolicySchema
+>
+
 const PLACEHOLDER_PATTERN = /\$\{([A-Z0-9_]+)\}/g
 
 export function loadJson<T>(filePath: string): T {
@@ -48,6 +67,12 @@ export function loadJson<T>(filePath: string): T {
 
 export function loadManifest(): CredentialsManifest {
   return loadJson<CredentialsManifest>(PATHS.manifest)
+}
+
+export function loadCursorRuntimePolicy(): CursorRuntimePolicy {
+  return cursorRuntimePolicySchema.parse(
+    loadJson<unknown>(PATHS.cursorRuntimePolicy)
+  )
 }
 
 export function loadEnvMap(): Record<string, string> {
@@ -196,6 +221,17 @@ export function toAbsolutePathIfRelative(value: string): string {
   return path.resolve(ROOT, value)
 }
 
+export function isRemoteMcpServer(
+  config: McpServerConfig
+): boolean {
+  return (
+    config.type === 'http' ||
+    config.transport === 'http' ||
+    typeof config.url === 'string' ||
+    typeof config.httpUrl === 'string'
+  )
+}
+
 export function cursorToVscodeServer(
   name: string,
   config: McpServerConfig
@@ -234,7 +270,7 @@ export function writeJson(filePath: string, data: unknown) {
 export function ensureCursorSymlink() {
   const target = path.relative(
     path.dirname(PATHS.cursorSymlink),
-    PATHS.cursorOut
+    PATHS.cursorRuntimeOut
   )
 
   if (fs.existsSync(PATHS.cursorSymlink)) {

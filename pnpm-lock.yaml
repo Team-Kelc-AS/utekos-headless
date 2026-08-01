@@ -164,6 +164,9 @@ importers:
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+      '@vercel/connect':
+        specifier: ^0.5.0
+        version: 0.5.0(@ai-sdk/mcp@2.0.16(zod@4.4.3))(ai@6.0.208(zod@4.4.3))
       '@vercel/flags-core':
         specifier: ^1.4.0
         version: 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
@@ -4451,9 +4454,35 @@ packages:
   '@vercel/cli-config@0.2.0':
     resolution: {integrity: sha512-fJRRRB7734BDuXZ89yBEaA2ncYhH7bWX30mk04W80J6VAfQc+4iB8lyzAdaGpFV3/vNlkt9VZt+/uoQoWX6UsQ==}
 
+  '@vercel/cli-config@0.2.1':
+    resolution: {integrity: sha512-RhfyXmRLHdbnry8RJqHDc+5rGxMZ0bu+fpysZjtv3bE+BubpuwxTancHOKiH5zKQREsdwFVr3mOI2kOvxlOyxA==}
+
   '@vercel/cli-exec@1.0.0':
     resolution: {integrity: sha512-kQF8LGie/Hbdq9/psJxLE7owRTcqMQMhgybU04gCeR7cbQAr5t8OrjefDNColJv1QSSucFt4pLwRiARVmlOnug==}
     engines: {node: '>= 18'}
+
+  '@vercel/connect@0.5.0':
+    resolution: {integrity: sha512-iaorL0iwPY+tC/6Qn937AVk+lbwq42nRI2s+d/MIoAblE+1FJUXCmyMn/Ni66FQ4U8ICMjufFzbyp3OCKoDerg==}
+    peerDependencies:
+      '@ai-sdk/mcp': ^1 || ^2
+      '@auth/core': '>=0.37.0'
+      '@chat-adapter/slack': ^4.0.0
+      ai: ^6 || ^7.0.0-beta.0
+      better-auth: '>=1.5.0'
+      eve: '>=0.13.7'
+    peerDependenciesMeta:
+      '@ai-sdk/mcp':
+        optional: true
+      '@auth/core':
+        optional: true
+      '@chat-adapter/slack':
+        optional: true
+      ai:
+        optional: true
+      better-auth:
+        optional: true
+      eve:
+        optional: true
 
   '@vercel/flags-core@1.5.1':
     resolution: {integrity: sha512-D24YwwylsnaC6LShsND4yG3PU4trn/vp2Q7kQYkIp2tcbSnGXlrnzVRG9YUPkE5LvNQ7D4Dho+4pvDSjddfb1w==}
@@ -4488,6 +4517,10 @@ packages:
 
   '@vercel/oidc@3.8.0':
     resolution: {integrity: sha512-r00laGW6Pv778RoR6M2NxX91ycSj+PBwVo+fOb9Bif+F0IyUKt25zrvBzfEzQpeAzbqOgPZyQibEWDdDFApd+A==}
+    engines: {node: '>= 20'}
+
+  '@vercel/oidc@3.8.1':
+    resolution: {integrity: sha512-ufdalm2MWOYksyj8KVpWjoOFPJO6zoYpuyvIggIQ2bB0CFCjTCiTkGXHqAKwG77GVRjOaN3/8S5ITlZpXWmqOw==}
     engines: {node: '>= 20'}
 
   '@vercel/otel@2.1.3':
@@ -14423,9 +14456,21 @@ snapshots:
       xdg-app-paths: 5.5.1
       zod: 4.1.11
 
+  '@vercel/cli-config@0.2.1':
+    dependencies:
+      xdg-app-paths: 5.5.1
+      zod: 4.1.11
+
   '@vercel/cli-exec@1.0.0':
     dependencies:
       execa: 5.1.1
+
+  '@vercel/connect@0.5.0(@ai-sdk/mcp@2.0.16(zod@4.4.3))(ai@6.0.208(zod@4.4.3))':
+    dependencies:
+      '@vercel/oidc': 3.8.1
+    optionalDependencies:
+      '@ai-sdk/mcp': 2.0.16(zod@4.4.3)
+      ai: 6.0.208(zod@4.4.3)
 
   '@vercel/flags-core@1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
     dependencies:
@@ -14454,6 +14499,12 @@ snapshots:
   '@vercel/oidc@3.8.0':
     dependencies:
       '@vercel/cli-config': 0.2.0
+      '@vercel/cli-exec': 1.0.0
+      jose: 5.10.0
+
+  '@vercel/oidc@3.8.1':
+    dependencies:
+      '@vercel/cli-config': 0.2.1
       '@vercel/cli-exec': 1.0.0
       jose: 5.10.0
 

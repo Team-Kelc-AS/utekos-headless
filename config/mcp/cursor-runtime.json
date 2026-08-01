@@ -1,0 +1,9 @@
+{
+  "excludedServers": {
+    "gemini-api-docs-mcp": "Repeated HTTP 429 responses cause background reconnect churn in Cursor; retain for explicit on-demand clients."
+  },
+  "includedLocalServers": {
+    "facebook-ads": "Meta Ads MCP requires a USER token with ads_mcp_management. Cursor OAuth loopback is unreliable against Meta's localhost→127.0.0.1 rewrite, so this uses mcp-remote + META_APP_USER_TOKEN via run-server.",
+    "data-manager-mcp": "No official hosted Google Data Manager MCP exists. Lean local read-only diagnostics for request status and auth."
+  }
+}

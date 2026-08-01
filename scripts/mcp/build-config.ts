@@ -5,6 +5,8 @@ import {
   PATHS,
   collectPlaceholders,
   ensureCursorSymlink,
+  isRemoteMcpServer,
+  loadCursorRuntimePolicy,
   loadEnvMap,
   loadJson,
   loadManifest,
@@ -26,6 +28,7 @@ const inlinePlaceholderKeys = new Set([
   'META_APP_ID',
   'META_AUTO_REFRESH',
   'META_BUSINESS_ID',
+  'META_DEVTOOLS_MCP_CLIENT_ID',
   'UTEKOS_CSS_INSIGHT_MCP_URL'
 ])
 
@@ -124,6 +127,13 @@ function main() {
       )
     : {}
   const manifest = loadManifest()
+  const cursorRuntimePolicy = loadCursorRuntimePolicy()
+  const cursorRuntimeExclusions = new Set(
+    Object.keys(cursorRuntimePolicy.excludedServers)
+  )
+  const cursorRuntimeLocalIncludes = new Set(
+    Object.keys(cursorRuntimePolicy.includedLocalServers)
+  )
   const env = loadEnvMap()
   const unresolved = new Set<string>()
 
@@ -174,7 +184,18 @@ function main() {
   }
 
   const vscodeServers: McpServers = {}
+  const cursorRuntimeServers: McpServers = {}
   for (const [name, config] of Object.entries(cursorServers)) {
+    const baseConfig = base.mcpServers[name]
+    if (
+      baseConfig &&
+      !cursorRuntimeExclusions.has(name) &&
+      (isRemoteMcpServer(baseConfig) ||
+        cursorRuntimeLocalIncludes.has(name))
+    ) {
+      cursorRuntimeServers[name] = config
+    }
+
     const raw =
       vscodeOverrides[name] ?
         (resolveClientPlaceholders(
@@ -198,15 +219,21 @@ function main() {
   }
 
   writeJson(PATHS.cursorOut, { mcpServers: cursorServers })
+  writeJson(PATHS.cursorRuntimeOut, {
+    mcpServers: cursorRuntimeServers
+  })
   writeJson(PATHS.vscodeOut, { mcpServers: vscodeServers })
   ensureCursorSymlink()
 
   console.log(`Wrote ${PATHS.cursorOut}`)
+  console.log(`Wrote ${PATHS.cursorRuntimeOut}`)
   console.log(`Wrote ${PATHS.vscodeOut}`)
   console.log(
-    `Linked ${PATHS.cursorSymlink} -> ${path.relative(path.dirname(PATHS.cursorSymlink), PATHS.cursorOut)}`
+    `Linked ${PATHS.cursorSymlink} -> ${path.relative(path.dirname(PATHS.cursorSymlink), PATHS.cursorRuntimeOut)}`
   )
-  console.log(`Servers: ${Object.keys(cursorServers).length}`)
+  console.log(
+    `Servers: full=${Object.keys(cursorServers).length}, Cursor remote-only=${Object.keys(cursorRuntimeServers).length}`
+  )
 }
 
 main()

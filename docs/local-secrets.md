@@ -9,13 +9,15 @@ be written to generated or committed configuration.
 | Layer                    | Path                                   | Committed | Purpose                                                    |
 | ------------------------ | -------------------------------------- | --------- | ---------------------------------------------------------- |
 | Server source            | `config/mcp/servers.base.json`         | yes       | Canonical server definitions and `${ENV_VAR}` placeholders |
+| Cursor runtime policy    | `config/mcp/cursor-runtime.json`       | yes       | Remote servers excluded from automatic Cursor startup      |
 | Credential manifest      | `config/mcp/credentials.manifest.json` | yes       | Credential ownership and optional/required classification  |
 | Editor overrides         | `config/mcp/vscode-overrides.json`     | yes       | VS Code-only transport overrides                           |
 | MCP secrets              | `.env.mcp.local`                       | no        | Primary MCP credential source                              |
 | App secrets              | `.env.local`                           | no        | Next.js runtime values and MCP fallback                    |
-| Generated Cursor config  | `mcp.json`                             | no        | Generated output                                           |
+| Generated full config    | `mcp.json`                             | no        | Full generated output for explicit/on-demand clients       |
+| Cursor runtime profile   | `.cursor/mcp.remote.json`              | no        | Generated remote-only profile; no local stdio fan-out      |
 | Generated VS Code config | `.vscode/mcp.json`                     | no        | Generated output                                           |
-| Cursor link              | `.cursor/mcp.json`                     | no        | Symlink to `mcp.json`                                      |
+| Cursor link              | `.cursor/mcp.json`                     | no        | Symlink to `.cursor/mcp.remote.json`                       |
 
 `.env.mcp.local` wins over `.env.local`. Empty fallback values
 are ignored. Credential JSON files remain under ignored
@@ -40,6 +42,15 @@ corepack enable
 
 Reload the MCP client after generation.
 
+Cursor uses the remote-only runtime profile by default. This
+prevents every editor window from launching the full local stdio
+catalog and avoids orphaned subprocess fan-out after agent or
+extension-host restarts. The complete generated catalog remains
+in `mcp.json` for explicit, on-demand clients and diagnostics.
+Remote servers with persistent background failures can be kept
+out of automatic startup through `config/mcp/cursor-runtime.json`
+without removing them from the full catalog.
+
 ## Safety rules
 
 - Never hand-edit `mcp.json`, `.vscode/mcp.json`, or
@@ -58,18 +69,22 @@ Reload the MCP client after generation.
   missing value degrades that server only and never the build.
 - Remote OAuth servers keep OAuth state in the client. Do not
   copy cached tokens into repository files.
-- `facebook-ads` (`https://mcp.facebook.com/ads`) disables OAuth
-  Dynamic Client Registration, so a client that tries to register
-  itself never receives a `client_id` and its authenticate action
-  hangs without opening a browser. The server therefore declares
-  a static `auth.CLIENT_ID` bound to `${META_APP_ID}`. The Meta
-  app must carry the "Create & manage ads with ads MCP server"
-  use case, which is what grants the `ads_mcp_management` scope;
-  a System User token cannot hold that scope. While the app is in
-  development mode Meta auto-allows `http://localhost` redirects,
-  so Cursor's `http://localhost:8787/callback` needs no allowlist
-  entry. `https://mcp.facebook.com/devtools` does support dynamic
-  registration and needs no static client id.
+- Meta token roles:
+  - `META_ACCESS_TOKEN` — Pixel CAPI (app runtime `/events`)
+  - `META_SYSTEM_USER_TOKEN` — System User reads / dataset quality
+  - `META_APP_USER_TOKEN` — USER token with `ads_mcp_management`
+    for the official Ads MCP
+- `facebook-ads` uses `mcp-remote` +
+  `Authorization: Bearer ${META_APP_USER_TOKEN}` via `run-server.mjs`.
+  Cursor OAuth against Meta is unreliable because Meta's DCR
+  rewrites `localhost` → `127.0.0.1` while Cursor listens on
+  `http://localhost:8787/callback`.
+- `meta-developer-tools` keeps Cursor OAuth with static
+  `META_DEVTOOLS_MCP_CLIENT_ID` (Meta's public Cursor client).
+  A System User token cannot authorize `/devtools`.
+- There is no official hosted Google Data Manager MCP. The local
+  `data-manager-mcp` server provides read-only diagnostics and is
+  explicitly allowlisted in `config/mcp/cursor-runtime.json`.
 - A successful build proves configuration generation only.
   Restart the client and run a safe read tool before reporting a
   provider MCP as usable.
