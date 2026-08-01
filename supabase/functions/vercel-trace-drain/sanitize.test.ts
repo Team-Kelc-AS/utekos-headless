@@ -125,6 +125,59 @@ test('fails closed on a wrong project resource scope', () => {
   assert.deepEqual(result.observations, [])
 })
 
+test('classifies unscoped resource shape without returning attribute values', () => {
+  const unscoped = traceEnvelope()
+  unscoped.resourceSpans[0]!.resource.attributes = [
+    {
+      key: 'service.name',
+      value: { stringValue: 'must-not-be-returned' }
+    }
+  ]
+  unscoped.resourceSpans[0]!.scopeSpans[0]!.scope = {
+    name: 'vercel'
+  }
+
+  const result = sanitizeVercelTraceEnvelope(
+    vercelTraceEnvelopeSchema.parse(unscoped),
+    config
+  )
+
+  assert.equal(result.attributesEmptyResourceCount, 0)
+  assert.equal(result.scopeKeysAbsentResourceCount, 1)
+  assert.equal(result.projectScopeKeyOnlyResourceCount, 0)
+  assert.equal(result.deploymentScopeKeyOnlyResourceCount, 0)
+  assert.equal(result.scopeKeysPresentButInvalidResourceCount, 0)
+  assert.equal(result.serviceNameAttributePresentResourceCount, 1)
+  assert.equal(result.vercelScopeNamePresentResourceCount, 1)
+  assert.equal(JSON.stringify(result).includes('must-not-be-returned'), false)
+})
+
+test('distinguishes present but invalid scope keys from absent keys', () => {
+  const invalidScope = traceEnvelope()
+  invalidScope.resourceSpans[0]!.resource.attributes = [
+    {
+      key: 'vercel.projectId',
+      value: { boolValue: true }
+    },
+    {
+      key: 'vercel.deploymentId',
+      value: { stringValue: 'dpl_current' }
+    }
+  ]
+
+  const result = sanitizeVercelTraceEnvelope(
+    vercelTraceEnvelopeSchema.parse(invalidScope),
+    config
+  )
+
+  assert.equal(result.scopeKeysAbsentResourceCount, 0)
+  assert.equal(result.projectScopeKeyOnlyResourceCount, 0)
+  assert.equal(result.deploymentScopeKeyOnlyResourceCount, 0)
+  assert.equal(result.scopeKeysPresentButInvalidResourceCount, 1)
+  assert.equal(result.missingProjectIdResourceCount, 1)
+  assert.deepEqual(result.observations, [])
+})
+
 test('rejects one trace id reused across deployments', () => {
   const first = traceEnvelope().resourceSpans[0]!
   const second = traceEnvelope({ deploymentId: 'dpl_other' })

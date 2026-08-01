@@ -4,6 +4,7 @@ import test from 'node:test'
 
 import type {
   TraceDrainRuntimeConfig,
+  VercelTraceEnvelope,
   VercelTraceObservation
 } from './contracts.ts'
 import { createVercelTraceDrainHandler } from './handler.ts'
@@ -16,7 +17,7 @@ const config: TraceDrainRuntimeConfig = {
   signatureSecret: 'trace-secret-that-is-at-least-32-characters'
 }
 
-function envelope(projectId = config.projectId) {
+function envelope(projectId = config.projectId): VercelTraceEnvelope {
   return {
     resourceSpans: [
       {
@@ -163,7 +164,15 @@ test('logs aggregate scope counters without payload identifiers', async () => {
 
   try {
     const scopedEnvelope = envelope()
-    scopedEnvelope.resourceSpans[0]!.resource.attributes = []
+    scopedEnvelope.resourceSpans[0]!.resource.attributes = [
+      {
+        key: 'service.name',
+        value: { stringValue: 'must-not-be-logged' }
+      }
+    ]
+    scopedEnvelope.resourceSpans[0]!.scopeSpans[0]!.scope = {
+      name: 'vercel'
+    }
     const handler = createVercelTraceDrainHandler({
       config,
       upsertObservations: () => Promise.resolve(0)
@@ -176,9 +185,11 @@ test('logs aggregate scope counters without payload identifiers', async () => {
     assert.equal(warnings.length, 1)
     const warning = JSON.parse(warnings[0]!)
     assert.deepEqual(warning, {
+      attributes_empty_resource_count: 0,
       code: 'invalid_trace_scope',
       component: 'vercel-trace-drain',
       conflicting_trace_id_count: 0,
+      deployment_scope_key_only_resource_count: 0,
       event: 'request_rejected',
       invalid_resource_count: 1,
       invalid_span_count: 0,
@@ -187,8 +198,13 @@ test('logs aggregate scope counters without payload identifiers', async () => {
       missing_deployment_id_resource_count: 1,
       missing_project_id_resource_count: 1,
       observation_count: 0,
+      project_scope_key_only_resource_count: 0,
       received_span_count: 1,
-      rejected_span_count: 1
+      rejected_span_count: 1,
+      scope_keys_absent_resource_count: 1,
+      scope_keys_present_but_invalid_resource_count: 0,
+      service_name_attribute_present_resource_count: 1,
+      vercel_scope_name_present_resource_count: 1
     })
     assert.equal(warnings[0]!.includes(config.projectId), false)
     assert.equal(warnings[0]!.includes('dpl_current'), false)
@@ -196,6 +212,7 @@ test('logs aggregate scope counters without payload identifiers', async () => {
       warnings[0]!.includes('00112233445566778899aabbccddeeff'),
       false
     )
+    assert.equal(warnings[0]!.includes('must-not-be-logged'), false)
   } finally {
     console.warn = originalWarn
   }
@@ -240,9 +257,11 @@ test('accepts the scoped portion of a mixed batch with OTLP partial success', as
     assert.equal(writes[0]?.length, 1)
     assert.equal(warnings.length, 1)
     assert.deepEqual(JSON.parse(warnings[0]!), {
+      attributes_empty_resource_count: 1,
       code: 'partial_trace_scope',
       component: 'vercel-trace-drain',
       conflicting_trace_id_count: 0,
+      deployment_scope_key_only_resource_count: 0,
       event: 'request_rejected',
       invalid_resource_count: 1,
       invalid_span_count: 0,
@@ -251,8 +270,13 @@ test('accepts the scoped portion of a mixed batch with OTLP partial success', as
       missing_deployment_id_resource_count: 1,
       missing_project_id_resource_count: 1,
       observation_count: 1,
+      project_scope_key_only_resource_count: 0,
       received_span_count: 2,
-      rejected_span_count: 1
+      rejected_span_count: 1,
+      scope_keys_absent_resource_count: 1,
+      scope_keys_present_but_invalid_resource_count: 0,
+      service_name_attribute_present_resource_count: 0,
+      vercel_scope_name_present_resource_count: 0
     })
   } finally {
     console.warn = originalWarn

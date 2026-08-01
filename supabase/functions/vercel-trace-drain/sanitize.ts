@@ -6,6 +6,8 @@ import type {
 
 const PROJECT_ID_ATTRIBUTE = 'vercel.projectId'
 const DEPLOYMENT_ID_ATTRIBUTE = 'vercel.deploymentId'
+const SERVICE_NAME_ATTRIBUTE = 'service.name'
+const VERCEL_SCOPE_NAME = 'vercel'
 
 interface MutableTraceObservation {
   traceId: string
@@ -19,14 +21,40 @@ interface MutableTraceObservation {
 export interface SanitizeTraceResult {
   observations: VercelTraceObservation[]
   receivedSpanCount: number
+  attributesEmptyResourceCount: number
+  deploymentScopeKeyOnlyResourceCount: number
   invalidResourceCount: number
   invalidSpanCount: number
   missingProjectIdResourceCount: number
   missingDeploymentIdResourceCount: number
   mismatchedProjectIdResourceCount: number
+  projectScopeKeyOnlyResourceCount: number
+  scopeKeysAbsentResourceCount: number
+  scopeKeysPresentButInvalidResourceCount: number
+  serviceNameAttributePresentResourceCount: number
+  vercelScopeNamePresentResourceCount: number
   invalidTimestampSpanCount: number
   conflictingTraceIdCount: number
   rejectedSpanCount: number
+}
+
+function hasAttribute(
+  attributes: VercelTraceEnvelope['resourceSpans'][number]['resource']['attributes'],
+  name: string
+): boolean {
+  return attributes.some(attribute => attribute.key === name)
+}
+
+function hasVercelScopeName(
+  scopeSpans: VercelTraceEnvelope['resourceSpans'][number]['scopeSpans'][number]
+): boolean {
+  const scope = scopeSpans.scope
+  return (
+    typeof scope === 'object' &&
+    scope !== null &&
+    'name' in scope &&
+    scope.name === VERCEL_SCOPE_NAME
+  )
 }
 
 function readStringAttribute(
@@ -71,21 +99,37 @@ export function sanitizeVercelTraceEnvelope(
   const traceSpanTotals = new Map<string, number>()
   const conflictingTraceIds = new Set<string>()
   let receivedSpanCount = 0
+  let attributesEmptyResourceCount = 0
+  let deploymentScopeKeyOnlyResourceCount = 0
   let invalidResourceCount = 0
   let invalidSpanCount = 0
   let missingProjectIdResourceCount = 0
   let missingDeploymentIdResourceCount = 0
   let mismatchedProjectIdResourceCount = 0
+  let projectScopeKeyOnlyResourceCount = 0
+  let scopeKeysAbsentResourceCount = 0
+  let scopeKeysPresentButInvalidResourceCount = 0
+  let serviceNameAttributePresentResourceCount = 0
+  let vercelScopeNamePresentResourceCount = 0
   let invalidTimestampSpanCount = 0
   let rejectedSpanCount = 0
 
   for (const resourceSpans of envelope.resourceSpans) {
+    const attributes = resourceSpans.resource.attributes
+    const hasProjectScopeKey = hasAttribute(
+      attributes,
+      PROJECT_ID_ATTRIBUTE
+    )
+    const hasDeploymentScopeKey = hasAttribute(
+      attributes,
+      DEPLOYMENT_ID_ATTRIBUTE
+    )
     const projectId = readStringAttribute(
-      resourceSpans.resource.attributes,
+      attributes,
       PROJECT_ID_ATTRIBUTE
     )
     const deploymentId = readStringAttribute(
-      resourceSpans.resource.attributes,
+      attributes,
       DEPLOYMENT_ID_ATTRIBUTE
     )
     const resourceSpanCount = resourceSpans.scopeSpans.reduce(
@@ -93,6 +137,21 @@ export function sanitizeVercelTraceEnvelope(
       0
     )
     receivedSpanCount += resourceSpanCount
+
+    if (attributes.length === 0) attributesEmptyResourceCount += 1
+    if (hasAttribute(attributes, SERVICE_NAME_ATTRIBUTE))
+      serviceNameAttributePresentResourceCount += 1
+    if (resourceSpans.scopeSpans.some(hasVercelScopeName))
+      vercelScopeNamePresentResourceCount += 1
+
+    if (!hasProjectScopeKey && !hasDeploymentScopeKey)
+      scopeKeysAbsentResourceCount += 1
+    else if (hasProjectScopeKey && !hasDeploymentScopeKey)
+      projectScopeKeyOnlyResourceCount += 1
+    else if (!hasProjectScopeKey && hasDeploymentScopeKey)
+      deploymentScopeKeyOnlyResourceCount += 1
+    else if (!projectId || !deploymentId)
+      scopeKeysPresentButInvalidResourceCount += 1
 
     if (!projectId) missingProjectIdResourceCount += 1
     if (!deploymentId) missingDeploymentIdResourceCount += 1
@@ -166,6 +225,8 @@ export function sanitizeVercelTraceEnvelope(
   }
 
   return {
+    attributesEmptyResourceCount,
+    deploymentScopeKeyOnlyResourceCount,
     observations: Array.from(traces.values(), trace => ({
       deployment_id: trace.deploymentId,
       duration_ms: formatDurationMilliseconds(
@@ -184,6 +245,11 @@ export function sanitizeVercelTraceEnvelope(
     missingProjectIdResourceCount,
     missingDeploymentIdResourceCount,
     mismatchedProjectIdResourceCount,
+    projectScopeKeyOnlyResourceCount,
+    scopeKeysAbsentResourceCount,
+    scopeKeysPresentButInvalidResourceCount,
+    serviceNameAttributePresentResourceCount,
+    vercelScopeNamePresentResourceCount,
     invalidTimestampSpanCount,
     conflictingTraceIdCount: conflictingTraceIds.size,
     rejectedSpanCount,

@@ -33,7 +33,11 @@ function traceScopeCounts(
   result: ReturnType<typeof sanitizeVercelTraceEnvelope>
 ): Record<string, number> {
   return {
+    attributes_empty_resource_count:
+      result.attributesEmptyResourceCount,
     conflicting_trace_id_count: result.conflictingTraceIdCount,
+    deployment_scope_key_only_resource_count:
+      result.deploymentScopeKeyOnlyResourceCount,
     invalid_resource_count: result.invalidResourceCount,
     invalid_span_count: result.invalidSpanCount,
     invalid_timestamp_span_count: result.invalidTimestampSpanCount,
@@ -44,8 +48,18 @@ function traceScopeCounts(
     missing_project_id_resource_count:
       result.missingProjectIdResourceCount,
     observation_count: result.observations.length,
+    project_scope_key_only_resource_count:
+      result.projectScopeKeyOnlyResourceCount,
     received_span_count: result.receivedSpanCount,
-    rejected_span_count: result.rejectedSpanCount
+    rejected_span_count: result.rejectedSpanCount,
+    scope_keys_absent_resource_count:
+      result.scopeKeysAbsentResourceCount,
+    scope_keys_present_but_invalid_resource_count:
+      result.scopeKeysPresentButInvalidResourceCount,
+    service_name_attribute_present_resource_count:
+      result.serviceNameAttributePresentResourceCount,
+    vercel_scope_name_present_resource_count:
+      result.vercelScopeNamePresentResourceCount
   }
 }
 
