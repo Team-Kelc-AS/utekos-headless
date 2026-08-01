@@ -1,4 +1,5 @@
 import { fetchMetaAdAccountTimezone } from './fetchMetaAdAccountTimezone'
+import { fetchMetaAdCreativeDestinations } from './fetchMetaAdCreativeDestinations'
 import { fetchMetaAdDeliveryInsights } from './fetchMetaAdDeliveryInsights'
 import { getMetaAdDeliveryDateWindow } from './getMetaAdDeliveryDateWindow'
 import {
@@ -13,6 +14,10 @@ import {
   type MetaAdDeliveryInsightsConfig
 } from './metaAdDeliveryInsightsConfig'
 import {
+  upsertMetaAdCreativeDestinations,
+  type MetaAdCreativeDestinationsUpsertInput
+} from './upsertMetaAdCreativeDestinations'
+import {
   upsertMetaAdDeliveryInsights,
   type MetaAdDeliveryInsightsUpsertInput
 } from './upsertMetaAdDeliveryInsights'
@@ -21,6 +26,8 @@ export type MetaAdDeliveryInsightsSyncResult = {
   accountId: string
   accountTimezone: string
   fetchedAt: string
+  creativeDestinationCount: number
+  creativeDestinationUpsertedCount: number
   rowCount: number
   rowsByBreakdown: Record<MetaAdDeliveryBreakdownKind, number>
   since: string
@@ -41,20 +48,27 @@ export type MetaAdDeliveryInsightsSyncDependencies = {
       dateWindow: { since: string; until: string }
     }
   ) => Promise<MetaAdDeliveryInsight[]>
+  fetchCreativeDestinations: typeof fetchMetaAdCreativeDestinations
   getConfig: () => MetaAdDeliveryInsightsConfig
   getNow: () => Date
   upsertInsights: (
     input: MetaAdDeliveryInsightsUpsertInput
   ) => Promise<number>
+  upsertCreativeDestinations: (
+    input: MetaAdCreativeDestinationsUpsertInput
+  ) => Promise<number>
 }
 
-const defaultDependencies: MetaAdDeliveryInsightsSyncDependencies = {
-  fetchAccountTimezone: fetchMetaAdAccountTimezone,
-  fetchInsights: fetchMetaAdDeliveryInsights,
-  getConfig: readMetaAdDeliveryInsightsConfig,
-  getNow: () => new Date(),
-  upsertInsights: upsertMetaAdDeliveryInsights
-}
+const defaultDependencies: MetaAdDeliveryInsightsSyncDependencies =
+  {
+    fetchAccountTimezone: fetchMetaAdAccountTimezone,
+    fetchCreativeDestinations: fetchMetaAdCreativeDestinations,
+    fetchInsights: fetchMetaAdDeliveryInsights,
+    getConfig: readMetaAdDeliveryInsightsConfig,
+    getNow: () => new Date(),
+    upsertCreativeDestinations: upsertMetaAdCreativeDestinations,
+    upsertInsights: upsertMetaAdDeliveryInsights
+  }
 
 function emptyBreakdownCounts() {
   return Object.fromEntries(
@@ -69,13 +83,11 @@ function emptyUnavailableMetricCounts() {
 }
 
 export async function syncMetaAdDeliveryInsights(
-  dependencies: MetaAdDeliveryInsightsSyncDependencies =
-    defaultDependencies
+  dependencies: MetaAdDeliveryInsightsSyncDependencies = defaultDependencies
 ): Promise<MetaAdDeliveryInsightsSyncResult> {
   const config = dependencies.getConfig()
-  const accountTimezone = await dependencies.fetchAccountTimezone(
-    config
-  )
+  const accountTimezone =
+    await dependencies.fetchAccountTimezone(config)
   const fetchedAt = dependencies.getNow()
   const dateWindow = getMetaAdDeliveryDateWindow(
     fetchedAt,
@@ -85,11 +97,10 @@ export async function syncMetaAdDeliveryInsights(
   const rowsByBreakdown = emptyBreakdownCounts()
 
   for (const breakdownKind of metaAdDeliveryBreakdownKinds) {
-    const breakdownInsights = await dependencies.fetchInsights(config, {
-      accountTimezone,
-      breakdownKind,
-      dateWindow
-    })
+    const breakdownInsights = await dependencies.fetchInsights(
+      config,
+      { accountTimezone, breakdownKind, dateWindow }
+    )
     rowsByBreakdown[breakdownKind] = breakdownInsights.length
     insights.push(...breakdownInsights)
   }
@@ -97,20 +108,32 @@ export async function syncMetaAdDeliveryInsights(
   const unavailableMetrics = emptyUnavailableMetricCounts()
   for (const insight of insights) {
     for (const metricName of metaAdDeliveryMetricNames) {
-      if (insight.metricAvailability[metricName] === 'unavailable') {
+      if (
+        insight.metricAvailability[metricName] === 'unavailable'
+      ) {
         unavailableMetrics[metricName] += 1
       }
     }
   }
 
+  const creativeDestinations =
+    await dependencies.fetchCreativeDestinations(config)
+
   const upsertedCount = await dependencies.upsertInsights({
     fetchedAt,
     insights
   })
+  const creativeDestinationUpsertedCount =
+    await dependencies.upsertCreativeDestinations({
+      destinations: creativeDestinations,
+      observedAt: fetchedAt
+    })
 
   return {
     accountId: config.accountId,
     accountTimezone,
+    creativeDestinationCount: creativeDestinations.length,
+    creativeDestinationUpsertedCount,
     fetchedAt: fetchedAt.toISOString(),
     rowCount: insights.length,
     rowsByBreakdown,

@@ -8,6 +8,8 @@ import {
 const syncResult = {
   accountId: '772268237116474',
   accountTimezone: 'America/Los_Angeles',
+  creativeDestinationCount: 12,
+  creativeDestinationUpsertedCount: 12,
   fetchedAt: '2026-08-01T06:00:00.000Z',
   rowCount: 25,
   rowsByBreakdown: {

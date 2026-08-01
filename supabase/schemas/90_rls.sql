@@ -19,6 +19,7 @@ alter table marketing.canonical_event_source_evidence force row level security;
 alter table marketing.meta_quality_snapshots enable row level security;
 alter table marketing.campaign_insights enable row level security;
 alter table marketing.meta_ad_delivery_insights enable row level security;
+alter table marketing.meta_ad_creative_destinations enable row level security;
 alter table marketing.checkout_attribution_snapshots enable row level security;
 alter table marketing.checkout_attribution_lookup_tokens enable row level security;
 

@@ -49,6 +49,12 @@ prove that the ad landed on `/skreddersy-varmen`. API/storage acceptance,
 Insights visibility, event-dispatch `accepted_unverified`, attribution and
 provider finality remain separate evidence classes.
 
+Creative destinations belong to the separate
+[`marketing.meta_ad_creative_destinations`](./ad-creative-destinations.md)
+slowly changing snapshot. A temporal join can prove observed configuration,
+but not the exact destination Meta delivered for an individual impression or
+click.
+
 ## Purpose and boundaries
 
 `/api/cron/meta-ad-delivery-insights` reads daily, ad-level Meta delivery data

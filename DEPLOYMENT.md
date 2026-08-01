@@ -426,7 +426,7 @@ reported six events and zero duplicate inserts. Compare event-level
 denominators and Meta source split after 7 and 14 days; one daily snapshot is
 not a trend.
 
-### Meta click-to-landing observability — pending release 2026-08-01
+### Meta click-to-landing observability — active release 2026-08-01
 
 This release restores read-only Meta ad-delivery aggregates and
 adds privacy-bounded request, consent and provider-stage
@@ -487,9 +487,14 @@ observability guide. Android remains open. The iOS Facebook run exposed a
 denied-to-granted PageView gap: production required a refresh before the
 PageView was collected. The follow-up application release retains only the
 latest denied PageView and flushes it on Cookiebot accept, with bounded and
-idempotent local tests. Intermittent unclassified Trace Drain 400s and the
-Klarna duplicate-configuration client error remain explicitly open. No GTM
-publish or Meta write mutation was part of this release.
+idempotent local tests. The BotID/Kasada duplicate-configuration defect was
+patched and production/Sentry checks found no post-release recurrence; it was
+not a Klarna SDK defect. Trace Drain v3 now accepts valid observations in mixed
+batches with OTLP `partialSuccess`; fully unscoped batches remain deliberately
+rejected with HTTP 400 because neither the documented Vercel project nor
+deployment attributes are present. The upstream source of those fully unscoped
+resources remains open. No GTM publish or Meta write mutation was part of this
+release.
 
 Application deployment `dpl_H8fmEoav8QH15VxbBjiroYwbC4X9` is `READY` on
 commit `599013fb5d2e1cc841093170a5a30ee6fdfc2cab` and owns `utekos.no`,
