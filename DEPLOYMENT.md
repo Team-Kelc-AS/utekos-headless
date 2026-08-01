@@ -426,6 +426,49 @@ reported six events and zero duplicate inserts. Compare event-level
 denominators and Meta source split after 7 and 14 days; one daily snapshot is
 not a trend.
 
+### Meta click-to-landing observability — pending release 2026-08-01
+
+This release restores read-only Meta ad-delivery aggregates and
+adds privacy-bounded request, consent and provider-stage
+correlation. The new `/api/cron/meta-ad-delivery-insights` route
+runs at `17 5 * * *` UTC and writes five independent daily ad
+grains to `marketing.meta_ad_delivery_insights`. It refetches the
+seven most recent completed dates in the live Meta account
+timezone; the current partial account day is excluded. Required
+existing app environment is `META_SYSTEM_USER_TOKEN`,
+`META_AD_ACCOUNT_ID`, `CRON_SECRET` and
+`SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING`. Before the
+application deploy, add the dedicated
+`LANDING_OBSERVABILITY_SIGNING_SECRET` with at least 32
+characters to Development, Preview and Production without
+printing its value. It signs the short-lived browser-to-consent
+correlation and must not reuse a Drain, cron, synthetic-traffic
+or provider credential.
+
+The two landing-observability receivers are Supabase Edge
+Functions, not routes in the drained Vercel project. Apply both
+new migrations before the app deploy. Both migrations fail closed
+if `cron.job` is unavailable; read both active retention jobs back
+after migration. Then configure the required dedicated `fbclid`
+HMAC secret and the remaining function secrets, deploy and verify
+signed canaries before creating
+100-percent Vercel Log and Trace Drains. Drain creation, function
+secrets, Supabase migration and Vercel deployment are separate
+approved mutations. Follow
+[`docs/analytics/meta-click-to-landing-observability.md`](docs/analytics/meta-click-to-landing-observability.md),
+[`docs/analytics/vercel-log-drain-edge-ingestion.md`](docs/analytics/vercel-log-drain-edge-ingestion.md),
+and
+[`docs/meta/ad-delivery-insights.md`](docs/meta/ad-delivery-insights.md).
+
+The receiver stores no raw query, IP address, user agent, raw
+referrer, arbitrary log message or raw `fbclid`. Trace duration
+is the bounded server trace envelope, not browser TTFB or
+page-load time. Meta reporting visibility, `accepted_unverified`
+adapter receipt and provider attribution/finality remain distinct
+states. Physical Facebook and Instagram in-app tests on iOS and
+Android remain a post-deploy release gate; Chromium user-agent
+emulation does not close it.
+
 ### Local integration audit 2026-07-14
 
 The isolated Git operations, Microsoft Merchant, PostHog SDK, Klarna
@@ -497,6 +540,7 @@ Run these before deciding the release order:
 | MCP config | `npm run mcp:build && npm run mcp:doctor` | Generated MCP output is derived from templates and has no inline secret findings. |
 | Commerce/tracking MCP | No active aggregate `mcp:commerce-tracking:doctor` script is registered. Run `npm run mcp:build`, `npm run mcp:doctor`, and the active target-specific doctors and tracking smoke tests relevant to the changed surface. | Do not treat a historical missing command as a release gate; reintroduce it only with an executable script, maintained server contract, tests, and runbook. |
 | Typecheck | `pnpm exec tsc --noEmit` | Runtime types pass. |
+| Supabase Edge Function typecheck | `pnpm run typecheck:edge-functions` | Deno-targeted Log and Trace Drain types pass separately from the Next.js runtime. |
 | Targeted tests | Use the tests touching changed runtime modules. | Changed behavior is covered. |
 | Lint | `npm run lint` | Run when useful, but document existing unrelated repo debt if it is not a clean gate. |
 
@@ -505,6 +549,7 @@ Run these before deciding the release order:
 | Change type | Must migrate or configure before Vercel deploy | Must deploy | Must verify after |
 | --- | --- | --- | --- |
 | Supabase schema read/write from runtime | Apply required migration to `hkoawfbomhnzupcsdggb`; verify schema dump contains new objects. | Vercel after Supabase. | `db lint`, schema dump grep, targeted runtime smoke. |
+| Vercel Log/Trace Drains to Supabase Edge Functions | Apply the landing-observability migration; set separate signature secrets; deploy and verify both receivers before Drain creation. | Supabase Edge Functions and, separately, the app correlation release. Drain creation requires explicit approval. | Signed canaries, idempotent replay, sanitized rows, RLS/grants, 30-day retention, real delivery and trace/log join. |
 | Tracking runtime writes to `ops.provider_dispatch_attempts` | Ensure required columns, constraints, statuses, and views exist. | Vercel after Supabase. | Provider rows, skip classification, dead-letter summary. |
 | PostHog client/runtime tracking | Ensure Cookiebot statistics consent is mapped and env vars are present. | Vercel. | Consent-gated init, no autocapture drift, masked replay, safe events only. |
 | Google/Meta/Microsoft provider diagnostics | Configure local/provider credentials outside generated files. | Usually no Vercel deploy unless runtime changed. | Read-only probes and provider dashboard/API status. |

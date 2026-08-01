@@ -47,6 +47,7 @@
     ".github/**/*",
     "alpha/**/*",
     "docs/**/*",
+    "supabase/functions/**/*",
     "src/components/klarna/dev/docs/**/*"
   ]
 }

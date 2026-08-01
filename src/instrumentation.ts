@@ -48,6 +48,9 @@ export const onRequestError: Instrumentation.onRequestError = async (error, requ
     stack: err.stack,
     path: request.path,
     method: request.method,
+    edgeRequestId:
+      request.headers['x-utekos-edge-request-id'] ??
+      undefined,
     routerKind: context.routerKind,
     routePath: context.routePath,
     routeType: context.routeType,

@@ -1,10 +1,10 @@
-export type CanonicalViewItemRouteDependencies = {
-  collect: (request: Request) => Promise<Response>
-}
+import {
+  createBrowserEventRouteHandler,
+  type BrowserEventRouteHandlerDependencies
+} from './createBrowserEventRouteHandler'
 
-export async function handleCanonicalViewItemRoute(
-  request: Request,
-  { collect }: CanonicalViewItemRouteDependencies
-): Promise<Response> {
-  return collect(request)
-}
+export type CanonicalViewItemRouteDependencies =
+  BrowserEventRouteHandlerDependencies
+
+export const handleCanonicalViewItemRoute =
+  createBrowserEventRouteHandler()

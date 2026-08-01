@@ -10,16 +10,16 @@ export type ProviderDispatchHealthCronDependencies = {
   runHealthCheck: typeof runProviderDispatchHealthCheck
 }
 
-const defaultDependencies: ProviderDispatchHealthCronDependencies = {
-  getCronSecret: () => process.env.CRON_SECRET,
-  runHealthCheck: dependencies =>
-    runProviderDispatchHealthCheck(dependencies)
-}
+const defaultDependencies: ProviderDispatchHealthCronDependencies =
+  {
+    getCronSecret: () => process.env.CRON_SECRET,
+    runHealthCheck: dependencies =>
+      runProviderDispatchHealthCheck(dependencies)
+  }
 
 export async function handleProviderDispatchHealthCron(
   request: Request,
-  dependencies: ProviderDispatchHealthCronDependencies =
-    defaultDependencies
+  dependencies: ProviderDispatchHealthCronDependencies = defaultDependencies
 ) {
   const authorized = hasValidCronAuthorization(
     request.headers.get('authorization'),
@@ -41,13 +41,37 @@ export async function handleProviderDispatchHealthCron(
   return Response.json(
     {
       ack_sample_size: result.ackSampleSize,
+      click_to_edge_baseline_day_count:
+        result.clickToEdgeBaselineDayCount,
+      click_to_edge_baseline_rate:
+        result.clickToEdgeBaselineRate,
+      click_to_edge_current_date: result.clickToEdgeCurrentDate,
+      click_to_edge_current_click_id_count:
+        result.clickToEdgeCurrentClickIdCount,
+      click_to_edge_current_edge_count:
+        result.clickToEdgeCurrentEdgeCount,
+      click_to_edge_current_outbound_clicks:
+        result.clickToEdgeCurrentOutboundClicks,
+      click_to_edge_current_signal_without_click_id_count:
+        result.clickToEdgeCurrentSignalWithoutClickIdCount,
+      click_to_edge_current_successful_edge_count:
+        result.clickToEdgeCurrentSuccessfulEdgeCount,
+      click_to_edge_rate: result.clickToEdgeRate,
+      click_to_edge_success_rate: result.clickToEdgeSuccessRate,
       dead_lettered: result.deadLettered.length,
+      edge_meta_click_id_coverage:
+        result.edgeMetaClickIdCoverage,
+      edge_meta_landing_count: result.edgeMetaLandingCount,
+      fbc_given_fbclid_coverage: result.fbcGivenFbclidCoverage,
+      fbclid_page_view_count: result.fbclidPageViewCount,
       healthy: result.healthy,
       initial_pending_over_two_minutes:
         result.initialPendingOverTwoMinutes.length,
       invalid_ledger_events: result.invalidLedgerEvents.length,
       missing_provider_attempts:
         result.missingProviderAttempts.length,
+      meta_api_acceptance_rate: result.metaApiAcceptanceRate,
+      meta_eligible_sample_size: result.metaEligibleSampleSize,
       ok: true,
       p95_ack_latency_ms: result.p95AckLatencyMs
     },

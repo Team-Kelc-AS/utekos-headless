@@ -39,6 +39,18 @@ function unhealthySnapshot(): ProviderDispatchHealthSnapshot {
 
   return {
     ackSampleSize: 12,
+    clickToEdgeBaselineDayCount: 7,
+    clickToEdgeBaselineRate: 0.8,
+    clickToEdgeCurrentClickIdCount: 225,
+    clickToEdgeCurrentDate: '2026-07-31',
+    clickToEdgeCurrentEdgeCount: 250,
+    clickToEdgeCurrentOutboundClicks: 500,
+    clickToEdgeCurrentSignalWithoutClickIdCount: 25,
+    clickToEdgeCurrentSuccessfulEdgeCount: 240,
+    edgeMetaLandingCount: 100,
+    edgeMetaLandingWithFbclidCount: 97,
+    fbcAndFbclidPageViewCount: 48,
+    fbclidPageViewCount: 50,
     ledgerCandidates: [
       {
         eventId: eligibleEvent.event_id,
@@ -59,6 +71,8 @@ function unhealthySnapshot(): ProviderDispatchHealthSnapshot {
         providers: []
       }
     ],
+    metaAcceptedUnverifiedCount: 19,
+    metaEligibleSampleSize: 20,
     p95AckLatencyMs: 61_000,
     problemAttempts: [
       {
@@ -94,6 +108,11 @@ test('finds missing attempts only for consent-qualified providers', () => {
   assert.equal(evaluation.invalidLedgerEvents.length, 1)
   assert.equal(evaluation.initialPendingOverTwoMinutes.length, 1)
   assert.equal(evaluation.deadLettered.length, 1)
+  assert.equal(evaluation.fbcGivenFbclidCoverage, 0.96)
+  assert.equal(evaluation.edgeMetaClickIdCoverage, 0.97)
+  assert.equal(evaluation.clickToEdgeRate, 0.5)
+  assert.equal(evaluation.clickToEdgeSuccessRate, 0.96)
+  assert.equal(evaluation.metaApiAcceptanceRate, 0.95)
   assert.equal(evaluation.healthy, false)
 })
 
@@ -113,7 +132,11 @@ test('emits one stable Sentry issue per failed health gate', async () => {
     'Canonical provider dispatch health: invalid_canonical_ledger_payload',
     'Canonical provider dispatch health: initial_pending_over_two_minutes',
     'Canonical provider dispatch health: dead_lettered',
-    'Canonical provider dispatch health: p95_ack_latency_over_60_seconds'
+    'Canonical provider dispatch health: p95_ack_latency_over_60_seconds',
+    'Canonical provider dispatch health: meta_edge_click_id_coverage_below_98_percent',
+    'Canonical provider dispatch health: meta_click_to_edge_rate_below_baseline',
+    'Canonical provider dispatch health: fbc_given_fbclid_below_98_percent',
+    'Canonical provider dispatch health: meta_api_acceptance_below_99_percent'
   ])
 })
 
@@ -127,7 +150,21 @@ test('does not alert merely because no low-volume event occurred', async () => {
     store: {
       readSnapshot: async () => ({
         ackSampleSize: 0,
+        clickToEdgeBaselineDayCount: 0,
+        clickToEdgeBaselineRate: null,
+        clickToEdgeCurrentClickIdCount: 0,
+        clickToEdgeCurrentDate: null,
+        clickToEdgeCurrentEdgeCount: 0,
+        clickToEdgeCurrentOutboundClicks: 0,
+        clickToEdgeCurrentSignalWithoutClickIdCount: 0,
+        clickToEdgeCurrentSuccessfulEdgeCount: 0,
+        edgeMetaLandingCount: 0,
+        edgeMetaLandingWithFbclidCount: 0,
+        fbcAndFbclidPageViewCount: 0,
+        fbclidPageViewCount: 0,
         ledgerCandidates: [],
+        metaAcceptedUnverifiedCount: 0,
+        metaEligibleSampleSize: 0,
         p95AckLatencyMs: null,
         problemAttempts: []
       })

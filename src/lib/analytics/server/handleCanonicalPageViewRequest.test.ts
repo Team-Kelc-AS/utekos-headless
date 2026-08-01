@@ -137,6 +137,38 @@ test('returns accepted after atomic persistence', async () => {
   })
 })
 
+test('redacts PageView queries from logs without changing the persisted payload', async () => {
+  const pageUrl =
+    'https://utekos.no/skreddersy-varmen?fbclid=AbC-123&utm_source=facebook#bestill'
+  const logCalls: unknown[][] = []
+  let persistedPageUrl: string | undefined
+  const originalConsoleInfo = console.info
+
+  console.info = (...args: unknown[]) => {
+    logCalls.push(args)
+  }
+
+  try {
+    const response = await handleCanonicalPageViewRequest(
+      request(JSON.stringify({ ...pageView(), page_url: pageUrl })),
+      dependencies(async input => {
+        persistedPageUrl = input.event.page_url
+        return insertedAcceptance
+      })
+    )
+
+    assert.equal(response.status, 202)
+  } finally {
+    console.info = originalConsoleInfo
+  }
+
+  assert.equal(persistedPageUrl, pageUrl)
+
+  const serializedLogs = JSON.stringify(logCalls)
+  assert.match(serializedLogs, /https:\/\/utekos\.no\/skreddersy-varmen/)
+  assert.doesNotMatch(serializedLogs, /fbclid|utm_source|bestill/)
+})
+
 test('returns an idempotent duplicate response', async () => {
   const response = await handleCanonicalPageViewRequest(
     request(JSON.stringify(pageView())),

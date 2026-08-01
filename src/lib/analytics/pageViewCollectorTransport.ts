@@ -82,7 +82,8 @@ export function prepareCanonicalPageViewForCollector(
 export function createPageViewCollectorTransport(
   dependencies: PageViewCollectorTransportDependencies
 ) {
-  const attemptedEventIds = new Set<string>()
+  const completedEventIds = new Set<string>()
+  const inFlightEventIds = new Set<string>()
   const pendingEvents = new Map<string, CanonicalPageView>()
 
   async function flush(): Promise<PageViewCollectorResult> {
@@ -105,12 +106,13 @@ export function createPageViewCollectorTransport(
     }
 
     const events = Array.from(pendingEvents.values()).filter(
-      event => !attemptedEventIds.has(event.event_id)
+      event =>
+        !completedEventIds.has(event.event_id) &&
+        !inFlightEventIds.has(event.event_id)
     )
 
     for (const event of events) {
-      attemptedEventIds.add(event.event_id)
-      pendingEvents.delete(event.event_id)
+      inFlightEventIds.add(event.event_id)
     }
 
     if (events.length === 0) return 'skipped'
@@ -129,13 +131,29 @@ export function createPageViewCollectorTransport(
       })
     )
 
+    for (const [index, result] of results.entries()) {
+      const event = events[index]
+      if (!event) continue
+
+      inFlightEventIds.delete(event.event_id)
+
+      if (result.status === 'fulfilled') {
+        completedEventIds.add(event.event_id)
+        pendingEvents.delete(event.event_id)
+      }
+    }
+
     return results.some(result => result.status === 'rejected') ?
         'failed'
       : 'sent'
   }
 
   function queue(event: CanonicalPageView) {
-    if (!attemptedEventIds.has(event.event_id)) {
+    if (
+      !completedEventIds.has(event.event_id) &&
+      !inFlightEventIds.has(event.event_id) &&
+      !pendingEvents.has(event.event_id)
+    ) {
       pendingEvents.set(event.event_id, event)
     }
 

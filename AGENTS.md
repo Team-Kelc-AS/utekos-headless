@@ -432,7 +432,10 @@ explicitly asks for that cost-bearing provider mutation.
   storefront does not currently write to them. Ledger:
   `marketing.event_ledger`. Kø: `ops.provider_dispatch_attempts`.
   Meta quality: `marketing.meta_quality_snapshots` via
-  `/api/cron/sync-meta-insights`.
+  `/api/cron/meta-dataset-quality`. Meta ad-delivery metrics use the
+  separate `/api/cron/meta-ad-delivery-insights` route and
+  `marketing.meta_ad_delivery_insights`; neither route proves provider
+  attribution finality.
 - **Provider-audit:** `ops.provider_dispatch_health` and
   `ops.dead_letter_summary` are the current read models for provider
   row counts, skipped rows, and unresolved dead letters.

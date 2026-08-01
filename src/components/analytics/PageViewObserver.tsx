@@ -11,7 +11,13 @@ import {
 } from '@/lib/analytics/pageViewClientContext'
 import { browserFirstPartyExternalIdStore } from '@/lib/analytics/firstPartyExternalId'
 import {
+  readBrowserLandingEdgeCorrelation,
+  readBrowserLandingEdgeRequestId
+} from '@/lib/analytics/landingEdgeCorrelation'
+import { browserLandingConsentTransport } from '@/lib/analytics/landingConsentObservation'
+import {
   browserPageViewCollectorTransport,
+  hasCookiebotDecision,
   type CookiebotState
 } from '@/lib/analytics/pageViewCollectorTransport'
 import {
@@ -41,7 +47,35 @@ export function PageViewObserver({
   const search = useSearchParams().toString()
 
   useEffect(() => {
+    const landingPageUrl = window.location.href
+    const landingDocumentReferrer = document.referrer
+    const landingCorrelation =
+      readBrowserLandingEdgeCorrelation(landingPageUrl)
+    const landingPageView =
+      landingCorrelation ?
+        browserPageViewSession.ensure({
+          pageUrl: landingPageUrl,
+          ...(landingDocumentReferrer ?
+            { documentReferrer: landingDocumentReferrer }
+          : {})
+        })
+      : undefined
+
+    const observeConsent = () => {
+      const cookiebot = getCookiebotState()
+      if (!hasCookiebotDecision(cookiebot)) return
+      if (!landingCorrelation || !landingPageView) return
+
+      void browserLandingConsentTransport.observe({
+        consent: getConsentSnapshot(cookiebot?.consent),
+        correlation_token: landingCorrelation.token,
+        edge_request_id: landingCorrelation.edgeRequestId,
+        page_view_id: landingPageView.pageViewId
+      })
+    }
+
     const handleConsentUpdate = () => {
+      observeConsent()
       void browserPageViewCollectorTransport.flush()
     }
 
@@ -49,6 +83,7 @@ export function PageViewObserver({
       window.addEventListener(eventName, handleConsentUpdate)
     }
 
+    observeConsent()
     void browserPageViewCollectorTransport.flush()
 
     return () => {
@@ -91,10 +126,14 @@ export function PageViewObserver({
       searchParams.get('impression_id') ??
       searchParams.get('impressionId') ??
       undefined
+    const edgeRequestId = readBrowserLandingEdgeRequestId(
+      navigation.pageUrl
+    )
 
     const event = createCanonicalPageView({
       environment,
       eventId: crypto.randomUUID(),
+      ...(edgeRequestId ? { edgeRequestId } : {}),
       pageViewId: pageView.pageViewId,
       eventTime: new Date().toISOString(),
       pageUrl: navigation.pageUrl,

@@ -1,0 +1,301 @@
+# Meta click-to-landing observability
+
+Status date: 2026-08-01
+
+Release state: local release candidate only. No application
+deploy, Supabase migration, Edge Function deploy, Vercel Drain,
+environment change, GTM publish or Meta mutation has been
+performed.
+
+## Metric contract
+
+Keep these stages separate. A later stage never retroactively
+proves an earlier one, and Meta API receipt does not prove
+provider attribution or Events Manager finality.
+
+| Stage                            | Evidence                                                                      | Correlation                                                                                                 |
+| -------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Meta outbound click              | `marketing.meta_ad_delivery_insights`, overall daily ad grain                 | `ad_id`, Meta account date                                                                                  |
+| Vercel edge document or redirect | `ops.vercel_edge_request_observations`                                        | `edge_request_id`, `request_id`, `trace_id`, required-when-present `fbclid_hmac`, numeric Meta ad parameter |
+| Resolved consent                 | `ops.landing_consent_observations`                                            | `edge_request_id`, `page_view_id`                                                                           |
+| Browser canonical PageView       | consent row's `page_view_id` and the browser dataLayer contract               | `page_view_id`                                                                                              |
+| Collector acceptance             | `marketing.event_ledger` `page_view` row                                      | payload `edge_request_id`, `page_view_id`, `event_id`                                                       |
+| Meta dispatch                    | `ops.provider_dispatch_attempts`                                              | `event_id`, provider `meta`                                                                                 |
+| Meta reporting observation       | Meta Dataset Quality snapshot or another documented provider-finality surface | provider event name and provider reporting window                                                           |
+
+`accepted_unverified` means that the Meta adapter received an
+accepted API response. It is not provider finality and is not
+attribution proof.
+
+## Verified production baseline
+
+Read-only checks on 2026-08-01 established:
+
+- For all consented PageViews observed from 2026-07-22, 2,037 of
+  2,037 PageViews containing `fbclid` also contained `fbc`.
+- Ad `120246491016410788` recorded 3,429 outbound clicks and
+  1,816 landing page views from 2026-07-13 through 2026-08-01, a
+  provider-reported click-to-landing-page-view rate of 52.96
+  percent.
+- From 2026-07-22, 1,149 canonical PageViews were associated with
+  that ad. Ten had the expected Facebook UTM/ad signal, granted
+  marketing consent, an iPhone WebKit user agent and `fbp`, but
+  lacked both `fbclid` and `fbc`. All ten used
+  `/skreddersy-varmen`.
+- The active production deployment returned successful documents
+  for `/skreddersy-varmen`, `/comfyrobe` and the active product
+  pages during the audit. Historical failures still exist on
+  older deployments: compressed response failures for the two
+  landing pages and invalid postponed-state fallbacks for product
+  pages. A current successful sample does not prove that the
+  intermittent failure is permanently resolved.
+
+### Ad `120246491016410788`
+
+The read-only Meta Insights investigation used the ad account's
+live `America/Los_Angeles` timezone. Provider values from
+2026-07-13 through the partial 2026-08-01 account day were:
+
+| Breakdown  | Outbound clicks | Landing-page views |   Rate |
+| ---------- | --------------: | -----------------: | -----: |
+| Overall    |           3,429 |              1,816 | 52.96% |
+| Facebook   |           3,213 |              1,694 | 52.72% |
+| Instagram  |             216 |                121 | 56.02% |
+| Mobile app |           3,382 |              1,792 | 52.99% |
+| Mobile web |              29 |                 14 | 48.28% |
+| Desktop    |              18 |                  9 | 50.00% |
+
+The dimensioned rows account for 1,815 of the 1,816 overall
+landing-page views. Do not silently force breakdown rows to
+reconcile when the provider omits a dimension.
+
+Key placement rows were Facebook or Instagram Feed 3,329 to
+1,768, Facebook Reels 47 to 16, Instagram Reels 8 to 3, and
+Facebook Stories 42 to 26. The sharpest date anomalies were
+2026-07-15 at 182 to 2, 2026-07-16 at 150 outbound clicks with
+the landing-page-view field unavailable rather than zero, and
+2026-07-17 at 170 to 54. The more recent completed 2026-07-22
+through 2026-07-28 window was 1,579 to 965, or 61.11 percent. A
+2026-07-29 row reported zero outbound clicks and one landing-page
+view, which is provider-attribution evidence to investigate
+rather than a mathematically meaningful conversion rate.
+
+The ten post-2026-07-22 UTM/ad-signal PageViews without `fbclid`
+and `fbc` shared the same bounded pattern: `/skreddersy-varmen`,
+Facebook source, the audited ad identifier in campaign content,
+iPhone Safari/WebKit, mobile, `fbp` present, no referrer, granted
+marketing consent, and no bot/headless classification. This
+establishes that the click identifier was absent when the
+canonical PageView arrived; it does not by itself identify
+whether Meta, an in-app navigation, a redirect before Utekos, or
+the original destination URL removed it.
+
+On the 2026-08-01 completion recheck, ad `120246491016410788` had
+effective status `CAMPAIGN_PAUSED`. The configured account's only
+effective `ACTIVE` ad was `120246830675150788`, using creative
+`1855977708900925`. Its live `asset_feed_spec` contained three
+unique Utekos destinations:
+
+- `http://www.utekos.no/skreddersy-varmen`;
+- `http://www.utekos.no/comfyrobe`;
+- `https://utekos.no/skreddersy-varmen/utekos-orginal`.
+
+The first two destinations take two 308 hops, first HTTP to HTTPS
+and then `www` to the canonical apex host. All four HTTP
+user-agent profiles—Facebook iOS, Instagram iOS, Facebook Android
+and Instagram Android—preserved the synthetic `fbclid` and UTM
+values through every hop for all three destinations and finished
+with HTTP 200. The twelve request chains completed in 86.6-255.2
+ms in this controlled sample. This proves current server redirect
+preservation, not Meta in-app browser rendering or a real user's
+completed landing.
+
+The same three final routes rendered to
+`document.readyState='complete'` in the in-app Chromium browser
+with their expected title and H1 and no captured console errors.
+The active Meta creative should nevertheless be updated to
+canonical `https://utekos.no/...` destinations after separate
+provider-write approval, eliminating two avoidable network
+transitions from paid clicks.
+
+### Vercel route investigation
+
+The active deployment `dpl_e5cmT5y8QLKckXGoTYtm6LsY6yyW` at
+commit `aa5415cfa8a969766f5a35b8363fc7c352aa45cc` returned 200
+for both landing pages and every active product handle in Safari,
+Facebook iOS and Instagram Android HTTP probes. Chromium browser
+rendering additionally passed for Facebook and Instagram
+user-agent profiles on iOS and Android.
+
+Historical Vercel evidence remains material:
+
+- `/skreddersy-varmen` had compressed-response
+  `Z_BUF_ERROR`/`Z_DATA_ERROR` failures and two Shopify cart
+  errors on older deployments, most recently 2026-07-28.
+- `/comfyrobe` had two cache-response 502 errors on an older
+  deployment on 2026-07-30.
+- product routes had 13 `invalid postponed state` incidents in
+  the seven-day query window: 11 for `/produkter/techdown`, one
+  for `/produkter/mikrofiber` and one for `/produkter/dun`. The
+  last was 2026-07-31 20:20 UTC on an older deployment. The
+  fallback still returned HTTP 200, so status alone would have
+  hidden the degraded render path.
+
+The controlled cache-hit probes measured 73-132 ms time to first
+byte and 146-260 ms total time for the two landing pages. Product
+probes measured 74-125 ms time to first byte and 331-559 ms total
+time. These are small diagnostic samples, not production latency
+distributions; the Trace Drain is needed for a continuous
+server-side distribution.
+
+Do not compare Meta's broad `fbc` percentage across every event
+with `fbc | fbclid`. The first includes Google, Bing, direct and
+automated traffic; the second measures click-ID construction when
+a Meta click identifier is actually present.
+
+## Collection boundaries
+
+The application proxy creates an opaque UUID for each document
+request, logs only that UUID, forwards it in
+`x-utekos-edge-request-id`, and exposes it to the browser through
+the `utekos_edge` Server-Timing entry. A separate
+`utekos_edge_auth` entry carries a 30-minute HMAC token bound to
+that UUID. The token authorizes only the terminal consent
+observation and is never stored. The proxy does not log the
+incoming URL, query or token.
+
+The signed Vercel Log Drain receiver is the pre-consent source of
+truth for HTTP status, route, deployment, cache, region and
+bounded campaign metadata. It discards raw query strings, IP
+addresses, user agents, raw referrers, arbitrary messages and raw
+`fbclid`. The `fbclid_hmac` uses a required dedicated secret and
+may only be used for equality/deduplication. The read model
+projects only whether a row is the first document observation for
+that digest, so redirects and reloads cannot inflate the
+strong click-ID stratum of the click-to-edge numerator.
+
+The signed Vercel Trace Drain receiver stores a bounded
+server-side trace duration keyed by the documented `trace_id`.
+That duration is not browser TTFB, DOM readiness or page-load
+duration.
+
+The browser captures the initial landing correlation and
+`page_view_id` before any SPA navigation and retains that pair
+until Cookiebot resolves. It sends a terminal consent observation
+only after a resolved response. A failed transmission is retried
+with bounded backoff at most three times for the exact consent
+state; subsequent Cookiebot events cannot make the attempts
+unbounded. States are serialized per edge request and PageView,
+so a newer decision is always sent after any older in-flight
+retry. The server fails closed unless
+the UUID-bound token is valid. One UUID is immutable to one
+`page_view_id` and accepts at most four terminal state writes.
+Pending consent is deliberately not persisted as a guessed
+decision. A denied decision does not create a canonical collector
+event.
+
+## Attribution and breakdowns
+
+Meta delivery is stored as separate daily grains. Never add rows
+from two grains together:
+
+- overall, used for outbound-click and landing-page-view
+  denominators;
+- publisher platform;
+- publisher platform plus placement;
+- device platform;
+- raw impression device. The sync does not infer an operating
+  system from a provider device label.
+
+Meta's documented delivery breakdowns do not provide a
+trustworthy standalone OS grain for this query. The landing-side
+`os_class` is therefore an edge arrival classification only; it
+must not be presented as Meta's outbound-click denominator by OS.
+
+Edge observations use the campaign parameters that actually
+arrived at Utekos. A numeric `utm_content` may be classified as
+the Meta ad id because the audited campaign uses that documented
+template. Non-numeric content is not coerced into an ad id.
+
+Verified bot, recognized automation and explicitly signed
+synthetic collector traffic are excluded from marketing dispatch.
+Unknown traffic remains fail-open and visible; it must not be
+silently called human.
+
+## Alert definitions
+
+The existing provider-health cron evaluates:
+
+- `fbc | fbclid` over consented canonical PageViews for 24 hours;
+  alert below 98 percent with at least 50 PageViews containing
+  `fbclid`;
+- edge Meta click-ID coverage over human-or-unknown Meta-signal
+  documents for 24 hours; alert below 98 percent with at least 50
+  documents;
+- click-to-edge rate for the latest stored Meta account date;
+  alert when at least 50 outbound clicks exist, at least three
+  prior eligible days exist, and the current rate is below 80
+  percent of the prior eligible-day average;
+- Meta API acceptance over eligible server dispatches for one
+  hour; alert below 99 percent with at least 20 attempts. Its
+  semantics remain `accepted_unverified`.
+
+The click-to-edge numerator has two explicit strata: the first
+document observation for each HMAC-deduplicated `fbclid`, plus
+one primary request for Meta UTM/ad evidence without `fbclid`.
+The latter is lower-identity evidence and is reported separately.
+Arrival counts include 4xx/5xx, because a failed response still
+reached Vercel; the successful 2xx/3xx component and success rate
+are reported separately. The security-invoker read model bridges
+Vercel request, proxy, edge and trace identifiers before ranking
+one primary row, so multiple Log Drain entries do not receive
+multiple request weight. A terminal BotID classification
+overrides the weaker user-agent classification when it exists.
+The denominator uses only the configured account's overall Meta
+outbound-click grain in the ad-account timezone. Rates are
+unavailable until both the Meta daily sync and a complete Vercel
+Drain history exist; absence of that history must not generate a
+false alert.
+
+## Redirect contract
+
+Next.js configuration redirects and rewrites preserve unmatched
+query parameters under the current documented framework contract.
+The custom Magasinet canonical redirect explicitly copies the
+complete query string. The Facebook checkout bridge already
+forwards every parameter except its consumed `products` and
+`coupon` inputs.
+
+Never move `fbclid` into the pathname, canonical metadata or
+server logs. Canonical HTML URLs may omit campaign parameters;
+the actual navigation URL and canonical PageView payload must
+retain them.
+
+## Release gates
+
+Follow `DEPLOYMENT.md`. The required order is:
+
+1. Run the complete local test, type, lint, build and migration
+   checks.
+2. Review and apply the Supabase migrations to the pink-lens
+   tracking project.
+3. Configure and deploy the signed Log and Trace Drain Edge
+   Functions.
+4. Prove signed canaries, idempotency, RLS/grants, retention and
+   absence of raw identifiers.
+5. Configure the dedicated application correlation-signing
+   secret, deploy the Vercel application and verify both proxy
+   correlation entries, consent observation, canonical PageView,
+   collector and Meta attempt.
+6. Create the 100-percent Vercel Log and Trace Drains only after
+   separate approval, then prove real production delivery.
+7. Run physical or approved device-cloud Facebook and Instagram
+   in-app browser tests on iOS and Android. Chromium user-agent
+   emulation is useful evidence, but it is not this release gate.
+8. Observe at least three complete Meta account days before
+   enabling the baseline click-to-edge alert as an operational
+   signal.
+
+Production deploys, Supabase mutations, Vercel Drain creation,
+provider secrets and Meta/GTM changes require explicit operator
+approval.

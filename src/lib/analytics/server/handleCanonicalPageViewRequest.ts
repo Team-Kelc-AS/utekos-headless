@@ -6,6 +6,7 @@ import {
 import type {
   CanonicalPageViewRequestContext
 } from './normalizeCanonicalPageView'
+import { redactPageUrlForLog } from './redactPageUrlForLog'
 
 const MAX_BODY_BYTES = 32 * 1024
 const PRODUCTION_COOKIE_DOMAIN = 'utekos.no'
@@ -132,7 +133,7 @@ function readEventSummary(payload: unknown) {
       : undefined,
     page_url:
       typeof record.page_url === 'string' ?
-        record.page_url
+        redactPageUrlForLog(record.page_url)
       : undefined
   }
 }

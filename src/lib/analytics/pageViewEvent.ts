@@ -8,6 +8,7 @@ export const canonicalPageViewSchema =
   canonicalEventEnvelopeSchema.extend({
     event_name: z.literal('page_view'),
     source: z.literal('web'),
+    edge_request_id: z.string().uuid().optional(),
     page_view_id: z.string().uuid(),
     page_url: z.string().url(),
     referrer_url: z.string().url().optional(),
@@ -35,6 +36,7 @@ type CreateCanonicalPageViewInput = {
   clickId?: Record<string, string>
   environment: CanonicalPageView['environment']
   eventId: string
+  edgeRequestId?: string
   externalId?: string
   impressionId?: string
   pageViewId: string
@@ -93,6 +95,9 @@ export function createCanonicalPageView(
     schema_version: 1,
     event_name: 'page_view',
     event_id: input.eventId,
+    ...(input.edgeRequestId ?
+      { edge_request_id: input.edgeRequestId }
+    : {}),
     page_view_id: input.pageViewId,
     event_time: input.eventTime,
     source: 'web',

@@ -190,6 +190,82 @@ test('the same event_id is attempted at most once', async () => {
   assert.equal(context.sent.length, 1)
 })
 
+test('retries a failed page_view on a later flush', async () => {
+  let attempts = 0
+  const sent: CanonicalPageView[] = []
+  const transport = createPageViewCollectorTransport({
+    getCookiebot: () => ({
+      hasResponse: true,
+      consent: {
+        marketing: false,
+        preferences: false,
+        statistics: true
+      }
+    }),
+    getCookieHeader: () => '',
+    send: async event => {
+      attempts += 1
+      if (attempts === 1) {
+        throw new Error('transient collector failure')
+      }
+      sent.push(event)
+    }
+  })
+  const event = pageView()
+
+  assert.equal(await transport.queue(event), 'failed')
+  assert.equal(await transport.flush(), 'sent')
+  assert.equal(await transport.flush(), 'skipped')
+  assert.equal(attempts, 2)
+  assert.deepEqual(
+    sent.map(sentEvent => sentEvent.event_id),
+    [event.event_id]
+  )
+})
+
+test('does not send an in-flight page_view concurrently', async () => {
+  let attempts = 0
+  let releaseSend: (() => void) | undefined
+  const sendGate = new Promise<void>(resolve => {
+    releaseSend = resolve
+  })
+  const transport = createPageViewCollectorTransport({
+    getCookiebot: () => ({
+      hasResponse: true,
+      consent: {
+        marketing: false,
+        preferences: false,
+        statistics: true
+      }
+    }),
+    getCookieHeader: () => '',
+    send: async () => {
+      attempts += 1
+      await sendGate
+    }
+  })
+  const event = pageView()
+
+  const firstSend = transport.queue(event)
+  const concurrentFlush = transport.flush()
+  const concurrentQueue = transport.queue(event)
+
+  await new Promise<void>(resolve => setImmediate(resolve))
+  assert.equal(attempts, 1)
+
+  releaseSend?.()
+  assert.deepEqual(
+    await Promise.all([
+      firstSend,
+      concurrentFlush,
+      concurrentQueue
+    ]),
+    ['sent', 'skipped', 'skipped']
+  )
+  assert.equal(await transport.queue(event), 'skipped')
+  assert.equal(attempts, 1)
+})
+
 test('distinct SPA page views are each sent once', async () => {
   const context = harness({
     hasResponse: true,

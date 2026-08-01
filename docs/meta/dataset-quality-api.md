@@ -25,6 +25,11 @@ the primary route at `17 3 * * *` and delegates an idempotent retry through
 [`DEPLOYMENT.md`](../../DEPLOYMENT.md) and [`FLOW.md`](../../FLOW.md) for the
 production artifact and verification gates.
 
+Campaign/ad delivery reporting is intentionally separate. The pending
+`/api/cron/meta-ad-delivery-insights` release reads daily Marketing API
+aggregates into `marketing.meta_ad_delivery_insights`; it must not be described
+as Dataset Quality, CAPI delivery finality, or attribution confirmation.
+
 ## Required Access
 
 - `META_SYSTEM_USER_TOKEN` is the preferred Dataset Quality read credential.
