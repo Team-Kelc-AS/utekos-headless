@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  LANDING_EDGE_CORRELATION_COOKIE_NAME,
   readLandingEdgeCorrelation,
+  readLandingEdgeCorrelationCookie,
   readLandingEdgeRequestId
 } from './landingEdgeCorrelation'
 
@@ -91,6 +93,33 @@ test('requires a well-formed authentication token for consent correlation', () =
           ]
         }
       ]
+    ),
+    undefined
+  )
+})
+
+test('reads the signed correlation pair from the first-party fallback cookie', () => {
+  assert.deepEqual(
+    readLandingEdgeCorrelationCookie(
+      `other=value; ${LANDING_EDGE_CORRELATION_COOKIE_NAME}=47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd.${correlationToken}`
+    ),
+    {
+      edgeRequestId: '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd',
+      token: correlationToken
+    }
+  )
+})
+
+test('rejects malformed or similarly named correlation cookies', () => {
+  assert.equal(
+    readLandingEdgeCorrelationCookie(
+      `${LANDING_EDGE_CORRELATION_COOKIE_NAME}-legacy=47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd.${correlationToken}`
+    ),
+    undefined
+  )
+  assert.equal(
+    readLandingEdgeCorrelationCookie(
+      `${LANDING_EDGE_CORRELATION_COOKIE_NAME}=not-a-correlation`
     ),
     undefined
   )

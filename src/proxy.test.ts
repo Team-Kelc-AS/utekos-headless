@@ -117,6 +117,13 @@ test('correlates a document request without logging its landing query', async ()
         'i'
       )
     )
+    assert.match(
+      response.headers.get('set-cookie') ?? '',
+      new RegExp(
+        `^__Host-utekos-edge-correlation=${edgeRequestId}\\.\\d{10}\\.[A-Za-z0-9_-]{43}; Path=/; Expires=.+; Max-Age=1800; Secure; SameSite=lax$`,
+        'i'
+      )
+    )
   } finally {
     console.info = originalInfo
     restoreSigningSecret()
@@ -140,6 +147,7 @@ test('does not correlate RSC or prefetch traffic as a landing', async () => {
     )
 
     assert.equal(response.headers.get('server-timing'), null)
+    assert.equal(response.headers.get('set-cookie'), null)
     assert.equal(logCalls, 0)
   } finally {
     console.info = originalInfo
@@ -166,6 +174,7 @@ test('keeps document navigation available when the signing secret is invalid', a
     const timing = response.headers.get('server-timing') ?? ''
     assert.match(timing, /utekos_edge;desc="[0-9a-f-]{36}"/u)
     assert.doesNotMatch(timing, /utekos_edge_auth/u)
+    assert.equal(response.headers.get('set-cookie'), null)
   } finally {
     console.error = originalError
     if (originalSecret === undefined) {

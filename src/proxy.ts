@@ -8,6 +8,7 @@ import { buildReportOnlyCsp } from '@/lib/security/buildReportOnlyCsp'
 import { isMagazineViewTransitionPreviewEnabled } from '@/app/magasinet/utils/isMagazineViewTransitionPreviewEnabled'
 import {
   LANDING_EDGE_AUTH_SERVER_TIMING_NAME,
+  LANDING_EDGE_CORRELATION_COOKIE_NAME,
   LANDING_EDGE_SERVER_TIMING_NAME
 } from '@/lib/analytics/landingEdgeCorrelation'
 import { createLandingEdgeCorrelationToken } from '@/lib/analytics/landingEdgeCorrelationToken'
@@ -103,6 +104,15 @@ function withLandingEdgeCorrelation<T extends NextResponse>(
       'Server-Timing',
       `${LANDING_EDGE_AUTH_SERVER_TIMING_NAME};desc="${correlation.token}"`
     )
+    response.cookies.set({
+      httpOnly: false,
+      maxAge: 30 * 60,
+      name: LANDING_EDGE_CORRELATION_COOKIE_NAME,
+      path: '/',
+      sameSite: 'lax',
+      secure: true,
+      value: `${correlation.edgeRequestId}.${correlation.token}`
+    })
   }
   return response
 }
