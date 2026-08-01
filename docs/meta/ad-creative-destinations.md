@@ -89,8 +89,11 @@ both Vercel telemetry scripts returned HTTP 200 after promotion.
 Fresh browser documents for all three Meta landing routes and the product route
 returned HTTP 200 with complete DOM and heading, no application console errors,
 no runtime exceptions and no duplicate KPSDK configuration. `window.va` and
-`window.si` were initialized, but the pass did not capture the telemetry script
-nodes or requests, so actual per-route telemetry delivery remains unproven.
+`window.si` initialization was followed by a fresh CDP capture that identified
+the deployment-generated base paths, both injected script nodes and HTTP 200
+responses for Analytics and Speed Insights. Analytics `view` returned HTTP 200
+on `/skreddersy-varmen` and `/comfyrobe`. The short capture did not observe a
+separate Speed Insights `vitals` submission.
 
 The follow-up provider-health release was promoted as Vercel deployment
 `dpl_CTUfdAuSz5mJRS1Uce1gFs2G77xg` from commit

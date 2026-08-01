@@ -121,9 +121,13 @@ deployment 5xx responses. Fresh browser documents for `/skreddersy-varmen`,
 `/produkter/utekos-dun` returned HTTP 200 with complete DOM and heading, no
 application console errors, no runtime exceptions and no duplicate KPSDK
 configuration. The two Vercel telemetry endpoints returned HTTP 200 and the
-page initialized `window.va` and `window.si`, but the capture did not observe
-the script nodes or requests. Actual per-route telemetry delivery therefore
-remains partial evidence rather than a completed runtime proof.
+page initialized the telemetry runtime. A follow-up CDP capture identified the
+deployment-generated base paths, both injected script nodes and HTTP 200
+responses for `@vercel/analytics/next` 2.0.1 and
+`@vercel/speed-insights/next` 2.0.0. The Analytics `view` endpoint also
+returned HTTP 200 on `/skreddersy-varmen` and `/comfyrobe`. A separate Speed
+Insights `vitals` submission was not observed in the short sample window, so
+script loading is proven while a sampled vitals delivery remains open.
 
 ## Purpose and boundaries
 
