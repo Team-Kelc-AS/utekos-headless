@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse, after } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import {
   clientLogPayloadSchema,
   toAppLogInput
 } from '@/lib/observability/logging/clientLogPayloadSchema'
 import { logToAppLogs } from '@/lib/utils/logToAppLogs'
-import { reportAppLogToSentry } from '@/lib/observability/logging/reportAppLogToSentry'
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,15 +17,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const logEntry = await logToAppLogs(
-      toAppLogInput(parsedBody.data)
-    )
-
-    after(async () => {
-      await reportAppLogToSentry(logEntry).catch(() => {
-        console.warn('Client error report delivery failed')
-      })
-    })
+    await logToAppLogs(toAppLogInput(parsedBody.data))
 
     return NextResponse.json(
       { ok: true },

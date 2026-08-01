@@ -1,16 +1,45 @@
 import 'server-only'
 
 import * as Sentry from '@sentry/nextjs'
+import { metaDatasetQualityIncompleteDataSchema } from '@/lib/observability/logging/appLogContract'
 import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
 import type { AppLogEntry } from 'types/observability/log/AppLogEntry'
 
-export async function reportAppLogToSentry(logEntry: AppLogEntry): Promise<void> {
-  if (logEntry.level !== 'ERROR') return
+export type ReportAppLogToSentryDependencies = {
+  captureMessage: typeof Sentry.captureMessage
+  flush: typeof Sentry.flush
+  getRuntime: typeof getVercelRuntimeContext
+}
 
-  const runtime = getVercelRuntimeContext()
+const defaultDependencies: ReportAppLogToSentryDependencies = {
+  captureMessage: Sentry.captureMessage,
+  flush: Sentry.flush,
+  getRuntime: getVercelRuntimeContext
+}
 
-  Sentry.captureMessage(logEntry.event, {
-    level: 'error',
+export async function reportAppLogToSentry(
+  logEntry: AppLogEntry,
+  dependencies: ReportAppLogToSentryDependencies = defaultDependencies
+): Promise<void> {
+  if (logEntry.level !== 'WARN' && logEntry.level !== 'ERROR') return
+
+  const runtime = dependencies.getRuntime()
+  const incompleteData =
+    logEntry.event === 'meta_dataset_quality.incomplete'
+      ? metaDatasetQualityIncompleteDataSchema.safeParse(logEntry.data)
+      : undefined
+
+  dependencies.captureMessage(logEntry.event, {
+    ...(incompleteData?.success
+      ? {
+          fingerprint: [
+            logEntry.event,
+            incompleteData.data.datasetId,
+            incompleteData.data.snapshotDate
+          ]
+        }
+      : {}),
+    level: logEntry.level === 'WARN' ? 'warning' : 'error',
     tags: {
       app_log_id: logEntry.id,
       vercel_environment: runtime.environment,
@@ -24,5 +53,5 @@ export async function reportAppLogToSentry(logEntry: AppLogEntry): Promise<void>
     }
   })
 
-  await Sentry.flush(1_500)
+  await dependencies.flush(1_500)
 }

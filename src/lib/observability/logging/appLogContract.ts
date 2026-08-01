@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { requiredMetaDatasetQualityEvents } from '@/lib/analytics/metaDatasetQualityRequiredEvents'
 
 const emptyDataSchema = z.strictObject({})
 const failureReasonSchema = z.enum([
@@ -8,7 +9,22 @@ const failureReasonSchema = z.enum([
   'unknown'
 ])
 
+export const metaDatasetQualityIncompleteDataSchema = z.strictObject({
+  datasetId: z.string().regex(/^\d{1,32}$/),
+  missingRequiredEvents: z
+    .array(z.enum(requiredMetaDatasetQualityEvents))
+    .min(1)
+    .max(6),
+  snapshotDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+})
+
 const eventSchemas = [
+  z.strictObject({
+    event: z.literal('meta_dataset_quality.incomplete'),
+    level: z.literal('WARN'),
+    data: metaDatasetQualityIncompleteDataSchema,
+    context: emptyDataSchema
+  }),
   z.strictObject({
     event: z.literal('client.error'),
     level: z.literal('ERROR'),

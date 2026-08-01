@@ -87,6 +87,47 @@ sende et navn/UUID-par. En ekte `InteractWithAccordion` brukte UUID
 15:40:07Z for browser og 15:41:17Z for server. Se
 [release-evidensen](docs/analytics/evidence/canonical-stale-events-near-realtime-cutover-2026-07-26.md).
 
+### Snapshot-vakt 2026-07-26: teknisk grønn, providerdata fortsatt gul
+
+Meta Dataset Quality-vakten skiller nå teknisk kjørehelse fra
+providerkompletthet. Sync-resultatet og cronresponsen inneholder
+`complete`, `missingRequiredEvents` og `runKind` (`primary` eller `retry`),
+mens `ok` og HTTP-status fortsatt bare uttrykker auth-, fetch-, validerings-,
+database- og runtimehelse. De seks påkrevde Meta-eventene er `PageView`,
+`ViewContent`, `AddToCart`, `InitiateCheckout`, `Purchase` og `Lead`; ekstra
+eventer gjør ikke et komplett snapshot ufullstendig.
+
+Primær- og retryruten har separate manuelle Sentry check-ins med UTC-planene
+`17 3 * * *` og `17 4 * * *`. En teknisk vellykket, men ufullstendig retry
+avsluttes som `ok` og sender én PII-fri
+`meta_dataset_quality.incomplete`-WARN med deterministisk fingerprint per
+event, dataset og UTC-dag. Den sentrale app-loggeren sender validerte WARN- og
+ERROR-hendelser nøyaktig én gang og isolerer alle Sentry-feil fra cron-,
+newsletter- og Lead-resultatet.
+
+Google-oppryddingen 2026-07-26 startet med 144 uløste dead letters. 134 ble
+lukket uten providerkall som `outside_provider_replay_window`; 10 ble
+re-køet én kontrollert gang med bevart event-ID/idempotens og korrigert
+payloadbygging. Google avviste alle 10 på kanonisk `event_timestamp` fordi
+de var omtrent 61 timer gamle. De 10 nye audit-radene ble derfor lukket uten
+ny resend. Replay-planleggeren bruker nå alltid
+`provider_dispatch_attempts.payload.event_time` og en fail-closed 48-timers
+Google-grense; den faller aldri tilbake til dead-letterens `created_at`.
+Fersk kontroll viser 0 uløste dead letters totalt og for Google. De 25
+strandede `accepted_unverified/provider_status_timeout`-radene er lest fra
+Google og er fortsatt faktisk `PROCESSING`; de er ikke sendt på nytt.
+
+Koden er produksjonspromotert fra verifisert Preview til Vercel-deployment
+`dpl_4gVppqcSq863LoPtNMSmZZoUUhYB`, Git-SHA
+`3f4c2ec92b69c4f9cb612d2f6bf3023cf3c3c0e6`. Deploymenten er `READY`, eier
+`utekos.no`, `www.utekos.no` og `feed.utekos.no`, og Vercel registrerer de
+eksisterende primary/retry-cronplanene. Ingen Meta-cron er kjørt manuelt.
+Snapshotet for 2026-07-26 har fortsatt 7 rader og 0 `Lead`; vakten er derfor
+korrekt gul frem til Meta faktisk viser Lead. Én operatørstyrt newsletter-Lead
+og read-only Sentry-monitorverifisering gjenstår. Dag-14-vurderingen
+2026-08-02 beholdes før langsiktig trendkonklusjon. Se
+[evidensnotatet](docs/analytics/evidence/meta-dataset-quality-remediation-2026-07-26.md).
+
 ### AI-kjøpshjelp: intern preview med null som standard
 
 Den nye kjøpshjelpen er en separat, ikke-telemetrisk brukerflyt. Root layout
