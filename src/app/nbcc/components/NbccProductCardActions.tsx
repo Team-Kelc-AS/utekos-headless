@@ -1,12 +1,10 @@
 'use client'
 
-import { MoveRightIcon } from '@/components/animate-icons/icons/move-right'
+import { KlarnaProductExpressCheckout } from '@/components/klarna/components/KlarnaProductExpressCheckout'
 import { Button } from '@/components/ui/button'
 import { useCanonicalAddToCart } from '@/hooks/useCanonicalAddToCart'
 import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductListVisibility'
-import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
 import { Loader2 } from 'lucide-react'
-import Link from 'next/link'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import type { NbccProductCardActionsProps } from '../types'
@@ -14,9 +12,7 @@ import type { NbccProductCardActionsProps } from '../types'
 export function NbccProductCardActions({
   product,
   variants,
-  href,
   productTitle,
-  tracking,
   totalItemCount
 }: NbccProductCardActionsProps) {
   const actionsRef = useRef<HTMLDivElement>(null)
@@ -77,27 +73,6 @@ export function NbccProductCardActions({
     })()
   }
 
-  const handleViewProduct = () => {
-    const shopifyVariant =
-      product.variants.edges
-        .map(edge => edge.node)
-        .find(
-          variant => variant.id === selectedVariant?.variantId
-        ) ?? product.variants.edges[0]?.node
-
-    const destinationUrl =
-      typeof window === 'undefined' ? href : (
-        new URL(href, window.location.origin).toString()
-      )
-
-    reportProductListSelectItem({
-      product,
-      variant: shopifyVariant,
-      itemListId: 'nbcc_products',
-      destinationUrl
-    })
-  }
-
   return (
     <div ref={actionsRef} className='flex flex-col gap-4'>
       <div>
@@ -146,21 +121,19 @@ export function NbccProductCardActions({
             <Loader2 className='size-4 animate-spin' />
           : 'Legg i handlekurv'}
         </Button>
-        <Button
-          asChild
-          variant='commerce-secondary'
-          className='h-9 w-full rounded-md transition-all duration-200'
-        >
-          <Link
-            href={href}
-            data-track='NbccProductCardCtaClick'
-            data-track-data={JSON.stringify(tracking)}
-            onClick={handleViewProduct}
-          >
-            Produktside
-            <MoveRightIcon size={16} animateOnHover='default' />
-          </Link>
-        </Button>
+        {isAvailable && shopifyVariant ?
+          <div className='flex h-11 min-h-11 w-full items-stretch'>
+            <KlarnaProductExpressCheckout
+              product={product}
+              selectedVariant={shopifyVariant}
+              quantity={1}
+              disabled={isPending}
+              theme='light'
+              className='h-full min-h-0 w-full min-w-0'
+              buttonContainerClassName='h-full min-h-full md:h-full md:min-h-full'
+            />
+          </div>
+        : null}
       </div>
     </div>
   )
