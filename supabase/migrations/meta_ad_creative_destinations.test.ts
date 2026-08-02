@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
 const migrationUrl = new URL(
-  './20260801170000_add_meta_ad_creative_destinations.sql',
+  './20260801150243_add_meta_ad_creative_destinations.sql',
   import.meta.url
 )
 const marketingSchemaUrl = new URL(

@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
 const migrationUrl = new URL(
-  './20260801223000_add_page_view_funnel_observations.sql',
+  './20260801225927_add_page_view_funnel_observations.sql',
   import.meta.url
 )
 const declarativeOpsSchemaUrl = new URL(
