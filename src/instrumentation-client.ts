@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs'
+import { initBotId } from 'botid/client/core'
 import {
   CHROME_EXTENSION_URL_PATTERN,
   isIgnorableClientError
@@ -27,6 +28,26 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 const SENTRY_DSN =
   process.env.NEXT_PUBLIC_PERFORMANCE_SENTRY_DSN ??
   process.env.NEXT_PUBLIC_SENTRY_DSN
+
+initBotId({
+  protect: [
+    {
+      method: 'POST',
+      path: '/api/events/*',
+      advancedOptions: { checkLevel: 'basic' }
+    },
+    {
+      method: 'POST',
+      path: '/api/observability/landing-consent',
+      advancedOptions: { checkLevel: 'basic' }
+    },
+    {
+      method: 'POST',
+      path: '/api/observability/page-view-dispatch',
+      advancedOptions: { checkLevel: 'basic' }
+    }
+  ]
+})
 
 Sentry.init({
   dsn: SENTRY_DSN,

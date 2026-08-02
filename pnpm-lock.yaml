@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  botid@1.5.11: 422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab
   next@16.2.12: 22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf
 
 importers:
@@ -199,7 +200,7 @@ importers:
         version: 4.12.1
       botid:
         specifier: ^1.5.11
-        version: 1.5.11(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 1.5.11(patch_hash=422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       capi-param-builder-nodejs:
         specifier: ^1.3.1
         version: 1.3.1
@@ -16384,7 +16385,7 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  botid@1.5.11(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
+  botid@1.5.11(patch_hash=422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
     optionalDependencies:
       next: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7

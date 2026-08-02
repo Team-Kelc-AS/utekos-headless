@@ -53,6 +53,13 @@ as $$
 declare
   inserted_count bigint;
 begin
+  if to_regclass('marketing.shopify_customers') is null
+    or to_regclass('marketing.customer_identity_links') is null
+    or to_regclass('marketing.customer_source_meta_2025') is null
+  then
+    return 0;
+  end if;
+
   delete from marketing.meta_high_value_customer_profiles;
 
   with approved as (
@@ -233,17 +240,27 @@ order by shopify_customer_id;
 revoke all on table marketing.meta_high_value_customer_audience_export from public, anon, authenticated;
 grant select on table marketing.meta_high_value_customer_audience_export to service_role;
 
-alter table marketing.customer_source_meta_2025_raw enable row level security;
-alter table marketing.customer_source_meta_2025 enable row level security;
-alter table marketing.customer_identity_links enable row level security;
+do $optional_customer_source_security$
+begin
+  if to_regclass('marketing.customer_source_meta_2025_raw') is not null then
+    alter table marketing.customer_source_meta_2025_raw enable row level security;
+    revoke all on table marketing.customer_source_meta_2025_raw from public, anon, authenticated;
+    grant select, insert, update, delete on table marketing.customer_source_meta_2025_raw to service_role;
+  end if;
 
-revoke all on table marketing.customer_source_meta_2025_raw from public, anon, authenticated;
-revoke all on table marketing.customer_source_meta_2025 from public, anon, authenticated;
-revoke all on table marketing.customer_identity_links from public, anon, authenticated;
+  if to_regclass('marketing.customer_source_meta_2025') is not null then
+    alter table marketing.customer_source_meta_2025 enable row level security;
+    revoke all on table marketing.customer_source_meta_2025 from public, anon, authenticated;
+    grant select, insert, update, delete on table marketing.customer_source_meta_2025 to service_role;
+  end if;
 
-grant select, insert, update, delete on table marketing.customer_source_meta_2025_raw to service_role;
-grant select, insert, update, delete on table marketing.customer_source_meta_2025 to service_role;
-grant select, insert, update, delete on table marketing.customer_identity_links to service_role;
+  if to_regclass('marketing.customer_identity_links') is not null then
+    alter table marketing.customer_identity_links enable row level security;
+    revoke all on table marketing.customer_identity_links from public, anon, authenticated;
+    grant select, insert, update, delete on table marketing.customer_identity_links to service_role;
+  end if;
+end;
+$optional_customer_source_security$;
 
 comment on table marketing.meta_high_value_customer_profiles is
   'Secure normalized source for the Utekos Meta high-value customer audience. Do not export this table directly; use meta_high_value_customer_audience_export.';
@@ -251,10 +268,25 @@ comment on table marketing.meta_high_value_customer_profiles is
 comment on view marketing.meta_high_value_customer_audience_export is
   'Meta Customer List CSV export. Contains only normalized Meta identifier and customer value fields.';
 
-comment on view marketing.meta_customer_audience is
-  'Legacy audience view. Use marketing.meta_high_value_customer_audience_export for new Meta uploads.';
+do $optional_legacy_audience_comment$
+begin
+  if to_regclass('marketing.meta_customer_audience') is not null then
+    comment on view marketing.meta_customer_audience is
+      'Legacy audience view. Use marketing.meta_high_value_customer_audience_export for new Meta uploads.';
+  end if;
+end;
+$optional_legacy_audience_comment$;
 
-select marketing.refresh_meta_high_value_customer_audience();
+do $initial_meta_audience_refresh$
+begin
+  if to_regclass('marketing.shopify_customers') is not null
+    and to_regclass('marketing.customer_identity_links') is not null
+    and to_regclass('marketing.customer_source_meta_2025') is not null
+  then
+    perform marketing.refresh_meta_high_value_customer_audience();
+  end if;
+end;
+$initial_meta_audience_refresh$;
 
 commit;
 

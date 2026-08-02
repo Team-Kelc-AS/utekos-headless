@@ -391,6 +391,16 @@ inspector_port = 8083
 # The Deno major version to use.
 deno_version = 2
 
+[functions.vercel-log-drain]
+# Vercel cannot present a Supabase JWT. The function verifies the raw request body
+# with the Drain-specific x-vercel-signature before parsing or writing anything.
+verify_jwt = false
+
+[functions.vercel-trace-drain]
+# The OTLP/HTTP JSON Trace Drain uses the same Vercel raw-body signature
+# contract as Log Drains and cannot present a Supabase JWT.
+verify_jwt = false
+
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 

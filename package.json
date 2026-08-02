@@ -29,6 +29,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "typecheck:edge-functions": "tsc --noEmit -p supabase/functions/tsconfig.json",
     "test:view-transitions": "playwright test --config=playwright.view-transitions.config.ts",
     "ai:devtools": "npx @ai-sdk/devtools",
     "analyze": "cross-env ANALYZE=true next build",

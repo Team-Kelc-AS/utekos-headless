@@ -371,7 +371,7 @@ export async function recordAcceptedGenerateLead(
   }
 
   return {
-    dataLayerEvent: buildGenerateLeadDataLayerEvent(event),
+    dataLayerEvent: buildGenerateLeadDataLayerEvent(result.event),
     eventId: result.event_id,
     status: result.status
   }

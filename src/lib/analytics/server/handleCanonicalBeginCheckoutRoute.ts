@@ -1,10 +1,10 @@
-export type CanonicalBeginCheckoutRouteDependencies = {
-  collect: (request: Request) => Promise<Response>
-}
+import {
+  createBrowserEventRouteHandler,
+  type BrowserEventRouteHandlerDependencies
+} from './createBrowserEventRouteHandler'
 
-export async function handleCanonicalBeginCheckoutRoute(
-  request: Request,
-  { collect }: CanonicalBeginCheckoutRouteDependencies
-): Promise<Response> {
-  return collect(request)
-}
+export type CanonicalBeginCheckoutRouteDependencies =
+  BrowserEventRouteHandlerDependencies
+
+export const handleCanonicalBeginCheckoutRoute =
+  createBrowserEventRouteHandler()

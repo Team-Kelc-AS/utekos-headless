@@ -13,6 +13,10 @@ test('delegates the request to collect exactly once and returns its response', a
   let collectedRequest: Request | undefined
 
   const response = await handleCanonicalPageViewRoute(request, {
+    classifyTraffic: async () => ({
+      classification: 'human_or_unknown',
+      excludeFromMarketingDispatch: false
+    }),
     collect: async currentRequest => {
       collectCalls += 1
       collectedRequest = currentRequest
@@ -34,6 +38,10 @@ test('propagates collect errors as rejected promises', async () => {
   const expectedError = new Error('collect failed')
 
   const result = handleCanonicalPageViewRoute(request, {
+    classifyTraffic: async () => ({
+      classification: 'human_or_unknown',
+      excludeFromMarketingDispatch: false
+    }),
     collect: () => {
       throw expectedError
     }

@@ -11,7 +11,13 @@ import {
 } from '@/lib/analytics/pageViewClientContext'
 import { browserFirstPartyExternalIdStore } from '@/lib/analytics/firstPartyExternalId'
 import {
+  readBrowserLandingEdgeCorrelation,
+  readBrowserLandingEdgeRequestId
+} from '@/lib/analytics/landingEdgeCorrelation'
+import { browserLandingConsentTransport } from '@/lib/analytics/landingConsentObservation'
+import {
   browserPageViewCollectorTransport,
+  hasCookiebotDecision,
   type CookiebotState
 } from '@/lib/analytics/pageViewCollectorTransport'
 import {
@@ -19,16 +25,11 @@ import {
   type TrackingEnvironment
 } from '@/lib/analytics/pageViewEvent'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
+import { subscribeToCookiebotPageViewUpdates } from '@/lib/analytics/subscribeToCookiebotPageViewUpdates'
 
 type PageViewObserverProps = { environment: TrackingEnvironment }
 
 type CookiebotWindow = Window & { Cookiebot?: CookiebotState }
-
-const COOKIEBOT_CONSENT_EVENTS = [
-  'CookiebotOnConsentReady',
-  'CookiebotOnAccept',
-  'CookiebotOnDecline'
-] as const
 
 function getCookiebotState() {
   return (window as CookiebotWindow).Cookiebot
@@ -41,24 +42,43 @@ export function PageViewObserver({
   const search = useSearchParams().toString()
 
   useEffect(() => {
-    const handleConsentUpdate = () => {
-      void browserPageViewCollectorTransport.flush()
+    const landingPageUrl = window.location.href
+    const landingDocumentReferrer = document.referrer
+    const landingCorrelation =
+      readBrowserLandingEdgeCorrelation(landingPageUrl)
+    const landingPageView =
+      landingCorrelation ?
+        browserPageViewSession.ensure({
+          pageUrl: landingPageUrl,
+          ...(landingDocumentReferrer ?
+            { documentReferrer: landingDocumentReferrer }
+          : {})
+        })
+      : undefined
+
+    const observeConsent = () => {
+      const cookiebot = getCookiebotState()
+      if (!hasCookiebotDecision(cookiebot)) return
+      if (!landingCorrelation || !landingPageView) return
+
+      void browserLandingConsentTransport.observe({
+        consent: getConsentSnapshot(cookiebot?.consent),
+        correlation_token: landingCorrelation.token,
+        edge_request_id: landingCorrelation.edgeRequestId,
+        page_view_id: landingPageView.pageViewId
+      })
     }
 
-    for (const eventName of COOKIEBOT_CONSENT_EVENTS) {
-      window.addEventListener(eventName, handleConsentUpdate)
-    }
+    const unsubscribe = subscribeToCookiebotPageViewUpdates({
+      eventTarget: window,
+      flush: () => browserPageViewCollectorTransport.flush(),
+      observeConsent
+    })
 
+    observeConsent()
     void browserPageViewCollectorTransport.flush()
 
-    return () => {
-      for (const eventName of COOKIEBOT_CONSENT_EVENTS) {
-        window.removeEventListener(
-          eventName,
-          handleConsentUpdate
-        )
-      }
-    }
+    return unsubscribe
   }, [])
 
   useEffect(() => {
@@ -91,10 +111,17 @@ export function PageViewObserver({
       searchParams.get('impression_id') ??
       searchParams.get('impressionId') ??
       undefined
+    const landingCorrelation = readBrowserLandingEdgeCorrelation(
+      navigation.pageUrl
+    )
+    const edgeRequestId =
+      landingCorrelation?.edgeRequestId ??
+      readBrowserLandingEdgeRequestId(navigation.pageUrl)
 
     const event = createCanonicalPageView({
       environment,
       eventId: crypto.randomUUID(),
+      ...(edgeRequestId ? { edgeRequestId } : {}),
       pageViewId: pageView.pageViewId,
       eventTime: new Date().toISOString(),
       pageUrl: navigation.pageUrl,
@@ -120,7 +147,10 @@ export function PageViewObserver({
     })
 
     emitCanonicalPageView(event)
-    void browserPageViewCollectorTransport.queue(event)
+    void browserPageViewCollectorTransport.queue(
+      event,
+      landingCorrelation
+    )
   }, [environment, pathname, search])
 
   return null
