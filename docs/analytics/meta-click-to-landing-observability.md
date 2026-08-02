@@ -1,15 +1,58 @@
 # Meta click-to-landing observability
 
-Status date: 2026-08-01
+Status date: 2026-08-02
 
 Release state: the implementation is active in production. The
 application, two Supabase migrations, two signed Edge Function
 receivers, the dedicated Vercel environment secret and
 project-scoped 100-percent Log and Trace Drains were released and
-verified on 2026-08-01. The physical Meta in-app-browser matrix,
-the first scheduled post-cutover Insights run and the
-overlapping-day baseline remain incomplete. No GTM publish or
-Meta write mutation was performed.
+verified on 2026-08-01. The controlled physical iOS Meta
+in-app-browser matrix is complete. Android was not run because no
+physical Android device was available and remains explicitly
+unverified. The first scheduled post-cutover Insights run and the
+overlapping-day baseline remain incomplete. No GTM publish or Meta
+write mutation was performed.
+
+## 2026-08-02 superseding acceptance update
+
+The final pre-integration production baseline was deployment
+`dpl_9PviuC8Zn6d2zkJoGDSyaCXcpipJ` on commit
+`62d8135be603bbe305de50188f196666be07645b`. All four controlled
+landing routes returned HTTP 200 and the final BotID/KPSDK issue
+was not reproduced. Valid OTLP deliveries and trace joins work;
+fully unscoped Trace Drain resources remain deliberate,
+classified HTTP 400 rejections.
+
+The controlled physical iOS matrix passed eight of eight cells:
+Facebook and Instagram across `/skreddersy-varmen`, `/comfyrobe`,
+`/skreddersy-varmen/utekos-orginal` and
+`/handlehjelp/storrelsesguide`. Every cell reached the edge with
+HTTP 200 in the expected iOS in-app browser, preserved `fbclid`,
+recorded consent, emitted one canonical `PageView`, produced both
+browser and collector receipts, and reached Meta as
+`accepted_unverified`. The ledger retained `fbclid`, `fbc` and
+`fbp`. Android remains zero of eight controlled cells and must not
+be reported as physically verified; the operator accepted this as
+the stopping point for 2026-08-02 because no Android device was
+available.
+
+The newsletter path already creates canonical `generate_lead`
+only after a successful submission and maps it to Meta standard
+event `Lead`. Published web-GTM v135 maps `generate_lead` to
+`Lead` and supplies the canonical `event_id` as Pixel `eventID`;
+Meta CAPI uses the same value as `event_id`. A release-candidate
+repair now builds the browser payload from the consent-normalized
+accepted event, preventing hashed lead data from reaching
+`dataLayer` when marketing consent is denied. The event catalog
+also records the actual browser/server shared-ID contract, and a
+dedicated Meta Lead mapper test protects the exact name and ID.
+No GTM publish is required for this repair.
+
+`src/components/analytics/VercelTelemetry.tsx` remains byte-exact
+at SHA-256
+`1aec7e5c586a29baa55e4bc7e191317e309a201ca85e3f8246d32b81c9499938`
+and must be included unchanged in the integrated production
+release.
 
 ## Production release evidence
 

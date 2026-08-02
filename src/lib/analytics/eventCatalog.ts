@@ -1731,8 +1731,7 @@ const eventCatalogBase = {
     dedupe: dedupe(
       'submission_id',
       'A separate accepted lead submission receives a new event_id.',
-      retain25Months,
-      false
+      retain25Months
     ),
     consent: leadConsent,
     providers: activeEventProviders('generate_lead', {
