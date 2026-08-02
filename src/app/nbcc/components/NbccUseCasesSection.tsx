@@ -39,18 +39,18 @@ export function NbccUseCasesSection() {
                 key={useCase.title}
                 data-nbcc-reveal
                 data-nbcc-animate
-                className='rounded-lg border border-foreground/10 bg-white/55 p-6 text-[#17130f] shadow-[0_1px_0_rgba(255,255,255,0.5)_inset]'
+                className='rounded-lg border border-foreground/15 bg-dark-teal p-6 text-foreground'
               >
                 <Icon
                   size={28}
                   animateOnHover='default'
-                  className='mb-5 text-[#6d4a20]'
+                  className='mb-5 text-primary'
                   aria-hidden
                 />
-                <h3 className='font-utekos-text-medium text-lg text-[#17130f]'>
+                <h3 className='font-utekos-text-medium text-lg text-foreground'>
                   {useCase.title}
                 </h3>
-                <p className='mt-3 text-sm leading-7 text-[#5a5046]'>
+                <p className='mt-3 text-sm leading-7 text-foreground/85'>
                   {useCase.description}
                 </p>
               </article>
