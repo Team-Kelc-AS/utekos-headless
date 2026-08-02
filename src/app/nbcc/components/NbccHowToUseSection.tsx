@@ -22,7 +22,7 @@ export function NbccHowToUseSection() {
             <h2 className='mt-4 max-w-xl font-utekos-text-medium text-3xl tracking-normal text-balance text-foreground sm:text-4xl'>
               Fra medlemskode til ekte Utekos.
             </h2>
-            <p className='mt-5 max-w-xl text-base text-foreground'>
+            <p className='mt-5 max-w-xl font-utekos-text text-base text-foreground'>
               Som medlem får du en hyggelig prisrabatt på hele
               vårt hovedsortiment. Følg de tre enkle stegene for
               å hente koden din, eller hopp rett til kassen om du
@@ -30,7 +30,7 @@ export function NbccHowToUseSection() {
             </p>
             <Button
               asChild
-              className='mt-8 h-12 rounded-md bg-primary px-6 text-primary-foreground hover:bg-primary/90'
+              className='mt-8 h-12 rounded-xl bg-primary px-6 font-utekos-text-medium text-foreground hover:bg-primary-muted'
             >
               <Link
                 href={'/produkter' as Route}

@@ -27,7 +27,7 @@ export async function NbccProductSection() {
   return (
     <article
       id='produkter'
-      className='dark:bg-dark-background bg-background px-6 py-20 sm:px-8 sm:py-24 lg:px-10'
+      className='bg-background px-6 py-20 sm:px-8 sm:py-24 lg:px-10'
     >
       <div className='mx-auto max-w-7xl'>
         <div
@@ -42,7 +42,7 @@ export async function NbccProductSection() {
             >
               Utekos for NBCC-medlemmer
             </Badge>
-            <h2 className='mt-5 max-w-2xl font-sans font-utekos-text-medium text-3xl text-balance text-foreground sm:text-4xl'>
+            <h2 className='mt-5 max-w-2xl font-sans text-3xl text-balance text-foreground sm:text-4xl'>
               Skreddersy din campingopplevelse
             </h2>
           </div>
@@ -117,7 +117,7 @@ export async function NbccProductSection() {
             }}
             containerClassName='flex w-full max-w-3xl flex-col items-center'
             panelClassName='w-full'
-            buttonClassName='h-12 w-full justify-center gap-2 rounded-md border-foreground dark:border-dark-foreground bg-card  px-6 text-foreground  hover:bg-card/90 /90 sm:w-auto'
+            buttonClassName='h-12 w-full justify-center gap-2 rounded-xl bg-[#00685e] px-6 text-foreground hover:bg-card/90 sm:w-auto'
           />
         </div>
       </div>

@@ -6,7 +6,6 @@ export const SITE_URL = 'https://utekos.no'
 export const NBCC_URL = `${SITE_URL}/nbcc`
 export const ORGANIZATION_ID = `${SITE_URL}/#organization`
 export const WEBSITE_ID = `${SITE_URL}/#website`
-export const NBCC_HERO_CONTENT_SELECTOR = '[data-nbcc-hero-content]'
 export const NBCC_AI_MODEL = process.env.NBCC_AI_SUMMARY_MODEL?.trim() || 'anthropic/claude-haiku-4.5'
 export const NBCC_AI_MODEL_FALLBACK =
   process.env.NBCC_AI_SUMMARY_FALLBACK_MODEL?.trim() || 'google/gemini-2.5-pro'

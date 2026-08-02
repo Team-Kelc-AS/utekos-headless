@@ -55,7 +55,7 @@ export type NbccAiSummaryResponse = NbccAiSummaryPayload & {
 
 export type NbccAiSummaryStatus = 'idle' | 'thinking' | 'completed'
 
-export const NbccAiSummarySectionSchema = z.object({
+const NbccAiSummarySectionSchema = z.object({
   title: z.string().min(2).max(72).describe('Kort seksjonstittel på norsk.'),
   body: z.string().min(20).max(520).optional().describe('Valgfri brødtekst for seksjonen.'),
   items: z
