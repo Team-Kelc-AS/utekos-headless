@@ -17,30 +17,26 @@ export function NbccFaqSection() {
           </p>
         </div>
 
-        <div
+        <Accordion
           data-nbcc-faq-surface
-          className='overflow-hidden rounded-lg border border-border bg-jungle'
+          data-nbcc-reveal
+          data-nbcc-animate
+          className='rounded-lg border border-border bg-jungle px-5 text-foreground'
         >
-          <Accordion
-            data-nbcc-reveal
-            data-nbcc-animate
-            className='bg-jungle px-5 text-foreground'
-          >
-            {nbccFaqItems.map(item => (
-              <AccordionItem
-                key={item.question}
-                value={item.question}
-              >
-                <AccordionTrigger className='py-5 text-base text-foreground hover:text-primary hover:no-underline'>
-                  {item.question}
-                </AccordionTrigger>
-                <AccordionContent className='pb-6 text-sm leading-7 text-foreground/85'>
-                  {item.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
+          {nbccFaqItems.map(item => (
+            <AccordionItem
+              key={item.question}
+              value={item.question}
+            >
+              <AccordionTrigger className='py-5 text-base text-foreground hover:text-primary hover:no-underline'>
+                {item.question}
+              </AccordionTrigger>
+              <AccordionContent className='pb-6 text-sm leading-7 text-foreground/85'>
+                {item.answer}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </article>
   )
