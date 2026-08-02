@@ -426,6 +426,161 @@ reported six events and zero duplicate inserts. Compare event-level
 denominators and Meta source split after 7 and 14 days; one daily snapshot is
 not a trend.
 
+### Meta click-to-landing observability — active release 2026-08-01
+
+This release restores read-only Meta ad-delivery aggregates and
+adds privacy-bounded request, consent and provider-stage
+correlation. The `/api/cron/meta-ad-delivery-insights` route runs at
+`17 10 * * *` UTC, after midnight in the Meta account's
+`America/Los_Angeles` timezone, and writes five independent daily ad
+grains to `marketing.meta_ad_delivery_insights`. It refetches the
+seven most recent completed dates in the live Meta account
+timezone; the current partial account day is excluded. Required
+existing app environment is `META_SYSTEM_USER_TOKEN`,
+`META_AD_ACCOUNT_ID`, `CRON_SECRET` and
+`SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING`. Before the
+application deploy, add the dedicated
+`LANDING_OBSERVABILITY_SIGNING_SECRET` with at least 32
+characters to Development, Preview and Production without
+printing its value. It signs the short-lived browser-to-consent
+correlation and must not reuse a Drain, cron, synthetic-traffic
+or provider credential.
+
+The two landing-observability receivers are Supabase Edge
+Functions, not routes in the drained Vercel project. Apply both
+new migrations before the app deploy. Both migrations fail closed
+if `cron.job` is unavailable; read both active retention jobs back
+after migration. Then configure the required dedicated `fbclid`
+HMAC secret and the remaining function secrets, deploy and verify
+signed canaries before creating
+100-percent Vercel Log and Trace Drains. Drain creation, function
+secrets, Supabase migration and Vercel deployment are separate
+approved mutations. Follow
+[`docs/analytics/meta-click-to-landing-observability.md`](docs/analytics/meta-click-to-landing-observability.md),
+[`docs/analytics/vercel-log-drain-edge-ingestion.md`](docs/analytics/vercel-log-drain-edge-ingestion.md),
+and
+[`docs/meta/ad-delivery-insights.md`](docs/meta/ad-delivery-insights.md).
+
+The receiver stores no raw query, IP address, user agent, raw
+referrer, arbitrary log message or raw `fbclid`. Trace duration
+is the bounded server trace envelope, not browser TTFB or
+page-load time. Meta reporting visibility, `accepted_unverified`
+adapter receipt and provider attribution/finality remain distinct
+states. Physical Facebook and Instagram in-app tests on iOS and
+Android remain a post-deploy release gate; Chromium user-agent
+emulation does not close it.
+
+The approved 2026-08-01 production release completed the two pink-lens
+migrations, both signed Supabase Edge Function deployments, the dedicated
+Vercel environment secret, application deployment
+`dpl_CqHhnFYQMn5PjYFWNeq3g9g84faN`, Log Drain
+`drn_oje49nFh1Hj93CZO`, and OTLP/HTTP Trace Drain
+`drn_J0LeFWHHSeHpo5Bb`. Signed canaries proved exact Vercel request-to-edge UUID
+correlation, trace joining, idempotent/sanitized storage and the expected
+same-site/`_rsc` exclusions; the synthetic rows were then removed. The
+authorized Meta sync stored 437 rows for all five grains. Final route checks
+found no runtime-error clusters for the scoped landing/product routes.
+
+The operational click-to-edge alert remains unavailable, rather than green or
+red, until at least three complete post-Drain account days exist. Physical
+iOS Facebook and Instagram in-app browser verification is recorded in the
+observability guide. Android remains open. The iOS Facebook run exposed a
+denied-to-granted PageView gap: production required a refresh before the
+PageView was collected. The follow-up application release retains only the
+latest denied PageView and flushes it on Cookiebot accept, with bounded and
+idempotent local tests. The BotID/Kasada duplicate-configuration defect was
+patched and production/Sentry checks found no post-release recurrence; it was
+not a Klarna SDK defect. Trace Drain v3 now accepts valid observations in mixed
+batches with OTLP `partialSuccess`; fully unscoped batches remain deliberately
+rejected with HTTP 400 because neither the documented Vercel project nor
+deployment attributes are present. The upstream source of those fully unscoped
+resources remains open. No GTM publish or Meta write mutation was part of this
+release.
+
+The provider-health follow-up was deployed from clean isolated branch commit
+`ad92bda52565bfb6e1b772379fe81afc4f4977a0` as Vercel deployment
+`dpl_CTUfdAuSz5mJRS1Uce1gFs2G77xg` and promoted to `utekos.no`. The build
+generated 134 of 134 pages. Fresh browser reads returned HTTP 200 for
+`/skreddersy-varmen`, `/comfyrobe`, `/skreddersy-varmen/utekos-orginal` and
+`/produkter/utekos-dun`, with no captured console warnings or errors. The
+release makes a missing overlapping click-to-edge day explicit as `NULL`,
+flushes an unhealthy Sentry alert before responding, and preserves
+`src/components/analytics/VercelTelemetry.tsx` at SHA-256
+`1aec7e5c586a29baa55e4bc7e191317e309a201ca85e3f8246d32b81c9499938`.
+The first authorized production health read reported 100-percent
+`fbc | fbclid`, 100-percent Meta API acceptance, 95.71-percent edge Meta
+click-ID coverage, no dead letters and `alert_delivery_flushed=true`.
+API acceptance remains `accepted_unverified`, and a successful SDK flush is
+not external Sentry issue or notification finality.
+
+Trace Drain v4 diagnostics classify the remaining HTTP 400 responses. In the
+stable post-v4 window 2026-08-01 15:58–20:00 UTC, 5,408
+`invalid_trace_scope` warnings represented 8,116 invalid resources and 27,470
+rejected spans. Every invalid resource had `service.name`; none had either
+required Vercel project/deployment scope key, and none had
+`scope.name=vercel`. The receiver therefore rejects a fully unscoped resource
+deliberately. A full Log Explorer query corrected the initial bounded sample:
+separate invocation logs recorded 3,915 HTTP 200, 5,323 HTTP 400 and 83 HTTP
+503 responses. All 83 were app-level executions from the handler's sole 503
+path. They occurred in the same three minutes as 270 Postgres FATAL records,
+all SQLSTATE `53300` (`too_many_connections`), with zero boot, timeout,
+resource-limit or Edge Function rate-limit signals. Connection exhaustion is
+therefore the supported trigger for the receiver's database catch; the v4
+catch did not retain enough error classification for a request-by-request
+SQLSTATE join.
+
+Supabase documents the default Edge Function `SUPABASE_DB_URL` as a direct
+database connection and recommends transaction-mode pooling on port 6543 for
+serverless and edge workloads. Trace Drain now requires the dedicated
+`VERCEL_TRACE_DRAIN_DATABASE_URL`, validates port 6543 and retains
+`prepare:false`; it no longer falls back to the direct default. Database
+failures log only an allowlisted category, never SQL, host, message, stack or
+connection string. The first pooler cutover in v6 was not successful: its
+scoped deliveries returned HTTP 503, with no HTTP 200, because the existing
+local pooler URL contained stale credentials. The same Postgres driver
+reproduced SQLSTATE `28P01` locally, while the canonical direct URL and a
+pooler URL rebuilt in memory with that canonical password both passed
+`select 1`. The dedicated secret was then replaced without printing or writing
+its value. Version 8 is `ACTIVE`, has bundle SHA-256
+`d37aae6f781d5995d68aa1ddbb32ee14c913eaaeb023a8deaac936aad5b729b8`, and
+adds bounded nested classification for authentication, connection, TLS,
+permission and schema failure families. The first v8 production window through
+21:15 UTC recorded twelve scoped HTTP 200, seventeen deliberate unscoped HTTP
+400 and zero HTTP 503. It inserted 38 trace rows across the production
+deployment after cutover; the same window had zero Postgres
+ERROR/FATAL/PANIC and zero connection-exhaustion records. This closes the
+database-write remediation gate while leaving the upstream unscoped-resource
+classification as a separate, fail-closed HTTP 400 behavior.
+
+A later privacy-bounded audit found that five of the six no-`fbclid` rows in
+the 24-hour Meta-signal denominator were controlled Utekos HTTP/browser probes.
+The exact-window precheck found five edge rows and zero consent, ledger or
+provider-attempt rows. The observations were preserved for audit and
+reclassified in place as two `synthetic_client` and three
+`browser_automation` rows. No canonical or provider data was deleted or
+replayed. The authorized post-check reported 138 of 139 qualifying human-or-
+unknown Meta landings with `fbclid` (99.28 percent), 100-percent
+`fbc | fbclid`, 100-percent Meta API acceptance, no dead letters and
+`healthy=true`. The one remaining no-`fbclid` row is a physical iOS landing
+with explicitly denied consent and no canonical PageView or provider dispatch.
+Future controlled production browser runs must use the existing signed
+synthetic-document contract so they are excluded at ingestion instead of
+requiring an audit classification.
+
+Application deployment `dpl_H8fmEoav8QH15VxbBjiroYwbC4X9` is `READY` on
+commit `599013fb5d2e1cc841093170a5a30ee6fdfc2cab` and owns `utekos.no`,
+`www.utekos.no` and `feed.utekos.no`. It preserves the already-live anonymous
+Vercel telemetry component exactly as `VercelTelemetry`: root-layout rendering
+of `Analytics` from `@vercel/analytics/next` and `SpeedInsights` from
+`@vercel/speed-insights/next`, without the superseded Cookiebot wrapper.
+Both first-party telemetry scripts returned HTTP 200 after promotion. The
+release also carries the bounded late-consent PageView queue described above.
+It required no Supabase migration, GTM publish, provider mutation or
+environment change. Post-deploy gateway smoke was green, and Vercel reported
+no runtime-error cluster for the three scoped Meta landing routes in the
+30-minute read. Automated HTML curl requests were rejected by BotID with 403;
+they are automation-blocking evidence rather than application-route status.
+
 ### Local integration audit 2026-07-14
 
 The isolated Git operations, Microsoft Merchant, PostHog SDK, Klarna
@@ -497,6 +652,7 @@ Run these before deciding the release order:
 | MCP config | `npm run mcp:build && npm run mcp:doctor` | Generated MCP output is derived from templates and has no inline secret findings. |
 | Commerce/tracking MCP | No active aggregate `mcp:commerce-tracking:doctor` script is registered. Run `npm run mcp:build`, `npm run mcp:doctor`, and the active target-specific doctors and tracking smoke tests relevant to the changed surface. | Do not treat a historical missing command as a release gate; reintroduce it only with an executable script, maintained server contract, tests, and runbook. |
 | Typecheck | `pnpm exec tsc --noEmit` | Runtime types pass. |
+| Supabase Edge Function typecheck | `pnpm run typecheck:edge-functions` | Deno-targeted Log and Trace Drain types pass separately from the Next.js runtime. |
 | Targeted tests | Use the tests touching changed runtime modules. | Changed behavior is covered. |
 | Lint | `npm run lint` | Run when useful, but document existing unrelated repo debt if it is not a clean gate. |
 
@@ -505,6 +661,7 @@ Run these before deciding the release order:
 | Change type | Must migrate or configure before Vercel deploy | Must deploy | Must verify after |
 | --- | --- | --- | --- |
 | Supabase schema read/write from runtime | Apply required migration to `hkoawfbomhnzupcsdggb`; verify schema dump contains new objects. | Vercel after Supabase. | `db lint`, schema dump grep, targeted runtime smoke. |
+| Vercel Log/Trace Drains to Supabase Edge Functions | Apply the landing-observability migration; set separate signature secrets; deploy and verify both receivers before Drain creation. | Supabase Edge Functions and, separately, the app correlation release. Drain creation requires explicit approval. | Signed canaries, idempotent replay, sanitized rows, RLS/grants, 30-day retention, real delivery and trace/log join. |
 | Tracking runtime writes to `ops.provider_dispatch_attempts` | Ensure required columns, constraints, statuses, and views exist. | Vercel after Supabase. | Provider rows, skip classification, dead-letter summary. |
 | PostHog client/runtime tracking | Ensure Cookiebot statistics consent is mapped and env vars are present. | Vercel. | Consent-gated init, no autocapture drift, masked replay, safe events only. |
 | Google/Meta/Microsoft provider diagnostics | Configure local/provider credentials outside generated files. | Usually no Vercel deploy unless runtime changed. | Read-only probes and provider dashboard/API status. |

@@ -1,4 +1,5 @@
 import type { CanonicalEventStore } from './canonicalEventStore'
+import type { CanonicalGenerateLead } from '../generateLeadEvent'
 import {
   normalizeCanonicalGenerateLead,
   type CanonicalGenerateLeadRequestContext
@@ -14,7 +15,11 @@ type AcceptCanonicalGenerateLeadInput = {
 }
 
 export type AcceptCanonicalGenerateLeadResult =
-  | { event_id: string; status: 'accepted' | 'duplicate' }
+  | {
+      event: CanonicalGenerateLead
+      event_id: string
+      status: 'accepted' | 'duplicate'
+    }
   | { reason: 'consent_denied'; status: 'rejected' }
 
 export async function acceptCanonicalGenerateLead(
@@ -38,6 +43,7 @@ export async function acceptCanonicalGenerateLead(
   })
 
   return {
+    event,
     event_id: event.event_id,
     status:
       result.status === 'inserted' ? 'accepted' : 'duplicate'

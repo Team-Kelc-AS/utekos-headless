@@ -18,6 +18,7 @@ test('builds a versioned canonical page_view with event_time and page context', 
   const event = createCanonicalPageView({
     environment: 'preview',
     eventId: 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7',
+    edgeRequestId: '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd',
     pageViewId: '0c955d6b-5e9c-47d0-b304-046df7f4bf7f',
     eventTime: '2026-07-15T12:34:56.789Z',
     pageUrl: 'https://utekos.no/produkter?variant=123',
@@ -33,6 +34,10 @@ test('builds a versioned canonical page_view with event_time and page context', 
 
   assert.equal(event.schema_version, 1)
   assert.equal(event.event_name, 'page_view')
+  assert.equal(
+    event.edge_request_id,
+    '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
+  )
   assert.equal(event.event_time, '2026-07-15T12:34:56.789Z')
   assert.equal(event.source, 'web')
   assert.equal(event.referrer_url, 'https://utekos.no/produkter')

@@ -10,6 +10,10 @@ async function invokeHandler(status: number) {
   const handleRoute = createBrowserEventRouteHandler()
 
   const response = await handleRoute(request, {
+    classifyTraffic: async () => ({
+      classification: 'human_or_unknown',
+      excludeFromMarketingDispatch: false
+    }),
     collect: async (incoming) => {
       collectCalls.push(incoming)
       return new Response(null, { status })
@@ -53,6 +57,10 @@ test('collect error propagates same Error instance', async () => {
 
   await assert.rejects(
     handleRoute(request, {
+      classifyTraffic: async () => ({
+        classification: 'human_or_unknown',
+        excludeFromMarketingDispatch: false
+      }),
       collect: async (incoming) => {
         collectCalls.push(incoming)
         throw expectedError
@@ -74,6 +82,10 @@ test('handler accepts collect-only dependencies', async () => {
   const handleRoute = createBrowserEventRouteHandler()
 
   const response = await handleRoute(request, {
+    classifyTraffic: async () => ({
+      classification: 'human_or_unknown',
+      excludeFromMarketingDispatch: false
+    }),
     collect: async (incoming) => {
       collectCalls.push(incoming)
       return expectedResponse
@@ -84,4 +96,31 @@ test('handler accepts collect-only dependencies', async () => {
   assert.equal(response.status, 202)
   assert.equal(collectCalls.length, 1)
   assert.equal(collectCalls[0], request)
+})
+
+test('excludes verified automation before collector persistence or dispatch', async () => {
+  const request = new Request(
+    'https://utekos.no/api/events/page-view',
+    { method: 'POST' }
+  )
+  let collectCalls = 0
+  const handleRoute = createBrowserEventRouteHandler()
+
+  const response = await handleRoute(request, {
+    classifyTraffic: async () => ({
+      classification: 'verified_bot',
+      excludeFromMarketingDispatch: true
+    }),
+    collect: async () => {
+      collectCalls += 1
+      return new Response(null, { status: 202 })
+    }
+  })
+
+  assert.equal(response.status, 204)
+  assert.equal(
+    response.headers.get('x-utekos-traffic-classification'),
+    'verified_bot'
+  )
+  assert.equal(collectCalls, 0)
 })

@@ -1,10 +1,10 @@
-export type CanonicalAddToCartRouteDependencies = {
-  collect: (request: Request) => Promise<Response>
-}
+import {
+  createBrowserEventRouteHandler,
+  type BrowserEventRouteHandlerDependencies
+} from './createBrowserEventRouteHandler'
 
-export async function handleCanonicalAddToCartRoute(
-  request: Request,
-  { collect }: CanonicalAddToCartRouteDependencies
-): Promise<Response> {
-  return collect(request)
-}
+export type CanonicalAddToCartRouteDependencies =
+  BrowserEventRouteHandlerDependencies
+
+export const handleCanonicalAddToCartRoute =
+  createBrowserEventRouteHandler()

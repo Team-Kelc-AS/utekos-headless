@@ -7,6 +7,7 @@ import {
 import { planCanonicalEventDispatch } from './planCanonicalEventDispatch'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import { canonicalPageViewSchema } from '../pageViewEvent'
+import { redactPageUrlForLog } from './redactPageUrlForLog'
 
 export type CanonicalPageViewStore = CanonicalEventStore
 
@@ -45,7 +46,7 @@ export async function acceptCanonicalPageView(
       JSON.stringify({
         event_id: normalized.event_id,
         page_view_id: normalized.page_view_id,
-        page_url: normalized.page_url,
+        page_url: redactPageUrlForLog(normalized.page_url),
         environment: normalized.environment,
         consent: normalized.consent
       })
@@ -93,7 +94,7 @@ export async function acceptCanonicalPageView(
     JSON.stringify({
       event_id: event.event_id,
       page_view_id: event.page_view_id,
-      page_url: event.page_url,
+      page_url: redactPageUrlForLog(event.page_url),
       environment: event.environment,
       status,
       cookies_to_set: ensured.cookiesToSet.map(cookie => cookie.name),

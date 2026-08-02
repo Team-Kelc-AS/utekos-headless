@@ -8,6 +8,10 @@ import {
   type CanonicalPageView
 } from './pageViewEvent'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
+import {
+  browserPageViewDispatchObservationTransport,
+  type PageViewDispatchObservation
+} from './pageViewDispatchObservation'
 
 export type CookiebotState = {
   consent?: CookiebotConsent
@@ -19,7 +23,20 @@ export type CookiebotState = {
 type PageViewCollectorTransportDependencies = {
   getCookiebot: () => CookiebotState | undefined
   getCookieHeader: () => string
+  observeDispatch?: (
+    observation: PageViewDispatchObservation
+  ) => Promise<unknown>
   send: (event: CanonicalPageView) => Promise<void>
+}
+
+export type PageViewCollectorCorrelation = {
+  edgeRequestId: string
+  token: string
+}
+
+type PendingPageView = {
+  correlation?: PageViewCollectorCorrelation
+  event: CanonicalPageView
 }
 
 export type PageViewCollectorResult =
@@ -82,8 +99,23 @@ export function prepareCanonicalPageViewForCollector(
 export function createPageViewCollectorTransport(
   dependencies: PageViewCollectorTransportDependencies
 ) {
-  const attemptedEventIds = new Set<string>()
-  const pendingEvents = new Map<string, CanonicalPageView>()
+  const completedEventIds = new Set<string>()
+  const inFlightEventIds = new Set<string>()
+  const pendingEvents = new Map<string, PendingPageView>()
+
+  function retainLatestPendingEvent() {
+    let latestEvent: PendingPageView | undefined
+
+    for (const event of pendingEvents.values()) {
+      latestEvent = event
+    }
+
+    pendingEvents.clear()
+
+    if (latestEvent) {
+      pendingEvents.set(latestEvent.event.event_id, latestEvent)
+    }
+  }
 
   async function flush(): Promise<PageViewCollectorResult> {
     if (pendingEvents.size === 0) return 'skipped'
@@ -100,23 +132,27 @@ export function createPageViewCollectorTransport(
       consent.marketing === 'granted'
 
     if (!hasPermittedPurpose) {
-      pendingEvents.clear()
+      retainLatestPendingEvent()
       return 'skipped'
     }
 
-    const events = Array.from(pendingEvents.values()).filter(
-      event => !attemptedEventIds.has(event.event_id)
+    const pendingPageViews = Array.from(
+      pendingEvents.values()
+    ).filter(
+      pending =>
+        !completedEventIds.has(pending.event.event_id) &&
+        !inFlightEventIds.has(pending.event.event_id)
     )
 
-    for (const event of events) {
-      attemptedEventIds.add(event.event_id)
-      pendingEvents.delete(event.event_id)
+    for (const pending of pendingPageViews) {
+      inFlightEventIds.add(pending.event.event_id)
     }
 
-    if (events.length === 0) return 'skipped'
+    if (pendingPageViews.length === 0) return 'skipped'
 
     const results = await Promise.allSettled(
-      events.map(async event => {
+      pendingPageViews.map(async pending => {
+        const { correlation, event } = pending
         const prepared = prepareCanonicalPageViewForCollector(
           event,
           cookiebot as CookiebotState,
@@ -125,18 +161,57 @@ export function createPageViewCollectorTransport(
         const enriched =
           await enrichCanonicalEventWithMetaAttribution(prepared)
 
+        if (
+          dependencies.observeDispatch &&
+          correlation &&
+          enriched.edge_request_id === correlation.edgeRequestId
+        ) {
+          void dependencies
+            .observeDispatch({
+              correlation_token: correlation.token,
+              edge_request_id: correlation.edgeRequestId,
+              event_id: enriched.event_id,
+              event_name: 'page_view',
+              page_view_id: enriched.page_view_id
+            })
+            .catch(() => undefined)
+        }
+
         await dependencies.send(enriched)
       })
     )
+
+    for (const [index, result] of results.entries()) {
+      const pending = pendingPageViews[index]
+      if (!pending) continue
+      const { event } = pending
+
+      inFlightEventIds.delete(event.event_id)
+
+      if (result.status === 'fulfilled') {
+        completedEventIds.add(event.event_id)
+        pendingEvents.delete(event.event_id)
+      }
+    }
 
     return results.some(result => result.status === 'rejected') ?
         'failed'
       : 'sent'
   }
 
-  function queue(event: CanonicalPageView) {
-    if (!attemptedEventIds.has(event.event_id)) {
-      pendingEvents.set(event.event_id, event)
+  function queue(
+    event: CanonicalPageView,
+    correlation?: PageViewCollectorCorrelation
+  ) {
+    if (
+      !completedEventIds.has(event.event_id) &&
+      !inFlightEventIds.has(event.event_id) &&
+      !pendingEvents.has(event.event_id)
+    ) {
+      pendingEvents.set(event.event_id, {
+        ...(correlation ? { correlation } : {}),
+        event
+      })
     }
 
     return flush()
@@ -151,6 +226,10 @@ export const browserPageViewCollectorTransport =
   createPageViewCollectorTransport({
     getCookiebot: () => (window as CookiebotWindow).Cookiebot,
     getCookieHeader: () => document.cookie,
+    observeDispatch: observation =>
+      browserPageViewDispatchObservationTransport.observe(
+        observation
+      ),
     send: async event => {
       const response = await fetch('/api/events/page-view', {
         body: JSON.stringify(event),

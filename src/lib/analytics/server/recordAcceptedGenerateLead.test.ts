@@ -23,7 +23,11 @@ let acceptImpl: (input: {
   requestContext: CanonicalGenerateLeadRequestContext
   store: unknown
 }) => Promise<
-  | { event_id: string; status: 'accepted' | 'duplicate' }
+  | {
+      event: CanonicalGenerateLead
+      event_id: string
+      status: 'accepted' | 'duplicate'
+    }
   | { reason: 'consent_denied'; status: 'rejected' }
 > = async () => {
   throw new Error('acceptImpl not configured')
@@ -111,6 +115,14 @@ const { recordAcceptedGenerateLead } =
       input: RecordAcceptedGenerateLeadInput
     ) => Promise<RecordAcceptedGenerateLeadResult>
   }
+const { normalizeCanonicalGenerateLead } = require(
+  './normalizeCanonicalGenerateLead.ts'
+) as {
+  normalizeCanonicalGenerateLead: (
+    payload: unknown,
+    requestContext: CanonicalGenerateLeadRequestContext
+  ) => CanonicalGenerateLead
+}
 
 const SUBMISSION_ID = '22222222-2222-4222-8222-222222222222'
 const PAGE_VIEW_ID = '11111111-1111-4111-8111-111111111111'
@@ -160,8 +172,8 @@ function baseInput(
 test('accepted lead returns existing result and does not schedule registry dispatch', async () => {
   resetSpies()
   acceptImpl = async input => {
-    const payload = input.payload as { event_id: string }
-    return { event_id: payload.event_id, status: 'accepted' }
+    const event = input.payload as CanonicalGenerateLead
+    return { event, event_id: event.event_id, status: 'accepted' }
   }
 
   const result = await recordAcceptedGenerateLead(
@@ -186,8 +198,8 @@ test('accepted lead returns existing result and does not schedule registry dispa
 test('duplicate lead returns existing result and schedules nothing', async () => {
   resetSpies()
   acceptImpl = async input => {
-    const payload = input.payload as { event_id: string }
-    return { event_id: payload.event_id, status: 'duplicate' }
+    const event = input.payload as CanonicalGenerateLead
+    return { event, event_id: event.event_id, status: 'duplicate' }
   }
 
   const result = await recordAcceptedGenerateLead(baseInput())
@@ -239,8 +251,8 @@ test('acceptance error propagates without scheduling registry dispatch', async (
 test('generated canonical event retains submissionId and current context', async () => {
   resetSpies()
   acceptImpl = async input => {
-    const payload = input.payload as { event_id: string }
-    return { event_id: payload.event_id, status: 'accepted' }
+    const event = input.payload as CanonicalGenerateLead
+    return { event, event_id: event.event_id, status: 'accepted' }
   }
 
   await recordAcceptedGenerateLead(
@@ -287,11 +299,15 @@ test('generated canonical event retains submissionId and current context', async
 test('denied marketing lead audits marketing signals as consent_denied', async () => {
   resetSpies()
   acceptImpl = async input => {
-    const payload = input.payload as { event_id: string }
-    return { event_id: payload.event_id, status: 'accepted' }
+    const payload = input.payload as CanonicalGenerateLead
+    const event = normalizeCanonicalGenerateLead(
+      payload,
+      input.requestContext
+    )
+    return { event, event_id: event.event_id, status: 'accepted' }
   }
 
-  await recordAcceptedGenerateLead(
+  const result = await recordAcceptedGenerateLead(
     baseInput({
       consent: {
         analytics: 'granted',
@@ -300,6 +316,7 @@ test('denied marketing lead audits marketing signals as consent_denied', async (
         source: 'cookiebot',
         version: '1'
       },
+      email: 'consent-denied@example.com',
       pageUrl:
         'https://utekos.no/nyhetsbrev?fbclid=denied-click',
       cookieHeader: '_fbp=fb.1.1; _fbc=fb.1.2.denied-click'
@@ -311,6 +328,14 @@ test('denied marketing lead audits marketing signals as consent_denied', async (
     .payload as CanonicalGenerateLead
   assert.equal(payload.click_id, undefined)
   assert.equal(payload.external_id, undefined)
+  assert.notEqual(payload.user_data, undefined)
+  if (result.status === 'skipped') {
+    assert.fail('expected analytics-only lead to be accepted')
+  }
+  assert.equal(
+    result.dataLayerEvent.canonical_event.user_data,
+    undefined
+  )
   assert.equal(
     payload.signal_audit?.external_id.state,
     'unavailable'

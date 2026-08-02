@@ -1,10 +1,10 @@
-export type CanonicalPageViewRouteDependencies = {
-  collect: (request: Request) => Promise<Response>
-}
+import {
+  createBrowserEventRouteHandler,
+  type BrowserEventRouteHandlerDependencies
+} from './createBrowserEventRouteHandler'
 
-export async function handleCanonicalPageViewRoute(
-  request: Request,
-  { collect }: CanonicalPageViewRouteDependencies
-): Promise<Response> {
-  return collect(request)
-}
+export type CanonicalPageViewRouteDependencies =
+  BrowserEventRouteHandlerDependencies
+
+export const handleCanonicalPageViewRoute =
+  createBrowserEventRouteHandler()

@@ -173,6 +173,236 @@ create table if not exists marketing.campaign_insights (
   )
 );
 create index if not exists campaign_insights_campaign_date_idx on marketing.campaign_insights (campaign_id, date_start desc);
+create table if not exists marketing.meta_ad_delivery_insights (
+  id uuid primary key default gen_random_uuid(),
+  account_id text not null check (account_id ~ '^[0-9]+$'),
+  account_timezone text not null,
+  api_version text not null check (api_version ~ '^v[0-9]+\.[0-9]+$'),
+  action_report_time text not null check (action_report_time in ('impression', 'conversion', 'mixed')),
+  attribution_setting text not null check (attribution_setting = 'account'),
+  campaign_id text not null check (campaign_id ~ '^[0-9]+$'),
+  campaign_name text,
+  adset_id text not null check (adset_id ~ '^[0-9]+$'),
+  adset_name text,
+  ad_id text not null check (ad_id ~ '^[0-9]+$'),
+  ad_name text,
+  insight_date date not null,
+  breakdown_kind text not null check (
+    breakdown_kind in (
+      'overall',
+      'publisher_platform',
+      'platform_position',
+      'device_platform',
+      'impression_device'
+    )
+  ),
+  dimension_key text not null,
+  publisher_platform text,
+  platform_position text,
+  device_platform text,
+  impression_device text,
+  impressions numeric check (impressions is null or impressions >= 0),
+  clicks numeric check (clicks is null or clicks >= 0),
+  link_clicks numeric check (link_clicks is null or link_clicks >= 0),
+  outbound_clicks numeric check (outbound_clicks is null or outbound_clicks >= 0),
+  landing_page_views numeric check (landing_page_views is null or landing_page_views >= 0),
+  metric_availability jsonb not null,
+  fetched_at timestamptz not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint meta_ad_delivery_insights_metric_availability_object_check
+    check (
+      jsonb_typeof(metric_availability) = 'object'
+      and metric_availability ->> 'impressions' in ('available', 'unavailable')
+      and metric_availability ->> 'clicks' in ('available', 'unavailable')
+      and metric_availability ->> 'link_clicks' in ('available', 'unavailable')
+      and metric_availability ->> 'outbound_clicks' in ('available', 'unavailable')
+      and metric_availability ->> 'landing_page_views' in ('available', 'unavailable')
+    ),
+  constraint meta_ad_delivery_insights_dimension_grain_check check (
+    (
+      breakdown_kind = 'overall'
+      and dimension_key = 'all'
+      and publisher_platform is null
+      and platform_position is null
+      and device_platform is null
+      and impression_device is null
+    )
+    or (
+      breakdown_kind = 'publisher_platform'
+      and publisher_platform is not null
+      and dimension_key = 'publisher_platform:' || publisher_platform
+      and platform_position is null
+      and device_platform is null
+      and impression_device is null
+    )
+    or (
+      breakdown_kind = 'platform_position'
+      and publisher_platform is not null
+      and platform_position is not null
+      and dimension_key = 'platform_position:' || publisher_platform || ':' || platform_position
+      and device_platform is null
+      and impression_device is null
+    )
+    or (
+      breakdown_kind = 'device_platform'
+      and publisher_platform is null
+      and platform_position is null
+      and device_platform is not null
+      and dimension_key = 'device_platform:' || device_platform
+      and impression_device is null
+    )
+    or (
+      breakdown_kind = 'impression_device'
+      and publisher_platform is null
+      and platform_position is null
+      and device_platform is null
+      and impression_device is not null
+      and dimension_key = 'impression_device:' || impression_device
+    )
+  ),
+  unique (
+    account_id,
+    ad_id,
+    insight_date,
+    breakdown_kind,
+    dimension_key
+  )
+);
+comment on table marketing.meta_ad_delivery_insights is
+  'Read-only Meta Ads daily delivery aggregates. API receipt and stored insight rows do not prove provider attribution finality.';
+create index if not exists meta_ad_delivery_insights_ad_date_idx
+  on marketing.meta_ad_delivery_insights (ad_id, insight_date desc);
+create index if not exists meta_ad_delivery_insights_date_breakdown_idx
+  on marketing.meta_ad_delivery_insights (insight_date desc, breakdown_kind);
+create table if not exists marketing.meta_ad_creative_destinations (
+  id uuid primary key default gen_random_uuid(),
+  account_id text not null check (account_id ~ '^[0-9]+$'),
+  ad_id text not null check (ad_id ~ '^[0-9]+$'),
+  creative_id text not null check (creative_id ~ '^[0-9]+$'),
+  api_version text not null default 'v25.0' check (api_version = 'v25.0'),
+  ad_created_time timestamptz not null,
+  ad_updated_time timestamptz not null,
+  effective_status text not null check (
+    char_length(btrim(effective_status)) between 1 and 120
+  ),
+  destination_url text check (
+    destination_url is null
+    or char_length(destination_url) between 1 and 8192
+  ),
+  normalized_destination_url text check (
+    normalized_destination_url is null
+    or char_length(normalized_destination_url) between 1 and 8192
+  ),
+  url_tags text check (
+    url_tags is null
+    or char_length(url_tags) between 0 and 8192
+  ),
+  source_kind text not null check (
+    source_kind in (
+      'asset_feed_link_url',
+      'object_story_link_data',
+      'object_story_template_data',
+      'object_story_video_call_to_action',
+      'object_url',
+      'template_url_spec_web',
+      'catalog_product_set',
+      'unresolved'
+    )
+  ),
+  source_path text not null check (
+    char_length(btrim(source_path)) between 1 and 512
+  ),
+  dynamic_resolution_status text not null check (
+    dynamic_resolution_status in (
+      'static',
+      'template',
+      'deeplink',
+      'catalog_dynamic',
+      'unresolved'
+    )
+  ),
+  destination_fingerprint text not null check (
+    destination_fingerprint ~ '^[0-9a-f]{64}$'
+  ),
+  observed_version text not null check (
+    observed_version ~ '^[0-9a-f]{64}$'
+  ),
+  observed_from timestamptz not null,
+  observed_through timestamptz not null,
+  observed_until timestamptz,
+  effective_from timestamptz,
+  effective_until timestamptz,
+  effective_period_basis text not null default 'unknown' check (
+    effective_period_basis in ('unknown', 'meta_activity')
+  ),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint meta_ad_creative_destinations_ad_time_check check (
+    ad_updated_time >= ad_created_time
+  ),
+  constraint meta_ad_creative_destinations_url_resolution_check check (
+    (
+      dynamic_resolution_status in ('static', 'template', 'deeplink')
+      and destination_url is not null
+      and normalized_destination_url is not null
+    )
+    or (
+      dynamic_resolution_status in ('catalog_dynamic', 'unresolved')
+      and destination_url is null
+      and normalized_destination_url is null
+    )
+  ),
+  constraint meta_ad_creative_destinations_source_resolution_check check (
+    (
+      source_kind = 'catalog_product_set'
+      and dynamic_resolution_status = 'catalog_dynamic'
+    )
+    or (
+      source_kind = 'unresolved'
+      and dynamic_resolution_status = 'unresolved'
+    )
+    or (
+      source_kind not in ('catalog_product_set', 'unresolved')
+      and dynamic_resolution_status in ('static', 'template', 'deeplink')
+    )
+  ),
+  constraint meta_ad_creative_destinations_observed_period_check check (
+    observed_from <= observed_through
+    and (observed_until is null or observed_through <= observed_until)
+  ),
+  constraint meta_ad_creative_destinations_effective_period_check check (
+    (
+      effective_period_basis = 'unknown'
+      and effective_from is null
+      and effective_until is null
+    )
+    or (
+      effective_period_basis = 'meta_activity'
+      and effective_from is not null
+      and (effective_until is null or effective_from <= effective_until)
+    )
+  ),
+  unique (
+    account_id,
+    ad_id,
+    creative_id,
+    observed_version,
+    destination_fingerprint
+  )
+);
+comment on table marketing.meta_ad_creative_destinations is
+  'Read-only Meta Marketing API v25 creative-destination observations. Observed periods prove configuration visibility, not the exact URL delivered for an impression or click.';
+comment on column marketing.meta_ad_creative_destinations.effective_period_basis is
+  'unknown leaves effective timestamps null; meta_activity requires a provider activity event as the effective boundary.';
+create index if not exists meta_ad_creative_destinations_ad_observed_idx
+  on marketing.meta_ad_creative_destinations (account_id, ad_id, observed_from desc);
+create index if not exists meta_ad_creative_destinations_url_observed_idx
+  on marketing.meta_ad_creative_destinations (normalized_destination_url, observed_from desc)
+  where normalized_destination_url is not null;
+create index if not exists meta_ad_creative_destinations_open_version_idx
+  on marketing.meta_ad_creative_destinations (account_id, ad_id, observed_version)
+  where observed_until is null;
 create table if not exists marketing.checkout_attribution_snapshots (
   id uuid primary key default gen_random_uuid(),
   idempotency_key text not null unique,

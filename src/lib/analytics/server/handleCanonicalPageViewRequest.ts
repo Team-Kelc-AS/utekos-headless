@@ -3,9 +3,10 @@ import {
   acceptCanonicalPageView,
   type CanonicalPageViewStore
 } from './acceptCanonicalPageView'
-import type {
-  CanonicalPageViewRequestContext
-} from './normalizeCanonicalPageView'
+import type { CanonicalPageViewRequestContext } from './normalizeCanonicalPageView'
+import { redactPageUrlForLog } from './redactPageUrlForLog'
+import { canonicalPageViewSchema } from '../pageViewEvent'
+import type { PageViewFunnelObservationIdentity } from './pageViewFunnelObservationStore'
 
 const MAX_BODY_BYTES = 32 * 1024
 const PRODUCTION_COOKIE_DOMAIN = 'utekos.no'
@@ -18,6 +19,9 @@ type CanonicalPageViewRequestDependencies = {
   getRequestContext: (
     request: Request
   ) => CanonicalPageViewRequestContext
+  scheduleCollectorReceipt?: (
+    identity: PageViewFunnelObservationIdentity
+  ) => void
   store: CanonicalPageViewStore
 }
 
@@ -75,11 +79,13 @@ function jsonResponse(
 }
 
 function hasJsonMediaType(request: Request) {
-  return request.headers
-    .get('content-type')
-    ?.split(';', 1)[0]
-    ?.trim()
-    .toLowerCase() === 'application/json'
+  return (
+    request.headers
+      .get('content-type')
+      ?.split(';', 1)[0]
+      ?.trim()
+      .toLowerCase() === 'application/json'
+  )
 }
 
 function hasSameOrigin(request: Request) {
@@ -132,7 +138,7 @@ function readEventSummary(payload: unknown) {
       : undefined,
     page_url:
       typeof record.page_url === 'string' ?
-        record.page_url
+        redactPageUrlForLog(record.page_url)
       : undefined
   }
 }
@@ -183,7 +189,9 @@ export async function handleCanonicalPageViewRequest(
   }
 
   const body = await request.text()
-  if (new TextEncoder().encode(body).byteLength > MAX_BODY_BYTES) {
+  if (
+    new TextEncoder().encode(body).byteLength > MAX_BODY_BYTES
+  ) {
     console.warn(
       '[tracking] page_view request rejected: payload too large',
       requestLogMeta(request)
@@ -207,6 +215,28 @@ export async function handleCanonicalPageViewRequest(
     '[tracking] page_view request received',
     requestLogMeta(request, summary)
   )
+
+  const receiptCandidate =
+    canonicalPageViewSchema.safeParse(payload)
+  if (
+    receiptCandidate.success &&
+    receiptCandidate.data.edge_request_id &&
+    dependencies.scheduleCollectorReceipt
+  ) {
+    try {
+      dependencies.scheduleCollectorReceipt({
+        edgeRequestId: receiptCandidate.data.edge_request_id,
+        eventId: receiptCandidate.data.event_id,
+        observedAt: new Date().toISOString(),
+        pageViewId: receiptCandidate.data.page_view_id
+      })
+    } catch {
+      console.warn(
+        '[tracking] page_view collector receipt observation failed',
+        requestLogMeta(request, summary)
+      )
+    }
+  }
 
   try {
     const result = await acceptCanonicalPageView({
@@ -244,10 +274,7 @@ export async function handleCanonicalPageViewRequest(
     )
 
     return jsonResponse(
-      {
-        event_id: result.event_id,
-        status: result.status
-      },
+      { event_id: result.event_id, status: result.status },
       result.status === 'accepted' ? 202 : 200,
       result.cookiesToSet,
       readPageUrl(payload)
