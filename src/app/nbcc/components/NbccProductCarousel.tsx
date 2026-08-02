@@ -21,7 +21,7 @@ export function NbccProductCarousel({ images }: NbccProductCarouselProps) {
           unoptimized
           sizes='(min-width: 1024px) 31vw, (min-width: 768px) 45vw, 100vw'
           data-nbcc-product-image
-          className='object-contain p-7'
+          className='rounded-lg object-contain p-7'
         />
       </div>
     )
@@ -47,7 +47,7 @@ export function NbccProductCarousel({ images }: NbccProductCarouselProps) {
             unoptimized
             sizes='(min-width: 1024px) 31vw, (min-width: 768px) 45vw, 100vw'
             data-nbcc-product-image
-            className='object-contain p-7'
+            className='rounded-lg object-contain p-7'
           />
         </div>
       ))}
