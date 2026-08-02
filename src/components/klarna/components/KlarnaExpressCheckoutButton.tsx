@@ -212,7 +212,13 @@ export function KlarnaExpressCheckoutButton({
                     }
                   }
                 )
-              })()
+              })().catch(error => {
+                onErrorRef.current?.(
+                  error instanceof Error ?
+                    error.message
+                  : 'Klarna express checkout failed'
+                )
+              })
             }
           },
           loadResult => {

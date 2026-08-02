@@ -4,7 +4,9 @@ interface ScrollToElementOptions {
   reducedMotion?: boolean | null
 }
 
-function shouldReduceMotion(reducedMotion?: boolean | null): boolean {
+function shouldReduceMotion(
+  reducedMotion?: boolean | null
+): boolean {
   if (typeof reducedMotion === 'boolean') {
     return reducedMotion
   }
@@ -13,13 +15,14 @@ function shouldReduceMotion(reducedMotion?: boolean | null): boolean {
     return true
   }
 
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  return window.matchMedia('(prefers-reduced-motion: reduce)')
+    .matches
 }
 
-export async function scrollToElement(
+export function scrollToElement(
   targetId: string,
   { offsetY = 80, reducedMotion }: ScrollToElementOptions = {}
-): Promise<void> {
+): void {
   if (typeof window === 'undefined') {
     return
   }
@@ -29,10 +32,12 @@ export async function scrollToElement(
     return
   }
 
-  const top = target.getBoundingClientRect().top + window.scrollY - offsetY
+  const top =
+    target.getBoundingClientRect().top + window.scrollY - offsetY
 
   window.scrollTo({
     top,
-    behavior: shouldReduceMotion(reducedMotion) ? 'auto' : 'smooth'
+    behavior:
+      shouldReduceMotion(reducedMotion) ? 'auto' : 'smooth'
   })
 }
