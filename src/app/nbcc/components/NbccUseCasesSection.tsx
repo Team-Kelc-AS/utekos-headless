@@ -39,6 +39,7 @@ export function NbccUseCasesSection() {
                 key={useCase.title}
                 data-nbcc-reveal
                 data-nbcc-animate
+                data-nbcc-usecase-card
                 className='rounded-lg border border-foreground/15 bg-dark-teal p-6 text-foreground'
               >
                 <Icon
