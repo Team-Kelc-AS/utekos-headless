@@ -97,18 +97,24 @@ export function NbccProductCarousel({
         </svg>
       </button>
 
-      <div className='absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5'>
+      <div className='absolute bottom-1.5 left-1/2 z-10 flex -translate-x-1/2'>
         {images.map((_, i) => (
           <button
             key={i}
+            type='button'
             onClick={() => setCurrent(i)}
             aria-label={`Bilde ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all duration-200 ${
-              i === current ?
-                'w-4 bg-white ring-1 ring-[#17130f]/45 dark:bg-[#17130f] dark:ring-white/55'
-              : 'w-1.5 bg-white/70 ring-1 ring-[#17130f]/35 hover:bg-white dark:bg-[#17130f]/70 dark:ring-white/45 dark:hover:bg-[#17130f]'
-            }`}
-          />
+            className='group/dot flex size-6 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white'
+          >
+            <span
+              aria-hidden
+              className={`h-1.5 rounded-full transition-all duration-200 ${
+                i === current ?
+                  'w-4 bg-white ring-1 ring-[#17130f]/45 dark:bg-[#17130f] dark:ring-white/55'
+                : 'w-1.5 bg-white/70 ring-1 ring-[#17130f]/35 group-hover/dot:bg-white dark:bg-[#17130f]/70 dark:ring-white/45 dark:group-hover/dot:bg-[#17130f]'
+              }`}
+            />
+          </button>
         ))}
       </div>
     </div>
