@@ -9,7 +9,7 @@ export function ComfyrobeFaqSection() {
       aria-labelledby='faq-heading'
     >
       <div className='mx-auto max-w-4xl px-6 md:px-12'>
-        <p className='text-center font-utekos-text-medium text-sm tracking-wide text-primary dark:text-[oklch(0.78_0.15_67)]'>
+        <p className='text-center font-utekos-text-medium text-sm tracking-wide text-primary'>
           Spørsmål før kjøp
         </p>
         <h2

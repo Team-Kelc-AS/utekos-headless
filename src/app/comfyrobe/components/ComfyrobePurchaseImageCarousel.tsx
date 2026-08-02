@@ -18,6 +18,9 @@ const PACKSHOT_BACKDROP = 'oklch(0.8767 0.0086 56.3)'
 /** Portrait crops from iPad token through landscape tablets / small laptops. */
 const IPAD_MEDIA = '(min-width: 51rem) and (max-width: 85rem)'
 
+/** Square crops on large desktop viewports. */
+const DESKTOP_MEDIA = '(min-width: 85.0625rem)'
+
 export function ComfyrobePurchaseImageCarousel() {
   const [fadePlugin] = useState(() => Fade())
 
@@ -58,11 +61,15 @@ export function ComfyrobePurchaseImageCarousel() {
                   >
                     <picture>
                       <source
+                        media={DESKTOP_MEDIA}
+                        srcSet={slide.desktopSrc}
+                      />
+                      <source
                         media={IPAD_MEDIA}
                         srcSet={slide.ipadSrc}
                       />
                       <Image
-                        src={slide.squareSrc}
+                        src={slide.mobileSrc}
                         alt={slide.alt}
                         fill
                         priority={index === 0}

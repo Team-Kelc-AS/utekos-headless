@@ -54,7 +54,7 @@ export function ComfyrobeProofBridge() {
           variants={comfyrobeRevealItem}
         >
           <div>
-            <p className='font-utekos-text-medium text-sm tracking-wide text-primary dark:text-[oklch(0.78_0.15_67)]'>
+            <p className='font-utekos-text-medium text-sm tracking-wide text-primary'>
               Fra hverdagsregn til kalde pauser
             </p>
             <h2
@@ -86,7 +86,7 @@ export function ComfyrobeProofBridge() {
               >
                 <dt className='font-google-sans flex items-center gap-3 font-utekos-text-medium font-bold'>
                   <Icon
-                    className='size-5 shrink-0 text-primary dark:text-[oklch(0.78_0.15_67)]'
+                    className='size-5 shrink-0 text-primary'
                     aria-hidden
                   />
                   {item.label}

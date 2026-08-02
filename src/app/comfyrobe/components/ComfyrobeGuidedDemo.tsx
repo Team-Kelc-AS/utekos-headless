@@ -84,7 +84,7 @@ export function ComfyrobeGuidedDemo() {
         variants={comfyrobeRevealGroup}
       >
         <m.p
-          className='font-utekos-text-medium text-sm tracking-wide text-[oklch(0.78_0.15_67)]'
+          className='font-utekos-text-medium text-sm tracking-wide text-primary'
           variants={comfyrobeRevealItem}
         >
           Bygget lag for lag
@@ -118,7 +118,7 @@ export function ComfyrobeGuidedDemo() {
               variants={comfyrobeRevealGroup}
             >
               <m.div
-                className='relative aspect-4/5 overflow-hidden bg-[#d8d2ca] sm:aspect-square'
+                className='relative aspect-4/5 overflow-hidden bg-jungle sm:aspect-square'
                 variants={comfyrobeRevealScale}
               >
                 <Image
@@ -131,7 +131,7 @@ export function ComfyrobeGuidedDemo() {
               </m.div>
               <div className='mx-auto max-w-2xl px-6 pt-7 md:px-12 xl:motion-reduce:pt-0 xl:motion-reduce:pr-16 xl:motion-reduce:pl-14'>
                 <m.div
-                  className='flex items-center gap-3 text-[oklch(0.78_0.15_67)]'
+                  className='flex items-center gap-3 text-primary'
                   variants={comfyrobeRevealItem}
                 >
                   <Icon className='size-5' aria-hidden />
@@ -158,7 +158,7 @@ export function ComfyrobeGuidedDemo() {
       </div>
 
       <div className='hidden min-h-[210vh] grid-cols-2 xl:motion-safe:grid'>
-        <div className='sticky top-0 h-screen overflow-hidden border-r border-white/10 bg-[#d8d2ca]'>
+        <div className='sticky top-0 h-screen overflow-hidden border-r border-white/10 bg-jungle'>
           {demoSteps.map((step, index) => (
             <m.div
               key={step.number}
@@ -217,7 +217,7 @@ export function ComfyrobeGuidedDemo() {
               >
                 <div className='max-w-xl'>
                   <m.div
-                    className='flex items-center gap-3 text-[oklch(0.78_0.15_67)]'
+                    className='flex items-center gap-3 text-primary'
                     variants={comfyrobeRevealItem}
                   >
                     <Icon className='size-6' aria-hidden />

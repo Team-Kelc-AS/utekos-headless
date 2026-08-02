@@ -199,14 +199,14 @@ export function ComfyrobePurchaseClient({
 
         <div className='flex flex-col'>
           <div className='flex-1 bg-background px-6 py-14 text-foreground md:px-12 lg:px-16 lg:py-18'>
-            <p className='font-utekos-text-medium text-sm tracking-wide text-primary dark:text-[oklch(0.78_0.15_67)]'>
-              Din Comfyrobe™
+            <p className='font-utekos-text-medium text-sm tracking-wide text-primary'>
+              Comfyrobe™
             </p>
             <h2
               id='purchase-heading'
               className='font-google-sans mt-3 max-w-[11ch] font-sans text-5xl leading-[0.92] font-bold tracking-tight text-foreground md:text-6xl'
             >
-              Velg størrelsen din.
+              Juster, form og nyt.
             </h2>
             <p className='mt-6 max-w-xl font-utekos-text text-lg leading-relaxed text-foreground/78'>
               Romslig unisex-passform. Sjekk størrelsesguiden før
@@ -227,7 +227,7 @@ export function ComfyrobePurchaseClient({
                       selectedVariant.compareAtPrice
                     )}
                   </span>
-                  <span className='font-google-sans mb-1 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground dark:text-foreground'>
+                  <span className='font-google-sans mb-1 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground'>
                     Spar {formatComfyrobeMoney(savings.amount)} ·{' '}
                     {savings.percentage} %
                   </span>

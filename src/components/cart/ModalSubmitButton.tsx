@@ -41,7 +41,7 @@ export function ModalSubmitButton({
           isPending={isCheckoutPending}
           isDisabled={isDisabled}
           onClick={onCheckout}
-          className='bg-[oklch(0.78_0.15_67)] text-[#001212] hover:bg-[oklch(0.73_0.15_67)] dark:bg-[oklch(0.78_0.15_67)] dark:text-[#001212] dark:hover:bg-[oklch(0.73_0.15_67)] [&_svg]:text-[#001212]'
+          className='bg-primary text-foreground hover:bg-primary/90 [&_svg]:text-foreground'
         />
         <div className='flex items-center gap-3 text-xs text-foreground/60'>
         </div>

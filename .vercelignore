@@ -52,6 +52,7 @@ src/components/klarna/klarna-sitemap.md
 src/components/klarna/README.md
 
 # local agent/editor/documentation payloads
+.agent/
 .agent/skills/
 .agents/
 .cursor/

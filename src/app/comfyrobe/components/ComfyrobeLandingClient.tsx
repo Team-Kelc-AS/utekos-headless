@@ -80,25 +80,24 @@ export function ComfyrobeLandingClient({
           aria-labelledby='comfyrobe-hero-heading'
           className='relative min-h-[calc(100svh-70px)] overflow-hidden bg-[#001919] text-white'
         >
-          <picture className='absolute inset-0 block bg-muted'>
+          <picture className='absolute inset-0 block'>
             <source
-              media='(min-width: 48rem)'
-              srcSet='https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Comfy-1920-1080-2.webp?v=1784870433'
+              media='(min-width: 85.0625rem)'
+              srcSet='/comfy-bg.webp'
+            />
+            <source
+              media='(min-width: 51rem) and (max-width: 85rem)'
+              srcSet='/comfy-bg-ipad.webp'
             />
             <Image
-              src='https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Comfyrobe-Kvinne-1600x1600.png?v=1784824903'
-              alt='Kvinne med mørk Comfyrobe fra Utekos'
+              src='/comfy-mann-45.webp'
+              alt='Mann med mørk Comfyrobe fra Utekos'
               fill
               priority
               sizes='100vw'
-              className='object-cover object-[57%_center] md:object-center'
+              className='object-cover object-top'
             />
           </picture>
-
-          <div
-            aria-hidden
-            className='absolute inset-0 bg-[linear-gradient(180deg,rgba(0,18,18,0.08)_0%,rgba(0,18,18,0.3)_38%,rgba(0,18,18,0.96)_100%)] md:bg-[linear-gradient(90deg,rgba(0,18,18,0.96)_0%,rgba(0,18,18,0.84)_32%,rgba(0,18,18,0.28)_57%,rgba(0,18,18,0.08)_75%)]'
-          />
 
           <div className='relative z-10 mx-auto flex min-h-[calc(100svh-70px)] w-full max-w-350 items-end px-6 py-8 md:items-center md:px-12 md:py-20 lg:px-20'>
             <m.div
@@ -120,7 +119,7 @@ export function ComfyrobeLandingClient({
                 variants={comfyrobeRevealItem}
               >
                 Tøff mot været.
-                <span className='mt-2 block text-[oklch(0.78_0.15_67)] italic md:mt-3'>
+                <span className='mt-2 block text-primary italic md:mt-3'>
                   Komfortabel mot deg.
                 </span>
               </m.h1>
@@ -139,9 +138,7 @@ export function ComfyrobeLandingClient({
               >
                 <BrandBadge
                   asChild
-                  bgColor='oklch(0.78 0.15 67)'
-                  fgColor='oklch(0.165 0.0282 194.77)'
-                  className='min-h-13 w-full gap-2 px-6 py-3 font-utekos-text-medium transition-[filter,transform] hover:brightness-105 active:scale-[0.985] sm:w-auto'
+                  className='min-h-13 w-full gap-2 bg-primary px-6 py-3 font-utekos-text-medium text-foreground transition-[filter,transform] hover:brightness-105 active:scale-[0.985] sm:w-auto'
                 >
                   <button
                     type='button'
