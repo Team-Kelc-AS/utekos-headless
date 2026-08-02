@@ -13,7 +13,7 @@ export function NbccUseCasesSection() {
           className='grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end'
         >
           <div>
-            <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-[#17130f] uppercase'>
+            <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-[#17130f]'>
               Campinglivet har mange former
             </p>
             <h2 className='mt-4 max-w-xl font-utekos-text-medium text-3xl tracking-normal text-balance sm:text-4xl'>
