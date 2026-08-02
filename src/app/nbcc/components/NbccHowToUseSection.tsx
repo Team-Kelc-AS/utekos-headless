@@ -11,7 +11,7 @@ export function NbccHowToUseSection() {
   return (
     <article
       id='slik-bruker-du-fordelen'
-      className='bg-muted px-4 py-20 text-foreground sm:px-6 lg:px-8'
+      className='bg-jungle px-4 py-20 text-foreground sm:px-6 lg:px-8'
     >
       <div className='mx-auto max-w-7xl'>
         <div className='grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start'>
