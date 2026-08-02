@@ -50,7 +50,7 @@ export function NbccUseCasesSection() {
                 <h3 className='font-utekos-text-medium text-lg text-foreground'>
                   {useCase.title}
                 </h3>
-                <p className='mt-3 text-sm leading-7 text-foreground/85'>
+                <p className='mt-3 text-sm leading-7 text-foreground'>
                   {useCase.description}
                 </p>
               </article>
