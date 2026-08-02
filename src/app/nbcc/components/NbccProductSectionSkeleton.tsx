@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export function NbccProductSectionSkeleton() {
   return (
-    <article className='bg-background dark:bg-dark-background px-6 py-20 sm:px-8 sm:py-24 lg:px-10'>
+    <article className='dark:bg-dark-background bg-background px-6 py-20 sm:px-8 sm:py-24 lg:px-10'>
       <div className='mx-auto max-w-7xl'>
         <div className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
           <div className='flex flex-col gap-3'>

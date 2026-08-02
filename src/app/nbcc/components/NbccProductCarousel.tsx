@@ -4,7 +4,9 @@ import Image from 'next/image'
 import { useState } from 'react'
 import type { NbccProductCarouselProps } from '../types'
 
-export function NbccProductCarousel({ images }: NbccProductCarouselProps) {
+export function NbccProductCarousel({
+  images
+}: NbccProductCarouselProps) {
   const [current, setCurrent] = useState(0)
 
   if (images.length === 0) return null
@@ -27,7 +29,8 @@ export function NbccProductCarousel({ images }: NbccProductCarouselProps) {
     )
   }
 
-  const prev = () => setCurrent(i => (i - 1 + images.length) % images.length)
+  const prev = () =>
+    setCurrent(i => (i - 1 + images.length) % images.length)
   const next = () => setCurrent(i => (i + 1) % images.length)
 
   return (
@@ -37,7 +40,9 @@ export function NbccProductCarousel({ images }: NbccProductCarouselProps) {
           key={img.src}
           aria-hidden={i !== current}
           className={`absolute inset-0 transition-opacity duration-300 ${
-            i === current ? 'opacity-100' : 'pointer-events-none opacity-0'
+            i === current ? 'opacity-100' : (
+              'pointer-events-none opacity-0'
+            )
           }`}
         >
           <Image
@@ -55,7 +60,7 @@ export function NbccProductCarousel({ images }: NbccProductCarouselProps) {
       <button
         onClick={prev}
         aria-label='Forrige bilde'
-        className='absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-foreground dark:bg-dark-foreground p-1.5 text-background dark:text-dark-background opacity-0 shadow-sm transition-opacity duration-200 group-hover/carousel:opacity-100 hover:bg-foreground/90 dark:hover:bg-dark-foreground/90'
+        className='dark:bg-dark-foreground dark:text-dark-background dark:hover:bg-dark-foreground/90 absolute top-1/2 left-2 z-10 -translate-y-1/2 rounded-full bg-foreground p-1.5 text-background opacity-0 shadow-sm transition-opacity duration-200 group-hover/carousel:opacity-100 hover:bg-foreground/90'
       >
         <svg
           width='16'
@@ -75,7 +80,7 @@ export function NbccProductCarousel({ images }: NbccProductCarouselProps) {
       <button
         onClick={next}
         aria-label='Neste bilde'
-        className='absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/85 p-1.5 text-black opacity-0 shadow-sm transition-opacity duration-200 group-hover/carousel:opacity-100 hover:bg-white'
+        className='absolute top-1/2 right-2 z-10 -translate-y-1/2 rounded-full bg-white/85 p-1.5 text-black opacity-0 shadow-sm transition-opacity duration-200 group-hover/carousel:opacity-100 hover:bg-white'
       >
         <svg
           width='16'

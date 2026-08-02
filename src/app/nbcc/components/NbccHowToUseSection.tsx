@@ -30,7 +30,7 @@ export function NbccHowToUseSection() {
             </p>
             <Button
               asChild
-              className='mt-8 h-12 rounded-xl bg-primary px-6 font-utekos-text-medium text-foreground hover:bg-primary-muted'
+              className='hover:bg-primary-muted mt-8 h-12 rounded-xl bg-primary px-6 font-utekos-text-medium text-foreground'
             >
               <Link
                 href={'/produkter' as Route}
