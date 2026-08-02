@@ -66,7 +66,7 @@ export async function NbccProductSection() {
                 data-nbcc-product-card
                 data-nbcc-reveal
                 data-nbcc-animate
-                className='group dark:border-dark-foreground/60 /80 overflow-hidden rounded-lg border-foreground/60 bg-card/80 py-0 shadow-none'
+                className='group dark:border-dark-foreground/60 overflow-hidden rounded-lg border-foreground/60 bg-jungle py-0 shadow-none'
               >
                 <CardHeader className='p-0'>
                   <NbccProductCarousel images={product.images} />
