@@ -17,20 +17,11 @@ export type NbccProduct = {
   tracking: NbccTrackingData
 }
 
-export type NbccUseCase = {
-  title: string
-  description: string
-}
+export type NbccUseCase = { title: string; description: string }
 
-export type NbccStep = {
-  title: string
-  description: string
-}
+export type NbccStep = { title: string; description: string }
 
-export type NbccFaqItem = {
-  question: string
-  answer: string
-}
+export type NbccFaqItem = { question: string; answer: string }
 
 export type NbccAiSummaryIntent = 'how-to-use' | 'sizes'
 
@@ -53,33 +44,60 @@ export type NbccAiSummaryResponse = NbccAiSummaryPayload & {
   error?: string
 }
 
-export type NbccAiSummaryStatus = 'idle' | 'thinking' | 'completed'
+export type NbccAiSummaryStatus =
+  | 'idle'
+  | 'thinking'
+  | 'completed'
 
-export const NbccAiSummarySectionSchema = z.object({
-  title: z.string().min(2).max(72).describe('Kort seksjonstittel på norsk.'),
-  body: z.string().min(20).max(520).optional().describe('Valgfri brødtekst for seksjonen.'),
+const NbccAiSummarySectionSchema = z.object({
+  title: z
+    .string()
+    .min(2)
+    .max(72)
+    .describe('Kort seksjonstittel på norsk.'),
+  body: z
+    .string()
+    .min(20)
+    .max(520)
+    .optional()
+    .describe('Valgfri brødtekst for seksjonen.'),
   items: z
     .array(z.string().min(8).max(220))
     .min(1)
     .max(6)
     .optional()
     .describe('Valgfrie punkter eller steg.'),
-  style: z.enum(['paragraph', 'list', 'steps']).optional().describe('Hvordan seksjonen bør vises i UI.')
+  style: z
+    .enum(['paragraph', 'list', 'steps'])
+    .optional()
+    .describe('Hvordan seksjonen bør vises i UI.')
 })
 
 export const NbccAiSummarySchema = z.object({
-  kicker: z.string().min(2).max(36).describe('Kort merkelapp på norsk, maks 3 ord.'),
-  title: z.string().min(4).max(72).describe('Kort, trygg og konkret tittel på norsk.'),
+  kicker: z
+    .string()
+    .min(2)
+    .max(36)
+    .describe('Kort merkelapp på norsk, maks 3 ord.'),
+  title: z
+    .string()
+    .min(4)
+    .max(72)
+    .describe('Kort, trygg og konkret tittel på norsk.'),
   intro: z
     .string()
     .min(60)
     .max(620)
-    .describe('Vennlig intro i naturlig norsk, skrevet som en dyktig kundeservice-ansatt.'),
+    .describe(
+      'Vennlig intro i naturlig norsk, skrevet som en dyktig kundeservice-ansatt.'
+    ),
   sections: z
     .array(NbccAiSummarySectionSchema)
     .min(2)
     .max(5)
-    .describe('Strukturerte seksjoner som hjelper kunden videre.')
+    .describe(
+      'Strukturerte seksjoner som hjelper kunden videre.'
+    )
 })
 
 export type NbccAiSummaryButtonProps = {

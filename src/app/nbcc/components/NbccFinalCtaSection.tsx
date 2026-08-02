@@ -7,20 +7,20 @@ import { nbccFinalCtaTracking } from '../utils/nbccLandingPageContent'
 
 export function NbccFinalCtaSection() {
   return (
-    <article className='bg-foreground-muted relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8'>
-      <div className='absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(240,195,106,0.18),transparent_34%),radial-gradient(circle_at_82%_42%,rgba(199,230,201,0.12),transparent_32%)]' />
+    <article className='relative overflow-hidden bg-jungle px-4 py-20 sm:px-6 lg:px-8'>
+      <div className='absolute inset-0' />
       <div
         data-nbcc-reveal
         data-nbcc-animate
-        className='relative mx-auto flex max-w-4xl flex-col items-center text-center'
+        className='relative mx-auto flex flex-col items-center text-left'
       >
-        <p className='dark:text-dark-background font-utekos-text-medium text-sm tracking-[0.18em] text-background uppercase'>
+        <p className='text-left font-utekos-text-medium text-sm text-foreground'>
           Klar for neste campingtur
         </p>
-        <h2 className='dark:text-dark-background mt-4 max-w-3xl font-sans text-4xl text-balance text-background *:font-utekos-text-medium sm:text-5xl'>
+        <h2 className='mt-4 max-w-3xl text-left font-sans text-4xl text-balance text-foreground sm:text-5xl'>
           Ta med varmen til plassen der praten fortsetter
         </h2>
-        <p className='dark:text-dark-background mt-6 max-w-2xl text-base text-background'>
+        <p className='mt-6 max-w-3xl text-left font-utekos-text text-base text-foreground'>
           Opplev en ny standard for utendørs velvære. Utekos
           forener banebrytende innovasjon med tidløs eleganse.
           Kjernen i konseptet er vår unike 3-i-1 funksjonalitet.
@@ -37,7 +37,7 @@ export function NbccFinalCtaSection() {
           data-track='NbccFinalProductsClick'
           data-track-data={JSON.stringify(nbccFinalCtaTracking)}
           size='lg'
-          className='dark:bg-dark-primary dark:text-dark-background dark:hover:bg-dark-primary/90 mt-9 h-12 rounded-md bg-primary px-6 font-utekos-text-medium text-[15px] text-background hover:bg-primary/90'
+          className='mt-9 h-12 rounded-xl bg-[#00685e] px-6 font-utekos-text-medium text-[15px] text-foreground hover:bg-[#00685e]/90'
         >
           <Link
             href={'/produkter' as Route}
