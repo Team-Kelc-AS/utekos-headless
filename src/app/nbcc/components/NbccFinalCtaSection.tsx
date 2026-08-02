@@ -17,7 +17,7 @@ export function NbccFinalCtaSection() {
         <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-foreground uppercase'>
           Klar for neste campingtur
         </p>
-        <h2 className='mt-4 max-w-3xl font-sans text-4xl text-balance text-foreground *:font-utekos-text-medium sm:text-5xl'>
+        <h2 className='mt-4 max-w-3xl font-sans text-4xl text-balance text-foreground sm:text-5xl'>
           Ta med varmen til plassen der praten fortsetter
         </h2>
         <p className='mt-6 max-w-2xl text-base text-foreground'>
