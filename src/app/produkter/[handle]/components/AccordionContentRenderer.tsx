@@ -1,4 +1,5 @@
 // Path: src/app/produkter/[handle]/components/AccordionContentRenderer.tsx
+import { cn } from '@/lib/utils/className'
 import type {
   ProductAccordionGroup,
   ProductAccordionSection
@@ -72,12 +73,19 @@ function AccordionGroup({
 }
 
 export function AccordionContentRenderer({
-  content
+  content,
+  className
 }: {
   content: ProductAccordionSection
+  className?: string
 }) {
   return (
-    <div className='relative z-10 px-6 pb-6 sm:pl-20'>
+    <div
+      className={cn(
+        'relative z-10 px-6 pb-6 sm:pl-20',
+        className
+      )}
+    >
       <div className='max-w-prose space-y-6 font-utekos-text'>
         {content.groups.map((group, index) => (
           <AccordionGroup

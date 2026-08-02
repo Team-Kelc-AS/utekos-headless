@@ -7,7 +7,7 @@ export function SizeGuideHero() {
     <SizeGuideSectionShell
       id='size-guide-hero'
       surface='muted'
-      className='mb-4 rounded-lg border-b border-border'
+      className='mb-4 rounded-xl border-b border-border'
     >
       <hgroup className='max-w-3xl'>
         <BrandBadge
@@ -16,7 +16,7 @@ export function SizeGuideHero() {
           fgColor='var(--card-foreground)'
           className='mb-4 border border-border px-5 py-2.5 font-sans text-base tracking-wide sm:px-8 sm:py-3'
         />
-        <h1 className='font-google-sans text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'>
+        <h1 className='font-sans text-3xl leading-[1.05] font-extrabold text-foreground md:text-5xl lg:text-6xl'>
           Størrelsesguide
         </h1>
         <p className='/90 mt-5 max-w-2xl text-lg leading-relaxed text-foreground/90'>

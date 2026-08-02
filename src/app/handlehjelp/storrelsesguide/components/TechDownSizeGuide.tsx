@@ -7,8 +7,9 @@ export function TechDownSizeGuide() {
   return (
     <SizeGuideSectionShell
       id='tech-down-size-guide'
-      surface='card'
+      surface='jungle'
       ariaLabelledby='tech-down-size-guide-heading'
+      className='rounded-xl'
     >
       <div className='max-w-5xl'>
         <BrandBadge
@@ -20,7 +21,7 @@ export function TechDownSizeGuide() {
 
         <h2
           id='tech-down-size-guide-heading'
-          className='font-google-sans pt-4 pb-6 text-3xl leading-[1.05] font-bold text-inherit md:text-5xl lg:text-6xl'
+          className='font-sans pt-4 pb-6 text-3xl leading-[1.05] font-bold text-inherit md:text-5xl lg:text-6xl'
         >
           Presisjon i hver størrelse
         </h2>

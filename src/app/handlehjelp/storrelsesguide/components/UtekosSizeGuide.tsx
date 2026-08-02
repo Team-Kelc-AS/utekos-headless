@@ -30,7 +30,7 @@ export function UtekosSizeGuide() {
         />
         <h2
           id='utekos-size-guide-heading'
-          className='font-google-sans pt-4 pb-6 text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
+          className='pt-4 pb-6 font-sans text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
         >
           En unik tilnærming til passform
         </h2>

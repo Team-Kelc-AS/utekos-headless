@@ -78,12 +78,12 @@ export function ComfyrobeLandingClient({
         <section
           id='comfyrobe-hero'
           aria-labelledby='comfyrobe-hero-heading'
-          className='relative min-h-[calc(100svh-70px)] overflow-hidden bg-[#001919] text-white'
+          className='relative min-h-[calc(100svh-70px)] overflow-hidden bg-jungle text-foreground md:mx-auto md:px-8 md:rounded-xl lg:px-12'
         >
           <picture className='absolute inset-0 block'>
             <source
               media='(min-width: 85.0625rem)'
-              srcSet='/comfy-bg.webp'
+              srcSet='/comfy-hero-wide.webp'
             />
             <source
               media='(min-width: 51rem) and (max-width: 85rem)'

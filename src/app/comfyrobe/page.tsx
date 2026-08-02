@@ -5,6 +5,7 @@ import { ComfyrobeFinalCta } from './components/ComfyrobeFinalCta'
 import { ComfyrobeGuidedDemo } from './components/ComfyrobeGuidedDemo'
 import { ComfyrobeLandingClient } from './components/ComfyrobeLandingClient'
 import { ComfyrobeMotionProvider } from './components/ComfyrobeMotionProvider'
+import { ComfyrobeProductDetailsSection } from './components/ComfyrobeProductDetailsSection'
 import { ComfyrobeProofBridge } from './components/ComfyrobeProofBridge'
 import { ComfyrobePurchaseSection } from './components/ComfyrobePurchaseSection'
 import { ComfyrobeStickyPurchase } from './components/ComfyrobeStickyPurchase'
@@ -67,6 +68,7 @@ export default async function ComfyrobeLandingPage() {
           </div>
         </PromotionImpression>
 
+        <ComfyrobeProductDetailsSection />
         <ComfyrobeGuidedDemo />
         <ComfyrobeFaqSection />
 

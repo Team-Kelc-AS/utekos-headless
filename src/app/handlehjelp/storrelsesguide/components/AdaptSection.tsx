@@ -6,7 +6,7 @@ export function AdaptSection() {
   return (
     <SizeGuideSectionShell
       id='utekos-measurements'
-      surface='card'
+      surface='jungle'
       ariaLabelledby='utekos-measurements-heading'
       className='rounded-lg'
     >

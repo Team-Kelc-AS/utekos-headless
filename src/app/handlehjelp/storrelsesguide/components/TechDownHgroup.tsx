@@ -7,11 +7,11 @@ export function TechDownHgroup() {
       id='tech-down-details'
       surface='muted'
       ariaLabelledby='tech-down-details-heading'
-      className='my-4 rounded-lg'
+      className='my-4 rounded-xl'
     >
       <h2
         id='tech-down-details-heading'
-        className='font-google-sans mb-4 max-w-4xl font-sans text-4xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
+        className='mb-4 max-w-4xl font-sans text-4xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
       >
         Gjennomtenkte detaljer
       </h2>

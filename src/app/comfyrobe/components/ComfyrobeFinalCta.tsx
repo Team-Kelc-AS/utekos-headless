@@ -42,7 +42,7 @@ export function ComfyrobeFinalCta({
       className='bg-[#071f1e] px-6 py-20 text-center text-white md:px-12 md:py-28'
     >
       <m.div
-        className='mx-auto max-w-4xl'
+        className='mx-auto max-w-4xl rounded-xl border-none bg-jungle py-12'
         initial='hidden'
         whileInView='visible'
         viewport={comfyrobeViewport}

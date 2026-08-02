@@ -241,36 +241,36 @@ export function ComfyrobeSizeGuide() {
         >
           <div className='w-full max-lg:min-w-max'>
             <div className='overflow-hidden rounded-lg border border-border shadow-[0_18px_44px_-36px_color-mix(in_oklab,var(--background)_72%,transparent)]'>
-              <table className='w-full divide-y divide-border bg-card text-card-foreground max-lg:min-w-176'>
-                <thead className='bg-secondary text-secondary-foreground'>
+              <table className='w-full divide-y divide-border bg-jungle text-foreground max-lg:min-w-176'>
+                <thead className='text-foreground bg-background'>
                   <tr>
                     <th
                       scope='col'
-                      className='py-3.5 pr-3 pl-4 text-left font-utekos-text-medium text-sm sm:pl-6'
+                      className='bg-background py-3.5 pr-3 pl-4 text-left font-utekos-text-medium text-sm sm:pl-6'
                     >
                       Måling
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
+                      className='bg-background px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Small
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
+                      className='bg-background px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Medium
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
+                      className='bg-background px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Large
                     </th>
                   </tr>
                 </thead>
-                <tbody className='divide-y divide-border'>
+                <tbody className='divide-y divide-border bg-jungle text-foreground'>
                   {comfyrobeData.map(row => (
                     <tr key={row.measurement}>
                       <td className='py-4 pr-3 pl-4 text-left text-sm font-medium whitespace-nowrap sm:pl-6'>

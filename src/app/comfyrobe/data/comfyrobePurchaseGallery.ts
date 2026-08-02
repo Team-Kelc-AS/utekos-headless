@@ -12,23 +12,23 @@ export type ComfyrobePurchaseGallerySlide = {
 }
 
 export const COMFYROBE_PURCHASE_PRIMARY_IMAGE =
-  '/comfy-ute-firkantet.webp'
+  '/comfy-kvinne-1024x1024.webp'
 
 export const COMFYROBE_PURCHASE_GALLERY: readonly ComfyrobePurchaseGallerySlide[] =
   [
-    {
-      id: 'mann',
-      alt: 'Mann med Comfyrobe™ i studio',
-      mobileSrc: '/comfy-mann-45.webp',
-      ipadSrc: '/comfy-mann-ipad.webp',
-      desktopSrc: '/comfy-mann-1024x1024.webp'
-    },
     {
       id: 'kvinne',
       alt: 'Kvinne med Comfyrobe™ i studio',
       mobileSrc: '/comfy-kvinne-45.webp',
       ipadSrc: '/comfy-kvinne-ipad.webp',
       desktopSrc: '/comfy-kvinne-1024x1024.webp'
+    },
+    {
+      id: 'mann',
+      alt: 'Mann med Comfyrobe™ i studio',
+      mobileSrc: '/comfy-mann-45.webp',
+      ipadSrc: '/comfy-mann-ipad.webp',
+      desktopSrc: '/comfy-mann-1024x1024.webp'
     },
     {
       id: 'produkt',

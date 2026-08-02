@@ -50,6 +50,7 @@ export function ModalSubmitButton({
           selectedVariant={selectedVariant}
           quantity={quantity}
           disabled={isDisabled}
+          theme='light'
           className='w-full min-w-0'
           buttonContainerClassName='h-14 min-h-14'
         />

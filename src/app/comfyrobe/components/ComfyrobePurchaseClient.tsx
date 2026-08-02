@@ -98,12 +98,12 @@ export function ComfyrobePurchaseClient({
 
   if (!selectedVariant) {
     return (
-      <section className='dark:bg-dark-foreground dark:text-dark-background bg-foreground px-6 py-20 text-background'>
+      <section className='bg-jungle text-foreground px-6 py-20'>
         <div className='mx-auto max-w-3xl text-center'>
           <h2 className='font-google-sans font-sans text-3xl font-bold'>
             Comfyrobe™ er midlertidig utsolgt
           </h2>
-          <p className='dark:text-dark-background/80 mt-4 font-utekos-text text-background/80'>
+          <p className='mt-4 font-utekos-text text-foreground/90'>
             Produktet kan ikke bestilles før Shopify rapporterer
             en tilgjengelig variant.
           </p>
@@ -192,9 +192,9 @@ export function ComfyrobePurchaseClient({
   return (
     <section
       aria-labelledby='purchase-heading'
-      className='dark:bg-dark-foreground dark:text-dark-background w-full bg-foreground text-background'
+      className='w-full bg-jungle md:px-8 md:rounded-xl md:py-12 lg:py-16 lg:px-12 mx-auto text-foreground'
     >
-      <div className='grid min-h-190 lg:grid-cols-2'>
+      <div className='grid min-h-190 overflow-hidden rounded-lg lg:grid-cols-2'>
         <ComfyrobePurchaseImageCarousel />
 
         <div className='flex flex-col'>
@@ -209,8 +209,7 @@ export function ComfyrobePurchaseClient({
               Juster, form og nyt.
             </h2>
             <p className='mt-6 max-w-xl font-utekos-text text-lg leading-relaxed text-foreground/78'>
-              Romslig unisex-passform. Sjekk størrelsesguiden før
-              du velger.
+             Roben for deg som ønsker en kombinasjon av teknisk ytelse, kompromissløs komfort og tidløst design.
             </p>
 
             <div
@@ -348,7 +347,7 @@ export function ComfyrobePurchaseClient({
             : null}
           </div>
 
-          <div className='border-t border-background/15 bg-card p-6 text-card-foreground md:p-10'>
+          <div className='border-t border-background/15 bg-background p-6 text-card-foreground md:p-10'>
             {selectedVariant.availableForSale ?
               <AddToCart
                 product={product}

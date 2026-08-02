@@ -5,9 +5,9 @@ export function TechDownMeasurement() {
   return (
     <SizeGuideSectionShell
       id='tech-down-measurements'
-      surface='card'
+      surface='jungle'
       ariaLabelledby='tech-down-measurements-heading'
-      className='rounded-lg'
+      className='rounded-xl'
     >
       <h2
         id='tech-down-measurements-heading'

@@ -21,7 +21,7 @@ const demoSteps = [
   {
     number: '01',
     eyebrow: 'Regnet ute',
-    title: 'Skjermet når været snur.',
+    title: 'Beskyttet mot elementene',
     description:
       'HydroGuard™-skallet kombinerer 8 000 mm vannsøyle og en pustende membran for skiftende regn og vind.',
     image: '/comfy_rainy.webp',
@@ -32,7 +32,7 @@ const demoSteps = [
   {
     number: '02',
     eyebrow: 'Varmen inne',
-    title: 'Myk der du merker det.',
+    title: 'Myk og behagelig innside',
     description:
       'SherpaCore™ 250 GSM gir en lun innside som gjør kalde pauser, vindfulle turer og ventetid ute mer behagelig.',
     image: '/1080/comfy-design-1080.png',
@@ -44,7 +44,7 @@ const demoSteps = [
   {
     number: '03',
     eyebrow: 'Frihet i bevegelse',
-    title: 'Romslig uten å holde deg igjen.',
+    title: 'Kompromissløs komfort og overlegen allsidighet.',
     description:
       'Toveis YKK®-glidelås, splitter, lommer, justerbare mansjetter og en romslig unisex-passform gjør kåpen enkel å bruke gjennom dagen.',
     image: '/1080/comfy-open-1080.png',
@@ -74,7 +74,7 @@ export function ComfyrobeGuidedDemo() {
     <section
       id='section-product-demo'
       aria-labelledby='product-demo-heading'
-      className='scroll-mt-20 bg-[#071f1e] text-white'
+      className='scroll-mt-20 bg-jungle px-6 text-foreground md:mx-auto md:rounded-xl md:px-8 lg:px-12'
     >
       <m.div
         className='mx-auto max-w-4xl px-6 py-18 text-center md:px-12 md:py-24'
@@ -94,7 +94,7 @@ export function ComfyrobeGuidedDemo() {
           className='font-google-sans mt-3 font-sans text-4xl leading-[0.94] font-bold tracking-tight md:text-6xl'
           variants={comfyrobeRevealItem}
         >
-          Beskyttelse utenpå. Ro inni.
+        Tøff mot været, komfortabel mot deg
         </m.h2>
         <m.p
           className='mx-auto mt-6 max-w-2xl font-utekos-text text-lg leading-relaxed text-white/75'
@@ -129,7 +129,7 @@ export function ComfyrobeGuidedDemo() {
                   className={step.imageClassName}
                 />
               </m.div>
-              <div className='mx-auto max-w-2xl px-6 pt-7 md:px-12 xl:motion-reduce:pt-0 xl:motion-reduce:pr-16 xl:motion-reduce:pl-14'>
+              <div className='mx-auto mt-6 max-w-2xl px-6 pt-7 md:px-12 xl:motion-reduce:pt-0 xl:motion-reduce:pr-16 xl:motion-reduce:pl-14'>
                 <m.div
                   className='flex items-center gap-3 text-primary'
                   variants={comfyrobeRevealItem}
@@ -158,30 +158,35 @@ export function ComfyrobeGuidedDemo() {
       </div>
 
       <div className='hidden min-h-[210vh] grid-cols-2 xl:motion-safe:grid'>
-        <div className='sticky top-0 h-screen overflow-hidden border-r border-white/10 bg-jungle'>
-          {demoSteps.map((step, index) => (
-            <m.div
-              key={step.number}
-              aria-hidden
-              className={cn(
-                'absolute inset-0',
-                activeStep === index ? 'z-10' : 'z-0'
-              )}
-              initial={index === 0 ? 'active' : 'inactive'}
-              animate={
-                activeStep === index ? 'active' : 'inactive'
-              }
-              variants={stickyImageVariants}
-            >
-              <Image
-                src={step.image}
-                alt=''
-                fill
-                sizes='50vw'
-                className={step.imageClassName}
-              />
-            </m.div>
-          ))}
+        <div className='sticky top-0 flex h-screen items-center justify-center overflow-hidden border-r border-white/10 bg-jungle p-8 2xl:p-12'>
+          <div className='relative aspect-square w-full overflow-hidden rounded-lg'>
+            {demoSteps.map((step, index) => (
+              <m.div
+                key={step.number}
+                aria-hidden
+                className={cn(
+                  'absolute inset-0',
+                  activeStep === index ? 'z-10' : 'z-0'
+                )}
+                initial={index === 0 ? 'active' : 'inactive'}
+                animate={
+                  activeStep === index ? 'active' : 'inactive'
+                }
+                variants={stickyImageVariants}
+              >
+                <Image
+                  src={step.image}
+                  alt=''
+                  fill
+                  sizes='50vw'
+                  className={cn(
+                    step.imageClassName,
+                    'rounded-lg'
+                  )}
+                />
+              </m.div>
+            ))}
+          </div>
 
           <div
             aria-hidden

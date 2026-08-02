@@ -8,7 +8,7 @@ export function ComfyrobeFaqSection() {
       className='bg-background py-20 text-foreground md:py-28'
       aria-labelledby='faq-heading'
     >
-      <div className='mx-auto max-w-4xl px-6 md:px-12'>
+      <div className='mx-auto max-w-4xl rounded-xl bg-jungle px-6 py-12 md:px-12'>
         <p className='text-center font-utekos-text-medium text-sm tracking-wide text-primary'>
           Spørsmål før kjøp
         </p>

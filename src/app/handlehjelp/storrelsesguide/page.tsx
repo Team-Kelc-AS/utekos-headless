@@ -48,7 +48,7 @@ export default function SizeGuidePage() {
       <UtekosSizeGuide />
       <AdaptSection />
       <ComfyrobeSizeGuide />
-      <BackToShopCta surface='card' />
+      <BackToShopCta surface='jungle' />
     </article>
   )
 }

@@ -52,6 +52,7 @@ next-env.d.ts
 /.codex/.env
 /.codex/auth.json
 /.codex/screenshots/
+/.agent/
 /.agent-artifacts/
 /.worktrees/
 /.playwright-cli/

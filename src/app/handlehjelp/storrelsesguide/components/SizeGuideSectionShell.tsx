@@ -5,6 +5,7 @@ export type SizeGuideSectionSurface =
   | 'card'
   | 'background'
   | 'muted'
+  | 'jungle'
 
 type SizeGuideSectionShellProps = {
   id: string
@@ -24,7 +25,8 @@ const surfaceClassNames: Record<
 > = {
   card: 'bg-card text-card-foreground',
   background: 'bg-background text-foreground',
-  muted: 'bg-muted text-foreground'
+  muted: 'bg-muted text-foreground',
+  jungle: 'bg-jungle text-foreground'
 }
 
 export function SizeGuideSectionShell({

@@ -33,7 +33,7 @@ export function ComfyrobePurchaseImageCarousel() {
         aria-label='Comfyrobe produktbilder'
         className='relative h-full w-full'
       >
-        <div className='relative aspect-[4/5] w-full overflow-hidden max-lg:min-[51rem]:aspect-[1080/1350] lg:absolute lg:inset-0 lg:aspect-auto lg:h-full'>
+        <div className='relative aspect-4/5 w-full overflow-hidden mamax-lg:min-[51rem]:aspect-1080/1350g:absolute lg:inset-0 lg:aspect-auto lg:h-full'>
           <CarouselContent className='absolute inset-0 ml-0 h-full'>
             {COMFYROBE_PURCHASE_GALLERY.map((slide, index) => {
               const isPackshot = slide.fit === 'contain'
@@ -59,7 +59,7 @@ export function ComfyrobePurchaseImageCarousel() {
                       : undefined
                     }
                   >
-                    <picture>
+                    <picture className='absolute inset-0 block'>
                       <source
                         media={DESKTOP_MEDIA}
                         srcSet={slide.desktopSrc}
@@ -88,12 +88,12 @@ export function ComfyrobePurchaseImageCarousel() {
         <CarouselPrevious
           forceVisible
           aria-label='Forrige produktbilde'
-          className='left-3 size-14 border-foreground/15 bg-background/85 text-foreground shadow-lg backdrop-blur-md hover:bg-background md:left-5 md:size-10 [&_svg]:!size-6 md:[&_svg]:!size-5'
+          className='left-3 size-14 border-foreground/15 bg-background/85 text-foreground shadow-lg backdrop-blur-md hover:bg-background md:left-5 md:size-10 [&_svg]:size-6! md:[&_svg]:size-5!'
         />
         <CarouselNext
           forceVisible
           aria-label='Neste produktbilde'
-          className='right-3 size-14 border-foreground/15 bg-background/85 text-foreground shadow-lg backdrop-blur-md hover:bg-background md:right-5 md:size-10 [&_svg]:!size-6 md:[&_svg]:!size-5'
+          className='right-3 size-14 border-foreground/15 bg-background/85 text-foreground shadow-lg backdrop-blur-md hover:bg-background md:right-5 md:size-10 [&_svg]:size-6! md:[&_svg]:size-5!'
         />
       </Carousel>
     </div>

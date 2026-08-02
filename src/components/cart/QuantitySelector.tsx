@@ -17,12 +17,12 @@ export function QuantitySelector() {
   }
 
   return (
-    <div className='border-jungle/15 bg-coral-green text-jungle inline-flex h-10 items-center rounded-lg border shadow-[0_14px_32px_-28px_color-mix(in_oklch,var(--jungle)_75%,transparent)] md:mb-3'>
+    <div className='border-background/15 bg-jungle text-foreground inline-flex h-10 items-center rounded-lg border shadow-[0_14px_32px_-28px_color-mix(in_oklch,var(--jungle)_75%,transparent)] md:mb-3'>
       <Button
         type='button'
         variant='ghost'
         size='icon'
-        className='text-jungle hover:bg-blue-green/45 hover:text-jungle disabled:text-jungle/35 h-full cursor-pointer disabled:cursor-not-allowed'
+        className='h-full cursor-pointer text-foreground hover:bg-blue-green/45 hover:text-foreground disabled:cursor-not-allowed disabled:text-foreground/35'
         onClick={() => updateQuantity(quantity - 1)}
         disabled={quantity <= 1}
       >
@@ -41,14 +41,14 @@ export function QuantitySelector() {
         onChange={e =>
           updateQuantity(parseInt(e.target.value, 10))
         }
-        className='text-jungle h-full w-10 border-transparent bg-transparent text-center text-base shadow-none focus-visible:ring-0'
+        className='h-full w-10 border-transparent bg-transparent text-center text-base text-foreground shadow-none focus-visible:ring-0'
       />
 
       <Button
         type='button'
         variant='ghost'
         size='icon'
-        className='text-jungle hover:bg-blue-green/45 hover:text-jungle disabled:text-jungle/35 h-full cursor-pointer disabled:cursor-not-allowed'
+        className='h-full cursor-pointer text-foreground hover:bg-blue-green/45 hover:text-foreground disabled:cursor-not-allowed disabled:text-foreground/35'
         onClick={() => updateQuantity(quantity + 1)}
       >
         <PlusIcon className='size-4' />

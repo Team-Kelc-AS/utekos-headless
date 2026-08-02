@@ -14,3 +14,4 @@ alwaysApply: false
    - google analytics
    - data manager api mcp
    - context7 (as backup for official endpoints)
+

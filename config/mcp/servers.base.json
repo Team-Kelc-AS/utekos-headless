@@ -619,6 +619,65 @@
       ],
       "autoApprove": []
     },
+    "brreg-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@0.1.38",
+        "https://brreg.mcp-server.fun/mcp",
+        "--silent"
+      ],
+      "tools": [
+        "brreg_search",
+        "search_companies"
+      ],
+      "autoApprove": []
+    },
+    "api1881": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        ".agent/mcp-1881/server.js"
+      ],
+      "tools": [
+        "search_person",
+        "lookup_id",
+        "list_keys_status"
+      ],
+      "autoApprove": [
+        "search_person",
+        "lookup_id",
+        "list_keys_status"
+      ]
+    },
+    "gnist": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        ".agent/mcp-gnist/server.js"
+      ],
+      "env": {
+        "GNIST_EMAIL": "${GNIST_EMAIL}",
+        "GNIST_PASSWORD": "${GNIST_PASSWORD}",
+        "GNIST_BASE_URL": "${GNIST_BASE_URL}"
+      },
+      "tools": [
+        "gnist_login_check",
+        "gnist_scrape_contacts",
+        "gnist_probe_member_directory",
+        "gnist_fetch"
+      ],
+      "autoApprove": [
+        "gnist_login_check",
+        "gnist_scrape_contacts",
+        "gnist_probe_member_directory",
+        "gnist_fetch"
+      ]
+    },
+    "apify": {
+      "url": "https://mcp.apify.com/?tools=actors,docs,runs,storage,gettingtechnicl/no-brreg-business-register-api,apify/facebook-pages-scraper,apify/facebook-page-contact-information,silva95gustavo/google-ads-scraper,codebyte/microsoft-ads-library,apify/facebook-groups-scraper,cleansyntax/facebook-profile-posts-scraper,nexgendata/norway-brreg-company-registry,solidcode/proff-no-scraper,stealth_mode/proff-bussiness-search-scraper"
+    },
     "meta-ads": {
       "command": "npx",
       "args": [
