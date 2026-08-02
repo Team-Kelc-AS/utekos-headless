@@ -104,6 +104,7 @@ export default function Providers({
         clearTimeout(timeoutId)
         if (isActive) setCartBootstrapStatus('ready')
       })
+      .catch(() => undefined)
 
     return () => {
       isActive = false

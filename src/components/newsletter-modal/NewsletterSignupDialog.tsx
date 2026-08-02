@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   useActionState,
   useEffect,
   useRef,
   useState
 } from 'react'
-import { Check, Loader2, Mail, Gift, XIcon } from 'lucide-react'
+import { Check, Loader2, Mail, XIcon } from 'lucide-react'
 
 import {
   subscribeToNewsletter,
@@ -26,6 +27,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 
+import { createSafeNewsletterAction } from './createSafeNewsletterAction'
 import { NEWSLETTER_DISCOUNT_PERCENT } from './newsletterModalConfig'
 import {
   getCookiebotFromWindow,
@@ -36,6 +38,11 @@ import {
 } from './newsletterModalRuntime'
 
 const initialState: ActionState = { status: 'idle', message: '' }
+
+const submitNewsletterSafely = createSafeNewsletterAction({
+  appendTrackingContext: appendLeadTrackingContext,
+  subscribe: subscribeToNewsletter
+})
 
 const OPEN_DELAY_MS = 3500
 const DEVELOPMENT_INITIAL_DELAY_MS = 1500
@@ -78,7 +85,7 @@ export function NewsletterSignupDialog() {
   const [open, setOpen] = useState(false)
 
   const [state, formAction, isPending] = useActionState(
-    subscribeToNewsletter,
+    submitNewsletterSafely,
     initialState
   )
 
@@ -261,11 +268,6 @@ export function NewsletterSignupDialog() {
     setOpen(nextOpen)
   }
 
-  const handleSubmit = (formData: FormData) => {
-    appendLeadTrackingContext(formData)
-    formAction(formData)
-  }
-
   const emailDescription =
     state.status === 'error' ?
       'newsletter-modal-email-help newsletter-modal-error'
@@ -275,7 +277,11 @@ export function NewsletterSignupDialog() {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className='max-h-[calc(100svh-2rem)] overflow-y-auto bg-transparent p-0 ring-0 sm:max-w-xl'
+        className={
+          state.status === 'success' ?
+            'max-h-[calc(100svh-2rem)] overflow-y-auto bg-transparent p-0 ring-0 sm:max-w-xl'
+          : 'max-h-[calc(100svh-2rem)] overflow-y-auto bg-transparent p-0 ring-0 sm:max-w-lg lg:w-[calc(100%-2rem)] lg:max-w-5xl'
+        }
       >
         {state.status === 'success' ?
           <section
@@ -307,16 +313,16 @@ export function NewsletterSignupDialog() {
             </span>
 
             <DialogHeader className='items-center'>
-              <DialogTitle className='font-utekos-text-medium text-2xl leading-tight text-popover-foreground sm:text-3xl'>
+              <DialogTitle className='font-sans text-2xl leading-tight text-popover-foreground sm:text-3xl'>
                 Rabattkoden er på vei
               </DialogTitle>
 
-              <DialogDescription className='max-w-md text-base leading-7 text-popover-foreground/80'>
+              <DialogDescription className='max-w-md font-utekos-text-medium text-base leading-7 text-popover-foreground/80'>
                 {state.message}
               </DialogDescription>
             </DialogHeader>
 
-            <p className='mx-auto mt-4 max-w-md text-sm leading-6 text-popover-foreground/70'>
+            <p className='mx-auto mt-4 max-w-md font-utekos-text text-sm leading-6 text-popover-foreground/70'>
               Sjekk også søppelpostmappen dersom e-posten ikke
               dukker opp med en gang.
             </p>
@@ -345,25 +351,34 @@ export function NewsletterSignupDialog() {
               </DialogClose>
             </div>
           </section>
-        : <section className='overflow-hidden rounded-xl bg-popover text-popover-foreground'>
-            <header className='relative isolate overflow-hidden bg-muted px-6 pt-8 pb-7 text-popover-foreground sm:px-9 sm:pt-10 sm:pb-9'>
-              <div
-                aria-hidden='true'
-                className='absolute -top-20 -right-16 -z-10 size-56 rounded-full bg-popover-foreground/10 blur-3xl'
+        : <section className='rounded-xl bg-popover font-utekos-text text-popover-foreground lg:grid lg:grid-cols-2'>
+            <div className='min-w-0 overflow-hidden bg-muted lg:relative lg:aspect-[4/5]'>
+              <Image
+                src='/newsletter-image-comfy-klarna.png'
+                alt='Marineblå Comfyrobe. Velg Klarna i kassen.'
+                width={1000}
+                height={1000}
+                sizes='(max-width: 639px) calc(100vw - 2rem), 32rem'
+                className='aspect-square h-auto w-full object-cover lg:hidden'
               />
 
-              <div
-                aria-hidden='true'
-                className='absolute -bottom-24 -left-16 -z-10 size-56 rounded-full bg-accent/10 blur-3xl'
+              <Image
+                src='/newsletter-image-comfy-klarna.webp'
+                alt='Marineblå Comfyrobe. Velg Klarna i kassen.'
+                fill
+                sizes='(max-width: 1279px) 496px, 512px'
+                className='hidden object-cover lg:block'
               />
+            </div>
 
+            <div className='relative flex min-w-0 flex-col'>
               <DialogClose
                 render={
                   <Button
                     type='button'
                     variant='ghost'
                     size='icon'
-                    className='absolute top-3 right-3 text-popover-foreground hover:bg-popover-foreground/10 hover:text-popover-foreground'
+                    className='absolute top-3 right-3 z-10 text-popover-foreground hover:bg-accent hover:text-accent-foreground'
                   />
                 }
               >
@@ -374,133 +389,127 @@ export function NewsletterSignupDialog() {
                 </span>
               </DialogClose>
 
-              <div className='mb-5 flex items-center gap-3'>
-                <span
-                  aria-hidden='true'
-                  className='flex size-12 shrink-0 items-center justify-center rounded-2xl bg-alternate-button text-background'
-                >
-                  <Gift className='size-6' />
-                </span>
+              <header className='px-5 pt-6 sm:px-8 sm:pt-10 sm:pr-10 lg:px-10'>
+                <DialogHeader className='pr-8'>
+                  <DialogTitle className='font-sans text-2xl leading-[1.08] text-balance text-popover-foreground sm:text-3xl lg:text-4xl'>
+                    {NEWSLETTER_DISCOUNT_PERCENT}% rabatt på
+                    Comfyrobe™
+                  </DialogTitle>
 
-                <span className='rounded-full border border-popover-foreground/25 bg-popover-foreground/10 px-3 py-1 font-utekos-text-medium text-xs tracking-[0.12em] text-popover-foreground uppercase'>
-                  Kampanje
-                </span>
-              </div>
+                  <DialogDescription className='max-w-lg font-utekos-text-medium text-sm leading-6 text-popover-foreground/85 sm:text-base sm:leading-7'>
+                    Meld deg på nyhetsbrevet og få allerede
+                    nedsatte Comfyrobe™ for{' '}
+                    <strong className='text-popover-foreground'>
+                      kun kr 799,-{' '}
+                    </strong>
+                    . Rabattkoden sendes til e-postadressen din
+                    etter registrering.
+                  </DialogDescription>
+                </DialogHeader>
+              </header>
 
-              <DialogHeader className='pr-8'>
-                <DialogTitle className='font-utekos-text-medium text-3xl leading-[1.08] text-balance text-popover-foreground sm:text-4xl'>
-                  {NEWSLETTER_DISCOUNT_PERCENT}% rabatt på
-                  Comfyrobe™
-                </DialogTitle>
+              <form
+                ref={formRef}
+                action={formAction}
+                className='flex flex-1 flex-col gap-4 px-5 py-6 sm:gap-5 sm:px-8 sm:py-8 lg:px-10'
+              >
+                <div className='space-y-2'>
+                  <label
+                    htmlFor='newsletter-modal-email'
+                    className='block font-utekos-text-medium text-sm text-popover-foreground'
+                  >
+                    E-postadresse
+                  </label>
 
-                <DialogDescription className='max-w-lg text-base leading-7 text-popover-foreground/85'>
-                  Meld deg på nyhetsbrevet og få allerede
-                  nedsatte Comfyrobe™ for{' '}
-                  <strong className='font-utekos-text-medium text-popover-foreground'>
-                    kun kr 799,-{' '}
-                  </strong>
-                  . Rabattkoden sendes til e-postadressen din
-                  etter registrering.
-                </DialogDescription>
-              </DialogHeader>
-            </header>
+                  <div className='relative'>
+                    <Mail
+                      aria-hidden='true'
+                      className='pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground'
+                    />
 
-            <form
-              ref={formRef}
-              action={handleSubmit}
-              className='space-y-5 px-6 py-7 sm:px-9 sm:py-8'
-            >
-              <div className='space-y-2'>
-                <label
-                  htmlFor='newsletter-modal-email'
-                  className='block font-utekos-text-medium text-sm text-popover-foreground'
-                >
-                  E-postadresse
-                </label>
+                    <Input
+                      id='newsletter-modal-email'
+                      name='email'
+                      type='email'
+                      inputMode='email'
+                      autoComplete='email'
+                      placeholder='din@epost.no'
+                      required
+                      autoFocus
+                      aria-invalid={state.status === 'error'}
+                      aria-describedby={emailDescription}
+                      className='h-12 rounded-full border-input bg-popover pr-5 pl-12 font-utekos-text text-base text-popover-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/30 md:text-base'
+                    />
+                  </div>
 
-                <div className='relative'>
-                  <Mail
-                    aria-hidden='true'
-                    className='pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground'
-                  />
-
-                  <Input
-                    id='newsletter-modal-email'
-                    name='email'
-                    type='email'
-                    inputMode='email'
-                    autoComplete='email'
-                    placeholder='din@epost.no'
-                    required
-                    autoFocus
-                    aria-invalid={state.status === 'error'}
-                    aria-describedby={emailDescription}
-                    className='h-12 rounded-full border-input bg-popover pr-5 pl-12 text-base text-popover-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/30 md:text-base'
-                  />
+                  <p
+                    id='newsletter-modal-email-help'
+                    className='font-utekos-text text-sm leading-6 text-popover-foreground/70'
+                  >
+                    Rabattkoden sendes til denne e-postadressen.
+                  </p>
                 </div>
 
-                <p
-                  id='newsletter-modal-email-help'
-                  className='text-sm leading-6 text-popover-foreground/70'
-                >
-                  Rabattkoden sendes til denne e-postadressen.
-                </p>
-              </div>
+                {state.status === 'error' ?
+                  <p
+                    id='newsletter-modal-error'
+                    role='alert'
+                    className='rounded-xl border border-destructive/25 bg-destructive px-4 py-3 font-utekos-text text-sm leading-6 text-destructive-foreground'
+                  >
+                    {state.message}
+                  </p>
+                : null}
 
-              {state.status === 'error' ?
-                <p
-                  id='newsletter-modal-error'
-                  role='alert'
-                  className='rounded-xl border border-destructive/25 bg-destructive px-4 py-3 text-sm leading-6 text-destructive-foreground'
-                >
-                  {state.message}
-                </p>
-              : null}
+                <div className='mt-auto space-y-5'>
+                  <div className='space-y-3'>
+                    <Button
+                      type='submit'
+                      variant='checkout'
+                      size='lg'
+                      disabled={isPending}
+                      aria-busy={isPending}
+                      className='min-h-12 w-full rounded-full bg-primary px-6 font-utekos-text-medium text-base text-foreground'
+                    >
+                      {isPending ?
+                        <>
+                          <Loader2
+                            aria-hidden='true'
+                            className='animate-spin'
+                          />
+                          Sender…
+                        </>
+                      : <>Send meg rabattkoden</>}
+                    </Button>
 
-              <Button
-                type='submit'
-                variant='checkout'
-                size='lg'
-                disabled={isPending}
-                aria-busy={isPending}
-                className='min-h-12 w-full rounded-full bg-primary px-6 font-utekos-text-medium text-base text-foreground'
-              >
-                {isPending ?
-                  <>
-                    <Loader2
-                      aria-hidden='true'
-                      className='animate-spin'
-                    />
-                    Sender…
-                  </>
-                : <>Send meg rabattkoden</>}
-              </Button>
+                    <DialogClose
+                      render={
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='lg'
+                          className='min-h-12 w-full rounded-full border-input bg-transparent px-6 font-utekos-text-medium text-base text-popover-foreground hover:bg-accent hover:text-accent-foreground'
+                        />
+                      }
+                    >
+                      Nei, takk
+                    </DialogClose>
+                  </div>
 
-              <p className='text-center font-utekos-text text-xs leading-5 tracking-tight text-popover-foreground/70'>
-                Når du melder deg på, samtykker du til å motta
-                nyheter og tilbud fra Utekos. Du kan melde deg av
-                når som helst. Les vår{' '}
-                <Link
-                  href='/personvern'
-                  className='font-utekos-text-medium text-popover-foreground underline underline-offset-4'
-                >
-                  personvernerklæring
-                </Link>
-                .
-              </p>
-
-              <DialogClose
-                render={
-                  <Button
-                    type='button'
-                    variant='secondary'
-                    className='mx-auto flex text-secondary-foreground'
-                  />
-                }
-              >
-                Ikke nå
-              </DialogClose>
-            </form>
+                  <p className='text-center font-utekos-text text-xs leading-5 tracking-tight text-popover-foreground/70'>
+                    Når du melder deg på, samtykker du til å
+                    motta nyheter og tilbud fra Utekos. Du kan
+                    melde deg av når som helst. Les vår{' '}
+                    <Link
+                      href='/personvern'
+                      className='font-utekos-text-medium text-popover-foreground underline underline-offset-4'
+                    >
+                      personvernerklæring
+                    </Link>
+                    .
+                  </p>
+                </div>
+              </form>
+            </div>
           </section>
         }
       </DialogContent>
