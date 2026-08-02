@@ -576,8 +576,15 @@ revoke execute on function marketing.refresh_meta_high_value_customer_audience()
   from service_role;
 revoke select on table marketing.meta_high_value_customer_audience_export
   from service_role;
-revoke select on table marketing.meta_customer_audience
-  from service_role;
+
+do $optional_legacy_audience_revoke$
+begin
+  if to_regclass('marketing.meta_customer_audience') is not null then
+    revoke select on table marketing.meta_customer_audience
+      from service_role;
+  end if;
+end;
+$optional_legacy_audience_revoke$;
 
 comment on function marketing.refresh_meta_high_value_customer_audience() is
   'Fail-closed for application roles until a verified marketing-consent join and documented audience refresh authorization are implemented.';

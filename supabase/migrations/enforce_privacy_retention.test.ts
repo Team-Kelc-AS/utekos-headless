@@ -37,6 +37,10 @@ test('privacy purge is protected and scheduled idempotently', async () => {
     sql,
     /revoke select on table marketing\.meta_high_value_customer_audience_export\s+from service_role/i
   )
+  assert.match(
+    sql,
+    /to_regclass\('marketing\.meta_customer_audience'\) is not null[\s\S]*revoke select on table marketing\.meta_customer_audience\s+from service_role/i
+  )
 })
 
 test('anonymous aggregate excludes direct and pseudonymous dimensions', async () => {
