@@ -21,10 +21,16 @@ export type KlarnaExpressPreparedAuthorize = {
   shopifyCartId: string
 }
 
+export type KlarnaExpressCheckoutTheme =
+  | 'default'
+  | 'light'
+  | 'outlined'
+
 type KlarnaExpressCheckoutButtonProps = {
   orderPayload: KlarnaExpressOrderPayload
   shopifyCartId?: string
   disabled?: boolean
+  theme?: KlarnaExpressCheckoutTheme
   className?: string
   buttonContainerClassName?: string
   onError?: (message: string) => void
@@ -52,6 +58,7 @@ export function KlarnaExpressCheckoutButton({
   orderPayload,
   shopifyCartId,
   disabled = false,
+  theme = 'default',
   className,
   buttonContainerClassName,
   onError,
@@ -107,7 +114,7 @@ export function KlarnaExpressCheckoutButton({
         }).load(
           {
             container: `#${containerId}`,
-            theme: 'default',
+            theme,
             shape: 'pill',
             locale: 'nb-NO',
             on_click: (
@@ -232,7 +239,7 @@ export function KlarnaExpressCheckoutButton({
     return () => {
       isActive = false
     }
-  }, [containerId, disabled])
+  }, [containerId, disabled, theme])
 
   return (
     <div

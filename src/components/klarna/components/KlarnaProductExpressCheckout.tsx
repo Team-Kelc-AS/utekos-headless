@@ -2,7 +2,10 @@
 
 import { useContext, useState } from 'react'
 
-import { KlarnaExpressCheckoutButton } from '@/components/klarna/components/KlarnaExpressCheckoutButton'
+import {
+  KlarnaExpressCheckoutButton,
+  type KlarnaExpressCheckoutTheme
+} from '@/components/klarna/components/KlarnaExpressCheckoutButton'
 import { buildKlarnaExpressOrderPayloadFromProductLine } from '@/components/klarna/utils/buildKlarnaExpressOrderPayload'
 import { prepareKlarnaExpressBeginCheckout } from '@/components/klarna/utils/prepareKlarnaExpressBeginCheckout'
 import type { KlarnaExpressOrderPayload } from '@/components/klarna/schemas/klarnaExpressOrderSchema'
@@ -22,6 +25,7 @@ type KlarnaProductExpressCheckoutProps = {
   selectedVariant: ProductPurchaseVariant | null
   quantity?: number
   disabled?: boolean
+  theme?: KlarnaExpressCheckoutTheme
   className?: string
   buttonContainerClassName?: string
 }
@@ -31,6 +35,7 @@ export function KlarnaProductExpressCheckout({
   selectedVariant,
   quantity = 1,
   disabled = false,
+  theme = 'default',
   className,
   buttonContainerClassName
 }: KlarnaProductExpressCheckoutProps) {
@@ -67,9 +72,10 @@ export function KlarnaProductExpressCheckout({
       )}
     >
       <KlarnaExpressCheckoutButton
-        key={`${selectedVariant.id}-${quantity}-${orderPayload.order_amount}`}
+        key={`${selectedVariant.id}-${quantity}-${orderPayload.order_amount}-${theme}`}
         orderPayload={orderPayload}
         disabled={disabled || !selectedVariant.availableForSale}
+        theme={theme}
         className='h-full min-h-0'
         {...(buttonContainerClassName ?
           { buttonContainerClassName }
