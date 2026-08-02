@@ -27,7 +27,7 @@ export async function NbccProductSection() {
   return (
     <article
       id='produkter'
-      className='dark:bg-dark-background bg-background px-4 py-20 sm:px-6 sm:py-24 lg:px-8'
+      className='dark:bg-dark-background bg-background px-6 py-20 sm:px-8 sm:py-24 lg:px-10'
     >
       <div className='mx-auto max-w-7xl'>
         <div
