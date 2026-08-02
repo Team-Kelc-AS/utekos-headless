@@ -21,7 +21,8 @@ const eslintConfig = defineConfig([
       'no-self-compare': 'error',
       'no-this-before-super': 'error',
       'no-useless-assignment': 'error',
-      'quotes': ['error', 'single']
+      'quotes': ['error', 'single'],
+      'react/jsx-no-undef': 'error'
     }
   },
   globalIgnores([
