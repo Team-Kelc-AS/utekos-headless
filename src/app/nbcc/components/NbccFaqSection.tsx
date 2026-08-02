@@ -20,7 +20,7 @@ export function NbccFaqSection() {
         <Accordion
           data-nbcc-reveal
           data-nbcc-animate
-          className='rounded-lg border border-border bg-card px-5 text-card-foreground'
+          className='rounded-lg border border-border bg-jungle px-5 text-card-foreground'
         >
           {nbccFaqItems.map(item => (
             <AccordionItem
