@@ -59,6 +59,7 @@ next-env.d.ts
 **/.playwright-cli.json
 /supabase/.branches/
 /supabase/.temp/
+/.development-data/
 
 # Local provider credentials (templates/examples stay commit-safe)
 /src/api/lib/cloud-credentials/*.json
