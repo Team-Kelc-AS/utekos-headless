@@ -27,25 +27,21 @@ export function NewProductInStoreNoticeView({
       <div
         ref={containerRef}
         className={cn(
-          'relative isolate mx-auto overflow-hidden rounded-3xl border border-border bg-background p-6 px-4 text-card-foreground shadow-2xl sm:p-10 md:max-w-6xl md:px-8 lg:px-12'
+          'relative isolate mx-auto overflow-hidden rounded-3xl border border-border bg-jungle p-6 px-4 text-card-foreground shadow-2xl sm:p-10 md:max-w-6xl md:px-8 lg:px-12'
         )}
       >
         <div
-          className='pointer-events-none absolute top-0 left-1/2 -z-20 h-125 w-125 -translate-x-1/2 -translate-y-1/2 opacity-20 blur-[100px]'
-          style={{
-            background:
-              'radial-gradient(circle, color-mix(in oklch, var(--card-foreground) 24%, transparent) 0%, transparent 70%)'
-          }}
+          className='pointer-events-none bg-jungle absolute top-0 left-1/2 -z-20 h-125 w-125 -translate-x-1/2 -translate-y-1/2 opacity-20 blur-[100px]'
         />
 
-        <div className='flex flex-col items-center gap-8 text-center'>
-          <div className='relative flex h-32 w-full items-center justify-center overflow-visible'>
-            <div className='absolute top-1/2 left-1/2 z-0 flex h-1 w-1 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-visible'>
+        <div className='flex flex-col bg-jungle rounded-2xl items-center gap-8 text-center'>
+          <div className='relative flex h-32 w-full rounded-2xl bg-jungle items-center justify-center overflow-visible'>
+            <div className='absolute top-1/2 left-1/2 z-0 flex h-1 w-1 rounded-full bg-jungle -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-visible'>
               {[...Array(5)].map((_, i) => (
                 <div
                   key={`smoke-${i}`}
                   className={`smoke-particle absolute h-20 w-20 rounded-full blur-xl ${
-                    i % 2 === 0 ? 'bg-night/80' : 'bg-night'
+                    i % 2 === 0 ? 'bg-jungle/80' : 'bg-jungle'
                   }`}
                   style={{ left: i * 5, top: i * 2 }}
                 />
@@ -86,12 +82,12 @@ export function NewProductInStoreNoticeView({
           >
             <H2
               ID='intersport-laksevag-heading'
-              className='font-google-sans pb-0 text-left text-3xl leading-tight font-bold tracking-normal text-foreground md:text-4xl lg:text-5xl'
+              className='font-sans pb-0 text-left text-3xl leading-tight font-extrabold tracking-normal text-foreground md:text-4xl lg:text-5xl'
             >
               Sjekk ut Utekos på Intersport Laksevåg!
             </H2>
 
-            <P className='-mt-2 w-full max-w-4xl text-left text-xl leading-snug tracking-normal text-foreground sm:text-2xl'>
+            <P className='-mt-2 w-full max-w-4xl text-left font-utekos-text-medium text-xl leading-snug tracking-normal text-foreground sm:text-2xl'>
               Se, prøve og kjenne på{' '}
               <InlineText
                 as='strong'

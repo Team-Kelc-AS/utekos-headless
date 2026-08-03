@@ -192,7 +192,7 @@ export function ProductCard({
 
             <AspectRatio
               ratio={1 / 1}
-              className='w-full overflow-hidden rounded-t-xl bg-dark-teal'
+              className='w-full overflow-hidden rounded-t-xl bg-jungle/90'
             >
               <Image
                 src={imageUrl}
@@ -200,7 +200,7 @@ export function ProductCard({
                 fill
                 quality={100}
                 sizes={imageSizes}
-                className='rounded-t-xl bg-dark-teal object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02]'
+                className='rounded-t-xl bg-jungle/90 object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02]'
                 fetchPriority={isPriority ? 'high' : 'low'}
                 loading={isPriority ? 'eager' : 'lazy'}
               />
@@ -301,7 +301,7 @@ export function ProductCard({
 
             <AspectRatio
               ratio={1 / 1}
-              className='w-full overflow-hidden rounded-t-xl bg-dark-teal'
+              className='w-full overflow-hidden rounded-t-xl bg-jungle/90'
             >
               <Image
                 src={imageUrl}
@@ -309,7 +309,7 @@ export function ProductCard({
                 fill
                 quality={100}
                 sizes={imageSizes}
-                className='rounded-t-xl bg-dark-teal object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02]'
+                className='rounded-t-xl bg-jungle/90 object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02]'
                 fetchPriority={isPriority ? 'high' : 'low'}
                 loading={isPriority ? 'eager' : 'lazy'}
               />
@@ -342,7 +342,7 @@ export function ProductCard({
       </div>
       <div
         className={cn(
-          'mx-auto mt-auto flex w-full flex-col items-center gap-3 bg-background p-6 pt-4!',
+          'mx-auto mt-auto flex w-full flex-col items-center gap-3 bg-jungle p-6 pt-4!',
           compactMobile &&
             'gap-2 p-3 pt-4! md:gap-3 md:p-4 md:pt-4! xl:p-6 xl:pt-4!'
         )}
@@ -356,6 +356,7 @@ export function ProductCard({
           product={product}
           selectedVariant={selectedVariant ?? null}
           className='w-full'
+          buttonContainerClassName='border-none ring-0'
         />
       </div>
     </Card>

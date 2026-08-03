@@ -87,7 +87,7 @@ export function ColorSelector({
             onClick={() => onSelect(optionName, colorValue)}
           >
             <span className='flex items-center gap-2 text-foreground'>
-              <span className='font-utekos-text-medium'>
+              <span className='font-utekos-text-medium text-foreground'>
                 {colorLabel}
               </span>
               {(

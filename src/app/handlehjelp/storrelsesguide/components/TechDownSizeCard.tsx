@@ -33,7 +33,7 @@ export function TechDownSizeCard({
           </span>
         </CardAction>
 
-        <p className='font-utekos-text-medium text-sm leading-none font-medium tracking-tight text-foreground/65'>
+        <p className='font-utekos-text-medium text-sm leading-none font-medium tracking-tight text-foreground/90'>
           Utekos TechDown™
         </p>
 

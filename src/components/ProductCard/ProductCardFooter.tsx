@@ -18,7 +18,7 @@ export function ProductCardFooter({
   }
 
   const actionButtonClassName =
-    'font-utekos-text-medium h-12 min-h-12 min-w-0 w-full max-w-full overflow-hidden rounded-full px-4 py-0 text-center text-base leading-tight whitespace-normal ring-1 ring-card-foreground/50 ring-inset motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2'
+    'h-12 min-h-12 min-w-0 w-full max-w-full overflow-hidden rounded-full border-none bg-primary px-4 py-0 text-center font-sans text-base leading-tight font-semibold whitespace-normal ring-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2'
   return (
     <CardFooter className='flex w-full flex-col p-0'>
       <div className='grid w-full min-w-0'>
@@ -29,11 +29,13 @@ export function ProductCardFooter({
             data-track='ProductCardFooterAddToCartClick'
             disabled={isPending}
             variant='checkout'
-            className={`${actionButtonClassName} focus-visible:outline-commerce-primary-foreground focus-visible:outline-dark-commerce-primary-foreground disabled:opacity-70`}
+            className={`${actionButtonClassName} disabled:opacity-70`}
           >
             {isPending ?
               <Loader2 className='size-4 animate-spin' />
-            : <InlineText>Legg i handlekurv</InlineText>}
+            : <InlineText className='font-sans font-semibold'>
+                Legg i handlekurv
+              </InlineText>}
           </Button>
         : <ProductCardSoldOut />}
       </div>

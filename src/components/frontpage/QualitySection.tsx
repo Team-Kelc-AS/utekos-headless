@@ -13,7 +13,11 @@ export async function QualitySection() {
     'relative overflow-hidden rounded-[1.5rem] border border-border bg-jungle text-card-foreground  backdrop-blur-2xl transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-2xl'
 
   return (
-    <PageSection as='section' background='default'>
+    <PageSection
+      as='section'
+      background='default'
+      className='overflow-hidden rounded-t-xl'
+    >
       <article className='relative overflow-hidden'>
         <div className='cols-1 grid-bg-card grid gap-6 lg:grid-cols-3 lg:grid-rows-2'>
           <AnimatedBlock

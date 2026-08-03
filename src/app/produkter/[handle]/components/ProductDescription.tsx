@@ -65,7 +65,7 @@ export function ProductDescription({
   return (
     <article
       aria-labelledby='product-description-heading'
-      className='dark:shadow-dark-background/20 mt-12 rounded-[1.25rem] border border-border bg-card p-5 font-utekos-text text-card-foreground shadow-lg shadow-background/20 sm:p-6'
+      className='dark:shadow-dark-background/20 mt-12 rounded-[1.25rem] border border-border bg-jungle p-5 font-utekos-text text-card-foreground shadow-lg shadow-background/20 sm:p-6'
     >
       <div
         id='product-description-content'

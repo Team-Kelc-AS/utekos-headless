@@ -50,7 +50,7 @@ export function PromiseSection() {
     <PageSection
       as='section'
       background='default'
-      className={cn('mx-auto')}
+      className={cn('mx-auto overflow-hidden rounded-t-xl')}
     >
       <div className='mx-auto'>
         <div className='grid grid-cols-1 gap-12'>

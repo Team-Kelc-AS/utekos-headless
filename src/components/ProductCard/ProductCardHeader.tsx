@@ -38,7 +38,7 @@ export function ProductCardHeader({
   return (
     <CardHeader
       className={cn(
-        'flex grow flex-col gap-3 rounded-t-xl border-t border-border bg-jungle/70 p-6 pb-4',
+        'flex grow flex-col gap-3 rounded-t-3xl border-t border-border bg-jungle p-6 pb-4',
         compactMobile && 'p-2 pb-2 md:p-6 md:pb-4'
       )}
     >
@@ -64,7 +64,7 @@ export function ProductCardHeader({
           >
             <H3
               className={cn(
-                'truncate pb-0 font-utekos-text-medium text-xl leading-8 text-card-foreground',
+                'truncate pb-0 font-sans text-xl leading-8 font-bold text-card-foreground',
                 compactMobile &&
                   'text-[0.82rem] leading-5 md:text-xl md:leading-8'
               )}
@@ -91,7 +91,7 @@ export function ProductCardHeader({
       </div>
       <InlineText
         className={cn(
-          'font-google-sans text-2xl leading-none font-bold text-card-foreground',
+          'font-sans text-2xl leading-none font-semibold text-card-foreground',
           compactMobile && 'text-base md:text-2xl'
         )}
       >

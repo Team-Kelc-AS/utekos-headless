@@ -21,7 +21,7 @@ export function AddToCartView({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='flex flex-col gap-4'
+        className='flex flex-col gap-4 bg-jungle py-6'
       >
         <div className='space-y-2'>
           <label

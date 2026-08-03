@@ -217,6 +217,41 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/contact',
+        destination: '/kontaktskjema',
+        permanent: true
+      },
+      {
+        source: '/products/utekos-techdawn',
+        destination: '/produkter/utekos-techdown',
+        permanent: true
+      },
+      {
+        source: '/terms',
+        destination: '/vilkar-betingelser',
+        permanent: true
+      },
+      {
+        source: '/privacy-policy',
+        destination: '/personvern',
+        permanent: true
+      },
+      {
+        source: '/products',
+        destination: '/produkter',
+        permanent: true
+      },
+      {
+        source: '/about-us',
+        destination: '/om-oss',
+        permanent: true
+      },
+      {
+        source: '/about',
+        destination: '/om-oss',
+        permanent: true
+      },
+      {
         source: '/discount/NBCC128',
         destination: '/nbcc',
         permanent: true

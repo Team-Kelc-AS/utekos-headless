@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { ArrowRight, Mail } from 'lucide-react'
 import { toast } from 'sonner'
-import { H2 } from '@/components/typography/TypographyH2'
 import { P } from '@/components/typography/TypographyP'
 import { Button } from '@/components/ui/button'
 import { NewsletterFormFeedback } from '@/components/form/components/NewsletterFormFeedback'
@@ -59,11 +58,12 @@ export function NewsletterForm() {
                 <Mail className='size-6' />
               </span>
 
-              <H2
-                Text='Meld deg på Utekos sitt nyhetsbrev!'
-                ID='newsletter-heading'
-                className='pb-0 text-2xl text-balance text-white md:text-3xl lg:text-3xl'
-              />
+              <h2
+                id='newsletter-heading'
+                className='scroll-m-20 pb-0 font-sans text-2xl tracking-tight text-balance text-white md:text-3xl lg:text-3xl'
+              >
+                Meld deg på Utekos sitt nyhetsbrev!
+              </h2>
             </div>
 
             <div className='flex flex-col gap-1.5 text-white/86'>

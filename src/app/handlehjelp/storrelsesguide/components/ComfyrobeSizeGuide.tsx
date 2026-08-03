@@ -98,7 +98,7 @@ export function ComfyrobeSizeGuide() {
         />
         <h2
           id='comfyrobe-size-guide-heading'
-          className='font-google-sans text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'
+          className='font-sans text-3xl leading-[1.05] font-extrabold text-foreground md:text-5xl lg:text-6xl'
         >
           Størrelsesguide for Comfyrobe™
         </h2>
@@ -117,16 +117,16 @@ export function ComfyrobeSizeGuide() {
         {comfyrobeFeatures.map(feature => (
           <div
             key={feature.title}
-            className='h-full rounded-lg border border-border bg-card p-6 text-left text-card-foreground shadow-[0_18px_46px_-38px_color-mix(in_oklab,var(--background)_90%,transparent)]'
+            className='h-full rounded-lg border border-border bg-jungle p-6 text-left text-foreground shadow-[0_18px_46px_-38px_color-mix(in_oklab,var(--background)_90%,transparent)]'
           >
             <div className='flex items-center gap-4'>
-              <div className='flex size-11 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground'>
+              <div className='flex size-11 shrink-0 items-center justify-center rounded-full bg-dark-teal text-foreground'>
                 <feature.Icon
                   className='size-5'
                   aria-hidden='true'
                 />
               </div>
-              <h3 className='font-utekos-text-medium text-lg'>
+              <h3 className='font-sans font-utekos-text-medium text-lg'>
                 {feature.title}
               </h3>
             </div>
@@ -148,7 +148,7 @@ export function ComfyrobeSizeGuide() {
               <CardAction>
                 <span
                   aria-hidden='true'
-                  className='font-google-sans flex size-11 items-center justify-center rounded-full border border-foreground/15 bg-[color-mix(in_oklch,var(--background)_88%,var(--foreground)_12%)] font-sans text-lg leading-none font-bold text-foreground shadow-xs'
+                  className='font-google-sans flex size-11 items-center justify-center rounded-full border border-foreground/15 bg-jungle font-sans text-lg leading-none font-bold text-foreground shadow-xs'
                 >
                   {card.sizeCode}
                 </span>
@@ -158,8 +158,11 @@ export function ComfyrobeSizeGuide() {
                 Comfyrobe™
               </p>
 
-              <CardTitle className='font-google-sans font-sans text-2xl leading-[1.05] font-bold text-foreground md:text-3xl'>
-                <h3 id={`comfyrobe-size-${card.id}-heading`}>
+              <CardTitle className='font-sans text-2xl leading-[1.05] font-bold text-foreground md:text-3xl'>
+                <h3
+                  id={`comfyrobe-size-${card.id}-heading`}
+                  className='font-sans'
+                >
                   {card.heading}
                 </h3>
               </CardTitle>
@@ -204,7 +207,7 @@ export function ComfyrobeSizeGuide() {
               </ul>
             </CardContent>
 
-            <CardFooter className='mt-auto bg-[color-mix(in_oklch,var(--background)_88%,var(--foreground)_12%)] px-5 py-0 sm:px-6'>
+            <CardFooter className='mt-auto bg-jungle px-5 py-0 sm:px-6'>
               <div className='w-full border-t border-border py-3'>
                 <a
                   href='#comfyrobe-measurements'

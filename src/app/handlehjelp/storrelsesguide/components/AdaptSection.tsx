@@ -21,10 +21,10 @@ export function AdaptSection() {
         {adaptFeatures.map(feature => (
           <div
             key={feature.title}
-            className='h-full rounded-lg border border-border bg-background p-6 text-left text-foreground shadow-[0_18px_46px_-38px_color-mix(in_oklab,var(--background)_90%,transparent)]'
+            className='h-full rounded-xl border border-border bg-background p-6 text-left text-foreground shadow-[0_18px_46px_-38px_color-mix(in_oklab,var(--background)_90%,transparent)]'
           >
             <div className='flex items-center gap-4'>
-              <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground'>
+              <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-jungle text-foreground'>
                 <feature.Icon
                   className='size-6'
                   aria-hidden='true'
@@ -51,23 +51,23 @@ export function AdaptSection() {
           <div className='w-full max-lg:min-w-max'>
             <div className='overflow-hidden rounded-lg border border-border shadow-[0_22px_54px_-42px_color-mix(in_oklab,var(--background)_90%,transparent)]'>
               <table className='w-full divide-y divide-border bg-background text-foreground max-lg:min-w-xl'>
-                <thead className='bg-secondary text-secondary-foreground'>
+                <thead className='bg-night text-foreground'>
                   <tr>
                     <th
                       scope='col'
-                      className='py-3.5 pr-3 pl-4 text-left font-utekos-text-medium text-sm sm:pl-6'
+                      className='bg-night py-3.5 pr-3 pl-4 text-left font-utekos-text-medium text-sm sm:pl-6'
                     >
                       Måling
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
+                      className='bg-night px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Medium
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
+                      className='bg-night px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Large
                     </th>

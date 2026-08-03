@@ -20,16 +20,17 @@ export function TechDownHgroup() {
         {techDownFeatures.map(feature => (
           <div
             key={feature.title}
-            className='h-full rounded-lg border border-border bg-card p-6 text-left text-card-foreground shadow-[0_18px_46px_-38px_color-mix(in_oklab,var(--background)_90%,transparent)]'
+            className='bg-jungle h-full rounded-lg border border-border p-6 text-left text-foreground shadow-[0_18px_46px_-38px_color-mix(in_oklab,var(--background)_90%,transparent)]'
+
           >
             <div className='flex items-center gap-4'>
-              <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground'>
+              <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-dark-teal text-foreground'>
                 <feature.Icon
                   className='size-6'
                   aria-hidden='true'
                 />
               </div>
-              <h3 className='font-utekos-text-medium text-lg'>
+              <h3 className='font-sans text-lg font-bold'>
                 {feature.title}
               </h3>
             </div>

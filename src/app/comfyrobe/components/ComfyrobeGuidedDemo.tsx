@@ -26,7 +26,7 @@ const demoSteps = [
       'HydroGuard™-skallet kombinerer 8 000 mm vannsøyle og en pustende membran for skiftende regn og vind.',
     image: '/comfy_rainy.webp',
     imageAlt: 'Person med mørk Comfyrobe ute i regnvær',
-    imageClassName: 'object-cover object-center',
+    imageClassName: 'rounded-lg object-cover object-center',
     icon: CloudRain
   },
   {
@@ -38,7 +38,7 @@ const demoSteps = [
     image: '/1080/comfy-design-1080.png',
     imageAlt:
       'Nærbilde av SherpaCore-fôr og glidelås i Comfyrobe',
-    imageClassName: 'object-cover object-center',
+    imageClassName: 'rounded-lg object-cover object-center',
     icon: ThermometerSnowflake
   },
   {
@@ -49,7 +49,8 @@ const demoSteps = [
       'Toveis YKK®-glidelås, splitter, lommer, justerbare mansjetter og en romslig unisex-passform gjør kåpen enkel å bruke gjennom dagen.',
     image: '/1080/comfy-open-1080.png',
     imageAlt: 'Åpen mørk Comfyrobe med synlig fôr',
-    imageClassName: 'object-contain object-center p-8 md:p-12',
+    imageClassName:
+      'rounded-lg object-contain object-center p-8 md:p-12',
     icon: Move3d
   }
 ] as const
@@ -118,7 +119,7 @@ export function ComfyrobeGuidedDemo() {
               variants={comfyrobeRevealGroup}
             >
               <m.div
-                className='relative aspect-4/5 overflow-hidden bg-jungle sm:aspect-square'
+                className='relative aspect-4/5 overflow-hidden rounded-lg bg-jungle sm:aspect-square'
                 variants={comfyrobeRevealScale}
               >
                 <Image

@@ -30,29 +30,29 @@ export function TechDownMeasurement() {
           <div className='w-full max-lg:min-w-max'>
             <div className='overflow-hidden rounded-lg border border-border shadow-[0_22px_54px_-42px_color-mix(in_oklab,var(--background)_90%,transparent)]'>
               <table className='w-full divide-y divide-border bg-background text-foreground max-lg:min-w-2xl'>
-                <thead className='bg-secondary text-secondary-foreground'>
+                <thead className='bg-muted text-foreground'>
                   <tr>
                     <th
                       scope='col'
-                      className='py-3.5 pr-3 pl-4 text-left font-utekos-text-medium text-sm sm:pl-6'
+                      className='bg-muted py-3.5 pr-3 pl-4 text-left font-utekos-text-medium text-sm sm:pl-6'
                     >
                       Måling
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
+                      className='bg-muted px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Liten
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
+                      className='bg-muted px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Middels
                     </th>
                     <th
                       scope='col'
-                      className='px-3 py-3.5 text-center font-utekos-text-medium text-sm'
+                      className='bg-muted px-3 py-3.5 text-center font-utekos-text-medium text-sm'
                     >
                       Stor
                     </th>

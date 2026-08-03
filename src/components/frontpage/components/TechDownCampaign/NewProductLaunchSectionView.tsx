@@ -81,7 +81,7 @@ export function NewProductLaunchSectionView({
                       </InlineText>
                     </div>
                   </div>
-                  <div className='mt-4 grid w-full grid-cols-1 gap-3 md:mt-0 md:grid-cols-2'>
+                  <div className='mt-4 grid w-full grid-cols-1 items-stretch gap-3 md:mt-0 md:grid-cols-2'>
                     <AddNewProductToCartButton
                       onAddToCartClick={onQuickViewClick}
                     />

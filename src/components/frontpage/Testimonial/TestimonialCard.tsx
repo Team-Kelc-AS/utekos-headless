@@ -24,7 +24,7 @@ export function TestimonialCard({
     <div
       ref={cardRef}
       className={cn(
-        'will-animate-fade-in-up group relative flex flex-col',
+        'will-animate-fade-in-up group relative flex h-full min-h-[22rem] flex-col',
         cardInView && 'is-in-view'
       )}
       style={

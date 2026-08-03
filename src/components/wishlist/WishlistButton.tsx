@@ -109,7 +109,7 @@ export function WishlistButton({
         data-track='WishlistButtonAddClick'
         onClick={handleWishlistClick}
         className={cn(
-          'border border-white/70 bg-cyan-500 text-[#172744] shadow-[0_12px_30px_-16px_rgba(0,0,0,0.85)] hover:bg-cyan-400 hover:text-[#172744] focus-visible:border-white focus-visible:ring-white/70 dark:bg-cyan-500 dark:text-[#172744] dark:hover:bg-cyan-400 dark:hover:text-[#172744]',
+          'border border-border bg-muted text-foreground shadow-[0_12px_30px_-16px_rgba(0,0,0,0.85)] hover:bg-muted/90 hover:text-foreground focus-visible:border-foreground/40 focus-visible:ring-foreground/40',
           isLabelled ?
             'h-11 rounded-full px-4 font-utekos-text-medium text-sm'
           : 'size-12 rounded-2xl',

@@ -24,7 +24,7 @@ export function ComfyrobeSection() {
       background='default'
       className={cn('mx-auto items-center')}
     >
-      <div className='dark:border-dark-foreground/12 relative min-w-0 overflow-hidden rounded-2xl border border-foreground/12 bg-card px-6 py-8 text-card-foreground'>
+      <div className='dark:border-dark-foreground/12 relative min-w-0 overflow-hidden rounded-2xl border border-foreground/12 bg-jungle px-6 py-8 text-foreground'>
         <div className='absolute inset-0 -z-10 overflow-hidden'>
           <div
             className='absolute top-1/4 left-1/4 size-150 opacity-15 blur-3xl'
