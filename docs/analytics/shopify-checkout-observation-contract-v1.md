@@ -124,65 +124,101 @@ Den har ingen fremmednøkkel eller skrivelogikk mot canonical
 ledger eller provider-outbox.
 
 Tabellen håndhever `verification_status=observed`, den eksakte
-v1-identiteten, de fire personvernflaggene og tillatte eventformer.
-En unik idempotensnøkkel og SHA-256 brukes til replaykontroll.
-Første observasjon, identitet og payload-hash er uforanderlige;
-kun monotont replay-antall og observasjonstid kan oppdateres.
+v1-identiteten, de fire personvernflaggene og tillatte
+eventformer. En unik idempotensnøkkel og SHA-256 brukes til
+replaykontroll. Første observasjon, identitet og payload-hash er
+uforanderlige; kun monotont replay-antall og observasjonstid kan
+oppdateres.
 
 RLS er aktivert og tvunget. `public`, `anon` og `authenticated`
-har ingen tilgang. `service_role` får bare den tabelltilgangen som
-trengs for senere mottakerintegrasjon. En daglig jobb sletter
+har ingen tilgang. `service_role` får bare den tabelltilgangen
+som trengs for senere mottakerintegrasjon. En daglig jobb sletter
 observasjoner etter 30 dager, med støtte for tidsavgrenset
 personvernunntak.
 
 Migrasjon `20260803194441_add_shopify_checkout_observations` ble
 anvendt på det kanoniske tracking-prosjektet
 `hkoawfbomhnzupcsdggb` 2026-08-03. Produksjonstabellen ble
-verifisert tom med tvungen RLS, forventede tilganger, replay-trigger
-og retention-jobb. Development-ruten fortsetter å bruke det lokale
-fillageret.
+verifisert tom med tvungen RLS, forventede tilganger,
+replay-trigger og retention-jobb. Development-ruten fortsetter å
+bruke det lokale fillageret.
 
-## Produksjonsmottaker — klargjort, ikke aktivert
+## Produksjonsmottaker — aktivert observed-only
 
-Den separate ruten
-`POST /api/shopify/checkout-observations` er klargjort for å skrive
-strengt validerte observasjoner til
-`ops.shopify_checkout_observations`. Den bruker samme streamingbaserte
-16 KiB-grense, Zod-validator, idempotensnøkkel og SHA-256-kontroll som
-development-ruten. En identisk replay øker bare det monotone
-observasjonstallet. Samme nøkkel med en annen validert payload gir
-`409 idempotency_conflict` uten overskriving.
+Den separate ruten `POST /api/shopify/checkout-observations` er
+klargjort for å skrive strengt validerte observasjoner til
+`ops.shopify_checkout_observations`. Den bruker samme
+streamingbaserte 16 KiB-grense, Zod-validator, idempotensnøkkel
+og SHA-256-kontroll som development-ruten. En identisk replay
+øker bare det monotone observasjonstallet. Samme nøkkel med en
+annen validert payload gir `409 idempotency_conflict` uten
+overskriving.
 
-Ruten er fail-closed og returnerer `404 receiver_disabled` med mindre
-`SHOPIFY_CHECKOUT_OBSERVATIONS_ENABLED` er eksakt `true`. Bryteren er
-ikke satt eller endret som del av denne leveransen. En senere
-aktivering krever separat godkjenning for miljøendring og deploy, og
-må verifiseres før én produksjons-Web Pixel kan kobles til ruten.
+Ruten er fail-closed og returnerer `404 receiver_disabled` med
+mindre `SHOPIFY_CHECKOUT_OBSERVATIONS_ENABLED` er eksakt `true`.
+Bryteren er satt til `true` kun i Vercel Production.
+Produksjonsdeploy `dpl_D3t1qCM6s14w9tpsdH1a4SfMmGmm` er `READY`
+og eier `utekos.no`.
+
+Aktiveringstesten 2026-08-04 brukte en PII-fri
+`alert_displayed/CHECKOUT_ERROR`-observasjon og beviste:
+
+- første POST ga `204` og `inserted`;
+- identisk replay ga `204` og `duplicate`, med
+  `observation_count=2`;
+- samme idempotensidentitet med endret payload ga
+  `409 idempotency_conflict`;
+- ukjent `email`-felt ble avvist med `400 invalid_observation`;
+- payload over 16 KiB ble avvist med `413 payload_too_large`;
+- lagret rad har `verification_status=observed`, analytics=true
+  og marketing/preferences/sale-of-data=false;
+- den eksakte testidentiteten har null rader i både
+  `marketing.event_ledger` og `ops.provider_dispatch_attempts`.
 
 Mottakeren oppretter ikke canonical ledger-rader eller
 provider-outbox-rader. Den inneholder ingen GA4-, Meta- eller
 Microsoft-levering.
 
-Read-only produksjonsinventering i Shopify Admin 2026-08-03 viste at
-den eksisterende Custom Pixel-en `Utekos GA4 Commerce` fortsatt er
-tilkoblet og eier GA4 `add_payment_info` fra
+Read-only produksjonsinventering i Shopify Admin 2026-08-03 viste
+at den eksisterende Custom Pixel-en `Utekos GA4 Commerce`
+fortsatt er tilkoblet og eier GA4 `add_payment_info` fra
 `payment_info_submitted` samt GA4 `purchase` fra
-`checkout_completed`. Det er ikke del av den nye mottakeren og ble
-ikke endret. «Provider deaktivert» for denne fasen gjelder derfor den
-nye observed-pipelinen, ikke en påstand om at all eksisterende
-Shopify-GA4 er slått av.
+`checkout_completed`. Det er ikke del av den nye mottakeren og
+ble ikke endret. «Provider deaktivert» for denne fasen gjelder
+derfor den nye observed-pipelinen, ikke en påstand om at all
+eksisterende Shopify-GA4 er slått av.
 
-En senere canonical/provider-cutover må stoppe gammel og starte ny
-GA4-eier for samme hendelse i kontrollert rekkefølge. Siden Custom
-Pixel-en inneholder begge hendelser, kan den ikke kobles helt fra når
-bare én erstatningshendelse er klar.
+Produksjonsappen `Utekos Platform` ble aktivert 2026-08-04 for
+`erling-7921.myshopify.com`. Aktiv appversjon er
+`utekos-checkout-observations-v1` med Web Pixel-UID
+`c02aadbc-9d1a-247d-788d-c1f674288851ae56df7e`. Én
+WebPixel-record ble opprettet med den eksakte innstillingen
+`https://utekos.no/api/shopify/checkout-observations`. Shopify
+Admin viser pikselen som `Web / Always on`, med påkrevd
+analytics-samtykke, uten marketing/preference-formål og uten
+datasalg.
+
+En ren produksjons-checkout viste dokumenterte
+inline-valideringsfeil uten kunde-, adresse- eller betalingsdata
+og uten ordre. Testøkten hadde ikke analytics-samtykke, og
+produserte derfor ingen ny observasjonsrad. Samtykket ble bevisst
+ikke endret fordi det samtidig kunne ha aktivert eksisterende
+GA4-eiere. En ekte, samtykket WebPixel-til-mottaker-observasjon
+står derfor fortsatt som en separat verifikasjonsgate;
+fail-closed-resultatet er ikke feilaktig rapportert som komplett
+ende-til-ende-bevis.
+
+En senere canonical/provider-cutover må stoppe gammel og starte
+ny GA4-eier for samme hendelse i kontrollert rekkefølge. Siden
+Custom Pixel-en inneholder begge hendelser, kan den ikke kobles
+helt fra når bare én erstatningshendelse er klar.
 
 ## Endringsklassifisering
 
-Denne leveransen etablerer kontrakt, validatorer, en lokal
-development-rute, et separat lokalt observasjonslager og en
-versjonert Supabase-migrasjon for det isolerte observed-lageret samt
-en deaktivert produksjonsmottaker. Migrasjonen er anvendt og
-verifisert på det kanoniske tracking-prosjektet. Leveransen oppretter
-ingen canonical ledger-rad, ingen provider-routing, ingen
-Web Pixel-aktivering, ingen miljøendring og ingen applikasjonsdeploy.
+Kontrakten, validatorene, Supabase-lageret, produksjonsmottakeren
+og én produksjons-Web Pixel er aktivert for observed-only
+innsamling. Aktiveringen omfatter Vercel-miljøbryteren og
+produksjonsdeployene som er dokumentert over. Den oppretter
+fortsatt ingen canonical ledger-rad, provider-outbox-rad eller ny
+GA4-, Meta- eller Microsoft-levering. Canonical/provider-cutover
+forblir en separat, hendelsesvis og godkjenningsgated fase.
