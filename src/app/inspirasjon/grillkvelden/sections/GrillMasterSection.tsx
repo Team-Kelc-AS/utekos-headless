@@ -15,7 +15,7 @@ export function GrillMasterSection() {
               <span>Grillmestere elsker</span>
               <UtekosWordmark
                 className='inline-block h-[0.78em] w-auto shrink-0 translate-y-[0.06em]'
-                style={{ color: 'var(--background)' }}
+                style={{ color: 'var(--foreground)' }}
               />
             </span>
           </h2>
