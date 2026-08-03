@@ -86,7 +86,10 @@ export async function prepareKlarnaExpressBeginCheckout(
     }
   }
 
-  await input.reportBeginCheckout({ cart: addResult.cart })
+  await input.reportBeginCheckout({
+    cart: addResult.cart,
+    checkoutMethod: 'klarna_express'
+  })
 
   return {
     ok: true,

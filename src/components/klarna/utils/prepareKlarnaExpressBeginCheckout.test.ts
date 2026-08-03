@@ -50,6 +50,7 @@ const minimalCart = {
 
 test('success reports begin_checkout once and matches cart id', async () => {
   let beginCheckoutReports = 0
+  let reportedCheckoutMethod: string | undefined
   let reportedCartId: string | undefined
 
   const result = await prepareKlarnaExpressBeginCheckout({
@@ -64,8 +65,9 @@ test('success reports begin_checkout once and matches cart id', async () => {
     }),
     getCartIdFromCookie: async () => null,
     reportAddToCart: () => () => {},
-    reportBeginCheckout: async ({ cart }) => {
+    reportBeginCheckout: async ({ cart, checkoutMethod }) => {
       beginCheckoutReports += 1
+      reportedCheckoutMethod = checkoutMethod
       reportedCartId = cart.id
     }
   })
@@ -76,6 +78,7 @@ test('success reports begin_checkout once and matches cart id', async () => {
   }
 
   assert.equal(beginCheckoutReports, 1)
+  assert.equal(reportedCheckoutMethod, 'klarna_express')
   assert.equal(reportedCartId, cartId)
   assert.equal(result.shopifyCartId, cartId)
   assert.equal(result.orderPayload.merchant_reference1, cartId)

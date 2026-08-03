@@ -56,3 +56,72 @@ test('Meta Dataset Quality warning accepts only PII-free snapshot fields', () =>
     false
   )
 })
+
+test('commerce event logs accept only bounded operational fields', () => {
+  const parsed = appLogInputSchema.parse({
+    context: {
+      pagePath:
+        'https://utekos.no/produkter/utekos-techdown?fbclid=secret',
+      requestPath: '/api/events/begin-checkout',
+      vercelId: 'arn1::request-1'
+    },
+    data: {
+      checkoutMethod: 'klarna_express',
+      currency: 'NOK',
+      durationMs: 42,
+      eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+      eventName: 'begin_checkout',
+      grossValue: 2499,
+      itemCount: 1,
+      quantity: 1,
+      status: 'accepted'
+    },
+    event: 'commerce.event',
+    level: 'INFO'
+  })
+
+  if (parsed.event !== 'commerce.event') {
+    assert.fail('Expected commerce.event log')
+  }
+
+  assert.equal(
+    parsed.context.pagePath,
+    '/produkter/utekos-techdown'
+  )
+  assert.equal(
+    appLogInputSchema.safeParse({
+      ...parsed,
+      data: {
+        ...parsed.data,
+        cartId: 'gid://shopify/Cart/secret'
+      }
+    }).success,
+    false
+  )
+})
+
+test('Klarna checkout logs reject tokens and customer data', () => {
+  const valid = {
+    context: {
+      requestPath: '/api/klarna/orders'
+    },
+    data: {
+      durationMs: 120,
+      stage: 'order_request_received'
+    },
+    event: 'commerce.klarna_checkout',
+    level: 'INFO'
+  } as const
+
+  assert.equal(appLogInputSchema.safeParse(valid).success, true)
+  assert.equal(
+    appLogInputSchema.safeParse({
+      ...valid,
+      data: {
+        ...valid.data,
+        authorizationToken: 'secret'
+      }
+    }).success,
+    false
+  )
+})

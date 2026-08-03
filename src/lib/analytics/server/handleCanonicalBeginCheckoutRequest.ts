@@ -1,8 +1,11 @@
 import { ZodError } from 'zod'
+import { canonicalBeginCheckoutSchema } from '../beginCheckoutEvent'
+import { readCheckoutMethod } from '../checkoutMethod'
 import {
   acceptCanonicalBeginCheckout,
   type CanonicalBeginCheckoutStore
 } from './acceptCanonicalBeginCheckout'
+import { logCanonicalCommerceEvent } from '@/lib/observability/logging/logCanonicalCommerceEvent'
 import type { CanonicalBeginCheckoutRequestContext } from './normalizeCanonicalBeginCheckout'
 
 const MAX_BODY_BYTES = 32 * 1024
@@ -50,6 +53,8 @@ export async function handleCanonicalBeginCheckoutRequest(
   request: Request,
   dependencies: CanonicalBeginCheckoutRequestDependencies
 ): Promise<Response> {
+  const startedAt = Date.now()
+
   if (!hasSameOrigin(request)) {
     return jsonResponse({ error: 'forbidden_origin' }, 403)
   }
@@ -88,6 +93,18 @@ export async function handleCanonicalBeginCheckoutRequest(
       return new Response(null, {
         headers: NO_STORE_HEADERS,
         status: 204
+      })
+    }
+
+    const event = canonicalBeginCheckoutSchema.safeParse(payload)
+    if (event.success) {
+      await logCanonicalCommerceEvent({
+        checkoutMethod: readCheckoutMethod(request.headers),
+        durationMs: Date.now() - startedAt,
+        event: event.data,
+        eventName: 'begin_checkout',
+        request,
+        status: result.status
       })
     }
 

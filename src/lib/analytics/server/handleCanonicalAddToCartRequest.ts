@@ -1,8 +1,10 @@
 import { ZodError } from 'zod'
+import { canonicalAddToCartSchema } from '../addToCartEvent'
 import {
   acceptCanonicalAddToCart,
   type CanonicalAddToCartStore
 } from './acceptCanonicalAddToCart'
+import { logCanonicalCommerceEvent } from '@/lib/observability/logging/logCanonicalCommerceEvent'
 import type { CanonicalAddToCartRequestContext } from './normalizeCanonicalAddToCart'
 
 const MAX_BODY_BYTES = 32 * 1024
@@ -50,6 +52,8 @@ export async function handleCanonicalAddToCartRequest(
   request: Request,
   dependencies: CanonicalAddToCartRequestDependencies
 ): Promise<Response> {
+  const startedAt = Date.now()
+
   if (!hasSameOrigin(request)) {
     return jsonResponse({ error: 'forbidden_origin' }, 403)
   }
@@ -88,6 +92,17 @@ export async function handleCanonicalAddToCartRequest(
       return new Response(null, {
         headers: NO_STORE_HEADERS,
         status: 204
+      })
+    }
+
+    const event = canonicalAddToCartSchema.safeParse(payload)
+    if (event.success) {
+      await logCanonicalCommerceEvent({
+        durationMs: Date.now() - startedAt,
+        event: event.data,
+        eventName: 'add_to_cart',
+        request,
+        status: result.status
       })
     }
 

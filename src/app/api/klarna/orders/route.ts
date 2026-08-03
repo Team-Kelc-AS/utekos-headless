@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { readCartIdCookie } from '@/lib/cart/readCartIdCookie'
 import { resolveFullShopifyCartId } from '@/lib/cart/parseShopifyCartId'
+import { logKlarnaCheckoutStage } from '@/lib/observability/logging/logKlarnaCheckoutStage'
 
 async function verifyCartOwnership(
   shopifyCartId: string,
@@ -53,6 +54,7 @@ async function verifyCartOwnership(
 }
 
 export async function POST(req: NextRequest) {
+  const startedAt = Date.now()
   let body: unknown
 
   try {
@@ -84,6 +86,12 @@ export async function POST(req: NextRequest) {
     attribution
   } = parsed.data
 
+  await logKlarnaCheckoutStage({
+    durationMs: Date.now() - startedAt,
+    request: req,
+    stage: 'order_request_received'
+  })
+
   try {
     const cart = await verifyCartOwnership(
       shopifyCartId,
@@ -106,6 +114,12 @@ export async function POST(req: NextRequest) {
       ...(attribution ? { attribution } : {})
     })
 
+    await logKlarnaCheckoutStage({
+      durationMs: Date.now() - startedAt,
+      request: req,
+      stage: 'order_created'
+    })
+
     return NextResponse.json({
       klarna_order_id: klarnaOrder.order_id,
       redirect_url: klarnaOrder.redirect_url,
@@ -115,6 +129,12 @@ export async function POST(req: NextRequest) {
       session_storage_key: KLARNA_EXPRESS_SESSION_KEY
     })
   } catch (error) {
+    await logKlarnaCheckoutStage({
+      durationMs: Date.now() - startedAt,
+      request: req,
+      stage: 'order_creation_failed'
+    })
+
     const message =
       error instanceof Error ?
         error.message

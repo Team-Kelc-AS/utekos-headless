@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { requiredMetaDatasetQualityEvents } from '@/lib/analytics/metaDatasetQualityRequiredEvents'
+import { sanitizeOperationalPathname } from './sanitizeOperationalPathname'
 
 const emptyDataSchema = z.strictObject({})
 const failureReasonSchema = z.enum([
@@ -7,6 +8,60 @@ const failureReasonSchema = z.enum([
   'network',
   'provider_rejected',
   'unknown'
+])
+
+const commerceEventStatusSchema = z.enum([
+  'accepted',
+  'duplicate'
+])
+const checkoutMethodSchema = z.enum([
+  'shopify_checkout',
+  'klarna_express'
+])
+const durationMsSchema = z
+  .number()
+  .int()
+  .nonnegative()
+  .max(300_000)
+const commerceEventDataBase = {
+  currency: z.string().regex(/^[A-Z]{3}$/),
+  durationMs: durationMsSchema,
+  eventId: z.string().uuid(),
+  grossValue: z.number().finite().nonnegative(),
+  itemCount: z.number().int().positive().max(250),
+  quantity: z.number().int().positive().max(10_000),
+  status: commerceEventStatusSchema
+}
+const commerceEventDataSchema = z.discriminatedUnion(
+  'eventName',
+  [
+    z.strictObject({
+      eventName: z.literal('add_to_cart'),
+      ...commerceEventDataBase
+    }),
+    z.strictObject({
+      checkoutMethod: checkoutMethodSchema,
+      eventName: z.literal('begin_checkout'),
+      ...commerceEventDataBase
+    })
+  ]
+)
+const commerceEventContextSchema = z.strictObject({
+  pagePath: z
+    .string()
+    .min(1)
+    .max(2_048)
+    .transform(sanitizeOperationalPathname),
+  requestPath: z.enum([
+    '/api/events/add-to-cart',
+    '/api/events/begin-checkout'
+  ]),
+  vercelId: z.string().min(1).max(256).optional()
+})
+const klarnaCheckoutStageSchema = z.enum([
+  'order_request_received',
+  'order_created',
+  'order_creation_failed'
 ])
 
 export const metaDatasetQualityIncompleteDataSchema = z.strictObject({
@@ -182,6 +237,24 @@ const eventSchemas = [
       formId: z.string().min(1).max(120)
     }),
     context: emptyDataSchema
+  }),
+  z.strictObject({
+    event: z.literal('commerce.event'),
+    level: z.literal('INFO'),
+    data: commerceEventDataSchema,
+    context: commerceEventContextSchema
+  }),
+  z.strictObject({
+    event: z.literal('commerce.klarna_checkout'),
+    level: z.literal('INFO'),
+    data: z.strictObject({
+      durationMs: durationMsSchema,
+      stage: klarnaCheckoutStageSchema
+    }),
+    context: z.strictObject({
+      requestPath: z.literal('/api/klarna/orders'),
+      vercelId: z.string().min(1).max(256).optional()
+    })
   }),
   z.strictObject({
     event: z.literal('klarna.notification_received'),

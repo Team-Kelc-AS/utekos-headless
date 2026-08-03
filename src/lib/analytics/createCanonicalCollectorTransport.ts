@@ -65,7 +65,9 @@ type SendCanonicalCollectorEventInput<E extends { consent: ConsentSnapshot }> =
   Pick<
     CreateCanonicalCollectorTransportInput<E>,
     'analyticsEventName' | 'endpoint' | 'enrichEvent'
-  >
+  > & {
+    headers?: Readonly<Record<string, string>>
+  }
 
 function compactRecord(
   entries: Array<[string, string | undefined]>
@@ -285,7 +287,8 @@ export async function sendCanonicalCollectorEvent<
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...input.headers
         },
         body: JSON.stringify(enriched),
         cache: 'no-store',

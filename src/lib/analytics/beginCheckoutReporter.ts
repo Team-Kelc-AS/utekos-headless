@@ -15,11 +15,15 @@ import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventW
 import { enrichCanonicalEventWithGoogleAnalyticsIds } from './googleAnalyticsBrowserIds'
 import { persistCheckoutAttributionSnapshot } from './persistCheckoutAttributionSnapshot'
 import { mapShopifyBeginCheckout } from './shopifyBeginCheckoutCommerce'
+import type { CheckoutMethod } from './checkoutMethod'
 import type { Cart } from 'types/cart'
 
 const CHECKOUT_TASK_DEADLINE_MS = 1500
 
-export type ReportCanonicalBeginCheckoutInput = { cart: Cart }
+export type ReportCanonicalBeginCheckoutInput = {
+  cart: Cart
+  checkoutMethod?: CheckoutMethod
+}
 
 async function settleCheckoutTasks(tasks: Promise<unknown>[]) {
   let timeout: ReturnType<typeof setTimeout> | undefined
@@ -101,7 +105,12 @@ export async function reportCanonicalBeginCheckout(
       event.consent.analytics === 'granted' ||
       event.consent.marketing === 'granted'
     ) {
-      tasks.push(collectCanonicalBeginCheckout(event))
+      tasks.push(
+        collectCanonicalBeginCheckout(
+          event,
+          input.checkoutMethod ?? 'shopify_checkout'
+        )
+      )
     }
 
     const results = await settleCheckoutTasks(tasks)
