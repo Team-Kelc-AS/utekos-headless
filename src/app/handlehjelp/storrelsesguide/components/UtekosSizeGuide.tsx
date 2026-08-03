@@ -17,15 +17,15 @@ export function UtekosSizeGuide() {
   return (
     <SizeGuideSectionShell
       id='utekos-size-guide'
-      surface='muted'
+      surface='jungle'
       ariaLabelledby='utekos-size-guide-heading'
       className='my-4 rounded-lg'
     >
       <div className='max-w-5xl'>
         <BrandBadge
           label='Mikrofiber™'
-          bgColor='var(--card)'
-          fgColor='var(--card-foreground)'
+          bgColor='var(--background)'
+          fgColor='var(--foreground)'
           className='mb-5 min-w-24 place-content-start border border-border px-4 py-2 text-left text-lg md:px-6 md:py-3'
         />
         <h2

@@ -14,10 +14,10 @@ export function ProductDetailsAccordionSection({
     <details
       data-accordion-id={id}
       data-accordion-title={title}
-      className='group border-coral-green dark:open:border-dark-card-foreground/24 dark:open:bg-dark-card/70 relative overflow-hidden rounded-xl border-b bg-card text-card-foreground transition-colors duration-200 hover:cursor-pointer open:border-card-foreground/24 open:bg-card/70'
+      className='group border-coral-green dark:open:border-dark-card-foreground/24 dark:open:bg-jungle relative overflow-hidden rounded-xl border-b bg-jungle text-card-foreground transition-colors duration-200 hover:cursor-pointer open:border-card-foreground/24 open:bg-jungle'
       style={{ contain: 'layout style paint' }}
     >
-      <summary className='relative z-10 flex min-h-14 list-none items-center justify-between px-5 py-4 text-card-foreground transition-colors duration-200 hover:text-card-foreground focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none group-open:text-card-foreground sm:px-6 [&::-webkit-details-marker]:hidden'>
+      <summary className='relative z-10 flex min-h-14 list-none items-center justify-between bg-jungle px-5 py-4 text-card-foreground transition-colors duration-200 hover:text-card-foreground focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none group-open:text-card-foreground sm:px-6 [&::-webkit-details-marker]:hidden'>
         <span className='flex items-center gap-4'>
           <span
             className='dark:border-dark-card-foreground/24 flex size-10 items-center justify-center rounded-full border border-card-foreground/24 bg-card text-card-foreground transition-transform duration-200 group-hover:scale-105'

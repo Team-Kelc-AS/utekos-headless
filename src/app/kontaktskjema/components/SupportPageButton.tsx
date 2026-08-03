@@ -30,7 +30,9 @@ export function SupportPageButton({
         aria-busy={isBusy || undefined}
         {...props}
       >
-        <span aria-live='polite'>{children}</span>
+        <span aria-live='polite' className='text-foreground'>
+          {children}
+        </span>
       </button>
     </BrandBadge>
   )

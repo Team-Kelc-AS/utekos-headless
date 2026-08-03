@@ -18,13 +18,13 @@ export function QuickCheckoutButton({
   return (
     <Button
       type='button'
-      variant='alternate'
+      variant='checkout'
       data-track='ModalGoToCheckout'
       disabled={isPending || isDisabled}
       aria-label='Gå til kassen'
       onClick={onClick}
       className={cn(
-        'dark:focus-visible:ring-offset-dark-background h-14 w-full min-w-0 cursor-pointer gap-2 rounded-full px-3 py-4 font-utekos-text-medium text-sm shadow-[0_20px_42px_-28px_color-mix(in_oklch,var(--alternate-button)_65%,transparent)] transition-all duration-300 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-foreground/45 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-55 sm:gap-3 sm:px-5 sm:text-base',
+        'dark:focus-visible:ring-offset-dark-background h-14 w-full min-w-0 cursor-pointer gap-2 rounded-full px-3 py-4 font-utekos-text-medium text-sm shadow-[0_20px_42px_-28px_color-mix(in_oklch,var(--primary)_65%,transparent)] transition-all duration-300 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-foreground/45 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-55 sm:gap-3 sm:px-5 sm:text-base',
         className
       )}
     >

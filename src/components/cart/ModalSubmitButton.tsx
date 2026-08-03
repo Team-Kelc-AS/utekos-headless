@@ -52,7 +52,7 @@ export function ModalSubmitButton({
           disabled={isDisabled}
           theme='light'
           className='w-full min-w-0'
-          buttonContainerClassName='h-14 min-h-14'
+          buttonContainerClassName='h-14 min-h-14 border-none ring-0'
         />
       </div>
     )
@@ -66,12 +66,13 @@ export function ModalSubmitButton({
         quantity={quantity}
         disabled={isDisabled}
         className='w-full min-w-0'
-        buttonContainerClassName='h-14 min-h-14'
+        buttonContainerClassName='h-14 min-h-14 border-none ring-0'
       />
       <QuickCheckoutButton
         isPending={isCheckoutPending}
         isDisabled={isDisabled}
         onClick={onCheckout}
+        className='bg-primary text-foreground hover:bg-primary/90 [&_svg]:text-foreground'
       />
     </div>
   )

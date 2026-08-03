@@ -5,7 +5,7 @@ import { ConditionalNewsLetter } from '@/components/footer/components/Conditiona
 
 export default function Footer() {
   return (
-    <footer className=' mt-auto border-t border-border pt-12 pb-4 text-foreground'>
+    <footer className='mt-auto border-t border-border pt-12 pb-4 font-utekos-text text-foreground'>
       <div className='container mx-auto px-4 sm:px-8'>
         <FooterNavigation />
         <ConditionalNewsLetter />

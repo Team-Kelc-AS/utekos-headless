@@ -13,7 +13,6 @@ import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle
@@ -53,7 +52,6 @@ const comfyrobeSizeCards = [
     id: 'xs',
     sizeCode: 'XS',
     heading: 'Velg XS hvis...',
-    measurementGuide: '97 cm total lengde, 65 cm brystbredde.',
     fitGuidance: [
       'Du bruker vanligvis small og vil beholde den korteste og minst voluminøse Comfyrobe-passformen.',
       'Du ønsker romslig komfort, men uten ekstra lengde og bredde.'
@@ -63,7 +61,6 @@ const comfyrobeSizeCards = [
     id: 'm/l',
     sizeCode: 'ML',
     heading: 'Velg M hvis...',
-    measurementGuide: '105 cm total lengde, 71 cm brystbredde.',
     fitGuidance: [
       'Du bruker vanligvis medium og ønsker den mest balanserte allværs-passformen.',
       'Du vil bruke Comfyrobe uten behov for et ekstra lag med klær under'
@@ -73,7 +70,6 @@ const comfyrobeSizeCards = [
     id: 'xl',
     sizeCode: 'XL',
     heading: 'Velg XL hvis...',
-    measurementGuide: '113 cm total lengde, 77 cm brystbredde.',
     fitGuidance: [
       'Du bruker vanligvis large, eller bevisst ønsker en mer overdimensjonert følelse.',
       'Du prioriterer maksimal dekning rundt kropp, skuldre og hette.'
@@ -166,28 +162,10 @@ export function ComfyrobeSizeGuide() {
                   {card.heading}
                 </h3>
               </CardTitle>
-
-              <CardDescription className='mt-1 flex items-start gap-2 font-utekos-text text-sm leading-relaxed tracking-normal text-foreground/75'>
-                <Ruler
-                  aria-hidden='true'
-                  className='mt-0.5 size-4 shrink-0 text-foreground/65'
-                />
-
-                <span>
-                  <span className='font-utekos-text-medium font-medium text-foreground'>
-                    Målreferanse:
-                  </span>{' '}
-                  {card.measurementGuide}
-                </span>
-              </CardDescription>
             </CardHeader>
 
             <CardContent className='flex flex-1 flex-col px-5 py-6 sm:px-6'>
-              <p className='font-utekos-text-medium text-sm leading-snug font-medium text-foreground'>
-                Passer særlig godt når:
-              </p>
-
-              <ul role='list' className='mt-4 space-y-4'>
+              <ul role='list' className='space-y-4'>
                 {card.fitGuidance.map(item => (
                   <li
                     key={item}

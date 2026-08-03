@@ -60,7 +60,7 @@ export function NewsletterForm() {
 
               <h2
                 id='newsletter-heading'
-                className='scroll-m-20 pb-0 font-sans text-2xl tracking-tight text-balance text-white md:text-3xl lg:text-3xl'
+                className='scroll-m-20 pb-0 font-sans text-2xl font-bold tracking-tight text-balance text-white md:text-3xl lg:text-3xl'
               >
                 Meld deg på Utekos sitt nyhetsbrev!
               </h2>

@@ -55,7 +55,7 @@ export function ProductPageAccordion({
       />
       <div className='mx-auto text-left'>
         <AnimatedBlock className='will-animate-fade-in-scale mb-6' delay='0s' threshold={0.3}>
-          <BrandBadge tone='neutral' className='gap-2 text-left'>
+          <BrandBadge tone='neutral' className='gap-2 bg-jungle text-left'>
             <Info className='size-5' aria-hidden='true' />
             <h2 id='product-details-heading' className='text-lg leading-[1.2] tracking-normal'>
               Produktdetaljer

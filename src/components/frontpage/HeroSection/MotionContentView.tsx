@@ -14,40 +14,42 @@ const HERO_DESTINATION = '/skreddersy-varmen'
 
 export function MotionContentView() {
   return (
-    <div className='align-center relative mx-auto mb-7 flex w-full max-w-[95%] flex-col items-center justify-center overflow-hidden text-center sm:mb-10'>
+    <div className='align-center relative mx-auto mb-7 flex w-full max-w-none flex-col items-center justify-center overflow-hidden text-center sm:mb-10 sm:max-w-[95%]'>
       <h1 id='hero-h1' className='sr-only'>
         Skreddersy varmen
       </h1>
       <HeroImage />
-      <TypographyH2 />
+      <div className='w-full px-4 sm:px-0'>
+        <TypographyH2 />
 
-      <div
-        data-nosnippet
-        className='mt-7 flex justify-center sm:mt-9'
-      >
-        <Button
-          asChild
-          variant='checkout'
-          className='group min-h-11 gap-2 rounded-full bg-primary px-5 py-3 font-utekos-text-medium text-sm leading-none text-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-6 md:px-8 md:py-4 lg:px-10 lg:py-5 lg:text-lg'
+        <div
+          data-nosnippet
+          className='mt-7 flex justify-center sm:mt-9'
         >
-          <Link
-            href={HERO_DESTINATION as Route}
-            aria-label='Gå til skreddersy varmen'
-            data-track='ReadMoreHeroClick'
-            onClick={() => {
-              reportCanonicalHeroInteract({
-                customData: {
-                  cta_id: HERO_CTA_ID,
-                  destination_path: HERO_DESTINATION,
-                  click_sequence: 1
-                }
-              })
-            }}
+          <Button
+            asChild
+            variant='checkout'
+            className='group min-h-11 gap-2 rounded-full bg-primary px-5 py-3 font-utekos-text-medium text-sm leading-none text-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-6 md:px-8 md:py-4 lg:px-10 lg:py-5 lg:text-lg'
           >
-            <InlineText>Se mer</InlineText>
-            <ArrowRight className='size-4 text-current transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none' />
-          </Link>
-        </Button>
+            <Link
+              href={HERO_DESTINATION as Route}
+              aria-label='Gå til skreddersy varmen'
+              data-track='ReadMoreHeroClick'
+              onClick={() => {
+                reportCanonicalHeroInteract({
+                  customData: {
+                    cta_id: HERO_CTA_ID,
+                    destination_path: HERO_DESTINATION,
+                    click_sequence: 1
+                  }
+                })
+              }}
+            >
+              <InlineText>Se mer</InlineText>
+              <ArrowRight className='size-4 text-current transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none' />
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   )

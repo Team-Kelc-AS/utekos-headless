@@ -6,14 +6,14 @@ export function SizeGuideHero() {
   return (
     <SizeGuideSectionShell
       id='size-guide-hero'
-      surface='muted'
+      surface='jungle'
       className='mb-4 rounded-xl border-b border-border'
     >
       <hgroup className='max-w-3xl'>
         <BrandBadge
           label=' Handlehjelp'
-          bgColor='var(--card)'
-          fgColor='var(--card-foreground)'
+          bgColor='var(--background)'
+          fgColor='var(--foreground)'
           className='mb-4 border border-border px-5 py-2.5 font-sans text-base tracking-wide sm:px-8 sm:py-3'
         />
         <h1 className='font-sans text-3xl leading-[1.05] font-extrabold text-foreground md:text-5xl lg:text-6xl'>

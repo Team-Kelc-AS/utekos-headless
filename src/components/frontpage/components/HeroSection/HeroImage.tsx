@@ -2,9 +2,10 @@ import heroSixteenNineImage from '@public/Skreddersy-Varmen-16x9.png'
 import heroSixteenTenImage from '@public/SSV-16-10.webp'
 import { cn } from '@/lib/utils/className'
 
-const heroFourThreeImage = {
-  src: 'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/SkreddersyVarmenKlarnaUtekos.webp?v=1784829461',
-  width: 1333
+const heroMobileImage = {
+  src: '/TechDown.700x775.webp',
+  width: 700,
+  height: 775
 } as const
 
 const heroImageProps = {
@@ -12,18 +13,18 @@ const heroImageProps = {
   decoding: 'async',
   fetchPriority: 'high',
   loading: 'eager',
-  sizes: '(min-width: 1152px) 1152px, calc(100vw - 2rem)'
+  sizes: '(min-width: 1152px) 1152px, (min-width: 640px) calc(100vw - 2rem), 100vw'
 } as const
 
 export function HeroImage() {
   return (
     <div
       className={cn(
-        'group relative mx-auto mb-7 max-w-6xl overflow-hidden rounded-2xl border border-foreground/12 dark:border-dark-foreground/12 shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)] sm:mb-10'
+        'group relative mx-auto mb-7 w-full max-w-none overflow-hidden rounded-none border-0 shadow-none sm:mb-10 sm:max-w-6xl sm:rounded-2xl sm:border sm:border-foreground/12 sm:shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)] sm:dark:border-dark-foreground/12'
       )}
     >
       <div
-        className='relative aspect-4/3 transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 lg:aspect-video'
+        className='relative aspect-[700/775] transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 lg:aspect-video'
         suppressHydrationWarning
       >
         <picture className='block size-full'>
@@ -36,16 +37,18 @@ export function HeroImage() {
             srcSet={`${heroSixteenTenImage.src} ${heroSixteenTenImage.width}w`}
           />
           <source
-            srcSet={`${heroFourThreeImage.src} ${heroFourThreeImage.width}w`}
+            srcSet={`${heroMobileImage.src} ${heroMobileImage.width}w`}
           />
           <img
             alt={heroImageProps.alt}
-            src={heroFourThreeImage.src}
-            srcSet={`${heroFourThreeImage.src} ${heroFourThreeImage.width}w`}
+            src={heroMobileImage.src}
+            srcSet={`${heroMobileImage.src} ${heroMobileImage.width}w`}
             sizes={heroImageProps.sizes}
             loading={heroImageProps.loading}
             decoding={heroImageProps.decoding}
             fetchPriority={heroImageProps.fetchPriority}
+            width={heroMobileImage.width}
+            height={heroMobileImage.height}
             className='block size-full object-cover object-[50%_45%]'
           />
         </picture>

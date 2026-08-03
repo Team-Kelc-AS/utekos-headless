@@ -11,7 +11,7 @@ export async function HeroSection() {
   return (
     <article
       className={cn(
-        'isolate mx-auto w-screen overflow-hidden px-4 pt-8 pb-6 sm:pt-12 sm:pb-10 lg:pt-16 dark:bg-background'
+        'isolate mx-auto w-screen overflow-hidden px-0 pt-0 pb-6 sm:px-4 sm:pt-12 sm:pb-10 lg:pt-16 dark:bg-background'
       )}
     >
       <div>

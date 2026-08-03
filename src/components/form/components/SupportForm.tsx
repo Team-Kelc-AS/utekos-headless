@@ -37,7 +37,7 @@ type ContactFormData = z.infer<typeof ClientContactFormSchema>
 
 const initialState: ContactFormState = { message: '' }
 const contactFieldClassName =
-  'h-12 rounded-none border-foreground dark:border-dark-foreground bg-card  text-card-foreground  tracking-normal placeholder:text-muted-foreground dark:placeholder:text-dark-muted-foreground focus-visible:border-primary dark:focus-visible:border-dark-primary focus-visible:ring-primary/35 dark:focus-visible:ring-dark-primary/35'
+  'h-12 rounded-lg border-foreground dark:border-dark-foreground bg-jungle font-utekos-text text-foreground/70 tracking-normal placeholder:text-muted-foreground dark:placeholder:text-dark-muted-foreground focus-visible:border-primary dark:focus-visible:border-dark-primary focus-visible:ring-primary/35 dark:focus-visible:ring-dark-primary/35'
 
 export function SupportForm({
   idPrefix = 'contact'
@@ -106,7 +106,7 @@ export function SupportForm({
           name='email'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='leading-text-paragraph font-medium tracking-normal text-foreground'>
+              <FormLabel className='leading-text-paragraph font-utekos-text font-medium tracking-normal text-foreground'>
                 E-post
               </FormLabel>
               <FormControl>
@@ -128,7 +128,7 @@ export function SupportForm({
             name='name'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='leading-text-paragraph font-medium tracking-normal text-foreground'>
+                <FormLabel className='leading-text-paragraph font-utekos-text font-medium tracking-normal text-foreground'>
                   Fullt navn
                 </FormLabel>
                 <FormControl>
@@ -148,7 +148,7 @@ export function SupportForm({
             name='phone'
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='leading-text-paragraph font-medium tracking-normal text-foreground'>
+                <FormLabel className='leading-text-paragraph font-utekos-text font-medium tracking-normal text-foreground'>
                   Telefon (valgfritt)
                 </FormLabel>
                 <FormControl>
@@ -170,7 +170,7 @@ export function SupportForm({
           name='country'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='leading-text-paragraph font-medium tracking-normal text-foreground'>
+              <FormLabel className='leading-text-paragraph font-utekos-text font-medium tracking-normal text-foreground'>
                 Land
               </FormLabel>
               <Select
@@ -184,8 +184,11 @@ export function SupportForm({
                       name={field.name}
                       value={field.value ?? ''}
                     />
-                    <SelectTrigger className='dark:border-dark-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35 dark:data-placeholder:text-dark-muted-foreground dark:[&_svg:not([class*=text-])]:text-dark-card-foreground h-12 w-full rounded-none border-foreground bg-card tracking-normal text-card-foreground focus-visible:border-primary focus-visible:ring-primary/35 data-placeholder:text-muted-foreground [&_svg:not([class*=text-])]:text-card-foreground'>
-                      <SelectValue placeholder='Velg ditt land' />
+                    <SelectTrigger className='dark:border-dark-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35 dark:data-placeholder:text-dark-muted-foreground dark:[&_svg:not([class*=text-])]:text-dark-card-foreground h-12 w-full rounded-lg border-foreground bg-jungle tracking-normal text-foreground/70 focus-visible:border-primary focus-visible:ring-primary/35 data-placeholder:text-muted-foreground [&_svg:not([class*=text-])]:text-card-foreground'>
+                      <SelectValue
+                        placeholder='Velg ditt land'
+                        className='bg-jungle text-foreground/70'
+                      />
                     </SelectTrigger>
                   </div>
                 </FormControl>
@@ -210,7 +213,7 @@ export function SupportForm({
           name='orderNumber'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='leading-text-paragraph font-medium tracking-normal text-foreground'>
+              <FormLabel className='leading-text-paragraph font-utekos-text font-medium tracking-normal text-foreground'>
                 Ordrenummer (valgfritt)
               </FormLabel>
               <FormControl>
@@ -235,7 +238,7 @@ export function SupportForm({
 
             return (
               <FormItem>
-                <FormLabel className='leading-text-paragraph font-medium tracking-normal text-foreground'>
+                <FormLabel className='leading-text-paragraph font-utekos-text font-medium tracking-normal text-foreground'>
                   Hvordan kan vi hjelpe?
                 </FormLabel>
                 <FormControl>
@@ -250,7 +253,7 @@ export function SupportForm({
                         form.clearErrors('message')
                       }
                     }}
-                    className='dark:border-dark-foreground dark:placeholder:text-dark-muted-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35 min-h-40 rounded-none border-foreground bg-card tracking-normal text-card-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
+                    className='dark:border-dark-foreground dark:placeholder:text-dark-muted-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35 min-h-40 rounded-lg border-foreground bg-jungle font-utekos-text tracking-normal text-foreground/70 placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
                   />
                 </FormControl>
                 <div className='leading-text-paragraph mt-1 flex items-center justify-between text-xs tracking-normal text-foreground'>
@@ -265,7 +268,7 @@ export function SupportForm({
                       `Må være minst ${messageMin} tegn.`
                     : messageChars >= messageMin ?
                       'Ser bra ut'
-                    : 'Skriv gjerne kort, bare nok til at vi kan hjelpe.'
+                    : 'Skriv minst 10 tegn'
                     }
                   </span>
                   <span>
@@ -281,12 +284,12 @@ export function SupportForm({
           control={form.control}
           name='privacy'
           render={({ field }) => (
-            <FormItem className='dark:border-dark-foreground relative flex flex-row items-center justify-between rounded-none border border-foreground bg-card p-4 text-card-foreground'>
+            <FormItem className='dark:border-dark-foreground relative flex flex-row items-center justify-between rounded-lg border border-foreground bg-jungle p-4 text-card-foreground'>
               <div className='flex-1 space-y-0.5 pr-4'>
-                <FormLabel className='leading-text-paragraph text-base tracking-normal text-foreground'>
+                <FormLabel className='leading-text-paragraph font-utekos-text-medium text-base tracking-normal text-foreground'>
                   Personvern
                 </FormLabel>
-                <FormDescription className='leading-text-paragraph tracking-normal text-card-foreground'>
+                <FormDescription className='leading-text-paragraph font-utekos-text tracking-normal text-card-foreground'>
                   Jeg bekrefter at jeg har lest{' '}
                   <Link
                     href='/personvern'
