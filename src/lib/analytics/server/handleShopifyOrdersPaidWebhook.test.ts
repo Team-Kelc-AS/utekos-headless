@@ -35,11 +35,18 @@ const { handleShopifyOrdersPaidWebhook } =
         }>
         createSourceEvidence?: (input: unknown) => unknown
         mapOrder?: (payload: unknown) => unknown
+        notifyPurchase?: (
+          purchase: unknown
+        ) => Promise<
+          | { delivery: 'already_sent' | 'sent'; ok: true }
+          | { ok: false; reason: 'provider_rejected' }
+        >
         now?: () => Date
         verifyWebhook?: (
           rawBody: string,
           hmac: string
         ) => boolean
+        writeLog?: (input: unknown) => Promise<unknown>
       }
     ) => Promise<Response>
   }
@@ -93,6 +100,11 @@ test('accepted purchase returns 202', async () => {
       verifyWebhook: () => true,
       mapOrder: payload => payload,
       createSourceEvidence: () => SOURCE_EVIDENCE,
+      notifyPurchase: async () => ({
+        delivery: 'sent',
+        ok: true
+      }),
+      writeLog: async () => ({}),
       acceptPurchase: async input => {
         acceptCalls.push(input)
         return { event_id: EVENT_ID, status: 'accepted' }
@@ -120,6 +132,11 @@ test('duplicate purchase returns 200', async () => {
       verifyWebhook: () => true,
       mapOrder: payload => payload,
       createSourceEvidence: () => SOURCE_EVIDENCE,
+      notifyPurchase: async () => ({
+        delivery: 'already_sent',
+        ok: true
+      }),
+      writeLog: async () => ({}),
       acceptPurchase: async () => ({
         event_id: EVENT_ID,
         status: 'duplicate'
@@ -132,6 +149,48 @@ test('duplicate purchase returns 200', async () => {
     event_id: EVENT_ID,
     status: 'duplicate'
   })
+})
+
+test('notification failure returns 500 after purchase acceptance', async () => {
+  const logs: unknown[] = []
+  const response = await handleShopifyOrdersPaidWebhook(
+    createRequest(ORDER_BODY),
+    {
+      verifyWebhook: () => true,
+      mapOrder: () => ({ event_id: EVENT_ID }),
+      createSourceEvidence: () => SOURCE_EVIDENCE,
+      acceptPurchase: async () => ({
+        event_id: EVENT_ID,
+        status: 'accepted'
+      }),
+      notifyPurchase: async () => ({
+        ok: false,
+        reason: 'provider_rejected'
+      }),
+      writeLog: async input => {
+        logs.push(input)
+        return {}
+      }
+    }
+  )
+
+  assert.equal(response.status, 500)
+  assert.deepEqual(await response.json(), {
+    error: 'purchase_notification_failed'
+  })
+  assert.deepEqual(logs, [
+    {
+      event: 'commerce.purchase_notification_failed',
+      level: 'ERROR',
+      data: {
+        eventId: EVENT_ID,
+        reasonCode: 'provider_rejected'
+      },
+      context: {
+        requestPath: '/api/shopify/webhooks/orders-paid'
+      }
+    }
+  ])
 })
 
 test('invalid HMAC returns 401 and does not map or accept', async () => {

@@ -83,8 +83,14 @@ export async function handleCanonicalBeginCheckoutRequest(
   }
 
   try {
+    const checkoutMethod = readCheckoutMethod(request.headers)
+    const parsedEvent = canonicalBeginCheckoutSchema.parse(payload)
+    const event = {
+      ...parsedEvent,
+      checkout_method: checkoutMethod
+    }
     const result = await acceptCanonicalBeginCheckout({
-      payload,
+      payload: event,
       requestContext: dependencies.getRequestContext(request),
       store: dependencies.store
     })
@@ -96,17 +102,14 @@ export async function handleCanonicalBeginCheckoutRequest(
       })
     }
 
-    const event = canonicalBeginCheckoutSchema.safeParse(payload)
-    if (event.success) {
-      await logCanonicalCommerceEvent({
-        checkoutMethod: readCheckoutMethod(request.headers),
-        durationMs: Date.now() - startedAt,
-        event: event.data,
-        eventName: 'begin_checkout',
-        request,
-        status: result.status
-      })
-    }
+    await logCanonicalCommerceEvent({
+      checkoutMethod,
+      durationMs: Date.now() - startedAt,
+      event,
+      eventName: 'begin_checkout',
+      request,
+      status: result.status
+    })
 
     return jsonResponse(
       {

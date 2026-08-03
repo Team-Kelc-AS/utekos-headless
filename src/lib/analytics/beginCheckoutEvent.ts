@@ -8,6 +8,7 @@ import {
   type CanonicalEventEnvelope,
   type ConsentSnapshot
 } from './canonicalEventEnvelope'
+import { checkoutMethodSchema } from './checkoutMethod'
 
 export const canonicalBeginCheckoutCommerceSchema =
   canonicalCommerceValueSchema.extend({
@@ -24,6 +25,7 @@ export const canonicalBeginCheckoutSchema =
   canonicalEventEnvelopeSchema.extend({
     event_name: z.literal('begin_checkout'),
     source: z.literal('web'),
+    checkout_method: checkoutMethodSchema.optional(),
     page_view_id: z.string().uuid().optional(),
     page_url: z.string().url(),
     referrer_url: z.string().url().optional(),

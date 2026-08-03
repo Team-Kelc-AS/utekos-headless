@@ -257,6 +257,32 @@ const eventSchemas = [
     })
   }),
   z.strictObject({
+    event: z.literal('commerce.purchase_notification_sent'),
+    level: z.literal('INFO'),
+    data: z.strictObject({
+      delivery: z.enum(['already_sent', 'sent']),
+      eventId: z.string().uuid()
+    }),
+    context: z.strictObject({
+      requestPath: z.literal(
+        '/api/shopify/webhooks/orders-paid'
+      )
+    })
+  }),
+  z.strictObject({
+    event: z.literal('commerce.purchase_notification_failed'),
+    level: z.literal('ERROR'),
+    data: z.strictObject({
+      eventId: z.string().uuid(),
+      reasonCode: z.enum(['configuration', 'provider_rejected'])
+    }),
+    context: z.strictObject({
+      requestPath: z.literal(
+        '/api/shopify/webhooks/orders-paid'
+      )
+    })
+  }),
+  z.strictObject({
     event: z.literal('klarna.notification_received'),
     level: z.literal('INFO'),
     data: z.strictObject({

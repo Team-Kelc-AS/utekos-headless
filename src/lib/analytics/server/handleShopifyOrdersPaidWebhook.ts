@@ -6,7 +6,9 @@ import { getVerifiedShopifyCustomerContext } from '@/lib/analytics/server/getVer
 import { postgresCanonicalEventStore } from '@/lib/analytics/server/postgresCanonicalPageViewStore'
 import { createShopifyWebhookCommerceSourceEvidence } from '@/lib/analytics/server/shopifyCommerceSourceEvidence'
 import { shopifyOrderToCanonicalPurchase } from '@/lib/analytics/server/shopifyOrderToCanonicalPurchase'
+import { sendPurchaseNotification } from '@/lib/email/sendPurchaseNotification'
 import { verifyShopifyWebhook } from '@/lib/shopify/verifyShopifyWebhook'
+import { logToAppLogs } from '@/lib/utils/logToAppLogs'
 import type { OrderPaid } from 'types/commerce/order/OrderPaid'
 
 const NO_STORE_HEADERS = {
@@ -18,8 +20,10 @@ type ShopifyOrdersPaidWebhookDependencies = {
   acceptPurchase?: typeof acceptCanonicalPurchase
   createSourceEvidence?: typeof createShopifyWebhookCommerceSourceEvidence
   mapOrder?: typeof shopifyOrderToCanonicalPurchase
+  notifyPurchase?: typeof sendPurchaseNotification
   now?: () => Date
   verifyWebhook?: typeof verifyShopifyWebhook
+  writeLog?: typeof logToAppLogs
 }
 
 function jsonResponse(
@@ -45,6 +49,9 @@ export async function handleShopifyOrdersPaidWebhook(
   const createSourceEvidence =
     dependencies.createSourceEvidence ??
     createShopifyWebhookCommerceSourceEvidence
+  const notifyPurchase =
+    dependencies.notifyPurchase ?? sendPurchaseNotification
+  const writeLog = dependencies.writeLog ?? logToAppLogs
   const now = dependencies.now ?? (() => new Date())
 
   const hmac = request.headers.get('x-shopify-hmac-sha256') ?? ''
@@ -85,6 +92,57 @@ export async function handleShopifyOrdersPaidWebhook(
       ),
       sourceEvidence,
       store: postgresCanonicalEventStore
+    })
+    let notification
+
+    try {
+      notification = await notifyPurchase(canonicalPurchase)
+    } catch {
+      await writeLog({
+        event: 'commerce.purchase_notification_failed',
+        level: 'ERROR',
+        data: {
+          eventId: canonicalPurchase.event_id,
+          reasonCode: 'configuration'
+        },
+        context: {
+          requestPath: '/api/shopify/webhooks/orders-paid'
+        }
+      })
+      return jsonResponse(
+        { error: 'purchase_notification_failed' },
+        500
+      )
+    }
+
+    if (!notification.ok) {
+      await writeLog({
+        event: 'commerce.purchase_notification_failed',
+        level: 'ERROR',
+        data: {
+          eventId: canonicalPurchase.event_id,
+          reasonCode: notification.reason
+        },
+        context: {
+          requestPath: '/api/shopify/webhooks/orders-paid'
+        }
+      })
+      return jsonResponse(
+        { error: 'purchase_notification_failed' },
+        500
+      )
+    }
+
+    await writeLog({
+      event: 'commerce.purchase_notification_sent',
+      level: 'INFO',
+      data: {
+        delivery: notification.delivery,
+        eventId: canonicalPurchase.event_id
+      },
+      context: {
+        requestPath: '/api/shopify/webhooks/orders-paid'
+      }
     })
 
     return jsonResponse(

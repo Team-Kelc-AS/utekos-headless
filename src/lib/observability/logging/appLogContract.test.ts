@@ -125,3 +125,39 @@ test('Klarna checkout logs reject tokens and customer data', () => {
     false
   )
 })
+
+test('purchase notification logs reject Shopify and customer identifiers', () => {
+  const valid = {
+    context: {
+      requestPath: '/api/shopify/webhooks/orders-paid'
+    },
+    data: {
+      delivery: 'sent',
+      eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de'
+    },
+    event: 'commerce.purchase_notification_sent',
+    level: 'INFO'
+  } as const
+
+  assert.equal(appLogInputSchema.safeParse(valid).success, true)
+  assert.equal(
+    appLogInputSchema.safeParse({
+      ...valid,
+      data: {
+        ...valid.data,
+        orderId: 'gid://shopify/Order/secret'
+      }
+    }).success,
+    false
+  )
+  assert.equal(
+    appLogInputSchema.safeParse({
+      ...valid,
+      data: {
+        ...valid.data,
+        email: 'customer@example.no'
+      }
+    }).success,
+    false
+  )
+})
