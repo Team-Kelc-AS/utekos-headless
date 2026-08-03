@@ -128,6 +128,21 @@ try {
   })
 
   window.addEventListener('unhandledrejection', event => {
+    try {
+      if (event.reason instanceof Error) {
+        Sentry.withScope(scope => {
+          scope.setTag(
+            'client_error_source',
+            'unhandled_rejection'
+          )
+          scope.setTag('client_route', window.location.pathname)
+          Sentry.captureException(event.reason)
+        })
+      }
+    } catch {
+      // Error reporting must never throw.
+    }
+
     beaconError({
       event: 'client_unhandled_rejection',
       level: 'error',
