@@ -16,10 +16,10 @@ export function InspirationGallerySection() {
     <article className='dark:bg-dark-background bg-background py-24 text-foreground'>
       <div className='container mx-auto px-4'>
         <div className='mx-auto max-w-3xl text-center md:max-w-4xl'>
-          <h2 className='inline-flex items-baseline justify-center gap-x-[0.18em] whitespace-nowrap text-foreground'>
+          <h2 className='inline-flex items-baseline justify-center gap-x-[0.18em] whitespace-nowrap font-sans text-4xl font-extrabold text-foreground md:text-5xl'>
             Utekos i sitt rette element
           </h2>
-          <p className='utekos-section-lead dark:text-dark-muted-foreground mx-auto my-8 max-w-2xl text-muted-foreground'>
+          <p className='utekos-section-lead mx-auto my-8 max-w-2xl text-foreground/90'>
             Fra morgenkaffen i soloppgang til sene kvelder under
             stjernene. La deg inspirere av ekte øyeblikk fra
             bobillivet.

@@ -24,7 +24,7 @@ export const benefitsData: Benefit[] = [
     title: 'Kompakt og praktisk',
     description:
       'Tar minimal plass i bobilen, maksimal komfort på turen',
-    color: 'text-primary dark:text-dark-primary',
+    color: 'text-dark-teal',
     bgColor: 'bg-background/24 dark:bg-dark-background/24'
   },
   {
@@ -50,7 +50,7 @@ export function BenefitsGrid({
   benefits: Benefit[]
 }) {
   return (
-    <SectionBox bgcolor='bg-background dark:bg-dark-background border-b border-border '>
+    <SectionBox bgcolor='bg-background border-b border-border'>
       <article className='text-foreground'>
         <div className='container'>
           <div className='mb-6 md:mb-8 lg:mb-10'>
@@ -65,7 +65,7 @@ export function BenefitsGrid({
             />
           </div>
 
-          <div className='grid grid-cols-1 gap-8 rounded-3xl bg-card py-6 md:grid-cols-2 md:py-12 lg:grid-cols-4'>
+          <div className='grid grid-cols-1 gap-8 rounded-3xl bg-jungle py-6 md:grid-cols-2 md:py-12 lg:grid-cols-4'>
             {benefits.map((benefit, benefitIndex) => {
               const Icon = benefit.icon
               const iconBackgroundClass =

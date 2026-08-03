@@ -94,7 +94,7 @@ function getNextFlipWordState(
 
 export const FlipWords = ({
   words,
-  duration = 3000,
+  duration = 900,
   className,
   animateLetters = true,
   random = false
@@ -131,7 +131,7 @@ export const FlipWords = ({
       <motion.div
         initial={{
           opacity: 0,
-          y: 10
+          y: 8
         }}
         animate={{
           opacity: 1,
@@ -139,13 +139,18 @@ export const FlipWords = ({
         }}
         transition={{
           type: 'spring',
-          stiffness: 100,
-          damping: 10
+          stiffness: 420,
+          damping: 32,
+          mass: 0.6
         }}
         exit={{
           opacity: 0,
-          y: -10,
-          filter: 'blur(4px)'
+          y: -8,
+          filter: 'blur(4px)',
+          transition: {
+            duration: 0.12,
+            ease: 'easeIn'
+          }
         }}
         className={cn(
           'relative z-10 inline-block px-2 text-left text-neutral-900 dark:text-neutral-100',
@@ -157,22 +162,22 @@ export const FlipWords = ({
           wordState.currentWord?.split(' ').map((word, wordIndex) => (
             <motion.span
               key={word + wordIndex}
-              initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
+              initial={{ opacity: 0, y: 8, filter: 'blur(8px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{
-                delay: wordIndex * 0.3,
-                duration: 0.3
+                delay: wordIndex * 0.08,
+                duration: 0.16
               }}
               className='inline-block whitespace-nowrap'
             >
               {word.split('').map((letter, letterIndex) => (
                 <motion.span
                   key={word + letterIndex}
-                  initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
+                  initial={{ opacity: 0, y: 8, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   transition={{
-                    delay: wordIndex * 0.3 + letterIndex * 0.05,
-                    duration: 0.2
+                    delay: wordIndex * 0.08 + letterIndex * 0.02,
+                    duration: 0.12
                   }}
                   className='inline-block'
                 >

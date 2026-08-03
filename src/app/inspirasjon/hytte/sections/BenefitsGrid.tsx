@@ -16,7 +16,7 @@ export const benefitsData: Benefit[] = [
       'Fra kjølig ankomst til peiskos-følelse på sekunder.',
     benefitColor:
       'bg-featured-foreground dark:bg-dark-featured-foreground',
-    iconColor: 'text-featured dark:text-dark-featured'
+    iconColor: 'text-dark-teal'
   },
   {
     icon: Settings2,
@@ -25,7 +25,7 @@ export const benefitsData: Benefit[] = [
       'Tar minimalt med plass og er enkel å ta med seg.',
     benefitColor:
       'bg-featured-foreground dark:bg-dark-featured-foreground',
-    iconColor: 'text-featured dark:text-dark-featured'
+    iconColor: 'text-dark-teal'
   },
   {
     icon: HeartHandshake,
@@ -34,7 +34,7 @@ export const benefitsData: Benefit[] = [
       'Mer tid til de gode samtalene utendørs, uansett vær.',
     benefitColor:
       'bg-featured-foreground dark:bg-dark-featured-foreground',
-    iconColor: 'text-featured dark:text-dark-featured'
+    iconColor: 'text-dark-teal'
   },
   {
     icon: MapPinIcon,
@@ -43,7 +43,7 @@ export const benefitsData: Benefit[] = [
       'Blir like selvsagt å ta på seg som tøflene inne.',
     benefitColor:
       'bg-featured-foreground dark:bg-dark-featured-foreground',
-    iconColor: 'text-featured dark:text-dark-featured'
+    iconColor: 'text-dark-teal'
   }
 ]
 
@@ -54,11 +54,11 @@ export function BenefitsGrid({
 }) {
   return (
     <article className='border-featured-border dark:border-dark-featured-border bg-featured dark:bg-dark-featured w-full min-w-0 overflow-x-clip border-t py-24 text-foreground'>
-      <div className='container mx-auto px-4'>
+      <div className='container mx-auto bg-background px-4'>
         <div className='mb-20 max-w-3xl text-left lg:max-w-4xl'>
-          <h2 className='text-fluid-display font-google-sans font-bold tracking-normal text-foreground'>
+          <h1 className='font-sans text-4xl font-extrabold tracking-normal text-foreground md:text-5xl lg:text-7xl'>
             Designet for hyttelivet
-          </h2>
+          </h1>
           <p className='mt-5 text-lg leading-relaxed text-foreground'>
             Komfort, kvalitet og smarte detaljer gjør det lett å
             bruke hytten mer.
@@ -69,7 +69,7 @@ export function BenefitsGrid({
           {benefits.map((benefit, benefitIndex) => (
             <AnimatedBlock
               key={benefit.title}
-              className='group will-animate-fade-in-scale text-center'
+              className='group will-animate-fade-in-scale rounded-xl bg-jungle py-4 text-center'
               delay={`${benefitIndex * 0.05}s`}
               threshold={0.2}
             >

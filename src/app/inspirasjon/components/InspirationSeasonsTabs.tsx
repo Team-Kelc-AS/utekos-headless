@@ -95,11 +95,19 @@ export function InspirationSeasonsTabs({
       'group-data-[orientation=horizontal]/tabs:h-auto grid w-full grid-cols-2 gap-2 bg-transparent p-1 sm:grid-cols-4'
     : 'group-data-[orientation=horizontal]/tabs:h-auto grid w-full grid-cols-2 gap-3 bg-transparent p-0 sm:grid-cols-4'
 
+  const roundedTriggerLayoutClassName =
+    'inspiration-seasons-tab-trigger relative flex !h-auto min-h-20 w-full flex-col items-center justify-center overflow-hidden rounded-xl border px-3 py-3 transition-all duration-300'
+
   const roundedTriggerClassName =
-    'inspiration-seasons-tab-trigger relative flex !h-auto min-h-20 w-full flex-col items-center justify-center overflow-hidden rounded-xl border border-foreground/12 bg-background/58 dark:bg-dark-background/58 px-3 py-3 transition-all duration-300 hover:border-foreground/28 hover:bg-background/72 dark:hover:bg-dark-background/72 data-active:border-foreground/24 data-active:bg-primary dark:data-active:bg-dark-primary data-active:text-background dark:data-active:text-dark-background'
+    'inspiration-seasons-tab-trigger relative flex !h-auto min-h-20 w-full flex-col items-center justify-center overflow-hidden rounded-xl border border-foreground/12 bg-background/58 px-3 py-3 transition-all duration-300 hover:border-foreground/28 hover:bg-background/72 data-active:border-foreground/24 data-active:bg-primary data-active:text-background dark:bg-dark-background/58 dark:hover:bg-dark-background/72 dark:data-active:bg-dark-primary dark:data-active:text-dark-background'
 
   const pillTriggerClassName =
-    'relative flex !h-auto w-full items-center justify-center overflow-hidden rounded-lg border border-foreground/12 bg-background/58 dark:bg-dark-background/58 px-3 py-3 transition-all duration-300 hover:border-foreground/28 data-active:border-foreground/18 data-active:bg-background dark:data-active:bg-dark-background data-active:text-foreground'
+    'relative flex !h-auto w-full items-center justify-center overflow-hidden rounded-lg border border-foreground/12 bg-background/58 px-3 py-3 transition-all duration-300 hover:border-foreground/28 data-active:border-foreground/18 data-active:bg-background data-active:text-foreground dark:bg-dark-background/58 dark:data-active:bg-dark-background'
+
+  const triggerBaseClassName =
+    variant === 'pill' ? pillTriggerClassName
+    : tabTriggerClassName ? roundedTriggerLayoutClassName
+    : roundedTriggerClassName
 
   return (
     <Tabs
@@ -120,12 +128,7 @@ export function InspirationSeasonsTabs({
             <TabsTrigger
               key={season.value}
               value={season.value}
-              className={cn(
-                variant === 'pill' ?
-                  pillTriggerClassName
-                : roundedTriggerClassName,
-                tabTriggerClassName
-              )}
+              className={cn(triggerBaseClassName, tabTriggerClassName)}
             >
               {isActive && showTabGlow ?
                 <div

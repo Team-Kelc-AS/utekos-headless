@@ -13,12 +13,12 @@ export function CTASection() {
       sectionClassName='bg-[var(--terrace-night)] text-[var(--terrace-cream)]'
       titleClassName='text-[var(--terrace-cream)]'
       leadClassName='text-[var(--terrace-sage-soft)]'
-      primaryButtonBg='var(--terrace-copper)'
-      primaryButtonText='var(--terrace-night)'
-      secondaryButtonBg='var(--terrace-glass)'
-      secondaryButtonText='var(--terrace-cream)'
-      primaryButtonClassName='border-transparent shadow-[0_18px_42px_-30px_var(--terrace-copper)]'
-      secondaryButtonClassName='border-[var(--terrace-line-dark)] shadow-none backdrop-blur-md'
+      primaryButtonBg='var(--secondary)'
+      primaryButtonText='var(--secondary-foreground)'
+      secondaryButtonBg='var(--primary)'
+      secondaryButtonText='var(--primary-foreground)'
+      primaryButtonClassName='border-transparent shadow-[0_18px_42px_-30px_var(--secondary)]'
+      secondaryButtonClassName='border-none shadow-none'
     />
   )
 }

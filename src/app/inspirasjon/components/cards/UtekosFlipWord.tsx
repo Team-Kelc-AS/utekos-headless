@@ -10,7 +10,7 @@ export function UtekosFlipWord() {
       <div className='relative flex min-h-12 w-full flex-1 items-center overflow-hidden sm:min-h-14'>
         <FlipWords
           words={flipWordData.words}
-          duration={2600}
+          duration={900}
           animateLetters={false}
           random
           className='font-utekos-text-medium px-0 text-4xl whitespace-nowrap text-foreground sm:text-5xl'

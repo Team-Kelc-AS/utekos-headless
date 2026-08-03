@@ -46,7 +46,7 @@ export function BenefitsGrid({
   benefits: Benefit[]
 }) {
   return (
-    <article className='bg-[var(--terrace-night-soft)] py-24 text-[var(--terrace-cream)] md:py-32'>
+    <article className='bg-jungle py-24 text-[var(--terrace-cream)] md:py-32'>
       <div className='container mx-auto px-4'>
         <MotionReveal className='mb-16 max-w-3xl md:max-w-4xl'>
           <H2
@@ -70,9 +70,9 @@ export function BenefitsGrid({
                 delay={index * 0.06}
                 y={18}
               >
-                <div className='h-full rounded-lg border border-[var(--terrace-line-dark)] bg-[var(--terrace-panel-dark)] p-7 text-left text-[var(--terrace-cream)] shadow-[0_28px_74px_-58px_rgb(0_0_0/0.88)] backdrop-blur-xl sm:p-8'>
+                <div className='h-full rounded-lg border border-[var(--terrace-line-dark)] bg-background p-7 text-left text-[var(--terrace-cream)] shadow-[0_28px_74px_-58px_rgb(0_0_0/0.88)] backdrop-blur-xl sm:p-8'>
                   <div className='mb-7 flex items-start gap-5'>
-                    <div className='flex size-14 shrink-0 items-center justify-center rounded-lg border border-[var(--terrace-line-dark)] bg-[var(--terrace-copper)] text-[var(--terrace-night)]'>
+                    <div className='flex size-14 shrink-0 items-center justify-center rounded-lg border border-[var(--terrace-line-dark)] bg-jungle text-foreground'>
                       <Icon
                         className='size-7'
                         aria-hidden='true'

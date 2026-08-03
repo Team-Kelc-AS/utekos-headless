@@ -72,10 +72,10 @@ export function UseCasesGrid({
                 key={useCase.title}
                 delay={index * 0.08}
               >
-                <Card className='group @container h-full overflow-hidden rounded-lg border border-[var(--terrace-line-dark)] bg-[var(--terrace-night)] text-[var(--terrace-cream)] shadow-[0_24px_70px_-58px_rgb(16_32_31/0.58)] transition-colors duration-300 hover:bg-[var(--terrace-night-soft)] motion-reduce:transition-none'>
+                <Card className='group @container h-full overflow-hidden rounded-lg border border-[var(--terrace-line-dark)] bg-jungle text-[var(--terrace-cream)] shadow-[0_24px_70px_-58px_rgb(16_32_31/0.58)] transition-colors duration-300 hover:brightness-110 motion-reduce:transition-none'>
                   <CardContent className='relative p-8'>
                     <div className='mb-6 flex items-center gap-4'>
-                      <div className='flex size-12 items-center justify-center rounded-lg border border-[var(--terrace-line-dark)] bg-[var(--terrace-copper)] text-[var(--terrace-night)]'>
+                      <div className='flex size-12 items-center justify-center rounded-lg border border-[var(--terrace-line-dark)] bg-dark-teal text-foreground'>
                         <Icon
                           className='size-6'
                           aria-hidden='true'

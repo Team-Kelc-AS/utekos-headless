@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import type { ModelKey } from '@/api/constants'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils/className'
 
 const QuickViewModal = dynamic(
   () =>
@@ -17,12 +18,16 @@ interface HyttePricingBuyButtonProps {
   productHandle: ModelKey
   labelledById: string
   className?: string
+  buttonClassName?: string
+  variant?: 'commerce-primary' | 'default' | 'checkout'
 }
 
 export function HyttePricingBuyButton({
   productHandle,
   labelledById,
-  className
+  className,
+  buttonClassName,
+  variant = 'commerce-primary'
 }: HyttePricingBuyButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -30,8 +35,12 @@ export function HyttePricingBuyButton({
     <>
       <Button
         type='button'
-        variant='commerce-primary'
-        className={className}
+        variant={variant}
+        className={cn(
+          'font-utekos-text-medium',
+          className,
+          buttonClassName
+        )}
         aria-describedby={labelledById}
         onClick={() => setIsModalOpen(true)}
       >

@@ -14,26 +14,26 @@ export function TailwindSection() {
       gutterWidth={hyttePatternGutterWidth}
       contentWidth={hyttePatternContentWidth}
       showHorizontalRules={false}
-      className='overflow-x-clip bg-sidebar text-sidebar-foreground'
+      className='overflow-x-clip bg-background text-foreground'
       contentClassName='w-full min-w-0 px-6 py-24 sm:py-32 lg:px-8'
     >
       <div className='mx-auto max-w-4xl text-center'>
-        <h2 className='font-utekos-text-medium text-base/7 text-sidebar-foreground'>
+        <h2 className='font-utekos-text-medium text-base/7 text-foreground'>
           Pris
         </h2>
-        <p className='mt-2 font-utekos-text-medium text-5xl tracking-tight text-balance text-sidebar-foreground sm:text-6xl'>
+        <p className='mt-2 font-utekos-text-medium text-5xl tracking-tight text-balance text-foreground sm:text-6xl'>
           Velg din favoritt
         </p>
       </div>
 
-      <p className='mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-sidebar-foreground sm:text-xl/8'>
+      <p className='mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-foreground sm:text-xl/8'>
         Velg varianten som du liker best eller egner seg til ditt
         bruksscenario for å få den beste komforten og skreddersy
         varmen etter behovene dine.
       </p>
 
       <div className='mx-auto mt-16 grid w-full max-w-lg min-w-0 grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2'>
-        <div className='dark:ring-dark-border rounded-3xl rounded-t-3xl bg-card p-8 text-card-foreground ring-1 ring-border sm:rounded-b-none sm:p-10 lg:rounded-tr-none lg:rounded-bl-3xl'>
+        <div className='rounded-3xl rounded-t-3xl bg-dark-teal p-8 text-foreground ring-1 ring-border sm:rounded-b-none sm:p-10 lg:rounded-tr-none lg:rounded-bl-3xl dark:ring-dark-border'>
           <h3
             id='utekos-mikrofiber'
             className='font-utekos-text-medium text-base/7 text-card-foreground'
@@ -126,10 +126,11 @@ export function TailwindSection() {
           <HyttePricingBuyButton
             productHandle='utekos-mikrofiber'
             labelledById='utekos-mikrofiber'
+            variant='default'
             className='mt-8 w-full sm:mt-10'
           />
         </div>
-        <div className='bg-featured dark:bg-dark-featured ring-featured-border dark:ring-dark-featured-border relative rounded-3xl p-8 text-foreground ring-1 sm:p-10'>
+        <div className='relative rounded-3xl border-none bg-jungle p-8 text-foreground sm:p-10'>
           <h3
             id='utekos-techdown'
             className='font-utekos-text-medium text-base/7 text-foreground'
@@ -255,6 +256,7 @@ export function TailwindSection() {
             productHandle='utekos-techdown'
             labelledById='utekos-techdown'
             className='mt-8 w-full sm:mt-10'
+            buttonClassName='text-dark-teal'
           />
         </div>
       </div>

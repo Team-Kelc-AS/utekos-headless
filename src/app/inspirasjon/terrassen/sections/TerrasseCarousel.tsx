@@ -101,9 +101,9 @@ export function TerrasseCarousel() {
       <div className='container mx-auto max-w-7xl'>
         <div className='mb-12 max-w-4xl text-left'>
           <BrandBadge
-            backgroundColor='var(--terrace-glass)'
-            textColor='var(--terrace-cream)'
-            className='mb-4 gap-2 border border-[var(--terrace-line-dark)] px-4 py-2 font-utekos-text text-sm leading-4 shadow-none backdrop-blur-md'
+            backgroundColor='var(--jungle)'
+            textColor='var(--foreground)'
+            className='mb-4 gap-2 border border-[var(--terrace-line-dark)] px-4 py-2 font-utekos-text text-sm leading-4 shadow-none'
           >
             <Camera className='size-4' aria-hidden='true' />
             <span className='inline-flex items-baseline gap-[0.28em] leading-none'>
@@ -122,7 +122,7 @@ export function TerrasseCarousel() {
         </div>
 
         <div className='relative'>
-          <div className='relative mx-auto max-w-6xl overflow-hidden rounded-lg border border-[var(--terrace-line-dark)] bg-[var(--terrace-glass-panel)] p-4 shadow-[0_32px_90px_-56px_rgb(0_0_0/0.9)] backdrop-blur-sm sm:p-6'>
+          <div className='relative mx-auto max-w-6xl overflow-hidden rounded-lg border-none bg-jungle p-4 shadow-[0_32px_90px_-56px_rgb(0_0_0/0.9)] sm:p-6'>
             <div className='absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,var(--terrace-copper),transparent)]' />
 
             <Carousel

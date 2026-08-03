@@ -14,7 +14,7 @@ export function TerraceHeroSection() {
       aria-labelledby='din-terrasse-hele-året'
       className='relative isolate overflow-hidden'
     >
-      <div className='relative z-10 container mx-auto flex min-h-[calc(100svh-5rem)] max-w-7xl items-end px-5 pt-12 pb-10 sm:px-6 sm:pt-32 sm:pb-14 lg:min-h-[760px] lg:pb-16'>
+      <div className='relative z-10 container mx-auto flex max-w-7xl items-start px-5 pt-10 pb-10 sm:min-h-[calc(100svh-5rem)] sm:items-end sm:px-6 sm:pt-32 sm:pb-14 lg:min-h-[760px] lg:pb-16'>
         <MotionReveal
           y={34}
           amount={0.08}
@@ -37,9 +37,9 @@ export function TerraceHeroSection() {
             <div className='mt-9 flex flex-wrap gap-3 sm:gap-4'>
               <BrandBadge
                 asChild
-                backgroundColor='var(--terrace-copper)'
-                textColor='var(--terrace-night)'
-                className='group focus-visible:outline-(--terrace-copper)on-reduce:transition-none font-google-sans min-h-12 border border-transparent px-6 py-3 text-base leading-4 font-bold shadow-[0_18px_42px_-30px_var(--terrace-copper)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-4 motion-reduce:hover:translate-y-0'
+                backgroundColor='var(--primary)'
+                textColor='var(--primary-foreground)'
+                className='group focus-visible:outline-primary font-google-sans min-h-12 border border-transparent px-6 py-3 text-base leading-4 font-bold shadow-[0_18px_42px_-30px_var(--primary)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-4 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
               >
                 <Link href='/produkter'>
                   Se produkter
@@ -48,9 +48,9 @@ export function TerraceHeroSection() {
               </BrandBadge>
               <BrandBadge
                 asChild
-                backgroundColor='var(--terrace-glass)'
-                textColor='var(--terrace-cream)'
-                className='font-google-sans min-h-12 border border-(--terrace-line-dark) px-6 py-3 text-base leading-4 font-bold shadow-none backdrop-blur-md transition-transform duration-300 hover:-translate-y-0.5 hover:bg-(--terrace-glass-hover) focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--terrace-cream) motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+                backgroundColor='var(--dark-teal)'
+                textColor='var(--foreground)'
+                className='font-google-sans min-h-12 border-none px-6 py-3 text-base leading-4 font-bold shadow-none transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground motion-reduce:transition-none motion-reduce:hover:translate-y-0'
               >
                 <Link href='#bruksomrader'>Planlegg bruken</Link>
               </BrandBadge>
@@ -68,10 +68,10 @@ export function TerraceHeroSection() {
                 <MotionHeroCard
                   key={feature.title}
                   delay={0.18 + index * 0.08}
-                  className='rounded-lg border border-(--terrace-line-dark) bg-card p-4 text-card-foreground shadow-[0_30px_70px_-54px_rgb(0_0_0/0.9)] sm:p-5'
+                  className='rounded-lg border-none bg-jungle p-4 text-foreground shadow-[0_30px_70px_-54px_rgb(0_0_0/0.9)] sm:p-5'
                 >
                   <div className='flex items-start gap-4'>
-                    <div className='dark:bg-dark-primary flex size-11 shrink-0 items-center justify-center rounded-lg border border-(--terrace-line-dark) bg-primary text-primary-foreground'>
+                    <div className='flex size-11 shrink-0 items-center justify-center rounded-lg border border-(--terrace-line-dark) bg-dark-teal text-foreground'>
                       <Icon
                         className='size-5'
                         aria-hidden='true'
