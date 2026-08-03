@@ -23,14 +23,14 @@ export function LandingProductHighlightsPanel({
     <div
       className={cn(
         'overflow-hidden rounded-3xl border border-border',
-        'bg-card text-card-foreground shadow-[0_12px_40px_rgba(0,0,0,0.28)]'
+        'bg-jungle text-foreground shadow-[0_12px_40px_rgba(0,0,0,0.28)]'
       )}
     >
       <div className='border-b border-border px-5 py-4 sm:px-6 sm:py-5'>
-        <h3 className='font-google-sans text-base font-bold tracking-tight sm:text-lg'>
+        <h3 className='font-google-sans text-base font-bold tracking-tight text-foreground sm:text-lg'>
           Dette gjør {modelName} spesiell
         </h3>
-        <p className='mt-1 text-sm text-card-foreground/80'>
+        <p className='mt-1 text-sm text-foreground/80'>
           Kvaliteter som gjør forskjellen i hverdagen
         </p>
       </div>
@@ -47,8 +47,8 @@ export function LandingProductHighlightsPanel({
           >
             <AccordionTrigger
               className={cn(
-                'px-5 py-4 text-left font-utekos-text-medium text-sm sm:px-6 sm:text-base',
-                'text-card-foreground hover:text-primary hover:no-underline',
+                'bg-jungle px-5 py-4 text-left font-utekos-text-medium text-sm sm:px-6 sm:text-base',
+                'text-foreground hover:text-primary hover:no-underline',
                 'data-[state=open]:text-primary'
               )}
             >
@@ -66,7 +66,7 @@ export function LandingProductHighlightsPanel({
             </AccordionTrigger>
             <AccordionContent
               className={cn(
-                'leading-text-paragraph pt-0 pb-4 text-sm text-card-foreground/80 sm:pb-5',
+                'leading-text-paragraph bg-jungle pt-0 pb-4 text-sm text-foreground/80 sm:pb-5',
                 'px-5 sm:px-6 sm:pl-16'
               )}
             >

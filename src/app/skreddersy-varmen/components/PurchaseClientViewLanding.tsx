@@ -390,7 +390,7 @@ export function PurchaseClientViewLanding({
             </div>
           </div>
 
-          <div className='border-t border-background/20 bg-card p-6 text-foreground min-[900px]:p-8 min-[1280px]:p-12 md:p-12'>
+          <div className='rounded-b-lg border-t border-background/20 bg-jungle p-6 text-foreground min-[900px]:p-8 min-[1280px]:p-12 md:p-12'>
             <div className='mb-4 min-[900px]:mb-6 min-[1280px]:mb-8'>
               <BrandBadge
                 asChild
