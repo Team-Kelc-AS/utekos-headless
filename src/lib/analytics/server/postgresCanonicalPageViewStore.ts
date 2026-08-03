@@ -1,6 +1,7 @@
 import 'server-only'
 import postgres from 'postgres'
 import { parseCanonicalEvent } from '../canonicalEvent'
+import { getPostgresClient } from '../../db/getPostgresClient'
 import {
   createCanonicalEventStore,
   type CanonicalEventTransactionRunner
@@ -11,24 +12,14 @@ import type {
   CanonicalEventStore
 } from './canonicalEventStore'
 
-let trackingSql: ReturnType<typeof postgres> | undefined
-
 function getTrackingSql() {
-  const connectionString =
-    process.env.SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING
+  const trackingSql = getPostgresClient()
 
-  if (!connectionString) {
+  if (!trackingSql) {
     throw new Error(
       'Missing tracking database connection string'
     )
   }
-
-  trackingSql ??= postgres(connectionString, {
-    connect_timeout: 10,
-    idle_timeout: 20,
-    max: 1,
-    max_lifetime: 60 * 30
-  })
 
   return trackingSql
 }

@@ -1,15 +1,12 @@
 import 'server-only'
 
 import postgres from 'postgres'
+import { resolvePostgresConnectionUrl } from './resolvePostgresConnectionUrl'
 
 let postgresClient: ReturnType<typeof postgres> | null | undefined
 
 function getPostgresUrl(): string | undefined {
-  return (
-    process.env.SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING
-    || process.env.SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING_MAYBE
-    || process.env.SUPABASE_VERCEL_POSTGRES_URL
-  )
+  return resolvePostgresConnectionUrl(process.env)
 }
 
 export function getPostgresClient(): ReturnType<typeof postgres> | null {
