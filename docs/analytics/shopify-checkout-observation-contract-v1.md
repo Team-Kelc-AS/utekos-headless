@@ -198,15 +198,37 @@ Admin viser pikselen som `Web / Always on`, med påkrevd
 analytics-samtykke, uten marketing/preference-formål og uten
 datasalg.
 
-En ren produksjons-checkout viste dokumenterte
-inline-valideringsfeil uten kunde-, adresse- eller betalingsdata
-og uten ordre. Testøkten hadde ikke analytics-samtykke, og
-produserte derfor ingen ny observasjonsrad. Samtykket ble bevisst
-ikke endret fordi det samtidig kunne ha aktivert eksisterende
-GA4-eiere. En ekte, samtykket WebPixel-til-mottaker-observasjon
-står derfor fortsatt som en separat verifikasjonsgate;
-fail-closed-resultatet er ikke feilaktig rapportert som komplett
-ende-til-ende-bevis.
+En første ren produksjons-checkout viste inline-valideringsfeil
+uten kunde-, adresse- eller betalingsdata og uten ordre.
+`INPUT_REQUIRED` og `INPUT_INVALID` er med vilje ikke tillatt i
+v1-kontrakten og produserte derfor ingen observasjonsrad. Dette
+nullresultatet beviser hendelsesfilteret, ikke manglende Web
+Pixel-lasting.
+
+En senere kontrollert checkout 2026-08-04 hadde eksplisitt
+analytics-samtykke i Shopifys egen checkout-dialog. Testen brukte
+én midlertidig handlekurvvare, slo av e-postmarkedsføring og
+sendte ingen kunde-, adresse-, telefon- eller kortdata. Et klikk
+på `Betal nå` med tomme obligatoriske felt fikk Shopify til å
+publisere `payment_info_submitted`. Det er innsendingsevidens,
+ikke betalingsforsøk eller betalingsresultat.
+
+Den nye App Web Pixel-en sendte først CORS `OPTIONS` og deretter
+`POST` til produksjonsmottakeren. Begge fikk `204` fra
+Vercel-deployment `dpl_D3t1qCM6s14w9tpsdH1a4SfMmGmm`. Supabase
+lagret nøyaktig én ny rad med `source=shopify_app_web_pixel`,
+`verification_status=observed`, alle fire Shopify-personvernflagg
+som `true` og `observation_count=1`. Den eksakte Shopify-
+eventidentiteten har null rader i både `marketing.event_ledger`
+og `ops.provider_dispatch_attempts`. Observasjonstabellen har
+ingen kolonner for navn, e-post, telefon, adresse eller rå
+payload. Ingen betaling ble startet, ingen ordre ble opprettet,
+og testhandlekurven ble tømt etterpå.
+
+Dette lukker den samtykkede WebPixel-til-mottaker-til-Supabase-
+verifikasjonsgaten. Testen endret ikke eksisterende
+`Utekos GA4 Commerce`; eventuell trafikk fra den eksisterende
+GA4-eieren er utenfor den nye observed-pipelinen.
 
 En senere canonical/provider-cutover må stoppe gammel og starte
 ny GA4-eier for samme hendelse i kontrollert rekkefølge. Siden
