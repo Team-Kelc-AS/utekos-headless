@@ -33,11 +33,15 @@ const MAGASINET_VIEW_TRANSITION_PREVIEW_ENABLED =
       process.env.MAGAZINE_VIEW_TRANSITIONS_PREVIEW_ENABLED
   })
 const KLARNA_FEED_PATH = '/klarna-feed.xml'
+const STATIC_ASSET_PATH_PATTERN =
+  /\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$/i
 export const LANDING_EDGE_REQUEST_ID_HEADER =
   'x-utekos-edge-request-id'
 
 function isDocumentNavigation(request: NextRequest) {
   if (request.method !== 'GET') return false
+  if (STATIC_ASSET_PATH_PATTERN.test(request.nextUrl.pathname))
+    return false
   if (request.headers.get('rsc') === '1') return false
   if (request.headers.has('next-router-prefetch')) return false
 

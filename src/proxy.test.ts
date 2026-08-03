@@ -272,6 +272,38 @@ test('does not correlate RSC or prefetch traffic as a landing', async () => {
   }
 })
 
+test('does not correlate a static asset requested by a crawler', async () => {
+  const originalInfo = console.info
+  const restoreSigningSecret = installSigningSecret()
+  let logCalls = 0
+  console.info = () => {
+    logCalls += 1
+  }
+
+  try {
+    const { proxy } = await productionProxy
+    const response = await proxy(
+      new NextRequest(
+        'https://utekos.no/tech-diagonal-halv-maritime-blue-bg.png',
+        {
+          headers: {
+            accept: '*/*',
+            'user-agent':
+              'meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)'
+          }
+        }
+      )
+    )
+
+    assert.equal(response.headers.get('server-timing'), null)
+    assert.equal(response.headers.get('set-cookie'), null)
+    assert.equal(logCalls, 0)
+  } finally {
+    console.info = originalInfo
+    restoreSigningSecret()
+  }
+})
+
 test('keeps document navigation available when the signing secret is invalid', async () => {
   const originalError = console.error
   const originalSecret =
