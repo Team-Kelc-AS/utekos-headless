@@ -35,6 +35,12 @@ Klarna Express click
   -> /api/klarna/orders stages in Vercel Runtime Logs
 ```
 
+For every accepted `begin_checkout`, the server also stores the validated
+method as `payload.checkout_method` in `marketing.event_ledger`. The allowed
+values are `shopify_checkout` and `klarna_express`. A missing or invalid
+internal method header fails closed to `shopify_checkout`; the server value
+overrides any client-supplied payload value.
+
 ## `add_to_cart` producers
 
 All current producers converge on `reportCanonicalAddToCart` and
@@ -95,6 +101,24 @@ Each canonical commerce line includes only:
 - fixed collector route, duration, runtime context, and optional Vercel
   request ID;
 - checkout method for `begin_checkout`.
+
+The runtime log and canonical ledger use the same server-validated method.
+Runtime logs expose it as `data.checkoutMethod`; the ledger payload exposes it
+as `checkout_method`.
+
+## Purchase notifications
+
+The authoritative Shopify `orders/paid` webhook sends one internal email
+notification per canonical purchase. The canonical event UUID is the Resend
+idempotency key, so Shopify retries do not create duplicate emails. A failed
+notification returns HTTP 500 after the purchase has been durably accepted;
+the next Shopify retry can therefore retry only the idempotent notification.
+
+The email contains only currency, paid value, and item-line count. It excludes
+customer details, Shopify order identifiers, transaction identifiers, and
+line-item names. Successful and failed delivery attempts are searchable as
+`commerce.purchase_notification_sent` and
+`commerce.purchase_notification_failed`.
 
 ## Consent and evidence boundary
 

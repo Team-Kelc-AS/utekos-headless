@@ -3,7 +3,10 @@ import test from 'node:test'
 import { canonicalAddToCartSchema } from '../addToCartEvent'
 import { canonicalBeginCheckoutSchema } from '../beginCheckoutEvent'
 import { CHECKOUT_METHOD_HEADER } from '../checkoutMethod'
-import type { CanonicalEventStore } from './canonicalEventStore'
+import type {
+  CanonicalEventStore,
+  CanonicalEventStoreInput
+} from './canonicalEventStore'
 import { handleCanonicalAddToCartRequest } from './handleCanonicalAddToCartRequest'
 import { handleCanonicalBeginCheckoutRequest } from './handleCanonicalBeginCheckoutRequest'
 
@@ -108,6 +111,7 @@ test('accepted add_to_cart writes the structured runtime log', async t => {
 
 test('accepted Klarna begin_checkout writes the checkout method', async t => {
   const lines: string[] = []
+  const acceptedEvents: CanonicalEventStoreInput['event'][] = []
   t.mock.method(console, 'log', (value: unknown) => {
     lines.push(String(value))
   })
@@ -130,10 +134,27 @@ test('accepted Klarna begin_checkout writes the checkout method', async t => {
     commerceRequest('/api/events/begin-checkout', event, {
       [CHECKOUT_METHOD_HEADER]: 'klarna_express'
     }),
-    { getRequestContext: () => ({}), store }
+    {
+      getRequestContext: () => ({}),
+      store: {
+        accept: async input => {
+          acceptedEvents.push(input.event)
+          return {
+            createdDispatchAttempts: [],
+            status: 'inserted'
+          }
+        }
+      }
+    }
   )
 
   assert.equal(response.status, 202)
+  assert.equal(
+    acceptedEvents[0]?.event_name === 'begin_checkout' ?
+      acceptedEvents[0].checkout_method
+    : undefined,
+    'klarna_express'
+  )
   const entry = JSON.parse(lines.at(-1) ?? '{}') as {
     data: Record<string, unknown>
     event: string
@@ -142,4 +163,48 @@ test('accepted Klarna begin_checkout writes the checkout method', async t => {
   assert.equal(entry.data.eventName, 'begin_checkout')
   assert.equal(entry.data.checkoutMethod, 'klarna_express')
   assert.equal(JSON.stringify(entry).includes('checkout-secret'), false)
+})
+
+test('begin_checkout persists the server-validated default method', async t => {
+  const acceptedEvents: CanonicalEventStoreInput['event'][] = []
+  t.mock.method(console, 'log', () => {})
+  const event = canonicalBeginCheckoutSchema.parse({
+    ...eventEnvelope,
+    checkout_method: 'klarna_express',
+    event_name: 'begin_checkout',
+    custom_data: {
+      cart_id: 'gid://shopify/Cart/secret',
+      checkout_id: 'checkout-secret',
+      creation_revision: 'revision-secret',
+      currency: 'NOK',
+      gross_value: 2499,
+      items: [commerceItem],
+      tax_value: 499.8,
+      value: 1999.2
+    }
+  })
+
+  const response = await handleCanonicalBeginCheckoutRequest(
+    commerceRequest('/api/events/begin-checkout', event),
+    {
+      getRequestContext: () => ({}),
+      store: {
+        accept: async input => {
+          acceptedEvents.push(input.event)
+          return {
+            createdDispatchAttempts: [],
+            status: 'inserted'
+          }
+        }
+      }
+    }
+  )
+
+  assert.equal(response.status, 202)
+  assert.equal(
+    acceptedEvents[0]?.event_name === 'begin_checkout' ?
+      acceptedEvents[0].checkout_method
+    : undefined,
+    'shopify_checkout'
+  )
 })
