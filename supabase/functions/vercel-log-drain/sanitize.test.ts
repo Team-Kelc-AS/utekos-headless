@@ -262,6 +262,37 @@ test('normalizes Instagram Android, redirects and known automation classes', asy
   )
 })
 
+test('classifies current Meta crawlers as known bots', async () => {
+  const baseProxy = validEntry().proxy as Record<string, unknown>
+  const userAgents = [
+    'meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)',
+    'meta-webindexer/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)',
+    'meta-externalads/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)',
+    'meta-externalfetcher/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)'
+  ]
+  const entries = userAgents.map((userAgent, index) =>
+    validEntry({
+      id: `meta-crawler-${index}`,
+      proxy: {
+        ...baseProxy,
+        path: `/crawler-test-${index}`,
+        userAgent: [userAgent]
+      }
+    })
+  )
+
+  const result = await sanitizeVercelLogBatch(entries, config)
+
+  assert.equal(result.observations.length, userAgents.length)
+  for (const observation of result.observations) {
+    assert.equal(
+      observation.automation_class,
+      'known_bot_user_agent'
+    )
+    assert.equal(observation.device_class, 'bot')
+  }
+})
+
 test('deduplicates repeated Vercel log ids before the database write', async () => {
   const result = await sanitizeVercelLogBatch(
     [validEntry(), validEntry()],

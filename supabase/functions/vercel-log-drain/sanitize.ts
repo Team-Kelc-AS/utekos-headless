@@ -158,7 +158,7 @@ function classifyUserAgent(
   const automationClass: UserAgentClassification['automationClass'] =
     verifiedSyntheticMarker ? 'synthetic_client'
     : (
-      /googlebot|bingbot|duckduckbot|baiduspider|yandexbot|facebookexternalhit|facebot|twitterbot|slackbot|linkedinbot|pinterestbot|applebot|bytespider|semrushbot|ahrefsbot|mj12bot/.test(
+      /googlebot|bingbot|duckduckbot|baiduspider|yandexbot|facebookexternalhit|facebot|meta-externalagent|meta-webindexer|meta-externalads|meta-externalfetcher|twitterbot|slackbot|linkedinbot|pinterestbot|applebot|bytespider|semrushbot|ahrefsbot|mj12bot/.test(
         normalized
       )
     ) ?

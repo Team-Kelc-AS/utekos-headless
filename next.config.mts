@@ -11,6 +11,10 @@ const GOOGLE_TAG_MANAGER_ORIGIN =
 
 const SERVER_TAG_MANAGER_ORIGIN =
   'https://cloud.server.utekos.no'
+const LEGACY_TECHDOWN_IMAGE_PATH =
+  '/tech-diagonal-halv-maritime-blue-bg.png'
+const CURRENT_TECHDOWN_IMAGE_PATH =
+  '/utekos-techdown-diagonalt-fullfigur.webp'
 
 const withMDX = createMDX({
   extension: /\.(md|mdx)$/,
@@ -182,6 +186,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
+        {
+          source: LEGACY_TECHDOWN_IMAGE_PATH,
+          destination: CURRENT_TECHDOWN_IMAGE_PATH
+        },
         {
           source: `${GOOGLE_TAG_GATEWAY_PATH}/:path*`,
           destination: `${GOOGLE_TAG_MANAGER_ORIGIN}/:path*`
