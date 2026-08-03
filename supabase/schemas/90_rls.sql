@@ -38,6 +38,8 @@ alter table ops.dead_letter_events enable row level security;
 alter table analytics.event_ledger_archive enable row level security;
 alter table ops.web_vitals enable row level security;
 alter table ops.integration_job_leases enable row level security;
+alter table ops.shopify_checkout_observations enable row level security;
+alter table ops.shopify_checkout_observations force row level security;
 alter table ops.vercel_edge_request_observations enable row level security;
 alter table ops.vercel_edge_request_observations force row level security;
 alter table ops.vercel_trace_observations enable row level security;
@@ -59,6 +61,8 @@ revoke all on table ops.tagging_observations
   from public, anon, authenticated, service_role;
 revoke all on table ops.privacy_retention_exceptions
   from public, anon, authenticated, service_role;
+revoke all on table ops.shopify_checkout_observations
+  from public, anon, authenticated, service_role;
 revoke all on table ops.meta_landing_observability
   from public, anon, authenticated, service_role;
 grant usage on schema ops to service_role;
@@ -67,5 +71,7 @@ grant select, insert, update on table ops.vercel_trace_observations to service_r
 grant select, insert, update on table ops.landing_consent_observations to service_role;
 grant select, insert on table ops.tagging_observations to service_role;
 grant select, insert, update, delete on table ops.privacy_retention_exceptions
+  to service_role;
+grant select, insert, update on table ops.shopify_checkout_observations
   to service_role;
 grant select on table ops.meta_landing_observability to service_role;

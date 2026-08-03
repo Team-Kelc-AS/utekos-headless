@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:utekos:shopify:checkout-observation:v1",
+  "title": "Utekos Shopify checkout observation v1",
+  "description": "PII-free, provider-neutral observations emitted by the Utekos Shopify App Web Pixel. Acceptance does not establish a canonical commerce event or provider delivery.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/checkoutProgressObservation"
+    },
+    {
+      "$ref": "#/$defs/checkoutAlertObservation"
+    }
+  ],
+  "$defs": {
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "analyticsProcessingAllowed": {
+          "type": "boolean"
+        },
+        "marketingAllowed": {
+          "type": "boolean"
+        },
+        "preferencesProcessingAllowed": {
+          "type": "boolean"
+        },
+        "saleOfDataAllowed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "analyticsProcessingAllowed",
+        "marketingAllowed",
+        "preferencesProcessingAllowed",
+        "saleOfDataAllowed"
+      ]
+    },
+    "commerce": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "currencyCode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "itemQuantity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      },
+      "required": [
+        "currencyCode",
+        "value",
+        "itemQuantity"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "value"
+            ]
+          },
+          "then": {
+            "properties": {
+              "currencyCode": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "checkoutProgressObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "utekos.shopify.checkout_observation"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "source": {
+          "const": "shopify_app_web_pixel"
+        },
+        "verificationStatus": {
+          "const": "observed"
+        },
+        "eventId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "eventName": {
+          "enum": [
+            "checkout_shipping_info_submitted",
+            "payment_info_submitted"
+          ]
+        },
+        "eventSequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "occurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "checkoutToken": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "commerce": {
+          "$ref": "#/$defs/commerce"
+        },
+        "privacy": {
+          "$ref": "#/$defs/privacy"
+        }
+      },
+      "required": [
+        "contract",
+        "schemaVersion",
+        "source",
+        "verificationStatus",
+        "eventId",
+        "eventName",
+        "eventSequence",
+        "occurredAt",
+        "checkoutToken",
+        "commerce",
+        "privacy"
+      ]
+    },
+    "checkoutAlertObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract": {
+          "const": "utekos.shopify.checkout_observation"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "source": {
+          "const": "shopify_app_web_pixel"
+        },
+        "verificationStatus": {
+          "const": "observed"
+        },
+        "eventId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "eventName": {
+          "const": "alert_displayed"
+        },
+        "eventSequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "occurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "alert": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "enum": [
+                "CHECKOUT_ERROR",
+                "PAYMENT_ERROR"
+              ]
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        "privacy": {
+          "$ref": "#/$defs/privacy"
+        }
+      },
+      "required": [
+        "contract",
+        "schemaVersion",
+        "source",
+        "verificationStatus",
+        "eventId",
+        "eventName",
+        "eventSequence",
+        "occurredAt",
+        "alert",
+        "privacy"
+      ]
+    }
+  }
+}
