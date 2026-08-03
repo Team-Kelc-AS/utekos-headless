@@ -3,7 +3,7 @@ import { hasValidCronAuthorization } from '@/lib/security/hasValidCronAuthorizat
 import { postgresProviderDispatchHealthStore } from '@/lib/analytics/server/postgresProviderDispatchHealthStore'
 import { runProviderDispatchHealthCheck } from '@/lib/analytics/server/providerDispatchHealth'
 
-export const maxDuration = 60
+export const maxDuration = 300
 
 export type ProviderDispatchHealthCronDependencies = {
   flush: typeof Sentry.flush

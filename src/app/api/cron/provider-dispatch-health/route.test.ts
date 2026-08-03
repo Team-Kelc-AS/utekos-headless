@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   handleProviderDispatchHealthCron,
+  maxDuration,
   type ProviderDispatchHealthCronDependencies
 } from './route'
 
@@ -37,6 +38,10 @@ const healthyResult = {
   metaEligibleSampleSize: 100,
   p95AckLatencyMs: 1_500
 }
+
+test('allows the measured production health queries to finish', () => {
+  assert.equal(maxDuration, 300)
+})
 
 test('rejects health cron requests without the configured secret', async () => {
   const dependencies: ProviderDispatchHealthCronDependencies = {
