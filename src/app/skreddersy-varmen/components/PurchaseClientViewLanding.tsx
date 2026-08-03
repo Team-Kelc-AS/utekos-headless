@@ -250,7 +250,7 @@ export function PurchaseClientViewLanding({
                     key={selectedSize}
                     className='animate-in fade-in slide-in-from-top-2 mt-3 duration-300'
                   >
-                    <div className='relative overflow-hidden rounded-2xl border border-primary/20 bg-card p-4 text-foreground shadow-md'>
+                    <div className='relative overflow-hidden rounded-2xl border border-primary/20 bg-jungle p-4 text-foreground shadow-md'>
                       <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
                         <Ruler className='size-4 text-primary' />
                         <span className='font-google-sans text-sm font-bold tracking-normal text-foreground'>
@@ -394,9 +394,10 @@ export function PurchaseClientViewLanding({
             <div className='mb-4 min-[900px]:mb-6 min-[1280px]:mb-8'>
               <BrandBadge
                 asChild
-                tone='commerce-primary'
+                bgColor='var(--primary)'
+                fgColor='var(--primary-foreground)'
                 className={cn(
-                  'font-google-sans hover:bg-primary-hover h-14 w-full min-w-0 bg-primary px-4 py-0 text-sm font-bold tracking-normal text-primary-foreground shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] sm:text-base md:h-16 md:px-6 md:text-lg',
+                  'font-google-sans hover:bg-primary-hover h-14 w-full min-w-0 px-4 py-0 text-sm font-bold tracking-normal shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] sm:text-base md:h-16 md:px-6 md:text-lg',
                   isPending && 'cursor-not-allowed opacity-80'
                 )}
               >

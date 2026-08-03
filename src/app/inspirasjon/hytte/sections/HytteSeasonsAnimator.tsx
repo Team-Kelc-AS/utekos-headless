@@ -18,6 +18,7 @@ export type HytteSeasonAnimationPreset =
   | 'push-line'
 
 const seasonItemMotion = {
+  hidden: { opacity: 0, y: 18, scale: 0.985 },
   visible: (index: number) => ({
     opacity: 1,
     y: 0,
@@ -32,6 +33,7 @@ const seasonItemMotion = {
 } satisfies Variants
 
 const pushWordMotion = {
+  hidden: { opacity: 0, y: '100%' },
   visible: (index: number) => ({
     opacity: 1,
     y: '0%',
@@ -44,6 +46,7 @@ const pushWordMotion = {
 } satisfies Variants
 
 const zoomWordMotion = {
+  hidden: { opacity: 0, scale: 0.7 },
   visible: (index: number) => ({
     opacity: 1,
     scale: 1,
@@ -58,6 +61,7 @@ const zoomWordMotion = {
 } satisfies Variants
 
 const pushLineMotion = {
+  hidden: { opacity: 0, y: '100%' },
   visible: (index: number) => ({
     opacity: 1,
     y: '0%',
@@ -152,13 +156,10 @@ export function HytteSeasonsAnimator({
           {childrenArray.map((child, index) => (
             <m.li
               key={`hytte-season-${seasonValues[index] ?? index}`}
-              className={cn(
-                'motion-safe:[transform:translateY(18px)_scale(0.985)] motion-safe:opacity-0',
-                itemClassName
-              )}
+              className={itemClassName}
               data-season={seasonValues[index]}
               custom={index}
-              initial={false}
+              initial='hidden'
               variants={seasonItemMotion}
               viewport={{
                 once: true,
@@ -190,10 +191,6 @@ function WordPresetText({
   const descriptionWords = splitWords(description)
   const variant =
     lineVariant === 'push' ? pushWordMotion : zoomWordMotion
-  const initialClassName =
-    lineVariant === 'push' ?
-      'motion-safe:[transform:translateY(100%)] motion-safe:opacity-0'
-    : 'motion-safe:[transform:scale(0.7)] motion-safe:opacity-0'
 
   return (
     <MotionConfig reducedMotion='user'>
@@ -203,7 +200,7 @@ function WordPresetText({
           data-season-copy={
             lineVariant === 'push' ? 'push-word' : 'zoom-in'
           }
-          initial={false}
+          initial='hidden'
           viewport={textViewport}
           whileInView='visible'
         >
@@ -217,12 +214,10 @@ function WordPresetText({
                   key={`${title}-${word}-${index}`}
                   className={cn(
                     'inline-block will-change-transform',
-                    initialClassName,
                     index < titleWords.length - 1 &&
                       'mr-[0.18em]'
                   )}
                   custom={index}
-                  initial={false}
                   variants={variant}
                 >
                   {word}
@@ -241,12 +236,10 @@ function WordPresetText({
                   key={`${description}-${word}-${index}`}
                   className={cn(
                     'inline-block will-change-transform',
-                    initialClassName,
                     index < descriptionWords.length - 1 &&
                       'mr-[0.18em]'
                   )}
                   custom={titleWords.length + index}
-                  initial={false}
                   variants={variant}
                 >
                   {word}
@@ -343,7 +336,7 @@ function PushLinePresetText({
         <m.div
           className={textBlockClassName}
           data-season-copy='push-line'
-          initial={false}
+          initial='hidden'
           viewport={textViewport}
           whileInView='visible'
         >
@@ -361,10 +354,9 @@ function PushLinePresetText({
                 <m.span
                   className={cn(
                     textLineClassName,
-                    'will-change-transform motion-safe:[transform:translateY(100%)] motion-safe:opacity-0'
+                    'will-change-transform'
                   )}
                   custom={index}
-                  initial={false}
                   variants={pushLineMotion}
                 >
                   {line.text}

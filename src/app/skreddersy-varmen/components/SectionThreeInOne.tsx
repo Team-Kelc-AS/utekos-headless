@@ -140,12 +140,12 @@ export function SectionThreeInOne() {
         </div>
 
         <div className='hidden w-full xl:flex'>
-          <div className='dark:border-dark-foreground/10 sticky top-0 flex h-screen w-1/2 items-center justify-center overflow-hidden border-r border-foreground/10 bg-card'>
+          <div className='dark:border-dark-foreground/10 sticky top-0 flex h-screen w-1/2 items-center justify-center overflow-hidden border-r border-foreground/10 bg-jungle'>
             {Steps.map((step, index) => (
               <m.div
                 key={step.id}
                 className={cn(
-                  'absolute inset-0 flex size-full items-center justify-center p-6 min-[1536px]:p-10',
+                  'absolute inset-0 flex size-full items-center justify-center bg-jungle p-6 min-[1536px]:p-10',
                   activeStep === index ? 'z-10' : 'z-0'
                 )}
                 animate={

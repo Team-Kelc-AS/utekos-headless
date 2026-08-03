@@ -15,11 +15,11 @@
  */
 export const grillSectionSurfaces = {
   light: {
-    section: 'bg-secondary dark:bg-dark-secondary py-24 text-secondary-foreground dark:text-dark-secondary-foreground',
-    heading: 'text-secondary-foreground dark:text-dark-secondary-foreground',
-    lead: 'text-secondary-foreground dark:text-dark-secondary-foreground',
-    body: 'text-secondary-foreground dark:text-dark-secondary-foreground',
-    muted: 'text-secondary-foreground dark:text-dark-secondary-foreground'
+    section: 'bg-jungle py-24 text-foreground',
+    heading: 'text-foreground',
+    lead: 'text-foreground',
+    body: 'text-foreground',
+    muted: 'text-foreground'
   },
   dark: {
     section: 'bg-maritime-darkest py-24 text-foreground',

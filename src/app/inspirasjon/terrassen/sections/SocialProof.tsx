@@ -17,7 +17,7 @@ export function SocialProof() {
             className='mb-8 pb-0 text-left text-[clamp(3rem,6vw,5.75rem)] leading-[0.95] text-[var(--terrace-cream)]'
           />
 
-          <Card className='rounded-lg border border-[var(--terrace-line-dark)] bg-jungle text-[var(--terrace-cream)] shadow-[0_28px_80px_-54px_rgb(0_0_0/0.86)]'>
+          <Card className='rounded-lg border-none bg-jungle text-[var(--terrace-cream)] shadow-[0_28px_80px_-54px_rgb(0_0_0/0.86)] ring-0'>
             <CardContent className='p-8 sm:p-12'>
               <blockquote className='mb-8'>
                 <P className='text-center font-utekos-text-medium text-xl leading-relaxed text-[var(--terrace-cream)] not-first:mt-0 md:text-2xl'>

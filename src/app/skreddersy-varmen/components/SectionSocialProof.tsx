@@ -23,7 +23,7 @@ export function SectionSocialProof() {
     <SkreddersyMotionProvider>
       <article
         aria-labelledby='socialproof-heading'
-        className='dark:border-dark-background/20 relative w-full max-w-full overflow-hidden border-t border-background/20 bg-card py-20 text-foreground md:py-28'
+        className='dark:border-dark-background/20 relative w-full max-w-full overflow-hidden border-t border-background/20 bg-jungle py-20 text-foreground md:py-28'
       >
         <div
           aria-hidden

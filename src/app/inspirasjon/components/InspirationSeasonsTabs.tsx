@@ -96,7 +96,7 @@ export function InspirationSeasonsTabs({
     : 'group-data-[orientation=horizontal]/tabs:h-auto grid w-full grid-cols-2 gap-3 bg-transparent p-0 sm:grid-cols-4'
 
   const roundedTriggerLayoutClassName =
-    'inspiration-seasons-tab-trigger relative flex !h-auto min-h-20 w-full flex-col items-center justify-center overflow-hidden rounded-xl border px-3 py-3 transition-all duration-300'
+    'inspiration-seasons-tab-trigger relative flex !h-auto min-h-20 w-full flex-col items-center justify-center overflow-hidden rounded-xl border-none px-3 py-3 transition-all duration-300'
 
   const roundedTriggerClassName =
     'inspiration-seasons-tab-trigger relative flex !h-auto min-h-20 w-full flex-col items-center justify-center overflow-hidden rounded-xl border border-foreground/12 bg-background/58 px-3 py-3 transition-all duration-300 hover:border-foreground/28 hover:bg-background/72 data-active:border-foreground/24 data-active:bg-primary data-active:text-background dark:bg-dark-background/58 dark:hover:bg-dark-background/72 dark:data-active:bg-dark-primary dark:data-active:text-dark-background'

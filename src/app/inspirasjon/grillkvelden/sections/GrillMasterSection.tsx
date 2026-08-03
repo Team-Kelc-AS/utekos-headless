@@ -10,7 +10,7 @@ export function GrillMasterSection() {
     <article className={light.section}>
       <div className='container mx-auto px-4'>
         <div className='mx-auto max-w-3xl text-center'>
-          <h2 className={`mb-8 ${light.heading}`}>
+          <h2 className={`mb-8 font-sans text-4xl font-extrabold md:text-5xl ${light.heading}`}>
             <span className='inline-flex flex-wrap items-baseline justify-center gap-x-[0.22em] gap-y-2'>
               <span>Grillmestere elsker</span>
               <UtekosWordmark
@@ -20,7 +20,7 @@ export function GrillMasterSection() {
             </span>
           </h2>
 
-          <Card className='bg-demitasse border-foreground/18 shadow-[0_28px_80px_-54px_color-mix(in_oklch,var(--background)_82%,transparent)]'>
+          <Card className='border-foreground/18 bg-background shadow-[0_28px_80px_-54px_color-mix(in_oklch,var(--background)_82%,transparent)]'>
             <CardContent className='p-8 sm:p-12'>
               <blockquote className='leading-text-paragraph mb-6 text-xl tracking-[-0.02em] text-foreground'>
                 &quot;Jeg elsker å arrangere grillfester, men

@@ -14,8 +14,8 @@ export const useCasesData: UseCase[] = [
     description:
       'Hold gjestene komfortable mens de venter på den perfekte gløden.',
     color: 'bg-card ',
-    iconColor: 'text-accent dark:text-dark-accent',
-    iconBackground: 'bg-card-foreground -foreground'
+    iconColor: 'text-foreground',
+    iconBackground: 'bg-primary'
   },
   {
     icon: Users,
@@ -24,8 +24,8 @@ export const useCasesData: UseCase[] = [
     description:
       'La de gode samtalene fortsette når temperaturen faller.',
     color: 'bg-card ',
-    iconColor: 'text-accent dark:text-dark-accent',
-    iconBackground: 'bg-card-foreground -foreground'
+    iconColor: 'text-foreground',
+    iconBackground: 'bg-primary'
   },
   {
     icon: Moon,
@@ -34,8 +34,8 @@ export const useCasesData: UseCase[] = [
     description:
       'For de som blir igjen — komfort som varer til den siste samtalen.',
     color: 'bg-card ',
-    iconColor: 'text-accent dark:text-dark-accent',
-    iconBackground: 'bg-card-foreground -foreground'
+    iconColor: 'text-foreground',
+    iconBackground: 'bg-primary'
   }
 ]
 
@@ -45,22 +45,22 @@ export function UseCasesGrid({
   useCases: UseCase[]
 }) {
   return (
-    <SectionBox bgcolor='bg-secondary dark:bg-dark-secondary text-secondary-foreground dark:text-dark-secondary-foreground border-b border-border '>
+    <SectionBox bgcolor='bg-jungle text-foreground border-b border-border'>
       <article
         id='bruksomrader'
-        className='dark:text-dark-secondary-foreground text-secondary-foreground'
+        className='text-foreground'
       >
         <div className='container'>
           <div className='mb-6 max-w-4xl'>
             <H2
               ID='bruksomrader'
               Text='Utekos gjennom hele kvelden'
-              className='dark:text-dark-secondary-foreground text-secondary-foreground'
+              className='text-foreground'
             />
             <Lead
               Text='Fra første gjest ankommer til de siste drar — komfort
             som holder stemningen oppe.'
-              className='dark:text-dark-secondary-foreground text-secondary-foreground'
+              className='text-foreground'
             />
           </div>
 

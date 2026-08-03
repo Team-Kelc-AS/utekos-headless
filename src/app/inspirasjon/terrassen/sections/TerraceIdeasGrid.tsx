@@ -67,10 +67,10 @@ export function TerraceIdeasGrid({
                 key={idea.name}
                 delay={index * 0.07}
               >
-                <Card className='group h-full rounded-lg border border-[var(--terrace-line-dark)] bg-[var(--terrace-night)] text-[var(--terrace-cream)] shadow-[0_28px_78px_-60px_rgb(16_32_31/0.82)] transition-colors duration-300 hover:bg-[var(--terrace-night-soft)] motion-reduce:transition-none'>
+                <Card className='group h-full rounded-lg border-none bg-jungle text-[var(--terrace-cream)] shadow-[0_28px_78px_-60px_rgb(16_32_31/0.82)] ring-0 transition-colors duration-300 hover:brightness-110 motion-reduce:transition-none'>
                   <CardContent className='p-6'>
                     <div className='mb-3 flex items-center gap-3'>
-                      <div className='flex size-10 shrink-0 items-center justify-center rounded-lg border border-[var(--terrace-line-dark)] bg-[var(--terrace-copper)] text-[var(--terrace-night)]'>
+                      <div className='flex size-10 shrink-0 items-center justify-center rounded-lg border border-[var(--terrace-line-dark)] bg-dark-teal text-foreground'>
                         <Icon
                           className='size-5'
                           aria-hidden='true'

@@ -1,6 +1,6 @@
 export const grillCardThemes = [
   {
-    surface: 'bg-demitasse',
+    surface: 'bg-jungle',
     border: 'border-foreground/12 hover:border-foreground/24',
     text: 'text-foreground',
     mutedText: 'text-foreground',
@@ -9,7 +9,7 @@ export const grillCardThemes = [
     iconColor: 'text-foreground'
   },
   {
-    surface: 'bg-demitasse',
+    surface: 'bg-jungle',
     border: 'border-foreground/12 hover:border-foreground/24',
     text: 'text-foreground',
     mutedText: 'text-foreground',
@@ -18,7 +18,7 @@ export const grillCardThemes = [
     iconColor: 'text-foreground'
   },
   {
-    surface: 'bg-demitasse',
+    surface: 'bg-jungle',
     border: 'border-foreground/12 hover:border-foreground/24',
     text: 'text-foreground',
     mutedText: 'text-foreground',
@@ -27,7 +27,7 @@ export const grillCardThemes = [
     iconColor: 'text-foreground'
   },
   {
-    surface: 'bg-demitasse',
+    surface: 'bg-jungle',
     border: 'border-foreground/12 hover:border-foreground/24',
     text: 'text-foreground',
     mutedText: 'text-foreground',
