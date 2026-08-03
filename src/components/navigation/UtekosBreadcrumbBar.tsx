@@ -62,11 +62,12 @@ export function UtekosBreadcrumbBar({
                 </BreadcrumbPage>
               : <BreadcrumbLink
                   className={styles.link}
-                  render={
+                  render={(props) => (
                     <Link
                       href={item.href as Route}
+                      {...props}
                     />
-                  }
+                  )}
                 >
                   {item.label}
                 </BreadcrumbLink>
