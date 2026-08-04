@@ -177,6 +177,16 @@ browser identifiers into a deterministic `add_payment_info` event. Only the
 Google Data Manager outbox is active. Meta, Microsoft and PostHog remain
 disabled, and `purchase` ownership is unchanged.
 
+Production cutover completed on 2026-08-04 at `03:27:09Z`. Shopify readback
+proved that only the old `payment_info_submitted` subscription was removed;
+`checkout_completed` and `purchase` remain intact. Vercel deployment
+`dpl_Gpp5WET4fWKxt3A34zSAmHbKdjMp` is `READY`. Supabase migration
+`20260804033956_allow_shopify_checkout_observation_v2` is applied, and the
+validated observation constraint accepts only schema versions 1 and 2 while
+preserving forced RLS and the existing grants. There is not yet a natural
+post-cutover v2 observation, canonical event or provider attempt, so live
+Google delivery remains pending evidence rather than inferred success.
+
 ### Event creation
 
 - Browser reporters create UUID `event_id` values and ISO-offset

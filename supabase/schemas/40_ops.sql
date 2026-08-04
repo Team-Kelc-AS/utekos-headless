@@ -416,7 +416,7 @@ create table if not exists ops.shopify_checkout_observations (
     default 'utekos.shopify.checkout_observation'
     check (contract_name = 'utekos.shopify.checkout_observation'),
   schema_version smallint not null default 1
-    check (schema_version = 1),
+    check (schema_version in (1, 2)),
   source text not null default 'shopify_app_web_pixel'
     check (source = 'shopify_app_web_pixel'),
   verification_status text not null default 'observed'
@@ -516,7 +516,7 @@ comment on table ops.shopify_checkout_observations is
 comment on column ops.shopify_checkout_observations.idempotency_key is
   'Versioned source identity. A matching payload hash is an identical replay; a different hash is an idempotency conflict and must never overwrite the first observation.';
 comment on column ops.shopify_checkout_observations.payload_sha256 is
-  'SHA-256 of the strictly validated v1 observation used only for replay equality and conflict detection.';
+  'SHA-256 of the strictly validated versioned observation used only for replay equality and conflict detection.';
 comment on column ops.shopify_checkout_observations.checkout_token is
   'Pseudonymous Shopify checkout correlation token from the allowlisted contract; customer and payment data are forbidden.';
 comment on column ops.shopify_checkout_observations.verification_status is

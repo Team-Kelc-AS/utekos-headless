@@ -26,11 +26,12 @@ kundechatbot ligger i
 
 ### Nåværende produksjon — 2026-08-04
 
-Vercel-deployment `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL` er `READY`, eier
-`utekos.no` og kjører nyeste `main`, eksakt SHA
-`7a9f19ed3f94cc08ee3140ddb4c99afe4af3d564`. Dette er dagens
-produksjonsdeployment. Trackingreleasen under er et historisk
-aktiveringsbevis, ikke nåværende deployment-ID.
+Vercel-deployment `dpl_Gpp5WET4fWKxt3A34zSAmHbKdjMp` er `READY`, eier
+`utekos.no`, `www.utekos.no` og `feed.utekos.no`, og er aktiveringsbeviset for
+runtimekoden som ble merget i PR #118. Cutover-tidspunktet er
+`2026-08-04T03:27:09Z`. Supabase-migrasjon
+`20260804033956_allow_shopify_checkout_observation_v2` er anvendt og den
+validerte observasjonsconstrainten godtar nøyaktig kontraktversjon 1 og 2.
 
 Katalogfasiten er 33 canonical events: 30 aktive og tre
 `blocked_source` (`add_shipping_info`, `checkout_error`,
@@ -42,6 +43,8 @@ Meta og tre Microsoft UET CAPI.
 canonical `begin_checkout`, en eksplisitt cutover-tidsport og Google Data
 Manager som eneste provider. Dette er ikke betalings- eller Purchase-bevis.
 Meta, Microsoft og PostHog forblir deaktivert for hendelsen.
+Første naturlige v2-hendelse er ennå ikke observert, så providerfinalitet er
+fortsatt åpen og skal ikke erstattes med en syntetisk betaling.
 
 ### Historical tracking release 2026-07-26 — produksjonsverifisert
 
