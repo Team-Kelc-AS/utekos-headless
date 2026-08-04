@@ -2,7 +2,8 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { Validator } from '@cfworker/json-schema'
 import type { Schema } from '@cfworker/json-schema'
-import contractSchema from '../../../contracts/shopify/checkout-observation/v1/schema.json'
+import v1ContractSchema from '../../../contracts/shopify/checkout-observation/v1/schema.json'
+import v2ContractSchema from '../../../contracts/shopify/checkout-observation/v2/schema.json'
 import { shopifyCheckoutObservationSchema } from './shopifyCheckoutObservationContract'
 
 const privacy = {
@@ -30,10 +31,40 @@ const shippingObservation = {
   privacy
 } as const
 
+const canonicalPaymentObservation = {
+  ...shippingObservation,
+  schemaVersion: 2,
+  eventId: 'shopify-event-payment-1',
+  eventName: 'payment_info_submitted',
+  correlation: {
+    beginCheckoutEventId:
+      '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
+  }
+} as const
+
 test('accepts a minimized checkout progress observation', () => {
   assert.deepEqual(
     shopifyCheckoutObservationSchema.parse(shippingObservation),
     shippingObservation
+  )
+})
+
+test('accepts a v2 payment observation with only a PII-free canonical correlation', () => {
+  assert.deepEqual(
+    shopifyCheckoutObservationSchema.parse(
+      canonicalPaymentObservation
+    ),
+    canonicalPaymentObservation
+  )
+})
+
+test('rejects a v2 payment observation without a valid begin-checkout UUID', () => {
+  assert.equal(
+    shopifyCheckoutObservationSchema.safeParse({
+      ...canonicalPaymentObservation,
+      correlation: { beginCheckoutEventId: 'checkout-token' }
+    }).success,
+    false
   )
 })
 
@@ -121,7 +152,7 @@ test('requires a currency when a commerce value is present', () => {
 
 test('the normative JSON Schema enforces the same strict boundary', () => {
   const validator = new Validator(
-    contractSchema as Schema,
+    v1ContractSchema as Schema,
     '2020-12',
     false
   )
@@ -143,6 +174,36 @@ test('the normative JSON Schema enforces the same strict boundary', () => {
       commerce: {
         ...shippingObservation.commerce,
         currencyCode: null
+      }
+    }).valid,
+    false
+  )
+})
+
+test('the normative v2 JSON Schema rejects PII and unknown correlation fields', () => {
+  const validator = new Validator(
+    v2ContractSchema as Schema,
+    '2020-12',
+    false
+  )
+
+  assert.equal(
+    validator.validate(canonicalPaymentObservation).valid,
+    true
+  )
+  assert.equal(
+    validator.validate({
+      ...canonicalPaymentObservation,
+      email: 'never@example.test'
+    }).valid,
+    false
+  )
+  assert.equal(
+    validator.validate({
+      ...canonicalPaymentObservation,
+      correlation: {
+        ...canonicalPaymentObservation.correlation,
+        checkoutEmailHash: 'forbidden'
       }
     }).valid,
     false

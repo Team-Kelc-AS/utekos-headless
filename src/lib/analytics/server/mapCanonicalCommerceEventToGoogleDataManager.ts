@@ -28,7 +28,7 @@ const {
 } = protos.google.ads.datamanager.v1
 
 type GoogleCommerceEvent = CanonicalEventEnvelope & {
-  page_url: string
+  page_url?: string | undefined
   page_title?: string | undefined
   referrer_url?: string | undefined
   page_view_id?: string | undefined
@@ -97,7 +97,7 @@ function mapItem(item: CanonicalCommerceItem): DataManagerItem {
 
 export function mapCanonicalCommerceEventToGoogleDataManager(
   event: CanonicalEventEnvelope & {
-    page_url: string
+    page_url?: string | undefined
     page_title?: string | undefined
     referrer_url?: string | undefined
     page_view_id?: string | undefined
@@ -152,7 +152,9 @@ function mapGoogleCommerceEvent(
       ),
       googleDataManagerParameter(
         'page_location',
-        limitGooglePageLocation(event.page_url),
+        event.page_url ?
+          limitGooglePageLocation(event.page_url)
+        : undefined,
         MAX_PAGE_LOCATION_LENGTH
       ),
       googleDataManagerParameter(

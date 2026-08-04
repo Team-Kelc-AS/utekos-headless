@@ -11,7 +11,8 @@ const CHECKOUT_ATTRIBUTION_SESSION_PREFIX =
 
 export async function persistCheckoutAttributionSnapshot(
   cartId: string,
-  snapshot: CheckoutAttributionSnapshot
+  snapshot: CheckoutAttributionSnapshot,
+  beginCheckoutEventId: string
 ) {
   try {
     window.sessionStorage.setItem(
@@ -24,6 +25,9 @@ export async function persistCheckoutAttributionSnapshot(
 
   await updateCartAttributesAction(
     cartId,
-    checkoutAttributionSnapshotToShopifyAttributes(snapshot)
+    checkoutAttributionSnapshotToShopifyAttributes(
+      snapshot,
+      beginCheckoutEventId
+    )
   )
 }

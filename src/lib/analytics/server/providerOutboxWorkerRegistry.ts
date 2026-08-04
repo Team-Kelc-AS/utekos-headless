@@ -1,6 +1,7 @@
 import { createPostgresProviderOutboxWorker } from './createPostgresProviderOutboxWorker'
 import type { RegisteredProviderAdapterKey } from './providerAdapterRegistry'
 import { googleDataManagerAddToCartProviderAdapter } from './providerAdapters/googleDataManagerAddToCartProviderAdapter'
+import { googleDataManagerAddPaymentInfoProviderAdapter } from './providerAdapters/googleDataManagerAddPaymentInfoProviderAdapter'
 import { googleDataManagerAddToWishlistProviderAdapter } from './providerAdapters/googleDataManagerAddToWishlistProviderAdapter'
 import { googleDataManagerBeginCheckoutProviderAdapter } from './providerAdapters/googleDataManagerBeginCheckoutProviderAdapter'
 import { googleDataManagerFilterApplyProviderAdapter } from './providerAdapters/googleDataManagerFilterApplyProviderAdapter'
@@ -51,6 +52,9 @@ import { microsoftUetPurchaseProviderAdapter } from './providerAdapters/microsof
 import type { ProviderOutboxBatchSummary } from './runProviderOutboxWorker'
 
 export const providerOutboxWorkerRegistry = {
+  'google:add_payment_info': createPostgresProviderOutboxWorker(
+    googleDataManagerAddPaymentInfoProviderAdapter
+  ),
   'google:add_to_cart': createPostgresProviderOutboxWorker(
     googleDataManagerAddToCartProviderAdapter
   ),

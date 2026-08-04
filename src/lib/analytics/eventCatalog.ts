@@ -959,6 +959,40 @@ const beginCheckoutProviders = {
   Record<ProviderId, ProviderCatalogEntry>
 >
 
+const addPaymentInfoProviderBase = activeEventProviders(
+  'add_payment_info',
+  {
+    commerce: true,
+    firstPartyRequired: [
+      'checkout_id',
+      'payment_revision',
+      'begin_checkout_event_id',
+      'currency',
+      'value',
+      'items'
+    ],
+    posthog: false
+  }
+)
+const addPaymentInfoGoogleTransport = {
+  browser: null,
+  server: 'google_data_manager'
+} as const
+const addPaymentInfoProviders = {
+  ...addPaymentInfoProviderBase,
+  google: {
+    ...addPaymentInfoProviderBase.google,
+    transport: addPaymentInfoGoogleTransport,
+    productionDetail:
+      'Google Data Manager is the sole active provider owner after the event-specific Shopify Custom Pixel cutover.',
+    signalDelivery: resolveProviderSignalDelivery(
+      addPaymentInfoGoogleTransport
+    )
+  }
+} as const satisfies Readonly<
+  Record<ProviderId, ProviderCatalogEntry>
+>
+
 const purchaseProviders = {
   supabase: providerMapping({
     support: 'supported',
@@ -1485,45 +1519,31 @@ const eventCatalogBase = {
   add_payment_info: {
     version: 1,
     name: 'add_payment_info',
-    lifecycle: 'blocked_source',
-    owner: 'shopify_checkout_event_source',
+    lifecycle: 'active',
+    owner: 'shopify_app_web_pixel',
     trigger: {
       description:
-        'Create only after an authoritative Shopify checkout event confirms an accepted payment revision; payment_info_submitted proves submission only.',
-      sources: ['browser', 'server'],
-      repeatability: 'Each accepted payment revision is new.',
+        'Create when Shopify emits payment_info_submitted and the PII-free begin_checkout correlation resolves to a consented canonical source. payment_info_submitted proves submission only, not payment success.',
+      sources: ['browser'],
+      repeatability: 'Each Shopify payment-information submission is new.',
       eventTime:
-        'The authoritative accepted-payment-step timestamp.',
+        'The Shopify payment_info_submitted timestamp.',
       prerequisites: [
-        'approved source that proves an accepted payment revision',
+        'Shopify payment_info_submitted source event',
         'checkout_id',
-        'stable payment revision distinct from Shopify event seq',
-        'payment type',
+        'begin_checkout_event_id correlation',
+        'stable Shopify source event id used as payment revision',
+        'analytics consent',
         'items'
       ]
     },
     dedupe: dedupe(
-      'checkout_id + payment_revision',
-      'A later accepted payment revision receives a new event_id.',
+      'Shopify payment_info_submitted event_id',
+      'A later Shopify submission receives a new event_id; replay of the same source event reuses it.',
       retain90Days
     ),
     consent: mutationConsent,
-    providers: plannedProviders('add_payment_info', {
-      googleRequired: [
-        'currency',
-        'value',
-        'payment_type',
-        'items'
-      ],
-      meta: {
-        eventName: 'AddPaymentInfo',
-        requiredParameters: ['content_ids', 'currency', 'value']
-      },
-      microsoft: {
-        eventName: 'add_payment_info',
-        requiredParameters: ['payment_type']
-      }
-    })
+    providers: addPaymentInfoProviders
   },
   purchase: {
     version: 1,

@@ -82,7 +82,10 @@ class TestStore implements ShopifyCheckoutObservationStore {
 
 function post(
   body: string,
-  store: ShopifyCheckoutObservationStore
+  store: ShopifyCheckoutObservationStore,
+  promote?: Parameters<
+    typeof handleShopifyCheckoutObservation
+  >[1]['promote']
 ) {
   return handleShopifyCheckoutObservation(
     new Request(
@@ -93,7 +96,7 @@ function post(
         body
       }
     ),
-    { enabled: true, store }
+    { enabled: true, store, ...(promote ? { promote } : {}) }
   )
 }
 
@@ -128,6 +131,57 @@ test('accepts all four checkout observation categories', async () => {
       'PAYMENT_ERROR'
     ]
   )
+})
+
+test('exposes the canonical promotion result after observed persistence', async () => {
+  const store = new TestStore()
+  const response = await post(
+    JSON.stringify({
+      ...observations[1],
+      schemaVersion: 2,
+      correlation: {
+        beginCheckoutEventId:
+          '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
+      }
+    }),
+    store,
+    async () => ({
+      eventId: '4487f69d-7b0b-4a62-a349-748c2fe20e16',
+      status: 'inserted'
+    })
+  )
+
+  assert.equal(response.status, 204)
+  assert.equal(
+    response.headers.get('X-Shopify-Checkout-Canonical-Result'),
+    'inserted'
+  )
+  assert.equal(store.persisted.length, 1)
+})
+
+test('keeps the observation and returns a sanitized retryable error when promotion is unavailable', async () => {
+  const store = new TestStore()
+  const response = await post(
+    JSON.stringify({
+      ...observations[1],
+      schemaVersion: 2,
+      correlation: {
+        beginCheckoutEventId:
+          '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
+      }
+    }),
+    store,
+    async () => {
+      throw new Error('database connection string must not leak')
+    }
+  )
+
+  assert.equal(response.status, 503)
+  assert.deepEqual(await response.json(), {
+    accepted: false,
+    reason: 'canonical_promotion_unavailable'
+  })
+  assert.equal(store.persisted.length, 1)
 })
 
 test('rejects PII before storage', async () => {

@@ -1,4 +1,5 @@
 import { googleDataManagerAddToCartProviderAdapter } from './providerAdapters/googleDataManagerAddToCartProviderAdapter'
+import { googleDataManagerAddPaymentInfoProviderAdapter } from './providerAdapters/googleDataManagerAddPaymentInfoProviderAdapter'
 import { googleDataManagerAddToWishlistProviderAdapter } from './providerAdapters/googleDataManagerAddToWishlistProviderAdapter'
 import { googleDataManagerBeginCheckoutProviderAdapter } from './providerAdapters/googleDataManagerBeginCheckoutProviderAdapter'
 import { googleDataManagerFilterApplyProviderAdapter } from './providerAdapters/googleDataManagerFilterApplyProviderAdapter'
@@ -49,6 +50,8 @@ import { microsoftUetPurchaseProviderAdapter } from './providerAdapters/microsof
 import type { ProviderAdapterKey } from './providerAdapter'
 
 export const providerAdapterRegistry = {
+  'google:add_payment_info':
+    googleDataManagerAddPaymentInfoProviderAdapter,
   'google:add_to_cart': googleDataManagerAddToCartProviderAdapter,
   'google:add_to_wishlist': googleDataManagerAddToWishlistProviderAdapter,
   'google:begin_checkout':

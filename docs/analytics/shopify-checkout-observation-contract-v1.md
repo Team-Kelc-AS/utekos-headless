@@ -163,6 +163,10 @@ Mottakeren oppretter ikke canonical ledger-rader eller
 provider-outbox-rader. Den inneholder ingen GA4-, Meta- eller
 Microsoft-levering.
 
+Dette gjelder alltid v1. Den avgrensede v2-kontrakten for
+`payment_info_submitted` kan promoteres etter en separat fail-closed cutover;
+se [Shopify checkout-observasjon v2](shopify-checkout-observation-contract-v2.md).
+
 Read-only produksjonsinventering i Shopify Admin 2026-08-03 viste at
 den eksisterende Custom Pixel-en `Utekos GA4 Commerce` fortsatt er
 tilkoblet og eier GA4 `add_payment_info` fra

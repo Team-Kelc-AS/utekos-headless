@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:utekos:shopify:checkout-observation:v2",
+  "title": "Utekos Shopify checkout observation v2",
+  "description": "PII-free payment-information submission observation with a canonical begin-checkout correlation. Acceptance remains observed until the receiver promotes the event after its cutover gate.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "utekos.shopify.checkout_observation"
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "source": {
+      "const": "shopify_app_web_pixel"
+    },
+    "verificationStatus": {
+      "const": "observed"
+    },
+    "eventId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "eventName": {
+      "const": "payment_info_submitted"
+    },
+    "eventSequence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "checkoutToken": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "correlation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "beginCheckoutEventId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "beginCheckoutEventId"
+      ]
+    },
+    "commerce": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "currencyCode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "itemQuantity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      },
+      "required": [
+        "currencyCode",
+        "value",
+        "itemQuantity"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "value"
+            ]
+          },
+          "then": {
+            "properties": {
+              "currencyCode": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "analyticsProcessingAllowed": {
+          "type": "boolean"
+        },
+        "marketingAllowed": {
+          "type": "boolean"
+        },
+        "preferencesProcessingAllowed": {
+          "type": "boolean"
+        },
+        "saleOfDataAllowed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "analyticsProcessingAllowed",
+        "marketingAllowed",
+        "preferencesProcessingAllowed",
+        "saleOfDataAllowed"
+      ]
+    }
+  },
+  "required": [
+    "contract",
+    "schemaVersion",
+    "source",
+    "verificationStatus",
+    "eventId",
+    "eventName",
+    "eventSequence",
+    "occurredAt",
+    "checkoutToken",
+    "correlation",
+    "commerce",
+    "privacy"
+  ]
+}

@@ -88,6 +88,55 @@ test('persists only the consent decision after a full denial', () => {
   )
 })
 
+test('adds a PII-free begin-checkout correlation only with analytics consent', () => {
+  const eventId = '550e8400-e29b-41d4-a716-446655440000'
+  const granted = createCheckoutAttributionSnapshot(
+    {
+      consent: {
+        analytics: 'granted',
+        marketing: 'denied',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1'
+      }
+    },
+    capturedAt
+  )
+  const denied = createCheckoutAttributionSnapshot(
+    {
+      consent: {
+        analytics: 'denied',
+        marketing: 'denied',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1'
+      }
+    },
+    capturedAt
+  )
+
+  assert.equal(
+    checkoutAttributionSnapshotToShopifyAttributes(
+      granted,
+      eventId
+    ).find(
+      attribute =>
+        attribute.key === 'utekos_begin_checkout_event_id'
+    )?.value,
+    eventId
+  )
+  assert.equal(
+    checkoutAttributionSnapshotToShopifyAttributes(
+      denied,
+      eventId
+    ).some(
+      attribute =>
+        attribute.key === 'utekos_begin_checkout_event_id'
+    ),
+    false
+  )
+})
+
 test('drops malformed or non-consented external order attributes', () => {
   const parsed = parseOrderAttributionFromNoteAttributes([
     {

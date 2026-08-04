@@ -24,7 +24,7 @@ kundechatbot ligger i
 
 ## Kort fasit
 
-### Nåværende produksjon — 2026-07-31
+### Nåværende produksjon — 2026-08-04
 
 Vercel-deployment `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL` er `READY`, eier
 `utekos.no` og kjører nyeste `main`, eksakt SHA
@@ -32,10 +32,16 @@ Vercel-deployment `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL` er `READY`, eier
 produksjonsdeployment. Trackingreleasen under er et historisk
 aktiveringsbevis, ikke nåværende deployment-ID.
 
-Katalogfasiten er 33 canonical events: 29 aktive og fire
-`blocked_source` (`add_shipping_info`, `add_payment_info`, `checkout_error`,
-`payment_error`). Registeret har 48 aktive provider/event-par: 28 Google, 17
+Katalogfasiten er 33 canonical events: 30 aktive og tre
+`blocked_source` (`add_shipping_info`, `checkout_error`,
+`payment_error`). Registeret har 49 aktive provider/event-par: 29 Google, 17
 Meta og tre Microsoft UET CAPI.
+
+`add_payment_info` bruker Shopify App Web Pixel
+`payment_info_submitted` med innsending-semantikk, PII-fri korrelasjon til
+canonical `begin_checkout`, en eksplisitt cutover-tidsport og Google Data
+Manager som eneste provider. Dette er ikke betalings- eller Purchase-bevis.
+Meta, Microsoft og PostHog forblir deaktivert for hendelsen.
 
 ### Historical tracking release 2026-07-26 — produksjonsverifisert
 
@@ -205,8 +211,8 @@ ikke-blokkerte katalogevents:
   (`newsletter_signup`): rad i `marketing.leads`, deretter ledger +
   Meta/Google-outbox (samtykkegatet). Microsoft UET for lead går via
   browser `dataLayer` (server-outbox fortsatt `blocked_no_worker`).
-- Fire events forblir `blocked_source`:
-  `add_shipping_info`, `add_payment_info`, `checkout_error`,
+- Tre events forblir `blocked_source`:
+  `add_shipping_info`, `checkout_error`,
   `payment_error`.
 
 Produksjonsdeployert 2026-07-18 er Meta-attribusjonen utvidet med den

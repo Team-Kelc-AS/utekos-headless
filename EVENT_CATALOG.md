@@ -1,6 +1,6 @@
 # EVENT_CATALOG v1
 
-Statusdato: 2026-07-31
+Statusdato: 2026-08-04
 
 Dette er Utekos sin autoritative beslutnings- og revisjonsflate for
 canonical events. Den maskinlesbare allowlisten ligger i
@@ -11,9 +11,9 @@ utenfor denne katalogen.
 En oppføring med `planned` eller `blocked_source` er en beslutning, ikke en
 påstand om at detector, schema, routing eller levering finnes i produksjon.
 
-Gjeldende v1-inventar er **33 canonical events: 29 `active` og fire
-`blocked_source`**. De fire blokkerte er `add_shipping_info`,
-`add_payment_info`, `checkout_error` og `payment_error`.
+Gjeldende v1-inventar er **33 canonical events: 30 `active` og tre
+`blocked_source`**. De tre blokkerte er `add_shipping_info`,
+`checkout_error` og `payment_error`.
 
 ## Ufravikelige runtime-regler
 
@@ -30,7 +30,7 @@ Gjeldende v1-inventar er **33 canonical events: 29 `active` og fire
 6. Aktive server-outbox-kombinasjoner styres av
    `serverOutbox: active` i katalogen og må matche
    `providerAdapterRegistry` + `providerOutboxWorkerRegistry`. Gjeldende
-   register har 48 aktive provider/event-par: 28 Google, 17 Meta og tre
+   register har 49 aktive provider/event-par: 29 Google, 17 Meta og tre
    Microsoft UET CAPI (`add_to_cart`, `begin_checkout`, `purchase`).
 7. Events utenfor katalogen kan ikke skrives til canonical ledger eller
    eksporteres av canonical router.
@@ -98,7 +98,7 @@ samtykkepolicyen tillater det.
 | `view_cart`           | active         | Cart-side eller drawer når løst cart-innhold faktisk er synlig                     | `page_view_id + cart_id + view_sequence`; ny synlig sekvens                                | C2       | R30       |
 | `begin_checkout`      | active         | Shopify checkout-service etter gyldig checkout-token eller URL                     | `checkout_id + creation_revision`; ny checkout                                             | C3       | R90       |
 | `add_shipping_info`   | blocked_source | Shopify checkout-event etter bekreftet lagret fraktvalg                            | `checkout_id + shipping_revision`; ny lagret revisjon                                      | C3       | R90       |
-| `add_payment_info`    | blocked_source | Shopify checkout-event etter bekreftet betalingssteg                               | `checkout_id + payment_revision`; ny akseptert revisjon                                    | C3       | R90       |
+| `add_payment_info`    | active         | Shopify App Web Pixel ved `payment_info_submitted`, korrelert til consented canonical `begin_checkout`; betyr innsending, ikke betalingssuksess | deterministisk UUID fra Shopify source-event-ID; ny Shopify-innsending | C3 | R90 |
 | `purchase`            | active         | Verifisert Shopify order-paid webhook etter relevant financial state               | `order_id + financial_state`; ny relevant state-overgang                                   | C4       | R7Y       |
 | `refund`              | active         | Verifisert Shopify refund webhook etter opprettet refund                           | `refund_id`; ny Shopify-refund                                                             | C4       | R7Y       |
 | `search`              | active         | Search-controller etter eksplisitt søk og løst resultat                            | `search_id`; nytt eksplisitt søk                                                           | C2       | R30       |
@@ -121,13 +121,16 @@ samtykkepolicyen tillater det.
 | `open_quick_view`     | active         | Quick-view når dialogen er åpen og produkt og valgt variant er løst                | `page_view_id + source_surface + product_id + variant_id + open_sequence`; ny vellykket åpning | C2    | R30       |
 | `video_progress`      | active         | Video-controller ved første passering av 10/25/50/75/90/100 %                      | `page_view_id + video_id + milestone`; ny side, video eller milepæl                        | C2       | R30       |
 
-`add_shipping_info` og `add_payment_info` forblir `blocked_source`.
+`add_shipping_info` forblir `blocked_source`.
 `checkout_shipping_info_submitted` dokumenterer at kunden velger en fraktrate,
 men ikke en stabil lagret fraktrevisjon.
-`payment_info_submitted` dokumenterer innsending, men ikke et akseptert
-betalingssteg. Ingen av kandidatene oppfyller derfor canonical postcondition
-eller dedupekontrakten. Se
-[KRI-24-kildebeslutningen](docs/analytics/evidence/kri-24-shopify-checkout-step-source-decision-2026-07-31.md).
+`payment_info_submitted` er nå den eksplisitt godkjente kilden for
+`add_payment_info` med samme innsending-semantikk som Shopify og Google.
+Den beviser ikke validering, autorisasjon, betaling eller Purchase. V2-payloaden
+kan bare promoteres når en PII-fri UUID korrelerer til en eksisterende,
+analytics-consented canonical `begin_checkout`. Kun Google Data Manager er
+aktiv provider; Meta, Microsoft og PostHog er ikke relevante for denne
+cutoveren. Se [v2-kontrakten](docs/analytics/shopify-checkout-observation-contract-v2.md).
 `checkout_error` og `payment_error` forblir `blocked_source` til den
 autoritative feilflaten er valgt og verifisert.
 
@@ -140,7 +143,7 @@ provider-dedupefelt, bortsett fra Google `view_item`, som bruker canonical
 `transaction_id`. Eventspesifikke krav er eksplisitt angitt i
 `eventCatalog.ts`.
 
-### Aktiv produksjonssannhet 2026-07-31
+### Aktiv produksjonssannhet 2026-08-04
 
 | Event/provider | Support | Providernavn | Transport | Produksjon | Server-outbox |
 | --- | --- | --- | --- | --- | --- |
@@ -154,6 +157,11 @@ provider-dedupefelt, bortsett fra Google `view_item`, som bruker canonical
 | `view_item` / Meta | supported | `ViewContent` | CAPI | active | **active** |
 | `view_item` / Microsoft | supported | `view_item` | browser UET + UET CAPI | browser active, server blocked | `blocked_no_worker` |
 | `view_item` / PostHog | planned | `view_item` | browser/server | not implemented | disabled |
+| `add_payment_info` / Supabase | supported | `add_payment_info` | correlated Shopify observation → first-party API | cutover-gated | disabled |
+| `add_payment_info` / Google | supported | `add_payment_info` | Google Data Manager | cutover-gated | **active** |
+| `add_payment_info` / Meta | not relevant | - | - | disabled | disabled |
+| `add_payment_info` / Microsoft | not relevant | - | - | disabled | disabled |
+| `add_payment_info` / PostHog | not relevant | - | - | disabled | disabled |
 
 Det finnes historiske pending `page_view`-rader fra før gjeldende
 claimant-cutover. Historiske Meta-rader må fortsatt ikke replayes blindt, selv
