@@ -56,7 +56,7 @@ export function ComfyrobeFinalCta({
         </m.p>
         <m.h2
           id='final-cta-heading'
-          className='font-google-sans mx-auto mt-3 max-w-[12ch] font-sans text-4xl leading-[0.94] font-bold tracking-[-0.025em] md:text-6xl'
+          className='font-google-sans mx-auto mt-3 max-w-[12ch] font-sans text-4xl leading-[0.94] font-bold tracking-tight md:text-6xl'
           variants={comfyrobeRevealItem}
         >
           Klar for neste ruskeværsdag?

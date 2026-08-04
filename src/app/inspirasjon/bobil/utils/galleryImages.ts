@@ -1,6 +1,7 @@
+import coffeUtekos from '@/assets/images/inspiration/coffe_utekos.webp'
 export const galleryImages = [
   {
-    src: '/coffe_utekos.webp',
+    src: coffeUtekos,
     alt: 'Person i Utekos-plagg nyter morgenkaffen utenfor bobilen med utsikt over en fjord.',
     title: 'Morgenkaffe med utsikt',
     description: 'Start dagen i ditt eget tempo, omgitt av natur og komfort.'

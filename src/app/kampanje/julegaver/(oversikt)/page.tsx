@@ -14,6 +14,11 @@ import {
 import { SantaHat } from '@/components/ui/santahat'
 import { connection } from 'next/server'
 import { KampanjeJulegaverBreadcrumbs } from '../components/KampanjeJulegaverBreadcrumbs'
+import comfyFrontUBakgrunn1080 from '@/assets/images/comfyrobe/comfy-front-u-bakgrunn-1080.png'
+import dunFrontHvitBakgrunn1080 from '@/assets/images/magazine/dun-front-hvit-bakgrunn-1080.png'
+import mikroFront1080 from '@/assets/images/mikrofiber/mikro-front-1080.png'
+import techdown1080 from '@/assets/images/techdown/techdown-1080.png'
+
 
 export const metadata: Metadata = {
   title: 'Julegavetips',
@@ -163,7 +168,7 @@ export default async function ChristmasCampaign() {
             {/* ENDRING: Bruker 'aspect-square' som er tryggere for 1:1 enn aspect-square */}
             <div className='relative aspect-square w-full overflow-hidden bg-neutral-900'>
               <Image
-                src='/magasinet/techdown-1080.png'
+                src={techdown1080}
                 alt='Utekos TechDown - Vår varmeste dunponcho'
                 fill
                 className='object-cover transition-transform duration-700 group-hover:scale-105'
@@ -204,7 +209,7 @@ export default async function ChristmasCampaign() {
 
             <div className='relative aspect-square w-full overflow-hidden bg-neutral-900'>
               <Image
-                src='/magasinet/dun-front-hvit-bakgrunn-1080.png'
+                src={dunFrontHvitBakgrunn1080}
                 alt='Utekos Mikrofiber - Den originale skifteroben'
                 fill
                 className='object-cover transition-transform duration-700 group-hover:scale-105'
@@ -244,7 +249,7 @@ export default async function ChristmasCampaign() {
 
             <div className='relative aspect-square w-full overflow-hidden bg-neutral-900'>
               <Image
-                src='/magasinet/mikro-front-1080.png'
+                src={mikroFront1080}
                 alt='Utekos Dun - Premium kvalitet'
                 fill
                 className='object-contain p-4 transition-transform duration-700 group-hover:scale-105'
@@ -283,7 +288,7 @@ export default async function ChristmasCampaign() {
 
             <div className='relative aspect-square w-full overflow-hidden bg-neutral-900'>
               <Image
-                src='/magasinet/comfy-front-u-bakgrunn-1080.png'
+                src={comfyFrontUBakgrunn1080}
                 alt='Utekos Comfyrobe'
                 fill
                 className='object-cover transition-transform duration-700 group-hover:scale-105'

@@ -2,7 +2,7 @@
 
 'use client'
 
-import ComfyRainy from '@public/comfy_rainy.webp'
+import ComfyRainy from '@/assets/images/comfyrobe/comfy_rainy.webp'
 import Image from 'next/image'
 import { useState } from 'react'
 import Fade from 'embla-carousel-fade'

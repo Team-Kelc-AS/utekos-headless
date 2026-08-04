@@ -1,3 +1,4 @@
+import type { StaticImageData } from 'next/image'
 import { z } from 'zod'
 
 export const magazineCategorySchema = z.enum([
@@ -16,9 +17,17 @@ export const magazineThemeSchema = z
   })
   .strict()
 
+const staticImageDataSchema = z.custom<StaticImageData>(
+  (value) =>
+    typeof value === 'object' &&
+    value !== null &&
+    'src' in value &&
+    typeof (value as StaticImageData).src === 'string'
+)
+
 export const magazineImageSchema = z
   .object({
-    src: z.string().min(1),
+    src: z.union([z.string().min(1), staticImageDataSchema]),
     alt: z.string().min(1),
     width: z.number().int().positive(),
     height: z.number().int().positive(),

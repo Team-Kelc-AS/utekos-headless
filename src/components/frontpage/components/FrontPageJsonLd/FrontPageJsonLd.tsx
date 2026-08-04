@@ -15,6 +15,7 @@ import { getFeaturedProducts } from '@/api/lib/products/getFeaturedProducts'
 import { mainMenu } from '@/db/config/menu.config'
 import { VIDEO_EMBED_URL, VIDEO_THUMBNAIL_URL, VIDEO_URL } from '@/constants'
 import { SITE_URL } from '@/constants'
+import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 
 const ORGANIZATION_ID = `${SITE_URL}/#organization`
 const WEBSITE_ID = `${SITE_URL}/#website`
@@ -65,7 +66,9 @@ const buildFeaturedProductListItem = (product: FeaturedProduct, index: number): 
       '@type': 'Brand',
       'name': sanitizeText(product.vendor) || 'Utekos'
     },
-    ...(product.featuredImage?.url ? { image: product.featuredImage.url } : {}),
+    ...(product.featuredImage?.url ?
+      { image: resolveImageSrc(product.featuredImage.url) }
+    : {}),
     ...(product.productType ? { category: product.productType } : {}),
     'offers': offer
   }

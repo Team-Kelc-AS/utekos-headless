@@ -1,4 +1,18 @@
 import type { MagazineArticleInput } from '../types'
+import erlingMesse from '@/assets/images/about/erling-messe.webp'
+import kateErlingGressVann from '@/assets/images/about/kate-erling-gress-vann.webp'
+import balpanneSteinheller from '@/assets/images/magazine/balpanne-steinheller.png'
+import bat2 from '@/assets/images/magazine/bat.png'
+import denUltimateHyggen from '@/assets/images/magazine/den-ultimate-hyggen.webp'
+import lagdeltLys from '@/assets/images/magazine/lagdelt-lys.png'
+import medUtekos from '@/assets/images/magazine/med-utekos.png'
+import prikkenOverIen from '@/assets/images/magazine/prikken-over-ien.png'
+import takrenne2 from '@/assets/images/magazine/takrenne.png'
+import utekosSaueskinn from '@/assets/images/magazine/utekos-saueskinn.png'
+import vintercamp2 from '@/assets/images/magazine/vintercamp.png'
+import techdown1600x1000 from '@/assets/images/techdown/TechDown-1600x1000.webp'
+import techdown1080 from '@/assets/images/techdown/techdown-1080.png'
+
 
 export const rawMagazineArticles = [
   {
@@ -11,7 +25,7 @@ export const rawMagazineArticles = [
     readingTimeMinutes: 7,
     author: { name: 'Utekos' },
     heroImage: {
-      src: '/med-utekos.png',
+      src: medUtekos,
       alt: 'Utekos i en beredskapssituasjon med varme og trygghet i fokus',
       width: 1600,
       height: 1000,
@@ -62,7 +76,7 @@ export const rawMagazineArticles = [
       },
       {
         type: 'image',
-        src: '/magasinet/den-ultimate-hyggen.webp',
+        src: denUltimateHyggen,
         alt: 'Lykt, pledd og Utekos som del av en rolig beredskapssone',
         width: 1536,
         height: 1024,
@@ -123,7 +137,7 @@ export const rawMagazineArticles = [
     readingTimeMinutes: 8,
     author: { name: 'Utekos' },
     heroImage: {
-      src: '/TechDown-1600x1000.webp',
+      src: techdown1600x1000,
       alt: 'Utekos TechDown brukt ute i mykt nordisk lys',
       width: 1600,
       height: 1000,
@@ -193,7 +207,7 @@ export const rawMagazineArticles = [
       },
       {
         type: 'image',
-        src: '/magasinet/techdown-1080.png',
+        src: techdown1080,
         alt: 'Utekos TechDown produktet på rolig bakgrunn',
         width: 1080,
         height: 1080,
@@ -226,7 +240,7 @@ export const rawMagazineArticles = [
     readingTimeMinutes: 9,
     author: { name: 'Utekos' },
     heroImage: {
-      src: '/magasinet/bat.png',
+      src: bat2,
       alt: 'Utekos brukt ved vannet i et rolig norsk landskap',
       width: 1536,
       height: 1024,
@@ -283,7 +297,7 @@ export const rawMagazineArticles = [
       },
       {
         type: 'image',
-        src: '/erling-messe.webp',
+        src: erlingMesse,
         alt: 'Gründerhistorie og Utekos-produkt vist på messe',
         width: 1080,
         height: 1080,
@@ -334,7 +348,7 @@ export const rawMagazineArticles = [
     readingTimeMinutes: 6,
     author: { name: 'Utekos' },
     heroImage: {
-      src: '/magasinet/prikken-over-ien.png',
+      src: prikkenOverIen,
       alt: 'En varm og sosial høstkveld rundt bålpannen',
       width: 1536,
       height: 1024,
@@ -379,7 +393,7 @@ export const rawMagazineArticles = [
       },
       {
         type: 'image',
-        src: '/magasinet/balpanne-steinheller.png',
+        src: balpanneSteinheller,
         alt: 'Bålpanne plassert trygt på steinheller',
         width: 1536,
         height: 1024,
@@ -474,7 +488,7 @@ export const rawMagazineArticles = [
       },
       {
         type: 'image',
-        src: '/magasinet/takrenne.png',
+        src: takrenne2,
         alt: 'Takrenne klargjort før vinteren',
         width: 1520,
         height: 1080,
@@ -634,7 +648,7 @@ export const rawMagazineArticles = [
       },
       {
         type: 'image',
-        src: '/magasinet/lagdelt-lys.png',
+        src: lagdeltLys,
         alt: 'Lagdelt lys i et varmt hyttemiljø',
         width: 1536,
         height: 1024,
@@ -671,7 +685,7 @@ export const rawMagazineArticles = [
     readingTimeMinutes: 9,
     author: { name: 'Utekos' },
     heroImage: {
-      src: '/magasinet/vintercamp.png',
+      src: vintercamp2,
       alt: 'Bobil i vinterlandskap med varmt lys fra innsiden',
       width: 1536,
       height: 1024,
@@ -712,7 +726,7 @@ export const rawMagazineArticles = [
       },
       {
         type: 'image',
-        src: '/magasinet/utekos-saueskinn.png',
+        src: utekosSaueskinn,
         alt: 'Utekos og saueskinn som del av en varm vintercamping-pakke',
         width: 1536,
         height: 1024,
@@ -827,7 +841,7 @@ export const rawMagazineArticles = [
     readingTimeMinutes: 5,
     author: { name: 'Utekos' },
     heroImage: {
-      src: '/kate-erling-gress-vann.webp',
+      src: kateErlingGressVann,
       alt: 'Vårpuss av båt ved vannkanten',
       width: 1200,
       height: 630,

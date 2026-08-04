@@ -1,6 +1,6 @@
-import TechDownImageFront from '@public/to-kvinner-nyter-terrasselivet-med-utekos-techdown.webp'
-import TechDownImagePatch from '@public/1080/utekos-techdown-bakfra.png'
-import TechDownZipperPullCord from '@public/utekos-techdown-logo-orange-zipper-pull-cord.webp'
+import TechDownImageFront from '@/assets/images/techdown/to-kvinner-nyter-terrasselivet-med-utekos-techdown.webp'
+import TechDownImagePatch from '@/assets/images/techdown/utekos-techdown-bakfra.png'
+import TechDownZipperPullCord from '@/assets/images/techdown/utekos-techdown-logo-orange-zipper-pull-cord.webp'
 
 export const TechDownImages = [
   {

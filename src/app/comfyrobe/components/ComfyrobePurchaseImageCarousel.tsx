@@ -62,11 +62,11 @@ export function ComfyrobePurchaseImageCarousel() {
                     <picture className='absolute inset-0 block'>
                       <source
                         media={DESKTOP_MEDIA}
-                        srcSet={slide.desktopSrc}
+                        srcSet={slide.desktopSrc.src}
                       />
                       <source
                         media={IPAD_MEDIA}
-                        srcSet={slide.ipadSrc}
+                        srcSet={slide.ipadSrc.src}
                       />
                       <Image
                         src={slide.mobileSrc}

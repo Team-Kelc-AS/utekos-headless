@@ -7,12 +7,15 @@ import { InspirationHero } from '../../layout/hero/InspirationHero'
 import { HeroHighlight } from '../../layout/hero/HeroHighlight'
 import { IceBathingHeroCta } from './IceBathingHeroCta'
 import { iceBathingHeroFeatures } from './iceBathingHeroFeatures'
+import comfyIsbading1080Master from '@/assets/images/comfyrobe/comfy-isbading-1080-master.png'
+import comfyIsbading1080 from '@/assets/images/comfyrobe/comfy-isbading-1080.png'
+
 
 const IceBathingHeroBackground = (
   <div className='absolute inset-0 select-none' aria-hidden='true'>
-    <Image src='/comfyrobe/comfy-isbading-1080.png' alt='' fill className='object-cover md:hidden' priority />
+    <Image src={comfyIsbading1080} alt='' fill className='object-cover md:hidden' priority />
     <Image
-      src='/comfyrobe/comfy-isbading-1080-master.png'
+      src={comfyIsbading1080Master}
       alt=''
       fill
       className='hidden object-cover md:block'

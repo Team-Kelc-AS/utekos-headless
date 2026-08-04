@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { H2 } from '@/components/typography/TypographyH2'
 import { P } from '@/components/typography/TypographyP'
 import { MotionReveal } from './TerraceMotion'
+import kristin2 from '@/assets/images/about/kristin.webp'
+
 
 export function SocialProof() {
   return (
@@ -31,7 +33,7 @@ export function SocialProof() {
               </blockquote>
               <div className='flex items-center justify-center gap-4'>
                 <Image
-                  src='/kristin.webp'
+                  src={kristin2}
                   alt='Kristin'
                   width={48}
                   height={48}

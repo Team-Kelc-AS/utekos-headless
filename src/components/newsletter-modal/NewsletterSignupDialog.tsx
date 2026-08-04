@@ -35,6 +35,9 @@ import {
   persistNewsletterModalDismissal,
   readNewsletterModalDismissals
 } from './newsletterModalRuntime'
+import newsletterImageComfyKlarna from '@/assets/images/partners/newsletter-image-comfy-klarna.png'
+import newsletterImageComfyKlarna2 from '@/assets/images/partners/newsletter-image-comfy-klarna.webp'
+
 
 const initialState: ActionState = { status: 'idle', message: '' }
 
@@ -351,21 +354,23 @@ export function NewsletterSignupDialog() {
             </div>
           </section>
         : <section className='rounded-xl bg-popover font-utekos-text text-popover-foreground lg:grid lg:grid-cols-2'>
-            <div className='min-w-0 overflow-hidden bg-muted lg:relative lg:aspect-[4/5]'>
+            <div className='relative min-w-0 overflow-hidden bg-muted lg:aspect-[4/5]'>
               <Image
-                src='/newsletter-image-comfy-klarna.png'
+                src={newsletterImageComfyKlarna}
                 alt='Marineblå Comfyrobe. Velg Klarna i kassen.'
                 width={1000}
                 height={1000}
                 sizes='(max-width: 639px) calc(100vw - 2rem), 32rem'
+                priority
                 className='aspect-square h-auto w-full object-cover lg:hidden'
               />
 
               <Image
-                src='/newsletter-image-comfy-klarna.webp'
+                src={newsletterImageComfyKlarna2}
                 alt='Marineblå Comfyrobe. Velg Klarna i kassen.'
                 fill
                 sizes='(max-width: 1279px) 496px, 512px'
+                priority
                 className='hidden object-cover lg:block'
               />
             </div>

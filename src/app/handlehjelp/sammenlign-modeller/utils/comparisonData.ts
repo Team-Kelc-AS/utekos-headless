@@ -1,3 +1,7 @@
+import type { StaticImageData } from 'next/image'
+import frontpageKateLinn from '@/assets/images/about/frontpage-kate-linn.webp'
+import coffeUtekos from '@/assets/images/inspiration/coffe_utekos.webp'
+
 export type ModelKey = 'utekos-dun' | 'utekos-mikrofiber' | 'utekos-techdown'
 
 export type ComparisonRow = {
@@ -11,7 +15,7 @@ export type ModelRecommendation = {
   name: string
   shortName: string
   href: string
-  imageSrc: string
+  imageSrc: string | StaticImageData
   imageAlt: string
   badge: string
   bestFor: string
@@ -26,7 +30,7 @@ export const modelRecommendations: ModelRecommendation[] = [
     name: 'Utekos Dun™',
     shortName: 'Dun™',
     href: '/produkter/utekos-dun',
-    imageSrc: '/coffe_utekos.webp',
+    imageSrc: coffeUtekos,
     imageAlt: 'Utekos Dun brukt på hytten en kald og tørr kveld',
     badge: 'Mest varme per gram',
     bestFor: 'Tørre, kalde kvelder på hytten',
@@ -40,7 +44,7 @@ export const modelRecommendations: ModelRecommendation[] = [
     name: 'Utekos Mikrofiber™',
     shortName: 'Mikrofiber™',
     href: '/produkter/utekos-mikrofiber',
-    imageSrc: '/frontpage-kate-linn.webp',
+    imageSrc: frontpageKateLinn,
     imageAlt: 'Utekos Mikrofiber brukt som lett komfortplagg ute',
     badge: 'Enklest i bruk',
     bestFor: 'Bobil, reise og daglig bruk',

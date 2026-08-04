@@ -38,6 +38,24 @@ const STATIC_ASSET_PATH_PATTERN =
 export const LANDING_EDGE_REQUEST_ID_HEADER =
   'x-utekos-edge-request-id'
 
+let hasLoggedMissingLandingSigningSecret = false
+
+function logLandingCorrelationUnavailable(reason: 'missing' | 'invalid') {
+  const isProduction = process.env.NODE_ENV === 'production'
+  // Missing secret is expected in local/dev without observability env.
+  // Log once there; keep hard errors in production.
+  if (!isProduction && reason === 'missing') {
+    if (hasLoggedMissingLandingSigningSecret) return
+    hasLoggedMissingLandingSigningSecret = true
+    console.warn(
+      '[landing-edge] correlation signing unavailable (set LANDING_OBSERVABILITY_SIGNING_SECRET to enable)'
+    )
+    return
+  }
+
+  console.error('[landing-edge] correlation signing unavailable')
+}
+
 function isDocumentNavigation(request: NextRequest) {
   if (request.method !== 'GET') return false
   if (STATIC_ASSET_PATH_PATTERN.test(request.nextUrl.pathname))
@@ -90,9 +108,7 @@ async function createLandingEdgeCorrelation(
   const secret =
     process.env.LANDING_OBSERVABILITY_SIGNING_SECRET?.trim()
   if (!secret) {
-    console.error(
-      '[landing-edge] correlation signing unavailable'
-    )
+    logLandingCorrelationUnavailable('missing')
     return {
       clearSynthetic,
       edgeRequestId,
@@ -114,9 +130,7 @@ async function createLandingEdgeCorrelation(
       token
     }
   } catch {
-    console.error(
-      '[landing-edge] correlation signing unavailable'
-    )
+    logLandingCorrelationUnavailable('invalid')
     return {
       clearSynthetic,
       edgeRequestId,

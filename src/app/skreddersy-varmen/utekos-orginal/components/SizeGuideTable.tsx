@@ -1,12 +1,38 @@
-import { Ruler } from 'lucide-react'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from '@/components/ui/accordion'
 import { SizeFeature } from './SizeFeature'
-import { TableRow } from './TableRow'
+import { SizeGuideAccordionTable } from '@/components/size-guide/SizeGuideAccordionTable'
+
+const UTEKOS_SIZE_COLUMNS = ['Medium', 'Large'] as const
+
+const utekosSizeRows = [
+  {
+    label: 'Total lengde (nakke til bunn)',
+    values: ['170 cm', '200 cm']
+  },
+  {
+    label: 'Brystvidde (flatmål)',
+    values: ['85 cm', '100 cm']
+  },
+  {
+    label: 'Armlengde (fra senter nakke)',
+    values: ['85 cm', '100 cm']
+  },
+  {
+    label: 'Bredde nederst (flatmål)',
+    values: ['66 cm', '75 cm']
+  },
+  {
+    label: 'Lengde på glidelås (V-hals)',
+    values: ['73 cm', '85.5 cm']
+  },
+  {
+    label: 'Høyde på hette',
+    values: ['35 cm', '35 cm']
+  },
+  {
+    label: 'Høyde på baklomme',
+    values: ['42 cm', '42 cm']
+  }
+] as const
 
 export function SizeGuideTable() {
   return (
@@ -16,7 +42,7 @@ export function SizeGuideTable() {
     >
       <div className='mx-auto max-w-5xl px-6'>
         <div className='mb-12 text-center'>
-          <h3 className='mb-4 font-sans text-3xl text-[#F4F1EA]'>
+          <h3 className='mb-4 font-sans text-3xl font-extrabold text-[#F4F1EA]'>
             Skapt for å tilpasses deg
           </h3>
           <p className='mx-auto max-w-2xl font-utekos-text text-[#F4F1EA]/70'>
@@ -40,79 +66,10 @@ export function SizeGuideTable() {
             desc='Åpne nedenfra for full bevegelsesfrihet, eller ovenfra for å slippe ut overskuddsvarme.'
           />
         </div>
-        <div className='mx-auto max-w-3xl'>
-          <Accordion className='w-full rounded-xl border border-[#F4F1EA]/10 bg-[#2C2420]/30 px-2 md:px-6'>
-            <AccordionItem
-              value='size-table'
-              className='border-none'
-            >
-              <AccordionTrigger className='justify-center py-6 text-lg font-medium text-[#F4F1EA] transition-colors hover:text-[#E07A5F] hover:no-underline'>
-                <span className='flex items-center gap-3'>
-                  <Ruler size={20} className='text-[#E07A5F]' />
-                  Se størrelsestabell
-                </span>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className='relative mt-2 mb-6 w-full overflow-hidden rounded-lg border border-[#F4F1EA]/5 bg-[#2C2420]/40'>
-                  <div className='overflow-x-auto'>
-                    <table className='w-full border-collapse text-left'>
-                      <thead>
-                        <tr className='border-b border-[#F4F1EA]/10 bg-[#2C2420]/60'>
-                          <th className='p-4 font-medium text-[#F4F1EA] md:p-6'>
-                            Måling
-                          </th>
-                          <th className='w-32 p-4 font-medium text-[#F4F1EA] md:w-48 md:p-6'>
-                            Medium
-                          </th>
-                          <th className='w-32 p-4 font-medium text-[#F4F1EA] md:w-48 md:p-6'>
-                            Large
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className='divide-y divide-[#F4F1EA]/5 text-sm text-[#F4F1EA]/80 md:text-base'>
-                        <TableRow
-                          label='Total lengde (nakke til bunn)'
-                          m='170 cm'
-                          l='200 cm'
-                        />
-                        <TableRow
-                          label='Brystvidde (flatmål)'
-                          m='85 cm'
-                          l='100 cm'
-                        />
-                        <TableRow
-                          label='Armlengde (fra senter nakke)'
-                          m='85 cm'
-                          l='100 cm'
-                        />
-                        <TableRow
-                          label='Bredde nederst (flatmål)'
-                          m='66 cm'
-                          l='75 cm'
-                        />
-                        <TableRow
-                          label='Lengde på glidelås (V-hals)'
-                          m='73 cm'
-                          l='85.5 cm'
-                        />
-                        <TableRow
-                          label='Høyde på hette'
-                          m='35 cm'
-                          l='35 cm'
-                        />
-                        <TableRow
-                          label='Høyde på baklomme'
-                          m='42 cm'
-                          l='42 cm'
-                        />
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
+        <SizeGuideAccordionTable
+          columns={UTEKOS_SIZE_COLUMNS}
+          rows={utekosSizeRows}
+        />
       </div>
     </article>
   )

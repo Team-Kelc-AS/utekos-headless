@@ -37,7 +37,7 @@ export function NbccProductCarousel({
     <div className='group/carousel relative aspect-square overflow-hidden bg-jungle'>
       {images.map((img, i) => (
         <div
-          key={img.src}
+          key={img.alt}
           aria-hidden={i !== current}
           className={`absolute inset-0 transition-opacity duration-300 ${
             i === current ? 'opacity-100' : (

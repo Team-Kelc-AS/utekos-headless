@@ -1,5 +1,5 @@
 import { AspectRatio } from '@/components/ui/aspect-ratio'
-import KystHus from '@public/Utekos-TechDown-Kysthus-612x705.png'
+import KystHus from '@/assets/images/techdown/Utekos-TechDown-Kysthus-612x705.png'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 

@@ -37,7 +37,7 @@ export function InspirationGallerySection() {
           <CarouselContent className='-ml-4'>
             {galleryImages.map(image => (
               <CarouselItem
-                key={image.src}
+                key={image.title}
                 className='pl-4 md:basis-1/2 lg:basis-1/3'
               >
                 <div className='group flex h-full flex-col p-1'>

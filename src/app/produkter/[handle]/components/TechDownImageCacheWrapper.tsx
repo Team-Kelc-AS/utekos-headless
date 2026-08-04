@@ -14,7 +14,7 @@ export async function TechDownImageCacheWrapper() {
     <div>
       {images.map(image => (
         <Image
-          key={image.url}
+          key={image.id}
           src={image.url}
           alt={image.altText}
           width={image.width}

@@ -21,6 +21,7 @@ import {
   COMFYROBE_PRODUCT_HANDLE,
   COMFYROBE_PRODUCT_URL
 } from '../data/comfyrobeLandingSeo'
+import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import { getComfyrobeLandingProduct } from '../lib/getComfyrobeLandingProduct'
 
 const ORGANIZATION_ID = `${SITE_URL}/#organization`
@@ -189,7 +190,9 @@ export async function ComfyrobeLandingJsonLd() {
     'name': product?.title || 'Comfyrobe™',
     'description': COMFYROBE_LANDING_DESCRIPTION,
     'image': [
-      product?.featuredImage?.url || COMFYROBE_LANDING_IMAGE,
+      product?.featuredImage?.url ?
+        resolveImageSrc(product.featuredImage.url)
+      : COMFYROBE_LANDING_IMAGE,
       COMFYROBE_LANDING_IMAGE
     ],
     'brand': {

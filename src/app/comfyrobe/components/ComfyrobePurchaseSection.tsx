@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ComfyrobePurchaseClient } from './ComfyrobePurchaseClient'
+import { buildComfyrobePurchaseModel } from '../lib/buildComfyrobePurchaseModel'
 import type { ShopifyProduct } from 'types/product'
 
 export function ComfyrobePurchaseSection({
@@ -30,5 +31,9 @@ export function ComfyrobePurchaseSection({
     )
   }
 
-  return <ComfyrobePurchaseClient product={product} />
+  const purchaseModel = buildComfyrobePurchaseModel(product)
+
+  return (
+    <ComfyrobePurchaseClient model={purchaseModel} />
+  )
 }

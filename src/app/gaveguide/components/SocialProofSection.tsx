@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image' // Importer Image-komponenten
 
-import mormor3 from '@public/mormor3.webp'
+import mormor3 from '@/assets/images/about/mormor3.webp'
 
 export function SocialProofSection() {
   return (

@@ -1,4 +1,4 @@
-import StapperImage from '@public/stapper-hvit.png'
+import StapperImage from '@/assets/images/partners/stapper-hvit.png'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Route } from 'next'

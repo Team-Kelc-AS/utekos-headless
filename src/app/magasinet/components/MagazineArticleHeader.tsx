@@ -3,6 +3,8 @@ import { CalendarDays, Clock, PencilLine } from 'lucide-react'
 import type { MagazineArticle } from '../types'
 import { formatMagazineArticleDate } from '../utils/formatMagazineArticleDate'
 import { MagazineHeroViewTransition } from './MagazineHeroViewTransition'
+import techdown1600x1000 from '@/assets/images/techdown/TechDown-1600x1000.webp'
+import utekostechdownmobile from '@/assets/images/techdown/UtekosTechDownMobile.png'
 
 type MagazineArticleHeaderProps = { article: MagazineArticle }
 
@@ -22,14 +24,14 @@ export function MagazineArticleHeader({
   const isTechDownLaunch = article.slug === TECHDOWN_SLUG
   const desktopImage = {
     src: isTechDownLaunch ?
-      '/TechDown-1600x1000.webp'
+      techdown1600x1000
     : article.heroImage.src,
     width: isTechDownLaunch ? 1600 : article.heroImage.width,
     height: isTechDownLaunch ? 1000 : article.heroImage.height,
     alt: article.heroImage.alt
   }
   const mobileImage = {
-    src: isTechDownLaunch ? '/UtekosTechDownMobile.png' : article.heroImage.src,
+    src: isTechDownLaunch ? utekostechdownmobile : article.heroImage.src,
     width: isTechDownLaunch ? 400 : article.heroImage.width,
     height: isTechDownLaunch ? 590 : article.heroImage.height,
     alt: article.heroImage.alt

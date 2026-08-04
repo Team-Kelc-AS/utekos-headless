@@ -141,7 +141,7 @@ export const TechDownFeatureSection = () => {
               <CarouselContent>
                 {TechDownImages.map((image, index) => (
                   <CarouselItem
-                    key={image.src.src}
+                    key={image.alt}
                     className='p-3 sm:p-4'
                   >
                     <div className='dark:bg-dark-foreground/4 relative aspect-square w-full overflow-hidden rounded-3xl bg-foreground/4 p-3 sm:p-4'>

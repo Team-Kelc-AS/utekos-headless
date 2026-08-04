@@ -9,6 +9,8 @@ import {
   Zap,
   type LucideIcon
 } from 'lucide-react'
+import carbonFibre from '@/assets/images/textures/carbon-fibre.png'
+
 
 type LayerType = 'outer' | 'insulation' | 'inner' | 'function'
 
@@ -98,7 +100,10 @@ export function ProductLayersVisual({
           icon={ShieldCheck}
           theme={LAYER_THEMES.secondary}
         >
-          <div className="absolute inset-0 bg-[url('/textures/carbon-fibre.png')] opacity-20" />
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{ backgroundImage: `url(${carbonFibre.src})` }}
+          />
           <div className='absolute top-4 right-4 animate-pulse text-secondary opacity-50'>
             <Droplet className='h-5 w-5' aria-hidden />
           </div>

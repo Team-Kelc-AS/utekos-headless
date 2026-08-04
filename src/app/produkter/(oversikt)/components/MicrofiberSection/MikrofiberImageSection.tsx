@@ -12,30 +12,37 @@ import {
 import Image from 'next/image'
 import { useInView } from '@/hooks/useInView'
 import { cn } from '@/lib/utils/className'
+import utekosMikrofiberBaksideFullFigur16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-bakside-full-figur-1600-1600.webp'
+import utekosMikrofiberHalvfigurForside16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-halvfigur-forside-1600-1600.webp'
+import utekosMikrofiberHelfigur16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-helfigur-1600-1600.webp'
+import utekosMikrofiberKvinnerNyterSkogen16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-kvinner-nyter-skogen-1600-1600.webp'
+import utekosMikrofiberParNyterKaffeTerrasse16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-par-nyter-kaffe-terrasse-1600-1600.webp'
+import utekosMikrofiberParkas16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-parkas-1600-1600.webp'
+
 
 const MICROFIBER_IMAGES = [
   {
-    src: '/utekos-mikrofiber-kvinner-nyter-skogen-1600-1600.webp',
+    src: utekosMikrofiberKvinnerNyterSkogen16001600,
     alt: 'Kvinner nyter skogen med Utekos Mikrofiber.'
   },
   {
-    src: '/utekos-mikrofiber-par-nyter-kaffe-terrasse-1600-1600.webp',
+    src: utekosMikrofiberParNyterKaffeTerrasse16001600,
     alt: 'Par nyter kaffe med Utekos Mikrofiber på terrassen vinterstid'
   },
   {
-    src: '/utekos-mikrofiber-helfigur-1600-1600.webp',
+    src: utekosMikrofiberHelfigur16001600,
     alt: 'Utekos Mikrofiber vist som fullfigur forfra.'
   },
   {
-    src: '/utekos-mikrofiber-parkas-1600-1600.webp',
+    src: utekosMikrofiberParkas16001600,
     alt: 'Utekos Mikrofiber vist i parkasmodus forfra.'
   },
   {
-    src: '/utekos-mikrofiber-halvfigur-forside-1600-1600.webp',
+    src: utekosMikrofiberHalvfigurForside16001600,
     alt: 'Utekos Mikrofiber vist som åpen halvfigur forfra.'
   },
   {
-    src: '/utekos-mikrofiber-bakside-full-figur-1600-1600.webp',
+    src: utekosMikrofiberBaksideFullFigur16001600,
     alt: 'Utekos Mikrofiber vist som helfigur bakfra.'
   }
 ] as const
@@ -58,7 +65,7 @@ export function MikrofiberImageSection() {
       >
         <CarouselContent className='h-full'>
           {MICROFIBER_IMAGES.map((image, index) => (
-            <CarouselItem key={image.src} className='h-full'>
+            <CarouselItem key={image.alt} className='h-full'>
               <div className='relative aspect-square w-full overflow-hidden rounded-xl'>
                 <Image
                   src={image.src}

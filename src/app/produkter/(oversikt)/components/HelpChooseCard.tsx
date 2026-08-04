@@ -4,6 +4,7 @@ import { useAddToCartAction } from '@/hooks/useAddToCartAction'
 import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductListVisibility'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
+import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import { flattenConnection } from '@shopify/hydrogen-react'
 import { AnimatePresence, motion } from 'motion/react'
 import {
@@ -209,7 +210,7 @@ export function HelpChooseCard({
           <div className='absolute inset-0 z-0 bg-neutral-800'>
             <AnimatePresence mode='wait'>
               <motion.div
-                key={activeImage}
+                key={resolveImageSrc(activeImage)}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

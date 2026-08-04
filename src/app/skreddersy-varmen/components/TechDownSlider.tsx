@@ -17,8 +17,8 @@ import {
   ShieldCheck,
   Waves
 } from 'lucide-react'
-import TechDownDryFiber from '@public/techdown-dry-macro.webp'
-import TechDownWetFiber from '@public/techdown-wet-macro.webp'
+import TechDownDryFiber from '@/assets/images/techdown/techdown-dry-macro.webp'
+import TechDownWetFiber from '@/assets/images/techdown/techdown-wet-macro.webp'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { SkreddersyMotionProvider } from './SkreddersyMotionProvider'
 import {

@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import founderImage from '@public/erling/eh_pointing_star_800.webp'
+import founderImage from '@/assets/images/about/eh_pointing_star_800.webp'
 import { Quote } from 'lucide-react'
 import { AboutBadge } from './AboutBadge'
 

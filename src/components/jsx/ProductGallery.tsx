@@ -10,6 +10,7 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel'
 import { CAROUSEL_SSR } from '@/components/ui/carousel-ssr'
+import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import { cn } from '@/lib/utils/className'
 import type { ProductGalleryProps } from '@types'
 
@@ -37,7 +38,7 @@ export function ProductGallery({
       <CarouselContent className='ml-0 h-full'>
         {images.map((image, index) => (
           <CarouselItem
-            key={image.url}
+            key={resolveImageSrc(image.url)}
             className='relative h-full basis-full pl-0'
           >
             <Image

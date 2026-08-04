@@ -11,10 +11,10 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel'
 import Autoplay from 'embla-carousel-autoplay'
-import TechDownKateKikkert from '@public/webp/techdown-kate-kikkert-1080.webp'
-import ClassicGeminiWoman from '@public/webp/kaffe-med-tilpasset-utekos-mikrofiber-vinter-terrasse-.webp'
-import TechDownMonica from '@public/webp/techdown-monica-1080.webp'
-import TechDownKristoffer from '@public/webp/techdown-kristoffer-1080.webp'
+import TechDownKateKikkert from '@/assets/images/techdown/techdown-kate-kikkert-1080.webp'
+import ClassicGeminiWoman from '@/assets/images/mikrofiber/kaffe-med-tilpasset-utekos-mikrofiber-vinter-terrasse-.webp'
+import TechDownMonica from '@/assets/images/techdown/techdown-monica-1080.webp'
+import TechDownKristoffer from '@/assets/images/techdown/techdown-kristoffer-1080.webp'
 import { PageSection } from '@/components/layout/PageSection'
 import { cn } from '@/lib/utils/className'
 

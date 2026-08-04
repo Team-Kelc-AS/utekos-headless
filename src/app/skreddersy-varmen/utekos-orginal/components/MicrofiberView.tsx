@@ -1,15 +1,16 @@
-import Image from 'next/image'
 import {
   Check,
   Truck,
   ShieldCheck,
   ShoppingCart,
-  Loader2
+  Loader2,
+  Zap
 } from 'lucide-react'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { productConfig } from '@/app/skreddersy-varmen/utekos-orginal/utils/productConfig'
 import { KlarnaLandingExpressCheckout } from '@/app/skreddersy-varmen/components/KlarnaLandingExpressCheckout'
+import { MicrofiberPurchaseImageCarousel } from './MicrofiberPurchaseImageCarousel'
 import type {
   MicrofiberLogicProps,
   MicrofiberColor,
@@ -21,7 +22,6 @@ export function MicrofiberView({
   setColor,
   size,
   setSize,
-  activeImage,
   product,
   selectedVariant,
   handleAddToCart,
@@ -29,45 +29,38 @@ export function MicrofiberView({
   isPending
 }: MicrofiberLogicProps) {
   return (
-    <article className='w-full border-t border-[#2C2420]/5 bg-[#F4F1EA] py-16 text-[#2C2420] md:py-24'>
+    <article className='w-full border-t border-[#2C2420]/5 bg-jungle py-16 text-[#2C2420] md:py-24'>
       <div className='mx-auto max-w-6xl px-6'>
         <div className='grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-24'>
           <AnimatedBlock className='relative aspect-4/5 w-full overflow-hidden rounded-2xl border border-[#2C2420]/5 bg-[#E5E2DB] shadow-lg'>
-            <Image
-              src={activeImage || ''}
-              alt={`Utekos Mikrofiber i fargen ${color}`}
-              fill
-              className='object-cover transition-all duration-500'
-              sizes='(max-width: 768px) 100vw, 50vw'
-              quality={95}
-            />
-            <div className='bg-promo dark:bg-dark-promo font-google-sans text-promo-foreground dark:text-dark-promo-foreground absolute top-4 left-4 rounded-full px-3 py-1.5 text-xs font-bold tracking-wider uppercase shadow-sm'>
-              Bestselger
+            <MicrofiberPurchaseImageCarousel />
+            <div className='pointer-events-none absolute top-4 left-4 z-20 rounded-full bg-primary px-3 py-1.5 font-google-sans text-xs font-bold tracking-wider text-foreground uppercase shadow-sm'>
+              Original
             </div>
           </AnimatedBlock>
 
           <div className='flex h-full flex-col justify-center'>
             <AnimatedBlock delay='0.1s'>
-              <h2 className='mb-4 font-serif text-3xl text-[#2C2420] md:text-5xl'>
+              <h2 className='mb-4 font-sans text-3xl font-extrabold text-foreground md:text-5xl'>
                 Sikre deg varmen nå.
               </h2>
-              <p className='mb-8 text-base leading-relaxed text-[#2C2420]/70 md:text-lg'>
+              <p className='mb-8 font-utekos-text text-lg leading-relaxed text-foreground'>
                 Invester i kvalitetstid. Utekos Mikrofiber™ er
                 laget for å vare, sesong etter sesong.
               </p>
               <div className='mb-8 flex items-baseline gap-3 border-b border-[#2C2420]/10 pb-6'>
-                <span className='font-google-sans text-3xl font-bold text-[#2C2420]'>
+                <span className='font-google-sans text-3xl font-bold text-foreground'>
                   {productConfig.price},-
                 </span>
-                <span className='text-sm text-[#2C2420]/50'>
+                <span className='text-sm text-foreground/70'>
                   Inkl. mva og fri frakt
                 </span>
               </div>
 
               <div className='mb-8'>
-                <label className='font-google-sans mb-3 block text-sm font-bold tracking-wider text-[#2C2420]/60 uppercase'>
+                <label className='mb-3 block font-google-sans text-sm font-bold tracking-wider text-foreground uppercase'>
                   Velg Farge:{' '}
-                  <span className='ml-1 text-[#2C2420]'>
+                  <span className='ml-1 text-foreground'>
                     {
                       productConfig.colors.find(
                         c => c.id === color
@@ -102,7 +95,7 @@ export function MicrofiberView({
 
               <div className='mb-10'>
                 <div className='mb-3 flex items-center justify-between'>
-                  <label className='font-google-sans block text-sm font-bold tracking-wider text-[#2C2420]/60 uppercase'>
+                  <label className='block font-google-sans text-sm font-bold tracking-wider text-foreground uppercase'>
                     Velg Størrelse
                   </label>
                   <button
@@ -123,16 +116,14 @@ export function MicrofiberView({
                       onClick={() =>
                         setSize(s.id as MicrofiberSize)
                       }
-                      className={`relative rounded-xl border-2 p-3 text-left transition-all duration-200 md:p-4 ${
-                        size === s.id ?
-                          'border-[#2C2420] bg-white'
-                        : 'border-[#2C2420]/10 bg-white hover:border-[#2C2420]/30'
-                      } `}
+                      className={`relative rounded-xl border-none bg-dark-teal p-3 text-left transition-all duration-200 md:p-4 ${
+                        size === s.id ? 'ring-2 ring-foreground' : ''
+                      }`}
                     >
-                      <span className='font-google-sans mb-1 block text-base font-bold text-[#2C2420] md:text-lg'>
+                      <span className='mb-1 block font-sans text-base font-bold text-foreground md:text-lg'>
                         {s.name}
                       </span>
-                      <span className='block text-xs leading-tight text-[#2C2420]/60'>
+                      <span className='block text-xs leading-tight text-foreground/90'>
                         {s.desc}
                       </span>
                     </button>
@@ -171,17 +162,21 @@ export function MicrofiberView({
                 className='mt-4'
               />
 
-              <div className='mt-6 grid grid-cols-2 gap-2 text-xs text-[#2C2420]/60 md:mt-8 md:gap-4 md:text-sm'>
+              <div className='mt-6 grid grid-cols-3 gap-2 text-xs text-foreground md:mt-8 md:gap-4 md:text-sm'>
                 <div className='flex items-center gap-2'>
-                  <Truck size={16} className='text-[#E07A5F]' />
-                  <span>Gratis frakt & rask levering</span>
+                  <Truck size={16} className='shrink-0 text-[#E07A5F]' />
+                  <span>Gratis frakt</span>
+                </div>
+                <div className='flex items-center gap-2'>
+                  <Zap size={16} className='shrink-0 text-[#E07A5F]' />
+                  <span>Rask levering</span>
                 </div>
                 <div className='flex items-center gap-2'>
                   <ShieldCheck
                     size={16}
-                    className='text-[#E07A5F]'
+                    className='shrink-0 text-[#E07A5F]'
                   />
-                  <span>30 dagers åpent kjøp</span>
+                  <span>14 dagers åpent kjøp</span>
                 </div>
               </div>
             </AnimatedBlock>

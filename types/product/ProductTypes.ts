@@ -1,5 +1,6 @@
 // Path: types/product.types.ts
 
+import type { StaticImageData } from 'next/image'
 import type { MetaobjectReference } from './MetaobjectReference'
 import type { ShopifyProduct } from './ShopifyProduct'
 import type { ProductCardModel } from './ProductPurchaseModel'
@@ -74,7 +75,7 @@ export type MicrofiberLogicProps = {
   setColor: (color: MicrofiberColor) => void
   size: MicrofiberSize
   setSize: (size: MicrofiberSize) => void
-  activeImage: string | undefined
+  activeImage: string | StaticImageData | undefined
   product: ShopifyProduct | null
   selectedVariant: ShopifyProductVariant | null
   handleAddToCart: () => void

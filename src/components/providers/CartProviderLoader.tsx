@@ -1,9 +1,11 @@
 import Providers from '@/components/providers/Providers'
+import { getCartIdFromCookie } from '@/lib/actions/cart/getCartIdFromCookie'
 
-export function CartProviderLoader({
+export async function CartProviderLoader({
   children
 }: {
   children: React.ReactNode
 }) {
-  return <Providers cartId={null}>{children}</Providers>
+  const cartId = await getCartIdFromCookie()
+  return <Providers cartId={cartId}>{children}</Providers>
 }

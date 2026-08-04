@@ -10,38 +10,44 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel'
 import { CAROUSEL_SSR } from '@/components/ui/carousel-ssr'
+import comfyAfterbath1080 from '@/assets/images/comfyrobe/comfy-afterbath-1080.png'
+import comfyDesign1080 from '@/assets/images/comfyrobe/comfy-design-1080.png'
+import comfyIsbading1080Master from '@/assets/images/comfyrobe/comfy-isbading-1080-master.png'
+import comfyIsbadingTo1080 from '@/assets/images/comfyrobe/comfy-isbading-to-1080.png'
+import comfyOpen1080 from '@/assets/images/comfyrobe/comfy-open-1080.png'
+
 
 const galleryImages = [
   {
-    src: '/comfyrobe/comfy-afterbath-1080.png', // Husk å legge inn riktige bildenavn
+    src: comfyAfterbath1080, // Husk å legge inn riktige bildenavn
     alt: 'En isbader kommer opp av vannet med et stort smil, klar til å ta på seg Utekos-kåpen.',
     title: 'Det øyeblikkelige rushet',
     description:
       'Sekundet du kommer opp av vannet og kjenner varmen fra kåpen treffe huden. Det er da magien skjer.'
   },
   {
-    src: '/comfyrobe/comfy-isbading-to-1080.png',
+    src: comfyIsbadingTo1080,
     alt: 'En vennegjeng står i snøen iført Utekos-kåper og drikker kaffe etter badet.',
     title: 'Varmen i fellesskapet',
     description:
       'Isbading er ofte best sammen med andre. Del opplevelsen, kaffen og varmen uten å fryse.'
   },
   {
-    src: '/comfyrobe/comfy-isbading-1080-master.png',
+    src: comfyIsbading1080Master,
     alt: 'Person sitter på et svaberg med rimfrost, pakket inn i Utekos og ser utover havet.',
     title: 'Ro i sjelen',
     description:
       'Finn stillheten ved havet. Med riktig utstyr kan du sitte lenge og la pulsen synke etter sjokket.'
   },
   {
-    src: '/1080/comfy-open-1080.png',
+    src: comfyOpen1080,
     alt: 'Person på vei fra badstue til sjøen i en Utekos-poncho.',
     title: 'Fra sauna til sjø',
     description:
       'Den perfekte følgesvenn mellom den varme badstuen og den iskalde fjorden.'
   },
   {
-    src: '/1080/comfy-design-1080.png',
+    src: comfyDesign1080,
     alt: 'Nærbilde av en person som smiler bredt mens de har på seg Utekos-kåpen etter isbading.',
     title: 'SherpaCore™',
     description:

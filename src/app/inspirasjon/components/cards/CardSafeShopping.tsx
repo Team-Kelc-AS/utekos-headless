@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import KlarnaBanner from '@public/Klarna-1366x768.png'
+import KlarnaBanner from '@/assets/images/partners/Klarna-1366x768.png'
 import { Card } from '@/components/ui/card'
 import { socialProofCardClassName } from './socialProofCardClassName'
 

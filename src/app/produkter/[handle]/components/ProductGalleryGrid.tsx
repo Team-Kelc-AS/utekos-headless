@@ -24,7 +24,7 @@ export function ProductGalleryGrid({ title, images }: ProductGalleryProps) {
           const isAboveFoldGridImage = index < 2
 
           return (
-            <div key={image.url} className='flex min-h-0 overflow-hidden rounded-lg bg-jungle p-3'>
+            <div key={image.id} className='flex min-h-0 overflow-hidden rounded-lg bg-jungle p-3'>
               <AspectRatio ratio={4 / 5} className='w-full'>
                 <Image
                   src={image.url}

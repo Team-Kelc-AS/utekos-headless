@@ -1,11 +1,13 @@
-import heroSixteenNineImage from '@public/Skreddersy-Varmen-16x9.png'
-import heroSixteenTenImage from '@public/SSV-16-10.webp'
 import { cn } from '@/lib/utils/className'
+import heroSixteenNineImage from '@/assets/images/campaign/Skreddersy-Varmen-16x9.png'
+import heroSixteenTenImage from '@/assets/images/campaign/SSV-16-10.webp'
+import techdown700x775 from '@/assets/images/techdown/TechDown.700x775.webp'
+
 
 const heroMobileImage = {
-  src: '/TechDown.700x775.webp',
-  width: 700,
-  height: 775
+  src: techdown700x775.src,
+  width: techdown700x775.width,
+  height: techdown700x775.height
 } as const
 
 const heroImageProps = {

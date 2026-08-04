@@ -20,6 +20,7 @@ import { VippsLogo } from '@/components/payments/VippsLogo'
 import { KlarnaLogo } from '@/components/payments/KlarnaLogo'
 import { ShoppingBag } from 'lucide-react'
 import type { ShopifyProduct } from 'types/product'
+import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import { cn } from '@/lib/utils/className'
 import { toast } from 'sonner'
 
@@ -86,18 +87,11 @@ export function ComfyrobeQuickBuy({ product }: Props) {
       <div className='w-full'>
         <Carousel className='w-full'>
           <CarouselContent>
-            {images.map(
-              (img: {
-                id: string
-                url?: string
-                altText?: string
-                image?: { url?: string; altText?: string }
-              }) => {
-                const imageUrl = img.url || img.image?.url
-                const altText =
-                  img.altText ||
-                  img.image?.altText ||
-                  product.title
+            {images.map(img => {
+                const imageUrlRaw = img.image?.url
+                const imageUrl =
+                  imageUrlRaw ? resolveImageSrc(imageUrlRaw) : null
+                const altText = img.image?.altText || product.title
 
                 if (!imageUrl) return null
 
@@ -114,8 +108,7 @@ export function ComfyrobeQuickBuy({ product }: Props) {
                     </div>
                   </CarouselItem>
                 )
-              }
-            )}
+              })}
           </CarouselContent>
           <div className='block'>
             <CarouselPrevious className='dark:bg-dark-background/70 dark:hover:bg-dark-background left-4 border border-foreground/12 bg-background/70 text-foreground backdrop-blur-md hover:bg-background' />

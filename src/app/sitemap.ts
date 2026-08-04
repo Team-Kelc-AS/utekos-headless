@@ -1,6 +1,7 @@
 // Path: src/app/sitemap.ts
 import { getProducts } from '@/api/lib/products/getProducts'
 import { getMagazineArticles } from '@/app/magasinet/utils/getMagazineArticles'
+import { toAbsoluteUrl } from '@/app/magasinet/utils/toAbsoluteUrl'
 import type { MetadataRoute } from 'next'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://utekos.no'
@@ -127,7 +128,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           typeof product.updatedAt === 'string' && product.updatedAt ? product.updatedAt : lastModifiedISO,
         changeFrequency: 'weekly',
         priority: 0.8,
-        images: product.featuredImage ? [product.featuredImage.url] : []
+        images:
+          product.featuredImage ?
+            [toAbsoluteUrl(product.featuredImage.url)]
+          : []
       }))
     : []
 
@@ -138,8 +142,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: article.updatedAt,
     changeFrequency: 'monthly',
     priority: 0.8,
-    images:
-      article.heroImage.src.startsWith('/') ? [`${baseUrl}${article.heroImage.src}`] : [article.heroImage.src]
+    images: [toAbsoluteUrl(article.heroImage.src)]
   }))
 
   return [...corePages, ...inspirationPages, ...utilityPages, ...productUrls, ...articleUrls]

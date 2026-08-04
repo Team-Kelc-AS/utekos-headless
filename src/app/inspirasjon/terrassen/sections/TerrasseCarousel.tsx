@@ -140,7 +140,7 @@ export function TerrasseCarousel() {
               <CarouselContent className='-ml-4'>
                 {terrasseImages.map(image => (
                   <CarouselItem
-                    key={image.src}
+                    key={image.alt}
                     className='pl-4 md:basis-1/2 lg:basis-1/3'
                   >
                     <div className='group relative overflow-hidden rounded-lg border border-[var(--terrace-line-dark)] bg-transparent'>

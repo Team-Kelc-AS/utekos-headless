@@ -1,6 +1,6 @@
 import { Maximize2, Move, User } from 'lucide-react'
-import TechHalfImage from '@public/utekos-techdown-halvfigur-forfra-1600x1600.webp'
-import TechDownKateKikkertImage from '@public/TechDown-Kikkert-1600x1600.webp'
+import TechHalfImage from '@/assets/images/techdown/utekos-techdown-halvfigur-forfra-1600x1600.webp'
+import TechDownKateKikkertImage from '@/assets/images/techdown/TechDown-Kikkert-1600x1600.webp'
 
 const TechDownKystenImage =
   'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/utekos-techdown-kysten.png'

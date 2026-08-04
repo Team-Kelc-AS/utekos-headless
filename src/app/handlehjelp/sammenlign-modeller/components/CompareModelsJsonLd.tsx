@@ -1,6 +1,8 @@
 // Path: src/app/handlehjelp/sammenlign-modeller/components/CompareModelsJsonLd.tsx
 import { productReviewBundles } from '@/db/data/reviews/productReviews'
+import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import { cacheLife } from 'next/cache'
+import type { StaticImageData } from 'next/image'
 import { SITE_URL } from '@/constants'
 import type {
   AggregateOffer,
@@ -69,12 +71,14 @@ const sellerReference = {
   '@id': ORGANIZATION_ID
 } as const
 
-const absoluteUrl = (pathOrUrl: string) => {
-  if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
-    return pathOrUrl
+const absoluteUrl = (pathOrUrl: string | StaticImageData) => {
+  const resolved = resolveImageSrc(pathOrUrl)
+
+  if (resolved.startsWith('http://') || resolved.startsWith('https://')) {
+    return resolved
   }
 
-  return `${SITE_URL}${pathOrUrl.startsWith('/') ? '' : '/'}${pathOrUrl}`
+  return `${SITE_URL}${resolved.startsWith('/') ? '' : '/'}${resolved}`
 }
 
 const getHandleFromHref = (href: string) => {

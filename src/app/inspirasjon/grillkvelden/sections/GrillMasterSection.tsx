@@ -2,6 +2,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
 import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { grillSectionSurfaces } from '../theme/sectionSurfaces'
+import hansAge from '@/assets/images/about/hans-age.webp'
+
 
 const { light } = grillSectionSurfaces
 
@@ -30,7 +32,7 @@ export function GrillMasterSection() {
               </blockquote>
               <div className='flex items-center justify-center gap-4'>
                 <Image
-                  src='/hans-age.webp'
+                  src={hansAge}
                   alt='Hans Åge'
                   width={48}
                   height={48}

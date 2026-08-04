@@ -7,10 +7,10 @@ export function DetailBlock({
 }) {
   return (
     <li>
-      <h4 className='font-google-sans dark:text-dark-background mb-1 text-base font-bold text-background'>
+      <h4 className='mb-1 font-sans text-base font-bold text-foreground'>
         {title}
       </h4>
-      <p className='leading-text-paragraph dark:text-dark-background/82 text-sm text-background/82 md:text-base'>
+      <p className='leading-text-paragraph text-sm text-foreground md:text-base'>
         {text}
       </p>
     </li>

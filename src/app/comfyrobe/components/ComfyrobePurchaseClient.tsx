@@ -1,55 +1,98 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent
+} from 'react'
 import Link from 'next/link'
 import { Check, Ruler, ShoppingBag } from 'lucide-react'
-import { flattenConnection } from '@shopify/hydrogen-react'
 import { AddToCart } from '@/components/cart/AddToCart'
-import { useLocalVariantSelection } from '@/hooks/useLocalVariantSelection'
+import { reportCanonicalVariantSelect } from '@/lib/analytics/variantSelectReporter'
 import { reportCanonicalViewItem } from '@/lib/analytics/viewItemReporter'
 import { createViewItemReportKey } from '@/lib/analytics/viewItemReportKey'
 import { ComfyrobePurchaseImageCarousel } from './ComfyrobePurchaseImageCarousel'
 import { formatComfyrobeMoney } from '../lib/buildComfyrobeOfferSummary'
 import { reportComfyrobePurchaseSelection } from '../lib/reportComfyrobePurchaseSelection'
-import type {
-  ShopifyProduct,
-  ShopifyProductVariant
-} from 'types/product'
+import type { ComfyrobePurchaseModel } from '../lib/buildComfyrobePurchaseModel'
+import type { ProductPurchaseVariant } from 'types/product/ProductPurchaseModel'
 
-function getSavings(variant: ShopifyProductVariant) {
-  const price = Number(variant.price.amount)
-  const compareAtPrice = Number(variant.compareAtPrice?.amount)
-
-  if (
-    !Number.isFinite(price) ||
-    !Number.isFinite(compareAtPrice) ||
-    variant.compareAtPrice?.currencyCode !==
-      variant.price.currencyCode ||
-    compareAtPrice <= price
-  ) {
-    return null
-  }
-
-  return {
-    amount: {
-      amount: String(compareAtPrice - price),
-      currencyCode: variant.price.currencyCode
-    },
-    percentage: Math.round(
-      ((compareAtPrice - price) / compareAtPrice) * 100
-    )
-  }
+type LocalSelection = {
+  productId: string
+  variantId: string
 }
 
 function hasOptionValue(
-  variant: ShopifyProductVariant,
+  variant: ProductPurchaseVariant,
   optionName: string,
   value: string
-) {
+): boolean {
   return variant.selectedOptions.some(
     option =>
       option.name === optionName && option.value === value
   )
+}
+
+function findVariantForOptionChange({
+  variants,
+  currentVariant,
+  optionName,
+  optionValue
+}: {
+  variants: ProductPurchaseVariant[]
+  currentVariant: ProductPurchaseVariant
+  optionName: string
+  optionValue: string
+}): ProductPurchaseVariant | null {
+  const currentOptions = new Map(
+    currentVariant.selectedOptions.map(option => [
+      option.name,
+      option.value
+    ])
+  )
+
+  const exactVariant = variants.find(candidate => {
+    if (
+      candidate.selectedOptions.length !==
+      currentVariant.selectedOptions.length
+    ) {
+      return false
+    }
+
+    return candidate.selectedOptions.every(option => {
+      const expectedValue =
+        option.name === optionName ?
+          optionValue
+        : currentOptions.get(option.name)
+
+      return option.value === expectedValue
+    })
+  })
+
+  if (exactVariant) return exactVariant
+
+  const matchingVariants = variants.filter(variant =>
+    hasOptionValue(variant, optionName, optionValue)
+  )
+
+  return (
+    matchingVariants.find(
+      variant => variant.availableForSale
+    ) ??
+    matchingVariants[0] ??
+    null
+  )
+}
+
+function createInteractionId(): string {
+  try {
+    return globalThis.crypto.randomUUID()
+  } catch {
+    return `comfyrobe-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2)}`
+  }
 }
 
 function reportSizeGuideSelection() {
@@ -60,24 +103,46 @@ function reportSizeGuideSelection() {
 }
 
 export function ComfyrobePurchaseClient({
-  product
+  model
 }: {
-  product: ShopifyProduct
+  model: ComfyrobePurchaseModel
 }) {
-  const variants = flattenConnection(product.variants)
-  const initialAvailableVariant =
-    variants.find(variant => variant.availableForSale) ??
-    variants[0] ??
-    null
-  const { selectedVariant, updateVariant, allVariants } =
-    useLocalVariantSelection(
-      product,
-      initialAvailableVariant?.id ?? null
-    )
+  const { product, initialVariantId, sizeOption } = model
+  const [selection, setSelection] =
+    useState<LocalSelection | null>(null)
   const reportedViewItemKey = useRef<string | null>(null)
-  const sizeButtonRefs = useRef<Array<HTMLButtonElement | null>>(
-    []
-  )
+  const sizeButtonRefs = useRef<
+    Array<HTMLButtonElement | null>
+  >([])
+
+  const selectedVariantId =
+    selection?.productId === product.id ?
+      selection.variantId
+    : initialVariantId
+  const selectedVariant =
+    product.variants.find(
+      variant => variant.id === selectedVariantId
+    ) ?? null
+  const selectedPresentation =
+    selectedVariant ?
+      (model.variantPresentation.find(
+        presentation =>
+          presentation.variantId === selectedVariant.id
+      ) ?? null)
+    : null
+  const sizeChoices =
+    sizeOption?.choices.map(choice => ({
+      ...choice,
+      selected:
+        selectedVariant ?
+          hasOptionValue(
+            selectedVariant,
+            sizeOption.name,
+            choice.value
+          )
+        : false
+    })) ?? []
+
   useEffect(() => {
     if (!selectedVariant) return
 
@@ -112,38 +177,47 @@ export function ComfyrobePurchaseClient({
     )
   }
 
-  const sizeOption = product.options.find(
-    option => option.name === 'Størrelse'
-  )
-  const sizeChoices =
-    sizeOption?.optionValues.map(optionValue => {
-      const value = optionValue.name
-      const matchingVariants = allVariants.filter(variant =>
-        hasOptionValue(variant, sizeOption.name, value)
-      )
+  const updateVariant = (
+    optionName: string,
+    optionValue: string
+  ) => {
+    const nextVariant = findVariantForOptionChange({
+      variants: product.variants,
+      currentVariant: selectedVariant,
+      optionName,
+      optionValue
+    })
 
-      return {
-        value,
-        available: matchingVariants.some(
-          variant => variant.availableForSale
-        ),
-        selected: hasOptionValue(
-          selectedVariant,
-          sizeOption.name,
-          value
-        )
-      }
-    }) ?? []
-  const color = selectedVariant.selectedOptions.find(
-    option => option.name === 'Farge'
-  )?.value
-  const gender = selectedVariant.selectedOptions.find(
-    option => option.name === 'Kjønn'
-  )?.value
-  const savings = getSavings(selectedVariant)
+    if (!nextVariant || nextVariant.id === selectedVariant.id) {
+      return
+    }
+
+    setSelection({
+      productId: product.id,
+      variantId: nextVariant.id
+    })
+
+    try {
+      reportCanonicalVariantSelect({
+        customData: {
+          interaction_id: createInteractionId(),
+          product_id: product.id,
+          variant_id: nextVariant.id,
+          item_id: nextVariant.id,
+          item_variant: nextVariant.title,
+          availability:
+            nextVariant.availableForSale ?
+              'available'
+            : 'unavailable'
+        }
+      })
+    } catch {
+      // Analytics must never block the purchase interaction.
+    }
+  }
 
   const handleSizeKeyDown = (
-    event: React.KeyboardEvent<HTMLButtonElement>,
+    event: KeyboardEvent<HTMLButtonElement>,
     currentIndex: number
   ) => {
     const availableIndices = sizeChoices.flatMap(
@@ -163,7 +237,8 @@ export function ComfyrobePurchaseClient({
       event.key === 'ArrowUp'
     ) {
       const direction =
-        event.key === 'ArrowRight' || event.key === 'ArrowDown' ?
+        event.key === 'ArrowRight' ||
+        event.key === 'ArrowDown' ?
           1
         : -1
       const currentPosition = Math.max(
@@ -189,6 +264,10 @@ export function ComfyrobePurchaseClient({
     sizeButtonRefs.current[nextIndex]?.focus()
   }
 
+  const color = selectedPresentation?.color ?? null
+  const gender = selectedPresentation?.gender ?? null
+  const savings = selectedPresentation?.savings ?? null
+
   return (
     <section
       aria-labelledby='purchase-heading'
@@ -209,7 +288,8 @@ export function ComfyrobePurchaseClient({
               Juster, form og nyt.
             </h2>
             <p className='mt-6 max-w-xl font-utekos-text text-lg leading-relaxed text-foreground/78'>
-             Roben for deg som ønsker en kombinasjon av teknisk ytelse, kompromissløs komfort og tidløst design.
+              Roben for deg som ønsker en kombinasjon av teknisk
+              ytelse, kompromissløs komfort og tidløst design.
             </p>
 
             <div
@@ -365,7 +445,7 @@ export function ComfyrobePurchaseClient({
               </div>
             }
             <p className='mt-5 text-center text-sm text-card-foreground/70'>
-              Sikker betaling · 14 dagers retur
+              Sikker betaling · Rask levering · 14 dagers retur
             </p>
           </div>
         </div>

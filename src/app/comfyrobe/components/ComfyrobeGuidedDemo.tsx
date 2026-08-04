@@ -16,6 +16,10 @@ import {
   comfyrobeRevealScale,
   comfyrobeViewport
 } from './comfyrobeMotionVariants'
+import comfyDesign1080 from '@/assets/images/comfyrobe/comfy-design-1080.png'
+import comfyOpen1080 from '@/assets/images/comfyrobe/comfy-open-1080.png'
+import comfyRainy from '@/assets/images/comfyrobe/comfy_rainy.webp'
+
 
 const demoSteps = [
   {
@@ -24,7 +28,7 @@ const demoSteps = [
     title: 'Beskyttet mot elementene',
     description:
       'HydroGuard™-skallet kombinerer 8 000 mm vannsøyle og en pustende membran for skiftende regn og vind.',
-    image: '/comfy_rainy.webp',
+    image: comfyRainy,
     imageAlt: 'Person med mørk Comfyrobe ute i regnvær',
     imageClassName: 'rounded-lg object-cover object-center',
     icon: CloudRain
@@ -35,7 +39,7 @@ const demoSteps = [
     title: 'Myk og behagelig innside',
     description:
       'SherpaCore™ 250 GSM gir en lun innside som gjør kalde pauser, vindfulle turer og ventetid ute mer behagelig.',
-    image: '/1080/comfy-design-1080.png',
+    image: comfyDesign1080,
     imageAlt:
       'Nærbilde av SherpaCore-fôr og glidelås i Comfyrobe',
     imageClassName: 'rounded-lg object-cover object-center',
@@ -47,7 +51,7 @@ const demoSteps = [
     title: 'Kompromissløs komfort og overlegen allsidighet.',
     description:
       'Toveis YKK®-glidelås, splitter, lommer, justerbare mansjetter og en romslig unisex-passform gjør kåpen enkel å bruke gjennom dagen.',
-    image: '/1080/comfy-open-1080.png',
+    image: comfyOpen1080,
     imageAlt: 'Åpen mørk Comfyrobe med synlig fôr',
     imageClassName:
       'rounded-lg object-contain object-center p-8 md:p-12',

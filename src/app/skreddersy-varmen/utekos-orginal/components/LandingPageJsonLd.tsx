@@ -20,7 +20,6 @@ import type {
   Organization,
   Product,
   Question,
-  Action,
   Review
 } from 'schema-dts'
 

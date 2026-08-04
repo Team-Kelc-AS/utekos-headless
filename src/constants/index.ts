@@ -1,4 +1,13 @@
 // Path: src/constants/index.ts
+import blueFull from '@/assets/images/gallery/blue-full.png'
+import blueOppfestet from '@/assets/images/gallery/blue-oppfestet.png'
+import blueParkas from '@/assets/images/gallery/blue-parkas.png'
+import classicBlueJacket34 from '@/assets/images/gallery/classic-blue-jacket-3-4.png'
+import utekosTechdownBakside from '@/assets/images/techdown/utekos-techdown-bakside.webp'
+import utekosTechdownDiagonaltFullfigur from '@/assets/images/techdown/utekos-techdown-diagonalt-fullfigur.webp'
+import utekosTechdownHalvfigurForfra1600x1600 from '@/assets/images/techdown/utekos-techdown-halvfigur-forfra-1600x1600.webp'
+import utekosTechdownKvinneTerrasseliv1600x1600 from '@/assets/images/techdown/utekos-techdown-kvinne-terrasseliv-1600x1600.webp'
+
 export type ModelKey = keyof typeof PRODUCT_VARIANTS
 export const TAGS = {
   products: 'products',
@@ -75,10 +84,10 @@ export const PRODUCT_VARIANTS = {
     colors: [{ name: 'Havdyp', hex: '#0F2B40' }],
     sizes: ['Liten', 'Middels', 'Stor', 'Ekstra stor'],
     images: [
-      '/utekos-techdown-kvinne-terrasseliv-1600x1600.webp',
-      '/utekos-techdown-diagonalt-fullfigur.webp',
-      '/1080/utekos-techdown-bakside.webp',
-      '/utekos-techdown-halvfigur-forfra-1600x1600.webp'
+      utekosTechdownKvinneTerrasseliv1600x1600,
+      utekosTechdownDiagonaltFullfigur,
+      utekosTechdownBakside,
+      utekosTechdownHalvfigurForfra1600x1600
     ]
   },
   mikro: {
@@ -111,10 +120,10 @@ export const PRODUCT_VARIANTS = {
     colors: [{ name: 'Fjellblå', hex: '#020244' }],
     sizes: ['Medium', 'Large'],
     images: [
-      '/1080/blue-full.png',
-      '/1080/blue-parkas.png',
-      '/1080/blue-oppfestet.png',
-      '/classic-blue-jacket-3-4.png'
+      blueFull,
+      blueParkas,
+      blueOppfestet,
+      classicBlueJacket34
     ]
   }
 }

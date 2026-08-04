@@ -1,11 +1,15 @@
-// Path: src/app/produkter/(oversikt)/utils/choices.ts
-
 import type { Route } from 'next'
+import type { StaticImageData } from 'next/image'
+import comfy1080 from '@/assets/images/comfyrobe/comfy-1080.png'
+import classicBlack1080 from '@/assets/images/gallery/classic-black-1080.png'
+import classicBlue1080 from '@/assets/images/gallery/classic-blue-1080.png'
+import utekosTechdownDiagonaltFullfigur from '@/assets/images/techdown/utekos-techdown-diagonalt-fullfigur.webp'
+
 interface ProductChoice {
   title: string
   description: string
   href: Route
-  imageUrl: string
+  imageUrl: string | StaticImageData
   linkColor: string
 }
 export const choices: ProductChoice[] = [
@@ -14,7 +18,7 @@ export const choices: ProductChoice[] = [
     description:
       'Optimalisert etter erfaringer og tilbakemeldinger. Gir maksimal komfort og bevegelsesfrihet. Perfekt for hytteliv, bobil og all utekos.',
     href: '/produkter/utekos-techdown' as Route,
-    imageUrl: '/utekos-techdown-diagonalt-fullfigur.webp',
+    imageUrl: utekosTechdownDiagonaltFullfigur,
     linkColor: 'text-sky-800'
   },
   {
@@ -22,7 +26,7 @@ export const choices: ProductChoice[] = [
     description:
       'Vårt bestselgende isolasjonsplagg, fylt med kvalitetsdun for funksjonell varme på de kaldeste dagene.',
     href: '/produkter/utekos-dun' as Route,
-    imageUrl: '/1080/classic-blue-1080.png',
+    imageUrl: classicBlue1080,
     linkColor: 'text-sky-800'
   },
   {
@@ -30,7 +34,7 @@ export const choices: ProductChoice[] = [
     description:
       'Din lette og pålitelige følgesvenn for alt fra bynære turer til kjølige kvelder på terrassen. Enkel, funksjonell og alltid klar.',
     href: '/produkter/utekos-mikrofiber' as Route,
-    imageUrl: '/1080/classic-black-1080.png',
+    imageUrl: classicBlack1080,
     linkColor: 'text-sky-800'
   },
   {
@@ -38,7 +42,7 @@ export const choices: ProductChoice[] = [
     description:
       'Vanntett, vindtett og fôret med myk plysj. Holder deg garantert varm og tørr etter isbadet eller på en fuktig dag på campingen.',
     href: '/produkter/comfyrobe' as Route,
-    imageUrl: '/1080/comfy-1080.png',
+    imageUrl: comfy1080,
     linkColor: 'text-sky-800'
   }
 ]

@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { INTERSPORT_LAKSEVAG_MAPS_URL } from '@/constants/maps'
-import IntersportLogo from '@public/logo/Intersport_logo.svg'
+import IntersportLogo from '@/assets/images/partners/Intersport_logo.svg'
 import { MapPin } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'

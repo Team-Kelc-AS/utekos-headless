@@ -13,6 +13,10 @@ import {
   comfyrobeRevealGroup,
   comfyrobeRevealItem
 } from './comfyrobeMotionVariants'
+import comfyBgIpad from '@/assets/images/comfyrobe/comfy-bg-ipad.webp'
+import comfyHeroWide from '@/assets/images/comfyrobe/comfy-hero-wide.webp'
+import comfyMann45 from '@/assets/images/comfyrobe/comfy-mann-45.webp'
+
 
 function createInteractionId(): string {
   try {
@@ -82,14 +86,14 @@ export function ComfyrobeLandingClient({
           <picture className='absolute inset-0 block'>
             <source
               media='(min-width: 85.0625rem)'
-              srcSet='/comfy-hero-wide.webp'
+              srcSet={comfyHeroWide.src}
             />
             <source
               media='(min-width: 51rem) and (max-width: 85rem)'
-              srcSet='/comfy-bg-ipad.webp'
+              srcSet={comfyBgIpad.src}
             />
             <Image
-              src='/comfy-mann-45.webp'
+              src={comfyMann45}
               alt='Mann med mørk Comfyrobe fra Utekos'
               fill
               priority

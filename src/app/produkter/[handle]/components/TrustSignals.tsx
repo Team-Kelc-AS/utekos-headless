@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import TRUSTBADGE from '@public/TrustBadge.svg'
+import TRUSTBADGE from '@/assets/images/partners/TrustBadge.svg'
 
 export function TrustSignals() {
   return (

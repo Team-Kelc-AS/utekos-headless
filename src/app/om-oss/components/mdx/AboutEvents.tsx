@@ -1,6 +1,11 @@
 import Image from 'next/image'
 import { MapPin } from 'lucide-react'
 import { AboutBadge } from './AboutBadge'
+import erlingMesse from '@/assets/images/about/erling-messe.webp'
+import messe1 from '@/assets/images/campaign/messe-1.webp'
+import messe2 from '@/assets/images/campaign/messe-2.webp'
+import messe3 from '@/assets/images/campaign/messe-3.webp'
+
 
 const pastEvents = [
   {
@@ -21,10 +26,10 @@ const pastEvents = [
 ]
 
 const fairImages = [
-  '/messe-1.webp',
-  '/messe-2.webp',
-  '/erling-messe.JPEG',
-  '/messe-3.webp'
+  messe1,
+  messe2,
+  erlingMesse,
+  messe3
 ] as const
 
 export function AboutEvents() {
@@ -70,7 +75,7 @@ export function AboutEvents() {
         <div className='grid grid-cols-2 gap-4'>
           {fairImages.map((src, index) => (
             <div
-              key={src}
+              key={`fair-image-${index}`}
               className='relative aspect-4/3 overflow-hidden rounded-lg border border-border bg-card'
             >
               <Image

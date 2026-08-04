@@ -28,6 +28,7 @@ import { useEffect, useRef, useState } from 'react'
 import { reportCanonicalRemoveFromCart } from '@/lib/analytics/removeFromCartReporter'
 import { mapShopifyRemoveFromCart } from '@/lib/analytics/shopifyRemoveFromCartCommerce'
 import { resolveSuccessfulCartRemovalQuantity } from '@/lib/analytics/resolveSuccessfulCartRemovalQuantity'
+import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import type { Cart } from 'types/cart'
 import type { ShopifyProduct } from 'types/product'
 import { AlertDialogTitle } from './AlertDialogen'
@@ -231,7 +232,9 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
 
   const variantTitle: string = line.merchandise.title || ''
   const imageUrl: string | undefined =
-    line.merchandise.image?.url
+    line.merchandise.image?.url ?
+      resolveImageSrc(line.merchandise.image.url)
+    : undefined
   const [color, size]: string[] = variantTitle.split(' / ')
   const basePrice: number =
     parseFloat(line.cost?.totalAmount?.amount || '0') /

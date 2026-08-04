@@ -7,18 +7,11 @@ import { CartMutationProvider } from '@/clients/CartMutationProvider'
 import { serverActions } from '@/constants/serverActions'
 import { CartIdProvider } from '@/components/providers/CartIdProvider'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
-import { getCartIdFromCookie } from '@/lib/actions/cart/getCartIdFromCookie'
-import {
-  CartBootstrapContext,
-  type CartBootstrapStatus
-} from '@/lib/context/CartBootstrapContext'
-import { resolveBootstrappedCartId } from '@/lib/cart/resolveBootstrappedCartId'
+import { CartBootstrapContext } from '@/lib/context/CartBootstrapContext'
 import { migrateLegacyCartSessionStorageKeys } from '@/lib/cart/migrateLegacyCartSessionStorageKeys'
 import { CartIdentityActionsContext } from '@/lib/context/CartIdentityActionsContext'
 import { adoptAuthoritativeCartIdentity } from '@/lib/cart/adoptAuthoritativeCartIdentity'
 import type { Cart as CartModel } from 'types/cart'
-
-const CART_BOOTSTRAP_TIMEOUT_MS = 3000
 
 const ReactQueryDevtools =
   process.env.NODE_ENV === 'development' ?
@@ -44,8 +37,6 @@ export default function Providers({
   const [cartId, setCartId] = useState<string | null>(
     initialCartId
   )
-  const [cartBootstrapStatus, setCartBootstrapStatus] =
-    useState<CartBootstrapStatus>('pending')
   const adoptCartIdentity = (
     authoritativeCartId: string | null,
     cart: CartModel | null
@@ -66,53 +57,15 @@ export default function Providers({
   }
 
   useEffect(() => {
-    let isActive = true
-
     try {
       migrateLegacyCartSessionStorageKeys(window.sessionStorage)
     } catch {
       // Storage can be unavailable in privacy-restricted browsers.
     }
-
-    const timeoutId = setTimeout(() => {
-      if (isActive) setCartBootstrapStatus('ready')
-    }, CART_BOOTSTRAP_TIMEOUT_MS)
-
-    void getCartIdFromCookie()
-      .then(persistedCartId => {
-        if (!isActive || !persistedCartId) return
-
-        setCartId(currentCartId =>
-          resolveBootstrappedCartId(
-            currentCartId,
-            persistedCartId
-          )
-        )
-      })
-      .catch(error => {
-        console.warn(
-          '[cart-cookie-bootstrap] Cookie read failed',
-          {
-            errorName:
-              error instanceof Error ?
-                error.name
-              : 'UnknownError'
-          }
-        )
-      })
-      .finally(() => {
-        clearTimeout(timeoutId)
-        if (isActive) setCartBootstrapStatus('ready')
-      })
-
-    return () => {
-      isActive = false
-      clearTimeout(timeoutId)
-    }
   }, [])
 
   return (
-    <CartBootstrapContext.Provider value={cartBootstrapStatus}>
+    <CartBootstrapContext.Provider value='ready'>
       <ThemeProvider
         attribute='class'
         defaultTheme='dark'

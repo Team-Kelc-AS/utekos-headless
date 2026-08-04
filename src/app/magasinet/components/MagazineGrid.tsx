@@ -10,11 +10,14 @@ import {
 } from '../utils/getMagazineHeroTransitionName'
 import { MagazineCategoryBadge } from './MagazineCategoryBadge'
 import { MagazineHeroViewTransition } from './MagazineHeroViewTransition'
+import medUtekos1080x1350 from '@/assets/images/magazine/med-utekos-1080x1350.png'
+import medUtekos from '@/assets/images/magazine/med-utekos.png'
+import utekostechdown15 from '@/assets/images/techdown/UtekosTechDown15.jpg'
 
 type MagazineGridProps = { articles: MagazineArticle[] }
 
 const BEREDSKAP_PORTRAIT_HERO = {
-  src: '/med-utekos-1080x1350.png',
+  src: medUtekos1080x1350,
   width: 1080,
   height: 1350
 } as const
@@ -22,7 +25,7 @@ const BEREDSKAP_PORTRAIT_HERO = {
 const TECHDOWN_LAUNCH_SLUG = 'utekos-techdown-lansering'
 
 const TECHDOWN_GRID_MOBILE_IMAGE = {
-  src: '/UtekosTechDown15.jpg',
+  src: utekostechdown15,
   width: 1600,
   height: 1000
 } as const
@@ -33,7 +36,7 @@ function FeaturedArticleCard({
   article: MagazineArticle
 }) {
   const usesPortraitHero =
-    article.heroImage.src === '/med-utekos.png'
+    article.heroImage.src === medUtekos
 
   return (
     <article className='bg-background py-14 text-foreground sm:py-20'>

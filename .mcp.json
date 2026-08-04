@@ -30,15 +30,15 @@
         "shadcn@latest",
         "mcp"
       ]
-  },
-  "chrome-devtools": {
-    "command": "npx",
-    "args": [
-      "-y",
-      "chrome-devtools-mcp@latest"
-    ]
-  },
-  "google-tag-manager-mcp-server": {
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ]
+    },
+    "google-tag-manager-mcp-server": {
       "type": "stdio",
       "command": "npx",
       "args": [
@@ -47,35 +47,41 @@
         "https://gtm-mcp.stape.ai/mcp"
       ]
     },
-  "mdn": {
-    "url": "https://mcp.mdn.mozilla.net/"
-  },
-  "next-devtools": {
-    "command": "npx",
-    "args": [
-      "-y",
-      "next-devtools-mcp@latest"
-    ]
-  },
-  "rsuite": {
-    "command": "npx",
-    "args": ["-y", "@rsuite/mcp@latest"]
-  },
-  "playwright": {
-    "command": "npx",
-    "args": [
-      "@playwright/mcp@latest"
-    ]
-  },
-  "ga4-mcp-server": {
-     "command": "npx",
+    "mdn": {
+      "url": "https://mcp.mdn.mozilla.net/"
+    },
+    "next-devtools": {
+      "command": "/Users/kristofferohnstadhjelmeland/.nvm/versions/node/v24.17.0/bin/npx",
+      "args": [
+        "-y",
+        "next-devtools-mcp@latest"
+      ],
+      "env": {
+        "PATH": "/Users/kristofferohnstadhjelmeland/.nvm/versions/node/v24.17.0/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    },
+    "rsuite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@rsuite/mcp@latest"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
+    },
+    "ga4-mcp-server": {
+      "command": "npx",
       "args": [
         "-y",
         "mcp-remote",
         "https://mcp-google-analytics.stape.io/mcp"
       ]
     },
-"facebook-ads": {
+    "facebook-ads": {
       "url": "https://mcp.facebook.com/ads",
       "headers": {
         "ACCESS_TOKEN": "${input:facebookAdsToken}",
@@ -83,10 +89,24 @@
         "SYSTEM_USER_TOKEN": "${input:systemUserToken}"
       }
     }
-},
+  },
   "inputs": [
-    { "id": "facebookAdsToken", "type": "promptString", "description": "Facebook Ads bearer token", "password": true },
-    { "id": "metaPixelId", "type": "promptString", "description": "Meta Pixel ID" },
-    { "id": "systemUserToken", "type": "promptString", "description": "Meta System User token", "password": true }
+    {
+      "id": "facebookAdsToken",
+      "type": "promptString",
+      "description": "Facebook Ads bearer token",
+      "password": true
+    },
+    {
+      "id": "metaPixelId",
+      "type": "promptString",
+      "description": "Meta Pixel ID"
+    },
+    {
+      "id": "systemUserToken",
+      "type": "promptString",
+      "description": "Meta System User token",
+      "password": true
+    }
   ]
 }

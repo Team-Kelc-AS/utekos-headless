@@ -8,6 +8,18 @@ import type {
   NbccTrackingData,
   NbccUseCase
 } from '../types'
+import katelinn2 from '@/assets/images/about/katelinn.png'
+import comfy1080 from '@/assets/images/comfyrobe/comfy-1080.png'
+import comfyBack1080 from '@/assets/images/comfyrobe/comfy-back-1080.png'
+import comfyDesign1080 from '@/assets/images/comfyrobe/comfy-design-1080.png'
+import comfyOpen1080 from '@/assets/images/comfyrobe/comfy-open-1080.png'
+import classicBlack1080 from '@/assets/images/gallery/classic-black-1080.png'
+import dunFrontHvitBakgrunn1080 from '@/assets/images/magazine/dun-front-hvit-bakgrunn-1080.png'
+import techdownMonica1080 from '@/assets/images/techdown/techdown-monica-1080.webp'
+import utekosTechdownBakside from '@/assets/images/techdown/utekos-techdown-bakside.webp'
+import utekosTechdownDiagonaltFullfigur from '@/assets/images/techdown/utekos-techdown-diagonalt-fullfigur.webp'
+import utekosTechdownKvinneTerrasseliv1600x1600 from '@/assets/images/techdown/utekos-techdown-kvinne-terrasseliv-1600x1600.webp'
+
 
 export const nbccHeroTracking = {
   primary: {
@@ -31,19 +43,19 @@ export const nbccProducts = [
     bestFor: 'For bobil, campingvogn, fortelt og faste plasser.',
     images: [
       {
-        src: '/utekos-techdown-kvinne-terrasseliv-1600x1600.webp',
+        src: utekosTechdownKvinneTerrasseliv1600x1600,
         alt: 'Kvinne nyter terrasselivet med Utekos TechDown™'
       },
       {
-        src: '/webp/techdown-monica-1080.webp',
+        src: techdownMonica1080,
         alt: 'Utekos TechDown – modell Monica'
       },
       {
-        src: '/utekos-techdown-diagonalt-fullfigur.webp',
+        src: utekosTechdownDiagonaltFullfigur,
         alt: 'Utekos TechDown komfortplagg for kjølige kvelder ute'
       },
       {
-        src: '/1080/utekos-techdown-bakside.webp',
+        src: utekosTechdownBakside,
         alt: 'Utekos TechDown sett bakfra'
       }
     ],
@@ -63,14 +75,14 @@ export const nbccProducts = [
       'Lett, praktisk og enkel å pakke med når du vil ha et varmt lag klart ved stolen eller markisen.',
     bestFor: 'For sommerhalvåret, reisedager og raske turer ut.',
     images: [
-      { src: '/katelinn.png', alt: 'Utekos Mikrofiber™ – modell Katelinn' },
+      { src: katelinn2, alt: 'Utekos Mikrofiber™ – modell Katelinn' },
       { src: '/schema-bilder/utekos-dun.png', alt: 'Utekos Dun produktbilde' },
       {
-        src: '/magasinet/dun-front-hvit-bakgrunn-1080.png',
+        src: dunFrontHvitBakgrunn1080,
         alt: 'Utekos Dun forfra på hvit bakgrunn'
       },
       {
-        src: '/1080/classic-black-1080.png',
+        src: classicBlack1080,
         alt: 'Utekos Mikrofiber i sort, lett komfortplagg for campingbruk'
       }
     ],
@@ -91,12 +103,12 @@ export const nbccProducts = [
     bestFor: 'Som en  fuktige morgener.',
     images: [
       {
-        src: '/1080/comfy-1080.png',
+        src: comfy1080,
         alt: 'Comfyrobe fra Utekos, varm og vanntett skifterobe'
       },
-      { src: '/1080/comfy-open-1080.png', alt: 'Comfyrobe åpen fremvisning' },
-      { src: '/1080/comfy-design-1080.png', alt: 'Comfyrobe designdetaljer' },
-      { src: '/1080/comfy-back-1080.png', alt: 'Comfyrobe sett bakfra' }
+      { src: comfyOpen1080, alt: 'Comfyrobe åpen fremvisning' },
+      { src: comfyDesign1080, alt: 'Comfyrobe designdetaljer' },
+      { src: comfyBack1080, alt: 'Comfyrobe sett bakfra' }
     ],
     href: '/produkter/comfyrobe' as Route,
     handle: 'comfyrobe',

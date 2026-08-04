@@ -8,6 +8,7 @@ import { ComfyrobeMotionProvider } from './components/ComfyrobeMotionProvider'
 import { ComfyrobeProductDetailsSection } from './components/ComfyrobeProductDetailsSection'
 import { ComfyrobeProofBridge } from './components/ComfyrobeProofBridge'
 import { ComfyrobePurchaseSection } from './components/ComfyrobePurchaseSection'
+import { ComfyrobeSizeGuideAccordion } from './components/ComfyrobeSizeGuideAccordion'
 import { ComfyrobeStickyPurchase } from './components/ComfyrobeStickyPurchase'
 import { getComfyrobeLandingProduct } from './lib/getComfyrobeLandingProduct'
 import { buildComfyrobeOfferSummary } from './lib/buildComfyrobeOfferSummary'
@@ -52,6 +53,7 @@ export default async function ComfyrobeLandingPage() {
       <ComfyrobeMotionProvider>
         <ComfyrobeLandingClient offer={offer} />
         <ComfyrobeProofBridge />
+        <ComfyrobeSizeGuideAccordion />
 
         <PromotionImpression
           promotionId='comfyrobe-purchase'

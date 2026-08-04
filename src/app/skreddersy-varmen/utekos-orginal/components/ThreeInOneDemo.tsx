@@ -12,10 +12,10 @@ export function ThreeInOneDemo() {
   const activeModeData = modes.find(m => m.id === activeMode)
 
   return (
-    <article className='w-full overflow-hidden bg-[#2C2420] py-16 text-[#F4F1EA] md:py-24'>
+    <article className='w-full overflow-hidden bg-jungle py-16 text-[#F4F1EA] md:py-24'>
       <div className='mx-auto max-w-6xl px-4 text-center md:px-6'>
         <AnimatedBlock className='animate-on-scroll mb-6 md:mb-12'>
-          <span className='font-google-sans mb-3 block text-xs font-bold tracking-[0.2em] text-[#E07A5F] uppercase md:text-sm'>
+          <span className='mb-3 block font-utekos-text-medium text-xs tracking-wide text-primary uppercase md:text-sm'>
             Modulært system
           </span>
           <h3 className='mb-4 font-serif text-3xl md:mb-6 md:text-5xl'>
@@ -39,15 +39,15 @@ export function ThreeInOneDemo() {
                   onClick={() => setActiveMode(mode.id)}
                   className={`relative flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium whitespace-nowrap transition-all duration-300 ease-out md:flex-none md:gap-2 md:px-6 md:py-3 md:text-base ${
                     isActive ?
-                      'dark:bg-dark-primary dark:text-dark-primary-foreground scale-100 bg-primary text-primary-foreground shadow-lg'
+                      'scale-100 bg-dark-teal text-[#F4F1EA] shadow-lg'
                     : 'text-[#F4F1EA]/60 hover:bg-white/5 hover:text-[#F4F1EA]'
                   } `}
                 >
                   <mode.icon
                     size={14}
-                    className='md:h-[18px] md:w-[18px]'
+                    className='text-foreground md:h-[18px] md:w-[18px]'
                   />
-                  <span>{mode.title}</span>
+                  <span className='text-foreground'>{mode.title}</span>
                 </button>
               )
             })}
@@ -57,7 +57,7 @@ export function ThreeInOneDemo() {
           className='animate-on-scroll mx-auto w-full max-w-sm md:max-w-5xl'
           delay='0.2s'
         >
-          <div className='relative aspect-9/16 w-full overflow-hidden rounded-2xl border border-[#F4F1EA]/10 bg-night shadow-2xl transition-[aspect-ratio] duration-300 md:aspect-video'>
+          <div className='relative aspect-9/16 w-full overflow-hidden rounded-2xl border border-[#F4F1EA]/10 bg-dark-teal shadow-2xl transition-[aspect-ratio] duration-300 md:aspect-video'>
             {modes.map(mode => {
               const isActive = activeMode === mode.id
 
@@ -83,7 +83,11 @@ export function ThreeInOneDemo() {
                       src={mode.desktopSrc}
                       alt={`Utekos ${mode.title} desktopvisning`}
                       fill
-                      className='object-contain'
+                      className={
+                        mode.id === 'fulldekket' ?
+                          'object-cover object-center'
+                        : 'object-contain'
+                      }
                       sizes='80vw'
                       priority={mode.id === 'fulldekket'}
                       quality={100}
@@ -112,8 +116,11 @@ export function ThreeInOneDemo() {
           {activeModeData && (
             <div className='animate-fade-in-up mt-4 rounded-xl border border-white/5 bg-white/5 p-4 text-left md:hidden'>
               <div className='mb-2 flex items-center gap-2 text-commerce-primary dark:text-dark-commerce-primary'>
-                <activeModeData.icon size={18} />
-                <h4 className='font-google-sans font-serif text-lg font-bold tracking-wide capitalize'>
+                <activeModeData.icon
+                  size={18}
+                  className='text-primary'
+                />
+                <h4 className='font-google-sans font-serif text-lg font-bold tracking-wide text-primary capitalize'>
                   {activeModeData.title}
                 </h4>
               </div>

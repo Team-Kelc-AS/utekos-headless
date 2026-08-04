@@ -6,7 +6,7 @@ import {
   CloudRain,
   type LucideIcon
 } from 'lucide-react'
-import ProductMain from '@public/UtekosMikrofiberVert.webp'
+import ProductMain from '@/assets/images/mikrofiber/MikroWall-4-5.webp'
 
 export function ProductShowcase() {
   return (
@@ -18,8 +18,8 @@ export function ProductShowcase() {
         <div className='grid grid-cols-1 items-center gap-16 lg:grid-cols-2'>
           <div className='space-y-8'>
             <div className='space-y-4'>
-              <h2 className='font-serif text-4xl leading-tight text-primary dark:text-dark-primary md:text-5xl'>
-                Utekos®
+              <h2 className='text-4xl leading-tight text-primary dark:text-dark-primary md:text-5xl'>
+                <span className='font-sans font-extrabold'>Utekos®</span>
                 <span className='font-utekos-text-medium mt-2 block text-2xl text-[#F4F1EA] md:text-3xl'>
                   Lettvekt møter kompromissløs varme.
                 </span>

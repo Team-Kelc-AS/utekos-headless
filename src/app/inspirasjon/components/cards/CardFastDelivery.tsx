@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import PostNordBanner from '@public/Postnord-1920-1080.png'
+import PostNordBanner from '@/assets/images/partners/Postnord-1920-1080.png'
 import { Card } from '@/components/ui/card'
 import { socialProofCardClassName } from './socialProofCardClassName'
 

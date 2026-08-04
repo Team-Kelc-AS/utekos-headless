@@ -5,7 +5,7 @@ import { Check, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
-import SherpaCoreImg from '@public/1080/comfy-design-1080.png'
+import SherpaCoreImg from '@/assets/images/comfyrobe/comfy-design-1080.png'
 
 const features = [
   'SherpaCore™ fôr som tørker deg umiddelbart',

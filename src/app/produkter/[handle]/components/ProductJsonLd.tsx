@@ -18,6 +18,7 @@ import type {
   WithContext
 } from 'schema-dts'
 import { SITE_URL } from '@/constants'
+import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 
 type Props = {
   handle: string
@@ -136,7 +137,10 @@ export async function ProductJsonLd({ handle }: Props) {
   const isProductGroup = variants.length > 0
 
   const defaultImages = computeVariantImages(product, null)
-  const featuredImage = defaultImages[0]?.url || product.featuredImage?.url
+  const featuredImageRaw =
+    defaultImages[0]?.url || product.featuredImage?.url
+  const featuredImage =
+    featuredImageRaw ? resolveImageSrc(featuredImageRaw) : undefined
 
   const merchantReturnPolicy: MerchantReturnPolicy = {
     '@type': 'MerchantReturnPolicy',
@@ -184,7 +188,9 @@ export async function ProductJsonLd({ handle }: Props) {
       'url': productUrl,
       'hasVariant': variants.map(({ node: variant }): ProductSchema => {
         const variantImages = computeVariantImages(product, variant)
-        const variantImage = variantImages[0]?.url || featuredImage
+        const variantImageRaw = variantImages[0]?.url || featuredImage
+        const variantImage =
+          variantImageRaw ? resolveImageSrc(variantImageRaw) : undefined
         const variantPrice = variant.price?.amount ? String(variant.price.amount) : null
         const cleanVariantId = cleanShopifyId(variant.id)
         const originalPrice = variant.compareAtPrice?.amount ? String(variant.compareAtPrice.amount) : null

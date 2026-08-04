@@ -1,8 +1,8 @@
 // Path: src/app/skreddersy-varmen/components/Hero.tsx
 
 import Image from 'next/image'
-import CinemaOne from '@public/cinema-twilight.webp'
-import MobileOne from '@public/skreddersy-varmen-hero-mobile.webp'
+import CinemaOne from '@/assets/images/campaign/cinema-twilight.webp'
+import MobileOne from '@/assets/images/campaign/skreddersy-varmen-hero-mobile.webp'
 import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { HeroActions } from '@/app/skreddersy-varmen/components/HeroActions'
 import { HeroStars } from '@/app/skreddersy-varmen/components/HeroStars'

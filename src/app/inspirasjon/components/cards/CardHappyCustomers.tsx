@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import MarketingVmDark from '@public/Marketing-VMP_Dark.svg'
+import MarketingVmDark from '@/assets/images/partners/Marketing-VMP_Dark.svg'
 import { Card } from '@/components/ui/card'
 import { socialProofCardClassName } from './socialProofCardClassName'
 

@@ -1,4 +1,5 @@
 import type { Route } from 'next'
+import type { StaticImageData } from 'next/image'
 import { z } from 'zod'
 import type { ShopifyProduct } from 'types/product/ShopifyProduct'
 
@@ -9,7 +10,7 @@ export type NbccProduct = {
   shortTitle: string
   description: string
   bestFor: string
-  images: Array<{ src: string; alt: string }>
+  images: Array<{ src: string | StaticImageData; alt: string }>
   href: Route
   handle: string
   sizes: string[]
@@ -133,7 +134,7 @@ export type NbccProductCardActionsProps = {
 }
 
 export type NbccProductCarouselImage = {
-  src: string
+  src: string | StaticImageData
   alt: string
 }
 

@@ -8,20 +8,24 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel'
+import kvinneNyterTerrasselivetMedUtekosTechdown from '@/assets/images/techdown/kvinne-nyter-terrasselivet-med-utekos-techdown.webp'
+import utekosTechdownBaksideFullmodus16001793 from '@/assets/images/techdown/utekos-techdown-bakside-fullmodus-1600-1793.webp'
+import utekosTechdownDiagonaltFullfigur from '@/assets/images/techdown/utekos-techdown-diagonalt-fullfigur.webp'
+
 
 const images = [
   {
-    src: '/utekos-techdown-diagonalt-fullfigur.webp',
+    src: utekosTechdownDiagonaltFullfigur,
     alt: 'Utekos TechDown diagonalt fullfigur',
     imageClassName: 'object-contain object-center p-1 sm:p-0'
   },
   {
-    src: '/kvinne-nyter-terrasselivet-med-utekos-techdown.webp',
+    src: kvinneNyterTerrasselivetMedUtekosTechdown,
     alt: 'Utekos TechDown i bruk på en terrasse',
     imageClassName: 'object-cover object-center'
   },
   {
-    src: '/utekos-techdown-bakside-fullmodus-1600-1793.webp',
+    src: utekosTechdownBaksideFullmodus16001793,
     alt: 'Utekos TechDown sett bakfra',
     imageClassName: 'object-contain object-center p-1 sm:p-0'
   }
@@ -41,7 +45,7 @@ export function ImageColumn() {
         >
           <CarouselContent>
             {images.map((image, index) => (
-              <CarouselItem key={image.src} className='h-fit'>
+              <CarouselItem key={image.alt} className='h-fit'>
                 <div className='bg-teal relative aspect-square overflow-hidden rounded-2xl sm:aspect-3/4 sm:rounded-[1.25rem] lg:aspect-3/4'>
                   <Image
                     src={image.src}

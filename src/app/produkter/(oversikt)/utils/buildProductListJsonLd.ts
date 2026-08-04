@@ -1,6 +1,7 @@
 import 'server-only'
 
 import type { ItemList, ListItem, WithContext } from 'schema-dts'
+import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import { fetchProductsWithRetry } from './fetchProductsWithRetry'
 
 export async function buildProductListJsonLd(): Promise<WithContext<ItemList> | null> {
@@ -17,7 +18,9 @@ export async function buildProductListJsonLd(): Promise<WithContext<ItemList> | 
       'position': index + 1,
       'url': `https://utekos.no/produkter/${product.handle}`,
       'name': product.title,
-      ...(product.featuredImage?.url ? { image: product.featuredImage.url } : {})
+      ...(product.featuredImage?.url ?
+        { image: resolveImageSrc(product.featuredImage.url) }
+      : {})
     }))
 
     return {
