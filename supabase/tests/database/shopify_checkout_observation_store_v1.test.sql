@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select extensions.plan(17);
+select extensions.plan(19);
 
 select extensions.has_table(
   'ops',
@@ -147,6 +147,82 @@ select extensions.is(
   ),
   1,
   'stores the first observation once'
+);
+
+select extensions.lives_ok(
+  $sql$
+    insert into ops.shopify_checkout_observations (
+      idempotency_key,
+      payload_sha256,
+      schema_version,
+      event_name,
+      event_id,
+      event_sequence,
+      occurred_at,
+      analytics_processing_allowed,
+      marketing_allowed,
+      preferences_processing_allowed,
+      sale_of_data_allowed,
+      checkout_token,
+      currency_code,
+      commerce_value,
+      item_quantity
+    ) values (
+      'utekos.shopify.checkout_observation:2:shopify_app_web_pixel:payment_info_submitted:evt-payment-v2',
+      repeat('f', 64),
+      2,
+      'payment_info_submitted',
+      'evt-payment-v2',
+      2,
+      '2026-08-03T18:00:30Z',
+      true,
+      false,
+      false,
+      false,
+      'checkout-token-v2',
+      'NOK',
+      1299.00,
+      1
+    )
+  $sql$,
+  'accepts a strictly validated version 2 payment observation'
+);
+
+select extensions.throws_ok(
+  $sql$
+    insert into ops.shopify_checkout_observations (
+      idempotency_key,
+      payload_sha256,
+      schema_version,
+      event_name,
+      event_id,
+      event_sequence,
+      occurred_at,
+      analytics_processing_allowed,
+      marketing_allowed,
+      preferences_processing_allowed,
+      sale_of_data_allowed,
+      checkout_token,
+      item_quantity
+    ) values (
+      'utekos.shopify.checkout_observation:3:shopify_app_web_pixel:payment_info_submitted:evt-payment-v3',
+      repeat('e', 64),
+      3,
+      'payment_info_submitted',
+      'evt-payment-v3',
+      3,
+      '2026-08-03T18:00:45Z',
+      true,
+      false,
+      false,
+      false,
+      'checkout-token-v3',
+      1
+    )
+  $sql$,
+  '23514'::char(5),
+  'new row for relation "shopify_checkout_observations" violates check constraint "shopify_checkout_observations_schema_version_check"',
+  'rejects unsupported observation contract versions'
 );
 
 select extensions.lives_ok(

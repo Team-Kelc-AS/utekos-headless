@@ -10,6 +10,39 @@ The purpose is simple: no runtime change should reach production before
 its required database, provider, environment, and verification steps are
 known and completed in the correct order.
 
+## Shopify `add_payment_info` cutover 2026-08-04
+
+The event-specific cutover was executed in fail-closed order:
+
+1. Shopify Custom Pixel `Utekos GA4 Commerce` stopped subscribing to
+   `payment_info_submitted`. A save, reload and full-code readback proved that
+   `checkout_completed` and the existing `purchase` send remained unchanged.
+   The exact UTF-8 source changed from SHA-256
+   `c3af96afc82e1a3e9134f6da28f93c66b4c1bfe3bf6e9fb9d571a4eefe2064b3`
+   (6,345 bytes) to
+   `c6dda9399fc9a6fb1e2216b5a976ce25b44173ca9d90e0351a004e356378cdb1`
+   (6,268 bytes).
+2. Production received
+   `SHOPIFY_ADD_PAYMENT_INFO_CUTOVER_AT=2026-08-04T03:27:09Z` and
+   `SHOPIFY_ADD_PAYMENT_INFO_CANONICAL_ENABLED=true`.
+3. Exact-source Vercel redeployment
+   `dpl_Gpp5WET4fWKxt3A34zSAmHbKdjMp` reached `READY` and owns the production
+   aliases. The observation receiver returns `204` to `OPTIONS`, exposes both
+   observation and canonical result headers, and remains `no-store`.
+4. Production schema inspection found that the observation table still
+   rejected contract version 2. Migration
+   `20260804033956_allow_shopify_checkout_observation_v2` replaced only that
+   check with a validated `schema_version in (1, 2)` constraint. RLS, grants,
+   retention, idempotency, replay-conflict controls and the PII-free table
+   shape are unchanged.
+
+The event catalog creates only a Google Data Manager outbox intent for
+`add_payment_info`. Meta and Microsoft are not relevant providers for this
+event and PostHog is excluded. No synthetic checkout, payment or order was
+created. The first natural consented Shopify event remains the required proof
+for observation persistence, canonical ledger acceptance, Google outbox state
+and provider finality.
+
 ## Active Meta stale-event / near-real-time release 2026-07-26
 
 Web-GTM v135 is live. Version 133 introduced the canonical mapping from
