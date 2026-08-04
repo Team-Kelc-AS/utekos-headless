@@ -22,6 +22,7 @@ test('implemented union covers every active catalog event', () => {
     'page_view',
     'view_item',
     'add_to_cart',
+    'add_payment_info',
     'begin_checkout',
     'purchase',
     'refund',

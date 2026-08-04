@@ -1,5 +1,6 @@
 import { shopifyCheckoutObservationSchema } from '../shopifyCheckoutObservationContract'
 import type { ShopifyCheckoutObservationStore } from './shopifyCheckoutObservationStore'
+import type { ShopifyAddPaymentInfoPromotionResult } from './promoteShopifyAddPaymentInfoObservation'
 
 export const MAX_SHOPIFY_CHECKOUT_OBSERVATION_BYTES = 16 * 1_024
 
@@ -8,7 +9,7 @@ const RESPONSE_HEADERS = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Expose-Headers':
-    'X-Shopify-Checkout-Observation-Result',
+    'X-Shopify-Checkout-Observation-Result, X-Shopify-Checkout-Canonical-Result',
   'Access-Control-Max-Age': '86400',
   'Cache-Control': 'no-store',
   'Cross-Origin-Resource-Policy': 'cross-origin'
@@ -16,6 +17,11 @@ const RESPONSE_HEADERS = {
 
 type HandlerDependencies = {
   enabled: boolean
+  promote?: (
+    observation: Parameters<
+      ShopifyCheckoutObservationStore['persist']
+    >[0]
+  ) => Promise<ShopifyAddPaymentInfoPromotionResult>
   store: ShopifyCheckoutObservationStore
 }
 
@@ -123,11 +129,30 @@ export async function handleShopifyCheckoutObservation(
     )
   }
 
+  let canonicalResult: ShopifyAddPaymentInfoPromotionResult | undefined
+  try {
+    canonicalResult = await dependencies.promote?.(parsed.data)
+  } catch {
+    return jsonResponse(
+      {
+        accepted: false,
+        reason: 'canonical_promotion_unavailable'
+      },
+      503
+    )
+  }
+
   return new Response(null, {
     status: 204,
     headers: {
       ...RESPONSE_HEADERS,
-      'X-Shopify-Checkout-Observation-Result': result.status
+      'X-Shopify-Checkout-Observation-Result': result.status,
+      ...(canonicalResult ?
+        {
+          'X-Shopify-Checkout-Canonical-Result':
+            canonicalResult.status
+        }
+      : {})
     }
   })
 }

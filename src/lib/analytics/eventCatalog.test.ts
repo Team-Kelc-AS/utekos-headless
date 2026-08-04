@@ -182,18 +182,17 @@ test('keeps blocked_source events isolated from active lifecycle', () => {
 
   assert.deepEqual(blockedSources, [
     'add_shipping_info',
-    'add_payment_info',
     'checkout_error',
     'payment_error'
   ])
 })
 
-test('keeps Shopify checkout-step candidates fail-closed', () => {
+test('keeps shipping blocked while add_payment_info is isolated to the approved Shopify and Google cutover', () => {
   const shipping = eventCatalog.add_shipping_info
   const payment = eventCatalog.add_payment_info
 
   assert.equal(shipping.lifecycle, 'blocked_source')
-  assert.equal(payment.lifecycle, 'blocked_source')
+  assert.equal(payment.lifecycle, 'active')
   assert.match(
     shipping.trigger.description,
     /checkout_shipping_info_submitted proves only that a rate was chosen/
@@ -208,10 +207,25 @@ test('keeps Shopify checkout-step candidates fail-closed', () => {
     )
   )
   assert.ok(
-    Object.values(payment.providers).every(
-      provider => provider.serverOutbox !== 'active'
+    Object.entries(payment.providers).every(
+      ([providerId, provider]) =>
+        providerId === 'google' ?
+          provider.serverOutbox === 'active'
+        : provider.serverOutbox !== 'active'
     )
   )
+  assert.equal(payment.owner, 'shopify_app_web_pixel')
+  assert.equal(payment.providers.google.transport.browser, null)
+  assert.equal(
+    payment.providers.google.transport.server,
+    'google_data_manager'
+  )
+  assert.equal(payment.providers.meta.support, 'not_relevant')
+  assert.equal(
+    payment.providers.microsoft_uet.support,
+    'not_relevant'
+  )
+  assert.equal(payment.providers.posthog.support, 'not_relevant')
 })
 
 test('marks all non-blocked catalog events as active', () => {
@@ -221,7 +235,6 @@ test('marks all non-blocked catalog events as active', () => {
 
   assert.deepEqual(inactiveEvents, [
     'add_shipping_info',
-    'add_payment_info',
     'checkout_error',
     'payment_error'
   ])
@@ -241,6 +254,7 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
 
   assert.ok(activeOutboxes.includes('google:view_item'))
   assert.ok(activeOutboxes.includes('google:add_to_cart'))
+  assert.ok(activeOutboxes.includes('google:add_payment_info'))
   assert.ok(activeOutboxes.includes('meta:search'))
   assert.ok(activeOutboxes.includes('microsoft_uet:purchase'))
   assert.ok(activeOutboxes.includes('microsoft_uet:add_to_cart'))

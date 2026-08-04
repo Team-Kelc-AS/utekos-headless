@@ -34,10 +34,10 @@ Status vocabulary:
 - **Refuted:** current primary evidence contradicts the prior
   claim.
 
-## Current production contract — 2026-07-31
+## Current production contract — 2026-08-04
 
-- Canonical inventory: 33 total, 29 active, four `blocked_source`.
-- Active provider/event registry: 48 workers — 28 Google, 17 Meta, three
+- Canonical inventory: 33 total, 30 active, three `blocked_source`.
+- Active provider/event registry: 49 workers — 29 Google, 17 Meta, three
   Microsoft UET CAPI.
 - Accepted events persist ledger plus provider attempts atomically. Only newly
   inserted attempt primary keys are published after commit to Vercel Queue.
@@ -94,7 +94,7 @@ Activation evidence is tracked in
 The project has a typed 33-event catalog, a shared consent-aware browser
 collector, 27 first-party event routes, Zod validation, atomic ledger/outbox
 persistence, exact-attempt Vercel Queue wake-up, a generic `SKIP LOCKED`
-database fallback, and 48 provider workers (28 Google, 17 Meta, three
+database fallback, and 49 provider workers (29 Google, 17 Meta, three
 Microsoft UET CAPI). It also has provider retries/dead letters, Google request-status
 reconciliation, intended Shopify webhook purchase/refund routes
 with verified browser/backfill purchase ingestion, Cookiebot
@@ -153,22 +153,29 @@ Oppgave 0 did not change it.
 
 ## Canonical event model
 
-`src/lib/analytics/eventCatalog.ts` declares 33 events: 29 active
-and four `blocked_source`. `src/lib/analytics/canonicalEvent.ts`
+`src/lib/analytics/eventCatalog.ts` declares 33 events: 30 active
+and three `blocked_source`. `src/lib/analytics/canonicalEvent.ts`
 defines the implemented Zod discriminated union. Each active
 event declares an owner, trigger, dedupe policy, consent policy
 and provider mapping. The complete chain is in
 [event-matrix.md](event-matrix.md).
 
-The four source-blocked events are:
+The three source-blocked events are:
 
 - `add_shipping_info`
-- `add_payment_info`
 - `checkout_error`
 - `payment_error`
 
 They are not eligible for persistence or provider dispatch until
 an authoritative source is implemented.
+
+`add_payment_info` is active with Shopify
+`payment_info_submitted` submission semantics. A strict v2 observation must
+carry a PII-free UUID that resolves to an analytics-consented canonical
+`begin_checkout`; the receiver then copies only canonical commerce and GA
+browser identifiers into a deterministic `add_payment_info` event. Only the
+Google Data Manager outbox is active. Meta, Microsoft and PostHog remain
+disabled, and `purchase` ownership is unchanged.
 
 ### Event creation
 

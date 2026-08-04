@@ -98,7 +98,11 @@ export async function reportCanonicalBeginCheckout(
 
     sendGTMEvent(buildBeginCheckoutDataLayerEvent(event))
     const tasks: Promise<unknown>[] = [
-      persistCheckoutAttributionSnapshot(input.cart.id, snapshot)
+      persistCheckoutAttributionSnapshot(
+        input.cart.id,
+        snapshot,
+        event.event_id
+      )
     ]
 
     if (

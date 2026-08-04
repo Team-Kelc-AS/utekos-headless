@@ -512,8 +512,7 @@
 ## DEV-025
 
 - **Priority:** P1
-- **Status:** CODE_FIXED_REPO_ARTIFACT; SHOPIFY_PIXEL_PUBLISH_BLOCKED
-  (2026-07-31)
+- **Status:** EVENT_SPECIFIC_CUTOVER_RELEASE_CANDIDATE (2026-08-04)
 - **Description:** Repoets historiske Shopify Customer Events-piksel mappet
   `payment_info_submitted` direkte til canonical `add_payment_info`, selv om
   eventkatalogen krever et akseptert betalingssteg og har
@@ -527,14 +526,17 @@
 - **Consequence:** Hvis den historiske pikselkoden fortsatt er publisert, kan
   en innsending bli rapportert som canonical `add_payment_info` før Utekos sin
   postcondition er sann.
-- **Resolution:** `payment_info_submitted`-abonnementet er fjernet fra repoets
-  pikselartefakt. Kontrakttesten krever nå at både betalings- og
-  frakthendelsen er uten abonnement. Eventkatalog, matrise og evidens beholder
-  begge eventer fail-closed.
-- **Remaining limitation:** Repoendringen endrer ikke en manuelt publisert
-  Shopify-piksel. Autentisert sammenligning og eventuell publisering av den
-  fail-closed pikselkoden er en separat Shopify-mutasjon som krever eksplisitt
-  godkjenning.
+- **Resolution:** Den godkjente cutoveren bruker
+  `payment_info_submitted` med eksplisitt innsending-semantikk, en PII-fri
+  UUID-korrelasjon til analytics-consented canonical `begin_checkout`,
+  deterministisk idempotens og Google Data Manager som eneste provider.
+  Meta, Microsoft og PostHog er deaktivert. `purchase` forblir eid av den
+  eksisterende Shopify order-payment-flyten.
+- **Remaining limitation:** Produksjonscutoveren er først ferdig når bare
+  `payment_info_submitted` er fjernet fra den eksisterende Custom Pixel-en,
+  Web Pixel v2 er aktiv, de to eksplisitte Vercel-portene er satt i riktig
+  rekkefølge og første naturlige hendelse er verifisert i observation,
+  canonical ledger, Google outbox og providerstatus.
 - **Systems:** Shopify Customer Events, GA4, canonical event catalog.
 - **Target task:** KRI-24 kodekonsistens; separat Shopify-pikseloppgave.
 

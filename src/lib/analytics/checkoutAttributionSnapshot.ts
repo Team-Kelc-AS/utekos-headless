@@ -11,6 +11,8 @@ const CAPTURED_AT_ATTRIBUTE = 'utekos_attribution_captured_at'
 const EXTERNAL_ID_ATTRIBUTE = 'utekos_external_id'
 const PAGE_URL_ATTRIBUTE = 'utekos_page_url'
 const REFERRER_URL_ATTRIBUTE = 'utekos_referrer_url'
+export const BEGIN_CHECKOUT_EVENT_ATTRIBUTE =
+  'utekos_begin_checkout_event_id'
 
 const browserAttributeKeys = {
   fbc: '_fbc',
@@ -308,7 +310,20 @@ export function parseOrderAttributionFromNoteAttributes(
 }
 
 export function checkoutAttributionSnapshotToShopifyAttributes(
-  snapshot: CheckoutAttributionSnapshot
+  snapshot: CheckoutAttributionSnapshot,
+  beginCheckoutEventId?: string
 ) {
-  return buildCartAttributes(snapshot)
+  const attributes = buildCartAttributes(snapshot)
+
+  if (
+    snapshot.consent.analytics === 'granted' &&
+    beginCheckoutEventId
+  ) {
+    attributes.push({
+      key: BEGIN_CHECKOUT_EVENT_ATTRIBUTE,
+      value: z.string().uuid().parse(beginCheckoutEventId)
+    })
+  }
+
+  return attributes
 }
