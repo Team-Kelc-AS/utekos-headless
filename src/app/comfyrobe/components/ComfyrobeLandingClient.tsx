@@ -48,7 +48,7 @@ export function ComfyrobeLandingClient({
 }) {
   const primaryLabel =
     offer?.availableForSale ?
-      `Velg størrelse – ${offer.priceLabel}`
+      `Velg størrelse`
     : offer ? `Se størrelser – ${offer.priceLabel}`
     : 'Se tilgjengelighet'
   const offerDetails = [
