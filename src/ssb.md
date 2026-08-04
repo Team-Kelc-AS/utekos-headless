@@ -22,23 +22,23 @@ Analysen nedenfor bygger primært på **2025**, som er siste komplette kalender�
 
 Andelene i juli, august og september er beregnet som månedens bobilovernattinger delt på fylkets samlede bobilovernattinger i 2025. ([SSB][2])
 
-| Rang | Fylke           | Bobilovernattinger 2025 |   Juli |     August |      September |  Jul.–sep. |
-| ---: | --------------- | ----------------------: | -----: | ---------: | -------------: | ---------: |
-|    1 | Vestland        |                 468 299 | 32,4 % |     25,7 % |          7,2 % | **65,4 %** |
-|    2 | Innlandet       |                 306 534 | 33,5 % |     23,2 % |          7,7 % | **64,5 %** |
-|    3 | Nordland        |                 238 063 | 37,3 % |     20,6 % |          7,3 % | **65,3 %** |
-|    4 | Møre og Romsdal |                 221 459 | 33,5 % |     24,0 % |          8,6 % | **66,1 %** |
-|    5 | Agder           |                 196 041 | 41,1 % |     21,7 % |          4,3 % | **67,1 %** |
-|    6 | Rogaland        |                 168 232 | 30,1 % |     26,1 % |          6,9 % | **63,1 %** |
-|    7 | Trøndelag       |                 139 658 | 34,7 % |     15,7 % |          8,1 % | **58,5 %** |
-|    8 | Telemark        |                 131 122 | 34,6 % |     19,4 % |          5,6 % | **59,6 %** |
-|    9 | Buskerud        |                  91 153 | 34,4 % |     21,1 % |          7,2 % | **62,7 %** |
-|   10 | Oslo            |                  85 232 | 25,1 % | **31,6 %** |          8,5 % | **65,2 %** |
-|   11 | Troms           |                  79 837 | 30,4 % |     20,5 % |          8,8 % | **59,8 %** |
-|   12 | Finnmark        |                  66 410 | 30,1 % |     24,4 % |          6,6 % | **61,1 %** |
-|   13 | Vestfold        |                  66 069 | 44,5 % |     21,9 % |          1,9 % | **68,2 %** |
-|   14 | Østfold         |                  31 611 | 33,9 % |     23,6 % | Ikke publisert |          – |
-|   15 | Akershus        |                   9 256 | 34,7 % |     24,7 % | Ikke publisert |          – |
+| Rang | Fylke           | Bobilovernattinger 2025 | Juli   | August     | September      | Jul.–sep.  |
+| -----:| -----------------| ------------------------:| -------:| -----------:| ---------------:| -----------:|
+| 1    | Vestland        | 468 299                | 32,4 % | 25,7 %     | 7,2 %          | **65,4 %** |
+| 2    | Innlandet       | 306 534                | 33,5 % | 23,2 %     | 7,7 %          | **64,5 %** |
+| 3    | Nordland        | 238 063                | 37,3 % | 20,6 %     | 7,3 %          | **65,3 %** |
+| 4    | Møre og Romsdal | 221 459                | 33,5 % | 24,0 %     | 8,6 %          | **66,1 %** |
+| 5    | Agder           | 196 041                | 41,1 % | 21,7 %     | 4,3 %          | **67,1 %** |
+| 6    | Rogaland        | 168 232                | 30,1 % | 26,1 %     | 6,9 %          | **63,1 %** |
+| 7    | Trøndelag       | 139 658                | 34,7 % | 15,7 %     | 8,1 %          | **58,5 %** |
+| 8    | Telemark        | 131 122                | 34,6 % | 19,4 %     | 5,6 %          | **59,6 %** |
+| 9    | Buskerud        | 91 153                 | 34,4 % | 21,1 %     | 7,2 %          | **62,7 %** |
+| 10   | Oslo            | 85 232                 | 25,1 % | **31,6 %** | 8,5 %          | **65,2 %** |
+| 11   | Troms           | 79 837                 | 30,4 % | 20,5 %     | 8,8 %          | **59,8 %** |
+| 12   | Finnmark        | 66 410                 | 30,1 % | 24,4 %     | 6,6 %          | **61,1 %** |
+| 13   | Vestfold        | 66 069                 | 44,5 % | 21,9 %     | 1,9 %          | **68,2 %** |
+| 14   | Østfold         | 31 611                 | 33,9 % | 23,6 %     | Ikke publisert | –          |
+| 15   | Akershus        | 9 256                  | 34,7 % | 24,7 %     | Ikke publisert | –          |
 
 ### Tolkning
 
@@ -55,11 +55,11 @@ Andelene i juli, august og september er beregnet som månedens bobilovernattinge
 # 2. Når er aktiviteten størst nasjonalt?
 
 | Måned              | Bobilovernattinger | Andel av årsaktiviteten | Bobilens andel av alle campingovernattinger |
-| ------------------ | -----------------: | ----------------------: | ------------------------------------------: |
-| Juli 2025          |            783 013 |              **34,1 %** |                                      27,0 % |
-| August 2025        |            530 687 |              **23,1 %** |                                  **32,5 %** |
-| September 2025     |            161 590 |               **7,0 %** |                                      30,3 % |
-| **Juli–september** |      **1 475 290** |              **64,2 %** |                                           – |
+| --------------------| -------------------:| ------------------------:| --------------------------------------------:|
+| Juli 2025          | 783 013           | **34,1 %**              | 27,0 %                                      |
+| August 2025        | 530 687           | **23,1 %**              | **32,5 %**                                  |
+| September 2025     | 161 590           | **7,0 %**               | 30,3 %                                      |
+| **Juli–september** | **1 475 290**      | **64,2 %**              | –                                           |
 
 Juli har størst absolutt aktivitet. August er likevel strategisk svært interessant fordi bobilens relative betydning er størst da: omtrent **én av tre campingovernattinger i august skjer i bobil**. ([SSB][2])
 

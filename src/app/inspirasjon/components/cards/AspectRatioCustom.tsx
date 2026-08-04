@@ -20,7 +20,10 @@ export function AspectRatioCustom({
 }
 
 const justerFormNytLineClassName =
-  'block max-w-full font-google-sans font-bold font-[family-name:var(--font-google-sans)] text-[clamp(6rem,14vw,16rem)] leading-none tracking-tight'
+  'block max-w-full font-google-sans font-bold font-[family-name:var(--font-google-sans)] tracking-tight'
+const justerFormNytTextSizeClassName =
+  'text-[clamp(4.5rem,10.5vw,12rem)]'
+const tightLineHeightClassName = 'leading-[0.82]'
 
 export function CardAspectRatioCustomContent({
   className
@@ -35,31 +38,39 @@ export function CardAspectRatioCustomContent({
       )}
       ratio={141 / 122}
     >
-      <div className='flex h-full w-full max-w-full min-w-0 flex-col items-center justify-center px-4 text-center sm:px-6'>
-        <span
-          className={cn(
-            justerFormNytLineClassName,
-            'text-sidebar-foreground'
-          )}
-        >
-          JUSTER.
-        </span>
-        <span
-          className={cn(
-            justerFormNytLineClassName,
-            'text-sidebar-foreground'
-          )}
-        >
-          FORM.
-        </span>
-        <span
-          className={cn(
-            justerFormNytLineClassName,
-            'text-primary'
-          )}
-        >
-          NYT.
-        </span>
+      <div className='flex h-full w-full max-w-full min-w-0 items-center justify-center px-4 sm:px-6'>
+        <div className='flex w-fit flex-col items-start text-left'>
+          <span
+            className={cn(
+              justerFormNytLineClassName,
+              justerFormNytTextSizeClassName,
+              'text-sidebar-foreground',
+              tightLineHeightClassName
+            )}
+          >
+            JUSTER.
+          </span>
+          <span
+            className={cn(
+              justerFormNytLineClassName,
+              justerFormNytTextSizeClassName,
+              'text-sidebar-foreground',
+              tightLineHeightClassName
+            )}
+          >
+            FORM.
+          </span>
+          <span
+            className={cn(
+              justerFormNytLineClassName,
+              justerFormNytTextSizeClassName,
+              'text-primary',
+              tightLineHeightClassName
+            )}
+          >
+            NYT.
+          </span>
+        </div>
       </div>
     </AspectRatioCustom>
   )
@@ -82,7 +93,8 @@ export function CardAspectRatioCustom({
       <Image
         src={KystHus}
         alt='Kysthus med Utekos-varme – juster, form og nyt uteplassen'
-        className='scale-75 rounded-lg object-contain'
+        className='rounded-lg object-contain'
+        style={{ transform: 'scale(0.9)' }}
         width={612}
         height={705}
       />

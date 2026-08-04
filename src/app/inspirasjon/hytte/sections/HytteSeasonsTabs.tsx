@@ -1,45 +1,32 @@
 import { Card, CardContent } from '@/components/ui/card'
-import {
-  HytteSeasonAnimatedText,
-  HytteSeasonsAnimator,
-  type HytteSeasonAnimationPreset
-} from './HytteSeasonsAnimator'
+import { HytteSeasonVideo } from './HytteSeasonVideo'
+import { HytteSeasonsAnimator } from './HytteSeasonsAnimator'
 
 const seasons = [
   {
     value: 'spring',
     label: 'Vår',
-    title: 'Kjenn våren komme',
-    description: 'Sol og vårfølelse',
-    animationPreset: 'push-word'
+    videoSrc: '/spring.mp4'
   },
   {
     value: 'summer',
     label: 'Sommer',
-    title: 'Lange, lyse kvelder',
-    description: 'Senk skuldrene helt',
-    animationPreset: 'scroll'
+    videoSrc: '/lange_kvelder.mp4'
   },
   {
     value: 'autumn',
     label: 'Høst',
-    title: 'Kaldt og vakkert',
-    description: 'Klar for hyttekos',
-    animationPreset: 'zoom-in'
+    videoSrc: '/kaldt_vakkert.mp4'
   },
   {
     value: 'winter',
     label: 'Vinter',
-    title: 'Varme etter skituren',
-    description: 'Umiddelbar komfort',
-    animationPreset: 'push-line'
+    videoSrc: '/varme.mp4'
   }
 ] satisfies readonly {
   value: string
   label: string
-  title: string
-  description: string
-  animationPreset: HytteSeasonAnimationPreset
+  videoSrc: string
 }[]
 
 export function HytteSeasonsTabs() {
@@ -54,18 +41,13 @@ export function HytteSeasonsTabs() {
           <figure
             key={season.value}
             className='flex min-w-0 flex-col gap-4'
-            data-animation-preset={season.animationPreset}
           >
             <Card
               size='sm'
-              className='dark:ring-dark-foreground/10 relative aspect-video w-full overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-sm ring-1 ring-foreground/10 transition-shadow duration-300 [--card-spacing:0rem] group-hover:shadow-md motion-reduce:transition-none'
+              className='relative aspect-video w-full gap-0 overflow-hidden rounded-lg bg-card py-0 text-card-foreground shadow-none ring-0'
             >
-              <CardContent className='grid h-full place-items-center px-4 py-6 text-card-foreground sm:px-8 md:px-10'>
-                <HytteSeasonAnimatedText
-                  preset={season.animationPreset}
-                  title={season.title}
-                  description={season.description}
-                />
+              <CardContent className='h-full overflow-hidden p-0'>
+                <HytteSeasonVideo src={season.videoSrc} />
               </CardContent>
             </Card>
 

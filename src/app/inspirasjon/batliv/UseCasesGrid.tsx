@@ -16,7 +16,6 @@ interface UseCase {
   description: string
   temperature: string
   color: string
-  iconColor: string
 }
 
 export const useCasesData: UseCase[] = [
@@ -27,8 +26,7 @@ export const useCasesData: UseCase[] = [
     description:
       'Nyt en stille morgen for anker med kaffekoppen, uansett hvor frisk brisen er.',
     temperature: '8-15°C',
-    color: 'from-primary/20 dark:from-dark-primary/20',
-    iconColor: 'text-primary dark:text-dark-primary'
+    color: 'from-primary/20 dark:from-dark-primary/20'
   },
   {
     icon: Moon,
@@ -37,8 +35,7 @@ export const useCasesData: UseCase[] = [
     description:
       'Bli samlingspunktet i gjestehavna. Forleng de sosiale kveldene uten å fryse.',
     temperature: '10-18°C',
-    color: 'from-very-peri/20',
-    iconColor: 'text-very-peri'
+    color: 'from-very-peri/20'
   },
   {
     icon: Wind,
@@ -47,8 +44,7 @@ export const useCasesData: UseCase[] = [
     description:
       'Perfekt for å holde varmen i cockpiten når du seiler eller på flybridgen i motvind.',
     temperature: 'Alle temperaturer',
-    color: 'from-ancient-water/20',
-    iconColor: 'text-ancient-water'
+    color: 'from-ancient-water/20'
   }
 ]
 
@@ -60,7 +56,7 @@ export function UseCasesGrid({
   return (
     <article
       id='bruksomrader'
-      className='dark:bg-dark-secondary dark:text-dark-secondary-foreground bg-secondary py-24 text-secondary-foreground'
+      className='dark:text-dark-secondary-foreground bg-muted py-24 text-secondary-foreground'
     >
       <div className='container mx-auto px-4'>
         <div className='mb-16 text-center'>
@@ -81,16 +77,14 @@ export function UseCasesGrid({
               delay={`${useCaseIndex * 0.1}s`}
               threshold={0.2}
             >
-              <Card className='group relative h-full overflow-hidden border-border bg-card text-card-foreground'>
+              <Card className='group relative h-full overflow-hidden border-border bg-jungle text-card-foreground'>
                 <div
                   className={`absolute inset-0 bg-linear-to-br ${useCase.color} to-transparent opacity-20 transition-opacity group-hover:opacity-30`}
                 />
                 <CardContent className='relative p-8'>
                   <div className='mb-6 flex items-center gap-4'>
-                    <div className='dark:bg-dark-secondary dark:text-dark-secondary-foreground flex h-12 w-12 items-center justify-center rounded-lg border border-border bg-secondary text-secondary-foreground'>
-                      <useCase.icon
-                        className={`h-6 w-6 ${useCase.iconColor}`}
-                      />
+                    <div className='flex h-12 w-12 items-center justify-center rounded-lg border border-border bg-dark-teal'>
+                      <useCase.icon className='h-6 w-6 text-foreground' />
                     </div>
                     <div>
                       <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
@@ -104,7 +98,7 @@ export function UseCasesGrid({
                   <h3 className='mb-2 font-utekos-text-medium text-xl'>
                     {useCase.title}
                   </h3>
-                  <p className='dark:text-dark-muted-foreground text-muted-foreground'>
+                  <p className='text-foreground/90'>
                     {useCase.description}
                   </p>
                 </CardContent>

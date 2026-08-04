@@ -8,38 +8,37 @@ import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/KlarnaCreditPromotionAutoSize'
 import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/KlarnaOnSiteMessagingScript'
 import { reportCanonicalSelectPromotion } from '@/lib/analytics/selectPromotionReporter'
-import { scrollToElement } from '@/lib/motion/scrollToElement'
 import type { ComfyrobeOfferSummary } from '../lib/buildComfyrobeOfferSummary'
 import {
   comfyrobeRevealGroup,
   comfyrobeRevealItem
 } from './comfyrobeMotionVariants'
 
+function createInteractionId(): string {
+  try {
+    return globalThis.crypto.randomUUID()
+  } catch {
+    return `comfyrobe-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  }
+}
+
 function reportHeroSelection(
   creativeName: string,
   creativeSlot: string
-) {
-  reportCanonicalSelectPromotion({
-    customData: {
-      interaction_id: globalThis.crypto.randomUUID(),
-      promotion_id: 'comfyrobe-hero',
-      promotion_name: 'Comfyrobe',
-      creative_name: creativeName,
-      creative_slot: creativeSlot
-    }
-  })
-}
-
-function scrollTo(
-  id: string,
-  creativeName: string,
-  creativeSlot: string
-) {
-  reportHeroSelection(creativeName, creativeSlot)
-  const reducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)'
-  ).matches
-  void scrollToElement(id, { offsetY: 76, reducedMotion })
+): void {
+  try {
+    reportCanonicalSelectPromotion({
+      customData: {
+        interaction_id: createInteractionId(),
+        promotion_id: 'comfyrobe-hero',
+        promotion_name: 'Comfyrobe',
+        creative_name: creativeName,
+        creative_slot: creativeSlot
+      }
+    })
+  } catch {
+    return
+  }
 }
 
 export function ComfyrobeLandingClient({
@@ -140,12 +139,11 @@ export function ComfyrobeLandingClient({
                   asChild
                   className='min-h-13 w-full gap-2 bg-primary px-6 py-3 font-utekos-text-medium text-foreground transition-[filter,transform] hover:brightness-105 active:scale-[0.985] sm:w-auto'
                 >
-                  <button
-                    type='button'
+                  <a
+                    href='#purchase-section'
                     data-track='ComfyrobeHeroPrimaryCta'
                     onClick={() =>
-                      scrollTo(
-                        'purchase-section',
+                      reportHeroSelection(
                         'Velg størrelse',
                         'primary_cta'
                       )
@@ -153,15 +151,14 @@ export function ComfyrobeLandingClient({
                   >
                     {primaryLabel}
                     <ArrowRight className='size-4' aria-hidden />
-                  </button>
+                  </a>
                 </BrandBadge>
 
-                <button
-                  type='button'
+                <a
+                  href='#section-product-demo'
                   data-track='ComfyrobeHeroSecondaryCta'
                   onClick={() =>
-                    scrollTo(
-                      'section-product-demo',
+                    reportHeroSelection(
                       'Se hvordan den beskytter',
                       'secondary_cta'
                     )
@@ -170,7 +167,7 @@ export function ComfyrobeLandingClient({
                 >
                   Se hvordan den beskytter
                   <ChevronDown className='size-4' aria-hidden />
-                </button>
+                </a>
               </m.div>
 
               <m.div

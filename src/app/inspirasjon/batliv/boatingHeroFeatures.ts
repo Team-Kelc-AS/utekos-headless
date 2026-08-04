@@ -2,9 +2,20 @@ import { Anchor, Sun, Waves } from 'lucide-react'
 import type { InspirationHeroFeature } from '../layout/hero/types'
 import { heroFeatureSurface } from '../theme/surfaces'
 
-const headerSecondaryCard = heroFeatureSurface('var(--header-secondary)')
-const veryPeriCard = heroFeatureSurface('var(--very-peri)')
-const ancientWaterCard = heroFeatureSurface('var(--ancient-water)')
+function boatingFeatureSurface(accent: string) {
+  return {
+    ...heroFeatureSurface(accent),
+    surface: 'var(--jungle)',
+    iconSurface: 'var(--dark-teal)',
+    cardClassName: 'border-none'
+  }
+}
+
+const headerSecondaryCard = boatingFeatureSurface(
+  'var(--header-secondary)'
+)
+const veryPeriCard = boatingFeatureSurface('var(--very-peri)')
+const ancientWaterCard = boatingFeatureSurface('var(--ancient-water)')
 
 export const boatingHeroFeatures: readonly InspirationHeroFeature[] = [
   {

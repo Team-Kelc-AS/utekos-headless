@@ -33,6 +33,11 @@ import { ProductPurchaseIsland } from './ProductPurchaseIsland'
 import { ProductViewItemReporter } from './ProductViewItemReporter'
 import { computeVariantImages } from '@/lib/utils/computeVariantImages'
 import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
+import {
+  COMFYROBE_MOBILE_LEAD_IMAGE,
+  COMFYROBE_MOBILE_SECOND_IMAGE,
+  COMFYROBE_MOBILE_THIRD_IMAGE
+} from '../utils/gallery-images/comfyrobeProductGalleryImages'
 
 type ProductPageViewProps = {
   productData: ProductPurchaseModel
@@ -95,6 +100,15 @@ export function ProductPageView({
     overrideImages,
     fallbackGalleryImages
   )
+  const mobileGalleryImages =
+    productData.handle === 'comfyrobe' ?
+      [
+        COMFYROBE_MOBILE_LEAD_IMAGE,
+        COMFYROBE_MOBILE_SECOND_IMAGE,
+        COMFYROBE_MOBILE_THIRD_IMAGE,
+        ...galleryImages.slice(3)
+      ]
+    : galleryImages
   const useDesktopGrid = galleryImages.length >= 6
   const useCompactGallery = galleryImages.length === 1
   const galleryAspectRatio = useCompactGallery ? 1 : 9 / 16
@@ -170,7 +184,7 @@ export function ProductPageView({
                           <div className='size-full md:hidden'>
                             <ProductGalleryClient
                               title={title}
-                              images={galleryImages}
+                              images={mobileGalleryImages}
                             />
                           </div>
                         </>

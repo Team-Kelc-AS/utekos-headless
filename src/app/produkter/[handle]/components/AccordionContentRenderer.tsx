@@ -82,7 +82,7 @@ export function AccordionContentRenderer({
   return (
     <div
       className={cn(
-        'relative z-10 px-6 pb-6 sm:pl-20',
+        'relative z-10 bg-jungle px-6 pb-6 sm:pl-20',
         className
       )}
     >

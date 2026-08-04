@@ -12,7 +12,7 @@ export function BoatSeasonSection() {
       tabTriggerClassName='border-foreground/18 bg-havdyp text-foreground hover:bg-havdyp/90 data-active:border-foreground data-active:bg-havdyp data-active:text-foreground'
       tabActiveClassName='text-foreground'
       tabInactiveClassName='text-foreground'
-      contentCardClassName='border-foreground/18 bg-havdyp'
+      contentCardClassName='border-foreground/18 bg-card dark:bg-card'
       contentIconClassName='border-foreground/18 bg-foreground text-black-beauty'
       contentIconGlyphClassName='text-black-beauty'
       contentTitleClassName='text-foreground'

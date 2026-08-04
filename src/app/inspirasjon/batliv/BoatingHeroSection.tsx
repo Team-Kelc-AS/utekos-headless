@@ -44,7 +44,7 @@ export function BoatingHeroSection() {
           </HeroHighlight>
         </>
       }
-      titleClassName='max-w-3xl'
+      titleClassName='max-w-3xl font-sans text-5xl md:text-6xl'
       lead='Fra den første kaffen i soloppgang til ankerdrammen under stjernene. Opplev en lengre og mer komfortabel båtsesong med varme som varer.'
       actions={
         <InspirationHeroActions
@@ -52,12 +52,12 @@ export function BoatingHeroSection() {
           secondaryLabel='Utforsk mulighetene'
           primaryStyle={{
             backgroundColor: 'var(--primary)',
-            textColor: 'var(--background)',
+            textColor: 'var(--foreground)',
             className:
               'border-primary/35 dark:border-dark-primary/35 shadow-[0_18px_38px_-28px_color-mix(in_oklch,var(--demitasse)_72%,transparent)] hover:brightness-105 focus-visible:ring-2 focus-visible:ring-primary/70 dark:focus-visible:ring-dark-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:focus-visible:ring-offset-dark-background'
           }}
           secondaryStyle={{
-            backgroundColor: 'var(--blueberry)',
+            backgroundColor: 'var(--secondary)',
             textColor: 'var(--foreground)',
             className:
               'border-foreground/35 shadow-[0_18px_38px_-30px_color-mix(in_oklch,var(--background)_48%,transparent)] hover:bg-foreground/90 focus-visible:ring-2 focus-visible:ring-foreground/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:focus-visible:ring-offset-dark-background'

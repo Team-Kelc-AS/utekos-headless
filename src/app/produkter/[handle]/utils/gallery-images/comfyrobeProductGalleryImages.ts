@@ -1,5 +1,29 @@
 import type { Image } from 'types/media'
 
+export const COMFYROBE_MOBILE_LEAD_IMAGE: Image = {
+  id: 'comfyrobe-mann-mobile',
+  url: '/comfy-mann-400-650.webp',
+  altText: 'Mann med marineblå Comfyrobe foran en mørk trevegg.',
+  width: 400,
+  height: 650
+}
+
+export const COMFYROBE_MOBILE_SECOND_IMAGE: Image = {
+  id: 'comfyrobe-mobile-portrait',
+  url: '/comfy-916.webp',
+  altText: 'Marineblå Comfyrobe i stående format.',
+  width: 900,
+  height: 1600
+}
+
+export const COMFYROBE_MOBILE_THIRD_IMAGE: Image = {
+  id: 'comfyrobe-mobile-back',
+  url: '/comfy-bak-916.webp',
+  altText: 'Marineblå Comfyrobe sett bakfra.',
+  width: 900,
+  height: 1600
+}
+
 export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
   {
     id: 'comfyrobe-demitasse-open-front',

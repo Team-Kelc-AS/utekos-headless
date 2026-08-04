@@ -21,8 +21,8 @@ const productProof = [
   },
   {
     icon: ShieldCheck,
-    label: 'Tapede sømmer',
-    detail: 'Forsterker værbeskyttelsen.'
+    label: 'YKK®-glidelåser',
+    detail: 'Slipper ut overskuddsvarme og bevarer lunhet rundt vitale soner.'
   },
   {
     icon: Wind,
@@ -84,14 +84,14 @@ export function ComfyrobeProofBridge() {
                 className='border-b border-border py-6 last:border-b-0 sm:nth-3:border-b-0 lg:border-b-0 lg:px-6 lg:first:pl-0 lg:last:pr-0'
                 variants={comfyrobeRevealItem}
               >
-                <dt className='font-google-sans flex items-center gap-3 font-utekos-text-medium font-bold'>
+                <dt className='font-google-sans flex items-center gap-3 font-utekos-text-medium font-bold text-foreground'>
                   <Icon
                     className='size-5 shrink-0 text-primary'
                     aria-hidden
                   />
                   {item.label}
                 </dt>
-                <dd className='mt-2 pl-8 text-sm leading-6 text-foreground/70'>
+                <dd className='mt-2 pl-8 text-sm leading-6 text-foreground/90'>
                   {item.detail}
                 </dd>
               </m.div>

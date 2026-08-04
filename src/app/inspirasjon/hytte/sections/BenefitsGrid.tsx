@@ -7,6 +7,9 @@ import {
 } from 'lucide-react'
 import type { Benefit } from '../types'
 
+const benefitIconSurface = 'bg-dark-teal'
+const benefitIconColor = 'text-sidebar-foreground'
+
 // Dataene oppdatert med Utekos Premium fargepalett
 export const benefitsData: Benefit[] = [
   {
@@ -14,36 +17,32 @@ export const benefitsData: Benefit[] = [
     title: 'Øyeblikkelig varme',
     description:
       'Fra kjølig ankomst til peiskos-følelse på sekunder.',
-    benefitColor:
-      'bg-featured-foreground dark:bg-dark-featured-foreground',
-    iconColor: 'text-dark-teal'
+    benefitColor: benefitIconSurface,
+    iconColor: benefitIconColor
   },
   {
     icon: Settings2,
     title: 'Praktisk design',
     description:
       'Tar minimalt med plass og er enkel å ta med seg.',
-    benefitColor:
-      'bg-featured-foreground dark:bg-dark-featured-foreground',
-    iconColor: 'text-dark-teal'
+    benefitColor: benefitIconSurface,
+    iconColor: benefitIconColor
   },
   {
     icon: HeartHandshake,
     title: 'Forlenger hyggen',
     description:
       'Mer tid til de gode samtalene utendørs, uansett vær.',
-    benefitColor:
-      'bg-featured-foreground dark:bg-dark-featured-foreground',
-    iconColor: 'text-dark-teal'
+    benefitColor: benefitIconSurface,
+    iconColor: benefitIconColor
   },
   {
     icon: MapPinIcon,
     title: 'En del av hytten',
     description:
       'Blir like selvsagt å ta på seg som tøflene inne.',
-    benefitColor:
-      'bg-featured-foreground dark:bg-dark-featured-foreground',
-    iconColor: 'text-dark-teal'
+    benefitColor: benefitIconSurface,
+    iconColor: benefitIconColor
   }
 ]
 
@@ -53,7 +52,7 @@ export function BenefitsGrid({
   benefits: Benefit[]
 }) {
   return (
-    <article className='border-featured-border dark:border-dark-featured-border bg-featured dark:bg-dark-featured w-full min-w-0 overflow-x-clip border-t py-24 text-foreground'>
+    <article className='border-featured-border dark:border-dark-featured-border bg-featured dark:bg-dark-featured w-full min-w-0 overflow-x-clip border-y border-b-foreground/20 py-24 text-foreground'>
       <div className='container mx-auto bg-background px-4'>
         <div className='mb-20 max-w-3xl text-left lg:max-w-4xl'>
           <h1 className='font-sans text-4xl font-extrabold tracking-normal text-foreground md:text-5xl lg:text-7xl'>
