@@ -43,6 +43,16 @@ created. The first natural consented Shopify event remains the required proof
 for observation persistence, canonical ledger acceptance, Google outbox state
 and provider finality.
 
+The first natural v2 event arrived at `2026-08-04T04:18:31.476Z`. Observation
+storage and duplicate replay handling succeeded, while canonical promotion
+failed closed before the ledger transaction because `source_api_version` used
+the contract label `checkout-observation-v2`. The strict source-evidence
+contract permits only a Shopify API version in `YYYY-MM` form (or `unstable`).
+The production app configuration is `2026-07`, so the focused hotfix records
+that value. This change requires no schema, environment, Custom Pixel or
+provider-resource mutation; deploy application code only, then require a new
+natural event for end-to-end provider proof.
+
 ## Active Meta stale-event / near-real-time release 2026-07-26
 
 Web-GTM v135 is live. Version 133 introduced the canonical mapping from

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { canonicalBeginCheckoutSchema } from '../beginCheckoutEvent'
 import type { ShopifyCanonicalPaymentObservation } from '../shopifyCheckoutObservationContract'
+import { canonicalEventSourceEvidenceSchema } from './canonicalEventSourceEvidence'
 import type {
   CanonicalEventStore,
   CanonicalEventStoreInput
@@ -146,7 +147,12 @@ test('promotes only to the canonical ledger and Google outbox after the cutover'
   )
   assert.equal(
     accepted.sourceEvidence?.source_api_version,
-    'checkout-observation-v2'
+    '2026-07'
+  )
+  assert.doesNotThrow(() =>
+    canonicalEventSourceEvidenceSchema.parse(
+      accepted.sourceEvidence
+    )
   )
 })
 

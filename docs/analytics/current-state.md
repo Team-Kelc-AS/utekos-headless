@@ -183,9 +183,13 @@ proved that only the old `payment_info_submitted` subscription was removed;
 `dpl_Gpp5WET4fWKxt3A34zSAmHbKdjMp` is `READY`. Supabase migration
 `20260804033956_allow_shopify_checkout_observation_v2` is applied, and the
 validated observation constraint accepts only schema versions 1 and 2 while
-preserving forced RLS and the existing grants. There is not yet a natural
-post-cutover v2 observation, canonical event or provider attempt, so live
-Google delivery remains pending evidence rather than inferred success.
+preserving forced RLS and the existing grants. A natural v2 observation
+arrived on 2026-08-04 at `04:18:31Z` and was stored twice as one idempotent
+`observed` row. Canonical promotion initially failed closed because source
+evidence used the contract label where the strict field requires Shopify API
+version `YYYY-MM`. The runtime now records the production app's actual API
+version, `2026-07`. Google delivery remains pending until a post-hotfix natural
+event proves the ledger, outbox and provider result.
 
 ### Event creation
 

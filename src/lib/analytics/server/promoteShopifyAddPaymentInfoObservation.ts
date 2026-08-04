@@ -79,7 +79,7 @@ export async function promoteShopifyAddPaymentInfoObservation(
       source_topic: 'payment_info_submitted',
       source_delivery_id: null,
       source_event_id: observation.eventId,
-      source_api_version: 'checkout-observation-v2',
+      source_api_version: '2026-07',
       source_triggered_at: observation.occurredAt,
       source_observed_at: (
         dependencies.now ?? (() => new Date())
