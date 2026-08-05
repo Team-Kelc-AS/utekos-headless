@@ -1,6 +1,6 @@
 # Deployment And Migration Checklist
 
-Status date: 2026-07-26
+Status date: 2026-08-05
 
 This is the mandatory release checklist for Utekos Headless. Use it
 before every deploy, production mutation, provider change, GTM publish,
@@ -9,6 +9,56 @@ tracking change, database migration, or operational tooling change.
 The purpose is simple: no runtime change should reach production before
 its required database, provider, environment, and verification steps are
 known and completed in the correct order.
+
+## Utekos Original app-only release and baseline 2026-08-05
+
+Production deployment `dpl_26WjzijrrUkRonQgqTmAQLii19cD` reached `READY`,
+owned `utekos.no`, `www.utekos.no`, and `feed.utekos.no`, and was built from
+exact Git SHA `c5ae1b3d213179bf778a81b214c7b4d58dce097e`. The app-only release
+removed the sold-out Vargnatt choice and simplified landing-page copy. It
+required no schema migration, environment change, GTM publish, or
+provider-resource mutation.
+
+The current production owner is descendant deployment
+`dpl_7zFaFkg2MYs4VKFkSUT5Rmp5LoG4` from Git SHA `0733856b8`. Its runtime parent
+`2af9f5f8e` retains the Utekos Original release unchanged and adds the later
+TechDown sizing/social-proof release.
+
+The post-release measurement baseline is fail-closed:
+
+- the route has no canonical `view_item`, `add_to_cart`, `begin_checkout`, or
+  attributed `purchase` in the 28-day ledger window;
+- GA4 reports 27 sessions and 28 page views, which is insufficient to assign an
+  A/B-test sample size without a longer baseline;
+- direct warehouse reports complete, but the scheduled
+  `/api/cron/provider-dispatch-health` route repeatedly fails with PostgreSQL
+  `57014` statement timeout;
+- the general provider report has zero unresolved dead letters, while its
+  aggregate failed threshold still counts 144 historical Google rows with
+  `dead_lettered` status. Do not treat that count as active unresolved backlog.
+
+Prepared remediation `20260805094715_optimize_provider_dispatch_health` is not
+applied in production. It creates a private, security-invoker
+`ops.meta_landing_edge_health` read model and changes only the health store's
+two Meta edge queries. Production-size read-only evidence returned the exact
+same 760 Meta landing rows and 718 fbclid rows in 330 ms instead of 83 671 ms.
+Local `supabase db reset` applied the complete migration chain, the view exposes
+11 bounded columns, `service_role` has select, and targeted tests/lint/TypeScript
+are green.
+
+Release order is mandatory:
+
+1. Explicitly approve and apply only
+   `20260805094715_optimize_provider_dispatch_health`.
+2. Verify the view, grant, row parity, query duration, and migration history.
+3. Deploy the matching application SHA that reads
+   `ops.meta_landing_edge_health`.
+4. Invoke the authenticated cron and verify HTTP 200, Sentry/check-in behavior,
+   PII-free response semantics, and no `57014` errors in Vercel logs.
+
+No GTM, provider, schema, environment, replay, experiment, or production
+mutation is authorized by this baseline. Remediation must follow the separate
+approval gates in this document.
 
 ## Shopify `add_payment_info` cutover 2026-08-04
 

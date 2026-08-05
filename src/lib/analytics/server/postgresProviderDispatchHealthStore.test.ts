@@ -128,7 +128,7 @@ test('reads the bounded ledger, problem, and ACK-latency windows', async () => {
   )
   assert.match(
     queries[5] ?? '',
-    /ops\.meta_landing_observability/i
+    /ops\.meta_landing_edge_health/i
   )
   assert.match(
     queries[5] ?? '',
@@ -150,7 +150,7 @@ test('reads the bounded ledger, problem, and ACK-latency windows', async () => {
   )
   assert.match(
     queries[6] ?? '',
-    /ops\.meta_landing_observability/i
+    /ops\.meta_landing_edge_health/i
   )
   assert.match(queries[6] ?? '', /is_first_fbclid_observation/i)
   assert.match(

@@ -151,7 +151,7 @@ const META_EDGE_CLICK_ID_COVERAGE_QUERY = `
     count(*)::integer as meta_landing_count,
     count(*) filter (where observation.fbclid_present)::integer
       as meta_landing_with_fbclid_count
-  from ops.meta_landing_observability as observation
+  from ops.meta_landing_edge_health as observation
   where observation.is_primary_request_observation
     and observation.environment = 'production'
     and observation.observation_type = 'document'
@@ -209,7 +209,7 @@ const META_CLICK_TO_EDGE_QUERY = `
       count(*) filter (
         where observation.status_code between 200 and 399
       )::numeric as successful_edge_documents
-    from ops.meta_landing_observability as observation
+    from ops.meta_landing_edge_health as observation
     cross join account_context as account
     where observation.observed_at >= now() - interval '16 days'
       and observation.environment = 'production'

@@ -1,16 +1,16 @@
 # Canonical events
 
-Status date: 2026-07-31
+Status date: 2026-08-05
 
 The application owns event meaning. GTM and sGTM are delivery
 adapters, not the event inventory or source of truth.
 
 ## Active inventory
 
-The v1 inventory contains **33 canonical events: 29 active and four
+The v1 inventory contains **33 canonical events: 30 active and three
 `blocked_source`**. The blocked events are `add_shipping_info`,
-`add_payment_info`, `checkout_error`, and `payment_error`. The machine-readable
-catalog and its contract tests are authoritative for the exact list.
+`checkout_error`, and `payment_error`. The machine-readable catalog and its
+contract tests are authoritative for the exact list.
 
 | Event | Owner | Detection | Delivery | Status |
 | --- | --- | --- | --- | --- |
@@ -18,10 +18,11 @@ catalog and its contract tests are authoritative for the exact list.
 | `view_item` | Next.js application | Resolved product and selected variant on a product page or landing purchase context (`/skreddersy-varmen`) | GTM/sGTM + ledger + Google Data Manager + Meta CAPI | Active |
 | `add_to_cart` | Shopify cart service | After accepted cart mutation | GTM/sGTM + ledger + Google Data Manager + Meta CAPI + qualified Microsoft UET CAPI | Active |
 | `begin_checkout` | Shopify checkout service | Before checkout redirect with valid checkout URL | GTM/sGTM + ledger + Google Data Manager + Meta CAPI + qualified Microsoft UET CAPI; persists checkout consent snapshot | Active |
+| `add_payment_info` | Shopify App Web Pixel | `payment_info_submitted` correlated to an analytics-consented canonical `begin_checkout` | Ledger + Google Data Manager | Active; submission semantics, not payment success |
 | `purchase` | Shopify orders-paid webhook | Verified order-paid webhook | Ledger (operational) + Google Data Manager + Meta CAPI + qualified Microsoft UET CAPI when checkout consent permits | Active |
 | `refund` | Shopify refunds-create webhook | Verified refund webhook | Ledger (operational) + Google Data Manager | Active |
 | Remaining behavior/commerce/lead/form/UX events | Storefront detectors / reporters | See `EVENT_CATALOG.md` | First-party API + Google Data Manager; Meta where catalog specifies | Active (schemas, collectors, adapters); some detectors still reporter-only |
-| `add_shipping_info`, `add_payment_info`, `checkout_error`, `payment_error` | — | — | — | `blocked_source` until Shopify Customer Events/Web Pixels source is chosen |
+| `add_shipping_info`, `checkout_error`, `payment_error` | — | — | — | `blocked_source` until an authoritative Shopify checkout source is approved |
 
 GA4 Enhanced Measurement page views, browser-history page views
 and the Google tag's automatic `send_page_view` must remain
@@ -78,7 +79,7 @@ The authenticated `/api/cron/provider-outbox-dispatch` runs every five minutes
 as recovery, due-retry, and stale-claim fallback; it is not the primary wake-up
 for newly accepted events.
 
-The current registry contains 48 active provider/event pairs: 28 Google, 17
+The current registry contains 49 active provider/event pairs: 29 Google, 17
 Meta, and three Microsoft UET CAPI workers. Microsoft server delivery is active
 for `add_to_cart`, `begin_checkout`, and `purchase`; missing ApiToken or
 `msclkid` is recorded fail-closed as `skipped_unqualified`. A provider API
@@ -180,9 +181,9 @@ boundary.
 
 [`EVENT_CATALOG.md`](EVENT_CATALOG.md) and
 `src/lib/analytics/eventCatalog.ts` are the authoritative human- and
-machine-readable allowlists for all 33 v1 decisions. All 29 active
+machine-readable allowlists for all 33 v1 decisions. All 30 active
 catalog events now have implemented schemas in the discriminated
-canonical union. The four `blocked_source` entries remain decisions
+canonical union. The three `blocked_source` entries remain decisions
 without runtime detectors until an authoritative checkout source is
 approved.
 

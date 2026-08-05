@@ -65,6 +65,8 @@ revoke all on table ops.shopify_checkout_observations
   from public, anon, authenticated, service_role;
 revoke all on table ops.meta_landing_observability
   from public, anon, authenticated, service_role;
+revoke all on table ops.meta_landing_edge_health
+  from public, anon, authenticated, service_role;
 grant usage on schema ops to service_role;
 grant select, insert on table ops.vercel_edge_request_observations to service_role;
 grant select, insert, update on table ops.vercel_trace_observations to service_role;
@@ -75,3 +77,4 @@ grant select, insert, update, delete on table ops.privacy_retention_exceptions
 grant select, insert, update on table ops.shopify_checkout_observations
   to service_role;
 grant select on table ops.meta_landing_observability to service_role;
+grant select on table ops.meta_landing_edge_health to service_role;

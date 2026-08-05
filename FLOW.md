@@ -1,6 +1,6 @@
 # FLOW - tracking, observability og kommersiell innsikt
 
-Statusdato: 2026-07-31.
+Statusdato: 2026-08-05.
 
 Dette dokumentet er den operative flytbeskrivelsen for hvordan
 Utekos skal samle inn, lagre, levere og bruke analytics-,
@@ -28,12 +28,16 @@ kundechatbot ligger i
 
 ## Kort fasit
 
-### Nåværende produksjon — 2026-08-04
+### Nåværende produksjon — 2026-08-05
 
-Vercel-deployment `dpl_Gpp5WET4fWKxt3A34zSAmHbKdjMp` er `READY`, eier
-`utekos.no`, `www.utekos.no` og `feed.utekos.no`, og er aktiveringsbeviset for
-runtimekoden som ble merget i PR #118. Cutover-tidspunktet er
-`2026-08-04T03:27:09Z`. Supabase-migrasjon
+Vercel-deployment `dpl_7zFaFkg2MYs4VKFkSUT5Rmp5LoG4` er `READY`, eier
+`utekos.no`, `www.utekos.no` og `feed.utekos.no`, og bygger eksakt Git-SHA
+`0733856b8`. Runtime-parenten `2af9f5f8e` bygger videre på
+`c5ae1b3d213179bf778a81b214c7b4d58dce097e`, som fjernet det utsolgte
+Vargnatt-valget og forenklet innhold på
+`/skreddersy-varmen/utekos-orginal`. Ingen av disse releasene endret schema,
+env, GTM eller providerressurser. `add_payment_info`-cutover-tidspunktet er
+fortsatt `2026-08-04T03:27:09Z`. Supabase-migrasjon
 `20260804033956_allow_shopify_checkout_observation_v2` er anvendt og den
 validerte observasjonsconstrainten godtar nøyaktig kontraktversjon 1 og 2.
 
@@ -47,8 +51,64 @@ Meta og tre Microsoft UET CAPI.
 canonical `begin_checkout`, en eksplisitt cutover-tidsport og Google Data
 Manager som eneste provider. Dette er ikke betalings- eller Purchase-bevis.
 Meta, Microsoft og PostHog forblir deaktivert for hendelsen.
-Første naturlige v2-hendelse er ennå ikke observert, så providerfinalitet er
-fortsatt åpen og skal ikke erstattes med en syntetisk betaling.
+Første naturlige v2-hendelse kom `2026-08-04T04:18:31.476Z`. Den opprinnelige
+canonical promoteringen feilet lukket på et ugyldig `source_api_version`-format;
+den fokuserte rettingen bruker Shopify API-versjon `2026-07`. Neste naturlige
+hendelse må fortsatt bevise hele observer → ledger → Google-finaliteten. Den
+skal ikke erstattes med en syntetisk betaling.
+
+### Landingsside-baseline — 2026-08-05
+
+Read-only kontroll av `/skreddersy-varmen/utekos-orginal` for de siste 28
+dagene viser:
+
+- GA4: 27 sesjoner, 27 brukere, 28 sidevisninger og 16 engasjerte sesjoner.
+- GA4-eventer: 28 `page_view`, 30 `scroll_depth` og tre
+  `select_promotion`; ingen commerce-event for ruten.
+- Canonical ledger: 24 `page_view`, 41 `scroll_depth` og tre
+  `select_promotion`; ingen `view_item`, `add_to_cart`, `begin_checkout` eller
+  route-attribuert `purchase`.
+- Google: 33 route-spesifikke `scroll_depth`-forsøk er `succeeded`, fire er
+  `accepted_unverified`, fire historiske er `dead_lettered`, og alle tre
+  `select_promotion` er `succeeded`.
+- Meta: 23 route-spesifikke `page_view` og 29 `scroll_depth` står
+  `accepted_unverified`; én eldre `page_view` er bevisst
+  `skipped_unqualified` før claimant-cutover.
+- Microsoft: den eneste route-spesifikke serverraden er en historisk
+  `page_view` som ble `skipped_unqualified` fordi adapteren var utilgjengelig
+  etter resetten.
+
+Ledgeren inneholder bare samtykkekvalifiserte hendelser og kan derfor ikke
+brukes alene som total trafikkdenominator. Trafikk- og eksperimentgrunnlag må
+komme fra GA4/Vercel og segmenteres etter samtykke.
+
+Den generelle 28-dagers kjøpsrapporten viser 64 canonical purchases, 44 Google-
+forsøk og 39 provider-confirmed Google-suksesser, uten uløste dead letters.
+Den generelle provider-health-rapporten teller samtidig 144 historiske Google-
+rader med `dead_lettered`-status, selv om `ops.dead_letter_summary` har null
+uløste. Dette er historisk statusgjeld, ikke 144 aktive dead letters.
+
+Vercel Runtime Logs viser et aktivt avvik: gjentatte kjøringer av
+`/api/cron/provider-dispatch-health` feiler med PostgreSQL `57014` statement
+timeout. Helsejobben kan derfor ikke regnes som grønn selv om direkte read-only
+rapporter kan fullføres.
+
+Rotårsaken er profilert read-only mot produksjonsvolumet på omtrent 40 000
+Vercel edge-observasjoner. De fem ordinære provider-spørringene fullfører på
+under ett sekund hver. `meta_edge_click_id_coverage` over den fullverdige
+`ops.meta_landing_observability`-viewen brukte 79–84 sekunder, mens
+`meta_click_to_edge` traff databasegrensen på 120 sekunder. Viewen evaluerer
+hele identitets-/funnelkorrelasjonen og laterale ledger/provider-joins før
+24-timers-/16-dagersfiltrene.
+
+Migrasjon `20260805094715_optimize_provider_dispatch_health` er forberedt, men
+ikke anvendt i produksjon. Den legger til den private
+`ops.meta_landing_edge_health`-viewen med bare request-/fbclid-rangering og
+samtykkeklassifisering. Read-only benchmark ga nøyaktig samme 760 Meta-
+landinger og 718 med fbclid som fullviewen, men på 330 ms mot 83 671 ms.
+Alle migrasjoner ble anvendt lokalt, service-role-grant ble verifisert, og
+10 målrettede tester, lint og TypeScript er grønne. Produksjonsrekkefølgen er
+schema først, verifisering, deretter appkode; dette krever separat godkjenning.
 
 ### Historical tracking release 2026-07-26 — produksjonsverifisert
 
