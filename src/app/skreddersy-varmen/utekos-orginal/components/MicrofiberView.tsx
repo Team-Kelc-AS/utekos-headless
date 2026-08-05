@@ -59,7 +59,7 @@ export function MicrofiberView({
 
               <div className='mb-8'>
                 <label className='mb-3 block font-google-sans text-sm font-bold tracking-wider text-foreground uppercase'>
-                  Velg Farge:{' '}
+                  Farge:{' '}
                   <span className='ml-1 text-foreground'>
                     {
                       productConfig.colors.find(
@@ -149,7 +149,6 @@ export function MicrofiberView({
                     </>
                   : <>
                       <ShoppingCart size={20} /> Legg i handlekurv
-                      — {productConfig.price},-
                     </>
                   }
                 </button>
