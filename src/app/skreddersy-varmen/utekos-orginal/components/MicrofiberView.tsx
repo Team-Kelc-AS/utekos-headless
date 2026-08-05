@@ -26,7 +26,6 @@ export function MicrofiberView({
   selectedVariant,
   handleAddToCart,
   scrollToSizeGuide,
-  handleGoToCheckout,
   isPending
 }: MicrofiberLogicProps) {
   return (
@@ -134,14 +133,15 @@ export function MicrofiberView({
 
               <BrandBadge
                 asChild
-                tone='commerce-primary'
-                className='bg-primary text-foreground hover:-translate-y-1 hover:bg-primary-hover hover:text-foreground hover:shadow-2xl active:scale-[0.98] disabled:transform-none disabled:cursor-not-allowed disabled:opacity-70 dark:bg-primary dark:text-foreground dark:hover:bg-primary-hover dark:hover:text-foreground'
+                bgColor='var(--primary)'
+                fgColor='var(--primary-foreground)'
+                className='font-google-sans w-full hover:-translate-y-1 hover:bg-primary-hover hover:text-primary-foreground hover:shadow-2xl active:scale-[0.98] disabled:transform-none disabled:cursor-not-allowed disabled:opacity-70'
               >
                 <button
                   onClick={handleAddToCart}
                   data-track='❗🛒❗SkreddersyUtekosOrginalAddToCartClick ❗🛒❗'
                   disabled={isPending}
-                  className='font-google-sans flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:py-5'
+                  className='flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:py-5'
                 >
                   {isPending ?
                     <>
@@ -154,22 +154,6 @@ export function MicrofiberView({
                   }
                 </button>
               </BrandBadge>
-
-              <button
-                type='button'
-                onClick={() => void handleGoToCheckout()}
-                data-track='SkreddersyVarmenGoToCheckout'
-                aria-label='Gå til kassen'
-                disabled={isPending || !handleGoToCheckout}
-                className='dark:border-dark-background/25 dark:bg-dark-background dark:text-dark-foreground dark:hover:bg-dark-background/90 mb-4 mt-4 flex h-12 w-full items-center justify-center rounded-md border border-background/25 bg-background px-4 text-base font-bold tracking-wider text-foreground shadow-md transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70'
-              >
-                {isPending ?
-                  <>
-                    <Loader2 className='h-5 w-5 animate-spin' />
-                    <span className='ml-2'>Åpner kassen...</span>
-                  </>
-                : <span>Gå til kassen</span>}
-              </button>
 
               <KlarnaLandingExpressCheckout
                 product={product}

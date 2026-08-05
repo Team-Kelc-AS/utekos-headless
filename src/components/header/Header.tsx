@@ -8,7 +8,6 @@ import Link from 'next/link'
 import type { Route } from 'next'
 import { HeadphonesIcon } from 'lucide-react'
 import { ClientMobileMenu } from './ClientMobileMenu'
-import wordmarkblack from '@/assets/images/brand/WordmarkBlack.svg'
 import wordmarkwhite from '@/assets/images/brand/WordmarkWhite.svg'
 
 
@@ -24,18 +23,11 @@ export default function Header({ menu }: { menu: MenuItem[] }) {
             className='flex h-14 items-center lg:h-16'
           >
             <Image
-              src={wordmarkblack}
-              alt='Utekos'
-              width={300}
-              height={73}
-              className='h-7 w-auto sm:h-8 lg:h-9 xl:h-10 dark:hidden'
-            />
-            <Image
               src={wordmarkwhite}
               alt='Utekos'
               width={300}
               height={73}
-              className='hidden h-7 w-auto sm:h-8 lg:h-9 xl:h-10 dark:block'
+              className='h-7 w-auto sm:h-8 lg:h-9 xl:h-10'
             />
           </Link>
         </div>

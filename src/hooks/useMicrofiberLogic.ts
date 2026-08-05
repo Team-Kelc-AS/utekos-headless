@@ -5,7 +5,6 @@ import { scrollToElement } from '@/lib/motion/scrollToElement'
 import { variantMap } from '@/app/skreddersy-varmen/utekos-orginal/utils/variantMap'
 import { productConfig } from '@/app/skreddersy-varmen/utekos-orginal/utils/productConfig'
 import { useCanonicalAddToCart } from '@/hooks/useCanonicalAddToCart'
-import { useAddToCartAction } from '@/hooks/useAddToCartAction'
 import { reportCanonicalVariantSelect } from '@/lib/analytics/variantSelectReporter'
 import { reportCanonicalViewItem } from '@/lib/analytics/viewItemReporter'
 import type {
@@ -14,7 +13,6 @@ import type {
   MicrofiberColor,
   MicrofiberSize
 } from 'types/product'
-import type { ProductCartModel } from 'types/product/ProductPurchaseModel'
 
 export function useMicrofiberLogic(product: ShopifyProduct | null) {
   const [color, setColor] = useState<MicrofiberColor>('fjellbla')
@@ -33,35 +31,6 @@ export function useMicrofiberLogic(product: ShopifyProduct | null) {
         .map(edge => edge.node)
         .find(variant => variant.id === `${GID_PREFIX}${variantIdRaw}`) ?? null
     : null
-  const productForCartAction: ProductCartModel = product
-    ? {
-        id: product.id,
-        title: product.title,
-        handle: product.handle,
-        vendor: product.vendor,
-        productType: product.productType,
-        collections: {
-          nodes: product.collections.nodes.map(node => ({
-            id: node.id,
-            title: node.title
-          }))
-        },
-        featuredImage: product.featuredImage
-      }
-    : {
-        id: '',
-        title: '',
-        handle: '',
-        vendor: '',
-        productType: '',
-        collections: { nodes: [] },
-        featuredImage: null
-      }
-  const { performGoToCheckout, isPending: isCheckoutPending } = useAddToCartAction({
-    product: productForCartAction,
-    selectedVariant
-  })
-
   useEffect(() => {
     if (!product || !selectedVariant) return
 
@@ -134,22 +103,6 @@ export function useMicrofiberLogic(product: ShopifyProduct | null) {
     })()
   }
 
-  const handleGoToCheckout = async () => {
-    if (!product) {
-      toast.error(
-        'Produktet er midlertidig utilgjengelig. Prøv igjen senere.'
-      )
-      return
-    }
-
-    if (!selectedVariant) {
-      toast.error('Kunne ikke finne valgt variant. Prøv igjen.')
-      return
-    }
-
-    await performGoToCheckout(1)
-  }
-
   return {
     color,
     setColor,
@@ -159,8 +112,7 @@ export function useMicrofiberLogic(product: ShopifyProduct | null) {
     product,
     selectedVariant,
     handleAddToCart,
-    handleGoToCheckout,
     scrollToSizeGuide,
-    isPending: isPending || isCheckoutPending || !product
+    isPending: isPending || !product
   }
 }

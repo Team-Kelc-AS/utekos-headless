@@ -18,7 +18,7 @@ export function ProductShowcase() {
         <div className='grid grid-cols-1 items-center gap-16 lg:grid-cols-2'>
           <div className='space-y-8'>
             <div className='space-y-4'>
-              <h2 className='dark:text-dark-primary text-4xl leading-tight text-primary md:text-5xl'>
+              <h2 className='text-4xl leading-tight text-[#F4F1EA] md:text-5xl'>
                 <span className='font-sans font-extrabold'>
                   Utekos®
                 </span>

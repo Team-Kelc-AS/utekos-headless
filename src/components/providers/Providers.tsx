@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { getQueryClient } from '@/api/lib/getQueryClient'
 import { CartMutationProvider } from '@/clients/CartMutationProvider'
 import { CartIdProvider } from '@/components/providers/CartIdProvider'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { serverActions } from '@/constants/serverActions'
 import { adoptAuthoritativeCartIdentity } from '@/lib/cart/adoptAuthoritativeCartIdentity'
 import { migrateLegacyCartSessionStorageKeys } from '@/lib/cart/migrateLegacyCartSessionStorageKeys'
@@ -124,24 +125,32 @@ export default function Providers({
 
   return (
     <CartBootstrapContext.Provider value={cartBootstrapStatus}>
-      <QueryClientProvider client={queryClient}>
-        <CartIdProvider value={cartId}>
-          <CartIdentityActionsContext.Provider
-            value={{ adoptCartIdentity }}
-          >
-            <CartMutationProvider
-              actions={serverActions}
-              adoptCartIdentity={adoptCartIdentity}
+      <ThemeProvider
+        attribute='class'
+        defaultTheme='dark'
+        forcedTheme='dark'
+        disableTransitionOnChange
+        enableColorScheme
+      >
+        <QueryClientProvider client={queryClient}>
+          <CartIdProvider value={cartId}>
+            <CartIdentityActionsContext.Provider
+              value={{ adoptCartIdentity }}
             >
-              {children}
-            </CartMutationProvider>
-          </CartIdentityActionsContext.Provider>
-        </CartIdProvider>
+              <CartMutationProvider
+                actions={serverActions}
+                adoptCartIdentity={adoptCartIdentity}
+              >
+                {children}
+              </CartMutationProvider>
+            </CartIdentityActionsContext.Provider>
+          </CartIdProvider>
 
-        {ReactQueryDevtools ?
-          <ReactQueryDevtools initialIsOpen={false} />
-        : null}
-      </QueryClientProvider>
+          {ReactQueryDevtools ?
+            <ReactQueryDevtools initialIsOpen={false} />
+          : null}
+        </QueryClientProvider>
+      </ThemeProvider>
     </CartBootstrapContext.Provider>
   )
 }

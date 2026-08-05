@@ -136,7 +136,8 @@
   --card-foreground: oklch(0.9493 0.007 88.64);
   --popover: oklch(0.985 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.5575 0.1564 43.75);
+  --primary-hover: oklch(0.69218 0.158176 62.7916);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: var(--color-teal-800);
   --secondary-foreground: oklch(0.985 0 0);
