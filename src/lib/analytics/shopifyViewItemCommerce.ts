@@ -75,12 +75,24 @@ type NormalizedMoney = { amount: number; currency: string }
 
 type PriceBreakdown = { net: number; gross: number; tax: number }
 
+/**
+ * View-item payloads sometimes omit `taxable`. Norway storefront defaults to
+ * taxable so Meta/Google commerce values stay consistent with add_to_cart.
+ */
+function withTaxableDefault(
+  variant: ProductPurchaseVariant
+): ProductPurchaseVariant {
+  if (typeof variant.taxable === 'boolean') return variant
+  return { ...variant, taxable: true }
+}
+
 export function mapShopifyViewItem({
   product,
-  variant,
+  variant: rawVariant,
   quantity = 1,
   priceContext = UTEKOS_NORWAY_PRICE_CONTEXT
 }: MapShopifyViewItemInput): CanonicalViewItemCommerce {
+  const variant = withTaxableDefault(rawVariant)
   assertQuantity(quantity)
   assertPriceContext(priceContext)
 
