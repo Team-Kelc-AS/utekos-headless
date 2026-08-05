@@ -1,14 +1,15 @@
 'use client'
 
 import { sendGTMEvent } from '@next/third-parties/google'
+
 import { readBrowserReporterContext } from './browserReporterContext'
-import { browserPageViewSession } from './pageViewSession'
 import {
   buildRemoveFromCartDataLayerEvent,
   createCanonicalRemoveFromCart,
   type CanonicalRemoveFromCart,
   type CanonicalRemoveFromCartCustomData
 } from './removeFromCartEvent'
+import { browserPageViewSession } from './pageViewSession'
 import { startRemoveFromCartCollectorTransport } from './removeFromCartCollectorTransport'
 
 export type ReportCanonicalRemoveFromCartInput = {
@@ -25,6 +26,7 @@ export function reportCanonicalRemoveFromCart(
 
   try {
     const clientContext = readBrowserReporterContext()
+
     const pageView = browserPageViewSession.ensure({
       pageUrl: clientContext.pageUrl,
       ...(clientContext.documentReferrer ?
@@ -57,11 +59,17 @@ export function reportCanonicalRemoveFromCart(
     })
 
     sendGTMEvent(buildRemoveFromCartDataLayerEvent(event))
+
     return startRemoveFromCartCollectorTransport(event)
   } catch (error) {
-    queueMicrotask(() => {
-      throw error
-    })
+    console.error(
+      '[remove-from-cart] Canonical reporting failed',
+      {
+        errorName:
+          error instanceof Error ? error.name : 'UnknownError'
+      }
+    )
+
     return () => {}
   }
 }
