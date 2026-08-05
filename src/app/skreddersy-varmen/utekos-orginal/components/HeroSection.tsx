@@ -57,7 +57,7 @@ export function HeroSection() {
 
         <p className='leading-text-paragraph mb-8 max-w-xs text-center text-lg font-light tracking-[-0.01em] text-foreground drop-shadow-md md:mb-12 md:max-w-3xl md:text-2xl'>
           Utekos® definerer en ny standard for utendørs velvære.
-          Juster, form og nyt – uansett sted og temperatur.
+          <span className='block'>Juster, form og nyt.</span>
         </p>
 
         <div className='flex w-full flex-col items-center gap-6'>
