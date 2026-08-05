@@ -12,23 +12,22 @@ export const SIZE_GUIDANCE: Record<
     ]
   },
   'Middels': {
-    height: '170 – 180 cm',
+    height: '165 – 175 cm',
     tips: [
       'Er du lavere enn 170 cm får du en romslig passform.',
-      'Ligger du i øvre sjiktet (mot 180 cm) får du en mer kroppsnær passform.'
+      'Ligger du i øvre sjiktet (mot 175 cm) får du en mer kroppsnær passform.'
     ]
   },
   'Stor': {
-    height: '180 – 195 cm',
+    height: '175 – 185 cm',
     tips: [
-      'Perfekt for deg over 180 cm, eller for deg som er lavere og ønsker romslighet.',
-      'Er du over 195 cm anbefaler vi heller størrelsen Ekstra stor.'
+      'Eller for deg som er lavere og ønsker romslighet.'
     ]
   },
   'Ekstra stor': {
-    height: '190 cm og oppover',
+    height: '185 cm og høyere',
     tips: [
-      'Skreddersydd for deg over 190 cm – ekstra lengde i kroppen og ermene.',
+      'Passer best for deg over 185 cm – ekstra lengde i kroppen og ermene.',
       'Også et godt valg for deg som er lavere, men ønsker maksimal romslighet og lengde.'
     ]
   },

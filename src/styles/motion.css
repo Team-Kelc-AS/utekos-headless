@@ -1,22 +1,5 @@
 /* src/styles/motion.css */
 
-[data-utekos-marquee] {
-    animation: utekos-marquee var(--utekos-marquee-duration, 42s)
-      linear infinite;
-  }
-  
-  [data-utekos-marquee]:hover,
-  [data-utekos-marquee]:focus-within,
-  [data-utekos-marquee-region]:hover [data-utekos-marquee],
-  [data-utekos-marquee-region]:focus-within [data-utekos-marquee] {
-    animation-play-state: paused;
-  }
-  
-  [data-utekos-marquee-region]:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 0.375rem;
-  }
-  
   .animate-on-scroll {
     opacity: 0;
     transform: translateY(20px);
@@ -149,11 +132,6 @@
   }
   
   @media (prefers-reduced-motion: reduce) {
-    [data-utekos-marquee] {
-      animation: none;
-      transform: none;
-    }
-  
     .will-animate-fade-in-up,
     .will-animate-fade-in-left,
     .will-animate-fade-in-right,

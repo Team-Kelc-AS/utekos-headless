@@ -6,6 +6,8 @@ import { Star, StarHalf, Quote } from 'lucide-react'
 import { reviews } from '../data/reviews'
 import { ReviewCard } from '@/app/skreddersy-varmen/components/ReviewCard'
 import { SkreddersyMotionProvider } from './SkreddersyMotionProvider'
+import { cn } from '@/lib/utils/className'
+import styles from './SectionSocialProof.module.css'
 import {
   revealGroup,
   revealItem,
@@ -88,7 +90,10 @@ export function SectionSocialProof() {
 
         <m.div
           data-utekos-marquee-region
-          className='relative w-full max-w-full overflow-hidden py-4'
+          className={cn(
+            styles.region,
+            'relative w-full max-w-full overflow-hidden py-4'
+          )}
           role='region'
           aria-label='Kundeanmeldelser'
           tabIndex={0}
@@ -108,7 +113,10 @@ export function SectionSocialProof() {
 
           <div
             data-utekos-marquee
-            className='flex w-max will-change-transform'
+            className={cn(
+              styles.track,
+              'flex w-max will-change-transform'
+            )}
           >
             {[...reviews, ...reviews].map((review, i) => (
               <div

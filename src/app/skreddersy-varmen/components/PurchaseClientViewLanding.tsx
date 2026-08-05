@@ -192,7 +192,7 @@ export function PurchaseClientViewLanding({
                   </span>
                   <Link
                     href={
-                      '/handlehjelp/storrelsesguide' as Route
+                      '/handlehjelp/storrelsesguide#tech-down-size-guide' as Route
                     }
                     data-track='SizeGuideSkreddersyVarmen'
                     onClick={() =>

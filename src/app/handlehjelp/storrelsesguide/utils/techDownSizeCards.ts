@@ -1,7 +1,7 @@
 export type TechDownSizeCardData = {
-  id: 'liten' | 'medium' | 'large'
-  size: 'Liten' | 'Medium' | 'Large'
-  sizeCode: 'S' | 'M' | 'L'
+  id: 'middels' | 'stor' | 'ekstra-stor'
+  size: 'Middels' | 'Stor' | 'Ekstra stor'
+  sizeCode: 'M' | 'L' | 'XL'
   heading: string
   heightGuide: string
   fitGuidance: readonly string[]
@@ -10,35 +10,35 @@ export type TechDownSizeCardData = {
 
 export const techDownSizeCards = [
   {
-    id: 'liten',
-    size: 'Liten',
-    sizeCode: 'S',
-    heading: 'Velg liten hvis...',
-    heightGuide: 'Opptil ca. 165–170 cm',
-    fitGuidance: [
-      'Du er noe lavere og ønsker en ekstra romslig følelse.',
-      'Du er noe høyere, men ønsker en nettere silhuett uten overflødig volum.'
-    ]
-  },
-  {
-    id: 'medium',
-    size: 'Medium',
+    id: 'middels',
+    size: 'Middels',
     sizeCode: 'M',
-    heading: 'Velg medium hvis...',
-    heightGuide: 'Opptil ca. 175–180 cm',
+    heading: 'Velg middels hvis...',
+    heightGuide: '165–175 cm',
     fitGuidance: [
-      'Du er noe lavere og ønsker ekstra romslig passform.',
-      'Du er noe høyere og ønsker en mer kroppsnær passform.'
+      'Du er lavere enn 170 cm og ønsker en romslig passform.',
+      'Du ligger i øvre sjiktet (mot 175 cm) og ønsker en mer kroppsnær passform.'
     ]
   },
   {
-    id: 'large',
-    size: 'Large',
+    id: 'stor',
+    size: 'Stor',
     sizeCode: 'L',
-    heading: 'Velg large hvis...',
-    heightGuide: 'Fra ca. 180–185 cm',
+    heading: 'Velg stor hvis...',
+    heightGuide: '175–185 cm',
     fitGuidance: [
-      'Du er noe lavere og ønsker ekstra romslig passform.'
+      'Du er lavere og ønsker romslighet.'
+    ]
+  },
+  {
+    id: 'ekstra-stor',
+    size: 'Ekstra stor',
+    sizeCode: 'XL',
+    heading: 'Velg ekstra stor hvis...',
+    heightGuide: '185 cm og høyere',
+    fitGuidance: [
+      'Du er over 185 cm og ønsker ekstra lengde i kroppen og ermene.',
+      'Du er lavere, men ønsker maksimal romslighet og lengde.'
     ]
   }
 ] as const satisfies readonly TechDownSizeCardData[]

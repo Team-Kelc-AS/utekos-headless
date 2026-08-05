@@ -49,7 +49,7 @@ export function useLandingPurchaseLogic({ products }: UseLandingPurchaseLogicPro
   const [selectedModel, setSelectedModelState] = useState<ModelKey>('utekos-techdown')
   const [quantity, setQuantityState] = useState(1)
   const [selectedColorIndex, setSelectedColorIndexState] = useState(0)
-  const [selectedSize, setSelectedSizeState] = useState('Middels')
+  const [selectedSize, setSelectedSizeState] = useState('Stor')
   const [isTransitioning, startTransition] = useTransition()
   const lastReportedVariantId = useRef<string | null>(null)
 
