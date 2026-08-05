@@ -18,17 +18,19 @@ export function ProductShowcase() {
         <div className='grid grid-cols-1 items-center gap-16 lg:grid-cols-2'>
           <div className='space-y-8'>
             <div className='space-y-4'>
-              <h2 className='text-4xl leading-tight text-primary dark:text-dark-primary md:text-5xl'>
-                <span className='font-sans font-extrabold'>Utekos®</span>
-                <span className='font-utekos-text-medium mt-2 block text-2xl text-[#F4F1EA] md:text-3xl'>
+              <h2 className='dark:text-dark-primary text-4xl leading-tight text-primary md:text-5xl'>
+                <span className='font-sans font-extrabold'>
+                  Utekos®
+                </span>
+                <span className='mt-2 block font-utekos-text-medium text-2xl text-[#F4F1EA] md:text-3xl'>
                   Lettvekt møter kompromissløs varme.
                 </span>
               </h2>
-              <p className='font-utekos-text max-w-xl text-lg leading-relaxed font-light text-[#F4F1EA]/80'>
-                Designet for nordiske forhold. Med smart hulfiber
-                får du følelsen av dun, men med egenskapene som
-                kreves når været skifter. Robust nok for
-                leirplassen, myk nok for hytteveggen.
+              <p className='max-w-xl font-utekos-text text-lg leading-relaxed font-light text-[#F4F1EA]/80'>
+                Designet for nordiske forhold. Med smart
+                termofiber får du følelsen av dun, men med
+                egenskapene som kreves når været skifter. Robust
+                nok for leirplassen, myk nok for hytteveggen.
               </p>
             </div>
             <div className='grid grid-cols-1 gap-6 pt-4 md:grid-cols-2'>
@@ -80,7 +82,7 @@ function FeatureItem({
 }) {
   return (
     <div className='flex items-start gap-4'>
-      <div className='mt-1 rounded-full bg-primary/10 p-2 text-primary dark:bg-dark-primary/10 dark:text-dark-primary'>
+      <div className='dark:bg-dark-primary/10 dark:text-dark-primary mt-1 rounded-full bg-primary/10 p-2 text-primary'>
         <Icon size={20} />
       </div>
       <div>
