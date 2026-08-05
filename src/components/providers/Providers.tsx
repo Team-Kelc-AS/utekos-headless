@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 import { getQueryClient } from '@/api/lib/getQueryClient'
 import { CartMutationProvider } from '@/clients/CartMutationProvider'
 import { CartIdProvider } from '@/components/providers/CartIdProvider'
-import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { serverActions } from '@/constants/serverActions'
 import { adoptAuthoritativeCartIdentity } from '@/lib/cart/adoptAuthoritativeCartIdentity'
 import { migrateLegacyCartSessionStorageKeys } from '@/lib/cart/migrateLegacyCartSessionStorageKeys'
@@ -125,32 +124,24 @@ export default function Providers({
 
   return (
     <CartBootstrapContext.Provider value={cartBootstrapStatus}>
-      <ThemeProvider
-        attribute='class'
-        defaultTheme='dark'
-        forcedTheme='dark'
-        disableTransitionOnChange
-        enableColorScheme
-      >
-        <QueryClientProvider client={queryClient}>
-          <CartIdProvider value={cartId}>
-            <CartIdentityActionsContext.Provider
-              value={{ adoptCartIdentity }}
+      <QueryClientProvider client={queryClient}>
+        <CartIdProvider value={cartId}>
+          <CartIdentityActionsContext.Provider
+            value={{ adoptCartIdentity }}
+          >
+            <CartMutationProvider
+              actions={serverActions}
+              adoptCartIdentity={adoptCartIdentity}
             >
-              <CartMutationProvider
-                actions={serverActions}
-                adoptCartIdentity={adoptCartIdentity}
-              >
-                {children}
-              </CartMutationProvider>
-            </CartIdentityActionsContext.Provider>
-          </CartIdProvider>
+              {children}
+            </CartMutationProvider>
+          </CartIdentityActionsContext.Provider>
+        </CartIdProvider>
 
-          {ReactQueryDevtools ?
-            <ReactQueryDevtools initialIsOpen={false} />
-          : null}
-        </QueryClientProvider>
-      </ThemeProvider>
+        {ReactQueryDevtools ?
+          <ReactQueryDevtools initialIsOpen={false} />
+        : null}
+      </QueryClientProvider>
     </CartBootstrapContext.Provider>
   )
 }

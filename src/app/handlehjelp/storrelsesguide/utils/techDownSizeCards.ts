@@ -13,7 +13,7 @@ export const techDownSizeCards = [
     id: 'middels',
     size: 'Middels',
     sizeCode: 'M',
-    heading: 'Velg middels hvis...',
+    heading: 'Velg Middels hvis...',
     heightGuide: '165–175 cm',
     fitGuidance: [
       'Du er lavere enn 170 cm og ønsker en romslig passform.',
@@ -24,17 +24,15 @@ export const techDownSizeCards = [
     id: 'stor',
     size: 'Stor',
     sizeCode: 'L',
-    heading: 'Velg stor hvis...',
+    heading: 'Velg Stor hvis...',
     heightGuide: '175–185 cm',
-    fitGuidance: [
-      'Du er lavere og ønsker romslighet.'
-    ]
+    fitGuidance: ['Du er lavere og ønsker romslighet.']
   },
   {
     id: 'ekstra-stor',
     size: 'Ekstra stor',
     sizeCode: 'XL',
-    heading: 'Velg ekstra stor hvis...',
+    heading: 'Velg Ekstra stor hvis...',
     heightGuide: '185 cm og høyere',
     fitGuidance: [
       'Du er over 185 cm og ønsker ekstra lengde i kroppen og ermene.',
