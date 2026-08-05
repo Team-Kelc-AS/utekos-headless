@@ -79,6 +79,7 @@ export type MicrofiberLogicProps = {
   product: ShopifyProduct | null
   selectedVariant: ShopifyProductVariant | null
   handleAddToCart: () => void
+  handleGoToCheckout: () => Promise<void>
   scrollToSizeGuide: () => void
   isPending: boolean
 }

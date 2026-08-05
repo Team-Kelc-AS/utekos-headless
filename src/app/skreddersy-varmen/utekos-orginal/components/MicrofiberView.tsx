@@ -26,6 +26,7 @@ export function MicrofiberView({
   selectedVariant,
   handleAddToCart,
   scrollToSizeGuide,
+  handleGoToCheckout,
   isPending
 }: MicrofiberLogicProps) {
   return (
@@ -153,6 +154,22 @@ export function MicrofiberView({
                   }
                 </button>
               </BrandBadge>
+
+              <button
+                type='button'
+                onClick={() => void handleGoToCheckout()}
+                data-track='SkreddersyVarmenGoToCheckout'
+                aria-label='Gå til kassen'
+                disabled={isPending || !handleGoToCheckout}
+                className='dark:border-dark-background/25 dark:bg-dark-background dark:text-dark-foreground dark:hover:bg-dark-background/90 mb-4 mt-4 flex h-12 w-full items-center justify-center rounded-md border border-background/25 bg-background px-4 text-base font-bold tracking-wider text-foreground shadow-md transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70'
+              >
+                {isPending ?
+                  <>
+                    <Loader2 className='h-5 w-5 animate-spin' />
+                    <span className='ml-2'>Åpner kassen...</span>
+                  </>
+                : <span>Gå til kassen</span>}
+              </button>
 
               <KlarnaLandingExpressCheckout
                 product={product}
