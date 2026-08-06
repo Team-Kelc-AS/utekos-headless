@@ -12,7 +12,7 @@ export const COMFYROBE_LANDING_DESCRIPTION =
   'Comfyrobe™ kombinerer et værbeskyttende skall med mykt SherpaCore™-fôr. Velg størrelse og kjøp direkte med Klarna eller legg i handlekurven.'
 
 export const COMFYROBE_LANDING_IMAGE =
-  'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Comfyrobe-Kvinne-1600x1600.png?v=1784824903'
+  `${SITE_URL}/og-comfyrobe-1200x630.jpg`
 
 export const COMFYROBE_LANDING_FAQ = [
   {
