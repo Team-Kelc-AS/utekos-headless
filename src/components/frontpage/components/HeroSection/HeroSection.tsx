@@ -2,6 +2,7 @@
 
 import { cacheLife, cacheTag } from 'next/cache'
 import { cn } from '@/lib/utils/className'
+import { HeroImage } from './HeroImage'
 import { MotionContent } from './MotionContent'
 
 export async function HeroSection() {
@@ -14,7 +15,8 @@ export async function HeroSection() {
         'isolate mx-auto w-screen overflow-hidden px-0 pt-0 pb-6 sm:px-4 sm:pt-12 sm:pb-10 lg:pt-16 dark:bg-background'
       )}
     >
-      <div>
+      <div className='align-center relative mx-auto mb-7 flex w-full max-w-none flex-col items-center justify-center overflow-hidden text-center sm:mb-10 sm:max-w-[95%] lg:max-w-none'>
+        <HeroImage />
         <MotionContent />
       </div>
     </article>

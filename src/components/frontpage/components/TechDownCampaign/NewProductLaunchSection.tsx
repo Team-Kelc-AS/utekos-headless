@@ -43,6 +43,7 @@ export function NewProductLaunchSection({
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
         sourceSurface='homepage_techdown_campaign'
+        hideDescription
       />
     </>
   )

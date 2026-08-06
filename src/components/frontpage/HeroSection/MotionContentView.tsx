@@ -2,11 +2,10 @@
 
 import Link from 'next/link'
 import type { Route } from 'next'
-import { ArrowRight } from 'lucide-react'
 import { TypographyH2 } from '@/app/inspirasjon/components/typography/TypographyH2'
 import { Button } from '@/components/ui/button'
+import { InvitingArrow } from '@/components/motion/InvitingArrow'
 import { InlineText } from '@/components/typography/TypographyInlineText'
-import { HeroImage } from '@/components/frontpage/components/HeroSection/HeroImage'
 import { reportCanonicalHeroInteract } from '@/lib/analytics/heroInteractReporter'
 
 const HERO_CTA_ID = 'read_more_hero'
@@ -14,11 +13,10 @@ const HERO_DESTINATION = '/skreddersy-varmen'
 
 export function MotionContentView() {
   return (
-    <div className='align-center relative mx-auto mb-7 flex w-full max-w-none flex-col items-center justify-center overflow-hidden text-center sm:mb-10 sm:max-w-[95%]'>
+    <>
       <h1 id='hero-h1' className='sr-only'>
         Skreddersy varmen
       </h1>
-      <HeroImage />
       <div className='w-full px-4 sm:px-0'>
         <TypographyH2 />
 
@@ -29,7 +27,7 @@ export function MotionContentView() {
           <Button
             asChild
             variant='checkout'
-            className='group min-h-11 gap-2 rounded-full bg-primary px-5 py-3 font-utekos-text-medium text-sm leading-none text-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-6 md:px-8 md:py-4 lg:px-10 lg:py-5 lg:text-lg'
+            className='group min-h-11 gap-2 rounded-full bg-primary px-5 py-4 font-utekos-text-medium! text-sm leading-none font-semibold text-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-6 md:px-8 md:py-6 lg:px-10 lg:py-7 lg:text-lg'
           >
             <Link
               href={HERO_DESTINATION as Route}
@@ -45,12 +43,12 @@ export function MotionContentView() {
                 })
               }}
             >
-              <InlineText>Se mer</InlineText>
-              <ArrowRight className='size-4 text-current transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none' />
+              <InlineText>Skreddersy varmen</InlineText>
+              <InvitingArrow />
             </Link>
           </Button>
         </div>
       </div>
-    </div>
+    </>
   )
 }

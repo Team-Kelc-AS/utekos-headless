@@ -18,6 +18,8 @@ export type CheckoutPresentation =
   | 'balanced'
   | 'standard-primary'
 
+export type AddToCartSurface = 'default' | 'inherit'
+
 export type PrepareAddToCartInput = {
   product: ProductCartModel
   selectedVariant: ProductPurchaseVariant
@@ -43,6 +45,7 @@ export type AddToCartProps = {
     | undefined
   checkoutPresentation?: CheckoutPresentation
   isSelectionPending?: boolean
+  surface?: AddToCartSurface
 }
 
 export type AddToCartViewProps = {
@@ -55,6 +58,7 @@ export type AddToCartViewProps = {
   isCheckoutPending: boolean
   isAvailable: boolean
   checkoutPresentation?: CheckoutPresentation
+  surface?: AddToCartSurface
 }
 
 export type CheckoutPanelProps = {

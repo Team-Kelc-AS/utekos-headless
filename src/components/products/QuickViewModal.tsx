@@ -36,21 +36,28 @@ interface QuickViewModalProps {
   isOpen: boolean
   onOpenChange: (isOpen: boolean) => void
   sourceSurface: string
+  hideDescription?: boolean
 }
 
 export function QuickViewModal({
   productHandle,
   isOpen,
   onOpenChange,
-  sourceSurface
+  sourceSurface,
+  hideDescription = false
 }: QuickViewModalProps) {
   const reportingState = useRef(initialQuickViewReportingState)
   const [productData, setProductData] =
     useState<ShopifyProduct | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
+  const initialVariantId =
+    productData?.selectedOrFirstAvailableVariant?.id ?? null
   const { selectedVariant, updateVariant } =
-    useLocalVariantSelection(productData ?? undefined)
+    useLocalVariantSelection(
+      productData ?? undefined,
+      initialVariantId
+    )
 
   const handleFetchError = useEffectEvent(() => {
     toast.error(
@@ -129,7 +136,11 @@ export function QuickViewModal({
               <DialogTitle className='font-google-sans text-3xl font-bold text-popover-foreground'>
                 {productData.title}
               </DialogTitle>
-              {productData.description && (
+              {hideDescription ?
+                <DialogDescription className='sr-only'>
+                  Hurtigvisning av {productData.title}.
+                </DialogDescription>
+              : productData.description ?
                 <DialogDescription
                   render={
                     <p className='max-w-2xl text-base leading-relaxed text-popover-foreground/80' />
@@ -137,13 +148,13 @@ export function QuickViewModal({
                 >
                   {productData.description}
                 </DialogDescription>
-              )}
+              : null}
             </DialogHeader>
 
             <div className='grid grid-cols-1 gap-10 pb-2 lg:grid-cols-2 lg:gap-12'>
               <div className='relative'>
                 <div className='sticky top-6'>
-                  <div className='relative aspect-square w-full overflow-hidden rounded-2xl bg-havdyp shadow-lg'>
+                  <div className='relative aspect-square w-full overflow-hidden rounded-2xl shadow-lg'>
                     {featuredImage && (
                       <Image
                         src={featuredImage.url}
@@ -188,6 +199,7 @@ export function QuickViewModal({
                   <AddToCart
                     product={productData}
                     selectedVariant={selectedVariant}
+                    surface='inherit'
                   />
                 </div>
               </div>

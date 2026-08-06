@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://utekos.no/linn-kate-kikkert.webp',
+        url: 'https://utekos.no/og-utekos_brand.jpg',
         width: 1200,
         height: 630,
         alt: 'Personer som nyter utelivet med varme klær fra Utekos'
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     title: 'Julegavetips | Utekos',
     description:
       'Finn de varmeste julegavene hos Utekos. TechDown, Comfyrobe, Dun og Mikrofiber.',
-    images: ['/linn-kate-kikkert.webp']
+    images: ['/og-utekos_brand.jpg']
   }
 }
 export default async function ChristmasCampaign() {

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { PageSection } from '@/components/layout/PageSection'
+import { InvitingArrow } from '@/components/motion/InvitingArrow'
 import { cn } from '@/lib/utils/className'
 import IntersportLogo from '@/assets/images/partners/Intersport_logo.svg'
 import type { Route } from 'next'
@@ -112,6 +113,7 @@ export function NewProductInStoreNoticeView({
                 className='flex items-center gap-2 font-utekos-text'
               >
                 <InlineText>Vis vei til butikken</InlineText>
+                <InvitingArrow />
               </Link>
             </Button>
           </div>

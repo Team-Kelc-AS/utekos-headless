@@ -13,15 +13,20 @@ export function AddToCartView({
   isPending,
   isCheckoutPending,
   isAvailable,
-  checkoutPresentation = 'balanced'
+  checkoutPresentation = 'balanced',
+  surface = 'default'
 }: AddToCartViewProps) {
   const quantity = form.watch('quantity')
+  const inheritsSurface = surface === 'inherit'
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='flex flex-col gap-4 bg-background py-6'
+        className={cn(
+          'flex flex-col gap-4 py-6',
+          inheritsSurface ? 'bg-transparent' : 'bg-background'
+        )}
       >
         <div className='space-y-2'>
           <label
@@ -32,7 +37,7 @@ export function AddToCartView({
           >
             Antall
           </label>
-          <QuantitySelector />
+          <QuantitySelector surface={surface} />
         </div>
         <ModalSubmitButton
           product={product}

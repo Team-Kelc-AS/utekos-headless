@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: 'Skreddersy varmen |',
     description:
       'Skreddersy varmen med Utekos. Oppdag genial funksjonalitet og kompromissløs komfort for dine utendørsopplevelser. Juster, form og nyt.',
-    images: ['/linn-kate-kikkert.webp']
+    images: ['/og-utekos_brand.jpg']
   }
 }
 

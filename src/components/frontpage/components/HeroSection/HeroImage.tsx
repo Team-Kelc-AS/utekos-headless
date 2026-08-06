@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils/className'
-import heroSixteenNineImage from '@/assets/images/campaign/Skreddersy-Varmen-16x9.png'
+import heroLgImage from '@/assets/images/gallery/utekos-brand-1400x735.webp'
+import heroXlImage from '@/assets/images/gallery/utekos_1400_788.webp'
 import heroSixteenTenImage from '@/assets/images/campaign/SSV-16-10.webp'
 import techdown700x775 from '@/assets/images/techdown/TechDown.700x775.webp'
 
@@ -25,14 +26,15 @@ export function HeroImage() {
         'group relative mx-auto mb-7 w-full max-w-none overflow-hidden rounded-none border-0 shadow-none sm:mb-10 sm:max-w-6xl sm:rounded-2xl sm:border sm:border-foreground/12 sm:shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)] sm:dark:border-dark-foreground/12'
       )}
     >
-      <div
-        className='relative aspect-[700/775] transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 lg:aspect-video'
-        suppressHydrationWarning
-      >
+      <div className='relative aspect-700/775 transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 lg:aspect-video xl:aspect-video'>
         <picture className='block size-full'>
           <source
+            media='(min-width: 1280px)'
+            srcSet={`${heroXlImage.src} ${heroXlImage.width}w`}
+          />
+          <source
             media='(min-width: 1024px)'
-            srcSet={`${heroSixteenNineImage.src} ${heroSixteenNineImage.width}w`}
+            srcSet={`${heroLgImage.src} ${heroLgImage.width}w`}
           />
           <source
             media='(min-width: 640px)'

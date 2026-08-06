@@ -15,7 +15,7 @@ import { H2 } from '@/components/typography/TypographyH2'
 import { InlineText } from '@/components/typography/TypographyInlineText'
 import { P } from '@/components/typography/TypographyP'
 
-const kickerText = 'Norsk vår er uforutsigbar'
+const kickerText = 'Norsk sommer er uforutsigbar'
 
 export function NewProductLaunchSectionView({
   onQuickViewClick,
