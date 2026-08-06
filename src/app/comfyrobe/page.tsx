@@ -3,15 +3,13 @@ import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { ComfyrobeFaqSection } from './components/ComfyrobeFaqSection'
 import { ComfyrobeFinalCta } from './components/ComfyrobeFinalCta'
 import { ComfyrobeGuidedDemo } from './components/ComfyrobeGuidedDemo'
-import { ComfyrobeLandingClient } from './components/ComfyrobeLandingClient'
+import { ComfyrobeHero } from './components/ComfyrobeHero'
 import { ComfyrobeMotionProvider } from './components/ComfyrobeMotionProvider'
 import { ComfyrobeProductDetailsSection } from './components/ComfyrobeProductDetailsSection'
 import { ComfyrobeProofBridge } from './components/ComfyrobeProofBridge'
 import { ComfyrobePurchaseSection } from './components/ComfyrobePurchaseSection'
 import { ComfyrobeSizeGuideAccordion } from './components/ComfyrobeSizeGuideAccordion'
 import { ComfyrobeStickyPurchase } from './components/ComfyrobeStickyPurchase'
-import { getComfyrobeLandingProduct } from './lib/getComfyrobeLandingProduct'
-import { buildComfyrobeOfferSummary } from './lib/buildComfyrobeOfferSummary'
 import {
   COMFYROBE_LANDING_DESCRIPTION,
   COMFYROBE_LANDING_IMAGE,
@@ -19,12 +17,19 @@ import {
   COMFYROBE_LANDING_URL,
   COMFYROBE_PRODUCT_URL
 } from './data/comfyrobeLandingSeo'
+import { buildComfyrobeOfferSummary } from './lib/buildComfyrobeOfferSummary'
+import { getComfyrobeLandingProduct } from './lib/getComfyrobeLandingProduct'
 
 export const metadata: Metadata = {
   title: COMFYROBE_LANDING_NAME,
   description: COMFYROBE_LANDING_DESCRIPTION,
-  alternates: { canonical: COMFYROBE_PRODUCT_URL },
-  robots: { index: false, follow: true },
+  alternates: {
+    canonical: COMFYROBE_PRODUCT_URL
+  },
+  robots: {
+    index: false,
+    follow: true
+  },
   openGraph: {
     type: 'website',
     locale: 'nb_NO',
@@ -50,8 +55,9 @@ export default async function ComfyrobeLandingPage() {
 
   return (
     <article className='flex min-h-screen w-full flex-col overflow-x-clip bg-background text-foreground'>
+      <ComfyrobeHero offer={offer} />
+
       <ComfyrobeMotionProvider>
-        <ComfyrobeLandingClient offer={offer} />
         <ComfyrobeProofBridge />
         <ComfyrobeSizeGuideAccordion />
 
