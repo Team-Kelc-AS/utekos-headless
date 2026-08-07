@@ -1,6 +1,8 @@
 import * as Sentry from '@sentry/nextjs'
 import { handleCallback } from '@vercel/queue'
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import {
+  CANONICAL_PROVIDER_DISPATCH_TOPIC,
   canonicalProviderDispatchMessageSchema,
   type CanonicalProviderDispatchMessage
 } from '../../../../lib/analytics/server/canonicalProviderDispatchQueue'
@@ -49,7 +51,20 @@ export async function handleCanonicalProviderDispatchQueueMessage(
 
 export const POST = handleCallback<CanonicalProviderDispatchMessage>(
   async message => {
-    await handleCanonicalProviderDispatchQueueMessage(message)
+    await startAnalyticsSpan(
+      {
+        name: 'canonical-provider-dispatch',
+        op: 'queue.process',
+        attributes: {
+          'messaging.system': 'vercel_queue',
+          'messaging.destination.name':
+            CANONICAL_PROVIDER_DISPATCH_TOPIC,
+          'messaging.operation.type': 'process',
+          'messaging.batch.message_count': 1
+        }
+      },
+      () => handleCanonicalProviderDispatchQueueMessage(message)
+    )
   },
   { visibilityTimeoutSeconds: 60 }
 )

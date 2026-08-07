@@ -1,8 +1,8 @@
 import {
   runGoogleDataManagerStatusReconciliation,
   type GoogleDataManagerStatusBatchSummary
-} from '../../../../lib/analytics/server/runGoogleDataManagerStatusReconciliation'
-import { hasValidCronAuthorization } from '../../../../lib/security/hasValidCronAuthorization'
+} from '@/lib/analytics/server/runGoogleDataManagerStatusReconciliation'
+import { hasValidCronAuthorization } from '@/lib/security/hasValidCronAuthorization'
 
 const CRON_BATCH_SIZE = 20
 

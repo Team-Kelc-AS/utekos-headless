@@ -2,12 +2,18 @@ import 'server-only'
 
 import { getCache, type RuntimeCache } from '@vercel/functions'
 import { z } from 'zod'
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
 import type { ShopifyProduct } from 'types/product'
 
 export const SHOPIFY_CATALOG_RUNTIME_CACHE_NAMESPACE = 'shopify-catalog:v2'
 export const SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS = 900
 export const SHOPIFY_PRODUCT_RUNTIME_CACHE_MAX_SAFE_BYTES = 1_900_000
+
+const RUNTIME_CACHE_SPAN_ATTRIBUTES = {
+  'cache.system': 'vercel_runtime_cache',
+  'cache.namespace': SHOPIFY_CATALOG_RUNTIME_CACHE_NAMESPACE
+} as const
 
 const moneySchema = z.looseObject({
   amount: z.string(),
@@ -110,30 +116,68 @@ export async function getRuntimeCachedShopifyProduct(
 
   const cacheKey = getShopifyProductRuntimeCacheKey(normalizedHandle)
   let cachedValue: unknown | null = null
+  let cachedProduct: ShopifyProduct | null = null
 
-  try {
-    cachedValue = await runtimeCache.get(cacheKey)
-  } catch (error) {
-    logCacheWarning('shopify.runtime_cache.read_failed', error, { cacheKey })
-  }
+  await startAnalyticsSpan(
+    {
+      name: 'cache.get shopify_product',
+      op: 'cache.get',
+      attributes: RUNTIME_CACHE_SPAN_ATTRIBUTES
+    },
+    async span => {
+      try {
+        cachedValue = await runtimeCache.get(cacheKey)
+      } catch (error) {
+        span.setAttribute('cache.hit', false)
+        logCacheWarning('shopify.runtime_cache.read_failed', error, {
+          cacheKey
+        })
+        return
+      }
+
+      if (cachedValue === null) {
+        span.setAttribute('cache.hit', false)
+        return
+      }
+
+      const parsedCachedValue =
+        shopifyRuntimeCachedProductSchema.safeParse(cachedValue)
+      if (parsedCachedValue.success) {
+        span.setAttribute('cache.hit', true)
+        cachedProduct = parsedCachedValue.data as unknown as ShopifyProduct
+        return
+      }
+
+      span.setAttribute('cache.hit', false)
+    }
+  )
+
+  if (cachedProduct) return cachedProduct
 
   if (cachedValue !== null) {
-    const parsedCachedValue = shopifyRuntimeCachedProductSchema.safeParse(cachedValue)
-    if (parsedCachedValue.success) {
-      return parsedCachedValue.data as unknown as ShopifyProduct
-    }
-
     try {
-      await runtimeCache.delete(cacheKey)
+      await startAnalyticsSpan(
+        {
+          name: 'cache.remove shopify_product',
+          op: 'cache.remove',
+          attributes: RUNTIME_CACHE_SPAN_ATTRIBUTES
+        },
+        () => runtimeCache.delete(cacheKey)
+      )
     } catch (error) {
-      logCacheWarning('shopify.runtime_cache.invalid_delete_failed', error, { cacheKey })
+      logCacheWarning(
+        'shopify.runtime_cache.invalid_delete_failed',
+        error,
+        { cacheKey }
+      )
     }
   }
 
   const fetchedProduct = await fetchProduct(normalizedHandle)
   if (fetchedProduct === null) return null
 
-  const parsedFetchedProduct = shopifyRuntimeCachedProductSchema.safeParse(fetchedProduct)
+  const parsedFetchedProduct =
+    shopifyRuntimeCachedProductSchema.safeParse(fetchedProduct)
   if (!parsedFetchedProduct.success) {
     throw new Error(
       `Shopify product ${normalizedHandle} failed runtime cache validation: ${parsedFetchedProduct.error.message}`
@@ -154,14 +198,25 @@ export async function getRuntimeCachedShopifyProduct(
   const normalizedProductId = normalizeShopifyProductId(product.id)
 
   try {
-    await runtimeCache.set(cacheKey, product, {
-      ttl: SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS,
-      tags: [
-        `product:${normalizedProductId}`,
-        `product-handle:${normalizedHandle}`,
-        'catalog'
-      ]
-    })
+    await startAnalyticsSpan(
+      {
+        name: 'cache.put shopify_product',
+        op: 'cache.put',
+        attributes: {
+          ...RUNTIME_CACHE_SPAN_ATTRIBUTES,
+          'cache.item_size': serializedBytes
+        }
+      },
+      () =>
+        runtimeCache.set(cacheKey, product, {
+          ttl: SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS,
+          tags: [
+            `product:${normalizedProductId}`,
+            `product-handle:${normalizedHandle}`,
+            'catalog'
+          ]
+        })
+    )
   } catch (error) {
     logCacheWarning('shopify.runtime_cache.write_failed', error, { cacheKey })
   }

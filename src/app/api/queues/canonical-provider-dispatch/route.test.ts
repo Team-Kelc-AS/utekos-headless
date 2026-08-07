@@ -1,9 +1,29 @@
 import assert from 'node:assert/strict'
+import Module from 'node:module'
+import { createRequire } from 'node:module'
 import test from 'node:test'
-import {
-  handleCanonicalProviderDispatchQueueMessage,
-  type CanonicalProviderDispatchQueueDependencies
-} from './route'
+import type { CanonicalProviderDispatchQueueDependencies } from './route'
+
+const moduleWithLoad = Module as typeof Module & {
+  _load: (
+    request: string,
+    parent: NodeModule | null,
+    isMain: boolean
+  ) => unknown
+}
+const originalLoad = moduleWithLoad._load.bind(Module)
+
+moduleWithLoad._load = (request, parent, isMain) => {
+  if (request === 'server-only') {
+    return {}
+  }
+
+  return originalLoad(request, parent, isMain)
+}
+
+const require = createRequire(import.meta.url)
+const { handleCanonicalProviderDispatchQueueMessage } =
+  require('./route.ts') as typeof import('./route')
 
 const validMessage = {
   adapter_key: 'meta:view_cart' as const,

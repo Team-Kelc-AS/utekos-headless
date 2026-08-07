@@ -5,6 +5,7 @@ import {
   send
 } from '@vercel/queue'
 import { z } from 'zod'
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import type { CreatedProviderDispatchAttempt } from './canonicalEventStore'
 import {
   providerAdapterRegistry,
@@ -88,28 +89,42 @@ export async function publishCanonicalProviderDispatchAttempts(
     return
   }
 
-  await Promise.all(
-    attempts.map(async attempt => {
-      const payload = canonicalProviderDispatchMessageSchema.parse({
-        adapter_key: attempt.adapterKey,
-        attempt_id: attempt.attemptId,
-        schema_version: 1
-      })
-
-      try {
-        await dependencies.send(
+  await startAnalyticsSpan(
+    {
+      name: 'canonical-provider-dispatch',
+      op: 'queue.publish',
+      attributes: {
+        'messaging.system': 'vercel_queue',
+        'messaging.destination.name':
           CANONICAL_PROVIDER_DISPATCH_TOPIC,
-          payload,
-          {
-            idempotencyKey: `${attempt.adapterKey}:${attempt.attemptId}`,
-            retentionSeconds:
-              CANONICAL_PROVIDER_DISPATCH_RETENTION_SECONDS
-          }
-        )
-      } catch (error) {
-        if (error instanceof DuplicateMessageError) return
-        captureQueuePublishFailure(error, attempt, dependencies)
+        'messaging.operation.type': 'send',
+        'messaging.batch.message_count': attempts.length
       }
-    })
+    },
+    () =>
+      Promise.all(
+        attempts.map(async attempt => {
+          const payload = canonicalProviderDispatchMessageSchema.parse({
+            adapter_key: attempt.adapterKey,
+            attempt_id: attempt.attemptId,
+            schema_version: 1
+          })
+
+          try {
+            await dependencies.send(
+              CANONICAL_PROVIDER_DISPATCH_TOPIC,
+              payload,
+              {
+                idempotencyKey: `${attempt.adapterKey}:${attempt.attemptId}`,
+                retentionSeconds:
+                  CANONICAL_PROVIDER_DISPATCH_RETENTION_SECONDS
+              }
+            )
+          } catch (error) {
+            if (error instanceof DuplicateMessageError) return
+            captureQueuePublishFailure(error, attempt, dependencies)
+          }
+        })
+      )
   )
 }

@@ -4,6 +4,11 @@ export type AnalyticsSpanOp =
   | 'db.query'
   | 'db.transaction'
   | 'rpc.client'
+  | 'cache.get'
+  | 'cache.put'
+  | 'cache.remove'
+  | 'queue.publish'
+  | 'queue.process'
 
 export type AnalyticsSpanAttributes = Readonly<
   Record<string, string | number | boolean>
@@ -21,7 +26,7 @@ export type StartAnalyticsSpanOptions = {
  */
 export function startAnalyticsSpan<T>(
   options: StartAnalyticsSpanOptions,
-  callback: () => T
+  callback: (span: Sentry.Span) => T
 ): T {
   return Sentry.startSpan(
     {

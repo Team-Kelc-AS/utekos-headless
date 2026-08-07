@@ -1,13 +1,34 @@
 import assert from 'node:assert/strict'
+import Module from 'node:module'
+import { createRequire } from 'node:module'
 import test from 'node:test'
 import type { RuntimeCache } from '@vercel/functions'
-import {
+import type { ShopifyProduct } from 'types/product'
+
+const moduleWithLoad = Module as typeof Module & {
+  _load: (
+    request: string,
+    parent: NodeModule | null,
+    isMain: boolean
+  ) => unknown
+}
+const originalLoad = moduleWithLoad._load.bind(Module)
+
+moduleWithLoad._load = (request, parent, isMain) => {
+  if (request === 'server-only') {
+    return {}
+  }
+
+  return originalLoad(request, parent, isMain)
+}
+
+const require = createRequire(import.meta.url)
+const {
   getRuntimeCachedShopifyProduct,
   getShopifyProductRuntimeCacheKey,
   SHOPIFY_CATALOG_RUNTIME_CACHE_NAMESPACE,
   SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS
-} from './shopifyProductRuntimeCache'
-import type { ShopifyProduct } from 'types/product'
+} = require('./shopifyProductRuntimeCache.ts') as typeof import('./shopifyProductRuntimeCache')
 
 class FakeRuntimeCache implements RuntimeCache {
   values = new Map<string, unknown>()

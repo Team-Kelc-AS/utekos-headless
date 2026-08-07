@@ -1,13 +1,34 @@
 import assert from 'node:assert/strict'
+import Module from 'node:module'
+import { createRequire } from 'node:module'
 import test from 'node:test'
 import { DuplicateMessageError } from '@vercel/queue'
-import {
+import type { CanonicalProviderDispatchPublisherDependencies } from './canonicalProviderDispatchQueue'
+
+const moduleWithLoad = Module as typeof Module & {
+  _load: (
+    request: string,
+    parent: NodeModule | null,
+    isMain: boolean
+  ) => unknown
+}
+const originalLoad = moduleWithLoad._load.bind(Module)
+
+moduleWithLoad._load = (request, parent, isMain) => {
+  if (request === 'server-only') {
+    return {}
+  }
+
+  return originalLoad(request, parent, isMain)
+}
+
+const require = createRequire(import.meta.url)
+const {
   CANONICAL_PROVIDER_DISPATCH_RETENTION_SECONDS,
   CANONICAL_PROVIDER_DISPATCH_TOPIC,
   canonicalProviderDispatchMessageSchema,
-  publishCanonicalProviderDispatchAttempts,
-  type CanonicalProviderDispatchPublisherDependencies
-} from './canonicalProviderDispatchQueue'
+  publishCanonicalProviderDispatchAttempts
+} = require('./canonicalProviderDispatchQueue.ts') as typeof import('./canonicalProviderDispatchQueue')
 
 const attempt = {
   adapterKey: 'meta:view_cart' as const,

@@ -37,3 +37,4 @@ alwaysApply: true
 -  @xstate/store-react: /websites/stately_ai_xstate-store
 -  @xstate/react: /statelyai/xstate 
 -  xstate: /statelyai/xstate
+-  Cursor: /websites/cursor
