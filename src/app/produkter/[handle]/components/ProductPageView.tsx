@@ -14,6 +14,9 @@ import ProductGalleryCard from './ProductGalleryCard'
 import PriceActivityPanel from './PriceActivityPanel'
 import { ProductDescription } from './ProductDescription'
 import { KlarnaDesktopPromo } from './KlarnaDesktopPromo'
+import { AsyncProductPurchaseIsland } from './AsyncProductPurchaseIsland'
+import { ProductPurchaseIslandSkeleton } from './ProductPurchaseIslandSkeleton'
+import { AsyncRelatedProducts } from './AsyncRelatedProducts'
 import { resolveProductGalleryImages } from '../utils/resolveProductGalleryImages'
 import type {
   ProductPurchaseModel,
@@ -27,11 +30,8 @@ import { ProductGalleryGrid } from './ProductGalleryGrid'
 import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
 import { SmartRealTimeActivity } from './SmartRealTimeActivity'
 import { ProductGalleryClient } from './ProductGalleryClient'
-import { ProductPurchaseIsland } from './ProductPurchaseIsland'
 import { ProductViewItemReporter } from './ProductViewItemReporter'
-import { AsyncRelatedProducts } from './AsyncRelatedProducts'
 import { computeVariantImages } from '@/lib/utils/computeVariantImages'
-import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 import {
   COMFYROBE_MOBILE_LEAD_IMAGE,
   COMFYROBE_MOBILE_SECOND_IMAGE,
@@ -41,15 +41,11 @@ import {
 type ProductPageViewProps = {
   productData: ProductPurchaseModel
   selectedVariant: ProductPurchaseVariant
-  productOptions: UtekosProductOptions
-  hasVariantSelectionError: boolean
 }
 
 export function ProductPageView({
   productData,
-  selectedVariant,
-  productOptions,
-  hasVariantSelectionError
+  selectedVariant
 }: ProductPageViewProps) {
   const { title } = productData
 
@@ -289,13 +285,16 @@ export function ProductPageView({
               </div>
             </AnimatedBlock>
 
-            <ProductPurchaseIsland
-              product={productData}
-              productOptions={productOptions}
-              hasVariantSelectionError={
-                hasVariantSelectionError
+            <Suspense
+              fallback={
+                <ProductPurchaseIslandSkeleton />
               }
-            />
+            >
+              <AsyncProductPurchaseIsland
+                product={productData}
+                selectedVariant={selectedVariant}
+              />
+            </Suspense>
 
             <ProductDescription
               description={
@@ -307,7 +306,7 @@ export function ProductPageView({
           </OptionsColumn>
         </ProductPageGrid>
 
-        <div className='mt-16 sm:mt-24'></div>
+        <div className='mt-16 sm:mt-24' />
 
         <ProductPageAccordion
           product={productData}

@@ -6,9 +6,7 @@ import { getCachedProductPageData } from '../utils/getCachedProductPageData'
 import { reshapeProductWithMetafields } from '@/hooks/useProductWithMetafields'
 import { resolveInitialVariant } from '../utils/resolveInitialVariant'
 import { getProductWithoutSmallSize } from '@/components/products/getProductWithoutSmallSize'
-import { fetchProductOptions } from '@/api/lib/products/fetchProductOptions'
 import { buildProductPurchaseModel } from '@/lib/shopify/buildProductPurchaseModel'
-import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 import type { SearchParamsPromise } from '../types'
 
 type AsyncProductContentProps = {
@@ -42,36 +40,7 @@ export async function AsyncProductContent({
     resolvedSearchParams
   )
 
-  let mappedProductOptions: UtekosProductOptions | null = null
-  let hasVariantSelectionError = false
-
-  if (initialVariant) {
-    try {
-      mappedProductOptions = await fetchProductOptions({
-        handle,
-        selectedOptions: initialVariant.selectedOptions.map(
-          ({ name, value }) => ({
-            name,
-            value
-          })
-        )
-      })
-
-      hasVariantSelectionError = mappedProductOptions === null
-    } catch {
-      hasVariantSelectionError = true
-    }
-
-    if (!mappedProductOptions) {
-      mappedProductOptions = {
-        selectedVariantId: initialVariant.id,
-        selectedVariantAvailableForSale: false,
-        options: []
-      }
-    }
-  }
-
-  if (!mappedProductOptions) {
+  if (!initialVariant) {
     notFound()
   }
 
@@ -80,7 +49,7 @@ export async function AsyncProductContent({
 
   const selectedPurchaseVariant =
     purchaseModel.variants.find(
-      variant => variant.id === initialVariant?.id
+      variant => variant.id === initialVariant.id
     )
 
   if (!selectedPurchaseVariant) {
@@ -91,8 +60,6 @@ export async function AsyncProductContent({
     <ProductPageView
       productData={purchaseModel}
       selectedVariant={selectedPurchaseVariant}
-      productOptions={mappedProductOptions}
-      hasVariantSelectionError={hasVariantSelectionError}
     />
   )
 }
