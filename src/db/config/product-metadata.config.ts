@@ -8,7 +8,6 @@ export const productMetadata: Record<string, ProductMetadata> = {
   'utekos-mikrofiber': { showActivity: true, baseViewers: 6 },
   'utekos-techdown': { showActivity: true, baseViewers: 9 },
   'comfyrobe': { showActivity: true, baseViewers: 5 },
-  'utekos-special-edition': { showActivity: true, baseViewers: 5 },
 
   // Tilbehør får ikke sanntidsvisning
   'utekos-buff': { showActivity: true, baseViewers: 2 },

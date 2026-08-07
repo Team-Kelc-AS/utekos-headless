@@ -15,7 +15,6 @@ import PriceActivityPanel from './PriceActivityPanel'
 import { ProductDescription } from './ProductDescription'
 import { KlarnaDesktopPromo } from './KlarnaDesktopPromo'
 import { resolveProductGalleryImages } from '../utils/resolveProductGalleryImages'
-import { STOCK_THRESHOLD } from '../utils/resolveProductGalleryImages'
 import type {
   ProductCardModel,
   ProductPurchaseModel,
@@ -75,12 +74,6 @@ export function ProductPageView({
       />
     : undefined
 
-  const quantity = productData.totalInventory ?? 0
-  const limitedStockCount =
-    quantity > 0 && quantity < STOCK_THRESHOLD ?
-      quantity
-    : undefined
-
   const overrideImages =
     PRODUCT_GALLERY_IMAGE_OVERRIDES[productData.handle]
   const variantImages = computeVariantImages(
@@ -134,9 +127,6 @@ export function ProductPageView({
         productHandle={productData.handle}
         priceAmount={selectedVariant.price.amount ?? '0'}
         currencyCode={selectedVariant.price.currencyCode}
-        limitedStockCount={
-          limitedStockCount ? limitedStockCount : 0
-        }
         activityNode={activityNode}
       />
     </div>

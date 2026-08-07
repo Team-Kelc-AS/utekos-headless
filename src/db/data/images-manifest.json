@@ -529,7 +529,7 @@
       },
       {
         "id": "gid://shopify/MediaImage/36996854219000",
-        "alt": "Special Edition Bålglød on Doll",
+        "alt": "",
         "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/dark_special_orange_w_2048_b1847404-a847-4bb4-a1a5-9f2ef2f293de.webp?v=1749151728",
         "width": 2048,
         "height": 3078,
@@ -782,132 +782,6 @@
         "width": 360,
         "height": 540,
         "fileSize": "113.56 KB"
-      }
-    ]
-  },
-  "Special Edition": {
-    "main": [
-      {
-        "id": "gid://shopify/MediaImage/36996677370104",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Kate_Special_Editon_800.webp?v=1749151728",
-        "width": 800,
-        "height": 1107,
-        "fileSize": "198.04 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996683038968",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/special_bag.webp?v=1749151728",
-        "width": 1362,
-        "height": 2048,
-        "fileSize": "170.87 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996683071736",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/special_bags_2048.webp?v=1749148761",
-        "width": 2048,
-        "height": 1581,
-        "fileSize": "208.46 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996689002744",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/doll_balglod_special_orange.webp?v=1749151728",
-        "width": 1333,
-        "height": 1844,
-        "fileSize": "161.80 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996689068280",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/special_orange_doll_open_widthout.webp?v=1749148900",
-        "width": 1362,
-        "height": 2048,
-        "fileSize": "270.77 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996689821944",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/mb_special_turkis_doll_widthout.webp?v=1749148928",
-        "width": 360,
-        "height": 541,
-        "fileSize": "28.92 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996689854712",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/special_turkis_doll_widthout.webp?v=1749151728",
-        "width": 1362,
-        "height": 2048,
-        "fileSize": "226.73 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996854251768",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/special_orange_doll_open_widthout_6e263d20-b150-4ae0-843f-367188da8578.webp?v=1749151728",
-        "width": 1362,
-        "height": 2048,
-        "fileSize": "270.77 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/37067261214968",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/kate_special_without.png?v=1750066794",
-        "width": 508,
-        "height": 703,
-        "fileSize": "113.82 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/37256632893688",
-        "alt": "Kvinne og mann slapper av i gresset med sine Utekos Special Edition",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/DSC07131.webp?v=1752433697",
-        "width": 1024,
-        "height": 641,
-        "fileSize": "141.87 KB"
-      }
-    ],
-    "Mobile": [
-      {
-        "id": "gid://shopify/MediaImage/36996677239032",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/mob_Kate_Special_Editon.webp?v=1749148615",
-        "width": 360,
-        "height": 498,
-        "fileSize": "109.74 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996682973432",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/mob_special_bag.webp?v=1749148761",
-        "width": 360,
-        "height": 541,
-        "fileSize": "25.00 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996683006200",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/mob_special_bags.webp?v=1749148761",
-        "width": 360,
-        "height": 278,
-        "fileSize": "43.07 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996688904440",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/mob_doll_closed_special_orange.webp?v=1749148899",
-        "width": 360,
-        "height": 498,
-        "fileSize": "29.12 KB"
-      },
-      {
-        "id": "gid://shopify/MediaImage/36996688969976",
-        "alt": "",
-        "url": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/mob_special_orange_doll_open_widthout.webp?v=1749148900",
-        "width": 360,
-        "height": 541,
-        "fileSize": "33.72 KB"
       }
     ]
   },

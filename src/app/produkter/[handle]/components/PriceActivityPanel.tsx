@@ -1,6 +1,6 @@
 import { Price } from '@/components/jsx/Price'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
-import { ShieldAlert, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
 import { reviews } from '@/app/skreddersy-varmen/data/reviews'
 import type { ReactNode } from 'react'
 import type { CurrencyCode } from 'types/commerce/CurrencyCode'
@@ -10,7 +10,6 @@ export interface PriceActivityPanelProps {
   priceAmount: string
   currencyCode: CurrencyCode
   activityNode?: ReactNode
-  limitedStockCount?: number
 }
 
 const OFFERS = {
@@ -67,15 +66,8 @@ export default function PriceActivityPanel({
   productHandle,
   priceAmount,
   currencyCode,
-  activityNode,
-  limitedStockCount
+  activityNode
 }: PriceActivityPanelProps) {
-  const shouldShowLimitedStockNotice =
-    typeof limitedStockCount === 'number' &&
-    limitedStockCount > 0
-
-  const isSpecialEdition =
-    productHandle === 'utekos-special-edition'
   const reviewSummary = getProductReviewSummary(productHandle)
 
   // Hent konfigurasjon for produktet
@@ -164,38 +156,6 @@ export default function PriceActivityPanel({
           <p className='mt-3 text-sm text-foreground'>
             {currentOffer.description}
           </p>
-        )}
-
-        {isSpecialEdition && shouldShowLimitedStockNotice && (
-          <div className='dark:border-dark-card/60  relative mt-4 overflow-hidden rounded-2xl border border-card/60 bg-card p-4'>
-            <div
-              className='relative flex items-center gap-3'
-              style={{ zIndex: 10 }}
-            >
-              <div className='dark:border-dark-card/60  flex h-10 w-10 items-center justify-center rounded-full border border-card/60 bg-card text-foreground'>
-                <ShieldAlert
-                  className='h-5 w-5'
-                  aria-hidden='true'
-                />
-              </div>
-              <div>
-                <p className='font-utekos-text-medium text-foreground'>
-                  Kun {limitedStockCount} igjen på lager!
-                </p>
-                <p className='font-utekos-text-medium text-sm text-foreground'>
-                  Unik utgave - kommer ikke tilbake
-                </p>
-              </div>
-            </div>
-            <div
-              className='pointer-events-none absolute -inset-x-2 -inset-y-8 opacity-20 blur-2xl'
-              style={{
-                background:
-                  'radial-gradient(120% 120% at 50% 0%, transparent 30%, color-mix(in oklab, var(--very-peri) 72%, transparent) 100%)'
-              }}
-              aria-hidden='true'
-            />
-          </div>
         )}
       </div>
 

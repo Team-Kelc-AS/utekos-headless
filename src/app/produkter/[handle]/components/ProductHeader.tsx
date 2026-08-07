@@ -1,6 +1,4 @@
 import { AnimatedBlock } from '@/components/AnimatedBlock'
-import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
-import { Sparkles } from 'lucide-react'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import type {
   ProductCartModel,
@@ -30,20 +28,7 @@ export default function ProductHeader({
         threshold={0.2}
       >
         <hgroup>
-          {productHandle === 'utekos-special-edition' && (
-            <BrandBadge
-              backgroundColor='bg-card '
-              textColor='text-foreground '
-              className='mb-5 gap-2'
-            >
-              <Sparkles className='h-5 w-5' aria-hidden='true' />
-              <span className='text-foreground'>
-                Begrenset opplag
-              </span>
-            </BrandBadge>
-          )}
-
-          <h1 className='font-google-sans mx-0 text-left font-sans text-4xl font-bold text-foreground'>
+          <h1 className='font-sans mx-0 text-left text-4xl font-bold text-foreground'>
             {productTitle}
           </h1>
 

@@ -11,7 +11,11 @@
           "publicUrl": "https://utekos.no/produkter/utekos-dun",
           "adminUrl": "https://admin.shopify.com/store/erling-7921/products/7710040391928"
         },
-        "variantOptions": ["Farge", "Størrelse", "Kjønn"],
+        "variantOptions": [
+          "Farge",
+          "Størrelse",
+          "Kjønn"
+        ],
         "variants": [
           {
             "id": 42903234609400,
@@ -145,7 +149,10 @@
           "publicUrl": null,
           "adminUrl": null
         },
-        "variantOptions": ["Farge", "Størrelse"],
+        "variantOptions": [
+          "Farge",
+          "Størrelse"
+        ],
         "variants": [
           {
             "id": 42903231004920,
@@ -275,7 +282,10 @@
           "publicUrl": "https://utekos.no/produkter/comfyrobe",
           "adminUrl": "https://admin.shopify.com/store/erling-7921/products/8036341448952"
         },
-        "variantOptions": ["Farge", "Størrelse"],
+        "variantOptions": [
+          "Farge",
+          "Størrelse"
+        ],
         "variants": [
           {
             "id": 43959919051000,
@@ -363,140 +373,6 @@
                 ]
               }
             }
-          } 
-        ]
-      },
-      {
-        "productName": "Utekos Special Edition",
-        "productId": 7710043439352,
-        "title": "Utekos Special Edition™",
-        "handle": "utekos-special-edition",
-        "category": null,
-        "urls": {
-          "publicUrl": "https://utekos.no/produkter/utekos-special-edition",
-          "adminUrl": "https://admin.shopify.com/store/erling-7921/products/7710043439352"
-        },
-        "variantOptions": ["Farge", "Størrelse", "Kjønn"],
-        "variants": [
-          {
-            "id": 42903236903160,
-            "title": "Fjellhimmel / Medium / Unisex",
-            "adminUrl": "https://admin.shopify.com/store/erling-7921/products/7710043439352/variants/42903236903160",
-            "tracked": true,
-            "options": {
-              "Farge": "Fjellhimmel",
-              "Størrelse": "M",
-              "Kjønn": "Unisex"
-            },
-            "metafield": {
-              "key": "bridgeFor.VariantHandler",
-              "value": "Utekos Special Edition™ Fjellhimmel Medium Unisex",
-              "metaobject": {
-                "name": "VaultVariant",
-                "type": "vaultvariant",
-                "fields": [
-                  {
-                    "key": "color_label",
-                    "useAsFilter": true
-                  },
-                  {
-                    "key": "vaultvariant.active",
-                    "type": "boolean",
-                    "useAsFilter": true
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": 42903236968696,
-            "title": "Fjellhimmel / Large / Unisex",
-            "adminUrl": "https://admin.shopify.com/store/erling-7921/products/7710043439352/variants/42903236968696",
-            "tracked": true,
-            "options": {
-              "Farge": "Fjellhimmel",
-              "Størrelse": "L",
-              "Kjønn": "Unisex"
-            },
-            "metafield": {
-              "key": "bridgeFor.VariantHandler",
-              "value": "Utekos Special Edition™ Fjellhimmel Large Unisex",
-              "metaobject": {
-                "name": "VaultVariant",
-                "type": "vaultvariant",
-                "fields": [
-                  {
-                    "key": "color_label",
-                    "useAsFilter": true
-                  },
-                  {
-                    "key": "vaultvariant.active",
-                    "type": "boolean",
-                    "useAsFilter": true
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": 42903236870392,
-            "title": "Bålglød / Medium / Unisex",
-            "adminUrl": "https://admin.shopify.com/store/erling-7921/products/7710043439352/variants/42903236870392",
-            "tracked": true,
-            "options": {
-              "Farge": "Bålglød",
-              "Størrelse": "M",
-              "Kjønn": "Unisex"
-            },
-            "metafield": {
-              "key": "bridgeFor.VariantHandler",
-              "value": "Utekos Special Edition™ Bålglød Medium Unisex",
-              "metaobject": {
-                "name": "VaultVariant",
-                "type": "vaultvariant",
-                "fields": [
-                  {
-                    "key": "color_label",
-                    "useAsFilter": true
-                  },
-                  {
-                    "key": "vaultvariant.active",
-                    "type": "boolean",
-                    "useAsFilter": true
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "id": 42903236935928,
-            "title": "Bålglød / Large / Unisex",
-            "adminUrl": "https://admin.shopify.com/store/erling-7921/products/7710043439352/variants/42903236935928",
-            "tracked": true,
-            "options": {
-              "Farge": "Bålglød",
-              "Størrelse": "L",
-              "Kjønn": "Unisex"
-            },
-            "metafield": {
-              "key": "bridgeFor.VariantHandler",
-              "value": "Utekos Special Edition™ Bålglød Large Unisex",
-              "metaobject": {
-                "name": "VaultVariant",
-                "type": "vaultvariant",
-                "fields": [
-                  {
-                    "key": "color_label",
-                    "useAsFilter": true
-                  },
-                  {
-                    "key": "vaultvariant.active",
-                    "type": "boolean",
-                    "useAsFilter": true
-                  }
-                ]
-              }
-            }
           }
         ]
       },
@@ -510,7 +386,9 @@
           "publicUrl": null,
           "adminUrl": null
         },
-        "variantOptions": ["Stil"],
+        "variantOptions": [
+          "Stil"
+        ],
         "variants": [
           {
             "id": null,

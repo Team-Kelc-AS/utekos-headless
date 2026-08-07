@@ -43,7 +43,6 @@ export type PriceActivityPanelProps = {
   productHandle: string
   priceAmount: string
   currencyCode: string
-  limitedStockCount?: number
   activityNode?: React.ReactNode
 }
 
