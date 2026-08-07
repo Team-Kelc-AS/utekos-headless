@@ -198,6 +198,3 @@ This architecture decouples the agent interface from the internal implementation
 For a semantic overview of all documentation, see [/docs/sitemap.md](/docs/sitemap.md)
 
 For an index of all available documentation, see [/docs/llms.txt](/docs/llms.txt)
-⚛️React Not Detected
-React is not detected on this page.
-Please ensure you're visiting a React application.

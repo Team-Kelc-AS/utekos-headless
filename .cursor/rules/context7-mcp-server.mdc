@@ -34,3 +34,6 @@ alwaysApply: true
 -  @sentry/profiling-node i Next.js: /websites/sentry_io_platforms_javascript_guides_nextjs
 -  Sentry JavaScript SDK source: /getsentry/sentry-javascript
 -  Utekos Docs: https://mcp.utekos.no/mcp
+-  @xstate/store-react: /websites/stately_ai_xstate-store
+-  @xstate/react: /statelyai/xstate 
+-  xstate: /statelyai/xstate
