@@ -13,6 +13,15 @@ historical ops.integration_events = preserved
 ## Cutover boundary
 
 ```text
+CUTOVER_AT=2026-08-07T16:42:29Z
+deployment (legacy verify)=dpl_2VMJXpBBNYBdo4fYp3KhyiowZeiT
+deployment (pgmq owner)=dpl_BRWdtoMX5PhFVPhBxMbzyfokCoqA
+git SHA=545fd4c1c
+```
+
+Prior first cutover (same day, retained for audit):
+
+```text
 CUTOVER_AT=2026-08-07T16:27:12Z
 deployment (legacy-ready selector)=dpl_EcYNM1m2r5vXjAJ3H7f3EHNK2sQ8
 deployment (pgmq owner)=dpl_FwwG3qFoa8FbPbhJUYJvQBzZNjnX
@@ -92,21 +101,26 @@ total_messages = 0
 
 No historical shadow backlog existed (enqueue is INSERT-only; no backfill).
 
-## Shadow reconciliation
+## Shadow reconciliation (re-cutover 2026-08-07T16:42Z)
 
-Because STEG 1–2 landed during Phase B, there was no organic shadow backlog.
-Controlled reconciliation:
+Sequence executed after operator approval:
+
+1. `DUN_WAITLIST_SYNC_BACKEND=legacy` → deploy `dpl_2VMJXpBBNYBdo4fYp3KhyiowZeiT`
+2. Cron verified: `{"backend":"legacy","ok":true,"claimed":0,...}`
+3. Seeded already-synced lead `763027f9-33f8-438f-a350-71000110009d` into PGMQ
+4. `DUN_WAITLIST_SYNC_BACKEND=pgmq` → deploy `dpl_BRWdtoMX5PhFVPhBxMbzyfokCoqA`
+5. Controlled shadow drain + post-cutover lead proof below
 
 | Bucket | Count | Notes |
 | --- | --- | --- |
-| seeded already-synced message | 1 | lead `de20f51d-…` |
-| already_satisfied | 1 | first PGMQ cron |
-| processed_by_pgmq (Shopify success) | 1 | post-cutover lead `d960ed71-…` |
+| seeded already-synced message | 1 | lead `763027f9-…` |
+| already_satisfied | 1 | first PGMQ cron after re-cutover |
+| processed_by_pgmq (Shopify success) | 1 | post-cutover lead `8b247798-…` |
 | retry_scheduled | 0 | |
 | dead_lettered | 0 | |
 | remaining unexplained | 0 | |
 
-First PGMQ cron response:
+First PGMQ cron response (re-cutover):
 
 ```json
 {
@@ -120,20 +134,20 @@ First PGMQ cron response:
   "ok": true,
   "queueMetrics": {
     "queueLength": 0,
-    "totalMessages": 1
+    "totalMessages": 3
   }
 }
 ```
 
 ## Post-cutover new lead proof
 
-Inserted Dun lead `d960ed71-3d31-4ee1-ae44-f155493077da`
+Inserted Dun lead `8b247798-f200-4702-9a43-837d20fded0e`
 (`source=product_waitlist_utekos_dun`).
 
 Verified:
 
-- atomic PGMQ enqueue (`msg_id=2`)
-- **0** new legacy `pending`/`processing`/`retry_scheduled` jobs
+- atomic PGMQ enqueue (`msg_id=4`)
+- **0** legacy active jobs (`succeeded` only; n=12)
 - cron `backend=pgmq` result:
 
 ```json
@@ -143,7 +157,11 @@ Verified:
   "alreadySatisfied": 0,
   "archived": 1,
   "backend": "pgmq",
-  "ok": true
+  "ok": true,
+  "queueMetrics": {
+    "queueLength": 0,
+    "totalMessages": 4
+  }
 }
 ```
 
@@ -153,7 +171,7 @@ Verified:
 ops.integration_events
   status = succeeded
   payload.sync_owner = pgmq
-  payload.lead_id = d960ed71-3d31-4ee1-ae44-f155493077da
+  payload.lead_id = 8b247798-f200-4702-9a43-837d20fded0e
 ```
 
 - PGMQ archive contains the message; active queue length = 0
