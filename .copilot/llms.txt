@@ -1,0 +1,139 @@
+# Sitemap
+
+> Complete repository sitemap for `Team-Kelc-AS/utekos-headless`, for AI agent
+> and Copilot context. Paths are relative to the repository root. This is a
+> map of the codebase itself (not the mirrored external documentation under
+> `.codex/docs/main-documentation/`, which has its own
+> [llms.txt](../.codex/docs/main-documentation/llms.txt) and
+> [sitemap.xml](../.codex/docs/main-documentation/sitemap.xml)).
+
+@doc-root: .
+@doc-format: repo-relative
+
+## Read first
+
+- [AGENTS.md](../AGENTS.md) — authoritative operating contract for all agents; read before any change.
+- [PLAN.md](../PLAN.md) — active project plan.
+- [DEPLOYMENT.md](../DEPLOYMENT.md) — canonical release-order/deployment checklist.
+- [FLOW.md](../FLOW.md) — end-to-end tracking/observability map, gap register, MCP status.
+- [DEVELOPMENT.md](../DEVELOPMENT.md) — local development setup.
+- [NEXT.md](../NEXT.md) — near-term follow-up notes.
+- [EVENT_CATALOG.md](../EVENT_CATALOG.md) — canonical tracking event catalog.
+- [CANONICAL_EVENTS.md](../CANONICAL_EVENTS.md) — canonical event definitions.
+- [COMMERCIAL_INTELLIGENCE_PLAN.md](../COMMERCIAL_INTELLIGENCE_PLAN.md) — commercial intelligence plan.
+- [.codex/rules/README.md](../.codex/rules/README.md) — Zero-Assumption Protocol rules index.
+
+## Root configuration
+
+- [package.json](../package.json) — scripts, dependencies (pnpm workspace).
+- [pnpm-workspace.yaml](../pnpm-workspace.yaml) / [pnpm-lock.yaml](../pnpm-lock.yaml) — pnpm workspace and lockfile.
+- [next.config.mts](../next.config.mts) — Next.js configuration.
+- [tsconfig.json](../tsconfig.json) / [tsconfig.customer-assistant.json](../tsconfig.customer-assistant.json) — TypeScript configuration.
+- [eslint.config.mts](../eslint.config.mts) / [prettier.config.mts](../prettier.config.mts) — lint/format configuration.
+- [vercel.json](../vercel.json) / [.vercelignore](../.vercelignore) — Vercel deployment configuration.
+- [docker-compose.yml](../docker-compose.yml) / [Dockerfile](../Dockerfile) / [Dockerfile.mcp-css](../Dockerfile.mcp-css) — container definitions.
+- [.mcp.json](../.mcp.json) — generated MCP server registration (do not hand-edit; regenerate via `npm run mcp:build`).
+- [.env.mcp.example](../.env.mcp.example) / [.env.docker.example](../.env.docker.example) / [.env.tunnel.example](../.env.tunnel.example) — env templates.
+- [.nvmrc](../.nvmrc) / [.node-version](../.node-version) — pinned Node.js runtime version.
+- [components.json](../components.json) / [shadcn-extension.json](../shadcn-extension.json) — shadcn/ui configuration.
+- [skills-lock.json](../skills-lock.json) — Copilot/agent skills lockfile.
+
+## Source (`src/`)
+
+- [src/app](../src/app) — Next.js App Router routes, layouts, and metadata (`sitemap.ts`, `robots.ts`, `manifest.ts`, `llms.txt`, `llms-full.txt`).
+  - [src/app/api](../src/app/api) — route handlers (webhooks, cron endpoints, server actions surface).
+  - [src/app/(home)](../src/app/(home)), [produkter](../src/app/produkter), [kjop](../src/app/kjop), [comfyrobe](../src/app/comfyrobe), [gaveguide](../src/app/gaveguide), [inspirasjon](../src/app/inspirasjon), [magasinet](../src/app/magasinet), [utekos-magasinet](../src/app/utekos-magasinet), [nbcc](../src/app/nbcc), [kampanje](../src/app/kampanje) — marketing and commerce page routes.
+  - [src/app/kontaktskjema](../src/app/kontaktskjema), [handlehjelp](../src/app/handlehjelp), [frakt-og-retur](../src/app/frakt-og-retur), [personvern](../src/app/personvern), [vilkar-betingelser](../src/app/vilkar-betingelser), [om-oss](../src/app/om-oss), [sporing](../src/app/sporing), [skreddersy-varmen](../src/app/skreddersy-varmen), [customer](../src/app/customer) — support/legal/account routes.
+- [src/api](../src/api) — Shopify Admin/Storefront GraphQL clients, queries, and constants.
+- [src/lib](../src/lib) — domain logic: `analytics`, `consent`, `cart`, `catalog-sync`, `campaigns`, `customer-assistant`, `db`, `email`, `errors`, `google`, `gtin`, `klarna`, `leads`, `merchant-feeds`, `motion`, `observability`, `redis`, `security`, `shopify`, `state`, `supabase`, `wishlist`, and shared `utils`.
+- [src/components](../src/components) — React components: `ui` (shadcn primitives), `header`, `footer`, `cart`, `chat`, `customer-assistant`, `frontpage`, `products`, `product-waitlist`, `size-guide`, `wishlist`, `consent`, `cookie-consent`, `analytics`, `emails`, `motion`, `animate-ui`, `animate-icons`, `providers`, `layout`, `legal`, `navigation`, `typography`, `skeletons`, `form`.
+- [src/hooks](../src/hooks) — cart, variant selection, and UI React hooks.
+- [src/clients](../src/clients) — client-side cart mutation providers.
+- [src/constants](../src/constants) — shared constants (cookies, countries, discount codes, error codes).
+- [src/db](../src/db) — database config, seed/data, and Zod schemas.
+- [src/types](../src/types) — ambient/module TypeScript declarations.
+- [src/styles](../src/styles) — global CSS layers (`base`, `components`, `keyframes`, `motion`, `typography`, `utilities`, `vendors`, `view-transitions`) and per-route styles.
+- [src/assets](../src/assets) — images, logos, videos.
+- [src/markdown](../src/markdown) — MDX content fragments.
+- [src/globals.css](../src/globals.css) — global stylesheet entry.
+- [src/proxy.ts](../src/proxy.ts) — Next.js proxy/middleware equivalent.
+- [src/instrumentation.ts](../src/instrumentation.ts) / [src/instrumentation-client.ts](../src/instrumentation-client.ts) — Sentry/OTel instrumentation hooks.
+- [src/UtekosIcons](../src/UtekosIcons) — icon set.
+
+## Types and contracts
+
+- [types](../types) — shared cross-cutting TypeScript types (`cart`, `commerce`, `marketing`, `media`, `observability`, `product`, plus root-level `*.types.ts`).
+- [contracts/shopify](../contracts/shopify) — Shopify data contracts.
+- [global.d.ts](../global.d.ts) / [mdx.d.ts](../mdx.d.ts) — global ambient declarations.
+
+## Configuration (`config/`)
+
+- [config/gcp](../config/gcp) — Google Cloud Platform configuration.
+- [config/gtm](../config/gtm) — Google Tag Manager container configuration.
+- [config/mcp](../config/mcp) — committed MCP server templates (source of truth for generated `mcp.json`).
+- [config/shopify](../config/shopify) — Shopify configuration.
+
+## Scripts (`scripts/`)
+
+- [scripts/ast-validation](../scripts/ast-validation), [scripts/next](../scripts/next) — Next.js/AST validation tooling.
+- [scripts/brand](../scripts/brand), [scripts/theme](../scripts/theme), [scripts/shadcn](../scripts/shadcn) — brand and design-system tooling.
+- [scripts/customer-assistant](../scripts/customer-assistant) — AI customer assistant build/dev tooling.
+- [scripts/deploy](../scripts/deploy), [scripts/docker](../scripts/docker) — deployment and container tooling.
+- [scripts/google-docs](../scripts/google-docs), [scripts/klarna-docs](../scripts/klarna-docs) — documentation sync tooling.
+- [scripts/gtin](../scripts/gtin), [scripts/merchant](../scripts/merchant), [scripts/microsoft-ads](../scripts/microsoft-ads) — commerce feed/ads tooling.
+- [scripts/mcp](../scripts/mcp) — MCP build/doctor tooling (`mcp:build`, `mcp:doctor`).
+- [scripts/ops](../scripts/ops), [scripts/perf](../scripts/perf), [scripts/privacy](../scripts/privacy), [scripts/pdp](../scripts/pdp), [scripts/tracking](../scripts/tracking) — operations, performance, privacy, PDP, and tracking tooling.
+- [scripts/sync-nextjs-docs.py](../scripts/sync-nextjs-docs.py) / [scripts/sync-react-docs.py](../scripts/sync-react-docs.py) — documentation mirror sync scripts.
+
+## Tests (`tests/`)
+
+- [tests/cart](../tests/cart) — cart Playwright tests (see [playwright.cart.config.ts](../playwright.cart.config.ts)).
+- [tests/customer-assistant](../tests/customer-assistant) — customer assistant Playwright tests (see [playwright.assistant.config.ts](../playwright.assistant.config.ts)).
+- [tests/view-transitions](../tests/view-transitions) — view-transition Playwright tests (see [playwright.view-transitions.config.ts](../playwright.view-transitions.config.ts)).
+
+## Supabase (`supabase/`)
+
+- [supabase/config.toml](../supabase/config.toml) — local Supabase stack configuration.
+- [supabase/schemas](../supabase/schemas) — declarative schema source (`marketing`, `ops`, `partner`, `analytics`).
+- [supabase/migrations](../supabase/migrations) — versioned schema migrations.
+- [supabase/functions](../supabase/functions) — Supabase Edge Functions.
+- [supabase/tests](../supabase/tests) — pgTAP/database tests.
+- [supabase/SERVERDOCS](../supabase/SERVERDOCS) — server-side Supabase documentation.
+
+## Docs (`docs/`)
+
+- [docs/local-secrets.md](../docs/local-secrets.md) — local secrets/env layering reference.
+- [docs/analytics](../docs/analytics), [docs/meta](../docs/meta), [docs/microsoft](../docs/microsoft) — provider-specific tracking docs.
+- [docs/cache-components](../docs/cache-components), [docs/next](../docs/next) — Next.js caching/runtime docs.
+- [docs/customer-assistant](../docs/customer-assistant) — AI customer assistant docs.
+- [docs/pgmt](../docs/pgmt) — Postgres migration tooling docs.
+- [docs/supabase](../docs/supabase) — Supabase-specific docs.
+- [docs/superpowers](../docs/superpowers) — Superpowers skill documentation.
+
+## Mirrored external documentation (`.codex/docs/`)
+
+- [.codex/docs/main-documentation/llms.txt](../.codex/docs/main-documentation/llms.txt) — category index for the full offline documentation mirror (Next.js, Google/Meta/Microsoft integrations, marketing science, UX, brand guidelines, and more).
+- [.codex/docs/main-documentation/sitemap.xml](../.codex/docs/main-documentation/sitemap.xml) — sitemap of every mirrored documentation URL.
+- [.codex/docs/main-documentation/agents.txt](../.codex/docs/main-documentation/agents.txt) — agent-facing documentation index.
+- [.codex/docs/main-documentation/README.md](../.codex/docs/main-documentation/README.md) — documentation mirror overview.
+- [.codex/rules](../.codex/rules) — Zero-Assumption Protocol rules (`docs-usage.rules`, `mcp-usage.rules`).
+
+## Agent and editor configuration
+
+- [.github/workflows](../.github/workflows) — CI workflows (e.g. `google-merchant-sync.yml`).
+- [.github/dependabot.yml](../.github/dependabot.yml) — dependency update configuration.
+- [.agents/skills](../.agents/skills) — Copilot/agent skills (`mapi-developer-assistant`, `pgmt`).
+- [.agent](../.agent) — baseline/audit notes (`utekos-well-architechted-framework.md`, PDP/GCP baselines).
+- [.cursor/rules](../.cursor/rules) — Cursor editor rules.
+- [.superpowers/sdd](../.superpowers/sdd) — Superpowers spec-driven-development skill.
+- [patches](../patches) — pnpm patch overrides for dependencies.
+- [vendor](../vendor) — vendored third-party code.
+
+## Public assets (`public/`)
+
+- [public/analytics](../public/analytics), [public/gtin](../public/gtin), [public/.well-known](../public/.well-known) — analytics assets, GTIN data, well-known files.
+- [public/comfyrobe](../public/comfyrobe), [public/1080](../public/1080), [public/schema-bilder](../public/schema-bilder), [public/email](../public/email) — product, image, and schema/email assets.
+
+## Output and generated artifacts
+
+- [output](../output) — build/generation output (not hand-authored).
