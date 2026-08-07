@@ -284,7 +284,7 @@
     "typescript-eslint": "^8.60.1",
     "uuid": "^13.0.0",
     "vaul": "^1.1.2",
-    "workflow": "^4.6.2",
+    "workflow": "^4.8.0",
     "xstate": "^5.32.0",
     "zod": "^4.4.3",
     "zod-validation-error": "^4.0.1"
