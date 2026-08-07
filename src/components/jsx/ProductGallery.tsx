@@ -28,7 +28,10 @@ export function ProductGallery({
     <Carousel
       slideCount={images.length}
       ssr={CAROUSEL_SSR.fullWidth(images.length)}
-      opts={{ align: 'start', loop: images.length > 1 }}
+      opts={{
+        align: 'start',
+        loop: images.length > 1
+      }}
       className={cn(
         'absolute inset-0 touch-pan-y overflow-hidden rounded-none select-none',
         imageBackgroundClassName
@@ -43,24 +46,32 @@ export function ProductGallery({
           >
             <Image
               src={image.url}
-              alt={image.altText || `Bilde av ${title}`}
+              alt={
+                image.altText ||
+                `Bilde av ${title}`
+              }
               fill
               sizes='(min-width: 1280px) 58vw, (min-width: 1024px) 54vw, 100vw'
-              quality={100}
+              quality={90}
               className={cn(
                 'pointer-events-none object-cover object-top select-none',
                 imageClassName
               )}
               draggable={false}
-              fetchPriority={index === 0 ? 'high' : 'auto'}
-              loading={index === 0 ? 'eager' : 'lazy'}
+              fetchPriority={
+                index === 0 ?
+                  'high'
+                : 'auto'
+              }
             />
           </CarouselItem>
         ))}
       </CarouselContent>
+
       {images.length > 1 && (
         <>
           <CarouselPrevious className='dark:border-dark-sidebar-foreground dark:ring-dark-sidebar-foreground dark:hover:text-dark-sidebar-foreground left-2 border-sidebar-foreground bg-sidebar text-sidebar-foreground shadow-lg ring-1 ring-sidebar-foreground hover:bg-sidebar hover:text-sidebar-foreground' />
+
           <CarouselNext className='dark:border-dark-sidebar-foreground dark:ring-dark-sidebar-foreground dark:hover:text-dark-sidebar-foreground right-2 border-sidebar-foreground bg-sidebar text-sidebar-foreground shadow-lg ring-1 ring-sidebar-foreground hover:bg-sidebar hover:text-sidebar-foreground' />
         </>
       )}

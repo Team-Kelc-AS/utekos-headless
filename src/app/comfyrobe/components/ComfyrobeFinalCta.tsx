@@ -19,7 +19,7 @@ export function ComfyrobeFinalCta({
 }) {
   const label =
     offer?.availableForSale ?
-      `Velg størrelse`
+      'Velg størrelse'
     : 'Se størrelse og tilgjengelighet'
 
   const handleClick = () => {

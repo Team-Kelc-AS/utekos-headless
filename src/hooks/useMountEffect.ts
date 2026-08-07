@@ -9,5 +9,7 @@ export default function useMountEffect(
 ) {
   useEffect((...args) => {
     return callback(...args)
+    // Mount-only by design; callback identity must not retrigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only hook
   }, [])
 }

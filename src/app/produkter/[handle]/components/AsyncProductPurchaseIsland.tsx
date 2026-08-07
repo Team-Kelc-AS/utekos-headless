@@ -18,7 +18,7 @@ export async function AsyncProductPurchaseIsland({
   selectedVariant
 }: AsyncProductPurchaseIslandProps) {
   let productOptions: UtekosProductOptions | null = null
-  let hasVariantSelectionError = false
+  let hasVariantSelectionError: boolean
 
   try {
     productOptions = await fetchProductOptions({

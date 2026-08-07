@@ -8,7 +8,6 @@ import {
   Img,
   Link,
   Preview,
-  Section,
   Text
 } from 'react-email'
 import * as React from 'react'

@@ -16,5 +16,7 @@ export default function useUpdateEffect(
       return
     }
     callback(...args)
+    // Skip first run by design; deps come from the caller.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- update-only hook
   }, deps)
 }

@@ -1,4 +1,3 @@
-import { Lightbulb } from 'lucide-react'
 import {
   Card,
   CardHeader,

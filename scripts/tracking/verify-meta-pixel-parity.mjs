@@ -213,7 +213,7 @@ function requestMatchesPath(pageUrl, pathname) {
 function isIgnorableConsoleError(message) {
   return (
     (message.includes('report-only Content Security Policy') &&
-      message.includes("frame-ancestors 'none'")) ||
+      message.includes('frame-ancestors \'none\'')) ||
     message.includes('Unsupported Summarizer API languages')
   )
 }
@@ -358,7 +358,7 @@ async function readPixelSentKeys(page) {
  * Prefer Next App Router `window.next.router.push` — plain <a>.click()
  * often hard-navigates and remounts the document.
  */
-async function softClientNavigate(page, pathname, searchParams = {}) {
+export async function softClientNavigate(page, pathname, searchParams = {}) {
   const navigationMarker = `utekos_meta_smoke_nav_${randomUUID()}`
   const query = new URLSearchParams(searchParams).toString()
   const targetHref = query ? `${pathname}?${query}` : pathname
@@ -673,7 +673,11 @@ async function verifySurface(browser, userAgent, surface) {
       (postConsentDataLayerEvents.length > 0 ?
         postConsentDataLayerEvents
       : latestCanonicalEventsByName(allPathEvents)
-      ).map(({ raw: _raw, ...event }) => event)
+      ).map(entry => {
+        const event = { ...entry }
+        delete event.raw
+        return event
+      })
 
     const postConsentRequests = requests.slice(postConsentRequestOffset)
     const postConsentResponses = responses.slice(

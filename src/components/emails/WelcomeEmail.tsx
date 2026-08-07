@@ -20,7 +20,7 @@ const broadcastBodyHtml = extractBroadcastBodyHtml(
  * Preview wrapper for `pnpm run email`.
  * Send path uses NEWSLETTER_WELCOME_HTML directly via sendWelcomeEmail.
  */
-export function WelcomeEmail(_props: WelcomeEmailProps = {}) {
+export function WelcomeEmail(_?: WelcomeEmailProps) {
   return (
     <Html lang='nb' dir='ltr'>
       <Head />

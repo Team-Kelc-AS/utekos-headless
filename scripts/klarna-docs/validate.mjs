@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs'
-import { basename, join, relative } from 'node:path'
+import { basename, relative } from 'node:path'
 import { isHeadingLine, isTaggableHeading } from '../google-docs/slugify.mjs'
 import { BLOCKQUOTE, DOCS_INDEX, ROOT, SKIP_NORMALIZE } from './lib/constants.mjs'
 import { walkMd } from './lib/fs-walk.mjs'

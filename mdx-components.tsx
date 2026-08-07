@@ -17,13 +17,17 @@ const components = {
   h3: H3,
   h4: H4,
   p: P,
-  img: props => (
-    <Image
-      sizes='100vw'
-      className='aspect-square h-auto w-full object-cover'
-      {...(props as ImageProps)}
-    />
-  )
+  img: props => {
+    const imageProps = props as ImageProps
+    return (
+      <Image
+        sizes='100vw'
+        className='aspect-square h-auto w-full object-cover'
+        {...imageProps}
+        alt={imageProps.alt ?? ''}
+      />
+    )
+  }
 } satisfies MDXComponents
 
 export function useMDXComponents(): MDXComponents {

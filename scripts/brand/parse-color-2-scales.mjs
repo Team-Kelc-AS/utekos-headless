@@ -42,16 +42,6 @@ const SEMANTIC_FAMILY_IDS = new Set([
   'secondary'
 ])
 
-function slugify(value) {
-  return value
-    .toLowerCase()
-    .replace(/å/g, 'a')
-    .replace(/æ/g, 'ae')
-    .replace(/ø/g, 'o')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
-
 function titleize(value) {
   return value
     .split('-')

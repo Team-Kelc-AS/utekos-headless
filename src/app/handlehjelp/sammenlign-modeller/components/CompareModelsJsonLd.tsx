@@ -100,16 +100,23 @@ const formatPrice = (value: number) => value.toFixed(2)
 const mapAvailability = (availableForSale: boolean): NonNullable<Offer['availability']> =>
   availableForSale ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'
 
-const getVariants = (product: ProductData | null): ProductVariant[] =>
-  []
+const getVariants = (product: ProductData | null): ProductVariant[] => {
+  void product
+  return []
+}
 
-const getVariantPrices = (product: ProductData | null) =>
-  []
+const getVariantPrices = (product: ProductData | null) => {
+  void product
+  return []
+}
 
-const getPriceCurrency = (product: ProductData | null) =>
-  'NOK'
+const getPriceCurrency = (product: ProductData | null) => {
+  void product
+  return 'NOK'
+}
 
 const getAvailability = (product: ProductData | null) => {
+  void product
   return undefined
 }
 

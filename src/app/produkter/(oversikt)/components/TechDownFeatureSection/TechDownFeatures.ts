@@ -1,4 +1,4 @@
-import { ArrowRight, Cloud, Shield, Shapes } from 'lucide-react'
+import { Cloud, Shield, Shapes } from 'lucide-react'
 
 export const TechDownfeatures = [
   {

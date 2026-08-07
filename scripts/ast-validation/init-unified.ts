@@ -6,7 +6,7 @@ import rehypeStarryNight from 'rehype-starry-night'
 import * as jsxRuntime from 'react/jsx-runtime'
 
 // Konstruerer kompilatoren som transformerer mdast -> hast -> jsx
-const contentCompiler = unified()
+export const contentCompiler = unified()
   .use(remarkParse) // Leser markdown til mdast
   .use(remarkRehype) // Konverterer mdast til hast (HTML AST)
   .use(rehypeStarryNight) // Legger til syntaksutheving for kodeblokker

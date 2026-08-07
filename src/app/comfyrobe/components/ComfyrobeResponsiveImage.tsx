@@ -87,9 +87,9 @@ export function ComfyrobeResponsiveImage({
       />
 
       {/* getImageProps provides Next.js-optimized src and srcSet. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         {...mobileImageProps}
+        alt={alt}
         className={joinClassNames(
           'absolute inset-0 size-full',
           className

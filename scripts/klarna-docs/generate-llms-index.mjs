@@ -166,11 +166,6 @@ function buildFlatIndex() {
       groups
         .get(group)
         ?.sort((a, b) => a.rel.localeCompare(b.rel)) ?? []
-    const sample = items[0]?.rel ?? ''
-    const linkTarget =
-      sample.includes('/') ?
-        sample.split('/').slice(0, -1).join('/')
-      : '.'
     lines.push('', `### ${group}`, '')
     for (const { rel, desc } of items) {
       lines.push(`- [${basename(rel)}](${rel}): ${desc}`)

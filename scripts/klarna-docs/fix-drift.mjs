@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { readFileSync, renameSync, statSync, writeFileSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { renameSync, statSync } from 'node:fs'
+import { join } from 'node:path'
 import { ROOT } from './lib/constants.mjs'
 
 const typoPath = join(

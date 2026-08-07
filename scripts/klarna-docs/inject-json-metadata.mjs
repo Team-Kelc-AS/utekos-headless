@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync, writeFileSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { join } from 'node:path'
 import metadata from './runtime-metadata.json' with { type: 'json' }
 import { DOCS_INDEX, ROOT } from './lib/constants.mjs'
 

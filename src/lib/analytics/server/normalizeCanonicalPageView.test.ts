@@ -99,3 +99,46 @@ test('removes marketing identifiers when marketing consent is denied', () => {
   assert.equal(event.user_data, undefined)
   assert.equal(event.event_device_info?.user_agent, 'trusted-browser-agent')
 })
+
+test('keeps consented browser_permission location when preferences are granted', () => {
+  const payload = pageViewPayload()
+  payload.consent = {
+    ...grantedConsent,
+    preferences: 'granted'
+  }
+  payload.location = {
+    city: 'Bergen',
+    country_code: 'NO',
+    postal_code: '5003',
+    region_code: '46',
+    source: 'browser_permission'
+  }
+
+  const event = normalizeCanonicalPageView(payload, {
+    clientIpAddress: '203.0.113.10',
+    userAgent: 'trusted-browser-agent'
+  })
+
+  assert.equal(event.client_ip_address, '203.0.113.10')
+  assert.equal(event.event_device_info?.user_agent, 'trusted-browser-agent')
+  assert.equal(event.region_code, undefined)
+  assert.deepEqual(event.location, {
+    city: 'Bergen',
+    country_code: 'NO',
+    postal_code: '5003',
+    region_code: '46',
+    source: 'browser_permission'
+  })
+})
+
+test('rejects client-spoofed IP, user agent and non-permission location', () => {
+  const event = normalizeCanonicalPageView(pageViewPayload(), {
+    clientIpAddress: '203.0.113.10',
+    userAgent: 'trusted-browser-agent'
+  })
+
+  assert.notEqual(event.client_ip_address, '198.51.100.99')
+  assert.notEqual(event.event_device_info?.user_agent, 'spoofed-browser-agent')
+  assert.notEqual(event.region_code, 'spoofed-region')
+  assert.equal(event.location, undefined)
+})

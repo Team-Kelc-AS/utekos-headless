@@ -63,7 +63,7 @@
 
       try {
         return decodeURIComponent(candidate.slice(prefix.length));
-      } catch (error) {
+      } catch {
         return null;
       }
     }
@@ -345,7 +345,7 @@
 
       return eventUrl.origin === w.location.origin &&
         eventUrl.pathname === w.location.pathname;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

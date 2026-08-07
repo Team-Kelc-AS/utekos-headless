@@ -21,13 +21,27 @@ const eslintConfig = defineConfig([
       'no-self-compare': 'error',
       'no-this-before-super': 'error',
       'no-useless-assignment': 'error',
-      'quotes': ['error', 'single']
+      'quotes': ['error', 'single'],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          varsIgnorePattern: '^_'
+        }
+      ]
     }
   },
   globalIgnores([
     '.next/**',
     'out/**',
     'build/**',
+    'output/**',
+    '.vercel/**',
+    '.agent/**',
+    '.agent-artifacts/**',
+    '.devtools/**',
+    'merchant-api-samples/**',
     'next-env.d.ts',
     'docs/md-docs/**',
     'docs/**/*.md',

@@ -25,17 +25,17 @@ export const sentryNodeClient = Sentry.init({
   initialScope: {
     tags: {
       vercel_region: runtime.region ?? 'unknown',
-      vercel_deployment_id: runtime.deploymentId ?? 'local',
-    },
+      vercel_deployment_id: runtime.deploymentId ?? 'local'
+    }
   },
 
   integrations: [
     nodeProfilingIntegration(),
-    Sentry.nodeRuntimeMetricsIntegration(),
+    Sentry.nodeRuntimeMetricsIntegration()
   ],
 
   tracesSampleRate: isProduction ? 0.1 : 1,
 
   profileSessionSampleRate: isProduction ? 0.05 : 1,
-  profileLifecycle: 'trace',
+  profileLifecycle: 'trace'
 })
