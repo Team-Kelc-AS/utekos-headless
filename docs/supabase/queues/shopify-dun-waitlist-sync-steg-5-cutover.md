@@ -1,47 +1,32 @@
 # Dun waitlist → Shopify sync — STEG 5 controlled cutover
 
-## Status (Phase A complete; Phase B blocked on production PGMQ)
+## Status (Phase B complete)
 
 ```text
-Code: reversible backend selector ready locally (not yet production-deployed)
-Production owner: legacy
-PGMQ in production: NOT PRESENT (extension + queue missing)
-Rollback path: set backend=legacy (no DB rollback) — once PGMQ exists
+production owner = PGMQ
+scheduler = Vercel Cron → /api/cron/shopify-dun-waitlist-sync
+DUN_WAITLIST_SYNC_BACKEND = pgmq
+legacy runner = available via env=legacy (rollback only)
+historical ops.integration_events = preserved
 ```
 
-### Phase B preflight snapshot (2026-08-07, project `hkoawfbomhnzupcsdggb`)
+## Cutover boundary
 
-**Legacy status counts** (`provider=shopify`, `event_type=dun_waitlist_customer_sync`):
-
-| status | n |
-| --- | --- |
-| succeeded | 10 |
-| pending | 0 |
-| processing | 0 |
-| retry_scheduled | 0 |
-
-Legacy active queue is drained (gate OK).
-
-**PGMQ metrics:** FAILED — `schema "pgmq" does not exist`.
-
-**Migration history:** latest applied is `20260805094715_optimize_provider_dispatch_health`.  
-Repo migrations **not** applied to production:
-
-- `20260807090113_enable_pgmq_shopify_dun_waitlist_sync`
-- `20260807124034_enqueue_dun_waitlist_shopify_pgmq_shadow`
-
-**Blocker:** STEG 1–2 must be applied to production before shadow drain / `pgmq` owner switch.
-
-**Do not set production `DUN_WAITLIST_SYNC_BACKEND=pgmq` until PGMQ exists and Phase A code is deployed with `legacy` first.**
+```text
+CUTOVER_AT=2026-08-07T16:27:12Z
+deployment (legacy-ready selector)=dpl_EcYNM1m2r5vXjAJ3H7f3EHNK2sQ8
+deployment (pgmq owner)=dpl_FwwG3qFoa8FbPbhJUYJvQBzZNjnX
+git SHA=497185369
+```
 
 ## Before
 
 ```text
 production owner = legacy (ops.integration_events)
-PGMQ = shadow enqueue (STEG 2) + dormant consumer (STEG 3–4)
+PGMQ = not yet migrated in production (STEG 1–2 applied during Phase B)
 ```
 
-## After Phase B (target)
+## After
 
 ```text
 production owner = PGMQ
@@ -64,7 +49,6 @@ DUN_WAITLIST_SYNC_BACKEND=legacy|pgmq
 
 - Strict Zod enum — missing/invalid fails closed (HTTP 500, no runner).
 - One cron execution → exactly one owner (never dual-run).
-- First production deploy after Phase A code must set `legacy`.
 
 ## Scheduler / batch (unchanged)
 
@@ -74,6 +58,105 @@ DUN_WAITLIST_SYNC_BACKEND=legacy|pgmq
 | Schedule | `*/5 * * * *` |
 | Batch size | `10` |
 | `maxDuration` | `60` |
+
+## Preflight (production)
+
+### Legacy status counts
+
+| status | n |
+| --- | --- |
+| succeeded | 10 |
+| pending | 0 |
+| processing | 0 |
+| retry_scheduled | 0 |
+| dead_lettered | 0 |
+
+Active legacy jobs drained: **yes**.
+
+Dun leads with email: **10**, all already `succeeded` synced: **10**.
+
+### PGMQ baseline note
+
+STEG 1–2 had **not** been applied to production pink-lens before Phase B.
+They were applied during this cutover:
+
+1. `enable_pgmq_shopify_dun_waitlist_sync`
+2. `enqueue_dun_waitlist_shopify_pgmq_shadow`
+
+Immediate post-migration metrics:
+
+```text
+queue_length = 0
+total_messages = 0
+```
+
+No historical shadow backlog existed (enqueue is INSERT-only; no backfill).
+
+## Shadow reconciliation
+
+Because STEG 1–2 landed during Phase B, there was no organic shadow backlog.
+Controlled reconciliation:
+
+| Bucket | Count | Notes |
+| --- | --- | --- |
+| seeded already-synced message | 1 | lead `de20f51d-…` |
+| already_satisfied | 1 | first PGMQ cron |
+| processed_by_pgmq (Shopify success) | 1 | post-cutover lead `d960ed71-…` |
+| retry_scheduled | 0 | |
+| dead_lettered | 0 | |
+| remaining unexplained | 0 | |
+
+First PGMQ cron response:
+
+```json
+{
+  "read": 1,
+  "succeeded": 0,
+  "alreadySatisfied": 1,
+  "retryScheduled": 0,
+  "deadLettered": 0,
+  "archived": 1,
+  "backend": "pgmq",
+  "ok": true,
+  "queueMetrics": {
+    "queueLength": 0,
+    "totalMessages": 1
+  }
+}
+```
+
+## Post-cutover new lead proof
+
+Inserted Dun lead `d960ed71-3d31-4ee1-ae44-f155493077da`
+(`source=product_waitlist_utekos_dun`).
+
+Verified:
+
+- atomic PGMQ enqueue (`msg_id=2`)
+- **0** new legacy `pending`/`processing`/`retry_scheduled` jobs
+- cron `backend=pgmq` result:
+
+```json
+{
+  "read": 1,
+  "succeeded": 1,
+  "alreadySatisfied": 0,
+  "archived": 1,
+  "backend": "pgmq",
+  "ok": true
+}
+```
+
+- durable evidence row:
+
+```text
+ops.integration_events
+  status = succeeded
+  payload.sync_owner = pgmq
+  payload.lead_id = d960ed71-3d31-4ee1-ae44-f155493077da
+```
+
+- PGMQ archive contains the message; active queue length = 0
 
 ## Durable sync evidence (PGMQ success)
 
@@ -87,80 +170,15 @@ status = succeeded
 payload = { lead_id, synced_at, sync_owner: "pgmq" }
 ```
 
-This enables:
-
-- `already_satisfied` on PGMQ redelivery after archive failure
-- legacy `ENQUEUE_MISSING` skip on rollback (any integration_event for lead)
-
-Evidence is written **before** `pgmq.archive`. Failures / `already_satisfied`
-do not write new evidence.
-
 ## Queue health thresholds
 
 | Level | Criterion |
 | --- | --- |
-| Healthy | oldest **visible/processable** message age &lt; 15 min (allow VT-hidden retries) |
+| Healthy | oldest **visible/processable** message age < 15 min (allow VT-hidden retries) |
 | Warning | oldest processable ≥ 15 min without expected `set_vt` delay |
 | Critical | oldest processable ≥ 30 min **or** consecutive cron failures |
 
-PGMQ cron responses include bounded `queueMetrics` when `pgmq.metrics` succeeds.
-
-## Preflight queries (Phase B — read-only)
-
-### Legacy status counts
-
-```sql
-select status, count(*)::bigint as n
-from ops.integration_events
-where provider = 'shopify'
-  and event_type = 'dun_waitlist_customer_sync'
-group by status
-order by status;
-```
-
-Require before owner switch:
-
-```text
-pending = 0
-processing = 0
-retry_scheduled = 0
-```
-
-(`succeeded` / `dead_lettered` may be non-zero historical.)
-
-### PGMQ metrics
-
-```sql
-select * from pgmq.metrics('shopify_dun_waitlist_sync');
-```
-
-### Archive count (optional)
-
-```sql
-select count(*)::bigint as archived
-from pgmq.a_shopify_dun_waitlist_sync;
-```
-
-## Shadow reconciliation template
-
-| Bucket | Count | Notes |
-| --- | --- | --- |
-| shadow messages total | _TBD_ | enqueued_at &lt; CUTOVER_AT |
-| already_satisfied | _TBD_ | |
-| processed_by_pgmq | _TBD_ | |
-| retry_scheduled | _TBD_ | known VT |
-| dead_lettered | _TBD_ | |
-| remaining unexplained | _TBD_ | must be 0 |
-
-Do **not** `pgmq.purge_queue`.
-
-## Cutover boundary (fill in Phase B)
-
-```text
-CUTOVER_AT=<ISO-8601 UTC>
-deployment=<Vercel deployment id / git SHA>
-DUN_WAITLIST_SYNC_BACKEND=pgmq
-```
+Post-cutover health: `queue_length=0`, `legacy_active=0`.
 
 ## Rollback triggers
 
@@ -186,38 +204,27 @@ A single transient Shopify failure + successful `set_vt` is **not** a rollback r
    `ops.integration_events` row for this provider/event_type
 6. Capture PGMQ metrics; fix root cause; re-reconcile before re-cutover
 
-## Phase B checklists
-
-### Preflight
-
-- [ ] latest production deployment healthy
-- [ ] queue extension + queue exist
-- [ ] legacy active jobs drained
-- [ ] PGMQ shadow metrics captured
-- [ ] controlled shadow batch succeeded
-- [ ] no systemic dead-letter issue
-- [ ] backend selector deploy verified with `legacy`
-- [ ] rollback config documented
-- [ ] Sentry tag `dun_waitlist_sync_backend` visible
-
-### Cutover
-
-- [ ] set backend to `pgmq`
-- [ ] activate production deployment/config
-- [ ] verify cron invokes PGMQ runner only
-- [ ] capture `CUTOVER_AT` + deployment SHA/ID
-- [ ] inspect first queue batch + metrics
-
-### Post-cutover
-
-- [ ] new Dun lead → PGMQ message → consumer → Shopify → archive + succeeded evidence
-- [ ] no new legacy integration_event enqueue from runtime for that lead
-- [ ] queue health normal
-- [ ] no unexpected dead-letter / duplicate side effects
-
 ## Explicit non-goals
 
 - No STEG 6 legacy code deletion in this step
 - No second cron path / Edge Function worker
 - No cadence/batch/concurrency change at cutover
 - No canonical provider dispatch / GTM / Meta / Google / Microsoft changes
+
+## Final confirmation
+
+```text
+PGMQ is now the production owner for Dun waitlist → Shopify synchronization.
+
+The existing Vercel Cron remains the scheduler and now invokes the PGMQ consumer.
+
+The legacy Dun queue is drained and is no longer the normal production owner.
+
+Historical ops.integration_events data was preserved.
+
+PGMQ enqueue remains atomic with marketing.leads.
+
+A documented rollback path to the legacy consumer exists and does not require a database rollback.
+
+No canonical provider dispatch, GTM, sGTM, Meta, Google or Microsoft queueing paths were changed.
+```
