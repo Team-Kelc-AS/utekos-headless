@@ -25,6 +25,7 @@ export function ProductWaitlistEmail({
   name,
   email,
   phone,
+  marketing,
   productLabel
 }: ProductWaitlistEmailProps): React.JSX.Element {
   const previewText = `Ny ventelistepåmelding for ${productLabel}`
@@ -73,12 +74,17 @@ export function ProductWaitlistEmail({
                 {email}
               </Link>
             </Text>
+            <Text style={detailText}>
+              <strong>Markedsføringssamtykke:</strong>{' '}
+              {marketing ? 'Ja' : 'Nei'}
+            </Text>
           </article>
 
           <article style={noticeSection}>
             <Text style={noticeText}>
-              Kunden har godtatt kontakt om denne produktventelisten.
-              Dette er ikke et generelt markedsføringssamtykke.
+              {marketing ?
+                'Kunden har godtatt kontakt om denne produktventelisten og samtykket til nyheter og tilbud på e-post.'
+              : 'Kunden har godtatt kontakt om denne produktventelisten. Dette er ikke et generelt markedsføringssamtykke.'}
             </Text>
           </article>
 
@@ -102,6 +108,7 @@ ProductWaitlistEmail.PreviewProps = {
   phone: '+47 400 00 000',
   productHandle: 'utekos-dun',
   privacy: true,
+  marketing: false,
   productLabel: 'Utekos Dun'
 } satisfies ProductWaitlistEmailProps
 

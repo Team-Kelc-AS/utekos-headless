@@ -9,28 +9,22 @@ const KLARNA_IMAGE_MOBILE =
 
 export function KlarnaCheckoutImage({ className }: { className?: string }) {
   return (
-    <div className={cn('w-full min-w-0', className)}>
+    <picture className={cn('block w-full min-w-0', className)}>
+      <source
+        media='(min-width: 900px)'
+        srcSet={KLARNA_IMAGE_DESKTOP}
+      />
+      <source
+        media='(min-width: 640px)'
+        srcSet={KLARNA_IMAGE_TABLET}
+      />
       <img
         src={KLARNA_IMAGE_MOBILE}
         alt='Velg Klarna i kassen'
         width={320}
         height={50}
-        className='block h-auto w-full max-w-80 min-[640px]:hidden'
+        className='h-auto w-full max-w-80 min-[640px]:max-w-75 min-[900px]:max-w-none'
       />
-      <img
-        src={KLARNA_IMAGE_TABLET}
-        alt='Velg Klarna i kassen'
-        width={300}
-        height={100}
-        className='hidden h-auto w-full max-w-75 min-[640px]:block min-[900px]:hidden'
-      />
-      <img
-        src={KLARNA_IMAGE_DESKTOP}
-        alt='Velg Klarna i kassen'
-        width={728}
-        height={90}
-        className='hidden h-auto w-full min-[900px]:block'
-      />
-    </div>
+    </picture>
   )
 }

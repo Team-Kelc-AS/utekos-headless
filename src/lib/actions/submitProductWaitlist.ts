@@ -18,6 +18,7 @@ import {
 } from '@/lib/leads/leadFormIds'
 import { recordLeadSubmission } from '@/lib/leads/recordLeadSubmission'
 import { classifyOperationalFailure } from '@/lib/observability/logging/appLogContract'
+import { syncSubscriberToShopify } from '@/lib/shopify/syncSubscriberToShopify'
 import { logToAppLogs } from '@/lib/utils/logToAppLogs'
 import { z } from 'zod'
 
@@ -39,6 +40,7 @@ export async function submitProductWaitlist(
     email: formData.get('email'),
     productHandle: formData.get('productHandle'),
     privacy: formData.get('privacy') === 'on',
+    marketing: formData.get('marketing') === 'on',
     website: formData.get('website') ?? ''
   }
 
@@ -73,10 +75,28 @@ export async function submitProductWaitlist(
       throw new Error(sendResult.message)
     }
 
+    if (result.data.marketing) {
+      try {
+        await syncSubscriberToShopify(result.data.email)
+      } catch (error: unknown) {
+        await logToAppLogs({
+          event: 'newsletter.shopify_sync_failed',
+          level: 'ERROR',
+          data: {
+            reasonCode: classifyOperationalFailure(error)
+          },
+          context: {}
+        })
+      }
+    }
+
     await logToAppLogs({
       event: 'waitlist.submitted',
       level: 'INFO',
-      data: { productHandle: result.data.productHandle },
+      data: {
+        productHandle: result.data.productHandle,
+        marketingOptIn: result.data.marketing
+      },
       context: {}
     })
   } catch (error: unknown) {

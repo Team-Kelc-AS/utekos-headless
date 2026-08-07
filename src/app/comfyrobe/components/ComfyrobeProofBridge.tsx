@@ -1,5 +1,5 @@
 'use client'
-
+10
 import * as m from 'motion/react-m'
 import {
   CloudRain,
@@ -55,19 +55,18 @@ export function ComfyrobeProofBridge() {
         >
           <div>
             <p className='font-utekos-text-medium text-sm tracking-wide text-primary'>
-              Fra hverdagsregn til kalde pauser
+              Romslig og funksjonell passform
             </p>
             <h2
               id='proof-bridge-heading'
               className='font-google-sans mt-3 max-w-[12ch] font-sans text-4xl leading-[0.94] font-bold tracking-tight md:text-6xl'
             >
-              Når været skifter, trenger du bare ett lag.
+             Skreddersy varmen
             </h2>
           </div>
           <p className='max-w-2xl font-utekos-text text-lg leading-relaxed text-foreground/80 lg:justify-self-end'>
-            Fra hundeturen til sidelinjen, hytta og raske
-            ærender: Comfyrobe™ samler værbeskyttelse og varme i
-            én romslig allværskåpe.
+            Comfyrobe™ kombinerer banebrytende innovasjon med tidløs eleganse.
+            Fra hundeturen til sidelinjen, hytten og raske
           </p>
         </m.div>
 

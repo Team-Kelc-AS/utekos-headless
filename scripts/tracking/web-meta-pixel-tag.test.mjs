@@ -172,6 +172,46 @@ test('does not replay events that occurred before marketing consent', () => {
   )
 })
 
+test(
+  'uses trackSingleCustom for Meta custom events and preserves eventID',
+  () => {
+    const runtime = createRuntime()
+
+    runtime.window.dataLayer.push(
+      canonicalEvent('page_view', 'page-event'),
+      canonicalEvent('scroll_depth', 'scroll-event', {
+        threshold: 50,
+        percent_scrolled: 50,
+        document_height: 2400
+      })
+    )
+
+    vm.runInContext(script, runtime.context)
+
+    const calls = queuedCalls(runtime.window)
+    const standardEventCalls = calls.filter(
+      call => call[0] === 'trackSingle'
+    )
+    const customEventCalls = calls.filter(
+      call => call[0] === 'trackSingleCustom'
+    )
+
+    assert.deepEqual(
+      standardEventCalls.map(call => [call[2], call[4].eventID]),
+      [['PageView', 'page-event']]
+    )
+    assert.deepEqual(
+      customEventCalls.map(call => [call[2], call[4].eventID]),
+      [['LandingScrollDepth', 'scroll-event']]
+    )
+    assert.deepEqual(customEventCalls[0][3], {
+      threshold: 50,
+      percent_scrolled: 50,
+      document_height: 2400
+    })
+  }
+)
+
 test('initializes once and sends canonical Meta events with CAPI event IDs', () => {
   const runtime = createRuntime()
   const commerce = {
@@ -241,7 +281,12 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
   const calls = queuedCalls(runtime.window)
   const configCalls = calls.filter(call => call[0] === 'set')
   const initCalls = calls.filter(call => call[0] === 'init')
-  const eventCalls = calls.filter(call => call[0] === 'trackSingle')
+  const standardEventCalls = calls.filter(
+    call => call[0] === 'trackSingle'
+  )
+  const customEventCalls = calls.filter(
+    call => call[0] === 'trackSingleCustom'
+  )
 
   assert.deepEqual(configCalls, [
     ['set', 'autoConfig', false, '1092362672918571']
@@ -253,41 +298,49 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     { external_id: 'anon_550e8400-e29b-41d4-a716-446655440000' }
   ])
   assert.deepEqual(
-    eventCalls.map(call => [call[2], call[4].eventID]),
+    standardEventCalls.map(call => [call[2], call[4].eventID]),
     [
       ['PageView', 'page-event'],
-      ['ViewItemList', 'list-event'],
       ['ViewContent', 'view-event'],
-      ['SelectItem', 'select-event'],
       ['AddToWishlist', 'wishlist-event'],
       ['AddToCart', 'cart-event'],
-      ['RemoveFromCart', 'remove-cart-event'],
-      ['ViewCart', 'view-cart-event'],
       ['InitiateCheckout', 'checkout-event'],
       ['Search', 'search-event'],
+      ['Lead', 'lead-event']
+    ]
+  )
+  assert.deepEqual(
+    customEventCalls.map(call => [call[2], call[4].eventID]),
+    [
+      ['ViewItemList', 'list-event'],
+      ['SelectItem', 'select-event'],
+      ['RemoveFromCart', 'remove-cart-event'],
+      ['ViewCart', 'view-cart-event'],
       ['LandingScrollDepth', 'scroll-depth-event'],
       ['ViewCategory', 'view-category-event'],
       ['HeroInteract', 'hero-interact-event'],
       ['InteractWithAccordion', 'accordion-event'],
-      ['OpenQuickView', 'quick-view-event'],
-      ['Lead', 'lead-event']
+      ['OpenQuickView', 'quick-view-event']
     ]
   )
-  assert.deepEqual(eventCalls[2][3], {
-    content_ids: ['47123456789012'],
-    contents: [{ id: '47123456789012', quantity: 1, item_price: 1790 }],
-    content_type: 'product',
-    num_items: 1,
-    currency: 'NOK',
-    value: 1790,
-    content_name: 'Utekos TechDown',
-    content_category: 'Uteklær',
-    gross_value: 1790,
-    tax_value: 358,
-    net_value: 1432
-  })
   assert.deepEqual(
-    eventCalls.find(call => call[2] === 'ViewItemList')?.[3],
+    standardEventCalls.find(call => call[2] === 'ViewContent')?.[3],
+    {
+      content_ids: ['47123456789012'],
+      contents: [{ id: '47123456789012', quantity: 1, item_price: 1790 }],
+      content_type: 'product',
+      num_items: 1,
+      currency: 'NOK',
+      value: 1790,
+      content_name: 'Utekos TechDown',
+      content_category: 'Uteklær',
+      gross_value: 1790,
+      tax_value: 358,
+      net_value: 1432
+    }
+  )
+  assert.deepEqual(
+    customEventCalls.find(call => call[2] === 'ViewItemList')?.[3],
     {
       content_ids: ['47123456789012'],
       contents: [{ id: '47123456789012', quantity: 1, item_price: 1790 }],
@@ -307,7 +360,7 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     }
   )
   assert.deepEqual(
-    eventCalls.find(call => call[2] === 'LandingScrollDepth')?.[3],
+    customEventCalls.find(call => call[2] === 'LandingScrollDepth')?.[3],
     {
       threshold: 50,
       percent_scrolled: 50,
@@ -315,7 +368,7 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     }
   )
   assert.deepEqual(
-    eventCalls.find(call => call[2] === 'ViewCategory')?.[3],
+    customEventCalls.find(call => call[2] === 'ViewCategory')?.[3],
     {
       content_category: 'produkter',
       content_name: 'Kolleksjonen',
@@ -325,7 +378,7 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     }
   )
   assert.deepEqual(
-    eventCalls.find(call => call[2] === 'HeroInteract')?.[3],
+    customEventCalls.find(call => call[2] === 'HeroInteract')?.[3],
     {
       content_name: 'read_more_hero',
       content_category: '/skreddersy-varmen',

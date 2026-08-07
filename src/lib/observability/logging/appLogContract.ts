@@ -174,7 +174,8 @@ const eventSchemas = [
     event: z.literal('waitlist.submitted'),
     level: z.literal('INFO'),
     data: z.strictObject({
-      productHandle: z.string().min(1).max(120)
+      productHandle: z.string().min(1).max(120),
+      marketingOptIn: z.boolean().optional()
     }),
     context: emptyDataSchema
   }),

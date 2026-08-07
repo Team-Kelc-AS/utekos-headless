@@ -11,27 +11,23 @@ const ALT =
 export function PaymentMethods() {
   return (
     <div className='mt-12 border-t border-border pt-8'>
-      <img
-        src={PAY_ICONS_MOBILE}
-        alt={ALT}
-        width={390}
-        height={50}
-        className='mx-auto block h-auto w-full max-w-5xl md:hidden'
-      />
-      <img
-        src={PAY_ICONS_IPAD}
-        alt={ALT}
-        width={800}
-        height={150}
-        className='mx-auto hidden h-auto w-full max-w-5xl md:block lg:hidden'
-      />
-      <img
-        src={PAY_ICONS_DESKTOP}
-        alt={ALT}
-        width={1200}
-        height={180}
-        className='mx-auto hidden h-auto w-full max-w-5xl lg:block'
-      />
+      <picture className='mx-auto block w-full max-w-5xl'>
+        <source
+          media='(min-width: 1024px)'
+          srcSet={PAY_ICONS_DESKTOP}
+        />
+        <source
+          media='(min-width: 768px)'
+          srcSet={PAY_ICONS_IPAD}
+        />
+        <img
+          src={PAY_ICONS_MOBILE}
+          alt={ALT}
+          width={390}
+          height={50}
+          className='mx-auto h-auto w-full max-w-5xl'
+        />
+      </picture>
     </div>
   )
 }

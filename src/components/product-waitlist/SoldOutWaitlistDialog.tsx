@@ -256,6 +256,25 @@ export function SoldOutWaitlistDialog() {
                 : null}
               </div>
 
+              <div className='space-y-2'>
+                <label
+                  htmlFor='waitlist-marketing'
+                  className='dark:border-dark-border dark:bg-dark-muted/25 flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/25 p-4'
+                >
+                  <input
+                    id='waitlist-marketing'
+                    type='checkbox'
+                    name='marketing'
+                    className='mt-1 size-4 shrink-0 accent-primary'
+                  />
+                  <span className='text-sm leading-6'>
+                    Jeg samtykker til å motta nyheter og
+                    eksklusive tilbud fra Utekos på e-post. Du kan
+                    når som helst melde deg av.
+                  </span>
+                </label>
+              </div>
+
               {state.status === 'error' && state.message ?
                 <p
                   role='alert'
@@ -271,7 +290,7 @@ export function SoldOutWaitlistDialog() {
                 size='lg'
                 disabled={isPending}
                 aria-busy={isPending}
-                className='min-h-12 w-full rounded-full bg-cyan-500 px-6 text-base text-[#172744] shadow-sm hover:bg-cyan-400 hover:text-[#172744] dark:bg-cyan-500 dark:text-[#172744] dark:hover:bg-cyan-400 dark:hover:text-[#172744]'
+                className='min-h-12 w-full rounded-full bg-primary px-6 text-base text-foreground font-utekos-text-medium shadow-sm hover:opacity-60'
               >
                 {isPending ?
                   <>

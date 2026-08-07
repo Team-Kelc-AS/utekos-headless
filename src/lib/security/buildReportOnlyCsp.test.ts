@@ -55,6 +55,18 @@ test('permits the third-party scripts and frames observed during report-only rol
   )
   assert.match(
     csp,
+    /script-src[^;]*https:\/\/cdn\.shopify\.com/
+  )
+  assert.match(
+    csp,
+    /connect-src[^;]*https:\/\/kasse\.utekos\.no/
+  )
+  assert.match(
+    csp,
+    /connect-src[^;]*https:\/\/monorail-edge\.shopifysvc\.com/
+  )
+  assert.match(
+    csp,
     /connect-src[^;]*https:\/\/consentcdn\.cookiebot\.eu/
   )
   assert.match(

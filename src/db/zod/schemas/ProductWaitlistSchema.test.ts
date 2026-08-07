@@ -9,10 +9,27 @@ test('accepts a valid Utekos Dun waitlist submission', () => {
     email: 'kari@example.com',
     productHandle: 'utekos-dun',
     privacy: true,
+    marketing: false,
     website: ''
   })
 
   assert.equal(result.success, true)
+})
+
+test('accepts optional marketing consent when unchecked by omission', () => {
+  const result = ProductWaitlistSchema.safeParse({
+    name: 'Kari Nordmann',
+    phone: '+47 123 45 678',
+    email: 'kari@example.com',
+    productHandle: 'utekos-dun',
+    privacy: true,
+    website: ''
+  })
+
+  assert.equal(result.success, true)
+  if (result.success) {
+    assert.equal(result.data.marketing, false)
+  }
 })
 
 test('requires privacy acknowledgement and the expected product handle', () => {
@@ -22,6 +39,7 @@ test('requires privacy acknowledgement and the expected product handle', () => {
     email: 'kari@example.com',
     productHandle: 'another-product',
     privacy: false,
+    marketing: true,
     website: ''
   })
 

@@ -24,6 +24,17 @@
     interact_with_accordion: 'InteractWithAccordion',
     open_quick_view: 'OpenQuickView'
   };
+  var CUSTOM_EVENTS = {
+    view_item_list: true,
+    select_item: true,
+    remove_from_cart: true,
+    view_cart: true,
+    scroll_depth: true,
+    view_category: true,
+    hero_interact: true,
+    interact_with_accordion: true,
+    open_quick_view: true
+  };
   var state = w.__utekosMetaPixelState || {
     initialized: false,
     sent: {},
@@ -355,8 +366,12 @@
     data = eventData(entry.event, canonicalEvent);
     if (data === null) return;
 
+    var command = CUSTOM_EVENTS[entry.event]
+      ? 'trackSingleCustom'
+      : 'trackSingle';
+
     w.fbq(
-      'trackSingle',
+      command,
       PIXEL_ID,
       metaEventName,
       data,

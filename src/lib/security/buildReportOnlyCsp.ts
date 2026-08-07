@@ -62,6 +62,21 @@ const KLARNA_ASSET_ORIGINS = ['https://x.klarnacdn.net'] as const
 
 const VERCEL_LIVE_ORIGINS = ['https://vercel.live'] as const
 
+/**
+ * Shopify Customer Privacy / consent-tracking API loaded by
+ * ShopifyCustomerPrivacyBridge after Cookiebot choice.
+ * connect-src hosts are evidenced from production report-only
+ * violations: checkout GraphQL + Monorail produce.
+ */
+const SHOPIFY_CONSENT_SCRIPT_ORIGINS = [
+  'https://cdn.shopify.com'
+] as const
+
+const SHOPIFY_CONSENT_CONNECT_ORIGINS = [
+  'https://kasse.utekos.no',
+  'https://monorail-edge.shopifysvc.com'
+] as const
+
 /** Privacy-enhanced YouTube embeds used by the storefront video. */
 const VIDEO_FRAME_ORIGINS = [
   'https://www.youtube-nocookie.com'
@@ -81,6 +96,7 @@ export function buildReportOnlyCsp(): string {
     ...MICROSOFT_TRACKING_ORIGINS,
     ...META_PIXEL_SCRIPT_ORIGINS,
     ...GOOGLE_ADS_ORIGINS,
+    ...SHOPIFY_CONSENT_SCRIPT_ORIGINS,
     ...VERCEL_LIVE_ORIGINS
   ]
 
@@ -92,6 +108,7 @@ export function buildReportOnlyCsp(): string {
     ...META_PIXEL_SCRIPT_ORIGINS,
     ...META_PIXEL_EVENT_ORIGINS,
     ...GOOGLE_ADS_ORIGINS,
+    ...SHOPIFY_CONSENT_CONNECT_ORIGINS,
     ...VERCEL_LIVE_ORIGINS,
     ...GA4_COLLECTION_ORIGINS,
     ...GA4_ADVERTISING_ORIGINS,

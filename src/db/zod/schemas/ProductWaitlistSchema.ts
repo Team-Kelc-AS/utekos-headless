@@ -27,6 +27,7 @@ export const ProductWaitlistSchema = z.object({
       message:
         'Du må bekrefte at du har lest hvordan vi behandler ventelisteopplysningene.'
     }),
+  marketing: z.boolean().default(false),
   website: z.string().max(200).optional()
 })
 
