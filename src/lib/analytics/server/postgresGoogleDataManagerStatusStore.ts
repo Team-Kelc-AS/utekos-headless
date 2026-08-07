@@ -52,6 +52,71 @@ const executePostgresQuery: GoogleDataManagerStatusQueryExecutor =
     return sql.unsafe<T[]>(query, postgresParameters)
   }
 
+const CLAIM_NEXT_BATCH_QUERY = `
+  with candidate as (
+    select id
+    from ops.provider_dispatch_attempts
+    where provider = 'google'
+      and status = 'accepted_unverified'
+      and request_id is not null
+      and request_id <> ''
+      and validation_result ->> 'validate_only' = 'false'
+      and coalesce(processed_at, created_at)
+        > now() - interval '24 hours'
+      and response_semantics not in (
+        'provider_confirmed_success_with_warnings',
+        'provider_status_timeout'
+      )
+      and not (coalesce(response, '{}'::jsonb) ? 'statusCheckLease')
+      and (
+        (
+          response ->> 'nextStatusCheckAt' is not null
+          and (response ->> 'nextStatusCheckAt')::timestamptz <= now()
+        )
+        or (
+          response ->> 'nextStatusCheckAt' is null
+          and updated_at <= now() - interval '30 minutes'
+        )
+      )
+    order by updated_at, created_at
+    for update skip locked
+    limit $1
+  ),
+  lease as (
+    select
+      id,
+      gen_random_uuid()::text as lease_token
+    from candidate
+  )
+  update ops.provider_dispatch_attempts as attempt
+  set
+    response = jsonb_set(
+      jsonb_set(
+        coalesce(attempt.response, '{}'::jsonb),
+        '{statusCheckAttempts}',
+        to_jsonb(
+          coalesce(
+            (attempt.response ->> 'statusCheckAttempts')::integer,
+            0
+          ) + 1
+        ),
+        true
+      ),
+      '{statusCheckLease}',
+      to_jsonb(lease.lease_token),
+      true
+    ),
+    updated_at = now()
+  from lease
+  where attempt.id = lease.id
+  returning
+    attempt.id::text as attempt_id,
+    attempt.request_id,
+    lease.lease_token,
+    (attempt.response ->> 'statusCheckAttempts')::integer
+      as status_check_attempts
+`
+
 const CLAIM_NEXT_QUERY = `
   with candidate as (
     select id
@@ -368,6 +433,33 @@ export function createPostgresGoogleDataManagerStatusStore(
           const rows = await executeQuery(CLAIM_NEXT_QUERY, [])
 
           return parseClaim(rows[0])
+        }
+      ),
+    claimNextBatch: async (limit: number) =>
+      startAnalyticsSpan(
+        {
+          name: 'db.query google_dm_status.claim_next_batch',
+          op: 'db.query',
+          attributes: {
+            'db.system': 'postgresql',
+            'db.operation.name': 'claim_next_batch',
+            'db.namespace': 'ops'
+          }
+        },
+        async () => {
+          const rows = await executeQuery(CLAIM_NEXT_BATCH_QUERY, [
+            limit
+          ])
+
+          return rows.map(row => {
+            const claim = parseClaim(row)
+            if (!claim) {
+              throw new Error(
+                'Unexpected null claim in batch result'
+              )
+            }
+            return claim
+          })
         }
       ),
     complete: async outcome =>
