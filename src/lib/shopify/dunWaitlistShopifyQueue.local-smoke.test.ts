@@ -463,3 +463,140 @@ test('local PGMQ smoke: atomic dead-letter + archive is idempotent', async t => 
     await sql.end({ timeout: 2 })
   }
 })
+
+test('local PGMQ smoke: archive retention deletes old rows only', async t => {
+  if (!(await canConnect())) {
+    t.skip('local Supabase Postgres is not available')
+    return
+  }
+
+  const sql = postgres(localDatabaseUrl, {
+    max: 1,
+    prepare: false
+  })
+
+  const oldLeadId = '66666666-6666-4666-8666-666666666666'
+  const recentLeadId = '77777777-7777-4777-8777-777777777777'
+  const activeLeadId = '88888888-8888-4888-8888-888888888888'
+
+  try {
+    await sql`
+      select ops.purge_expired_shopify_dun_waitlist_pgmq_archive(30)
+    `
+
+    await sql`
+      delete from pgmq.q_shopify_dun_waitlist_sync
+      where message ->> 'lead_id' in (
+        ${oldLeadId},
+        ${recentLeadId},
+        ${activeLeadId}
+      )
+    `
+    await sql`
+      delete from pgmq.a_shopify_dun_waitlist_sync
+      where message ->> 'lead_id' in (
+        ${oldLeadId},
+        ${recentLeadId},
+        ${activeLeadId}
+      )
+    `
+
+    const activeMsgId = await sql`
+      select pgmq.send(
+        ${DUN_WAITLIST_SHOPIFY_QUEUE_NAME},
+        ${sql.json({
+          schema_version: 1,
+          lead_id: activeLeadId
+        })}
+      ) as msg_id
+    `
+
+    await sql`
+      insert into pgmq.a_shopify_dun_waitlist_sync (
+        msg_id,
+        read_ct,
+        enqueued_at,
+        archived_at,
+        vt,
+        message
+      )
+      values
+        (
+          900001,
+          1,
+          now() - interval '40 days',
+          now() - interval '40 days',
+          now() - interval '40 days',
+          ${sql.json({
+            schema_version: 1,
+            lead_id: oldLeadId
+          })}
+        ),
+        (
+          900002,
+          1,
+          now() - interval '2 days',
+          now() - interval '2 days',
+          now() - interval '2 days',
+          ${sql.json({
+            schema_version: 1,
+            lead_id: recentLeadId
+          })}
+        )
+    `
+
+    const deleted = await sql`
+      select ops.purge_expired_shopify_dun_waitlist_pgmq_archive(30) as deleted
+    `
+    assert.ok((deleted[0]?.deleted ?? 0) >= 1)
+
+    const remaining = await sql`
+      select message ->> 'lead_id' as lead_id
+      from pgmq.a_shopify_dun_waitlist_sync
+      where message ->> 'lead_id' in (${oldLeadId}, ${recentLeadId})
+      order by 1
+    `
+    assert.deepEqual(
+      remaining.map(row => row.lead_id),
+      [recentLeadId]
+    )
+
+    const activeStillThere = await sql`
+      select count(*)::integer as count
+      from pgmq.q_shopify_dun_waitlist_sync
+      where msg_id = ${activeMsgId[0]?.msg_id}
+    `
+    assert.equal(activeStillThere[0]?.count, 1)
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      /purge_expired_shopify_dun_waitlist_pgmq_archive/.test(error.message)
+    ) {
+      t.skip(
+        'archive retention function not applied on local database yet'
+      )
+      return
+    }
+
+    throw error
+  } finally {
+    await sql`
+      delete from pgmq.q_shopify_dun_waitlist_sync
+      where message ->> 'lead_id' in (
+        ${oldLeadId},
+        ${recentLeadId},
+        ${activeLeadId}
+      )
+    `
+    await sql`
+      delete from pgmq.a_shopify_dun_waitlist_sync
+      where message ->> 'lead_id' in (
+        ${oldLeadId},
+        ${recentLeadId},
+        ${activeLeadId}
+      )
+      or msg_id in (900001, 900002)
+    `
+    await sql.end({ timeout: 2 })
+  }
+})

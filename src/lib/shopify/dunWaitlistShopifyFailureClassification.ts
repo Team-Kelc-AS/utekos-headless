@@ -1,12 +1,16 @@
 import { z } from 'zod'
 
-export const DUN_WAITLIST_SHOPIFY_MAX_ATTEMPTS = 5 as const
+import {
+  DUN_WAITLIST_SHOPIFY_ATTEMPTS_EXHAUSTED_REASON,
+  DUN_WAITLIST_SHOPIFY_MAX_ATTEMPTS,
+  DUN_WAITLIST_SHOPIFY_PGMQ_DEAD_LETTER_SOURCE
+} from './dunWaitlistShopifyQueueConfig'
 
-export const DUN_WAITLIST_SHOPIFY_PGMQ_DEAD_LETTER_SOURCE =
-  'shopify_dun_waitlist_pgmq' as const
-
-export const DUN_WAITLIST_SHOPIFY_ATTEMPTS_EXHAUSTED_REASON =
-  'shopify_dun_waitlist_attempts_exhausted' as const
+export {
+  DUN_WAITLIST_SHOPIFY_ATTEMPTS_EXHAUSTED_REASON,
+  DUN_WAITLIST_SHOPIFY_MAX_ATTEMPTS,
+  DUN_WAITLIST_SHOPIFY_PGMQ_DEAD_LETTER_SOURCE
+}
 
 export const dunWaitlistShopifyProviderFailureReasonSchema = z.enum([
   'invalid_waitlist_customer',

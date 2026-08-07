@@ -21,13 +21,33 @@ experience, so you can manage background tasks with minimal configuration.
 
 ## Local docs
 
-### Project baselines
+### Dun waitlist → Shopify (canonical)
 
-- [Dun waitlist → Shopify sync — STEG 1 PGMQ baseline](./shopify-dun-waitlist-sync-steg-1-baseline.md)
-- [Dun waitlist → Shopify sync — STEG 2 PGMQ shadow enqueue](./shopify-dun-waitlist-sync-steg-2-shadow-enqueue.md)
-- [Dun waitlist → Shopify sync — STEG 3 PGMQ consumer core](./shopify-dun-waitlist-sync-steg-3-consumer-core.md)
-- [Dun waitlist → Shopify sync — STEG 4 retry / dead-letter](./shopify-dun-waitlist-sync-steg-4-retry-dead-letter.md)
-- [Dun waitlist → Shopify sync — STEG 5 controlled cutover](./shopify-dun-waitlist-sync-steg-5-cutover.md)
+Use Supabase PGMQ for this workload because leads originate in Postgres and
+need atomic `INSERT` + `pgmq.send`. Vercel Cron is only the pull-worker
+scheduler; the Next.js/Vercel runtime remains the Shopify worker.
+
+- Producer: `marketing.leads` AFTER INSERT trigger → `pgmq.send`
+- Consumer: `/api/cron/shopify-dun-waitlist-sync` → `runDunWaitlistShopifyQueueBatch`
+- Retry: `pgmq.set_vt` with 5/10/20/40 minute backoff; max 5 attempts
+- Dead-letter: `ops.dead_letter_events` source `shopify_dun_waitlist_pgmq`
+- Observability: privacy-safe queue metrics on cron responses + Sentry spans
+- Retention: PGMQ archive 30 days; dead-letter rows 14 months (privacy job)
+- Security: server-only; no Data API / anon / authenticated queue access
+- Runbook: [STEG 6 Part 1 hardening](./shopify-dun-waitlist-sync-steg-6-hardening.md)
+- Final architecture (Part 2 pending): [final ADR](./shopify-dun-waitlist-sync-final.md)
+
+Canonical provider dispatch (Meta / Google / Microsoft) stays on Vercel Queue.
+Dun PGMQ is not a general queue migration.
+
+### Project baselines (Completed / historical)
+
+- [Dun waitlist → Shopify sync — STEG 1 PGMQ baseline](./shopify-dun-waitlist-sync-steg-1-baseline.md) (Completed / historical)
+- [Dun waitlist → Shopify sync — STEG 2 PGMQ shadow enqueue](./shopify-dun-waitlist-sync-steg-2-shadow-enqueue.md) (Completed / historical)
+- [Dun waitlist → Shopify sync — STEG 3 PGMQ consumer core](./shopify-dun-waitlist-sync-steg-3-consumer-core.md) (Completed / historical)
+- [Dun waitlist → Shopify sync — STEG 4 retry / dead-letter](./shopify-dun-waitlist-sync-steg-4-retry-dead-letter.md) (Completed / historical)
+- [Dun waitlist → Shopify sync — STEG 5 controlled cutover](./shopify-dun-waitlist-sync-steg-5-cutover.md) (Completed / historical)
+- [Dun waitlist → Shopify sync — STEG 6 Part 1 hardening](./shopify-dun-waitlist-sync-steg-6-hardening.md) (Active observation window)
 
 ### Supabase Queues guides
 

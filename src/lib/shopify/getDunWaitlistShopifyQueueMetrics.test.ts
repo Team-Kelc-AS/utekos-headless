@@ -30,20 +30,28 @@ const { DUN_WAITLIST_SHOPIFY_QUEUE_NAME } = require(
   './dunWaitlistShopifyQueueMessage.ts'
 ) as typeof import('./dunWaitlistShopifyQueueMessage')
 
-test('maps pgmq.metrics row to bounded queue health fields', async () => {
+test('maps metrics + visible/delayed split to privacy-safe health fields', async () => {
   const metrics = await getDunWaitlistShopifyQueueMetrics({
     executeQuery: async <T extends DunWaitlistShopifyQueueQueryRow>(
       query: string,
       parameters: readonly unknown[]
     ) => {
       assert.match(query, /pgmq\.metrics/)
+      assert.match(query, /visible_count/)
+      assert.match(query, /delayed_count/)
+      assert.match(query, /q_shopify_dun_waitlist_sync/)
+      assert.doesNotMatch(query, /message\b/)
       assert.deepEqual(parameters, [DUN_WAITLIST_SHOPIFY_QUEUE_NAME])
       return [
         {
           queue_length: 3,
           newest_msg_age_sec: 12,
           oldest_msg_age_sec: 90,
-          total_messages: 40
+          total_messages: 40,
+          visible_count: 1,
+          delayed_count: 2,
+          oldest_visible_age_sec: 90,
+          oldest_delayed_vt: '2026-08-07T17:00:00.000Z'
         }
       ] as unknown as T[]
     }
@@ -53,6 +61,52 @@ test('maps pgmq.metrics row to bounded queue health fields', async () => {
     queueLength: 3,
     newestMsgAgeSec: 12,
     oldestMsgAgeSec: 90,
-    totalMessages: 40
+    totalMessages: 40,
+    visibleCount: 1,
+    delayedCount: 2,
+    oldestVisibleAgeSec: 90,
+    oldestDelayedVt: '2026-08-07T17:00:00.000Z',
+    healthLevel: 'healthy'
   })
+})
+
+test('classifies warning when oldest visible age is at least 15 minutes', async () => {
+  const metrics = await getDunWaitlistShopifyQueueMetrics({
+    executeQuery: async <T extends DunWaitlistShopifyQueueQueryRow>() =>
+      [
+        {
+          queue_length: 1,
+          newest_msg_age_sec: 900,
+          oldest_msg_age_sec: 900,
+          total_messages: 5,
+          visible_count: 1,
+          delayed_count: 0,
+          oldest_visible_age_sec: 900,
+          oldest_delayed_vt: null
+        }
+      ] as unknown as T[]
+  })
+
+  assert.equal(metrics.healthLevel, 'warning')
+  assert.equal(metrics.oldestVisibleAgeSec, 900)
+})
+
+test('classifies critical when oldest visible age is at least 30 minutes', async () => {
+  const metrics = await getDunWaitlistShopifyQueueMetrics({
+    executeQuery: async <T extends DunWaitlistShopifyQueueQueryRow>() =>
+      [
+        {
+          queue_length: 2,
+          newest_msg_age_sec: 1800,
+          oldest_msg_age_sec: 1800,
+          total_messages: 8,
+          visible_count: 2,
+          delayed_count: 0,
+          oldest_visible_age_sec: 1800,
+          oldest_delayed_vt: null
+        }
+      ] as unknown as T[]
+  })
+
+  assert.equal(metrics.healthLevel, 'critical')
 })

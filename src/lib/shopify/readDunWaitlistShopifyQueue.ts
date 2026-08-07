@@ -4,7 +4,10 @@ import { z } from 'zod'
 
 import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 
-import { DUN_WAITLIST_SHOPIFY_QUEUE_NAME } from './dunWaitlistShopifyQueueMessage'
+import {
+  DUN_WAITLIST_SHOPIFY_QUEUE_NAME,
+  DUN_WAITLIST_SHOPIFY_QUEUE_VISIBILITY_TIMEOUT_SECONDS
+} from './dunWaitlistShopifyQueueConfig'
 import {
   executeDunWaitlistShopifyQueueQuery,
   type DunWaitlistShopifyQueueQueryExecutor
@@ -14,8 +17,7 @@ import {
   type DunWaitlistShopifyQueueRecord
 } from './dunWaitlistShopifyQueueRecord'
 
-export const DUN_WAITLIST_SHOPIFY_QUEUE_VISIBILITY_TIMEOUT_SECONDS =
-  120 as const
+export { DUN_WAITLIST_SHOPIFY_QUEUE_VISIBILITY_TIMEOUT_SECONDS }
 
 const qtySchema = z.number().int().min(1).max(50)
 const visibilityTimeoutSchema = z.number().int().min(1).max(3_600)

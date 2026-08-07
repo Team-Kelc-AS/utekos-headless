@@ -47,6 +47,7 @@
     "tracking:view-item:transaction-id": "node scripts/tracking/verify-view-item-transaction-id.mjs",
     "ops:provider-dispatch-report": "node scripts/ops/provider-dispatch-feedback-report.mjs",
     "ops:dead-letter-replay-plan": "node scripts/ops/dead-letter-replay-plan.mjs",
+    "ops:dun-waitlist-queue-health": "node scripts/queues/report-dun-waitlist-shopify-queue-health.mjs",
     "ops:identifier-coverage-report": "node scripts/ops/identifier-coverage-report.mjs",
     "ops:ga4-bigquery-readiness": "node scripts/ops/ga4-bigquery-readiness-report.mjs",
     "ops:ga4-multisource-report": "node scripts/ops/ga4-multisource-purchase-report.mjs",

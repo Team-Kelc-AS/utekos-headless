@@ -1,7 +1,8 @@
 import { z } from 'zod'
 
-export const DUN_WAITLIST_SHOPIFY_QUEUE_NAME =
-  'shopify_dun_waitlist_sync' as const
+import { DUN_WAITLIST_SHOPIFY_QUEUE_NAME } from './dunWaitlistShopifyQueueConfig'
+
+export { DUN_WAITLIST_SHOPIFY_QUEUE_NAME }
 
 export const dunWaitlistShopifyQueueMessageSchema = z.strictObject({
   schema_version: z.literal(1),

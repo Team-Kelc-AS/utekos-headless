@@ -1,14 +1,18 @@
 # Dun waitlist → Shopify sync — STEG 5 controlled cutover
 
-## Status (Phase B complete)
+## Status (Phase B complete / historical)
 
 ```text
 production owner = PGMQ
 scheduler = Vercel Cron → /api/cron/shopify-dun-waitlist-sync
 DUN_WAITLIST_SYNC_BACKEND = pgmq
-legacy runner = available via env=legacy (rollback only)
+legacy runner = available via env=legacy until ROLLBACK_WINDOW_EXPIRES_AT
+ROLLBACK_WINDOW_EXPIRES_AT = 2026-08-08T18:45:00+02:00
 historical ops.integration_events = preserved
+next = STEG 6 Part 1 hardening (non-destructive); Part 2 gated
 ```
+
+See [STEG 6 Part 1 hardening](./shopify-dun-waitlist-sync-steg-6-hardening.md).
 
 ## Cutover boundary
 

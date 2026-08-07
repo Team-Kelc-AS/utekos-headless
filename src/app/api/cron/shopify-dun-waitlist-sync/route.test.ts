@@ -72,7 +72,12 @@ const queueMetrics = {
   queueLength: 1,
   newestMsgAgeSec: 5,
   oldestMsgAgeSec: 5,
-  totalMessages: 10
+  totalMessages: 10,
+  visibleCount: 1,
+  delayedCount: 0,
+  oldestVisibleAgeSec: 5,
+  oldestDelayedVt: null,
+  healthLevel: 'healthy' as const
 }
 
 function baseDependencies(
