@@ -81,13 +81,9 @@ export async function runGoogleDataManagerStatusReconciliation(
 
   const timedOut = await dependencies.store.expireStale()
 
-  const claims: GoogleDataManagerStatusClaim[] = []
-
-  while (claims.length < input.maxItems) {
-    const claim = await dependencies.store.claimNext()
-    if (!claim) break
-    claims.push(claim)
-  }
+  const claims = await dependencies.store.claimNextBatch(
+    input.maxItems
+  )
 
   const summary: GoogleDataManagerStatusBatchSummary = {
     claimed: claims.length,

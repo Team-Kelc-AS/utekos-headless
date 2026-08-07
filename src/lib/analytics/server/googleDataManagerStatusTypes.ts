@@ -62,6 +62,9 @@ export type GoogleDataManagerStatusOutcome =
 
 export type GoogleDataManagerStatusStore = {
   claimNext: () => Promise<GoogleDataManagerStatusClaim | null>
+  claimNextBatch: (
+    limit: number
+  ) => Promise<GoogleDataManagerStatusClaim[]>
   complete: (
     outcome: GoogleDataManagerStatusOutcome
   ) => Promise<void>
