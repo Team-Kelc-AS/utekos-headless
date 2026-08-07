@@ -9,9 +9,15 @@ const dsn =
 const isProduction = process.env.NODE_ENV === 'production'
 const runtime = getVercelRuntimeContext()
 
-Sentry.init({
+/**
+ * Node Sentry client. OpenTelemetry provider ownership stays with
+ * `@vercel/otel` (`skipOpenTelemetrySetup`); instrumentation wires the
+ * Sentry sampler/processor/propagator/context manager into that pipeline.
+ */
+export const sentryNodeClient = Sentry.init({
   dsn,
   enabled: !!dsn,
+  skipOpenTelemetrySetup: true,
 
   environment: runtime.environment,
   release: runtime.commitSha ?? undefined,

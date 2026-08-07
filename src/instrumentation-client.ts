@@ -57,8 +57,6 @@ Sentry.init({
   sendDefaultPii: false,
   enableLogs: true,
   tracesSampleRate: IS_PRODUCTION ? 0.1 : 1,
-  profileSessionSampleRate: 1,
-  profileLifecycle: 'trace',
   denyUrls: [CHROME_EXTENSION_URL_PATTERN],
   beforeSend: filterSentryClientEvent
 })
