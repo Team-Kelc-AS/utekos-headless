@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     siteName: 'Utekos',
     images: [
       {
-        url: '/og-image-frakt.webp',
+        url: '/og-image-frakt-retur.jpg',
         width: 1200,
         height: 630,
         alt: 'En Utekos-pakke klar for sending.'

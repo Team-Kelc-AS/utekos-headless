@@ -27,7 +27,7 @@ export async function MaintenanceJsonLd() {
     'breadcrumb': { '@id': BREADCRUMB_ID },
     'primaryImageOfPage': {
       '@type': 'ImageObject',
-      'url': 'https://utekos.no/og-image-vedlikehold.jpg',
+      'url': 'https://utekos.no/og-image-utekos-produkter.jpg',
       'width': '1200',
       'height': '630'
     },
@@ -62,7 +62,7 @@ export async function MaintenanceJsonLd() {
     'inLanguage': 'no',
     'image': {
       '@type': 'ImageObject',
-      'url': 'https://utekos.no/og-image-vedlikehold.jpg',
+      'url': 'https://utekos.no/og-image-utekos-produkter.jpg',
       'width': '1200',
       'height': '630'
     },

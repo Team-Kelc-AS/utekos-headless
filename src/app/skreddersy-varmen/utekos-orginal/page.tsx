@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://utekos.no/1080/aspect-video-kokong-2.webp',
+        url: '/og-image-utekos-original.jpg',
         width: 1200,
         height: 630,
         alt: 'Personer som nyter utelivet med varme klær fra Utekos'
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: 'Skreddersy varmen |',
     description:
       'Skreddersy varmen med Utekos. Oppdag genial funksjonalitet og kompromissløs komfort for dine utendørsopplevelser. Juster, form og nyt.',
-    images: ['/og-utekos_brand.jpg']
+    images: ['/og-image-utekos-original.jpg']
   }
 }
 

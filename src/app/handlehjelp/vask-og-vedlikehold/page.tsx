@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     siteName: 'Utekos',
     images: [
       {
-        url: '/og-image-vedlikehold.jpg',
+        url: '/og-image-utekos-produkter.jpg',
         width: 1200,
         height: 630,
         alt: 'Et Utekos-plagg hengt luftig til tørk i naturlige omgivelser.'

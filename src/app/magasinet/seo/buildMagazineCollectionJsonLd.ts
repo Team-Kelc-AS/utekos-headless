@@ -26,7 +26,7 @@ export function buildMagazineCollectionJsonLd(articles: MagazineArticle[]): Maga
     },
     'primaryImageOfPage': {
       '@type': 'ImageObject',
-      'url': `${SITE_URL}/og-image.jpg`
+      'url': `${SITE_URL}/og-image-utekos-magasinet.jpg`
     },
     'mainEntity': {
       '@type': 'ItemList',

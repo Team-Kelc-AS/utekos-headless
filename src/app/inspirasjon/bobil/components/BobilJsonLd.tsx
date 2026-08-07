@@ -15,7 +15,7 @@ export async function BobilJsonLd() {
     'url': 'https://utekos.no/inspirasjon/bobil',
     'primaryImageOfPage': {
       '@type': 'ImageObject',
-      'url': 'https://utekos.no/og-image-bobil.webp'
+      'url': 'https://utekos.no/og-image-bobil.jpg'
     },
     'publisher': {
       '@id': 'https://utekos.no/#organization'

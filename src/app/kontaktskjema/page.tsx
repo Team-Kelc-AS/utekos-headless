@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-image-produkter.png',
+        url: '/og-image-utekos-produkter.jpg',
         width: 1200,
         height: 630,
         alt: 'Kundeservice Utekos'

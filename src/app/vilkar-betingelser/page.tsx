@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: 'Utekos',
     images: [
       {
-        url: '/og-image-legal.webp',
+        url: '/og-image-terms.jpg',
         width: 1200,
         height: 630,
         alt: 'Utekos vilkår og betingelser'

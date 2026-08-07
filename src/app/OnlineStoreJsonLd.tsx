@@ -24,7 +24,7 @@ export async function OnlineStoreJsonLd() {
     'description':
       'Utekos er en merkevare som designer funksjonelt yttertøy for kompromissløs komfort og overlegen allsidighet: Hytteliv, bobilferie, telttur, båt og terrasseliv.',
     'logo': 'https://utekos.no/logo.png',
-    'image': 'https://utekos.no/og-image-produkter.png',
+    'image': 'https://utekos.no/og-image-utekos-produkter.jpg',
     'foundingDate': '2020',
     'email': 'kundeservice@utekos.no',
     'telephone': '+47 40 21 63 43',

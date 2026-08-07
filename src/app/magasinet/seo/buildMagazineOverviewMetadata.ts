@@ -10,7 +10,7 @@ const title = 'Magasinet | Utekos'
 const description =
   'Les inspirasjon, guider og råd fra Utekos om hytteliv, terrasseliv, båtliv, bobilliv og varme komfortplagg for gode stunder ute.'
 
-const imageUrl = `${SITE_URL}/og-image.jpg`
+const imageUrl = `${SITE_URL}/og-image-utekos-magasinet.jpg`
 
 export function buildMagazineOverviewMetadata(): Metadata {
   return {

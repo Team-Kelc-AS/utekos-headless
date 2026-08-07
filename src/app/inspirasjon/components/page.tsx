@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: 'Utekos',
     images: [
       {
-        url: '/og-image-hytte.webp',
+        url: '/og-image-hytte.jpg',
         width: 1200,
         height: 630,
         alt: 'Vennegjeng som koser seg utenfor hytten med Utekos-plagg'

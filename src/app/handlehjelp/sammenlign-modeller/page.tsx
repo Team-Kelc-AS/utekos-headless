@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     siteName: 'Utekos',
     images: [
       {
-        url: 'https://utekos.no/og-image-compare.webp',
+        url: '/og-image-compare.jpg',
         width: 1200,
         height: 630,
         alt: 'Sammenligning av Utekos Dun, Mikrofiber og TechDown'
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: pageTitle,
     description: pageDescription,
-    images: ['https://utekos.no/og-image-compare.webp']
+    images: ['/og-image-compare.jpg']
   }
 }
 

@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     type: 'article',
     images: [
       {
-        url: 'https://utekos.no/og-kate-linn-kikkert-master.png',
+        url: '/og-image-utekos-produkter.jpg',
         width: 1200,
         height: 630,
         alt: 'Nærbilde av Utekos tekniske materialer og lag-på-lag konstruksjon.'
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     title: 'Teknologi og materialer',
     description:
       'Oppdag teknologien som holder deg varm. TechDown™, HydroGuard™ og mer.',
-    images: ['https://utekos.no/og-kate-linn-kikkert-master.png']
+    images: ['/og-image-utekos-produkter.jpg']
   }
 }
 

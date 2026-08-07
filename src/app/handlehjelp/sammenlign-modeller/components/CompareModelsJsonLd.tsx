@@ -423,7 +423,7 @@ export async function CompareModelsJsonLd() {
     },
     'primaryImageOfPage': {
       '@type': 'ImageObject',
-      'url': `${SITE_URL}/og-image-compare.webp`,
+      'url': `${SITE_URL}/og-image-compare.jpg`,
       'width': '1200',
       'height': '630',
       'caption': 'Sammenligning av Utekos Dun, Utekos Mikrofiber og TechDown'
