@@ -1,4 +1,5 @@
 import { protos } from '@google-ads/datamanager'
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import { GA_MEASUREMENT_ID } from '../../../api/constants/monitoring'
 import {
   createGoogleDataManagerIngestionClient,
@@ -154,12 +155,23 @@ export async function sendGoogleDataManagerEvent(
     )
   }
 
-  const [response] = await dependencies
-    .createClient()
-    .ingestEvents(request, {
-      timeout:
-        GOOGLE_DATA_MANAGER_TIMEOUT_MS
-    })
+  const [response] = await startAnalyticsSpan(
+    {
+      name: 'Google Data Manager ingestEvents',
+      op: 'rpc.client',
+      attributes: {
+        'rpc.system': 'grpc',
+        'rpc.service':
+          'google.ads.datamanager.v1.IngestionService',
+        'rpc.method': 'ingestEvents',
+        validate_only: config.validateOnly
+      }
+    },
+    () =>
+      dependencies.createClient().ingestEvents(request, {
+        timeout: GOOGLE_DATA_MANAGER_TIMEOUT_MS
+      })
+  )
 
   const requestId =
     response.requestId?.trim() ||

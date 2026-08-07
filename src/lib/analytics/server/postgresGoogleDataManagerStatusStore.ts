@@ -1,4 +1,5 @@
 import postgres from 'postgres'
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import type {
   GoogleDataManagerStatusClaim,
   GoogleDataManagerStatusOutcome,
@@ -335,79 +336,115 @@ export function createPostgresGoogleDataManagerStatusStore(
   executeQuery: GoogleDataManagerStatusQueryExecutor = executePostgresQuery
 ): GoogleDataManagerStatusStore {
   return {
-    expireStale: async () => {
-      const rows = await executeQuery(EXPIRE_STALE_QUERY, [])
+    expireStale: async () =>
+      startAnalyticsSpan(
+        {
+          name: 'db.query google_dm_status.expire_stale',
+          op: 'db.query',
+          attributes: {
+            'db.system': 'postgresql',
+            'db.operation.name': 'expire_stale',
+            'db.namespace': 'ops'
+          }
+        },
+        async () => {
+          const rows = await executeQuery(EXPIRE_STALE_QUERY, [])
 
-      return parseExpiredCount(rows[0])
-    },
-    claimNext: async () => {
-      const rows = await executeQuery(CLAIM_NEXT_QUERY, [])
+          return parseExpiredCount(rows[0])
+        }
+      ),
+    claimNext: async () =>
+      startAnalyticsSpan(
+        {
+          name: 'db.query google_dm_status.claim_next',
+          op: 'db.query',
+          attributes: {
+            'db.system': 'postgresql',
+            'db.operation.name': 'claim_next',
+            'db.namespace': 'ops'
+          }
+        },
+        async () => {
+          const rows = await executeQuery(CLAIM_NEXT_QUERY, [])
 
-      return parseClaim(rows[0])
-    },
-    complete: async outcome => {
-      const claimParameters = [
-        outcome.claim.attemptId,
-        outcome.claim.requestId,
-        outcome.claim.leaseToken
-      ] as const
+          return parseClaim(rows[0])
+        }
+      ),
+    complete: async outcome =>
+      startAnalyticsSpan(
+        {
+          name: 'db.query google_dm_status.complete',
+          op: 'db.query',
+          attributes: {
+            'db.system': 'postgresql',
+            'db.operation.name': 'complete',
+            'db.namespace': 'ops'
+          }
+        },
+        async () => {
+          const claimParameters = [
+            outcome.claim.attemptId,
+            outcome.claim.requestId,
+            outcome.claim.leaseToken
+          ] as const
 
-      if (outcome.status === 'retry') {
-        const rows = await executeQuery(RETRY_QUERY, [
-          ...claimParameters,
-          outcome.errorMessage,
-          outcome.latencyMs,
-          outcome.nextCheckAt
-        ])
-        assertCompleted(rows, outcome.claim)
-        return
-      }
+          if (outcome.status === 'retry') {
+            const rows = await executeQuery(RETRY_QUERY, [
+              ...claimParameters,
+              outcome.errorMessage,
+              outcome.latencyMs,
+              outcome.nextCheckAt
+            ])
+            assertCompleted(rows, outcome.claim)
+            return
+          }
 
-      const statusResponse = outcome.result.response
+          const statusResponse = outcome.result.response
 
-      if (
-        outcome.status === 'failed' ||
-        outcome.status === 'partial_success' ||
-        outcome.status === 'processing_failure'
-      ) {
-        const rows = await executeQuery(TERMINAL_QUERY, [
-          ...claimParameters,
-          statusResponse,
-          outcome.result.overallStatus,
-          statusError(outcome),
-          outcome.latencyMs,
-          outcome.status === 'failed' ?
-            'google_data_manager_request_failed'
-          : outcome.status === 'partial_success' ?
-            'google_data_manager_request_partial_success'
-          : 'google_data_manager_request_processing_mismatch'
-        ])
-        assertCompleted(rows, outcome.claim)
-        return
-      }
+          if (
+            outcome.status === 'failed' ||
+            outcome.status === 'partial_success' ||
+            outcome.status === 'processing_failure'
+          ) {
+            const rows = await executeQuery(TERMINAL_QUERY, [
+              ...claimParameters,
+              statusResponse,
+              outcome.result.overallStatus,
+              statusError(outcome),
+              outcome.latencyMs,
+              outcome.status === 'failed' ?
+                'google_data_manager_request_failed'
+              : outcome.status === 'partial_success' ?
+                'google_data_manager_request_partial_success'
+              : 'google_data_manager_request_processing_mismatch'
+            ])
+            assertCompleted(rows, outcome.claim)
+            return
+          }
 
-      const succeeded = outcome.status === 'succeeded'
-      const succeededWithWarnings =
-        outcome.status === 'succeeded_with_warnings'
-      const rows = await executeQuery(NON_TERMINAL_QUERY, [
-        ...claimParameters,
-        statusResponse,
-        outcome.result.overallStatus,
-        succeeded ? 'succeeded' : 'accepted_unverified',
-        succeeded ? 'provider_confirmed_success'
-        : succeededWithWarnings ?
-          'provider_confirmed_success_with_warnings'
-        : outcome.status === 'processing' ? 'provider_processing'
-        : 'provider_status_unknown',
-        outcome.latencyMs,
-        (
-          outcome.status === 'processing' ||
-          outcome.status === 'unknown'
-        ) ?
-          outcome.nextCheckAt
-        : null
-      ])
-      assertCompleted(rows, outcome.claim)
-    }
+          const succeeded = outcome.status === 'succeeded'
+          const succeededWithWarnings =
+            outcome.status === 'succeeded_with_warnings'
+          const rows = await executeQuery(NON_TERMINAL_QUERY, [
+            ...claimParameters,
+            statusResponse,
+            outcome.result.overallStatus,
+            succeeded ? 'succeeded' : 'accepted_unverified',
+            succeeded ? 'provider_confirmed_success'
+            : succeededWithWarnings ?
+              'provider_confirmed_success_with_warnings'
+            : outcome.status === 'processing' ? 'provider_processing'
+            : 'provider_status_unknown',
+            outcome.latencyMs,
+            (
+              outcome.status === 'processing' ||
+              outcome.status === 'unknown'
+            ) ?
+              outcome.nextCheckAt
+            : null
+          ])
+          assertCompleted(rows, outcome.claim)
+        }
+      )
   }
 }

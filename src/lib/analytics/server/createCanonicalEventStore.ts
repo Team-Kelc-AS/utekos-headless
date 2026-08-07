@@ -1,3 +1,4 @@
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import type {
   CanonicalEventAcceptance,
   CanonicalEventStore,
@@ -34,47 +35,61 @@ export function createCanonicalEventStore(
 ): CanonicalEventStore {
   return {
     accept: input =>
-      runTransaction(async transaction => {
-        const rows = mapCanonicalEventPersistence(input)
-        const sourceEvidence =
-          input.sourceEvidence === undefined ?
-            undefined
-          : mapCanonicalEventSourceEvidencePersistence({
-              event: input.event,
-              sourceEvidence: input.sourceEvidence
-            })
-        const inserted = await transaction.insertLedger(
-          rows.ledger
-        )
-
-        if (sourceEvidence) {
-          await transaction.upsertSourceEvidence(sourceEvidence)
-        }
-
-        if (!inserted) {
-          return {
-            createdDispatchAttempts: [],
-            status: 'duplicate'
+      startAnalyticsSpan(
+        {
+          name: 'db.transaction canonical_event.accept',
+          op: 'db.transaction',
+          attributes: {
+            'db.system': 'postgresql',
+            'db.operation.name': 'accept',
+            'db.namespace': 'marketing'
           }
-        }
+        },
+        () =>
+          runTransaction(async transaction => {
+            const rows = mapCanonicalEventPersistence(input)
+            const sourceEvidence =
+              input.sourceEvidence === undefined ?
+                undefined
+              : mapCanonicalEventSourceEvidencePersistence({
+                  event: input.event,
+                  sourceEvidence: input.sourceEvidence
+                })
+            const inserted = await transaction.insertLedger(
+              rows.ledger
+            )
 
-        const createdDispatchAttempts: CreatedProviderDispatchAttempt[] = []
+            if (sourceEvidence) {
+              await transaction.upsertSourceEvidence(sourceEvidence)
+            }
 
-        for (const dispatch of rows.dispatches) {
-          const attemptId = await transaction.insertDispatch(dispatch)
+            if (!inserted) {
+              return {
+                createdDispatchAttempts: [],
+                status: 'duplicate'
+              }
+            }
 
-          if (attemptId && dispatch.status === 'pending') {
-            createdDispatchAttempts.push({
-              adapterKey: `${dispatch.provider}:${dispatch.event_name}`,
-              attemptId
-            })
-          }
-        }
+            const createdDispatchAttempts: CreatedProviderDispatchAttempt[] =
+              []
 
-        return {
-          createdDispatchAttempts,
-          status: 'inserted'
-        }
-      })
+            for (const dispatch of rows.dispatches) {
+              const attemptId =
+                await transaction.insertDispatch(dispatch)
+
+              if (attemptId && dispatch.status === 'pending') {
+                createdDispatchAttempts.push({
+                  adapterKey: `${dispatch.provider}:${dispatch.event_name}`,
+                  attemptId
+                })
+              }
+            }
+
+            return {
+              createdDispatchAttempts,
+              status: 'inserted'
+            }
+          })
+      )
   }
 }

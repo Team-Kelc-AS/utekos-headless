@@ -1,4 +1,5 @@
 import { protos } from '@google-ads/datamanager'
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import {
   createGoogleDataManagerIngestionClient,
   type GoogleDataManagerIngestionClient
@@ -115,12 +116,23 @@ export async function retrieveGoogleDataManagerRequestStatus(
     throw new Error('Google Data Manager requestId is required')
   }
 
-  const [response] = await dependencies
-    .createClient()
-    .retrieveRequestStatus(
-      { requestId: normalizedRequestId },
-      { timeout: GOOGLE_DATA_MANAGER_STATUS_TIMEOUT_MS }
-    )
+  const [response] = await startAnalyticsSpan(
+    {
+      name: 'Google Data Manager retrieveRequestStatus',
+      op: 'rpc.client',
+      attributes: {
+        'rpc.system': 'grpc',
+        'rpc.service':
+          'google.ads.datamanager.v1.IngestionService',
+        'rpc.method': 'retrieveRequestStatus'
+      }
+    },
+    () =>
+      dependencies.createClient().retrieveRequestStatus(
+        { requestId: normalizedRequestId },
+        { timeout: GOOGLE_DATA_MANAGER_STATUS_TIMEOUT_MS }
+      )
+  )
 
   const normalizedResponse =
     RetrieveRequestStatusResponse.fromObject(response)

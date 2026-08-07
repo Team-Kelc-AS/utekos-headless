@@ -1,4 +1,5 @@
 import postgres from 'postgres'
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import type { CanonicalEvent } from '../canonicalEvent'
 import type { ProviderAdapter } from './providerAdapter'
 import type {
@@ -284,25 +285,49 @@ export function createPostgresProviderOutboxDatabase<
   executeQuery: ProviderOutboxQueryExecutor = executePostgresQuery
 ): ProviderOutboxDatabase<R> {
   return {
-    claimById: async attemptId => {
-      const rows = await executeQuery(CLAIM_BY_ID_QUERY, [
-        attemptId,
-        adapter.provider,
-        adapter.eventName,
-        adapter.claimNotBefore ?? null
-      ])
+    claimById: async attemptId =>
+      startAnalyticsSpan(
+        {
+          name: 'db.query provider_outbox.claim_by_id',
+          op: 'db.query',
+          attributes: {
+            'db.system': 'postgresql',
+            'db.operation.name': 'claim_by_id',
+            'db.namespace': 'ops'
+          }
+        },
+        async () => {
+          const rows = await executeQuery(CLAIM_BY_ID_QUERY, [
+            attemptId,
+            adapter.provider,
+            adapter.eventName,
+            adapter.claimNotBefore ?? null
+          ])
 
-      return parseClaimedRow(rows[0])
-    },
-    claimNext: async () => {
-      const rows = await executeQuery(CLAIM_NEXT_QUERY, [
-        adapter.provider,
-        adapter.eventName,
-        adapter.claimNotBefore ?? null
-      ])
+          return parseClaimedRow(rows[0])
+        }
+      ),
+    claimNext: async () =>
+      startAnalyticsSpan(
+        {
+          name: 'db.query provider_outbox.claim_next',
+          op: 'db.query',
+          attributes: {
+            'db.system': 'postgresql',
+            'db.operation.name': 'claim_next',
+            'db.namespace': 'ops'
+          }
+        },
+        async () => {
+          const rows = await executeQuery(CLAIM_NEXT_QUERY, [
+            adapter.provider,
+            adapter.eventName,
+            adapter.claimNotBefore ?? null
+          ])
 
-      return parseClaimedRow(rows[0])
-    },
+          return parseClaimedRow(rows[0])
+        }
+      ),
     markAcceptedUnverified: async outcome => {
       const receipt = adapter.projectReceipt(outcome.receipt)
       const rows = await executeQuery(ACCEPTED_UNVERIFIED_QUERY, [

@@ -1,3 +1,4 @@
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import type { CanonicalEvent } from '../canonicalEvent'
 import type { ProviderAdapter } from './providerAdapter'
 import type {
@@ -105,18 +106,30 @@ export function createProviderOutboxStore<
 
       return null
     },
-    complete: async outcome => {
-      switch (outcome.status) {
-        case 'succeeded':
-          await database.markAcceptedUnverified(outcome)
-          break
-        case 'retry_scheduled':
-          await database.markRetryScheduled(outcome)
-          break
-        case 'dead_lettered':
-          await database.markDeadLettered(outcome)
-          break
-      }
-    }
+    complete: async outcome =>
+      startAnalyticsSpan(
+        {
+          name: 'db.query provider_outbox.complete',
+          op: 'db.query',
+          attributes: {
+            'db.system': 'postgresql',
+            'db.operation.name': 'complete',
+            'db.namespace': 'ops'
+          }
+        },
+        async () => {
+          switch (outcome.status) {
+            case 'succeeded':
+              await database.markAcceptedUnverified(outcome)
+              break
+            case 'retry_scheduled':
+              await database.markRetryScheduled(outcome)
+              break
+            case 'dead_lettered':
+              await database.markDeadLettered(outcome)
+              break
+          }
+        }
+      )
   }
 }
