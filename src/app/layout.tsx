@@ -10,6 +10,7 @@ import { mainMenu } from '@/db/config/menu.config'
 import Footer from '@/components/footer/components/Footer'
 import Header from '@/components/header/Header'
 import { SiteChrome } from '@/components/layout/SiteChrome'
+import { CookieScript } from '@/components/layout/CookieScript'
 import { OnlineStoreJsonLd } from './OnlineStoreJsonLd'
 import { CartProviderLoader } from '@/components/providers/CartProviderLoader'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
@@ -50,27 +51,51 @@ const googleTagGatewayUrl = new URL(
 ).toString()
 
 function getTrackingEnvironment(): TrackingEnvironment {
-  if (process.env.NODE_ENV === 'test') return 'test'
-  if (process.env.VERCEL_ENV === 'production')
+  if (process.env.NODE_ENV === 'test') {
+    return 'test'
+  }
+
+  if (
+    process.env.VERCEL_ENV === 'production'
+  ) {
     return 'production'
-  if (process.env.VERCEL_ENV === 'preview') return 'preview'
+  }
+
+  if (
+    process.env.VERCEL_ENV === 'preview'
+  ) {
+    return 'preview'
+  }
+
   return 'development'
 }
 
 export const metadata: Metadata = {
-  icons: { icon: '/icon.png', apple: '/apple-icon.png' },
-  metadataBase: new URL('https://utekos.no'),
+  icons: {
+    icon: '/icon.png',
+    apple: '/apple-icon.png'
+  },
+  metadataBase: new URL(
+    'https://utekos.no'
+  ),
   title: {
     default: 'Utekos - Skreddersy varmen',
     template: '%s | Utekos'
   },
   description:
     'Utekos er en merkevare som designer funksjonelt yttertøy for kompromissløs komfort og overlegen allsidighet. Perfekt for hytteliv, bobilferie, telttur, i båt og terrasseliv.',
-  alternates: { canonical: '/' },
+  alternates: {
+    canonical: '/'
+  },
   applicationName: 'Utekos',
   category: 'Yttertøy',
   manifest: '/manifest.webmanifest',
-  authors: [{ name: 'Utekos', url: 'https://utekos.no' }],
+  authors: [
+    {
+      name: 'Utekos',
+      url: 'https://utekos.no'
+    }
+  ],
   creator: 'Utekos',
   publisher: 'Utekos',
   formatDetection: {
@@ -78,8 +103,12 @@ export const metadata: Metadata = {
     address: true,
     telephone: true
   },
-  facebook: { appId: '1154247890253046' },
-  pinterest: { richPin: true },
+  facebook: {
+    appId: '1154247890253046'
+  },
+  pinterest: {
+    richPin: true
+  },
   appleWebApp: {
     capable: true,
     title: 'Utekos',
@@ -125,12 +154,18 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const storefrontAccessToken =
-    process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
+    process.env
+      .SHOPIFY_STOREFRONT_ACCESS_TOKEN
+
   const assistantRolloutPercent =
-    resolveAssistantPreviewRolloutPercent(process.env)
-  const shouldLoadMarketingScripts = shouldLoadGoogleTagManager(
-    process.env.VERCEL_ENV
-  )
+    resolveAssistantPreviewRolloutPercent(
+      process.env
+    )
+
+  const shouldLoadMarketingScripts =
+    shouldLoadGoogleTagManager(
+      process.env.VERCEL_ENV
+    )
 
   return (
     <html
@@ -139,13 +174,20 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
+      {shouldLoadMarketingScripts ?
+        <CookieScript />
+      : null}
+
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
         {shouldLoadMarketingScripts ?
           <>
             <GoogleTagManager
               gtmId='GTM-5TWMJQFP'
-              gtmScriptUrl={googleTagGatewayUrl}
+              gtmScriptUrl={
+                googleTagGatewayUrl
+              }
             />
+
             <Script
               id='meta-pixel-canonical-browser'
               src='/analytics/meta-pixel-canonical-v1.js'
@@ -153,30 +195,44 @@ export default function RootLayout({
             />
           </>
         : null}
+
         <Suspense fallback={null}>
           <PageViewObserver
-            environment={getTrackingEnvironment()}
+            environment={
+              getTrackingEnvironment()
+            }
           />
           <ScrollDepthObserver />
         </Suspense>
+
         <OnlineStoreJsonLd />
 
         <Suspense fallback={null}>
           <CartProviderLoader>
             <SiteChrome
-              assistantRolloutPercent={assistantRolloutPercent}
-              header={<Header menu={mainMenu} />}
+              assistantRolloutPercent={
+                assistantRolloutPercent
+              }
+              header={
+                <Header menu={mainMenu} />
+              }
               footer={<Footer />}
             >
               {children}
             </SiteChrome>
           </CartProviderLoader>
         </Suspense>
+
         <ShopifyCustomerPrivacyBridge
-          {...(storefrontAccessToken ?
-            { storefrontAccessToken }
-          : {})}
+          {...(
+            storefrontAccessToken ?
+              {
+                storefrontAccessToken
+              }
+            : {}
+          )}
         />
+
         <VercelTelemetry />
       </body>
     </html>
