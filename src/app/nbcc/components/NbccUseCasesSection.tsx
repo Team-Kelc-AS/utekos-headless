@@ -1,17 +1,14 @@
 import { CompassIcon } from '@/components/animate-icons/icons/compass'
 import { nbccUseCases } from '../utils/nbccLandingPageContent'
 import { useCaseIcons } from '../utils/useCaseIcons'
+import { NbccReveal, NbccRevealGroup } from './NbccReveal'
 
 export function NbccUseCasesSection() {
   return (
     <article className='relative overflow-hidden bg-muted px-4 py-20 text-foreground sm:px-6 lg:px-8'>
       <div className='absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-foreground/20 to-transparent' />
       <div className='mx-auto max-w-7xl'>
-        <div
-          data-nbcc-reveal
-          data-nbcc-animate
-          className='grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end'
-        >
+        <NbccReveal className='grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end'>
           <div>
             <p className='font-utekos-text-medium text-sm text-foreground'>
               Campinglivet har mange former
@@ -29,35 +26,34 @@ export function NbccUseCasesSection() {
             fellesnevneren den samme: De aller beste stundene
             skapes utendørs.
           </p>
-        </div>
+        </NbccReveal>
 
-        <div className='mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+        <NbccRevealGroup className='mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
           {nbccUseCases.map((useCase, index) => {
             const Icon = useCaseIcons[index] ?? CompassIcon
             return (
-              <article
-                key={useCase.title}
-                data-nbcc-reveal
-                data-nbcc-animate
-                data-nbcc-usecase-card
-                className='rounded-lg border border-foreground/15 bg-jungle p-6 text-foreground'
-              >
-                <Icon
-                  size={28}
-                  animateOnHover='default'
-                  className='mb-5 text-primary'
-                  aria-hidden
-                />
-                <h3 className='font-utekos-text-medium text-lg text-foreground'>
-                  {useCase.title}
-                </h3>
-                <p className='mt-3 font-utekos-text text-sm leading-7 text-foreground'>
-                  {useCase.description}
-                </p>
-              </article>
+              <NbccReveal item key={useCase.title}>
+                <article
+                  data-nbcc-usecase-card
+                  className='rounded-lg border border-foreground/15 bg-jungle p-6 text-foreground'
+                >
+                  <Icon
+                    size={28}
+                    animateOnHover='default'
+                    className='mb-5 text-primary'
+                    aria-hidden
+                  />
+                  <h3 className='font-utekos-text-medium text-lg text-foreground'>
+                    {useCase.title}
+                  </h3>
+                  <p className='mt-3 font-utekos-text text-sm leading-7 text-foreground'>
+                    {useCase.description}
+                  </p>
+                </article>
+              </NbccReveal>
             )
           })}
-        </div>
+        </NbccRevealGroup>
       </div>
     </article>
   )

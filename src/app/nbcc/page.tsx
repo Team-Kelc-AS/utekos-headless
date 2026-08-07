@@ -4,7 +4,6 @@ import { Suspense } from 'react'
 import { NbccBenefitSection } from './components/NbccBenefitSection'
 import { NbccFaqSection } from './components/NbccFaqSection'
 import { NbccFinalCtaSection } from './components/NbccFinalCtaSection'
-import { NbccMotionEnhancer } from './components/NbccMotionEnhancer'
 import { NbccHeroSection } from './components/NbccHeroSection'
 import { NbccHowToUseSection } from './components/NbccHowToUseSection'
 import { NbccProductSection } from './components/NbccProductSection'
@@ -60,7 +59,6 @@ export const metadata: Metadata = {
 export default function NbccPage() {
   return (
     <article data-nbcc-page className='bg-background dark:bg-dark-background'>
-      <NbccMotionEnhancer />
       <NbccHeroSection />
       <NbccBenefitSection />
       <NbccUseCasesSection />

@@ -38,3 +38,5 @@ alwaysApply: true
 -  @xstate/react: /statelyai/xstate 
 -  xstate: /statelyai/xstate
 -  Cursor: /websites/cursor
+-  @shopify/hydrogen-react: /shopify/hydrogen
+-  Shopify Headless architecture: /websites/shopify_dev_storefronts_headless_hydrogen

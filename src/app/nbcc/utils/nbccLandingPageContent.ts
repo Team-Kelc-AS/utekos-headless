@@ -8,17 +8,25 @@ import type {
   NbccTrackingData,
   NbccUseCase
 } from '../types'
-import katelinn2 from '@/assets/images/about/katelinn.png'
-import comfy1080 from '@/assets/images/comfyrobe/comfy-1080.png'
-import comfyBack1080 from '@/assets/images/comfyrobe/comfy-back-1080.png'
-import comfyDesign1080 from '@/assets/images/comfyrobe/comfy-design-1080.png'
-import comfyOpen1080 from '@/assets/images/comfyrobe/comfy-open-1080.png'
-import classicBlack1080 from '@/assets/images/gallery/classic-black-1080.png'
-import dunFrontHvitBakgrunn1080 from '@/assets/images/magazine/dun-front-hvit-bakgrunn-1080.png'
-import techdownMonica1080 from '@/assets/images/techdown/techdown-monica-1080.webp'
-import utekosTechdownBakside from '@/assets/images/techdown/utekos-techdown-bakside.webp'
-import utekosTechdownDiagonaltFullfigur from '@/assets/images/techdown/utekos-techdown-diagonalt-fullfigur.webp'
-import utekosTechdownKvinneTerrasseliv1600x1600 from '@/assets/images/techdown/utekos-techdown-kvinne-terrasseliv-1600x1600.webp'
+import comfyrobeManWall from '@/assets/images/comfyrobe/Comfyrobe-Man-Wall-Logo-800x800.webp'
+import comfyrobeManOutside from '@/assets/images/comfyrobe/Comfyrobe-Man-Outside-Logo-800x800.webp'
+import comfyrobeWoman from '@/assets/images/comfyrobe/Comfyrobe-Woman-Logo-800x800.webp'
+import comfyrobeFrontWall from '@/assets/images/comfyrobe/Comfyrobe-FrontWall-Logo-800x800.webp'
+import comfyrobeBacksideWall from '@/assets/images/comfyrobe/Comfyrobe-Backside-Wall-Logo-800x800.webp'
+import comfyrobeCampaignV2 from '@/assets/images/comfyrobe/Comfyrobe-Campaign.v2-Logo-800x800.webp'
+import mikrofiberWoodsOff from '@/assets/images/mikrofiber/Mikrofiber-Woods-Off-Logo-800x800.webp'
+import mikrofiberWoman from '@/assets/images/mikrofiber/Mikrofiber-Woman-Logo-800x800.webp'
+import mikrofiberFrontFull from '@/assets/images/mikrofiber/Mikrofiber-Front-Full-Logo-800x800.webp'
+import mikrofiberBacksideWall from '@/assets/images/mikrofiber/Mikrofiber-Backside-Wall-Logo-800x800.webp'
+import mikrofiberFrontHalfWall from '@/assets/images/mikrofiber/Mikrofiber-Front-Half-Wall-Logo-800x800.webp'
+import techdownWomanWallKikkert from '@/assets/images/techdown/TechDown-WomanWall-Kikkert-v4-Logo-1200x1200.webp'
+import techdownWomenKikkert from '@/assets/images/techdown/TechDown-Women-Kikkert-Logo-800x800.webp'
+import techdownWomanWall from '@/assets/images/techdown/TechDown-Woman-Wall-Logo-800x800.webp'
+import techdownBackside from '@/assets/images/techdown/TechDown-Backside-Logo-800x800.webp'
+import techdownDiagonalWall from '@/assets/images/techdown/TechDown-Diagoal-Logo-Wall-800x800.webp'
+import techdownFullFront from '@/assets/images/techdown/TechDown-FullFront-Logo-800x800.webp'
+import techdownBackSideHalv from '@/assets/images/techdown/TechDown-BackSide-Halv-Logo-800x800.webp'
+import techdownFrontHalv from '@/assets/images/techdown/TechDown-Front-Halv-Logo-800x800.webp'
 
 
 export const nbccHeroTracking = {
@@ -43,20 +51,36 @@ export const nbccProducts = [
     bestFor: 'For bobil, campingvogn, fortelt og faste plasser.',
     images: [
       {
-        src: utekosTechdownKvinneTerrasseliv1600x1600,
-        alt: 'Kvinne nyter terrasselivet med Utekos TechDown™'
+        src: techdownWomanWallKikkert,
+        alt: 'Kvinne med kikkert i Utekos TechDown™'
       },
       {
-        src: techdownMonica1080,
-        alt: 'Utekos TechDown – modell Monica'
+        src: techdownWomenKikkert,
+        alt: 'Kvinner med kikkert i Utekos TechDown™'
       },
       {
-        src: utekosTechdownDiagonaltFullfigur,
-        alt: 'Utekos TechDown komfortplagg for kjølige kvelder ute'
+        src: techdownWomanWall,
+        alt: 'Kvinne i Utekos TechDown™ foran vegg'
       },
       {
-        src: utekosTechdownBakside,
-        alt: 'Utekos TechDown sett bakfra'
+        src: techdownBackside,
+        alt: 'Utekos TechDown™ sett bakfra'
+      },
+      {
+        src: techdownDiagonalWall,
+        alt: 'Utekos TechDown™ diagonalt mot vegg'
+      },
+      {
+        src: techdownFullFront,
+        alt: 'Utekos TechDown™ helfigur forfra'
+      },
+      {
+        src: techdownBackSideHalv,
+        alt: 'Utekos TechDown™ halvfigur bakfra'
+      },
+      {
+        src: techdownFrontHalv,
+        alt: 'Utekos TechDown™ halvfigur forfra'
       }
     ],
     href: '/produkter/utekos-techdown' as Route,
@@ -75,15 +99,25 @@ export const nbccProducts = [
       'Lett, praktisk og enkel å pakke med når du vil ha et varmt lag klart ved stolen eller markisen.',
     bestFor: 'For sommerhalvåret, reisedager og raske turer ut.',
     images: [
-      { src: katelinn2, alt: 'Utekos Mikrofiber™ – modell Katelinn' },
-      { src: '/schema-bilder/utekos-dun.png', alt: 'Utekos Dun produktbilde' },
       {
-        src: dunFrontHvitBakgrunn1080,
-        alt: 'Utekos Dun forfra på hvit bakgrunn'
+        src: mikrofiberWoodsOff,
+        alt: 'Utekos Mikrofiber™ i skogen'
       },
       {
-        src: classicBlack1080,
-        alt: 'Utekos Mikrofiber i sort, lett komfortplagg for campingbruk'
+        src: mikrofiberWoman,
+        alt: 'Kvinne i Utekos Mikrofiber™'
+      },
+      {
+        src: mikrofiberFrontFull,
+        alt: 'Utekos Mikrofiber™ helfigur forfra'
+      },
+      {
+        src: mikrofiberBacksideWall,
+        alt: 'Utekos Mikrofiber™ sett bakfra mot vegg'
+      },
+      {
+        src: mikrofiberFrontHalfWall,
+        alt: 'Utekos Mikrofiber™ halvfigur forfra mot vegg'
       }
     ],
     href: '/produkter/utekos-mikrofiber' as Route,
@@ -104,12 +138,29 @@ export const nbccProducts = [
     bestFor: 'For våte morgener, skifte etter bad og kjølige kvelder ute.',
     images: [
       {
-        src: comfy1080,
-        alt: 'Comfyrobe fra Utekos, varm og vanntett skifterobe'
+        src: comfyrobeManWall,
+        alt: 'Mann i Comfyrobe foran vegg'
       },
-      { src: comfyOpen1080, alt: 'Comfyrobe åpen fremvisning' },
-      { src: comfyDesign1080, alt: 'Comfyrobe designdetaljer' },
-      { src: comfyBack1080, alt: 'Comfyrobe sett bakfra' }
+      {
+        src: comfyrobeManOutside,
+        alt: 'Mann i Comfyrobe utendørs'
+      },
+      {
+        src: comfyrobeWoman,
+        alt: 'Kvinne i Comfyrobe'
+      },
+      {
+        src: comfyrobeFrontWall,
+        alt: 'Comfyrobe forfra mot vegg'
+      },
+      {
+        src: comfyrobeBacksideWall,
+        alt: 'Comfyrobe sett bakfra mot vegg'
+      },
+      {
+        src: comfyrobeCampaignV2,
+        alt: 'Comfyrobe kampanjebilde'
+      }
     ],
     href: '/produkter/comfyrobe' as Route,
     handle: 'comfyrobe',

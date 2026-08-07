@@ -4,16 +4,13 @@ import Link from 'next/link'
 import type { Route } from 'next'
 
 import { nbccFinalCtaTracking } from '../utils/nbccLandingPageContent'
+import { NbccReveal } from './NbccReveal'
 
 export function NbccFinalCtaSection() {
   return (
     <article className='relative overflow-hidden bg-jungle px-4 py-20 sm:px-6 lg:px-8'>
       <div className='absolute inset-0' />
-      <div
-        data-nbcc-reveal
-        data-nbcc-animate
-        className='relative mx-auto flex flex-col items-center text-left'
-      >
+      <NbccReveal className='relative mx-auto flex flex-col items-center text-left'>
         <p className='text-left font-utekos-text-medium text-sm text-foreground'>
           Klar for neste campingtur
         </p>
@@ -50,7 +47,7 @@ export function NbccFinalCtaSection() {
             <MoveRightIcon size={18} animateOnHover='default' />
           </Link>
         </Button>
-      </div>
+      </NbccReveal>
     </article>
   )
 }

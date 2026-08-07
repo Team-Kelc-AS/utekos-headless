@@ -6,6 +6,7 @@ import Link from 'next/link'
 import type { Route } from 'next'
 
 import { nbccSteps } from '../utils/nbccLandingPageContent'
+import { NbccReveal } from './NbccReveal'
 
 export function NbccHowToUseSection() {
   return (
@@ -15,7 +16,7 @@ export function NbccHowToUseSection() {
     >
       <div className='mx-auto max-w-7xl'>
         <div className='grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start'>
-          <div data-nbcc-reveal data-nbcc-animate>
+          <NbccReveal>
             <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-foreground uppercase'>
               NBCC MEDLEMSFORDEL
             </p>
@@ -48,13 +49,9 @@ export function NbccHowToUseSection() {
                 />
               </Link>
             </Button>
-          </div>
+          </NbccReveal>
 
-          <div
-            data-nbcc-reveal
-            data-nbcc-animate
-            className='rounded-lg border border-foreground/15 bg-card p-6 sm:p-8'
-          >
+          <NbccReveal className='rounded-lg border border-foreground/15 bg-card p-6 sm:p-8'>
             <ol className='grid gap-6'>
               {nbccSteps.map((step, index) => (
                 <li
@@ -86,7 +83,7 @@ export function NbccHowToUseSection() {
                 </li>
               ))}
             </ol>
-          </div>
+          </NbccReveal>
         </div>
       </div>
     </article>
