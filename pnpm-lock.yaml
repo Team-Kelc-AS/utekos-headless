@@ -177,8 +177,8 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0(@ai-sdk/mcp@2.0.16(zod@4.4.3))(ai@6.0.208(zod@4.4.3))
       '@vercel/flags-core':
-        specifier: ^1.4.0
-        version: 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
+        specifier: ^1.7.1
+        version: 1.7.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
       '@vercel/functions':
         specifier: ^3.7.5
         version: 3.7.5(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)
@@ -4464,8 +4464,15 @@ packages:
   '@vercel/cli-config@0.2.1':
     resolution: {integrity: sha512-RhfyXmRLHdbnry8RJqHDc+5rGxMZ0bu+fpysZjtv3bE+BubpuwxTancHOKiH5zKQREsdwFVr3mOI2kOvxlOyxA==}
 
+  '@vercel/cli-config@0.2.2':
+    resolution: {integrity: sha512-kAy35eymNzRBfmcqEViVQge0KJ59FYEKsPqGNCSJQ7M9HTuFGWd3qPcZos1A5cZpAWRBdiYe82Bcz9P7pIZvUQ==}
+
   '@vercel/cli-exec@1.0.0':
     resolution: {integrity: sha512-kQF8LGie/Hbdq9/psJxLE7owRTcqMQMhgybU04gCeR7cbQAr5t8OrjefDNColJv1QSSucFt4pLwRiARVmlOnug==}
+    engines: {node: '>= 18'}
+
+  '@vercel/cli-exec@1.0.1':
+    resolution: {integrity: sha512-g9XerViJ/paZujufXYcu5XYI2vU2rtB4sgdpjUHde5RnOkdmpu0ngH46LCFGHoPXO/C+qDPSczIHIRN+8Q2YKQ==}
     engines: {node: '>= 18'}
 
   '@vercel/connect@0.5.0':
@@ -4502,8 +4509,31 @@ packages:
       next:
         optional: true
 
+  '@vercel/flags-core@1.7.1':
+    resolution: {integrity: sha512-Fzm/+ubwxjEjhdGC8RXp+maQzjRFCNCPbXuxHd75v1tKllya45+gYRhc71HHqIVuteVWkdaYAdRdi+ytwaShiQ==}
+    peerDependencies:
+      '@openfeature/server-sdk': 1.18.0
+      next: '*'
+    peerDependenciesMeta:
+      '@openfeature/server-sdk':
+        optional: true
+      next:
+        optional: true
+
   '@vercel/functions@3.7.5':
     resolution: {integrity: sha512-ESf8BbeDebqRUyMi09JwRbQqpLn4g6fjcVVHPsHB56j2dSqRrSHO4h3X4aaxJf6iQQjzhAtDGI2xCWQ27JE8PA==}
+    engines: {node: '>= 20'}
+    peerDependencies:
+      '@aws-sdk/credential-provider-web-identity': '*'
+      ws: '>=8'
+    peerDependenciesMeta:
+      '@aws-sdk/credential-provider-web-identity':
+        optional: true
+      ws:
+        optional: true
+
+  '@vercel/functions@3.8.0':
+    resolution: {integrity: sha512-2vvvf544KWqZBR6ZqqpnpKV9DRT6pb69YgSa0BMZ619L/HO0hblHGkpoqlmTE/L0R28op46vgk9EDAT3D932Vw==}
     engines: {node: '>= 20'}
     peerDependencies:
       '@aws-sdk/credential-provider-web-identity': '*'
@@ -4528,6 +4558,10 @@ packages:
 
   '@vercel/oidc@3.8.1':
     resolution: {integrity: sha512-ufdalm2MWOYksyj8KVpWjoOFPJO6zoYpuyvIggIQ2bB0CFCjTCiTkGXHqAKwG77GVRjOaN3/8S5ITlZpXWmqOw==}
+    engines: {node: '>= 20'}
+
+  '@vercel/oidc@3.8.2':
+    resolution: {integrity: sha512-nmVSeQ7tewCkqYBNB/MNL8aPB9sTvtjvqIE6+U17U4IuTyehuWVERDlWrSn0DVfiFAstRlRkGLHBlKHB2FyzbQ==}
     engines: {node: '>= 20'}
 
   '@vercel/otel@2.1.3':
@@ -14398,7 +14432,16 @@ snapshots:
       xdg-app-paths: 5.5.1
       zod: 4.1.11
 
+  '@vercel/cli-config@0.2.2':
+    dependencies:
+      xdg-app-paths: 5.5.1
+      zod: 4.1.11
+
   '@vercel/cli-exec@1.0.0':
+    dependencies:
+      execa: 5.1.1
+
+  '@vercel/cli-exec@1.0.1':
     dependencies:
       execa: 5.1.1
 
@@ -14422,9 +14465,29 @@ snapshots:
       - '@aws-sdk/credential-provider-web-identity'
       - ws
 
+  '@vercel/flags-core@1.7.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
+    dependencies:
+      '@vercel/functions': 3.8.0(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)
+      '@vercel/oidc': 3.5.0
+      jose: 5.2.1
+      js-xxhash: 4.0.0
+    optionalDependencies:
+      '@openfeature/server-sdk': 1.18.0(@openfeature/core@1.11.0)
+      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+    transitivePeerDependencies:
+      - '@aws-sdk/credential-provider-web-identity'
+      - ws
+
   '@vercel/functions@3.7.5(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)':
     dependencies:
       '@vercel/oidc': 3.8.0
+    optionalDependencies:
+      '@aws-sdk/credential-provider-web-identity': 3.972.49
+      ws: 8.21.0
+
+  '@vercel/functions@3.8.0(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)':
+    dependencies:
+      '@vercel/oidc': 3.8.2
     optionalDependencies:
       '@aws-sdk/credential-provider-web-identity': 3.972.49
       ws: 8.21.0
@@ -14443,6 +14506,12 @@ snapshots:
     dependencies:
       '@vercel/cli-config': 0.2.1
       '@vercel/cli-exec': 1.0.0
+      jose: 5.10.0
+
+  '@vercel/oidc@3.8.2':
+    dependencies:
+      '@vercel/cli-config': 0.2.2
+      '@vercel/cli-exec': 1.0.1
       jose: 5.10.0
 
   '@vercel/otel@2.1.3(@opentelemetry/api-logs@0.214.0)(@opentelemetry/api@1.9.1)(@opentelemetry/instrumentation@0.214.0(@opentelemetry/api@1.9.1)(supports-color@8.1.1))(@opentelemetry/resources@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-logs@0.208.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-metrics@2.2.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))':
@@ -14701,7 +14770,7 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.31
       '@standard-schema/spec': 1.0.0
       '@types/ms': 2.1.0
-      '@vercel/functions': 3.7.5(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)
+      '@vercel/functions': 3.8.0(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)
       '@workflow/errors': 4.1.5
       '@workflow/serde': 4.1.2
       '@workflow/utils': 4.1.4
