@@ -3,6 +3,8 @@ import Module from 'node:module'
 import { createRequire } from 'node:module'
 import test from 'node:test'
 
+import type { DunWaitlistShopifyQueueQueryRow } from './dunWaitlistShopifyQueueDb'
+
 const moduleWithLoad = Module as typeof Module & {
   _load: (
     request: string,
@@ -53,22 +55,27 @@ test('calls pgmq.set_vt with queue name, bigint msg_id, and vt seconds', async (
       visibilityTimeoutSeconds: 300
     },
     {
-      executeQuery: async (query, parameters) => {
+      executeQuery: async <T extends DunWaitlistShopifyQueueQueryRow>(
+        query: string,
+        parameters: readonly unknown[]
+      ) => {
         calls.push({ query, parameters })
-        return [{ msg_id: '42' }]
+        return [{ msg_id: '42' }] as unknown as T[]
       }
     }
   )
 
   assert.equal(updated, true)
   assert.equal(calls.length, 1)
-  assert.match(calls[0].query, /pgmq\.set_vt/)
-  assert.deepEqual(calls[0].parameters, [
+  const call = calls[0]
+  assert.ok(call)
+  assert.match(call.query, /pgmq\.set_vt/)
+  assert.deepEqual(call.parameters, [
     DUN_WAITLIST_SHOPIFY_QUEUE_NAME,
     '42',
     300
   ])
-  assert.match(calls[0].query, /\$2::bigint/)
+  assert.match(call.query, /\$2::bigint/)
 })
 
 test('returns false when set_vt updates no row', async () => {
@@ -78,7 +85,8 @@ test('returns false when set_vt updates no row', async () => {
       visibilityTimeoutSeconds: 600
     },
     {
-      executeQuery: async () => []
+      executeQuery: async <T extends DunWaitlistShopifyQueueQueryRow>() =>
+        [] as unknown as T[]
     }
   )
 

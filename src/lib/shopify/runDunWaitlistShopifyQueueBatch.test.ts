@@ -71,24 +71,33 @@ function unusedDeadLetter(): never {
   throw new Error('deadLetter should not be called')
 }
 
-test('archives only after Shopify success', async () => {
-  const archiveOrder: string[] = []
-  let syncCalls = 0
+async function noopRecordSucceeded(): Promise<{ recorded: boolean }> {
+  return { recorded: true }
+}
+
+test('records sync evidence before archive on Shopify success', async () => {
+  const order: string[] = []
+  let recordedLeadId: string | undefined
 
   const summary = await runDunWaitlistShopifyQueueBatch(
     { maxItems: 1 },
     {
       readMessages: async () => [makeRecord('1', leadA)],
       processMessage: async () => {
-        syncCalls += 1
-        archiveOrder.push('sync')
+        order.push('sync')
         return {
           status: 'succeeded',
-          customerId: 'gid://shopify/Customer/1'
+          customerId: 'gid://shopify/Customer/1',
+          leadId: leadA
         }
       },
+      recordSyncSucceeded: async leadId => {
+        recordedLeadId = leadId
+        order.push('evidence')
+        return { recorded: true }
+      },
       archiveMessage: async msgId => {
-        archiveOrder.push(`archive:${msgId}`)
+        order.push(`archive:${msgId}`)
         return true
       },
       setVisibility: async () => {
@@ -98,10 +107,39 @@ test('archives only after Shopify success', async () => {
     }
   )
 
-  assert.deepEqual(archiveOrder, ['sync', 'archive:1'])
-  assert.equal(syncCalls, 1)
+  assert.deepEqual(order, ['sync', 'evidence', 'archive:1'])
+  assert.equal(recordedLeadId, leadA)
   assert.equal(summary.succeeded, 1)
   assert.equal(summary.archived, 1)
+})
+
+test('does not archive when sync evidence write fails', async () => {
+  let archiveCalls = 0
+
+  const summary = await runDunWaitlistShopifyQueueBatch(
+    { maxItems: 1 },
+    {
+      readMessages: async () => [makeRecord('1', leadA)],
+      processMessage: async () => ({
+        status: 'succeeded',
+        customerId: 'gid://shopify/Customer/1',
+        leadId: leadA
+      }),
+      recordSyncSucceeded: async () => {
+        throw new Error('evidence write failed')
+      },
+      archiveMessage: async () => {
+        archiveCalls += 1
+        return true
+      },
+      setVisibility: async () => false,
+      deadLetterMessage: unusedDeadLetter
+    }
+  )
+
+  assert.equal(archiveCalls, 0)
+  assert.equal(summary.succeeded, 0)
+  assert.equal(summary.failed, 1)
 })
 
 test('schedules retry via set_vt on transient first attempt', async () => {
@@ -120,6 +158,7 @@ test('schedules retry via set_vt on transient first attempt', async () => {
         leadId: leadB,
         schemaVersion: 1
       }),
+      recordSyncSucceeded: noopRecordSucceeded,
       archiveMessage: async () => {
         archiveCalls += 1
         return true
@@ -158,6 +197,7 @@ test('schedules 600s backoff on transient second attempt', async () => {
         kind: 'transient',
         reason: 'shopify_tags_add_failed'
       }),
+      recordSyncSucceeded: noopRecordSucceeded,
       archiveMessage: async () => true,
       setVisibility: async input => {
         visibility.push(input.visibilityTimeoutSeconds)
@@ -186,6 +226,7 @@ test('dead-letters permanent failure on first attempt without set_vt', async () 
         leadId: leadC,
         schemaVersion: 1
       }),
+      recordSyncSucceeded: noopRecordSucceeded,
       archiveMessage: async () => {
         throw new Error('success archive should not be used')
       },
@@ -229,6 +270,7 @@ test('dead-letters attempts exhausted with last failure reason preserved', async
         leadId: leadA,
         schemaVersion: 1
       }),
+      recordSyncSucceeded: noopRecordSucceeded,
       archiveMessage: async () => true,
       setVisibility: async () => {
         setVisibilityCalls += 1
@@ -266,8 +308,10 @@ test('archives success on final attempt without dead-letter', async () => {
       readMessages: async () => [makeRecord('55', leadA, 5)],
       processMessage: async () => ({
         status: 'succeeded',
-        customerId: 'gid://shopify/Customer/55'
+        customerId: 'gid://shopify/Customer/55',
+        leadId: leadA
       }),
+      recordSyncSucceeded: noopRecordSucceeded,
       archiveMessage: async () => {
         archiveCalls += 1
         return true
@@ -292,12 +336,17 @@ test('archives success on final attempt without dead-letter', async () => {
 
 test('archives already_satisfied shadow messages without counting Shopify success', async () => {
   let archiveCalls = 0
+  let evidenceCalls = 0
 
   const summary = await runDunWaitlistShopifyQueueBatch(
     { maxItems: 1 },
     {
       readMessages: async () => [makeRecord('3', leadC)],
       processMessage: async () => ({ status: 'already_satisfied' }),
+      recordSyncSucceeded: async () => {
+        evidenceCalls += 1
+        return { recorded: true }
+      },
       archiveMessage: async () => {
         archiveCalls += 1
         return true
@@ -308,6 +357,7 @@ test('archives already_satisfied shadow messages without counting Shopify succes
   )
 
   assert.equal(archiveCalls, 1)
+  assert.equal(evidenceCalls, 0)
   assert.equal(summary.alreadySatisfied, 1)
   assert.equal(summary.succeeded, 0)
   assert.equal(summary.archived, 1)
@@ -317,6 +367,7 @@ test('isolates mixed outcomes within a batch', async () => {
   const archived: string[] = []
   const retries: string[] = []
   const deadLetters: string[] = []
+  const evidence: string[] = []
 
   const summary = await runDunWaitlistShopifyQueueBatch(
     { maxItems: 4 },
@@ -331,7 +382,8 @@ test('isolates mixed outcomes within a batch', async () => {
         if (record.msg_id === '1') {
           return {
             status: 'succeeded',
-            customerId: 'gid://shopify/Customer/1'
+            customerId: 'gid://shopify/Customer/1',
+            leadId: leadA
           }
         }
 
@@ -352,6 +404,10 @@ test('isolates mixed outcomes within a batch', async () => {
         }
 
         return { status: 'already_satisfied' }
+      },
+      recordSyncSucceeded: async leadId => {
+        evidence.push(leadId)
+        return { recorded: true }
       },
       archiveMessage: async msgId => {
         archived.push(msgId)
@@ -379,6 +435,7 @@ test('isolates mixed outcomes within a batch', async () => {
     failed: 0,
     archived: 3
   })
+  assert.deepEqual(evidence, [leadA])
   assert.deepEqual(archived, ['1', '4'])
   assert.deepEqual(retries, ['2'])
   assert.deepEqual(deadLetters, ['3'])
@@ -396,6 +453,7 @@ test('counts set_vt failure as failed and does not archive', async () => {
         kind: 'transient',
         reason: 'shopify_customer_lookup_failed'
       }),
+      recordSyncSucceeded: noopRecordSucceeded,
       archiveMessage: async () => {
         archiveCalls += 1
         return true
@@ -423,6 +481,7 @@ test('counts dead-letter transaction failure as failed without archive', async (
         reason: 'lead_not_found',
         leadId: leadA
       }),
+      recordSyncSucceeded: noopRecordSucceeded,
       archiveMessage: async () => true,
       setVisibility: async () => true,
       deadLetterMessage: async () => {

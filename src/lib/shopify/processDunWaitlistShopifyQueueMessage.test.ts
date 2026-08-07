@@ -108,7 +108,8 @@ test('syncs a valid unsatisfied lead exactly once', async () => {
 
   assert.deepEqual(result, {
     status: 'succeeded',
-    customerId: 'gid://shopify/Customer/99'
+    customerId: 'gid://shopify/Customer/99',
+    leadId
   })
   assert.equal(syncCalls, 1)
 })

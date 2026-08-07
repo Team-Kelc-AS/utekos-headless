@@ -26,7 +26,7 @@ import {
 
 export type ProcessDunWaitlistShopifyQueueMessageResult =
   | { status: 'already_satisfied' }
-  | { status: 'succeeded'; customerId: string }
+  | { status: 'succeeded'; customerId: string; leadId: string }
   | {
       status: 'failure'
       kind: 'transient' | 'permanent'
@@ -146,7 +146,8 @@ export async function processDunWaitlistShopifyQueueMessage(
 
         return {
           status: 'succeeded',
-          customerId: synced.customerId
+          customerId: synced.customerId,
+          leadId
         }
       } catch (error: unknown) {
         const reason = failureReasonFromUnknown(error)

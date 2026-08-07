@@ -1,73 +1,131 @@
+import * as Sentry from '@sentry/nextjs'
+
+import { hasValidCronAuthorization } from '@/lib/security/hasValidCronAuthorization'
 import {
-    runDunWaitlistShopifySyncBatch,
-    type DunWaitlistShopifySyncSummary
-  } from '@/lib/shopify/runDunWaitlistShopifySyncBatch'
-  import { hasValidCronAuthorization } from '@/lib/security/hasValidCronAuthorization'
-  
-  const CRON_BATCH_SIZE = 10
-  
-  export const maxDuration = 60
-  
-  type RunBatch = (input: {
+  getDunWaitlistSyncBackend,
+  type DunWaitlistSyncBackend
+} from '@/lib/shopify/getDunWaitlistSyncBackend'
+import {
+  getDunWaitlistShopifyQueueMetrics,
+  type DunWaitlistShopifyQueueMetrics
+} from '@/lib/shopify/getDunWaitlistShopifyQueueMetrics'
+import {
+  runDunWaitlistShopifyQueueBatch,
+  type DunWaitlistShopifyQueueBatchSummary
+} from '@/lib/shopify/runDunWaitlistShopifyQueueBatch'
+import {
+  runDunWaitlistShopifySyncBatch,
+  type DunWaitlistShopifySyncSummary
+} from '@/lib/shopify/runDunWaitlistShopifySyncBatch'
+
+const CRON_BATCH_SIZE = 10
+
+export const maxDuration = 60
+
+export type DunWaitlistShopifySyncCronDependencies = {
+  getCronSecret: () => string | undefined
+  getBackend: () => DunWaitlistSyncBackend
+  runLegacyBatch: (input: {
     maxItems: number
   }) => Promise<DunWaitlistShopifySyncSummary>
-  
-  export type DunWaitlistShopifySyncCronDependencies = {
-    getCronSecret: () => string | undefined
-    runBatch: RunBatch
+  runPgmqBatch: (input: {
+    maxItems: number
+  }) => Promise<DunWaitlistShopifyQueueBatchSummary>
+  getQueueMetrics: () => Promise<DunWaitlistShopifyQueueMetrics>
+  setBackendTag: (backend: DunWaitlistSyncBackend) => void
+}
+
+const defaultDependencies: DunWaitlistShopifySyncCronDependencies = {
+  getCronSecret: () => process.env.CRON_SECRET,
+  getBackend: getDunWaitlistSyncBackend,
+  runLegacyBatch: runDunWaitlistShopifySyncBatch,
+  runPgmqBatch: runDunWaitlistShopifyQueueBatch,
+  getQueueMetrics: getDunWaitlistShopifyQueueMetrics,
+  setBackendTag: backend => {
+    Sentry.getCurrentScope().setTag('dun_waitlist_sync_backend', backend)
   }
-  
-  const defaultDependencies: DunWaitlistShopifySyncCronDependencies =
-    {
-      getCronSecret: () =>
-        process.env.CRON_SECRET,
-      runBatch:
-        runDunWaitlistShopifySyncBatch
-    }
-  
-  export async function handleDunWaitlistShopifySyncCron(
-    request: Request,
-    dependencies: DunWaitlistShopifySyncCronDependencies =
-      defaultDependencies
-  ) {
-    const authorized =
-      hasValidCronAuthorization(
-        request.headers.get('authorization'),
-        dependencies.getCronSecret()
-      )
-  
-    if (!authorized) {
-      return Response.json(
-        { ok: false },
-        {
-          headers: {
-            'Cache-Control': 'no-store'
-          },
-          status: 401
-        }
-      )
-    }
-  
-    const summary =
-      await dependencies.runBatch({
-        maxItems: CRON_BATCH_SIZE
-      })
-  
+}
+
+const noStoreHeaders = {
+  'Cache-Control': 'no-store'
+} as const
+
+export async function handleDunWaitlistShopifySyncCron(
+  request: Request,
+  dependencies: DunWaitlistShopifySyncCronDependencies = defaultDependencies
+) {
+  const authorized = hasValidCronAuthorization(
+    request.headers.get('authorization'),
+    dependencies.getCronSecret()
+  )
+
+  if (!authorized) {
     return Response.json(
+      { ok: false },
       {
-        ...summary,
-        ok: true
-      },
-      {
-        headers: {
-          'Cache-Control': 'no-store'
-        }
+        headers: noStoreHeaders,
+        status: 401
       }
     )
   }
-  
-  export function GET(request: Request) {
-    return handleDunWaitlistShopifySyncCron(
-      request
+
+  let backend: DunWaitlistSyncBackend
+
+  try {
+    backend = dependencies.getBackend()
+  } catch {
+    return Response.json(
+      {
+        ok: false,
+        error: 'invalid_dun_waitlist_sync_backend'
+      },
+      {
+        headers: noStoreHeaders,
+        status: 500
+      }
     )
   }
+
+  dependencies.setBackendTag(backend)
+
+  if (backend === 'legacy') {
+    const summary = await dependencies.runLegacyBatch({
+      maxItems: CRON_BATCH_SIZE
+    })
+
+    return Response.json(
+      {
+        ...summary,
+        backend: 'legacy' as const,
+        ok: true
+      },
+      { headers: noStoreHeaders }
+    )
+  }
+
+  const summary = await dependencies.runPgmqBatch({
+    maxItems: CRON_BATCH_SIZE
+  })
+
+  let queueMetrics: DunWaitlistShopifyQueueMetrics | undefined
+
+  try {
+    queueMetrics = await dependencies.getQueueMetrics()
+  } catch {
+    queueMetrics = undefined
+  }
+
+  return Response.json(
+    {
+      ...summary,
+      backend: 'pgmq' as const,
+      ok: true,
+      ...(queueMetrics !== undefined ? { queueMetrics } : {})
+    },
+    { headers: noStoreHeaders }
+  )
+}
+
+export function GET(request: Request) {
+  return handleDunWaitlistShopifySyncCron(request)
+}

@@ -62,12 +62,14 @@ legacy integration_event
 ```
 
 Messages that fail, are invalid, or lack a lead remain leased until VT
-expiry. Terminal dead-letter policy is STEG 4.
+expiry unless STEG 4 retry/dead-letter handling is applied by the
+dormant PGMQ consumer. See
+[STEG 4 retry / dead-letter](./shopify-dun-waitlist-sync-steg-4-retry-dead-letter.md).
 
 ## Explicit non-goals
 
 - No new Vercel / Supabase cron
 - No Edge Function
 - No cutover of `/api/cron/shopify-dun-waitlist-sync`
-- No `set_vt` backoff / max-attempt dead-letter yet
 - No writes to `ops.integration_events` from the PGMQ consumer
+- Terminal `set_vt` / dead-letter policy: implemented in STEG 4 (consumer still dormant)

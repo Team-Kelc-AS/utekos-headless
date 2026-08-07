@@ -27,6 +27,7 @@ experience, so you can manage background tasks with minimal configuration.
 - [Dun waitlist → Shopify sync — STEG 2 PGMQ shadow enqueue](./shopify-dun-waitlist-sync-steg-2-shadow-enqueue.md)
 - [Dun waitlist → Shopify sync — STEG 3 PGMQ consumer core](./shopify-dun-waitlist-sync-steg-3-consumer-core.md)
 - [Dun waitlist → Shopify sync — STEG 4 retry / dead-letter](./shopify-dun-waitlist-sync-steg-4-retry-dead-letter.md)
+- [Dun waitlist → Shopify sync — STEG 5 controlled cutover](./shopify-dun-waitlist-sync-steg-5-cutover.md)
 
 ### Supabase Queues guides
 

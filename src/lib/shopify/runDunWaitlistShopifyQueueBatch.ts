@@ -15,6 +15,7 @@ import {
   type ProcessDunWaitlistShopifyQueueMessageResult
 } from './processDunWaitlistShopifyQueueMessage'
 import { readDunWaitlistShopifyQueue } from './readDunWaitlistShopifyQueue'
+import { recordDunWaitlistShopifySyncSucceeded } from './recordDunWaitlistShopifySyncSucceeded'
 import { setDunWaitlistShopifyQueueVisibility } from './setDunWaitlistShopifyQueueVisibility'
 
 export type DunWaitlistShopifyQueueBatchSummary = {
@@ -43,6 +44,7 @@ export type RunDunWaitlistShopifyQueueBatchDependencies = {
     visibilityTimeoutSeconds: number
   }) => Promise<boolean>
   deadLetterMessage: typeof deadLetterDunWaitlistShopifyQueueMessage
+  recordSyncSucceeded: (leadId: string) => Promise<{ recorded: boolean }>
 }
 
 const maxItemsSchema = z.number().int().min(1).max(50)
@@ -53,7 +55,8 @@ const defaultDependencies: RunDunWaitlistShopifyQueueBatchDependencies =
     processMessage: processDunWaitlistShopifyQueueMessage,
     archiveMessage: archiveDunWaitlistShopifyQueueMessage,
     setVisibility: setDunWaitlistShopifyQueueVisibility,
-    deadLetterMessage: deadLetterDunWaitlistShopifyQueueMessage
+    deadLetterMessage: deadLetterDunWaitlistShopifyQueueMessage,
+    recordSyncSucceeded: recordDunWaitlistShopifySyncSucceeded
   }
 
 async function archiveSuccess(
@@ -185,6 +188,12 @@ export async function runDunWaitlistShopifyQueueBatch(
 
     switch (result.status) {
       case 'succeeded':
+        try {
+          await dependencies.recordSyncSucceeded(result.leadId)
+        } catch {
+          summary.failed += 1
+          break
+        }
         summary.succeeded += 1
         await archiveSuccess(
           record.msg_id,

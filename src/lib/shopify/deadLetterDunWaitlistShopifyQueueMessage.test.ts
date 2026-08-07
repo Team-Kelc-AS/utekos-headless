@@ -3,6 +3,8 @@ import Module from 'node:module'
 import { createRequire } from 'node:module'
 import test from 'node:test'
 
+import type { DunWaitlistShopifyQueueQueryRow } from './dunWaitlistShopifyQueueDb'
+
 const moduleWithLoad = Module as typeof Module & {
   _load: (
     request: string,
@@ -63,7 +65,10 @@ test('runs dead-letter insert and archive in one transaction', async () => {
     {
       runTransaction: async work =>
         work({
-          executeQuery: async (query, parameters) => {
+          executeQuery: async <T extends DunWaitlistShopifyQueueQueryRow>(
+            query: string,
+            parameters: readonly unknown[]
+          ) => {
             queries.push({ query, parameters })
             return [
               {
@@ -72,22 +77,24 @@ test('runs dead-letter insert and archive in one transaction', async () => {
                 dead_letter_id: 'dl-1',
                 inserted: true
               }
-            ]
+            ] as unknown as T[]
           }
         })
     }
   )
 
   assert.equal(queries.length, 1)
-  assert.match(queries[0].query, /ops\.dead_letter_events/)
-  assert.match(queries[0].query, /pgmq\.archive/)
-  assert.equal(queries[0].parameters[0], DUN_WAITLIST_SHOPIFY_PGMQ_DEAD_LETTER_SOURCE)
-  assert.equal(queries[0].parameters[1], '12345')
-  assert.equal(queries[0].parameters[2], 'invalid_queue_message')
-  assert.equal(queries[0].parameters[5], DUN_WAITLIST_SHOPIFY_QUEUE_NAME)
-  assert.equal(queries[0].parameters[6], '12345')
+  const call = queries[0]
+  assert.ok(call)
+  assert.match(call.query, /ops\.dead_letter_events/)
+  assert.match(call.query, /pgmq\.archive/)
+  assert.equal(call.parameters[0], DUN_WAITLIST_SHOPIFY_PGMQ_DEAD_LETTER_SOURCE)
+  assert.equal(call.parameters[1], '12345')
+  assert.equal(call.parameters[2], 'invalid_queue_message')
+  assert.equal(call.parameters[5], DUN_WAITLIST_SHOPIFY_QUEUE_NAME)
+  assert.equal(call.parameters[6], '12345')
 
-  const payload = JSON.parse(String(queries[0].parameters[3])) as {
+  const payload = JSON.parse(String(call.parameters[3])) as {
     pgmq_message_id: string
     lead_id?: string
   }
@@ -116,7 +123,10 @@ test('preserves attempts-exhausted reason and last failure in metadata', async (
     {
       runTransaction: async work =>
         work({
-          executeQuery: async (_query, parameters) => {
+          executeQuery: async <T extends DunWaitlistShopifyQueueQueryRow>(
+            _query: string,
+            parameters: readonly unknown[]
+          ) => {
             metadataRaw = String(parameters[4])
             return [
               {
@@ -125,7 +135,7 @@ test('preserves attempts-exhausted reason and last failure in metadata', async (
                 dead_letter_id: 'dl-2',
                 inserted: true
               }
-            ]
+            ] as unknown as T[]
           }
         })
     }
@@ -152,14 +162,15 @@ test('idempotent second call reports alreadyExisted without requiring a new inse
     {
       runTransaction: async work =>
         work({
-          executeQuery: async () => [
-            {
-              already_existed: true,
-              archived: true,
-              dead_letter_id: 'dl-existing',
-              inserted: false
-            }
-          ]
+          executeQuery: async <T extends DunWaitlistShopifyQueueQueryRow>() =>
+            [
+              {
+                already_existed: true,
+                archived: true,
+                dead_letter_id: 'dl-existing',
+                inserted: false
+              }
+            ] as unknown as T[]
         })
     }
   )

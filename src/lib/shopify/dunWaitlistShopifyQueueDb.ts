@@ -41,33 +41,37 @@ function getTrackingSql() {
   return trackingSql
 }
 
-function createQueryExecutor(sql: {
-  unsafe: <T extends readonly (object | undefined)[]>(
-    query: string,
-    parameters?: readonly unknown[] | null
-  ) => Promise<T>
-}): DunWaitlistShopifyQueueQueryExecutor {
-  return async <T extends DunWaitlistShopifyQueueQueryRow>(
-    query: string,
-    parameters: readonly unknown[]
-  ) => {
-    return sql.unsafe<T[]>(query, parameters)
-  }
-}
-
 export const executeDunWaitlistShopifyQueueQuery: DunWaitlistShopifyQueueQueryExecutor =
   async <T extends DunWaitlistShopifyQueueQueryRow>(
     query: string,
     parameters: readonly unknown[]
   ) => {
-    return createQueryExecutor(getTrackingSql())<T>(query, parameters)
+    const sql = getTrackingSql()
+    const postgresParameters =
+      parameters as Parameters<typeof sql.unsafe>[1]
+
+    return sql.unsafe<T[]>(query, postgresParameters)
   }
 
 export const withDunWaitlistShopifyQueueTransaction: DunWaitlistShopifyQueueTransactionRunner =
-  async work => {
-    return getTrackingSql().begin(async sql => {
-      return work({
-        executeQuery: createQueryExecutor(sql)
-      })
+  async <T>(
+    work: (transaction: DunWaitlistShopifyQueueTransaction) => Promise<T>
+  ): Promise<T> => {
+    const result = await getTrackingSql().begin(async sql => {
+      const executeQuery: DunWaitlistShopifyQueueQueryExecutor = async <
+        TRow extends DunWaitlistShopifyQueueQueryRow
+      >(
+        query: string,
+        parameters: readonly unknown[]
+      ) => {
+        const postgresParameters =
+          parameters as Parameters<typeof sql.unsafe>[1]
+
+        return sql.unsafe<TRow[]>(query, postgresParameters)
+      }
+
+      return work({ executeQuery })
     })
+
+    return result as T
   }

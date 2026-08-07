@@ -1,10 +1,13 @@
 # Dun waitlist → Shopify sync — STEG 4 retry / dead-letter
 
 PGMQ retry and dead-letter semantics are implemented and tested.
-PGMQ consumer remains dormant in production.
-Legacy Dun sync remains the production owner.
-No production cutover was performed.
+PGMQ consumer remains callable only when `DUN_WAITLIST_SYNC_BACKEND=pgmq`.
+Until STEG 5 Phase B cutover approval, legacy Dun sync remains the
+production owner.
+No production cutover has occurred in STEG 4.
 No legacy queue/state was removed.
+
+See [STEG 5 cutover](./shopify-dun-waitlist-sync-steg-5-cutover.md).
 
 ## State after STEG 4
 

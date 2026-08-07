@@ -333,23 +333,20 @@ test('local PGMQ smoke: atomic dead-letter + archive is idempotent', async t => 
     prepare: false
   })
 
-  const runTransaction = async <T>(
-    work: (transaction: {
-      executeQuery: <R extends Record<string, unknown>>(
-        query: string,
-        parameters: readonly unknown[]
-      ) => Promise<R[]>
-    }) => Promise<T>
-  ) =>
-    sql.begin(async tx =>
-      work({
-        executeQuery: async (query, parameters) =>
-          tx.unsafe(
-            query,
-            parameters as Parameters<typeof tx.unsafe>[1]
-          )
-      })
-    )
+  const runTransaction: typeof import('./dunWaitlistShopifyQueueDb').withDunWaitlistShopifyQueueTransaction =
+    async work => {
+      const result = await sql.begin(async tx =>
+        work({
+          executeQuery: async (query, parameters) =>
+            tx.unsafe(
+              query,
+              parameters as Parameters<typeof tx.unsafe>[1]
+            )
+        })
+      )
+
+      return result as Awaited<ReturnType<typeof work>>
+    }
 
   const leadId = '55555555-5555-4555-8555-555555555555'
 
