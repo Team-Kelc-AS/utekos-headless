@@ -104,7 +104,7 @@ index 5c34c5cfecedf5d583812ddd0dbe01724371b270..af8ff136229cc143cb8a538c87ccf0c3
 +    return values.flatMap((value)=>typeof value === 'string' ? value.split(',') : []).map((value)=>value.trim().toLowerCase()).filter((value)=>value && value !== 'identity');
 +}
 +function reportDecompressionFailure(contentEncoding, activeEncoding, error) {
-+    console.warn('[next-ppr-resume] postponed-state decompression failed; using raw body', {
++    console.warn('[next-ppr-resume] postponed-state decompression failed; using safe dynamic-data fallback', {
 +        contentEncoding: contentEncoding || 'none',
 +        activeEncoding,
 +        code: typeof error?.code === 'string' ? error.code : 'UNKNOWN'
@@ -219,7 +219,7 @@ index 5c34c5cfecedf5d583812ddd0dbe01724371b270..af8ff136229cc143cb8a538c87ccf0c3
 +    } catch (error) {
 +        const activeEncoding = error?.activeEncoding || requestedEncodings.at(-1) || 'unknown';
 +        reportDecompressionFailure(requestedEncoding, activeEncoding, error);
-+        return body;
++        return Buffer.from('4:nullnull', 'utf8');
 +    }
 +}
 +
@@ -295,7 +295,7 @@ index 41027be598bfb7e9f8afbf84ae22e65c44e93feb..d6f76430cbbbd37bf0a7d14d0129be91
 +    return values.flatMap((value)=>typeof value === 'string' ? value.split(',') : []).map((value)=>value.trim().toLowerCase()).filter((value)=>value && value !== 'identity');
 +}
 +function reportDecompressionFailure(contentEncoding, activeEncoding, error) {
-+    console.warn('[next-ppr-resume] postponed-state decompression failed; using raw body', {
++    console.warn('[next-ppr-resume] postponed-state decompression failed; using safe dynamic-data fallback', {
 +        contentEncoding: contentEncoding || 'none',
 +        activeEncoding,
 +        code: typeof error?.code === 'string' ? error.code : 'UNKNOWN'
@@ -410,7 +410,7 @@ index 41027be598bfb7e9f8afbf84ae22e65c44e93feb..d6f76430cbbbd37bf0a7d14d0129be91
 +    } catch (error) {
 +        const activeEncoding = error?.activeEncoding || requestedEncodings.at(-1) || 'unknown';
 +        reportDecompressionFailure(requestedEncoding, activeEncoding, error);
-+        return body;
++        return Buffer.from('4:nullnull', 'utf8');
 +    }
 +}
 +

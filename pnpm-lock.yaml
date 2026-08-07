@@ -4,9 +4,13 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  encoding-sniffer: ^1.0.2
+  rimraf: ^6.1.3
+
 patchedDependencies:
   botid@1.5.11: 422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab
-  next@16.2.12: 22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf
+  next@16.2.12: 85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5
   react-email@6.6.3: a3effa40ff6e63f92736e2c08686d3e123f8d38caa70928ddb7a94a0a362cfd7
 
 importers:
@@ -33,7 +37,7 @@ importers:
         version: 4.1.1
       '@flags-sdk/vercel':
         specifier: ^1.3.0
-        version: 1.4.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
+        version: 1.4.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
       '@fontsource-variable/google-sans':
         specifier: ^5.2.1
         version: 5.2.1
@@ -96,7 +100,7 @@ importers:
         version: 16.2.12(@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20)))(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7))
       '@next/third-parties':
         specifier: 16.2.12
-        version: 16.2.12(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 16.2.12(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@openfeature/server-sdk':
         specifier: ^1.18.0
         version: 1.18.0(@openfeature/core@1.11.0)
@@ -129,7 +133,7 @@ importers:
         version: 10.56.0
       '@sentry/nextjs':
         specifier: 10.56.0
-        version: 10.56.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))
+        version: 10.56.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))
       '@sentry/opentelemetry':
         specifier: 10.56.0
         version: 10.56.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/semantic-conventions@1.41.1)
@@ -168,13 +172,13 @@ importers:
         version: 1.38.0
       '@vercel/analytics':
         specifier: ^2.0.1
-        version: 2.0.1(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 2.0.1(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@vercel/connect':
         specifier: ^0.5.0
         version: 0.5.0(@ai-sdk/mcp@2.0.16(zod@4.4.3))(ai@6.0.208(zod@4.4.3))
       '@vercel/flags-core':
         specifier: ^1.4.0
-        version: 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
+        version: 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
       '@vercel/functions':
         specifier: ^3.7.5
         version: 3.7.5(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)
@@ -189,7 +193,7 @@ importers:
         version: 0.4.0(@opentelemetry/api@1.9.1)
       '@vercel/speed-insights':
         specifier: ^2.0.0
-        version: 2.0.0(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 2.0.0(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@xstate/react':
         specifier: ^6.1.0
         version: 6.1.0(@types/react@19.2.17)(react@19.2.7)(xstate@5.32.1)
@@ -204,16 +208,13 @@ importers:
         version: 4.12.1
       botid:
         specifier: ^1.5.11
-        version: 1.5.11(patch_hash=422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 1.5.11(patch_hash=422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       capi-param-builder-nodejs:
         specifier: ^1.3.1
         version: 1.3.1
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
-      cli:
-        specifier: ^1.0.1
-        version: 1.0.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -252,7 +253,7 @@ importers:
         version: 0.1.2(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)
       flags:
         specifier: ^4.1.0
-        version: 4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       google-auth-library:
         specifier: ^10.6.2
         version: 10.7.0(supports-color@8.1.1)
@@ -276,7 +277,7 @@ importers:
         version: 12.40.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       next:
         specifier: 16.2.12
-        version: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -375,7 +376,7 @@ importers:
         version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       workflow:
         specifier: ^4.6.2
-        version: 4.6.2(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(typescript@6.0.3)(ws@8.21.0)
+        version: 4.6.2(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(typescript@6.0.3)(ws@8.21.0)
       xstate:
         specifier: ^5.32.0
         version: 5.32.1
@@ -1868,6 +1869,15 @@ packages:
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@exodus/bytes@1.15.1':
+    resolution: {integrity: sha512-S6mL0yNB/Abt9Ei4tq8gDhcczc4S3+vQ4ra7vxnAf+YHC02srtqxKKZghx2Dq6p0e66THKwR6r8N6P95wEty7Q==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
+    peerDependencies:
+      '@noble/hashes': ^1.8.0 || ^2.0.0
+    peerDependenciesMeta:
+      '@noble/hashes':
+        optional: true
+
   '@flags-sdk/vercel@1.4.2':
     resolution: {integrity: sha512-Qy9c1ptGIwfNwDjUYDO4QPHGEb8w4mMaAQ48z394DZiVfY5/A6EEC/kiVpTOS8AosVr1fjT0zG6m9bnEL/GghQ==}
     peerDependencies:
@@ -2140,10 +2150,6 @@ packages:
 
   '@internationalized/string@3.2.9':
     resolution: {integrity: sha512-kzP/M/mbQxODlmOt4bIQZ2SBVUWUSqMLXooXixnX7noche8WHaQcA+nwFN1K2KCF/cp+LDUhcJsCicwkvhD1pg==}
-
-  '@isaacs/cliui@8.0.2':
-    resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
-    engines: {node: '>=12'}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -2920,10 +2926,6 @@ packages:
   '@pandacss/is-valid-prop@1.11.3':
     resolution: {integrity: sha512-YaHK+p5DaN8AUpsRx5OqqGxaZzn8uNIdVhP+K1cjvjv3+Qa9D/75/A1dPyLmfKrSRJc8UoR9WN9fxQX0rVzhzQ==}
     engines: {node: '>=20'}
-
-  '@pkgjs/parseargs@0.11.0':
-    resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
-    engines: {node: '>=14'}
 
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
@@ -5751,10 +5753,6 @@ packages:
     resolution: {integrity: sha512-xRwvIOMGrfOAnM1JYtqQImuaNtDEv9v6oIYAs4LIHwTiKee8uwvIi363igssOC0O5U04i4AlENs79LQLu9tEMw==}
     engines: {node: '>=20'}
 
-  cli@1.0.1:
-    resolution: {integrity: sha512-41U72MB56TfUMGndAKK8vJ78eooOD4Z5NOL4xEfjc0c23s+6EYKXlXsmACBVclLP1yOfWCgEganVzddVrSNoTg==}
-    engines: {node: '>=0.2.5'}
-
   client-only@0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
 
@@ -6184,9 +6182,6 @@ packages:
   duplexify@4.1.3:
     resolution: {integrity: sha512-M3BmBhwJRZsSx38lZyhE53Csddgzl5R7xGJNk7CVddZD6CcmwMCH8J+7AprIrQKH7TonKxaCjcv27Qmf+sQ+oA==}
 
-  eastasianwidth@0.2.0:
-    resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
-
   easy-table@1.2.0:
     resolution: {integrity: sha512-OFzVOv03YpvtcWGe5AayU5G2hgybsg3iqA6drU8UaoZyB9jLGMTrz9+asnLp/E+6qPh88yEI1gvyZFZ41dmgww==}
 
@@ -6264,8 +6259,9 @@ packages:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
     engines: {node: '>= 0.8'}
 
-  encoding-sniffer@0.2.1:
-    resolution: {integrity: sha512-5gvq20T6vfpekVtqrYQsSCFZ1wEg5+wW0/QaZMWkFr6BqD3NfKs0rLCx4rrVlSWJeZb5NBJgVLswK/w2MWU+Gw==}
+  encoding-sniffer@1.0.2:
+    resolution: {integrity: sha512-dlQ0jlnDJ2ElE1Ky4crYX0pPEPxQY9F2j+ZMIXlBedLJToEfDed9pvPqXg4fZnuu4qVBbcIrZVeg3S4aibTYGw==}
+    engines: {node: '>=20.19.0'}
 
   end-of-stream@1.4.5:
     resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
@@ -6623,10 +6619,6 @@ packages:
     resolution: {integrity: sha512-9Be3ZoN4LmYR90tUoVu2te2BsbzHfhJyfEiAVfz7N5/zv+jduIfLrV2xdQXOHbaD6KgpGdO9PRPM1Y4Q9QkPkA==}
     engines: {node: ^18.19.0 || >=20.5.0}
 
-  exit@0.1.2:
-    resolution: {integrity: sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ==}
-    engines: {node: '>= 0.8.0'}
-
   express-rate-limit@8.5.2:
     resolution: {integrity: sha512-5Kb34ipNX694DH48vN9irak1Qx30nb0PLYHXfJgw4YEjiC3ZEmZJhwOp+VfiCYwFzvFTdB9QkArYS5kXa2cx2A==}
     engines: {node: '>= 16'}
@@ -6827,10 +6819,6 @@ packages:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
     engines: {node: '>= 0.4'}
 
-  foreground-child@3.3.1:
-    resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
-    engines: {node: '>=14'}
-
   form-data-encoder@4.1.0:
     resolution: {integrity: sha512-G6NsmEW15s0Uw9XnCg+33H3ViYRyiM0hMrMhhqQOR8NFc5GhYrI+6I3u7OTw7b91J2g8rtvMBZJDbcGb2YUniw==}
     engines: {node: '>= 18'}
@@ -6897,9 +6885,6 @@ packages:
   fs-extra@11.3.5:
     resolution: {integrity: sha512-eKpRKAovdpZtR1WopLHxlBWvAgPny3c4gX1G5Jhwmmw4XJj0ifSD5qB5TOo8hmA0wlRKDAOAhEE1yVPgs6Fgcg==}
     engines: {node: '>=14.14'}
-
-  fs.realpath@1.0.0:
-    resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
   fsevents@2.3.2:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
@@ -7013,18 +6998,9 @@ packages:
   glob-to-regexp@0.4.1:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
 
-  glob@10.5.0:
-    resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
-    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-    hasBin: true
-
   glob@13.0.6:
     resolution: {integrity: sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==}
     engines: {node: 18 || 20 || >=22}
-
-  glob@7.2.3:
-    resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
@@ -7257,10 +7233,6 @@ packages:
     resolution: {integrity: sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA==}
     engines: {node: '>=20.0.0'}
 
-  iconv-lite@0.6.3:
-    resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
-    engines: {node: '>=0.10.0'}
-
   iconv-lite@0.7.2:
     resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
     engines: {node: '>=0.10.0'}
@@ -7297,10 +7269,6 @@ packages:
   indent-string@4.0.0:
     resolution: {integrity: sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==}
     engines: {node: '>=8'}
-
-  inflight@1.0.6:
-    resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
-    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -7573,9 +7541,6 @@ packages:
   iterator.prototype@1.1.5:
     resolution: {integrity: sha512-H0dkQoCa3b2VEeKQBOxFph+JAbcrQdE7KC0UkqwpLmv2EC4P41QXP+rqo9wYodACiG5/WM5s9oDApTU8utwj9g==}
     engines: {node: '>= 0.4'}
-
-  jackspeak@3.4.3:
-    resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
 
   jake@10.9.4:
     resolution: {integrity: sha512-wpHYzhxiVQL+IV05BLE2Xn34zW1S223hvjtqk0+gsPrwd/8JNLXJgZZM/iPFsYc1xyphF+6M6EvdE5E9MBGkDA==}
@@ -7923,9 +7888,6 @@ packages:
   lowercase-keys@3.0.0:
     resolution: {integrity: sha512-ozCC6gdQ+glXOQsveKD0YsDy8DSQFjDTz4zyzEHNV5+JP5D62LmfDZ6o1cycFx9ouG940M5dE8C8CTewdj2YWQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
-  lru-cache@10.4.3:
-    resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
   lru-cache@11.5.1:
     resolution: {integrity: sha512-RPimw/7aMdv2oqRrxKwvZXcPfwBrn/JZ2xYcY9Hus/6LaS3VOAKVWKWgNLCFSiOm1ESXinjsDlidVU7JlnCN2A==}
@@ -8753,10 +8715,6 @@ packages:
     resolution: {integrity: sha512-RjhtfwJOxzcFmNOi6ltcbcu4Iu+FL3zEj83dk4kAS+fVpTxXLO1b38RvJgT/0QwvV/L3aY9TAnyv0EOqW4GoMQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  path-is-absolute@1.0.1:
-    resolution: {integrity: sha512-AVbw3UJ2e9bq64vSaS9Am0fje1Pa8pbGqTTsmXfaIiMpnr5DlDhfJOuLj9Sf95ZPVDAUerDfEk88MPmPe7UCQg==}
-    engines: {node: '>=0.10.0'}
-
   path-key@3.1.1:
     resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
     engines: {node: '>=8'}
@@ -8767,10 +8725,6 @@ packages:
 
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
-
-  path-scurry@1.11.1:
-    resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
-    engines: {node: '>=16 || 14 >=14.18'}
 
   path-scurry@2.0.2:
     resolution: {integrity: sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==}
@@ -9477,8 +9431,9 @@ packages:
   rfdc@1.4.1:
     resolution: {integrity: sha512-q1b3N5QkRUWUl7iyylaaj3kOpIT0N2i9MqIEQXP73GVsN9cw3fdx8X63cEmWhJGi2PPCF23Ijp7ktmd39rawIA==}
 
-  rimraf@5.0.10:
-    resolution: {integrity: sha512-l0OE8wL34P4nJH/H2ffoaniAokM2qSmrtXHmlpvYr5AVVX8msAyW0l8NVJFDxlSK4u3Uh/f41cQheDVdnYijwQ==}
+  rimraf@6.1.3:
+    resolution: {integrity: sha512-LKg+Cr2ZF61fkcaK1UdkH2yEBBKnYjTyWzTJT6KNPcSPaiT7HSdhtMXQuN5wkTX0Xu72KQ1l8S42rlmexS2hSA==}
+    engines: {node: 20 || >=22}
     hasBin: true
 
   rolldown@1.1.5:
@@ -9755,10 +9710,6 @@ packages:
   string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
     engines: {node: '>=8'}
-
-  string-width@5.1.2:
-    resolution: {integrity: sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA==}
-    engines: {node: '>=12'}
 
   string-width@7.2.0:
     resolution: {integrity: sha512-tsaTIkKW9b4N+AEj+SVA+WhJzV7/zMhcSu78mLKWSk7cXMOSHsBKFWUs0fWwq8QyK3MgJBQRX6Gbi4kYbdvGkQ==}
@@ -10464,11 +10415,6 @@ packages:
       webpack-cli:
         optional: true
 
-  whatwg-encoding@3.1.1:
-    resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
-    engines: {node: '>=18'}
-    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
-
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
     engines: {node: '>=18'}
@@ -10540,10 +10486,6 @@ packages:
   wrap-ansi@7.0.0:
     resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}
     engines: {node: '>=10'}
-
-  wrap-ansi@8.1.0:
-    resolution: {integrity: sha512-si7QWI6zUMq56bESFvagtmzMdGOtoxfR+Sez11Mobfc7tm+VkUckk9bW2UeffTGVUbOksxmSw0AA2gs8g71NCQ==}
-    engines: {node: '>=12'}
 
   wrap-ansi@9.0.2:
     resolution: {integrity: sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww==}
@@ -12129,10 +12071,12 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
-  '@flags-sdk/vercel@1.4.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
+  '@exodus/bytes@1.15.1': {}
+
+  '@flags-sdk/vercel@1.4.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
     dependencies:
-      '@vercel/flags-core': 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
-      flags: 4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@vercel/flags-core': 1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)
+      flags: 4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     transitivePeerDependencies:
       - '@aws-sdk/credential-provider-web-identity'
       - '@openfeature/server-sdk'
@@ -12367,15 +12311,6 @@ snapshots:
   '@internationalized/string@3.2.9':
     dependencies:
       '@swc/helpers': 0.5.15
-
-  '@isaacs/cliui@8.0.2':
-    dependencies:
-      string-width: 5.1.2
-      string-width-cjs: string-width@4.2.3
-      strip-ansi: 7.2.0
-      strip-ansi-cjs: strip-ansi@6.0.1
-      wrap-ansi: 8.1.0
-      wrap-ansi-cjs: wrap-ansi@7.0.0
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
@@ -12855,9 +12790,9 @@ snapshots:
   '@next/swc-win32-x64-msvc@16.2.6':
     optional: true
 
-  '@next/third-parties@16.2.12(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@next/third-parties@16.2.12(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
     dependencies:
-      next: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
       third-party-capital: 1.0.20
 
@@ -13115,9 +13050,6 @@ snapshots:
   '@pandacss/is-valid-prop@1.11.1': {}
 
   '@pandacss/is-valid-prop@1.11.3': {}
-
-  '@pkgjs/parseargs@0.11.0':
-    optional: true
 
   '@pkgr/core@0.3.6': {}
 
@@ -13664,7 +13596,7 @@ snapshots:
 
   '@sentry/core@10.56.0': {}
 
-  '@sentry/nextjs@10.56.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))':
+  '@sentry/nextjs@10.56.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/semantic-conventions': 1.41.1
@@ -13677,7 +13609,7 @@ snapshots:
       '@sentry/react': 10.56.0(react@19.2.7)
       '@sentry/vercel-edge': 10.56.0
       '@sentry/webpack-plugin': 5.3.0(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.20))
-      next: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       rollup: 4.62.2
       stacktrace-parser: 0.1.11
     transitivePeerDependencies:
@@ -14444,9 +14376,9 @@ snapshots:
     dependencies:
       uncrypto: 0.1.3
 
-  '@vercel/analytics@2.0.1(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@vercel/analytics@2.0.1(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
     optionalDependencies:
-      next: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
 
   '@vercel/cli-auth@0.0.1':
@@ -14477,7 +14409,7 @@ snapshots:
       '@ai-sdk/mcp': 2.0.16(zod@4.4.3)
       ai: 6.0.208(zod@4.4.3)
 
-  '@vercel/flags-core@1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
+  '@vercel/flags-core@1.5.1(@aws-sdk/credential-provider-web-identity@3.972.49)(@openfeature/server-sdk@1.18.0(@openfeature/core@1.11.0))(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(ws@8.21.0)':
     dependencies:
       '@vercel/functions': 3.7.5(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.21.0)
       '@vercel/oidc': 3.5.0
@@ -14485,7 +14417,7 @@ snapshots:
       js-xxhash: 4.0.0
     optionalDependencies:
       '@openfeature/server-sdk': 1.18.0(@openfeature/core@1.11.0)
-      next: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     transitivePeerDependencies:
       - '@aws-sdk/credential-provider-web-identity'
       - ws
@@ -14539,9 +14471,9 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
 
-  '@vercel/speed-insights@2.0.0(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@vercel/speed-insights@2.0.0(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
     optionalDependencies:
-      next: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
 
   '@visulima/boxen@2.0.10': {}
@@ -14810,7 +14742,7 @@ snapshots:
       - supports-color
       - ws
 
-  '@workflow/next@4.1.2(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(ws@8.21.0)':
+  '@workflow/next@4.1.2(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(ws@8.21.0)':
     dependencies:
       '@swc/core': 1.15.3
       '@workflow/builders': 4.1.3(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
@@ -14819,7 +14751,7 @@ snapshots:
       semver: 7.7.4
       watchpack: 2.5.1
     optionalDependencies:
-      next: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - '@swc/helpers'
@@ -16389,9 +16321,9 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  botid@1.5.11(patch_hash=422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
+  botid@1.5.11(patch_hash=422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
     optionalDependencies:
-      next: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
 
   bowser@2.14.1: {}
@@ -16551,13 +16483,15 @@ snapshots:
       dom-serializer: 2.0.0
       domhandler: 5.0.3
       domutils: 3.2.2
-      encoding-sniffer: 0.2.1
+      encoding-sniffer: 1.0.2
       htmlparser2: 10.1.0
       parse5: 7.3.0
       parse5-htmlparser2-tree-adapter: 7.1.0
       parse5-parser-stream: 7.1.2
       undici: 7.28.0
       whatwg-mimetype: 4.0.0
+    transitivePeerDependencies:
+      - '@noble/hashes'
 
   chokidar@4.0.3:
     dependencies:
@@ -16618,11 +16552,6 @@ snapshots:
     dependencies:
       slice-ansi: 8.0.0
       string-width: 8.2.1
-
-  cli@1.0.1:
-    dependencies:
-      exit: 0.1.2
-      glob: 7.2.3
 
   client-only@0.0.1: {}
 
@@ -17024,8 +16953,6 @@ snapshots:
       readable-stream: 3.6.2
       stream-shift: 1.0.3
 
-  eastasianwidth@0.2.0: {}
-
   easy-table@1.2.0:
     dependencies:
       ansi-regex: 5.0.1
@@ -17090,10 +17017,11 @@ snapshots:
 
   encodeurl@2.0.0: {}
 
-  encoding-sniffer@0.2.1:
+  encoding-sniffer@1.0.2:
     dependencies:
-      iconv-lite: 0.6.3
-      whatwg-encoding: 3.1.1
+      '@exodus/bytes': 1.15.1
+    transitivePeerDependencies:
+      - '@noble/hashes'
 
   end-of-stream@1.4.5:
     dependencies:
@@ -17706,8 +17634,6 @@ snapshots:
       strip-final-newline: 4.0.0
       yoctocolors: 2.1.2
 
-  exit@0.1.2: {}
-
   express-rate-limit@8.5.2(express@5.2.1(supports-color@8.1.1)):
     dependencies:
       express: 5.2.1(supports-color@8.1.1)
@@ -17921,13 +17847,13 @@ snapshots:
 
   first-match@0.0.1: {}
 
-  flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  flags@4.2.0(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
       '@edge-runtime/cookies': 5.0.2
       jose: 5.10.0
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
-      next: 16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
@@ -17947,11 +17873,6 @@ snapshots:
   for-each@0.3.5:
     dependencies:
       is-callable: 1.2.7
-
-  foreground-child@3.3.1:
-    dependencies:
-      cross-spawn: 7.0.6
-      signal-exit: 4.1.0
 
   form-data-encoder@4.1.0: {}
 
@@ -18008,8 +17929,6 @@ snapshots:
       graceful-fs: 4.2.11
       jsonfile: 6.2.1
       universalify: 2.0.1
-
-  fs.realpath@1.0.0: {}
 
   fsevents@2.3.2:
     optional: true
@@ -18125,29 +18044,11 @@ snapshots:
 
   glob-to-regexp@0.4.1: {}
 
-  glob@10.5.0:
-    dependencies:
-      foreground-child: 3.3.1
-      jackspeak: 3.4.3
-      minimatch: 9.0.9
-      minipass: 7.1.3
-      package-json-from-dist: 1.0.1
-      path-scurry: 1.11.1
-
   glob@13.0.6:
     dependencies:
       minimatch: 10.2.5
       minipass: 7.1.3
       path-scurry: 2.0.2
-
-  glob@7.2.3:
-    dependencies:
-      fs.realpath: 1.0.0
-      inflight: 1.0.6
-      inherits: 2.0.4
-      minimatch: 3.1.5
-      once: 1.4.0
-      path-is-absolute: 1.0.1
 
   globals@11.12.0: {}
 
@@ -18204,7 +18105,7 @@ snapshots:
       proto3-json-serializer: 3.0.4
       protobufjs: 7.6.4
       retry-request: 8.0.3(supports-color@8.1.1)
-      rimraf: 5.0.10
+      rimraf: 6.1.3
     transitivePeerDependencies:
       - supports-color
 
@@ -18511,10 +18412,6 @@ snapshots:
 
   iceberg-js@0.8.1: {}
 
-  iconv-lite@0.6.3:
-    dependencies:
-      safer-buffer: 2.1.2
-
   iconv-lite@0.7.2:
     dependencies:
       safer-buffer: 2.1.2
@@ -18544,11 +18441,6 @@ snapshots:
   imurmurhash@0.1.4: {}
 
   indent-string@4.0.0: {}
-
-  inflight@1.0.6:
-    dependencies:
-      once: 1.4.0
-      wrappy: 1.0.2
 
   inherits@2.0.4: {}
 
@@ -18779,12 +18671,6 @@ snapshots:
       get-proto: 1.0.1
       has-symbols: 1.1.0
       set-function-name: 2.0.2
-
-  jackspeak@3.4.3:
-    dependencies:
-      '@isaacs/cliui': 8.0.2
-    optionalDependencies:
-      '@pkgjs/parseargs': 0.11.0
 
   jake@10.9.4:
     dependencies:
@@ -19099,8 +18985,6 @@ snapshots:
   lottie-web@5.13.0: {}
 
   lowercase-keys@3.0.0: {}
-
-  lru-cache@10.4.3: {}
 
   lru-cache@11.5.1: {}
 
@@ -19721,7 +19605,7 @@ snapshots:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
-  next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
       '@next/env': 16.2.12
       '@swc/helpers': 0.5.15
@@ -20077,6 +19961,7 @@ snapshots:
       zod-to-json-schema: 3.25.2(zod@3.25.76)
     transitivePeerDependencies:
       - '@cfworker/json-schema'
+      - '@noble/hashes'
       - supports-color
 
   parent-module@1.0.1:
@@ -20141,18 +20026,11 @@ snapshots:
 
   path-exists@5.0.0: {}
 
-  path-is-absolute@1.0.1: {}
-
   path-key@3.1.1: {}
 
   path-key@4.0.0: {}
 
   path-parse@1.0.7: {}
-
-  path-scurry@1.11.1:
-    dependencies:
-      lru-cache: 10.4.3
-      minipass: 7.1.3
 
   path-scurry@2.0.2:
     dependencies:
@@ -21011,9 +20889,10 @@ snapshots:
 
   rfdc@1.4.1: {}
 
-  rimraf@5.0.10:
+  rimraf@6.1.3:
     dependencies:
-      glob: 10.5.0
+      glob: 13.0.6
+      package-json-from-dist: 1.0.1
 
   rolldown@1.1.5:
     dependencies:
@@ -21445,12 +21324,6 @@ snapshots:
       emoji-regex: 8.0.0
       is-fullwidth-code-point: 3.0.0
       strip-ansi: 6.0.1
-
-  string-width@5.1.2:
-    dependencies:
-      eastasianwidth: 0.2.0
-      emoji-regex: 9.2.2
-      strip-ansi: 7.2.0
 
   string-width@7.2.0:
     dependencies:
@@ -22208,10 +22081,6 @@ snapshots:
       - postcss
       - uglify-js
 
-  whatwg-encoding@3.1.1:
-    dependencies:
-      iconv-lite: 0.6.3
-
   whatwg-mimetype@4.0.0: {}
 
   whatwg-url@5.0.0:
@@ -22282,14 +22151,14 @@ snapshots:
 
   wordwrap@1.0.0: {}
 
-  workflow@4.6.2(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(typescript@6.0.3)(ws@8.21.0):
+  workflow@4.6.2(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(typescript@6.0.3)(ws@8.21.0):
     dependencies:
       '@workflow/astro': 4.0.13(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/cli': 4.3.2(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/core': 4.6.2(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/errors': 4.1.5
       '@workflow/nest': 4.0.14(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3)(supports-color@8.1.1)(ws@8.21.0)
-      '@workflow/next': 4.1.2(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(ws@8.21.0)
+      '@workflow/next': 4.1.2(@opentelemetry/api@1.9.1)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/nitro': 4.1.4(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/nuxt': 4.0.14(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
       '@workflow/rollup': 4.0.13(@opentelemetry/api@1.9.1)(supports-color@8.1.1)(ws@8.21.0)
@@ -22326,12 +22195,6 @@ snapshots:
       ansi-styles: 4.3.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
-
-  wrap-ansi@8.1.0:
-    dependencies:
-      ansi-styles: 6.2.3
-      string-width: 5.1.2
-      strip-ansi: 7.2.0
 
   wrap-ansi@9.0.2:
     dependencies:
