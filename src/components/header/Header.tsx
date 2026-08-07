@@ -10,8 +10,11 @@ import { HeadphonesIcon } from 'lucide-react'
 import { ClientMobileMenu } from './ClientMobileMenu'
 import wordmarkwhite from '@/assets/images/brand/WordmarkWhite.svg'
 
-
-export default function Header({ menu }: { menu: MenuItem[] }) {
+export default function Header({
+  menu
+}: {
+  menu: MenuItem[]
+}) {
   return (
     <header className='top-0! z-50 w-full text-foreground'>
       <div className='relative mx-auto grid min-h-18 w-full grid-cols-[auto_1fr] items-center gap-3 px-4 py-2.5 sm:px-6 lg:min-h-20 lg:px-10 xl:min-h-22.5'>
@@ -27,6 +30,8 @@ export default function Header({ menu }: { menu: MenuItem[] }) {
               alt='Utekos'
               width={300}
               height={73}
+              loading='eager'
+              fetchPriority='high'
               className='h-7 w-auto sm:h-8 lg:h-9 xl:h-10'
             />
           </Link>
@@ -40,7 +45,10 @@ export default function Header({ menu }: { menu: MenuItem[] }) {
             data-track='HeaderCustomerServiceClick'
             className='dark:focus-visible:ring-dark-ring hidden h-11 min-w-31 items-center justify-center gap-2 rounded-md px-3 font-utekos-text-medium text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex dark:hover:bg-accent'
           >
-            <HeadphonesIcon className='size-4' aria-hidden />
+            <HeadphonesIcon
+              className='size-4'
+              aria-hidden
+            />
             <span>Kundeservice</span>
           </Link>
 
