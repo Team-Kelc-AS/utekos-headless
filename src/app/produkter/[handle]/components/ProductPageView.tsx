@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { ProductPageAccordion } from '@/app/produkter/[handle]/components/ProductPageAccordion'
 import { GalleryColumn } from '@/components/jsx/GalleryColumn'
+import { ProductGallery } from '@/components/jsx/ProductGallery'
 import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/KlarnaCreditPromotionAutoSize'
 import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/KlarnaOnSiteMessagingScript'
@@ -29,7 +30,6 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { ProductGalleryGrid } from './ProductGalleryGrid'
 import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
 import { SmartRealTimeActivity } from './SmartRealTimeActivity'
-import { ProductGalleryClient } from './ProductGalleryClient'
 import { ProductViewItemReporter } from './ProductViewItemReporter'
 import { computeVariantImages } from '@/lib/utils/computeVariantImages'
 import {
@@ -193,7 +193,7 @@ export function ProductPageView({
                           </div>
 
                           <div className='size-full md:hidden'>
-                            <ProductGalleryClient
+                            <ProductGallery
                               title={title}
                               images={
                                 mobileGalleryImages
@@ -201,7 +201,7 @@ export function ProductPageView({
                             />
                           </div>
                         </>
-                      : <ProductGalleryClient
+                      : <ProductGallery
                           title={title}
                           images={galleryImages}
                           {...(useCompactGallery ?

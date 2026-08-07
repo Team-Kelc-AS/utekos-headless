@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import test from 'node:test'
@@ -12,76 +13,59 @@ async function readSource(
 }
 
 test(
-  'PDP carousel is server prerendered instead of being client-only',
+  'PDP renders ProductGallery directly from the server component',
   async () => {
     const source = await readSource(
-      'src/app/produkter/[handle]/components/ProductGalleryClient.tsx'
-    )
-
-    assert.doesNotMatch(
-      source,
-      /from\s+['"]next\/dynamic['"]/,
-      'PDP gallery must not use next/dynamic'
-    )
-
-    assert.doesNotMatch(
-      source,
-      /ssr\s*:\s*false/,
-      'PDP gallery must not disable server prerendering'
+      'src/app/produkter/[handle]/components/ProductPageView.tsx'
     )
 
     assert.match(
       source,
       /import\s+\{\s*ProductGallery\s*\}\s+from\s+['"]@\/components\/jsx\/ProductGallery['"]/,
-      'ProductGallery must be imported statically'
+      'ProductPageView must import ProductGallery directly'
+    )
+
+    assert.doesNotMatch(
+      source,
+      /ProductGalleryClient/,
+      'ProductPageView must not retain the redundant ProductGalleryClient wrapper'
     )
 
     assert.match(
       source,
-      /<ProductGallery\s+\{\.\.\.props\}\s*\/>/,
-      'ProductGalleryClient must render ProductGallery directly'
+      /<ProductGallery[\s\S]*?title=\{title\}[\s\S]*?\/>/,
+      'ProductPageView must render ProductGallery directly'
     )
   }
 )
 
 test(
-  'carousel LCP image is discoverable without forcing responsive duplicates eager',
-  async () => {
-    const source = await readSource(
-      'src/components/jsx/ProductGallery.tsx'
+  'redundant ProductGalleryClient wrapper no longer exists',
+  () => {
+    const wrapperPath = join(
+      repoRoot,
+      'src/app/produkter/[handle]/components/ProductGalleryClient.tsx'
     )
 
-    assert.match(
-      source,
-      /quality=\{\s*90\s*\}/,
-      'ProductGallery images must use quality 90'
-    )
-
-    assert.match(
-      source,
-      /fetchPriority=\{\s*index\s*===\s*0\s*\?\s*['"]high['"]\s*:\s*['"]auto['"]\s*\}/,
-      'First carousel image must retain high fetch priority'
-    )
-
-    assert.doesNotMatch(
-      source,
-      /\bloading\s*=/,
-      'Responsive carousel images must use native default lazy loading'
-    )
-
-    assert.doesNotMatch(
-      source,
-      /quality=\{\s*100\s*\}/,
-      'ProductGallery must not request quality 100'
+    assert.equal(
+      existsSync(wrapperPath),
+      false,
+      'ProductGalleryClient.tsx must be deleted'
     )
   }
 )
 
 test(
-  'desktop grid avoids eager-loading the hidden responsive variant',
+  'desktop gallery grid remains a Server Component',
   async () => {
     const source = await readSource(
       'src/app/produkter/[handle]/components/ProductGalleryGrid.tsx'
+    )
+
+    assert.doesNotMatch(
+      source,
+      /^\s*['"]use client['"]/m,
+      'ProductGalleryGrid must not introduce a Client Component boundary'
     )
 
     assert.match(
@@ -99,13 +83,52 @@ test(
     assert.doesNotMatch(
       source,
       /\bloading\s*=/,
-      'Desktop grid must not eagerly load while hidden on mobile'
+      'Desktop grid must not force responsive duplicates to eager-load'
+    )
+  }
+)
+
+test(
+  'interactive carousel owns the Client Component boundary',
+  async () => {
+    const source = await readSource(
+      'src/components/jsx/ProductGallery.tsx'
+    )
+
+    assert.match(
+      source,
+      /^\s*['"]use client['"]/m,
+      'Interactive ProductGallery must remain a Client Component'
     )
 
     assert.doesNotMatch(
       source,
-      /quality=\{\s*95\s*\}/,
-      'Desktop grid must not retain quality 95'
+      /from\s+['"]next\/dynamic['"]/,
+      'ProductGallery must not use client-only dynamic rendering'
+    )
+
+    assert.doesNotMatch(
+      source,
+      /ssr\s*:\s*false/,
+      'ProductGallery must remain server-prerenderable'
+    )
+
+    assert.match(
+      source,
+      /quality=\{\s*90\s*\}/,
+      'ProductGallery images must use quality 90'
+    )
+
+    assert.match(
+      source,
+      /fetchPriority=\{\s*index\s*===\s*0\s*\?\s*['"]high['"]\s*:\s*['"]auto['"]\s*\}/,
+      'First carousel image must retain high fetch priority'
+    )
+
+    assert.doesNotMatch(
+      source,
+      /\bloading\s*=/,
+      'Responsive carousel images must use native default loading behavior'
     )
   }
 )
