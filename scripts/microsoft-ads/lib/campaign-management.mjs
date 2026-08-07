@@ -410,4 +410,4 @@ function normalizeRelativePath(pathname) {
   return path.startsWith('/')
     ? path
     : `/${path}`
-}t
+}

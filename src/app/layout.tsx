@@ -10,14 +10,12 @@ import { mainMenu } from '@/db/config/menu.config'
 import Footer from '@/components/footer/components/Footer'
 import Header from '@/components/header/Header'
 import { SiteChrome } from '@/components/layout/SiteChrome'
-import { CookieScript } from '@/components/layout/CookieScript'
 import { OnlineStoreJsonLd } from './OnlineStoreJsonLd'
 import { CartProviderLoader } from '@/components/providers/CartProviderLoader'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
 import { VercelTelemetry } from '@/components/analytics/VercelTelemetry'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
-import { GoogleTagManager } from '@next/third-parties/google'
 import Script from 'next/script'
 import { SITE_URL } from '@/constants'
 import type { Metadata } from 'next'
@@ -26,13 +24,22 @@ import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/
 import { Google_Sans_Flex } from 'next/font/google'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 
+const GOOGLE_TAG_MANAGER_ID =
+  'GTM-5TWMJQFP'
+
 const googleSansFlex = Google_Sans_Flex({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-google-sans',
   preload: false,
   fallback: ['system-ui', 'sans-serif'],
-  axes: ['ROND', 'GRAD', 'wdth', 'opsz', 'slnt']
+  axes: [
+    'ROND',
+    'GRAD',
+    'wdth',
+    'opsz',
+    'slnt'
+  ]
 })
 
 const googleTagGatewayOrigin =
@@ -41,7 +48,8 @@ const googleTagGatewayOrigin =
     process.env.VERCEL_URL
   ) ?
     `https://${process.env.VERCEL_URL}`
-  : process.env.NODE_ENV === 'development' ?
+  : process.env.NODE_ENV ===
+      'development' ?
     'http://localhost:3000'
   : SITE_URL
 
@@ -49,6 +57,14 @@ const googleTagGatewayUrl = new URL(
   '/__gtg/gtm.js',
   googleTagGatewayOrigin
 ).toString()
+
+const googleTagManagerScriptUrl =
+  new URL(googleTagGatewayUrl)
+
+googleTagManagerScriptUrl.searchParams.set(
+  'id',
+  GOOGLE_TAG_MANAGER_ID
+)
 
 function getTrackingEnvironment(): TrackingEnvironment {
   if (process.env.NODE_ENV === 'test') {
@@ -175,25 +191,42 @@ export default function RootLayout({
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
       {shouldLoadMarketingScripts ?
-        <CookieScript />
+        <>
+          <Script
+            id='_next-gtm-init'
+            strategy='beforeInteractive'
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function(w,l){
+                  w[l]=w[l]||[];
+                  w[l].push({
+                    'gtm.start':
+                      new Date().getTime(),
+                    event:'gtm.js'
+                  });
+                })(window,'dataLayer');
+              `
+            }}
+          />
+
+          <Script
+            id='_next-gtm'
+            data-ntpc='GTM'
+            src={
+              googleTagManagerScriptUrl.toString()
+            }
+            strategy='beforeInteractive'
+          />
+        </>
       : null}
 
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
         {shouldLoadMarketingScripts ?
-          <>
-            <GoogleTagManager
-              gtmId='GTM-5TWMJQFP'
-              gtmScriptUrl={
-                googleTagGatewayUrl
-              }
-            />
-
-            <Script
-              id='meta-pixel-canonical-browser'
-              src='/analytics/meta-pixel-canonical-v1.js'
-              strategy='afterInteractive'
-            />
-          </>
+          <Script
+            id='meta-pixel-canonical-browser'
+            src='/analytics/meta-pixel-canonical-v1.js'
+            strategy='afterInteractive'
+          />
         : null}
 
         <Suspense fallback={null}>
