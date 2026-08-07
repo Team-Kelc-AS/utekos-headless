@@ -18,6 +18,7 @@ import { insertMarketingLead } from './insertMarketingLead'
 
 export type RecordLeadSubmissionInput = {
   email: string
+  entryPoint?: string
   firstName?: string
   formId: LeadFormId
   leadId: string
@@ -74,6 +75,9 @@ export async function recordLeadSubmission(
         : {}),
         ...(input.productHandle ?
           { product_handle: input.productHandle }
+        : {}),
+        ...(input.entryPoint ?
+          { entry_point: input.entryPoint }
         : {})
       }
     })

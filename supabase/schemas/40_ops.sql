@@ -24,6 +24,9 @@ create table if not exists ops.provider_dispatch_attempts (
   idempotency_key text not null,
   provider text not null,
   event_id text,
+  -- Canonical event name only (e.g. scroll_depth, page_view).
+  -- Provider wire names (LandingScrollDepth, PageView) are resolved
+  -- inside provider mappers at dispatch time, never stored here.
   event_name text,
   payload jsonb not null default '{}'::jsonb,
   payload_summary jsonb not null default '{}'::jsonb,

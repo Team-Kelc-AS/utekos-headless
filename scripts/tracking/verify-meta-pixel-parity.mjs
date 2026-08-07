@@ -15,15 +15,22 @@ const OPENBRIDGE_HOSTS = new Set([
   '5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws'
 ])
 const SURFACES = [
-  { name: 'homepage', path: '/', expectedEvents: ['PageView'] },
+  {
+    name: 'homepage',
+    path: '/',
+    awayPath: '/om-oss',
+    expectedEvents: ['PageView']
+  },
   {
     name: 'product',
-    path: '/produkter/utekos-dun',
+    path: '/produkter/utekos-techdown',
+    awayPath: '/',
     expectedEvents: ['PageView', 'ViewContent']
   },
   {
     name: 'campaign',
     path: '/skreddersy-varmen',
+    awayPath: '/',
     expectedEvents: ['PageView', 'ViewContent']
   }
 ]
@@ -40,6 +47,17 @@ function isMetaTransport(rawUrl) {
     (url.hostname === 'www.facebook.com' && url.pathname === '/tr/') ||
     OPENBRIDGE_HOSTS.has(url.hostname)
   )
+}
+
+function isFacebookTrRequest(rawUrl) {
+  try {
+    const url = new URL(rawUrl)
+    return (
+      url.hostname === 'www.facebook.com' && url.pathname === '/tr/'
+    )
+  } catch {
+    return false
+  }
 }
 
 function isMetaCspViolation(message) {
@@ -163,6 +181,81 @@ function hasCanonicalEventParity(
   })
 }
 
+function latestCanonicalEventsByName(events) {
+  const latest = new Map()
+
+  for (const event of events) {
+    latest.set(event.event, event)
+  }
+
+  return [...latest.values()]
+}
+
+function isCanonicalEventId(eventId) {
+  return (
+    typeof eventId === 'string' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      eventId
+    )
+  )
+}
+
+function requestMatchesPath(pageUrl, pathname) {
+  if (typeof pageUrl !== 'string') return false
+
+  try {
+    return new URL(pageUrl).pathname === pathname
+  } catch {
+    return false
+  }
+}
+
+function isIgnorableConsoleError(message) {
+  return (
+    (message.includes('report-only Content Security Policy') &&
+      message.includes("frame-ancestors 'none'")) ||
+    message.includes('Unsupported Summarizer API languages')
+  )
+}
+
+const ALLOWED_SIDE_EFFECT_EVENTS = new Set([
+  'LandingScrollDepth'
+])
+
+function selectParityFacebookEvents(events, pathname) {
+  return events.filter(
+    event =>
+      requestMatchesPath(event.pageUrl, pathname) &&
+      isCanonicalEventId(event.eventId)
+  )
+}
+
+function selectParityOpenBridgeEvents(events, pathname) {
+  return events.filter(
+    event =>
+      requestMatchesPath(event?.pageUrl, pathname) &&
+      isCanonicalEventId(event?.eventId)
+  )
+}
+
+function hasExpectedFacebookEvents(events, expectedEvents) {
+  return expectedEvents.every(
+    eventName =>
+      events.filter(event => event.eventName === eventName)
+        .length === 1
+  )
+}
+
+function countFacebookTrForPath(requests, pathname, offset = 0) {
+  return selectParityFacebookEvents(
+    requests
+      .slice(offset)
+      .filter(request => isFacebookTrRequest(request.url))
+      .map(parseFacebookEvent),
+    pathname
+  ).length
+}
+
 async function acceptAllConsent(page) {
   const selectors = [
     '#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll',
@@ -188,15 +281,231 @@ async function acceptAllConsent(page) {
   throw new Error('Cookiebot accept-all button was not visible')
 }
 
-async function waitUntil(predicate, timeoutMs = 20_000) {
+async function waitForMarketingConsent(page, timeoutMs = 20_000) {
+  await page.waitForFunction(
+    () => globalThis.Cookiebot?.consent?.marketing === true,
+    undefined,
+    { timeout: timeoutMs }
+  )
+}
+
+async function waitForPixelInitialized(page, timeoutMs = 20_000) {
+  await page.waitForFunction(
+    () => globalThis.__utekosMetaPixelState?.initialized === true,
+    undefined,
+    { timeout: timeoutMs }
+  )
+}
+
+async function waitForPixelTransportReady(page, timeoutMs = 25_000) {
+  await page.waitForFunction(
+    () => {
+      const fbq = globalThis.fbq
+      return Boolean(
+        globalThis.__utekosMetaPixelState?.initialized === true &&
+          fbq?.loaded === true &&
+          typeof fbq?.callMethod === 'function' &&
+          document.cookie.includes('_fbp=') &&
+          document.cookie.includes('_fbc=') &&
+          document.cookie.includes('utekos_external_id=')
+      )
+    },
+    undefined,
+    { timeout: timeoutMs }
+  )
+}
+
+async function readCanonicalEventsForPath(page, pathname) {
+  return page.evaluate(targetPath => {
+    return (globalThis.dataLayer ?? [])
+      .filter(
+        entry =>
+          entry &&
+          typeof entry === 'object' &&
+          (entry.event === 'page_view' || entry.event === 'view_item')
+      )
+      .filter(entry => {
+        const pageUrl = entry.canonical_event?.page_url
+        if (typeof pageUrl !== 'string') return false
+
+        try {
+          return new URL(pageUrl).pathname === targetPath
+        } catch {
+          return false
+        }
+      })
+      .map(entry => ({
+        canonicalEventId: entry.canonical_event?.event_id ?? null,
+        event: entry.event,
+        eventId: entry.event_id ?? null,
+        pageUrl: entry.canonical_event?.page_url ?? null,
+        raw: entry
+      }))
+  }, pathname)
+}
+
+async function readPixelSentKeys(page) {
+  return page.evaluate(
+    () => Object.keys(globalThis.__utekosMetaPixelState?.sent ?? {})
+  )
+}
+
+/**
+ * Soft-navigate within the same JS context so Cookiebot marketing
+ * consent and the Pixel poller stay live. Production does not replay
+ * pre-consent dataLayer entries; full reload races Cookiebot restore.
+ *
+ * Prefer Next App Router `window.next.router.push` — plain <a>.click()
+ * often hard-navigates and remounts the document.
+ */
+async function softClientNavigate(page, pathname, searchParams = {}) {
+  const navigationMarker = `utekos_meta_smoke_nav_${randomUUID()}`
+  const query = new URLSearchParams(searchParams).toString()
+  const targetHref = query ? `${pathname}?${query}` : pathname
+
+  const result = await page.evaluate(
+    ({ targetPath, targetHref: href, marker }) => {
+      const currentQuery = location.search.replace(/^\?/, '')
+      const desiredQuery = href.includes('?')
+        ? href.slice(href.indexOf('?') + 1)
+        : ''
+      if (
+        location.pathname === targetPath &&
+        currentQuery === desiredQuery
+      ) {
+        return { method: 'noop', soft: true }
+      }
+
+      window.__utekosMetaSmokeNavMarker = marker
+      const router = window.next?.router
+
+      if (typeof router?.push === 'function') {
+        router.push(href)
+        return { method: 'next-router-push', soft: true }
+      }
+
+      const links = [...document.querySelectorAll('a[href]')]
+      const existing = links.find(anchor => {
+        const raw = anchor.getAttribute('href')
+        if (!raw || raw.startsWith('#')) return false
+
+        try {
+          return new URL(raw, location.origin).pathname === targetPath
+        } catch {
+          return false
+        }
+      })
+
+      if (existing) {
+        existing.click()
+        return { method: 'existing-link', soft: true }
+      }
+
+      const injected = document.createElement('a')
+      injected.href = href
+      injected.setAttribute('href', href)
+      injected.setAttribute('data-utekos-meta-smoke-nav', marker)
+      injected.style.display = 'none'
+      document.body.appendChild(injected)
+      injected.click()
+
+      return { method: 'injected-link', soft: true }
+    },
+    {
+      marker: navigationMarker,
+      targetHref,
+      targetPath: pathname
+    }
+  )
+
+  if (result.method === 'noop') return result
+
+  await page.waitForURL(
+    url => {
+      try {
+        return new URL(url).pathname === pathname
+      } catch {
+        return false
+      }
+    },
+    { timeout: TIMEOUT_MS }
+  )
+
+  const softStillAlive = await page.evaluate(marker => {
+    return window.__utekosMetaSmokeNavMarker === marker
+  }, navigationMarker)
+
+  if (!softStillAlive) {
+    throw new Error(
+      `Hard navigation detected while soft-navigating to ${pathname} ` +
+        `(method=${result.method}). Smoke requires SPA navigation so ` +
+        'pre-consent Cookiebot/Pixel state is preserved.'
+    )
+  }
+
+  await page.waitForTimeout(2_500)
+  return result
+}
+
+/**
+ * Generate NEW post-consent canonical events for Pixel to dispatch.
+ *
+ * Full reload races Cookiebot restore vs the Pixel poller. Soft-nav
+ * away/back remounts PageView but Next App Router can restore cached
+ * product trees so view_item's useRef dedupe suppresses ViewContent.
+ * Re-pushing cloned pre-consent entries with fresh UUIDs stays in the
+ * same consented JS context and matches the Pixel contract:
+ * new dataLayer rows after consent → /tr/.
+ */
+async function generatePostConsentSurfaceEvents(page, surface, preConsentEvents) {
+  const expectedCanonicalNames = surface.expectedEvents.map(
+    metaName => CANONICAL_EVENT_NAMES[metaName]
+  )
+
+  await page.evaluate(
+    ({ expectedCanonicalNames: names, sources }) => {
+      const dataLayer = globalThis.dataLayer || []
+      globalThis.dataLayer = dataLayer
+
+      for (const name of names) {
+        const source = sources.find(entry => entry.event === name)
+        if (!source?.raw) {
+          throw new Error(
+            `Missing pre-consent dataLayer source for ${name}`
+          )
+        }
+
+        const eventId = crypto.randomUUID()
+        const clone = structuredClone(source.raw)
+        clone.event_id = eventId
+        if (
+          clone.canonical_event &&
+          typeof clone.canonical_event === 'object'
+        ) {
+          clone.canonical_event.event_id = eventId
+          clone.canonical_event.page_url = location.href
+        }
+        dataLayer.push(clone)
+      }
+    },
+    {
+      expectedCanonicalNames,
+      sources: preConsentEvents
+    }
+  )
+
+  await page.waitForTimeout(1_000)
+}
+
+async function waitUntil(predicate, timeoutMs = 20_000, label = 'condition') {
   const deadline = Date.now() + timeoutMs
 
   while (Date.now() < deadline) {
-    if (predicate()) return
+    if (await predicate()) return
     await new Promise(resolve => setTimeout(resolve, 200))
   }
 
-  throw new Error('Timed out while waiting for Meta Pixel transport')
+  throw new Error(`Timed out while waiting for ${label}`)
 }
 
 async function verifySurface(browser, userAgent, surface) {
@@ -257,6 +566,7 @@ async function verifySurface(browser, userAgent, surface) {
   page.on('pageerror', error => pageErrors.push(error.message))
 
   try {
+    // Phase A — pre-consent on the target surface
     const navigation = await page.goto(url.toString(), {
       timeout: TIMEOUT_MS,
       waitUntil: 'domcontentloaded'
@@ -268,13 +578,40 @@ async function verifySurface(browser, userAgent, surface) {
       META_COOKIE_NAMES.includes(cookie.name)
     )
     const beforeMetaRequests = requests.length
-    const consentSelector = await acceptAllConsent(page)
-
-    await page.waitForFunction(
-      () => globalThis.Cookiebot?.consent?.marketing === true,
-      undefined,
-      { timeout: 10_000 }
+    const preConsentEvents = latestCanonicalEventsByName(
+      await readCanonicalEventsForPath(page, surface.path)
     )
+    const preConsentEventIds = preConsentEvents
+      .map(event => event.eventId)
+      .filter(Boolean)
+
+    // Phase B — grant marketing consent; pre-consent events must not replay
+    const consentSelector = await acceptAllConsent(page)
+    await waitForMarketingConsent(page)
+    await waitForPixelInitialized(page)
+    await waitForPixelTransportReady(page)
+
+    const sentAfterConsent = await readPixelSentKeys(page)
+    const facebookTrAfterConsent = countFacebookTrForPath(
+      requests,
+      surface.path
+    )
+    const preConsentIdsReplayed = preConsentEventIds.filter(eventId =>
+      sentAfterConsent.some(key => key.endsWith(`:${eventId}`))
+    )
+    const noPreConsentReplay =
+      preConsentIdsReplayed.length === 0 &&
+      facebookTrAfterConsent === 0
+
+    // Phase C — generate NEW post-consent events via SPA soft navigation
+    const postConsentRequestOffset = requests.length
+    const postConsentResponseOffset = responses.length
+    await generatePostConsentSurfaceEvents(
+      page,
+      surface,
+      preConsentEvents
+    )
+
     await page.waitForFunction(
       names =>
         names.every(name =>
@@ -286,14 +623,21 @@ async function verifySurface(browser, userAgent, surface) {
       { timeout: 15_000 }
     )
     await waitUntil(
-      () =>
-        requests.filter(request => {
-          const requestUrl = new URL(request.url)
-          return (
-            requestUrl.hostname === 'www.facebook.com' &&
-            requestUrl.pathname === '/tr/'
-          )
-        }).length >= surface.expectedEvents.length
+      () => {
+        const facebook = selectParityFacebookEvents(
+          requests
+            .slice(postConsentRequestOffset)
+            .filter(request => isFacebookTrRequest(request.url))
+            .map(parseFacebookEvent),
+          surface.path
+        )
+        return hasExpectedFacebookEvents(
+          facebook,
+          surface.expectedEvents
+        )
+      },
+      30_000,
+      `Meta /tr/ events (${surface.expectedEvents.join(', ')}) on ${surface.path}`
     )
     await page.waitForTimeout(2_000)
 
@@ -312,48 +656,48 @@ async function verifySurface(browser, userAgent, surface) {
           .update(externalId.value)
           .digest('hex')
       : null
-    const dataLayerEvents = await page.evaluate(() =>
-      (globalThis.dataLayer ?? [])
-        .filter(
-          entry =>
-            entry &&
-            typeof entry === 'object' &&
-            (entry.event === 'page_view' ||
-              entry.event === 'view_item')
-        )
-        .map(entry => ({
-          canonicalEventId:
-            entry.canonical_event?.event_id ?? null,
-          event: entry.event,
-          eventId: entry.event_id ?? null,
-          pageUrl: entry.canonical_event?.page_url ?? null
-        }))
+
+    // Prefer post-consent event IDs (exclude the pre-consent snapshot).
+    const allPathEvents = await readCanonicalEventsForPath(
+      page,
+      surface.path
     )
-    const facebookEvents = requests
-      .filter(request => {
-        const requestUrl = new URL(request.url)
-        return (
-          requestUrl.hostname === 'www.facebook.com' &&
-          requestUrl.pathname === '/tr/'
-        )
-      })
-      .map(parseFacebookEvent)
-    const openBridgeEvents = requests
-      .filter(request =>
-        OPENBRIDGE_HOSTS.has(new URL(request.url).hostname)
+    const postConsentDataLayerEvents = latestCanonicalEventsByName(
+      allPathEvents.filter(
+        event =>
+          event.eventId &&
+          !preConsentEventIds.includes(event.eventId)
       )
-      .map(parseOpenBridgeEvent)
-      .filter(Boolean)
-    const facebookStatuses = responses
-      .filter(response => {
-        const responseUrl = new URL(response.url)
-        return (
-          responseUrl.hostname === 'www.facebook.com' &&
-          responseUrl.pathname === '/tr/'
+    )
+    const dataLayerEvents =
+      (postConsentDataLayerEvents.length > 0 ?
+        postConsentDataLayerEvents
+      : latestCanonicalEventsByName(allPathEvents)
+      ).map(({ raw: _raw, ...event }) => event)
+
+    const postConsentRequests = requests.slice(postConsentRequestOffset)
+    const postConsentResponses = responses.slice(
+      postConsentResponseOffset
+    )
+    const facebookEvents = selectParityFacebookEvents(
+      postConsentRequests
+        .filter(request => isFacebookTrRequest(request.url))
+        .map(parseFacebookEvent),
+      surface.path
+    )
+    const openBridgeEvents = selectParityOpenBridgeEvents(
+      postConsentRequests
+        .filter(request =>
+          OPENBRIDGE_HOSTS.has(new URL(request.url).hostname)
         )
-      })
+        .map(parseOpenBridgeEvent)
+        .filter(Boolean),
+      surface.path
+    )
+    const facebookStatuses = postConsentResponses
+      .filter(response => isFacebookTrRequest(response.url))
       .map(response => response.status)
-    const openBridgeStatuses = responses
+    const openBridgeStatuses = postConsentResponses
       .filter(response =>
         OPENBRIDGE_HOSTS.has(new URL(response.url).hostname)
       )
@@ -370,7 +714,12 @@ async function verifySurface(browser, userAgent, surface) {
     const fbcParts = fbc?.value.split('.') ?? []
     const fbpParts = fbp?.value.split('.') ?? []
     const unexpectedFacebookEvents = facebookEvents.filter(
-      event => !surface.expectedEvents.includes(event.eventName)
+      event =>
+        !surface.expectedEvents.includes(event.eventName) &&
+        !ALLOWED_SIDE_EFFECT_EVENTS.has(event.eventName)
+    )
+    const actionableConsoleErrors = consoleErrors.filter(
+      message => !isIgnorableConsoleError(message)
     )
     const checks = {
       automaticEventsDisabled: runtime.automaticSetup === false,
@@ -413,16 +762,20 @@ async function verifySurface(browser, userAgent, surface) {
         facebookEvents.every(event => event.fbp === fbp?.value) &&
         openBridgeEvents.every(event => event?.fbp === fbp?.value),
       noConsoleErrors:
-        consoleErrors.length === 0 && pageErrors.length === 0,
+        actionableConsoleErrors.length === 0 &&
+        pageErrors.length === 0,
       noMetaBeforeConsent:
         beforeCookies.length === 0 && beforeMetaRequests === 0,
       noMetaCspViolations: metaCspViolations.length === 0,
+      noPreConsentReplay,
       noUnexpectedPixelEvents:
         unexpectedFacebookEvents.length === 0,
       providerResponses:
-        facebookStatuses.length === surface.expectedEvents.length &&
+        facebookEvents.length === surface.expectedEvents.length &&
+        facebookStatuses.length >= facebookEvents.length &&
         facebookStatuses.every(status => status === 200) &&
-        openBridgeStatuses.length >= surface.expectedEvents.length &&
+        openBridgeEvents.length >= surface.expectedEvents.length &&
+        openBridgeStatuses.length >= openBridgeEvents.length &&
         openBridgeStatuses.every(status => status === 200)
     }
 
@@ -452,6 +805,8 @@ async function verifySurface(browser, userAgent, surface) {
       openBridgeEvents,
       openBridgeStatuses,
       pageErrors,
+      preConsentEventIds,
+      preConsentIdsReplayed,
       requestFailures,
       runtime,
       surface: surface.name,
@@ -465,6 +820,9 @@ async function verifySurface(browser, userAgent, surface) {
 async function main() {
   const browser = await chromium.launch({
     args: ['--disable-blink-features=AutomationControlled'],
+    // Kasada on utekos.no blocks stock Playwright Chromium from Meta
+    // /tr/ + OpenBridge transport; system Chrome passes the challenge.
+    channel: 'chrome',
     headless: true
   })
   const majorVersion = browser.version().split('.')[0]

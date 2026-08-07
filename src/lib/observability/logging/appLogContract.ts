@@ -175,7 +175,10 @@ const eventSchemas = [
     level: z.literal('INFO'),
     data: z.strictObject({
       productHandle: z.string().min(1).max(120),
-      marketingOptIn: z.boolean().optional()
+      marketingOptIn: z.boolean().optional(),
+      entryPoint: z
+        .enum(['product_page', 'product_card'])
+        .optional()
     }),
     context: emptyDataSchema
   }),
@@ -184,7 +187,10 @@ const eventSchemas = [
     level: z.literal('ERROR'),
     data: z.strictObject({
       reasonCode: failureReasonSchema,
-      productHandle: z.string().min(1).max(120)
+      productHandle: z.string().min(1).max(120),
+      entryPoint: z
+        .enum(['product_page', 'product_card'])
+        .optional()
     }),
     context: emptyDataSchema
   }),

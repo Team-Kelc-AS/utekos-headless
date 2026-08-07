@@ -11,10 +11,18 @@ import { InlineText } from '@/components/typography/TypographyInlineText'
 export function ProductCardFooter({
   isAvailable,
   isPending,
-  onQuickBuy
+  onQuickBuy,
+  showWaitlistCta = false,
+  onWaitlistClick
 }: ProductCardFooterProps) {
   const handleQuickBuyClick = (e: React.MouseEvent) => {
     onQuickBuy(e)
+  }
+
+  const handleWaitlistClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onWaitlistClick?.(e)
   }
 
   const actionButtonClassName =
@@ -36,6 +44,18 @@ export function ProductCardFooter({
             : <InlineText className='font-sans font-semibold'>
                 Legg i handlekurv
               </InlineText>}
+          </Button>
+        : showWaitlistCta ?
+          <Button
+            type='button'
+            onClick={handleWaitlistClick}
+            data-track='ProductCardWaitlistClick'
+            variant='checkout'
+            className={actionButtonClassName}
+          >
+            <InlineText className='font-sans font-semibold'>
+              Meld på venteliste
+            </InlineText>
           </Button>
         : <ProductCardSoldOut />}
       </div>

@@ -39,6 +39,7 @@ export async function submitProductWaitlist(
     phone: formData.get('phone'),
     email: formData.get('email'),
     productHandle: formData.get('productHandle'),
+    entryPoint: formData.get('entryPoint') || undefined,
     privacy: formData.get('privacy') === 'on',
     marketing: formData.get('marketing') === 'on',
     website: formData.get('website') ?? ''
@@ -65,6 +66,7 @@ export async function submitProductWaitlist(
     formData.get('leadTrackingContext')
   )
   const leadId = crypto.randomUUID()
+  const { entryPoint, productHandle, marketing } = result.data
 
   try {
     const sendResult = await sendProductWaitlistNotification(
@@ -75,7 +77,7 @@ export async function submitProductWaitlist(
       throw new Error(sendResult.message)
     }
 
-    if (result.data.marketing) {
+    if (marketing) {
       try {
         await syncSubscriberToShopify(result.data.email)
       } catch (error: unknown) {
@@ -94,8 +96,9 @@ export async function submitProductWaitlist(
       event: 'waitlist.submitted',
       level: 'INFO',
       data: {
-        productHandle: result.data.productHandle,
-        marketingOptIn: result.data.marketing
+        productHandle,
+        marketingOptIn: marketing,
+        entryPoint
       },
       context: {}
     })
@@ -108,7 +111,8 @@ export async function submitProductWaitlist(
       level: 'ERROR',
       data: {
         reasonCode: classifyOperationalFailure(error),
-        productHandle: result.data.productHandle
+        productHandle,
+        entryPoint
       },
       context: {}
     })
@@ -139,7 +143,8 @@ export async function submitProductWaitlist(
     formId: LEAD_FORM_IDS.productWaitlistUtekosDun,
     leadType: LEAD_TYPES.productWaitlist,
     source: LEAD_SOURCES.productWaitlistUtekosDun,
-    productHandle: result.data.productHandle,
+    productHandle,
+    entryPoint,
     ...(trackingContext ? { trackingContext } : {})
   })
 

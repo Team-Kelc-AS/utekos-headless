@@ -271,6 +271,56 @@ context and applies Meta's documented appendix to supported user-data values.
 The browser Pixel and server CAPI continue to share the canonical event name
 and event ID for deduplication.
 
+### Provider attempt `event_name` observability (2026-08-07)
+
+`ops.provider_dispatch_attempts.event_name` stores the **canonical** event
+name (`scroll_depth`, `page_view`, `view_item`, …), not the Meta CAPI wire
+name. Wire names such as `LandingScrollDepth` and `PageView` are resolved
+only inside `mapCanonical*ToMeta` before the Conversions API call:
+
+```text
+scroll_depth  →  attempt.event_name = scroll_depth
+              →  Meta mapper → LandingScrollDepth
+              →  CAPI
+```
+
+Diagnose Meta outbox rows with canonical names:
+
+```sql
+SELECT *
+FROM ops.provider_dispatch_attempts
+WHERE provider = 'meta'
+  AND event_name = 'scroll_depth';
+```
+
+Do **not** filter on `event_name = 'LandingScrollDepth'` for post-reset
+traffic. Rows that used Meta wire names in `event_name` are pre-reset
+history (through approximately 2026-07-15).
+
+### Meta Pixel `trackSingleCustom` STEG 3 close (2026-08-07)
+
+Production verification closed the Pixel standard/custom dispatch fix:
+`trackSingle` for Meta standard events, `trackSingleCustom` for custom
+events (including `LandingScrollDepth`), identical browser `eventID` and
+CAPI `event_id`, and Meta API acceptance (`eventsReceived=1` +
+`fbTraceId`). Web-GTM live version for this fix is `136` (rollback
+`135`). Meta Events Manager row-level merge/dedupe remains not API-proven.
+
+`tracking:meta-pixel:smoke` follows the production consent contract
+(2026-08-07 harness fix):
+
+```text
+pre-consent canonical event → must not replay
+marketing consent granted → generate NEW canonical event
+new post-consent event → expect /tr/
+```
+
+The smoke asserts `noPreConsentReplay`, then re-pushes fresh canonical
+UUIDs in the same consented JS context (no production-code change; full
+reload races Cookiebot restore vs the Pixel poller). It launches system
+Chrome (`channel: 'chrome'`) because stock Playwright Chromium is
+blocked by Kasada on `utekos.no` and never reaches Meta `/tr/`.
+
 Release verification:
 
 - frozen pnpm install and runtime import reported SDK `25.0.3`,

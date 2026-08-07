@@ -1,5 +1,14 @@
 import { z } from 'zod'
 
+export const productWaitlistEntryPointSchema = z.enum([
+  'product_page',
+  'product_card'
+])
+
+export type ProductWaitlistEntryPoint = z.infer<
+  typeof productWaitlistEntryPointSchema
+>
+
 export const ProductWaitlistSchema = z.object({
   name: z
     .string()
@@ -21,12 +30,13 @@ export const ProductWaitlistSchema = z.object({
     .email('Skriv inn en gyldig e-postadresse.')
     .max(254, 'E-postadressen er for lang.'),
   productHandle: z.literal('utekos-dun'),
-  privacy: z
-    .boolean()
-    .refine(value => value, {
-      message:
-        'Du må bekrefte at du har lest hvordan vi behandler ventelisteopplysningene.'
-    }),
+  entryPoint: productWaitlistEntryPointSchema.default(
+    'product_page'
+  ),
+  privacy: z.boolean().refine(value => value, {
+    message:
+      'Du må bekrefte at du har lest hvordan vi behandler ventelisteopplysningene.'
+  }),
   marketing: z.boolean().default(false),
   website: z.string().max(200).optional()
 })

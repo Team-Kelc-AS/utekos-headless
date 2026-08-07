@@ -9,6 +9,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import type { ProductWaitlistEntryPoint } from '@/db/zod/schemas/ProductWaitlistSchema'
 import {
   submitProductWaitlist,
   type ProductWaitlistActionState
@@ -17,30 +18,62 @@ import { appendLeadTrackingContext } from '@/lib/analytics/collectLeadFormTracki
 import { pushGenerateLeadToDataLayer } from '@/lib/analytics/pushGenerateLeadToDataLayer'
 import { Check, Clock3, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { useActionState, useEffect, useState } from 'react'
+import { useActionState, useEffect, useId, useState } from 'react'
 
 const initialState: ProductWaitlistActionState = {
   status: 'idle',
   message: ''
 }
 
+const DEFAULT_AUTO_OPEN_DELAY_MS = 3000
+
 const fieldClassName =
   'h-12 rounded-lg border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35 dark:border-dark-border dark:bg-dark-background dark:text-dark-foreground dark:placeholder:text-dark-muted-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35'
 
-export function SoldOutWaitlistDialog() {
-  const [open, setOpen] = useState(false)
+export type SoldOutWaitlistDialogProps = {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  autoOpenDelayMs?: number | null
+  entryPoint?: ProductWaitlistEntryPoint
+}
+
+export function SoldOutWaitlistDialog({
+  open: openProp,
+  onOpenChange,
+  autoOpenDelayMs = DEFAULT_AUTO_OPEN_DELAY_MS,
+  entryPoint = 'product_page'
+}: SoldOutWaitlistDialogProps = {}) {
+  const fieldId = useId()
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false)
+  const isControlled = openProp !== undefined
+  const open = isControlled ? openProp : uncontrolledOpen
+
+  const setOpen = (nextOpen: boolean) => {
+    if (!isControlled) {
+      setUncontrolledOpen(nextOpen)
+    }
+    onOpenChange?.(nextOpen)
+  }
+
   const [state, formAction, isPending] = useActionState(
     submitProductWaitlist,
     initialState
   )
 
   useEffect(() => {
+    if (typeof autoOpenDelayMs !== 'number') {
+      return
+    }
+
     const timer = window.setTimeout(() => {
-      setOpen(true)
-    }, 3000)
+      if (!isControlled) {
+        setUncontrolledOpen(true)
+      }
+      onOpenChange?.(true)
+    }, autoOpenDelayMs)
 
     return () => window.clearTimeout(timer)
-  }, [])
+  }, [autoOpenDelayMs, isControlled, onOpenChange])
 
   useEffect(() => {
     if (state.status === 'success' && state.dataLayerEvent) {
@@ -52,6 +85,15 @@ export function SoldOutWaitlistDialog() {
     appendLeadTrackingContext(formData)
     formAction(formData)
   }
+
+  const nameFieldId = `${fieldId}-waitlist-name`
+  const phoneFieldId = `${fieldId}-waitlist-phone`
+  const emailFieldId = `${fieldId}-waitlist-email`
+  const marketingFieldId = `${fieldId}-waitlist-marketing`
+  const nameErrorId = `${fieldId}-waitlist-name-error`
+  const phoneErrorId = `${fieldId}-waitlist-phone-error`
+  const emailErrorId = `${fieldId}-waitlist-email-error`
+  const privacyErrorId = `${fieldId}-waitlist-privacy-error`
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -113,32 +155,35 @@ export function SoldOutWaitlistDialog() {
                 name='productHandle'
                 value='utekos-dun'
               />
+              <input
+                type='hidden'
+                name='entryPoint'
+                value={entryPoint}
+              />
               <input type='hidden' name='website' value='' />
 
               <div className='space-y-2'>
                 <label
-                  htmlFor='waitlist-name'
+                  htmlFor={nameFieldId}
                   className='text-sm font-medium'
                 >
                   Navn
                 </label>
                 <Input
-                  id='waitlist-name'
+                  id={nameFieldId}
                   name='name'
                   autoComplete='name'
                   placeholder='Ditt navn'
                   required
                   aria-invalid={Boolean(state.errors?.name)}
                   aria-describedby={
-                    state.errors?.name ?
-                      'waitlist-name-error'
-                    : undefined
+                    state.errors?.name ? nameErrorId : undefined
                   }
                   className={fieldClassName}
                 />
                 {state.errors?.name?.[0] ?
                   <p
-                    id='waitlist-name-error'
+                    id={nameErrorId}
                     role='alert'
                     className='text-sm text-destructive'
                   >
@@ -150,13 +195,13 @@ export function SoldOutWaitlistDialog() {
               <div className='grid gap-5 sm:grid-cols-2'>
                 <div className='space-y-2'>
                   <label
-                    htmlFor='waitlist-phone'
+                    htmlFor={phoneFieldId}
                     className='text-sm font-medium'
                   >
                     Telefon
                   </label>
                   <Input
-                    id='waitlist-phone'
+                    id={phoneFieldId}
                     name='phone'
                     type='tel'
                     inputMode='tel'
@@ -166,14 +211,14 @@ export function SoldOutWaitlistDialog() {
                     aria-invalid={Boolean(state.errors?.phone)}
                     aria-describedby={
                       state.errors?.phone ?
-                        'waitlist-phone-error'
+                        phoneErrorId
                       : undefined
                     }
                     className={fieldClassName}
                   />
                   {state.errors?.phone?.[0] ?
                     <p
-                      id='waitlist-phone-error'
+                      id={phoneErrorId}
                       role='alert'
                       className='text-sm text-destructive'
                     >
@@ -184,13 +229,13 @@ export function SoldOutWaitlistDialog() {
 
                 <div className='space-y-2'>
                   <label
-                    htmlFor='waitlist-email'
+                    htmlFor={emailFieldId}
                     className='text-sm font-medium'
                   >
                     E-post
                   </label>
                   <Input
-                    id='waitlist-email'
+                    id={emailFieldId}
                     name='email'
                     type='email'
                     inputMode='email'
@@ -200,14 +245,14 @@ export function SoldOutWaitlistDialog() {
                     aria-invalid={Boolean(state.errors?.email)}
                     aria-describedby={
                       state.errors?.email ?
-                        'waitlist-email-error'
+                        emailErrorId
                       : undefined
                     }
                     className={fieldClassName}
                   />
                   {state.errors?.email?.[0] ?
                     <p
-                      id='waitlist-email-error'
+                      id={emailErrorId}
                       role='alert'
                       className='text-sm text-destructive'
                     >
@@ -226,7 +271,7 @@ export function SoldOutWaitlistDialog() {
                     aria-invalid={Boolean(state.errors?.privacy)}
                     aria-describedby={
                       state.errors?.privacy ?
-                        'waitlist-privacy-error'
+                        privacyErrorId
                       : undefined
                     }
                     className='mt-1 size-4 shrink-0 accent-primary'
@@ -247,7 +292,7 @@ export function SoldOutWaitlistDialog() {
                 </label>
                 {state.errors?.privacy?.[0] ?
                   <p
-                    id='waitlist-privacy-error'
+                    id={privacyErrorId}
                     role='alert'
                     className='text-sm text-destructive'
                   >
@@ -258,11 +303,11 @@ export function SoldOutWaitlistDialog() {
 
               <div className='space-y-2'>
                 <label
-                  htmlFor='waitlist-marketing'
+                  htmlFor={marketingFieldId}
                   className='dark:border-dark-border dark:bg-dark-muted/25 flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/25 p-4'
                 >
                   <input
-                    id='waitlist-marketing'
+                    id={marketingFieldId}
                     type='checkbox'
                     name='marketing'
                     className='mt-1 size-4 shrink-0 accent-primary'

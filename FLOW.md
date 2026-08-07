@@ -529,6 +529,23 @@ Det som fungerer:
 - `marketing.event_ledger` viser accepted tracking-events.
 - `ops.provider_dispatch_attempts` viser provider-kø og
   provider-resultater.
+- **Observability-kontrakt:**
+  `ops.provider_dispatch_attempts.event_name` er alltid det
+  **kanoniske** event-navnet (`scroll_depth`, `page_view`, …), ikke
+  providerens wire-navn. Meta wire-navn (f.eks. `LandingScrollDepth`,
+  `PageView`) resolves først i provider-mapperen
+  (`mapCanonical*ToMeta`) før CAPI-kall. Riktig diagnose:
+
+  ```sql
+  SELECT *
+  FROM ops.provider_dispatch_attempts
+  WHERE provider = 'meta'
+    AND event_name = 'scroll_depth';
+  ```
+
+  Pre-reset-rader som lagret Meta wire-navn i `event_name` er
+  historikk (siste ca. 2026-07-15) og skal ikke brukes som aktiv
+  fasit.
 - `ops.provider_dispatch_health` og `ops.dead_letter_summary` gir
   read models for drift.
 - `marketing.consent_snapshots`, `ops.web_vitals`,

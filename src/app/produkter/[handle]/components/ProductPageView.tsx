@@ -1,5 +1,5 @@
+import { Suspense } from 'react'
 import { ProductPageAccordion } from '@/app/produkter/[handle]/components/ProductPageAccordion'
-import { RelatedProducts } from '@/app/produkter/[handle]/components/RelatedProducts'
 import { GalleryColumn } from '@/components/jsx/GalleryColumn'
 import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/KlarnaCreditPromotionAutoSize'
@@ -16,7 +16,6 @@ import { ProductDescription } from './ProductDescription'
 import { KlarnaDesktopPromo } from './KlarnaDesktopPromo'
 import { resolveProductGalleryImages } from '../utils/resolveProductGalleryImages'
 import type {
-  ProductCardModel,
   ProductPurchaseModel,
   ProductPurchaseVariant
 } from 'types/product/ProductPurchaseModel'
@@ -30,6 +29,7 @@ import { SmartRealTimeActivity } from './SmartRealTimeActivity'
 import { ProductGalleryClient } from './ProductGalleryClient'
 import { ProductPurchaseIsland } from './ProductPurchaseIsland'
 import { ProductViewItemReporter } from './ProductViewItemReporter'
+import { AsyncRelatedProducts } from './AsyncRelatedProducts'
 import { computeVariantImages } from '@/lib/utils/computeVariantImages'
 import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 import {
@@ -41,7 +41,6 @@ import {
 type ProductPageViewProps = {
   productData: ProductPurchaseModel
   selectedVariant: ProductPurchaseVariant
-  relatedProducts: ProductCardModel[]
   productOptions: UtekosProductOptions
   hasVariantSelectionError: boolean
 }
@@ -49,17 +48,19 @@ type ProductPageViewProps = {
 export function ProductPageView({
   productData,
   selectedVariant,
-  relatedProducts,
   productOptions,
   hasVariantSelectionError
 }: ProductPageViewProps) {
   const { title } = productData
+
   const selectedVariantProfile =
     selectedVariant.variantProfileData
+
   const productSubtitle =
     typeof selectedVariantProfile?.subtitle === 'string' ?
       selectedVariantProfile.subtitle
     : undefined
+
   const productPageContent = getProductPageContent(
     productData.handle
   )
@@ -70,16 +71,22 @@ export function ProductPageView({
   const activityNode =
     currentProductMetadata?.showActivity ?
       <SmartRealTimeActivity
-        baseViewers={currentProductMetadata.baseViewers ?? 3}
+        baseViewers={
+          currentProductMetadata.baseViewers ?? 3
+        }
       />
     : undefined
 
   const overrideImages =
-    PRODUCT_GALLERY_IMAGE_OVERRIDES[productData.handle]
+    PRODUCT_GALLERY_IMAGE_OVERRIDES[
+      productData.handle
+    ]
+
   const variantImages = computeVariantImages(
     productData,
     selectedVariant
   )
+
   const fallbackGalleryImages = variantImages.map(
     (image: Image) => ({
       id: image.id,
@@ -89,10 +96,12 @@ export function ProductPageView({
       height: image.height ?? 0
     })
   )
+
   const galleryImages = resolveProductGalleryImages(
     overrideImages,
     fallbackGalleryImages
   )
+
   const mobileGalleryImages =
     productData.handle === 'comfyrobe' ?
       [
@@ -102,14 +111,21 @@ export function ProductPageView({
         ...galleryImages.slice(3)
       ]
     : galleryImages
+
   const useDesktopGrid = galleryImages.length >= 6
   const useCompactGallery = galleryImages.length === 1
-  const galleryAspectRatio = useCompactGallery ? 1 : 9 / 16
+
+  const galleryAspectRatio =
+    useCompactGallery ? 1 : 9 / 16
+
   const galleryFrameClassName =
     useCompactGallery ?
       'mx-auto w-full max-w-lg sm:max-w-xl md:max-w-lg lg:max-w-xl'
     : 'relative left-1/2 w-screen -translate-x-1/2 md:left-auto md:w-full md:translate-x-0'
-  const galleryStickyClassName = `${galleryFrameClassName} md:sticky md:top-24 lg:top-20`
+
+  const galleryStickyClassName =
+    `${galleryFrameClassName} md:sticky md:top-24 lg:top-20`
+
   const galleryImageClassName =
     useCompactGallery ?
       'object-contain object-center p-6 sm:p-8 md:p-10'
@@ -118,15 +134,20 @@ export function ProductPageView({
   const klarnaPurchaseAmount =
     getKlarnaMinorUnitAmount({
       amount: selectedVariant.price.amount ?? '0',
-      currencyCode: selectedVariant.price.currencyCode
+      currencyCode:
+        selectedVariant.price.currencyCode
     }) ?? ''
 
   const priceActivityPanel = (
     <div className='! relative mt-2 pt-0 text-foreground! md:mt-0 md:pt-2'>
       <PriceActivityPanel
         productHandle={productData.handle}
-        priceAmount={selectedVariant.price.amount ?? '0'}
-        currencyCode={selectedVariant.price.currencyCode}
+        priceAmount={
+          selectedVariant.price.amount ?? '0'
+        }
+        currencyCode={
+          selectedVariant.price.currencyCode
+        }
         activityNode={activityNode}
       />
     </div>
@@ -138,10 +159,13 @@ export function ProductPageView({
         product={productData}
         variant={selectedVariant}
       />
+
       {productData.handle === 'utekos-dun' ?
         <SoldOutWaitlistDialog />
       : null}
+
       <KlarnaOnSiteMessagingScript />
+
       <div className='pointer-events-none absolute inset-0 -z-10'>
         <div className='absolute top-12 left-[8%] size-80 rounded-full' />
         <div className='absolute right-[8%] bottom-[18%] h-96 w-96 rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--very-peri)_20%,transparent)_0%,transparent_72%)] blur-3xl' />
@@ -171,10 +195,13 @@ export function ProductPageView({
                               images={galleryImages}
                             />
                           </div>
+
                           <div className='size-full md:hidden'>
                             <ProductGalleryClient
                               title={title}
-                              images={mobileGalleryImages}
+                              images={
+                                mobileGalleryImages
+                              }
                             />
                           </div>
                         </>
@@ -195,7 +222,9 @@ export function ProductPageView({
                   }
                   hasIntegratedBackground
                   integratedBackgroundSize={
-                    useCompactGallery ? 'compact' : 'wide'
+                    useCompactGallery ?
+                      'compact'
+                    : 'wide'
                   }
                   flushOnMobile={!useCompactGallery}
                   enableStickyOnDesktop={false}
@@ -203,6 +232,7 @@ export function ProductPageView({
                 />
               </AspectRatio>
             </div>
+
             <AnimatedBlock
               className='will-animate-fade-in-up mt-6 md:hidden'
               delay='0s'
@@ -213,10 +243,13 @@ export function ProductPageView({
                 selectedVariant={selectedVariant}
                 productHandle={productData.handle}
                 productTitle={title}
-                productSubtitle={productSubtitle ?? ''}
+                productSubtitle={
+                  productSubtitle ?? ''
+                }
               />
             </AnimatedBlock>
           </GalleryColumn>
+
           <OptionsColumn>
             <div className='dark:text-dark-background hidden text-background md:block'>
               <ProductHeader
@@ -224,7 +257,9 @@ export function ProductPageView({
                 selectedVariant={selectedVariant}
                 productHandle={productData.handle}
                 productTitle={title}
-                productSubtitle={productSubtitle ?? ''}
+                productSubtitle={
+                  productSubtitle ?? ''
+                }
               />
             </div>
 
@@ -246,7 +281,9 @@ export function ProductPageView({
               >
                 <KlarnaCreditPromotionAutoSize
                   id={`klarna-credit-promotion-${productData.handle}`}
-                  purchaseAmount={klarnaPurchaseAmount}
+                  purchaseAmount={
+                    klarnaPurchaseAmount
+                  }
                   theme='default'
                 />
               </div>
@@ -259,22 +296,32 @@ export function ProductPageView({
                 hasVariantSelectionError
               }
             />
+
             <ProductDescription
-              description={productPageContent?.description}
+              description={
+                productPageContent?.description
+              }
             />
+
             <KlarnaDesktopPromo />
           </OptionsColumn>
         </ProductPageGrid>
 
         <div className='mt-16 sm:mt-24'></div>
+
         <ProductPageAccordion
           product={productData}
-          sections={productPageContent?.accordion}
+          sections={
+            productPageContent?.accordion
+          }
           selectedVariant={selectedVariant}
         />
-        {relatedProducts && relatedProducts.length > 0 && (
-          <RelatedProducts products={relatedProducts} />
-        )}
+
+        <Suspense fallback={null}>
+          <AsyncRelatedProducts
+            handle={productData.handle}
+          />
+        </Suspense>
       </div>
     </article>
   )

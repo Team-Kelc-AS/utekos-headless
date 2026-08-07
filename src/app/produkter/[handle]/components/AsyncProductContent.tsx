@@ -7,10 +7,7 @@ import { reshapeProductWithMetafields } from '@/hooks/useProductWithMetafields'
 import { resolveInitialVariant } from '../utils/resolveInitialVariant'
 import { getProductWithoutSmallSize } from '@/components/products/getProductWithoutSmallSize'
 import { fetchProductOptions } from '@/api/lib/products/fetchProductOptions'
-import {
-  buildProductCardModel,
-  buildProductPurchaseModel
-} from '@/lib/shopify/buildProductPurchaseModel'
+import { buildProductPurchaseModel } from '@/lib/shopify/buildProductPurchaseModel'
 import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 import type { SearchParamsPromise } from '../types'
 
@@ -23,11 +20,10 @@ export async function AsyncProductContent({
   handle,
   searchParams
 }: AsyncProductContentProps) {
-  const [{ product, relatedProducts }, resolvedSearchParams] =
-    await Promise.all([
-      getCachedProductPageData(handle),
-      searchParams
-    ])
+  const [{ product }, resolvedSearchParams] = await Promise.all([
+    getCachedProductPageData(handle),
+    searchParams
+  ])
 
   if (!product) {
     notFound()
@@ -35,6 +31,7 @@ export async function AsyncProductContent({
 
   const productWithMetafields =
     reshapeProductWithMetafields(product) || product
+
   const displayProduct =
     productWithMetafields.handle === 'utekos-techdown' ?
       getProductWithoutSmallSize(productWithMetafields)
@@ -53,9 +50,13 @@ export async function AsyncProductContent({
       mappedProductOptions = await fetchProductOptions({
         handle,
         selectedOptions: initialVariant.selectedOptions.map(
-          ({ name, value }) => ({ name, value })
+          ({ name, value }) => ({
+            name,
+            value
+          })
         )
       })
+
       hasVariantSelectionError = mappedProductOptions === null
     } catch {
       hasVariantSelectionError = true
@@ -74,10 +75,13 @@ export async function AsyncProductContent({
     notFound()
   }
 
-  const purchaseModel = buildProductPurchaseModel(displayProduct)
-  const selectedPurchaseVariant = purchaseModel.variants.find(
-    variant => variant.id === initialVariant?.id
-  )
+  const purchaseModel =
+    buildProductPurchaseModel(displayProduct)
+
+  const selectedPurchaseVariant =
+    purchaseModel.variants.find(
+      variant => variant.id === initialVariant?.id
+    )
 
   if (!selectedPurchaseVariant) {
     notFound()
@@ -87,7 +91,6 @@ export async function AsyncProductContent({
     <ProductPageView
       productData={purchaseModel}
       selectedVariant={selectedPurchaseVariant}
-      relatedProducts={relatedProducts.map(buildProductCardModel)}
       productOptions={mappedProductOptions}
       hasVariantSelectionError={hasVariantSelectionError}
     />

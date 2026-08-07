@@ -26,6 +26,7 @@ import { ProductCardCompactVariantSelector } from './ProductCardCompactVariantSe
 import { ProductColorSwatches } from './ProductColorSwatches'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
+import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
 
 interface ExtendedProductCardProps extends ProductCardProps {
   isPriority?: boolean
@@ -51,6 +52,7 @@ export function ProductCard({
   const [selectedOptions, setSelectedOptions] = useState(
     () => initialOptions ?? getInitialOptionsForProduct(product)
   )
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false)
 
   const { addToCart, isPending } = useCanonicalAddToCart()
 
@@ -90,6 +92,8 @@ export function ProductCard({
     fallbackImage?.altText ??
     product.title
   const isAvailable = selectedVariant?.availableForSale ?? false
+  const showWaitlistCta =
+    product.handle === 'utekos-dun' && !isAvailable
   const imageSizes =
     compactMobile ?
       '(min-width: 1280px) 33vw, (min-width: 768px) 38vw, (min-width: 640px) 50vw, 72vw'
@@ -160,6 +164,12 @@ export function ProductCard({
       itemListId,
       destinationUrl
     })
+  }
+
+  const handleWaitlistClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsWaitlistOpen(true)
   }
 
   const compactProductCardContent =
@@ -351,6 +361,8 @@ export function ProductCard({
           isAvailable={isAvailable}
           isPending={isPending}
           onQuickBuy={handleQuickBuy}
+          showWaitlistCta={showWaitlistCta}
+          onWaitlistClick={handleWaitlistClick}
         />
         <KlarnaProductExpressCheckout
           product={product}
@@ -359,6 +371,14 @@ export function ProductCard({
           buttonContainerClassName='border-none ring-0'
         />
       </div>
+      {showWaitlistCta ?
+        <SoldOutWaitlistDialog
+          open={isWaitlistOpen}
+          onOpenChange={setIsWaitlistOpen}
+          autoOpenDelayMs={null}
+          entryPoint='product_card'
+        />
+      : null}
     </Card>
   )
 }

@@ -8,7 +8,11 @@ export type AnalyticsSpanOp =
   | 'cache.put'
   | 'cache.remove'
   | 'queue.publish'
+  | 'queue.receive'
   | 'queue.process'
+  | 'queue.ack'
+  | 'queue.retry'
+  | 'queue.dead_letter'
 
 export type AnalyticsSpanAttributes = Readonly<
   Record<string, string | number | boolean>

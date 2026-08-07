@@ -135,6 +135,8 @@ export type ProductCardFooterProps = {
   isAvailable: boolean
   isPending: boolean
   onQuickBuy: (e: React.MouseEvent) => void
+  showWaitlistCta?: boolean
+  onWaitlistClick?: (e: React.MouseEvent) => void
 }
 
 export type ProductCardHeaderProps = {

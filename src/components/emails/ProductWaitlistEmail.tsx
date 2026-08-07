@@ -107,6 +107,7 @@ ProductWaitlistEmail.PreviewProps = {
   email: 'ola@example.com',
   phone: '+47 400 00 000',
   productHandle: 'utekos-dun',
+  entryPoint: 'product_page',
   privacy: true,
   marketing: false,
   productLabel: 'Utekos Dun'
