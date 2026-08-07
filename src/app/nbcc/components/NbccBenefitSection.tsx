@@ -11,7 +11,6 @@ export function NbccBenefitSection() {
         <div data-nbcc-reveal data-nbcc-animate>
           <Badge
             variant='promo'
-            className='rounded-md px-3 py-2'
           >
             Medlemsfordel for NBCC-medlemmer
           </Badge>

@@ -41,10 +41,10 @@ export const metadata: Metadata = {
       'Praktisk varme for campingfolk, fra kaffe ved campingvogna til sene samtaler i forteltet.',
     images: [
       {
-        url: '/og-image-bobil.webp',
+        url: '/og-utekos-nbcc-1200x630.jpg',
         width: 1200,
         height: 630,
-        alt: 'Vintercamping med bobil, fortelt og varme kveldsstunder'
+        alt: 'NBCC-medlemsfordel hos Utekos'
       }
     ]
   },
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     title: 'NBCC-medlemsfordel hos Utekos',
     description:
       'Varme komfortplagg for camping, bobil, caravan og kjølige kvelder ute.',
-    images: ['/og-image-bobil.webp']
+    images: ['/og-utekos-nbcc-1200x630.jpg']
   }
 }
 

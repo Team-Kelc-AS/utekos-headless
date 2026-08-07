@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  Brain as BrainIcon,
   BrainCircuitIcon,
   ChevronDownIcon,
   SparklesIcon
@@ -151,11 +152,11 @@ export function NbccAiSummaryButton({
       >
         {isThinking ?
           <BrainCircuitIcon
-            className='h-4 w-4 animate-pulse'
+            className='size-[18px] shrink-0 animate-pulse'
             aria-hidden
           />
-        : <SparklesIcon className='h-4 w-4' aria-hidden />}
-        <span>{buttonLabel}</span>
+        : <BrainIcon className='size-[18px] shrink-0' aria-hidden />}
+        <span className='truncate'>{buttonLabel}</span>
         {isCompleted ?
           <ChevronDownIcon
             className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}

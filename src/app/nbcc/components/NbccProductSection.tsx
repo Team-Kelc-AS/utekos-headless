@@ -4,13 +4,13 @@ import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
 import { cacheLife, cacheTag } from 'next/cache'
 import { nbccProducts } from '../utils/nbccLandingPageContent'
 import { resolveVariantsForSizes } from '../utils/resolveVariantsForSizes'
+import { toNbccCartProduct } from '../utils/toNbccCartProduct'
 import { NbccAiSummaryButton } from './NbccAiSummaryButton'
 import { NbccProductCarousel } from './NbccProductCarousel'
 import { NbccProductCardActions } from './NbccProductCardActions'
@@ -38,7 +38,6 @@ export async function NbccProductSection() {
           <div>
             <Badge
               variant='promo'
-              className='rounded-md px-3 py-2'
             >
               Utekos for NBCC-medlemmer
             </Badge>
@@ -60,9 +59,14 @@ export async function NbccProductSection() {
                 )
               : []
 
+            const cartProduct =
+              shopifyProduct ?
+                toNbccCartProduct(shopifyProduct)
+              : null
+
             return (
               <Card
-                key={product.title}
+                key={product.handle}
                 data-nbcc-product-card
                 data-nbcc-reveal
                 data-nbcc-animate
@@ -71,7 +75,7 @@ export async function NbccProductSection() {
                 <CardHeader className='p-0'>
                   <NbccProductCarousel images={product.images} />
                 </CardHeader>
-                <CardContent className='px-6 pb-0'>
+                <CardContent className='px-6 pb-6'>
                   <p className='font-utekos-text-medium text-sm text-foreground'>
                     {product.shortTitle}
                   </p>
@@ -79,9 +83,10 @@ export async function NbccProductSection() {
                     {product.title}
                   </CardTitle>
                   <div className='mt-5'>
-                    {shopifyProduct ?
+                    {cartProduct && shopifyProduct ?
                       <NbccProductCardActions
                         product={shopifyProduct}
+                        cartProduct={cartProduct}
                         variants={variants}
                         href={product.href}
                         productTitle={product.title}
@@ -94,7 +99,6 @@ export async function NbccProductSection() {
                     }
                   </div>
                 </CardContent>
-                <CardFooter className='p-6' />
               </Card>
             )
           })}

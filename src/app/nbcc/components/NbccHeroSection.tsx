@@ -6,7 +6,7 @@ import { CompassIcon } from '@/components/animate-icons/icons/compass'
 import { MoveRightIcon } from '@/components/animate-icons/icons/move-right'
 import { Button } from '@/components/ui/button'
 import heroImage from '@/assets/images/campaign/nbcc-retro-master.webp'
-import nbccLogo from '@/assets/images/campaign/NBCC_logo_RGB_lys_bg.png'
+import nbccLogo from '@/assets/logo/nbcc/nbcc_logo_red_bg.png'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, type Variants } from 'motion/react'
@@ -27,7 +27,7 @@ export function NbccHeroSection() {
       transition={{ staggerChildren: 0.085 }}
       className='dark:bg-dark-background relative isolate overflow-hidden bg-background'
     >
-      <div className='dark:from-dark-background absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent' />
+      <div className='dark:from-dark-background absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-background to-transparent' />
 
       <div className='relative mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-center lg:gap-x-16 lg:gap-y-0 lg:px-8 lg:py-28'>
         <motion.div
@@ -39,20 +39,17 @@ export function NbccHeroSection() {
           data-nbcc-hero
           data-nbcc-animate
           data-nbcc-hero-content
-          className='flex flex-wrap items-center gap-3 md:mb-8 lg:col-start-1'
+          className='flex flex-wrap items-center gap-3 overflow-visible md:mb-8 lg:col-start-1'
         >
-          <span className='inline-flex items-center gap-3 rounded-md border border-[#17130f]/15 bg-white px-3 py-2 shadow-sm'>
-            <Image
-              src={nbccLogo}
-              alt='NBCC logo'
-              width={150}
-              height={60}
-              className='h-9 w-auto object-contain'
-            />
-            <span
-              className='h-8 w-px bg-neutral-300'
-              aria-hidden
-            />
+          <Image
+            src={nbccLogo}
+            alt='NBCC logo'
+            width={120}
+            height={180}
+            priority
+            className='relative z-10 -my-6 h-28 w-auto object-contain sm:h-32'
+          />
+          <span className='inline-flex items-center rounded-md border border-[#17130f]/15 bg-white px-3 py-2 shadow-sm'>
             <span className='font-utekos-text-medium text-sm text-[#17130f]'>
               Medlemsfordel
             </span>
@@ -80,7 +77,7 @@ export function NbccHeroSection() {
             ease: [0.22, 1, 0.36, 1]
           }}
           data-nbcc-hero-content
-          className='relative aspect-[2184/1920] w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10 lg:col-start-2 lg:row-span-5 lg:row-start-1'
+          className='relative aspect-2184/1920 w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10 lg:col-start-2 lg:row-span-5 lg:row-start-1'
         >
           <Image
             src={heroImage}
@@ -121,13 +118,13 @@ export function NbccHeroSection() {
           data-nbcc-hero
           data-nbcc-animate
           data-nbcc-hero-content
-          className='grid gap-3 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start lg:col-start-1 lg:mt-9'
+          className='grid grid-cols-1 gap-3 sm:grid-cols-2 sm:items-start lg:col-start-1 lg:mt-9'
         >
           <Button
             asChild
             size='lg'
             variant='commerce-primary'
-            className='h-12 w-full justify-center rounded-md px-6 font-utekos-text-medium text-[15px] sm:w-auto'
+            className='h-12 w-full min-w-0 justify-center gap-2 rounded-2xl px-6 font-utekos-text-medium text-base'
           >
             <Link
               href='#produkter'
@@ -136,7 +133,7 @@ export function NbccHeroSection() {
                 nbccHeroTracking.primary
               )}
             >
-              Finn din favoritt
+              <span className='truncate'>Finn din favoritt</span>
               <MoveRightIcon
                 size={18}
                 animateOnHover='default'
@@ -151,8 +148,8 @@ export function NbccHeroSection() {
             trackingName='NbccHeroHowToAiClick'
             trackingData={nbccHeroTracking.secondary}
             containerClassName='min-w-0 w-full'
-            panelClassName='w-full sm:max-w-[32rem]'
-            buttonClassName='h-12 w-full justify-center gap-2 rounded-md border border-commerce-secondary dark:border-dark-commerce-secondary bg-commerce-secondary dark:bg-dark-commerce-secondary px-6 text-[15px] font-utekos-text-medium text-commerce-secondary-foreground dark:text-dark-commerce-secondary-foreground hover:bg-commerce-secondary-hover dark:hover:bg-dark-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground dark:hover:text-dark-commerce-secondary-hover-foreground sm:w-auto'
+            panelClassName='w-full'
+            buttonClassName='h-12 w-full min-w-0 justify-center gap-2 rounded-2xl border border-commerce-secondary bg-dark-teal px-6 text-base font-utekos-text-medium text-foreground hover:opacity-60'
           />
         </motion.div>
 
@@ -165,7 +162,7 @@ export function NbccHeroSection() {
           data-nbcc-hero
           data-nbcc-animate
           data-nbcc-hero-content
-          className='grid gap-4 border-t border-white/[0.16] pt-6 text-sm text-foreground sm:grid-cols-3 lg:col-start-1 lg:mt-12'
+          className='grid gap-4 border-t border-white/16 pt-6 text-sm text-foreground sm:grid-cols-3 lg:col-start-1 lg:mt-12'
         >
           <div className='flex items-start gap-3'>
             <BadgeCheckIcon

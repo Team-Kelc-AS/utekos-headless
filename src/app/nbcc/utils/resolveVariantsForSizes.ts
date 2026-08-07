@@ -3,6 +3,7 @@ import type { ShopifyProductVariant } from 'types/product'
 import type { NbccProductVariant } from '../types'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { normalizeVariantOption } from './normalizeVariantOption'
+import { toNbccPurchaseVariant } from './toNbccCartProduct'
 
 export function resolveVariantsForSizes(
   allVariants: ShopifyProductVariant[],
@@ -12,9 +13,10 @@ export function resolveVariantsForSizes(
   return sizes.flatMap(label => {
     const normalizedLabel = normalizeVariantOption(label)
 
-    const variant = allVariants.find(v => {
-      const hasSize = v.selectedOptions.some(
-        option => normalizeVariantOption(option.value) === normalizedLabel
+    const variant = allVariants.find(candidate => {
+      const hasSize = candidate.selectedOptions.some(
+        option =>
+          normalizeVariantOption(option.value) === normalizedLabel
       )
 
       if (!hasSize) return false
@@ -22,7 +24,11 @@ export function resolveVariantsForSizes(
       if (color) {
         const normalizedColor = normalizeVariantOption(color)
 
-        return v.selectedOptions.some(option => normalizeVariantOption(option.value) === normalizedColor)
+        return candidate.selectedOptions.some(
+          option =>
+            normalizeVariantOption(option.value) ===
+            normalizedColor
+        )
       }
 
       return true
@@ -35,7 +41,8 @@ export function resolveVariantsForSizes(
         label,
         variantId: variant.id,
         availableForSale: variant.availableForSale,
-        price: formatPrice(variant.price)
+        price: formatPrice(variant.price),
+        purchaseVariant: toNbccPurchaseVariant(variant)
       }
     ]
   })

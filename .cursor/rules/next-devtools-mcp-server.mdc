@@ -1,0 +1,32 @@
+---
+description: Mandatoryfor working-tool. Applied whenever doing work inside utekos-headless.
+alwaysApply: true
+
+# next.js MCP Server
+
+When working inside the utekos-headless folder:
+
+## Connect
+
+- Connect to next-devtools mcp server
+- Command: npx or /Users/kristofferohnstadhjelmeland/.nvm/versions/node/v24.17.0/bin/npx
+- Args: -y next-devtools-mcp@latest
+- Env (not mandatory): "PATH": "/Users/kristofferohnstadhjelmeland/.nvm/versions/node/v24.17.0/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+## Fix if trouble
+
+- Troubleshoot and fix if not working on first and second try
+- If not working after second try, keep troubleshooting until it works
+- must be connected and operational before you proceed with the task
+
+## Active usage
+
+- Always use when working with UI-related, browser or next.js-documentation
+- 
+
+## Docs
+
+- /Users/kristofferohnstadhjelmeland/utekos-headless/docs/next/mcp-server.md
+- Relative: docs/next/mcp-server.md
+- https://nextjs.org/docs/app/guides/mcp.md
+- https://nextjs.org/docs/app/guides/mcp

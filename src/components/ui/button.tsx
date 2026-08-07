@@ -12,13 +12,13 @@ const buttonVariants = cva(
         'alternate':
           'bg-alternate-button text-foreground hover:scale-104 hover:bg-[#12403C]',
         'checkout':
-          'bg-primary text-foreground hover:text-foreground/90 dark:bg-primary dark:text-foreground',
+          'bg-primary text-foreground hover:text-foreground/90 rounded-2xl hover:opacity-60 hover:scale-103',
         'commerce-primary':
-          'bg-commerce-primary text-commerce-primary-foreground hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:bg-dark-commerce-primary dark:text-dark-commerce-primary-foreground dark:hover:bg-dark-commerce-primary-hover dark:hover:text-dark-commerce-primary-hover-foreground',
+          'bg-primary text-foreground hover:opacity-60 rounded-2xl',
         'commerce-secondary':
           'border-commerce-secondary bg-commerce-secondary text-commerce-secondary-foreground hover:bg-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground dark:border-dark-commerce-secondary dark:bg-dark-commerce-secondary dark:text-dark-commerce-secondary-foreground dark:hover:bg-dark-commerce-secondary-hover dark:hover:text-dark-commerce-secondary-hover-foreground',
         'default':
-          'hover:bg-primary-hover bg-primary text-primary-foreground dark:bg-primary',
+          'hover:bg-primary-hover bg-primary text-primary-foreground',
         'outline':
           'dark:border-dark-input dark:bg-dark-background dark:hover:bg-dark-accent dark:hover:text-dark-accent-foreground border-input bg-background hover:bg-accent hover:text-accent-foreground',
         'seeProduct':

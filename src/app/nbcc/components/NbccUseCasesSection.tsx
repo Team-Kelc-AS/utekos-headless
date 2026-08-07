@@ -4,7 +4,7 @@ import { useCaseIcons } from '../utils/useCaseIcons'
 
 export function NbccUseCasesSection() {
   return (
-    <article className='relative overflow-hidden bg-jungle px-4 py-20 text-foreground sm:px-6 lg:px-8'>
+    <article className='relative overflow-hidden bg-muted px-4 py-20 text-foreground sm:px-6 lg:px-8'>
       <div className='absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-foreground/20 to-transparent' />
       <div className='mx-auto max-w-7xl'>
         <div
@@ -13,7 +13,7 @@ export function NbccUseCasesSection() {
           className='grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end'
         >
           <div>
-            <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-foreground'>
+            <p className='font-utekos-text-medium text-sm text-foreground'>
               Campinglivet har mange former
             </p>
             <h2 className='mt-4 max-w-xl font-utekos-text-medium text-3xl tracking-normal text-balance text-foreground sm:text-4xl'>
@@ -40,7 +40,7 @@ export function NbccUseCasesSection() {
                 data-nbcc-reveal
                 data-nbcc-animate
                 data-nbcc-usecase-card
-                className='rounded-lg border border-foreground/15 bg-dark-teal p-6 text-foreground'
+                className='rounded-lg border border-foreground/15 bg-jungle p-6 text-foreground'
               >
                 <Icon
                   size={28}

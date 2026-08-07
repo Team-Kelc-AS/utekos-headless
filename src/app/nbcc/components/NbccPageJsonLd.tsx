@@ -24,10 +24,10 @@ export async function NbccPageJsonLd() {
     },
     'primaryImageOfPage': {
       '@type': 'ImageObject',
-      'url': `${SITE_URL}/og-image-bobil.webp`,
+      'url': `${SITE_URL}/og-utekos-nbcc-1200x630.jpg`,
       'width': '1200',
       'height': '630',
-      'caption': 'Vintercamping med bobil, fortelt og varme kveldsstunder'
+      'caption': 'NBCC-medlemsfordel hos Utekos'
     }
   }
 

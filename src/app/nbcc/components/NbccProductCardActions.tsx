@@ -11,25 +11,29 @@ import type { NbccProductCardActionsProps } from '../types'
 
 export function NbccProductCardActions({
   product,
+  cartProduct,
   variants,
   productTitle,
   totalItemCount
 }: NbccProductCardActionsProps) {
   const actionsRef = useRef<HTMLDivElement>(null)
   const [selectedLabel, setSelectedLabel] = useState(
-    variants[0]?.label ?? ''
+    variants.find(variant => variant.availableForSale)?.label ??
+      variants[0]?.label ??
+      ''
   )
 
   const { addToCart, isPending } = useCanonicalAddToCart()
 
   const selectedVariant = variants.find(
-    v => v.label === selectedLabel
+    variant => variant.label === selectedLabel
   )
   const isAvailable = selectedVariant?.availableForSale ?? false
   const price =
     selectedVariant?.price ?? variants[0]?.price ?? ''
-  const shopifyVariant = product.variants.edges
-    .map(edge => edge.node)
+  const purchaseVariant = selectedVariant?.purchaseVariant
+  const shopifyVariant = product.variants?.edges
+    ?.map(edge => edge.node)
     .find(variant => variant.id === selectedVariant?.variantId)
 
   useCanonicalProductListVisibility({
@@ -43,7 +47,7 @@ export function NbccProductCardActions({
   })
 
   const handleAddToCart = () => {
-    if (!selectedVariant?.variantId) {
+    if (!selectedVariant?.variantId || !purchaseVariant) {
       toast.error('Velg en størrelse først.')
       return
     }
@@ -52,15 +56,10 @@ export function NbccProductCardActions({
       return
     }
 
-    if (!shopifyVariant) {
-      toast.error('Kunne ikke finne valgt variant. Prøv igjen.')
-      return
-    }
-
     void (async () => {
       const { success } = await addToCart({
-        product,
-        variant: shopifyVariant,
+        product: cartProduct,
+        variant: purchaseVariant,
         quantity: 1,
         openCart: true
       })
@@ -73,6 +72,15 @@ export function NbccProductCardActions({
     })()
   }
 
+  if (variants.length === 0) {
+    return (
+      <p className='text-sm text-muted-foreground' role='status'>
+        Størrelser er midlertidig utilgjengelige for dette
+        produktet.
+      </p>
+    )
+  }
+
   return (
     <div ref={actionsRef} className='flex flex-col gap-4'>
       <div>
@@ -80,28 +88,28 @@ export function NbccProductCardActions({
           Størrelse
         </p>
         <div className='flex flex-wrap gap-2'>
-          {variants.map(v => (
+          {variants.map(variant => (
             <button
-              key={v.label}
+              key={variant.label}
               type='button'
-              onClick={() => setSelectedLabel(v.label)}
-              disabled={!v.availableForSale}
+              onClick={() => setSelectedLabel(variant.label)}
+              disabled={!variant.availableForSale}
               className={[
                 'rounded-md border px-3 py-1.5 text-sm font-medium transition-all',
-                v.label === selectedLabel ?
+                variant.label === selectedLabel ?
                   'dark:border-dark-background dark:bg-dark-foreground dark:text-dark-background border-background bg-foreground text-background'
-                : !v.availableForSale ?
-                  'dark:border-dark-foreground/10 /25 cursor-not-allowed border-foreground/10 text-foreground/25 line-through'
-                : 'dark:border-dark-foreground/40 /80 dark:hover:border-dark-foreground dark:hover:text-dark-foreground border-foreground/40 text-foreground/80 hover:border-foreground hover:text-foreground'
+                : !variant.availableForSale ?
+                  'dark:border-dark-foreground/10 cursor-not-allowed border-foreground/10 text-foreground/25 line-through'
+                : 'dark:border-dark-foreground/40 dark:hover:border-dark-foreground dark:hover:text-dark-foreground border-foreground/40 text-foreground/80 hover:border-foreground hover:text-foreground'
               ].join(' ')}
             >
-              {v.label}
+              {variant.label}
             </button>
           ))}
         </div>
       </div>
 
-      <div className='flex items-center justify-between'>
+      <div className='flex items-center justify-between gap-3'>
         <span className='font-utekos-text-medium text-xl text-foreground'>
           {price}
         </span>
@@ -113,22 +121,22 @@ export function NbccProductCardActions({
       <div className='flex flex-col gap-2'>
         <Button
           onClick={handleAddToCart}
-          disabled={isPending || !isAvailable}
-          variant='commerce-primary'
-          className='h-11 w-full rounded-md'
+          disabled={isPending || !isAvailable || !purchaseVariant}
+          variant='checkout'
+          className='h-11 w-full rounded-3xl bg-primary font-utekos-text-medium text-base text-foreground hover:bg-primary/90'
         >
           {isPending ?
             <Loader2 className='size-4 animate-spin' />
           : 'Legg i handlekurv'}
         </Button>
-        {isAvailable && shopifyVariant ?
+        {isAvailable && purchaseVariant ?
           <div className='flex h-11 min-h-11 w-full items-stretch'>
             <KlarnaProductExpressCheckout
-              product={product}
-              selectedVariant={shopifyVariant}
+              product={cartProduct}
+              selectedVariant={purchaseVariant}
               quantity={1}
               disabled={isPending}
-              theme='light'
+              theme='default'
               className='h-full min-h-0 w-full min-w-0'
               buttonContainerClassName='h-full min-h-full md:h-full md:min-h-full'
             />

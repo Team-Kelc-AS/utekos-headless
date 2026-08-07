@@ -7,6 +7,7 @@ settings:
 patchedDependencies:
   botid@1.5.11: 422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab
   next@16.2.12: 22b8ba3dbc7620038662c11849931cf8129091860bad05b7fc2886a9aa8deadf
+  react-email@6.6.3: a3effa40ff6e63f92736e2c08686d3e123f8d38caa70928ddb7a94a0a362cfd7
 
 importers:
 
@@ -302,7 +303,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       react-email:
         specifier: 6.6.3
-        version: 6.6.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)
+        version: 6.6.3(patch_hash=a3effa40ff6e63f92736e2c08686d3e123f8d38caa70928ddb7a94a0a362cfd7)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)
       react-hook-form:
         specifier: ^7.77.0
         version: 7.80.0(react@19.2.7)
@@ -20599,7 +20600,7 @@ snapshots:
       react: 19.2.7
       scheduler: 0.27.0
 
-  react-email@6.6.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@8.1.1):
+  react-email@6.6.3(patch_hash=a3effa40ff6e63f92736e2c08686d3e123f8d38caa70928ddb7a94a0a362cfd7)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@8.1.1):
     dependencies:
       '@babel/parser': 7.27.0
       '@babel/traverse': 7.27.0(supports-color@8.1.1)

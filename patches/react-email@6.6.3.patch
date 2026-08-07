@@ -1,0 +1,12 @@
+diff --git a/tsconfig.json b/tsconfig.json
+index e13f016fed468f81d8a1f4b86168b298b2c1bdee..3f27c7bde6bcb3882934a587f6615b6710e154c1 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -3,7 +3,6 @@
+   "display": "Next.js",
+   "compilerOptions": {
+     "composite": false,
+-    "downlevelIteration": true,
+     "esModuleInterop": true,
+     "forceConsistentCasingInFileNames": true,
+     "inlineSources": false,

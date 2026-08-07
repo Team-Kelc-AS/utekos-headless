@@ -1,6 +1,10 @@
 import type { Route } from 'next'
 import type { StaticImageData } from 'next/image'
 import { z } from 'zod'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import type { ShopifyProduct } from 'types/product/ShopifyProduct'
 
 export type NbccTrackingData = Record<string, string>
@@ -122,10 +126,12 @@ export type NbccProductVariant = {
   variantId: string
   availableForSale: boolean
   price: string
+  purchaseVariant: ProductPurchaseVariant
 }
 
 export type NbccProductCardActionsProps = {
   product: ShopifyProduct
+  cartProduct: ProductCartModel
   variants: NbccProductVariant[]
   href: Route
   productTitle: string

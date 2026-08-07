@@ -23,7 +23,7 @@ export function NbccProductCarousel({
           unoptimized
           sizes='(min-width: 1024px) 31vw, (min-width: 768px) 45vw, 100vw'
           data-nbcc-product-image
-          className='rounded-lg object-contain p-7'
+          className='object-cover'
         />
       </div>
     )
@@ -52,7 +52,7 @@ export function NbccProductCarousel({
             unoptimized
             sizes='(min-width: 1024px) 31vw, (min-width: 768px) 45vw, 100vw'
             data-nbcc-product-image
-            className='rounded-lg object-contain p-7'
+            className='object-cover'
           />
         </div>
       ))}

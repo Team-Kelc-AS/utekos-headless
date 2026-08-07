@@ -14,7 +14,7 @@ const badgeVariants = cva(
           'dark:bg-dark-primary dark:[a]:hover:bg-dark-primary/80 bg-primary text-primary-foreground [a]:hover:bg-primary/80',
         secondary:
           'dark:[a]:hover:bg-dark-secondary/80 bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80',
-        promo: 'bg-badge text-foreground',
+        promo: 'bg-badge py-6 px-6 font-utekos-text-medium tracking-normal text-foreground rounded-xl',
         destructive:
           'dark:bg-dark-destructive/10 dark:text-dark-destructive dark:focus-visible:ring-dark-destructive/20 dark:bg-dark-destructive/20 dark:focus-visible:ring-dark-destructive/40 dark:[a]:hover:bg-dark-destructive/20 bg-destructive/10 text-destructive focus-visible:ring-destructive/20 [a]:hover:bg-destructive/20',
         outline:

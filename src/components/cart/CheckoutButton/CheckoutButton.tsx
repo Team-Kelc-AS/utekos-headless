@@ -17,6 +17,7 @@ export const CheckoutButton = ({
   cart,
   className,
   children,
+  variant = 'secondary',
   ...props
 }: {
   checkoutUrl: string
@@ -39,7 +40,9 @@ export const CheckoutButton = ({
   const disabledAttrs =
     isDisabled ? { 'aria-disabled': true, 'tabIndex': -1 } : {}
 
-  const handleClick = async (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = async (
+    event: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     if (isDisabled) {
       event.preventDefault()
       event.stopPropagation()
@@ -47,12 +50,12 @@ export const CheckoutButton = ({
     }
 
     if (
-      event.defaultPrevented
-      || event.button !== 0
-      || event.metaKey
-      || event.ctrlKey
-      || event.shiftKey
-      || event.altKey
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
     ) {
       return
     }
@@ -69,7 +72,7 @@ export const CheckoutButton = ({
   return (
     <Button
       asChild
-      variant='secondary'
+      variant={variant}
       className={cn(
         'cursor-pointer hover:brightness-95 aria-disabled:cursor-not-allowed',
         className

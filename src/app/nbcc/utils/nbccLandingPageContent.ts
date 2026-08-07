@@ -99,8 +99,9 @@ export const nbccProducts = [
   {
     title: 'Comfyrobe™',
     shortTitle: 'Comfyrobe™',
-    description: 'Vindtett, 8000 vannsøyle og lun etter dusj, bad eller en våt runde over campingplassen.',
-    bestFor: 'Som en  fuktige morgener.',
+    description:
+      'Vindtett, 8000 vannsøyle og lun etter dusj, bad eller en våt runde over campingplassen.',
+    bestFor: 'For våte morgener, skifte etter bad og kjølige kvelder ute.',
     images: [
       {
         src: comfy1080,
@@ -112,7 +113,8 @@ export const nbccProducts = [
     ],
     href: '/produkter/comfyrobe' as Route,
     handle: 'comfyrobe',
-    sizes: ['S', 'L'],
+    sizes: ['XS', 'XL'],
+    color: 'Fjellnatt',
     tracking: {
       page: 'nbcc',
       section: 'products',
