@@ -1,4 +1,3 @@
-import { AnimatedBlock } from '@/components/AnimatedBlock'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import type {
   ProductCartModel,
@@ -22,11 +21,7 @@ export default function ProductHeader({
 }: ProductHeaderProps) {
   return (
     <div className='flex items-start justify-between gap-4 text-left text-foreground md:mb-6'>
-      <AnimatedBlock
-        className='will-animate-fade-in-up min-w-0 flex-1'
-        delay='0.06s'
-        threshold={0.2}
-      >
+      <div className='min-w-0 flex-1'>
         <hgroup>
           <h1 className='font-sans mx-0 text-left text-4xl font-bold text-foreground'>
             {productTitle}
@@ -39,7 +34,8 @@ export default function ProductHeader({
               </p>
             )}
         </hgroup>
-      </AnimatedBlock>
+      </div>
+
       <WishlistButton
         product={product}
         variant={selectedVariant}

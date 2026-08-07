@@ -229,11 +229,7 @@ export function ProductPageView({
               </AspectRatio>
             </div>
 
-            <AnimatedBlock
-              className='will-animate-fade-in-up mt-6 md:hidden'
-              delay='0s'
-              threshold={0.2}
-            >
+            <div className='mt-6 md:hidden'>
               <ProductHeader
                 product={productData}
                 selectedVariant={selectedVariant}
@@ -243,7 +239,7 @@ export function ProductPageView({
                   productSubtitle ?? ''
                 }
               />
-            </AnimatedBlock>
+            </div>
           </GalleryColumn>
 
           <OptionsColumn>
