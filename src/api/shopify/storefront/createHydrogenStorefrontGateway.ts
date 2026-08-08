@@ -683,15 +683,6 @@ function resolveAuthentication({
 
   const buyerIp = context?.buyerIp ?? null
 
-  if (
-    requestKind === 'mutation' &&
-    !hasCredential(config.privateStorefrontToken)
-  ) {
-    throw new Error(
-      'Missing Shopify private Storefront access token for mutation.'
-    )
-  }
-
   if (hasCredential(config.privateStorefrontToken)) {
     if (!buyerIp) {
       throw new Error(

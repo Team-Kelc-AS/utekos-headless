@@ -154,7 +154,7 @@ test('buyer calls use the public compatibility path when private auth is unavail
   assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
 
-test('mutation fails closed when private auth is unavailable', async () => {
+test('mutation uses the public compatibility path when private auth is unavailable', async () => {
   const requests: RequestInit[] = []
   const gateway = createHydrogenStorefrontGateway(
     {
@@ -170,14 +170,21 @@ test('mutation fails closed when private auth is unavailable', async () => {
     }
   )
 
-  await assert.rejects(
-    gateway.mutation<TestMutation>({
-      context: { buyerIp: '203.0.113.8' },
-      query: mutation
-    }),
-    /private Storefront access token for mutation/
+  await gateway.mutation<TestMutation>({
+    context: { buyerIp: '203.0.113.8' },
+    query: mutation
+  })
+
+  const request = requests[0]
+  const headers = new Headers(request?.headers)
+
+  assert.equal(request?.cache, 'no-store')
+  assert.equal(
+    headers.get('x-shopify-storefront-access-token'),
+    'public-test-token'
   )
-  assert.equal(requests.length, 0)
+  assert.equal(headers.has('shopify-storefront-private-token'), false)
+  assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
 
 test('private buyer auth fails closed without a validated buyer IP', async () => {
