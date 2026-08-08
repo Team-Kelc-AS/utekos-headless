@@ -2,6 +2,7 @@
 import { getProducts } from '@/api/lib/products/getProducts'
 import { getMagazineArticles } from '@/app/magasinet/utils/getMagazineArticles'
 import { toAbsoluteUrl } from '@/app/magasinet/utils/toAbsoluteUrl'
+import { returnPolicy } from '@/lib/policies/returnPolicy'
 import type { MetadataRoute } from 'next'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://utekos.no'
@@ -60,12 +61,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/inspirasjon/hytteliv',
     '/inspirasjon/terrassen'
   ]
-  const inspirationPages: MetadataRoute.Sitemap = inspirationPaths.map(path => ({
-    url: `${baseUrl}${path}`,
-    lastModified: lastModifiedISO,
-    changeFrequency: 'monthly',
-    priority: 0.7
-  }))
+  const inspirationPages: MetadataRoute.Sitemap =
+    inspirationPaths.map(path => ({
+      url: `${baseUrl}${path}`,
+      lastModified: lastModifiedISO,
+      changeFrequency: 'monthly',
+      priority: 0.7
+    }))
 
   const utilityPages: MetadataRoute.Sitemap = [
     {
@@ -82,7 +84,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${baseUrl}/frakt-og-retur`,
-      lastModified: lastModifiedISO,
+      lastModified: returnPolicy.lastUpdated,
       changeFrequency: 'yearly',
       priority: 0.3
     },
@@ -125,7 +127,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       productsResponse.body.map(product => ({
         url: `${baseUrl}/produkter/${product.handle}`,
         lastModified:
-          typeof product.updatedAt === 'string' && product.updatedAt ? product.updatedAt : lastModifiedISO,
+          (
+            typeof product.updatedAt === 'string' &&
+            product.updatedAt
+          ) ?
+            product.updatedAt
+          : lastModifiedISO,
         changeFrequency: 'weekly',
         priority: 0.8,
         images:
@@ -137,13 +144,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const articles = await getMagazineArticles()
 
-  const articleUrls: MetadataRoute.Sitemap = articles.map(article => ({
-    url: `${baseUrl}/magasinet/${article.slug}`,
-    lastModified: article.updatedAt,
-    changeFrequency: 'monthly',
-    priority: 0.8,
-    images: [toAbsoluteUrl(article.heroImage.src)]
-  }))
+  const articleUrls: MetadataRoute.Sitemap = articles.map(
+    article => ({
+      url: `${baseUrl}/magasinet/${article.slug}`,
+      lastModified: article.updatedAt,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+      images: [toAbsoluteUrl(article.heroImage.src)]
+    })
+  )
 
-  return [...corePages, ...inspirationPages, ...utilityPages, ...productUrls, ...articleUrls]
+  return [
+    ...corePages,
+    ...inspirationPages,
+    ...utilityPages,
+    ...productUrls,
+    ...articleUrls
+  ]
 }

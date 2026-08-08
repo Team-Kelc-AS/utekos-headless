@@ -15,6 +15,8 @@ const shell = {
 
 const variantPresentation = {
   id: productId,
+  totalInventory: 0,
+  availableForSale: false,
   options: [],
   variants: { edges: [] }
 } satisfies StorefrontProductVariantPresentation

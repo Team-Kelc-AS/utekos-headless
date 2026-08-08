@@ -1,32 +1,34 @@
+import {
+  returnPolicy,
+  returnPolicyCopy
+} from '@/lib/policies/returnPolicy'
+
 export const shippingReturnsFaqItems = [
   {
     id: 'Merchant-Center-Shopping-Cost',
     question: 'Hva koster frakten hos Utekos?',
     answer:
-      'Vi tilbyr fri frakt på alle bestillinger over 999 kr i hele Norge. For bestillinger under dette beløpet har vi fraktkostnad på 99 kr.'
+      'Vi tilbyr fri frakt på bestillinger over 999 kr i Norge. For bestillinger under 999 kr koster ordinær frakt 99 kr.'
   },
   {
     id: 'Merchant-C-Delivery-Time',
     question: 'Hvor lang er leveringstiden?',
     answer:
-      'Leveringstiden er normalt 2-5 virkedager. Bestillinger som gjøres før klokken 16 sendes samme dag, med unntak av søndag.'
+      'Leveringstiden er normalt 2–5 virkedager. Bestillinger som gjøres før klokken 16 sendes normalt samme dag, med unntak av søndag.'
   },
   {
     id: 'return-window',
     question: 'Hvor lang er angreretten?',
-    answer:
-      'Vi opererer med lovbestemt 14 dagers angrerett fra dagen kunden mottar produktet. Fraktkostnader knyttet til retur betales av sender.'
+    answer: returnPolicyCopy.summary
   },
   {
     id: 'return-process',
     question: 'Hvordan returnerer jeg en vare?',
-    answer:
-      'Send en e-post til kundeservice@utekos.no med fullt navn, adresse, ordrenummer og hvilke produkter returen gjelder. Pakk varen forsvarlig og bruk en sendingsmetode med sporing.'
+    answer: `${returnPolicyCopy.notice} Send meldingen til ${returnPolicy.contactEmail}. ${returnPolicyCopy.returnDeadline} ${returnPolicyCopy.returnShipping}`
   },
   {
     id: 'return-exceptions',
     question: 'Er det unntak fra angreretten?',
-    answer:
-      'Angreretten gjelder ikke for produkter som er forseglet av hygieniske årsaker dersom forseglingen er brutt etter mottak. Plagget må være ubrukt, uten lukt og med alle merkelapper intakt.'
+    answer: returnPolicyCopy.exceptions
   }
 ] as const

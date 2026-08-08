@@ -6,7 +6,7 @@ export function ShippingReturnsBreadcrumbs() {
       surface='transparent'
       items={[
         { label: 'Forsiden', href: '/' },
-        { label: 'Frakt og retur' }
+        { label: 'Frakt, retur og refusjon' }
       ]}
     />
   )

@@ -2,6 +2,7 @@
 
 import type { OnlineStore, WithContext } from 'schema-dts'
 import { cacheLife } from 'next/cache'
+import { merchantReturnPolicyJsonLd } from '@/lib/policies/merchantReturnPolicyJsonLd'
 
 export async function OnlineStoreJsonLd() {
   'use cache'
@@ -31,10 +32,7 @@ export async function OnlineStoreJsonLd() {
     'vatID': 'NO 925 820 393 MVA',
     'iso6523Code': '0192:925820393',
     'knowsLanguage': 'no',
-    'areaServed': {
-      '@type': 'Country',
-      'name': 'Norway'
-    },
+    'areaServed': { '@type': 'Country', 'name': 'Norway' },
     'address': {
       '@type': 'PostalAddress',
       'streetAddress': 'Lille Damsgårdsveien 25',
@@ -66,14 +64,7 @@ export async function OnlineStoreJsonLd() {
         }
       }
     },
-    'hasMerchantReturnPolicy': {
-      '@type': 'MerchantReturnPolicy',
-      'applicableCountry': 'NO',
-      'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
-      'merchantReturnDays': 14,
-      'returnMethod': 'https://schema.org/ReturnByMail',
-      'url': 'https://utekos.no/frakt-og-retur'
-    }
+    'hasMerchantReturnPolicy': merchantReturnPolicyJsonLd
   }
 
   return (

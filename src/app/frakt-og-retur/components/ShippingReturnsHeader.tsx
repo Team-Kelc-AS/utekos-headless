@@ -12,7 +12,7 @@ export function ShippingReturnsHeader() {
           className='mb-6 border border-foreground/6 px-8 py-4 text-left text-sm md:text-base'
         />
         <h1 className='font-google-sans font-sans text-4xl font-bold text-foreground sm:text-4xl md:text-5xl lg:text-6xl'>
-          Frakt og retur - enkelt og trygt
+          Frakt, retur og refusjon
         </h1>
         <p className='mx-auto mt-4 text-left font-utekos-text text-lg text-foreground md:text-xl'>
           Vi ønsker at din handleopplevelse skal være like trygg
@@ -22,6 +22,35 @@ export function ShippingReturnsHeader() {
           Her finner du alt du trenger å vite om vår levering og
           returprosess.
         </p>
+        <nav
+          aria-label='Innhold på siden'
+          className='mt-6 flex flex-wrap gap-x-5 gap-y-3 text-base'
+        >
+          <a
+            href='#slik-returnerer-du'
+            className='font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
+          >
+            Slik returnerer du
+          </a>
+          <a
+            href='#refusjon'
+            className='font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
+          >
+            Refusjon
+          </a>
+          <a
+            href='#varens-tilstand'
+            className='font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
+          >
+            Varens tilstand
+          </a>
+          <a
+            href='#reklamasjon'
+            className='font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
+          >
+            Reklamasjon
+          </a>
+        </nav>
       </header>
 
       <div className='container mx-auto px-8 pt-4'>

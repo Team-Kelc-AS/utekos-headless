@@ -4,19 +4,22 @@ import {
   Package,
   ShieldCheck
 } from 'lucide-react'
+import { returnPolicy } from '@/lib/policies/returnPolicy'
 import Link from 'next/link'
 
 const guaranteeIconClassName =
   'flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground'
 
 export function InfoSidebar() {
+  const address = returnPolicy.returnAddress
+
   return (
     <aside className='w-full lg:col-span-4'>
-      <div className='sticky top-28 flex min-w-0 mt-4 flex-col rounded-2xl bg-night p-2'>
+      <div className='sticky top-28 mt-4 flex min-w-0 flex-col rounded-2xl bg-night p-2'>
         <div className='flex flex-col items-start rounded-xl border border-border bg-jungle p-6 text-card-foreground shadow-sm ring-1 ring-border sm:p-8'>
-          <h3 className='mb-8 text-left font-utekos-text-medium text-xl leading-tight text-card-foreground'>
+          <h2 className='mb-8 text-left font-utekos-text-medium text-xl leading-tight text-card-foreground'>
             Dine trygghetsgarantier
-          </h3>
+          </h2>
 
           <ul className='flex w-full flex-col gap-6'>
             <li className='flex items-start gap-4'>
@@ -65,12 +68,14 @@ export function InfoSidebar() {
               </div>
               <div className='flex flex-col items-start'>
                 <span className='font-utekos-text-medium text-base text-card-foreground'>
-                  Retur
+                  Returadresse
                 </span>
                 <address className='mt-1 not-italic'>
                   <span className='text-left font-utekos-text text-sm leading-relaxed text-card-foreground/90'>
-                    Send en e-post til kundeservice@utekos.no, så
-                    er du i gang.
+                    {address.streetAddress}
+                    <br />
+                    {address.postalCode}{' '}
+                    {address.addressLocality}
                   </span>
                 </address>
               </div>
@@ -80,13 +85,20 @@ export function InfoSidebar() {
           <hr className='my-8 w-full border-t border-border' />
 
           <div className='flex w-full flex-col items-start'>
-            <h4 className='mb-4 text-left font-utekos-text-medium text-base text-card-foreground'>
-              Har du andre spørsmål?
-            </h4>
+            <h3 className='mb-4 text-left font-utekos-text-medium text-base text-card-foreground'>
+              Start en retur
+            </h3>
+            <a
+              href={`mailto:${returnPolicy.contactEmail}`}
+              data-track='ShippingReturnsSidebarEmailClick'
+              className='mb-3 font-utekos-text-medium text-sm text-card-foreground underline decoration-card-foreground/30 underline-offset-4 hover:decoration-card-foreground'
+            >
+              {returnPolicy.contactEmail}
+            </a>
             <Link
               href='/kontaktskjema'
               data-track='ShippingReturnsContactClick'
-              className='font-utekos-text-medium flex min-h-12 w-full bg-primary items-center justify-center gap-2 rounded-3xl border border-secondary/30  px-6 py-3 text-base font-bold text-secondary-foreground shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-hover hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card focus-visible:outline-none'
+              className='hover:bg-primary-hover flex min-h-12 w-full items-center justify-center gap-2 rounded-3xl border border-secondary/30 bg-primary px-6 py-3 font-utekos-text-medium text-base font-bold text-secondary-foreground shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card focus-visible:outline-none'
             >
               <Mail className='size-5' aria-hidden='true' />
               Kontakt oss

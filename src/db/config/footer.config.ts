@@ -59,7 +59,7 @@ export const footerConfig: FooterSection[] = [
         trackingEvent: 'FooterAboutUsClick'
       },
       {
-        title: 'Fraktinformasjon',
+        title: 'Frakt, retur og refusjon',
         path: '/frakt-og-retur' as Route,
         trackingEvent: 'FooterShippingReturnClick'
       },

@@ -1,11 +1,17 @@
 import { rawMagazineArticles } from '@/app/magasinet/data/magazineArticles'
 import { validateMagazineArticles } from '@/app/magasinet/utils/validateMagazineArticles'
+import { returnPolicyLlmsSummary } from '@/lib/policies/returnPolicy'
 
-const magazineArticlesValidation = validateMagazineArticles(rawMagazineArticles)
+const magazineArticlesValidation = validateMagazineArticles(
+  rawMagazineArticles
+)
 const magazineArticleLines =
   magazineArticlesValidation.success ?
     magazineArticlesValidation.articles
-      .map(article => `- [${article.title}](https://utekos.no/magasinet/${article.slug}): ${article.excerpt}`)
+      .map(
+        article =>
+          `- [${article.title}](https://utekos.no/magasinet/${article.slug}): ${article.excerpt}`
+      )
       .join('\n')
   : ''
 
@@ -47,7 +53,7 @@ intuitive ventilasjonsytemer, YKK® Dual V-Zip™ og en lengre liste med ytterli
 ## Kontaktskjema, personvern, regler, vilkår og informasjonsiden til Utekos.
 
 - [Kontakt oss](https://utekos.no/kontaktskjema): Kundeservice og generelle henvendelser.
-- [Frakt og retur](https://utekos.no/frakt-og-retur): Levering, frakt og returvilkår.
+- [Frakt, retur og refusjon](https://utekos.no/frakt-og-retur): ${returnPolicyLlmsSummary}
 - [Personvern](https://utekos.no/personvern): Behandling av personopplysninger.
 - [Vilkår og betingelser](https://utekos.no/vilkar-betingelser): Kjøpsvilkår for nettbutikken.
 - [Om Utekos®](https://utekos.no/om-oss): Merkevare, bakgrunn og selskap.
@@ -75,7 +81,8 @@ export async function GET() {
   return new Response(body, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=86400'
+      'Cache-Control':
+        'public, s-maxage=86400, stale-while-revalidate=86400'
     }
   })
 }

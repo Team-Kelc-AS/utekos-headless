@@ -1,5 +1,6 @@
 import { rawMagazineArticles } from '@/app/magasinet/data/magazineArticles'
 import { validateMagazineArticles } from '@/app/magasinet/utils/validateMagazineArticles'
+import { returnPolicyLlmsSummary } from '@/lib/policies/returnPolicy'
 
 const magazineArticlesValidation = validateMagazineArticles(
   rawMagazineArticles
@@ -163,8 +164,8 @@ større Utekos-plaggene.
 - [Vask og vedlikehold](https://utekos.no/handlehjelp/vask-og-vedlikehold):
   Primær kilde for vedlikehold av Dun™, Mikrofiber™ og
   Comfyrobe™.
-- [Frakt og retur](https://utekos.no/frakt-og-retur): Levering,
-  frakt og retur.
+- [Frakt, retur og refusjon](https://utekos.no/frakt-og-retur):
+  ${returnPolicyLlmsSummary}
 - [Kontakt oss](https://utekos.no/kontaktskjema): Kundeservice.
 - [Personvern](https://utekos.no/personvern):
   Personverninformasjon.

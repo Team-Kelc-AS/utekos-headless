@@ -15,11 +15,11 @@ export default function ShippingAndReturnsLayout({
     <>
       <ShippingAndReturnsPageJsonLd />
       <ShippingReturnsBreadcrumbs />
-      <article
+      <div
         className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSans.variable}`}
       >
         {children}
-      </article>
+      </div>
     </>
   )
 }

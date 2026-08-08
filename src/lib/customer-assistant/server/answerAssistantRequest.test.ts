@@ -19,6 +19,17 @@ const useQuestion =
 const priorityQuestion =
   'Hva er viktigst for deg: mest mulig varme, lav vekt, værbeskyttelse eller enkelt vedlikehold?'
 
+function getShippingReturnsFaqAnswer(
+  id: (typeof shippingReturnsFaqItems)[number]['id']
+) {
+  const item = shippingReturnsFaqItems.find(
+    candidate => candidate.id === id
+  )
+
+  assert.ok(item)
+  return item.answer
+}
+
 function createRequest(
   input: Partial<AssistantChatRequest> & { text: string }
 ): AssistantChatRequest {
@@ -1504,7 +1515,7 @@ test('shipping and returns uses the current FAQ and emits its canonical source',
 
   assert.equal(
     outcome.text,
-    'Vi tilbyr fri frakt på alle bestillinger over 999 kr i hele Norge. For bestillinger under dette beløpet har vi fraktkostnad på 99 kr.'
+    getShippingReturnsFaqAnswer('Merchant-Center-Shopping-Cost')
   )
   assert.deepEqual(outcome.sources, [
     {
@@ -1551,10 +1562,11 @@ test('support answers remove markdown markers before streaming to the UI', async
 })
 
 test('shipping FAQ distinguishes delivery duration from the return window', async () => {
-  const deliveryAnswer =
-    'Leveringstiden er normalt 2-5 virkedager. Bestillinger som gjøres før klokken 16 sendes samme dag, med unntak av søndag.'
+  const deliveryAnswer = getShippingReturnsFaqAnswer(
+    'Merchant-C-Delivery-Time'
+  )
   const returnWindowAnswer =
-    'Vi opererer med lovbestemt 14 dagers angrerett fra dagen kunden mottar produktet. Fraktkostnader knyttet til retur betales av sender.'
+    getShippingReturnsFaqAnswer('return-window')
 
   for (const question of [
     'Hvor lenge er leveringstiden?',
@@ -1614,7 +1626,7 @@ test('shipping FAQ preserves explicit return-process routing', async () => {
 
     assert.equal(
       outcome.text,
-      'Send en e-post til kundeservice@utekos.no med fullt navn, adresse, ordrenummer og hvilke produkter returen gjelder. Pakk varen forsvarlig og bruk en sendingsmetode med sporing.',
+      getShippingReturnsFaqAnswer('return-process'),
       question
     )
   }
@@ -1641,7 +1653,7 @@ test('shipping intent canonicalizes mixed size wording to the return process', a
   assert.deepEqual(calls, ['Hvordan returnerer jeg en vare?'])
   assert.equal(
     outcome.text,
-    'Send en e-post til kundeservice@utekos.no med fullt navn, adresse, ordrenummer og hvilke produkter returen gjelder. Pakk varen forsvarlig og bruk en sendingsmetode med sporing.'
+    getShippingReturnsFaqAnswer('return-process')
   )
   assert.deepEqual(outcome.sources, [
     {
@@ -1682,8 +1694,8 @@ test('shipping classifier pairs return subtopics and forwards canonical FAQ ques
     {
       question: 'Er det unntak fra fri frakt?',
       canonicalQuestion: 'Hva koster frakten hos Utekos?',
-      answerPattern: /fraktkostnad på 99 kr/iu,
-      excludedPattern: /hygieniske årsaker/iu
+      answerPattern: /ordinær frakt 99 kr/iu,
+      excludedPattern: /produktspesifikke unntak/iu
     },
     {
       question: 'Hvordan returnerer jeg under angreretten?',
@@ -1694,8 +1706,8 @@ test('shipping classifier pairs return subtopics and forwards canonical FAQ ques
     {
       question: 'Hva koster det å returnere varen?',
       canonicalQuestion: 'Hvor lang er angreretten?',
-      answerPattern: /retur betales av sender/iu,
-      excludedPattern: /fraktkostnad på 99 kr/iu
+      answerPattern: /betaler og ordner returfrakten selv/iu,
+      excludedPattern: /ordinær frakt 99 kr/iu
     }
   ] as const
 
