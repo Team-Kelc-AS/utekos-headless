@@ -94,6 +94,7 @@ function buildGenerateLeadSignalAudit(input: {
   fbp?: string
   fbpSource?: 'first_party_cookie' | 'meta_parameter_builder'
   marketingGranted: boolean
+  snapCookie1?: string
   userAgent?: string
 }): CanonicalSignalAudit {
   const {
@@ -106,6 +107,7 @@ function buildGenerateLeadSignalAudit(input: {
     fbp,
     fbpSource,
     marketingGranted,
+    snapCookie1,
     userAgent
   } = input
 
@@ -154,6 +156,14 @@ function buildGenerateLeadSignalAudit(input: {
       meta_fbp: unavailableCanonicalSignal(
         'consent_denied',
         assessedAt
+      ),
+      snap_click_id: unavailableCanonicalSignal(
+        'consent_denied',
+        assessedAt
+      ),
+      snap_cookie1: unavailableCanonicalSignal(
+        'consent_denied',
+        assessedAt
       )
     }
   }
@@ -162,6 +172,7 @@ function buildGenerateLeadSignalAudit(input: {
     clickId && Object.keys(clickId).length > 0
   )
   const fbclid = clickId?.fbclid
+  const snapClickId = clickId?.snap_click_id
 
   return {
     event_source_url: presentCanonicalSignal(
@@ -213,6 +224,17 @@ function buildGenerateLeadSignalAudit(input: {
     meta_fbp:
       fbp && fbpSource ?
         presentCanonicalSignal(fbpSource, assessedAt)
+      : unavailableCanonicalSignal('not_observed', assessedAt),
+    snap_click_id:
+      snapClickId ?
+        presentCanonicalSignal('browser_request_url', assessedAt)
+      : unavailableCanonicalSignal(
+          'no_applicable_click',
+          assessedAt
+        ),
+    snap_cookie1:
+      snapCookie1 ?
+        presentCanonicalSignal('first_party_cookie', assessedAt)
       : unavailableCanonicalSignal('not_observed', assessedAt)
   }
 }
@@ -261,6 +283,8 @@ export async function recordAcceptedGenerateLead(
     marketingGranted ?
       readCookie(cookieHeader, FIRST_PARTY_EXTERNAL_ID_COOKIE)
     : undefined
+  const snapCookie1 =
+    marketingGranted ? extractedBrowserId?.sc_cookie1 : undefined
 
   let fbc =
     marketingGranted ? extractedBrowserId?.fbc : undefined
@@ -320,6 +344,7 @@ export async function recordAcceptedGenerateLead(
     ...(fbp ? { fbp } : {}),
     ...(fbpSource ? { fbpSource } : {}),
     marketingGranted,
+    ...(snapCookie1 ? { snapCookie1 } : {}),
     ...(input.requestContext.userAgent ?
       { userAgent: input.requestContext.userAgent }
     : {})
