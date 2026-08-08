@@ -55,6 +55,7 @@ export type AddToCartViewProps = {
   onSubmit: (values: AddToCartFormValues) => void
   onCheckout: (values: AddToCartFormValues) => void
   isPending: boolean
+  isAddToCartPending: boolean
   isCheckoutPending: boolean
   isAvailable: boolean
   checkoutPresentation?: CheckoutPresentation

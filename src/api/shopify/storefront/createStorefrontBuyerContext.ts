@@ -10,7 +10,9 @@ export function createStorefrontBuyerContext(
   requestHeaders: Headers,
   resolveIpAddress: ResolveIpAddress = ipAddress
 ): StorefrontBuyerContext {
-  const candidate = resolveIpAddress(requestHeaders)?.trim()
+  const candidate = resolveIpAddress(
+    new Headers(requestHeaders)
+  )?.trim()
 
   return {
     buyerIp:

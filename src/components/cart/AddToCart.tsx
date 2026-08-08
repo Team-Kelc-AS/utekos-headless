@@ -29,8 +29,13 @@ export function AddToCart({
   isSelectionPending = false,
   surface = 'default'
 }: ExtendedAddToCartProps) {
-  const { performGoToCheckout, isPending, isCheckoutPending } =
-    useAddToCartAction({
+  const {
+    performAddToCart,
+    performGoToCheckout,
+    isPending,
+    isAddToCartPending,
+    isCheckoutPending
+  } = useAddToCartAction({
       product,
       selectedVariant,
       additionalLine,
@@ -40,6 +45,10 @@ export function AddToCart({
   const form = useAddToCartForm(selectedVariant)
 
   useCartErrorMonitoring()
+
+  const onSubmit = (values: AddToCartFormValues) => {
+    void performAddToCart(values.quantity)
+  }
 
   const onCheckout = (values: AddToCartFormValues) => {
     void performGoToCheckout(values.quantity)
@@ -52,9 +61,10 @@ export function AddToCart({
       form={form}
       product={product}
       selectedVariant={selectedVariant}
-      onSubmit={() => undefined}
+      onSubmit={onSubmit}
       onCheckout={onCheckout}
       isPending={isPending || isSelectionPending}
+      isAddToCartPending={isAddToCartPending}
       isCheckoutPending={isCheckoutPending}
       isAvailable={isAvailable}
       checkoutPresentation={checkoutPresentation}

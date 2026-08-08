@@ -50,3 +50,18 @@ test('uses the injected platform IP resolver as the trust boundary', () => {
     { buyerIp: '198.51.100.24' }
   )
 })
+
+test('normalizes framework header proxies before platform IP resolution', () => {
+  const frameworkHeaders = new Headers({
+    'x-real-ip': '203.0.113.8'
+  })
+
+  Object.defineProperty(frameworkHeaders, 'headers', {
+    value: { get: null }
+  })
+
+  assert.deepEqual(
+    createStorefrontBuyerContext(frameworkHeaders),
+    { buyerIp: '203.0.113.8' }
+  )
+})

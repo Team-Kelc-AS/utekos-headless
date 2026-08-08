@@ -11,6 +11,7 @@ export function AddToCartView({
   onSubmit,
   onCheckout,
   isPending,
+  isAddToCartPending,
   isCheckoutPending,
   isAvailable,
   checkoutPresentation = 'balanced',
@@ -43,6 +44,7 @@ export function AddToCartView({
           product={product}
           selectedVariant={selectedVariant}
           quantity={quantity}
+          isAddToCartPending={isAddToCartPending}
           isCheckoutPending={isCheckoutPending}
           isDisabled={!isAvailable || isPending}
           availableForSale={isAvailable}

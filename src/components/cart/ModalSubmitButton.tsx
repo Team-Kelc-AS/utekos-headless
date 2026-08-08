@@ -1,6 +1,7 @@
 'use client'
 
 import { SoldOutButton } from './SoldOutButton'
+import { ActiveSubmitButton } from './ActiveSubmitButton'
 import { QuickCheckoutButton } from './QuickCheckoutButton'
 import { KlarnaProductExpressCheckout } from '@/components/klarna/components/KlarnaProductExpressCheckout'
 import type {
@@ -14,6 +15,7 @@ interface ModalSubmitButtonProps {
   selectedVariant: ProductPurchaseVariant | null
   quantity: number
   availableForSale: boolean
+  isAddToCartPending: boolean
   isCheckoutPending: boolean
   isDisabled: boolean
   onCheckout: () => void
@@ -25,6 +27,7 @@ export function ModalSubmitButton({
   selectedVariant,
   quantity,
   availableForSale,
+  isAddToCartPending,
   isCheckoutPending,
   isDisabled,
   onCheckout,
@@ -37,6 +40,10 @@ export function ModalSubmitButton({
   if (checkoutPresentation === 'standard-primary') {
     return (
       <div className='grid gap-3'>
+        <ActiveSubmitButton
+          isPending={isAddToCartPending}
+          isDisabled={isDisabled}
+        />
         <QuickCheckoutButton
           isPending={isCheckoutPending}
           isDisabled={isDisabled}
@@ -59,21 +66,27 @@ export function ModalSubmitButton({
   }
 
   return (
-    <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
-      <KlarnaProductExpressCheckout
-        product={product}
-        selectedVariant={selectedVariant}
-        quantity={quantity}
-        disabled={isDisabled}
-        className='w-full min-w-0'
-        buttonContainerClassName='h-14 min-h-14 border-none ring-0'
-      />
-      <QuickCheckoutButton
-        isPending={isCheckoutPending}
+    <div className='grid gap-3'>
+      <ActiveSubmitButton
+        isPending={isAddToCartPending}
         isDisabled={isDisabled}
-        onClick={onCheckout}
-        className='bg-primary text-foreground hover:bg-primary/90 [&_svg]:text-foreground'
       />
+      <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
+        <KlarnaProductExpressCheckout
+          product={product}
+          selectedVariant={selectedVariant}
+          quantity={quantity}
+          disabled={isDisabled}
+          className='w-full min-w-0'
+          buttonContainerClassName='h-14 min-h-14 border-none ring-0'
+        />
+        <QuickCheckoutButton
+          isPending={isCheckoutPending}
+          isDisabled={isDisabled}
+          onClick={onCheckout}
+          className='bg-primary text-foreground hover:bg-primary/90 [&_svg]:text-foreground'
+        />
+      </div>
     </div>
   )
 }
