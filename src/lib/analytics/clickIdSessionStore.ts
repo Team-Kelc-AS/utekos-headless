@@ -8,6 +8,7 @@ export const CLICK_ID_PARAMETERS = [
   'gbraid',
   'gclid',
   'msclkid',
+  'snap_click_id',
   'ttclid',
   'twclid',
   'wbraid'
@@ -29,7 +30,12 @@ function readClickIdsFromSearchParams(
   const identifiers: Record<string, string> = {}
 
   for (const parameter of CLICK_ID_PARAMETERS) {
-    const value = searchParams.get(parameter)?.trim()
+    const value = (
+      parameter === 'snap_click_id' ?
+        searchParams.get('ScCid')
+      : searchParams.get(parameter)
+    )?.trim()
+
     if (value) identifiers[parameter] = value
   }
 
@@ -152,8 +158,7 @@ function getDefaultLocalStorage(): StorageLike | undefined {
 /**
  * URL click IDs win over session/local values for the same key.
  * Newly seen URL values are merged into sessionStorage and a 90-day
- * localStorage record so Meta click IDs survive tab close when `_fbc`
- * is delayed, blocked, or cleared.
+ * localStorage record so paid-media click IDs survive tab close.
  */
 export function resolveClickIds(
   pageUrl: string,
