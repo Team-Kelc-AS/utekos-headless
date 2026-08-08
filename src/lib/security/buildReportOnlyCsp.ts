@@ -63,6 +63,24 @@ const KLARNA_ASSET_ORIGINS = ['https://x.klarnacdn.net'] as const
 const VERCEL_LIVE_ORIGINS = ['https://vercel.live'] as const
 
 /**
+ * @vercel/analytics + @vercel/speed-insights load from this host in
+ * development (script.debug.js). Production uses first-party
+ * /_vercel/insights and /_vercel/speed-insights under 'self'.
+ */
+const VERCEL_ANALYTICS_SCRIPT_ORIGINS = [
+  'https://va.vercel-scripts.com'
+] as const
+
+/**
+ * Development ingest hosts for Speed Insights / Analytics when the
+ * debug scripts are served from va.vercel-scripts.com.
+ */
+const VERCEL_ANALYTICS_CONNECT_ORIGINS = [
+  'https://vitals.vercel-insights.com',
+  'https://vitals.vercel-analytics.com'
+] as const
+
+/**
  * Vercel BotID / Kasada fingerprinting error sink, evidenced from
  * production report-only connect-src violations on the homepage.
  */
@@ -106,7 +124,8 @@ export function buildReportOnlyCsp(): string {
     ...META_PIXEL_SCRIPT_ORIGINS,
     ...GOOGLE_ADS_ORIGINS,
     ...SHOPIFY_CONSENT_SCRIPT_ORIGINS,
-    ...VERCEL_LIVE_ORIGINS
+    ...VERCEL_LIVE_ORIGINS,
+    ...VERCEL_ANALYTICS_SCRIPT_ORIGINS
   ]
 
   const connectSrc = [
@@ -119,6 +138,7 @@ export function buildReportOnlyCsp(): string {
     ...GOOGLE_ADS_ORIGINS,
     ...SHOPIFY_CONSENT_CONNECT_ORIGINS,
     ...VERCEL_LIVE_ORIGINS,
+    ...VERCEL_ANALYTICS_CONNECT_ORIGINS,
     ...BOTID_KASADA_CONNECT_ORIGINS,
     ...GA4_COLLECTION_ORIGINS,
     ...GA4_ADVERTISING_ORIGINS,

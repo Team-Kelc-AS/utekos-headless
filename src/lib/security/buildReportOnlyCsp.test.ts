@@ -145,6 +145,18 @@ test('permits GA4 advertising hosts and Klarna CDN assets required by report-onl
   assert.match(csp, /media-src 'self' data: blob:/)
   assert.match(
     csp,
+    /script-src[^;]*https:\/\/va\.vercel-scripts\.com/
+  )
+  assert.match(
+    csp,
+    /connect-src[^;]*https:\/\/vitals\.vercel-insights\.com/
+  )
+  assert.match(
+    csp,
+    /connect-src[^;]*https:\/\/vitals\.vercel-analytics\.com/
+  )
+  assert.match(
+    csp,
     /connect-src[^;]*https:\/\/reporting\.cdndex\.io/
   )
   assert.match(csp, /connect-src[^;]*https:\/\/\*\.cdndex\.io/)
