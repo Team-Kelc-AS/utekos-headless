@@ -33,6 +33,28 @@ test('resolveClickIds reads click identifiers from the URL', () => {
   )
 })
 
+test('maps Snap ScCid to canonical snap_click_id without changing the value', () => {
+  assert.deepEqual(
+    resolveClickIds(
+      'https://utekos.no/?ScCid=AbC-123_XyZ',
+      createMemoryStorage(),
+      createMemoryStorage()
+    ),
+    { snap_click_id: 'AbC-123_XyZ' }
+  )
+})
+
+test('does not invent support for incorrectly-cased Snap query keys', () => {
+  assert.equal(
+    resolveClickIds(
+      'https://utekos.no/?sccid=wrong-case',
+      createMemoryStorage(),
+      createMemoryStorage()
+    ),
+    undefined
+  )
+})
+
 test('resolveClickIds persists URL click IDs into session and local storage', () => {
   const session = createMemoryStorage()
   const local = createMemoryStorage()
@@ -52,6 +74,28 @@ test('resolveClickIds persists URL click IDs into session and local storage', ()
   assert.deepEqual(JSON.parse(local.getItem(CLICK_ID_LOCAL_KEY)!), {
     identifiers: { fbclid: 'meta-persist' },
     updatedAt: '2026-07-20T12:00:00.000Z'
+  })
+})
+
+test('persists canonical Snap click IDs into session and local storage', () => {
+  const session = createMemoryStorage()
+  const local = createMemoryStorage()
+  const now = Date.parse('2026-08-08T09:00:00.000Z')
+
+  resolveClickIds(
+    'https://utekos.no/?ScCid=Snap-Persist-AbC',
+    session,
+    local,
+    now
+  )
+
+  assert.equal(
+    session.getItem(CLICK_ID_SESSION_KEY),
+    JSON.stringify({ snap_click_id: 'Snap-Persist-AbC' })
+  )
+  assert.deepEqual(JSON.parse(local.getItem(CLICK_ID_LOCAL_KEY)!), {
+    identifiers: { snap_click_id: 'Snap-Persist-AbC' },
+    updatedAt: '2026-08-08T09:00:00.000Z'
   })
 })
 
@@ -123,5 +167,23 @@ test('resolveClickIds lets fresh URL values win over session and local', () => {
       Date.parse('2026-07-20T12:00:00.000Z')
     ),
     { fbclid: 'new-meta', gclid: 'keep-google', msclkid: 'bing-1' }
+  )
+})
+
+test('lets a fresh ScCid replace an older persisted Snap click id', () => {
+  const session = createMemoryStorage({
+    [CLICK_ID_SESSION_KEY]: JSON.stringify({
+      snap_click_id: 'old-snap',
+      fbclid: 'keep-meta'
+    })
+  })
+
+  assert.deepEqual(
+    resolveClickIds(
+      'https://utekos.no/?ScCid=new-Snap-Value',
+      session,
+      createMemoryStorage()
+    ),
+    { snap_click_id: 'new-Snap-Value', fbclid: 'keep-meta' }
   )
 })
