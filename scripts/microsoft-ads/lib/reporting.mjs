@@ -58,8 +58,8 @@ const pollResponseSchema = z
   .object({
     ReportRequestStatus: z
       .object({
-        Status: z.string().optional(),
-        ReportDownloadUrl: z.string().optional()
+        Status: z.enum(['Error', 'Pending', 'Success']).optional(),
+        ReportDownloadUrl: z.string().nullable().optional()
       })
       .passthrough()
       .optional()
@@ -205,10 +205,7 @@ export function createMicrosoftAdsReportingClient({
     const url = requireHttpsUrl(downloadUrl, 'downloadUrl')
     const controller = new AbortController()
     const timeout = setTimeout(
-      () =>
-        controller.abort(
-          new Error(`Report download timed out after ${timeoutMs} ms.`)
-        ),
+      () => controller.abort(new Error(`Report download timed out after ${timeoutMs} ms.`)),
       timeoutMs
     )
     const combinedSignal = signal
@@ -247,12 +244,26 @@ export function createMicrosoftAdsReportingClient({
       attempts
     })
 
-    if (!completed.ok || !completed.status?.ReportDownloadUrl) {
+    if (!completed.ok) {
       return {
         ok: false,
+        empty: false,
         reportRequestId: submitted.reportRequestId,
         status: completed.status,
         pollAttempts: completed.attempts
+      }
+    }
+
+    if (!completed.status?.ReportDownloadUrl) {
+      return {
+        ok: true,
+        empty: true,
+        reportRequestId: submitted.reportRequestId,
+        status: completed.status,
+        pollAttempts: completed.attempts,
+        rowCount: 0,
+        rows: [],
+        allRows: []
       }
     }
 
@@ -262,12 +273,11 @@ export function createMicrosoftAdsReportingClient({
     )
     const allRows = parseMicrosoftAdsReportCsv(csv)
     const rows =
-      rowLimit === null
-        ? allRows
-        : allRows.slice(0, normalizeRowLimit(rowLimit))
+      rowLimit === null ? allRows : allRows.slice(0, normalizeRowLimit(rowLimit))
 
     return {
       ok: true,
+      empty: false,
       reportRequestId: submitted.reportRequestId,
       status: completed.status,
       pollAttempts: completed.attempts,
@@ -335,9 +345,7 @@ export function createMicrosoftAdsReportingClient({
 
 export function parseMicrosoftAdsReportCsv(csv) {
   if (typeof csv !== 'string') {
-    throw new TypeError(
-      'Microsoft Advertising report CSV must be a string.'
-    )
+    throw new TypeError('Microsoft Advertising report CSV must be a string.')
   }
 
   const matrix = parseCsvMatrix(csv)
@@ -366,9 +374,7 @@ export function summarizeMicrosoftAdsCampaignReportRows(rows) {
       totals.impressions += numberValue(row.Impressions)
       totals.clicks += numberValue(row.Clicks)
       totals.spend += numberValue(row.Spend)
-      totals.conversionsQualified += numberValue(
-        row.ConversionsQualified
-      )
+      totals.conversionsQualified += numberValue(row.ConversionsQualified)
       totals.allConversionsQualified += numberValue(
         row.AllConversionsQualified
       )
@@ -432,9 +438,7 @@ function parseCsvMatrix(csv) {
   }
 
   if (quoted) {
-    throw new Error(
-      'Microsoft Advertising report CSV contains an unterminated quote.'
-    )
+    throw new Error('Microsoft Advertising report CSV contains an unterminated quote.')
   }
 
   if (field.length > 0 || row.length > 0) {
@@ -450,17 +454,11 @@ function stripTrailingCarriageReturn(value) {
 }
 
 function decodeReportBuffer(buffer) {
-  if (
-    buffer.length < 2 ||
-    buffer[0] !== 0x50 ||
-    buffer[1] !== 0x4b
-  ) {
+  if (buffer.length < 2 || buffer[0] !== 0x50 || buffer[1] !== 0x4b) {
     return buffer.toString('utf8')
   }
 
-  const tempDir = fs.mkdtempSync(
-    path.join(os.tmpdir(), 'utekos-msads-report-')
-  )
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'utekos-msads-report-'))
   const zipPath = path.join(tempDir, 'report.zip')
   fs.writeFileSync(zipPath, buffer)
 
@@ -470,10 +468,7 @@ function decodeReportBuffer(buffer) {
       maxBuffer: 64 * 1024 * 1024
     })
   } finally {
-    fs.rmSync(tempDir, {
-      recursive: true,
-      force: true
-    })
+    fs.rmSync(tempDir, { recursive: true, force: true })
   }
 }
 
@@ -487,13 +482,8 @@ function numberValue(value) {
 }
 
 function normalizeRelativePath(pathname) {
-  if (
-    typeof pathname !== 'string' ||
-    !pathname.trim()
-  ) {
-    throw new TypeError(
-      'Reporting pathname must be a non-empty string.'
-    )
+  if (typeof pathname !== 'string' || !pathname.trim()) {
+    throw new TypeError('Reporting pathname must be a non-empty string.')
   }
 
   const value = pathname.trim()
@@ -503,74 +493,49 @@ function normalizeRelativePath(pathname) {
     value.startsWith('//') ||
     value.includes('..')
   ) {
-    throw new Error(
-      'Reporting requests must use a relative API pathname.'
-    )
+    throw new Error('Reporting requests must use a relative API pathname.')
   }
 
   return value.startsWith('/') ? value : `/${value}`
 }
 
 function requireNonEmptyString(value, field) {
-  if (
-    typeof value !== 'string' ||
-    !value.trim()
-  ) {
-    throw new Error(
-      `Microsoft Advertising ${field} is required.`
-    )
+  if (typeof value !== 'string' || !value.trim()) {
+    throw new Error(`Microsoft Advertising ${field} is required.`)
   }
 
   return value.trim()
 }
 
 function requireHttpsUrl(value, field) {
-  const parsed = new URL(
-    requireNonEmptyString(value, field)
-  )
+  const parsed = new URL(requireNonEmptyString(value, field))
 
   if (parsed.protocol !== 'https:') {
-    throw new Error(
-      `Microsoft Advertising ${field} must use HTTPS.`
-    )
+    throw new Error(`Microsoft Advertising ${field} must use HTTPS.`)
   }
 
   return parsed.toString()
 }
 
 function normalizeRowLimit(value) {
-  if (
-    !Number.isInteger(value) ||
-    value < 0
-  ) {
-    throw new TypeError(
-      'Reporting rowLimit must be a non-negative integer.'
-    )
+  if (!Number.isInteger(value) || value < 0) {
+    throw new TypeError('Reporting rowLimit must be a non-negative integer.')
   }
 
   return value
 }
 
 function sleep(milliseconds, signal) {
-  if (
-    !Number.isFinite(milliseconds) ||
-    milliseconds < 0
-  ) {
-    throw new TypeError(
-      'Sleep duration must be a non-negative number.'
-    )
+  if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+    throw new TypeError('Sleep duration must be a non-negative number.')
   }
 
   return new Promise((resolve, reject) => {
     const onAbort = () => {
       clearTimeout(timeout)
       signal?.removeEventListener('abort', onAbort)
-      reject(
-        signal?.reason ??
-          new Error('Operation aborted.')
-      )
+      reject(signal?.reason ?? new Error('Operation aborted.'))
     }
-
     const timeout = setTimeout(() => {
       signal?.removeEventListener('abort', onAbort)
       resolve()
@@ -585,10 +550,6 @@ function sleep(milliseconds, signal) {
       return
     }
 
-    signal.addEventListener(
-      'abort',
-      onAbort,
-      { once: true }
-    )
+    signal.addEventListener('abort', onAbort, { once: true })
   })
 }

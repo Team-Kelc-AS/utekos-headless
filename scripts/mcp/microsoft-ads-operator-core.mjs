@@ -8,6 +8,40 @@ const SEVERITY_WEIGHTS = Object.freeze({
   info: 10
 })
 
+
+const DIAGNOSIS_INTENTS = Object.freeze([
+  {
+    name: 'conversion_tracking',
+    areas: ['conversion_tracking', 'attribution', 'uet', 'local_tracking', 'deduplication'],
+    tokens: ['conversion', 'conversions', 'konvertering', 'konverteringer', 'qualified', 'kvalifisert', 'kvalifiserte', 'goal', 'goals', 'uet', 'msclkid', 'tracking', 'attribution', 'attribusjon', 'purchase', 'kjop', 'click', 'clicks', 'klikk'],
+    codeTokens: ['CONVERSION', 'UET', 'MSCLKID', 'CLICKS', 'ATTRIBUTION', 'PURCHASE']
+  },
+  {
+    name: 'merchant',
+    areas: ['merchant', 'merchant_center', 'shopping', 'catalog', 'feed'],
+    tokens: ['merchant', 'merchantcenter', 'shopping', 'catalog', 'catalogue', 'feed', 'product', 'products', 'produkt', 'produkter', 'disapproved', 'avvist', 'offer', 'offers'],
+    codeTokens: ['MERCHANT', 'SHOPPING', 'PRODUCT', 'CATALOG', 'FEED', 'OFFER']
+  },
+  {
+    name: 'delivery',
+    areas: ['delivery', 'campaign', 'campaigns', 'account'],
+    tokens: ['delivery', 'levering', 'impression', 'impressions', 'visninger', 'campaign', 'campaigns', 'kampanje', 'kampanjer', 'spend', 'forbruk', 'traffic', 'trafikk'],
+    codeTokens: ['DELIVERY', 'CAMPAIGN', 'IMPRESSION', 'SPEND']
+  },
+  {
+    name: 'budget',
+    areas: ['budget', 'delivery', 'campaign'],
+    tokens: ['budget', 'budsjett', 'limited', 'begrenset', 'spend', 'forbruk'],
+    codeTokens: ['BUDGET']
+  },
+  {
+    name: 'targeting',
+    areas: ['targeting', 'audience', 'keyword'],
+    tokens: ['targeting', 'malretting', 'audience', 'publikum', 'keyword', 'keywords', 'sokeord', 'negative'],
+    codeTokens: ['TARGET', 'AUDIENCE', 'KEYWORD', 'NEGATIVE']
+  }
+])
+
 const DIAGNOSIS_STOP_WORDS = new Set([
   'a',
   'an',
@@ -105,6 +139,7 @@ export function rankMicrosoftAdsDiagnosisFindings(query, findings, { limit } = {
   const queryText = normalizeSearchText(query)
   const queryTokens = tokenizeDiagnosis(queryText)
   const normalizedLimit = normalizeOptionalLimit(limit, input.length)
+  const intent = classifyMicrosoftAdsDiagnosisIntent(queryText)
 
   return input
     .map(finding => {
@@ -125,27 +160,39 @@ export function rankMicrosoftAdsDiagnosisFindings(query, findings, { limit } = {
 
       const searchTokens = new Set(tokenizeDiagnosis(searchText))
       const tokenOverlap = queryTokens.filter(token => searchTokens.has(token)).length
-      const phraseBonus = queryText.length >= 4 && searchText.includes(queryText) ? 300 : 0
+      const phraseBonus = queryText.length >= 4 && searchText.includes(queryText) ? 220 : 0
       const codeBonus = queryTokens.some(token =>
         normalizeSearchText(finding?.code).includes(token)
       )
-        ? 40
+        ? 35
         : 0
       const areaBonus = queryTokens.some(token =>
         normalizeSearchText(finding?.area).includes(token)
       )
-        ? 30
+        ? 25
         : 0
       const severityScore = SEVERITY_WEIGHTS[finding?.severity] ?? 0
+      const intentAreaBonus = scoreIntentArea(finding?.area, intent)
+      const intentCodeBonus = scoreIntentCode(finding?.code, intent)
       const diagnosticScore =
-        phraseBonus + tokenOverlap * 100 + codeBonus + areaBonus + severityScore
+        phraseBonus +
+        tokenOverlap * 60 +
+        codeBonus +
+        areaBonus +
+        severityScore +
+        intentAreaBonus +
+        intentCodeBonus
 
       return {
         ...finding,
         diagnosticScore,
         diagnosticMatch: {
           tokenOverlap,
-          queryTokenCount: queryTokens.length
+          queryTokenCount: queryTokens.length,
+          primaryIntent: intent.primaryIntent,
+          matchedIntents: intent.matchedIntents,
+          intentAreaBonus,
+          intentCodeBonus
         }
       }
     })
@@ -165,6 +212,64 @@ export function rankMicrosoftAdsDiagnosisFindings(query, findings, { limit } = {
       return String(left.code ?? '').localeCompare(String(right.code ?? ''))
     })
     .slice(0, normalizedLimit)
+}
+
+export function classifyMicrosoftAdsDiagnosisIntent(query) {
+  const text = normalizeSearchText(query)
+  const tokens = new Set(tokenizeDiagnosis(text))
+  const scored = DIAGNOSIS_INTENTS.map(intent => {
+    let score = intent.tokens.reduce(
+      (total, token) => total + (tokens.has(normalizeSearchText(token)) ? 1 : 0),
+      0
+    )
+
+    if (
+      intent.name === 'conversion_tracking' &&
+      hasAnyToken(tokens, ['click', 'clicks', 'klikk']) &&
+      hasAnyToken(tokens, ['conversion', 'conversions', 'konvertering', 'konverteringer', 'qualified', 'kvalifiserte']) &&
+      hasAnyToken(tokens, ['zero', 'no', 'none', 'ingen', 'null'])
+    ) {
+      score += 8
+    }
+
+    return { ...intent, score }
+  })
+    .filter(intent => intent.score > 0)
+    .sort((left, right) => right.score - left.score || left.name.localeCompare(right.name))
+
+  return {
+    primaryIntent: scored[0]?.name ?? 'general',
+    matchedIntents: scored.map(intent => intent.name),
+    scored
+  }
+}
+
+function scoreIntentArea(area, intentResult) {
+  const normalizedArea = normalizeSearchText(area)
+  if (!normalizedArea) return 0
+
+  let bonus = 0
+  for (let index = 0; index < intentResult.scored.length; index += 1) {
+    const intent = intentResult.scored[index]
+    if (!intent.areas.some(candidate => normalizedArea.includes(normalizeSearchText(candidate)))) continue
+    bonus = Math.max(bonus, index === 0 ? 450 : 180)
+  }
+  return bonus
+}
+
+function scoreIntentCode(code, intentResult) {
+  const normalizedCode = String(code ?? '').toUpperCase()
+  let bonus = 0
+  for (let index = 0; index < intentResult.scored.length; index += 1) {
+    const intent = intentResult.scored[index]
+    if (!intent.codeTokens.some(token => normalizedCode.includes(token))) continue
+    bonus = Math.max(bonus, index === 0 ? 140 : 60)
+  }
+  return bonus
+}
+
+function hasAnyToken(tokens, candidates) {
+  return candidates.some(candidate => tokens.has(normalizeSearchText(candidate)))
 }
 
 export function buildMicrosoftAdsReportRequest(input, config, now = Date.now) {

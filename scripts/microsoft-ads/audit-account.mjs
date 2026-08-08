@@ -21,6 +21,7 @@ import {
   createMicrosoftShoppingContentClient,
   summarizeMicrosoftShoppingProducts
 } from './lib/shopping-content.mjs'
+import { readMicrosoftUetDispatchEvidence } from './evidence/supabase-tracking-evidence.mjs'
 
 const auditRequiredFields = [
   'developerToken',
@@ -200,7 +201,8 @@ export async function collectMicrosoftAdsAccountAudit({
     campaignsRead,
     shoppingRead,
     reportRead,
-    adInsightRead
+    adInsightRead,
+    dispatchEvidenceRead
   ] = await Promise.all([
     safeRead('account_properties', () =>
       readAccountProperties(campaignManagement)
@@ -218,7 +220,10 @@ export async function collectMicrosoftAdsAccountAudit({
     safeRead('campaign_report', () =>
       reporting.generateCampaignPerformanceReport()
     ),
-    safeRead('ad_insight', () => readAdInsight(adInsight))
+    safeRead('ad_insight', () => readAdInsight(adInsight)),
+    safeRead('microsoft_uet_dispatch_evidence', () =>
+      readMicrosoftUetDispatchEvidence()
+    )
   ])
 
   const accountProperties = unwrapRead(accountPropertiesRead)
@@ -228,7 +233,31 @@ export async function collectMicrosoftAdsAccountAudit({
   const shoppingContent = unwrapRead(shoppingRead)
   const report = unwrapRead(reportRead)
   const adInsightData = unwrapRead(adInsightRead)
-  const localImplementation = readLocalImplementation()
+  const dispatchEvidence = dispatchEvidenceRead.ok
+    ? dispatchEvidenceRead.value
+    : {
+        ok: false,
+        reason: dispatchEvidenceRead.error,
+        lookbackDays: 30,
+        provider: 'microsoft_uet',
+        rowCount: 0,
+        providerConfirmed: false,
+        firstSeenAt: null,
+        lastSeenAt: null,
+        acceptedCount: 0,
+        skippedCount: 0,
+        failedCount: 0,
+        byStatus: {},
+        byDispatchMode: {},
+        bySkipReason: {},
+        bySkipReasonLastSeenAt: {},
+        bySkipReasonAndEventName: {},
+        byEventName: {}
+      }
+  const localImplementation = {
+    ...readLocalImplementation(),
+    providerDispatchEvidence: dispatchEvidence
+  }
 
   const criticalReads = {
     accountProperties: accountPropertiesRead.ok,
@@ -799,176 +828,109 @@ async function readAdInsight(client) {
 }
 
 function readLocalImplementation() {
-  const eventMap = readProjectSourceFile(
-    'src/lib/tracking/events/mapToCanonicalEventName.ts'
+  const sourceScan = scanMicrosoftTrackingSources()
+  const allContent = sourceScan.files.map(file => file.content).join('\n')
+  const providerFiles = sourceScan.files.filter(file =>
+    file.content.includes("'microsoft_uet'") ||
+    file.content.includes('"microsoft_uet"')
   )
-  const browserUet = readProjectSourceFile(
-    'src/lib/tracking/microsoft-uet/trackMicrosoftUetEvent.ts'
+  const capiFiles = sourceScan.files.filter(file =>
+    file.content.includes('capi.uet.microsoft.com') ||
+    file.content.includes('missing_capi_token') ||
+    file.content.includes('missing_msclkid')
   )
-  const uetTag = readProjectSourceFile(
-    'src/components/analytics/MicrosoftUetTag.tsx'
-  )
-  const capiPurchase = readProjectSourceFile(
-    'src/lib/tracking/microsoft-uet/sendMicrosoftUetPurchase.ts'
-  )
-  const capiEventBuilder = readProjectSourceFile(
-    'src/lib/tracking/microsoft-uet/buildMicrosoftUetPurchaseEvent.ts'
-  )
-  const providerQueue = readProjectSourceFile(
-    'src/lib/tracking/warehouse/getProvidersForAcceptedTrackingEvent.ts'
-  )
-  const orderTracking = readProjectSourceFile(
-    'src/lib/tracking/services/processOrderTrackingWithDependencies.ts'
+  const browserFiles = sourceScan.files.filter(file =>
+    file.content.includes('uetq') ||
+    file.content.includes('PRODUCT_PURCHASE') ||
+    file.content.includes('MicrosoftUet')
   )
 
-  const addToCartAction = eventMap.content.includes(
-    "AddToCart: 'add_to_cart'"
+  const cApiEndpointPresent = capiFiles.some(file =>
+    file.content.includes('capi.uet.microsoft.com')
   )
-    ? 'add_to_cart'
-    : 'unknown'
-  const beginCheckoutAction = eventMap.content.includes(
-    "InitiateCheckout: 'begin_checkout'"
+  const cApiRequiresToken = capiFiles.some(file =>
+    file.content.includes('missing_capi_token')
   )
-    ? 'begin_checkout'
-    : 'unknown'
-  const beginCheckoutCompatibilityAction = browserUet.content.includes(
-    "eventAction: 'AutoEvent_begin_checkout'"
+  const cApiRequiresMsclkid = capiFiles.some(file =>
+    file.content.includes('missing_msclkid')
   )
-    ? 'AutoEvent_begin_checkout'
-    : 'unknown'
-  const purchaseAction = eventMap.content.includes("Purchase: 'purchase'")
-    ? 'purchase'
-    : 'unknown'
-  const productPurchaseCompatibilityAction = browserUet.content.includes(
-    "eventAction: 'PRODUCT_PURCHASE'"
+  const microsoftProviderDeclared = providerFiles.some(file =>
+    file.content.includes('ProviderId') ||
+    file.content.includes('provider:') ||
+    file.content.includes('adapter')
   )
-    ? 'PRODUCT_PURCHASE'
-    : 'unknown'
-  const productPurchaseCompatibilityPageType = browserUet.content.includes(
-    "pageType: 'PURCHASE'"
+  const retryProviderPresent = providerFiles.some(file =>
+    file.content.includes('server_retry') ||
+    file.content.includes('retry')
   )
-    ? 'PURCHASE'
-    : 'unknown'
-  const productPurchaseHelperEventName = browserUet.content.includes(
-    "eventName: 'PRODUCT_PURCHASE'"
+  const directProviderPresent = providerFiles.some(file =>
+    file.content.includes('server_direct')
   )
-    ? 'PRODUCT_PURCHASE'
-    : 'unknown'
-  const productPurchaseHelperPageType = browserUet.content.includes(
-    "pageType: 'PURCHASE'"
+  const productIdPayloadPresent = browserFiles.some(file =>
+    file.content.includes('ecomm_prodid') ||
+    file.content.includes('productId') ||
+    file.content.includes('product_id')
   )
-    ? 'PURCHASE'
-    : 'unknown'
-  const inlinePurchaseEventName = uetTag.content.includes(
-    "window.uetq.push('event', 'PRODUCT_PURCHASE', payload)"
+  const purchaseEventPresent = browserFiles.some(file =>
+    file.content.includes('PRODUCT_PURCHASE') ||
+    file.content.includes("'purchase'")
   )
-    ? 'PRODUCT_PURCHASE'
-    : 'unknown'
-  const inlinePurchasePageType = uetTag.content.includes(
-    "ecomm_pagetype: 'PURCHASE'"
+  const outboundClickEmitterFound = sourceScan.files.some(file =>
+    file.content.includes('AutoEvent_outbound_click') ||
+    file.content.includes('outbound_click')
   )
-    ? 'PURCHASE'
-    : 'unknown'
-  const serverCapiPurchaseEventName = capiEventBuilder.content.includes(
-    "eventName: 'PRODUCT_PURCHASE'"
-  )
-    ? 'PRODUCT_PURCHASE'
-    : 'unknown'
-  const serverCapiPageType = capiEventBuilder.content.includes(
-    "pageType: 'purchase'"
-  )
-    ? 'purchase'
-    : capiEventBuilder.content.includes("pageType: 'PURCHASE'")
-      ? 'PURCHASE'
-      : 'unknown'
-  const cApiRequiresToken =
-    capiPurchase.content.includes('if (!config.apiToken)') &&
-    capiPurchase.content.includes("reason: 'missing_capi_token'")
-  const cApiRequiresMsclkid =
-    capiPurchase.content.includes('getMicrosoftClickId(attribution)') &&
-    capiPurchase.content.includes("reason: 'missing_msclkid'")
-  const outboundClickLabelScrubbed = uetTag.content.includes(
-    'return `${parsed.origin}${parsed.pathname}`'
-  )
-  const outboundClickEmitterFound = [
-    eventMap.content,
-    browserUet.content,
-    uetTag.content
-  ].some(
-    content =>
-      content.includes('AutoEvent_outbound_click') ||
-      content.includes('outbound_click')
+  const outboundClickLabelScrubbed = sourceScan.files.some(file =>
+    file.content.includes('parsed.origin') && file.content.includes('parsed.pathname')
   )
 
   return {
-    inspectedFiles: [
-      eventMap,
-      browserUet,
-      uetTag,
-      capiPurchase,
-      capiEventBuilder,
-      providerQueue,
-      orderTracking
-    ].map(file => ({
+    inspectedFiles: sourceScan.files.map(file => ({
       path: file.relativePath,
-      exists: file.exists
+      exists: true
     })),
+    scanRoots: sourceScan.roots,
     browserEvents: {
-      dispatcherPresent: browserUet.content.includes(
-        'dispatchMicrosoftUetBrowserEvent'
-      ),
-      addToCartAction,
-      beginCheckoutAction,
-      beginCheckoutCompatibilityAction,
-      beginCheckoutPageType:
-        browserUet.content.includes("case 'begin_checkout'") &&
-        browserUet.content.includes("return 'cart'")
-          ? 'cart'
-          : 'unknown',
-      purchaseAction,
-      productPurchaseCompatibilityAction,
-      productPurchaseCompatibilityPageType,
-      productPurchaseHelperEventName,
-      productPurchaseHelperPageType,
-      queuePushPattern: browserUet.content.includes(
-        "getMicrosoftUetQueue().push('event', eventAction, payload)"
-      )
-        ? "uetq.push('event', action, payload)"
-        : 'unknown'
+      dispatcherPresent: browserFiles.length > 0,
+      purchaseAction: purchaseEventPresent ? 'purchase' : 'unknown',
+      productPurchaseCompatibilityAction: allContent.includes('PRODUCT_PURCHASE')
+        ? 'PRODUCT_PURCHASE'
+        : 'unknown',
+      queuePushPattern: allContent.includes('uetq') ? 'uetq' : 'unknown'
     },
     productPurchaseGoal: {
       documentedEventAction: 'PRODUCT_PURCHASE',
       documentedPageType: 'PURCHASE',
-      localHelperEventAction: productPurchaseHelperEventName,
-      localHelperPageType: productPurchaseHelperPageType,
-      inlineHelperEventAction: inlinePurchaseEventName,
-      inlineHelperPageType: inlinePurchasePageType,
-      serverCapiEventAction: serverCapiPurchaseEventName,
-      serverCapiPageType,
-      productIdPayloadPresent:
-        browserUet.content.includes('ecomm_prodid') &&
-        uetTag.content.includes('ecomm_prodid'),
-      cApiEndpointPresent: capiPurchase.content.includes(
-        'https://capi.uet.microsoft.com/v1/${config.tagId}/events'
-      ),
+      localHelperEventAction: allContent.includes('PRODUCT_PURCHASE')
+        ? 'PRODUCT_PURCHASE'
+        : 'unknown',
+      localHelperPageType: /pageType\s*:\s*['\"]PURCHASE['\"]/.test(allContent)
+        ? 'PURCHASE'
+        : /pageType\s*:\s*['\"]purchase['\"]/.test(allContent)
+          ? 'purchase'
+          : 'unknown',
+      serverCapiEventAction: capiFiles.some(file => file.content.includes('PRODUCT_PURCHASE'))
+        ? 'PRODUCT_PURCHASE'
+        : capiFiles.some(file => file.content.includes("eventName: 'purchase'"))
+          ? 'purchase'
+          : 'unknown',
+      serverCapiPageType: capiFiles.some(file => /pageType\s*:\s*['\"]purchase['\"]/.test(file.content))
+        ? 'purchase'
+        : capiFiles.some(file => /pageType\s*:\s*['\"]PURCHASE['\"]/.test(file.content))
+          ? 'PURCHASE'
+          : 'unknown',
+      productIdPayloadPresent,
+      cApiEndpointPresent,
       cApiRequiresToken,
       cApiRequiresMsclkid
     },
     providerQueue: {
-      serverQueueIncludesMicrosoft:
-        providerQueue.content.includes("'microsoft'") ||
-        providerQueue.content.includes("'microsoft_uet'"),
-      serverDirectOrderAuditPresent:
-        orderTracking.content.includes("provider: 'microsoft_uet'") &&
-        orderTracking.content.includes("dispatchMode: 'server_direct'"),
-      skippedPurchaseLogPresent: orderTracking.content.includes(
-        'Microsoft UET Purchase Skipped'
-      ),
-      providerTypeDeclaration: providerQueue.content.includes(
-        "export type TrackingProvider = 'meta' | 'google'"
-      )
-        ? "export type TrackingProvider = 'meta' | 'google'"
-        : 'unknown'
+      serverQueueIncludesMicrosoft: microsoftProviderDeclared,
+      serverRetryIncludesMicrosoft: retryProviderPresent,
+      serverDirectIncludesMicrosoft: directProviderPresent,
+      providerTypeDeclaration: microsoftProviderDeclared
+        ? "ProviderId includes 'microsoft_uet'"
+        : 'unknown',
+      matchingFiles: providerFiles.map(file => file.relativePath)
     },
     missingEmitters: {
       outboundClick: !outboundClickEmitterFound,
@@ -977,12 +939,43 @@ function readLocalImplementation() {
   }
 }
 
-function readProjectSourceFile(relativePath) {
-  const fullPath = path.join(MICROSOFT_ADS_REPO_ROOT, relativePath)
-  return {
-    relativePath,
-    exists: fs.existsSync(fullPath),
-    content: fs.existsSync(fullPath) ? fs.readFileSync(fullPath, 'utf8') : ''
+function scanMicrosoftTrackingSources() {
+  const relativeRoots = [
+    'src/lib/analytics/server',
+    'src/lib/analytics',
+    'src/components/analytics',
+    'src/app/api'
+  ]
+  const roots = relativeRoots.filter(relativeRoot =>
+    fs.existsSync(path.join(MICROSOFT_ADS_REPO_ROOT, relativeRoot))
+  )
+  const files = []
+  const seen = new Set()
+
+  for (const relativeRoot of roots) {
+    walkProjectSourceTree(relativeRoot, files, seen)
+  }
+
+  return { roots, files }
+}
+
+function walkProjectSourceTree(relativeDirectory, files, seen) {
+  const absoluteDirectory = path.join(MICROSOFT_ADS_REPO_ROOT, relativeDirectory)
+  for (const entry of fs.readdirSync(absoluteDirectory, { withFileTypes: true })) {
+    if (entry.name.startsWith('.') || entry.name === 'node_modules') continue
+    const relativePath = path.join(relativeDirectory, entry.name)
+    const absolutePath = path.join(MICROSOFT_ADS_REPO_ROOT, relativePath)
+
+    if (entry.isDirectory()) {
+      walkProjectSourceTree(relativePath, files, seen)
+      continue
+    }
+
+    if (!/\.(?:[cm]?[jt]sx?)$/.test(entry.name) || seen.has(relativePath)) continue
+    seen.add(relativePath)
+    const content = fs.readFileSync(absolutePath, 'utf8')
+    if (!/microsoft|uet|provider_dispatch|providerid|msclkid/i.test(content)) continue
+    files.push({ relativePath, content })
   }
 }
 
@@ -1198,17 +1191,19 @@ function buildFindings({
   }
 
   if (
-    localImplementation.providerQueue.providerTypeDeclaration ===
-      "export type TrackingProvider = 'meta' | 'google'" ||
-    !localImplementation.providerQueue.serverQueueIncludesMicrosoft
+    localImplementation?.providerDispatchEvidence?.providerConfirmed !== true &&
+    !localImplementation?.providerQueue?.serverQueueIncludesMicrosoft
   ) {
     findings.push({
       severity: 'high',
       code: 'LOCAL_MICROSOFT_PROVIDER_QUEUE_NOT_CONFIRMED',
       area: 'local_tracking',
       message:
-        'The local provider queue scan does not confirm Microsoft as an accepted server retry provider.',
-      evidence: localImplementation.providerQueue
+        'Neither current source discovery nor recent provider-dispatch evidence confirms Microsoft UET server routing.',
+      evidence: {
+        providerQueue: localImplementation.providerQueue,
+        providerDispatchEvidence: localImplementation.providerDispatchEvidence
+      }
     })
   }
 

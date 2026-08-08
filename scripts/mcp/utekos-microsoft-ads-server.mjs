@@ -4,10 +4,7 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
-import {
-  McpServer,
-  StdioServerTransport
-} from '@modelcontextprotocol/server'
+import { McpServer, StdioServerTransport } from '@modelcontextprotocol/server'
 
 import { collectMicrosoftAdsAccountAudit } from '../microsoft-ads/audit-account.mjs'
 import { analyzeMicrosoftAdsAccountHealth } from '../microsoft-ads/health/account-health.mjs'
@@ -22,8 +19,11 @@ import { redactMicrosoftAdsSecrets } from '../microsoft-ads/lib/http.mjs'
 import { createMicrosoftAdsReportingClient } from '../microsoft-ads/lib/reporting.mjs'
 import {
   MICROSOFT_ADS_TOOL_CONTRACTS,
+  MICROSOFT_ADS_TOOL_CONTRACT_VERSION,
+  normalizeMicrosoftAdsFullAuditForWire,
   normalizeMicrosoftAdsRecommendation,
-  parseMicrosoftAdsToolOutput
+  parseMicrosoftAdsToolOutput,
+  summarizeMicrosoftAdsAudit
 } from './microsoft-ads-tool-contracts.mjs'
 import {
   buildMicrosoftAdsReportRequest,
@@ -119,7 +119,9 @@ export function createUtekosMicrosoftAdsMcpServer({
     { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_account_snapshot },
     safeTool('microsoft_ads_account_snapshot', async ({ refresh = false, detail = 'full' }) => {
       const audit = await auditCache.get({ refresh })
-      return detail === 'summary' ? summarizeAudit(audit) : audit
+      return detail === 'summary'
+        ? summarizeMicrosoftAdsAudit(audit)
+        : normalizeMicrosoftAdsFullAuditForWire(audit)
     })
   )
 
@@ -317,7 +319,7 @@ function toToolResult(toolName, value) {
     ],
     structuredContent,
     _meta: {
-      'no.utekos/contractVersion': '1.0.0',
+      'no.utekos/contractVersion': MICROSOFT_ADS_TOOL_CONTRACT_VERSION,
       'no.utekos/tool': toolName
     }
   }
@@ -354,60 +356,6 @@ function collectHealthByArea({
     account: analyzeAccountHealth(audit),
     tracking: analyzeTrackingHealth(audit),
     merchant: analyzeMerchantHealth(audit)
-  }
-}
-
-function summarizeAudit(audit) {
-  const campaignItems = Array.isArray(audit?.campaigns?.campaigns)
-    ? audit.campaigns.campaigns
-    : []
-  const recommendations = audit?.adInsight?.recommendations ?? {}
-
-  return {
-    ok: audit?.ok ?? false,
-    auditVersion: audit?.auditVersion ?? null,
-    startedAt: audit?.startedAt ?? null,
-    finishedAt: audit?.finishedAt ?? null,
-    account: audit?.account ?? null,
-    credentialReadiness: audit?.credentialReadiness ?? null,
-    criticalReads: audit?.criticalReads ?? null,
-    campaigns: {
-      count: audit?.campaigns?.count ?? campaignItems.length,
-      activeCount:
-        audit?.campaigns?.activeCount ??
-        campaignItems.filter(campaign => campaign?.status === 'Active').length,
-      byType: countBy(campaignItems, campaign => campaign?.type ?? 'Unknown')
-    },
-    uet: {
-      count: audit?.uetTags?.count ?? 0,
-      statuses: countBy(audit?.uetTags?.tags ?? [], tag => tag?.trackingStatus ?? 'Unknown')
-    },
-    conversionGoals: {
-      count: audit?.conversionGoals?.count ?? 0,
-      trackingStatuses: countBy(
-        audit?.conversionGoals?.goals ?? [],
-        goal => goal?.trackingStatus ?? 'Unknown'
-      )
-    },
-    merchant: audit?.shoppingContent
-      ? {
-          ok: audit.shoppingContent.ok ?? false,
-          storeId: audit.shoppingContent.storeId ?? null,
-          catalogCount: audit.shoppingContent.catalogs?.count ?? 0,
-          productCount: audit.shoppingContent.products?.count ?? 0,
-          disapprovedCount:
-            audit.shoppingContent.productStatuses?.disapprovedCount ?? 0,
-          warningCount:
-            audit.shoppingContent.productStatuses?.warningCount ?? 0
-        }
-      : null,
-    reportTotals: audit?.report?.totals ?? null,
-    recommendations: {
-      count: recommendations.count ?? 0,
-      byType: recommendations.byType ?? {}
-    },
-    readFailures: audit?.readFailures ?? [],
-    auditFindingCount: Array.isArray(audit?.findings) ? audit.findings.length : 0
   }
 }
 

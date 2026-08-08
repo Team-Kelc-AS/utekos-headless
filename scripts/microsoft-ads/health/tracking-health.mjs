@@ -22,6 +22,15 @@ export function analyzeMicrosoftAdsTrackingHealth(audit) {
   const reportTotals = audit?.report?.totals ?? {}
   const local = audit?.localImplementation ?? {}
   const credentialReadiness = audit?.credentialReadiness ?? {}
+  const dispatchEvidence = local?.providerDispatchEvidence ?? {}
+  const providerDispatchEvidenceAvailable = dispatchEvidence?.ok === true
+  const providerDispatchConfirmed = dispatchEvidence?.providerConfirmed === true
+  const missingMsclkidSkipCount = numberValue(
+    dispatchEvidence?.bySkipReason?.missing_msclkid
+  )
+  const adapterUnavailableAfterResetCount = numberValue(
+    dispatchEvidence?.bySkipReason?.provider_adapter_unavailable_after_reset
+  )
 
   const msclkidAutoTagging = accountProperties?.byName?.MSCLKIDAutoTaggingEnabled
   const cApiRequiresMsclkid = Boolean(local?.productPurchaseGoal?.cApiRequiresMsclkid)
@@ -293,6 +302,113 @@ export function analyzeMicrosoftAdsTrackingHealth(audit) {
   const activeUet = tags.some(tag => tag?.trackingStatus === 'Active')
   const noRecentGoals = goals.filter(goal => goal?.trackingStatus === 'NoRecentConversions')
 
+  if (missingMsclkidSkipCount > 0) {
+    findings.push(
+      createMicrosoftAdsHealthFinding({
+        severity: clicks > 0 && conversions === 0 ? 'high' : 'medium',
+        code: 'MICROSOFT_UET_DISPATCH_SKIPPED_MISSING_MSCLKID',
+        area: 'conversion_tracking',
+        title: 'Microsoft UET dispatches are being skipped for missing MSCLKID',
+        summary: `${missingMsclkidSkipCount} Microsoft UET provider attempts in the last ${dispatchEvidence.lookbackDays ?? 30} days were terminally skipped with missing_msclkid.`,
+        diagnosis: {
+          certainty: 'confirmed',
+          confidence: 1,
+          rootCause:
+            'Production provider-dispatch evidence shows otherwise eligible Microsoft UET attempts are classified skipped_unqualified when MSCLKID is absent.',
+          rationale:
+            'This is runtime evidence from ops.provider_dispatch_attempts and takes precedence over static source-path heuristics.'
+        },
+        evidence: [
+          {
+            source: 'audit.localImplementation.providerDispatchEvidence',
+            key: 'missing_msclkid',
+            value: missingMsclkidSkipCount
+          },
+          {
+            source: 'audit.localImplementation.providerDispatchEvidence',
+            key: 'lastSeenAt',
+            value:
+              dispatchEvidence?.bySkipReasonLastSeenAt?.missing_msclkid ?? null
+          },
+          {
+            source: 'audit.localImplementation.providerDispatchEvidence',
+            key: 'missing_msclkid_by_event_name',
+            value:
+              dispatchEvidence?.bySkipReasonAndEventName?.missing_msclkid ?? {}
+          },
+          {
+            source: 'audit.localImplementation.providerDispatchEvidence',
+            key: 'acceptedCount',
+            value: numberValue(dispatchEvidence?.acceptedCount)
+          }
+        ],
+        remediation: {
+          summary:
+            'Restore MSCLKID capture/propagation for Microsoft paid traffic and verify the qualification policy against the supported CAPI matching contract before relaxing any gate.',
+          backend: 'local-code',
+          operation: null,
+          steps: [
+            'Verify MSCLKID auto-tagging is enabled in Microsoft Advertising.',
+            'Trace a real Microsoft ad click through landing attribution, canonical event creation and provider payload construction.',
+            'Confirm msclkid survives navigation and checkout attribution into the Microsoft UET provider attempt.',
+            'Measure missing_msclkid again after the fix.',
+            'Only relax the terminal skip if the current Microsoft CAPI contract and Utekos deduplication rules support the alternative matching path safely.'
+          ]
+        },
+        verification: [
+          'New Microsoft paid clicks create provider attempts with MSCLKID where expected.',
+          'The missing_msclkid skip count stops increasing for qualified Microsoft traffic.',
+          'Known conversions reach Microsoft UET/CAPI without introducing duplicate conversion credit.'
+        ],
+        sourceDocs: [CAPI_DOC]
+      })
+    )
+  }
+
+  if (
+    adapterUnavailableAfterResetCount > 0 &&
+    isRecentIsoTimestamp(
+      dispatchEvidence?.bySkipReasonLastSeenAt?.provider_adapter_unavailable_after_reset,
+      7
+    )
+  ) {
+    findings.push(
+      createMicrosoftAdsHealthFinding({
+        severity: 'high',
+        code: 'MICROSOFT_PROVIDER_ADAPTER_UNAVAILABLE_RECENTLY',
+        area: 'local_tracking',
+        title: 'Microsoft provider adapter was unavailable recently',
+        summary: `${adapterUnavailableAfterResetCount} Microsoft UET dispatches were skipped because the provider adapter was unavailable after reset within the current evidence window.`,
+        diagnosis: {
+          certainty: 'confirmed',
+          confidence: 1,
+          rootCause: 'provider_adapter_unavailable_after_reset'
+        },
+        evidence: [
+          {
+            source: 'audit.localImplementation.providerDispatchEvidence',
+            key: 'provider_adapter_unavailable_after_reset',
+            value: adapterUnavailableAfterResetCount
+          }
+        ],
+        remediation: {
+          summary: 'Verify the provider adapter registry and reset/bootstrap path remains stable in the current deployment.',
+          backend: 'local-code',
+          operation: null,
+          steps: [
+            'Inspect the current Microsoft UET adapter registration and reset path.',
+            'Confirm new provider attempts resolve the microsoft_uet adapter.',
+            'Re-run tracking health after current traffic has exercised the adapter.'
+          ]
+        },
+        verification: [
+          'No new provider_adapter_unavailable_after_reset skips are recorded for Microsoft UET.'
+        ],
+        sourceDocs: [CAPI_DOC]
+      })
+    )
+  }
+
   if (clicks > 0 && conversions === 0) {
     findings.push(
       createMicrosoftAdsHealthFinding({
@@ -381,6 +497,13 @@ export function analyzeMicrosoftAdsTrackingHealth(audit) {
       reason: audit?.report?.error ?? null
     },
     {
+      name: 'providerDispatchEvidence',
+      ok: providerDispatchEvidenceAvailable,
+      reason: providerDispatchEvidenceAvailable
+        ? null
+        : dispatchEvidence?.reason ?? 'Microsoft UET provider-dispatch evidence is unavailable.'
+    },
+    {
       name: 'localImplementation',
       ok: Boolean(local && Object.keys(local).length > 0),
       reason: local && Object.keys(local).length > 0 ? null : 'Local implementation scan is missing.'
@@ -404,7 +527,14 @@ export function analyzeMicrosoftAdsTrackingHealth(audit) {
       msclkidAutoTaggingEnabled: !isFalseLike(msclkidAutoTagging),
       uetCapiEndpointPresent: cApiEndpointPresent,
       uetCapiTokenPresent: cApiTokenPresent,
-      localCapiRequiresMsclkid: cApiRequiresMsclkid
+      localCapiRequiresMsclkid: cApiRequiresMsclkid,
+      providerDispatchEvidenceAvailable,
+      providerDispatchConfirmed,
+      providerDispatchAttemptCount: numberValue(dispatchEvidence?.rowCount),
+      providerDispatchAcceptedCount: numberValue(dispatchEvidence?.acceptedCount),
+      providerDispatchSkippedCount: numberValue(dispatchEvidence?.skippedCount),
+      providerDispatchFailedCount: numberValue(dispatchEvidence?.failedCount),
+      missingMsclkidSkipCount
     }
   })
 }
@@ -634,21 +764,26 @@ function addLocalImplementationFindings(
 
   const providerQueue = local?.providerQueue ?? {}
 
+  const runtimeProviderConfirmed =
+    local?.providerDispatchEvidence?.providerConfirmed === true
+
   if (
-    providerQueue?.serverQueueIncludesMicrosoft === false ||
-    providerQueue?.providerTypeDeclaration === "export type TrackingProvider = 'meta' | 'google'"
+    !runtimeProviderConfirmed &&
+    providerQueue?.serverQueueIncludesMicrosoft === false
   ) {
     findings.push(
       createMicrosoftAdsHealthFinding({
         severity: 'high',
         code: 'MICROSOFT_PROVIDER_QUEUE_NOT_CONFIRMED',
         area: 'local_tracking',
-        title: 'Microsoft is not confirmed in the provider queue contract',
-        summary: 'The inspected provider dispatch contract does not confirm Microsoft as a server provider.',
+        title: 'Microsoft provider routing is not confirmed',
+        summary: 'Neither current runtime dispatch evidence nor the current source scan confirms Microsoft as a server provider.',
         diagnosis: {
           certainty: 'probable',
           confidence: 0.9,
-          rootCause: providerQueue?.providerTypeDeclaration ?? null
+          rootCause: providerQueue?.providerTypeDeclaration ?? null,
+          rationale:
+            'Runtime provider-dispatch evidence takes precedence over static source inspection. This finding is emitted only when neither source confirms Microsoft routing.'
         },
         evidence: [
           {
@@ -796,6 +931,13 @@ function isFalseLike(value) {
 
 function numberValue(value) {
   return Number(String(value ?? '').replaceAll(',', '')) || 0
+}
+
+function isRecentIsoTimestamp(value, days) {
+  if (!value || !Number.isFinite(days) || days <= 0) return false
+  const timestamp = new Date(value).getTime()
+  if (!Number.isFinite(timestamp)) return false
+  return Date.now() - timestamp <= days * 86_400_000
 }
 
 function sanitizeCode(value) {

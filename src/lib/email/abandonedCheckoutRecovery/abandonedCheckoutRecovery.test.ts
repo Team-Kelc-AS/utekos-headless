@@ -1,6 +1,7 @@
 import {
     deepStrictEqual,
     equal,
+    ok,
     rejects
   } from 'node:assert/strict'
   import { test } from 'node:test'
@@ -21,6 +22,12 @@ import {
     new Date(
       '2026-08-08T06:30:00.000Z'
     )
+
+  function assertDefined<T>(
+    value: T | undefined
+  ): asserts value is T {
+    ok(value !== undefined)
+  }
   
   function checkout(
     overrides: Partial<
@@ -123,6 +130,8 @@ import {
             ],
             NOW
           )
+
+        assertDefined(row)
   
         equal(
           row.status,
@@ -152,6 +161,8 @@ import {
           ],
           NOW
         )
+
+      assertDefined(row)
   
       equal(
         row.status,
@@ -178,6 +189,8 @@ import {
           ],
           NOW
         )
+
+      assertDefined(row)
   
       equal(
         row.suppressionReason,
@@ -199,6 +212,8 @@ import {
           ],
           NOW
         )
+
+      assertDefined(row)
   
       equal(
         row.suppressionReason,
@@ -243,18 +258,27 @@ import {
             row
           ])
         )
-  
-      equal(
+
+      const olderPlan =
         byId[
           'gid://shopify/AbandonedCheckout/100'
-        ].suppressionReason,
+        ]
+
+      const newerPlan =
+        byId[
+          'gid://shopify/AbandonedCheckout/101'
+        ]
+
+      assertDefined(olderPlan)
+      assertDefined(newerPlan)
+
+      equal(
+        olderPlan.suppressionReason,
         'superseded_by_newer_checkout'
       )
   
       equal(
-        byId[
-          'gid://shopify/AbandonedCheckout/101'
-        ].status,
+        newerPlan.status,
         'pending'
       )
     }
@@ -273,6 +297,8 @@ import {
           ],
           NOW
         )
+
+      assertDefined(row)
   
       equal(
         row.suppressionReason,
@@ -300,6 +326,8 @@ import {
           ],
           NOW
         )
+
+      assertDefined(row)
   
       equal(
         row.suppressionReason,
@@ -321,6 +349,8 @@ import {
           ],
           NOW
         )
+
+      assertDefined(row)
   
       equal(
         row.suppressionReason,
@@ -342,6 +372,8 @@ import {
           ],
           NOW
         )
+
+      assertDefined(row)
   
       equal(
         row.suppressionReason,
@@ -358,6 +390,8 @@ import {
           [checkout()],
           NOW
         )
+
+      assertDefined(plan)
   
       const insert =
         toAbandonedCheckoutRecoveryDispatchInsert(
@@ -518,19 +552,25 @@ import {
         calls.length,
         2
       )
+
+      const firstCall = calls[0]
+      const secondCall = calls[1]
+
+      assertDefined(firstCall)
+      assertDefined(secondCall)
   
       equal(
-        calls[0].variables.query,
-        "created_at:>='2026-08-01T06:30:00.000Z' recovery_state:not_recovered"
+        firstCall.variables.query,
+        'created_at:>=\'2026-08-01T06:30:00.000Z\' recovery_state:not_recovered'
       )
   
       equal(
-        calls[0].variables.after,
+        firstCall.variables.after,
         null
       )
   
       equal(
-        calls[1].variables.after,
+        secondCall.variables.after,
         'cursor-1'
       )
   

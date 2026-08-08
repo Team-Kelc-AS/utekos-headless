@@ -3,14 +3,10 @@
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-
-import {
-  Client,
-  StdioClientTransport
-} from '@modelcontextprotocol/client'
-
+import { Client, StdioClientTransport } from '@modelcontextprotocol/client'
 import { redactMicrosoftAdsSecrets } from '../microsoft-ads/lib/http.mjs'
 import { UTEKOS_MICROSOFT_ADS_MCP_TOOLS } from './utekos-microsoft-ads-server.mjs'
+import { MICROSOFT_ADS_TOOL_CONTRACT_VERSION } from './microsoft-ads-tool-contracts.mjs'
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url))
 const serverPath = path.join(moduleDir, 'utekos-microsoft-ads-server.mjs')
@@ -42,7 +38,13 @@ async function main() {
     const contractErrors = contractChecks.filter(check => !check.ok).map(check => check.name)
     const liveChecks = live ? await runLiveChecks(client) : null
     const liveErrors = liveChecks
-      ? Object.entries(liveChecks).filter(([, check]) => check.isError).map(([name]) => name)
+      ? Object.entries(liveChecks)
+          .filter(([, check]) =>
+            check.isError ||
+            !check.hasStructuredContent ||
+            check.resultMetaContractVersion !== MICROSOFT_ADS_TOOL_CONTRACT_VERSION
+          )
+          .map(([name]) => name)
       : []
     const result = {
       ok: missingTools.length === 0 && unexpectedTools.length === 0 && contractErrors.length === 0 && liveErrors.length === 0,
@@ -78,7 +80,7 @@ function inspectToolContract(tool) {
   if (annotations.destructiveHint !== false) failures.push('annotations.destructiveHint')
   if (annotations.idempotentHint !== true) failures.push('annotations.idempotentHint')
   if (annotations.openWorldHint !== true) failures.push('annotations.openWorldHint')
-  if (!tool._meta || typeof tool._meta[REQUIRED_META_KEY] !== 'string') failures.push(REQUIRED_META_KEY)
+  if (tool._meta?.[REQUIRED_META_KEY] !== MICROSOFT_ADS_TOOL_CONTRACT_VERSION) failures.push(REQUIRED_META_KEY)
   return {
     name: tool.name,
     ok: failures.length === 0,
@@ -111,14 +113,75 @@ async function listAllTools(client) {
 
 async function runLiveChecks(client) {
   const checks = [
-    { key: 'snapshot', name: 'microsoft_ads_account_snapshot', arguments: { refresh: true, detail: 'summary' } },
-    { key: 'accountHealth', name: 'microsoft_ads_account_health', arguments: { refresh: false } },
-    { key: 'trackingHealth', name: 'microsoft_ads_tracking_health', arguments: { refresh: false } },
-    { key: 'merchantHealth', name: 'microsoft_ads_merchant_health', arguments: { refresh: false } }
+    {
+      key: 'snapshotSummary',
+      name: 'microsoft_ads_account_snapshot',
+      arguments: { refresh: true, detail: 'summary' }
+    },
+    {
+      key: 'snapshotFull',
+      name: 'microsoft_ads_account_snapshot',
+      arguments: { refresh: false, detail: 'full' }
+    },
+    {
+      key: 'accountHealth',
+      name: 'microsoft_ads_account_health',
+      arguments: { refresh: false }
+    },
+    {
+      key: 'trackingHealth',
+      name: 'microsoft_ads_tracking_health',
+      arguments: { refresh: false }
+    },
+    {
+      key: 'merchantHealth',
+      name: 'microsoft_ads_merchant_health',
+      arguments: { refresh: false }
+    },
+    {
+      key: 'diagnose',
+      name: 'microsoft_ads_diagnose',
+      arguments: {
+        query: 'paid clicks but zero qualified conversions and Merchant Center issues',
+        area: 'auto',
+        refresh: false,
+        maxFindings: 5
+      }
+    },
+    {
+      key: 'recommendations',
+      name: 'microsoft_ads_recommendations',
+      arguments: { refresh: false, limit: 5 }
+    },
+    {
+      key: 'report',
+      name: 'microsoft_ads_report',
+      arguments: {
+        reportType: 'CampaignPerformanceReportRequest',
+        aggregation: 'Summary',
+        columns: [
+          'AccountId',
+          'CampaignId',
+          'CampaignName',
+          'CampaignStatus',
+          'CampaignType',
+          'Impressions',
+          'Clicks',
+          'Spend'
+        ],
+        predefinedTime: 'Last7Days',
+        rowLimit: 5,
+        returnOnlyCompleteData: false
+      },
+      timeout: 300_000
+    }
   ]
   const results = {}
   for (const check of checks) {
-    const result = await client.callTool({ name: check.name, arguments: check.arguments }, { timeout: 180_000 })
+    const result = await client.callTool(
+      { name: check.name, arguments: check.arguments },
+      { timeout: check.timeout ?? 180_000 }
+    )
     results[check.key] = {
       tool: check.name,
       isError: Boolean(result.isError),
