@@ -187,6 +187,70 @@ test('mutation uses the public compatibility path when private auth is unavailab
   assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
 
+test('mutation retries with public auth when Shopify rejects the configured private credential', async () => {
+  const requests: RequestInit[] = []
+  const gateway = createHydrogenStorefrontGateway(
+    {
+      storeDomain: 'example.myshopify.com',
+      publicStorefrontToken: 'public-test-token',
+      privateStorefrontToken: 'rejected-private-token',
+      storefrontApiVersion: '2026-07'
+    },
+    {
+      fetch: async (_input, init) => {
+        requests.push(init ?? {})
+
+        if (requests.length === 1) {
+          return Response.json(
+            {
+              errors: [
+                {
+                  message: '',
+                  extensions: { code: 'ACCESS_DENIED' }
+                }
+              ]
+            },
+            { status: 403 }
+          )
+        }
+
+        return Response.json({
+          data: {
+            cartCreate: {
+              cart: { id: 'gid://shopify/Cart/test' }
+            }
+          }
+        })
+      }
+    }
+  )
+
+  const result = await gateway.mutation<TestMutation>({
+    context: { buyerIp: '203.0.113.8' },
+    query: mutation
+  })
+
+  assert.equal(result.success, true)
+  assert.equal(requests.length, 2)
+
+  const privateHeaders = new Headers(requests[0]?.headers)
+  const fallbackHeaders = new Headers(requests[1]?.headers)
+
+  assert.equal(
+    privateHeaders.get('shopify-storefront-private-token'),
+    'rejected-private-token'
+  )
+  assert.equal(
+    fallbackHeaders.get('x-shopify-storefront-access-token'),
+    'public-test-token'
+  )
+  assert.equal(
+    fallbackHeaders.has('shopify-storefront-private-token'),
+    false
+  )
+  assert.equal(fallbackHeaders.has('shopify-storefront-buyer-ip'), false)
+})
+
 test('private buyer auth fails closed without a validated buyer IP', async () => {
   const { gateway, requests } = createGateway()
 

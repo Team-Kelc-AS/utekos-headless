@@ -735,7 +735,7 @@ export function createHydrogenStorefrontGateway(
   })
   const endpoint = client.getStorefrontApiUrl()
 
-  function dispatch<
+  async function dispatch<
     T extends ShopifyOperation<unknown, object>
   >(
     requestKind: StorefrontRequestKind,
@@ -750,8 +750,38 @@ export function createHydrogenStorefrontGateway(
       ...(context ? { context } : {})
     })
 
-    return executeStorefrontRequest<T>({
+    const result = await executeStorefrontRequest<T>({
       ...authentication,
+      requestKind,
+      endpoint,
+      fetchImpl: dependencies.fetch,
+      query: input.query,
+      storefrontApiVersion: config.storefrontApiVersion,
+      ...(cache !== undefined ? { cache } : {}),
+      ...(input.signal ? { signal: input.signal } : {}),
+      ...(input.timeoutMs !== undefined ?
+        { timeoutMs: input.timeoutMs }
+      : {}),
+      ...(input.variables ? { variables: input.variables } : {})
+    })
+
+    const privateCredentialWasRejected =
+      authentication.authMode === 'private' &&
+      !result.success &&
+      getShopifyGraphQLErrorMetadata(result.error).code ===
+        'ACCESS_DENIED'
+
+    if (
+      !privateCredentialWasRejected ||
+      !hasCredential(config.publicStorefrontToken)
+    ) {
+      return result
+    }
+
+    return executeStorefrontRequest<T>({
+      authMode: 'public_fallback',
+      buyerIpPresent: false,
+      headers: client.getPublicTokenHeaders(),
       requestKind,
       endpoint,
       fetchImpl: dependencies.fetch,

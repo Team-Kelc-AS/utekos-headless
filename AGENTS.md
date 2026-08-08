@@ -207,6 +207,21 @@ Code and architecture rules:
 
 Verification gates:
 
+- Any change that touches a Shopify API request path, StorefrontGateway
+  authentication or headers, Cart or CartDrawer, AddToCart,
+  CheckoutButton, or Klarna Express is incomplete until the affected
+  commerce flow has been verified on `https://utekos.no` after the exact
+  commit is `READY` and owns the production aliases. This gate has no
+  test-, build-, preview-, urgency-, or documentation-only exception.
+  Production verification must prove the real AddToCart mutation and
+  authoritative cart response, CartDrawer contents/subtotal and a cart
+  update or removal, CheckoutButton resolution without completing an
+  order, and Klarna Express preparation up to but not through payment
+  authorization. Check browser console/network plus Vercel runtime logs,
+  remove every test cart line afterward, and record the exact commit and
+  deployment. If any step is blocked or skipped, report the result as
+  `production unverified`; passing tests, a successful build, HTTP 200 or
+  Vercel `READY` are never sufficient proof.
 - UI work requires browser/runtime verification: console,
   network, DOM/snapshot, screenshot, responsive viewport, and
   contrast/WCAG when visual or brand-critical.
