@@ -24,7 +24,9 @@ export const canonicalSignalNames = [
   'click_ids',
   'meta_fbclid',
   'meta_fbc',
-  'meta_fbp'
+  'meta_fbp',
+  'snap_click_id',
+  'snap_cookie1'
 ] as const
 
 export type CanonicalSignalName =
