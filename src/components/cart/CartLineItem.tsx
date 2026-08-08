@@ -372,6 +372,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
                   isUpdatingQuantity ||
                   localQuantity >= 99
                 }
+                aria-label={`Øk antall for ${productTitle}`}
               >
                 <Plus className='size-3' />
               </Button>

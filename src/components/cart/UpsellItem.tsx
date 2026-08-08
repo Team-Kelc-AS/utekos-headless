@@ -14,7 +14,8 @@ export function UpsellItem({
   product,
   showDiscountHint
 }: UpsellItemProps) {
-  const { addToCart, isPending } = useCanonicalAddToCart()
+  const { addToCart, isPending, isCartBusy } =
+    useCanonicalAddToCart()
 
   const selectedOptions = getInitialAvailableOptions(product)
   const selectedVariant = findMatchingVariant(
@@ -93,7 +94,7 @@ export function UpsellItem({
             size='sm'
             variant='secondary'
             onClick={handleAddToCart}
-            disabled={!selectedVariant || isPending}
+            disabled={!selectedVariant || isPending || isCartBusy}
             className='w-full sm:w-auto sm:shrink-0'
           >
             Legg til <ArrowRightIcon className='ml-2 h-4 w-4' />

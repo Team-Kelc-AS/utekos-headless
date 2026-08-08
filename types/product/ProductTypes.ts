@@ -81,4 +81,5 @@ export type MicrofiberLogicProps = {
   handleAddToCart: () => void
   scrollToSizeGuide: () => void
   isPending: boolean
+  isDisabled: boolean
 }

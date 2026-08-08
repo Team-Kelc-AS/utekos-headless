@@ -27,6 +27,7 @@ export function AddToCart({
   additionalProductData,
   checkoutPresentation = 'balanced',
   isSelectionPending = false,
+  showAddToCartAction = true,
   surface = 'default'
 }: ExtendedAddToCartProps) {
   const {
@@ -68,6 +69,7 @@ export function AddToCart({
       isCheckoutPending={isCheckoutPending}
       isAvailable={isAvailable}
       checkoutPresentation={checkoutPresentation}
+      showAddToCartAction={showAddToCartAction}
       surface={surface}
     />
   )

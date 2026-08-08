@@ -207,21 +207,31 @@ Code and architecture rules:
 
 Verification gates:
 
-- Any change that touches a Shopify API request path, StorefrontGateway
-  authentication or headers, Cart or CartDrawer, AddToCart,
-  CheckoutButton, or Klarna Express is incomplete until the affected
-  commerce flow has been verified on `https://utekos.no` after the exact
-  commit is `READY` and owns the production aliases. This gate has no
-  test-, build-, preview-, urgency-, or documentation-only exception.
-  Production verification must prove the real AddToCart mutation and
-  authoritative cart response, CartDrawer contents/subtotal and a cart
-  update or removal, CheckoutButton resolution without completing an
-  order, and Klarna Express preparation up to but not through payment
-  authorization. Check browser console/network plus Vercel runtime logs,
-  remove every test cart line afterward, and record the exact commit and
-  deployment. If any step is blocked or skipped, report the result as
-  `production unverified`; passing tests, a successful build, HTTP 200 or
-  Vercel `READY` are never sufficient proof.
+- Any change that touches a Shopify API request path or a user action whose
+  resulting state can reach Shopify is incomplete until the affected flow has
+  been verified on `https://utekos.no` after the exact commit is `READY` and
+  owns the production aliases. This includes StorefrontGateway authentication
+  and headers; product, collection and search queries; variant selectors on
+  product cards, Quick View and product pages; Cart and CartDrawer; AddToCart,
+  quantity, removal, clear, discounts and attributes; CheckoutButton and
+  Klarna Express; customer-account actions; newsletter and waitlist forms; and
+  any Storefront or Admin API action exposed through the storefront. This gate
+  has no test-, build-, preview-, urgency-, or documentation-only exception.
+  Inventory every active render placement and every distinct handler,
+  server-action, route and transport chain. Production verification must prove
+  every distinct chain and inspect every active placement for correct wiring;
+  representative placements are sufficient only when they share the same
+  verified handler and payload contract. For commerce, prove the real AddToCart
+  mutation and authoritative cart response, CartDrawer contents/subtotal and
+  quantity/removal, CheckoutButton resolution without completing an order, and
+  Klarna Express preparation up to but not through payment authorization.
+  Verify variant selection changes the exact variant later sent to Shopify.
+  Check browser console/network plus Vercel runtime logs, remove every test cart
+  line afterward, and record the exact commit and deployment. Never create a
+  real payment or order as a smoke test. If a customer, consent, subscription
+  or other persistent provider mutation cannot be tested safely, report that
+  exact chain as `production unverified`; passing tests, a successful build,
+  HTTP 200 or Vercel `READY` are never sufficient proof.
 - UI work requires browser/runtime verification: console,
   network, DOM/snapshot, screenshot, responsive viewport, and
   contrast/WCAG when visual or brand-critical.

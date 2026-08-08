@@ -26,7 +26,8 @@ export function MicrofiberView({
   selectedVariant,
   handleAddToCart,
   scrollToSizeGuide,
-  isPending
+  isPending,
+  isDisabled
 }: MicrofiberLogicProps) {
   return (
     <article className='w-full border-t border-[#2C2420]/5 bg-jungle py-16 text-[#2C2420] md:py-24'>
@@ -140,7 +141,7 @@ export function MicrofiberView({
                 <button
                   onClick={handleAddToCart}
                   data-track='❗🛒❗SkreddersyUtekosOrginalAddToCartClick ❗🛒❗'
-                  disabled={isPending}
+                  disabled={isDisabled}
                   className='flex w-full items-center justify-center gap-3 py-4 text-lg font-bold shadow-xl transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:py-5'
                 >
                   {isPending ?

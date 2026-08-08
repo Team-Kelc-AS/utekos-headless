@@ -16,7 +16,7 @@ import {
 import type { Route } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import type {
   ShopifyProduct,
   ShopifyProductVariant
@@ -71,7 +71,6 @@ export function HelpChooseCard({
   const [isSelectingSize, setIsSelectingSize] = useState(false)
   const [selectedVariant, setSelectedVariant] =
     useState<ShopifyProductVariant | null>(null)
-  const [pendingAdd, setPendingAdd] = useState(false)
 
   const selectedColor = defaultColor
 
@@ -119,18 +118,6 @@ export function HelpChooseCard({
     selectedVariant: selectedVariant
   })
 
-  useEffect(() => {
-    if (!pendingAdd) return
-    if (!selectedVariant) return
-
-    const pendingTimer = window.setTimeout(() => {
-      performAddToCart(1)
-      setPendingAdd(false)
-    }, 0)
-
-    return () => window.clearTimeout(pendingTimer)
-  }, [pendingAdd, selectedVariant, performAddToCart])
-
   const handleBuyClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -146,7 +133,7 @@ export function HelpChooseCard({
     e.preventDefault()
     e.stopPropagation()
     setSelectedVariant(variant)
-    setPendingAdd(true)
+    void performAddToCart(1, variant)
   }
 
   const activeImage =

@@ -134,6 +134,7 @@ export type ProductVariantSelectorProps = {
 export type ProductCardFooterProps = {
   isAvailable: boolean
   isPending: boolean
+  isDisabled: boolean
   onQuickBuy: (e: React.MouseEvent) => void
   showWaitlistCta?: boolean
   onWaitlistClick?: (e: React.MouseEvent) => void

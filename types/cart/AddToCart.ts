@@ -45,6 +45,7 @@ export type AddToCartProps = {
     | undefined
   checkoutPresentation?: CheckoutPresentation
   isSelectionPending?: boolean
+  showAddToCartAction?: boolean
   surface?: AddToCartSurface
 }
 
@@ -59,6 +60,7 @@ export type AddToCartViewProps = {
   isCheckoutPending: boolean
   isAvailable: boolean
   checkoutPresentation?: CheckoutPresentation
+  showAddToCartAction?: boolean
   surface?: AddToCartSurface
 }
 

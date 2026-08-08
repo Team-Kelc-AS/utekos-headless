@@ -23,7 +23,8 @@ export function NbccProductCardActions({
       ''
   )
 
-  const { addToCart, isPending } = useCanonicalAddToCart()
+  const { addToCart, isPending, isCartBusy } =
+    useCanonicalAddToCart()
 
   const selectedVariant = variants.find(
     variant => variant.label === selectedLabel
@@ -121,7 +122,9 @@ export function NbccProductCardActions({
       <div className='flex flex-col gap-2'>
         <Button
           onClick={handleAddToCart}
-          disabled={isPending || !isAvailable || !purchaseVariant}
+          disabled={
+            isPending || isCartBusy || !isAvailable || !purchaseVariant
+          }
           variant='checkout'
           className='h-11 w-full rounded-3xl bg-primary font-utekos-text-medium text-base text-foreground hover:bg-primary/90'
         >
@@ -135,7 +138,7 @@ export function NbccProductCardActions({
               product={cartProduct}
               selectedVariant={purchaseVariant}
               quantity={1}
-              disabled={isPending}
+              disabled={isCartBusy}
               theme='default'
               className='h-full min-h-0 w-full min-w-0'
               buttonContainerClassName='h-full min-h-full md:h-full md:min-h-full'

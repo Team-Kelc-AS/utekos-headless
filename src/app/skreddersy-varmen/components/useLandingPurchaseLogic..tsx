@@ -8,7 +8,6 @@ import { CartIdContext } from '@/lib/context/CartIdContext'
 import { CartMutationContext } from '@/lib/context/CartMutationContext'
 import { cartStore } from '@/lib/state/cartStore'
 import { useCartMutations } from '@/hooks/useCartMutations'
-import { useOptimisticCartUpdate } from '@/hooks/useOptimisticCartUpdate'
 import { getCartIdFromCookie } from '@/lib/actions/cart/getCartIdFromCookie'
 import { reportCanonicalAddToCart } from '@/lib/analytics/addToCartReporter'
 import { reportCanonicalVariantSelect } from '@/lib/analytics/variantSelectReporter'
@@ -17,7 +16,6 @@ import { getSelectableSizes, PRODUCT_VARIANTS } from '@/api/constants'
 import type { ModelKey } from '@/api/constants'
 import type { ColorVariant } from 'types/product/ProductTypes'
 import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
-import type { OptimisticItemInput } from '@/hooks/useOptimisticCartUpdate'
 
 type UseLandingPurchaseLogicProps = {
   products: Record<string, ShopifyProduct | null | undefined>
@@ -54,7 +52,6 @@ export function useLandingPurchaseLogic({ products }: UseLandingPurchaseLogicPro
   const lastReportedVariantId = useRef<string | null>(null)
 
   const { addLines } = useCartMutations()
-  const { updateCartCache } = useOptimisticCartUpdate()
   const queryClient = useQueryClient()
   const contextCartId = useContext(CartIdContext)
 
@@ -222,21 +219,6 @@ export function useLandingPurchaseLogic({ products }: UseLandingPurchaseLogicPro
       let cartId = contextCartId || (await getCartIdFromCookie())
 
       try {
-        const optimisticItems: OptimisticItemInput[] = [
-          {
-            product,
-            variant: selectedVariant,
-            quantity
-          }
-        ]
-
-        if (cartId) {
-          await updateCartCache({
-            cartId,
-            items: optimisticItems
-          })
-        }
-
         cartStore.send({ type: 'OPEN' })
 
         const mutationResult = await addLines([
@@ -297,6 +279,7 @@ export function useLandingPurchaseLogic({ products }: UseLandingPurchaseLogicPro
     selectableSizes,
     handleAddToCart,
     isPending: isTransitioning || isPendingFromMachine,
+    isAddToCartPending: isTransitioning,
     currentConfig,
     currentColor,
     shopifyProduct: resolvedCheckout?.product ?? null,

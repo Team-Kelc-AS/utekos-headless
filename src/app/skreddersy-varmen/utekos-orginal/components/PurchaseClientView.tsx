@@ -91,6 +91,8 @@ export function PurchaseClientView({
   handleAddToCart,
   handleGoToCheckout,
   isPending,
+  isAddToCartPending,
+  isCheckoutPending,
   currentConfig,
   isTechDownOffer
 }: PurchaseClientViewProps) {
@@ -493,7 +495,7 @@ export function PurchaseClientView({
                 isPending && 'cursor-not-allowed opacity-80'
               )}
             >
-              {isPending ?
+              {isAddToCartPending ?
                 <>
                   <Loader2 className='h-6 w-6 animate-spin' />
                   <span className='font-google-sans text-lg font-bold tracking-wider whitespace-nowrap'>
@@ -525,7 +527,7 @@ export function PurchaseClientView({
                   'cursor-not-allowed opacity-80'
               )}
             >
-              {isPending ?
+              {isCheckoutPending ?
                 <>
                   <Loader2 className='h-5 w-5 animate-spin' />
                   <span>Åpner kassen...</span>

@@ -5,6 +5,7 @@ import { useEffect, useId, useRef } from 'react'
 import { cn } from '@/lib/utils/className'
 import { useInView } from '@/hooks/useInView'
 import { completeKlarnaExpressCheckout } from '@/components/klarna/utils/completeKlarnaExpressCheckout'
+import { classifyKlarnaAuthorizationResult } from '@/components/klarna/utils/classifyKlarnaAuthorizationResult'
 import { loadKlarnaExpressCheckoutSdk } from '@/components/klarna/utils/loadKlarnaExpressCheckoutSdk'
 import { loadKlarnaPublicConfig } from '@/components/klarna/utils/loadKlarnaPublicConfig'
 import {
@@ -169,13 +170,24 @@ export function KlarnaExpressCheckoutButton({
                   async (
                     result: KlarnaExpressCheckoutAuthorizationResult
                   ) => {
-                    if (
-                      !result.approved ||
-                      !result.authorization_token
-                    ) {
-                      onErrorRef.current?.(
-                        'Klarna authorization was not approved'
-                      )
+                    const authorizationOutcome =
+                      classifyKlarnaAuthorizationResult(result)
+
+                    if (authorizationOutcome !== 'approved') {
+                      if (
+                        authorizationOutcome === 'unavailable'
+                      ) {
+                        onErrorRef.current?.(
+                          'Klarna er ikke tilgjengelig for dette kjøpet akkurat nå'
+                        )
+                      }
+                      return
+                    }
+
+                    const authorizationToken =
+                      result.authorization_token
+
+                    if (!authorizationToken) {
                       return
                     }
 
@@ -199,8 +211,7 @@ export function KlarnaExpressCheckoutButton({
                     try {
                       const completion =
                         await completeKlarnaExpressCheckout({
-                          authorizationToken:
-                            result.authorization_token,
+                          authorizationToken,
                           orderPayload: authorizePayload,
                           collectedShippingAddress:
                             parsedAddress.data,

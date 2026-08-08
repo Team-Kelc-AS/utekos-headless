@@ -15,6 +15,7 @@ export function AddToCartView({
   isCheckoutPending,
   isAvailable,
   checkoutPresentation = 'balanced',
+  showAddToCartAction = true,
   surface = 'default'
 }: AddToCartViewProps) {
   const quantity = form.watch('quantity')
@@ -50,6 +51,7 @@ export function AddToCartView({
           availableForSale={isAvailable}
           onCheckout={form.handleSubmit(onCheckout)}
           checkoutPresentation={checkoutPresentation}
+          showAddToCartAction={showAddToCartAction}
         />
       </form>
     </Form>

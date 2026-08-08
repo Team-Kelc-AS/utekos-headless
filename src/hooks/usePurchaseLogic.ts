@@ -5,7 +5,6 @@ import { CartMutationContext } from '@/lib/context/CartMutationContext'
 import { CartIdContext } from '@/lib/context/CartIdContext'
 import { cartStore } from '@/lib/state/cartStore'
 import { useCartMutations } from '@/hooks/useCartMutations'
-import { useOptimisticCartUpdate } from '@/hooks/useOptimisticCartUpdate'
 import { getCartIdFromCookie } from '@/lib/actions/cart/getCartIdFromCookie'
 import { getVariants } from '@/app/skreddersy-varmen/utekos-orginal/utils/getVariants'
 import { getSelectableSizes, PRODUCT_VARIANTS } from '@/api/constants'
@@ -14,7 +13,6 @@ import type { ColorVariant } from 'types/product/ProductTypes'
 import type { UsePurchaseLogicProps } from 'types/product/PageProps'
 import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
 import type { Cart } from 'types/cart'
-import type { OptimisticItemInput } from '@/hooks/useOptimisticCartUpdate'
 import { reportCanonicalAddToCart } from '@/lib/analytics/addToCartReporter'
 import { reportCanonicalBeginCheckout } from '@/lib/analytics/beginCheckoutReporter'
 
@@ -38,7 +36,6 @@ export function usePurchaseLogic({ products }: UsePurchaseLogicProps) {
   const [isCheckoutRedirecting, setIsCheckoutRedirecting] = useState(false)
 
   const { addLines } = useCartMutations()
-  const { updateCartCache } = useOptimisticCartUpdate()
   const queryClient = useQueryClient()
   const contextCartId = useContext(CartIdContext)
 
@@ -138,21 +135,6 @@ export function usePurchaseLogic({ products }: UsePurchaseLogicProps) {
     try {
       let currentCartId = contextCartId || (await getCartIdFromCookie())
 
-      const itemsToUpdate: OptimisticItemInput[] = [
-        {
-          product,
-          variant: selectedVariant,
-          quantity
-        }
-      ]
-
-      if (currentCartId) {
-        await updateCartCache({
-          cartId: currentCartId,
-          items: itemsToUpdate
-        })
-      }
-
       const linesToProcess = [{ variantId: selectedVariant.id, quantity }]
       const mutationResult = await addLines(linesToProcess)
 
@@ -249,6 +231,8 @@ export function usePurchaseLogic({ products }: UsePurchaseLogicProps) {
     handleAddToCart,
     handleGoToCheckout,
     isPending: isTransitioning || isPendingFromMachine || isCheckoutRedirecting,
+    isAddToCartPending: isTransitioning,
+    isCheckoutPending: isCheckoutRedirecting,
     currentConfig,
     currentColor: currentColor as ColorVariant
   }

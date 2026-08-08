@@ -36,7 +36,7 @@ export function ComfyrobeQuickBuy({ product }: Props) {
   const selectedVariant = variants.find(
     v => v.id === selectedVariantId
   )
-  const { addToCart, isPending } = useCanonicalAddToCart()
+  const { addToCart, isCartBusy } = useCanonicalAddToCart()
   const [isAdding, setIsAdding] = useState(false)
 
   const handleAddToCart = () => {
@@ -212,7 +212,7 @@ export function ComfyrobeQuickBuy({ product }: Props) {
               type='button'
               onClick={handleAddToCart}
               disabled={
-                !selectedVariant || isAdding || isPending
+                !selectedVariant || isAdding || isCartBusy
               }
             >
               {isAdding ?

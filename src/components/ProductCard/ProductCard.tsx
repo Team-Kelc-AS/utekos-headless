@@ -54,7 +54,8 @@ export function ProductCard({
   )
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false)
 
-  const { addToCart, isPending } = useCanonicalAddToCart()
+  const { addToCart, isPending, isCartBusy } =
+    useCanonicalAddToCart()
 
   const selectedVariant = findMatchingVariant(
     product,
@@ -360,6 +361,7 @@ export function ProductCard({
         <ProductCardFooter
           isAvailable={isAvailable}
           isPending={isPending}
+          isDisabled={isPending || isCartBusy}
           onQuickBuy={handleQuickBuy}
           showWaitlistCta={showWaitlistCta}
           onWaitlistClick={handleWaitlistClick}
@@ -367,6 +369,7 @@ export function ProductCard({
         <KlarnaProductExpressCheckout
           product={product}
           selectedVariant={selectedVariant ?? null}
+          disabled={isCartBusy}
           className='w-full'
           buttonContainerClassName='border-none ring-0'
         />

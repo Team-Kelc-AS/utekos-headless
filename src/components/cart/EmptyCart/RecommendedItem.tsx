@@ -23,7 +23,8 @@ export function RecommendedItem({
   totalItemCount: number
 }) {
   const itemRef = useRef<HTMLDivElement>(null)
-  const { addToCart, isPending } = useCanonicalAddToCart()
+  const { addToCart, isPending, isCartBusy } =
+    useCanonicalAddToCart()
   const selectedOptions = getInitialAvailableOptions(product)
   const selectedVariant = findMatchingVariant(
     product,
@@ -111,7 +112,7 @@ export function RecommendedItem({
         size='sm'
         variant='secondary'
         onClick={handleAddToCart}
-        disabled={!selectedVariant || isPending}
+        disabled={!selectedVariant || isPending || isCartBusy}
       >
         Legg til
       </Button>

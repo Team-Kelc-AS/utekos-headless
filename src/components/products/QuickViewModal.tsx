@@ -199,6 +199,7 @@ export function QuickViewModal({
                   <AddToCart
                     product={productData}
                     selectedVariant={selectedVariant}
+                    showAddToCartAction={false}
                     surface='inherit'
                   />
                 </div>

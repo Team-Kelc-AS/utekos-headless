@@ -46,6 +46,7 @@ export type PurchaseClientViewLandingProps = {
   selectableSizes: string[]
   handleAddToCart: () => void
   isPending: boolean
+  isAddToCartPending: boolean
   currentConfig: (typeof PRODUCT_VARIANTS)[ModelKey]
   isTechDownOffer: boolean
   shopifyProduct: ShopifyProduct | null
@@ -64,6 +65,7 @@ export function PurchaseClientViewLanding({
   selectableSizes,
   handleAddToCart,
   isPending,
+  isAddToCartPending,
   currentConfig,
   isTechDownOffer,
   shopifyProduct,
@@ -401,7 +403,7 @@ export function PurchaseClientViewLanding({
                   isPending && 'cursor-not-allowed opacity-80'
                 )}
               >
-                {isPending ?
+                {isAddToCartPending ?
                   <button
                     type='button'
                     onClick={handleAddToCart}
@@ -422,6 +424,7 @@ export function PurchaseClientViewLanding({
                     type='button'
                     onClick={handleAddToCart}
                     data-track='SkreddersyVarmenAddToCartClick'
+                    disabled={isPending}
                     className={cn(
                       'flex w-full min-w-0 items-center justify-center gap-2 text-center',
                       focusRing

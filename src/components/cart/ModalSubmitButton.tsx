@@ -20,6 +20,7 @@ interface ModalSubmitButtonProps {
   isDisabled: boolean
   onCheckout: () => void
   checkoutPresentation?: CheckoutPresentation
+  showAddToCartAction?: boolean
 }
 
 export function ModalSubmitButton({
@@ -31,7 +32,8 @@ export function ModalSubmitButton({
   isCheckoutPending,
   isDisabled,
   onCheckout,
-  checkoutPresentation = 'balanced'
+  checkoutPresentation = 'balanced',
+  showAddToCartAction = true
 }: ModalSubmitButtonProps) {
   if (!availableForSale || !selectedVariant) {
     return <SoldOutButton />
@@ -40,10 +42,12 @@ export function ModalSubmitButton({
   if (checkoutPresentation === 'standard-primary') {
     return (
       <div className='grid gap-3'>
-        <ActiveSubmitButton
-          isPending={isAddToCartPending}
-          isDisabled={isDisabled}
-        />
+        {showAddToCartAction ?
+          <ActiveSubmitButton
+            isPending={isAddToCartPending}
+            isDisabled={isDisabled}
+          />
+        : null}
         <QuickCheckoutButton
           isPending={isCheckoutPending}
           isDisabled={isDisabled}
@@ -67,10 +71,12 @@ export function ModalSubmitButton({
 
   return (
     <div className='grid gap-3'>
-      <ActiveSubmitButton
-        isPending={isAddToCartPending}
-        isDisabled={isDisabled}
-      />
+      {showAddToCartAction ?
+        <ActiveSubmitButton
+          isPending={isAddToCartPending}
+          isDisabled={isDisabled}
+        />
+      : null}
       <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
         <KlarnaProductExpressCheckout
           product={product}

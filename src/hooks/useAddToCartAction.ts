@@ -7,37 +7,19 @@ import { CartMutationContext } from '@/lib/context/CartMutationContext'
 import { CartIdContext } from '@/lib/context/CartIdContext'
 import { cartStore } from '@/lib/state/cartStore'
 import { useCartMutations } from '@/hooks/useCartMutations'
-import {
-  useOptimisticCartUpdate,
-  type OptimisticItemInput
-} from '@/hooks/useOptimisticCartUpdate'
 import { handlePostAddToCartCampaigns } from '@/lib/campaigns/cart/handlePostAddToCartCampaigns'
 import { reportCanonicalAddToCart } from '@/lib/analytics/addToCartReporter'
 import { reportCanonicalBeginCheckout } from '@/lib/analytics/beginCheckoutReporter'
 import type { UseAddToCartActionProps, Cart } from 'types/cart'
-import type {
-  ProductCartModel,
-  ProductPurchaseVariant
-} from 'types/product/ProductPurchaseModel'
-
-interface ExtendedAddToCartProps extends UseAddToCartActionProps {
-  additionalProductData?:
-    | {
-        product: ProductCartModel
-        variant: ProductPurchaseVariant
-      }
-    | undefined
-}
+import type { ProductPurchaseVariant } from 'types/product/ProductPurchaseModel'
 
 export function useAddToCartAction({
   product,
   selectedVariant,
-  additionalLine,
-  additionalProductData
-}: ExtendedAddToCartProps) {
+  additionalLine
+}: UseAddToCartActionProps) {
   const [pendingAction, setPendingAction] = useState<'add' | 'checkout' | null>(null)
   const { addLines } = useCartMutations()
-  const { updateCartCache } = useOptimisticCartUpdate()
   const queryClient = useQueryClient()
   const contextCartId = useContext(CartIdContext)
 
@@ -47,12 +29,16 @@ export function useAddToCartAction({
 
   const addSelectedLinesToCart = async ({
     quantity,
-    openCart
+    openCart,
+    variantOverride
   }: {
     quantity: number
     openCart: boolean
+    variantOverride?: ProductPurchaseVariant
   }) => {
-    if (!selectedVariant) {
+    const purchaseVariant = variantOverride ?? selectedVariant
+
+    if (!purchaseVariant) {
       toast.error('Vennligst velg en variant før du legger i handlekurven.')
       return null
     }
@@ -64,26 +50,7 @@ export function useAddToCartAction({
     try {
       let cartId = contextCartId
 
-      if (cartId) {
-        const itemsToUpdate: OptimisticItemInput[] = []
-        itemsToUpdate.push({
-          product,
-          variant: selectedVariant,
-          quantity
-        })
-
-        if (additionalLine && additionalProductData) {
-          itemsToUpdate.push({
-            product: additionalProductData.product,
-            variant: additionalProductData.variant,
-            quantity: additionalLine.quantity,
-            customPrice: 0
-          })
-        }
-        await updateCartCache({ cartId, items: itemsToUpdate })
-      }
-
-      const lines = [{ variantId: selectedVariant.id, quantity }]
+      const lines = [{ variantId: purchaseVariant.id, quantity }]
       if (additionalLine) {
         lines.push({
           variantId: additionalLine.variantId,
@@ -113,12 +80,12 @@ export function useAddToCartAction({
         queryClient.setQueryData(['cart', resultCart.id], resultCart)
       }
 
-      if (cartId && selectedVariant) {
+      if (cartId) {
         reportCanonicalAddToCart({
           cartId,
           product,
           quantity,
-          variant: selectedVariant
+          variant: purchaseVariant
         })
       }
 
@@ -161,7 +128,7 @@ export function useAddToCartAction({
       return {
         cart: resultCart,
         cartId,
-        selectedVariant
+        selectedVariant: purchaseVariant
       }
     } catch (mutationError) {
       console.error('Feil under legg-i-kurv operasjon:', mutationError)
@@ -176,13 +143,20 @@ export function useAddToCartAction({
     }
   }
 
-  const performAddToCart = async (quantity: number) => {
+  const performAddToCart = async (
+    quantity: number,
+    variantOverride?: ProductPurchaseVariant
+  ) => {
     if (pendingAction || isPendingFromMachine) return
 
     setPendingAction('add')
 
     try {
-      await addSelectedLinesToCart({ quantity, openCart: true })
+      await addSelectedLinesToCart({
+        quantity,
+        openCart: true,
+        ...(variantOverride ? { variantOverride } : {})
+      })
     } finally {
       setPendingAction(null)
     }

@@ -37,6 +37,8 @@ export type PurchaseClientViewProps = {
   handleAddToCart: () => void
   handleGoToCheckout?: () => Promise<void>
   isPending: boolean
+  isAddToCartPending: boolean
+  isCheckoutPending: boolean
   currentConfig: ProductConfig
   currentColor: ColorVariant | undefined
   isTechDownOffer: boolean

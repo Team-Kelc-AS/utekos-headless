@@ -17,7 +17,8 @@ import type {
 export function useMicrofiberLogic(product: ShopifyProduct | null) {
   const [color, setColor] = useState<MicrofiberColor>('fjellbla')
   const [size, setSize] = useState<MicrofiberSize>('large')
-  const { addToCart, isPending } = useCanonicalAddToCart()
+  const { addToCart, isPending, isCartBusy } =
+    useCanonicalAddToCart()
   const reportedVariantIdRef = useRef<string | null>(null)
   const reportedViewItemVariantIdRef = useRef<string | null>(null)
 
@@ -113,6 +114,7 @@ export function useMicrofiberLogic(product: ShopifyProduct | null) {
     selectedVariant,
     handleAddToCart,
     scrollToSizeGuide,
-    isPending: isPending || !product
+    isPending,
+    isDisabled: isPending || isCartBusy || !product
   }
 }

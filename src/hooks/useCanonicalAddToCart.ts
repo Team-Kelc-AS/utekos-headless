@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { toast } from 'sonner'
 import { CartIdContext } from '@/lib/context/CartIdContext'
 import { CartMutationContext } from '@/lib/context/CartMutationContext'
@@ -24,7 +24,8 @@ export type CanonicalAddToCartParams = {
 export function useCanonicalAddToCart() {
   const { addLines } = useCartMutations()
   const contextCartId = useContext(CartIdContext)
-  const isPending = CartMutationContext.useSelector(state =>
+  const [isPending, setIsPending] = useState(false)
+  const isCartBusy = CartMutationContext.useSelector(state =>
     state.matches('mutating')
   )
 
@@ -34,30 +35,41 @@ export function useCanonicalAddToCart() {
     quantity,
     openCart
   }: CanonicalAddToCartParams): Promise<{ success: boolean }> => {
-    const result = await addProductLineAndReportAddToCart({
-      product,
-      variant,
-      quantity,
-      contextCartId,
-      addLines,
-      getCartIdFromCookie,
-      report: reportCanonicalAddToCart
-    })
-
-    if (!result.success) {
-      toast.error(result.message)
+    if (isPending || isCartBusy) {
       return { success: false }
     }
+
+    setIsPending(true)
 
     if (openCart) {
       cartStore.send({ type: 'OPEN' })
     }
 
-    return { success: true }
+    try {
+      const result = await addProductLineAndReportAddToCart({
+        product,
+        variant,
+        quantity,
+        contextCartId,
+        addLines,
+        getCartIdFromCookie,
+        report: reportCanonicalAddToCart
+      })
+
+      if (!result.success) {
+        toast.error(result.message)
+        return { success: false }
+      }
+
+      return { success: true }
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return {
     addToCart,
-    isPending
+    isPending,
+    isCartBusy
   }
 }

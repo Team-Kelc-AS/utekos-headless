@@ -11,6 +11,7 @@ import { InlineText } from '@/components/typography/TypographyInlineText'
 export function ProductCardFooter({
   isAvailable,
   isPending,
+  isDisabled,
   onQuickBuy,
   showWaitlistCta = false,
   onWaitlistClick
@@ -35,7 +36,7 @@ export function ProductCardFooter({
             type='button'
             onClick={handleQuickBuyClick}
             data-track='ProductCardFooterAddToCartClick'
-            disabled={isPending}
+            disabled={isDisabled}
             variant='checkout'
             className={`${actionButtonClassName} disabled:opacity-70`}
           >

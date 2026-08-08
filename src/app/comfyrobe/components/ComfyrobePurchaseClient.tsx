@@ -433,6 +433,7 @@ export function ComfyrobePurchaseClient({
                 product={product}
                 selectedVariant={selectedVariant}
                 checkoutPresentation='standard-primary'
+                showAddToCartAction={false}
               />
             : <div className='rounded-2xl border border-border p-5 text-center'>
                 <ShoppingBag
