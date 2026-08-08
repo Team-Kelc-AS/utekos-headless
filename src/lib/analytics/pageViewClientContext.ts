@@ -52,10 +52,12 @@ export function extractBrowserIds(
   if (consent.marketing === 'granted') {
     const fbp = cookies.get('_fbp')
     const fbc = cookies.get('_fbc')
+    const snapCookie = cookies.get('_scid')
     const uetSession = cookies.get('_uetsid')
     const uetVisitor = cookies.get('_uetvid')
     if (fbp) identifiers.fbp = fbp
     if (fbc) identifiers.fbc = fbc
+    if (snapCookie) identifiers.sc_cookie1 = snapCookie
     if (uetSession) identifiers.uet_session = uetSession
     if (uetVisitor) identifiers.uet_visitor = uetVisitor
   }
