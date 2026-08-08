@@ -2,7 +2,7 @@
 
 import { z } from 'zod'
 
-import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
+import { logCartError } from '@/lib/cart/logCartError'
 import { resolveFullShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
 import { getStorefrontBuyerContext } from '@/api/shopify/storefront/getStorefrontBuyerContext'
@@ -51,10 +51,7 @@ export async function updateCartAttributesAction(
     )
     return { success: true }
   } catch (error) {
-    console.error(
-      'Shopify cart attributes update failed.',
-      getRedactedErrorSummary(error)
-    )
+    logCartError('Shopify cart attributes update failed.', error)
     throw new Error('Kunne ikke oppdatere handlekurven.')
   }
 }
