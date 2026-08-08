@@ -112,6 +112,20 @@ const websiteSignals = {
       'checkout_attribution_snapshot'
     ],
     marketingUnavailableReasons
+  ),
+  snap_click_id: signalRule(
+    'required_when_observed',
+    [
+      'browser_request_url',
+      'durable_click_id_store',
+      'checkout_attribution_snapshot'
+    ],
+    noClickReasons
+  ),
+  snap_cookie1: signalRule(
+    'required_when_marketing_granted',
+    ['first_party_cookie', 'checkout_attribution_snapshot'],
+    marketingUnavailableReasons
   )
 } as const satisfies CanonicalEventSignalPolicy
 
@@ -147,7 +161,8 @@ const transactionAttributionSignals = Object.fromEntries(
       (
         signal === 'click_ids' ||
           signal === 'meta_fbclid' ||
-          signal === 'meta_fbc'
+          signal === 'meta_fbc' ||
+          signal === 'snap_click_id'
       ) ?
         ['consent_denied', 'no_applicable_click']
       : signal === 'event_source_url' ? []
@@ -222,7 +237,9 @@ const googleSignals = {
   click_ids: 'send_when_supported_and_permitted',
   meta_fbclid: 'not_applicable',
   meta_fbc: 'not_applicable',
-  meta_fbp: 'not_applicable'
+  meta_fbp: 'not_applicable',
+  snap_click_id: 'not_applicable',
+  snap_cookie1: 'not_applicable'
 } as const satisfies ProviderSignalDeliveryPolicy
 
 const metaSignals = {
@@ -233,7 +250,9 @@ const metaSignals = {
   click_ids: 'not_applicable',
   meta_fbclid: 'derive_to_provider_format',
   meta_fbc: 'send_when_available',
-  meta_fbp: 'send_when_available'
+  meta_fbp: 'send_when_available',
+  snap_click_id: 'not_applicable',
+  snap_cookie1: 'not_applicable'
 } as const satisfies ProviderSignalDeliveryPolicy
 
 const microsoftSignals = {
@@ -244,7 +263,9 @@ const microsoftSignals = {
   click_ids: 'send_when_available',
   meta_fbclid: 'not_applicable',
   meta_fbc: 'not_applicable',
-  meta_fbp: 'not_applicable'
+  meta_fbp: 'not_applicable',
+  snap_click_id: 'not_applicable',
+  snap_cookie1: 'not_applicable'
 } as const satisfies ProviderSignalDeliveryPolicy
 
 const posthogSignals = {
