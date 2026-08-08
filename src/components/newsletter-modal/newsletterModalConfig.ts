@@ -12,6 +12,7 @@ export const NEWSLETTER_MODAL_SUPPRESSION_MS =
 
 const EXCLUDED_NEWSLETTER_MODAL_PATHS = [
   '/design',
+  '/personvern',
   '/produkter/utekos-dun',
   '/skreddersy-varmen'
 ] as const

@@ -10,10 +10,17 @@ import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-import { NewsletterSignupDialog } from '@/components/newsletter-modal/NewsletterSignupDialog'
 import { isNewsletterModalExcludedPath } from '@/components/newsletter-modal/newsletterModalConfig'
 
 import { NavigationProgress } from './NavigationProgress'
+
+const NewsletterSignupDialog = dynamic(
+  () =>
+    import(
+      '@/components/newsletter-modal/NewsletterSignupDialog'
+    ).then(module => module.NewsletterSignupDialog),
+  { ssr: false }
+)
 
 const CustomerAssistant = dynamic(
   () =>

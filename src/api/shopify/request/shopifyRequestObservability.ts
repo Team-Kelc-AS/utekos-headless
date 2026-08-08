@@ -31,6 +31,16 @@ import type {
   
   const requestIdInMessagePattern =
     /Request ID:\s*([A-Za-z0-9-]+)/i
+
+  function isShopifyGraphQLOperationType(
+    value: string | undefined
+  ): value is ShopifyGraphQLOperationType {
+    return (
+      value === 'query' ||
+      value === 'mutation' ||
+      value === 'subscription'
+    )
+  }
   
   function nonEmptyString(
     value: unknown
@@ -54,13 +64,24 @@ import type {
       namedOperationPattern.exec(
         withoutComments
       )
+
+    const namedOperationType =
+      namedMatch?.[1]
+
+    const namedOperationName =
+      namedMatch?.[2]
   
-    if (namedMatch) {
+    if (
+      isShopifyGraphQLOperationType(
+        namedOperationType
+      ) &&
+      namedOperationName
+    ) {
       return {
         type:
-          namedMatch[1] as
-            ShopifyGraphQLOperationType,
-        name: namedMatch[2]
+          namedOperationType,
+        name:
+          namedOperationName
       }
     }
   
@@ -68,12 +89,16 @@ import type {
       operationTypePattern.exec(
         withoutComments
       )
+
+    const operationType =
+      operationTypeMatch?.[1]
   
     return {
       type:
-        operationTypeMatch ?
-          operationTypeMatch[1] as
-            ShopifyGraphQLOperationType
+        isShopifyGraphQLOperationType(
+          operationType
+        ) ?
+          operationType
         : 'query',
       name: 'anonymous'
     }
