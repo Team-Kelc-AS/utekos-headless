@@ -32,13 +32,20 @@ test('maps Cookiebot categories to the canonical consent snapshot', () => {
 
 test('extracts supported click identifiers from the current URL', () => {
   assert.deepEqual(
-    extractClickIds('https://utekos.no/?gclid=google-1&fbclid=meta-1&unknown=no'),
-    { gclid: 'google-1', fbclid: 'meta-1' }
+    extractClickIds(
+      'https://utekos.no/?gclid=google-1&fbclid=meta-1&ScCid=Snap-AbC-1&unknown=no'
+    ),
+    {
+      gclid: 'google-1',
+      fbclid: 'meta-1',
+      snap_click_id: 'Snap-AbC-1'
+    }
   )
 })
 
 test('does not expose browser identifiers without matching consent', () => {
-  const cookie = '_fbp=fb.1.123; _fbc=fb.1.456; _ga=GA1.1.123.456'
+  const cookie =
+    '_fbp=fb.1.123; _fbc=fb.1.456; _scid=Snap.Cookie.Denied; _ga=GA1.1.123.456'
 
   assert.equal(extractBrowserIds(cookie, {
     analytics: 'denied',
@@ -50,7 +57,8 @@ test('does not expose browser identifiers without matching consent', () => {
 })
 
 test('reads only consented browser identifiers from existing cookies', () => {
-  const cookie = '_fbp=fb.1.123; _fbc=fb.1.456; _ga=GA1.1.123.456'
+  const cookie =
+    '_fbp=fb.1.123; _fbc=fb.1.456; _scid=Snap.Cookie.Value; _ga=GA1.1.123.456'
 
   assert.deepEqual(extractBrowserIds(cookie, {
     analytics: 'granted',
@@ -61,6 +69,7 @@ test('reads only consented browser identifiers from existing cookies', () => {
   }), {
     fbp: 'fb.1.123',
     fbc: 'fb.1.456',
+    sc_cookie1: 'Snap.Cookie.Value',
     ga_client: 'GA1.1.123.456'
   })
 })
