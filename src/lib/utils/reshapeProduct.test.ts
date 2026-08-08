@@ -67,14 +67,10 @@ function createStorefrontProduct(): StorefrontProduct {
             selectedOptions: [{ name: 'Størrelse', value: 'Medium' }],
             quantityAvailable: 4,
             sku: 'COMFY-M',
-            weight: 1750,
-            weightUnit: 'GRAMS',
             price: money,
             compareAtPrice: null,
             image: null,
             metafield: {
-              type: 'metaobject_reference',
-              value: 'gid://shopify/Metaobject/1',
               reference: {
                 subtitle: {
                   key: 'subtitle',
@@ -104,6 +100,7 @@ test('normalizes a Storefront product into the enriched Utekos domain', () => {
   assert.equal(product.selectedOrFirstAvailableVariant?.id, variant?.id)
   assert.equal(variant?.variantProfileData?.subtitle?.value, 'Vargnatt')
   assert.equal(variant?.metafield?.namespace, 'bridgeFor')
+  assert.equal(variant?.weight, null)
   assert.equal(variant?.weightUnit, 'GRAMS')
   assert.equal(product.description, 'Varm og vindtett.')
 })

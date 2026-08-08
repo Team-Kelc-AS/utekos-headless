@@ -6,6 +6,7 @@ import { validateCartCommand } from '@/lib/actions/cart/validateCartCommand'
 import { normalizeCart } from '@/lib/helpers/normalizers/normalizeCart'
 import { readCartIdCookie } from '@/lib/cart/readCartIdCookie'
 import type { CartActionsResult, CartCommand } from 'types/cart'
+import { getStorefrontBuyerContext } from '@/api/shopify/storefront/getStorefrontBuyerContext'
 
 export async function runCartCommand(
   command: CartCommand,
@@ -14,9 +15,11 @@ export async function runCartCommand(
   await validateCartCommand(command)
 
   const existingCartId = await readCartIdCookie()
+  const context = await getStorefrontBuyerContext()
   const rawCart = await performCartCommand(
     command,
-    existingCartId
+    existingCartId,
+    context
   )
 
   await setCartIdInCookie(rawCart.id)

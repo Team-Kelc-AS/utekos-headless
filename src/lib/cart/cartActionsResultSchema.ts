@@ -42,9 +42,10 @@ const cartLineSchema = z
             id: z.string(),
             title: z.string(),
             handle: z.string(),
-            featuredImage: imageSchema
+            vendor: z.string(),
+            productType: z.string()
           })
-          .passthrough()
+          .strict()
       })
       .passthrough()
   })

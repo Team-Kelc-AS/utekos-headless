@@ -11,7 +11,7 @@ import { z } from 'zod/v4'
 const repoRoot = path.resolve(process.env.UTEKOS_REPO_ROOT ?? process.cwd())
 const profile = 'utekos_chatgpt_shopify_readonly'
 const mode = 'live-read-protected-data'
-const defaultApiVersion = '2026-04'
+const defaultApiVersion = '2026-07'
 
 const canonicalTools = [
   'shopify_readonly_bootstrap',

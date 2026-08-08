@@ -26,7 +26,7 @@ export type ShopifyCommerceReconciliationGraphqlClient = <TData>(
   variables?: Record<string, unknown>
 ) => Promise<TData>
 
-function classifyShopifyFetchError(error: unknown): never {
+function classifyShopifyAdminRequestError(error: unknown): never {
   const message =
     error instanceof Error ? error.message : String(error)
 
@@ -89,7 +89,7 @@ export async function fetchShopifyCommerceReconciliationOrdersPage(
       }
     )
   } catch (error) {
-    classifyShopifyFetchError(error)
+    classifyShopifyAdminRequestError(error)
   }
 
   const parsed =

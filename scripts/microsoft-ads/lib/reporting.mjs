@@ -324,10 +324,11 @@ export function createMicrosoftAdsReportingClient({
       return result
     }
 
+    const { allRows, ...safeResult } = result
+
     return {
-      ...result,
-      totals: summarizeMicrosoftAdsCampaignReportRows(result.allRows),
-      allRows: undefined
+      ...safeResult,
+      totals: summarizeMicrosoftAdsCampaignReportRows(allRows)
     }
   }
 

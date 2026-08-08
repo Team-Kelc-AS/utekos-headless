@@ -3,7 +3,8 @@ import 'server-only'
 import { getCartLineIdsQuery } from '@/api/graphql/queries/cart/getCartLineIdsQuery'
 import { getCartQuery } from '@/api/graphql/queries/cart/getCartQuery'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
+import type { StorefrontBuyerContext } from '@/api/shopify/storefront/StorefrontGatewayContract'
 import { performCartLinesRemoveMutation } from '@/lib/actions/perform/performCartLinesRemoveMutation'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
 import type {
@@ -17,10 +18,11 @@ type CartLineIdsOperation = ShopifyOperation<
 >
 
 export async function performCartClearMutation(
+  context: StorefrontBuyerContext,
   cartId: string
 ): Promise<StorefrontCart> {
-  const lineIdsResult = await shopifyFetch<CartLineIdsOperation>(
-    { query: getCartLineIdsQuery, variables: { cartId } }
+  const lineIdsResult = await storefrontGateway.buyerQuery<CartLineIdsOperation>(
+    { context, query: getCartLineIdsQuery, variables: { cartId } }
   )
 
   if (!lineIdsResult.success) {
@@ -38,6 +40,7 @@ export async function performCartClearMutation(
   const lineIds = cart.lines.nodes.map(line => line.id)
   if (lineIds.length > 0) {
     const clearedCart = await performCartLinesRemoveMutation(
+      context,
       cartId,
       lineIds
     )
@@ -49,7 +52,8 @@ export async function performCartClearMutation(
     return clearedCart
   }
 
-  const cartResult = await shopifyFetch<ShopifyCartOperation>({
+  const cartResult = await storefrontGateway.buyerQuery<ShopifyCartOperation>({
+    context,
     query: getCartQuery,
     variables: { cartId }
   })

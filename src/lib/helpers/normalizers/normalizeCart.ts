@@ -4,37 +4,24 @@ import type {
   StorefrontCart,
   StorefrontCartLine
 } from '@/api/shopify/types/storefrontApi'
-import { reshapeProduct } from '@/lib/utils/reshapeProduct'
 import { flattenConnection } from '@shopify/hydrogen-react'
 import type { Cart, CartLine } from 'types/cart'
 import { normalizeProductImage } from './normalizeProductImage'
 import { normalizeStorefrontMoney } from './normalizeStorefrontMoney'
 import { parseShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { CART_CHECKOUT_PATH } from '@/lib/cart/cartCheckoutPath'
-import type { ProductCartModel } from 'types/product/ProductPurchaseModel'
 
 const normalizeCartLine = (
   node: StorefrontCartLine
 ): CartLine => {
-  const product = reshapeProduct(node.merchandise.product)
-  const featuredImage = normalizeProductImage(
-    product.featuredImage,
-    product.title
-  )
+  const product = node.merchandise.product
   const cartProduct = {
     id: product.id,
     title: product.title,
     handle: product.handle,
-    productType: product.productType,
     vendor: product.vendor,
-    collections: {
-      nodes: product.collections.nodes.map(collection => ({
-        id: collection.id,
-        title: collection.title
-      }))
-    },
-    featuredImage
-  } satisfies ProductCartModel
+    productType: product.productType
+  }
 
   return {
     id: node.id,

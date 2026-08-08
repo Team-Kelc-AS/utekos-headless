@@ -4,6 +4,7 @@ import { clearCartIdCookie } from '@/lib/actions/cart/setCartIdInCookie'
 import { readCartIdCookie } from '@/lib/cart/readCartIdCookie'
 import { resolveShopifyCheckoutUrl } from '@/lib/cart/resolveShopifyCheckoutUrl'
 import { fetchRawCart } from '@/lib/helpers/cart/fetchCart'
+import { createStorefrontBuyerContext } from '@/api/shopify/storefront/createStorefrontBuyerContext'
 
 const NO_STORE_HEADERS = {
   'cache-control': 'private, no-store, max-age=0'
@@ -26,7 +27,8 @@ export async function GET(
     return storefrontRedirect(request)
   }
 
-  const cart = await fetchRawCart(cartId)
+  const context = createStorefrontBuyerContext(request.headers)
+  const cart = await fetchRawCart(context, cartId)
   const checkoutUrl =
     cart ?
       resolveShopifyCheckoutUrl(

@@ -40,8 +40,8 @@ export const reshapeProduct = (product: StorefrontProduct): ShopifyProduct => {
         ...(reference
           ? { variantProfileData: reshapeMetaobject(reference) }
           : {}),
-        weight: variant.weight ?? null,
-        weightUnit: variant.weightUnit,
+        weight: null,
+        weightUnit: 'GRAMS',
         quantityAvailable: variant.quantityAvailable ?? null
       }
     }

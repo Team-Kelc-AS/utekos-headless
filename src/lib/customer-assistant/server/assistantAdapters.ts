@@ -33,7 +33,6 @@ export type AssistantRequestContext = {
 
 export type AssistantAdapters = {
   fetchProducts(input: {
-    buyerIp?: string
     handles?: string[]
   }): Promise<AssistantProduct[]>
   supportKnowledge: SupportKnowledgeAdapter

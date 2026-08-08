@@ -178,11 +178,9 @@ function resolveRequestHandoff(
 }
 
 function createCatalogInput(
-  context: AssistantRequestContext,
   handles?: string[]
 ) {
   return {
-    ...(context.buyerIp ? { buyerIp: context.buyerIp } : {}),
     ...(handles ? { handles } : {})
   }
 }
@@ -221,7 +219,6 @@ function reorderEligibleAlternatives(
 
 async function answerProductHelp(
   request: AssistantChatRequest,
-  context: AssistantRequestContext,
   adapters: AssistantAdapters
 ): Promise<AssistantOutcome> {
   const clarification = resolveAssistantClarification(
@@ -247,7 +244,7 @@ async function answerProductHelp(
 
   try {
     products = assistantProductsResultSchema.parse(
-      await adapters.fetchProducts(createCatalogInput(context))
+      await adapters.fetchProducts(createCatalogInput())
     )
   } catch {
     return safeFailure('shopify_unavailable')
@@ -309,7 +306,6 @@ async function answerProductHelp(
 
 async function answerStockHelp(
   request: AssistantChatRequest,
-  context: AssistantRequestContext,
   adapters: AssistantAdapters
 ): Promise<AssistantOutcome> {
   const productHandle = request.pageContext.productHandle
@@ -333,7 +329,6 @@ async function answerStockHelp(
     const products = assistantProductsResultSchema.parse(
       await adapters.fetchProducts(
         createCatalogInput(
-          context,
           productHandle ? [productHandle] : undefined
         )
       )
@@ -477,11 +472,11 @@ export async function answerAssistantRequest(
   }
 
   if (request.intent === 'product_help') {
-    return answerProductHelp(request, context, adapters)
+    return answerProductHelp(request, adapters)
   }
 
   if (request.intent === 'stock_help') {
-    return answerStockHelp(request, context, adapters)
+    return answerStockHelp(request, adapters)
   }
 
   if (request.intent === 'size_help') {

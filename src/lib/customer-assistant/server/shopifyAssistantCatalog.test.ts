@@ -114,7 +114,7 @@ test('uses the product title when Shopify has no image alt text', () => {
   )
 })
 
-test('uses documented product handle lookups with buyer context', async () => {
+test('uses documented product handle lookups without buyer context', async () => {
   let request: unknown
   const fetchProducts =
     __TEST_ONLY__.createFetchAssistantProducts(async input => {
@@ -134,7 +134,6 @@ test('uses documented product handle lookups with buyer context', async () => {
     })
 
   const products = await fetchProducts({
-    buyerIp: '203.0.113.8',
     handles: ['utekos-techdown', 'comfyrobe', 'utekos-techdown']
   })
 
@@ -142,14 +141,9 @@ test('uses documented product handle lookups with buyer context', async () => {
     products.map(product => product.handle),
     ['utekos-techdown', 'comfyrobe']
   )
-  assert.deepEqual(
-    (
-      request as {
-        headers?: HeadersInit
-        variables: Record<string, string | number>
-      }
-    ).headers,
-    { 'Shopify-Storefront-Buyer-IP': '203.0.113.8' }
+  assert.equal(
+    'headers' in (request as Record<string, unknown>),
+    false
   )
   assert.deepEqual(
     (request as { variables: Record<string, string | number> })

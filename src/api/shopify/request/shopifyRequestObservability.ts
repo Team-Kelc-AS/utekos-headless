@@ -141,7 +141,7 @@ import type {
     }
   }
   
-  export function classifyShopifyFetchError({
+  export function classifyShopifyRequestError({
     error,
     timeoutSignal,
     callerSignal

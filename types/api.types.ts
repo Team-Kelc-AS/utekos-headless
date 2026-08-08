@@ -1,7 +1,6 @@
 // Path: types/api.types.ts
 
 import type { Cart } from 'types/cart'
-import type { GraphQLErrorResponse } from './graphql.types'
 import type { DehydratedState } from '@tanstack/react-query'
 import type { ShopifyProduct } from 'types/product'
 import type {
@@ -16,9 +15,10 @@ import type {
   StorefrontCartLinesRemovePayload,
   StorefrontCartLinesUpdatePayload,
   StorefrontCartLineUpdateInput,
-  StorefrontProduct,
   StorefrontProductConnection,
+  StorefrontProductShell,
   StorefrontProductQueryVariables,
+  StorefrontProductVariantPresentation,
   StorefrontProductsQueryVariables
 } from '@/api/shopify/types/storefrontApi'
 
@@ -37,10 +37,6 @@ export type ShopifyOperation<TData, TVariables = never> = {
 export type ShopifyResponse<T> =
   | { success: true; status: number; body: T }
   | { success: false; status: number; error: string }
-
-export type ShopifyFetchResult<TData> =
-  | { success: true; body: TData }
-  | { success: false; error: GraphQLErrorResponse }
 
 export type Connection<T> = {
   edges: Array<Edge<T>>
@@ -119,8 +115,13 @@ export type ShopifyErrorDetailInput = {
   extensions?: Record<string, unknown> | undefined
 }
 
-export type ShopifyProductOperation = ShopifyOperation<
-  { product: StorefrontProduct | null },
+export type ShopifyProductShellOperation = ShopifyOperation<
+  { product: StorefrontProductShell | null },
+  StorefrontProductQueryVariables
+>
+
+export type ShopifyProductVariantPresentationOperation = ShopifyOperation<
+  { product: StorefrontProductVariantPresentation | null },
   StorefrontProductQueryVariables
 >
 

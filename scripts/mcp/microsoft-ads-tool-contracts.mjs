@@ -633,5 +633,22 @@ export function normalizeMicrosoftAdsRecommendation(item) {
 
 function toJsonObject(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return { value: value ?? null }
-  return microsoftAdsJsonObjectSchema.parse(value)
+  return microsoftAdsJsonObjectSchema.parse(dropUndefinedDeep(value))
+}
+
+function dropUndefinedDeep(value) {
+  if (Array.isArray(value)) {
+    return value.map(item => (item === undefined ? null : dropUndefinedDeep(item)))
+  }
+
+  if (value && typeof value === 'object') {
+    const normalized = {}
+    for (const [key, entry] of Object.entries(value)) {
+      if (entry === undefined) continue
+      normalized[key] = dropUndefinedDeep(entry)
+    }
+    return normalized
+  }
+
+  return value
 }

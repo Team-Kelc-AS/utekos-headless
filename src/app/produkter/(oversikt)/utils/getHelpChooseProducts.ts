@@ -2,7 +2,7 @@ import 'server-only'
 
 import { cacheLife, cacheTag } from 'next/cache'
 import { TAGS } from '@/api/constants'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import { flattenConnection } from '@shopify/hydrogen-react'
 import type { Connection, ShopifyOperation } from '@types'
 import type { Money } from 'types/commerce/Money'
@@ -219,7 +219,7 @@ export async function getHelpChooseProducts() {
   cacheTag(TAGS.products)
   cacheLife('collections')
 
-  const response = await shopifyFetch<HelpChooseProductsOperation>({
+  const response = await storefrontGateway.catalogQuery<HelpChooseProductsOperation>({
     query: helpChooseProductsQuery,
     variables: { first: 12 }
   })

@@ -1,4 +1,4 @@
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import type { ShopifyOperation } from '@types'
 import { z } from 'zod'
 import {
@@ -23,7 +23,6 @@ type RawAssistantProduct = {
 }
 
 type AssistantCatalogRequest = {
-  headers?: HeadersInit
   query: string
   signal?: AbortSignal
   variables: Record<string, string | number>
@@ -38,7 +37,6 @@ const assistantHandleSchema = z
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
 
 const assistantCatalogInputSchema = z.strictObject({
-  buyerIp: z.string().min(1).max(45).optional(),
   handles: z.array(assistantHandleSchema).max(20).optional()
 })
 
@@ -92,7 +90,7 @@ const assistantProductByHandleBodySchema = z.record(
   rawAssistantProductSchema.nullable()
 )
 
-const shopifyFetchResultSchema = z.union([
+const storefrontGatewayResultSchema = z.union([
   z.strictObject({
     success: z.literal(true),
     body: z.unknown()
@@ -180,7 +178,7 @@ function normalizeAssistantCatalogFailure(): never {
 }
 
 function parseSuccessfulShopifyBody(response: unknown) {
-  const parsed = shopifyFetchResultSchema.safeParse(response)
+  const parsed = storefrontGatewayResultSchema.safeParse(response)
 
   if (!parsed.success || !parsed.data.success) {
     normalizeAssistantCatalogFailure()
@@ -192,7 +190,7 @@ function parseSuccessfulShopifyBody(response: unknown) {
 async function fetchShopifyAssistantCatalog(
   request: AssistantCatalogRequest
 ): Promise<unknown> {
-  return shopifyFetch<
+  return storefrontGateway.catalogQuery<
     ShopifyOperation<
       unknown,
       AssistantCatalogRequest['variables']
@@ -239,7 +237,6 @@ function createFetchAssistantProducts(
   options: { deadlineMs?: number } = {}
 ) {
   return async function fetchAssistantProductsWithCatalog(input: {
-    buyerIp?: string
     handles?: string[]
   }): Promise<AssistantProduct[]> {
     const parsedInput =
@@ -263,28 +260,12 @@ function createFetchAssistantProducts(
               `handle${index}`,
               handle
             ])
-          ),
-          ...(parsedInput.data.buyerIp ?
-            {
-              headers: {
-                'Shopify-Storefront-Buyer-IP':
-                  parsedInput.data.buyerIp
-              }
-            }
-          : {})
+          )
         }
       : {
           query: assistantProductsQuery,
           signal,
-          variables: { first: 20 },
-          ...(parsedInput.data.buyerIp ?
-            {
-              headers: {
-                'Shopify-Storefront-Buyer-IP':
-                  parsedInput.data.buyerIp
-              }
-            }
-          : {})
+          variables: { first: 20 }
         }
 
     try {
@@ -328,7 +309,6 @@ const fetchAssistantProductsFromShopify =
   createFetchAssistantProducts(fetchShopifyAssistantCatalog)
 
 export function fetchAssistantProducts(input: {
-  buyerIp?: string
   handles?: string[]
 }): Promise<AssistantProduct[]> {
   return fetchAssistantProductsFromShopify(input)

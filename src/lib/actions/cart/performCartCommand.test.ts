@@ -16,6 +16,7 @@ const lines = [
     quantity: 1
   }
 ]
+const context = { buyerIp: '203.0.113.8' }
 
 function createDependencies() {
   return {
@@ -46,6 +47,7 @@ describe('performCartCommand add-lines recovery', () => {
     const result = await performCartCommand(
       { type: 'add-lines', lines },
       existingCartId,
+      context,
       dependencies
     )
 
@@ -54,7 +56,7 @@ describe('performCartCommand add-lines recovery', () => {
     assert.equal(dependencies.createCart.mock.callCount(), 1)
     assert.deepEqual(
       dependencies.createCart.mock.calls[0]?.arguments,
-      [lines, undefined]
+      [context, lines, undefined]
     )
   })
 
@@ -69,12 +71,13 @@ describe('performCartCommand add-lines recovery', () => {
     await performCartCommand(
       { type: 'add-lines', lines, discountCode: 'STAYCOMFY' },
       existingCartId,
+      context,
       dependencies
     )
 
     assert.deepEqual(
       dependencies.createCart.mock.calls[0]?.arguments,
-      [lines, 'STAYCOMFY']
+      [context, lines, 'STAYCOMFY']
     )
   })
 
@@ -89,6 +92,7 @@ describe('performCartCommand add-lines recovery', () => {
       performCartCommand(
         { type: 'add-lines', lines },
         existingCartId,
+        context,
         dependencies
       ),
       error

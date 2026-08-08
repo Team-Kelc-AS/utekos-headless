@@ -2,7 +2,8 @@
 import 'server-only'
 
 import { getCartQuery } from '@/api/graphql/queries/cart/getCartQuery'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
+import type { StorefrontBuyerContext } from '@/api/shopify/storefront/StorefrontGatewayContract'
 import { CartNotFoundError } from '@/lib/errors/CartNotFoundError'
 import { normalizeCart } from '@/lib/helpers/normalizers/normalizeCart'
 import type { ShopifyCartOperation } from '@types'
@@ -12,9 +13,11 @@ import { redactShopifyCartSecrets } from '@/lib/cart/redactShopifyCartSecrets'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
 
 export const fetchRawCart = async (
+  context: StorefrontBuyerContext,
   cartId: string
 ): Promise<StorefrontCart | null> => {
-  const res = await shopifyFetch<ShopifyCartOperation>({
+  const res = await storefrontGateway.buyerQuery<ShopifyCartOperation>({
+    context,
     query: getCartQuery,
     variables: { cartId }
   })
@@ -40,9 +43,10 @@ export const fetchRawCart = async (
 }
 
 export const fetchCart = async (
+  context: StorefrontBuyerContext,
   cartId: string
 ): Promise<Cart | null> => {
-  const cart = await fetchRawCart(cartId)
+  const cart = await fetchRawCart(context, cartId)
 
   return cart ? normalizeCart(cart) : null
 }

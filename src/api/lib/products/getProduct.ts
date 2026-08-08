@@ -1,8 +1,11 @@
 // Path: src/api/lib/products/getProduct.ts
 
 import 'server-only'
-import { getProductQuery } from '@/api/graphql/queries/products'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import {
+  getProductShellQuery,
+  getProductVariantPresentationQuery
+} from '@/api/graphql/queries/products'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import { reshapeProduct } from '@/lib/utils/reshapeProduct'
 import { cacheTag, cacheLife } from 'next/cache'
 import { TAGS } from '@/api/constants'
@@ -11,23 +14,45 @@ import {
   normalizeShopifyProductHandle
 } from '@/lib/cache/shopifyProductRuntimeCache'
 import type { ShopifyProduct } from 'types/product'
-import type { ShopifyProductOperation } from '@types'
+import type {
+  ShopifyProductShellOperation,
+  ShopifyProductVariantPresentationOperation
+} from '@types'
+import { composeStorefrontProduct } from './composeStorefrontProduct'
 
 async function fetchProductFromShopify(
   handle: string
 ): Promise<ShopifyProduct | null> {
-  const res = await shopifyFetch<ShopifyProductOperation>({
-    query: getProductQuery,
-    variables: { handle }
-  })
+  const [shellResponse, variantPresentationResponse] =
+    await Promise.all([
+      storefrontGateway.catalogQuery<ShopifyProductShellOperation>({
+        query: getProductShellQuery,
+        variables: { handle }
+      }),
+      storefrontGateway.catalogQuery<ShopifyProductVariantPresentationOperation>({
+        query: getProductVariantPresentationQuery,
+        variables: { handle }
+      })
+    ])
 
-  if (!res.success) {
+  if (!shellResponse.success) {
     throw new Error(
-      res.error.errors[0]?.message ?? `Failed to fetch product: ${handle}`
+      shellResponse.error.errors[0]?.message ??
+        `Failed to fetch product shell: ${handle}`
     )
   }
 
-  const rawProduct = res.body.product
+  if (!variantPresentationResponse.success) {
+    throw new Error(
+      variantPresentationResponse.error.errors[0]?.message ??
+        `Failed to fetch product variant presentation: ${handle}`
+    )
+  }
+
+  const rawProduct = composeStorefrontProduct(
+    shellResponse.body.product,
+    variantPresentationResponse.body.product
+  )
   if (!rawProduct) return null
 
   return reshapeProduct(rawProduct)

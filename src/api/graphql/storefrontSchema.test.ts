@@ -33,7 +33,7 @@ test('Storefront operations match the pinned Hydrogen React schema', () => {
     assert.deepEqual(
       errors.map(error => error.message),
       [],
-      `${name} must match the Storefront 2026-04 schema`
+      `${name} must match the bundled Hydrogen compatibility schema`
     )
   }
 })

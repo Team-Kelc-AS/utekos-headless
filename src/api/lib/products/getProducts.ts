@@ -2,7 +2,7 @@
 
 import 'server-only'
 import { getProductsQuery } from '@/api/graphql/queries/products'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import { reshapeProducts } from '@/lib/utils/reshapeProducts'
 import { flattenConnection } from '@shopify/hydrogen-react'
 import type {
@@ -19,7 +19,7 @@ export async function fetchProducts(
 ): Promise<ShopifyProduct[]> {
   const variables = { first: 12, ...params }
 
-  const res = await shopifyFetch<ShopifyProductsOperation>({
+  const res = await storefrontGateway.catalogQuery<ShopifyProductsOperation>({
     query: getProductsQuery,
     variables
   })

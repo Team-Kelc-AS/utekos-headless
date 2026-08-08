@@ -30,7 +30,6 @@ import { mapShopifyRemoveFromCart } from '@/lib/analytics/shopifyRemoveFromCartC
 import { resolveSuccessfulCartRemovalQuantity } from '@/lib/analytics/resolveSuccessfulCartRemovalQuantity'
 import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import type { Cart } from 'types/cart'
-import type { ShopifyProduct } from 'types/product'
 import { AlertDialogTitle } from './AlertDialogen'
 import { Activity } from 'react'
 
@@ -133,7 +132,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
       result
     })
     const resolvedCartId = result.cart?.id ?? cartId
-    const product = line.merchandise.product as ShopifyProduct | undefined
+    const product = line.merchandise.product
 
     if (resolvedCartId && product && removedQuantity > 0) {
       const eventTime = new Date().toISOString()
@@ -195,9 +194,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
       })
 
       if (removedQuantity > 0) {
-        const product = line.merchandise.product as
-          | ShopifyProduct
-          | undefined
+        const product = line.merchandise.product
 
         if (product) {
           const eventTime = new Date().toISOString()

@@ -1,4 +1,4 @@
-import { shopifyFetch } from '../../src/api/shopify/request/fetchShopify'
+import { createStorefrontGatewayFromEnvironment } from '../../src/api/shopify/storefront/createStorefrontGatewayFromEnvironment'
 import type { ShopifyOperation } from '@types'
 import { protos } from '@google-cloud/retail'
 import { z } from 'zod'
@@ -275,11 +275,13 @@ export function buildRetailCatalog(
 }
 
 export async function fetchShopifyRetailCatalog(): Promise<RetailCatalogSnapshot> {
+  const storefrontGateway =
+    createStorefrontGatewayFromEnvironment(process.env)
   const products: RawProduct[] = []
   let after: string | null = null
 
   for (let page = 0; page < 100; page += 1) {
-    const response = await shopifyFetch<
+    const response = await storefrontGateway.catalogQuery<
       ShopifyOperation<
         z.infer<typeof pageSchema>,
         CatalogVariables

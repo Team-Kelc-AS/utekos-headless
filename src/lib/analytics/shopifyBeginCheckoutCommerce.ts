@@ -1,13 +1,9 @@
 import { createHash } from 'node:crypto'
-import {
-  mapShopifyViewItem,
-  UTEKOS_NORWAY_PRICE_CONTEXT
-} from './shopifyViewItemCommerce'
+import { UTEKOS_NORWAY_PRICE_CONTEXT } from './shopifyViewItemCommerce'
+import { mapCartVariantCommerce } from './mapCartVariantCommerce'
 import type { CanonicalBeginCheckoutCommerce } from './beginCheckoutEvent'
 import type { Cart, CartLine } from 'types/cart'
 import type { CartProductVariant } from 'types/cart/CartProductVariant'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
 
 export function createCheckoutCreationRevision(
   checkoutId: string,
@@ -45,9 +41,9 @@ export function mapShopifyBeginCheckout(
   }
 
   const mappedItems = mappableLines.map(line =>
-    mapShopifyViewItem({
-      product: line.merchandise.product as ShopifyProduct,
-      variant: cartVariantToShopifyVariant(line.merchandise),
+    mapCartVariantCommerce({
+      product: line.merchandise.product,
+      variant: line.merchandise,
       quantity: line.quantity,
       priceContext: UTEKOS_NORWAY_PRICE_CONTEXT
     })
@@ -88,34 +84,10 @@ function hasMappableMerchandise(
   line: CartLine
 ): line is CartLine & {
   merchandise: CartProductVariant & {
-    product: ShopifyProduct
+    product: CartProductVariant['product']
   }
 } {
   return Boolean(line.merchandise?.product?.id)
-}
-
-function cartVariantToShopifyVariant(
-  merchandise: CartProductVariant
-): ShopifyProductVariant {
-  return {
-    id: merchandise.id,
-    title: merchandise.title,
-    barcode: null,
-    availableForSale: merchandise.availableForSale,
-    currentlyNotInStock: !merchandise.availableForSale,
-    taxable: true,
-    selectedOptions: merchandise.selectedOptions,
-    price: merchandise.price,
-    image: merchandise.image,
-    compareAtPrice: merchandise.compareAtPrice,
-    product: merchandise.product as ShopifyProduct,
-    metafield: null,
-    sku: undefined,
-    variantProfile: null,
-    weight: null,
-    weightUnit: 'GRAMS',
-    quantityAvailable: null
-  }
 }
 
 function normalizeCurrency(value: string) {

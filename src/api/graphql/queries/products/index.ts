@@ -1,16 +1,27 @@
 // Path: src/api/graphql/queries/products/index.ts
 
 import productFragment from '@/lib/fragments/productFragment'
+import productShellFragment from '@/lib/fragments/productShellFragment'
+import productVariantPresentationFragment from '@/lib/fragments/productVariantPresentationFragment'
 
 export { getProductOptionsQuery } from './getProductOptionsQuery'
 
-export const getProductQuery = /* GraphQL */ `
-  query getProduct($handle: String!) {
+export const getProductShellQuery = /* GraphQL */ `
+  query getProductShell($handle: String!) {
     product(handle: $handle) {
-      ...product
+      ...productShell
     }
   }
-  ${productFragment}
+  ${productShellFragment}
+`
+
+export const getProductVariantPresentationQuery = /* GraphQL */ `
+  query getProductVariantPresentation($handle: String!) {
+    product(handle: $handle) {
+      ...productVariantPresentation
+    }
+  }
+  ${productVariantPresentationFragment}
 `
 
 export const getProductsQuery = /* GraphQL */ `

@@ -5,6 +5,8 @@ import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 import {
+  buildMicrosoftAdsReportRequest,
+  MICROSOFT_ADS_REPORT_TIME_PERIODS,
   rankMicrosoftAdsDiagnosisFindings
 } from '../scripts/mcp/microsoft-ads-operator-core.mjs'
 import {
@@ -121,9 +123,44 @@ test('tracking health gives runtime provider evidence precedence over source-pat
     /!runtimeProviderConfirmed\s*&&\s*providerQueue\?\.serverQueueIncludesMicrosoft === false/
   )
   assert.match(auditSource, /providerDispatchEvidence:\s*dispatchEvidence/)
-  assert.match(evidenceReader, /\.schema\('ops'\)/)
-  assert.match(evidenceReader, /\.from\('provider_dispatch_attempts'\)/)
-  assert.match(evidenceReader, /\.eq\('provider',\s*'microsoft_uet'\)/)
+  assert.match(evidenceReader, /from ops\.provider_dispatch_attempts/)
+  assert.match(evidenceReader, /provider = 'microsoft_uet'/)
+  assert.match(evidenceReader, /SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING/)
+  assert.doesNotMatch(evidenceReader, /\.schema\('ops'\)/)
+})
+
+test('campaign report result omits allRows instead of carrying an undefined key', () => {
+  const source = read('scripts/microsoft-ads/lib/reporting.mjs')
+
+  assert.doesNotMatch(source, /allRows:\s*undefined/)
+  assert.match(source, /const \{ allRows, \.\.\.safeResult \} = result/)
+})
+
+test('report request builder rejects invalid ReportTimePeriod values before any network call', () => {
+  const reportInput = {
+    reportType: 'CampaignPerformanceReportRequest',
+    aggregation: 'Summary',
+    columns: ['AccountId', 'Clicks']
+  }
+  const config = { accountId: '188365141' }
+
+  assert.throws(
+    () =>
+      buildMicrosoftAdsReportRequest(
+        { ...reportInput, predefinedTime: 'Last7Days' },
+        config
+      ),
+    /not a valid ReportTimePeriod value/
+  )
+
+  const request = buildMicrosoftAdsReportRequest(
+    { ...reportInput, predefinedTime: 'LastSevenDays' },
+    config
+  )
+
+  assert.equal(request.Time.PredefinedTime, 'LastSevenDays')
+  assert.ok(MICROSOFT_ADS_REPORT_TIME_PERIODS.includes('Last30Days'))
+  assert.equal(MICROSOFT_ADS_REPORT_TIME_PERIODS.includes('Last7Days'), false)
 })
 
 test('live doctor exercises every public tool and both snapshot modes', () => {

@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
 import { resolveFullShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
+import { getStorefrontBuyerContext } from '@/api/shopify/storefront/getStorefrontBuyerContext'
 
 const cartAttributesSchema = z
   .array(
@@ -42,7 +43,9 @@ export async function updateCartAttributesAction(
   }
 
   try {
+    const context = await getStorefrontBuyerContext()
     await performCartAttributesUpdateMutation(
+      context,
       fullCartId,
       attributes
     )

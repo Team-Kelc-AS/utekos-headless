@@ -2,23 +2,15 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { mapShopifyRemoveFromCart } from './shopifyRemoveFromCartCommerce'
 import type { CartProductVariant } from 'types/cart/CartProductVariant'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
+import type { CartProduct } from 'types/cart'
 
 const product = {
   id: 'gid://shopify/Product/456',
   handle: 'utekos-techdown',
   title: 'Utekos TechDown',
   vendor: 'Utekos',
-  productType: 'Yttertøy',
-  collections: { nodes: [] },
-  options: [],
-  variants: { nodes: [] },
-  featuredImage: null,
-  priceRange: {
-    minVariantPrice: { amount: '1790.0', currencyCode: 'NOK' },
-    maxVariantPrice: { amount: '1790.0', currencyCode: 'NOK' }
-  }
-} as unknown as ShopifyProduct
+  productType: 'Yttertøy'
+} satisfies CartProduct
 
 const variant = {
   id: 'gid://shopify/ProductVariant/46944403882232',
@@ -51,4 +43,7 @@ test('mapShopifyRemoveFromCart carries cart_id, mutation id, and commerce', () =
   )
   assert.equal(customData.items[0]?.quantity, 2)
   assert.equal(customData.items[0]?.taxable, true)
+  assert.equal(customData.items[0]?.item_brand, 'Utekos')
+  assert.equal(customData.items[0]?.item_category, 'Yttertøy')
+  assert.deepEqual(customData.items[0]?.collection_ids, [])
 })

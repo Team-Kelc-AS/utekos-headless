@@ -1,5 +1,5 @@
 // Path: src/lib/fragments/cartFragment.ts
-import product from './productFragment'
+import cartProduct from './cartProductFragment'
 
 const cart = /* GraphQL */ `
   fragment cart on Cart {
@@ -22,14 +22,6 @@ const cart = /* GraphQL */ `
           quantity
           cost {
             totalAmount {
-              amount
-              currencyCode
-            }
-            subtotalAmount {
-              amount
-              currencyCode
-            }
-            amountPerQuantity {
               amount
               currencyCode
             }
@@ -59,7 +51,7 @@ const cart = /* GraphQL */ `
                 value
               }
               product {
-                ...product
+                ...cartProduct
               }
             }
           }
@@ -68,7 +60,7 @@ const cart = /* GraphQL */ `
     }
     totalQuantity
   }
-  ${product}
+  ${cartProduct}
 `
 
 export default cart

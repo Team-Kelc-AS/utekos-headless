@@ -12,8 +12,11 @@ import type { NextRequest } from 'next/server'
 import { readCartIdCookie } from '@/lib/cart/readCartIdCookie'
 import { resolveFullShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { logKlarnaCheckoutStage } from '@/lib/observability/logging/logKlarnaCheckoutStage'
+import { createStorefrontBuyerContext } from '@/api/shopify/storefront/createStorefrontBuyerContext'
+import type { StorefrontBuyerContext } from '@/api/shopify/storefront/StorefrontGatewayContract'
 
 async function verifyCartOwnership(
+  context: StorefrontBuyerContext,
   shopifyCartId: string,
   orderPayload: KlarnaCreateOrderRequest['orderPayload']
 ) {
@@ -30,7 +33,7 @@ async function verifyCartOwnership(
     throw new Error('Cart reference verification failed')
   }
 
-  const cart = await fetchCart(fullCartId)
+  const cart = await fetchCart(context, fullCartId)
 
   if (!cart) {
     throw new Error('Cart not found for Klarna express checkout')
@@ -93,7 +96,9 @@ export async function POST(req: NextRequest) {
   })
 
   try {
+    const context = createStorefrontBuyerContext(req.headers)
     const cart = await verifyCartOwnership(
+      context,
       shopifyCartId,
       orderPayload
     )

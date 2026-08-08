@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { createClient } from '@supabase/supabase-js'
+import postgres from 'postgres'
 
 import { MICROSOFT_ADS_REPO_ROOT } from '../lib/config.mjs'
 import { summarizeMicrosoftUetDispatchAttempts } from './summarize-microsoft-uet-dispatch-attempts.mjs'
@@ -9,13 +9,19 @@ import { summarizeMicrosoftUetDispatchAttempts } from './summarize-microsoft-uet
 const DEFAULT_LOOKBACK_DAYS = 30
 const MAX_ROWS = 5000
 
+const WAREHOUSE_URL_ENV_KEYS = Object.freeze([
+  'SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING',
+  'SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING_MAYBE',
+  'SUPABASE_VERCEL_POSTGRES_URL'
+])
+
 export async function readMicrosoftUetDispatchEvidence({
   lookbackDays = DEFAULT_LOOKBACK_DAYS,
   now = () => new Date(),
   processEnv = process.env,
   repoRoot = MICROSOFT_ADS_REPO_ROOT,
   envFiles = ['.env.mcp.local', '.env.local'],
-  createClientImpl = createClient
+  createSqlImpl = postgres
 } = {}) {
   if (!Number.isInteger(lookbackDays) || lookbackDays < 1 || lookbackDays > 365) {
     throw new TypeError('Microsoft UET dispatch evidence lookbackDays must be an integer between 1 and 365.')
@@ -27,71 +33,75 @@ export async function readMicrosoftUetDispatchEvidence({
   }
 
   const env = resolveEnv({ processEnv, repoRoot, envFiles })
-  const url = firstNonEmpty(env, ['SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_URL'])
-  const serviceRoleKey = firstNonEmpty(env, [
-    'SUPABASE_SERVICE_ROLE_KEY',
-    'SUPABASE_SECRET_KEY'
-  ])
+  const warehouseUrl = firstNonEmpty(env, WAREHOUSE_URL_ENV_KEYS)
 
-  if (!url || !serviceRoleKey) {
-    return {
-      ok: false,
-      reason: 'supabase_server_credentials_unavailable',
-      lookbackDays,
-      provider: 'microsoft_uet',
-      rowCount: 0,
-      providerConfirmed: false,
-      firstSeenAt: null,
-      lastSeenAt: null,
-      acceptedCount: 0,
-      skippedCount: 0,
-      failedCount: 0,
-      byStatus: {},
-      byDispatchMode: {},
-      bySkipReason: {},
-      bySkipReasonLastSeenAt: {},
-      byEventName: {}
-    }
+  if (!warehouseUrl) {
+    return unavailableEvidence('supabase_warehouse_url_unavailable', lookbackDays)
   }
 
-  const supabase = createClientImpl(url, serviceRoleKey, {
-    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-    global: { headers: { 'x-utekos-evidence-reader': 'microsoft-ads-mcp' } }
-  })
   const since = new Date(clock.getTime() - lookbackDays * 86_400_000).toISOString()
-  const { data, error } = await supabase
-    .schema('ops')
-    .from('provider_dispatch_attempts')
-    .select('event_name,status,dispatch_mode,skip_reason,created_at,processed_at,http_status,response_semantics,attempt_count')
-    .eq('provider', 'microsoft_uet')
-    .gte('created_at', since)
-    .order('created_at', { ascending: false })
-    .limit(MAX_ROWS)
-
-  if (error) {
-    return {
-      ok: false,
-      reason: `supabase_read_failed:${sanitizeReason(error.message)}`,
-      lookbackDays,
-      provider: 'microsoft_uet',
-      rowCount: 0,
-      providerConfirmed: false,
-      firstSeenAt: null,
-      lastSeenAt: null,
-      acceptedCount: 0,
-      skippedCount: 0,
-      failedCount: 0,
-      byStatus: {},
-      byDispatchMode: {},
-      bySkipReason: {},
-      bySkipReasonLastSeenAt: {},
-      byEventName: {}
+  const sql = createSqlImpl(warehouseUrl, {
+    max: 1,
+    idle_timeout: 5,
+    connect_timeout: 10,
+    prepare: false,
+    connection: {
+      application_name: 'utekos-microsoft-ads-mcp-evidence'
     }
-  }
-
-  return summarizeMicrosoftUetDispatchAttempts(Array.isArray(data) ? data : [], {
-    lookbackDays
   })
+
+  try {
+    const rows = await sql`
+      select
+        event_name,
+        status,
+        dispatch_mode,
+        skip_reason,
+        created_at,
+        processed_at,
+        http_status,
+        response_semantics,
+        attempt_count
+      from ops.provider_dispatch_attempts
+      where provider = 'microsoft_uet'
+        and created_at >= ${since}
+      order by created_at desc
+      limit ${MAX_ROWS}
+    `
+
+    return summarizeMicrosoftUetDispatchAttempts(Array.isArray(rows) ? rows : [], {
+      lookbackDays
+    })
+  } catch (error) {
+    return unavailableEvidence(
+      `supabase_read_failed:${sanitizeReason(error?.message)}`,
+      lookbackDays
+    )
+  } finally {
+    await sql.end({ timeout: 5 }).catch(() => {})
+  }
+}
+
+function unavailableEvidence(reason, lookbackDays) {
+  return {
+    ok: false,
+    reason,
+    lookbackDays,
+    provider: 'microsoft_uet',
+    rowCount: 0,
+    providerConfirmed: false,
+    firstSeenAt: null,
+    lastSeenAt: null,
+    acceptedCount: 0,
+    skippedCount: 0,
+    failedCount: 0,
+    byStatus: {},
+    byDispatchMode: {},
+    bySkipReason: {},
+    bySkipReasonLastSeenAt: {},
+    bySkipReasonAndEventName: {},
+    byEventName: {}
+  }
 }
 
 function resolveEnv({ processEnv, repoRoot, envFiles }) {

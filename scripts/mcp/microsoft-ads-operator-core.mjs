@@ -351,6 +351,28 @@ function normalizeScope(scope, config) {
   return { AccountIds: [accountId] }
 }
 
+export const MICROSOFT_ADS_REPORT_TIME_PERIODS = Object.freeze([
+  'Last14Days',
+  'Last30Days',
+  'LastFourWeeks',
+  'LastFourWeeksStartingMonday',
+  'LastMonth',
+  'LastSevenDays',
+  'LastSixMonths',
+  'LastThreeMonths',
+  'LastWeek',
+  'LastWeekStartingMonday',
+  'LastYear',
+  'ThisMonth',
+  'ThisWeek',
+  'ThisWeekStartingMonday',
+  'ThisYear',
+  'Today',
+  'Yesterday'
+])
+
+const REPORT_TIME_PERIOD_SET = new Set(MICROSOFT_ADS_REPORT_TIME_PERIODS)
+
 function normalizeReportTime(input) {
   const predefinedTime = optionalNonEmptyString(input?.predefinedTime)
   const customStartDate = optionalNonEmptyString(input?.customStartDate)
@@ -359,6 +381,12 @@ function normalizeReportTime(input) {
 
   if (predefinedTime && hasCustomDate) {
     throw new Error('Use either predefinedTime or custom dates, not both.')
+  }
+
+  if (predefinedTime && !REPORT_TIME_PERIOD_SET.has(predefinedTime)) {
+    throw new Error(
+      `Microsoft Ads predefinedTime '${predefinedTime}' is not a valid ReportTimePeriod value. Valid values: ${MICROSOFT_ADS_REPORT_TIME_PERIODS.join(', ')}.`
+    )
   }
 
   if (hasCustomDate && (!customStartDate || !customEndDate)) {

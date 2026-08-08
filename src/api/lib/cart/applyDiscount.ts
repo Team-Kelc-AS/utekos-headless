@@ -2,7 +2,8 @@
 'use server'
 
 import { mutationCartDiscountCodesUpdate } from '@/api/graphql/mutations/cart'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
+import { getStorefrontBuyerContext } from '@/api/shopify/storefront/getStorefrontBuyerContext'
 import type { ShopifyDiscountCodesUpdateOperation } from '@types'
 import { updateTag } from 'next/cache'
 import { TAGS } from '@/api/constants'
@@ -35,8 +36,10 @@ export async function applyDiscount(
   }
 
   try {
+    const context = await getStorefrontBuyerContext()
     const res =
-      await shopifyFetch<ShopifyDiscountCodesUpdateOperation>({
+      await storefrontGateway.mutation<ShopifyDiscountCodesUpdateOperation>({
+        context,
         query: mutationCartDiscountCodesUpdate,
         variables: {
           cartId: fullCartId,

@@ -1,4 +1,5 @@
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
+import type { StorefrontBuyerContext } from '@/api/shopify/storefront/StorefrontGatewayContract'
 import { requireCartId } from '@/lib/actions/cart/requireCartId'
 import { isShopifyCartNotFoundError } from '@/lib/errors/isShopifyCartNotFoundError'
 import type { CartCommand } from 'types/cart'
@@ -14,24 +15,32 @@ type UpdateLineCommand = Extract<
 >
 
 type PerformCartCommandDependencies = {
-  clearCart: (cartId: string) => Promise<StorefrontCart>
+  clearCart: (
+    context: StorefrontBuyerContext,
+    cartId: string
+  ) => Promise<StorefrontCart>
   createCart: (
+    context: StorefrontBuyerContext,
     lines: AddLinesCommand['lines'],
     discountCode?: string
   ) => Promise<StorefrontCart>
   updateDiscountCodes: (
+    context: StorefrontBuyerContext,
     cartId: string,
     discountCodes: string[]
   ) => Promise<StorefrontCart>
   addLines: (
+    context: StorefrontBuyerContext,
     cartId: string,
     lines: AddLinesCommand['lines']
   ) => Promise<StorefrontCart>
   removeLines: (
+    context: StorefrontBuyerContext,
     cartId: string,
     lineIds: string[]
   ) => Promise<StorefrontCart>
   updateLines: (
+    context: StorefrontBuyerContext,
     cartId: string,
     input: UpdateLineCommand['input']
   ) => Promise<StorefrontCart>
@@ -67,6 +76,7 @@ async function loadDefaultDependencies(): Promise<PerformCartCommandDependencies
 export async function performCartCommand(
   command: CartCommand,
   cartId: string | null,
+  context: StorefrontBuyerContext,
   dependencies?: PerformCartCommandDependencies
 ): Promise<StorefrontCart> {
   const resolvedDependencies =
@@ -76,6 +86,7 @@ export async function performCartCommand(
     case 'add-lines': {
       if (!cartId) {
         return resolvedDependencies.createCart(
+          context,
           command.lines,
           command.discountCode
         )
@@ -85,6 +96,7 @@ export async function performCartCommand(
 
       try {
         cart = await resolvedDependencies.addLines(
+          context,
           cartId,
           command.lines
         )
@@ -94,6 +106,7 @@ export async function performCartCommand(
         }
 
         return resolvedDependencies.createCart(
+          context,
           command.lines,
           command.discountCode
         )
@@ -105,6 +118,7 @@ export async function performCartCommand(
 
       try {
         return await resolvedDependencies.updateDiscountCodes(
+          context,
           cartId,
           [command.discountCode]
         )
@@ -118,16 +132,19 @@ export async function performCartCommand(
     }
     case 'update-line':
       return resolvedDependencies.updateLines(
+        context,
         requireCartId(cartId),
         command.input
       )
     case 'remove-line':
       return resolvedDependencies.removeLines(
+        context,
         requireCartId(cartId),
         [command.input.lineId]
       )
     case 'clear':
       return resolvedDependencies.clearCart(
+        context,
         requireCartId(cartId)
       )
   }

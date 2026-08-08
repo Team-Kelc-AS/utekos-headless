@@ -1,15 +1,8 @@
-// Path: src/api/shopify/request/fetchShopify.ts
-
 import { isGraphQLErrorResponse } from '@/api/graphql/response/isGraphQLErrorResponse'
 import { isGraphQLSuccessResponse } from '@/api/graphql/response/isGraphQLSuccessResponse'
-import {
-  getShopifyEndpoint,
-  getShopifyToken,
-  SHOPIFY_STOREFRONT_API_VERSION
-} from '@/db/config/shopify.config'
+import { createStorefrontClient } from '@shopify/hydrogen-react/storefront-client'
 import type {
   ExtractVariables,
-  ShopifyFetchResult,
   ShopifyOperation
 } from '@types'
 import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
@@ -17,30 +10,65 @@ import { redactShopifyCartSecrets } from '@/lib/cart/redactShopifyCartSecrets'
 import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
 import {
-  classifyShopifyFetchError,
+  classifyShopifyRequestError,
   DEFAULT_SHOPIFY_STOREFRONT_TIMEOUT_MS,
   getShopifyGraphQLErrorMetadata,
   getShopifyOperationMetadata,
   SLOW_SHOPIFY_STOREFRONT_REQUEST_MS
-} from './shopifyRequestObservability'
+} from '../request/shopifyRequestObservability'
+import type {
+  StorefrontBuyerContext,
+  StorefrontGateway,
+  StorefrontGatewayResult
+} from './StorefrontGatewayContract'
 
-type ShopifyFetchInput<
+type StorefrontRequestKind =
+  | 'catalog'
+  | 'buyer'
+  | 'mutation'
+
+type StorefrontAuthMode =
+  | 'public'
+  | 'private'
+  | 'public_fallback'
+
+export type HydrogenStorefrontGatewayConfig = Readonly<{
+  storeDomain: string
+  publicStorefrontToken?: string
+  privateStorefrontToken?: string
+  storefrontApiVersion: string
+}>
+
+type HydrogenStorefrontGatewayDependencies = Readonly<{
+  fetch: typeof fetch
+}>
+
+type StorefrontTransportInput<
   T extends ShopifyOperation<
     unknown,
     object
   >
 > = {
-  headers?: HeadersInit
+  authMode: StorefrontAuthMode
+  buyerIpPresent: boolean
   cache?: RequestCache
+  endpoint: string
+  fetchImpl: typeof fetch
+  headers: Record<string, string>
   query: string
+  requestKind: StorefrontRequestKind
   signal?: AbortSignal
+  storefrontApiVersion: string
   timeoutMs?: number
   variables?: ExtractVariables<T>
 }
 
 type ShopifyRequestLogContext = {
+  authMode: StorefrontAuthMode
+  buyerIpPresent: boolean
   operationName: string
   operationType: string
+  requestKind: StorefrontRequestKind
   cacheMode: string
   timeoutMs: number
   durationMs: number
@@ -75,10 +103,16 @@ function createRequestLogContext(
   input: ShopifyRequestLogContext
 ) {
   return {
+    authMode:
+      input.authMode,
+    buyerIpPresent:
+      input.buyerIpPresent,
     operationName:
       input.operationName,
     operationType:
       input.operationType,
+    requestKind:
+      input.requestKind,
     cacheMode:
       input.cacheMode,
     timeoutMs:
@@ -163,37 +197,40 @@ function logShopifyRequestFailure(
   )
 }
 
-export async function shopifyFetch<
+async function executeStorefrontRequest<
   T extends ShopifyOperation<
     unknown,
     object
   >
 >({
+  authMode,
+  buyerIpPresent,
   headers,
   cache,
+  endpoint,
+  fetchImpl,
   query,
+  requestKind,
   signal,
+  storefrontApiVersion,
   timeoutMs,
   variables
-}: ShopifyFetchInput<T>): Promise<
-  ShopifyFetchResult<T['data']>
+}: StorefrontTransportInput<T>): Promise<
+  StorefrontGatewayResult<T['data']>
 > {
-  const endpoint =
-    getShopifyEndpoint()
-
-  const token =
-    getShopifyToken()
-
-  if (!token) {
-    throw new Error(
-      'Missing Shopify storefront access token.'
-    )
-  }
-
   const operation =
     getShopifyOperationMetadata(
       query
     )
+
+  const expectedOperationType =
+    requestKind === 'mutation' ? 'mutation' : 'query'
+
+  if (operation.type !== expectedOperationType) {
+    throw new Error(
+      `StorefrontGateway ${requestKind} requires a ${expectedOperationType} operation.`
+    )
+  }
 
   const endpointUrl =
     new URL(endpoint)
@@ -246,7 +283,13 @@ export async function shopifyFetch<
         'shopify.api':
           'storefront',
         'shopify.api.version':
-          SHOPIFY_STOREFRONT_API_VERSION,
+          storefrontApiVersion,
+        'shopify.storefront.request_kind':
+          requestKind,
+        'shopify.storefront.auth_mode':
+          authMode,
+        'shopify.storefront.has_buyer_ip':
+          buyerIpPresent,
         'shopify.fetch.cache_mode':
           cacheMode,
         'shopify.timeout_ms':
@@ -277,20 +320,14 @@ export async function shopifyFetch<
 
       try {
         const response =
-          await fetch(
+          await fetchImpl(
             endpoint,
             {
               method: 'POST',
               ...(cache ?
                 { cache }
               : {}),
-              headers: {
-                'Content-Type':
-                  'application/json',
-                'X-Shopify-Storefront-Access-Token':
-                  token,
-                ...headers
-              },
+              headers,
               signal:
                 requestSignal,
               body:
@@ -380,10 +417,13 @@ export async function shopifyFetch<
             SLOW_SHOPIFY_STOREFRONT_REQUEST_MS
           ) {
             logSlowShopifyRequest({
+              authMode,
+              buyerIpPresent,
               operationName:
                 operation.name,
               operationType:
                 operation.type,
+              requestKind,
               cacheMode,
               timeoutMs:
                 resolvedTimeoutMs,
@@ -453,10 +493,13 @@ export async function shopifyFetch<
               )
             ),
             {
+              authMode,
+              buyerIpPresent,
               operationName:
                 operation.name,
               operationType:
                 operation.type,
+              requestKind,
               cacheMode,
               timeoutMs:
                 resolvedTimeoutMs,
@@ -493,7 +536,7 @@ export async function shopifyFetch<
           )
 
         const errorType =
-          classifyShopifyFetchError({
+          classifyShopifyRequestError({
             error,
             timeoutSignal,
             ...(signal ?
@@ -553,10 +596,13 @@ export async function shopifyFetch<
         logShopifyRequestFailure(
           error,
           {
+            authMode,
+            buyerIpPresent,
             operationName:
               operation.name,
             operationType:
               operation.type,
+            requestKind,
             cacheMode,
             timeoutMs:
               resolvedTimeoutMs,
@@ -587,4 +633,154 @@ export async function shopifyFetch<
       }
     }
   )
+}
+
+type GatewayRequestInput<
+  T extends ShopifyOperation<unknown, object>
+> = {
+  query: string
+  signal?: AbortSignal
+  timeoutMs?: number
+  variables?: ExtractVariables<T>
+}
+
+type StorefrontClient = ReturnType<typeof createStorefrontClient>
+
+function hasCredential(
+  value: string | undefined
+): value is string {
+  return Boolean(value?.trim())
+}
+
+function resolveAuthentication({
+  client,
+  config,
+  requestKind,
+  context
+}: {
+  client: StorefrontClient
+  config: HydrogenStorefrontGatewayConfig
+  requestKind: StorefrontRequestKind
+  context?: StorefrontBuyerContext
+}): {
+  authMode: StorefrontAuthMode
+  buyerIpPresent: boolean
+  headers: Record<string, string>
+} {
+  if (requestKind === 'catalog') {
+    if (!hasCredential(config.publicStorefrontToken)) {
+      throw new Error(
+        'Missing Shopify public Storefront access token.'
+      )
+    }
+
+    return {
+      authMode: 'public',
+      buyerIpPresent: false,
+      headers: client.getPublicTokenHeaders()
+    }
+  }
+
+  const buyerIp = context?.buyerIp ?? null
+
+  if (
+    requestKind === 'mutation' &&
+    !hasCredential(config.privateStorefrontToken)
+  ) {
+    throw new Error(
+      'Missing Shopify private Storefront access token for mutation.'
+    )
+  }
+
+  if (hasCredential(config.privateStorefrontToken)) {
+    if (!buyerIp) {
+      throw new Error(
+        'A validated buyer IP is required for private Shopify Storefront authentication.'
+      )
+    }
+
+    return {
+      authMode: 'private',
+      buyerIpPresent: true,
+      headers: client.getPrivateTokenHeaders({ buyerIp })
+    }
+  }
+
+  if (hasCredential(config.publicStorefrontToken)) {
+    return {
+      authMode: 'public_fallback',
+      buyerIpPresent: false,
+      headers: client.getPublicTokenHeaders()
+    }
+  }
+
+  throw new Error(
+    'Missing Shopify Storefront access token.'
+  )
+}
+
+export function createHydrogenStorefrontGateway(
+  config: HydrogenStorefrontGatewayConfig,
+  dependencies: HydrogenStorefrontGatewayDependencies = {
+    fetch: globalThis.fetch
+  }
+): StorefrontGateway {
+  const client = createStorefrontClient({
+    storeDomain: config.storeDomain,
+    storefrontApiVersion: config.storefrontApiVersion,
+    contentType: 'json',
+    ...(hasCredential(config.publicStorefrontToken) ?
+      {
+        publicStorefrontToken:
+          config.publicStorefrontToken
+      }
+    : {}),
+    ...(hasCredential(config.privateStorefrontToken) ?
+      {
+        privateStorefrontToken:
+          config.privateStorefrontToken
+      }
+    : {})
+  })
+  const endpoint = client.getStorefrontApiUrl()
+
+  function dispatch<
+    T extends ShopifyOperation<unknown, object>
+  >(
+    requestKind: StorefrontRequestKind,
+    input: GatewayRequestInput<T>,
+    context?: StorefrontBuyerContext,
+    cache?: RequestCache
+  ) {
+    const authentication = resolveAuthentication({
+      client,
+      config,
+      requestKind,
+      ...(context ? { context } : {})
+    })
+
+    return executeStorefrontRequest<T>({
+      ...authentication,
+      requestKind,
+      endpoint,
+      fetchImpl: dependencies.fetch,
+      query: input.query,
+      storefrontApiVersion: config.storefrontApiVersion,
+      ...(cache !== undefined ? { cache } : {}),
+      ...(input.signal ? { signal: input.signal } : {}),
+      ...(input.timeoutMs !== undefined ?
+        { timeoutMs: input.timeoutMs }
+      : {}),
+      ...(input.variables ? { variables: input.variables } : {})
+    })
+  }
+
+  return {
+    catalogQuery: async input =>
+      dispatch('catalog', input, undefined, input.cache),
+    buyerQuery: async input =>
+      dispatch('buyer', input, input.context, 'no-store'),
+    mutation: async input =>
+      dispatch('mutation', input, input.context, 'no-store')
+  }
 }

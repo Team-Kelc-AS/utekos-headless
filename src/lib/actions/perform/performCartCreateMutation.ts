@@ -2,16 +2,19 @@ import 'server-only'
 
 import { mutationCartCreate } from '@/api/graphql/mutations/cart'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
+import type { StorefrontBuyerContext } from '@/api/shopify/storefront/StorefrontGatewayContract'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
 import { getCartFromMutationPayload } from '@/lib/actions/cart/getCartFromMutationPayload'
 import type { ShopifyCreateCartOperation } from '@types'
 
 export const performCartCreateMutation = async (
+  context: StorefrontBuyerContext,
   lines: { variantId: string; quantity: number }[],
   discountCode?: string
 ): Promise<StorefrontCart> => {
-  const result = await shopifyFetch<ShopifyCreateCartOperation>({
+  const result = await storefrontGateway.mutation<ShopifyCreateCartOperation>({
+    context,
     query: mutationCartCreate,
     variables: {
       lines: lines.map(line => ({

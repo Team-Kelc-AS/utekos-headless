@@ -12,8 +12,8 @@ const repoRoot = process.cwd()
 const helperRelativePath =
   'src/api/shopify/request/shopifyRequestObservability.ts'
 
-const fetchRelativePath =
-  'src/api/shopify/request/fetchShopify.ts'
+const gatewayAdapterRelativePath =
+  'src/api/shopify/storefront/createHydrogenStorefrontGateway.ts'
 
 async function readSource(
   relativePath: string
@@ -51,7 +51,7 @@ type ObservabilityModule = {
     code?: string
     requestId?: string
   }
-  classifyShopifyFetchError: (input: {
+  classifyShopifyRequestError: (input: {
     error: unknown
     timeoutSignal: AbortSignal
     callerSignal?: AbortSignal
@@ -179,7 +179,7 @@ test(
 )
 
 test(
-  'Shopify fetch error classification distinguishes timeout, caller abort and transport failure',
+  'Shopify request error classification distinguishes timeout, caller abort and transport failure',
   async () => {
     const absolutePath = join(
       repoRoot,
@@ -205,7 +205,7 @@ test(
 
     assert.equal(
       observability
-        .classifyShopifyFetchError({
+        .classifyShopifyRequestError({
           error:
             new Error('timed out'),
           timeoutSignal:
@@ -223,7 +223,7 @@ test(
 
     assert.equal(
       observability
-        .classifyShopifyFetchError({
+        .classifyShopifyRequestError({
           error:
             new Error('aborted'),
           timeoutSignal:
@@ -236,7 +236,7 @@ test(
 
     assert.equal(
       observability
-        .classifyShopifyFetchError({
+        .classifyShopifyRequestError({
           error:
             new TypeError(
               'fetch failed'
@@ -250,10 +250,10 @@ test(
 )
 
 test(
-  'shopifyFetch applies deadline and emits GraphQL request observability without request payloads',
+  'StorefrontGateway adapter applies policy, deadlines and payload-safe observability',
   async () => {
     const source = await readSource(
-      fetchRelativePath
+      gatewayAdapterRelativePath
     )
 
     assert.match(
@@ -274,6 +274,21 @@ test(
     assert.match(
       source,
       /startAnalyticsSpan\(/
+    )
+
+    assert.match(
+      source,
+      /createStorefrontClient\(/
+    )
+
+    assert.match(
+      source,
+      /getPublicTokenHeaders\(/
+    )
+
+    assert.match(
+      source,
+      /getPrivateTokenHeaders\(\{ buyerIp \}\)/
     )
 
     assert.match(
@@ -309,6 +324,21 @@ test(
     assert.match(
       source,
       /['"]shopify\.fetch\.cache_mode['"]/
+    )
+
+    assert.match(
+      source,
+      /['"]shopify\.storefront\.request_kind['"]/
+    )
+
+    assert.match(
+      source,
+      /['"]shopify\.storefront\.auth_mode['"]/
+    )
+
+    assert.match(
+      source,
+      /['"]shopify\.storefront\.has_buyer_ip['"]/
     )
 
     assert.match(
@@ -374,6 +404,16 @@ test(
     assert.doesNotMatch(
       source,
       /\bcookies\(\)/
+    )
+
+    assert.doesNotMatch(
+      source,
+      /X-Shopify-Storefront-Access-Token/
+    )
+
+    assert.doesNotMatch(
+      source,
+      /Shopify-Storefront-Private-Token/
     )
   }
 )

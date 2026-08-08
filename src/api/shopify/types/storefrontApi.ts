@@ -15,7 +15,6 @@ import type {
   CartWarning,
   Collection,
   Image as HydrogenImage,
-  Metafield as HydrogenMetafield,
   MoneyV2,
   Product as HydrogenProduct,
   ProductConnection,
@@ -44,10 +43,7 @@ type StorefrontProductPriceRange = {
   maxVariantPrice: StorefrontMoney
 }
 
-type StorefrontVariantMetafield = Pick<
-  HydrogenMetafield,
-  'type' | 'value'
-> & {
+type StorefrontVariantMetafield = {
   reference: RawMetaobject | null
 }
 
@@ -62,8 +58,6 @@ export type StorefrontProductVariant = Pick<
   | 'selectedOptions'
   | 'quantityAvailable'
   | 'sku'
-  | 'weight'
-  | 'weightUnit'
 > & {
   price: StorefrontMoney
   compareAtPrice: StorefrontMoney | null
@@ -71,17 +65,15 @@ export type StorefrontProductVariant = Pick<
   metafield: StorefrontVariantMetafield | null
 }
 
-export type StorefrontProduct = Pick<
+export type StorefrontProductShell = Pick<
   HydrogenProduct,
   | 'id'
   | 'title'
   | 'tags'
   | 'handle'
-  | 'totalInventory'
   | 'updatedAt'
   | 'productType'
   | 'vendor'
-  | 'availableForSale'
   | 'description'
 > & {
   collections: {
@@ -89,16 +81,25 @@ export type StorefrontProduct = Pick<
   }
   compareAtPriceRange: StorefrontProductPriceRange
   priceRange: StorefrontProductPriceRange
-  options: StorefrontProductOption[]
   featuredImage: StorefrontImage | null
   images: {
     edges: Array<{ node: StorefrontImage }>
   }
+  seo: Pick<Seo, 'title' | 'description'>
+}
+
+export type StorefrontProductVariantPresentation = {
+  id: HydrogenProduct['id']
+  totalInventory: HydrogenProduct['totalInventory']
+  availableForSale: HydrogenProduct['availableForSale']
+  options: StorefrontProductOption[]
   variants: {
     edges: Array<{ node: StorefrontProductVariant }>
   }
-  seo: Pick<Seo, 'title' | 'description'>
 }
+
+export type StorefrontProduct = StorefrontProductShell &
+  StorefrontProductVariantPresentation
 
 export type StorefrontProductConnection = Pick<
   ProductConnection,
@@ -114,8 +115,13 @@ export type StorefrontCartProductVariant = Pick<
   price: StorefrontMoney
   compareAtPrice: StorefrontMoney | null
   image: StorefrontImage | null
-  product: StorefrontProduct
+  product: StorefrontCartProduct
 }
+
+export type StorefrontCartProduct = Pick<
+  HydrogenProduct,
+  'id' | 'handle' | 'title' | 'vendor' | 'productType'
+>
 
 export type StorefrontCartLine = Pick<
   HydrogenCartLine,

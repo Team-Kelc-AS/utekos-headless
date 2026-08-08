@@ -169,7 +169,7 @@ async function runLiveChecks(client) {
           'Clicks',
           'Spend'
         ],
-        predefinedTime: 'Last7Days',
+        predefinedTime: 'LastSevenDays',
         rowLimit: 5,
         returnOnlyCompleteData: false
       },

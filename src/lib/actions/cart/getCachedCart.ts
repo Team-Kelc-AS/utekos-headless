@@ -5,6 +5,7 @@ import { CartNotFoundError } from '@/lib/errors/CartNotFoundError'
 import { parseShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
 import type { Cart } from 'types/cart'
+import { getStorefrontBuyerContext } from '@/api/shopify/storefront/getStorefrontBuyerContext'
 
 async function getCartById(
   cartId: string
@@ -12,7 +13,8 @@ async function getCartById(
   try {
     const { fetchCart } =
       await import('@/lib/helpers/cart/fetchCart')
-    const cart = await fetchCart(cartId)
+    const context = await getStorefrontBuyerContext()
+    const cart = await fetchCart(context, cartId)
     return cart
   } catch (error) {
     if (error instanceof CartNotFoundError) {

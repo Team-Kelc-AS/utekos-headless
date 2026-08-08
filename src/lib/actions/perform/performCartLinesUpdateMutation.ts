@@ -3,20 +3,23 @@ import 'server-only'
 
 import { mutationCartLinesUpdate } from '@/api/graphql/mutations/cart'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
+import type { StorefrontBuyerContext } from '@/api/shopify/storefront/StorefrontGatewayContract'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
 import { getCartFromMutationPayload } from '@/lib/actions/cart/getCartFromMutationPayload'
 import type { ShopifyUpdateCartLineQuantityOperation } from '@types'
 import type { UpdateCartLineInput } from 'types/cart'
 
 export const performCartLinesUpdateMutation = async (
+  context: StorefrontBuyerContext,
   cartId: string,
   input: UpdateCartLineInput
 ): Promise<StorefrontCart> => {
   const lines = [{ id: input.lineId, quantity: input.quantity }]
 
   const result =
-    await shopifyFetch<ShopifyUpdateCartLineQuantityOperation>({
+    await storefrontGateway.mutation<ShopifyUpdateCartLineQuantityOperation>({
+      context,
       query: mutationCartLinesUpdate,
       variables: { cartId, lines }
     })

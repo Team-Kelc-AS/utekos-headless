@@ -2,7 +2,7 @@
 
 import type { Image } from 'types/media'
 import type { Money } from 'types/commerce/Money'
-import type { ProductCartModel } from 'types/product/ProductPurchaseModel'
+import type { CartProduct } from './CartProduct'
 
 export type CartProductVariant = {
   id: string
@@ -12,7 +12,5 @@ export type CartProductVariant = {
   image: Image | null
   compareAtPrice: Money | null
   selectedOptions: { name: string; value: string }[]
-  product: Omit<ProductCartModel, 'featuredImage'> & {
-    featuredImage: Image
-  }
+  product: CartProduct
 }

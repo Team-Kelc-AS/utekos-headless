@@ -20,7 +20,7 @@ export function createOptimisticLineItem(
     height: 0
   }
 
-  const featuredImage = product.featuredImage ?? variant.image ?? fallbackImage
+  const image = product.featuredImage ?? variant.image ?? fallbackImage
 
   return {
     id: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -38,10 +38,13 @@ export function createOptimisticLineItem(
       price: variant.price,
       compareAtPrice: variant.compareAtPrice,
       selectedOptions: variant.selectedOptions,
-      image: variant.image ?? featuredImage,
+      image: variant.image ?? image,
       product: {
-        ...product,
-        featuredImage: featuredImage
+        id: product.id,
+        handle: product.handle,
+        title: product.title,
+        vendor: product.vendor,
+        productType: product.productType
       }
     }
   }

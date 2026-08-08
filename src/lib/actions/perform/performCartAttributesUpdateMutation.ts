@@ -2,7 +2,8 @@ import 'server-only'
 
 import { mutationCartAttributesUpdate } from '@/api/graphql/mutations/cart'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
+import type { StorefrontBuyerContext } from '@/api/shopify/storefront/StorefrontGatewayContract'
 import { ShopifyApiError } from '@/lib/errors/ShopifyApiError'
 import { getCartFromMutationPayload } from '@/lib/actions/cart/getCartFromMutationPayload'
 import type { ShopifyCartAttributesUpdateOperation } from '@types'
@@ -10,6 +11,7 @@ import type { ShopifyCartAttributesUpdateOperation } from '@types'
 type CartAttribute = { key: string; value: string }
 
 export const performCartAttributesUpdateMutation = async (
+  context: StorefrontBuyerContext,
   cartId: string,
   attributes: CartAttribute[]
 ): Promise<StorefrontCart | null> => {
@@ -18,7 +20,8 @@ export const performCartAttributesUpdateMutation = async (
   }
 
   const result =
-    await shopifyFetch<ShopifyCartAttributesUpdateOperation>({
+    await storefrontGateway.mutation<ShopifyCartAttributesUpdateOperation>({
+      context,
       query: mutationCartAttributesUpdate,
       variables: { cartId, attributes }
     })

@@ -1,6 +1,6 @@
 import 'server-only'
 import { getProductOptionsQuery } from '@/api/graphql/queries/products'
-import { shopifyFetch } from '@/api/shopify/request/fetchShopify'
+import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import type {
   StorefrontProductOptions,
   StorefrontProductOptionsVariables
@@ -22,7 +22,7 @@ export async function fetchProductOptions(
 ) {
   const parsedVariables =
     parseStorefrontProductOptionsVariables(variables)
-  const response = await shopifyFetch<ProductOptionsOperation>({
+  const response = await storefrontGateway.catalogQuery<ProductOptionsOperation>({
     cache: 'no-store',
     query: getProductOptionsQuery,
     variables: parsedVariables

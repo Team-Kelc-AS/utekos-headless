@@ -160,6 +160,126 @@ repoTest('tracking health trusts runtime Microsoft UET evidence over stale sourc
   assert.equal(result.metrics.missingMsclkidSkipCount, 354)
 })
 
+repoTest('full snapshot wire mapper tolerates report payloads carrying undefined values', async () => {
+  const { normalizeMicrosoftAdsFullAuditForWire } = await import(
+    '../scripts/mcp/microsoft-ads-tool-contracts.mjs'
+  )
+
+  const audit = createAuditFixture()
+  audit.report = {
+    ok: true,
+    empty: false,
+    rowCount: 2,
+    rows: [{ CampaignId: '1', Clicks: '10' }],
+    totals: { clicks: 10 },
+    allRows: undefined,
+    status: { Status: 'Success', nested: { dropped: undefined } }
+  }
+
+  const full = normalizeMicrosoftAdsFullAuditForWire(audit)
+
+  assert.equal('allRows' in full.report, false)
+  assert.equal('dropped' in full.report.status.nested, false)
+  assert.equal(full.report.rowCount, 2)
+  assert.equal(JSON.parse(JSON.stringify(full.report)).totals.clicks, 10)
+})
+
+repoTest('dispatch evidence reader queries ops.provider_dispatch_attempts over direct Postgres', async () => {
+  const { readMicrosoftUetDispatchEvidence } = await import(
+    '../scripts/microsoft-ads/evidence/supabase-tracking-evidence.mjs'
+  )
+
+  const queries = []
+  let ended = false
+  const rows = [
+    {
+      event_name: 'purchase',
+      status: 'accepted_unverified',
+      dispatch_mode: 'server_retry',
+      skip_reason: null,
+      created_at: '2026-08-01T10:00:00.000Z'
+    },
+    {
+      event_name: 'add_to_cart',
+      status: 'skipped_unqualified',
+      dispatch_mode: 'server_retry',
+      skip_reason: 'missing_msclkid',
+      created_at: '2026-08-02T10:00:00.000Z'
+    }
+  ]
+
+  const createSqlImpl = (url, options) => {
+    assert.equal(url, 'postgres://warehouse.invalid/testdb')
+    assert.equal(options.max, 1)
+    return Object.assign(
+      async (strings, ...values) => {
+        queries.push({ text: strings.join('?'), values })
+        return rows
+      },
+      { end: async () => { ended = true } }
+    )
+  }
+
+  const result = await readMicrosoftUetDispatchEvidence({
+    lookbackDays: 30,
+    now: () => new Date('2026-08-08T08:00:00.000Z'),
+    processEnv: {
+      SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING:
+        'postgres://warehouse.invalid/testdb'
+    },
+    envFiles: [],
+    createSqlImpl
+  })
+
+  assert.equal(result.ok, true)
+  assert.equal(result.providerConfirmed, true)
+  assert.equal(result.rowCount, 2)
+  assert.equal(result.acceptedCount, 1)
+  assert.equal(result.skippedCount, 1)
+  assert.equal(result.bySkipReason.missing_msclkid, 1)
+  assert.equal(ended, true)
+  assert.match(queries[0].text, /from ops\.provider_dispatch_attempts/)
+  assert.match(queries[0].text, /provider = 'microsoft_uet'/)
+  assert.deepEqual(queries[0].values, ['2026-07-09T08:00:00.000Z', 5000])
+})
+
+repoTest('dispatch evidence reader fails closed without a warehouse URL and on query errors', async () => {
+  const { readMicrosoftUetDispatchEvidence } = await import(
+    '../scripts/microsoft-ads/evidence/supabase-tracking-evidence.mjs'
+  )
+
+  const missingUrl = await readMicrosoftUetDispatchEvidence({
+    processEnv: {},
+    envFiles: [],
+    createSqlImpl: () => {
+      throw new Error('must not connect without a warehouse URL')
+    }
+  })
+
+  assert.equal(missingUrl.ok, false)
+  assert.equal(missingUrl.reason, 'supabase_warehouse_url_unavailable')
+  assert.equal(missingUrl.providerConfirmed, false)
+
+  const queryFailure = await readMicrosoftUetDispatchEvidence({
+    processEnv: {
+      SUPABASE_VERCEL_POSTGRES_URL_NON_POOLING:
+        'postgres://warehouse.invalid/testdb'
+    },
+    envFiles: [],
+    createSqlImpl: () =>
+      Object.assign(
+        async () => {
+          throw new Error('relation "ops.provider_dispatch_attempts" does not exist')
+        },
+        { end: async () => {} }
+      )
+  })
+
+  assert.equal(queryFailure.ok, false)
+  assert.match(queryFailure.reason, /^supabase_read_failed:/)
+  assert.equal(queryFailure.rowCount, 0)
+})
+
 function createAuditFixture() {
   return {
     ok: true,

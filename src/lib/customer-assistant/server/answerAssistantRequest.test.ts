@@ -194,7 +194,7 @@ test('product help reads Shopify, applies matching, and emits product recommenda
     })
   )
 
-  assert.deepEqual(catalogCalls, [{ buyerIp: context.buyerIp }])
+  assert.deepEqual(catalogCalls, [{}])
   assert.deepEqual(recommendationCalls, [
     { productIds: ['product-techdown'], sessionId }
   ])
@@ -228,7 +228,6 @@ test('stock help reports only available or unavailable without quantity claims',
       createAdapters({
         fetchProducts: async input => {
           assert.deepEqual(input, {
-            buyerIp: context.buyerIp,
             handles: ['utekos-techdown']
           })
           return [
@@ -256,7 +255,7 @@ test('stock help resolves a product and variant through live Shopify outside a p
   const adapters = createAdapters({
     fetchProducts: async input => {
       catalogCalls += 1
-      assert.deepEqual(input, { buyerIp: context.buyerIp })
+      assert.deepEqual(input, {})
       return [
         createProduct({
           handle: 'utekos-techdown',

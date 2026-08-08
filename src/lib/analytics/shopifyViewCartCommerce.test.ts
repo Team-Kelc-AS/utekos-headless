@@ -37,15 +37,7 @@ const cart = {
           handle: 'utekos-techdown',
           title: 'Utekos TechDown',
           vendor: 'Utekos',
-          productType: 'Yttertøy',
-          collections: { nodes: [] },
-          options: [],
-          variants: { nodes: [] },
-          featuredImage: null,
-          priceRange: {
-            minVariantPrice: { amount: '1790.0', currencyCode: 'NOK' },
-            maxVariantPrice: { amount: '1790.0', currencyCode: 'NOK' }
-          }
+          productType: 'Yttertøy'
         }
       }
     }
@@ -65,6 +57,9 @@ test('mapShopifyViewCart carries cart_id and view_sequence onto commerce', () =>
     'gid://shopify/ProductVariant/46944403882232'
   )
   assert.equal(customData.items[0]?.taxable, true)
+  assert.equal(customData.items[0]?.item_brand, 'Utekos')
+  assert.equal(customData.items[0]?.item_category, 'Yttertøy')
+  assert.deepEqual(customData.items[0]?.collection_ids, [])
 })
 
 test('nextViewCartSequence increments monotonically', () => {
