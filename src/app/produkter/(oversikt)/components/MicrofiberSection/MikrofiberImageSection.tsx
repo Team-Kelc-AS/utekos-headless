@@ -15,14 +15,14 @@ import { cn } from '@/lib/utils/className'
 import utekosMikrofiberBaksideFullFigur16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-bakside-full-figur-1600-1600.webp'
 import utekosMikrofiberHalvfigurForside16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-halvfigur-forside-1600-1600.webp'
 import utekosMikrofiberHelfigur16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-helfigur-1600-1600.webp'
-import utekosMikrofiberKvinnerNyterSkogen16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-kvinner-nyter-skogen-1600-1600.webp'
+import mikrofiberWoods900x900 from '@/assets/images/mikrofiber/Mikrofiber-Woods-900x900.webp'
 import utekosMikrofiberParNyterKaffeTerrasse16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-par-nyter-kaffe-terrasse-1600-1600.webp'
 import utekosMikrofiberParkas16001600 from '@/assets/images/mikrofiber/utekos-mikrofiber-parkas-1600-1600.webp'
 
 
 const MICROFIBER_IMAGES = [
   {
-    src: utekosMikrofiberKvinnerNyterSkogen16001600,
+    src: mikrofiberWoods900x900,
     alt: 'Kvinner nyter skogen med Utekos Mikrofiber.'
   },
   {
@@ -59,14 +59,14 @@ export function MikrofiberImageSection() {
       )}
     >
       <Carousel
-        className='aspect-square w-full overflow-hidden'
+        className='aspect-square w-full overflow-hidden lg:h-full lg:aspect-auto xl:h-auto xl:aspect-square'
         slideCount={MICROFIBER_IMAGES.length}
         opts={{ align: 'start', loop: true }}
       >
         <CarouselContent className='h-full'>
           {MICROFIBER_IMAGES.map((image, index) => (
             <CarouselItem key={image.alt} className='h-full'>
-              <div className='relative aspect-square w-full overflow-hidden rounded-xl'>
+              <div className='relative aspect-square w-full overflow-hidden rounded-xl lg:h-full lg:aspect-auto xl:h-auto xl:aspect-square'>
                 <Image
                   src={image.src}
                   alt={image.alt}

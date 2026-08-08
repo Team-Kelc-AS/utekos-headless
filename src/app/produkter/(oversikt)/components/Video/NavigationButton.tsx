@@ -7,9 +7,9 @@ export function NavigationButton() {
   return (
     <div className='animate-header-item mt-12 w-full'>
       <Button
-        variant='outline'
+        variant='default'
         size='default'
-        className='mb-2 w-full rounded-2xl bg-jungle px-8 py-8 text-lg leading-none tracking-[-0.01em] text-coral-green brightness-120 hover:scale-103 hover:bg-jungle-hover'
+        className='mb-2 w-full rounded-2xl bg-primary px-8 py-8 text-lg leading-none tracking-[-0.01em] text-foreground hover:scale-103 hover:bg-primary/90'
         asChild
       >
         <Link

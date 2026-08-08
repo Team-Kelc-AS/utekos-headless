@@ -32,9 +32,9 @@ export function ProductVideoSection() {
             <TypographyVideoSectionLead />
             <div className='animate-header-item'>
               <div className='mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start'>
-                <div className='group mx-4 flex max-w-[70%] items-center gap-4 rounded-lg border-white/10 bg-card px-0 py-4 text-nowrap shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90'>
-                  <div className='dark:border-dark-foreground flex size-12 shrink-0 items-center justify-center rounded-xl border border-foreground bg-linear-to-br from-white/10 to-transparent text-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform duration-500 group-hover:scale-110'>
-                    <Sun className='h-5 stroke-[1.5]' />
+                <div className='group flex w-full min-w-0 items-center gap-4 rounded-lg bg-jungle px-4 py-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90 sm:flex-1'>
+                  <div className='flex size-12 shrink-0 items-center justify-center rounded-xl border border-foreground/40 bg-dark-teal text-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform duration-500 group-hover:scale-110'>
+                    <Sun className='size-5 stroke-[1.5]' aria-hidden='true' />
                   </div>
                   <div className='text-left'>
                     <p className='font-sans text-[1rem] leading-[1.1] tracking-[-0.01em] text-foreground'>
@@ -46,9 +46,9 @@ export function ProductVideoSection() {
                   </div>
                 </div>
 
-                <div className='group mx-4 flex max-w-[70%] items-center gap-4 rounded-lg border-card/20 bg-card px-0 py-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90 dark:border-dark-card/20'>
-                  <div className='dark:border-dark-card/20 dark:from-dark-card/50  flex size-12 shrink-0 items-center justify-center rounded-xl border border-card/20 bg-linear-to-br from-card/50 to-transparent text-card shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)] transition-transform duration-500 group-hover:scale-110'>
-                    <Layers className='size-5 stroke-[1.5] text-foreground' />
+                <div className='group flex w-full min-w-0 items-center gap-4 rounded-lg bg-jungle px-4 py-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90 sm:flex-1'>
+                  <div className='flex size-12 shrink-0 items-center justify-center rounded-xl border border-foreground/40 bg-dark-teal text-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-transform duration-500 group-hover:scale-110'>
+                    <Layers className='size-5 stroke-[1.5]' aria-hidden='true' />
                   </div>
                   <div className='text-left'>
                     <p className='rounded-lg font-sans text-[1rem] leading-[1.1] tracking-[-0.01em] text-foreground'>

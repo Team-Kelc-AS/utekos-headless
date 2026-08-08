@@ -2,15 +2,13 @@
 
 'use client'
 
+import comfyrobeMan1024x1024 from '@/assets/images/comfyrobe/comfy-mann-1024x1024.webp'
 import ComfyRainy from '@/assets/images/comfyrobe/comfy_rainy.webp'
 import Image from 'next/image'
 import { useState } from 'react'
 import Fade from 'embla-carousel-fade'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
-
-const COMFYROBE_PRIMARY_IMAGE =
-  'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Comfyrobe-Kvinne-1600x1600.png?v=1784824903'
 
 export function ComfyrobeImageCarousel() {
   const [fadePlugin] = useState(() => Fade())
@@ -27,8 +25,8 @@ export function ComfyrobeImageCarousel() {
           <CarouselItem className='absolute inset-0 basis-full pl-0'>
             <div className='relative flex size-full items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_28%,color-mix(in_oklch,var(--havdyp)_54%,var(--background)_46%)_0%,var(--background)_72%)]'>
               <Image
-                src={COMFYROBE_PRIMARY_IMAGE}
-                alt='Comfyrobe produktbilde.'
+                src={comfyrobeMan1024x1024}
+                alt='Mann med blå Comfyrobe utendørs.'
                 fill
                 quality={95}
                 className='rounded-lg object-contain object-center p-0 transition-transform duration-500 motion-reduce:scale-100'
