@@ -509,5 +509,28 @@
         "Google labels the official Google Analytics MCP server experimental. The local proxy preserves the exact nine-tool read-only surface and adds the output schemas, structured content, and tool annotations required for a private ChatGPT developer-mode app; it does not add Analytics write capabilities."
       ]
     }
+  ],
+  "directTunnelProfiles": [
+    {
+      "id": "utekos_chatgpt_microsoft_ads",
+      "name": "Utekos ChatGPT Microsoft Ads",
+      "mode": "read-verify",
+      "defaultForChatGPT": false,
+      "tunnelTarget": "microsoft-ads",
+      "tunnelProfile": "utekos-chatgpt-microsoft-ads",
+      "mcpCommand": "node ${repoRoot}/scripts/mcp/utekos-microsoft-ads-server.mjs",
+      "mcpSurface": "utekos-microsoft-ads-read-verify",
+      "healthAddr": "127.0.0.1:8091",
+      "mcpPort": "8891",
+      "canonicalTools": [
+        "microsoft_ads_account_snapshot",
+        "microsoft_ads_account_health",
+        "microsoft_ads_tracking_health",
+        "microsoft_ads_merchant_health",
+        "microsoft_ads_diagnose",
+        "microsoft_ads_recommendations",
+        "microsoft_ads_report"
+      ]
+    }
   ]
 }

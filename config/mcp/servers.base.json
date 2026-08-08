@@ -1307,6 +1307,23 @@
         "search_docs"
       ],
       "autoApprove": []
+    },
+    "utekos-microsoft-ads": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "scripts/mcp/utekos-microsoft-ads-server.mjs"
+      ],
+      "tools": [
+        "microsoft_ads_account_snapshot",
+        "microsoft_ads_account_health",
+        "microsoft_ads_tracking_health",
+        "microsoft_ads_merchant_health",
+        "microsoft_ads_diagnose",
+        "microsoft_ads_recommendations",
+        "microsoft_ads_report"
+      ],
+      "autoApprove": []
     }
   }
 }

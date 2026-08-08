@@ -165,7 +165,16 @@
     "test:cart-cookie-bootstrap": "tsx --test src/lib/cart/*.test.ts",
     "ppr:shell:smoke": "node scripts/next/verify-ppr-shell-integrity.mjs",
     "test:ppr-rsc-probe": "node --test scripts/next/ppr-rsc-probe.test.mjs",
-    "ppr:rsc:probe": "node scripts/next/ppr-rsc-probe.mjs"
+    "ppr:rsc:probe": "node scripts/next/ppr-rsc-probe.mjs",
+    "mcp:microsoft-ads:register": "node scripts/mcp/register-utekos-microsoft-ads.mjs",
+    "mcp:microsoft-ads:registration:doctor": "node scripts/mcp/doctor-utekos-microsoft-ads-registration.mjs",
+    "mcp:tunnel:init:microsoft-ads": "node scripts/mcp/openai-tunnel-microsoft-ads.mjs init",
+    "mcp:tunnel:check:microsoft-ads": "node scripts/mcp/openai-tunnel-microsoft-ads.mjs check",
+    "mcp:tunnel:doctor:microsoft-ads": "node scripts/mcp/openai-tunnel-microsoft-ads.mjs doctor",
+    "mcp:tunnel:run:microsoft-ads": "node scripts/mcp/openai-tunnel-microsoft-ads.mjs run",
+    "mcp:tunnel:start:microsoft-ads": "node scripts/mcp/openai-tunnel-microsoft-ads.mjs start",
+    "mcp:tunnel:status:microsoft-ads": "node scripts/mcp/openai-tunnel-microsoft-ads.mjs status",
+    "mcp:tunnel:stop:microsoft-ads": "node scripts/mcp/openai-tunnel-microsoft-ads.mjs stop"
   },
   "dependencies": {
     "@adobe/leonardo-contrast-colors": "^1.1.0",
