@@ -296,6 +296,42 @@ test('generated canonical event retains submissionId and current context', async
   assert.equal(runBatchCalls.length, 0)
 })
 
+test('generated lead preserves consented Snap attribution and provenance', async () => {
+  resetSpies()
+  acceptImpl = async input => {
+    const event = input.payload as CanonicalGenerateLead
+    return { event, event_id: event.event_id, status: 'accepted' }
+  }
+
+  await recordAcceptedGenerateLead(
+    baseInput({
+      pageUrl: 'https://utekos.no/venteliste?ScCid=Snap-Lead-AbC123',
+      cookieHeader:
+        'utekos_external_id=anon_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee; _scid=Snap.Cookie.Lead'
+    })
+  )
+
+  assert.equal(acceptCalls.length, 1)
+  const payload = acceptCalls[0]!.payload as CanonicalGenerateLead
+
+  assert.equal(payload.click_id?.snap_click_id, 'Snap-Lead-AbC123')
+  assert.equal(payload.browser_id?.sc_cookie1, 'Snap.Cookie.Lead')
+  assert.equal(payload.signal_audit?.snap_click_id?.state, 'present')
+  if (payload.signal_audit?.snap_click_id?.state === 'present') {
+    assert.equal(
+      payload.signal_audit.snap_click_id.source,
+      'browser_request_url'
+    )
+  }
+  assert.equal(payload.signal_audit?.snap_cookie1?.state, 'present')
+  if (payload.signal_audit?.snap_cookie1?.state === 'present') {
+    assert.equal(
+      payload.signal_audit.snap_cookie1.source,
+      'first_party_cookie'
+    )
+  }
+})
+
 test('denied marketing lead audits marketing signals as consent_denied', async () => {
   resetSpies()
   acceptImpl = async input => {
@@ -318,8 +354,9 @@ test('denied marketing lead audits marketing signals as consent_denied', async (
       },
       email: 'consent-denied@example.com',
       pageUrl:
-        'https://utekos.no/nyhetsbrev?fbclid=denied-click',
-      cookieHeader: '_fbp=fb.1.1; _fbc=fb.1.2.denied-click'
+        'https://utekos.no/nyhetsbrev?fbclid=denied-click&ScCid=denied-snap-click',
+      cookieHeader:
+        '_fbp=fb.1.1; _fbc=fb.1.2.denied-click; _scid=denied-snap-cookie'
     })
   )
 
@@ -328,6 +365,7 @@ test('denied marketing lead audits marketing signals as consent_denied', async (
     .payload as CanonicalGenerateLead
   assert.equal(payload.click_id, undefined)
   assert.equal(payload.external_id, undefined)
+  assert.equal(payload.browser_id?.sc_cookie1, undefined)
   assert.notEqual(payload.user_data, undefined)
   if (result.status === 'skipped') {
     assert.fail('expected analytics-only lead to be accepted')
@@ -345,6 +383,20 @@ test('denied marketing lead audits marketing signals as consent_denied', async (
   ) {
     assert.equal(
       payload.signal_audit.external_id.reason,
+      'consent_denied'
+    )
+  }
+  assert.equal(payload.signal_audit?.snap_click_id?.state, 'unavailable')
+  if (payload.signal_audit?.snap_click_id?.state === 'unavailable') {
+    assert.equal(
+      payload.signal_audit.snap_click_id.reason,
+      'consent_denied'
+    )
+  }
+  assert.equal(payload.signal_audit?.snap_cookie1?.state, 'unavailable')
+  if (payload.signal_audit?.snap_cookie1?.state === 'unavailable') {
+    assert.equal(
+      payload.signal_audit.snap_cookie1.reason,
       'consent_denied'
     )
   }
