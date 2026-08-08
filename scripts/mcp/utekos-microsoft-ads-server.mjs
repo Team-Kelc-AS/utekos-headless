@@ -4,16 +4,15 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
-import { McpServer, StdioServerTransport } from '@modelcontextprotocol/server'
-import { z } from 'zod'
+import {
+  McpServer,
+  StdioServerTransport
+} from '@modelcontextprotocol/server'
 
 import { collectMicrosoftAdsAccountAudit } from '../microsoft-ads/audit-account.mjs'
 import { analyzeMicrosoftAdsAccountHealth } from '../microsoft-ads/health/account-health.mjs'
 import { analyzeMicrosoftAdsMerchantHealth } from '../microsoft-ads/health/merchant-health.mjs'
 import { analyzeMicrosoftAdsTrackingHealth } from '../microsoft-ads/health/tracking-health.mjs'
-import {
-  MICROSOFT_ADS_RECOMMENDATION_TYPES
-} from '../microsoft-ads/lib/ad-insight.mjs'
 import { refreshMicrosoftAdsAccessToken } from '../microsoft-ads/lib/auth.mjs'
 import {
   assertMicrosoftAdsRequirements,
@@ -21,6 +20,11 @@ import {
 } from '../microsoft-ads/lib/config.mjs'
 import { redactMicrosoftAdsSecrets } from '../microsoft-ads/lib/http.mjs'
 import { createMicrosoftAdsReportingClient } from '../microsoft-ads/lib/reporting.mjs'
+import {
+  MICROSOFT_ADS_TOOL_CONTRACTS,
+  normalizeMicrosoftAdsRecommendation,
+  parseMicrosoftAdsToolOutput
+} from './microsoft-ads-tool-contracts.mjs'
 import {
   buildMicrosoftAdsReportRequest,
   createMicrosoftAdsAuditCache,
@@ -46,42 +50,6 @@ const BASE_AUTH_REQUIRED_FIELDS = Object.freeze([
   'customerId',
   'accountId'
 ])
-
-const refreshInputSchema = z.object({
-  refresh: z.boolean().optional()
-})
-
-const snapshotInputSchema = z.object({
-  refresh: z.boolean().optional(),
-  detail: z.enum(['full', 'summary']).optional()
-})
-
-const diagnoseInputSchema = z.object({
-  query: z.string().trim().min(2),
-  area: z.enum(['auto', 'account', 'tracking', 'merchant']).optional(),
-  refresh: z.boolean().optional(),
-  maxFindings: z.number().int().min(1).max(50).optional()
-})
-
-const recommendationsInputSchema = z.object({
-  refresh: z.boolean().optional(),
-  types: z.array(z.enum(MICROSOFT_ADS_RECOMMENDATION_TYPES)).min(1).optional(),
-  limit: z.number().int().min(1).max(2_000).optional()
-})
-
-const reportInputSchema = z.object({
-  reportType: z.string().trim().min(1),
-  aggregation: z.string().trim().min(1).optional(),
-  columns: z.array(z.string().trim().min(1)).min(1),
-  predefinedTime: z.string().trim().min(1).optional(),
-  customStartDate: z.string().trim().min(1).optional(),
-  customEndDate: z.string().trim().min(1).optional(),
-  reportTimeZone: z.string().trim().min(1).optional(),
-  filter: z.object({}).passthrough().optional(),
-  scope: z.object({}).passthrough().optional(),
-  rowLimit: z.number().int().min(0).max(5_000).optional(),
-  returnOnlyCompleteData: z.boolean().optional()
-})
 
 export function createUtekosMicrosoftAdsMcpServer({
   collectAudit = collectMicrosoftAdsAccountAudit,
@@ -128,7 +96,11 @@ export function createUtekosMicrosoftAdsMcpServer({
   const server = new McpServer(
     {
       name: 'utekos-microsoft-ads',
-      version: '1.0.0'
+      title: 'Utekos Microsoft Ads Operator',
+      version: '1.1.0',
+      description:
+        'Evidence-backed Microsoft Advertising operator for Utekos account, tracking, Merchant Center, recommendations, reporting, and diagnosis.',
+      websiteUrl: 'https://utekos.no'
     },
     {
       instructions: [
@@ -144,13 +116,8 @@ export function createUtekosMicrosoftAdsMcpServer({
 
   server.registerTool(
     'microsoft_ads_account_snapshot',
-    {
-      title: 'Microsoft Ads Account Snapshot',
-      description:
-        'Read the live Microsoft Advertising account structure and diagnostics snapshot, including campaigns, ad groups, ads, keywords, UET, conversion goals, Merchant Center, reporting, recommendations, and local implementation evidence.',
-      inputSchema: snapshotInputSchema
-    },
-    safeTool(async ({ refresh = false, detail = 'full' }) => {
+    { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_account_snapshot },
+    safeTool('microsoft_ads_account_snapshot', async ({ refresh = false, detail = 'full' }) => {
       const audit = await auditCache.get({ refresh })
       return detail === 'summary' ? summarizeAudit(audit) : audit
     })
@@ -158,13 +125,8 @@ export function createUtekosMicrosoftAdsMcpServer({
 
   server.registerTool(
     'microsoft_ads_account_health',
-    {
-      title: 'Microsoft Ads Account Health',
-      description:
-        'Diagnose account-wide delivery, campaign structure, ads, keywords, budget, Microsoft performance insights, recommendations, and missing diagnostic coverage.',
-      inputSchema: refreshInputSchema
-    },
-    safeTool(async ({ refresh = false }) => {
+    { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_account_health },
+    safeTool('microsoft_ads_account_health', async ({ refresh = false }) => {
       const audit = await auditCache.get({ refresh })
       return analyzeAccountHealth(audit)
     })
@@ -172,13 +134,8 @@ export function createUtekosMicrosoftAdsMcpServer({
 
   server.registerTool(
     'microsoft_ads_tracking_health',
-    {
-      title: 'Microsoft Ads Tracking Health',
-      description:
-        'Diagnose UET, conversion goals, MSCLKID attribution, browser/CAPI alignment, Microsoft purchase events, provider routing, and local tracking implementation evidence.',
-      inputSchema: refreshInputSchema
-    },
-    safeTool(async ({ refresh = false }) => {
+    { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_tracking_health },
+    safeTool('microsoft_ads_tracking_health', async ({ refresh = false }) => {
       const audit = await auditCache.get({ refresh })
       return analyzeTrackingHealth(audit)
     })
@@ -186,13 +143,8 @@ export function createUtekosMicrosoftAdsMcpServer({
 
   server.registerTool(
     'microsoft_ads_merchant_health',
-    {
-      title: 'Microsoft Ads Merchant Health',
-      description:
-        'Diagnose Microsoft Merchant Center stores, catalogs, publishing, product inventory, stock state, product warnings/disapprovals, product issue codes, target countries, and feed-label consistency.',
-      inputSchema: refreshInputSchema
-    },
-    safeTool(async ({ refresh = false }) => {
+    { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_merchant_health },
+    safeTool('microsoft_ads_merchant_health', async ({ refresh = false }) => {
       const audit = await auditCache.get({ refresh })
       return analyzeMerchantHealth(audit)
     })
@@ -200,13 +152,8 @@ export function createUtekosMicrosoftAdsMcpServer({
 
   server.registerTool(
     'microsoft_ads_diagnose',
-    {
-      title: 'Diagnose Microsoft Ads Problem',
-      description:
-        'Investigate a natural-language Microsoft Ads problem by ranking evidence-backed account, tracking, and Merchant health findings. Use this for questions such as why campaigns are not delivering, why conversions are missing, or why products are disapproved.',
-      inputSchema: diagnoseInputSchema
-    },
-    safeTool(async ({
+    { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_diagnose },
+    safeTool('microsoft_ads_diagnose', async ({
       query,
       area = 'auto',
       refresh = false,
@@ -252,13 +199,8 @@ export function createUtekosMicrosoftAdsMcpServer({
 
   server.registerTool(
     'microsoft_ads_recommendations',
-    {
-      title: 'Microsoft Ads Recommendations',
-      description:
-        'Read current Microsoft Advertising Ad Insight recommendations, including budget, keyword, broad-match, negative-keyword conflict, responsive-search-ad, and RSA asset recommendations.',
-      inputSchema: recommendationsInputSchema
-    },
-    safeTool(async ({ refresh = false, types, limit = 100 }) => {
+    { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_recommendations },
+    safeTool('microsoft_ads_recommendations', async ({ refresh = false, types, limit = 100 }) => {
       const audit = await auditCache.get({ refresh })
       const source = audit?.adInsight?.recommendations ?? {}
       const requestedTypes = types ? new Set(types) : null
@@ -279,20 +221,15 @@ export function createUtekosMicrosoftAdsMcpServer({
         returnedCount: selected.length,
         byType: summarizeRecommendationsByType(filtered),
         error: source.error ?? null,
-        items: selected
+        items: selected.map(normalizeMicrosoftAdsRecommendation)
       }
     })
   )
 
   server.registerTool(
     'microsoft_ads_report',
-    {
-      title: 'Microsoft Ads Reporting v13',
-      description:
-        'Generate a live Microsoft Advertising Reporting v13 report with explicit report type, columns, aggregation, date range, scope, and optional filter. Use this for detailed search-query, keyword, product, audience, geographic, asset, conversion, publisher, share-of-voice, and other supported report types.',
-      inputSchema: reportInputSchema
-    },
-    safeTool(async input => {
+    { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_report },
+    safeTool('microsoft_ads_report', async input => {
       const config = getEffectiveConfig()
       assertRequirements(config, BASE_AUTH_REQUIRED_FIELDS)
 
@@ -347,11 +284,11 @@ async function main() {
   console.error('Utekos Microsoft Ads MCP server running on stdio')
 }
 
-function safeTool(handler) {
+function safeTool(toolName, handler) {
   return async args => {
     try {
       const result = await handler(args ?? {})
-      return toToolResult(result)
+      return toToolResult(toolName, result)
     } catch (error) {
       const message = redactMicrosoftAdsSecrets(
         error instanceof Error ? error.message : String(error)
@@ -365,8 +302,11 @@ function safeTool(handler) {
   }
 }
 
-function toToolResult(value) {
-  const structuredContent = normalizeStructuredContent(value)
+function toToolResult(toolName, value) {
+  const structuredContent = parseMicrosoftAdsToolOutput(
+    toolName,
+    normalizeStructuredContent(value)
+  )
 
   return {
     content: [
@@ -375,7 +315,11 @@ function toToolResult(value) {
         text: JSON.stringify(structuredContent, null, 2)
       }
     ],
-    structuredContent
+    structuredContent,
+    _meta: {
+      'no.utekos/contractVersion': '1.0.0',
+      'no.utekos/tool': toolName
+    }
   }
 }
 

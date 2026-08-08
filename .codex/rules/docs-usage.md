@@ -1,7 +1,3 @@
-# Docs Usage Rules
-
-Kodeløsninger skal uten unntak gjøres ved hjelp av oppdatert og offisielle dokumentasjon.
-
 ## Alternativer
 
 - "next-devtools": "npx -y next-devtools-mcp@latest"
