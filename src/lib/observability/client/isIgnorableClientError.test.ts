@@ -47,3 +47,39 @@ test('retains the existing in-app WebView noise filters', () => {
     true
   )
 })
+
+test('ignores BotID Kasada first-party proxy script noise', () => {
+  assert.equal(
+    isIgnorableClientError({
+      message: 'Error',
+      source:
+        'https://utekos.no/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/a-4-a/c.js?i=0&v=3&h=utekos.no'
+    }),
+    true
+  )
+  assert.equal(
+    isIgnorableClientError({
+      message: 'Error',
+      source:
+        'https://utekos.no/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fp?x-kpsdk-v=j-1.2.616'
+    }),
+    true
+  )
+})
+
+test('ignores Cookiebot and Summarizer vendor noise by message', () => {
+  assert.equal(
+    isIgnorableClientError({
+      message:
+        'Blocked aria-hidden on an element because its descendant retained focus. Element with focus: #CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll'
+    }),
+    true
+  )
+  assert.equal(
+    isIgnorableClientError({
+      message:
+        'Unsupported Summarizer API languages were specified, and the request was aborted.'
+    }),
+    true
+  )
+})

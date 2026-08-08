@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef } from 'react'
 
 import { cn } from '@/lib/utils/className'
+import { useInView } from '@/hooks/useInView'
 import { completeKlarnaExpressCheckout } from '@/components/klarna/utils/completeKlarnaExpressCheckout'
 import { loadKlarnaExpressCheckoutSdk } from '@/components/klarna/utils/loadKlarnaExpressCheckoutSdk'
 import { loadKlarnaPublicConfig } from '@/components/klarna/utils/loadKlarnaPublicConfig'
@@ -67,6 +68,13 @@ export function KlarnaExpressCheckoutButton({
 }: KlarnaExpressCheckoutButtonProps) {
   const containerSuffix = useId().replace(/:/g, '')
   const containerId = `klarna-express-checkout-${containerSuffix}`
+  const [setContainerRef, isNearViewport] = useInView<HTMLDivElement>({
+    threshold: 0,
+    triggerOnce: true,
+    // Prefetch shortly before the CTA enters view; avoids eager Kasada/Klarna
+    // work on cold homepage loads while keeping cart/drawer mounts snappy.
+    rootMargin: '240px 0px'
+  })
   const payloadRef = useRef(orderPayload)
   const cartIdRef = useRef(shopifyCartId)
   const onErrorRef = useRef(onError)
@@ -89,7 +97,7 @@ export function KlarnaExpressCheckoutButton({
   ])
 
   useEffect(() => {
-    if (disabled) {
+    if (disabled || !isNearViewport) {
       return
     }
 
@@ -239,10 +247,11 @@ export function KlarnaExpressCheckoutButton({
     return () => {
       isActive = false
     }
-  }, [containerId, disabled, theme])
+  }, [containerId, disabled, isNearViewport, theme])
 
   return (
     <div
+      ref={setContainerRef}
       className={cn(
         'flex h-full w-full items-stretch justify-center',
         className

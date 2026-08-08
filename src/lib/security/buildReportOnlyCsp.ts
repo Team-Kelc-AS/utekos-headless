@@ -63,6 +63,15 @@ const KLARNA_ASSET_ORIGINS = ['https://x.klarnacdn.net'] as const
 const VERCEL_LIVE_ORIGINS = ['https://vercel.live'] as const
 
 /**
+ * Vercel BotID / Kasada fingerprinting error sink, evidenced from
+ * production report-only connect-src violations on the homepage.
+ */
+const BOTID_KASADA_CONNECT_ORIGINS = [
+  'https://reporting.cdndex.io',
+  'https://*.cdndex.io'
+] as const
+
+/**
  * Shopify Customer Privacy / consent-tracking API loaded by
  * ShopifyCustomerPrivacyBridge after Cookiebot choice.
  * connect-src hosts are evidenced from production report-only
@@ -110,11 +119,16 @@ export function buildReportOnlyCsp(): string {
     ...GOOGLE_ADS_ORIGINS,
     ...SHOPIFY_CONSENT_CONNECT_ORIGINS,
     ...VERCEL_LIVE_ORIGINS,
+    ...BOTID_KASADA_CONNECT_ORIGINS,
     ...GA4_COLLECTION_ORIGINS,
     ...GA4_ADVERTISING_ORIGINS,
     'https://*.ingest.sentry.io',
     'https://*.ingest.de.sentry.io'
   ]
+
+  // Kasada fingerprinting plays data:audio media; without media-src
+  // it falls through default-src 'self' and floods report-only CSP.
+  const mediaSrc = ["'self'", 'data:', 'blob:']
 
   const imgSrc = [
     "'self'",
@@ -149,6 +163,7 @@ export function buildReportOnlyCsp(): string {
     "frame-ancestors 'none'",
     `connect-src ${joinOrigins(connectSrc)}`,
     `img-src ${joinOrigins(imgSrc)}`,
+    `media-src ${joinOrigins(mediaSrc)}`,
     `frame-src ${joinOrigins(frameSrc)}`,
     "worker-src 'self' blob:",
     'report-uri /api/security/csp-report'

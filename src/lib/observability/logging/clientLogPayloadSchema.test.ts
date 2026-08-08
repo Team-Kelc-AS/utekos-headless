@@ -6,13 +6,26 @@ import {
   toAppLogInput
 } from './clientLogPayloadSchema'
 
-test('client log contract rejects free text, stacks and full URLs', () => {
-  const result = clientLogPayloadSchema.safeParse({
+test('client log contract rejects email-like messages, stacks and full URLs', () => {
+  const emailMessage = clientLogPayloadSchema.safeParse({
     event: 'client_error',
     level: 'error',
     data: {
       source: 'window_error',
-      message: 'customer@example.no',
+      message: 'customer@example.no'
+    },
+    context: {
+      pathname: '/konto'
+    }
+  })
+  assert.equal(emailMessage.success, false)
+
+  const withStack = clientLogPayloadSchema.safeParse({
+    event: 'client_error',
+    level: 'error',
+    data: {
+      source: 'window_error',
+      message: 'ChunkLoadError',
       stack: 'secret stack'
     },
     context: {
@@ -20,16 +33,18 @@ test('client log contract rejects free text, stacks and full URLs', () => {
       href: 'https://utekos.no/konto?email=customer@example.no'
     }
   })
-
-  assert.equal(result.success, false)
+  assert.equal(withStack.success, false)
 })
 
-test('client log contract keeps only a redacted pathname', () => {
+test('client log contract keeps only a redacted pathname and sanitized triage fields', () => {
   const parsed = clientLogPayloadSchema.parse({
     event: 'client_error',
     level: 'error',
     data: {
       source: 'window_error',
+      message: 'ChunkLoadError: Failed to load chunk',
+      filename:
+        'https://utekos.no/_next/static/chunks/app.js?dpl=secret',
       line: 12,
       column: 4
     },
@@ -40,7 +55,21 @@ test('client log contract keeps only a redacted pathname', () => {
 
   const appLog = toAppLogInput(parsed)
   assert.deepEqual(appLog.context, { route: '/ordre/:dynamic' })
+  assert.equal(parsed.event, 'client_error')
+  assert.equal(
+    parsed.data.source === 'window_error' ?
+      parsed.data.message
+    : undefined,
+    'ChunkLoadError: Failed to load chunk'
+  )
+  assert.equal(
+    parsed.data.source === 'window_error' ?
+      parsed.data.filename
+    : undefined,
+    '/_next/static/chunks/app.js'
+  )
   assert.equal(JSON.stringify(appLog).includes('customer@example.no'), false)
+  assert.equal(JSON.stringify(appLog).includes('dpl=secret'), false)
 })
 
 test('operational pathname sanitizer removes query and risky segments', () => {

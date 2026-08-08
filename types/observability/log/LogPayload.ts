@@ -6,6 +6,8 @@ export type LogPayload =
       level: 'error'
       data: {
         source: 'window_error'
+        message?: string
+        filename?: string
         line?: number
         column?: number
       }

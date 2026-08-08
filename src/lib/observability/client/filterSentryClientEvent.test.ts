@@ -52,3 +52,26 @@ test('drops injected WebView noise captured as a top-level Sentry message', () =
 
   assert.equal(filterSentryClientEvent(event), null)
 })
+
+test('drops BotID Kasada stack frames even when the message is generic', () => {
+  const event = {
+    type: undefined,
+    exception: {
+      values: [
+        {
+          value: 'Error',
+          stacktrace: {
+            frames: [
+              {
+                filename:
+                  'https://utekos.no/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/a-4-a/c.js'
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+
+  assert.equal(filterSentryClientEvent(event), null)
+})

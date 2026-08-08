@@ -1,9 +1,16 @@
 import * as Sentry from '@sentry/nextjs'
 import { initBotId } from 'botid/client/core'
 import {
+  BOTID_KASADA_PATH_PATTERN,
+  BOTID_KASADA_URL_PATTERN,
   CHROME_EXTENSION_URL_PATTERN,
+  COOKIEBOT_URL_PATTERN,
   isIgnorableClientError
 } from '@/lib/observability/client/isIgnorableClientError'
+import {
+  sanitizeClientErrorFilename,
+  sanitizeClientErrorMessage
+} from '@/lib/observability/client/sanitizeClientErrorBeacon'
 import { describeUnhandledRejection } from '@/lib/observability/client/describeUnhandledRejection'
 import { filterSentryClientEvent } from '@/lib/observability/client/filterSentryClientEvent'
 import type { LogPayload } from 'types/observability/log/LogPayload'
@@ -57,7 +64,18 @@ Sentry.init({
   sendDefaultPii: false,
   enableLogs: true,
   tracesSampleRate: IS_PRODUCTION ? 0.1 : 1,
-  denyUrls: [CHROME_EXTENSION_URL_PATTERN],
+  ignoreErrors: [
+    'Unsupported Summarizer API',
+    'The requested language options are not supported',
+    'Blocked aria-hidden on an element because its descendant retained focus',
+    'CybotCookiebotDialog'
+  ],
+  denyUrls: [
+    CHROME_EXTENSION_URL_PATTERN,
+    BOTID_KASADA_PATH_PATTERN,
+    BOTID_KASADA_URL_PATTERN,
+    COOKIEBOT_URL_PATTERN
+  ],
   beforeSend: filterSentryClientEvent
 })
 
@@ -106,20 +124,31 @@ try {
       event.error instanceof Error ?
         event.error.stack
       : undefined
+    const message = event.message || 'Unknown client error'
     if (
       isIgnorableClientError({
-        message: event.message,
+        message,
         source: event.filename,
         stack
       })
     )
       return
 
+    const sanitizedMessage = sanitizeClientErrorMessage(message)
+    const sanitizedFilename =
+      event.filename ?
+        sanitizeClientErrorFilename(event.filename)
+      : undefined
+
     beaconError({
       event: 'client_error',
       level: 'error',
       data: {
         source: 'window_error',
+        ...(sanitizedMessage ? { message: sanitizedMessage } : {}),
+        ...(sanitizedFilename ?
+          { filename: sanitizedFilename }
+        : {}),
         ...(event.lineno ? { line: event.lineno } : {}),
         ...(event.colno ? { column: event.colno } : {})
       },
@@ -128,6 +157,25 @@ try {
   })
 
   window.addEventListener('unhandledrejection', event => {
+    const rejection = describeUnhandledRejection(
+      event.reason,
+      event.promise
+    )
+    const message =
+      event.reason instanceof Error ?
+        event.reason.message
+      : typeof event.reason === 'string' ?
+        event.reason
+      : 'Unhandled promise rejection'
+    const stack =
+      event.reason instanceof Error ?
+        event.reason.stack
+      : undefined
+
+    if (isIgnorableClientError({ message, stack })) {
+      return
+    }
+
     try {
       if (event.reason instanceof Error) {
         Sentry.withScope(scope => {
@@ -148,10 +196,7 @@ try {
       level: 'error',
       data: {
         source: 'unhandled_rejection',
-        ...describeUnhandledRejection(
-          event.reason,
-          event.promise
-        )
+        ...rejection
       },
       context: { pathname: window.location.pathname }
     })

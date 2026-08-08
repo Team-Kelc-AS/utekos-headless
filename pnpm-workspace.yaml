@@ -15,6 +15,17 @@ allowedDeprecatedVersions:
   node-domexception: 1.0.0
   tsconfck: 3.1.6
 
+minimumReleaseAgeExclude:
+  - '@supabase/cli-darwin-arm64@2.112.0'
+  - '@supabase/cli-darwin-x64@2.112.0'
+  - '@supabase/cli-linux-arm64-musl@2.112.0'
+  - '@supabase/cli-linux-arm64@2.112.0'
+  - '@supabase/cli-linux-x64-musl@2.112.0'
+  - '@supabase/cli-linux-x64@2.112.0'
+  - '@supabase/cli-windows-arm64@2.112.0'
+  - '@supabase/cli-windows-x64@2.112.0'
+  - supabase@2.112.0
+
 overrides:
   encoding-sniffer: ^1.0.2
   rimraf: ^6.1.3

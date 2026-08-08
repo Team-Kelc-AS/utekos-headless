@@ -10,11 +10,27 @@ const pathnameSchema = z
   .max(2_048)
   .transform(sanitizeOperationalPathname)
 
+const clientErrorMessageSchema = z
+  .string()
+  .min(1)
+  .max(240)
+  .refine(value => !/\S+@\S+\.\S+/.test(value), {
+    message: 'Client error message must not contain email-like values'
+  })
+
+const clientErrorFilenameSchema = z
+  .string()
+  .min(1)
+  .max(512)
+  .transform(sanitizeOperationalPathname)
+
 const clientErrorSchema = z.strictObject({
   event: z.literal('client_error'),
   level: z.literal('error'),
   data: z.strictObject({
     source: z.literal('window_error'),
+    message: clientErrorMessageSchema.optional(),
+    filename: clientErrorFilenameSchema.optional(),
     line: z
       .number()
       .int()

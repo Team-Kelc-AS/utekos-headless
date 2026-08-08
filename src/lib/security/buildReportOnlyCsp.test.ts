@@ -142,6 +142,12 @@ test('permits GA4 advertising hosts and Klarna CDN assets required by report-onl
   assert.match(csp, /img-src[^;]*https:\/\/\*\.google\.no/)
   assert.match(csp, /style-src[^;]*https:\/\/x\.klarnacdn\.net/)
   assert.match(csp, /font-src[^;]*https:\/\/x\.klarnacdn\.net/)
+  assert.match(csp, /media-src 'self' data: blob:/)
+  assert.match(
+    csp,
+    /connect-src[^;]*https:\/\/reporting\.cdndex\.io/
+  )
+  assert.match(csp, /connect-src[^;]*https:\/\/\*\.cdndex\.io/)
 
   assert.doesNotMatch(
     csp,
