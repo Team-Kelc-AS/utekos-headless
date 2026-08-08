@@ -6,6 +6,7 @@ export const canonicalClickIdsSchema = z.strictObject({
   gbraid: z.string().min(1).optional(),
   gclid: z.string().min(1).optional(),
   msclkid: z.string().min(1).optional(),
+  snap_click_id: z.string().min(1).optional(),
   ttclid: z.string().min(1).optional(),
   twclid: z.string().min(1).optional(),
   wbraid: z.string().min(1).optional()
@@ -87,7 +88,9 @@ export const canonicalSignalAuditSchema = z.strictObject({
   click_ids: canonicalSignalAuditEntrySchema,
   meta_fbclid: canonicalSignalAuditEntrySchema,
   meta_fbc: canonicalSignalAuditEntrySchema,
-  meta_fbp: canonicalSignalAuditEntrySchema
+  meta_fbp: canonicalSignalAuditEntrySchema,
+  snap_click_id: canonicalSignalAuditEntrySchema.optional(),
+  snap_cookie1: canonicalSignalAuditEntrySchema.optional()
 })
 
 export type CanonicalSignalAudit = z.infer<
