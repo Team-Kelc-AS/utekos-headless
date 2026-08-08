@@ -462,8 +462,10 @@ create table if not exists marketing.checkout_attribution_snapshots (
   wbraid text,
   msclkid text,
   dclid text,
+  sc_click_id text,
   fbp text,
   fbc text,
+  sc_cookie1 text,
   external_id text,
   email_hash text,
   client_ip_address text,
@@ -477,6 +479,10 @@ create table if not exists marketing.checkout_attribution_snapshots (
   constraint checkout_attribution_snapshots_storage_tokens_check
     check (cardinality(storage_tokens) > 0)
 );
+comment on column marketing.checkout_attribution_snapshots.sc_click_id is
+  'Consent-gated Snap Click ID captured from the exact ScCid landing parameter; stored unchanged.';
+comment on column marketing.checkout_attribution_snapshots.sc_cookie1 is
+  'Consent-gated Snap first-party _scid cookie value for later CAPI matching; stored unchanged.';
 create unique index if not exists checkout_attribution_snapshots_event_id_idx on marketing.checkout_attribution_snapshots (event_id)
 where event_id is not null;
 create index if not exists checkout_attribution_snapshots_cart_id_idx on marketing.checkout_attribution_snapshots (cart_id, updated_at desc)
