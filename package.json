@@ -329,7 +329,7 @@
     "eslint-plugin-prettier": "^5.5.6",
     "graphql-tag": "^2.12.6",
     "jiti": "^2.7.0",
-    "knip": "^5.88.1",
+    "knip": "^6.29.0",
     "prettier": "^3.8.4",
     "prettier-plugin-expand-json": "^1.0.5",
     "prettier-plugin-markdown-html": "^1.4.1",
