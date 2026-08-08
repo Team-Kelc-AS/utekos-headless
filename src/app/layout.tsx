@@ -159,7 +159,9 @@ export const metadata: Metadata = {
   verification: {
     other: {
       'facebook-domain-verification':
-        'e3q80hk1igl2celczeysvf7y1mltrs'
+        'e3q80hk1igl2celczeysvf7y1mltrs',
+      'p:domain_verify':
+        'edb3d2ffc77d9930280b515c685c5e13'
     }
   }
 }
