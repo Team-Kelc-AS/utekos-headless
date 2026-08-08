@@ -1,9 +1,8 @@
 import { Maximize2, Move, User } from 'lucide-react'
 import TechHalfImage from '@/assets/images/techdown/utekos-techdown-halvfigur-forfra-1600x1600.webp'
 import TechDownKateKikkertImage from '@/assets/images/techdown/TechDown-Kikkert-1600x1600.webp'
-
-const TechDownKystenImage =
-  'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/utekos-techdown-kysten.png'
+import TechDownFullLengthMobileImage from '@/assets/images/techdown/TechDown-1080x1350-2.webp'
+import TechDownFullLengthDesktopImage from '@/assets/images/techdown/TechDown-1200x1200-4.webp'
 
 export const Steps = [
   {
@@ -14,7 +13,11 @@ export const Steps = [
     description:
       'Utgangspunktet for selve utekosen. Pakk deg inn i en isolerende kokong for komplett komfort. Perfekt i hytteveggen, utenfor bobilen eller lange kvelder på terrassen hvor roen senker seg.',
     icon: <Maximize2 className='size-5' />,
-    image: TechDownKystenImage,
+    image: {
+      mobile: TechDownFullLengthMobileImage,
+      desktop: TechDownFullLengthDesktopImage
+    },
+    mobileAspectClassName: 'aspect-[4/5]',
     isProduct: false,
     desktopObjectFit: 'cover',
     desktopObjectPosition: 'center center'
@@ -27,7 +30,11 @@ export const Steps = [
     description:
       'Nyter du total omfavnelse av Utekos, men må plutselig på kjøkkenet eller svare telefonen? Heis opp plagget til ønsket lengde, stram snoren i livet og bli mobil på sekunder. Beveg deg trygt og subbefritt – uten å miste varmen.',
     icon: <Move className='size-5' />,
-    image: TechHalfImage,
+    image: {
+      mobile: TechHalfImage,
+      desktop: TechHalfImage
+    },
+    mobileAspectClassName: 'aspect-square',
     isProduct: true,
     desktopObjectFit: 'contain',
     desktopObjectPosition: 'center center'
@@ -40,7 +47,11 @@ export const Steps = [
     description:
       'Planlagt bevegelse over tid. Forvandle Utekos til en selvformet parkas. Full bevegelsesfrihet med et elegant snitt.',
     icon: <User className='size-5' />,
-    image: TechDownKateKikkertImage,
+    image: {
+      mobile: TechDownKateKikkertImage,
+      desktop: TechDownKateKikkertImage
+    },
+    mobileAspectClassName: 'aspect-square',
     isProduct: false,
     desktopObjectFit: 'cover',
     desktopObjectPosition: 'center center'

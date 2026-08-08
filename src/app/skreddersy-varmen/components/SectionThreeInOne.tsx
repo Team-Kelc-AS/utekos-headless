@@ -86,11 +86,14 @@ export function SectionThreeInOne() {
               custom={index}
             >
               <m.div
-                className='dark:border-dark-foreground/10 relative aspect-square w-full overflow-hidden border-y border-foreground/10 bg-card'
+                className={cn(
+                  'dark:border-dark-foreground/10 relative w-full overflow-hidden border-y border-foreground/10 bg-card',
+                  step.mobileAspectClassName
+                )}
                 variants={revealScale}
               >
                 <Image
-                  src={step.image}
+                  src={step.image.mobile}
                   alt={step.title}
                   fill
                   loading='lazy'
@@ -156,7 +159,7 @@ export function SectionThreeInOne() {
               >
                 <div className='dark:border-dark-foreground/15 dark:bg-dark-background/40 relative aspect-square w-[min(86%,82vh)] overflow-hidden rounded-3xl border border-foreground/15 bg-background/40 shadow-2xl'>
                   <Image
-                    src={step.image}
+                    src={step.image.desktop}
                     alt={step.title}
                     fill
                     loading='lazy'
