@@ -17,6 +17,7 @@ export const BEGIN_CHECKOUT_EVENT_ATTRIBUTE =
 const browserAttributeKeys = {
   fbc: '_fbc',
   fbp: '_fbp',
+  sc_cookie1: '_scid',
   ga_client: '_ga',
   ga_client_id: 'ga_client_id',
   ga_cookie: 'ga_cookie',
@@ -29,6 +30,7 @@ const clickAttributeKeys = {
   gbraid: 'gbraid',
   gclid: 'gclid',
   msclkid: 'msclkid',
+  snap_click_id: 'ScCid',
   ttclid: 'ttclid',
   twclid: 'twclid',
   wbraid: 'wbraid'
@@ -128,7 +130,8 @@ export function createCheckoutAttributionSnapshot(
     ...(hasMarketingConsent ?
       selectIdentifiers(source.browser_id, {
         fbc: browserAttributeKeys.fbc,
-        fbp: browserAttributeKeys.fbp
+        fbp: browserAttributeKeys.fbp,
+        sc_cookie1: browserAttributeKeys.sc_cookie1
       })
     : {})
   }
@@ -254,7 +257,7 @@ export function parseOrderAttributionFromNoteAttributes(
   }
 
   if (consent.marketing === 'granted') {
-    for (const identifier of ['fbc', 'fbp'] as const) {
+    for (const identifier of ['fbc', 'fbp', 'sc_cookie1'] as const) {
       const value = parseIdentifier(
         attributes.get(browserAttributeKeys[identifier])
       )
