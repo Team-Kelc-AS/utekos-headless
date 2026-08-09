@@ -60,9 +60,6 @@ importers:
       '@adobe/leonardo-contrast-colors':
         specifier: ^1.1.0
         version: 1.1.0
-      '@ai-sdk/devtools':
-        specifier: ^0.0.18
-        version: 0.0.18
       '@ai-sdk/openai':
         specifier: ^3.0.67
         version: 3.0.73(zod@4.4.3)
@@ -98,7 +95,7 @@ importers:
         version: 4.4.0(supports-color@8.1.1)
       '@google/genai':
         specifier: ^2.10.0
-        version: 2.10.0(@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1)
+        version: 2.10.0(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1)
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.2.7)
@@ -111,9 +108,6 @@ importers:
       '@langchain/langgraph':
         specifier: ^1.4.7
         version: 1.4.7(@langchain/core@1.2.1(@opentelemetry/api@1.9.1)(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(openai@6.45.0(@smithy/signature-v4@5.6.4)(ws@8.21.0)(zod@4.4.3))(ws@8.21.0))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(zod@4.4.3)
-      '@mcp-b/react-webmcp':
-        specifier: ^4.0.0
-        version: 4.0.0(@cfworker/json-schema@4.1.1)(react@19.2.7)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))(zod@4.4.3)
       '@mdx-js/loader':
         specifier: ^3.1.1
         version: 3.1.1(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.26))
@@ -128,13 +122,10 @@ importers:
         version: 2.0.0-alpha.2(@cfworker/json-schema@4.1.1)
       '@modelcontextprotocol/ext-apps':
         specifier: ^1.7.4
-        version: 1.7.4(@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(zod@4.4.3)
-      '@modelcontextprotocol/node':
-        specifier: 2.0.0-alpha.2
-        version: 2.0.0-alpha.2(@modelcontextprotocol/server@2.0.0-alpha.2(@cfworker/json-schema@4.1.1))(hono@4.13.1)
+        version: 1.7.4(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(zod@4.4.3)
       '@modelcontextprotocol/sdk':
-        specifier: ^1.29.0
-        version: 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
+        specifier: ^1.30.0
+        version: 1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
       '@modelcontextprotocol/server':
         specifier: 2.0.0-alpha.2
         version: 2.0.0-alpha.2(@cfworker/json-schema@4.1.1)
@@ -152,7 +143,7 @@ importers:
         version: 1.9.1
       '@prefecthq/fastmcp-ts':
         specifier: ^0.0.2-alpha.0
-        version: 0.0.2-alpha.0(@cfworker/json-schema@4.1.1)(@google/genai@2.10.0(@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1))(openai@6.45.0(@smithy/signature-v4@5.6.4)(ws@8.21.0)(zod@4.4.3))(supports-color@8.1.1)(zod@4.4.3)
+        version: 0.0.2-alpha.0(@cfworker/json-schema@4.1.1)(@google/genai@2.10.0(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1))(openai@6.45.0(@smithy/signature-v4@5.6.4)(ws@8.21.0)(zod@4.4.3))(supports-color@8.1.1)(zod@4.4.3)
       '@radix-ui/react-label':
         specifier: ^2.1.10
         version: 2.1.10(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -570,11 +561,6 @@ packages:
 
   '@adobe/leonardo-contrast-colors@1.1.0':
     resolution: {integrity: sha512-URFR8vNgNsE/rnXqljVrx6OyZV3nQXTfbDDWZwTUYfOkmBr9hRB7ENK8f7pT7gHDjSuCf2bjJ227u4PUHUXHHg==}
-
-  '@ai-sdk/devtools@0.0.18':
-    resolution: {integrity: sha512-0J25Q7occrkMJM1MrP0KeR8XNdGGKNgzxhOLfxBe/qZBQP6yXgV4H5Gf2DnDC3UgXDBJBskH9nh23doCo2Pebw==}
-    engines: {node: '>=18'}
-    hasBin: true
 
   '@ai-sdk/gateway@3.0.133':
     resolution: {integrity: sha512-Ebs+7iS9zUgJu5B0RlxM2JmDWzq79Cpd6YdiqcCzB5qFdpfQJPUDiXutqlQP89F2XGjOdDeidulBTXUdXWzOxw==}
@@ -1979,41 +1965,6 @@ packages:
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
 
-  '@mcp-b/global@4.0.0':
-    resolution: {integrity: sha512-jDBrAwN/A3jJ+tUxtS5IcM7en8VS38n0TUkibcZspq+Pu4Romh1s99jlkOkk1r1CvIbLJ5zJqgIMzWKFR4067A==}
-    engines: {node: '>=18'}
-
-  '@mcp-b/react-webmcp@4.0.0':
-    resolution: {integrity: sha512-FEbUXmziTxcdIpNzqbsabE/6ukgP1W7t81ZeWgNJOHHEWk8S1x/ZJ2bcEEDI22XtB45SAlBySD/uXyk9R5iWWw==}
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0 || ^19.0.0
-      zod: ^3.25 || ^4.0
-    peerDependenciesMeta:
-      zod:
-        optional: true
-
-  '@mcp-b/transports@4.0.0':
-    resolution: {integrity: sha512-uf8a1zYnpfT0ugBobElhH37Z4jNlBV76WvaHZPKO8DYSvAI4Qs7B+bUQwNpCoSC/tCqdMbHkLxW2G/6Xz9/4Mw==}
-
-  '@mcp-b/webmcp-polyfill@4.0.0':
-    resolution: {integrity: sha512-7M6WS3IcxaIEhidbS9N7wrrGjtJf474Vi4Fn1hGkFkmYFT5EoFw/kS/4CSdUR/KmlInO1kyluHRY6t3avMQfFw==}
-    engines: {node: '>=18'}
-
-  '@mcp-b/webmcp-ts-sdk@4.0.0':
-    resolution: {integrity: sha512-zXdbBdefgcBz077NkvZ3WZhkHOvBU2rpsVK8ytQt/SbiS2tCIFshuB027QceuTyuprOjW0b7XKDnSzDB2DQVMA==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25 || ^4.0
-      zod-to-json-schema: ^3.25.0
-    peerDependenciesMeta:
-      zod:
-        optional: true
-      zod-to-json-schema:
-        optional: true
-
-  '@mcp-b/webmcp-types@4.0.0':
-    resolution: {integrity: sha512-CUBBmiut1UBsiD3FAF6xrLKeKAuJkzd6/BlL1C/uo8sVpwY42NW4mls9rLcTxmLF/8Cj5/ZOwJiLzXl/T3GIQg==}
-
   '@mdx-js/loader@3.1.1':
     resolution: {integrity: sha512-0TTacJyZ9mDmY+VefuthVshaNIyCGZHJG2fMnGaDttCt8HmjUF7SizlHJpaCDoGnN635nK1wpzfpx/Xx5S4WnQ==}
     peerDependencies:
@@ -2060,15 +2011,8 @@ packages:
       react-dom:
         optional: true
 
-  '@modelcontextprotocol/node@2.0.0-alpha.2':
-    resolution: {integrity: sha512-7DQS8Nf3d/9Cv85hEtDjDU2kQg3UPuxcNvMDAvub91OJe4LmWkD5ZTTb/isrPzGBd2x8/I78dz8RPz/tkpqGDQ==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      '@modelcontextprotocol/server': ^2.0.0-alpha.2
-      hono: ^4.12.34
-
-  '@modelcontextprotocol/sdk@1.29.0':
-    resolution: {integrity: sha512-zo37mZA9hJWpULgkRpowewez1y6ML5GsXJPY8FI0tBBCd77HEvza4jDqRKOXgHNn867PVGCyTdzqpz0izu5ZjQ==}
+  '@modelcontextprotocol/sdk@1.30.0':
+    resolution: {integrity: sha512-xKd8OIzlqNzcqcNumGAa6g+PW2kjD5vrpcKOnfldAUPP3j7lnqMPwlTXQm8gF+UwH72z0lqaRbjr9hqGz0eITA==}
     engines: {node: '>=18'}
     peerDependencies:
       '@cfworker/json-schema': ^4.1.1
@@ -10317,12 +10261,6 @@ snapshots:
       ciecam02: 0.4.6
       hsluv: 1.0.2
 
-  '@ai-sdk/devtools@0.0.18':
-    dependencies:
-      '@ai-sdk/provider': 3.0.10
-      '@hono/node-server': 2.1.0(hono@4.13.1)
-      hono: 4.13.1
-
   '@ai-sdk/gateway@3.0.133(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 3.0.10
@@ -11689,14 +11627,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@google/genai@2.10.0(@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1)':
+  '@google/genai@2.10.0(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1)':
     dependencies:
       google-auth-library: 10.7.0(supports-color@8.1.1)
       p-retry: 4.6.2
       protobufjs: 7.6.5
       ws: 8.21.0
     optionalDependencies:
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
+      '@modelcontextprotocol/sdk': 1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -11968,76 +11906,6 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@mcp-b/global@4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))(zod@4.4.3)':
-    dependencies:
-      '@mcp-b/transports': 4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))
-      '@mcp-b/webmcp-polyfill': 4.0.0
-      '@mcp-b/webmcp-ts-sdk': 4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))(zod@4.4.3)
-      '@mcp-b/webmcp-types': 4.0.0
-    transitivePeerDependencies:
-      - '@cfworker/json-schema'
-      - supports-color
-      - zod
-      - zod-to-json-schema
-
-  '@mcp-b/react-webmcp@4.0.0(@cfworker/json-schema@4.1.1)(react@19.2.7)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))(zod@4.4.3)':
-    dependencies:
-      '@mcp-b/global': 4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))(zod@4.4.3)
-      '@mcp-b/transports': 4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))
-      '@mcp-b/webmcp-polyfill': 4.0.0
-      '@mcp-b/webmcp-ts-sdk': 4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))(zod@4.4.3)
-      '@mcp-b/webmcp-types': 4.0.0
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
-      react: 19.2.7
-    optionalDependencies:
-      zod: 4.4.3
-    transitivePeerDependencies:
-      - '@cfworker/json-schema'
-      - supports-color
-      - zod-to-json-schema
-
-  '@mcp-b/transports@4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))':
-    dependencies:
-      '@mcp-b/webmcp-ts-sdk': 4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))(zod@3.25.76)
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
-      zod: 3.25.76
-    transitivePeerDependencies:
-      - '@cfworker/json-schema'
-      - supports-color
-      - zod-to-json-schema
-
-  '@mcp-b/webmcp-polyfill@4.0.0':
-    dependencies:
-      '@cfworker/json-schema': 4.1.1
-      '@mcp-b/webmcp-types': 4.0.0
-      '@standard-schema/spec': 1.1.0
-
-  '@mcp-b/webmcp-ts-sdk@4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))(zod@3.25.76)':
-    dependencies:
-      '@mcp-b/webmcp-polyfill': 4.0.0
-      '@mcp-b/webmcp-types': 4.0.0
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
-    optionalDependencies:
-      zod: 3.25.76
-      zod-to-json-schema: 3.25.2(zod@4.4.3)
-    transitivePeerDependencies:
-      - '@cfworker/json-schema'
-      - supports-color
-
-  '@mcp-b/webmcp-ts-sdk@4.0.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod-to-json-schema@3.25.2(zod@4.4.3))(zod@4.4.3)':
-    dependencies:
-      '@mcp-b/webmcp-polyfill': 4.0.0
-      '@mcp-b/webmcp-types': 4.0.0
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
-    optionalDependencies:
-      zod: 4.4.3
-      zod-to-json-schema: 3.25.2(zod@4.4.3)
-    transitivePeerDependencies:
-      - '@cfworker/json-schema'
-      - supports-color
-
-  '@mcp-b/webmcp-types@4.0.0': {}
-
   '@mdx-js/loader@3.1.1(supports-color@8.1.1)(webpack@5.107.2(@swc/core@1.15.3)(esbuild@0.28.1)(lightningcss@1.32.0)(postcss@8.5.26))':
     dependencies:
       '@mdx-js/mdx': 3.1.1(supports-color@8.1.1)
@@ -12098,22 +11966,16 @@ snapshots:
     optionalDependencies:
       '@cfworker/json-schema': 4.1.1
 
-  '@modelcontextprotocol/ext-apps@1.7.4(@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(zod@4.4.3)':
+  '@modelcontextprotocol/ext-apps@1.7.4(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(zod@4.4.3)':
     dependencies:
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
+      '@modelcontextprotocol/sdk': 1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
       '@standard-schema/spec': 1.1.0
       zod: 4.4.3
     optionalDependencies:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
-  '@modelcontextprotocol/node@2.0.0-alpha.2(@modelcontextprotocol/server@2.0.0-alpha.2(@cfworker/json-schema@4.1.1))(hono@4.13.1)':
-    dependencies:
-      '@hono/node-server': 2.1.0(hono@4.13.1)
-      '@modelcontextprotocol/server': 2.0.0-alpha.2(@cfworker/json-schema@4.1.1)
-      hono: 4.13.1
-
-  '@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)':
+  '@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)':
     dependencies:
       '@hono/node-server': 2.1.0(hono@4.13.1)
       ajv: 8.20.0
@@ -12126,7 +11988,7 @@ snapshots:
       express: 5.2.1(supports-color@8.1.1)
       express-rate-limit: 8.5.2(express@5.2.1(supports-color@8.1.1))
       hono: 4.13.1
-      jose: 6.2.3
+      jose: 6.2.8
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
@@ -12137,7 +11999,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)':
+  '@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)':
     dependencies:
       '@hono/node-server': 2.1.0(hono@4.13.1)
       ajv: 8.20.0
@@ -12150,7 +12012,7 @@ snapshots:
       express: 5.2.1(supports-color@8.1.1)
       express-rate-limit: 8.5.2(express@5.2.1(supports-color@8.1.1))
       hono: 4.13.1
-      jose: 6.2.3
+      jose: 6.2.8
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
@@ -12600,10 +12462,10 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
-  '@prefecthq/fastmcp-ts@0.0.2-alpha.0(@cfworker/json-schema@4.1.1)(@google/genai@2.10.0(@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1))(openai@6.45.0(@smithy/signature-v4@5.6.4)(ws@8.21.0)(zod@4.4.3))(supports-color@8.1.1)(zod@4.4.3)':
+  '@prefecthq/fastmcp-ts@0.0.2-alpha.0(@cfworker/json-schema@4.1.1)(@google/genai@2.10.0(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1))(openai@6.45.0(@smithy/signature-v4@5.6.4)(ws@8.21.0)(zod@4.4.3))(supports-color@8.1.1)(zod@4.4.3)':
     dependencies:
       '@clack/prompts': 1.6.0
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
+      '@modelcontextprotocol/sdk': 1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3)
       '@standard-schema/spec': 1.1.0
       '@types/express': 5.0.6
       chalk: 5.6.2
@@ -12617,7 +12479,7 @@ snapshots:
       url-template: 3.1.1
       yaml: 2.9.0
     optionalDependencies:
-      '@google/genai': 2.10.0(@modelcontextprotocol/sdk@1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1)
+      '@google/genai': 2.10.0(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@4.4.3))(supports-color@8.1.1)
       openai: 6.45.0(@smithy/signature-v4@5.6.4)(ws@8.21.0)(zod@4.4.3)
     transitivePeerDependencies:
       - '@cfworker/json-schema'
@@ -14045,7 +13907,7 @@ snapshots:
 
   '@vygruppen/spor-mcp-server@2.1.13(@cfworker/json-schema@4.1.1)(@emotion/is-prop-valid@1.4.0)(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(typescript@6.0.3)':
     dependencies:
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
+      '@modelcontextprotocol/sdk': 1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
       '@sanity/client': 7.23.0
       '@vygruppen/spor-design-tokens': 5.0.5
       '@vygruppen/spor-react': 13.4.3(@emotion/is-prop-valid@1.4.0)(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(supports-color@8.1.1)(typescript@6.0.3)
@@ -17254,7 +17116,7 @@ snapshots:
   fastmcp-ts@0.1.2(@cfworker/json-schema@4.1.1)(supports-color@8.1.1):
     dependencies:
       '@microsoft/tsdoc': 0.15.1
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
+      '@modelcontextprotocol/sdk': 1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
       reflect-metadata: 0.2.2
       zod: 3.25.76
     transitivePeerDependencies:
@@ -19447,7 +19309,7 @@ snapshots:
 
   pagespeed-mcp-server@2.0.1(@cfworker/json-schema@4.1.1)(@noble/hashes@1.8.0)(supports-color@8.1.1):
     dependencies:
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
+      '@modelcontextprotocol/sdk': 1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
       cheerio: 1.2.0(@noble/hashes@1.8.0)
       node-fetch: 3.3.2
       zod: 3.25.76
@@ -20563,7 +20425,7 @@ snapshots:
       '@babel/plugin-transform-typescript': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
       '@babel/preset-typescript': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
       '@dotenvx/dotenvx': 1.75.1
-      '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
+      '@modelcontextprotocol/sdk': 1.30.0(@cfworker/json-schema@4.1.1)(supports-color@8.1.1)(zod@3.25.76)
       '@types/validate-npm-package-name': 4.0.2
       browserslist: 4.28.2
       commander: 14.0.3

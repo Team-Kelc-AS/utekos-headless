@@ -1,7 +1,6 @@
 'use server'
 
-import { gateway, generateText, Output, wrapLanguageModel } from 'ai'
-import { devToolsMiddleware } from '@ai-sdk/devtools'
+import { gateway, generateText, Output } from 'ai'
 import { unstable_cache } from 'next/cache'
 import {
   NBCC_AI_MODEL,
@@ -19,16 +18,8 @@ async function generateWithModel(
   intent: NbccAiSummaryIntent,
   modelId: string
 ): Promise<NbccAiSummaryPayload> {
-  const model =
-    process.env.NODE_ENV === 'development' ?
-      wrapLanguageModel({
-        model: gateway(modelId),
-        middleware: devToolsMiddleware()
-      })
-    : gateway(modelId)
-
   const { output } = await generateText({
-    model,
+    model: gateway(modelId),
     output: Output.object({ schema: NbccAiSummarySchema }),
     prompt: buildNbccPrompt(intent),
     temperature: 0.25,
