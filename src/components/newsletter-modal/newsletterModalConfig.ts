@@ -11,9 +11,10 @@ export const NEWSLETTER_MODAL_SUPPRESSION_MS =
   30 * 24 * 60 * 60 * 1000
 
 const EXCLUDED_NEWSLETTER_MODAL_PATHS = [
+  '/comfyrobe',
   '/design',
   '/personvern',
-  '/produkter/utekos-dun',
+  '/produkter',
   '/skreddersy-varmen'
 ] as const
 
