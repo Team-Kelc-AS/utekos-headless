@@ -147,7 +147,7 @@ test('promotes only to the canonical ledger and Google outbox after the cutover'
   )
   assert.equal(
     accepted.sourceEvidence?.source_api_version,
-    '2026-07'
+    '2026-04'
   )
   assert.doesNotThrow(() =>
     canonicalEventSourceEvidenceSchema.parse(

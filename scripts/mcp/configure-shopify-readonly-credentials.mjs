@@ -52,7 +52,7 @@ let output = fs.existsSync(targetPath) ? fs.readFileSync(targetPath, 'utf8') : '
 output = upsert(output, 'SHOPIFY_CHATGPT_STORE_DOMAIN', storeDomain)
 output = upsert(output, 'SHOPIFY_CHATGPT_CLIENT_ID', clientId)
 output = upsert(output, 'SHOPIFY_CHATGPT_CLIENT_SECRET', clientSecret)
-output = upsert(output, 'SHOPIFY_CHATGPT_API_VERSION', '2026-07')
+output = upsert(output, 'SHOPIFY_CHATGPT_API_VERSION', '2026-04')
 
 const temporaryPath = `${targetPath}.tmp`
 fs.writeFileSync(temporaryPath, output, { mode: 0o600 })

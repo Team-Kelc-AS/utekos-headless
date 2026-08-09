@@ -434,7 +434,7 @@ Dashboard app in `.env.mcp.local`:
 SHOPIFY_CHATGPT_STORE_DOMAIN=your-store.myshopify.com
 SHOPIFY_CHATGPT_CLIENT_ID=
 SHOPIFY_CHATGPT_CLIENT_SECRET=
-SHOPIFY_CHATGPT_API_VERSION=2026-07
+SHOPIFY_CHATGPT_API_VERSION=2026-04
 ```
 
 Request only `read_orders`, `read_all_orders`, and

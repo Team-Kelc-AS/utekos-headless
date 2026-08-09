@@ -1,4 +1,4 @@
-const SHOPIFY_ADMIN_API_VERSION = '2026-07'
+const SHOPIFY_ADMIN_API_VERSION = '2026-04'
 
 type ShopifyAdminEnvironment = Readonly<
   Record<string, string | undefined>

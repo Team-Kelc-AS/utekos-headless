@@ -1,5 +1,5 @@
 // Path: src/db/config/shopify.config.ts
-export const SHOPIFY_STOREFRONT_API_VERSION = '2026-07'
+export const SHOPIFY_STOREFRONT_API_VERSION = '2026-04'
 
 export type ShopifyStorefrontEnvironment = Readonly<{
   [key: string]: string | undefined

@@ -777,7 +777,7 @@ test('accept mode passes provider-neutral reconciliation evidence for purchases 
     source_topic: 'orders/paid',
     source_delivery_id: null,
     source_event_id: null,
-    source_api_version: '2026-07',
+    source_api_version: '2026-04',
     source_triggered_at: '2026-07-01T10:00:00.000Z',
     source_observed_at: '2026-07-01T12:00:00.000Z'
   })
@@ -790,7 +790,7 @@ test('accept mode passes provider-neutral reconciliation evidence for purchases 
     source_topic: 'refunds/create',
     source_delivery_id: null,
     source_event_id: null,
-    source_api_version: '2026-07',
+    source_api_version: '2026-04',
     source_triggered_at: '2026-07-01T11:00:00.000Z',
     source_observed_at: '2026-07-01T12:00:00.000Z'
   })

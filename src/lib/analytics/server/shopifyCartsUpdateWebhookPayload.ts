@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 /**
  * Shopify Admin REST webhook payload for topic `carts/update`
- * (API version 2026-07). Official sample:
- * https://shopify.dev/docs/api/admin-rest/2026-07/resources/webhook
+ * (API version 2026-04). Official sample:
+ * https://shopify.dev/docs/api/admin-rest/2026-04/resources/webhook
  *
  * Snapshot-only: the payload is the cart *after* the update, not a
  * line-item diff. Removals require a prior snapshot.
@@ -90,5 +90,5 @@ export type ShopifyCartsUpdateLineItem = z.infer<
   typeof shopifyCartLineItemSchema
 >
 
-export const SHOPIFY_CARTS_UPDATE_API_VERSION = '2026-07' as const
+export const SHOPIFY_CARTS_UPDATE_API_VERSION = '2026-04' as const
 export const SHOPIFY_CARTS_UPDATE_TOPIC = 'carts/update' as const

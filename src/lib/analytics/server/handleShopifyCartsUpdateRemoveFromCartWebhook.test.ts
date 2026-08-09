@@ -85,7 +85,7 @@ function createRequest(body: string, hmac = 'valid-hmac') {
     {
       method: 'POST',
       headers: {
-        'x-shopify-api-version': '2026-07',
+        'x-shopify-api-version': '2026-04',
         'x-shopify-event-id': 'cart-event-1',
         'x-shopify-hmac-sha256': hmac,
         'x-shopify-topic': 'carts/update',
@@ -192,7 +192,7 @@ test('quantity decrease accepts remove_from_cart', async () => {
           source_topic: 'carts/update',
           source_delivery_id: 'cart-delivery-1',
           source_event_id: 'cart-event-1',
-          source_api_version: '2026-07',
+          source_api_version: '2026-04',
           source_triggered_at: UPDATED_AT,
           source_observed_at: UPDATED_AT
         }),

@@ -62,7 +62,7 @@ const SOURCE_EVIDENCE = {
   source_topic: 'orders/paid',
   source_delivery_id: 'order-delivery-1',
   source_event_id: 'order-event-1',
-  source_api_version: '2026-07',
+  source_api_version: '2026-04',
   source_triggered_at: '2026-07-21T20:00:00.000Z',
   source_observed_at: '2026-07-21T20:00:01.000Z'
 }

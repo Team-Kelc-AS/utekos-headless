@@ -48,7 +48,7 @@ function createGateway() {
       storeDomain: 'example.myshopify.com',
       publicStorefrontToken: 'public-test-token',
       privateStorefrontToken: 'private-test-token',
-      storefrontApiVersion: '2026-07'
+      storefrontApiVersion: '2026-04'
     },
     { fetch: fetchImpl }
   )
@@ -127,7 +127,7 @@ test('buyer calls use the public compatibility path when private auth is unavail
     {
       storeDomain: 'example.myshopify.com',
       publicStorefrontToken: 'public-test-token',
-      storefrontApiVersion: '2026-07'
+      storefrontApiVersion: '2026-04'
     },
     {
       fetch: async (_input, init) => {
@@ -160,7 +160,7 @@ test('mutation uses the public compatibility path when private auth is unavailab
     {
       storeDomain: 'example.myshopify.com',
       publicStorefrontToken: 'public-test-token',
-      storefrontApiVersion: '2026-07'
+      storefrontApiVersion: '2026-04'
     },
     {
       fetch: async (_input, init) => {
@@ -194,7 +194,7 @@ test('mutation retries with public auth when Shopify rejects the configured priv
       storeDomain: 'example.myshopify.com',
       publicStorefrontToken: 'public-test-token',
       privateStorefrontToken: 'rejected-private-token',
-      storefrontApiVersion: '2026-07'
+      storefrontApiVersion: '2026-04'
     },
     {
       fetch: async (_input, init) => {
