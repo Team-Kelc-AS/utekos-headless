@@ -3,6 +3,7 @@
 
 import Image from 'next/image'
 import Fade from 'embla-carousel-fade'
+import TechDownFlowerMobileImage from '@/assets/images/techdown/TechDown-Flower-1080x1350.webp'
 import { cn } from '@/lib/utils/className'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import {
@@ -49,23 +50,46 @@ export function LandingPageProductCarouselPurchaseSection({
         className='relative w-full min-[900px]:max-w-xl'
       >
         <CarouselContent className='ml-0'>
-          {currentConfig.images.map((src, i) => (
-            <CarouselItem
-              key={src}
-              className='relative aspect-4/5 pl-0'
-            >
-              <div className='dark:min-[900px]:ring-dark-background/10 relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10'>
-                <Image
-                  src={src}
-                  alt={`${currentConfig.title} – bilde ${i + 1}`}
-                  fill
-                  className='object-cover'
-                  sizes='(max-width: 900px) 100vw, 40vw'
-                  priority={i === 0}
-                />
-              </div>
-            </CarouselItem>
-          ))}
+          {currentConfig.images.map((src, i) => {
+            const isTechDownFirstImage =
+              selectedModel === 'utekos-techdown' && i === 0
+
+            return (
+              <CarouselItem
+                key={src}
+                className='relative aspect-4/5 pl-0'
+              >
+                <div className='dark:min-[900px]:ring-dark-background/10 relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10'>
+                  {isTechDownFirstImage ?
+                    <>
+                      <Image
+                        src={TechDownFlowerMobileImage}
+                        alt={`${currentConfig.title} – bilde ${i + 1}`}
+                        fill
+                        className='object-cover min-[900px]:hidden'
+                        sizes='(max-width: 899px) 100vw, 0px'
+                      />
+                      <Image
+                        src={src}
+                        alt={`${currentConfig.title} – bilde ${i + 1}`}
+                        fill
+                        className='hidden object-cover min-[900px]:block'
+                        sizes='(max-width: 899px) 0px, 40vw'
+                      />
+                    </>
+                  : <Image
+                      src={src}
+                      alt={`${currentConfig.title} – bilde ${i + 1}`}
+                      fill
+                      className='object-cover'
+                      sizes='(max-width: 900px) 100vw, 40vw'
+                      priority={i === 0}
+                    />
+                  }
+                </div>
+              </CarouselItem>
+            )
+          })}
         </CarouselContent>
 
         {currentConfig.images.length > 1 && (
