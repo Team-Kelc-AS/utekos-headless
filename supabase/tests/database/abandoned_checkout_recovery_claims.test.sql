@@ -2,7 +2,7 @@ begin;
 
 do $test$
 declare
-  v_now timestamptz := '2026-08-09T09:00:00Z';
+  v_now timestamptz := statement_timestamp() + interval '1 second';
   v_claim record;
   v_reclaimed record;
   v_retry_status text;

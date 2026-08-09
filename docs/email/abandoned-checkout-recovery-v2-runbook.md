@@ -12,6 +12,17 @@
 
 ## Local gates
 
+Run the no-send design sequence before any provider activation:
+
+```bash
+pnpm email:recovery:preview
+```
+
+This renders the three design frames at 0, 15 and 30 seconds in both generic
+and STAYCOMFY variants. It writes only local HTML artifacts, has no delivery
+dependency and cannot call Resend or mutate recovery dispatch state.
+Production timing remains +1, +7 and +24 hours.
+
 ```bash
 source "$HOME/.nvm/nvm.sh" && nvm use --silent
 corepack pnpm exec tsx --test src/lib/email/abandonedCheckoutRecovery/*.test.ts src/components/emails/*.test.tsx src/app/api/webhooks/resend/route.test.ts
