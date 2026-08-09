@@ -10,7 +10,10 @@ import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-import { isNewsletterModalExcludedPath } from '@/components/newsletter-modal/newsletterModalConfig'
+import {
+  NEWSLETTER_MODAL_ENABLED,
+  isNewsletterModalExcludedPath
+} from '@/components/newsletter-modal/newsletterModalConfig'
 
 import { NavigationProgress } from './NavigationProgress'
 
@@ -106,6 +109,7 @@ export function SiteChrome({
   }
 
   const showNewsletterModal =
+    NEWSLETTER_MODAL_ENABLED &&
     !isNewsletterModalExcludedPath(pathname)
 
   return (

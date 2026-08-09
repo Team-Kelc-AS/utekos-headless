@@ -1,7 +1,14 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { isNewsletterModalExcludedPath } from './newsletterModalConfig'
+import {
+  NEWSLETTER_MODAL_ENABLED,
+  isNewsletterModalExcludedPath
+} from './newsletterModalConfig'
+
+test('keeps the newsletter modal paused', () => {
+  assert.equal(NEWSLETTER_MODAL_ENABLED, false)
+})
 
 test('excludes privacy routes from the newsletter modal', () => {
   assert.equal(isNewsletterModalExcludedPath('/personvern'), true)
@@ -26,7 +33,7 @@ test('excludes product and campaign routes from the newsletter modal', () => {
   assert.equal(isNewsletterModalExcludedPath('/comfyrobe/variant'), true)
 })
 
-test('keeps the newsletter modal enabled on eligible routes', () => {
+test('keeps eligible routes available for a future resume', () => {
   assert.equal(isNewsletterModalExcludedPath('/'), false)
   assert.equal(isNewsletterModalExcludedPath('/magasinet'), false)
   assert.equal(isNewsletterModalExcludedPath(null), false)
