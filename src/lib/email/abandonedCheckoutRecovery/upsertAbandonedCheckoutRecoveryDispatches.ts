@@ -16,44 +16,6 @@ import {
   type AbandonedCheckoutRecoveryDispatchPlan
 } from './abandonedCheckoutRecovery'
 
-/**
- * database.types.ts is generated from the database.
- *
- * During this step the recovery RPC can exist in a migration
- * before the generated file has been refreshed against a
- * database containing that migration.
- *
- * Extend only that exact migration contract here.
- *
- * Once generated Database contains the RPC as well, this
- * intersection remains compatible and can later be removed
- * without changing runtime behaviour.
- */
-type AbandonedCheckoutRecoveryDatabase =
-  Omit<
-    Database,
-    'ops'
-  >
-  & {
-    ops:
-      Omit<
-        Database['ops'],
-        'Functions'
-      >
-      & {
-        Functions:
-          Database['ops']['Functions']
-          & {
-            upsert_abandoned_checkout_recovery_dispatches: {
-              Args: {
-                p_rows: Json
-              }
-              Returns: number
-            }
-          }
-      }
-  }
-
 const AffectedCountSchema =
   z.union([
     z
@@ -187,7 +149,7 @@ async function executeDefaultUpsertRpc(
 ): Promise<UpsertRpcResult> {
   const adminClient =
     createSupabaseAdminClient<
-      AbandonedCheckoutRecoveryDatabase
+      Database
     >()
 
   const {

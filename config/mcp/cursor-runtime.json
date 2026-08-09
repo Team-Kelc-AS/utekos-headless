@@ -5,6 +5,7 @@
   "includedLocalServers": {
     "facebook-ads": "Meta Ads MCP requires a USER token with ads_mcp_management. Cursor OAuth loopback is unreliable against Meta's localhost→127.0.0.1 rewrite, so this uses mcp-remote + META_APP_USER_TOKEN via run-server.",
     "data-manager-mcp": "No official hosted Google Data Manager MCP exists. Lean local read-only diagnostics for request status and auth.",
+    "trends-mcp": "Read-only local stdio surface for the TrendsMCP REST API. The wrapper keeps the API key out of generated client files and exposes only the three documented query tools.",
     "utekos-microsoft-ads": "Read-only Microsoft Advertising operator MCP. Uses the existing repo-local Microsoft Ads configuration and is explicitly allowlisted for Cursor runtime startup."
   }
 }

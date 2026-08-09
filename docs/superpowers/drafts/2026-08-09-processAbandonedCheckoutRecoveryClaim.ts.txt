@@ -1,0 +1,299 @@
+processAbandonedCheckoutRecoveryClaim.ts
+
+
+import { z } from 'zod'
+
+import {
+  getAbandonedCheckoutRecoveryResendIdempotencyKey
+} from './abandonedCheckoutRecovery'
+import type {
+  AbandonedCheckoutRecoveryDeliveryPort,
+  ClaimedAbandonedCheckoutRecoveryDispatch
+} from './abandonedCheckoutRecoveryDispatch'
+import type {
+  AbandonedCheckoutRecoveryPreSendSuppressionReason,
+  AuthorizeAbandonedCheckoutRecoverySendResult
+} from './authorizeAbandonedCheckoutRecoverySend'
+import {
+  revalidateAbandonedCheckoutBeforeSend
+} from './revalidateAbandonedCheckoutBeforeSend'
+import {
+  completeAbandonedCheckoutRecoveryDispatch,
+  renewAbandonedCheckoutRecoveryDispatchLease,
+  retryAbandonedCheckoutRecoveryDispatch,
+  suppressAbandonedCheckoutRecoveryDispatch
+} from './transitionAbandonedCheckoutRecoveryDispatch'
+
+type RenewLeaseInput = {
+  dispatchId: string
+  workerId: string
+  leaseSeconds: number
+  now: Date
+}
+
+type SuppressInput = {
+  dispatchId: string
+  workerId: string
+  suppressionReason:
+    AbandonedCheckoutRecoveryPreSendSuppressionReason
+  now: Date
+}
+
+type CompleteInput = {
+  dispatchId: string
+  workerId: string
+  resendEmailId: string
+  now: Date
+}
+
+type RetryInput = {
+  dispatchId: string
+  workerId: string
+  errorCode: AbandonedCheckoutRecoveryWorkerErrorCode
+  retryAt: Date
+  maxAttempts: number
+  now: Date
+}
+
+export type AbandonedCheckoutRecoveryWorkerErrorCode =
+  | 'shopify_revalidation_failed'
+  | 'resend_provider_rejected'
+
+export type ProcessAbandonedCheckoutRecoveryClaimInput = {
+  claim: ClaimedAbandonedCheckoutRecoveryDispatch
+  workerId: string
+  leaseSeconds?: number
+  retryDelayMs?: number
+  maxAttempts?: number
+}
+
+export type ProcessAbandonedCheckoutRecoveryClaimResult =
+  | {
+      status: 'suppressed'
+      suppressionReason:
+        AbandonedCheckoutRecoveryPreSendSuppressionReason
+    }
+  | {
+      status: 'ownership_lost'
+    }
+  | {
+      status: 'sent'
+    }
+  | {
+      status: 'retry_scheduled' | 'failed'
+      errorCode: AbandonedCheckoutRecoveryWorkerErrorCode
+    }
+
+export type ProcessAbandonedCheckoutRecoveryClaimDependencies = {
+  deliverAuthorizedEmail: AbandonedCheckoutRecoveryDeliveryPort
+  revalidate?: (
+    claim: ClaimedAbandonedCheckoutRecoveryDispatch
+  ) => Promise<AuthorizeAbandonedCheckoutRecoverySendResult>
+  renewLease?: (
+    input: RenewLeaseInput
+  ) => Promise<boolean>
+  suppress?: (
+    input: SuppressInput
+  ) => Promise<boolean>
+  complete?: (
+    input: CompleteInput
+  ) => Promise<boolean>
+  retry?: (
+    input: RetryInput
+  ) => Promise<'pending' | 'failed' | null>
+  now?: () => Date
+}
+
+const processConfigSchema = z.strictObject({
+  workerId: z
+    .string()
+    .regex(/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/),
+  leaseSeconds: z.number().int().min(30).max(900),
+  retryDelayMs: z.number().int().min(1000).max(86_400_000),
+  maxAttempts: z.number().int().min(1).max(20)
+})
+
+const deliveryResultSchema = z.discriminatedUnion('ok', [
+  z.strictObject({
+    ok: z.literal(true),
+    resendEmailId: z
+      .string()
+      .regex(/^[A-Za-z0-9][A-Za-z0-9_-]{0,254}$/)
+  }),
+  z.strictObject({
+    ok: z.literal(false)
+  })
+])
+
+function getValidNow(
+  getNow: () => Date
+): Date {
+  const now = getNow()
+
+  if (!Number.isFinite(now.getTime())) {
+    throw new Error(
+      'abandoned_checkout_recovery_processor_now_invalid'
+    )
+  }
+
+  return now
+}
+
+export async function processAbandonedCheckoutRecoveryClaim(
+  input: ProcessAbandonedCheckoutRecoveryClaimInput,
+  dependencies:
+    ProcessAbandonedCheckoutRecoveryClaimDependencies
+): Promise<ProcessAbandonedCheckoutRecoveryClaimResult> {
+  const configResult = processConfigSchema.safeParse({
+    workerId: input.workerId,
+    leaseSeconds: input.leaseSeconds ?? 120,
+    retryDelayMs: input.retryDelayMs ?? 5 * 60 * 1000,
+    maxAttempts: input.maxAttempts ?? 3
+  })
+
+  if (!configResult.success) {
+    throw new Error(
+      'abandoned_checkout_recovery_processor_input_invalid'
+    )
+  }
+
+  const config = configResult.data
+  const revalidate =
+    dependencies.revalidate
+    ?? revalidateAbandonedCheckoutBeforeSend
+  const renewLease =
+    dependencies.renewLease
+    ?? renewAbandonedCheckoutRecoveryDispatchLease
+  const suppress =
+    dependencies.suppress
+    ?? suppressAbandonedCheckoutRecoveryDispatch
+  const complete =
+    dependencies.complete
+    ?? completeAbandonedCheckoutRecoveryDispatch
+  const retry =
+    dependencies.retry
+    ?? retryAbandonedCheckoutRecoveryDispatch
+  const getNow = dependencies.now ?? (() => new Date())
+
+  const transitionFailure = async (
+    errorCode: AbandonedCheckoutRecoveryWorkerErrorCode
+  ): Promise<ProcessAbandonedCheckoutRecoveryClaimResult> => {
+    const now = getValidNow(getNow)
+    const retryStatus = await retry({
+      dispatchId: input.claim.dispatchId,
+      workerId: config.workerId,
+      errorCode,
+      retryAt: new Date(
+        now.getTime() + config.retryDelayMs
+      ),
+      maxAttempts: config.maxAttempts,
+      now
+    })
+
+    if (retryStatus === null) {
+      return { status: 'ownership_lost' }
+    }
+
+    return retryStatus === 'pending'
+      ? {
+          status: 'retry_scheduled',
+          errorCode
+        }
+      : {
+          status: 'failed',
+          errorCode
+        }
+  }
+
+  let authorization:
+    AuthorizeAbandonedCheckoutRecoverySendResult
+
+  try {
+    authorization = await revalidate(input.claim)
+  } catch {
+    return transitionFailure(
+      'shopify_revalidation_failed'
+    )
+  }
+
+  if (!authorization.authorized) {
+    const transitioned = await suppress({
+      dispatchId: input.claim.dispatchId,
+      workerId: config.workerId,
+      suppressionReason:
+        authorization.suppressionReason,
+      now: getValidNow(getNow)
+    })
+
+    return transitioned
+      ? {
+          status: 'suppressed',
+          suppressionReason:
+            authorization.suppressionReason
+        }
+      : {
+          status: 'ownership_lost'
+        }
+  }
+
+  const renewed = await renewLease({
+    dispatchId: input.claim.dispatchId,
+    workerId: config.workerId,
+    leaseSeconds: config.leaseSeconds,
+    now: getValidNow(getNow)
+  })
+
+  if (!renewed) {
+    return { status: 'ownership_lost' }
+  }
+
+  let deliveryResult:
+    z.infer<typeof deliveryResultSchema>
+
+  try {
+    const rawDeliveryResult =
+      await dependencies.deliverAuthorizedEmail({
+        to: authorization.to,
+        recoveryUrl: authorization.recoveryUrl,
+        idempotencyKey:
+          getAbandonedCheckoutRecoveryResendIdempotencyKey({
+            shopifyAbandonedCheckoutId:
+              input.claim.shopifyAbandonedCheckoutId,
+            sequenceVersion:
+              input.claim.sequenceVersion,
+            step: input.claim.step
+          })
+      })
+    const parsedDeliveryResult =
+      deliveryResultSchema.safeParse(rawDeliveryResult)
+
+    if (!parsedDeliveryResult.success) {
+      return transitionFailure(
+        'resend_provider_rejected'
+      )
+    }
+
+    deliveryResult = parsedDeliveryResult.data
+  } catch {
+    return transitionFailure(
+      'resend_provider_rejected'
+    )
+  }
+
+  if (!deliveryResult.ok) {
+    return transitionFailure(
+      'resend_provider_rejected'
+    )
+  }
+
+  const completed = await complete({
+    dispatchId: input.claim.dispatchId,
+    workerId: config.workerId,
+    resendEmailId: deliveryResult.resendEmailId,
+    now: getValidNow(getNow)
+  })
+
+  return completed
+    ? { status: 'sent' }
+    : { status: 'ownership_lost' }
+}

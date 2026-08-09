@@ -52,7 +52,7 @@ export function ProductGallery({
               }
               fill
               sizes='(min-width: 1280px) 58vw, (min-width: 1024px) 54vw, 100vw'
-              quality={90}
+              quality={95}
               className={cn(
                 'pointer-events-none object-cover object-top select-none',
                 imageClassName

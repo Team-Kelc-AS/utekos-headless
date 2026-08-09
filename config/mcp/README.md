@@ -59,6 +59,40 @@ credential auth or a quota-project header to this server.
 Context7 is an optional documentation fallback and may be
 supplied by the installed connector instead of a local API key.
 
+## TrendsMCP
+
+`trends-mcp` is a local read-only stdio wrapper around the
+documented TrendsMCP REST endpoint. It exposes exactly:
+
+- `get_trends`
+- `get_growth`
+- `get_top_trends`
+
+Store the API key as `TRENDS_MCP_API_KEY` in `.env.mcp.local`.
+The generated client files start `scripts/mcp/run-server.mjs`,
+which resolves the key only at process startup; the key must not
+appear in generated JSON.
+
+Run the quota-free contract doctor with:
+
+```bash
+npm run mcp:trends:doctor
+```
+
+The optional live doctor consumes one TrendsMCP request and must
+be invoked deliberately:
+
+```bash
+npm run mcp:trends:doctor:live
+```
+
+The provider documentation shows a direct JSON response. The live
+API currently wraps that JSON in `statusCode` plus a stringified
+`body`; the local server validates and unwraps either form before
+validating the documented operation payload.
+
+Provider reference: <https://www.trendsmcp.ai/docs.md>.
+
 ## Shadcn Access
 
 Use two complementary MCP surfaces for local clients, and one

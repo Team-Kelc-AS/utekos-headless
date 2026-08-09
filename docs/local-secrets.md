@@ -71,20 +71,28 @@ without removing them from the full catalog.
   copy cached tokens into repository files.
 - Meta token roles:
   - `META_ACCESS_TOKEN` — Pixel CAPI (app runtime `/events`)
-  - `META_SYSTEM_USER_TOKEN` — System User reads / dataset quality
+  - `META_SYSTEM_USER_TOKEN` — System User reads / dataset
+    quality
   - `META_APP_USER_TOKEN` — USER token with `ads_mcp_management`
     for the official Ads MCP
 - `facebook-ads` uses `mcp-remote` +
-  `Authorization: Bearer ${META_APP_USER_TOKEN}` via `run-server.mjs`.
-  Cursor OAuth against Meta is unreliable because Meta's DCR
-  rewrites `localhost` → `127.0.0.1` while Cursor listens on
-  `http://localhost:8787/callback`.
+  `Authorization: Bearer ${META_APP_USER_TOKEN}` via
+  `run-server.mjs`. Cursor OAuth against Meta is unreliable
+  because Meta's DCR rewrites `localhost` → `127.0.0.1` while
+  Cursor listens on `http://localhost:8787/callback`.
 - `meta-developer-tools` keeps Cursor OAuth with static
-  `META_DEVTOOLS_MCP_CLIENT_ID` (Meta's public Cursor client).
-  A System User token cannot authorize `/devtools`.
+  `META_DEVTOOLS_MCP_CLIENT_ID` (Meta's public Cursor client). A
+  System User token cannot authorize `/devtools`.
 - There is no official hosted Google Data Manager MCP. The local
   `data-manager-mcp` server provides read-only diagnostics and is
   explicitly allowlisted in `config/mcp/cursor-runtime.json`.
+- `trends-mcp` uses the local `scripts/mcp/trendsmcp.js` stdio
+  wrapper so `TRENDS_MCP_API_KEY` is resolved only when the
+  process starts. The wrapper exposes the provider's three
+  documented read-only tools and never writes the key to
+  generated client files. Each live tool call consumes TrendsMCP
+  quota; `npm run mcp:trends:doctor` performs discovery without a
+  live API request.
 - A successful build proves configuration generation only.
   Restart the client and run a safe read tool before reporting a
   provider MCP as usable.

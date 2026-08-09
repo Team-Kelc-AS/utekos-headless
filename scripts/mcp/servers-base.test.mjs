@@ -154,3 +154,26 @@ test('uses the official privacy-reduced MDN remote MCP', () => {
   )
   assert.deepEqual(servers.mdn.autoApprove, [])
 })
+
+test('keeps TrendsMCP read-only and resolves its API key at runtime', () => {
+  const trends = servers['trends-mcp']
+
+  assert.equal(trends.type, 'stdio')
+  assert.equal(trends.command, 'node')
+  assert.deepEqual(trends.args, ['scripts/mcp/trendsmcp.js'])
+  assert.deepEqual(trends.env, {
+    TRENDS_MCP_API_KEY: '${TRENDS_MCP_API_KEY}'
+  })
+  assert.deepEqual(trends.tools, [
+    'get_trends',
+    'get_growth',
+    'get_top_trends'
+  ])
+  assert.deepEqual(trends.autoApprove, [])
+  assert.deepEqual(
+    manifest.optionalEnv.TRENDS_MCP_API_KEY?.servers,
+    ['trends-mcp']
+  )
+  assert.match(envExample, /^TRENDS_MCP_API_KEY=$/m)
+  assert.doesNotMatch(envExample, /^TRENDS_MCP_BEARER_TOKEN=/m)
+})

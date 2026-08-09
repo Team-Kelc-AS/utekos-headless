@@ -1,5 +1,72 @@
 import type { Image } from 'types/media'
 import { productImage } from '@/app/produkter/[handle]/utils/pruductImage'
+import techDownKikkertMobile from '@/assets/images/techdown/TechDown-700x1250.webp'
+import techDownFrontMobile from '@/assets/images/techdown/TechDown-Front-1-700x1250.webp'
+import techDownSideMobile from '@/assets/images/techdown/TechDown-Full-Front-2-700x1250.webp'
+import techDownBackMobile from '@/assets/images/techdown/TechDown-Back-700x1250-2.webp'
+import techDownKystMobile from '@/assets/images/techdown/TechDown-Kyst-700x1250.webp'
+import techDownJacketBackMobile from '@/assets/images/techdown/TechDown-B-700x1250.webp'
+import techDownZipperMobile from '@/assets/images/techdown/TechDown-Zipper-700x1250.webp'
+import techDownFlagMobile from '@/assets/images/techdown/TechDown-Flag-700x1250.webp'
+
+export const TECHDOWN_MOBILE_GALLERY_IMAGES: Image[] = [
+  productImage(
+    'utekos-techdown-mobile-kikkert',
+    techDownKikkertMobile,
+    'Kvinne sitter i stol med Utekos TechDown og ser i kikkert.',
+    700,
+    1250
+  ),
+  productImage(
+    'utekos-techdown-mobile-front',
+    techDownFrontMobile,
+    'Utekos TechDown i marineblå vist rett forfra med hette og fotpose i full lengde.',
+    700,
+    1250
+  ),
+  productImage(
+    'utekos-techdown-mobile-side',
+    techDownSideMobile,
+    'Utekos TechDown vist fra siden i full lengde.',
+    700,
+    1250
+  ),
+  productImage(
+    'utekos-techdown-mobile-bakside',
+    techDownBackMobile,
+    'Utekos TechDown sett bakfra i full lengde.',
+    700,
+    1250
+  ),
+  productImage(
+    'utekos-techdown-mobile-kyst',
+    techDownKystMobile,
+    'Kvinne slapper av i solnedgangen på terrassen ved kysten med Utekos TechDown.',
+    700,
+    1250
+  ),
+  productImage(
+    'utekos-techdown-mobile-jakke-bakside',
+    techDownJacketBackMobile,
+    'Overdelen av Utekos TechDown sett bakfra med hette.',
+    700,
+    1250
+  ),
+  productImage(
+    'utekos-techdown-mobile-glidelas',
+    techDownZipperMobile,
+    'Nærbilde av glidelås med oransje glidelåstrekk og snorstrammere på Utekos TechDown.',
+    700,
+    1250
+  ),
+  productImage(
+    'utekos-techdown-mobile-flagg',
+    techDownFlagMobile,
+    'Nærbilde av brodert norsk flagg på Utekos TechDown.',
+    700,
+    1250
+  )
+]
 
 export const TECHDOWN_PRODUCT_GALLERY_IMAGES: Image[] = [
   productImage(

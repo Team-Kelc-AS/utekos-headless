@@ -675,9 +675,6 @@
         "gnist_fetch"
       ]
     },
-    "apify": {
-      "url": "https://mcp.apify.com/?tools=actors,docs,runs,storage,gettingtechnicl/no-brreg-business-register-api,apify/facebook-pages-scraper,apify/facebook-page-contact-information,silva95gustavo/google-ads-scraper,codebyte/microsoft-ads-library,apify/facebook-groups-scraper,cleansyntax/facebook-profile-posts-scraper,nexgendata/norway-brreg-company-registry,solidcode/proff-no-scraper,stealth_mode/proff-bussiness-search-scraper"
-    },
     "meta-ads": {
       "command": "npx",
       "args": [
@@ -1167,6 +1164,31 @@
         "list_programs"
       ],
       "autoApprove": []
+    },
+    "trends-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "scripts/mcp/trendsmcp.js"
+      ],
+      "env": {
+        "TRENDS_MCP_API_KEY": "${TRENDS_MCP_API_KEY}"
+      },
+      "tools": [
+        "get_trends",
+        "get_growth",
+        "get_top_trends"
+      ],
+      "autoApprove": []
+    },
+    "apify": {
+      "command": "npx",
+      "args": [
+          "mcp-remote",
+          "https://mcp.apify.com/?tools=automationagents/search-google-trends",
+          "--header",
+          "Authorization: Bearer ${APIFY_API_TOKEN}"
+      ]
     },
     "gemini-api-docs-mcp": {
       "url": "https://gemini-api-docs-mcp.dev"

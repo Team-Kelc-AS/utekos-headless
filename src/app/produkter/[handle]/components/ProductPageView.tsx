@@ -37,6 +37,7 @@ import {
   COMFYROBE_MOBILE_SECOND_IMAGE,
   COMFYROBE_MOBILE_THIRD_IMAGE
 } from '../utils/gallery-images/comfyrobeProductGalleryImages'
+import { TECHDOWN_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/techdown/productGalleryImages'
 
 type ProductPageViewProps = {
   productData: ProductPurchaseModel
@@ -106,6 +107,8 @@ export function ProductPageView({
         COMFYROBE_MOBILE_THIRD_IMAGE,
         ...galleryImages.slice(3)
       ]
+    : productData.handle === 'utekos-techdown' ?
+      TECHDOWN_MOBILE_GALLERY_IMAGES
     : galleryImages
 
   const useDesktopGrid = galleryImages.length >= 6
