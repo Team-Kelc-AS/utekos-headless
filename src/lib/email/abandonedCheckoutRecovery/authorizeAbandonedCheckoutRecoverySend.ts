@@ -22,6 +22,7 @@ export type ShopifyAbandonedCheckoutPreSendState = {
   emailState: ShopifyAbandonmentEmailState | null
   inventoryAvailable: boolean
   isMostSignificantAbandonment: boolean
+  staycomfyDiscountActive: boolean
   customer: {
     id: string
     email: {
@@ -37,6 +38,7 @@ export type ShopifyAbandonedCheckoutPreSendState = {
     updatedAt: string
     completedAt: string | null
     recoveryUrl: string
+    containsComfyrobe: boolean
   }
 }
 
@@ -53,7 +55,12 @@ export type AbandonedCheckoutRecoveryPreSendSuppressionReason =
   | 'not_subscribed'
 
 export type AuthorizeAbandonedCheckoutRecoverySendResult =
-  | { authorized: true; to: string; recoveryUrl: string }
+  | {
+      authorized: true
+      to: string
+      recoveryUrl: string
+      offerType: 'generic' | 'staycomfy'
+    }
   | {
       authorized: false
       suppressionReason: AbandonedCheckoutRecoveryPreSendSuppressionReason
@@ -202,6 +209,11 @@ export function authorizeAbandonedCheckoutRecoverySend(input: {
   return {
     authorized: true,
     to: state.customer.email.address,
-    recoveryUrl: state.checkout.recoveryUrl
+    recoveryUrl: state.checkout.recoveryUrl,
+    offerType:
+      state.checkout.containsComfyrobe &&
+      state.staycomfyDiscountActive ?
+        'staycomfy'
+      : 'generic'
   }
 }

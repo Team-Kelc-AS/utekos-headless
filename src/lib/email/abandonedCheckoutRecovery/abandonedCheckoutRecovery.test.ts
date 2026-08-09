@@ -60,7 +60,7 @@ import {
   }
   
   test(
-    'eligible subscribed checkout becomes pending step 1 one hour after creation',
+    'eligible checkout creates the +1, +7 and +24 hour sequence',
     () => {
       const plan =
         buildAbandonedCheckoutRecoveryPlan(
@@ -70,7 +70,7 @@ import {
   
       equal(
         plan.length,
-        1
+        3
       )
   
       deepStrictEqual(
@@ -81,7 +81,7 @@ import {
           shopifyCustomerId:
             'gid://shopify/Customer/10',
           sequenceVersion:
-            1,
+            2,
           step:
             1,
           checkoutCreatedAt:
@@ -99,6 +99,33 @@ import {
           suppressedAt:
             null
         }
+      )
+
+      deepStrictEqual(
+        plan.map(row => ({ step: row.step, dueAt: row.dueAt })),
+        [
+          { step: 1, dueAt: '2026-08-08T06:00:00.000Z' },
+          { step: 2, dueAt: '2026-08-08T12:00:00.000Z' },
+          { step: 3, dueAt: '2026-08-09T05:00:00.000Z' }
+        ]
+      )
+    }
+  )
+
+  test(
+    'checkout created before activation is suppressed without backfill',
+    () => {
+      const rows = buildAbandonedCheckoutRecoveryPlan(
+        [checkout()],
+        NOW,
+        new Date('2026-08-08T05:00:00.001Z')
+      )
+
+      equal(rows.length, 3)
+      equal(rows.every(row => row.status === 'suppressed'), true)
+      equal(
+        rows.every(row => row.suppressionReason === 'before_activation'),
+        true
       )
     }
   )
@@ -439,7 +466,7 @@ import {
   
       equal(
         first,
-        'abandoned-checkout:gid://shopify/AbandonedCheckout/100:v1:step-1'
+        'abandoned-checkout:gid://shopify/AbandonedCheckout/100:v2:step-1'
       )
   
       equal(

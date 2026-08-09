@@ -19,10 +19,24 @@ const defaultDependencies: RevalidateAbandonedCheckoutBeforeSendDependencies =
     fetchState: abandonedCheckoutId =>
       fetchShopifyAbandonedCheckoutPreSendState({
         abandonedCheckoutId,
+        comfyrobeProductId:
+          requireComfyrobeProductId(),
         executeAdminGraphql: ({ query, variables }) =>
           shopifyAdminGraphql<unknown>(query, variables)
       })
   }
+
+function requireComfyrobeProductId(): string {
+  const productId = process.env.STAYCOMFY_COMFYROBE_PRODUCT_ID
+
+  if (!productId?.startsWith('gid://shopify/Product/')) {
+    throw new Error(
+      'abandoned_checkout_recovery_comfyrobe_product_id_invalid'
+    )
+  }
+
+  return productId
+}
 
 export async function revalidateAbandonedCheckoutBeforeSend(
   claim: AbandonedCheckoutRecoveryPreSendClaim,

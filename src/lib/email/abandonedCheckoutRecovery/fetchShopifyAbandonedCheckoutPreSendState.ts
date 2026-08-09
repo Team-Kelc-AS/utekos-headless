@@ -36,17 +36,45 @@ const AbandonmentSchema = z.object({
     updatedAt: z.string().min(1),
     completedAt: z.string().min(1).nullable(),
     abandonedCheckoutUrl: z.string().min(1),
-    customer: z.object({ id: z.string().min(1) }).nullable()
+    customer: z.object({ id: z.string().min(1) }).nullable(),
+    lineItems: z.object({
+      nodes: z.array(
+        z.object({
+          product: z.object({ id: z.string().min(1) }).nullable()
+        })
+      ),
+      pageInfo: z.object({ hasNextPage: z.boolean() })
+    })
   })
 })
 
+const DiscountSchema = z.object({
+  codeDiscount: z.object({
+    __typename: z.string(),
+    status: z.enum(['ACTIVE', 'EXPIRED', 'SCHEDULED']).optional(),
+    discountClasses: z
+      .array(z.enum(['ORDER', 'PRODUCT', 'SHIPPING']))
+      .optional(),
+    appliesOncePerCustomer: z.boolean().optional(),
+    appliesOnOneTimePurchase: z.boolean().optional(),
+    appliesOnSubscription: z.boolean().optional(),
+    combinesWith: z.object({
+      orderDiscounts: z.boolean(),
+      productDiscounts: z.boolean(),
+      shippingDiscounts: z.boolean()
+    }).optional()
+  }).nullable()
+}).nullable()
+
 const ResponseSchema = z.object({
-  abandonmentByAbandonedCheckoutId: AbandonmentSchema.nullable()
+  abandonmentByAbandonedCheckoutId: AbandonmentSchema.nullable(),
+  codeDiscountNodeByCode: DiscountSchema
 })
 
 export const SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY = `#graphql
   query AbandonedCheckoutRecoveryPreSend(
     $abandonedCheckoutId: ID!
+    $discountCode: String!
   ) {
     abandonmentByAbandonedCheckoutId(
       abandonedCheckoutId: $abandonedCheckoutId
@@ -76,6 +104,33 @@ export const SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY = `#graphql
         customer {
           id
         }
+        lineItems(first: 250) {
+          nodes {
+            product {
+              id
+            }
+          }
+          pageInfo {
+            hasNextPage
+          }
+        }
+      }
+    }
+    codeDiscountNodeByCode(code: $discountCode) {
+      codeDiscount {
+        __typename
+        ... on DiscountCodeApp {
+          status
+          discountClasses
+          appliesOncePerCustomer
+          appliesOnOneTimePurchase
+          appliesOnSubscription
+          combinesWith {
+            orderDiscounts
+            productDiscounts
+            shippingDiscounts
+          }
+        }
       }
     }
   }
@@ -83,6 +138,7 @@ export const SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY = `#graphql
 
 export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
   abandonedCheckoutId: string
+  comfyrobeProductId: string
   executeAdminGraphql: ShopifyAdminGraphqlExecutor
 }): Promise<ShopifyAbandonedCheckoutPreSendState> {
   let parsed: z.infer<typeof ResponseSchema>
@@ -91,7 +147,8 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
     const response = await input.executeAdminGraphql({
       query: SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY,
       variables: {
-        abandonedCheckoutId: input.abandonedCheckoutId
+        abandonedCheckoutId: input.abandonedCheckoutId,
+        discountCode: 'STAYCOMFY'
       }
     })
 
@@ -120,6 +177,18 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
 
   const checkout = abandonment.abandonedCheckoutPayload
   const email = abandonment.customer.defaultEmailAddress
+  const discount = parsed.codeDiscountNodeByCode?.codeDiscount
+  const staycomfyDiscountActive =
+    discount?.__typename === 'DiscountCodeApp' &&
+    discount.status === 'ACTIVE' &&
+    discount.appliesOncePerCustomer === true &&
+    discount.appliesOnOneTimePurchase === true &&
+    discount.appliesOnSubscription === false &&
+    discount.combinesWith?.orderDiscounts === false &&
+    discount.combinesWith.productDiscounts === false &&
+    discount.combinesWith.shippingDiscounts === false &&
+    discount.discountClasses?.includes('PRODUCT') === true &&
+    discount.discountClasses.includes('SHIPPING') === true
 
   return {
     abandonmentId: abandonment.id,
@@ -133,6 +202,7 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
     inventoryAvailable: abandonment.inventoryAvailable,
     isMostSignificantAbandonment:
       abandonment.isMostSignificantAbandonment,
+    staycomfyDiscountActive,
     customer: {
       id: abandonment.customer.id,
       email:
@@ -150,7 +220,11 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
       createdAt: checkout.createdAt,
       updatedAt: checkout.updatedAt,
       completedAt: checkout.completedAt,
-      recoveryUrl: checkout.abandonedCheckoutUrl
+      recoveryUrl: checkout.abandonedCheckoutUrl,
+      containsComfyrobe:
+        checkout.lineItems.nodes.some(
+          line => line.product?.id === input.comfyrobeProductId
+        )
     }
   }
 }

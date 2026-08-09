@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 
-import { NEWSLETTER_DISCOUNT_PERCENT } from './newsletterModalConfig'
+import { NEWSLETTER_DISCOUNT_AMOUNT_NOK } from './newsletterModalConfig'
 import {
   getCookiebotFromWindow,
   getNewsletterModalRuntimeState,
@@ -396,15 +396,14 @@ export function NewsletterSignupDialog() {
               <header className='px-5 pt-6 sm:px-8 sm:pt-10 sm:pr-10 lg:px-10'>
                 <DialogHeader className='pr-8'>
                   <DialogTitle className='font-sans text-2xl leading-[1.08] text-balance text-popover-foreground sm:text-3xl lg:text-4xl'>
-                    {NEWSLETTER_DISCOUNT_PERCENT}% rabatt på
+                    {NEWSLETTER_DISCOUNT_AMOUNT_NOK} kr rabatt per
                     Comfyrobe™
                   </DialogTitle>
 
                   <DialogDescription className='max-w-lg font-utekos-text-medium text-sm leading-6 text-popover-foreground/85 sm:text-base sm:leading-7'>
-                    Meld deg på nyhetsbrevet og få allerede
-                    nedsatte Comfyrobe™ for{' '}
+                    Meld deg på nyhetsbrevet og få{' '}
                     <strong className='text-popover-foreground'>
-                      kun kr 799,-{' '}
+                      200 kr rabatt per Comfyrobe™ og gratis frakt
                     </strong>
                     . Rabattkoden sendes til e-postadressen din
                     etter registrering.

@@ -1,10 +1,16 @@
-export const ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION = 1 as const
+export const ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION = 2 as const
 
 export const ABANDONED_CHECKOUT_RECOVERY_WINDOW_MS =
   7 * 24 * 60 * 60 * 1000
 
-export const ABANDONED_CHECKOUT_RECOVERY_STEP_1_DELAY_MS =
-  60 * 60 * 1000
+export const ABANDONED_CHECKOUT_RECOVERY_STEP_DELAYS_MS = {
+  1: 60 * 60 * 1000,
+  2: 7 * 60 * 60 * 1000,
+  3: 24 * 60 * 60 * 1000
+} as const
+
+export type AbandonedCheckoutRecoveryStep =
+  keyof typeof ABANDONED_CHECKOUT_RECOVERY_STEP_DELAYS_MS
 
 export type CustomerEmailMarketingState =
   | 'INVALID'
@@ -35,6 +41,7 @@ export type AbandonedCheckoutRecoverySuppressionReason =
   | 'missing_email'
   | 'invalid_email'
   | 'not_subscribed'
+  | 'before_activation'
   | 'outside_window'
   | 'future_checkout_timestamp'
   | 'superseded_by_newer_checkout'
@@ -43,7 +50,7 @@ export type AbandonedCheckoutRecoveryDispatchPlan = {
   shopifyAbandonedCheckoutId: string
   shopifyCustomerId: string | null
   sequenceVersion: typeof ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION
-  step: 1
+  step: AbandonedCheckoutRecoveryStep
   checkoutCreatedAt: string
   checkoutUpdatedAt: string
   dueAt: string
@@ -57,7 +64,7 @@ export type AbandonedCheckoutRecoveryDispatchInsert = {
   shopify_abandoned_checkout_id: string
   shopify_customer_id: string | null
   sequence_version: typeof ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION
-  step: 1
+  step: AbandonedCheckoutRecoveryStep
   checkout_created_at: string
   checkout_updated_at: string
   due_at: string
@@ -142,6 +149,7 @@ function getLatestCheckoutIdByCustomer(
 function getSuppressionReason(
   checkout: ShopifyAbandonedCheckoutRecoveryCandidate,
   nowMs: number,
+  activatedAtMs: number,
   latestCheckoutIdByCustomer: ReadonlyMap<string, string>
 ): AbandonedCheckoutRecoverySuppressionReason | null {
   if (checkout.completedAt !== null) {
@@ -155,6 +163,10 @@ function getSuppressionReason(
 
   if (createdAtMs > nowMs) {
     return 'future_checkout_timestamp'
+  }
+
+  if (createdAtMs < activatedAtMs) {
+    return 'before_activation'
   }
 
   if (
@@ -203,12 +215,18 @@ function getSuppressionReason(
 
 export function buildAbandonedCheckoutRecoveryPlan(
   checkouts: readonly ShopifyAbandonedCheckoutRecoveryCandidate[],
-  now: Date = new Date()
+  now: Date = new Date(),
+  activatedAt: Date = new Date(0)
 ): AbandonedCheckoutRecoveryDispatchPlan[] {
   const nowMs = now.getTime()
+  const activatedAtMs = activatedAt.getTime()
 
-  if (!Number.isFinite(nowMs)) {
-    throw new Error('Invalid now date')
+  if (
+    !Number.isFinite(nowMs) ||
+    !Number.isFinite(activatedAtMs) ||
+    activatedAtMs > nowMs
+  ) {
+    throw new Error('Invalid recovery timeline')
   }
 
   const latestCheckoutIdByCustomer =
@@ -216,7 +234,7 @@ export function buildAbandonedCheckoutRecoveryPlan(
 
   const suppressedAt = now.toISOString()
 
-  return checkouts.map(checkout => {
+  return checkouts.flatMap(checkout => {
     const createdAtMs = parseIsoTimestamp(
       checkout.createdAt,
       'createdAt'
@@ -227,41 +245,44 @@ export function buildAbandonedCheckoutRecoveryPlan(
       'updatedAt'
     )
 
-    const dueAt = new Date(
-      createdAtMs +
-        ABANDONED_CHECKOUT_RECOVERY_STEP_1_DELAY_MS
-    ).toISOString()
-
     const suppressionReason = getSuppressionReason(
       checkout,
       nowMs,
+      activatedAtMs,
       latestCheckoutIdByCustomer
     )
 
-    return {
-      shopifyAbandonedCheckoutId:
-        checkout.checkoutId,
-      shopifyCustomerId:
-        checkout.customerId,
-      sequenceVersion:
-        ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION,
-      step: 1,
-      checkoutCreatedAt:
-        new Date(createdAtMs).toISOString(),
-      checkoutUpdatedAt:
-        new Date(updatedAtMs).toISOString(),
-      dueAt,
-      nextAttemptAt: dueAt,
-      status:
-        suppressionReason ?
-          'suppressed'
-        : 'pending',
-      suppressionReason,
-      suppressedAt:
-        suppressionReason ?
-          suppressedAt
-        : null
-    }
+    return ([1, 2, 3] as const).map(step => {
+      const dueAt = new Date(
+        createdAtMs +
+          ABANDONED_CHECKOUT_RECOVERY_STEP_DELAYS_MS[step]
+      ).toISOString()
+
+      return {
+        shopifyAbandonedCheckoutId:
+          checkout.checkoutId,
+        shopifyCustomerId:
+          checkout.customerId,
+        sequenceVersion:
+          ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION,
+        step,
+        checkoutCreatedAt:
+          new Date(createdAtMs).toISOString(),
+        checkoutUpdatedAt:
+          new Date(updatedAtMs).toISOString(),
+        dueAt,
+        nextAttemptAt: dueAt,
+        status:
+          suppressionReason ?
+            'suppressed'
+          : 'pending',
+        suppressionReason,
+        suppressedAt:
+          suppressionReason ?
+            suppressedAt
+          : null
+      }
+    })
   })
 }
 
