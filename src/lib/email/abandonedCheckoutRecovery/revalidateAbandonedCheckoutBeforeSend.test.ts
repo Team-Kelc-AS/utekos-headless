@@ -42,7 +42,11 @@ const state = {
     completedAt: null,
     recoveryUrl:
       'https://checkout.shopify.com/recover/opaque-token',
-    containsComfyrobe: true
+    containsComfyrobe: true,
+    productImage: {
+      url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+      alt: 'Marineblå Comfyrobe'
+    }
   }
 } satisfies ShopifyAbandonedCheckoutPreSendState
 
@@ -67,7 +71,11 @@ test('fetches by claimed checkout and returns only the authorization result', as
     to: 'kunde@example.no',
     recoveryUrl:
       'https://checkout.shopify.com/recover/opaque-token',
-    offerType: 'staycomfy'
+    offerType: 'staycomfy',
+    productImage: {
+      url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+      alt: 'Marineblå Comfyrobe'
+    }
   })
 })
 

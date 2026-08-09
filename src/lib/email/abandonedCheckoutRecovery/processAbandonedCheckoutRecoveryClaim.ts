@@ -256,6 +256,7 @@ export async function processAbandonedCheckoutRecoveryClaim(
         sequenceVersion: input.claim.sequenceVersion,
         step: input.claim.step,
         offerType: authorization.offerType,
+        productImage: authorization.productImage,
         idempotencyKey:
           getAbandonedCheckoutRecoveryResendIdempotencyKey({
             shopifyAbandonedCheckoutId:

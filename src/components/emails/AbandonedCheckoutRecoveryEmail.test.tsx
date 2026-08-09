@@ -34,8 +34,12 @@ test('generic recovery omits the STAYCOMFY offer', async () => {
     })
   )
 
-  assert.match(html, /Fortsett til kassen/)
-  assert.doesNotMatch(html, /STAYCOMFY|200 kr rabatt/)
+  assert.match(html, /Til kassen/)
+  assert.match(html, /<img/)
+  assert.match(html, /#001a18/)
+  assert.match(html, /#012622/)
+  assert.match(html, /#bb4d0f/)
+  assert.doesNotMatch(html, /STAYCOMFY|200 kr|gratis frakt/i)
 })
 
 test('Comfyrobe recovery includes the offer and unsubscribe link', async () => {
@@ -43,11 +47,17 @@ test('Comfyrobe recovery includes the offer and unsubscribe link', async () => {
     createElement(AbandonedCheckoutRecoveryEmail, {
       step: 3,
       offerType: 'staycomfy',
+      productImage: {
+        url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+        alt: 'Marineblå Comfyrobe'
+      },
       ...urls
     })
   )
 
-  assert.match(html, /200 kr rabatt per Comfyrobe \+ gratis frakt/)
+  assert.match(html, /200 kr per Comfyrobe \+ gratis frakt/)
   assert.match(html, /STAYCOMFY/)
   assert.match(html, /Meld deg av/)
+  assert.match(html, /Marineblå Comfyrobe/)
+  assert.match(html, /Google Sans Flex/)
 })

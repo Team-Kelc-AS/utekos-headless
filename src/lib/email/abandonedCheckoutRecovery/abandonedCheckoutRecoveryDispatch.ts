@@ -20,5 +20,9 @@ export type AbandonedCheckoutRecoveryDeliveryPort = (
     sequenceVersion: number
     step: number
     offerType: 'generic' | 'staycomfy'
+    productImage: {
+      url: string
+      alt: string
+    } | null
   }
 ) => Promise<unknown>

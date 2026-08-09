@@ -39,6 +39,10 @@ export type ShopifyAbandonedCheckoutPreSendState = {
     completedAt: string | null
     recoveryUrl: string
     containsComfyrobe: boolean
+    productImage: {
+      url: string
+      alt: string
+    } | null
   }
 }
 
@@ -60,6 +64,10 @@ export type AuthorizeAbandonedCheckoutRecoverySendResult =
       to: string
       recoveryUrl: string
       offerType: 'generic' | 'staycomfy'
+      productImage: {
+        url: string
+        alt: string
+      } | null
     }
   | {
       authorized: false
@@ -210,6 +218,7 @@ export function authorizeAbandonedCheckoutRecoverySend(input: {
     authorized: true,
     to: state.customer.email.address,
     recoveryUrl: state.checkout.recoveryUrl,
+    productImage: state.checkout.productImage,
     offerType:
       state.checkout.containsComfyrobe &&
       state.staycomfyDiscountActive ?

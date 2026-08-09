@@ -43,7 +43,11 @@ function state(
       updatedAt: '2026-08-09T08:25:00.000Z',
       completedAt: null,
       recoveryUrl: 'https://checkout.shopify.com/recover/opaque',
-      containsComfyrobe: true
+      containsComfyrobe: true,
+      productImage: {
+        url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+        alt: 'Marineblå Comfyrobe'
+      }
     },
     ...overrides
   }
@@ -56,7 +60,11 @@ test('authorizes a Comfyrobe offer only with active v2 discount state', () => {
       authorized: true,
       to: 'kunde@example.no',
       recoveryUrl: 'https://checkout.shopify.com/recover/opaque',
-      offerType: 'staycomfy'
+      offerType: 'staycomfy',
+      productImage: {
+        url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+        alt: 'Marineblå Comfyrobe'
+      }
     }
   )
 
@@ -69,7 +77,11 @@ test('authorizes a Comfyrobe offer only with active v2 discount state', () => {
       authorized: true,
       to: 'kunde@example.no',
       recoveryUrl: 'https://checkout.shopify.com/recover/opaque',
-      offerType: 'generic'
+      offerType: 'generic',
+      productImage: {
+        url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+        alt: 'Marineblå Comfyrobe'
+      }
     }
   )
 })

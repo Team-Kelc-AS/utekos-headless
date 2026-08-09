@@ -70,6 +70,7 @@ AbandonedCheckoutRecoveryDeliveryPort = async input => {
   const emailProps = {
     step: input.step,
     offerType: input.offerType,
+    productImage: input.productImage,
     recoveryUrl: input.recoveryUrl,
     unsubscribeUrl
   } as const

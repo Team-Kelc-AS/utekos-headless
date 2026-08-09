@@ -33,6 +33,16 @@ async function main(): Promise<void> {
           createElement(AbandonedCheckoutRecoveryEmail, {
             step: frame.step,
             offerType,
+            productImage:
+              offerType === 'staycomfy' ?
+                {
+                  url: 'https://utekos.no/og-image-comfyrobe.jpg',
+                  alt: 'Marineblå Comfyrobe fra Utekos'
+                }
+              : {
+                  url: 'https://utekos.no/og-image-utekos-produkter.jpg',
+                  alt: 'Utvalgte produkter fra Utekos'
+                },
             ...previewUrls
           })
         )

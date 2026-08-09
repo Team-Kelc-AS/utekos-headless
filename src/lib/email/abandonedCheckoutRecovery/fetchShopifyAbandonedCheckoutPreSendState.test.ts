@@ -46,7 +46,16 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
             customer: { id: 'gid://shopify/Customer/2001' },
             lineItems: {
               nodes: [
-                { product: { id: 'gid://shopify/Product/5001' } }
+                {
+                  title: 'Comfyrobe',
+                  product: { id: 'gid://shopify/Product/5001' },
+                  image: {
+                    url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+                    altText: 'Marineblå Comfyrobe',
+                    width: 1200,
+                    height: 1200
+                  }
+                }
               ],
               pageInfo: { hasNextPage: false }
             }
@@ -107,7 +116,11 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
       completedAt: null,
       recoveryUrl:
         'https://checkout.shopify.com/recover/opaque-token',
-      containsComfyrobe: true
+      containsComfyrobe: true,
+      productImage: {
+        url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+        alt: 'Marineblå Comfyrobe'
+      }
     }
   })
 })

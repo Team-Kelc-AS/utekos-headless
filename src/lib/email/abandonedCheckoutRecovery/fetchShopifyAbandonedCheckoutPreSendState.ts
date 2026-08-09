@@ -40,7 +40,16 @@ const AbandonmentSchema = z.object({
     lineItems: z.object({
       nodes: z.array(
         z.object({
-          product: z.object({ id: z.string().min(1) }).nullable()
+          title: z.string().min(1).nullable(),
+          product: z.object({ id: z.string().min(1) }).nullable(),
+          image: z
+            .object({
+              url: z.string().url(),
+              altText: z.string().nullable(),
+              width: z.number().int().positive(),
+              height: z.number().int().positive()
+            })
+            .nullable()
         })
       ),
       pageInfo: z.object({ hasNextPage: z.boolean() })
@@ -106,8 +115,15 @@ export const SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY = `#graphql
         }
         lineItems(first: 250) {
           nodes {
+            title
             product {
               id
+            }
+            image {
+              url
+              altText
+              width
+              height
             }
           }
           pageInfo {
@@ -176,6 +192,7 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
   }
 
   const checkout = abandonment.abandonedCheckoutPayload
+  const checkoutLines = checkout.lineItems.nodes
   const email = abandonment.customer.defaultEmailAddress
   const discount = parsed.codeDiscountNodeByCode?.codeDiscount
   const staycomfyDiscountActive =
@@ -189,6 +206,22 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
     discount.combinesWith.shippingDiscounts === false &&
     discount.discountClasses?.includes('PRODUCT') === true &&
     discount.discountClasses.includes('SHIPPING') === true
+  const comfyrobeLine = checkoutLines.find(
+    line => line.product?.id === input.comfyrobeProductId
+  )
+  const imageLine =
+    comfyrobeLine?.image ? comfyrobeLine
+    : checkoutLines.find(line => line.image !== null)
+  const productImage =
+    imageLine?.image ?
+      {
+        url: imageLine.image.url,
+        alt:
+          imageLine.image.altText?.trim() ||
+          imageLine.title?.trim() ||
+          'Produkt fra Utekos'
+      }
+    : null
 
   return {
     abandonmentId: abandonment.id,
@@ -222,9 +255,10 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
       completedAt: checkout.completedAt,
       recoveryUrl: checkout.abandonedCheckoutUrl,
       containsComfyrobe:
-        checkout.lineItems.nodes.some(
+        checkoutLines.some(
           line => line.product?.id === input.comfyrobeProductId
-        )
+        ),
+      productImage
     }
   }
 }

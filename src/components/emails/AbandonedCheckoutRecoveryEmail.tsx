@@ -6,6 +6,7 @@ import {
   Heading,
   Hr,
   Html,
+  Img,
   Link,
   Preview,
   Section,
@@ -16,6 +17,10 @@ import * as React from 'react'
 export type AbandonedCheckoutRecoveryEmailProps = {
   step: 1 | 2 | 3
   offerType: 'generic' | 'staycomfy'
+  productImage?: {
+    url: string
+    alt: string
+  } | null
   recoveryUrl: string
   unsubscribeUrl: string
 }
@@ -25,7 +30,7 @@ const copyByStep = {
     subject: 'Glemte du noe i kassen?',
     preview: 'Varene dine venter fortsatt i kassen.',
     heading: 'Kassen din venter',
-    body: 'Du kan fortsette akkurat der du slapp.'
+    body: 'Vi har passet godt på handlekurven din. Du kan fortsette akkurat der du slapp.'
   },
   2: {
     subject: 'Handlekurven din venter fortsatt',
@@ -41,6 +46,17 @@ const copyByStep = {
   }
 } as const
 
+const fallbackImages = {
+  generic: {
+    url: 'https://utekos.no/og-image-utekos-produkter.jpg',
+    alt: 'Utvalgte produkter fra Utekos'
+  },
+  staycomfy: {
+    url: 'https://utekos.no/og-image-comfyrobe.jpg',
+    alt: 'Comfyrobe fra Utekos'
+  }
+} as const
+
 export function getAbandonedCheckoutRecoverySubject(
   step: 1 | 2 | 3
 ): string {
@@ -50,10 +66,12 @@ export function getAbandonedCheckoutRecoverySubject(
 export function AbandonedCheckoutRecoveryEmail({
   step,
   offerType,
+  productImage,
   recoveryUrl,
   unsubscribeUrl
 }: AbandonedCheckoutRecoveryEmailProps): React.JSX.Element {
   const copy = copyByStep[step]
+  const image = productImage ?? fallbackImages[offerType]
 
   return (
     <Html lang='nb' dir='ltr'>
@@ -61,32 +79,52 @@ export function AbandonedCheckoutRecoveryEmail({
       <Preview>{copy.preview}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text style={brand}>UTEKOS</Text>
-          <Heading as='h1' style={heading}>
-            {copy.heading}
-          </Heading>
-          <Text style={paragraph}>{copy.body}</Text>
+          <Text style={brand}>Utekos</Text>
+          <Text style={eyebrow}>Handlekurv</Text>
 
-          {offerType === 'staycomfy' && (
-            <Section style={offer}>
-              <Heading as='h2' style={offerHeading}>
-                200 kr rabatt per Comfyrobe + gratis frakt
+          <Section style={contentCard}>
+            <Img
+              src={image.url}
+              alt={image.alt}
+              width='536'
+              style={productImageStyle}
+            />
+
+            <Section style={content}>
+              <Heading as='h1' style={heading}>
+                {copy.heading}
               </Heading>
-              <Text style={offerText}>
-                Bruk koden <strong>STAYCOMFY</strong> i kassen. Koden
-                gjelder én gang per kunde og kan ikke kombineres med
-                andre rabatter.
+              <Text style={paragraph}>{copy.body}</Text>
+
+              {offerType === 'staycomfy' && (
+                <Section style={offer}>
+                  <Heading as='h2' style={offerHeading}>
+                    200 kr per Comfyrobe + gratis frakt
+                  </Heading>
+                  <Text style={offerText}>
+                    Bruk rabattkoden i kassen:
+                  </Text>
+                  <Text style={discountCode}>STAYCOMFY</Text>
+                  <Text style={offerFinePrint}>
+                    Én bruk per kunde. Kan ikke kombineres med andre
+                    rabatter.
+                  </Text>
+                </Section>
+              )}
+
+              <Button href={recoveryUrl} style={button}>
+                Til kassen
+              </Button>
+
+              <Text style={finePrint}>
+                Tilgjengelighet og endelig pris bekreftes i
+                Shopify-kassen.
+                {offerType === 'staycomfy' &&
+                  ' Gratis frakt legges automatisk til når STAYCOMFY gjelder.'}
               </Text>
             </Section>
-          )}
+          </Section>
 
-          <Button href={recoveryUrl} style={button}>
-            Fortsett til kassen
-          </Button>
-
-          <Text style={finePrint}>
-            Tilgjengelighet og endelig pris bekreftes i Shopify-kassen.
-          </Text>
           <Hr style={rule} />
           <Text style={footer}>
             Ønsker du ikke flere slike e-poster?{' '}
@@ -101,89 +139,158 @@ export function AbandonedCheckoutRecoveryEmail({
   )
 }
 
+const fontFamily =
+  '"Google Sans Flex","Google Sans",Arial,Helvetica,sans-serif'
+
 const main = {
-  backgroundColor: '#f0eee9',
-  color: '#001211',
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
+  backgroundColor: '#001a18',
+  color: '#f0eee9',
+  fontFamily,
   margin: 0,
   padding: '32px 12px'
 }
 
 const container = {
-  backgroundColor: '#ffffff',
-  border: '1px solid #c8d2cf',
-  borderRadius: '12px',
   margin: '0 auto',
   maxWidth: '600px',
-  padding: '40px'
+  padding: '28px 20px 32px'
 }
 
 const brand = {
-  color: '#001211',
-  fontSize: '14px',
-  fontWeight: '700',
-  letterSpacing: '0.14em',
-  margin: '0 0 28px'
-}
-
-const heading = {
-  color: '#001211',
-  fontSize: '30px',
-  lineHeight: '38px',
-  margin: '0 0 16px'
-}
-
-const paragraph = {
-  color: '#253532',
-  fontSize: '17px',
-  lineHeight: '28px',
-  margin: '0 0 24px'
-}
-
-const offer = {
-  backgroundColor: '#e5f34a',
-  border: '2px solid #001211',
-  borderRadius: '8px',
-  margin: '0 0 28px',
-  padding: '20px'
-}
-
-const offerHeading = {
-  color: '#001211',
-  fontSize: '20px',
-  lineHeight: '28px',
+  color: '#f0eee9',
+  fontFamily,
+  fontSize: '48px',
+  fontStyle: 'italic',
+  fontWeight: '800',
+  letterSpacing: '-0.04em',
+  lineHeight: '52px',
   margin: '0 0 8px'
 }
 
+const eyebrow = {
+  color: '#f0eee9',
+  fontFamily,
+  fontSize: '22px',
+  fontWeight: '600',
+  lineHeight: '30px',
+  margin: '0 0 28px'
+}
+
+const contentCard = {
+  backgroundColor: '#012622',
+  borderRadius: '24px',
+  overflow: 'hidden' as const
+}
+
+const productImageStyle = {
+  backgroundColor: '#001a18',
+  border: 0,
+  display: 'block',
+  height: 'auto',
+  maxWidth: '100%',
+  width: '100%'
+}
+
+const content = {
+  padding: '32px 32px 36px'
+}
+
+const heading = {
+  color: '#f0eee9',
+  fontFamily,
+  fontSize: '32px',
+  fontWeight: '800',
+  letterSpacing: '-0.02em',
+  lineHeight: '38px',
+  margin: '0 0 14px'
+}
+
+const paragraph = {
+  color: '#f0eee9',
+  fontFamily,
+  fontSize: '17px',
+  fontWeight: '400',
+  lineHeight: '27px',
+  margin: '0 0 26px'
+}
+
+const offer = {
+  backgroundColor: '#001a18',
+  borderRadius: '16px',
+  margin: '0 0 28px',
+  padding: '22px'
+}
+
+const offerHeading = {
+  color: '#f0eee9',
+  fontFamily,
+  fontSize: '21px',
+  fontWeight: '800',
+  lineHeight: '28px',
+  margin: '0 0 12px'
+}
+
 const offerText = {
-  color: '#001211',
+  color: '#f0eee9',
+  fontFamily,
   fontSize: '15px',
-  lineHeight: '24px',
+  fontWeight: '400',
+  lineHeight: '23px',
+  margin: '0 0 10px'
+}
+
+const discountCode = {
+  color: '#f0eee9',
+  fontFamily,
+  fontSize: '22px',
+  fontWeight: '800',
+  letterSpacing: '0.08em',
+  lineHeight: '28px',
+  margin: '0 0 10px'
+}
+
+const offerFinePrint = {
+  color: '#f0eee9',
+  fontFamily,
+  fontSize: '13px',
+  fontWeight: '400',
+  lineHeight: '20px',
   margin: 0
 }
 
 const button = {
-  backgroundColor: '#001211',
-  borderRadius: '6px',
-  color: '#ffffff',
+  backgroundColor: '#bb4d0f',
+  borderRadius: '14px',
+  color: '#f0eee9',
   display: 'block',
-  fontSize: '17px',
-  fontWeight: '700',
-  padding: '15px 24px',
+  fontFamily,
+  fontSize: '20px',
+  fontWeight: '800',
+  lineHeight: '24px',
+  padding: '17px 24px',
   textAlign: 'center' as const,
   textDecoration: 'none'
 }
 
 const finePrint = {
-  color: '#4d5b58',
+  color: '#f0eee9',
+  fontFamily,
   fontSize: '13px',
+  fontWeight: '400',
   lineHeight: '20px',
   margin: '18px 0 0'
 }
 
-const rule = { borderColor: '#c8d2cf', margin: '32px 0 20px' }
+const rule = {
+  borderColor: '#31514c',
+  margin: '30px 0 20px'
+}
+
 const footer = { ...finePrint, margin: 0 }
-const link = { color: '#123f39', textDecoration: 'underline' }
+const link = {
+  color: '#f0eee9',
+  fontWeight: '600',
+  textDecoration: 'underline'
+}
 
 export default AbandonedCheckoutRecoveryEmail

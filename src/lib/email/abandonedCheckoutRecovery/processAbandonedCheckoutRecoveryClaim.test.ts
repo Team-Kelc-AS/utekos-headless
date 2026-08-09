@@ -31,13 +31,18 @@ test('processor revalidates, delivers and completes an authorized claim', async 
       authorized: true,
       to: 'kunde@example.no',
       recoveryUrl: 'https://checkout.shopify.com/recover/opaque',
-      offerType: 'staycomfy'
+      offerType: 'staycomfy',
+      productImage: {
+        url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+        alt: 'Marineblå Comfyrobe'
+      }
     }),
     renewLease: async () => true,
     deliverAuthorizedEmail: async input => {
       assert.equal(input.dispatchId, claim.dispatchId)
       assert.equal(input.step, 2)
       assert.equal(input.offerType, 'staycomfy')
+      assert.equal(input.productImage?.alt, 'Marineblå Comfyrobe')
       assert.match(input.idempotencyKey, /v2:step-2$/)
       return { ok: true, resendEmailId: 'email_123' }
     },
@@ -86,7 +91,8 @@ test('processor schedules a retry when Resend rejects the email', async () => {
       authorized: true,
       to: 'kunde@example.no',
       recoveryUrl: 'https://checkout.shopify.com/recover/opaque',
-      offerType: 'generic'
+      offerType: 'generic',
+      productImage: null
     }),
     renewLease: async () => true,
     deliverAuthorizedEmail: async () => ({ ok: false }),
