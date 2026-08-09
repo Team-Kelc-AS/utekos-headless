@@ -16,6 +16,7 @@
     "db:types": "supabase gen types typescript --project-id hkoawfbomhnzupcsdggb --schema marketing,partner,ops > src/types/supabase/database.types.ts",
     "dev": "env -u DEBUG -u NEXT_PRIVATE_DEBUG_CACHE next dev",
     "email": "NEXT_PUBLIC_APP_URL=http://localhost:3000 email dev --dir src/components/emails --port 3001",
+    "email:recovery:preview": "tsx scripts/email/preview-abandoned-checkout-recovery.tsx",
     "docker:dev": "docker compose up web",
     "docker:dev:build": "docker compose build web",
     "docker:dev:watch": "docker compose watch web",

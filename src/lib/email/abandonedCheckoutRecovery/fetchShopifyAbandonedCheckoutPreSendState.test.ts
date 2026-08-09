@@ -14,6 +14,7 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
 
   const state = await fetchShopifyAbandonedCheckoutPreSendState({
     abandonedCheckoutId: 'gid://shopify/AbandonedCheckout/1001',
+    comfyrobeProductId: 'gid://shopify/Product/5001',
     executeAdminGraphql: async request => {
       requests.push(request)
 
@@ -42,7 +43,37 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
             completedAt: null,
             abandonedCheckoutUrl:
               'https://checkout.shopify.com/recover/opaque-token',
-            customer: { id: 'gid://shopify/Customer/2001' }
+            customer: { id: 'gid://shopify/Customer/2001' },
+            lineItems: {
+              nodes: [
+                {
+                  title: 'Comfyrobe',
+                  product: { id: 'gid://shopify/Product/5001' },
+                  image: {
+                    url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+                    altText: 'Marineblå Comfyrobe',
+                    width: 1200,
+                    height: 1200
+                  }
+                }
+              ],
+              pageInfo: { hasNextPage: false }
+            }
+          }
+        },
+        codeDiscountNodeByCode: {
+          codeDiscount: {
+            __typename: 'DiscountCodeApp',
+            status: 'ACTIVE',
+            discountClasses: ['PRODUCT', 'SHIPPING'],
+            appliesOncePerCustomer: true,
+            appliesOnOneTimePurchase: true,
+            appliesOnSubscription: false,
+            combinesWith: {
+              orderDiscounts: false,
+              productDiscounts: false,
+              shippingDiscounts: false
+            }
           }
         }
       }
@@ -54,7 +85,8 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
       query: SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY,
       variables: {
         abandonedCheckoutId:
-          'gid://shopify/AbandonedCheckout/1001'
+          'gid://shopify/AbandonedCheckout/1001',
+        discountCode: 'STAYCOMFY'
       }
     }
   ])
@@ -67,6 +99,7 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
     emailState: 'NOT_SENT',
     inventoryAvailable: true,
     isMostSignificantAbandonment: true,
+    staycomfyDiscountActive: true,
     customer: {
       id: 'gid://shopify/Customer/2001',
       email: {
@@ -82,7 +115,12 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
       updatedAt: '2026-08-09T08:25:00Z',
       completedAt: null,
       recoveryUrl:
-        'https://checkout.shopify.com/recover/opaque-token'
+        'https://checkout.shopify.com/recover/opaque-token',
+      containsComfyrobe: true,
+      productImage: {
+        url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+        alt: 'Marineblå Comfyrobe'
+      }
     }
   })
 })
@@ -92,8 +130,10 @@ test('fails closed when Shopify has no abandonment for the checkout', async () =
     fetchShopifyAbandonedCheckoutPreSendState({
       abandonedCheckoutId:
         'gid://shopify/AbandonedCheckout/1001',
+      comfyrobeProductId: 'gid://shopify/Product/5001',
       executeAdminGraphql: async () => ({
-        abandonmentByAbandonedCheckoutId: null
+        abandonmentByAbandonedCheckoutId: null,
+        codeDiscountNodeByCode: null
       })
     }),
     {
@@ -108,10 +148,12 @@ test('fails closed on a malformed Shopify response', async () => {
     fetchShopifyAbandonedCheckoutPreSendState({
       abandonedCheckoutId:
         'gid://shopify/AbandonedCheckout/1001',
+      comfyrobeProductId: 'gid://shopify/Product/5001',
       executeAdminGraphql: async () => ({
         abandonmentByAbandonedCheckoutId: {
           id: 'gid://shopify/Abandonment/3001'
-        }
+        },
+        codeDiscountNodeByCode: null
       })
     }),
     {

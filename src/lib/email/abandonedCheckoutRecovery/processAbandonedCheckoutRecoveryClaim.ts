@@ -250,8 +250,13 @@ export async function processAbandonedCheckoutRecoveryClaim(
   try {
     const rawDeliveryResult =
       await dependencies.deliverAuthorizedEmail({
+        dispatchId: input.claim.dispatchId,
         to: authorization.to,
         recoveryUrl: authorization.recoveryUrl,
+        sequenceVersion: input.claim.sequenceVersion,
+        step: input.claim.step,
+        offerType: authorization.offerType,
+        productImage: authorization.productImage,
         idempotencyKey:
           getAbandonedCheckoutRecoveryResendIdempotencyKey({
             shopifyAbandonedCheckoutId:

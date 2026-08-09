@@ -213,7 +213,9 @@ export function createPrivacySections({
           <PolicyItem title='Resend'>
             Utsending av kundeservice- og ventelistevarsler fra regionen
             eu-west-1 (Irland). Åpnings- og klikksporing er deaktivert, og vi
-            bruker ikke Resend-webhooks. Resend opplyser at kontodata,
+            livssyklus-webhooks for forlatt kasse lagres kun som
+            dataminimerte tekniske ID-er og status – ikke rå e-postadresse,
+            emne eller meldingsinnhold. Resend opplyser at kontodata,
             e-postmetadata og logger kan lagres i USA.
           </PolicyItem>
           <PolicyItem title='Sentry'>

@@ -25,6 +25,7 @@ const state = {
   emailState: 'NOT_SENT',
   inventoryAvailable: true,
   isMostSignificantAbandonment: true,
+  staycomfyDiscountActive: true,
   customer: {
     id: 'gid://shopify/Customer/2001',
     email: {
@@ -40,7 +41,12 @@ const state = {
     updatedAt: '2026-08-09T08:25:00.000Z',
     completedAt: null,
     recoveryUrl:
-      'https://checkout.shopify.com/recover/opaque-token'
+      'https://checkout.shopify.com/recover/opaque-token',
+    containsComfyrobe: true,
+    productImage: {
+      url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+      alt: 'Marineblå Comfyrobe'
+    }
   }
 } satisfies ShopifyAbandonedCheckoutPreSendState
 
@@ -64,7 +70,12 @@ test('fetches by claimed checkout and returns only the authorization result', as
     authorized: true,
     to: 'kunde@example.no',
     recoveryUrl:
-      'https://checkout.shopify.com/recover/opaque-token'
+      'https://checkout.shopify.com/recover/opaque-token',
+    offerType: 'staycomfy',
+    productImage: {
+      url: 'https://cdn.shopify.com/example/comfyrobe.jpg',
+      alt: 'Marineblå Comfyrobe'
+    }
   })
 })
 

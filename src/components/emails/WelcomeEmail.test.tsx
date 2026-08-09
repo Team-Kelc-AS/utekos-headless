@@ -10,13 +10,13 @@ import {
 test('newsletter welcome content matches Resend broadcast markers', () => {
   assert.equal(
     NEWSLETTER_WELCOME_SUBJECT,
-    '20 % på Comfyrobe™ – til deg som følger Utekos'
+    '200 kr per Comfyrobe + gratis frakt – til deg som følger Utekos'
   )
 
   assert.match(NEWSLETTER_WELCOME_HTML, /STAYCOMFY/)
   assert.match(
     NEWSLETTER_WELCOME_HTML,
-    /Spar totalt 890,80 kr på Comfyrobe™ med rabattkoden STAYCOMFY/
+    /200 kr rabatt per Comfyrobe og gratis frakt med STAYCOMFY/
   )
   assert.match(
     NEWSLETTER_WELCOME_HTML,
@@ -46,4 +46,6 @@ test('newsletter welcome content matches Resend broadcast markers', () => {
     NEWSLETTER_WELCOME_TEXT,
     /RESEND_UNSUBSCRIBE_URL/
   )
+  assert.doesNotMatch(NEWSLETTER_WELCOME_HTML, /20 %|799,20|890,80/)
+  assert.doesNotMatch(NEWSLETTER_WELCOME_TEXT, /20 %|799,20|890,80/)
 })

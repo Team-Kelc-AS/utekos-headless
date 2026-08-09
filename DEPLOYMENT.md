@@ -1428,6 +1428,11 @@ key for development.
 | `RESEND_FROM_EMAIL` | No (default `kundeservice@utekos.no`) | Verified sender domain |
 | `RESEND_FROM_NAME` | No (default `Utekos`) | Display name for customer-facing mail |
 | `CONTACT_FORM_SEND_TO_EMAIL` | Yes for kontakt/venteliste | Internal notification recipient |
+| `ABANDONED_CHECKOUT_RECOVERY_ENABLED` | Yes for recovery (`false` during first deploy) | Fail-closed recovery switch |
+| `ABANDONED_CHECKOUT_RECOVERY_ACTIVATED_AT` | Yes when enabled | UTC cutoff; older checkouts are never backfilled |
+| `STAYCOMFY_COMFYROBE_PRODUCT_ID` | Yes when enabled | Exact Shopify Product GID used for offer eligibility |
+| `RESEND_WEBHOOK_SECRET` | Yes before webhook activation | Raw-body Resend webhook verification |
+| `EMAIL_UNSUBSCRIBE_SECRET` | Yes when enabled, minimum 32 bytes | HMAC key for opaque unsubscribe tokens |
 
 ### Vercel Production requirement
 
@@ -1450,6 +1455,18 @@ Local template preview:
 ```bash
 pnpm run email
 ```
+
+### Abandoned-checkout recovery release order
+
+1. Apply `20260809123000_abandoned_checkout_recovery_v2.sql` before the app.
+2. Deploy with `ABANDONED_CHECKOUT_RECOVERY_ENABLED=false`.
+3. Configure `RESEND_WEBHOOK_SECRET` and `EMAIL_UNSUBSCRIBE_SECRET` without logging either value, then redeploy.
+4. Create and verify the disabled Resend webhook separately.
+5. After explicit approval, disable Shopify native abandoned-checkout email and prove there are no scheduled native messages.
+6. Set `ABANDONED_CHECKOUT_RECOVERY_ACTIVATED_AT` to the exact cutover timestamp and then set `ABANDONED_CHECKOUT_RECOVERY_ENABLED=true`.
+7. Verify `email.sent` and `email.delivered` as separate provider lifecycle events. A returned Resend ID is acceptance, not delivery proof.
+
+Rollback is fail-closed: set `ABANDONED_CHECKOUT_RECOVERY_ENABLED=false` and redeploy. Do not re-enable Shopify native email until pending Resend dispatches and overlap risk have been inspected.
 
 ## Microsoft Environment Gate (UET tag token vs Ads API OAuth)
 

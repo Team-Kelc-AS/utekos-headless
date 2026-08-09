@@ -70,7 +70,8 @@ export type RunAbandonedCheckoutRecoveryDiscoveryDependencies = {
   buildPlans?: (
     candidates:
       readonly ShopifyAbandonedCheckoutRecoveryCandidate[],
-    now: Date
+    now: Date,
+    activatedAt?: Date
   ) => AbandonedCheckoutRecoveryDispatchPlan[]
 
   persistPlans?: (
@@ -203,7 +204,8 @@ async function defaultFetchCandidates(
 
 export async function runAbandonedCheckoutRecoveryDiscovery(
   dependencies:
-    RunAbandonedCheckoutRecoveryDiscoveryDependencies = {}
+    RunAbandonedCheckoutRecoveryDiscoveryDependencies = {},
+  activatedAt: Date = new Date(0)
 ): Promise<
   RunAbandonedCheckoutRecoveryDiscoverySummary
 > {
@@ -251,7 +253,8 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
         const plans =
           buildPlans(
             candidates,
-            startedAtDate
+            startedAtDate,
+            activatedAt
           )
 
         const pendingPlans =

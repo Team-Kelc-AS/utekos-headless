@@ -1,5 +1,5 @@
 export const NEWSLETTER_DISCOUNT_CODE = 'STAYCOMFY'
-export const NEWSLETTER_DISCOUNT_PERCENT = 20
+export const NEWSLETTER_DISCOUNT_AMOUNT_NOK = 200
 
 export const NEWSLETTER_MODAL_LOCAL_STORAGE_KEY =
   'utekos-newsletter-modal-dismissed-at'

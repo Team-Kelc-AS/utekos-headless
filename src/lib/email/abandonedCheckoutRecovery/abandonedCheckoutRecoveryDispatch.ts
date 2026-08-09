@@ -13,8 +13,16 @@ export type ClaimedAbandonedCheckoutRecoveryDispatch =
 
 export type AbandonedCheckoutRecoveryDeliveryPort = (
   input: {
+    dispatchId: string
     to: string
     recoveryUrl: string
     idempotencyKey: string
+    sequenceVersion: number
+    step: number
+    offerType: 'generic' | 'staycomfy'
+    productImage: {
+      url: string
+      alt: string
+    } | null
   }
 ) => Promise<unknown>
