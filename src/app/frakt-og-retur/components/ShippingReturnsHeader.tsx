@@ -65,9 +65,7 @@ export function ShippingReturnsHeader() {
         </p>
         <p className='text-left font-utekos-text text-lg text-foreground md:text-xl'>
           Vi sender alle bestillinger som gjøres før kl. 16 samme
-          dag. Hvor lang tid akkurat din bestilling tar, er
-          avhengig av destinasjon, slik at du kan starte din
-          utekos så raskt som mulig.
+          dag, bortsett fra (man-fre). Hvor lang tid akkurat din bestilling tar er avhengig av destinasjonen.
         </p>
       </div>
     </>

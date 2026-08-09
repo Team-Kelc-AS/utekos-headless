@@ -1,6 +1,6 @@
 import { Maximize2, Move, User } from 'lucide-react'
 import TechHalfImage from '@/assets/images/techdown/utekos-techdown-halvfigur-forfra-1600x1600.webp'
-import TechDownKateKikkertImage from '@/assets/images/techdown/TechDown-Kikkert-1600x1600.webp'
+import TechDownKateKikkertImage from '@/assets/images/techdown/TechDown-Kyst-W-1600x1600.webp'
 import TechDownFullLengthMobileImage from '@/assets/images/techdown/TechDown-1080x1350-2.webp'
 import TechDownFullLengthDesktopImage from '@/assets/images/techdown/TechDown-1200x1200-4.webp'
 

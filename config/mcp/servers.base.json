@@ -675,12 +675,21 @@
         "gnist_fetch"
       ]
     },
+    "gsc-wizard": {
+      "url": "https://mcp.gscwizard.com/mcp",
+      "headers": {
+        "Authorization": "gscw_live_e0e7ef1fa86ed4d26ee9f41da4a1a605_a851fc8eea27edd306294f35c8eec75249b22ff476d1cb4e"
+      }
+    },
     "meta-ads": {
       "command": "npx",
       "args": [
         "-y",
         "meta-ads-mcp"
       ],
+   "se-ranking": {
+      "url": "https://api.seranking.com/mcp"
+    },
       "env": {
         "META_ACCESS_TOKEN": "${META_ACCESS_TOKEN}",
         "META_APP_ID": "${META_APP_ID}",

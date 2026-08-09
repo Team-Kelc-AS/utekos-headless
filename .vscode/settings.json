@@ -1,0 +1,8 @@
+{
+  "frontMatter.git.enabled": true,
+  "frontMatter.content.pageFolders": [
+    {
+      "path": "[[workspace]]/.agent"
+    }
+  ]
+}
