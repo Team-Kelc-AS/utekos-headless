@@ -50,7 +50,8 @@ test('does not expose browser identifiers without matching consent', () => {
 })
 
 test('reads only consented browser identifiers from existing cookies', () => {
-  const cookie = '_fbp=fb.1.123; _fbc=fb.1.456; _ga=GA1.1.123.456'
+  const cookie =
+    '_fbp=fb.1.123; _fbc=fb.1.456; _ga=GA1.1.123.456; _uetsid=uet-session; _uetvid=uet-visitor'
 
   assert.deepEqual(extractBrowserIds(cookie, {
     analytics: 'granted',
@@ -61,6 +62,8 @@ test('reads only consented browser identifiers from existing cookies', () => {
   }), {
     fbp: 'fb.1.123',
     fbc: 'fb.1.456',
+    uet_session: 'uet-session',
+    uet_visitor: 'uet-visitor',
     ga_client: 'GA1.1.123.456'
   })
 })

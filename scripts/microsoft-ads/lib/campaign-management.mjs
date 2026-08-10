@@ -82,6 +82,21 @@ const mutationResponseSchema = z
   })
   .passthrough()
 
+const addConversionGoalsResponseSchema = mutationResponseSchema.extend({
+  ConversionGoalIds: z
+    .array(idSchema.nullable())
+    .optional()
+    .nullable()
+})
+
+const addConversionGoalSchema = microsoftObjectSchema.extend({
+  Type: z.string().trim().min(1)
+})
+
+const updateConversionGoalSchema = addConversionGoalSchema.extend({
+  Id: idSchema
+})
+
 export function getMicrosoftAdsCampaignManagementBaseUrl(
   environment
 ) {
@@ -215,6 +230,36 @@ export function createMicrosoftAdsCampaignManagementClient({
           ReturnAdditionalFields: returnAdditionalFields
         },
         responseSchema: conversionGoalsResponseSchema
+      })
+    },
+
+    addConversionGoals(conversionGoals, options = {}) {
+      const items = z
+        .array(addConversionGoalSchema)
+        .min(1)
+        .max(100)
+        .parse(conversionGoals)
+
+      return rawRequest('/ConversionGoals', {
+        ...options,
+        method: 'POST',
+        body: { ConversionGoals: items },
+        responseSchema: addConversionGoalsResponseSchema
+      })
+    },
+
+    updateConversionGoals(conversionGoals, options = {}) {
+      const items = z
+        .array(updateConversionGoalSchema)
+        .min(1)
+        .max(100)
+        .parse(conversionGoals)
+
+      return rawRequest('/ConversionGoals', {
+        ...options,
+        method: 'PUT',
+        body: { ConversionGoals: items },
+        responseSchema: mutationResponseSchema
       })
     },
 

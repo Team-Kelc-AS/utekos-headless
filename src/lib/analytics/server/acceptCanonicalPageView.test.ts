@@ -28,6 +28,8 @@ function pageView(
     environment: 'test',
     page_url: 'https://utekos.no/',
     page_title: 'Utekos',
+    external_id:
+      'anon_5eb34f2b-4a49-4db0-956f-b9796d7cc0d5',
     consent: {
       analytics,
       marketing,
@@ -86,7 +88,7 @@ test('accepts the event and its provider intents through one storage call', asyn
   assert.ok(writes[0]?.event.browser_id?.fbp)
   assert.deepEqual(
     writes[0]?.dispatches.map(dispatch => dispatch.provider),
-    ['meta']
+    ['meta', 'microsoft_uet']
   )
 })
 

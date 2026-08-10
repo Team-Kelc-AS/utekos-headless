@@ -25,7 +25,7 @@ function addToCart() {
       version: '1'
     },
     click_id: {
-      msclkid: 'dd4afcccb1c9a4cad9544dd7e5006'
+      msclkid: 'dd4afccc-b1c9-4a4c-ad95-44dd7e5006ab'
     },
     custom_data: {
       currency: 'NOK',
@@ -74,7 +74,7 @@ test('posts add_to_cart events to the Microsoft UET CAPI endpoint', async () => 
         headers: new Headers({ 'x-ms-request-id': 'req-atc-1' }),
         ok: true,
         status: 200,
-        text: async () => ''
+        text: async () => JSON.stringify({ eventsReceived: 1 })
       }
     },
     readConfig: () => ({
@@ -92,6 +92,7 @@ test('posts add_to_cart events to the Microsoft UET CAPI endpoint', async () => 
   assert.equal(result.status, 200)
   assert.equal(result.requestId, 'req-atc-1')
   assert.equal(result.eventName, 'add_to_cart')
+  assert.equal(result.eventsReceived, 1)
   assert.equal(result.tagId, '97247724')
 })
 

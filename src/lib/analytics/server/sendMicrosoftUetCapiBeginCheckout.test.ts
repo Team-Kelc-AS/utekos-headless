@@ -25,7 +25,7 @@ function beginCheckout(overrides: Record<string, unknown> = {}) {
       version: '1'
     },
     click_id: {
-      msclkid: 'dd4afcccb1c9a4cad9544dd7e5006'
+      msclkid: 'dd4afccc-b1c9-4a4c-ad95-44dd7e5006ab'
     },
     custom_data: {
       currency: 'NOK',
@@ -102,7 +102,7 @@ test('posts begin_checkout events to the Microsoft UET CAPI endpoint', async () 
   assert.equal(result.tagId, '97247724')
 })
 
-test('fails closed without msclkid', async () => {
+test('fails closed without any Microsoft-supported user identifier', async () => {
   await assert.rejects(
     () =>
       sendMicrosoftUetCapiBeginCheckout(
@@ -120,8 +120,44 @@ test('fails closed without msclkid', async () => {
       ),
     (error: unknown) =>
       error instanceof MicrosoftUetCapiConfigError
-      && error.reason === 'missing_msclkid'
+      && error.reason === 'missing_microsoft_uet_identifier'
   )
+})
+
+test('sends without msclkid when a consented ID Sync VID exists', async () => {
+  const calls: string[] = []
+
+  const result = await sendMicrosoftUetCapiBeginCheckout(
+    beginCheckout({
+      browser_id: {
+        microsoft_vid: '5eb34f2b-4a49-4db0-956f-b9796d7cc0d5'
+      },
+      click_id: { fbclid: 'only-meta' }
+    }),
+    {
+      fetchFn: async (_url, init) => {
+        calls.push(String(init.body))
+        return {
+          headers: new Headers(),
+          ok: true,
+          status: 200,
+          text: async () => JSON.stringify({ eventsReceived: 1 })
+        }
+      },
+      readConfig: () => ({
+        apiToken: 'test-token',
+        tagId: '97247724'
+      }),
+      resolveToken: () => undefined
+    }
+  )
+
+  assert.match(
+    calls[0] ?? '',
+    /"anonymousId":"5eb34f2b-4a49-4db0-956f-b9796d7cc0d5"/
+  )
+  assert.doesNotMatch(calls[0] ?? '', /"msclkid"/)
+  assert.equal(result.eventsReceived, 1)
 })
 
 test('fails closed without CAPI token', async () => {

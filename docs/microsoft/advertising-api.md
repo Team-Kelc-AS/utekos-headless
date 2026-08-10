@@ -13,6 +13,10 @@ Operational scope for Utekos Microsoft diagnostics. Microsoft/Bing is treated as
 - Scripts: `https://learn.microsoft.com/en-us/advertising/scripts/`
 - Clarity Advertising Dashboard: `https://learn.microsoft.com/en-us/clarity/advertising/advertising-dashboard`
 - Clarity Consent API V2: `https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-consent-api-v2`
+- Microsoft Advertising MCP: `https://learn.microsoft.com/en-us/advertising/guides/mcp-setup?view=bingads-13`
+- UET Conversions API: `https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration?view=bingads-13`
+
+CanonicalEvent-reisen, produksjonsfunnene og målarkitekturen er dokumentert i [`uet-capi-canonical-event-audit.md`](uet-capi-canonical-event-audit.md).
 
 ## Required Local Credentials
 

@@ -614,14 +614,19 @@ const pageViewProviders = {
       browser: 'microsoft_uet',
       server: 'microsoft_uet_capi'
     },
-    requiredParameters: baseProviderParameters,
+    requiredParameters: [
+      ...baseProviderParameters,
+      'page_load_id',
+      'event_source_url',
+      'user_data_identifier'
+    ],
     dedupeField: 'event_id',
     consentRequirement: 'marketing',
-    adapterVersion: 1,
+    adapterVersion: 2,
     productionStatus: 'active',
     productionDetail:
-      'Browser UET is active. Historical server rows are pending without a worker and must not be replayed.',
-    serverOutbox: 'blocked_no_worker'
+      'Browser UET and CAPI pageLoad delivery are active for newly accepted consented page views. Historical blocked rows must not be replayed.',
+    serverOutbox: 'active'
   }),
   posthog: providerMapping({
     support: 'planned',
@@ -824,14 +829,14 @@ const addToCartProviders = {
       'items',
       'currency',
       'value',
-      'msclkid'
+      'user_data_identifier'
     ],
     dedupeField: 'event_id',
     consentRequirement: 'marketing',
-    adapterVersion: 1,
+    adapterVersion: 2,
     productionStatus: 'active',
     productionDetail:
-      'Browser UET is active; Microsoft UET CAPI add_to_cart outbox is active when marketing consent is granted and msclkid is present; missing token or msclkid is skipped_unqualified.',
+      'Browser UET is active; Microsoft UET CAPI add_to_cart outbox is active when marketing consent is granted and at least one Microsoft-supported userData identifier is present.',
     serverOutbox: 'active'
   }),
   posthog: providerMapping({
@@ -929,14 +934,15 @@ const beginCheckoutProviders = {
       ...baseProviderParameters,
       'items',
       'currency',
-      'value'
+      'value',
+      'user_data_identifier'
     ],
     dedupeField: 'event_id',
     consentRequirement: 'marketing',
-    adapterVersion: 1,
+    adapterVersion: 2,
     productionStatus: 'active',
     productionDetail:
-      'Browser UET is active; Microsoft UET CAPI outbox worker is active for begin_checkout.',
+      'Browser UET is active; Microsoft UET CAPI outbox worker is active for begin_checkout when at least one Microsoft-supported userData identifier is present.',
     serverOutbox: 'active'
   }),
   posthog: providerMapping({
@@ -1064,14 +1070,14 @@ const purchaseProviders = {
       'revenue_value',
       'currency',
       'items',
-      'msclkid'
+      'user_data_identifier'
     ],
     dedupeField: 'event_id',
     consentRequirement: 'marketing',
-    adapterVersion: 1,
+    adapterVersion: 2,
     productionStatus: 'active',
     productionDetail:
-      'Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and msclkid is present; missing token or msclkid is skipped_unqualified.',
+      'Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and at least one Microsoft-supported userData identifier is present.',
     serverOutbox: 'active'
   }),
   posthog: providerMapping({

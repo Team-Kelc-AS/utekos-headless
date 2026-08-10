@@ -399,7 +399,7 @@ export function normalizeMicrosoftAdsFullAuditForWire(audit) {
     conversionGoals: toJsonObject(value.conversionGoals),
     campaigns: toJsonObject(value.campaigns),
     shoppingContent: toJsonObject(value.shoppingContent),
-    report: toJsonObject(value.report),
+    report: normalizeAuditReportForWire(value.report),
     adInsight: toJsonObject(value.adInsight),
     localImplementation: toJsonObject(value.localImplementation),
     findings: Array.isArray(value.findings)
@@ -634,6 +634,21 @@ export function normalizeMicrosoftAdsRecommendation(item) {
 function toJsonObject(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return { value: value ?? null }
   return microsoftAdsJsonObjectSchema.parse(dropUndefinedDeep(value))
+}
+
+function normalizeAuditReportForWire(value) {
+  const report = dropUndefinedDeep(
+    value && typeof value === 'object' && !Array.isArray(value)
+      ? value
+      : {}
+  )
+  delete report.allRows
+
+  if (report.status && typeof report.status === 'object' && !Array.isArray(report.status)) {
+    delete report.status.ReportDownloadUrl
+  }
+
+  return toJsonObject(report)
 }
 
 function dropUndefinedDeep(value) {

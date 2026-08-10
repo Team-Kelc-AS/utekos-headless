@@ -16,9 +16,14 @@ type MicrosoftUetCapiDispatchReceipt = {
   result: {
     eventId: string
     eventName: string
+    eventsReceived: number | null
     requestId: string | null
+    responseCode: string | null
+    responseMessage: string | null
     status: number
     tagId: string
+    validationErrors: ReadonlyArray<unknown>
+    validationWarnings: ReadonlyArray<unknown>
   }
 }
 
@@ -129,8 +134,13 @@ export function createMicrosoftUetProviderAdapter<
       requestId: receipt.result.requestId,
       response: receipt.result,
       validationResult: {
+        events_received: receipt.result.eventsReceived,
         http_status: receipt.result.status,
-        tag_id: receipt.result.tagId
+        tag_id: receipt.result.tagId,
+        validation_error_count:
+          receipt.result.validationErrors.length,
+        validation_warning_count:
+          receipt.result.validationWarnings.length
       }
     }),
     provider: 'microsoft_uet',

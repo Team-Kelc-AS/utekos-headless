@@ -28,6 +28,9 @@ export function analyzeMicrosoftAdsTrackingHealth(audit) {
   const missingMsclkidSkipCount = numberValue(
     dispatchEvidence?.bySkipReason?.missing_msclkid
   )
+  const missingMicrosoftIdentifierSkipCount = numberValue(
+    dispatchEvidence?.bySkipReason?.missing_microsoft_uet_identifier
+  )
   const adapterUnavailableAfterResetCount = numberValue(
     dispatchEvidence?.bySkipReason?.provider_adapter_unavailable_after_reset
   )
@@ -365,6 +368,65 @@ export function analyzeMicrosoftAdsTrackingHealth(audit) {
     )
   }
 
+  if (missingMicrosoftIdentifierSkipCount > 0) {
+    findings.push(
+      createMicrosoftAdsHealthFinding({
+        severity: clicks > 0 && conversions === 0 ? 'high' : 'medium',
+        code: 'MICROSOFT_UET_DISPATCH_SKIPPED_MISSING_IDENTIFIER',
+        area: 'conversion_tracking',
+        title: 'Microsoft UET dispatches lack a supported user identifier',
+        summary: `${missingMicrosoftIdentifierSkipCount} Microsoft UET provider attempts in the last ${dispatchEvidence.lookbackDays ?? 30} days were terminally skipped because every supported CAPI userData identifier was missing.`,
+        diagnosis: {
+          certainty: 'confirmed',
+          confidence: 1,
+          rootCause:
+            'Production provider-dispatch evidence shows Microsoft UET attempts without anonymousId, externalId, em, ph, msclkid, idfa or gaid.',
+          rationale:
+            'The current qualification reason means the event had no provider-supported identity path; it does not mean MSCLKID alone was required.'
+        },
+        evidence: [
+          {
+            source: 'audit.localImplementation.providerDispatchEvidence',
+            key: 'missing_microsoft_uet_identifier',
+            value: missingMicrosoftIdentifierSkipCount
+          },
+          {
+            source: 'audit.localImplementation.providerDispatchEvidence',
+            key: 'lastSeenAt',
+            value:
+              dispatchEvidence?.bySkipReasonLastSeenAt
+                ?.missing_microsoft_uet_identifier ?? null
+          },
+          {
+            source: 'audit.localImplementation.providerDispatchEvidence',
+            key: 'missing_microsoft_uet_identifier_by_event_name',
+            value:
+              dispatchEvidence?.bySkipReasonAndEventName
+                ?.missing_microsoft_uet_identifier ?? {}
+          }
+        ],
+        remediation: {
+          summary:
+            'Restore at least one consented Microsoft-supported identity path and preserve it through the complete CanonicalEvent journey.',
+          backend: 'local-code',
+          operation: null,
+          steps: [
+            'Verify MSCLKID auto-tagging and paid-click capture.',
+            'Complete Microsoft ID Sync and preserve the same VID as anonymousId.',
+            'Verify externalId and normalized SHA-256 email or phone are attached only with valid marketing consent.',
+            'Trace the chosen identifier through checkout attribution and the final CAPI payload.'
+          ]
+        },
+        verification: [
+          'New qualified events contain at least one Microsoft-supported userData identifier.',
+          'The missing_microsoft_uet_identifier count stops increasing for eligible traffic.',
+          'Microsoft response evidence records eventsReceived and validation details.'
+        ],
+        sourceDocs: [CAPI_DOC]
+      })
+    )
+  }
+
   if (
     adapterUnavailableAfterResetCount > 0 &&
     isRecentIsoTimestamp(
@@ -534,7 +596,8 @@ export function analyzeMicrosoftAdsTrackingHealth(audit) {
       providerDispatchAcceptedCount: numberValue(dispatchEvidence?.acceptedCount),
       providerDispatchSkippedCount: numberValue(dispatchEvidence?.skippedCount),
       providerDispatchFailedCount: numberValue(dispatchEvidence?.failedCount),
-      missingMsclkidSkipCount
+      missingMsclkidSkipCount,
+      missingMicrosoftIdentifierSkipCount
     }
   })
 }

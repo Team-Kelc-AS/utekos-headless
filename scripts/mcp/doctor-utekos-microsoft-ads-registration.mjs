@@ -7,12 +7,15 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 import {
+  MICROSOFT_ADS_OFFICIAL_OAUTH_MCP_URL,
+  MICROSOFT_ADS_OFFICIAL_SERVER_ID,
   UTEKOS_MICROSOFT_ADS_SERVER_ID,
   UTEKOS_MICROSOFT_ADS_TOOLS,
   UTEKOS_MICROSOFT_ADS_TUNNEL_PROFILE_ID,
   UTEKOS_MICROSOFT_ADS_TUNNEL_TARGET,
   createMicrosoftAdsPackageScripts,
-  createMicrosoftAdsServerConfig
+  createMicrosoftAdsServerConfig,
+  createOfficialMicrosoftAdsServerConfig
 } from './register-utekos-microsoft-ads.mjs'
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url))
@@ -41,6 +44,15 @@ export function inspectMicrosoftAdsRegistration({ root = repoRoot } = {}) {
       actual
         ? 'canonical Microsoft Ads stdio entry is present'
         : 'missing canonical Microsoft Ads stdio entry'
+    )
+    const officialActual =
+      base.mcpServers?.[MICROSOFT_ADS_OFFICIAL_SERVER_ID]
+    add(
+      'official-base-server',
+      deepEqual(officialActual, createOfficialMicrosoftAdsServerConfig()),
+      officialActual
+        ? 'official Microsoft Ads remote MCP entry is present'
+        : 'missing official Microsoft Ads remote MCP entry'
     )
   }
 
@@ -120,14 +132,28 @@ export function inspectMicrosoftAdsRegistration({ root = repoRoot } = {}) {
     const hasTable = codex.includes(
       `[mcp_servers.${UTEKOS_MICROSOFT_ADS_SERVER_ID}]`
     )
+    const hasOfficialTable = codex.includes(
+      `[mcp_servers.${MICROSOFT_ADS_OFFICIAL_SERVER_ID}]`
+    )
+    const hasOfficialUrl = codex.includes(
+      `url = ${JSON.stringify(MICROSOFT_ADS_OFFICIAL_OAUTH_MCP_URL)}`
+    )
     const missingTools = UTEKOS_MICROSOFT_ADS_TOOLS.filter(
       tool => !codex.includes(`"${tool}"`)
     )
     add(
       'codex-project-config',
-      hasMarkers && hasTable && missingTools.length === 0,
-      hasMarkers && hasTable && missingTools.length === 0
-        ? 'project-scoped Codex MCP table is registered'
+      hasMarkers &&
+        hasTable &&
+        hasOfficialTable &&
+        hasOfficialUrl &&
+        missingTools.length === 0,
+      hasMarkers &&
+        hasTable &&
+        hasOfficialTable &&
+        hasOfficialUrl &&
+        missingTools.length === 0
+        ? 'project-scoped Codex MCP tables are registered'
         : 'Codex managed block is incomplete'
     )
   }
@@ -136,13 +162,29 @@ export function inspectMicrosoftAdsRegistration({ root = repoRoot } = {}) {
     root,
     'mcp.json',
     'generated-full-catalog',
-    checks
+    checks,
+    UTEKOS_MICROSOFT_ADS_SERVER_ID
+  )
+  inspectGeneratedJson(
+    root,
+    'mcp.json',
+    'generated-official-full-catalog',
+    checks,
+    MICROSOFT_ADS_OFFICIAL_SERVER_ID
   )
   inspectGeneratedJson(
     root,
     '.cursor/mcp.remote.json',
     'generated-cursor-runtime',
-    checks
+    checks,
+    UTEKOS_MICROSOFT_ADS_SERVER_ID
+  )
+  inspectGeneratedJson(
+    root,
+    '.cursor/mcp.remote.json',
+    'generated-official-cursor-runtime',
+    checks,
+    MICROSOFT_ADS_OFFICIAL_SERVER_ID
   )
 
   const cursorLink = path.join(root, '.cursor/mcp.json')
@@ -170,7 +212,7 @@ export function inspectMicrosoftAdsRegistration({ root = repoRoot } = {}) {
   return checks
 }
 
-function inspectGeneratedJson(root, relativePath, name, checks) {
+function inspectGeneratedJson(root, relativePath, name, checks, serverId) {
   const filePath = path.join(root, relativePath)
   if (!fs.existsSync(filePath)) {
     checks.push({
@@ -185,10 +227,10 @@ function inspectGeneratedJson(root, relativePath, name, checks) {
     const json = JSON.parse(fs.readFileSync(filePath, 'utf8'))
     checks.push({
       name,
-      ok: Boolean(json.mcpServers?.[UTEKOS_MICROSOFT_ADS_SERVER_ID]),
-      message: Boolean(json.mcpServers?.[UTEKOS_MICROSOFT_ADS_SERVER_ID])
-        ? `${UTEKOS_MICROSOFT_ADS_SERVER_ID} is present`
-        : `${UTEKOS_MICROSOFT_ADS_SERVER_ID} is missing`
+      ok: Boolean(json.mcpServers?.[serverId]),
+      message: Boolean(json.mcpServers?.[serverId])
+        ? `${serverId} is present`
+        : `${serverId} is missing`
     })
   } catch (error) {
     checks.push({
@@ -281,13 +323,15 @@ async function main() {
   if (args.codex) {
     const codex = runOptional(repoRoot, 'codex', ['mcp', 'list'])
     const combined = `${codex.stdout}\n${codex.stderr}`
+    const hasLocal = combined.includes(UTEKOS_MICROSOFT_ADS_SERVER_ID)
+    const hasOfficial = combined.includes(MICROSOFT_ADS_OFFICIAL_SERVER_ID)
     checks.push({
       name: 'codex-mcp-list',
-      ok: codex.ok && combined.includes(UTEKOS_MICROSOFT_ADS_SERVER_ID),
+      ok: codex.ok && hasLocal && hasOfficial,
       message: codex.ok
-        ? combined.includes(UTEKOS_MICROSOFT_ADS_SERVER_ID)
-          ? 'Codex reports the Microsoft Ads MCP server'
-          : 'Codex ran, but Microsoft Ads was not listed; ensure the project is trusted and restart Codex'
+        ? hasLocal && hasOfficial
+          ? 'Codex reports both Microsoft Ads MCP servers'
+          : 'Codex ran, but one or both Microsoft Ads servers were not listed; ensure the project is trusted and restart Codex'
         : codex.error?.message || firstUsefulLine(codex.stderr) || 'codex mcp list failed'
     })
   }
