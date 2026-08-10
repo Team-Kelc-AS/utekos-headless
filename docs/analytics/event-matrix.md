@@ -1,16 +1,19 @@
 # Canonical event and destination matrix
 
-**Current production:** verified 2026-07-31. Deployment
-`dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL` is `READY`, owns `utekos.no`, and runs
-exact `main` SHA `7a9f19ed3f94cc08ee3140ddb4c99afe4af3d564`.
+**Current production contract:** verified 2026-08-10. The latest
+runtime-bearing baseline before the documentation-policy release is deployment
+`dpl_NuutdmSBqX1Y8fBTrEd4yyLBgNRB`, `READY`, from exact `main` SHA
+`f93be8de1cc9e44b614b5bc7d06042f74cd1246e`. Web-GTM v141 is published and
+v140 is the immediate rollback.
 
 **Historical freeze:** the 2026-07-20 refresh at `ed16dfd06` / deployment
 `dpl_3Pe1KmJSj5unFh1jD7VytiPvFr5H` is retained as audit history.
 
-**Historical tracking release:** 2026-07-26. Web-GTM v135 is live; v133 introduced the
+**Historical tracking release:** 2026-07-26. Web-GTM v135 was live at
+activation and is now superseded by v141; v133 introduced the
 canonical mappings from isolated workspace 141, v134 removed the redundant
 additional-consent setting, and v135 added future `dataLayer` polling to tag
-153. Version 134 is the immediate GTM rollback.
+153. Version 134 was the immediate GTM rollback at that release.
 Application deployment `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` from
 `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2` is `READY`. Controlled genuine
 events have correlated collector, ledger, queue, Google and Meta receipts.

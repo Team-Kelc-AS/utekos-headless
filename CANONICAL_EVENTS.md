@@ -1,6 +1,6 @@
 # Canonical events
 
-Status date: 2026-08-05
+Status date: 2026-08-10
 
 The application owns event meaning. GTM and sGTM are delivery
 adapters, not the event inventory or source of truth.
@@ -14,7 +14,7 @@ contract tests are authoritative for the exact list.
 
 | Event | Owner | Detection | Delivery | Status |
 | --- | --- | --- | --- | --- |
-| `page_view` | Next.js application | Initial render and App Router URL change | `dataLayer` -> web GTM -> `/__sgtm` -> GA4, plus consent-aware first-party collection and qualified Meta CAPI | Active; Meta server outbox active, Microsoft server blocked |
+| `page_view` | Next.js application | Initial render and App Router URL change | `dataLayer` -> web GTM -> `/__sgtm` -> GA4, plus consent-aware first-party collection, qualified Meta CAPI and consent-gated Microsoft browser UET | Active; Meta server outbox active; Microsoft browser active; no registered Microsoft `page_view` server worker |
 | `view_item` | Next.js application | Resolved product and selected variant on a product page or landing purchase context (`/skreddersy-varmen`) | GTM/sGTM + ledger + Google Data Manager + Meta CAPI | Active |
 | `add_to_cart` | Shopify cart service | After accepted cart mutation | GTM/sGTM + ledger + Google Data Manager + Meta CAPI + qualified Microsoft UET CAPI | Active |
 | `begin_checkout` | Shopify checkout service | Before checkout redirect with valid checkout URL | GTM/sGTM + ledger + Google Data Manager + Meta CAPI + qualified Microsoft UET CAPI; persists checkout consent snapshot | Active |
@@ -85,6 +85,11 @@ for `add_to_cart`, `begin_checkout`, and `purchase`; missing ApiToken or
 `msclkid` is recorded fail-closed as `skipped_unqualified`. A provider API
 receipt remains `accepted_unverified`, not proof of final dashboard attribution.
 
+Web-GTM v141 is the current published browser container and v140 is its
+immediate rollback. A controlled Microsoft `page_view` CAPI probe returned
+HTTP 200 with `eventsReceived=1`, but this is transport evidence only and does
+not add `page_view` to the registered three-worker Microsoft server contract.
+
 ## Server ingestion foundation
 
 The server ingestion foundation includes tested first-party Route
@@ -152,6 +157,21 @@ Microsoft UET CAPI maps `page_view_id` to `pageLoadId` and uses
 `event_id` for deduplication. Microsoft ID sync remains a
 separate consent-gated browser responsibility when audience
 matching or remarketing is enabled.
+
+## Documentation and release consistency
+
+Any change to event meaning, source, consent, destination, worker registry or
+provider finality must update the affected contract surfaces together:
+
+- `EVENT_CATALOG.md` and its machine-readable implementation/tests;
+- this document and `docs/analytics/event-matrix.md`;
+- `docs/analytics/current-state.md` and `FLOW.md` when active status changes;
+- `DEPLOYMENT.md` for release order, provider mutation, rollback and evidence.
+
+Release verification must follow the same event ID from browser or webhook
+through collector, ledger/outbox, provider response and external reporting.
+HTTP 200, `eventsReceived`, a `READY` deployment or a visible browser request
+must never be promoted to provider attribution or bidding proof.
 
 The pre-consent Google `dataLayer` event remains separate from
 first-party persistence. A consent update may release a held
