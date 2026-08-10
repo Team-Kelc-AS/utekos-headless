@@ -62,6 +62,23 @@ reprocessing, item-level status, and Shopping eligibility remain externally
 unverified until the provider reports them. Do not describe the 13 products as
 approved solely from a valid feed response.
 
+### Microsoft Merchant assortment reduction 2026-08-11
+
+The hosted primary feed intentionally includes only Utekos Mikrofiber
+Fjellblå, Comfyrobe and Utekos TechDown offers. It excludes every Utekos Dun,
+Utekos Stapper and Utekos Buff offer, plus every Utekos Mikrofiber color other
+than Fjellblå. With the Shopify catalog state observed at release time, the
+expected output is nine offers: two Mikrofiber Fjellblå, three Comfyrobe and
+four TechDown variants.
+
+[Microsoft documents](https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_bmc_productinventoryfeed)
+that submitting an updated primary feed overwrites the previous upload.
+Deployment makes the hosted TSV authoritative but does not trigger Microsoft
+Merchant Center ingestion. The operator must update the existing URL-download
+feed afterward and verify that the processed catalog no longer contains the
+seven removed offers. Provider processing and item status remain separate
+evidence gates.
+
 ## Utekos Original app-only release and baseline 2026-08-05
 
 Production deployment `dpl_26WjzijrrUkRonQgqTmAQLii19cD` reached `READY`,

@@ -8,6 +8,7 @@ import { MERCHANT_FEED_SITE_URL } from '@/lib/merchant-feeds/merchantFeedSiteUrl
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 import { getMicrosoftMerchantProductCategory } from './getMicrosoftMerchantProductCategory'
+import { isMicrosoftMerchantOfferIncluded } from './isMicrosoftMerchantOfferIncluded'
 
 export const MICROSOFT_MERCHANT_FEED_COLUMNS = [
   'id',
@@ -358,7 +359,12 @@ export function buildMicrosoftMerchantFeed(
   const rows = products
     .filter(product => product.status === 'ACTIVE')
     .flatMap(product =>
-      product.variants.edges.map(({ node }) => buildRow(product, node))
+      product.variants.edges
+        .map(({ node }) => node)
+        .filter(variant =>
+          isMicrosoftMerchantOfferIncluded(product, variant)
+        )
+        .map(variant => buildRow(product, variant))
     )
 
   if (rows.length === 0) {
