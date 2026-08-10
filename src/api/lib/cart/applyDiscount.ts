@@ -11,7 +11,7 @@ import { normalizeCart } from '@/lib/helpers/normalizers/normalizeCart'
 import { resolveFullShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
 import { getShopifyCartCacheTag } from '@/lib/cart/getShopifyCartCacheTag'
-import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
+import { logCartError } from '@/lib/cart/logCartError'
 import { redactShopifyCartSecrets } from '@/lib/cart/redactShopifyCartSecrets'
 import { z } from 'zod'
 
@@ -73,10 +73,7 @@ export async function applyDiscount(
 
     return normalizeCart(cart)
   } catch (error) {
-    console.error(
-      '[applyDiscount] CRITICAL ERROR:',
-      getRedactedErrorSummary(error)
-    )
+    logCartError('[applyDiscount] CRITICAL ERROR:', error)
 
     const message =
       error instanceof Error ?

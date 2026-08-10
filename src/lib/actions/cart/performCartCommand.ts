@@ -3,7 +3,7 @@ import type { StorefrontBuyerContext } from '@/api/shopify/storefront/Storefront
 import { requireCartId } from '@/lib/actions/cart/requireCartId'
 import { isShopifyCartNotFoundError } from '@/lib/errors/isShopifyCartNotFoundError'
 import type { CartCommand } from 'types/cart'
-import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
+import { logCartError } from '@/lib/cart/logCartError'
 
 type AddLinesCommand = Extract<
   CartCommand,
@@ -123,10 +123,7 @@ export async function performCartCommand(
           [command.discountCode]
         )
       } catch (error) {
-        console.error(
-          'Cart lines were added, but the discount code update failed.',
-          getRedactedErrorSummary(error)
-        )
+        logCartError('Cart lines were added, but the discount code update failed.', error)
         return cart
       }
     }
