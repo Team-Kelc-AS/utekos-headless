@@ -1,7 +1,10 @@
 import { z } from 'zod'
+import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 import type { CanonicalPurchase } from '../purchaseEvent'
-import { findGoogleClientId } from './findGoogleClientId'
-import { findMicrosoftClickId } from './findMicrosoftClickId'
+import {
+  buildMicrosoftUetCapiUserData,
+  microsoftUetCapiUserDataSchema
+} from './microsoftUetCapiUserData'
 
 const microsoftUetCapiItemSchema = z
   .object({
@@ -9,24 +12,6 @@ const microsoftUetCapiItemSchema = z
     name: z.string().min(1).optional(),
     price: z.number().nonnegative().optional(),
     quantity: z.number().int().positive().optional()
-  })
-  .strict()
-
-const microsoftUetCapiUserDataSchema = z
-  .object({
-    anonymousId: z.string().min(1).optional(),
-    clientIpAddress: z.string().min(1).optional(),
-    clientUserAgent: z.string().min(1).optional(),
-    em: z
-      .string()
-      .regex(/^[a-f0-9]{64}$/i)
-      .optional(),
-    externalId: z.string().min(1).optional(),
-    msclkid: z.string().min(1).optional(),
-    ph: z
-      .string()
-      .regex(/^[a-f0-9]{64}$/i)
-      .optional()
   })
   .strict()
 
@@ -50,11 +35,11 @@ export const microsoftUetCapiPurchaseEventSchema = z
     adStorageConsent: z.literal('G'),
     customData: microsoftUetCapiCustomDataSchema,
     eventId: z.string().min(1),
-    eventName: z.literal('PRODUCT_PURCHASE'),
+    eventName: z.literal('purchase'),
     eventSourceUrl: z.string().url().optional(),
     eventTime: z.number().int().positive(),
     eventType: z.literal('custom'),
-    userData: microsoftUetCapiUserDataSchema.optional()
+    userData: microsoftUetCapiUserDataSchema
   })
   .strict()
 
@@ -74,27 +59,6 @@ export type MicrosoftUetCapiRequest = z.infer<
   typeof microsoftUetCapiRequestSchema
 >
 
-function buildUserData(event: CanonicalPurchase) {
-  const msclkid = findMicrosoftClickId(event.click_id)
-  const anonymousId = findGoogleClientId(event.browser_id)
-  const emailHash = event.user_data?.email_sha256?.[0]
-  const phoneHash = event.user_data?.phone_sha256?.[0]
-
-  return {
-    ...(event.event_device_info?.user_agent ?
-      { clientUserAgent: event.event_device_info.user_agent }
-    : {}),
-    ...(anonymousId ? { anonymousId } : {}),
-    ...(event.external_id ? { externalId: event.external_id } : {}),
-    ...(emailHash ? { em: emailHash } : {}),
-    ...(phoneHash ? { ph: phoneHash } : {}),
-    ...(event.client_ip_address ?
-      { clientIpAddress: event.client_ip_address }
-    : {}),
-    ...(msclkid ? { msclkid } : {})
-  }
-}
-
 export function mapCanonicalPurchaseToMicrosoftUet(
   event: CanonicalPurchase
 ): MicrosoftUetCapiPurchaseEvent {
@@ -113,7 +77,7 @@ export function mapCanonicalPurchaseToMicrosoftUet(
   }
 
   const items = event.custom_data.items.map(item => ({
-    id: item.item_id,
+    id: cleanShopifyId(item.item_id) ?? item.item_id,
     name: item.item_name,
     price: item.final_unit_price ?? item.unit_price,
     quantity: item.quantity
@@ -137,11 +101,11 @@ export function mapCanonicalPurchaseToMicrosoftUet(
       value
     },
     eventId: event.event_id,
-    eventName: 'PRODUCT_PURCHASE',
+    eventName: 'purchase',
     ...(event.page_url ? { eventSourceUrl: event.page_url } : {}),
     eventTime,
     eventType: 'custom',
-    userData: buildUserData(event)
+    userData: buildMicrosoftUetCapiUserData(event)
   })
 }
 

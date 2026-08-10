@@ -4,6 +4,8 @@ import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
+import { normalizeMicrosoftAdsFullAuditForWire } from './microsoft-ads-tool-contracts.mjs'
+
 const root = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '../..'
@@ -80,4 +82,43 @@ test('tool metadata never embeds credential values or credential metadata keys',
     'MICROSOFT_ADS_DEVELOPER_TOKEN',
     'CONTROL_PLANE_API_KEY'
   ]) assert.doesNotMatch(source, new RegExp(forbidden))
+})
+
+test('full account snapshot strips signed report download URLs', () => {
+  const timestamp = '2026-08-10T12:00:00.000Z'
+  const normalized = normalizeMicrosoftAdsFullAuditForWire({
+    ok: true,
+    auditVersion: 2,
+    startedAt: timestamp,
+    finishedAt: timestamp,
+    account: {
+      environment: 'production',
+      customerId: null,
+      accountId: null,
+      merchantStoreId: null,
+      uetTagId: null,
+      developerTokenPresent: false,
+      clientIdPresent: false,
+      clientSecretPresent: false,
+      accessTokenPresent: false,
+      refreshTokenPresent: false,
+      uetCapiTokenPresent: false
+    },
+    credentialReadiness: {},
+    criticalReads: {},
+    report: {
+      ok: true,
+      empty: false,
+      allRows: [{ secret: 'discarded' }],
+      status: {
+        Status: 'Success',
+        ReportDownloadUrl: 'https://example.invalid/signed-report'
+      }
+    },
+    sources: ['https://learn.microsoft.com/advertising/']
+  })
+
+  assert.deepEqual(normalized.report.status, { Status: 'Success' })
+  assert.equal('allRows' in normalized.report, false)
+  assert.doesNotMatch(JSON.stringify(normalized), /signed-report/)
 })

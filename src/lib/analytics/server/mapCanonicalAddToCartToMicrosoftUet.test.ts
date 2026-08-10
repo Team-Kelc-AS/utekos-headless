@@ -14,6 +14,7 @@ function addToCart(overrides: Record<string, unknown> = {}) {
     event_time: '2026-07-17T10:05:00.000Z',
     source: 'web',
     environment: 'test',
+    page_view_id: '11111111-1111-4111-8111-111111111111',
     page_url: 'https://utekos.no/produkter/utekos-dun',
     page_title: 'Utekos Dun',
     consent: {
@@ -24,12 +25,14 @@ function addToCart(overrides: Record<string, unknown> = {}) {
       version: '1'
     },
     click_id: {
-      msclkid: 'dd4afcccb1c9a4cad9544dd7e5006'
+      msclkid: 'dd4afccc-b1c9-4a4c-ad95-44dd7e5006ab'
     },
     browser_id: {
-      ga_client_id: '1234567890.987654321'
+      ga_client_id: '1234567890.987654321',
+      uet_visitor: 'uet-visitor-1'
     },
-    external_id: 'anon_123',
+    external_id:
+      'anon_550e8400-e29b-41d4-a716-446655440000',
     client_ip_address: '203.0.113.10',
     event_device_info: {
       user_agent: 'Mozilla/5.0'
@@ -48,7 +51,7 @@ function addToCart(overrides: Record<string, unknown> = {}) {
           collection_titles: [],
           currently_not_in_stock: false,
           gross_unit_price: 2490,
-          item_id: '42903234609400',
+          item_id: 'gid://shopify/ProductVariant/42903234609400',
           item_name: 'Utekos Dun',
           price_includes_tax: true,
           product_handle: 'utekos-dun',
@@ -74,8 +77,18 @@ test('maps canonical add_to_cart to Microsoft UET CAPI custom event', () => {
   assert.equal(event.eventType, 'custom')
   assert.equal(event.eventName, 'add_to_cart')
   assert.equal(event.eventId, '61c2ef59-6e6f-4f56-a63a-567ca398f9de')
-  assert.equal(event.userData?.msclkid, 'dd4afcccb1c9a4cad9544dd7e5006')
-  assert.equal(event.userData?.anonymousId, '1234567890.987654321')
+  assert.equal(
+    event.userData.msclkid,
+    'dd4afccc-b1c9-4a4c-ad95-44dd7e5006ab'
+  )
+  assert.equal(
+    event.userData.anonymousId,
+    '550e8400-e29b-41d4-a716-446655440000'
+  )
+  assert.equal(
+    event.pageLoadId,
+    '11111111-1111-4111-8111-111111111111'
+  )
   assert.equal(event.customData.pageType, 'product')
   assert.equal(event.customData.value, 2490)
   assert.equal(event.customData.currency, 'NOK')

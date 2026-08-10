@@ -160,6 +160,60 @@ repoTest('tracking health trusts runtime Microsoft UET evidence over stale sourc
   assert.equal(result.metrics.missingMsclkidSkipCount, 354)
 })
 
+repoTest('tracking health reports the current missing Microsoft identifier reason', async () => {
+  const { analyzeMicrosoftAdsTrackingHealth } = await import(
+    '../scripts/microsoft-ads/health/tracking-health.mjs'
+  )
+
+  const audit = createAuditFixture()
+  audit.localImplementation = {
+    providerDispatchEvidence: {
+      ok: true,
+      reason: null,
+      lookbackDays: 30,
+      provider: 'microsoft_uet',
+      rowCount: 3,
+      providerConfirmed: true,
+      acceptedCount: 1,
+      skippedCount: 2,
+      failedCount: 0,
+      bySkipReason: { missing_microsoft_uet_identifier: 2 },
+      bySkipReasonLastSeenAt: {
+        missing_microsoft_uet_identifier: '2026-08-10T12:00:00.000Z'
+      },
+      bySkipReasonAndEventName: {
+        missing_microsoft_uet_identifier: {
+          add_to_cart: 1,
+          purchase: 1
+        }
+      }
+    },
+    productPurchaseGoal: {
+      cApiEndpointPresent: true,
+      cApiRequiresToken: true,
+      cApiRequiresMsclkid: false
+    }
+  }
+  audit.report = {
+    ok: true,
+    totals: { clicks: 100, allConversionsQualified: 0 }
+  }
+
+  const result = analyzeMicrosoftAdsTrackingHealth(audit)
+  const finding = result.findings.find(
+    candidate =>
+      candidate.code ===
+      'MICROSOFT_UET_DISPATCH_SKIPPED_MISSING_IDENTIFIER'
+  )
+
+  assert.ok(finding)
+  assert.equal(
+    result.metrics.missingMicrosoftIdentifierSkipCount,
+    2
+  )
+  assert.equal(result.metrics.missingMsclkidSkipCount, 0)
+})
+
 repoTest('full snapshot wire mapper tolerates report payloads carrying undefined values', async () => {
   const { normalizeMicrosoftAdsFullAuditForWire } = await import(
     '../scripts/mcp/microsoft-ads-tool-contracts.mjs'

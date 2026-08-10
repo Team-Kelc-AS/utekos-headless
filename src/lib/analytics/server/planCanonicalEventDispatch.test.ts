@@ -61,6 +61,8 @@ function pageView(): CanonicalEvent {
     environment: 'test',
     page_url: 'https://utekos.no/',
     page_title: 'Utekos',
+    external_id:
+      'anon_550e8400-e29b-41d4-a716-446655440000',
     consent
   })
 }
@@ -110,14 +112,30 @@ function viewItem(): CanonicalEvent {
   })
 }
 
-test('routes consented page_view events to the active Meta outbox', () => {
-  assert.deepEqual(planCanonicalEventDispatch(pageView()), [
-    {
-      dispatch_mode: 'server_retry',
-      event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
-      provider: 'meta'
+test('routes consented page_view events to Meta and Microsoft', () => {
+  const previous = process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
+  process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = 'test-uet-token'
+
+  try {
+    assert.deepEqual(planCanonicalEventDispatch(pageView()), [
+      {
+        dispatch_mode: 'server_retry',
+        event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+        provider: 'meta'
+      },
+      {
+        dispatch_mode: 'server_retry',
+        event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+        provider: 'microsoft_uet'
+      }
+    ])
+  } finally {
+    if (previous === undefined) {
+      delete process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
+    } else {
+      process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = previous
     }
-  ])
+  }
 })
 
 test('routes view_item only to the active Google and Meta outboxes', () => {
@@ -213,7 +231,9 @@ test('routes consented purchase with msclkid and UET token to Microsoft outbox',
       source: 'webhook',
       environment: 'test',
       browser_id: { ga_client_id: '123456789.1784201643' },
-      click_id: { msclkid: 'dd4afcccb1c9a4cad9544dd7e5006' },
+      click_id: {
+        msclkid: 'dd4afccc-b1c9-4a4c-ad95-44dd7e5006ab'
+      },
       consent,
       custom_data: {
         currency: 'NOK',
@@ -263,7 +283,7 @@ test('routes consented purchase with msclkid and UET token to Microsoft outbox',
   }
 })
 
-test('skips Microsoft purchase without msclkid as unqualified', () => {
+test('skips Microsoft purchase without a supported identifier', () => {
   const previous = process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
   process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = 'test-uet-token'
 
@@ -301,8 +321,32 @@ test('skips Microsoft purchase without msclkid as unqualified', () => {
       dispatch_mode: 'server_retry',
       event_id: event.event_id,
       provider: 'microsoft_uet',
-      skip_reason: 'missing_msclkid',
+      skip_reason: 'missing_microsoft_uet_identifier',
       status: 'skipped_unqualified'
+    })
+  } finally {
+    if (previous === undefined) {
+      delete process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
+    } else {
+      process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = previous
+    }
+  }
+})
+
+test('routes Microsoft purchase with external ID when msclkid is absent', () => {
+  const previous = process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
+  process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = 'test-uet-token'
+
+  try {
+    const event = purchase({ external_id: 'anonymous-customer-1' })
+    const microsoft = planCanonicalEventDispatch(event, {
+      now: purchasePlanningNow
+    }).find(intent => intent.provider === 'microsoft_uet')
+
+    assert.deepEqual(microsoft, {
+      dispatch_mode: 'server_retry',
+      event_id: event.event_id,
+      provider: 'microsoft_uet'
     })
   } finally {
     if (previous === undefined) {
@@ -461,7 +505,9 @@ test('routes consented add_to_cart with msclkid and UET token to Microsoft outbo
       page_url: 'https://utekos.no/produkter/utekos-dun',
       page_title: 'Utekos Dun',
       browser_id: { ga_client_id: '123456789.1784201643' },
-      click_id: { msclkid: 'dd4afcccb1c9a4cad9544dd7e5006' },
+      click_id: {
+        msclkid: 'dd4afccc-b1c9-4a4c-ad95-44dd7e5006ab'
+      },
       consent,
       custom_data: {
         currency: 'NOK',
@@ -521,7 +567,7 @@ test('routes consented add_to_cart with msclkid and UET token to Microsoft outbo
   }
 })
 
-test('skips Microsoft add_to_cart without msclkid as unqualified', () => {
+test('skips Microsoft add_to_cart without a supported identifier', () => {
   const previous = process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
   process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = 'test-uet-token'
 
@@ -577,7 +623,7 @@ test('skips Microsoft add_to_cart without msclkid as unqualified', () => {
       dispatch_mode: 'server_retry',
       event_id: event.event_id,
       provider: 'microsoft_uet',
-      skip_reason: 'missing_msclkid',
+      skip_reason: 'missing_microsoft_uet_identifier',
       status: 'skipped_unqualified'
     })
   } finally {
@@ -604,7 +650,9 @@ test('routes consented begin_checkout with msclkid and UET token to Microsoft ou
       page_url: 'https://utekos.no/checkout',
       page_title: 'Checkout',
       browser_id: { ga_client_id: '123456789.1784201643' },
-      click_id: { msclkid: 'dd4afcccb1c9a4cad9544dd7e5006' },
+      click_id: {
+        msclkid: 'dd4afccc-b1c9-4a4c-ad95-44dd7e5006ab'
+      },
       consent,
       custom_data: {
         currency: 'NOK',
@@ -665,7 +713,7 @@ test('routes consented begin_checkout with msclkid and UET token to Microsoft ou
   }
 })
 
-test('skips Microsoft begin_checkout without msclkid as unqualified', () => {
+test('skips Microsoft begin_checkout without a supported identifier', () => {
   const previous = process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
   process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = 'test-uet-token'
 
@@ -722,7 +770,7 @@ test('skips Microsoft begin_checkout without msclkid as unqualified', () => {
       dispatch_mode: 'server_retry',
       event_id: event.event_id,
       provider: 'microsoft_uet',
-      skip_reason: 'missing_msclkid',
+      skip_reason: 'missing_microsoft_uet_identifier',
       status: 'skipped_unqualified'
     })
   } finally {

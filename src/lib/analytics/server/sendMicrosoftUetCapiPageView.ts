@@ -1,45 +1,46 @@
-import type { CanonicalAddToCart } from '../addToCartEvent'
+import type { CanonicalPageView } from '../pageViewEvent'
 import {
   getMicrosoftUetCapiConfig,
   type MicrosoftUetCapiConfig
 } from './getMicrosoftUetCapiConfig'
-import {
-  buildMicrosoftUetCapiAddToCartRequest,
-  type MicrosoftUetCapiAddToCartEvent,
-  type MicrosoftUetCapiAddToCartRequest
-} from './mapCanonicalAddToCartToMicrosoftUet'
-import { resolveMicrosoftUetCapiTokenFromEnv } from './microsoftUetCapiTokenEnvKeys'
-import {
-  MicrosoftUetCapiConfigError,
-  MicrosoftUetCapiHttpError
-} from './sendMicrosoftUetCapiPurchase'
 import { hasMicrosoftUetCapiIdentifier } from './hasMicrosoftUetCapiIdentifier'
+import {
+  buildMicrosoftUetCapiPageViewRequest,
+  type MicrosoftUetCapiPageViewEvent,
+  type MicrosoftUetCapiPageViewRequest
+} from './mapCanonicalPageViewToMicrosoftUet'
+import { resolveMicrosoftUetCapiTokenFromEnv } from './microsoftUetCapiTokenEnvKeys'
 import {
   formatMicrosoftUetCapiHttpErrorMessage,
   parseMicrosoftUetCapiResponse,
   type MicrosoftUetCapiResponseSummary
 } from './parseMicrosoftUetCapiResponse'
+import {
+  MicrosoftUetCapiConfigError,
+  MicrosoftUetCapiHttpError
+} from './sendMicrosoftUetCapiPurchase'
 
-export type MicrosoftUetCapiAddToCartSendResult = MicrosoftUetCapiResponseSummary & {
-  eventId: string
-  eventName: 'add_to_cart'
-  requestId: string | null
-  status: number
-  tagId: string
-}
+export type MicrosoftUetCapiPageViewSendResult =
+  MicrosoftUetCapiResponseSummary & {
+    eventId: string
+    eventName: 'page_view'
+    requestId: string | null
+    status: number
+    tagId: string
+  }
 
 type MicrosoftUetFetch = (
   input: string,
   init: RequestInit
 ) => Promise<Pick<Response, 'headers' | 'ok' | 'status' | 'text'>>
 
-export type MicrosoftUetCapiAddToCartSendDependencies = {
+export type MicrosoftUetCapiPageViewSendDependencies = {
   fetchFn: MicrosoftUetFetch
   readConfig: () => MicrosoftUetCapiConfig
   resolveToken: () => string | undefined
 }
 
-const defaultDependencies: MicrosoftUetCapiAddToCartSendDependencies = {
+const defaultDependencies: MicrosoftUetCapiPageViewSendDependencies = {
   fetchFn: fetch,
   readConfig: getMicrosoftUetCapiConfig,
   resolveToken: resolveMicrosoftUetCapiTokenFromEnv
@@ -47,16 +48,17 @@ const defaultDependencies: MicrosoftUetCapiAddToCartSendDependencies = {
 
 function readRequestId(headers: Headers): string | null {
   return (
-    headers.get('x-ms-request-id')
-    ?? headers.get('request-id')
-    ?? null
+    headers.get('x-ms-request-id') ??
+    headers.get('request-id') ??
+    null
   )
 }
 
-export async function sendMicrosoftUetCapiAddToCart(
-  event: CanonicalAddToCart,
-  dependencies: MicrosoftUetCapiAddToCartSendDependencies = defaultDependencies
-): Promise<MicrosoftUetCapiAddToCartSendResult> {
+export async function sendMicrosoftUetCapiPageView(
+  event: CanonicalPageView,
+  dependencies: MicrosoftUetCapiPageViewSendDependencies =
+    defaultDependencies
+): Promise<MicrosoftUetCapiPageViewSendResult> {
   const config = dependencies.readConfig()
   const apiToken = config.apiToken ?? dependencies.resolveToken()
 
@@ -70,11 +72,10 @@ export async function sendMicrosoftUetCapiAddToCart(
     )
   }
 
-  const requestBody: MicrosoftUetCapiAddToCartRequest =
-    buildMicrosoftUetCapiAddToCartRequest(event)
-  const addToCartEvent: MicrosoftUetCapiAddToCartEvent =
+  const requestBody: MicrosoftUetCapiPageViewRequest =
+    buildMicrosoftUetCapiPageViewRequest(event)
+  const pageViewEvent: MicrosoftUetCapiPageViewEvent =
     requestBody.data[0]!
-
   const response = await dependencies.fetchFn(
     `https://capi.uet.microsoft.com/v1/${config.tagId}/events`,
     {
@@ -88,8 +89,7 @@ export async function sendMicrosoftUetCapiAddToCart(
   )
   const responseText = await response.text()
   const requestId = readRequestId(response.headers)
-  const responseSummary =
-    parseMicrosoftUetCapiResponse(responseText)
+  const responseSummary = parseMicrosoftUetCapiResponse(responseText)
 
   if (!response.ok) {
     throw new MicrosoftUetCapiHttpError(
@@ -98,17 +98,14 @@ export async function sendMicrosoftUetCapiAddToCart(
         response.status,
         responseSummary
       ),
-      {
-        details: responseSummary,
-        requestId
-      }
+      { details: responseSummary, requestId }
     )
   }
 
   return {
     ...responseSummary,
-    eventId: addToCartEvent.eventId,
-    eventName: addToCartEvent.eventName,
+    eventId: pageViewEvent.eventId,
+    eventName: pageViewEvent.eventName,
     requestId,
     status: response.status,
     tagId: config.tagId

@@ -20,7 +20,9 @@ const browserAttributeKeys = {
   ga_client: '_ga',
   ga_client_id: 'ga_client_id',
   ga_cookie: 'ga_cookie',
-  ga_session_id: 'ga_session_id'
+  ga_session_id: 'ga_session_id',
+  uet_session: '_uetsid',
+  uet_visitor: '_uetvid'
 } as const
 
 const clickAttributeKeys = {
@@ -128,7 +130,9 @@ export function createCheckoutAttributionSnapshot(
     ...(hasMarketingConsent ?
       selectIdentifiers(source.browser_id, {
         fbc: browserAttributeKeys.fbc,
-        fbp: browserAttributeKeys.fbp
+        fbp: browserAttributeKeys.fbp,
+        uet_session: browserAttributeKeys.uet_session,
+        uet_visitor: browserAttributeKeys.uet_visitor
       })
     : {})
   }
@@ -254,7 +258,12 @@ export function parseOrderAttributionFromNoteAttributes(
   }
 
   if (consent.marketing === 'granted') {
-    for (const identifier of ['fbc', 'fbp'] as const) {
+    for (const identifier of [
+      'fbc',
+      'fbp',
+      'uet_session',
+      'uet_visitor'
+    ] as const) {
       const value = parseIdentifier(
         attributes.get(browserAttributeKeys[identifier])
       )

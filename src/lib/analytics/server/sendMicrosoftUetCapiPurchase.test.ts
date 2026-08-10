@@ -7,7 +7,7 @@ import {
   sendMicrosoftUetCapiPurchase
 } from './sendMicrosoftUetCapiPurchase'
 
-function purchase() {
+function purchase(overrides: Record<string, unknown> = {}) {
   return canonicalPurchaseSchema.parse({
     schema_version: 1,
     event_name: 'purchase',
@@ -23,7 +23,7 @@ function purchase() {
       version: '1'
     },
     click_id: {
-      msclkid: 'dd4afcccb1c9a4cad9544dd7e5006'
+      msclkid: 'dd4afccc-b1c9-4a4c-ad95-44dd7e5006ab'
     },
     custom_data: {
       currency: 'NOK',
@@ -38,7 +38,8 @@ function purchase() {
           unit_price: 100
         }
       ]
-    }
+    },
+    ...overrides
   })
 }
 
@@ -56,7 +57,23 @@ test('posts purchase events to the Microsoft UET CAPI endpoint', async () => {
         headers: new Headers({ 'x-ms-request-id': 'req-1' }),
         ok: true,
         status: 200,
-        text: async () => ''
+        text: async () =>
+          JSON.stringify({
+            eventsReceived: 1,
+            error: {
+              code: 'ValidationError',
+              details: [
+                {
+                  attemptedValue: 'do-not-persist',
+                  errorCode: 'InvalidUrl',
+                  errorMessage: 'Invalid referrer URL',
+                  index: 0,
+                  isWarning: true,
+                  propertyName: 'data[0].referrerUrl'
+                }
+              ]
+            }
+          })
       }
     },
     readConfig: () => ({
@@ -70,10 +87,13 @@ test('posts purchase events to the Microsoft UET CAPI endpoint', async () => {
     calls[0]?.url,
     'https://capi.uet.microsoft.com/v1/97247724/events'
   )
-  assert.match(calls[0]?.body ?? '', /PRODUCT_PURCHASE/)
+  assert.match(calls[0]?.body ?? '', /"eventName":"purchase"/)
   assert.equal(result.status, 200)
   assert.equal(result.requestId, 'req-1')
   assert.equal(result.tagId, '97247724')
+  assert.equal(result.eventsReceived, 1)
+  assert.equal(result.validationWarnings.length, 1)
+  assert.doesNotMatch(JSON.stringify(result), /do-not-persist/)
 })
 
 test('fails closed when the ApiToken is missing', async () => {
@@ -92,7 +112,7 @@ test('fails closed when the ApiToken is missing', async () => {
   )
 })
 
-test('surfaces non-2xx Microsoft responses as HTTP errors', async () => {
+test('surfaces sanitized non-2xx Microsoft responses as HTTP errors', async () => {
   await assert.rejects(
     () =>
       sendMicrosoftUetCapiPurchase(purchase(), {
@@ -100,7 +120,22 @@ test('surfaces non-2xx Microsoft responses as HTTP errors', async () => {
           headers: new Headers(),
           ok: false,
           status: 401,
-          text: async () => '{"error":{"code":"Unauthorized"}}'
+          text: async () =>
+            JSON.stringify({
+              error: {
+                code: 'Unauthorized',
+                details: [
+                  {
+                    attemptedValue: 'do-not-persist',
+                    errorCode: 'InvalidValue',
+                    errorMessage: 'The value is invalid',
+                    index: 0,
+                    propertyName: 'data[0].userData.msclkid'
+                  }
+                ],
+                message: 'Authentication failed'
+              }
+            })
         }),
         readConfig: () => ({
           apiToken: 'bad-token',
@@ -108,8 +143,16 @@ test('surfaces non-2xx Microsoft responses as HTTP errors', async () => {
         }),
         resolveToken: () => 'bad-token'
       }),
-    (error: unknown) =>
-      error instanceof MicrosoftUetCapiHttpError
-      && error.status === 401
+    (error: unknown) => {
+      if (!(error instanceof MicrosoftUetCapiHttpError)) {
+        return false
+      }
+
+      assert.equal(error.status, 401)
+      assert.match(error.message, /Unauthorized: Authentication failed/)
+      assert.doesNotMatch(error.message, /do-not-persist/)
+      assert.doesNotMatch(JSON.stringify(error.details), /do-not-persist/)
+      return true
+    }
   )
 })

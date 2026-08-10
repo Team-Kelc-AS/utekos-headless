@@ -168,7 +168,8 @@ test('defines the required owner, trigger, dedupe, consent, and provider contrac
           provider.dedupeField === 'event_id' ||
             provider.dedupeField === 'transaction_id'
         )
-        assert.equal(provider.adapterVersion, 1)
+        assert.equal(typeof provider.adapterVersion, 'number')
+        assert.ok((provider.adapterVersion ?? 0) >= 1)
         assert.ok(provider.requiredParameters.length > 0)
       }
     }
@@ -370,7 +371,7 @@ test('records current mixed Microsoft delivery and historical page_view backlog 
   )
   assert.equal(
     eventCatalog.page_view.providers.microsoft_uet.serverOutbox,
-    'blocked_no_worker'
+    'active'
   )
   assert.match(
     eventCatalog.page_view.providers.meta.productionDetail,

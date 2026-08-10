@@ -5,7 +5,7 @@ import {
 } from '../eventCatalog'
 import type { ProviderId } from './providerAdapter'
 import { findGoogleClientId } from './findGoogleClientId'
-import { findMicrosoftClickId } from './findMicrosoftClickId'
+import { hasMicrosoftUetCapiIdentifier } from './hasMicrosoftUetCapiIdentifier'
 import {
   classifyGoogleDataManagerEventFreshness,
   type GoogleDataManagerEventFreshness
@@ -23,7 +23,7 @@ type ProviderSkipReason =
   | 'missing_capi_token'
   | 'missing_client_id'
   | 'missing_google_analytics_identifier'
-  | 'missing_msclkid'
+  | 'missing_microsoft_uet_identifier'
   | 'google_event_outside_72h'
 
 type SkippedProviderDispatchIntent =
@@ -180,13 +180,14 @@ export function planCanonicalEventDispatch(
         ]
       }
 
-      if (!findMicrosoftClickId(event.click_id)) {
+      if (!hasMicrosoftUetCapiIdentifier(event)) {
         return [
           {
             dispatch_mode: 'server_retry' as const,
             event_id: event.event_id,
             provider,
-            skip_reason: 'missing_msclkid' as const,
+            skip_reason:
+              'missing_microsoft_uet_identifier' as const,
             status: 'skipped_unqualified' as const
           }
         ]
