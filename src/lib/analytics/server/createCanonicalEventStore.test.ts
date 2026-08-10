@@ -140,7 +140,7 @@ test('returns only newly inserted pending attempts for queue publication', async
       eventInput.dispatches[0]!,
       {
         ...eventInput.dispatches[1]!,
-        skip_reason: 'missing_msclkid',
+        skip_reason: 'missing_microsoft_uet_identifier',
         status: 'skipped_unqualified'
       }
     ]

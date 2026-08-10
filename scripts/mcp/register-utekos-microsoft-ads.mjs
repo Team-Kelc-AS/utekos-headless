@@ -7,6 +7,11 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 export const UTEKOS_MICROSOFT_ADS_SERVER_ID = 'utekos-microsoft-ads'
+export const MICROSOFT_ADS_OFFICIAL_SERVER_ID = 'microsoft-ads-official'
+export const MICROSOFT_ADS_OFFICIAL_MCP_URL =
+  'https://partner.api.bingads.microsoft.com/ext/mcp/vnext?toolSetNames=OpenBeta'
+export const MICROSOFT_ADS_OFFICIAL_OAUTH_MCP_URL =
+  'https://partner.api.bingads.microsoft.com/ext/mcp/vnext'
 export const UTEKOS_MICROSOFT_ADS_TUNNEL_PROFILE_ID =
   'utekos_chatgpt_microsoft_ads'
 export const UTEKOS_MICROSOFT_ADS_TUNNEL_TARGET = 'microsoft-ads'
@@ -49,6 +54,14 @@ export function createMicrosoftAdsServerConfig() {
     command: 'node',
     args: ['scripts/mcp/utekos-microsoft-ads-server.mjs'],
     tools: [...UTEKOS_MICROSOFT_ADS_TOOLS],
+    autoApprove: []
+  }
+}
+
+export function createOfficialMicrosoftAdsServerConfig() {
+  return {
+    type: 'http',
+    url: MICROSOFT_ADS_OFFICIAL_MCP_URL,
     autoApprove: []
   }
 }
@@ -100,6 +113,20 @@ export function applyMicrosoftAdsRegistration({
     base.mcpServers[UTEKOS_MICROSOFT_ADS_SERVER_ID] = serverConfig
     writeJsonAtomic(basePath, base)
     changed.push(relative(root, basePath))
+  }
+
+  const officialServerConfig = createOfficialMicrosoftAdsServerConfig()
+  if (
+    !isDeepEqual(
+      base.mcpServers[MICROSOFT_ADS_OFFICIAL_SERVER_ID],
+      officialServerConfig
+    )
+  ) {
+    base.mcpServers[MICROSOFT_ADS_OFFICIAL_SERVER_ID] = officialServerConfig
+    writeJsonAtomic(basePath, base)
+    if (!changed.includes(relative(root, basePath))) {
+      changed.push(relative(root, basePath))
+    }
   }
 
   const cursorPath = path.join(root, 'config/mcp/cursor-runtime.json')
@@ -241,6 +268,14 @@ export function createCodexManagedBlock(repoRoot) {
     'enabled_tools = [',
     tools,
     ']',
+    '',
+    '# Official Microsoft Advertising remote MCP. OAuth is completed by the MCP client.',
+    `[mcp_servers.${MICROSOFT_ADS_OFFICIAL_SERVER_ID}]`,
+    `url = ${tomlString(MICROSOFT_ADS_OFFICIAL_OAUTH_MCP_URL)}`,
+    'enabled = true',
+    'required = false',
+    'startup_timeout_sec = 30',
+    'tool_timeout_sec = 180',
     CODEX_END
   ].join('\n')
 }
@@ -258,7 +293,8 @@ export function upsertManagedTomlBlock(source, block) {
 
   if (
     beginIndex === -1 &&
-    normalized.includes(`[mcp_servers.${UTEKOS_MICROSOFT_ADS_SERVER_ID}]`)
+    (normalized.includes(`[mcp_servers.${UTEKOS_MICROSOFT_ADS_SERVER_ID}]`) ||
+      normalized.includes(`[mcp_servers.${MICROSOFT_ADS_OFFICIAL_SERVER_ID}]`))
   ) {
     throw new Error(
       '.codex/config.toml already contains an unmanaged Microsoft Ads MCP table. Remove or migrate that table before running registration to avoid duplicate TOML tables.'

@@ -47,6 +47,7 @@ import { metaViewItemListProviderAdapter } from './providerAdapters/metaViewItem
 import { microsoftUetAddToCartProviderAdapter } from './providerAdapters/microsoftUetAddToCartProviderAdapter'
 import { microsoftUetBeginCheckoutProviderAdapter } from './providerAdapters/microsoftUetBeginCheckoutProviderAdapter'
 import { microsoftUetPurchaseProviderAdapter } from './providerAdapters/microsoftUetPurchaseProviderAdapter'
+import { microsoftUetPageViewProviderAdapter } from './providerAdapters/microsoftUetPageViewProviderAdapter'
 import type { ProviderAdapterKey } from './providerAdapter'
 
 export const providerAdapterRegistry = {
@@ -104,6 +105,7 @@ export const providerAdapterRegistry = {
   'microsoft_uet:add_to_cart': microsoftUetAddToCartProviderAdapter,
   'microsoft_uet:begin_checkout':
     microsoftUetBeginCheckoutProviderAdapter,
+  'microsoft_uet:page_view': microsoftUetPageViewProviderAdapter,
   'microsoft_uet:purchase': microsoftUetPurchaseProviderAdapter
 } as const satisfies Partial<Record<ProviderAdapterKey, unknown>>
 

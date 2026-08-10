@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { claimPageViewNavigation } from '@/lib/analytics/claimPageViewNavigation'
 import { emitCanonicalPageView } from '@/lib/analytics/emitCanonicalPageView'
+import { browserMicrosoftUetIdSyncEmitter } from '@/lib/analytics/emitMicrosoftUetIdSync'
 import {
   extractBrowserIds,
   extractClickIds,
@@ -40,6 +41,10 @@ export function PageViewObserver({
 }: PageViewObserverProps) {
   const pathname = usePathname()
   const search = useSearchParams().toString()
+  const currentPageView = useRef<{
+    eventId: string
+    pageViewId: string
+  } | null>(null)
 
   useEffect(() => {
     const landingPageUrl = window.location.href
@@ -59,10 +64,31 @@ export function PageViewObserver({
     const observeConsent = () => {
       const cookiebot = getCookiebotState()
       if (!hasCookiebotDecision(cookiebot)) return
+
+      const consent = getConsentSnapshot(cookiebot?.consent)
+
+      if (consent.marketing === 'granted') {
+        const externalId =
+          browserFirstPartyExternalIdStore.getOrCreate(consent)
+        const pageView = currentPageView.current
+
+        if (externalId) {
+          browserMicrosoftUetIdSyncEmitter.emit({
+            externalId,
+            ...(pageView ?
+              {
+                pageViewEventId: pageView.eventId,
+                pageViewId: pageView.pageViewId
+              }
+            : {})
+          })
+        }
+      }
+
       if (!landingCorrelation || !landingPageView) return
 
       void browserLandingConsentTransport.observe({
-        consent: getConsentSnapshot(cookiebot?.consent),
+        consent,
         correlation_token: landingCorrelation.token,
         edge_request_id: landingCorrelation.edgeRequestId,
         page_view_id: landingPageView.pageViewId
@@ -146,7 +172,21 @@ export function PageViewObserver({
       }
     })
 
+    currentPageView.current = {
+      eventId: event.event_id,
+      pageViewId: event.page_view_id
+    }
+
     emitCanonicalPageView(event)
+
+    if (externalId) {
+      browserMicrosoftUetIdSyncEmitter.emit({
+        externalId,
+        pageViewEventId: event.event_id,
+        pageViewId: event.page_view_id
+      })
+    }
+
     void browserPageViewCollectorTransport.queue(
       event,
       landingCorrelation

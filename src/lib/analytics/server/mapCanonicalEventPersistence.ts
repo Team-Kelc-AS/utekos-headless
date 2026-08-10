@@ -36,7 +36,7 @@ export type ProviderDispatchInsert = {
     | 'missing_capi_token'
     | 'missing_client_id'
     | 'missing_google_analytics_identifier'
-    | 'missing_msclkid'
+    | 'missing_microsoft_uet_identifier'
   status: 'pending' | 'skipped_unqualified'
 }
 

@@ -831,13 +831,14 @@ function readLocalImplementation() {
   const sourceScan = scanMicrosoftTrackingSources()
   const allContent = sourceScan.files.map(file => file.content).join('\n')
   const providerFiles = sourceScan.files.filter(file =>
-    file.content.includes("'microsoft_uet'") ||
+    file.content.includes('\'microsoft_uet\'') ||
     file.content.includes('"microsoft_uet"')
   )
   const capiFiles = sourceScan.files.filter(file =>
     file.content.includes('capi.uet.microsoft.com') ||
     file.content.includes('missing_capi_token') ||
-    file.content.includes('missing_msclkid')
+    file.content.includes('missing_msclkid') ||
+    file.content.includes('missing_microsoft_uet_identifier')
   )
   const browserFiles = sourceScan.files.filter(file =>
     file.content.includes('uetq') ||
@@ -873,7 +874,7 @@ function readLocalImplementation() {
   )
   const purchaseEventPresent = browserFiles.some(file =>
     file.content.includes('PRODUCT_PURCHASE') ||
-    file.content.includes("'purchase'")
+    file.content.includes('\'purchase\'')
   )
   const outboundClickEmitterFound = sourceScan.files.some(file =>
     file.content.includes('AutoEvent_outbound_click') ||
@@ -910,7 +911,7 @@ function readLocalImplementation() {
           : 'unknown',
       serverCapiEventAction: capiFiles.some(file => file.content.includes('PRODUCT_PURCHASE'))
         ? 'PRODUCT_PURCHASE'
-        : capiFiles.some(file => file.content.includes("eventName: 'purchase'"))
+        : capiFiles.some(file => file.content.includes('eventName: \'purchase\''))
           ? 'purchase'
           : 'unknown',
       serverCapiPageType: capiFiles.some(file => /pageType\s*:\s*['\"]purchase['\"]/.test(file.content))
@@ -928,7 +929,7 @@ function readLocalImplementation() {
       serverRetryIncludesMicrosoft: retryProviderPresent,
       serverDirectIncludesMicrosoft: directProviderPresent,
       providerTypeDeclaration: microsoftProviderDeclared
-        ? "ProviderId includes 'microsoft_uet'"
+        ? 'ProviderId includes \'microsoft_uet\''
         : 'unknown',
       matchingFiles: providerFiles.map(file => file.relativePath)
     },
@@ -941,6 +942,7 @@ function readLocalImplementation() {
 
 function scanMicrosoftTrackingSources() {
   const relativeRoots = [
+    'config/gtm',
     'src/lib/analytics/server',
     'src/lib/analytics',
     'src/components/analytics',
@@ -971,7 +973,7 @@ function walkProjectSourceTree(relativeDirectory, files, seen) {
       continue
     }
 
-    if (!/\.(?:[cm]?[jt]sx?)$/.test(entry.name) || seen.has(relativePath)) continue
+    if (!/\.(?:html|[cm]?[jt]sx?)$/.test(entry.name) || seen.has(relativePath)) continue
     seen.add(relativePath)
     const content = fs.readFileSync(absolutePath, 'utf8')
     if (!/microsoft|uet|provider_dispatch|providerid|msclkid/i.test(content)) continue

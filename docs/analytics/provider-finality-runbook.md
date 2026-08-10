@@ -52,8 +52,10 @@ Additional rules:
   attempt, but nonterminal or unavailable on the
   provider-delivery axis.
 - A qualified skip requires a specific `skip_reason`, for example
-  `missing_client_id`, `missing_msclkid` or `missing_capi_token`.
-  It is not a provider failure.
+  `missing_client_id`, `missing_microsoft_uet_identifier` or
+  `missing_capi_token`. Historical Microsoft rows can use
+  `missing_msclkid`; this older reason describes the former hard gate.
+  A qualified skip is not a provider failure.
 - `retry_scheduled` preserves the original idempotency/dedupe
   key. A retry does not prove that the preceding request failed
   to reach the provider.

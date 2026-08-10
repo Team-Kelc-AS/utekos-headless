@@ -1355,6 +1355,11 @@
         "microsoft_ads_report"
       ],
       "autoApprove": []
+    },
+    "microsoft-ads-official": {
+      "type": "http",
+      "url": "https://partner.api.bingads.microsoft.com/ext/mcp/vnext?toolSetNames=OpenBeta",
+      "autoApprove": []
     }
   }
 }

@@ -13,8 +13,14 @@ import {
   MicrosoftUetCapiConfigError,
   MicrosoftUetCapiHttpError
 } from './sendMicrosoftUetCapiPurchase'
+import { hasMicrosoftUetCapiIdentifier } from './hasMicrosoftUetCapiIdentifier'
+import {
+  formatMicrosoftUetCapiHttpErrorMessage,
+  parseMicrosoftUetCapiResponse,
+  type MicrosoftUetCapiResponseSummary
+} from './parseMicrosoftUetCapiResponse'
 
-export type MicrosoftUetCapiBeginCheckoutSendResult = {
+export type MicrosoftUetCapiBeginCheckoutSendResult = MicrosoftUetCapiResponseSummary & {
   eventId: string
   eventName: 'begin_checkout'
   requestId: string | null
@@ -40,16 +46,6 @@ const defaultDependencies: MicrosoftUetCapiBeginCheckoutSendDependencies =
     resolveToken: resolveMicrosoftUetCapiTokenFromEnv
   }
 
-function getResponseBody(responseText: string): unknown {
-  if (!responseText) return undefined
-
-  try {
-    return JSON.parse(responseText)
-  } catch {
-    return responseText
-  }
-}
-
 function readRequestId(headers: Headers): string | null {
   return (
     headers.get('x-ms-request-id')
@@ -69,14 +65,16 @@ export async function sendMicrosoftUetCapiBeginCheckout(
     throw new MicrosoftUetCapiConfigError('missing_capi_token')
   }
 
+  if (!hasMicrosoftUetCapiIdentifier(event)) {
+    throw new MicrosoftUetCapiConfigError(
+      'missing_microsoft_uet_identifier'
+    )
+  }
+
   const requestBody: MicrosoftUetCapiBeginCheckoutRequest =
     buildMicrosoftUetCapiBeginCheckoutRequest(event)
   const beginCheckoutEvent: MicrosoftUetCapiBeginCheckoutEvent =
     requestBody.data[0]!
-
-  if (!beginCheckoutEvent.userData?.msclkid) {
-    throw new MicrosoftUetCapiConfigError('missing_msclkid')
-  }
 
   const response = await dependencies.fetchFn(
     `https://capi.uet.microsoft.com/v1/${config.tagId}/events`,
@@ -91,19 +89,25 @@ export async function sendMicrosoftUetCapiBeginCheckout(
   )
   const responseText = await response.text()
   const requestId = readRequestId(response.headers)
+  const responseSummary =
+    parseMicrosoftUetCapiResponse(responseText)
 
   if (!response.ok) {
     throw new MicrosoftUetCapiHttpError(
       response.status,
-      responseText || `Microsoft UET CAPI HTTP ${response.status}`,
+      formatMicrosoftUetCapiHttpErrorMessage(
+        response.status,
+        responseSummary
+      ),
       {
-        details: getResponseBody(responseText),
+        details: responseSummary,
         requestId
       }
     )
   }
 
   return {
+    ...responseSummary,
     eventId: beginCheckoutEvent.eventId,
     eventName: beginCheckoutEvent.eventName,
     requestId,

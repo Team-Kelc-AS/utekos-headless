@@ -4,6 +4,12 @@ import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
+import {
+  MICROSOFT_ADS_TOOL_CONTRACTS,
+  MICROSOFT_ADS_TOOL_CONTRACT_VERSION,
+  normalizeMicrosoftAdsFullAuditForWire
+} from './microsoft-ads-tool-contracts.mjs'
+
 const root = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '../..'
@@ -40,6 +46,37 @@ test('server registers contracts with output schemas and runtime validation', ()
   assert.match(source, /MICROSOFT_ADS_TOOL_CONTRACTS\.microsoft_ads_account_snapshot/)
   assert.match(source, /parseMicrosoftAdsToolOutput/)
   assert.match(source, /structuredContent/)
+})
+
+test('all tools accept only a digits-only configured account selector', () => {
+  assert.equal(MICROSOFT_ADS_TOOL_CONTRACT_VERSION, '1.2.0')
+
+  for (const name of toolNames) {
+    const schema = MICROSOFT_ADS_TOOL_CONTRACTS[name].inputSchema
+    const minimumInput = name === 'microsoft_ads_diagnose'
+      ? { query: 'tracking status' }
+      : name === 'microsoft_ads_report'
+        ? { reportType: 'CampaignPerformanceReportRequest', columns: ['Clicks'] }
+        : {}
+
+    assert.equal(
+      schema.safeParse({ ...minimumInput, accountId: '188445594' }).success,
+      true,
+      `${name} should accept the configured account selector`
+    )
+    assert.equal(
+      schema.safeParse({ ...minimumInput, accountId: 'G120L495' }).success,
+      false,
+      `${name} should reject an account number in the accountId field`
+    )
+  }
+})
+
+test('server keeps a separate audit cache for each selected account', () => {
+  const source = fs.readFileSync(serverPath, 'utf8')
+  assert.match(source, /const auditCaches = new Map\(\)/)
+  assert.match(source, /selectMicrosoftAdsAccountConfig/)
+  assert.match(source, /assertAllowedReportScope/)
 })
 
 test('stable health schemas no longer use unknown or passthrough', () => {
@@ -80,4 +117,43 @@ test('tool metadata never embeds credential values or credential metadata keys',
     'MICROSOFT_ADS_DEVELOPER_TOKEN',
     'CONTROL_PLANE_API_KEY'
   ]) assert.doesNotMatch(source, new RegExp(forbidden))
+})
+
+test('full account snapshot strips signed report download URLs', () => {
+  const timestamp = '2026-08-10T12:00:00.000Z'
+  const normalized = normalizeMicrosoftAdsFullAuditForWire({
+    ok: true,
+    auditVersion: 2,
+    startedAt: timestamp,
+    finishedAt: timestamp,
+    account: {
+      environment: 'production',
+      customerId: null,
+      accountId: null,
+      merchantStoreId: null,
+      uetTagId: null,
+      developerTokenPresent: false,
+      clientIdPresent: false,
+      clientSecretPresent: false,
+      accessTokenPresent: false,
+      refreshTokenPresent: false,
+      uetCapiTokenPresent: false
+    },
+    credentialReadiness: {},
+    criticalReads: {},
+    report: {
+      ok: true,
+      empty: false,
+      allRows: [{ secret: 'discarded' }],
+      status: {
+        Status: 'Success',
+        ReportDownloadUrl: 'https://example.invalid/signed-report'
+      }
+    },
+    sources: ['https://learn.microsoft.com/advertising/']
+  })
+
+  assert.deepEqual(normalized.report.status, { Status: 'Success' })
+  assert.equal('allRows' in normalized.report, false)
+  assert.doesNotMatch(JSON.stringify(normalized), /signed-report/)
 })
