@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type { Route } from 'next'
-import { TypographyH2 } from '@/app/inspirasjon/components/typography/TypographyH2'
+import { TypographyH2 } from './TypographyH2'
 import { Button } from '@/components/ui/button'
 import { InvitingArrow } from '@/components/motion/InvitingArrow'
 import { InlineText } from '@/components/typography/TypographyInlineText'
