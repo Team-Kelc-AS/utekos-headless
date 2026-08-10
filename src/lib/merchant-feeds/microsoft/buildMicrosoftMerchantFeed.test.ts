@@ -222,4 +222,8 @@ test('includes only the approved Microsoft Merchant assortment', () => {
       }
     ]
   )
+  assert.equal(
+    rows.find(row => row.id === '303')?.additional_image_link,
+    ''
+  )
 })
