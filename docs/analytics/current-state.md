@@ -1,11 +1,12 @@
 # Canonical analytics architecture: current state
 
-**Current evidence:** 2026-07-31T01:04:19Z. **Repository baseline:** newest
-`main` at `7a9f19ed3f94cc08ee3140ddb4c99afe4af3d564`. **Production
-deployment:** `dpl_7aYMhUMJTxyiTtWL38Wkxh5QpzaL`, `READY`, owns
-`utekos.no`, exact same SHA, `arn1`, Node.js 24.x. **Live snapshots:** read-only
-Supabase `pink-lens` (`hkoawfbomhnzupcsdggb`) and Vercel runtime/deployment
-queried 2026-07-31.
+**Current release evidence:** 2026-08-10. The latest runtime-bearing `main`
+baseline before the documentation-policy release is
+`f93be8de1cc9e44b614b5bc7d06042f74cd1246e`; Vercel deployment
+`dpl_NuutdmSBqX1Y8fBTrEd4yyLBgNRB` reached `READY` and owned the production
+aliases. **Warehouse snapshot:** the read-only Supabase `pink-lens`
+(`hkoawfbomhnzupcsdggb`) snapshot below remains dated 2026-07-31 and is not
+silently represented as a fresh database read.
 
 **Historical evidence freeze:** the 2026-07-20 audit at `ed16dfd06` /
 `dpl_3Pe1KmJSj5unFh1jD7VytiPvFr5H`, including its GTM, Meta, Microsoft, and
@@ -34,7 +35,7 @@ Status vocabulary:
 - **Refuted:** current primary evidence contradicts the prior
   claim.
 
-## Current production contract — 2026-08-04
+## Current production contract — 2026-08-10
 
 - Canonical inventory: 33 total, 30 active, three `blocked_source`.
 - Active provider/event registry: 49 workers — 29 Google, 17 Meta, three
@@ -55,11 +56,15 @@ Status vocabulary:
 - Microsoft server workers are active and have production API-acceptance
   history for `add_to_cart`, `begin_checkout`, and `purchase`. Missing
   `msclkid`/ApiToken remains fail-closed as `skipped_unqualified`.
+- Web-GTM v141 is published with v140 as immediate rollback. Readback on
+  2026-08-10 confirmed container `GTM-5TWMJQFP`, tag 130 UET base, tag 160
+  Microsoft ID Sync, tag 126 Cookiebot and tag 153 Meta Pixel.
 
 ## Historical tracking release — 2026-07-26
 
 This section retains the 2026-07-26 tracking activation freeze. Web-GTM v135
-is live; v133 introduced the canonical
+was live at activation and is now superseded by v141; v133 introduced the
+canonical
 mapping from workspace 141, v134 changed only the redundant GTM
 additional-consent setting, and v135 changed only tag 153 to initialize on
 page load and poll future canonical `dataLayer` entries with the app bridge's

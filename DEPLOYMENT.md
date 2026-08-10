@@ -46,6 +46,22 @@ order or payment was created as a smoke test.
 See `docs/microsoft/uet-capi-canonical-event-audit.md` for the complete field
 contract, account map, current verification boundary and rollback context.
 
+### Microsoft Merchant feed correction 2026-08-10
+
+The Microsoft retail feed correction is on `main` commit
+`f93be8de1cc9e44b614b5bc7d06042f74cd1246e`. Vercel deployment
+`dpl_NuutdmSBqX1Y8fBTrEd4yyLBgNRB` reached `READY` and owned the production
+aliases immediately before this documentation release. The generated feed
+contains 16 offers and 29 columns, sets `adult=FALSE`, `age_group=adult`, and
+`gender=unisex`, and uses `utekos.no` product URLs. This addresses the
+editorial classification defect found on 13 products.
+
+Feed generation and deployment do not prove that Microsoft Merchant Center
+has refreshed or approved the affected offers. Catalog refresh, editorial
+reprocessing, item-level status, and Shopping eligibility remain externally
+unverified until the provider reports them. Do not describe the 13 products as
+approved solely from a valid feed response.
+
 ## Utekos Original app-only release and baseline 2026-08-05
 
 Production deployment `dpl_26WjzijrrUkRonQgqTmAQLii19cD` reached `READY`,
@@ -139,9 +155,11 @@ that value. This change requires no schema, environment, Custom Pixel or
 provider-resource mutation; deploy application code only, then require a new
 natural event for end-to-end provider proof.
 
-## Active Meta stale-event / near-real-time release 2026-07-26
+## Historical Meta stale-event / near-real-time release 2026-07-26
 
-Web-GTM v135 is live. Version 133 introduced the canonical mapping from
+This release was superseded by Web-GTM v141 on 2026-08-10; v140 is the current
+immediate rollback. At the time of this historical release, Web-GTM v135 was
+live. Version 133 introduced the canonical mapping from
 isolated workspace 141 with only tag 153 and trigger 152 changed; v134 changed
 only GTM's redundant additional-consent setting while the tag's explicit
 Cookiebot marketing guard remained fail-closed. Version 135 was created from
@@ -183,7 +201,7 @@ Production evidence:
 
 | Evidence | Value |
 | -------- | ----- |
-| Published GTM version | `135`; immediate rollback `134`; pre-cutover rollback `132` |
+| Published GTM version at this release | `135`; immediate rollback then `134`; pre-cutover rollback `132` |
 | Vercel deployment ID / Git SHA | `dpl_7EvERHHrH7pfAYK7jQcwMySZjD5W` / `3799e58ac90a4c0177d3bd6fba8a1d2ad3fd2ea2`; `READY`, aliased |
 | Representative canonical event IDs | `ViewItemList` `5d162e4f-9416-4883-aad0-2787b4601a53`; `OpenQuickView` `74cec7fd-81f6-4a7b-95b1-0b1c65d7cd01`; `InteractWithAccordion` `d51aa3ea-a427-4f8a-9098-005f77007626`; 3→2 `RemoveFromCart` `cb48d8fb-0fbb-416e-8d57-f83715a42a59` |
 | Meta/Google receipts | Every controlled Meta attempt returned `events_received=1`; Google requests were executed with `validate_only=false`, with the first representative new-event requests later reconciled to `SUCCESS` |
@@ -195,7 +213,7 @@ Production evidence:
 Production proved that v134's event-triggered GTM Custom HTML tag did not
 execute for the controlled event. The same-origin
 `/analytics/meta-pixel-canonical-v1.js` bridge therefore remains the
-deterministic browser fallback. GTM v135 now initializes tag 153 on page load
+deterministic browser fallback. GTM v135 then initialized tag 153 on page load
 and polls future canonical `dataLayer` entries; both implementations share the
 same mapping and `window.__utekosMetaPixelState.sent` duplicate guard. Direct
 app CAPI remains the sole Meta server owner. Workspace 143 was versioned and
@@ -241,9 +259,11 @@ build/doctor and tracking gateway smoke were green.
 The consent-gated Meta browser-parity follow-up was released through commits
 `76e535dd9` and `74c269061`. Exact-SHA Vercel deployment
 `dpl_2B5VwzkG4xg4BFPVRNMhfV9oApan` reached `READY` and was validated on the
-production aliases. Web-GTM version `121` is live with Meta Pixel tag `153`,
-canonical event trigger `152`, and `autoConfig=false`; version `120` is the
-immediate rollback. The isolated GTM workspace diff contained only tag `153`,
+production aliases. Web-GTM version `121` was live for this historical release
+with Meta Pixel tag `153`, canonical event trigger `152`, and
+`autoConfig=false`; version `120` was its immediate rollback. The current web
+container version is v141 with v140 as rollback. The isolated GTM workspace
+diff contained only tag `153`,
 compiled without errors and was published after explicit approval. The exact
 published tag source has SHA-256
 `d9a4186f1bd50804217b8fed91f849f89c6656158e03542f07be1e796101f79e`.
@@ -339,8 +359,9 @@ Production verification closed the Pixel standard/custom dispatch fix:
 `trackSingle` for Meta standard events, `trackSingleCustom` for custom
 events (including `LandingScrollDepth`), identical browser `eventID` and
 CAPI `event_id`, and Meta API acceptance (`eventsReceived=1` +
-`fbTraceId`). Web-GTM live version for this fix is `136` (rollback
-`135`). Meta Events Manager row-level merge/dedupe remains not API-proven.
+`fbTraceId`). Web-GTM version for this historical fix was `136` (rollback
+`135`). It was superseded by v141 on 2026-08-10, with v140 now the immediate
+rollback. Meta Events Manager row-level merge/dedupe remains not API-proven.
 
 `tracking:meta-pixel:smoke` follows the production consent contract
 (2026-08-07 harness fix):
@@ -824,8 +845,10 @@ Run these before deciding the release order:
 
 | Check | Command or source | Required conclusion |
 | --- | --- | --- |
-| Worktree scope | `git status --short` | Identify relevant files and ignore unrelated dirty files. |
-| Runtime diff | `git diff --name-only` | Identify whether app runtime, Supabase, env, MCP, GTM, scripts, or docs changed. |
+| Main baseline | `git fetch origin main` and `git rev-parse origin/main` | Use the current remote production branch, never a remembered or stale local `main`. |
+| Worktree scope | `git status --short` | Release worktree is clean before edits; unrelated dirty files remain untouched in their original checkout. |
+| Release diff | `git diff --name-status origin/main...HEAD` | Every file in the complete branch-to-main diff is intended and classified. An individual commit diff is not sufficient. |
+| Branch relation | `git rev-list --left-right --count origin/main...HEAD` | Know whether `main` moved; update the branch and rerun affected gates before merge. |
 | Supabase history | `SUPABASE_NO_TELEMETRY=1 npx supabase migration list --linked` | Know exactly which local migrations are missing remote and which remote migrations are missing local. |
 | Supabase schema proof | `SUPABASE_NO_TELEMETRY=1 npx supabase db dump --linked --schema ops,marketing --file /tmp/utekos-linked-ops-marketing-schema.sql` | Confirm production has the columns, constraints, tables, and views the runtime will use. |
 | MCP config | `npm run mcp:build && npm run mcp:doctor` | Generated MCP output is derived from templates and has no inline secret findings. |
@@ -839,7 +862,7 @@ Run these before deciding the release order:
 
 | Change type | Must migrate or configure before Vercel deploy | Must deploy | Must verify after |
 | --- | --- | --- | --- |
-| Supabase schema read/write from runtime | Apply required migration to `hkoawfbomhnzupcsdggb`; verify schema dump contains new objects. | Vercel after Supabase. | `db lint`, schema dump grep, targeted runtime smoke. |
+| Supabase schema read/write from runtime | Review the current official Supabase changelog, apply the required migration only to `hkoawfbomhnzupcsdggb`, and verify Data API exposure, RLS and grants for affected objects. Do not rely on extension-version pinning; verify the installed default version. | Vercel after Supabase. | Migration history, `db lint`, schema dump/query, RLS/grants and targeted runtime smoke. |
 | Vercel Log/Trace Drains to Supabase Edge Functions | Apply the landing-observability migration; set separate signature secrets; deploy and verify both receivers before Drain creation. | Supabase Edge Functions and, separately, the app correlation release. Drain creation requires explicit approval. | Signed canaries, idempotent replay, sanitized rows, RLS/grants, 30-day retention, real delivery and trace/log join. |
 | Tracking runtime writes to `ops.provider_dispatch_attempts` | Ensure required columns, constraints, statuses, and views exist. | Vercel after Supabase. | Provider rows, skip classification, dead-letter summary. |
 | PostHog client/runtime tracking | Ensure Cookiebot statistics consent is mapped and env vars are present. | Vercel. | Consent-gated init, no autocapture drift, masked replay, safe events only. |
@@ -847,10 +870,44 @@ Run these before deciding the release order:
 | MCP server/template changes | Update committed templates, then regenerate generated files locally. | No app deploy unless app runtime changed. | `mcp:build`, `mcp:doctor`, relevant MCP doctor. |
 | GTM or sGTM behavior | Verify current docs, container IDs, workspace state, and consent model. | GTM publish only with explicit approval; Vercel if app loader changed. | GTM Preview, sGTM endpoints, production tracking smoke. |
 | Vercel env vars | Pull/inspect env state and document changed keys. | Redeploy Vercel after env change. | Deployment inspect, runtime logs, route smoke. |
+| Sentry config, runtime instrumentation or source maps | Verify current official Sentry/Vercel guidance and release/env mapping. Upload source maps before affected errors can arrive. | Vercel through the normal Git release. | Exact Git SHA/release correlation, environment and deployment tags, readable stack traces and a post-deploy issue/error scan. |
 | Dead-letter replay runtime | No Supabase migration required when only app cron/route changes. | Vercel after code merge. | `/api/cron/replay-dead-letter` returns `401` (not `404`); `npm run ops:provider-dispatch-report`. |
 | Microsoft UET CAPI env | Set UET tag ApiToken (Conversions API auth) in Vercel Production. | Redeploy after env change. | Purchase row not `missing_capi_token`; see Microsoft env gate. |
 | Shopify/Klarna/Sanity runtime | Confirm provider docs, required env and provider-side allowed origins. | Vercel. | Route/action smoke, visible provider UI and provider response proof. |
-| Docs-only root docs | No migration. | No production deploy required unless the deploy is used to publish docs. | `git diff --check` and direct file inspection. |
+| Canonical event or destination contract | Keep catalog, implementation, consent, provider mapping and operational docs consistent. | Vercel/GTM/provider only for the surfaces actually changed and separately approved. | Browser event, collector, ledger/outbox, provider response and external status; acceptance alone is not attribution. |
+| Docs-only root docs | No migration. | No production deploy required unless the deploy is intentionally used to publish docs. | `git diff --check`, link/status consistency and direct file inspection. |
+
+## Authoritative Git And Vercel Release Model
+
+`origin/main` is the only normal production source of truth. A Vercel
+deployment is a complete repository snapshot at one Git commit; it never
+contains only the files changed by one agent. “Deploy only my changes” means
+that the branch-to-`origin/main` diff contains only the intended files, while
+the resulting build still contains all files already present on `main`.
+
+Required operating rules:
+
+1. Create a clean release branch/worktree from freshly fetched `origin/main`.
+   Never clean, reset, stash, or broadly stage a shared dirty checkout.
+2. Stage explicit paths. The removed `pnpm run sync` shortcut must not be
+   recreated: `git add .` can include unrelated work and pushing the current
+   branch does not guarantee a reviewed production release.
+3. Push the feature branch and use its Git-triggered Vercel Preview. Verify the
+   complete `origin/main...HEAD` diff, required checks, Preview deployment and
+   changed runtime surfaces.
+4. Fetch `origin/main` again before merge. If it moved, update the branch and
+   rerun every gate affected by the combined snapshot.
+5. Merge the reviewed pull request to `main`. The Vercel Git integration for
+   the resulting exact `main` commit is the sole normal production path.
+6. Record pull request, merge SHA, Vercel deployment ID, `READY` state,
+   production alias ownership, runtime logs and changed-surface smoke results.
+
+Do not use `vercel --prod`, a deploy hook, or manual alias promotion as a
+routine shortcut. A break-glass direct deployment requires separate explicit
+approval, an exact clean commit proven equivalent to current `origin/main`, a
+documented incident reason, and immediate reconciliation back into `main`.
+GitHub and Vercel must never be allowed to represent different production
+source states.
 
 ## Production Release Order
 
@@ -864,11 +921,15 @@ Run these before deciding the release order:
    migrations first.
 5. Verify Supabase production schema and migration history.
 6. Run local verification again after migration.
-7. Run `pnpm run sync -- "Commit message"` after explicit production
-   approval. The push to `main` triggers the Vercel deployment.
-8. Inspect the Vercel production deployment until it is ready or failed.
-9. Run post-deploy smoke checks for the changed surfaces.
-10. Update [PLAN.md](PLAN.md) with the final deployment and migration
+7. Stage only the classified files, commit on a clean branch, and push it.
+8. Verify the Git-triggered Vercel Preview and open a pull request to `main`.
+9. Fetch `origin/main` again; update and reverify the branch if `main` moved.
+10. Merge the reviewed pull request. The exact merge commit triggers the
+    production deployment through the Vercel Git integration.
+11. Inspect the production deployment until it is ready or failed and prove it
+    owns the production aliases.
+12. Run post-deploy smoke checks for the changed surfaces.
+13. Update [PLAN.md](PLAN.md) with the final deployment and migration
     status.
 
 ## Supabase Production Gate
@@ -879,20 +940,27 @@ views, jobs, leases, dead letters, or audit rows.
 
 Required sequence:
 
-1. `SUPABASE_NO_TELEMETRY=1 npx supabase migration list --linked`
-2. Read the local migration SQL that is expected to run.
-3. Dump the relevant remote schemas to `/tmp` and grep for required
+1. Read the current official Supabase changelog and the documentation for every
+   affected database feature. Record relevant breaking changes.
+2. `SUPABASE_NO_TELEMETRY=1 npx supabase migration list --linked`
+3. Read the local migration SQL that is expected to run.
+4. Dump the relevant remote schemas to `/tmp` and grep for required
    objects.
-4. If remote has migration-history drift, repair history only when the
+5. If remote has migration-history drift, repair history only when the
    schema state proves the target migration is already applied or
    intentionally absent.
-5. Prefer `SUPABASE_NO_TELEMETRY=1 npx supabase db push --linked
+6. For schemas exposed through the Data API, verify explicit grants and RLS;
+   do not infer safety from schema placement alone.
+7. Do not rely on a requested PostgreSQL extension version being installed.
+   Supabase now ignores extension-version pinning; verify the installed default
+   and compatibility before proceeding.
+8. Prefer `SUPABASE_NO_TELEMETRY=1 npx supabase db push --linked
    --dry-run` before any actual push.
-6. Run `SUPABASE_NO_TELEMETRY=1 npx supabase db push --linked` only
+9. Run `SUPABASE_NO_TELEMETRY=1 npx supabase db push --linked` only
    after explicit production approval.
-7. Run `SUPABASE_NO_TELEMETRY=1 npx supabase db lint --linked --schema
+10. Run `SUPABASE_NO_TELEMETRY=1 npx supabase db lint --linked --schema
    marketing,ops,analytics`.
-8. Dump or query production schema again to prove required objects
+11. Dump or query production schema again to prove required objects
    exist.
 
 Current tracking warehouse project:
@@ -1180,7 +1248,7 @@ Remove after migration:
 Redeploy Vercel after any env change. Verify with:
 
 ```bash
-TRACKING_SMOKE_BASE_URL=https://utekos.no npm run tracking:smoke
+TRACKING_GATEWAY_BASE_URL=https://utekos.no npm run tracking:gateway:smoke
 ```
 
 Required sequence:
@@ -1189,11 +1257,12 @@ Required sequence:
 2. Ensure required Supabase migrations and provider/env changes are done
    first.
 3. Run `pnpm exec tsc --noEmit` and relevant tests.
-4. Run `pnpm run sync -- "Commit message"` after explicit production
-   approval.
-5. Inspect the resulting production deployment in Vercel.
+4. Follow the authoritative clean branch, Preview, pull request and `main`
+   merge sequence above after explicit production approval.
+5. Inspect the resulting exact-merge-SHA production deployment in Vercel.
 6. If failed, fetch build logs and stop. Do not retry blindly.
-7. If ready, verify the production domain and relevant runtime surfaces.
+7. If ready, verify production alias ownership, the production domain and the
+   relevant runtime surfaces.
 
 ### Klarna Express Checkout gate (Preview + Production)
 

@@ -34,7 +34,6 @@
     "ai:devtools": "npx @ai-sdk/devtools",
     "analyze": "cross-env ANALYZE=true next build",
     "clean": "rm -rf .next",
-    "sync": "f() { git add . && git commit -m \"$1\" && git push; }; f",
     "knip": "knip",
     "pdp:baseline": "tsx scripts/pdp/baseline.ts",
     "pdp:baseline:write": "tsx scripts/pdp/baseline.ts --write",
