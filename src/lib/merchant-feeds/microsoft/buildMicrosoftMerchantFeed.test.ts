@@ -95,6 +95,35 @@ function parseFeedRows(feed: string) {
   })
 }
 
+function createProduct(
+  handle: string,
+  title: string,
+  variants: Array<{
+    id: string
+    color: string
+  }>
+): CatalogSyncProduct {
+  return {
+    ...product,
+    id: `gid://shopify/Product/${handle}`,
+    handle,
+    title,
+    variants: {
+      edges: variants.map(({ id, color }) => ({
+        node: {
+          ...product.variants.edges[0]!.node,
+          id: `gid://shopify/ProductVariant/${id}`,
+          selectedOptions: [
+            { name: 'Farge', value: color },
+            { name: 'Størrelse', value: 'Medium' },
+            { name: 'Kjønn', value: 'Unisex' }
+          ]
+        }
+      }))
+    }
+  }
+}
+
 test('builds a Microsoft Merchant TSV with one row per variant', () => {
   const feed = buildMicrosoftMerchantFeed([product])
   const rows = parseFeedRows(feed)
@@ -107,7 +136,7 @@ test('builds a Microsoft Merchant TSV with one row per variant', () => {
   assert.equal(rows[0]?.id, '200')
   assert.equal(
     rows[0]?.title,
-    'Utekos TechDown™ - Havdyp / Stor / Unisex'
+    'Utekos TechDown™ Havdyp – Stor'
   )
   assert.equal(
     rows[0]?.description,
@@ -146,5 +175,51 @@ test('fails closed when there are no active product offers', () => {
   assert.throws(
     () => buildMicrosoftMerchantFeed([{ ...product, status: 'DRAFT' }]),
     /contains no active offers/
+  )
+})
+
+test('includes only the approved Microsoft Merchant assortment', () => {
+  const feed = buildMicrosoftMerchantFeed([
+    createProduct('utekos-dun', 'Utekos Dun', [
+      { id: '301', color: 'Fjellblå' }
+    ]),
+    createProduct('utekos-mikrofiber', 'Utekos Mikrofiber', [
+      { id: '302', color: 'Vargnatt' },
+      { id: '303', color: 'Fjellblå' }
+    ]),
+    createProduct('utekos-stapper', 'Utekos Stapper', [
+      { id: '304', color: 'Vargnatt' }
+    ]),
+    createProduct('utekos-buff', 'Utekos Buff', [
+      { id: '305', color: 'Fjellblå' }
+    ]),
+    createProduct('utekos-techdown', 'Utekos TechDown', [
+      { id: '306', color: 'Havdyp' }
+    ]),
+    createProduct('comfyrobe', 'Comfyrobe', [
+      { id: '307', color: 'Fjellnatt' }
+    ])
+  ])
+  const rows = parseFeedRows(feed)
+
+  assert.deepEqual(
+    rows.map(row => ({
+      id: row.id,
+      title: row.title
+    })),
+    [
+      {
+        id: '303',
+        title: 'Utekos Mikrofiber Fjellblå – Medium'
+      },
+      {
+        id: '306',
+        title: 'Utekos TechDown Havdyp – Medium'
+      },
+      {
+        id: '307',
+        title: 'Comfyrobe Fjellnatt – Medium'
+      }
+    ]
   )
 })

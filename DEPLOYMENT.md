@@ -62,6 +62,52 @@ reprocessing, item-level status, and Shopping eligibility remain externally
 unverified until the provider reports them. Do not describe the 13 products as
 approved solely from a valid feed response.
 
+### Microsoft Merchant assortment reduction 2026-08-11
+
+The hosted primary feed intentionally includes only Utekos Mikrofiber
+Fjellblå, Comfyrobe and Utekos TechDown offers. It excludes every Utekos Dun,
+Utekos Stapper and Utekos Buff offer, plus every Utekos Mikrofiber color other
+than Fjellblå. With the Shopify catalog state observed at release time, the
+expected output is nine offers: two Mikrofiber Fjellblå, three Comfyrobe and
+four TechDown variants.
+
+Every included variant title is generated in the feed layer without changing
+the Shopify product or option names. The format is
+`[Product name] [Color] – [Size]`. Gender remains in the dedicated `gender`
+attribute and is not duplicated in the title.
+
+[Microsoft documents](https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_bmc_productinventoryfeed)
+that submitting an updated primary feed overwrites the previous upload.
+Deployment makes the hosted TSV authoritative but does not trigger Microsoft
+Merchant Center ingestion. The operator must update the existing URL-download
+feed afterward and verify that the processed catalog no longer contains the
+seven removed offers. Provider processing and item status remain separate
+evidence gates.
+
+### Cross-provider variant title contract 2026-08-11
+
+Microsoft Merchant and Google Merchant API inputs share the title formatter
+`[Product name] [Color] – [Size]`. Color and size remain in their dedicated
+attributes, while gender is not duplicated in the title. Google explicitly
+recommends
+[variant-identifying properties in variant titles](https://support.google.com/merchants/answer/17085146?hl=en);
+the Merchant API
+continues to receive the full variant as a `ProductInput` through
+`buildMerchantProductInput.ts`. Deployment changes future Google sync payloads
+but does not itself invoke a Google catalog sync or prove processed-product
+acceptance.
+
+The read-only Meta Commerce Catalog audit found catalog `690208780604782` with
+13 product items. Its sources are a Batch API app, an active partner integration
+and manual creation; there is no Meta product-feed exporter or catalog-sync
+sender in this repository. Current Meta item names contain only the Shopify
+product name, while color, size and gender are separate catalog fields. A local
+file change therefore cannot alter Meta titles in the present architecture.
+Direct item edits are provider mutations and may be overwritten by the partner
+source, so this release deliberately makes no Meta catalog mutation. A durable
+Meta title change requires ownership of the upstream partner mapping or a
+separately approved repository-owned Meta catalog sync.
+
 ## Utekos Original app-only release and baseline 2026-08-05
 
 Production deployment `dpl_26WjzijrrUkRonQgqTmAQLii19cD` reached `READY`,
@@ -893,12 +939,15 @@ Required operating rules:
    recreated: `git add .` can include unrelated work and pushing the current
    branch does not guarantee a reviewed production release.
 3. Push the feature branch and use its Git-triggered Vercel Preview. Verify the
-   complete `origin/main...HEAD` diff, required checks, Preview deployment and
-   changed runtime surfaces.
+   complete `origin/main...HEAD` diff, repository-enforced checks, Preview
+   deployment and changed runtime surfaces.
 4. Fetch `origin/main` again before merge. If it moved, update the branch and
    rerun every gate affected by the combined snapshot.
-5. Merge the reviewed pull request to `main`. The Vercel Git integration for
-   the resulting exact `main` commit is the sole normal production path.
+5. Merge the pull request after the intended diff and release evidence have
+   been reviewed by the acting operator/agent. No external bot approval is
+   required unless GitHub itself enforces that exact check. The Vercel Git
+   integration for the resulting exact `main` commit is the sole normal
+   production path.
 6. Record pull request, merge SHA, Vercel deployment ID, `READY` state,
    production alias ownership, runtime logs and changed-surface smoke results.
 
@@ -908,6 +957,53 @@ approval, an exact clean commit proven equivalent to current `origin/main`, a
 documented incident reason, and immediate reconciliation back into `main`.
 GitHub and Vercel must never be allowed to represent different production
 source states.
+
+### Efficient merge gate
+
+Before waiting on any GitHub check, read branch protection and active
+repository rulesets. A status check is blocking only when GitHub marks it as
+required. Advisory integrations—including Seer, CodeQL bot summaries, Copilot
+review and marketplace review apps—run asynchronously and must not be polled or
+treated as external approval authorities. If an advisory check has already
+returned an actionable critical finding, resolve it before merge. A pending
+advisory check is not a blocker.
+
+The normal merge decision requires all of the following:
+
+1. The branch contains only the intended `origin/main...HEAD` diff.
+2. Risk-appropriate local tests, lint, type checks and build gates pass.
+3. The exact runtime SHA has a Git-triggered Vercel Preview in `READY` state and
+   the changed runtime surface has passed its smoke test. A later docs-only
+   commit can reuse that Preview under the exception below.
+4. GitHub reports the pull request as mergeable and every repository-enforced
+   required check is satisfied.
+5. The user has explicitly approved the production deployment.
+
+Do not use `gh pr checks --watch`, wait for an advisory reviewer, or add an
+extra human/bot approval round by default. Merge immediately when the five
+conditions above are met, then monitor the exact production deployment and
+handle later advisory findings as follow-up. As checked on 2026-08-11,
+`main` had no branch protection and the repository had no active rulesets; this
+is current-state evidence, not a permanent assumption, so re-read the cheap
+GitHub controls when their state is material.
+
+#### Docs-only Preview reuse
+
+Do not spend another full Preview build on a trailing commit that changes only
+documentation/control Markdown after a `READY` Preview of its direct runtime
+ancestor. Reuse the ancestor Preview only when all of these are true:
+
+1. `git diff --name-only <ready-runtime-sha>...HEAD` contains only `*.md` files.
+2. `git diff --check <ready-runtime-sha>...HEAD` passes.
+3. No environment, generated config, dependency, workflow, runtime, schema,
+   provider, asset or executable file changed after the ready runtime SHA.
+4. The reused deployment ID and the exact docs-only diff are recorded in the
+   release evidence.
+
+This exception does not apply when any runtime-affecting file changed, and it
+does not convert a failed runtime Preview into a pass. A Vercel provisioning
+failure with no build logs may be recorded as infrastructure evidence while
+the runtime-identical ancestor remains the code gate.
 
 ## Production Release Order
 
@@ -924,8 +1020,9 @@ source states.
 7. Stage only the classified files, commit on a clean branch, and push it.
 8. Verify the Git-triggered Vercel Preview and open a pull request to `main`.
 9. Fetch `origin/main` again; update and reverify the branch if `main` moved.
-10. Merge the reviewed pull request. The exact merge commit triggers the
-    production deployment through the Vercel Git integration.
+10. Merge the pull request as soon as the efficient merge gate above passes.
+    The exact merge commit triggers the production deployment through the
+    Vercel Git integration.
 11. Inspect the production deployment until it is ready or failed and prove it
     owns the production aliases.
 12. Run post-deploy smoke checks for the changed surfaces.
