@@ -34,11 +34,9 @@ const googleSansFlex = Google_Sans_Flex({
   preload: false,
   fallback: ['system-ui', 'sans-serif'],
   axes: [
-    'ROND',
     'GRAD',
-    'wdth',
     'opsz',
-    'slnt'
+    'wght'
   ]
 })
 
