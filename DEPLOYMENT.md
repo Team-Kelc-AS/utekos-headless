@@ -973,8 +973,9 @@ The normal merge decision requires all of the following:
 1. The branch contains only the intended `origin/main...HEAD` diff.
 2. Risk-appropriate local tests, lint, type checks and build gates pass.
 3. The exact runtime SHA has a Git-triggered Vercel Preview in `READY` state and
-   the changed runtime surface has passed its smoke test. A later docs-only
-   commit can reuse that Preview under the exception below.
+   the changed runtime surface has passed its smoke test, or the bounded
+   Preview-infrastructure fallback below applies. A later docs-only commit can
+   reuse the verified runtime deployment under the exception below.
 4. GitHub reports the pull request as mergeable and every repository-enforced
    required check is satisfied.
 5. The user has explicitly approved the production deployment.
@@ -987,11 +988,40 @@ handle later advisory findings as follow-up. As checked on 2026-08-11,
 is current-state evidence, not a permanent assumption, so re-read the cheap
 GitHub controls when their state is material.
 
+#### Preview infrastructure fallback
+
+Do not retry or wait indefinitely when Vercel cannot start a Preview build. A
+failed application build is never eligible for this fallback. It applies only
+when the initial Git-triggered Preview and one redeploy both fail before build
+start with the same provider-side provisioning error, no application build
+logs exist, and the failure is therefore isolated from the repository code.
+
+After those two attempts, an explicitly approved production deployment may be
+used as the exact-commit runtime gate only when all of these are true:
+
+1. The pull request is mergeable, the intended diff is narrow, and every
+   repository-enforced required check is satisfied.
+2. Targeted tests, lint, generated types and TypeScript pass. Any blocked local
+   full build is traced to an unchanged external dependency rather than the
+   changed code and is recorded in the release evidence.
+3. The currently `READY` production deployment remains the active alias while
+   the new deployment builds; a failed candidate must not replace it.
+4. The agent monitors the exact merge SHA until Vercel reports `READY`, verifies
+   all production aliases, runs the changed-surface smoke against the public
+   domain, and checks deployment-scoped runtime error logs.
+5. If the candidate fails or post-deploy smoke fails, stop and keep or restore
+   the previous known-good production deployment. Never report the change as
+   deployed from merge state or build progress alone.
+
+This is a bounded infrastructure fallback, not permission to bypass a Preview
+that actually built and found an application error.
+
 #### Docs-only Preview reuse
 
 Do not spend another full Preview build on a trailing commit that changes only
-documentation/control Markdown after a `READY` Preview of its direct runtime
-ancestor. Reuse the ancestor Preview only when all of these are true:
+documentation/control Markdown after a `READY` Preview or Production deployment
+of its direct runtime ancestor. Reuse the ancestor deployment only when all of
+these are true:
 
 1. `git diff --name-only <ready-runtime-sha>...HEAD` contains only `*.md` files.
 2. `git diff --check <ready-runtime-sha>...HEAD` passes.

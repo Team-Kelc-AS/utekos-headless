@@ -252,9 +252,12 @@ Verification gates:
   protection or an active ruleset explicitly marks the exact check as
   required. The merge gate is the intended diff, risk-appropriate local
   verification, a `READY` Git-triggered Vercel Preview of the exact runtime
-  commit, mergeability and explicit production approval. A trailing docs-only
-  commit may reuse the nearest `READY` runtime-ancestor Preview when an exact
-  Git diff proves that only documentation/control Markdown files changed.
+  commit, mergeability and explicit production approval. When Vercel fails
+  Preview provisioning before build start, follow the bounded production
+  fallback in `DEPLOYMENT.md`; provider infrastructure must not become an
+  unbounded merge authority. A trailing docs-only commit may reuse the nearest
+  `READY` runtime-ancestor deployment when an exact Git diff proves that only
+  documentation/control Markdown files changed.
   Address any actionable critical finding already available before merge, but
   treat pending advisory checks as asynchronous follow-up rather than a
   release blocker.
