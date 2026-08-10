@@ -972,8 +972,9 @@ The normal merge decision requires all of the following:
 
 1. The branch contains only the intended `origin/main...HEAD` diff.
 2. Risk-appropriate local tests, lint, type checks and build gates pass.
-3. The exact head SHA has a Git-triggered Vercel Preview in `READY` state and
-   the changed runtime surface has passed its smoke test.
+3. The exact runtime SHA has a Git-triggered Vercel Preview in `READY` state and
+   the changed runtime surface has passed its smoke test. A later docs-only
+   commit can reuse that Preview under the exception below.
 4. GitHub reports the pull request as mergeable and every repository-enforced
    required check is satisfied.
 5. The user has explicitly approved the production deployment.
@@ -985,6 +986,24 @@ handle later advisory findings as follow-up. As checked on 2026-08-11,
 `main` had no branch protection and the repository had no active rulesets; this
 is current-state evidence, not a permanent assumption, so re-read the cheap
 GitHub controls when their state is material.
+
+#### Docs-only Preview reuse
+
+Do not spend another full Preview build on a trailing commit that changes only
+documentation/control Markdown after a `READY` Preview of its direct runtime
+ancestor. Reuse the ancestor Preview only when all of these are true:
+
+1. `git diff --name-only <ready-runtime-sha>...HEAD` contains only `*.md` files.
+2. `git diff --check <ready-runtime-sha>...HEAD` passes.
+3. No environment, generated config, dependency, workflow, runtime, schema,
+   provider, asset or executable file changed after the ready runtime SHA.
+4. The reused deployment ID and the exact docs-only diff are recorded in the
+   release evidence.
+
+This exception does not apply when any runtime-affecting file changed, and it
+does not convert a failed runtime Preview into a pass. A Vercel provisioning
+failure with no build logs may be recorded as infrastructure evidence while
+the runtime-identical ancestor remains the code gate.
 
 ## Production Release Order
 

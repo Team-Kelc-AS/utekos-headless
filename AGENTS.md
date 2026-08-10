@@ -251,10 +251,13 @@ Verification gates:
   request may merge. Do not poll or wait for them unless GitHub branch
   protection or an active ruleset explicitly marks the exact check as
   required. The merge gate is the intended diff, risk-appropriate local
-  verification, a `READY` Git-triggered Vercel Preview, mergeability and
-  explicit production approval. Address any actionable critical finding
-  already available before merge, but treat pending advisory checks as
-  asynchronous follow-up rather than a release blocker.
+  verification, a `READY` Git-triggered Vercel Preview of the exact runtime
+  commit, mergeability and explicit production approval. A trailing docs-only
+  commit may reuse the nearest `READY` runtime-ancestor Preview when an exact
+  Git diff proves that only documentation/control Markdown files changed.
+  Address any actionable critical finding already available before merge, but
+  treat pending advisory checks as asynchronous follow-up rather than a
+  release blocker.
 - Before any production deploy, schema mutation, env change, GTM
   publish, tracking change, provider change, or operational tooling
   release, read and follow [DEPLOYMENT.md](DEPLOYMENT.md). The
