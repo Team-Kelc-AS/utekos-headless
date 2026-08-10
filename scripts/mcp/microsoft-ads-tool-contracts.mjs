@@ -9,7 +9,7 @@ import {
 } from '../microsoft-ads/health/finding-schema.mjs'
 import { MICROSOFT_ADS_RECOMMENDATION_TYPES } from '../microsoft-ads/lib/ad-insight.mjs'
 
-export const MICROSOFT_ADS_TOOL_CONTRACT_VERSION = '1.2.0'
+export const MICROSOFT_ADS_TOOL_CONTRACT_VERSION = '1.2.1'
 export const MICROSOFT_ADS_SUPPORTED_RECOMMENDATION_TYPES = Object.freeze([
   'ADD_BROAD_MATCH_KEYWORD',
   'CAMPAIGN_BUDGET',
@@ -188,7 +188,8 @@ export const microsoftAdsTrackingHealthOutputSchema = healthEnvelope(z.object({
   providerDispatchAcceptedCount: countSchema,
   providerDispatchSkippedCount: countSchema,
   providerDispatchFailedCount: countSchema,
-  missingMsclkidSkipCount: countSchema
+  missingMsclkidSkipCount: countSchema,
+  missingMicrosoftIdentifierSkipCount: countSchema
 }).strict())
 
 export const microsoftAdsMerchantHealthOutputSchema = healthEnvelope(z.object({
