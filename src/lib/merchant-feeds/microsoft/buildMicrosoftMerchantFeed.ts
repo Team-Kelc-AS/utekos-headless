@@ -5,6 +5,7 @@ import type {
 import { isValidGtin } from '@/lib/gtin/isValidGtin'
 import { normalizeGtin } from '@/lib/gtin/normalizeGtin'
 import { MERCHANT_FEED_SITE_URL } from '@/lib/merchant-feeds/merchantFeedSiteUrl'
+import { buildVariantTitle } from '@/lib/merchant-feeds/buildVariantTitle'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 import { getMicrosoftMerchantProductCategory } from './getMicrosoftMerchantProductCategory'
@@ -93,21 +94,6 @@ function stripHtml(value: string) {
     .replace(/&quot;/gi, '"')
     .replace(/&lt;/gi, '<')
     .replace(/&gt;/gi, '>')
-}
-
-function buildProductTitle(
-  product: CatalogSyncProduct,
-  variant: CatalogSyncVariant
-) {
-  const optionSummary = variant.selectedOptions
-    .map(option => option.value.trim())
-    .filter(value => value && value.toLowerCase() !== 'default title')
-    .join(' / ')
-  const title = optionSummary
-    ? `${product.title} - ${optionSummary}`
-    : product.title
-
-  return sanitizeFeedValue(title, 150)
 }
 
 function buildProductDescription(product: CatalogSyncProduct) {
@@ -304,7 +290,10 @@ function buildRow(
 
   return {
     id: sanitizeFeedValue(offerId, 50),
-    title: buildProductTitle(product, variant),
+    title: sanitizeFeedValue(
+      buildVariantTitle(product.title, variant.selectedOptions),
+      150
+    ),
     description: buildProductDescription(product),
     link: `${MERCHANT_FEED_SITE_URL}/produkter/${encodeURIComponent(product.handle)}?variant=${encodeURIComponent(variant.id)}`,
     image_link: imageLink,

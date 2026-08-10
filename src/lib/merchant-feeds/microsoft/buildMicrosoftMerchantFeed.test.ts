@@ -136,7 +136,7 @@ test('builds a Microsoft Merchant TSV with one row per variant', () => {
   assert.equal(rows[0]?.id, '200')
   assert.equal(
     rows[0]?.title,
-    'Utekos TechDown™ - Havdyp / Stor / Unisex'
+    'Utekos TechDown™ Havdyp – Stor'
   )
   assert.equal(
     rows[0]?.description,
@@ -210,15 +210,15 @@ test('includes only the approved Microsoft Merchant assortment', () => {
     [
       {
         id: '303',
-        title: 'Utekos Mikrofiber - Fjellblå / Medium / Unisex'
+        title: 'Utekos Mikrofiber Fjellblå – Medium'
       },
       {
         id: '306',
-        title: 'Utekos TechDown - Havdyp / Medium / Unisex'
+        title: 'Utekos TechDown Havdyp – Medium'
       },
       {
         id: '307',
-        title: 'Comfyrobe - Fjellnatt / Medium / Unisex'
+        title: 'Comfyrobe Fjellnatt – Medium'
       }
     ]
   )

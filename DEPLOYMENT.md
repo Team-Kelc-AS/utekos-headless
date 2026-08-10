@@ -71,6 +71,11 @@ than Fjellblå. With the Shopify catalog state observed at release time, the
 expected output is nine offers: two Mikrofiber Fjellblå, three Comfyrobe and
 four TechDown variants.
 
+Every included variant title is generated in the feed layer without changing
+the Shopify product or option names. The format is
+`[Product name] [Color] – [Size]`. Gender remains in the dedicated `gender`
+attribute and is not duplicated in the title.
+
 [Microsoft documents](https://learn.microsoft.com/en-us/advertising/msa-help/hlp_ba_proc_bmc_productinventoryfeed)
 that submitting an updated primary feed overwrites the previous upload.
 Deployment makes the hosted TSV authoritative but does not trigger Microsoft
@@ -78,6 +83,30 @@ Merchant Center ingestion. The operator must update the existing URL-download
 feed afterward and verify that the processed catalog no longer contains the
 seven removed offers. Provider processing and item status remain separate
 evidence gates.
+
+### Cross-provider variant title contract 2026-08-11
+
+Microsoft Merchant and Google Merchant API inputs share the title formatter
+`[Product name] [Color] – [Size]`. Color and size remain in their dedicated
+attributes, while gender is not duplicated in the title. Google explicitly
+recommends
+[variant-identifying properties in variant titles](https://support.google.com/merchants/answer/17085146?hl=en);
+the Merchant API
+continues to receive the full variant as a `ProductInput` through
+`buildMerchantProductInput.ts`. Deployment changes future Google sync payloads
+but does not itself invoke a Google catalog sync or prove processed-product
+acceptance.
+
+The read-only Meta Commerce Catalog audit found catalog `690208780604782` with
+13 product items. Its sources are a Batch API app, an active partner integration
+and manual creation; there is no Meta product-feed exporter or catalog-sync
+sender in this repository. Current Meta item names contain only the Shopify
+product name, while color, size and gender are separate catalog fields. A local
+file change therefore cannot alter Meta titles in the present architecture.
+Direct item edits are provider mutations and may be overwritten by the partner
+source, so this release deliberately makes no Meta catalog mutation. A durable
+Meta title change requires ownership of the upstream partner mapping or a
+separately approved repository-owned Meta catalog sync.
 
 ## Utekos Original app-only release and baseline 2026-08-05
 

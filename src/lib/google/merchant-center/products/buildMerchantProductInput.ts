@@ -5,6 +5,7 @@ import type {
 } from '@/lib/catalog-sync/types'
 import { isValidGtin } from '@/lib/gtin/isValidGtin'
 import { normalizeGtin } from '@/lib/gtin/normalizeGtin'
+import { buildVariantTitle } from '@/lib/merchant-feeds/buildVariantTitle'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 import { getMerchantCenterConfig } from '../config'
@@ -22,24 +23,6 @@ function stripHtml(value: string) {
     .replace(/&quot;/gi, '"')
     .replace(/\s+/g, ' ')
     .trim()
-}
-
-function buildMerchantProductTitle(
-  product: CatalogSyncProduct,
-  variant: CatalogSyncVariant
-) {
-  if (variant.title === 'Default Title') {
-    return product.title.trim()
-  }
-
-  const optionSummary = variant.selectedOptions
-    .map(option => option.value.trim())
-    .filter(Boolean)
-    .join(' / ')
-
-  return optionSummary ?
-      `${product.title.trim()} - ${optionSummary}`
-    : `${product.title.trim()} - ${variant.title.trim()}`
 }
 
 function buildMerchantProductLink(
@@ -252,7 +235,10 @@ export function buildMerchantProductInput(
     'størrelse'
   ])
   const productAttributes: Record<string, unknown> = {
-    title: buildMerchantProductTitle(product, variant),
+    title: buildVariantTitle(
+      product.title,
+      variant.selectedOptions
+    ),
     description: stripHtml(product.descriptionHtml),
     link: productLink,
     canonicalLink: `https://utekos.no/produkter/${product.handle}`,
