@@ -246,6 +246,15 @@ Verification gates:
   mutation, ad campaign creation, Shopify catalog mutation, and
   Supabase schema mutation require explicit user confirmation and
   must not be hidden behind a default agent profile.
+- External advisory reviewers and scanners such as Seer, CodeQL bots,
+  Copilot or other marketplace checks do not decide whether a pull
+  request may merge. Do not poll or wait for them unless GitHub branch
+  protection or an active ruleset explicitly marks the exact check as
+  required. The merge gate is the intended diff, risk-appropriate local
+  verification, a `READY` Git-triggered Vercel Preview, mergeability and
+  explicit production approval. Address any actionable critical finding
+  already available before merge, but treat pending advisory checks as
+  asynchronous follow-up rather than a release blocker.
 - Before any production deploy, schema mutation, env change, GTM
   publish, tracking change, provider change, or operational tooling
   release, read and follow [DEPLOYMENT.md](DEPLOYMENT.md). The

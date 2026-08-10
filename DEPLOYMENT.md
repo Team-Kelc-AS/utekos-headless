@@ -939,12 +939,15 @@ Required operating rules:
    recreated: `git add .` can include unrelated work and pushing the current
    branch does not guarantee a reviewed production release.
 3. Push the feature branch and use its Git-triggered Vercel Preview. Verify the
-   complete `origin/main...HEAD` diff, required checks, Preview deployment and
-   changed runtime surfaces.
+   complete `origin/main...HEAD` diff, repository-enforced checks, Preview
+   deployment and changed runtime surfaces.
 4. Fetch `origin/main` again before merge. If it moved, update the branch and
    rerun every gate affected by the combined snapshot.
-5. Merge the reviewed pull request to `main`. The Vercel Git integration for
-   the resulting exact `main` commit is the sole normal production path.
+5. Merge the pull request after the intended diff and release evidence have
+   been reviewed by the acting operator/agent. No external bot approval is
+   required unless GitHub itself enforces that exact check. The Vercel Git
+   integration for the resulting exact `main` commit is the sole normal
+   production path.
 6. Record pull request, merge SHA, Vercel deployment ID, `READY` state,
    production alias ownership, runtime logs and changed-surface smoke results.
 
@@ -954,6 +957,34 @@ approval, an exact clean commit proven equivalent to current `origin/main`, a
 documented incident reason, and immediate reconciliation back into `main`.
 GitHub and Vercel must never be allowed to represent different production
 source states.
+
+### Efficient merge gate
+
+Before waiting on any GitHub check, read branch protection and active
+repository rulesets. A status check is blocking only when GitHub marks it as
+required. Advisory integrations—including Seer, CodeQL bot summaries, Copilot
+review and marketplace review apps—run asynchronously and must not be polled or
+treated as external approval authorities. If an advisory check has already
+returned an actionable critical finding, resolve it before merge. A pending
+advisory check is not a blocker.
+
+The normal merge decision requires all of the following:
+
+1. The branch contains only the intended `origin/main...HEAD` diff.
+2. Risk-appropriate local tests, lint, type checks and build gates pass.
+3. The exact head SHA has a Git-triggered Vercel Preview in `READY` state and
+   the changed runtime surface has passed its smoke test.
+4. GitHub reports the pull request as mergeable and every repository-enforced
+   required check is satisfied.
+5. The user has explicitly approved the production deployment.
+
+Do not use `gh pr checks --watch`, wait for an advisory reviewer, or add an
+extra human/bot approval round by default. Merge immediately when the five
+conditions above are met, then monitor the exact production deployment and
+handle later advisory findings as follow-up. As checked on 2026-08-11,
+`main` had no branch protection and the repository had no active rulesets; this
+is current-state evidence, not a permanent assumption, so re-read the cheap
+GitHub controls when their state is material.
 
 ## Production Release Order
 
@@ -970,8 +1001,9 @@ source states.
 7. Stage only the classified files, commit on a clean branch, and push it.
 8. Verify the Git-triggered Vercel Preview and open a pull request to `main`.
 9. Fetch `origin/main` again; update and reverify the branch if `main` moved.
-10. Merge the reviewed pull request. The exact merge commit triggers the
-    production deployment through the Vercel Git integration.
+10. Merge the pull request as soon as the efficient merge gate above passes.
+    The exact merge commit triggers the production deployment through the
+    Vercel Git integration.
 11. Inspect the production deployment until it is ready or failed and prove it
     owns the production aliases.
 12. Run post-deploy smoke checks for the changed surfaces.
