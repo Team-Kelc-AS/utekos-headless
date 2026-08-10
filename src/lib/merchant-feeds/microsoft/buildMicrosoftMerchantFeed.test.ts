@@ -39,7 +39,8 @@ const product: CatalogSyncProduct = {
           image: null,
           selectedOptions: [
             { name: 'Farge', value: 'Havdyp' },
-            { name: 'Størrelse', value: 'Stor' }
+            { name: 'Størrelse', value: 'Stor' },
+            { name: 'Kjønn', value: 'Unisex' }
           ],
           weight: null,
           weightUnit: 'kg',
@@ -65,7 +66,8 @@ const product: CatalogSyncProduct = {
           },
           selectedOptions: [
             { name: 'Farge', value: 'Havdyp' },
-            { name: 'Størrelse', value: 'Liten' }
+            { name: 'Størrelse', value: 'Liten' },
+            { name: 'Kjønn', value: 'Unisex' }
           ],
           weight: null,
           weightUnit: 'kg',
@@ -103,7 +105,10 @@ test('builds a Microsoft Merchant TSV with one row per variant', () => {
   )
   assert.equal(rows.length, 2)
   assert.equal(rows[0]?.id, '200')
-  assert.equal(rows[0]?.title, 'Utekos TechDown™ - Havdyp / Stor')
+  assert.equal(
+    rows[0]?.title,
+    'Utekos TechDown™ - Havdyp / Stor / Unisex'
+  )
   assert.equal(
     rows[0]?.description,
     'Varm & lett for terrasse og tur.'
@@ -117,6 +122,9 @@ test('builds a Microsoft Merchant TSV with one row per variant', () => {
   assert.equal(rows[0]?.product_category, '203')
   assert.equal(rows[0]?.color, 'Havdyp')
   assert.equal(rows[0]?.size, 'Stor')
+  assert.equal(rows[0]?.age_group, 'adult')
+  assert.equal(rows[0]?.gender, 'unisex')
+  assert.equal(rows[0]?.adult, 'FALSE')
   assert.equal(rows[0]?.custom_label_0, 'Bestselger')
   assert.equal(rows[0]?.availability, 'in stock')
   assert.equal(rows[1]?.availability, 'out of stock')

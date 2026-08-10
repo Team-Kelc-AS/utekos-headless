@@ -1,10 +1,10 @@
-import { SITE_URL } from '@/constants'
 import type {
   CatalogSyncProduct,
   CatalogSyncVariant
 } from '@/lib/catalog-sync/types'
 import { isValidGtin } from '@/lib/gtin/isValidGtin'
 import { normalizeGtin } from '@/lib/gtin/normalizeGtin'
+import { MERCHANT_FEED_SITE_URL } from '@/lib/merchant-feeds/merchantFeedSiteUrl'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 import { getMicrosoftMerchantProductCategory } from './getMicrosoftMerchantProductCategory'
@@ -28,8 +28,11 @@ export const MICROSOFT_MERCHANT_FEED_COLUMNS = [
   'product_category',
   'color',
   'size',
+  'age_group',
+  'gender',
   'material',
   'pattern',
+  'adult',
   'custom_label_0',
   'custom_label_1',
   'custom_label_2',
@@ -207,6 +210,29 @@ function getSelectedOption(
   return sanitizeFeedValue(option?.value ?? '', 100)
 }
 
+function buildGender(variant: CatalogSyncVariant) {
+  const gender = getSelectedOption(variant, ['gender', 'kjønn'])
+    .toLowerCase()
+
+  const normalizedGender = {
+    dame: 'female',
+    female: 'female',
+    herre: 'male',
+    kvinne: 'female',
+    male: 'male',
+    mann: 'male',
+    unisex: 'unisex'
+  }[gender]
+
+  if (!normalizedGender) {
+    throw new Error(
+      `Microsoft Merchant offer ${cleanShopifyId(variant.id)} has missing or unsupported gender "${gender}"`
+    )
+  }
+
+  return normalizedGender
+}
+
 function buildAdditionalImageLinks(
   product: CatalogSyncProduct,
   primaryImageLink: string
@@ -279,7 +305,7 @@ function buildRow(
     id: sanitizeFeedValue(offerId, 50),
     title: buildProductTitle(product, variant),
     description: buildProductDescription(product),
-    link: `${SITE_URL}/produkter/${encodeURIComponent(product.handle)}?variant=${encodeURIComponent(variant.id)}`,
+    link: `${MERCHANT_FEED_SITE_URL}/produkter/${encodeURIComponent(product.handle)}?variant=${encodeURIComponent(variant.id)}`,
     image_link: imageLink,
     additional_image_link: buildAdditionalImageLinks(product, imageLink),
     availability: variant.availableForSale ? 'in stock' : 'out of stock',
@@ -297,8 +323,11 @@ function buildRow(
     product_category: getMicrosoftMerchantProductCategory(product.handle),
     color: getSelectedOption(variant, ['color', 'farge']),
     size: getSelectedOption(variant, ['size', 'størrelse', 'str']),
+    age_group: 'adult',
+    gender: buildGender(variant),
     material: getSelectedOption(variant, ['material', 'materiale']),
     pattern: getSelectedOption(variant, ['pattern', 'mønster']),
+    adult: 'FALSE',
     custom_label_0: sanitizeFeedValue(
       variant.customLabel0?.value ?? '',
       100
