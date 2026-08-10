@@ -24,7 +24,7 @@ main().catch(error => {
 })
 
 async function main() {
-  const client = new Client({ name: 'utekos-microsoft-ads-doctor', version: '1.2.0' })
+  const client = new Client({ name: 'utekos-microsoft-ads-doctor', version: '1.2.1' })
   const transport = new StdioClientTransport({ command: process.execPath, args: [serverPath], env: process.env })
   try {
     await client.connect(transport)

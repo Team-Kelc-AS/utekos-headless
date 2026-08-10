@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import {
   MICROSOFT_ADS_TOOL_CONTRACTS,
   MICROSOFT_ADS_TOOL_CONTRACT_VERSION,
+  microsoftAdsTrackingHealthOutputSchema,
   normalizeMicrosoftAdsFullAuditForWire
 } from './microsoft-ads-tool-contracts.mjs'
 
@@ -49,7 +50,7 @@ test('server registers contracts with output schemas and runtime validation', ()
 })
 
 test('all tools accept only a digits-only configured account selector', () => {
-  assert.equal(MICROSOFT_ADS_TOOL_CONTRACT_VERSION, '1.2.0')
+  assert.equal(MICROSOFT_ADS_TOOL_CONTRACT_VERSION, '1.2.1')
 
   for (const name of toolNames) {
     const schema = MICROSOFT_ADS_TOOL_CONTRACTS[name].inputSchema
@@ -70,6 +71,47 @@ test('all tools accept only a digits-only configured account selector', () => {
       `${name} should reject an account number in the accountId field`
     )
   }
+})
+
+test('tracking health output accepts the missing Microsoft identifier metric', () => {
+  const result = microsoftAdsTrackingHealthOutputSchema.safeParse({
+    scope: 'microsoft-ads:188365141',
+    status: 'healthy',
+    ok: true,
+    summary: {
+      total: 0,
+      critical: 0,
+      high: 0,
+      medium: 0,
+      low: 0,
+      info: 0,
+      actionable: 0
+    },
+    coverage: { complete: true, checks: [] },
+    metrics: {
+      uetTagCount: 1,
+      activeUetTagCount: 1,
+      conversionGoalCount: 3,
+      noRecentConversionGoalCount: 3,
+      clicks: 0,
+      allConversionsQualified: 0,
+      msclkidAutoTaggingEnabled: true,
+      uetCapiEndpointPresent: true,
+      uetCapiTokenPresent: true,
+      localCapiRequiresMsclkid: false,
+      providerDispatchEvidenceAvailable: true,
+      providerDispatchConfirmed: false,
+      providerDispatchAttemptCount: 0,
+      providerDispatchAcceptedCount: 0,
+      providerDispatchSkippedCount: 0,
+      providerDispatchFailedCount: 0,
+      missingMsclkidSkipCount: 0,
+      missingMicrosoftIdentifierSkipCount: 0
+    },
+    findings: []
+  })
+
+  assert.equal(result.success, true)
 })
 
 test('server keeps a separate audit cache for each selected account', () => {
