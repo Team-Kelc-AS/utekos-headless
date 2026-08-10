@@ -224,6 +224,17 @@ function buildAdditionalImageLinks(
   product: CatalogSyncProduct,
   primaryImageLink: string
 ) {
+  const productColors = new Set(
+    product.variants.edges
+      .map(({ node }) => getSelectedOption(node, ['color', 'farge']))
+      .filter(Boolean)
+      .map(color => color.toLowerCase())
+  )
+
+  if (productColors.size > 1) {
+    return ''
+  }
+
   const seenUrls = new Set([primaryImageLink])
 
   return product.images
