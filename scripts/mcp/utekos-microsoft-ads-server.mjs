@@ -114,7 +114,7 @@ export function createUtekosMicrosoftAdsMcpServer({
     {
       name: 'utekos-microsoft-ads',
       title: 'Utekos Microsoft Ads Operator',
-      version: '1.2.0',
+      version: '1.2.1',
       description:
         'Evidence-backed multi-account Microsoft Advertising operator for Utekos account, tracking, Merchant Center, recommendations, reporting, and diagnosis.',
       websiteUrl: 'https://utekos.no'
