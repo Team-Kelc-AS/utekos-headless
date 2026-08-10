@@ -29,6 +29,10 @@ Store these in `.env.mcp.local`, never in generated MCP files or `.env.mcp.examp
 - `MICROSOFT_ADS_REFRESH_TOKEN`
 - `MICROSOFT_ADS_CUSTOMER_ID`
 - `MICROSOFT_ADS_ACCOUNT_ID`
+- `MICROSOFT_ADS_MASTER_ACCOUNT_ID` for the second allowlisted ad account
+- `MICROSOFT_ADS_MASTER_ACCOUNT_NUMBER` for operator reference
+- `MICROSOFT_ADS_MASTER_MANAGER_ACCOUNT_ID`
+- `MICROSOFT_ADS_MASTER_MANAGER_ACCOUNT_NUMBER`
 - `MICROSOFT_ADS_ENVIRONMENT=production` or `sandbox`
 - `MICROSOFT_MERCHANT_CENTER_STORE_ID`
 - `MICROSOFT_UET_TAG_ID` or `NEXT_PUBLIC_MICROSOFT_UET_TAG_ID`
@@ -37,6 +41,16 @@ Store these in `.env.mcp.local`, never in generated MCP files or `.env.mcp.examp
 - `MICROSOFT_CLARITY_PROJECT_ID` or `NEXT_PUBLIC_CLARITY_PROJECT_ID`
 
 OAuth must request `msads.manage`. Refresh-token handling is mandatory; a short-lived access token alone is not sufficient for robust diagnostics.
+
+The current Utekos customer/manager is `254835341`. The local operator accepts
+the primary account `188365141` and the second account `188445594`. All seven
+`utekos-microsoft-ads` tools accept an optional digits-only `accountId`; omit it
+for the primary account. Unknown account IDs are rejected locally before a
+provider call, and each selected account has a separate audit cache.
+
+Both accounts use UET tag `97247724`. Do not duplicate CanonicalEvent CAPI
+dispatch per account: one deduplicated event goes to the shared tag, while each
+account owns its own `Scope=Account` conversion goals.
 
 ## Read-Only MCP Probes
 
@@ -54,6 +68,13 @@ Run:
 
 ```bash
 npm run mcp:commerce-tracking:doctor
+```
+
+Verify the dedicated Microsoft operator for both configured accounts:
+
+```bash
+npm run mcp:microsoft-ads:doctor:live
+npm run mcp:microsoft-ads:doctor:live -- --account-id=188445594
 ```
 
 Microsoft is not OK until OAuth readiness, account access, campaign status, UET, Shopping Content, and Clarity readiness return structured success or a deliberate, documented fail-closed reason.

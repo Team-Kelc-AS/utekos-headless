@@ -13,7 +13,9 @@ import { analyzeMicrosoftAdsTrackingHealth } from '../microsoft-ads/health/track
 import { refreshMicrosoftAdsAccessToken } from '../microsoft-ads/lib/auth.mjs'
 import {
   assertMicrosoftAdsRequirements,
-  loadMicrosoftAdsConfig
+  getConfiguredMicrosoftAdsAccountIds,
+  loadMicrosoftAdsConfig,
+  selectMicrosoftAdsAccountConfig
 } from '../microsoft-ads/lib/config.mjs'
 import { redactMicrosoftAdsSecrets } from '../microsoft-ads/lib/http.mjs'
 import { createMicrosoftAdsReportingClient } from '../microsoft-ads/lib/reporting.mjs'
@@ -66,12 +68,13 @@ export function createUtekosMicrosoftAdsMcpServer({
 } = {}) {
   let sessionRefreshToken = null
 
-  const getEffectiveConfig = () => {
-    const config = loadConfig()
+  const getEffectiveConfig = accountId => {
+    const loadedConfig = loadConfig()
+    const config = sessionRefreshToken
+      ? { ...loadedConfig, refreshToken: sessionRefreshToken }
+      : loadedConfig
 
-    return sessionRefreshToken
-      ? { ...config, refreshToken: sessionRefreshToken }
-      : config
+    return selectMicrosoftAdsAccountConfig(config, accountId)
   }
 
   const rememberRotatedRefreshToken = token => {
@@ -80,26 +83,40 @@ export function createUtekosMicrosoftAdsMcpServer({
     }
   }
 
-  const auditCache = createMicrosoftAdsAuditCache({
-    ttlMs: auditCacheTtlMs,
-    now: clock,
-    collect: async () => {
-      const config = getEffectiveConfig()
-      return collectAudit({
-        config,
-        fetchImpl,
-        onRefreshTokenRotated: rememberRotatedRefreshToken
-      })
+  const auditCaches = new Map()
+  const getAuditCache = accountId => {
+    const config = getEffectiveConfig(accountId)
+    const cacheKey = config.accountId
+
+    if (!auditCaches.has(cacheKey)) {
+      auditCaches.set(
+        cacheKey,
+        createMicrosoftAdsAuditCache({
+          ttlMs: auditCacheTtlMs,
+          now: clock,
+          collect: async () =>
+            collectAudit({
+              config: getEffectiveConfig(cacheKey),
+              fetchImpl,
+              onRefreshTokenRotated: rememberRotatedRefreshToken
+            })
+        })
+      )
     }
-  })
+
+    return auditCaches.get(cacheKey)
+  }
+
+  const getAudit = ({ accountId, refresh = false }) =>
+    getAuditCache(accountId).get({ refresh })
 
   const server = new McpServer(
     {
       name: 'utekos-microsoft-ads',
       title: 'Utekos Microsoft Ads Operator',
-      version: '1.1.0',
+      version: '1.2.0',
       description:
-        'Evidence-backed Microsoft Advertising operator for Utekos account, tracking, Merchant Center, recommendations, reporting, and diagnosis.',
+        'Evidence-backed multi-account Microsoft Advertising operator for Utekos account, tracking, Merchant Center, recommendations, reporting, and diagnosis.',
       websiteUrl: 'https://utekos.no'
     },
     {
@@ -109,6 +126,7 @@ export function createUtekosMicrosoftAdsMcpServer({
         'Use merchant_health for Microsoft Merchant Center, catalog, feed, product eligibility, warnings, and disapprovals.',
         'Use diagnose to rank evidence-backed health findings against a natural-language problem statement.',
         'Use report for detailed Reporting v13 breakdowns that are not already present in the account audit.',
+        'Every tool accepts an optional accountId. Omit it for the primary account; only explicitly configured account IDs are allowed.',
         'Microsoft recommendations are evidence inputs, not automatic truth; compare them with measured performance and health findings.'
       ].join(' ')
     }
@@ -117,8 +135,8 @@ export function createUtekosMicrosoftAdsMcpServer({
   server.registerTool(
     'microsoft_ads_account_snapshot',
     { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_account_snapshot },
-    safeTool('microsoft_ads_account_snapshot', async ({ refresh = false, detail = 'full' }) => {
-      const audit = await auditCache.get({ refresh })
+    safeTool('microsoft_ads_account_snapshot', async ({ accountId, refresh = false, detail = 'full' }) => {
+      const audit = await getAudit({ accountId, refresh })
       return detail === 'summary'
         ? summarizeMicrosoftAdsAudit(audit)
         : normalizeMicrosoftAdsFullAuditForWire(audit)
@@ -128,8 +146,8 @@ export function createUtekosMicrosoftAdsMcpServer({
   server.registerTool(
     'microsoft_ads_account_health',
     { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_account_health },
-    safeTool('microsoft_ads_account_health', async ({ refresh = false }) => {
-      const audit = await auditCache.get({ refresh })
+    safeTool('microsoft_ads_account_health', async ({ accountId, refresh = false }) => {
+      const audit = await getAudit({ accountId, refresh })
       return analyzeAccountHealth(audit)
     })
   )
@@ -137,8 +155,8 @@ export function createUtekosMicrosoftAdsMcpServer({
   server.registerTool(
     'microsoft_ads_tracking_health',
     { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_tracking_health },
-    safeTool('microsoft_ads_tracking_health', async ({ refresh = false }) => {
-      const audit = await auditCache.get({ refresh })
+    safeTool('microsoft_ads_tracking_health', async ({ accountId, refresh = false }) => {
+      const audit = await getAudit({ accountId, refresh })
       return analyzeTrackingHealth(audit)
     })
   )
@@ -146,8 +164,8 @@ export function createUtekosMicrosoftAdsMcpServer({
   server.registerTool(
     'microsoft_ads_merchant_health',
     { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_merchant_health },
-    safeTool('microsoft_ads_merchant_health', async ({ refresh = false }) => {
-      const audit = await auditCache.get({ refresh })
+    safeTool('microsoft_ads_merchant_health', async ({ accountId, refresh = false }) => {
+      const audit = await getAudit({ accountId, refresh })
       return analyzeMerchantHealth(audit)
     })
   )
@@ -157,11 +175,12 @@ export function createUtekosMicrosoftAdsMcpServer({
     { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_diagnose },
     safeTool('microsoft_ads_diagnose', async ({
       query,
+      accountId,
       area = 'auto',
       refresh = false,
       maxFindings = 10
     }) => {
-      const audit = await auditCache.get({ refresh })
+      const audit = await getAudit({ accountId, refresh })
       const healthByArea = collectHealthByArea({
         audit,
         area,
@@ -202,8 +221,8 @@ export function createUtekosMicrosoftAdsMcpServer({
   server.registerTool(
     'microsoft_ads_recommendations',
     { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_recommendations },
-    safeTool('microsoft_ads_recommendations', async ({ refresh = false, types, limit = 100 }) => {
-      const audit = await auditCache.get({ refresh })
+    safeTool('microsoft_ads_recommendations', async ({ accountId, refresh = false, types, limit = 100 }) => {
+      const audit = await getAudit({ accountId, refresh })
       const source = audit?.adInsight?.recommendations ?? {}
       const requestedTypes = types ? new Set(types) : null
       const items = Array.isArray(source.items) ? source.items : []
@@ -232,8 +251,9 @@ export function createUtekosMicrosoftAdsMcpServer({
     'microsoft_ads_report',
     { ...MICROSOFT_ADS_TOOL_CONTRACTS.microsoft_ads_report },
     safeTool('microsoft_ads_report', async input => {
-      const config = getEffectiveConfig()
+      const config = getEffectiveConfig(input.accountId)
       assertRequirements(config, BASE_AUTH_REQUIRED_FIELDS)
+      assertAllowedReportScope(input.scope, loadConfig())
 
       const auth = await refreshAccessToken(config, { fetchImpl })
 
@@ -273,9 +293,15 @@ export function createUtekosMicrosoftAdsMcpServer({
 
   return {
     server,
-    auditCache,
+    auditCache: getAuditCache(),
+    auditCaches,
+    getAuditCache,
     getEffectiveConfig,
-    clearAuditCache: auditCache.clear
+    clearAuditCache: () => {
+      for (const cache of auditCaches.values()) {
+        cache.clear()
+      }
+    }
   }
 }
 
@@ -375,6 +401,42 @@ function countBy(items, selector) {
   }
 
   return counts
+}
+
+function assertAllowedReportScope(scope, config) {
+  if (!scope) {
+    return
+  }
+
+  const allowedAccountIds = new Set(getConfiguredMicrosoftAdsAccountIds(config))
+  const scopedAccountIds = collectReportScopeAccountIds(scope)
+  const forbiddenAccountId = scopedAccountIds.find(
+    accountId => !allowedAccountIds.has(accountId)
+  )
+
+  if (forbiddenAccountId) {
+    throw new Error(
+      `Microsoft Advertising report scope account ${forbiddenAccountId} is not in the configured account allowlist.`
+    )
+  }
+}
+
+function collectReportScopeAccountIds(value, key = '') {
+  if (Array.isArray(value)) {
+    return value.flatMap(item => collectReportScopeAccountIds(item, key))
+  }
+
+  if (!value || typeof value !== 'object') {
+    if (/^AccountIds?$/i.test(key) && /^\d+$/.test(String(value ?? ''))) {
+      return [String(value)]
+    }
+
+    return []
+  }
+
+  return Object.entries(value).flatMap(([childKey, childValue]) =>
+    collectReportScopeAccountIds(childValue, childKey)
+  )
 }
 
 function isDirectExecution() {

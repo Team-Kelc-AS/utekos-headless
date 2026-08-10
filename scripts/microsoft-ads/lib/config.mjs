@@ -34,6 +34,12 @@ export const MICROSOFT_ADS_REQUIRED_FIELDS = Object.freeze([
 
 const optionalSecretSchema = z.string().trim().min(1).optional()
 const optionalIdSchema = z.string().regex(/^\d+$/).optional()
+const optionalAccountNumberSchema = z
+  .string()
+  .trim()
+  .regex(/^[A-Z0-9]+$/i)
+  .transform(value => value.toUpperCase())
+  .optional()
 
 export const microsoftAdsConfigSchema = z
   .object({
@@ -48,6 +54,10 @@ export const microsoftAdsConfigSchema = z
     refreshToken: optionalSecretSchema,
     customerId: optionalIdSchema,
     accountId: optionalIdSchema,
+    masterAccountId: optionalIdSchema,
+    masterAccountNumber: optionalAccountNumberSchema,
+    masterManagerAccountId: optionalIdSchema,
+    masterManagerAccountNumber: optionalAccountNumberSchema,
     merchantStoreId: optionalIdSchema,
     uetTagId: optionalIdSchema,
     uetCapiToken: optionalSecretSchema
@@ -82,6 +92,18 @@ export function loadMicrosoftAdsConfig({
       value('MICROSOFT_ADS_CUSTOMER_ID')
     ),
     accountId: normalizeMicrosoftAdsId(value('MICROSOFT_ADS_ACCOUNT_ID')),
+    masterAccountId: normalizeMicrosoftAdsId(
+      value('MICROSOFT_ADS_MASTER_ACCOUNT_ID')
+    ),
+    masterAccountNumber: normalizeMicrosoftAdsAccountNumber(
+      value('MICROSOFT_ADS_MASTER_ACCOUNT_NUMBER')
+    ),
+    masterManagerAccountId: normalizeMicrosoftAdsId(
+      value('MICROSOFT_ADS_MASTER_MANAGER_ACCOUNT_ID')
+    ),
+    masterManagerAccountNumber: normalizeMicrosoftAdsAccountNumber(
+      value('MICROSOFT_ADS_MASTER_MANAGER_ACCOUNT_NUMBER')
+    ),
     merchantStoreId: normalizeMicrosoftAdsId(
       value('MICROSOFT_MERCHANT_CENTER_STORE_ID')
     ),
@@ -139,6 +161,35 @@ export function getSafeMicrosoftAdsConfig(config) {
   }
 }
 
+export function getConfiguredMicrosoftAdsAccountIds(config) {
+  const parsed = microsoftAdsConfigSchema.parse(config)
+
+  return [...new Set([parsed.accountId, parsed.masterAccountId].filter(Boolean))]
+}
+
+export function selectMicrosoftAdsAccountConfig(config, requestedAccountId) {
+  const parsed = microsoftAdsConfigSchema.parse(config)
+  const accountId = requestedAccountId
+    ? normalizeMicrosoftAdsId(requestedAccountId)
+    : parsed.accountId
+  const allowedAccountIds = getConfiguredMicrosoftAdsAccountIds(parsed)
+
+  if (!accountId) {
+    throw new Error('Microsoft Advertising account selection requires an account ID.')
+  }
+
+  if (!allowedAccountIds.includes(accountId)) {
+    throw new Error(
+      `Microsoft Advertising account ${accountId} is not in the configured account allowlist.`
+    )
+  }
+
+  return {
+    ...parsed,
+    accountId
+  }
+}
+
 export function normalizeMicrosoftAdsId(value) {
   const normalized = optionalValue(value)
 
@@ -151,6 +202,24 @@ export function normalizeMicrosoftAdsId(value) {
   if (!/^\d+$/.test(compact)) {
     throw new Error(
       'Microsoft Advertising IDs must contain digits only, optionally formatted with hyphens or spaces.'
+    )
+  }
+
+  return compact
+}
+
+export function normalizeMicrosoftAdsAccountNumber(value) {
+  const normalized = optionalValue(value)
+
+  if (!normalized) {
+    return undefined
+  }
+
+  const compact = normalized.replaceAll('-', '').replaceAll(' ', '').toUpperCase()
+
+  if (!/^[A-Z0-9]+$/.test(compact)) {
+    throw new Error(
+      'Microsoft Advertising account numbers must contain letters and digits only, optionally formatted with hyphens or spaces.'
     )
   }
 
@@ -233,7 +302,7 @@ function stripMatchingQuotes(value) {
   const first = value[0]
   const last = value[value.length - 1]
 
-  return first === last && (first === '"' || first === "'")
+  return first === last && (first === '"' || first === '\'')
     ? value.slice(1, -1)
     : value
 }

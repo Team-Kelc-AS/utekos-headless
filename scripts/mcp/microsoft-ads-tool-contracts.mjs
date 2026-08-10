@@ -9,7 +9,7 @@ import {
 } from '../microsoft-ads/health/finding-schema.mjs'
 import { MICROSOFT_ADS_RECOMMENDATION_TYPES } from '../microsoft-ads/lib/ad-insight.mjs'
 
-export const MICROSOFT_ADS_TOOL_CONTRACT_VERSION = '1.1.0'
+export const MICROSOFT_ADS_TOOL_CONTRACT_VERSION = '1.2.0'
 export const MICROSOFT_ADS_SUPPORTED_RECOMMENDATION_TYPES = Object.freeze([
   'ADD_BROAD_MATCH_KEYWORD',
   'CAMPAIGN_BUDGET',
@@ -274,26 +274,38 @@ export const microsoftAdsReportOutputSchema = z.object({
   result: reportResultSchema
 }).strict()
 
+const accountIdInputSchema = z
+  .string()
+  .trim()
+  .regex(/^\d+$/)
+  .optional()
+  .describe('Configured Microsoft Advertising account ID. Omit to use the primary account.')
+const accountSelectionShape = { accountId: accountIdInputSchema }
 const refreshInputSchema = z.object({
+  ...accountSelectionShape,
   refresh: z.boolean().optional().describe('Bypass the in-process audit cache and read Microsoft Ads again.')
 }).strict()
 const snapshotInputSchema = z.object({
+  ...accountSelectionShape,
   refresh: z.boolean().optional().describe('Bypass the in-process audit cache.'),
   detail: z.enum(['full','summary']).optional().describe('Return the full audit or a compact operational summary. Defaults to full.')
 }).strict()
 const diagnoseInputSchema = z.object({
+  ...accountSelectionShape,
   query: z.string().trim().min(2).max(1000).describe('Concrete Microsoft Ads problem or question to diagnose.'),
   area: z.enum(['auto','account','tracking','merchant']).optional().describe('Limit diagnosis to one health surface; auto combines all three.'),
   refresh: z.boolean().optional().describe('Bypass the audit cache before diagnosing.'),
   maxFindings: z.number().int().min(1).max(50).optional().describe('Maximum ranked findings to return. Defaults to 10.')
 }).strict()
 const recommendationsInputSchema = z.object({
+  ...accountSelectionShape,
   refresh: z.boolean().optional().describe('Bypass the audit cache before reading recommendations.'),
   types: z.array(recommendationTypeSchema).min(1).max(MICROSOFT_ADS_SUPPORTED_RECOMMENDATION_TYPES.length).optional().describe('Optional Microsoft recommendation type allowlist.'),
   limit: z.number().int().min(1).max(2000).optional().describe('Maximum recommendation items returned. Defaults to 100.')
 }).strict()
 const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
 const reportInputSchema = z.object({
+  ...accountSelectionShape,
   reportType: z.string().trim().min(1).max(120).describe('Microsoft Reporting v13 request type, e.g. CampaignPerformanceReportRequest.'),
   aggregation: z.string().trim().min(1).max(80).optional().describe('Microsoft report aggregation. Defaults are resolved by the request builder.'),
   columns: z.array(z.string().trim().min(1).max(120)).min(1).max(200).describe('Exact Microsoft Reporting columns to request.'),

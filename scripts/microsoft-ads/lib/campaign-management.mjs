@@ -89,11 +89,15 @@ const addConversionGoalsResponseSchema = mutationResponseSchema.extend({
     .nullable()
 })
 
-const addConversionGoalSchema = microsoftObjectSchema.extend({
+const conversionGoalSchema = microsoftObjectSchema.extend({
   Type: z.string().trim().min(1)
 })
 
-const updateConversionGoalSchema = addConversionGoalSchema.extend({
+const addConversionGoalSchema = conversionGoalSchema.extend({
+  GoalCategory: z.string().trim().min(1)
+})
+
+const updateConversionGoalSchema = conversionGoalSchema.extend({
   Id: idSchema
 })
 

@@ -4,7 +4,11 @@ import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
-import { normalizeMicrosoftAdsFullAuditForWire } from './microsoft-ads-tool-contracts.mjs'
+import {
+  MICROSOFT_ADS_TOOL_CONTRACTS,
+  MICROSOFT_ADS_TOOL_CONTRACT_VERSION,
+  normalizeMicrosoftAdsFullAuditForWire
+} from './microsoft-ads-tool-contracts.mjs'
 
 const root = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -42,6 +46,37 @@ test('server registers contracts with output schemas and runtime validation', ()
   assert.match(source, /MICROSOFT_ADS_TOOL_CONTRACTS\.microsoft_ads_account_snapshot/)
   assert.match(source, /parseMicrosoftAdsToolOutput/)
   assert.match(source, /structuredContent/)
+})
+
+test('all tools accept only a digits-only configured account selector', () => {
+  assert.equal(MICROSOFT_ADS_TOOL_CONTRACT_VERSION, '1.2.0')
+
+  for (const name of toolNames) {
+    const schema = MICROSOFT_ADS_TOOL_CONTRACTS[name].inputSchema
+    const minimumInput = name === 'microsoft_ads_diagnose'
+      ? { query: 'tracking status' }
+      : name === 'microsoft_ads_report'
+        ? { reportType: 'CampaignPerformanceReportRequest', columns: ['Clicks'] }
+        : {}
+
+    assert.equal(
+      schema.safeParse({ ...minimumInput, accountId: '188445594' }).success,
+      true,
+      `${name} should accept the configured account selector`
+    )
+    assert.equal(
+      schema.safeParse({ ...minimumInput, accountId: 'G120L495' }).success,
+      false,
+      `${name} should reject an account number in the accountId field`
+    )
+  }
+})
+
+test('server keeps a separate audit cache for each selected account', () => {
+  const source = fs.readFileSync(serverPath, 'utf8')
+  assert.match(source, /const auditCaches = new Map\(\)/)
+  assert.match(source, /selectMicrosoftAdsAccountConfig/)
+  assert.match(source, /assertAllowedReportScope/)
 })
 
 test('stable health schemas no longer use unknown or passthrough', () => {

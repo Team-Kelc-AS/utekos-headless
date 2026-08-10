@@ -1,300 +1,227 @@
 # Microsoft Ads: CanonicalEvent, UET CAPI og MCP
 
-Statusdato: 2026-08-10. Produksjonsfunnene er et read-only
-øyeblikksbilde. Etter eksplisitt godkjenning er appkoden
-implementert lokalt og GTM-endringene lagt i isolert workspace
-`145`; workspace-et er ikke publisert, og ingen Microsoft-mål,
-Vercel-deploy eller Supabase-rad er endret ennå.
+Statusdato: 2026-08-10.
 
-Produksjonen som ble observert var Vercel `READY` på commit
-`28bf4566dd327f540680dfef74bad2dab897ffc9` med aliasene til
-`utekos.no`.
+## Dokumentasjonsstatus
 
-## Lokal implementeringsstatus etter godkjenning
+Implementasjonen og provider-oppsettet er kontrollert mot oppdatert, offisiell
+Microsoft-dokumentasjon:
 
-Fase 1 og ID Sync/CAPI-kontrakten er implementert lokalt, men er
-ikke deployet eller produksjonsverifisert:
+- [UET Conversions API](https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration?view=bingads-13)
+- [Universal Event Tracking](https://learn.microsoft.com/en-us/advertising/guides/universal-event-tracking?view=bingads-13)
+- [EventGoal](https://learn.microsoft.com/en-us/advertising/campaign-management-service/eventgoal?view=bingads-13)
+- [Microsoft Advertising MCP](https://learn.microsoft.com/en-us/advertising/guides/mcp-setup?view=bingads-13)
 
-- CAPI kvalifiserer nå på minst én støttet Microsoft-identifikator,
-  ikke bare `msclkid`.
-- `anonymousId` kommer fra den eksplisitte ID Sync-GUID-en
-  (`browser_id.microsoft_vid`) eller samme anonyme eksterne UUID;
-  Google Analytics client ID og usynkronisert `_uetvid` brukes ikke.
-- Den samtykkede GUID-en bevares i CanonicalEvent og
-  checkout-attribusjonen.
-- Shopify variant-GID normaliseres til Merchant-feedens numeriske
-  produkt-ID.
-- Canonical `page_view` har egen CAPI `pageLoad`-adapter med
-  `pageLoadId=page_view_id`; tilhørende custom events arver samme
-  sidekontekst.
-- Microsoft-svar projiserer `eventsReceived`, request-ID og
-  valideringsdetaljer uten `attemptedValue`.
-- Appen sender `microsoft_uet_id_sync` kun etter Cookiebot
-  marketing-samtykke. GTM-workspace `145` mapper GUID-en til
-  klientpikselen med `Red3=BACID_254835341` og samme `VID` som
-  CAPI `anonymousId`.
-- GTM-workspace `145` oppdaterer browser-UET med eksakt kanonisk
-  `eventName`, `event_id`, verdi, valuta og normaliserte
-  Merchant-produkt-ID-er.
+Dokumentasjon og lokal runtime-kontekst er tilstrekkelig for løsningen som er
+beskrevet her. Provideraksept er ikke det samme som attribusjon eller dokumentert
+bruk i budalgoritmen; disse grensene er eksplisitt oppført nedenfor.
 
-Microsoft conversion goals er nå rettet og lest tilbake fra
-Campaign Management v13:
+## Nåværende produksjonsstatus
 
-- `47539433` Add To Cart: aktiv, `Unique`, ekskludert fra budgivning.
-- `47546689` gammelt auto-Begin Checkout: pauset og ekskludert.
-- `47554899` PageView: pauset og ekskludert.
-- `47565274` Begin Checkout – CanonicalEvent: aktiv,
-  `Action=begin_checkout`, `Unique`, ekskludert.
-- `47565275` Purchase – CanonicalEvent: aktiv,
-  `Action=purchase`, `All`, inkludert i budgivning og variabel
-  NOK-verdi.
+- App: Vercel deployment `dpl_7D6w9RjSZdX6UNyxPZxsSFEaEQ5A`, `READY`,
+  produksjonsalias `utekos.no`, commit
+  `9236fe1197eb6542df5bd18c02859e176acb71d5`.
+- Web-GTM: publisert versjon `141`.
+- UET: tag `97247724` (`UtekosTag`, Active) brukes av begge annonsekontoene.
+- Microsoft customer/manager: `254835341`.
+- Primær annonsekonto: `188365141`.
+- Andre annonsekonto: `188445594` (`G120L495`).
+- UET CAPI autentiseres med UET-taggens ApiToken. Microsoft Ads OAuth-tokenet
+  brukes bare mot Advertising API/MCP og må aldri brukes som CAPI-token.
 
-GTM-publisering og produksjonsdeploy gjenstår. Funnene nedenfor
-beskriver derfor fortsatt den observerte pre-remediation-
-produksjonen inntil en eksakt deployet commit og GTM-versjon er
-verifisert ende til ende.
+### Konverteringsmål per annonsekonto
 
-## Dokumentasjonsgrunnlag
+Målene har `Scope=Account`. Hver konto trenger derfor egne mål selv om begge
+bruker samme UET-tag og samme dedupliserte eventstrøm.
 
-- [Microsoft UET Conversions API](https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration?view=bingads-13)
-- [Microsoft Advertising MCP setup](https://learn.microsoft.com/en-us/advertising/guides/mcp-setup?view=bingads-13)
-- [GetUetTagAuthKey](https://learn.microsoft.com/en-us/advertising/campaign-management-service/getuettagauthkey?view=bingads-13)
-- [Shopify Storefront `Attribute`](https://shopify.dev/docs/api/storefront/latest/objects/Attribute)
-- `FLOW.md`, `DEPLOYMENT.md`, `docs/analytics/event-matrix.md` og
-  `docs/analytics/provider-finality-runbook.md`
+| Konto | Goal ID | Action | Count | Budgivning | Status |
+| --- | ---: | --- | --- | --- | --- |
+| `188365141` | `47539433` | `add_to_cart` | Unique | Ekskludert | Active |
+| `188365141` | `47565274` | `begin_checkout` | Unique | Ekskludert | Active |
+| `188365141` | `47565275` | `purchase` | All | Inkludert | Active |
+| `188445594` | `47565304` | `add_to_cart` | Unique | Ekskludert | Active |
+| `188445594` | `47565305` | `begin_checkout` | Unique | Ekskludert | Active |
+| `188445594` | `47565306` | `purchase` | All | Inkludert | Active |
 
-## Faktisk reise i dagens løsning
+De tre nye målene ble opprettet med de påkrevde kategoriene `AddToCart`,
+`BeginCheckout` og `Purchase`, og lest tilbake uten `PartialErrors`. Første
+opprettelsesforsøk uten `GoalCategory` ble avvist atomisk med
+`InvalidGoalCategory`; ingen delvise mål ble opprettet.
+
+`NoRecentConversions` etter opprettelse er forventet og beviser ikke feil.
+Providerens senere `TrackingStatus`, Reporting og kampanjedata må vise reelle
+konverteringer før attribusjon eller algoritmebruk kan bekreftes.
+
+## Reisen fra annonseklikk til Microsofts algoritmer
 
 ```mermaid
 flowchart LR
-  A["Microsoft-annonsen klikkes"] --> B["Microsoft legger msclkid på landings-URL"]
-  B --> C["Utekos lagrer siste msclkid i sessionStorage og localStorage i inntil 90 dager"]
-  C --> D["Cookiebot marketing-samtykke"]
-  D --> E["CanonicalEvent opprettes etter autoritativ brukerhandling"]
-  E --> F["dataLayer til browser-UET i web-GTM"]
-  E --> G["/api/events/* til CanonicalEvent-normalisering"]
-  G --> H["marketing.event_ledger"]
-  H --> I["ops.provider_dispatch_attempts"]
-  I --> J["Microsoft UET-worker mapper add_to_cart, begin_checkout eller purchase"]
-  J --> K["POST capi.uet.microsoft.com/v1/{tagId}/events"]
-  K --> L["Microsoft validerer, matcher mål, dedupliserer og attribuerer"]
-  L --> M["Konverteringssignal kan brukes av rapportering og budalgoritmer"]
+  A["Klikk på Microsoft-annonsen"] --> B["Auto-tagging legger msclkid på URL"]
+  B --> C["Utekos fanger klikk-ID og samtykkestatus"]
+  C --> D["Autoritativ brukerhandling oppretter CanonicalEvent"]
+  D --> E["Web-GTM sender browser-UET"]
+  D --> F["Event API normaliserer og validerer"]
+  F --> G["marketing.event_ledger"]
+  G --> H["ops.provider_dispatch_attempts"]
+  H --> I["Microsoft-adapter mapper samme eventId og eventName"]
+  I --> J["POST capi.uet.microsoft.com/v1/97247724/events"]
+  E --> K["Microsoft dedupliserer browser og server"]
+  J --> K
+  K --> L["Kontoavgrenset EventGoal matcher action"]
+  L --> M["Reporting og conversion columns"]
+  M --> N["Purchase kan brukes av automatisert budgivning"]
 ```
 
-Viktige parameterkilder:
+Én CanonicalEvent sendes én gang til tag `97247724`. Eventet skal ikke sendes
+på nytt per annonsekonto; en ekstra CAPI-sending til samme tag kan doble signalet.
+Kontoenes egne EventGoals avgjør hvilken konto som kan telle handlingen.
 
-| Microsoft-felt                       | CanonicalEvent-kilde              | Nåværende status                                                            |
-| ------------------------------------ | --------------------------------- | --------------------------------------------------------------------------- |
-| `eventId`                            | `event_id`                        | Stabil UUID på CAPI; mangler i live browser-UET-taggen                      |
-| `eventName`                          | provider-mapping av `event_name`  | Lokalt: `add_to_cart`, `begin_checkout`, `purchase`; produksjon er eldre    |
-| `eventTime`                          | `event_time`                      | Konverteres til Unix-sekunder                                               |
-| `eventSourceUrl`                     | `page_url`                        | Tilgjengelig når kildeflyten har URL                                        |
-| `adStorageConsent`                   | `consent.marketing`               | CAPI sendes bare som `G` etter innvilget marketing-samtykke                 |
-| `msclkid`                            | `click_id.msclkid`                | Siste verdi lagres i 90 dager og følger Shopify cart-attributter            |
-| `anonymousId`                        | UET ID Sync `VID`                 | Lokalt korrekt GUID; produksjon er ikke verifisert                          |
-| `externalId`                         | `external_id`                     | Tilgjengelig med marketing-samtykke                                         |
-| `em`, `ph`                           | normalisert SHA-256 i `user_data` | Mest komplett på purchase fra Shopify                                       |
-| `clientUserAgent`, `clientIpAddress` | nettleser/server-kontekst         | Tilgjengelig når kilden leverer dem                                         |
-| `value`, `currency`, `transactionId` | `custom_data`                     | Finnes i CAPI-mappingene                                                    |
-| `itemIds`, `items`                   | `custom_data.items`               | Lokalt normalisert til numerisk variant-ID; produksjon er ikke verifisert   |
+GTM-trigger `122` dekker de sju browser-eventene `view_item_list`,
+`select_item`, `view_item`, `add_to_cart`, `begin_checkout`, `search` og
+`generate_lead`. Purchase eies av den autoritative Shopify/server-kilden og er
+derfor CAPI-only i dagens kontrakt; deduplisering mot browser gjelder bare
+eventer som faktisk har begge transportveier.
 
-`accepted_unverified` betyr at adapteren behandlet svaret som
-teknisk aksept. Det beviser ikke målmatching, deduplisering,
-attribusjon eller at signalet ble brukt i budgivningen.
+### Parameterkontrakt
 
-## Produksjonsfunn før remediation
+| Microsoft-felt | CanonicalEvent-kilde | Krav og hensikt |
+| --- | --- | --- |
+| `eventId` | `event_id` | Samme stabile UUID i browser-UET og CAPI for deduplisering og retry. |
+| `eventName` | provider-mapping av `event_name` | Eksakt `add_to_cart`, `begin_checkout` eller `purchase`; må matche EventGoal action. |
+| `eventTime` | `event_time` | Unix-sekunder innen Microsofts tillatte tidsvindu. |
+| `eventSourceUrl` | `page_url` | Faktisk side der handlingen oppstod. |
+| `adStorageConsent` | `consent.marketing` | Sendes som granted bare etter gyldig marketing-samtykke. |
+| `msclkid` | `click_id.msclkid` | Sterkeste annonseklikk-kobling; beholdes gjennom CanonicalEvent og checkout-attribusjon. |
+| `anonymousId` | `browser_id.microsoft_vid` | Samme GUID som brukes i Microsoft ID Sync; ikke GA client ID eller usynkronisert `_uetvid`. |
+| `externalId`, `em`, `ph` | samtykket `user_data` | Alternative/støttende matchnøkler; e-post og telefon normaliseres og SHA-256-hashes. |
+| `clientUserAgent`, `clientIpAddress` | request-kontekst | Sendes når kilden har legitim tilgang til dem. |
+| `value`, `currency` | `custom_data` | Ordre-/handlekurvverdi og `NOK`. |
+| `transactionId` | `custom_data.transaction_id` | Autoritativ ordre-ID for purchase. |
+| `itemIds`, `items` | `custom_data.items` | Numerisk Shopify variant-ID som matcher Merchant-feeden. |
 
-### Høy prioritet
+CAPI-kvalifisering er one-of: minst én støttet identifikator må finnes.
+`msclkid` skal sendes når den finnes, men fravær av `msclkid` alene skal ikke
+forkaste et ellers gyldig event med korrekt `anonymousId`, `externalId`, `em`
+eller `ph`.
 
-1. Microsoft rapporterer klikk og spend, men null kvalifiserte
-   konverteringer. Den aktive kontoen har 4 623 klikk i det leste
-   rapportvinduet, mens `allConversionsQualified` er 0.
-2. Live conversion-goal for Begin Checkout forventer handlingen
-   `AutoEvent_begin_checkout`, mens både browser-taggen og CAPI
-   sender `begin_checkout`. Målmatching er derfor ikke
-   konsistent.
-3. Det lesbare Event-goal-settet inneholder ikke et aktivt
-   purchase-mål som matcher CAPI-navnet `PRODUCT_PURCHASE`.
-   Product-goal-overflaten må kontrolleres separat før dette
-   klassifiseres som endelig fravær.
-4. Add To Cart, Begin Checkout og PageView er ikke ekskludert fra
-   budgivning. For en salgskonto kan dette lære algoritmen å
-   kjøpe billige øvre trakt-hendelser i stedet for ordre.
-   Kampanjens goal set må bekrefte den endelige effekten.
-5. Av 620 lagrede Microsoft-dispatcher er bare 6
-   `accepted_unverified`. 404 er hoppet med `missing_msclkid`;
-   208 historiske rader ble hoppet fordi adapteren var
-   utilgjengelig etter resetten. De kvalifiserte hoppene har
-   ingen aktive failures, men de gir heller ingen
-   Microsoft-signalverdi.
-6. `msclkid` er svært viktig, men offisiell CAPI krever ikke
-   akkurat denne identifikatoren. `userData` må ha minst én
-   støttet identifikator. Dagens absolutte `msclkid`-gate kaster
-   derfor bort lovlige hendelser som kunne vært sendt med korrekt
-   `anonymousId`, `externalId`, `em` eller `ph`.
+## Feil og suboptimal logikk som er rettet
 
-### Datakvalitet og deduplisering
+1. Browser-UET manglet `event_id`, verdi, valuta og Merchant-produkt-ID-er.
+   GTM v141 bruker nå den native Microsoft UET-tagtypen og sender den kanoniske
+   kontrakten.
+2. Custom HTML-varianten i GTM kjørte ikke. Den ble erstattet med den native
+   `baut`-taggen i stedet for å omgå consent- eller triggerkontroller.
+3. Microsoft ID Sync manglet eller ble forvekslet med Clarity MUID-sync.
+   Marketing-samtykke fyrer nå en eksplisitt ID Sync med
+   `Red3=BACID_254835341` og samme GUID som CAPI `anonymousId`.
+4. CAPI brukte tidligere GA client ID som `anonymousId`. Løsningen bruker nå
+   `browser_id.microsoft_vid` eller samme eksterne UUID.
+5. Absolutt `msclkid`-gate forkastet lovlige events med andre støttede
+   identifikatorer. Adapteren validerer nå Microsofts dokumenterte one-of-krav.
+6. Shopify variant-GID ble sendt som produkt-ID. Den normaliseres nå til
+   numerisk variant-ID som matcher Merchant-feeden.
+7. Providerresponsen mistet `eventsReceived`, request-ID og
+   valideringsdetaljer. Disse lagres nå uten å lagre `attemptedValue`.
+8. Gammelt Begin Checkout-navn og PageView-mål kunne ikke gi korrekt
+   CanonicalEvent-matching. De gamle målene er pauset; aktive mål matcher nå
+   de kanoniske action-navnene.
+9. Øvre trakt-mål kunne påvirke salgsbudgivning. Add To Cart og Begin Checkout
+   er sekundære (`ExcludeFromBidding=true`); purchase er primært og teller alle
+   salg med variabel NOK-verdi.
+10. Den andre annonsekontoen manglet kontoavgrensede mål og kunne derfor ikke
+    telle samme UET/CAPI-signal. Tre egne mål er nå aktive.
+11. Utekos MCP var låst til én konto. Kontrakt v1.2 har et valgfritt,
+    digits-only `accountId` på alle sju verktøy, eksplisitt allowlist og separat
+    audit-cache per konto.
 
-1. Live GTM v136 har UET-taggen
-   `Microsoft UET – Canonical business events`, men den sender
-   bare `customEventAction={{Event}}`. Canonical `event_id`,
-   verdi, valuta og varelinjer videresendes ikke. Browser-UET og
-   CAPI kan da ikke dokumenteres som samme konvertering.
-2. Etter førstegangs samtykke ble ingen Microsoft UET-request
-   eller `_uetvid` observert før siden ble lastet på nytt. Etter
-   reload ble `bat.js`, UET pageLoad og `_uetvid` observert.
-   Førstesidekonverteringer etter samtykke kan derfor miste
-   browser-kontekst.
-3. Det ble observert en `c.bing.com/c.gif`-request fra Clarity
-   sin MUID-sync, men ikke den dokumenterte CAPI ID
-   Sync-requesten med `Red3=BACID_<CID>` og `VID`. Clarity-sync
-   er ikke bevis for CAPI ID Sync.
-4. CAPI `anonymousId` settes fra Google Analytics client ID.
-   Microsoft krever at den matcher `VID` fra klientens ID Sync.
-5. Checkout-attribusjonen bevarer `msclkid`, Meta- og
-   Google-identifikatorer, men ikke UET visitor/session ID.
-   Dermed mister Shopify purchase-kilden den beste Microsoft
-   browser-identiteten.
-6. Add To Cart og Begin Checkout bruker full Shopify variant-GID
-   som `itemIds`. Microsoft Merchant-feeden bruker numerisk
-   variant-ID. Dette svekker eller bryter dynamisk
-   remarketing-matching.
-7. HTTP 200-responskroppen kastes i senderne. `eventsReceived` og
-   `ValidationWarning` blir ikke lagret, selv om Microsoft kan
-   fjerne ugyldige valgfrie felter og fortsatt svare 200.
-8. De seks eldre `accepted_unverified`-radene har ikke
-   HTTP-status i den autoritative kolonnen og mangler request-ID.
-   Dette er utilstrekkelig provider-finality-bevis.
+## Kompakt oppsettguide for CanonicalEvent + Microsoft UET CAPI
 
-### MCP
+1. Bekreft customer, begge account IDs, UET-tag og auto-tagging med read-only
+   Campaign Management-kall.
+2. Bruk én felles UET-tag/eventstrøm når kontoene ligger under samme customer
+   og samme tag skal måle nettstedet. Ikke dupliser CAPI-kall per konto.
+3. Opprett kontoavgrensede EventGoals i hver annonsekonto med påkrevd
+   `GoalCategory`, eksakt action-navn og UET-tag-ID.
+4. Bruk `Unique` og `ExcludeFromBidding=true` for diagnostiske Add To Cart og
+   Begin Checkout. Bruk `All`, variabel NOK-verdi og
+   `ExcludeFromBidding=false` for purchase.
+5. Fang `msclkid` ved landingen, forny ved nytt Microsoft-klikk, og bevar den
+   gjennom CanonicalEvent og Shopify checkout-attribusjon innenfor consent- og
+   retention-kontrakten.
+6. Etter marketing-samtykke: opprett en stabil Microsoft VID, gjennomfør ID
+   Sync og bruk samme GUID i browser- og serverkontekst.
+7. Valider ekstern input med CanonicalEvent/Zod før ledger. Bevar stabil
+   `event_id` ved retry og normaliser produkt-ID, verdi, valuta og transaksjon.
+8. Send browser-UET og CAPI med samme `eventId` og `eventName`. Browser-taggen
+   går via consent-gated web-GTM; servereventet går direkte til UET CAPI.
+9. Autentiser CAPI med UET ApiToken (`tagID` + bearer token), aldri Ads OAuth.
+10. Lagre ledger, dispatchforsøk, HTTP-status, request-ID, `eventsReceived` og
+    valideringsfeil/-advarsler. Klassifiser HTTP 200 som transportaksept, ikke
+    som attribusjonsbevis.
+11. Verifiser consent → dataLayer → browser-request → ledger → queue → CAPI →
+    målstatus → Reporting. Bruk en reell ordre passivt; opprett aldri betaling
+    eller ordre som smoke-test.
 
-1. Den lokale `utekos-microsoft-ads`-serveren og
-   ChatGPT-tunnelprofilen er registrert og alle sju
-   read-only-verktøy blir oppdaget.
-2. Live Utekos Microsoft Ads-plugin leste konto, UET, conversion
-   goals, reporting, Merchant Center og Ad Insight uten kritiske
-   read failures.
-3. Microsoft OAuth roterte refresh token i sesjonen. Det nye
-   tokenet må persisteres i godkjent secret store før prosessen
-   restartes; ellers er tilkoblingen ikke restart-sikker.
-4. Full account snapshot kunne tidligere inkludere Reporting sin
-   signerte nedlastings-URL. Wire-normaliseringen fjerner nå
-   URL-en og `allRows`.
-5. Microsoft sin offisielle remote MCP er registrert i de
-   genererte klientkonfigurasjonene, men Codex OAuth stopper før
-   samtykkeskjermen fordi serverens authorization metadata
-   annonserer `organizations` som issuer og returnerer
-   `{tenantid}`. Den offisielle remoten er derfor konfigurert,
-   men ikke autentisert i Codex. Dette påvirker ikke den fungerende
-   lokale Utekos-serveren eller direkte UET CAPI-transport.
+## MCP-oppsett for begge kontoer
 
-## Korrekt målarkitektur for CanonicalEvent og CAPI
+Den lokale `utekos-microsoft-ads`-serveren er read-only og har sju verktøy for
+snapshot, kontohelse, tracking, Merchant Center, diagnose, anbefalinger og
+Reporting. Alle aksepterer nå valgfri `accountId`; uten verdi brukes
+`MICROSOFT_ADS_ACCOUNT_ID`.
 
-1. **Definer ett provider-contract per konvertering.** Bruk
-   eksakt samme UET tag-ID, `eventId` og `eventName` i
-   browser-UET og CAPI. Anbefalt CanonicalEvent-navn er
-   `add_to_cart`, `begin_checkout` og `purchase`.
-   Microsoft-målene må bruke nøyaktig de samme action-navnene.
-2. **Gjør purchase til primært salgsmål.** Bruk
-   `CountType=Unique`, variabel NOK-verdi og inkluder dette i
-   budgivning. Behold Add To Cart og Begin Checkout som
-   diagnostiske/sekundære mål og ekskluder dem fra budgivning med
-   mindre en eksplisitt kampanjestrategi krever noe annet.
-   PageView skal ikke være primært salgssignal.
-3. **Bevar klikkidentiteten.** Fang siste `msclkid` på første
-   request, overskriv ved nytt Microsoft-klikk og behold
-   maksimalt 90 dager. Bevar den gjennom redirects,
-   CanonicalEvent og Shopify cart-attributter. Fjern den når
-   marketing-samtykke ikke finnes.
-4. **Fullfør ID Sync.** Etter marketing-samtykke, fyr klient-side
-   `https://c.bing.com/c.gif` minst én gang per sesjon med
-   Microsoft-kundens `Red3=BACID_<CID>` og en stabil `VID`. Samme
-   `VID` skal lagres som `browser_id.microsoft_vid`,
-   følge checkout-attribusjonen og mappes til CAPI
-   `userData.anonymousId`.
-5. **Valider `userData` som one-of.** Hver CAPI-hendelse må ha
-   minst én av `anonymousId`, `externalId`, `em`, `ph`,
-   `msclkid`, `idfa` eller `gaid`. Send `msclkid` når den finnes,
-   men hopp bare hendelsen når alle støttede identifikatorer
-   mangler.
-6. **Normaliser produkt-ID.** Konverter Shopify
-   `gid://shopify/ProductVariant/<id>` til `<id>` før `itemIds`
-   og `items[].id` bygges, slik at verdien matcher
-   Merchant-feedens `id`.
-7. **Send komplett payload direkte til CAPI.** Bruk
-   `POST https://capi.uet.microsoft.com/v1/{tagId}/events` med
-   UET ApiToken, ikke Microsoft Ads OAuth-token og ikke MCP.
-   Bevar stabil `eventId` på retry, Unix-sekunder innen syv
-   dager, `adStorageConsent=G`, URL, UA/IP, verdi, valuta,
-   transaksjons-ID og varelinjer når de er tillatt og
-   tilgjengelige.
-8. **Gjør browser-taggen lik CAPI.** GTM må sende CanonicalEvent
-   sitt `event_id`, eventnavn og samme kommersielle parametere.
-   Førstegangs samtykke må starte UET uten reload.
-   GTM-publisering krever separat eksplisitt godkjenning.
-9. **Lagre responssemantikk.** Parse og lagre HTTP-status,
-   request-ID, `eventsReceived`, antall validation
-   errors/warnings og feltsti/feilkode uten å lagre
-   `attemptedValue`. HTTP 200 med warning er delvis datatap, ikke
-   grønn provider-finality.
-10. **Verifiser hele kjeden.** Kjør payload- og enhetstester,
-    deretter eksakt READY-commit i produksjon: consent, landing
-    med ekte Microsoft-klikk, `dataLayer`, browser-UET-request,
-    CanonicalEvent-rad, outbox-rad, CAPI-svar, UET
-    Dashboard-parametere, conversion-goal-status og Reporting.
-    Bruk en reell ordre som passiv korrelasjon; opprett aldri
-    ordre eller betaling som smoke-test.
+Ignorert `.env.mcp.local`:
 
-## MCP-oppsett
+```dotenv
+MICROSOFT_ADS_CUSTOMER_ID=254835341
+MICROSOFT_ADS_ACCOUNT_ID=188365141
+MICROSOFT_ADS_MASTER_ACCOUNT_ID=188445594
+MICROSOFT_ADS_MASTER_ACCOUNT_NUMBER=G120L495
+MICROSOFT_ADS_MASTER_MANAGER_ACCOUNT_ID=254835341
+MICROSOFT_ADS_MASTER_MANAGER_ACCOUNT_NUMBER=K120006WEF
+```
 
-To MCP-overflater skal eksistere side om side:
-
-- `microsoft-ads-official`: Microsoft sin remote MCP for Ads
-  API-operasjoner og kontoressurser.
-- `utekos-microsoft-ads`: Utekos sin read-only operator for
-  kontohelse, tracking, Merchant Center, rapporter og
-  CanonicalEvent/Supabase-bevis.
-
-Registrer og verifiser lokalt:
+Account number (`G120L495`) er ikke det samme som account ID (`188445594`).
+MCP-input bruker alltid den numeriske ID-en. Ukjente konto-ID-er avvises før
+providerkall.
 
 ```bash
 source "$HOME/.nvm/nvm.sh" && nvm use --silent
-npm run mcp:microsoft-ads:register
+npm run mcp:build
 npm run mcp:microsoft-ads:registration:doctor -- --static --codex
 npm run mcp:microsoft-ads:doctor
+npm run mcp:microsoft-ads:doctor:live
+npm run mcp:microsoft-ads:doctor:live -- --account-id=188445594
 ```
 
-Kildekonfigurasjonen bruker Microsofts dokumenterte
-OpenBeta-endpoint for Cursor og VS Code:
+Den offisielle `microsoft-ads-official`-serveren og den lokale
+`utekos-microsoft-ads`-serveren er to separate overflater. MCP er ikke
+CAPI-transport; CanonicalEvent sender direkte til
+`https://capi.uet.microsoft.com/v1/{tagId}/events`.
 
-```text
-https://partner.api.bingads.microsoft.com/ext/mcp/vnext?toolSetNames=OpenBeta
-```
+## Verifisert og fortsatt uverifisert
 
-Codex og ChatGPT-connectoren bruker den kanoniske OAuth-ressursen
-uten query-string. Microsofts resource metadata avviser
-query-URL-en ved Codex OAuth-login:
+Verifisert:
 
-```text
-https://partner.api.bingads.microsoft.com/ext/mcp/vnext
-```
+- ingen Microsoft-request før marketing-samtykke i kontrollert nettleserflyt;
+- én ID Sync med stabil GUID etter samtykke;
+- `bat.js`, pageLoad og native browser-UET HTTP-suksess;
+- browser `add_to_cart` med korrekt action, `event_id`, NOK-verdi og produkt-ID;
+- CAPI `page_view` HTTP 200 med `eventsReceived=1` i Supabase;
+- UET-tag, auto-tagging og kontoaksess for begge kontoer;
+- alle seks aktive CanonicalEvent-mål lest tilbake fra riktig account context;
+- Vercel `READY`-commit og GTM v141.
 
-Med den kanoniske URL-en stopper dagens Codex-klient deretter på
-Microsoft-serverens issuer-metadata før samtykke:
+Ikke endelig verifisert:
 
-```text
-Authorization server issuer mismatch: expected .../organizations/v2.0,
-received .../{tenantid}/v2.0
-```
+- målmatching, deduplisering, attribusjon og bruk i budalgoritmen;
+- en reell `add_to_cart`, `begin_checkout` og `purchase` hele veien gjennom
+  providerstatus og Reporting;
+- purchase via reell ordre. Ingen ordre eller betaling ble opprettet som test.
 
-OAuth-oppsettet i den eksisterende Entra-appen skal ha sign-in
-audience `AzureADandPersonalMicrosoftAccount`, scope
-`https://ads.microsoft.com/msads.manage`, tom Resource-verdi og
-ChatGPT sin genererte Callback URL registrert som public-client
-redirect URI. App- eller client-secret skal aldri legges i
-genererte MCP-filer.
+Det kontrollerte automatiserte Add To Cart-forsøket ble korrekt klassifisert
+som `automated_bot` av BotID og ble ikke skrevet til serverleddet. Derfor er
+browser-signalet verifisert, mens akkurat dette business-eventets CAPI-aksept
+forblir produksjonsuverifisert.
 
-Den offisielle MCP-serveren er ikke CAPI-transport.
-CanonicalEvent-workerne skal fortsatt sende konverteringer
-direkte til UET CAPI. MCP brukes til oppsett, lesing, diagnostikk
-og verifikasjon.
+`accepted_unverified` betyr teknisk transportaksept. Det beviser aldri alene
+målmatching, deduplisering, attribusjon, rapportering eller budalgoritmebruk.
