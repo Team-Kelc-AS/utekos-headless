@@ -1,0 +1,42 @@
+{
+  "tag": {
+    "name": "Microsoft UET – Canonical business events",
+    "type": "baut",
+    "queueName": "uetq",
+    "eventType": "userDefined",
+    "eventAction": "{{Event}}",
+    "trigger": {
+      "id": "122",
+      "name": "Canonical Microsoft business events",
+      "type": "customEvent",
+      "eventNamePattern": "^(view_item_list|select_item|view_item|add_to_cart|begin_checkout|search|generate_lead)$"
+    },
+    "firingOption": "oncePerEvent",
+    "consentTypes": [
+      "ad_storage",
+      "ad_user_data",
+      "ad_personalization"
+    ],
+    "customParameters": {
+      "event_category": "{{Event}}",
+      "event_label": "{{DLV - event_id}}",
+      "event_value": "{{DLV - commerce.value}}",
+      "revenue_value": "{{DLV - commerce.value}}",
+      "currency": "{{DLV - commerce.currency}}",
+      "event_id": "{{DLV - event_id}}",
+      "ecomm_pagetype": "{{Microsoft UET - page type}}",
+      "ecomm_totalvalue": "{{DLV - commerce.value}}",
+      "ecomm_prodid": "{{Microsoft UET - product IDs}}"
+    }
+  },
+  "dataLayerVariables": {
+    "DLV - commerce.currency": "commerce.currency",
+    "DLV - commerce.items": "commerce.items",
+    "DLV - commerce.value": "commerce.value",
+    "DLV - event_id": "event_id"
+  },
+  "javascriptVariables": {
+    "Microsoft UET - page type": "function() {\n  var pageTypes = {\n    add_to_cart: 'cart',\n    begin_checkout: 'cart',\n    generate_lead: 'other',\n    search: 'searchresults',\n    select_item: 'product',\n    view_item: 'product',\n    view_item_list: 'category'\n  };\n\n  return pageTypes[{{Event}}] || 'other';\n}",
+    "Microsoft UET - product IDs": "function() {\n  var items = {{DLV - commerce.items}};\n  var ids = [];\n  var index;\n\n  if (!items || !items.length) return;\n\n  for (index = 0; index < items.length; index += 1) {\n    var candidate = items[index] && (items[index].variant_id || items[index].item_id);\n    var match;\n\n    if (typeof candidate !== 'string') continue;\n\n    match = /^gid:\\/\\/shopify\\/ProductVariant\\/(\\d+)$/.exec(candidate);\n    if (match) {\n      ids.push(match[1]);\n    } else if (/^[A-Za-z0-9-]{1,50}$/.test(candidate)) {\n      ids.push(candidate);\n    }\n  }\n\n  return ids.length ? ids : undefined;\n}"
+  }
+}

@@ -1,6 +1,6 @@
 # Deployment And Migration Checklist
 
-Status date: 2026-08-05
+Status date: 2026-08-10
 
 This is the mandatory release checklist for Utekos Headless. Use it
 before every deploy, production mutation, provider change, GTM publish,
@@ -9,6 +9,42 @@ tracking change, database migration, or operational tooling change.
 The purpose is simple: no runtime change should reach production before
 its required database, provider, environment, and verification steps are
 known and completed in the correct order.
+
+## Microsoft CanonicalEvent / UET CAPI release 2026-08-10
+
+The user explicitly approved the Microsoft provider, GTM, environment and
+production mutations for this release.
+
+Release evidence:
+
+| Surface | Evidence |
+| --- | --- |
+| Application | Vercel `dpl_7D6w9RjSZdX6UNyxPZxsSFEaEQ5A`, exact Git SHA `9236fe1197eb6542df5bd18c02859e176acb71d5`, `READY`, production aliases owned |
+| Web-GTM | Published version `141`; immediate rollback `140` |
+| UET | Tag `97247724`, customer/manager `254835341`, active in account contexts `188365141` and `188445594` |
+| Primary account goals | `47539433` add_to_cart, `47565274` begin_checkout, `47565275` purchase |
+| Second account goals | `47565304` add_to_cart, `47565305` begin_checkout, `47565306` purchase |
+| CAPI auth | `MICROSOFT_UET_CAPI_ACCESS_TOKEN` set for Production and Preview; never substitute Ads OAuth |
+| MCP | Local operator contract v1.2, explicit account selector on all seven tools, allowlist and per-account cache |
+
+Both accounts use the same UET tag. CanonicalEvent must dispatch one event to
+the tag, not one event per account. Each account has separate
+`Scope=Account` conversion goals. Add To Cart and Begin Checkout are Unique and
+excluded from bidding; Purchase is All, variable NOK value and included in
+bidding.
+
+Browser verification proved default-denied behavior, no Microsoft request
+before marketing consent, one Microsoft ID Sync after consent, UET library and
+pageLoad success, and native `add_to_cart` with matching event ID, NOK value
+and normalized product ID. Supabase has CAPI `page_view` transport acceptance
+with HTTP 200 and `eventsReceived=1`. The automated Add To Cart server attempt
+was deliberately blocked as `automated_bot`, so real business-event CAPI
+acceptance, goal matching, deduplication, attribution and algorithm use remain
+unverified until natural traffic supplies provider and Reporting evidence. No
+order or payment was created as a smoke test.
+
+See `docs/microsoft/uet-capi-canonical-event-audit.md` for the complete field
+contract, account map, current verification boundary and rollback context.
 
 ## Utekos Original app-only release and baseline 2026-08-05
 

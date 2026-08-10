@@ -3,117 +3,100 @@ import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import vm from 'node:vm'
 
-const html = readFileSync(
-  new URL('../../config/gtm/web-microsoft-uet.html', import.meta.url),
-  'utf8'
+const contract = JSON.parse(
+  readFileSync(
+    new URL(
+      '../../config/gtm/web-microsoft-uet-native.json',
+      import.meta.url
+    ),
+    'utf8'
+  )
 )
-const script = html.match(/^<script>\n([\s\S]+)\n<\/script>\n?$/)?.[1]
 
-assert.ok(script, 'Expected one executable script block')
+function evaluateJavascriptVariable(source, replacements) {
+  const executable = Object.entries(replacements).reduce(
+    (current, [placeholder, value]) =>
+      current.replaceAll(placeholder, JSON.stringify(value)),
+    source
+  )
 
-function canonicalEvent(eventName, eventId, customData = {}) {
-  return {
-    event: eventName,
-    event_id: eventId,
-    canonical_event: {
-      consent: { marketing: 'granted' },
-      custom_data: customData,
-      event_id: eventId,
-      event_name: eventName,
-      page_view_id: '11111111-1111-4111-8111-111111111111'
-    }
-  }
+  return vm.runInNewContext(`(${executable})()`)
 }
 
-function runtime(marketing = true) {
-  const calls = []
-  const window = {
-    Cookiebot: { consent: { marketing } },
-    dataLayer: [],
-    uetq: {
-      push: (...args) => calls.push(args)
+test('uses the official native Microsoft UET tag contract', () => {
+  assert.equal(contract.tag.type, 'baut')
+  assert.equal(contract.tag.queueName, 'uetq')
+  assert.equal(contract.tag.eventAction, '{{Event}}')
+  assert.equal(contract.tag.firingOption, 'oncePerEvent')
+  assert.deepEqual(contract.tag.trigger, {
+    id: '122',
+    name: 'Canonical Microsoft business events',
+    type: 'customEvent',
+    eventNamePattern:
+      '^(view_item_list|select_item|view_item|add_to_cart|begin_checkout|search|generate_lead)$'
+  })
+  assert.deepEqual(contract.tag.consentTypes, [
+    'ad_storage',
+    'ad_user_data',
+    'ad_personalization'
+  ])
+})
+
+test('maps canonical event identity and complete commerce values', () => {
+  assert.deepEqual(contract.tag.customParameters, {
+    event_category: '{{Event}}',
+    event_label: '{{DLV - event_id}}',
+    event_value: '{{DLV - commerce.value}}',
+    revenue_value: '{{DLV - commerce.value}}',
+    currency: '{{DLV - commerce.currency}}',
+    event_id: '{{DLV - event_id}}',
+    ecomm_pagetype: '{{Microsoft UET - page type}}',
+    ecomm_totalvalue: '{{DLV - commerce.value}}',
+    ecomm_prodid: '{{Microsoft UET - product IDs}}'
+  })
+})
+
+test('normalizes Shopify variant GIDs for Microsoft dynamic remarketing', () => {
+  const ids = evaluateJavascriptVariable(
+    contract.javascriptVariables['Microsoft UET - product IDs'],
+    {
+      '{{DLV - commerce.items}}': [
+        {
+          item_id:
+            'gid://shopify/ProductVariant/42903234609400'
+        },
+        { variant_id: 'merchant-sku-2' },
+        { item_id: 'gid://shopify/Product/invalid' }
+      ]
     }
-  }
-  window.window = window
-
-  return {
-    context: vm.createContext({ isFinite, window }),
-    calls,
-    window
-  }
-}
-
-test('sends the canonical event ID and complete commerce values', () => {
-  const current = runtime()
-  current.window.dataLayer.push(
-    canonicalEvent('add_to_cart', 'event-atc-1', {
-      cart_mutation_id: 'mutation-1',
-      currency: 'NOK',
-      value: 2490,
-      items: [
-        {
-          item_id: 'gid://shopify/ProductVariant/42903234609400',
-          quantity: 1
-        }
-      ]
-    })
   )
 
-  vm.runInContext(script, current.context)
-
-  assert.deepEqual(
-    JSON.parse(JSON.stringify(current.calls)),
-    [
-      [
-        'event',
-        'add_to_cart',
-        {
-          currency: 'NOK',
-          ecomm_pagetype: 'cart',
-          ecomm_prodid: ['42903234609400'],
-          ecomm_totalvalue: 2490,
-          event_category: 'ecommerce',
-          event_id: 'event-atc-1',
-          event_label: 'mutation-1',
-          event_value: 2490,
-          revenue_value: 2490
-        }
-      ]
-    ]
-  )
+  assert.deepEqual(Array.from(ids), [
+    '42903234609400',
+    'merchant-sku-2'
+  ])
 })
 
-test('fails closed without current marketing consent', () => {
-  const current = runtime(false)
-  current.window.dataLayer.push(
-    canonicalEvent('begin_checkout', 'event-checkout-1')
+test('maps CanonicalEvent names to Microsoft page types', () => {
+  const source =
+    contract.javascriptVariables['Microsoft UET - page type']
+
+  assert.equal(
+    evaluateJavascriptVariable(source, {
+      '{{Event}}': 'add_to_cart'
+    }),
+    'cart'
   )
-
-  vm.runInContext(script, current.context)
-
-  assert.deepEqual(current.calls, [])
-})
-
-test('does not send a mismatched canonical event ID', () => {
-  const current = runtime()
-  const entry = canonicalEvent('add_to_cart', 'event-atc-1')
-  entry.event_id = 'different-event-id'
-  current.window.dataLayer.push(entry)
-
-  vm.runInContext(script, current.context)
-
-  assert.deepEqual(current.calls, [])
-})
-
-test('suppresses duplicate browser delivery for the same event', () => {
-  const current = runtime()
-  current.window.dataLayer.push(
-    canonicalEvent('begin_checkout', 'event-checkout-1')
+  assert.equal(
+    evaluateJavascriptVariable(source, {
+      '{{Event}}': 'view_item_list'
+    }),
+    'category'
   )
-
-  vm.runInContext(script, current.context)
-  vm.runInContext(script, current.context)
-
-  assert.equal(current.calls.length, 1)
-  assert.equal(current.calls[0][1], 'begin_checkout')
+  assert.equal(
+    evaluateJavascriptVariable(source, {
+      '{{Event}}': 'unknown_event'
+    }),
+    'other'
+  )
 })

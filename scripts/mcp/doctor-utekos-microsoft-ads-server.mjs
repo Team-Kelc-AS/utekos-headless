@@ -11,6 +11,7 @@ import { MICROSOFT_ADS_TOOL_CONTRACT_VERSION } from './microsoft-ads-tool-contra
 const moduleDir = path.dirname(fileURLToPath(import.meta.url))
 const serverPath = path.join(moduleDir, 'utekos-microsoft-ads-server.mjs')
 const live = process.argv.includes('--live')
+const accountId = parseAccountIdArgument(process.argv)
 const REQUIRED_META_KEY = 'no.utekos/contractVersion'
 
 main().catch(error => {
@@ -23,7 +24,7 @@ main().catch(error => {
 })
 
 async function main() {
-  const client = new Client({ name: 'utekos-microsoft-ads-doctor', version: '1.1.0' })
+  const client = new Client({ name: 'utekos-microsoft-ads-doctor', version: '1.2.0' })
   const transport = new StdioClientTransport({ command: process.execPath, args: [serverPath], env: process.env })
   try {
     await client.connect(transport)
@@ -36,7 +37,7 @@ async function main() {
       .filter(tool => expectedNames.includes(tool.name))
       .map(inspectToolContract)
     const contractErrors = contractChecks.filter(check => !check.ok).map(check => check.name)
-    const liveChecks = live ? await runLiveChecks(client) : null
+    const liveChecks = live ? await runLiveChecks(client, accountId) : null
     const liveErrors = liveChecks
       ? Object.entries(liveChecks)
           .filter(([, check]) =>
@@ -49,6 +50,7 @@ async function main() {
     const result = {
       ok: missingTools.length === 0 && unexpectedTools.length === 0 && contractErrors.length === 0 && liveErrors.length === 0,
       mode: live ? 'live' : 'discovery',
+      accountId: accountId ?? 'primary',
       serverPath,
       expectedToolCount: expectedNames.length,
       discoveredToolCount: discoveredNames.length,
@@ -111,37 +113,39 @@ async function listAllTools(client) {
   return tools
 }
 
-async function runLiveChecks(client) {
+async function runLiveChecks(client, accountId) {
+  const accountSelection = accountId ? { accountId } : {}
   const checks = [
     {
       key: 'snapshotSummary',
       name: 'microsoft_ads_account_snapshot',
-      arguments: { refresh: true, detail: 'summary' }
+      arguments: { ...accountSelection, refresh: true, detail: 'summary' }
     },
     {
       key: 'snapshotFull',
       name: 'microsoft_ads_account_snapshot',
-      arguments: { refresh: false, detail: 'full' }
+      arguments: { ...accountSelection, refresh: false, detail: 'full' }
     },
     {
       key: 'accountHealth',
       name: 'microsoft_ads_account_health',
-      arguments: { refresh: false }
+      arguments: { ...accountSelection, refresh: false }
     },
     {
       key: 'trackingHealth',
       name: 'microsoft_ads_tracking_health',
-      arguments: { refresh: false }
+      arguments: { ...accountSelection, refresh: false }
     },
     {
       key: 'merchantHealth',
       name: 'microsoft_ads_merchant_health',
-      arguments: { refresh: false }
+      arguments: { ...accountSelection, refresh: false }
     },
     {
       key: 'diagnose',
       name: 'microsoft_ads_diagnose',
       arguments: {
+        ...accountSelection,
         query: 'paid clicks but zero qualified conversions and Merchant Center issues',
         area: 'auto',
         refresh: false,
@@ -151,12 +155,13 @@ async function runLiveChecks(client) {
     {
       key: 'recommendations',
       name: 'microsoft_ads_recommendations',
-      arguments: { refresh: false, limit: 5 }
+      arguments: { ...accountSelection, refresh: false, limit: 5 }
     },
     {
       key: 'report',
       name: 'microsoft_ads_report',
       arguments: {
+        ...accountSelection,
         reportType: 'CampaignPerformanceReportRequest',
         aggregation: 'Summary',
         columns: [
@@ -191,6 +196,22 @@ async function runLiveChecks(client) {
     }
   }
   return results
+}
+
+function parseAccountIdArgument(argv) {
+  const value = argv
+    .find(argument => argument.startsWith('--account-id='))
+    ?.slice('--account-id='.length)
+
+  if (!value) {
+    return null
+  }
+
+  if (!/^\d+$/.test(value)) {
+    throw new Error('--account-id must contain digits only.')
+  }
+
+  return value
 }
 
 function extractToolPayload(result) {

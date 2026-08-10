@@ -63,6 +63,7 @@ test('adds a typed conversion goal and returns its provider id', async () => {
     {
       Type: 'Event',
       Name: 'Purchase – CanonicalEvent',
+      GoalCategory: 'Purchase',
       ActionExpression: 'purchase',
       ActionOperator: 'Equals',
       TagId: '97247724'
@@ -76,6 +77,28 @@ test('adds a typed conversion goal and returns its provider id', async () => {
     calls[0]?.body.ConversionGoals[0].ActionExpression,
     'purchase'
   )
+})
+
+test('rejects a conversion goal without the required provider category', () => {
+  const calls = []
+  const client = createClient(calls, {
+    ConversionGoalIds: [],
+    PartialErrors: []
+  })
+
+  assert.throws(
+    () =>
+      client.addConversionGoals([
+        {
+          Type: 'Event',
+          Name: 'Purchase without category',
+          ActionExpression: 'purchase',
+          TagId: '97247724'
+        }
+      ]),
+    /Invalid input/
+  )
+  assert.equal(calls.length, 0)
 })
 
 test('rejects an update without a goal id before network I/O', () => {
