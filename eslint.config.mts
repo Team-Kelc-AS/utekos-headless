@@ -9,6 +9,8 @@ const eslintConfig = defineConfig([
   prettier,
   {
     rules: {
+      'no-use-before-define': 'off',
+      '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: true, variables: true, typedefs: false }],
       'block-scoped-var': 'error',
       'comma-dangle': ['error', 'never'],
       'dot-notation': 'error',
