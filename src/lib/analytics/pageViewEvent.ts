@@ -81,8 +81,8 @@ function mapEventDeviceInfo(input: EventDeviceInfoInput | undefined) {
     ...(input.screenHeight === undefined ? {} : { screen_height: input.screenHeight }),
     ...(input.screenWidth === undefined ? {} : { screen_width: input.screenWidth }),
     ...(input.userAgent ? { user_agent: input.userAgent } : {}),
-    ...(input.viewportHeight === undefined ? {} : { viewport_height: input.viewportHeight }),
-    ...(input.viewportWidth === undefined ? {} : { viewport_width: input.viewportWidth })
+    ...(input.viewportHeight ? { viewport_height: input.viewportHeight } : {}),
+    ...(input.viewportWidth ? { viewport_width: input.viewportWidth } : {})
   }
 }
 
