@@ -70,7 +70,6 @@ ${magazineArticleLines}
 - [Bobilliv](https://utekos.no/inspirasjon/bobil)
 - [Båtliv](https://utekos.no/inspirasjon/batliv)
 - [Terrassen](https://utekos.no/inspirasjon/terrassen)
-- [Isbading](https://utekos.no/inspirasjon/isbading)
 
 ## Relaterte maskinlesbare flater
 

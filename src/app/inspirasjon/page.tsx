@@ -8,12 +8,12 @@ export const metadata = {
   title:
     'Inspirasjon til hytteliv, bobil, båtliv og utekos | Utekos',
   description:
-    'Finn inspirasjon til mer komfort ute: hytteliv, bobil, båtliv, terrasse, grillkvelder og isbading med Utekos.',
+    'Finn inspirasjon til mer komfort ute: hytteliv, bobil, båtliv, terrasse og grillkvelder med Utekos.',
   alternates: { canonical: '/inspirasjon' },
   openGraph: {
     title: 'Inspirasjon til mer utekos | Utekos',
     description:
-      'Utforsk guider og ideer for hytteliv, bobil, båtliv, terrasse, grillkvelder og isbading.',
+      'Utforsk guider og ideer for hytteliv, bobil, båtliv, terrasse og grillkvelder.',
     url: '/inspirasjon',
     siteName: 'Utekos',
     locale: 'no_NO',
@@ -41,9 +41,9 @@ export default function InspirationPage() {
         </h1>
         <p className='leading-text-paragraph /90 mx-auto mt-6 max-w-2xl font-utekos-text text-lg tracking-normal text-foreground/90'>
           Utforsk praktiske guider for hytteliv, bobil, båtliv,
-          terrasse, grillkvelder og isbading. Finn situasjonen
-          som ligner din, og se hvordan Utekos forlenger de gode
-          øyeblikkene ute.
+          terrasse og grillkvelder. Finn situasjonen som ligner
+          din, og se hvordan Utekos forlenger de gode øyeblikkene
+          ute.
         </p>
         <div className='mt-8 flex flex-wrap justify-center gap-4'>
           <BrandBadge
