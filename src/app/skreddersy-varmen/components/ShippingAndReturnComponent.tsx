@@ -32,7 +32,7 @@ export function ShippingAndReturnComponent() {
                 Rask levering 2–5 dager
               </p>
               <p className={pointSubtextClass}>
-                Sendes samme dag. Fri frakt på denne varen.
+                Fri frakt fra 999 kr. Ellers 99 kr.
               </p>
             </div>
           </div>
@@ -48,7 +48,7 @@ export function ShippingAndReturnComponent() {
                 14 dagers åpent kjøp
               </p>
               <p className={pointSubtextClass}>
-                Gjelder fra du har mottatt varen
+                Kunden ordner og betaler ordinær retur
               </p>
             </div>
           </div>
@@ -77,7 +77,7 @@ export function ShippingAndReturnComponent() {
             onClick={() =>
               reportLandingSelectPromotion('shippingReturns')
             }
-            className='group /60 dark:hover:text-dark-accent inline-flex items-center gap-1.5 text-xs font-medium text-foreground/60 transition-colors hover:text-accent'
+            className='group dark:hover:text-dark-accent inline-flex items-center gap-1.5 text-xs font-medium text-foreground/60 transition-colors hover:text-accent'
           >
             Alt om frakt og retur
             <ArrowRight

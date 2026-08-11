@@ -35,12 +35,12 @@ export function SectionThreeInOne() {
 
   return (
     <SkreddersyMotionProvider>
-      <article
+      <section
         aria-labelledby='threeinone-heading'
         className='dark:bg-dark-background w-full bg-background text-foreground'
       >
         <m.div
-          className='mx-auto max-w-4xl px-6 py-16 text-center md:py-24'
+          className='mx-auto max-w-5xl px-6 py-16 text-left md:py-24'
           initial='hidden'
           whileInView='visible'
           viewport={skreddersyViewport}
@@ -54,13 +54,13 @@ export function SectionThreeInOne() {
           </m.span>
           <m.h2
             id='threeinone-heading'
-            className='font-google-sans mb-6 font-sans text-[clamp(2rem,7.5vw,4rem)] leading-[0.92] font-bold tracking-[-0.01em] text-foreground'
+            className='leading-heading-level-two font-google-sans mb-6 max-w-[18ch] font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-foreground md:text-5xl lg:text-6xl'
             variants={revealScale}
           >
             Friheten til å velge
           </m.h2>
           <m.p
-            className='leading-text-paragraph /90 mx-auto max-w-2xl font-sans text-balance text-foreground/90'
+            className='leading-text-paragraph max-w-3xl font-sans text-foreground/90 md:text-lg'
             variants={revealItem}
           >
             Det unike med Utekos
@@ -68,9 +68,16 @@ export function SectionThreeInOne() {
               ®
             </span>{' '}
             er transformasjonen. Fra en isolerende kokong til en
-            elegant parkas på sekunder. Du har en mobil
-            varmekilde som endrer måten du behøver å planlegge
-            på. Med Utekos er du helgradert.
+            elegant parkas på sekunder. Du har en mobil varmekilde
+            som endrer måten du behøver å planlegge på. Med Utekos er
+            du helgradert.
+          </m.p>
+          <m.p
+            className='mt-8 text-xs text-foreground/65'
+            variants={revealItem}
+          >
+            Sist innholdsendret{' '}
+            <time dateTime='2026-08-11'>11. august 2026</time>
           </m.p>
         </m.div>
 
@@ -132,7 +139,7 @@ export function SectionThreeInOne() {
                   {step.title}
                 </m.h3>
                 <m.p
-                  className='leading-text-paragraph /85 mt-2 font-sans tracking-wide text-foreground/85 md:text-2xl'
+                  className='leading-text-paragraph mt-2 font-sans tracking-wide text-foreground/85 md:text-2xl'
                   variants={revealItem}
                 >
                   {step.description}
@@ -229,7 +236,7 @@ export function SectionThreeInOne() {
                   </m.h3>
 
                   <m.p
-                    className='leading-text-paragraph /85 max-w-lg font-sans text-base text-foreground/85 md:text-2xl'
+                    className='leading-text-paragraph max-w-lg font-sans text-base text-foreground/85 md:text-2xl'
                     variants={revealItem}
                   >
                     {step.description}
@@ -239,7 +246,7 @@ export function SectionThreeInOne() {
             ))}
           </div>
         </div>
-      </article>
+      </section>
     </SkreddersyMotionProvider>
   )
 }

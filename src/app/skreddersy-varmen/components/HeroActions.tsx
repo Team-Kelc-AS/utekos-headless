@@ -41,7 +41,7 @@ export function HeroActions() {
             className='group inline-flex items-center gap-2 leading-none'
           >
             <span className='block leading-none'>
-              Finn din favoritt
+              Velg størrelse
             </span>
             <ArrowRight
               className='size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1'
@@ -66,7 +66,7 @@ export function HeroActions() {
             className='group inline-flex items-center gap-2 leading-none'
           >
             <span className='block leading-none'>
-              Se løsningen
+              Se 3-i-1-løsningen
             </span>
             <ChevronDown
               className='size-4 shrink-0'

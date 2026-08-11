@@ -1,7 +1,7 @@
 import { Price } from '@/components/jsx/Price'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { Star } from 'lucide-react'
-import { reviews } from '@/app/skreddersy-varmen/data/reviews'
+import { techDownReviewSummary } from '@/app/skreddersy-varmen/data/reviews'
 import type { ReactNode } from 'react'
 import type { CurrencyCode } from 'types/commerce/CurrencyCode'
 
@@ -27,34 +27,14 @@ const OFFERS = {
   }
 } as const
 
-const REVIEW_PRODUCT_BY_HANDLE = {
-  'utekos-techdown': 'Utekos TechDown',
-  'utekos-mikrofiber': 'Utekos Mikrofiber'
-} as const
-
 function getProductReviewSummary(productHandle: string) {
-  const reviewProductName =
-    REVIEW_PRODUCT_BY_HANDLE[
-      productHandle as keyof typeof REVIEW_PRODUCT_BY_HANDLE
-    ]
+  if (productHandle !== 'utekos-techdown') return null
 
-  if (!reviewProductName) return null
-
-  const productReviews = reviews.filter(
-    review => review.product === reviewProductName
-  )
-
-  if (!productReviews.length) return null
-
-  const averageRating =
-    productReviews.reduce(
-      (sum, review) => sum + review.rating,
-      0
-    ) / productReviews.length
+  const averageRating = techDownReviewSummary.ratingValue
 
   return {
     averageRating,
-    count: productReviews.length,
+    count: techDownReviewSummary.reviewCount,
     formattedAverage: averageRating.toLocaleString('nb-NO', {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1

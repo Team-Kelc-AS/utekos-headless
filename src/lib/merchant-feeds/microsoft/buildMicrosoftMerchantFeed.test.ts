@@ -115,7 +115,13 @@ function createProduct(
           id: `gid://shopify/ProductVariant/${id}`,
           selectedOptions: [
             { name: 'Farge', value: color },
-            { name: 'Størrelse', value: 'Medium' },
+            {
+              name: 'Størrelse',
+              value:
+                handle === 'utekos-techdown' ? 'Middels'
+                : handle === 'comfyrobe' ? 'M'
+                : 'Medium'
+            },
             { name: 'Kjønn', value: 'Unisex' }
           ]
         }
@@ -124,7 +130,7 @@ function createProduct(
   }
 }
 
-test('builds a Microsoft Merchant TSV with one row per variant', () => {
+test('builds a Microsoft Merchant TSV from the Utekos presentation contract', () => {
   const feed = buildMicrosoftMerchantFeed([product])
   const rows = parseFeedRows(feed)
 
@@ -132,15 +138,19 @@ test('builds a Microsoft Merchant TSV with one row per variant', () => {
     feed.split('\r\n')[0],
     MICROSOFT_MERCHANT_FEED_COLUMNS.join('\t')
   )
-  assert.equal(rows.length, 2)
+  assert.equal(rows.length, 1)
   assert.equal(rows[0]?.id, '200')
   assert.equal(
     rows[0]?.title,
-    'Utekos TechDown™ Havdyp – Stor'
+    'Utekos TechDown™ / Havdyp / Stor / Unisex'
   )
   assert.equal(
     rows[0]?.description,
-    'Varm & lett for terrasse og tur.'
+    'Utekos TechDown™ er et varmt og allsidig 3-i-1-plagg med Luméa™-ytterstoff og CloudWeave™-isolasjon for terrasse, hytte, båt og bobil.'
+  )
+  assert.equal(
+    rows[0]?.link,
+    'https://utekos.no/produkter/utekos-techdown?farge=havdyp&storrelse=stor&kjonn=unisex'
   )
   assert.equal(rows[0]?.price, '1990.00 NOK')
   assert.equal(rows[0]?.sale_price, '1790.00 NOK')
@@ -156,8 +166,10 @@ test('builds a Microsoft Merchant TSV with one row per variant', () => {
   assert.equal(rows[0]?.adult, 'FALSE')
   assert.equal(rows[0]?.custom_label_0, 'Bestselger')
   assert.equal(rows[0]?.availability, 'in stock')
-  assert.equal(rows[1]?.availability, 'out of stock')
-  assert.equal(rows[1]?.sale_price, '')
+  assert.equal(
+    rows[0]?.material,
+    'Luméa™-ytterstoff i nylon og syntetisk CloudWeave™-isolasjon'
+  )
   assert.match(
     rows[0]?.additional_image_link ?? '',
     /detail%2Cone\.jpg/
@@ -210,15 +222,17 @@ test('includes only the approved Microsoft Merchant assortment', () => {
     [
       {
         id: '303',
-        title: 'Utekos Mikrofiber Fjellblå – Medium'
+        title:
+          'Utekos Mikrofiber™ / Fjellblå / Medium / Unisex'
       },
       {
         id: '306',
-        title: 'Utekos TechDown Havdyp – Medium'
+        title:
+          'Utekos TechDown™ / Havdyp / Middels / Unisex'
       },
       {
         id: '307',
-        title: 'Comfyrobe Fjellnatt – Medium'
+        title: 'Comfyrobe™ / Fjellnatt / M / Unisex'
       }
     ]
   )

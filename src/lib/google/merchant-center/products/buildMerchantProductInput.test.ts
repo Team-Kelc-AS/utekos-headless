@@ -27,8 +27,8 @@ const product: CatalogSyncProduct = {
       {
         node: {
           id: 'gid://shopify/ProductVariant/200',
-          title: 'Havdyp / Liten',
-          sku: 'UTEKOS-HAV-LITEN',
+          title: 'Havdyp / Stor',
+          sku: 'UTEKOS-HAV-STOR',
           barcode: null,
           price: '1790.00',
           compareAtPrice: null,
@@ -37,7 +37,7 @@ const product: CatalogSyncProduct = {
           image: null,
           selectedOptions: [
             { name: 'Farge', value: 'Havdyp' },
-            { name: 'Størrelse', value: 'Liten' },
+            { name: 'Størrelse', value: 'Stor' },
             { name: 'Kjønn', value: 'Unisex' }
           ],
           weight: null,
@@ -53,7 +53,7 @@ const product: CatalogSyncProduct = {
   }
 }
 
-test('sends the normalized variant title to Google Merchant Center', () => {
+test('sends the Utekos presentation to Google Merchant Center', () => {
   const result = buildMerchantProductInput(
     product,
     product.variants.edges[0]!.node
@@ -67,8 +67,58 @@ test('sends the normalized variant title to Google Merchant Center', () => {
 
   assert.equal(
     result.input.productAttributes.title,
-    'Utekos TechDown™ Havdyp – Liten'
+    'Utekos TechDown™ / Havdyp / Stor / Unisex'
+  )
+  assert.equal(
+    result.input.productAttributes.description,
+    'Utekos TechDown™ er et varmt og allsidig 3-i-1-plagg med Luméa™-ytterstoff og CloudWeave™-isolasjon for terrasse, hytte, båt og bobil.'
+  )
+  assert.equal(
+    result.input.productAttributes.link,
+    'https://utekos.no/produkter/utekos-techdown?farge=havdyp&storrelse=stor&kjonn=unisex'
+  )
+  assert.equal(
+    result.input.productAttributes.canonicalLink,
+    'https://utekos.no/produkter/utekos-techdown'
   )
   assert.equal(result.input.productAttributes.color, 'Havdyp')
-  assert.equal(result.input.productAttributes.size, 'Liten')
+  assert.equal(result.input.productAttributes.size, 'Stor')
+  assert.equal(
+    String(result.input.productAttributes.link).includes('gid://shopify'),
+    false
+  )
+})
+
+test('excludes a hidden TechDown size', () => {
+  const hiddenVariant = {
+    ...product.variants.edges[0]!.node,
+    selectedOptions: [
+      { name: 'Farge', value: 'Havdyp' },
+      { name: 'Størrelse', value: 'Liten' },
+      { name: 'Kjønn', value: 'Unisex' }
+    ]
+  }
+
+  assert.deepEqual(buildMerchantProductInput(product, hiddenVariant), {
+    ok: false,
+    reason: 'hidden_public_variant'
+  })
+})
+
+test('fails closed for a product without an Utekos presentation', () => {
+  const unknownProduct = {
+    ...product,
+    handle: 'shopify-only-product'
+  }
+
+  assert.deepEqual(
+    buildMerchantProductInput(
+      unknownProduct,
+      unknownProduct.variants.edges[0]!.node
+    ),
+    {
+      ok: false,
+      reason: 'missing_product_presentation'
+    }
+  )
 })

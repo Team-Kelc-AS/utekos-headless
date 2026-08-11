@@ -3,19 +3,8 @@ import type { Route } from 'next'
 
 export const LANDING_BASE_URL = 'https://utekos.no'
 export const LANDING_PAGE_URL = `${LANDING_BASE_URL}/skreddersy-varmen`
-export const LANDING_LAST_UPDATED = '2026-05-22'
+export const LANDING_LAST_UPDATED = '2026-08-11'
 export const LANDING_AUTHOR_NAME = 'Utekos'
-
-export type LandingProductSeed = {
-  position: number
-  handle: string
-  name: string
-  description: string
-  price: string
-  originalPrice: string
-  image: string
-  sku: string
-}
 
 export type LandingFaqEntry = {
   question: string
@@ -29,31 +18,6 @@ export type LandingEvidenceEntry = {
   linkLabel: string
 }
 
-export const LANDING_PRODUCTS: LandingProductSeed[] = [
-  {
-    position: 1,
-    handle: 'utekos-techdown',
-    name: 'Utekos TechDown™',
-    description:
-      'Flaggskipet i kolleksjonen. Hydrofob CloudWave™-isolasjon beholder varmen i fukt, og 3-i-1-konstruksjonen lar deg justere fra parkas til kokong på sekunder.',
-    price: '1790',
-    originalPrice: '1990',
-    image: `${LANDING_BASE_URL}/utekos-techdown-kvinne-terrasseliv-1600x1600.webp`,
-    sku: 'utekos-techdown'
-  },
-  {
-    position: 2,
-    handle: 'utekos-mikrofiber',
-    name: 'Utekos Mikrofiber™',
-    description:
-      'Det lette og pakkbare valget for bobil, båt, hytte og reise. Mikrofiber™ gir lun varme med lavt volum og enkel tørk.',
-    price: '1590',
-    originalPrice: '2290',
-    image: `${LANDING_BASE_URL}/1080/blue-full.png`,
-    sku: 'utekos-mikrofiber'
-  }
-]
-
 export const LANDING_EVIDENCE_ENTRIES: LandingEvidenceEntry[] = [
   {
     title: '3-i-1 gir kontroll over varmen',
@@ -65,14 +29,14 @@ export const LANDING_EVIDENCE_ENTRIES: LandingEvidenceEntry[] = [
   {
     title: 'Syntetisk isolasjon tåler rå luft',
     answer:
-      'TechDown™ bruker hydrofob CloudWave™-isolasjon som holder loft og varme bedre i fukt enn klassisk dun. Det er relevant i norsk kystklima og ved bålpanne, båt og bobil.',
+      'Utekos TechDown™ bruker syntetisk CloudWeave™-isolasjon som fortsatt isolerer når forholdene blir fuktige. Det er relevant i norsk kystklima og ved terrasse, båt og bobil.',
     href: '/handlehjelp/teknologi-materialer' as Route,
     linkLabel: 'Se teknologi'
   },
   {
     title: 'Størrelse velges etter høyde og ønsket rom',
     answer:
-      'Velg størrelse ut fra høyde, lag under og hvor lun kokongfølelse du ønsker. Størrelsesguiden forklarer forskjellen mellom Liten, Middels, Stor og Ekstra stor.',
+      'Velg størrelse ut fra høyde, lag under og hvor lun kokongfølelse du ønsker. På denne siden kan du velge Middels, Stor eller Ekstra stor.',
     href: '/handlehjelp/storrelsesguide' as Route,
     linkLabel: 'Se størrelsesguide'
   },
@@ -87,9 +51,9 @@ export const LANDING_EVIDENCE_ENTRIES: LandingEvidenceEntry[] = [
 
 export const LANDING_FAQ_ENTRIES: LandingFaqEntry[] = [
   {
-    question: 'Hvilken Utekos-modell passer best for meg?',
+    question: 'Hva er Utekos TechDown™?',
     answer:
-      'Velg TechDown™ når du vil ha mest allsidighet og best fuktytelse. Velg Mikrofiber™ når lav vekt, enkel pakking og rask tørk er viktigst.'
+      'Utekos TechDown™ er et varmt og allsidig 3-i-1-plagg som kan brukes som parkas, oppfestet modell eller heldekkende kokong.'
   },
   {
     question: 'Hvordan fungerer 3-i-1-konstruksjonen?',
@@ -99,7 +63,7 @@ export const LANDING_FAQ_ENTRIES: LandingFaqEntry[] = [
   {
     question: 'Fungerer Utekos i fuktig vær?',
     answer:
-      'Ja. TechDown™ bruker hydrofob CloudWave™-isolasjon som er laget for å beholde varmeevne når luften er rå eller plagget utsettes for fukt.'
+      'Utekos TechDown™ bruker syntetisk CloudWeave™-isolasjon som er valgt fordi syntetiske fibre fortsatt isolerer når forholdene blir fuktige.'
   },
   {
     question: 'Hvordan finner jeg riktig størrelse?',
@@ -114,11 +78,11 @@ export const LANDING_FAQ_ENTRIES: LandingFaqEntry[] = [
   {
     question: 'Hvor lang er leveringstiden?',
     answer:
-      'Normal leveringstid i Norge er 2-5 virkedager. Varer sendes samme dag når ordre og lagerstatus tillater det.'
+      'Normal transporttid i Norge er 2–5 virkedager. Gjeldende lagerstatus vises ved størrelsesvalget.'
   },
   {
     question: 'Hvor lang returfrist har jeg?',
     answer:
-      'Du har 14 dagers returfrist. Varen må være ubrukt, og frakt- og returvilkår står samlet på frakt- og retursiden.'
+      'Du har 14 kalenderdagers angrerett fra fysisk mottak. Du oppretter og betaler ordinær returfrakt selv; ved en gyldig reklamasjon dekker Utekos nødvendig returfrakt.'
   }
 ]

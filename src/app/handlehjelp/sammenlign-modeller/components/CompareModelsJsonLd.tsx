@@ -11,9 +11,7 @@ import type {
   FAQPage,
   Graph,
   ItemList,
-  MerchantReturnPolicy,
   Offer,
-  OfferShippingDetails,
   Product as ProductSchema,
   ProductGroup,
   Review,
@@ -133,48 +131,6 @@ const getModelMaterial = (key: ModelRecommendation['key']) => {
   }
 }
 
-const getShippingDetails = (): OfferShippingDetails => ({
-  '@type': 'OfferShippingDetails',
-  'shippingRate': {
-    '@type': 'MonetaryAmount',
-    'value': 0,
-    'currency': 'NOK'
-  },
-  'shippingDestination': {
-    '@type': 'DefinedRegion',
-    'addressCountry': 'NO'
-  },
-  'deliveryTime': {
-    '@type': 'ShippingDeliveryTime',
-    'handlingTime': {
-      '@type': 'QuantitativeValue',
-      'minValue': 0,
-      'maxValue': 1,
-      'unitCode': 'DAY'
-    },
-    'transitTime': {
-      '@type': 'QuantitativeValue',
-      'minValue': 1,
-      'maxValue': 5,
-      'unitCode': 'DAY'
-    }
-  }
-})
-
-const getMerchantReturnPolicy = (): MerchantReturnPolicy => ({
-  '@type': 'MerchantReturnPolicy',
-  'applicableCountry': 'NO',
-  'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
-  'merchantReturnDays': 14,
-  'returnMethod': 'https://schema.org/ReturnByMail',
-  'returnFees': 'https://schema.org/FreeReturn',
-  'refundType': 'https://schema.org/FullRefund',
-  'url': `${SITE_URL}/frakt-og-retur`
-})
-
-const getPriceValidUntil = () =>
-  new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 10)
-
 const getReviewMarkup = (handle: string): ReviewMarkup => {
   const bundle = productReviewBundles[handle]
   if (!bundle) return {}
@@ -228,14 +184,12 @@ const buildProductOffer = (model: ModelRecommendation, product: ProductData | nu
   const variants = getVariants(product)
   const effectivePrice = uniquePrices[0] ?? fallbackPricing.price
   const effectiveOriginalPrice = uniquePrices.length === 0 ? fallbackPricing.originalPrice : undefined
-  const priceValidUntil = getPriceValidUntil()
-
   if (uniquePrices.length > 1) {
     const priceSpecification: UnitPriceSpecification | undefined =
       fallbackPricing.originalPrice ?
         {
           '@type': 'UnitPriceSpecification',
-          'priceType': 'https://schema.org/ListPrice',
+          'priceType': 'https://schema.org/StrikethroughPrice',
           'price': String(fallbackPricing.originalPrice),
           'priceCurrency': currency
         }
@@ -248,11 +202,8 @@ const buildProductOffer = (model: ModelRecommendation, product: ProductData | nu
       'lowPrice': formatPrice(uniquePrices[0]!),
       'highPrice': formatPrice(uniquePrices[uniquePrices.length - 1]!),
       'offerCount': prices.length || variants.length || 1,
-      'priceValidUntil': priceValidUntil,
       'seller': sellerReference,
-      'itemCondition': 'https://schema.org/NewCondition',
-      'hasMerchantReturnPolicy': getMerchantReturnPolicy(),
-      'shippingDetails': getShippingDetails()
+      'itemCondition': 'https://schema.org/NewCondition'
     }
 
     if (priceSpecification) {
@@ -271,17 +222,14 @@ const buildProductOffer = (model: ModelRecommendation, product: ProductData | nu
     'url': productUrl,
     'priceCurrency': currency,
     'price': formatPrice(effectivePrice),
-    'priceValidUntil': priceValidUntil,
     'seller': sellerReference,
-    'itemCondition': 'https://schema.org/NewCondition',
-    'hasMerchantReturnPolicy': getMerchantReturnPolicy(),
-    'shippingDetails': getShippingDetails()
+    'itemCondition': 'https://schema.org/NewCondition'
   }
 
   if (effectiveOriginalPrice) {
     offer.priceSpecification = {
       '@type': 'UnitPriceSpecification',
-      'priceType': 'https://schema.org/ListPrice',
+      'priceType': 'https://schema.org/StrikethroughPrice',
       'price': String(effectiveOriginalPrice),
       'priceCurrency': currency
     }

@@ -2,12 +2,14 @@
 
 import { KlarnaProductExpressCheckout } from '@/components/klarna/components/KlarnaProductExpressCheckout'
 import { cn } from '@/lib/utils/className'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 type KlarnaLandingExpressCheckoutProps = {
-  product: ShopifyProduct | null
-  selectedVariant: ShopifyProductVariant | null
+  product: ProductCartModel | null
+  selectedVariant: ProductPurchaseVariant | null
   quantity: number
   className?: string
 }

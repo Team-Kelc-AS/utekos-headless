@@ -242,21 +242,19 @@ export default function RootLayout({
 
         <OnlineStoreJsonLd />
 
-        <Suspense fallback={null}>
-          <CartProviderLoader>
-            <SiteChrome
-              assistantRolloutPercent={
-                assistantRolloutPercent
-              }
-              header={
-                <Header menu={mainMenu} />
-              }
-              footer={<Footer />}
-            >
-              {children}
-            </SiteChrome>
-          </CartProviderLoader>
-        </Suspense>
+        <CartProviderLoader>
+          <SiteChrome
+            assistantRolloutPercent={
+              assistantRolloutPercent
+            }
+            header={
+              <Header menu={mainMenu} />
+            }
+            footer={<Footer />}
+          >
+            {children}
+          </SiteChrome>
+        </CartProviderLoader>
 
         <ShopifyCustomerPrivacyBridge
           {...(

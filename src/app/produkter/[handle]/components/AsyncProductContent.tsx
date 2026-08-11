@@ -1,12 +1,13 @@
-// src/app/produkter/[handle]/components/AsyncProductContent.tsx
-
 import { notFound } from 'next/navigation'
 import { ProductPageView } from './ProductPageView'
 import { getCachedProductPageData } from '../utils/getCachedProductPageData'
 import { reshapeProductWithMetafields } from '@/hooks/useProductWithMetafields'
-import { resolveInitialVariant } from '../utils/resolveInitialVariant'
-import { getProductWithoutSmallSize } from '@/components/products/getProductWithoutSmallSize'
-import { buildProductPurchaseModel } from '@/lib/shopify/buildProductPurchaseModel'
+import {
+  buildPresentedProductPurchaseModel,
+  buildProductCommerceViewModel,
+  resolveCommerceVariantFromSearchParams
+} from '@/lib/products/commerce'
+import { getProductPresentation } from '@/lib/products/presentation'
 import type { SearchParamsPromise } from '../types'
 
 type AsyncProductContentProps = {
@@ -18,8 +19,14 @@ export async function AsyncProductContent({
   handle,
   searchParams
 }: AsyncProductContentProps) {
+  const presentation = getProductPresentation(handle)
+
+  if (!presentation) {
+    notFound()
+  }
+
   const [{ product }, resolvedSearchParams] = await Promise.all([
-    getCachedProductPageData(handle),
+    getCachedProductPageData(presentation.publicHandle),
     searchParams
   ])
 
@@ -29,30 +36,34 @@ export async function AsyncProductContent({
 
   const productWithMetafields =
     reshapeProductWithMetafields(product) || product
-
-  const displayProduct =
-    productWithMetafields.handle === 'utekos-techdown' ?
-      getProductWithoutSmallSize(productWithMetafields)
-    : productWithMetafields
-
-  const initialVariant = resolveInitialVariant(
-    displayProduct,
-    resolvedSearchParams
+  const commerce = buildProductCommerceViewModel(
+    productWithMetafields,
+    presentation.publicHandle
   )
+  const selectedCommerceVariant =
+    resolveCommerceVariantFromSearchParams(
+      commerce,
+      resolvedSearchParams
+    )
 
-  if (!initialVariant) {
+  if (!selectedCommerceVariant) {
     notFound()
   }
 
-  const purchaseModel =
-    buildProductPurchaseModel(displayProduct)
+  const purchaseModel = buildPresentedProductPurchaseModel(
+    productWithMetafields,
+    presentation.publicHandle
+  )
+  const selectedPurchaseVariant = purchaseModel.variants.find(
+    variant => variant.id === selectedCommerceVariant.commerce.id
+  )
+  const selectedStorefrontVariant =
+    productWithMetafields.variants.edges.find(
+      ({ node }) =>
+        node.id === selectedCommerceVariant.commerce.id
+    )?.node
 
-  const selectedPurchaseVariant =
-    purchaseModel.variants.find(
-      variant => variant.id === initialVariant.id
-    )
-
-  if (!selectedPurchaseVariant) {
+  if (!selectedPurchaseVariant || !selectedStorefrontVariant) {
     notFound()
   }
 
@@ -60,6 +71,12 @@ export async function AsyncProductContent({
     <ProductPageView
       productData={purchaseModel}
       selectedVariant={selectedPurchaseVariant}
+      storefrontLookupHandle={
+        presentation.storefrontLookupHandle
+      }
+      storefrontSelectedOptions={
+        selectedStorefrontVariant.selectedOptions
+      }
     />
   )
 }

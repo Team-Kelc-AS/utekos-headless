@@ -1,0 +1,54 @@
+import { slugifyVariantOption } from '@/lib/utils/slugifyVariantOption'
+import type { ProductCommerceViewModel } from './productCommerceViewModelSchema'
+
+type SearchParamsRecord = Record<
+  string,
+  string | string[] | undefined
+>
+
+function firstValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value
+}
+
+export function resolveCommerceVariantFromSearchParams(
+  commerce: ProductCommerceViewModel,
+  searchParams: SearchParamsRecord
+) {
+  const legacyVariantId = firstValue(searchParams.variant)
+  const legacyVariant = commerce.variants.find(
+    variant => variant.commerce.id === legacyVariantId
+  )
+
+  if (legacyVariant) return legacyVariant
+
+  const readableKeys = [
+    ['farge', 'color'],
+    ['storrelse', 'size'],
+    ['kjonn', 'gender']
+  ] as const
+  const suppliedReadableKeys = readableKeys.filter(([param]) =>
+    Boolean(firstValue(searchParams[param]))
+  )
+
+  if (suppliedReadableKeys.length > 0) {
+    const readableVariant = commerce.variants.find(variant =>
+      suppliedReadableKeys.every(([param, optionKey]) => {
+        const optionValue = variant.options[optionKey]
+
+        return (
+          optionValue &&
+          firstValue(searchParams[param]) ===
+            slugifyVariantOption(optionValue)
+        )
+      })
+    )
+
+    if (readableVariant) return readableVariant
+  }
+
+  return (
+    commerce.variants.find(
+      variant => variant.commerce.id === commerce.defaultVariantId
+    ) ?? commerce.variants[0]
+  )
+}

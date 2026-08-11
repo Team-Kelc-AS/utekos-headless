@@ -12,11 +12,18 @@ export const metadata: Metadata = {
   title: 'Skreddersy varmen | Utekos',
   description:
     'Kompromissløs komfort og overlegen allsidighet. Juster, form og nyt.',
+  alternates: {
+    canonical: 'https://utekos.no/skreddersy-varmen'
+  },
+  robots: {
+    index: false,
+    follow: true
+  },
   openGraph: {
     title: 'Utekos - Skreddersy varmen',
     description:
       'Kompromissløs komfort og overlegen allsidighet. Juster, form og nyt.',
-    url: 'https://utekos.no/skreddersy-varmen/utekos-orginal',
+    url: 'https://utekos.no/skreddersy-varmen',
     siteName: 'Utekos',
     locale: 'nb_NO',
     type: 'website',

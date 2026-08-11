@@ -1,4 +1,3 @@
-// Path: src/app/skreddersy-varmen/components/PurchaseClientLanding.tsx
 'use client'
 
 import { useEffect, useRef } from 'react'
@@ -6,16 +5,20 @@ import { useLandingPurchaseLogic } from './useLandingPurchaseLogic.'
 import { PurchaseClientViewLanding } from './PurchaseClientViewLanding'
 import { reportCanonicalViewItem } from '@/lib/analytics/viewItemReporter'
 import { createViewItemReportKey } from '@/lib/analytics/viewItemReportKey'
-import type { ShopifyProduct } from 'types/product'
+import type { ProductCommerceViewModel } from '@/lib/products/commerce'
 
 export function PurchaseClientLanding({
-  products
+  commerce,
+  initialVariantId
 }: {
-  products: Record<string, ShopifyProduct | null | undefined>
+  commerce: ProductCommerceViewModel
+  initialVariantId: string
 }) {
-  const logic = useLandingPurchaseLogic({ products })
+  const logic = useLandingPurchaseLogic({
+    commerce,
+    initialVariantId
+  })
   const reportedViewItemKey = useRef<string | null>(null)
-
   const { shopifyProduct, selectedShopifyVariant } = logic
 
   useEffect(() => {
@@ -39,5 +42,5 @@ export function PurchaseClientLanding({
     })
   }, [shopifyProduct, selectedShopifyVariant])
 
-  return <PurchaseClientViewLanding {...logic} isTechDownOffer={false} />
+  return <PurchaseClientViewLanding {...logic} />
 }

@@ -29,7 +29,10 @@ export function SizeGuideAccordionTable({
 }: SizeGuideAccordionTableProps) {
   return (
     <div id={id} className={cn('mx-auto w-full max-w-3xl', className)}>
-      <Accordion className='w-full rounded-xl border border-[#F4F1EA]/10 bg-jungle px-2 md:px-6'>
+      <Accordion
+        multiple={false}
+        className='w-full rounded-xl border border-[#F4F1EA]/10 bg-jungle px-2 md:px-6'
+      >
         <AccordionItem value='size-table' className='border-none'>
           <AccordionTrigger className='justify-center bg-jungle py-6 text-lg font-medium text-[#F4F1EA] transition-colors hover:text-[#E07A5F] hover:no-underline'>
             <span className='flex items-center gap-3 font-utekos-text-medium'>

@@ -42,11 +42,18 @@ import { TECHDOWN_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/techdown
 type ProductPageViewProps = {
   productData: ProductPurchaseModel
   selectedVariant: ProductPurchaseVariant
+  storefrontLookupHandle: string
+  storefrontSelectedOptions: Array<{
+    name: string
+    value: string
+  }>
 }
 
 export function ProductPageView({
   productData,
-  selectedVariant
+  selectedVariant,
+  storefrontLookupHandle,
+  storefrontSelectedOptions
 }: ProductPageViewProps) {
   const { title } = productData
 
@@ -232,21 +239,10 @@ export function ProductPageView({
               </AspectRatio>
             </div>
 
-            <div className='mt-6 md:hidden'>
-              <ProductHeader
-                product={productData}
-                selectedVariant={selectedVariant}
-                productHandle={productData.handle}
-                productTitle={title}
-                productSubtitle={
-                  productSubtitle ?? ''
-                }
-              />
-            </div>
           </GalleryColumn>
 
           <OptionsColumn>
-            <div className='dark:text-dark-background hidden text-background md:block'>
+            <div className='mt-2 md:mt-0'>
               <ProductHeader
                 product={productData}
                 selectedVariant={selectedVariant}
@@ -292,6 +288,8 @@ export function ProductPageView({
               <AsyncProductPurchaseIsland
                 product={productData}
                 selectedVariant={selectedVariant}
+                storefrontLookupHandle={storefrontLookupHandle}
+                storefrontSelectedOptions={storefrontSelectedOptions}
               />
             </Suspense>
 
@@ -317,7 +315,7 @@ export function ProductPageView({
 
         <Suspense fallback={null}>
           <AsyncRelatedProducts
-            handle={productData.handle}
+            handle={storefrontLookupHandle}
           />
         </Suspense>
       </div>

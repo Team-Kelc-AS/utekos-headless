@@ -22,6 +22,9 @@ type MerchantSyncSkippedReason =
   | 'missing_item_group_id'
   | 'missing_image_link'
   | 'missing_price'
+  | 'missing_product_presentation'
+  | 'invalid_variant_presentation'
+  | 'hidden_public_variant'
 
 type MerchantCenterSyncSummary = {
   productsScanned: number
@@ -89,7 +92,10 @@ function createSyncSummary(): MerchantCenterSyncSummary {
       missing_offer_id: 0,
       missing_item_group_id: 0,
       missing_image_link: 0,
-      missing_price: 0
+      missing_price: 0,
+      missing_product_presentation: 0,
+      invalid_variant_presentation: 0,
+      hidden_public_variant: 0
     }
   }
 }

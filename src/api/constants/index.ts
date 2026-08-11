@@ -23,7 +23,7 @@ export const PRODUCT_VARIANTS = {
     price: 1790,
     badge: 'Bestselger',
     description:
-      'Utekos TechDown forener banebrytende innovasjon med tidløs eleganse. CloudWave™ holder deg varm og bevarer spensten i fôret, selv under fuktige forhold. 3-i-1-konstruksjonen lar deg enkelt tilpasse passformen, regulere ventilasjonen og veksle mellom ulike moduser.',
+      'Utekos TechDown™ forener banebrytende innovasjon med tidløs eleganse. CloudWave™ holder deg varm og bevarer spensten i fôret, selv under fuktige forhold. 3-i-1-konstruksjonen lar deg enkelt tilpasse passformen, regulere ventilasjonen og veksle mellom ulike moduser.',
     highlights: [
       {
         title: 'Holder varmen i fukt',

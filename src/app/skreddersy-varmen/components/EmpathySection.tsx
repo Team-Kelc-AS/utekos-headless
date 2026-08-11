@@ -29,7 +29,7 @@ function scrollToModel() {
 export function EmpathySection() {
   return (
     <SkreddersyMotionProvider>
-      <m.article
+      <m.section
         aria-labelledby='empathy-heading'
         className='dark:bg-dark-foreground dark:text-dark-background relative w-full overflow-hidden bg-foreground py-16 text-background md:py-24 lg:py-28'
         initial='hidden'
@@ -131,7 +131,7 @@ export function EmpathySection() {
                   className='group inline-flex items-center gap-2 leading-none'
                 >
                   <span className='block leading-none'>
-                    Utforsk kolleksjonen
+                    Utforsk Utekos TechDown™
                   </span>
                   <span aria-hidden className='inline-flex'>
                     <ArrowRight className='size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0' />
@@ -191,7 +191,7 @@ export function EmpathySection() {
           aria-hidden
           className='absolute bottom-0'
         />
-      </m.article>
+      </m.section>
     </SkreddersyMotionProvider>
   )
 }

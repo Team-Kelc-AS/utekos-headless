@@ -1,17 +1,14 @@
-// Path: src/app/skreddersy-varmen/components/PurchaseClientViewLanding.tsx
 'use client'
 
-import Link from 'next/link'
-import type { Route } from 'next'
 import {
   Minus,
   Plus,
   Loader2,
-  Gift,
   Ruler,
   ShoppingCart
 } from 'lucide-react'
 import { cn } from '@/lib/utils/className'
+import { formatPrice } from '@/lib/utils/formatPrice'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { ProductDetailsAccordion } from './ProductDetailsAccordion'
@@ -23,75 +20,74 @@ import {
   choiceGridClass,
   choicePillClass
 } from '../utils/constants'
-import { LandingPageVariantSelector } from './LandingPageVariantSelector'
-import { getModelName } from '@/app/skreddersy-varmen/utils/getModelName'
 import { LandingProductHighlightsPanel } from './LandingProductHighlightsPanel'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
 import { ShippingAndReturnComponent } from './ShippingAndReturnComponent'
 import { KlarnaLandingExpressCheckout } from './KlarnaLandingExpressCheckout'
-import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
-import type { ModelKey, PRODUCT_VARIANTS } from '@/api/constants'
-import type { ShopifyProduct } from 'types/product/ShopifyProduct'
-import type { ShopifyProductVariant } from 'types/product/ShopifyProductVariant'
+import { PRODUCT_VARIANTS } from '@/api/constants'
+import { TechDownSizeGuideAccordion } from './TechDownSizeGuideAccordion'
+import type { ProductCommerceViewModel } from '@/lib/products/commerce'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
+
+const techDownContent = PRODUCT_VARIANTS['utekos-techdown']
 
 export type PurchaseClientViewLandingProps = {
-  selectedModel: ModelKey
-  setSelectedModel: (model: ModelKey) => void
   quantity: number
   setQuantity: (qty: number) => void
-  selectedColorIndex: number
-  setSelectedColorIndex: (index: number) => void
   selectedSize: string
   setSelectedSize: (size: string) => void
-  selectableSizes: string[]
+  sizeOptions: Array<{
+    label: string
+    availableForSale: boolean
+  }>
   handleAddToCart: () => void
   isPending: boolean
   isAddToCartPending: boolean
-  currentConfig: (typeof PRODUCT_VARIANTS)[ModelKey]
-  isTechDownOffer: boolean
-  shopifyProduct: ShopifyProduct | null
-  selectedShopifyVariant: ShopifyProductVariant | null
+  commerce: ProductCommerceViewModel
+  shopifyProduct: ProductCartModel
+  selectedShopifyVariant: ProductPurchaseVariant | null
 }
 
 export function PurchaseClientViewLanding({
-  selectedModel,
-  setSelectedModel,
   quantity,
   setQuantity,
-  selectedColorIndex,
-  setSelectedColorIndex,
   selectedSize,
   setSelectedSize,
-  selectableSizes,
+  sizeOptions,
   handleAddToCart,
   isPending,
   isAddToCartPending,
-  currentConfig,
-  isTechDownOffer,
+  commerce,
   shopifyProduct,
   selectedShopifyVariant
 }: PurchaseClientViewLandingProps) {
   const guidance = SIZE_GUIDANCE[selectedSize]
-  const modelName = getModelName(currentConfig.title)
-  const visibleSizes = selectableSizes ?? currentConfig.sizes
+  const modelName = commerce.displayName.replace(/^Utekos\s+/u, '')
+  const isAvailable =
+    selectedShopifyVariant?.availableForSale ?? false
+  const currentPrice = selectedShopifyVariant?.price
+  const compareAtPrice = selectedShopifyVariant?.compareAtPrice
+  const hasCompareAtPrice = Boolean(
+    currentPrice &&
+      compareAtPrice &&
+      Number(compareAtPrice.amount) > Number(currentPrice.amount)
+  )
 
   return (
     <>
-      <article className='relative w-full max-w-full overflow-x-clip text-background min-[900px]:grid min-[900px]:grid-cols-2'>
-        <LandingPageProductCarouselPurchaseSection
-          selectedModel={selectedModel}
-          currentConfig={currentConfig}
-        />
+      <section className='relative w-full max-w-full overflow-x-clip text-background min-[900px]:grid min-[900px]:grid-cols-2'>
+        <LandingPageProductCarouselPurchaseSection />
 
         <div className='flex w-full flex-col bg-foreground'>
           <div className='flex-1 p-6 min-[1280px]:p-20 md:p-12'>
-            <LandingPageVariantSelector
-              selectedModel={selectedModel}
-              setSelectedModel={(model: ModelKey) =>
-                setSelectedModel(model as ModelKey)
-              }
-            />
-            <div key={`hero-${selectedModel}`} className='mb-10'>
+            <div className='mb-4 font-utekos-text-medium text-sm text-background/80'>
+              Utekos TechDown™ · Bestselger
+            </div>
+
+            <div className='mb-10'>
               <h2 className='font-google-sans mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-background min-[1280px]:text-7xl'>
                 <span className='sr-only'>Utekos </span>
                 <UtekosWordmark
@@ -105,36 +101,40 @@ export function PurchaseClientViewLanding({
               </h2>
 
               <p className='leading-text-paragraph mb-8 max-w-152 text-lg tracking-normal text-background/90 md:text-xl'>
-                {currentConfig.subtitle}
+                Et varmt og allsidig 3-i-1-plagg for terrasse,
+                hytte, båt og bobil.
               </p>
 
-              <div className='space-y-4'>
-                <p className='font-google-sans text-4xl font-bold tracking-tight text-background tabular-nums min-[900px]:text-5xl min-[1280px]:text-6xl min-[1280px]:leading-none'>
-                  {currentConfig.price},-
-                </p>
-                <KlarnaCheckoutImage className='min-[900px]:max-w-md' />
-              </div>
-
-              {isTechDownOffer && (
-                <div className='mt-8 flex items-center gap-4 rounded-lg border border-accent/30 bg-accent/10 p-4 shadow-sm'>
-                  <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-accent/20'>
-                    <Gift className='size-5 text-accent' />
-                  </div>
-                  <div>
-                    <h3 className='font-utekos-text-medium text-background'>
-                      Sommertilbud
-                    </h3>
-                    <p className='text-sm text-background/80'>
-                      10% rabatt + Gratis Buff™ (verdi 249,-)
-                      legges til i kurven.
+              {currentPrice ?
+                <div className='space-y-3'>
+                  <div className='flex flex-wrap items-baseline gap-3'>
+                    <p className='font-google-sans text-4xl font-bold tracking-tight text-background tabular-nums min-[900px]:text-5xl min-[1280px]:text-6xl min-[1280px]:leading-none'>
+                      {formatPrice(currentPrice)}
                     </p>
+                    {hasCompareAtPrice && compareAtPrice ?
+                      <p className='text-lg text-background/70 line-through tabular-nums md:text-xl'>
+                        {formatPrice(compareAtPrice)}
+                      </p>
+                    : null}
                   </div>
+                  <p
+                    className={cn(
+                      'font-utekos-text-medium text-sm',
+                      isAvailable ?
+                        'text-background'
+                      : 'text-destructive-foreground'
+                    )}
+                    aria-live='polite'
+                  >
+                    {isAvailable ? 'På lager' : 'Utsolgt'} · Normal
+                    transporttid 2–5 virkedager
+                  </p>
+                  <KlarnaCheckoutImage className='min-[900px]:max-w-md' />
                 </div>
-              )}
+              : null}
             </div>
 
             <div
-              key={`details-${selectedModel}`}
               className='mb-12 space-y-8'
               aria-label='Produktinformasjon'
             >
@@ -145,7 +145,7 @@ export function PurchaseClientViewLanding({
                 threshold={0.01}
               >
                 <p className='leading-text-paragraph text-base text-background/85 md:text-lg'>
-                  {currentConfig.description}
+                  {techDownContent.description}
                 </p>
               </AnimatedBlock>
 
@@ -156,7 +156,7 @@ export function PurchaseClientViewLanding({
                 threshold={0.01}
               >
                 <div className={choiceGridClass}>
-                  {currentConfig.features.map(feature => (
+                  {techDownContent.features.map(feature => (
                     <span
                       key={feature}
                       className={cn(
@@ -178,8 +178,8 @@ export function PurchaseClientViewLanding({
               >
                 <LandingProductHighlightsPanel
                   modelName={modelName}
-                  selectedModel={selectedModel}
-                  highlights={currentConfig.highlights}
+                  selectedModel='utekos-techdown'
+                  highlights={techDownContent.highlights}
                 />
               </AnimatedBlock>
             </div>
@@ -192,18 +192,6 @@ export function PurchaseClientViewLanding({
                   <span className='font-google-sans text-sm font-bold tracking-normal text-background'>
                     Størrelse
                   </span>
-                  <Link
-                    href={
-                      '/handlehjelp/storrelsesguide#tech-down-size-guide' as Route
-                    }
-                    data-track='SizeGuideSkreddersyVarmen'
-                    onClick={() =>
-                      reportLandingSelectPromotion('sizeGuide')
-                    }
-                    className='text-sm text-background underline transition-colors hover:text-primary'
-                  >
-                    Se størrelsesguide
-                  </Link>
                 </div>
 
                 <div
@@ -211,43 +199,36 @@ export function PurchaseClientViewLanding({
                   role='radiogroup'
                   aria-label='Velg størrelse'
                 >
-                  {visibleSizes.map(size => {
-                    const isActive = selectedSize === size
-                    const sizePillClassName = cn(
-                      choicePillClass,
-                      isActive ?
-                        'border border-background bg-background text-foreground shadow-md'
-                      : 'border border-background/15 bg-foreground text-background hover:bg-background/5',
-                      focusRing
-                    )
+                  {sizeOptions.map(size => {
+                    const isActive = selectedSize === size.label
 
-                    return isActive ?
-                        <button
-                          key={size}
-                          type='button'
-                          role='radio'
-                          aria-checked='true'
-                          aria-label={`Størrelse ${size}`}
-                          onClick={() => setSelectedSize(size)}
-                          className={sizePillClassName}
-                        >
-                          {size}
-                        </button>
-                      : <button
-                          key={size}
-                          type='button'
-                          role='radio'
-                          aria-checked='false'
-                          aria-label={`Størrelse ${size}`}
-                          onClick={() => setSelectedSize(size)}
-                          className={sizePillClassName}
-                        >
-                          {size}
-                        </button>
+                    return (
+                      <button
+                        key={size.label}
+                        type='button'
+                        role='radio'
+                        aria-checked={isActive}
+                        aria-label={`Størrelse ${size.label}${size.availableForSale ? '' : ', utsolgt'}`}
+                        onClick={() => setSelectedSize(size.label)}
+                        className={cn(
+                          choicePillClass,
+                          isActive ?
+                            'border border-background bg-background text-foreground shadow-md'
+                          : 'border border-background/15 bg-foreground text-background hover:bg-background/5',
+                          !size.availableForSale && 'opacity-65',
+                          focusRing
+                        )}
+                      >
+                        <span>{size.label}</span>
+                        {!size.availableForSale ?
+                          <span className='sr-only'>Utsolgt</span>
+                        : null}
+                      </button>
+                    )
                   })}
                 </div>
 
-                {guidance && (
+                {guidance ?
                   <div
                     key={selectedSize}
                     className='animate-in fade-in slide-in-from-top-2 mt-3 duration-300'
@@ -256,95 +237,41 @@ export function PurchaseClientViewLanding({
                       <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
                         <Ruler className='size-4 text-primary' />
                         <span className='font-google-sans text-sm font-bold tracking-normal text-foreground'>
-                          Passer best for deg som er{' '}
-                          {guidance.height}
+                          Anbefaling: Du er {guidance.height}
                         </span>
                       </div>
                       <ul className='mt-2 space-y-1.5'>
-                        {guidance.tips.map((tip, i) => (
+                        {guidance.tips.map(tip => (
                           <li
-                            key={i}
-                            className='leading-text-paragraph /90 text-sm text-foreground/90'
+                            key={tip}
+                            className='leading-text-paragraph text-sm text-foreground/90'
                           >
-                            <span>{tip}</span>
+                            {tip}
                           </li>
                         ))}
                       </ul>
                     </div>
                   </div>
-                )}
+                : null}
+
+                <TechDownSizeGuideAccordion />
 
                 <div className='mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-t border-background/10 pt-4'>
-                  <div
-                    className='min-w-0'
-                    role='radiogroup'
-                    aria-label='Velg farge'
-                  >
+                  <div className='min-w-0'>
                     <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-background/80'>
                       Farge
                     </span>
-
-                    <div className='mt-1 grid w-full grid-cols-[repeat(auto-fit,minmax(7rem,1fr))] gap-2'>
-                      {currentConfig.colors.map(
-                        (colorObj, index) => {
-                          const isActive =
-                            selectedColorIndex === index
-                          const isInteractive =
-                            currentConfig.colors.length > 1
-                          const colorPillClassName = cn(
-                            'inline-flex h-10 min-w-0 items-center justify-start gap-2 rounded-full border border-background/15 bg-foreground px-3 font-utekos-text-medium text-sm text-background transition',
-                            isInteractive &&
-                              'hover:bg-background/5',
-                            !isInteractive && 'cursor-default',
-                            isActive &&
-                              'border-background shadow-sm ring-1 ring-background',
-                            focusRing
-                          )
-                          const colorPillContent = (
-                            <>
-                              <span
-                                className='size-4 shrink-0 rounded-full border border-background/20 shadow-sm'
-                                style={{
-                                  backgroundColor: colorObj.hex
-                                }}
-                              />
-                              <span className='truncate'>
-                                {colorObj.name}
-                              </span>
-                            </>
-                          )
-
-                          return isActive ?
-                              <button
-                                key={colorObj.name}
-                                type='button'
-                                role='radio'
-                                aria-checked='true'
-                                aria-label={`Farge ${colorObj.name}`}
-                                onClick={() =>
-                                  isInteractive &&
-                                  setSelectedColorIndex(index)
-                                }
-                                className={colorPillClassName}
-                              >
-                                {colorPillContent}
-                              </button>
-                            : <button
-                                key={colorObj.name}
-                                type='button'
-                                role='radio'
-                                aria-checked='false'
-                                aria-label={`Farge ${colorObj.name}`}
-                                onClick={() =>
-                                  isInteractive &&
-                                  setSelectedColorIndex(index)
-                                }
-                                className={colorPillClassName}
-                              >
-                                {colorPillContent}
-                              </button>
-                        }
-                      )}
+                    <div className='mt-1 inline-flex h-10 min-w-32 items-center gap-2 rounded-full border border-background bg-foreground px-3 font-utekos-text-medium text-sm text-background shadow-sm ring-1 ring-background'>
+                      <span
+                        aria-hidden
+                        className='size-4 shrink-0 rounded-full border border-background/20 shadow-sm'
+                        style={{
+                          backgroundColor: 'var(--color-havdyp)'
+                        }}
+                      />
+                      <span>
+                        {commerce.variants[0]?.options.color ?? 'Havdyp'}
+                      </span>
                     </div>
                   </div>
 
@@ -352,7 +279,6 @@ export function PurchaseClientViewLanding({
                     <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-background/80'>
                       Antall
                     </span>
-
                     <div className='mt-1 flex h-10 items-center rounded-full border border-background/15 bg-foreground text-background'>
                       <button
                         type='button'
@@ -363,9 +289,8 @@ export function PurchaseClientViewLanding({
                         )}
                         aria-label='Reduser antall'
                       >
-                        <Minus size={17} />
+                        <Minus size={17} aria-hidden />
                       </button>
-
                       <span
                         className='w-9 text-center font-utekos-text-medium text-base text-background tabular-nums'
                         aria-live='polite'
@@ -373,7 +298,6 @@ export function PurchaseClientViewLanding({
                       >
                         {quantity}
                       </span>
-
                       <button
                         type='button'
                         onClick={() => setQuantity(quantity + 1)}
@@ -383,7 +307,7 @@ export function PurchaseClientViewLanding({
                         )}
                         aria-label='Øk antall'
                       >
-                        <Plus size={17} />
+                        <Plus size={17} aria-hidden />
                       </button>
                     </div>
                   </div>
@@ -400,46 +324,51 @@ export function PurchaseClientViewLanding({
                 fgColor='var(--primary-foreground)'
                 className={cn(
                   'font-google-sans hover:bg-primary-hover h-14 w-full min-w-0 px-4 py-0 text-sm font-bold tracking-normal shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] sm:text-base md:h-16 md:px-6 md:text-lg',
-                  isPending && 'cursor-not-allowed opacity-80'
+                  (isPending || !isAvailable) &&
+                    'cursor-not-allowed opacity-80'
                 )}
               >
-                {isAddToCartPending ?
-                  <button
-                    type='button'
-                    onClick={handleAddToCart}
-                    data-track='SkreddersyVarmenAddToCartClick'
-                    disabled
-                    aria-busy='true'
-                    className={cn(
-                      'flex w-full min-w-0 items-center justify-center gap-2 text-center',
-                      focusRing
-                    )}
-                  >
-                    <Loader2 className='size-5 animate-spin' />
-                    <span className='whitespace-nowrap'>
-                      Legger i handlekurv
-                    </span>
-                  </button>
-                : <button
-                    type='button'
-                    onClick={handleAddToCart}
-                    data-track='SkreddersyVarmenAddToCartClick'
-                    disabled={isPending}
-                    className={cn(
-                      'flex w-full min-w-0 items-center justify-center gap-2 text-center',
-                      focusRing
-                    )}
-                  >
-                    <ShoppingCart className='size-5 shrink-0' />
-                    <span className='whitespace-nowrap'>
-                      Legg i handlekurv
-                    </span>
-                    <span className='hidden h-5 w-px bg-background/20 sm:block' />
-                    <span className='font-google-sans hidden font-bold whitespace-nowrap sm:inline'>
-                      {currentConfig.price * quantity},-
-                    </span>
-                  </button>
-                }
+                <button
+                  type='button'
+                  onClick={handleAddToCart}
+                  data-track='SkreddersyVarmenAddToCartClick'
+                  disabled={isPending || !isAvailable}
+                  aria-busy={isAddToCartPending}
+                  className={cn(
+                    'flex w-full min-w-0 items-center justify-center gap-2 text-center',
+                    focusRing
+                  )}
+                >
+                  {isAddToCartPending ?
+                    <Loader2
+                      className='size-5 animate-spin'
+                      aria-hidden
+                    />
+                  : <ShoppingCart
+                      className='size-5 shrink-0'
+                      aria-hidden
+                    />}
+                  <span className='whitespace-nowrap'>
+                    {isAddToCartPending ?
+                      'Legger i handlekurv'
+                    : isAvailable ?
+                      'Legg i handlekurv'
+                    : 'Utsolgt'}
+                  </span>
+                  {currentPrice && isAvailable ?
+                    <>
+                      <span className='hidden h-5 w-px bg-background/20 sm:block' />
+                      <span className='font-google-sans hidden font-bold whitespace-nowrap sm:inline'>
+                        {formatPrice({
+                          amount: String(
+                            Number(currentPrice.amount) * quantity
+                          ),
+                          currencyCode: currentPrice.currencyCode
+                        })}
+                      </span>
+                    </>
+                  : null}
+                </button>
               </BrandBadge>
             </div>
 
@@ -450,13 +379,12 @@ export function PurchaseClientViewLanding({
               className='mb-4 min-[900px]:mb-6 min-[1280px]:mb-8'
             />
 
-            {/* Teksten tilktnyttet frakt/retur blir automatisk synlig mot card-bakgrunnen */}
             <ShippingAndReturnComponent />
           </div>
         </div>
-      </article>
+      </section>
 
-      <ProductDetailsAccordion selectedModel={selectedModel} />
+      <ProductDetailsAccordion selectedModel='utekos-techdown' />
     </>
   )
 }

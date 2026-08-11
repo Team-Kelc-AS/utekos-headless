@@ -3,12 +3,17 @@
 import type { OnlineStore, WithContext } from 'schema-dts'
 import { cacheLife } from 'next/cache'
 import { merchantReturnPolicyJsonLd } from '@/lib/policies/merchantReturnPolicyJsonLd'
+import { merchantShippingServiceJsonLd } from '@/lib/policies/merchantShippingServiceJsonLd'
+
+type OnlineStoreWithShippingService = OnlineStore & {
+  hasShippingService: typeof merchantShippingServiceJsonLd
+}
 
 export async function OnlineStoreJsonLd() {
   'use cache'
   cacheLife('max')
 
-  const jsonLd: WithContext<OnlineStore> = {
+  const jsonLd: WithContext<OnlineStoreWithShippingService> = {
     '@context': 'https://schema.org',
     '@type': 'OnlineStore',
     '@id': 'https://utekos.no/#organization',
@@ -49,21 +54,7 @@ export async function OnlineStoreJsonLd() {
       'availableLanguage': 'no'
     },
 
-    'makesOffer': {
-      '@type': 'Offer',
-      'shippingDetails': {
-        '@type': 'OfferShippingDetails',
-        'shippingDestination': {
-          '@type': 'DefinedRegion',
-          'addressCountry': 'NO'
-        },
-        'shippingRate': {
-          '@type': 'MonetaryAmount',
-          'value': 0,
-          'currency': 'NOK'
-        }
-      }
-    },
+    'hasShippingService': merchantShippingServiceJsonLd,
     'hasMerchantReturnPolicy': merchantReturnPolicyJsonLd
   }
 

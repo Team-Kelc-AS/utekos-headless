@@ -8,7 +8,12 @@ import {
 } from '@/lib/customer-assistant/assistantRollout'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import {
+  Suspense,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 
 import {
   NEWSLETTER_MODAL_ENABLED,
@@ -114,7 +119,9 @@ export function SiteChrome({
 
   return (
     <>
-      <NavigationProgress />
+      <Suspense fallback={null}>
+        <NavigationProgress />
+      </Suspense>
 
       {showNewsletterModal ?
         <NewsletterSignupDialog />
