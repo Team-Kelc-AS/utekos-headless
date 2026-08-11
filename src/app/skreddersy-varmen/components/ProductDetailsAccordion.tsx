@@ -10,6 +10,11 @@ import {
 import { PRODUCT_PAGE_CONTENT } from '@/db/data/products/product-page-content'
 import type { ModelKey } from '@/api/constants'
 import type { ProductAccordionSection } from '@/db/data/products/product-page-content'
+import {
+  landingAccordionContentClassName,
+  landingAccordionItemClassName,
+  landingAccordionTriggerClassName
+} from './landingAccordionStyles'
 
 function Section({
   section
@@ -19,15 +24,15 @@ function Section({
   return (
     <AccordionItem
       value={section.id}
-      className='rounded-xl border border-border bg-jungle px-4'
+      className={landingAccordionItemClassName}
     >
-      <AccordionTrigger className='dark:hover:text-dark-foreground dark:focus-visible:ring-dark-foreground/45 min-h-14 text-left font-sans font-utekos-text-medium text-lg tracking-normal text-foreground transition-colors hover:text-foreground hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground/45 md:text-xl'>
+      <AccordionTrigger className={landingAccordionTriggerClassName}>
         {section.title}
       </AccordionTrigger>
-      <AccordionContent className='pt-2 pb-6'>
+      <AccordionContent className={landingAccordionContentClassName}>
         <div className='max-w-prose space-y-6 font-utekos-text'>
           {section.groups.map((group, index) => (
-            <article
+            <section
               key={`${group.title ?? section.id}-${index}`}
               className='space-y-3'
             >
@@ -78,12 +83,12 @@ function Section({
                   <h4 className='font-sans font-utekos-text-medium text-base leading-tight tracking-normal'>
                     {group.note.title}
                   </h4>
-                  <p className='utekos-text /86 mt-2 text-sm leading-[1.6] tracking-normal text-foreground/86'>
+                  <p className='utekos-text mt-2 text-sm leading-[1.6] tracking-normal text-foreground/86'>
                     {group.note.text}
                   </p>
                 </div>
               )}
-            </article>
+            </section>
           ))}
         </div>
       </AccordionContent>
@@ -104,7 +109,7 @@ export function ProductDetailsAccordion({
   }
 
   return (
-    <article
+    <section
       key={selectedModel}
       className='dark:bg-dark-background w-full bg-background pt-6 pb-24 text-foreground'
       aria-live='polite'
@@ -116,6 +121,7 @@ export function ProductDetailsAccordion({
 
         <Accordion
           key={`details-${selectedModel}`}
+          multiple={false}
           className='w-full gap-3'
         >
           {sections.map(section => (
@@ -123,6 +129,6 @@ export function ProductDetailsAccordion({
           ))}
         </Accordion>
       </div>
-    </article>
+    </section>
   )
 }

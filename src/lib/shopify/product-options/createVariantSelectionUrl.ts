@@ -1,27 +1,35 @@
-import { slugifyVariantOption } from '@/lib/utils/slugifyVariantOption'
+import {
+  buildPublicVariantUrl,
+  requireProductPresentation,
+  resolvePublicVariantOptions
+} from '@/lib/products/presentation'
 
 type CreateVariantSelectionUrlInput = {
   handle: string
-  variantId: string
-  optionNames: string[]
+  selectedOptions: Array<{ name: string; value: string }>
   searchParams: Pick<URLSearchParams, 'toString'>
 }
 
 export function createVariantSelectionUrl({
   handle,
-  variantId,
-  optionNames,
+  selectedOptions,
   searchParams
 }: CreateVariantSelectionUrlInput): string {
-  const params = new URLSearchParams(searchParams.toString())
+  const presentation = requireProductPresentation(handle)
+  const options = resolvePublicVariantOptions(
+    presentation,
+    selectedOptions
+  )
 
-  params.delete('variant')
-
-  for (const optionName of optionNames) {
-    params.delete(slugifyVariantOption(optionName))
+  if (!options) {
+    throw new Error(
+      `Cannot build a public variant URL for ${presentation.productKey}`
+    )
   }
 
-  params.set('variant', variantId)
-
-  return `/produkter/${encodeURIComponent(handle)}?${params.toString()}`
+  return buildPublicVariantUrl({
+    presentation,
+    options,
+    searchParams
+  })
 }

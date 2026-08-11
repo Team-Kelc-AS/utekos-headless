@@ -1,6 +1,5 @@
 import { UtekosBreadcrumbBar } from '@/components/navigation/UtekosBreadcrumbBar'
 import type { ReactNode } from 'react'
-import { SkreddersyVarmenJsonLd } from './components/LandingPageJsonLd'
 
 export default function UtekosOriginalLayout({
   children
@@ -9,7 +8,6 @@ export default function UtekosOriginalLayout({
 }) {
   return (
     <>
-      <SkreddersyVarmenJsonLd />
       <UtekosBreadcrumbBar
         surface='transparent'
         items={[

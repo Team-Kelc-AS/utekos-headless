@@ -33,8 +33,8 @@ import {
 const content = {
   dry: {
     label: 'Tørt klima',
-    title: 'Maksimal isolasjon',
-    desc: 'Slik ser Utekos TechDown™ ut under ideelle forhold. Tusenvis av mikroskopiske luftlommer fanger kroppsvarmen din og skaper en lun, beskyttende barriere mot omgivelsene.',
+    title: 'Luftlommer holder på varmen',
+    desc: 'CloudWeave™ består av syntetiske fibre som skaper isolerende luftlommer. Det gir et varmt og luftig fyll i tørre forhold.',
     icon: (
       <ShieldCheck
         className='dark:text-dark-accent size-6 text-accent'
@@ -44,8 +44,8 @@ const content = {
   },
   wet: {
     label: 'Fuktig klima',
-    title: 'Uendret beskyttelse',
-    desc: 'Her skiller teknologien seg fra tradisjonell dun. Under fuktige forhold og når regnet treffer, kollapser ikke fibrene. De er hydrofobe (vannavstøtende) og fortsetter å isolere deg.',
+    title: 'Isolerer også når forholdene blir fuktige',
+    desc: 'Et varmt og allsidig 3-i-1-plagg for terrasse, hytte, båt og bobil.',
     icon: (
       <Waves
         className='dark:text-dark-primary size-6 text-primary'
@@ -148,37 +148,39 @@ export function TechDownSlider() {
 
   return (
     <SkreddersyMotionProvider>
-      <article
+      <section
         aria-labelledby='techdown-heading'
-        className='dark:border-dark-background/10 dark:bg-dark-foreground dark:text-dark-background w-full border-t border-background/10 bg-foreground py-24 text-background'
+        className='dark:border-dark-background/10 dark:bg-dark-foreground dark:text-dark-background w-full border-t border-background/10 bg-foreground py-16 text-background md:py-24'
       >
         <div className='mx-auto max-w-5xl px-6'>
           <m.div
-            className='mb-16 text-center'
+            className='mb-16 text-left'
             initial='hidden'
             whileInView='visible'
             viewport={skreddersyViewport}
             variants={revealGroup}
           >
             <m.span
-              className='dark:text-dark-accent mb-3 inline-block font-utekos-text-medium leading-4 text-accent'
+              className='dark:text-dark-accent mb-3 block font-utekos-text-medium leading-4 text-accent'
               variants={revealItemLeft}
             >
               Teknologi
             </m.span>
             <m.h2
               id='techdown-heading'
-              className='leading-heading-level-two font-google-sans dark:text-dark-background mb-6 font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-background md:text-5xl lg:text-6xl'
+              className='leading-heading-level-two font-google-sans dark:text-dark-background mb-6 max-w-[18ch] font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-background md:text-5xl lg:text-6xl'
               variants={revealScale}
             >
               Når været snur, består varmen
             </m.h2>
             <m.p
-              className='leading-text-paragraph dark:text-dark-background/85 mx-auto max-w-2xl font-utekos-text-medium text-base text-background/85 md:text-lg'
+              className='leading-text-paragraph dark:text-dark-background/85 max-w-3xl font-utekos-text-medium text-base text-background/85 md:text-lg'
               variants={revealItem}
             >
-              Dra linjen for å se forskjellen på hvordan vanlig
-              dun og Utekos TechDown™ håndterer fuktighet.
+              CloudWeave™ fortsetter å gi isolasjon når forholdene
+              blir fuktige. Dra linjen for å utforske forskjellen på
+              hvordan tradisjonell dun og Utekos TechDown™ håndterer
+              fuktighet.
             </m.p>
           </m.div>
 
@@ -237,7 +239,7 @@ export function TechDownSlider() {
               <div className='absolute inset-0 size-full'>
                 <Image
                   src={TechDownWetFiber}
-                  alt='TechDown fiber i fuktig vær'
+                  alt='Utekos TechDown™-fiber i fuktig vær'
                   fill
                   sizes='(max-width: 1024px) 100vw, 80vw'
                   className='object-cover'
@@ -254,7 +256,7 @@ export function TechDownSlider() {
               >
                 <Image
                   src={TechDownDryFiber}
-                  alt='TechDown fiber i tørt vær'
+                  alt='Utekos TechDown™-fiber i tørt vær'
                   fill
                   sizes='(max-width: 1024px) 100vw, 80vw'
                   className='object-cover opacity-90'
@@ -355,34 +357,9 @@ export function TechDownSlider() {
                   </p>
 
                   <div className='dark:border-dark-background/10 border-t border-background/10 pt-6'>
-                    <div className='mb-2 flex items-end justify-between'>
-                      <span className='dark:text-dark-background font-utekos-text-medium text-sm leading-4 text-background'>
-                        Isolasjonsevne
-                      </span>
-                      <span className='font-google-sans dark:text-dark-background font-sans text-xl leading-[0.95] font-bold tracking-[-0.01em] text-background'>
-                        {isDryView ? '100%' : '98%'}
-                      </span>
-                    </div>
-                    <div className='dark:bg-dark-foreground h-1.5 w-full overflow-hidden rounded-full bg-foreground'>
-                      <m.div
-                        className='h-full origin-left'
-                        initial={false}
-                        animate={{
-                          scaleX: isDryView ? 1 : 0.98,
-                          backgroundColor:
-                            isDryView ?
-                              'var(--color-accent)'
-                            : 'var(--color-primary)'
-                        }}
-                        transition={{
-                          duration: 0.7,
-                          ease: skreddersyEase
-                        }}
-                      />
-                    </div>
-                    <p className='leading-text-paragraph dark:text-dark-background/75 mt-3 font-utekos-text text-xs text-background/75 italic'>
-                      *Beholder nær full effekt selv i ekstrem
-                      fuktighet.
+                    <p className='leading-text-paragraph dark:text-dark-background/75 font-utekos-text text-xs text-background/75'>
+                      Illustrasjonen forklarer materialprinsippet og
+                      er ikke en prosentmåling eller laboratorietest.
                     </p>
                   </div>
                 </div>
@@ -390,7 +367,7 @@ export function TechDownSlider() {
             </AnimatePresence>
           </m.div>
         </div>
-      </article>
+      </section>
     </SkreddersyMotionProvider>
   )
 }

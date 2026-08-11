@@ -11,24 +11,26 @@ import type {
 type AsyncProductPurchaseIslandProps = {
   product: ProductPurchaseModel
   selectedVariant: ProductPurchaseVariant
+  storefrontLookupHandle: string
+  storefrontSelectedOptions: Array<{
+    name: string
+    value: string
+  }>
 }
 
 export async function AsyncProductPurchaseIsland({
   product,
-  selectedVariant
+  selectedVariant,
+  storefrontLookupHandle,
+  storefrontSelectedOptions
 }: AsyncProductPurchaseIslandProps) {
   let productOptions: UtekosProductOptions | null = null
   let hasVariantSelectionError: boolean
 
   try {
     productOptions = await fetchProductOptions({
-      handle: product.handle,
-      selectedOptions: selectedVariant.selectedOptions.map(
-        ({ name, value }) => ({
-          name,
-          value
-        })
-      )
+      handle: storefrontLookupHandle,
+      selectedOptions: storefrontSelectedOptions
     })
 
     hasVariantSelectionError = productOptions === null

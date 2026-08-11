@@ -14,6 +14,8 @@ import { scrollToElement } from '@/lib/motion/scrollToElement'
 import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
 import { reportCanonicalViewPromotion } from '@/lib/analytics/viewPromotionReporter'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
+import { formatPrice } from '@/lib/utils/formatPrice'
+import type { Money } from 'types/commerce/Money'
 
 const DISMISS_KEY = 'utekos:sticky-mobile-dismissed'
 const IMPRESSION_DWELL_MS = 1000
@@ -21,7 +23,13 @@ const IMPRESSION_DWELL_MS = 1000
 const focusRing =
   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-dark-primary focus-visible:ring-2 focus-visible:ring-foreground/20 dark:focus-visible:ring-dark-foreground/20'
 
-export function StickyMobileAction() {
+export function StickyMobileAction({
+  price,
+  availableForSale
+}: {
+  price?: Money
+  availableForSale?: boolean
+}) {
   const reduced = useReducedMotion()
   const [isVisible, setIsVisible] = useState(false)
   const [isDismissed, setIsDismissed] = useState(false)
@@ -165,7 +173,7 @@ export function StickyMobileAction() {
               data-track='SkreddersyVarmenStickyClose'
               aria-label='Lukk'
               className={cn(
-                'dark:border-dark-foreground/10 dark:bg-dark-foreground/5 /60 dark:hover:bg-dark-foreground/10 dark:hover:text-dark-foreground flex size-9 shrink-0 items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground/60 transition-colors hover:bg-foreground/10 hover:text-foreground sm:size-10',
+                'dark:border-dark-foreground/10 dark:bg-dark-foreground/5 dark:hover:bg-dark-foreground/10 dark:hover:text-dark-foreground flex size-9 shrink-0 items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground/60 transition-colors hover:bg-foreground/10 hover:text-foreground sm:size-10',
                 focusRing
               )}
             >
@@ -199,7 +207,9 @@ export function StickyMobileAction() {
                 </span>
               </span>
               <span className='/75 mt-0.5 truncate text-[13px] leading-tight font-medium text-foreground/75 sm:text-sm'>
-                Fra 1790,-
+                {price ?
+                  `${formatPrice(price)} · ${availableForSale ? 'På lager' : 'Utsolgt'}`
+                : 'Velg størrelse'}
               </span>
             </button>
 

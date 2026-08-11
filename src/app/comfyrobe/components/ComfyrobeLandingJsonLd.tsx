@@ -4,10 +4,7 @@ import type {
   BreadcrumbList,
   FAQPage,
   Graph,
-  MerchantReturnPolicy,
   Offer,
-  OfferShippingDetails,
-  Organization,
   Product,
   Question,
   WebPage
@@ -31,50 +28,6 @@ function stringifyJsonLd(data: unknown): string {
   return JSON.stringify(data).replace(/</g, '\\u003c')
 }
 
-function getShippingDetails(): OfferShippingDetails {
-  return {
-    '@type': 'OfferShippingDetails',
-    'shippingRate': {
-      '@type': 'MonetaryAmount',
-      'value': '0',
-      'currency': 'NOK'
-    },
-    'shippingDestination': {
-      '@type': 'DefinedRegion',
-      'addressCountry': 'NO'
-    },
-    'deliveryTime': {
-      '@type': 'ShippingDeliveryTime',
-      'handlingTime': {
-        '@type': 'QuantitativeValue',
-        'minValue': 0,
-        'maxValue': 1,
-        'unitCode': 'DAY'
-      },
-      'transitTime': {
-        '@type': 'QuantitativeValue',
-        'minValue': 1,
-        'maxValue': 4,
-        'unitCode': 'DAY'
-      }
-    }
-  }
-}
-
-function getMerchantReturnPolicy(): MerchantReturnPolicy {
-  return {
-    '@type': 'MerchantReturnPolicy',
-    'applicableCountry': 'NO',
-    'returnPolicyCategory':
-      'https://schema.org/MerchantReturnFiniteReturnWindow',
-    'merchantReturnDays': 14,
-    'returnMethod': 'https://schema.org/ReturnByMail',
-    'returnFees': 'https://schema.org/FreeReturn',
-    'refundType': 'https://schema.org/FullRefund',
-    'url': `${SITE_URL}/frakt-og-retur`
-  }
-}
-
 export async function ComfyrobeLandingJsonLd() {
   'use cache'
   cacheLife('max')
@@ -95,24 +48,6 @@ export async function ComfyrobeLandingJsonLd() {
     product?.selectedOrFirstAvailableVariant?.availableForSale ??
     product?.availableForSale ??
     false
-  const priceValidUntil = new Date(
-    new Date().setFullYear(new Date().getFullYear() + 1)
-  )
-    .toISOString()
-    .slice(0, 10)
-
-  const organizationNode: Organization = {
-    '@type': 'Organization',
-    '@id': ORGANIZATION_ID,
-    'name': 'Utekos',
-    'url': SITE_URL,
-    'logo': `${SITE_URL}/logo.png`,
-    'sameAs': [
-      'https://www.facebook.com/utekosen',
-      'https://www.instagram.com/utekos.no'
-    ]
-  }
-
   const breadcrumbNode: BreadcrumbList = {
     '@type': 'BreadcrumbList',
     '@id': `${COMFYROBE_LANDING_URL}#breadcrumb`,
@@ -160,20 +95,18 @@ export async function ComfyrobeLandingJsonLd() {
         'url': `${COMFYROBE_LANDING_URL}#purchase-section`,
         'priceCurrency': price.currencyCode || 'NOK',
         'price': String(price.amount),
-        'priceValidUntil': priceValidUntil,
         'availability':
           availableForSale ?
             'https://schema.org/InStock'
           : 'https://schema.org/OutOfStock',
         'itemCondition': 'https://schema.org/NewCondition',
         'seller': { '@id': ORGANIZATION_ID },
-        'shippingDetails': getShippingDetails(),
-        'hasMerchantReturnPolicy': getMerchantReturnPolicy(),
         ...(compareAtPrice?.amount ?
           {
             'priceSpecification': {
               '@type': 'UnitPriceSpecification',
-              'priceType': 'https://schema.org/ListPrice',
+              'priceType':
+                'https://schema.org/StrikethroughPrice',
               'price': String(compareAtPrice.amount),
               'priceCurrency': compareAtPrice.currencyCode || 'NOK'
             }
@@ -228,7 +161,6 @@ export async function ComfyrobeLandingJsonLd() {
   const graph: Graph = {
     '@context': 'https://schema.org',
     '@graph': [
-      organizationNode,
       webpageNode,
       breadcrumbNode,
       productNode,

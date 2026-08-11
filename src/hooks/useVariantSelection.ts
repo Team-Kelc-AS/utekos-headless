@@ -123,10 +123,7 @@ export function useVariantSelection({
 
     const nextUrl = createVariantSelectionUrl({
       handle: product.handle,
-      variantId: nextVariant.id,
-      optionNames: product.options.map(
-        productOption => productOption.name
-      ),
+      selectedOptions: nextVariant.selectedOptions,
       searchParams
     })
 

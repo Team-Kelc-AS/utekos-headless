@@ -144,9 +144,9 @@ test('normalizes Hydrogen options to canonical Utekos variant links', () => {
   assert.equal(fjellbla.variantAvailableForSale, true)
   assert.equal(
     fjellbla.variantHref,
-    '/produkter/utekos-mikrofiber?variant=gid%3A%2F%2Fshopify%2FProductVariant%2F2'
+    '/produkter/utekos-mikrofiber?farge=fjellbla&storrelse=medium&kjonn=unisex'
   )
-  assert.equal(fjellbla.variantHref.includes('Farge='), false)
+  assert.equal(fjellbla.variantHref.includes('variant='), false)
 })
 
 test('requires fresh adjacency data after the selected combination changes', () => {
@@ -201,7 +201,7 @@ test('keeps top-down option availability separate from exact variant inventory',
   assert.equal(vargnatt.variantAvailableForSale, false)
 })
 
-test('preserves combined-listing handles in the Utekos link', () => {
+test('keeps the Utekos-owned public handle for a combined-listing variant', () => {
   const childFjellblaMedium = createVariant(
     fjellblaMedium.id,
     'Fjellblå',
@@ -221,7 +221,7 @@ test('preserves combined-listing handles in the Utekos link', () => {
   assert.equal(fjellbla.isDifferentProduct, true)
   assert.equal(
     fjellbla.variantHref,
-    '/produkter/utekos-mikrofiber-fjellbla?variant=gid%3A%2F%2Fshopify%2FProductVariant%2F2'
+    '/produkter/utekos-mikrofiber?farge=fjellbla&storrelse=medium&kjonn=unisex'
   )
 })
 

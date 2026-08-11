@@ -5,7 +5,7 @@ import type {
 import { isValidGtin } from '@/lib/gtin/isValidGtin'
 import { normalizeGtin } from '@/lib/gtin/normalizeGtin'
 import { MERCHANT_FEED_SITE_URL } from '@/lib/merchant-feeds/merchantFeedSiteUrl'
-import { buildVariantTitle } from '@/lib/merchant-feeds/buildVariantTitle'
+import { resolveCatalogVariantPresentation } from '@/lib/products/presentation'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 import { getMicrosoftMerchantProductCategory } from './getMicrosoftMerchantProductCategory'
@@ -83,40 +83,6 @@ function sanitizeFeedValue(value: string, maxLength: number) {
     .trim()
 
   return truncateUnicode(sanitizedValue, maxLength)
-}
-
-function stripHtml(value: string) {
-  return value
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/&#39;|&apos;/gi, '\'')
-    .replace(/&quot;/gi, '"')
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>')
-}
-
-function buildProductDescription(product: CatalogSyncProduct) {
-  const description = sanitizeFeedValue(
-    stripHtml(product.descriptionHtml),
-    10_000
-  )
-
-  return description || sanitizeFeedValue(product.title, 10_000)
-}
-
-function buildBrand(product: CatalogSyncProduct) {
-  const vendor = sanitizeFeedValue(product.vendor ?? '', 70)
-
-  if (vendor) {
-    return vendor
-  }
-
-  const isUtekosProduct = [product.title, product.handle].some(value =>
-    /^utekos\b/i.test(value.trim())
-  )
-
-  return isUtekosProduct ? 'Utekos' : ''
 }
 
 function buildMpn(sku: string | null) {
@@ -197,9 +163,8 @@ function getSelectedOption(
   return sanitizeFeedValue(option?.value ?? '', 100)
 }
 
-function buildGender(variant: CatalogSyncVariant) {
-  const gender = getSelectedOption(variant, ['gender', 'kjønn'])
-    .toLowerCase()
+function buildGender(value: string | undefined, offerId: string) {
+  const gender = value?.trim().toLowerCase() ?? ''
 
   const normalizedGender = {
     dame: 'female',
@@ -213,7 +178,7 @@ function buildGender(variant: CatalogSyncVariant) {
 
   if (!normalizedGender) {
     throw new Error(
-      `Microsoft Merchant offer ${cleanShopifyId(variant.id)} has missing or unsupported gender "${gender}"`
+      `Microsoft Merchant offer ${offerId} has missing or unsupported gender "${gender}"`
     )
   }
 
@@ -280,11 +245,21 @@ function buildRow(
 ): MicrosoftMerchantFeedRow {
   const offerId = cleanShopifyId(variant.id)
   const itemGroupId = cleanShopifyId(product.id)
+  const publicVariant = resolveCatalogVariantPresentation({
+    handle: product.handle,
+    selectedOptions: variant.selectedOptions
+  })
   const imageLink =
     variant.image?.url.trim() || product.featuredImage?.url.trim() || ''
 
   if (!offerId) {
     throw new Error('Microsoft Merchant offer is missing an ID')
+  }
+
+  if (publicVariant.status !== 'included') {
+    throw new Error(
+      `Microsoft Merchant offer ${offerId} has no publishable Utekos presentation`
+    )
   }
 
   if (!isHttpUrl(imageLink)) {
@@ -293,7 +268,7 @@ function buildRow(
     )
   }
 
-  const brand = buildBrand(product)
+  const brand = 'Utekos'
   const gtin = buildGtin(variant.barcode)
   const mpn = buildMpn(variant.sku)
   const prices = buildPrices(variant, offerId)
@@ -301,12 +276,12 @@ function buildRow(
 
   return {
     id: sanitizeFeedValue(offerId, 50),
-    title: sanitizeFeedValue(
-      buildVariantTitle(product.title, variant.selectedOptions),
-      150
+    title: sanitizeFeedValue(publicVariant.publicName, 150),
+    description: sanitizeFeedValue(
+      publicVariant.presentation.description,
+      10_000
     ),
-    description: buildProductDescription(product),
-    link: `${MERCHANT_FEED_SITE_URL}/produkter/${encodeURIComponent(product.handle)}?variant=${encodeURIComponent(variant.id)}`,
+    link: `${MERCHANT_FEED_SITE_URL}${publicVariant.publicPath}`,
     image_link: imageLink,
     additional_image_link: buildAdditionalImageLinks(product, imageLink),
     availability: variant.availableForSale ? 'in stock' : 'out of stock',
@@ -320,13 +295,19 @@ function buildRow(
       canUseItemGroupId(product) && itemGroupId
         ? sanitizeFeedValue(itemGroupId, 50)
         : '',
-    product_type: sanitizeFeedValue(product.productType ?? '', 750),
+    product_type: sanitizeFeedValue(
+      publicVariant.presentation.category,
+      750
+    ),
     product_category: getMicrosoftMerchantProductCategory(product.handle),
-    color: getSelectedOption(variant, ['color', 'farge']),
-    size: getSelectedOption(variant, ['size', 'størrelse', 'str']),
+    color: sanitizeFeedValue(publicVariant.options.color ?? '', 100),
+    size: sanitizeFeedValue(publicVariant.options.size ?? '', 100),
     age_group: 'adult',
-    gender: buildGender(variant),
-    material: getSelectedOption(variant, ['material', 'materiale']),
+    gender: buildGender(publicVariant.options.gender, offerId),
+    material: sanitizeFeedValue(
+      publicVariant.presentation.material,
+      200
+    ),
     pattern: getSelectedOption(variant, ['pattern', 'mønster']),
     adult: 'FALSE',
     custom_label_0: sanitizeFeedValue(

@@ -2,13 +2,16 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { createVariantSelectionUrl } from './createVariantSelectionUrl'
 
-test('writes the canonical variant GID and preserves unrelated parameters', () => {
+test('writes readable Utekos options and preserves attribution parameters', () => {
   const url = createVariantSelectionUrl({
-    handle: 'utekos-mikrofiber',
-    variantId: 'gid://shopify/ProductVariant/3',
-    optionNames: ['Farge', 'Størrelse', 'Kjønn'],
+    handle: 'utekos-techdown',
+    selectedOptions: [
+      { name: 'Farge', value: 'Havdyp' },
+      { name: 'Størrelse', value: 'Stor' },
+      { name: 'Kjønn', value: 'Unisex' }
+    ],
     searchParams: new URLSearchParams(
-      'farge=Vargnatt&storrelse=Medium&kjonn=Unisex&pilot=1&utm_source=test'
+      'variant=gid%3A%2F%2Fshopify%2FProductVariant%2F3&farge=Vargnatt&storrelse=Medium&kjonn=Unisex&pilot=1&utm_source=test&fbclid=abc&msclkid=xyz'
     )
   })
 
@@ -16,32 +19,36 @@ test('writes the canonical variant GID and preserves unrelated parameters', () =
 
   assert.equal(
     parsedUrl.pathname,
-    '/produkter/utekos-mikrofiber'
+    '/produkter/utekos-techdown'
   )
-  assert.equal(
-    parsedUrl.searchParams.get('variant'),
-    'gid://shopify/ProductVariant/3'
-  )
+  assert.equal(parsedUrl.searchParams.get('farge'), 'havdyp')
+  assert.equal(parsedUrl.searchParams.get('storrelse'), 'stor')
+  assert.equal(parsedUrl.searchParams.get('kjonn'), 'unisex')
   assert.equal(parsedUrl.searchParams.get('pilot'), '1')
   assert.equal(parsedUrl.searchParams.get('utm_source'), 'test')
-  assert.equal(parsedUrl.searchParams.has('farge'), false)
-  assert.equal(parsedUrl.searchParams.has('storrelse'), false)
-  assert.equal(parsedUrl.searchParams.has('kjonn'), false)
+  assert.equal(parsedUrl.searchParams.get('fbclid'), 'abc')
+  assert.equal(parsedUrl.searchParams.get('msclkid'), 'xyz')
+  assert.equal(parsedUrl.searchParams.has('variant'), false)
+  assert.equal(url.includes('gid%3A%2F%2Fshopify'), false)
 })
 
-test('replaces a previous canonical variant without duplicating it', () => {
+test('replaces previous readable options without duplicating them', () => {
   const url = createVariantSelectionUrl({
-    handle: 'utekos-mikrofiber',
-    variantId: 'gid://shopify/ProductVariant/4',
-    optionNames: ['Farge'],
+    handle: 'utekos-techdown',
+    selectedOptions: [
+      { name: 'Farge', value: 'Havdyp' },
+      { name: 'Størrelse', value: 'Ekstra stor' },
+      { name: 'Kjønn', value: 'Unisex' }
+    ],
     searchParams: new URLSearchParams(
-      'variant=gid%3A%2F%2Fshopify%2FProductVariant%2F1'
+      'variant=gid%3A%2F%2Fshopify%2FProductVariant%2F1&storrelse=middels&storrelse=stor'
     )
   })
 
   const parsedUrl = new URL(url, 'https://utekos.no')
 
-  assert.deepEqual(parsedUrl.searchParams.getAll('variant'), [
-    'gid://shopify/ProductVariant/4'
+  assert.deepEqual(parsedUrl.searchParams.getAll('storrelse'), [
+    'ekstra-stor'
   ])
+  assert.equal(parsedUrl.searchParams.has('variant'), false)
 })

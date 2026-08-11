@@ -15,21 +15,13 @@ import {
 } from '@/components/ui/carousel'
 import { CAROUSEL_SSR } from '@/components/ui/carousel-ssr'
 import { focusRing } from '../utils/constants'
-import type { ModelKey, PRODUCT_VARIANTS } from '@/api/constants'
+import { PRODUCT_VARIANTS } from '@/api/constants'
 
-type LandingPageProductCarouselPurchaseSectionProps = {
-  selectedModel: ModelKey
-  currentConfig: (typeof PRODUCT_VARIANTS)[ModelKey]
-}
-
-export function LandingPageProductCarouselPurchaseSection({
-  selectedModel,
-  currentConfig
-}: LandingPageProductCarouselPurchaseSectionProps) {
+export function LandingPageProductCarouselPurchaseSection() {
+  const currentConfig = PRODUCT_VARIANTS['utekos-techdown']
   return (
     <div className='dark:bg-dark-background relative flex w-full flex-col items-center justify-center bg-background min-[900px]:sticky min-[900px]:top-0 min-[900px]:h-svh min-[900px]:self-start min-[900px]:p-8 min-[1280px]:p-12'>
       <BrandBadge
-        key={`badge-${selectedModel}`}
         tone='promo'
         className='animate-in fade-in slide-in-from-left-2 dark:bg-dark-primary dark:text-dark-primary-foreground absolute top-4 left-4 z-20 bg-primary px-4 py-1.5 font-utekos-text-medium text-xs tracking-normal text-primary-foreground shadow-lg duration-500 min-[900px]:top-8 min-[900px]:left-8 min-[1280px]:top-12 min-[1280px]:left-12'
       >
@@ -39,7 +31,6 @@ export function LandingPageProductCarouselPurchaseSection({
       </BrandBadge>
 
       <Carousel
-        key={selectedModel}
         slideCount={currentConfig.images.length}
         ssr={CAROUSEL_SSR.fullWidth(currentConfig.images.length)}
         opts={{
@@ -51,8 +42,7 @@ export function LandingPageProductCarouselPurchaseSection({
       >
         <CarouselContent className='ml-0'>
           {currentConfig.images.map((src, i) => {
-            const isTechDownFirstImage =
-              selectedModel === 'utekos-techdown' && i === 0
+            const isTechDownFirstImage = i === 0
 
             return (
               <CarouselItem

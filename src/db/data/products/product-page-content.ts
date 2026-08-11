@@ -195,7 +195,7 @@ export const PRODUCT_PAGE_CONTENT = {
           {
             title: 'Enkelt vedlikehold',
             paragraphs: [
-              'Komfort skal være ukomplisert. TechDown™ tåler maskinvask og tørker raskt, slik at den alltid er klar for neste eventyr.'
+              'Komfort skal være ukomplisert. Utekos TechDown™ tåler maskinvask og tørker raskt, slik at den alltid er klar for neste eventyr.'
             ]
           },
           {
@@ -237,7 +237,7 @@ export const PRODUCT_PAGE_CONTENT = {
             items: [
               'Maskinvask på skånsomt program når det er nødvendig.',
               'Bruk mildt vaskemiddel og unngå blekemiddel.',
-              'La plagget lufttørke. TechDown™ tørker raskt og er utviklet for enkel bruk over tid.'
+              'La plagget lufttørke. Utekos TechDown™ tørker raskt og er utviklet for enkel bruk over tid.'
             ]
           },
           {

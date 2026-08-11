@@ -214,5 +214,12 @@ export type MerchantProductInputBuildResult =
     }
   | {
       ok: false
-      reason: 'missing_offer_id' | 'missing_item_group_id' | 'missing_image_link' | 'missing_price'
+      reason:
+        | 'missing_offer_id'
+        | 'missing_item_group_id'
+        | 'missing_image_link'
+        | 'missing_price'
+        | 'missing_product_presentation'
+        | 'invalid_variant_presentation'
+        | 'hidden_public_variant'
     }

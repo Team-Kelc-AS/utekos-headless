@@ -1,6 +1,6 @@
 // Path: src/app/skreddersy-varmen/components/ReviewCard.tsx
 
-import { Star, MapPin, BadgeCheck } from 'lucide-react'
+import { Star, MapPin } from 'lucide-react'
 import { cn } from '@/lib/utils/className'
 import type { Review } from '../data/reviews'
 import { initialsFrom } from '@/app/skreddersy-varmen/utils/initialsFrom'
@@ -30,10 +30,8 @@ export function ReviewCard({ review }: { review: Review }) {
             )
           )}
         </div>
-        {/* Verifisert-badge: Bruker accent for en beroligende, organisk og troverdig grønnfarge */}
         <span className='leading-text-paragraph dark:text-dark-primary inline-flex shrink-0 items-center gap-1 font-utekos-text-medium text-[10px] tracking-[-0.01em] text-primary'>
-          <BadgeCheck size={12} aria-hidden />
-          Verifisert
+          Utekos TechDown™
         </span>
       </header>
 
@@ -44,7 +42,7 @@ export function ReviewCard({ review }: { review: Review }) {
       )}
 
       {/* foreground med litt transparens for behagelig lese-kontrast i brødteksten */}
-      <p className='leading-text-paragraph /85 mb-6 text-sm tracking-[-0.01em] text-foreground/85 md:text-base'>
+      <p className='leading-text-paragraph mb-6 text-sm tracking-[-0.01em] text-foreground/85 md:text-base'>
         {review.quote}
       </p>
 
@@ -60,7 +58,7 @@ export function ReviewCard({ review }: { review: Review }) {
             {review.name}
           </p>
           {(review.role || review.location) && (
-            <p className='leading-text-paragraph /50 flex items-center gap-1.5 text-xs tracking-[-0.01em] text-foreground/50'>
+            <p className='leading-text-paragraph flex items-center gap-1.5 text-xs tracking-[-0.01em] text-foreground/50'>
               {review.role && (
                 <>
                   <span className='truncate'>{review.role}</span>

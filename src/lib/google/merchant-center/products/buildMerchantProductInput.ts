@@ -5,7 +5,7 @@ import type {
 } from '@/lib/catalog-sync/types'
 import { isValidGtin } from '@/lib/gtin/isValidGtin'
 import { normalizeGtin } from '@/lib/gtin/normalizeGtin'
-import { buildVariantTitle } from '@/lib/merchant-feeds/buildVariantTitle'
+import { resolveCatalogVariantPresentation } from '@/lib/products/presentation'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 import { getMerchantCenterConfig } from '../config'
@@ -13,38 +13,6 @@ import type {
   MerchantProductIdentifierStrategy,
   MerchantProductInputBuildResult
 } from '../merchantCenterTypes'
-
-function stripHtml(value: string) {
-  return value
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/&#39;/gi, '\'')
-    .replace(/&quot;/gi, '"')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
-function buildMerchantProductLink(
-  handle: string,
-  variantId: string
-) {
-  return `https://utekos.no/produkter/${handle}?variant=${encodeURIComponent(variantId)}`
-}
-
-function buildMerchantBrand(product: CatalogSyncProduct) {
-  const vendor = product.vendor?.trim()
-
-  if (vendor) {
-    return vendor
-  }
-
-  const ownBrandSignals = [product.title, product.handle].some(
-    signal => /^utekos\b/i.test(signal.trim())
-  )
-
-  return ownBrandSignals ? 'Utekos' : undefined
-}
 
 function shouldUseSkuAsMerchantMpn(
   sku: string | null | undefined
@@ -142,19 +110,6 @@ function buildMerchantShippingWeight(
   return { value: Number(weight.toFixed(4)), unit: weightUnit }
 }
 
-function getSelectedOptionValue(
-  variant: CatalogSyncVariant,
-  names: string[]
-) {
-  const normalizedNames = names.map(name => name.toLowerCase())
-  const option = variant.selectedOptions.find(item =>
-    normalizedNames.includes(item.name.trim().toLowerCase())
-  )
-  const value = option?.value.trim()
-
-  return value ? value : undefined
-}
-
 function buildMerchantAdditionalImageLinks(
   product: CatalogSyncProduct,
   imageLink: string
@@ -184,6 +139,10 @@ export function buildMerchantProductInput(
   const config = getMerchantCenterConfig()
   const offerId = cleanShopifyId(variant.id)
   const itemGroupId = cleanShopifyId(product.id)
+  const publicVariant = resolveCatalogVariantPresentation({
+    handle: product.handle,
+    selectedOptions: variant.selectedOptions
+  })
   const imageLink =
     variant.image?.url || product.featuredImage?.url
 
@@ -193,6 +152,10 @@ export function buildMerchantProductInput(
 
   if (!itemGroupId) {
     return { ok: false, reason: 'missing_item_group_id' }
+  }
+
+  if (publicVariant.status !== 'included') {
+    return { ok: false, reason: publicVariant.status }
   }
 
   if (!imageLink) {
@@ -212,45 +175,30 @@ export function buildMerchantProductInput(
     !gtin && shouldUseSkuAsMerchantMpn(variant.sku) ?
       variant.sku?.trim()
     : undefined
-  const brand = buildMerchantBrand(product)
+  const brand = 'Utekos'
   const salePrice = buildMerchantSalePrice(
     variant,
     config.defaults.currencyCode
   )
-  const productLink = buildMerchantProductLink(
-    product.handle,
-    variant.id
-  )
+  const productLink = publicVariant.publicUrl
   const additionalImageLinks = buildMerchantAdditionalImageLinks(
     product,
     imageLink
   )
-  const productType = product.productType?.trim()
-  const color = getSelectedOptionValue(variant, [
-    'color',
-    'farge'
-  ])
-  const size = getSelectedOptionValue(variant, [
-    'size',
-    'størrelse'
-  ])
   const productAttributes: Record<string, unknown> = {
-    title: buildVariantTitle(
-      product.title,
-      variant.selectedOptions
-    ),
-    description: stripHtml(product.descriptionHtml),
+    title: publicVariant.publicName,
+    description: publicVariant.presentation.description,
     link: productLink,
-    canonicalLink: `https://utekos.no/produkter/${product.handle}`,
+    canonicalLink: publicVariant.presentation.canonicalUrl,
     imageLink,
     additionalImageLinks,
     availability: buildMerchantAvailability(variant),
     condition: 'NEW',
     googleProductCategory: '203',
     itemGroupId,
-    productTypes: productType ? [productType] : undefined,
-    color,
-    size,
+    productTypes: [publicVariant.presentation.category],
+    color: publicVariant.options.color,
+    size: publicVariant.options.size,
     customLabel0:
       variant.customLabel0?.value?.trim() || undefined,
     customLabel1:
@@ -279,9 +227,7 @@ export function buildMerchantProductInput(
     )
   }
 
-  if (brand) {
-    productAttributes.brand = brand
-  }
+  productAttributes.brand = brand
 
   if (gtin) {
     productAttributes.gtins = [gtin]

@@ -6,7 +6,6 @@ import { ProductPageSkeleton } from './components/ProductPageSkeleton'
 import { AsyncProductContent } from './components/AsyncProductContent'
 import { generateProductMetadata } from './utils/generateProductMetadata'
 import { generateProductStaticParams } from './utils/generateProductStaticParams'
-import { connection } from 'next/server'
 import type { Metadata } from 'next'
 
 import type {
@@ -32,7 +31,6 @@ export default async function ProductPage({
   params,
   searchParams
 }: ProductPageProps) {
-  await connection()
   const { handle } = await params
 
   return (

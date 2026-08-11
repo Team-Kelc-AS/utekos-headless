@@ -55,6 +55,7 @@
     "assistant:gcp:discovery:apply": "tsx scripts/customer-assistant/apply-discovery-resources.ts",
     "validate:gtin": "tsx scripts/gtin/validate-gtin-doc.ts",
     "policy:return:test": "tsx --test src/lib/policies/returnPolicy.test.ts",
+    "schema:skreddersy-varmen:validate": "tsx scripts/schema/validate-skreddersy-varmen.mts",
     "policy:return:verify": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/policies/verify-return-policy.ts",
     "merchant:preflight": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/merchant/preflight.ts",
     "merchant:create-data-source": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/merchant/create-data-source.ts",

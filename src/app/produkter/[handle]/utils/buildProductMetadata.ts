@@ -3,26 +3,27 @@
 import type { Metadata } from 'next'
 import type { ShopifyProduct } from 'types/product'
 import { SITE_URL } from './siteUrl'
-import { getProductHandle } from './getProductHandle'
-import { getProductTitle } from './getProductTitle'
-import { getProductDescription } from './getProductDescription'
 import { getProductDisplayImage } from './getProductDisplayImage'
 import { cleanText } from './cleanText'
 import { toAbsoluteUrl } from './toAbsoluteUrl'
 import { buildProductOtherMetadata } from './buildProductOtherMetadata'
+import type { ProductPresentation } from '@/lib/products/presentation'
 
-export function buildProductMetadata(product: ShopifyProduct, fallbackHandle: string): Metadata {
-  const handle = getProductHandle(product, fallbackHandle)
-  const canonicalPath = `/produkter/${handle}`
+export function buildProductMetadata(
+  product: ShopifyProduct,
+  presentation: ProductPresentation
+): Metadata {
+  const canonicalPath = presentation.canonicalPath
   const canonicalUrl = toAbsoluteUrl(canonicalPath)
 
-  const title = getProductTitle(product)
-  const description = getProductDescription(product)
+  const title = presentation.displayName
+  const description = presentation.description
 
   const displayImage = getProductDisplayImage(product)
   const displayImageUrl = toAbsoluteUrl(displayImage?.url || '/og-image.jpg')
 
-  const imageAlt = cleanText(displayImage?.altText) || title
+  const imageAlt =
+    cleanText(presentation.media.defaultAlt) || title
 
   return {
     metadataBase: new URL(SITE_URL),
