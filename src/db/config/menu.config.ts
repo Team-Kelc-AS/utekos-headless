@@ -43,8 +43,7 @@ export const mainMenu: MenuItem[] = [
       { title: 'Båtliv', url: '/inspirasjon/batliv', items: [] },
       { title: 'Terrassen', url: '/inspirasjon/terrassen', items: [] },
       { title: 'Grillkvelden', url: '/inspirasjon/grillkvelden', items: [] },
-      { title: 'Skreddersy varmen', url: '/skreddersy-varmen', items: [] },
-      { title: 'Isbading', url: '/inspirasjon/isbading', items: [] }
+      { title: 'Skreddersy varmen', url: '/skreddersy-varmen', items: [] }
     ]
   },
   {

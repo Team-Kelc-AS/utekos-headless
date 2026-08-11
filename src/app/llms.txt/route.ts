@@ -68,7 +68,6 @@ ${magazineArticleLines}
 - [Bobilliv](https://utekos.no/inspirasjon/bobil): Reise, overnatting og mobil bruk.
 - [Båtliv](https://utekos.no/inspirasjon/batliv): Komfort på sjøen og ved brygga.
 - [Terrassen](https://utekos.no/inspirasjon/terrassen): Hjemmebruk på uteplassen.
-- [Isbading](https://utekos.no/inspirasjon/isbading): Kaldbad og restitusjon.
 
 ## Valgfri
 

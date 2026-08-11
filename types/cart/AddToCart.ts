@@ -3,11 +3,12 @@ import type {
   ProductPurchaseVariant
 } from 'types/product/ProductPurchaseModel'
 import type { UseFormReturn } from 'react-hook-form'
-import type { SizeOptionKey } from '@/app/inspirasjon/isbading/sizeSelectorData'
 import type { LucideIcon } from 'lucide-react'
 import type { AddToCartSchema } from '@/db/zod/schemas/AddToCartSchema'
 import { z } from '@/db/zod/zodClient'
 export type AddToCartFormValues = z.infer<typeof AddToCartSchema>
+
+export type SizeOptionKey = 'XS' | 'M' | 'XL'
 
 export type AddToCartButtonProps = {
   isPending: boolean

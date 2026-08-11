@@ -28,7 +28,6 @@ to avoid double-firing paths that already report.
 | --- | --- | --- |
 | Product card quick-buy | `src/components/ProductCard/ProductCard.tsx` | `useCanonicalAddToCart` |
 | Gaveguide grid | `src/app/gaveguide/components/ProductGridCard.tsx` | `useCanonicalAddToCart` |
-| Isbading Comfyrobe | `src/app/inspirasjon/isbading/sections/ComfyrobeQuickBuy.tsx` | `useCanonicalAddToCart` |
 | Empty-cart recommendation | `src/components/cart/EmptyCart/RecommendedItem.tsx` | `useCanonicalAddToCart` |
 | Cart upsell | `src/components/cart/UpsellItem.tsx` | `useCanonicalAddToCart` |
 | NBCC product cards | `src/app/nbcc/components/NbccProductCardActions.tsx` | `useCanonicalAddToCart` + full `ShopifyProduct` from parent |
