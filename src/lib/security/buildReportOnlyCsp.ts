@@ -180,7 +180,6 @@ export function buildReportOnlyCsp(): string {
     `font-src ${joinOrigins(["'self'", 'data:', ...KLARNA_ASSET_ORIGINS])}`,
     "object-src 'none'",
     "base-uri 'self'",
-    "frame-ancestors 'none'",
     `connect-src ${joinOrigins(connectSrc)}`,
     `img-src ${joinOrigins(imgSrc)}`,
     `media-src ${joinOrigins(mediaSrc)}`,

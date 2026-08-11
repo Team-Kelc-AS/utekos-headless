@@ -148,6 +148,20 @@ test('correlates a document request without logging its landing query', async ()
     assert.equal(message.includes('secret-click'), false)
     assert.equal(message.includes('utm_source'), false)
     assert.equal(
+      response.headers.get('content-security-policy'),
+      'frame-ancestors \'self\''
+    )
+    assert.equal(
+      response.headers.get('x-frame-options'),
+      'SAMEORIGIN'
+    )
+    assert.doesNotMatch(
+      response.headers.get(
+        'content-security-policy-report-only'
+      ) ?? '',
+      /frame-ancestors/u
+    )
+    assert.equal(
       response.headers.get(
         'x-middleware-request-x-utekos-edge-request-id'
       ),

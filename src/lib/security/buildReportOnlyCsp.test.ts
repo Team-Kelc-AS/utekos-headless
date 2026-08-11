@@ -7,7 +7,7 @@ test('protects structural directives and permits the consent-aware tag gateways'
 
   assert.match(csp, /object-src 'none'/)
   assert.match(csp, /base-uri 'self'/)
-  assert.match(csp, /frame-ancestors 'none'/)
+  assert.doesNotMatch(csp, /frame-ancestors/)
   assert.match(csp, /connect-src[^;]*https:\/\/js\.klarna\.com/)
   assert.match(csp, /script-src[^;]*https:\/\/js\.klarna\.com/)
   assert.match(csp, /report-uri \/api\/security\/csp-report/)
