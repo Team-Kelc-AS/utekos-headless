@@ -827,7 +827,7 @@ async function readAdInsight(client) {
   }
 }
 
-function readLocalImplementation() {
+export function readLocalImplementation() {
   const sourceScan = scanMicrosoftTrackingSources()
   const allContent = sourceScan.files.map(file => file.content).join('\n')
   const providerFiles = sourceScan.files.filter(file =>
@@ -973,6 +973,7 @@ function walkProjectSourceTree(relativeDirectory, files, seen) {
       continue
     }
 
+    if (/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(entry.name)) continue
     if (!/\.(?:html|[cm]?[jt]sx?)$/.test(entry.name) || seen.has(relativePath)) continue
     seen.add(relativePath)
     const content = fs.readFileSync(absolutePath, 'utf8')

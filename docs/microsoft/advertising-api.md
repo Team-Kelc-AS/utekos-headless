@@ -50,7 +50,9 @@ provider call, and each selected account has a separate audit cache.
 
 Both accounts use UET tag `97247724`. Do not duplicate CanonicalEvent CAPI
 dispatch per account: one deduplicated event goes to the shared tag, while each
-account owns its own `Scope=Account` conversion goals.
+account sees the same three active `Scope=Customer` EventGoals: `47565453`
+(`add_to_cart`), `47565454` (`begin_checkout`) and `47565502` (`purchase`). The
+six superseded `Scope=Account` goals are paused.
 
 ## Read-Only MCP Probes
 

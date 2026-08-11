@@ -1,6 +1,6 @@
 # Deployment And Migration Checklist
 
-Status date: 2026-08-10
+Status date: 2026-08-11
 
 This is the mandatory release checklist for Utekos Headless. Use it
 before every deploy, production mutation, provider change, GTM publish,
@@ -10,7 +10,7 @@ The purpose is simple: no runtime change should reach production before
 its required database, provider, environment, and verification steps are
 known and completed in the correct order.
 
-## Microsoft CanonicalEvent / UET CAPI release 2026-08-10
+## Microsoft CanonicalEvent / UET CAPI release and Customer-scope cutover 2026-08-11
 
 The user explicitly approved the Microsoft provider, GTM, environment and
 production mutations for this release.
@@ -22,16 +22,24 @@ Release evidence:
 | Application | Vercel `dpl_7D6w9RjSZdX6UNyxPZxsSFEaEQ5A`, exact Git SHA `9236fe1197eb6542df5bd18c02859e176acb71d5`, `READY`, production aliases owned |
 | Web-GTM | Published version `141`; immediate rollback `140` |
 | UET | Tag `97247724`, customer/manager `254835341`, active in account contexts `188365141` and `188445594` |
-| Primary account goals | `47539433` add_to_cart, `47565274` begin_checkout, `47565275` purchase |
-| Second account goals | `47565304` add_to_cart, `47565305` begin_checkout, `47565306` purchase |
+| Active Customer goals | `47565453` add_to_cart, `47565454` begin_checkout, `47565502` purchase; visible from both account contexts |
+| Paused legacy account goals | Primary: `47539433`, `47565274`, `47565275`; second: `47565304`, `47565305`, `47565306` |
+| Separate Product goal | `47538621`, renamed `Product Backtrack` in the Microsoft UI; user-observed Product goal, not part of the CanonicalEvent cutover and no browser snippet added |
 | CAPI auth | `MICROSOFT_UET_CAPI_ACCESS_TOKEN` set for Production and Preview; never substitute Ads OAuth |
 | MCP | Local operator contract v1.2, explicit account selector on all seven tools, allowlist and per-account cache |
 
 Both accounts use the same UET tag. CanonicalEvent must dispatch one event to
-the tag, not one event per account. Each account has separate
-`Scope=Account` conversion goals. Add To Cart and Begin Checkout are Unique and
-excluded from bidding; Purchase is All, variable NOK value and included in
-bidding.
+the tag, not one event per account. The three active EventGoals have
+`Scope=Customer` and apply to both account contexts under customer `254835341`.
+The six former `Scope=Account` goals are paused. Add To Cart and Begin Checkout
+are Unique and excluded from bidding; Purchase is All, variable NOK value and
+included in bidding. The cutover used a fail-closed sequence and was read back
+through both account contexts after the provider updates completed.
+
+`Product Backtrack` is a separate Microsoft Product goal. The manual
+`PRODUCT_PURCHASE`/`pid` snippets shown in its UI are implementation guidance,
+not proof of an active Utekos emitter. This release does not add either snippet
+to the app or GTM and does not redirect CanonicalEvent `purchase` to that goal.
 
 Browser verification proved default-denied behavior, no Microsoft request
 before marketing consent, one Microsoft ID Sync after consent, UET library and
