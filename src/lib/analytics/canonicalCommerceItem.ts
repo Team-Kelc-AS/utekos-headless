@@ -38,7 +38,7 @@ export const canonicalCommerceItemSchema = z.strictObject({
   gross_discount: z.number().finite().nonnegative().optional(),
   tax_amount: z.number().finite().nonnegative(),
   tax_rate: z.number().finite().min(0).max(1),
-  taxable: z.boolean(),
+  taxable: z.boolean().default(true),
   price_includes_tax: z.boolean(),
   available_for_sale: z.boolean(),
   currently_not_in_stock: z.boolean(),
