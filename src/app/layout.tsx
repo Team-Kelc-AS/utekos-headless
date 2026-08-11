@@ -23,6 +23,7 @@ import type { TrackingEnvironment } from '@/lib/analytics/pageViewEvent'
 import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
 import { Google_Sans_Flex } from 'next/font/google'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
+import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
 
 const GOOGLE_TAG_MANAGER_ID =
   'GTM-5TWMJQFP'
@@ -172,7 +173,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const storefrontAccessToken =
-    process.env.NEXT_PUBLIC_STOREFRONT_API_ACCESS_TOKEN
+    resolveShopifyCustomerPrivacyPublicToken(process.env)
 
   const assistantRolloutPercent =
     resolveAssistantPreviewRolloutPercent(
