@@ -414,8 +414,10 @@ companion
 
 ### Required env for core storefront E2E
 
-- `SHOPIFY_STORE_DOMAIN`
-- `SHOPIFY_STOREFRONT_ACCESS_TOKEN`
+- `VERCEL_SHOPIFY_STORE_DOMAIN` and
+  `VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN` from the connected Shopify
+  Marketplace resource, or the server-only fallbacks `STORE_DOMAIN` and
+  `STOREFRONT_API_ACCESS_TOKEN` for local development
 
 These are pre-provisioned in the Cloud Agent environment. Pull
 additional secrets with `vercel env pull .env.local` if the

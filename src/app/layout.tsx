@@ -172,8 +172,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const storefrontAccessToken =
-    process.env
-      .SHOPIFY_STOREFRONT_ACCESS_TOKEN
+    process.env.NEXT_PUBLIC_STOREFRONT_API_ACCESS_TOKEN
 
   const assistantRolloutPercent =
     resolveAssistantPreviewRolloutPercent(

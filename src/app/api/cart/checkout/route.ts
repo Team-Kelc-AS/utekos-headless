@@ -33,7 +33,7 @@ export async function GET(
     cart ?
       resolveShopifyCheckoutUrl(
         cart.checkoutUrl,
-        process.env.SHOPIFY_STORE_DOMAIN
+        process.env.STORE_DOMAIN
       )
     : null
 

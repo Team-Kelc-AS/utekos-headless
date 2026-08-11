@@ -145,7 +145,7 @@ export function TailwindSection() {
           </p>
           <p className='mt-6 text-base/7 text-foreground'>
             Vårt første hybridiske produkt. Kombinasjonen av
-            CloudWave™ og tekstil med Luméa™-skallet gir en
+            CloudWeave™ og tekstil med Luméa™-skallet gir en
             sofistikert finish og fungerer samtidig som et
             beskyttende skjold, mens den innovative
             CloudWeave™-isolasjonen sikrer pålitelig varme under

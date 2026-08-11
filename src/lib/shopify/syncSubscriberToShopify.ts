@@ -28,7 +28,7 @@ export async function syncSubscriberToShopify(email: string) {
 
   try {
     const response = await fetch(
-      `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2026-04/graphql.json`,
+      `https://${process.env.STORE_DOMAIN}/admin/api/2026-04/graphql.json`,
       {
         method: 'POST',
         headers: {

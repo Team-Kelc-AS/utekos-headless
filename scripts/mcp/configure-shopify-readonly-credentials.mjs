@@ -37,8 +37,9 @@ const existingApp = readEnv(appEnvPath)
 const storeDomain = String(
   input.storeDomain ??
   existingMcp.SHOPIFY_CHATGPT_STORE_DOMAIN ??
-  existingApp.SHOPIFY_STORE_DOMAIN ??
-  existingMcp.SHOPIFY_STORE_DOMAIN ??
+  existingApp.STORE_DOMAIN ??
+  existingApp.NEXT_PUBLIC_STORE_DOMAIN ??
+  existingMcp.STORE_DOMAIN ??
   ''
 ).trim().replace(/^https?:\/\//, '').replace(/\/$/, '')
 
