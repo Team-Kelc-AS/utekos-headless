@@ -7,7 +7,7 @@
  * @export KlarnaTopStripPromotionBadge
  * @docs-index /src/components/klarna/agents.txt
  * @data-key top-strip-promotion-badge
- * @locale no-NO
+ * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
 // Path: src/components/klarna/components/KlarnaTopStripPromotionBadge.tsx
@@ -16,7 +16,7 @@ export function KlarnaTopStripPromotionBadge() {
   return (
     <klarna-placement
       data-key='top-strip-promotion-badge'
-      data-locale='no-NO'
+      data-locale='nb-NO'
       data-theme='dark'
       data-purchase-amount=''
     ></klarna-placement>
@@ -28,7 +28,7 @@ export function KlarnaTopStripPromotionBadge() {
 /* ```html
    <klarna-placement
         data-key="top-strip-promotion-badge"
-        data-locale="no-NO"
+        data-locale="nb-NO"
     data-purchase-amount=""
       ></klarna-placement>
       ``` */
@@ -37,7 +37,7 @@ export function KlarnaTopStripPromotionBadge() {
 /* ```html
   <klarna-placement
     data-key="top-strip-promotion-badge"
-    data-locale="no-NO"
+    data-locale="nb-NO"
     data-purchase-amount=""
     data-theme="dark"
   ></klarna-placement>

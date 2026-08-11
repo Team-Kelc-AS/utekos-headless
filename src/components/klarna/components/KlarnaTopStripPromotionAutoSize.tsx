@@ -7,7 +7,7 @@
  * @export KlarnaTopStripPromotionAutoSize
  * @docs-index /src/components/klarna/agents.txt
  * @data-key top-strip-promotion-auto-size
- * @locale no-NO
+ * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
 // Path: src/components/klarna/components/KlarnaTopStripPromotionAutoSize.tsx
@@ -21,7 +21,7 @@ export function KlarnaTopStripPromotionAutoSize() {
   return (
     <klarna-placement
       data-key='top-strip-promotion-auto-size'
-      data-locale='no-NO'
+      data-locale='nb-NO'
       data-theme='dark'
     ></klarna-placement>
   )
@@ -32,7 +32,7 @@ export function KlarnaTopStripPromotionAutoSize() {
 /* ```html
 <klarna-placement
 data-key="top-strip-promotion-auto-size"
-  data-locale='no-NO'
+  data-locale='nb-NO'
 ></klarna-placement>
 ``` */
 
@@ -40,7 +40,7 @@ data-key="top-strip-promotion-auto-size"
 /* ```html
 <klarna-placement
   data-key='top-strip-promotion-auto-size'
-  data-locale='no-NO'
+  data-locale='nb-NO'
   data-theme='dark'
 ></klarna-placement>
 ``` */

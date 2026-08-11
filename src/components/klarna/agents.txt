@@ -3,7 +3,7 @@
 @docs_index: /src/components/klarna/llms.md
 @parent_index: /docs/agents.txt
 @doc-root: src/components/klarna
-@locale: no-NO
+@locale: nb-NO
 @version_target: klarna-payments-api-v1
 @ai_directive: ZERO-ASSUMPTION — start med llms.md. Valider payloads med Zod. Hent live API-docs via Context7 ved tvil.
 

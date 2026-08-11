@@ -40,7 +40,7 @@ export function KlarnaOnSiteMessagingScript() {
       id={KLARNA_ON_SITE_MESSAGING_SCRIPT_ID}
       src={KLARNA_ON_SITE_MESSAGING_SCRIPT_URL}
       strategy='afterInteractive'
-      data-locale='no-NO'
+      data-locale='nb-NO'
       data-client-id={config.client_id}
       data-environment={config.environment}
       onError={(error: Error) => {

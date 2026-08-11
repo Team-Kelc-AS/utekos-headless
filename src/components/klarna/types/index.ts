@@ -32,7 +32,7 @@ export type KlarnaPlacementMessagePrefix = 'Or' | 'or'
 
 export type KlarnaPlacementData = {
   key: KlarnaPlacementKey | undefined
-  locale: string | 'no-NO' | undefined
+  locale: string | 'nb-NO' | undefined
   purchaseAmount: number | string | undefined
 }
 

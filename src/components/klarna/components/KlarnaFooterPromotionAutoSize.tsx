@@ -7,7 +7,7 @@
  * @export KlarnaFooterPromotionAutoSize
  * @docs-index /src/components/klarna/agents.txt
  * @data-key footer-promotion-auto-size
- * @locale no-NO
+ * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
 // Path: src/components/klarna/components/KlarnaFooterPromotionAutoSize.tsx
@@ -20,7 +20,7 @@ export function KlarnaFooterPromotionAutoSize() {
   return (
     <klarna-placement
       data-key='footer-promotion-auto-size'
-      data-locale='no-NO'
+      data-locale='nb-NO'
       data-theme='dark'
     ></klarna-placement>
   )
@@ -31,7 +31,7 @@ export function KlarnaFooterPromotionAutoSize() {
 /* ```html
 <klarna-placement
   data-key='footer-promotion-auto-size'
-  data-locale='no-NO'
+  data-locale='nb-NO'
 ></klarna-placement>
 ``` */
 
@@ -39,7 +39,7 @@ export function KlarnaFooterPromotionAutoSize() {
 /* ```html
 <klarna-placement
   data-key='footer-promotion-auto-size'
-  data-locale='no-NO'
+  data-locale='nb-NO'
   data-theme='dark'
 ></klarna-placement>
 ``` */
