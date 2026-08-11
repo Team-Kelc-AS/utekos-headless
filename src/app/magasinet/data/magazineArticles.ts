@@ -169,7 +169,7 @@ export const rawMagazineArticles = [
         items: [
           {
             title: 'Syntetisk isolasjon',
-            text: 'CloudWave™ Insulation gir luftig varme og bedre trygghet når fuktighet er en del av bildet.',
+            text: 'CloudWeave™ Insulation gir luftig varme og bedre trygghet når fuktighet er en del av bildet.',
             icon: 'layers'
           },
           {

@@ -135,8 +135,10 @@ etter installasjon.
 ### Formål
 
 - Koble riktig Shopify-butikk til riktig Vercel-prosjekt.
-- Sikre at storefront-runtime fortsatt bruker `SHOPIFY_STORE_DOMAIN` og
-  `SHOPIFY_STOREFRONT_ACCESS_TOKEN`.
+- Sikre at storefront-runtime bruker Marketplace-ressursens
+  `VERCEL_SHOPIFY_STORE_DOMAIN` og
+  `VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN`, med `STORE_DOMAIN` og
+  `STOREFRONT_API_ACCESS_TOKEN` som server-only lokal fallback.
 - Holde Admin GraphQL-token, ordretilgang, webhooks, Supabase Vault og
   historikkimport som separate gates.
 - Unngå at marketplace-installasjonen skjuler nye writes, katalogmutasjoner
@@ -166,8 +168,10 @@ aktiv:
    oppdatere lokale utviklingsverdier. Eksisterende `.env.local` skal ikke
    overskrives blindt.
 3. Sjekk at produksjon har:
-   - `SHOPIFY_STORE_DOMAIN`
-   - `SHOPIFY_STOREFRONT_ACCESS_TOKEN`
+   - `VERCEL_SHOPIFY_STORE_DOMAIN`
+   - `VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN`
+   - `STORE_DOMAIN` og `STOREFRONT_API_ACCESS_TOKEN` som eksplisitte
+     fallback-verdier dersom Marketplace-ressursen ikke er tilgjengelig.
    - `SHOPIFY_ADMIN_API_TOKEN` hvis Admin GraphQL, katalogsync, Customer Match,
      Klarna order bridge eller Shopify historikk-backfill skal brukes.
    - `SHOPIFY_WEBHOOK_SECRET` hvis Shopify webhooks skal valideres.

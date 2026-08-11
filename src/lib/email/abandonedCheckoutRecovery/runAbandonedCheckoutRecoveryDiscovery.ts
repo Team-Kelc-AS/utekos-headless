@@ -138,7 +138,7 @@ function classifyFailure(
       'SHOPIFY_ADMIN_API_TOKEN'
     )
     || message.includes(
-      'SHOPIFY_STORE_DOMAIN'
+      'STORE_DOMAIN'
     )
   ) {
     return 'shopify_auth_failed'

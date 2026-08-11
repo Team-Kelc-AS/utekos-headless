@@ -1,6 +1,6 @@
 const SHOPIFY_ADMIN_API_TOKEN =
   process.env.SHOPIFY_ADMIN_API_TOKEN
-const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN
+const STORE_DOMAIN = process.env.STORE_DOMAIN
 export const SHOPIFY_ADMIN_API_VERSION = '2026-04'
 
 type ShopifyAdminGraphqlError = { message: string }
@@ -11,18 +11,18 @@ type ShopifyAdminGraphqlResponse<TData> = {
 }
 
 export function getShopifyAdminGraphqlUrl(): string {
-  if (!SHOPIFY_STORE_DOMAIN) {
-    throw new Error('Missing SHOPIFY_STORE_DOMAIN')
+  if (!STORE_DOMAIN) {
+    throw new Error('Missing STORE_DOMAIN')
   }
 
-  return `https://${SHOPIFY_STORE_DOMAIN}/admin/api/${SHOPIFY_ADMIN_API_VERSION}/graphql.json`
+  return `https://${STORE_DOMAIN}/admin/api/${SHOPIFY_ADMIN_API_VERSION}/graphql.json`
 }
 
 export async function shopifyAdminGraphql<TData>(
   query: string,
   variables?: Record<string, unknown>
 ): Promise<TData> {
-  if (!SHOPIFY_ADMIN_API_TOKEN || !SHOPIFY_STORE_DOMAIN) {
+  if (!SHOPIFY_ADMIN_API_TOKEN || !STORE_DOMAIN) {
     throw new Error(
       'Shopify Admin API credentials are not configured'
     )

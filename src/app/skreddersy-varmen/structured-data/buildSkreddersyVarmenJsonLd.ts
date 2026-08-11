@@ -20,10 +20,9 @@ export function buildSkreddersyVarmenJsonLd(
         '@type': 'ItemPage',
         '@id': `${PAGE_URL}#webpage`,
         'url': PAGE_URL,
-        'name':
-          'Utekos TechDown™ – skreddersy varmen ute | Utekos',
+        'name': 'Utekos TechDown™ – Skreddersy varmen | Utekos',
         'description':
-          'Oppdag Utekos TechDown™ – et varmt og allsidig 3-i-1-plagg for terrasse, hytte, båt og bobil. Velg størrelse og skreddersy varmen ute.',
+          'Oppdag Utekos TechDown™ – tilpass passform og ventilasjon med unik 3-i-1-funksjonalitet. Skapt for hytte, camping, båt, bobil og terrasseliv.',
         'inLanguage': 'nb-NO',
         'dateModified': LANDING_LAST_UPDATED,
         'isPartOf': {

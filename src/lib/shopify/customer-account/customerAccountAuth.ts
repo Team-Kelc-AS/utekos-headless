@@ -65,7 +65,7 @@ export type CustomerAccountTokenResponse = z.infer<
 
 export function getCustomerAccountConfig(): CustomerAccountConfig {
   return customerAccountConfigSchema.parse({
-    storeDomain: process.env.SHOPIFY_STORE_DOMAIN,
+    storeDomain: process.env.STORE_DOMAIN,
     customerAccountUrl:
       process.env.SHOPIFY_CUSTOMER_ACCOUNT_URL ??
       DEFAULT_CUSTOMER_ACCOUNT_URL,

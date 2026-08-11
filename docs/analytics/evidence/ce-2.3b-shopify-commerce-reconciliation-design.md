@@ -268,7 +268,7 @@ Client: `shopifyAdminGraphql` in
 `src/lib/shopify/shopifyAdminGraphql.ts`
 (`API_VERSION = '2026-04'`).
 
-Auth env: `SHOPIFY_ADMIN_API_TOKEN`, `SHOPIFY_STORE_DOMAIN`.
+Auth env: `SHOPIFY_ADMIN_API_TOKEN`, `STORE_DOMAIN`.
 
 Required scopes (from schema validation): at least `read_orders`
 (and related read scopes returned by validator:

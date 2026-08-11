@@ -27,7 +27,7 @@ export function ProductCareTechDown() {
           TechDown™ er laget for ukomplisert bruk over tid.
           Skånsom vask, mildt vaskemiddel og rolig lufttørking
           bevarer både Luméa™-ytterstoffet og
-          CloudWave™-isolasjonens spenst.
+          CloudWeave™-isolasjonens spenst.
         </p>
       </div>
 

@@ -5,11 +5,11 @@ import { getShopifyAdminConfig } from './getShopifyAdminConfig'
 
 test('keeps Shopify Admin credentials optional at module import', async () => {
   const originalToken = process.env.SHOPIFY_ADMIN_API_TOKEN
-  const originalDomain = process.env.SHOPIFY_STORE_DOMAIN
+  const originalDomain = process.env.STORE_DOMAIN
 
   try {
     delete process.env.SHOPIFY_ADMIN_API_TOKEN
-    delete process.env.SHOPIFY_STORE_DOMAIN
+    delete process.env.STORE_DOMAIN
 
     await assert.doesNotReject(() => import('./admin'))
   } finally {
@@ -20,9 +20,9 @@ test('keeps Shopify Admin credentials optional at module import', async () => {
     }
 
     if (originalDomain === undefined) {
-      delete process.env.SHOPIFY_STORE_DOMAIN
+      delete process.env.STORE_DOMAIN
     } else {
-      process.env.SHOPIFY_STORE_DOMAIN = originalDomain
+      process.env.STORE_DOMAIN = originalDomain
     }
   }
 })
@@ -38,7 +38,7 @@ test('returns request configuration when both credentials exist', () => {
   assert.deepEqual(
     getShopifyAdminConfig({
       SHOPIFY_ADMIN_API_TOKEN: 'test-token',
-      SHOPIFY_STORE_DOMAIN: 'test-shop.myshopify.com'
+      STORE_DOMAIN: 'test-shop.myshopify.com'
     }),
     {
       accessToken: 'test-token',
