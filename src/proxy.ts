@@ -211,16 +211,21 @@ function continueDocumentRequest(
   }
 
   return withLandingEdgeCorrelation(
-    withReportOnlyCsp(
+    withSecurityHeaders(
       NextResponse.next({ request: { headers: requestHeaders } })
     ),
     correlation
   )
 }
 
-function withReportOnlyCsp<T extends NextResponse>(
+function withSecurityHeaders<T extends NextResponse>(
   response: T
 ): T {
+  response.headers.set(
+    'Content-Security-Policy',
+    'frame-ancestors \'self\''
+  )
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
   response.headers.set(
     'Content-Security-Policy-Report-Only',
     buildReportOnlyCsp()
@@ -234,7 +239,7 @@ function rewriteKlarnaFeedRoot(
   const feedUrl = request.nextUrl.clone()
   feedUrl.pathname = KLARNA_FEED_PATH
 
-  return withReportOnlyCsp(NextResponse.rewrite(feedUrl))
+  return withSecurityHeaders(NextResponse.rewrite(feedUrl))
 }
 
 export async function proxy(request: NextRequest) {
@@ -243,7 +248,7 @@ export async function proxy(request: NextRequest) {
   const hostname = request.nextUrl.hostname
 
   if (isBlockedUserAgent(userAgent)) {
-    return withReportOnlyCsp(
+    return withSecurityHeaders(
       new NextResponse(null, {
         status: 403,
         statusText: 'Forbidden'
@@ -262,7 +267,7 @@ export async function proxy(request: NextRequest) {
       return continueDocumentRequest(request, correlation)
     }
 
-    return withReportOnlyCsp(
+    return withSecurityHeaders(
       new NextResponse(null, {
         status: 404,
         statusText: 'Not Found'
@@ -279,7 +284,7 @@ export async function proxy(request: NextRequest) {
     redirectUrl.search = request.nextUrl.search
 
     return withLandingEdgeCorrelation(
-      withReportOnlyCsp(NextResponse.redirect(redirectUrl, 307)),
+      withSecurityHeaders(NextResponse.redirect(redirectUrl, 307)),
       correlation
     )
   }
@@ -303,7 +308,7 @@ export async function proxy(request: NextRequest) {
     upgradeUrl.search = request.nextUrl.search
 
     return withLandingEdgeCorrelation(
-      withReportOnlyCsp(NextResponse.redirect(upgradeUrl)),
+      withSecurityHeaders(NextResponse.redirect(upgradeUrl)),
       correlation
     )
   }
