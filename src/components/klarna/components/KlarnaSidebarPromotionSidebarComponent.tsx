@@ -7,7 +7,7 @@
  * @export KlarnaSidebarPromotionAutoSize
  * @docs-index /src/components/klarna/agents.txt
  * @data-key sidebar-promotion-auto-size
- * @locale no-NO
+ * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
 // Path: src/components/klarna/components/KlarnaSidebarPromotionSidebarComponent.tsx
@@ -16,7 +16,7 @@ export function KlarnaSidebarPromotionAutoSize() {
   return (
     <klarna-placement
       data-key='sidebar-promotion-auto-size'
-      data-locale='no-NO'
+      data-locale='nb-NO'
       data-theme='dark'
     ></klarna-placement>
   )
@@ -27,7 +27,7 @@ export function KlarnaSidebarPromotionAutoSize() {
 /* ```html
 <klarna-placement
   data-key='sidebar-promotion-auto-size'
-  data-locale='no-NO'
+  data-locale='nb-NO'
 ></klarna-placement>
 ``` */
 
@@ -35,7 +35,7 @@ export function KlarnaSidebarPromotionAutoSize() {
 /* ```html
 <klarna-placement
   data-key='sidebar-promotion-auto-size'
-  data-locale='no-NO'
+  data-locale='nb-NO'
   data-theme='dark'
 ></klarna-placement>
 ``` */

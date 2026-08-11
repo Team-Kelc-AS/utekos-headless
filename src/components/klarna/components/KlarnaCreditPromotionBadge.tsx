@@ -7,7 +7,7 @@
  * @export KlarnaCreditPromotionBadge
  * @docs-index /src/components/klarna/agents.txt
  * @data-key credit-promotion-badge
- * @locale no-NO
+ * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
 // Path: src/components/klarna/components/KlarnaCreditPromotionBadge.tsx
@@ -21,7 +21,7 @@ export function KlarnaCreditPromotionBadge() {
   return (
     <klarna-placement
       data-key='credit-promotion-badge'
-      data-locale='no-NO'
+      data-locale='nb-NO'
       data-purchase-amount=''
     ></klarna-placement>
   )
@@ -32,7 +32,7 @@ export function KlarnaCreditPromotionBadge() {
 /* ```html
  <klarna-placement
       data-key="credit-promotion-badge"
-      data-locale="no-NO"
+      data-locale="nb-NO"
   data-purchase-amount=""
     ></klarna-placement>
     ``` */
@@ -41,7 +41,7 @@ export function KlarnaCreditPromotionBadge() {
 /* ```html
 <klarna-placement
   data-key="credit-promotion-badge"
-  data-locale="no-NO"
+  data-locale="nb-NO"
   data-purchase-amount=""
   data-theme="dark"
 ></klarna-placement>

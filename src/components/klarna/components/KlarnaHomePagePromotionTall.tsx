@@ -7,7 +7,7 @@
  * @export KlarnaHomePagePromotionTall
  * @docs-index /src/components/klarna/agents.txt
  * @data-key homepage-promotion-tall
- * @locale no-NO
+ * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
 // Path: src/components/klarna/components/KlarnaHomePagePromotionTall.tsx
@@ -21,7 +21,7 @@ export function KlarnaHomePagePromotionTall() {
   return (
     <klarna-placement
       data-key='homepage-promotion-tall'
-      data-locale='no-NO'
+      data-locale='nb-NO'
       data-theme='dark'
     ></klarna-placement>
   )
@@ -32,7 +32,7 @@ export function KlarnaHomePagePromotionTall() {
 /* ```html  
 <klarna-placement
 data-key='homepage-promotion-tall'
-data-locale='no-NO'
+data-locale='nb-NO'
 ></klarna-placement>
 ``` */
 
@@ -40,7 +40,7 @@ data-locale='no-NO'
 /* ```html
 <klarna-placement
   data-key='homepage-promotion-tall'
-  data-locale='no-NO'
+  data-locale='nb-NO'
   data-theme='dark'
 ></klarna-placement>
 ``` */

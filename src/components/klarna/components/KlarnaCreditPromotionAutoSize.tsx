@@ -7,7 +7,7 @@
  * @export KlarnaCreditPromotionAutoSize
  * @docs-index /src/components/klarna/agents.txt
  * @data-key credit-promotion-auto-size
- * @locale no-NO
+ * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
 // Path: src/components/klarna/components/KlarnaCreditPromotionAutoSize.tsx
@@ -35,7 +35,7 @@ export function KlarnaCreditPromotionAutoSize({
         .filter(Boolean)
         .join(' ')}
       data-key='credit-promotion-auto-size'
-      data-locale='no-NO'
+      data-locale='nb-NO'
       data-theme={theme}
       data-purchase-amount={purchaseAmount}
     ></klarna-placement>
@@ -47,7 +47,7 @@ export function KlarnaCreditPromotionAutoSize({
 /* ```html
  <klarna-placement
       data-key="credit-promotion-auto-size"
-      data-locale="no-NO"
+      data-locale="nb-NO"
   data-purchase-amount=""
     ></klarna-placement>
     ``` */

@@ -7,7 +7,7 @@
  * @export KlarnaInfoPagePlacement
  * @docs-index /src/components/klarna/agents.txt
  * @data-key info-page
- * @locale no-NO
+ * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
 // Path: src/components/klarna/components/KlarnaInfoPagePlacementComponent.tsx
@@ -21,7 +21,7 @@ export function KlarnaInfoPagePlacement() {
   return (  
     <klarna-placement
       data-key='info-page'
-      data-locale='no-NO'
+      data-locale='nb-NO'
     ></klarna-placement>
   )
 }
@@ -31,7 +31,7 @@ export function KlarnaInfoPagePlacement() {
 /* ```html
 <klarna-placement
   data-key='info-page'
-  data-locale='no-NO'
+  data-locale='nb-NO'
 ></klarna-placement>
 ``` */
 
@@ -39,7 +39,7 @@ export function KlarnaInfoPagePlacement() {
 /* ```html
 <klarna-placement
   data-key='info-page'
-  data-locale='no-NO'
+  data-locale='nb-NO'
   data-theme='dark'
 ></klarna-placement>
 ``` */

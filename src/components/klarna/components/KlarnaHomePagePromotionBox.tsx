@@ -7,7 +7,7 @@
  * @export KlarnaHomePagePromotionBox
  * @docs-index /src/components/klarna/agents.txt
  * @data-key homepage-promotion-box
- * @locale no-NO
+ * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
 // Path: src/components/klarna/components/KlarnaHomePagePromotionBox.tsx
@@ -21,7 +21,7 @@ export function KlarnaHomePagePromotionBox() {
   return (
     <klarna-placement
       data-key='homepage-promotion-box'
-      data-locale='no-NO'
+      data-locale='nb-NO'
       data-theme='dark'
     ></klarna-placement>
   )
