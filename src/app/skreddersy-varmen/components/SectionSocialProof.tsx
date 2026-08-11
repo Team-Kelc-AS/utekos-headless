@@ -83,7 +83,7 @@ export function SectionSocialProof() {
               variants={revealItem}
             >
               Disse anmeldelsene er eksplisitt knyttet til Utekos
-              Utekos TechDown™ og er de samme som brukes i sidens
+              TechDown™ og er de samme som brukes i sidens
               aggregerte rating.
             </m.p>
           </m.header>
