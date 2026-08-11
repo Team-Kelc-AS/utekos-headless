@@ -1,6 +1,6 @@
 # Microsoft Ads: CanonicalEvent, UET CAPI og MCP
 
-Statusdato: 2026-08-10.
+Statusdato: 2026-08-11.
 
 ## Dokumentasjonsstatus
 
@@ -29,24 +29,30 @@ bruk i budalgoritmen; disse grensene er eksplisitt oppført nedenfor.
 - UET CAPI autentiseres med UET-taggens ApiToken. Microsoft Ads OAuth-tokenet
   brukes bare mot Advertising API/MCP og må aldri brukes som CAPI-token.
 
-### Konverteringsmål per annonsekonto
+### Customer-scoped CanonicalEvent-mål
 
-Målene har `Scope=Account`. Hver konto trenger derfor egne mål selv om begge
-bruker samme UET-tag og samme dedupliserte eventstrøm.
+De tre aktive EventGoals har `Scope=Customer` og gjelder begge annonsekontoene
+under customer `254835341`. Begge kontoer bruker samme UET-tag og samme
+dedupliserte eventstrøm.
 
-| Konto | Goal ID | Action | Count | Budgivning | Status |
-| --- | ---: | --- | --- | --- | --- |
-| `188365141` | `47539433` | `add_to_cart` | Unique | Ekskludert | Active |
-| `188365141` | `47565274` | `begin_checkout` | Unique | Ekskludert | Active |
-| `188365141` | `47565275` | `purchase` | All | Inkludert | Active |
-| `188445594` | `47565304` | `add_to_cart` | Unique | Ekskludert | Active |
-| `188445594` | `47565305` | `begin_checkout` | Unique | Ekskludert | Active |
-| `188445594` | `47565306` | `purchase` | All | Inkludert | Active |
+| Goal ID | Action | Scope | Count | Budgivning | Status |
+| ---: | --- | --- | --- | --- | --- |
+| `47565453` | `add_to_cart` | Customer | Unique | Ekskludert | Active |
+| `47565454` | `begin_checkout` | Customer | Unique | Ekskludert | Active |
+| `47565502` | `purchase` | Customer | All | Inkludert | Active |
 
-De tre nye målene ble opprettet med de påkrevde kategoriene `AddToCart`,
-`BeginCheckout` og `Purchase`, og lest tilbake uten `PartialErrors`. Første
-opprettelsesforsøk uten `GoalCategory` ble avvist atomisk med
-`InvalidGoalCategory`; ingen delvise mål ble opprettet.
+De seks tidligere kontoavgrensede målene er pauset: `47539433`, `47565274` og
+`47565275` i konto `188365141`, samt `47565304`, `47565305` og `47565306` i
+konto `188445594`. Customer-målene ble lest tilbake som aktive fra begge
+account contexts etter cutover.
+
+Mål `47538621` er ifølge operatørens Microsoft UI av typen Product og heter nå
+`Product Backtrack`. Dette er et separat produktmål, ikke CanonicalEvent-målet
+`purchase` (`47565502`). UI-koden med `PRODUCT_PURCHASE`, `ecomm_prodid`,
+`ecomm_pagetype=PURCHASE` og valgfritt `pid` er dokumentert
+installasjonsveiledning; den er ikke implementert i appen eller GTM som del av
+denne endringen. Product-målets nye navn og UI-status er operatørobservasjon,
+ikke Campaign Management-API-verifikasjon.
 
 `NoRecentConversions` etter opprettelse er forventet og beviser ikke feil.
 Providerens senere `TrackingStatus`, Reporting og kampanjedata må vise reelle
@@ -67,14 +73,15 @@ flowchart LR
   I --> J["POST capi.uet.microsoft.com/v1/97247724/events"]
   E --> K["Microsoft dedupliserer browser og server"]
   J --> K
-  K --> L["Kontoavgrenset EventGoal matcher action"]
+  K --> L["Customer-scoped EventGoal matcher action"]
   L --> M["Reporting og conversion columns"]
   M --> N["Purchase kan brukes av automatisert budgivning"]
 ```
 
 Én CanonicalEvent sendes én gang til tag `97247724`. Eventet skal ikke sendes
 på nytt per annonsekonto; en ekstra CAPI-sending til samme tag kan doble signalet.
-Kontoenes egne EventGoals avgjør hvilken konto som kan telle handlingen.
+Customer-scoped EventGoals gjør de samme CanonicalEvent-handlingene tilgjengelige
+i begge annonsekontoene under samme customer.
 
 GTM-trigger `122` dekker de sju browser-eventene `view_item_list`,
 `select_item`, `view_item`, `add_to_cart`, `begin_checkout`, `search` og
@@ -128,8 +135,9 @@ eller `ph`.
 9. Øvre trakt-mål kunne påvirke salgsbudgivning. Add To Cart og Begin Checkout
    er sekundære (`ExcludeFromBidding=true`); purchase er primært og teller alle
    salg med variabel NOK-verdi.
-10. Den andre annonsekontoen manglet kontoavgrensede mål og kunne derfor ikke
-    telle samme UET/CAPI-signal. Tre egne mål er nå aktive.
+10. Dupliserte kontoavgrensede mål ga tungvint administrasjon og navnkonflikter.
+    Tre Customer-scoped mål er nå aktive for begge kontoer; de seks gamle er
+    pauset.
 11. Utekos MCP var låst til én konto. Kontrakt v1.2 har et valgfritt,
     digits-only `accountId` på alle sju verktøy, eksplisitt allowlist og separat
     audit-cache per konto.
@@ -140,8 +148,10 @@ eller `ph`.
    Campaign Management-kall.
 2. Bruk én felles UET-tag/eventstrøm når kontoene ligger under samme customer
    og samme tag skal måle nettstedet. Ikke dupliser CAPI-kall per konto.
-3. Opprett kontoavgrensede EventGoals i hver annonsekonto med påkrevd
-   `GoalCategory`, eksakt action-navn og UET-tag-ID.
+3. Opprett EventGoals én gang med `Scope=Customer`, påkrevd `GoalCategory`,
+   eksakt action-navn og UET-tag-ID. Scope kan ikke endres på eksisterende mål;
+   opprett Customer-målene og paus de gamle Account-målene i en kontrollert
+   cutover.
 4. Bruk `Unique` og `ExcludeFromBidding=true` for diagnostiske Add To Cart og
    Begin Checkout. Bruk `All`, variabel NOK-verdi og
    `ExcludeFromBidding=false` for purchase.
@@ -208,7 +218,8 @@ Verifisert:
 - browser `add_to_cart` med korrekt action, `event_id`, NOK-verdi og produkt-ID;
 - CAPI `page_view` HTTP 200 med `eventsReceived=1` i Supabase;
 - UET-tag, auto-tagging og kontoaksess for begge kontoer;
-- alle seks aktive CanonicalEvent-mål lest tilbake fra riktig account context;
+- tre aktive Customer-scoped CanonicalEvent-mål og seks pausede legacy-mål lest
+  tilbake fra begge account contexts;
 - Vercel `READY`-commit og GTM v141.
 
 Ikke endelig verifisert:
