@@ -966,6 +966,34 @@ documented incident reason, and immediate reconciliation back into `main`.
 GitHub and Vercel must never be allowed to represent different production
 source states.
 
+### Required post-merge worktree cleanup
+
+Worktree and branch cleanup is the final release gate after merge and any
+required production verification:
+
+1. Refresh `origin/main`, list registered worktrees, and inspect each candidate
+   with `git status --short --untracked-files=all`.
+2. A worktree is removable only when it is clean, contains no unique ignored
+   artifact needed by the task, and the command
+   `git merge-base --is-ancestor <HEAD> origin/main` succeeds.
+3. Remove each verified candidate with `git worktree remove <path>`. Never use
+   `--force` and never manually delete a dirty worktree.
+4. Leave dirty worktrees untouched. Record only their path, branch, and a short
+   classification of the contained work so they can be reconciled separately.
+5. Review prunable entries, then run `git worktree prune` to remove stale Git
+   registrations whose directories are already gone.
+6. Delete a local merged feature branch only after its worktree has been
+   removed. Use the non-forcing `git branch -d <branch>` safety check. Remote
+   branch deletion is a separate GitHub mutation and is not implied.
+7. Keep the primary checkout clean and fast-forwarded to current `origin/main`.
+   If it is dirty, preserve its unique work on a clearly named branch before
+   switching it; never reset, clean, or stash it to manufacture a clean state.
+
+Do not treat a branch name, a successful PR, or a missing directory as proof
+that cleanup is safe. The clean-worktree and merged-ancestry checks are both
+required. A completed release must not leave a clean merged worktree behind
+without a documented reason.
+
 ### Efficient merge gate
 
 Before waiting on any GitHub check, read branch protection and active

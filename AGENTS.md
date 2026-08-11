@@ -205,6 +205,26 @@ Code and architecture rules:
 - Do not hand-edit generated MCP files such as `mcp.json`,
   `.vscode/mcp.json`, or `.cursor/mcp.json`.
 
+### Git worktree lifecycle
+
+- Treat the primary checkout as a clean, current `main` reference. Do task
+  work in a dedicated worktree created from freshly fetched `origin/main`.
+- Worktree cleanup is part of task completion. After the branch is merged and
+  any required production verification is complete, confirm that the worktree
+  is clean, contains no unique untracked or ignored artifacts, and that its
+  `HEAD` is an ancestor of `origin/main`; then remove it with
+  `git worktree remove <path>`.
+- Never force-remove or manually delete a dirty worktree. Inventory its changed
+  and untracked paths, preserve the work on its existing branch, and report it
+  as unresolved until it is deliberately reconciled.
+- Run `git worktree prune` only after reviewing the prunable registrations.
+  Delete a local feature branch only after its worktree has been removed and
+  Git proves it is merged. Remote branch deletion is a separate external write
+  and requires explicit scope.
+- A task is not operationally complete while it leaves behind a clean, merged
+  worktree without a documented reason. Do not allow completed `/tmp`
+  worktrees or stale worktree metadata to accumulate.
+
 Verification gates:
 
 - Any change that touches a Shopify API request path or a user action whose
