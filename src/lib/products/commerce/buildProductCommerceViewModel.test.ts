@@ -111,8 +111,25 @@ test('builds the landing graph as one ItemPage and one complete ProductGroup', (
   const productGroup = graph.find(
     node => node['@type'] === 'ProductGroup'
   )
+  const itemPage = graph.find(node => node['@type'] === 'ItemPage')
 
   assert.equal(graph.length, 3)
+  assert.deepEqual(itemPage, {
+    '@type': 'ItemPage',
+    '@id': 'https://utekos.no/skreddersy-varmen#webpage',
+    'url': 'https://utekos.no/skreddersy-varmen',
+    'name': 'Utekos TechDown™ | Skreddersy varmen',
+    'description':
+      'Opplev kompromissløs komfort og overlegen allsidighet. Tilpass lengde, reguler ventilasjon og skreddersy passform. Juster, form og nyt.',
+    'inLanguage': 'nb-NO',
+    'dateModified': '2026-08-12',
+    'isPartOf': { '@id': 'https://utekos.no/#website' },
+    'publisher': { '@id': 'https://utekos.no/#organization' },
+    'breadcrumb': {
+      '@id': 'https://utekos.no/skreddersy-varmen#breadcrumb'
+    },
+    'mainEntity': { '@id': commerce.productGroupUrl }
+  })
   assert.equal(
     graph.filter(node => node['@type'] === 'ProductGroup').length,
     1
