@@ -44,7 +44,7 @@ const content = {
   },
   wet: {
     label: 'Fuktig klima',
-    title: 'Isolerer også når forholdene blir fuktige',
+    title: 'Bevarer spenst og loft',
     desc: 'Et varmt og allsidig 3-i-1-plagg for terrasse, hytte, båt og bobil.',
     icon: (
       <Waves
@@ -150,7 +150,7 @@ export function TechDownSlider() {
     <SkreddersyMotionProvider>
       <section
         aria-labelledby='techdown-heading'
-        className='dark:border-dark-background/10 dark:bg-dark-foreground dark:text-dark-background w-full border-t border-background/10 bg-foreground py-16 text-background md:py-24'
+        className='dark:border-dark-background/10 dark:text-dark-background w-full border-t border-background/10 bg-cloud-dancer py-16 text-background md:py-24 dark:bg-cloud-dancer'
       >
         <div className='mx-auto max-w-5xl px-6'>
           <m.div
@@ -168,19 +168,19 @@ export function TechDownSlider() {
             </m.span>
             <m.h2
               id='techdown-heading'
-              className='leading-heading-level-two font-google-sans dark:text-dark-background mb-6 max-w-[18ch] font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-background md:text-5xl lg:text-6xl'
+              className='leading-heading-level-two mb-6 max-w-[18ch] bg-cloud-dancer font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-background md:text-5xl lg:text-6xl'
               variants={revealScale}
             >
               Når været snur, består varmen
             </m.h2>
             <m.p
-              className='leading-text-paragraph dark:text-dark-background/85 max-w-3xl font-utekos-text-medium text-base text-background/85 md:text-lg'
+              className='leading-text-paragraph max-w-3xl bg-cloud-dancer font-sans text-base text-background md:text-lg'
               variants={revealItem}
             >
-              CloudWeave™ fortsetter å gi isolasjon når forholdene
-              blir fuktige. Dra linjen for å utforske forskjellen på
-              hvordan tradisjonell dun og Utekos TechDown™ håndterer
-              fuktighet.
+              CloudWeave™ fortsetter å gi isolasjon når
+              forholdene blir fuktige. Dra linjen for å utforske
+              forskjellen på hvordan tradisjonell dun og Utekos
+              TechDown™ håndterer fuktighet.
             </m.p>
           </m.div>
 
@@ -304,7 +304,7 @@ export function TechDownSlider() {
           </m.div>
 
           <m.div
-            className='dark:border-dark-background/5 dark:bg-dark-foreground mt-12 rounded-sm border border-background/5 bg-foreground p-8 shadow-xl md:p-12'
+            className='dark:border-dark-background/10 dark:bg-dark-foreground mt-6 rounded-2xl border border-background/10 bg-foreground p-6 shadow-xl md:p-8'
             initial='hidden'
             whileInView='visible'
             viewport={skreddersyViewport}
@@ -313,7 +313,7 @@ export function TechDownSlider() {
             <AnimatePresence mode='wait' initial={false}>
               <m.div
                 key={contentKey}
-                className='flex flex-col items-start gap-8 md:flex-row md:gap-16'
+                className='grid items-start gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center'
                 initial={{
                   opacity: 0,
                   x: isDryView ? 18 : -18,
@@ -334,34 +334,25 @@ export function TechDownSlider() {
                   ease: skreddersyEase
                 }}
               >
-                <div className='flex flex-col items-start md:w-1/3'>
-                  <BrandBadge
-                    backgroundColor='var(--color-foreground)'
-                    textColor='var(--color-background)'
-                    className='mb-4 flex items-center gap-3 px-[30px] text-xs leading-none font-medium shadow-sm sm:px-8'
-                  >
-                    <span className='dark:text-dark-background flex w-full items-center gap-2 text-left font-utekos-text-medium text-base leading-4 text-balance text-background'>
-                      {currentContent.icon}{' '}
+                <div>
+                  <div className='mb-3 flex items-center gap-2 text-primary'>
+                    <span className='inline-flex shrink-0' aria-hidden>
+                      {currentContent.icon}
+                    </span>
+                    <span className='font-utekos-text-medium text-xs font-medium tracking-[0.08em] uppercase'>
                       {currentContent.label}
                     </span>
-                  </BrandBadge>
+                  </div>
 
-                  <h3 className='font-google-sans dark:text-dark-background font-sans text-3xl leading-[0.95] font-bold tracking-[-0.01em] text-background'>
+                  <h3 className='font-google-sans dark:text-dark-background font-sans text-2xl leading-[1.05] font-bold tracking-[-0.01em] text-background md:text-4xl'>
                     {currentContent.title}
                   </h3>
                 </div>
 
-                <div className='md:w-2/3'>
-                  <p className='dark:text-dark-background/90 mb-8 pb-2 font-utekos-text! text-lg text-background/90'>
+                <div>
+                  <p className='leading-text-paragraph dark:text-dark-background/90 font-utekos-text text-base text-background/90 md:text-lg'>
                     {currentContent.desc}
                   </p>
-
-                  <div className='dark:border-dark-background/10 border-t border-background/10 pt-6'>
-                    <p className='leading-text-paragraph dark:text-dark-background/75 font-utekos-text text-xs text-background/75'>
-                      Illustrasjonen forklarer materialprinsippet og
-                      er ikke en prosentmåling eller laboratorietest.
-                    </p>
-                  </div>
                 </div>
               </m.div>
             </AnimatePresence>

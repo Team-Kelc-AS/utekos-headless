@@ -86,9 +86,11 @@ export function Hero({
             </span>
           </h1>
 
-          <p className='leading-text-paragraph mt-7 max-w-xl font-sans text-base text-foreground/90 drop-shadow-md md:text-lg lg:text-xl'>
-            Kompromissløs komfort <span>og</span> overlegen
-            allsidighet.
+          <p className='leading-text-paragraph mt-7 max-w-xl font-sans text-base tracking-tight text-foreground/90 drop-shadow-md md:text-lg lg:text-xl'>
+            <span className='block'>Kompromissløs komfort</span>
+            <span className='block'>
+              og overlegen allsidighet.
+            </span>
           </p>
 
           <HeroActions />
@@ -140,7 +142,9 @@ export function Hero({
         </div>
       </div>
 
-      {klarnaPurchaseAmount ? <KlarnaOnSiteMessagingScript /> : null}
+      {klarnaPurchaseAmount ?
+        <KlarnaOnSiteMessagingScript />
+      : null}
     </section>
   )
 }

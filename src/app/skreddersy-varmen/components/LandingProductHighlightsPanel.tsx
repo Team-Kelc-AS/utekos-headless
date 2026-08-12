@@ -26,13 +26,10 @@ export function LandingProductHighlightsPanel({
         'bg-jungle text-foreground shadow-[0_12px_40px_rgba(0,0,0,0.28)]'
       )}
     >
-      <div className='border-b border-border px-5 py-4 sm:px-6 sm:py-5'>
+      <div className='border-b border-border bg-background px-5 py-4 sm:px-6 sm:py-5'>
         <h3 className='font-google-sans text-base font-bold tracking-tight text-foreground sm:text-lg'>
-          Dette gjør {modelName} spesiell
+          Slik fungerer {modelName}
         </h3>
-        <p className='mt-1 text-sm text-foreground/80'>
-          Kvaliteter som gjør forskjellen i hverdagen
-        </p>
       </div>
 
       <Accordion
@@ -55,7 +52,7 @@ export function LandingProductHighlightsPanel({
               <span className='flex min-w-0 items-center gap-3'>
                 <span
                   aria-hidden
-                  className='font-google-sans flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground tabular-nums'
+                  className='font-google-sans flex size-7 shrink-0 items-center justify-center rounded-full bg-dark-teal text-xs font-bold text-primary-foreground tabular-nums'
                 >
                   {index + 1}
                 </span>
@@ -66,7 +63,7 @@ export function LandingProductHighlightsPanel({
             </AccordionTrigger>
             <AccordionContent
               className={cn(
-                'leading-text-paragraph bg-jungle pt-0 pb-4 text-sm text-foreground/80 sm:pb-5',
+                'leading-text-paragraph bg-jungle pt-0 pb-4 text-sm text-foreground/90 sm:pb-5',
                 'px-5 sm:px-6 sm:pl-16'
               )}
             >

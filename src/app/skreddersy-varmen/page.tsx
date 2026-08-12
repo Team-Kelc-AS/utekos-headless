@@ -7,15 +7,14 @@ import { StickyMobileAction } from './components/StickyMobileAction'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { PreFooterNavigation } from './components/PreFooterNavigation'
 import { SkreddersyVarmenBreadcrumbs } from './components/SkreddersyVarmenBreadcrumbs'
-import { ShippingReturnsSection } from './components/geo/ShippingReturnsSection'
+import { SkreddersyVarmenKlarnaStrip } from './components/SkreddersyVarmenKlarnaStrip'
 import { SectionSocialProof } from './components/SectionSocialProof'
 import { LandingFaq } from './components/LandingFaq'
 import { SkreddersyVarmenJsonLd } from './structured-data/SkreddersyVarmenJsonLd'
 import { getTechDownCommerceViewModel } from '@/lib/products/commerce'
 import type { Metadata } from 'next'
 
-const metadataTitle =
-  'Utekos TechDown™ – Skreddersy varmen'
+const metadataTitle = 'Utekos TechDown™ – Skreddersy varmen'
 const socialTitle = `${metadataTitle} | Utekos`
 const description =
   'Oppdag Utekos TechDown™ – tilpass passform og ventilasjon med unik 3-i-1-funksjonalitet. Skapt for hytte, camping, båt, bobil og terrasseliv.'
@@ -28,9 +27,7 @@ const socialImage = {
 } as const
 
 export const metadata: Metadata = {
-  title: {
-    absolute: 'Utekos TechDown™ - Skreddersy varmen'
-  },
+  title: { absolute: 'Utekos TechDown™ - Skreddersy varmen' },
   description,
   category: 'Yttertøy',
   authors: [{ name: 'Utekos', url: 'https://utekos.no/om-oss' }],
@@ -93,9 +90,10 @@ function LandingCommerceUnavailable() {
           Kjøpsvalget er midlertidig utilgjengelig
         </h2>
         <p className='leading-text-paragraph mt-3 text-background/78'>
-          Vi kunne ikke bekrefte pris eller lagerstatus fra Shopify.
-          Produktinformasjonen er tilgjengelig, men Utekos viser
-          ingen konstruerte commerce-opplysninger eller kjøpsknapp.
+          Vi kunne ikke bekrefte pris eller lagerstatus fra
+          Shopify. Produktinformasjonen er tilgjengelig, men
+          Utekos viser ingen konstruerte commerce-opplysninger
+          eller kjøpsknapp.
         </p>
       </div>
     </section>
@@ -127,6 +125,7 @@ export default async function LandingPage({
       />
 
       <SkreddersyVarmenBreadcrumbs />
+      <SkreddersyVarmenKlarnaStrip />
       <HeroAndEmpathy commerce={commerce} />
 
       <DeferredLandingSections />
@@ -152,8 +151,6 @@ export default async function LandingPage({
           : <LandingCommerceUnavailable />}
         </PromotionImpression>
       </div>
-
-      <ShippingReturnsSection />
 
       <PromotionImpression
         promotionId='skreddersy-varmen-social-proof'

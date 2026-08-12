@@ -52,7 +52,7 @@ export function HeroActions() {
 
         <BrandBadge
           asChild
-          bgColor='var(--secondary)'
+          bgColor='var(--jungle)'
           fgColor='var(--secondary-foreground)'
           className='h-12 w-full px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.97] md:h-14 md:text-base'
         >
@@ -66,7 +66,7 @@ export function HeroActions() {
             className='group inline-flex items-center gap-2 leading-none'
           >
             <span className='block leading-none'>
-              Se 3-i-1-løsningen
+              Se løsningen
             </span>
             <ChevronDown
               className='size-4 shrink-0'

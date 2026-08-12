@@ -26,12 +26,12 @@ export const PRODUCT_VARIANTS = {
       'Utekos TechDown™ forener banebrytende innovasjon med tidløs eleganse. CloudWeave™ holder deg varm og bevarer spensten i fôret, selv under fuktige forhold. 3-i-1-konstruksjonen lar deg enkelt tilpasse passformen, regulere ventilasjonen og veksle mellom ulike moduser.',
     highlights: [
       {
-        title: 'Holder varmen i fukt',
+        title: 'CloudWeave™ holder varmen i fukt',
         body: 'Luméa™-skallet gir en sofistikert finish og fungerer som et beskyttende skjold, mens den innovative CloudWeave™-isolasjonen sikrer pålitelig varme. Den oppleves som myk og luftig dun, samtidig som den bevarer spensten og loftet under fuktige forhold.'
       },
       {
         title: '3-i-1 funksjonalitet',
-        body: 'Juster, form og nyt.'
+        body: 'Bruk plagget som parkas, fest det opp for mer bevegelse eller stram det rundt bena som en lun kokong. Du justerer varmen uten å gå inn og skifte.'
       },
       {
         title: 'YKK® Dual V-Zip™',

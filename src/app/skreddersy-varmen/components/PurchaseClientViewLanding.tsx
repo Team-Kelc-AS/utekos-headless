@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  Check,
   Minus,
   Plus,
   Loader2,
@@ -13,7 +14,6 @@ import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { ProductDetailsAccordion } from './ProductDetailsAccordion'
 import { LandingPageProductCarouselPurchaseSection } from './LandingPageProductCarouselPurchaseSection'
-import { KlarnaCheckoutImage } from './KlarnaCheckoutImage'
 import {
   SIZE_GUIDANCE,
   focusRing,
@@ -65,15 +65,18 @@ export function PurchaseClientViewLanding({
   selectedShopifyVariant
 }: PurchaseClientViewLandingProps) {
   const guidance = SIZE_GUIDANCE[selectedSize]
-  const modelName = commerce.displayName.replace(/^Utekos\s+/u, '')
+  const modelName = commerce.displayName.replace(
+    /^Utekos\s+/u,
+    ''
+  )
   const isAvailable =
     selectedShopifyVariant?.availableForSale ?? false
   const currentPrice = selectedShopifyVariant?.price
   const compareAtPrice = selectedShopifyVariant?.compareAtPrice
   const hasCompareAtPrice = Boolean(
     currentPrice &&
-      compareAtPrice &&
-      Number(compareAtPrice.amount) > Number(currentPrice.amount)
+    compareAtPrice &&
+    Number(compareAtPrice.amount) > Number(currentPrice.amount)
   )
 
   return (
@@ -81,55 +84,76 @@ export function PurchaseClientViewLanding({
       <section className='relative w-full max-w-full overflow-x-clip text-background min-[900px]:grid min-[900px]:grid-cols-2'>
         <LandingPageProductCarouselPurchaseSection />
 
-        <div className='flex w-full flex-col bg-foreground'>
+        <div className='flex w-full flex-col bg-background text-foreground'>
           <div className='flex-1 p-6 min-[1280px]:p-20 md:p-12'>
-            <div className='mb-4 font-utekos-text-medium text-sm text-background/80'>
+            <div className='mb-4 font-utekos-text-medium text-sm text-foreground/80'>
               Utekos TechDown™ · Bestselger
             </div>
 
             <div className='mb-10'>
-              <h2 className='font-google-sans mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-background min-[1280px]:text-7xl'>
+              <h2 className='font-google-sans mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-foreground min-[1280px]:text-7xl'>
                 <span className='sr-only'>Utekos </span>
                 <UtekosWordmark
                   aria-hidden
-                  className='h-[0.82em] w-auto translate-y-[0.04em]'
-                  style={{ color: 'var(--color-background)' }}
+                  className='h-[0.82em] w-auto translate-y-[0.04em] text-foreground'
                 />
                 <span className='font-google-sans font-sans font-bold tracking-[-0.015em]'>
                   {modelName}
                 </span>
               </h2>
 
-              <p className='leading-text-paragraph mb-8 max-w-152 text-lg tracking-normal text-background/90 md:text-xl'>
-                Et varmt og allsidig 3-i-1-plagg for terrasse,
-                hytte, båt og bobil.
+              <p className='leading-text-paragraph mb-3 max-w-152 font-sans text-lg font-normal tracking-normal text-foreground/90 min-[900px]:mb-8 md:text-xl'>
+                Vår nyeste, varmeste og mest allsidige modell.
               </p>
 
               {currentPrice ?
-                <div className='space-y-3'>
+                <div className='space-y-8 min-[900px]:space-y-3'>
                   <div className='flex flex-wrap items-baseline gap-3'>
-                    <p className='font-google-sans text-4xl font-bold tracking-tight text-background tabular-nums min-[900px]:text-5xl min-[1280px]:text-6xl min-[1280px]:leading-none'>
+                    <p className='font-google-sans text-4xl font-bold tracking-tight text-foreground tabular-nums min-[900px]:text-5xl min-[1280px]:text-6xl min-[1280px]:leading-none'>
                       {formatPrice(currentPrice)}
                     </p>
                     {hasCompareAtPrice && compareAtPrice ?
-                      <p className='text-lg text-background/70 line-through tabular-nums md:text-xl'>
+                      <p className='text-lg text-foreground/70 tabular-nums line-through md:text-xl'>
                         {formatPrice(compareAtPrice)}
                       </p>
                     : null}
                   </div>
                   <p
                     className={cn(
-                      'font-utekos-text-medium text-sm',
+                      'hidden flex-wrap items-center gap-x-2 gap-y-1 font-utekos-text text-sm font-normal min-[900px]:flex',
                       isAvailable ?
-                        'text-background'
+                        'text-foreground'
                       : 'text-destructive-foreground'
                     )}
                     aria-live='polite'
                   >
-                    {isAvailable ? 'På lager' : 'Utsolgt'} · Normal
-                    transporttid 2–5 virkedager
+                    {isAvailable ?
+                      <>
+                        <span className='inline-flex items-center gap-1'>
+                          <Check
+                            aria-hidden
+                            className='size-4 shrink-0 text-primary'
+                          />
+                          På lager
+                        </span>
+                        <span className='inline-flex items-center gap-1'>
+                          <Check
+                            aria-hidden
+                            className='size-4 shrink-0 text-primary'
+                          />
+                          Rask levering
+                        </span>
+                        <span className='inline-flex items-center gap-1'>
+                          <Check
+                            aria-hidden
+                            className='size-4 shrink-0 text-primary'
+                          />
+                          Gratis frakt
+                        </span>
+                      </>
+                    : 'Utsolgt - Normal transporttid 2–5 virkedager'
+                    }
                   </p>
-                  <KlarnaCheckoutImage className='min-[900px]:max-w-md' />
                 </div>
               : null}
             </div>
@@ -144,24 +168,13 @@ export function PurchaseClientViewLanding({
                 rootMargin='0px 0px 25% 0px'
                 threshold={0.01}
               >
-                <p className='leading-text-paragraph text-base text-background/85 md:text-lg'>
-                  {techDownContent.description}
-                </p>
-              </AnimatedBlock>
-
-              <AnimatedBlock
-                className='will-animate-fade-in-up'
-                delay='0.1s'
-                rootMargin='0px 0px 25% 0px'
-                threshold={0.01}
-              >
                 <div className={choiceGridClass}>
                   {techDownContent.features.map(feature => (
                     <span
                       key={feature}
                       className={cn(
                         choicePillClass,
-                        'font-google-sans border border-border bg-muted font-bold text-foreground shadow-sm'
+                        'min-[900px]:font-google-sans rounded-2xl border border-border bg-background font-utekos-text-medium text-[11px] text-foreground shadow-sm min-[900px]:font-bold md:max-xl:text-[14px]'
                       )}
                     >
                       {feature}
@@ -172,7 +185,7 @@ export function PurchaseClientViewLanding({
 
               <AnimatedBlock
                 className='will-animate-fade-in-up'
-                delay='0.15s'
+                delay='0.1s'
                 rootMargin='0px 0px 25% 0px'
                 threshold={0.01}
               >
@@ -184,13 +197,13 @@ export function PurchaseClientViewLanding({
               </AnimatedBlock>
             </div>
 
-            <div className='mb-12 h-px w-full bg-background/10' />
+            <div className='mb-12 h-px w-full bg-foreground/10' />
 
-            <div className='mb-12 space-y-12'>
+            <div className='mb-0 space-y-12 min-[900px]:mb-12'>
               <div>
-                <div className='mb-4 flex items-center justify-between'>
-                  <span className='font-google-sans text-sm font-bold tracking-normal text-background'>
-                    Størrelse
+                <div className='mb-4 flex items-center justify-between min-[900px]:mb-4'>
+                  <span className='font-google-sans text-sm font-bold tracking-normal text-foreground'>
+                    STØRRELSE
                   </span>
                 </div>
 
@@ -209,19 +222,23 @@ export function PurchaseClientViewLanding({
                         role='radio'
                         aria-checked={isActive}
                         aria-label={`Størrelse ${size.label}${size.availableForSale ? '' : ', utsolgt'}`}
-                        onClick={() => setSelectedSize(size.label)}
+                        onClick={() =>
+                          setSelectedSize(size.label)
+                        }
                         className={cn(
                           choicePillClass,
                           isActive ?
-                            'border border-background bg-background text-foreground shadow-md'
-                          : 'border border-background/15 bg-foreground text-background hover:bg-background/5',
+                            'cursor-pointer border border-foreground/20 bg-primary text-base text-foreground shadow-none hover:opacity-70 sm:text-base md:text-base'
+                          : 'cursor-pointer border-none bg-dark-teal text-base text-foreground hover:opacity-70 sm:text-base md:text-base',
                           !size.availableForSale && 'opacity-65',
                           focusRing
                         )}
                       >
                         <span>{size.label}</span>
                         {!size.availableForSale ?
-                          <span className='sr-only'>Utsolgt</span>
+                          <span className='sr-only'>
+                            Utsolgt
+                          </span>
                         : null}
                       </button>
                     )
@@ -231,13 +248,14 @@ export function PurchaseClientViewLanding({
                 {guidance ?
                   <div
                     key={selectedSize}
-                    className='animate-in fade-in slide-in-from-top-2 mt-3 duration-300'
+                    className='animate-in fade-in slide-in-from-top-2 mt-6 duration-300 min-[900px]:mt-3'
                   >
-                    <div className='relative overflow-hidden rounded-2xl border border-primary/20 bg-jungle p-4 text-foreground shadow-md'>
+                    <div className='relative overflow-hidden rounded-2xl border-none bg-[#00453e] p-4 font-utekos-text text-foreground shadow-md'>
                       <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
                         <Ruler className='size-4 text-primary' />
-                        <span className='font-google-sans text-sm font-bold tracking-normal text-foreground'>
-                          Anbefaling: Du er {guidance.height}
+                        <span className='font-utekos-text text-sm font-bold tracking-normal text-foreground'>
+                          Anbefaling: For deg mellom{' '}
+                          {guidance.height}
                         </span>
                       </div>
                       <ul className='mt-2 space-y-1.5'>
@@ -256,12 +274,12 @@ export function PurchaseClientViewLanding({
 
                 <TechDownSizeGuideAccordion />
 
-                <div className='mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-t border-background/10 pt-4'>
+                <div className='mt-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-t border-foreground/10 pt-4 min-[900px]:mt-4'>
                   <div className='min-w-0'>
-                    <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-background/80'>
-                      Farge
+                    <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-foreground/80'>
+                      FARGE
                     </span>
-                    <div className='mt-1 inline-flex h-10 min-w-32 items-center gap-2 rounded-full border border-background bg-foreground px-3 font-utekos-text-medium text-sm text-background shadow-sm ring-1 ring-background'>
+                    <div className='mt-1 inline-flex h-10 w-29 items-center justify-center gap-2 rounded-full border-none bg-cloud-dancer px-3 font-utekos-text-medium text-sm text-background shadow-sm ring-1 ring-background'>
                       <span
                         aria-hidden
                         className='size-4 shrink-0 rounded-full border border-background/20 shadow-sm'
@@ -269,17 +287,18 @@ export function PurchaseClientViewLanding({
                           backgroundColor: 'var(--color-havdyp)'
                         }}
                       />
-                      <span>
-                        {commerce.variants[0]?.options.color ?? 'Havdyp'}
+                      <span className='flex-1 text-center'>
+                        {commerce.variants[0]?.options.color ??
+                          'Havdyp'}
                       </span>
                     </div>
                   </div>
 
                   <div className='shrink-0'>
-                    <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-background/80'>
+                    <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-foreground/80'>
                       Antall
                     </span>
-                    <div className='mt-1 flex h-10 items-center rounded-full border border-background/15 bg-foreground text-background'>
+                    <div className='mt-1 flex h-10 items-center rounded-full border border-background/15 bg-cloud-dancer text-background'>
                       <button
                         type='button'
                         onClick={() => setQuantity(quantity - 1)}
@@ -347,7 +366,8 @@ export function PurchaseClientViewLanding({
                   : <ShoppingCart
                       className='size-5 shrink-0'
                       aria-hidden
-                    />}
+                    />
+                  }
                   <span className='whitespace-nowrap'>
                     {isAddToCartPending ?
                       'Legger i handlekurv'
@@ -361,7 +381,8 @@ export function PurchaseClientViewLanding({
                       <span className='font-google-sans hidden font-bold whitespace-nowrap sm:inline'>
                         {formatPrice({
                           amount: String(
-                            Number(currentPrice.amount) * quantity
+                            Number(currentPrice.amount) *
+                              quantity
                           ),
                           currencyCode: currentPrice.currencyCode
                         })}

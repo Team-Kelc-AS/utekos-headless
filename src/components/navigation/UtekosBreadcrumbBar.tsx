@@ -20,6 +20,7 @@ type UtekosBreadcrumbBarProps = {
   items: BreadcrumbNavItem[]
   surface: BreadcrumbSurface
   className?: string
+  containerClassName?: string
   listClassName?: string
   embedded?: boolean
 }
@@ -28,6 +29,7 @@ export function UtekosBreadcrumbBar({
   items,
   surface,
   className,
+  containerClassName,
   listClassName,
   embedded
 }: UtekosBreadcrumbBarProps) {
@@ -62,11 +64,7 @@ export function UtekosBreadcrumbBar({
                 </BreadcrumbPage>
               : <BreadcrumbLink
                   className={styles.link}
-                  render={
-                    <Link
-                      href={item.href as Route}
-                    />
-                  }
+                  render={<Link href={item.href as Route} />}
                 >
                   {item.label}
                 </BreadcrumbLink>
@@ -87,7 +85,12 @@ export function UtekosBreadcrumbBar({
   if (showColoredStripe) {
     return (
       <article className={cn('w-full', styles.stripe)}>
-        <div className='container mx-auto w-full px-4 py-5'>
+        <div
+          className={cn(
+            'container mx-auto w-full px-4 py-5',
+            containerClassName
+          )}
+        >
           {breadcrumb}
         </div>
       </article>
@@ -95,7 +98,12 @@ export function UtekosBreadcrumbBar({
   }
 
   return (
-    <div className='container mx-auto w-full px-4 py-5'>
+    <div
+      className={cn(
+        'container mx-auto w-full px-4 py-5',
+        containerClassName
+      )}
+    >
       {breadcrumb}
     </div>
   )

@@ -2,7 +2,7 @@ export function ShippingReturnsSection() {
   return (
     <section
       aria-labelledby='shipping-returns-heading'
-      className='w-full bg-card px-6 py-16 text-foreground md:px-12 md:py-24'
+      className='w-full bg-jungle px-6 py-16 text-foreground md:bg-card md:px-12 md:py-24'
     >
       <div className='mx-auto max-w-5xl'>
         <h2
@@ -12,7 +12,7 @@ export function ShippingReturnsSection() {
           Frakt og retur
         </h2>
         <div className='mt-7 grid gap-5 md:grid-cols-2'>
-          <div className='rounded-2xl border border-border bg-background p-6'>
+          <div className='rounded-2xl border border-border bg-night p-6 md:bg-background'>
             <h3 className='font-google-sans text-2xl font-bold'>
               Frakt i Norge
             </h3>
@@ -22,14 +22,15 @@ export function ShippingReturnsSection() {
               er 2–5 virkedager.
             </p>
           </div>
-          <div className='rounded-2xl border border-border bg-background p-6'>
+          <div className='rounded-2xl border border-border bg-night p-6 md:bg-background'>
             <h3 className='font-google-sans text-2xl font-bold'>
               Angrerett og reklamasjon
             </h3>
             <p className='leading-text-paragraph mt-3 text-foreground/82'>
-              Du har 14 kalenderdagers angrerett fra fysisk mottak
-              og ordner ordinær returfrakt selv. Ved en gyldig
-              reklamasjon dekker Utekos nødvendig returfrakt.
+              Du har 14 kalenderdagers angrerett fra fysisk
+              mottak og ordner ordinær returfrakt selv. Ved en
+              gyldig reklamasjon dekker Utekos nødvendig
+              returfrakt.
             </p>
           </div>
         </div>

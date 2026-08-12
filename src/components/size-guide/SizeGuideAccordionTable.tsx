@@ -1,4 +1,5 @@
 import { Ruler } from 'lucide-react'
+import type { ReactNode } from 'react'
 import {
   Accordion,
   AccordionContent,
@@ -18,6 +19,10 @@ export type SizeGuideAccordionTableProps = {
   columns: readonly string[]
   rows: readonly SizeGuideAccordionRow[]
   className?: string
+  accordionClassName?: string
+  triggerClassName?: string
+  tableHeaderClassName?: string
+  mobileContent?: ReactNode
 }
 
 export function SizeGuideAccordionTable({
@@ -25,34 +30,79 @@ export function SizeGuideAccordionTable({
   triggerLabel = 'Se størrelsestabell',
   columns,
   rows,
-  className
+  className,
+  accordionClassName,
+  triggerClassName,
+  tableHeaderClassName,
+  mobileContent
 }: SizeGuideAccordionTableProps) {
   return (
-    <div id={id} className={cn('mx-auto w-full max-w-3xl', className)}>
+    <div
+      id={id}
+      className={cn('mx-auto w-full max-w-3xl', className)}
+    >
       <Accordion
         multiple={false}
-        className='w-full rounded-xl border border-[#F4F1EA]/10 bg-jungle px-2 md:px-6'
+        className={cn(
+          'w-full rounded-xl border border-[#F4F1EA]/10 bg-jungle px-2 md:px-6',
+          accordionClassName
+        )}
       >
-        <AccordionItem value='size-table' className='border-none'>
-          <AccordionTrigger className='justify-center bg-jungle py-6 text-lg font-medium text-[#F4F1EA] transition-colors hover:text-[#E07A5F] hover:no-underline'>
+        <AccordionItem
+          value='size-table'
+          className='border-none'
+        >
+          <AccordionTrigger
+            className={cn(
+              'justify-center bg-jungle py-6 text-lg transition-colors hover:text-[#E07A5F] hover:no-underline',
+              triggerClassName ?? 'font-medium text-[#F4F1EA]'
+            )}
+          >
             <span className='flex items-center gap-3 font-utekos-text-medium'>
-              <Ruler size={20} className='text-[#E07A5F]' aria-hidden />
+              <Ruler
+                size={20}
+                className='text-[#E07A5F]'
+                aria-hidden
+              />
               {triggerLabel}
             </span>
           </AccordionTrigger>
-          <AccordionContent>
-            <div className='relative mt-2 mb-6 w-full overflow-hidden rounded-lg border border-[#F4F1EA]/5 bg-jungle'>
+          <AccordionContent
+            className={mobileContent ? 'pb-0' : undefined}
+          >
+            {mobileContent ? (
+              <div className='sm:hidden'>{mobileContent}</div>
+            ) : null}
+            <div
+              className={cn(
+                'relative mt-2 mb-6 w-full overflow-hidden rounded-lg border border-[#F4F1EA]/5 bg-jungle',
+                mobileContent && 'hidden sm:block'
+              )}
+            >
               <div className='overflow-x-auto'>
                 <table className='w-full border-collapse bg-jungle text-left'>
                   <thead>
-                    <tr className='border-b border-[#F4F1EA]/10 bg-dark-teal'>
-                      <th className='bg-dark-teal p-4 font-medium text-[#F4F1EA] md:p-6'>
+                    <tr
+                      className={cn(
+                        'border-b border-[#F4F1EA]/10 bg-dark-teal',
+                        tableHeaderClassName
+                      )}
+                    >
+                      <th
+                        className={cn(
+                          'bg-dark-teal p-4 font-medium text-[#F4F1EA] md:p-6',
+                          tableHeaderClassName
+                        )}
+                      >
                         Måling
                       </th>
                       {columns.map(column => (
                         <th
                           key={column}
-                          className='w-28 bg-dark-teal p-4 font-medium text-[#F4F1EA] md:w-40 md:p-6'
+                          className={cn(
+                            'w-28 bg-dark-teal p-4 font-medium text-[#F4F1EA] md:w-40 md:p-6',
+                            tableHeaderClassName
+                          )}
                         >
                           {column}
                         </th>

@@ -1,6 +1,7 @@
 // Path: src/components/frontpage/PreFooterNavigation.tsx
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { cn } from '@/lib/utils/className'
 import { NavLinks } from './NavLinks'
 
@@ -9,9 +10,18 @@ export function PreFooterNavigation() {
     // Gradient-bakgrunnen blender sømløst over fra trekkspillet over, og ned i footeren under
     <section className='dark:from-dark-background dark:to-dark-card w-full max-w-full bg-linear-to-b from-background to-card py-16 text-foreground md:py-24'>
       <div className='mx-auto max-w-5xl px-6'>
-        <div className='mb-12 text-center'>
+        <div className='mb-12 text-left'>
           <h2 className='leading-heading-level-two mb-4 font-sans font-utekos-text-medium text-5xl text-foreground md:text-6xl'>
-            Utforsk mer av Utekos
+            <span className='block'>Utforsk mer</span>
+            <span className='flex items-baseline gap-3'>
+              <span>
+                av <span className='sr-only'>Utekos</span>
+              </span>
+              <UtekosWordmark
+                aria-hidden
+                className='h-[0.72em] w-auto translate-y-[0.04em] text-foreground'
+              />
+            </span>
           </h2>
         </div>
 

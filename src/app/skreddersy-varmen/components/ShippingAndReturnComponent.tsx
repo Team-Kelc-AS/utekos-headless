@@ -12,16 +12,13 @@ import {
 import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
 
 const pointIconClass =
-  'mt-0.5 shrink-0 text-ceramic drop-shadow-sm'
-const pointSubtextClass =
-  'mt-0.5 text-xs leading-snug text-foreground/85'
-
+  'mt-0.5 shrink-0 text-light-teal drop-shadow-sm'
 export function ShippingAndReturnComponent() {
   return (
     <div className='flex flex-col gap-6'>
-      <div className='dark:border-dark-foreground/10 dark:bg-dark-background rounded-xl border border-foreground/10 bg-background text-foreground shadow-sm'>
+      <div className='rounded-xl border border-foreground/10 bg-jungle text-foreground shadow-sm min-[900px]:bg-background'>
         <div className='dark:divide-dark-foreground/10 grid grid-cols-1 divide-y divide-foreground/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
-          <div className='flex items-start gap-3 p-4'>
+          <div className='flex items-start gap-3 bg-night p-4 sm:bg-transparent'>
             <Truck
               size={22}
               className={pointIconClass}
@@ -31,13 +28,10 @@ export function ShippingAndReturnComponent() {
               <p className='font-utekos-text-medium text-sm text-foreground'>
                 Rask levering 2–5 dager
               </p>
-              <p className={pointSubtextClass}>
-                Fri frakt fra 999 kr. Ellers 99 kr.
-              </p>
             </div>
           </div>
 
-          <div className='flex items-start gap-3 p-4'>
+          <div className='flex items-start gap-3 bg-night p-4 sm:bg-transparent'>
             <RefreshCcw
               size={22}
               className={pointIconClass}
@@ -47,13 +41,10 @@ export function ShippingAndReturnComponent() {
               <p className='font-utekos-text-medium text-sm text-foreground'>
                 14 dagers åpent kjøp
               </p>
-              <p className={pointSubtextClass}>
-                Kunden ordner og betaler ordinær retur
-              </p>
             </div>
           </div>
 
-          <div className='flex items-start gap-3 p-4'>
+          <div className='flex items-start gap-3 bg-night p-4 sm:bg-transparent'>
             <CreditCard
               size={22}
               className={pointIconClass}
@@ -63,26 +54,23 @@ export function ShippingAndReturnComponent() {
               <p className='font-utekos-text-medium text-sm text-foreground'>
                 Fleksible betalingsmuligheter
               </p>
-              <p className={pointSubtextClass}>
-                Skreddersy i kassen
-              </p>
             </div>
           </div>
         </div>
 
-        <div className='dark:border-dark-foreground/10 dark:bg-dark-background/50 rounded-b-xl border-t border-foreground/10 bg-background/50 px-4 py-2.5'>
+        <div className='rounded-b-xl border-t border-foreground/10 bg-background px-4 py-2.5 min-[900px]:bg-background/50'>
           <Link
             href={'/frakt-og-retur' as Route}
             data-track='SkreddersyVarmenFraktOgReturLink'
             onClick={() =>
               reportLandingSelectPromotion('shippingReturns')
             }
-            className='group dark:hover:text-dark-accent inline-flex items-center gap-1.5 text-xs font-medium text-foreground/60 transition-colors hover:text-accent'
+            className='group inline-flex items-center gap-1.5 text-xs font-medium text-foreground/90 transition-colors hover:text-accent min-[900px]:text-foreground/60'
           >
             Alt om frakt og retur
             <ArrowRight
               size={12}
-              className='transition-transform group-hover:translate-x-0.5'
+              className='text-light-teal transition-transform group-hover:translate-x-0.5'
             />
           </Link>
         </div>

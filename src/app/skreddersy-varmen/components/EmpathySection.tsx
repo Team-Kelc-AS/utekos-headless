@@ -31,7 +31,7 @@ export function EmpathySection() {
     <SkreddersyMotionProvider>
       <m.section
         aria-labelledby='empathy-heading'
-        className='dark:bg-dark-foreground dark:text-dark-background relative w-full overflow-hidden bg-foreground py-16 text-background md:py-24 lg:py-28'
+        className='dark:text-dark-background relative w-full overflow-hidden bg-cloud-dancer py-16 text-background md:py-24 lg:py-28 dark:bg-cloud-dancer'
         initial='hidden'
         whileInView='visible'
         viewport={skreddersyViewport}
@@ -43,7 +43,7 @@ export function EmpathySection() {
               className='relative mb-4 inline-flex items-end overflow-hidden pb-1.5'
               variants={revealItemLeft}
             >
-              <span className='dark:text-dark-background font-utekos-text-medium text-sm leading-4 text-background'>
+              <span className='dark:text-dark-background font-sans text-sm leading-4 text-background'>
                 Det du kjenner igjen
               </span>
               <m.span
@@ -54,7 +54,7 @@ export function EmpathySection() {
             </m.div>
             <h2
               id='empathy-heading'
-              className='font-utekos-text-medium dark:text-dark-background mb-5 max-w-[11ch] text-4xl leading-[0.92] tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
+              className='dark:text-dark-background mb-5 max-w-[11ch] font-utekos-text-medium text-4xl leading-[0.92] tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
             >
               <span className='block overflow-hidden pb-[0.08em]'>
                 <m.span
@@ -77,7 +77,7 @@ export function EmpathySection() {
 
             <div className='leading-text-paragraph dark:text-dark-background max-w-none text-base text-background'>
               <m.p
-                className='font-utekos-text relative max-w-136'
+                className='relative max-w-136 font-sans'
                 variants={revealItem}
               >
                 Du kjenner følelsen. Praten går lett rundt
@@ -100,7 +100,7 @@ export function EmpathySection() {
                 </m.p>
               </div>
               <m.p
-                className='font-utekos-text dark:text-dark-background mt-6 max-w-136 text-background'
+                className='dark:text-dark-background mt-6 max-w-136 font-utekos-text text-background'
                 variants={revealItem}
               >
                 Med Utekos® blir svaret enkelt. Tilpass passform,

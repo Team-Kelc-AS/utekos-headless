@@ -2,7 +2,7 @@
 'use client'
 
 import * as m from 'motion/react-m'
-import { Star, StarHalf, Quote } from 'lucide-react'
+import { Star, StarHalf } from 'lucide-react'
 import {
   techDownReviews,
   techDownReviewSummary
@@ -19,7 +19,8 @@ import {
 } from './skreddersyMotionVariants'
 
 export function SectionSocialProof() {
-  const averageRating = techDownReviewSummary.ratingValue.toFixed(1)
+  const averageRating =
+    techDownReviewSummary.ratingValue.toFixed(1)
 
   return (
     <SkreddersyMotionProvider>
@@ -27,13 +28,6 @@ export function SectionSocialProof() {
         aria-labelledby='socialproof-heading'
         className='dark:border-dark-background/20 relative w-full max-w-full overflow-hidden border-t border-background/20 bg-jungle py-20 text-foreground md:py-28'
       >
-        <div
-          aria-hidden
-          className='pointer-events-none absolute -top-16 right-4 text-foreground opacity-[0.03] select-none md:right-16'
-        >
-          <Quote size={320} strokeWidth={1} />
-        </div>
-
         <div className='relative z-10 mx-auto max-w-6xl px-6'>
           <m.header
             className='mb-12 text-center md:mb-16'
@@ -72,19 +66,18 @@ export function SectionSocialProof() {
 
             <m.h2
               id='socialproof-heading'
-              className='mx-auto max-w-[18ch] font-sans font-utekos-text-medium text-[clamp(1.75rem,7vw,3.75rem)] leading-[0.95] tracking-[-0.01em] text-balance wrap-break-word text-foreground sm:max-w-[22ch] md:max-w-5xl'
+              className='mx-auto max-w-[18ch] font-sans text-[clamp(1.75rem,7vw,3.75rem)] leading-[0.95] font-bold tracking-[-0.01em] text-balance wrap-break-word text-foreground sm:max-w-[22ch] md:max-w-5xl'
               variants={revealItem}
             >
-              Kundeerfaringer med Utekos TechDown™
+              Hva sier andre livsnytere?
             </m.h2>
 
             <m.p
-              className='leading-text-paragraph mx-auto mt-5 max-w-[34ch] text-[clamp(0.875rem,3.4vw,1.125rem)] tracking-[-0.01em] text-balance wrap-break-word text-foreground/80 md:max-w-2xl'
+              className='leading-text-paragraph mx-auto mt-5 max-w-[34ch] text-left text-[clamp(0.875rem,3.4vw,1.125rem)] tracking-[-0.01em] text-balance wrap-break-word text-foreground/80 md:max-w-2xl'
               variants={revealItem}
             >
-              Disse anmeldelsene er eksplisitt knyttet til Utekos
-              TechDown™ og er de samme som brukes i sidens
-              aggregerte rating.
+              Tilbakemeldinger fra mennesker som valgte å
+              investere i forbedret og forlenget hygge utendørs.
             </m.p>
           </m.header>
         </div>
@@ -111,12 +104,7 @@ export function SectionSocialProof() {
             className='dark:from-dark-card pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l from-card to-transparent md:w-24'
           />
 
-          <div
-            className={cn(
-              styles.track,
-              'flex w-max'
-            )}
-          >
+          <div className={cn(styles.track, 'flex w-max')}>
             {techDownReviews.map(review => (
               <div
                 key={review.id}

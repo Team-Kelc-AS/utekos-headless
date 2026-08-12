@@ -26,10 +26,14 @@ function Section({
       value={section.id}
       className={landingAccordionItemClassName}
     >
-      <AccordionTrigger className={landingAccordionTriggerClassName}>
+      <AccordionTrigger
+        className={landingAccordionTriggerClassName}
+      >
         {section.title}
       </AccordionTrigger>
-      <AccordionContent className={landingAccordionContentClassName}>
+      <AccordionContent
+        className={landingAccordionContentClassName}
+      >
         <div className='max-w-prose space-y-6 font-utekos-text'>
           {section.groups.map((group, index) => (
             <section
@@ -111,11 +115,11 @@ export function ProductDetailsAccordion({
   return (
     <section
       key={selectedModel}
-      className='dark:bg-dark-background w-full bg-background pt-6 pb-24 text-foreground'
+      className='w-full bg-night pt-6 pb-24 text-foreground min-[900px]:bg-background'
       aria-live='polite'
     >
       <div className='mx-auto max-w-3xl px-4'>
-        <h2 className='mx-auto my-8 max-w-[90%] text-left font-sans font-utekos-text-medium text-3xl tracking-normal text-foreground sm:text-center sm:text-5xl md:max-w-4xl'>
+        <h2 className='my-8 text-left font-sans text-3xl font-extrabold tracking-normal text-foreground sm:text-center sm:text-5xl'>
           Produktdetaljer
         </h2>
 

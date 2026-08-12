@@ -47,7 +47,7 @@ export function SectionThreeInOne() {
           variants={revealGroup}
         >
           <m.span
-            className='mb-3 block font-utekos-text-medium text-base leading-4 tracking-wide text-ceramic'
+            className='mb-3 block font-sans text-base leading-4 tracking-wide text-primary'
             variants={revealItemLeft}
           >
             Adaptiv funksjonalitet
@@ -68,9 +68,9 @@ export function SectionThreeInOne() {
               ®
             </span>{' '}
             er transformasjonen. Fra en isolerende kokong til en
-            elegant parkas på sekunder. Du har en mobil varmekilde
-            som endrer måten du behøver å planlegge på. Med Utekos er
-            du helgradert.
+            elegant parkas på sekunder. Du har en mobil
+            varmekilde som endrer måten du behøver å planlegge
+            på. Med Utekos er du helgradert.
           </m.p>
           <m.p
             className='mt-8 text-xs text-foreground/65'
@@ -81,7 +81,7 @@ export function SectionThreeInOne() {
           </m.p>
         </m.div>
 
-        <div className='flex flex-col pb-20 xl:hidden'>
+        <div className='flex flex-col pb-20 lg:hidden'>
           {Steps.map((step, index) => (
             <m.div
               key={step.id}
@@ -107,10 +107,10 @@ export function SectionThreeInOne() {
                   quality={75}
                   className={cn(
                     step.desktopObjectFit === 'contain' ?
-                      'object-contain p-12 min-[1536px]:p-16'
+                      'bg-jungle object-contain p-12 min-[1536px]:p-16'
                     : 'object-cover'
                   )}
-                  sizes='(max-width: 1279px) 100vw, 0px'
+                  sizes='(max-width: 1023px) 100vw, 0px'
                 />
                 <BrandBadge
                   tone='promo'
@@ -149,7 +149,7 @@ export function SectionThreeInOne() {
           ))}
         </div>
 
-        <div className='hidden w-full xl:flex'>
+        <div className='hidden w-full lg:flex'>
           <div className='dark:border-dark-foreground/10 sticky top-0 flex h-screen w-1/2 items-center justify-center overflow-hidden border-r border-foreground/10 bg-jungle'>
             {Steps.map((step, index) => (
               <m.div
@@ -176,7 +176,7 @@ export function SectionThreeInOne() {
                         'object-contain p-12 min-[1536px]:p-16'
                       : 'object-cover'
                     )}
-                    sizes='(max-width: 1279px) 0px, min(43vw, 82vh)'
+                    sizes='(max-width: 1023px) 0px, min(43vw, 82vh)'
                   />
                   <div className='dark:from-dark-background absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-background to-transparent opacity-60' />
                 </div>
@@ -202,7 +202,7 @@ export function SectionThreeInOne() {
             {Steps.map((step, index) => (
               <m.div
                 key={step.id}
-                className='dark:border-dark-foreground/10 flex min-h-screen flex-col justify-center border-b border-foreground/10 px-20 last:border-0'
+                className='dark:border-dark-foreground/10 flex min-h-screen flex-col justify-center border-b border-foreground/10 px-12 py-24 last:border-0 xl:px-20'
                 initial='hidden'
                 whileInView='visible'
                 viewport={{
@@ -212,7 +212,7 @@ export function SectionThreeInOne() {
                 variants={revealGroup}
                 onViewportEnter={() => setActiveStep(index)}
               >
-                <div>
+                <div className='max-w-xl'>
                   <m.div
                     className='dark:text-dark-primary mb-4 flex items-center gap-3 font-sans text-base leading-4 font-medium text-primary md:text-lg'
                     variants={revealItemLeft}

@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils/className'
+import klarnaMobileImage from '@/assets/images/partners/Klarna-729x30.png'
 
 const KLARNA_IMAGE_DESKTOP =
   'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/728x90.png'
@@ -7,9 +8,17 @@ const KLARNA_IMAGE_TABLET =
 const KLARNA_IMAGE_MOBILE =
   'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/320x50_0b8b051a-4eab-40b2-9a2c-0c610915afd4.png'
 
-export function KlarnaCheckoutImage({ className }: { className?: string }) {
+export function KlarnaCheckoutImage({
+  className
+}: {
+  className?: string
+}) {
   return (
     <picture className={cn('block w-full min-w-0', className)}>
+      <source
+        media='(max-width: 639px)'
+        srcSet={klarnaMobileImage.src}
+      />
       <source
         media='(min-width: 900px)'
         srcSet={KLARNA_IMAGE_DESKTOP}
@@ -23,7 +32,7 @@ export function KlarnaCheckoutImage({ className }: { className?: string }) {
         alt='Velg Klarna i kassen'
         width={320}
         height={50}
-        className='h-auto w-full max-w-80 min-[640px]:max-w-75 min-[900px]:max-w-none'
+        className='-mx-6 h-auto w-screen max-w-none min-[640px]:mx-0 min-[640px]:w-full min-[640px]:max-w-75 min-[900px]:max-w-none'
       />
     </picture>
   )

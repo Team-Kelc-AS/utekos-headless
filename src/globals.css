@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme static {
+  --color-cloud-dancer: oklch(0.9493 0.007 88.64);
   --color-light-teal: oklch(0.8017 0.0772 182.11);
   --color-green-300: oklch(0.8017 0.0772 182.11);
   --color-green-400: #38b49e;
@@ -46,6 +47,7 @@
 }
 
 @theme inline {
+  --color-cloud-dancer: oklch(0.9493 0.007 88.64);
   --font-utekos-text: var(--font-utekos-text);
   --font-utekos-text-medium: var(--font-utekos-text-medium);
   --color-alternate: var(--alternate);
@@ -119,6 +121,7 @@
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
   --color-network-pill: oklch(0.8017 0.0772 182.11);
   --background: oklch(0.1645 0.0284 190.51);
+  --cloud-dancer: oklch(0.9493 0.007 88.64);
   --foreground: oklch(0.985 0 0);
   --light-teal: oklch(0.8017 0.0772 182.11);
   --green-400: #38b49e;
@@ -196,6 +199,7 @@
 }
 
 .dark {
+  --cloud-dancer: oklch(0.9493 0.007 88.64);
   --background: oklch(0.1645 0.0284 190.51);
   --foreground: oklch(0.985 0 0);
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
