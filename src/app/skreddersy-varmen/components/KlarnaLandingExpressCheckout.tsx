@@ -31,6 +31,7 @@ export function KlarnaLandingExpressCheckout({
 
   return (
     <div
+      role='group'
       className={cn(
         'flex w-full min-w-0 flex-col gap-3 min-[900px]:gap-4',
         className
