@@ -53,6 +53,31 @@ const staticAssetHeaders = [
   { key: 'Cache-Control', value: STATIC_ASSET_CACHE_CONTROL }
 ]
 
+async function buildSecurityHeaders() {
+  const cspModulePath =
+    './src/lib/security/buildReportOnlyCsp.ts'
+  const { buildReportOnlyCsp } = await import(cspModulePath)
+
+  /* eslint-disable quotes -- CSP keywords require ASCII single quotes inside the header value. */
+  return [
+    {
+      key: 'Content-Security-Policy',
+      value: "frame-ancestors 'self'"
+    },
+    {
+      key: 'Content-Security-Policy-Report-Only',
+      value: buildReportOnlyCsp()
+    },
+    { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+    { key: 'Document-Policy', value: 'js-profiling' },
+    {
+      key: 'Referrer-Policy',
+      value: 'strict-origin-when-cross-origin'
+    }
+  ]
+  /* eslint-enable quotes */
+}
+
 const serverlessTraceExcludes = [
   'gcloud components install alpha beta skaffold minikube kubectl gke-gcloud-auth-plugin/**',
   'output/**',
@@ -153,17 +178,10 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
+    const securityHeaders = await buildSecurityHeaders()
+
     return [
-      {
-        source: '/:path*',
-        headers: [
-          { key: 'Document-Policy', value: 'js-profiling' },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
-          }
-        ]
-      },
+      { source: '/:path*', headers: securityHeaders },
 
       {
         source: `${SERVER_TAG_MANAGER_PATH}/:path*`,

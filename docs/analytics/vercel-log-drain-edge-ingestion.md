@@ -1,12 +1,11 @@
 # Vercel Log and Trace Drains to Supabase landing observability
 
-Status date: 2026-08-01
+Status date: 2026-08-12
 
-Release state: active in production. The migrations, signed Edge
-Function receivers and project-scoped Vercel Log and Trace Drains
-were released and verified on 2026-08-01. The Trace Drain receiver
-is active as version 3 with bounded rejection classification and
-OTLP partial-success handling.
+Release state: the Vercel Log Drain is active in production. The
+`vercel-trace-drain` Edge Function remains deployed, but its permanent Vercel
+Trace Drain was removed on 2026-08-12. It is retained only for manually
+approved, time-bounded diagnostics; it is not active by default.
 
 ## Purpose and boundary
 
@@ -18,12 +17,16 @@ Both are hosted as Supabase Edge Functions instead of routes in
 the drained Vercel project, which prevents recursive drain
 traffic.
 
-The endpoint is not a canonical marketing event collector and
+Neither endpoint is a canonical marketing event collector and
 does not dispatch to Meta, Google, Microsoft, PostHog or any
 other provider. Its rows are evidence for the
 `outbound click -> edge request` transition only. Consent-stage
 evidence is stored separately in
 `ops.landing_consent_observations`.
+
+The Log Drain is operationally independent of Trace Drain delivery. Removing
+the Trace Drain must not change browser collection, canonical ledger writes,
+provider outbox processing, or the Log Drain's document-observation contract.
 
 Current official sources:
 
@@ -68,9 +71,9 @@ Current official sources:
    read model bridges `request_id`, `edge_request_id`,
    `vercel_id` and `trace_id` across sibling records before
    selecting one primary HTTP-request observation.
-9. The separate signed Trace Drain accepts OTLP/HTTP JSON, checks
-   the exact project and deployment resource attributes, and
-   stores one trace envelope keyed by `trace_id`.
+9. During an approved diagnostic window only, the separate signed Trace Drain
+   accepts OTLP/HTTP JSON, checks the exact project and deployment resource
+   attributes, and stores one trace envelope keyed by `trace_id`.
 10. The daily retention job removes request, trace and consent
     observations after 30 days unless a documented, time-limited
     privacy exception is active.
@@ -299,10 +302,12 @@ fixed by the partial-success response. Post-version-3 400 warnings
 observed so far contain no valid observation and remain intentionally
 fail-closed. Their upstream Vercel emission cause is not yet proven.
 
-Sampling below 100 percent invalidates the raw click-to-edge
-denominator unless the rate is incorporated explicitly into every
-report. Do not treat a successful Drain delivery test as proof
-that production traffic is being stored.
+Trace data is not a click-to-edge denominator and must never be used as one.
+The normal production state is no Vercel Trace Drain. For a diagnostic window,
+use a sampling rate below 100 percent and label all resulting trace findings as
+sampled diagnostics. Delete the Trace Drain when the stated window ends. Do
+not treat a successful Drain delivery test as proof that production traffic is
+being stored.
 
 ## Release order and evidence
 
@@ -325,12 +330,13 @@ each mutation. Follow this order:
    columns.
 9. Send a controlled signed OTLP JSON canary and prove only one
    bounded trace envelope is stored.
-10. Create the Vercel Log and Trace Drains with separate
-    dedicated signature secrets.
+10. Create the Vercel Log Drain with its dedicated signature secret.
 11. Use Vercel's delivery validation, then prove a real document
     request creates one corresponding database observation.
-12. Prove the production-only Trace sampling rule, 100-percent
-    sampling and a Log-to-Trace join for a real request.
+12. Leave the Vercel Trace Drain absent. If a diagnostic window is separately
+    approved, create it with a recorded end time and sampling below 100
+    percent, capture the scoped evidence, then delete it and read back the
+    absent state.
 13. Verify the Edge Function logs and Vercel Drain status without
     exposing body, signature secret, click id or database URL.
 14. After the consent collector is released, prove

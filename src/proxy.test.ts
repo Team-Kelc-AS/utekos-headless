@@ -148,20 +148,6 @@ test('correlates a document request without logging its landing query', async ()
     assert.equal(message.includes('secret-click'), false)
     assert.equal(message.includes('utm_source'), false)
     assert.equal(
-      response.headers.get('content-security-policy'),
-      'frame-ancestors \'self\''
-    )
-    assert.equal(
-      response.headers.get('x-frame-options'),
-      'SAMEORIGIN'
-    )
-    assert.doesNotMatch(
-      response.headers.get(
-        'content-security-policy-report-only'
-      ) ?? '',
-      /frame-ancestors/u
-    )
-    assert.equal(
       response.headers.get(
         'x-middleware-request-x-utekos-edge-request-id'
       ),
@@ -301,7 +287,7 @@ test('does not correlate a static asset requested by a crawler', async () => {
         'https://utekos.no/tech-diagonal-halv-maritime-blue-bg.png',
         {
           headers: {
-            accept: '*/*',
+            'accept': '*/*',
             'user-agent':
               'meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)'
           }
@@ -312,6 +298,34 @@ test('does not correlate a static asset requested by a crawler', async () => {
     assert.equal(response.headers.get('server-timing'), null)
     assert.equal(response.headers.get('set-cookie'), null)
     assert.equal(logCalls, 0)
+  } finally {
+    console.info = originalInfo
+    restoreSigningSecret()
+  }
+})
+
+test('leaves user-agent enforcement to Vercel Firewall and BotID', async () => {
+  const originalInfo = console.info
+  const restoreSigningSecret = installSigningSecret()
+  console.info = () => {}
+
+  try {
+    const { proxy } = await productionProxy
+    const response = await proxy(
+      new NextRequest('https://utekos.no/skreddersy-varmen', {
+        headers: {
+          'accept': 'text/html',
+          'sec-fetch-dest': 'document',
+          'user-agent': 'curl/8.7.1'
+        }
+      })
+    )
+
+    assert.equal(response.status, 200)
+    assert.match(
+      response.headers.get('server-timing') ?? '',
+      /utekos_edge;desc="[0-9a-f-]{36}"/u
+    )
   } finally {
     console.info = originalInfo
     restoreSigningSecret()
