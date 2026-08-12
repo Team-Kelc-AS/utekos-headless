@@ -2,8 +2,6 @@ import { techDownReviews } from '../data/reviews'
 import {
   LANDING_BASE_URL,
   LANDING_LAST_UPDATED,
-  LANDING_PAGE_DESCRIPTION,
-  LANDING_PAGE_TITLE,
   LANDING_PAGE_URL
 } from '../data/landingSeoContent'
 import { buildProductGroupJsonLd } from '@/lib/products/structured-data/buildProductGroupJsonLd'
@@ -23,8 +21,9 @@ export function buildSkreddersyVarmenJsonLd(
         '@type': 'ItemPage',
         '@id': `${LANDING_PAGE_URL}#webpage`,
         'url': LANDING_PAGE_URL,
-        'name': LANDING_PAGE_TITLE,
-        'description': LANDING_PAGE_DESCRIPTION,
+        'name': 'Utekos TechDown™ | Skreddersy varmen',
+        'description':
+          'Opplev kompromissløs komfort og overlegen allsidighet. Tilpass lengde, reguler ventilasjon og skreddersy passform. Juster, form og nyt.',
         'inLanguage': 'nb-NO',
         'dateModified': LANDING_LAST_UPDATED,
         'isPartOf': { '@id': `${LANDING_BASE_URL}/#website` },
