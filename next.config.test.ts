@@ -34,3 +34,27 @@ test('serves security headers globally outside Proxy', async () => {
     /frame-ancestors/u
   )
 })
+
+test('permanently redirects legacy Shopify product URLs to public product URLs', async () => {
+  const configModulePath = './next.config.mts'
+  const { default: nextConfig } = (await import(
+    configModulePath
+  )) as { default: NextConfig }
+  const redirectsFactory = nextConfig.redirects
+  if (typeof redirectsFactory !== 'function') {
+    assert.fail('next.config must define redirects')
+  }
+
+  const redirects = await redirectsFactory()
+
+  assert.deepEqual(
+    redirects.find(
+      redirect => redirect.source === '/products/:path*'
+    ),
+    {
+      source: '/products/:path*',
+      destination: '/produkter/:path*',
+      permanent: true
+    }
+  )
+})

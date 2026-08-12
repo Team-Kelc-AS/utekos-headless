@@ -240,8 +240,8 @@ const nextConfig: NextConfig = {
         permanent: true
       },
       {
-        source: '/products/utekos-techdawn',
-        destination: '/produkter/utekos-techdown',
+        source: '/products/:path*',
+        destination: '/produkter/:path*',
         permanent: true
       },
       {
