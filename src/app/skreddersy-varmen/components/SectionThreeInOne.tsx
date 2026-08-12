@@ -94,7 +94,7 @@ export function SectionThreeInOne() {
             >
               <m.div
                 className={cn(
-                  'dark:border-dark-foreground/10 relative w-full overflow-hidden border-y border-foreground/10 bg-card',
+                  'dark:border-dark-foreground/10 relative w-full overflow-hidden border-y border-foreground/10 bg-jungle',
                   step.mobileAspectClassName
                 )}
                 variants={revealScale}

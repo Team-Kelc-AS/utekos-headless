@@ -23,7 +23,7 @@ export async function LandingFaq() {
       aria-labelledby='landing-faq-heading'
       className='dark:bg-dark-background w-full bg-background px-6 py-16 text-foreground md:px-12 md:py-24'
     >
-      <div className='mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16'>
+      <div className='mx-auto flex w-full max-w-5xl flex-col items-start gap-10'>
         <div>
           <p className='text-foreground-muted mb-3 text-sm leading-4 font-medium'>
             Ofte stilte spørsmål
@@ -36,7 +36,10 @@ export async function LandingFaq() {
           </h2>
         </div>
 
-        <Accordion multiple={false} className='w-full gap-3'>
+        <Accordion
+          multiple={false}
+          className='w-full max-w-4xl gap-3'
+        >
           {LANDING_FAQ_ENTRIES.map(entry => (
             <AccordionItem
               key={entry.question}
