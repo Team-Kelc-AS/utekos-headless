@@ -15,32 +15,36 @@ import { ComfyrobeSection } from '@/components/frontpage/components/SpecialOffer
 import { FeaturedProductsSkeleton } from '@/components/skeletons/FeaturedProductsSkeleton'
 import { AsyncProductLaunchWrapper } from '@/components/frontpage/AsyncProductLaunchWrapper'
 import { FeaturedProductsSection } from '@/components/frontpage/FeaturedProductSection'
+import { FrontPageJsonLd } from '@/components/frontpage/components/FrontPageJsonLd/FrontPageJsonLd'
 
 const HomePage = () => {
   return (
-    <article>
-      <HeroSection />
-      <HomePageSectionFlow>
-        <div className='flex flex-col'>
-          <Suspense fallback={null}>
-            <AsyncProductLaunchWrapper />
-          </Suspense>
-          <LazyNewProductInStoreNotice />
-          <Suspense fallback={<FeaturedProductsSkeleton />}>
-            <FeaturedProductsSection />
-          </Suspense>
-          <NodeSection />
-          <ComfyrobeSection />
-          <LazyChatAndInfoSection />
-        </div>
-        <div className='flex flex-col'>
-          <CachedPromiseSection />
-          <MomentsSection />
-          <QualitySection />
-        </div>
-      </HomePageSectionFlow>
-      <LazyTestimonialConstellation />
-    </article>
+    <>
+      <FrontPageJsonLd />
+      <article>
+        <HeroSection />
+        <HomePageSectionFlow>
+          <div className='flex flex-col'>
+            <Suspense fallback={null}>
+              <AsyncProductLaunchWrapper />
+            </Suspense>
+            <LazyNewProductInStoreNotice />
+            <Suspense fallback={<FeaturedProductsSkeleton />}>
+              <FeaturedProductsSection />
+            </Suspense>
+            <NodeSection />
+            <ComfyrobeSection />
+            <LazyChatAndInfoSection />
+          </div>
+          <div className='flex flex-col'>
+            <CachedPromiseSection />
+            <MomentsSection />
+            <QualitySection />
+          </div>
+        </HomePageSectionFlow>
+        <LazyTestimonialConstellation />
+      </article>
+    </>
   )
 }
 
