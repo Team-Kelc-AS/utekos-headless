@@ -12,13 +12,15 @@ import { SectionSocialProof } from './components/SectionSocialProof'
 import { LandingFaq } from './components/LandingFaq'
 import { LandingKlarnaPromotion } from './components/LandingKlarnaPromotion'
 import { SkreddersyVarmenJsonLd } from './structured-data/SkreddersyVarmenJsonLd'
+import {
+  LANDING_PAGE_DESCRIPTION,
+  LANDING_PAGE_TITLE,
+  LANDING_PAGE_URL,
+  LANDING_SOCIAL_TITLE
+} from './data/landingSeoContent'
 import { getTechDownCommerceViewModel } from '@/lib/products/commerce'
 import type { Metadata } from 'next'
 
-const metadataTitle = 'Utekos TechDown™ – Skreddersy varmen'
-const socialTitle = `${metadataTitle} | Utekos`
-const description =
-  'Oppdag Utekos TechDown™ – tilpass passform og ventilasjon med unik 3-i-1-funksjonalitet. Skapt for hytte, camping, båt, bobil og terrasseliv.'
 const socialImage = {
   url: 'https://utekos.no/og-image-skreddersy-varmen.jpg',
   width: 1200,
@@ -28,15 +30,13 @@ const socialImage = {
 } as const
 
 export const metadata: Metadata = {
-  title: { absolute: 'Utekos TechDown™ - Skreddersy varmen' },
-  description,
+  title: { absolute: LANDING_PAGE_TITLE },
+  description: LANDING_PAGE_DESCRIPTION,
   category: 'Yttertøy',
   authors: [{ name: 'Utekos', url: 'https://utekos.no/om-oss' }],
   creator: 'Utekos',
   publisher: 'Utekos',
-  alternates: {
-    canonical: 'https://utekos.no/skreddersy-varmen'
-  },
+  alternates: { canonical: LANDING_PAGE_URL },
   robots: {
     index: true,
     follow: true,
@@ -51,16 +51,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'no_NO',
-    title: socialTitle,
-    description,
-    url: 'https://utekos.no/skreddersy-varmen',
+    title: LANDING_SOCIAL_TITLE,
+    description: LANDING_PAGE_DESCRIPTION,
+    url: LANDING_PAGE_URL,
     siteName: 'Utekos',
     images: [socialImage]
   },
   twitter: {
     card: 'summary_large_image',
-    title: socialTitle,
-    description,
+    title: LANDING_SOCIAL_TITLE,
+    description: LANDING_PAGE_DESCRIPTION,
     images: [socialImage]
   }
 }

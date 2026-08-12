@@ -10,6 +10,8 @@ export const Steps = [
     stepNumber: '01',
     modeName: 'Fullengdemodus',
     title: 'Maksimal isolasjon',
+    imageAlt:
+      'Person som sitter utendørs i mørkeblå Utekos TechDown™ i fullengdemodus.',
     description:
       'Utgangspunktet for selve utekosen. Pakk deg inn i en isolerende kokong for komplett komfort. Perfekt i hytteveggen, utenfor bobilen eller lange kvelder på terrassen hvor roen senker seg.',
     icon: <Maximize2 className='size-5' />,
@@ -27,13 +29,12 @@ export const Steps = [
     stepNumber: '02',
     modeName: 'Oppjustert modus',
     title: 'Umiddelbar mobilitet',
+    imageAlt:
+      'Mørkeblå Utekos TechDown™ sett forfra i oppjustert modus.',
     description:
       'Nyter du total omfavnelse av Utekos, men må plutselig på kjøkkenet eller svare telefonen? Heis opp plagget til ønsket lengde, stram snoren i livet og bli mobil på sekunder. Beveg deg trygt og subbefritt – uten å miste varmen.',
     icon: <Move className='size-5' />,
-    image: {
-      mobile: TechHalfImage,
-      desktop: TechHalfImage
-    },
+    image: { mobile: TechHalfImage, desktop: TechHalfImage },
     mobileAspectClassName: 'aspect-square',
     isProduct: true,
     desktopObjectFit: 'contain',
@@ -44,6 +45,8 @@ export const Steps = [
     stepNumber: '03',
     modeName: 'Parkasmodus',
     title: 'Selvformet eleganse',
+    imageAlt:
+      'Person som sitter utendørs i mørkeblå Utekos TechDown™ og ser i en kikkert.',
     description:
       'Planlagt bevegelse over tid. Forvandle Utekos til en selvformet parkas. Full bevegelsesfrihet med et elegant snitt.',
     icon: <User className='size-5' />,

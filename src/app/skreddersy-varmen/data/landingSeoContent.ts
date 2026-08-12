@@ -3,7 +3,12 @@ import type { Route } from 'next'
 
 export const LANDING_BASE_URL = 'https://utekos.no'
 export const LANDING_PAGE_URL = `${LANDING_BASE_URL}/skreddersy-varmen`
-export const LANDING_LAST_UPDATED = '2026-08-11'
+export const LANDING_PAGE_TITLE =
+  'Utekos TechDown™ – Skreddersy varmen'
+export const LANDING_SOCIAL_TITLE = `${LANDING_PAGE_TITLE} | Utekos`
+export const LANDING_PAGE_DESCRIPTION =
+  'Oppdag Utekos TechDown™ – tilpass passform og ventilasjon med unik 3-i-1-funksjonalitet. Skapt for hytte, camping, båt, bobil og terrasseliv.'
+export const LANDING_LAST_UPDATED = '2026-08-12'
 export const LANDING_AUTHOR_NAME = 'Utekos'
 
 export type LandingFaqEntry = {
