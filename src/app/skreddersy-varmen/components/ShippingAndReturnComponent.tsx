@@ -17,7 +17,7 @@ export function ShippingAndReturnComponent() {
   return (
     <div className='flex flex-col gap-6'>
       <div className='rounded-xl border border-foreground/10 bg-jungle text-foreground shadow-sm min-[900px]:bg-background'>
-        <div className='dark:divide-dark-foreground/10 grid grid-cols-1 divide-y divide-foreground/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
+        <div className='dark:divide-dark-foreground/10 grid grid-cols-1 divide-y divide-foreground/10 min-[1280px]:grid-cols-3 min-[1280px]:divide-x min-[1280px]:divide-y-0'>
           <div className='flex items-start gap-3 bg-jungle p-4'>
             <Truck
               size={22}
