@@ -165,7 +165,7 @@ export function PurchaseClientViewLanding({
 
             <div className='mb-6 h-px w-full bg-background/10 min-[900px]:mb-12' />
 
-            <div className='mb-0 space-y-12 text-foreground min-[900px]:mb-12'>
+            <div className='mb-0 space-y-12 text-foreground min-[900px]:mb-4'>
               <div className='overflow-hidden rounded-xl bg-night p-6 min-[900px]:p-6'>
                 <div className='mb-4 flex items-center justify-between min-[900px]:mb-4'>
                   <span className='font-google-sans text-sm font-bold tracking-normal text-foreground'>
