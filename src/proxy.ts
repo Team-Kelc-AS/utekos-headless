@@ -1,10 +1,8 @@
 // src/proxy.ts
 
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import type { NextRequest, ProxyConfig } from 'next/server'
 import { isKlarnaFeedHost } from '@/lib/merchant-feeds/klarna/klarnaFeedHost'
-import { isBlockedUserAgent } from '@/lib/security/isBlockedUserAgent'
-import { buildReportOnlyCsp } from '@/lib/security/buildReportOnlyCsp'
 import { isMagazineViewTransitionPreviewEnabled } from '@/app/magasinet/utils/isMagazineViewTransitionPreviewEnabled'
 import {
   LANDING_EDGE_AUTH_SERVER_TIMING_NAME,
@@ -40,7 +38,9 @@ export const LANDING_EDGE_REQUEST_ID_HEADER =
 
 let hasLoggedMissingLandingSigningSecret = false
 
-function logLandingCorrelationUnavailable(reason: 'missing' | 'invalid') {
+function logLandingCorrelationUnavailable(
+  reason: 'missing' | 'invalid'
+) {
   const isProduction = process.env.NODE_ENV === 'production'
   // Missing secret is expected in local/dev without observability env.
   // Log once there; keep hard errors in production.
@@ -70,9 +70,7 @@ function isDocumentNavigation(request: NextRequest) {
   if (destination) return destination === 'document'
 
   const accept = request.headers.get('accept')
-  return (
-    !accept || accept.includes('text/html') || accept === '*/*'
-  )
+  return accept?.includes('text/html') ?? false
 }
 
 type LandingEdgeCorrelation = {
@@ -109,11 +107,7 @@ async function createLandingEdgeCorrelation(
     process.env.LANDING_OBSERVABILITY_SIGNING_SECRET?.trim()
   if (!secret) {
     logLandingCorrelationUnavailable('missing')
-    return {
-      clearSynthetic,
-      edgeRequestId,
-      synthetic: false
-    }
+    return { clearSynthetic, edgeRequestId, synthetic: false }
   }
 
   try {
@@ -123,19 +117,10 @@ async function createLandingEdgeCorrelation(
       secret
     })
 
-    return {
-      clearSynthetic,
-      edgeRequestId,
-      synthetic,
-      token
-    }
+    return { clearSynthetic, edgeRequestId, synthetic, token }
   } catch {
     logLandingCorrelationUnavailable('invalid')
-    return {
-      clearSynthetic,
-      edgeRequestId,
-      synthetic: false
-    }
+    return { clearSynthetic, edgeRequestId, synthetic: false }
   }
 }
 
@@ -211,26 +196,9 @@ function continueDocumentRequest(
   }
 
   return withLandingEdgeCorrelation(
-    withSecurityHeaders(
-      NextResponse.next({ request: { headers: requestHeaders } })
-    ),
+    NextResponse.next({ request: { headers: requestHeaders } }),
     correlation
   )
-}
-
-function withSecurityHeaders<T extends NextResponse>(
-  response: T
-): T {
-  response.headers.set(
-    'Content-Security-Policy',
-    'frame-ancestors \'self\''
-  )
-  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
-  response.headers.set(
-    'Content-Security-Policy-Report-Only',
-    buildReportOnlyCsp()
-  )
-  return response
 }
 
 function rewriteKlarnaFeedRoot(
@@ -239,22 +207,12 @@ function rewriteKlarnaFeedRoot(
   const feedUrl = request.nextUrl.clone()
   feedUrl.pathname = KLARNA_FEED_PATH
 
-  return withSecurityHeaders(NextResponse.rewrite(feedUrl))
+  return NextResponse.rewrite(feedUrl)
 }
 
 export async function proxy(request: NextRequest) {
-  const userAgent = request.headers.get('user-agent') || ''
   const pathname = request.nextUrl.pathname
   const hostname = request.nextUrl.hostname
-
-  if (isBlockedUserAgent(userAgent)) {
-    return withSecurityHeaders(
-      new NextResponse(null, {
-        status: 403,
-        statusText: 'Forbidden'
-      })
-    )
-  }
 
   const correlation = await createLandingEdgeCorrelation(request)
 
@@ -267,12 +225,10 @@ export async function proxy(request: NextRequest) {
       return continueDocumentRequest(request, correlation)
     }
 
-    return withSecurityHeaders(
-      new NextResponse(null, {
-        status: 404,
-        statusText: 'Not Found'
-      })
-    )
+    return new NextResponse(null, {
+      status: 404,
+      statusText: 'Not Found'
+    })
   }
 
   if (pathname === '/' && isAllowedNboccReferrer(request)) {
@@ -284,7 +240,7 @@ export async function proxy(request: NextRequest) {
     redirectUrl.search = request.nextUrl.search
 
     return withLandingEdgeCorrelation(
-      withSecurityHeaders(NextResponse.redirect(redirectUrl, 307)),
+      NextResponse.redirect(redirectUrl, 307),
       correlation
     )
   }
@@ -308,7 +264,7 @@ export async function proxy(request: NextRequest) {
     upgradeUrl.search = request.nextUrl.search
 
     return withLandingEdgeCorrelation(
-      withSecurityHeaders(NextResponse.redirect(upgradeUrl)),
+      NextResponse.redirect(upgradeUrl),
       correlation
     )
   }
@@ -318,6 +274,51 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|sporing|__gtg|__sgtm|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|videos|apple-icon|icon|manifest).*)'
+    {
+      source:
+        '/((?!api(?:/|$)|sporing(?:/|$)|__gtg(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|videos(?:/|$)|favicon\\.ico$|sitemap\\.xml$|robots\\.txt$|apple-icon(?:\\.[^/]+)?$|icon(?:\\.[^/]+)?$|manifest(?:\\.[^/]+)?$|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)',
+      has: [
+        {
+          type: 'header',
+          key: 'sec-fetch-dest',
+          value: 'document'
+        }
+      ],
+      missing: [
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+        { type: 'header', key: 'rsc', value: '1' }
+      ]
+    },
+    {
+      source:
+        '/((?!api(?:/|$)|sporing(?:/|$)|__gtg(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|videos(?:/|$)|favicon\\.ico$|sitemap\\.xml$|robots\\.txt$|apple-icon(?:\\.[^/]+)?$|icon(?:\\.[^/]+)?$|manifest(?:\\.[^/]+)?$|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)',
+      has: [
+        { type: 'header', key: 'accept', value: '.*text/html.*' }
+      ],
+      missing: [
+        { type: 'header', key: 'sec-fetch-dest' },
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+        { type: 'header', key: 'rsc', value: '1' }
+      ]
+    },
+    {
+      source: '/',
+      has: [
+        {
+          type: 'header',
+          key: 'referer',
+          value:
+            'https?://(?:www\\.)?(?:nbocc\\.no|bergenhordaland\\.nbocc\\.no)(?:/.*)?'
+        }
+      ]
+    },
+    {
+      source: '/:path*',
+      has: [
+        { type: 'host', value: '(?:www\\.)?feed\\.utekos\\.no' }
+      ]
+    }
   ]
-}
+} satisfies ProxyConfig

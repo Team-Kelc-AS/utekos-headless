@@ -1,6 +1,25 @@
 # Meta click-to-landing observability
 
-Status date: 2026-08-02
+Status date: 2026-08-12
+
+## 2026-08-12 operational supersession: Trace Drain is diagnostic-only
+
+The permanent production Trace Drain was removed from Vercel on 2026-08-12.
+`vercel-trace-drain` remains deployed in Supabase solely as a manually enabled,
+time-bounded diagnostic receiver. It is not a canonical collector, does not
+gate the consent or provider pipelines, and must not be recreated by an
+application deployment.
+
+The Vercel Log Drain remains active. It is the pre-consent request-observation
+source for the click-to-edge read model; its continued operation is independent
+of Trace Drain delivery. Canonical tracking remains unchanged: browser
+collection, the canonical ledger, provider outbox and provider dispatch do not
+depend on either Trace Drain configuration or trace rows.
+
+Any future Trace Drain activation requires separate operator approval, a
+written start/end window, an explicit sampling rate below 100 percent, and a
+post-window deletion check. Do not use a standing Trace Drain, a rate of `1`,
+or an application deployment as an activation mechanism.
 
 Release state: the implementation is active in production. The
 application, two Supabase migrations, two signed Edge Function
@@ -545,6 +564,16 @@ bounded observability writes and is never stored in the
 warehouse. The proxy does not log the incoming URL, query or
 token.
 
+As of 2026-08-12, the Proxy matcher runs correlation only for requests that
+carry document-navigation signals. RSC, prefetch, API, Vercel-internal,
+tracking gateway and static-resource paths are excluded before Proxy
+execution; this includes `/analytics/meta-pixel-canonical-v1.js`. The NBCC
+root redirect and the Klarna feed host remain explicit matcher contracts.
+General CSP, X-Frame, Document-Policy and Referrer-Policy headers are owned by
+`next.config.mts`, so proxy-excluded responses retain the same header policy.
+Generic user-agent blocking is owned by Vercel Firewall system mitigations;
+BotID remains configured on the protected event and observability POST routes.
+
 The signed Vercel Log Drain receiver is the pre-consent source of
 truth for HTTP status, route, deployment, cache, region and
 bounded campaign metadata. It discards raw query strings, IP
@@ -555,10 +584,11 @@ projects only whether a row is the first document observation for
 that digest, so redirects and reloads cannot inflate the strong
 click-ID stratum of the click-to-edge numerator.
 
-The signed Vercel Trace Drain receiver stores a bounded
-server-side trace duration keyed by the documented `trace_id`.
-That duration is not browser TTFB, DOM readiness or page-load
-duration.
+When an explicitly approved diagnostic window is active, the signed Vercel
+Trace Drain receiver stores a bounded server-side trace duration keyed by the
+documented `trace_id`. That duration is not browser TTFB, DOM readiness or
+page-load duration. Outside that window no Vercel Trace Drain exists and no
+trace observations are expected.
 
 The browser captures the initial landing correlation and
 `page_view_id` before any SPA navigation and retains that pair
@@ -684,8 +714,10 @@ Follow `DEPLOYMENT.md`. The required order is:
    secret, deploy the Vercel application and verify both proxy
    correlation entries, consent observation, canonical PageView,
    collector and Meta attempt.
-6. Create the 100-percent Vercel Log and Trace Drains only after
-   separate approval, then prove real production delivery.
+6. Keep the Vercel Log Drain active. Do not create a standing Trace Drain.
+   A time-bounded Trace Drain diagnostic window requires separate approval,
+   a stated end time, sampling below 100 percent, and deletion after the
+   post-window evidence is captured.
 7. Run physical or approved device-cloud Facebook and Instagram
    in-app browser tests on iOS and Android. Chromium user-agent
    emulation is useful evidence, but it is not this release gate.

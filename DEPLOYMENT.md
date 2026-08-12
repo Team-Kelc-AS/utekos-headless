@@ -706,10 +706,10 @@ new migrations before the app deploy. Both migrations fail closed
 if `cron.job` is unavailable; read both active retention jobs back
 after migration. Then configure the required dedicated `fbclid`
 HMAC secret and the remaining function secrets, deploy and verify
-signed canaries before creating
-100-percent Vercel Log and Trace Drains. Drain creation, function
-secrets, Supabase migration and Vercel deployment are separate
-approved mutations. Follow
+signed canaries before creating the Vercel Log Drain. Keep the Trace Drain
+absent outside a separately approved diagnostic window; never create it as a
+100-percent standing pipeline. Drain creation, function secrets, Supabase
+migration and Vercel deployment are separate approved mutations. Follow
 [`docs/analytics/meta-click-to-landing-observability.md`](docs/analytics/meta-click-to-landing-observability.md),
 [`docs/analytics/vercel-log-drain-edge-ingestion.md`](docs/analytics/vercel-log-drain-edge-ingestion.md),
 and
@@ -723,6 +723,22 @@ adapter receipt and provider attribution/finality remain distinct
 states. Physical Facebook and Instagram in-app tests on iOS and
 Android remain a post-deploy release gate; Chromium user-agent
 emulation does not close it.
+
+### Trace Drain default: absent except for an approved diagnostic window
+
+As of 2026-08-12, the production Vercel Trace Drain is deleted. The deployed
+`vercel-trace-drain` Supabase Edge Function is retained as a diagnostic tool,
+not a permanent pipeline. Vercel application deploys neither create nor
+reactivate a Drain; do not add a standing Drain or a 100-percent sampling rule
+to release steps. The Vercel Log Drain remains active and is independent of
+Trace Drain delivery. Canonical tracking (browser collector, ledger, outbox
+and provider dispatch) is independent of both Drain configurations.
+
+Reactivation requires separate operator approval and a written diagnostic
+window with purpose, start/end time and a sampling rate below 100 percent.
+After evidence capture, delete the Trace Drain and read back Vercel's absent
+state. A retained Edge Function, a successful application deploy, or a
+historical Drain ID is never evidence that tracing should be active.
 
 The approved 2026-08-01 production release completed the two pink-lens
 migrations, both signed Supabase Edge Function deployments, the dedicated

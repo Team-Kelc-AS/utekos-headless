@@ -11,7 +11,13 @@ export const MARKETING_CONFIG = {
   fbclid_param: 'fbclid',
   fbc_param: 'fbc',
   email_param: 'email',
-  additional_params: ['gclid', 'msclkid', 'gbraid', 'wbraid', 'dclid'],
+  additional_params: [
+    'gclid',
+    'msclkid',
+    'gbraid',
+    'wbraid',
+    'dclid'
+  ],
   cookie_max_age: 30 * 24 * 60 * 60,
   cookie_path: '/',
   cookie_domain: process.env.COOKIE_DOMAIN,
@@ -19,14 +25,5 @@ export const MARKETING_CONFIG = {
   email_hash_cookie_name: 'email_hash',
   fbc_cookie_name: '_fbc'
 }
-
-export const BLOCKED_USER_AGENTS = [
-  'python-httpx',
-  'python-requests',
-  'aiohttp',
-  'scrapy',
-  'curl',
-  'wget'
-]
 
 export const GA_MEASUREMENT_ID = 'G-FCES3L0M9M'
