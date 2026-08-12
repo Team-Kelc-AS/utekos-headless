@@ -12,13 +12,13 @@ import {
 import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
 
 const pointIconClass =
-  'mt-0.5 shrink-0 text-light-teal drop-shadow-sm'
+  'mt-0.5 shrink-0 text-primary drop-shadow-sm'
 export function ShippingAndReturnComponent() {
   return (
     <div className='flex flex-col gap-6'>
       <div className='rounded-xl border border-foreground/10 bg-jungle text-foreground shadow-sm min-[900px]:bg-background'>
         <div className='dark:divide-dark-foreground/10 grid grid-cols-1 divide-y divide-foreground/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
-          <div className='flex items-start gap-3 bg-night p-4 sm:bg-transparent'>
+          <div className='flex items-start gap-3 bg-jungle p-4'>
             <Truck
               size={22}
               className={pointIconClass}
@@ -31,7 +31,7 @@ export function ShippingAndReturnComponent() {
             </div>
           </div>
 
-          <div className='flex items-start gap-3 bg-night p-4 sm:bg-transparent'>
+          <div className='flex items-start gap-3 bg-jungle p-4'>
             <RefreshCcw
               size={22}
               className={pointIconClass}
@@ -44,7 +44,7 @@ export function ShippingAndReturnComponent() {
             </div>
           </div>
 
-          <div className='flex items-start gap-3 bg-night p-4 sm:bg-transparent'>
+          <div className='flex items-start gap-3 bg-jungle p-4'>
             <CreditCard
               size={22}
               className={pointIconClass}

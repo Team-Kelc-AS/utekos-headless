@@ -42,8 +42,8 @@ export function TechDownSizeGuideAccordion() {
       columns={publicSizes}
       rows={techDownSizeRows}
       className='mt-5 max-w-none'
-      accordionClassName='rounded-2xl border border-foreground/15 bg-jungle px-3 sm:rounded-xl sm:border-none sm:bg-[#00453e] sm:px-2 min-[900px]:px-6'
-      triggerClassName='bg-jungle px-2 py-4 font-utekos-text text-foreground hover:text-foreground sm:bg-[#00453e] sm:py-6 min-[900px]:font-medium min-[900px]:text-[#F4F1EA]'
+      accordionClassName='rounded-2xl border border-foreground/15 bg-jungle px-3 sm:rounded-xl sm:border-none sm:px-2 min-[900px]:px-6'
+      triggerClassName='bg-jungle px-2 pt-5 pb-4 font-utekos-text text-foreground hover:text-foreground sm:py-6 min-[900px]:font-medium min-[900px]:text-[#F4F1EA]'
       tableHeaderClassName='bg-background'
       mobileContent={
         <TechDownMobileSizeGuide sizes={publicSizeGuidance} />

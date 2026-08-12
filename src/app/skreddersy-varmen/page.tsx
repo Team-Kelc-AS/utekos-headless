@@ -10,6 +10,7 @@ import { SkreddersyVarmenBreadcrumbs } from './components/SkreddersyVarmenBreadc
 import { SkreddersyVarmenKlarnaStrip } from './components/SkreddersyVarmenKlarnaStrip'
 import { SectionSocialProof } from './components/SectionSocialProof'
 import { LandingFaq } from './components/LandingFaq'
+import { LandingKlarnaPromotion } from './components/LandingKlarnaPromotion'
 import { SkreddersyVarmenJsonLd } from './structured-data/SkreddersyVarmenJsonLd'
 import { getTechDownCommerceViewModel } from '@/lib/products/commerce'
 import type { Metadata } from 'next'
@@ -163,6 +164,7 @@ export default async function LandingPage({
       </PromotionImpression>
 
       <LandingFaq />
+      <LandingKlarnaPromotion />
       <PreFooterNavigation />
     </div>
   )

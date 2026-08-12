@@ -150,7 +150,7 @@ export function TechDownSlider() {
     <SkreddersyMotionProvider>
       <section
         aria-labelledby='techdown-heading'
-        className='dark:border-dark-background/10 dark:text-dark-background w-full border-t border-background/10 bg-cloud-dancer py-16 text-background md:py-24 dark:bg-cloud-dancer'
+        className='dark:border-dark-background/10 dark:text-dark-background w-full border-t border-background/10 bg-[#f0eada] py-16 text-background md:py-24 dark:bg-[#f0eada]'
       >
         <div className='mx-auto max-w-5xl px-6'>
           <m.div
@@ -168,13 +168,13 @@ export function TechDownSlider() {
             </m.span>
             <m.h2
               id='techdown-heading'
-              className='leading-heading-level-two mb-6 max-w-[18ch] bg-cloud-dancer font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-background md:text-5xl lg:text-6xl'
+              className='leading-heading-level-two mb-6 max-w-[18ch] bg-[#f0eada] font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-background md:text-5xl lg:text-6xl'
               variants={revealScale}
             >
               Når været snur, består varmen
             </m.h2>
             <m.p
-              className='leading-text-paragraph max-w-3xl bg-cloud-dancer font-sans text-base text-background md:text-lg'
+              className='leading-text-paragraph max-w-3xl bg-[#f0eada] font-sans text-base text-background md:text-lg'
               variants={revealItem}
             >
               CloudWeave™ fortsetter å gi isolasjon når
@@ -336,7 +336,10 @@ export function TechDownSlider() {
               >
                 <div>
                   <div className='mb-3 flex items-center gap-2 text-primary'>
-                    <span className='inline-flex shrink-0' aria-hidden>
+                    <span
+                      className='inline-flex shrink-0'
+                      aria-hidden
+                    >
                       {currentContent.icon}
                     </span>
                     <span className='font-utekos-text-medium text-xs font-medium tracking-[0.08em] uppercase'>

@@ -22,7 +22,6 @@ export function KlarnaHomePagePromotionBox() {
     <klarna-placement
       data-key='homepage-promotion-box'
       data-locale='nb-NO'
-      data-theme='dark'
     ></klarna-placement>
   )
 }

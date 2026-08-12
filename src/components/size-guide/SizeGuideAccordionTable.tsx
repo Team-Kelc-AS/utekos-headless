@@ -70,13 +70,13 @@ export function SizeGuideAccordionTable({
           <AccordionContent
             className={mobileContent ? 'pb-0' : undefined}
           >
-            {mobileContent ? (
-              <div className='sm:hidden'>{mobileContent}</div>
-            ) : null}
+            {mobileContent ?
+              <div>{mobileContent}</div>
+            : null}
             <div
               className={cn(
                 'relative mt-2 mb-6 w-full overflow-hidden rounded-lg border border-[#F4F1EA]/5 bg-jungle',
-                mobileContent && 'hidden sm:block'
+                mobileContent && 'hidden'
               )}
             >
               <div className='overflow-x-auto'>

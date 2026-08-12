@@ -26,7 +26,7 @@ export function LandingProductHighlightsPanel({
         'bg-jungle text-foreground shadow-[0_12px_40px_rgba(0,0,0,0.28)]'
       )}
     >
-      <div className='border-b border-border bg-background px-5 py-4 sm:px-6 sm:py-5'>
+      <div className='border-b border-border bg-night px-5 py-4 sm:px-6 sm:py-5'>
         <h3 className='font-google-sans text-base font-bold tracking-tight text-foreground sm:text-lg'>
           Slik fungerer {modelName}
         </h3>
@@ -45,7 +45,7 @@ export function LandingProductHighlightsPanel({
             <AccordionTrigger
               className={cn(
                 'bg-jungle px-5 py-4 text-left font-utekos-text-medium text-sm sm:px-6 sm:text-base',
-                'text-foreground hover:text-primary hover:no-underline',
+                'text-foreground hover:text-white hover:no-underline hover:opacity-85',
                 'data-[state=open]:text-primary'
               )}
             >

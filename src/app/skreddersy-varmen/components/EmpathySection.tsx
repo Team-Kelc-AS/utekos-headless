@@ -31,7 +31,7 @@ export function EmpathySection() {
     <SkreddersyMotionProvider>
       <m.section
         aria-labelledby='empathy-heading'
-        className='dark:text-dark-background relative w-full overflow-hidden bg-cloud-dancer py-16 text-background md:py-24 lg:py-28 dark:bg-cloud-dancer'
+        className='dark:text-dark-background relative w-full overflow-hidden bg-[#f0eada] py-16 text-background md:py-24 lg:py-28 dark:bg-[#f0eada]'
         initial='hidden'
         whileInView='visible'
         viewport={skreddersyViewport}

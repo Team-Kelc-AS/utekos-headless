@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Check,
   Minus,
   Plus,
   Loader2,
@@ -85,81 +84,45 @@ export function PurchaseClientViewLanding({
         <LandingPageProductCarouselPurchaseSection />
 
         <div className='flex w-full flex-col bg-background text-foreground'>
-          <div className='flex-1 p-6 min-[1280px]:p-20 md:p-12'>
-            <div className='mb-4 font-utekos-text-medium text-sm text-foreground/80'>
+          <div className='flex-1 bg-[#f0eada] p-8 text-background min-[1280px]:p-20 md:p-12'>
+            <div className='mb-4 font-utekos-text-medium text-sm text-background/80'>
               Utekos TechDown™ · Bestselger
             </div>
 
-            <div className='mb-10'>
-              <h2 className='font-google-sans mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-foreground min-[1280px]:text-7xl'>
+            <div className='mb-6 min-[900px]:mb-8'>
+              <h2 className='font-google-sans mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-background min-[1280px]:text-7xl'>
                 <span className='sr-only'>Utekos </span>
                 <UtekosWordmark
                   aria-hidden
-                  className='h-[0.82em] w-auto translate-y-[0.04em] text-foreground'
+                  className='h-[0.82em] w-auto translate-y-[0.04em] text-background'
                 />
                 <span className='font-google-sans font-sans font-bold tracking-[-0.015em]'>
                   {modelName}
                 </span>
               </h2>
 
-              <p className='leading-text-paragraph mb-3 max-w-152 font-sans text-lg font-normal tracking-normal text-foreground/90 min-[900px]:mb-8 md:text-xl'>
+              <p className='leading-text-paragraph mb-6 max-w-152 font-sans text-lg font-normal tracking-normal text-background/90 min-[900px]:mb-8 md:text-xl'>
                 Vår nyeste, varmeste og mest allsidige modell.
               </p>
 
               {currentPrice ?
                 <div className='space-y-8 min-[900px]:space-y-3'>
                   <div className='flex flex-wrap items-baseline gap-3'>
-                    <p className='font-google-sans text-4xl font-bold tracking-tight text-foreground tabular-nums min-[900px]:text-5xl min-[1280px]:text-6xl min-[1280px]:leading-none'>
+                    <p className='font-google-sans text-4xl font-bold tracking-tight text-background tabular-nums min-[900px]:text-5xl min-[1280px]:text-6xl min-[1280px]:leading-none'>
                       {formatPrice(currentPrice)}
                     </p>
                     {hasCompareAtPrice && compareAtPrice ?
-                      <p className='text-lg text-foreground/70 tabular-nums line-through md:text-xl'>
+                      <p className='text-lg text-background/70 tabular-nums line-through md:text-xl'>
                         {formatPrice(compareAtPrice)}
                       </p>
                     : null}
                   </div>
-                  <p
-                    className={cn(
-                      'hidden flex-wrap items-center gap-x-2 gap-y-1 font-utekos-text text-sm font-normal min-[900px]:flex',
-                      isAvailable ?
-                        'text-foreground'
-                      : 'text-destructive-foreground'
-                    )}
-                    aria-live='polite'
-                  >
-                    {isAvailable ?
-                      <>
-                        <span className='inline-flex items-center gap-1'>
-                          <Check
-                            aria-hidden
-                            className='size-4 shrink-0 text-primary'
-                          />
-                          På lager
-                        </span>
-                        <span className='inline-flex items-center gap-1'>
-                          <Check
-                            aria-hidden
-                            className='size-4 shrink-0 text-primary'
-                          />
-                          Rask levering
-                        </span>
-                        <span className='inline-flex items-center gap-1'>
-                          <Check
-                            aria-hidden
-                            className='size-4 shrink-0 text-primary'
-                          />
-                          Gratis frakt
-                        </span>
-                      </>
-                    : 'Utsolgt - Normal transporttid 2–5 virkedager'
-                    }
-                  </p>
                 </div>
               : null}
             </div>
 
             <div
-              className='mb-12 space-y-8'
+              className='mb-6 space-y-6 min-[900px]:mb-12 min-[900px]:space-y-8'
               aria-label='Produktinformasjon'
             >
               <AnimatedBlock
@@ -174,7 +137,10 @@ export function PurchaseClientViewLanding({
                       key={feature}
                       className={cn(
                         choicePillClass,
-                        'min-[900px]:font-google-sans rounded-2xl border border-border bg-background font-utekos-text-medium text-[11px] text-foreground shadow-sm min-[900px]:font-bold md:max-xl:text-[14px]'
+                        'min-[900px]:font-google-sans rounded-2xl border border-border bg-background font-utekos-text-medium text-[11px] text-foreground shadow-sm min-[900px]:font-bold md:max-xl:text-[14px]',
+                        feature === 'Helårsbruk' && 'bg-night',
+                        feature === 'Vannavstøtende' &&
+                          'bg-night'
                       )}
                     >
                       {feature}
@@ -197,10 +163,10 @@ export function PurchaseClientViewLanding({
               </AnimatedBlock>
             </div>
 
-            <div className='mb-12 h-px w-full bg-foreground/10' />
+            <div className='mb-6 h-px w-full bg-background/10 min-[900px]:mb-12' />
 
-            <div className='mb-0 space-y-12 min-[900px]:mb-12'>
-              <div>
+            <div className='mb-0 space-y-12 text-foreground min-[900px]:mb-12'>
+              <div className='overflow-hidden rounded-xl bg-night p-6 min-[900px]:p-0'>
                 <div className='mb-4 flex items-center justify-between min-[900px]:mb-4'>
                   <span className='font-google-sans text-sm font-bold tracking-normal text-foreground'>
                     STØRRELSE
@@ -227,9 +193,12 @@ export function PurchaseClientViewLanding({
                         }
                         className={cn(
                           choicePillClass,
+                          '!rounded-2xl',
                           isActive ?
                             'cursor-pointer border border-foreground/20 bg-primary text-base text-foreground shadow-none hover:opacity-70 sm:text-base md:text-base'
-                          : 'cursor-pointer border-none bg-dark-teal text-base text-foreground hover:opacity-70 sm:text-base md:text-base',
+                          : size.label === 'Ekstra stor' ?
+                            'cursor-pointer border-none bg-jungle text-base text-foreground hover:opacity-70 sm:text-base md:text-base'
+                          : 'cursor-pointer border-none bg-jungle text-base text-foreground hover:opacity-70 min-[900px]:bg-night sm:text-base md:text-base',
                           !size.availableForSale && 'opacity-65',
                           focusRing
                         )}
@@ -248,9 +217,9 @@ export function PurchaseClientViewLanding({
                 {guidance ?
                   <div
                     key={selectedSize}
-                    className='animate-in fade-in slide-in-from-top-2 mt-6 duration-300 min-[900px]:mt-3'
+                    className='animate-in fade-in slide-in-from-top-2 mt-5 duration-300 min-[900px]:mt-3'
                   >
-                    <div className='relative overflow-hidden rounded-2xl border-none bg-[#00453e] p-4 font-utekos-text text-foreground shadow-md'>
+                    <div className='relative overflow-hidden rounded-2xl border-none bg-jungle p-4 font-utekos-text text-foreground shadow-md'>
                       <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
                         <Ruler className='size-4 text-primary' />
                         <span className='font-utekos-text text-sm font-bold tracking-normal text-foreground'>
@@ -274,12 +243,12 @@ export function PurchaseClientViewLanding({
 
                 <TechDownSizeGuideAccordion />
 
-                <div className='mt-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-t border-foreground/10 pt-4 min-[900px]:mt-4'>
+                <div className='mt-5 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-t border-foreground/10 pt-4 min-[900px]:mt-4'>
                   <div className='min-w-0'>
                     <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-foreground/80'>
                       FARGE
                     </span>
-                    <div className='mt-1 inline-flex h-10 w-29 items-center justify-center gap-2 rounded-full border-none bg-cloud-dancer px-3 font-utekos-text-medium text-sm text-background shadow-sm ring-1 ring-background'>
+                    <div className='mt-1 inline-flex h-10 w-29 items-center justify-center gap-2 rounded-full border-none bg-[#f0eada] px-3 font-utekos-text-medium text-sm text-background shadow-sm ring-1 ring-background'>
                       <span
                         aria-hidden
                         className='size-4 shrink-0 rounded-full border border-background/20 shadow-sm'
@@ -296,9 +265,9 @@ export function PurchaseClientViewLanding({
 
                   <div className='shrink-0'>
                     <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-foreground/80'>
-                      Antall
+                      ANTALL
                     </span>
-                    <div className='mt-1 flex h-10 items-center rounded-full border border-background/15 bg-cloud-dancer text-background'>
+                    <div className='mt-1 flex h-10 items-center rounded-full border border-background/15 bg-[#f0eada] text-background'>
                       <button
                         type='button'
                         onClick={() => setQuantity(quantity - 1)}
@@ -335,7 +304,7 @@ export function PurchaseClientViewLanding({
             </div>
           </div>
 
-          <div className='rounded-b-lg border-t border-background/20 bg-jungle p-6 text-foreground min-[900px]:p-8 min-[1280px]:p-12 md:p-12'>
+          <div className='rounded-b-lg border-t border-background/20 !bg-[#f0eada] p-6 text-background min-[900px]:p-8 min-[1280px]:p-12 md:p-12'>
             <div className='mb-4 min-[900px]:mb-6 min-[1280px]:mb-8'>
               <BrandBadge
                 asChild
