@@ -77,80 +77,15 @@ export function SectionThreeInOne() {
             variants={revealItem}
           >
             Sist innholdsendret{' '}
-            <time dateTime='2026-08-11'>11. august 2026</time>
+            <time dateTime='2026-08-12'>12. august 2026</time>
           </m.p>
         </m.div>
 
-        <div className='flex flex-col pb-20 lg:hidden'>
-          {Steps.map((step, index) => (
-            <m.div
-              key={step.id}
-              className='mb-12 flex flex-col last:mb-0'
-              initial='hidden'
-              whileInView='visible'
-              viewport={skreddersyViewport}
-              variants={revealGroup}
-              custom={index}
-            >
-              <m.div
-                className={cn(
-                  'dark:border-dark-foreground/10 relative w-full overflow-hidden border-y border-foreground/10 bg-jungle',
-                  step.mobileAspectClassName
-                )}
-                variants={revealScale}
-              >
-                <Image
-                  src={step.image.mobile}
-                  alt={step.title}
-                  fill
-                  loading='lazy'
-                  quality={75}
-                  className={cn(
-                    step.desktopObjectFit === 'contain' ?
-                      'bg-jungle object-contain p-12 min-[1536px]:p-16'
-                    : 'object-cover'
-                  )}
-                  sizes='(max-width: 1023px) 100vw, 0px'
-                />
-                <BrandBadge
-                  tone='promo'
-                  className='absolute top-4 left-4 h-7 px-3 py-0 text-xs leading-none font-medium shadow-lg backdrop-blur-md'
-                >
-                  {step.stepNumber}
-                </BrandBadge>
-              </m.div>
-
-              <div className='mx-auto w-full max-w-xl px-6 pt-6 md:px-8'>
-                <m.div
-                  className='dark:text-dark-primary mb-2 flex items-center gap-2 text-primary'
-                  variants={revealItemLeft}
-                >
-                  <span className='inline-flex shrink-0'>
-                    {step.icon}
-                  </span>
-                  <span className='text-sm leading-4 font-medium'>
-                    {step.modeName}
-                  </span>
-                </m.div>
-                <m.h3
-                  className='font-google-sans mb-3 font-sans text-3xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-4xl'
-                  variants={revealItem}
-                >
-                  {step.title}
-                </m.h3>
-                <m.p
-                  className='leading-text-paragraph mt-2 font-sans tracking-wide text-foreground/85 md:text-2xl'
-                  variants={revealItem}
-                >
-                  {step.description}
-                </m.p>
-              </div>
-            </m.div>
-          ))}
-        </div>
-
-        <div className='hidden w-full lg:flex'>
-          <div className='dark:border-dark-foreground/10 sticky top-0 flex h-screen w-1/2 items-center justify-center overflow-hidden border-r border-foreground/10 bg-jungle'>
+        <div className='w-full lg:flex'>
+          <div
+            aria-hidden='true'
+            className='dark:border-dark-foreground/10 sticky top-0 hidden h-screen w-1/2 items-center justify-center overflow-hidden border-r border-foreground/10 bg-jungle lg:flex'
+          >
             {Steps.map((step, index) => (
               <m.div
                 key={step.id}
@@ -167,7 +102,7 @@ export function SectionThreeInOne() {
                 <div className='dark:border-dark-foreground/15 dark:bg-dark-background/40 relative aspect-square w-[min(86%,82vh)] overflow-hidden rounded-3xl border border-foreground/15 bg-background/40 shadow-2xl'>
                   <Image
                     src={step.image.desktop}
-                    alt={step.title}
+                    alt=''
                     fill
                     loading='lazy'
                     quality={75}
@@ -198,11 +133,11 @@ export function SectionThreeInOne() {
             </div>
           </div>
 
-          <div className='dark:bg-dark-background flex w-1/2 flex-col bg-background'>
+          <div className='dark:bg-dark-background flex w-full flex-col bg-background pb-20 lg:w-1/2 lg:pb-0'>
             {Steps.map((step, index) => (
               <m.div
                 key={step.id}
-                className='dark:border-dark-foreground/10 flex min-h-screen flex-col justify-center border-b border-foreground/10 px-12 py-24 last:border-0 xl:px-20'
+                className='dark:border-dark-foreground/10 mb-12 flex flex-col border-foreground/10 last:mb-0 lg:mb-0 lg:min-h-screen lg:justify-center lg:border-b lg:px-12 lg:py-24 lg:last:border-0 xl:px-20'
                 initial='hidden'
                 whileInView='visible'
                 viewport={{
@@ -212,9 +147,37 @@ export function SectionThreeInOne() {
                 variants={revealGroup}
                 onViewportEnter={() => setActiveStep(index)}
               >
-                <div className='max-w-xl'>
+                <m.div
+                  className={cn(
+                    'dark:border-dark-foreground/10 relative w-full overflow-hidden border-y border-foreground/10 bg-jungle lg:hidden',
+                    step.mobileAspectClassName
+                  )}
+                  variants={revealScale}
+                >
+                  <Image
+                    src={step.image.mobile}
+                    alt={step.imageAlt}
+                    fill
+                    loading='lazy'
+                    quality={75}
+                    className={cn(
+                      step.desktopObjectFit === 'contain' ?
+                        'bg-jungle object-contain p-12'
+                      : 'object-cover'
+                    )}
+                    sizes='(max-width: 1023px) 100vw, 0px'
+                  />
+                  <BrandBadge
+                    tone='promo'
+                    className='absolute top-4 left-4 h-7 px-3 py-0 text-xs leading-none font-medium shadow-lg backdrop-blur-md'
+                  >
+                    {step.stepNumber}
+                  </BrandBadge>
+                </m.div>
+
+                <div className='mx-auto w-full max-w-xl px-6 pt-6 md:px-8 lg:px-0 lg:pt-0'>
                   <m.div
-                    className='dark:text-dark-primary mb-4 flex items-center gap-3 font-sans text-base leading-4 font-medium text-primary md:text-lg'
+                    className='dark:text-dark-primary mb-2 flex items-center gap-2 font-sans text-primary lg:mb-4 lg:gap-3'
                     variants={revealItemLeft}
                   >
                     <m.span
@@ -223,20 +186,23 @@ export function SectionThreeInOne() {
                     >
                       {step.icon}
                     </m.span>
-                    <span className='font-utekos-text-medium text-base leading-4 md:text-lg'>
-                      {step.stepNumber} — {step.modeName}
+                    <span className='font-utekos-text-medium text-sm leading-4 font-medium lg:text-base xl:text-lg'>
+                      <span className='hidden lg:inline'>
+                        {step.stepNumber} —{' '}
+                      </span>
+                      {step.modeName}
                     </span>
                   </m.div>
 
                   <m.h3
-                    className='font-google-sans mb-6 font-sans text-5xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-6xl'
+                    className='font-google-sans mb-3 font-sans text-3xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-4xl lg:mb-6 lg:text-5xl xl:text-6xl'
                     variants={revealItem}
                   >
                     {step.title}
                   </m.h3>
 
                   <m.p
-                    className='leading-text-paragraph max-w-lg font-sans text-base text-foreground/85 md:text-2xl'
+                    className='leading-text-paragraph mt-2 max-w-lg font-sans text-base tracking-wide text-foreground/85 md:text-2xl lg:mt-0 lg:tracking-normal'
                     variants={revealItem}
                   >
                     {step.description}

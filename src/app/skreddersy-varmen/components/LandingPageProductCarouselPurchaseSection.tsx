@@ -1,7 +1,7 @@
 // Path: src/app/skreddersy-varmen/components/LandingPageProductCarouselPurchaseSection.tsx
 'use client'
 
-import Image from 'next/image'
+import Image, { getImageProps } from 'next/image'
 import Fade from 'embla-carousel-fade'
 import TechDownFlowerMobileImage from '@/assets/images/techdown/TechDown-Flower-1080x1350.webp'
 import { cn } from '@/lib/utils/className'
@@ -17,8 +17,26 @@ import { CAROUSEL_SSR } from '@/components/ui/carousel-ssr'
 import { focusRing } from '../utils/constants'
 import { PRODUCT_VARIANTS } from '@/api/constants'
 
+const TECHDOWN_IMAGE_ALTS = [
+  'Person som sitter på en terrasse i mørkeblå Utekos TechDown™.',
+  'Mørkeblå Utekos TechDown™ i fullengdemodus sett skrått forfra.',
+  'Mørkeblå Utekos TechDown™ i fullengdemodus sett bakfra.',
+  'Mørkeblå Utekos TechDown™ sett forfra i oppjustert modus.'
+] as const
+
 export function LandingPageProductCarouselPurchaseSection() {
   const currentConfig = PRODUCT_VARIANTS['utekos-techdown']
+  const firstImage = currentConfig.images[0]
+
+  if (!firstImage) return null
+
+  const { props: desktopFirstImage } = getImageProps({
+    src: firstImage,
+    alt: TECHDOWN_IMAGE_ALTS[0],
+    fill: true,
+    sizes: '(min-width: 900px) 40vw, 0px'
+  })
+
   return (
     <div className='dark:bg-dark-background relative flex w-full flex-col items-center justify-center bg-background min-[900px]:sticky min-[900px]:top-0 min-[900px]:h-svh min-[900px]:self-start min-[900px]:p-8 min-[1280px]:p-12'>
       <BrandBadge
@@ -43,6 +61,9 @@ export function LandingPageProductCarouselPurchaseSection() {
         <CarouselContent className='ml-0'>
           {currentConfig.images.map((src, i) => {
             const isTechDownFirstImage = i === 0
+            const imageAlt =
+              TECHDOWN_IMAGE_ALTS[i] ??
+              `${currentConfig.title} sett fra en ny vinkel.`
 
             return (
               <CarouselItem
@@ -51,29 +72,27 @@ export function LandingPageProductCarouselPurchaseSection() {
               >
                 <div className='dark:min-[900px]:ring-dark-background/10 relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10'>
                   {isTechDownFirstImage ?
-                    <>
+                    <picture>
+                      <source
+                        media='(min-width: 900px)'
+                        srcSet={desktopFirstImage.srcSet}
+                        sizes='40vw'
+                      />
                       <Image
                         src={TechDownFlowerMobileImage}
-                        alt={`${currentConfig.title} – bilde ${i + 1}`}
+                        alt={imageAlt}
                         fill
-                        className='object-cover min-[900px]:hidden'
-                        sizes='(max-width: 899px) 100vw, 0px'
+                        loading='lazy'
+                        className='object-cover'
+                        sizes='(max-width: 899px) 100vw, 40vw'
                       />
-                      <Image
-                        src={src}
-                        alt={`${currentConfig.title} – bilde ${i + 1}`}
-                        fill
-                        className='hidden object-cover min-[900px]:block'
-                        sizes='(max-width: 899px) 0px, 40vw'
-                      />
-                    </>
+                    </picture>
                   : <Image
                       src={src}
-                      alt={`${currentConfig.title} – bilde ${i + 1}`}
+                      alt={imageAlt}
                       fill
                       className='object-cover'
                       sizes='(max-width: 900px) 100vw, 40vw'
-                      priority={i === 0}
                     />
                   }
                 </div>

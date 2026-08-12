@@ -150,7 +150,7 @@ export function EmpathySection() {
                 <div className='absolute inset-x-0 -inset-y-14'>
                   <Image
                     src='https://cdn.shopify.com/s/files/1/0634/2154/6744/files/skreddersdy-varmen-balpanne.jpg?v=1780812470'
-                    alt='Bålpanne med flammer. To stk Utekos i bakgrunnen.'
+                    alt='Bålpanne med flammer og to personer i mørkeblå Utekos TechDown™ i bakgrunnen.'
                     fill
                     className='object-cover'
                     sizes='(max-width: 1024px) 100vw, 50vw'

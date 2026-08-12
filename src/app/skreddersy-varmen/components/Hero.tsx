@@ -51,6 +51,7 @@ export function Hero({
           src={MobileOne}
           alt=''
           fill
+          loading='eager'
           fetchPriority='high'
           quality={80}
           sizes='100vw'
