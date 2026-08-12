@@ -219,7 +219,7 @@ export function PurchaseClientViewLanding({
                     key={selectedSize}
                     className='animate-in fade-in slide-in-from-top-2 mt-5 duration-300 min-[900px]:mt-3'
                   >
-                    <div className='relative overflow-hidden rounded-2xl border-none bg-jungle p-4 font-utekos-text text-foreground shadow-md'>
+                    <div className='relative overflow-hidden rounded-2xl border-none bg-jungle p-4 font-utekos-text text-foreground shadow-md md:p-6'>
                       <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
                         <Ruler className='size-4 text-primary' />
                         <span className='font-utekos-text text-sm font-bold tracking-normal text-foreground'>
