@@ -11,7 +11,6 @@ import { SkreddersyVarmenKlarnaStrip } from './components/SkreddersyVarmenKlarna
 import { SectionSocialProof } from './components/SectionSocialProof'
 import { LandingFaq } from './components/LandingFaq'
 import { LandingKlarnaPromotion } from './components/LandingKlarnaPromotion'
-import { SkreddersyVarmenJsonLd } from './structured-data/SkreddersyVarmenJsonLd'
 import {
   LANDING_PAGE_DESCRIPTION,
   LANDING_PAGE_TITLE,
@@ -111,10 +110,6 @@ export default async function LandingPage({
 
   return (
     <div className='dark:bg-dark-background flex min-h-screen w-full flex-col items-center justify-start overflow-x-clip bg-background'>
-      {commerce ?
-        <SkreddersyVarmenJsonLd commerce={commerce} />
-      : null}
-
       <StickyMobileAction
         {...(defaultVariant ?
           {
