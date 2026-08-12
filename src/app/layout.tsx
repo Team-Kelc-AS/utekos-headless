@@ -95,10 +95,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     'https://utekos.no'
   ),
-  title: {
-    default: 'Utekos - Skreddersy varmen',
-    template: '%s | Utekos'
-  },
+  title: 'Utekos - Skreddersy varmen',
   description:
     'Utekos er en merkevare som designer funksjonelt yttertøy for kompromissløs komfort og overlegen allsidighet. Perfekt for hytteliv, bobilferie, telttur, i båt og terrasseliv.',
   alternates: {
