@@ -1,9 +1,9 @@
 // Path: src/app/skreddersy-varmen/components/LandingPageProductCarouselPurchaseSection.tsx
 'use client'
 
-import Image, { getImageProps } from 'next/image'
+import Image from 'next/image'
 import Fade from 'embla-carousel-fade'
-import TechDownFlowerMobileImage from '@/assets/images/techdown/TechDown-Flower-1080x1350.webp'
+import TechDownTerraceImage from '@/assets/images/techdown/TechDown-Terrasse-2048x2720.webp'
 import { cn } from '@/lib/utils/className'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import {
@@ -26,16 +26,10 @@ const TECHDOWN_IMAGE_ALTS = [
 
 export function LandingPageProductCarouselPurchaseSection() {
   const currentConfig = PRODUCT_VARIANTS['utekos-techdown']
-  const firstImage = currentConfig.images[0]
-
-  if (!firstImage) return null
-
-  const { props: desktopFirstImage } = getImageProps({
-    src: firstImage,
-    alt: TECHDOWN_IMAGE_ALTS[0],
-    fill: true,
-    sizes: '(min-width: 900px) 40vw, 0px'
-  })
+  const galleryImages = [
+    TechDownTerraceImage,
+    ...currentConfig.images.slice(1)
+  ]
 
   return (
     <div className='dark:bg-dark-background relative flex w-full flex-col items-center justify-center bg-background min-[900px]:sticky min-[900px]:top-0 min-[900px]:h-svh min-[900px]:self-start min-[900px]:p-8 min-[1280px]:p-12'>
@@ -49,59 +43,39 @@ export function LandingPageProductCarouselPurchaseSection() {
       </BrandBadge>
 
       <Carousel
-        slideCount={currentConfig.images.length}
-        ssr={CAROUSEL_SSR.fullWidth(currentConfig.images.length)}
-        opts={{
-          loop: currentConfig.images.length > 1,
-          duration: 35
-        }}
-        plugins={currentConfig.images.length > 1 ? [Fade()] : []}
+        slideCount={galleryImages.length}
+        ssr={CAROUSEL_SSR.fullWidth(galleryImages.length)}
+        opts={{ loop: galleryImages.length > 1, duration: 35 }}
+        plugins={galleryImages.length > 1 ? [Fade()] : []}
         className='relative w-full min-[900px]:max-w-xl'
       >
         <CarouselContent className='ml-0'>
-          {currentConfig.images.map((src, i) => {
-            const isTechDownFirstImage = i === 0
+          {galleryImages.map((src, i) => {
             const imageAlt =
               TECHDOWN_IMAGE_ALTS[i] ??
               `${currentConfig.title} sett fra en ny vinkel.`
 
             return (
               <CarouselItem
-                key={src}
-                className='relative aspect-4/5 pl-0'
+                key={typeof src === 'string' ? src : src.src}
+                className='relative aspect-4/5 pl-0 md:aspect-3/4'
               >
                 <div className='dark:min-[900px]:ring-dark-background/10 relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10'>
-                  {isTechDownFirstImage ?
-                    <picture>
-                      <source
-                        media='(min-width: 900px)'
-                        srcSet={desktopFirstImage.srcSet}
-                        sizes='40vw'
-                      />
-                      <Image
-                        src={TechDownFlowerMobileImage}
-                        alt={imageAlt}
-                        fill
-                        loading='lazy'
-                        className='object-cover'
-                        sizes='(max-width: 899px) 100vw, 40vw'
-                      />
-                    </picture>
-                  : <Image
-                      src={src}
-                      alt={imageAlt}
-                      fill
-                      className='object-cover'
-                      sizes='(max-width: 900px) 100vw, 40vw'
-                    />
-                  }
+                  <Image
+                    src={src}
+                    alt={imageAlt}
+                    fill
+                    className='object-cover'
+                    sizes='(max-width: 899px) 100vw, 40vw'
+                    preload={i === 0}
+                  />
                 </div>
               </CarouselItem>
             )
           })}
         </CarouselContent>
 
-        {currentConfig.images.length > 1 && (
+        {galleryImages.length > 1 && (
           <>
             <CarouselPrevious
               aria-label='Forrige bilde'
