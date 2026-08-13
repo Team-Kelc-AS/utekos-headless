@@ -12,22 +12,33 @@ import { getShopifyCartLogReference } from '@/lib/cart/getShopifyCartCacheTag'
 import { redactShopifyCartSecrets } from '@/lib/cart/redactShopifyCartSecrets'
 import type { StorefrontCart } from '@/api/shopify/types/storefrontApi'
 
-export const fetchRawCart = async (
+export type CartReadResult =
+  | { status: 'ready'; cart: Cart }
+  | { status: 'not-found' }
+  | { status: 'unavailable' }
+
+type RawCartReadResult =
+  | { status: 'ready'; cart: StorefrontCart }
+  | { status: 'not-found' }
+  | { status: 'unavailable' }
+
+async function readRawCart(
   context: StorefrontBuyerContext,
   cartId: string
-): Promise<StorefrontCart | null> => {
-  const res = await storefrontGateway.buyerQuery<ShopifyCartOperation>({
-    context,
-    query: getCartQuery,
-    variables: { cartId }
-  })
+): Promise<RawCartReadResult> {
+  const res =
+    await storefrontGateway.buyerQuery<ShopifyCartOperation>({
+      context,
+      query: getCartQuery,
+      variables: { cartId }
+    })
 
   if (!res.success) {
     console.error(
       `Failed to fetch ${getShopifyCartLogReference(cartId)}:`,
       redactShopifyCartSecrets(JSON.stringify(res.error.errors))
     )
-    return null
+    return { status: 'unavailable' }
   }
 
   if (!res.body.cart) {
@@ -36,17 +47,36 @@ export const fetchRawCart = async (
         `${getShopifyCartLogReference(cartId)} was not found.`
       )
     )
-    return null
+    return { status: 'not-found' }
   }
 
-  return res.body.cart
+  return { status: 'ready', cart: res.body.cart }
+}
+
+export const fetchRawCart = async (
+  context: StorefrontBuyerContext,
+  cartId: string
+): Promise<StorefrontCart | null> => {
+  const result = await readRawCart(context, cartId)
+  return result.status === 'ready' ? result.cart : null
+}
+
+export async function fetchCartReadResult(
+  context: StorefrontBuyerContext,
+  cartId: string
+): Promise<CartReadResult> {
+  const result = await readRawCart(context, cartId)
+
+  if (result.status !== 'ready') return result
+
+  return { status: 'ready', cart: normalizeCart(result.cart) }
 }
 
 export const fetchCart = async (
   context: StorefrontBuyerContext,
   cartId: string
 ): Promise<Cart | null> => {
-  const cart = await fetchRawCart(context, cartId)
+  const result = await fetchCartReadResult(context, cartId)
 
-  return cart ? normalizeCart(cart) : null
+  return result.status === 'ready' ? result.cart : null
 }
