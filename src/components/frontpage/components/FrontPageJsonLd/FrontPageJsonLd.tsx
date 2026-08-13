@@ -24,9 +24,9 @@ const PRIMARY_IMAGE_ID = `${SITE_URL}/#primary-image`
 const NAVIGATION_ID = `${SITE_URL}/#primary-navigation`
 const FEATURED_PRODUCTS_ID = `${SITE_URL}/#featured-products`
 const FRONT_PAGE_VIDEO_ID = `${SITE_URL}/#frontpage-video`
-const HOME_PAGE_NAME = 'Utekos® - Skreddersy varmen'
+const HOME_PAGE_NAME = 'Utekos® Offisiell Nettbutikk | Skreddersy varmen'
 const HOME_PAGE_DESCRIPTION =
-  'Opplev kompromissløs komfort og overlegen allsidighet. Gjør som tusenvis av andre livsnytere og løft utendørslivet til et nytt nivå.'
+  'Opplev kompromissløs komfort og overlegen allsidighet. Juster, form og nyt.'
 
 type FeaturedProduct = Awaited<ReturnType<typeof getFeaturedProducts>>[number]
 

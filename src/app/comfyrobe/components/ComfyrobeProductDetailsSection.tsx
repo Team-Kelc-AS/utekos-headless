@@ -1,15 +1,5 @@
 'use client'
 
-import {
-  Activity,
-  Info,
-  Layers3,
-  Ruler,
-  TableProperties,
-  WashingMachine,
-  Waypoints
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import {
   Accordion,
@@ -19,20 +9,14 @@ import {
 } from '@/components/ui/accordion'
 import {
   getProductPageContent,
-  type ProductAccordionGroup,
-  type ProductAccordionSectionId
+  type ProductAccordionGroup
 } from '@/db/data/products/product-page-content'
 
-const sectionIcons = {
-  materialer: Layers3,
-  funksjoner: Activity,
-  egenskaper: TableProperties,
-  bruksomrader: Waypoints,
-  passform: Ruler,
-  vaskeanvisning: WashingMachine
-} as const satisfies Record<ProductAccordionSectionId, LucideIcon>
-
-function AccordionGroup({ group }: { group: ProductAccordionGroup }) {
+function AccordionGroup({
+  group
+}: {
+  group: ProductAccordionGroup
+}) {
   return (
     <article className='space-y-3'>
       {group.title ?
@@ -95,8 +79,9 @@ function AccordionGroup({ group }: { group: ProductAccordionGroup }) {
   )
 }
 
-const comfyrobeAccordion =
+const comfyrobeAccordion = (
   getProductPageContent('comfyrobe')?.accordion ?? []
+).filter(section => section.id !== 'egenskaper')
 
 export function ComfyrobeProductDetailsSection() {
   if (comfyrobeAccordion.length === 0) {
@@ -106,12 +91,11 @@ export function ComfyrobeProductDetailsSection() {
   return (
     <section
       id='comfyrobe-product-details'
-      className='bg-background px-6 py-16 text-foreground font-sans md:py-24'
+      className='bg-background px-6 pt-8 pb-10 font-sans text-foreground md:py-14'
       aria-labelledby='comfyrobe-details-heading'
     >
-      <div className='md:max-w-[85%] mx-auto'>
-        <BrandBadge className='gap-2 bg-jungle text-left text-foreground font-sans'>
-          <Info className='size-5 font-sans' aria-hidden />
+      <div className='mx-auto md:max-w-[85%]'>
+        <BrandBadge className='gap-2 rounded-2xl bg-jungle text-left font-sans text-foreground'>
           <h2
             id='comfyrobe-details-heading'
             className='font-sans text-lg leading-[1.2] tracking-normal'
@@ -121,38 +105,29 @@ export function ComfyrobeProductDetailsSection() {
         </BrandBadge>
 
         <Accordion className='mt-8 w-full rounded-2xl border border-border bg-jungle px-4 text-card-foreground sm:px-5'>
-          {comfyrobeAccordion.map(section => {
-            const Icon = sectionIcons[section.id]
-
-            return (
-              <AccordionItem
-                key={section.id}
-                value={section.id}
-                className='border-border'
-              >
-                <AccordionTrigger className='py-5 text-base text-card-foreground hover:text-primary hover:no-underline **:data-[slot=accordion-trigger-icon]:text-primary'>
-                  <span className='flex min-w-0 items-center gap-3 sm:gap-4'>
-                    <span className='flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-dark-teal text-foreground'>
-                      <Icon className='size-5' aria-hidden />
-                    </span>
-                    <span className='font-utekos-text-medium text-left leading-[1.2]'>
-                      {section.title}
-                    </span>
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className='pb-5 text-card-foreground'>
-                  <div className='max-w-prose space-y-6 font-utekos-text sm:pl-14'>
-                    {section.groups.map((group, index) => (
-                      <AccordionGroup
-                        key={`${group.title ?? section.id}-${index}`}
-                        group={group}
-                      />
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            )
-          })}
+          {comfyrobeAccordion.map(section => (
+            <AccordionItem
+              key={section.id}
+              value={section.id}
+              className='border-border'
+            >
+              <AccordionTrigger className='py-5 text-base text-card-foreground hover:text-primary hover:no-underline **:data-[slot=accordion-trigger-icon]:text-primary'>
+                <span className='text-left font-utekos-text-medium leading-[1.2]'>
+                  {section.title}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className='pb-5 text-card-foreground'>
+                <div className='max-w-prose space-y-6 font-utekos-text sm:pl-14'>
+                  {section.groups.map((group, index) => (
+                    <AccordionGroup
+                      key={`${group.title ?? section.id}-${index}`}
+                      group={group}
+                    />
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
         </Accordion>
       </div>
     </section>

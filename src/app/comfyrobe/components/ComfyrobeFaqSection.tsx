@@ -1,16 +1,15 @@
-import Link from 'next/link'
 import { ChevronDown } from 'lucide-react'
 import { COMFYROBE_LANDING_FAQ } from '../data/comfyrobeLandingSeo'
 
 export function ComfyrobeFaqSection() {
   return (
     <section
-      className='bg-background py-20 text-foreground md:py-28'
+      className='bg-background px-6 py-10 text-foreground md:px-12 md:py-28 lg:px-16'
       aria-labelledby='faq-heading'
     >
       <div className='mx-auto max-w-4xl rounded-xl bg-jungle px-6 py-12 md:px-12'>
         <p className='text-center font-utekos-text-medium text-sm tracking-wide text-primary'>
-          Spørsmål før kjøp
+          Ofte stilte spørsmål
         </p>
         <h2
           id='faq-heading'
@@ -18,11 +17,6 @@ export function ComfyrobeFaqSection() {
         >
           Trygg på valget.
         </h2>
-        <p className='mx-auto mt-5 max-w-2xl text-center font-utekos-text text-lg leading-relaxed text-foreground/72'>
-          Passform, værbeskyttelse og bruk – det viktigste før du
-          velger størrelse.
-        </p>
-
         <div className='mt-12 divide-y divide-border border-y border-border'>
           {COMFYROBE_LANDING_FAQ.map(item => (
             <details key={item.question} className='group py-2'>
@@ -41,30 +35,6 @@ export function ComfyrobeFaqSection() {
             </details>
           ))}
         </div>
-
-        <nav
-          aria-label='Mer kjøpshjelp'
-          className='mt-9 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm'
-        >
-          <Link
-            href='/handlehjelp/storrelsesguide#comfyrobe-size-guide'
-            className='min-h-11 content-center font-utekos-text-medium underline underline-offset-4'
-          >
-            Se størrelsesguide
-          </Link>
-          <Link
-            href='/handlehjelp/vask-og-vedlikehold'
-            className='min-h-11 content-center font-utekos-text-medium underline underline-offset-4'
-          >
-            Vask og vedlikehold
-          </Link>
-          <Link
-            href='/produkter/comfyrobe'
-            className='min-h-11 content-center font-utekos-text-medium underline underline-offset-4'
-          >
-            Ordinær produktside
-          </Link>
-        </nav>
       </div>
     </section>
   )

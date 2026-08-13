@@ -1,11 +1,20 @@
 'use client'
 
-import { ArrowRight, ChevronDown } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
+import { KlarnaProductExpressCheckout } from '@/components/klarna/components/KlarnaProductExpressCheckout'
+import { Button } from '@/components/ui/button'
+import { useAddToCartAction } from '@/hooks/useAddToCartAction'
 import { reportCanonicalSelectPromotion } from '@/lib/analytics/selectPromotionReporter'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 
 type ComfyrobeHeroActionsProps = {
   primaryLabel: string
+  product: ProductCartModel | null
+  selectedVariant: ProductPurchaseVariant | null
 }
 
 function createInteractionId(): string {
@@ -37,52 +46,85 @@ function reportHeroSelection(
   }
 }
 
+function ComfyrobeHeroPurchaseActions({
+  product,
+  selectedVariant
+}: {
+  product: ProductCartModel
+  selectedVariant: ProductPurchaseVariant
+}) {
+  const { performAddToCart, isAddToCartPending, isPending } =
+    useAddToCartAction({ product, selectedVariant })
+  const isUnavailable = !selectedVariant.availableForSale
+
+  return (
+    <div className='flex w-full flex-col gap-3 sm:w-72 md:w-144'>
+      <Button
+        type='button'
+        data-track='ComfyrobeHeroAddToCart'
+        disabled={isPending || isUnavailable}
+        onClick={() => {
+          reportHeroSelection('Legg i handlekurv', 'primary_cta')
+          void performAddToCart(1)
+        }}
+        className='h-14 w-full rounded-full bg-primary font-utekos-text-medium text-base text-foreground hover:bg-primary/90 md:h-28 md:text-lg'
+      >
+        {isAddToCartPending ?
+          <>
+            <Loader2
+              data-icon='inline-start'
+              className='animate-spin'
+            />
+            Legger til …
+          </>
+        : 'Legg i handlekurv'}
+      </Button>
+
+      <KlarnaProductExpressCheckout
+        product={product}
+        selectedVariant={selectedVariant}
+        quantity={1}
+        disabled={isPending || isUnavailable}
+        theme='light'
+        className='w-full min-w-0'
+        buttonContainerClassName='h-14 min-h-14 border-none ring-0 md:h-28 md:min-h-28'
+      />
+    </div>
+  )
+}
+
 export function ComfyrobeHeroActions({
-  primaryLabel
+  primaryLabel,
+  product,
+  selectedVariant
 }: ComfyrobeHeroActionsProps) {
   return (
-    <div className='mt-5 flex max-w-xl flex-col items-start gap-3 sm:flex-row sm:items-center md:mt-8'>
-      <BrandBadge
-        asChild
-        className='min-h-13 w-full gap-2 bg-primary px-6 py-3 font-utekos-text-medium text-foreground transition-[filter,transform] hover:brightness-105 active:scale-[0.985] sm:w-auto'
-      >
-        <a
-          href='#purchase-section'
-          data-track='ComfyrobeHeroPrimaryCta'
-          onClick={() =>
-            reportHeroSelection(
-              'Velg størrelse',
-              'primary_cta'
-            )
-          }
-        >
-          {primaryLabel}
-
-          <ArrowRight
-            className='size-4'
-            aria-hidden='true'
-          />
-        </a>
-      </BrandBadge>
-
-      <a
-        href='#section-product-demo'
-        data-track='ComfyrobeHeroSecondaryCta'
-        onClick={() =>
-          reportHeroSelection(
-            'Se hvordan den beskytter',
-            'secondary_cta'
-          )
-        }
-        className='inline-flex min-h-11 items-center gap-2 rounded-full px-2 font-utekos-text-medium text-sm text-white underline decoration-white/45 underline-offset-4 transition-colors hover:decoration-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'
-      >
-        Se hvordan den beskytter
-
-        <ChevronDown
-          className='size-4'
-          aria-hidden='true'
+    <div className='mt-6 flex max-w-xl flex-col items-start gap-3 sm:flex-row sm:items-center md:mt-8'>
+      {product && selectedVariant ?
+        <ComfyrobeHeroPurchaseActions
+          product={product}
+          selectedVariant={selectedVariant}
         />
-      </a>
+      : <BrandBadge
+          asChild
+          className='min-h-13 w-full gap-2 bg-primary px-6 py-3 font-utekos-text-medium text-foreground transition-[filter,transform] hover:brightness-105 active:scale-[0.985] sm:w-auto'
+        >
+          <a
+            href='#purchase-section'
+            data-track='ComfyrobeHeroPrimaryCta'
+            onClick={() =>
+              reportHeroSelection(
+                'Velg størrelse',
+                'primary_cta'
+              )
+            }
+          >
+            {primaryLabel}
+
+            <ArrowRight className='size-4' aria-hidden='true' />
+          </a>
+        </BrandBadge>
+      }
     </div>
   )
 }

@@ -27,7 +27,7 @@ const PRODUCT_CONFIG = [
     handle: 'comfyrobe',
     glowColor: '#f59e0b',
     fallbackTitle: 'Comfyrobe™',
-    fallbackPrice: '999 kr'
+    fallbackPrice: '990 kr'
   }
 ] as const
 

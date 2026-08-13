@@ -1,6 +1,5 @@
 import 'server-only'
 
-import { flattenConnection } from '@shopify/hydrogen-react'
 import { buildProductPurchaseModel } from '@/lib/shopify/buildProductPurchaseModel'
 import type { ShopifyProduct } from 'types/product'
 import type {
@@ -33,6 +32,8 @@ export type ComfyrobePurchaseModel = {
   variantPresentation: ComfyrobeVariantPresentation[]
 }
 
+const COMFYROBE_LANDING_SIZE = 'XL'
+
 function getSelectedOptionValue(
   variant: ProductPurchaseVariant,
   optionName: string
@@ -55,9 +56,7 @@ function buildSavings(
   variant: ProductPurchaseVariant
 ): ComfyrobeVariantPresentation['savings'] {
   const price = Number(variant.price.amount)
-  const compareAtPrice = Number(
-    variant.compareAtPrice?.amount
-  )
+  const compareAtPrice = Number(variant.compareAtPrice?.amount)
 
   if (
     !Number.isFinite(price) ||
@@ -72,9 +71,7 @@ function buildSavings(
 
   return {
     amount: {
-      amount: formatComputedMoneyAmount(
-        compareAtPrice - price
-      ),
+      amount: formatComputedMoneyAmount(compareAtPrice - price),
       currencyCode: variant.price.currencyCode
     },
     percentage: Math.round(
@@ -87,42 +84,31 @@ export function buildComfyrobePurchaseModel(
   product: ShopifyProduct
 ): ComfyrobePurchaseModel {
   const productModel = buildProductPurchaseModel(product)
-  const sourceVariants = flattenConnection(product.variants)
-  const sourceInitialVariant =
-    sourceVariants.find(variant => variant.availableForSale) ??
-    sourceVariants[0] ??
-    null
-  const initialVariantId =
-    productModel.variants.some(
-      variant => variant.id === sourceInitialVariant?.id
-    ) ?
-      (sourceInitialVariant?.id ?? null)
-    : (productModel.variants.find(
-        variant => variant.availableForSale
-      )?.id ??
-      productModel.variants[0]?.id ??
-      null)
 
   const sizeProductOption = productModel.options.find(
     option => option.name === 'Størrelse'
   )
+  const xlVariant =
+    sizeProductOption ?
+      (productModel.variants.find(
+        variant =>
+          getSelectedOptionValue(
+            variant,
+            sizeProductOption.name
+          ) === COMFYROBE_LANDING_SIZE
+      ) ?? null)
+    : null
+  const initialVariantId = xlVariant?.id ?? null
   const sizeOption =
     sizeProductOption ?
       {
         name: sizeProductOption.name,
-        choices: sizeProductOption.optionValues.map(
-          optionValue => ({
-            value: optionValue.name,
-            available: productModel.variants.some(
-              variant =>
-                variant.availableForSale &&
-                getSelectedOptionValue(
-                  variant,
-                  sizeProductOption.name
-                ) === optionValue.name
-            )
-          })
-        )
+        choices: [
+          {
+            value: COMFYROBE_LANDING_SIZE,
+            available: xlVariant?.availableForSale ?? false
+          }
+        ]
       }
     : null
 
@@ -130,13 +116,11 @@ export function buildComfyrobePurchaseModel(
     product: productModel,
     initialVariantId,
     sizeOption,
-    variantPresentation: productModel.variants.map(
-      variant => ({
-        variantId: variant.id,
-        color: getSelectedOptionValue(variant, 'Farge'),
-        gender: getSelectedOptionValue(variant, 'Kjønn'),
-        savings: buildSavings(variant)
-      })
-    )
+    variantPresentation: productModel.variants.map(variant => ({
+      variantId: variant.id,
+      color: getSelectedOptionValue(variant, 'Farge'),
+      gender: getSelectedOptionValue(variant, 'Kjønn'),
+      savings: buildSavings(variant)
+    }))
   }
 }

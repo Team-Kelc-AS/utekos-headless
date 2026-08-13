@@ -31,10 +31,10 @@ export function ProductPurchaseIsland({
 
   if (!selectedVariant) return null
 
-  const sortedProductOptions = getSortedOptions(product.options, [
-    'Størrelse',
-    'Farge'
-  ])
+  const sortedProductOptions = getSortedOptions(
+    product.options,
+    ['Størrelse', 'Farge']
+  )
   const colorHexMap = createSwatchColorMap(product)
 
   return (
@@ -85,6 +85,7 @@ export function ProductPurchaseIsland({
                 isVariantNavigationPending ||
                 hasVariantSelectionError
               }
+              showAddToCartAction={false}
             />
           </Activity>
         </div>
