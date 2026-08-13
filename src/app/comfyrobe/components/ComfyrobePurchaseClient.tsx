@@ -68,7 +68,7 @@ export function ComfyrobePurchaseClient({
     >
       <div className='mx-auto grid max-w-3xl overflow-hidden rounded-lg'>
         <div className='flex flex-col'>
-          <div className='flex-1 bg-background px-4 pt-6 pb-4 text-foreground md:px-12 md:pt-8 md:pb-5 lg:px-16 lg:pt-10 lg:pb-6'>
+          <div className='flex-1 bg-background px-6 pt-6 pb-4 text-foreground md:px-12 md:pt-8 md:pb-5 lg:px-16 lg:pt-10 lg:pb-6'>
             <div className='flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-2'>
               <ComfyrobeSizeGuideDialog
                 onOpen={reportSizeGuideSelection}
