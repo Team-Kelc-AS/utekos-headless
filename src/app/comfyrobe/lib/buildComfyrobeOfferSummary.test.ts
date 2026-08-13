@@ -30,18 +30,18 @@ test('builds a valid Comfyrobe offer from the first available variant', () => {
       },
       {
         availableForSale: true,
-        price: nok('999'),
+        price: nok('990'),
         compareAtPrice: nok('1690')
       }
     ])
   )
 
-  assert.equal(offer?.priceLabel, '999\u00a0kr')
+  assert.equal(offer?.priceLabel, '990\u00a0kr')
   assert.equal(offer?.compareAtPriceLabel, '1\u00a0690\u00a0kr')
-  assert.equal(offer?.savingsAmountLabel, '691\u00a0kr')
+  assert.equal(offer?.savingsAmountLabel, '700\u00a0kr')
   assert.equal(offer?.savingsPercentage, 41)
   assert.equal(offer?.availabilityLabel, 'På lager')
-  assert.equal(offer?.klarnaPurchaseAmount, '99900')
+  assert.equal(offer?.klarnaPurchaseAmount, '99000')
 })
 
 test('omits savings when the compare-at price is missing or invalid', () => {
@@ -49,7 +49,7 @@ test('omits savings when the compare-at price is missing or invalid', () => {
     productWithVariants([
       {
         availableForSale: true,
-        price: nok('999'),
+        price: nok('990'),
         compareAtPrice: null
       }
     ])
@@ -58,7 +58,7 @@ test('omits savings when the compare-at price is missing or invalid', () => {
     productWithVariants([
       {
         availableForSale: true,
-        price: nok('999'),
+        price: nok('990'),
         compareAtPrice: nok('899')
       }
     ])
@@ -76,7 +76,7 @@ test('reports unavailable inventory without inventing scarcity', () => {
     productWithVariants([
       {
         availableForSale: false,
-        price: nok('999'),
+        price: nok('990'),
         compareAtPrice: nok('1690')
       }
     ])

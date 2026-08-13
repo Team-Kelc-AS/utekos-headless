@@ -27,16 +27,10 @@ export type ProductDescriptionContent = {
 
 export type ProductAccordionGroup = {
   title?: string
-  rows?: Array<{
-    label: string
-    value: string
-  }>
+  rows?: Array<{ label: string; value: string }>
   paragraphs?: string[]
   items?: string[]
-  note?: {
-    title: string
-    text: string
-  }
+  note?: { title: string; text: string }
 }
 
 export type ProductAccordionSection = {
@@ -224,7 +218,9 @@ export const PRODUCT_PAGE_CONTENT = {
           },
           {
             title: 'Finn din perfekte match',
-            paragraphs: ['Bruk lenken ved størrelsesvelgeren og i menyen over for å se de nøyaktige målene.']
+            paragraphs: [
+              'Bruk lenken ved størrelsesvelgeren og i menyen over for å se de nøyaktige målene.'
+            ]
           }
         ]
       },
@@ -288,7 +284,11 @@ export const PRODUCT_PAGE_CONTENT = {
             rows: [
               { label: 'Fôrstoff', value: 'Taffeta' },
               { label: 'Skallstoff', value: 'DuraLite™ Nylon' },
-              { label: 'Belegg', value: 'Durable Water Repellent, inkl. flammehemming' },
+              {
+                label: 'Belegg',
+                value:
+                  'Durable Water Repellent, inkl. flammehemming'
+              },
               { label: 'Trådtetthet', value: '380T' },
               { label: 'Trådtykkelse', value: '20D' },
               { label: 'Vekt', value: 'Ca. 800 g' },
@@ -324,19 +324,27 @@ export const PRODUCT_PAGE_CONTENT = {
           },
           {
             title: 'Isolert og justerbar hette',
-            items: ['Romslig konstruksjon med god isolasjon og plass til lue eller ekstra bekledning.']
+            items: [
+              'Romslig konstruksjon med god isolasjon og plass til lue eller ekstra bekledning.'
+            ]
           },
           {
             title: 'Elastiske mansjetter',
-            items: ['Myke Spandex-mansjetter som hindrer varmetap og kald trekk.']
+            items: [
+              'Myke Spandex-mansjetter som hindrer varmetap og kald trekk.'
+            ]
           },
           {
             title: 'Lommer og varmemuffe',
-            items: ['Dype sidelommer og sentrert, fôret muffe som fungerer som effektiv håndvarmer.']
+            items: [
+              'Dype sidelommer og sentrert, fôret muffe som fungerer som effektiv håndvarmer.'
+            ]
           },
           {
             title: 'Transportsekk',
-            items: ['Leveres med praktisk oppbevaringssekk for enkel transport og komprimering.']
+            items: [
+              'Leveres med praktisk oppbevaringssekk for enkel transport og komprimering.'
+            ]
           }
         ]
       },
@@ -371,7 +379,9 @@ export const PRODUCT_PAGE_CONTENT = {
           },
           {
             title: 'Ubegrenset bevegelsesfrihet',
-            paragraphs: ['Romslig unisex-passform gir frihet til å bevege deg og plass til ekstra lag under.']
+            paragraphs: [
+              'Romslig unisex-passform gir frihet til å bevege deg og plass til ekstra lag under.'
+            ]
           }
         ]
       },
@@ -381,15 +391,33 @@ export const PRODUCT_PAGE_CONTENT = {
         groups: [
           {
             title: 'Båt- og hytteliv',
-            items: ['Camping, båt og bobilliv', 'På hytten eller terrassen hjemme']
+            items: [
+              'Camping, båt og bobilliv',
+              'På hytten eller terrassen hjemme'
+            ]
           },
-          { title: 'Jakt og fiske', items: ['Smygjakt og posteringsjakt', 'Fiske, inkludert isfiske'] },
+          {
+            title: 'Jakt og fiske',
+            items: [
+              'Smygjakt og posteringsjakt',
+              'Fiske, inkludert isfiske'
+            ]
+          },
           {
             title: 'Pause og bålkos',
-            items: ['Aktiv vandring, toppturer og skiturer', 'Isklatring og krevende fjellsport']
+            items: [
+              'Aktiv vandring, toppturer og skiturer',
+              'Isklatring og krevende fjellsport'
+            ]
           },
-          { title: 'Til vanns', items: ['Båt- og seiltur', 'Isbading før og etter'] },
-          { title: 'Andre bruksområder', items: ['Kalde tribuner', 'Fotooppdrag i kulden'] }
+          {
+            title: 'Til vanns',
+            items: ['Båt- og seiltur', 'Isbading før og etter']
+          },
+          {
+            title: 'Andre bruksområder',
+            items: ['Kalde tribuner', 'Fotooppdrag i kulden']
+          }
         ]
       },
       {
@@ -410,7 +438,9 @@ export const PRODUCT_PAGE_CONTENT = {
           },
           {
             title: 'Finn din perfekte match',
-            paragraphs: ['Bruk lenken ved størrelsesvelgeren og i menyen over for å se de nøyaktige målene.']
+            paragraphs: [
+              'Bruk lenken ved størrelsesvelgeren og i menyen over for å se de nøyaktige målene.'
+            ]
           }
         ]
       },
@@ -468,14 +498,27 @@ export const PRODUCT_PAGE_CONTENT = {
         groups: [
           {
             rows: [
-              { label: 'Fôrstoff', value: 'Premium 90 % Taffeta Dun' },
-              { label: 'Skallstoff', value: 'Downproof nylon taft med DWR' },
-              { label: 'Belegg', value: 'Durable Water Repellent, inkl. flammehemming' },
+              {
+                label: 'Fôrstoff',
+                value: 'Premium 90 % Taffeta Dun'
+              },
+              {
+                label: 'Skallstoff',
+                value: 'Downproof nylon taft med DWR'
+              },
+              {
+                label: 'Belegg',
+                value:
+                  'Durable Water Repellent, inkl. flammehemming'
+              },
               { label: 'Trådtetthet', value: '380T' },
               { label: 'Trådtykkelse', value: '20D' },
               { label: 'Fyll', value: '400 g' },
               { label: 'Vekt', value: 'Ca. 1000 g' },
-              { label: 'Glidelåser', value: 'YKK toveis glidelås' }
+              {
+                label: 'Glidelåser',
+                value: 'YKK toveis glidelås'
+              }
             ]
           }
         ]
@@ -490,10 +533,17 @@ export const PRODUCT_PAGE_CONTENT = {
               'Lar deg justere passformen etter brukssituasjonen. Bruk den som parkas, i oppfestet modus eller med full tildekking av kropp og føtter for maksimal varme.'
             ]
           },
-          { title: 'Premium isolasjon', paragraphs: ['Fylt med 90 % kvalitetsdun med 650 FP fyllkraft.'] },
+          {
+            title: 'Premium isolasjon',
+            paragraphs: [
+              'Fylt med 90 % kvalitetsdun med 650 FP fyllkraft.'
+            ]
+          },
           {
             title: 'Slitesterkt ytterstoff',
-            paragraphs: ['DWR-behandlet og flammehemmende 20D Nylon Taffeta.']
+            paragraphs: [
+              'DWR-behandlet og flammehemmende 20D Nylon Taffeta.'
+            ]
           },
           {
             title: 'Toveis YKK®-glidelås',
@@ -503,19 +553,27 @@ export const PRODUCT_PAGE_CONTENT = {
           },
           {
             title: 'Isolert og justerbar hette',
-            paragraphs: ['Gir beskyttelse og plass til et godt lag med ull under uten å føles trang.']
+            paragraphs: [
+              'Gir beskyttelse og plass til et godt lag med ull under uten å føles trang.'
+            ]
           },
           {
             title: 'Myke stretch-mansjetter',
-            paragraphs: ['Elastiske mansjetter forsegler varmen inne og holder kald trekk ute.']
+            paragraphs: [
+              'Elastiske mansjetter forsegler varmen inne og holder kald trekk ute.'
+            ]
           },
           {
             title: 'Håndlommer og muffe',
-            paragraphs: ['Praktiske sidelommer og behagelig muffe varmer hendene raskt.']
+            paragraphs: [
+              'Praktiske sidelommer og behagelig muffe varmer hendene raskt.'
+            ]
           },
           {
             title: 'Medfølgende sekk',
-            paragraphs: ['Leveres med praktisk sekk for pakking og oppbevaring.']
+            paragraphs: [
+              'Leveres med praktisk sekk for pakking og oppbevaring.'
+            ]
           }
         ]
       },
@@ -525,7 +583,9 @@ export const PRODUCT_PAGE_CONTENT = {
         groups: [
           {
             title: 'Både varm og lett',
-            paragraphs: ['Høyt varme-til-vekt-forhold gir maksimal isolasjon med minimal vekt og pakkvolum.']
+            paragraphs: [
+              'Høyt varme-til-vekt-forhold gir maksimal isolasjon med minimal vekt og pakkvolum.'
+            ]
           },
           {
             title: 'Vær- og vindbestandig',
@@ -541,15 +601,21 @@ export const PRODUCT_PAGE_CONTENT = {
           },
           {
             title: 'Bygget for norske forhold',
-            paragraphs: ['Designet for alt fra kalde fjelldaler til fuktige kystkvelder.']
+            paragraphs: [
+              'Designet for alt fra kalde fjelldaler til fuktige kystkvelder.'
+            ]
           },
           {
             title: 'Allsidig i bruk',
-            paragraphs: ['Egnet som restitusjonsplagg etter topptur og som komfortplagg til hytteliv.']
+            paragraphs: [
+              'Egnet som restitusjonsplagg etter topptur og som komfortplagg til hytteliv.'
+            ]
           },
           {
             title: 'Ubegrenset bevegelsesfrihet',
-            paragraphs: ['Romslig unisex-passform gir frihet til å bevege deg og plass til ekstra lag.']
+            paragraphs: [
+              'Romslig unisex-passform gir frihet til å bevege deg og plass til ekstra lag.'
+            ]
           }
         ]
       },
@@ -557,8 +623,20 @@ export const PRODUCT_PAGE_CONTENT = {
         id: 'bruksomrader',
         title: 'Bruksområder',
         groups: [
-          { title: 'Leir- og hytteliv', items: ['Camping, bobil og hengekøye', 'På hytten og terrassen'] },
-          { title: 'Jakt og fiske', items: ['Smygjakt og posteringsjakt', 'Fiske, inkludert isfiske'] },
+          {
+            title: 'Leir- og hytteliv',
+            items: [
+              'Camping, bobil og hengekøye',
+              'På hytten og terrassen'
+            ]
+          },
+          {
+            title: 'Jakt og fiske',
+            items: [
+              'Smygjakt og posteringsjakt',
+              'Fiske, inkludert isfiske'
+            ]
+          },
           {
             title: 'Fjellsport og turer',
             items: [
@@ -567,8 +645,14 @@ export const PRODUCT_PAGE_CONTENT = {
               'Isklatring og krevende fjellsport'
             ]
           },
-          { title: 'Til vanns', items: ['Båt- og seiltur', 'Isbading før og etter'] },
-          { title: 'Andre bruksområder', items: ['Kalde tribuner', 'Fotooppdrag i kulden'] }
+          {
+            title: 'Til vanns',
+            items: ['Båt- og seiltur', 'Isbading før og etter']
+          },
+          {
+            title: 'Andre bruksområder',
+            items: ['Kalde tribuner', 'Fotooppdrag i kulden']
+          }
         ]
       },
       {
@@ -589,7 +673,9 @@ export const PRODUCT_PAGE_CONTENT = {
           },
           {
             title: 'Finn din perfekte match',
-            paragraphs: ['Bruk lenken ved størrelsesvelgeren og i menyen over for å se de nøyaktige målene.']
+            paragraphs: [
+              'Bruk lenken ved størrelsesvelgeren og i menyen over for å se de nøyaktige målene.'
+            ]
           }
         ]
       },
@@ -662,25 +748,10 @@ export const PRODUCT_PAGE_CONTENT = {
         title: 'Materialer',
         groups: [
           {
-            title: 'Fôrstoff',
-            items: [
-              'SherpaCore™ Thermal Lining',
-              'Mykt og luftig',
-              '100 % polyester',
-              '250 GSM',
-              'Antipeeling behandlet',
-              'Slitesterk og rivebestandig hamp i kragen'
-            ]
-          },
-          {
-            title: 'Ytterstoff',
-            items: [
-              'HydroGuard™ Shell',
-              '100 % polyester',
-              '8000 mm vannsøyle',
-              '130 GSM',
-              'Pustende PU-belegg',
-              'YKK®-glidelåser'
+            paragraphs: [
+              'Skallet består av et høytpresterende HydroGuard™ Shell (130 GSM i 100 % polyester) laminert med en pustende PU-membran. Med en vannsøyle på 8 000 mm gir dette fullstendig beskyttelse mot kraftig regn og vind. Samtidig sørger membranen (3 000 g/m²/24t) for å effektivt slippe ut overskuddsvarme.',
+              'Innsiden er fôret med 250 GSM SherpaCore™, en myk og lun syntetisk lammeullsfleece av høy kvalitet. Fleecen er antipeeling-behandlet for å sikre varig mykhet og slitestyrke. Konstruksjonen gir umiddelbar varme rundt kroppens vitale soner og absorberer restfuktighet direkte fra huden.',
+              'Utstyrt med robuste YKK®-glidelåser av høy kvalitet som sikrer smidig bruk og lang levetid, uansett værforhold.'
             ]
           }
         ]
@@ -690,32 +761,33 @@ export const PRODUCT_PAGE_CONTENT = {
         title: 'Funksjoner',
         groups: [
           {
-            title: 'Vanntett og vindtett',
+            title: 'Romslig og justerbar hette',
             paragraphs: [
-              'Med minimum 8000 mm vannsøyle og pustende membran holder Comfyrobe™ deg tørr i regn og skjermer effektivt mot vind uten klamhet.'
+              'En stor hette som enkelt kan strammes og tilpasses for å gi maksimal beskyttelse når været snur.'
             ]
           },
           {
-            title: 'Varm og hurtigtørkende',
+            title: 'Toveis glidelås midt foran',
             paragraphs: [
-              'Innvendig fôr i SherpaCore™ plysj gir umiddelbar varmeisolering og absorberer restfuktighet etter isbad eller vannsport.'
+              'Den praktiske toveis glidelåsen gjør av- og påkledningen rask og smidig, og lar deg enkelt lufte ut eller åpne opp nedenfra for ekstra bevegelighet.'
             ]
           },
           {
-            title: 'Gjennomtenkt design',
-            items: [
-              'Stor, romslig og justerbar hette.',
-              'Toveis YKK®-glidelås for enkel av- og påkledning.',
-              'Splitt bak og i sidene for bevegelighet.',
-              'Unisex-snitt.',
-              'Diskrete refleksdetaljer.',
-              'To varme, fôrede sidelommer og en innerlomme.'
+            title: 'Lommedetaljer',
+            paragraphs: [
+              'Utstyrt med to fôrede sidelommer som raskt varmer opp kalde hender, samt en sikker innerlomme for trygg oppbevaring av telefon og verdisaker.'
             ]
           },
           {
-            title: 'Justerbar ermekant',
+            title: 'Justerbare ermekanter',
             paragraphs: [
-              'Forhøyet stropp med borrelås ved ermekanten gjør det enkelt å stramme eller løsne ermet etter behov.'
+              'Ermene har en forhøyet stropp med borrelås som gjør det enkelt å stramme mansjettene for å stenge kulden ute, eller løsne dem for økt ventilasjon.'
+            ]
+          },
+          {
+            title: 'Økt synlighet',
+            paragraphs: [
+              'Integrerte, diskrete refleksdetaljer sørger for at du er mer synlig under mørke og grå forhold, uten at det går på bekostning av det rene designet.'
             ]
           }
         ]
@@ -724,6 +796,18 @@ export const PRODUCT_PAGE_CONTENT = {
         id: 'egenskaper',
         title: 'Egenskaper',
         groups: [
+          {
+            rows: [
+              {
+                label: '8 000 mm vannsøyle',
+                value: 'Beskytter når regnet varer.'
+              },
+              {
+                label: 'Pustende membran',
+                value: 'Slipper ut overskuddsvarme.'
+              }
+            ]
+          },
           {
             title: 'Bredt bruksområde i all slags vær',
             items: [
@@ -735,50 +819,13 @@ export const PRODUCT_PAGE_CONTENT = {
         ]
       },
       {
-        id: 'bruksomrader',
-        title: 'Bruksområder',
-        groups: [
-          {
-            title: 'Fritidsbruk',
-            items: [
-              'Hverdagsbruk',
-              'Kalde idrettsarrangement og tribuner',
-              'Lufte hunden eller hente posten på sure dager'
-            ]
-          },
-          {
-            title: 'Leir og hytteliv',
-            items: [
-              'Morgen- og kveldsplagg på hytten eller terrassen',
-              'Rundt bobilen eller campingvognen',
-              'Kveldskos rundt bålpannen'
-            ]
-          },
-          {
-            title: 'På tur og i friluft',
-            items: [
-              'Vann- og vindtett ytterplagg i ruskevær',
-              'Jakt, fiske og naturopplevelser',
-              'Før og etter utendørs trening'
-            ]
-          },
-          { title: 'Til vanns', items: ['Båt- og seiltur', 'Isbading før og etter'] },
-          { title: 'Andre bruksområder', items: ['Kalde tribuner', 'Fotooppdrag i kulden'] }
-        ]
-      },
-      {
         id: 'passform',
         title: 'Passform',
         groups: [
           {
-            title: 'Romslig og komfortabel passform',
             paragraphs: [
-              'Comfyrobe™ har en romslig, unisex og avslappet passform. Den kan trekkes over våte klær og tykke gensere, samtidig som splitter i sidene og bak sikrer god bevegelsesfrihet.'
+              'Comfyrobe™ er designet med en uformell og romslig unisex-passform. Den ekstra vidden er nøye uttenkt for at du enkelt skal kunne trekke jakken rett over vått tøy, våtdrakter eller tykke ullgensere. For å balansere det romslige volumet med funksjonalitet, er jakken utstyrt med strategiske splitter både bak og i sidene, noe som sikrer optimal bevegelsesfrihet gjennom hele dagen.'
             ]
-          },
-          {
-            title: 'Finn din perfekte match',
-            paragraphs: ['Bruk lenken ved størrelsesvelgeren og i menyen over for å se de nøyaktige målene.']
           }
         ]
       },
@@ -788,7 +835,11 @@ export const PRODUCT_PAGE_CONTENT = {
         groups: [
           {
             title: 'Maskinvask på maks 40°C',
-            items: ['Skånsomt program.', 'Bruk mildt vaskemiddel.', 'Ikke bruk blekemiddel.']
+            items: [
+              'Skånsomt program.',
+              'Bruk mildt vaskemiddel.',
+              'Ikke bruk blekemiddel.'
+            ]
           },
           {
             title: 'Unngå tørketrommelen',
@@ -800,7 +851,10 @@ export const PRODUCT_PAGE_CONTENT = {
               'Etterbehandle det vannavvisende laget med egnet spray eller impregnering ved behov.'
             ]
           },
-          { title: 'Daglig vedlikehold', items: ['Heng gjerne til lufting etter bruk.'] }
+          {
+            title: 'Daglig vedlikehold',
+            items: ['Heng gjerne til lufting etter bruk.']
+          }
         ]
       }
     ]
@@ -825,23 +879,38 @@ export const PRODUCT_PAGE_CONTENT = {
       ]
     }
   }
-} as const satisfies Record<ProductPageHandle, ProductPageContent>
+} as const satisfies Record<
+  ProductPageHandle,
+  ProductPageContent
+>
 
-export function getProductPageContent(handle: string | null | undefined): ProductPageContent | undefined {
+export function getProductPageContent(
+  handle: string | null | undefined
+): ProductPageContent | undefined {
   if (!handle) return undefined
 
   return PRODUCT_PAGE_CONTENT[handle as ProductPageHandle]
 }
 
-export function getProductPageDescriptionText(handle: string | null | undefined): string | undefined {
+export function getProductPageDescriptionText(
+  handle: string | null | undefined
+): string | undefined {
   const content = getProductPageContent(handle)
 
   if (!content) return undefined
 
   const blockText = content.description.blocks
-    .flatMap(block => [block.title, ...(block.paragraphs ?? []), ...(block.items ?? [])])
+    .flatMap(block => [
+      block.title,
+      ...(block.paragraphs ?? []),
+      ...(block.items ?? [])
+    ])
     .filter((value): value is string => Boolean(value))
     .join(' ')
 
-  return [content.description.lead, blockText].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim()
+  return [content.description.lead, blockText]
+    .filter(Boolean)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim()
 }

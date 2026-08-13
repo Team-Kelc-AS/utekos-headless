@@ -19,15 +19,12 @@ moduleWithLoad._load = (request, parent, isMain) => {
 }
 
 const require = createRequire(import.meta.url)
-const {
-  buildProductCommerceViewModel
-} = require('./buildProductCommerceViewModel.ts') as typeof import('./buildProductCommerceViewModel')
-const {
-  resolveCommerceVariantFromSearchParams
-} = require('./resolveCommerceVariantFromSearchParams.ts') as typeof import('./resolveCommerceVariantFromSearchParams')
-const {
-  buildSkreddersyVarmenJsonLd
-} = require('../../../app/skreddersy-varmen/structured-data/buildSkreddersyVarmenJsonLd.ts') as typeof import('../../../app/skreddersy-varmen/structured-data/buildSkreddersyVarmenJsonLd')
+const { buildProductCommerceViewModel } =
+  require('./buildProductCommerceViewModel.ts') as typeof import('./buildProductCommerceViewModel')
+const { resolveCommerceVariantFromSearchParams } =
+  require('./resolveCommerceVariantFromSearchParams.ts') as typeof import('./resolveCommerceVariantFromSearchParams')
+const { buildSkreddersyVarmenJsonLd } =
+  require('../../../app/skreddersy-varmen/structured-data/buildSkreddersyVarmenJsonLd.ts') as typeof import('../../../app/skreddersy-varmen/structured-data/buildSkreddersyVarmenJsonLd')
 
 test('builds one TechDown commerce model with three public sizes', () => {
   const commerce = buildProductCommerceViewModel(
@@ -35,7 +32,10 @@ test('builds one TechDown commerce model with three public sizes', () => {
   )
 
   assert.equal(commerce.displayName, 'Utekos TechDown™')
-  assert.equal(commerce.defaultVariantId, 'gid://shopify/ProductVariant/102')
+  assert.equal(
+    commerce.defaultVariantId,
+    'gid://shopify/ProductVariant/102'
+  )
   assert.deepEqual(
     commerce.variants.map(variant => variant.options.size),
     ['Middels', 'Stor', 'Ekstra stor']
@@ -57,34 +57,45 @@ test('builds one TechDown commerce model with three public sizes', () => {
     'Utekos TechDown™ i Havdyp, størrelse Stor, Unisex.'
   )
   assert.doesNotMatch(
-    JSON.stringify(commerce.variants.map(variant => variant.publicUrl)),
+    JSON.stringify(
+      commerce.variants.map(variant => variant.publicUrl)
+    ),
     /gid:\/\/shopify|\/products\//
   )
-  assert.match(commerce.variants[0]?.commerce.id ?? '', /^gid:\/\/shopify\//)
+  assert.match(
+    commerce.variants[0]?.commerce.id ?? '',
+    /^gid:\/\/shopify\//
+  )
 })
 
 test('resolves a readable sold-out variant without changing the default', () => {
   const commerce = buildProductCommerceViewModel(
     createTechDownShopifyProductFixture()
   )
-  const resolved = resolveCommerceVariantFromSearchParams(commerce, {
-    farge: 'havdyp',
-    storrelse: 'ekstra-stor',
-    kjonn: 'unisex'
-  })
+  const resolved = resolveCommerceVariantFromSearchParams(
+    commerce,
+    {
+      farge: 'havdyp',
+      storrelse: 'ekstra-stor',
+      kjonn: 'unisex'
+    }
+  )
 
   assert.equal(resolved?.options.size, 'Ekstra stor')
   assert.equal(resolved?.commerce.availableForSale, false)
-  assert.equal(commerce.defaultVariantId, 'gid://shopify/ProductVariant/102')
+  assert.equal(
+    commerce.defaultVariantId,
+    'gid://shopify/ProductVariant/102'
+  )
 })
 
 test('uses the product image when Shopify omits a variant image', () => {
   const product = createTechDownShopifyProductFixture()
-  const mediumVariant = product.variants.edges.find(
-    edge =>
-      edge.node.selectedOptions.some(
-        option => option.name === 'Størrelse' && option.value === 'Middels'
-      )
+  const mediumVariant = product.variants.edges.find(edge =>
+    edge.node.selectedOptions.some(
+      option =>
+        option.name === 'Størrelse' && option.value === 'Middels'
+    )
   )
 
   assert.ok(mediumVariant)
@@ -95,7 +106,10 @@ test('uses the product image when Shopify omits a variant image', () => {
     variant => variant.options.size === 'Middels'
   )
 
-  assert.equal(medium?.commerce.image?.url, product.featuredImage?.url)
+  assert.equal(
+    medium?.commerce.image?.url,
+    product.featuredImage?.url
+  )
   assert.equal(
     medium?.commerce.image?.altText,
     'Utekos TechDown™ i Havdyp, størrelse Middels, Unisex.'
@@ -131,7 +145,8 @@ test('builds the landing graph as one ItemPage and one complete ProductGroup', (
     'mainEntity': { '@id': commerce.productGroupUrl }
   })
   assert.equal(
-    graph.filter(node => node['@type'] === 'ProductGroup').length,
+    graph.filter(node => node['@type'] === 'ProductGroup')
+      .length,
     1
   )
   assert.ok(productGroup && 'hasVariant' in productGroup)
@@ -139,7 +154,9 @@ test('builds the landing graph as one ItemPage and one complete ProductGroup', (
   if (!productGroup || !('hasVariant' in productGroup)) return
 
   assert.equal(productGroup.productGroupID, 'utekos-techdown')
-  assert.deepEqual(productGroup.variesBy, ['https://schema.org/size'])
+  assert.deepEqual(productGroup.variesBy, [
+    'https://schema.org/size'
+  ])
   assert.equal(productGroup.hasVariant.length, 3)
   assert.deepEqual(
     productGroup.hasVariant.map(variant => variant['@id']),
@@ -154,7 +171,14 @@ test('builds the landing graph as one ItemPage and one complete ProductGroup', (
     'https://schema.org/OutOfStock'
   )
   assert.equal(productGroup.aggregateRating?.reviewCount, 16)
+  assert.equal(productGroup.aggregateRating?.ratingCount, 16)
+  assert.equal(productGroup.aggregateRating?.bestRating, 5)
+  assert.equal(productGroup.aggregateRating?.worstRating, 1)
   assert.equal(productGroup.review?.length, 16)
+  assert.equal(
+    graph.filter(node => node['@type'] === 'Review').length,
+    0
+  )
 
   const serialized = JSON.stringify(data)
   assert.doesNotMatch(

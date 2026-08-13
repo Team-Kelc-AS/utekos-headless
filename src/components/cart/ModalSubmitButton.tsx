@@ -54,8 +54,7 @@ export function ModalSubmitButton({
           onClick={onCheckout}
           className='bg-primary text-foreground hover:bg-primary/90 [&_svg]:text-foreground'
         />
-        <div className='flex items-center gap-3 text-xs text-foreground/60'>
-        </div>
+        <div className='flex items-center gap-3 text-xs text-foreground/60'></div>
         <KlarnaProductExpressCheckout
           product={product}
           selectedVariant={selectedVariant}
@@ -83,6 +82,7 @@ export function ModalSubmitButton({
           selectedVariant={selectedVariant}
           quantity={quantity}
           disabled={isDisabled}
+          theme='light'
           className='w-full min-w-0'
           buttonContainerClassName='h-14 min-h-14 border-none ring-0'
         />

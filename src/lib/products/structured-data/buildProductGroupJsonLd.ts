@@ -73,13 +73,8 @@ function buildVariantNode(
     'name': variant.publicName,
     'url': variant.publicUrl,
     'description': model.description,
-    'brand': {
-      '@type': 'Brand',
-      'name': 'Utekos'
-    },
-    'isVariantOf': {
-      '@id': model.productGroupUrl
-    },
+    'brand': { '@type': 'Brand', 'name': 'Utekos' },
+    'isVariantOf': { '@id': model.productGroupUrl },
     ...(variant.options.size ?
       { size: variant.options.size }
     : {}),
@@ -88,8 +83,7 @@ function buildVariantNode(
     : {}),
     'audience': {
       '@type': 'PeopleAudience',
-      'suggestedGender':
-        variant.options.gender ?? model.audience
+      'suggestedGender': variant.options.gender ?? model.audience
     },
     ...(variant.commerce.sku ?
       { sku: variant.commerce.sku }
@@ -108,9 +102,7 @@ function buildVariantNode(
           'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       'itemCondition': 'https://schema.org/NewCondition',
-      'seller': {
-        '@id': ORGANIZATION_ID
-      },
+      'seller': { '@id': ORGANIZATION_ID },
       ...(priceSpecification ? { priceSpecification } : {})
     }
   }
@@ -131,7 +123,7 @@ function buildReviewMarkup(
     'reviewCount': reviews.length,
     'ratingCount': reviews.length,
     'bestRating': 5,
-    'worstRating': Math.min(...reviews.map(review => review.rating))
+    'worstRating': 1
   }
 
   if (includeAggregateRatingOnly) {
@@ -143,13 +135,8 @@ function buildReviewMarkup(
     review: reviews.map(review => ({
       '@type': 'Review',
       ...(review.title ? { name: review.title } : {}),
-      'author': {
-        '@type': 'Person',
-        'name': review.name
-      },
-      'publisher': {
-        '@id': ORGANIZATION_ID
-      },
+      'author': { '@type': 'Person', 'name': review.name },
+      'publisher': { '@id': ORGANIZATION_ID },
       'reviewBody': review.quote,
       'reviewRating': {
         '@type': 'Rating',
@@ -181,15 +168,12 @@ export function buildProductGroupJsonLd(
     'name': model.displayName,
     'description': model.description,
     'url': model.canonicalUrl,
-    'brand': {
-      '@type': 'Brand',
-      'name': 'Utekos'
-    },
+    'brand': { '@type': 'Brand', 'name': 'Utekos' },
     'category': model.category,
     'material': model.material,
-    ...(colors.length === 1 ?
-      { color: colors[0] }
-    : colors.length > 1 ? { color: colors } : {}),
+    ...(colors.length === 1 ? { color: colors[0] }
+    : colors.length > 1 ? { color: colors }
+    : {}),
     'audience': {
       '@type': 'PeopleAudience',
       'suggestedGender': model.audience
