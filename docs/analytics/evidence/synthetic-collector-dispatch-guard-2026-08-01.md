@@ -1,8 +1,8 @@
 # Synthetic collector dispatch guard — 2026-08-01
 
 > Superseded runtime boundary, 2026-08-13: this document preserves the
-> production evidence for the 2026-08-01 BotID-protected release. The current
-> release candidate removes BotID from the telemetry critical path. The signed
+> production evidence for the 2026-08-01 BotID-protected release. The
+> 2026-08-13 production cutover removes BotID from the telemetry critical path. The signed
 > document signature/correlation-cookie guard described below remains active
 > and is now the collector's explicit synthetic-traffic exclusion. Historical
 > BotID classifications and evidence remain valid audit records.

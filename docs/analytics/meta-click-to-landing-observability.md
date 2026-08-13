@@ -4,10 +4,11 @@ Status date: 2026-08-13
 
 ## 2026-08-13 emergency cutover: BotID removed from telemetry latency path
 
-This source change is authorized for a direct emergency production cutover.
-Until the matching Git/Vercel release reaches `READY` and owns the production
-aliases, the production baseline below still describes the active BotID
-behavior.
+Runtime commit `ec73a91e0b5f2b142bd9d11c86d6751724cc952e` was pushed
+directly to `main` as the authorized emergency cutover. Git-triggered Vercel
+deployment `dpl_9FU7RrmPBntWdCgADztaLP2rjWa8` is `READY` and owns
+`utekos.no`, `www.utekos.no`, and `feed.utekos.no`. The previous production
+deployment `dpl_3o1yHxCJccBAykGc82L4eSMY8EJu` is the rollback candidate.
 
 The release candidate removes the application BotID integration from both
 sides of the time-critical telemetry path:
@@ -30,6 +31,27 @@ otherwise rejected is deliberately classified as `human_or_unknown`; it must
 not be described as verified human. Historical `automated_bot` and
 `verified_bot` rows remain valid audit data but are not produced by the new
 collector path.
+
+Production readback after alias assignment:
+
+- a full Android Meta in-app-browser load made 113 requests, emitted one
+  correlated `landing-consent` observation with HTTP 202 in 154 ms, and loaded
+  zero BotID/Kasada/KPSDK resources;
+- consent-denied PageView validation returned HTTP 204 with `no-store` in
+  206 ms, while invalid observation probes returned their expected HTTP 400 in
+  90–93 ms without creating marketing events;
+- two natural consented `/skreddersy-varmen` PageViews returned HTTP 202 and
+  entered the canonical ledger with `fbp`, `fbc`, and `external_id` present;
+- Meta accepted both server attempts with `events_received=1`, a trace ID,
+  zero response messages, and 292/314 ms adapter latency. Microsoft accepted
+  the paired attempts in 252/255 ms;
+- GTM/sGTM remained HTTP 200, `no-store`, and cache `MISS`; the browser console
+  and Vercel runtime-error aggregation were empty.
+
+Meta provider acceptance is not the same as Ads Manager attribution or
+landing-page-view reporting. Those surfaces can update later and must be
+measured over post-cutover traffic rather than inferred from this immediate
+readback.
 
 ## 2026-08-12 operational supersession: Trace Drain is diagnostic-only
 
@@ -601,9 +623,8 @@ root redirect and the Klarna feed host remain explicit matcher contracts.
 General CSP, X-Frame, Document-Policy and Referrer-Policy headers are owned by
 `next.config.mts`, so proxy-excluded responses retain the same header policy.
 Generic user-agent blocking is owned by Vercel Firewall system mitigations;
-the 2026-08-13 emergency cutover removes BotID from the event and observability
-POST routes. Production retains the older behavior until that exact deployment
-is `READY`, owns the aliases, and is verified.
+the 2026-08-13 emergency cutover removed BotID from the event and observability
+POST routes and was production-verified on the exact Git deployment.
 
 The signed Vercel Log Drain receiver is the pre-consent source of
 truth for HTTP status, route, deployment, cache, region and

@@ -324,6 +324,16 @@ Required release evidence:
    response, Vercel log, and no-Kasada-resource checks. Provider acceptance
    remains distinct from attribution and landing-page-view reporting.
 
+Production result: runtime commit
+`ec73a91e0b5f2b142bd9d11c86d6751724cc952e` was pushed directly to `main`
+under the emergency authorization. Git deployment
+`dpl_9FU7RrmPBntWdCgADztaLP2rjWa8` reached `READY` and owns all three
+production aliases. A full Meta Android in-app load contained no
+BotID/Kasada/KPSDK resource, and two natural consented PageViews with Meta
+identifiers reached the ledger and returned `events_received=1` from Meta.
+The previous production deployment
+`dpl_3o1yHxCJccBAykGc82L4eSMY8EJu` is the rollback candidate.
+
 ### Meta identifier and checkout attribution release 2026-07-18
 
 The production release adds a consent-gated Meta Parameter Builder route,
