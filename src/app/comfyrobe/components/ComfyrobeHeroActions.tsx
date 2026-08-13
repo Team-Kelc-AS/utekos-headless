@@ -67,7 +67,7 @@ function ComfyrobeHeroPurchaseActions({
           reportHeroSelection('Legg i handlekurv', 'primary_cta')
           void performAddToCart(1)
         }}
-        className='h-14 w-full rounded-full bg-primary font-utekos-text-medium text-base text-foreground hover:bg-primary/90 md:h-28 md:text-lg'
+        className='h-14 w-full rounded-full bg-primary font-utekos-text-medium text-base text-foreground hover:bg-primary/90 md:text-lg'
       >
         {isAddToCartPending ?
           <>
@@ -87,7 +87,7 @@ function ComfyrobeHeroPurchaseActions({
         disabled={isPending || isUnavailable}
         theme='light'
         className='w-full min-w-0'
-        buttonContainerClassName='h-14 min-h-14 border-none ring-0 md:h-28 md:min-h-28'
+        buttonContainerClassName='h-14 min-h-14 border-none ring-0'
       />
     </div>
   )
