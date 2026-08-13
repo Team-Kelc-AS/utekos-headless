@@ -216,7 +216,7 @@ export function ComfyrobeHero({
                   />
                 </div>
 
-                <ComfyrobePurchaseLinks className='mt-4 hidden md:order-4 md:flex md:flex-col md:items-start md:gap-1' />
+                <ComfyrobePurchaseLinks className='mt-4 hidden md:order-4 md:flex md:flex-row md:gap-6' />
               </div>
             </div>
           </div>
