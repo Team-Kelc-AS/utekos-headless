@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import type { ComfyrobeOfferSummary } from '../lib/buildComfyrobeOfferSummary'
 import { buildComfyrobePurchaseModel } from '../lib/buildComfyrobePurchaseModel'
 import { ComfyrobeHeroActions } from './ComfyrobeHeroActions'
+import { ComfyrobePurchaseLinks } from './ComfyrobePurchaseLinks'
 import { ComfyrobeResponsiveImage } from './ComfyrobeResponsiveImage'
 import type { ShopifyProduct } from 'types/product'
 
@@ -70,9 +71,9 @@ export function ComfyrobeHero({
         <section
           id='comfyrobe-hero'
           aria-labelledby='comfyrobe-hero-heading'
-          className='overflow-hidden bg-jungle text-foreground md:mx-auto md:rounded-xl'
+          className='overflow-hidden bg-jungle text-foreground md:mx-auto md:grid md:grid-cols-2 md:rounded-xl'
         >
-          <div className='relative aspect-4/5 w-full md:aspect-3/4 min-[85.0625rem]:aspect-video'>
+          <div className='relative aspect-4/5 w-full md:aspect-auto md:min-h-[42rem] lg:min-h-[46rem]'>
             <ComfyrobeResponsiveImage
               alt='Mann med mørk Comfyrobe fra Utekos'
               mobileSrc={comfyMann45}
@@ -87,7 +88,7 @@ export function ComfyrobeHero({
             </Badge>
           </div>
 
-          <div className='bg-background px-6 pt-4 pb-6 md:px-12 md:pt-6 md:pb-12 lg:px-20 lg:pt-8 lg:pb-14'>
+          <div className='bg-background px-6 pt-4 pb-6 md:flex md:bg-night md:px-12 md:pt-6 md:pb-12 lg:px-20 lg:pt-8 lg:pb-14'>
             <div className='mx-auto w-full max-w-350'>
               <div className='flex w-full max-w-165 flex-col'>
                 <Link
@@ -214,6 +215,8 @@ export function ComfyrobeHero({
                     selectedVariant={selectedVariant}
                   />
                 </div>
+
+                <ComfyrobePurchaseLinks className='mt-6 hidden md:flex md:flex-col md:items-start md:gap-1' />
               </div>
             </div>
           </div>
