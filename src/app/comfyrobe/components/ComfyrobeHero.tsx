@@ -103,10 +103,10 @@ export function ComfyrobeHero({
                   Utekos TechDown™ Havdyp
                 </Link>
 
-                <div className='mb-0 font-utekos-text-medium text-white md:mb-5 md:text-sm'>
+                <div className='mb-0 font-utekos-text-medium text-white md:mb-2 md:text-sm'>
                   <h1
                     id='comfyrobe-hero-heading'
-                    className='font-google-sans mb-3 flex items-baseline gap-2 font-sans text-[clamp(1.5rem,6.5vw,2.25rem)] leading-tight font-bold tracking-tight whitespace-nowrap text-white md:gap-3 md:text-4xl lg:text-5xl'
+                    className='font-google-sans mb-3 flex items-baseline gap-2 font-sans text-[clamp(1.5rem,6.5vw,2.25rem)] leading-tight font-bold tracking-tight whitespace-nowrap text-white md:mb-5 md:gap-3 md:text-4xl lg:text-5xl'
                   >
                     <span>Comfyrobe™ XL</span>
                     {offer?.priceLabel ?
@@ -195,7 +195,7 @@ export function ComfyrobeHero({
                   : null}
                 </div>
 
-                <p className='order-3 mt-3 max-w-xl font-utekos-text text-base leading-7 text-white/92 md:order-2 md:mt-7 md:text-lg md:leading-relaxed'>
+                <p className='order-3 mt-3 max-w-xl font-utekos-text text-base leading-7 text-white/92 md:order-2 md:mt-3 md:text-lg md:leading-relaxed'>
                   Møt skiftende høstvær i en lang og romslig
                   ytterjakke som kombinerer klassisk design med
                   pålitelig værbeskyttelse. Med en vannsøyle på 8
