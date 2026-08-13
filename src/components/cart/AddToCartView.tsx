@@ -16,6 +16,8 @@ export function AddToCartView({
   isAvailable,
   checkoutPresentation = 'balanced',
   showAddToCartAction = true,
+  showQuickCheckoutAction = true,
+  showQuantitySelector = true,
   surface = 'default'
 }: AddToCartViewProps) {
   const quantity = form.watch('quantity')
@@ -30,17 +32,20 @@ export function AddToCartView({
           inheritsSurface ? 'bg-transparent' : 'bg-background'
         )}
       >
-        <div className='space-y-2'>
-          <label
-            className={cn(
-              'block font-utekos-text-medium text-sm tracking-wide text-foreground',
-              checkoutPresentation === 'balanced' && 'uppercase'
-            )}
-          >
-            Antall
-          </label>
-          <QuantitySelector surface={surface} />
-        </div>
+        {showQuantitySelector ?
+          <div className='space-y-2'>
+            <label
+              className={cn(
+                'block font-utekos-text-medium text-sm tracking-wide text-foreground',
+                checkoutPresentation === 'balanced' &&
+                  'uppercase'
+              )}
+            >
+              Antall
+            </label>
+            <QuantitySelector surface={surface} />
+          </div>
+        : null}
         <ModalSubmitButton
           product={product}
           selectedVariant={selectedVariant}
@@ -52,6 +57,7 @@ export function AddToCartView({
           onCheckout={form.handleSubmit(onCheckout)}
           checkoutPresentation={checkoutPresentation}
           showAddToCartAction={showAddToCartAction}
+          showQuickCheckoutAction={showQuickCheckoutAction}
         />
       </form>
     </Form>
