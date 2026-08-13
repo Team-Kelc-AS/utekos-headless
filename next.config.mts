@@ -1,5 +1,4 @@
 import type { NextConfig } from 'next'
-import { withBotId } from 'botid/next/config'
 import { withSentryConfig } from '@sentry/nextjs'
 import createMDX from '@next/mdx'
 
@@ -324,7 +323,7 @@ const sentryOptions = {
   webpack: { treeshake: { removeDebugLogging: true } }
 }
 
-const configuredNextConfig = withBotId(withMDX(nextConfig))
+const configuredNextConfig = withMDX(nextConfig)
 
 export default withSentryConfig(
   configuredNextConfig,

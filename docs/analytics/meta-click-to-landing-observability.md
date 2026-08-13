@@ -1,6 +1,35 @@
 # Meta click-to-landing observability
 
-Status date: 2026-08-12
+Status date: 2026-08-13
+
+## 2026-08-13 emergency cutover: BotID removed from telemetry latency path
+
+This source change is authorized for a direct emergency production cutover.
+Until the matching Git/Vercel release reaches `READY` and owns the production
+aliases, the production baseline below still describes the active BotID
+behavior.
+
+The release candidate removes the application BotID integration from both
+sides of the time-critical telemetry path:
+
+- `instrumentation-client.ts` no longer patches browser `fetch`/XHR or waits
+  for a BotID/Kasada challenge before `/api/events/*`,
+  `/api/observability/landing-consent`, or
+  `/api/observability/page-view-dispatch`;
+- the event and observation handlers no longer call `checkBotId()` before
+  accepting or storing a request;
+- the BotID Next.js wrapper, runtime dependency, and local Kasada patch are
+  removed, so the application no longer provisions BotID proxy rewrites.
+
+The existing low-latency trust boundaries remain: same-origin enforcement on
+observation writes, signed edge-correlation tokens, strict body-size limits,
+Zod contracts, consent checks, idempotency, and the signed synthetic-document
+cookie/signature exclusion. Vercel Firewall remains the independent edge
+enforcement surface. A request that is neither verified synthetic traffic nor
+otherwise rejected is deliberately classified as `human_or_unknown`; it must
+not be described as verified human. Historical `automated_bot` and
+`verified_bot` rows remain valid audit data but are not produced by the new
+collector path.
 
 ## 2026-08-12 operational supersession: Trace Drain is diagnostic-only
 
@@ -572,7 +601,9 @@ root redirect and the Klarna feed host remain explicit matcher contracts.
 General CSP, X-Frame, Document-Policy and Referrer-Policy headers are owned by
 `next.config.mts`, so proxy-excluded responses retain the same header policy.
 Generic user-agent blocking is owned by Vercel Firewall system mitigations;
-BotID remains configured on the protected event and observability POST routes.
+the 2026-08-13 emergency cutover removes BotID from the event and observability
+POST routes. Production retains the older behavior until that exact deployment
+is `READY`, owns the aliases, and is verified.
 
 The signed Vercel Log Drain receiver is the pre-consent source of
 truth for HTTP status, route, deployment, cache, region and
@@ -676,8 +707,9 @@ reached Vercel; the successful 2xx/3xx component and success rate
 are reported separately. The security-invoker read model bridges
 Vercel request, proxy, edge and trace identifiers before ranking
 one primary row, so multiple Log Drain entries do not receive
-multiple request weight. A terminal BotID classification
-overrides the weaker user-agent classification when it exists.
+multiple request weight. Historical terminal BotID classifications remain
+stronger than user-agent classification when present. After the 2026-08-13
+cutover, new collector requests do not create terminal BotID classifications.
 The denominator uses only the configured account's overall Meta
 outbound-click grain in the ad-account timezone. Rates are
 unavailable until both the Meta daily sync and a complete Vercel

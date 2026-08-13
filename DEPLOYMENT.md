@@ -290,6 +290,40 @@ published as v135 after GTM authorization recovered.
 - Treat row counts as evidence only when source, status, reason,
   unresolved/resolved state, and replay policy are visible.
 
+### BotID telemetry critical-path removal — emergency production cutover 2026-08-13
+
+This is an application-only runtime change. It removes BotID client challenge
+wrapping and synchronous server classification from `/api/events/*`,
+`/api/observability/landing-consent`, and
+`/api/observability/page-view-dispatch`. It requires no Supabase migration,
+environment change, GTM publish, provider-resource mutation, or historical
+event replay.
+
+The release must preserve the signed synthetic signature/correlation-cookie
+exclusion, same-origin checks, signed observation correlation, body-size and
+schema validation, consent, idempotency, and Vercel Firewall ownership. New
+collector traffic that is not verified synthetic is `human_or_unknown`, not
+verified human.
+
+Required release evidence:
+
+1. The BotID boundary regression test proves there is no `initBotId`,
+   `checkBotId`, `withBotId`, dependency, or patch in the active telemetry
+   runtime.
+2. Synthetic-signature and synthetic-correlation tests still exclude before
+   ledger/provider dispatch; stale or caller-supplied headers do not gain
+   trusted status.
+3. The PageView collector and both observation handler suites pass, followed
+   by focused lint, Next type generation, TypeScript, build, MCP build/doctor,
+   and the tracking gateway smoke.
+4. A Git-triggered Preview of the exact runtime commit shows direct PageView
+   and observation POSTs without BotID/Kasada `c.js`, `p.js`, or KPSDK network
+   work, and no collector request waits on a client challenge.
+5. After separately approved production release, repeat the consent-denied,
+   consent-granted, late-consent, Meta in-app-browser, ledger/outbox, provider
+   response, Vercel log, and no-Kasada-resource checks. Provider acceptance
+   remains distinct from attribution and landing-page-view reporting.
+
 ### Meta identifier and checkout attribution release 2026-07-18
 
 The production release adds a consent-gated Meta Parameter Builder route,

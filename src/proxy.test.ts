@@ -304,7 +304,7 @@ test('does not correlate a static asset requested by a crawler', async () => {
   }
 })
 
-test('leaves user-agent enforcement to Vercel Firewall and BotID', async () => {
+test('leaves user-agent enforcement to Vercel Firewall', async () => {
   const originalInfo = console.info
   const restoreSigningSecret = installSigningSecret()
   console.info = () => {}

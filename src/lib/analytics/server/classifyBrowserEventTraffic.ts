@@ -1,4 +1,3 @@
-import { checkBotId } from 'botid/server'
 import { readLandingSyntheticCorrelationCookie } from '../landingEdgeCorrelation'
 import { verifyLandingEdgeCorrelationToken } from '../landingEdgeCorrelationToken'
 import {
@@ -23,18 +22,12 @@ export type BrowserEventTrafficVerdict = {
   excludeFromMarketingDispatch: boolean
 }
 
-type BotIdVerdict = Awaited<ReturnType<typeof checkBotId>>
-
 export type BrowserEventTrafficDependencies = {
-  checkBot: () => Promise<BotIdVerdict>
   environment: BrowserEventTrafficEnvironment
   nowSeconds: () => number
 }
 
 const defaultDependencies: BrowserEventTrafficDependencies = {
-  checkBot: () => checkBotId({
-    advancedOptions: { checkLevel: 'basic' }
-  }),
   environment: process.env,
   nowSeconds: () => Math.floor(Date.now() / 1000)
 }
@@ -80,34 +73,6 @@ export async function classifyBrowserEventTraffic(
       classification: 'synthetic',
       excludeFromMarketingDispatch: true
     }
-  }
-
-  try {
-    const verdict = await dependencies.checkBot()
-
-    if (verdict.isVerifiedBot) {
-      return {
-        classification: 'verified_bot',
-        excludeFromMarketingDispatch: true
-      }
-    }
-
-    if (verdict.isBot) {
-      return {
-        classification: 'automated_bot',
-        excludeFromMarketingDispatch: true
-      }
-    }
-  } catch (error) {
-    console.error(
-      '[tracking] BotID classification failed; collector remains fail-open',
-      {
-        method: request.method,
-        path: new URL(request.url).pathname,
-        error_name:
-          error instanceof Error ? error.name : 'NonError'
-      }
-    )
   }
 
   return {

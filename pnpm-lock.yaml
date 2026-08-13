@@ -9,7 +9,6 @@ overrides:
   rimraf: ^6.1.3
 
 patchedDependencies:
-  botid@1.5.11: 422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab
   next@16.2.12: 85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5
   react-email@6.6.3: a3effa40ff6e63f92736e2c08686d3e123f8d38caa70928ddb7a94a0a362cfd7
 
@@ -209,9 +208,6 @@ importers:
       axe-core:
         specifier: ^4.12.1
         version: 4.12.1
-      botid:
-        specifier: ^1.5.11
-        version: 1.5.11(patch_hash=422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       capi-param-builder-nodejs:
         specifier: ^1.3.1
         version: 1.3.1
@@ -5586,17 +5582,6 @@ packages:
 
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
-
-  botid@1.5.11:
-    resolution: {integrity: sha512-KOO1A3+/vFVJk5aFoG3sNwiogKFPVR+x4aw4gQ1b2e0XoE+i5xp48/EZn+WqR07jRHeDGwHWQUOtV5WVm7xiww==}
-    peerDependencies:
-      next: '*'
-      react: ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      next:
-        optional: true
-      react:
-        optional: true
 
   bowser@2.14.1:
     resolution: {integrity: sha512-tzPjzCxygAKWFOJP011oxFHs57HzIhOEracIgAePE4pqB3LikALKnSzUyU4MGs9/iCEUuHlAJTjTc5M+u7YEGg==}
@@ -16415,11 +16400,6 @@ snapshots:
       - supports-color
 
   boolbase@1.0.0: {}
-
-  botid@1.5.11(patch_hash=422c156c099c2a18bd4245126952f403b95275e7297be89a70ec542caa1a94ab)(next@16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
-    optionalDependencies:
-      next: 16.2.12(patch_hash=85bfbf25f5ad574508b615585ecfc7339973c7ad550d7213820e88dd5e4e8aa5)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      react: 19.2.7
 
   bowser@2.14.1: {}
 
