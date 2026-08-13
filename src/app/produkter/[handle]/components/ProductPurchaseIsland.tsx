@@ -85,7 +85,8 @@ export function ProductPurchaseIsland({
                 isVariantNavigationPending ||
                 hasVariantSelectionError
               }
-              showAddToCartAction={false}
+              showQuickCheckoutAction={false}
+              showQuantitySelector={false}
             />
           </Activity>
         </div>

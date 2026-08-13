@@ -28,6 +28,8 @@ export function AddToCart({
   checkoutPresentation = 'balanced',
   isSelectionPending = false,
   showAddToCartAction = true,
+  showQuickCheckoutAction = true,
+  showQuantitySelector = true,
   surface = 'default'
 }: ExtendedAddToCartProps) {
   const {
@@ -37,11 +39,11 @@ export function AddToCart({
     isAddToCartPending,
     isCheckoutPending
   } = useAddToCartAction({
-      product,
-      selectedVariant,
-      additionalLine,
-      ...(additionalProductData ? { additionalProductData } : {})
-    })
+    product,
+    selectedVariant,
+    additionalLine,
+    ...(additionalProductData ? { additionalProductData } : {})
+  })
 
   const form = useAddToCartForm(selectedVariant)
 
@@ -70,6 +72,8 @@ export function AddToCart({
       isAvailable={isAvailable}
       checkoutPresentation={checkoutPresentation}
       showAddToCartAction={showAddToCartAction}
+      showQuickCheckoutAction={showQuickCheckoutAction}
+      showQuantitySelector={showQuantitySelector}
       surface={surface}
     />
   )

@@ -21,6 +21,7 @@ interface ModalSubmitButtonProps {
   onCheckout: () => void
   checkoutPresentation?: CheckoutPresentation
   showAddToCartAction?: boolean
+  showQuickCheckoutAction?: boolean
 }
 
 export function ModalSubmitButton({
@@ -33,7 +34,8 @@ export function ModalSubmitButton({
   isDisabled,
   onCheckout,
   checkoutPresentation = 'balanced',
-  showAddToCartAction = true
+  showAddToCartAction = true,
+  showQuickCheckoutAction = true
 }: ModalSubmitButtonProps) {
   if (!availableForSale || !selectedVariant) {
     return <SoldOutButton />
@@ -48,12 +50,14 @@ export function ModalSubmitButton({
             isDisabled={isDisabled}
           />
         : null}
-        <QuickCheckoutButton
-          isPending={isCheckoutPending}
-          isDisabled={isDisabled}
-          onClick={onCheckout}
-          className='bg-primary text-foreground hover:bg-primary/90 [&_svg]:text-foreground'
-        />
+        {showQuickCheckoutAction ?
+          <QuickCheckoutButton
+            isPending={isCheckoutPending}
+            isDisabled={isDisabled}
+            onClick={onCheckout}
+            className='bg-primary text-foreground hover:bg-primary/90 [&_svg]:text-foreground'
+          />
+        : null}
         <div className='flex items-center gap-3 text-xs text-foreground/60'></div>
         <KlarnaProductExpressCheckout
           product={product}
@@ -86,12 +90,14 @@ export function ModalSubmitButton({
           className='w-full min-w-0'
           buttonContainerClassName='h-14 min-h-14 border-none ring-0'
         />
-        <QuickCheckoutButton
-          isPending={isCheckoutPending}
-          isDisabled={isDisabled}
-          onClick={onCheckout}
-          className='bg-primary text-foreground hover:bg-primary/90 [&_svg]:text-foreground'
-        />
+        {showQuickCheckoutAction ?
+          <QuickCheckoutButton
+            isPending={isCheckoutPending}
+            isDisabled={isDisabled}
+            onClick={onCheckout}
+            className='bg-primary text-foreground hover:bg-primary/90 [&_svg]:text-foreground'
+          />
+        : null}
       </div>
     </div>
   )

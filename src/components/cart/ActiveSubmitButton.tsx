@@ -29,7 +29,7 @@ export function ActiveSubmitButton({
           aria-hidden='true'
         />
         <span className='truncate'>
-          {isPending ? 'Legger til...' : 'Legg i kurv'}
+          {isPending ? 'Legger til...' : 'Legg i handlekurv'}
         </span>
       </Button>
     </BrandBadge>
