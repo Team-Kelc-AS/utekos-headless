@@ -1,5 +1,6 @@
 'use client'
 
+import { cn } from '@/lib/utils/className'
 import { SoldOutButton } from './SoldOutButton'
 import { ActiveSubmitButton } from './ActiveSubmitButton'
 import { QuickCheckoutButton } from './QuickCheckoutButton'
@@ -80,7 +81,12 @@ export function ModalSubmitButton({
           isDisabled={isDisabled}
         />
       : null}
-      <div className='grid grid-cols-1 gap-3 md:grid-cols-2'>
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-3',
+          showQuickCheckoutAction && 'md:grid-cols-2'
+        )}
+      >
         <KlarnaProductExpressCheckout
           product={product}
           selectedVariant={selectedVariant}
