@@ -1,6 +1,5 @@
 'use client'
 
-import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import {
   Accordion,
   AccordionContent,
@@ -92,19 +91,10 @@ export function ComfyrobeProductDetailsSection() {
     <section
       id='comfyrobe-product-details'
       className='bg-background px-6 pt-8 pb-10 font-sans text-foreground md:py-14'
-      aria-labelledby='comfyrobe-details-heading'
+      aria-label='Produktdetaljer'
     >
       <div className='mx-auto md:max-w-[85%]'>
-        <BrandBadge className='gap-2 rounded-2xl bg-jungle text-left font-sans text-foreground'>
-          <h2
-            id='comfyrobe-details-heading'
-            className='font-sans text-lg leading-[1.2] tracking-normal'
-          >
-            Produktdetaljer
-          </h2>
-        </BrandBadge>
-
-        <Accordion className='mt-8 w-full rounded-2xl border border-border bg-jungle px-4 text-card-foreground sm:px-5'>
+        <Accordion className='w-full rounded-2xl border border-border bg-jungle px-4 text-card-foreground sm:px-5'>
           {comfyrobeAccordion.map(section => (
             <AccordionItem
               key={section.id}
