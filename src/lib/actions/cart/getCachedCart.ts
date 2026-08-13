@@ -1,27 +1,22 @@
 // Path: src/lib/helpers/getCachedCart.ts
 'use server'
 
-import { CartNotFoundError } from '@/lib/errors/CartNotFoundError'
 import { parseShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
 import type { Cart } from 'types/cart'
 import { getStorefrontBuyerContext } from '@/api/shopify/storefront/getStorefrontBuyerContext'
 
-async function getCartById(
+async function getCartReadResult(
   cartId: string
-): Promise<Cart | null> {
-  try {
-    const { fetchCart } =
-      await import('@/lib/helpers/cart/fetchCart')
-    const context = await getStorefrontBuyerContext()
-    const cart = await fetchCart(context, cartId)
-    return cart
-  } catch (error) {
-    if (error instanceof CartNotFoundError) {
-      return null
-    }
-    throw error
-  }
+): Promise<
+  | { status: 'ready'; cart: Cart }
+  | { status: 'not-found' }
+  | { status: 'unavailable' }
+> {
+  const { fetchCartReadResult } =
+    await import('@/lib/helpers/cart/fetchCart')
+  const context = await getStorefrontBuyerContext()
+  return fetchCartReadResult(context, cartId)
 }
 
 export type CachedCartReadResult =
@@ -55,9 +50,23 @@ export async function getCachedCart(
     }
   }
 
+  const result = await getCartReadResult(identity.fullId)
+
+  if (result.status === 'not-found') {
+    const { clearCartIdCookie } =
+      await import('@/lib/actions/cart/setCartIdInCookie')
+    await clearCartIdCookie()
+
+    return {
+      status: 'identity-changed',
+      cartId: null,
+      cart: null
+    }
+  }
+
   return {
     status: 'ready',
     cartId: identity.publicId,
-    cart: await getCartById(identity.fullId)
+    cart: result.status === 'ready' ? result.cart : null
   }
 }
