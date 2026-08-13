@@ -7,6 +7,7 @@ import { ComfyrobeMotionProvider } from './components/ComfyrobeMotionProvider'
 import { ComfyrobeProductDetailsSection } from './components/ComfyrobeProductDetailsSection'
 import { ComfyrobePurchaseSection } from './components/ComfyrobePurchaseSection'
 import { ComfyrobeStickyPurchase } from './components/ComfyrobeStickyPurchase'
+import { PreFooterNavigation } from '../skreddersy-varmen/components/PreFooterNavigation'
 import { ComfyrobeJsonLd } from './structured-data/ComfyrobeJsonLd'
 import {
   COMFYROBE_LANDING_DESCRIPTION,
@@ -89,6 +90,8 @@ export default async function ComfyrobeLandingPage() {
 
         <ComfyrobeStickyPurchase offer={offer} />
       </ComfyrobeMotionProvider>
+
+      <PreFooterNavigation variant='comfyrobe' />
     </article>
   )
 }

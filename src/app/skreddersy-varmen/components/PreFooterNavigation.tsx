@@ -5,10 +5,25 @@ import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { cn } from '@/lib/utils/className'
 import { NavLinks } from './NavLinks'
 
-export function PreFooterNavigation() {
+type PreFooterNavigationProps = {
+  variant?: 'default' | 'comfyrobe'
+}
+
+export function PreFooterNavigation({
+  variant = 'default'
+}: PreFooterNavigationProps) {
+  const isComfyrobe = variant === 'comfyrobe'
+
   return (
     // Gradient-bakgrunnen blender sømløst over fra trekkspillet over, og ned i footeren under
-    <section className='dark:from-dark-background dark:to-dark-card w-full max-w-full bg-linear-to-b from-background to-card py-16 text-foreground md:py-24'>
+    <section
+      className={cn(
+        'w-full max-w-full py-16 text-foreground md:py-24',
+        isComfyrobe ?
+          'bg-linear-to-b from-background to-jungle'
+        : 'dark:from-dark-background dark:to-dark-card bg-linear-to-b from-background to-card'
+      )}
+    >
       <div className='mx-auto max-w-5xl px-6'>
         <div className='mb-12 text-left'>
           <h2 className='leading-heading-level-two mb-4 font-sans font-utekos-text-medium text-5xl text-foreground md:text-6xl'>
@@ -32,8 +47,10 @@ export function PreFooterNavigation() {
               href={link.href}
               className={cn(
                 'group flex items-center justify-between p-6',
-                'dark:border-dark-foreground/10 dark:bg-dark-background/30 rounded-2xl border border-foreground/10 bg-background/30 backdrop-blur-sm',
-                'dark:hover:border-dark-primary/50 dark:hover:bg-dark-background/60 dark:hover:shadow-dark-primary/5 transition-all duration-400 hover:border-secondary/50 hover:bg-background/60 hover:shadow-lg hover:shadow-secondary/5',
+                'rounded-2xl border backdrop-blur-sm transition-all duration-400',
+                isComfyrobe ?
+                  'border-white/10 bg-night/55 hover:border-primary/55 hover:bg-night hover:shadow-lg hover:shadow-primary/5'
+                : 'dark:border-dark-foreground/10 dark:bg-dark-background/30 border-foreground/10 bg-background/30 dark:hover:border-dark-primary/50 dark:hover:bg-dark-background/60 dark:hover:shadow-dark-primary/5 hover:border-secondary/50 hover:bg-background/60 hover:shadow-lg hover:shadow-secondary/5',
                 index === 0 && 'md:col-span-2 lg:col-span-3',
                 link.mdOnly && 'hidden md:flex'
               )}
@@ -41,8 +58,10 @@ export function PreFooterNavigation() {
               <div className='flex items-center gap-4'>
                 <div
                   className={cn(
-                    'rounded-full border border-border bg-muted p-3 text-ceramic shadow-sm transition-colors duration-400',
-                    'group-hover:border-secondary/50 group-hover:bg-secondary group-hover:text-secondary-foreground'
+                    'rounded-full border p-3 shadow-sm transition-colors duration-400',
+                    isComfyrobe ?
+                      'border-white/10 bg-background text-primary group-hover:border-primary/50 group-hover:bg-primary group-hover:text-background'
+                    : 'border-border bg-muted text-ceramic group-hover:border-secondary/50 group-hover:bg-secondary group-hover:text-secondary-foreground'
                   )}
                 >
                   {link.icon}
