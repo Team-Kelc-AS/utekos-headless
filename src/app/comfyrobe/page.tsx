@@ -8,7 +8,6 @@ import { ComfyrobeProductDetailsSection } from './components/ComfyrobeProductDet
 import { ComfyrobePurchaseSection } from './components/ComfyrobePurchaseSection'
 import { ComfyrobeStickyPurchase } from './components/ComfyrobeStickyPurchase'
 import { PreFooterNavigation } from '../skreddersy-varmen/components/PreFooterNavigation'
-import { ComfyrobeJsonLd } from './structured-data/ComfyrobeJsonLd'
 import {
   COMFYROBE_LANDING_DESCRIPTION,
   COMFYROBE_LANDING_IMAGE,
@@ -49,10 +48,6 @@ export default async function ComfyrobeLandingPage() {
 
   return (
     <article className='flex min-h-screen w-full flex-col overflow-x-clip bg-background text-foreground'>
-      {product ?
-        <ComfyrobeJsonLd product={product} />
-      : null}
-
       <div className='w-full bg-cloud-dancer text-background'>
         <UtekosBreadcrumbBar
           surface='transparent'
