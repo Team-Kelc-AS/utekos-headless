@@ -1,9 +1,20 @@
 import type { ReactNode } from 'react'
+import { ComfyrobeJsonLd } from './structured-data/ComfyrobeJsonLd'
+import { getComfyrobeLandingProduct } from './lib/getComfyrobeLandingProduct'
 
-export default function ComfyrobeLandingLayout({
+export default async function ComfyrobeLandingLayout({
   children
 }: {
   children: ReactNode
 }) {
-  return children
+  const product = await getComfyrobeLandingProduct()
+
+  return (
+    <>
+      {product ?
+        <ComfyrobeJsonLd product={product} />
+      : null}
+      {children}
+    </>
+  )
 }
