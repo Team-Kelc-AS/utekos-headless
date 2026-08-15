@@ -26,34 +26,17 @@ type ShopifyCatalogSyncVariantNode = {
   compareAtPrice: string | null
   inventoryQuantity: number | null
   availableForSale: boolean
-  image: {
-    url: string
-  } | null
-  selectedOptions: Array<{
-    name: string
-    value: string
-  }>
-  customLabel0: {
-    value: string
-  } | null
-  customLabel1: {
-    value: string
-  } | null
-  customLabel2: {
-    value: string
-  } | null
-  customLabel3: {
-    value: string
-  } | null
-  customLabel4: {
-    value: string
-  } | null
+  updatedAt: string
+  image: { url: string } | null
+  selectedOptions: Array<{ name: string; value: string }>
+  customLabel0: { value: string } | null
+  customLabel1: { value: string } | null
+  customLabel2: { value: string } | null
+  customLabel3: { value: string } | null
+  customLabel4: { value: string } | null
   inventoryItem: {
     measurement: {
-      weight: {
-        value: number
-        unit: ShopifyWeightUnit
-      } | null
+      weight: { value: number; unit: ShopifyWeightUnit } | null
     } | null
   } | null
 }
@@ -66,20 +49,11 @@ type ShopifyCatalogSyncProductNode = {
   descriptionHtml: string
   vendor: string | null
   status: string
-  featuredImage: {
-    url: string
-  } | null
-  images: {
-    edges: Array<{
-      node: {
-        url: string
-      }
-    }>
-  }
+  updatedAt: string
+  featuredImage: { url: string } | null
+  images: { edges: Array<{ node: { url: string } }> }
   variants: {
-    edges: Array<{
-      node: ShopifyCatalogSyncVariantNode
-    }>
+    edges: Array<{ node: ShopifyCatalogSyncVariantNode }>
   }
 }
 
@@ -90,9 +64,7 @@ type ShopifyCatalogSyncQueryResponse = {
         hasNextPage: boolean
         endCursor: string | null
       }
-      edges: Array<{
-        node: ShopifyCatalogSyncProductNode
-      }>
+      edges: Array<{ node: ShopifyCatalogSyncProductNode }>
     }
   }
   errors?: unknown
@@ -119,9 +91,7 @@ type ShopifyCustomerMatchQueryResponse = {
         hasNextPage: boolean
         endCursor: string | null
       }
-      edges: Array<{
-        node: ShopifyCustomerMatchCustomerNode
-      }>
+      edges: Array<{ node: ShopifyCustomerMatchCustomerNode }>
     }
   }
   errors?: unknown
@@ -137,7 +107,9 @@ export type ShopifyCustomerMatchCustomer = {
   smsMarketingSubscribed: boolean
 }
 
-function mapWeightUnit(unit: ShopifyWeightUnit): CatalogSyncWeightUnit {
+function mapWeightUnit(
+  unit: ShopifyWeightUnit
+): CatalogSyncWeightUnit {
   switch (unit) {
     case 'KILOGRAMS':
       return 'kg'
@@ -152,7 +124,9 @@ function mapWeightUnit(unit: ShopifyWeightUnit): CatalogSyncWeightUnit {
   }
 }
 
-function mapVariant(node: ShopifyCatalogSyncVariantNode): CatalogSyncVariant {
+function mapVariant(
+  node: ShopifyCatalogSyncVariantNode
+): CatalogSyncVariant {
   const weightData = node.inventoryItem?.measurement?.weight
 
   return {
@@ -164,10 +138,12 @@ function mapVariant(node: ShopifyCatalogSyncVariantNode): CatalogSyncVariant {
     compareAtPrice: node.compareAtPrice,
     inventoryQuantity: node.inventoryQuantity,
     availableForSale: node.availableForSale,
+    updatedAt: node.updatedAt,
     image: node.image,
     selectedOptions: node.selectedOptions,
     weight: weightData?.value || null,
-    weightUnit: weightData?.unit ? mapWeightUnit(weightData.unit) : 'kg',
+    weightUnit:
+      weightData?.unit ? mapWeightUnit(weightData.unit) : 'kg',
     customLabel0: node.customLabel0,
     customLabel1: node.customLabel1,
     customLabel2: node.customLabel2,
@@ -176,7 +152,9 @@ function mapVariant(node: ShopifyCatalogSyncVariantNode): CatalogSyncVariant {
   }
 }
 
-function mapProduct(node: ShopifyCatalogSyncProductNode): CatalogSyncProduct {
+function mapProduct(
+  node: ShopifyCatalogSyncProductNode
+): CatalogSyncProduct {
   return {
     id: node.id,
     title: node.title,
@@ -185,6 +163,7 @@ function mapProduct(node: ShopifyCatalogSyncProductNode): CatalogSyncProduct {
     descriptionHtml: node.descriptionHtml,
     vendor: node.vendor,
     status: node.status,
+    updatedAt: node.updatedAt,
     featuredImage: node.featuredImage,
     images: node.images.edges.map(edge => ({
       url: edge.node.url
@@ -197,7 +176,9 @@ function mapProduct(node: ShopifyCatalogSyncProductNode): CatalogSyncProduct {
   }
 }
 
-async function fetchCatalogSyncProductPage(cursor: string | null) {
+async function fetchCatalogSyncProductPage(
+  cursor: string | null
+) {
   const { accessToken, graphqlUrl } = getShopifyAdminConfig()
   const query = `
     query getCatalogSyncProducts($cursor: String) {
@@ -215,6 +196,7 @@ async function fetchCatalogSyncProductPage(cursor: string | null) {
             descriptionHtml
             vendor
             status
+            updatedAt
             featuredImage {
               url
             }
@@ -236,6 +218,7 @@ async function fetchCatalogSyncProductPage(cursor: string | null) {
                   compareAtPrice
                   inventoryQuantity
                   availableForSale
+                  updatedAt
                   inventoryItem {
                     measurement {
                       weight {
@@ -281,38 +264,38 @@ async function fetchCatalogSyncProductPage(cursor: string | null) {
       'Content-Type': 'application/json',
       'X-Shopify-Access-Token': accessToken
     },
-    body: JSON.stringify({
-      query,
-      variables: {
-        cursor
-      }
-    })
+    body: JSON.stringify({ query, variables: { cursor } })
   })
 
   if (!response.ok) {
     const text = await response.text()
-    throw new Error(`Shopify Admin API Error (${response.status}): ${text}`)
+    throw new Error(
+      `Shopify Admin API Error (${response.status}): ${text}`
+    )
   }
 
-  const json = (await response.json()) as ShopifyCatalogSyncQueryResponse
+  const json =
+    (await response.json()) as ShopifyCatalogSyncQueryResponse
 
   if (json.errors) {
-    throw new Error(`GraphQL Errors: ${JSON.stringify(json.errors)}`)
+    throw new Error(
+      `GraphQL Errors: ${JSON.stringify(json.errors)}`
+    )
   }
 
   const productsConnection = json.data?.products
 
   if (!productsConnection) {
-    return {
-      products: [],
-      nextCursor: null
-    }
+    return { products: [], nextCursor: null }
   }
 
   return {
-    products: productsConnection.edges.map(edge => mapProduct(edge.node)),
-    nextCursor: productsConnection.pageInfo.hasNextPage
-      ? productsConnection.pageInfo.endCursor
+    products: productsConnection.edges.map(edge =>
+      mapProduct(edge.node)
+    ),
+    nextCursor:
+      productsConnection.pageInfo.hasNextPage ?
+        productsConnection.pageInfo.endCursor
       : null
   }
 }
@@ -325,13 +308,13 @@ function mapCustomerMatchCustomer(
     firstName: node.firstName,
     lastName: node.lastName,
     email:
-      node.defaultEmailAddress?.marketingState === 'SUBSCRIBED'
-        ? node.defaultEmailAddress.emailAddress
-        : null,
+      node.defaultEmailAddress?.marketingState === 'SUBSCRIBED' ?
+        node.defaultEmailAddress.emailAddress
+      : null,
     phone:
-      node.defaultPhoneNumber?.marketingState === 'SUBSCRIBED'
-        ? node.defaultPhoneNumber.phoneNumber
-        : null,
+      node.defaultPhoneNumber?.marketingState === 'SUBSCRIBED' ?
+        node.defaultPhoneNumber.phoneNumber
+      : null,
     emailMarketingSubscribed:
       node.defaultEmailAddress?.marketingState === 'SUBSCRIBED',
     smsMarketingSubscribed:
@@ -339,7 +322,9 @@ function mapCustomerMatchCustomer(
   }
 }
 
-async function fetchCustomerMatchCustomerPage(cursor: string | null) {
+async function fetchCustomerMatchCustomerPage(
+  cursor: string | null
+) {
   const { accessToken, graphqlUrl } = getShopifyAdminConfig()
   const query = `
     query getCustomerMatchCustomers($cursor: String) {
@@ -373,45 +358,45 @@ async function fetchCustomerMatchCustomerPage(cursor: string | null) {
       'Content-Type': 'application/json',
       'X-Shopify-Access-Token': accessToken
     },
-    body: JSON.stringify({
-      query,
-      variables: {
-        cursor
-      }
-    })
+    body: JSON.stringify({ query, variables: { cursor } })
   })
 
   if (!response.ok) {
     const text = await response.text()
-    throw new Error(`Shopify Admin API Error (${response.status}): ${text}`)
+    throw new Error(
+      `Shopify Admin API Error (${response.status}): ${text}`
+    )
   }
 
-  const json = (await response.json()) as ShopifyCustomerMatchQueryResponse
+  const json =
+    (await response.json()) as ShopifyCustomerMatchQueryResponse
 
   if (json.errors) {
-    throw new Error(`GraphQL Errors: ${JSON.stringify(json.errors)}`)
+    throw new Error(
+      `GraphQL Errors: ${JSON.stringify(json.errors)}`
+    )
   }
 
   const customersConnection = json.data?.customers
 
   if (!customersConnection) {
-    return {
-      customers: [],
-      nextCursor: null
-    }
+    return { customers: [], nextCursor: null }
   }
 
   return {
     customers: customersConnection.edges.map(edge =>
       mapCustomerMatchCustomer(edge.node)
     ),
-    nextCursor: customersConnection.pageInfo.hasNextPage
-      ? customersConnection.pageInfo.endCursor
+    nextCursor:
+      customersConnection.pageInfo.hasNextPage ?
+        customersConnection.pageInfo.endCursor
       : null
   }
 }
 
-export async function getAllProductsForCatalogSync(): Promise<CatalogSyncProduct[]> {
+export async function getAllProductsForCatalogSync(): Promise<
+  CatalogSyncProduct[]
+> {
   try {
     const products: CatalogSyncProduct[] = []
     let cursor: string | null = null
@@ -442,8 +427,8 @@ export async function getCustomerMatchCustomers(limit = 10000) {
 
     while (customers.length < limit) {
       const page = await fetchCustomerMatchCustomerPage(cursor)
-      const consentedCustomers = page.customers.filter(customer =>
-        Boolean(customer.email || customer.phone)
+      const consentedCustomers = page.customers.filter(
+        customer => Boolean(customer.email || customer.phone)
       )
 
       customers.push(...consentedCustomers)

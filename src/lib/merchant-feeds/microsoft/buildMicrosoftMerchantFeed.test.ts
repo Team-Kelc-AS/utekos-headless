@@ -17,9 +17,8 @@ const product: CatalogSyncProduct = {
     '<p>Varm &amp; lett\nfor terrasse\tog tur.</p>',
   vendor: 'Utekos',
   status: 'ACTIVE',
-  featuredImage: {
-    url: 'https://cdn.shopify.com/featured.jpg'
-  },
+  updatedAt: '2026-08-15T08:00:00Z',
+  featuredImage: { url: 'https://cdn.shopify.com/featured.jpg' },
   images: [
     { url: 'https://cdn.shopify.com/featured.jpg' },
     { url: 'https://cdn.shopify.com/detail,one.jpg' }
@@ -36,6 +35,7 @@ const product: CatalogSyncProduct = {
           compareAtPrice: '1990',
           inventoryQuantity: 4,
           availableForSale: true,
+          updatedAt: '2026-08-15T08:30:00Z',
           image: null,
           selectedOptions: [
             { name: 'Farge', value: 'Havdyp' },
@@ -61,9 +61,8 @@ const product: CatalogSyncProduct = {
           compareAtPrice: null,
           inventoryQuantity: 0,
           availableForSale: false,
-          image: {
-            url: 'https://cdn.shopify.com/variant.jpg'
-          },
+          updatedAt: '2026-08-15T09:00:00Z',
+          image: { url: 'https://cdn.shopify.com/variant.jpg' },
           selectedOptions: [
             { name: 'Farge', value: 'Havdyp' },
             { name: 'Størrelse', value: 'Liten' },
@@ -90,7 +89,10 @@ function parseFeedRows(feed: string) {
     const values = line.split('\t')
 
     return Object.fromEntries(
-      columns.map((column, index) => [column, values[index] ?? ''])
+      columns.map((column, index) => [
+        column,
+        values[index] ?? ''
+      ])
     )
   })
 }
@@ -98,10 +100,7 @@ function parseFeedRows(feed: string) {
 function createProduct(
   handle: string,
   title: string,
-  variants: Array<{
-    id: string
-    color: string
-  }>
+  variants: Array<{ id: string; color: string }>
 ): CatalogSyncProduct {
   return {
     ...product,
@@ -185,7 +184,10 @@ test('builds a Microsoft Merchant TSV from the Utekos presentation contract', ()
 
 test('fails closed when there are no active product offers', () => {
   assert.throws(
-    () => buildMicrosoftMerchantFeed([{ ...product, status: 'DRAFT' }]),
+    () =>
+      buildMicrosoftMerchantFeed([
+        { ...product, status: 'DRAFT' }
+      ]),
     /contains no active offers/
   )
 })
@@ -215,25 +217,17 @@ test('includes only the approved Microsoft Merchant assortment', () => {
   const rows = parseFeedRows(feed)
 
   assert.deepEqual(
-    rows.map(row => ({
-      id: row.id,
-      title: row.title
-    })),
+    rows.map(row => ({ id: row.id, title: row.title })),
     [
       {
         id: '303',
-        title:
-          'Utekos Mikrofiber™ / Fjellblå / Medium / Unisex'
+        title: 'Utekos Mikrofiber™ / Fjellblå / Medium / Unisex'
       },
       {
         id: '306',
-        title:
-          'Utekos TechDown™ / Havdyp / Middels / Unisex'
+        title: 'Utekos TechDown™ / Havdyp / Middels / Unisex'
       },
-      {
-        id: '307',
-        title: 'Comfyrobe™ / Fjellnatt / M / Unisex'
-      }
+      { id: '307', title: 'Comfyrobe™ / Fjellnatt / M / Unisex' }
     ]
   )
   assert.equal(
