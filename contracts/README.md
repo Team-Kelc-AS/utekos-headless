@@ -24,8 +24,13 @@ hand.
 - `events/utekos-event-delivery/0.1.0/parameter-contract.json`:
   complete canonical/browser/server provider parameter rules for
   all 33 catalog events.
+- `asyncapi/utekos-provider-dispatch/0.1.0/asyncapi.json`:
+  PII-free Vercel Queue dispatch envelope and producer/consumer
+  operations.
 - `reports/utekos-events-0.1.0-implementation-matrix.md`:
   route-to-implementation traceability.
+- `reports/utekos-provider-dispatch-0.1.0-implementation-matrix.md`:
+  queue-to-adapter/worker traceability and delivery semantics.
 
 ## Generate and verify
 
@@ -36,6 +41,9 @@ Node.js and pnpm versions:
 pnpm contracts:events:generate
 pnpm contracts:events:check
 pnpm contracts:events:test
+pnpm contracts:dispatch:generate
+pnpm contracts:dispatch:check
+pnpm contracts:dispatch:test
 ```
 
 `contracts:events:generate` writes every generated artifact from
@@ -44,6 +52,22 @@ the explicit catalog and the live Zod schemas.
 those sources. `contracts:events:test` verifies complete route
 coverage, implementation-file traceability, Zod examples, OpenAPI
 schema parity, and the characterized HTTP outcomes.
+
+The matching Provider Dispatch commands generate and verify the
+AsyncAPI document against the queue topic, Vercel trigger
+options, strict Zod envelope, adapter registry, worker registry,
+publisher, and consumer behavior.
+
+## Authority boundary
+
+An immutable SwaggerHub version is the normative consumer
+contract after it has passed Registry fetch-back verification.
+The repository keeps the generator, executable tests, and a
+reproducible mirror because CI and runtime verification cannot
+run from a registry description alone. The TypeScript/Zod
+implementation remains the evidence for what the deployed
+application actually accepts; a Registry contract is not proof of
+deployment or provider acceptance.
 
 ## Change discipline
 

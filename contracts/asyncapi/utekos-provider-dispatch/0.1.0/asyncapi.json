@@ -1,0 +1,197 @@
+{
+  "asyncapi": "3.1.0",
+  "info": {
+    "title": "Utekos Provider Dispatch",
+    "version": "0.1.0",
+    "description": "Characterization contract for the PII-free Vercel Queue envelope that targets one persisted provider outbox attempt. Provider payloads are loaded from the canonical ledger after the message is claimed; they are never placed on this queue."
+  },
+  "defaultContentType": "application/json",
+  "servers": {
+    "vercelQueueRuntime": {
+      "host": "{region}.vercel-queue.com",
+      "protocol": "https",
+      "description": "Vercel-managed Queue Service endpoint. The SDK resolves the runtime region; the deployed application is pinned to arn1.",
+      "variables": {
+        "region": {
+          "default": "arn1",
+          "description": "Vercel Queue storage region resolved by @vercel/queue."
+        }
+      },
+      "x-utekos-runtime": {
+        "package": "@vercel/queue",
+        "version": "0.4.0",
+        "triggerType": "queue/v2beta"
+      }
+    }
+  },
+  "channels": {
+    "canonicalProviderDispatch": {
+      "address": "canonical-provider-dispatch-v1",
+      "description": "One message targets one already-persisted provider dispatch attempt.",
+      "servers": [
+        {
+          "$ref": "#/servers/vercelQueueRuntime"
+        }
+      ],
+      "messages": {
+        "canonicalProviderDispatchV1": {
+          "$ref": "#/components/messages/CanonicalProviderDispatchV1"
+        }
+      },
+      "x-utekos-queue-options": {
+        "retentionSeconds": 604800,
+        "visibilityTimeoutSeconds": 60,
+        "initialDelaySeconds": 0,
+        "retryAfterSeconds": 15,
+        "deliveryGuarantee": "at-least-once",
+        "acknowledgement": "automatic after the consumer callback resolves",
+        "redelivery": "automatic when the callback throws or the visibility lease expires",
+        "idempotencyKey": "adapter_key + \":\" + attempt_id",
+        "deduplicationWindowSeconds": 86400
+      }
+    }
+  },
+  "operations": {
+    "publishProviderDispatchAttempt": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/canonicalProviderDispatch"
+      },
+      "summary": "Publish newly persisted provider dispatch attempts.",
+      "messages": [
+        {
+          "$ref": "#/channels/canonicalProviderDispatch/messages/canonicalProviderDispatchV1"
+        }
+      ],
+      "x-utekos-implementation": "src/lib/analytics/server/canonicalProviderDispatchQueue.ts"
+    },
+    "consumeProviderDispatchAttempt": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/canonicalProviderDispatch"
+      },
+      "summary": "Validate the envelope, claim the named outbox attempt, and run only its registered provider worker.",
+      "messages": [
+        {
+          "$ref": "#/channels/canonicalProviderDispatch/messages/canonicalProviderDispatchV1"
+        }
+      ],
+      "x-utekos-implementation": "src/app/api/queues/canonical-provider-dispatch/route.ts",
+      "x-utekos-processing-outcomes": [
+        "invalid_message",
+        "not_claimed",
+        "accepted_unverified",
+        "retry_scheduled",
+        "dead_lettered"
+      ]
+    }
+  },
+  "components": {
+    "messages": {
+      "CanonicalProviderDispatchV1": {
+        "name": "CanonicalProviderDispatchV1",
+        "title": "Canonical provider dispatch attempt",
+        "summary": "PII-free pointer to one registered provider outbox attempt.",
+        "contentType": "application/json",
+        "correlationId": {
+          "description": "The persisted provider dispatch attempt UUID.",
+          "location": "$message.payload#/attempt_id"
+        },
+        "payload": {
+          "$ref": "#/components/schemas/CanonicalProviderDispatchMessage"
+        },
+        "examples": [
+          {
+            "name": "metaViewCart",
+            "payload": {
+              "adapter_key": "meta:view_cart",
+              "attempt_id": "7bcd24a4-190c-4eca-a834-5c9854bd54ea",
+              "schema_version": 1
+            }
+          }
+        ]
+      }
+    },
+    "schemas": {
+      "CanonicalProviderDispatchMessage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "adapter_key": {
+            "type": "string",
+            "enum": [
+              "google:add_payment_info",
+              "google:add_to_cart",
+              "google:add_to_wishlist",
+              "google:begin_checkout",
+              "google:filter_apply",
+              "google:form_error",
+              "google:form_start",
+              "google:form_submit",
+              "google:generate_lead",
+              "google:hero_interact",
+              "google:interact_with_accordion",
+              "google:open_quick_view",
+              "google:purchase",
+              "google:refund",
+              "google:remove_from_cart",
+              "google:scroll_depth",
+              "google:search",
+              "google:select_item",
+              "google:select_promotion",
+              "google:size_guide_view",
+              "google:sort_apply",
+              "google:variant_select",
+              "google:video_progress",
+              "google:view_cart",
+              "google:view_category",
+              "google:view_item",
+              "google:view_item_list",
+              "google:view_promotion",
+              "google:view_search_results",
+              "meta:add_to_cart",
+              "meta:add_to_wishlist",
+              "meta:begin_checkout",
+              "meta:generate_lead",
+              "meta:hero_interact",
+              "meta:interact_with_accordion",
+              "meta:open_quick_view",
+              "meta:page_view",
+              "meta:purchase",
+              "meta:remove_from_cart",
+              "meta:scroll_depth",
+              "meta:search",
+              "meta:select_item",
+              "meta:view_cart",
+              "meta:view_category",
+              "meta:view_item",
+              "meta:view_item_list",
+              "microsoft_uet:add_to_cart",
+              "microsoft_uet:begin_checkout",
+              "microsoft_uet:page_view",
+              "microsoft_uet:purchase"
+            ],
+            "description": "Exact key in providerAdapterRegistry and providerOutboxWorkerRegistry."
+          },
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Primary key of ops.provider_dispatch_attempts."
+          },
+          "schema_version": {
+            "type": "integer",
+            "const": 1
+          }
+        },
+        "required": [
+          "adapter_key",
+          "attempt_id",
+          "schema_version"
+        ]
+      }
+    }
+  },
+  "x-utekos-characterized-against": "97a0a4538f9682a2b210e50b770ce59f826b42ac",
+  "x-utekos-binding-note": "No protocol binding is declared because the official AsyncAPI bindings catalog has no Vercel Queue binding. Kafka, AMQP, and IBM MQ bindings would be false representations.",
+  "x-utekos-delivery-note": "Vercel Queue delivery is at least once. The publisher idempotency key is deduplicated for min(retention, 24 hours), so consumers and the persisted outbox claim remain the durable idempotency boundary."
+}
