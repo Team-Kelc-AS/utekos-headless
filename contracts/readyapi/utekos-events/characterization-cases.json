@@ -1,0 +1,1291 @@
+{
+  "name": "Utekos Events API characterization plan",
+  "version": "0.1.0",
+  "openapiImport": "../../openapi/utekos-events/0.1.0/openapi.resolved.json",
+  "characterizedAgainst": "97a0a4538f9682a2b210e50b770ce59f826b42ac",
+  "environment": {
+    "baseUrl": "http://localhost:3000",
+    "origin": "http://localhost:3000"
+  },
+  "limitations": [
+    "ReadyAPI Desktop 4.1.0 and SmartBear Functional Testing tools were not available in the implementation environment, so this is a deterministic suite manifest rather than a generated ReadyAPI project XML.",
+    "Accepted, duplicate, consent, and traffic-classification cases require a controlled store/classifier or an isolated test environment. They must not be pointed at production as characterization setup."
+  ],
+  "commonCases": [
+    {
+      "id": "forbidden-origin",
+      "safeWithoutStore": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "Origin": "https://invalid.example"
+        },
+        "body": "{}"
+      },
+      "expect": {
+        "status": 403,
+        "json": {
+          "error": "forbidden_origin"
+        },
+        "cacheControl": "no-store, max-age=0"
+      }
+    },
+    {
+      "id": "unsupported-media-type",
+      "safeWithoutStore": true,
+      "request": {
+        "headers": {
+          "Content-Type": "text/plain"
+        },
+        "body": "{}"
+      },
+      "expect": {
+        "status": 415,
+        "json": {
+          "error": "unsupported_media_type"
+        },
+        "cacheControl": "no-store, max-age=0"
+      }
+    },
+    {
+      "id": "invalid-json",
+      "safeWithoutStore": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{"
+      },
+      "expect": {
+        "status": 400,
+        "json": {
+          "error": "invalid_json"
+        },
+        "cacheControl": "no-store, max-age=0"
+      }
+    },
+    {
+      "id": "declared-body-too-large",
+      "safeWithoutStore": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "32769"
+        },
+        "body": "{}"
+      },
+      "expect": {
+        "status": 413,
+        "json": {
+          "error": "payload_too_large"
+        },
+        "cacheControl": "no-store, max-age=0"
+      }
+    },
+    {
+      "id": "invalid-event",
+      "safeWithoutStore": true,
+      "request": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{}"
+      },
+      "expect": {
+        "status": 400,
+        "json": {
+          "error": "invalid_event"
+        },
+        "cacheControl": "no-store, max-age=0"
+      }
+    }
+  ],
+  "controlledCases": [
+    {
+      "id": "accepted",
+      "expectStatus": 202
+    },
+    {
+      "id": "duplicate-event-id",
+      "expectStatus": 200
+    },
+    {
+      "id": "consent-denied",
+      "expectStatus": 204
+    },
+    {
+      "id": "traffic-excluded",
+      "expectStatus": 204,
+      "expectHeader": "X-Utekos-Traffic-Classification"
+    }
+  ],
+  "operations": [
+    {
+      "operationId": "collectAddToCartEvent",
+      "method": "POST",
+      "path": "/api/events/add-to-cart",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "add_to_cart",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "page_title": "Example product | Utekos",
+        "custom_data": {
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ],
+          "cart_mutation_id": "cart-mutation-1",
+          "cart_id": "gid://shopify/Cart/1"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalAddToCartRequest.ts",
+        "schema": "src/lib/analytics/addToCartEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectAddToWishlistEvent",
+      "method": "POST",
+      "path": "/api/events/add-to-wishlist",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "add_to_wishlist",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ],
+          "wishlist_mutation_id": "wishlist-mutation-1"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalAddToWishlistRequest.ts",
+        "schema": "src/lib/analytics/addToWishlistEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectBeginCheckoutEvent",
+      "method": "POST",
+      "path": "/api/events/begin-checkout",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "begin_checkout",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "page_title": "Example product | Utekos",
+        "custom_data": {
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ],
+          "cart_id": "gid://shopify/Cart/1",
+          "checkout_id": "checkout-1",
+          "creation_revision": "1"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalBeginCheckoutRequest.ts",
+        "schema": "src/lib/analytics/beginCheckoutEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectFilterApplyEvent",
+      "method": "POST",
+      "path": "/api/events/filter-apply",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "filter_apply",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "interaction_id": "filter-1",
+          "result_revision": 1,
+          "filter_name": "size",
+          "filter_value": "large",
+          "result_count": 8
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalFilterApplyRequest.ts",
+        "schema": "src/lib/analytics/filterApplyEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectFormErrorEvent",
+      "method": "POST",
+      "path": "/api/events/form-error",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "form_error",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "attempt_id": "attempt-1",
+          "form_id": "contact",
+          "error_category": "validation"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalFormErrorRequest.ts",
+        "schema": "src/lib/analytics/formErrorEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectFormStartEvent",
+      "method": "POST",
+      "path": "/api/events/form-start",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "form_start",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "form_id": "contact",
+          "form_name": "Contact form"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalFormStartRequest.ts",
+        "schema": "src/lib/analytics/formStartEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectFormSubmitEvent",
+      "method": "POST",
+      "path": "/api/events/form-submit",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "form_submit",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "server",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "submission_id": "submission-1",
+          "form_id": "contact",
+          "form_name": "Contact form",
+          "result": "accepted"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalFormSubmitRequest.ts",
+        "schema": "src/lib/analytics/formSubmitEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectGenerateLeadEvent",
+      "method": "POST",
+      "path": "/api/events/generate-lead",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "generate_lead",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "server",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "submission_id": "submission-1",
+          "form_id": "contact",
+          "lead_type": "contact"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalGenerateLeadRequest.ts",
+        "schema": "src/lib/analytics/generateLeadEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectHeroInteractEvent",
+      "method": "POST",
+      "path": "/api/events/hero-interact",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "hero_interact",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "cta_id": "hero-primary",
+          "destination_path": "/collections/all",
+          "click_sequence": 1
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalHeroInteractRequest.ts",
+        "schema": "src/lib/analytics/heroInteractEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectInteractWithAccordionEvent",
+      "method": "POST",
+      "path": "/api/events/interact-with-accordion",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "interact_with_accordion",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ],
+          "accordion_id": "materials",
+          "accordion_title": "Materials",
+          "interaction_sequence": 1,
+          "interaction_type": "open"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalInteractWithAccordionRequest.ts",
+        "schema": "src/lib/analytics/interactWithAccordionEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectOpenQuickViewEvent",
+      "method": "POST",
+      "path": "/api/events/open-quick-view",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "open_quick_view",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ],
+          "open_sequence": 1,
+          "source_surface": "product-card"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalOpenQuickViewRequest.ts",
+        "schema": "src/lib/analytics/openQuickViewEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectPageViewEvent",
+      "method": "POST",
+      "path": "/api/events/page-view",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "page_view",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "page_title": "Example product | Utekos"
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalPageViewRequest.ts",
+        "schema": "src/lib/analytics/pageViewEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectRemoveFromCartEvent",
+      "method": "POST",
+      "path": "/api/events/remove-from-cart",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "remove_from_cart",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ],
+          "cart_mutation_id": "cart-mutation-2",
+          "cart_id": "gid://shopify/Cart/1"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalRemoveFromCartRequest.ts",
+        "schema": "src/lib/analytics/removeFromCartEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectScrollDepthEvent",
+      "method": "POST",
+      "path": "/api/events/scroll-depth",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "scroll_depth",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "threshold": 50,
+          "percent_scrolled": 50,
+          "document_height": 2400
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalScrollDepthRequest.ts",
+        "schema": "src/lib/analytics/scrollDepthEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectSearchEvent",
+      "method": "POST",
+      "path": "/api/events/search",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "search",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "search_id": "search-1",
+          "search_term": "utepeis",
+          "result_state": "results"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalSearchRequest.ts",
+        "schema": "src/lib/analytics/searchEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectSelectItemEvent",
+      "method": "POST",
+      "path": "/api/events/select-item",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "select_item",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "interaction_id": "select-item-1",
+          "item_list_id": "featured-products",
+          "destination_url": "https://utekos.no/products/example-product",
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ]
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalSelectItemRequest.ts",
+        "schema": "src/lib/analytics/selectItemEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectSelectPromotionEvent",
+      "method": "POST",
+      "path": "/api/events/select-promotion",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "select_promotion",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "interaction_id": "promotion-click-1",
+          "promotion_id": "summer-1",
+          "promotion_name": "Summer campaign",
+          "creative_name": "Hero summer",
+          "creative_slot": "hero",
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ]
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalSelectPromotionRequest.ts",
+        "schema": "src/lib/analytics/selectPromotionEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectSizeGuideViewEvent",
+      "method": "POST",
+      "path": "/api/events/size-guide-view",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "size_guide_view",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "guide_id": "comfyrobe-size-guide",
+          "open_sequence": 1
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalSizeGuideViewRequest.ts",
+        "schema": "src/lib/analytics/sizeGuideViewEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectSortApplyEvent",
+      "method": "POST",
+      "path": "/api/events/sort-apply",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "sort_apply",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "interaction_id": "sort-1",
+          "result_revision": 1,
+          "sort_key": "price-ascending",
+          "result_count": 8
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalSortApplyRequest.ts",
+        "schema": "src/lib/analytics/sortApplyEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectVariantSelectEvent",
+      "method": "POST",
+      "path": "/api/events/variant-select",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "variant_select",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "interaction_id": "variant-select-1",
+          "product_id": "gid://shopify/Product/1",
+          "variant_id": "gid://shopify/ProductVariant/1",
+          "item_id": "gid://shopify/ProductVariant/1",
+          "item_variant": "Large",
+          "availability": "available"
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalVariantSelectRequest.ts",
+        "schema": "src/lib/analytics/variantSelectEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectVideoProgressEvent",
+      "method": "POST",
+      "path": "/api/events/video-progress",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "video_progress",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "video_id": "hero-video",
+          "milestone": 50,
+          "video_title": "Utekos product guide",
+          "video_duration": 60,
+          "video_current_time": 30,
+          "video_percent": 50
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalVideoProgressRequest.ts",
+        "schema": "src/lib/analytics/videoProgressEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectViewCartEvent",
+      "method": "POST",
+      "path": "/api/events/view-cart",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "view_cart",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ],
+          "cart_id": "gid://shopify/Cart/1",
+          "view_sequence": 1
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalViewCartRequest.ts",
+        "schema": "src/lib/analytics/viewCartEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectViewCategoryEvent",
+      "method": "POST",
+      "path": "/api/events/view-category",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "view_category",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "category_id": "outdoor-living",
+          "category_name": "Outdoor living",
+          "view_sequence": 1
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalViewCategoryRequest.ts",
+        "schema": "src/lib/analytics/viewCategoryEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectViewItemEvent",
+      "method": "POST",
+      "path": "/api/events/view-item",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "view_item",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "page_title": "Example product | Utekos",
+        "custom_data": {
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ]
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalViewItemRequest.ts",
+        "schema": "src/lib/analytics/viewItemEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectViewItemListEvent",
+      "method": "POST",
+      "path": "/api/events/view-item-list",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "view_item_list",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "currency": "NOK",
+          "value": 100,
+          "gross_value": 125,
+          "tax_value": 25,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ],
+          "impression_sequence": 1,
+          "item_list_id": "featured-products",
+          "item_list_name": "Featured products",
+          "total_item_count": 1
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalViewItemListRequest.ts",
+        "schema": "src/lib/analytics/viewItemListEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectViewPromotionEvent",
+      "method": "POST",
+      "path": "/api/events/view-promotion",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "view_promotion",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "promotion_id": "summer-1",
+          "promotion_name": "Summer campaign",
+          "creative_name": "Hero summer",
+          "creative_slot": "hero",
+          "impression_sequence": 1,
+          "items": [
+            {
+              "item_id": "gid://shopify/ProductVariant/1",
+              "product_id": "gid://shopify/Product/1",
+              "variant_id": "gid://shopify/ProductVariant/1",
+              "item_name": "Example product",
+              "product_handle": "example-product",
+              "quantity": 1,
+              "unit_price": 100,
+              "gross_unit_price": 125,
+              "tax_amount": 25,
+              "tax_rate": 0.25,
+              "taxable": true,
+              "price_includes_tax": true,
+              "available_for_sale": true,
+              "currently_not_in_stock": false,
+              "quantity_available": 10,
+              "selected_options": [],
+              "collection_ids": [],
+              "collection_titles": []
+            }
+          ]
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalViewPromotionRequest.ts",
+        "schema": "src/lib/analytics/viewPromotionEvent.ts"
+      }
+    },
+    {
+      "operationId": "collectViewSearchResultsEvent",
+      "method": "POST",
+      "path": "/api/events/view-search-results",
+      "validBody": {
+        "schema_version": 1,
+        "event_name": "view_search_results",
+        "event_id": "11111111-1111-4111-8111-111111111111",
+        "event_time": "2026-08-15T10:00:00.000Z",
+        "source": "web",
+        "environment": "test",
+        "consent": {
+          "analytics": "granted",
+          "marketing": "granted",
+          "preferences": "granted",
+          "source": "cookiebot",
+          "version": "1"
+        },
+        "page_url": "https://utekos.no/products/example-product",
+        "page_title": "Example product | Utekos",
+        "page_view_id": "22222222-2222-4222-8222-222222222222",
+        "custom_data": {
+          "search_id": "search-1",
+          "result_revision": 1,
+          "search_term": "utepeis",
+          "result_count": 8
+        }
+      },
+      "implementation": {
+        "requestHandler": "src/lib/analytics/server/handleCanonicalViewSearchResultsRequest.ts",
+        "schema": "src/lib/analytics/viewSearchResultsEvent.ts"
+      }
+    }
+  ]
+}
