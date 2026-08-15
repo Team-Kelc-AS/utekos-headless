@@ -6,11 +6,12 @@ import type { CatalogSyncProduct } from '@/lib/catalog-sync/types'
 import { buildMerchantProductInput } from './buildMerchantProductInput'
 
 process.env.GOOGLE_MERCHANT_ACCOUNT_ID = '123456789'
-process.env.GOOGLE_MERCHANT_SERVICE_ACCOUNT_JSON = JSON.stringify({
-  client_email:
-    'mercchant-center-api@project-c683eb2c-20ae-4ec2-ac3.iam.gserviceaccount.com',
-  private_key: 'test-private-key'
-})
+process.env.GOOGLE_MERCHANT_SERVICE_ACCOUNT_JSON =
+  JSON.stringify({
+    client_email:
+      'mercchant-center-api@project-c683eb2c-20ae-4ec2-ac3.iam.gserviceaccount.com',
+    private_key: 'test-private-key'
+  })
 
 const product: CatalogSyncProduct = {
   id: 'gid://shopify/Product/100',
@@ -20,6 +21,7 @@ const product: CatalogSyncProduct = {
   descriptionHtml: '<p>Varm og lett.</p>',
   vendor: 'Utekos',
   status: 'ACTIVE',
+  updatedAt: '2026-08-15T08:00:00Z',
   featuredImage: { url: 'https://cdn.shopify.com/product.jpg' },
   images: [],
   variants: {
@@ -34,6 +36,7 @@ const product: CatalogSyncProduct = {
           compareAtPrice: null,
           inventoryQuantity: 1,
           availableForSale: true,
+          updatedAt: '2026-08-15T08:30:00Z',
           image: null,
           selectedOptions: [
             { name: 'Farge', value: 'Havdyp' },
@@ -84,7 +87,9 @@ test('sends the Utekos presentation to Google Merchant Center', () => {
   assert.equal(result.input.productAttributes.color, 'Havdyp')
   assert.equal(result.input.productAttributes.size, 'Stor')
   assert.equal(
-    String(result.input.productAttributes.link).includes('gid://shopify'),
+    String(result.input.productAttributes.link).includes(
+      'gid://shopify'
+    ),
     false
   )
 })
@@ -99,10 +104,10 @@ test('excludes a hidden TechDown size', () => {
     ]
   }
 
-  assert.deepEqual(buildMerchantProductInput(product, hiddenVariant), {
-    ok: false,
-    reason: 'hidden_public_variant'
-  })
+  assert.deepEqual(
+    buildMerchantProductInput(product, hiddenVariant),
+    { ok: false, reason: 'hidden_public_variant' }
+  )
 })
 
 test('fails closed for a product without an Utekos presentation', () => {
@@ -116,9 +121,6 @@ test('fails closed for a product without an Utekos presentation', () => {
       unknownProduct,
       unknownProduct.variants.edges[0]!.node
     ),
-    {
-      ok: false,
-      reason: 'missing_product_presentation'
-    }
+    { ok: false, reason: 'missing_product_presentation' }
   )
 })

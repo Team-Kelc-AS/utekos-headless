@@ -3,25 +3,22 @@ import { createHash } from 'node:crypto'
 import { getKlarnaFeed } from '@/lib/merchant-feeds/klarna/getKlarnaFeed'
 import { connection } from 'next/server'
 
-function buildStableLastModified(feedDigestHex: string): string {
-  const secondsSinceEpoch =
-    (Number.parseInt(feedDigestHex.slice(0, 8), 16) % 315_360_000) +
-    1_704_067_200
-
-  return new Date(secondsSinceEpoch * 1000).toUTCString()
-}
-
-function buildFeedHeaders(feed: string, ifNoneMatch: string | null) {
-  const digestHex = createHash('sha256').update(feed).digest('hex')
+function buildFeedHeaders(
+  feed: string,
+  lastModified: string,
+  ifNoneMatch: string | null
+) {
+  const digestHex = createHash('sha256')
+    .update(feed)
+    .digest('hex')
   const etag = `"${digestHex}"`
-  const lastModified = buildStableLastModified(digestHex)
 
   if (ifNoneMatch === etag) {
     return {
       status: 304 as const,
       body: null,
       headers: {
-        ETag: etag,
+        'ETag': etag,
         'Last-Modified': lastModified,
         'Cache-Control': 'public, max-age=900, must-revalidate',
         'X-Content-Type-Options': 'nosniff'
@@ -34,7 +31,7 @@ function buildFeedHeaders(feed: string, ifNoneMatch: string | null) {
     body: feed,
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      ETag: etag,
+      'ETag': etag,
       'Last-Modified': lastModified,
       'Cache-Control': 'public, max-age=900, must-revalidate',
       'X-Content-Type-Options': 'nosniff'
@@ -48,7 +45,8 @@ export async function GET(request: Request): Promise<Response> {
   try {
     const feed = await getKlarnaFeed()
     const response = buildFeedHeaders(
-      feed,
+      feed.xml,
+      feed.lastModified,
       request.headers.get('if-none-match')
     )
 

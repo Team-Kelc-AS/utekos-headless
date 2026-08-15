@@ -1,25 +1,19 @@
 const KLARNA_CATEGORY_BY_HANDLE: Record<string, string> = {
-  comfyrobe: 'Klær > Unisex > Jakker og kåper',
-  'utekos-dun': 'Klær > Unisex > Outerwear',
-  'utekos-mikrofiber': 'Klær > Unisex > Outerwear',
-  'utekos-techdown': 'Klær > Unisex > Outerwear',
-  'utekos-stapper': 'Sport og fritid > Friluftsliv > Tilbehør'
+  'comfyrobe': 'Klær > Unisex > Yttertøy > Jakker og kåper',
+  'utekos-dun': 'Klær > Unisex > Yttertøy',
+  'utekos-mikrofiber': 'Klær > Unisex > Yttertøy',
+  'utekos-techdown': 'Klær > Unisex > Yttertøy',
+  'utekos-stapper':
+    'Sport og fritid > Friluftsliv > Oppbevaring > Kompresjonsposer'
 }
 
 export function getKlarnaFeedCategory(
-  productHandle: string,
-  productType: string | null
+  productHandle: string
 ): string {
   const mappedCategory = KLARNA_CATEGORY_BY_HANDLE[productHandle]
 
   if (mappedCategory) {
     return mappedCategory
-  }
-
-  const normalizedProductType = productType?.trim()
-
-  if (normalizedProductType) {
-    return `Klær > Unisex > ${normalizedProductType}`
   }
 
   throw new Error(
