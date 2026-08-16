@@ -1,5 +1,3 @@
-import comfyBgIpad from '@/assets/images/comfyrobe/comfy-bg-ipad.webp'
-import comfyHeroWide from '@/assets/images/comfyrobe/comfy-hero-wide.webp'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
@@ -7,12 +5,15 @@ import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/Kl
 import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/KlarnaOnSiteMessagingScript'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import {
+  COMFYROBE_HERO_MOBILE_GALLERY,
+  COMFYROBE_HERO_TABLET_GALLERY
+} from '../data/comfyrobeHeroGallery'
 import type { ComfyrobeOfferSummary } from '../lib/buildComfyrobeOfferSummary'
 import { buildComfyrobePurchaseModel } from '../lib/buildComfyrobePurchaseModel'
 import { ComfyrobeHeroActions } from './ComfyrobeHeroActions'
 import { ComfyrobeHeroImageCarousel } from './ComfyrobeHeroImageCarousel'
 import { ComfyrobePurchaseLinks } from './ComfyrobePurchaseLinks'
-import { ComfyrobeResponsiveImage } from './ComfyrobeResponsiveImage'
 import type { ShopifyProduct } from 'types/product'
 
 type ComfyrobeHeroProps = {
@@ -73,19 +74,20 @@ export function ComfyrobeHero({
           aria-labelledby='comfyrobe-hero-heading'
           className='overflow-hidden bg-jungle text-foreground md:mx-auto md:grid md:grid-cols-2 md:rounded-xl'
         >
-          <div className='relative aspect-4/5 w-full md:aspect-auto md:min-h-[42rem] lg:min-h-[46rem]'>
+          <div className='relative aspect-2/3 w-full md:aspect-square md:self-start'>
             <div className='absolute inset-0 md:hidden'>
-              <ComfyrobeHeroImageCarousel />
+              <ComfyrobeHeroImageCarousel
+                slides={COMFYROBE_HERO_MOBILE_GALLERY}
+                sizes='100vw'
+                imageClassName='object-contain object-center'
+                preloadFirst
+              />
             </div>
             <div className='absolute inset-0 hidden md:block'>
-              <ComfyrobeResponsiveImage
-                alt='Mann med mørk Comfyrobe fra Utekos'
-                mobileSrc={comfyBgIpad}
-                tabletSrc={comfyBgIpad}
-                desktopSrc={comfyHeroWide}
+              <ComfyrobeHeroImageCarousel
+                slides={COMFYROBE_HERO_TABLET_GALLERY}
                 sizes='(min-width: 48rem) 50vw, 100vw'
-                className='object-cover object-top'
-                eager
+                imageClassName='object-cover object-center'
               />
             </div>
             <Badge className='absolute bottom-4 left-4 z-10 h-auto rounded-lg bg-cloud-dancer px-3 py-2 font-utekos-text-medium text-sm text-background md:bottom-6 md:left-6'>

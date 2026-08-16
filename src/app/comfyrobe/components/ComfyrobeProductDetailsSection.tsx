@@ -1,40 +1,31 @@
-'use client'
-
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from '@/components/ui/accordion'
 import {
   getProductPageContent,
-  type ProductAccordionGroup
+  type ProductAccordionGroup,
+  type ProductAccordionSectionId
 } from '@/db/data/products/product-page-content'
+import { cn } from '@/lib/utils/className'
 
-function AccordionGroup({
+function ProductSpecGroup({
   group
 }: {
   group: ProductAccordionGroup
 }) {
   return (
-    <article className='space-y-3'>
+    <div className='space-y-3'>
       {group.title ?
-        <h3 className='font-sans text-lg leading-[1.2] tracking-normal text-foreground'>
+        <h4 className='font-utekos-text-medium text-base leading-snug text-foreground'>
           {group.title}
-        </h3>
+        </h4>
       : null}
 
       {group.rows && group.rows.length > 0 ?
         <dl className='grid gap-3 sm:grid-cols-2'>
           {group.rows.map(row => (
-            <div
-              key={row.label}
-              className='rounded-lg border border-border bg-background/40 p-3'
-            >
+            <div key={row.label}>
               <dt className='font-utekos-text-medium text-sm leading-[1.35] text-foreground'>
                 {row.label}
               </dt>
-              <dd className='mt-1 text-sm leading-normal text-foreground/82'>
+              <dd className='mt-1 text-sm leading-normal text-pretty text-foreground/82'>
                 {row.value}
               </dd>
             </div>
@@ -45,7 +36,7 @@ function AccordionGroup({
       {group.paragraphs?.map(paragraph => (
         <p
           key={paragraph}
-          className='text-base leading-[1.6] text-card-foreground/86'
+          className='text-base leading-[1.65] text-pretty text-card-foreground/86'
         >
           {paragraph}
         </p>
@@ -65,60 +56,97 @@ function AccordionGroup({
       : null}
 
       {group.note ?
-        <div className='rounded-lg border border-border bg-background/55 p-4 text-foreground'>
+        <div className='border-t border-white/10 pt-4 text-foreground'>
           <h4 className='font-sans text-base leading-tight'>
             {group.note.title}
           </h4>
-          <p className='mt-2 text-sm leading-[1.6] text-foreground/86'>
+          <p className='mt-2 text-sm leading-[1.6] text-pretty text-foreground/86'>
             {group.note.text}
           </p>
         </div>
       : null}
-    </article>
+    </div>
   )
 }
 
-const comfyrobeAccordion = (
+function specCardPlacement(
+  id: ProductAccordionSectionId
+): string {
+  switch (id) {
+    case 'funksjoner':
+      return 'md:row-span-2'
+    case 'vaskeanvisning':
+      return 'md:col-span-2'
+    case 'materialer':
+    case 'passform':
+    case 'egenskaper':
+    case 'bruksomrader':
+      return ''
+    default: {
+      const _exhaustive: never = id
+      return _exhaustive
+    }
+  }
+}
+
+const comfyrobeSpecs = (
   getProductPageContent('comfyrobe')?.accordion ?? []
 ).filter(section => section.id !== 'egenskaper')
 
 export function ComfyrobeProductDetailsSection() {
-  if (comfyrobeAccordion.length === 0) {
+  if (comfyrobeSpecs.length === 0) {
     return null
   }
 
   return (
     <section
       id='comfyrobe-product-details'
-      className='bg-background px-6 pt-8 pb-10 font-sans text-foreground md:py-14'
-      aria-label='Produktdetaljer'
+      className='bg-background px-6 py-16 font-sans text-foreground md:px-12 md:py-24 lg:px-16 lg:py-32'
+      aria-labelledby='comfyrobe-product-details-heading'
     >
-      <div className='mx-auto md:max-w-[85%]'>
-        <Accordion className='w-full rounded-2xl border border-border bg-jungle px-4 text-card-foreground sm:px-5'>
-          {comfyrobeAccordion.map(section => (
-            <AccordionItem
+      <div className='mx-auto max-w-7xl'>
+        <header className='max-w-2xl'>
+          <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-primary uppercase'>
+            Produktdetaljer
+          </p>
+          <h2
+            id='comfyrobe-product-details-heading'
+            className='font-google-sans mt-3 scroll-mt-24 text-balance font-sans text-4xl leading-[0.94] font-bold tracking-tight md:text-6xl'
+          >
+            Stoff, snitt og stell
+          </h2>
+          <p className='mt-5 max-w-xl font-utekos-text text-base leading-relaxed text-pretty text-foreground/80 md:text-lg'>
+            HydroGuard™-skall, SherpaCore™-fôr og en romslig
+            unisex-passform – med stell som bevarer
+            vanntettheten.
+          </p>
+        </header>
+
+        <div className='mt-12 grid gap-3 md:mt-16 md:grid-cols-2 md:gap-4 lg:gap-5'>
+          {comfyrobeSpecs.map(section => (
+            <div
               key={section.id}
-              value={section.id}
-              className='border-border'
+              className={cn(
+                'rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-1.5',
+                specCardPlacement(section.id)
+              )}
             >
-              <AccordionTrigger className='py-5 text-base text-card-foreground hover:text-primary hover:no-underline **:data-[slot=accordion-trigger-icon]:text-primary'>
-                <span className='text-left font-utekos-text-medium leading-[1.2]'>
+              <article className='h-full rounded-[calc(1.5rem-0.375rem)] bg-jungle px-6 py-7 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)] md:px-8 md:py-8'>
+                <h3 className='font-google-sans text-2xl leading-tight font-bold tracking-tight text-foreground'>
                   {section.title}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className='pb-5 text-card-foreground'>
-                <div className='max-w-prose space-y-6 font-utekos-text sm:pl-14'>
+                </h3>
+                <div className='mt-5 max-w-prose space-y-6 font-utekos-text'>
                   {section.groups.map((group, index) => (
-                    <AccordionGroup
+                    <ProductSpecGroup
                       key={`${group.title ?? section.id}-${index}`}
                       group={group}
                     />
                   ))}
                 </div>
-              </AccordionContent>
-            </AccordionItem>
+              </article>
+            </div>
           ))}
-        </Accordion>
+        </div>
       </div>
     </section>
   )

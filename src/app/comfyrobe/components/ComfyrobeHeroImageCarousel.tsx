@@ -8,12 +8,24 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel'
-import { COMFYROBE_HERO_GALLERY } from '../data/comfyrobeHeroGallery'
+import type { ComfyrobeHeroGallerySlide } from '../data/comfyrobeHeroGallery'
 
-export function ComfyrobeHeroImageCarousel() {
+type ComfyrobeHeroImageCarouselProps = {
+  slides: readonly ComfyrobeHeroGallerySlide[]
+  sizes: string
+  imageClassName: string
+  preloadFirst?: boolean
+}
+
+export function ComfyrobeHeroImageCarousel({
+  slides,
+  sizes,
+  imageClassName,
+  preloadFirst = false
+}: ComfyrobeHeroImageCarouselProps) {
   return (
     <Carousel
-      slideCount={COMFYROBE_HERO_GALLERY.length}
+      slideCount={slides.length}
       opts={{
         loop: true,
         align: 'center',
@@ -30,7 +42,7 @@ export function ComfyrobeHeroImageCarousel() {
       className='relative size-full'
     >
       <CarouselContent className='ml-0 h-full'>
-        {COMFYROBE_HERO_GALLERY.map((slide, index) => (
+        {slides.map((slide, index) => (
           <CarouselItem
             key={slide.id}
             className='h-full basis-full pl-0'
@@ -40,10 +52,11 @@ export function ComfyrobeHeroImageCarousel() {
                 src={slide.src}
                 alt={slide.alt}
                 fill
-                sizes='100vw'
+                sizes={sizes}
                 quality={75}
-                preload={index === 0}
-                className='object-cover object-top'
+                preload={preloadFirst && index === 0}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                className={imageClassName}
               />
             </div>
           </CarouselItem>

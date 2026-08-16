@@ -79,11 +79,8 @@ export default async function ComfyrobeLandingPage() {
       </PromotionImpression>
 
       <ComfyrobeMotionProvider>
-        <div className='w-full md:grid md:grid-cols-2 md:items-stretch'>
-          <ComfyrobeProductDetailsSection />
-          <ComfyrobeFaqSection />
-        </div>
-
+        <ComfyrobeProductDetailsSection />
+        <ComfyrobeFaqSection />
         <ComfyrobeStickyPurchase offer={offer} />
       </ComfyrobeMotionProvider>
 
