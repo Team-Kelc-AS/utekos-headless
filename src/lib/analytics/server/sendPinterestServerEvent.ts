@@ -2,11 +2,13 @@ import type { PinterestConversionEvent } from './mapCanonicalEventToPinterest'
 import { getPinterestConversionsApiConfig } from './pinterestConversionsApiConfig'
 
 export type PinterestConversionsApiResponse = {
+  code?: number
   events?: Array<{
     error_message?: string | null
     status?: string
     warning_message?: string | null
   }>
+  message?: string
   num_events_processed?: number
   num_events_received?: number
 }
@@ -55,6 +57,28 @@ export class PinterestConversionsApiHttpError extends Error {
   }
 }
 
+function describePinterestConversionsApiFailure(
+  status: number,
+  payload: PinterestConversionsApiResponse,
+  text: string
+) {
+  const eventError = payload.events?.find(
+    item => item.error_message
+  )?.error_message
+  const envelopeMessage =
+    typeof payload.message === 'string' && payload.message.trim() ?
+      payload.message.trim()
+    : undefined
+  const detail =
+    eventError ??
+    envelopeMessage ??
+    (text.trim() ? text.trim().slice(0, 400) : undefined)
+
+  return detail ?
+      `Pinterest Conversions API HTTP ${status}: ${detail}`
+    : `Pinterest Conversions API HTTP ${status}`
+}
+
 export async function sendPinterestServerEvent(
   event: PinterestConversionEvent
 ): Promise<PinterestSendResult> {
@@ -96,14 +120,9 @@ export async function sendPinterestServerEvent(
   }
 
   if (!response.ok) {
-    const firstError = payload.events?.find(
-      item => item.error_message
-    )?.error_message
     throw new PinterestConversionsApiHttpError(
       response.status,
-      firstError ?
-        `Pinterest Conversions API HTTP ${response.status}: ${firstError}`
-      : `Pinterest Conversions API HTTP ${response.status}`
+      describePinterestConversionsApiFailure(response.status, payload, text)
     )
   }
 

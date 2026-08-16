@@ -14,7 +14,7 @@ export type PinterestUserData = {
   client_user_agent?: string
   click_id?: string
   em?: string[]
-  external_id?: string
+  external_id?: string[]
   ph?: string[]
 }
 
@@ -222,7 +222,7 @@ function buildUserData(
       { client_user_agent: clientUserAgent }
     : {}),
     ...(epik ? { click_id: epik } : {}),
-    ...(externalId ? { external_id: externalId } : {})
+    ...(externalId ? { external_id: [externalId] } : {})
   }
 }
 
