@@ -575,7 +575,7 @@ test(
   () => {
     const templatePath =
       require.resolve(
-        'next/dist/build/templates/app-page.js'
+        'next/dist/build/templates/app-page-runtime.js'
       )
 
     const template =

@@ -114,7 +114,6 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 180,
 
   experimental: {
-    viewTransition: true,
     // Bound synchronous PPR resume decompression. Current control-route
     // artifacts are well below this ceiling; Preview verifies the measured
     // headroom before production acceptance.

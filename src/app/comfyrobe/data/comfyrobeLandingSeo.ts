@@ -6,18 +6,17 @@ export const COMFYROBE_PRODUCT_HANDLE = 'comfyrobe'
 export const COMFYROBE_PRODUCT_URL = `${SITE_URL}/produkter/${COMFYROBE_PRODUCT_HANDLE}`
 
 export const COMFYROBE_LANDING_NAME =
-  'Comfyrobe™ – varm og vanntett allværskåpe | Utekos'
+  'Comfyrobe™ - Romslig Allværsjakke Herre |  Made By Utekos®'
 
 export const COMFYROBE_LANDING_DESCRIPTION =
-  'Comfyrobe™ kombinerer et værbeskyttende skall med mykt SherpaCore™-fôr. Velg størrelse og kjøp direkte med Klarna eller legg i handlekurven.'
-
+'Et moteriktig ytterplagg med romslig passform. Strategiske snitt og toveis YKK®-glidelås gir konstant bevegelsesfrihet.  Hiv den på og møt høsten med stil.';
 export const COMFYROBE_LANDING_IMAGE = `${SITE_URL}/og-comfyrobe-1200x630.jpg`
 
 export const COMFYROBE_LANDING_FAQ = [
   {
     question: 'Hvordan er passformen?',
     answer:
-      'Passformen er bevisst romslig og unisex, slik at kåpen enkelt kan brukes over vanlige klær eller flere lag. Sidesplitter gir ekstra bevegelsesfrihet.'
+      'Passformen er bevisst romslig og unisex, slik at roben enkelt kan brukes over vanlige klær eller flere lag. Sidesplitter gir ekstra bevegelsesfrihet.'
   },
   {
     question: 'Er Comfyrobe™ vanntett?',
