@@ -9,6 +9,9 @@ import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
 import { redactShopifyCartSecrets } from '@/lib/cart/redactShopifyCartSecrets'
 import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
+import { cancelResponseBody } from '../request/cancelResponseBody'
+import { createShopifyRequestDeadline } from '../request/createShopifyRequestDeadline'
+import { readJsonWithDeadline } from '../request/readJsonWithDeadline'
 import {
   classifyShopifyRequestError,
   DEFAULT_SHOPIFY_STOREFRONT_TIMEOUT_MS,
@@ -253,18 +256,14 @@ async function executeStorefrontRequest<
     )
   }
 
-  const timeoutSignal =
-    AbortSignal.timeout(
-      resolvedTimeoutMs
-    )
-
-  const requestSignal =
-    signal ?
-      AbortSignal.any([
-        signal,
-        timeoutSignal
-      ])
-    : timeoutSignal
+  const deadline =
+    createShopifyRequestDeadline({
+      timeoutMs:
+        resolvedTimeoutMs,
+      ...(signal ?
+        { callerSignal: signal }
+      : {})
+    })
 
   return startAnalyticsSpan(
     {
@@ -318,28 +317,34 @@ async function executeStorefrontRequest<
         | string
         | undefined
 
+      let response:
+        | Response
+        | undefined
+
       try {
-        const response =
-          await fetchImpl(
-            endpoint,
-            {
-              method: 'POST',
-              ...(cache ?
-                { cache }
-              : {}),
-              headers,
-              signal:
-                requestSignal,
-              body:
-                JSON.stringify({
-                  ...(query ?
-                    { query }
-                  : {}),
-                  ...(variables ?
-                    { variables }
-                  : {})
-                })
-            }
+        response =
+          await deadline.race(
+            fetchImpl(
+              endpoint,
+              {
+                method: 'POST',
+                ...(cache ?
+                  { cache }
+                : {}),
+                headers,
+                signal:
+                  deadline.signal,
+                body:
+                  JSON.stringify({
+                    ...(query ?
+                      { query }
+                    : {}),
+                    ...(variables ?
+                      { variables }
+                    : {})
+                  })
+              }
+            )
           )
 
         status =
@@ -378,7 +383,10 @@ async function executeStorefrontRequest<
           performance.now()
 
         const body: unknown =
-          await response.json()
+          await readJsonWithDeadline(
+            response,
+            deadline
+          )
 
         responseBodyMs =
           elapsedMilliseconds(
@@ -530,6 +538,8 @@ async function executeStorefrontRequest<
           'Unknown response structure from Shopify API.'
         )
       } catch (error) {
+        cancelResponseBody(response)
+
         const durationMs =
           elapsedMilliseconds(
             startedAt
@@ -538,7 +548,8 @@ async function executeStorefrontRequest<
         const errorType =
           classifyShopifyRequestError({
             error,
-            timeoutSignal,
+            timeoutSignal:
+              deadline.signal,
             ...(signal ?
               {
                 callerSignal:
@@ -630,6 +641,8 @@ async function executeStorefrontRequest<
         )
 
         throw error
+      } finally {
+        deadline.dispose()
       }
     }
   )

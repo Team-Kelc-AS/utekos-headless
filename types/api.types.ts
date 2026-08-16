@@ -15,10 +15,12 @@ import type {
   StorefrontCartLinesRemovePayload,
   StorefrontCartLinesUpdatePayload,
   StorefrontCartLineUpdateInput,
+  StorefrontProductCardConnection,
   StorefrontProductConnection,
   StorefrontProductShell,
   StorefrontProductQueryVariables,
   StorefrontProductVariantPresentation,
+  StorefrontProductCardsQueryVariables,
   StorefrontProductsQueryVariables
 } from '@/api/shopify/types/storefrontApi'
 
@@ -128,6 +130,11 @@ export type ShopifyProductVariantPresentationOperation = ShopifyOperation<
 export type ShopifyProductsOperation = ShopifyOperation<
   { products: StorefrontProductConnection },
   StorefrontProductsQueryVariables
+>
+
+export type ShopifyProductCardsOperation = ShopifyOperation<
+  { products: StorefrontProductCardConnection },
+  StorefrontProductCardsQueryVariables
 >
 
 export type GetProductsParams = StorefrontProductsQueryVariables

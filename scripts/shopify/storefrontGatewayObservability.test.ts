@@ -263,12 +263,27 @@ test(
 
     assert.match(
       source,
-      /AbortSignal\.timeout\(\s*resolvedTimeoutMs\s*\)/
+      /createShopifyRequestDeadline\(/
     )
 
     assert.match(
       source,
-      /AbortSignal\.any\(\s*\[\s*signal\s*,\s*timeoutSignal\s*\]\s*\)/
+      /deadline\.race\(/
+    )
+
+    assert.match(
+      source,
+      /readJsonWithDeadline\(/
+    )
+
+    assert.match(
+      source,
+      /cancelResponseBody\(/
+    )
+
+    assert.doesNotMatch(
+      source,
+      /AbortSignal\.timeout\(/
     )
 
     assert.match(

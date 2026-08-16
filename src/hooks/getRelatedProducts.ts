@@ -1,17 +1,15 @@
 // Path: src/hooks/getRelatedProducts.ts
 
-import type { ShopifyProduct } from 'types/product'
-
 const DEFAULT_FIRST_RELATED_PRODUCT_HANDLE = 'utekos-mikrofiber'
 const FIRST_RELATED_PRODUCT_BY_CURRENT_HANDLE: Record<string, string> = {
   'utekos-mikrofiber': 'utekos-techdown'
 }
 
-export function getRelatedProducts(
-  allProducts: ShopifyProduct[] | undefined,
+export function getRelatedProducts<T extends { handle: string }>(
+  allProducts: T[] | undefined,
   currentHandle: string,
   limit?: number
-): ShopifyProduct[] {
+): T[] {
   if (!allProducts) {
     return []
   }

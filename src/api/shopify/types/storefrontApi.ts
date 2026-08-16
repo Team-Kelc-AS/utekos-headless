@@ -101,6 +101,49 @@ export type StorefrontProductVariantPresentation = {
 export type StorefrontProduct = StorefrontProductShell &
   StorefrontProductVariantPresentation
 
+export type StorefrontProductCardVariant = Pick<
+  HydrogenProductVariant,
+  | 'id'
+  | 'title'
+  | 'barcode'
+  | 'availableForSale'
+  | 'currentlyNotInStock'
+  | 'taxable'
+  | 'selectedOptions'
+  | 'quantityAvailable'
+  | 'sku'
+> & {
+  price: StorefrontMoney
+  compareAtPrice: StorefrontMoney | null
+  image: StorefrontImage | null
+}
+
+export type StorefrontProductCard = Pick<
+  HydrogenProduct,
+  | 'id'
+  | 'handle'
+  | 'title'
+  | 'productType'
+  | 'vendor'
+  | 'availableForSale'
+> & {
+  featuredImage: StorefrontImage | null
+  collections: {
+    nodes: Array<Pick<Collection, 'id' | 'title'>>
+  }
+  priceRange: {
+    minVariantPrice: StorefrontMoney
+  }
+  options: StorefrontProductOption[]
+  variants: {
+    edges: Array<{ node: StorefrontProductCardVariant }>
+  }
+}
+
+export type StorefrontProductCardConnection = {
+  edges: Array<{ node: StorefrontProductCard }>
+}
+
 export type StorefrontProductConnection = Pick<
   ProductConnection,
   '__typename'
@@ -198,4 +241,9 @@ export type StorefrontProductQueryVariables = {
 export type StorefrontProductsQueryVariables = Pick<
   QueryRootProductsArgs,
   'first' | 'query' | 'reverse' | 'sortKey'
+>
+
+export type StorefrontProductCardsQueryVariables = Pick<
+  QueryRootProductsArgs,
+  'first'
 >
