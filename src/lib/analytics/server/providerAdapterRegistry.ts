@@ -48,6 +48,15 @@ import { microsoftUetAddToCartProviderAdapter } from './providerAdapters/microso
 import { microsoftUetBeginCheckoutProviderAdapter } from './providerAdapters/microsoftUetBeginCheckoutProviderAdapter'
 import { microsoftUetPurchaseProviderAdapter } from './providerAdapters/microsoftUetPurchaseProviderAdapter'
 import { microsoftUetPageViewProviderAdapter } from './providerAdapters/microsoftUetPageViewProviderAdapter'
+import { pinterestAddPaymentInfoProviderAdapter } from './providerAdapters/pinterestAddPaymentInfoProviderAdapter'
+import { pinterestAddToCartProviderAdapter } from './providerAdapters/pinterestAddToCartProviderAdapter'
+import { pinterestAddToWishlistProviderAdapter } from './providerAdapters/pinterestAddToWishlistProviderAdapter'
+import { pinterestBeginCheckoutProviderAdapter } from './providerAdapters/pinterestBeginCheckoutProviderAdapter'
+import { pinterestGenerateLeadProviderAdapter } from './providerAdapters/pinterestGenerateLeadProviderAdapter'
+import { pinterestPurchaseProviderAdapter } from './providerAdapters/pinterestPurchaseProviderAdapter'
+import { pinterestSearchProviderAdapter } from './providerAdapters/pinterestSearchProviderAdapter'
+import { pinterestViewCategoryProviderAdapter } from './providerAdapters/pinterestViewCategoryProviderAdapter'
+import { pinterestViewItemProviderAdapter } from './providerAdapters/pinterestViewItemProviderAdapter'
 import type { ProviderAdapterKey } from './providerAdapter'
 
 export const providerAdapterRegistry = {
@@ -106,7 +115,18 @@ export const providerAdapterRegistry = {
   'microsoft_uet:begin_checkout':
     microsoftUetBeginCheckoutProviderAdapter,
   'microsoft_uet:page_view': microsoftUetPageViewProviderAdapter,
-  'microsoft_uet:purchase': microsoftUetPurchaseProviderAdapter
+  'microsoft_uet:purchase': microsoftUetPurchaseProviderAdapter,
+  'pinterest:add_payment_info':
+    pinterestAddPaymentInfoProviderAdapter,
+  'pinterest:add_to_cart': pinterestAddToCartProviderAdapter,
+  'pinterest:add_to_wishlist':
+    pinterestAddToWishlistProviderAdapter,
+  'pinterest:begin_checkout': pinterestBeginCheckoutProviderAdapter,
+  'pinterest:generate_lead': pinterestGenerateLeadProviderAdapter,
+  'pinterest:purchase': pinterestPurchaseProviderAdapter,
+  'pinterest:search': pinterestSearchProviderAdapter,
+  'pinterest:view_category': pinterestViewCategoryProviderAdapter,
+  'pinterest:view_item': pinterestViewItemProviderAdapter
 } as const satisfies Partial<Record<ProviderAdapterKey, unknown>>
 
 export type RegisteredProviderAdapterKey =

@@ -11,11 +11,13 @@ const timestamp = '2026-07-21T12:00:00.000Z'
 
 test('preserves case-sensitive click identifiers unchanged', () => {
   const parsed = canonicalClickIdsSchema.parse({
+    epik: 'PinterestCaseSensitiveValue',
     fbclid: 'AbCdEf-123_XyZ',
     gclid: 'GoogleCaseSensitiveValue',
     msclkid: 'MicrosoftCaseSensitiveValue'
   })
 
+  assert.equal(parsed.epik, 'PinterestCaseSensitiveValue')
   assert.equal(parsed.fbclid, 'AbCdEf-123_XyZ')
   assert.equal(parsed.gclid, 'GoogleCaseSensitiveValue')
   assert.equal(parsed.msclkid, 'MicrosoftCaseSensitiveValue')

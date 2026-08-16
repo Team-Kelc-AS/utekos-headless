@@ -6,6 +6,8 @@ import {
 import type { ProviderId } from './providerAdapter'
 import { findGoogleClientId } from './findGoogleClientId'
 import { hasMicrosoftUetCapiIdentifier } from './hasMicrosoftUetCapiIdentifier'
+import { hasPinterestCanonicalUserIdentity } from './mapCanonicalEventToPinterest'
+import { isPinterestConversionsApiConfigured } from './pinterestConversionsApiConfig'
 import {
   classifyGoogleDataManagerEventFreshness,
   type GoogleDataManagerEventFreshness
@@ -20,6 +22,7 @@ type ActiveProviderDispatchIntent = {
 }
 
 type ProviderSkipReason =
+  | 'insufficient_pinterest_user_identity'
   | 'missing_capi_token'
   | 'missing_client_id'
   | 'missing_google_analytics_identifier'
@@ -39,7 +42,8 @@ export type ProviderDispatchIntent =
 const outboxProviderIds = [
   'google',
   'meta',
-  'microsoft_uet'
+  'microsoft_uet',
+  'pinterest'
 ] as const satisfies readonly ProviderId[]
 
 type Dependencies = { now: () => number }
@@ -80,6 +84,10 @@ function hasRequiredConsent(
       // eligible for outbox planning; provider-specific analytics
       // or marketing gates still apply via their own requirements.
       return true
+    default: {
+      const exhaustive: never = requirement
+      return exhaustive
+    }
   }
 }
 
@@ -188,6 +196,33 @@ export function planCanonicalEventDispatch(
             provider,
             skip_reason:
               'missing_microsoft_uet_identifier' as const,
+            status: 'skipped_unqualified' as const
+          }
+        ]
+      }
+    }
+
+    if (provider === 'pinterest') {
+      if (!isPinterestConversionsApiConfigured()) {
+        return [
+          {
+            dispatch_mode: 'server_retry' as const,
+            event_id: event.event_id,
+            provider,
+            skip_reason: 'missing_capi_token' as const,
+            status: 'skipped_unqualified' as const
+          }
+        ]
+      }
+
+      if (!hasPinterestCanonicalUserIdentity(event)) {
+        return [
+          {
+            dispatch_mode: 'server_retry' as const,
+            event_id: event.event_id,
+            provider,
+            skip_reason:
+              'insufficient_pinterest_user_identity' as const,
             status: 'skipped_unqualified' as const
           }
         ]

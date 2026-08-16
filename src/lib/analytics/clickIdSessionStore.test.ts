@@ -25,11 +25,11 @@ function createMemoryStorage(initial?: Record<string, string>) {
 test('resolveClickIds reads click identifiers from the URL', () => {
   assert.deepEqual(
     resolveClickIds(
-      'https://utekos.no/?gclid=google-1&fbclid=meta-1&unknown=no',
+      'https://utekos.no/?gclid=google-1&fbclid=meta-1&epik=pinterest-1&unknown=no',
       createMemoryStorage(),
       createMemoryStorage()
     ),
-    { gclid: 'google-1', fbclid: 'meta-1' }
+    { epik: 'pinterest-1', gclid: 'google-1', fbclid: 'meta-1' }
   )
 })
 
@@ -39,7 +39,7 @@ test('resolveClickIds persists URL click IDs into session and local storage', ()
   const now = Date.parse('2026-07-20T12:00:00.000Z')
 
   resolveClickIds(
-    'https://utekos.no/?fbclid=meta-persist',
+    'https://utekos.no/?fbclid=meta-persist&epik=pinterest-persist',
     session,
     local,
     now
@@ -47,10 +47,16 @@ test('resolveClickIds persists URL click IDs into session and local storage', ()
 
   assert.equal(
     session.getItem(CLICK_ID_SESSION_KEY),
-    JSON.stringify({ fbclid: 'meta-persist' })
+    JSON.stringify({
+      epik: 'pinterest-persist',
+      fbclid: 'meta-persist'
+    })
   )
   assert.deepEqual(JSON.parse(local.getItem(CLICK_ID_LOCAL_KEY)!), {
-    identifiers: { fbclid: 'meta-persist' },
+    identifiers: {
+      epik: 'pinterest-persist',
+      fbclid: 'meta-persist'
+    },
     updatedAt: '2026-07-20T12:00:00.000Z'
   })
 })

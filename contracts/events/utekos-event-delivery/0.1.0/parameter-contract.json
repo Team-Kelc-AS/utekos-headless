@@ -58,6 +58,12 @@
       "role": "Direct HTTP plus repository-owned Zod schemas",
       "implementation": "src/lib/analytics/server/microsoftUet"
     },
+    "pinterestConversionsApi": {
+      "package": null,
+      "manifestVersion": null,
+      "role": "Direct HTTP to Pinterest Conversions API v5 events",
+      "implementation": "src/lib/analytics/server/dispatchCanonicalEventToPinterest.ts"
+    },
     "shopifyCustomerEvents": {
       "package": null,
       "manifestVersion": null,
@@ -897,6 +903,88 @@
         "rule": "Identifies the first-party sender."
       }
     ],
+    "pinterestBrowser": [
+      {
+        "path": "event",
+        "requirement": "required",
+        "source": "Pinterest Tag event mapping",
+        "rule": "pintrk track name from the first-party canonical subscriber."
+      },
+      {
+        "path": "event_id",
+        "requirement": "required",
+        "source": "event_id",
+        "rule": "Shared with Conversions API for deduplication."
+      },
+      {
+        "path": "line_items[].product_id",
+        "requirement": "conditional",
+        "source": "custom_data.items[].item_id",
+        "rule": "Numeric Shopify variant ID matching the catalog feed id."
+      }
+    ],
+    "pinterestServer": [
+      {
+        "path": "event_name",
+        "requirement": "required",
+        "source": "Pinterest CAPI snake_case mapping",
+        "rule": "Canonical purchase maps to checkout, not purchase."
+      },
+      {
+        "path": "event_id",
+        "requirement": "required",
+        "source": "event_id",
+        "rule": "Shared with Pinterest Tag for deduplication."
+      },
+      {
+        "path": "event_time",
+        "requirement": "required",
+        "source": "event_time",
+        "rule": "Unix timestamp of the canonical occurrence."
+      },
+      {
+        "path": "event_source_url",
+        "requirement": "required",
+        "source": "page_url",
+        "rule": "Trusted source URL for the conversion."
+      },
+      {
+        "path": "user_data.em",
+        "requirement": "conditional",
+        "source": "user_data.email_sha256",
+        "rule": "Hashed email when available."
+      },
+      {
+        "path": "user_data.client_ip_address",
+        "requirement": "recommended",
+        "source": "client_ip_address",
+        "rule": "Required with user agent when hashed email is absent."
+      },
+      {
+        "path": "user_data.client_user_agent",
+        "requirement": "recommended",
+        "source": "event_device_info.user_agent",
+        "rule": "Required with client IP when hashed email is absent."
+      },
+      {
+        "path": "user_data.click_id",
+        "requirement": "conditional",
+        "source": "click_id.epik",
+        "rule": "Pinterest click identifier; not written to Shopify checkout attributes."
+      },
+      {
+        "path": "custom_data.content_ids[]",
+        "requirement": "conditional",
+        "source": "custom_data.items[].item_id",
+        "rule": "Numeric Shopify variant IDs matching the Pinterest catalog feed id."
+      },
+      {
+        "path": "custom_data.contents[].id",
+        "requirement": "conditional",
+        "source": "custom_data.items[].item_id",
+        "rule": "Same catalog identity as Tag line_items[].product_id."
+      }
+    ],
     "shopifyPurchaseBrowser": [
       {
         "path": "event",
@@ -1140,6 +1228,16 @@
             }
           }
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "Canonical page_view is not mapped to Pinterest PageVisit; product view_item owns PageVisit with catalog product IDs.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "page_view",
@@ -1361,6 +1459,16 @@
             }
           }
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "view_item_list",
@@ -1575,6 +1683,16 @@
             }
           }
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "select_item",
@@ -1771,6 +1889,52 @@
                 "event_id",
                 "event_time",
                 "items",
+                "currency",
+                "value"
+              ]
+            }
+          }
+        },
+        "pinterest": {
+          "support": "supported",
+          "eventName": "page_visit",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "pinterest_tag",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          },
+          "server": {
+            "transport": "pinterest_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
                 "currency",
                 "value"
               ]
@@ -1991,6 +2155,52 @@
             }
           }
         },
+        "pinterest": {
+          "support": "supported",
+          "eventName": "add_to_wishlist",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "pinterest_tag",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          },
+          "server": {
+            "transport": "pinterest_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "add_to_wishlist",
@@ -2188,6 +2398,52 @@
                 "currency",
                 "value",
                 "user_data_identifier"
+              ]
+            }
+          }
+        },
+        "pinterest": {
+          "support": "supported",
+          "eventName": "add_to_cart",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "pinterest_tag",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          },
+          "server": {
+            "transport": "pinterest_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
               ]
             }
           }
@@ -2408,6 +2664,16 @@
               ]
             }
           }
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
         },
         "posthog": {
           "support": "planned",
@@ -2633,6 +2899,16 @@
             }
           }
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "view_cart",
@@ -2836,6 +3112,52 @@
             }
           }
         },
+        "pinterest": {
+          "support": "supported",
+          "eventName": "initiate_checkout",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "pinterest_tag",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          },
+          "server": {
+            "transport": "pinterest_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "begin_checkout",
@@ -3008,6 +3330,16 @@
             }
           }
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "add_shipping_info",
@@ -3144,6 +3476,52 @@
           "dedupeField": null,
           "browser": null,
           "server": null
+        },
+        "pinterest": {
+          "support": "supported",
+          "eventName": "add_payment_info",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "pinterest_tag",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          },
+          "server": {
+            "transport": "pinterest_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          }
         },
         "posthog": {
           "support": "not_relevant",
@@ -3312,6 +3690,54 @@
             }
           }
         },
+        "pinterest": {
+          "support": "supported",
+          "eventName": "checkout",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "pinterest_tag",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value",
+                "order_id"
+              ]
+            }
+          },
+          "server": {
+            "transport": "pinterest_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value",
+                "order_id"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "purchase",
@@ -3443,6 +3869,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Microsoft UET refund mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest refund mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -3626,6 +4062,46 @@
             }
           }
         },
+        "pinterest": {
+          "support": "supported",
+          "eventName": "search",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "pinterest_tag",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "search_string"
+              ]
+            }
+          },
+          "server": {
+            "transport": "pinterest_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "search_string"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "search",
@@ -3761,6 +4237,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -3918,6 +4404,16 @@
           "browser": null,
           "server": null
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "view_promotion",
@@ -4065,6 +4561,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -4265,6 +4771,44 @@
             }
           }
         },
+        "pinterest": {
+          "support": "supported",
+          "eventName": "lead",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "pinterest_tag",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data"
+              ]
+            }
+          },
+          "server": {
+            "transport": "pinterest_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "generate_lead",
@@ -4408,6 +4952,16 @@
           "browser": null,
           "server": null
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "form_start",
@@ -4544,6 +5098,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -4692,6 +5256,16 @@
           "browser": null,
           "server": null
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "form_error",
@@ -4834,6 +5408,16 @@
           "browser": null,
           "server": null
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "filter_apply",
@@ -4969,6 +5553,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -5116,6 +5710,16 @@
           "browser": null,
           "server": null
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "variant_select",
@@ -5252,6 +5856,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -5395,6 +6009,16 @@
           "browser": null,
           "server": null
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "checkout_error",
@@ -5528,6 +6152,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -5705,6 +6339,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -5892,6 +6536,46 @@
           "browser": null,
           "server": null
         },
+        "pinterest": {
+          "support": "supported",
+          "eventName": "view_category",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "pinterest_tag",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_category"
+              ]
+            }
+          },
+          "server": {
+            "transport": "pinterest_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "pinterestServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "event_source_url",
+                "user_data",
+                "content_category"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "view_category",
@@ -6069,6 +6753,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -6301,6 +6995,16 @@
             }
           }
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "interact_with_accordion",
@@ -6527,6 +7231,16 @@
             }
           }
         },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "open_quick_view",
@@ -6671,6 +7385,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,

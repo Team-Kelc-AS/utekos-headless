@@ -15,6 +15,46 @@ export type PinterestSendResult =
   | { status: 'disabled' }
   | { status: 'sent'; response: PinterestConversionsApiResponse }
 
+export class PinterestConversionsApiConfigError extends Error {
+  readonly reason: 'disabled' | 'missing_capi_token'
+
+  constructor(reason: 'disabled' | 'missing_capi_token') {
+    super(`Pinterest Conversions API ${reason}`)
+    this.name = 'PinterestConversionsApiConfigError'
+    this.reason = reason
+  }
+}
+
+export class PinterestConversionsApiSkipError extends Error {
+  readonly reason:
+    | 'marketing_consent_not_granted'
+    | 'non_production_event'
+    | 'unsupported_event'
+    | 'insufficient_user_identity'
+
+  constructor(
+    reason:
+      | 'marketing_consent_not_granted'
+      | 'non_production_event'
+      | 'unsupported_event'
+      | 'insufficient_user_identity'
+  ) {
+    super(`Pinterest Conversions API skipped: ${reason}`)
+    this.name = 'PinterestConversionsApiSkipError'
+    this.reason = reason
+  }
+}
+
+export class PinterestConversionsApiHttpError extends Error {
+  readonly status: number
+
+  constructor(status: number, message: string) {
+    super(message)
+    this.name = 'PinterestConversionsApiHttpError'
+    this.status = status
+  }
+}
+
 export async function sendPinterestServerEvent(
   event: PinterestConversionEvent
 ): Promise<PinterestSendResult> {
@@ -48,7 +88,8 @@ export async function sendPinterestServerEvent(
         text
       ) as PinterestConversionsApiResponse
     } catch {
-      throw new Error(
+      throw new PinterestConversionsApiHttpError(
+        response.status,
         `Pinterest Conversions API returned non-JSON HTTP ${response.status}`
       )
     }
@@ -58,7 +99,8 @@ export async function sendPinterestServerEvent(
     const firstError = payload.events?.find(
       item => item.error_message
     )?.error_message
-    throw new Error(
+    throw new PinterestConversionsApiHttpError(
+      response.status,
       firstError ?
         `Pinterest Conversions API HTTP ${response.status}: ${firstError}`
       : `Pinterest Conversions API HTTP ${response.status}`
@@ -69,7 +111,8 @@ export async function sendPinterestServerEvent(
     item => item.status === 'failed' || item.error_message
   )
   if (failedEvent) {
-    throw new Error(
+    throw new PinterestConversionsApiHttpError(
+      response.status,
       failedEvent.error_message ??
         'Pinterest Conversions API rejected the event'
     )

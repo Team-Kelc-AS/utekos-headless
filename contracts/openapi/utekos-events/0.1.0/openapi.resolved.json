@@ -207,6 +207,18 @@
                 "status": "active"
               }
             },
+            "pinterest": {
+              "eventName": "add_to_cart",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "pinterest_tag",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "pinterest_conversions_api",
+                "status": "active"
+              }
+            },
             "posthog": {
               "eventName": "add_to_cart",
               "productionStatus": "not_implemented",
@@ -378,6 +390,18 @@
               "server": {
                 "transport": "microsoft_uet_capi",
                 "status": "blocked_no_worker"
+              }
+            },
+            "pinterest": {
+              "eventName": "add_to_wishlist",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "pinterest_tag",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "pinterest_conversions_api",
+                "status": "active"
               }
             },
             "posthog": {
@@ -555,6 +579,18 @@
                 "status": "active"
               }
             },
+            "pinterest": {
+              "eventName": "initiate_checkout",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "pinterest_tag",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "pinterest_conversions_api",
+                "status": "active"
+              }
+            },
             "posthog": {
               "eventName": "begin_checkout",
               "productionStatus": "not_implemented",
@@ -689,6 +725,12 @@
               "server": null
             },
             "microsoft_uet": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "pinterest": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -831,6 +873,12 @@
               "browser": null,
               "server": null
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "form_error",
               "productionStatus": "not_implemented",
@@ -962,6 +1010,12 @@
               "server": null
             },
             "microsoft_uet": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "pinterest": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -1099,6 +1153,12 @@
               "server": null
             },
             "microsoft_uet": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "pinterest": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -1252,6 +1312,18 @@
                 "status": "blocked_no_worker"
               }
             },
+            "pinterest": {
+              "eventName": "lead",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "pinterest_tag",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "pinterest_conversions_api",
+                "status": "active"
+              }
+            },
             "posthog": {
               "eventName": "generate_lead",
               "productionStatus": "not_implemented",
@@ -1390,6 +1462,12 @@
               }
             },
             "microsoft_uet": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "pinterest": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -1571,6 +1649,12 @@
                 "status": "blocked_no_worker"
               }
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "interact_with_accordion",
               "productionStatus": "not_implemented",
@@ -1745,6 +1829,12 @@
                 "status": "blocked_no_worker"
               }
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "open_quick_view",
               "productionStatus": "not_implemented",
@@ -1885,6 +1975,12 @@
                 "transport": "microsoft_uet_capi",
                 "status": "active"
               }
+            },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
             },
             "posthog": {
               "eventName": "page_view",
@@ -2060,6 +2156,12 @@
                 "status": "blocked_no_worker"
               }
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "remove_from_cart",
               "productionStatus": "not_implemented",
@@ -2198,6 +2300,12 @@
               }
             },
             "microsoft_uet": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "pinterest": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -2350,6 +2458,18 @@
               "server": {
                 "transport": "microsoft_uet_capi",
                 "status": "blocked_no_worker"
+              }
+            },
+            "pinterest": {
+              "eventName": "search",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "pinterest_tag",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "pinterest_conversions_api",
+                "status": "active"
               }
             },
             "posthog": {
@@ -2527,6 +2647,12 @@
                 "status": "blocked_no_worker"
               }
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "select_item",
               "productionStatus": "not_implemented",
@@ -2688,6 +2814,12 @@
               "browser": null,
               "server": null
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "select_promotion",
               "productionStatus": "not_implemented",
@@ -2819,6 +2951,12 @@
               "server": null
             },
             "microsoft_uet": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "pinterest": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -2957,6 +3095,12 @@
               "server": null
             },
             "microsoft_uet": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "pinterest": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -3102,6 +3246,12 @@
               "browser": null,
               "server": null
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "variant_select",
               "productionStatus": "not_implemented",
@@ -3237,6 +3387,12 @@
               "server": null
             },
             "microsoft_uet": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "pinterest": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -3416,6 +3572,12 @@
                 "status": "blocked_no_worker"
               }
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "view_cart",
               "productionStatus": "not_implemented",
@@ -3558,6 +3720,18 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
+            },
+            "pinterest": {
+              "eventName": "view_category",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "pinterest_tag",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "pinterest_conversions_api",
+                "status": "active"
+              }
             },
             "posthog": {
               "eventName": "view_category",
@@ -3726,6 +3900,18 @@
               "server": {
                 "transport": "microsoft_uet_capi",
                 "status": "blocked_no_worker"
+              }
+            },
+            "pinterest": {
+              "eventName": "page_visit",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "pinterest_tag",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "pinterest_conversions_api",
+                "status": "active"
               }
             },
             "posthog": {
@@ -3904,6 +4090,12 @@
                 "status": "blocked_no_worker"
               }
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "view_item_list",
               "productionStatus": "not_implemented",
@@ -4065,6 +4257,12 @@
               "browser": null,
               "server": null
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "view_promotion",
               "productionStatus": "not_implemented",
@@ -4203,6 +4401,12 @@
               "browser": null,
               "server": null
             },
+            "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "view_search_results",
               "productionStatus": "not_implemented",
@@ -4330,6 +4534,10 @@
             "type": "object",
             "properties": {
               "dclid": {
+                "type": "string",
+                "minLength": 1
+              },
+              "epik": {
                 "type": "string",
                 "minLength": 1
               },
@@ -5128,6 +5336,10 @@
         "type": "object",
         "properties": {
           "dclid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "epik": {
             "type": "string",
             "minLength": 1
           },
@@ -5988,6 +6200,10 @@
         "type": "object",
         "properties": {
           "dclid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "epik": {
             "type": "string",
             "minLength": 1
           },

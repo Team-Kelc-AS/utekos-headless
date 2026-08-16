@@ -18,6 +18,7 @@ export type ProviderId =
   | 'google'
   | 'meta'
   | 'microsoft_uet'
+  | 'pinterest'
   | 'posthog'
 
 export type ServerOutboxStatus =
@@ -43,6 +44,7 @@ type BrowserTransport =
   | 'shopify_customer_events'
   | 'meta_pixel'
   | 'microsoft_uet'
+  | 'pinterest_tag'
   | 'posthog_browser'
 
 type ServerTransport =
@@ -51,6 +53,7 @@ type ServerTransport =
   | 'google_data_manager'
   | 'meta_conversions_api'
   | 'microsoft_uet_capi'
+  | 'pinterest_conversions_api'
   | 'posthog_server'
 
 type ProviderConsentRequirement =
@@ -247,6 +250,38 @@ function notRelevantProvider(
   })
 }
 
+function pinterestCatalogProvider(
+  eventName: string,
+  input: {
+    active: boolean
+    requiredParameters?: readonly string[]
+  }
+): ProviderCatalogEntry {
+  return providerMapping({
+    support: 'supported',
+    eventName,
+    transport: {
+      browser: 'pinterest_tag',
+      server: 'pinterest_conversions_api'
+    },
+    requiredParameters: [
+      ...baseProviderParameters,
+      'event_source_url',
+      'user_data',
+      ...(input.requiredParameters ?? [])
+    ],
+    dedupeField: 'event_id',
+    consentRequirement: 'marketing',
+    adapterVersion: 1,
+    productionStatus: input.active ? 'active' : 'planned',
+    productionDetail:
+      input.active ?
+        'Pinterest Tag and Conversions API outbox are active.'
+      : 'Pinterest mapping is specified but canonical routing is not active.',
+    serverOutbox: input.active ? 'active' : 'disabled'
+  })
+}
+
 type PlannedProviderInput = {
   firstPartyConsentRequirement?: ProviderConsentRequirement
   googleRequired?: readonly string[]
@@ -255,6 +290,10 @@ type PlannedProviderInput = {
     requiredParameters?: readonly string[]
   }
   microsoft?: {
+    eventName: string
+    requiredParameters?: readonly string[]
+  }
+  pinterest?: {
     eventName: string
     requiredParameters?: readonly string[]
   }
@@ -350,6 +389,20 @@ function plannedProviders(
         })
       : notRelevantProvider(
           'No v1 marketing use case justifies a Microsoft UET export.'
+        ),
+    pinterest:
+      input.pinterest ?
+        pinterestCatalogProvider(input.pinterest.eventName, {
+          active: false,
+          ...(input.pinterest.requiredParameters ?
+            {
+              requiredParameters:
+                input.pinterest.requiredParameters
+            }
+          : {})
+        })
+      : notRelevantProvider(
+          'No v1 Pinterest conversion mapping is approved.'
         ),
     posthog:
       input.posthog === false ?
@@ -484,6 +537,20 @@ function activeEventProviders(
         })
       : notRelevantProvider(
           'No v1 marketing use case justifies a Microsoft UET export.'
+        ),
+    pinterest:
+      input.pinterest ?
+        pinterestCatalogProvider(input.pinterest.eventName, {
+          active: true,
+          ...(input.pinterest.requiredParameters ?
+            {
+              requiredParameters:
+                input.pinterest.requiredParameters
+            }
+          : {})
+        })
+      : notRelevantProvider(
+          'No v1 Pinterest conversion mapping is approved.'
         ),
     posthog:
       input.posthog === false ?
@@ -628,6 +695,9 @@ const pageViewProviders = {
       'Browser UET and CAPI pageLoad delivery are active for newly accepted consented page views. Historical blocked rows must not be replayed.',
     serverOutbox: 'active'
   }),
+  pinterest: notRelevantProvider(
+    'Canonical page_view is not mapped to Pinterest PageVisit; product view_item owns PageVisit with catalog product IDs.'
+  ),
   posthog: providerMapping({
     support: 'planned',
     eventName: 'page_view',
@@ -734,6 +804,15 @@ const viewItemProviders = {
       'Browser UET is active; server delivery is blocked because no UET CAPI worker exists.',
     serverOutbox: 'blocked_no_worker'
   }),
+  pinterest: pinterestCatalogProvider('page_visit', {
+    active: true,
+    requiredParameters: [
+      'content_ids',
+      'contents',
+      'currency',
+      'value'
+    ]
+  }),
   posthog: providerMapping({
     support: 'planned',
     eventName: 'view_item',
@@ -838,6 +917,15 @@ const addToCartProviders = {
     productionDetail:
       'Browser UET is active; Microsoft UET CAPI add_to_cart outbox is active when marketing consent is granted and at least one Microsoft-supported userData identifier is present.',
     serverOutbox: 'active'
+  }),
+  pinterest: pinterestCatalogProvider('add_to_cart', {
+    active: true,
+    requiredParameters: [
+      'content_ids',
+      'contents',
+      'currency',
+      'value'
+    ]
   }),
   posthog: providerMapping({
     support: 'planned',
@@ -945,6 +1033,15 @@ const beginCheckoutProviders = {
       'Browser UET is active; Microsoft UET CAPI outbox worker is active for begin_checkout when at least one Microsoft-supported userData identifier is present.',
     serverOutbox: 'active'
   }),
+  pinterest: pinterestCatalogProvider('initiate_checkout', {
+    active: true,
+    requiredParameters: [
+      'content_ids',
+      'contents',
+      'currency',
+      'value'
+    ]
+  }),
   posthog: providerMapping({
     support: 'planned',
     eventName: 'begin_checkout',
@@ -977,6 +1074,15 @@ const addPaymentInfoProviderBase = activeEventProviders(
       'value',
       'items'
     ],
+    pinterest: {
+      eventName: 'add_payment_info',
+      requiredParameters: [
+        'content_ids',
+        'contents',
+        'currency',
+        'value'
+      ]
+    },
     posthog: false
   }
 )
@@ -1080,6 +1186,16 @@ const purchaseProviders = {
       'Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and at least one Microsoft-supported userData identifier is present.',
     serverOutbox: 'active'
   }),
+  pinterest: pinterestCatalogProvider('checkout', {
+    active: true,
+    requiredParameters: [
+      'content_ids',
+      'contents',
+      'currency',
+      'value',
+      'order_id'
+    ]
+  }),
   posthog: providerMapping({
     support: 'planned',
     eventName: 'purchase',
@@ -1144,6 +1260,9 @@ const refundProviders = {
   ),
   microsoft_uet: notRelevantProvider(
     'No v1 Microsoft UET refund mapping is approved.'
+  ),
+  pinterest: notRelevantProvider(
+    'No v1 Pinterest refund mapping is approved.'
   ),
   posthog: notRelevantProvider(
     'The event is excluded from the v1 product-analytics scope.'
@@ -1336,6 +1455,15 @@ const eventCatalogBase = {
       microsoft: {
         eventName: 'add_to_wishlist',
         requiredParameters: ['items']
+      },
+      pinterest: {
+        eventName: 'add_to_wishlist',
+        requiredParameters: [
+          'content_ids',
+          'contents',
+          'currency',
+          'value'
+        ]
       }
     })
   },
@@ -1645,6 +1773,10 @@ const eventCatalogBase = {
       microsoft: {
         eventName: 'search',
         requiredParameters: ['search_term']
+      },
+      pinterest: {
+        eventName: 'search',
+        requiredParameters: ['search_string']
       }
     })
   },
@@ -1763,7 +1895,8 @@ const eventCatalogBase = {
     providers: activeEventProviders('generate_lead', {
       googleRequired: ['currency', 'value'],
       meta: { eventName: 'Lead' },
-      microsoft: { eventName: 'generate_lead' }
+      microsoft: { eventName: 'generate_lead' },
+      pinterest: { eventName: 'lead' }
     })
   },
   form_start: {
@@ -2105,6 +2238,10 @@ const eventCatalogBase = {
           'category_name',
           'view_sequence'
         ]
+      },
+      pinterest: {
+        eventName: 'view_category',
+        requiredParameters: ['content_category']
       },
       posthog: true
     })

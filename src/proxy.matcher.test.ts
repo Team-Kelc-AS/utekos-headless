@@ -43,6 +43,13 @@ test('matches only document navigations and required proxy routes', () => {
   )
   assert.equal(
     proxyMatches(
+      'https://utekos.no/analytics/pinterest-tag-canonical-v1.js',
+      { 'accept': '*/*', 'sec-fetch-dest': 'script' }
+    ),
+    false
+  )
+  assert.equal(
+    proxyMatches(
       'https://utekos.no/_next/static/chunks/app.js',
       { 'accept': '*/*', 'sec-fetch-dest': 'script' }
     ),

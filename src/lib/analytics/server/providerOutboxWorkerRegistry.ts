@@ -50,6 +50,15 @@ import { microsoftUetAddToCartProviderAdapter } from './providerAdapters/microso
 import { microsoftUetBeginCheckoutProviderAdapter } from './providerAdapters/microsoftUetBeginCheckoutProviderAdapter'
 import { microsoftUetPageViewProviderAdapter } from './providerAdapters/microsoftUetPageViewProviderAdapter'
 import { microsoftUetPurchaseProviderAdapter } from './providerAdapters/microsoftUetPurchaseProviderAdapter'
+import { pinterestAddPaymentInfoProviderAdapter } from './providerAdapters/pinterestAddPaymentInfoProviderAdapter'
+import { pinterestAddToCartProviderAdapter } from './providerAdapters/pinterestAddToCartProviderAdapter'
+import { pinterestAddToWishlistProviderAdapter } from './providerAdapters/pinterestAddToWishlistProviderAdapter'
+import { pinterestBeginCheckoutProviderAdapter } from './providerAdapters/pinterestBeginCheckoutProviderAdapter'
+import { pinterestGenerateLeadProviderAdapter } from './providerAdapters/pinterestGenerateLeadProviderAdapter'
+import { pinterestPurchaseProviderAdapter } from './providerAdapters/pinterestPurchaseProviderAdapter'
+import { pinterestSearchProviderAdapter } from './providerAdapters/pinterestSearchProviderAdapter'
+import { pinterestViewCategoryProviderAdapter } from './providerAdapters/pinterestViewCategoryProviderAdapter'
+import { pinterestViewItemProviderAdapter } from './providerAdapters/pinterestViewItemProviderAdapter'
 import type { ProviderOutboxBatchSummary } from './runProviderOutboxWorker'
 
 export const providerOutboxWorkerRegistry = {
@@ -202,6 +211,33 @@ export const providerOutboxWorkerRegistry = {
   ),
   'microsoft_uet:purchase': createPostgresProviderOutboxWorker(
     microsoftUetPurchaseProviderAdapter
+  ),
+  'pinterest:add_payment_info': createPostgresProviderOutboxWorker(
+    pinterestAddPaymentInfoProviderAdapter
+  ),
+  'pinterest:add_to_cart': createPostgresProviderOutboxWorker(
+    pinterestAddToCartProviderAdapter
+  ),
+  'pinterest:add_to_wishlist': createPostgresProviderOutboxWorker(
+    pinterestAddToWishlistProviderAdapter
+  ),
+  'pinterest:begin_checkout': createPostgresProviderOutboxWorker(
+    pinterestBeginCheckoutProviderAdapter
+  ),
+  'pinterest:generate_lead': createPostgresProviderOutboxWorker(
+    pinterestGenerateLeadProviderAdapter
+  ),
+  'pinterest:purchase': createPostgresProviderOutboxWorker(
+    pinterestPurchaseProviderAdapter
+  ),
+  'pinterest:search': createPostgresProviderOutboxWorker(
+    pinterestSearchProviderAdapter
+  ),
+  'pinterest:view_category': createPostgresProviderOutboxWorker(
+    pinterestViewCategoryProviderAdapter
+  ),
+  'pinterest:view_item': createPostgresProviderOutboxWorker(
+    pinterestViewItemProviderAdapter
   )
 } as const satisfies Record<
   RegisteredProviderAdapterKey,

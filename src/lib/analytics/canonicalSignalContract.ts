@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const canonicalClickIdsSchema = z.strictObject({
   dclid: z.string().min(1).optional(),
+  epik: z.string().min(1).optional(),
   fbclid: z.string().min(1).optional(),
   gbraid: z.string().min(1).optional(),
   gclid: z.string().min(1).optional(),

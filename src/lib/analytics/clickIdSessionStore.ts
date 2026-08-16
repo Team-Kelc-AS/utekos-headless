@@ -4,6 +4,7 @@ const CLICK_ID_LOCAL_TTL_MS = 90 * 24 * 60 * 60 * 1000
 
 export const CLICK_ID_PARAMETERS = [
   'dclid',
+  'epik',
   'fbclid',
   'gbraid',
   'gclid',

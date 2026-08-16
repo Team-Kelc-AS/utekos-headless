@@ -17,6 +17,57 @@ const consent = {
   version: '1'
 }
 
+const pinterestEnvKeys = [
+  'PINTEREST_CONVERSIONS_API_ENABLED',
+  'PINTEREST_CONVERSIONS_ACCESS_TOKEN',
+  'PINTEREST_AD_ACCOUNT_ID'
+] as const
+
+function isolatePinterestEnv() {
+  const previous = Object.fromEntries(
+    pinterestEnvKeys.map(key => [key, process.env[key]])
+  )
+
+  for (const key of pinterestEnvKeys) {
+    delete process.env[key]
+  }
+
+  return previous
+}
+
+function restorePinterestEnv(
+  previous: Record<string, string | undefined>
+) {
+  for (const key of pinterestEnvKeys) {
+    if (previous[key] === undefined) {
+      delete process.env[key]
+    } else {
+      process.env[key] = previous[key]
+    }
+  }
+}
+
+function withIsolatedPinterestEnv(run: () => void) {
+  const previous = isolatePinterestEnv()
+  try {
+    run()
+  } finally {
+    restorePinterestEnv(previous)
+  }
+}
+
+function pinterestMissingToken(eventId: string) {
+  return {
+    dispatch_mode: 'server_retry' as const,
+    event_id: eventId,
+    provider: 'pinterest' as const,
+    skip_reason: 'missing_capi_token' as const,
+    status: 'skipped_unqualified' as const
+  }
+}
+
+isolatePinterestEnv()
+
 function purchase(
   overrides: Record<string, unknown> = {}
 ): CanonicalEvent {
@@ -139,83 +190,94 @@ test('routes consented page_view events to Meta and Microsoft', () => {
 })
 
 test('routes view_item only to the active Google and Meta outboxes', () => {
-  assert.deepEqual(planCanonicalEventDispatch(viewItem()), [
-    {
-      dispatch_mode: 'server_retry',
-      event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
-      provider: 'google'
-    },
-    {
-      dispatch_mode: 'server_retry',
-      event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
-      provider: 'meta'
-    }
-  ])
-})
-
-test('applies provider-specific consent without creating Microsoft rows', () => {
-  const event = viewItem()
-
-  assert.deepEqual(
-    planCanonicalEventDispatch({
-      ...event,
-      consent: {
-        ...event.consent,
-        analytics: 'granted',
-        marketing: 'denied'
-      }
-    }),
-    [
+  withIsolatedPinterestEnv(() => {
+    assert.deepEqual(planCanonicalEventDispatch(viewItem()), [
       {
         dispatch_mode: 'server_retry',
-        event_id: event.event_id,
+        event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
         provider: 'google'
-      }
-    ]
-  )
-
-  assert.deepEqual(
-    planCanonicalEventDispatch({
-      ...event,
-      consent: {
-        ...event.consent,
-        analytics: 'denied',
-        marketing: 'granted'
-      }
-    }),
-    [
-      {
-        dispatch_mode: 'server_retry',
-        event_id: event.event_id,
-        provider: 'meta'
-      }
-    ]
-  )
-})
-
-test('records consented Google events without a valid client ID as unqualified', () => {
-  const event = viewItem()
-
-  assert.deepEqual(
-    planCanonicalEventDispatch({
-      ...event,
-      browser_id: undefined
-    }),
-    [
-      {
-        dispatch_mode: 'server_retry',
-        event_id: event.event_id,
-        provider: 'google',
-        skip_reason: 'missing_client_id',
-        status: 'skipped_unqualified'
       },
       {
         dispatch_mode: 'server_retry',
-        event_id: event.event_id,
+        event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
         provider: 'meta'
-      }
-    ]
-  )
+      },
+      pinterestMissingToken(
+        '61c2ef59-6e6f-4f56-a63a-567ca398f9de'
+      )
+    ])
+  })
+})
+
+test('applies provider-specific consent without creating Microsoft rows', () => {
+  withIsolatedPinterestEnv(() => {
+    const event = viewItem()
+
+    assert.deepEqual(
+      planCanonicalEventDispatch({
+        ...event,
+        consent: {
+          ...event.consent,
+          analytics: 'granted',
+          marketing: 'denied'
+        }
+      }),
+      [
+        {
+          dispatch_mode: 'server_retry',
+          event_id: event.event_id,
+          provider: 'google'
+        }
+      ]
+    )
+
+    assert.deepEqual(
+      planCanonicalEventDispatch({
+        ...event,
+        consent: {
+          ...event.consent,
+          analytics: 'denied',
+          marketing: 'granted'
+        }
+      }),
+      [
+        {
+          dispatch_mode: 'server_retry',
+          event_id: event.event_id,
+          provider: 'meta'
+        },
+        pinterestMissingToken(event.event_id)
+      ]
+    )
+  })
+})
+
+test('records consented Google events without a valid client ID as unqualified', () => {
+  withIsolatedPinterestEnv(() => {
+    const event = viewItem()
+
+    assert.deepEqual(
+      planCanonicalEventDispatch({
+        ...event,
+        browser_id: undefined
+      }),
+      [
+        {
+          dispatch_mode: 'server_retry',
+          event_id: event.event_id,
+          provider: 'google',
+          skip_reason: 'missing_client_id',
+          status: 'skipped_unqualified'
+        },
+        {
+          dispatch_mode: 'server_retry',
+          event_id: event.event_id,
+          provider: 'meta'
+        },
+        pinterestMissingToken(event.event_id)
+      ]
+    )
+  })
 })
 
 test('routes consented purchase with msclkid and UET token to Microsoft outbox', () => {
@@ -271,7 +333,8 @@ test('routes consented purchase with msclkid and UET token to Microsoft outbox',
           dispatch_mode: 'server_retry',
           event_id: event.event_id,
           provider: 'microsoft_uet'
-        }
+        },
+        pinterestMissingToken(event.event_id)
       ]
     )
   } finally {
@@ -556,7 +619,8 @@ test('routes consented add_to_cart with msclkid and UET token to Microsoft outbo
         dispatch_mode: 'server_retry',
         event_id: event.event_id,
         provider: 'microsoft_uet'
-      }
+      },
+      pinterestMissingToken(event.event_id)
     ])
   } finally {
     if (previous === undefined) {
@@ -702,7 +766,8 @@ test('routes consented begin_checkout with msclkid and UET token to Microsoft ou
         dispatch_mode: 'server_retry',
         event_id: event.event_id,
         provider: 'microsoft_uet'
-      }
+      },
+      pinterestMissingToken(event.event_id)
     ])
   } finally {
     if (previous === undefined) {
@@ -780,4 +845,88 @@ test('skips Microsoft begin_checkout without a supported identifier', () => {
       process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = previous
     }
   }
+})
+
+test('skips Pinterest view_item when CAPI is not configured', () => {
+  withIsolatedPinterestEnv(() => {
+    const pinterest = planCanonicalEventDispatch(viewItem()).find(
+      intent => intent.provider === 'pinterest'
+    )
+
+    assert.deepEqual(
+      pinterest,
+      pinterestMissingToken(
+        '61c2ef59-6e6f-4f56-a63a-567ca398f9de'
+      )
+    )
+  })
+})
+
+test('skips Pinterest view_item without a user identity', () => {
+  withIsolatedPinterestEnv(() => {
+    process.env.PINTEREST_CONVERSIONS_API_ENABLED = 'true'
+    process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN = 'test-token'
+    process.env.PINTEREST_AD_ACCOUNT_ID = '123456789'
+
+    const pinterest = planCanonicalEventDispatch(viewItem()).find(
+      intent => intent.provider === 'pinterest'
+    )
+
+    assert.deepEqual(pinterest, {
+      dispatch_mode: 'server_retry',
+      event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+      provider: 'pinterest',
+      skip_reason: 'insufficient_pinterest_user_identity',
+      status: 'skipped_unqualified'
+    })
+  })
+})
+
+test('enqueues Pinterest view_item when CAPI is configured and IP plus UA are present', () => {
+  withIsolatedPinterestEnv(() => {
+    process.env.PINTEREST_CONVERSIONS_API_ENABLED = 'true'
+    process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN = 'test-token'
+    process.env.PINTEREST_AD_ACCOUNT_ID = '123456789'
+
+    const event = {
+      ...viewItem(),
+      client_ip_address: '203.0.113.10',
+      event_device_info: {
+        user_agent: 'Mozilla/5.0 UtekosTest'
+      }
+    }
+
+    const pinterest = planCanonicalEventDispatch(event).find(
+      intent => intent.provider === 'pinterest'
+    )
+
+    assert.deepEqual(pinterest, {
+      dispatch_mode: 'server_retry',
+      event_id: event.event_id,
+      provider: 'pinterest'
+    })
+  })
+})
+
+test('enqueues Pinterest purchase when CAPI is configured and email hash is present', () => {
+  withIsolatedPinterestEnv(() => {
+    process.env.PINTEREST_CONVERSIONS_API_ENABLED = 'true'
+    process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN = 'test-token'
+    process.env.PINTEREST_AD_ACCOUNT_ID = '123456789'
+
+    const event = purchase({
+      user_data: {
+        email_sha256: ['a'.repeat(64)]
+      }
+    })
+    const pinterest = planCanonicalEventDispatch(event, {
+      now: purchasePlanningNow
+    }).find(intent => intent.provider === 'pinterest')
+
+    assert.deepEqual(pinterest, {
+      dispatch_mode: 'server_retry',
+      event_id: event.event_id,
+      provider: 'pinterest'
+    })
+  })
 })

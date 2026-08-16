@@ -65,6 +65,14 @@ function viewItem() {
 }
 
 test('one canonical event_id creates one row and one stable provider dedupe key per route', async () => {
+  const previousEnabled = process.env.PINTEREST_CONVERSIONS_API_ENABLED
+  const previousToken = process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN
+  const previousAccount = process.env.PINTEREST_AD_ACCOUNT_ID
+  delete process.env.PINTEREST_CONVERSIONS_API_ENABLED
+  delete process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN
+  delete process.env.PINTEREST_AD_ACCOUNT_ID
+
+  try {
   const event = viewItem()
   const ledgerKeys = new Set<string>()
   const dispatchRows: Array<{ key: string; payload: unknown }> =
@@ -108,12 +116,13 @@ test('one canonical event_id creates one row and one stable provider dedupe key 
     2
   )
   assert.equal(ledgerKeys.size, 1)
-  assert.equal(dispatchRows.length, 2)
+  assert.equal(dispatchRows.length, 3)
   assert.deepEqual(
     dispatchRows.map(row => row.key),
     [
       `google:view_item:${event.event_id}`,
-      `meta:view_item:${event.event_id}`
+      `meta:view_item:${event.event_id}`,
+      `pinterest:view_item:${event.event_id}`
     ]
   )
 
@@ -239,4 +248,21 @@ test('one canonical event_id creates one row and one stable provider dedupe key 
       totalClaims: 1
     }
   ])
+  } finally {
+    if (previousEnabled === undefined) {
+      delete process.env.PINTEREST_CONVERSIONS_API_ENABLED
+    } else {
+      process.env.PINTEREST_CONVERSIONS_API_ENABLED = previousEnabled
+    }
+    if (previousToken === undefined) {
+      delete process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN
+    } else {
+      process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN = previousToken
+    }
+    if (previousAccount === undefined) {
+      delete process.env.PINTEREST_AD_ACCOUNT_ID
+    } else {
+      process.env.PINTEREST_AD_ACCOUNT_ID = previousAccount
+    }
+  }
 })

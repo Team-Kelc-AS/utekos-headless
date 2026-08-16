@@ -208,6 +208,7 @@ function buildUserData(
   const emailHashes = event.user_data?.email_sha256
   const phoneHashes = event.user_data?.phone_sha256
   const clientUserAgent = event.event_device_info?.user_agent
+  const epik = event.click_id?.epik
   const externalId =
     event.external_id ? sha256(event.external_id) : undefined
 
@@ -220,6 +221,7 @@ function buildUserData(
     ...(clientUserAgent ?
       { client_user_agent: clientUserAgent }
     : {}),
+    ...(epik ? { click_id: epik } : {}),
     ...(externalId ? { external_id: externalId } : {})
   }
 }
@@ -231,6 +233,22 @@ export function hasPinterestRequiredUserIdentity(
     userData.em?.length ||
     (userData.client_ip_address && userData.client_user_agent)
   )
+}
+
+export function hasPinterestCanonicalUserIdentity(
+  event: CanonicalEvent
+) {
+  return hasPinterestRequiredUserIdentity({
+    ...(event.user_data?.email_sha256 ?
+      { em: event.user_data.email_sha256 }
+    : {}),
+    ...(event.client_ip_address ?
+      { client_ip_address: event.client_ip_address }
+    : {}),
+    ...(event.event_device_info?.user_agent ?
+      { client_user_agent: event.event_device_info.user_agent }
+    : {})
+  })
 }
 
 export function mapCanonicalEventToPinterest(

@@ -49,6 +49,7 @@ test('permits the third-party scripts and frames observed during report-only rol
     csp,
     /script-src[^;]*https:\/\/connect\.facebook\.net/
   )
+  assert.match(csp, /script-src[^;]*https:\/\/s\.pinimg\.com/)
   assert.match(
     csp,
     /script-src[^;]*https:\/\/googleads\.g\.doubleclick\.net/
@@ -83,6 +84,11 @@ test('permits the third-party scripts and frames observed during report-only rol
     csp,
     /connect-src[^;]*https:\/\/www\.facebook\.com/
   )
+  assert.match(csp, /connect-src[^;]*https:\/\/s\.pinimg\.com/)
+  assert.match(
+    csp,
+    /connect-src[^;]*https:\/\/ct\.pinterest\.com/
+  )
   assert.match(
     csp,
     /connect-src[^;]*https:\/\/mpc2-prod-25-is5qnl632q-wl\.a\.run\.app/
@@ -105,6 +111,7 @@ test('permits the third-party scripts and frames observed during report-only rol
   )
   assert.match(csp, /img-src[^;]*https:\/\/c\.bing\.com/)
   assert.match(csp, /img-src[^;]*https:\/\/www\.facebook\.com/)
+  assert.match(csp, /img-src[^;]*https:\/\/ct\.pinterest\.com/)
   assert.match(csp, /frame-src[^;]*https:\/\/www\.facebook\.com/)
   assert.match(
     csp,

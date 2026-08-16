@@ -830,6 +830,90 @@ const microsoftBrowser = [
   )
 ] as const
 
+const pinterestServer = [
+  parameter(
+    'event_name',
+    'required',
+    'Pinterest CAPI snake_case mapping',
+    'Canonical purchase maps to checkout, not purchase.'
+  ),
+  parameter(
+    'event_id',
+    'required',
+    'event_id',
+    'Shared with Pinterest Tag for deduplication.'
+  ),
+  parameter(
+    'event_time',
+    'required',
+    'event_time',
+    'Unix timestamp of the canonical occurrence.'
+  ),
+  parameter(
+    'event_source_url',
+    'required',
+    'page_url',
+    'Trusted source URL for the conversion.'
+  ),
+  parameter(
+    'user_data.em',
+    'conditional',
+    'user_data.email_sha256',
+    'Hashed email when available.'
+  ),
+  parameter(
+    'user_data.client_ip_address',
+    'recommended',
+    'client_ip_address',
+    'Required with user agent when hashed email is absent.'
+  ),
+  parameter(
+    'user_data.client_user_agent',
+    'recommended',
+    'event_device_info.user_agent',
+    'Required with client IP when hashed email is absent.'
+  ),
+  parameter(
+    'user_data.click_id',
+    'conditional',
+    'click_id.epik',
+    'Pinterest click identifier; not written to Shopify checkout attributes.'
+  ),
+  parameter(
+    'custom_data.content_ids[]',
+    'conditional',
+    'custom_data.items[].item_id',
+    'Numeric Shopify variant IDs matching the Pinterest catalog feed id.'
+  ),
+  parameter(
+    'custom_data.contents[].id',
+    'conditional',
+    'custom_data.items[].item_id',
+    'Same catalog identity as Tag line_items[].product_id.'
+  )
+] as const
+
+const pinterestBrowser = [
+  parameter(
+    'event',
+    'required',
+    'Pinterest Tag event mapping',
+    'pintrk track name from the first-party canonical subscriber.'
+  ),
+  parameter(
+    'event_id',
+    'required',
+    'event_id',
+    'Shared with Conversions API for deduplication.'
+  ),
+  parameter(
+    'line_items[].product_id',
+    'conditional',
+    'custom_data.items[].item_id',
+    'Numeric Shopify variant ID matching the catalog feed id.'
+  )
+] as const
+
 const shopifyPurchaseBrowser = [
   parameter(
     'event',
@@ -975,6 +1059,13 @@ export const deliveryIntegrations = {
     role: 'Direct HTTP plus repository-owned Zod schemas',
     implementation: 'src/lib/analytics/server/microsoftUet'
   },
+  pinterestConversionsApi: {
+    package: null,
+    manifestVersion: null,
+    role: 'Direct HTTP to Pinterest Conversions API v5 events',
+    implementation:
+      'src/lib/analytics/server/dispatchCanonicalEventToPinterest.ts'
+  },
   shopifyCustomerEvents: {
     package: null,
     manifestVersion: null,
@@ -1013,6 +1104,12 @@ function parametersFor(
       transport === 'server' ?
         'microsoftServer'
       : 'microsoftBrowser'
+    ]
+  if (provider === 'pinterest')
+    parameterSets = [
+      transport === 'server' ?
+        'pinterestServer'
+      : 'pinterestBrowser'
     ]
 
   return {
@@ -1064,6 +1161,8 @@ export function buildUtekosEventDeliveryParameterContract() {
       metaServer,
       microsoftBrowser,
       microsoftServer,
+      pinterestBrowser,
+      pinterestServer,
       shopifyPurchaseBrowser
     },
     events: Object.fromEntries(

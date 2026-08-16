@@ -12,6 +12,7 @@ const providerIds = [
   'google',
   'meta',
   'microsoft_uet',
+  'pinterest',
   'posthog'
 ] as const satisfies readonly ProviderId[]
 
@@ -104,6 +105,53 @@ test('requires complete Meta website matching projection', () => {
       meta.signalDelivery.meta_fbp,
       'send_when_available',
       `meta:${eventName}: fbp`
+    )
+  }
+})
+
+test('requires Pinterest CAPI request and click signals', () => {
+  for (const eventName of canonicalEventNames) {
+    const pinterest =
+      eventCatalog[eventName].providers.pinterest
+
+    if (
+      pinterest.transport.server !== 'pinterest_conversions_api' ||
+      pinterest.support !== 'supported'
+    ) {
+      continue
+    }
+
+    assert.equal(
+      pinterest.signalDelivery.event_source_url,
+      'required'
+    )
+    assert.equal(
+      pinterest.signalDelivery.client_ip_address,
+      'send_when_available'
+    )
+    assert.equal(
+      pinterest.signalDelivery.client_user_agent,
+      'send_when_available'
+    )
+    assert.equal(
+      pinterest.signalDelivery.external_id,
+      'send_when_available'
+    )
+    assert.equal(
+      pinterest.signalDelivery.click_ids,
+      'send_when_available'
+    )
+    assert.equal(
+      pinterest.signalDelivery.meta_fbclid,
+      'not_applicable'
+    )
+    assert.equal(
+      pinterest.signalDelivery.meta_fbc,
+      'not_applicable'
+    )
+    assert.equal(
+      pinterest.signalDelivery.meta_fbp,
+      'not_applicable'
     )
   }
 })
