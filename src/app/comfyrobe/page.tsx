@@ -48,6 +48,7 @@ export default async function ComfyrobeLandingPage() {
 
   return (
     <article className='flex min-h-screen w-full flex-col overflow-x-clip bg-background text-foreground'>
+
       <div className='w-full bg-cloud-dancer text-background'>
         <UtekosBreadcrumbBar
           surface='transparent'

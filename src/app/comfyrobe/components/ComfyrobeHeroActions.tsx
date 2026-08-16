@@ -58,7 +58,7 @@ function ComfyrobeHeroPurchaseActions({
   const isUnavailable = !selectedVariant.availableForSale
 
   return (
-    <div className='flex w-full flex-col gap-3 sm:w-72 md:w-144'>
+    <div className='flex w-full flex-col gap-3 sm:w-72 md:w-xl'>
       <Button
         type='button'
         data-track='ComfyrobeHeroAddToCart'

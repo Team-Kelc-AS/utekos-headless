@@ -6,7 +6,7 @@ Preview and production gates remain
 
 Reviewed: 2026-07-30
 
-Next.js: 16.2.12
+Next.js: 16.3.1
 
 ## Decision
 
@@ -29,18 +29,19 @@ lockfile must not be merged.
 ### Version and security floor
 
 The completion candidate uses exact Next.js family version
-16.2.12. The earlier 16.2.9 candidate was rejected after the
-official July 2026 security release identified four high- and
-five medium-severity issues and required 16.2.11 or newer for the
+16.3.1. The 16.2.9 candidate was rejected after the official July
+2026 security release identified four high- and five
+medium-severity issues and required 16.2.11 or newer for the
 affected 16.2 line. The current pin is above that minimum and is
 applied consistently to `next`, `@next/mdx`,
 `@next/third-parties`, `@next/bundle-analyzer` and
 `eslint-config-next`.
 
-The local patch is version-pinned and was revalidated against the
-16.2.12 registry tarball. A Next.js upgrade must fail the frozen
-install until the patch mapping, same-source control and complete
-verification matrix have been ported deliberately.
+The local patch is version-pinned to `next@16.3.1`. Official
+16.3.1 still has no `decompressBody` helper. A further Next.js
+upgrade must fail the frozen install until the patch mapping,
+same-source control and complete verification matrix have been
+ported deliberately.
 
 ## What is known
 
@@ -90,7 +91,7 @@ verification matrix have been ported deliberately.
 - `cacheComponents` remains enabled.
 - `experimental.turbopackFileSystemCacheForBuild` remains
   `false`.
-- `patches/next@16.2.12.patch` normalizes `Content-Encoding`,
+- `patches/next@16.3.1.patch` normalizes `Content-Encoding`,
   decodes stacked codings in reverse application order and
   handles `gzip`, `br` and `deflate`.
 - Gzip magic remains a recovery signal when an intermediary omits
