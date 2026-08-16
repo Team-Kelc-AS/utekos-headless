@@ -45,6 +45,10 @@ project_info_1/
 /.env*/
 /env.local
 
+# OpenAPI/AsyncAPI characterization artifacts — not a Vercel runtime input
+contracts/
+scripts/contracts/
+
 # Klarna local agent docs (runtime components stay deployable)
 src/components/klarna/dev/
 src/components/klarna/llms.md

@@ -17,6 +17,7 @@ import {
 } from './data/comfyrobeLandingSeo'
 import { buildComfyrobeOfferSummary } from './lib/buildComfyrobeOfferSummary'
 import { getComfyrobeLandingProduct } from './lib/getComfyrobeLandingProduct'
+import { ComfyrobeJsonLd } from './structured-data/ComfyrobeJsonLd'
 
 export const metadata: Metadata = {
   title: COMFYROBE_LANDING_NAME,
@@ -47,47 +48,51 @@ export default async function ComfyrobeLandingPage() {
   const offer = buildComfyrobeOfferSummary(product)
 
   return (
-    <article className='flex min-h-screen w-full flex-col overflow-x-clip bg-background text-foreground'>
+    <>
+      {product ?
+        <ComfyrobeJsonLd product={product} />
+      : null}
+      <article className='flex min-h-screen w-full flex-col overflow-x-clip bg-background text-foreground'>
+        <div className='w-full bg-cloud-dancer text-background'>
+          <UtekosBreadcrumbBar
+            surface='transparent'
+            items={[
+              { label: 'Hjem', href: '/' },
+              { label: 'Comfyrobe™ XL' }
+            ]}
+            containerClassName='px-6 py-3 md:px-8 lg:px-12'
+            listClassName='flex-nowrap whitespace-nowrap text-sm'
+          />
+        </div>
 
-      <div className='w-full bg-cloud-dancer text-background'>
-        <UtekosBreadcrumbBar
-          surface='transparent'
-          items={[
-            { label: 'Hjem', href: '/' },
-            { label: 'Comfyrobe™ XL' }
-          ]}
-          containerClassName='px-6 py-3 md:px-8 lg:px-12'
-          listClassName='flex-nowrap whitespace-nowrap text-sm'
-        />
-      </div>
+        <ComfyrobeHero offer={offer} product={product} />
 
-      <ComfyrobeHero offer={offer} product={product} />
-
-      <PromotionImpression
-        promotionId='comfyrobe-purchase'
-        promotionName='Comfyrobe'
-        creativeName='Purchase'
-        creativeSlot='purchase'
-        className='w-full'
-      >
-        <div
-          id='purchase-section'
-          className='w-full scroll-mt-20'
+        <PromotionImpression
+          promotionId='comfyrobe-purchase'
+          promotionName='Comfyrobe'
+          creativeName='Purchase'
+          creativeSlot='purchase'
+          className='w-full'
         >
-          <ComfyrobePurchaseSection product={product} />
-        </div>
-      </PromotionImpression>
+          <div
+            id='purchase-section'
+            className='w-full scroll-mt-20'
+          >
+            <ComfyrobePurchaseSection product={product} />
+          </div>
+        </PromotionImpression>
 
-      <ComfyrobeMotionProvider>
-        <div className='w-full md:grid md:grid-cols-2 md:items-stretch'>
-          <ComfyrobeProductDetailsSection />
-          <ComfyrobeFaqSection />
-        </div>
+        <ComfyrobeMotionProvider>
+          <div className='w-full md:grid md:grid-cols-2 md:items-stretch'>
+            <ComfyrobeProductDetailsSection />
+            <ComfyrobeFaqSection />
+          </div>
 
-        <ComfyrobeStickyPurchase offer={offer} />
-      </ComfyrobeMotionProvider>
+          <ComfyrobeStickyPurchase offer={offer} />
+        </ComfyrobeMotionProvider>
 
-      <PreFooterNavigation variant='comfyrobe' />
-    </article>
+        <PreFooterNavigation variant='comfyrobe' />
+      </article>
+    </>
   )
 }
