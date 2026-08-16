@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import test from 'node:test'
 
 import type { CanonicalViewItem } from '../viewItemEvent'
@@ -126,4 +127,18 @@ test('forwards Canonical epik as Pinterest user_data.click_id', () => {
   )
 
   assert.equal(mapped?.user_data.click_id, 'PinterestClickId-1')
+})
+
+test('sends hashed external_id as a Pinterest user_data array', () => {
+  const mapped = mapCanonicalEventToPinterest(
+    viewItem({
+      external_id: 'anon_ce5f010a-804c-4bc6-8738-febd9f4eafbf'
+    })
+  )
+
+  assert.deepEqual(mapped?.user_data.external_id, [
+    createHash('sha256')
+      .update('anon_ce5f010a-804c-4bc6-8738-febd9f4eafbf', 'utf8')
+      .digest('hex')
+  ])
 })

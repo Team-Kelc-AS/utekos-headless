@@ -41,7 +41,12 @@ const META_PIXEL_FRAME_ORIGINS = [
 ] as const
 
 const PINTEREST_TAG_SCRIPT_ORIGINS = [
-  'https://s.pinimg.com'
+  'https://s.pinimg.com',
+  'https://ct.pinterest.com'
+] as const
+
+const PINTEREST_TAG_FRAME_ORIGINS = [
+  'https://ct.pinterest.com'
 ] as const
 
 const PINTEREST_TAG_EVENT_ORIGINS = [
@@ -181,6 +186,7 @@ export function buildReportOnlyCsp(): string {
     ...KLARNA_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...META_PIXEL_FRAME_ORIGINS,
+    ...PINTEREST_TAG_FRAME_ORIGINS,
     ...VIDEO_FRAME_ORIGINS,
     ...VERCEL_LIVE_ORIGINS
   ]
