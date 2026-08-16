@@ -7,12 +7,23 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: ['Googlebot', 'Googlebot-Video'],
-        allow: ['/', '/videos/', '/api/google/feed', '/klarna-feed.xml'],
+        allow: [
+          '/',
+          '/videos/',
+          '/api/google/feed',
+          '/klarna-feed.xml',
+          '/pinterest-catalog.tsv'
+        ],
         disallow: ['/cart/', '/account/', '/api/']
       },
       {
         userAgent: '*',
-        allow: ['/', '/api/google/feed', '/klarna-feed.xml'],
+        allow: [
+          '/',
+          '/api/google/feed',
+          '/klarna-feed.xml',
+          '/pinterest-catalog.tsv'
+        ],
         disallow: ['/cart/', '/account/', '/api/', '/videos/']
       }
     ],
