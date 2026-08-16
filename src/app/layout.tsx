@@ -181,6 +181,8 @@ export default function RootLayout({
     shouldLoadGoogleTagManager(
       process.env.VERCEL_ENV
     )
+  const pinterestTagId =
+    process.env.NEXT_PUBLIC_PINTEREST_TAG_ID?.trim()
 
   return (
     <html
@@ -221,11 +223,21 @@ export default function RootLayout({
 
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
         {shouldLoadMarketingScripts ?
-          <Script
-            id='meta-pixel-canonical-browser'
-            src='/analytics/meta-pixel-canonical-v1.js'
-            strategy='afterInteractive'
-          />
+          <>
+            <Script
+              id='meta-pixel-canonical-browser'
+              src='/analytics/meta-pixel-canonical-v1.js'
+              strategy='afterInteractive'
+            />
+            {pinterestTagId ?
+              <Script
+                id='pinterest-tag-canonical-browser'
+                src='/analytics/pinterest-tag-canonical-v1.js'
+                strategy='afterInteractive'
+                data-tag-id={pinterestTagId}
+              />
+            : null}
+          </>
         : null}
 
         <Suspense fallback={null}>

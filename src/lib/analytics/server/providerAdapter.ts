@@ -8,6 +8,7 @@ export type ProviderId =
   | 'google'
   | 'meta'
   | 'microsoft_uet'
+  | 'pinterest'
 
 export type ProviderAdapterKey =
   `${ProviderId}:${ImplementedCanonicalEventName}`

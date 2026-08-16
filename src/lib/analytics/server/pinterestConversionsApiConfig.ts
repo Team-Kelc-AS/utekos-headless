@@ -14,6 +14,14 @@ function requiredEnv(name: string) {
   return value
 }
 
+export function isPinterestConversionsApiConfigured() {
+  return (
+    process.env.PINTEREST_CONVERSIONS_API_ENABLED === 'true' &&
+    Boolean(process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN?.trim()) &&
+    Boolean(process.env.PINTEREST_AD_ACCOUNT_ID?.trim())
+  )
+}
+
 export function getPinterestConversionsApiConfig(): PinterestConversionsApiConfig {
   const enabled =
     process.env.PINTEREST_CONVERSIONS_API_ENABLED === 'true'

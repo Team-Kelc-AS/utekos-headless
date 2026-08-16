@@ -117,3 +117,13 @@ test('does not use Canonical product_id as the Pinterest content id', () => {
     'gid://shopify/ProductVariant/999'
   )
 })
+
+test('forwards Canonical epik as Pinterest user_data.click_id', () => {
+  const mapped = mapCanonicalEventToPinterest(
+    viewItem({
+      click_id: { epik: 'PinterestClickId-1' }
+    })
+  )
+
+  assert.equal(mapped?.user_data.click_id, 'PinterestClickId-1')
+})

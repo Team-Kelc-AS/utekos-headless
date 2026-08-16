@@ -120,6 +120,10 @@
                 "type": "string",
                 "minLength": 1
               },
+              "epik": {
+                "type": "string",
+                "minLength": 1
+              },
               "fbclid": {
                 "type": "string",
                 "minLength": 1
@@ -915,6 +919,10 @@
         "type": "object",
         "properties": {
           "dclid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "epik": {
             "type": "string",
             "minLength": 1
           },
@@ -1775,6 +1783,10 @@
         "type": "object",
         "properties": {
           "dclid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "epik": {
             "type": "string",
             "minLength": 1
           },

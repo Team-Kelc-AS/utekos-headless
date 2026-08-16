@@ -125,6 +125,7 @@ test('every Events API operation embeds its detailed delivery contract', () => {
       'google',
       'meta',
       'microsoft_uet',
+      'pinterest',
       'posthog',
       'supabase'
     ])

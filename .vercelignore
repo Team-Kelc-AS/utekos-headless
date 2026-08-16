@@ -45,8 +45,16 @@ project_info_1/
 /.env*/
 /env.local
 
-# OpenAPI/AsyncAPI characterization artifacts — not a Vercel runtime input
-contracts/
+# OpenAPI/AsyncAPI characterization artifacts — not a Vercel runtime input.
+# Keep contracts/shopify/ so Next typecheck can resolve checkout-observation schemas.
+contracts/asyncapi/
+contracts/domains/
+contracts/events/
+contracts/governance/
+contracts/openapi/
+contracts/readyapi/
+contracts/reports/
+contracts/README.md
 scripts/contracts/
 
 # Klarna local agent docs (runtime components stay deployable)

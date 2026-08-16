@@ -16,6 +16,7 @@ const providerIds = [
   'google',
   'meta',
   'microsoft_uet',
+  'pinterest',
   'posthog'
 ] as const satisfies readonly CatalogProviderId[]
 

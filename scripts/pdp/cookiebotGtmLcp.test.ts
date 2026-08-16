@@ -129,6 +129,20 @@ test(
 )
 
 test(
+  'Pinterest Tag loader remains post-hydration behind the marketing script gate',
+  async () => {
+    const source = await readSource('src/app/layout.tsx')
+
+    assert.match(
+      source,
+      /id=['"]pinterest-tag-canonical-browser['"][\s\S]*?src=['"]\/analytics\/pinterest-tag-canonical-v1\.js['"][\s\S]*?data-tag-id=\{pinterestTagId\}/,
+      'Pinterest Tag must load afterInteractive with the public tag id'
+    )
+    assert.match(source, /NEXT_PUBLIC_PINTEREST_TAG_ID/)
+  }
+)
+
+test(
   'obsolete direct Cookiebot implementation is removed',
   () => {
     assert.equal(

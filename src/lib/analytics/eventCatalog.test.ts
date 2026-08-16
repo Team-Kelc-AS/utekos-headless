@@ -48,6 +48,7 @@ const providerIds = [
   'google',
   'meta',
   'microsoft_uet',
+  'pinterest',
   'posthog'
 ] as const satisfies readonly ProviderId[]
 
@@ -210,7 +211,7 @@ test('keeps shipping blocked while add_payment_info is isolated to the approved 
   assert.ok(
     Object.entries(payment.providers).every(
       ([providerId, provider]) =>
-        providerId === 'google' ?
+        providerId === 'google' || providerId === 'pinterest' ?
           provider.serverOutbox === 'active'
         : provider.serverOutbox !== 'active'
     )
@@ -225,6 +226,14 @@ test('keeps shipping blocked while add_payment_info is isolated to the approved 
   assert.equal(
     payment.providers.microsoft_uet.support,
     'not_relevant'
+  )
+  assert.equal(
+    payment.providers.pinterest.eventName,
+    'add_payment_info'
+  )
+  assert.equal(
+    payment.providers.pinterest.serverOutbox,
+    'active'
   )
   assert.equal(payment.providers.posthog.support, 'not_relevant')
 })
@@ -261,6 +270,21 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   assert.ok(activeOutboxes.includes('microsoft_uet:add_to_cart'))
   assert.ok(
     activeOutboxes.includes('microsoft_uet:begin_checkout')
+  )
+  assert.ok(activeOutboxes.includes('pinterest:view_item'))
+  assert.ok(activeOutboxes.includes('pinterest:add_to_cart'))
+  assert.ok(activeOutboxes.includes('pinterest:begin_checkout'))
+  assert.ok(activeOutboxes.includes('pinterest:purchase'))
+  assert.ok(activeOutboxes.includes('pinterest:search'))
+  assert.ok(activeOutboxes.includes('pinterest:view_category'))
+  assert.ok(activeOutboxes.includes('pinterest:add_to_wishlist'))
+  assert.ok(activeOutboxes.includes('pinterest:generate_lead'))
+  assert.ok(
+    activeOutboxes.includes('pinterest:add_payment_info')
+  )
+  assert.equal(
+    eventCatalog.page_view.providers.pinterest.support,
+    'not_relevant'
   )
   assert.equal(
     eventCatalog.page_view.providers.meta.serverOutbox,
