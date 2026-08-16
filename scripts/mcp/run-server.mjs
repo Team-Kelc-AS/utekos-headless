@@ -103,6 +103,33 @@ if (!server) {
 const unresolved = new Set()
 const resolved = resolvePlaceholders(server, env, unresolved)
 
+const isMcpRemote =
+  resolved.command === 'npx' &&
+  Array.isArray(server.args) &&
+  server.args.some(
+    arg => typeof arg === 'string' && /^mcp-remote(?:@|$)/.test(arg)
+  )
+
+const passthroughEnv = {}
+const childArgs = isMcpRemote
+  ? server.args.map(arg => {
+      if (typeof arg !== 'string') return arg
+
+      for (const match of arg.matchAll(/\$\{([A-Z0-9_]+)\}/g)) {
+        const key = match[1]
+        const value = env[key] ?? process.env[key]
+
+        if (value === undefined) {
+          unresolved.add(key)
+        } else {
+          passthroughEnv[key] = value
+        }
+      }
+
+      return arg
+    })
+  : resolved.args
+
 if (unresolved.size > 0) {
   console.error(`Missing MCP env for ${serverName}: ${[...unresolved].sort().join(', ')}`)
   process.exit(1)
@@ -115,6 +142,7 @@ if (!resolved.command || !Array.isArray(resolved.args)) {
 
 const childEnv = {
   ...process.env,
+  ...passthroughEnv,
   ...(resolved.env && typeof resolved.env === 'object' ? resolved.env : {}),
   PATH: [
     path.join(os.homedir(), '.local', 'bin'),
@@ -122,14 +150,53 @@ const childEnv = {
   ].filter(Boolean).join(path.delimiter)
 }
 
-const child = spawn(resolved.command, resolved.args, {
+const child = spawn(resolved.command, childArgs, {
   cwd: root,
   env: childEnv,
-  stdio: 'inherit'
+  stdio: 'inherit',
+  detached: process.platform !== 'win32'
 })
+
+const forwardedSignals = ['SIGINT', 'SIGTERM', 'SIGHUP']
+let shuttingDown = false
+
+function signalChildTree(signal) {
+  if (!child.pid) return
+
+  try {
+    if (process.platform === 'win32') {
+      child.kill(signal)
+    } else {
+      process.kill(-child.pid, signal)
+    }
+  } catch (error) {
+    if (error?.code !== 'ESRCH') {
+      console.error(`Failed to forward ${signal} to MCP child tree: ${error.message}`)
+    }
+  }
+}
+
+for (const signal of forwardedSignals) {
+  process.on(signal, () => {
+    if (shuttingDown) return
+    shuttingDown = true
+
+    signalChildTree(signal)
+
+    const forceKillTimer = setTimeout(() => {
+      signalChildTree('SIGKILL')
+    }, 5000)
+
+    forceKillTimer.unref()
+  })
+}
 
 child.on('exit', (code, signal) => {
   if (signal) {
+    for (const handledSignal of forwardedSignals) {
+      process.removeAllListeners(handledSignal)
+    }
+
     process.kill(process.pid, signal)
     return
   }

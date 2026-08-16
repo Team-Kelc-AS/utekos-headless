@@ -330,9 +330,23 @@ test(
       CART_TOKEN
     )
 
+    /**
+     * Formatting-independent assertion.
+     *
+     * Accepts both:
+     *
+     * redis.call('SET', ...)
+     *
+     * and:
+     *
+     * redis.call(
+     *   'SET',
+     *   ...
+     * )
+     */
     assert.match(
       call.script,
-      /redis\.call\('SET'/
+      /redis\.call\(\s*'SET'/
     )
 
     assert.match(

@@ -122,7 +122,7 @@ export function ComfyrobeSizeGuide() {
                   aria-hidden='true'
                 />
               </div>
-              <h3 className='font-sans font-utekos-text-medium text-lg'>
+              <h3 className='font-sans text-lg'>
                 {feature.title}
               </h3>
             </div>
