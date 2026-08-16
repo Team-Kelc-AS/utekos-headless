@@ -327,7 +327,7 @@
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.60.1",
     "@typescript-eslint/parser": "^8.60.1",
-    "@vygruppen/spor-mcp-server": "^2.1.13",
+    "@vygruppen/spor-mcp-server": "^2.2.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "cross-env": "^10.1.0",
     "culori": "^4.0.2",
