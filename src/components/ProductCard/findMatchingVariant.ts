@@ -9,10 +9,13 @@ export function findMatchingVariant(
 ): ProductPurchaseVariant | undefined {
   if (!product.variants.edges?.length) return undefined
 
+  // Hoist selectedOptions key count outside the iteration loop to avoid redundant
+  // Object.keys() allocations on every variant comparison during UI option selection.
+  const targetOptionsCount = Object.keys(selectedOptions).length
+
   return product.variants.edges.find(edge => {
     const variant = edge.node
-    const variantOptionsCount = Object.keys(selectedOptions).length
-    if (variant.selectedOptions.length !== variantOptionsCount) return false
+    if (variant.selectedOptions.length !== targetOptionsCount) return false
 
     return variant.selectedOptions.every(
       option => selectedOptions[option.name] === option.value
