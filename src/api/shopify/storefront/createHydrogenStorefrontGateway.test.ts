@@ -264,6 +264,49 @@ test('private buyer auth fails closed without a validated buyer IP', async () =>
   assert.equal(requests.length, 0)
 })
 
+test('enforces a wall-clock deadline around hanging response bodies', async () => {
+  let cancelled = false
+  const hangingBody = new ReadableStream({
+    start() {},
+    cancel() {
+      cancelled = true
+    }
+  })
+  const gateway = createHydrogenStorefrontGateway(
+    {
+      storeDomain: 'example.myshopify.com',
+      publicStorefrontToken: 'public-test-token',
+      storefrontApiVersion: '2026-04'
+    },
+    {
+      fetch: async () =>
+        new Response(hangingBody, {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+            'x-request-id': 'hanging-body'
+          }
+        })
+    }
+  )
+  const startedAt = performance.now()
+
+  await assert.rejects(
+    gateway.catalogQuery<TestQuery>({
+      query,
+      timeoutMs: 40
+    }),
+    (error: unknown) =>
+      error instanceof DOMException && error.name === 'TimeoutError'
+  )
+
+  assert.equal(cancelled, true)
+  assert.ok(
+    performance.now() - startedAt < 400,
+    'hanging JSON bodies must not outlive the Shopify deadline'
+  )
+})
+
 test('rejects an operation that crosses the declared gateway boundary', async () => {
   const { gateway, requests } = createGateway()
 

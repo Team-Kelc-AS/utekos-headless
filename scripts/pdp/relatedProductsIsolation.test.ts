@@ -83,6 +83,16 @@ test(
 
     assert.match(
       asyncRelatedProductsSource,
+      /try \{/
+    )
+
+    assert.match(
+      asyncRelatedProductsSource,
+      /return null/
+    )
+
+    assert.doesNotMatch(
+      asyncRelatedProductsSource,
       /buildProductCardModel/
     )
 
@@ -117,5 +127,43 @@ test(
       recommendationsIndex > accordionIndex,
       'Recommendations must remain below the product accordion'
     )
+  }
+)
+
+test(
+  'related products use a dedicated product-card query instead of the full product fragment',
+  async () => {
+    const [
+      querySource,
+      cachedRelatedSource
+    ] = await Promise.all([
+      readSource(
+        'src/api/graphql/queries/products/getProductCardsQuery.ts'
+      ),
+      readSource(
+        'src/api/lib/products/getCachedRelatedProducts.ts'
+      )
+    ])
+
+    assert.match(querySource, /query getProductCards/)
+    assert.doesNotMatch(querySource, /productFragment/)
+    assert.doesNotMatch(querySource, /VariantHandler/)
+    assert.doesNotMatch(querySource, /compareAtPriceRange/)
+    assert.doesNotMatch(cachedRelatedSource, /fetchProducts/)
+    assert.doesNotMatch(cachedRelatedSource, /getProductsQuery/)
+    assert.match(cachedRelatedSource, /loadRelatedProducts/)
+  }
+)
+
+test(
+  'product catalog webhooks expire related-products Runtime Cache tags',
+  async () => {
+    const source = await readSource(
+      'src/lib/cache/revalidateProductCatalog.ts'
+    )
+
+    assert.match(source, /related-products/)
+    assert.match(source, /related-products-handle:\$\{normalizedHandle\}/)
+    assert.match(source, /runtimeCache\.expireTag/)
   }
 )

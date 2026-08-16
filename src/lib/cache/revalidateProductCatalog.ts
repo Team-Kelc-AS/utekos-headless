@@ -3,6 +3,7 @@ import 'server-only'
 import type { RuntimeCache } from '@vercel/functions'
 import { revalidateTag } from 'next/cache'
 import { TAGS } from '@/api/constants'
+import { RELATED_PRODUCTS_RUNTIME_CACHE_TAG } from '@/api/lib/products/relatedProductsPolicy'
 import {
   getShopifyCatalogRuntimeCache,
   normalizeShopifyProductHandle,
@@ -25,7 +26,10 @@ export async function revalidateProductCatalog(
   dependencies: ProductCatalogInvalidationDependencies = {}
 ): Promise<ProductCatalogInvalidationResult> {
   const tags = new Set<string>([TAGS.products])
-  const runtimeTags = new Set<string>(['catalog'])
+  const runtimeTags = new Set<string>([
+    'catalog',
+    RELATED_PRODUCTS_RUNTIME_CACHE_TAG
+  ])
 
   for (const handle of handles) {
     const normalizedHandle = normalizeShopifyProductHandle(handle)
@@ -34,6 +38,7 @@ export async function revalidateProductCatalog(
       tags.add(`product-${normalizedHandle}`)
       tags.add(`related-products-${normalizedHandle}`)
       runtimeTags.add(`product-handle:${normalizedHandle}`)
+      runtimeTags.add(`related-products-handle:${normalizedHandle}`)
     }
   }
 

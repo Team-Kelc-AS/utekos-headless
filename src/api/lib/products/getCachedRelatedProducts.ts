@@ -2,23 +2,23 @@
 
 import 'server-only'
 
-import { fetchProducts } from '@/api/lib/products/getProducts'
-import { getRelatedProducts } from '@/hooks/getRelatedProducts'
+import { loadRelatedProducts } from '@/api/lib/products/loadRelatedProducts'
 import { cacheLife, cacheTag } from 'next/cache'
 import { TAGS } from '@/api/constants'
-import type { ShopifyProduct } from 'types/product'
+import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 
 export async function getCachedRelatedProducts(
   currentHandle: string,
   limit: number = 12
-): Promise<ShopifyProduct[]> {
+): Promise<ProductCardModel[]> {
   'use cache: remote'
 
   cacheTag(`related-products-${currentHandle}`, TAGS.products)
   cacheLife('collections')
 
-  const allProducts = await fetchProducts({ first: Math.max(limit * 2, 24) })
-  const related = getRelatedProducts(allProducts, currentHandle, limit)
-
-  return related
+  try {
+    return await loadRelatedProducts(currentHandle, limit)
+  } catch {
+    return []
+  }
 }

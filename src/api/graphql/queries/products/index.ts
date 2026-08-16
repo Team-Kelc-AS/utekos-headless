@@ -5,6 +5,7 @@ import productShellFragment from '@/lib/fragments/productShellFragment'
 import productVariantPresentationFragment from '@/lib/fragments/productVariantPresentationFragment'
 
 export { getProductOptionsQuery } from './getProductOptionsQuery'
+export { getProductCardsQuery } from './getProductCardsQuery'
 
 export const getProductShellQuery = /* GraphQL */ `
   query getProductShell($handle: String!) {
