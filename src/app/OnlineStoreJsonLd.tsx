@@ -2,6 +2,7 @@
 
 import type { OnlineStore, WithContext } from 'schema-dts'
 import { cacheLife } from 'next/cache'
+import { PINTEREST_PROFILE_URL } from '@/lib/merchant-feeds/pinterest/pinterestProfileUrl'
 import { merchantReturnPolicyJsonLd } from '@/lib/policies/merchantReturnPolicyJsonLd'
 import { merchantShippingServiceJsonLd } from '@/lib/policies/merchantShippingServiceJsonLd'
 
@@ -24,7 +25,7 @@ export async function OnlineStoreJsonLd() {
     'sameAs': [
       'https://www.facebook.com/utekosen',
       'https://www.instagram.com/utekos.no',
-      'https://no.pinterest.com/utekosoffisiell/',
+      PINTEREST_PROFILE_URL,
       'https://x.com/UtekosOffisiell'
     ],
     'description':
