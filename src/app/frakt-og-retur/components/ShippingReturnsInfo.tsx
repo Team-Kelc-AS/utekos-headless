@@ -134,54 +134,64 @@ export function ShippingReturnsInfo() {
         className='will-animate-fade-in-up mt-12 w-full'
         delay='0.5s'
       >
-        <section
-          aria-labelledby='return-policy-summary-heading'
-          className='rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-sm sm:p-8'
-        >
-          <h2
-            id='return-policy-summary-heading'
-            className='font-google-sans text-2xl font-bold sm:text-3xl'
+        <article className='flex min-w-0 flex-col rounded-2xl bg-night p-2'>
+          <section
+            aria-labelledby='return-policy-summary-heading'
+            className='dark:ring-dark-border rounded-xl bg-jungle p-6 text-foreground shadow-sm ring-1 ring-border sm:p-8'
           >
-            Returpolicy – kort fortalt
-          </h2>
-          <dl className='mt-6 grid gap-6 sm:grid-cols-2'>
-            <div>
-              <dt className='font-utekos-text-medium text-base'>
-                Angrefrist
-              </dt>
-              <dd className='mt-1 font-utekos-text leading-relaxed text-card-foreground/90'>
-                {returnPolicy.returnWindowDays} kalenderdager fra
-                fysisk mottak
-              </dd>
-            </div>
-            <div>
-              <dt className='font-utekos-text-medium text-base'>
-                Returfrakt
-              </dt>
-              <dd className='mt-1 font-utekos-text leading-relaxed text-card-foreground/90'>
-                Kunden oppretter og betaler returfrakten
-              </dd>
-            </div>
-            <div>
-              <dt className='font-utekos-text-medium text-base'>
-                Behandlingstid
-              </dt>
-              <dd className='mt-1 font-utekos-text leading-relaxed text-card-foreground/90'>
-                {returnPolicy.processRefundBusinessDays.minimum}–
-                {returnPolicy.processRefundBusinessDays.maximum}{' '}
-                virkedager etter mottak og kontroll
-              </dd>
-            </div>
-            <div>
-              <dt className='font-utekos-text-medium text-base'>
-                Returmetode
-              </dt>
-              <dd className='mt-1 font-utekos-text leading-relaxed text-card-foreground/90'>
-                Retur med post til den publiserte returadressen
-              </dd>
-            </div>
-          </dl>
-        </section>
+            <h2
+              id='return-policy-summary-heading'
+              className='font-google-sans text-2xl font-bold sm:text-3xl'
+            >
+              Returpolicy
+            </h2>
+            <dl className='mt-6 grid gap-6 sm:grid-cols-2'>
+              <div>
+                <dt className='font-utekos-text-medium text-base'>
+                  Angrefrist
+                </dt>
+                <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
+                  {returnPolicy.returnWindowDays} kalenderdager
+                  fra fysisk mottak
+                </dd>
+              </div>
+              <div>
+                <dt className='font-utekos-text-medium text-base'>
+                  Returfrakt
+                </dt>
+                <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
+                  Kunden oppretter og betaler returfrakten
+                </dd>
+              </div>
+              <div>
+                <dt className='font-utekos-text-medium text-base'>
+                  Behandlingstid
+                </dt>
+                <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
+                  {
+                    returnPolicy.processRefundBusinessDays
+                      .minimum
+                  }
+                  –
+                  {
+                    returnPolicy.processRefundBusinessDays
+                      .maximum
+                  }{' '}
+                  virkedager etter mottak og kontroll
+                </dd>
+              </div>
+              <div>
+                <dt className='font-utekos-text-medium text-base'>
+                  Returmetode
+                </dt>
+                <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
+                  Retur med post til den publiserte
+                  returadressen
+                </dd>
+              </div>
+            </dl>
+          </section>
+        </article>
       </AnimatedBlock>
 
       <AnimatedBlock

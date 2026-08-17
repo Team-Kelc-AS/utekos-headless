@@ -1,17 +1,8 @@
-// Path: src/app/frakt-og-retur/components/ShippingReturnsHeader.tsx
-import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
-
 export function ShippingReturnsHeader() {
   return (
     <>
       <header className='container mx-auto w-full items-start px-8 text-left'>
-        <BrandBadge
-          label='Fri frakt over 999 kr'
-          backgroundColor='var(--jungle)'
-          textColor='var(--foreground)'
-          className='mb-6 border border-foreground/6 px-8 py-4 text-left text-sm md:text-base'
-        />
-        <h1 className='font-google-sans font-sans text-4xl font-bold text-foreground sm:text-4xl md:text-5xl lg:text-6xl'>
+        <h1 className='font-google-sans hidden font-sans text-4xl font-bold text-foreground md:block md:text-5xl lg:text-6xl'>
           Frakt, retur og refusjon
         </h1>
         <p className='mx-auto mt-4 text-left font-utekos-text text-lg text-foreground md:text-xl'>
