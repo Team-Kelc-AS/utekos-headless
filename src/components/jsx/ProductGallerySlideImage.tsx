@@ -8,7 +8,7 @@ type ProductGallerySlideImageProps = {
   title: string
   index: number
   imageLayout: ProductGalleryImageLayout
-  imageClassName?: string
+  imageClassName?: string | undefined
 }
 
 export function ProductGallerySlideImage({

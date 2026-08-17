@@ -18,7 +18,7 @@ export function ProductGallery({
   title,
   images,
   imageBackgroundClassName = '',
-  imageClassName,
+  imageClassName = '',
   imageLayout = 'cover-fill'
 }: ProductGalleryProps) {
   if (images.length === 0) {
