@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { connection } from 'next/server'
 import { getCachedRelatedProducts } from '@/api/lib/products/getCachedRelatedProducts'
 import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
 import { RelatedProducts } from './RelatedProducts'
@@ -11,6 +12,8 @@ type AsyncRelatedProductsProps = {
 export async function AsyncRelatedProducts({
   handle
 }: AsyncRelatedProductsProps) {
+  await connection()
+
   try {
     const products = await getCachedRelatedProducts(handle)
 

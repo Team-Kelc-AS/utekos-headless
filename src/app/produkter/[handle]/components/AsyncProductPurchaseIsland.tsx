@@ -1,6 +1,7 @@
 import 'server-only'
 
 import { captureException } from '@sentry/nextjs'
+import { connection } from 'next/server'
 import { fetchProductOptions } from '@/api/lib/products/fetchProductOptions'
 import { ProductPurchaseIsland } from './ProductPurchaseIsland'
 import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
@@ -25,6 +26,8 @@ export async function AsyncProductPurchaseIsland({
   storefrontLookupHandle,
   storefrontSelectedOptions
 }: AsyncProductPurchaseIslandProps) {
+  await connection()
+
   let productOptions: UtekosProductOptions | null = null
   let hasVariantSelectionError: boolean
 
