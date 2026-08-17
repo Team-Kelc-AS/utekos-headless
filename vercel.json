@@ -2,6 +2,9 @@
   "github": {
     "autoAlias": false
   },
+  "git": {
+    "deploymentEnabled": false
+  },
   "functions": {
     "src/app/api/queues/canonical-provider-dispatch/route.ts": {
       "experimentalTriggers": [
