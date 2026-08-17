@@ -2,15 +2,17 @@
 import { InfoSidebar } from '@/app/frakt-og-retur/components/InfoSideBar'
 import { ShippingReturnsHeader } from '@/app/frakt-og-retur/components/ShippingReturnsHeader'
 import { ShippingReturnsInfo } from '@/app/frakt-og-retur/components/ShippingReturnsInfo'
+import { ShippingReturnsMobileHero } from '@/app/frakt-og-retur/components/ShippingReturnsMobileHero'
+import { ShippingReturnsProductLinks } from '@/app/frakt-og-retur/components/ShippingReturnsProductLinks'
 import { returnPolicyPageMetadata } from '@/lib/policies/returnPolicyMetadata'
+import { PatternFrame } from '@/components/ui/pattern-frame'
 
 export const metadata = returnPolicyPageMetadata
 
-import { PatternFrame } from '@/components/ui/pattern-frame'
-
 export default function ShippingAndReturnsPage() {
   return (
-    <article className='dark:bg-dark-background mx-auto w-full bg-background pt-12 pb-20 sm:pt-16 sm:pb-28'>
+    <article className='dark:bg-dark-background mx-auto w-full bg-background pt-0 pb-20 md:pt-16 sm:pb-28'>
+      <ShippingReturnsMobileHero />
       <ShippingReturnsHeader />
 
       <PatternFrame
@@ -25,6 +27,8 @@ export default function ShippingAndReturnsPage() {
         <ShippingReturnsInfo />
         <InfoSidebar />
       </PatternFrame>
+
+      <ShippingReturnsProductLinks />
     </article>
   )
 }

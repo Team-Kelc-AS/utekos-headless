@@ -3,17 +3,17 @@ import { ComfyrobeContentColumn } from './ComfyrobeContentColumn'
 import type { ShopifyMediaImage } from 'types/media'
 import { PageSection } from '@/components/layout/PageSection'
 import { cn } from '@/lib/utils/className'
-import comyrobekvinne31600x1600 from '@/assets/images/comfyrobe/ComyrobeKvinne3-1600x1600.webp'
+import comfyrobeProduct1200x1200 from '@/assets/images/comfyrobe/Comfyrobe-Product-1200x1200.webp'
 
 
 const COMFYROBE_FALLBACK_IMAGE: ShopifyMediaImage = {
   id: 'comfyrobe-fallback',
   image: {
     id: 'comfyrobe-fallback',
-    url: comyrobekvinne31600x1600,
+    url: comfyrobeProduct1200x1200,
     altText: 'Comfyrobe™ - Vanntett og vindtett robe',
-    width: 1600,
-    height: 1600
+    width: 1200,
+    height: 1200
   }
 }
 
