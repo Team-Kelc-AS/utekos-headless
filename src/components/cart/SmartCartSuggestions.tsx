@@ -60,9 +60,12 @@ export function SmartCartSuggestions({
   }
 
   const subtotal = parseFloat(cart.cost.subtotalAmount.amount)
-  const cartLineProductIds = new Set(
-    cart.lines.map(line => line.merchandise.product.id)
-  )
+
+  // Optimization: Populate Set directly via loop to avoid intermediate array allocation from cart.lines.map(...)
+  const cartLineProductIds = new Set<string>()
+  for (let i = 0; i < cart.lines.length; i++) {
+    cartLineProductIds.add(cart.lines[i].merchandise.product.id)
+  }
 
   const eligibleAccessoryProducts = accessoryProducts.filter(
     isSuggestionEligible
@@ -73,16 +76,33 @@ export function SmartCartSuggestions({
 
   if (subtotal < FREE_SHIPPING_THRESHOLD) {
     const remainingAmount = FREE_SHIPPING_THRESHOLD - subtotal
-    const allPotential = [
-      ...eligibleAccessoryProducts,
-      ...eligibleRecommendedProducts
-    ]
 
-    const availableSuggestions = [
-      ...new Map(
-        allPotential.map(product => [product.id, product])
-      ).values()
-    ].filter(product => !cartLineProductIds.has(product.id))
+    // Optimization: Deduplicate potential products in a single pass while filtering out items already in cart,
+    // avoiding intermediate `[product.id, product]` tuple array allocations and `new Map(...)` overhead.
+    const seenProductIds = new Set<string>()
+    const availableSuggestions: ShopifyProduct[] = []
+
+    for (let i = 0; i < eligibleAccessoryProducts.length; i++) {
+      const product = eligibleAccessoryProducts[i]
+      if (
+        !cartLineProductIds.has(product.id) &&
+        !seenProductIds.has(product.id)
+      ) {
+        seenProductIds.add(product.id)
+        availableSuggestions.push(product)
+      }
+    }
+
+    for (let i = 0; i < eligibleRecommendedProducts.length; i++) {
+      const product = eligibleRecommendedProducts[i]
+      if (
+        !cartLineProductIds.has(product.id) &&
+        !seenProductIds.has(product.id)
+      ) {
+        seenProductIds.add(product.id)
+        availableSuggestions.push(product)
+      }
+    }
 
     const sorted = [...availableSuggestions].sort((a, b) => {
       const priceA = parseFloat(
