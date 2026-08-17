@@ -1062,6 +1062,65 @@ const beginCheckoutProviders = {
   Record<ProviderId, ProviderCatalogEntry>
 >
 
+const checkoutProgressMetaTransport = {
+  browser: null,
+  server: 'meta_conversions_api'
+} as const
+
+const addShippingInfoProviderBase = activeEventProviders(
+  'add_shipping_info',
+  {
+    commerce: true,
+    firstPartyRequired: [
+      'checkout_id',
+      'shipping_revision',
+      'begin_checkout_event_id',
+      'currency',
+      'value',
+      'items'
+    ],
+    meta: {
+      eventName: 'AddShippingInfo',
+      requiredParameters: [
+        'content_ids',
+        'contents',
+        'currency',
+        'value'
+      ]
+    },
+    posthog: false
+  }
+)
+const addShippingInfoGoogleTransport = {
+  browser: null,
+  server: null
+} as const
+const addShippingInfoProviders = {
+  ...addShippingInfoProviderBase,
+  google: {
+    ...addShippingInfoProviderBase.google,
+    transport: addShippingInfoGoogleTransport,
+    productionStatus: 'planned',
+    productionDetail:
+      'Google delivery remains disabled until an add_shipping_info Data Manager adapter is approved.',
+    serverOutbox: 'disabled',
+    signalDelivery: resolveProviderSignalDelivery(
+      addShippingInfoGoogleTransport
+    )
+  },
+  meta: {
+    ...addShippingInfoProviderBase.meta,
+    transport: checkoutProgressMetaTransport,
+    productionDetail:
+      'Meta Conversions API is the active provider owner for this Shopify checkout event.',
+    signalDelivery: resolveProviderSignalDelivery(
+      checkoutProgressMetaTransport
+    )
+  }
+} as const satisfies Readonly<
+  Record<ProviderId, ProviderCatalogEntry>
+>
+
 const addPaymentInfoProviderBase = activeEventProviders(
   'add_payment_info',
   {
@@ -1074,8 +1133,8 @@ const addPaymentInfoProviderBase = activeEventProviders(
       'value',
       'items'
     ],
-    pinterest: {
-      eventName: 'add_payment_info',
+    meta: {
+      eventName: 'AddPaymentInfo',
       requiredParameters: [
         'content_ids',
         'contents',
@@ -1096,9 +1155,18 @@ const addPaymentInfoProviders = {
     ...addPaymentInfoProviderBase.google,
     transport: addPaymentInfoGoogleTransport,
     productionDetail:
-      'Google Data Manager is the sole active provider owner after the event-specific Shopify Custom Pixel cutover.',
+      'Google Data Manager remains active after the event-specific Shopify Custom Pixel cutover.',
     signalDelivery: resolveProviderSignalDelivery(
       addPaymentInfoGoogleTransport
+    )
+  },
+  meta: {
+    ...addPaymentInfoProviderBase.meta,
+    transport: checkoutProgressMetaTransport,
+    productionDetail:
+      'Meta Conversions API is active for marketing-consented Shopify payment submissions.',
+    signalDelivery: resolveProviderSignalDelivery(
+      checkoutProgressMetaTransport
     )
   }
 } as const satisfies Readonly<
@@ -1615,40 +1683,31 @@ const eventCatalogBase = {
   add_shipping_info: {
     version: 1,
     name: 'add_shipping_info',
-    lifecycle: 'blocked_source',
-    owner: 'shopify_checkout_event_source',
+    lifecycle: 'active',
+    owner: 'shopify_app_web_pixel',
     trigger: {
       description:
-        'Create only after an authoritative Shopify checkout event confirms that a shipping revision was saved; checkout_shipping_info_submitted proves only that a rate was chosen.',
-      sources: ['browser', 'server'],
-      repeatability: 'Each saved shipping revision is new.',
-      eventTime: 'The authoritative saved-shipping timestamp.',
+        'Create when Shopify emits checkout_shipping_info_submitted and the PII-free begin_checkout correlation resolves to a consented canonical source. The event proves that a shipping rate was chosen.',
+      sources: ['browser'],
+      repeatability: 'Each Shopify shipping-information submission is new.',
+      eventTime:
+        'The Shopify checkout_shipping_info_submitted timestamp.',
       prerequisites: [
-        'approved source that proves a saved shipping revision',
+        'Shopify checkout_shipping_info_submitted source event',
         'checkout_id',
-        'stable shipping revision distinct from Shopify event seq',
-        'shipping tier',
+        'begin_checkout_event_id correlation',
+        'stable Shopify source event id used as shipping revision',
+        'analytics consent',
         'items'
       ]
     },
     dedupe: dedupe(
-      'checkout_id + shipping_revision',
-      'A later saved shipping revision receives a new event_id.',
+      'Shopify checkout_shipping_info_submitted event_id',
+      'A later Shopify submission receives a new event_id; replay of the same source event reuses it.',
       retain90Days
     ),
     consent: mutationConsent,
-    providers: plannedProviders('add_shipping_info', {
-      googleRequired: [
-        'currency',
-        'value',
-        'shipping_tier',
-        'items'
-      ],
-      microsoft: {
-        eventName: 'add_shipping_info',
-        requiredParameters: ['shipping_tier']
-      }
-    })
+    providers: addShippingInfoProviders
   },
   add_payment_info: {
     version: 1,

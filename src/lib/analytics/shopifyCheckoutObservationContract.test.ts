@@ -42,6 +42,15 @@ const canonicalPaymentObservation = {
   }
 } as const
 
+const canonicalShippingObservation = {
+  ...shippingObservation,
+  schemaVersion: 2,
+  correlation: {
+    beginCheckoutEventId:
+      '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
+  }
+} as const
+
 test('accepts a minimized checkout progress observation', () => {
   assert.deepEqual(
     shopifyCheckoutObservationSchema.parse(shippingObservation),
@@ -55,6 +64,15 @@ test('accepts a v2 payment observation with only a PII-free canonical correlatio
       canonicalPaymentObservation
     ),
     canonicalPaymentObservation
+  )
+})
+
+test('accepts a v2 shipping observation with only a PII-free canonical correlation', () => {
+  assert.deepEqual(
+    shopifyCheckoutObservationSchema.parse(
+      canonicalShippingObservation
+    ),
+    canonicalShippingObservation
   )
 })
 

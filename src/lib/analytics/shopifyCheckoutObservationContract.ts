@@ -66,17 +66,26 @@ const paymentObservationSchema = z.strictObject({
   commerce: commerceSchema
 })
 
-const canonicalPaymentObservationSchema = z.strictObject({
+const canonicalCheckoutProgressObservationShape = {
   ...commonObservationShape,
   schemaVersion: z.literal(
     SHOPIFY_CHECKOUT_OBSERVATION_CANONICAL_SCHEMA_VERSION
   ),
-  eventName: z.literal('payment_info_submitted'),
   checkoutToken: z.string().min(1).max(255),
   correlation: z.strictObject({
     beginCheckoutEventId: z.string().uuid()
   }),
   commerce: commerceSchema
+}
+
+const canonicalShippingObservationSchema = z.strictObject({
+  ...canonicalCheckoutProgressObservationShape,
+  eventName: z.literal('checkout_shipping_info_submitted')
+})
+
+const canonicalPaymentObservationSchema = z.strictObject({
+  ...canonicalCheckoutProgressObservationShape,
+  eventName: z.literal('payment_info_submitted')
 })
 
 const alertObservationSchema = z.strictObject({
@@ -100,6 +109,15 @@ export const shopifyCheckoutObservationSchema =
       paymentObservationSchema,
       alertObservationSchema
     ]),
+    z.discriminatedUnion('eventName', [
+      canonicalShippingObservationSchema,
+      canonicalPaymentObservationSchema
+    ])
+  ])
+
+export const shopifyCanonicalCheckoutProgressObservationSchema =
+  z.discriminatedUnion('eventName', [
+    canonicalShippingObservationSchema,
     canonicalPaymentObservationSchema
   ])
 
@@ -114,4 +132,7 @@ export type ShopifyCheckoutObservation = z.infer<
 >
 export type ShopifyCanonicalPaymentObservation = z.infer<
   typeof shopifyCanonicalPaymentObservationSchema
+>
+export type ShopifyCanonicalCheckoutProgressObservation = z.infer<
+  typeof shopifyCanonicalCheckoutProgressObservationSchema
 >

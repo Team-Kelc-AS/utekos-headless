@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { canonicalAddToCartSchema } from './addToCartEvent'
 import { canonicalAddPaymentInfoSchema } from './addPaymentInfoEvent'
+import { canonicalAddShippingInfoSchema } from './addShippingInfoEvent'
 import { canonicalBeginCheckoutSchema } from './beginCheckoutEvent'
 import { canonicalPageViewSchema } from './pageViewEvent'
 import { canonicalPurchaseSchema } from './purchaseEvent'
@@ -37,6 +38,7 @@ export const canonicalEventSchema = z.discriminatedUnion(
     canonicalViewItemSchema,
     canonicalAddToCartSchema,
     canonicalAddPaymentInfoSchema,
+    canonicalAddShippingInfoSchema,
     canonicalBeginCheckoutSchema,
     canonicalPurchaseSchema,
     canonicalRefundSchema,

@@ -183,35 +183,37 @@ test('keeps blocked_source events isolated from active lifecycle', () => {
   )
 
   assert.deepEqual(blockedSources, [
-    'add_shipping_info',
     'checkout_error',
     'payment_error'
   ])
 })
 
-test('keeps shipping blocked while add_payment_info is isolated to the approved Shopify and Google cutover', () => {
+test('routes correlated checkout progress only to its approved providers', () => {
   const shipping = eventCatalog.add_shipping_info
   const payment = eventCatalog.add_payment_info
 
-  assert.equal(shipping.lifecycle, 'blocked_source')
+  assert.equal(shipping.lifecycle, 'active')
   assert.equal(payment.lifecycle, 'active')
   assert.match(
     shipping.trigger.description,
-    /checkout_shipping_info_submitted proves only that a rate was chosen/
+    /proves that a shipping rate was chosen/
   )
   assert.match(
     payment.trigger.description,
     /payment_info_submitted proves submission only/
   )
-  assert.ok(
-    Object.values(shipping.providers).every(
-      provider => provider.serverOutbox !== 'active'
-    )
+  assert.equal(shipping.owner, 'shopify_app_web_pixel')
+  assert.equal(shipping.providers.meta.eventName, 'AddShippingInfo')
+  assert.equal(shipping.providers.meta.serverOutbox, 'active')
+  assert.equal(shipping.providers.meta.transport.browser, null)
+  assert.equal(
+    shipping.providers.meta.transport.server,
+    'meta_conversions_api'
   )
   assert.ok(
     Object.entries(payment.providers).every(
       ([providerId, provider]) =>
-        providerId === 'google' || providerId === 'pinterest' ?
+        providerId === 'google' || providerId === 'meta' ?
           provider.serverOutbox === 'active'
         : provider.serverOutbox !== 'active'
     )
@@ -222,19 +224,18 @@ test('keeps shipping blocked while add_payment_info is isolated to the approved 
     payment.providers.google.transport.server,
     'google_data_manager'
   )
-  assert.equal(payment.providers.meta.support, 'not_relevant')
+  assert.equal(payment.providers.meta.eventName, 'AddPaymentInfo')
+  assert.equal(payment.providers.meta.serverOutbox, 'active')
+  assert.equal(payment.providers.meta.transport.browser, null)
+  assert.equal(
+    payment.providers.meta.transport.server,
+    'meta_conversions_api'
+  )
   assert.equal(
     payment.providers.microsoft_uet.support,
     'not_relevant'
   )
-  assert.equal(
-    payment.providers.pinterest.eventName,
-    'add_payment_info'
-  )
-  assert.equal(
-    payment.providers.pinterest.serverOutbox,
-    'active'
-  )
+  assert.equal(payment.providers.pinterest.support, 'not_relevant')
   assert.equal(payment.providers.posthog.support, 'not_relevant')
 })
 
@@ -244,7 +245,6 @@ test('marks all non-blocked catalog events as active', () => {
   )
 
   assert.deepEqual(inactiveEvents, [
-    'add_shipping_info',
     'checkout_error',
     'payment_error'
   ])
@@ -265,6 +265,8 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   assert.ok(activeOutboxes.includes('google:view_item'))
   assert.ok(activeOutboxes.includes('google:add_to_cart'))
   assert.ok(activeOutboxes.includes('google:add_payment_info'))
+  assert.ok(activeOutboxes.includes('meta:add_shipping_info'))
+  assert.ok(activeOutboxes.includes('meta:add_payment_info'))
   assert.ok(activeOutboxes.includes('meta:search'))
   assert.ok(activeOutboxes.includes('microsoft_uet:purchase'))
   assert.ok(activeOutboxes.includes('microsoft_uet:add_to_cart'))
@@ -279,9 +281,6 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   assert.ok(activeOutboxes.includes('pinterest:view_category'))
   assert.ok(activeOutboxes.includes('pinterest:add_to_wishlist'))
   assert.ok(activeOutboxes.includes('pinterest:generate_lead'))
-  assert.ok(
-    activeOutboxes.includes('pinterest:add_payment_info')
-  )
   assert.equal(
     eventCatalog.page_view.providers.pinterest.support,
     'not_relevant'

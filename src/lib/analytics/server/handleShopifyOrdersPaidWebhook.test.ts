@@ -33,6 +33,10 @@ const { handleShopifyOrdersPaidWebhook } =
           event_id: string
           status: 'accepted' | 'duplicate'
         }>
+        completeCheckoutSession?: (
+          order: unknown,
+          purchase: unknown
+        ) => Promise<unknown>
         createSourceEvidence?: (input: unknown) => unknown
         mapOrder?: (payload: unknown) => unknown
         notifyPurchase?: (
@@ -93,6 +97,7 @@ function createRequest(body: string, hmac = 'valid-hmac') {
 
 test('accepted purchase returns 202', async () => {
   const acceptCalls: unknown[] = []
+  const completionCalls: unknown[] = []
 
   const response = await handleShopifyOrdersPaidWebhook(
     createRequest(ORDER_BODY),
@@ -105,6 +110,9 @@ test('accepted purchase returns 202', async () => {
         ok: true
       }),
       writeLog: async () => ({}),
+      completeCheckoutSession: async (order, purchase) => {
+        completionCalls.push({ order, purchase })
+      },
       acceptPurchase: async input => {
         acceptCalls.push(input)
         return { event_id: EVENT_ID, status: 'accepted' }
@@ -118,12 +126,50 @@ test('accepted purchase returns 202', async () => {
     status: 'accepted'
   })
   assert.equal(acceptCalls.length, 1)
+  assert.deepEqual(completionCalls, [
+    {
+      order: { id: 12345 },
+      purchase: { id: 12345 }
+    }
+  ])
   assert.deepEqual(
     (acceptCalls[0] as { sourceEvidence: unknown })
       .sourceEvidence,
     SOURCE_EVIDENCE
   )
 })
+
+test(
+  'Registry finality failure does not reject an accepted purchase',
+  async () => {
+    const response = await handleShopifyOrdersPaidWebhook(
+      createRequest(ORDER_BODY),
+      {
+        verifyWebhook: () => true,
+        mapOrder: payload => payload,
+        createSourceEvidence: () => SOURCE_EVIDENCE,
+        acceptPurchase: async () => ({
+          event_id: EVENT_ID,
+          status: 'accepted'
+        }),
+        completeCheckoutSession: async () => {
+          throw new Error('Registry unavailable')
+        },
+        notifyPurchase: async () => ({
+          delivery: 'sent',
+          ok: true
+        }),
+        writeLog: async () => ({})
+      }
+    )
+
+    assert.equal(response.status, 202)
+    assert.deepEqual(await response.json(), {
+      event_id: EVENT_ID,
+      status: 'accepted'
+    })
+  }
+)
 
 test('duplicate purchase returns 200', async () => {
   const response = await handleShopifyOrdersPaidWebhook(

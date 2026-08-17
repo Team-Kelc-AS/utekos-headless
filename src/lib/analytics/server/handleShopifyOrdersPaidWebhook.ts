@@ -18,6 +18,10 @@ const NO_STORE_HEADERS = {
 
 type ShopifyOrdersPaidWebhookDependencies = {
   acceptPurchase?: typeof acceptCanonicalPurchase
+  completeCheckoutSession?: (
+    order: OrderPaid,
+    purchase: ReturnType<typeof shopifyOrderToCanonicalPurchase>
+  ) => Promise<unknown>
   createSourceEvidence?: typeof createShopifyWebhookCommerceSourceEvidence
   mapOrder?: typeof shopifyOrderToCanonicalPurchase
   notifyPurchase?: typeof sendPurchaseNotification
@@ -46,6 +50,8 @@ export async function handleShopifyOrdersPaidWebhook(
     dependencies.mapOrder ?? shopifyOrderToCanonicalPurchase
   const acceptPurchase =
     dependencies.acceptPurchase ?? acceptCanonicalPurchase
+  const completeCheckoutSession =
+    dependencies.completeCheckoutSession
   const createSourceEvidence =
     dependencies.createSourceEvidence ??
     createShopifyWebhookCommerceSourceEvidence
@@ -93,6 +99,23 @@ export async function handleShopifyOrdersPaidWebhook(
       sourceEvidence,
       store: postgresCanonicalEventStore
     })
+
+    if (completeCheckoutSession) {
+      try {
+        await completeCheckoutSession(
+          orderPayload as OrderPaid,
+          canonicalPurchase
+        )
+      } catch {
+        /*
+         * Canonical purchase persistence is authoritative.
+         * Registry finality is an idempotent operational
+         * projection and must not reject or delay Shopify's
+         * paid-order webhook retry contract.
+         */
+      }
+    }
+
     let notification
 
     try {
