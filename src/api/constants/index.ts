@@ -40,7 +40,7 @@ export const PRODUCT_VARIANTS = {
     ],
     features: ['Helårsbruk', 'Tre bruksformer', 'Vannavstøtende'],
     colors: [{ name: 'Havdyp', hex: 'var(--color-havdyp)' }],
-    sizes: ['Liten', 'Middels', 'Stor', 'Ekstra stor'],
+    sizes: ['Liten', 'Middels', 'Stor', 'Større'],
     images: [
       'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/kvinne-nyter-terrasselivet-med-utekos-techdown.webp?v=1780689292',
       'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/utekos-techdown-diagonalt-fullfigur.webp?v=1780689364',

@@ -37,7 +37,7 @@ test('replaces previous readable options without duplicating them', () => {
     handle: 'utekos-techdown',
     selectedOptions: [
       { name: 'Farge', value: 'Havdyp' },
-      { name: 'Størrelse', value: 'Ekstra stor' },
+      { name: 'Størrelse', value: 'Større' },
       { name: 'Kjønn', value: 'Unisex' }
     ],
     searchParams: new URLSearchParams(
@@ -48,7 +48,7 @@ test('replaces previous readable options without duplicating them', () => {
   const parsedUrl = new URL(url, 'https://utekos.no')
 
   assert.deepEqual(parsedUrl.searchParams.getAll('storrelse'), [
-    'ekstra-stor'
+    'storre'
   ])
   assert.equal(parsedUrl.searchParams.has('variant'), false)
 })

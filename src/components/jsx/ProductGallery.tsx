@@ -1,7 +1,6 @@
 // Path: src/components/jsx/ProductGallery.tsx
 'use client'
 
-import Image from 'next/image'
 import {
   Carousel,
   CarouselContent,
@@ -10,6 +9,7 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel'
 import { CAROUSEL_SSR } from '@/components/ui/carousel-ssr'
+import { ProductGallerySlideImage } from '@/components/jsx/ProductGallerySlideImage'
 import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import { cn } from '@/lib/utils/className'
 import type { ProductGalleryProps } from '@types'
@@ -18,7 +18,8 @@ export function ProductGallery({
   title,
   images,
   imageBackgroundClassName = '',
-  imageClassName
+  imageClassName,
+  imageLayout = 'cover-fill'
 }: ProductGalleryProps) {
   if (images.length === 0) {
     return null
@@ -44,25 +45,12 @@ export function ProductGallery({
             key={resolveImageSrc(image.url)}
             className='relative h-full basis-full pl-0'
           >
-            <Image
-              src={image.url}
-              alt={
-                image.altText ||
-                `Bilde av ${title}`
-              }
-              fill
-              sizes='(min-width: 1280px) 58vw, (min-width: 1024px) 54vw, 100vw'
-              quality={95}
-              className={cn(
-                'pointer-events-none object-cover object-top select-none',
-                imageClassName
-              )}
-              draggable={false}
-              fetchPriority={
-                index === 0 ?
-                  'high'
-                : 'auto'
-              }
+            <ProductGallerySlideImage
+              image={image}
+              title={title}
+              index={index}
+              imageLayout={imageLayout}
+              imageClassName={imageClassName}
             />
           </CarouselItem>
         ))}

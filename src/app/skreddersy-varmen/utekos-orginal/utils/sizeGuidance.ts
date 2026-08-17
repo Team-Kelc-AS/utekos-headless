@@ -21,7 +21,7 @@ export const SIZE_GUIDANCE: Record<string, { height: string; tips: string[] }> =
         'Obs: Er du over 195 cm kan denne størrelsen oppleves som litt snau.'
       ]
     },
-    'Ekstra stor': {
+    'Større': {
       height: '190 cm og oppover',
       tips: [
         'Skreddersydd for deg over 190 cm – ekstra lengde i kroppen og ermene.',

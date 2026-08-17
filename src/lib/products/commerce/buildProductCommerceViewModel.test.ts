@@ -38,14 +38,14 @@ test('builds one TechDown commerce model with three public sizes', () => {
   )
   assert.deepEqual(
     commerce.variants.map(variant => variant.options.size),
-    ['Middels', 'Stor', 'Ekstra stor']
+    ['Middels', 'Stor', 'Større']
   )
   assert.deepEqual(
     commerce.variants.map(variant => variant.publicName),
     [
       'Utekos TechDown™ / Havdyp / Middels / Unisex',
       'Utekos TechDown™ / Havdyp / Stor / Unisex',
-      'Utekos TechDown™ / Havdyp / Ekstra stor / Unisex'
+      'Utekos TechDown™ / Havdyp / Større / Unisex'
     ]
   )
   assert.equal(
@@ -81,7 +81,7 @@ test('resolves a readable sold-out variant without changing the default', () => 
     }
   )
 
-  assert.equal(resolved?.options.size, 'Ekstra stor')
+  assert.equal(resolved?.options.size, 'Større')
   assert.equal(resolved?.commerce.availableForSale, false)
   assert.equal(
     commerce.defaultVariantId,
@@ -163,7 +163,7 @@ test('builds the landing graph as one ItemPage and one complete ProductGroup', (
     [
       'https://utekos.no/produkter/utekos-techdown#variant-havdyp-middels-unisex',
       'https://utekos.no/produkter/utekos-techdown#variant-havdyp-stor-unisex',
-      'https://utekos.no/produkter/utekos-techdown#variant-havdyp-ekstra-stor-unisex'
+      'https://utekos.no/produkter/utekos-techdown#variant-havdyp-storre-unisex'
     ]
   )
   assert.equal(

@@ -226,7 +226,7 @@ export function ProductCard({
           />
         </CardContent>
 
-        <div className='dark:border-dark-card-foreground/24 flex flex-col gap-2 rounded-t-xl border-t border-card-foreground/24 p-3 md:gap-3 md:p-4'>
+        <div className='dark:border-dark-card-foreground/24 flex flex-col gap-2 rounded-t-xl border-t border-card-foreground/24 bg-jungle p-3 md:gap-3 md:p-4'>
           <div className='grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-2'>
             <Link
               href={productUrl}

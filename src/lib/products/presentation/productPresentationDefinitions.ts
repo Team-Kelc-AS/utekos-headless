@@ -1,4 +1,8 @@
 import { productPresentationDefinitionSchema } from './productPresentationSchema'
+import {
+  TECH_DOWN_HIDDEN_SIZES,
+  TECH_DOWN_SIZE_VALUE_MAP
+} from './techDownSizeContract'
 
 const commonGenderOption = {
   key: 'gender',
@@ -40,25 +44,12 @@ export const productPresentationDefinitions =
           publicName: 'Størrelse',
           publicParam: 'storrelse',
           shopifyNames: ['Størrelse', 'Size', 'Str'],
-          valueMap: {
-            liten: 'Liten',
-            small: 'Liten',
-            s: 'Liten',
-            middels: 'Middels',
-            medium: 'Middels',
-            m: 'Middels',
-            stor: 'Stor',
-            large: 'Stor',
-            l: 'Stor',
-            'ekstra stor': 'Ekstra stor',
-            'extra large': 'Ekstra stor',
-            xl: 'Ekstra stor'
-          }
+          valueMap: TECH_DOWN_SIZE_VALUE_MAP
         },
         commonGenderOption
       ],
       hiddenOptionValues: {
-        size: ['Liten']
+        size: TECH_DOWN_HIDDEN_SIZES
       },
       media: {
         defaultAlt:

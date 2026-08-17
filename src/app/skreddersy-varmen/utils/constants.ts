@@ -24,7 +24,7 @@ export const SIZE_GUIDANCE: Record<
       'Eller for deg som er lavere og ønsker romslighet.'
     ]
   },
-  'Ekstra stor': {
+  'Større': {
     height: '185 cm og høyere',
     tips: [
       'Passer best for deg over 185 cm – ekstra lengde i kroppen og ermene.',

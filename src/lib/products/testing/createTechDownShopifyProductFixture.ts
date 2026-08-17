@@ -34,7 +34,7 @@ const sizes = [
     barcode: null
   },
   {
-    name: 'Ekstra stor',
+    name: 'Større',
     id: '103',
     sku: 'TECHDOWN-HAVDYP-XL',
     availableForSale: false,

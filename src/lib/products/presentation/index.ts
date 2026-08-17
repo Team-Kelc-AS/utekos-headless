@@ -21,6 +21,7 @@ export type {
 } from './resolvePublicVariantOptions'
 export { resolveCatalogVariantPresentation } from './resolveCatalogVariantPresentation'
 export type { CatalogVariantPresentationResult } from './resolveCatalogVariantPresentation'
+export { publicOptionSearchParamMatches } from './publicOptionSearchParamMatches'
 export {
   buildProductPresentationLlmsIndex,
   buildProductPresentationLlmsProfiles

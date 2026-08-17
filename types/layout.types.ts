@@ -65,11 +65,16 @@ export type AccordionSectionData = {
   color: string
 }
 
+export type ProductGalleryImageLayout =
+  | 'cover-fill'
+  | 'intrinsic'
+
 export type ProductGalleryProps = {
   title: string
   images: Image[]
   imageBackgroundClassName?: string
   imageClassName?: string
+  imageLayout?: ProductGalleryImageLayout
 }
 export type QuantitySelectorProps = {
   value: number

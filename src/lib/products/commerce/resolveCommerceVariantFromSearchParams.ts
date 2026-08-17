@@ -1,4 +1,4 @@
-import { slugifyVariantOption } from '@/lib/utils/slugifyVariantOption'
+import { publicOptionSearchParamMatches } from '@/lib/products/presentation'
 import type { ProductCommerceViewModel } from './productCommerceViewModelSchema'
 
 type SearchParamsRecord = Record<
@@ -37,8 +37,10 @@ export function resolveCommerceVariantFromSearchParams(
 
         return (
           optionValue &&
-          firstValue(searchParams[param]) ===
-            slugifyVariantOption(optionValue)
+          publicOptionSearchParamMatches(
+            optionValue,
+            firstValue(searchParams[param]) ?? ''
+          )
         )
       })
     )

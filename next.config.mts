@@ -77,29 +77,15 @@ async function buildSecurityHeaders() {
   /* eslint-enable quotes */
 }
 
-const serverlessTraceExcludes = [
-  'gcloud components install alpha beta skaffold minikube kubectl gke-gcloud-auth-plugin/**',
-  'output/**',
-  '.playwright-cli/**',
-  '.vc-config.json',
-  'types/codex-log.md'
-]
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   poweredByHeader: false,
+  partialPrefetching: true,
   typedRoutes: true,
   reactCompiler: true,
   cacheComponents: true,
   turbopack: { root: process.cwd() },
-  outputFileTracingExcludes: { '*': serverlessTraceExcludes },
-  ...(ENABLE_DOCKER_STANDALONE_OUTPUT ?
-    { output: 'standalone' }
-  : {}),
-  ...(ENABLE_DOCKER_POLLING ?
-    { watchOptions: { pollIntervalMs: 1000 } }
-  : {}),
-
   cacheLife: {
     products: { stale: 300, revalidate: 900, expire: 3600 },
     collections: { stale: 600, revalidate: 1800, expire: 7200 },
@@ -114,16 +100,10 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 180,
 
   experimental: {
-    // Bound synchronous PPR resume decompression. Current control-route
-    // artifacts are well below this ceiling; Preview verifies the measured
-    // headroom before production acceptance.
-    maxPostponedStateSize: '5 MB',
-    turbopackFileSystemCacheForDev: false,
-    // Disabled: restored turbopack build caches have been correlated with
-    // truncated PPR HTML shells (blank page + "Connection closed") under
-    // cacheComponents. Prefer clean prerenders until upstream is fixed.
-    // See the production Z_BUF_ERROR evidence and vercel/next.js#94371.
-    turbopackFileSystemCacheForBuild: false,
+    turbopackRustReactCompiler: true,
+    turbopackFileSystemCacheForDev: true,
+    turbopackFileSystemCacheForBuild: true,
+    serverComponentsHmrCache: true,
     webVitalsAttribution: ['CLS', 'INP', 'LCP'],
     optimizePackageImports: [
       'zod',

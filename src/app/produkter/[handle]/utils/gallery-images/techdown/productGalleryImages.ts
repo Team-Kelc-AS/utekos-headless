@@ -1,70 +1,65 @@
 import type { Image } from 'types/media'
 import { productImage } from '@/app/produkter/[handle]/utils/pruductImage'
-import techDownKikkertMobile from '@/assets/images/techdown/TechDown-700x1250.webp'
-import techDownFrontMobile from '@/assets/images/techdown/TechDown-Front-1-700x1250.webp'
-import techDownSideMobile from '@/assets/images/techdown/TechDown-Full-Front-2-700x1250.webp'
-import techDownBackMobile from '@/assets/images/techdown/TechDown-Back-700x1250-2.webp'
-import techDownKystMobile from '@/assets/images/techdown/TechDown-Kyst-700x1250.webp'
-import techDownJacketBackMobile from '@/assets/images/techdown/TechDown-B-700x1250.webp'
-import techDownZipperMobile from '@/assets/images/techdown/TechDown-Zipper-700x1250.webp'
-import techDownFlagMobile from '@/assets/images/techdown/TechDown-Flag-700x1250.webp'
+import techDownMobileColorBg1 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/Product-Page-Img-Color-Bg-1000x5000-1.webp'
+import techDownMobileColorBg2 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/2.webp'
+import techDownMobileColorBg3 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/3.webp'
+import techDownMobileColorBg4 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/4.webp'
+import techDownMobileColorBg5 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/5.webp'
+import techDownMobileColorBg6 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/6.webp'
+import techDownMobileColorBg8 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/8.webp'
+
+const TECHDOWN_MOBILE_IMAGE_WIDTH = 1000
+const TECHDOWN_MOBILE_IMAGE_HEIGHT = 1500
 
 export const TECHDOWN_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
-    'utekos-techdown-mobile-kikkert',
-    techDownKikkertMobile,
+    'utekos-techdown-mobile-color-bg-1',
+    techDownMobileColorBg1,
     'Kvinne sitter i stol med Utekos TechDown og ser i kikkert.',
-    700,
-    1250
+    TECHDOWN_MOBILE_IMAGE_WIDTH,
+    TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-front',
-    techDownFrontMobile,
+    'utekos-techdown-mobile-color-bg-2',
+    techDownMobileColorBg2,
     'Utekos TechDown i marineblå vist rett forfra med hette og fotpose i full lengde.',
-    700,
-    1250
+    TECHDOWN_MOBILE_IMAGE_WIDTH,
+    TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-side',
-    techDownSideMobile,
+    'utekos-techdown-mobile-color-bg-3',
+    techDownMobileColorBg3,
     'Utekos TechDown vist fra siden i full lengde.',
-    700,
-    1250
+    TECHDOWN_MOBILE_IMAGE_WIDTH,
+    TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-bakside',
-    techDownBackMobile,
+    'utekos-techdown-mobile-color-bg-4',
+    techDownMobileColorBg4,
     'Utekos TechDown sett bakfra i full lengde.',
-    700,
-    1250
+    TECHDOWN_MOBILE_IMAGE_WIDTH,
+    TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-kyst',
-    techDownKystMobile,
+    'utekos-techdown-mobile-color-bg-5',
+    techDownMobileColorBg5,
     'Kvinne slapper av i solnedgangen på terrassen ved kysten med Utekos TechDown.',
-    700,
-    1250
+    TECHDOWN_MOBILE_IMAGE_WIDTH,
+    TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-jakke-bakside',
-    techDownJacketBackMobile,
+    'utekos-techdown-mobile-color-bg-6',
+    techDownMobileColorBg6,
     'Overdelen av Utekos TechDown sett bakfra med hette.',
-    700,
-    1250
+    TECHDOWN_MOBILE_IMAGE_WIDTH,
+    TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-glidelas',
-    techDownZipperMobile,
-    'Nærbilde av glidelås med oransje glidelåstrekk og snorstrammere på Utekos TechDown.',
-    700,
-    1250
-  ),
-  productImage(
-    'utekos-techdown-mobile-flagg',
-    techDownFlagMobile,
+    'utekos-techdown-mobile-color-bg-8',
+    techDownMobileColorBg8,
     'Nærbilde av brodert norsk flagg på Utekos TechDown.',
-    700,
-    1250
+    TECHDOWN_MOBILE_IMAGE_WIDTH,
+    TECHDOWN_MOBILE_IMAGE_HEIGHT
   )
 ]
 

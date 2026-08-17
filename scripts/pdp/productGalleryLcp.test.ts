@@ -94,6 +94,9 @@ test(
     const source = await readSource(
       'src/components/jsx/ProductGallery.tsx'
     )
+    const imageSource = await readSource(
+      'src/components/jsx/ProductGallerySlideImage.tsx'
+    )
 
     assert.match(
       source,
@@ -114,21 +117,107 @@ test(
     )
 
     assert.match(
-      source,
-      /quality=\{\s*90\s*\}/,
-      'ProductGallery images must use quality 90'
+      imageSource,
+      /quality=\{\s*95\s*\}/,
+      'ProductGallery images must use quality 95'
     )
 
     assert.match(
-      source,
-      /fetchPriority=\{\s*index\s*===\s*0\s*\?\s*['"]high['"]\s*:\s*['"]auto['"]\s*\}/,
+      imageSource,
+      /index === 0 \? 'high' : 'auto'/,
       'First carousel image must retain high fetch priority'
     )
 
     assert.doesNotMatch(
-      source,
+      imageSource,
       /\bloading\s*=/,
       'Responsive carousel images must use native default loading behavior'
+    )
+  }
+)
+
+test(
+  'TechDown mobile gallery uses 2:3 intrinsic next/image slides',
+  async () => {
+    const pageSource = await readSource(
+      'src/app/produkter/[handle]/components/ProductPageView.tsx'
+    )
+    const imageSource = await readSource(
+      'src/components/jsx/ProductGallerySlideImage.tsx'
+    )
+    const gallerySource = await readSource(
+      'src/app/produkter/[handle]/utils/gallery-images/techdown/productGalleryImages.ts'
+    )
+
+    assert.match(
+      pageSource,
+      /isTechDownProduct \? 2 \/ 3/,
+      'TechDown mobile gallery frame must use aspect-ratio 2:3'
+    )
+
+    assert.match(
+      pageSource,
+      /imageLayout=\{\s*isTechDownProduct \?\s*'intrinsic'\s*:\s*'cover-fill'\s*\}/,
+      'TechDown mobile gallery must use intrinsic next/image sizing'
+    )
+
+    assert.match(
+      imageSource,
+      /width=\{image\.width\}/,
+      'Intrinsic slides must set next/image width'
+    )
+
+    assert.match(
+      imageSource,
+      /height=\{image\.height\}/,
+      'Intrinsic slides must set next/image height'
+    )
+
+    assert.match(
+      imageSource,
+      /object-contain object-center/,
+      'Intrinsic slides must not crop with object-cover'
+    )
+
+    assert.match(
+      gallerySource,
+      /const TECHDOWN_MOBILE_IMAGE_WIDTH = 1000/,
+      'TechDown mobile next/image width must be 1000'
+    )
+
+    assert.match(
+      gallerySource,
+      /const TECHDOWN_MOBILE_IMAGE_HEIGHT = 1500/,
+      'TechDown mobile next/image height must be 1500'
+    )
+
+    assert.match(
+      gallerySource,
+      /Product-Page-Img-Color-Bg-1000x5000-1\.webp/,
+      'TechDown mobile gallery must start with the first color-bg still'
+    )
+
+    assert.match(
+      gallerySource,
+      /Product-Page-Img-Color-Bg-1000x5000\/8\.webp/,
+      'TechDown mobile gallery must end with color-bg still 8'
+    )
+
+    assert.doesNotMatch(
+      gallerySource,
+      /Product-Page-Img-Color-Bg-1000x5000\/7\.webp/,
+      'TechDown mobile gallery must skip color-bg still 7'
+    )
+
+    const mobileImageImports =
+      gallerySource.match(
+        /Product-Page-Img-Color-Bg-1000x5000\/(?:Product-Page-Img-Color-Bg-1000x5000-1|[2-8])\.webp/g
+      ) ?? []
+
+    assert.equal(
+      mobileImageImports.length,
+      7,
+      'TechDown mobile gallery must contain exactly the seven requested stills'
     )
   }
 )

@@ -55,7 +55,7 @@ test('builds a stable readable TechDown URL and preserves attribution', () => {
     presentation,
     options: {
       color: 'Havdyp',
-      size: 'Ekstra stor',
+      size: 'Større',
       gender: 'Unisex'
     },
     searchParams:
@@ -64,9 +64,45 @@ test('builds a stable readable TechDown URL and preserves attribution', () => {
 
   assert.equal(
     url,
-    '/produkter/utekos-techdown?farge=havdyp&storrelse=ekstra-stor&kjonn=unisex&fbclid=fb&msclkid=ms&utm_medium=paid&utm_source=meta'
+    '/produkter/utekos-techdown?farge=havdyp&storrelse=storre&kjonn=unisex&fbclid=fb&msclkid=ms&utm_medium=paid&utm_source=meta'
   )
   assert.doesNotMatch(url, /variant=|gid|products\//)
+})
+
+test('uses Større as the public TechDown XL size', () => {
+  const fromShopifyName = resolveCatalogVariantPresentation({
+    handle: 'utekos-techdown',
+    selectedOptions: [
+      { name: 'Farge', value: 'Havdyp' },
+      { name: 'Størrelse', value: 'Større' },
+      { name: 'Kjønn', value: 'Unisex' }
+    ]
+  })
+  const fromLegacyName = resolveCatalogVariantPresentation({
+    handle: 'utekos-techdown',
+    selectedOptions: [
+      { name: 'Farge', value: 'Havdyp' },
+      { name: 'Størrelse', value: 'Ekstra stor' },
+      { name: 'Kjønn', value: 'Unisex' }
+    ]
+  })
+
+  assert.equal(fromShopifyName.status, 'included')
+  assert.equal(fromLegacyName.status, 'included')
+
+  if (
+    fromShopifyName.status !== 'included' ||
+    fromLegacyName.status !== 'included'
+  ) {
+    throw new Error('Expected TechDown Større to be publicly included')
+  }
+
+  assert.equal(fromShopifyName.options.size, 'Større')
+  assert.equal(fromLegacyName.options.size, 'Større')
+  assert.equal(
+    fromShopifyName.publicPath,
+    '/produkter/utekos-techdown?farge=havdyp&storrelse=storre&kjonn=unisex'
+  )
 })
 
 test('excludes hidden and unmapped catalog variants', () => {

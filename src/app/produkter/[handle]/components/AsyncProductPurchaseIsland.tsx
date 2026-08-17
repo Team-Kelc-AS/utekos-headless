@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { captureException } from '@sentry/nextjs'
 import { fetchProductOptions } from '@/api/lib/products/fetchProductOptions'
 import { ProductPurchaseIsland } from './ProductPurchaseIsland'
 import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
@@ -34,14 +35,20 @@ export async function AsyncProductPurchaseIsland({
     })
 
     hasVariantSelectionError = productOptions === null
-  } catch {
+  } catch (error) {
     hasVariantSelectionError = true
+    captureException(error, {
+      tags: {
+        surface: 'product-purchase-island',
+        handle: storefrontLookupHandle
+      }
+    })
   }
 
   if (!productOptions) {
     productOptions = {
       selectedVariantId: selectedVariant.id,
-      selectedVariantAvailableForSale: false,
+      selectedVariantAvailableForSale: selectedVariant.availableForSale,
       options: []
     }
   }

@@ -64,7 +64,7 @@ test(
 
     assert.match(
       asyncPurchaseSource,
-      /selectedVariantAvailableForSale:\s*false/
+      /selectedVariantAvailableForSale:\s*selectedVariant\.availableForSale/
     )
 
     assert.match(

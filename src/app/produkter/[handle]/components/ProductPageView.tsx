@@ -118,11 +118,15 @@ export function ProductPageView({
       TECHDOWN_MOBILE_GALLERY_IMAGES
     : galleryImages
 
+  const isTechDownProduct =
+    productData.handle === 'utekos-techdown'
   const useDesktopGrid = galleryImages.length >= 6
   const useCompactGallery = galleryImages.length === 1
 
   const galleryAspectRatio =
-    useCompactGallery ? 1 : 9 / 16
+    useCompactGallery ? 1
+    : isTechDownProduct ? 2 / 3
+    : 9 / 16
 
   const galleryFrameClassName =
     useCompactGallery ?
@@ -188,7 +192,11 @@ export function ProductPageView({
             <div className={galleryStickyClassName}>
               <AspectRatio
                 ratio={galleryAspectRatio}
-                className='w-full'
+                className={
+                  isTechDownProduct ?
+                    'w-full md:aspect-9/16'
+                  : 'w-full'
+                }
               >
                 <ProductGalleryCard
                   galleryContent={
@@ -207,6 +215,11 @@ export function ProductPageView({
                               title={title}
                               images={
                                 mobileGalleryImages
+                              }
+                              imageLayout={
+                                isTechDownProduct ?
+                                  'intrinsic'
+                                : 'cover-fill'
                               }
                             />
                           </div>

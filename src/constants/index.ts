@@ -34,10 +34,10 @@ export const SIZE_GUIDANCE: Record<string, { height: string; tips: string[] }> =
     height: '180 – 195 cm',
     tips: [
       'Perfekt for deg over 180 cm, eller for deg som er lavere og ønsker romslighet.',
-      'Er du over 195 cm anbefaler vi heller størrelsen Ekstra stor.'
+      'Er du over 195 cm anbefaler vi heller størrelsen Større.'
     ]
   },
-  'Ekstra stor': {
+  'Større': {
     height: '195 cm og oppover',
     tips: [
       'Skreddersydd for deg over 195 cm – ekstra lengde i kroppen og ermene.',
@@ -82,7 +82,7 @@ export const PRODUCT_VARIANTS = {
     ],
     features: ['Vannavstøtende', 'Helårsbruk', 'Slitesterk'],
     colors: [{ name: 'Havdyp', hex: '#0F2B40' }],
-    sizes: ['Liten', 'Middels', 'Stor', 'Ekstra stor'],
+    sizes: ['Liten', 'Middels', 'Stor', 'Større'],
     images: [
       utekosTechdownKvinneTerrasseliv1600x1600,
       utekosTechdownDiagonaltFullfigur,

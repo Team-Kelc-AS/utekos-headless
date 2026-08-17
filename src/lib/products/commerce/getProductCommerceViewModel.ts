@@ -1,7 +1,9 @@
 import 'server-only'
 
 import { getProduct } from '@/api/lib/products/getProduct'
-import { requireProductPresentation } from '@/lib/products/presentation'
+import { requireProductPresentation } from '@/lib/products/presentation/getProductPresentation'
+import { hasExactTechDownPublicSizes } from '@/lib/products/presentation/hasExactTechDownPublicSizes'
+import { TECH_DOWN_PUBLIC_SIZES } from '@/lib/products/presentation/techDownSizeContract'
 import { cacheLife, cacheTag } from 'next/cache'
 import { buildProductCommerceViewModel } from './buildProductCommerceViewModel'
 
@@ -34,15 +36,19 @@ export async function getTechDownCommerceViewModel() {
 
   if (!model) return null
 
-  const sizes = model.variants.map(variant => variant.options.size)
-  const expectedSizes = ['Middels', 'Stor', 'Ekstra stor']
+  const receivedSizes = model.variants.map(
+    variant => variant.options.size
+  )
 
-  if (
-    sizes.length !== expectedSizes.length ||
-    expectedSizes.some(size => !sizes.includes(size))
-  ) {
+  if (!hasExactTechDownPublicSizes(receivedSizes)) {
+    const receivedUniqueSizes = [
+      ...new Set(
+        model.variants.map(variant => variant.options.size ?? 'missing')
+      )
+    ]
+
     throw new Error(
-      'TechDown commerce snapshot does not match the public size contract'
+      `TechDown commerce snapshot does not match the public size contract (expected: ${TECH_DOWN_PUBLIC_SIZES.join(', ')}; received: ${receivedUniqueSizes.join(', ')})`
     )
   }
 

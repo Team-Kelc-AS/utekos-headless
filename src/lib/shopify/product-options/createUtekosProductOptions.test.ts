@@ -251,3 +251,72 @@ test('rejects incomplete selected-option input before Storefront fetch', () => {
     /Invalid Shopify product-options variables/
   )
 })
+
+test('keeps TechDown Stor available when Shopify names XL as Større', () => {
+  const havdypMiddels = createVariant(
+    'gid://shopify/ProductVariant/101',
+    'Havdyp',
+    'Middels',
+    true,
+    'utekos-techdown'
+  )
+  const havdypStor = createVariant(
+    'gid://shopify/ProductVariant/102',
+    'Havdyp',
+    'Stor',
+    true,
+    'utekos-techdown'
+  )
+  const havdypStorere = createVariant(
+    'gid://shopify/ProductVariant/103',
+    'Havdyp',
+    'Større',
+    true,
+    'utekos-techdown'
+  )
+  const productOptions = createUtekosProductOptions({
+    handle: 'utekos-techdown',
+    encodedVariantExistence: 'v1_0:0:0,1:0,2:0,,',
+    encodedVariantAvailability: 'v1_0:0:0,1:0,2:0,,',
+    options: [
+      {
+        name: 'Farge',
+        optionValues: [
+          { name: 'Havdyp', firstSelectableVariant: havdypStor }
+        ]
+      },
+      {
+        name: 'Størrelse',
+        optionValues: [
+          {
+            name: 'Middels',
+            firstSelectableVariant: havdypMiddels
+          },
+          { name: 'Stor', firstSelectableVariant: havdypStor },
+          {
+            name: 'Større',
+            firstSelectableVariant: havdypStorere
+          }
+        ]
+      },
+      {
+        name: 'Kjønn',
+        optionValues: [
+          { name: 'Unisex', firstSelectableVariant: havdypStor }
+        ]
+      }
+    ],
+    selectedOrFirstAvailableVariant: havdypStor,
+    adjacentVariants: [havdypMiddels, havdypStorere]
+  })
+
+  const stor = findValue(productOptions, 'Størrelse', 'Stor')
+  const storre = findValue(productOptions, 'Størrelse', 'Større')
+
+  assert.equal(productOptions.selectedVariantId, havdypStor.id)
+  assert.equal(productOptions.selectedVariantAvailableForSale, true)
+  assert.equal(stor.variantAvailableForSale, true)
+  assert.equal(storre.name, 'Større')
+  assert.equal(storre.variantId, havdypStorere.id)
+  assert.equal(storre.variantAvailableForSale, true)
+})
