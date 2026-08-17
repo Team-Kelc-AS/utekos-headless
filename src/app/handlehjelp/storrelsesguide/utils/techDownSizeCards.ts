@@ -1,6 +1,6 @@
 export type TechDownSizeCardData = {
-  id: 'middels' | 'stor' | 'ekstra-stor'
-  size: 'Middels' | 'Stor' | 'Ekstra stor'
+  id: 'middels' | 'stor' | 'storre'
+  size: 'Middels' | 'Stor' | 'Større'
   sizeCode: 'M' | 'L' | 'XL'
   heading: string
   heightGuide: string
@@ -29,10 +29,10 @@ export const techDownSizeCards = [
     fitGuidance: ['Du er lavere og ønsker romslighet.']
   },
   {
-    id: 'ekstra-stor',
-    size: 'Ekstra stor',
+    id: 'storre',
+    size: 'Større',
     sizeCode: 'XL',
-    heading: 'Velg Ekstra stor hvis...',
+    heading: 'Velg Større hvis...',
     heightGuide: '185 cm og høyere',
     fitGuidance: [
       'Du er over 185 cm og ønsker ekstra lengde i kroppen og ermene.',

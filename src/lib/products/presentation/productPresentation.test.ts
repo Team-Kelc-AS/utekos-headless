@@ -7,6 +7,8 @@ import {
   requireProductPresentation,
   resolveCatalogVariantPresentation
 } from './index'
+import { SIZE_GUIDANCE } from '../../../app/skreddersy-varmen/utils/constants'
+import { TECH_DOWN_PUBLIC_SIZES } from './techDownSizeContract'
 
 test('validates all five public Utekos product presentations', () => {
   const presentations = getAllProductPresentations()
@@ -67,6 +69,15 @@ test('builds a stable readable TechDown URL and preserves attribution', () => {
     '/produkter/utekos-techdown?farge=havdyp&storrelse=storre&kjonn=unisex&fbclid=fb&msclkid=ms&utm_medium=paid&utm_source=meta'
   )
   assert.doesNotMatch(url, /variant=|gid|products\//)
+})
+
+test('covers every public TechDown size in landing size guidance', () => {
+  for (const size of TECH_DOWN_PUBLIC_SIZES) {
+    assert.ok(
+      SIZE_GUIDANCE[size],
+      `Missing Utekos TechDown™ size guidance for ${size}`
+    )
+  }
 })
 
 test('uses Større as the public TechDown XL size', () => {
