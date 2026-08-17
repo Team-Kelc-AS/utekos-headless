@@ -1,8 +1,9 @@
 import { SizeGuideAccordionTable } from '@/components/size-guide/SizeGuideAccordionTable'
+import { TECH_DOWN_PUBLIC_SIZES } from '@/lib/products/presentation/techDownSizeContract'
 import { TechDownMobileSizeGuide } from './TechDownMobileSizeGuide'
 import { SIZE_GUIDANCE } from '../utils/constants'
 
-const publicSizes = ['Middels', 'Stor', 'Ekstra stor'] as const
+const publicSizes = TECH_DOWN_PUBLIC_SIZES
 
 function requireGuidance(size: (typeof publicSizes)[number]) {
   const guidance = SIZE_GUIDANCE[size]

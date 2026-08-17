@@ -196,8 +196,6 @@ export function PurchaseClientViewLanding({
                           '!rounded-xl max-md:!text-[15px] md:!rounded-2xl',
                           isActive ?
                             'cursor-pointer border border-foreground/20 bg-primary text-base text-foreground shadow-none hover:opacity-70 sm:text-base md:text-base'
-                          : size.label === 'Ekstra stor' ?
-                            'cursor-pointer border-none bg-jungle text-base text-foreground hover:opacity-70 sm:text-base md:text-base'
                           : 'cursor-pointer border-none bg-jungle text-base text-foreground hover:opacity-70 min-[900px]:bg-night sm:text-base md:text-base',
                           !size.availableForSale && 'opacity-65',
                           focusRing

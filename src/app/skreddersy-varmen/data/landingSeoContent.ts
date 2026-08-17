@@ -41,7 +41,7 @@ export const LANDING_EVIDENCE_ENTRIES: LandingEvidenceEntry[] = [
   {
     title: 'Størrelse velges etter høyde og ønsket rom',
     answer:
-      'Velg størrelse ut fra høyde, lag under og hvor lun kokongfølelse du ønsker. På denne siden kan du velge Middels, Stor eller Ekstra stor.',
+      'Velg størrelse ut fra høyde, lag under og hvor lun kokongfølelse du ønsker. På denne siden kan du velge Middels, Stor eller Større.',
     href: '/handlehjelp/storrelsesguide' as Route,
     linkLabel: 'Se størrelsesguide'
   },
