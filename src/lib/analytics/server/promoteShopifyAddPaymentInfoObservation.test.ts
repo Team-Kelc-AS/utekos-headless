@@ -109,7 +109,7 @@ function store(source = beginCheckout) {
   return { accepted, implementation }
 }
 
-test('promotes only to the canonical ledger and Google outbox after the cutover', async () => {
+test('promotes to Google and Meta when analytics and marketing consent are granted', async () => {
   const target = store()
   const result = await promoteShopifyAddPaymentInfoObservation(
     observation,
@@ -133,14 +133,22 @@ test('promotes only to the canonical ledger and Google outbox after the cutover'
       dispatch_mode: 'server_retry',
       event_id: accepted.event.event_id,
       provider: 'google'
+    },
+    {
+      dispatch_mode: 'server_retry',
+      event_id: accepted.event.event_id,
+      provider: 'meta'
     }
   ])
-  assert.equal(accepted.event.consent.marketing, 'denied')
+  assert.equal(accepted.event.consent.marketing, 'granted')
   assert.deepEqual(accepted.event.browser_id, {
-    ga_client_id: '1234567890.987654321'
+    ga_client_id: '1234567890.987654321',
+    fbp: 'must-not-be-copied'
   })
-  assert.equal(accepted.event.external_id, undefined)
-  assert.equal(accepted.event.click_id, undefined)
+  assert.equal(accepted.event.external_id, 'must-not-be-copied')
+  assert.deepEqual(accepted.event.click_id, {
+    fbclid: 'must-not-be-copied'
+  })
   assert.equal(
     accepted.sourceEvidence?.source_event_id,
     observation.eventId

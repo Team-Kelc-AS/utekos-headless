@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:utekos:shopify:checkout-observation:v2",
   "title": "Utekos Shopify checkout observation v2",
-  "description": "PII-free payment-information submission observation with a canonical begin-checkout correlation. Acceptance remains observed until the receiver promotes the event after its cutover gate.",
+  "description": "PII-free shipping- or payment-information submission observation with a canonical begin-checkout correlation. Acceptance remains observed until the receiver promotes the event after its cutover gate.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -24,7 +24,10 @@
       "maxLength": 255
     },
     "eventName": {
-      "const": "payment_info_submitted"
+      "enum": [
+        "checkout_shipping_info_submitted",
+        "payment_info_submitted"
+      ]
     },
     "eventSequence": {
       "type": "integer",

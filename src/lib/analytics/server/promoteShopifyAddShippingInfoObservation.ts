@@ -1,8 +1,8 @@
 import {
-  canonicalAddPaymentInfoSchema,
-  deterministicAddPaymentInfoEventId,
-  type CanonicalAddPaymentInfo
-} from '../addPaymentInfoEvent'
+  canonicalAddShippingInfoSchema,
+  deterministicAddShippingInfoEventId,
+  type CanonicalAddShippingInfo
+} from '../addShippingInfoEvent'
 import {
   canonicalBeginCheckoutSchema,
   type CanonicalBeginCheckout
@@ -28,34 +28,26 @@ type Dependencies = {
   store: PromotionStore
 }
 
-export type ShopifyAddPaymentInfoPromotionResult = {
-  eventId?: string
-  status: 'duplicate' | 'inserted' | 'not_applicable'
-}
-
-export async function promoteShopifyAddPaymentInfoObservation(
+export async function promoteShopifyAddShippingInfoObservation(
   observation: ShopifyCheckoutObservation,
   dependencies: Dependencies
-): Promise<ShopifyAddPaymentInfoPromotionResult> {
+) {
   if (
     !dependencies.config.enabled ||
     observation.schemaVersion !== 2 ||
-    observation.eventName !== 'payment_info_submitted' ||
+    observation.eventName !== 'checkout_shipping_info_submitted' ||
     !observation.privacy.analyticsProcessingAllowed ||
     Date.parse(observation.occurredAt) <
       Date.parse(dependencies.config.cutoverAt)
   ) {
-    return { status: 'not_applicable' }
+    return { status: 'not_applicable' as const }
   }
 
   const source = await dependencies.store.find({
     event_id: observation.correlation.beginCheckoutEventId,
     event_name: 'begin_checkout'
   })
-
-  if (!source) {
-    throw new Error('canonical_begin_checkout_not_ready')
-  }
+  if (!source) throw new Error('canonical_begin_checkout_not_ready')
 
   const beginCheckout = canonicalBeginCheckoutSchema.parse(source)
   assertCompatibleCheckoutProgressSource(
@@ -63,8 +55,7 @@ export async function promoteShopifyAddPaymentInfoObservation(
     beginCheckout,
     dependencies.environment
   )
-
-  const event = mapObservationToCanonicalAddPaymentInfo(
+  const event = mapObservationToCanonicalAddShippingInfo(
     observation,
     beginCheckout,
     dependencies.environment
@@ -78,7 +69,7 @@ export async function promoteShopifyAddPaymentInfoObservation(
       source_method: 'web_pixel',
       source_object_type: 'checkout',
       source_object_id: observation.checkoutToken,
-      source_topic: 'payment_info_submitted',
+      source_topic: 'checkout_shipping_info_submitted',
       source_delivery_id: null,
       source_event_id: observation.eventId,
       source_api_version: '2026-04',
@@ -89,24 +80,24 @@ export async function promoteShopifyAddPaymentInfoObservation(
     }
   })
 
-  return {
-    eventId: event.event_id,
-    status: accepted.status
-  }
+  return { eventId: event.event_id, status: accepted.status }
 }
 
-export function mapObservationToCanonicalAddPaymentInfo(
+export function mapObservationToCanonicalAddShippingInfo(
   observation: Extract<
     ShopifyCheckoutObservation,
-    { schemaVersion: 2 }
+    {
+      schemaVersion: 2
+      eventName: 'checkout_shipping_info_submitted'
+    }
   >,
   beginCheckout: CanonicalBeginCheckout,
   environment: CanonicalEventEnvelope['environment']
-): CanonicalAddPaymentInfo {
-  return canonicalAddPaymentInfoSchema.parse({
+): CanonicalAddShippingInfo {
+  return canonicalAddShippingInfoSchema.parse({
     schema_version: 1,
-    event_name: 'add_payment_info',
-    event_id: deterministicAddPaymentInfoEventId(
+    event_name: 'add_shipping_info',
+    event_id: deterministicAddShippingInfoEventId(
       observation.eventId
     ),
     event_time: observation.occurredAt,
@@ -123,7 +114,7 @@ export function mapObservationToCanonicalAddPaymentInfo(
       tax_value: beginCheckout.custom_data.tax_value,
       items: beginCheckout.custom_data.items,
       checkout_id: observation.checkoutToken,
-      payment_revision: observation.eventId,
+      shipping_revision: observation.eventId,
       begin_checkout_event_id:
         observation.correlation.beginCheckoutEventId
     }

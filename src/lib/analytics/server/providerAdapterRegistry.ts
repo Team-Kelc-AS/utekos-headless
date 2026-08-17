@@ -28,6 +28,8 @@ import { googleDataManagerViewSearchResultsProviderAdapter } from './providerAda
 import { googleDataManagerInteractWithAccordionProviderAdapter } from './providerAdapters/googleDataManagerInteractWithAccordionProviderAdapter'
 import { googleDataManagerOpenQuickViewProviderAdapter } from './providerAdapters/googleDataManagerOpenQuickViewProviderAdapter'
 import { metaAddToCartProviderAdapter } from './providerAdapters/metaAddToCartProviderAdapter'
+import { metaAddPaymentInfoProviderAdapter } from './providerAdapters/metaAddPaymentInfoProviderAdapter'
+import { metaAddShippingInfoProviderAdapter } from './providerAdapters/metaAddShippingInfoProviderAdapter'
 import { metaAddToWishlistProviderAdapter } from './providerAdapters/metaAddToWishlistProviderAdapter'
 import { metaBeginCheckoutProviderAdapter } from './providerAdapters/metaBeginCheckoutProviderAdapter'
 import { metaGenerateLeadProviderAdapter } from './providerAdapters/metaGenerateLeadProviderAdapter'
@@ -94,6 +96,8 @@ export const providerAdapterRegistry = {
   'google:view_search_results':
     googleDataManagerViewSearchResultsProviderAdapter,
   'meta:add_to_cart': metaAddToCartProviderAdapter,
+  'meta:add_payment_info': metaAddPaymentInfoProviderAdapter,
+  'meta:add_shipping_info': metaAddShippingInfoProviderAdapter,
   'meta:add_to_wishlist': metaAddToWishlistProviderAdapter,
   'meta:begin_checkout': metaBeginCheckoutProviderAdapter,
   'meta:generate_lead': metaGenerateLeadProviderAdapter,

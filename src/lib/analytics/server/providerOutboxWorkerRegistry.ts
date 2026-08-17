@@ -30,6 +30,8 @@ import { googleDataManagerViewSearchResultsProviderAdapter } from './providerAda
 import { googleDataManagerInteractWithAccordionProviderAdapter } from './providerAdapters/googleDataManagerInteractWithAccordionProviderAdapter'
 import { googleDataManagerOpenQuickViewProviderAdapter } from './providerAdapters/googleDataManagerOpenQuickViewProviderAdapter'
 import { metaAddToCartProviderAdapter } from './providerAdapters/metaAddToCartProviderAdapter'
+import { metaAddPaymentInfoProviderAdapter } from './providerAdapters/metaAddPaymentInfoProviderAdapter'
+import { metaAddShippingInfoProviderAdapter } from './providerAdapters/metaAddShippingInfoProviderAdapter'
 import { metaAddToWishlistProviderAdapter } from './providerAdapters/metaAddToWishlistProviderAdapter'
 import { metaBeginCheckoutProviderAdapter } from './providerAdapters/metaBeginCheckoutProviderAdapter'
 import { metaGenerateLeadProviderAdapter } from './providerAdapters/metaGenerateLeadProviderAdapter'
@@ -151,6 +153,12 @@ export const providerOutboxWorkerRegistry = {
   ),
   'meta:add_to_cart': createPostgresProviderOutboxWorker(
     metaAddToCartProviderAdapter
+  ),
+  'meta:add_payment_info': createPostgresProviderOutboxWorker(
+    metaAddPaymentInfoProviderAdapter
+  ),
+  'meta:add_shipping_info': createPostgresProviderOutboxWorker(
+    metaAddShippingInfoProviderAdapter
   ),
   'meta:add_to_wishlist': createPostgresProviderOutboxWorker(
     metaAddToWishlistProviderAdapter
