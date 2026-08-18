@@ -4,7 +4,7 @@
 
 - "meta-developer-tools": "https://mcp.facebook.com/devtools"
 - "facebook-ads": "https://mcp.facebook.com/ads"
-- "google-tag-manager-mcp-server": "https://gtm-mcp.stape.ai/mcp"
+- "google-tag-manager-mcp-server": "https://gtm-mcp.stape.ai/mcp" (manual/on-demand only; never project autostart)
 - "data-manager-mcp-server": "https://analyticsdata.googleapis.com/mcp/v1"
 - "vercel/mcp-server": "npx -y @vercel/mcp-server"
 - "context7": "https://mcp.context7.com/mcp"
@@ -12,4 +12,3 @@
 # next-devtools-mcp
 
 - "next-devtools": "npx -y next-devtools-mcp@latest"
-

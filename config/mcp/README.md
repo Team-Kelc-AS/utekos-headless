@@ -43,6 +43,13 @@ npm run mcp:tunnel:check
   generated catalog remains in `mcp.json` for explicit/on-demand
   clients. VS Code uses `.vscode/mcp.json`; Docker Desktop
   clients can use their dedicated wiring.
+- The committed `.mcp.json` is an automatic project profile. The
+  OAuth-backed Stape GTM bridge is intentionally excluded from it
+  because starting `mcp-remote` initiates browser authorization when
+  no valid session exists. Its canonical definition remains in
+  `config/mcp/servers.base.json` and the generated full `mcp.json`
+  catalog for deliberate, on-demand use. The separate local `gtm-mcp`
+  server is unaffected.
 - `cursor-runtime.json` keeps remote servers with persistent
   background failures out of Cursor startup while retaining them
   in the full generated catalog.

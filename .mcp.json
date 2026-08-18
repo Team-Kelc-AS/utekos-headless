@@ -38,15 +38,6 @@
         "chrome-devtools-mcp@latest"
       ]
     },
-    "google-tag-manager-mcp-server": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://gtm-mcp.stape.ai/mcp"
-      ]
-    },
     "mdn": {
       "url": "https://mcp.mdn.mozilla.net/"
     },

@@ -9,6 +9,7 @@ be written to generated or committed configuration.
 | Layer                    | Path                                   | Committed | Purpose                                                    |
 | ------------------------ | -------------------------------------- | --------- | ---------------------------------------------------------- |
 | Server source            | `config/mcp/servers.base.json`         | yes       | Canonical server definitions and `${ENV_VAR}` placeholders |
+| Project autostart profile | `.mcp.json`                            | yes       | Small automatic profile; excludes interactive OAuth bridges |
 | Cursor runtime policy    | `config/mcp/cursor-runtime.json`       | yes       | Remote servers excluded from automatic Cursor startup      |
 | Credential manifest      | `config/mcp/credentials.manifest.json` | yes       | Credential ownership and optional/required classification  |
 | Editor overrides         | `config/mcp/vscode-overrides.json`     | yes       | VS Code-only transport overrides                           |
@@ -50,6 +51,12 @@ in `mcp.json` for explicit, on-demand clients and diagnostics.
 Remote servers with persistent background failures can be kept
 out of automatic startup through `config/mcp/cursor-runtime.json`
 without removing them from the full catalog.
+
+The Stape GTM server remains in the canonical source and generated
+full catalog, but not in `.mcp.json`. Starting its `mcp-remote` bridge
+without a valid session launches an interactive OAuth browser flow, so
+it must only be started deliberately. This does not disable the local
+service-account-backed `gtm-mcp` server.
 
 ## Safety rules
 

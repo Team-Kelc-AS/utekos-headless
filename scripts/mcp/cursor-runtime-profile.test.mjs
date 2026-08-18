@@ -5,6 +5,9 @@ import test from 'node:test'
 const base = JSON.parse(
   fs.readFileSync('config/mcp/servers.base.json', 'utf8')
 ).mcpServers
+const projectAutoStart = JSON.parse(
+  fs.readFileSync('.mcp.json', 'utf8')
+).mcpServers
 const full = JSON.parse(fs.readFileSync('mcp.json', 'utf8')).mcpServers
 const runtime = JSON.parse(
   fs.readFileSync('.cursor/mcp.remote.json', 'utf8')
@@ -16,6 +19,7 @@ const excluded = new Set(Object.keys(policy.excludedServers ?? {}))
 const includedLocal = new Set(
   Object.keys(policy.includedLocalServers ?? {})
 )
+const stapeGtmServer = 'google-tag-manager-mcp-server'
 
 function isRemote(config) {
   return (
@@ -66,4 +70,11 @@ test('keeps the Cursor runtime profile remote-first with explicit local includes
     assert.equal(name in runtime, true)
     assert.equal(isRemote(base[name]), false)
   }
+})
+
+test('keeps Stape GTM available without project autostart OAuth', () => {
+  assert.equal(stapeGtmServer in base, true)
+  assert.equal(stapeGtmServer in full, true)
+  assert.equal(stapeGtmServer in projectAutoStart, false)
+  assert.equal(stapeGtmServer in runtime, false)
 })
