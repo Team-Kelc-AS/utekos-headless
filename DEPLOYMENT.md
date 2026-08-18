@@ -959,10 +959,10 @@ Run these before deciding the release order:
 
 | Check | Command or source | Required conclusion |
 | --- | --- | --- |
-| Main baseline | `git fetch origin main` and `git rev-parse origin/main` | Use the current remote production branch, never a remembered or stale local `main`. |
-| Worktree scope | `git status --short` | Release worktree is clean before edits; unrelated dirty files remain untouched in their original checkout. |
-| Release diff | `git diff --name-status origin/main...HEAD` | Every file in the complete branch-to-main diff is intended and classified. An individual commit diff is not sufficient. |
-| Branch relation | `git rev-list --left-right --count origin/main...HEAD` | Know whether `main` moved; update the branch and rerun affected gates before merge. |
+| Main baseline | `git fetch origin main`, `git branch --show-current`, and `git rev-list --left-right --count main...origin/main` | Work only from local `main` at `0 0` against the current remote production branch before editing. |
+| Checkout scope | `git status --short --branch` | The single primary checkout contains only the intentional release; classify every tracked and untracked path before sync. |
+| Release diff | `git diff --name-status`, `git diff --cached --name-status`, and the final `git status --short` | Every path that `pnpm sync` will stage is intentional and classified. |
+| Main relation | `git rev-list --left-right --count main...origin/main` | Recheck immediately before sync. If either count is non-zero, stop and reconcile without force, reset, stash, or an unreviewed rebase. |
 | Supabase history | `SUPABASE_NO_TELEMETRY=1 npx supabase migration list --linked` | Know exactly which local migrations are missing remote and which remote migrations are missing local. |
 | Supabase schema proof | `SUPABASE_NO_TELEMETRY=1 npx supabase db dump --linked --schema ops,marketing --file /tmp/utekos-linked-ops-marketing-schema.sql` | Confirm production has the columns, constraints, tables, and views the runtime will use. |
 | MCP config | `npm run mcp:build && npm run mcp:doctor` | Generated MCP output is derived from templates and has no inline secret findings. |
@@ -996,57 +996,65 @@ Run these before deciding the release order:
 
 `origin/main` is the only normal production source of truth. A Vercel
 deployment is a complete repository snapshot at one Git commit; it never
-contains only the files changed by one agent. “Deploy only my changes” means
-that the branch-to-`origin/main` diff contains only the intended files, while
-the resulting build still contains all files already present on `main`.
+contains only the files changed by one agent. The normal operating invariant is
+that the primary local checkout, GitHub `main`, and the active Vercel production
+deployment all resolve to the exact same commit. Ignored local secrets, caches,
+dependencies, and build output are outside that source-tree identity and must
+never be committed or treated as public files.
 
 Required operating rules:
 
-1. Create a clean release branch/worktree from freshly fetched `origin/main`.
-   Never clean, reset, stash, or broadly stage a shared dirty checkout.
-2. Stage explicit paths. The removed `pnpm run sync` shortcut must not be
-   recreated: `git add .` can include unrelated work and pushing the current
-   branch does not guarantee a reviewed production release.
-3. Push the feature branch and use its Git-triggered Vercel Preview. Verify the
-   complete `origin/main...HEAD` diff, repository-enforced checks, Preview
-   deployment and changed runtime surfaces.
-4. Fetch `origin/main` again before merge. If it moved, update the branch and
-   rerun every gate affected by the combined snapshot.
-5. Merge the pull request after the intended diff and release evidence have
-   been reviewed by the acting operator/agent. No external bot approval is
-   required unless GitHub itself enforces that exact check. The Vercel Git
-   integration for the resulting exact `main` commit is the sole normal
-   production path.
-6. Record pull request, merge SHA, Vercel deployment ID, `READY` state,
-   production alias ownership, runtime logs and changed-surface smoke results.
+1. Use the single primary checkout on `main`. Fetch `origin/main` and require
+   `main...origin/main` to report `0 0` before editing. When local `main` is
+   clean and only behind, update it fast-forward-only before work begins.
+2. Do not create a feature branch or worktree by default. Those are explicit,
+   temporary exceptions for a named migration or incident and must be
+   reconciled back into `main` and cleaned up before the exception closes.
+3. Before release, inspect the entire checkout with `git status` and the full
+   unstaged/staged diff. `pnpm sync "<commit message>"` runs `git add .`, so all
+   non-ignored changes belong to one reviewed production unit or the command
+   must not run.
+4. Run the documentation and risk-appropriate verification gates for every
+   changed surface. Fetch `origin/main` again immediately before release and
+   stop if the relation is no longer `0 0`.
+5. Use `pnpm sync "<commit message>"` as the only normal commit, push, and
+   deployment trigger. Do not also push through a pull request, direct
+   `git push`, Vercel CLI production deploy, deploy hook, or manual promotion.
+6. Follow the exact pushed commit until the Git-triggered Vercel production
+   deployment is `READY` and owns every production alias. Record the commit,
+   deployment ID, alias ownership, runtime logs, and changed-surface smoke.
+7. Finish only when local `main`, `origin/main`, and active Vercel production
+   report the same commit and local `git status` is clean.
 
-Do not use `vercel --prod`, a deploy hook, or manual alias promotion as a
-routine shortcut. A break-glass direct deployment requires separate explicit
-approval, an exact clean commit proven equivalent to current `origin/main`, a
-documented incident reason, and immediate reconciliation back into `main`.
-GitHub and Vercel must never be allowed to represent different production
-source states.
+Do not use `vercel --prod`, a deploy hook, manual alias promotion, a feature
+branch push, or a pull-request merge as a routine parallel route. A break-glass
+exception requires separate explicit approval, a documented incident reason,
+and immediate reconciliation back into the main-only invariant. GitHub and
+Vercel must never remain on different production source commits.
 
-### Required post-merge worktree cleanup
+### Exceptional worktree lifecycle
 
-Worktree and branch cleanup is the final release gate after merge and any
-required production verification:
+Worktrees are prohibited in the normal workflow. If the user explicitly
+approves one for a named migration or incident, its cleanup is part of that
+exception's completion:
 
-1. Refresh `origin/main`, list registered worktrees, and inspect each candidate
-   with `git status --short --untracked-files=all`.
-2. A worktree is removable only when it is clean, contains no unique ignored
+1. Record its owner, purpose, starting `origin/main` commit, and cleanup
+   condition when it is created.
+2. Before removal, refresh `origin/main` and inspect the candidate with
+   `git status --short --untracked-files=all`.
+3. A worktree is removable only when it is clean, contains no unique ignored
    artifact needed by the task, and the command
    `git merge-base --is-ancestor <HEAD> origin/main` succeeds.
-3. Remove each verified candidate with `git worktree remove <path>`. Never use
+4. Remove each verified candidate with `git worktree remove <path>`. Never use
    `--force` and never manually delete a dirty worktree.
-4. Leave dirty worktrees untouched. Record only their path, branch, and a short
+5. Leave dirty worktrees untouched. Record only their path, branch, and a short
    classification of the contained work so they can be reconciled separately.
-5. Review prunable entries, then run `git worktree prune` to remove stale Git
+6. Review prunable entries, then run `git worktree prune` to remove stale Git
    registrations whose directories are already gone.
-6. Delete a local merged feature branch only after its worktree has been
+7. Delete a local merged feature branch only after its worktree has been
    removed. Use the non-forcing `git branch -d <branch>` safety check. Remote
    branch deletion is a separate GitHub mutation and is not implied.
-7. Keep the primary checkout clean and fast-forwarded to current `origin/main`.
+8. Keep the primary checkout clean and fast-forwarded to current `origin/main`.
    If it is dirty, preserve its unique work on a clearly named branch before
    switching it; never reset, clean, or stash it to manufacture a clean state.
 
@@ -1055,9 +1063,10 @@ that cleanup is safe. The clean-worktree and merged-ancestry checks are both
 required. A completed release must not leave a clean merged worktree behind
 without a documented reason.
 
-### Efficient merge gate
+### Exceptional branch/PR merge gate
 
-Before waiting on any GitHub check, read branch protection and active
+This section applies only when the user explicitly approves a branch/PR
+exception. Before waiting on any GitHub check, read branch protection and active
 repository rulesets. A status check is blocking only when GitHub marks it as
 required. Advisory integrations—including Seer, CodeQL bot summaries, Copilot
 review and marketplace review apps—run asynchronously and must not be polled or
@@ -1144,16 +1153,16 @@ the runtime-identical ancestor remains the code gate.
    migrations first.
 5. Verify Supabase production schema and migration history.
 6. Run local verification again after migration.
-7. Stage only the classified files, commit on a clean branch, and push it.
-8. Verify the Git-triggered Vercel Preview and open a pull request to `main`.
-9. Fetch `origin/main` again; update and reverify the branch if `main` moved.
-10. Merge the pull request as soon as the efficient merge gate above passes.
-    The exact merge commit triggers the production deployment through the
-    Vercel Git integration.
-11. Inspect the production deployment until it is ready or failed and prove it
+7. Review the complete main-checkout status and diff, then fetch `origin/main`
+   again and require `main...origin/main` to remain `0 0`.
+8. Run `pnpm sync "<commit message>"`. This is the sole normal commit, push,
+   and Git-triggered production-deployment route.
+9. Fetch `origin/main` and prove local `main...origin/main` is again `0 0` at
+   the exact pushed commit.
+10. Inspect the production deployment until it is ready or failed and prove it
     owns the production aliases.
-12. Run post-deploy smoke checks for the changed surfaces.
-13. Update [PLAN.md](PLAN.md) with the final deployment and migration
+11. Run post-deploy smoke checks for the changed surfaces.
+12. Update [PLAN.md](PLAN.md) with the final deployment and migration
     status.
 
 ## Supabase Production Gate
@@ -1481,9 +1490,9 @@ Required sequence:
 2. Ensure required Supabase migrations and provider/env changes are done
    first.
 3. Run `pnpm exec tsc --noEmit` and relevant tests.
-4. Follow the authoritative clean branch, Preview, pull request and `main`
-   merge sequence above after explicit production approval.
-5. Inspect the resulting exact-merge-SHA production deployment in Vercel.
+4. Follow the authoritative main-only sequence above and run
+   `pnpm sync "<commit message>"` after explicit production approval.
+5. Inspect the resulting exact-pushed-SHA production deployment in Vercel.
 6. If failed, fetch build logs and stop. Do not retry blindly.
 7. If ready, verify production alias ownership, the production domain and the
    relevant runtime surfaces.
@@ -1637,7 +1646,7 @@ approved.
 The Quick Preview file must be produced by the capture command. The guard
 repeats the official `workspaces.quick_preview` call and compares compiler and
 sync status, exact workspace changes, live fingerprints, resource digests,
-workspace fingerprints and client `6`. It also requires a clean git worktree;
+workspace fingerprints and client `6`. It also requires a clean Git checkout;
 store evidence outside the repository.
 
 ### Receipt key contract

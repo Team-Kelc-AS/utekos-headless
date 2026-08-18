@@ -205,25 +205,38 @@ Code and architecture rules:
 - Do not hand-edit generated MCP files such as `mcp.json`,
   `.vscode/mcp.json`, or `.cursor/mcp.json`.
 
-### Git worktree lifecycle
+### Git main-only lifecycle
 
-- Treat the primary checkout as a clean, current `main` reference. Do task
-  work in a dedicated worktree created from freshly fetched `origin/main`.
-- Worktree cleanup is part of task completion. After the branch is merged and
-  any required production verification is complete, confirm that the worktree
-  is clean, contains no unique untracked or ignored artifacts, and that its
-  `HEAD` is an ancestor of `origin/main`; then remove it with
-  `git worktree remove <path>`.
-- Never force-remove or manually delete a dirty worktree. Inventory its changed
-  and untracked paths, preserve the work on its existing branch, and report it
-  as unresolved until it is deliberately reconciled.
-- Run `git worktree prune` only after reviewing the prunable registrations.
-  Delete a local feature branch only after its worktree has been removed and
-  Git proves it is merged. Remote branch deletion is a separate external write
-  and requires explicit scope.
-- A task is not operationally complete while it leaves behind a clean, merged
-  worktree without a documented reason. Do not allow completed `/tmp`
-  worktrees or stale worktree metadata to accumulate.
+- The repository's primary checkout is the only normal working copy. Work
+  directly on `main`; do not create a feature branch or worktree unless the
+  user explicitly approves a concrete migration, incident, or other
+  exceptional isolation need.
+- Begin repository work by fetching `origin/main`, confirming the active branch
+  is `main`, and checking `git rev-list --left-right --count main...origin/main`.
+  A clean local `main` that is behind must be advanced with a fast-forward-only
+  update before editing. Never begin from a stale snapshot.
+- `pnpm sync "<commit message>"` is the only normal commit, push, and production
+  release command. It runs `git add .`, commits, and pushes, so the complete
+  status and diff must be reviewed as one intentional release before it runs.
+  Run it only from `main`, only when `main` is neither ahead of nor behind
+  `origin/main`, and only after the applicable documentation, test, deployment,
+  and explicit production-approval gates have passed.
+- Do not use a separate `git push`, pull-request merge, `vercel --prod`, deploy
+  hook, or manual alias promotion as a parallel normal release route. After
+  `pnpm sync`, prove that local `main`, `origin/main`, and the active Vercel
+  production deployment all identify the exact same commit.
+- Concurrent agents may edit the shared checkout, but only one coordinated
+  release may manipulate Git state. Other tasks must not independently switch
+  branches, reset, stash, rebase, commit, or push.
+- If `origin/main` moves while local work is dirty, stop and classify the
+  overlap. Never reset, clean, stash, or broadly overwrite the checkout. A
+  temporary preservation branch is allowed only as an explicit reconciliation
+  exception and must be reconciled and removed as part of that exceptional
+  task.
+- An explicitly approved exceptional worktree must start from current
+  `origin/main`, have a named owner and cleanup condition, and be removed after
+  reconciliation. Never force-remove or manually delete a dirty worktree;
+  inventory and preserve its tracked, untracked, and ignored artifacts first.
 
 Verification gates:
 
@@ -267,20 +280,16 @@ Verification gates:
   Supabase schema mutation require explicit user confirmation and
   must not be hidden behind a default agent profile.
 - External advisory reviewers and scanners such as Seer, CodeQL bots,
-  Copilot or other marketplace checks do not decide whether a pull
-  request may merge. Do not poll or wait for them unless GitHub branch
-  protection or an active ruleset explicitly marks the exact check as
-  required. The merge gate is the intended diff, risk-appropriate local
-  verification, a `READY` Git-triggered Vercel Preview of the exact runtime
-  commit, mergeability and explicit production approval. When Vercel fails
-  Preview provisioning before build start, follow the bounded production
-  fallback in `DEPLOYMENT.md`; provider infrastructure must not become an
-  unbounded merge authority. A trailing docs-only commit may reuse the nearest
-  `READY` runtime-ancestor deployment when an exact Git diff proves that only
-  documentation/control Markdown files changed.
-  Address any actionable critical finding already available before merge, but
-  treat pending advisory checks as asynchronous follow-up rather than a
-  release blocker.
+  Copilot or other marketplace checks do not decide whether `pnpm sync` may
+  run. Do not poll or wait for them unless an active repository rule explicitly
+  marks the exact check as required for `main`. The release gate is the complete
+  intended checkout diff, risk-appropriate local verification, current
+  documentation, and explicit production approval. Every pushed `main` commit,
+  including a docs-only commit, must receive an exact Git-triggered Vercel
+  production deployment so local `main`, GitHub `main`, and production cannot
+  drift. Address any actionable critical finding already available before
+  sync, but treat non-required pending advisory checks as asynchronous
+  follow-up rather than a release blocker.
 - Before any production deploy, schema mutation, env change, GTM
   publish, tracking change, provider change, or operational tooling
   release, read and follow [DEPLOYMENT.md](DEPLOYMENT.md). The
