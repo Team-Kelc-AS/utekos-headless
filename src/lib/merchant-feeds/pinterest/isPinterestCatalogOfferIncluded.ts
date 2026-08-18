@@ -9,6 +9,11 @@ const EXCLUDED_PRODUCT_HANDLES = new Set([
   'utekos-dun'
 ])
 
+const EXCLUDED_VARIANT_SKUS = new Set([
+  'COMFYROBE-FJELLNATT-L',
+  'COMFYROBE-FJELLNATT-M'
+])
+
 const INCLUDED_COLOR_BY_HANDLE: Record<string, string> = {
   'comfyrobe': 'fjellnatt',
   'utekos-mikrofiber': 'fjellblå',
@@ -31,6 +36,12 @@ export function isPinterestCatalogOfferIncluded(
   }
 
   if (EXCLUDED_PRODUCT_HANDLES.has(handle)) {
+    return false
+  }
+
+  const sku = variant.sku?.trim().toUpperCase() ?? ''
+
+  if (EXCLUDED_VARIANT_SKUS.has(sku)) {
     return false
   }
 
