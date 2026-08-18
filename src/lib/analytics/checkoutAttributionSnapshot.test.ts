@@ -20,6 +20,7 @@ test('round-trips consented attribution through Shopify attributes', () => {
         unrelated: 'drop-me'
       },
       click_id: {
+        epik: 'pinterest-click',
         fbclid: 'meta-click',
         gclid: 'google-click',
         unknown: 'drop-me'
@@ -59,7 +60,11 @@ test('round-trips consented attribution through Shopify attributes', () => {
       uet_session: 'uet-session-1',
       uet_visitor: 'uet-visitor-1'
     },
-    click_id: { fbclid: 'meta-click', gclid: 'google-click' },
+    click_id: {
+      epik: 'pinterest-click',
+      fbclid: 'meta-click',
+      gclid: 'google-click'
+    },
     external_id: 'anon_550e8400-e29b-41d4-a716-446655440000',
     page_url: 'https://utekos.no/produkter/test',
     referrer_url: 'https://facebook.com/ad'

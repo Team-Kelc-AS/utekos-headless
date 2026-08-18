@@ -24,6 +24,7 @@
   })
 
   const trackedEventIds = new Set()
+  const pendingEventIds = new Set()
   let pinterestLoaded = false
 
   function getTagId() {
@@ -53,14 +54,18 @@
     return window.pintrk
   }
 
-  function loadPinterestTag() {
+  function loadPinterestTag(enhancedMatch) {
     if (pinterestLoaded) return true
 
     const tagId = getTagId()
     if (!tagId) return false
 
     const pintrk = ensurePintrk()
-    pintrk('load', tagId)
+    if (Object.keys(enhancedMatch).length > 0) {
+      pintrk('load', tagId, enhancedMatch)
+    } else {
+      pintrk('load', tagId)
+    }
 
     if (
       !document.querySelector(
@@ -101,6 +106,39 @@
     return typeof value === 'number' && Number.isFinite(value) ?
         value
       : undefined
+  }
+
+  async function sha256(value) {
+    if (
+      typeof value !== 'string' ||
+      !value.trim() ||
+      !window.crypto?.subtle
+    ) {
+      return undefined
+    }
+
+    const bytes = new TextEncoder().encode(value.trim())
+    const digest = await window.crypto.subtle.digest(
+      'SHA-256',
+      bytes
+    )
+
+    return Array.from(new Uint8Array(digest), byte =>
+      byte.toString(16).padStart(2, '0')
+    ).join('')
+  }
+
+  async function buildEnhancedMatch(canonicalEvent) {
+    const email =
+      Array.isArray(canonicalEvent?.user_data?.email_sha256) ?
+        canonicalEvent.user_data.email_sha256[0]
+      : undefined
+    const externalId = await sha256(canonicalEvent.external_id)
+
+    return {
+      ...(email ? { em: email } : {}),
+      ...(externalId ? { external_id: externalId } : {})
+    }
   }
 
   function positiveInteger(value) {
@@ -144,6 +182,10 @@
       typeof item.item_name === 'string' ?
         item.item_name
       : undefined
+    const productBrand =
+      typeof item.item_brand === 'string' ?
+        item.item_brand
+      : undefined
     const productCategory =
       typeof item.item_category === 'string' ? item.item_category
       : typeof item.product_type === 'string' ? item.product_type
@@ -160,6 +202,7 @@
     return {
       product_id: id,
       ...(productName ? { product_name: productName } : {}),
+      ...(productBrand ? { product_brand: productBrand } : {}),
       ...(productCategory ?
         { product_category: productCategory }
       : {}),
@@ -223,7 +266,7 @@
     }
   }
 
-  function processCanonicalEvent(canonicalEvent) {
+  async function processCanonicalEvent(canonicalEvent) {
     if (!asRecord(canonicalEvent)) return
     if (canonicalEvent.schema_version !== 1) return
     if (typeof canonicalEvent.event_id !== 'string') return
@@ -235,19 +278,29 @@
       EVENT_MAP[canonicalEvent.event_name]
     if (!pinterestEventName) return
     if (trackedEventIds.has(canonicalEvent.event_id)) return
-    if (!loadPinterestTag()) return
+    if (pendingEventIds.has(canonicalEvent.event_id)) return
 
-    window.pintrk(
-      'track',
-      pinterestEventName,
-      buildEventData(canonicalEvent)
-    )
-    trackedEventIds.add(canonicalEvent.event_id)
+    pendingEventIds.add(canonicalEvent.event_id)
+
+    try {
+      const enhancedMatch =
+        await buildEnhancedMatch(canonicalEvent)
+      if (!loadPinterestTag(enhancedMatch)) return
+
+      window.pintrk(
+        'track',
+        pinterestEventName,
+        buildEventData(canonicalEvent)
+      )
+      trackedEventIds.add(canonicalEvent.event_id)
+    } finally {
+      pendingEventIds.delete(canonicalEvent.event_id)
+    }
   }
 
   function processDataLayerEntry(entry) {
     if (!asRecord(entry)) return
-    processCanonicalEvent(entry.canonical_event)
+    void processCanonicalEvent(entry.canonical_event)
   }
 
   function processExistingDataLayer() {
