@@ -12,6 +12,7 @@ import {
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 import { getPinterestCatalogImageUrls } from './getPinterestCatalogImageUrls'
+import { buildPinterestCatalogTitle } from './buildPinterestCatalogTitle'
 import { getPinterestGoogleProductCategory } from './getPinterestGoogleProductCategory'
 import { getPinterestMaterial } from './getPinterestMaterial'
 import { getPinterestProductType } from './getPinterestProductType'
@@ -333,7 +334,14 @@ function buildRow(
     updatedAtMs: buildOfferUpdatedAt(product, variant, offerId),
     row: {
       id: sanitizeFeedValue(offerId, 127),
-      title: sanitizeFeedValue(publicVariant.publicName, 500),
+      title: sanitizeFeedValue(
+        buildPinterestCatalogTitle({
+          displayName: publicVariant.presentation.displayName,
+          color,
+          size
+        }),
+        500
+      ),
       description: sanitizeFeedValue(
         publicVariant.presentation.description,
         10_000

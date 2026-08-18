@@ -7,7 +7,8 @@ import { isPinterestCatalogOfferIncluded } from './isPinterestCatalogOfferInclud
 
 function createOffer(
   handle: string,
-  options: Array<{ name: string; value: string }>
+  options: Array<{ name: string; value: string }>,
+  sku = 'TEST'
 ): {
   product: CatalogSyncProduct
   variant: CatalogSyncProduct['variants']['edges'][number]['node']
@@ -15,7 +16,7 @@ function createOffer(
   const variant = {
     id: 'gid://shopify/ProductVariant/1',
     title: 'Test',
-    sku: 'TEST',
+    sku,
     barcode: '4006381333931',
     price: '1790',
     compareAtPrice: null,
@@ -90,6 +91,42 @@ test('excludes Dun, Mikrofiber Vargnatt and TechDown Liten', () => {
   )
 })
 
+test('excludes Comfyrobe M and L source variants', () => {
+  const medium = createOffer(
+    'comfyrobe',
+    [
+      { name: 'Farge', value: 'Fjellnatt' },
+      { name: 'Størrelse', value: 'M' },
+      { name: 'Kjønn', value: 'Unisex' }
+    ],
+    'COMFYROBE-FJELLNATT-M'
+  )
+  const large = createOffer(
+    'comfyrobe',
+    [
+      { name: 'Farge', value: 'Fjellnatt' },
+      { name: 'Størrelse', value: 'XL' },
+      { name: 'Kjønn', value: 'Unisex' }
+    ],
+    'COMFYROBE-FJELLNATT-L'
+  )
+
+  assert.equal(
+    isPinterestCatalogOfferIncluded(
+      medium.product,
+      medium.variant
+    ),
+    false
+  )
+  assert.equal(
+    isPinterestCatalogOfferIncluded(
+      large.product,
+      large.variant
+    ),
+    false
+  )
+})
+
 test('includes TechDown Havdyp, Mikrofiber Fjellblå, Comfyrobe and Stapper', () => {
   const techdown = createOffer('utekos-techdown', [
     { name: 'Farge', value: 'Havdyp' },
@@ -101,11 +138,15 @@ test('includes TechDown Havdyp, Mikrofiber Fjellblå, Comfyrobe and Stapper', ()
     { name: 'Størrelse', value: 'Medium' },
     { name: 'Kjønn', value: 'Unisex' }
   ])
-  const comfyrobe = createOffer('comfyrobe', [
-    { name: 'Farge', value: 'Fjellnatt' },
-    { name: 'Størrelse', value: 'M' },
-    { name: 'Kjønn', value: 'Unisex' }
-  ])
+  const comfyrobe = createOffer(
+    'comfyrobe',
+    [
+      { name: 'Farge', value: 'Fjellnatt' },
+      { name: 'Størrelse', value: 'XS' },
+      { name: 'Kjønn', value: 'Unisex' }
+    ],
+    'COMFYROBE-FJELLNATT-S'
+  )
   const stapper = createOffer('utekos-stapper', [
     { name: 'Farge', value: 'Vargnatt' },
     { name: 'Størrelse', value: 'OneSize' },

@@ -142,7 +142,7 @@ test('builds a Pinterest TSV from the Utekos presentation contract', () => {
   assert.equal(rows.length, 2)
   assert.equal(
     inStockRow?.title,
-    'Utekos TechDown™ / Havdyp / Stor / Unisex'
+    'Utekos TechDown™ Havdyp - Stor'
   )
   assert.equal(
     inStockRow?.description,
@@ -270,6 +270,10 @@ test('sends dedicated Mikrofiber Patriot Blue images and excludes Vargnatt', () 
 
   assert.equal(rows.length, 1)
   assert.equal(rows[0]?.id, '303')
+  assert.equal(
+    rows[0]?.title,
+    'Utekos Mikrofiber™ Fjellblå - Medium'
+  )
   assert.equal(
     rows[0]?.image_link,
     'https://utekos.no/Utekos-TechDown-Maritime-Blue-Unisex/Utekos-Mikrofiber-Patriot-Blue-Unisex..png'
