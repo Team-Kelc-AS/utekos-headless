@@ -173,7 +173,7 @@ test('builds a Pinterest TSV from the Utekos presentation contract', () => {
   assert.equal(inStockRow?.age_group, 'adult')
   assert.equal(inStockRow?.adult, 'false')
   assert.equal(inStockRow?.material, 'Nylon')
-  assert.equal(inStockRow?.size_system, 'NO')
+  assert.equal(inStockRow?.size_system, 'EU')
   assert.equal(inStockRow?.variant_names, 'Color,Size,Gender')
   assert.equal(inStockRow?.variant_values, 'Havdyp,Stor,unisex')
   assert.equal(inStockRow?.custom_label_0, 'Bestselger')

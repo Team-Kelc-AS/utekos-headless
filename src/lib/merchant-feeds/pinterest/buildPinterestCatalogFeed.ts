@@ -16,7 +16,10 @@ import { getPinterestGoogleProductCategory } from './getPinterestGoogleProductCa
 import { getPinterestMaterial } from './getPinterestMaterial'
 import { getPinterestProductType } from './getPinterestProductType'
 import { isPinterestCatalogOfferIncluded } from './isPinterestCatalogOfferIncluded'
-import { PINTEREST_FEED_CURRENCY } from './pinterestCatalogRegistration'
+import {
+  PINTEREST_FEED_CURRENCY,
+  PINTEREST_FEED_SIZE_SYSTEM
+} from './pinterestCatalogRegistration'
 
 export const PINTEREST_CATALOG_FEED_COLUMNS = [
   'id',
@@ -363,7 +366,7 @@ function buildRow(
         'mønster'
       ]),
       size,
-      size_system: 'NO',
+      size_system: PINTEREST_FEED_SIZE_SYSTEM,
       variant_names: 'Color,Size,Gender',
       variant_values: [color, size, gender].join(','),
       adult: 'false',
