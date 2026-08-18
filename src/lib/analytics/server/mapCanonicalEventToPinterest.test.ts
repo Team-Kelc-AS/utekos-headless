@@ -44,6 +44,7 @@ function viewItem(
           variant_id: CANONICAL_VARIANT_ID,
           item_name: 'Comfyrobe™',
           item_brand: 'Utekos',
+          item_category: 'Ponchoer',
           product_handle: 'comfyrobe',
           quantity: 1,
           unit_price: 799.2,
@@ -141,4 +142,42 @@ test('sends hashed external_id as a Pinterest user_data array', () => {
       .update('anon_ce5f010a-804c-4bc6-8738-febd9f4eafbf', 'utf8')
       .digest('hex')
   ])
+})
+
+test('sends trusted location match keys in Pinterest format', () => {
+  const mapped = mapCanonicalEventToPinterest(
+    viewItem({
+      location: {
+        city: 'Oslo',
+        country_code: 'NO',
+        postal_code: '0150',
+        region_code: '03',
+        source: 'ip_geolocation'
+      }
+    })
+  )
+
+  assert.deepEqual(mapped?.user_data.ct, [
+    createHash('sha256').update('oslo').digest('hex')
+  ])
+  assert.deepEqual(mapped?.user_data.country, [
+    createHash('sha256').update('no').digest('hex')
+  ])
+  assert.deepEqual(mapped?.user_data.zp, [
+    createHash('sha256').update('0150').digest('hex')
+  ])
+  assert.equal(mapped?.user_data.st, undefined)
+})
+
+test('includes product brand and category in Pinterest contents', () => {
+  const mapped = mapCanonicalEventToPinterest(viewItem())
+
+  assert.equal(
+    mapped?.custom_data?.contents?.[0]?.item_brand,
+    'Utekos'
+  )
+  assert.equal(
+    mapped?.custom_data?.contents?.[0]?.item_category,
+    'Ponchoer'
+  )
 })

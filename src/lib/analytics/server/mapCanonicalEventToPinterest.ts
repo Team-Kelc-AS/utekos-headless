@@ -13,9 +13,13 @@ export type PinterestUserData = {
   client_ip_address?: string
   client_user_agent?: string
   click_id?: string
+  country?: string[]
+  ct?: string[]
   em?: string[]
   external_id?: string[]
   ph?: string[]
+  st?: string[]
+  zp?: string[]
 }
 
 export type PinterestContent = {
@@ -94,6 +98,20 @@ function sha256(value: string) {
   return createHash('sha256')
     .update(value.trim(), 'utf8')
     .digest('hex')
+}
+
+function normalizePinterestLocationValue(value: string) {
+  return value
+    .trim()
+    .toLocaleLowerCase('en-US')
+    .replace(/[\s\p{P}\p{S}]+/gu, '')
+}
+
+function hashLocationValue(value: string | undefined) {
+  if (!value) return undefined
+
+  const normalized = normalizePinterestLocationValue(value)
+  return normalized ? sha256(normalized) : undefined
 }
 
 function readItems(customData: UnknownRecord) {
@@ -211,6 +229,22 @@ function buildUserData(
   const epik = event.click_id?.epik
   const externalId =
     event.external_id ? sha256(event.external_id) : undefined
+  const city = hashLocationValue(event.location?.city)
+  const countryCode = event.location?.country_code
+  const country =
+    countryCode && /^[a-z]{2}$/i.test(countryCode) ?
+      hashLocationValue(countryCode)
+    : undefined
+  const regionCode = event.location?.region_code
+  const state =
+    regionCode && /^[a-z]{2}$/i.test(regionCode) ?
+      hashLocationValue(regionCode)
+    : undefined
+  const postalCode = event.location?.postal_code
+  const zip =
+    postalCode && /^\d+$/.test(postalCode) ?
+      hashLocationValue(postalCode)
+    : undefined
 
   return {
     ...(emailHashes?.length ? { em: emailHashes } : {}),
@@ -222,7 +256,11 @@ function buildUserData(
       { client_user_agent: clientUserAgent }
     : {}),
     ...(epik ? { click_id: epik } : {}),
-    ...(externalId ? { external_id: [externalId] } : {})
+    ...(externalId ? { external_id: [externalId] } : {}),
+    ...(city ? { ct: [city] } : {}),
+    ...(country ? { country: [country] } : {}),
+    ...(state ? { st: [state] } : {}),
+    ...(zip ? { zp: [zip] } : {})
   }
 }
 

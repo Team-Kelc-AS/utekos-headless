@@ -877,7 +877,13 @@ const pinterestServer = [
     'user_data.click_id',
     'conditional',
     'click_id.epik',
-    'Pinterest click identifier; not written to Shopify checkout attributes.'
+    'Pinterest click identifier; preserved in consented Shopify checkout attributes for purchase attribution.'
+  ),
+  parameter(
+    'user_data.ct/country/st/zp',
+    'conditional',
+    'location',
+    'SHA-256 match keys from trusted canonical location fields when valid for Pinterest formatting.'
   ),
   parameter(
     'custom_data.content_ids[]',
@@ -911,6 +917,12 @@ const pinterestBrowser = [
     'conditional',
     'custom_data.items[].item_id',
     'Numeric Shopify variant ID matching the catalog feed id.'
+  ),
+  parameter(
+    'line_items[].product_brand/product_category',
+    'conditional',
+    'custom_data.items[].item_brand/item_category',
+    'Product context carried from the same canonical commerce item.'
   )
 ] as const
 

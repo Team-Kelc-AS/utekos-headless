@@ -27,6 +27,7 @@ const browserAttributeKeys = {
 
 const clickAttributeKeys = {
   dclid: 'dclid',
+  epik: 'epik',
   fbclid: 'fbclid',
   gbraid: 'gbraid',
   gclid: 'gclid',
