@@ -53,6 +53,8 @@ function baseOrder(
           title: 'Jacket',
           quantity: 1,
           sku: 'JKT-1',
+          vendor: 'Utekos',
+          product: { vendor: 'Utekos', productType: 'Jackets' },
           variant: {
             id: 'gid://shopify/ProductVariant/99',
             legacyResourceId: '99'
@@ -89,6 +91,8 @@ test('mapShopifyGraphqlOrderPurchasePricing maps item revenue', () => {
   assert.equal(pricing.items.length, 1)
   assert.equal(pricing.items[0]?.item_id, '99')
   assert.equal(pricing.items[0]?.unit_price, 100)
+  assert.equal(pricing.items[0]?.item_brand, 'Utekos')
+  assert.equal(pricing.items[0]?.item_category, 'Jackets')
 })
 
 test('mapShopifyGraphqlOrderPurchasePricing applies each-scoped discounts', () => {

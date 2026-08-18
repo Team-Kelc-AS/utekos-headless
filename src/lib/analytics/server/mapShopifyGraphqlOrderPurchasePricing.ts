@@ -106,6 +106,9 @@ function mapPurchaseItem(
 
   const itemName =
     lineItem.name?.trim() || lineItem.title?.trim()
+  const itemBrand =
+    lineItem.vendor?.trim() || lineItem.product?.vendor.trim()
+  const itemCategory = lineItem.product?.productType.trim()
 
   if (!itemName) {
     throw new Error('Shopify GraphQL line item requires a name')
@@ -192,7 +195,9 @@ function mapPurchaseItem(
       unit_price: unitPrice,
       final_unit_price: finalUnitPrice,
       ...(discount > 0 ? { discount } : {}),
-      ...(lineItem.sku ? { sku: lineItem.sku } : {})
+      ...(lineItem.sku ? { sku: lineItem.sku } : {}),
+      ...(itemBrand ? { item_brand: itemBrand } : {}),
+      ...(itemCategory ? { item_category: itemCategory } : {})
     },
     netDiscountTotal: roundMoney(netDiscountTotal),
     netRevenue

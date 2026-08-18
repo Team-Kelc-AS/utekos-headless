@@ -7,6 +7,7 @@ import {
 } from '../checkoutAttributionSnapshot'
 import { hashCustomerMatchIdentifier } from '@/lib/google/data-manager/hashCustomerMatchIdentifier'
 import { shopifyOrderToCanonicalPurchase } from './shopifyOrderToCanonicalPurchase'
+import { checkoutProductContextToShopifyAttributes } from '../checkoutProductContext'
 
 function orderPaid(): OrderPaid {
   const attribution = createCheckoutAttributionSnapshot(
@@ -154,6 +155,29 @@ test('restores checkout attribution for the purchase webhook', () => {
     final_unit_price: 1990,
     sku: 'UTEKOS-1'
   })
+})
+
+test('restores exact product brand and category for purchase dispatch', () => {
+  const order = orderPaid()
+  order.line_items[0]!.vendor = 'Fallback vendor'
+  order.note_attributes.push(
+    ...checkoutProductContextToShopifyAttributes([
+      {
+        item_id: '48249962135800',
+        item_brand: 'Utekos',
+        item_category: 'Ponchoer'
+      }
+    ]).map(attribute => ({
+      name: attribute.key,
+      value: attribute.value
+    }))
+  )
+
+  const item =
+    shopifyOrderToCanonicalPurchase(order).custom_data.items[0]
+
+  assert.equal(item?.item_brand, 'Utekos')
+  assert.equal(item?.item_category, 'Ponchoer')
 })
 
 test('derives fbclid from appendix-bearing fbc when click_id is missing', () => {

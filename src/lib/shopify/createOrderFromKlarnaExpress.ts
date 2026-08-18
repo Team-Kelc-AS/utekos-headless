@@ -161,7 +161,14 @@ export async function createOrderFromKlarnaExpress({
           note: `Klarna express checkout order ${klarnaOrderId}`,
           customAttributes: buildKlarnaExpressOrderAttributes({
             klarnaOrderId,
-            ...(attribution ? { attribution } : {})
+            ...(attribution ? { attribution } : {}),
+            productContextItems:
+              cart?.lines.map(line => ({
+                item_id: line.merchandise.id,
+                item_brand: line.merchandise.product.vendor,
+                product_type:
+                  line.merchandise.product.productType
+              })) ?? []
           })
         }
       }

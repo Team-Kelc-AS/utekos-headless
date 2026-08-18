@@ -101,7 +101,8 @@ export async function reportCanonicalBeginCheckout(
       persistCheckoutAttributionSnapshot(
         input.cart.id,
         snapshot,
-        event.event_id
+        event.event_id,
+        event.custom_data.items
       )
     ]
 
