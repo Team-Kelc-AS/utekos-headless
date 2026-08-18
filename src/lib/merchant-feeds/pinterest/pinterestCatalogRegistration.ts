@@ -8,6 +8,7 @@ export const PINTEREST_FEED_FORMAT = 'TSV' as const
 export const PINTEREST_FEED_COUNTRY = 'NO' as const
 export const PINTEREST_FEED_CURRENCY = 'NOK' as const
 export const PINTEREST_FEED_LOCALE = 'nb-NO' as const
+export const PINTEREST_FEED_SIZE_SYSTEM = 'EU' as const
 export const PINTEREST_FEED_TIMEZONE = 'Europe/Oslo' as const
 export const PINTEREST_FEED_PROCESSING_TIME = '02:00' as const
 
