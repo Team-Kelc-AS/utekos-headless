@@ -14,6 +14,7 @@ import { mapShopifyOrderPurchasePricing } from './mapShopifyOrderPurchasePricing
 import { parseAbsoluteHttpUrl } from './parseAbsoluteHttpUrl'
 import { readShopifyMoneyAmount } from './readShopifyMoneyAmount'
 import { resolveCanonicalEnvironment } from './resolveCanonicalEnvironment'
+import { parseOrderProductContextFromNoteAttributes } from '../checkoutProductContext'
 
 function hashEmail(email: string | null | undefined) {
   if (!email) return undefined
@@ -116,7 +117,13 @@ export function shopifyOrderToCanonicalPurchase(
   const currency = (
     order.presentment_currency || order.currency
   ).toUpperCase()
-  const pricing = mapShopifyOrderPurchasePricing(order, currency)
+  const pricing = mapShopifyOrderPurchasePricing(
+    order,
+    currency,
+    parseOrderProductContextFromNoteAttributes(
+      order.note_attributes
+    )
+  )
 
   const userData = {
     ...(emailHash ? { email_sha256: [emailHash] } : {}),

@@ -5,6 +5,8 @@ import {
   checkoutAttributionSnapshotToShopifyAttributes,
   type CheckoutAttributionSnapshot
 } from './checkoutAttributionSnapshot'
+import { checkoutProductContextToShopifyAttributes } from './checkoutProductContext'
+import type { CanonicalCommerceItem } from './canonicalCommerceItem'
 
 const CHECKOUT_ATTRIBUTION_SESSION_PREFIX =
   'utekos:checkout_attribution:'
@@ -12,7 +14,8 @@ const CHECKOUT_ATTRIBUTION_SESSION_PREFIX =
 export async function persistCheckoutAttributionSnapshot(
   cartId: string,
   snapshot: CheckoutAttributionSnapshot,
-  beginCheckoutEventId: string
+  beginCheckoutEventId: string,
+  items: ReadonlyArray<CanonicalCommerceItem>
 ) {
   try {
     window.sessionStorage.setItem(
@@ -23,11 +26,11 @@ export async function persistCheckoutAttributionSnapshot(
     // Shopify cart attributes remain the cross-domain source of truth.
   }
 
-  await updateCartAttributesAction(
-    cartId,
-    checkoutAttributionSnapshotToShopifyAttributes(
+  await updateCartAttributesAction(cartId, [
+    ...checkoutAttributionSnapshotToShopifyAttributes(
       snapshot,
       beginCheckoutEventId
-    )
-  )
+    ),
+    ...checkoutProductContextToShopifyAttributes(items)
+  ])
 }

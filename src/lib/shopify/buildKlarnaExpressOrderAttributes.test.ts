@@ -25,12 +25,20 @@ test('persists the Klarna order id and consented attribution only', () => {
 
   const attributes = buildKlarnaExpressOrderAttributes({
     attribution,
-    klarnaOrderId: 'klarna-order-1'
+    klarnaOrderId: 'klarna-order-1',
+    productContextItems: [
+      {
+        item_id: '48249962135800',
+        item_brand: 'Utekos',
+        item_category: 'Ponchoer'
+      }
+    ]
   })
 
   assert.equal(
-    attributes.find(attribute => attribute.key === 'klarna_order_id')
-      ?.value,
+    attributes.find(
+      attribute => attribute.key === 'klarna_order_id'
+    )?.value,
     'klarna-order-1'
   )
   assert.equal(
@@ -40,7 +48,14 @@ test('persists the Klarna order id and consented attribution only', () => {
     false
   )
   assert.equal(
-    attributes.find(attribute => attribute.key === 'fbclid')?.value,
+    attributes.find(attribute => attribute.key === 'fbclid')
+      ?.value,
     'meta-click'
+  )
+  assert.match(
+    attributes.find(
+      attribute => attribute.key === 'utekos_product_context_v1'
+    )?.value ?? '',
+    /"item_category":"Ponchoer"/
   )
 })

@@ -1,11 +1,13 @@
 import type { OrderPaid } from 'types/commerce/order/OrderPaid'
 import type { LineItem } from 'types/commerce/order/LineItem'
 import { readShopifyMoneyAmount } from './readShopifyMoneyAmount'
+import type { CheckoutProductContextItem } from '../checkoutProductContext'
 
 const MONEY_PRECISION = 1_000_000
 
 function roundMoney(value: number) {
-  const rounded = Math.round(value * MONEY_PRECISION) / MONEY_PRECISION
+  const rounded =
+    Math.round(value * MONEY_PRECISION) / MONEY_PRECISION
   return Object.is(rounded, -0) ? 0 : rounded
 }
 
@@ -14,7 +16,9 @@ function lineTaxRate(lineItem: LineItem) {
     const rate = Number(taxLine.rate)
 
     if (!Number.isFinite(rate) || rate < 0) {
-      throw new Error('Shopify line item has an invalid tax rate')
+      throw new Error(
+        'Shopify line item has an invalid tax rate'
+      )
     }
 
     return total + rate
@@ -47,9 +51,13 @@ function discountApplicationFor(
     )
   }
 
-  const allocationMethod = application.allocation_method.toLowerCase()
+  const allocationMethod =
+    application.allocation_method.toLowerCase()
 
-  if (allocationMethod !== 'each' && allocationMethod !== 'across') {
+  if (
+    allocationMethod !== 'each' &&
+    allocationMethod !== 'across'
+  ) {
     throw new Error(
       `Unsupported Shopify discount allocation method: ${application.allocation_method}`
     )
@@ -61,7 +69,8 @@ function discountApplicationFor(
 function mapPurchaseItem(
   order: OrderPaid,
   lineItem: LineItem,
-  currency: string
+  currency: string,
+  productContext: ReadonlyMap<string, CheckoutProductContextItem>
 ) {
   if (lineItem.quantity <= 0) return undefined
 
@@ -110,7 +119,8 @@ function mapPurchaseItem(
 
   if (
     grossDiscountTotal > grossLineValue + Number.EPSILON ||
-    netDiscountTotal > netLineValueBeforeDiscount + Number.EPSILON
+    netDiscountTotal >
+      netLineValueBeforeDiscount + Number.EPSILON
   ) {
     throw new Error(
       'Shopify line item discounts exceed the line item value'
@@ -137,18 +147,27 @@ function mapPurchaseItem(
     Math.max(0, netLineValueBeforeDiscount - netDiscountTotal)
   )
 
+  const itemId =
+    lineItem.variant_id !== null ?
+      String(lineItem.variant_id)
+    : String(lineItem.id)
+  const context = productContext.get(itemId)
+  const itemBrand =
+    context?.item_brand ?? lineItem.vendor?.trim()
+
   return {
     item: {
-      item_id:
-        lineItem.variant_id !== null ?
-          String(lineItem.variant_id)
-        : String(lineItem.id),
+      item_id: itemId,
       item_name: lineItem.name || lineItem.title,
       quantity: lineItem.quantity,
       unit_price: unitPrice,
       final_unit_price: finalUnitPrice,
       ...(discount > 0 ? { discount } : {}),
-      ...(lineItem.sku ? { sku: lineItem.sku } : {})
+      ...(lineItem.sku ? { sku: lineItem.sku } : {}),
+      ...(itemBrand ? { item_brand: itemBrand } : {}),
+      ...(context?.item_category ?
+        { item_category: context.item_category }
+      : {})
     },
     netDiscountTotal: roundMoney(netDiscountTotal),
     netRevenue
@@ -157,25 +176,40 @@ function mapPurchaseItem(
 
 function couponCodes(order: OrderPaid) {
   const codes = [
-    ...(order.discount_codes ?? []).map(discount => discount.code),
-    ...order.discount_applications.map(application => application.code)
+    ...(order.discount_codes ?? []).map(
+      discount => discount.code
+    ),
+    ...order.discount_applications.map(
+      application => application.code
+    )
   ]
 
-  return [...new Set(
-    codes
-      .map(code => code?.trim())
-      .filter((code): code is string => Boolean(code))
-      .map(code => Array.from(code).slice(0, 100).join(''))
-  )].slice(0, 10)
+  return [
+    ...new Set(
+      codes
+        .map(code => code?.trim())
+        .filter((code): code is string => Boolean(code))
+        .map(code => Array.from(code).slice(0, 100).join(''))
+    )
+  ].slice(0, 10)
 }
 
 export function mapShopifyOrderPurchasePricing(
   order: OrderPaid,
-  currency: string
+  currency: string,
+  productContext: ReadonlyMap<
+    string,
+    CheckoutProductContextItem
+  > = new Map()
 ) {
   const mapped = order.line_items
-    .map(lineItem => mapPurchaseItem(order, lineItem, currency))
-    .filter((item): item is NonNullable<typeof item> => item !== undefined)
+    .map(lineItem =>
+      mapPurchaseItem(order, lineItem, currency, productContext)
+    )
+    .filter(
+      (item): item is NonNullable<typeof item> =>
+        item !== undefined
+    )
 
   if (mapped.length === 0) {
     throw new Error(

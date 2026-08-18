@@ -41,6 +41,11 @@ const lineItemNodeSchema = z.object({
   title: z.string().nullable().optional(),
   quantity: z.number().int(),
   sku: z.string().nullable().optional(),
+  vendor: z.string().nullable().optional(),
+  product: z
+    .object({ vendor: z.string(), productType: z.string() })
+    .nullable()
+    .optional(),
   variant: z
     .object({ id: z.string(), legacyResourceId: z.string() })
     .nullable()
@@ -330,6 +335,11 @@ query ShopifyCommerceReconciliation(
           title
           quantity
           sku
+          vendor
+          product {
+            vendor
+            productType
+          }
           variant {
             id
             legacyResourceId
