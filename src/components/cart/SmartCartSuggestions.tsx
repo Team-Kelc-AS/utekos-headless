@@ -73,39 +73,57 @@ export function SmartCartSuggestions({
 
   if (subtotal < FREE_SHIPPING_THRESHOLD) {
     const remainingAmount = FREE_SHIPPING_THRESHOLD - subtotal
-    const allPotential = [
-      ...eligibleAccessoryProducts,
-      ...eligibleRecommendedProducts
-    ]
 
-    const availableSuggestions = [
-      ...new Map(
-        allPotential.map(product => [product.id, product])
-      ).values()
-    ].filter(product => !cartLineProductIds.has(product.id))
+    // Bolt Performance Optimization: Single-pass candidate collection with pre-parsed prices.
+    // Avoids intermediate arrays from spreads, `new Map()` allocations, and repeated
+    // `parseFloat()` parsing inside the sort comparator function (O(N log N) -> O(N) parses).
+    interface Candidate {
+      product: ShopifyProduct
+      price: number
+    }
+    const candidates: Candidate[] = []
+    const seenProductIds = new Set<string>()
 
-    const sorted = [...availableSuggestions].sort((a, b) => {
-      const priceA = parseFloat(
-        a.priceRange.minVariantPrice.amount
-      )
-      const priceB = parseFloat(
-        b.priceRange.minVariantPrice.amount
-      )
-      const aIsBridge = priceA >= remainingAmount
-      const bIsBridge = priceB >= remainingAmount
+    const addCandidates = (products: ShopifyProduct[]) => {
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i]
+        if (!product) continue
+        if (
+          !seenProductIds.has(product.id) &&
+          !cartLineProductIds.has(product.id)
+        ) {
+          seenProductIds.add(product.id)
+          candidates.push({
+            product,
+            price: parseFloat(product.priceRange.minVariantPrice.amount)
+          })
+        }
+      }
+    }
+
+    addCandidates(eligibleAccessoryProducts)
+    addCandidates(eligibleRecommendedProducts)
+
+    candidates.sort((a, b) => {
+      const aIsBridge = a.price >= remainingAmount
+      const bIsBridge = b.price >= remainingAmount
 
       if (aIsBridge && !bIsBridge) return -1
       if (!aIsBridge && bIsBridge) return 1
-      if (aIsBridge && bIsBridge) return priceA - priceB
+      if (aIsBridge && bIsBridge) return a.price - b.price
 
-      return priceB - priceA
+      return b.price - a.price
     })
 
-    const suggestions = sorted.slice(0, 1)
-    if (suggestions.length === 0) return null
+    if (candidates.length === 0) return null
+
+    const topCandidate = candidates[0]?.product
+    if (!topCandidate) return null
+
+    const suggestions = [topCandidate]
 
     const showDiscountHint = eligibleAccessoryProducts.some(
-      product => product.id === suggestions[0]?.id
+      product => product.id === topCandidate.id
     )
 
     return (
