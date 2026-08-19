@@ -47,6 +47,8 @@ test('uses final cart and line costs after all discounts', () => {
   assert.equal(commerce.gross_value, 1440)
   assert.equal(commerce.value, 1152)
   assert.equal(commerce.tax_value, 288)
+  assert.equal(commerce.items.length, 1)
+  assert.equal(commerce.items[0]?.item_name, 'Rabattert produkt')
   assert.equal(commerce.items[0]?.gross_unit_price, 720)
   assert.equal(commerce.items[0]?.unit_price, 576)
   assert.equal(commerce.items[0]?.tax_amount, 144)

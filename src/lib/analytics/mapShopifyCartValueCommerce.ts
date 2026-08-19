@@ -63,25 +63,26 @@ export function mapShopifyCartValueCommerce(
     lineGrossTotal > grossValue && lineGrossTotal > 0 ?
       grossValue / lineGrossTotal
     : 1
-  const mappedItems = mappableLines.flatMap((line, index) => {
-    const commerce = mapCartVariantCommerce({
-      product: line.merchandise.product,
-      variant: line.merchandise,
-      quantity: line.quantity,
-      priceContext: UTEKOS_NORWAY_PRICE_CONTEXT
-    })
-    const discountedLineGross = roundMoney(
-      (lineGrossTotals[index] ?? 0) * cartDiscountRatio
-    )
-
-    return commerce.items.map(item =>
-      applyAuthoritativeLineCost(
-        item,
-        discountedLineGross,
-        line.quantity
+  const mappedItems: ShopifyCartValueCommerce['items'] =
+    mappableLines.flatMap((line, index) => {
+      const commerce = mapCartVariantCommerce({
+        product: line.merchandise.product,
+        variant: line.merchandise,
+        quantity: line.quantity,
+        priceContext: UTEKOS_NORWAY_PRICE_CONTEXT
+      })
+      const discountedLineGross = roundMoney(
+        (lineGrossTotals[index] ?? 0) * cartDiscountRatio
       )
-    )
-  })
+
+      return commerce.items.map(item =>
+        applyAuthoritativeLineCost(
+          item,
+          discountedLineGross,
+          line.quantity
+        )
+      )
+    })
   const netValue = roundMoney(
     grossValue / (1 + UTEKOS_NORWAY_PRICE_CONTEXT.taxRate)
   )
@@ -93,7 +94,7 @@ export function mapShopifyCartValueCommerce(
     value: netValue,
     gross_value: grossValue,
     tax_value: taxValue,
-    items: mappedItems.flatMap(commerce => commerce.items),
+    items: mappedItems,
     checkout_id: resolveCheckoutId(cart)
   }
 }
