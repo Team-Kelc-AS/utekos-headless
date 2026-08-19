@@ -5,6 +5,7 @@ export {
   getTechDownCommerceViewModel
 } from './getProductCommerceViewModel'
 export { resolveCommerceVariantFromSearchParams } from './resolveCommerceVariantFromSearchParams'
+export { toPurchaseVariantFromPublicCommerce } from './toPurchaseVariantFromPublicCommerce'
 export type {
   ProductCommerceViewModel,
   PublicCommerceVariant

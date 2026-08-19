@@ -100,7 +100,7 @@ export function buildProductCommerceViewModel(
           commerce: {
             id: variant.id,
             title: publicName,
-            gtin: variant.gtin ?? null,
+            gtin: variant.barcode,
             availableForSale: variant.availableForSale,
             currentlyNotInStock: variant.currentlyNotInStock,
             taxable: variant.taxable,

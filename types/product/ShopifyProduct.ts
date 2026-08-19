@@ -55,5 +55,4 @@ export type ShopifyProduct = {
   selectedOrFirstAvailableVariant?: ShopifyProductVariant
   variants: ProductVariantConnection
   weight?: WeightUnit
-  gtin?: ShopifyProductVariant['gtin']
 }

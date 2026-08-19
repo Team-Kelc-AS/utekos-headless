@@ -16,6 +16,7 @@ import {
   requireProductPresentation
 } from '@/lib/products/presentation'
 import type { ProductCommerceViewModel } from '@/lib/products/commerce'
+import { toPurchaseVariantFromPublicCommerce } from '@/lib/products/commerce/toPurchaseVariantFromPublicCommerce'
 import type { Route } from 'next'
 
 type UseLandingPurchaseLogicProps = {
@@ -54,10 +55,7 @@ export function useLandingPurchaseLogic({
     ) ?? commerce.variants[0]
   const selectedShopifyVariant =
     selectedVariant ?
-      {
-        ...selectedVariant.commerce,
-        sku: selectedVariant.commerce.sku
-      }
+      toPurchaseVariantFromPublicCommerce(selectedVariant)
     : null
 
   const reportVariantSelect = (
