@@ -7,8 +7,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(__dirname, '../..')
 
 const SOURCE_CSS_PATH = path.join(repoRoot, 'src/color-3.css')
-const CSV_SOURCE_PATH =
-  '/Users/kristofferohnstadhjelmeland/Downloads/converted_colors.csv'
+const CSV_SOURCE_PATH = path.resolve(
+  process.argv[2] ??
+    process.env.BRAND_COLORS_CSV_PATH ??
+    path.join(repoRoot, 'converted_colors.csv')
+)
 const OUTPUT_JSON_PATH = path.join(repoRoot, 'src/lib/brand/color-tokens.json')
 const OUTPUT_DOC_PATH = path.join(repoRoot, 'docs/brand-colors.md')
 const REFERENCE_BACKGROUND_HEX = '#010214'
@@ -793,7 +796,7 @@ async function buildBrandColorData() {
   return {
     generatedAt: new Date().toISOString(),
     source: 'src/color-3.css',
-    csvSource: CSV_SOURCE_PATH,
+    csvSource: path.basename(CSV_SOURCE_PATH),
     referenceBackground: REFERENCE_BACKGROUND_HEX,
     generationNotes: [
       'src/color-3.css is the primary source for displayed Utekos brand tokens.',

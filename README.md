@@ -11,11 +11,7 @@ GitHub nor included in Vercel deployments.
 
 All repository-owned MCP configuration, ChatGPT profiles, tunnels, MCP servers,
 provider diagnostics, and local authentication helpers are owned by the
-independent repository:
-
-```text
-/Users/kristofferohnstadhjelmeland/dev/utekos-platform-tools
-```
+independent local `utekos-platform-tools` repository.
 
 This application must not depend on platform-tools for install, build, tests, or
 production runtime. Generated MCP editor files in this checkout are ignored

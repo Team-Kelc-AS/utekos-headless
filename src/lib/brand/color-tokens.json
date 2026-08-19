@@ -1,7 +1,7 @@
 {
   "generatedAt": "2026-06-23T17:24:04.438Z",
   "source": "src/color-3.css",
-  "csvSource": "/Users/kristofferohnstadhjelmeland/Downloads/converted_colors.csv",
+  "csvSource": "converted_colors.csv",
   "referenceBackground": "#010214",
   "generationNotes": [
     "src/color-3.css is the primary source for displayed Utekos brand tokens.",
