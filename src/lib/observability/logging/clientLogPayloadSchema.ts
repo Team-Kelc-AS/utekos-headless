@@ -73,8 +73,10 @@ export const clientLogPayloadSchema = z.discriminatedUnion(
   [clientErrorSchema, unhandledRejectionSchema]
 )
 
+export type ClientLogPayload = z.infer<typeof clientLogPayloadSchema>
+
 export function toAppLogInput(
-  payload: z.infer<typeof clientLogPayloadSchema>
+  payload: ClientLogPayload
 ): AppLogInput {
   if (payload.event === 'client_error') {
     return {

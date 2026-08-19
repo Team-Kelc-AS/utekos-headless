@@ -12,6 +12,7 @@ import {
 } from '@/lib/observability/client/sanitizeClientErrorBeacon'
 import { describeUnhandledRejection } from '@/lib/observability/client/describeUnhandledRejection'
 import { filterSentryClientEvent } from '@/lib/observability/client/filterSentryClientEvent'
+import { sendClientLog } from '@/lib/observability/client/sendClientLog'
 import type { LogPayload } from 'types/observability/log/LogPayload'
 
 /**
@@ -74,22 +75,10 @@ function beaconError(payload: LogPayload) {
   }
 
   try {
-    const body = JSON.stringify(payload)
-
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon(
-        '/api/log',
-        new Blob([body], { type: 'application/json' })
-      )
-      return
-    }
-
-    void fetch('/api/log', {
-      method: 'POST',
-      body,
-      keepalive: true,
-      headers: { 'content-type': 'application/json' }
-    }).catch(() => {})
+    void sendClientLog(payload, {
+      fetch,
+      sendBeacon: navigator.sendBeacon?.bind(navigator)
+    })
   } catch {
     // Error reporting must never throw.
   }

@@ -5,6 +5,11 @@ const COOKIEBOT_ORIGINS = [
   'https://consentcdn.cookiebot.eu'
 ] as const
 
+const STOREFRONT_ORIGINS = [
+  'https://utekos.no',
+  'https://www.utekos.no'
+] as const
+
 const TAG_GATEWAY_ORIGINS = [
   'https://www.googletagmanager.com',
   'https://cloud.server.utekos.no',
@@ -132,6 +137,7 @@ export function buildReportOnlyCsp(): string {
     "'self'",
     "'unsafe-inline'",
     "'unsafe-eval'",
+    ...STOREFRONT_ORIGINS,
     ...KLARNA_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...MICROSOFT_TRACKING_ORIGINS,
@@ -145,6 +151,7 @@ export function buildReportOnlyCsp(): string {
 
   const connectSrc = [
     "'self'",
+    ...STOREFRONT_ORIGINS,
     ...KLARNA_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...MICROSOFT_TRACKING_ORIGINS,
@@ -170,6 +177,7 @@ export function buildReportOnlyCsp(): string {
     "'self'",
     'data:',
     'blob:',
+    ...STOREFRONT_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...MICROSOFT_TRACKING_ORIGINS,
     ...META_PIXEL_EVENT_ORIGINS,
@@ -183,6 +191,7 @@ export function buildReportOnlyCsp(): string {
 
   const frameSrc = [
     "'self'",
+    ...STOREFRONT_ORIGINS,
     ...KLARNA_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...META_PIXEL_FRAME_ORIGINS,

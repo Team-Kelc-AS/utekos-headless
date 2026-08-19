@@ -47,7 +47,14 @@ function hostname(value: string | undefined): string | undefined {
   }
 }
 
-export function parseCspReport(value: unknown) {
+export type ParsedCspReport = {
+  directive: string
+  blockedHost: string | undefined
+  documentHost: string | undefined
+  disposition: 'enforce' | 'report'
+}
+
+export function parseCspReport(value: unknown): ParsedCspReport {
   const report = cspReportSchema.parse(value)['csp-report']
   return {
     directive: directive(report['effective-directive'] || report['violated-directive']),

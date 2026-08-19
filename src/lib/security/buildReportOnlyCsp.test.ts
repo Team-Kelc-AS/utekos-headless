@@ -11,6 +11,10 @@ test('protects structural directives and permits the consent-aware tag gateways'
   assert.match(csp, /connect-src[^;]*https:\/\/js\.klarna\.com/)
   assert.match(csp, /script-src[^;]*https:\/\/js\.klarna\.com/)
   assert.match(csp, /report-uri \/api\/security\/csp-report/)
+  assert.match(csp, /script-src[^;]*https:\/\/utekos\.no/)
+  assert.match(csp, /connect-src[^;]*https:\/\/utekos\.no/)
+  assert.match(csp, /script-src[^;]*https:\/\/www\.utekos\.no/)
+  assert.match(csp, /connect-src[^;]*https:\/\/www\.utekos\.no/)
   assert.match(
     csp,
     /script-src[^;]*https:\/\/consent\.cookiebot\.com/
