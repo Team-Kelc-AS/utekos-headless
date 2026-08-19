@@ -109,7 +109,10 @@ tests/
 **/*.test.*
 **/*.spec.*
 playwright.*.config.ts
-supabase/
+supabase/**
+!supabase/functions/
+!supabase/functions/_shared/
+!supabase/functions/_shared/landing-edge-request-id.ts
 Dockerfile
 docker-compose.yml
 eslint.config.mts
