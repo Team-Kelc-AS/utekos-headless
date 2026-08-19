@@ -61,6 +61,37 @@ next-env.d.ts
 /supabase/.temp/
 /.development-data/
 
+# Local-only agent, operations, evidence, and editor sources. These stay on
+# disk for local agents but are never committed or sent through GitHub.
+/.agent/
+/.agents/
+/.codex/
+/.cursor/
+/.github/
+/.playwright-cli/
+/.superpowers/
+/.vscode/
+/docs/
+/output/
+/AGENTS.md
+/CANONICAL_EVENTS.md
+/COMMERCIAL_INTELLIGENCE_PLAN.md
+/DEPLOYMENT.md
+/DEVELOPMENT.md
+/EVENT_CATALOG.md
+/FLOW.md
+/NEXT.md
+/PLAN.md
+/draft.md
+/chatgpt-app-submission.json
+/skills-lock.json
+/test.json
+/shadcn-extension.json
+/.env.docker.example
+/.gcloudignore
+/.mcp.json
+/types/codex-log.md
+
 # Local provider credentials (templates/examples stay commit-safe)
 /src/api/lib/cloud-credentials/*.json
 !/src/api/lib/cloud-credentials/*.example.json
@@ -73,7 +104,7 @@ next-env.d.ts
 **/application_default_credentials.json
 
 # Generated MCP client configurations may interpolate local credentials.
-# config/mcp/ remains tracked as the committed template source.
+# Their committed templates live in utekos-platform-tools.
 /mcp.json
 /.vscode/mcp.json
 /.cursor/mcp.json

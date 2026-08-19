@@ -8,7 +8,6 @@ import { z } from 'zod'
 import { redactOperationalText } from './provider-dispatch-feedback-report.mjs'
 
 dotenv.config({ path: '.env.local', quiet: true })
-dotenv.config({ path: '.env.mcp.local', override: false, quiet: true })
 
 const DEFAULT_LIMIT = 100
 const SUPPORTED_REPLAY_PROVIDERS = new Set(['meta', 'google', 'microsoft_uet'])

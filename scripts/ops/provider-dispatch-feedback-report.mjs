@@ -5,7 +5,6 @@ import dotenv from 'dotenv'
 import postgres from 'postgres'
 
 dotenv.config({ path: '.env.local', quiet: true })
-dotenv.config({ path: '.env.mcp.local', override: false, quiet: true })
 
 const ACTIVE_QUEUE_STATUSES = new Set(['pending', 'processing', 'retry_scheduled'])
 const FAILED_STATUSES = new Set(['failed', 'dead_lettered'])

@@ -6,11 +6,6 @@ import { pathToFileURL } from 'node:url'
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '.env.local', quiet: true })
-dotenv.config({
-  path: '.env.mcp.local',
-  override: false,
-  quiet: true
-})
 
 const execFileAsync = promisify(execFile)
 

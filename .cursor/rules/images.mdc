@@ -1,9 +1,0 @@
----
-alwaysApply: false
----
-
-- next/images import and usage 
-
-- Alle kodeeide bilder skal lagres under src/assets/images/, importeres statisk og brukes med next/image. 
-- Ikke referer til slike bilder via public/*. 
-- Unntak: Shopify-administrerte bilder kan bruke Shopify CDN-URL fra API-et

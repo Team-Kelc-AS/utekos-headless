@@ -17,6 +17,9 @@ token.json
 **/application_default_credentials.json
 
 # local MCP / tooling output
+.github/
+.superpowers/
+.vscode/
 .agents/
 .agents/skills/
 .playwright-mcp/
@@ -35,8 +38,17 @@ pagespeed_raport/
 pagespeed-rapport/
 pagespeed_rapport/
 rapport.md
-PLAN.md
 AGENTS.md
+CANONICAL_EVENTS.md
+COMMERCIAL_INTELLIGENCE_PLAN.md
+DEPLOYMENT.md
+DEVELOPMENT.md
+EVENT_CATALOG.md
+FLOW.md
+NEXT.md
+PLAN.md
+README.md
+draft.md
 project_info_1/
 
 # environment-variables
@@ -70,9 +82,15 @@ src/components/klarna/README.md
 .cursor/
 .gemini/
 docs/
+.gcloudignore
+.mcp.json
+chatgpt-app-submission.json
+components.json
+skills-lock.json
+shadcn-extension.json
+test.json
 .env.docker.example
 .env.local.incomplete.backup
-.env.mcp.example
 .env.tunnel.example
 
 # accidental local SDK / tooling trees (must never ship in serverless traces)
@@ -81,3 +99,19 @@ output/
 .playwright-cli/
 .vc-config.json
 types/codex-log.md
+
+# Repository quality and local development sources. Keep the one script used by
+# Vercel prebuild; exclude all other scripts, tests, fixtures, and local stacks.
+scripts/**
+!scripts/deploy/
+!scripts/deploy/validate-build-env.mjs
+tests/
+**/*.test.*
+**/*.spec.*
+playwright.*.config.ts
+supabase/
+Dockerfile
+docker-compose.yml
+eslint.config.mts
+prettier.config.mts
+tsconfig.customer-assistant.json

@@ -10,7 +10,6 @@ import {
 } from './provider-dispatch-feedback-report.mjs'
 
 dotenv.config({ path: '.env.local', quiet: true })
-dotenv.config({ path: '.env.mcp.local', override: false, quiet: true })
 
 const DEFAULT_THRESHOLDS = {
   maxHistoricalMissingGaClientIdRate: 0.25,

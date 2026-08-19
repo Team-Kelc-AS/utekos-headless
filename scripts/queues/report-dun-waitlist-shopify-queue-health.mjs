@@ -11,7 +11,6 @@ import postgres from 'postgres'
 import { z } from 'zod'
 
 dotenv.config({ path: '.env.local', quiet: true })
-dotenv.config({ path: '.env.mcp.local', override: false, quiet: true })
 
 const QUEUE_NAME = 'shopify_dun_waitlist_sync'
 const DLQ_SOURCE = 'shopify_dun_waitlist_pgmq'
