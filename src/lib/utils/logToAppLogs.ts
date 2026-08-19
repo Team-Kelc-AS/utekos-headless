@@ -3,9 +3,15 @@ import {
   appLogInputSchema,
   type AppLogInput
 } from '@/lib/observability/logging/appLogContract'
-import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
+import { parseAppLogEntryExtras } from '@/lib/observability/logging/appLogEntryExtrasSchema'
 import { reportAppLogToSentry } from '@/lib/observability/logging/reportAppLogToSentry'
-import type { AppLogEntry } from 'types/observability/log/AppLogEntry'
+import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
+import type {
+  AppLogEntry,
+  AppLogEntryExtras
+} from 'types/observability/log/AppLogEntry'
+
+export type LogToAppLogsInput = AppLogInput & AppLogEntryExtras
 
 export type LogToAppLogsDependencies = {
   report: typeof reportAppLogToSentry
@@ -16,14 +22,21 @@ const defaultDependencies: LogToAppLogsDependencies = {
 }
 
 export async function logToAppLogs(
-  input: AppLogInput,
+  input: LogToAppLogsInput,
   dependencies: LogToAppLogsDependencies = defaultDependencies
 ): Promise<AppLogEntry> {
-  const parsedInput = appLogInputSchema.parse(input)
+  const { event, level, data, context, ...extrasInput } = input
+  const parsedInput = appLogInputSchema.parse({
+    event,
+    level,
+    data,
+    context
+  })
+  const extras = parseAppLogEntryExtras(extrasInput)
   const timestamp = new Date().toISOString()
   const logId = crypto.randomUUID()
 
-  const logEntry = {
+  const logEntry: AppLogEntry = {
     event: parsedInput.event,
     id: logId,
     timestamp,
@@ -32,15 +45,18 @@ export async function logToAppLogs(
     context: {
       ...parsedInput.context,
       runtime: getVercelRuntimeContext()
-    }
+    },
+    ...extras
   }
 
+  const serialized = JSON.stringify(logEntry)
+
   if (parsedInput.level === 'ERROR') {
-    console.error(JSON.stringify(logEntry))
+    console.error(serialized)
   } else if (parsedInput.level === 'WARN') {
-    console.warn(JSON.stringify(logEntry))
+    console.warn(serialized)
   } else {
-    console.log(JSON.stringify(logEntry))
+    console.log(serialized)
   }
 
   if (

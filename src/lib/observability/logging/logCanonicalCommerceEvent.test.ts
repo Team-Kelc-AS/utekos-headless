@@ -34,9 +34,21 @@ test('writes a searchable privacy-safe begin_checkout runtime log', async t => {
 
   assert.equal(lines.length, 1)
   const entry = JSON.parse(lines[0] ?? '{}') as {
+    adPlatformEvents?: {
+      google?: { eventName?: string; parameters?: Record<string, unknown> }
+      meta?: { eventName?: string; parameters?: Record<string, unknown> }
+      microsoft_uet?: {
+        eventName?: string
+        parameters?: Record<string, unknown>
+      }
+      pinterest?: { eventName?: string; parameters?: Record<string, unknown> }
+    }
     context: Record<string, unknown>
     data: Record<string, unknown>
     event: string
+    eventId?: string
+    eventName?: string
+    pageUrl?: string
   }
 
   assert.equal(entry.event, 'commerce.event')
@@ -44,8 +56,34 @@ test('writes a searchable privacy-safe begin_checkout runtime log', async t => {
   assert.equal(entry.data.checkoutMethod, 'klarna_express')
   assert.equal(entry.data.quantity, 2)
   assert.equal(entry.context.pagePath, '/produkter/utekos-techdown')
+  assert.equal(entry.eventId, '61c2ef59-6e6f-4f56-a63a-567ca398f9de')
+  assert.equal(entry.eventName, 'begin_checkout')
+  assert.equal(entry.pageUrl, '/produkter/utekos-techdown')
+  assert.equal(entry.adPlatformEvents?.meta?.eventName, 'InitiateCheckout')
+  assert.equal(entry.adPlatformEvents?.google?.eventName, 'begin_checkout')
+  assert.equal(entry.adPlatformEvents?.microsoft_uet?.eventName, 'begin_checkout')
+  assert.equal(entry.adPlatformEvents?.pinterest?.eventName, 'initiate_checkout')
+  assert.equal(entry.adPlatformEvents?.meta?.parameters?.currency, 'NOK')
+  assert.equal(entry.adPlatformEvents?.meta?.parameters?.value, 2499)
+  assert.equal(
+    entry.adPlatformEvents?.meta?.parameters?.event_source_url,
+    '/produkter/utekos-techdown'
+  )
+  assert.equal(entry.adPlatformEvents?.google?.parameters?.value, 2499)
+  assert.equal(
+    entry.adPlatformEvents?.microsoft_uet?.parameters?.eventCategory,
+    'ecommerce'
+  )
   assert.equal(JSON.stringify(entry).includes('fbclid'), false)
   assert.equal(JSON.stringify(entry).includes('secret'), false)
+  assert.equal(JSON.stringify(entry).includes('user_data'), true)
+  assert.equal(
+    Object.hasOwn(
+      entry.adPlatformEvents?.meta?.parameters ?? {},
+      'user_data'
+    ),
+    false
+  )
 })
 
 test('fails open when both runtime log transports throw', async t => {

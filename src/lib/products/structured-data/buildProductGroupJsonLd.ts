@@ -63,7 +63,7 @@ function buildVariantNode(
   model: ProductCommerceViewModel,
   variant: PublicCommerceVariant
 ) {
-  const validGtin = isValidGtin(variant.commerce.barcode)
+  const validGtin = isValidGtin(variant.commerce.gtin)
   const priceSpecification = buildPriceSpecification(variant)
   const image = buildVariantImage(variant)
 
@@ -89,7 +89,7 @@ function buildVariantNode(
       { sku: variant.commerce.sku }
     : {}),
     ...(validGtin ?
-      getSchemaOrgGtinData(variant.commerce.barcode)
+      getSchemaOrgGtinData(variant.commerce.gtin || '')
     : {}),
     ...(image ? { image } : {}),
     'offers': {

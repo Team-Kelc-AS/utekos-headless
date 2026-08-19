@@ -1,6 +1,7 @@
 import type { CanonicalAddToCart } from '@/lib/analytics/addToCartEvent'
 import type { CanonicalBeginCheckout } from '@/lib/analytics/beginCheckoutEvent'
 import type { CheckoutMethod } from '@/lib/analytics/checkoutMethod'
+import { buildAdPlatformLogEvents } from '@/lib/observability/logging/buildAdPlatformLogEvents'
 import { logToAppLogs } from '@/lib/utils/logToAppLogs'
 
 type CommerceEventStatus = 'accepted' | 'duplicate'
@@ -52,6 +53,11 @@ export async function logCanonicalCommerceEvent(
         eventName: input.eventName
       }
 
+  const adPlatformEvents = buildAdPlatformLogEvents({
+    event: input.event,
+    eventName: input.eventName
+  })
+
   try {
     await logToAppLogs({
       event: 'commerce.event',
@@ -64,7 +70,26 @@ export async function logCanonicalCommerceEvent(
             '/api/events/add-to-cart'
           : '/api/events/begin-checkout',
         ...(vercelId ? { vercelId } : {})
-      }
+      },
+      eventId: input.event.event_id,
+      eventName: input.eventName,
+      ...(input.event.event_time ?
+        { eventTime: input.event.event_time }
+      : {}),
+      ...(input.event.page_view_id ?
+        { pageViewId: input.event.page_view_id }
+      : {}),
+      pageUrl: input.event.page_url,
+      ...(input.event.page_title ?
+        { pageTitle: input.event.page_title }
+      : {}),
+      ...(input.event.consent ?
+        { consent: input.event.consent }
+      : {}),
+      ...(input.event.environment ?
+        { environment: input.event.environment }
+      : {}),
+      ...(adPlatformEvents ? { adPlatformEvents } : {})
     })
   } catch {
     try {

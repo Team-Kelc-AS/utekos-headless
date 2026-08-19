@@ -104,7 +104,7 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForDev: true,
     turbopackFileSystemCacheForBuild: true,
     serverComponentsHmrCache: true,
-    webVitalsAttribution: ['CLS', 'INP', 'LCP'],
+    webVitalsAttribution: ['CLS', 'INP', 'LCP', 'FCP', 'TTFB'],
     optimizePackageImports: [
       'zod',
       'facebook-nodejs-business-sdk',

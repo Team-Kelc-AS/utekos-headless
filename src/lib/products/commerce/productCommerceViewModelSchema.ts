@@ -38,7 +38,7 @@ const productCommerceSchema = z.strictObject({
 const purchaseVariantSchema = z.strictObject({
   id: z.string().min(1),
   title: z.string().min(1),
-  barcode: z.string().nullable(),
+  gtin: z.string().nullable(),
   availableForSale: z.boolean(),
   currentlyNotInStock: z.boolean(),
   taxable: z.boolean(),

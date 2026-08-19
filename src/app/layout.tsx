@@ -5,6 +5,8 @@ import {
   utekosText,
   utekosTextMedium
 } from '@/app/fonts/font.config'
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Suspense } from 'react'
 import { mainMenu } from '@/db/config/menu.config'
 import Footer from '@/components/footer/components/Footer'
@@ -14,78 +16,26 @@ import { OnlineStoreJsonLd } from './OnlineStoreJsonLd'
 import { CartProviderLoader } from '@/components/providers/CartProviderLoader'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
-import { VercelTelemetry } from '@/components/analytics/VercelTelemetry'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
 import Script from 'next/script'
-import { SITE_URL } from '@/constants'
 import type { Metadata } from 'next'
-import type { TrackingEnvironment } from '@/lib/analytics/pageViewEvent'
+import { getTrackingEnvironment } from '@/lib/analytics/getTrackingEnvironment'
 import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
-import { Google_Sans_Flex } from 'next/font/google'
+import { Google_Sans_Flex} from 'next/font/google'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
-
-const GOOGLE_TAG_MANAGER_ID =
-  'GTM-5TWMJQFP'
+import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader';
+import { WebVitals } from '@/components/analytics/WebVitals';
 
 const googleSansFlex = Google_Sans_Flex({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-google-sans',
+  variable: '--font-sans',
   preload: false,
-  fallback: ['system-ui', 'sans-serif'],
-  axes: [
-    'ROND',
-    'GRAD',
-    'wdth',
-    'opsz',
-    'slnt'
-  ]
+  fallback: ['Geist','system-ui', 'sans-serif'],
+
 })
 
-const googleTagGatewayOrigin =
-  (
-    process.env.VERCEL_ENV === 'preview' &&
-    process.env.VERCEL_URL
-  ) ?
-    `https://${process.env.VERCEL_URL}`
-  : process.env.NODE_ENV ===
-      'development' ?
-    'http://localhost:3000'
-  : SITE_URL
-
-const googleTagGatewayUrl = new URL(
-  '/__gtg/gtm.js',
-  googleTagGatewayOrigin
-).toString()
-
-const googleTagManagerScriptUrl =
-  new URL(googleTagGatewayUrl)
-
-googleTagManagerScriptUrl.searchParams.set(
-  'id',
-  GOOGLE_TAG_MANAGER_ID
-)
-
-function getTrackingEnvironment(): TrackingEnvironment {
-  if (process.env.NODE_ENV === 'test') {
-    return 'test'
-  }
-
-  if (
-    process.env.VERCEL_ENV === 'production'
-  ) {
-    return 'production'
-  }
-
-  if (
-    process.env.VERCEL_ENV === 'preview'
-  ) {
-    return 'preview'
-  }
-
-  return 'development'
-}
 
 export const metadata: Metadata = {
   icons: {
@@ -191,35 +141,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
-      {shouldLoadMarketingScripts ?
-        <>
-          <Script
-            id='_next-gtm-init'
-            strategy='beforeInteractive'
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function(w,l){
-                  w[l]=w[l]||[];
-                  w[l].push({
-                    'gtm.start':
-                      new Date().getTime(),
-                    event:'gtm.js'
-                  });
-                })(window,'dataLayer');
-              `
-            }}
-          />
-
-          <Script
-            id='_next-gtm'
-            data-ntpc='GTM'
-            src={
-              googleTagManagerScriptUrl.toString()
-            }
-            strategy='beforeInteractive'
-          />
-        </>
-      : null}
+      <GoogleTagManagerLoader
+       enabled={shouldLoadMarketingScripts}
+     />
 
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
         {shouldLoadMarketingScripts ?
@@ -248,6 +172,7 @@ export default function RootLayout({
           />
           <ScrollDepthObserver />
         </Suspense>
+        <WebVitals />
 
         <OnlineStoreJsonLd />
 
@@ -266,16 +191,10 @@ export default function RootLayout({
         </CartProviderLoader>
 
         <ShopifyCustomerPrivacyBridge
-          {...(
-            storefrontAccessToken ?
-              {
-                storefrontAccessToken
-              }
-            : {}
-          )}
-        />
-
-        <VercelTelemetry />
+         storefrontAccessToken={storefrontAccessToken || ''}
+          />
+        <Analytics mode="production" />
+         <SpeedInsights />
       </body>
     </html>
   )

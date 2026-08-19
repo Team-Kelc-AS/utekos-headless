@@ -12,10 +12,10 @@ type AcceptResult =
   | { event_id: string; status: 'accepted' | 'duplicate' }
   | { reason: 'consent_denied'; status: 'rejected' }
 
-type AcceptFn = (input: {
+type AcceptFn<TStore> = (input: {
   payload: unknown
   requestContext: CanonicalBrowserEventRequestContext
-  store: CanonicalEventStore
+  store: TStore
 }) => Promise<AcceptResult>
 
 type HandlerOptions = {
@@ -100,8 +100,10 @@ function requestLogMeta(
   }
 }
 
-export function createBrowserEventRequestHandler(
-  accept: AcceptFn,
+export function createBrowserEventRequestHandler<
+  TStore = CanonicalEventStore
+>(
+  accept: AcceptFn<TStore>,
   options: HandlerOptions = {}
 ) {
   const configuredEventName = options.eventName
@@ -112,7 +114,7 @@ export function createBrowserEventRequestHandler(
       getRequestContext: (
         request: Request
       ) => CanonicalBrowserEventRequestContext
-      store: CanonicalEventStore
+      store: TStore
     }
   ): Promise<Response> {
     if (!hasSameOrigin(request)) {

@@ -47,8 +47,7 @@ export async function reportAppLogToSentry(
       vercel_deployment_id: runtime.deploymentId ?? 'local'
     },
     extra: {
-      data: logEntry.data,
-      context: logEntry.context,
+      ...logEntry,
       commitSha: runtime.commitSha
     }
   })

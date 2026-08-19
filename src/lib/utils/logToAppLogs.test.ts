@@ -63,3 +63,74 @@ test('returns the same ERROR log entry when reporting delivery fails', async t =
   assert.equal(result.event, errorInput.event)
   assert.deepEqual(result.data, errorInput.data)
 })
+
+test('writes complete ad-platform event parameters to the runtime log line', async t => {
+  const lines: string[] = []
+  t.mock.method(console, 'log', (value: unknown) => {
+    lines.push(String(value))
+  })
+
+  const result = await logToAppLogs({
+    context: {
+      pagePath: '/produkter/utekos-techdown',
+      requestPath: '/api/events/add-to-cart'
+    },
+    data: {
+      currency: 'NOK',
+      durationMs: 12,
+      eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+      eventName: 'add_to_cart',
+      grossValue: 2499,
+      itemCount: 1,
+      quantity: 1,
+      status: 'accepted'
+    },
+    event: 'commerce.event',
+    eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+    eventName: 'add_to_cart',
+    level: 'INFO',
+    pageUrl: 'https://utekos.no/produkter/utekos-techdown?fbclid=secret',
+    adPlatformEvents: {
+      meta: {
+        eventName: 'AddToCart',
+        requiredParameters: ['event_id', 'currency', 'value', 'user_data'],
+        transport: {
+          browser: null,
+          server: 'meta_conversions_api'
+        },
+        parameters: {
+          action_source: 'website',
+          currency: 'NOK',
+          event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+          event_source_url:
+            'https://utekos.no/produkter/utekos-techdown?fbclid=secret',
+          value: 2499
+        }
+      }
+    }
+  })
+
+  assert.equal(lines.length, 1)
+  const entry = JSON.parse(lines[0] ?? '{}') as {
+    adPlatformEvents?: {
+      meta?: {
+        eventName?: string
+        parameters?: Record<string, unknown>
+      }
+    }
+    eventId?: string
+    pageUrl?: string
+  }
+
+  assert.equal(entry.eventId, result.eventId)
+  assert.equal(entry.pageUrl, '/produkter/utekos-techdown')
+  assert.equal(entry.adPlatformEvents?.meta?.eventName, 'AddToCart')
+  assert.equal(entry.adPlatformEvents?.meta?.parameters?.currency, 'NOK')
+  assert.equal(
+    entry.adPlatformEvents?.meta?.parameters?.event_source_url,
+    '/produkter/utekos-techdown'
+  )
+  assert.equal(JSON.stringify(entry).includes('fbclid'), false)
+  assert.equal(JSON.stringify(entry).includes('secret'), false)
+  assert.equal(JSON.stringify(entry).includes('user_data'), true)
+})

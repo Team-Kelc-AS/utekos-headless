@@ -11,7 +11,7 @@ import type { MetaobjectReference } from './MetaobjectReference'
 export type ShopifyProductVariant = {
   id: string
   title: string
-  barcode: string | null
+  gtin?: string | null
   availableForSale: boolean
   currentlyNotInStock: boolean
   taxable: boolean
