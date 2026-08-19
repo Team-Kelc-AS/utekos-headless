@@ -1,4 +1,4 @@
-import { mapShopifyBeginCheckout } from './shopifyBeginCheckoutCommerce'
+import { mapShopifyCartValueCommerce } from './mapShopifyCartValueCommerce'
 import type { CanonicalViewCartCustomData } from './viewCartEvent'
 import type { Cart } from 'types/cart'
 
@@ -6,7 +6,7 @@ export function mapShopifyViewCart(
   cart: Cart,
   viewSequence: number
 ): CanonicalViewCartCustomData {
-  const commerce = mapShopifyBeginCheckout(cart)
+  const commerce = mapShopifyCartValueCommerce(cart)
 
   return {
     currency: commerce.currency,

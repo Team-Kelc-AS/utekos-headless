@@ -3,10 +3,13 @@ import {
 } from './providerOutboxWorkerRegistry'
 import type { RegisteredProviderAdapterKey } from './providerAdapterRegistry'
 import type { ProviderOutboxBatchSummary } from './runProviderOutboxWorker'
+import { listDueProviderOutboxAdapterKeys } from './listDueProviderOutboxAdapterKeys'
 
-export type RegisteredProviderOutboxBatchSummary = Record<
-  RegisteredProviderAdapterKey,
-  ProviderOutboxBatchSummary
+export type RegisteredProviderOutboxBatchSummary = Partial<
+  Record<
+    RegisteredProviderAdapterKey,
+    ProviderOutboxBatchSummary
+  >
 >
 
 type RegisteredWorker = (input: {
@@ -18,20 +21,28 @@ export type RegisteredProviderOutboxBatchDependencies = Record<
   RegisteredWorker
 >
 
+export type RegisteredProviderOutboxBatchRuntimeDependencies = {
+  listDueAdapterKeys: () => Promise<RegisteredProviderAdapterKey[]>
+  workers: RegisteredProviderOutboxBatchDependencies
+}
+
+const defaultDependencies: RegisteredProviderOutboxBatchRuntimeDependencies =
+  {
+    listDueAdapterKeys: listDueProviderOutboxAdapterKeys,
+    workers: providerOutboxWorkerRegistry
+  }
+
 export async function runRegisteredProviderOutboxBatch(
   input: { maxItems: number },
-  dependencies: RegisteredProviderOutboxBatchDependencies =
-    providerOutboxWorkerRegistry
+  dependencies: RegisteredProviderOutboxBatchRuntimeDependencies =
+    defaultDependencies
 ): Promise<RegisteredProviderOutboxBatchSummary> {
-  const entries = Object.entries(dependencies) as [
-    RegisteredProviderAdapterKey,
-    RegisteredWorker
-  ][]
+  const dueAdapterKeys = await dependencies.listDueAdapterKeys()
   const results = await Promise.all(
-    entries.map(async ([key, runBatch]) => [
-      key,
-      await runBatch(input)
-    ] as const)
+    dueAdapterKeys.map(async key => {
+      const runBatch = dependencies.workers[key]
+      return [key, await runBatch(input)] as const
+    })
   )
 
   return Object.fromEntries(

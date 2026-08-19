@@ -9,7 +9,7 @@ import { deriveLandingEdgeRequestId } from '../_shared/landing-edge-request-id.t
 const config: DrainRuntimeConfig = {
   allowedHosts: ['utekos.no', 'www.utekos.no'],
   databaseUrl:
-    'postgresql://postgres:postgres@127.0.0.1:5432/postgres',
+    'postgresql://postgres:postgres@127.0.0.1:6543/postgres',
   environment: 'production',
   fbclidHmacSecret:
     'fbclid-secret-that-is-at-least-32-characters',

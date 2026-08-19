@@ -33,16 +33,34 @@ function stubWorkers(
   ) as RegisteredProviderOutboxBatchDependencies
 }
 
-test('runs every registered provider-event worker without event-specific orchestration', async () => {
+test('runs only provider-event workers with due fallback rows', async () => {
   const calls: string[] = []
+  const dueAdapterKeys = providerAdapterKeys.slice(0, 3)
   const result = await runRegisteredProviderOutboxBatch(
     { maxItems: 3 },
-    stubWorkers(calls)
+    {
+      listDueAdapterKeys: async () => dueAdapterKeys,
+      workers: stubWorkers(calls)
+    }
   )
 
-  assert.equal(calls.length, providerAdapterKeys.length)
-  for (const key of providerAdapterKeys) {
+  assert.equal(calls.length, dueAdapterKeys.length)
+  for (const key of dueAdapterKeys) {
     assert.ok(calls.includes(`${key}:3`))
     assert.deepEqual(result[key], summary)
   }
+})
+
+test('performs no worker claims when no fallback rows are due', async () => {
+  const calls: string[] = []
+  const result = await runRegisteredProviderOutboxBatch(
+    { maxItems: 3 },
+    {
+      listDueAdapterKeys: async () => [],
+      workers: stubWorkers(calls)
+    }
+  )
+
+  assert.deepEqual(calls, [])
+  assert.deepEqual(result, {})
 })

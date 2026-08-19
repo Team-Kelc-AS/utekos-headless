@@ -48,6 +48,7 @@
 
 @theme inline {
   --color-cloud-dancer: oklch(0.9493 0.007 88.64);
+  --font-google-sans: var(--font-sans);
   --font-utekos-text: var(--font-utekos-text);
   --font-utekos-text-medium: var(--font-utekos-text-medium);
   --color-alternate: var(--alternate);

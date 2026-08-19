@@ -5,8 +5,8 @@ import {
   shopifyCartRemovalToCanonicalRemoveFromCart
 } from './shopifyCartRemovalToCanonicalRemoveFromCart'
 
-test('maps cart removal to webhook remove_from_cart with commerce', () => {
-  const event = shopifyCartRemovalToCanonicalRemoveFromCart({
+test('maps cart removal to webhook remove_from_cart with commerce', async () => {
+  const event = await shopifyCartRemovalToCanonicalRemoveFromCart({
     cartToken: 'exampleCartId',
     quantityRemoved: 2,
     updatedAt: '2026-07-24T12:00:00.000Z',

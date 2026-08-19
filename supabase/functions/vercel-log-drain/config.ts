@@ -17,7 +17,7 @@ export function readDrainRuntimeConfig(
     .map(host => host.trim())
     .filter(Boolean)
   return drainRuntimeConfigSchema.parse({
-    databaseUrl: env.get('SUPABASE_DB_URL'),
+    databaseUrl: env.get('VERCEL_LOG_DRAIN_DATABASE_URL'),
     signatureSecret: env.get(
       'VERCEL_LOG_DRAIN_SIGNATURE_SECRET'
     ),

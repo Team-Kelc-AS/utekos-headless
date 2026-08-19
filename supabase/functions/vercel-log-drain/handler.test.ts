@@ -12,7 +12,7 @@ import { createVercelLogDrainHandler } from './handler.ts'
 const config: DrainRuntimeConfig = {
   allowedHosts: ['utekos.no'],
   databaseUrl:
-    'postgresql://postgres:postgres@127.0.0.1:5432/postgres',
+    'postgresql://postgres:postgres@127.0.0.1:6543/postgres',
   fbclidHmacSecret:
     'fbclid-hmac-secret-that-is-at-least-32-characters',
   environment: 'production',
@@ -163,10 +163,29 @@ test('enforces method, encoding, body and array bounds', async () => {
     { length: MAX_DRAIN_BATCH_SIZE + 1 },
     (_, index) => validEntry(`log-${index}`)
   )
-  const oversizedBatchResponse = await handler(
-    await signedRequest(oversizedBatch)
-  )
+  const originalWarn = console.warn
+  let warning: string | undefined
+  console.warn = message => {
+    warning = String(message)
+  }
+  let oversizedBatchResponse: Response | undefined
+  try {
+    oversizedBatchResponse = await handler(
+      await signedRequest(oversizedBatch)
+    )
+  } finally {
+    console.warn = originalWarn
+  }
+
+  assert.ok(oversizedBatchResponse)
   assert.equal(oversizedBatchResponse.status, 400)
+  assert.deepEqual(JSON.parse(warning ?? ''), {
+    code: 'invalid_batch',
+    component: 'vercel-log-drain',
+    event: 'request_rejected',
+    issue_count: 1,
+    received_count: MAX_DRAIN_BATCH_SIZE + 1
+  })
 })
 
 test('returns retryable failure when the database write fails', async () => {

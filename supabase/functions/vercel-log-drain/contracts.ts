@@ -113,6 +113,14 @@ const hostnameSchema = z
     'Expected a concrete hostname without a wildcard or port'
   )
 
+function usesTransactionPoolerPort(value: string): boolean {
+  try {
+    return new URL(value).port === '6543'
+  } catch {
+    return false
+  }
+}
+
 export const drainRuntimeConfigSchema = z.object({
   databaseUrl: z
     .string()
@@ -122,7 +130,11 @@ export const drainRuntimeConfigSchema = z.object({
         value.startsWith('postgres://') ||
         value.startsWith('postgresql://'),
       'Expected a Postgres connection URL'
-    ),
+    )
+    .refine(usesTransactionPoolerPort, {
+      message:
+        'Expected a Postgres transaction-pooler URL on port 6543'
+    }),
   signatureSecret: z.string().min(32).max(512),
   projectId: boundedIdentifierSchema,
   environment: vercelEnvironmentSchema,

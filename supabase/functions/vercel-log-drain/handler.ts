@@ -33,6 +33,18 @@ export function createVercelLogDrainHandler({
       signedRequest.parsedBody
     )
     if (!batch.success) {
+      console.warn(
+        JSON.stringify({
+          code: 'invalid_batch',
+          component: 'vercel-log-drain',
+          event: 'request_rejected',
+          issue_count: batch.error.issues.length,
+          received_count:
+            Array.isArray(signedRequest.parsedBody) ?
+              signedRequest.parsedBody.length
+            : null
+        })
+      )
       return jsonDrainResponse({ code: 'invalid_batch' }, 400)
     }
 

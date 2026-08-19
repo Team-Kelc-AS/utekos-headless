@@ -229,7 +229,7 @@ test('preserves identifiers and replaces client network context', async () => {
   assert.equal(storedEvent.region_code, '03')
   assert.deepEqual(
     storedInput.dispatches.map(dispatch => dispatch.provider),
-    ['google', 'meta']
+    ['google', 'meta', 'pinterest']
   )
 })
 

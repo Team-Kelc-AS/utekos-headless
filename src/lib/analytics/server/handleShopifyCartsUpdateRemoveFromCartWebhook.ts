@@ -126,7 +126,7 @@ export async function handleShopifyCartsUpdateRemoveFromCartWebhook(
     }> = []
 
     for (const removal of removals) {
-      const canonical = shopifyCartRemovalToCanonicalRemoveFromCart({
+      const canonical = await shopifyCartRemovalToCanonicalRemoveFromCart({
         cartToken,
         priorLine: removal.prior_line,
         quantityRemoved: removal.quantity_removed,

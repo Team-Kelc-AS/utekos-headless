@@ -134,6 +134,7 @@ test('every Events API operation embeds its detailed delivery contract', () => {
 
 test('catalog covers every src/app/api/events route exactly once', () => {
   const routeRoot = resolve(repositoryRoot, 'src/app/api/events')
+  const specializedRouteSegments = new Set(['web-vital'])
   const actualSegments = readdirSync(routeRoot, {
     withFileTypes: true
   })
@@ -143,11 +144,20 @@ test('catalog covers every src/app/api/events route exactly once', () => {
     )
     .map(entry => entry.name)
     .sort()
+  const catalogEligibleSegments = actualSegments.filter(
+    segment => !specializedRouteSegments.has(segment)
+  )
   const catalogSegments = utekosEventsContractCatalog
     .map(event => event.routeSegment)
     .toSorted()
 
-  assert.deepEqual(catalogSegments, actualSegments)
+  assert.deepEqual(catalogSegments, catalogEligibleSegments)
+  assert.deepEqual(
+    actualSegments.filter(segment =>
+      specializedRouteSegments.has(segment)
+    ),
+    ['web-vital']
+  )
   assert.equal(
     new Set(catalogSegments).size,
     catalogSegments.length
@@ -163,10 +173,13 @@ test('each catalog entry traces to its route, handlers, normalizer, and schema',
       'utf8'
     )
 
-    assert.match(routeSource, /export const maxDuration = 60/)
     assert.match(
       routeSource,
-      /export function POST\(request: Request\)/
+      /export\s+const\s+maxDuration\s*=\s*60\b/
+    )
+    assert.match(
+      routeSource,
+      /export\s+function\s+POST\s*\(\s*request\s*:\s*Request\s*\)/
     )
     assert.match(
       routeSource,

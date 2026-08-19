@@ -66,17 +66,17 @@ This report is generated from the canonical event catalog and the characterized 
 | `begin_checkout` | `active` | `microsoft_uet` | microsoft_uet (implemented; microsoftBrowser) | microsoft_uet_capi (active; microsoftServer) | Browser UET is active; Microsoft UET CAPI outbox worker is active for begin_checkout when at least one Microsoft-supported userData identifier is present. |
 | `begin_checkout` | `active` | `pinterest` | pinterest_tag (implemented; pinterestBrowser) | pinterest_conversions_api (active; pinterestServer) | Pinterest Tag and Conversions API outbox are active. |
 | `begin_checkout` | `active` | `posthog` | posthog_browser (not_implemented; event-specific logical requirements) | posthog_server (disabled; event-specific logical requirements) | The storefront PostHog integration is currently removed. |
-| `add_shipping_info` | `blocked_source` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Canonical schema, collector, and ledger mapping are not active yet. |
-| `add_shipping_info` | `blocked_source` | `google` | google_tag_manager (planned; googleBrowserDataLayer) | server_side_gtm (disabled; googleServer) | Provider mapping is specified but canonical routing is not active. |
-| `add_shipping_info` | `blocked_source` | `meta` | none | none | No v1 marketing use case justifies a Meta export. |
-| `add_shipping_info` | `blocked_source` | `microsoft_uet` | microsoft_uet (planned; microsoftBrowser) | microsoft_uet_capi (disabled; microsoftServer) | Marketing mapping is specified but canonical routing is not active. |
-| `add_shipping_info` | `blocked_source` | `pinterest` | none | none | No v1 Pinterest conversion mapping is approved. |
-| `add_shipping_info` | `blocked_source` | `posthog` | posthog_browser (not_implemented; event-specific logical requirements) | posthog_server (disabled; event-specific logical requirements) | The storefront PostHog integration is currently removed. |
+| `add_shipping_info` | `active` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Canonical first-party persistence is active. |
+| `add_shipping_info` | `active` | `google` | none | none | Google delivery remains disabled until an add_shipping_info Data Manager adapter is approved. |
+| `add_shipping_info` | `active` | `meta` | none | meta_conversions_api (active; metaServer) | Meta Conversions API is the active provider owner for this Shopify checkout event. |
+| `add_shipping_info` | `active` | `microsoft_uet` | none | none | No v1 marketing use case justifies a Microsoft UET export. |
+| `add_shipping_info` | `active` | `pinterest` | none | none | No v1 Pinterest conversion mapping is approved. |
+| `add_shipping_info` | `active` | `posthog` | none | none | The event is excluded from the v1 product-analytics scope. |
 | `add_payment_info` | `active` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Canonical first-party persistence is active. |
-| `add_payment_info` | `active` | `google` | none | google_data_manager (active; googleServer) | Google Data Manager is the sole active provider owner after the event-specific Shopify Custom Pixel cutover. |
-| `add_payment_info` | `active` | `meta` | none | none | No v1 marketing use case justifies a Meta export. |
+| `add_payment_info` | `active` | `google` | none | google_data_manager (active; googleServer) | Google Data Manager remains active after the event-specific Shopify Custom Pixel cutover. |
+| `add_payment_info` | `active` | `meta` | none | meta_conversions_api (active; metaServer) | Meta Conversions API is active for marketing-consented Shopify payment submissions. |
 | `add_payment_info` | `active` | `microsoft_uet` | none | none | No v1 marketing use case justifies a Microsoft UET export. |
-| `add_payment_info` | `active` | `pinterest` | pinterest_tag (implemented; pinterestBrowser) | pinterest_conversions_api (active; pinterestServer) | Pinterest Tag and Conversions API outbox are active. |
+| `add_payment_info` | `active` | `pinterest` | none | none | No v1 Pinterest conversion mapping is approved. |
 | `add_payment_info` | `active` | `posthog` | none | none | The event is excluded from the v1 product-analytics scope. |
 | `purchase` | `active` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Operational ledger persistence via Shopify orders-paid webhook. |
 | `purchase` | `active` | `google` | shopify_customer_events (implemented; shopifyPurchaseBrowser) | google_data_manager (active; shopifyPurchaseBrowser) | Shopify Customer Events is the browser source and the Data Manager purchase outbox is the supplementary server source when checkout analytics consent was granted. Both use transaction_id for GA4 deduplication. |

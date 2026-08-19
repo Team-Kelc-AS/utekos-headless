@@ -17,6 +17,8 @@
     display: flex;
     width: 100%;
     line-height: 0;
+    background-color: #fff;
+    color: #000;
   }
   
   .klarna-top-strip klarna-placement {
@@ -26,9 +28,19 @@
     line-height: 0;
   }
 
+  .klarna-top-strip klarna-placement::part(osm-container) {
+    background-color: #fff;
+    color: #000;
+  }
+
   /* Klarna credit-promotion OSM: default/light theme + shared vertical padding */
   .klarna-credit-promotion-auto-size::part(osm-container) {
     padding-block: 0.75rem;
     padding-inline: 0.75rem;
     border-radius: 0.75rem;
+  }
+
+  .klarna-osm-light::part(osm-container) {
+    background-color: #fff;
+    color: #000;
   }

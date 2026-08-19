@@ -18,6 +18,10 @@ test('schedules provider dispatch, quality, and delivery reconciliation', () => 
       schedule: '*/5 * * * *'
     },
     {
+      path: '/api/cron/shopify-dun-waitlist-sync',
+      schedule: '*/5 * * * *'
+    },
+    {
       path: '/api/cron/google-data-manager-status',
       schedule: '*/5 * * * *'
     },

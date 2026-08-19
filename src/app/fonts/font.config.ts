@@ -19,13 +19,3 @@ export const utekosTextMedium = localFont({
   preload: false,
   fallback: ['sans-serif', 'system-ui', 'Helvetica']
 })
-
-export const googleSans = localFont({
-  src: '../../../node_modules/@fontsource-variable/google-sans/files/google-sans-latin-wght-normal.woff2',
-  weight: '400 700',
-  style: 'normal',
-  display: 'swap',
-  variable: '--font-google-sans',
-  preload: false,
-  fallback: ['system-ui', 'sans-serif']
-})

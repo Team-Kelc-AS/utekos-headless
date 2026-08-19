@@ -89,7 +89,6 @@ components.json
 skills-lock.json
 shadcn-extension.json
 test.json
-.env.docker.example
 .env.local.incomplete.backup
 .env.tunnel.example
 
@@ -113,8 +112,6 @@ supabase/**
 !supabase/functions/
 !supabase/functions/_shared/
 !supabase/functions/_shared/landing-edge-request-id.ts
-Dockerfile
-docker-compose.yml
 eslint.config.mts
 prettier.config.mts
 tsconfig.customer-assistant.json

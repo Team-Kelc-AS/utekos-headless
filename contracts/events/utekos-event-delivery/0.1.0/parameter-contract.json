@@ -921,6 +921,12 @@
         "requirement": "conditional",
         "source": "custom_data.items[].item_id",
         "rule": "Numeric Shopify variant ID matching the catalog feed id."
+      },
+      {
+        "path": "line_items[].product_brand/product_category",
+        "requirement": "conditional",
+        "source": "custom_data.items[].item_brand/item_category",
+        "rule": "Product context carried from the same canonical commerce item."
       }
     ],
     "pinterestServer": [
@@ -970,7 +976,13 @@
         "path": "user_data.click_id",
         "requirement": "conditional",
         "source": "click_id.epik",
-        "rule": "Pinterest click identifier; not written to Shopify checkout attributes."
+        "rule": "Pinterest click identifier; preserved in consented Shopify checkout attributes for purchase attribution."
+      },
+      {
+        "path": "user_data.ct/country/st/zp",
+        "requirement": "conditional",
+        "source": "location",
+        "rule": "SHA-256 match keys from trusted canonical location fields when valid for Pinterest formatting."
       },
       {
         "path": "custom_data.content_ids[]",
@@ -3191,23 +3203,23 @@
       }
     },
     "add_shipping_info": {
-      "lifecycle": "blocked_source",
-      "owner": "shopify_checkout_event_source",
+      "lifecycle": "active",
+      "owner": "shopify_app_web_pixel",
       "sources": [
-        "browser",
-        "server"
+        "browser"
       ],
       "prerequisites": [
-        "approved source that proves a saved shipping revision",
+        "Shopify checkout_shipping_info_submitted source event",
         "checkout_id",
-        "stable shipping revision distinct from Shopify event seq",
-        "shipping tier",
+        "begin_checkout_event_id correlation",
+        "stable Shopify source event id used as shipping revision",
+        "analytics consent",
         "items"
       ],
       "deduplication": {
-        "eventId": "checkout_id + shipping_revision",
+        "eventId": "Shopify checkout_shipping_info_submitted event_id",
         "reuse": "Reuse the same event_id for retries and every delivery of the same canonical occurrence.",
-        "newEvent": "A later saved shipping revision receives a new event_id.",
+        "newEvent": "A later Shopify submission receives a new event_id; replay of the same source event reuses it.",
         "ledgerIdempotencyKey": "event_name + event_id",
         "providerIdempotencyKey": "provider + event_name + event_id",
         "browserServerShareEventId": true,
@@ -3219,10 +3231,10 @@
       },
       "providers": {
         "supabase": {
-          "support": "planned",
+          "support": "supported",
           "eventName": "add_shipping_info",
-          "productionStatus": "planned",
-          "productionDetail": "Canonical schema, collector, and ledger mapping are not active yet.",
+          "productionStatus": "active",
+          "productionDetail": "Canonical first-party persistence is active.",
           "consentRequirement": "analytics_or_marketing",
           "dedupeField": "event_id",
           "browser": null,
@@ -3237,7 +3249,13 @@
                 "event_id",
                 "event_name",
                 "event_time",
-                "consent"
+                "consent",
+                "checkout_id",
+                "shipping_revision",
+                "begin_checkout_event_id",
+                "currency",
+                "value",
+                "items"
               ]
             }
           }
@@ -3246,89 +3264,50 @@
           "support": "supported",
           "eventName": "add_shipping_info",
           "productionStatus": "planned",
-          "productionDetail": "Provider mapping is specified but canonical routing is not active.",
+          "productionDetail": "Google delivery remains disabled until an add_shipping_info Data Manager adapter is approved.",
           "consentRequirement": "analytics",
+          "dedupeField": "transaction_id",
+          "browser": null,
+          "server": null
+        },
+        "meta": {
+          "support": "supported",
+          "eventName": "AddShippingInfo",
+          "productionStatus": "active",
+          "productionDetail": "Meta Conversions API is the active provider owner for this Shopify checkout event.",
+          "consentRequirement": "marketing",
           "dedupeField": "event_id",
-          "browser": {
-            "transport": "google_tag_manager",
-            "status": "planned",
-            "parameterContract": {
-              "parameterSets": [
-                "googleBrowserDataLayer"
-              ],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time",
-                "currency",
-                "value",
-                "shipping_tier",
-                "items"
-              ]
-            }
-          },
+          "browser": null,
           "server": {
-            "transport": "server_side_gtm",
-            "status": "disabled",
+            "transport": "meta_conversions_api",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [
-                "googleServer"
+                "metaServer"
               ],
               "logicalRequiredParameters": [
                 "event_id",
                 "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
                 "currency",
-                "value",
-                "shipping_tier",
-                "items"
+                "value"
               ]
             }
           }
         },
-        "meta": {
+        "microsoft_uet": {
           "support": "not_relevant",
           "eventName": null,
           "productionStatus": "not_relevant",
-          "productionDetail": "No v1 marketing use case justifies a Meta export.",
+          "productionDetail": "No v1 marketing use case justifies a Microsoft UET export.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "microsoft_uet": {
-          "support": "supported",
-          "eventName": "add_shipping_info",
-          "productionStatus": "planned",
-          "productionDetail": "Marketing mapping is specified but canonical routing is not active.",
-          "consentRequirement": "marketing",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "microsoft_uet",
-            "status": "planned",
-            "parameterContract": {
-              "parameterSets": [
-                "microsoftBrowser"
-              ],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time",
-                "shipping_tier"
-              ]
-            }
-          },
-          "server": {
-            "transport": "microsoft_uet_capi",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [
-                "microsoftServer"
-              ],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time",
-                "shipping_tier"
-              ]
-            }
-          }
         },
         "pinterest": {
           "support": "not_relevant",
@@ -3341,34 +3320,14 @@
           "server": null
         },
         "posthog": {
-          "support": "planned",
-          "eventName": "add_shipping_info",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "The event is excluded from the v1 product-analytics scope.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
         }
       }
     },
@@ -3434,7 +3393,7 @@
           "support": "supported",
           "eventName": "add_payment_info",
           "productionStatus": "active",
-          "productionDetail": "Google Data Manager is the sole active provider owner after the event-specific Shopify Custom Pixel cutover.",
+          "productionDetail": "Google Data Manager remains active after the event-specific Shopify Custom Pixel cutover.",
           "consentRequirement": "analytics",
           "dedupeField": "transaction_id",
           "browser": null,
@@ -3458,14 +3417,33 @@
           }
         },
         "meta": {
-          "support": "not_relevant",
-          "eventName": null,
-          "productionStatus": "not_relevant",
-          "productionDetail": "No v1 marketing use case justifies a Meta export.",
-          "consentRequirement": "none",
-          "dedupeField": null,
+          "support": "supported",
+          "eventName": "AddPaymentInfo",
+          "productionStatus": "active",
+          "productionDetail": "Meta Conversions API is active for marketing-consented Shopify payment submissions.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
           "browser": null,
-          "server": null
+          "server": {
+            "transport": "meta_conversions_api",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "metaServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          }
         },
         "microsoft_uet": {
           "support": "not_relevant",
@@ -3478,50 +3456,14 @@
           "server": null
         },
         "pinterest": {
-          "support": "supported",
-          "eventName": "add_payment_info",
-          "productionStatus": "active",
-          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
-          "consentRequirement": "marketing",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "pinterest_tag",
-            "status": "implemented",
-            "parameterContract": {
-              "parameterSets": [
-                "pinterestBrowser"
-              ],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time",
-                "event_source_url",
-                "user_data",
-                "content_ids",
-                "contents",
-                "currency",
-                "value"
-              ]
-            }
-          },
-          "server": {
-            "transport": "pinterest_conversions_api",
-            "status": "active",
-            "parameterContract": {
-              "parameterSets": [
-                "pinterestServer"
-              ],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time",
-                "event_source_url",
-                "user_data",
-                "content_ids",
-                "contents",
-                "currency",
-                "value"
-              ]
-            }
-          }
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
         },
         "posthog": {
           "support": "not_relevant",

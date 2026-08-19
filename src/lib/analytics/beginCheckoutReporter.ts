@@ -60,7 +60,7 @@ export async function reportCanonicalBeginCheckout(
     })
 
     const eventTime = new Date().toISOString()
-    const commerce = mapShopifyBeginCheckout(input.cart)
+    const commerce = await mapShopifyBeginCheckout(input.cart)
 
     const initialEvent = createCanonicalBeginCheckout({
       environment: clientContext.environment,

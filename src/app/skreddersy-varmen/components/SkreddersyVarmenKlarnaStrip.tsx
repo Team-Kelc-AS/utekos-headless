@@ -4,9 +4,9 @@ export function SkreddersyVarmenKlarnaStrip() {
   return (
     <aside
       aria-label='Klarna betalingsinformasjon'
-      className='klarna-top-strip w-full overflow-hidden bg-background'
+      className='klarna-top-strip w-full overflow-hidden bg-white text-black'
     >
-      <KlarnaTopStripPromotionAutoSize />
+      <KlarnaTopStripPromotionAutoSize theme='default' />
     </aside>
   )
 }

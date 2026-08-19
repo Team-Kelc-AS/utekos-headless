@@ -1,6 +1,7 @@
 import { ZodError } from 'zod'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import type { CanonicalBrowserEventRequestContext } from './normalizeCanonicalBrowserEvent'
+import { redactPageUrlForLog } from './redactPageUrlForLog'
 
 const MAX_BODY_BYTES = 32 * 1024
 const NO_STORE_HEADERS = {
@@ -81,7 +82,7 @@ function getEventSummary(payload: unknown) {
       : undefined,
     page_url:
       typeof record.page_url === 'string' ?
-        record.page_url
+        redactPageUrlForLog(record.page_url)
       : undefined
   }
 }
@@ -181,16 +182,6 @@ export function createBrowserEventRequestHandler<
     const summary = getEventSummary(payload)
     const eventName =
       configuredEventName ?? summary.event_name ?? 'unknown'
-
-    console.info(
-      '[tracking] browser event received',
-      requestLogMeta(request, {
-        event_name: eventName,
-        event_id: summary.event_id,
-        page_view_id: summary.page_view_id,
-        page_url: summary.page_url
-      })
-    )
 
     try {
       const result = await accept({

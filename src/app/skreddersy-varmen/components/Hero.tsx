@@ -129,12 +129,13 @@ export function Hero({
                 <div
                   role='group'
                   aria-label='Betalingsinformasjon fra Klarna'
-                  className='max-w-md overflow-hidden'
+                  className='max-w-md overflow-hidden rounded-xl bg-white text-black'
                 >
                   <KlarnaCreditPromotionAutoSize
                     id='klarna-credit-promotion-skreddersy-varmen-hero'
+                    className='klarna-osm-light'
                     purchaseAmount={klarnaPurchaseAmount}
-                    theme='dark'
+                    theme='default'
                   />
                 </div>
               : null}

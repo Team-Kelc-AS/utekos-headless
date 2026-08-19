@@ -10,19 +10,20 @@
  * @locale nb-NO
  * @dependencies dev/docs/markdown/latest-official/on-site-messaging/product-and-cart-placements.md
  */
-// Path: src/components/klarna/components/KlarnaTopStripPromotionAutoSize.tsx
+import type { KlarnaPlacementTheme } from '@/components/klarna/types'
 
-/* TODO: Add type. Reuse or expand existing types if possible.
- See @/components/klarna/types/index.ts and
- "global.d.ts".
-*/
+type KlarnaTopStripPromotionAutoSizeProps = {
+  theme?: KlarnaPlacementTheme
+}
 
-export function KlarnaTopStripPromotionAutoSize() {
+export function KlarnaTopStripPromotionAutoSize({
+  theme = 'default'
+}: KlarnaTopStripPromotionAutoSizeProps) {
   return (
     <klarna-placement
       data-key='top-strip-promotion-auto-size'
       data-locale='nb-NO'
-      data-theme='dark'
+      data-theme={theme}
     ></klarna-placement>
   )
 }

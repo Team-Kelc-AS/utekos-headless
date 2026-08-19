@@ -13,9 +13,9 @@ export type MapShopifyRemoveFromCartInput = {
   variant: CartProductVariant
 }
 
-export function mapShopifyRemoveFromCart(
+export async function mapShopifyRemoveFromCart(
   input: MapShopifyRemoveFromCartInput
-): CanonicalRemoveFromCartCustomData {
+): Promise<CanonicalRemoveFromCartCustomData> {
   const commerce = mapCartVariantCommerce({
     product: input.product,
     variant: input.variant,
@@ -26,7 +26,7 @@ export function mapShopifyRemoveFromCart(
   return {
     ...commerce,
     cart_id: input.cartId,
-    cart_mutation_id: createCartMutationId({
+    cart_mutation_id: await createCartMutationId({
       cartId: input.cartId,
       mutationTimestamp: input.mutationTimestamp,
       quantity: input.quantity,

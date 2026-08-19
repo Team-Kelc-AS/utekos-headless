@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto'
+import { sha256Hex } from '@/lib/crypto/sha256Hex'
 import { mapShopifyViewItem } from './shopifyViewItemCommerce'
 import type { CanonicalAddToCartCommerce } from './addToCartEvent'
 import type {
@@ -15,27 +15,28 @@ export type MapShopifyAddToCartInput = {
   variant: ProductPurchaseVariant
 }
 
-export function createCartMutationId(input: {
+export async function createCartMutationId(input: {
   cartId: string
   cartUpdatedAt?: string
   mutationTimestamp: string
   quantity: number
   variantId: string
 }) {
-  const material = [
-    input.cartId,
-    input.variantId,
-    String(input.quantity),
-    input.cartUpdatedAt ?? input.mutationTimestamp
-  ].join('|')
-  const hash = createHash('sha256').update(material).digest('hex')
+  const hash = await sha256Hex(
+    [
+      input.cartId,
+      input.variantId,
+      String(input.quantity),
+      input.cartUpdatedAt ?? input.mutationTimestamp
+    ].join('|')
+  )
 
   return `cart_mut_${hash.slice(0, 32)}`
 }
 
-export function mapShopifyAddToCart(
+export async function mapShopifyAddToCart(
   input: MapShopifyAddToCartInput
-): CanonicalAddToCartCommerce {
+): Promise<CanonicalAddToCartCommerce> {
   const commerce = mapShopifyViewItem({
     product: input.product,
     variant: input.variant,
@@ -45,7 +46,7 @@ export function mapShopifyAddToCart(
   return {
     ...commerce,
     cart_id: input.cartId,
-    cart_mutation_id: createCartMutationId({
+    cart_mutation_id: await createCartMutationId({
       cartId: input.cartId,
       ...(input.cartUpdatedAt ?
         { cartUpdatedAt: input.cartUpdatedAt }

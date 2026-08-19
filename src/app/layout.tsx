@@ -5,8 +5,8 @@ import {
   utekosText,
   utekosTextMedium
 } from '@/app/fonts/font.config'
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Suspense } from 'react'
 import { mainMenu } from '@/db/config/menu.config'
 import Footer from '@/components/footer/components/Footer'
@@ -21,21 +21,19 @@ import Script from 'next/script'
 import type { Metadata } from 'next'
 import { getTrackingEnvironment } from '@/lib/analytics/getTrackingEnvironment'
 import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
-import { Google_Sans_Flex} from 'next/font/google'
+import { Google_Sans_Flex } from 'next/font/google'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
-import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader';
-import { WebVitals } from '@/components/analytics/WebVitals';
+import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
+import { WebVitals } from '@/components/analytics/WebVitals'
 
 const googleSansFlex = Google_Sans_Flex({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
   preload: false,
-  fallback: ['Geist','system-ui', 'sans-serif'],
-
+  fallback: ['Geist', 'system-ui', 'sans-serif']
 })
-
 
 export const metadata: Metadata = {
   icons: {
@@ -142,8 +140,8 @@ export default function RootLayout({
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
       <GoogleTagManagerLoader
-       enabled={shouldLoadMarketingScripts}
-     />
+        enabled={shouldLoadMarketingScripts}
+      />
 
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
         {shouldLoadMarketingScripts ?

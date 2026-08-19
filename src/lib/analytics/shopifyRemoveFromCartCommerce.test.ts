@@ -23,8 +23,8 @@ const variant = {
   product
 } as unknown as CartProductVariant
 
-test('mapShopifyRemoveFromCart carries cart_id, mutation id, and commerce', () => {
-  const customData = mapShopifyRemoveFromCart({
+test('mapShopifyRemoveFromCart carries cart_id, mutation id, and commerce', async () => {
+  const customData = await mapShopifyRemoveFromCart({
     cartId: 'gid://shopify/Cart/abc123',
     mutationTimestamp: '2026-07-24T12:00:00.000Z',
     product,
@@ -33,7 +33,10 @@ test('mapShopifyRemoveFromCart carries cart_id, mutation id, and commerce', () =
   })
 
   assert.equal(customData.cart_id, 'gid://shopify/Cart/abc123')
-  assert.ok(customData.cart_mutation_id.length > 0)
+  assert.equal(
+    customData.cart_mutation_id,
+    'cart_mut_4561bb2f26f6e1771d3b7fcf9a6407e9'
+  )
   assert.equal(customData.currency, 'NOK')
   assert.equal(customData.gross_value, 3580)
   assert.equal(customData.items.length, 1)

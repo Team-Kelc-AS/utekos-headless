@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import bundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
 import createMDX from '@next/mdx'
 
@@ -43,10 +44,11 @@ const SENTRY_ORG =
 const SENTRY_PROJECT =
   process.env.PERFORMANCE_SENTRY_PROJECT ||
   process.env.SENTRY_PROJECT
-const ENABLE_DOCKER_STANDALONE_OUTPUT =
-  process.env.NEXT_OUTPUT_STANDALONE === '1'
-const ENABLE_DOCKER_POLLING =
-  process.env.NEXT_DEV_POLLING === '1'
+const ENABLE_BUNDLE_ANALYZER = process.env.ANALYZE === 'true'
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: ENABLE_BUNDLE_ANALYZER
+})
 
 const staticAssetHeaders = [
   { key: 'Cache-Control', value: STATIC_ASSET_CACHE_CONTROL }
@@ -302,7 +304,7 @@ const sentryOptions = {
   webpack: { treeshake: { removeDebugLogging: true } }
 }
 
-const configuredNextConfig = withMDX(nextConfig)
+const configuredNextConfig = withBundleAnalyzer(withMDX(nextConfig))
 
 export default withSentryConfig(
   configuredNextConfig,

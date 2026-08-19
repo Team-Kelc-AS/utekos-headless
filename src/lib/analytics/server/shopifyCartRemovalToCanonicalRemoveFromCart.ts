@@ -82,12 +82,12 @@ function resolveCurrency(line: ShopifyCartSnapshotLine) {
   return line.currency_code ?? 'NOK'
 }
 
-export function shopifyCartRemovalToCanonicalRemoveFromCart(input: {
+export async function shopifyCartRemovalToCanonicalRemoveFromCart(input: {
   cartToken: string
   priorLine: ShopifyCartSnapshotLine
   quantityRemoved: number
   updatedAt: string
-}): CanonicalRemoveFromCart {
+}): Promise<CanonicalRemoveFromCart> {
   if (input.quantityRemoved < 1) {
     throw new Error('invalid_quantity_removed')
   }
@@ -129,7 +129,7 @@ export function shopifyCartRemovalToCanonicalRemoveFromCart(input: {
       gross_value: roundMoney(breakdown.gross * quantity),
       tax_value: roundMoney(breakdown.tax * quantity),
       cart_id: cartId,
-      cart_mutation_id: createCartMutationId({
+      cart_mutation_id: await createCartMutationId({
         cartId,
         cartUpdatedAt: input.updatedAt,
         mutationTimestamp: eventTime,

@@ -87,7 +87,6 @@ next-env.d.ts
 /skills-lock.json
 /test.json
 /shadcn-extension.json
-/.env.docker.example
 /.gcloudignore
 /.mcp.json
 /types/codex-log.md

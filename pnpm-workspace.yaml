@@ -28,9 +28,13 @@ minimumReleaseAgeExclude:
 
 overrides:
   encoding-sniffer: ^1.0.2
-  # CVE-2026-45623: PostCSS sourceMappingURL path traversal, fixed in 8.5.12.
-  # Next.js still pins 8.4.31; this lifts every copy without bumping workflow.
-  postcss: ^8.5.12
+  # Pin every Next copy to the app line so experimental 16.3 flags
+  # (turbopackRustReactCompiler) cannot resolve against an older nested Next.
+  next: 16.3.1
+  # GHSA-fxqj-rqcc-2cmp (CVE-2026-69153): incomplete sourceMappingURL fix,
+  # patched in 8.5.23. A looser ^8.5.12 override resolved next's exact
+  # postcss@8.5.23 pin down to vulnerable 8.5.20.
+  postcss: ^8.5.23
   rimraf: ^6.1.3
 
 patchedDependencies:

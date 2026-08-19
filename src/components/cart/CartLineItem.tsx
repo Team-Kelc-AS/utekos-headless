@@ -37,6 +37,13 @@ interface CartLineItemProps {
   lineId: string
 }
 
+function logRemoveFromCartAnalyticsFailure(error: unknown) {
+  console.error('[cart] remove_from_cart analytics failed', {
+    error_name:
+      error instanceof Error ? error.name : 'UnknownError'
+  })
+}
+
 export const CartLineItem = ({ lineId }: CartLineItemProps) => {
   const line = useCartLine(lineId)
   const cartId = useCartId()
@@ -134,25 +141,32 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
     const resolvedCartId = result.cart?.id ?? cartId
     const product = line.merchandise.product
 
-    if (resolvedCartId && product && removedQuantity > 0) {
-      const eventTime = new Date().toISOString()
-      reportCanonicalRemoveFromCart({
-        customData: mapShopifyRemoveFromCart({
-          cartId: resolvedCartId,
-          mutationTimestamp: eventTime,
-          product,
-          quantity: removedQuantity,
-          variant: line.merchandise
+    try {
+      if (resolvedCartId && product && removedQuantity > 0) {
+        const eventTime = new Date().toISOString()
+        reportCanonicalRemoveFromCart({
+          customData: await mapShopifyRemoveFromCart({
+            cartId: resolvedCartId,
+            mutationTimestamp: eventTime,
+            product,
+            quantity: removedQuantity,
+            variant: line.merchandise
+          })
         })
-      })
+      }
+    } catch (error) {
+      logRemoveFromCartAnalyticsFailure(error)
+    } finally {
+      try {
+        if (cartId) {
+          await queryClient.invalidateQueries({ queryKey })
+        }
+      } finally {
+        setIsDeleting(false)
+        setQuantityOverride(null)
+      }
     }
 
-    if (cartId) {
-      await queryClient.invalidateQueries({ queryKey })
-    }
-
-    setIsDeleting(false)
-    setQuantityOverride(null)
   }
 
   const handleUpdateQuantity = (newQuantity: number) => {
@@ -193,25 +207,29 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
         result
       })
 
-      if (removedQuantity > 0) {
-        const product = line.merchandise.product
+      try {
+        if (removedQuantity > 0) {
+          const product = line.merchandise.product
 
-        if (product) {
-          const eventTime = new Date().toISOString()
-          reportCanonicalRemoveFromCart({
-            customData: mapShopifyRemoveFromCart({
-              cartId: result.cart.id,
-              mutationTimestamp: eventTime,
-              product,
-              quantity: removedQuantity,
-              variant: line.merchandise
+          if (product) {
+            const eventTime = new Date().toISOString()
+            reportCanonicalRemoveFromCart({
+              customData: await mapShopifyRemoveFromCart({
+                cartId: result.cart.id,
+                mutationTimestamp: eventTime,
+                product,
+                quantity: removedQuantity,
+                variant: line.merchandise
+              })
             })
-          })
+          }
         }
+      } catch (error) {
+        logRemoveFromCartAnalyticsFailure(error)
+      } finally {
+        setQuantityOverride(null)
+        setIsUpdatingQuantity(false)
       }
-
-      setQuantityOverride(null)
-      setIsUpdatingQuantity(false)
     }, 300)
   }
 
