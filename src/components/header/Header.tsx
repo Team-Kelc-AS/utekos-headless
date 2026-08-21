@@ -23,16 +23,16 @@ export default function Header({
             href={'/' as Route}
             aria-label='Utekos - Til forsiden'
             data-track='HeaderLogoClick'
-            className='flex h-14 items-center lg:h-16'
+            className='flex h-14 items-center pl-2 lg:h-16'
           >
             <Image
-              src='/LogoWhite.svg'
+              src='/IconWhite.svg'
               alt=''
-              width={1032}
-              height={1147}
+              width={1280}
+              height={1109}
               loading='eager'
               fetchPriority='high'
-              className='h-7 w-auto sm:hidden'
+              className='h-8 w-auto sm:hidden'
             />
             <Image
               src={wordmarkwhite}
