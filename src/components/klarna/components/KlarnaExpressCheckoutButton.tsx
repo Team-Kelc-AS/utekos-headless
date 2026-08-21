@@ -12,6 +12,7 @@ import {
   klarnaCollectedShippingAddressSchema,
   type KlarnaExpressOrderPayload
 } from '@/components/klarna/schemas/klarnaExpressOrderSchema'
+import styles from './KlarnaExpressCheckoutButton.module.css'
 
 import type {
   KlarnaExpressCheckoutAuthorizationResult,
@@ -272,10 +273,8 @@ export function KlarnaExpressCheckoutButton({
       <div
         id={containerId}
         className={cn(
-          'flex h-16 min-h-16 w-full items-stretch overflow-hidden rounded-full ring-1 ring-card-foreground/50 ring-inset md:h-14 md:min-h-14',
-          '*:h-full *:min-h-full *:w-full',
-          '[&_button]:h-full! [&_button]:min-h-full! [&_button]:w-full!',
-          '[&_iframe]:h-full! [&_iframe]:min-h-full! [&_iframe]:w-full!',
+          styles.host,
+          'h-12 min-h-12 ring-1 ring-card-foreground/50 ring-inset md:h-12 md:min-h-12',
           buttonContainerClassName
         )}
       />

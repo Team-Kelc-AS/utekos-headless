@@ -14,10 +14,8 @@ type KlarnaLandingExpressCheckoutProps = {
   className?: string
 }
 
-const klarnaButtonContainerClassName = cn(
-  'h-14 min-h-14 ring-card-foreground/50',
-  'md:h-16 md:min-h-16'
-)
+const klarnaButtonContainerClassName =
+  'h-14 min-h-14 md:h-14 md:min-h-14 ring-card-foreground/50'
 
 export function KlarnaLandingExpressCheckout({
   product,

@@ -15,13 +15,10 @@ export function PreFooterNavigation({
   const isComfyrobe = variant === 'comfyrobe'
 
   return (
-    // Gradient-bakgrunnen blender sømløst over fra trekkspillet over, og ned i footeren under
     <section
       className={cn(
         'w-full max-w-full py-16 text-foreground md:py-24',
-        isComfyrobe ?
-          'bg-linear-to-b from-background to-jungle'
-        : 'dark:from-dark-background dark:to-dark-card bg-linear-to-b from-background to-card'
+        isComfyrobe ? 'bg-jungle' : 'bg-night'
       )}
     >
       <div className='mx-auto max-w-5xl px-6'>
@@ -49,8 +46,8 @@ export function PreFooterNavigation({
                 'group flex items-center justify-between p-6',
                 'rounded-2xl border backdrop-blur-sm transition-all duration-400',
                 isComfyrobe ?
-                  'border-white/10 bg-night/55 hover:border-primary/55 hover:bg-night hover:shadow-lg hover:shadow-primary/5'
-                : 'dark:border-dark-foreground/10 dark:bg-dark-background/30 border-foreground/10 bg-background/30 dark:hover:border-dark-primary/50 dark:hover:bg-dark-background/60 dark:hover:shadow-dark-primary/5 hover:border-secondary/50 hover:bg-background/60 hover:shadow-lg hover:shadow-secondary/5',
+                  'border-white/10 bg-jungle hover:border-primary/55 hover:bg-jungle/90 hover:shadow-lg hover:shadow-primary/5'
+                : 'dark:border-dark-foreground/10 border-foreground/10 bg-jungle dark:hover:border-dark-primary/50 dark:hover:shadow-dark-primary/5 hover:border-secondary/50 hover:bg-jungle/90 hover:shadow-lg hover:shadow-secondary/5',
                 index === 0 && 'md:col-span-2 lg:col-span-3',
                 link.mdOnly && 'hidden md:flex'
               )}
@@ -61,14 +58,14 @@ export function PreFooterNavigation({
                     'rounded-full border p-3 shadow-sm transition-colors duration-400',
                     isComfyrobe ?
                       'border-white/10 bg-background text-primary group-hover:border-primary/50 group-hover:bg-primary group-hover:text-background'
-                    : 'border-border bg-muted text-ceramic group-hover:border-secondary/50 group-hover:bg-secondary group-hover:text-secondary-foreground'
+                    : 'border-border bg-muted text-primary group-hover:border-secondary/50 group-hover:bg-secondary group-hover:text-primary'
                   )}
                 >
                   {link.icon}
                 </div>
 
                 <div className='flex flex-col'>
-                  <span className='/50 dark:group-hover:text-dark-foreground/90 mb-0.5 font-sans text-xs font-medium tracking-widest text-foreground/50 uppercase transition-colors group-hover:text-foreground/90'>
+                  <span className='mb-0.5 font-sans text-xs font-medium tracking-widest text-primary uppercase transition-colors group-hover:text-primary'>
                     {link.description}
                   </span>
                   <span className='font-sans text-lg font-medium text-foreground transition-transform duration-300 group-hover:translate-x-1'>
@@ -77,7 +74,7 @@ export function PreFooterNavigation({
                 </div>
               </div>
 
-              <ArrowRight className='size-5 text-muted-foreground transition-all duration-400 group-hover:translate-x-2 group-hover:text-ceramic' />
+              <ArrowRight className='size-5 text-primary transition-all duration-400 group-hover:translate-x-2 group-hover:text-primary' />
             </Link>
           ))}
         </div>

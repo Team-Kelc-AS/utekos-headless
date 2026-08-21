@@ -11,14 +11,14 @@ import {
 } from 'lucide-react'
 import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
 
-const pointIconClass =
-  'mt-0.5 shrink-0 text-primary drop-shadow-sm'
+const pointIconClass = 'shrink-0 text-primary drop-shadow-sm'
+
 export function ShippingAndReturnComponent() {
   return (
     <div className='flex flex-col gap-6'>
-      <div className='rounded-xl border border-foreground/10 bg-jungle text-foreground shadow-sm min-[900px]:bg-background'>
+      <div className='overflow-hidden rounded-xl border border-foreground/10 bg-jungle text-foreground shadow-sm min-[900px]:bg-background'>
         <div className='dark:divide-dark-foreground/10 grid grid-cols-1 divide-y divide-foreground/10 min-[1280px]:grid-cols-3 min-[1280px]:divide-x min-[1280px]:divide-y-0'>
-          <div className='flex items-start gap-3 bg-jungle p-4'>
+          <div className='flex items-center gap-3 bg-jungle p-4'>
             <Truck
               size={22}
               className={pointIconClass}
@@ -26,12 +26,12 @@ export function ShippingAndReturnComponent() {
             />
             <div className='min-w-0'>
               <p className='font-utekos-text-medium text-sm text-foreground'>
-                Rask levering 2–5 dager
+                Rask levering
               </p>
             </div>
           </div>
 
-          <div className='flex items-start gap-3 bg-jungle p-4'>
+          <div className='flex items-center gap-3 bg-jungle p-4'>
             <RefreshCcw
               size={22}
               className={pointIconClass}
@@ -44,7 +44,7 @@ export function ShippingAndReturnComponent() {
             </div>
           </div>
 
-          <div className='flex items-start gap-3 bg-jungle p-4'>
+          <div className='flex items-center gap-3 bg-jungle p-4'>
             <CreditCard
               size={22}
               className={pointIconClass}
@@ -52,13 +52,13 @@ export function ShippingAndReturnComponent() {
             />
             <div className='min-w-0'>
               <p className='font-utekos-text-medium text-sm text-foreground'>
-                Fleksible betalingsmuligheter
+                Trygg betaling
               </p>
             </div>
           </div>
         </div>
 
-        <div className='rounded-b-xl border-t border-foreground/10 bg-background px-4 py-2.5 min-[900px]:bg-background/50'>
+        <div className='rounded-b-xl border-t border-foreground/10 bg-night px-4 py-2.5'>
           <Link
             href={'/frakt-og-retur' as Route}
             data-track='SkreddersyVarmenFraktOgReturLink'

@@ -1,0 +1,22 @@
+.host {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+}
+
+.host :is(div, button, iframe, a, span) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: none !important;
+}
+
+.host iframe {
+  display: block !important;
+  border: 0 !important;
+}

@@ -115,7 +115,7 @@ export function ProductDetailsAccordion({
   return (
     <section
       key={selectedModel}
-      className='w-full bg-night pt-6 pb-24 text-foreground min-[900px]:bg-background'
+      className='w-full bg-night pt-6 pb-24 text-foreground'
       aria-live='polite'
     >
       <div className='mx-auto max-w-3xl px-4'>

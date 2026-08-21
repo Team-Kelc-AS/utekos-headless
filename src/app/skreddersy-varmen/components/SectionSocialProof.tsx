@@ -85,7 +85,7 @@ export function SectionSocialProof() {
         <m.div
           className={cn(
             styles.region,
-            'relative w-full max-w-full overflow-x-auto overflow-y-hidden py-4'
+            'relative w-full max-w-full overflow-hidden py-4'
           )}
           role='region'
           aria-label='Kundeanmeldelser'
@@ -108,6 +108,15 @@ export function SectionSocialProof() {
             {techDownReviews.map(review => (
               <div
                 key={review.id}
+                className='mr-4 w-[min(85vw,22rem)] shrink-0 md:mr-6 md:w-88 lg:w-[24rem]'
+              >
+                <ReviewCard review={review} />
+              </div>
+            ))}
+            {techDownReviews.map(review => (
+              <div
+                key={`marquee-${review.id}`}
+                aria-hidden
                 className='mr-4 w-[min(85vw,22rem)] shrink-0 md:mr-6 md:w-88 lg:w-[24rem]'
               >
                 <ReviewCard review={review} />

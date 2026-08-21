@@ -31,7 +31,7 @@ export function EmpathySection() {
     <SkreddersyMotionProvider>
       <m.section
         aria-labelledby='empathy-heading'
-        className='dark:text-dark-background relative w-full overflow-hidden bg-[#f0eada] py-16 text-background md:py-24 lg:py-28 dark:bg-[#f0eada]'
+        className='dark:text-dark-background relative w-full overflow-hidden bg-cloud-dancer py-16 text-background md:py-24 lg:py-28 dark:bg-cloud-dancer'
         initial='hidden'
         whileInView='visible'
         viewport={skreddersyViewport}
@@ -121,8 +121,9 @@ export function EmpathySection() {
             >
               <BrandBadge
                 asChild
-                tone='commerce-secondary'
-                className='hover:bg-primary-hover dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary-hover dark:hover:text-dark-primary-hover-foreground h-12 bg-primary px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal text-primary-foreground shadow-sm transition-[filter,transform] hover:text-primary-foreground hover:brightness-110 active:scale-[0.98] md:h-14 md:px-6 md:text-base'
+                bgColor='var(--primary)'
+                fgColor='var(--primary-foreground)'
+                className='hover:bg-primary-hover dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary-hover dark:hover:text-dark-primary-hover-foreground h-12 px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.98] md:h-14 md:px-6 md:text-base'
               >
                 <button
                   type='button'

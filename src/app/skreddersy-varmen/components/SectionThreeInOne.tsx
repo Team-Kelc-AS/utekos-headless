@@ -37,7 +37,7 @@ export function SectionThreeInOne() {
     <SkreddersyMotionProvider>
       <section
         aria-labelledby='threeinone-heading'
-        className='dark:bg-dark-background w-full bg-background text-foreground'
+        className='dark:bg-dark-background w-full bg-evening text-foreground'
       >
         <m.div
           className='mx-auto max-w-5xl px-6 py-16 text-left md:py-24'
@@ -54,7 +54,7 @@ export function SectionThreeInOne() {
           </m.span>
           <m.h2
             id='threeinone-heading'
-            className='leading-heading-level-two mb-6 max-w-[18ch] font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-foreground md:text-5xl lg:text-6xl'
+            className='leading-heading-level-two mb-6 max-w-[18ch] font-sans text-4xl font-extrabold tracking-[-0.01em] text-balance text-foreground md:text-5xl lg:text-6xl'
             variants={revealScale}
           >
             Friheten til å velge
@@ -84,13 +84,13 @@ export function SectionThreeInOne() {
         <div className='w-full lg:flex'>
           <div
             aria-hidden='true'
-            className='dark:border-dark-foreground/10 sticky top-0 hidden h-screen w-1/2 items-center justify-center overflow-hidden border-r border-foreground/10 bg-jungle lg:flex'
+            className='dark:border-dark-foreground/10 sticky top-0 hidden h-screen w-1/2 items-center justify-center overflow-hidden rounded-r-lg border-r border-foreground/10 bg-jungle lg:flex'
           >
             {Steps.map((step, index) => (
               <m.div
                 key={step.id}
                 className={cn(
-                  'absolute inset-0 flex size-full items-center justify-center bg-jungle p-6 min-[1536px]:p-10',
+                  'absolute inset-0 flex size-full items-center justify-center rounded-r-lg bg-jungle p-6 min-[1536px]:p-10',
                   activeStep === index ? 'z-10' : 'z-0'
                 )}
                 animate={
@@ -133,11 +133,11 @@ export function SectionThreeInOne() {
             </div>
           </div>
 
-          <div className='dark:bg-dark-background flex w-full flex-col bg-background pb-20 lg:w-1/2 lg:pb-0'>
+          <div className='dark:bg-dark-background flex w-full flex-col bg-evening pb-20 lg:w-1/2 lg:pb-0'>
             {Steps.map((step, index) => (
               <m.div
                 key={step.id}
-                className='dark:border-dark-foreground/10 mb-12 flex flex-col border-foreground/10 last:mb-0 lg:mb-0 lg:min-h-screen lg:justify-center lg:border-b lg:px-12 lg:py-24 lg:last:border-0 xl:px-20'
+                className='dark:border-dark-foreground/10 mb-12 flex flex-col border-foreground/10 bg-evening last:mb-0 lg:mb-0 lg:min-h-screen lg:justify-center lg:border-b lg:px-12 lg:py-24 lg:last:border-0 xl:px-20'
                 initial='hidden'
                 whileInView='visible'
                 viewport={{
@@ -195,7 +195,7 @@ export function SectionThreeInOne() {
                   </m.div>
 
                   <m.h3
-                    className='mb-3 font-sans text-3xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-4xl lg:mb-6 lg:text-5xl xl:text-6xl'
+                    className='mb-3 font-sans text-3xl leading-[0.92] font-extrabold tracking-[-0.01em] text-foreground md:text-4xl lg:mb-6 lg:text-5xl xl:text-6xl'
                     variants={revealItem}
                   >
                     {step.title}

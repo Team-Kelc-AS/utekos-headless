@@ -16,8 +16,10 @@
   --color-green-900: #012622;
   --color-green-1000: #001a18;
   --color-green-haze: #00685e;
+  --color-evening: oklch(0.1798 0.0319 183.65);
   --color-dark-teal: oklch(0.3507 0.0622 183.77);
   --color-jungle: oklch(0.2383 0.042 184.99);
+  --color-jungle-tone: oklch(0.3625 0.0414 181.18);
   --color-night: oklch(0.1959 0.0341 188);
   --color-white-sand: oklch(0.8767 0.0086 56.3);
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
@@ -61,6 +63,7 @@
   --color-card: var(--card);
   --color-ceramic: var(--ceramic);
   --color-card-foreground: var(--card-foreground);
+  --color-evening: var(--evening);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
@@ -92,6 +95,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-jungle-tone: var(--jungle-tone);
   --color-green-noir: var(--green-noir);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -131,8 +135,10 @@
   --green-500: #00957a;
   --green-600: #037d67;
   --green-haze: #00685e;
+  --evening: oklch(0.1798 0.0319 183.65);
   --dark-teal: oklch(0.3507 0.0622 183.77);
   --jungle: oklch(0.24 0.042 184.99);
+  --jungle-tone: oklch(0.3625 0.0414 181.18);
   --night: oklch(0.1959 0.0341 188);
   --badge: oklch(0.2357 0.0402 194.77);
   --card: oklch(0.2943 0.0502 194.77);
@@ -209,10 +215,12 @@
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
   --teal-25: oklch(0.9569 0.014 185.95);
   --badge: oklch(0.2357 0.0402 194.77);
+  --jungle-tone: oklch(0.3625 0.0414 181.18);
   --magazine-article-card: oklch(0.350674 0.062274 183.5177);
   --magazine-header: oklch(0.2419 0.0418 184.31);
   --card: oklch(0.325 0.0503 194.96);
   --jungle: oklch(0.2383 0.042 184.99)s;
+  --evening: oklch(0.1798 0.0319 183.65);
   --ceramic: oklch(0.6678 0.1141 194.02);
   --alternate: oklch(0.2943 0.0502 194.77);
   --alternate-button: oklch(0.4999 0.0853 194.77);

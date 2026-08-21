@@ -102,7 +102,9 @@ export function NewsletterForm() {
 
             <BrandBadge
               asChild
-              className='hover:bg-primary-hover h-12 w-full shrink-0 px-6 py-0 font-utekos-text-medium text-base text-foreground transition-colors duration-300 sm:w-auto'
+              bgColor='var(--primary)'
+              fgColor='var(--primary-foreground)'
+              className='hover:bg-primary-hover h-12 w-full shrink-0 bg-primary px-6 py-0 font-utekos-text-medium text-base text-primary-foreground transition-colors duration-300 sm:w-auto'
             >
               <Button
                 type='submit'

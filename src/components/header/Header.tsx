@@ -26,13 +26,22 @@ export default function Header({
             className='flex h-14 items-center lg:h-16'
           >
             <Image
+              src='/LogoWhite.svg'
+              alt=''
+              width={1032}
+              height={1147}
+              loading='eager'
+              fetchPriority='high'
+              className='h-7 w-auto sm:hidden'
+            />
+            <Image
               src={wordmarkwhite}
-              alt='Utekos'
+              alt=''
               width={300}
               height={73}
               loading='eager'
               fetchPriority='high'
-              className='h-7 w-auto sm:h-8 lg:h-9 xl:h-10'
+              className='hidden h-7 w-auto sm:block sm:h-8 lg:h-9 xl:h-10'
             />
           </Link>
         </div>

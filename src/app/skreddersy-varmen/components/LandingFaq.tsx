@@ -21,7 +21,7 @@ export async function LandingFaq() {
   return (
     <section
       aria-labelledby='landing-faq-heading'
-      className='dark:bg-dark-background w-full bg-background px-6 py-16 text-foreground md:px-12 md:py-24'
+      className='dark:bg-dark-background w-full bg-night px-6 py-16 text-foreground md:px-12 md:py-24'
     >
       <div className='mx-auto flex w-full max-w-5xl flex-col items-start gap-10'>
         <div>

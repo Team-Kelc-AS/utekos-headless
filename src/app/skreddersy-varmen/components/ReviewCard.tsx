@@ -10,8 +10,8 @@ export function ReviewCard({ review }: { review: Review }) {
     <article
       className={cn(
         // Grunnstil: Mørk maritim bakgrunn som skaper kontrast til "card" bakgrunnen.
-        'group dark:border-dark-foreground/10 dark:bg-dark-background relative flex h-full flex-col justify-between rounded-lg border border-foreground/10 bg-background p-6 shadow-lg transition-all duration-400 md:p-7',
-        'dark:hover:border-dark-primary/50 dark:hover:bg-dark-background/95 dark:hover:shadow-dark-primary/10 hover:-translate-y-1 hover:border-primary/50 hover:bg-background/95 hover:shadow-2xl hover:shadow-primary/10'
+        'group dark:border-dark-foreground/10 relative flex h-full flex-col justify-between rounded-lg border border-foreground/10 bg-night p-6 shadow-lg transition-all duration-400 md:p-7',
+        'dark:hover:border-dark-primary/50 dark:hover:shadow-dark-primary/10 hover:-translate-y-1 hover:border-primary/50 hover:bg-night/95 hover:shadow-2xl hover:shadow-primary/10'
       )}
     >
       <header className='mb-5 flex items-center justify-between gap-3'>

@@ -22,12 +22,12 @@ export function LandingProductHighlightsPanel({
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-3xl border border-border',
+        'overflow-hidden rounded-2xl border border-border',
         'bg-jungle text-foreground shadow-[0_12px_40px_rgba(0,0,0,0.28)]'
       )}
     >
-      <div className='border-b border-border bg-night px-5 py-4 sm:px-6 sm:py-5'>
-        <h3 className='font-google-sans text-base font-bold tracking-tight text-foreground sm:text-lg'>
+      <div className='border-b border-border bg-jungle-tone px-5 py-4 sm:px-6 sm:py-5'>
+        <h3 className='font-sans text-base font-bold tracking-tight text-foreground sm:text-lg'>
           Slik fungerer {modelName}
         </h3>
       </div>
@@ -52,7 +52,7 @@ export function LandingProductHighlightsPanel({
               <span className='flex min-w-0 items-center gap-3'>
                 <span
                   aria-hidden
-                  className='font-google-sans flex size-7 shrink-0 items-center justify-center rounded-full bg-dark-teal text-xs font-bold text-primary-foreground tabular-nums'
+                  className='font-google-sans flex size-7 shrink-0 items-center justify-center rounded-full bg-jungle-tone text-xs font-bold text-primary-foreground tabular-nums'
                 >
                   {index + 1}
                 </span>

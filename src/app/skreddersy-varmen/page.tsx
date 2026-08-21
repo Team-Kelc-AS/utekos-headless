@@ -11,7 +11,6 @@ import { SkreddersyVarmenBreadcrumbs } from './components/SkreddersyVarmenBreadc
 import { SkreddersyVarmenKlarnaStrip } from './components/SkreddersyVarmenKlarnaStrip'
 import { SectionSocialProof } from './components/SectionSocialProof'
 import { LandingFaq } from './components/LandingFaq'
-import { LandingKlarnaPromotion } from './components/LandingKlarnaPromotion'
 import {
   LANDING_PAGE_DESCRIPTION,
   LANDING_PAGE_TITLE,
@@ -162,7 +161,6 @@ export default async function LandingPage({
       </PromotionImpression>
 
       <LandingFaq />
-      <LandingKlarnaPromotion />
       <PreFooterNavigation />
     </div>
   )

@@ -1,11 +1,16 @@
 .region {
   overscroll-behavior-inline: contain;
-  scroll-snap-type: inline proximity;
   scrollbar-width: thin;
 }
 
-.track > * {
-  scroll-snap-align: center;
+.track {
+  animation: social-proof-marquee 90s linear infinite;
+  will-change: transform;
+}
+
+.region:hover .track,
+.region:focus-within .track {
+  animation-play-state: paused;
 }
 
 .region:focus-visible {
@@ -13,8 +18,29 @@
   outline-offset: 0.375rem;
 }
 
+@keyframes social-proof-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .region {
+    overflow-x: auto;
+    scroll-snap-type: inline proximity;
+  }
+
   .track {
+    animation: none;
+    will-change: auto;
     scroll-behavior: auto;
+  }
+
+  .track > * {
+    scroll-snap-align: center;
   }
 }

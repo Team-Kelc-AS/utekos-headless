@@ -83,20 +83,20 @@ export function PurchaseClientViewLanding({
       <section className='relative w-full max-w-full overflow-x-clip text-background min-[900px]:grid min-[900px]:grid-cols-2'>
         <LandingPageProductCarouselPurchaseSection />
 
-        <div className='flex w-full flex-col bg-background text-foreground'>
-          <div className='flex-1 bg-[#f0eada] p-8 text-background min-[1280px]:p-20 md:p-12'>
+        <div className='flex w-full flex-col bg-[#F3F0E7] text-foreground'>
+          <div className='flex-1 bg-[#F3F0E7] p-8 text-background min-[900px]:rounded-tl-3xl min-[1280px]:p-20 md:p-12'>
             <div className='mb-4 font-utekos-text-medium text-sm text-background/80'>
               Utekos TechDown™ · Bestselger
             </div>
 
             <div className='mb-6 min-[900px]:mb-8'>
-              <h2 className='mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-background min-[1280px]:text-7xl'>
+              <h2 className='mb-4 flex flex-nowrap items-baseline gap-x-3 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-background min-[1280px]:text-7xl'>
                 <span className='sr-only'>Utekos </span>
                 <UtekosWordmark
                   aria-hidden
-                  className='h-[0.82em] w-auto translate-y-[0.04em] text-background'
+                  className='h-[0.82em] w-auto shrink-0 translate-y-[0.04em] text-background'
                 />
-                <span className='font-sans font-bold tracking-[-0.015em]'>
+                <span className='whitespace-nowrap font-sans font-bold tracking-[-0.04em]'>
                   {modelName}
                 </span>
               </h2>
@@ -137,10 +137,7 @@ export function PurchaseClientViewLanding({
                       key={feature}
                       className={cn(
                         choicePillClass,
-                        'rounded-2xl border border-border bg-dark-teal font-sans text-[11px] text-foreground shadow-sm min-[900px]:font-bold md:max-xl:text-[14px]',
-                        feature === 'Helårsbruk' && 'bg-dark-teal',
-                        feature === 'Vannavstøtende' &&
-                          'bg-dark-teal'
+                        'rounded-2xl border border-border bg-jungle-tone font-sans text-[11px] text-foreground shadow-sm min-[900px]:font-bold md:max-xl:text-[14px]'
                       )}
                     >
                       {feature}
@@ -169,7 +166,7 @@ export function PurchaseClientViewLanding({
               <div className='overflow-hidden rounded-xl bg-jungle p-6 min-[900px]:p-6'>
                 <div className='mb-4 flex items-center justify-between min-[900px]:mb-4'>
                   <span className='font-sans text-sm font-bold tracking-normal text-foreground'>
-                    STØRRELSE
+                    Størrelse
                   </span>
                 </div>
 
@@ -196,7 +193,7 @@ export function PurchaseClientViewLanding({
                           'rounded-xl! max-md:text-[15px]! md:rounded-2xl!',
                           isActive ?
                             'cursor-pointer border border-foreground/20 bg-primary text-base text-foreground shadow-none hover:opacity-70 sm:text-base md:text-base'
-                          : 'cursor-pointer border-none bg-dark-teal text-base text-foreground hover:opacity-70 min-[900px]:bg-night sm:text-base md:text-base',
+                          : 'cursor-pointer border-none bg-jungle-tone text-base text-foreground hover:opacity-70 sm:text-base md:text-base',
                           !size.availableForSale && 'opacity-65',
                           focusRing
                         )}
@@ -212,34 +209,36 @@ export function PurchaseClientViewLanding({
                   })}
                 </div>
 
-                {guidance ?
-                  <div
-                    key={selectedSize}
-                    className='animate-in fade-in slide-in-from-top-2 mt-5 duration-300 min-[900px]:mt-3'
-                  >
-                    <div className='relative overflow-hidden rounded-2xl border-none bg-jungle p-4 font-utekos-text text-foreground shadow-md md:p-6'>
-                      <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
-                        <Ruler className='size-4 text-primary' />
-                        <span className='font-utekos-text text-sm font-bold tracking-normal text-foreground'>
-                          Anbefaling: For deg mellom{' '}
-                          {guidance.height}
-                        </span>
+                <div className='mt-4 flex flex-col gap-4'>
+                  {guidance ?
+                    <div
+                      key={selectedSize}
+                      className='animate-in fade-in slide-in-from-top-2 duration-300'
+                    >
+                      <div className='relative overflow-hidden rounded-2xl border-none bg-jungle-tone p-4 font-utekos-text text-foreground shadow-md md:p-6'>
+                        <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
+                          <Ruler className='size-4 text-primary' />
+                          <span className='font-utekos-text text-sm font-bold tracking-normal text-foreground'>
+                            Anbefaling: For deg mellom{' '}
+                            {guidance.height}
+                          </span>
+                        </div>
+                        <ul className='mt-2 space-y-1.5'>
+                          {guidance.tips.map(tip => (
+                            <li
+                              key={tip}
+                              className='leading-text-paragraph text-sm text-foreground/90'
+                            >
+                              {tip}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <ul className='mt-2 space-y-1.5'>
-                        {guidance.tips.map(tip => (
-                          <li
-                            key={tip}
-                            className='leading-text-paragraph text-sm text-foreground/90'
-                          >
-                            {tip}
-                          </li>
-                        ))}
-                      </ul>
                     </div>
-                  </div>
-                : null}
+                  : null}
 
-                <TechDownSizeGuideAccordion />
+                  <TechDownSizeGuideAccordion />
+                </div>
 
                 <div className='mt-5 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-t border-foreground/10 pt-4 min-[900px]:mt-4'>
                   <div className='min-w-0'>
@@ -303,13 +302,13 @@ export function PurchaseClientViewLanding({
           </div>
 
           <div className='rounded-b-lg border-t border-background/20 bg-cloud-dancer p-6 text-background min-[900px]:p-8 min-[1280px]:p-12 md:p-12'>
-            <div className='mb-4 min-[900px]:mb-6 min-[1280px]:mb-8'>
+            <div className='mb-2.5 min-[900px]:mb-3 min-[1280px]:mb-3.5'>
               <BrandBadge
                 asChild
                 bgColor='var(--primary)'
                 fgColor='var(--primary-foreground)'
                 className={cn(
-                  'hover:bg-primary-hover h-14 w-full min-w-0 px-4 py-0 font-google-sans text-sm font-bold tracking-normal shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] sm:text-base md:h-16 md:px-6 md:text-lg',
+                  'hover:bg-primary-hover h-14 min-h-14 w-full min-w-0 px-4 py-0 font-google-sans text-base font-normal leading-none tracking-normal shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] md:h-14 md:min-h-14 md:px-6',
                   (isPending || !isAvailable) &&
                     'cursor-not-allowed opacity-80'
                 )}
@@ -335,7 +334,7 @@ export function PurchaseClientViewLanding({
                       aria-hidden
                     />
                   }
-                  <span className='whitespace-nowrap'>
+                  <span className='font-medium whitespace-nowrap'>
                     {isAddToCartPending ?
                       'Legger i handlekurv'
                     : isAvailable ?
@@ -345,7 +344,7 @@ export function PurchaseClientViewLanding({
                   {currentPrice && isAvailable ?
                     <>
                       <span className='hidden h-5 w-px bg-background/20 sm:block' />
-                      <span className='hidden font-google-sans font-bold whitespace-nowrap sm:inline'>
+                      <span className='hidden font-google-sans font-medium whitespace-nowrap sm:inline'>
                         {formatPrice({
                           amount: String(
                             Number(currentPrice.amount) *
@@ -366,6 +365,7 @@ export function PurchaseClientViewLanding({
               quantity={quantity}
               className='mb-4 min-[900px]:mb-6 min-[1280px]:mb-8'
             />
+
 
             <ShippingAndReturnComponent />
           </div>
