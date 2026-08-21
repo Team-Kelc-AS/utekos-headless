@@ -3,6 +3,7 @@ import { DeferredLandingSections } from '@/app/skreddersy-varmen/components/Defe
 import { HeroAndEmpathy } from './components/HeroEmpathy'
 import { LandingPurchaseFallback } from './components/LandingPurchaseFallback'
 import { LandingPurchaseSection } from './components/LandingPurchaseSection'
+import { MetaWebsiteHighlights } from './components/MetaWebsiteHighlights'
 import { StickyMobileAction } from './components/StickyMobileAction'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { PreFooterNavigation } from './components/PreFooterNavigation'
@@ -110,6 +111,8 @@ export default async function LandingPage({
 
   return (
     <div className='dark:bg-dark-background flex min-h-screen w-full flex-col items-center justify-start overflow-x-clip bg-background'>
+      <MetaWebsiteHighlights />
+
       <StickyMobileAction
         {...(defaultVariant ?
           {

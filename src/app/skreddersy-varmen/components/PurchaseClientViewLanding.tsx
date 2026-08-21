@@ -137,10 +137,10 @@ export function PurchaseClientViewLanding({
                       key={feature}
                       className={cn(
                         choicePillClass,
-                        'rounded-2xl border border-border bg-background font-utekos-text-medium text-[11px] text-foreground shadow-sm min-[900px]:font-google-sans min-[900px]:font-bold md:max-xl:text-[14px]',
-                        feature === 'Helårsbruk' && 'bg-night',
+                        'rounded-2xl border border-border bg-dark-teal font-sans text-[11px] text-foreground shadow-sm min-[900px]:font-bold md:max-xl:text-[14px]',
+                        feature === 'Helårsbruk' && 'bg-dark-teal',
                         feature === 'Vannavstøtende' &&
-                          'bg-night'
+                          'bg-dark-teal'
                       )}
                     >
                       {feature}

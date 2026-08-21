@@ -41,7 +41,7 @@ function Section({
               className='space-y-3'
             >
               {group.title && (
-                <h3 className='font-sans font-utekos-text-medium text-lg leading-[1.2] tracking-normal text-foreground'>
+                <h3 className='font-sans text-lg leading-[1.2] tracking-normal text-foreground'>
                   {group.title}
                 </h3>
               )}
@@ -50,9 +50,9 @@ function Section({
                   {group.rows.map(row => (
                     <div
                       key={row.label}
-                      className='dark:bg-dark-background/40 rounded-lg border border-border bg-background/40 p-3'
+                      className='bg-dark-teal rounded-lg border border-border p-3'
                     >
-                      <dt className='font-utekos-text-medium text-sm leading-[1.35] tracking-normal text-foreground'>
+                      <dt className='font-sans text-sm leading-[1.35] tracking-normal text-foreground'>
                         {row.label}
                       </dt>
                       <dd className='/82 mt-1 text-sm leading-normal tracking-normal text-foreground/82'>
@@ -65,13 +65,13 @@ function Section({
               {group.paragraphs?.map(paragraph => (
                 <p
                   key={paragraph}
-                  className='/86 text-base leading-[1.6] tracking-normal text-foreground/86'
+                  className='text-base leading-[1.6] tracking-normal text-foreground/90'
                 >
                   {paragraph}
                 </p>
               ))}
               {group.items && group.items.length > 0 && (
-                <ul className='/86 space-y-2 pl-5 text-base leading-[1.55] tracking-normal text-foreground/86'>
+                <ul className='space-y-2 pl-5 text-base leading-[1.55] tracking-normal text-foreground/90'>
                   {group.items.map(item => (
                     <li
                       key={item}
@@ -83,11 +83,11 @@ function Section({
                 </ul>
               )}
               {group.note && (
-                <div className='google-sans-flex dark:bg-dark-background/55 rounded-lg border border-border bg-background/55 p-4 text-foreground'>
-                  <h4 className='font-sans font-utekos-text-medium text-base leading-tight tracking-normal'>
+                <div className='google-sans bg-dark-teal rounded-lg border border-border p-4 text-foreground'>
+                  <h4 className='font-sans text-base leading-tight tracking-normal'>
                     {group.note.title}
                   </h4>
-                  <p className='utekos-text mt-2 text-sm leading-[1.6] tracking-normal text-foreground/86'>
+                  <p className='utekos-text mt-2 text-sm leading-[1.6] tracking-normal text-foreground/90'>
                     {group.note.text}
                   </p>
                 </div>
