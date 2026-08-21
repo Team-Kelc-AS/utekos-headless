@@ -19,7 +19,7 @@ export function InlineText({
   return (
     <Component
       className={cn(
-        'font-utekos-text tracking-normal',
+        'font-sans tracking-normal',
         className
       )}
     >

@@ -69,8 +69,6 @@ export const normalizeCart = (
 
   return {
     id: publicCartId,
-    // The Shopify checkout URL contains the same capability key as the
-    // authenticated cart id. Keep it server-side until checkout navigation.
     checkoutUrl: CART_CHECKOUT_PATH,
     totalQuantity: shopifyCart.totalQuantity,
     cost: {

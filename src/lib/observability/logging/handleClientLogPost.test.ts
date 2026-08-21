@@ -16,7 +16,7 @@ const validBody = JSON.stringify({
 
 function request(body?: string) {
   return new Request('https://utekos.no/api/log', {
-    body,
+    ...(body === undefined ? {} : { body }),
     method: 'POST'
   })
 }

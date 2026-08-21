@@ -67,15 +67,14 @@ export const canonicalSignalAuditEntrySchema =
     z.strictObject({
       state: z.literal('present'),
       source: canonicalSignalSourceSchema,
-      captured_at: z.string().datetime({ offset: true })
+      captured_at: z.iso.datetime({ offset: true })
     }),
     z.strictObject({
       state: z.literal('unavailable'),
       reason: canonicalSignalUnavailableReasonSchema,
-      assessed_at: z.string().datetime({ offset: true })
+      assessed_at: z.iso.datetime({ offset: true })
     })
   ])
-
 export type CanonicalSignalAuditEntry = z.infer<
   typeof canonicalSignalAuditEntrySchema
 >

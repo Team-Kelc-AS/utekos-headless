@@ -27,18 +27,23 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'nb_NO',
     siteName: 'Utekos',
-    title: 'Comfyrobe™ – tøff mot været, komfortabel mot deg',
-    description:
-      'Vanntett allværskåpe med mykt SherpaCore™-fôr for norsk hverdagsvær.',
+    title: COMFYROBE_LANDING_NAME,
+    description: COMFYROBE_LANDING_DESCRIPTION,
     url: COMFYROBE_LANDING_URL,
     images: [
       {
         url: COMFYROBE_LANDING_IMAGE,
         width: 1200,
         height: 630,
-        alt: 'Kvinne med Comfyrobe fra Utekos'
+        alt: 'Comfyrobe™ XL i Fjellnatt vist forfra, bakfra og med SherpaCore™-detalj'
       }
     ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: COMFYROBE_LANDING_NAME,
+    description: COMFYROBE_LANDING_DESCRIPTION,
+    images: [COMFYROBE_LANDING_IMAGE]
   }
 }
 
@@ -48,7 +53,6 @@ export default async function ComfyrobeLandingPage() {
 
   return (
     <article className='flex min-h-screen w-full flex-col overflow-x-clip bg-background text-foreground'>
-
       <div className='w-full bg-cloud-dancer text-background'>
         <UtekosBreadcrumbBar
           surface='transparent'

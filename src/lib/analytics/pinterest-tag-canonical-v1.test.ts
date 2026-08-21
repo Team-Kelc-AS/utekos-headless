@@ -108,3 +108,62 @@ test('Pinterest Tag sends matching product identity and Enhanced Match', async (
     '8c30895c344721c6a8cb233e551a34673d2c2fa2317395471588a8e17b6ae654'
   )
 })
+
+test('Pinterest Tag maps canonical purchase to Checkout with product context', async () => {
+  const { tracked, processCanonicalEvent } = loadTag()
+
+  await processCanonicalEvent({
+    schema_version: 1,
+    event_id: '69143bcb-d302-4881-bca2-a58a381e2ae7',
+    event_name: 'purchase',
+    environment: 'production',
+    consent: { marketing: 'granted' },
+    custom_data: {
+      currency: 'NOK',
+      value: 2036.4,
+      transaction_id: 'shopify_order_6968683004152',
+      items: [
+        {
+          item_id: CANONICAL_ITEM_ID,
+          item_name: 'Comfyrobe™',
+          item_brand: 'Utekos',
+          item_category: 'Ponchoer',
+          quantity: 2,
+          unit_price: 799
+        }
+      ]
+    }
+  })
+
+  const checkoutCall = tracked.find(
+    call => call[0] === 'track' && call[1] === 'Checkout'
+  )
+  const eventData = checkoutCall?.[2] as {
+    currency?: string
+    event_id?: string
+    line_items?: Array<Record<string, unknown>>
+    order_id?: string
+    order_quantity?: number
+    value?: number
+  }
+
+  assert.equal(
+    eventData.event_id,
+    '69143bcb-d302-4881-bca2-a58a381e2ae7'
+  )
+  assert.equal(eventData.currency, 'NOK')
+  assert.equal(eventData.value, 2036.4)
+  assert.equal(eventData.order_id, 'shopify_order_6968683004152')
+  assert.equal(eventData.order_quantity, 2)
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(eventData.line_items?.[0])),
+    {
+      product_id: PINTEREST_PRODUCT_ID,
+      product_name: 'Comfyrobe™',
+      product_brand: 'Utekos',
+      product_category: 'Ponchoer',
+      product_price: 799,
+      product_quantity: 2
+    }
+  )
+})

@@ -151,20 +151,23 @@ function getDefaultLocalStorage(): StorageLike | undefined {
 }
 
 /**
- * URL click IDs win over session/local values for the same key.
- * Newly seen URL values are merged into sessionStorage and a 90-day
- * localStorage record so Meta click IDs survive tab close when `_fbc`
- * is delayed, blocked, or cleared.
+ * URL click IDs win over freshly observed first-party cookie values,
+ * which in turn win over session/local values for the same key.
+ * Newly seen URL/cookie values are merged into sessionStorage and a
+ * 90-day localStorage record so click attribution survives navigation
+ * and the cross-domain Shopify checkout handoff.
  */
 export function resolveClickIds(
   pageUrl: string,
   sessionStorageLike: StorageLike | undefined = getDefaultSessionStorage(),
   localStorageLike: StorageLike | undefined = getDefaultLocalStorage(),
-  nowMs: number = Date.now()
+  nowMs: number = Date.now(),
+  observedClickIds: Record<string, string> = {}
 ): Record<string, string> | undefined {
   const fromUrl = readClickIdsFromSearchParams(
     new URL(pageUrl).searchParams
   )
+  const fromObserved = sanitizeClickIds(observedClickIds)
   const fromSession = readPersistedClickIds(
     sessionStorageLike,
     CLICK_ID_SESSION_KEY
@@ -173,14 +176,22 @@ export function resolveClickIds(
   const merged = {
     ...fromLocal,
     ...fromSession,
+    ...fromObserved,
     ...fromUrl
   }
+  const hasNewObservedValue = Object.entries(fromObserved).some(
+    ([key, value]) =>
+      fromSession[key] !== value && fromLocal[key] !== value
+  )
 
   if (Object.keys(fromUrl).length > 0 || Object.keys(merged).length > 0) {
-    if (Object.keys(fromUrl).length > 0) {
+    if (Object.keys(fromUrl).length > 0 || hasNewObservedValue) {
       persistClickIds(sessionStorageLike, CLICK_ID_SESSION_KEY, merged)
       persistDurableClickIds(localStorageLike, merged, nowMs)
-    } else if (Object.keys(fromSession).length === 0 && Object.keys(fromLocal).length > 0) {
+    } else if (
+      Object.keys(fromSession).length === 0 &&
+      Object.keys(fromLocal).length > 0
+    ) {
       // Hydrate the current tab from durable storage without extending TTL.
       persistClickIds(sessionStorageLike, CLICK_ID_SESSION_KEY, merged)
     }

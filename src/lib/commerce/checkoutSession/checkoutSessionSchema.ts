@@ -32,6 +32,8 @@ const sha256FingerprintSchema = z
   .string()
   .regex(/^sha256:[a-f0-9]{64}$/)
 
+const nullableUrlSchema = z.url().max(4000).nullable()
+
 const shopifyCartGidSchema = z
   .string()
   .regex(/^gid:\/\/shopify\/Cart\/[^/?#]+$/)
@@ -44,9 +46,23 @@ const shopifyVariantGidSchema = z
   .string()
   .regex(/^gid:\/\/shopify\/ProductVariant\/\d+$/)
 
+  const SHOPIFY_CART_LINE_GID_PREFIX =
+  'gid://shopify/CartLine/' as const
+
+const MAX_SHOPIFY_OPAQUE_ID_LENGTH =
+  4_096
+
 const shopifyCartLineGidSchema = z
   .string()
-  .regex(/^gid:\/\/shopify\/CartLine\/[^?#]+$/)
+  .min(
+    SHOPIFY_CART_LINE_GID_PREFIX.length + 1
+  )
+  .max(
+    MAX_SHOPIFY_OPAQUE_ID_LENGTH
+  )
+  .startsWith(
+    SHOPIFY_CART_LINE_GID_PREFIX
+  )
 
 const shopifyOrderGidSchema = z
   .string()
@@ -106,7 +122,7 @@ export const checkoutSessionLineItemSchema = z.strictObject({
     checkoutSessionSelectedOptionSchema
   ),
 
-  image_url: z.string().url().max(4000).nullable(),
+  image_url: nullableUrlSchema,
 
   available_for_sale: z.boolean().nullable(),
 
@@ -280,17 +296,14 @@ export const shopifyCheckoutAttemptStateSchema =
      * May contain Shopify capability credentials.
      * Must NEVER be copied to:
      * - canonical analytics events
+     * - Pinterest
      * - GTM
      * - Meta
      * - Microsoft
      * - Vercel Web Analytics
      * - ordinary unredacted runtime logs
      */
-    private_checkout_url: z
-      .string()
-      .url()
-      .max(4000)
-      .nullable(),
+    private_checkout_url: nullableUrlSchema,
 
     /**
      * Safe correlation fingerprint for observability.
@@ -307,11 +320,7 @@ export const shopifyCheckoutAttemptStateSchema =
     /**
      * PRIVATE recovery capability URL from Shopify.
      */
-    private_abandoned_checkout_url: z
-      .string()
-      .url()
-      .max(4000)
-      .nullable(),
+    private_abandoned_checkout_url: nullableUrlSchema,
 
     abandoned_checkout_created_at:
       nullableIsoDateTimeSchema,
@@ -393,11 +402,7 @@ export const klarnaExpressAttemptStateSchema =
      * completion. Keep it private because its future semantics
      * are provider-owned.
      */
-    private_redirect_url: z
-      .string()
-      .url()
-      .max(4000)
-      .nullable(),
+    private_redirect_url: nullableUrlSchema,
 
     shipping_address_collected_at:
       nullableIsoDateTimeSchema,

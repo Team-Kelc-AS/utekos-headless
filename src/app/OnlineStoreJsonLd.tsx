@@ -29,7 +29,7 @@ export async function OnlineStoreJsonLd() {
       'https://x.com/UtekosOffisiell'
     ],
     'description':
-      'Utekos er en merkevare som designer funksjonelt yttertøy for kompromissløs komfort og overlegen allsidighet: Hytteliv, bobilferie, telttur, båt og terrasseliv.',
+      'Utekos er en merkevare som designer yttertøy som kan justeres og formes etter behov. Opplev ompromissløs komfort og overlegen allsidighet. Perfekt for hytte, bobil, camping og terrasseliv.',
     'logo': 'https://utekos.no/logo.png',
     'image': 'https://utekos.no/og-image-utekos-produkter.jpg',
     'foundingDate': '2020',

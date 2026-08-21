@@ -16,7 +16,7 @@ export default function Header({
   menu: MenuItem[]
 }) {
   return (
-    <header className='top-0! z-50 w-full text-foreground'>
+    <header className='top-0! z-50 bg-night w-full text-foreground'>
       <div className='relative mx-auto grid min-h-18 w-full grid-cols-[auto_1fr] items-center gap-3 px-4 py-2.5 sm:px-6 lg:min-h-20 lg:px-10 xl:min-h-22.5'>
         <div className='flex min-w-0 items-center justify-start'>
           <Link

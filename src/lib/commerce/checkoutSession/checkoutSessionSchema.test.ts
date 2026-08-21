@@ -486,3 +486,81 @@ test(
     )
   }
 )
+
+test(
+  'preserves an opaque Shopify CartLine ID',
+  () => {
+    const session =
+      createValidSession()
+
+    const lineId =
+      'gid://shopify/CartLine/example-line?cart=synthetic-cart-token'
+
+    session
+      .shopify_cart
+      .line_items[0]!
+      .line_id =
+        lineId
+
+    const parsed =
+      checkoutSessionSchema.parse(
+        session
+      )
+
+    assert.equal(
+      parsed
+        .shopify_cart
+        .line_items[0]
+        ?.line_id,
+      lineId
+    )
+  }
+)
+
+test(
+  'rejects a non-CartLine Shopify ID as line_id',
+  () => {
+    const session =
+      createValidSession()
+
+    session
+      .shopify_cart
+      .line_items[0]!
+      .line_id =
+        'gid://shopify/ProductVariant/46944403915000'
+
+    const result =
+      checkoutSessionSchema.safeParse(
+        session
+      )
+
+    assert.equal(
+      result.success,
+      false
+    )
+  }
+)
+
+test(
+  'rejects an empty Shopify CartLine ID',
+  () => {
+    const session =
+      createValidSession()
+
+    session
+      .shopify_cart
+      .line_items[0]!
+      .line_id =
+        'gid://shopify/CartLine/'
+
+    const result =
+      checkoutSessionSchema.safeParse(
+        session
+      )
+
+    assert.equal(
+      result.success,
+      false
+    )
+  }
+)

@@ -6,14 +6,14 @@ export function TypographyH2() {
     <>
       <H2
         ID='hero-subheading'
-        className='font-utekos-text-medium w-full pt-2 pb-0 text-xl! text-foreground md:text-3xl!'
+        className='font-sans w-full pt-2 pb-0 text-xl! font-medium text-foreground md:text-3xl!'
       >
         Kompromissløs komfort og
         <br className='sm:hidden' />
         {' '}
         overlegen allsidighet.
       </H2>
-      <P className='pt-2 text-center text-xl! font-utekos-text-medium text-foreground md:text-3xl! not-first:mt-0'>
+      <P className='pt-2 text-center text-xl! font-sans text-foreground font-medium md:text-3xl! not-first:mt-0'>
         Juster, form og nyt.
       </P>
     </>

@@ -261,7 +261,7 @@ test('generated canonical event retains submissionId and current context', async
       pageUrl: 'https://utekos.no/venteliste?fbclid=abc123',
       pageViewId: PAGE_VIEW_ID,
       cookieHeader:
-        'utekos_external_id=anon_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee; _fbp=fb.1.1; _fbc=fb.1.1753099200000.abc123'
+        'utekos_external_id=anon_aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee; _fbp=fb.1.1; _fbc=fb.1.1753099200000.abc123; _epik=pinterest-cookie-1'
     })
   )
 
@@ -270,6 +270,7 @@ test('generated canonical event retains submissionId and current context', async
     acceptCalls[0]!
   const event = payload as {
     event_id: string
+    click_id?: Record<string, string>
     page_view_id?: string
     page_url: string
     custom_data: { submission_id: string; form_id: string }
@@ -283,6 +284,7 @@ test('generated canonical event retains submissionId and current context', async
   assert.equal(event.custom_data.submission_id, SUBMISSION_ID)
   assert.equal(event.custom_data.form_id, 'newsletter_signup')
   assert.equal(event.page_view_id, PAGE_VIEW_ID)
+  assert.equal(event.click_id?.epik, 'pinterest-cookie-1')
   assert.equal(
     event.page_url,
     'https://utekos.no/venteliste?fbclid=abc123'

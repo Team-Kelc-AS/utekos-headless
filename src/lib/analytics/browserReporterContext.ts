@@ -41,7 +41,10 @@ export function readBrowserReporterContext(): BrowserReporterContext {
     (window as CookiebotWindow).Cookiebot?.consent
   )
   const browserId = extractBrowserIds(document.cookie, consent)
-  const clickId = extractClickIds(pageUrl)
+  const clickId =
+    consent.marketing === 'granted' ?
+      extractClickIds(pageUrl, document.cookie)
+    : undefined
   const externalId =
     browserFirstPartyExternalIdStore.getOrCreate(consent)
 

@@ -1,19 +1,12 @@
 import { after } from 'next/server'
 
 import { shopifyCheckoutObservationSchema } from '@/lib/analytics/shopifyCheckoutObservationContract'
-
 import { handleShopifyCheckoutObservation } from '@/lib/analytics/server/handleShopifyCheckoutObservation'
-
 import { postgresShopifyCheckoutObservationStore } from '@/lib/analytics/server/postgresShopifyCheckoutObservationStore'
-
 import { postgresCanonicalEventStore } from '@/lib/analytics/server/postgresCanonicalPageViewStore'
-
 import { promoteShopifyAddPaymentInfoObservation } from '@/lib/analytics/server/promoteShopifyAddPaymentInfoObservation'
-
 import { promoteShopifyAddShippingInfoObservation } from '@/lib/analytics/server/promoteShopifyAddShippingInfoObservation'
-
 import { readShopifyAddPaymentInfoCanonicalConfig } from '@/lib/analytics/server/shopifyAddPaymentInfoCanonicalConfig'
-
 import { reconcileShopifyCheckoutObservation } from '@/lib/commerce/checkoutSession/reconcileShopifyCheckoutAttempt'
 
 export const maxDuration = 60

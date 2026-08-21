@@ -212,6 +212,69 @@ test(
   }
 )
 
+test(
+  'normalizes the selected Shopify variant GID and keeps variant_select out of Meta',
+  () => {
+    const runtime = createRuntime()
+
+    runtime.window.dataLayer.push(
+      canonicalEvent('view_item', 'selected-view', {
+        currency: 'NOK',
+        gross_value: 1790,
+        items: [{
+          item_id: 'gid://shopify/ProductVariant/46944403882232',
+          product_id: 'gid://shopify/Product/9240112693496',
+          variant_id: 'gid://shopify/ProductVariant/46944403882232',
+          quantity: 1,
+          gross_unit_price: 1790
+        }]
+      }),
+      canonicalEvent('variant_select', 'selected-variant', {
+        interaction_id: 'variant-select-1',
+        product_id: 'gid://shopify/Product/9240112693496',
+        variant_id: 'gid://shopify/ProductVariant/46944403882232',
+        item_id: 'gid://shopify/ProductVariant/46944403882232',
+        item_variant: 'Utekos TechDown / Havdyp / Middels / Unisex',
+        availability: 'available'
+      })
+    )
+
+    vm.runInContext(script, runtime.context)
+
+    const eventCalls = queuedCalls(runtime.window).filter(
+      call => call[0] === 'trackSingle' || call[0] === 'trackSingleCustom'
+    )
+    const viewContentCall = eventCalls.find(
+      call => call[2] === 'ViewContent'
+    )
+
+    assert.deepEqual(viewContentCall, [
+      'trackSingle',
+      '1092362672918571',
+      'ViewContent',
+      {
+        content_ids: ['46944403882232'],
+        contents: [{
+          id: '46944403882232',
+          quantity: 1,
+          item_price: 1790
+        }],
+        content_type: 'product',
+        num_items: 1,
+        currency: 'NOK',
+        value: 1790,
+        gross_value: 1790
+      },
+      { eventID: 'selected-view' }
+    ])
+    assert.equal(JSON.stringify(viewContentCall).includes('gid://'), false)
+    assert.equal(
+      eventCalls.some(call => call[4]?.eventID === 'selected-variant'),
+      false
+    )
+  }
+)
+
 test('initializes once and sends canonical Meta events with CAPI event IDs', () => {
   const runtime = createRuntime()
   const commerce = {

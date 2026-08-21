@@ -38,8 +38,19 @@ export function getConsentSnapshot(
   }
 }
 
-export function extractClickIds(pageUrl: string) {
-  return resolveClickIds(pageUrl)
+export function extractClickIds(
+  pageUrl: string,
+  cookieHeader: string = ''
+) {
+  const epik = parseCookies(cookieHeader).get('_epik')
+
+  return resolveClickIds(
+    pageUrl,
+    undefined,
+    undefined,
+    undefined,
+    epik ? { epik } : {}
+  )
 }
 
 export function extractBrowserIds(

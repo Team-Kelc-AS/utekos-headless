@@ -1,7 +1,5 @@
 # META EVENT TRACKING
 
-
-
 ### Events Manager feedback
 
 **Initiate Checkout**
@@ -20,11 +18,6 @@
 - 21.43% of total events are receiving 
 
 ---
-
-
-
-
-
 
 
 ### AddToCart
@@ -64,7 +57,6 @@ Should be REALTIME, OR AS CLOSE TO
 - 11 % of total events are receiving 
 
 ---
-
 
 
 ### AddToWishList

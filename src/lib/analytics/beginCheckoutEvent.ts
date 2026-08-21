@@ -26,9 +26,9 @@ export const canonicalBeginCheckoutSchema =
     event_name: z.literal('begin_checkout'),
     source: z.literal('web'),
     checkout_method: checkoutMethodSchema.optional(),
-    page_view_id: z.string().uuid().optional(),
-    page_url: z.string().url(),
-    referrer_url: z.string().url().optional(),
+    page_view_id: z.uuid().optional(),
+    page_url: z.url(),
+    referrer_url: z.url().optional(),
     page_title: z.string().min(1),
     custom_data: canonicalBeginCheckoutCommerceSchema
   })

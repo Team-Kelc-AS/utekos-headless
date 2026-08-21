@@ -22,22 +22,17 @@ export const canonicalCommerceItemSchema = z.strictObject({
   sku: z.string().min(1).optional(),
   gtin: z.string().min(1).optional(),
   quantity: z.number().int().positive(),
-  unit_price: z.number().finite().nonnegative(),
-  gross_unit_price: z.number().finite().nonnegative(),
-  compare_at_unit_price: z
-    .number()
-    .finite()
-    .nonnegative()
-    .optional(),
-  gross_compare_at_unit_price: z
-    .number()
-    .finite()
-    .nonnegative()
-    .optional(),
-  discount: z.number().finite().nonnegative().optional(),
-  gross_discount: z.number().finite().nonnegative().optional(),
-  tax_amount: z.number().finite().nonnegative(),
-  tax_rate: z.number().finite().min(0).max(1),
+  unit_price: z.number().nonnegative(),
+  gross_unit_price: z.number().nonnegative(),
+
+  compare_at_unit_price: z.number().nonnegative().optional(),
+  gross_compare_at_unit_price: z.number().nonnegative().optional(),
+
+  discount: z.number().nonnegative().optional(),
+  gross_discount: z.number().nonnegative().optional(),
+
+  tax_amount: z.number().nonnegative(),
+  tax_rate: z.number().min(0).max(1),
   taxable: z.boolean(),
   price_includes_tax: z.boolean(),
   available_for_sale: z.boolean(),
@@ -54,9 +49,9 @@ export type CanonicalCommerceItem = z.infer<
 
 export const canonicalCommerceValueSchema = z.strictObject({
   currency: z.string().regex(/^[A-Z]{3}$/),
-  value: z.number().finite().nonnegative(),
-  gross_value: z.number().finite().nonnegative(),
-  tax_value: z.number().finite().nonnegative(),
+  value: z.number().nonnegative(),
+  gross_value: z.number().nonnegative(),
+  tax_value: z.number().nonnegative(),
   items: z.array(canonicalCommerceItemSchema).min(1)
 })
 

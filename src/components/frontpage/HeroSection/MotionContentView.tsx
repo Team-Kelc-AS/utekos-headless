@@ -26,12 +26,12 @@ export function MotionContentView() {
         >
           <Button
             asChild
-            variant='checkout'
-            className='group min-h-11 gap-2 rounded-full bg-primary px-5 py-4 font-utekos-text-medium! text-sm leading-none font-semibold text-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-6 md:px-8 md:py-6 lg:px-10 lg:py-7 lg:text-lg'
+            variant='alternate'
+            className='group min-h-11 gap-2 rounded-full bg-primary px-5 py-4 font-sans text-sm leading-none transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-6 md:px-8 md:py-6 lg:px-10 lg:py-7 lg:text-lg'
           >
             <Link
               href={HERO_DESTINATION as Route}
-              aria-label='Gå til skreddersy varmen'
+              aria-label='Utforsk'
               data-track='ReadMoreHeroClick'
               onClick={() => {
                 reportCanonicalHeroInteract({
@@ -43,7 +43,7 @@ export function MotionContentView() {
                 })
               }}
             >
-              <InlineText>Skreddersy varmen</InlineText>
+              <InlineText>Utforsk</InlineText>
               <InvitingArrow />
             </Link>
           </Button>

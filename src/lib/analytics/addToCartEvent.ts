@@ -23,9 +23,9 @@ export const canonicalAddToCartSchema =
   canonicalEventEnvelopeSchema.extend({
     event_name: z.literal('add_to_cart'),
     source: z.literal('web'),
-    page_view_id: z.string().uuid().optional(),
-    page_url: z.string().url(),
-    referrer_url: z.string().url().optional(),
+    page_view_id: z.uuid().optional(),
+    page_url: z.url(),
+    referrer_url: z.url().optional(),
     page_title: z.string().min(1),
     custom_data: canonicalAddToCartCommerceSchema
   })

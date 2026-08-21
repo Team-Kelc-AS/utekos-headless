@@ -93,11 +93,19 @@ export async function acceptCanonicalPageView(
     '[tracking] page_view store result',
     JSON.stringify({
       event_id: event.event_id,
+      event_time: event.event_time,
+      source: event.source,
+      event_name: event.event_name,
       page_view_id: event.page_view_id,
       page_url: redactPageUrlForLog(event.page_url),
       environment: event.environment,
       status,
       cookies_to_set: ensured.cookiesToSet.map(cookie => cookie.name),
+      has_click_id: Boolean(event.click_id),
+      has_client_ip_address: Boolean(
+        input.requestContext.clientIpAddress
+      ),
+      has_client_user_agent: Boolean(input.requestContext.userAgent),
       has_fbp: Boolean(event.browser_id?.fbp),
       has_fbc: Boolean(event.browser_id?.fbc),
       has_external_id: Boolean(event.external_id)

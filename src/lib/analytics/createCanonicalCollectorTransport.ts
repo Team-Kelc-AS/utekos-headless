@@ -1,6 +1,7 @@
 import { captureException } from '@sentry/nextjs'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
+import { extractClickIds } from './pageViewClientContext'
 
 const COOKIEBOT_EVENTS = [
   'CookiebotOnConsentReady',
@@ -90,20 +91,6 @@ function readCookie(name: string): string | undefined {
     .find(candidate => candidate.startsWith(prefix))
 
   return cookie?.slice(prefix.length) || undefined
-}
-
-function readClickIds(pageUrl: string) {
-  const url = new URL(pageUrl)
-
-  return compactRecord([
-    ['fbclid', url.searchParams.get('fbclid') || undefined],
-    ['gclid', url.searchParams.get('gclid') || undefined],
-    ['gbraid', url.searchParams.get('gbraid') || undefined],
-    ['wbraid', url.searchParams.get('wbraid') || undefined],
-    ['msclkid', url.searchParams.get('msclkid') || undefined],
-    ['ttclid', url.searchParams.get('ttclid') || undefined],
-    ['epik', url.searchParams.get('epik') || undefined]
-  ])
 }
 
 function resolveConsent(
@@ -222,7 +209,7 @@ function resolveBrowserCollection<E extends { consent: ConsentSnapshot; page_url
     : {}),
     ...(consent.marketing === 'granted' ?
       {
-        clickId: readClickIds(pageUrl),
+        clickId: extractClickIds(pageUrl, document.cookie),
         marketingBrowserId: compactRecord([
           ['fbp', readCookie('_fbp')],
           ['fbc', readCookie('_fbc')],

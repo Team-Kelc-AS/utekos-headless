@@ -129,7 +129,10 @@ export function PageViewObserver({
       getCookiebotState()?.consent
     )
     const browserId = extractBrowserIds(document.cookie, consent)
-    const clickId = extractClickIds(navigation.pageUrl)
+    const clickId =
+      consent.marketing === 'granted' ?
+        extractClickIds(navigation.pageUrl, document.cookie)
+      : undefined
     const externalId =
       browserFirstPartyExternalIdStore.getOrCreate(consent)
     const searchParams = new URL(navigation.pageUrl).searchParams

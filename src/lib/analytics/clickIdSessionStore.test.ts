@@ -131,3 +131,44 @@ test('resolveClickIds lets fresh URL values win over session and local', () => {
     { fbclid: 'new-meta', gclid: 'keep-google', msclkid: 'bing-1' }
   )
 })
+
+test('resolveClickIds persists a freshly observed Pinterest _epik value', () => {
+  const session = createMemoryStorage()
+  const local = createMemoryStorage()
+  const now = Date.parse('2026-08-21T08:00:00.000Z')
+
+  assert.deepEqual(
+    resolveClickIds(
+      'https://utekos.no/produkter/comfyrobe',
+      session,
+      local,
+      now,
+      { epik: 'pinterest-cookie-1' }
+    ),
+    { epik: 'pinterest-cookie-1' }
+  )
+  assert.equal(
+    session.getItem(CLICK_ID_SESSION_KEY),
+    JSON.stringify({ epik: 'pinterest-cookie-1' })
+  )
+  assert.deepEqual(
+    JSON.parse(local.getItem(CLICK_ID_LOCAL_KEY)!),
+    {
+      identifiers: { epik: 'pinterest-cookie-1' },
+      updatedAt: '2026-08-21T08:00:00.000Z'
+    }
+  )
+})
+
+test('resolveClickIds lets a fresh URL epik win over the Pinterest cookie', () => {
+  assert.deepEqual(
+    resolveClickIds(
+      'https://utekos.no/?epik=pinterest-url-new',
+      createMemoryStorage(),
+      createMemoryStorage(),
+      Date.parse('2026-08-21T08:00:00.000Z'),
+      { epik: 'pinterest-cookie-old' }
+    ),
+    { epik: 'pinterest-url-new' }
+  )
+})

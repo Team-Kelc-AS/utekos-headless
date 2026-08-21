@@ -38,7 +38,7 @@ export function ProductCardHeader({
   return (
     <CardHeader
       className={cn(
-        'flex grow flex-col gap-3 rounded-t-3xl border-t border-border bg-jungle p-6 pb-4',
+        'relative z-10 -mt-6 flex grow flex-col gap-3 rounded-t-3xl border-t border-border bg-jungle p-6 pb-4',
         compactMobile && 'p-2 pb-2 md:p-6 md:pb-4'
       )}
     >

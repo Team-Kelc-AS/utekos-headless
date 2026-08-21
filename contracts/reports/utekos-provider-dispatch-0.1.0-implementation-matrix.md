@@ -35,6 +35,8 @@ The queue message contains only `adapter_key`, `attempt_id`, and `schema_version
 | `google:view_item_list` | `google` | `view_item_list` | registered adapter + worker |
 | `google:view_promotion` | `google` | `view_promotion` | registered adapter + worker |
 | `google:view_search_results` | `google` | `view_search_results` | registered adapter + worker |
+| `meta:add_payment_info` | `meta` | `add_payment_info` | registered adapter + worker |
+| `meta:add_shipping_info` | `meta` | `add_shipping_info` | registered adapter + worker |
 | `meta:add_to_cart` | `meta` | `add_to_cart` | registered adapter + worker |
 | `meta:add_to_wishlist` | `meta` | `add_to_wishlist` | registered adapter + worker |
 | `meta:begin_checkout` | `meta` | `begin_checkout` | registered adapter + worker |

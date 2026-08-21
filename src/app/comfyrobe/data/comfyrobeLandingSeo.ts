@@ -6,10 +6,10 @@ export const COMFYROBE_PRODUCT_HANDLE = 'comfyrobe'
 export const COMFYROBE_PRODUCT_URL = `${SITE_URL}/produkter/${COMFYROBE_PRODUCT_HANDLE}`
 
 export const COMFYROBE_LANDING_NAME =
-  'Comfyrobe™ - Romslig Allværsjakke Herre |  Made By Utekos®'
+  'Comfyrobe™ XL – lang og romslig allværsjakke | Utekos'
 
 export const COMFYROBE_LANDING_DESCRIPTION =
-'Et moteriktig ytterplagg med romslig passform. Strategiske snitt og toveis YKK®-glidelås gir konstant bevegelsesfrihet.  Hiv den på og møt høsten med stil.';
+  'Lang og romslig unisex allværsjakke med 8 000 mm vannsøyle, varmt SherpaCore™-fôr og toveis YKK®-glidelås. Se Comfyrobe™ XL fra Utekos.'
 export const COMFYROBE_LANDING_IMAGE = `${SITE_URL}/og-comfyrobe-1200x630.jpg`
 
 export const COMFYROBE_LANDING_FAQ = [

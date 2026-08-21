@@ -37,6 +37,16 @@ test('extracts supported click identifiers from the current URL', () => {
   )
 })
 
+test('extracts the Pinterest click id from its documented _epik cookie', () => {
+  assert.deepEqual(
+    extractClickIds(
+      'https://utekos.no/produkter/comfyrobe',
+      '_epik=pinterest-cookie-1; unrelated=value'
+    ),
+    { epik: 'pinterest-cookie-1' }
+  )
+})
+
 test('does not expose browser identifiers without matching consent', () => {
   const cookie = '_fbp=fb.1.123; _fbc=fb.1.456; _ga=GA1.1.123.456'
 

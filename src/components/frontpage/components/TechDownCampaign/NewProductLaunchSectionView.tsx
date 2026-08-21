@@ -13,9 +13,6 @@ import { PageSection } from '@/components/layout/PageSection'
 import { cn } from '@/lib/utils/className'
 import { H2 } from '@/components/typography/TypographyH2'
 import { InlineText } from '@/components/typography/TypographyInlineText'
-import { P } from '@/components/typography/TypographyP'
-
-const kickerText = 'Norsk sommer er uforutsigbar'
 
 export function NewProductLaunchSectionView({
   onQuickViewClick,
@@ -41,19 +38,12 @@ export function NewProductLaunchSectionView({
             </div>
 
             <div className='flex w-full flex-col items-start'>
-              <P className='mb-4 text-lg leading-[1.08] text-foreground sm:text-2xl md:text-3xl xl:text-3xl'>
-                {kickerText}
-              </P>
-
               <H2
                 ID='techdown-launch-heading'
-                className='font-google-sans mb-7 max-w-3xl pb-2 text-[1.7rem] leading-[0.94] font-bold text-foreground min-[360px]:text-[1.8rem] sm:mb-8 sm:text-[2.5rem] md:text-5xl md:leading-[0.96] lg:text-6xl lg:leading-[0.94]'
+                className='font-sans mb-7 max-w-3xl pb-2 text-[1.7rem] leading-[0.94] font-bold text-foreground min-[360px]:text-[1.8rem] sm:mb-8 sm:text-[2.5rem] md:text-5xl md:leading-[0.96] lg:text-6xl lg:leading-[0.94]'
               >
-                <InlineText className='block overflow-visible font-sans whitespace-nowrap'>
+                <InlineText className='block overflow-visible font-sans tracking-tight whitespace-nowrap'>
                   {productName}
-                </InlineText>
-                <InlineText className='block overflow-visible font-sans'>
-                  er ikke det
                 </InlineText>
               </H2>
 

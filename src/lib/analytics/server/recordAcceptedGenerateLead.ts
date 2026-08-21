@@ -255,7 +255,7 @@ export async function recordAcceptedGenerateLead(
   )
   const extractedClickId =
     marketingGranted ?
-      nonEmptyClickIds(extractClickIds(input.pageUrl))
+      nonEmptyClickIds(extractClickIds(input.pageUrl, cookieHeader))
     : undefined
   const externalId =
     marketingGranted ?

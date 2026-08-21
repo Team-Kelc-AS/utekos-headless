@@ -7,7 +7,7 @@ export const canonicalAddPaymentInfoCommerceSchema =
   canonicalCommerceValueSchema.extend({
     checkout_id: z.string().min(1),
     payment_revision: z.string().min(1).max(255),
-    begin_checkout_event_id: z.string().uuid()
+    begin_checkout_event_id: z.uuid()
   })
 
 export const canonicalAddPaymentInfoSchema =

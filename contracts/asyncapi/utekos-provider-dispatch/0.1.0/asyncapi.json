@@ -149,6 +149,8 @@
               "google:view_item_list",
               "google:view_promotion",
               "google:view_search_results",
+              "meta:add_payment_info",
+              "meta:add_shipping_info",
               "meta:add_to_cart",
               "meta:add_to_wishlist",
               "meta:begin_checkout",

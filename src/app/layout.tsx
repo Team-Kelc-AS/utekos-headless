@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   ),
   title: 'Utekos - Skreddersy varmen',
   description:
-    'Utekos er en merkevare som designer funksjonelt yttertøy for kompromissløs komfort og overlegen allsidighet. Perfekt for hytteliv, bobilferie, telttur, i båt og terrasseliv.',
+    'Utekos er en merkevare som designer yttertøy som kan justeres og formes etter behov. Opplev ompromissløs komfort og overlegen allsidighet. Perfekt for hytte, bobil, camping og terrasseliv.',
   alternates: {
     canonical: '/'
   },
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     siteName: 'Utekos',
     title: 'Utekos - Skreddersy varmen',
     description:
-      'Utekos er en merkevare som designer funksjonelt yttertøy for kompromissløs komfort og overlegen allsidighet. Perfekt for hytteliv, bobilferie, telttur, i båt og terrasseliv.',
+      'Utekos er en merkevare som designer yttertøy som kan justeres og formes etter behov. Opplev kompromissløs komfort og overlegen allsidighet. Perfekt for hytteliv, bobil, båt og terrasseliv.',
     images: {
       url: 'https://utekos.no/og-utekos_brand.jpg',
       width: 1200,
