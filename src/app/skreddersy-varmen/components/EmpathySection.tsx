@@ -92,7 +92,7 @@ export function EmpathySection() {
                   variants={scaleYReveal}
                 />
                 <m.p
-                  className='font-google-sans dark:text-dark-background ml-5 font-sans text-xl leading-[0.95] font-bold tracking-normal text-background italic md:ml-7 md:text-3xl'
+                  className='dark:text-dark-background ml-5 font-sans text-xl leading-[0.95] font-bold tracking-normal text-background italic md:ml-7 md:text-3xl'
                   variants={revealItemRight}
                 >
                   &ldquo;Det begynner å bli kaldt. <br />
@@ -170,7 +170,7 @@ export function EmpathySection() {
                   <p className='mb-1.5 text-sm leading-4 font-medium tracking-normal text-white/85'>
                     Stemning
                   </p>
-                  <p className='font-google-sans font-sans text-lg leading-[0.95] font-bold tracking-normal italic drop-shadow-md md:text-2xl'>
+                  <p className='font-sans text-lg leading-[0.95] font-bold tracking-normal italic drop-shadow-md md:text-2xl'>
                     &ldquo;Klokken er 23:15.
                     <br />
                     Ingen vil gå inn.&rdquo;

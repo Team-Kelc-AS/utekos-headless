@@ -54,7 +54,7 @@ export function SectionThreeInOne() {
           </m.span>
           <m.h2
             id='threeinone-heading'
-            className='leading-heading-level-two font-google-sans mb-6 max-w-[18ch] font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-foreground md:text-5xl lg:text-6xl'
+            className='leading-heading-level-two mb-6 max-w-[18ch] font-sans text-4xl font-bold tracking-[-0.01em] text-balance text-foreground md:text-5xl lg:text-6xl'
             variants={revealScale}
           >
             Friheten til å velge
@@ -195,7 +195,7 @@ export function SectionThreeInOne() {
                   </m.div>
 
                   <m.h3
-                    className='font-google-sans mb-3 font-sans text-3xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-4xl lg:mb-6 lg:text-5xl xl:text-6xl'
+                    className='mb-3 font-sans text-3xl leading-[0.92] font-bold tracking-[-0.01em] text-foreground md:text-4xl lg:mb-6 lg:text-5xl xl:text-6xl'
                     variants={revealItem}
                   >
                     {step.title}

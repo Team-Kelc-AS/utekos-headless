@@ -90,13 +90,13 @@ export function PurchaseClientViewLanding({
             </div>
 
             <div className='mb-6 min-[900px]:mb-8'>
-              <h2 className='font-google-sans mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-background min-[1280px]:text-7xl'>
+              <h2 className='mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-background min-[1280px]:text-7xl'>
                 <span className='sr-only'>Utekos </span>
                 <UtekosWordmark
                   aria-hidden
                   className='h-[0.82em] w-auto translate-y-[0.04em] text-background'
                 />
-                <span className='font-google-sans font-sans font-bold tracking-[-0.015em]'>
+                <span className='font-sans font-bold tracking-[-0.015em]'>
                   {modelName}
                 </span>
               </h2>
@@ -137,7 +137,7 @@ export function PurchaseClientViewLanding({
                       key={feature}
                       className={cn(
                         choicePillClass,
-                        'min-[900px]:font-google-sans rounded-2xl border border-border bg-background font-utekos-text-medium text-[11px] text-foreground shadow-sm min-[900px]:font-bold md:max-xl:text-[14px]',
+                        'rounded-2xl border border-border bg-background font-utekos-text-medium text-[11px] text-foreground shadow-sm min-[900px]:font-google-sans min-[900px]:font-bold md:max-xl:text-[14px]',
                         feature === 'Helårsbruk' && 'bg-night',
                         feature === 'Vannavstøtende' &&
                           'bg-night'
@@ -166,9 +166,9 @@ export function PurchaseClientViewLanding({
             <div className='mb-6 h-px w-full bg-background/10 min-[900px]:mb-12' />
 
             <div className='mb-0 space-y-12 text-foreground min-[900px]:mb-4'>
-              <div className='overflow-hidden rounded-xl bg-night p-6 min-[900px]:p-6'>
+              <div className='overflow-hidden rounded-xl bg-jungle p-6 min-[900px]:p-6'>
                 <div className='mb-4 flex items-center justify-between min-[900px]:mb-4'>
-                  <span className='font-google-sans text-sm font-bold tracking-normal text-foreground'>
+                  <span className='font-sans text-sm font-bold tracking-normal text-foreground'>
                     STØRRELSE
                   </span>
                 </div>
@@ -193,10 +193,10 @@ export function PurchaseClientViewLanding({
                         }
                         className={cn(
                           choicePillClass,
-                          '!rounded-xl max-md:!text-[15px] md:!rounded-2xl',
+                          'rounded-xl! max-md:text-[15px]! md:rounded-2xl!',
                           isActive ?
                             'cursor-pointer border border-foreground/20 bg-primary text-base text-foreground shadow-none hover:opacity-70 sm:text-base md:text-base'
-                          : 'cursor-pointer border-none bg-jungle text-base text-foreground hover:opacity-70 min-[900px]:bg-night sm:text-base md:text-base',
+                          : 'cursor-pointer border-none bg-dark-teal text-base text-foreground hover:opacity-70 min-[900px]:bg-night sm:text-base md:text-base',
                           !size.availableForSale && 'opacity-65',
                           focusRing
                         )}
@@ -246,7 +246,7 @@ export function PurchaseClientViewLanding({
                     <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-foreground/80'>
                       FARGE
                     </span>
-                    <div className='mt-1 inline-flex h-10 w-29 items-center justify-center gap-2 rounded-full border-none bg-[#f0eada] px-3 font-utekos-text-medium text-sm text-background shadow-sm ring-1 ring-background'>
+                    <div className='mt-1 inline-flex h-10 w-29 items-center justify-center gap-2 rounded-full border-none bg-cloud-dancer px-3 font-utekos-text-medium text-sm text-background shadow-sm ring-1 ring-background'>
                       <span
                         aria-hidden
                         className='size-4 shrink-0 rounded-full border border-background/20 shadow-sm'
@@ -265,7 +265,7 @@ export function PurchaseClientViewLanding({
                     <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-foreground/80'>
                       ANTALL
                     </span>
-                    <div className='mt-1 flex h-10 items-center rounded-full border border-background/15 bg-[#f0eada] text-background'>
+                    <div className='mt-1 flex h-10 items-center rounded-full border border-background/15 bg-cloud-dancer text-background'>
                       <button
                         type='button'
                         onClick={() => setQuantity(quantity - 1)}
@@ -302,14 +302,14 @@ export function PurchaseClientViewLanding({
             </div>
           </div>
 
-          <div className='rounded-b-lg border-t border-background/20 !bg-[#f0eada] p-6 text-background min-[900px]:p-8 min-[1280px]:p-12 md:p-12'>
+          <div className='rounded-b-lg border-t border-background/20 bg-cloud-dancer p-6 text-background min-[900px]:p-8 min-[1280px]:p-12 md:p-12'>
             <div className='mb-4 min-[900px]:mb-6 min-[1280px]:mb-8'>
               <BrandBadge
                 asChild
                 bgColor='var(--primary)'
                 fgColor='var(--primary-foreground)'
                 className={cn(
-                  'font-google-sans hover:bg-primary-hover h-14 w-full min-w-0 px-4 py-0 text-sm font-bold tracking-normal shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] sm:text-base md:h-16 md:px-6 md:text-lg',
+                  'hover:bg-primary-hover h-14 w-full min-w-0 px-4 py-0 font-google-sans text-sm font-bold tracking-normal shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] sm:text-base md:h-16 md:px-6 md:text-lg',
                   (isPending || !isAvailable) &&
                     'cursor-not-allowed opacity-80'
                 )}
@@ -345,7 +345,7 @@ export function PurchaseClientViewLanding({
                   {currentPrice && isAvailable ?
                     <>
                       <span className='hidden h-5 w-px bg-background/20 sm:block' />
-                      <span className='font-google-sans hidden font-bold whitespace-nowrap sm:inline'>
+                      <span className='hidden font-google-sans font-bold whitespace-nowrap sm:inline'>
                         {formatPrice({
                           amount: String(
                             Number(currentPrice.amount) *

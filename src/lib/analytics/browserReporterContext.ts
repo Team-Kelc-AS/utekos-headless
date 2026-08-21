@@ -7,11 +7,19 @@ import {
   type CookiebotConsent
 } from './pageViewClientContext'
 import { browserFirstPartyExternalIdStore } from './firstPartyExternalId'
+import {
+  resolveCampaignAttribution,
+  type CampaignAttribution
+} from './campaignAttributionSessionStore'
 import { resolveTrackingEnvironment } from './viewItemReporter'
-import type { ConsentSnapshot, TrackingEnvironment } from './pageViewEvent'
+import type {
+  ConsentSnapshot,
+  TrackingEnvironment
+} from './pageViewEvent'
 
 export type BrowserReporterContext = {
   browserId?: Record<string, string>
+  campaignAttribution?: CampaignAttribution
   clickId?: Record<string, string>
   consent: ConsentSnapshot
   documentReferrer: string
@@ -45,6 +53,10 @@ export function readBrowserReporterContext(): BrowserReporterContext {
     consent.marketing === 'granted' ?
       extractClickIds(pageUrl, document.cookie)
     : undefined
+  const campaignAttribution =
+    consent.marketing === 'granted' ?
+      resolveCampaignAttribution(pageUrl)
+    : undefined
   const externalId =
     browserFirstPartyExternalIdStore.getOrCreate(consent)
 
@@ -58,6 +70,7 @@ export function readBrowserReporterContext(): BrowserReporterContext {
     ),
     consent,
     ...(browserId ? { browserId } : {}),
+    ...(campaignAttribution ? { campaignAttribution } : {}),
     ...(clickId ? { clickId } : {}),
     ...(externalId ? { externalId } : {}),
     eventDeviceInfo: {

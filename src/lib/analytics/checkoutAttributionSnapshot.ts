@@ -4,6 +4,12 @@ import {
   type ConsentSnapshot
 } from './canonicalEventEnvelope'
 import type { CanonicalClickIds } from './canonicalSignalContract'
+import {
+  CAMPAIGN_ATTRIBUTION_KEYS,
+  campaignAttributionSchema,
+  parseCampaignAttribution,
+  type CampaignAttribution
+} from './campaignAttribution'
 import { parseOrderConsentFromNoteAttributes } from './checkoutConsentSnapshot'
 
 const CONSENT_ATTRIBUTE = 'utekos_consent'
@@ -37,6 +43,18 @@ const clickAttributeKeys = {
   wbraid: 'wbraid'
 } as const
 
+const campaignAttributeKeys = {
+  campaign_id: 'utekos_campaign_id',
+  campaign_name: 'utekos_campaign_name',
+  adset_id: 'utekos_adset_id',
+  adset_name: 'utekos_adset_name',
+  ad_id: 'utekos_ad_id',
+  ad_name: 'utekos_ad_name'
+} as const satisfies Record<
+  (typeof CAMPAIGN_ATTRIBUTION_KEYS)[number],
+  string
+>
+
 const identifierValueSchema = z.string().min(1).max(4096)
 const identifierMapSchema = z.record(
   z.string().min(1),
@@ -50,6 +68,7 @@ export const checkoutAttributionSnapshotSchema = z.strictObject({
   captured_at: capturedAtSchema,
   consent: canonicalEventEnvelopeSchema.shape.consent,
   browser_id: identifierMapSchema.optional(),
+  campaign: campaignAttributionSchema.optional(),
   click_id: identifierMapSchema.optional(),
   external_id: identifierValueSchema.optional(),
   page_url: attributionUrlSchema.optional(),
@@ -62,6 +81,7 @@ export type CheckoutAttributionSnapshot = z.infer<
 
 type CheckoutAttributionSource = {
   browser_id?: Record<string, string> | undefined
+  campaign?: CampaignAttribution | undefined
   click_id?:
     | CanonicalClickIds
     | Record<string, string>
@@ -155,6 +175,9 @@ export function createCheckoutAttributionSnapshot(
         )
       }
     : {}),
+    ...(hasMarketingConsent && source.campaign ?
+      { campaign: source.campaign }
+    : {}),
     ...(hasMarketingConsent && source.external_id ?
       { external_id: source.external_id }
     : {}),
@@ -204,6 +227,14 @@ function buildCartAttributes(
     })
   }
 
+  for (const [field, attributeKey] of Object.entries(
+    campaignAttributeKeys
+  )) {
+    const value =
+      snapshot.campaign?.[field as keyof CampaignAttribution]
+    if (value) attributes.push({ key: attributeKey, value })
+  }
+
   for (const [identifier, attributeKey] of Object.entries(
     browserAttributeKeys
   )) {
@@ -247,6 +278,7 @@ export function parseOrderAttributionFromNoteAttributes(
     parseOrderConsentFromNoteAttributes(noteAttributes)
   const browserId: Record<string, string> = {}
   const clickId: Record<string, string> = {}
+  const campaign: Partial<CampaignAttribution> = {}
 
   if (consent.analytics === 'granted') {
     for (const [identifier, attributeKey] of Object.entries(
@@ -259,6 +291,15 @@ export function parseOrderAttributionFromNoteAttributes(
   }
 
   if (consent.marketing === 'granted') {
+    for (const [field, attributeKey] of Object.entries(
+      campaignAttributeKeys
+    )) {
+      const value = attributes.get(attributeKey)
+      if (value) {
+        campaign[field as keyof CampaignAttribution] = value
+      }
+    }
+
     for (const identifier of [
       'fbc',
       'fbp',
@@ -291,6 +332,7 @@ export function parseOrderAttributionFromNoteAttributes(
     consent.marketing === 'granted' ?
       parseIdentifier(attributes.get(EXTERNAL_ID_ATTRIBUTE))
     : undefined
+  const parsedCampaign = parseCampaignAttribution(campaign)
   const hasPermittedPurpose =
     consent.analytics === 'granted' ||
     consent.marketing === 'granted'
@@ -313,6 +355,7 @@ export function parseOrderAttributionFromNoteAttributes(
     ...(Object.keys(clickId).length > 0 ?
       { click_id: clickId }
     : {}),
+    ...(parsedCampaign ? { campaign: parsedCampaign } : {}),
     ...(externalId ? { external_id: externalId } : {}),
     ...(pageUrl ? { page_url: pageUrl } : {}),
     ...(referrerUrl ? { referrer_url: referrerUrl } : {})

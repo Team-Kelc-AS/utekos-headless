@@ -92,7 +92,12 @@ export async function reportCanonicalBeginCheckout(
         metaEnrichedEvent
       )
     const snapshot = createCheckoutAttributionSnapshot(
-      event,
+      {
+        ...event,
+        ...(clientContext.campaignAttribution ?
+          { campaign: clientContext.campaignAttribution }
+        : {})
+      },
       eventTime
     )
 

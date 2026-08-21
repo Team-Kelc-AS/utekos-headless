@@ -11,6 +11,11 @@ test('persists the Klarna order id and consented attribution only', () => {
         fbp: 'fb.1.1784194900000.123456789'
       },
       click_id: { fbclid: 'meta-click' },
+      campaign: {
+        campaign_id: '1201',
+        adset_id: '1202',
+        ad_id: '1203'
+      },
       consent: {
         analytics: 'denied',
         marketing: 'granted',
@@ -51,6 +56,24 @@ test('persists the Klarna order id and consented attribution only', () => {
     attributes.find(attribute => attribute.key === 'fbclid')
       ?.value,
     'meta-click'
+  )
+  assert.equal(
+    attributes.find(
+      attribute => attribute.key === 'utekos_campaign_id'
+    )?.value,
+    '1201'
+  )
+  assert.equal(
+    attributes.find(
+      attribute => attribute.key === 'utekos_adset_id'
+    )?.value,
+    '1202'
+  )
+  assert.equal(
+    attributes.find(
+      attribute => attribute.key === 'utekos_ad_id'
+    )?.value,
+    '1203'
   )
   assert.match(
     attributes.find(

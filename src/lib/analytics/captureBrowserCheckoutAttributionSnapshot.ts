@@ -9,7 +9,9 @@ import { enrichCanonicalEventWithGoogleAnalyticsIds } from './googleAnalyticsBro
 export async function captureBrowserCheckoutAttributionSnapshot() {
   const context = readBrowserReporterContext()
   const clickId = ensureFbclidFromFbc({
-    ...(context.browserId ? { browser_id: context.browserId } : {}),
+    ...(context.browserId ?
+      { browser_id: context.browserId }
+    : {}),
     ...(context.clickId ? { click_id: context.clickId } : {})
   })
   const initialContext = {
@@ -22,6 +24,9 @@ export async function captureBrowserCheckoutAttributionSnapshot() {
       { browser_id: context.browserId }
     : {}),
     ...(clickId ? { click_id: clickId } : {}),
+    ...(context.campaignAttribution ?
+      { campaign: context.campaignAttribution }
+    : {}),
     ...(context.externalId ?
       { external_id: context.externalId }
     : {})

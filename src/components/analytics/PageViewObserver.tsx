@@ -11,6 +11,7 @@ import {
   getConsentSnapshot
 } from '@/lib/analytics/pageViewClientContext'
 import { browserFirstPartyExternalIdStore } from '@/lib/analytics/firstPartyExternalId'
+import { resolveCampaignAttribution } from '@/lib/analytics/campaignAttributionSessionStore'
 import {
   readBrowserLandingEdgeCorrelation,
   readBrowserLandingEdgeRequestId
@@ -68,6 +69,7 @@ export function PageViewObserver({
       const consent = getConsentSnapshot(cookiebot?.consent)
 
       if (consent.marketing === 'granted') {
+        resolveCampaignAttribution(landingPageUrl)
         const externalId =
           browserFirstPartyExternalIdStore.getOrCreate(consent)
         const pageView = currentPageView.current
@@ -135,6 +137,9 @@ export function PageViewObserver({
       : undefined
     const externalId =
       browserFirstPartyExternalIdStore.getOrCreate(consent)
+    if (consent.marketing === 'granted') {
+      resolveCampaignAttribution(navigation.pageUrl)
+    }
     const searchParams = new URL(navigation.pageUrl).searchParams
     const impressionId =
       searchParams.get('impression_id') ??

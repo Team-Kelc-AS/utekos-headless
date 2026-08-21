@@ -146,6 +146,111 @@ test('adds a PII-free begin-checkout correlation only with analytics consent', (
   )
 })
 
+test('round-trips consented campaign hierarchy through Shopify attributes', () => {
+  const snapshot = createCheckoutAttributionSnapshot(
+    {
+      campaign: {
+        campaign_id: '1201',
+        campaign_name: 'Comfyrobe Sales',
+        adset_id: '1202',
+        adset_name: 'Prospektering',
+        ad_id: '1203',
+        ad_name: 'Video A'
+      },
+      consent: {
+        analytics: 'denied',
+        marketing: 'granted',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1'
+      }
+    },
+    capturedAt
+  )
+  const noteAttributes =
+    checkoutAttributionSnapshotToShopifyAttributes(snapshot).map(
+      attribute => ({
+        name: attribute.key,
+        value: attribute.value
+      })
+    )
+
+  assert.deepEqual(
+    noteAttributes.filter(
+      attribute =>
+        attribute.name.startsWith('utekos_') &&
+        (attribute.name.includes('campaign') ||
+          attribute.name.includes('adset') ||
+          attribute.name.includes('ad_'))
+    ),
+    [
+      { name: 'utekos_campaign_id', value: '1201' },
+      { name: 'utekos_campaign_name', value: 'Comfyrobe Sales' },
+      { name: 'utekos_adset_id', value: '1202' },
+      { name: 'utekos_adset_name', value: 'Prospektering' },
+      { name: 'utekos_ad_id', value: '1203' },
+      { name: 'utekos_ad_name', value: 'Video A' }
+    ]
+  )
+  assert.deepEqual(
+    parseOrderAttributionFromNoteAttributes(noteAttributes)
+      .campaign,
+    snapshot.campaign
+  )
+})
+
+test('drops campaign hierarchy without marketing consent', () => {
+  const snapshot = createCheckoutAttributionSnapshot(
+    {
+      campaign: {
+        campaign_id: 'should-not-persist',
+        adset_id: 'should-not-persist',
+        ad_id: 'should-not-persist'
+      },
+      consent: {
+        analytics: 'granted',
+        marketing: 'denied',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1'
+      }
+    },
+    capturedAt
+  )
+
+  assert.equal(snapshot.campaign, undefined)
+  assert.equal(
+    checkoutAttributionSnapshotToShopifyAttributes(
+      snapshot
+    ).some(
+      attribute =>
+        attribute.key.startsWith('utekos_campaign') ||
+        attribute.key.startsWith('utekos_adset') ||
+        attribute.key.startsWith('utekos_ad_')
+    ),
+    false
+  )
+})
+
+test('keeps valid campaign fields when an external order field is malformed', () => {
+  const parsed = parseOrderAttributionFromNoteAttributes([
+    {
+      name: 'utekos_consent',
+      value: JSON.stringify({
+        analytics: 'denied',
+        marketing: 'granted',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1'
+      })
+    },
+    { name: 'utekos_campaign_id', value: '1201' },
+    { name: 'utekos_ad_name', value: 'a'.repeat(501) }
+  ])
+
+  assert.deepEqual(parsed.campaign, { campaign_id: '1201' })
+})
+
 test('drops malformed or non-consented external order attributes', () => {
   const parsed = parseOrderAttributionFromNoteAttributes([
     {
@@ -160,7 +265,10 @@ test('drops malformed or non-consented external order attributes', () => {
     },
     { name: 'utekos_attribution_captured_at', value: 'invalid' },
     { name: 'utekos_external_id', value: 'should-not-pass' },
-    { name: 'utekos_page_url', value: 'https://utekos.no/private' },
+    {
+      name: 'utekos_page_url',
+      value: 'https://utekos.no/private'
+    },
     { name: '_fbc', value: 'should-not-pass' }
   ])
 
