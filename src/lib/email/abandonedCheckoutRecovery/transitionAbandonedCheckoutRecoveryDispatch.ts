@@ -7,6 +7,9 @@ import type {
 import type {
   AbandonedCheckoutRecoveryPreSendSuppressionReason
 } from './authorizeAbandonedCheckoutRecoverySend'
+import type {
+  ProtectedAbandonedCheckoutRecoveryDeliveryAudit
+} from './protectAbandonedCheckoutRecoveryDeliveryAudit'
 
 type RenewRpcCall = {
   name:
@@ -33,11 +36,15 @@ type SuppressRpcCall = {
 
 type CompleteRpcCall = {
   name:
-    'complete_abandoned_checkout_recovery_dispatch'
+    'complete_abandoned_checkout_recovery_dispatch_v3'
   args: {
     p_id: string
     p_processing_owner: string
     p_resend_email_id: string
+    p_recipient_ciphertext: string
+    p_recipient_fingerprint: string
+    p_recovery_url_ciphertext: string
+    p_recovery_url_fingerprint: string
     p_now: string
   }
 }
@@ -90,7 +97,7 @@ type AbandonedCheckoutRecoveryTransitionDatabase =
               Args: SuppressRpcCall['args']
               Returns: boolean
             }
-            complete_abandoned_checkout_recovery_dispatch: {
+            complete_abandoned_checkout_recovery_dispatch_v3: {
               Args: CompleteRpcCall['args']
               Returns: boolean
             }
@@ -137,7 +144,17 @@ const completeInputSchema = z.strictObject({
   ...baseInputShape,
   resendEmailId: z
     .string()
-    .regex(/^[A-Za-z0-9][A-Za-z0-9_-]{0,254}$/)
+    .regex(/^[A-Za-z0-9][A-Za-z0-9_-]{0,254}$/),
+  protectedAudit: z.strictObject({
+    recipientCiphertext: z.string().regex(
+      /^v1\.[A-Za-z0-9_-]{16}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{22}$/
+    ).max(1024),
+    recipientFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+    recoveryUrlCiphertext: z.string().regex(
+      /^v1\.[A-Za-z0-9_-]{16}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{22}$/
+    ).max(6144),
+    recoveryUrlFingerprint: z.string().regex(/^[a-f0-9]{64}$/)
+  })
 })
 
 const retryInputSchema = z.strictObject({
@@ -183,7 +200,7 @@ async function executeDefaultTransitionRpc(
       return { data, error }
     }
 
-    case 'complete_abandoned_checkout_recovery_dispatch': {
+    case 'complete_abandoned_checkout_recovery_dispatch_v3': {
       const { data, error } = await opsClient.rpc(
         call.name,
         call.args
@@ -318,6 +335,7 @@ export async function completeAbandonedCheckoutRecoveryDispatch(
     dispatchId: string
     workerId: string
     resendEmailId: string
+    protectedAudit: ProtectedAbandonedCheckoutRecoveryDeliveryAudit
     now: Date
   },
   dependencies:
@@ -328,11 +346,19 @@ export async function completeAbandonedCheckoutRecoveryDispatch(
   return await executeTransition(
     {
       name:
-        'complete_abandoned_checkout_recovery_dispatch',
+        'complete_abandoned_checkout_recovery_dispatch_v3',
       args: {
         p_id: parsed.dispatchId,
         p_processing_owner: parsed.workerId,
         p_resend_email_id: parsed.resendEmailId,
+        p_recipient_ciphertext:
+          parsed.protectedAudit.recipientCiphertext,
+        p_recipient_fingerprint:
+          parsed.protectedAudit.recipientFingerprint,
+        p_recovery_url_ciphertext:
+          parsed.protectedAudit.recoveryUrlCiphertext,
+        p_recovery_url_fingerprint:
+          parsed.protectedAudit.recoveryUrlFingerprint,
         p_now: parsed.now.toISOString()
       }
     },

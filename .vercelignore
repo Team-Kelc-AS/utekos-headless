@@ -99,19 +99,13 @@ output/
 .vc-config.json
 types/codex-log.md
 
-# Repository quality and local development sources. Keep the one script used by
-# Vercel prebuild; exclude all other scripts, tests, fixtures, and local stacks.
-scripts/**
-!scripts/deploy/
-!scripts/deploy/validate-build-env.mjs
+# Repository quality and local development sources. Tests, fixtures, and local
+# stacks are excluded below. Tracked scripts and Supabase sources remain
+# available because the Vercel build imports them directly.
 tests/
 **/*.test.*
 **/*.spec.*
 playwright.*.config.ts
-supabase/**
-!supabase/functions/
-!supabase/functions/_shared/
-!supabase/functions/_shared/landing-edge-request-id.ts
 eslint.config.mts
 prettier.config.mts
 tsconfig.customer-assistant.json

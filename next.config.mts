@@ -2,6 +2,7 @@ import type { NextConfig } from 'next'
 import bundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
 import createMDX from '@next/mdx'
+import { withWorkflow } from 'workflow/next'
 
 const GOOGLE_TAG_GATEWAY_PATH = '/__gtg'
 const SERVER_TAG_MANAGER_PATH = '/__sgtm'
@@ -304,7 +305,9 @@ const sentryOptions = {
   webpack: { treeshake: { removeDebugLogging: true } }
 }
 
-const configuredNextConfig = withBundleAnalyzer(withMDX(nextConfig))
+const configuredNextConfig = withWorkflow(
+  withBundleAnalyzer(withMDX(nextConfig))
+)
 
 export default withSentryConfig(
   configuredNextConfig,

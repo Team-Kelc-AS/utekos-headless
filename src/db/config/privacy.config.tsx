@@ -211,9 +211,12 @@ export function createPrivacySections({
             plassert i EU-regionen Stockholm.
           </PolicyItem>
           <PolicyItem title='Resend'>
-            Utsending av kundeservice- og ventelistevarsler fra regionen
-            eu-west-1 (Irland). Åpnings- og klikksporing er deaktivert, og vi
-            bruker ikke Resend-webhooks. Resend opplyser at kontodata,
+            Utsending av kundeservice, ventelistevarsler og påminnelser om
+            påbegynt checkout fra regionen eu-west-1 (Irland). Åpnings- og
+            klikksporing er deaktivert. Signaturverifiserte webhooks brukes for
+            leveringsstatus, retur og klage; vi lagrer bare leverandør-ID,
+            hendelsestype og tidspunkt fra disse hendelsene, ikke rå payload,
+            adresse, emne eller checkout-lenke. Resend opplyser at kontodata,
             e-postmetadata og logger kan lagres i USA.
           </PolicyItem>
           <PolicyItem title='Sentry'>
@@ -330,6 +333,7 @@ export function createPrivacySections({
               <tr><td className='p-3'>Kundeservice</td><td className='p-3'>24 måneder etter avsluttet sak. Ordre-, garanti- og tvistesaker følger relevant rettslig frist.</td></tr>
               <tr><td className='p-3'>Venteliste</td><td className='p-3'>Maksimalt 12 måneder, eller sletting innen 30 dager etter varsling eller tilbaketrekking.</td></tr>
               <tr><td className='p-3'>Nyhetsbrev</td><td className='p-3'>Aktiv adresse til avmelding. Direkte identifikator i Supabase-speil maksimalt 14 måneder; minimalt samtykke-/avmeldingsbevis 3 år.</td></tr>
+              <tr><td className='p-3'>Påbegynt checkout og leveringsaudit</td><td className='p-3'>Kryptert e-postadresse og kryptert checkout-gjenopprettingslenke maksimalt 90 dager. Resend-ID og dataminimerte leveringshendelser kan beholdes som teknisk statusaudit inntil 14 måneder.</td></tr>
               <tr><td className='p-3'>Ordre og regnskap</td><td className='p-3'>Primærdokumentasjon 5 år etter regnskapsårets slutt; sekundærdokumentasjon 3,5 år.</td></tr>
               <tr><td className='p-3'>Rå Shopify GraphQL-svar og overflødige payloadkopier</td><td className='p-3'>30 dager etter at normaliserte ordredata er verifisert.</td></tr>
               <tr><td className='p-3'>Tekniske applogger</td><td className='p-3'>Maksimalt 30 dager og uten kundedata; ingen Redis-kopi.</td></tr>
@@ -380,7 +384,7 @@ export function createPrivacySections({
             Bruk «Endre cookie-innstillinger» i cookie-delen eller lenken i
             bunnteksten.
           </PolicyItem>
-          <PolicyItem title='Nyhetsbrev'>
+          <PolicyItem title='Markedsføring på e-post'>
             Bruk avmeldingslenken i e-posten eller kontakt oss.
           </PolicyItem>
           <PolicyItem title='Andre forespørsler'>

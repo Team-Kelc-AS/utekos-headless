@@ -276,7 +276,7 @@ export const config = {
   matcher: [
     {
       source:
-        '/((?!api(?:/|$)|sporing(?:/|$)|__gtg(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|videos(?:/|$)|favicon\\.ico$|sitemap\\.xml$|robots\\.txt$|apple-icon(?:\\.[^/]+)?$|icon(?:\\.[^/]+)?$|manifest(?:\\.[^/]+)?$|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)',
+        '/((?!api(?:/|$)|\\.well-known/workflow(?:/|$)|sporing(?:/|$)|__gtg(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|videos(?:/|$)|favicon\\.ico$|sitemap\\.xml$|robots\\.txt$|apple-icon(?:\\.[^/]+)?$|icon(?:\\.[^/]+)?$|manifest(?:\\.[^/]+)?$|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)',
       has: [
         {
           type: 'header',
@@ -292,7 +292,7 @@ export const config = {
     },
     {
       source:
-        '/((?!api(?:/|$)|sporing(?:/|$)|__gtg(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|videos(?:/|$)|favicon\\.ico$|sitemap\\.xml$|robots\\.txt$|apple-icon(?:\\.[^/]+)?$|icon(?:\\.[^/]+)?$|manifest(?:\\.[^/]+)?$|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)',
+        '/((?!api(?:/|$)|\\.well-known/workflow(?:/|$)|sporing(?:/|$)|__gtg(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|videos(?:/|$)|favicon\\.ico$|sitemap\\.xml$|robots\\.txt$|apple-icon(?:\\.[^/]+)?$|icon(?:\\.[^/]+)?$|manifest(?:\\.[^/]+)?$|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)',
       has: [
         { type: 'header', key: 'accept', value: '.*text/html.*' }
       ],

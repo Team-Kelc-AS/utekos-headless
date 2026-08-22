@@ -12,6 +12,11 @@ type SendTransactionalEmailInput = {
   subject: string
   idempotencyKey: string
   replyTo?: string
+  headers?: Record<string, string>
+  tags?: Array<{
+    name: string
+    value: string
+  }>
 } & ({ react: ReactElement } | { html: string; text: string })
 
 export async function sendTransactionalEmail(
@@ -27,6 +32,8 @@ export async function sendTransactionalEmail(
           to: input.to,
           subject: input.subject,
           ...(input.replyTo ? { replyTo: input.replyTo } : {}),
+          ...(input.headers ? { headers: input.headers } : {}),
+          ...(input.tags ? { tags: input.tags } : {}),
           react: input.react
         },
         { idempotencyKey: input.idempotencyKey }
@@ -37,6 +44,8 @@ export async function sendTransactionalEmail(
           to: input.to,
           subject: input.subject,
           ...(input.replyTo ? { replyTo: input.replyTo } : {}),
+          ...(input.headers ? { headers: input.headers } : {}),
+          ...(input.tags ? { tags: input.tags } : {}),
           html: input.html,
           text: input.text
         },

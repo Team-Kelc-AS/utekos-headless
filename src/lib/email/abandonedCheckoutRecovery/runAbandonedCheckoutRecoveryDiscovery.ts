@@ -57,10 +57,13 @@ export type RunAbandonedCheckoutRecoveryDiscoverySummary = {
 }
 
 export type RunAbandonedCheckoutRecoveryDiscoveryDependencies = {
+  activationAt: Date
+
   now?: () => Date
 
   fetchCandidates?: (
     input: {
+      activationAt: Date
       now: Date
     }
   ) => Promise<
@@ -70,7 +73,8 @@ export type RunAbandonedCheckoutRecoveryDiscoveryDependencies = {
   buildPlans?: (
     candidates:
       readonly ShopifyAbandonedCheckoutRecoveryCandidate[],
-    now: Date
+    now: Date,
+    activationAt: Date
   ) => AbandonedCheckoutRecoveryDispatchPlan[]
 
   persistPlans?: (
@@ -82,7 +86,8 @@ export type RunAbandonedCheckoutRecoveryDiscoveryDependencies = {
 }
 
 function assertValidDate(
-  date: Date
+  date: Date,
+  fieldName: 'activation_at' | 'now'
 ) {
   if (
     !Number.isFinite(
@@ -90,7 +95,7 @@ function assertValidDate(
     )
   ) {
     throw new Error(
-      'abandoned_checkout_recovery_invalid_now'
+      `abandoned_checkout_recovery_invalid_${fieldName}`
     )
   }
 }
@@ -182,10 +187,14 @@ function classifyFailure(
 
 async function defaultFetchCandidates(
   input: {
+    activationAt: Date
     now: Date
   }
 ) {
   return fetchShopifyAbandonedCheckoutRecoveryCandidates({
+    activationAt:
+      input.activationAt,
+
     now:
       input.now,
 
@@ -203,7 +212,7 @@ async function defaultFetchCandidates(
 
 export async function runAbandonedCheckoutRecoveryDiscovery(
   dependencies:
-    RunAbandonedCheckoutRecoveryDiscoveryDependencies = {}
+    RunAbandonedCheckoutRecoveryDiscoveryDependencies
 ): Promise<
   RunAbandonedCheckoutRecoveryDiscoverySummary
 > {
@@ -227,7 +236,13 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
     now()
 
   assertValidDate(
-    startedAtDate
+    startedAtDate,
+    'now'
+  )
+
+  assertValidDate(
+    dependencies.activationAt,
+    'activation_at'
   )
 
   const startedAt =
@@ -244,6 +259,9 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
       async () => {
         const candidates =
           await fetchCandidates({
+            activationAt:
+              dependencies.activationAt,
+
             now:
               startedAtDate
           })
@@ -251,7 +269,8 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
         const plans =
           buildPlans(
             candidates,
-            startedAtDate
+            startedAtDate,
+            dependencies.activationAt
           )
 
         const pendingPlans =
@@ -279,7 +298,8 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
           now()
 
         assertValidDate(
-          completedAtDate
+          completedAtDate,
+          'now'
         )
 
         return {

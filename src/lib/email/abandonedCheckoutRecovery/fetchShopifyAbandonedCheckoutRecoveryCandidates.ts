@@ -109,6 +109,7 @@ export type ShopifyAdminGraphqlExecutor = (
 
 type FetchShopifyAbandonedCheckoutRecoveryCandidatesInput = {
   executeAdminGraphql: ShopifyAdminGraphqlExecutor
+  activationAt: Date
   now?: Date
   windowMs?: number
 }
@@ -249,6 +250,7 @@ export function buildShopifyAbandonedCheckoutRecoverySearchQuery(
 export async function fetchShopifyAbandonedCheckoutRecoveryCandidates(
   {
     executeAdminGraphql,
+    activationAt,
     now = new Date(),
     windowMs =
       ABANDONED_CHECKOUT_RECOVERY_WINDOW_MS
@@ -261,6 +263,11 @@ export async function fetchShopifyAbandonedCheckoutRecoveryCandidates(
     'now'
   )
 
+  assertValidDate(
+    activationAt,
+    'activationAt'
+  )
+
   if (
     !Number.isSafeInteger(windowMs) ||
     windowMs <= 0
@@ -271,7 +278,10 @@ export async function fetchShopifyAbandonedCheckoutRecoveryCandidates(
   }
 
   const cutoff = new Date(
-    now.getTime() - windowMs
+    Math.max(
+      now.getTime() - windowMs,
+      activationAt.getTime()
+    )
   )
 
   const searchQuery =

@@ -15,6 +15,10 @@ import {
   revalidateAbandonedCheckoutBeforeSend
 } from './revalidateAbandonedCheckoutBeforeSend'
 import {
+  protectAbandonedCheckoutRecoveryDeliveryAudit,
+  type ProtectedAbandonedCheckoutRecoveryDeliveryAudit
+} from './protectAbandonedCheckoutRecoveryDeliveryAudit'
+import {
   completeAbandonedCheckoutRecoveryDispatch,
   renewAbandonedCheckoutRecoveryDispatchLease,
   retryAbandonedCheckoutRecoveryDispatch,
@@ -40,6 +44,7 @@ type CompleteInput = {
   dispatchId: string
   workerId: string
   resendEmailId: string
+  protectedAudit: ProtectedAbandonedCheckoutRecoveryDeliveryAudit
   now: Date
 }
 
@@ -54,6 +59,7 @@ type RetryInput = {
 
 export type AbandonedCheckoutRecoveryWorkerErrorCode =
   | 'shopify_revalidation_failed'
+  | 'delivery_audit_failed'
   | 'resend_provider_rejected'
 
 export type ProcessAbandonedCheckoutRecoveryClaimInput = {
@@ -83,6 +89,12 @@ export type ProcessAbandonedCheckoutRecoveryClaimResult =
 
 export type ProcessAbandonedCheckoutRecoveryClaimDependencies = {
   deliverAuthorizedEmail: AbandonedCheckoutRecoveryDeliveryPort
+  protectDeliveryAudit?: (
+    input: {
+      recipient: string
+      recoveryUrl: string
+    }
+  ) => ProtectedAbandonedCheckoutRecoveryDeliveryAudit
   revalidate?: (
     claim: ClaimedAbandonedCheckoutRecoveryDispatch
   ) => Promise<AuthorizeAbandonedCheckoutRecoverySendResult>
@@ -244,12 +256,33 @@ export async function processAbandonedCheckoutRecoveryClaim(
     return { status: 'ownership_lost' }
   }
 
+  let protectedAudit:
+    ProtectedAbandonedCheckoutRecoveryDeliveryAudit
+
+  try {
+    protectedAudit = (
+      dependencies.protectDeliveryAudit
+      ?? protectAbandonedCheckoutRecoveryDeliveryAudit
+    )({
+      recipient: authorization.to,
+      recoveryUrl: authorization.recoveryUrl
+    })
+  } catch {
+    return transitionFailure('delivery_audit_failed')
+  }
+
   let deliveryResult:
     z.infer<typeof deliveryResultSchema>
 
   try {
     const rawDeliveryResult =
       await dependencies.deliverAuthorizedEmail({
+        dispatchId: input.claim.dispatchId,
+        shopifyCustomerId:
+          input.claim.shopifyCustomerId,
+        sequenceVersion:
+          input.claim.sequenceVersion,
+        step: input.claim.step,
         to: authorization.to,
         recoveryUrl: authorization.recoveryUrl,
         idempotencyKey:
@@ -287,6 +320,7 @@ export async function processAbandonedCheckoutRecoveryClaim(
     dispatchId: input.claim.dispatchId,
     workerId: config.workerId,
     resendEmailId: deliveryResult.resendEmailId,
+    protectedAudit,
     now: getValidNow(getNow)
   })
 

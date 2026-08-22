@@ -13,6 +13,10 @@ export type ClaimedAbandonedCheckoutRecoveryDispatch =
 
 export type AbandonedCheckoutRecoveryDeliveryPort = (
   input: {
+    dispatchId: string
+    shopifyCustomerId: string
+    sequenceVersion: number
+    step: number
     to: string
     recoveryUrl: string
     idempotencyKey: string

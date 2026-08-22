@@ -8,7 +8,7 @@ import {
   
   import {
     ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION,
-    buildAbandonedCheckoutRecoveryPlan,
+    buildAbandonedCheckoutRecoveryPlan as buildPlan,
     getAbandonedCheckoutRecoveryResendIdempotencyKey,
     toAbandonedCheckoutRecoveryDispatchInsert,
     type ShopifyAbandonedCheckoutRecoveryCandidate
@@ -22,6 +22,23 @@ import {
     new Date(
       '2026-08-08T06:30:00.000Z'
     )
+
+  const ACTIVATION_AT =
+    new Date(
+      '2026-08-08T00:00:00.000Z'
+    )
+
+  function buildAbandonedCheckoutRecoveryPlan(
+    checkouts: readonly ShopifyAbandonedCheckoutRecoveryCandidate[],
+    now: Date = NOW,
+    activationAt: Date = ACTIVATION_AT
+  ) {
+    return buildPlan(
+      checkouts,
+      now,
+      activationAt
+    )
+  }
 
   function assertDefined<T>(
     value: T | undefined
@@ -60,45 +77,119 @@ import {
   }
   
   test(
-    'eligible subscribed checkout becomes pending step 1 one hour after creation',
+    'eligible subscribed checkout becomes three pending steps at 4, 24 and 72 hours',
     () => {
       const plan =
         buildAbandonedCheckoutRecoveryPlan(
-          [checkout()],
-          NOW
+          [checkout()]
         )
   
       equal(
         plan.length,
-        1
+        3
       )
   
       deepStrictEqual(
-        plan[0],
-        {
-          shopifyAbandonedCheckoutId:
-            'gid://shopify/AbandonedCheckout/100',
-          shopifyCustomerId:
-            'gid://shopify/Customer/10',
+        plan.map(row => ({
           sequenceVersion:
-            1,
+            row.sequenceVersion,
           step:
-            1,
-          checkoutCreatedAt:
-            '2026-08-08T05:00:00.000Z',
-          checkoutUpdatedAt:
-            '2026-08-08T05:15:00.000Z',
+            row.step,
           dueAt:
-            '2026-08-08T06:00:00.000Z',
+            row.dueAt,
           nextAttemptAt:
-            '2026-08-08T06:00:00.000Z',
+            row.nextAttemptAt,
           status:
-            'pending',
-          suppressionReason:
-            null,
-          suppressedAt:
-            null
-        }
+            row.status
+        })),
+        [
+          {
+            sequenceVersion: 3,
+            step: 1,
+            dueAt:
+              '2026-08-08T09:00:00.000Z',
+            nextAttemptAt:
+              '2026-08-08T09:00:00.000Z',
+            status: 'pending'
+          },
+          {
+            sequenceVersion: 3,
+            step: 2,
+            dueAt:
+              '2026-08-09T05:00:00.000Z',
+            nextAttemptAt:
+              '2026-08-09T05:00:00.000Z',
+            status: 'pending'
+          },
+          {
+            sequenceVersion: 3,
+            step: 3,
+            dueAt:
+              '2026-08-11T05:00:00.000Z',
+            nextAttemptAt:
+              '2026-08-11T05:00:00.000Z',
+            status: 'pending'
+          }
+        ]
+      )
+    }
+  )
+
+  test(
+    'each checkout has one unique plan per sequence version and step',
+    () => {
+      const plan =
+        buildAbandonedCheckoutRecoveryPlan(
+          [checkout()]
+        )
+
+      const keys =
+        plan.map(row => [
+          row.shopifyAbandonedCheckoutId,
+          row.sequenceVersion,
+          row.step
+        ].join(':'))
+
+      equal(
+        new Set(keys).size,
+        3
+      )
+    }
+  )
+
+  test(
+    'checkout before activation is not enrolled while the cutoff instant is included',
+    () => {
+      const plan =
+        buildAbandonedCheckoutRecoveryPlan(
+          [
+            checkout({
+              checkoutId:
+                'gid://shopify/AbandonedCheckout/99',
+              createdAt:
+                '2026-08-07T23:59:59.999Z'
+            }),
+            checkout({
+              checkoutId:
+                'gid://shopify/AbandonedCheckout/100',
+              createdAt:
+                '2026-08-08T00:00:00.000Z',
+              updatedAt:
+                '2026-08-08T00:00:00.000Z'
+            })
+          ]
+        )
+
+      equal(
+        plan.length,
+        3
+      )
+
+      ok(
+        plan.every(row =>
+          row.shopifyAbandonedCheckoutId
+          === 'gid://shopify/AbandonedCheckout/100'
+        )
       )
     }
   )
@@ -248,7 +339,10 @@ import {
       const plan =
         buildAbandonedCheckoutRecoveryPlan(
           [older, newer],
-          NOW
+          NOW,
+          new Date(
+            '2026-08-01T00:00:00.000Z'
+          )
         )
   
       const byId =
@@ -347,7 +441,10 @@ import {
                 '2026-07-31T06:29:59.999Z'
             })
           ],
-          NOW
+          NOW,
+          new Date(
+            '2026-07-01T00:00:00.000Z'
+          )
         )
 
       assertDefined(row)
@@ -439,7 +536,7 @@ import {
   
       equal(
         first,
-        'abandoned-checkout:gid://shopify/AbandonedCheckout/100:v1:step-1'
+        'abandoned-checkout:gid://shopify/AbandonedCheckout/100:v3:step-1'
       )
   
       equal(
@@ -542,6 +639,8 @@ import {
       const candidates =
         await fetchShopifyAbandonedCheckoutRecoveryCandidates(
           {
+            activationAt:
+              ACTIVATION_AT,
             executeAdminGraphql,
             now:
               NOW
@@ -561,7 +660,7 @@ import {
   
       equal(
         firstCall.variables.query,
-        'created_at:>=\'2026-08-01T06:30:00.000Z\' recovery_state:not_recovered'
+        'created_at:>=\'2026-08-08T00:00:00.000Z\' recovery_state:not_recovered'
       )
   
       equal(
@@ -626,6 +725,8 @@ import {
         () =>
           fetchShopifyAbandonedCheckoutRecoveryCandidates(
             {
+              activationAt:
+                ACTIVATION_AT,
               executeAdminGraphql,
               now:
                 NOW

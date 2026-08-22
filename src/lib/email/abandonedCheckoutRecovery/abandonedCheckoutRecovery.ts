@@ -1,10 +1,32 @@
-export const ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION = 1 as const
+/*
+ * Sequence version 2 is already reserved in the database contract for the
+ * historical +1/+7/+24-hour schedule. The +4/+24/+72-hour schedule is v3.
+ */
+export const ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION = 3 as const
 
 export const ABANDONED_CHECKOUT_RECOVERY_WINDOW_MS =
   7 * 24 * 60 * 60 * 1000
 
-export const ABANDONED_CHECKOUT_RECOVERY_STEP_1_DELAY_MS =
+const HOUR_MS =
   60 * 60 * 1000
+
+export const ABANDONED_CHECKOUT_RECOVERY_SEQUENCE = [
+  {
+    step: 1,
+    delayMs: 4 * HOUR_MS
+  },
+  {
+    step: 2,
+    delayMs: 24 * HOUR_MS
+  },
+  {
+    step: 3,
+    delayMs: 72 * HOUR_MS
+  }
+] as const
+
+export type AbandonedCheckoutRecoveryStep =
+  typeof ABANDONED_CHECKOUT_RECOVERY_SEQUENCE[number]['step']
 
 export type CustomerEmailMarketingState =
   | 'INVALID'
@@ -43,7 +65,7 @@ export type AbandonedCheckoutRecoveryDispatchPlan = {
   shopifyAbandonedCheckoutId: string
   shopifyCustomerId: string | null
   sequenceVersion: typeof ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION
-  step: 1
+  step: AbandonedCheckoutRecoveryStep
   checkoutCreatedAt: string
   checkoutUpdatedAt: string
   dueAt: string
@@ -57,7 +79,7 @@ export type AbandonedCheckoutRecoveryDispatchInsert = {
   shopify_abandoned_checkout_id: string
   shopify_customer_id: string | null
   sequence_version: typeof ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION
-  step: 1
+  step: AbandonedCheckoutRecoveryStep
   checkout_created_at: string
   checkout_updated_at: string
   due_at: string
@@ -203,20 +225,34 @@ function getSuppressionReason(
 
 export function buildAbandonedCheckoutRecoveryPlan(
   checkouts: readonly ShopifyAbandonedCheckoutRecoveryCandidate[],
-  now: Date = new Date()
+  now: Date,
+  activationAt: Date
 ): AbandonedCheckoutRecoveryDispatchPlan[] {
   const nowMs = now.getTime()
+  const activationAtMs = activationAt.getTime()
 
   if (!Number.isFinite(nowMs)) {
     throw new Error('Invalid now date')
   }
 
+  if (!Number.isFinite(activationAtMs)) {
+    throw new Error('Invalid activationAt date')
+  }
+
+  const activatedCheckouts =
+    checkouts.filter(checkout =>
+      parseIsoTimestamp(
+        checkout.createdAt,
+        'createdAt'
+      ) >= activationAtMs
+    )
+
   const latestCheckoutIdByCustomer =
-    getLatestCheckoutIdByCustomer(checkouts)
+    getLatestCheckoutIdByCustomer(activatedCheckouts)
 
   const suppressedAt = now.toISOString()
 
-  return checkouts.map(checkout => {
+  return activatedCheckouts.flatMap(checkout => {
     const createdAtMs = parseIsoTimestamp(
       checkout.createdAt,
       'createdAt'
@@ -227,41 +263,45 @@ export function buildAbandonedCheckoutRecoveryPlan(
       'updatedAt'
     )
 
-    const dueAt = new Date(
-      createdAtMs +
-        ABANDONED_CHECKOUT_RECOVERY_STEP_1_DELAY_MS
-    ).toISOString()
-
     const suppressionReason = getSuppressionReason(
       checkout,
       nowMs,
       latestCheckoutIdByCustomer
     )
 
-    return {
-      shopifyAbandonedCheckoutId:
-        checkout.checkoutId,
-      shopifyCustomerId:
-        checkout.customerId,
-      sequenceVersion:
-        ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION,
-      step: 1,
-      checkoutCreatedAt:
-        new Date(createdAtMs).toISOString(),
-      checkoutUpdatedAt:
-        new Date(updatedAtMs).toISOString(),
-      dueAt,
-      nextAttemptAt: dueAt,
-      status:
-        suppressionReason ?
-          'suppressed'
-        : 'pending',
-      suppressionReason,
-      suppressedAt:
-        suppressionReason ?
-          suppressedAt
-        : null
-    }
+    return ABANDONED_CHECKOUT_RECOVERY_SEQUENCE.map(
+      sequenceStep => {
+        const dueAt = new Date(
+          createdAtMs + sequenceStep.delayMs
+        ).toISOString()
+
+        return {
+          shopifyAbandonedCheckoutId:
+            checkout.checkoutId,
+          shopifyCustomerId:
+            checkout.customerId,
+          sequenceVersion:
+            ABANDONED_CHECKOUT_RECOVERY_SEQUENCE_VERSION,
+          step:
+            sequenceStep.step,
+          checkoutCreatedAt:
+            new Date(createdAtMs).toISOString(),
+          checkoutUpdatedAt:
+            new Date(updatedAtMs).toISOString(),
+          dueAt,
+          nextAttemptAt: dueAt,
+          status:
+            suppressionReason ?
+              'suppressed' as const
+            : 'pending' as const,
+          suppressionReason,
+          suppressedAt:
+            suppressionReason ?
+              suppressedAt
+            : null
+        }
+      }
+    )
   })
 }
 
