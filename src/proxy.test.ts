@@ -160,13 +160,7 @@ test('correlates a document request without logging its landing query', async ()
         'i'
       )
     )
-    assert.match(
-      response.headers.get('set-cookie') ?? '',
-      new RegExp(
-        `^__Host-utekos-edge-correlation=${edgeRequestId}\\.\\d{10}\\.[A-Za-z0-9_-]{43}; Path=/; Expires=.+; Max-Age=1800; Secure; SameSite=lax$`,
-        'i'
-      )
-    )
+    assert.equal(response.headers.get('set-cookie'), null)
   } finally {
     console.info = originalInfo
     restoreSigningSecret()

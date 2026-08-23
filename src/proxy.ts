@@ -6,7 +6,6 @@ import { isKlarnaFeedHost } from '@/lib/merchant-feeds/klarna/klarnaFeedHost'
 import { isMagazineViewTransitionPreviewEnabled } from '@/app/magasinet/utils/isMagazineViewTransitionPreviewEnabled'
 import {
   LANDING_EDGE_AUTH_SERVER_TIMING_NAME,
-  LANDING_EDGE_CORRELATION_COOKIE_NAME,
   LANDING_EDGE_SERVER_TIMING_NAME,
   LANDING_SYNTHETIC_CORRELATION_COOKIE_NAME,
   readLandingSyntheticCorrelationCookie
@@ -139,15 +138,6 @@ function withLandingEdgeCorrelation<T extends NextResponse>(
       'Server-Timing',
       `${LANDING_EDGE_AUTH_SERVER_TIMING_NAME};desc="${correlation.token}"`
     )
-    response.cookies.set({
-      httpOnly: false,
-      maxAge: 30 * 60,
-      name: LANDING_EDGE_CORRELATION_COOKIE_NAME,
-      path: '/',
-      sameSite: 'lax',
-      secure: true,
-      value: `${correlation.edgeRequestId}.${correlation.token}`
-    })
     if (correlation.synthetic || correlation.clearSynthetic) {
       response.cookies.set({
         httpOnly: true,
