@@ -89,7 +89,7 @@ test('preserves opaque click ID casing and characters', () => {
 
   assert.deepEqual(readPreConsentClickIds(scope), {
     fbclid: 'AbC-DeF_123',
-    sc_click_id: ' A+B/C=='
+    sc_click_id: ' A+B/C== '
   })
 })
 
