@@ -1,4 +1,29 @@
-# Cookie scan report
+# Current production scan verification
+
+Verified in the authenticated Cookiebot admin interface on 24/08/2026
+(Europe/Oslo). Cookiebot lists the newest report as 24 August; the report
+itself uses the UTC scan date 23/08/2026.
+
+- Domain: utekos.no
+- Cookies and trackers identified: 56
+- Removed since the preceding scan: 1
+- Necessary: 7
+- Statistics: 12
+- Marketing: 37
+- Unclassified category: 0
+- Google Consent Mode risk summary: No risk detected
+- GCM consent parameters set as Default: No risk
+- CMP to GCM consent signal active: No risk
+- Google trackers blocked prior consent: No risk
+
+This supersedes the risk status in the historical 22/08/2026 report below.
+That report is retained as pre-cutover evidence only. Its repeated
+"Blocked until accepted by user: No" values must not be interpreted as the
+current production state.
+
+---
+
+# Historical Cookie scan report (22/08/2026, pre-cutover)
 
 
 ### Summary
