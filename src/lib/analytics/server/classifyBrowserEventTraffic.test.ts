@@ -168,3 +168,49 @@ test('does not trust a caller-supplied BotID header', async () => {
     excludeFromMarketingDispatch: false
   })
 })
+
+test('excludes the documented Cookiebot scanner user agent', async () => {
+  const request = new Request(
+    'https://utekos.no/api/events/page-view',
+    {
+      headers: {
+        'user-agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko; compatible; Cookiebot/1.0; +http://cookiebot.com/) Chrome/129.0.6668.29 Safari/537.36'
+      },
+      method: 'POST'
+    }
+  )
+
+  const verdict = await classifyBrowserEventTraffic(
+    request,
+    dependencies()
+  )
+
+  assert.deepEqual(verdict, {
+    classification: 'verified_bot',
+    excludeFromMarketingDispatch: true
+  })
+})
+
+test('does not exclude an ordinary Chrome user agent', async () => {
+  const request = new Request(
+    'https://utekos.no/api/events/page-view',
+    {
+      headers: {
+        'user-agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/129.0.6668.29 Safari/537.36'
+      },
+      method: 'POST'
+    }
+  )
+
+  const verdict = await classifyBrowserEventTraffic(
+    request,
+    dependencies()
+  )
+
+  assert.deepEqual(verdict, {
+    classification: 'human_or_unknown',
+    excludeFromMarketingDispatch: false
+  })
+})

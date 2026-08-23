@@ -32,6 +32,16 @@ const defaultDependencies: BrowserEventTrafficDependencies = {
   nowSeconds: () => Math.floor(Date.now() / 1000)
 }
 
+const COOKIEBOT_SCANNER_USER_AGENT_MARKER = 'Cookiebot/1.0'
+
+function isVerifiedCookiebotScanner(request: Request) {
+  return (
+    request.headers
+      .get('user-agent')
+      ?.includes(COOKIEBOT_SCANNER_USER_AGENT_MARKER) === true
+  )
+}
+
 async function hasVerifiedSyntheticCorrelation(
   request: Request,
   dependencies: BrowserEventTrafficDependencies
@@ -71,6 +81,13 @@ export async function classifyBrowserEventTraffic(
   ) {
     return {
       classification: 'synthetic',
+      excludeFromMarketingDispatch: true
+    }
+  }
+
+  if (isVerifiedCookiebotScanner(request)) {
+    return {
+      classification: 'verified_bot',
       excludeFromMarketingDispatch: true
     }
   }
