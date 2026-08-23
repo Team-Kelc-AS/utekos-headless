@@ -238,6 +238,40 @@ import {
       }
     }
   )
+
+  test(
+    'exact checkout opt-in evidence overrides only NOT_SUBSCRIBED',
+    () => {
+      for (const marketingState of [
+        'NOT_SUBSCRIBED',
+        'UNSUBSCRIBED',
+        'PENDING',
+        'INVALID'
+      ] as const) {
+        const [row] = buildAbandonedCheckoutRecoveryPlan(
+          [
+            checkout({
+              checkoutEmailMarketingAccepted: true,
+              email: {
+                address: 'kunde@example.no',
+                marketingState,
+                validFormat: marketingState !== 'INVALID'
+              }
+            })
+          ],
+          NOW
+        )
+
+        assertDefined(row)
+        equal(
+          row.status,
+          marketingState === 'NOT_SUBSCRIBED'
+            ? 'pending'
+            : 'suppressed'
+        )
+      }
+    }
+  )
   
   test(
     'completed checkout is suppressed as recovered',

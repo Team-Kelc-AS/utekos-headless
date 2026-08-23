@@ -285,6 +285,7 @@ export async function processAbandonedCheckoutRecoveryClaim(
         step: input.claim.step,
         to: authorization.to,
         recoveryUrl: authorization.recoveryUrl,
+        lineItems: authorization.lineItems,
         idempotencyKey:
           getAbandonedCheckoutRecoveryResendIdempotencyKey({
             shopifyAbandonedCheckoutId:

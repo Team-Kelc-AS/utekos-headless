@@ -37,6 +37,8 @@ export type CustomerEmailMarketingState =
 
 export type ShopifyAbandonedCheckoutRecoveryCandidate = {
   checkoutId: string
+  beginCheckoutEventId?: string | null
+  checkoutEmailMarketingAccepted?: boolean
   customerId: string | null
   createdAt: string
   updatedAt: string
@@ -216,7 +218,13 @@ function getSuppressionReason(
     return 'invalid_email'
   }
 
-  if (checkout.email.marketingState !== 'SUBSCRIBED') {
+  if (
+    checkout.email.marketingState !== 'SUBSCRIBED'
+    && !(
+      checkout.email.marketingState === 'NOT_SUBSCRIBED'
+      && checkout.checkoutEmailMarketingAccepted
+    )
+  ) {
     return 'not_subscribed'
   }
 

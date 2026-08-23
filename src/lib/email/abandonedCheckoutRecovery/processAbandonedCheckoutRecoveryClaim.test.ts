@@ -38,7 +38,15 @@ test('protects delivery evidence before sending and completes with Resend id', a
       revalidate: async () => ({
         authorized: true,
         to: 'kunde@example.com',
-        recoveryUrl: 'https://checkout.example/recover?token=secret'
+        recoveryUrl: 'https://checkout.example/recover?token=secret',
+        lineItems: [
+          {
+            title: 'Utekos TechDown',
+            quantity: 1,
+            priceLabel: '1 790,00 kr',
+            imageUrl: null
+          }
+        ]
       }),
       renewLease: async () => true,
       protectDeliveryAudit: input => {
@@ -52,6 +60,14 @@ test('protects delivery evidence before sending and completes with Resend id', a
         assert.equal(input.dispatchId, claim.dispatchId)
         assert.equal(input.sequenceVersion, 3)
         assert.equal(input.step, 2)
+        assert.deepEqual(input.lineItems, [
+          {
+            title: 'Utekos TechDown',
+            quantity: 1,
+            priceLabel: '1 790,00 kr',
+            imageUrl: null
+          }
+        ])
         return {
           ok: true,
           resendEmailId: 'resend_email_123'
@@ -87,7 +103,8 @@ test('fails closed before Resend when audit protection is unavailable', async ()
       revalidate: async () => ({
         authorized: true,
         to: 'kunde@example.com',
-        recoveryUrl: 'https://checkout.example/recover'
+        recoveryUrl: 'https://checkout.example/recover',
+        lineItems: []
       }),
       renewLease: async () => true,
       protectDeliveryAudit: () => {

@@ -88,7 +88,14 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   reactCompiler: true,
   cacheComponents: true,
-  turbopack: { root: process.cwd() },
+  turbopack: {
+    root: process.cwd(),
+    rules: {
+      '*.mp4': {
+        type: 'asset'
+      }
+    }
+  },
   cacheLife: {
     products: { stale: 300, revalidate: 900, expire: 3600 },
     collections: { stale: 600, revalidate: 1800, expire: 7200 },
@@ -291,6 +298,15 @@ const nextConfig: NextConfig = {
         permanent: true
       }
     ]
+  },
+
+  webpack: config => {
+    config.module.rules.push({
+      test: /\.mp4$/iu,
+      type: 'asset/resource'
+    })
+
+    return config
   }
 }
 

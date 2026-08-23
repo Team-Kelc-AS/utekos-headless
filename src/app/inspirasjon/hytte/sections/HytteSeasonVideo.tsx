@@ -17,7 +17,7 @@ export function HytteSeasonVideo({ src }: HytteSeasonVideoProps) {
     }
 
     void video.play()
-  }, [])
+  }, [src])
 
   return (
     <video
@@ -30,6 +30,7 @@ export function HytteSeasonVideo({ src }: HytteSeasonVideoProps) {
       muted
       playsInline
       preload='auto'
+      src={src}
       width={1920}
     >
       <source

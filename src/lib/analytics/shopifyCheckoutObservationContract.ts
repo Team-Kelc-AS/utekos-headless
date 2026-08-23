@@ -92,7 +92,12 @@ const alertObservationSchema = z.strictObject({
   ...commonObservationShape,
   eventName: z.literal('alert_displayed'),
   alert: z.strictObject({
-    type: z.enum(['CHECKOUT_ERROR', 'PAYMENT_ERROR'])
+    type: z.enum([
+      'CHECKOUT_ERROR',
+      'CONTACT_ERROR',
+      'DELIVERY_ERROR',
+      'PAYMENT_ERROR'
+    ])
   })
 })
 

@@ -1,4 +1,7 @@
+import { formatPrice } from '@/lib/utils/formatPrice'
+
 import type { CustomerEmailMarketingState } from './abandonedCheckoutRecovery'
+import { resolveAbandonedCheckoutRecoveryProductImageUrl } from './resolveAbandonedCheckoutRecoveryProductImageUrl'
 
 export type ShopifyAbandonmentEmailState =
   | 'NOT_SENT'
@@ -11,6 +14,22 @@ export type AbandonedCheckoutRecoveryPreSendClaim = {
   shopifyCustomerId: string
   checkoutCreatedAt: string
   checkoutUpdatedAt: string
+}
+
+export type AbandonedCheckoutRecoveryCheckoutLineItem = {
+  title: string
+  quantity: number
+  variantTitle: string | null
+  priceAmount: string
+  priceCurrencyCode: string
+  productHandle: string | null
+}
+
+export type AbandonedCheckoutRecoveryEmailLineItem = {
+  title: string
+  quantity: number
+  priceLabel: string
+  imageUrl: string | null
 }
 
 export type ShopifyAbandonedCheckoutPreSendState = {
@@ -32,11 +51,14 @@ export type ShopifyAbandonedCheckoutPreSendState = {
   }
   checkout: {
     id: string
+    beginCheckoutEventId?: string | null
+    checkoutEmailMarketingAccepted?: boolean
     customerId: string | null
     createdAt: string
     updatedAt: string
     completedAt: string | null
     recoveryUrl: string
+    lineItems: AbandonedCheckoutRecoveryCheckoutLineItem[]
   }
 }
 
@@ -53,7 +75,12 @@ export type AbandonedCheckoutRecoveryPreSendSuppressionReason =
   | 'not_subscribed'
 
 export type AuthorizeAbandonedCheckoutRecoverySendResult =
-  | { authorized: true; to: string; recoveryUrl: string }
+  | {
+      authorized: true
+      to: string
+      recoveryUrl: string
+      lineItems: AbandonedCheckoutRecoveryEmailLineItem[]
+    }
   | {
       authorized: false
       suppressionReason: AbandonedCheckoutRecoveryPreSendSuppressionReason
@@ -61,6 +88,39 @@ export type AuthorizeAbandonedCheckoutRecoverySendResult =
 
 const INVALID_STATE_ERROR =
   'abandoned_checkout_recovery_shopify_state_invalid'
+
+function toEmailLineItems(
+  lineItems: readonly AbandonedCheckoutRecoveryCheckoutLineItem[]
+): AbandonedCheckoutRecoveryEmailLineItem[] {
+  return lineItems.map(lineItem => {
+    if (lineItem.priceCurrencyCode !== 'NOK') {
+      throw new Error(INVALID_STATE_ERROR)
+    }
+
+    const amount = Number.parseFloat(lineItem.priceAmount)
+
+    if (!Number.isFinite(amount) || amount < 0) {
+      throw new Error(INVALID_STATE_ERROR)
+    }
+
+    const title =
+      lineItem.variantTitle === null
+        ? lineItem.title
+        : `${lineItem.title}, ${lineItem.variantTitle}`
+
+    return {
+      title,
+      quantity: lineItem.quantity,
+      priceLabel: formatPrice({
+        amount: lineItem.priceAmount,
+        currencyCode: 'NOK'
+      }),
+      imageUrl: resolveAbandonedCheckoutRecoveryProductImageUrl(
+        lineItem.productHandle
+      )
+    }
+  })
+}
 
 function parseTimestamp(value: string): number {
   const timestamp = Date.parse(value)
@@ -192,7 +252,13 @@ export function authorizeAbandonedCheckoutRecoverySend(input: {
     }
   }
 
-  if (state.customer.email.marketingState !== 'SUBSCRIBED') {
+  if (
+    state.customer.email.marketingState !== 'SUBSCRIBED'
+    && !(
+      state.customer.email.marketingState === 'NOT_SUBSCRIBED'
+      && state.checkout.checkoutEmailMarketingAccepted
+    )
+  ) {
     return {
       authorized: false,
       suppressionReason: 'not_subscribed'
@@ -202,6 +268,7 @@ export function authorizeAbandonedCheckoutRecoverySend(input: {
   return {
     authorized: true,
     to: state.customer.email.address,
-    recoveryUrl: state.checkout.recoveryUrl
+    recoveryUrl: state.checkout.recoveryUrl,
+    lineItems: toEmailLineItems(state.checkout.lineItems)
   }
 }

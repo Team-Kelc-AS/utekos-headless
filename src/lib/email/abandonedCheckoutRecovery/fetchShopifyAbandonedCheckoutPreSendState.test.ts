@@ -42,7 +42,24 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
             completedAt: null,
             abandonedCheckoutUrl:
               'https://checkout.shopify.com/recover/opaque-token',
-            customer: { id: 'gid://shopify/Customer/2001' }
+            customer: { id: 'gid://shopify/Customer/2001' },
+            lineItems: {
+              nodes: [
+                {
+                  title: 'Utekos TechDown',
+                  quantity: 1,
+                  variantTitle: 'Default Title',
+                  discountedTotalPriceSet: {
+                    shopMoney: {
+                      amount: '1790.00',
+                      currencyCode: 'NOK'
+                    }
+                  },
+                  product: { handle: 'utekos-techdown' }
+                }
+              ],
+              pageInfo: { hasNextPage: false }
+            }
           }
         }
       }
@@ -82,7 +99,17 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
       updatedAt: '2026-08-09T08:25:00Z',
       completedAt: null,
       recoveryUrl:
-        'https://checkout.shopify.com/recover/opaque-token'
+        'https://checkout.shopify.com/recover/opaque-token',
+      lineItems: [
+        {
+          title: 'Utekos TechDown',
+          quantity: 1,
+          variantTitle: null,
+          priceAmount: '1790.00',
+          priceCurrencyCode: 'NOK',
+          productHandle: 'utekos-techdown'
+        }
+      ]
     }
   })
 })
@@ -111,6 +138,52 @@ test('fails closed on a malformed Shopify response', async () => {
       executeAdminGraphql: async () => ({
         abandonmentByAbandonedCheckoutId: {
           id: 'gid://shopify/Abandonment/3001'
+        }
+      })
+    }),
+    {
+      message:
+        'abandoned_checkout_recovery_shopify_state_invalid'
+    }
+  )
+})
+
+test('fails closed when Shopify truncates abandoned checkout line items', async () => {
+  await assert.rejects(
+    fetchShopifyAbandonedCheckoutPreSendState({
+      abandonedCheckoutId:
+        'gid://shopify/AbandonedCheckout/1001',
+      executeAdminGraphql: async () => ({
+        abandonmentByAbandonedCheckoutId: {
+          id: 'gid://shopify/Abandonment/3001',
+          createdAt: '2026-08-09T08:30:00Z',
+          customerHasNoDraftOrderSinceAbandonment: true,
+          customerHasNoOrderSinceAbandonment: true,
+          emailSentAt: null,
+          emailState: 'NOT_SENT',
+          inventoryAvailable: true,
+          isMostSignificantAbandonment: true,
+          customer: {
+            id: 'gid://shopify/Customer/2001',
+            defaultEmailAddress: {
+              emailAddress: 'kunde@example.no',
+              marketingState: 'SUBSCRIBED',
+              validFormat: true
+            }
+          },
+          abandonedCheckoutPayload: {
+            id: 'gid://shopify/AbandonedCheckout/1001',
+            createdAt: '2026-08-09T08:00:00Z',
+            updatedAt: '2026-08-09T08:25:00Z',
+            completedAt: null,
+            abandonedCheckoutUrl:
+              'https://checkout.shopify.com/recover/opaque-token',
+            customer: { id: 'gid://shopify/Customer/2001' },
+            lineItems: {
+              nodes: [],
+              pageInfo: { hasNextPage: true }
+            }
+          }
         }
       })
     }),

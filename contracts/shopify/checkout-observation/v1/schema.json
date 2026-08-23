@@ -197,6 +197,8 @@
             "type": {
               "enum": [
                 "CHECKOUT_ERROR",
+                "CONTACT_ERROR",
+                "DELIVERY_ERROR",
                 "PAYMENT_ERROR"
               ]
             }

@@ -12,7 +12,7 @@ const MobileMenu = dynamic(
     ),
   {
     ssr: false,
-    loading: () => <div className='h-11 min-w-23' />
+    loading: () => <div className='h-11 min-w-11 md:min-w-23' />
   }
 )
 
@@ -28,7 +28,7 @@ export function ClientMobileMenu({
   )
 
   if (!isMounted) {
-    return <div aria-hidden className='h-11 min-w-23 shrink-0' />
+    return <div aria-hidden className='h-11 min-w-11 shrink-0 md:min-w-23' />
   }
 
   return <MobileMenu menu={menu} />

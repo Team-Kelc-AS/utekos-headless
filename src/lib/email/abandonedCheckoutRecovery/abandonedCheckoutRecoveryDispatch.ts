@@ -1,4 +1,5 @@
 import type {
+  AbandonedCheckoutRecoveryEmailLineItem,
   AbandonedCheckoutRecoveryPreSendClaim
 } from './authorizeAbandonedCheckoutRecoverySend'
 
@@ -19,6 +20,7 @@ export type AbandonedCheckoutRecoveryDeliveryPort = (
     step: number
     to: string
     recoveryUrl: string
+    lineItems: AbandonedCheckoutRecoveryEmailLineItem[]
     idempotencyKey: string
   }
 ) => Promise<unknown>

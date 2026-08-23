@@ -67,7 +67,7 @@ export function CartTrigger({
     >
       <ShoppingCartIcon className='size-4 transition-all ease-in-out hover:scale-110' />
       {showLabel ?
-        <span className='font-utekos-text-medium text-sm'>
+        <span className='hidden font-utekos-text-medium text-sm md:inline'>
           Handlekurv
         </span>
       : null}

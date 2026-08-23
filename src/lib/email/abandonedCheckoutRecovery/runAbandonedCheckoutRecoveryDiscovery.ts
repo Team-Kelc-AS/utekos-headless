@@ -1,6 +1,7 @@
 import 'server-only'
 
 import * as Sentry from '@sentry/nextjs'
+import { z } from 'zod'
 
 import {
   shopifyAdminGraphql
@@ -16,6 +17,9 @@ import {
 import {
   fetchShopifyAbandonedCheckoutRecoveryCandidates
 } from './fetchShopifyAbandonedCheckoutRecoveryCandidates'
+import {
+  resolveCheckoutRecoveryEmailMarketingAcceptance
+} from './resolveCheckoutRecoveryEmailMarketingAcceptance'
 
 import {
   upsertAbandonedCheckoutRecoveryDispatches,
@@ -59,6 +63,8 @@ export type RunAbandonedCheckoutRecoveryDiscoverySummary = {
 export type RunAbandonedCheckoutRecoveryDiscoveryDependencies = {
   activationAt: Date
 
+  canaryEmail?: string | null
+
   now?: () => Date
 
   fetchCandidates?: (
@@ -69,6 +75,10 @@ export type RunAbandonedCheckoutRecoveryDiscoveryDependencies = {
   ) => Promise<
     ShopifyAbandonedCheckoutRecoveryCandidate[]
   >
+
+  resolveCheckoutEmailMarketingAcceptance?: (
+    candidate: ShopifyAbandonedCheckoutRecoveryCandidate
+  ) => Promise<boolean>
 
   buildPlans?: (
     candidates:
@@ -83,6 +93,29 @@ export type RunAbandonedCheckoutRecoveryDiscoveryDependencies = {
   ) => Promise<
     UpsertAbandonedCheckoutRecoveryDispatchesResult
   >
+}
+
+function parseCanaryEmail(
+  value: string | null | undefined
+): string | null {
+  if (value === null || value === undefined) {
+    return null
+  }
+
+  const parsed = z
+    .email()
+    .max(320)
+    .safeParse(
+      value.trim().toLowerCase()
+    )
+
+  if (!parsed.success) {
+    throw new Error(
+      'abandoned_checkout_recovery_canary_email_invalid'
+    )
+  }
+
+  return parsed.data
 }
 
 function assertValidDate(
@@ -231,6 +264,20 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
   const persistPlans =
     dependencies.persistPlans
     ?? upsertAbandonedCheckoutRecoveryDispatches
+  const resolveCheckoutEmailMarketingAcceptance =
+    dependencies.resolveCheckoutEmailMarketingAcceptance
+    ?? (candidate => {
+      if (!candidate.beginCheckoutEventId || !candidate.email) {
+        return Promise.resolve(false)
+      }
+
+      return resolveCheckoutRecoveryEmailMarketingAcceptance({
+        beginCheckoutEventId: candidate.beginCheckoutEventId,
+        email: candidate.email.address,
+        checkoutCreatedAt: candidate.createdAt,
+        now: startedAtDate
+      })
+    })
 
   const startedAtDate =
     now()
@@ -249,6 +296,14 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
     startedAtDate.toISOString()
 
   try {
+    const canaryEmail =
+      parseCanaryEmail(
+        dependencies.canaryEmail === undefined ?
+          process.env
+            .ABANDONED_CHECKOUT_RECOVERY_CANARY_EMAIL
+        : dependencies.canaryEmail
+      )
+
     return await Sentry.startSpan(
       {
         name:
@@ -257,7 +312,7 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
           'workflow'
       },
       async () => {
-        const candidates =
+        const discoveredCandidates =
           await fetchCandidates({
             activationAt:
               dependencies.activationAt,
@@ -265,6 +320,36 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
             now:
               startedAtDate
           })
+
+        const filteredCandidates =
+          canaryEmail ?
+            discoveredCandidates.filter(
+              candidate =>
+                candidate.email?.address
+                  .trim()
+                  .toLowerCase()
+                === canaryEmail
+            )
+          : discoveredCandidates
+
+        const candidates = await Promise.all(
+          filteredCandidates.map(async candidate => {
+            if (
+              candidate.email?.marketingState !== 'NOT_SUBSCRIBED'
+              || !candidate.beginCheckoutEventId
+            ) {
+              return candidate
+            }
+
+            return {
+              ...candidate,
+              checkoutEmailMarketingAccepted:
+                await resolveCheckoutEmailMarketingAcceptance(
+                  candidate
+                )
+            }
+          })
+        )
 
         const plans =
           buildPlans(

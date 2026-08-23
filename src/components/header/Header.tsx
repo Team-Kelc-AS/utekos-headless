@@ -63,7 +63,7 @@ export default function Header({
 
           <Cart
             showLabel
-            className='dark:hover:bg-dark-accent h-11 min-w-29 rounded-md border-transparent bg-transparent px-3 text-foreground hover:bg-accent hover:text-accent-foreground'
+            className='dark:hover:bg-dark-accent h-11 min-w-11 rounded-md border-transparent bg-transparent px-0 text-foreground hover:bg-accent hover:text-accent-foreground md:min-w-29 md:px-3'
           />
 
           <ClientMobileMenu menu={menu} />

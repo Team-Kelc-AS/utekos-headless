@@ -40,7 +40,8 @@ const state = {
     updatedAt: '2026-08-09T08:25:00.000Z',
     completedAt: null,
     recoveryUrl:
-      'https://checkout.shopify.com/recover/opaque-token'
+      'https://checkout.shopify.com/recover/opaque-token',
+    lineItems: []
   }
 } satisfies ShopifyAbandonedCheckoutPreSendState
 
@@ -64,7 +65,8 @@ test('fetches by claimed checkout and returns only the authorization result', as
     authorized: true,
     to: 'kunde@example.no',
     recoveryUrl:
-      'https://checkout.shopify.com/recover/opaque-token'
+      'https://checkout.shopify.com/recover/opaque-token',
+    lineItems: []
   })
 })
 
@@ -81,4 +83,39 @@ test('redacts raw Shopify failures at the revalidation boundary', async () => {
       message: 'abandoned_checkout_recovery_revalidation_failed'
     }
   )
+})
+
+test('uses exact checkout evidence for NOT_SUBSCRIBED state', async () => {
+  const notSubscribedState: ShopifyAbandonedCheckoutPreSendState = {
+    ...state,
+    customer: {
+      ...state.customer,
+      email: {
+        address: 'kunde@example.no',
+        marketingState: 'NOT_SUBSCRIBED',
+        validFormat: true
+      }
+    },
+    checkout: {
+      ...state.checkout,
+      beginCheckoutEventId:
+        '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
+    }
+  }
+
+  const result = await revalidateAbandonedCheckoutBeforeSend(
+    claim,
+    {
+      fetchState: async () => notSubscribedState,
+      resolveCheckoutEmailMarketingAcceptance: async currentState => {
+        assert.equal(
+          currentState.checkout.beginCheckoutEventId,
+          '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
+        )
+        return true
+      }
+    }
+  )
+
+  assert.equal(result.authorized, true)
 })

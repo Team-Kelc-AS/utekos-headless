@@ -7,11 +7,15 @@ import {
   type ShopifyAbandonedCheckoutPreSendState
 } from './authorizeAbandonedCheckoutRecoverySend'
 import { fetchShopifyAbandonedCheckoutPreSendState } from './fetchShopifyAbandonedCheckoutPreSendState'
+import { resolveCheckoutRecoveryEmailMarketingAcceptance } from './resolveCheckoutRecoveryEmailMarketingAcceptance'
 
 type RevalidateAbandonedCheckoutBeforeSendDependencies = {
   fetchState: (
     abandonedCheckoutId: string
   ) => Promise<ShopifyAbandonedCheckoutPreSendState>
+  resolveCheckoutEmailMarketingAcceptance?: (
+    state: ShopifyAbandonedCheckoutPreSendState
+  ) => Promise<boolean>
 }
 
 const defaultDependencies: RevalidateAbandonedCheckoutBeforeSendDependencies =
@@ -33,9 +37,41 @@ export async function revalidateAbandonedCheckoutBeforeSend(
       claim.shopifyAbandonedCheckoutId
     )
 
+    const shouldResolveCheckoutAcceptance =
+      state.customer.email?.marketingState === 'NOT_SUBSCRIBED'
+      && Boolean(state.checkout.beginCheckoutEventId)
+
+    const checkoutEmailMarketingAccepted =
+      shouldResolveCheckoutAcceptance ?
+        await (
+          dependencies.resolveCheckoutEmailMarketingAcceptance
+          ?? (currentState => {
+            const email = currentState.customer.email
+            const beginCheckoutEventId =
+              currentState.checkout.beginCheckoutEventId
+
+            if (!email || !beginCheckoutEventId) {
+              return Promise.resolve(false)
+            }
+
+            return resolveCheckoutRecoveryEmailMarketingAcceptance({
+              beginCheckoutEventId,
+              email: email.address,
+              checkoutCreatedAt: currentState.checkout.createdAt
+            })
+          })
+        )(state)
+      : false
+
     return authorizeAbandonedCheckoutRecoverySend({
       claim,
-      state
+      state: {
+        ...state,
+        checkout: {
+          ...state.checkout,
+          checkoutEmailMarketingAccepted
+        }
+      }
     })
   } catch {
     throw new Error(

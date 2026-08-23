@@ -29,6 +29,30 @@ const CheckoutAttributeSchema = z.object({
   value: z.string()
 })
 
+const ShopMoneySchema = z.object({
+  amount: z.string().min(1),
+
+  currencyCode: z.string().min(1)
+})
+
+const LineItemNodeSchema = z.object({
+  title: z.string().min(1),
+
+  quantity: z.number().int().positive(),
+
+  variantTitle: z.string().min(1).nullable(),
+
+  discountedTotalPriceSet: z.object({
+    shopMoney: ShopMoneySchema
+  }),
+
+  product: z
+    .object({
+      handle: z.string().min(1)
+    })
+    .nullable()
+})
+
 const AbandonmentSchema = z.object({
   id: z.string().min(1),
 
@@ -89,7 +113,15 @@ const AbandonmentSchema = z.object({
       .optional()
       .default([]),
 
-    customer: z.object({ id: z.string().min(1) }).nullable()
+    customer: z.object({ id: z.string().min(1) }).nullable(),
+
+    lineItems: z.object({
+      nodes: z.array(LineItemNodeSchema),
+
+      pageInfo: z.object({
+        hasNextPage: z.boolean()
+      })
+    })
   })
 })
 
@@ -134,6 +166,25 @@ export const SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY = `#graphql
         customer {
           id
         }
+        lineItems(first: 10) {
+          nodes {
+            title
+            quantity
+            variantTitle
+            discountedTotalPriceSet {
+              shopMoney {
+                amount
+                currencyCode
+              }
+            }
+            product {
+              handle
+            }
+          }
+          pageInfo {
+            hasNextPage
+          }
+        }
       }
     }
   }
@@ -172,6 +223,39 @@ function resolveBeginCheckoutEventId(
   }
 
   return values.values().next().value ?? null
+}
+
+function resolveVariantTitle(
+  variantTitle: string | null
+): string | null {
+  if (variantTitle === null) {
+    return null
+  }
+
+  const trimmed = variantTitle.trim()
+
+  if (
+    trimmed.length === 0
+    || trimmed.toLocaleLowerCase('nb-NO') === 'default title'
+  ) {
+    return null
+  }
+
+  return trimmed
+}
+
+function toCheckoutLineItems(
+  lineItems: z.infer<typeof LineItemNodeSchema>[]
+): ShopifyAbandonedCheckoutPreSendState['checkout']['lineItems'] {
+  return lineItems.map(lineItem => ({
+    title: lineItem.title.trim(),
+    quantity: lineItem.quantity,
+    variantTitle: resolveVariantTitle(lineItem.variantTitle),
+    priceAmount: lineItem.discountedTotalPriceSet.shopMoney.amount,
+    priceCurrencyCode:
+      lineItem.discountedTotalPriceSet.shopMoney.currencyCode,
+    productHandle: lineItem.product?.handle ?? null
+  }))
 }
 
 async function safelyReconcileNativeAbandonment(input: {
@@ -282,6 +366,23 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
   }
 
   const checkout = abandonment.abandonedCheckoutPayload
+  const beginCheckoutEventId = resolveBeginCheckoutEventId(
+    checkout.customAttributes
+  )
+
+  if (checkout.lineItems.pageInfo.hasNextPage) {
+    throw new Error(
+      'abandoned_checkout_recovery_shopify_state_invalid'
+    )
+  }
+
+  const lineItems = toCheckoutLineItems(checkout.lineItems.nodes)
+
+  if (lineItems.some(lineItem => lineItem.title.length === 0)) {
+    throw new Error(
+      'abandoned_checkout_recovery_shopify_state_invalid'
+    )
+  }
 
   const email = abandonment.customer.defaultEmailAddress
 
@@ -337,6 +438,13 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
     checkout: {
       id: checkout.id,
 
+      ...(beginCheckoutEventId ?
+        {
+          beginCheckoutEventId,
+          checkoutEmailMarketingAccepted: false
+        }
+      : {}),
+
       customerId: checkout.customer?.id ?? null,
 
       createdAt: checkout.createdAt,
@@ -345,7 +453,9 @@ export async function fetchShopifyAbandonedCheckoutPreSendState(input: {
 
       completedAt: checkout.completedAt,
 
-      recoveryUrl: checkout.abandonedCheckoutUrl
+      recoveryUrl: checkout.abandonedCheckoutUrl,
+
+      lineItems
     }
   }
 }

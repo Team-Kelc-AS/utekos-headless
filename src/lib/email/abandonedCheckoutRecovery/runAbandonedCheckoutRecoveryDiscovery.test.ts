@@ -135,3 +135,125 @@ test(
     )
   }
 )
+
+test(
+  'canary mode only builds plans for the configured email address',
+  async () => {
+    const clock = [
+      STARTED_AT,
+      COMPLETED_AT
+    ]
+
+    let plannedCandidates:
+      readonly ShopifyAbandonedCheckoutRecoveryCandidate[] = []
+
+    const summary =
+      await runAbandonedCheckoutRecoveryDiscovery({
+        activationAt:
+          ACTIVATION_AT,
+
+        canaryEmail:
+          ' APP@UTEKOS.NO ',
+
+        now:
+          () => {
+            const date =
+              clock.shift()
+
+            assert.ok(date)
+
+            return date
+          },
+
+        fetchCandidates:
+          async () => [
+            {
+              ...candidate,
+              email: {
+                ...candidate.email!,
+                address:
+                  'app@utekos.no'
+              }
+            },
+            candidate
+          ],
+
+        buildPlans:
+          candidates => {
+            plannedCandidates =
+              candidates
+
+            return []
+          },
+
+        persistPlans:
+          async plans => ({
+            submitted:
+              plans.length,
+            affected:
+              0,
+            unchanged:
+              0
+          })
+      })
+
+    assert.deepEqual(
+      plannedCandidates.map(
+        item => item.email?.address
+      ),
+      ['app@utekos.no']
+    )
+
+    assert.equal(
+      summary.candidatesDiscovered,
+      1
+    )
+  }
+)
+
+test(
+  'resolves exact checkout opt-in before building plans',
+  async () => {
+    const clock = [STARTED_AT, COMPLETED_AT]
+    let plannedCandidate:
+      ShopifyAbandonedCheckoutRecoveryCandidate | undefined
+
+    await runAbandonedCheckoutRecoveryDiscovery({
+      activationAt: ACTIVATION_AT,
+      now: () => {
+        const date = clock.shift()
+        assert.ok(date)
+        return date
+      },
+      fetchCandidates: async () => [
+        {
+          ...candidate,
+          beginCheckoutEventId:
+            '71c2ef59-6e6f-4f56-a63a-567ca398f9de',
+          email: {
+            ...candidate.email!,
+            marketingState: 'NOT_SUBSCRIBED'
+          }
+        }
+      ],
+      resolveCheckoutEmailMarketingAcceptance: async input => {
+        assert.equal(input.email?.address, 'customer@example.com')
+        return true
+      },
+      buildPlans: candidates => {
+        plannedCandidate = candidates[0]
+        return []
+      },
+      persistPlans: async () => ({
+        submitted: 0,
+        affected: 0,
+        unchanged: 0
+      })
+    })
+
+    assert.equal(
+      plannedCandidate?.checkoutEmailMarketingAccepted,
+      true
+    )
+  }
+)

@@ -26,6 +26,13 @@ token.json
 playwright-mcp/
 .playwright-cli/
 **/.playwright-cli.json
+.next/
+.next-profiles/
+.swc/
+.worktrees/
+merchant-api-samples/
+node_modules/
+tsconfig.tsbuildinfo
 supabase/.branches/
 supabase/.temp/
 

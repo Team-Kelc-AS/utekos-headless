@@ -7,6 +7,9 @@ import {
 import {
   purgeExpiredAbandonedCheckoutRecoveryDeliveryAudit
 } from '@/lib/email/abandonedCheckoutRecovery/purgeExpiredAbandonedCheckoutRecoveryDeliveryAudit'
+import {
+  purgeExpiredShopifyCheckoutRecoveryEvidence
+} from '@/lib/email/abandonedCheckoutRecovery/purgeExpiredShopifyCheckoutRecoveryEvidence'
 
 export type AbandonedCheckoutRecoveryWorkflowInput = {
   activationAt: string
@@ -51,14 +54,18 @@ async function dispatchDueRecoveryEmails(
 async function purgeExpiredDeliveryAudit() {
   'use step'
 
-  const deleted =
-    await purgeExpiredAbandonedCheckoutRecoveryDeliveryAudit()
+  const [deliveryAuditDeleted, checkoutEvidenceDeleted] =
+    await Promise.all([
+      purgeExpiredAbandonedCheckoutRecoveryDeliveryAudit(),
+      purgeExpiredShopifyCheckoutRecoveryEvidence()
+    ])
 
   console.info('[abandoned-checkout-recovery] retention complete', {
-    deleted
+    deliveryAuditDeleted,
+    checkoutEvidenceDeleted
   })
 
-  return { deleted }
+  return { deliveryAuditDeleted, checkoutEvidenceDeleted }
 }
 
 export async function abandonedCheckoutRecoveryWorkflow(

@@ -107,6 +107,26 @@ test('accepts an allowlisted alert type without free text', () => {
   )
 })
 
+test('accepts PII-free contact and delivery validation alerts', () => {
+  for (const type of ['CONTACT_ERROR', 'DELIVERY_ERROR'] as const) {
+    assert.equal(
+      shopifyCheckoutObservationSchema.safeParse({
+        contract: 'utekos.shopify.checkout_observation',
+        schemaVersion: 1,
+        source: 'shopify_app_web_pixel',
+        verificationStatus: 'observed',
+        eventId: `shopify-event-${type}`,
+        eventName: 'alert_displayed',
+        eventSequence: 5,
+        occurredAt: '2026-08-03T10:00:01.000Z',
+        alert: { type },
+        privacy
+      }).success,
+      true
+    )
+  }
+})
+
 test('rejects PII, canonical claims, and provider fields', () => {
   for (const forbiddenField of [
     'email',
@@ -149,7 +169,7 @@ test('rejects alert free text and non-allowlisted alert types', () => {
   assert.equal(
     shopifyCheckoutObservationSchema.safeParse({
       ...commonAlert,
-      alert: { type: 'CONTACT_ERROR' }
+      alert: { type: 'DISCOUNT_ERROR' }
     }).success,
     false
   )

@@ -26,7 +26,8 @@ export const deliverAbandonedCheckoutRecoveryEmail:
     const content = getAbandonedCheckoutRecoveryEmailContent({
       step: input.step,
       recoveryUrl: input.recoveryUrl,
-      unsubscribeUrl
+      unsubscribeUrl,
+      lineItems: input.lineItems
     })
 
     const result = await sendTransactionalEmail({

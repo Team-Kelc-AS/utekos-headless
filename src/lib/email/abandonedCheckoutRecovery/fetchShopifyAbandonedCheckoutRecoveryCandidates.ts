@@ -20,11 +20,20 @@ const CustomerEmailSchema = z.object({
   validFormat: z.boolean()
 })
 
+const CheckoutAttributeSchema = z.object({
+  key: z.string().min(1),
+  value: z.string()
+})
+
 const AbandonedCheckoutNodeSchema = z.object({
   id: z.string().min(1),
   createdAt: z.string().min(1),
   updatedAt: z.string().min(1),
   completedAt: z.string().min(1).nullable(),
+  customAttributes: z
+    .array(CheckoutAttributeSchema)
+    .optional()
+    .default([]),
   customer: z
     .object({
       id: z.string().min(1),
@@ -82,6 +91,10 @@ export const SHOPIFY_ABANDONED_CHECKOUT_RECOVERY_QUERY = `#graphql
         createdAt
         updatedAt
         completedAt
+        customAttributes {
+          key
+          value
+        }
         customer {
           id
           numberOfOrders
@@ -198,10 +211,18 @@ function toCandidate(
   >
 ): ShopifyAbandonedCheckoutRecoveryCandidate {
   const customer = node.customer
+  const beginCheckoutEventId =
+    resolveBeginCheckoutEventId(node.customAttributes)
 
   return {
     checkoutId:
       node.id,
+    ...(beginCheckoutEventId ?
+      {
+        beginCheckoutEventId,
+        checkoutEmailMarketingAccepted: false
+      }
+    : {}),
     customerId:
       customer?.id ?? null,
     createdAt:
@@ -231,6 +252,35 @@ function toCandidate(
         }
       : null
   }
+}
+
+function resolveBeginCheckoutEventId(
+  attributes: readonly z.infer<typeof CheckoutAttributeSchema>[]
+): string | null {
+  const matching = attributes.filter(
+    attribute =>
+      attribute.key === 'utekos_begin_checkout_event_id'
+  )
+
+  if (matching.length === 0) {
+    return null
+  }
+
+  const values = new Set<string>()
+
+  for (const attribute of matching) {
+    const parsed = z.string().uuid().safeParse(attribute.value)
+
+    if (!parsed.success) {
+      return null
+    }
+
+    values.add(parsed.data)
+  }
+
+  return values.size === 1
+    ? values.values().next().value ?? null
+    : null
 }
 
 export function buildShopifyAbandonedCheckoutRecoverySearchQuery(

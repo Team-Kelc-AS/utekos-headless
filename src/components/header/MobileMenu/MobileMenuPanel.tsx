@@ -142,14 +142,14 @@ export function MobileMenuPanel({
           render={
             <Button
               variant='outline'
-              className='dark:hover:bg-dark-accent h-11 min-w-[5.75rem] rounded-md border-transparent bg-transparent px-3 font-utekos-text-medium text-sm text-foreground hover:bg-accent hover:text-accent-foreground'
+              className='dark:hover:bg-dark-accent h-11 min-w-11 rounded-md border-transparent bg-transparent px-0 font-utekos-text-medium text-sm text-foreground hover:bg-accent hover:text-accent-foreground md:min-w-[5.75rem] md:px-3'
               aria-label='Åpne meny'
               data-track='MobileMenuClick'
             />
           }
         >
           <MenuIcon className='size-4' />
-          <span>Meny</span>
+          <span className='hidden md:inline'>Meny</span>
         </SheetTrigger>
       </div>
 
