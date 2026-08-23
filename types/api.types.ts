@@ -17,9 +17,8 @@ import type {
   StorefrontCartLineUpdateInput,
   StorefrontProductCardConnection,
   StorefrontProductConnection,
-  StorefrontProductShell,
+  StorefrontProduct,
   StorefrontProductQueryVariables,
-  StorefrontProductVariantPresentation,
   StorefrontProductCardsQueryVariables,
   StorefrontProductsQueryVariables
 } from '@/api/shopify/types/storefrontApi'
@@ -117,13 +116,8 @@ export type ShopifyErrorDetailInput = {
   extensions?: Record<string, unknown> | undefined
 }
 
-export type ShopifyProductShellOperation = ShopifyOperation<
-  { product: StorefrontProductShell | null },
-  StorefrontProductQueryVariables
->
-
-export type ShopifyProductVariantPresentationOperation = ShopifyOperation<
-  { product: StorefrontProductVariantPresentation | null },
+export type ShopifyProductOperation = ShopifyOperation<
+  { product: StorefrontProduct | null },
   StorefrontProductQueryVariables
 >
 

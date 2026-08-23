@@ -1,10 +1,7 @@
 // Path: src/api/lib/products/getProduct.ts
 
 import 'server-only'
-import {
-  getProductShellQuery,
-  getProductVariantPresentationQuery
-} from '@/api/graphql/queries/products'
+import { getProductQuery } from '@/api/graphql/queries/products'
 import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import { reshapeProduct } from '@/lib/utils/reshapeProduct'
 import { cacheTag, cacheLife } from 'next/cache'
@@ -14,45 +11,25 @@ import {
   normalizeShopifyProductHandle
 } from '@/lib/cache/shopifyProductRuntimeCache'
 import type { ShopifyProduct } from 'types/product'
-import type {
-  ShopifyProductShellOperation,
-  ShopifyProductVariantPresentationOperation
-} from '@types'
-import { composeStorefrontProduct } from './composeStorefrontProduct'
+import type { ShopifyProductOperation } from '@types'
 
 async function fetchProductFromShopify(
   handle: string
 ): Promise<ShopifyProduct | null> {
-  const [shellResponse, variantPresentationResponse] =
-    await Promise.all([
-      storefrontGateway.catalogQuery<ShopifyProductShellOperation>({
-        query: getProductShellQuery,
-        variables: { handle }
-      }),
-      storefrontGateway.catalogQuery<ShopifyProductVariantPresentationOperation>({
-        query: getProductVariantPresentationQuery,
-        variables: { handle }
-      })
-    ])
+  const response =
+    await storefrontGateway.catalogQuery<ShopifyProductOperation>({
+      query: getProductQuery,
+      variables: { handle }
+    })
 
-  if (!shellResponse.success) {
+  if (!response.success) {
     throw new Error(
-      shellResponse.error.errors[0]?.message ??
-        `Failed to fetch product shell: ${handle}`
+      response.error.errors[0]?.message ??
+        `Failed to fetch product: ${handle}`
     )
   }
 
-  if (!variantPresentationResponse.success) {
-    throw new Error(
-      variantPresentationResponse.error.errors[0]?.message ??
-        `Failed to fetch product variant presentation: ${handle}`
-    )
-  }
-
-  const rawProduct = composeStorefrontProduct(
-    shellResponse.body.product,
-    variantPresentationResponse.body.product
-  )
+  const rawProduct = response.body.product
   if (!rawProduct) return null
 
   return reshapeProduct(rawProduct)

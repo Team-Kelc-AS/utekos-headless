@@ -9,8 +9,7 @@ import {
 } from 'graphql'
 import {
   getProductOptionsQuery,
-  getProductShellQuery,
-  getProductVariantPresentationQuery
+  getProductQuery
 } from './queries/products'
 
 type QueryShape = {
@@ -19,13 +18,13 @@ type QueryShape = {
   maxDepth: number
 }
 
-test('PDP product concerns remain separated by GraphQL operation', () => {
+test('PDP product concerns are combined in one GraphQL operation', () => {
   const shellFields = rootFragmentFields(
-    getProductShellQuery,
+    getProductQuery,
     'productShell'
   )
   const presentationFields = rootFragmentFields(
-    getProductVariantPresentationQuery,
+    getProductQuery,
     'productVariantPresentation'
   )
 
@@ -53,13 +52,15 @@ test('PDP product concerns remain separated by GraphQL operation', () => {
     'variants'
   ])
 
-  assert.doesNotMatch(
-    getProductShellQuery,
-    /\bvariants\b|encodedVariant|adjacentVariants|bridgeFor/
+  assert.match(getProductQuery, /query getProduct\(/)
+  assert.match(getProductQuery, /\.\.\.product\b/)
+  assert.equal(
+    (getProductQuery.match(/product\(handle:/g) ?? []).length,
+    1
   )
   assert.doesNotMatch(
-    getProductVariantPresentationQuery,
-    /\bdescription\b|\bseo\b|\bcollections\b|\bweight(?:Unit)?\b|encodedVariant|adjacentVariants/
+    getProductQuery,
+    /encodedVariant|adjacentVariants|\bweight(?:Unit)?\b/
   )
   assert.match(getProductOptionsQuery, /encodedVariantExistence/)
   assert.match(getProductOptionsQuery, /encodedVariantAvailability/)
@@ -68,14 +69,9 @@ test('PDP product concerns remain separated by GraphQL operation', () => {
 })
 
 test('PDP product operations stay within their static shape budgets', () => {
-  assert.deepEqual(measureQueryShape(getProductShellQuery), {
-    bytes: 997,
-    expandedFields: 45,
-    maxDepth: 5
-  })
-  assert.deepEqual(measureQueryShape(getProductVariantPresentationQuery), {
-    bytes: 2707,
-    expandedFields: 70,
+  assert.deepEqual(measureQueryShape(getProductQuery), {
+    bytes: 3652,
+    expandedFields: 114,
     maxDepth: 11
   })
 })
