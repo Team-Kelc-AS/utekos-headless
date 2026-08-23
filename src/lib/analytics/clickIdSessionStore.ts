@@ -181,10 +181,9 @@ function getDefaultLocalStorage(): StorageLike | undefined {
 /**
  * URL click IDs win over freshly observed first-party cookie values,
  * which in turn win over session/local values for the same key.
- * Newly seen URL/cookie values are merged into sessionStorage and a
- * 90-day localStorage record so click attribution survives navigation
- * and the cross-domain Shopify checkout handoff. ScCid remains only in
- * module memory until the caller authorizes marketing persistence.
+ * Durable browser storage is only read or written when the caller has
+ * authorized marketing persistence. This keeps the pre-consent path
+ * limited to the current URL plus explicitly supplied volatile values.
  */
 export function resolveClickIds(
   pageUrl: string,
@@ -207,11 +206,15 @@ export function resolveClickIds(
     : {}),
     ...observedClickIds
   })
-  const fromSession = readPersistedClickIds(
-    sessionStorageLike,
-    CLICK_ID_SESSION_KEY
-  )
-  const fromLocal = readDurableClickIds(localStorageLike, nowMs)
+  const fromSession =
+    persist ?
+      readPersistedClickIds(
+        sessionStorageLike,
+        CLICK_ID_SESSION_KEY
+      )
+    : {}
+  const fromLocal =
+    persist ? readDurableClickIds(localStorageLike, nowMs) : {}
   const merged = {
     ...fromLocal,
     ...fromSession,
