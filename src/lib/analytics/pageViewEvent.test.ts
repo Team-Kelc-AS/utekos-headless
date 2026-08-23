@@ -4,6 +4,7 @@ import {
   buildPageViewDataLayerEvent,
   createCanonicalPageView,
   releaseCanonicalPageViewForConsent,
+  shouldReleaseCanonicalPageViewForConsent,
   resolvePageViewNavigation
 } from './pageViewEvent'
 
@@ -142,6 +143,44 @@ test('releases the captured page_view with the same identity after consent', () 
     fbclid: 'paid-click'
   })
   assert.equal(released.external_id, 'anon_123')
+})
+
+test('only releases a page_view that was captured before marketing consent', () => {
+  const captured = createCanonicalPageView({
+    environment: 'production',
+    eventId: 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7',
+    pageViewId: '0c955d6b-5e9c-47d0-b304-046df7f4bf7f',
+    eventTime: '2026-07-15T12:34:56.789Z',
+    pageUrl: 'https://utekos.no/',
+    pageTitle: 'Utekos',
+    consent
+  })
+  const grantedConsent = {
+    ...consent,
+    analytics: 'granted' as const,
+    marketing: 'granted' as const
+  }
+
+  assert.equal(
+    shouldReleaseCanonicalPageViewForConsent({
+      event: captured,
+      consent: grantedConsent
+    }),
+    true
+  )
+
+  const alreadyGranted = releaseCanonicalPageViewForConsent({
+    event: captured,
+    consent: grantedConsent
+  })
+
+  assert.equal(
+    shouldReleaseCanonicalPageViewForConsent({
+      event: alreadyGranted,
+      consent: grantedConsent
+    }),
+    false
+  )
 })
 
 test('uses document referrer for the first page and previous URL for SPA navigation', () => {

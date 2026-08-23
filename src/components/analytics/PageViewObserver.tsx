@@ -25,6 +25,7 @@ import {
 import {
   createCanonicalPageView,
   releaseCanonicalPageViewForConsent,
+  shouldReleaseCanonicalPageViewForConsent,
   type CanonicalPageView,
   type TrackingEnvironment
 } from '@/lib/analytics/pageViewEvent'
@@ -88,7 +89,14 @@ export function PageViewObserver({
           })
         }
 
-        if (pageView && !pageView.marketingReleaseScheduled) {
+        if (
+          pageView &&
+          !pageView.marketingReleaseScheduled &&
+          shouldReleaseCanonicalPageViewForConsent({
+            event: pageView.event,
+            consent
+          })
+        ) {
           pageView.marketingReleaseScheduled = true
 
           window.setTimeout(() => {

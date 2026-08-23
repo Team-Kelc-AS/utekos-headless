@@ -56,6 +56,11 @@ type ReleaseCanonicalPageViewInput = {
   externalId?: string
 }
 
+type ShouldReleaseCanonicalPageViewInput = Pick<
+  ReleaseCanonicalPageViewInput,
+  'event' | 'consent'
+>
+
 export type PageViewDataLayerEvent = {
   event: 'page_view'
   event_id: string
@@ -150,6 +155,15 @@ export function releaseCanonicalPageViewForConsent(
       { external_id: input.externalId }
     : {})
   })
+}
+
+export function shouldReleaseCanonicalPageViewForConsent(
+  input: ShouldReleaseCanonicalPageViewInput
+) {
+  return (
+    input.event.consent.marketing !== 'granted' &&
+    input.consent.marketing === 'granted'
+  )
 }
 
 export function buildPageViewDataLayerEvent(
