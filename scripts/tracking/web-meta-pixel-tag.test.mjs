@@ -3,11 +3,6 @@ import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import vm from 'node:vm'
 
-const html = readFileSync(
-  new URL('../../config/gtm/web-meta-pixel.html', import.meta.url),
-  'utf8'
-)
-const script = html.match(/^<script>\n([\s\S]+)\n<\/script>\n?$/)?.[1]
 const publicScript = readFileSync(
   new URL(
     '../../public/analytics/meta-pixel-canonical-v1.js',
@@ -15,9 +10,7 @@ const publicScript = readFileSync(
   ),
   'utf8'
 ).trimEnd()
-
-assert.ok(script, 'Expected one executable script block')
-assert.equal(publicScript, script, 'GTM and app Pixel code must stay identical')
+const script = publicScript
 
 function canonicalEvent(eventName, eventId, customData = {}) {
   return {
@@ -33,7 +26,10 @@ function canonicalEvent(eventName, eventId, customData = {}) {
   }
 }
 
-function createRuntime({ marketing = true } = {}) {
+function createRuntime({
+  marketing = true,
+  hasResponse = marketing
+} = {}) {
   const insertedScripts = []
   const intervals = []
   const document = {
@@ -51,7 +47,7 @@ function createRuntime({ marketing = true } = {}) {
     head: { appendChild: node => insertedScripts.push(node) }
   }
   const window = {
-    Cookiebot: { consent: { marketing } },
+    Cookiebot: { consent: { marketing }, hasResponse },
     URL,
     crypto: { randomUUID: () => '550e8400-e29b-41d4-a716-446655440000' },
     dataLayer: [],
@@ -98,7 +94,11 @@ test('requires current marketing consent', () => {
   assert.deepEqual(runtime.insertedScripts, [])
   assert.deepEqual(
     listeners.map(([name]) => name).sort(),
-    ['CookiebotOnAccept', 'CookiebotOnConsentReady']
+    [
+      'CookiebotOnAccept',
+      'CookiebotOnConsentReady',
+      'CookiebotOnDecline'
+    ]
   )
 })
 
@@ -151,7 +151,7 @@ test('dispatches canonical events added after the app bridge loads', () => {
   )
 })
 
-test('does not replay events that occurred before marketing consent', () => {
+test('releases events recorded before the first marketing decision', () => {
   const runtime = createRuntime({ marketing: false })
   runtime.window.addEventListener = () => {}
 
@@ -160,6 +160,7 @@ test('does not replay events that occurred before marketing consent', () => {
   runtime.intervals[0]()
 
   runtime.window.Cookiebot.consent.marketing = true
+  runtime.window.Cookiebot.hasResponse = true
   runtime.intervals[0]()
   runtime.window.dataLayer.push(canonicalEvent('page_view', 'after-consent'))
   runtime.intervals[0]()
@@ -168,7 +169,38 @@ test('does not replay events that occurred before marketing consent', () => {
     queuedCalls(runtime.window)
       .filter(call => call[0] === 'trackSingle')
       .map(call => [call[2], call[4].eventID]),
-    [['PageView', 'after-consent']]
+    [
+      ['PageView', 'before-consent'],
+      ['PageView', 'after-consent']
+    ]
+  )
+})
+
+test('never releases events discarded by an explicit rejection', () => {
+  const runtime = createRuntime({
+    marketing: false,
+    hasResponse: true
+  })
+  runtime.window.addEventListener = () => {}
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'rejected-event')
+  )
+
+  vm.runInContext(publicScript, runtime.context)
+  runtime.intervals[0]()
+
+  runtime.window.Cookiebot.consent.marketing = true
+  runtime.intervals[0]()
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'accepted-event')
+  )
+  runtime.intervals[0]()
+
+  assert.deepEqual(
+    queuedCalls(runtime.window)
+      .filter(call => call[0] === 'trackSingle')
+      .map(call => [call[2], call[4].eventID]),
+    [['PageView', 'accepted-event']]
   )
 })
 

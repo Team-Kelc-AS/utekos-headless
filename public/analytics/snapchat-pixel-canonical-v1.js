@@ -12,6 +12,7 @@
   })
 
   const trackedEventIds = new Set()
+  const discardedEventIds = new Set()
   let pixelLoaded = false
 
   function asRecord(value) {
@@ -29,11 +30,12 @@
     return loader?.dataset?.pixelId?.trim() || ''
   }
 
-  function hasMarketingConsent(event) {
-    return (
-      event?.consent?.marketing === 'granted' &&
-      window.Cookiebot?.consent?.marketing === true
-    )
+  function hasMarketingConsent() {
+    return window.Cookiebot?.consent?.marketing === true
+  }
+
+  function hasConsentDecision() {
+    return window.Cookiebot?.hasResponse === true
   }
 
   function isProductionEvent(event) {
@@ -179,11 +181,12 @@
     if (!asRecord(canonicalEvent)) return
     if (canonicalEvent.schema_version !== 1) return
     if (typeof canonicalEvent.event_id !== 'string') return
-    if (!hasMarketingConsent(canonicalEvent)) return
+    if (!hasMarketingConsent()) return
     if (!isProductionEvent(canonicalEvent)) return
 
     const eventName = EVENT_MAP[canonicalEvent.event_name]
     if (!eventName) return
+    if (discardedEventIds.has(canonicalEvent.event_id)) return
     if (trackedEventIds.has(canonicalEvent.event_id)) return
     if (!loadPixel()) return
 
@@ -197,7 +200,20 @@
 
   function processDataLayerEntry(entry) {
     if (!asRecord(entry)) return
-    processCanonicalEvent(entry.canonical_event)
+    const canonicalEvent = entry.canonical_event
+
+    if (hasMarketingConsent()) {
+      processCanonicalEvent(canonicalEvent)
+      return
+    }
+
+    if (
+      hasConsentDecision() &&
+      asRecord(canonicalEvent) &&
+      typeof canonicalEvent.event_id === 'string'
+    ) {
+      discardedEventIds.add(canonicalEvent.event_id)
+    }
   }
 
   function processExistingDataLayer() {

@@ -172,7 +172,10 @@ export async function sendSnapchatServerEvent(
     sanitized.status ??
     ''
   ).toUpperCase()
-  if (providerStatus !== 'SUCCESS') {
+  if (
+    providerStatus !== 'SUCCESS' &&
+    providerStatus !== 'VALID'
+  ) {
     throw new SnapchatConversionsApiHttpError(
       response.status,
       describeFailure(response.status, sanitized)

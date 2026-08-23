@@ -25,6 +25,7 @@
 
   const trackedEventIds = new Set()
   const pendingEventIds = new Set()
+  const discardedEventIds = new Set()
   let pinterestLoaded = false
 
   function getTagId() {
@@ -32,8 +33,12 @@
     return loader?.dataset?.tagId?.trim() || ''
   }
 
-  function hasMarketingConsent(canonicalEvent) {
-    return canonicalEvent?.consent?.marketing === 'granted'
+  function hasMarketingConsent() {
+    return window.Cookiebot?.consent?.marketing === true
+  }
+
+  function hasConsentDecision() {
+    return window.Cookiebot?.hasResponse === true
   }
 
   function isProductionEvent(canonicalEvent) {
@@ -133,12 +138,33 @@
       Array.isArray(canonicalEvent?.user_data?.email_sha256) ?
         canonicalEvent.user_data.email_sha256[0]
       : undefined
-    const externalId = await sha256(canonicalEvent.external_id)
+    const externalId = await sha256(
+      canonicalEvent.external_id ??
+        readCookie('utekos_external_id')
+    )
 
     return {
       ...(email ? { em: email } : {}),
       ...(externalId ? { external_id: externalId } : {})
     }
+  }
+
+  function readCookie(name) {
+    const prefix = `${name}=`
+    const parts = document.cookie ? document.cookie.split(';') : []
+
+    for (const rawPart of parts) {
+      const part = rawPart.trim()
+      if (!part.startsWith(prefix)) continue
+
+      try {
+        return decodeURIComponent(part.slice(prefix.length))
+      } catch {
+        return undefined
+      }
+    }
+
+    return undefined
   }
 
   function positiveInteger(value) {
@@ -271,12 +297,13 @@
     if (canonicalEvent.schema_version !== 1) return
     if (typeof canonicalEvent.event_id !== 'string') return
     if (typeof canonicalEvent.event_name !== 'string') return
-    if (!hasMarketingConsent(canonicalEvent)) return
+    if (!hasMarketingConsent()) return
     if (!isProductionEvent(canonicalEvent)) return
 
     const pinterestEventName =
       EVENT_MAP[canonicalEvent.event_name]
     if (!pinterestEventName) return
+    if (discardedEventIds.has(canonicalEvent.event_id)) return
     if (trackedEventIds.has(canonicalEvent.event_id)) return
     if (pendingEventIds.has(canonicalEvent.event_id)) return
 
@@ -300,7 +327,20 @@
 
   function processDataLayerEntry(entry) {
     if (!asRecord(entry)) return
-    void processCanonicalEvent(entry.canonical_event)
+    const canonicalEvent = entry.canonical_event
+
+    if (hasMarketingConsent()) {
+      void processCanonicalEvent(canonicalEvent)
+      return
+    }
+
+    if (
+      hasConsentDecision() &&
+      asRecord(canonicalEvent) &&
+      typeof canonicalEvent.event_id === 'string'
+    ) {
+      discardedEventIds.add(canonicalEvent.event_id)
+    }
   }
 
   function processExistingDataLayer() {
@@ -346,6 +386,7 @@
     onConsentChanged
   )
   window.addEventListener('CookiebotOnAccept', onConsentChanged)
+  window.addEventListener('CookiebotOnDecline', onConsentChanged)
 
   window.__utekosPinterestCanonical = Object.freeze({
     bridgeVersion: BRIDGE_VERSION,

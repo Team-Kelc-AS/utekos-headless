@@ -21,7 +21,10 @@ function memoryStorage(initial: Record<string, string> = {}) {
   }
 }
 
-function loadPixel(marketing = false) {
+function loadPixel(
+  marketing = false,
+  hasResponse = marketing
+) {
   const calls: unknown[][] = []
   const appendedScripts: Array<Record<string, unknown>> = []
   const listeners = new Map<string, () => void>()
@@ -40,7 +43,7 @@ function loadPixel(marketing = false) {
     }
   }
   const window = {
-    Cookiebot: { consent: { marketing } },
+    Cookiebot: { consent: { marketing }, hasResponse },
     addEventListener(name: string, listener: () => void) {
       listeners.set(name, listener)
     },
@@ -103,6 +106,42 @@ test('does not load or call Snapchat before marketing consent', () => {
 
   assert.equal(harness.calls.length, 0)
   assert.equal(harness.appendedScripts.length, 0)
+})
+
+test('releases the original pre-consent event after acceptance', () => {
+  const harness = loadPixel(false, false)
+  harness.window.dataLayer.push({
+    canonical_event: canonicalEvent('page_view', false)
+  })
+
+  assert.equal(harness.calls.length, 0)
+
+  harness.window.Cookiebot.consent.marketing = true
+  harness.window.Cookiebot.hasResponse = true
+  harness.listeners.get('CookiebotOnAccept')?.()
+
+  const trackCalls = harness.calls.filter(
+    call => call[0] === 'track'
+  )
+  assert.equal(trackCalls.length, 1)
+  assert.equal(trackCalls[0]?.[1], 'PAGE_VIEW')
+  assert.equal(
+    (trackCalls[0]?.[2] as Record<string, unknown>)
+      .client_dedup_id,
+    'event-page_view'
+  )
+})
+
+test('does not release an event after explicit rejection', () => {
+  const harness = loadPixel(false, true)
+  harness.window.dataLayer.push({
+    canonical_event: canonicalEvent('page_view', false)
+  })
+
+  harness.window.Cookiebot.consent.marketing = true
+  harness.listeners.get('CookiebotOnAccept')?.()
+
+  assert.equal(harness.calls.length, 0)
 })
 
 test('maps the four headless events once with canonical dedupe ids', () => {
@@ -181,6 +220,7 @@ test('stops calls and removes Utekos-owned Snapchat identifiers after consent wi
   )
 
   harness.window.Cookiebot.consent.marketing = false
+  harness.window.Cookiebot.hasResponse = true
   harness.listeners.get('CookiebotOnDecline')?.()
   harness.processCanonicalEvent(canonicalEvent('view_item'))
 

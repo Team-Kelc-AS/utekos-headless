@@ -79,6 +79,14 @@
     );
   }
 
+  function hasConsentDecision() {
+    return Boolean(w.Cookiebot && w.Cookiebot.hasResponse === true);
+  }
+
+  function discardPendingEvents() {
+    state.lastDataLayerIndex = (w.dataLayer || []).length;
+  }
+
   function ensureExternalId() {
     var existing = readCookie(EXTERNAL_ID_COOKIE);
 
@@ -403,18 +411,23 @@
     state.listening = true;
 
     var retry = function() {
-      if (!hasMarketingConsent()) return;
-      run(0);
+      if (hasMarketingConsent()) {
+        run(0);
+      } else if (hasConsentDecision()) {
+        discardPendingEvents();
+      }
     };
 
     w.addEventListener('CookiebotOnAccept', retry);
     w.addEventListener('CookiebotOnConsentReady', retry);
+    w.addEventListener('CookiebotOnDecline', retry);
   }
 
   function run(attempt) {
     state.timer = null;
     if (!hasMarketingConsent()) {
       scheduleConsentRetry();
+      if (hasConsentDecision()) discardPendingEvents();
       return;
     }
 
@@ -442,9 +455,11 @@
     state.poller = w.setInterval(function() {
       if (hasMarketingConsent()) {
         run(0);
-      } else {
-        // Never replay events that occurred before marketing consent.
-        state.lastDataLayerIndex = (w.dataLayer || []).length;
+      } else if (hasConsentDecision()) {
+        // Explicitly rejected events are discarded. Before the visitor
+        // answers, retain canonical rows so the original event ID and
+        // captured landing context can be released on acceptance.
+        discardPendingEvents();
       }
     }, 200);
   }

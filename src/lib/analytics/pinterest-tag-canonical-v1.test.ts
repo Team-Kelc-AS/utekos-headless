@@ -14,8 +14,12 @@ const CANONICAL_ITEM_ID =
   'gid://shopify/ProductVariant/123456789'
 const PINTEREST_PRODUCT_ID = '123456789'
 
-function loadTag() {
+function loadTag(
+  marketing = true,
+  hasResponse = marketing
+) {
   const tracked: unknown[][] = []
+  const listeners = new Map<string, () => void>()
   const pintrk = Object.assign(
     (...args: unknown[]) => {
       tracked.push(args)
@@ -23,6 +27,7 @@ function loadTag() {
     { queue: [] as unknown[], version: '3.0' }
   )
   const document = {
+    cookie: '',
     getElementById: () => ({
       dataset: { tagId: '2612345678901' }
     }),
@@ -34,10 +39,13 @@ function loadTag() {
     head: { appendChild() {} }
   }
   const window = {
+    Cookiebot: { consent: { marketing }, hasResponse },
     pintrk,
     crypto: webcrypto,
     dataLayer: [] as unknown[],
-    addEventListener() {},
+    addEventListener(name: string, listener: () => void) {
+      listeners.set(name, listener)
+    },
     document
   }
   const sandbox = { TextEncoder, Uint8Array, window, document }
@@ -53,8 +61,55 @@ function loadTag() {
     }
   ).__utekosPinterestCanonical.processCanonicalEvent
 
-  return { tracked, processCanonicalEvent }
+  return { listeners, tracked, processCanonicalEvent, window }
 }
+
+function canonicalPageView(marketing = false) {
+  return {
+    schema_version: 1,
+    event_id: 'pending-pinterest-event',
+    event_name: 'view_category',
+    environment: 'production',
+    consent: { marketing: marketing ? 'granted' : 'denied' },
+    custom_data: { category_name: 'Uteklær' }
+  }
+}
+
+test('releases the original pre-consent event after acceptance', async () => {
+  const harness = loadTag(false, false)
+  harness.window.dataLayer.push({
+    canonical_event: canonicalPageView(false)
+  })
+
+  assert.equal(harness.tracked.length, 0)
+
+  harness.window.Cookiebot.consent.marketing = true
+  harness.window.Cookiebot.hasResponse = true
+  harness.listeners.get('CookiebotOnAccept')?.()
+  await new Promise(resolve => setImmediate(resolve))
+
+  const trackCall = harness.tracked.find(
+    call => call[0] === 'track'
+  )
+  assert.equal(trackCall?.[1], 'ViewCategory')
+  assert.equal(
+    (trackCall?.[2] as Record<string, unknown>)?.event_id,
+    'pending-pinterest-event'
+  )
+})
+
+test('does not release an event after explicit rejection', async () => {
+  const harness = loadTag(false, true)
+  harness.window.dataLayer.push({
+    canonical_event: canonicalPageView(false)
+  })
+
+  harness.window.Cookiebot.consent.marketing = true
+  harness.listeners.get('CookiebotOnAccept')?.()
+  await new Promise(resolve => setImmediate(resolve))
+
+  assert.equal(harness.tracked.length, 0)
+})
 
 test('Pinterest Tag sends matching product identity and Enhanced Match', async () => {
   const { tracked, processCanonicalEvent } = loadTag()

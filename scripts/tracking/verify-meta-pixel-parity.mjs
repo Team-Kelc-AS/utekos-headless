@@ -246,16 +246,6 @@ function hasExpectedFacebookEvents(events, expectedEvents) {
   )
 }
 
-function countFacebookTrForPath(requests, pathname, offset = 0) {
-  return selectParityFacebookEvents(
-    requests
-      .slice(offset)
-      .filter(request => isFacebookTrRequest(request.url))
-      .map(parseFacebookEvent),
-    pathname
-  ).length
-}
-
 async function acceptAllConsent(page) {
   const selectors = [
     '#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll',
@@ -352,8 +342,8 @@ async function readPixelSentKeys(page) {
 
 /**
  * Soft-navigate within the same JS context so Cookiebot marketing
- * consent and the Pixel poller stay live. Production does not replay
- * pre-consent dataLayer entries; full reload races Cookiebot restore.
+ * consent and the Pixel poller stay live. Full reload races Cookiebot
+ * restore and is unsuitable for the consent-release smoke.
  *
  * Prefer Next App Router `window.next.router.push` — plain <a>.click()
  * often hard-navigates and remounts the document.
@@ -447,56 +437,6 @@ export async function softClientNavigate(page, pathname, searchParams = {}) {
   return result
 }
 
-/**
- * Generate NEW post-consent canonical events for Pixel to dispatch.
- *
- * Full reload races Cookiebot restore vs the Pixel poller. Soft-nav
- * away/back remounts PageView but Next App Router can restore cached
- * product trees so view_item's useRef dedupe suppresses ViewContent.
- * Re-pushing cloned pre-consent entries with fresh UUIDs stays in the
- * same consented JS context and matches the Pixel contract:
- * new dataLayer rows after consent → /tr/.
- */
-async function generatePostConsentSurfaceEvents(page, surface, preConsentEvents) {
-  const expectedCanonicalNames = surface.expectedEvents.map(
-    metaName => CANONICAL_EVENT_NAMES[metaName]
-  )
-
-  await page.evaluate(
-    ({ expectedCanonicalNames: names, sources }) => {
-      const dataLayer = globalThis.dataLayer || []
-      globalThis.dataLayer = dataLayer
-
-      for (const name of names) {
-        const source = sources.find(entry => entry.event === name)
-        if (!source?.raw) {
-          throw new Error(
-            `Missing pre-consent dataLayer source for ${name}`
-          )
-        }
-
-        const eventId = crypto.randomUUID()
-        const clone = structuredClone(source.raw)
-        clone.event_id = eventId
-        if (
-          clone.canonical_event &&
-          typeof clone.canonical_event === 'object'
-        ) {
-          clone.canonical_event.event_id = eventId
-          clone.canonical_event.page_url = location.href
-        }
-        dataLayer.push(clone)
-      }
-    },
-    {
-      expectedCanonicalNames,
-      sources: preConsentEvents
-    }
-  )
-
-  await page.waitForTimeout(1_000)
-}
-
 async function waitUntil(predicate, timeoutMs = 20_000, label = 'condition') {
   const deadline = Date.now() + timeoutMs
 
@@ -585,32 +525,14 @@ async function verifySurface(browser, userAgent, surface) {
       .map(event => event.eventId)
       .filter(Boolean)
 
-    // Phase B — grant marketing consent; pre-consent events must not replay
+    // Phase B — grant marketing consent. The bridge must release the
+    // original pending rows, preserving their canonical event IDs.
+    const consentRequestOffset = requests.length
+    const consentResponseOffset = responses.length
     const consentSelector = await acceptAllConsent(page)
     await waitForMarketingConsent(page)
     await waitForPixelInitialized(page)
     await waitForPixelTransportReady(page)
-
-    const sentAfterConsent = await readPixelSentKeys(page)
-    const facebookTrAfterConsent = countFacebookTrForPath(
-      requests,
-      surface.path
-    )
-    const preConsentIdsReplayed = preConsentEventIds.filter(eventId =>
-      sentAfterConsent.some(key => key.endsWith(`:${eventId}`))
-    )
-    const noPreConsentReplay =
-      preConsentIdsReplayed.length === 0 &&
-      facebookTrAfterConsent === 0
-
-    // Phase C — generate NEW post-consent events via SPA soft navigation
-    const postConsentRequestOffset = requests.length
-    const postConsentResponseOffset = responses.length
-    await generatePostConsentSurfaceEvents(
-      page,
-      surface,
-      preConsentEvents
-    )
 
     await page.waitForFunction(
       names =>
@@ -626,7 +548,7 @@ async function verifySurface(browser, userAgent, surface) {
       () => {
         const facebook = selectParityFacebookEvents(
           requests
-            .slice(postConsentRequestOffset)
+            .slice(consentRequestOffset)
             .filter(request => isFacebookTrRequest(request.url))
             .map(parseFacebookEvent),
           surface.path
@@ -640,6 +562,14 @@ async function verifySurface(browser, userAgent, surface) {
       `Meta /tr/ events (${surface.expectedEvents.join(', ')}) on ${surface.path}`
     )
     await page.waitForTimeout(2_000)
+
+    const sentAfterConsent = await readPixelSentKeys(page)
+    const preConsentIdsReleased = preConsentEventIds.filter(eventId =>
+      sentAfterConsent.some(key => key.endsWith(`:${eventId}`))
+    )
+    const preConsentReleaseComplete =
+      preConsentEventIds.length === surface.expectedEvents.length &&
+      preConsentIdsReleased.length === preConsentEventIds.length
 
     const cookies = (await context.cookies()).filter(cookie =>
       META_COOKIE_NAMES.includes(cookie.name)
@@ -657,32 +587,14 @@ async function verifySurface(browser, userAgent, surface) {
           .digest('hex')
       : null
 
-    // Prefer post-consent event IDs (exclude the pre-consent snapshot).
-    const allPathEvents = await readCanonicalEventsForPath(
-      page,
-      surface.path
-    )
-    const postConsentDataLayerEvents = latestCanonicalEventsByName(
-      allPathEvents.filter(
-        event =>
-          event.eventId &&
-          !preConsentEventIds.includes(event.eventId)
-      )
-    )
-    const dataLayerEvents =
-      (postConsentDataLayerEvents.length > 0 ?
-        postConsentDataLayerEvents
-      : latestCanonicalEventsByName(allPathEvents)
-      ).map(entry => {
-        const event = { ...entry }
-        delete event.raw
-        return event
-      })
+    const dataLayerEvents = preConsentEvents.map(entry => {
+      const event = { ...entry }
+      delete event.raw
+      return event
+    })
 
-    const postConsentRequests = requests.slice(postConsentRequestOffset)
-    const postConsentResponses = responses.slice(
-      postConsentResponseOffset
-    )
+    const postConsentRequests = requests.slice(consentRequestOffset)
+    const postConsentResponses = responses.slice(consentResponseOffset)
     const facebookEvents = selectParityFacebookEvents(
       postConsentRequests
         .filter(request => isFacebookTrRequest(request.url))
@@ -771,7 +683,7 @@ async function verifySurface(browser, userAgent, surface) {
       noMetaBeforeConsent:
         beforeCookies.length === 0 && beforeMetaRequests === 0,
       noMetaCspViolations: metaCspViolations.length === 0,
-      noPreConsentReplay,
+      preConsentReleaseComplete,
       noUnexpectedPixelEvents:
         unexpectedFacebookEvents.length === 0,
       providerResponses:
@@ -810,7 +722,7 @@ async function verifySurface(browser, userAgent, surface) {
       openBridgeStatuses,
       pageErrors,
       preConsentEventIds,
-      preConsentIdsReplayed,
+      preConsentIdsReleased,
       requestFailures,
       runtime,
       surface: surface.name,

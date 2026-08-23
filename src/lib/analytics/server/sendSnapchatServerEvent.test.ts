@@ -107,6 +107,27 @@ test('sends exactly one event and stores only a sanitized receipt', async () => 
   )
 })
 
+test('accepts the documented HTTP 200 VALID response', async () => {
+  await withHarness(
+    new Response(
+      JSON.stringify({
+        status: 'VALID',
+        reason: 'Events have been processed successfully.'
+      }),
+      { status: 200 }
+    ),
+    async () => {
+      const result = await sendSnapchatServerEvent(event)
+
+      assert.deepEqual(result, {
+        status: 'sent',
+        acceptance: 'accepted_unverified',
+        response: { status: 'VALID' }
+      })
+    }
+  )
+})
+
 test('never includes the token or raw response in provider errors', async () => {
   await withHarness(
     new Response(
