@@ -21,17 +21,23 @@ const bootstrap = `
   state.observedAtMs = state.observedAtMs && typeof state.observedAtMs === 'object'
     ? state.observedAtMs
     : {};
+  state.decision = state.decision === 'granted' || state.decision === 'denied'
+    ? state.decision
+    : 'pending';
   w[KEY] = state;
 
-  function clear() {
+  function deny() {
     state.clickIds = {};
     state.observedAtMs = {};
+    state.decision = 'denied';
   }
 
   function capture() {
     var params;
     var now = Date.now();
     var index;
+
+    if (state.decision === 'denied') return;
 
     try {
       params = new w.URLSearchParams(w.location.search || '');
@@ -76,18 +82,19 @@ const bootstrap = `
       cookiebot.consent &&
       cookiebot.consent.marketing === true
     ) {
+      state.decision = 'granted';
       capture();
       return;
     }
 
-    clear();
+    deny();
   }
 
   capture();
 
   w.addEventListener('CookiebotOnConsentReady', reconcileConsent);
   w.addEventListener('CookiebotOnAccept', reconcileConsent);
-  w.addEventListener('CookiebotOnDecline', clear);
+  w.addEventListener('CookiebotOnDecline', deny);
 })(window);
 `
 
