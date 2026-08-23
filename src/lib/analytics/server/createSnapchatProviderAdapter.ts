@@ -177,6 +177,7 @@ export function createSnapchatProviderAdapter<
     isRetryable: isRetryableSnapchatError,
     key: input.key,
     projectReceipt: receipt => ({
+      httpStatus: receipt.result.httpStatus,
       requestId: receipt.result.response.requestId ?? null,
       response: {
         acceptance: receipt.result.acceptance,

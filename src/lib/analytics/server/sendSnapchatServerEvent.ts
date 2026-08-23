@@ -14,6 +14,7 @@ export type SnapchatSendResult =
   | {
       status: 'sent'
       acceptance: 'accepted_unverified'
+      httpStatus: number
       response: SnapchatConversionsApiResponse
     }
 
@@ -185,6 +186,7 @@ export async function sendSnapchatServerEvent(
   return {
     status: 'sent',
     acceptance: 'accepted_unverified',
+    httpStatus: response.status,
     response: sanitized
   }
 }

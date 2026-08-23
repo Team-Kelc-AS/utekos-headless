@@ -215,13 +215,14 @@ test('projects provider acceptance into accepted_unverified fields', async () =>
   )
   assert.match(
     fake.calls[0]?.query ?? '',
-    /and attempt_count = \$6/i
+    /and attempt_count = \$7/i
   )
   assert.deepEqual(fake.calls[0]?.parameters, [
     '7bcd24a4-190c-4eca-a834-5c9854bd54ea',
     { accepted: 1 },
     'request-1',
     { events_received: 1 },
+    null,
     125,
     1
   ])

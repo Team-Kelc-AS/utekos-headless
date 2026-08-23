@@ -20,6 +20,7 @@ export type MetaConversionsApiConfig = {
 type MetaEventResponse = {
   events_received: number
   fbtrace_id?: string
+  http_status?: number
   id?: string
   messages?: string[]
   num_processed_entries?: number
@@ -113,6 +114,7 @@ export type MetaSendResult = {
   datasetId?: string
   eventsReceived: number
   fbTraceId?: string
+  httpStatus?: number
   messages: string[]
   processedEntries?: number
 }
@@ -177,7 +179,10 @@ export function createMetaHttpService(
           )
         }
 
-        return metaEventResponseSchema.parse(responseBody)
+        return {
+          ...metaEventResponseSchema.parse(responseBody),
+          http_status: response.status
+        }
       } catch (error) {
         if (controller.signal.aborted) {
           throw new MetaConversionsApiTimeoutError(timeoutMs)
@@ -273,6 +278,9 @@ export async function sendMetaServerEvent(
     ...(response.fbtrace_id ?
       { fbTraceId: response.fbtrace_id }
     : {}),
+    ...(response.http_status === undefined ?
+      {}
+    : { httpStatus: response.http_status }),
     ...(response.num_processed_entries === undefined ?
       {}
     : { processedEntries: response.num_processed_entries })

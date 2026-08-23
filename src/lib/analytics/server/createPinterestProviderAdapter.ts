@@ -147,6 +147,7 @@ export function createPinterestProviderAdapter<
     isRetryable: isRetryablePinterestError,
     key: input.key,
     projectReceipt: receipt => ({
+      httpStatus: receipt.result.httpStatus,
       requestId: null,
       response: receipt.result,
       validationResult: {

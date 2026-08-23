@@ -35,6 +35,7 @@ test('configures one Meta request and projects its receipt', async () => {
     execute: async () => ({
       events_received: 1,
       fbtrace_id: 'trace-1',
+      http_status: 200,
       id: 'dataset-1',
       messages: ['accepted'],
       num_processed_entries: 1
@@ -84,6 +85,7 @@ test('configures one Meta request and projects its receipt', async () => {
     datasetId: 'dataset-1',
     eventsReceived: 1,
     fbTraceId: 'trace-1',
+    httpStatus: 200,
     messages: ['accepted'],
     processedEntries: 1
   })
@@ -149,7 +151,8 @@ test('uses the SDK HTTP override to send one validated request', async () => {
   })
   assert.deepEqual(response, {
     events_received: 1,
-    fbtrace_id: 'trace-1'
+    fbtrace_id: 'trace-1',
+    http_status: 200
   })
 })
 

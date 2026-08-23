@@ -149,15 +149,15 @@ const ACCEPTED_UNVERIFIED_QUERY = `
     request_id = $3,
     validation_result = $4::jsonb,
     response_semantics = 'provider_accepted_unverified',
-    http_status = null,
+    http_status = $5,
     last_error = null,
     next_attempt_at = null,
-    latency_ms = $5,
+    latency_ms = $6,
     processed_at = now(),
     updated_at = now()
   where id = $1::uuid
     and status = 'processing'
-    and attempt_count = $6
+    and attempt_count = $7
   returning id::text as id
 `
 
@@ -335,6 +335,7 @@ export function createPostgresProviderOutboxDatabase<
         receipt.response,
         receipt.requestId,
         receipt.validationResult,
+        receipt.httpStatus ?? null,
         outcome.latencyMs,
         outcome.attemptCount
       ])

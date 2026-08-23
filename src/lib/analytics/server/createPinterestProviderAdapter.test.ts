@@ -16,6 +16,7 @@ test('projects Pinterest CAPI counts into the provider receipt', () => {
     eventName: 'view_item',
     provider: 'pinterest' as const,
     result: {
+      httpStatus: 200,
       status: 'sent' as const,
       response: {
         num_events_processed: 1,
@@ -31,6 +32,7 @@ test('projects Pinterest CAPI counts into the provider receipt', () => {
 
   const projection = adapter.projectReceipt(receipt)
 
+  assert.equal(projection.httpStatus, 200)
   assert.equal(projection.requestId, null)
   assert.deepEqual(projection.validationResult, {
     events_processed: 1,

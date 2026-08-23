@@ -35,6 +35,7 @@ test('projects Microsoft response evidence into the provider receipt', () => {
 
   const projection = adapter.projectReceipt(receipt)
 
+  assert.equal(projection.httpStatus, 200)
   assert.equal(projection.requestId, 'request-123')
   assert.deepEqual(projection.validationResult, {
     events_received: 1,

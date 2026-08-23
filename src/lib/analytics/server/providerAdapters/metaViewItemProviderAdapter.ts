@@ -102,6 +102,7 @@ export const metaViewItemProviderAdapter: ProviderAdapter<
   isRetryable: isRetryableMetaError,
   key: 'meta:view_item',
   projectReceipt: receipt => ({
+    httpStatus: receipt.result.httpStatus ?? null,
     requestId: receipt.result.fbTraceId ?? null,
     response: receipt.result,
     validationResult: {

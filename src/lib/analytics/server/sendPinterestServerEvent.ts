@@ -15,7 +15,11 @@ export type PinterestConversionsApiResponse = {
 
 export type PinterestSendResult =
   | { status: 'disabled' }
-  | { status: 'sent'; response: PinterestConversionsApiResponse }
+  | {
+      status: 'sent'
+      httpStatus: number
+      response: PinterestConversionsApiResponse
+    }
 
 export class PinterestConversionsApiConfigError extends Error {
   readonly reason: 'disabled' | 'missing_capi_token'
@@ -137,5 +141,9 @@ export async function sendPinterestServerEvent(
     )
   }
 
-  return { status: 'sent', response: payload }
+  return {
+    status: 'sent',
+    httpStatus: response.status,
+    response: payload
+  }
 }

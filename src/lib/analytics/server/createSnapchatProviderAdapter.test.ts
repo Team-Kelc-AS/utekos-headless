@@ -78,6 +78,29 @@ test('retries only network errors, 408, 429, and 5xx responses', () => {
   }
 })
 
+test('projects Snap transport and VALID response evidence separately', () => {
+  const projection = adapter.projectReceipt({
+    eventId: 'event-1',
+    eventName: 'page_view',
+    provider: 'snapchat',
+    result: {
+      acceptance: 'accepted_unverified',
+      httpStatus: 200,
+      response: {
+        requestId: 'request-1',
+        status: 'VALID'
+      },
+      status: 'sent'
+    }
+  })
+
+  assert.equal(projection.httpStatus, 200)
+  assert.equal(projection.requestId, 'request-1')
+  assert.deepEqual(projection.validationResult, {
+    acceptance: 'accepted_unverified'
+  })
+})
+
 test('registers Snapchat without exposing its token to browser code', async () => {
   assert.equal(adapter.provider, 'snapchat')
   assert.equal(adapter.key, 'snapchat:page_view')

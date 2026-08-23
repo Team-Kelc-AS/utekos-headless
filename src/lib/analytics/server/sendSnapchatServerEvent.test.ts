@@ -90,6 +90,7 @@ test('sends exactly one event and stores only a sanitized receipt', async () => 
       assert.deepEqual(result, {
         status: 'sent',
         acceptance: 'accepted_unverified',
+        httpStatus: 200,
         response: {
           requestId: 'snap-request-1',
           requestStatus: 'SUCCESS'
@@ -122,6 +123,7 @@ test('accepts the documented HTTP 200 VALID response', async () => {
       assert.deepEqual(result, {
         status: 'sent',
         acceptance: 'accepted_unverified',
+        httpStatus: 200,
         response: { status: 'VALID' }
       })
     }

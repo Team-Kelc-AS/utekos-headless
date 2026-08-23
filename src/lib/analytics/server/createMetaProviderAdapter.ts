@@ -105,6 +105,7 @@ export function createMetaProviderAdapter<
     isRetryable: isRetryableMetaError,
     key: input.key,
     projectReceipt: receipt => ({
+      httpStatus: receipt.result.httpStatus ?? null,
       requestId: receipt.result.fbTraceId ?? null,
       response: receipt.result,
       validationResult: {

@@ -131,6 +131,7 @@ export function createMicrosoftUetProviderAdapter<
     isRetryable: isRetryableMicrosoftUetError,
     key: input.key,
     projectReceipt: receipt => ({
+      httpStatus: receipt.result.status,
       requestId: receipt.result.requestId,
       response: receipt.result,
       validationResult: {

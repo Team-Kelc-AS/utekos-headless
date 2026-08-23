@@ -15,6 +15,7 @@ export type ProviderAdapterKey =
   `${ProviderId}:${ImplementedCanonicalEventName}`
 
 export type ProviderReceiptProjection = {
+  httpStatus?: number | null
   requestId: string | null
   response: unknown
   validationResult: unknown
