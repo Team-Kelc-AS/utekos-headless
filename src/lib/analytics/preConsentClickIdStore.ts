@@ -11,10 +11,23 @@ export const PRE_CONSENT_CLICK_ID_KEYS = [
 export type PreConsentClickIdKey =
   (typeof PRE_CONSENT_CLICK_ID_KEYS)[number]
 
+export type PreConsentClickIdDecision =
+  | 'pending'
+  | 'granted'
+  | 'denied'
+
 export type PreConsentClickIdSnapshot = {
   clickIds: Partial<Record<PreConsentClickIdKey, string>>
   observedAtMs: Partial<Record<PreConsentClickIdKey, number>>
+  decision: PreConsentClickIdDecision
 }
+
+const QUERY_TO_CANONICAL_KEY = [
+  ['fbclid', 'fbclid'],
+  ['msclkid', 'msclkid'],
+  ['epik', 'epik'],
+  ['ScCid', 'sc_click_id']
+] as const
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(
@@ -25,6 +38,22 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function readScopeValue(scope: unknown) {
   if (!isRecord(scope)) return undefined
   return scope[PRE_CONSENT_CLICK_ID_GLOBAL_KEY]
+}
+
+function parseDecision(value: unknown): PreConsentClickIdDecision {
+  return value === 'granted' || value === 'denied' ? value : 'pending'
+}
+
+function ensureRawState(scope: Record<string, unknown>) {
+  const existing = scope[PRE_CONSENT_CLICK_ID_GLOBAL_KEY]
+  const state = isRecord(existing) ? existing : {}
+
+  if (!isRecord(state.clickIds)) state.clickIds = {}
+  if (!isRecord(state.observedAtMs)) state.observedAtMs = {}
+  state.decision = parseDecision(state.decision)
+  scope[PRE_CONSENT_CLICK_ID_GLOBAL_KEY] = state
+
+  return state
 }
 
 export function readPreConsentClickIdSnapshot(
@@ -57,9 +86,11 @@ export function readPreConsentClickIdSnapshot(
     }
   }
 
-  return Object.keys(clickIds).length > 0 ?
-      { clickIds, observedAtMs }
-    : undefined
+  return {
+    clickIds,
+    observedAtMs,
+    decision: parseDecision(raw.decision)
+  }
 }
 
 export function readPreConsentClickIds(
@@ -70,6 +101,45 @@ export function readPreConsentClickIds(
   }
 }
 
+export function setPreConsentClickIdDecision(
+  decision: PreConsentClickIdDecision,
+  scope: unknown = globalThis
+): void {
+  if (!isRecord(scope)) return
+  const state = ensureRawState(scope)
+  state.decision = decision
+}
+
+export function capturePreConsentClickIdsFromUrl(
+  pageUrl: string,
+  scope: unknown = globalThis,
+  nowMs: number = Date.now()
+): void {
+  if (!isRecord(scope)) return
+
+  const state = ensureRawState(scope)
+  if (state.decision === 'denied') return
+
+  let searchParams: URLSearchParams
+
+  try {
+    searchParams = new URL(pageUrl).searchParams
+  } catch {
+    return
+  }
+
+  const clickIds = state.clickIds as Record<string, unknown>
+  const observedAtMs = state.observedAtMs as Record<string, unknown>
+
+  for (const [queryKey, canonicalKey] of QUERY_TO_CANONICAL_KEY) {
+    const value = searchParams.get(queryKey)
+    if (typeof value !== 'string' || !value.trim()) continue
+
+    clickIds[canonicalKey] = value
+    observedAtMs[canonicalKey] = nowMs
+  }
+}
+
 export function clearPreConsentClickIds(
   scope: unknown = globalThis
 ): void {
@@ -77,6 +147,7 @@ export function clearPreConsentClickIds(
 
   scope[PRE_CONSENT_CLICK_ID_GLOBAL_KEY] = {
     clickIds: {},
-    observedAtMs: {}
+    observedAtMs: {},
+    decision: 'denied'
   }
 }
