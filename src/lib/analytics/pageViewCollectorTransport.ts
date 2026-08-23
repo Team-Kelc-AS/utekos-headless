@@ -1,5 +1,6 @@
 import {
   extractBrowserIds,
+  extractClickIds,
   getConsentSnapshot,
   type CookiebotConsent
 } from './pageViewClientContext'
@@ -66,6 +67,13 @@ export function prepareCanonicalPageViewForCollector(
     hasMarketingConsent ?
       extractBrowserIds(cookieHeader, consent)
     : undefined
+  const clickId =
+    hasMarketingConsent ?
+      {
+        ...(event.click_id ?? {}),
+        ...(extractClickIds(event.page_url, cookieHeader, true) ?? {})
+      }
+    : {}
 
   const baseEvent = { ...event }
 
@@ -81,9 +89,7 @@ export function prepareCanonicalPageViewForCollector(
     ...baseEvent,
     consent,
     ...(browserId ? { browser_id: browserId } : {}),
-    ...(hasMarketingConsent && event.click_id ?
-      { click_id: event.click_id }
-    : {}),
+    ...(Object.keys(clickId).length > 0 ? { click_id: clickId } : {}),
     ...(hasMarketingConsent && event.external_id ?
       { external_id: event.external_id }
     : {}),
