@@ -86,21 +86,20 @@
     return lineItems.reduce(function (products, lineItem) {
       var quantity = Number(lineItem && lineItem.quantity)
       var variant = lineItem && lineItem.variant
-      var product = variant && variant.product
-      var productId = numericShopifyId(
-        product && product.id,
-        'Product'
+      var variantId = numericShopifyId(
+        variant && variant.id,
+        'ProductVariant'
       )
 
       if (
-        !productId ||
+        !variantId ||
         !Number.isInteger(quantity) ||
         quantity <= 0
       ) {
         return products
       }
 
-      products.push({ id: productId, quantity: quantity })
+      products.push({ id: variantId, quantity: quantity })
       return products
     }, [])
   }

@@ -12,7 +12,8 @@ export default function robots(): MetadataRoute.Robots {
           '/videos/',
           '/api/google/feed',
           '/klarna-feed.xml',
-          '/pinterest-catalog.tsv'
+          '/pinterest-catalog.tsv',
+          '/snapchat-catalog.tsv'
         ],
         disallow: ['/cart/', '/account/', '/api/']
       },
@@ -22,7 +23,8 @@ export default function robots(): MetadataRoute.Robots {
           '/',
           '/api/google/feed',
           '/klarna-feed.xml',
-          '/pinterest-catalog.tsv'
+          '/pinterest-catalog.tsv',
+          '/snapchat-catalog.tsv'
         ],
         disallow: ['/cart/', '/account/', '/api/', '/videos/']
       }

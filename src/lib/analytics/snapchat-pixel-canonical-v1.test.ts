@@ -87,6 +87,7 @@ function canonicalEvent(eventName: string, marketing = true) {
         {
           item_id: 'gid://shopify/ProductVariant/123',
           product_id: 'gid://shopify/Product/987654321',
+          variant_id: 'gid://shopify/ProductVariant/123',
           quantity: 2
         }
       ]
@@ -145,7 +146,7 @@ test('maps the four headless events once with canonical dedupe ids', () => {
   )
   assert.deepEqual(
     (trackCalls[1]?.[2] as Record<string, unknown>).item_ids,
-    ['987654321']
+    ['123']
   )
   assert.equal(
     JSON.stringify(trackCalls).includes('must-not-be-forwarded'),

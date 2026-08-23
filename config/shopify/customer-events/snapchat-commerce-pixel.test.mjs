@@ -76,6 +76,7 @@ function checkoutEvent(overrides = {}) {
           {
             quantity: 2,
             variant: {
+              id: 'gid://shopify/ProductVariant/123456789',
               product: { id: 'gid://shopify/Product/987654321' }
             }
           }
@@ -118,7 +119,7 @@ test('sends ADD_BILLING once with Shopify event id deduplication', () => {
   assert.equal(calls.length, 1)
   assert.equal(calls[0][2].client_dedup_id, event.id)
   assert.deepEqual(Array.from(calls[0][2].item_ids), [
-    '987654321'
+    '123456789'
   ])
   assert.equal(calls[0][2].number_items, 2)
   assert.equal(calls[0][2].currency, 'NOK')
@@ -173,13 +174,16 @@ test('stops checkout calls after marketing consent is revoked', () => {
   assert.equal(harness.appendedScripts.length, 0)
 })
 
-test('requires numeric Shopify Product and Order ids', () => {
+test('requires numeric Shopify ProductVariant and Order ids', () => {
   const harness = createHarness(true)
   const event = checkoutEvent({
     lineItems: [
       {
         quantity: 1,
-        variant: { product: { id: 'invalid-product-id' } }
+        variant: {
+          id: 'invalid-variant-id',
+          product: { id: 'gid://shopify/Product/987654321' }
+        }
       }
     ],
     order: { id: 'invalid-order-id' }

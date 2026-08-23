@@ -99,10 +99,14 @@
       : undefined
   }
 
-  function productId(item) {
-    if (typeof item?.product_id !== 'string') return undefined
-    const value = item.product_id.trim()
-    const gidMatch = /^gid:\/\/shopify\/Product\/([0-9]+)$/.exec(
+  function variantId(item) {
+    const candidate =
+      typeof item?.variant_id === 'string' ? item.variant_id
+      : typeof item?.item_id === 'string' ? item.item_id
+      : undefined
+    if (!candidate) return undefined
+    const value = candidate.trim()
+    const gidMatch = /^gid:\/\/shopify\/ProductVariant\/([0-9]+)$/.exec(
       value
     )
     if (gidMatch) return gidMatch[1]
@@ -115,7 +119,7 @@
       Array.isArray(customData.items) ?
         customData.items.filter(asRecord)
       : []
-    const itemIds = items.map(productId).filter(Boolean)
+    const itemIds = items.map(variantId).filter(Boolean)
     const value = finiteNumber(customData.value)
     const currency =
       (

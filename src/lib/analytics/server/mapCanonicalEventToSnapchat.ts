@@ -118,15 +118,17 @@ function readItems(customData: UnknownRecord) {
 function mapContent(
   item: UnknownRecord
 ): SnapchatContent | null {
-  const productId = readString(item, 'product_id')
-  if (!productId) return null
+  const variantId =
+    readString(item, 'variant_id') ??
+    readString(item, 'item_id')
+  if (!variantId) return null
 
-  const gidMatch = /^gid:\/\/shopify\/Product\/([0-9]+)$/.exec(
-    productId
+  const gidMatch = /^gid:\/\/shopify\/ProductVariant\/([0-9]+)$/.exec(
+    variantId
   )
   const id =
     gidMatch?.[1] ??
-    (/^[0-9]+$/.test(productId) ? productId : undefined)
+    (/^[0-9]+$/.test(variantId) ? variantId : undefined)
   if (!id) return null
 
   const itemPrice =

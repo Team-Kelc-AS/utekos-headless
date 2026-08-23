@@ -45,6 +45,7 @@ function commerceData(overrides: Record<string, unknown> = {}) {
       {
         item_id: 'gid://shopify/ProductVariant/123456789',
         product_id: 'gid://shopify/Product/987654321',
+        variant_id: 'gid://shopify/ProductVariant/123456789',
         quantity: 2,
         unit_price: 799
       }
@@ -77,23 +78,23 @@ test('maps all six canonical events to Snapchat standard events', () => {
   }
 })
 
-test('uses Product IDs and maps complete commerce data', () => {
+test('uses variant IDs that match the Snapchat catalog', () => {
   const mapped = mapCanonicalEventToSnapchat(
     canonicalEvent('view_item', { custom_data: commerceData() })
   )
 
   assert.deepEqual(mapped?.custom_data, {
-    content_ids: ['987654321'],
+    content_ids: ['123456789'],
     content_type: 'product',
     contents: [
-      { id: '987654321', item_price: 799, quantity: 2 }
+      { id: '123456789', item_price: 799, quantity: 2 }
     ],
     currency: 'NOK',
     num_items: 2,
     value: 1598
   })
   assert.equal(
-    JSON.stringify(mapped).includes('ProductVariant/123456789'),
+    JSON.stringify(mapped).includes('987654321'),
     false
   )
 })
