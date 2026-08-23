@@ -2,6 +2,7 @@ import 'server-only'
 
 import Script from 'next/script'
 import { SITE_URL } from '@/constants'
+import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from './googleTagManagerBootstrap'
 
 const GOOGLE_TAG_MANAGER_ID =
   'GTM-5TWMJQFP'
@@ -27,17 +28,6 @@ googleTagManagerScriptUrl.searchParams.set(
   'id',
   GOOGLE_TAG_MANAGER_ID
 )
-
-const GOOGLE_TAG_MANAGER_BOOTSTRAP = `
-  (function(w,l){
-    w[l]=w[l]||[];
-    w[l].push({
-      'gtm.start':
-        new Date().getTime(),
-      event:'gtm.js'
-    });
-  })(window,'dataLayer');
-`
 
 type GoogleTagManagerLoaderProps = {
   enabled: boolean
