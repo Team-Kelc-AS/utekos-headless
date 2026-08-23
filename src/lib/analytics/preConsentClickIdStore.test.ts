@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  capturePreConsentClickIdsFromUrl,
   clearPreConsentClickIds,
   PRE_CONSENT_CLICK_ID_GLOBAL_KEY,
   readPreConsentClickIds,
-  readPreConsentClickIdSnapshot
+  readPreConsentClickIdSnapshot,
+  setPreConsentClickIdDecision
 } from './preConsentClickIdStore'
 
 test('reads only the four supported pre-consent marketing click IDs', () => {
@@ -23,7 +25,8 @@ test('reads only the four supported pre-consent marketing click IDs', () => {
         epik: 1_787_500_000_002,
         sc_click_id: 1_787_500_000_003,
         gclid: 1_787_500_000_004
-      }
+      },
+      decision: 'pending'
     }
   }
 
@@ -39,7 +42,35 @@ test('reads only the four supported pre-consent marketing click IDs', () => {
       msclkid: 1_787_500_000_001,
       epik: 1_787_500_000_002,
       sc_click_id: 1_787_500_000_003
-    }
+    },
+    decision: 'pending'
+  })
+})
+
+test('captures the four phase-one click IDs from the landing URL', () => {
+  const scope: Record<string, unknown> = {}
+  const observedAt = 1_787_500_000_123
+
+  capturePreConsentClickIdsFromUrl(
+    'https://utekos.no/?fbclid=Meta-A&msclkid=Ms-B&epik=Pin-C&ScCid=%20Snap-D%2B%2F%3D%20&gclid=not-phase-one',
+    scope,
+    observedAt
+  )
+
+  assert.deepEqual(readPreConsentClickIdSnapshot(scope), {
+    clickIds: {
+      fbclid: 'Meta-A',
+      msclkid: 'Ms-B',
+      epik: 'Pin-C',
+      sc_click_id: ' Snap-D+/= '
+    },
+    observedAtMs: {
+      fbclid: observedAt,
+      msclkid: observedAt,
+      epik: observedAt,
+      sc_click_id: observedAt
+    },
+    decision: 'pending'
   })
 })
 
@@ -50,7 +81,8 @@ test('preserves opaque click ID casing and characters', () => {
         fbclid: 'AbC-DeF_123',
         sc_click_id: ' A+B/C== '
       },
-      observedAtMs: {}
+      observedAtMs: {},
+      decision: 'pending'
     }
   }
 
@@ -60,19 +92,42 @@ test('preserves opaque click ID casing and characters', () => {
   })
 })
 
-test('clears the volatile snapshot without creating durable storage', () => {
-  const scope: Record<string, unknown> = {
-    [PRE_CONSENT_CLICK_ID_GLOBAL_KEY]: {
-      clickIds: { fbclid: 'meta-1', msclkid: 'microsoft-1' },
-      observedAtMs: { fbclid: 1, msclkid: 2 }
-    }
-  }
+test('decline clears the volatile snapshot and blocks recapture', () => {
+  const scope: Record<string, unknown> = {}
+
+  capturePreConsentClickIdsFromUrl(
+    'https://utekos.no/?fbclid=meta-before-decline',
+    scope,
+    1
+  )
+  clearPreConsentClickIds(scope)
+  capturePreConsentClickIdsFromUrl(
+    'https://utekos.no/?fbclid=meta-after-decline',
+    scope,
+    2
+  )
+
+  assert.deepEqual(readPreConsentClickIdSnapshot(scope), {
+    clickIds: {},
+    observedAtMs: {},
+    decision: 'denied'
+  })
+})
+
+test('a later explicit grant re-enables volatile capture', () => {
+  const scope: Record<string, unknown> = {}
 
   clearPreConsentClickIds(scope)
+  setPreConsentClickIdDecision('granted', scope)
+  capturePreConsentClickIdsFromUrl(
+    'https://utekos.no/?msclkid=microsoft-after-grant',
+    scope,
+    3
+  )
 
-  assert.equal(readPreConsentClickIdSnapshot(scope), undefined)
-  assert.deepEqual(scope[PRE_CONSENT_CLICK_ID_GLOBAL_KEY], {
-    clickIds: {},
-    observedAtMs: {}
+  assert.deepEqual(readPreConsentClickIdSnapshot(scope), {
+    clickIds: { msclkid: 'microsoft-after-grant' },
+    observedAtMs: { msclkid: 3 },
+    decision: 'granted'
   })
 })
