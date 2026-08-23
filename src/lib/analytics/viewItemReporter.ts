@@ -269,11 +269,13 @@ function readBrowserClientContext(): ViewItemClientContext {
 
   const browserId = extractBrowserIds(document.cookie, consent)
 
-  const clickId = extractClickIds(
+  const observedClickId = extractClickIds(
     pageUrl,
     document.cookie,
     consent.marketing === 'granted'
   )
+  const clickId =
+    consent.marketing === 'granted' ? observedClickId : undefined
   const externalId =
     browserFirstPartyExternalIdStore.getOrCreate(consent)
 
