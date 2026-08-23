@@ -5,12 +5,10 @@ import {
 } from 'facebook-nodejs-business-sdk'
 import type { CanonicalCommerceItem } from '../canonicalCommerceItem'
 import type { CanonicalEventEnvelope } from '../canonicalEventEnvelope'
+import { resolveMetaCatalogProductId } from '../metaCatalogIdentity'
 import { buildMetaUserData } from './buildMetaUserData'
 import { buildMetaRequestContext } from './buildMetaRequestContext'
 import { metaMarketingRequestContextPreference } from './metaMarketingRequestContextPreference'
-
-const SHOPIFY_VARIANT_GID =
-  /^gid:\/\/shopify\/ProductVariant\/(\d+)$/
 
 type MetaCommerceEvent = CanonicalEventEnvelope & {
   page_url: string
@@ -21,21 +19,9 @@ type MetaCommerceEvent = CanonicalEventEnvelope & {
   }
 }
 
-function getMetaContentId(variantId: string) {
-  const match = SHOPIFY_VARIANT_GID.exec(variantId)
-
-  if (!match?.[1]) {
-    throw new Error(
-      'Meta content_id requires a Shopify ProductVariant GID'
-    )
-  }
-
-  return match[1]
-}
-
 function buildContent(item: CanonicalCommerceItem) {
   const content = new Content()
-    .setId(getMetaContentId(item.variant_id))
+    .setId(resolveMetaCatalogProductId(item.variant_id))
     .setQuantity(item.quantity)
     .setItemPrice(item.gross_unit_price)
     .setTitle(item.item_name)
@@ -56,7 +42,7 @@ function buildCustomData(
 ) {
   const items = event.custom_data.items
   const contentIds = items.map(item =>
-    getMetaContentId(item.variant_id)
+    resolveMetaCatalogProductId(item.variant_id)
   )
   const contents = items.map(buildContent)
   const primaryItem = items[0]

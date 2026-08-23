@@ -4,6 +4,7 @@ import { handleCanonicalPageViewRequest } from '@/lib/analytics/server/handleCan
 import { handleCanonicalPageViewRoute } from '@/lib/analytics/server/handleCanonicalPageViewRoute'
 import { postgresCanonicalPageViewStore } from '@/lib/analytics/server/postgresCanonicalPageViewStore'
 import { postgresPageViewFunnelObservationStore } from '@/lib/analytics/server/postgresPageViewFunnelObservationStore'
+import { postgresProvisionalPageViewCaptureStore } from '@/lib/analytics/server/postgresProvisionalPageViewCaptureStore'
 
 export const maxDuration = 60
 
@@ -51,6 +52,8 @@ export function POST(request: Request) {
             }
           })
         },
+        provisionalStore:
+          postgresProvisionalPageViewCaptureStore,
         store: postgresCanonicalPageViewStore
       })
   })

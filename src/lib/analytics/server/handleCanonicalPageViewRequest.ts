@@ -7,6 +7,7 @@ import type { CanonicalPageViewRequestContext } from './normalizeCanonicalPageVi
 import { redactPageUrlForLog } from './redactPageUrlForLog'
 import { canonicalPageViewSchema } from '../pageViewEvent'
 import type { PageViewFunnelObservationIdentity } from './pageViewFunnelObservationStore'
+import type { ProvisionalPageViewCaptureStore } from './provisionalPageViewCaptureStore'
 
 const MAX_BODY_BYTES = 32 * 1024
 const PRODUCTION_COOKIE_DOMAIN = 'utekos.no'
@@ -22,6 +23,10 @@ type CanonicalPageViewRequestDependencies = {
   scheduleCollectorReceipt?: (
     identity: PageViewFunnelObservationIdentity
   ) => void
+  provisionalStore?: Pick<
+    ProvisionalPageViewCaptureStore,
+    'release'
+  >
   store: CanonicalPageViewStore
 }
 
@@ -272,6 +277,19 @@ export async function handleCanonicalPageViewRequest(
         )
       })
     )
+
+    if (dependencies.provisionalStore) {
+      try {
+        await dependencies.provisionalStore.release(
+          result.event_id
+        )
+      } catch {
+        console.warn(
+          '[tracking] provisional page_view release failed',
+          requestLogMeta(request, summary)
+        )
+      }
+    }
 
     return jsonResponse(
       { event_id: result.event_id, status: result.status },

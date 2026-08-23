@@ -7,11 +7,11 @@ import {
   canonicalPageViewSchema,
   type CanonicalPageView
 } from './pageViewEvent'
-import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
 import {
   browserPageViewDispatchObservationTransport,
   type PageViewDispatchObservation
 } from './pageViewDispatchObservation'
+import type { ProvisionalPageViewCaptureState } from './provisionalPageViewCapture'
 
 export type CookiebotState = {
   consent?: CookiebotConsent
@@ -21,6 +21,13 @@ export type CookiebotState = {
 }
 
 type PageViewCollectorTransportDependencies = {
+  capture: (
+    event: CanonicalPageView,
+    state: ProvisionalPageViewCaptureState
+  ) => Promise<void>
+  enrich: (
+    event: CanonicalPageView
+  ) => Promise<CanonicalPageView>
   getCookiebot: () => CookiebotState | undefined
   getCookieHeader: () => string
   observeDispatch?: (
@@ -40,6 +47,7 @@ type PendingPageView = {
 }
 
 export type PageViewCollectorResult =
+  | 'captured'
   | 'failed'
   | 'sent'
   | 'skipped'
@@ -99,9 +107,77 @@ export function prepareCanonicalPageViewForCollector(
 export function createPageViewCollectorTransport(
   dependencies: PageViewCollectorTransportDependencies
 ) {
+  const capturedEventStates = new Map<
+    string,
+    ProvisionalPageViewCaptureState
+  >()
+  const captureInFlightEvents = new Map<
+    string,
+    Promise<boolean>
+  >()
   const completedEventIds = new Set<string>()
   const inFlightEventIds = new Set<string>()
   const pendingEvents = new Map<string, PendingPageView>()
+
+  function captureStateRank(
+    state: ProvisionalPageViewCaptureState
+  ) {
+    if (state === 'granted') return 2
+    if (state === 'denied') return 1
+    return 0
+  }
+
+  function resolveCaptureState(
+    cookiebot: CookiebotState | undefined
+  ): ProvisionalPageViewCaptureState {
+    if (!hasCookiebotDecision(cookiebot)) return 'pending'
+
+    const consent = getConsentSnapshot(cookiebot?.consent)
+    return (
+        consent.analytics === 'granted' ||
+        consent.marketing === 'granted'
+      ) ?
+        'granted'
+      : 'denied'
+  }
+
+  async function capturePendingEvent(
+    pending: PendingPageView,
+    state: ProvisionalPageViewCaptureState
+  ) {
+    const eventId = pending.event.event_id
+    const capturedState = capturedEventStates.get(eventId)
+
+    if (
+      capturedState &&
+      captureStateRank(capturedState) >= captureStateRank(state)
+    ) {
+      return true
+    }
+
+    const inFlight = captureInFlightEvents.get(eventId)
+    if (inFlight) {
+      await inFlight
+      return capturePendingEvent(pending, state)
+    }
+
+    const operation = (async () => {
+      try {
+        await dependencies.capture(pending.event, state)
+        capturedEventStates.set(eventId, state)
+        return true
+      } catch {
+        return false
+      }
+    })()
+
+    captureInFlightEvents.set(eventId, operation)
+    const result = await operation
+    if (captureInFlightEvents.get(eventId) === operation) {
+      captureInFlightEvents.delete(eventId)
+    }
+    return result
+  }
 
   function retainLatestPendingEvent() {
     let latestEvent: PendingPageView | undefined
@@ -123,7 +199,12 @@ export function createPageViewCollectorTransport(
     const cookiebot = dependencies.getCookiebot()
 
     if (!hasCookiebotDecision(cookiebot)) {
-      return 'skipped'
+      const results = await Promise.all(
+        Array.from(pendingEvents.values()).map(pending =>
+          capturePendingEvent(pending, 'pending')
+        )
+      )
+      return results.every(Boolean) ? 'captured' : 'failed'
     }
 
     const consent = getConsentSnapshot(cookiebot?.consent)
@@ -132,8 +213,13 @@ export function createPageViewCollectorTransport(
       consent.marketing === 'granted'
 
     if (!hasPermittedPurpose) {
+      const results = await Promise.all(
+        Array.from(pendingEvents.values()).map(pending =>
+          capturePendingEvent(pending, 'denied')
+        )
+      )
       retainLatestPendingEvent()
-      return 'skipped'
+      return results.every(Boolean) ? 'captured' : 'failed'
     }
 
     const pendingPageViews = Array.from(
@@ -153,13 +239,13 @@ export function createPageViewCollectorTransport(
     const results = await Promise.allSettled(
       pendingPageViews.map(async pending => {
         const { correlation, event } = pending
+        await capturePendingEvent(pending, 'granted')
         const prepared = prepareCanonicalPageViewForCollector(
           event,
           cookiebot as CookiebotState,
           dependencies.getCookieHeader()
         )
-        const enriched =
-          await enrichCanonicalEventWithMetaAttribution(prepared)
+        const enriched = await dependencies.enrich(prepared)
 
         if (
           dependencies.observeDispatch &&
@@ -199,7 +285,7 @@ export function createPageViewCollectorTransport(
       : 'sent'
   }
 
-  function queue(
+  async function queue(
     event: CanonicalPageView,
     correlation?: PageViewCollectorCorrelation
   ) {
@@ -214,6 +300,14 @@ export function createPageViewCollectorTransport(
       })
     }
 
+    const pending = pendingEvents.get(event.event_id)
+    if (pending) {
+      await capturePendingEvent(
+        pending,
+        resolveCaptureState(dependencies.getCookiebot())
+      )
+    }
+
     return flush()
   }
 
@@ -224,6 +318,33 @@ type CookiebotWindow = Window & { Cookiebot?: CookiebotState }
 
 export const browserPageViewCollectorTransport =
   createPageViewCollectorTransport({
+    capture: async (event, captureState) => {
+      const response = await fetch(
+        '/api/events/page-view/capture',
+        {
+          body: JSON.stringify({
+            capture_state: captureState,
+            event
+          }),
+          cache: 'no-store',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          keepalive: true,
+          method: 'POST'
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error(
+          `Page-view capture returned ${response.status}`
+        )
+      }
+    },
+    enrich: async event => {
+      const { enrichCanonicalEventWithMetaAttribution } =
+        await import('./enrichCanonicalEventWithMetaAttribution')
+      return enrichCanonicalEventWithMetaAttribution(event)
+    },
     getCookiebot: () => (window as CookiebotWindow).Cookiebot,
     getCookieHeader: () => document.cookie,
     observeDispatch: observation =>

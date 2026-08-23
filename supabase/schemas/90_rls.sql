@@ -14,6 +14,8 @@ alter table marketing.attribution_events enable row level security;
 alter table marketing.website_visitor_events enable row level security;
 alter table marketing.consent_snapshots enable row level security;
 alter table marketing.event_ledger enable row level security;
+alter table marketing.provisional_page_view_captures enable row level security;
+alter table marketing.provisional_page_view_captures force row level security;
 alter table marketing.canonical_event_source_evidence enable row level security;
 alter table marketing.canonical_event_source_evidence force row level security;
 alter table marketing.meta_quality_snapshots enable row level security;
@@ -63,11 +65,17 @@ revoke all on table ops.privacy_retention_exceptions
   from public, anon, authenticated, service_role;
 revoke all on table ops.shopify_checkout_observations
   from public, anon, authenticated, service_role;
+revoke all on table marketing.provisional_page_view_captures
+  from public, anon, authenticated, service_role;
 revoke all on table ops.meta_landing_observability
   from public, anon, authenticated, service_role;
 revoke all on table ops.meta_landing_edge_health
   from public, anon, authenticated, service_role;
 grant usage on schema ops to service_role;
+grant usage on schema marketing to service_role;
+grant select, insert, update, delete
+  on table marketing.provisional_page_view_captures
+  to service_role;
 grant select, insert on table ops.vercel_edge_request_observations to service_role;
 grant select, insert, update on table ops.vercel_trace_observations to service_role;
 grant select, insert, update on table ops.landing_consent_observations to service_role;

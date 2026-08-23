@@ -3,6 +3,7 @@ import {
   CustomData,
   ServerEvent
 } from 'facebook-nodejs-business-sdk'
+import { resolveMetaCatalogProductId } from '../metaCatalogIdentity'
 import type { CanonicalPurchase } from '../purchaseEvent'
 import { buildMetaUserData } from './buildMetaUserData'
 import { buildMetaRequestContext } from './buildMetaRequestContext'
@@ -12,7 +13,7 @@ function buildPurchaseContent(
   item: CanonicalPurchase['custom_data']['items'][number]
 ) {
   return new Content()
-    .setId(item.item_id)
+    .setId(resolveMetaCatalogProductId(item.item_id))
     .setQuantity(item.quantity)
     .setItemPrice(item.final_unit_price ?? item.unit_price)
     .setTitle(item.item_name)
@@ -20,7 +21,9 @@ function buildPurchaseContent(
 
 function buildPurchaseCustomData(event: CanonicalPurchase) {
   const items = event.custom_data.items
-  const contentIds = items.map(item => item.item_id)
+  const contentIds = items.map(item =>
+    resolveMetaCatalogProductId(item.item_id)
+  )
   const contents = items.map(buildPurchaseContent)
   const primaryItem = items[0]
 

@@ -147,6 +147,44 @@ test('returns accepted after atomic persistence', async () => {
   })
 })
 
+test('releases the provisional row only after canonical acceptance', async () => {
+  const releasedEventIds: string[] = []
+  const response = await handleCanonicalPageViewRequest(
+    request(JSON.stringify(pageView())),
+    {
+      ...dependencies(),
+      provisionalStore: {
+        release: async eventId => {
+          releasedEventIds.push(eventId)
+        }
+      }
+    }
+  )
+
+  assert.equal(response.status, 202)
+  assert.deepEqual(releasedEventIds, [
+    '61c2ef59-6e6f-4f56-a63a-567ca398f9de'
+  ])
+})
+
+test('keeps a denied provisional row for bounded diagnostics', async () => {
+  let releases = 0
+  const response = await handleCanonicalPageViewRequest(
+    request(JSON.stringify(pageView('denied', 'denied'))),
+    {
+      ...dependencies(),
+      provisionalStore: {
+        release: async () => {
+          releases += 1
+        }
+      }
+    }
+  )
+
+  assert.equal(response.status, 204)
+  assert.equal(releases, 0)
+})
+
 test('schedules collector receipt before canonical acceptance', async () => {
   const order: string[] = []
   const receipts: PageViewFunnelObservationIdentity[] = []

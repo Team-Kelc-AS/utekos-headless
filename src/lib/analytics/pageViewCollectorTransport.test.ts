@@ -40,9 +40,17 @@ function pageView(
 
 function harness(initialCookiebot: CookiebotState | undefined) {
   let cookiebot = initialCookiebot
+  const captures: Array<{
+    event: CanonicalPageView
+    state: 'pending' | 'denied' | 'granted'
+  }> = []
   const sent: CanonicalPageView[] = []
 
   const transport = createPageViewCollectorTransport({
+    capture: async (event, state) => {
+      captures.push({ event, state })
+    },
+    enrich: async event => event,
     getCookiebot: () => cookiebot,
     getCookieHeader: () =>
       [
@@ -56,6 +64,7 @@ function harness(initialCookiebot: CookiebotState | undefined) {
   })
 
   return {
+    captures,
     sent,
     setCookiebot(value: CookiebotState) {
       cookiebot = value
@@ -71,6 +80,12 @@ test('holds page_view while consent is pending', async () => {
   await context.transport.queue(event)
 
   assert.equal(context.sent.length, 0)
+  assert.equal(context.captures.length, 1)
+  assert.equal(context.captures[0]?.state, 'pending')
+  assert.deepEqual(
+    context.captures[0]?.event.click_id,
+    event.click_id
+  )
 
   context.setCookiebot({
     hasResponse: true,
@@ -84,6 +99,7 @@ test('holds page_view while consent is pending', async () => {
   await context.transport.flush()
 
   assert.equal(context.sent.length, 1)
+  assert.equal(context.captures.at(-1)?.state, 'granted')
   assert.equal(context.sent[0]?.event_id, event.event_id)
   assert.equal(context.sent[0]?.event_time, event.event_time)
 })
@@ -103,6 +119,12 @@ test('does not send when analytics and marketing are denied', async () => {
   await context.transport.flush()
 
   assert.equal(context.sent.length, 0)
+  assert.equal(context.captures.length, 1)
+  assert.equal(context.captures[0]?.state, 'denied')
+  assert.deepEqual(context.captures[0]?.event.click_id, {
+    fbclid: 'meta-click',
+    gclid: 'google-click'
+  })
 })
 
 test('sends the pending current page_view once after late consent grant', async () => {
@@ -117,7 +139,7 @@ test('sends the pending current page_view once after late consent grant', async 
   })
   const event = pageView()
 
-  assert.equal(await context.transport.queue(event), 'skipped')
+  assert.equal(await context.transport.queue(event), 'captured')
   assert.equal(context.sent.length, 0)
 
   context.setCookiebot({
@@ -172,12 +194,21 @@ test('late grant sends only the latest page viewed while denied', async () => {
       'https://utekos.no/skreddersy-varmen'
     )
   )
+
   await context.transport.queue(
     pageView(
       '33333333-3333-4333-8333-333333333333',
       '44444444-4444-4444-8444-444444444444',
       'https://utekos.no/produkter'
     )
+  )
+
+  assert.deepEqual(
+    context.captures.map(capture => capture.event.page_url),
+    [
+      'https://utekos.no/skreddersy-varmen',
+      'https://utekos.no/produkter'
+    ]
   )
 
   context.setCookiebot({
@@ -301,6 +332,8 @@ test('starts a signed browser receipt before collector send after consent', asyn
   const token =
     '1754029200.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq'
   const transport = createPageViewCollectorTransport({
+    capture: async () => undefined,
+    enrich: async event => event,
     getCookiebot: () => ({
       hasResponse: true,
       consent: {
@@ -347,6 +380,8 @@ test('collector send continues when browser receipt fails', async () => {
   let sends = 0
   const edgeRequestId = '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
   const transport = createPageViewCollectorTransport({
+    capture: async () => undefined,
+    enrich: async event => event,
     getCookiebot: () => ({
       hasResponse: true,
       consent: {
@@ -382,6 +417,8 @@ test('retries a failed page_view on a later flush', async () => {
   let attempts = 0
   const sent: CanonicalPageView[] = []
   const transport = createPageViewCollectorTransport({
+    capture: async () => undefined,
+    enrich: async event => event,
     getCookiebot: () => ({
       hasResponse: true,
       consent: {
@@ -418,6 +455,8 @@ test('does not send an in-flight page_view concurrently', async () => {
     releaseSend = resolve
   })
   const transport = createPageViewCollectorTransport({
+    capture: async () => undefined,
+    enrich: async event => event,
     getCookiebot: () => ({
       hasResponse: true,
       consent: {
@@ -442,13 +481,18 @@ test('does not send an in-flight page_view concurrently', async () => {
   assert.equal(attempts, 1)
 
   releaseSend?.()
-  assert.deepEqual(
-    await Promise.all([
-      firstSend,
-      concurrentFlush,
-      concurrentQueue
-    ]),
-    ['sent', 'skipped', 'skipped']
+  const results = await Promise.all([
+    firstSend,
+    concurrentFlush,
+    concurrentQueue
+  ])
+  assert.equal(
+    results.filter(result => result === 'sent').length,
+    1
+  )
+  assert.equal(
+    results.filter(result => result === 'skipped').length,
+    2
   )
   assert.equal(await transport.queue(event), 'skipped')
   assert.equal(attempts, 1)

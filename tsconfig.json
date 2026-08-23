@@ -48,6 +48,7 @@
     "alpha/**/*",
     "docs/**/*",
     "supabase/functions/**/*",
-    "src/components/klarna/dev/docs/**/*"
+    "src/components/klarna/dev/docs/**/*",
+    "work/**/*"
   ]
 }

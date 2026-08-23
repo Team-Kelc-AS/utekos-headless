@@ -130,6 +130,54 @@ create table if not exists marketing.event_ledger (
 create index if not exists event_ledger_event_id_idx on marketing.event_ledger (event_id);
 create index if not exists event_ledger_event_name_idx on marketing.event_ledger (event_name, occurred_at desc);
 create index if not exists event_ledger_created_at_idx on marketing.event_ledger (created_at desc);
+create table if not exists marketing.provisional_page_view_captures (
+  event_id uuid primary key,
+  page_view_id uuid not null,
+  edge_request_id uuid,
+  capture_state text not null
+    check (capture_state in ('pending', 'denied', 'granted')),
+  payload jsonb not null,
+  occurred_at timestamptz not null,
+  capture_count integer not null default 1
+    check (capture_count >= 1),
+  captured_at timestamptz not null default statement_timestamp(),
+  updated_at timestamptz not null default statement_timestamp(),
+  expires_at timestamptz not null
+    default (statement_timestamp() + interval '24 hours'),
+  constraint provisional_page_view_captures_payload_identity_check
+    check (
+      payload ->> 'event_name' = 'page_view'
+      and payload ->> 'event_id' = event_id::text
+      and payload ->> 'page_view_id' = page_view_id::text
+      and (
+        edge_request_id is null
+        or payload ->> 'edge_request_id' = edge_request_id::text
+      )
+    ),
+  constraint provisional_page_view_captures_retention_check
+    check (
+      updated_at >= captured_at
+      and expires_at > updated_at
+      and expires_at <= updated_at + interval '24 hours 5 minutes'
+    )
+);
+comment on table marketing.provisional_page_view_captures is
+  'Server-only, 24-hour consent buffer for canonical page_view capture. It may temporarily contain source URLs and advertising click identifiers, but it never creates provider dispatch attempts and is deleted immediately after canonical consented acceptance.';
+comment on column marketing.provisional_page_view_captures.capture_state is
+  'Cookiebot decision state observed by the browser. pending and denied rows remain provider-ineligible; granted rows are released after canonical acceptance.';
+create index if not exists provisional_page_view_captures_state_idx
+  on marketing.provisional_page_view_captures (
+    capture_state,
+    captured_at desc
+  );
+create index if not exists provisional_page_view_captures_edge_idx
+  on marketing.provisional_page_view_captures (
+    edge_request_id,
+    occurred_at desc
+  )
+  where edge_request_id is not null;
+create index if not exists provisional_page_view_captures_expiry_idx
+  on marketing.provisional_page_view_captures (expires_at);
 create table if not exists marketing.canonical_event_source_evidence (
   id uuid primary key default gen_random_uuid(),
   canonical_event_id text not null,

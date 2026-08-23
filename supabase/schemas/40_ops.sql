@@ -1360,6 +1360,68 @@ begin
 end;
 $schedule_page_view_funnel_observation_purge$;
 
+create or replace function ops.purge_expired_provisional_page_view_captures()
+returns bigint
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_deleted bigint := 0;
+  v_now timestamptz := statement_timestamp();
+begin
+  delete from marketing.provisional_page_view_captures capture
+  where capture.expires_at <= v_now
+    and not ops.has_active_privacy_retention_exception(
+      'marketing',
+      'provisional_page_view_captures',
+      capture.event_id::text,
+      v_now
+    );
+
+  get diagnostics v_deleted = row_count;
+  return v_deleted;
+end;
+$$;
+
+comment on function ops.purge_expired_provisional_page_view_captures() is
+  'Deletes short-lived consent-buffer page views after at most 24 hours unless a time-limited privacy retention exception is active.';
+
+revoke all on function ops.purge_expired_provisional_page_view_captures()
+  from public;
+revoke execute on function ops.purge_expired_provisional_page_view_captures()
+  from public, anon, authenticated;
+grant execute on function ops.purge_expired_provisional_page_view_captures()
+  to service_role, postgres;
+
+do $schedule_provisional_page_view_capture_purge$
+declare
+  v_job_exists boolean;
+begin
+  if to_regclass('cron.job') is null then
+    raise exception using
+      errcode = '55000',
+      message = 'pg_cron cron.job is required for provisional page_view retention';
+  end if;
+
+  execute $query$
+    select exists (
+      select 1
+      from cron.job
+      where jobname = 'purge_expired_provisional_page_view_captures'
+    )
+  $query$ into v_job_exists;
+
+  if not v_job_exists then
+    perform cron.schedule(
+      'purge_expired_provisional_page_view_captures',
+      '*/15 * * * *',
+      'select ops.purge_expired_provisional_page_view_captures();'
+    );
+  end if;
+end;
+$schedule_provisional_page_view_capture_purge$;
+
 -- Dun waitlist PGMQ archive retention (transport history only; not business ledger).
 create or replace function ops.purge_expired_shopify_dun_waitlist_pgmq_archive(
   retention_days integer default 30
