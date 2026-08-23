@@ -8,6 +8,7 @@ type UserDataQuality = {
 
 type ProviderDataQuality = UserDataQuality & {
   google_event_freshness?: CanonicalEventStoreInput['dispatches'][number]['google_event_freshness']
+  snapchat_event_freshness?: CanonicalEventStoreInput['dispatches'][number]['snapchat_event_freshness']
 }
 
 export type CanonicalLedgerInsert = {
@@ -38,6 +39,10 @@ export type ProviderDispatchInsert = {
     | 'missing_client_id'
     | 'missing_google_analytics_identifier'
     | 'missing_microsoft_uet_identifier'
+    | 'missing_snapchat_configuration'
+    | 'missing_snapchat_match_identifier'
+    | 'snapchat_before_cutover'
+    | 'snapchat_event_outside_7d'
   status: 'pending' | 'skipped_unqualified'
 }
 
@@ -79,6 +84,12 @@ export function mapCanonicalEventPersistence(
           {
             google_event_freshness:
               dispatch.google_event_freshness
+          }
+        : {}),
+        ...(dispatch.snapchat_event_freshness ?
+          {
+            snapchat_event_freshness:
+              dispatch.snapchat_event_freshness
           }
         : {})
       }

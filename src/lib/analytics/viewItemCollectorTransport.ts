@@ -1,4 +1,5 @@
 import { captureException } from '@sentry/nextjs'
+import { clearStoredSnapchatClickId } from './clickIdSessionStore'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
 import { enrichCanonicalViewItemWithGoogleAnalyticsIds } from './googleAnalyticsBrowserIds'
 import { extractClickIds } from './pageViewClientContext'
@@ -44,9 +45,7 @@ type ViewItemCollectorTransportDependencies = {
   resolveCurrentCollection: (
     event: CanonicalViewItem
   ) => ResolvedViewItemCollection
-  subscribeToConsentChanges: (
-    listener: () => void
-  ) => () => void
+  subscribeToConsentChanges: (listener: () => void) => () => void
 }
 
 function compactRecord(
@@ -58,9 +57,7 @@ function compactRecord(
     if (value) record[key] = value
   }
 
-  return Object.keys(record).length > 0 ?
-      record
-    : undefined
+  return Object.keys(record).length > 0 ? record : undefined
 }
 
 function readCookie(name: string): string | undefined {
@@ -133,13 +130,9 @@ export function applyViewItemCollectionContext(
     context.consent.preferences === 'granted'
 
   const browserId = {
-    ...(analyticsGranted ?
-      context.analyticsBrowserId
-    : {}),
+    ...(analyticsGranted ? context.analyticsBrowserId : {}),
     ...(marketingGranted ? event.browser_id : {}),
-    ...(marketingGranted ?
-      context.marketingBrowserId
-    : {})
+    ...(marketingGranted ? context.marketingBrowserId : {})
   }
 
   if (Object.keys(browserId).length > 0) {
@@ -147,10 +140,7 @@ export function applyViewItemCollectionContext(
   }
 
   if (marketingGranted) {
-    const clickId = {
-      ...event.click_id,
-      ...context.clickId
-    }
+    const clickId = { ...event.click_id, ...context.clickId }
 
     if (Object.keys(clickId).length > 0) {
       nextEvent.click_id = clickId
@@ -183,20 +173,25 @@ function resolveBrowserCollection(
   event: CanonicalViewItem
 ): ResolvedViewItemCollection {
   const cookiebot =
-    typeof window === 'undefined' ?
-      undefined
-    : (window as CookiebotWindow).Cookiebot
+    typeof window === 'undefined' ? undefined : (
+      (window as CookiebotWindow).Cookiebot
+    )
 
   const consent = resolveConsent(
     cookiebot,
     event.consent.version
   )
+  const hasResponse =
+    cookiebot?.hasResponse === true ||
+    cookiebot?.declined === true
+
+  if (hasResponse && consent.marketing !== 'granted') {
+    clearStoredSnapchatClickId()
+  }
 
   const context: ViewItemCollectionContext = {
     consent,
-    hasResponse:
-      cookiebot?.hasResponse === true ||
-      cookiebot?.declined === true,
+    hasResponse,
     ...(consent.analytics === 'granted' ?
       {
         analyticsBrowserId: compactRecord([
@@ -206,17 +201,19 @@ function resolveBrowserCollection(
     : {}),
     ...(consent.marketing === 'granted' ?
       {
-        clickId: extractClickIds(event.page_url, document.cookie),
+        clickId: extractClickIds(
+          event.page_url,
+          document.cookie,
+          true
+        ),
         marketingBrowserId: compactRecord([
           ['fbp', readCookie('_fbp')],
           ['fbc', readCookie('_fbc')],
           ['gcl_au', readCookie('_gcl_au')],
-          [
-            'uet_msclkid',
-            readCookie('_uetmsclkid')
-          ],
+          ['uet_msclkid', readCookie('_uetmsclkid')],
           ['uet_sid', readCookie('_uetsid')],
-          ['uet_vid', readCookie('_uetvid')]
+          ['uet_vid', readCookie('_uetvid')],
+          ['sc_cookie1', readCookie('_scid')]
         ])
       }
     : {})
@@ -224,10 +221,7 @@ function resolveBrowserCollection(
 
   return {
     context,
-    event: applyViewItemCollectionContext(
-      event,
-      context
-    )
+    event: applyViewItemCollectionContext(event, context)
   }
 }
 
@@ -248,11 +242,7 @@ function subscribeToCookiebotChanges(
 }
 
 function isRetryableStatus(status: number) {
-  return (
-    status === 408 ||
-    status === 429 ||
-    status >= 500
-  )
+  return status === 408 || status === 429 || status >= 500
 }
 
 async function postCanonicalViewItem(
@@ -287,10 +277,7 @@ async function postCanonicalViewItem(
 
     if (response.ok) return
 
-    if (
-      attempt === 1 ||
-      !isRetryableStatus(response.status)
-    ) {
+    if (attempt === 1 || !isRetryableStatus(response.status)) {
       throw new Error(
         `View-item collector returned ${response.status}`
       )
@@ -307,9 +294,7 @@ function reportCollectorError(error: unknown) {
   })
 }
 
-function hasCollectionConsent(
-  event: CanonicalViewItem
-) {
+function hasCollectionConsent(event: CanonicalViewItem) {
   return (
     event.consent.analytics === 'granted' ||
     event.consent.marketing === 'granted'
@@ -357,9 +342,7 @@ export function createViewItemCollectorTransport(
 
     if (!finished) {
       unsubscribe =
-        dependencies.subscribeToConsentChanges(
-          evaluate
-        )
+        dependencies.subscribeToConsentChanges(evaluate)
 
       evaluate()
     }
@@ -373,8 +356,7 @@ const startBrowserViewItemCollector =
     postEvent: postCanonicalViewItem,
     reportError: reportCollectorError,
     resolveCurrentCollection: resolveBrowserCollection,
-    subscribeToConsentChanges:
-      subscribeToCookiebotChanges
+    subscribeToConsentChanges: subscribeToCookiebotChanges
   })
 
 export function startViewItemCollectorTransport(

@@ -3,7 +3,10 @@ import {
   parseCampaignAttribution,
   type CampaignAttribution
 } from './campaignAttribution'
-import { CLICK_ID_PARAMETERS } from './clickIdSessionStore'
+import {
+  CLICK_ID_PARAMETERS,
+  SNAPCHAT_CLICK_ID_QUERY_PARAMETER
+} from './clickIdSessionStore'
 
 export const CAMPAIGN_ATTRIBUTION_SESSION_KEY =
   'utekos_campaign_attribution'
@@ -13,6 +16,7 @@ export const CAMPAIGN_ATTRIBUTION_LOCAL_KEY =
 const CAMPAIGN_ATTRIBUTION_TTL_MS = 90 * 24 * 60 * 60 * 1000
 const ATTRIBUTION_BOUNDARY_PARAMETERS = [
   ...CLICK_ID_PARAMETERS,
+  SNAPCHAT_CLICK_ID_QUERY_PARAMETER,
   'utm_source',
   'utm_medium',
   'utm_campaign',

@@ -27,6 +27,7 @@ const browserAttributeKeys = {
   ga_client_id: 'ga_client_id',
   ga_cookie: 'ga_cookie',
   ga_session_id: 'ga_session_id',
+  sc_cookie1: '_scid',
   uet_session: '_uetsid',
   uet_visitor: '_uetvid'
 } as const
@@ -38,6 +39,7 @@ const clickAttributeKeys = {
   gbraid: 'gbraid',
   gclid: 'gclid',
   msclkid: 'msclkid',
+  sc_click_id: 'sc_click_id',
   ttclid: 'ttclid',
   twclid: 'twclid',
   wbraid: 'wbraid'
@@ -152,6 +154,7 @@ export function createCheckoutAttributionSnapshot(
       selectIdentifiers(source.browser_id, {
         fbc: browserAttributeKeys.fbc,
         fbp: browserAttributeKeys.fbp,
+        sc_cookie1: browserAttributeKeys.sc_cookie1,
         uet_session: browserAttributeKeys.uet_session,
         uet_visitor: browserAttributeKeys.uet_visitor
       })
@@ -303,6 +306,7 @@ export function parseOrderAttributionFromNoteAttributes(
     for (const identifier of [
       'fbc',
       'fbp',
+      'sc_cookie1',
       'uet_session',
       'uet_visitor'
     ] as const) {

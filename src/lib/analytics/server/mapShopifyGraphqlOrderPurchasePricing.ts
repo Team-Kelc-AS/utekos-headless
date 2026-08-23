@@ -190,6 +190,9 @@ function mapPurchaseItem(
         lineItem.variant?.legacyResourceId ?
           String(lineItem.variant.legacyResourceId)
         : String(lineItem.id),
+      ...(lineItem.product?.legacyResourceId ?
+        { product_id: String(lineItem.product.legacyResourceId) }
+      : {}),
       item_name: itemName,
       quantity: lineItem.quantity,
       unit_price: unitPrice,

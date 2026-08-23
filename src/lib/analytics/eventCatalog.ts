@@ -19,6 +19,7 @@ export type ProviderId =
   | 'meta'
   | 'microsoft_uet'
   | 'pinterest'
+  | 'snapchat'
   | 'posthog'
 
 export type ServerOutboxStatus =
@@ -45,6 +46,7 @@ type BrowserTransport =
   | 'meta_pixel'
   | 'microsoft_uet'
   | 'pinterest_tag'
+  | 'snap_pixel'
   | 'posthog_browser'
 
 type ServerTransport =
@@ -54,6 +56,7 @@ type ServerTransport =
   | 'meta_conversions_api'
   | 'microsoft_uet_capi'
   | 'pinterest_conversions_api'
+  | 'snap_conversions_api_v3'
   | 'posthog_server'
 
 type ProviderConsentRequirement =
@@ -282,6 +285,41 @@ function pinterestCatalogProvider(
   })
 }
 
+function snapchatCatalogProvider(
+  eventName: string,
+  input: {
+    active: boolean
+    browser: BrowserTransport | null
+    dedupeField?: string
+    requiredParameters?: readonly string[]
+  }
+): ProviderCatalogEntry {
+  return providerMapping({
+    support: 'supported',
+    eventName,
+    transport: {
+      browser: input.browser,
+      server: 'snap_conversions_api_v3'
+    },
+    requiredParameters: [
+      ...baseProviderParameters,
+      'action_source',
+      'event_source_url',
+      'user_data',
+      ...(input.requiredParameters ?? [])
+    ],
+    dedupeField: input.dedupeField ?? 'event_id',
+    consentRequirement: 'marketing',
+    adapterVersion: 1,
+    productionStatus: input.active ? 'active' : 'planned',
+    productionDetail:
+      input.active ?
+        'Utekos-owned Snap Pixel and Conversions API v3 outbox are active.'
+      : 'Snapchat mapping is specified but canonical routing is not active.',
+    serverOutbox: input.active ? 'active' : 'disabled'
+  })
+}
+
 type PlannedProviderInput = {
   firstPartyConsentRequirement?: ProviderConsentRequirement
   googleRequired?: readonly string[]
@@ -294,6 +332,12 @@ type PlannedProviderInput = {
     requiredParameters?: readonly string[]
   }
   pinterest?: {
+    eventName: string
+    requiredParameters?: readonly string[]
+  }
+  snapchat?: {
+    browser?: BrowserTransport | null
+    dedupeField?: string
     eventName: string
     requiredParameters?: readonly string[]
   }
@@ -403,6 +447,24 @@ function plannedProviders(
         })
       : notRelevantProvider(
           'No v1 Pinterest conversion mapping is approved.'
+        ),
+    snapchat:
+      input.snapchat ?
+        snapchatCatalogProvider(input.snapchat.eventName, {
+          active: false,
+          browser: input.snapchat.browser ?? null,
+          ...(input.snapchat.dedupeField ?
+            { dedupeField: input.snapchat.dedupeField }
+          : {}),
+          ...(input.snapchat.requiredParameters ?
+            {
+              requiredParameters:
+                input.snapchat.requiredParameters
+            }
+          : {})
+        })
+      : notRelevantProvider(
+          'No v1 Snapchat conversion mapping is approved.'
         ),
     posthog:
       input.posthog === false ?
@@ -552,6 +614,24 @@ function activeEventProviders(
       : notRelevantProvider(
           'No v1 Pinterest conversion mapping is approved.'
         ),
+    snapchat:
+      input.snapchat ?
+        snapchatCatalogProvider(input.snapchat.eventName, {
+          active: true,
+          browser: input.snapchat.browser ?? null,
+          ...(input.snapchat.dedupeField ?
+            { dedupeField: input.snapchat.dedupeField }
+          : {}),
+          ...(input.snapchat.requiredParameters ?
+            {
+              requiredParameters:
+                input.snapchat.requiredParameters
+            }
+          : {})
+        })
+      : notRelevantProvider(
+          'No v1 Snapchat conversion mapping is approved.'
+        ),
     posthog:
       input.posthog === false ?
         notRelevantProvider(
@@ -698,6 +778,10 @@ const pageViewProviders = {
   pinterest: notRelevantProvider(
     'Canonical page_view is not mapped to Pinterest PageVisit; product view_item owns PageVisit with catalog product IDs.'
   ),
+  snapchat: snapchatCatalogProvider('PAGE_VIEW', {
+    active: true,
+    browser: 'snap_pixel'
+  }),
   posthog: providerMapping({
     support: 'planned',
     eventName: 'page_view',
@@ -813,6 +897,16 @@ const viewItemProviders = {
       'value'
     ]
   }),
+  snapchat: snapchatCatalogProvider('VIEW_CONTENT', {
+    active: true,
+    browser: 'snap_pixel',
+    requiredParameters: [
+      'content_ids',
+      'contents',
+      'currency',
+      'value'
+    ]
+  }),
   posthog: providerMapping({
     support: 'planned',
     eventName: 'view_item',
@@ -920,6 +1014,16 @@ const addToCartProviders = {
   }),
   pinterest: pinterestCatalogProvider('add_to_cart', {
     active: true,
+    requiredParameters: [
+      'content_ids',
+      'contents',
+      'currency',
+      'value'
+    ]
+  }),
+  snapchat: snapchatCatalogProvider('ADD_CART', {
+    active: true,
+    browser: 'snap_pixel',
     requiredParameters: [
       'content_ids',
       'contents',
@@ -1042,6 +1146,16 @@ const beginCheckoutProviders = {
       'value'
     ]
   }),
+  snapchat: snapchatCatalogProvider('START_CHECKOUT', {
+    active: true,
+    browser: 'snap_pixel',
+    requiredParameters: [
+      'content_ids',
+      'contents',
+      'currency',
+      'value'
+    ]
+  }),
   posthog: providerMapping({
     support: 'planned',
     eventName: 'begin_checkout',
@@ -1135,6 +1249,17 @@ const addPaymentInfoProviderBase = activeEventProviders(
     ],
     meta: {
       eventName: 'AddPaymentInfo',
+      requiredParameters: [
+        'content_ids',
+        'contents',
+        'currency',
+        'value'
+      ]
+    },
+    snapchat: {
+      browser: 'shopify_customer_events',
+      dedupeField: 'payment_revision',
+      eventName: 'ADD_BILLING',
       requiredParameters: [
         'content_ids',
         'contents',
@@ -1264,6 +1389,18 @@ const purchaseProviders = {
       'order_id'
     ]
   }),
+  snapchat: snapchatCatalogProvider('PURCHASE', {
+    active: true,
+    browser: 'shopify_customer_events',
+    dedupeField: 'transaction_id',
+    requiredParameters: [
+      'content_ids',
+      'contents',
+      'currency',
+      'value',
+      'order_id'
+    ]
+  }),
   posthog: providerMapping({
     support: 'planned',
     eventName: 'purchase',
@@ -1331,6 +1468,9 @@ const refundProviders = {
   ),
   pinterest: notRelevantProvider(
     'No v1 Pinterest refund mapping is approved.'
+  ),
+  snapchat: notRelevantProvider(
+    'No v1 Snapchat refund mapping is approved.'
   ),
   posthog: notRelevantProvider(
     'The event is excluded from the v1 product-analytics scope.'
@@ -1689,7 +1829,8 @@ const eventCatalogBase = {
       description:
         'Create when Shopify emits checkout_shipping_info_submitted and the PII-free begin_checkout correlation resolves to a consented canonical source. The event proves that a shipping rate was chosen.',
       sources: ['browser'],
-      repeatability: 'Each Shopify shipping-information submission is new.',
+      repeatability:
+        'Each Shopify shipping-information submission is new.',
       eventTime:
         'The Shopify checkout_shipping_info_submitted timestamp.',
       prerequisites: [
@@ -1718,9 +1859,9 @@ const eventCatalogBase = {
       description:
         'Create when Shopify emits payment_info_submitted and the PII-free begin_checkout correlation resolves to a consented canonical source. payment_info_submitted proves submission only, not payment success.',
       sources: ['browser'],
-      repeatability: 'Each Shopify payment-information submission is new.',
-      eventTime:
-        'The Shopify payment_info_submitted timestamp.',
+      repeatability:
+        'Each Shopify payment-information submission is new.',
+      eventTime: 'The Shopify payment_info_submitted timestamp.',
       prerequisites: [
         'Shopify payment_info_submitted source event',
         'checkout_id',
@@ -2439,7 +2580,11 @@ const eventCatalogBase = {
         'open_sequence',
         'items'
       ],
-      googleRequired: ['source_surface', 'open_sequence', 'items'],
+      googleRequired: [
+        'source_surface',
+        'open_sequence',
+        'items'
+      ],
       meta: {
         eventName: 'OpenQuickView',
         requiredParameters: [

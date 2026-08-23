@@ -59,6 +59,14 @@ const PINTEREST_TAG_EVENT_ORIGINS = [
   'https://ct.pinterest.com'
 ] as const
 
+const SNAPCHAT_PIXEL_SCRIPT_ORIGINS = [
+  'https://sc-static.net'
+] as const
+
+const SNAPCHAT_PIXEL_EVENT_ORIGINS = [
+  'https://tr.snapchat.com'
+] as const
+
 const GOOGLE_ADS_ORIGINS = [
   'https://ad.doubleclick.net',
   'https://googleads.g.doubleclick.net',
@@ -143,6 +151,7 @@ export function buildReportOnlyCsp(): string {
     ...MICROSOFT_TRACKING_ORIGINS,
     ...META_PIXEL_SCRIPT_ORIGINS,
     ...PINTEREST_TAG_SCRIPT_ORIGINS,
+    ...SNAPCHAT_PIXEL_SCRIPT_ORIGINS,
     ...GOOGLE_ADS_ORIGINS,
     ...SHOPIFY_CONSENT_SCRIPT_ORIGINS,
     ...VERCEL_LIVE_ORIGINS,
@@ -158,6 +167,7 @@ export function buildReportOnlyCsp(): string {
     ...META_PIXEL_SCRIPT_ORIGINS,
     ...META_PIXEL_EVENT_ORIGINS,
     ...PINTEREST_TAG_EVENT_ORIGINS,
+    ...SNAPCHAT_PIXEL_EVENT_ORIGINS,
     ...GOOGLE_ADS_ORIGINS,
     ...SHOPIFY_CONSENT_CONNECT_ORIGINS,
     ...VERCEL_LIVE_ORIGINS,
@@ -182,6 +192,7 @@ export function buildReportOnlyCsp(): string {
     ...MICROSOFT_TRACKING_ORIGINS,
     ...META_PIXEL_EVENT_ORIGINS,
     ...PINTEREST_TAG_EVENT_ORIGINS,
+    ...SNAPCHAT_PIXEL_EVENT_ORIGINS,
     ...GOOGLE_ADS_ORIGINS,
     ...GA4_COLLECTION_ORIGINS,
     ...GA4_ADVERTISING_ORIGINS,

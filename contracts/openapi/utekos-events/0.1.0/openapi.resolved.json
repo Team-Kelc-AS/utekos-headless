@@ -219,6 +219,18 @@
                 "status": "active"
               }
             },
+            "snapchat": {
+              "eventName": "ADD_CART",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "snap_pixel",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "snap_conversions_api_v3",
+                "status": "active"
+              }
+            },
             "posthog": {
               "eventName": "add_to_cart",
               "productionStatus": "not_implemented",
@@ -403,6 +415,12 @@
                 "transport": "pinterest_conversions_api",
                 "status": "active"
               }
+            },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
             },
             "posthog": {
               "eventName": "add_to_wishlist",
@@ -591,6 +609,18 @@
                 "status": "active"
               }
             },
+            "snapchat": {
+              "eventName": "START_CHECKOUT",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "snap_pixel",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "snap_conversions_api_v3",
+                "status": "active"
+              }
+            },
             "posthog": {
               "eventName": "begin_checkout",
               "productionStatus": "not_implemented",
@@ -731,6 +761,12 @@
               "server": null
             },
             "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "snapchat": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -879,6 +915,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "form_error",
               "productionStatus": "not_implemented",
@@ -1016,6 +1058,12 @@
               "server": null
             },
             "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "snapchat": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -1159,6 +1207,12 @@
               "server": null
             },
             "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "snapchat": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -1324,6 +1378,12 @@
                 "status": "active"
               }
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "generate_lead",
               "productionStatus": "not_implemented",
@@ -1468,6 +1528,12 @@
               "server": null
             },
             "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "snapchat": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -1655,6 +1721,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "interact_with_accordion",
               "productionStatus": "not_implemented",
@@ -1835,6 +1907,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "open_quick_view",
               "productionStatus": "not_implemented",
@@ -1981,6 +2059,18 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
+            },
+            "snapchat": {
+              "eventName": "PAGE_VIEW",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "snap_pixel",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "snap_conversions_api_v3",
+                "status": "active"
+              }
             },
             "posthog": {
               "eventName": "page_view",
@@ -2162,6 +2252,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "remove_from_cart",
               "productionStatus": "not_implemented",
@@ -2306,6 +2402,12 @@
               "server": null
             },
             "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "snapchat": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -2471,6 +2573,12 @@
                 "transport": "pinterest_conversions_api",
                 "status": "active"
               }
+            },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
             },
             "posthog": {
               "eventName": "search",
@@ -2653,6 +2761,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "select_item",
               "productionStatus": "not_implemented",
@@ -2820,6 +2934,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "select_promotion",
               "productionStatus": "not_implemented",
@@ -2957,6 +3077,12 @@
               "server": null
             },
             "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "snapchat": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -3101,6 +3227,12 @@
               "server": null
             },
             "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "snapchat": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -3252,6 +3384,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "variant_select",
               "productionStatus": "not_implemented",
@@ -3393,6 +3531,12 @@
               "server": null
             },
             "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "snapchat": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -3578,6 +3722,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "view_cart",
               "productionStatus": "not_implemented",
@@ -3732,6 +3882,12 @@
                 "transport": "pinterest_conversions_api",
                 "status": "active"
               }
+            },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
             },
             "posthog": {
               "eventName": "view_category",
@@ -3911,6 +4067,18 @@
               },
               "server": {
                 "transport": "pinterest_conversions_api",
+                "status": "active"
+              }
+            },
+            "snapchat": {
+              "eventName": "VIEW_CONTENT",
+              "productionStatus": "active",
+              "browser": {
+                "transport": "snap_pixel",
+                "status": "implemented"
+              },
+              "server": {
+                "transport": "snap_conversions_api_v3",
                 "status": "active"
               }
             },
@@ -4096,6 +4264,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "view_item_list",
               "productionStatus": "not_implemented",
@@ -4263,6 +4437,12 @@
               "browser": null,
               "server": null
             },
+            "snapchat": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
             "posthog": {
               "eventName": "view_promotion",
               "productionStatus": "not_implemented",
@@ -4402,6 +4582,12 @@
               "server": null
             },
             "pinterest": {
+              "eventName": null,
+              "productionStatus": "not_relevant",
+              "browser": null,
+              "server": null
+            },
+            "snapchat": {
               "eventName": null,
               "productionStatus": "not_relevant",
               "browser": null,
@@ -4554,6 +4740,10 @@
                 "minLength": 1
               },
               "msclkid": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sc_click_id": {
                 "type": "string",
                 "minLength": 1
               },
@@ -5356,6 +5546,10 @@
             "minLength": 1
           },
           "msclkid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sc_click_id": {
             "type": "string",
             "minLength": 1
           },
@@ -6220,6 +6414,10 @@
             "minLength": 1
           },
           "msclkid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sc_click_id": {
             "type": "string",
             "minLength": 1
           },

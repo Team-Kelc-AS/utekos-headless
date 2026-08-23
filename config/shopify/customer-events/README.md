@@ -65,3 +65,18 @@ The required proof is:
 
 `ga4-commerce-pixel.js` remains the independent
 analytics-consented GA4/sGTM purchase pixel.
+
+## Snapchat Commerce
+
+`snapchat-commerce-pixel.js` is a separate, marketing-consented
+Shopify Customer Events pixel for `payment_info_submitted` and
+`checkout_completed`. It initializes the shared Utekos SnapPixel
+without browser PII or automatic page views, uses numeric Shopify
+Product IDs, and sends the same ADD_BILLING/PURCHASE dedupe
+values as the canonical CAPI v3 mapping.
+
+The file is fail-closed through Shopify's privacy API. Its
+presence in this repository does not publish or connect the
+Custom Pixel. Publishing and connecting it remains a provider
+mutation behind the production cutover approval and must not be
+combined with the existing GA4 pixel.

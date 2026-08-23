@@ -50,7 +50,6 @@ import { microsoftUetAddToCartProviderAdapter } from './providerAdapters/microso
 import { microsoftUetBeginCheckoutProviderAdapter } from './providerAdapters/microsoftUetBeginCheckoutProviderAdapter'
 import { microsoftUetPurchaseProviderAdapter } from './providerAdapters/microsoftUetPurchaseProviderAdapter'
 import { microsoftUetPageViewProviderAdapter } from './providerAdapters/microsoftUetPageViewProviderAdapter'
-import { pinterestAddPaymentInfoProviderAdapter } from './providerAdapters/pinterestAddPaymentInfoProviderAdapter'
 import { pinterestAddToCartProviderAdapter } from './providerAdapters/pinterestAddToCartProviderAdapter'
 import { pinterestAddToWishlistProviderAdapter } from './providerAdapters/pinterestAddToWishlistProviderAdapter'
 import { pinterestBeginCheckoutProviderAdapter } from './providerAdapters/pinterestBeginCheckoutProviderAdapter'
@@ -59,40 +58,63 @@ import { pinterestPurchaseProviderAdapter } from './providerAdapters/pinterestPu
 import { pinterestSearchProviderAdapter } from './providerAdapters/pinterestSearchProviderAdapter'
 import { pinterestViewCategoryProviderAdapter } from './providerAdapters/pinterestViewCategoryProviderAdapter'
 import { pinterestViewItemProviderAdapter } from './providerAdapters/pinterestViewItemProviderAdapter'
+import { snapchatAddPaymentInfoProviderAdapter } from './providerAdapters/snapchatAddPaymentInfoProviderAdapter'
+import { snapchatAddToCartProviderAdapter } from './providerAdapters/snapchatAddToCartProviderAdapter'
+import { snapchatBeginCheckoutProviderAdapter } from './providerAdapters/snapchatBeginCheckoutProviderAdapter'
+import { snapchatPageViewProviderAdapter } from './providerAdapters/snapchatPageViewProviderAdapter'
+import { snapchatPurchaseProviderAdapter } from './providerAdapters/snapchatPurchaseProviderAdapter'
+import { snapchatViewItemProviderAdapter } from './providerAdapters/snapchatViewItemProviderAdapter'
 import type { ProviderAdapterKey } from './providerAdapter'
 
 export const providerAdapterRegistry = {
   'google:add_payment_info':
     googleDataManagerAddPaymentInfoProviderAdapter,
-  'google:add_to_cart': googleDataManagerAddToCartProviderAdapter,
-  'google:add_to_wishlist': googleDataManagerAddToWishlistProviderAdapter,
+  'google:add_to_cart':
+    googleDataManagerAddToCartProviderAdapter,
+  'google:add_to_wishlist':
+    googleDataManagerAddToWishlistProviderAdapter,
   'google:begin_checkout':
     googleDataManagerBeginCheckoutProviderAdapter,
-  'google:filter_apply': googleDataManagerFilterApplyProviderAdapter,
+  'google:filter_apply':
+    googleDataManagerFilterApplyProviderAdapter,
   'google:form_error': googleDataManagerFormErrorProviderAdapter,
   'google:form_start': googleDataManagerFormStartProviderAdapter,
-  'google:form_submit': googleDataManagerFormSubmitProviderAdapter,
-  'google:generate_lead': googleDataManagerGenerateLeadProviderAdapter,
-  'google:hero_interact': googleDataManagerHeroInteractProviderAdapter,
+  'google:form_submit':
+    googleDataManagerFormSubmitProviderAdapter,
+  'google:generate_lead':
+    googleDataManagerGenerateLeadProviderAdapter,
+  'google:hero_interact':
+    googleDataManagerHeroInteractProviderAdapter,
   'google:interact_with_accordion':
     googleDataManagerInteractWithAccordionProviderAdapter,
-  'google:open_quick_view': googleDataManagerOpenQuickViewProviderAdapter,
+  'google:open_quick_view':
+    googleDataManagerOpenQuickViewProviderAdapter,
   'google:purchase': googleDataManagerPurchaseProviderAdapter,
   'google:refund': googleDataManagerRefundProviderAdapter,
-  'google:remove_from_cart': googleDataManagerRemoveFromCartProviderAdapter,
-  'google:scroll_depth': googleDataManagerScrollDepthProviderAdapter,
+  'google:remove_from_cart':
+    googleDataManagerRemoveFromCartProviderAdapter,
+  'google:scroll_depth':
+    googleDataManagerScrollDepthProviderAdapter,
   'google:search': googleDataManagerSearchProviderAdapter,
-  'google:select_item': googleDataManagerSelectItemProviderAdapter,
-  'google:select_promotion': googleDataManagerSelectPromotionProviderAdapter,
-  'google:size_guide_view': googleDataManagerSizeGuideViewProviderAdapter,
+  'google:select_item':
+    googleDataManagerSelectItemProviderAdapter,
+  'google:select_promotion':
+    googleDataManagerSelectPromotionProviderAdapter,
+  'google:size_guide_view':
+    googleDataManagerSizeGuideViewProviderAdapter,
   'google:sort_apply': googleDataManagerSortApplyProviderAdapter,
-  'google:variant_select': googleDataManagerVariantSelectProviderAdapter,
-  'google:video_progress': googleDataManagerVideoProgressProviderAdapter,
+  'google:variant_select':
+    googleDataManagerVariantSelectProviderAdapter,
+  'google:video_progress':
+    googleDataManagerVideoProgressProviderAdapter,
   'google:view_cart': googleDataManagerViewCartProviderAdapter,
-  'google:view_category': googleDataManagerViewCategoryProviderAdapter,
+  'google:view_category':
+    googleDataManagerViewCategoryProviderAdapter,
   'google:view_item': googleDataManagerViewItemProviderAdapter,
-  'google:view_item_list': googleDataManagerViewItemListProviderAdapter,
-  'google:view_promotion': googleDataManagerViewPromotionProviderAdapter,
+  'google:view_item_list':
+    googleDataManagerViewItemListProviderAdapter,
+  'google:view_promotion':
+    googleDataManagerViewPromotionProviderAdapter,
   'google:view_search_results':
     googleDataManagerViewSearchResultsProviderAdapter,
   'meta:add_to_cart': metaAddToCartProviderAdapter,
@@ -115,22 +137,32 @@ export const providerAdapterRegistry = {
   'meta:view_cart': metaViewCartProviderAdapter,
   'meta:view_category': metaViewCategoryProviderAdapter,
   'meta:view_item_list': metaViewItemListProviderAdapter,
-  'microsoft_uet:add_to_cart': microsoftUetAddToCartProviderAdapter,
+  'microsoft_uet:add_to_cart':
+    microsoftUetAddToCartProviderAdapter,
   'microsoft_uet:begin_checkout':
     microsoftUetBeginCheckoutProviderAdapter,
   'microsoft_uet:page_view': microsoftUetPageViewProviderAdapter,
   'microsoft_uet:purchase': microsoftUetPurchaseProviderAdapter,
-  'pinterest:add_payment_info':
-    pinterestAddPaymentInfoProviderAdapter,
   'pinterest:add_to_cart': pinterestAddToCartProviderAdapter,
   'pinterest:add_to_wishlist':
     pinterestAddToWishlistProviderAdapter,
-  'pinterest:begin_checkout': pinterestBeginCheckoutProviderAdapter,
-  'pinterest:generate_lead': pinterestGenerateLeadProviderAdapter,
+  'pinterest:begin_checkout':
+    pinterestBeginCheckoutProviderAdapter,
+  'pinterest:generate_lead':
+    pinterestGenerateLeadProviderAdapter,
   'pinterest:purchase': pinterestPurchaseProviderAdapter,
   'pinterest:search': pinterestSearchProviderAdapter,
-  'pinterest:view_category': pinterestViewCategoryProviderAdapter,
-  'pinterest:view_item': pinterestViewItemProviderAdapter
+  'pinterest:view_category':
+    pinterestViewCategoryProviderAdapter,
+  'pinterest:view_item': pinterestViewItemProviderAdapter,
+  'snapchat:add_payment_info':
+    snapchatAddPaymentInfoProviderAdapter,
+  'snapchat:add_to_cart': snapchatAddToCartProviderAdapter,
+  'snapchat:begin_checkout':
+    snapchatBeginCheckoutProviderAdapter,
+  'snapchat:page_view': snapchatPageViewProviderAdapter,
+  'snapchat:purchase': snapchatPurchaseProviderAdapter,
+  'snapchat:view_item': snapchatViewItemProviderAdapter
 } as const satisfies Partial<Record<ProviderAdapterKey, unknown>>
 
 export type RegisteredProviderAdapterKey =

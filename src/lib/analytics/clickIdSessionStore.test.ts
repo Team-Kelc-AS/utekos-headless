@@ -3,11 +3,15 @@ import test from 'node:test'
 import {
   CLICK_ID_LOCAL_KEY,
   CLICK_ID_SESSION_KEY,
+  clearEphemeralSnapchatClickId,
+  clearStoredSnapchatClickId,
   resolveClickIds
 } from './clickIdSessionStore'
 
 function createMemoryStorage(initial?: Record<string, string>) {
-  const store = new Map<string, string>(Object.entries(initial ?? {}))
+  const store = new Map<string, string>(
+    Object.entries(initial ?? {})
+  )
 
   return {
     getItem(key: string) {
@@ -52,13 +56,16 @@ test('resolveClickIds persists URL click IDs into session and local storage', ()
       fbclid: 'meta-persist'
     })
   )
-  assert.deepEqual(JSON.parse(local.getItem(CLICK_ID_LOCAL_KEY)!), {
-    identifiers: {
-      epik: 'pinterest-persist',
-      fbclid: 'meta-persist'
-    },
-    updatedAt: '2026-07-20T12:00:00.000Z'
-  })
+  assert.deepEqual(
+    JSON.parse(local.getItem(CLICK_ID_LOCAL_KEY)!),
+    {
+      identifiers: {
+        epik: 'pinterest-persist',
+        fbclid: 'meta-persist'
+      },
+      updatedAt: '2026-07-20T12:00:00.000Z'
+    }
+  )
 })
 
 test('resolveClickIds merges durable local click IDs when URL and session are empty', () => {
@@ -84,7 +91,10 @@ test('resolveClickIds merges durable local click IDs when URL and session are em
   )
   assert.equal(
     session.getItem(CLICK_ID_SESSION_KEY),
-    JSON.stringify({ fbclid: 'meta-local', gclid: 'google-local' })
+    JSON.stringify({
+      fbclid: 'meta-local',
+      gclid: 'google-local'
+    })
   )
 })
 
@@ -128,7 +138,11 @@ test('resolveClickIds lets fresh URL values win over session and local', () => {
       local,
       Date.parse('2026-07-20T12:00:00.000Z')
     ),
-    { fbclid: 'new-meta', gclid: 'keep-google', msclkid: 'bing-1' }
+    {
+      fbclid: 'new-meta',
+      gclid: 'keep-google',
+      msclkid: 'bing-1'
+    }
   )
 })
 
@@ -170,5 +184,72 @@ test('resolveClickIds lets a fresh URL epik win over the Pinterest cookie', () =
       { epik: 'pinterest-cookie-old' }
     ),
     { epik: 'pinterest-url-new' }
+  )
+})
+
+test('keeps ScCid ephemeral until marketing consent allows persistence', () => {
+  clearEphemeralSnapchatClickId()
+  const session = createMemoryStorage()
+  const local = createMemoryStorage()
+  const now = Date.parse('2026-08-23T10:00:00.000Z')
+
+  assert.deepEqual(
+    resolveClickIds(
+      'https://utekos.no/?ScCid=%20AbC-._%2B%2F%3D%20',
+      session,
+      local,
+      now,
+      {},
+      false
+    ),
+    { sc_click_id: ' AbC-._+/= ' }
+  )
+  assert.deepEqual(session.dump(), {})
+  assert.deepEqual(local.dump(), {})
+
+  assert.deepEqual(
+    resolveClickIds(
+      'https://utekos.no/produkter/comfyrobe',
+      session,
+      local,
+      now,
+      {},
+      true
+    ),
+    { sc_click_id: ' AbC-._+/= ' }
+  )
+  assert.equal(
+    session.getItem(CLICK_ID_SESSION_KEY),
+    JSON.stringify({ sc_click_id: ' AbC-._+/= ' })
+  )
+  clearEphemeralSnapchatClickId()
+})
+
+test('removes only Snapchat attribution after consent withdrawal', () => {
+  const session = createMemoryStorage({
+    [CLICK_ID_SESSION_KEY]: JSON.stringify({
+      gclid: 'google-1',
+      sc_click_id: 'snap-1'
+    })
+  })
+  const local = createMemoryStorage({
+    [CLICK_ID_LOCAL_KEY]: JSON.stringify({
+      identifiers: { gclid: 'google-1', sc_click_id: 'snap-1' },
+      updatedAt: '2026-08-23T10:00:00.000Z'
+    })
+  })
+
+  clearStoredSnapchatClickId(session, local)
+
+  assert.deepEqual(
+    JSON.parse(session.getItem(CLICK_ID_SESSION_KEY)!),
+    { gclid: 'google-1' }
+  )
+  assert.deepEqual(
+    JSON.parse(local.getItem(CLICK_ID_LOCAL_KEY)!),
+    {
+      identifiers: { gclid: 'google-1' },
+      updatedAt: '2026-08-23T10:00:00.000Z'
+    }
   )
 })

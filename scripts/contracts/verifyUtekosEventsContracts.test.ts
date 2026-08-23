@@ -127,6 +127,7 @@ test('every Events API operation embeds its detailed delivery contract', () => {
       'microsoft_uet',
       'pinterest',
       'posthog',
+      'snapchat',
       'supabase'
     ])
   }

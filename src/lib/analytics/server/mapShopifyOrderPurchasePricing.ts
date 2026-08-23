@@ -158,6 +158,12 @@ function mapPurchaseItem(
   return {
     item: {
       item_id: itemId,
+      ...((
+        Number.isSafeInteger(lineItem.product_id) &&
+        lineItem.product_id > 0
+      ) ?
+        { product_id: String(lineItem.product_id) }
+      : {}),
       item_name: lineItem.name || lineItem.title,
       quantity: lineItem.quantity,
       unit_price: unitPrice,

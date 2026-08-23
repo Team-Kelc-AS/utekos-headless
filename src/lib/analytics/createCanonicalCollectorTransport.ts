@@ -1,5 +1,6 @@
 import { captureException } from '@sentry/nextjs'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
+import { clearStoredSnapchatClickId } from './clickIdSessionStore'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
 import { extractClickIds } from './pageViewClientContext'
 
@@ -39,36 +40,38 @@ type EventWithConsent = {
   client_ip_address?: string | undefined
   external_id?: string | undefined
   impression_id?: string | undefined
-  location?: {
-    source?:
-      | 'browser_permission'
-      | 'customer_provided'
-      | 'ip_geolocation'
-      | 'server_request'
-    [key: string]: unknown
-  } | undefined
+  location?:
+    | {
+        source?:
+          | 'browser_permission'
+          | 'customer_provided'
+          | 'ip_geolocation'
+          | 'server_request'
+        [key: string]: unknown
+      }
+    | undefined
   region_code?: string | undefined
   user_data?: unknown
-  event_device_info?: {
-    user_agent?: string | undefined
-    [key: string]: unknown
-  } | undefined
+  event_device_info?:
+    | { user_agent?: string | undefined; [key: string]: unknown }
+    | undefined
 }
 
-type CreateCanonicalCollectorTransportInput<E extends { consent: ConsentSnapshot }> = {
+type CreateCanonicalCollectorTransportInput<
+  E extends { consent: ConsentSnapshot }
+> = {
   analyticsEventName: string
   endpoint: string
   enrichEvent?: (event: E) => Promise<E>
   hasCollectionConsent?: (event: E) => boolean
 }
 
-type SendCanonicalCollectorEventInput<E extends { consent: ConsentSnapshot }> =
-  Pick<
-    CreateCanonicalCollectorTransportInput<E>,
-    'analyticsEventName' | 'endpoint' | 'enrichEvent'
-  > & {
-    headers?: Readonly<Record<string, string>>
-  }
+type SendCanonicalCollectorEventInput<
+  E extends { consent: ConsentSnapshot }
+> = Pick<
+  CreateCanonicalCollectorTransportInput<E>,
+  'analyticsEventName' | 'endpoint' | 'enrichEvent'
+> & { headers?: Readonly<Record<string, string>> }
 
 function compactRecord(
   entries: Array<[string, string | undefined]>
@@ -99,11 +102,17 @@ function resolveConsent(
 ): ConsentSnapshot {
   return {
     analytics:
-      cookiebot?.consent?.statistics === true ? 'granted' : 'denied',
+      cookiebot?.consent?.statistics === true ?
+        'granted'
+      : 'denied',
     marketing:
-      cookiebot?.consent?.marketing === true ? 'granted' : 'denied',
+      cookiebot?.consent?.marketing === true ?
+        'granted'
+      : 'denied',
     preferences:
-      cookiebot?.consent?.preferences === true ? 'granted' : 'denied',
+      cookiebot?.consent?.preferences === true ?
+        'granted'
+      : 'denied',
     source: 'cookiebot',
     version
   }
@@ -138,9 +147,12 @@ export function applyCanonicalCollectionContext<
     }
   }
 
-  const analyticsGranted = context.consent.analytics === 'granted'
-  const marketingGranted = context.consent.marketing === 'granted'
-  const preferencesGranted = context.consent.preferences === 'granted'
+  const analyticsGranted =
+    context.consent.analytics === 'granted'
+  const marketingGranted =
+    context.consent.marketing === 'granted'
+  const preferencesGranted =
+    context.consent.preferences === 'granted'
 
   const browserId = {
     ...(analyticsGranted ? context.analyticsBrowserId : {}),
@@ -153,10 +165,7 @@ export function applyCanonicalCollectionContext<
   }
 
   if (marketingGranted) {
-    const clickId = {
-      ...source.click_id,
-      ...context.clickId
-    }
+    const clickId = { ...source.click_id, ...context.clickId }
 
     if (Object.keys(clickId).length > 0) {
       nextEvent.click_id = clickId
@@ -185,21 +194,30 @@ export function applyCanonicalCollectionContext<
   return nextEvent as E
 }
 
-function resolveBrowserCollection<E extends { consent: ConsentSnapshot; page_url?: string }>(
-  event: E
-): { context: CanonicalCollectionContext; event: E } {
+function resolveBrowserCollection<
+  E extends { consent: ConsentSnapshot; page_url?: string }
+>(event: E): { context: CanonicalCollectionContext; event: E } {
   const cookiebot =
-    typeof window === 'undefined' ?
-      undefined
-    : (window as CookiebotWindow).Cookiebot
+    typeof window === 'undefined' ? undefined : (
+      (window as CookiebotWindow).Cookiebot
+    )
 
-  const consent = resolveConsent(cookiebot, event.consent.version)
+  const consent = resolveConsent(
+    cookiebot,
+    event.consent.version
+  )
   const pageUrl = event.page_url ?? 'https://utekos.no/'
+  const hasResponse =
+    cookiebot?.hasResponse === true ||
+    cookiebot?.declined === true
+
+  if (hasResponse && consent.marketing !== 'granted') {
+    clearStoredSnapchatClickId()
+  }
 
   const context: CanonicalCollectionContext = {
     consent,
-    hasResponse:
-      cookiebot?.hasResponse === true || cookiebot?.declined === true,
+    hasResponse,
     ...(consent.analytics === 'granted' ?
       {
         analyticsBrowserId: compactRecord([
@@ -209,14 +227,15 @@ function resolveBrowserCollection<E extends { consent: ConsentSnapshot; page_url
     : {}),
     ...(consent.marketing === 'granted' ?
       {
-        clickId: extractClickIds(pageUrl, document.cookie),
+        clickId: extractClickIds(pageUrl, document.cookie, true),
         marketingBrowserId: compactRecord([
           ['fbp', readCookie('_fbp')],
           ['fbc', readCookie('_fbc')],
           ['gcl_au', readCookie('_gcl_au')],
           ['uet_msclkid', readCookie('_uetmsclkid')],
           ['uet_sid', readCookie('_uetsid')],
-          ['uet_vid', readCookie('_uetvid')]
+          ['uet_vid', readCookie('_uetvid')],
+          ['sc_cookie1', readCookie('_scid')]
         ])
       }
     : {})
@@ -228,7 +247,9 @@ function resolveBrowserCollection<E extends { consent: ConsentSnapshot; page_url
   }
 }
 
-function subscribeToCookiebotChanges(listener: () => void): () => void {
+function subscribeToCookiebotChanges(
+  listener: () => void
+): () => void {
   if (typeof window === 'undefined') return () => {}
 
   for (const eventName of COOKIEBOT_EVENTS) {
@@ -246,7 +267,9 @@ function isRetryableStatus(status: number) {
   return status === 408 || status === 429 || status >= 500
 }
 
-function defaultHasCollectionConsent(event: { consent: ConsentSnapshot }) {
+function defaultHasCollectionConsent(event: {
+  consent: ConsentSnapshot
+}) {
   return (
     event.consent.analytics === 'granted' ||
     event.consent.marketing === 'granted'
@@ -273,7 +296,7 @@ export async function sendCanonicalCollectorEvent<
       response = await fetch(input.endpoint, {
         method: 'POST',
         headers: {
-          Accept: 'application/json',
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
           ...input.headers
         },

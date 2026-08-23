@@ -7,6 +7,7 @@ export const canonicalClickIdsSchema = z.strictObject({
   gbraid: z.string().min(1).optional(),
   gclid: z.string().min(1).optional(),
   msclkid: z.string().min(1).optional(),
+  sc_click_id: z.string().min(1).optional(),
   ttclid: z.string().min(1).optional(),
   twclid: z.string().min(1).optional(),
   wbraid: z.string().min(1).optional()

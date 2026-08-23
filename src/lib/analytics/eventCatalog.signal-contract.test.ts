@@ -13,6 +13,7 @@ const providerIds = [
   'meta',
   'microsoft_uet',
   'pinterest',
+  'snapchat',
   'posthog'
 ] as const satisfies readonly ProviderId[]
 
@@ -111,11 +112,11 @@ test('requires complete Meta website matching projection', () => {
 
 test('requires Pinterest CAPI request and click signals', () => {
   for (const eventName of canonicalEventNames) {
-    const pinterest =
-      eventCatalog[eventName].providers.pinterest
+    const pinterest = eventCatalog[eventName].providers.pinterest
 
     if (
-      pinterest.transport.server !== 'pinterest_conversions_api' ||
+      pinterest.transport.server !==
+        'pinterest_conversions_api' ||
       pinterest.support !== 'supported'
     ) {
       continue
@@ -152,6 +153,40 @@ test('requires Pinterest CAPI request and click signals', () => {
     assert.equal(
       pinterest.signalDelivery.meta_fbp,
       'not_applicable'
+    )
+  }
+})
+
+test('requires Snapchat CAPI v3 request and click signals', () => {
+  for (const eventName of canonicalEventNames) {
+    const snapchat = eventCatalog[eventName].providers.snapchat
+
+    if (
+      snapchat.transport.server !== 'snap_conversions_api_v3' ||
+      snapchat.support !== 'supported'
+    ) {
+      continue
+    }
+
+    assert.equal(
+      snapchat.signalDelivery.event_source_url,
+      'required'
+    )
+    assert.equal(
+      snapchat.signalDelivery.client_ip_address,
+      'send_when_available'
+    )
+    assert.equal(
+      snapchat.signalDelivery.client_user_agent,
+      'send_when_available'
+    )
+    assert.equal(
+      snapchat.signalDelivery.external_id,
+      'send_when_available'
+    )
+    assert.equal(
+      snapchat.signalDelivery.click_ids,
+      'send_when_available'
     )
   }
 })
@@ -195,7 +230,13 @@ test('keeps Google IP sharing policy-aware for EEA traffic', () => {
   for (const eventName of canonicalEventNames) {
     const google = eventCatalog[eventName].providers.google
 
-    if (google.support === 'not_relevant') continue
+    if (
+      google.support === 'not_relevant' ||
+      (google.transport.browser === null &&
+        google.transport.server === null)
+    ) {
+      continue
+    }
 
     assert.equal(
       google.signalDelivery.client_ip_address,

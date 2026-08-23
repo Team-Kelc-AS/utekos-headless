@@ -131,10 +131,11 @@ export function PageViewObserver({
       getCookiebotState()?.consent
     )
     const browserId = extractBrowserIds(document.cookie, consent)
-    const clickId =
-      consent.marketing === 'granted' ?
-        extractClickIds(navigation.pageUrl, document.cookie)
-      : undefined
+    const clickId = extractClickIds(
+      navigation.pageUrl,
+      document.cookie,
+      consent.marketing === 'granted'
+    )
     const externalId =
       browserFirstPartyExternalIdStore.getOrCreate(consent)
     if (consent.marketing === 'granted') {

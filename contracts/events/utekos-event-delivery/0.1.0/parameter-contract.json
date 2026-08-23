@@ -1250,6 +1250,42 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "supported",
+          "eventName": "PAGE_VIEW",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "snap_pixel",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data"
+              ]
+            }
+          },
+          "server": {
+            "transport": "snap_conversions_api_v3",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "page_view",
@@ -1481,6 +1517,16 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "view_item_list",
@@ -1700,6 +1746,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -1943,6 +1999,50 @@
               "logicalRequiredParameters": [
                 "event_id",
                 "event_time",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          }
+        },
+        "snapchat": {
+          "support": "supported",
+          "eventName": "VIEW_CONTENT",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "snap_pixel",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          },
+          "server": {
+            "transport": "snap_conversions_api_v3",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
                 "event_source_url",
                 "user_data",
                 "content_ids",
@@ -2213,6 +2313,16 @@
             }
           }
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "add_to_wishlist",
@@ -2460,6 +2570,50 @@
             }
           }
         },
+        "snapchat": {
+          "support": "supported",
+          "eventName": "ADD_CART",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "snap_pixel",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          },
+          "server": {
+            "transport": "snap_conversions_api_v3",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "add_to_cart",
@@ -2682,6 +2836,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -2916,6 +3080,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -3170,6 +3344,50 @@
             }
           }
         },
+        "snapchat": {
+          "support": "supported",
+          "eventName": "START_CHECKOUT",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": {
+            "transport": "snap_pixel",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          },
+          "server": {
+            "transport": "snap_conversions_api_v3",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "begin_checkout",
@@ -3314,6 +3532,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -3464,6 +3692,50 @@
           "dedupeField": null,
           "browser": null,
           "server": null
+        },
+        "snapchat": {
+          "support": "supported",
+          "eventName": "ADD_BILLING",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "payment_revision",
+          "browser": {
+            "transport": "shopify_customer_events",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          },
+          "server": {
+            "transport": "snap_conversions_api_v3",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value"
+              ]
+            }
+          }
         },
         "posthog": {
           "support": "not_relevant",
@@ -3680,6 +3952,52 @@
             }
           }
         },
+        "snapchat": {
+          "support": "supported",
+          "eventName": "PURCHASE",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+          "consentRequirement": "marketing",
+          "dedupeField": "transaction_id",
+          "browser": {
+            "transport": "shopify_customer_events",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value",
+                "order_id"
+              ]
+            }
+          },
+          "server": {
+            "transport": "snap_conversions_api_v3",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "contents",
+                "currency",
+                "value",
+                "order_id"
+              ]
+            }
+          }
+        },
         "posthog": {
           "support": "planned",
           "eventName": "purchase",
@@ -3821,6 +4139,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest refund mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat refund mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -4044,6 +4372,16 @@
             }
           }
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "search",
@@ -4189,6 +4527,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -4356,6 +4704,16 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "view_promotion",
@@ -4513,6 +4871,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -4751,6 +5119,16 @@
             }
           }
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "generate_lead",
@@ -4904,6 +5282,16 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "form_start",
@@ -5050,6 +5438,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -5208,6 +5606,16 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "form_error",
@@ -5360,6 +5768,16 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "filter_apply",
@@ -5505,6 +5923,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -5662,6 +6090,16 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "variant_select",
@@ -5808,6 +6246,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -5961,6 +6409,16 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "checkout_error",
@@ -6104,6 +6562,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -6291,6 +6759,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -6518,6 +6996,16 @@
             }
           }
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "view_category",
@@ -6705,6 +7193,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -6947,6 +7445,16 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "interact_with_accordion",
@@ -7183,6 +7691,16 @@
           "browser": null,
           "server": null
         },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
         "posthog": {
           "support": "planned",
           "eventName": "open_quick_view",
@@ -7337,6 +7855,16 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Pinterest conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "No v1 Snapchat conversion mapping is approved.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,

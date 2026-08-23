@@ -11,7 +11,9 @@ function granted(value: boolean | undefined) {
   return value === true ? 'granted' : 'denied'
 }
 
-function parseCookies(cookieHeader: string): Map<string, string> {
+function parseCookies(
+  cookieHeader: string
+): Map<string, string> {
   const cookies = new Map<string, string>()
 
   for (const part of cookieHeader.split(';')) {
@@ -20,7 +22,8 @@ function parseCookies(cookieHeader: string): Map<string, string> {
 
     const name = part.slice(0, separator).trim()
     const value = part.slice(separator + 1).trim()
-    if (name && value) cookies.set(name, decodeURIComponent(value))
+    if (name && value)
+      cookies.set(name, decodeURIComponent(value))
   }
 
   return cookies
@@ -40,7 +43,8 @@ export function getConsentSnapshot(
 
 export function extractClickIds(
   pageUrl: string,
-  cookieHeader: string = ''
+  cookieHeader: string = '',
+  marketingConsentGranted: boolean = false
 ) {
   const epik = parseCookies(cookieHeader).get('_epik')
 
@@ -49,7 +53,8 @@ export function extractClickIds(
     undefined,
     undefined,
     undefined,
-    epik ? { epik } : {}
+    epik ? { epik } : {},
+    marketingConsentGranted
   )
 }
 
@@ -65,10 +70,12 @@ export function extractBrowserIds(
     const fbc = cookies.get('_fbc')
     const uetSession = cookies.get('_uetsid')
     const uetVisitor = cookies.get('_uetvid')
+    const snapchatCookie = cookies.get('_scid')
     if (fbp) identifiers.fbp = fbp
     if (fbc) identifiers.fbc = fbc
     if (uetSession) identifiers.uet_session = uetSession
     if (uetVisitor) identifiers.uet_visitor = uetVisitor
+    if (snapchatCookie) identifiers.sc_cookie1 = snapchatCookie
   }
 
   if (consent.analytics === 'granted') {
@@ -76,5 +83,7 @@ export function extractBrowserIds(
     if (gaClient) identifiers.ga_client = gaClient
   }
 
-  return Object.keys(identifiers).length > 0 ? identifiers : undefined
+  return Object.keys(identifiers).length > 0 ?
+      identifiers
+    : undefined
 }

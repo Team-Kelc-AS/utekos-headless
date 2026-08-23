@@ -15,6 +15,7 @@ test('round-trips consented attribution through Shopify attributes', () => {
         fbc: 'fb.1.1784195000000.meta-click',
         fbp: 'fb.1.1784194900000.123456789',
         ga_client_id: '123456789.1784194900',
+        sc_cookie1: 'snap-cookie-1',
         uet_session: 'uet-session-1',
         uet_visitor: 'uet-visitor-1',
         unrelated: 'drop-me'
@@ -23,6 +24,7 @@ test('round-trips consented attribution through Shopify attributes', () => {
         epik: 'pinterest-click',
         fbclid: 'meta-click',
         gclid: 'google-click',
+        sc_click_id: 'snap-click',
         unknown: 'drop-me'
       },
       consent: {
@@ -57,13 +59,15 @@ test('round-trips consented attribution through Shopify attributes', () => {
       fbc: 'fb.1.1784195000000.meta-click',
       fbp: 'fb.1.1784194900000.123456789',
       ga_client_id: '123456789.1784194900',
+      sc_cookie1: 'snap-cookie-1',
       uet_session: 'uet-session-1',
       uet_visitor: 'uet-visitor-1'
     },
     click_id: {
       epik: 'pinterest-click',
       fbclid: 'meta-click',
-      gclid: 'google-click'
+      gclid: 'google-click',
+      sc_click_id: 'snap-click'
     },
     external_id: 'anon_550e8400-e29b-41d4-a716-446655440000',
     page_url: 'https://utekos.no/produkter/test',

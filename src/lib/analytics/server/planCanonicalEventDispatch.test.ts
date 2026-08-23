@@ -66,6 +66,36 @@ function pinterestMissingToken(eventId: string) {
   }
 }
 
+const snapchatEnvKeys = [
+  'SNAPCHAT_CONVERSIONS_API_ENABLED',
+  'SNAPCHAT_CONVERSIONS_API_ACCESS_TOKEN',
+  'SNAPCHAT_CONVERSIONS_API_CUTOVER_AT',
+  'SNAPCHAT_PIXEL_ID',
+  'NEXT_PUBLIC_SNAPCHAT_PIXEL_ID'
+] as const
+
+function withSnapchatEnv(
+  values: Partial<
+    Record<(typeof snapchatEnvKeys)[number], string>
+  >,
+  run: () => void
+) {
+  const previous = Object.fromEntries(
+    snapchatEnvKeys.map(key => [key, process.env[key]])
+  )
+  try {
+    for (const key of snapchatEnvKeys) delete process.env[key]
+    Object.assign(process.env, values)
+    run()
+  } finally {
+    for (const key of snapchatEnvKeys) {
+      const value = previous[key]
+      if (value === undefined) delete process.env[key]
+      else process.env[key] = value
+    }
+  }
+}
+
 isolatePinterestEnv()
 
 function purchase(
@@ -112,8 +142,7 @@ function pageView(): CanonicalEvent {
     environment: 'test',
     page_url: 'https://utekos.no/',
     page_title: 'Utekos',
-    external_id:
-      'anon_550e8400-e29b-41d4-a716-446655440000',
+    external_id: 'anon_550e8400-e29b-41d4-a716-446655440000',
     consent
   })
 }
@@ -401,7 +430,9 @@ test('routes Microsoft purchase with external ID when msclkid is absent', () => 
   process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = 'test-uet-token'
 
   try {
-    const event = purchase({ external_id: 'anonymous-customer-1' })
+    const event = purchase({
+      external_id: 'anonymous-customer-1'
+    })
     const microsoft = planCanonicalEventDispatch(event, {
       now: purchasePlanningNow
     }).find(intent => intent.provider === 'microsoft_uet')
@@ -849,9 +880,9 @@ test('skips Microsoft begin_checkout without a supported identifier', () => {
 
 test('skips Pinterest view_item when CAPI is not configured', () => {
   withIsolatedPinterestEnv(() => {
-    const pinterest = planCanonicalEventDispatch(viewItem()).find(
-      intent => intent.provider === 'pinterest'
-    )
+    const pinterest = planCanonicalEventDispatch(
+      viewItem()
+    ).find(intent => intent.provider === 'pinterest')
 
     assert.deepEqual(
       pinterest,
@@ -868,9 +899,9 @@ test('skips Pinterest view_item without a user identity', () => {
     process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN = 'test-token'
     process.env.PINTEREST_AD_ACCOUNT_ID = '123456789'
 
-    const pinterest = planCanonicalEventDispatch(viewItem()).find(
-      intent => intent.provider === 'pinterest'
-    )
+    const pinterest = planCanonicalEventDispatch(
+      viewItem()
+    ).find(intent => intent.provider === 'pinterest')
 
     assert.deepEqual(pinterest, {
       dispatch_mode: 'server_retry',
@@ -891,9 +922,7 @@ test('enqueues Pinterest view_item when CAPI is configured and IP plus UA are pr
     const event = {
       ...viewItem(),
       client_ip_address: '203.0.113.10',
-      event_device_info: {
-        user_agent: 'Mozilla/5.0 UtekosTest'
-      }
+      event_device_info: { user_agent: 'Mozilla/5.0 UtekosTest' }
     }
 
     const pinterest = planCanonicalEventDispatch(event).find(
@@ -915,9 +944,7 @@ test('enqueues Pinterest purchase when CAPI is configured and email hash is pres
     process.env.PINTEREST_AD_ACCOUNT_ID = '123456789'
 
     const event = purchase({
-      user_data: {
-        email_sha256: ['a'.repeat(64)]
-      }
+      user_data: { email_sha256: ['a'.repeat(64)] }
     })
     const pinterest = planCanonicalEventDispatch(event, {
       now: purchasePlanningNow
@@ -929,4 +956,128 @@ test('enqueues Pinterest purchase when CAPI is configured and email hash is pres
       provider: 'pinterest'
     })
   })
+})
+
+test('does not plan Snapchat rows while its feature flag is disabled', () => {
+  withSnapchatEnv({}, () => {
+    const snapchat = planCanonicalEventDispatch(viewItem()).find(
+      intent => intent.provider === 'snapchat'
+    )
+    assert.equal(snapchat, undefined)
+  })
+})
+
+test('classifies Snapchat configuration, identity, freshness, and cutover gates', () => {
+  const now = Date.parse('2026-08-23T10:00:00.000Z')
+  const base = {
+    SNAPCHAT_CONVERSIONS_API_ENABLED: 'true',
+    SNAPCHAT_CONVERSIONS_API_ACCESS_TOKEN: 'test-token',
+    SNAPCHAT_CONVERSIONS_API_CUTOVER_AT:
+      '2026-08-23T09:00:00.000Z',
+    SNAPCHAT_PIXEL_ID: 'pixel-a',
+    NEXT_PUBLIC_SNAPCHAT_PIXEL_ID: 'pixel-a'
+  }
+
+  withSnapchatEnv(
+    { ...base, NEXT_PUBLIC_SNAPCHAT_PIXEL_ID: 'pixel-b' },
+    () => {
+      const event = {
+        ...viewItem(),
+        event_time: '2026-08-23T09:30:00.000Z'
+      }
+      const snapchat = planCanonicalEventDispatch(event, {
+        now: () => now
+      }).find(intent => intent.provider === 'snapchat')
+      assert.equal(
+        snapchat && 'skip_reason' in snapchat ?
+          snapchat.skip_reason
+        : undefined,
+        'missing_snapchat_configuration'
+      )
+    }
+  )
+
+  withSnapchatEnv(base, () => {
+    const event = {
+      ...viewItem(),
+      event_time: '2026-08-23T09:30:00.000Z'
+    }
+    const snapchat = planCanonicalEventDispatch(event, {
+      now: () => now
+    }).find(intent => intent.provider === 'snapchat')
+    assert.equal(
+      snapchat && 'skip_reason' in snapchat ?
+        snapchat.skip_reason
+      : undefined,
+      'missing_snapchat_match_identifier'
+    )
+  })
+
+  withSnapchatEnv(base, () => {
+    const event = {
+      ...viewItem(),
+      event_time: '2026-08-15T09:30:00.000Z',
+      client_ip_address: '192.0.2.1',
+      event_device_info: { user_agent: 'test' }
+    }
+    const snapchat = planCanonicalEventDispatch(event, {
+      now: () => now
+    }).find(intent => intent.provider === 'snapchat')
+    assert.equal(
+      snapchat && 'skip_reason' in snapchat ?
+        snapchat.skip_reason
+      : undefined,
+      'snapchat_event_outside_7d'
+    )
+  })
+
+  withSnapchatEnv(base, () => {
+    const event = {
+      ...viewItem(),
+      event_time: '2026-08-23T08:30:00.000Z',
+      client_ip_address: '192.0.2.1',
+      event_device_info: { user_agent: 'test' }
+    }
+    const snapchat = planCanonicalEventDispatch(event, {
+      now: () => now
+    }).find(intent => intent.provider === 'snapchat')
+    assert.equal(
+      snapchat && 'skip_reason' in snapchat ?
+        snapchat.skip_reason
+      : undefined,
+      'snapchat_before_cutover'
+    )
+  })
+})
+
+test('plans Snapchat CAPI v3 for a qualified post-cutover event', () => {
+  const now = Date.parse('2026-08-23T10:00:00.000Z')
+  withSnapchatEnv(
+    {
+      SNAPCHAT_CONVERSIONS_API_ENABLED: 'true',
+      SNAPCHAT_CONVERSIONS_API_ACCESS_TOKEN: 'test-token',
+      SNAPCHAT_CONVERSIONS_API_CUTOVER_AT:
+        '2026-08-23T09:00:00.000Z',
+      SNAPCHAT_PIXEL_ID: 'pixel-a',
+      NEXT_PUBLIC_SNAPCHAT_PIXEL_ID: 'pixel-a'
+    },
+    () => {
+      const event = {
+        ...viewItem(),
+        event_time: '2026-08-23T09:30:00.000Z',
+        client_ip_address: '192.0.2.1',
+        event_device_info: { user_agent: 'test' }
+      }
+      const snapchat = planCanonicalEventDispatch(event, {
+        now: () => now
+      }).find(intent => intent.provider === 'snapchat')
+
+      assert.deepEqual(snapchat, {
+        dispatch_mode: 'server_retry',
+        event_id: event.event_id,
+        provider: 'snapchat',
+        snapchat_event_freshness: 'within_7d'
+      })
+    }
+  )
 })

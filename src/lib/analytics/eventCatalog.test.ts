@@ -49,6 +49,7 @@ const providerIds = [
   'meta',
   'microsoft_uet',
   'pinterest',
+  'snapchat',
   'posthog'
 ] as const satisfies readonly ProviderId[]
 
@@ -167,7 +168,8 @@ test('defines the required owner, trigger, dedupe, consent, and provider contrac
         assert.ok(provider.eventName)
         assert.ok(
           provider.dedupeField === 'event_id' ||
-            provider.dedupeField === 'transaction_id'
+            provider.dedupeField === 'transaction_id' ||
+            provider.dedupeField === 'payment_revision'
         )
         assert.equal(typeof provider.adapterVersion, 'number')
         assert.ok((provider.adapterVersion ?? 0) >= 1)
@@ -203,7 +205,10 @@ test('routes correlated checkout progress only to its approved providers', () =>
     /payment_info_submitted proves submission only/
   )
   assert.equal(shipping.owner, 'shopify_app_web_pixel')
-  assert.equal(shipping.providers.meta.eventName, 'AddShippingInfo')
+  assert.equal(
+    shipping.providers.meta.eventName,
+    'AddShippingInfo'
+  )
   assert.equal(shipping.providers.meta.serverOutbox, 'active')
   assert.equal(shipping.providers.meta.transport.browser, null)
   assert.equal(
@@ -213,7 +218,11 @@ test('routes correlated checkout progress only to its approved providers', () =>
   assert.ok(
     Object.entries(payment.providers).every(
       ([providerId, provider]) =>
-        providerId === 'google' || providerId === 'meta' ?
+        (
+          providerId === 'google' ||
+          providerId === 'meta' ||
+          providerId === 'snapchat'
+        ) ?
           provider.serverOutbox === 'active'
         : provider.serverOutbox !== 'active'
     )
@@ -224,7 +233,10 @@ test('routes correlated checkout progress only to its approved providers', () =>
     payment.providers.google.transport.server,
     'google_data_manager'
   )
-  assert.equal(payment.providers.meta.eventName, 'AddPaymentInfo')
+  assert.equal(
+    payment.providers.meta.eventName,
+    'AddPaymentInfo'
+  )
   assert.equal(payment.providers.meta.serverOutbox, 'active')
   assert.equal(payment.providers.meta.transport.browser, null)
   assert.equal(
@@ -235,7 +247,19 @@ test('routes correlated checkout progress only to its approved providers', () =>
     payment.providers.microsoft_uet.support,
     'not_relevant'
   )
-  assert.equal(payment.providers.pinterest.support, 'not_relevant')
+  assert.equal(
+    payment.providers.pinterest.support,
+    'not_relevant'
+  )
+  assert.equal(
+    payment.providers.snapchat.eventName,
+    'ADD_BILLING'
+  )
+  assert.equal(payment.providers.snapchat.serverOutbox, 'active')
+  assert.equal(
+    payment.providers.snapchat.transport.browser,
+    'shopify_customer_events'
+  )
   assert.equal(payment.providers.posthog.support, 'not_relevant')
 })
 
@@ -281,6 +305,12 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   assert.ok(activeOutboxes.includes('pinterest:view_category'))
   assert.ok(activeOutboxes.includes('pinterest:add_to_wishlist'))
   assert.ok(activeOutboxes.includes('pinterest:generate_lead'))
+  assert.ok(activeOutboxes.includes('snapchat:page_view'))
+  assert.ok(activeOutboxes.includes('snapchat:view_item'))
+  assert.ok(activeOutboxes.includes('snapchat:add_to_cart'))
+  assert.ok(activeOutboxes.includes('snapchat:begin_checkout'))
+  assert.ok(activeOutboxes.includes('snapchat:add_payment_info'))
+  assert.ok(activeOutboxes.includes('snapchat:purchase'))
   assert.equal(
     eventCatalog.page_view.providers.pinterest.support,
     'not_relevant'

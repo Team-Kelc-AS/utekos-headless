@@ -9,10 +9,14 @@ export const CLICK_ID_PARAMETERS = [
   'gbraid',
   'gclid',
   'msclkid',
+  'sc_click_id',
   'ttclid',
   'twclid',
   'wbraid'
 ] as const
+
+export const SNAPCHAT_CLICK_ID_QUERY_PARAMETER = 'ScCid'
+let ephemeralSnapchatClickId: string | undefined
 
 type StorageLike = {
   getItem(key: string): string | null
@@ -30,8 +34,18 @@ function readClickIdsFromSearchParams(
   const identifiers: Record<string, string> = {}
 
   for (const parameter of CLICK_ID_PARAMETERS) {
+    if (parameter === 'sc_click_id') continue
     const value = searchParams.get(parameter)?.trim()
     if (value) identifiers[parameter] = value
+  }
+
+  const snapchatClickId = searchParams.get(
+    SNAPCHAT_CLICK_ID_QUERY_PARAMETER
+  )
+  if (snapchatClickId) {
+    // ScCid is an opaque provider identifier. Preserve it byte-for-byte.
+    identifiers.sc_click_id = snapchatClickId
+    ephemeralSnapchatClickId = snapchatClickId
   }
 
   return identifiers
@@ -40,7 +54,11 @@ function readClickIdsFromSearchParams(
 function sanitizeClickIds(
   parsed: unknown
 ): Record<string, string> {
-  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+  if (
+    !parsed ||
+    typeof parsed !== 'object' ||
+    Array.isArray(parsed)
+  ) {
     return {}
   }
 
@@ -48,7 +66,11 @@ function sanitizeClickIds(
 
   for (const parameter of CLICK_ID_PARAMETERS) {
     const value = (parsed as Record<string, unknown>)[parameter]
-    if (typeof value === 'string' && value.trim()) {
+    if (typeof value !== 'string') continue
+
+    if (parameter === 'sc_click_id' && value.length > 0) {
+      identifiers[parameter] = value
+    } else if (value.trim()) {
       identifiers[parameter] = value.trim()
     }
   }
@@ -83,12 +105,18 @@ function readDurableClickIds(
     if (!raw) return {}
 
     const parsed: unknown = JSON.parse(raw)
-    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    if (
+      !parsed ||
+      typeof parsed !== 'object' ||
+      Array.isArray(parsed)
+    ) {
       return {}
     }
 
     const record = parsed as Partial<DurableClickIdRecord>
-    const updatedAtMs = Date.parse(String(record.updatedAt ?? ''))
+    const updatedAtMs = Date.parse(
+      String(record.updatedAt ?? '')
+    )
     if (!Number.isFinite(updatedAtMs)) return {}
     if (nowMs - updatedAtMs > CLICK_ID_LOCAL_TTL_MS) return {}
 
@@ -155,19 +183,30 @@ function getDefaultLocalStorage(): StorageLike | undefined {
  * which in turn win over session/local values for the same key.
  * Newly seen URL/cookie values are merged into sessionStorage and a
  * 90-day localStorage record so click attribution survives navigation
- * and the cross-domain Shopify checkout handoff.
+ * and the cross-domain Shopify checkout handoff. ScCid remains only in
+ * module memory until the caller authorizes marketing persistence.
  */
 export function resolveClickIds(
   pageUrl: string,
-  sessionStorageLike: StorageLike | undefined = getDefaultSessionStorage(),
-  localStorageLike: StorageLike | undefined = getDefaultLocalStorage(),
+  sessionStorageLike:
+    | StorageLike
+    | undefined = getDefaultSessionStorage(),
+  localStorageLike:
+    | StorageLike
+    | undefined = getDefaultLocalStorage(),
   nowMs: number = Date.now(),
-  observedClickIds: Record<string, string> = {}
+  observedClickIds: Record<string, string> = {},
+  persist: boolean = true
 ): Record<string, string> | undefined {
   const fromUrl = readClickIdsFromSearchParams(
     new URL(pageUrl).searchParams
   )
-  const fromObserved = sanitizeClickIds(observedClickIds)
+  const fromObserved = sanitizeClickIds({
+    ...(ephemeralSnapchatClickId ?
+      { sc_click_id: ephemeralSnapchatClickId }
+    : {}),
+    ...observedClickIds
+  })
   const fromSession = readPersistedClickIds(
     sessionStorageLike,
     CLICK_ID_SESSION_KEY
@@ -184,20 +223,81 @@ export function resolveClickIds(
       fromSession[key] !== value && fromLocal[key] !== value
   )
 
-  if (Object.keys(fromUrl).length > 0 || Object.keys(merged).length > 0) {
+  if (
+    persist &&
+    (Object.keys(fromUrl).length > 0 ||
+      Object.keys(merged).length > 0)
+  ) {
     if (Object.keys(fromUrl).length > 0 || hasNewObservedValue) {
-      persistClickIds(sessionStorageLike, CLICK_ID_SESSION_KEY, merged)
+      persistClickIds(
+        sessionStorageLike,
+        CLICK_ID_SESSION_KEY,
+        merged
+      )
       persistDurableClickIds(localStorageLike, merged, nowMs)
     } else if (
       Object.keys(fromSession).length === 0 &&
       Object.keys(fromLocal).length > 0
     ) {
       // Hydrate the current tab from durable storage without extending TTL.
-      persistClickIds(sessionStorageLike, CLICK_ID_SESSION_KEY, merged)
+      persistClickIds(
+        sessionStorageLike,
+        CLICK_ID_SESSION_KEY,
+        merged
+      )
     }
   }
 
   return Object.keys(merged).length > 0 ? merged : undefined
+}
+
+export function clearEphemeralSnapchatClickId() {
+  ephemeralSnapchatClickId = undefined
+}
+
+export function clearStoredSnapchatClickId(
+  sessionStorageLike:
+    | StorageLike
+    | undefined = getDefaultSessionStorage(),
+  localStorageLike:
+    | StorageLike
+    | undefined = getDefaultLocalStorage()
+) {
+  clearEphemeralSnapchatClickId()
+
+  try {
+    const raw = sessionStorageLike?.getItem(CLICK_ID_SESSION_KEY)
+    if (raw && sessionStorageLike) {
+      const identifiers = sanitizeClickIds(JSON.parse(raw))
+      delete identifiers.sc_click_id
+      sessionStorageLike.setItem(
+        CLICK_ID_SESSION_KEY,
+        JSON.stringify(identifiers)
+      )
+    }
+  } catch {
+    // Ignore unavailable or corrupted privacy storage.
+  }
+
+  try {
+    const raw = localStorageLike?.getItem(CLICK_ID_LOCAL_KEY)
+    if (raw && localStorageLike) {
+      const parsed = JSON.parse(
+        raw
+      ) as Partial<DurableClickIdRecord>
+      const identifiers = sanitizeClickIds(parsed.identifiers)
+      delete identifiers.sc_click_id
+      localStorageLike.setItem(
+        CLICK_ID_LOCAL_KEY,
+        JSON.stringify({
+          identifiers,
+          updatedAt: parsed.updatedAt
+        })
+      )
+    }
+  } catch {
+    // Ignore unavailable or corrupted privacy storage.
+  }
 }
 
 export { CLICK_ID_LOCAL_KEY, CLICK_ID_SESSION_KEY }

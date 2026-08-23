@@ -4,6 +4,7 @@ import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 
 const purchaseItemSchema = z.strictObject({
   item_id: z.string().min(1),
+  product_id: z.string().min(1).optional(),
   item_name: z.string().min(1),
   quantity: z.number().int().positive(),
   unit_price: z.number().finite().nonnegative(),

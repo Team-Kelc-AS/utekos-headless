@@ -258,6 +258,17 @@ const pinterestSignals = {
   meta_fbp: 'not_applicable'
 } as const satisfies ProviderSignalDeliveryPolicy
 
+const snapchatSignals = {
+  event_source_url: 'required',
+  client_ip_address: 'send_when_available',
+  client_user_agent: 'send_when_available',
+  external_id: 'send_when_available',
+  click_ids: 'send_when_available',
+  meta_fbclid: 'not_applicable',
+  meta_fbc: 'not_applicable',
+  meta_fbp: 'not_applicable'
+} as const satisfies ProviderSignalDeliveryPolicy
+
 const posthogSignals = {
   ...notApplicableProviderSignals,
   event_source_url: 'send_when_available'
@@ -294,6 +305,13 @@ export function resolveProviderSignalDelivery(
     transport.browser === 'pinterest_tag'
   ) {
     return pinterestSignals
+  }
+
+  if (
+    transport.server === 'snap_conversions_api_v3' ||
+    transport.browser === 'snap_pixel'
+  ) {
+    return snapchatSignals
   }
 
   if (

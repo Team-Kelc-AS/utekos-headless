@@ -54,7 +54,12 @@ function baseOrder(
           quantity: 1,
           sku: 'JKT-1',
           vendor: 'Utekos',
-          product: { vendor: 'Utekos', productType: 'Jackets' },
+          product: {
+            id: 'gid://shopify/Product/42',
+            legacyResourceId: '42',
+            vendor: 'Utekos',
+            productType: 'Jackets'
+          },
           variant: {
             id: 'gid://shopify/ProductVariant/99',
             legacyResourceId: '99'

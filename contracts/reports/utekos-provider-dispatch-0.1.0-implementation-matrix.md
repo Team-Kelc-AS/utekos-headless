@@ -58,7 +58,6 @@ The queue message contains only `adapter_key`, `attempt_id`, and `schema_version
 | `microsoft_uet:begin_checkout` | `microsoft_uet` | `begin_checkout` | registered adapter + worker |
 | `microsoft_uet:page_view` | `microsoft_uet` | `page_view` | registered adapter + worker |
 | `microsoft_uet:purchase` | `microsoft_uet` | `purchase` | registered adapter + worker |
-| `pinterest:add_payment_info` | `pinterest` | `add_payment_info` | registered adapter + worker |
 | `pinterest:add_to_cart` | `pinterest` | `add_to_cart` | registered adapter + worker |
 | `pinterest:add_to_wishlist` | `pinterest` | `add_to_wishlist` | registered adapter + worker |
 | `pinterest:begin_checkout` | `pinterest` | `begin_checkout` | registered adapter + worker |
@@ -67,6 +66,12 @@ The queue message contains only `adapter_key`, `attempt_id`, and `schema_version
 | `pinterest:search` | `pinterest` | `search` | registered adapter + worker |
 | `pinterest:view_category` | `pinterest` | `view_category` | registered adapter + worker |
 | `pinterest:view_item` | `pinterest` | `view_item` | registered adapter + worker |
+| `snapchat:add_payment_info` | `snapchat` | `add_payment_info` | registered adapter + worker |
+| `snapchat:add_to_cart` | `snapchat` | `add_to_cart` | registered adapter + worker |
+| `snapchat:begin_checkout` | `snapchat` | `begin_checkout` | registered adapter + worker |
+| `snapchat:page_view` | `snapchat` | `page_view` | registered adapter + worker |
+| `snapchat:purchase` | `snapchat` | `purchase` | registered adapter + worker |
+| `snapchat:view_item` | `snapchat` | `view_item` | registered adapter + worker |
 
 ## Runtime invariants
 

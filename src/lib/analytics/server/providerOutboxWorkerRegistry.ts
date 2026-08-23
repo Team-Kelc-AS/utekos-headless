@@ -52,7 +52,6 @@ import { microsoftUetAddToCartProviderAdapter } from './providerAdapters/microso
 import { microsoftUetBeginCheckoutProviderAdapter } from './providerAdapters/microsoftUetBeginCheckoutProviderAdapter'
 import { microsoftUetPageViewProviderAdapter } from './providerAdapters/microsoftUetPageViewProviderAdapter'
 import { microsoftUetPurchaseProviderAdapter } from './providerAdapters/microsoftUetPurchaseProviderAdapter'
-import { pinterestAddPaymentInfoProviderAdapter } from './providerAdapters/pinterestAddPaymentInfoProviderAdapter'
 import { pinterestAddToCartProviderAdapter } from './providerAdapters/pinterestAddToCartProviderAdapter'
 import { pinterestAddToWishlistProviderAdapter } from './providerAdapters/pinterestAddToWishlistProviderAdapter'
 import { pinterestBeginCheckoutProviderAdapter } from './providerAdapters/pinterestBeginCheckoutProviderAdapter'
@@ -61,6 +60,12 @@ import { pinterestPurchaseProviderAdapter } from './providerAdapters/pinterestPu
 import { pinterestSearchProviderAdapter } from './providerAdapters/pinterestSearchProviderAdapter'
 import { pinterestViewCategoryProviderAdapter } from './providerAdapters/pinterestViewCategoryProviderAdapter'
 import { pinterestViewItemProviderAdapter } from './providerAdapters/pinterestViewItemProviderAdapter'
+import { snapchatAddPaymentInfoProviderAdapter } from './providerAdapters/snapchatAddPaymentInfoProviderAdapter'
+import { snapchatAddToCartProviderAdapter } from './providerAdapters/snapchatAddToCartProviderAdapter'
+import { snapchatBeginCheckoutProviderAdapter } from './providerAdapters/snapchatBeginCheckoutProviderAdapter'
+import { snapchatPageViewProviderAdapter } from './providerAdapters/snapchatPageViewProviderAdapter'
+import { snapchatPurchaseProviderAdapter } from './providerAdapters/snapchatPurchaseProviderAdapter'
+import { snapchatViewItemProviderAdapter } from './providerAdapters/snapchatViewItemProviderAdapter'
 import type { ProviderOutboxBatchSummary } from './runProviderOutboxWorker'
 
 export const providerOutboxWorkerRegistry = {
@@ -133,9 +138,10 @@ export const providerOutboxWorkerRegistry = {
   'google:hero_interact': createPostgresProviderOutboxWorker(
     googleDataManagerHeroInteractProviderAdapter
   ),
-  'google:interact_with_accordion': createPostgresProviderOutboxWorker(
-    googleDataManagerInteractWithAccordionProviderAdapter
-  ),
+  'google:interact_with_accordion':
+    createPostgresProviderOutboxWorker(
+      googleDataManagerInteractWithAccordionProviderAdapter
+    ),
   'google:open_quick_view': createPostgresProviderOutboxWorker(
     googleDataManagerOpenQuickViewProviderAdapter
   ),
@@ -148,9 +154,10 @@ export const providerOutboxWorkerRegistry = {
   'google:view_promotion': createPostgresProviderOutboxWorker(
     googleDataManagerViewPromotionProviderAdapter
   ),
-  'google:view_search_results': createPostgresProviderOutboxWorker(
-    googleDataManagerViewSearchResultsProviderAdapter
-  ),
+  'google:view_search_results':
+    createPostgresProviderOutboxWorker(
+      googleDataManagerViewSearchResultsProviderAdapter
+    ),
   'meta:add_to_cart': createPostgresProviderOutboxWorker(
     metaAddToCartProviderAdapter
   ),
@@ -172,9 +179,10 @@ export const providerOutboxWorkerRegistry = {
   'meta:hero_interact': createPostgresProviderOutboxWorker(
     metaHeroInteractProviderAdapter
   ),
-  'meta:interact_with_accordion': createPostgresProviderOutboxWorker(
-    metaInteractWithAccordionProviderAdapter
-  ),
+  'meta:interact_with_accordion':
+    createPostgresProviderOutboxWorker(
+      metaInteractWithAccordionProviderAdapter
+    ),
   'meta:open_quick_view': createPostgresProviderOutboxWorker(
     metaOpenQuickViewProviderAdapter
   ),
@@ -208,27 +216,27 @@ export const providerOutboxWorkerRegistry = {
   'meta:view_item_list': createPostgresProviderOutboxWorker(
     metaViewItemListProviderAdapter
   ),
-  'microsoft_uet:add_to_cart': createPostgresProviderOutboxWorker(
-    microsoftUetAddToCartProviderAdapter
-  ),
-  'microsoft_uet:begin_checkout': createPostgresProviderOutboxWorker(
-    microsoftUetBeginCheckoutProviderAdapter
-  ),
+  'microsoft_uet:add_to_cart':
+    createPostgresProviderOutboxWorker(
+      microsoftUetAddToCartProviderAdapter
+    ),
+  'microsoft_uet:begin_checkout':
+    createPostgresProviderOutboxWorker(
+      microsoftUetBeginCheckoutProviderAdapter
+    ),
   'microsoft_uet:page_view': createPostgresProviderOutboxWorker(
     microsoftUetPageViewProviderAdapter
   ),
   'microsoft_uet:purchase': createPostgresProviderOutboxWorker(
     microsoftUetPurchaseProviderAdapter
   ),
-  'pinterest:add_payment_info': createPostgresProviderOutboxWorker(
-    pinterestAddPaymentInfoProviderAdapter
-  ),
   'pinterest:add_to_cart': createPostgresProviderOutboxWorker(
     pinterestAddToCartProviderAdapter
   ),
-  'pinterest:add_to_wishlist': createPostgresProviderOutboxWorker(
-    pinterestAddToWishlistProviderAdapter
-  ),
+  'pinterest:add_to_wishlist':
+    createPostgresProviderOutboxWorker(
+      pinterestAddToWishlistProviderAdapter
+    ),
   'pinterest:begin_checkout': createPostgresProviderOutboxWorker(
     pinterestBeginCheckoutProviderAdapter
   ),
@@ -246,8 +254,29 @@ export const providerOutboxWorkerRegistry = {
   ),
   'pinterest:view_item': createPostgresProviderOutboxWorker(
     pinterestViewItemProviderAdapter
+  ),
+  'snapchat:add_payment_info':
+    createPostgresProviderOutboxWorker(
+      snapchatAddPaymentInfoProviderAdapter
+    ),
+  'snapchat:add_to_cart': createPostgresProviderOutboxWorker(
+    snapchatAddToCartProviderAdapter
+  ),
+  'snapchat:begin_checkout': createPostgresProviderOutboxWorker(
+    snapchatBeginCheckoutProviderAdapter
+  ),
+  'snapchat:page_view': createPostgresProviderOutboxWorker(
+    snapchatPageViewProviderAdapter
+  ),
+  'snapchat:purchase': createPostgresProviderOutboxWorker(
+    snapchatPurchaseProviderAdapter
+  ),
+  'snapchat:view_item': createPostgresProviderOutboxWorker(
+    snapchatViewItemProviderAdapter
   )
 } as const satisfies Record<
   RegisteredProviderAdapterKey,
-  (input: { maxItems: number }) => Promise<ProviderOutboxBatchSummary>
+  (input: {
+    maxItems: number
+  }) => Promise<ProviderOutboxBatchSummary>
 >

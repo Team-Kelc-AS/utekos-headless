@@ -172,7 +172,6 @@
               "microsoft_uet:begin_checkout",
               "microsoft_uet:page_view",
               "microsoft_uet:purchase",
-              "pinterest:add_payment_info",
               "pinterest:add_to_cart",
               "pinterest:add_to_wishlist",
               "pinterest:begin_checkout",
@@ -180,7 +179,13 @@
               "pinterest:purchase",
               "pinterest:search",
               "pinterest:view_category",
-              "pinterest:view_item"
+              "pinterest:view_item",
+              "snapchat:add_payment_info",
+              "snapchat:add_to_cart",
+              "snapchat:begin_checkout",
+              "snapchat:page_view",
+              "snapchat:purchase",
+              "snapchat:view_item"
             ],
             "description": "Exact key in providerAdapterRegistry and providerOutboxWorkerRegistry."
           },

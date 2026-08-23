@@ -9,6 +9,7 @@ export type ProviderId =
   | 'meta'
   | 'microsoft_uet'
   | 'pinterest'
+  | 'snapchat'
 
 export type ProviderAdapterKey =
   `${ProviderId}:${ImplementedCanonicalEventName}`
@@ -25,10 +26,7 @@ export type ProviderRetryPolicy = {
   positiveJitterRatio: number
 }
 
-export type ProviderAdapter<
-  E extends CanonicalEvent,
-  R
-> = {
+export type ProviderAdapter<E extends CanonicalEvent, R> = {
   claimNotBefore?: string
   deadLetterReasons: {
     attemptsExhausted: string

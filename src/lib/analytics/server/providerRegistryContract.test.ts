@@ -17,6 +17,7 @@ const providerIds = [
   'meta',
   'microsoft_uet',
   'pinterest',
+  'snapchat',
   'posthog'
 ] as const satisfies readonly CatalogProviderId[]
 
@@ -27,8 +28,10 @@ const providerAdapterKeys = Object.keys(
 test('keeps catalog, adapters, and workers in one active-outbox allowlist', () => {
   const catalogKeys = canonicalEventNames.flatMap(eventName =>
     providerIds.flatMap(providerId =>
-      eventCatalog[eventName].providers[providerId]
-        .serverOutbox === 'active' ?
+      (
+        eventCatalog[eventName].providers[providerId]
+          .serverOutbox === 'active'
+      ) ?
         [`${providerId}:${eventName}`]
       : []
     )

@@ -163,6 +163,27 @@ test('clears stale campaign metadata when a new untagged paid click arrives', ()
   )
 })
 
+test('treats the exact Snapchat ScCid parameter as a new paid-click boundary', () => {
+  const session = createMemoryStorage({
+    [CAMPAIGN_ATTRIBUTION_SESSION_KEY]: JSON.stringify({
+      campaign_id: 'old-campaign'
+    })
+  })
+
+  assert.equal(
+    resolveCampaignAttribution(
+      'https://utekos.no/?ScCid=opaque-snap-click',
+      session,
+      createMemoryStorage()
+    ),
+    undefined
+  )
+  assert.equal(
+    session.getItem(CAMPAIGN_ATTRIBUTION_SESSION_KEY),
+    null
+  )
+})
+
 test('ignores expired durable campaign attribution', () => {
   const local = createMemoryStorage({
     [CAMPAIGN_ATTRIBUTION_LOCAL_KEY]: JSON.stringify({

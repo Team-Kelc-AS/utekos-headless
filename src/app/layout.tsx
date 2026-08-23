@@ -36,28 +36,16 @@ const googleSansFlex = Google_Sans_Flex({
 })
 
 export const metadata: Metadata = {
-  icons: {
-    icon: '/icon.png',
-    apple: '/apple-icon.png'
-  },
-  metadataBase: new URL(
-    'https://utekos.no'
-  ),
+  icons: { icon: '/icon.png', apple: '/apple-icon.png' },
+  metadataBase: new URL('https://utekos.no'),
   title: 'Utekos - Skreddersy varmen',
   description:
     'Utekos er en merkevare som designer yttertøy som kan justeres og formes etter behov. Opplev ompromissløs komfort og overlegen allsidighet. Perfekt for hytte, bobil, camping og terrasseliv.',
-  alternates: {
-    canonical: '/'
-  },
+  alternates: { canonical: '/' },
   applicationName: 'Utekos',
   category: 'Yttertøy',
   manifest: '/manifest.webmanifest',
-  authors: [
-    {
-      name: 'Utekos',
-      url: 'https://utekos.no'
-    }
-  ],
+  authors: [{ name: 'Utekos', url: 'https://utekos.no' }],
   creator: 'Utekos',
   publisher: 'Utekos',
   formatDetection: {
@@ -65,12 +53,8 @@ export const metadata: Metadata = {
     address: true,
     telephone: true
   },
-  facebook: {
-    appId: '1154247890253046'
-  },
-  pinterest: {
-    richPin: true
-  },
+  facebook: { appId: '1154247890253046' },
+  pinterest: { richPin: true },
   appleWebApp: {
     capable: true,
     title: 'Utekos',
@@ -106,8 +90,7 @@ export const metadata: Metadata = {
     other: {
       'facebook-domain-verification':
         'e3q80hk1igl2celczeysvf7y1mltrs',
-      'p:domain_verify':
-        'edb3d2ffc77d9930280b515c685c5e13'
+      'p:domain_verify': 'edb3d2ffc77d9930280b515c685c5e13'
     }
   }
 }
@@ -121,16 +104,17 @@ export default function RootLayout({
     resolveShopifyCustomerPrivacyPublicToken(process.env)
 
   const assistantRolloutPercent =
-    resolveAssistantPreviewRolloutPercent(
-      process.env
-    )
+    resolveAssistantPreviewRolloutPercent(process.env)
 
-  const shouldLoadMarketingScripts =
-    shouldLoadGoogleTagManager(
-      process.env.VERCEL_ENV
-    )
+  const shouldLoadMarketingScripts = shouldLoadGoogleTagManager(
+    process.env.VERCEL_ENV
+  )
   const pinterestTagId =
     process.env.NEXT_PUBLIC_PINTEREST_TAG_ID?.trim()
+  const snapchatPixelEnabled =
+    process.env.SNAPCHAT_PIXEL_ENABLED === 'true'
+  const snapchatPixelId =
+    process.env.NEXT_PUBLIC_SNAPCHAT_PIXEL_ID?.trim()
 
   return (
     <html
@@ -159,14 +143,20 @@ export default function RootLayout({
                 data-tag-id={pinterestTagId}
               />
             : null}
+            {snapchatPixelEnabled && snapchatPixelId ?
+              <Script
+                id='snapchat-pixel-canonical-browser'
+                src='/analytics/snapchat-pixel-canonical-v1.js'
+                strategy='afterInteractive'
+                data-pixel-id={snapchatPixelId}
+              />
+            : null}
           </>
         : null}
 
         <Suspense fallback={null}>
           <PageViewObserver
-            environment={
-              getTrackingEnvironment()
-            }
+            environment={getTrackingEnvironment()}
           />
           <ScrollDepthObserver />
         </Suspense>
@@ -176,12 +166,8 @@ export default function RootLayout({
 
         <CartProviderLoader>
           <SiteChrome
-            assistantRolloutPercent={
-              assistantRolloutPercent
-            }
-            header={
-              <Header menu={mainMenu} />
-            }
+            assistantRolloutPercent={assistantRolloutPercent}
+            header={<Header menu={mainMenu} />}
             footer={<Footer />}
           >
             {children}
@@ -189,10 +175,10 @@ export default function RootLayout({
         </CartProviderLoader>
 
         <ShopifyCustomerPrivacyBridge
-         storefrontAccessToken={storefrontAccessToken || ''}
-          />
-        <Analytics mode="production" />
-         <SpeedInsights />
+          storefrontAccessToken={storefrontAccessToken || ''}
+        />
+        <Analytics mode='production' />
+        <SpeedInsights />
       </body>
     </html>
   )

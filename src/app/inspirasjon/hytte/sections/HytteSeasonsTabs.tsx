@@ -1,7 +1,3 @@
-import autumnVideo from '@/assets/videos/kaldt_vakkert.mp4'
-import summerVideo from '@/assets/videos/lange_kvelder.mp4'
-import springVideo from '@/assets/videos/spring.mp4'
-import winterVideo from '@/assets/videos/varme.mp4'
 import { Card, CardContent } from '@/components/ui/card'
 import { HytteSeasonVideo } from './HytteSeasonVideo'
 import { HytteSeasonsAnimator } from './HytteSeasonsAnimator'
@@ -10,22 +6,22 @@ const seasons = [
   {
     value: 'spring',
     label: 'Vår',
-    videoSrc: springVideo
+    videoSrc: '/videos/spring.mp4'
   },
   {
     value: 'summer',
     label: 'Sommer',
-    videoSrc: summerVideo
+    videoSrc: '/videos/lange_kvelder.mp4'
   },
   {
     value: 'autumn',
     label: 'Høst',
-    videoSrc: autumnVideo
+    videoSrc: '/videos/kaldt_vakkert.mp4'
   },
   {
     value: 'winter',
     label: 'Vinter',
-    videoSrc: winterVideo
+    videoSrc: '/videos/varme.mp4'
   }
 ] satisfies readonly {
   value: string

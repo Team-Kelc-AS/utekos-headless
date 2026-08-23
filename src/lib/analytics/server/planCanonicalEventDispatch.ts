@@ -8,6 +8,16 @@ import { findGoogleClientId } from './findGoogleClientId'
 import { hasMicrosoftUetCapiIdentifier } from './hasMicrosoftUetCapiIdentifier'
 import { hasPinterestCanonicalUserIdentity } from './mapCanonicalEventToPinterest'
 import { isPinterestConversionsApiConfigured } from './pinterestConversionsApiConfig'
+import { hasSnapchatCanonicalUserIdentity } from './mapCanonicalEventToSnapchat'
+import {
+  isSnapchatConversionsApiEnabled,
+  isSnapchatConversionsApiConfigured,
+  resolveSnapchatCutoverAtMs
+} from './snapchatConversionsApiConfig'
+import {
+  classifySnapchatEventFreshness,
+  type SnapchatEventFreshness
+} from './snapchatEventFreshness'
 import {
   classifyGoogleDataManagerEventFreshness,
   type GoogleDataManagerEventFreshness
@@ -18,6 +28,7 @@ type ActiveProviderDispatchIntent = {
   dispatch_mode: 'server_retry'
   event_id: string
   google_event_freshness?: GoogleDataManagerEventFreshness
+  snapchat_event_freshness?: SnapchatEventFreshness
   provider: ProviderId
 }
 
@@ -27,7 +38,11 @@ type ProviderSkipReason =
   | 'missing_client_id'
   | 'missing_google_analytics_identifier'
   | 'missing_microsoft_uet_identifier'
+  | 'missing_snapchat_configuration'
+  | 'missing_snapchat_match_identifier'
   | 'google_event_outside_72h'
+  | 'snapchat_event_outside_7d'
+  | 'snapchat_before_cutover'
 
 type SkippedProviderDispatchIntent =
   ActiveProviderDispatchIntent & {
@@ -43,7 +58,8 @@ const outboxProviderIds = [
   'google',
   'meta',
   'microsoft_uet',
-  'pinterest'
+  'pinterest',
+  'snapchat'
 ] as const satisfies readonly ProviderId[]
 
 type Dependencies = { now: () => number }
@@ -99,142 +115,208 @@ export function planCanonicalEventDispatch(
 
   if (catalogEntry.lifecycle !== 'active') return []
 
-  return outboxProviderIds.flatMap(provider => {
-    const providerEntry = catalogEntry.providers[provider]
+  return outboxProviderIds.flatMap(
+    (provider): ProviderDispatchIntent[] => {
+      const providerEntry = catalogEntry.providers[provider]
 
-    if (providerEntry.serverOutbox !== 'active') return []
-    if (
-      providerEntry.support !== 'supported' ||
-      providerEntry.productionStatus !== 'active'
-    ) {
-      throw new Error(
-        `${provider}:${event.event_name} has an inconsistent active outbox catalog entry`
-      )
-    }
-    if (
-      !hasRequiredConsent(
-        providerEntry.consentRequirement,
-        event
-      )
-    ) {
-      return []
-    }
-
-    if (
-      provider === 'google' &&
-      event.event_name === 'purchase'
-    ) {
-      const googleEventFreshness =
-        classifyGoogleDataManagerEventFreshness(
-          event.event_time,
-          dependencies.now()
+      if (providerEntry.serverOutbox !== 'active') return []
+      if (
+        providerEntry.support !== 'supported' ||
+        providerEntry.productionStatus !== 'active'
+      ) {
+        throw new Error(
+          `${provider}:${event.event_name} has an inconsistent active outbox catalog entry`
         )
-      const baseIntent = {
-        dispatch_mode: 'server_retry' as const,
-        event_id: event.event_id,
-        google_event_freshness: googleEventFreshness,
-        provider
+      }
+      if (
+        !hasRequiredConsent(
+          providerEntry.consentRequirement,
+          event
+        )
+      ) {
+        return []
       }
 
-      if (googleEventFreshness === 'outside_72h') {
+      if (
+        provider === 'google' &&
+        event.event_name === 'purchase'
+      ) {
+        const googleEventFreshness =
+          classifyGoogleDataManagerEventFreshness(
+            event.event_time,
+            dependencies.now()
+          )
+        const baseIntent = {
+          dispatch_mode: 'server_retry' as const,
+          event_id: event.event_id,
+          google_event_freshness: googleEventFreshness,
+          provider
+        }
+
+        if (googleEventFreshness === 'outside_72h') {
+          return [
+            {
+              ...baseIntent,
+              skip_reason: 'google_event_outside_72h' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
+
+        if (!hasGoogleAnalyticsPurchaseIdentifier(event)) {
+          return [
+            {
+              ...baseIntent,
+              skip_reason:
+                'missing_google_analytics_identifier' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
+
+        return [baseIntent]
+      }
+
+      if (
+        provider === 'google' &&
+        !findGoogleClientId(event.browser_id)
+      ) {
         return [
           {
-            ...baseIntent,
-            skip_reason: 'google_event_outside_72h' as const,
+            dispatch_mode: 'server_retry' as const,
+            event_id: event.event_id,
+            provider,
+            skip_reason: 'missing_client_id' as const,
             status: 'skipped_unqualified' as const
           }
         ]
       }
 
-      if (!hasGoogleAnalyticsPurchaseIdentifier(event)) {
-        return [
-          {
-            ...baseIntent,
-            skip_reason:
-              'missing_google_analytics_identifier' as const,
-            status: 'skipped_unqualified' as const
-          }
-        ]
+      if (provider === 'microsoft_uet') {
+        if (!resolveMicrosoftUetCapiTokenFromEnv()) {
+          return [
+            {
+              dispatch_mode: 'server_retry' as const,
+              event_id: event.event_id,
+              provider,
+              skip_reason: 'missing_capi_token' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
+
+        if (!hasMicrosoftUetCapiIdentifier(event)) {
+          return [
+            {
+              dispatch_mode: 'server_retry' as const,
+              event_id: event.event_id,
+              provider,
+              skip_reason:
+                'missing_microsoft_uet_identifier' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
       }
 
-      return [baseIntent]
-    }
+      if (provider === 'pinterest') {
+        if (!isPinterestConversionsApiConfigured()) {
+          return [
+            {
+              dispatch_mode: 'server_retry' as const,
+              event_id: event.event_id,
+              provider,
+              skip_reason: 'missing_capi_token' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
 
-    if (
-      provider === 'google' &&
-      !findGoogleClientId(event.browser_id)
-    ) {
+        if (!hasPinterestCanonicalUserIdentity(event)) {
+          return [
+            {
+              dispatch_mode: 'server_retry' as const,
+              event_id: event.event_id,
+              provider,
+              skip_reason:
+                'insufficient_pinterest_user_identity' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
+      }
+
+      if (provider === 'snapchat') {
+        if (!isSnapchatConversionsApiEnabled()) return []
+
+        const snapchatEventFreshness =
+          classifySnapchatEventFreshness(
+            event.event_time,
+            dependencies.now()
+          )
+        const baseIntent = {
+          dispatch_mode: 'server_retry' as const,
+          event_id: event.event_id,
+          provider,
+          snapchat_event_freshness: snapchatEventFreshness
+        }
+
+        if (!isSnapchatConversionsApiConfigured()) {
+          return [
+            {
+              ...baseIntent,
+              skip_reason:
+                'missing_snapchat_configuration' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
+
+        if (snapchatEventFreshness === 'outside_7d') {
+          return [
+            {
+              ...baseIntent,
+              skip_reason: 'snapchat_event_outside_7d' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
+
+        const cutoverAtMs = resolveSnapchatCutoverAtMs()
+        if (
+          cutoverAtMs !== undefined &&
+          Date.parse(event.event_time) < cutoverAtMs
+        ) {
+          return [
+            {
+              ...baseIntent,
+              skip_reason: 'snapchat_before_cutover' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
+
+        if (!hasSnapchatCanonicalUserIdentity(event)) {
+          return [
+            {
+              ...baseIntent,
+              skip_reason:
+                'missing_snapchat_match_identifier' as const,
+              status: 'skipped_unqualified' as const
+            }
+          ]
+        }
+
+        return [baseIntent]
+      }
+
       return [
         {
           dispatch_mode: 'server_retry' as const,
           event_id: event.event_id,
-          provider,
-          skip_reason: 'missing_client_id' as const,
-          status: 'skipped_unqualified' as const
+          provider
         }
       ]
     }
-
-    if (provider === 'microsoft_uet') {
-      if (!resolveMicrosoftUetCapiTokenFromEnv()) {
-        return [
-          {
-            dispatch_mode: 'server_retry' as const,
-            event_id: event.event_id,
-            provider,
-            skip_reason: 'missing_capi_token' as const,
-            status: 'skipped_unqualified' as const
-          }
-        ]
-      }
-
-      if (!hasMicrosoftUetCapiIdentifier(event)) {
-        return [
-          {
-            dispatch_mode: 'server_retry' as const,
-            event_id: event.event_id,
-            provider,
-            skip_reason:
-              'missing_microsoft_uet_identifier' as const,
-            status: 'skipped_unqualified' as const
-          }
-        ]
-      }
-    }
-
-    if (provider === 'pinterest') {
-      if (!isPinterestConversionsApiConfigured()) {
-        return [
-          {
-            dispatch_mode: 'server_retry' as const,
-            event_id: event.event_id,
-            provider,
-            skip_reason: 'missing_capi_token' as const,
-            status: 'skipped_unqualified' as const
-          }
-        ]
-      }
-
-      if (!hasPinterestCanonicalUserIdentity(event)) {
-        return [
-          {
-            dispatch_mode: 'server_retry' as const,
-            event_id: event.event_id,
-            provider,
-            skip_reason:
-              'insufficient_pinterest_user_identity' as const,
-            status: 'skipped_unqualified' as const
-          }
-        ]
-      }
-    }
-
-    return [
-      {
-        dispatch_mode: 'server_retry' as const,
-        event_id: event.event_id,
-        provider
-      }
-    ]
-  })
+  )
 }

@@ -140,6 +140,10 @@
                 "type": "string",
                 "minLength": 1
               },
+              "sc_click_id": {
+                "type": "string",
+                "minLength": 1
+              },
               "ttclid": {
                 "type": "string",
                 "minLength": 1
@@ -939,6 +943,10 @@
             "minLength": 1
           },
           "msclkid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sc_click_id": {
             "type": "string",
             "minLength": 1
           },
@@ -1803,6 +1811,10 @@
             "minLength": 1
           },
           "msclkid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sc_click_id": {
             "type": "string",
             "minLength": 1
           },
