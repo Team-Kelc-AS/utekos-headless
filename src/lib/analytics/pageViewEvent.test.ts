@@ -3,6 +3,7 @@ import test from 'node:test'
 import {
   buildPageViewDataLayerEvent,
   createCanonicalPageView,
+  releaseCanonicalPageViewForConsent,
   resolvePageViewNavigation
 } from './pageViewEvent'
 
@@ -96,6 +97,51 @@ test('keeps consented browser and URL identifiers in provider-neutral maps', () 
   assert.deepEqual(event.browser_id, { fbp: 'fb.1.123' })
   assert.deepEqual(event.click_id, { gclid: 'google-1' })
   assert.equal(event.impression_id, 'impression-1')
+})
+
+test('releases the captured page_view with the same identity after consent', () => {
+  const captured = createCanonicalPageView({
+    environment: 'production',
+    eventId: 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7',
+    pageViewId: '0c955d6b-5e9c-47d0-b304-046df7f4bf7f',
+    eventTime: '2026-07-15T12:34:56.789Z',
+    pageUrl: 'https://utekos.no/?fbclid=paid-click',
+    pageTitle: 'Utekos',
+    consent,
+    clickId: { fbclid: 'captured-before-consent' }
+  })
+  const grantedConsent = {
+    ...consent,
+    analytics: 'granted' as const,
+    marketing: 'granted' as const
+  }
+
+  const released = releaseCanonicalPageViewForConsent({
+    event: captured,
+    consent: grantedConsent,
+    browserId: {
+      fbc: 'fb.1.123.paid-click',
+      fbp: 'fb.1.123'
+    },
+    clickId: {
+      fbclid: 'paid-click'
+    },
+    externalId: 'anon_123'
+  })
+
+  assert.equal(released.event_id, captured.event_id)
+  assert.equal(released.page_view_id, captured.page_view_id)
+  assert.equal(released.event_time, captured.event_time)
+  assert.equal(released.page_url, captured.page_url)
+  assert.deepEqual(released.consent, grantedConsent)
+  assert.deepEqual(released.browser_id, {
+    fbc: 'fb.1.123.paid-click',
+    fbp: 'fb.1.123'
+  })
+  assert.deepEqual(released.click_id, {
+    fbclid: 'paid-click'
+  })
+  assert.equal(released.external_id, 'anon_123')
 })
 
 test('uses document referrer for the first page and previous URL for SPA navigation', () => {

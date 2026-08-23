@@ -24,6 +24,8 @@ import {
 } from '@/lib/analytics/pageViewCollectorTransport'
 import {
   createCanonicalPageView,
+  releaseCanonicalPageViewForConsent,
+  type CanonicalPageView,
   type TrackingEnvironment
 } from '@/lib/analytics/pageViewEvent'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
@@ -43,8 +45,8 @@ export function PageViewObserver({
   const pathname = usePathname()
   const search = useSearchParams().toString()
   const currentPageView = useRef<{
-    eventId: string
-    pageViewId: string
+    event: CanonicalPageView
+    marketingReleaseScheduled: boolean
   } | null>(null)
 
   useEffect(() => {
@@ -79,11 +81,44 @@ export function PageViewObserver({
             externalId,
             ...(pageView ?
               {
-                pageViewEventId: pageView.eventId,
-                pageViewId: pageView.pageViewId
+                pageViewEventId: pageView.event.event_id,
+                pageViewId: pageView.event.page_view_id
               }
             : {})
           })
+        }
+
+        if (pageView && !pageView.marketingReleaseScheduled) {
+          pageView.marketingReleaseScheduled = true
+
+          window.setTimeout(() => {
+            const activePageView = currentPageView.current
+
+            if (!activePageView || activePageView !== pageView) {
+              return
+            }
+
+            const browserId = extractBrowserIds(
+              document.cookie,
+              consent
+            )
+            const clickId = extractClickIds(
+              pageView.event.page_url,
+              document.cookie,
+              true
+            )
+            const releasedEvent =
+              releaseCanonicalPageViewForConsent({
+                event: pageView.event,
+                consent,
+                ...(browserId ? { browserId } : {}),
+                ...(clickId ? { clickId } : {}),
+                ...(externalId ? { externalId } : {})
+              })
+
+            pageView.event = releasedEvent
+            emitCanonicalPageView(releasedEvent)
+          }, 0)
         }
       }
 
@@ -182,8 +217,8 @@ export function PageViewObserver({
     })
 
     currentPageView.current = {
-      eventId: event.event_id,
-      pageViewId: event.page_view_id
+      event,
+      marketingReleaseScheduled: false
     }
 
     emitCanonicalPageView(event)

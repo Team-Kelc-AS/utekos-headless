@@ -48,6 +48,14 @@ type CreateCanonicalPageViewInput = {
   eventDeviceInfo?: EventDeviceInfoInput
 }
 
+type ReleaseCanonicalPageViewInput = {
+  event: CanonicalPageView
+  consent: ConsentSnapshot
+  browserId?: Record<string, string>
+  clickId?: Record<string, string>
+  externalId?: string
+}
+
 export type PageViewDataLayerEvent = {
   event: 'page_view'
   event_id: string
@@ -111,6 +119,36 @@ export function createCanonicalPageView(
     ...(input.externalId ? { external_id: input.externalId } : {}),
     ...(input.impressionId ? { impression_id: input.impressionId } : {}),
     ...(eventDeviceInfo ? { event_device_info: eventDeviceInfo } : {})
+  })
+}
+
+/**
+ * Reuses the canonical identity captured at landing time while replacing the
+ * pre-consent identity envelope with the identifiers that are eligible after
+ * the visitor grants marketing consent.
+ */
+export function releaseCanonicalPageViewForConsent(
+  input: ReleaseCanonicalPageViewInput
+): CanonicalPageView {
+  const {
+    browser_id: _capturedBrowserId,
+    click_id: _capturedClickId,
+    external_id: _capturedExternalId,
+    ...capturedEvent
+  } = input.event
+
+  return canonicalPageViewSchema.parse({
+    ...capturedEvent,
+    consent: input.consent,
+    ...(input.browserId ?
+      { browser_id: input.browserId }
+    : {}),
+    ...(input.clickId ?
+      { click_id: input.clickId }
+    : {}),
+    ...(input.externalId ?
+      { external_id: input.externalId }
+    : {})
   })
 }
 
