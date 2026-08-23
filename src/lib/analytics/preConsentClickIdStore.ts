@@ -29,6 +29,14 @@ const QUERY_TO_CANONICAL_KEY = [
   ['ScCid', 'sc_click_id']
 ] as const
 
+const PRE_CONSENT_REDACTED_QUERY_KEYS = [
+  'fbclid',
+  'msclkid',
+  'epik',
+  'ScCid',
+  'sc_click_id'
+] as const
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(
     value && typeof value === 'object' && !Array.isArray(value)
@@ -138,6 +146,26 @@ export function capturePreConsentClickIdsFromUrl(
     clickIds[canonicalKey] = value
     observedAtMs[canonicalKey] = nowMs
   }
+}
+
+export function redactMarketingClickIdsFromUrl(pageUrl: string): string {
+  let url: URL
+
+  try {
+    url = new URL(pageUrl)
+  } catch {
+    return pageUrl
+  }
+
+  let changed = false
+
+  for (const key of PRE_CONSENT_REDACTED_QUERY_KEYS) {
+    if (!url.searchParams.has(key)) continue
+    url.searchParams.delete(key)
+    changed = true
+  }
+
+  return changed ? url.href : pageUrl
 }
 
 export function clearPreConsentClickIds(
