@@ -1,0 +1,532 @@
+# Cookie scan report
+
+
+### Summary
+Scan date:  22/08/2026
+Domain name:  utekos.no
+Server location:  United States
+Cookies, in total:  49
+New cookies:  13
+
+
+### Google Consent Mode Check
+Risk Summary:  At risk
+GCM consent parameters set as "Default":  No risk
+CMP to GCM consent signal is active:  No risk
+Google trackers blocked prior consent:  At risk
+
+
+### Scan result
+49 cookies were identified, hereof 13 new since the previous scan.
+1 cookies are unclassified and need manual classification and a purpose description.
+Category: Necessary (7)
+Necessary cookies help make a website usable by enabling basic functions like page navigation and access to secure areas of the website. The website cannot function properly without these cookies.
+
+COOKIE NAME	PROVIDER	TYPE	MAXIMUM STORAGE DURATION
+__klarna_sdk_default-config	js.klarna.com	HTML	Session
+First found URL: https://utekos.no/skreddersy-varmen/utekos-orginal
+Cookie purpose description: This cookie is used in conjunction with the payment window - The cookie is necessary for making secure transactions on the website.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+__klarna_sdk_identity-api	js.klarna.com	HTML	Session
+First found URL: https://utekos.no/skreddersy-varmen/utekos-orginal
+Cookie purpose description: This cookie is used in conjunction with the payment window - The cookie is necessary for making secure transactions on the website.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+__klarna_sdk_version	js.klarna.com	HTML	Persistent
+First found URL: https://utekos.no/skreddersy-varmen/utekos-orginal
+Cookie purpose description: This cookie is used in conjunction with the payment window - The cookie is necessary for making secure transactions on the website.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+_shopify_essential	kasse.utekos.no	HTTP	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Necessary for the checkout function on the website.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: Canada (adequate)
+Adequate country under GDPR (EU)
+_tracking_consent	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Stores the user's cookie consent state for the current domain
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+via https://cdn.shopify.com/shopifycloud/consent-tracking-api/v0.1/consent-tracking-api.js
+Data is sent to: Canada (adequate)
+Adequate country under GDPR (EU)
+CookieConsent	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Stores the user's cookie consent state for the current domain
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+via https://consent.cookiebot.eu/uc.js?cbid=f2145160-1ac5-4859-8385-36dc6327495fimplementation=gtmconsentmode-dataredaction=dynamic
+Data is sent to: Ireland (adequate)
+Adequate country under GDPR (EU)
+is_eu	s.pinimg.com	HTML	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Determines whether the user is located within the EU and therefore is subject to EU's data privacy regulations.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/analytics/pinterest-tag-canonical-v1.js
+Data is sent to: Ireland (adequate)
+Adequate country under GDPR (EU)
+Category: Statistics (10)
+Statistic cookies help website owners to understand how visitors interact with websites by collecting and reporting information anonymously.
+
+COOKIE NAME	PROVIDER	TYPE	MAXIMUM STORAGE DURATION
+_clck	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Collects data on the user’s navigation and behavior on the website. This is used to compile statistical reports and heatmaps for the website owner.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+via https://scripts.clarity.ms/0.8.69/clarity.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_clsk	utekos.no	HTTP	1 day
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Registers statistical data on users' behaviour on the website. Used for internal analytics by the website operator.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+via https://scripts.clarity.ms/0.8.69/clarity.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_cltk	scripts.clarity.ms	HTML	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Registers statistical data on users' behaviour on the website. Used for internal analytics by the website operator.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_ga	utekos.no	HTTP	2 years
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used to send data to Google Analytics about the visitor's device and behavior. Tracks the visitor across devices and marketing channels.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+via https://www.googletagmanager.com/gtag/js?id=GT-MKRLF5WKcx=cgtm=4e68j0
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_ga_#	utekos.no	HTTP	2 years
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used to send data to Google Analytics about the visitor's device and behavior. Tracks the visitor across devices and marketing channels.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+via https://www.googletagmanager.com/gtag/js?id=GT-MKRLF5WKcx=cgtm=4e68j0
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_shopify_analytics	kasse.utekos.no	HTTP	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Registers statistical data on users' behaviour on the website. Used for internal analytics by the website operator.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: Canada (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+c.gif	bing.com	Pixel	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Collects data on the user’s navigation and behavior on the website. This is used to compile statistical reports and heatmaps for the website owner.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+c.gif	c.clarity.ms	Pixel	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Collects data on the user’s navigation and behavior on the website. This is used to compile statistical reports and heatmaps for the website owner.
+Initiator: Webserver
+Source: c.clarity.ms
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+FPAU	utekos.no	HTTP	3 months
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Assigns a specific ID to the visitor. This allows the website to determine the number of specific user-visits for analysis and statistics.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+FPGSID	utekos.no	HTTP	1 day
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Registers statistical data on users' behaviour on the website. Used for internal analytics by the website operator.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+Category: Marketing (31)
+Marketing cookies are used to track visitors across websites. The intention is to display ads that are relevant and engaging for the individual user and thereby more valuable for publishers and third party advertisers.
+
+COOKIE NAME	PROVIDER	TYPE	MAXIMUM STORAGE DURATION
+_fbp	utekos.no	HTTP	3 months
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used by Facebook to deliver a series of advertisement products such as real time bidding from third party advertisers.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/analytics/meta-pixel-canonical-v1.js
+via https://connect.facebook.net/en_US/fbevents.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_gcl_au	utekos.no	HTTP	3 months
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used to measure the efficiency of the website’s advertisement efforts, by collecting data on the conversion rate of the website’s ads across multiple websites.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_gcl_ls	utekos.no	HTML	Persistent
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Tracks the conversion rate between the user and the advertisement banners on the website - This serves to optimise the relevance of the advertisements on the website.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_pin_unauth	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used by Pinterest to track the usage of services.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/analytics/pinterest-tag-canonical-v1.js
+via https://s.pinimg.com/ct/lib/main.e47a302d.js
+Data is sent to: United Kingdom (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_pinterest_ct_ua	pinterest.com	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used by Pinterest to track the usage of services.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_scid	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Sets a unique ID for the visitor, that allows third party advertisers to target the visitor with relevant advertisement. This pairing service is provided by third party advertisement hubs, which facilitates real-time bidding for advertisers.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_shopify_marketing	kasse.utekos.no	HTTP	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Contains data on the content of the shopping cart. This data is used for marketing purposes by promoting related products or for retargeting purposes.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: Canada (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_shopify_s	utekos.no	HTTP	1 day
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Collects data on user behaviour and interaction in order to optimize the website and make advertisement on the website more relevant.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_shopify_y	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Collects data on user behaviour and interaction in order to optimize the website and make advertisement on the website more relevant.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_uetsid	bing.com	HTML	Persistent
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_uetsid	utekos.no	HTTP	1 day
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Collects data on visitor behaviour from multiple websites, in order to present more relevant advertisement - This also allows the website to limit the number of times that they are shown the same advertisement.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+via https://bat.bing.com/bat.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_uetsid_exp	bing.com	HTML	Persistent
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Contains the expiry-date for the cookie with corresponding name.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_uetvid	bing.com	HTML	Persistent
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_uetvid	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+via https://bat.bing.com/bat.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_uetvid_exp	bing.com	HTML	Persistent
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Contains the expiry-date for the cookie with corresponding name.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+ANONCHK	c.clarity.ms	HTTP	1 day
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Registers data on visitors from multiple visits and on multiple websites. This information is used to measure the efficiency of advertisement on websites.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+LAST_RESULT_ENTRY_KEY	youtube-nocookie.com	HTTP	Session
+First found URL: https://utekos.no/produkter
+Cookie purpose description: Used to track user’s interaction with embedded content.
+Initiator: Script tag
+Source: https://www.youtube-nocookie.com/s/_/ytembeds/_/js/k=ytembeds.base.en_US.VqIvYKkXsLY.2021.O/am=AAAAQA/d=1/excm=base,root/br=1/rs=AGKMywGrspruSnqByTyKB6rWKUKeLUg5gQ/m=root,base
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+lastExternalReferrer	connect.facebook.net	HTML	Persistent
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Detects how the user reached the website by registering their last URL-address.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/analytics/meta-pixel-canonical-v1.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+lastExternalReferrerTime	connect.facebook.net	HTML	Persistent
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Detects how the user reached the website by registering their last URL-address.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/analytics/meta-pixel-canonical-v1.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+MR	bing.com	HTTP	7 days
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+MR	c.clarity.ms	HTTP	7 days
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used to track visitors on multiple websites, in order to present relevant advertisement based on the visitor's preferences.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+MUID	bing.com	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used widely by Microsoft as a unique user ID. The cookie enables user tracking by synchronising the ID across many Microsoft domains.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+MUID	clarity.ms	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used widely by Microsoft as a unique user ID. The cookie enables user tracking by synchronising the ID across many Microsoft domains.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+SM	c.clarity.ms	HTTP	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Registers a unique ID that identifies the user's device during return visits across websites that use the same ad network. The ID is used to allow targeted ads.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+SRM_B	bing.com	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Tracks the user’s interaction with the website’s search-bar-function. This data can be used to present the user with relevant products or services.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+TESTCOOKIESENABLED	youtube-nocookie.com	HTTP	1 day
+First found URL: https://utekos.no/produkter
+Cookie purpose description: Used to track user’s interaction with embedded content.
+Initiator: Script tag
+Source: https://www.youtube-nocookie.com/s/_/ytembeds/_/js/k=ytembeds.base.en_US.VqIvYKkXsLY.2021.O/am=AAAAQA/d=1/excm=base,root/br=1/rs=AGKMywGrspruSnqByTyKB6rWKUKeLUg5gQ/m=root,base
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+utekos_external_id	utekos.no	HTTP	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Unclassified
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/3c88ky3jdkoys.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+v3/	pinterest.com	Pixel	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used by Pinterest to track the usage of services.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+yt-icons-last-purged	youtube-nocookie.com	HTML	Persistent
+First found URL: https://utekos.no/produkter
+Cookie purpose description: Necessary for the implementation and functionality of YouTube video-content on the website.
+Initiator: Webserver
+Source: youtube-nocookie.com
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+ytidb::LAST_RESULT_ENTRY_KEY	youtube-nocookie.com	HTML	Persistent
+First found URL: https://utekos.no/produkter
+Cookie purpose description: Used to track user’s interaction with embedded content.
+Initiator: Webserver
+Source: youtube-nocookie.com
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+YtIdbMeta#databases	youtube-nocookie.com	IndexedDB	Persistent
+First found URL: https://utekos.no/produkter
+Cookie purpose description: Used to track user’s interaction with embedded content.
+Initiator: Script tag
+Source: https://www.youtube-nocookie.com/s/_/ytembeds/_/js/k=ytembeds.base.en_US.VqIvYKkXsLY.2021.O/am=AAAAQA/d=1/excm=base,root/br=1/rs=AGKMywGrspruSnqByTyKB6rWKUKeLUg5gQ/m=root,base
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+Category: Unclassified (1)
+Unclassified cookies are cookies that we are in the process of classifying, together with the providers of individual cookies.
+
+COOKIE NAME	PROVIDER	TYPE	MAXIMUM STORAGE DURATION
+__Host-utekos-edge-correlation	utekos.no	HTTP	1 day
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Unclassified
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+New cookies (13)
+COOKIE NAME	PROVIDER	TYPE	MAXIMUM STORAGE DURATION
+_shopify_essential	kasse.utekos.no	HTTP	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Necessary for the checkout function on the website.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: Canada (adequate)
+Adequate country under GDPR (EU)
+_tracking_consent	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Stores the user's cookie consent state for the current domain
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+via https://cdn.shopify.com/shopifycloud/consent-tracking-api/v0.1/consent-tracking-api.js
+Data is sent to: Canada (adequate)
+Adequate country under GDPR (EU)
+is_eu	s.pinimg.com	HTML	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Determines whether the user is located within the EU and therefore is subject to EU's data privacy regulations.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/analytics/pinterest-tag-canonical-v1.js
+Data is sent to: Ireland (adequate)
+Adequate country under GDPR (EU)
+_shopify_analytics	kasse.utekos.no	HTTP	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Registers statistical data on users' behaviour on the website. Used for internal analytics by the website operator.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: Canada (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+c.gif	bing.com	Pixel	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Collects data on the user’s navigation and behavior on the website. This is used to compile statistical reports and heatmaps for the website owner.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/__gtg/gtm.js?id=GTM-5TWMJQFP
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+_pin_unauth	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used by Pinterest to track the usage of services.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/analytics/pinterest-tag-canonical-v1.js
+via https://s.pinimg.com/ct/lib/main.e47a302d.js
+Data is sent to: United Kingdom (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_pinterest_ct_ua	pinterest.com	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used by Pinterest to track the usage of services.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_scid	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Sets a unique ID for the visitor, that allows third party advertisers to target the visitor with relevant advertisement. This pairing service is provided by third party advertisement hubs, which facilitates real-time bidding for advertisers.
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_shopify_marketing	kasse.utekos.no	HTTP	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Contains data on the content of the shopping cart. This data is used for marketing purposes by promoting related products or for retargeting purposes.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: Canada (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_shopify_s	utekos.no	HTTP	1 day
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Collects data on user behaviour and interaction in order to optimize the website and make advertisement on the website more relevant.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+_shopify_y	utekos.no	HTTP	1 year
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Collects data on user behaviour and interaction in order to optimize the website and make advertisement on the website more relevant.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No
+v3/	pinterest.com	Pixel	Session
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Used by Pinterest to track the usage of services.
+Initiator: Script tag, page source line number 1
+Source: https://utekos.no/_next/static/immutable/chunks/0nvrmus97o03k.js
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+__Host-utekos-edge-correlation	utekos.no	HTTP	1 day
+First found URL: https://utekos.no/gaveguide
+Cookie purpose description: Unclassified
+Initiator: Script tag
+Source:
+Data is sent to: United States (adequate)
+Adequate country under GDPR (EU)
+Blocked until accepted by user: No

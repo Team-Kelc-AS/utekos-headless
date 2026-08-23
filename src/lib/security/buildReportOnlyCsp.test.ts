@@ -61,6 +61,10 @@ test('permits the third-party scripts and frames observed during report-only rol
   assert.match(csp, /script-src[^;]*https:\/\/sc-static\.net/)
   assert.match(
     csp,
+    /script-src[^;]*https:\/\/tr\.snapchat\.com/
+  )
+  assert.match(
+    csp,
     /script-src[^;]*https:\/\/googleads\.g\.doubleclick\.net/
   )
   assert.match(csp, /script-src[^;]*https:\/\/cdn\.shopify\.com/)
@@ -101,6 +105,10 @@ test('permits the third-party scripts and frames observed during report-only rol
   )
   assert.match(
     csp,
+    /connect-src[^;]*https:\/\/\*\.snapchat\.com/
+  )
+  assert.match(
+    csp,
     /connect-src[^;]*https:\/\/mpc2-prod-25-is5qnl632q-wl\.a\.run\.app/
   )
   assert.match(
@@ -123,8 +131,16 @@ test('permits the third-party scripts and frames observed during report-only rol
   assert.match(csp, /img-src[^;]*https:\/\/www\.facebook\.com/)
   assert.match(csp, /img-src[^;]*https:\/\/ct\.pinterest\.com/)
   assert.match(csp, /img-src[^;]*https:\/\/tr\.snapchat\.com/)
+  assert.doesNotMatch(
+    csp,
+    /(?:script-src|img-src)[^;]*https:\/\/\*\.snapchat\.com/
+  )
   assert.match(csp, /frame-src[^;]*https:\/\/www\.facebook\.com/)
   assert.match(csp, /frame-src[^;]*https:\/\/ct\.pinterest\.com/)
+  assert.match(
+    csp,
+    /frame-src[^;]*https:\/\/tr\.snapchat\.com/
+  )
   assert.match(
     csp,
     /frame-src[^;]*https:\/\/www\.youtube-nocookie\.com/

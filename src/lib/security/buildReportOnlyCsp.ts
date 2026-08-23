@@ -59,11 +59,32 @@ const PINTEREST_TAG_EVENT_ORIGINS = [
   'https://ct.pinterest.com'
 ] as const
 
+/**
+ * Snap Pixel loader plus the geo config bundle it injects from
+ * tr.snapchat.com/config/{geo}/{pixel}.js. The config host is
+ * evidenced from production report-only script-src violations.
+ */
 const SNAPCHAT_PIXEL_SCRIPT_ORIGINS = [
-  'https://sc-static.net'
+  'https://sc-static.net',
+  'https://tr.snapchat.com'
 ] as const
 
 const SNAPCHAT_PIXEL_EVENT_ORIGINS = [
+  'https://tr.snapchat.com'
+] as const
+
+/**
+ * Numbered regional collectors such as tr6.snapchat.com, evidenced
+ * from production report-only connect-src violations. CSP host
+ * wildcards only match as the leftmost DNS label, so tr*.snapchat.com
+ * is invalid.
+ */
+const SNAPCHAT_PIXEL_COLLECTOR_ORIGINS = [
+  'https://*.snapchat.com'
+] as const
+
+/** Snap Pixel creates a hidden iframe to tr.snapchat.com. */
+const SNAPCHAT_PIXEL_FRAME_ORIGINS = [
   'https://tr.snapchat.com'
 ] as const
 
@@ -168,6 +189,7 @@ export function buildReportOnlyCsp(): string {
     ...META_PIXEL_EVENT_ORIGINS,
     ...PINTEREST_TAG_EVENT_ORIGINS,
     ...SNAPCHAT_PIXEL_EVENT_ORIGINS,
+    ...SNAPCHAT_PIXEL_COLLECTOR_ORIGINS,
     ...GOOGLE_ADS_ORIGINS,
     ...SHOPIFY_CONSENT_CONNECT_ORIGINS,
     ...VERCEL_LIVE_ORIGINS,
@@ -207,6 +229,7 @@ export function buildReportOnlyCsp(): string {
     ...TAG_GATEWAY_ORIGINS,
     ...META_PIXEL_FRAME_ORIGINS,
     ...PINTEREST_TAG_FRAME_ORIGINS,
+    ...SNAPCHAT_PIXEL_FRAME_ORIGINS,
     ...VIDEO_FRAME_ORIGINS,
     ...VERCEL_LIVE_ORIGINS
   ]
