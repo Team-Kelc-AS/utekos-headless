@@ -15,6 +15,7 @@ import { SiteChrome } from '@/components/layout/SiteChrome'
 import { OnlineStoreJsonLd } from './OnlineStoreJsonLd'
 import { CartProviderLoader } from '@/components/providers/CartProviderLoader'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
+import { PreConsentClickIdCapture } from '@/components/analytics/PreConsentClickIdCapture'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
 import Script from 'next/script'
@@ -123,6 +124,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
+      <PreConsentClickIdCapture />
       <GoogleTagManagerLoader
         enabled={shouldLoadMarketingScripts}
       />
