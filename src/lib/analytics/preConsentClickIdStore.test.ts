@@ -6,6 +6,7 @@ import {
   PRE_CONSENT_CLICK_ID_GLOBAL_KEY,
   readPreConsentClickIds,
   readPreConsentClickIdSnapshot,
+  redactMarketingClickIdsFromUrl,
   setPreConsentClickIdDecision
 } from './preConsentClickIdStore'
 
@@ -88,8 +89,17 @@ test('preserves opaque click ID casing and characters', () => {
 
   assert.deepEqual(readPreConsentClickIds(scope), {
     fbclid: 'AbC-DeF_123',
-    sc_click_id: ' A+B/C== '
+    sc_click_id: ' A+B/C=='
   })
+})
+
+test('redacts the four platform click IDs from pre-consent URLs only', () => {
+  assert.equal(
+    redactMarketingClickIdsFromUrl(
+      'https://utekos.no/produkter/comfyrobe?utm_source=meta&fbclid=Meta-A&msclkid=Ms-B&epik=Pin-C&ScCid=Snap-D&gclid=Google-E'
+    ),
+    'https://utekos.no/produkter/comfyrobe?utm_source=meta&gclid=Google-E'
+  )
 })
 
 test('decline clears the volatile snapshot and blocks recapture', () => {
