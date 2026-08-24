@@ -246,11 +246,7 @@ export function FacebookLoginPrompt({
             id='facebook-login-title'
             className='font-sans text-lg font-semibold'
           >
-            Takk – du er koblet til
-          </p>
-          <p className='mt-2 text-sm leading-6 text-popover-foreground/75'>
-            Du kan fortsette å handle som vanlig. Ingen konto er
-            opprettet i Shopify.
+            Velkommen til Utekos!
           </p>
         </div>
       : state === 'needs_contact' ?
