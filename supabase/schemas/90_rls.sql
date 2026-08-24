@@ -22,6 +22,8 @@ alter table marketing.meta_quality_snapshots enable row level security;
 alter table marketing.campaign_insights enable row level security;
 alter table marketing.meta_ad_delivery_insights enable row level security;
 alter table marketing.meta_ad_creative_destinations enable row level security;
+alter table marketing.facebook_login_identities enable row level security;
+alter table marketing.facebook_login_identities force row level security;
 alter table marketing.checkout_attribution_snapshots enable row level security;
 alter table marketing.checkout_attribution_lookup_tokens enable row level security;
 
@@ -67,6 +69,8 @@ revoke all on table ops.shopify_checkout_observations
   from public, anon, authenticated, service_role;
 revoke all on table marketing.provisional_page_view_captures
   from public, anon, authenticated, service_role;
+revoke all on table marketing.facebook_login_identities
+  from public, anon, authenticated, service_role;
 revoke all on table ops.meta_landing_observability
   from public, anon, authenticated, service_role;
 revoke all on table ops.meta_landing_edge_health
@@ -75,6 +79,9 @@ grant usage on schema ops to service_role;
 grant usage on schema marketing to service_role;
 grant select, insert, update, delete
   on table marketing.provisional_page_view_captures
+  to service_role;
+grant select, insert, update, delete
+  on table marketing.facebook_login_identities
   to service_role;
 grant select, insert on table ops.vercel_edge_request_observations to service_role;
 grant select, insert, update on table ops.vercel_trace_observations to service_role;

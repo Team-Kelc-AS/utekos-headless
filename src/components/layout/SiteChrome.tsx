@@ -8,12 +8,7 @@ import {
 } from '@/lib/customer-assistant/assistantRollout'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
-import {
-  Suspense,
-  useEffect,
-  useRef,
-  useState
-} from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 
 import {
   NEWSLETTER_MODAL_ENABLED,
@@ -21,12 +16,13 @@ import {
 } from '@/components/newsletter-modal/newsletterModalConfig'
 
 import { NavigationProgress } from './NavigationProgress'
+import { FacebookLoginPrompt } from '@/components/facebook-login/FacebookLoginPrompt'
 
 const NewsletterSignupDialog = dynamic(
   () =>
-    import(
-      '@/components/newsletter-modal/NewsletterSignupDialog'
-    ).then(module => module.NewsletterSignupDialog),
+    import('@/components/newsletter-modal/NewsletterSignupDialog').then(
+      module => module.NewsletterSignupDialog
+    ),
   { ssr: false }
 )
 
@@ -41,6 +37,7 @@ const CustomerAssistant = dynamic(
 type SiteChromeProps = {
   assistantRolloutPercent: number
   children: React.ReactNode
+  facebookLoginEnabled: boolean
   header: React.ReactNode
   footer: React.ReactNode
 }
@@ -103,6 +100,7 @@ function AssistantRolloutMount({
 export function SiteChrome({
   assistantRolloutPercent,
   children,
+  facebookLoginEnabled,
   header,
   footer
 }: SiteChromeProps) {
@@ -126,6 +124,8 @@ export function SiteChrome({
       {showNewsletterModal ?
         <NewsletterSignupDialog />
       : null}
+
+      <FacebookLoginPrompt enabled={facebookLoginEnabled} />
 
       {header}
 

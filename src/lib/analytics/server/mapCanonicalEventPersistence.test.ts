@@ -22,6 +22,7 @@ const event: CanonicalPageView = {
   },
   external_id: 'customer-1',
   user_data: {
+    facebook_login_id: '1234567890',
     email_sha256: [
       '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
     ]
@@ -47,6 +48,7 @@ test('maps one canonical ledger row with stable idempotency and quality metadata
     user_data_quality: {
       email_sha256_count: 1,
       has_external_id: true,
+      has_facebook_login_id: true,
       phone_sha256_count: 0
     }
   })
@@ -86,6 +88,7 @@ test('maps canonical Meta and Microsoft outbox rows without provider renaming', 
       data_quality: {
         email_sha256_count: 1,
         has_external_id: true,
+        has_facebook_login_id: true,
         phone_sha256_count: 0
       },
       dispatch_mode: 'server_retry',
@@ -119,6 +122,7 @@ test('persists a non-qualified Google row without scheduling it', () => {
     data_quality: {
       email_sha256_count: 1,
       has_external_id: true,
+      has_facebook_login_id: true,
       phone_sha256_count: 0
     },
     dispatch_mode: 'server_retry',
@@ -150,6 +154,7 @@ test('persists Google event freshness as provider data quality', () => {
     email_sha256_count: 1,
     google_event_freshness: 'late_within_window',
     has_external_id: true,
+    has_facebook_login_id: true,
     phone_sha256_count: 0
   })
 })

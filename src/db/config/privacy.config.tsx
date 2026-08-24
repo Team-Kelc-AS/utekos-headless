@@ -31,8 +31,8 @@ function ExternalLink({
   )
 }
 
-export const lastUpdated = '26. juli 2026'
-export const lastUpdatedIso = '2026-07-26'
+export const lastUpdated = '24. august 2026'
+export const lastUpdatedIso = '2026-08-24'
 
 export function createPrivacySections({
   includeCookieDeclaration = true
@@ -399,6 +399,65 @@ export function createPrivacySections({
           </ExternalLink>
           . Vi ønsker gjerne muligheten til å rette opp først, men du trenger
           ikke kontakte oss før du klager.
+        </p>
+      </>
+    )
+  },
+  {
+    id: 'facebook-innlogging',
+    title: 'Facebook-innlogging og sletting',
+    content: (
+      <>
+        <p>
+          Besøkende som kommer fra en Meta-annonse kan frivillig velge
+          «Fortsett med Facebook». Det er ingen innloggingsmur, og du kan bruke
+          og handle i nettbutikken uten å koble til Facebook. Vi ber bare om
+          offentlig profil og e-postadresse. Facebook kan unnlate å dele
+          e-postadressen; da kan du frivillig oppgi e-post eller mobilnummer i
+          ett reservefelt.
+        </p>
+        <p>
+          Når du velger Facebook-innlogging, behandler vi en app-avgrenset
+          Facebook-ID, eventuell kontaktopplysning, en pseudonym
+          besøksidentifikator og tilgjengelig annonseattribusjon. Vi lagrer ikke
+          Facebook-passordet eller Facebook-tilgangstokenet, og vi oppretter
+          ikke automatisk en Shopify-kunde eller kundekonto. Direkte
+          kontaktopplysninger lagres kryptert, med en separat hash til godkjent
+          annonsemåling når markedsføringssamtykket tillater det.
+        </p>
+        <p>
+          Opplysningene i denne valgfrie identitetskoblingen slettes automatisk
+          senest 180 dager etter siste innlogging, med mindre en dokumentert
+          rettslig plikt krever begrenset videre oppbevaring.
+        </p>
+        <h3>Slik ber du om sletting</h3>
+        <ol>
+          <li>
+            Fjern «Utekos Customer Login» under Apper og nettsteder i
+            Facebook-innstillingene dine dersom du også vil trekke tilbake
+            Facebook-tilkoblingen.
+          </li>
+          <li>
+            Send en e-post til{' '}
+            <a href='mailto:kundeservice@utekos.no?subject=Slett%20Facebook%20Login-data'>
+              kundeservice@utekos.no
+            </a>{' '}
+            med emnet «Slett Facebook Login-data». Oppgi e-postadressen eller
+            mobilnummeret du brukte, slik at vi kan finne riktig kobling. Ikke
+            send passord eller tilgangstoken.
+          </li>
+          <li>
+            Vi kan be om rimelig identitetsbekreftelse. Den aktuelle
+            Facebook-innloggingskoblingen og tilhørende direkte identifikatorer
+            slettes innen 30 dager, og du får bekreftelse når forespørselen er
+            ferdig behandlet.
+          </li>
+        </ol>
+        <p>
+          Fjerning i Facebook stopper fremtidig tilgang fra appen, men erstatter
+          ikke en slettingsforespørsel til Utekos for opplysninger som allerede
+          er mottatt. Kjøps-, regnskaps- eller kundeserviceopplysninger som
+          behandles på et annet lovlig grunnlag følger sine egne lagringsfrister.
         </p>
       </>
     )

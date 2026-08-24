@@ -3,6 +3,7 @@ import {
   acceptCanonicalViewItem,
   type CanonicalViewItemStore
 } from './acceptCanonicalViewItem'
+import { enrichCanonicalPayloadWithFacebookLogin } from '@/lib/facebook-login/enrichCanonicalPayloadWithFacebookLogin'
 import type { CanonicalViewItemRequestContext } from './normalizeCanonicalViewItem'
 
 const MAX_BODY_BYTES = 32 * 1024
@@ -29,11 +30,13 @@ function jsonResponse(
 }
 
 function hasJsonMediaType(request: Request) {
-  return request.headers
-    .get('content-type')
-    ?.split(';', 1)[0]
-    ?.trim()
-    .toLowerCase() === 'application/json'
+  return (
+    request.headers
+      .get('content-type')
+      ?.split(';', 1)[0]
+      ?.trim()
+      .toLowerCase() === 'application/json'
+  )
 }
 
 function hasSameOrigin(request: Request) {
@@ -67,7 +70,9 @@ export async function handleCanonicalViewItemRequest(
   }
 
   const body = await request.text()
-  if (new TextEncoder().encode(body).byteLength > MAX_BODY_BYTES) {
+  if (
+    new TextEncoder().encode(body).byteLength > MAX_BODY_BYTES
+  ) {
     return jsonResponse({ error: 'payload_too_large' }, 413)
   }
 
@@ -77,6 +82,10 @@ export async function handleCanonicalViewItemRequest(
   } catch {
     return jsonResponse({ error: 'invalid_json' }, 400)
   }
+  payload = enrichCanonicalPayloadWithFacebookLogin(
+    payload,
+    request.headers.get('cookie') ?? undefined
+  )
 
   try {
     const result = await acceptCanonicalViewItem({
@@ -93,10 +102,7 @@ export async function handleCanonicalViewItemRequest(
     }
 
     return jsonResponse(
-      {
-        event_id: result.event_id,
-        status: result.status
-      },
+      { event_id: result.event_id, status: result.status },
       result.status === 'accepted' ? 202 : 200
     )
   } catch (error) {

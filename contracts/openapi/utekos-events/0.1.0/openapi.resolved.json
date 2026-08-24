@@ -4706,6 +4706,11 @@
                   "pattern": "^[a-f0-9]{64}$"
                 }
               },
+              "facebook_login_id": {
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^\\d+$"
+              },
               "phone_sha256": {
                 "type": "array",
                 "items": {
@@ -6379,6 +6384,11 @@
               "type": "string",
               "pattern": "^[a-f0-9]{64}$"
             }
+          },
+          "facebook_login_id": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^\\d+$"
           },
           "phone_sha256": {
             "type": "array",

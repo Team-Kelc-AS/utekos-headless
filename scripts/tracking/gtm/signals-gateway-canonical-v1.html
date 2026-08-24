@@ -1,0 +1,414 @@
+<!--
+  GTM Custom HTML: Signals Gateway - Canonical cbq bridge v1
+  Trigger: All Pages, once per page
+  Consent settings: No additional consent required. This tag starts locally before
+  a decision so it can retain canonical rows, but it loads/sends nothing until
+  Cookiebot marketing consent is true. Explicitly rejected rows are discarded.
+-->
+<script>
+(function(w, d) {
+  'use strict';
+
+  var VERSION = '1.0.0';
+  var PIXEL_ID = '1633085772154426486';
+  var HOST = 'https://signals.utekos.no/';
+  var SCRIPT_URL = HOST + 'sdk/' + PIXEL_ID + '/events.js';
+  var EVENT_NAMES = {
+    page_view: 'PageView',
+    view_item_list: 'ViewItemList',
+    view_item: 'ViewContent',
+    select_item: 'SelectItem',
+    add_to_wishlist: 'AddToWishlist',
+    add_to_cart: 'AddToCart',
+    remove_from_cart: 'RemoveFromCart',
+    view_cart: 'ViewCart',
+    begin_checkout: 'InitiateCheckout',
+    search: 'Search',
+    generate_lead: 'Lead',
+    scroll_depth: 'LandingScrollDepth',
+    view_category: 'ViewCategory',
+    hero_interact: 'HeroInteract',
+    interact_with_accordion: 'InteractWithAccordion',
+    open_quick_view: 'OpenQuickView'
+  };
+  var CUSTOM_EVENTS = {
+    view_item_list: true,
+    select_item: true,
+    remove_from_cart: true,
+    view_cart: true,
+    scroll_depth: true,
+    view_category: true,
+    hero_interact: true,
+    interact_with_accordion: true,
+    open_quick_view: true
+  };
+
+  w.dataLayer = w.dataLayer || [];
+
+  if (
+    w.__utekosSignalsGatewayState &&
+    w.__utekosSignalsGatewayState.version === VERSION
+  ) {
+    return;
+  }
+
+  var state = {
+    version: VERSION,
+    initialized: false,
+    sent: {},
+    lastDataLayerIndex: 0,
+    poller: null,
+    listening: false
+  };
+
+  w.__utekosSignalsGatewayState = state;
+
+  function hasMarketingConsent() {
+    return Boolean(
+      w.Cookiebot &&
+      w.Cookiebot.consent &&
+      w.Cookiebot.consent.marketing === true
+    );
+  }
+
+  function hasConsentDecision() {
+    return Boolean(w.Cookiebot && w.Cookiebot.hasResponse === true);
+  }
+
+  function discardPendingEvents() {
+    state.lastDataLayerIndex = (w.dataLayer || []).length;
+  }
+
+  function installSignalsGatewayPixel() {
+    if (state.initialized) return;
+
+    if (!w.cbq) {
+      var queue = function() {
+        if (queue.callMethod) {
+          queue.callMethod.apply(queue, arguments);
+        } else {
+          queue.queue.push(arguments);
+        }
+      };
+      var firstScript;
+      var script;
+
+      w.cbq = queue;
+      if (!w._cbq) w._cbq = queue;
+      queue.push = queue;
+      queue.loaded = true;
+      queue.version = '2.0';
+      queue.queue = [];
+
+      script = d.createElement('script');
+      script.async = true;
+      script.src = SCRIPT_URL;
+      firstScript = d.getElementsByTagName('script')[0];
+
+      if (firstScript && firstScript.parentNode) {
+        firstScript.parentNode.insertBefore(script, firstScript);
+      } else if (d.head) {
+        d.head.appendChild(script);
+      }
+    }
+
+    w.cbq('setHost', HOST);
+    w.cbq('init', PIXEL_ID);
+    state.initialized = true;
+  }
+
+  function contentId(variantId) {
+    var match = /^gid:\/\/shopify\/ProductVariant\/(\d+)$/.exec(
+      variantId || ''
+    );
+
+    return match ? match[1] : null;
+  }
+
+  function finiteNumber(value) {
+    return typeof value === 'number' && isFinite(value);
+  }
+
+  function isoCurrency(value) {
+    if (typeof value !== 'string') return null;
+
+    var currency = value.replace(/^\s+|\s+$/g, '').toUpperCase();
+
+    return /^[A-Z]{3}$/.test(currency) ? currency : null;
+  }
+
+  function commerceData(customData) {
+    var items = customData && customData.items;
+    var contentIds = [];
+    var contents = [];
+    var numItems = 0;
+    var index;
+
+    if (!items || !items.length) return null;
+
+    for (index = 0; index < items.length; index += 1) {
+      var item = items[index];
+      var id = contentId(item.variant_id);
+      var content;
+
+      if (!id) continue;
+
+      content = {
+        id: id,
+        quantity: item.quantity
+      };
+
+      if (finiteNumber(item.gross_unit_price)) {
+        content.item_price = item.gross_unit_price;
+      }
+
+      contentIds.push(id);
+      contents.push(content);
+      if (finiteNumber(item.quantity)) numItems += item.quantity;
+    }
+
+    if (!contentIds.length) return null;
+
+    var primary = items[0];
+    var currency = isoCurrency(customData.currency);
+    var value = finiteNumber(customData.gross_value) ?
+      customData.gross_value :
+      null;
+    var result = {
+      content_ids: contentIds,
+      contents: contents,
+      content_type: 'product',
+      num_items: numItems
+    };
+
+    if (currency && value !== null) {
+      result.currency = currency;
+      result.value = value;
+    }
+
+    if (primary.item_name) result.content_name = primary.item_name;
+    if (primary.item_category || primary.product_type) {
+      result.content_category = primary.item_category || primary.product_type;
+    }
+
+    var customFields = [
+      'accordion_id',
+      'accordion_title',
+      'cart_id',
+      'gross_value',
+      'impression_sequence',
+      'interaction_sequence',
+      'interaction_type',
+      'item_list_id',
+      'item_list_name',
+      'open_sequence',
+      'source_surface',
+      'tax_value',
+      'total_item_count',
+      'view_sequence'
+    ];
+
+    for (index = 0; index < customFields.length; index += 1) {
+      var field = customFields[index];
+      var fieldValue = customData[field];
+
+      if (
+        (typeof fieldValue === 'string' && fieldValue) ||
+        finiteNumber(fieldValue)
+      ) {
+        result[field] = fieldValue;
+      }
+    }
+
+    if (finiteNumber(customData.value)) {
+      result.net_value = customData.value;
+    }
+
+    return result;
+  }
+
+  function eventData(eventName, canonicalEvent) {
+    var customData = canonicalEvent.custom_data || {};
+
+    if (
+      eventName === 'view_item' ||
+      eventName === 'view_item_list' ||
+      eventName === 'select_item' ||
+      eventName === 'add_to_wishlist' ||
+      eventName === 'add_to_cart' ||
+      eventName === 'remove_from_cart' ||
+      eventName === 'view_cart' ||
+      eventName === 'begin_checkout' ||
+      eventName === 'interact_with_accordion' ||
+      eventName === 'open_quick_view'
+    ) {
+      return commerceData(customData);
+    }
+
+    if (eventName === 'search') {
+      return customData.search_term ?
+        { search_string: customData.search_term } : {};
+    }
+
+    if (eventName === 'scroll_depth') {
+      var scroll = {};
+
+      if (finiteNumber(customData.threshold)) {
+        scroll.threshold = customData.threshold;
+      }
+      if (finiteNumber(customData.percent_scrolled)) {
+        scroll.percent_scrolled = customData.percent_scrolled;
+      }
+      if (finiteNumber(customData.document_height)) {
+        scroll.document_height = customData.document_height;
+      }
+
+      return scroll;
+    }
+
+    if (eventName === 'view_category') {
+      var category = {};
+
+      if (customData.category_id) {
+        category.content_category = customData.category_id;
+        category.category_id = customData.category_id;
+      }
+      if (customData.category_name) {
+        category.content_name = customData.category_name;
+        category.category_name = customData.category_name;
+      }
+      if (finiteNumber(customData.view_sequence)) {
+        category.view_sequence = customData.view_sequence;
+      }
+
+      return category;
+    }
+
+    if (eventName === 'hero_interact') {
+      var hero = {};
+
+      if (customData.cta_id) {
+        hero.content_name = customData.cta_id;
+        hero.cta_id = customData.cta_id;
+      }
+      if (customData.destination_path) {
+        hero.content_category = customData.destination_path;
+        hero.destination_path = customData.destination_path;
+      }
+      if (finiteNumber(customData.click_sequence)) {
+        hero.click_sequence = customData.click_sequence;
+      }
+
+      return hero;
+    }
+
+    if (eventName === 'generate_lead') {
+      var lead = {};
+      var leadCurrency = isoCurrency(customData.currency);
+      var leadValue = finiteNumber(customData.value) ?
+        customData.value :
+        null;
+
+      if (leadCurrency && leadValue !== null) {
+        lead.currency = leadCurrency;
+        lead.value = leadValue;
+      }
+
+      return lead;
+    }
+
+    return {};
+  }
+
+  function isCurrentPage(canonicalEvent) {
+    if (!canonicalEvent.page_url) return true;
+
+    try {
+      var eventUrl = new w.URL(canonicalEvent.page_url, w.location.href);
+
+      return eventUrl.origin === w.location.origin &&
+        eventUrl.pathname === w.location.pathname;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function dispatch(entry) {
+    var canonicalEvent = entry.canonical_event;
+    var metaEventName = EVENT_NAMES[entry.event];
+    var eventKey;
+    var data;
+
+    if (!canonicalEvent || !metaEventName) return;
+    if (entry.event_id !== canonicalEvent.event_id) return;
+    if (!isCurrentPage(canonicalEvent)) return;
+
+    eventKey = metaEventName + ':' + entry.event_id;
+    if (state.sent[eventKey]) return;
+
+    data = eventData(entry.event, canonicalEvent);
+    if (data === null) return;
+
+    w.cbq(
+      CUSTOM_EVENTS[entry.event] ? 'trackCustom' : 'track',
+      metaEventName,
+      data,
+      { eventID: entry.event_id }
+    );
+    state.sent[eventKey] = true;
+  }
+
+  function scanDataLayer() {
+    var dataLayer = w.dataLayer || [];
+    var startIndex = state.lastDataLayerIndex;
+    var index;
+
+    if (startIndex > dataLayer.length) startIndex = 0;
+
+    for (index = startIndex; index < dataLayer.length; index += 1) {
+      var entry = dataLayer[index];
+
+      if (!entry || typeof entry !== 'object') continue;
+      if (typeof entry.event_id !== 'string' || !entry.event_id) continue;
+      dispatch(entry);
+    }
+
+    state.lastDataLayerIndex = dataLayer.length;
+  }
+
+  function run() {
+    if (!hasMarketingConsent()) {
+      if (hasConsentDecision()) discardPendingEvents();
+      return;
+    }
+
+    installSignalsGatewayPixel();
+    scanDataLayer();
+  }
+
+  function listenForConsent() {
+    if (state.listening) return;
+    state.listening = true;
+
+    var retry = function() {
+      run();
+    };
+
+    w.addEventListener('CookiebotOnAccept', retry);
+    w.addEventListener('CookiebotOnConsentReady', retry);
+    w.addEventListener('CookiebotOnDecline', retry);
+  }
+
+  function startPolling() {
+    if (state.poller !== null) return;
+
+    state.poller = w.setInterval(function() {
+      run();
+    }, 200);
+  }
+
+  listenForConsent();
+  run();
+  startPolling();
+})(window, document);
+</script>

@@ -6,6 +6,7 @@ import {
   type CanonicalBeginCheckoutStore
 } from './acceptCanonicalBeginCheckout'
 import { logCanonicalCommerceEvent } from '@/lib/observability/logging/logCanonicalCommerceEvent'
+import { enrichCanonicalPayloadWithFacebookLogin } from '@/lib/facebook-login/enrichCanonicalPayloadWithFacebookLogin'
 import type { CanonicalBeginCheckoutRequestContext } from './normalizeCanonicalBeginCheckout'
 
 const MAX_BODY_BYTES = 32 * 1024
@@ -21,7 +22,10 @@ type CanonicalBeginCheckoutRequestDependencies = {
   store: CanonicalBeginCheckoutStore
 }
 
-function jsonResponse(body: Record<string, string>, status: number) {
+function jsonResponse(
+  body: Record<string, string>,
+  status: number
+) {
   return Response.json(body, {
     headers: NO_STORE_HEADERS,
     status
@@ -71,7 +75,9 @@ export async function handleCanonicalBeginCheckoutRequest(
   }
 
   const body = await request.text()
-  if (new TextEncoder().encode(body).byteLength > MAX_BODY_BYTES) {
+  if (
+    new TextEncoder().encode(body).byteLength > MAX_BODY_BYTES
+  ) {
     return jsonResponse({ error: 'payload_too_large' }, 413)
   }
 
@@ -81,10 +87,15 @@ export async function handleCanonicalBeginCheckoutRequest(
   } catch {
     return jsonResponse({ error: 'invalid_json' }, 400)
   }
+  payload = enrichCanonicalPayloadWithFacebookLogin(
+    payload,
+    request.headers.get('cookie') ?? undefined
+  )
 
   try {
     const checkoutMethod = readCheckoutMethod(request.headers)
-    const parsedEvent = canonicalBeginCheckoutSchema.parse(payload)
+    const parsedEvent =
+      canonicalBeginCheckoutSchema.parse(payload)
     const event = {
       ...parsedEvent,
       checkout_method: checkoutMethod
@@ -112,10 +123,7 @@ export async function handleCanonicalBeginCheckoutRequest(
     })
 
     return jsonResponse(
-      {
-        event_id: result.event_id,
-        status: result.status
-      },
+      { event_id: result.event_id, status: result.status },
       result.status === 'accepted' ? 202 : 200
     )
   } catch (error) {

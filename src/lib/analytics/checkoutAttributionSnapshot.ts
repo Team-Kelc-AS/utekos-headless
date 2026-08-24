@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import {
+  canonicalUserDataSchema,
   canonicalEventEnvelopeSchema,
   type ConsentSnapshot
 } from './canonicalEventEnvelope'
@@ -17,6 +18,12 @@ const CAPTURED_AT_ATTRIBUTE = 'utekos_attribution_captured_at'
 const EXTERNAL_ID_ATTRIBUTE = 'utekos_external_id'
 const PAGE_URL_ATTRIBUTE = 'utekos_page_url'
 const REFERRER_URL_ATTRIBUTE = 'utekos_referrer_url'
+export const FACEBOOK_LOGIN_ID_ATTRIBUTE =
+  'utekos_facebook_login_id'
+export const FACEBOOK_EMAIL_SHA256_ATTRIBUTE =
+  'utekos_facebook_email_sha256'
+export const FACEBOOK_PHONE_SHA256_ATTRIBUTE =
+  'utekos_facebook_phone_sha256'
 export const BEGIN_CHECKOUT_EVENT_ATTRIBUTE =
   'utekos_begin_checkout_event_id'
 
@@ -73,6 +80,7 @@ export const checkoutAttributionSnapshotSchema = z.strictObject({
   campaign: campaignAttributionSchema.optional(),
   click_id: identifierMapSchema.optional(),
   external_id: identifierValueSchema.optional(),
+  user_data: canonicalUserDataSchema.optional(),
   page_url: attributionUrlSchema.optional(),
   referrer_url: attributionUrlSchema.optional()
 })
@@ -90,6 +98,7 @@ type CheckoutAttributionSource = {
     | undefined
   consent: ConsentSnapshot
   external_id?: string | undefined
+  user_data?: z.infer<typeof canonicalUserDataSchema> | undefined
   page_url?: string | undefined
   referrer_url?: string | undefined
 }
@@ -184,6 +193,9 @@ export function createCheckoutAttributionSnapshot(
     ...(hasMarketingConsent && source.external_id ?
       { external_id: source.external_id }
     : {}),
+    ...(hasMarketingConsent && source.user_data ?
+      { user_data: source.user_data }
+    : {}),
     ...(hasPermittedPurpose && source.page_url ?
       { page_url: sanitizeAttributionUrl(source.page_url) }
     : {}),
@@ -259,6 +271,25 @@ function buildCartAttributes(
     })
   }
 
+  if (snapshot.user_data?.facebook_login_id) {
+    attributes.push({
+      key: FACEBOOK_LOGIN_ID_ATTRIBUTE,
+      value: snapshot.user_data.facebook_login_id
+    })
+  }
+  for (const hash of snapshot.user_data?.email_sha256 ?? []) {
+    attributes.push({
+      key: FACEBOOK_EMAIL_SHA256_ATTRIBUTE,
+      value: hash
+    })
+  }
+  for (const hash of snapshot.user_data?.phone_sha256 ?? []) {
+    attributes.push({
+      key: FACEBOOK_PHONE_SHA256_ATTRIBUTE,
+      value: hash
+    })
+  }
+
   return attributes
 }
 
@@ -282,6 +313,7 @@ export function parseOrderAttributionFromNoteAttributes(
   const browserId: Record<string, string> = {}
   const clickId: Record<string, string> = {}
   const campaign: Partial<CampaignAttribution> = {}
+  const userData: z.infer<typeof canonicalUserDataSchema> = {}
 
   if (consent.analytics === 'granted') {
     for (const [identifier, attributeKey] of Object.entries(
@@ -322,6 +354,26 @@ export function parseOrderAttributionFromNoteAttributes(
       const value = parseIdentifier(attributes.get(attributeKey))
       if (value) clickId[identifier] = value
     }
+
+    const facebookLoginId = parseIdentifier(
+      attributes.get(FACEBOOK_LOGIN_ID_ATTRIBUTE)
+    )
+    const emailSha256 = attributes.get(
+      FACEBOOK_EMAIL_SHA256_ATTRIBUTE
+    )
+    const phoneSha256 = attributes.get(
+      FACEBOOK_PHONE_SHA256_ATTRIBUTE
+    )
+
+    if (facebookLoginId && /^\d+$/u.test(facebookLoginId)) {
+      userData.facebook_login_id = facebookLoginId
+    }
+    if (emailSha256 && /^[a-f0-9]{64}$/u.test(emailSha256)) {
+      userData.email_sha256 = [emailSha256]
+    }
+    if (phoneSha256 && /^[a-f0-9]{64}$/u.test(phoneSha256)) {
+      userData.phone_sha256 = [phoneSha256]
+    }
   }
 
   const parsedCapturedAt = capturedAtSchema.safeParse(
@@ -361,6 +413,9 @@ export function parseOrderAttributionFromNoteAttributes(
     : {}),
     ...(parsedCampaign ? { campaign: parsedCampaign } : {}),
     ...(externalId ? { external_id: externalId } : {}),
+    ...(Object.keys(userData).length > 0 ?
+      { user_data: userData }
+    : {}),
     ...(pageUrl ? { page_url: pageUrl } : {}),
     ...(referrerUrl ? { referrer_url: referrerUrl } : {})
   })

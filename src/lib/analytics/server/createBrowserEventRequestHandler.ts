@@ -2,6 +2,7 @@ import { ZodError } from 'zod'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import type { CanonicalBrowserEventRequestContext } from './normalizeCanonicalBrowserEvent'
 import { redactPageUrlForLog } from './redactPageUrlForLog'
+import { enrichCanonicalPayloadWithFacebookLogin } from '@/lib/facebook-login/enrichCanonicalPayloadWithFacebookLogin'
 
 const MAX_BODY_BYTES = 32 * 1024
 const NO_STORE_HEADERS = {
@@ -19,11 +20,12 @@ type AcceptFn<TStore> = (input: {
   store: TStore
 }) => Promise<AcceptResult>
 
-type HandlerOptions = {
-  eventName?: string
-}
+type HandlerOptions = { eventName?: string }
 
-function jsonResponse(body: Record<string, string>, status: number) {
+function jsonResponse(
+  body: Record<string, string>,
+  status: number
+) {
   return Response.json(body, {
     headers: NO_STORE_HEADERS,
     status
@@ -103,10 +105,7 @@ function requestLogMeta(
 
 export function createBrowserEventRequestHandler<
   TStore = CanonicalEventStore
->(
-  accept: AcceptFn<TStore>,
-  options: HandlerOptions = {}
-) {
+>(accept: AcceptFn<TStore>, options: HandlerOptions = {}) {
   const configuredEventName = options.eventName
 
   return async function handleRequest(
@@ -135,7 +134,10 @@ export function createBrowserEventRequestHandler<
           event_name: configuredEventName
         })
       )
-      return jsonResponse({ error: 'unsupported_media_type' }, 415)
+      return jsonResponse(
+        { error: 'unsupported_media_type' },
+        415
+      )
     }
 
     const declaredLength = Number(
@@ -179,6 +181,11 @@ export function createBrowserEventRequestHandler<
       return jsonResponse({ error: 'invalid_json' }, 400)
     }
 
+    payload = enrichCanonicalPayloadWithFacebookLogin(
+      payload,
+      request.headers.get('cookie') ?? undefined
+    )
+
     const summary = getEventSummary(payload)
     const eventName =
       configuredEventName ?? summary.event_name ?? 'unknown'
@@ -220,10 +227,7 @@ export function createBrowserEventRequestHandler<
       )
 
       return jsonResponse(
-        {
-          event_id: result.event_id,
-          status: result.status
-        },
+        { event_id: result.event_id, status: result.status },
         result.status === 'accepted' ? 202 : 200
       )
     } catch (error) {

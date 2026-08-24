@@ -3,6 +3,7 @@ import type { CanonicalEventStoreInput } from './canonicalEventStore'
 type UserDataQuality = {
   email_sha256_count: number
   has_external_id: boolean
+  has_facebook_login_id: boolean
   phone_sha256_count: number
 }
 
@@ -57,6 +58,9 @@ export function mapCanonicalEventPersistence(
     email_sha256_count:
       input.event.user_data?.email_sha256?.length ?? 0,
     has_external_id: Boolean(input.event.external_id),
+    has_facebook_login_id: Boolean(
+      input.event.user_data?.facebook_login_id
+    ),
     phone_sha256_count:
       input.event.user_data?.phone_sha256?.length ?? 0
   }

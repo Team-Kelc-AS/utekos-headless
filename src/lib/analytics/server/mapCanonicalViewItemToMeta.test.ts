@@ -60,6 +60,7 @@ function viewItem(
     },
     page_url: 'https://utekos.no/produkter/utekos-techdown',
     user_data: {
+      facebook_login_id: '1234567890',
       email_sha256: [emailHash],
       phone_sha256: [phoneHash]
     },
@@ -86,7 +87,8 @@ test('maps canonical view_item to a catalog-compatible Meta ViewContent event', 
       client_ip_address: '203.0.113.10',
       client_user_agent: 'Mozilla/5.0',
       fbc: 'fb.1.1784195800000.meta-click-id',
-      fbp: 'fb.1.1784195900000.123456789'
+      fbp: 'fb.1.1784195900000.123456789',
+      fb_login_id: '1234567890'
     },
     custom_data: {
       value: 1990,
@@ -136,7 +138,10 @@ test('does not map IP geolocation city or postal code into Meta ct/zp', () => {
   assert.equal(normalized.user_data.ct, undefined)
   assert.equal(normalized.user_data.zp, undefined)
   assert.equal(normalized.user_data.country, undefined)
-  assert.equal(normalized.user_data.client_ip_address, '203.0.113.10')
+  assert.equal(
+    normalized.user_data.client_ip_address,
+    '203.0.113.10'
+  )
 })
 
 test('uses the persisted fbc value and never rebuilds it from event time', () => {
@@ -179,6 +184,6 @@ test('rejects a variant id that cannot match the Meta catalog', () => {
 
   assert.throws(
     () => mapCanonicalViewItemToMeta(event),
-    /ProductVariant GID/
+    /numeric Shopify ProductVariant ID/
   )
 })

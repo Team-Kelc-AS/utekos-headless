@@ -92,6 +92,7 @@ next-env.d.ts
 /types/codex-log.md
 
 # Local provider credentials (templates/examples stay commit-safe)
+/.user/files/marketing/meta/signals/
 /src/api/lib/cloud-credentials/*.json
 !/src/api/lib/cloud-credentials/*.example.json
 /credentials.json

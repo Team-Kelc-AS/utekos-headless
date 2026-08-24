@@ -30,9 +30,14 @@ const identifierMapSchema = z.record(
   z.string().min(1)
 )
 
-const userDataSchema = z.strictObject({
+export const canonicalUserDataSchema = z.strictObject({
   email_sha256: z
     .array(z.string().regex(/^[a-f0-9]{64}$/))
+    .optional(),
+  facebook_login_id: z
+    .string()
+    .regex(/^\d+$/u)
+    .max(64)
     .optional(),
   phone_sha256: z
     .array(z.string().regex(/^[a-f0-9]{64}$/))
@@ -69,7 +74,7 @@ export const canonicalEventEnvelopeSchema = z.strictObject({
     'test'
   ]),
   consent: consentSnapshotSchema,
-  user_data: userDataSchema.optional(),
+  user_data: canonicalUserDataSchema.optional(),
   click_id: canonicalClickIdsSchema.optional(),
   external_id: z.string().min(1).optional(),
   browser_id: identifierMapSchema.optional(),

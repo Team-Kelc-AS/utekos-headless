@@ -495,6 +495,82 @@ create index if not exists meta_ad_creative_destinations_url_observed_idx
 create index if not exists meta_ad_creative_destinations_open_version_idx
   on marketing.meta_ad_creative_destinations (account_id, ad_id, observed_version)
   where observed_until is null;
+create table if not exists marketing.facebook_login_identities (
+  id uuid primary key default gen_random_uuid(),
+  app_id text not null
+    check (app_id ~ '^[0-9]{1,64}$'),
+  facebook_login_id text not null
+    check (facebook_login_id ~ '^[0-9]{1,64}$'),
+  external_id text not null
+    check (
+      external_id ~ '^anon_[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+    ),
+  email_ciphertext text
+    check (
+      email_ciphertext is null
+      or email_ciphertext ~ '^v1\.[A-Za-z0-9_-]{16}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{22}$'
+    ),
+  email_sha256 text
+    check (
+      email_sha256 is null
+      or email_sha256 ~ '^[a-f0-9]{64}$'
+    ),
+  phone_ciphertext text
+    check (
+      phone_ciphertext is null
+      or phone_ciphertext ~ '^v1\.[A-Za-z0-9_-]{16}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{22}$'
+    ),
+  phone_sha256 text
+    check (
+      phone_sha256 is null
+      or phone_sha256 ~ '^[a-f0-9]{64}$'
+    ),
+  email_permission_granted boolean not null default false,
+  fbclid text check (fbclid is null or length(fbclid) between 1 and 500),
+  fbc text check (fbc is null or length(fbc) between 1 and 500),
+  campaign_id text check (campaign_id is null or length(campaign_id) between 1 and 500),
+  campaign_name text check (campaign_name is null or length(campaign_name) between 1 and 500),
+  adset_id text check (adset_id is null or length(adset_id) between 1 and 500),
+  adset_name text check (adset_name is null or length(adset_name) between 1 and 500),
+  ad_id text check (ad_id is null or length(ad_id) between 1 and 500),
+  ad_name text check (ad_name is null or length(ad_name) between 1 and 500),
+  login_count integer not null default 1 check (login_count >= 1),
+  first_login_at timestamptz not null default statement_timestamp(),
+  last_login_at timestamptz not null default statement_timestamp(),
+  contact_updated_at timestamptz,
+  created_at timestamptz not null default statement_timestamp(),
+  updated_at timestamptz not null default statement_timestamp(),
+  expires_at timestamptz not null
+    default (statement_timestamp() + interval '180 days'),
+  unique (app_id, facebook_login_id),
+  constraint facebook_login_identities_email_pair_check
+    check ((email_ciphertext is null) = (email_sha256 is null)),
+  constraint facebook_login_identities_phone_pair_check
+    check ((phone_ciphertext is null) = (phone_sha256 is null)),
+  constraint facebook_login_identities_retention_check
+    check (
+      last_login_at >= first_login_at
+      and updated_at >= created_at
+      and expires_at > updated_at
+      and expires_at <= updated_at + interval '180 days 5 minutes'
+    )
+);
+comment on table marketing.facebook_login_identities is
+  'Service-role-only Facebook Login identity bridge for voluntary Meta-origin login. Stores app-scoped ID, encrypted contact data, provider-ready hashes and acquisition identifiers. Never stores Facebook access tokens and never creates Shopify customers.';
+comment on column marketing.facebook_login_identities.email_ciphertext is
+  'AES-256-GCM application-encrypted normalized email. Plaintext email is forbidden.';
+comment on column marketing.facebook_login_identities.phone_ciphertext is
+  'AES-256-GCM application-encrypted E.164 phone. Plaintext phone is forbidden.';
+create index if not exists facebook_login_identities_external_id_idx
+  on marketing.facebook_login_identities (external_id, last_login_at desc);
+create index if not exists facebook_login_identities_email_sha256_idx
+  on marketing.facebook_login_identities (email_sha256)
+  where email_sha256 is not null;
+create index if not exists facebook_login_identities_phone_sha256_idx
+  on marketing.facebook_login_identities (phone_sha256)
+  where phone_sha256 is not null;
+create index if not exists facebook_login_identities_expires_at_idx
+  on marketing.facebook_login_identities (expires_at);
 create table if not exists marketing.checkout_attribution_snapshots (
   id uuid primary key default gen_random_uuid(),
   idempotency_key text not null unique,

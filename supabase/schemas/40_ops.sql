@@ -1492,3 +1492,65 @@ begin
   end if;
 end;
 $schedule_shopify_dun_waitlist_pgmq_archive_purge$;
+
+create or replace function ops.purge_expired_facebook_login_identities()
+returns bigint
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_deleted bigint := 0;
+  v_now timestamptz := statement_timestamp();
+begin
+  delete from marketing.facebook_login_identities identity
+  where identity.expires_at <= v_now
+    and not ops.has_active_privacy_retention_exception(
+      'marketing',
+      'facebook_login_identities',
+      identity.id::text,
+      v_now
+    );
+
+  get diagnostics v_deleted = row_count;
+  return v_deleted;
+end;
+$$;
+
+comment on function ops.purge_expired_facebook_login_identities() is
+  'Deletes expired voluntary Facebook Login identity bridges after at most 180 days unless a time-limited privacy retention exception is active.';
+
+revoke all on function ops.purge_expired_facebook_login_identities()
+  from public;
+revoke execute on function ops.purge_expired_facebook_login_identities()
+  from public, anon, authenticated;
+grant execute on function ops.purge_expired_facebook_login_identities()
+  to service_role, postgres;
+
+do $schedule_facebook_login_identity_purge$
+declare
+  v_job_exists boolean;
+begin
+  if to_regclass('cron.job') is null then
+    raise exception using
+      errcode = '55000',
+      message = 'pg_cron cron.job is required for Facebook Login identity retention';
+  end if;
+
+  execute $query$
+    select exists (
+      select 1
+      from cron.job
+      where jobname = 'purge_expired_facebook_login_identities'
+    )
+  $query$ into v_job_exists;
+
+  if not v_job_exists then
+    perform cron.schedule(
+      'purge_expired_facebook_login_identities',
+      '23 2 * * *',
+      'select ops.purge_expired_facebook_login_identities();'
+    );
+  end if;
+end;
+$schedule_facebook_login_identity_purge$;

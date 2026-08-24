@@ -117,7 +117,19 @@ function orderPaid(): OrderPaid {
 }
 
 test('restores checkout attribution for the purchase webhook', () => {
-  const event = shopifyOrderToCanonicalPurchase(orderPaid())
+  const order = orderPaid()
+  order.note_attributes.push(
+    { name: 'utekos_facebook_login_id', value: '1234567890' },
+    {
+      name: 'utekos_facebook_email_sha256',
+      value: 'a'.repeat(64)
+    },
+    {
+      name: 'utekos_facebook_phone_sha256',
+      value: 'b'.repeat(64)
+    }
+  )
+  const event = shopifyOrderToCanonicalPurchase(order)
 
   assert.equal(
     event.external_id,
@@ -145,6 +157,13 @@ test('restores checkout attribution for the purchase webhook', () => {
   })
   assert.equal(event.consent.marketing, 'granted')
   assert.equal(event.consent.analytics, 'granted')
+  assert.equal(event.user_data?.facebook_login_id, '1234567890')
+  assert.ok(
+    event.user_data?.email_sha256?.includes('a'.repeat(64))
+  )
+  assert.ok(
+    event.user_data?.phone_sha256?.includes('b'.repeat(64))
+  )
   assert.equal(event.custom_data.value, 1990)
   assert.equal(event.custom_data.item_revenue, 1592)
   assert.deepEqual(event.custom_data.items[0], {

@@ -8,6 +8,7 @@ import { redactPageUrlForLog } from './redactPageUrlForLog'
 import { canonicalPageViewSchema } from '../pageViewEvent'
 import type { PageViewFunnelObservationIdentity } from './pageViewFunnelObservationStore'
 import type { ProvisionalPageViewCaptureStore } from './provisionalPageViewCaptureStore'
+import { enrichCanonicalPayloadWithFacebookLogin } from '@/lib/facebook-login/enrichCanonicalPayloadWithFacebookLogin'
 
 const MAX_BODY_BYTES = 32 * 1024
 const PRODUCTION_COOKIE_DOMAIN = 'utekos.no'
@@ -214,6 +215,11 @@ export async function handleCanonicalPageViewRequest(
     )
     return jsonResponse({ error: 'invalid_json' }, 400)
   }
+
+  payload = enrichCanonicalPayloadWithFacebookLogin(
+    payload,
+    request.headers.get('cookie') ?? undefined
+  )
 
   const summary = readEventSummary(payload)
   console.info(

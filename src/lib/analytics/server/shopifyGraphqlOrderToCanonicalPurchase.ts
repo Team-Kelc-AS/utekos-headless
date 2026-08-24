@@ -131,8 +131,36 @@ export function shopifyGraphqlOrderToCanonicalPurchase(
   }
 
   const userData = {
-    ...(emailHash ? { email_sha256: [emailHash] } : {}),
-    ...(phoneHash ? { phone_sha256: [phoneHash] } : {})
+    ...(attribution.user_data?.facebook_login_id ?
+      {
+        facebook_login_id:
+          attribution.user_data.facebook_login_id
+      }
+    : {}),
+    ...((
+      emailHash || attribution.user_data?.email_sha256?.length
+    ) ?
+      {
+        email_sha256: [
+          ...new Set([
+            ...(attribution.user_data?.email_sha256 ?? []),
+            ...(emailHash ? [emailHash] : [])
+          ])
+        ]
+      }
+    : {}),
+    ...((
+      phoneHash || attribution.user_data?.phone_sha256?.length
+    ) ?
+      {
+        phone_sha256: [
+          ...new Set([
+            ...(attribution.user_data?.phone_sha256 ?? []),
+            ...(phoneHash ? [phoneHash] : [])
+          ])
+        ]
+      }
+    : {})
   }
 
   return canonicalPurchaseSchema.parse({

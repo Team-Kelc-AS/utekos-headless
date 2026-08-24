@@ -104,8 +104,19 @@ function paidOrder(
 }
 
 test('shopifyGraphqlOrderToCanonicalPurchase uses deterministic ids and server source', () => {
-  const event =
-    shopifyGraphqlOrderToCanonicalPurchase(paidOrder())
+  const order = paidOrder()
+  order.customAttributes.push(
+    { key: 'utekos_facebook_login_id', value: '1234567890' },
+    {
+      key: 'utekos_facebook_email_sha256',
+      value: 'a'.repeat(64)
+    },
+    {
+      key: 'utekos_facebook_phone_sha256',
+      value: 'b'.repeat(64)
+    }
+  )
+  const event = shopifyGraphqlOrderToCanonicalPurchase(order)
 
   assert.equal(event.source, 'server')
   assert.equal(
@@ -123,6 +134,13 @@ test('shopifyGraphqlOrderToCanonicalPurchase uses deterministic ids and server s
   assert.equal(event.page_url, 'https://utekos.no/cart')
   assert.equal(event.event_device_info, undefined)
   assert.equal(event.external_id, 'shopify_customer_77')
+  assert.equal(event.user_data?.facebook_login_id, '1234567890')
+  assert.ok(
+    event.user_data?.email_sha256?.includes('a'.repeat(64))
+  )
+  assert.ok(
+    event.user_data?.phone_sha256?.includes('b'.repeat(64))
+  )
 })
 
 test('shopifyGraphqlOrderToCanonicalPurchase fails closed without order name', () => {

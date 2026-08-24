@@ -29,6 +29,7 @@ function hashExternalId(value: string) {
 export function buildMetaUserData(event: MetaUserDataEvent) {
   const userData = new UserData()
   const emailHashes = event.user_data?.email_sha256
+  const facebookLoginId = event.user_data?.facebook_login_id
   const phoneHashes = event.user_data?.phone_sha256
   const externalId =
     event.external_id ?
@@ -44,6 +45,7 @@ export function buildMetaUserData(event: MetaUserDataEvent) {
     location?.source === 'customer_provided'
 
   if (emailHashes?.length) userData.setEmails(emailHashes)
+  if (facebookLoginId) userData.setFbLoginId(facebookLoginId)
   if (phoneHashes?.length) userData.setPhones(phoneHashes)
   if (externalId) userData.setExternalId(externalId)
   if (event.client_ip_address) {

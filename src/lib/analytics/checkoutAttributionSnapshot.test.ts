@@ -75,6 +75,54 @@ test('round-trips consented attribution through Shopify attributes', () => {
   })
 })
 
+test('round-trips Facebook Login match signals only with marketing consent', () => {
+  const snapshot = createCheckoutAttributionSnapshot(
+    {
+      consent: {
+        analytics: 'denied',
+        marketing: 'granted',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1'
+      },
+      user_data: {
+        email_sha256: ['a'.repeat(64)],
+        facebook_login_id: '1234567890',
+        phone_sha256: ['b'.repeat(64)]
+      }
+    },
+    capturedAt
+  )
+  const noteAttributes =
+    checkoutAttributionSnapshotToShopifyAttributes(snapshot).map(
+      attribute => ({
+        name: attribute.key,
+        value: attribute.value
+      })
+    )
+
+  assert.deepEqual(
+    parseOrderAttributionFromNoteAttributes(noteAttributes)
+      .user_data,
+    snapshot.user_data
+  )
+
+  const denied = createCheckoutAttributionSnapshot(
+    {
+      consent: {
+        analytics: 'granted',
+        marketing: 'denied',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1'
+      },
+      user_data: snapshot.user_data
+    },
+    capturedAt
+  )
+  assert.equal(denied.user_data, undefined)
+})
+
 test('persists only the consent decision after a full denial', () => {
   const snapshot = createCheckoutAttributionSnapshot(
     {

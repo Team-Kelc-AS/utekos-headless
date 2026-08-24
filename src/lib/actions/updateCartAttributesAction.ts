@@ -6,6 +6,8 @@ import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
 import { resolveFullShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
 import { getStorefrontBuyerContext } from '@/api/shopify/storefront/getStorefrontBuyerContext'
+import { headers } from 'next/headers'
+import { appendFacebookLoginShopifyAttributes } from '@/lib/facebook-login/facebookLoginCheckout'
 
 const cartAttributesSchema = z
   .array(
@@ -25,7 +27,13 @@ export async function updateCartAttributesAction(
   const publicCartId = shopifyPublicCartIdSchema.parse(
     publicCartIdInput
   )
-  const attributes = cartAttributesSchema.parse(attributesInput)
+  const parsedAttributes =
+    cartAttributesSchema.parse(attributesInput)
+  const requestHeaders = await headers()
+  const attributes = appendFacebookLoginShopifyAttributes(
+    parsedAttributes,
+    requestHeaders.get('cookie') ?? undefined
+  )
   const [
     { readCartIdCookie },
     { performCartAttributesUpdateMutation }

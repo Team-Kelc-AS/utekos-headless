@@ -14,6 +14,7 @@ import { resolveFullShopifyCartId } from '@/lib/cart/parseShopifyCartId'
 import { logKlarnaCheckoutStage } from '@/lib/observability/logging/logKlarnaCheckoutStage'
 import { createStorefrontBuyerContext } from '@/api/shopify/storefront/createStorefrontBuyerContext'
 import type { StorefrontBuyerContext } from '@/api/shopify/storefront/StorefrontGatewayContract'
+import { enrichCheckoutAttributionWithFacebookLogin } from '@/lib/facebook-login/facebookLoginCheckout'
 
 async function verifyCartOwnership(
   context: StorefrontBuyerContext,
@@ -111,12 +112,20 @@ export async function POST(req: NextRequest) {
       }
     )
 
+    const enrichedAttribution =
+      enrichCheckoutAttributionWithFacebookLogin(
+        attribution,
+        req.headers.get('cookie') ?? undefined
+      )
+
     const shopifyOrder = await createOrderFromKlarnaExpress({
       cart,
       orderPayload,
       collectedShippingAddress,
       klarnaOrderId: klarnaOrder.order_id,
-      ...(attribution ? { attribution } : {})
+      ...(enrichedAttribution ?
+        { attribution: enrichedAttribution }
+      : {})
     })
 
     await logKlarnaCheckoutStage({

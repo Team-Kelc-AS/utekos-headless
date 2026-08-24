@@ -53,6 +53,10 @@ test('permits the third-party scripts and frames observed during report-only rol
     csp,
     /script-src[^;]*https:\/\/connect\.facebook\.net/
   )
+  assert.match(
+    csp,
+    /script-src[^;]*https:\/\/signals\.utekos\.no/
+  )
   assert.match(csp, /script-src[^;]*https:\/\/s\.pinimg\.com/)
   assert.match(
     csp,
@@ -93,6 +97,10 @@ test('permits the third-party scripts and frames observed during report-only rol
   assert.match(
     csp,
     /connect-src[^;]*https:\/\/www\.facebook\.com/
+  )
+  assert.match(
+    csp,
+    /connect-src[^;]*https:\/\/signals\.utekos\.no/
   )
   assert.match(csp, /connect-src[^;]*https:\/\/s\.pinimg\.com/)
   assert.match(

@@ -31,11 +31,13 @@ const MICROSOFT_TRACKING_ORIGINS = [
 ] as const
 
 const META_PIXEL_SCRIPT_ORIGINS = [
-  'https://connect.facebook.net'
+  'https://connect.facebook.net',
+  'https://signals.utekos.no'
 ] as const
 
 const META_PIXEL_EVENT_ORIGINS = [
   'https://www.facebook.com',
+  'https://signals.utekos.no',
   'https://mpc2-prod-25-is5qnl632q-wl.a.run.app',
   'https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws'
 ] as const
