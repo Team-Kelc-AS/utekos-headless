@@ -2,22 +2,32 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { resolveShopifyCustomerPrivacyPublicToken } from './resolveShopifyCustomerPrivacyPublicToken'
 
-test('uses the verified Vercel Shopify public Storefront token', () => {
+test('prefers the verified public Storefront token', () => {
   assert.equal(
     resolveShopifyCustomerPrivacyPublicToken({
+      STOREFRONT_API_ACCESS_TOKEN: '  verified-public-token  ',
       VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN:
-        '  public-storefront-token  '
+        'invalid-integration-token'
     }),
-    'public-storefront-token'
+    'verified-public-token'
   )
 })
 
-test('fails closed instead of exposing unrelated Storefront token aliases', () => {
+test('falls back to the Vercel integration token', () => {
+  assert.equal(
+    resolveShopifyCustomerPrivacyPublicToken({
+      VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN:
+        '  integration-public-token  '
+    }),
+    'integration-public-token'
+  )
+})
+
+test('fails closed instead of exposing browser or legacy token aliases', () => {
   assert.equal(
     resolveShopifyCustomerPrivacyPublicToken({
       NEXT_PUBLIC_STOREFRONT_API_ACCESS_TOKEN:
         'invalid-browser-token',
-      STOREFRONT_API_ACCESS_TOKEN: 'server-only-token',
       SHOPIFY_STOREFRONT_ACCESS_TOKEN: 'legacy-token'
     }),
     undefined
