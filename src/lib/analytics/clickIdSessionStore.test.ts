@@ -117,6 +117,33 @@ test('resolveClickIds ignores expired durable local click IDs', () => {
   )
 })
 
+test('persist=false does not read durable click ID storage', () => {
+  clearEphemeralSnapchatClickId()
+  const session = createMemoryStorage({
+    [CLICK_ID_SESSION_KEY]: JSON.stringify({
+      fbclid: 'meta-session'
+    })
+  })
+  const local = createMemoryStorage({
+    [CLICK_ID_LOCAL_KEY]: JSON.stringify({
+      identifiers: { msclkid: 'microsoft-local' },
+      updatedAt: '2026-08-23T10:00:00.000Z'
+    })
+  })
+
+  assert.equal(
+    resolveClickIds(
+      'https://utekos.no/',
+      session,
+      local,
+      Date.parse('2026-08-23T10:00:00.000Z'),
+      {},
+      false
+    ),
+    undefined
+  )
+})
+
 test('resolveClickIds lets fresh URL values win over session and local', () => {
   const session = createMemoryStorage({
     [CLICK_ID_SESSION_KEY]: JSON.stringify({

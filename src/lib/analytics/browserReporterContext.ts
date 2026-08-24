@@ -11,6 +11,7 @@ import {
   resolveCampaignAttribution,
   type CampaignAttribution
 } from './campaignAttributionSessionStore'
+import { redactMarketingClickIdsFromUrl } from './preConsentClickIdStore'
 import { resolveTrackingEnvironment } from './viewItemReporter'
 import type {
   ConsentSnapshot,
@@ -44,29 +45,41 @@ type CookiebotWindow = Window & {
 }
 
 export function readBrowserReporterContext(): BrowserReporterContext {
-  const pageUrl = window.location.href
+  const currentPageUrl = window.location.href
+  const currentDocumentReferrer = document.referrer
   const consent = getConsentSnapshot(
     (window as CookiebotWindow).Cookiebot?.consent
   )
+  const hasMarketingConsent = consent.marketing === 'granted'
   const browserId = extractBrowserIds(document.cookie, consent)
-  const clickId = extractClickIds(
-    pageUrl,
+  const observedClickId = extractClickIds(
+    currentPageUrl,
     document.cookie,
-    consent.marketing === 'granted'
+    hasMarketingConsent
   )
+  const clickId =
+    hasMarketingConsent ? observedClickId : undefined
+  const pageUrl =
+    hasMarketingConsent ?
+      currentPageUrl
+    : redactMarketingClickIdsFromUrl(currentPageUrl)
+  const documentReferrer =
+    hasMarketingConsent ?
+      currentDocumentReferrer
+    : redactMarketingClickIdsFromUrl(currentDocumentReferrer)
   const campaignAttribution =
-    consent.marketing === 'granted' ?
-      resolveCampaignAttribution(pageUrl)
+    hasMarketingConsent ?
+      resolveCampaignAttribution(currentPageUrl)
     : undefined
   const externalId =
     browserFirstPartyExternalIdStore.getOrCreate(consent)
 
   return {
     pageUrl,
-    documentReferrer: document.referrer,
+    documentReferrer,
     pageTitle: document.title || 'Utekos',
     environment: resolveTrackingEnvironment(
-      pageUrl,
+      currentPageUrl,
       process.env.NODE_ENV
     ),
     consent,

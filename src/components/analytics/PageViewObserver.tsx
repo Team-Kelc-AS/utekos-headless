@@ -30,6 +30,7 @@ import {
   type TrackingEnvironment
 } from '@/lib/analytics/pageViewEvent'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
+import { redactMarketingClickIdsFromUrl } from '@/lib/analytics/preConsentClickIdStore'
 import { subscribeToCookiebotPageViewUpdates } from '@/lib/analytics/subscribeToCookiebotPageViewUpdates'
 
 type PageViewObserverProps = { environment: TrackingEnvironment }
@@ -173,15 +174,28 @@ export function PageViewObserver({
     const consent = getConsentSnapshot(
       getCookiebotState()?.consent
     )
+    const hasMarketingConsent = consent.marketing === 'granted'
     const browserId = extractBrowserIds(document.cookie, consent)
-    const clickId = extractClickIds(
+    const observedClickId = extractClickIds(
       navigation.pageUrl,
       document.cookie,
-      consent.marketing === 'granted'
+      hasMarketingConsent
     )
+    const clickId =
+      hasMarketingConsent ? observedClickId : undefined
+    const eventPageUrl =
+      hasMarketingConsent ?
+        navigation.pageUrl
+      : redactMarketingClickIdsFromUrl(navigation.pageUrl)
+    const eventReferrerUrl =
+      navigation.referrerUrl ?
+        hasMarketingConsent ?
+          navigation.referrerUrl
+        : redactMarketingClickIdsFromUrl(navigation.referrerUrl)
+      : undefined
     const externalId =
       browserFirstPartyExternalIdStore.getOrCreate(consent)
-    if (consent.marketing === 'granted') {
+    if (hasMarketingConsent) {
       resolveCampaignAttribution(navigation.pageUrl)
     }
     const searchParams = new URL(navigation.pageUrl).searchParams
@@ -202,10 +216,8 @@ export function PageViewObserver({
       ...(edgeRequestId ? { edgeRequestId } : {}),
       pageViewId: pageView.pageViewId,
       eventTime: new Date().toISOString(),
-      pageUrl: navigation.pageUrl,
-      ...(navigation.referrerUrl ?
-        { referrerUrl: navigation.referrerUrl }
-      : {}),
+      pageUrl: eventPageUrl,
+      ...(eventReferrerUrl ? { referrerUrl: eventReferrerUrl } : {}),
       pageTitle: document.title || 'Utekos',
       consent,
       ...(browserId ? { browserId } : {}),

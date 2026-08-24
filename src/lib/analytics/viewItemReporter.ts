@@ -12,6 +12,7 @@ import {
   browserPageViewSession,
   type PageViewContext
 } from './pageViewSession'
+import { redactMarketingClickIdsFromUrl } from './preConsentClickIdStore'
 import {
   buildViewItemDataLayerEvent,
   createCanonicalViewItem,
@@ -149,15 +150,27 @@ export function createViewItemReporter(
           product: input.product,
           variant: input.variant
         })
+        const hasMarketingConsent =
+          clientContext.consent.marketing === 'granted'
+        const eventPageUrl =
+          hasMarketingConsent ?
+            pageView.pageUrl
+          : redactMarketingClickIdsFromUrl(pageView.pageUrl)
+        const eventReferrerUrl =
+          pageView.referrerUrl ?
+            hasMarketingConsent ?
+              pageView.referrerUrl
+            : redactMarketingClickIdsFromUrl(pageView.referrerUrl)
+          : undefined
 
         const event = dependencies.createEvent({
           environment: clientContext.environment,
           eventId: dependencies.createEventId(),
           pageViewId: pageView.pageViewId,
           eventTime: dependencies.getEventTime(),
-          pageUrl: pageView.pageUrl,
-          ...(pageView.referrerUrl ?
-            { referrerUrl: pageView.referrerUrl }
+          pageUrl: eventPageUrl,
+          ...(eventReferrerUrl ?
+            { referrerUrl: eventReferrerUrl }
           : {}),
           pageTitle: clientContext.pageTitle,
           consent: clientContext.consent,
@@ -261,23 +274,35 @@ type CookiebotWindow = Window & {
 }
 
 function readBrowserClientContext(): ViewItemClientContext {
-  const pageUrl = window.location.href
+  const currentPageUrl = window.location.href
+  const currentDocumentReferrer = document.referrer
 
   const consent = getConsentSnapshot(
     (window as CookiebotWindow).Cookiebot?.consent
   )
+  const hasMarketingConsent = consent.marketing === 'granted'
 
   const browserId = extractBrowserIds(document.cookie, consent)
 
-  const clickId = extractClickIds(
-    pageUrl,
+  const observedClickId = extractClickIds(
+    currentPageUrl,
     document.cookie,
-    consent.marketing === 'granted'
+    hasMarketingConsent
   )
+  const clickId =
+    hasMarketingConsent ? observedClickId : undefined
+  const pageUrl =
+    hasMarketingConsent ?
+      currentPageUrl
+    : redactMarketingClickIdsFromUrl(currentPageUrl)
+  const documentReferrer =
+    hasMarketingConsent ?
+      currentDocumentReferrer
+    : redactMarketingClickIdsFromUrl(currentDocumentReferrer)
   const externalId =
     browserFirstPartyExternalIdStore.getOrCreate(consent)
 
-  const searchParams = new URL(pageUrl).searchParams
+  const searchParams = new URL(currentPageUrl).searchParams
 
   const impressionId =
     searchParams.get('impression_id') ??
@@ -286,10 +311,10 @@ function readBrowserClientContext(): ViewItemClientContext {
 
   return {
     pageUrl,
-    documentReferrer: document.referrer,
+    documentReferrer,
     pageTitle: document.title || 'Utekos',
     environment: resolveTrackingEnvironment(
-      pageUrl,
+      currentPageUrl,
       process.env.NODE_ENV
     ),
     consent,

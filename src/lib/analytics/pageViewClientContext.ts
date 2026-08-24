@@ -1,5 +1,10 @@
 import type { ConsentSnapshot } from './pageViewEvent'
 import { resolveClickIds } from './clickIdSessionStore'
+import {
+  capturePreConsentClickIdsFromUrl,
+  readPreConsentClickIds,
+  setPreConsentClickIdDecision
+} from './preConsentClickIdStore'
 
 export type CookiebotConsent = {
   marketing?: boolean
@@ -46,14 +51,27 @@ export function extractClickIds(
   cookieHeader: string = '',
   marketingConsentGranted: boolean = false
 ) {
-  const epik = parseCookies(cookieHeader).get('_epik')
+  if (marketingConsentGranted) {
+    setPreConsentClickIdDecision('granted')
+  }
+
+  capturePreConsentClickIdsFromUrl(pageUrl)
+
+  const preConsentClickIds = readPreConsentClickIds()
+  const epik =
+    marketingConsentGranted ?
+      parseCookies(cookieHeader).get('_epik')
+    : undefined
 
   return resolveClickIds(
     pageUrl,
     undefined,
     undefined,
     undefined,
-    epik ? { epik } : {},
+    {
+      ...preConsentClickIds,
+      ...(epik ? { epik } : {})
+    },
     marketingConsentGranted
   )
 }
