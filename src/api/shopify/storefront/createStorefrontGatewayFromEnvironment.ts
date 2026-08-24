@@ -40,8 +40,8 @@ export function buildStorefrontGatewayConfigFromEnvironment(
     environment.STORE_DOMAIN
   )
   const storefrontAccessToken = firstConfiguredValue(
-    environment.VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-    environment.STOREFRONT_API_ACCESS_TOKEN
+    environment.STOREFRONT_API_ACCESS_TOKEN,
+    environment.VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN
   )
 
   return {

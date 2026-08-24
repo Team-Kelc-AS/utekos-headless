@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { buildStorefrontGatewayConfigFromEnvironment } from './createStorefrontGatewayFromEnvironment'
 
-test('prefers the Vercel Shopify integration credentials', () => {
+test('prefers the explicitly configured server Storefront token', () => {
   const config = buildStorefrontGatewayConfigFromEnvironment({
     VERCEL_SHOPIFY_STORE_DOMAIN:
       'https://integration.myshopify.com/path',
@@ -15,7 +15,7 @@ test('prefers the Vercel Shopify integration credentials', () => {
   assert.deepEqual(config, {
     storeDomain: 'integration.myshopify.com',
     storefrontApiVersion: '2026-04',
-    publicStorefrontToken: 'integration-storefront-token'
+    publicStorefrontToken: 'fallback-storefront-token'
   })
   assert.equal('privateStorefrontToken' in config, false)
 })
