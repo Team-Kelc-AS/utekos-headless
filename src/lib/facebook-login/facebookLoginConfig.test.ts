@@ -1,9 +1,36 @@
 import assert from 'node:assert/strict'
 import { randomBytes } from 'node:crypto'
 import test from 'node:test'
-import { readFacebookLoginConfig } from './facebookLoginConfig'
+import {
+  isFacebookLoginEnabled,
+  readFacebookLoginConfig
+} from './facebookLoginConfig'
 
 const identityKey = randomBytes(32).toString('base64')
+
+test('shows Facebook Login only in Vercel Preview', () => {
+  assert.equal(
+    isFacebookLoginEnabled({
+      FACEBOOK_LOGIN_ENABLED: 'true',
+      VERCEL_ENV: 'preview'
+    }),
+    true
+  )
+  assert.equal(
+    isFacebookLoginEnabled({
+      FACEBOOK_LOGIN_ENABLED: 'true',
+      VERCEL_ENV: 'production'
+    }),
+    false
+  )
+  assert.equal(
+    isFacebookLoginEnabled({
+      FACEBOOK_LOGIN_ENABLED: 'false',
+      VERCEL_ENV: 'preview'
+    }),
+    false
+  )
+})
 
 test('uses dedicated consumer-login credentials', () => {
   const config = readFacebookLoginConfig({

@@ -2,7 +2,7 @@
 
 import { Loader2, XIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -85,10 +85,7 @@ export function FacebookLoginPrompt({
   const [pending, setPending] = useState(false)
   const [message, setMessage] = useState('')
 
-  const excluded = useMemo(
-    () => isExcludedPath(pathname),
-    [pathname]
-  )
+  const excluded = isExcludedPath(pathname)
 
   useEffect(() => {
     if (!enabled || excluded) return
@@ -116,12 +113,9 @@ export function FacebookLoginPrompt({
 
     if (!signal || wasDismissed()) return
 
-    const controller = new AbortController()
-
     void fetch('/api/identity/facebook/status', {
       cache: 'no-store',
-      credentials: 'same-origin',
-      signal: controller.signal
+      credentials: 'same-origin'
     })
       .then(async response => {
         if (!response.ok) return undefined
@@ -152,7 +146,6 @@ export function FacebookLoginPrompt({
 
     return () => {
       disposed = true
-      controller.abort()
     }
   }, [enabled, excluded, pathname])
 
@@ -227,7 +220,7 @@ export function FacebookLoginPrompt({
       role='dialog'
       aria-modal='false'
       aria-labelledby='facebook-login-title'
-      className='fixed top-20 right-3 left-3 z-[120] ml-auto max-w-sm rounded-2xl border border-border/80 bg-popover p-5 text-popover-foreground shadow-2xl sm:right-5 sm:left-auto sm:p-6'
+      className='fixed top-1/2 right-4 left-4 z-[120] mx-auto w-auto max-w-md -translate-y-1/2 rounded-3xl border border-border/80 bg-popover p-6 text-popover-foreground shadow-2xl sm:p-7'
     >
       <Button
         type='button'
@@ -311,11 +304,11 @@ export function FacebookLoginPrompt({
             id='facebook-login-title'
             className='pr-7 font-sans text-xl font-semibold'
           >
-            Enklere fra Facebook
+            Velkommen fra Facebook
           </h2>
           <p className='mt-2 text-sm leading-6 text-popover-foreground/75'>
-            Fortsett med Facebook for en mer sammenhengende
-            handleopplevelse fra annonsen du kom fra.
+            Fortsett enkelt fra annonsen til en mer
+            sammenhengende handleopplevelse hos Utekos.
           </p>
           {state === 'error' ?
             <p
