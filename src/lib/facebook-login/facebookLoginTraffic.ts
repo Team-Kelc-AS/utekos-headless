@@ -27,6 +27,25 @@ export function isFacebookLoginPreviewHostname(
   )
 }
 
+export function isFacebookLoginManualPreview(input: {
+  hostname: string
+  pageUrl: string
+}) {
+  if (!isFacebookLoginPreviewHostname(input.hostname)) {
+    return false
+  }
+
+  try {
+    return (
+      new URL(input.pageUrl).searchParams.get(
+        'facebook_login_preview'
+      ) === '1'
+    )
+  } catch {
+    return false
+  }
+}
+
 function readCookie(cookieHeader: string, name: string) {
   const prefix = `${name}=`
 

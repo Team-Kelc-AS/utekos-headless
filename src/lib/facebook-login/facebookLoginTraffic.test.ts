@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   detectFacebookLoginTraffic,
+  isFacebookLoginManualPreview,
   isFacebookLoginPreviewHostname,
   isMetaReferrer
 } from './facebookLoginTraffic'
@@ -17,6 +18,25 @@ test('limits the Facebook Login prompt to preview hosts', () => {
   assert.equal(isFacebookLoginPreviewHostname('utekos.no'), false)
   assert.equal(
     isFacebookLoginPreviewHostname('www.utekos.no'),
+    false
+  )
+})
+
+test('allows the manual prompt override only on preview hosts', () => {
+  assert.equal(
+    isFacebookLoginManualPreview({
+      hostname: 'utekos-headless-example.vercel.app',
+      pageUrl:
+        'https://utekos-headless-example.vercel.app/?facebook_login_preview=1'
+    }),
+    true
+  )
+  assert.equal(
+    isFacebookLoginManualPreview({
+      hostname: 'utekos.no',
+      pageUrl:
+        'https://utekos.no/?facebook_login_preview=1'
+    }),
     false
   )
 })

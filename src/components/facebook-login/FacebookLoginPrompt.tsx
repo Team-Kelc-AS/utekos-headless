@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   detectFacebookLoginTraffic,
+  isFacebookLoginManualPreview,
   isFacebookLoginPreviewHostname
 } from '@/lib/facebook-login/facebookLoginTraffic'
 
@@ -91,8 +92,13 @@ export function FacebookLoginPrompt({
   const excluded = isExcludedPath(pathname)
 
   useEffect(() => {
+    const manualPreview = isFacebookLoginManualPreview({
+      hostname: window.location.hostname,
+      pageUrl: window.location.href
+    })
+
     if (
-      !enabled ||
+      (!enabled && !manualPreview) ||
       excluded ||
       !isFacebookLoginPreviewHostname(window.location.hostname)
     ) {
@@ -120,7 +126,21 @@ export function FacebookLoginPrompt({
       referrer: document.referrer
     })
 
-    if (!signal || wasDismissed()) return
+    if ((!signal && !manualPreview) || (!manualPreview && wasDismissed())) {
+      return
+    }
+
+    if (manualPreview) {
+      const previewTimer = window.setTimeout(
+        () => setState('login'),
+        OPEN_DELAY_MS
+      )
+
+      return () => {
+        disposed = true
+        window.clearTimeout(previewTimer)
+      }
+    }
 
     void fetch('/api/identity/facebook/status', {
       cache: 'no-store',
@@ -168,7 +188,7 @@ export function FacebookLoginPrompt({
     return () => window.clearTimeout(timer)
   }, [state])
 
-  if (!enabled || excluded || state === 'hidden') return null
+  if (excluded || state === 'hidden') return null
 
   const dismiss = () => {
     persistDismissal()
