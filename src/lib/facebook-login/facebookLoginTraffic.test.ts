@@ -2,8 +2,24 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   detectFacebookLoginTraffic,
+  isFacebookLoginPreviewHostname,
   isMetaReferrer
 } from './facebookLoginTraffic'
+
+test('limits the Facebook Login prompt to preview hosts', () => {
+  assert.equal(
+    isFacebookLoginPreviewHostname(
+      'utekos-headless-example.vercel.app'
+    ),
+    true
+  )
+  assert.equal(isFacebookLoginPreviewHostname('localhost'), true)
+  assert.equal(isFacebookLoginPreviewHostname('utekos.no'), false)
+  assert.equal(
+    isFacebookLoginPreviewHostname('www.utekos.no'),
+    false
+  )
+})
 
 test('detects direct Meta ad traffic from fbclid first', () => {
   assert.equal(

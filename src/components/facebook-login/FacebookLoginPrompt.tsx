@@ -6,7 +6,10 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { detectFacebookLoginTraffic } from '@/lib/facebook-login/facebookLoginTraffic'
+import {
+  detectFacebookLoginTraffic,
+  isFacebookLoginPreviewHostname
+} from '@/lib/facebook-login/facebookLoginTraffic'
 
 const DISMISSED_SESSION_KEY =
   'utekos-facebook-login-prompt-dismissed'
@@ -88,7 +91,13 @@ export function FacebookLoginPrompt({
   const excluded = isExcludedPath(pathname)
 
   useEffect(() => {
-    if (!enabled || excluded) return
+    if (
+      !enabled ||
+      excluded ||
+      !isFacebookLoginPreviewHostname(window.location.hostname)
+    ) {
+      return
+    }
 
     let disposed = false
 

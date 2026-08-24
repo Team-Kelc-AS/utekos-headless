@@ -27,10 +27,7 @@ export function isFacebookLoginEnabled(
     Record<string, string | undefined>
   > = process.env
 ): boolean {
-  return (
-    environment.FACEBOOK_LOGIN_ENABLED === 'true' &&
-    environment.VERCEL_ENV === 'preview'
-  )
+  return environment.FACEBOOK_LOGIN_ENABLED === 'true'
 }
 
 export function readFacebookLoginConfig(

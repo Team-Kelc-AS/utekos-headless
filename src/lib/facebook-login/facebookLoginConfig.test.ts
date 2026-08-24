@@ -8,11 +8,10 @@ import {
 
 const identityKey = randomBytes(32).toString('base64')
 
-test('shows Facebook Login only in Vercel Preview', () => {
+test('enables Facebook Login when the feature is configured', () => {
   assert.equal(
     isFacebookLoginEnabled({
-      FACEBOOK_LOGIN_ENABLED: 'true',
-      VERCEL_ENV: 'preview'
+      FACEBOOK_LOGIN_ENABLED: 'true'
     }),
     true
   )
@@ -21,7 +20,7 @@ test('shows Facebook Login only in Vercel Preview', () => {
       FACEBOOK_LOGIN_ENABLED: 'true',
       VERCEL_ENV: 'production'
     }),
-    false
+    true
   )
   assert.equal(
     isFacebookLoginEnabled({
