@@ -122,6 +122,7 @@ export function FacebookLoginPrompt({
   const [contact, setContact] = useState('')
   const [pending, setPending] = useState(false)
   const [sdkReady, setSdkReady] = useState(false)
+  const [buttonRendered, setButtonRendered] = useState(false)
   const [sdkAttempt, setSdkAttempt] = useState(0)
   const [message, setMessage] = useState('')
 
@@ -386,7 +387,12 @@ export function FacebookLoginPrompt({
     const sdk = sdkRef.current
     if (!container || !sdk) return
 
+    let disposed = false
+
     sdk.XFBML.parse(container, () => {
+      if (disposed) return
+
+      setButtonRendered(true)
       if (buttonRenderedTrackedRef.current) return
       buttonRenderedTrackedRef.current = true
       trackFacebookLoginFunnel({
@@ -395,6 +401,10 @@ export function FacebookLoginPrompt({
         trafficSignal: trafficSignalRef.current
       })
     })
+
+    return () => {
+      disposed = true
+    }
   }, [sdkReady, state])
 
   useEffect(() => {
@@ -557,25 +567,35 @@ export function FacebookLoginPrompt({
 
           <div
             ref={buttonContainerRef}
-            className='mt-5 flex min-h-10 w-full items-center justify-center'
+            aria-busy={!buttonRendered}
+            className='relative mt-5 h-10 w-full overflow-hidden rounded-md'
           >
             {sdkReady ?
               <div
-                className='fb-login-button w-full'
-                data-width='100%'
-                data-size='large'
-                data-button-type='continue_with'
-                data-layout='default'
-                data-auto-logout-link='false'
-                data-use-continue-as='true'
-                data-scope='public_profile,email'
-                data-onlogin='utekosFacebookLoginOnLogin();'
-              />
-            : <div
+                className={`h-10 w-full overflow-hidden ${
+                  buttonRendered ? 'visible' : 'invisible'
+                }`}
+              >
+                <div
+                  className='fb-login-button w-full'
+                  data-width='100%'
+                  data-size='large'
+                  data-button-type='continue_with'
+                  data-layout='default'
+                  data-auto-logout-link='false'
+                  data-use-continue-as='true'
+                  data-scope='public_profile,email'
+                  data-onlogin='utekosFacebookLoginOnLogin();'
+                />
+              </div>
+            : null}
+
+            {!buttonRendered ?
+              <div
                 aria-hidden='true'
-                className='h-10 w-full animate-pulse rounded-md bg-[#1877F2]/20'
+                className='absolute inset-0 h-10 w-full animate-pulse rounded-md bg-[#1877F2]/20'
               />
-            }
+            : null}
           </div>
 
           {pending ?
@@ -603,6 +623,7 @@ export function FacebookLoginPrompt({
                 type='button'
                 onClick={() => {
                   setMessage('')
+                  setButtonRendered(false)
                   setSdkReady(false)
                   setSdkAttempt(value => value + 1)
                 }}
@@ -620,9 +641,6 @@ export function FacebookLoginPrompt({
           >
             Fortsett uten å logge inn
           </button>
-          <p className='mt-3 text-center text-xs leading-5 text-popover-foreground/60'>
-            Frivillig. Vi ber bare om offentlig profil og e-post.
-          </p>
         </div>
       }
     </aside>
