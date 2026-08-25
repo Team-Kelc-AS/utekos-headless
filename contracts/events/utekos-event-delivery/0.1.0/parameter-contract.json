@@ -1285,36 +1285,6 @@
               ]
             }
           }
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "page_view",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -1526,36 +1496,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "view_item_list",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -1760,36 +1700,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "select_item",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -2052,36 +1962,6 @@
               ]
             }
           }
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "view_item",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -2322,36 +2202,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "add_to_wishlist",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -2613,36 +2463,6 @@
               ]
             }
           }
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "add_to_cart",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -2850,36 +2670,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "remove_from_cart",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -3094,36 +2884,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "view_cart",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -3387,36 +3147,6 @@
               ]
             }
           }
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "begin_checkout",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -3542,16 +3272,6 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Snapchat conversion mapping is approved.",
-          "consentRequirement": "none",
-          "dedupeField": null,
-          "browser": null,
-          "server": null
-        },
-        "posthog": {
-          "support": "not_relevant",
-          "eventName": null,
-          "productionStatus": "not_relevant",
-          "productionDetail": "The event is excluded from the v1 product-analytics scope.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -3736,16 +3456,6 @@
               ]
             }
           }
-        },
-        "posthog": {
-          "support": "not_relevant",
-          "eventName": null,
-          "productionStatus": "not_relevant",
-          "productionDetail": "The event is excluded from the v1 product-analytics scope.",
-          "consentRequirement": "none",
-          "dedupeField": null,
-          "browser": null,
-          "server": null
         }
       }
     },
@@ -3997,36 +3707,6 @@
               ]
             }
           }
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "purchase",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -4149,16 +3829,6 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Snapchat refund mapping is approved.",
-          "consentRequirement": "none",
-          "dedupeField": null,
-          "browser": null,
-          "server": null
-        },
-        "posthog": {
-          "support": "not_relevant",
-          "eventName": null,
-          "productionStatus": "not_relevant",
-          "productionDetail": "The event is excluded from the v1 product-analytics scope.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,
@@ -4381,36 +4051,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "search",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -4541,36 +4181,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "view_search_results",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -4713,36 +4323,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "view_promotion",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -4885,36 +4465,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "select_promotion",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -5128,36 +4678,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "generate_lead",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -5291,36 +4811,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "form_start",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -5452,36 +4942,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "form_submit",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -5615,36 +5075,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "form_error",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -5777,36 +5207,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "filter_apply",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -5937,36 +5337,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "sort_apply",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -6099,36 +5469,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "variant_select",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -6260,36 +5600,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "size_guide_view",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -6418,36 +5728,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "checkout_error",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -6576,36 +5856,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "payment_error",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -6773,36 +6023,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "scroll_depth",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -7005,36 +6225,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "view_category",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -7207,36 +6397,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "hero_interact",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -7454,36 +6614,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "interact_with_accordion",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -7700,36 +6830,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "open_quick_view",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     },
@@ -7869,36 +6969,6 @@
           "dedupeField": null,
           "browser": null,
           "server": null
-        },
-        "posthog": {
-          "support": "planned",
-          "eventName": "video_progress",
-          "productionStatus": "not_implemented",
-          "productionDetail": "The storefront PostHog integration is currently removed.",
-          "consentRequirement": "analytics",
-          "dedupeField": "event_id",
-          "browser": {
-            "transport": "posthog_browser",
-            "status": "not_implemented",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          },
-          "server": {
-            "transport": "posthog_server",
-            "status": "disabled",
-            "parameterContract": {
-              "parameterSets": [],
-              "logicalRequiredParameters": [
-                "event_id",
-                "event_time"
-              ]
-            }
-          }
         }
       }
     }

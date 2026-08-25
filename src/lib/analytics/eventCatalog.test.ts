@@ -49,8 +49,7 @@ const providerIds = [
   'meta',
   'microsoft_uet',
   'pinterest',
-  'snapchat',
-  'posthog'
+  'snapchat'
 ] as const satisfies readonly ProviderId[]
 
 test('contains exactly the 33 v1 canonical events', () => {
@@ -260,7 +259,6 @@ test('routes correlated checkout progress only to its approved providers', () =>
     payment.providers.snapchat.transport.browser,
     'shopify_customer_events'
   )
-  assert.equal(payment.providers.posthog.support, 'not_relevant')
 })
 
 test('marks all non-blocked catalog events as active', () => {

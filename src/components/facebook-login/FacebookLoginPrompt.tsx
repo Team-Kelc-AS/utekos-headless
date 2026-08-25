@@ -3,7 +3,7 @@
 import { Loader2, XIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import type { FormEvent } from 'react'
+import type { SubmitEvent } from 'react'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -430,7 +430,7 @@ export function FacebookLoginPrompt({
   }
 
   const submitContact = async (
-    event: FormEvent<HTMLFormElement>
+    event: SubmitEvent<HTMLFormElement>
   ) => {
     event.preventDefault()
     if (pending) return
@@ -478,29 +478,19 @@ export function FacebookLoginPrompt({
       role='dialog'
       aria-modal='false'
       aria-labelledby='facebook-login-title'
-      className='fixed right-4 bottom-4 left-4 z-[120] mx-auto w-auto max-w-sm rounded-3xl border border-border/80 bg-popover p-5 text-popover-foreground shadow-2xl sm:p-6'
+      className='fixed right-4 bottom-4 left-4 z-120 mx-auto w-auto max-w-sm rounded-3xl border border-border/80 bg-popover p-5 text-popover-foreground shadow-2xl sm:p-6'
     >
       <Button
         type='button'
-        variant='ghost'
+        variant='utekos'
         size='icon'
         onClick={dismiss}
-        className='absolute top-2 right-2 rounded-full'
+        className='absolute top-2 right-2 rounded-full text-facebook-login-button'
       >
-        <XIcon aria-hidden='true' />
-        <span className='sr-only'>Lukk</span>
+        Fortsett uten å logge inn
       </Button>
 
-      {state === 'connected' ?
-        <div aria-live='polite' className='pr-8'>
-          <p
-            id='facebook-login-title'
-            className='font-sans text-lg font-semibold'
-          >
-            Velkommen til Utekos!
-          </p>
-        </div>
-      : state === 'needs_contact' ?
+  
         <form onSubmit={submitContact} className='pr-3'>
           <h2
             id='facebook-login-title'
@@ -508,10 +498,6 @@ export function FacebookLoginPrompt({
           >
             Legg til kontaktinformasjon
           </h2>
-          <p className='mt-2 text-sm leading-6 text-popover-foreground/75'>
-            Facebook delte ingen e-post. Du kan legge inn én
-            kontaktmåte, eller fortsette uten.
-          </p>
           <label
             htmlFor='facebook-login-contact'
             className='mt-4 block text-sm font-medium'
@@ -558,12 +544,6 @@ export function FacebookLoginPrompt({
           </button>
         </form>
       : <div>
-          <h2
-            id='facebook-login-title'
-            className='pr-7 font-sans text-xl font-semibold'
-          >
-            Velkommen til Utekos
-          </h2>
 
           <div
             ref={buttonContainerRef}
@@ -593,8 +573,15 @@ export function FacebookLoginPrompt({
             {!buttonRendered ?
               <div
                 aria-hidden='true'
-                className='absolute inset-0 h-10 w-full animate-pulse rounded-md bg-[#1877F2]/20'
-              />
+                className='absolute inset-0 h-10 w-full animate-pulse rounded-md bg-facebook-login-button'
+              >
+                <div className='absolute inset-0 h-10 w-full animate-pulse rounded-md bg-facebook-login-button/20'>
+                  <Loader2
+                    aria-hidden='true'
+                    className='animate-spin'
+                  />
+                </div>
+              </div>
             : null}
           </div>
 
@@ -607,7 +594,7 @@ export function FacebookLoginPrompt({
                 aria-hidden='true'
                 className='animate-spin'
               />
-              Fullfører innloggingen …
+              Fullfører innloggingen
             </p>
           : null}
 
@@ -619,30 +606,29 @@ export function FacebookLoginPrompt({
               >
                 {message}
               </p>
-              <button
-                type='button'
-                onClick={() => {
-                  setMessage('')
-                  setButtonRendered(false)
-                  setSdkReady(false)
-                  setSdkAttempt(value => value + 1)
-                }}
-                className='mt-2 text-sm underline underline-offset-4'
-              >
-                Prøv igjen
-              </button>
-            </div>
-          : null}
+                <Button
+                  variant="utekos"
+                  onClick={() => {
+                    setMessage('')
+                    setButtonRendered(false)
+                    setSdkReady(false)
+                    setSdkAttempt(value => value + 1)
+                  }}
+                  className='mt-2 text-sm'
+                >
+                  Prøv igjen
+                </Button>
+              </div>
+            : null}
 
-          <button
-            type='button'
+          <Button
+            variant='utekos'
             onClick={dismiss}
-            className='mt-4 w-full text-center text-sm underline underline-offset-4'
+            className='mt-4 w-full text-center'
           >
             Fortsett uten å logge inn
-          </button>
-        </div>
-      }
+          </Button>
+        </div>  
     </aside>
   )
 }

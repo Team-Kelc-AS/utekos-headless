@@ -17,8 +17,7 @@ const providerIds = [
   'meta',
   'microsoft_uet',
   'pinterest',
-  'snapchat',
-  'posthog'
+  'snapchat'
 ] as const satisfies readonly CatalogProviderId[]
 
 const providerAdapterKeys = Object.keys(

@@ -13,8 +13,7 @@ const providerIds = [
   'meta',
   'microsoft_uet',
   'pinterest',
-  'snapchat',
-  'posthog'
+  'snapchat'
 ] as const satisfies readonly ProviderId[]
 
 test('defines an explicit signal contract for every catalog event', () => {

@@ -20,7 +20,6 @@ export type ProviderId =
   | 'microsoft_uet'
   | 'pinterest'
   | 'snapchat'
-  | 'posthog'
 
 export type ServerOutboxStatus =
   | 'active'
@@ -47,7 +46,6 @@ type BrowserTransport =
   | 'microsoft_uet'
   | 'pinterest_tag'
   | 'snap_pixel'
-  | 'posthog_browser'
 
 type ServerTransport =
   | 'first_party_api'
@@ -57,7 +55,6 @@ type ServerTransport =
   | 'microsoft_uet_capi'
   | 'pinterest_conversions_api'
   | 'snap_conversions_api_v3'
-  | 'posthog_server'
 
 type ProviderConsentRequirement =
   | 'analytics'
@@ -341,7 +338,6 @@ type PlannedProviderInput = {
     eventName: string
     requiredParameters?: readonly string[]
   }
-  posthog?: boolean
 }
 
 function plannedProviders(
@@ -465,28 +461,7 @@ function plannedProviders(
         })
       : notRelevantProvider(
           'No v1 Snapchat conversion mapping is approved.'
-        ),
-    posthog:
-      input.posthog === false ?
-        notRelevantProvider(
-          'The event is excluded from the v1 product-analytics scope.'
         )
-      : providerMapping({
-          support: 'planned',
-          eventName,
-          transport: {
-            browser: 'posthog_browser',
-            server: 'posthog_server'
-          },
-          requiredParameters: baseProviderParameters,
-          dedupeField: 'event_id',
-          consentRequirement: 'analytics',
-          adapterVersion: 1,
-          productionStatus: 'not_implemented',
-          productionDetail:
-            'The storefront PostHog integration is currently removed.',
-          serverOutbox: 'disabled'
-        })
   }
 }
 
@@ -631,28 +606,7 @@ function activeEventProviders(
         })
       : notRelevantProvider(
           'No v1 Snapchat conversion mapping is approved.'
-        ),
-    posthog:
-      input.posthog === false ?
-        notRelevantProvider(
-          'The event is excluded from the v1 product-analytics scope.'
         )
-      : providerMapping({
-          support: 'planned',
-          eventName,
-          transport: {
-            browser: 'posthog_browser',
-            server: 'posthog_server'
-          },
-          requiredParameters: baseProviderParameters,
-          dedupeField: 'event_id',
-          consentRequirement: 'analytics',
-          adapterVersion: 1,
-          productionStatus: 'not_implemented',
-          productionDetail:
-            'The storefront PostHog integration is currently removed.',
-          serverOutbox: 'disabled'
-        })
   }
 }
 
@@ -782,22 +736,7 @@ const pageViewProviders = {
     active: true,
     browser: 'snap_pixel'
   }),
-  posthog: providerMapping({
-    support: 'planned',
-    eventName: 'page_view',
-    transport: {
-      browser: 'posthog_browser',
-      server: 'posthog_server'
-    },
-    requiredParameters: baseProviderParameters,
-    dedupeField: 'event_id',
-    consentRequirement: 'analytics',
-    adapterVersion: 1,
-    productionStatus: 'not_implemented',
-    productionDetail:
-      'The storefront PostHog integration is currently removed.',
-    serverOutbox: 'disabled'
-  })
+
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -907,22 +846,7 @@ const viewItemProviders = {
       'value'
     ]
   }),
-  posthog: providerMapping({
-    support: 'planned',
-    eventName: 'view_item',
-    transport: {
-      browser: 'posthog_browser',
-      server: 'posthog_server'
-    },
-    requiredParameters: baseProviderParameters,
-    dedupeField: 'event_id',
-    consentRequirement: 'analytics',
-    adapterVersion: 1,
-    productionStatus: 'not_implemented',
-    productionDetail:
-      'The storefront PostHog integration is currently removed.',
-    serverOutbox: 'disabled'
-  })
+
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1031,22 +955,7 @@ const addToCartProviders = {
       'value'
     ]
   }),
-  posthog: providerMapping({
-    support: 'planned',
-    eventName: 'add_to_cart',
-    transport: {
-      browser: 'posthog_browser',
-      server: 'posthog_server'
-    },
-    requiredParameters: baseProviderParameters,
-    dedupeField: 'event_id',
-    consentRequirement: 'analytics',
-    adapterVersion: 1,
-    productionStatus: 'not_implemented',
-    productionDetail:
-      'The storefront PostHog integration is currently removed.',
-    serverOutbox: 'disabled'
-  })
+
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1156,22 +1065,7 @@ const beginCheckoutProviders = {
       'value'
     ]
   }),
-  posthog: providerMapping({
-    support: 'planned',
-    eventName: 'begin_checkout',
-    transport: {
-      browser: 'posthog_browser',
-      server: 'posthog_server'
-    },
-    requiredParameters: baseProviderParameters,
-    dedupeField: 'event_id',
-    consentRequirement: 'analytics',
-    adapterVersion: 1,
-    productionStatus: 'not_implemented',
-    productionDetail:
-      'The storefront PostHog integration is currently removed.',
-    serverOutbox: 'disabled'
-  })
+
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1202,7 +1096,6 @@ const addShippingInfoProviderBase = activeEventProviders(
         'value'
       ]
     },
-    posthog: false
   }
 )
 const addShippingInfoGoogleTransport = {
@@ -1267,7 +1160,6 @@ const addPaymentInfoProviderBase = activeEventProviders(
         'value'
       ]
     },
-    posthog: false
   }
 )
 const addPaymentInfoGoogleTransport = {
@@ -1401,22 +1293,7 @@ const purchaseProviders = {
       'order_id'
     ]
   }),
-  posthog: providerMapping({
-    support: 'planned',
-    eventName: 'purchase',
-    transport: {
-      browser: 'posthog_browser',
-      server: 'posthog_server'
-    },
-    requiredParameters: baseProviderParameters,
-    dedupeField: 'event_id',
-    consentRequirement: 'analytics',
-    adapterVersion: 1,
-    productionStatus: 'not_implemented',
-    productionDetail:
-      'The storefront PostHog integration is currently removed.',
-    serverOutbox: 'disabled'
-  })
+
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1472,9 +1349,7 @@ const refundProviders = {
   snapchat: notRelevantProvider(
     'No v1 Snapchat refund mapping is approved.'
   ),
-  posthog: notRelevantProvider(
-    'The event is excluded from the v1 product-analytics scope.'
-  )
+
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1597,7 +1472,6 @@ const eventCatalogBase = {
         eventName: 'select_item',
         requiredParameters: ['items']
       },
-      posthog: true
     })
   },
   view_item: {
@@ -2182,7 +2056,6 @@ const eventCatalogBase = {
     providers: activeEventProviders('form_error', {
       firstPartyConsentRequirement: 'analytics_or_operational',
       googleRequired: ['form_id', 'error_category'],
-      posthog: true
     })
   },
   filter_apply: {
@@ -2212,7 +2085,6 @@ const eventCatalogBase = {
     consent: behaviorConsent,
     providers: activeEventProviders('filter_apply', {
       googleRequired: ['filter_name', 'filter_value'],
-      posthog: true
     })
   },
   sort_apply: {
@@ -2242,7 +2114,6 @@ const eventCatalogBase = {
     consent: behaviorConsent,
     providers: activeEventProviders('sort_apply', {
       googleRequired: ['sort_key'],
-      posthog: true
     })
   },
   variant_select: {
@@ -2271,7 +2142,6 @@ const eventCatalogBase = {
     consent: behaviorConsent,
     providers: activeEventProviders('variant_select', {
       googleRequired: ['item_id', 'item_variant'],
-      posthog: true
     })
   },
   size_guide_view: {
@@ -2300,7 +2170,6 @@ const eventCatalogBase = {
     providers: activeEventProviders('size_guide_view', {
       googleRequired: ['guide_id'],
       firstPartyRequired: ['page_view_id', 'guide_id'],
-      posthog: true
     })
   },
   checkout_error: {
@@ -2329,7 +2198,6 @@ const eventCatalogBase = {
     providers: plannedProviders('checkout_error', {
       firstPartyConsentRequirement: 'analytics_or_operational',
       googleRequired: ['error_category'],
-      posthog: true
     })
   },
   payment_error: {
@@ -2358,7 +2226,6 @@ const eventCatalogBase = {
     providers: plannedProviders('payment_error', {
       firstPartyConsentRequirement: 'analytics_or_operational',
       googleRequired: ['error_category'],
-      posthog: true
     })
   },
   scroll_depth: {
@@ -2395,7 +2262,6 @@ const eventCatalogBase = {
           'document_height'
         ]
       },
-      posthog: true
     })
   },
   view_category: {
@@ -2443,7 +2309,6 @@ const eventCatalogBase = {
         eventName: 'view_category',
         requiredParameters: ['content_category']
       },
-      posthog: true
     })
   },
   hero_interact: {
@@ -2487,7 +2352,6 @@ const eventCatalogBase = {
           'click_sequence'
         ]
       },
-      posthog: true
     })
   },
   interact_with_accordion: {
@@ -2544,7 +2408,6 @@ const eventCatalogBase = {
         eventName: 'interact_with_accordion',
         requiredParameters: ['items', 'accordion_id']
       },
-      posthog: true
     })
   },
   open_quick_view: {
@@ -2600,7 +2463,6 @@ const eventCatalogBase = {
         eventName: 'open_quick_view',
         requiredParameters: ['items', 'source_surface']
       },
-      posthog: true
     })
   },
   video_progress: {
@@ -2639,7 +2501,6 @@ const eventCatalogBase = {
         'video_id',
         'milestone'
       ],
-      posthog: true
     })
   }
 } as const satisfies Record<string, EventCatalogEntryBase>

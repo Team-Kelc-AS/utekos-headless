@@ -230,18 +230,6 @@
                 "transport": "snap_conversions_api_v3",
                 "status": "active"
               }
-            },
-            "posthog": {
-              "eventName": "add_to_cart",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -421,18 +409,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "add_to_wishlist",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -620,18 +596,6 @@
                 "transport": "snap_conversions_api_v3",
                 "status": "active"
               }
-            },
-            "posthog": {
-              "eventName": "begin_checkout",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -771,18 +735,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "filter_apply",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -920,18 +872,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "form_error",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -1068,18 +1008,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "form_start",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -1217,18 +1145,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "form_submit",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -1383,18 +1299,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "generate_lead",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -1538,18 +1442,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "hero_interact",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -1726,18 +1618,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "interact_with_accordion",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -1912,18 +1792,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "open_quick_view",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -2070,18 +1938,6 @@
               "server": {
                 "transport": "snap_conversions_api_v3",
                 "status": "active"
-              }
-            },
-            "posthog": {
-              "eventName": "page_view",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
               }
             }
           }
@@ -2257,18 +2113,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "remove_from_cart",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -2412,18 +2256,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "scroll_depth",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -2579,18 +2411,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "search",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -2766,18 +2586,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "select_item",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -2939,18 +2747,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "select_promotion",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -3087,18 +2883,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "size_guide_view",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -3237,18 +3021,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "sort_apply",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -3389,18 +3161,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "variant_select",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -3541,18 +3301,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "video_progress",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -3727,18 +3475,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "view_cart",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -3888,18 +3624,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "view_category",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -4081,18 +3805,6 @@
                 "transport": "snap_conversions_api_v3",
                 "status": "active"
               }
-            },
-            "posthog": {
-              "eventName": "view_item",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -4269,18 +3981,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "view_item_list",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -4442,18 +4142,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "view_promotion",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }
@@ -4592,18 +4280,6 @@
               "productionStatus": "not_relevant",
               "browser": null,
               "server": null
-            },
-            "posthog": {
-              "eventName": "view_search_results",
-              "productionStatus": "not_implemented",
-              "browser": {
-                "transport": "posthog_browser",
-                "status": "not_implemented"
-              },
-              "server": {
-                "transport": "posthog_server",
-                "status": "disabled"
-              }
             }
           }
         }

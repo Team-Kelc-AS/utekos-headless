@@ -25,7 +25,7 @@ Working branch: `codex/utekos-events-contracts-20260815`
 - A complete event-delivery parameter contract covers all 33
   canonical catalog events and separates canonical input, browser
   delivery, and server delivery for Supabase, Google, Meta,
-  Microsoft UET, PostHog, and Shopify-owned checkout telemetry.
+  Microsoft UET, Pinterest, Snapchat, and Shopify-owned checkout telemetry.
 - The contract records required, conditional, recommended, and
   optional fields, installed integration owners/versions, consent
   gates, transformations, and explicit non-delivery states.
@@ -127,10 +127,6 @@ No runtime file under `src/` was changed.
    Shopify-hosted Customer Events pixel separately emits GA
    purchase from `checkout_completed`; authoritative server
    purchase/refund data originates from Shopify webhook flows.
-8. PostHog mappings remain non-implemented or disabled where the
-   event catalog says so; parameters are not represented as
-   active delivery.
-
 No unmapped event route, missing underlying implementation file,
 invalid example, or request-schema mismatch was found.
 

@@ -117,27 +117,6 @@ function activeEventProviders(
       : notRelevantProvider(
           'No v1 marketing use case justifies a Microsoft UET export.'
         ),
-    posthog:
-      input.posthog === false ?
-        notRelevantProvider(
-          'The event is excluded from the v1 product-analytics scope.'
-        )
-      : providerMapping({
-          support: 'planned',
-          eventName,
-          transport: {
-            browser: 'posthog_browser',
-            server: 'posthog_server'
-          },
-          requiredParameters: baseProviderParameters,
-          dedupeField: 'event_id',
-          consentRequirement: 'analytics',
-          adapterVersion: 1,
-          productionStatus: 'not_implemented',
-          productionDetail:
-            'The storefront PostHog integration is currently removed.',
-          serverOutbox: 'disabled'
-        })
   }
 }
 `
@@ -167,7 +146,6 @@ const eventConfigs = {
     providers: `activeEventProviders('select_item', {
       commerce: true,
       googleRequired: ['item_list_id', 'items'],
-      posthog: true
     })`
   },
   add_to_wishlist: {
@@ -265,28 +243,24 @@ const eventConfigs = {
     providers: `activeEventProviders('form_error', {
       firstPartyConsentRequirement: 'analytics_or_operational',
       googleRequired: ['form_id', 'error_category'],
-      posthog: true
     })`
   },
   filter_apply: {
     lifecycle: 'active',
     providers: `activeEventProviders('filter_apply', {
       googleRequired: ['filter_name', 'filter_value'],
-      posthog: true
     })`
   },
   sort_apply: {
     lifecycle: 'active',
     providers: `activeEventProviders('sort_apply', {
       googleRequired: ['sort_key'],
-      posthog: true
     })`
   },
   variant_select: {
     lifecycle: 'active',
     providers: `activeEventProviders('variant_select', {
       googleRequired: ['item_id', 'item_variant'],
-      posthog: true
     })`
   },
   size_guide_view: {
@@ -294,7 +268,6 @@ const eventConfigs = {
     providers: `activeEventProviders('size_guide_view', {
       googleRequired: ['guide_id'],
       firstPartyRequired: ['page_view_id', 'guide_id'],
-      posthog: true
     })`
   },
   scroll_depth: {
@@ -302,7 +275,6 @@ const eventConfigs = {
     providers: `activeEventProviders('scroll_depth', {
       googleRequired: ['percent_scrolled'],
       firstPartyRequired: ['page_view_id', 'threshold'],
-      posthog: true
     })`
   },
   video_progress: {
@@ -315,7 +287,6 @@ const eventConfigs = {
         'video_title'
       ],
       firstPartyRequired: ['page_view_id', 'video_id', 'milestone'],
-      posthog: true
     })`
   }
 }

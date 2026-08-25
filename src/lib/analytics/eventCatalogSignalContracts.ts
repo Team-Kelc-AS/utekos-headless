@@ -269,11 +269,6 @@ const snapchatSignals = {
   meta_fbp: 'not_applicable'
 } as const satisfies ProviderSignalDeliveryPolicy
 
-const posthogSignals = {
-  ...notApplicableProviderSignals,
-  event_source_url: 'send_when_available'
-} as const satisfies ProviderSignalDeliveryPolicy
-
 type ProviderTransportInput = Readonly<{
   browser: string | null
   server: string | null
@@ -320,13 +315,6 @@ export function resolveProviderSignalDelivery(
     transport.browser === 'google_tag_manager'
   ) {
     return googleSignals
-  }
-
-  if (
-    transport.server === 'posthog_server' ||
-    transport.browser === 'posthog_browser'
-  ) {
-    return posthogSignals
   }
 
   return notApplicableProviderSignals

@@ -86,7 +86,7 @@ brukerens enhet.
 Nåværende produksjon realiserer dette bare for Google. Microsoft
 UET og Clarity lastes av web-GTM, men sender fortsatt direkte fra
 browser til Microsoft. Appen laster i tillegg egen UET, og Meta
-Pixel, PostHog og andre klienter finnes fortsatt. sGTM er derfor
+Pixel og andre klienter finnes fortsatt. sGTM er derfor
 ikke en universell ytelsesgateway.
 
 ### 5. Operasjonell kontroll
@@ -123,7 +123,6 @@ Endpoint HTTP 200 er nødvendig, men beviser ingen av disse alene.
 | Shopify paid purchase truth       | Shopify webhook + Supabase            | Betalt ordre er et serverdomene-event, ikke en sidevisning                          |
 | Meta CAPI                         | Eksisterende serveradapter + Supabase | Har event-ID, retry og Dataset Quality-audit; migrering ville skape ny duplikatfare |
 | Microsoft UET CAPI                | Eksisterende serveradapter + Supabase | Krever UET token, `msclkid`, providerstatus og skip reason                          |
-| PostHog product analytics         | Consent-gatet PostHog helper          | Produktanalyse, ikke provider-dispatch                                              |
 | Rå brukerprofiler eller PII-lager | Ingen trackingflate                   | Bryter dataminimeringsprinsippet                                                    |
 
 Meta eller Microsoft kan senere flyttes til sGTM, men bare som en
