@@ -22,6 +22,11 @@ export type FacebookLoginConfig = {
   redirectOrigin: string
 }
 
+export type FacebookLoginClientConfig = {
+  apiVersion: typeof FACEBOOK_GRAPH_API_VERSION
+  appId: string
+}
+
 export function isFacebookLoginEnabled(
   environment: Readonly<
     Record<string, string | undefined>
@@ -30,15 +35,30 @@ export function isFacebookLoginEnabled(
   return environment.FACEBOOK_LOGIN_ENABLED === 'true'
 }
 
-export function readFacebookLoginConfig(
+export function readFacebookLoginClientConfig(
   environment: Readonly<
     Record<string, string | undefined>
   > = process.env
+): FacebookLoginClientConfig | undefined {
+  const appId = environment.FACEBOOK_LOGIN_APP_ID?.trim()
+  if (!appId || !/^\d+$/u.test(appId)) return undefined
+
+  return { apiVersion: FACEBOOK_GRAPH_API_VERSION, appId }
+}
+
+export function readFacebookLoginConfig(
+  environment: Readonly<
+    Record<string, string | undefined>
+  > = process.env,
+  options: { allowDisabled?: boolean } = {}
 ): FacebookLoginConfig {
   const parsed =
     facebookLoginEnvironmentSchema.parse(environment)
 
-  if (parsed.FACEBOOK_LOGIN_ENABLED !== 'true') {
+  if (
+    parsed.FACEBOOK_LOGIN_ENABLED !== 'true' &&
+    !options.allowDisabled
+  ) {
     throw new Error('facebook_login_disabled')
   }
 

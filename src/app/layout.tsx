@@ -26,7 +26,10 @@ import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagM
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
 import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
 import { WebVitals } from '@/components/analytics/WebVitals'
-import { isFacebookLoginEnabled } from '@/lib/facebook-login/facebookLoginConfig'
+import {
+  isFacebookLoginEnabled,
+  readFacebookLoginClientConfig
+} from '@/lib/facebook-login/facebookLoginConfig'
 
 const googleSansFlex = Google_Sans_Flex({
   subsets: ['latin'],
@@ -119,6 +122,11 @@ export default function RootLayout({
   const facebookLoginEnabled = isFacebookLoginEnabled(
     process.env
   )
+  const facebookLoginClientConfig =
+    readFacebookLoginClientConfig(process.env)
+  const facebookLoginPreviewAllowed =
+    process.env.NODE_ENV === 'development' ||
+    process.env.VERCEL_ENV === 'preview'
 
   return (
     <html
@@ -172,6 +180,10 @@ export default function RootLayout({
           <SiteChrome
             assistantRolloutPercent={assistantRolloutPercent}
             facebookLoginEnabled={facebookLoginEnabled}
+            facebookLoginClientConfig={facebookLoginClientConfig}
+            facebookLoginPreviewAllowed={
+              facebookLoginPreviewAllowed
+            }
             header={<Header menu={mainMenu} />}
             footer={<Footer />}
           >

@@ -12,17 +12,13 @@ import {
   facebookLoginOAuthContextSchema,
   type FacebookLoginOAuthContext
 } from '@/lib/facebook-login/facebookLoginContracts'
-import { readFacebookLoginConfig } from '@/lib/facebook-login/facebookLoginConfig'
-import {
-  decryptFacebookLoginJson,
-  encryptFacebookLoginJson
-} from '@/lib/facebook-login/facebookLoginCrypto'
+import { readFacebookLoginRequestConfig } from '@/lib/facebook-login/readFacebookLoginRequestConfig'
+import { decryptFacebookLoginJson } from '@/lib/facebook-login/facebookLoginCrypto'
 import {
   appendFacebookLoginResult,
   exchangeFacebookLoginCode
 } from '@/lib/facebook-login/facebookLoginOAuth'
-import { protectFacebookLoginContact } from '@/lib/facebook-login/protectFacebookLoginContact'
-import { upsertFacebookLoginIdentity } from '@/lib/facebook-login/postgresFacebookLoginIdentityStore'
+import { finalizeFacebookLoginIdentity } from '@/lib/facebook-login/finalizeFacebookLoginIdentity'
 
 function sameState(left: string, right: string) {
   const leftBuffer = Buffer.from(left, 'utf8')
@@ -61,7 +57,7 @@ export async function GET(request: NextRequest) {
   let context: FacebookLoginOAuthContext | undefined
 
   try {
-    const config = readFacebookLoginConfig()
+    const config = readFacebookLoginRequestConfig(request)
     const stateCookie = request.cookies.get(
       FACEBOOK_LOGIN_OAUTH_COOKIE
     )?.value
@@ -118,54 +114,12 @@ export async function GET(request: NextRequest) {
       code,
       config
     })
-    const protectedEmail =
-      identity.email ?
-        protectFacebookLoginContact(
-          identity.email,
-          config.identityKey
-        )
-      : undefined
-
-    if (protectedEmail && protectedEmail.kind !== 'email') {
-      throw new Error('facebook_login_email_invalid')
-    }
-
-    const stored = await upsertFacebookLoginIdentity({
-      appId: config.appId,
-      emailPermissionGranted: identity.emailPermissionGranted,
-      externalId: context.externalId,
-      facebookLoginId: identity.facebookLoginId,
-      ...(context.attribution ?
-        { attribution: context.attribution }
-      : {}),
-      ...(context.fbc ? { fbc: context.fbc } : {}),
-      ...(context.fbclid ? { fbclid: context.fbclid } : {}),
-      ...(protectedEmail ?
-        {
-          emailCiphertext: protectedEmail.ciphertext,
-          emailSha256: protectedEmail.sha256
-        }
-      : {})
-    })
-
-    const expiresAt =
-      Date.now() + FACEBOOK_LOGIN_IDENTITY_MAX_AGE_SECONDS * 1000
-    const identityCookie = encryptFacebookLoginJson(
-      {
-        identityId: stored.id,
-        facebookLoginId: identity.facebookLoginId,
-        externalId: context.externalId,
-        expiresAt,
-        ...(context.fbc ? { fbc: context.fbc } : {}),
-        ...(context.fbclid ? { fbclid: context.fbclid } : {}),
-        ...(protectedEmail ?
-          { emailSha256: protectedEmail.sha256 }
-        : {})
-      },
-      'identity-cookie',
-      config.identityKey
-    )
-    const result = protectedEmail ? 'connected' : 'needs_contact'
+    const { identityCookie, result } =
+      await finalizeFacebookLoginIdentity({
+        config,
+        context,
+        identity
+      })
     const response = NextResponse.redirect(
       appendFacebookLoginResult(
         config.redirectOrigin,
@@ -198,7 +152,8 @@ export async function GET(request: NextRequest) {
 
     let origin = 'https://utekos.no'
     try {
-      origin = readFacebookLoginConfig().redirectOrigin
+      origin =
+        readFacebookLoginRequestConfig(request).redirectOrigin
     } catch {}
 
     const response = NextResponse.redirect(

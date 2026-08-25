@@ -5,7 +5,8 @@ import type { FacebookLoginConfig } from './facebookLoginConfig'
 import {
   buildFacebookLoginDialogUrl,
   createFacebookLoginOAuthContext,
-  exchangeFacebookLoginCode
+  exchangeFacebookLoginCode,
+  validateFacebookLoginAccessToken
 } from './facebookLoginOAuth'
 
 const config: FacebookLoginConfig = {
@@ -90,4 +91,54 @@ test('validates app and user identity before returning profile data', async () =
   assert.equal(calls[1]?.pathname, '/v25.0/debug_token')
   assert.equal(calls[2]?.pathname, '/v25.0/me')
   assert.ok(calls[2]?.searchParams.get('appsecret_proof'))
+})
+
+test('validates an SDK token against the expected app-scoped user', async () => {
+  const responses = [
+    {
+      data: {
+        app_id: config.appId,
+        is_valid: true,
+        scopes: ['public_profile'],
+        user_id: '1234567890'
+      }
+    },
+    { id: '1234567890' }
+  ]
+  const fetchFn: typeof fetch = async () =>
+    Response.json(responses.shift())
+
+  const identity = await validateFacebookLoginAccessToken({
+    accessToken: 'sdk-user-access-token-for-testing',
+    config,
+    expectedUserId: '1234567890',
+    fetchFn
+  })
+
+  assert.deepEqual(identity, {
+    facebookLoginId: '1234567890',
+    emailPermissionGranted: false
+  })
+})
+
+test('rejects an SDK token for another app-scoped user', async () => {
+  const fetchFn: typeof fetch = async () =>
+    Response.json({
+      data: {
+        app_id: config.appId,
+        is_valid: true,
+        scopes: ['public_profile'],
+        user_id: '1234567890'
+      }
+    })
+
+  await assert.rejects(
+    validateFacebookLoginAccessToken({
+      accessToken: 'sdk-user-access-token-for-testing',
+      config,
+      expectedUserId: '9999999999',
+      fetchFn
+    }),
+    /facebook_login_token_identity_invalid/u
+  )
 })

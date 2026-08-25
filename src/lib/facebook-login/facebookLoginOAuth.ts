@@ -176,12 +176,28 @@ export async function exchangeFacebookLoginCode(input: {
   const token = accessTokenResponseSchema.parse(
     await fetchGraphJson(tokenUrl, fetchFn)
   )
+
+  return validateFacebookLoginAccessToken({
+    accessToken: token.access_token,
+    config,
+    fetchFn
+  })
+}
+
+export async function validateFacebookLoginAccessToken(input: {
+  accessToken: string
+  config: FacebookLoginConfig
+  expectedUserId?: string
+  fetchFn?: typeof fetch
+}) {
+  const { config } = input
+  const fetchFn = input.fetchFn ?? fetch
   const appAccessToken = `${config.appId}|${config.appSecret}`
 
   const debugUrl = new URL(
     `https://graph.facebook.com/${config.apiVersion}/debug_token`
   )
-  debugUrl.searchParams.set('input_token', token.access_token)
+  debugUrl.searchParams.set('input_token', input.accessToken)
   debugUrl.searchParams.set('access_token', appAccessToken)
 
   const debug = debugTokenResponseSchema.parse(
@@ -191,7 +207,9 @@ export async function exchangeFacebookLoginCode(input: {
 
   if (
     String(debug.data.app_id) !== config.appId ||
-    !/^\d+$/u.test(facebookLoginId)
+    !/^\d+$/u.test(facebookLoginId) ||
+    (input.expectedUserId &&
+      input.expectedUserId !== facebookLoginId)
   ) {
     throw new Error('facebook_login_token_identity_invalid')
   }
@@ -200,11 +218,11 @@ export async function exchangeFacebookLoginCode(input: {
     `https://graph.facebook.com/${config.apiVersion}/me`
   )
   profileUrl.searchParams.set('fields', 'id,email')
-  profileUrl.searchParams.set('access_token', token.access_token)
+  profileUrl.searchParams.set('access_token', input.accessToken)
   profileUrl.searchParams.set(
     'appsecret_proof',
     createHmac('sha256', config.appSecret)
-      .update(token.access_token, 'utf8')
+      .update(input.accessToken, 'utf8')
       .digest('hex')
   )
 

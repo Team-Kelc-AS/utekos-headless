@@ -5,10 +5,11 @@ import {
   FACEBOOK_LOGIN_IDENTITY_MAX_AGE_SECONDS
 } from '@/lib/facebook-login/facebookLoginContracts'
 import { readFacebookLoginIdentityCookie } from '@/lib/facebook-login/facebookLoginCookie'
-import { readFacebookLoginConfig } from '@/lib/facebook-login/facebookLoginConfig'
+import { readFacebookLoginRequestConfig } from '@/lib/facebook-login/readFacebookLoginRequestConfig'
 import { encryptFacebookLoginJson } from '@/lib/facebook-login/facebookLoginCrypto'
 import { protectFacebookLoginContact } from '@/lib/facebook-login/protectFacebookLoginContact'
 import { updateFacebookLoginContact } from '@/lib/facebook-login/postgresFacebookLoginIdentityStore'
+import { isSameOriginFacebookLoginRequest } from '@/lib/facebook-login/isSameOriginFacebookLoginRequest'
 
 const contactSchema = z.strictObject({
   contact: z.string().trim().min(3).max(320)
@@ -18,19 +19,8 @@ const NO_STORE_HEADERS = {
   'Cache-Control': 'no-store, max-age=0'
 }
 
-function hasSameOrigin(request: Request) {
-  const origin = request.headers.get('origin')
-  if (!origin) return false
-
-  try {
-    return new URL(origin).origin === new URL(request.url).origin
-  } catch {
-    return false
-  }
-}
-
 export async function POST(request: NextRequest) {
-  if (!hasSameOrigin(request)) {
+  if (!isSameOriginFacebookLoginRequest(request)) {
     return Response.json(
       { error: 'forbidden_origin' },
       { headers: NO_STORE_HEADERS, status: 403 }
@@ -38,7 +28,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const config = readFacebookLoginConfig()
+    const config = readFacebookLoginRequestConfig(request)
     const identity = readFacebookLoginIdentityCookie({
       cookieHeader: request.headers.get('cookie') ?? undefined,
       identityKey: config.identityKey

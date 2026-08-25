@@ -165,3 +165,15 @@ export async function updateFacebookLoginContact(
     throw new Error('facebook_login_identity_not_found')
   }
 }
+
+export async function deleteFacebookLoginIdentity(input: {
+  appId: string
+  identityId: string
+}) {
+  const sql = getSql()
+  await sql`
+    delete from marketing.facebook_login_identities
+    where id = ${input.identityId}::uuid
+      and app_id = ${input.appId}
+  `
+}

@@ -6,6 +6,7 @@ import {
   privacySections
 } from '@/db/config/privacy.config'
 import type { Metadata } from 'next'
+import { FacebookLoginConnectionControl } from '@/components/facebook-login/FacebookLoginConnectionControl'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://utekos.no'),
@@ -71,7 +72,7 @@ export default function PrivacyPolicyPage() {
 
           <div className='p-8 sm:p-12 lg:p-16'>
             <header className='text-center'>
-              <h1 className='font-google-sans mx-auto text-center text-4xl font-bold text-white sm:text-5xl'>
+              <h1 className='mx-auto text-center font-google-sans text-4xl font-bold text-white sm:text-5xl'>
                 Personvern
               </h1>
               <p className='mt-4 text-white/70'>
@@ -92,6 +93,7 @@ export default function PrivacyPolicyPage() {
                     </SectionWrapper>
                   )
                 )}
+                <FacebookLoginConnectionControl />
               </div>
 
               <aside className='lg:col-span-4'>

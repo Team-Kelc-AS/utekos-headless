@@ -1,6 +1,6 @@
 import { connection, NextRequest } from 'next/server'
 import { readFacebookLoginIdentityCookie } from '@/lib/facebook-login/facebookLoginCookie'
-import { readFacebookLoginConfig } from '@/lib/facebook-login/facebookLoginConfig'
+import { readFacebookLoginRequestConfig } from '@/lib/facebook-login/readFacebookLoginRequestConfig'
 
 const NO_STORE_HEADERS = {
   'Cache-Control': 'no-store, max-age=0'
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   await connection()
 
   try {
-    const config = readFacebookLoginConfig()
+    const config = readFacebookLoginRequestConfig(request)
     const identity = readFacebookLoginIdentityCookie({
       cookieHeader: request.headers.get('cookie') ?? undefined,
       identityKey: config.identityKey
@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
 
     return Response.json(
       {
+        linked: Boolean(identity),
         connected: Boolean(
           identity?.emailSha256 || identity?.phoneSha256
         ),
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
     )
   } catch {
     return Response.json(
-      { connected: false, needs_contact: false },
+      { linked: false, connected: false, needs_contact: false },
       { headers: NO_STORE_HEADERS }
     )
   }

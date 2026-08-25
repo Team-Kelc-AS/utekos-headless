@@ -7,7 +7,7 @@ import {
   FACEBOOK_LOGIN_OAUTH_COOKIE,
   FACEBOOK_LOGIN_OAUTH_MAX_AGE_SECONDS
 } from '@/lib/facebook-login/facebookLoginContracts'
-import { readFacebookLoginConfig } from '@/lib/facebook-login/facebookLoginConfig'
+import { readFacebookLoginRequestConfig } from '@/lib/facebook-login/readFacebookLoginRequestConfig'
 import { encryptFacebookLoginJson } from '@/lib/facebook-login/facebookLoginCrypto'
 import {
   buildFacebookLoginDialogUrl,
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
   await connection()
 
   try {
-    const config = readFacebookLoginConfig()
+    const config = readFacebookLoginRequestConfig(request)
     const context = createFacebookLoginOAuthContext({
       cookieHeader: request.headers.get('cookie') ?? undefined,
       origin: request.nextUrl.origin,
