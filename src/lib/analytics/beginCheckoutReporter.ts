@@ -102,28 +102,36 @@ export async function reportCanonicalBeginCheckout(
     )
 
     sendGTMEvent(buildBeginCheckoutDataLayerEvent(event))
-    const tasks: Promise<unknown>[] = [
-      persistCheckoutAttributionSnapshot(
+
+    try {
+      await persistCheckoutAttributionSnapshot(
         input.cart.id,
         snapshot,
         event.event_id,
         event.custom_data.items
       )
-    ]
-
-    if (
-      event.consent.analytics === 'granted' ||
-      event.consent.marketing === 'granted'
-    ) {
-      tasks.push(
-        collectCanonicalBeginCheckout(
-          event,
-          input.checkoutMethod ?? 'shopify_checkout'
-        )
-      )
+    } catch (error) {
+      captureException(error, {
+        tags: {
+          analytics_event: 'begin_checkout',
+          analytics_stage: 'checkout_attribution_persist'
+        }
+      })
     }
 
-    const results = await settleCheckoutTasks(tasks)
+    if (
+      event.consent.analytics !== 'granted' &&
+      event.consent.marketing !== 'granted'
+    ) {
+      return
+    }
+
+    const results = await settleCheckoutTasks([
+      collectCanonicalBeginCheckout(
+        event,
+        input.checkoutMethod ?? 'shopify_checkout'
+      )
+    ])
     if (!results) {
       captureException(
         new Error('Checkout attribution handoff timed out'),

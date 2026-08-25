@@ -28,6 +28,7 @@ import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerL
 import { WebVitals } from '@/components/analytics/WebVitals'
 import {
   isFacebookLoginEnabled,
+  isFacebookLoginPreviewAllowed,
   readFacebookLoginClientConfig
 } from '@/lib/facebook-login/facebookLoginConfig'
 
@@ -125,8 +126,7 @@ export default function RootLayout({
   const facebookLoginClientConfig =
     readFacebookLoginClientConfig(process.env)
   const facebookLoginPreviewAllowed =
-    process.env.NODE_ENV === 'development' ||
-    process.env.VERCEL_ENV === 'preview'
+    isFacebookLoginPreviewAllowed(process.env)
 
   return (
     <html

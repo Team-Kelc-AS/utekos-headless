@@ -3,11 +3,31 @@ import { randomBytes } from 'node:crypto'
 import test from 'node:test'
 import {
   isFacebookLoginEnabled,
+  isFacebookLoginPreviewAllowed,
   readFacebookLoginClientConfig,
   readFacebookLoginConfig
 } from './facebookLoginConfig'
 
 const identityKey = randomBytes(32).toString('base64')
+
+test('allows the login prompt preview override only on Vercel preview', () => {
+  assert.equal(
+    isFacebookLoginPreviewAllowed({ VERCEL_ENV: 'preview' }),
+    true
+  )
+  assert.equal(
+    isFacebookLoginPreviewAllowed({ VERCEL_ENV: 'production' }),
+    false
+  )
+  assert.equal(
+    isFacebookLoginPreviewAllowed({
+      NODE_ENV: 'development',
+      VERCEL_ENV: 'development'
+    }),
+    false
+  )
+  assert.equal(isFacebookLoginPreviewAllowed({}), false)
+})
 
 test('enables Facebook Login when the feature is configured', () => {
   assert.equal(
