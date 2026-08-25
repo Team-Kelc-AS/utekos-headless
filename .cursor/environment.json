@@ -1,0 +1,60 @@
+{
+  "name": "utekos-headless",
+  "install": "bash .cursor/cloud-install.sh",
+  "ports": [
+    {
+      "name": "Next.js",
+      "port": 3000
+    }
+  ],
+  "mcpServerAllowlist": [
+    {
+      "name": "context7",
+      "serverUrl": "https://mcp.context7.com/mcp"
+    },
+    {
+      "name": "meta-developer-tools",
+      "serverUrl": "https://mcp.facebook.com/devtools"
+    },
+    {
+      "name": "facebook-ads-http",
+      "serverUrl": "https://mcp.facebook.com/ads"
+    },
+    {
+      "name": "mdn",
+      "serverUrl": "https://mcp.mdn.mozilla.net/"
+    },
+    {
+      "name": "microsoft-learn-mcp",
+      "serverUrl": "https://learn.microsoft.com/api/mcp"
+    },
+    {
+      "name": "openai",
+      "serverUrl": "https://developers.openai.com/mcp"
+    },
+    {
+      "name": "supabase",
+      "serverUrl": "https://mcp.supabase.com/mcp"
+    },
+    {
+      "name": "utekos-docs",
+      "serverUrl": "https://mcp.utekos.no/mcp"
+    },
+    {
+      "name": "mapi-devdocs",
+      "serverUrl": "https://merchantapi.googleapis.com/devdocs/mcp/"
+    },
+    {
+      "name": "mcp-docs",
+      "serverUrl": "https://modelcontextprotocol.io/mcp"
+    },
+    {
+      "name": "resend",
+      "serverUrl": "https://mcp.resend.com/mcp"
+    },
+    {
+      "name": "microsoft-ads-official",
+      "serverUrl": "https://partner.api.bingads.microsoft.com/ext/mcp/vnext"
+    }
+  ]
+}

@@ -63,10 +63,14 @@ next-env.d.ts
 
 # Local-only agent, operations, evidence, and editor sources. These stay on
 # disk for local agents but are never committed or sent through GitHub.
+# Exception: Cursor Cloud clones GitHub only, so environment.json and the
+# install script must be tracked. MCP configs and debug logs stay ignored.
 /.agent/
 /.agents/
 /.codex/
-/.cursor/
+/.cursor/*
+!/.cursor/environment.json
+!/.cursor/cloud-install.sh
 /.github/
 /.playwright-cli/
 /.superpowers/
