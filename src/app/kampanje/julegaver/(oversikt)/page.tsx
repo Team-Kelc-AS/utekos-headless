@@ -187,10 +187,7 @@ export default async function ChristmasCampaign() {
               </p>
               <div className='mt-4 flex items-baseline gap-3'>
                 <span className='font-google-sans text-xl font-bold text-foreground'>
-                  1 790 kr
-                </span>
-                <span className='dark:text-dark-muted-foreground text-sm text-muted-foreground line-through'>
-                  1 999 kr
+                  1 990 kr
                 </span>
               </div>
               <Link
@@ -227,10 +224,7 @@ export default async function ChristmasCampaign() {
               </p>
               <div className='mt-4 flex items-baseline gap-3'>
                 <span className='font-google-sans text-xl font-bold text-foreground'>
-                  1 590 kr
-                </span>
-                <span className='dark:text-dark-muted-foreground text-sm text-muted-foreground line-through'>
-                  2 290 kr
+                  1 790 kr
                 </span>
               </div>
               <Link

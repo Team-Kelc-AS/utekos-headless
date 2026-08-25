@@ -50,7 +50,7 @@ export const productName = 'Utekos TechDown™'
 export const productHandle = 'utekos-techdown'
 export const productUrl = `/produkter/${productHandle}`
 export const originalPrice = 1990
-export const discountAmount = 200
+export const discountAmount = 0
 export const currentPrice = originalPrice - discountAmount
 export const GID_PREFIX = 'gid://shopify/ProductVariant/'
 export const PRODUCT_VARIANTS = {
@@ -58,7 +58,7 @@ export const PRODUCT_VARIANTS = {
     id: 'utekos-techdown',
     title: 'Utekos TechDown™',
     subtitle: 'Vår varmeste og mest allsidige',
-    price: 1790,
+    price: 1990,
     badge: 'Bestselger',
     description:
       'Flaggskipet i kolleksjonen. CloudWeave™ hydrofob isolasjon beholder varmen selv i fukt — der vanlig dun kollapser, består Utekos. 3-i-1-konstruksjonen lar deg justere fra parkas til kokong på sekunder, slik at du kan bli sittende lenger.',
@@ -94,7 +94,7 @@ export const PRODUCT_VARIANTS = {
     id: 'utekos-mikro',
     title: 'Utekos Mikrofiber™',
     subtitle: 'Lettvekts reisefølge',
-    price: 1590,
+    price: 1790,
     badge: 'Reisefavoritt',
     description:
       'Vårt letteste plagg (800g). Perfekt for bobil, båt, hytte og reise. Hurtigtørkende isolasjon og samme premium ytre som flaggskipet, bare lettere.',

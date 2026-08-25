@@ -66,9 +66,11 @@ export function NewProductLaunchSectionView({
                       <InlineText className='text-sm text-foreground'>
                         inkl. mva
                       </InlineText>
-                      <InlineText className='bg-featured-foreground/10 dark:bg-dark-featured-foreground/10 decoration-featured-foreground/80 dark:decoration-dark-featured-foreground/80 ring-featured-border dark:ring-dark-featured-border font-google-sans rounded-full px-3 py-1 text-sm font-bold text-foreground line-through decoration-2 ring-1'>
-                        {originalPrice},-
-                      </InlineText>
+                      {originalPrice > currentPrice ?
+                        <InlineText className='bg-featured-foreground/10 dark:bg-dark-featured-foreground/10 decoration-featured-foreground/80 dark:decoration-dark-featured-foreground/80 ring-featured-border dark:ring-dark-featured-border font-google-sans rounded-full px-3 py-1 text-sm font-bold text-foreground line-through decoration-2 ring-1'>
+                          {originalPrice},-
+                        </InlineText>
+                      : null}
                     </div>
                   </div>
                   <div className='mt-4 grid w-full grid-cols-1 items-stretch gap-3 md:mt-0 md:grid-cols-2'>

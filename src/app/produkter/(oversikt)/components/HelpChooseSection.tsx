@@ -15,13 +15,13 @@ const PRODUCT_CONFIG = [
     handle: 'utekos-techdown',
     glowColor: '#0ea5e9',
     fallbackTitle: 'Utekos TechDown™',
-    fallbackPrice: '1 790 kr'
+    fallbackPrice: '1 990 kr'
   },
   {
     handle: 'utekos-mikrofiber',
     glowColor: '#a3a3a3',
     fallbackTitle: 'Utekos Mikrofiber™',
-    fallbackPrice: '1 590 kr'
+    fallbackPrice: '1 790 kr'
   },
   {
     handle: 'comfyrobe',

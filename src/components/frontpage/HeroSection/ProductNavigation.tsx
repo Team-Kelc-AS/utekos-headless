@@ -30,13 +30,13 @@ const components: { title: string; href: Route; description: string }[] = [
     title: "Utekos TechDown™",
     href: "/produkter/utekos-techdown?farge=havdyp&storrelse=middels&kjonn=unisex" as Route,
     description:
-      "NOK 1790,-",
+      "NOK 1990,-",
   },
   {
     title: "Utekos Mikrofiber™",
     href: "/produkter/utekos-techdown?farge=havdyp&storrelse=stor&kjonn=unisex" as Route,
     description:
-      "NOK 1590,-",
+      "NOK 1790,-",
   },
   {
     title: "Comfyrobe™",

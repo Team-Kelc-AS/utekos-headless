@@ -11,7 +11,7 @@ export const productName = 'Utekos TechDown™'
 export const productHandle = 'utekos-techdown'
 export const productUrl = `/produkter/${productHandle}`
 export const originalPrice = 1990
-export const discountAmount = 200
+export const discountAmount = 0
 export const currentPrice = originalPrice - discountAmount
 export const GID_PREFIX = 'gid://shopify/ProductVariant/'
 
@@ -20,7 +20,7 @@ export const PRODUCT_VARIANTS = {
     id: 'utekos-techdown',
     title: 'Utekos TechDown™',
     subtitle: 'Vår nyeste, varmeste og mest allsidige modell.',
-    price: 1790,
+    price: 1990,
     badge: 'Bestselger',
     description:
       'Utekos TechDown™ forener banebrytende innovasjon med tidløs eleganse. CloudWeave™ holder deg varm og bevarer spensten i fôret, selv under fuktige forhold. 3-i-1-konstruksjonen lar deg enkelt tilpasse passformen, regulere ventilasjonen og veksle mellom ulike moduser.',
@@ -52,7 +52,7 @@ export const PRODUCT_VARIANTS = {
     id: 'utekos-mikrofiber',
     title: 'Utekos Mikrofiber™',
     subtitle: 'Lett varme som tar lite plass',
-    price: 1590,
+    price: 1790,
     badge: 'Reisefavoritt',
     description:
       'Kolleksjonens letteste modell for deg som vil ha varme uten mye volum. Den pakker seg lett, tørker raskt og gir trygg komfort i bobilen, båten, på hytta eller på sidelinjen.',

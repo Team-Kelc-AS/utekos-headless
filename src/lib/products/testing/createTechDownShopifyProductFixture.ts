@@ -57,16 +57,13 @@ export function createTechDownShopifyProductFixture(): ShopifyProduct {
         { name: 'Størrelse', value: size.name },
         { name: 'Kjønn', value: 'Unisex' }
       ],
-      price: { amount: '1790.00', currencyCode: 'NOK' },
+      price: { amount: '1990.00', currencyCode: 'NOK' },
       image: {
         ...productImage,
         id: `gid://shopify/ProductImage/${size.id}`,
         url: `https://cdn.shopify.com/techdown-${size.id}.jpg`
       },
-      compareAtPrice: {
-        amount: '1990.00',
-        currencyCode: 'NOK'
-      },
+      compareAtPrice: null,
       metafield: null,
       sku: size.sku,
       variantProfile: null,
@@ -105,11 +102,11 @@ export function createTechDownShopifyProductFixture(): ShopifyProduct {
     },
     priceRange: {
       minVariantPrice: {
-        amount: '1790.00',
+        amount: '1990.00',
         currencyCode: 'NOK'
       },
       maxVariantPrice: {
-        amount: '1790.00',
+        amount: '1990.00',
         currencyCode: 'NOK'
       }
     },

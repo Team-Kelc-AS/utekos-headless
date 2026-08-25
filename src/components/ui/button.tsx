@@ -5,16 +5,38 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils/className'
 
 const buttonVariants = cva(
-  'group/button focus-visible:border-dark-ring focus-visible:ring-dark-ring/50 aria-invalid:border-dark-destructive aria-invalid:ring-dark-destructive/20 aria-invalid:border-dark-destructive/50 aria-invalid:ring-dark-destructive/40 inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4',
+  'group/button dark:focus-visible:border-dark-ring dark:focus-visible:ring-dark-ring/50 dark:aria-invalid:border-dark-destructive dark:aria-invalid:ring-dark-destructive/20 dark:aria-invalid:border-dark-destructive/50 dark:aria-invalid:ring-dark-destructive/40 inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4',
   {
     variants: {
-        variant: {
-          'utekos':
-            'bg-primary text-foreground hover:opacity-60 rounded-2xl',
-        },
+      variant: {
+        'alternate':
+          'bg-alternate-button text-foreground hover:scale-104 hover:bg-[#12403C]',
+        'checkout':
+          'bg-primary text-foreground hover:text-foreground/90 rounded-2xl hover:opacity-60 hover:scale-103',
+        'commerce-primary':
+          'bg-primary text-foreground hover:opacity-60 rounded-2xl',
+        'commerce-secondary':
+          'border-commerce-secondary bg-commerce-secondary text-commerce-secondary-foreground hover:bg-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground dark:border-dark-commerce-secondary dark:bg-dark-commerce-secondary dark:text-dark-commerce-secondary-foreground dark:hover:bg-dark-commerce-secondary-hover dark:hover:text-dark-commerce-secondary-hover-foreground',
+        'default':
+          'hover:bg-primary-hover bg-primary text-primary-foreground',
+        'outline':
+          'dark:border-dark-input dark:bg-dark-background dark:hover:bg-dark-accent dark:hover:text-dark-accent-foreground border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        'seeProduct':
+          'border-border bg-sidebar-primary text-foreground shadow-xs aria-expanded:bg-accent aria-expanded:text-accent-foreground dark:border-border dark:bg-sidebar-primary dark:aria-expanded:bg-accent dark:aria-expanded:text-accent-foreground',
+        'secondary':
+          'dark:aria-expanded:text-dark-secondary-foreground bg-secondary text-secondary-foreground aria-expanded:bg-secondary aria-expanded:text-secondary-foreground dark:bg-secondary dark:aria-expanded:bg-secondary',
+        'ghost':
+          'dark:aria-expanded:bg-dark-accent dark:aria-expanded:text-dark-accent-foreground text-foreground hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent aria-expanded:text-accent-foreground dark:hover:bg-accent',
+        'destructive':
+          'dark:hover:bg-dark-destructive/90 dark:focus-visible:border-dark-destructive dark:focus-visible:ring-dark-destructive/30 bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-destructive/30 dark:bg-destructive dark:text-destructive-foreground',
+        'link':
+          'text-primary underline-offset-4 hover:underline dark:text-primary',
+        'utekos':
+          'bg-primary text-foreground hover:opacity-60 rounded-2xl'
+      },
       size: {
         'default':
-          'h-9 gap-1.5 px-3 in-data-[slot=utekos button-group]:rounded-lg has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
+          'h-9 gap-1.5 px-3 in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
         'xs': 'h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*="size-"])]:size-3',
         'sm': 'h-8 gap-1 rounded-[min(var(--radius-md),10px)] px-2.5 in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5',
         'lg': 'h-10 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
@@ -26,7 +48,7 @@ const buttonVariants = cva(
         'icon-lg': 'size-10'
       }
     },
-    defaultVariants: { variant: 'utekos', size: 'default' }
+    defaultVariants: { variant: 'default', size: 'default' }
   }
 )
 
@@ -38,8 +60,8 @@ function Button({
   className,
   children,
   nativeButton,
-  variant = 'utekos',
-  size = 'icon',
+  variant = 'default',
+  size = 'default',
   ...props
 }: ButtonProps) {
   const buttonClassName = cn(
@@ -75,40 +97,32 @@ function Button({
 
 function AddToCartButton() {
   return (
-    <Button
+    <button
       className={cn(
         'font-google-sans transform rounded-full px-12 py-4 font-utekos-text font-bold tracking-normal transition-colors duration-200 hover:scale-105'
       )}
     >
       Legg i handlekurv
-    </Button>
+    </button>
   )
 }
 
 function CheckoutButton() {
   return (
-    <Button
+    <button
       className={cn(
-        'bg-primary text-foreground hover:opacity-60 rounded-2xl',
         'transform rounded-full px-12 py-4 font-sans tracking-normal transition-colors duration-200 hover:scale-105'
       )}
     >
       Gå til kassen
-    </Button>
+    </button>
   )
 }
 
 function UtekosButton() {
   return (
-    <Button
-      className={cn(
-        'bg-primary text-foreground hover:opacity-60 rounded-2xl',
-        'transform rounded-full px-12 py-4 font-sans tracking-normal transition-colors duration-200 hover:scale-105'
-      )}
-        variant='utekos'
-        size='default'
-    >
-      Utekos  
+    <Button variant='utekos' size='default'>
+      Utekos
     </Button>
   )
 }

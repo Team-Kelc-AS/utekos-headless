@@ -42,7 +42,7 @@ export function TailwindSection() {
           </h3>
           <p className='mt-4 flex items-baseline gap-x-2'>
             <span className='font-utekos-text-medium text-5xl tracking-tight text-card-foreground'>
-              1590
+              1790
             </span>
             <span className='text-base text-card-foreground'>
               kr
@@ -139,7 +139,7 @@ export function TailwindSection() {
           </h3>
           <p className='mt-4 flex items-baseline gap-x-2'>
             <span className='font-utekos-text-medium text-5xl tracking-tight text-foreground'>
-              1790
+              1990
             </span>
             <span className='text-base text-foreground'>kr</span>
           </p>

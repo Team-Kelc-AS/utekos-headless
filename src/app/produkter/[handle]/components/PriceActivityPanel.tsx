@@ -13,12 +13,6 @@ export interface PriceActivityPanelProps {
 }
 
 const OFFERS = {
-  'utekos-mikrofiber': {
-    label: 'Tilbud',
-    fixedSavings: null,
-    originalPrice: 2290,
-    description: null
-  },
   'comfyrobe': {
     label: 'Tilbud',
     fixedSavings: null,

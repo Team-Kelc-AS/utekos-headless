@@ -2,7 +2,7 @@
 import blueFull from '@/assets/images/gallery/blue-full.png'
 
 export const productConfig = {
-  price: 1590,
+  price: 1790,
   colors: [
     {
       id: 'fjellbla',

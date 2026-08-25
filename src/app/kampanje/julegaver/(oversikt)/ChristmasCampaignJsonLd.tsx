@@ -25,8 +25,8 @@ export async function ChristmasCampaignJsonLd() {
       name: 'Utekos Mikrofiber',
       url: `${baseUrl}/produkter/utekos-mikrofiber`,
       image: `${baseUrl}/magasinet/dun-front-hvit-bakgrunn-1080.png`,
-      price: '1590',
-      originalPrice: '2290',
+      price: '1790',
+      originalPrice: '1790',
       description:
         'Lettvekt møter varme og allsidighet. Gir deg følelsen av dun med ekstra fordeler.'
     },

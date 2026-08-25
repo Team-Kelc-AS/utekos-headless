@@ -56,12 +56,10 @@ const FALLBACK_PRICING: Record<ModelRecommendation['key'], FallbackPricing> = {
     originalPrice: 3290
   },
   'utekos-mikrofiber': {
-    price: 1590,
-    originalPrice: 2290
+    price: 1790
   },
   'utekos-techdown': {
-    price: 1790,
-    originalPrice: 1990
+    price: 1990
   }
 }
 

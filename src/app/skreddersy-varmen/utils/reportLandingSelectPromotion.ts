@@ -30,7 +30,7 @@ export const LANDING_PROMOTIONS = {
   stickyCta: {
     promotion_id: 'skreddersy-varmen-sticky',
     promotion_name: 'Skreddersy varmen',
-    creative_name: 'TechDown fra 1790',
+    creative_name: 'TechDown fra 1990',
     creative_slot: 'sticky_product'
   },
   stickyOrder: {
