@@ -8,7 +8,7 @@ export default function TechMaterialsLayout({
   children: ReactNode
 }) {
   return (
-    <article className='bg-background text-foreground'>
+    <div className='bg-background text-foreground'>
       <TechJsonLd />
       <UtekosBreadcrumbBar
         surface='transparent'
@@ -18,6 +18,6 @@ export default function TechMaterialsLayout({
         ]}
       />
       {children}
-    </article>
+    </div>
   )
 }

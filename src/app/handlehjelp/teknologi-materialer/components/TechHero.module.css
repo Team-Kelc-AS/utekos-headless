@@ -1,0 +1,105 @@
+@keyframes supporting-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lead-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(0.22em) scale(0.86);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes reveal-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(1.05em);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.badgeEntrance {
+  opacity: 0;
+  animation: supporting-entrance 540ms
+    cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 80ms;
+}
+
+.lineViewport {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.04em;
+}
+
+.lineViewport + .lineViewport {
+  margin-top: 0.04em;
+}
+
+.storyLine {
+  display: block;
+  opacity: 0;
+  transform-origin: center bottom;
+  will-change: transform, opacity;
+}
+
+.leadLine {
+  animation: lead-arrival 780ms cubic-bezier(0.16, 1, 0.3, 1)
+    260ms forwards;
+}
+
+.revealLine {
+  animation: reveal-arrival 900ms cubic-bezier(0.16, 1, 0.3, 1)
+    1840ms forwards;
+}
+
+.storyContent > :global(p) {
+  opacity: 0;
+  animation: supporting-entrance 700ms
+    cubic-bezier(0.16, 1, 0.3, 1) 2880ms forwards;
+}
+
+.scrollCueEntrance {
+  opacity: 0;
+  transform: translate(-50%, 0.75rem);
+  animation: scroll-cue-entrance 600ms
+    cubic-bezier(0.16, 1, 0.3, 1) 3350ms forwards;
+}
+
+@keyframes scroll-cue-entrance {
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badgeEntrance,
+  .storyLine,
+  .storyContent > :global(p),
+  .scrollCueEntrance {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    will-change: auto;
+  }
+
+  .scrollCueEntrance {
+    transform: translateX(-50%);
+  }
+}

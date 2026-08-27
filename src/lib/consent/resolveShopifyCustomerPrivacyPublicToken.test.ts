@@ -23,7 +23,7 @@ test('falls back to the Vercel integration token', () => {
   )
 })
 
-test('fails closed instead of exposing browser or legacy token aliases', () => {
+test('fails closed instead of exposing deprecated browser or legacy token aliases', () => {
   assert.equal(
     resolveShopifyCustomerPrivacyPublicToken({
       NEXT_PUBLIC_STOREFRONT_API_ACCESS_TOKEN:
@@ -31,6 +31,15 @@ test('fails closed instead of exposing browser or legacy token aliases', () => {
       SHOPIFY_STOREFRONT_ACCESS_TOKEN: 'legacy-token'
     }),
     undefined
+  )
+})
+
+test('uses the Headless public token as a last-resort Customer Privacy credential', () => {
+  assert.equal(
+    resolveShopifyCustomerPrivacyPublicToken({
+      NEXT_PUBLIC_STOREFRONT_ACCESS_TOKEN: '  headless-public-token  '
+    }),
+    'headless-public-token'
   )
 })
 

@@ -5,11 +5,14 @@ export function buildPublicVariantName(
   presentation: ProductPresentation,
   options: PublicVariantOptions
 ) {
-  const optionLabels = presentation.publicOptionOrder
-    .map(optionKey => options[optionKey])
-    .filter((value): value is string => Boolean(value))
+  const productAndColor = [
+    presentation.displayName,
+    options.color
+  ].filter((value): value is string => Boolean(value))
 
-  return [presentation.displayName, ...optionLabels].join(' / ')
+  return [productAndColor.join(' '), options.size]
+    .filter((value): value is string => Boolean(value))
+    .join(' - ')
 }
 
 export function buildPublicVariantImageAlt(

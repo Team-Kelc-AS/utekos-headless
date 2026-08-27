@@ -7,6 +7,12 @@ import techDownMobileColorBg4 from '@/assets/images/techdown/ProductPage/Product
 import techDownMobileColorBg5 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/5.webp'
 import techDownMobileColorBg6 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/6.webp'
 import techDownMobileColorBg8 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/8.webp'
+import techDownDesktopStill1 from '@/assets/images/techdown/ProductPage-TechDown-1.jpg'
+import techDownDesktopStill2 from '@/assets/images/techdown/ProductPage-TechDown-2.jpg'
+import techDownDesktopStill3 from '@/assets/images/techdown/ProductPage-TechDown-3.jpg'
+import techDownDesktopStill4 from '@/assets/images/techdown/ProductPage-TechDown-4.jpg'
+import techDownDesktopStill6 from '@/assets/images/techdown/ProductPage-TechDown-6.jpg'
+import techDownDesktopStill7 from '@/assets/images/techdown/ProductPage-TechDown-7png.webp'
 
 const TECHDOWN_MOBILE_IMAGE_WIDTH = 1000
 const TECHDOWN_MOBILE_IMAGE_HEIGHT = 1500
@@ -63,47 +69,50 @@ export const TECHDOWN_MOBILE_GALLERY_IMAGES: Image[] = [
   )
 ]
 
+const TECHDOWN_DESKTOP_IMAGE_WIDTH = 1440
+const TECHDOWN_DESKTOP_IMAGE_HEIGHT = 1800
+
 export const TECHDOWN_PRODUCT_GALLERY_IMAGES: Image[] = [
   productImage(
-    'utekos-techdown-kvinne-terrasseliv',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/kvinne-nyter-terrasselivet-med-utekos-techdown.webp',
-    'Kvinne med Utekos TechDown på terrassen.',
-    1080,
-    1350
+    'utekos-techdown-product-page-1',
+    techDownDesktopStill1,
+    'Utekos TechDown i marineblå vist rett forfra med hette og fotpose i full lengde.',
+    TECHDOWN_DESKTOP_IMAGE_WIDTH,
+    TECHDOWN_DESKTOP_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-kvinne-balpanne',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Kvinne-Balpanne-1080x1350.png',
-    'Kvinne med Utekos TechDown smiler lurt ved bålpannen.',
-    1080,
-    1350
+    'utekos-techdown-product-page-2',
+    techDownDesktopStill2,
+    'Utekos TechDown sett bakfra i full lengde.',
+    TECHDOWN_DESKTOP_IMAGE_WIDTH,
+    TECHDOWN_DESKTOP_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-herre-terrasseliv',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Mann-Terrasse-1080x1350.png',
-    'Mann med Utekos TechDown og solbriller slapper av på terrassen.',
-    1080,
-    1350
+    'utekos-techdown-product-page-3',
+    techDownDesktopStill3,
+    'Overdelen av Utekos TechDown sett bakfra med hette i parkasmodus.',
+    TECHDOWN_DESKTOP_IMAGE_WIDTH,
+    TECHDOWN_DESKTOP_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-to-kvinner-terrasselivet-mobile',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Kvinne-Kysthus-1080x1350.png',
-    'Kvinne med Utekos TechDown ved kysthus.',
-    1080,
-    1350
+    'utekos-techdown-product-page-4',
+    techDownDesktopStill4,
+    'Utekos TechDown i marineblå vist forfra i full lengde.',
+    TECHDOWN_DESKTOP_IMAGE_WIDTH,
+    TECHDOWN_DESKTOP_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-bobil-bonfire-overlay-mobile',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Kvinne-Kikker-Terrasse-1080x1350.png',
-    'Kvinne med Utekos TechDown på terrasse ser på utsikt med kikkert.',
-    1080,
-    1350
+    'utekos-techdown-product-page-6',
+    techDownDesktopStill6,
+    'Kvinne sitter på treterrasse med Utekos TechDown.',
+    TECHDOWN_DESKTOP_IMAGE_WIDTH,
+    TECHDOWN_DESKTOP_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-herre-kikker',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Herre-Kikker-1080x1350.png?v=1781242515',
-    'Mann med Utekos TechDown står og bruker kikkert.',
-    1080,
-    1350
+    'utekos-techdown-product-page-7',
+    techDownDesktopStill7,
+    'Kvinne slapper av i stol på terrassen med Utekos TechDown.',
+    TECHDOWN_DESKTOP_IMAGE_WIDTH,
+    TECHDOWN_DESKTOP_IMAGE_HEIGHT
   )
 ]

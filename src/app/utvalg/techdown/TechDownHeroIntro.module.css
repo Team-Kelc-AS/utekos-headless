@@ -1,0 +1,348 @@
+.hero {
+  --intro-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --intro-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  contain: layout paint;
+  background: var(--color-cloud-dancer);
+  color: var(--color-foreground);
+}
+
+.junglePanel {
+  position: absolute;
+  z-index: 0;
+  inset: -8vmax;
+  border-radius: 8vmax;
+  background: var(--color-jungle);
+  transform: scale3d(0, 0, 1);
+  transform-origin: center;
+  animation: jungle-reveal 850ms var(--intro-ease-out) 1350ms
+    both;
+}
+
+.openingLogo {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 1;
+  transform-origin: center;
+  animation:
+    make-visible 0ms 200ms forwards,
+    logo-arrive 550ms var(--intro-ease-out) 200ms both,
+    logo-depart 800ms var(--intro-ease-in-out) 2250ms
+      forwards;
+}
+
+.openingLogoImage {
+  width: min(82vw, 22rem);
+  height: auto;
+}
+
+.headerShell {
+  position: absolute;
+  z-index: 4;
+  inset: 0 0 auto;
+}
+
+.headerShell :global(header) {
+  background-color: transparent;
+}
+
+.headerShell :global([data-header-part='brand']),
+.headerShell :global([data-header-part='actions']) {
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.headerShell :global([data-header-part='brand']) {
+  transform: translate3d(-28vw, 0, 0);
+  animation:
+    make-interactive 0ms 2450ms forwards,
+    header-brand-arrive 550ms var(--intro-ease-out) 2450ms
+      both;
+}
+
+.headerShell :global([data-header-part='actions']) {
+  transform: translate3d(28vw, 0, 0);
+  animation:
+    make-interactive 0ms 2475ms forwards,
+    header-actions-arrive 550ms var(--intro-ease-out)
+      2475ms both;
+}
+
+.copyArea {
+  position: absolute;
+  z-index: 3;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 1rem));
+  left: max(1.25rem, env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.headline {
+  visibility: hidden;
+  max-width: 12ch;
+  margin: 0 0 clamp(1.25rem, 2.4vw, 2rem);
+  font-family: var(--font-sans), sans-serif;
+  font-size: clamp(2.65rem, 9.5vw, 8.5rem);
+  font-weight: 650;
+  line-height: 0.88;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+  opacity: 0;
+  transform: translate3d(16vw, 28%, 0);
+  animation:
+    make-visible 0ms 3050ms forwards,
+    headline-arrive 500ms var(--intro-ease-out) 3050ms both;
+}
+
+.scrollCue {
+  visibility: hidden;
+  display: inline-flex;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.35rem;
+  color: inherit;
+  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-size: 0.875rem;
+  line-height: 1;
+  text-decoration: none;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(0, 1rem, 0);
+  animation:
+    make-interactive 0ms 2700ms forwards,
+    cue-arrive 400ms var(--intro-ease-out) 2700ms both;
+}
+
+.scrollCue:focus-visible {
+  border-radius: 0.25rem;
+  outline: 2px solid currentColor;
+  outline-offset: 0.4rem;
+}
+
+.scrollCueArrow {
+  width: 1.35rem;
+  height: 1.35rem;
+  animation: cue-invitation 4200ms var(--intro-ease-out) 3650ms
+    infinite;
+}
+
+.contentAnchor {
+  position: relative;
+  height: 0;
+  scroll-margin-top: 0;
+}
+
+@media (min-width: 40rem) {
+  .openingLogoImage {
+    width: min(58vw, 42rem);
+  }
+
+  .copyArea {
+    right: max(2rem, env(safe-area-inset-right));
+    bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1.5rem));
+    left: max(2rem, env(safe-area-inset-left));
+  }
+}
+
+@media (min-width: 64rem) {
+  .openingLogoImage {
+    width: min(38vw, 46rem);
+  }
+
+  .copyArea {
+    right: max(2.5rem, env(safe-area-inset-right));
+    bottom: max(2.5rem, calc(env(safe-area-inset-bottom) + 2rem));
+    left: max(2.5rem, env(safe-area-inset-left));
+  }
+
+  .scrollCue {
+    font-size: 1rem;
+  }
+}
+
+@keyframes jungle-reveal {
+  0% {
+    transform: scale3d(0, 0, 1);
+  }
+
+  16% {
+    transform: scale3d(0.22, 0.025, 1);
+  }
+
+  58% {
+    transform: scale3d(0.6, 0.84, 1);
+  }
+
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes logo-arrive {
+  0% {
+    transform: scale3d(0.035, 0.08, 1);
+  }
+
+  16% {
+    transform: scale3d(0.055, 0.1, 1);
+  }
+
+  62% {
+    transform: scale3d(1.025, 0.94, 1);
+  }
+
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes logo-depart {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+
+  22% {
+    opacity: 1;
+    transform: translate3d(0, -9%, 0)
+      scale3d(1.025, 1.025, 1);
+  }
+
+  58% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 115svh, 0)
+      scale3d(0.98, 0.98, 1);
+  }
+}
+
+@keyframes header-brand-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(-28vw, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes header-actions-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(28vw, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes headline-arrive {
+  0% {
+    opacity: 0;
+    transform: translate3d(16vw, 28%, 0);
+  }
+
+  78% {
+    opacity: 1;
+    transform: translate3d(-0.7rem, 0, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes cue-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes cue-invitation {
+  0%,
+  14%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  7% {
+    transform: translate3d(0, 0.45rem, 0);
+  }
+}
+
+@keyframes make-interactive {
+  to {
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+@keyframes make-visible {
+  to {
+    visibility: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .junglePanel {
+    animation: none;
+    transform: scale3d(1, 1, 1);
+  }
+
+  .openingLogo {
+    display: none;
+    animation: none;
+  }
+
+  .headerShell :global([data-header-part='brand']),
+  .headerShell :global([data-header-part='actions']) {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .headline,
+  .scrollCue {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .scrollCueArrow {
+    animation: none;
+  }
+}

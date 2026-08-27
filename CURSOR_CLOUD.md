@@ -19,7 +19,7 @@ missing, so Cloud Agents still get an operating contract.
 ## Runtime
 
 - Install: `.cursor/cloud-install.sh` via `.cursor/environment.json`
-  (Node `24.17.0`, Corepack pnpm `11.17.0`, `pnpm install --frozen-lockfile`).
+  (Node `24.17.0`, Corepack pnpm `11.24.0`, `pnpm install --frozen-lockfile`).
 - Do not assume `next dev` is already running. Start it only when the
   task needs a live app and Storefront secrets are set.
 - Verify with `pnpm typecheck` and targeted tests.
@@ -43,8 +43,13 @@ missing, so Cloud Agents still get an operating contract.
 
 Use the Cloud Agents Secrets tab, not a snapshotted `.env.local`.
 
-- Storefront: `VERCEL_SHOPIFY_STORE_DOMAIN` or `STORE_DOMAIN`, and
-  `VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN` or
-  `STOREFRONT_API_ACCESS_TOKEN`.
+- Storefront: `VERCEL_SHOPIFY_STORE_DOMAIN` or `STORE_DOMAIN`; public
+  `STOREFRONT_API_ACCESS_TOKEN` or
+  `VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN` (Headless public
+  `NEXT_PUBLIC_STOREFRONT_ACCESS_TOKEN` is last-resort only); private
+  `PRIVATE_STOREFRONT_ACCESS_TOKEN` or
+  `STOREFRONT_API_PRIVATE_ACCESS_TOKEN`. Never put a private
+  Storefront token in a `NEXT_PUBLIC_*` variable. Admin `shpat_`
+  tokens are not Storefront private credentials.
 - `pnpm build`: `SHOPIFY_ADMIN_API_TOKEN`.
 - HTTP MCP: matching dashboard/OAuth credentials only as needed.

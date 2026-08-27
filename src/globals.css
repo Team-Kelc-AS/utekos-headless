@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'shadcn/tailwind.css';
 @import './styles/view-transitions.css';
+@import './styles/cookiebot-dialog.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -25,28 +26,6 @@
   --color-white-sand: oklch(0.8767 0.0086 56.3);
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
   --color-network-pill: oklch(0.8017 0.0772 182.11);
-  --color-commerce-primary: oklch(0.2413 0.0374 194.96);
-  --color-commerce-primary-foreground: oklch(1 0 0);
-  --color-commerce-primary-hover: oklch(0.3477 0.0369 195.59);
-  --color-commerce-primary-hover-foreground: oklch(1 0 0);
-  --color-dark-commerce-primary: oklch(0.7294 0.0907 188.98);
-  --color-dark-commerce-primary-foreground: oklch(
-    0.2413 0.0374 194.96
-  );
-  --color-dark-commerce-primary-hover: oklch(
-    0.8161 0.0904 189.31
-  );
-  --color-dark-commerce-primary-hover-foreground: oklch(
-    0.2413 0.0374 194.96
-  );
-  --color-commerce-secondary: oklch(0.3926 0.0768 228.29);
-  --color-commerce-secondary-foreground: oklch(1 0 0);
-  --color-commerce-secondary-hover: oklch(0.5203 0.1038 230.1);
-  --color-commerce-secondary-hover-foreground: oklch(1 0 0);
-  --color-dark-commerce-secondary: oklch(0.5203 0.1038 230.1);
-  --color-dark-commerce-secondary-foreground: oklch(1 0 0);
-  --color-dark-commerce-secondary-hover: oklch(0.58 0.11 230);
-  --color-dark-commerce-secondary-hover-foreground: oklch(1 0 0);
 }
 
 @theme inline {
@@ -157,7 +136,7 @@
   --primary-foreground: oklch(0.985 0 0);
   --secondary: var(--color-teal-800);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.86 0.0237 93.36);
+  --muted: oklch(0.1959 0.0341 188);
   --muted-foreground: oklch(0.8974 0.0084 91.49);
   --magazine-article-card: oklch(0.350674 0.062274 183.5177);
   --magazine-article-card-pill: oklch(0.6787 0.0958 186.35);
@@ -188,27 +167,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --commerce-primary: oklch(0.548902 0.163159 42.8063);
-  --commerce-primary-foreground: oklch(1 0 0);
-  --commerce-primary-hover: oklch(0.3477 0.0369 195.59);
-  --commerce-primary-hover-foreground: oklch(1 0 0);
-  --commerce-secondary: oklch(0.3926 0.0768 228.29);
-  --commerce-secondary-foreground: oklch(1 0 0);
-  --commerce-secondary-hover: oklch(0.5203 0.1038 230.1);
-  --commerce-secondary-hover-foreground: oklch(1 0 0);
-  --dark-commerce-primary: oklch(0.7294 0.0907 188.98);
-  --dark-commerce-primary-foreground: oklch(
-    0.2413 0.0374 194.96
-  );
-  --dark-commerce-primary-hover: oklch(0.8161 0.0904 189.31);
-  --dark-commerce-primary-hover-foreground: oklch(
-    0.2413 0.0374 194.96
-  );
 
-  --dark-commerce-secondary: oklch(0.5203 0.1038 230.1);
-  --dark-commerce-secondary-foreground: oklch(1 0 0);
-  --dark-commerce-secondary-hover: oklch(0.58 0.11 230);
-  --dark-commerce-secondary-hover-foreground: oklch(1 0 0);
 }
 
 .dark {

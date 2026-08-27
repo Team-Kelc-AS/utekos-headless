@@ -43,7 +43,8 @@ export const productPresentationDefinitionSchema = z
     media: productMediaPresentationSchema,
     category: z.string().min(1),
     material: z.string().min(1),
-    audience: z.string().min(1)
+    audience: z.string().min(1),
+    suggestedMinAge: z.literal(13).optional()
   })
   .superRefine((definition, context) => {
     if (

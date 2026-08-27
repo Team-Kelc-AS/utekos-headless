@@ -1,45 +1,72 @@
 import { ArrowDown } from 'lucide-react'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
+import type { ReactNode } from 'react'
+import styles from './TechHero.module.css'
 
-export function TechHero() {
+type TechHeroProps = {
+  badgeLabel: string
+  headlineLead: string
+  headlineReveal: string
+  children: ReactNode
+}
+
+export function TechHero({
+  badgeLabel,
+  headlineLead,
+  headlineReveal,
+  children
+}: TechHeroProps) {
   return (
-    <article className='relative mb-24 flex min-h-[90vh] flex-col items-center justify-center overflow-hidden border-b border-border bg-background text-center text-foreground'>
-      <div className='pointer-events-none absolute inset-0 overflow-hidden'>
-        <div className='absolute top-0 left-1/2 size-125 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary/20 blur-[120px]' />
-        <div className='absolute right-0 bottom-0 size-100 translate-y-1/3 rounded-full bg-accent/20 blur-[100px]' />
-      </div>
-
-      <div className='relative z-10 container mx-auto px-4'>
+    <header className='relative mb-24 flex min-h-[90vh] flex-col items-center justify-center overflow-hidden border-b border-border bg-background text-center text-foreground'>
+      <div className='container mx-auto px-4'>
         <div className='mx-auto flex max-w-4xl flex-col items-center space-y-8'>
           <BrandBadge
             backgroundColor='var(--card)'
             textColor='var(--card-foreground)'
-            className='border border-border/40 px-8! py-3! text-base!'
+            className={`${styles.badgeEntrance} border-0! px-8! py-3! text-base!`}
           >
-            Skapt for komfort
+            {badgeLabel}
           </BrandBadge>
 
-          <h1 className='font-google-sans text-5xl font-bold text-foreground sm:text-7xl md:text-8xl'>
-            Ett plagg. <br />
-            <span className='text-foreground'>
-              Tre opplevelser.
-            </span>
-          </h1>
-
-          <p className='mx-auto max-w-2xl text-lg leading-relaxed text-foreground/90 md:text-xl'>
-            Det unike med Utekos er friheten til å velge. Fra en
-            isolerende kokong til en elegant parkas på sekunder.
-            Vi kaller det{' '}
-            <strong className='text-foreground'>
-              adaptiv funksjonalitet
-            </strong>
-            .
-          </p>
+          <div
+            className={`${styles.storyContent} grid justify-items-center gap-8 [&_strong]:text-foreground [&>p]:mx-auto [&>p]:max-w-2xl [&>p]:text-lg [&>p]:leading-relaxed [&>p]:text-foreground/90 md:[&>p]:text-xl`}
+          >
+            <h1
+              aria-label={`${headlineLead} ${headlineReveal}`}
+              className='max-w-[12ch] font-google-sans text-5xl leading-[0.94] font-bold text-foreground sm:text-7xl md:text-8xl'
+            >
+              <span
+                className={styles.lineViewport}
+                aria-hidden='true'
+              >
+                <span
+                  className={`${styles.storyLine} ${styles.leadLine}`}
+                  data-story-beat='lead'
+                >
+                  {headlineLead}
+                </span>
+              </span>{' '}
+              <span
+                className={styles.lineViewport}
+                aria-hidden='true'
+              >
+                <span
+                  className={`${styles.storyLine} ${styles.revealLine}`}
+                  data-story-beat='reveal'
+                >
+                  {headlineReveal}
+                </span>
+              </span>
+            </h1>
+            {children}
+          </div>
         </div>
       </div>
-      <div className='absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce text-foreground/90'>
+      <div
+        className={`${styles.scrollCueEntrance} absolute bottom-12 left-1/2 text-foreground/90`}
+      >
         <ArrowDown className='h-6 w-6' aria-hidden />
       </div>
-    </article>
+    </header>
   )
 }

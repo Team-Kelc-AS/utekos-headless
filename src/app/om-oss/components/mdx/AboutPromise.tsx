@@ -19,7 +19,7 @@ export function AboutPromise() {
     <article className='mx-auto bg-background px-8 py-20 text-center text-foreground sm:py-28 md:px-12 lg:px-16'>
       <div className='max-w-5xl px-4 text-left sm:px-6 lg:px-8'>
         <AboutBadge className='mb-6'>Vårt løfte</AboutBadge>
-        <h2 className='font-google-sans text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'>
+        <h2 className='text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'>
           Vårt løfte til deg
         </h2>
         <p className='mt-5 max-w-2xl text-left font-utekos-text-medium text-xl leading-8 text-foreground'>

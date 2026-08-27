@@ -221,3 +221,107 @@ test(
     )
   }
 )
+
+test(
+  'TechDown desktop gallery stacks the requested ProductPage stills',
+  async () => {
+    const pageSource = await readSource(
+      'src/app/produkter/[handle]/components/ProductPageView.tsx'
+    )
+    const stackSource = await readSource(
+      'src/app/produkter/[handle]/components/ProductGalleryStack.tsx'
+    )
+    const gallerySource = await readSource(
+      'src/app/produkter/[handle]/utils/gallery-images/techdown/productGalleryImages.ts'
+    )
+
+    assert.match(
+      pageSource,
+      /const useDesktopStack = isTechDownProduct/,
+      'TechDown must opt into the desktop image stack'
+    )
+
+    assert.match(
+      pageSource,
+      /<ProductGalleryStack[\s\S]*?images=\{galleryImages\}/,
+      'TechDown desktop gallery must render ProductGalleryStack'
+    )
+
+    assert.match(
+      pageSource,
+      /hidden md:block/,
+      'TechDown image stack must be limited to md and larger'
+    )
+
+    assert.doesNotMatch(
+      stackSource,
+      /^\s*['"]use client['"]/m,
+      'ProductGalleryStack must remain a Server Component'
+    )
+
+    assert.match(
+      stackSource,
+      /flex-col/,
+      'Desktop TechDown images must stack vertically'
+    )
+
+    assert.match(
+      stackSource,
+      /quality=\{\s*90\s*\}/,
+      'Desktop stack images must use quality 90'
+    )
+
+    assert.match(
+      stackSource,
+      /fetchPriority=\{\s*isLeadImage\s*\?\s*['"]high['"]\s*:\s*['"]auto['"]\s*\}/,
+      'Lead desktop stack image must retain high fetch priority'
+    )
+
+    assert.doesNotMatch(
+      stackSource,
+      /\bloading\s*=/,
+      'Desktop stack must not force responsive duplicates to eager-load'
+    )
+
+    assert.match(
+      gallerySource,
+      /const TECHDOWN_DESKTOP_IMAGE_WIDTH = 1440/,
+      'TechDown desktop next/image width must be 1440'
+    )
+
+    assert.match(
+      gallerySource,
+      /const TECHDOWN_DESKTOP_IMAGE_HEIGHT = 1800/,
+      'TechDown desktop next/image height must be 1800'
+    )
+
+    assert.match(
+      gallerySource,
+      /ProductPage-TechDown-1\.jpg/,
+      'TechDown desktop gallery must start with ProductPage-TechDown-1'
+    )
+
+    assert.match(
+      gallerySource,
+      /ProductPage-TechDown-7png\.webp/,
+      'TechDown desktop gallery must end with ProductPage-TechDown-7png'
+    )
+
+    assert.doesNotMatch(
+      gallerySource,
+      /ProductPage-TechDown-5/,
+      'TechDown desktop gallery must skip ProductPage-TechDown-5'
+    )
+
+    const desktopImageImports =
+      gallerySource.match(
+        /ProductPage-TechDown-(?:1|2|3|4|6|7png)\.(?:jpg|webp)/g
+      ) ?? []
+
+    assert.equal(
+      desktopImageImports.length,
+      6,
+      'TechDown desktop gallery must contain exactly the six requested stills'
+    )
+  }
+)

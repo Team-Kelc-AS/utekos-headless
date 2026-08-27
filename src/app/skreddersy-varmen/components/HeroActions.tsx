@@ -23,13 +23,13 @@ function smoothScrollTo(id: string) {
 export function HeroActions() {
   return (
     <>
-      <div className='mt-9 flex w-full max-w-76 flex-col items-stretch gap-3'>
+      <div className='mt-2 flex w-full max-w-76 flex-col items-stretch gap-2 md:mt-9 md:gap-3'>
         {/* Primærknapp: Varm, konverterende kontrast (Iced Apricot) mot den mørke kveldsbakgrunnen */}
         <BrandBadge
           asChild
           bgColor='var(--primary)'
           fgColor='var(--primary-foreground)'
-          className='h-12 w-full px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-xl transition-[filter,transform] hover:brightness-105 active:scale-[0.97] md:h-14 md:text-base'
+          className='h-11 w-full px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-xl transition-[filter,transform] hover:brightness-105 active:scale-[0.97] md:h-14 md:text-base'
         >
           <button
             type='button'
@@ -54,7 +54,7 @@ export function HeroActions() {
           asChild
           bgColor='var(--dark-teal)'
           fgColor='var(--secondary-foreground)'
-          className='h-12 w-full px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.97] md:h-14 md:text-base'
+          className='h-11 w-full px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.97] md:h-14 md:text-base'
         >
           <button
             type='button'

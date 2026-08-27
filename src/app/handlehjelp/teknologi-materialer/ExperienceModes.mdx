@@ -1,0 +1,45 @@
+import { ExperienceModeCard } from './components/ExperienceModeCard'
+
+<section
+  aria-label='Tre måter å bruke Utekos på'
+  className='relative z-20 container mx-auto -mt-20 px-4 pb-24'
+>
+  <MdxColumns
+    columns={3}
+    className='grid-flow-col auto-cols-[100%] grid-cols-none snap-x snap-mandatory touch-pan-x overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid-flow-row md:auto-cols-auto md:grid-cols-3 md:snap-none md:overflow-visible md:pb-0'
+  >
+    <ExperienceModeCard
+      mode='full-length'
+      subtitle='Maksimal isolasjon'
+      title='1. Fullengdemodus'
+    >
+
+Synk ned i en varm, isolerende kokong – fra solveggen til sene
+kvelder på terrassen.
+
+    </ExperienceModeCard>
+
+    <ExperienceModeCard
+      mode='adjusted'
+      subtitle='Umiddelbar mobilitet'
+      title='2. Oppjustert modus'
+    >
+
+Heis opp, stram til og beveg deg fritt på sekunder – uten å gi
+slipp på varmen.
+
+    </ExperienceModeCard>
+
+    <ExperienceModeCard
+      mode='parkas'
+      subtitle='Aktiv utendørs'
+      title='3. Parkasmodus'
+    >
+
+Trekk den opp til parkas og ta varmen med deg – med full
+bevegelsesfrihet og et elegant snitt.
+
+    </ExperienceModeCard>
+
+  </MdxColumns>
+</section>

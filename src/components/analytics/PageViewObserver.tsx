@@ -245,5 +245,74 @@ export function PageViewObserver({
     )
   }, [environment, pathname, search])
 
+  useEffect(() => {
+    const rectsOverlap = (
+      a: DOMRect | undefined,
+      b: DOMRect | undefined
+    ) =>
+      Boolean(
+        a &&
+          b &&
+          !(
+            a.right < b.left ||
+            a.left > b.right ||
+            a.bottom < b.top ||
+            a.top > b.bottom
+          )
+      )
+
+    const reportCookiebotOverlay = () => {
+      const dialog = document.getElementById('CybotCookiebotDialog')
+      const sizeButton = [...document.querySelectorAll('button')].find(
+        button => /Velg størrelse/.test(button.textContent || '')
+      )
+      const solutionButton = [...document.querySelectorAll('button')].find(
+        button => /Se løsningen/.test(button.textContent || '')
+      )
+      const accept = document.getElementById(
+        'CybotCookiebotDialogBodyButtonAccept'
+      )
+      const decline = document.getElementById(
+        'CybotCookiebotDialogBodyButtonDecline'
+      )
+      const sticky = document.querySelector(
+        '[class*="fixed"][class*="bottom-3"]'
+      )
+      const cookiebot = getCookiebotState()
+      const dialogRect = dialog?.getBoundingClientRect()
+      const sizeRect = sizeButton?.getBoundingClientRect()
+      const solutionRect = solutionButton?.getBoundingClientRect()
+      const acceptRect = accept?.getBoundingClientRect()
+      const declineRect = decline?.getBoundingClientRect()
+      const dialogStyle = dialog ? getComputedStyle(dialog) : null
+      const compactMarker = getComputedStyle(document.documentElement)
+        .getPropertyValue('--utekos-cookiebot-compact')
+        .trim()
+
+      // #region agent log
+      fetch('http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0f682d'},body:JSON.stringify({sessionId:'0f682d',runId:'post-fix',hypothesisId:'A',location:'src/components/analytics/PageViewObserver.tsx:cookiebotCompactCoverage',message:'cookiebot compact coverage',data:{pathname,host:location.host,compactMarker,hasResponse:cookiebot?.hasResponse===true,dialogPresent:Boolean(dialog),dialogDisplay:dialogStyle?.display??null,dialogTransform:dialogStyle?.transform??null,dialogMaxHeight:dialogStyle?.maxHeight??null,dialogY:dialogRect?Math.round(dialogRect.y):null,dialogHeight:dialogRect?Math.round(dialogRect.height):0,sizeBottom:sizeRect?Math.round(sizeRect.bottom):null,solutionBottom:solutionRect?Math.round(solutionRect.bottom):null,coversSizeButton:rectsOverlap(dialogRect,sizeRect),coversSolutionButton:rectsOverlap(dialogRect,solutionRect),coversSticky:rectsOverlap(dialogRect,sticky?.getBoundingClientRect()),acceptVisible:Boolean(acceptRect&&acceptRect.height>0),declineVisible:Boolean(declineRect&&declineRect.height>0),viewportHeight:window.innerHeight,viewportWidth:window.innerWidth},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+
+      const solutionBottom = solutionRect ? Math.round(solutionRect.bottom) : null
+      const vh = window.innerHeight
+      const banner14Top = vh - Math.min(vh * 0.28, 224)
+      const banner18Top = vh - Math.min(vh * 0.36, 288)
+      // #region agent log
+      fetch('http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'0f682d'},body:JSON.stringify({sessionId:'0f682d',runId:'post-fix',hypothesisId:'B',location:'src/components/analytics/PageViewObserver.tsx:cookiebotViewportSim',message:'cookiebot viewport simulation',data:{pathname,host:location.host,viewportHeight:vh,solutionBottom,wouldCover18:solutionBottom!=null&&solutionBottom>banner18Top,wouldCover14:solutionBottom!=null&&solutionBottom>banner14Top,banner14Top:Math.round(banner14Top),banner18Top:Math.round(banner18Top)},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+    }
+
+    reportCookiebotOverlay()
+    window.addEventListener('CookiebotOnDialogDisplay', reportCookiebotOverlay)
+    window.addEventListener('CookiebotOnAccept', reportCookiebotOverlay)
+    window.addEventListener('CookiebotOnDecline', reportCookiebotOverlay)
+
+    return () => {
+      window.removeEventListener('CookiebotOnDialogDisplay', reportCookiebotOverlay)
+      window.removeEventListener('CookiebotOnAccept', reportCookiebotOverlay)
+      window.removeEventListener('CookiebotOnDecline', reportCookiebotOverlay)
+    }
+  }, [pathname])
+
   return null
 }

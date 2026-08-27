@@ -251,17 +251,24 @@ test('mutation retries with public auth when Shopify rejects the configured priv
   assert.equal(fallbackHeaders.has('shopify-storefront-buyer-ip'), false)
 })
 
-test('private buyer auth fails closed without a validated buyer IP', async () => {
+test('buyer calls stay on public auth when private is configured without a buyer IP', async () => {
   const { gateway, requests } = createGateway()
 
-  await assert.rejects(
-    gateway.buyerQuery<TestQuery>({
-      context: { buyerIp: null },
-      query
-    }),
-    /validated buyer IP is required/
+  await gateway.buyerQuery<TestQuery>({
+    context: { buyerIp: null },
+    query
+  })
+
+  const request = requests[0]
+  const headers = new Headers(request?.headers)
+
+  assert.equal(requests.length, 1)
+  assert.equal(
+    headers.get('x-shopify-storefront-access-token'),
+    'public-test-token'
   )
-  assert.equal(requests.length, 0)
+  assert.equal(headers.has('shopify-storefront-private-token'), false)
+  assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
 
 test('enforces a wall-clock deadline around hanging response bodies', async () => {
@@ -305,6 +312,62 @@ test('enforces a wall-clock deadline around hanging response bodies', async () =
     performance.now() - startedAt < 400,
     'hanging JSON bodies must not outlive the Shopify deadline'
   )
+})
+
+test('logs an optional catalog timeout as degraded instead of a critical error', async () => {
+  const warnings: string[] = []
+  const errors: string[] = []
+  const originalWarn = console.warn
+  const originalError = console.error
+
+  console.warn = value => warnings.push(String(value))
+  console.error = value => errors.push(String(value))
+
+  try {
+    const hangingBody = new ReadableStream({ start() {} })
+    const gateway = createHydrogenStorefrontGateway(
+      {
+        storeDomain: 'example.myshopify.com',
+        publicStorefrontToken: 'public-test-token',
+        storefrontApiVersion: '2026-04'
+      },
+      {
+        fetch: async () =>
+          new Response(hangingBody, {
+            status: 200,
+            headers: { 'content-type': 'application/json' }
+          })
+      }
+    )
+
+    await assert.rejects(
+      gateway.catalogQuery<TestQuery>({
+        failureImpact: 'optional',
+        query,
+        timeoutMs: 40
+      }),
+      (error: unknown) =>
+        error instanceof DOMException && error.name === 'TimeoutError'
+    )
+
+    assert.equal(errors.length, 0)
+    assert.equal(warnings.length, 1)
+
+    const payload = JSON.parse(warnings[0] ?? '{}') as {
+      event?: string
+      level?: string
+      context?: Record<string, unknown>
+    }
+
+    assert.equal(payload.event, 'shopify.storefront.optional_request_failed')
+    assert.equal(payload.level, 'WARN')
+    assert.equal(payload.context?.failureImpact, 'optional')
+    assert.equal(payload.context?.timeoutPhase, 'body')
+    assert.equal(payload.context?.timeoutState, 'on_time')
+  } finally {
+    console.warn = originalWarn
+    console.error = originalError
+  }
 })
 
 test('rejects an operation that crosses the declared gateway boundary', async () => {

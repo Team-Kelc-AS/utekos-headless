@@ -2,26 +2,26 @@
 import { Coffee, Maximize2, Move } from 'lucide-react'
 
 const modeCardClassName =
-  'group relative overflow-hidden rounded-2xl border border-foreground/12 bg-card  p-8 ring-1 ring-foreground/12 dark:ring-foreground/12 transition-all hover:shadow-lg'
+  'group relative overflow-hidden rounded-2xl border border-foreground/12 bg-jungle text-foreground p-8 ring-1 ring-foreground/12 transition-all hover:shadow-lg'
 
 export function FunctionalityPageThreeModesSection() {
   return (
     <section
       aria-labelledby='functionality-modes-heading'
-      className='border-t border-foreground/20 pt-20'
+      className='border-t border-foreground/20 pt-20 bg-jungle'
     >
       <div className='container mx-auto px-4 py-12 sm:py-16'>
         <h2 id='functionality-modes-heading' className='sr-only'>
-          Tre bruksmoduser
+          Endeløse bruksmuligheter
         </h2>
         <div className='grid gap-8 md:grid-cols-3'>
           <div
-            className={`${modeCardClassName} hover:border-sky-300/40`}
+            className={`${modeCardClassName} hover:border-muted/40`}
           >
-            <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-sky-900/30 text-foreground'>
+            <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full text-foreground'>
               <Maximize2 className='size-6' aria-hidden />
             </div>
-            <h3 className='font-google-sans mb-3 text-xl font-bold text-foreground'>
+            <h3 className='font-sans mb-3 text-xl font-bold text-foreground'>
               1. Fullengdemodus
             </h3>
             <p className='mb-4 pb-2 text-foreground md:text-2xl'>
@@ -71,7 +71,7 @@ export function FunctionalityPageThreeModesSection() {
             <p className='mb-4 text-sm font-medium text-foreground'>
               For turer og aktiv eleganse
             </p>
-            <p className='/90 text-foreground/90'>
+            <p className='text-foreground/90'>
               Skal du bevege deg over lengre avstander, gå tur
               med hunden eller slå av en prat med naboen? Ved å
               brette nedre del av plagget innunder deg og stramme

@@ -61,6 +61,7 @@ const publicVariantSchema = z.strictObject({
   publicPath: z.string().startsWith('/produkter/'),
   publicUrl: z.url(),
   publicName: z.string().min(1),
+  description: z.string().min(40),
   imageAlt: z.string().min(1),
   options: publicOptionsSchema,
   commerce: purchaseVariantSchema
@@ -78,6 +79,7 @@ export const productCommerceViewModelSchema = z.strictObject({
   category: z.string().min(1),
   material: z.string().min(1),
   audience: z.string().min(1),
+  suggestedMinAge: z.literal(13).optional(),
   updatedAt: z.iso.datetime(),
   product: productCommerceSchema,
   variants: z.array(publicVariantSchema).min(1),

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  buildPublicVariantName,
   buildPublicVariantUrl,
   getAllProductPresentations,
   getProductPresentation,
@@ -34,16 +35,72 @@ test('validates all five public Utekos product presentations', () => {
   )
 })
 
+test('builds readable public variant names without the gender option', () => {
+  const examples = [
+    {
+      handle: 'utekos-techdown',
+      color: 'Havdyp',
+      size: 'Middels',
+      expected: 'Utekos TechDown™ Havdyp - Middels'
+    },
+    {
+      handle: 'utekos-mikrofiber',
+      color: 'Fjellblå',
+      size: 'Medium',
+      expected: 'Utekos Mikrofiber™ Fjellblå - Medium'
+    },
+    {
+      handle: 'utekos-dun',
+      color: 'Vargnatt',
+      size: 'Medium',
+      expected: 'Utekos Dun™ Vargnatt - Medium'
+    },
+    {
+      handle: 'utekos-stapper',
+      color: 'Vargnatt',
+      size: 'OneSize',
+      expected: 'Utekos Stapper™ Vargnatt - OneSize'
+    },
+    {
+      handle: 'comfyrobe',
+      color: 'Fjellnatt',
+      size: 'XS',
+      expected: 'Comfyrobe™ Fjellnatt - XS'
+    }
+  ] as const
+
+  for (const example of examples) {
+    const name = buildPublicVariantName(
+      requireProductPresentation(example.handle),
+      {
+        color: example.color,
+        size: example.size,
+        gender: 'Unisex'
+      }
+    )
+
+    assert.equal(name, example.expected)
+    assert.doesNotMatch(name, /Unisex|\//)
+  }
+})
+
 test('locks the TechDown public identity and fails closed for unknown products', () => {
-  const presentation = requireProductPresentation('utekos-techdown')
+  const presentation = requireProductPresentation(
+    'utekos-techdown'
+  )
 
   assert.equal(presentation.displayName, 'Utekos TechDown™')
   assert.equal(
     presentation.canonicalUrl,
     'https://utekos.no/produkter/utekos-techdown'
   )
-  assert.equal(presentation.storefrontLookupHandle, 'utekos-techdown')
-  assert.deepEqual(presentation.hiddenOptionValues.size, ['Liten'])
+  assert.equal(
+    presentation.storefrontLookupHandle,
+    'utekos-techdown'
+  )
+  assert.deepEqual(presentation.hiddenOptionValues.size, [
+    'Liten'
+  ])
   assert.equal(getProductPresentation('shopify-only'), null)
   assert.throws(
     () => requireProductPresentation('shopify-only'),
@@ -52,7 +109,9 @@ test('locks the TechDown public identity and fails closed for unknown products',
 })
 
 test('builds a stable readable TechDown URL and preserves attribution', () => {
-  const presentation = requireProductPresentation('utekos-techdown')
+  const presentation = requireProductPresentation(
+    'utekos-techdown'
+  )
   const url = buildPublicVariantUrl({
     presentation,
     options: {
@@ -105,7 +164,9 @@ test('uses Større as the public TechDown XL size', () => {
     fromShopifyName.status !== 'included' ||
     fromLegacyName.status !== 'included'
   ) {
-    throw new Error('Expected TechDown Større to be publicly included')
+    throw new Error(
+      'Expected TechDown Større to be publicly included'
+    )
   }
 
   assert.equal(fromShopifyName.options.size, 'Større')

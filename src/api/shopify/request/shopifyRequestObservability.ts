@@ -7,6 +7,9 @@ import type {
   
   export const SLOW_SHOPIFY_STOREFRONT_REQUEST_MS =
     1_000
+
+  export const SHOPIFY_TIMEOUT_OVERSHOOT_WARN_MS =
+    1_000
   
   export type ShopifyGraphQLOperationType =
     | 'query'
@@ -143,14 +146,14 @@ import type {
   
   export function classifyShopifyRequestError({
     error,
-    timeoutSignal,
+    didTimeout,
     callerSignal
   }: {
     error: unknown
-    timeoutSignal: AbortSignal
+    didTimeout: boolean
     callerSignal?: AbortSignal
   }): string {
-    if (timeoutSignal.aborted) {
+    if (didTimeout) {
       return 'timeout'
     }
   
@@ -166,4 +169,37 @@ import type {
     }
   
     return 'unknown'
+  }
+
+  export type ShopifyTimeoutDiagnostics = {
+    timeoutPhase?: 'headers' | 'body'
+    timeoutOvershootMs?: number
+    timeoutState?: 'on_time' | 'delayed'
+  }
+
+  export function getShopifyTimeoutDiagnostics({
+    errorType,
+    durationMs,
+    timeoutMs,
+    responseHeadersMs
+  }: {
+    errorType: string
+    durationMs: number
+    timeoutMs: number
+    responseHeadersMs?: number
+  }): ShopifyTimeoutDiagnostics {
+    if (errorType !== 'timeout') {
+      return {}
+    }
+
+    const timeoutOvershootMs = Math.max(0, durationMs - timeoutMs)
+
+    return {
+      timeoutPhase: responseHeadersMs === undefined ? 'headers' : 'body',
+      timeoutOvershootMs,
+      timeoutState:
+        timeoutOvershootMs >= SHOPIFY_TIMEOUT_OVERSHOOT_WARN_MS ?
+          'delayed'
+        : 'on_time'
+    }
   }

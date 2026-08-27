@@ -18,6 +18,7 @@ import {
 import { NavigationProgress } from './NavigationProgress'
 import { FacebookLoginPrompt } from '@/components/facebook-login/FacebookLoginPrompt'
 import type { FacebookLoginClientConfig } from '@/lib/facebook-login/facebookLoginConfig'
+import { shouldHideHeaderAndFooter } from './siteChromeVisibility'
 
 const NewsletterSignupDialog = dynamic(
   () =>
@@ -121,6 +122,7 @@ export function SiteChrome({
   const showNewsletterModal =
     NEWSLETTER_MODAL_ENABLED &&
     !isNewsletterModalExcludedPath(pathname)
+  const hideHeaderAndFooter = shouldHideHeaderAndFooter(pathname)
 
   return (
     <>
@@ -132,17 +134,19 @@ export function SiteChrome({
         <NewsletterSignupDialog />
       : null}
 
-      <FacebookLoginPrompt
-        enabled={facebookLoginEnabled}
-        clientConfig={facebookLoginClientConfig}
-        previewAllowed={facebookLoginPreviewAllowed}
-      />
+      {facebookLoginPreviewAllowed ?
+        <FacebookLoginPrompt
+          enabled={facebookLoginEnabled}
+          clientConfig={facebookLoginClientConfig}
+          previewAllowed={facebookLoginPreviewAllowed}
+        />
+      : null}
 
-      {header}
+      {hideHeaderAndFooter ? null : header}
 
       <main>{children}</main>
 
-      {footer}
+      {hideHeaderAndFooter ? null : footer}
 
       {assistantRolloutPercent > 0 &&
         !isAssistantExcludedPathname(pathname) && (

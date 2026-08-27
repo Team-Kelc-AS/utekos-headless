@@ -5,6 +5,8 @@ export type StorefrontBuyerContext = Readonly<{
   buyerIp: string | null
 }>
 
+export type StorefrontFailureImpact = 'required' | 'optional'
+
 export type StorefrontGatewayResult<TData> =
   | { success: true; body: TData }
   | { success: false; error: GraphQLErrorResponse }
@@ -13,6 +15,7 @@ type StorefrontRequestInput<
   T extends ShopifyOperation<unknown, object>
 > = {
   query: string
+  failureImpact?: StorefrontFailureImpact
   signal?: AbortSignal
   timeoutMs?: number
   variables?: ExtractVariables<T>

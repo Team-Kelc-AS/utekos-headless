@@ -63,7 +63,7 @@ export function NewProductInStoreNoticeView({
 
             <div
               ref={logoBoxRef}
-              className='relative z-10 flex h-16 items-center justify-center rounded-2xl border-2 border-white/90 bg-white px-8 shadow-[0_0_30px_rgba(255,255,255,0.2)] will-change-transform'
+              className='relative z-10 flex h-16 items-center justify-center rounded-2xl border-2 border-white/90 bg-white px-8 will-change-transform'
             >
               <Image
                 src={IntersportLogo}
@@ -88,11 +88,11 @@ export function NewProductInStoreNoticeView({
               Sjekk ut Utekos på Intersport Laksevåg!
             </H2>
 
-            <P className='-mt-2 w-full max-w-4xl text-left font-utekos-text-medium text-xl leading-snug tracking-normal text-foreground sm:text-2xl'>
+            <P className='-mt-2 w-full max-w-4xl text-left font-sans text-xl leading-snug tracking-normal text-foreground sm:text-2xl'>
               Se, prøve og kjenne på{' '}
               <InlineText
                 as='strong'
-                className='font-utekos-text-medium text-foreground'
+                className='font-sans text-foreground'
               >
                 Utekos TechDown™
               </InlineText>{' '}
@@ -110,7 +110,7 @@ export function NewProductInStoreNoticeView({
               <Link
                 href={mapsUrl as Route}
                 target='_blank'
-                className='flex items-center gap-2 font-utekos-text'
+                className='flex items-center gap-2 font-sans'
               >
                 <InlineText>Vis vei til butikken</InlineText>
                 <InvitingArrow />

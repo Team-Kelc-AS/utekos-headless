@@ -18,7 +18,10 @@ export default function Header({
   return (
     <header className='top-0! z-50 bg-night w-full text-foreground'>
       <div className='relative mx-auto grid min-h-18 w-full grid-cols-[auto_1fr] items-center gap-3 px-4 py-2.5 sm:px-6 lg:min-h-20 lg:px-10 xl:min-h-22.5'>
-        <div className='flex min-w-0 items-center justify-start'>
+        <div
+          data-header-part='brand'
+          className='flex min-w-0 items-center justify-start'
+        >
           <Link
             href={'/' as Route}
             aria-label='Utekos - Til forsiden'
@@ -46,7 +49,10 @@ export default function Header({
           </Link>
         </div>
 
-        <div className='flex min-w-0 items-center justify-end gap-1.5 sm:gap-2 lg:gap-3'>
+        <div
+          data-header-part='actions'
+          className='flex min-w-0 items-center justify-end gap-1.5 sm:gap-2 lg:gap-3'
+        >
           <HeaderSearch variant='nav' />
 
           <Link
