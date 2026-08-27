@@ -3,6 +3,7 @@ import bundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
 import createMDX from '@next/mdx'
 import { withWorkflow } from 'workflow/next'
+import { buildReportOnlyCsp } from './src/lib/security/buildReportOnlyCsp'
 
 const GOOGLE_TAG_GATEWAY_PATH = '/__gtg'
 const SERVER_TAG_MANAGER_PATH = '/__sgtm'
@@ -55,11 +56,7 @@ const staticAssetHeaders = [
   { key: 'Cache-Control', value: STATIC_ASSET_CACHE_CONTROL }
 ]
 
-async function buildSecurityHeaders() {
-  const cspModulePath =
-    './src/lib/security/buildReportOnlyCsp.ts'
-  const { buildReportOnlyCsp } = await import(cspModulePath)
-  
+function buildSecurityHeaders() {
   return [
     {
       key: 'Content-Security-Policy',
@@ -76,7 +73,6 @@ async function buildSecurityHeaders() {
       value: 'strict-origin-when-cross-origin'
     }
   ]
-  /* eslint-enable quotes */
 }
 
 
@@ -165,7 +161,7 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
-    const securityHeaders = await buildSecurityHeaders()
+    const securityHeaders = buildSecurityHeaders()
 
     return [
       { source: '/:path*', headers: securityHeaders },
