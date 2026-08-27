@@ -24,6 +24,7 @@ import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/
 import { Google_Sans_Flex } from 'next/font/google'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
+import { readStorefrontGatewayEnvironment } from '@/api/shopify/storefront/readStorefrontGatewayEnvironment'
 import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
 import { WebVitals } from '@/components/analytics/WebVitals'
 import {
@@ -106,7 +107,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const storefrontAccessToken =
-    resolveShopifyCustomerPrivacyPublicToken(process.env)
+    resolveShopifyCustomerPrivacyPublicToken(
+      readStorefrontGatewayEnvironment()
+    )
 
   const assistantRolloutPercent =
     resolveAssistantPreviewRolloutPercent(process.env)

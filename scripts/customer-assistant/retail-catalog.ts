@@ -1,4 +1,5 @@
 import { createStorefrontGatewayFromEnvironment } from '../../src/api/shopify/storefront/createStorefrontGatewayFromEnvironment'
+import { readStorefrontGatewayEnvironment } from '../../src/api/shopify/storefront/readStorefrontGatewayEnvironment'
 import type { ShopifyOperation } from '@types'
 import { protos } from '@google-cloud/retail'
 import { z } from 'zod'
@@ -276,7 +277,9 @@ export function buildRetailCatalog(
 
 export async function fetchShopifyRetailCatalog(): Promise<RetailCatalogSnapshot> {
   const storefrontGateway =
-    createStorefrontGatewayFromEnvironment(process.env)
+    createStorefrontGatewayFromEnvironment(
+      readStorefrontGatewayEnvironment()
+    )
   const products: RawProduct[] = []
   let after: string | null = null
 
