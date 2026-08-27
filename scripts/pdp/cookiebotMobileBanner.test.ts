@@ -54,6 +54,36 @@ test(
 )
 
 test(
+  'PageViewObserver does not keep leftover Cookiebot debug ingest',
+  async () => {
+    const source = await readSource(
+      'src/components/analytics/PageViewObserver.tsx'
+    )
+
+    assert.doesNotMatch(
+      source,
+      /127\.0\.0\.1:7626/,
+      'Cursor debug ingest must not remain in the page-view observer'
+    )
+    assert.doesNotMatch(
+      source,
+      /#region agent log/,
+      'Agent debug regions must not remain in the page-view observer'
+    )
+    assert.doesNotMatch(
+      source,
+      /reportCookiebotOverlay/,
+      'Cookiebot overlay measurement is not part of the page-view observer contract'
+    )
+    assert.match(
+      source,
+      /subscribeToCookiebotPageViewUpdates/,
+      'Canonical Cookiebot consent observation must remain'
+    )
+  }
+)
+
+test(
   'skreddersy-varmen hero keeps mobile CTAs above a bottom Cookiebot sheet',
   async () => {
     const hero = await readSource(
