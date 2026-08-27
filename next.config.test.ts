@@ -3,6 +3,18 @@ import { access } from 'node:fs/promises'
 import test from 'node:test'
 import type { NextConfig } from 'next'
 
+type NextConfigExport =
+  | NextConfig
+  | (() => NextConfig | Promise<NextConfig>)
+
+async function loadNextConfig(): Promise<NextConfig> {
+  const { default: exported } = (await import('./next.config.ts')) as {
+    default: NextConfigExport
+  }
+
+  return typeof exported === 'function' ? await exported() : exported
+}
+
 test('uses the documented Next.js TypeScript config filename', async () => {
   await access(new URL('./next.config.ts', import.meta.url))
   await assert.rejects(
@@ -11,10 +23,7 @@ test('uses the documented Next.js TypeScript config filename', async () => {
 })
 
 test('serves security headers globally outside Proxy', async () => {
-  const configModulePath = './next.config.ts'
-  const { default: nextConfig } = (await import(
-    configModulePath
-  )) as { default: NextConfig }
+  const nextConfig = await loadNextConfig()
   const headersFactory = nextConfig.headers
   if (typeof headersFactory !== 'function') {
     assert.fail('next.config must define global headers')
@@ -44,10 +53,7 @@ test('serves security headers globally outside Proxy', async () => {
 })
 
 test('permanently redirects legacy Shopify product URLs to public product URLs', async () => {
-  const configModulePath = './next.config.ts'
-  const { default: nextConfig } = (await import(
-    configModulePath
-  )) as { default: NextConfig }
+  const nextConfig = await loadNextConfig()
   const redirectsFactory = nextConfig.redirects
   if (typeof redirectsFactory !== 'function') {
     assert.fail('next.config must define redirects')
