@@ -1,9 +1,17 @@
 import assert from 'node:assert/strict'
+import { access } from 'node:fs/promises'
 import test from 'node:test'
 import type { NextConfig } from 'next'
 
+test('uses the documented Next.js TypeScript config filename', async () => {
+  await access(new URL('./next.config.ts', import.meta.url))
+  await assert.rejects(
+    access(new URL('./next.config.mts', import.meta.url))
+  )
+})
+
 test('serves security headers globally outside Proxy', async () => {
-  const configModulePath = './next.config.mts'
+  const configModulePath = './next.config.ts'
   const { default: nextConfig } = (await import(
     configModulePath
   )) as { default: NextConfig }
@@ -36,7 +44,7 @@ test('serves security headers globally outside Proxy', async () => {
 })
 
 test('permanently redirects legacy Shopify product URLs to public product URLs', async () => {
-  const configModulePath = './next.config.mts'
+  const configModulePath = './next.config.ts'
   const { default: nextConfig } = (await import(
     configModulePath
   )) as { default: NextConfig }

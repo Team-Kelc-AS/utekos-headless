@@ -59,8 +59,7 @@ async function buildSecurityHeaders() {
   const cspModulePath =
     './src/lib/security/buildReportOnlyCsp.ts'
   const { buildReportOnlyCsp } = await import(cspModulePath)
-
-  /* eslint-disable quotes -- CSP keywords require ASCII single quotes inside the header value. */
+  
   return [
     {
       key: 'Content-Security-Policy',
