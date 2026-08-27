@@ -29,15 +29,22 @@ test('allows the login prompt preview override only on Vercel preview', () => {
   assert.equal(isFacebookLoginPreviewAllowed({}), false)
 })
 
-test('enables Facebook Login when the feature is configured', () => {
+test('enables Facebook Login only on Vercel preview', () => {
   assert.equal(
     isFacebookLoginEnabled({ FACEBOOK_LOGIN_ENABLED: 'true' }),
-    true
+    false
   )
   assert.equal(
     isFacebookLoginEnabled({
       FACEBOOK_LOGIN_ENABLED: 'true',
       VERCEL_ENV: 'production'
+    }),
+    false
+  )
+  assert.equal(
+    isFacebookLoginEnabled({
+      FACEBOOK_LOGIN_ENABLED: 'true',
+      VERCEL_ENV: 'preview'
     }),
     true
   )

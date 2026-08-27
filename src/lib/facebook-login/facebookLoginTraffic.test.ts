@@ -4,6 +4,7 @@ import {
   detectFacebookLoginTraffic,
   isFacebookLoginManualPreview,
   isFacebookLoginPreviewHostname,
+  isFacebookLoginPromptActive,
   isMetaReferrer
 } from './facebookLoginTraffic'
 
@@ -19,6 +20,33 @@ test('limits the Facebook Login prompt to preview hosts', () => {
   assert.equal(
     isFacebookLoginPreviewHostname('www.utekos.no'),
     false
+  )
+})
+
+test('never activates the Facebook Login prompt on production hosts', () => {
+  assert.equal(
+    isFacebookLoginPromptActive({
+      enabled: true,
+      hostname: 'utekos.no',
+      previewAllowed: false
+    }),
+    false
+  )
+  assert.equal(
+    isFacebookLoginPromptActive({
+      enabled: true,
+      hostname: 'www.utekos.no',
+      previewAllowed: true
+    }),
+    false
+  )
+  assert.equal(
+    isFacebookLoginPromptActive({
+      enabled: false,
+      hostname: 'utekos-headless-example.vercel.app',
+      previewAllowed: true
+    }),
+    true
   )
 })
 

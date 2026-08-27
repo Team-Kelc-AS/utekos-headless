@@ -11,7 +11,7 @@ import type { FacebookLoginClientConfig } from '@/lib/facebook-login/facebookLog
 import {
   detectFacebookLoginTraffic,
   isFacebookLoginManualPreview,
-  isFacebookLoginPreviewHostname,
+  isFacebookLoginPromptActive,
   type FacebookLoginTrafficSignal
 } from '@/lib/facebook-login/facebookLoginTraffic'
 import {
@@ -129,18 +129,17 @@ export function FacebookLoginPrompt({
   const excluded = isExcludedPath(pathname)
 
   useEffect(() => {
-    const previewHostname = isFacebookLoginPreviewHostname(
-      window.location.hostname
-    )
+    const activeOnCurrentHost = isFacebookLoginPromptActive({
+      enabled,
+      hostname: window.location.hostname,
+      previewAllowed
+    })
     const manualPreview =
-      previewAllowed &&
+      activeOnCurrentHost &&
       isFacebookLoginManualPreview({
         hostname: window.location.hostname,
         pageUrl: window.location.href
       })
-    const activeOnCurrentHost =
-      (enabled && !previewHostname) ||
-      (previewAllowed && previewHostname)
 
     if (!activeOnCurrentHost || excluded) {
       return

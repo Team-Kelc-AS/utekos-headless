@@ -32,7 +32,10 @@ export function isFacebookLoginEnabled(
     Record<string, string | undefined>
   > = process.env
 ): boolean {
-  return environment.FACEBOOK_LOGIN_ENABLED === 'true'
+  return (
+    environment.FACEBOOK_LOGIN_ENABLED === 'true' &&
+    isFacebookLoginPreviewAllowed(environment)
+  )
 }
 
 export function isFacebookLoginPreviewAllowed(

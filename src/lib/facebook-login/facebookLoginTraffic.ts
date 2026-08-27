@@ -27,6 +27,17 @@ export function isFacebookLoginPreviewHostname(
   )
 }
 
+export function isFacebookLoginPromptActive(input: {
+  enabled: boolean
+  hostname: string
+  previewAllowed: boolean
+}) {
+  return (
+    input.previewAllowed &&
+    isFacebookLoginPreviewHostname(input.hostname)
+  )
+}
+
 export function isFacebookLoginManualPreview(input: {
   hostname: string
   pageUrl: string
