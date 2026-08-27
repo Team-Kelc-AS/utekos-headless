@@ -38,7 +38,7 @@ async function collectRuntimeFiles(path) {
 test('keeps BotID out of the client and server telemetry path', async () => {
   const runtimePaths = [
     'src/instrumentation-client.ts',
-    'next.config.mts',
+    'next.config.ts',
     ...(await collectRuntimeFiles('src/app/api/events')),
     ...(await collectRuntimeFiles('src/app/api/observability')),
     ...(await collectRuntimeFiles('src/lib/analytics/server'))

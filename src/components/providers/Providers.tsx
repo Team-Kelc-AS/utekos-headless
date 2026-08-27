@@ -3,11 +3,9 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
-
 import { getQueryClient } from '@/api/lib/getQueryClient'
 import { CartMutationProvider } from '@/clients/CartMutationProvider'
 import { CartIdProvider } from '@/components/providers/CartIdProvider'
-import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { serverActions } from '@/constants/serverActions'
 import { adoptAuthoritativeCartIdentity } from '@/lib/cart/adoptAuthoritativeCartIdentity'
 import { migrateLegacyCartSessionStorageKeys } from '@/lib/cart/migrateLegacyCartSessionStorageKeys'
@@ -125,13 +123,6 @@ export default function Providers({
 
   return (
     <CartBootstrapContext.Provider value={cartBootstrapStatus}>
-      <ThemeProvider
-        attribute='class'
-        defaultTheme='dark'
-        forcedTheme='dark'
-        disableTransitionOnChange
-        enableColorScheme
-      >
         <QueryClientProvider client={queryClient}>
           <CartIdProvider value={cartId}>
             <CartIdentityActionsContext.Provider
@@ -150,7 +141,6 @@ export default function Providers({
             <ReactQueryDevtools initialIsOpen={false} />
           : null}
         </QueryClientProvider>
-      </ThemeProvider>
     </CartBootstrapContext.Provider>
   )
 }

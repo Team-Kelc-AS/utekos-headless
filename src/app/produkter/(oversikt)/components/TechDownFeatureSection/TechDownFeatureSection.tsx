@@ -132,29 +132,24 @@ export const TechDownFeatureSection = () => {
 
       <div className='container mx-auto grid grid-cols-1 items-center gap-12 py-2 lg:grid-cols-2 lg:gap-20'>
         <div className='motion-visual w-full'>
-          <div className='dark:border-dark-foreground/10 dark:bg-dark-foreground/4 relative aspect-square rounded-2xl border border-foreground/10 bg-foreground/4 p-2 shadow-[0_32px_80px_-44px_rgba(8,15,24,0.92)] backdrop-blur-sm'>
+          <div className='relative aspect-square rounded-[1.75rem] bg-night p-[0.4rem] shadow-[0_2rem_5rem_-3.5rem_rgb(0_0_0_/_85%)]'>
             <Carousel
               className='w-full'
               slideCount={TechDownImages.length}
               opts={{ loop: true }}
             >
-              <CarouselContent>
+              <CarouselContent className='ml-0'>
                 {TechDownImages.map((image, index) => (
-                  <CarouselItem
-                    key={image.alt}
-                    className='p-3 sm:p-4'
-                  >
-                    <div className='dark:bg-dark-foreground/4 relative aspect-square w-full overflow-hidden rounded-3xl bg-foreground/4 p-3 sm:p-4'>
-                      <div className='relative size-full overflow-hidden rounded-[1.15rem]'>
-                        <Image
-                          src={image.src}
-                          alt={image.alt}
-                          fill
-                          className='object-cover object-center drop-shadow-2xl'
-                          sizes='(max-width: 1024px) 100vw, 42vw'
-                          priority={index === 0}
-                        />
-                      </div>
+                  <CarouselItem key={image.alt} className='pl-0'>
+                    <div className='relative aspect-square w-full overflow-hidden rounded-[1.4rem] bg-havdyp'>
+                      <Image
+                        src={image.src}
+                        alt={image.alt}
+                        fill
+                        className='object-cover object-center'
+                        sizes='(max-width: 1024px) 100vw, 42vw'
+                        priority={index === 0}
+                      />
                     </div>
                   </CarouselItem>
                 ))}
@@ -166,15 +161,15 @@ export const TechDownFeatureSection = () => {
         </div>
 
         <div className='flex flex-col items-start px-4 lg:px-0'>
-          <h2 className='motion-content font-google-sans mb-6 text-4xl font-bold text-white sm:text-5xl lg:text-6xl'>
+          <h2 className='motion-content mb-6 font-google-sans text-4xl font-bold text-white sm:text-5xl lg:text-6xl'>
             Møt Utekos <br />
             <span className='text-foreground'>TechDown™</span>
           </h2>
 
           <p className='motion-content /90 mb-8 max-w-lg text-lg leading-relaxed text-foreground/90'>
             Vi har ikke bare kombinert det beste fra dunens
-            letthet og mikrofiberens slitestyrke – vi har
-            utviklet en helt ny kategori av personlig komfort.
+            letthet og mikrofiberens slitestyrke. Vi har utviklet
+            en helt ny kategori av personlig komfort.
           </p>
 
           <ul className='mb-10 w-fit max-w-full space-y-3'>
@@ -197,8 +192,8 @@ export const TechDownFeatureSection = () => {
             <BrandBadge
               asChild
               backgroundColor='var(--color-primary)'
-              textColor='var(--color-background)'
-              className='group h-14 px-8 text-base shadow-[0_20px_46px_-28px_rgba(20,30,40,0.56)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-95'
+              textColor='var(--color-foreground)'
+              className='group h-14 min-w-56 justify-center rounded-xl px-10 font-utekos-text-medium text-base text-foreground shadow-[0_20px_46px_-28px_rgba(20,30,40,0.56)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-95'
             >
               <Link
                 href={'/produkter/utekos-techdown' as Route}

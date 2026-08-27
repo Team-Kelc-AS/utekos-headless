@@ -34,7 +34,9 @@ const PRODUCT_CONFIG = [
 export async function HelpChooseSection() {
   const products = await getHelpChooseProducts()
   const cards = PRODUCT_CONFIG.flatMap((config, index) => {
-    const product = products.find(p => p.handle === config.handle)
+    const product = products.find(
+      p => p.handle === config.handle
+    )
     if (!product) return []
     return [{ config, product, index }]
   })
@@ -45,23 +47,6 @@ export async function HelpChooseSection() {
 
   return (
     <article className='relative mb-24 w-full px-4 md:px-6'>
-      <div className='absolute inset-0 -z-10 overflow-hidden opacity-30'>
-        <div
-          className='absolute top-0 left-1/4 h-[300px] w-[300px] blur-[100px]'
-          style={{
-            background:
-              'radial-gradient(circle, #0ea5e9 0%, transparent 70%)'
-          }}
-        />
-        <div
-          className='absolute right-1/4 bottom-0 h-[300px] w-[300px] blur-[100px]'
-          style={{
-            background:
-              'radial-gradient(circle, #06b6d4 0%, transparent 70%)'
-          }}
-        />
-      </div>
-
       <div className='mx-auto max-w-7xl'>
         <Carousel
           slideCount={cards.length}

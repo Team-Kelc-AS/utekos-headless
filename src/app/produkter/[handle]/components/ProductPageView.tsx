@@ -28,6 +28,7 @@ import { DesktopBreadcrump } from './DesktopBreadcrump'
 import { PRODUCT_GALLERY_IMAGE_OVERRIDES } from '../utils/gallery-images/productGalleryImageOverrides'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { ProductGalleryGrid } from './ProductGalleryGrid'
+import { ProductGalleryStack } from './ProductGalleryStack'
 import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
 import { SmartRealTimeActivity } from './SmartRealTimeActivity'
 import { ProductViewItemReporter } from './ProductViewItemReporter'
@@ -120,7 +121,9 @@ export function ProductPageView({
 
   const isTechDownProduct =
     productData.handle === 'utekos-techdown'
-  const useDesktopGrid = galleryImages.length >= 6
+  const useDesktopStack = isTechDownProduct
+  const useDesktopGrid =
+    !useDesktopStack && galleryImages.length >= 6
   const useCompactGallery = galleryImages.length === 1
 
   const galleryAspectRatio =
@@ -164,7 +167,7 @@ export function ProductPageView({
   )
 
   return (
-    <article className='dark:bg-dark-background ! relative isolate overflow-x-clip bg-background py-0 text-foreground! md:py-6'>
+    <article className='dark:bg-dark-background ! relative isolate overflow-x-clip bg-background py-0 text-foreground! md:overflow-x-visible md:py-6'>
       <ProductViewItemReporter
         product={productData}
         variant={selectedVariant}
@@ -189,72 +192,118 @@ export function ProductPageView({
 
         <ProductPageGrid>
           <GalleryColumn>
-            <div className={galleryStickyClassName}>
-              <AspectRatio
-                ratio={galleryAspectRatio}
-                className={
-                  isTechDownProduct ?
-                    'w-full md:aspect-9/16'
-                  : 'w-full'
-                }
-              >
-                <ProductGalleryCard
-                  galleryContent={
-                    <div className='relative isolate size-full overflow-hidden rounded-none md:rounded-3xl'>
-                      {useDesktopGrid ?
-                        <>
-                          <div className='hidden size-full md:block'>
-                            <ProductGalleryGrid
-                              title={title}
-                              images={galleryImages}
-                            />
-                          </div>
+            {useDesktopStack ?
+              <>
+                <div className='hidden md:block'>
+                  <ProductGalleryStack
+                    title={title}
+                    images={galleryImages}
+                  />
+                </div>
 
-                          <div className='size-full md:hidden'>
-                            <ProductGallery
-                              title={title}
-                              images={
-                                mobileGalleryImages
-                              }
-                              imageLayout={
-                                isTechDownProduct ?
-                                  'intrinsic'
-                                : 'cover-fill'
-                              }
-                            />
-                          </div>
-                        </>
-                      : <ProductGallery
-                          title={title}
-                          images={galleryImages}
-                          {...(useCompactGallery ?
-                            {
-                              imageBackgroundClassName:
-                                'bg-transparent',
-                              imageClassName:
-                                galleryImageClassName as string
+                <div
+                  className={`${galleryFrameClassName} md:hidden`}
+                >
+                  <AspectRatio
+                    ratio={galleryAspectRatio}
+                    className='w-full'
+                  >
+                    <ProductGalleryCard
+                      galleryContent={
+                        <div className='relative isolate size-full overflow-hidden rounded-none'>
+                          <ProductGallery
+                            title={title}
+                            images={mobileGalleryImages}
+                            imageLayout={
+                              isTechDownProduct ?
+                                'intrinsic'
+                              : 'cover-fill'
                             }
-                          : {})}
-                        />
+                          />
+                        </div>
                       }
-                    </div>
+                      hasIntegratedBackground
+                      integratedBackgroundSize='wide'
+                      flushOnMobile
+                      enableStickyOnDesktop={false}
+                      ariaLabel='Produktgalleri'
+                    />
+                  </AspectRatio>
+                </div>
+              </>
+            : <div className={galleryStickyClassName}>
+                <AspectRatio
+                  ratio={galleryAspectRatio}
+                  className={
+                    isTechDownProduct ?
+                      'w-full md:aspect-9/16'
+                    : 'w-full'
                   }
-                  hasIntegratedBackground
-                  integratedBackgroundSize={
-                    useCompactGallery ?
-                      'compact'
-                    : 'wide'
-                  }
-                  flushOnMobile={!useCompactGallery}
-                  enableStickyOnDesktop={false}
-                  ariaLabel='Produktgalleri'
-                />
-              </AspectRatio>
-            </div>
+                >
+                  <ProductGalleryCard
+                    galleryContent={
+                      <div className='relative isolate size-full overflow-hidden rounded-none md:rounded-3xl'>
+                        {useDesktopGrid ?
+                          <>
+                            <div className='hidden size-full md:block'>
+                              <ProductGalleryGrid
+                                title={title}
+                                images={galleryImages}
+                              />
+                            </div>
 
+                            <div className='size-full md:hidden'>
+                              <ProductGallery
+                                title={title}
+                                images={
+                                  mobileGalleryImages
+                                }
+                                imageLayout={
+                                  isTechDownProduct ?
+                                    'intrinsic'
+                                  : 'cover-fill'
+                                }
+                              />
+                            </div>
+                          </>
+                        : <ProductGallery
+                            title={title}
+                            images={galleryImages}
+                            {...(useCompactGallery ?
+                              {
+                                imageBackgroundClassName:
+                                  'bg-transparent',
+                                imageClassName:
+                                  galleryImageClassName as string
+                              }
+                            : {})}
+                          />
+                        }
+                      </div>
+                    }
+                    hasIntegratedBackground
+                    integratedBackgroundSize={
+                      useCompactGallery ?
+                        'compact'
+                      : 'wide'
+                    }
+                    flushOnMobile={!useCompactGallery}
+                    enableStickyOnDesktop={false}
+                    ariaLabel='Produktgalleri'
+                  />
+                </AspectRatio>
+              </div>
+            }
           </GalleryColumn>
 
           <OptionsColumn>
+            <div
+              className={
+                useDesktopStack ?
+                  'md:sticky md:top-8'
+                : undefined
+              }
+            >
             <div className='mt-2 md:mt-0'>
               <ProductHeader
                 product={productData}
@@ -313,6 +362,7 @@ export function ProductPageView({
             />
 
             <KlarnaDesktopPromo />
+            </div>
           </OptionsColumn>
         </ProductPageGrid>
 

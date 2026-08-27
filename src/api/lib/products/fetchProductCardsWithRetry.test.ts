@@ -100,3 +100,26 @@ test('does not retry GraphQL validation errors', async () => {
 
   assert.equal(attempts, 1)
 })
+
+test(
+  'enforces the total budget when an attempt ignores its abort signal',
+  { timeout: 500 },
+  async () => {
+    const startedAt = performance.now()
+
+    await assert.rejects(
+      fetchProductCardsWithRetry({
+        first: 24,
+        budgetMs: 40,
+        fetchProductCards: async () => new Promise(() => {})
+      }),
+      (error: unknown) =>
+        error instanceof DOMException && error.name === 'TimeoutError'
+    )
+
+    assert.ok(
+      performance.now() - startedAt < 300,
+      'the shared catalog budget must not depend on adapter signal handling'
+    )
+  }
+)

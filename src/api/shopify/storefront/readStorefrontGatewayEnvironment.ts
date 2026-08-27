@@ -1,0 +1,21 @@
+import type { ShopifyStorefrontEnvironment } from '@/db/config/shopify.config'
+
+export function readStorefrontGatewayEnvironment(): ShopifyStorefrontEnvironment {
+  return {
+    VERCEL_SHOPIFY_STORE_DOMAIN:
+      process.env.VERCEL_SHOPIFY_STORE_DOMAIN,
+    STORE_DOMAIN: process.env.STORE_DOMAIN,
+    STOREFRONT_API_ACCESS_TOKEN:
+      process.env.STOREFRONT_API_ACCESS_TOKEN,
+    VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN:
+      process.env.VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+    NEXT_PUBLIC_STOREFRONT_ACCESS_TOKEN:
+      process.env.NEXT_PUBLIC_STOREFRONT_ACCESS_TOKEN,
+    PRIVATE_STOREFRONT_ACCESS_TOKEN:
+      process.env.PRIVATE_STOREFRONT_ACCESS_TOKEN,
+    STOREFRONT_API_PRIVATE_ACCESS_TOKEN:
+      process.env.STOREFRONT_API_PRIVATE_ACCESS_TOKEN,
+    PRIVATE_STOREFRONT_API_TOKEN:
+      process.env.PRIVATE_STOREFRONT_API_TOKEN
+  }
+}

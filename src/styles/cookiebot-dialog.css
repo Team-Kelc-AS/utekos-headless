@@ -1,0 +1,67 @@
+/* Compact the GTM-owned Cookiebot Edge dialog on small viewports.
+   Official override path: Cookiebot Support
+   "Overriding styles for the cookie banner with an external stylesheet".
+   Do not hide accept, decline, close, or powered-by. */
+
+:root {
+  --utekos-cookiebot-compact: 1;
+}
+
+@media (width < 48rem) {
+  #CybotCookiebotDialog {
+    position: fixed !important;
+    top: auto !important;
+    right: 0.5rem !important;
+    bottom: 0 !important;
+    left: 0.5rem !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: auto !important;
+    max-height: min(32svh, 14rem) !important;
+    margin: 0 !important;
+    transform: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  }
+
+  #CybotCookiebotDialogHeader {
+    flex-shrink: 0 !important;
+    max-height: 2.5rem !important;
+    overflow: hidden !important;
+  }
+
+  #CybotCookiebotDialogBody {
+    flex: 0 1 auto !important;
+    min-height: 0 !important;
+    max-height: 2.5rem !important;
+    overflow: auto !important;
+  }
+
+  #CybotCookiebotDialogBodyContent,
+  #CybotCookiebotDialogBodyContentText {
+    max-height: 2.5rem !important;
+    overflow: auto !important;
+  }
+
+  #CybotCookiebotDialogFooter {
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    padding-block: 0.25rem !important;
+  }
+
+  #CybotCookiebotDialogFooter .CybotCookiebotScrollArea {
+    min-height: 0 !important;
+    padding-block: 0.25rem !important;
+  }
+
+  #CybotCookiebotDialogBodyButtonAccept,
+  #CybotCookiebotDialogBodyButtonDecline {
+    display: block !important;
+    min-height: 2.75rem !important;
+    height: auto !important;
+    padding-block: 0.5rem !important;
+  }
+}

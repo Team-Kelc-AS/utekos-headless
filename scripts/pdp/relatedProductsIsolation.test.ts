@@ -135,10 +135,14 @@ test(
   async () => {
     const [
       querySource,
-      cachedRelatedSource
+      cachedCatalogSource,
+      relatedSelectionSource
     ] = await Promise.all([
       readSource(
         'src/api/graphql/queries/products/getProductCardsQuery.ts'
+      ),
+      readSource(
+        'src/api/lib/products/getCachedProductCards.ts'
       ),
       readSource(
         'src/api/lib/products/getCachedRelatedProducts.ts'
@@ -149,9 +153,17 @@ test(
     assert.doesNotMatch(querySource, /productFragment/)
     assert.doesNotMatch(querySource, /VariantHandler/)
     assert.doesNotMatch(querySource, /compareAtPriceRange/)
-    assert.doesNotMatch(cachedRelatedSource, /fetchProducts/)
-    assert.doesNotMatch(cachedRelatedSource, /getProductsQuery/)
-    assert.match(cachedRelatedSource, /loadRelatedProducts/)
+    assert.match(cachedCatalogSource, /['"]use cache: remote['"]/)
+    assert.match(cachedCatalogSource, /fetchProductCardsWithRetry/)
+    assert.match(cachedCatalogSource, /cacheSignal\(\)/)
+    assert.match(cachedCatalogSource, /cacheTag\(TAGS\.products\)/)
+    assert.doesNotMatch(cachedCatalogSource, /catch\s*\(/)
+    assert.doesNotMatch(cachedCatalogSource, /currentHandle/)
+
+    assert.match(relatedSelectionSource, /getCachedProductCards/)
+    assert.match(relatedSelectionSource, /getRelatedProducts/)
+    assert.doesNotMatch(relatedSelectionSource, /use cache: remote/)
+    assert.doesNotMatch(relatedSelectionSource, /loadRelatedProducts/)
   }
 )
 

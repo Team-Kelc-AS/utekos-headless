@@ -96,7 +96,7 @@ export function ComfyrobeGuidedDemo() {
         </m.p>
         <m.h2
           id='product-demo-heading'
-          className='font-google-sans mt-3 font-sans text-4xl leading-[0.94] font-bold tracking-tight md:text-6xl'
+          className='mt-3 font-sans text-4xl leading-[0.94] font-bold tracking-tight md:text-6xl'
           variants={comfyrobeRevealItem}
         >
         Tøff mot været, komfortabel mot deg
@@ -145,7 +145,7 @@ export function ComfyrobeGuidedDemo() {
                   </span>
                 </m.div>
                 <m.h3
-                  className='font-google-sans mt-3 font-sans text-3xl leading-[0.96] font-bold tracking-[-0.02em] md:text-4xl'
+                  className='mt-3 font-sans text-3xl leading-[0.96] font-bold tracking-[-0.02em] md:text-4xl'
                   variants={comfyrobeRevealItem}
                 >
                   {step.title}
@@ -203,7 +203,7 @@ export function ComfyrobeGuidedDemo() {
                 className={cn(
                   'h-1.5 rounded-full transition-[width,background-color] duration-500 motion-reduce:transition-none',
                   activeStep === index ?
-                    'w-12 bg-[#c99350]'
+                    'w-12 bg-primary'
                   : 'w-3 bg-[#071f1e]/30'
                 )}
               />
@@ -236,7 +236,7 @@ export function ComfyrobeGuidedDemo() {
                     </span>
                   </m.div>
                   <m.h3
-                    className='font-google-sans mt-5 font-sans text-5xl leading-[0.92] font-bold tracking-tight 2xl:text-6xl'
+                    className='mt-5 font-sans text-5xl leading-[0.92] font-bold tracking-tight 2xl:text-6xl'
                     variants={comfyrobeRevealItem}
                   >
                     {step.title}

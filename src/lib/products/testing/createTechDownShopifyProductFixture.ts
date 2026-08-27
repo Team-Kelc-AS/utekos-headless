@@ -15,7 +15,7 @@ const sizes = [
     sku: 'TECHDOWN-HAVDYP-S',
     availableForSale: false,
     quantityAvailable: 0,
-    barcode: null
+    barcode: '07090062980009'
   },
   {
     name: 'Middels',
@@ -23,7 +23,7 @@ const sizes = [
     sku: 'TECHDOWN-HAVDYP-M',
     availableForSale: true,
     quantityAvailable: 7,
-    barcode: '4006381333931'
+    barcode: '07090062980016'
   },
   {
     name: 'Stor',
@@ -31,7 +31,7 @@ const sizes = [
     sku: 'TECHDOWN-HAVDYP-L',
     availableForSale: true,
     quantityAvailable: 4,
-    barcode: null
+    barcode: '07090062980023'
   },
   {
     name: 'Større',
@@ -39,7 +39,7 @@ const sizes = [
     sku: 'TECHDOWN-HAVDYP-XL',
     availableForSale: false,
     quantityAvailable: 0,
-    barcode: null
+    barcode: '07090062980030'
   }
 ] as const
 

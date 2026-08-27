@@ -17,10 +17,12 @@ import {
   DEFAULT_SHOPIFY_STOREFRONT_TIMEOUT_MS,
   getShopifyGraphQLErrorMetadata,
   getShopifyOperationMetadata,
+  getShopifyTimeoutDiagnostics,
   SLOW_SHOPIFY_STOREFRONT_REQUEST_MS
 } from '../request/shopifyRequestObservability'
 import type {
   StorefrontBuyerContext,
+  StorefrontFailureImpact,
   StorefrontGateway,
   StorefrontGatewayResult
 } from './StorefrontGatewayContract'
@@ -56,6 +58,7 @@ type StorefrontTransportInput<
   buyerIpPresent: boolean
   cache?: RequestCache
   endpoint: string
+  failureImpact?: StorefrontFailureImpact
   fetchImpl: typeof fetch
   headers: Record<string, string>
   query: string
@@ -72,6 +75,7 @@ type ShopifyRequestLogContext = {
   operationName: string
   operationType: string
   requestKind: StorefrontRequestKind
+  failureImpact: StorefrontFailureImpact
   cacheMode: string
   timeoutMs: number
   durationMs: number
@@ -81,6 +85,9 @@ type ShopifyRequestLogContext = {
   requestId?: string
   errorType?: string
   graphqlErrorCode?: string
+  timeoutPhase?: 'headers' | 'body'
+  timeoutOvershootMs?: number
+  timeoutState?: 'on_time' | 'delayed'
 }
 
 function elapsedMilliseconds(
@@ -116,6 +123,8 @@ function createRequestLogContext(
       input.operationType,
     requestKind:
       input.requestKind,
+    failureImpact:
+      input.failureImpact,
     cacheMode:
       input.cacheMode,
     timeoutMs:
@@ -139,6 +148,15 @@ function createRequestLogContext(
       null,
     graphqlErrorCode:
       input.graphqlErrorCode ??
+      null,
+    timeoutPhase:
+      input.timeoutPhase ??
+      null,
+    timeoutOvershootMs:
+      input.timeoutOvershootMs ??
+      null,
+    timeoutState:
+      input.timeoutState ??
       null,
     runtime:
       getVercelRuntimeContext()
@@ -165,39 +183,54 @@ function logShopifyGraphQLError(
   error: string,
   context: ShopifyRequestLogContext
 ) {
-  console.error(
-    JSON.stringify({
-      event:
-        'shopify.storefront.graphql_error',
-      level: 'ERROR',
-      error,
-      context:
-        createRequestLogContext(
-          context
-        )
-    })
-  )
+  const isOptional = context.failureImpact === 'optional'
+  const payload = JSON.stringify({
+    event:
+      isOptional ?
+        'shopify.storefront.optional_graphql_error'
+      : 'shopify.storefront.graphql_error',
+    level: isOptional ? 'WARN' : 'ERROR',
+    error,
+    context: createRequestLogContext(context)
+  })
+
+  if (isOptional) {
+    console.warn(payload)
+    return
+  }
+
+  console.error(payload)
 }
 
 function logShopifyRequestFailure(
   error: unknown,
   context: ShopifyRequestLogContext
 ) {
-  console.error(
-    JSON.stringify({
-      event:
-        'shopify.storefront.request_failed',
-      level: 'ERROR',
-      error:
-        getRedactedErrorSummary(
-          error
-        ),
-      context:
-        createRequestLogContext(
-          context
-        )
-    })
-  )
+  const wasCancelled = context.errorType === 'aborted'
+  const isOptional = context.failureImpact === 'optional'
+  const payload = JSON.stringify({
+    event:
+      wasCancelled ?
+        'shopify.storefront.request_cancelled'
+      : isOptional ?
+        'shopify.storefront.optional_request_failed'
+      : 'shopify.storefront.request_failed',
+    level: wasCancelled ? 'INFO' : isOptional ? 'WARN' : 'ERROR',
+    error: getRedactedErrorSummary(error),
+    context: createRequestLogContext(context)
+  })
+
+  if (wasCancelled) {
+    console.info(payload)
+    return
+  }
+
+  if (isOptional) {
+    console.warn(payload)
+    return
+  }
+
+  console.error(payload)
 }
 
 async function executeStorefrontRequest<
@@ -211,6 +244,7 @@ async function executeStorefrontRequest<
   headers,
   cache,
   endpoint,
+  failureImpact,
   fetchImpl,
   query,
   requestKind,
@@ -240,6 +274,9 @@ async function executeStorefrontRequest<
 
   const cacheMode =
     cache ?? 'default'
+
+  const resolvedFailureImpact =
+    failureImpact ?? 'required'
 
   const resolvedTimeoutMs =
     timeoutMs ??
@@ -285,6 +322,8 @@ async function executeStorefrontRequest<
           storefrontApiVersion,
         'shopify.storefront.request_kind':
           requestKind,
+        'shopify.storefront.failure_impact':
+          resolvedFailureImpact,
         'shopify.storefront.auth_mode':
           authMode,
         'shopify.storefront.has_buyer_ip':
@@ -432,6 +471,8 @@ async function executeStorefrontRequest<
               operationType:
                 operation.type,
               requestKind,
+              failureImpact:
+                resolvedFailureImpact,
               cacheMode,
               timeoutMs:
                 resolvedTimeoutMs,
@@ -508,6 +549,8 @@ async function executeStorefrontRequest<
               operationType:
                 operation.type,
               requestKind,
+              failureImpact:
+                resolvedFailureImpact,
               cacheMode,
               timeoutMs:
                 resolvedTimeoutMs,
@@ -548,13 +591,24 @@ async function executeStorefrontRequest<
         const errorType =
           classifyShopifyRequestError({
             error,
-            timeoutSignal:
-              deadline.signal,
+            didTimeout:
+              deadline.didTimeout,
             ...(signal ?
               {
                 callerSignal:
                   signal
               }
+            : {})
+          })
+
+        const timeoutDiagnostics =
+          getShopifyTimeoutDiagnostics({
+            errorType,
+            durationMs,
+            timeoutMs:
+              resolvedTimeoutMs,
+            ...(responseHeadersMs !== undefined ?
+              { responseHeadersMs }
             : {})
           })
 
@@ -567,6 +621,30 @@ async function executeStorefrontRequest<
           'shopify.duration_ms',
           durationMs
         )
+
+        if (timeoutDiagnostics.timeoutPhase) {
+          span.setAttribute(
+            'shopify.timeout.phase',
+            timeoutDiagnostics.timeoutPhase
+          )
+        }
+
+        if (
+          timeoutDiagnostics.timeoutOvershootMs !==
+          undefined
+        ) {
+          span.setAttribute(
+            'shopify.timeout.overshoot_ms',
+            timeoutDiagnostics.timeoutOvershootMs
+          )
+        }
+
+        if (timeoutDiagnostics.timeoutState) {
+          span.setAttribute(
+            'shopify.timeout.state',
+            timeoutDiagnostics.timeoutState
+          )
+        }
 
         if (
           responseHeadersMs !==
@@ -614,6 +692,8 @@ async function executeStorefrontRequest<
             operationType:
               operation.type,
             requestKind,
+            failureImpact:
+              resolvedFailureImpact,
             cacheMode,
             timeoutMs:
               resolvedTimeoutMs,
@@ -634,6 +714,7 @@ async function executeStorefrontRequest<
               { status }
             : {}),
             errorType,
+            ...timeoutDiagnostics,
             ...(requestId ?
               { requestId }
             : {})
@@ -652,6 +733,7 @@ type GatewayRequestInput<
   T extends ShopifyOperation<unknown, object>
 > = {
   query: string
+  failureImpact?: StorefrontFailureImpact
   signal?: AbortSignal
   timeoutMs?: number
   variables?: ExtractVariables<T>
@@ -696,13 +778,7 @@ function resolveAuthentication({
 
   const buyerIp = context?.buyerIp ?? null
 
-  if (hasCredential(config.privateStorefrontToken)) {
-    if (!buyerIp) {
-      throw new Error(
-        'A validated buyer IP is required for private Shopify Storefront authentication.'
-      )
-    }
-
+  if (hasCredential(config.privateStorefrontToken) && buyerIp) {
     return {
       authMode: 'private',
       buyerIpPresent: true,
@@ -771,6 +847,9 @@ export function createHydrogenStorefrontGateway(
       query: input.query,
       storefrontApiVersion: config.storefrontApiVersion,
       ...(cache !== undefined ? { cache } : {}),
+      ...(input.failureImpact ?
+        { failureImpact: input.failureImpact }
+      : {}),
       ...(input.signal ? { signal: input.signal } : {}),
       ...(input.timeoutMs !== undefined ?
         { timeoutMs: input.timeoutMs }
@@ -801,6 +880,9 @@ export function createHydrogenStorefrontGateway(
       query: input.query,
       storefrontApiVersion: config.storefrontApiVersion,
       ...(cache !== undefined ? { cache } : {}),
+      ...(input.failureImpact ?
+        { failureImpact: input.failureImpact }
+      : {}),
       ...(input.signal ? { signal: input.signal } : {}),
       ...(input.timeoutMs !== undefined ?
         { timeoutMs: input.timeoutMs }

@@ -13,6 +13,8 @@ function createPublicCommerceVariant(
     publicUrl:
       'https://utekos.no/produkter/utekos-techdown?farge=havdyp&storrelse=middels&kjonn=unisex',
     publicName: 'Utekos TechDown™ / Havdyp / Middels / Unisex',
+    description:
+      'Utekos TechDown™ er et varmt og allsidig 3-i-1-plagg. Denne varianten har fargen Havdyp og størrelse Middels.',
     imageAlt: 'Utekos TechDown™ i Havdyp, størrelse Middels, Unisex.',
     options: {
       color: 'Havdyp',

@@ -1,9 +1,15 @@
-import { isValidGtin } from '@/lib/gtin/isValidGtin'
 import { getSchemaOrgGtinData } from '@/lib/gtin/getSchemaOrgGtinData'
+import { isValidGtin } from '@/lib/gtin/isValidGtin'
+import { MERCHANT_RETURN_POLICY_ID } from '@/lib/policies/merchantReturnPolicyJsonLd'
+import { MERCHANT_SHIPPING_SERVICE_ID } from '@/lib/policies/merchantShippingServiceJsonLd'
 import type {
   ProductCommerceViewModel,
   PublicCommerceVariant
 } from '@/lib/products/commerce'
+import {
+  resolveProductStructuredImages,
+  type ProductStructuredImage
+} from './productStructuredImageManifest'
 
 export type ProductReviewPresentation = {
   name: string
@@ -15,6 +21,12 @@ export type ProductReviewPresentation = {
 type BuildProductGroupJsonLdOptions = {
   reviews?: readonly ProductReviewPresentation[]
   includeAggregateRatingOnly?: boolean
+}
+
+type StructuredVariantInput = {
+  variant: PublicCommerceVariant
+  gtinData: ReturnType<typeof getSchemaOrgGtinData>
+  images: readonly ProductStructuredImage[]
 }
 
 const ORGANIZATION_ID = 'https://utekos.no/#organization'
@@ -45,34 +57,73 @@ function buildPriceSpecification(
   }
 }
 
-function buildVariantImage(variant: PublicCommerceVariant) {
-  const image = variant.commerce.image
-
-  if (!image) return undefined
-
-  return {
+function buildVariantImages(
+  images: readonly ProductStructuredImage[]
+) {
+  return images.map(image => ({
     '@type': 'ImageObject',
     'contentUrl': image.url,
-    'caption': variant.imageAlt,
+    'caption': image.caption,
     'width': image.width,
     'height': image.height
+  }))
+}
+
+function resolveStructuredVariants(
+  model: ProductCommerceViewModel
+): StructuredVariantInput[] {
+  return model.variants.flatMap(variant => {
+    if (!isValidGtin(variant.commerce.gtin)) {
+      return []
+    }
+
+    const images = resolveProductStructuredImages({
+      gtin: variant.commerce.gtin,
+      productKey: model.productKey
+    })
+
+    if (images.length === 0) {
+      return []
+    }
+
+    return [
+      {
+        variant,
+        gtinData: getSchemaOrgGtinData(
+          variant.commerce.gtin
+        ),
+        images
+      }
+    ]
+  })
+}
+
+function buildAudience(
+  model: ProductCommerceViewModel,
+  suggestedGender: string
+) {
+  return {
+    '@type': 'PeopleAudience',
+    'suggestedGender': suggestedGender,
+    ...(model.suggestedMinAge ?
+      { suggestedMinAge: model.suggestedMinAge }
+    : {})
   }
 }
 
 function buildVariantNode(
   model: ProductCommerceViewModel,
-  variant: PublicCommerceVariant
+  input: StructuredVariantInput
 ) {
-  const validGtin = isValidGtin(variant.commerce.gtin)
+  const { variant } = input
   const priceSpecification = buildPriceSpecification(variant)
-  const image = buildVariantImage(variant)
 
   return {
     '@type': 'Product',
     '@id': `${model.canonicalUrl}#${variant.publicId}`,
     'name': variant.publicName,
     'url': variant.publicUrl,
-    'description': model.description,
+    'description': variant.description,
     'brand': { '@type': 'Brand', 'name': 'Utekos' },
     'isVariantOf': { '@id': model.productGroupUrl },
     ...(variant.options.size ?
@@ -81,17 +132,15 @@ function buildVariantNode(
     ...(variant.options.color ?
       { color: variant.options.color }
     : {}),
-    'audience': {
-      '@type': 'PeopleAudience',
-      'suggestedGender': variant.options.gender ?? model.audience
-    },
+    'audience': buildAudience(
+      model,
+      variant.options.gender ?? model.audience
+    ),
     ...(variant.commerce.sku ?
       { sku: variant.commerce.sku }
     : {}),
-    ...(validGtin ?
-      getSchemaOrgGtinData(variant.commerce.gtin || '')
-    : {}),
-    ...(image ? { image } : {}),
+    ...input.gtinData,
+    'image': buildVariantImages(input.images),
     'offers': {
       '@type': 'Offer',
       'url': variant.publicUrl,
@@ -103,6 +152,15 @@ function buildVariantNode(
         : 'https://schema.org/OutOfStock',
       'itemCondition': 'https://schema.org/NewCondition',
       'seller': { '@id': ORGANIZATION_ID },
+      'shippingDetails': {
+        '@type': 'OfferShippingDetails',
+        'hasShippingService': {
+          '@id': MERCHANT_SHIPPING_SERVICE_ID
+        }
+      },
+      'hasMerchantReturnPolicy': {
+        '@id': MERCHANT_RETURN_POLICY_ID
+      },
       ...(priceSpecification ? { priceSpecification } : {})
     }
   }
@@ -148,17 +206,36 @@ function buildReviewMarkup(
   }
 }
 
+function getDistinctOptionValues(
+  variants: readonly StructuredVariantInput[],
+  option: 'color' | 'size'
+) {
+  return [
+    ...new Set(
+      variants
+        .map(({ variant }) => variant.options[option])
+        .filter((value): value is string => Boolean(value))
+    )
+  ]
+}
+
 export function buildProductGroupJsonLd(
   model: ProductCommerceViewModel,
   options: BuildProductGroupJsonLdOptions = {}
 ) {
   const reviews = options.reviews ?? []
-  const colors = [
-    ...new Set(
-      model.variants
-        .map(variant => variant.options.color)
-        .filter((value): value is string => Boolean(value))
-    )
+  const structuredVariants = resolveStructuredVariants(model)
+  const colors = getDistinctOptionValues(
+    structuredVariants,
+    'color'
+  )
+  const sizes = getDistinctOptionValues(
+    structuredVariants,
+    'size'
+  )
+  const variesBy = [
+    ...(sizes.length > 1 ? ['https://schema.org/size'] : []),
+    ...(colors.length > 1 ? ['https://schema.org/color'] : [])
   ]
 
   return {
@@ -174,12 +251,9 @@ export function buildProductGroupJsonLd(
     ...(colors.length === 1 ? { color: colors[0] }
     : colors.length > 1 ? { color: colors }
     : {}),
-    'audience': {
-      '@type': 'PeopleAudience',
-      'suggestedGender': model.audience
-    },
-    'variesBy': ['https://schema.org/size'],
-    'hasVariant': model.variants.map(variant =>
+    'audience': buildAudience(model, model.audience),
+    ...(variesBy.length > 0 ? { variesBy } : {}),
+    'hasVariant': structuredVariants.map(variant =>
       buildVariantNode(model, variant)
     ),
     ...buildReviewMarkup(

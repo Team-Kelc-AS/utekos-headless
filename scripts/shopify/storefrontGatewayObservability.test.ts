@@ -26,6 +26,7 @@ async function readSource(
 
 type ObservabilityModule = {
   DEFAULT_SHOPIFY_STOREFRONT_TIMEOUT_MS: number
+  SHOPIFY_TIMEOUT_OVERSHOOT_WARN_MS: number
   SLOW_SHOPIFY_STOREFRONT_REQUEST_MS: number
   getShopifyOperationMetadata: (
     query: string
@@ -53,9 +54,19 @@ type ObservabilityModule = {
   }
   classifyShopifyRequestError: (input: {
     error: unknown
-    timeoutSignal: AbortSignal
+    didTimeout: boolean
     callerSignal?: AbortSignal
   }) => string
+  getShopifyTimeoutDiagnostics: (input: {
+    errorType: string
+    durationMs: number
+    timeoutMs: number
+    responseHeadersMs?: number
+  }) => {
+    timeoutPhase?: 'headers' | 'body'
+    timeoutOvershootMs?: number
+    timeoutState?: 'on_time' | 'delayed'
+  }
 }
 
 test(
@@ -197,9 +208,6 @@ test(
         pathToFileURL(absolutePath).href
       ) as ObservabilityModule
 
-    const timedOutSignal =
-      AbortSignal.abort()
-
     const idleController =
       new AbortController()
 
@@ -208,8 +216,7 @@ test(
         .classifyShopifyRequestError({
           error:
             new Error('timed out'),
-          timeoutSignal:
-            timedOutSignal,
+          didTimeout: true,
           callerSignal:
             idleController.signal
         }),
@@ -226,8 +233,7 @@ test(
         .classifyShopifyRequestError({
           error:
             new Error('aborted'),
-          timeoutSignal:
-            idleController.signal,
+          didTimeout: false,
           callerSignal:
             callerController.signal
         }),
@@ -241,10 +247,45 @@ test(
             new TypeError(
               'fetch failed'
             ),
-          timeoutSignal:
-            idleController.signal
+          didTimeout: false
         }),
       'TypeError'
+    )
+
+    assert.deepEqual(
+      observability.getShopifyTimeoutDiagnostics({
+        errorType: 'timeout',
+        durationMs: 100_121,
+        timeoutMs: 8_000
+      }),
+      {
+        timeoutPhase: 'headers',
+        timeoutOvershootMs: 92_121,
+        timeoutState: 'delayed'
+      }
+    )
+
+    assert.deepEqual(
+      observability.getShopifyTimeoutDiagnostics({
+        errorType: 'timeout',
+        durationMs: 8_020,
+        timeoutMs: 8_000,
+        responseHeadersMs: 1_186
+      }),
+      {
+        timeoutPhase: 'body',
+        timeoutOvershootMs: 20,
+        timeoutState: 'on_time'
+      }
+    )
+
+    assert.deepEqual(
+      observability.getShopifyTimeoutDiagnostics({
+        errorType: 'aborted',
+        durationMs: 250,
+        timeoutMs: 8_000
+      }),
+      {}
     )
   }
 )
@@ -394,6 +435,26 @@ test(
     assert.match(
       source,
       /shopify\.storefront\.request_failed/
+    )
+
+    assert.match(
+      source,
+      /shopify\.storefront\.optional_request_failed/
+    )
+
+    assert.match(
+      source,
+      /shopify\.storefront\.request_cancelled/
+    )
+
+    assert.match(
+      source,
+      /timeoutOvershootMs/
+    )
+
+    assert.match(
+      source,
+      /timeoutPhase/
     )
 
     assert.match(

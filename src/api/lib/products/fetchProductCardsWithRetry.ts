@@ -21,6 +21,7 @@ function remainingBudgetMs(startedAt: number, budgetMs: number, now: () => numbe
 export async function fetchProductCardsWithRetry(input: {
   first: number
   budgetMs?: number
+  signal?: AbortSignal
   fetchProductCards?: FetchProductCardsAttempt
   now?: () => number
   random?: () => number
@@ -33,7 +34,10 @@ export async function fetchProductCardsWithRetry(input: {
     (ms => new Promise(resolve => setTimeout(resolve, ms)))
   const fetchCards = input.fetchProductCards ?? fetchProductCards
   const startedAt = now()
-  const deadline = createShopifyRequestDeadline({ timeoutMs: budgetMs })
+  const deadline = createShopifyRequestDeadline({
+    timeoutMs: budgetMs,
+    ...(input.signal ? { callerSignal: input.signal } : {})
+  })
 
   try {
     const timeoutMs = remainingBudgetMs(startedAt, budgetMs, now)
@@ -43,11 +47,13 @@ export async function fetchProductCardsWithRetry(input: {
     }
 
     try {
-      return await fetchCards({
-        first: input.first,
-        timeoutMs,
-        signal: deadline.signal
-      })
+      return await deadline.race(
+        fetchCards({
+          first: input.first,
+          timeoutMs,
+          signal: deadline.signal
+        })
+      )
     } catch (error) {
       const remainingMs = remainingBudgetMs(startedAt, budgetMs, now)
       const jitterMs = getRelatedProductsRetryJitterMs(input.random)
@@ -59,18 +65,20 @@ export async function fetchProductCardsWithRetry(input: {
         throw error
       }
 
-      await sleep(jitterMs)
+      await deadline.race(sleep(jitterMs))
 
       const retryTimeoutMs = remainingBudgetMs(startedAt, budgetMs, now)
       if (retryTimeoutMs < RELATED_PRODUCTS_MIN_RETRY_BUDGET_MS) {
         throw error
       }
 
-      return await fetchCards({
-        first: input.first,
-        timeoutMs: retryTimeoutMs,
-        signal: deadline.signal
-      })
+      return await deadline.race(
+        fetchCards({
+          first: input.first,
+          timeoutMs: retryTimeoutMs,
+          signal: deadline.signal
+        })
+      )
     }
   } finally {
     deadline.dispose()

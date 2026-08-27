@@ -1,13 +1,15 @@
 import 'server-only'
 
 import { createStorefrontGatewayFromEnvironment } from './createStorefrontGatewayFromEnvironment'
+import { readStorefrontGatewayEnvironment } from './readStorefrontGatewayEnvironment'
 import type { StorefrontGateway } from './StorefrontGatewayContract'
 
 let resolvedGateway: StorefrontGateway | undefined
 
 function getGateway(): StorefrontGateway {
-  resolvedGateway ??=
-    createStorefrontGatewayFromEnvironment(process.env)
+  resolvedGateway ??= createStorefrontGatewayFromEnvironment(
+    readStorefrontGatewayEnvironment()
+  )
 
   return resolvedGateway
 }

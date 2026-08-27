@@ -8,7 +8,9 @@ import {
   isHiddenPublicVariant,
   requireProductPresentation,
   resolvePublicVariantOptions,
-  toPublicSelectedOptions
+  toPublicSelectedOptions,
+  type ProductPresentation,
+  type PublicVariantOptions
 } from '@/lib/products/presentation'
 import { slugifyVariantOption } from '@/lib/utils/slugifyVariantOption'
 import {
@@ -42,6 +44,22 @@ function buildPublicVariantId(
     .join('-')
 
   return `variant-${suffix || 'default'}`
+}
+
+function buildPublicVariantDescription(
+  presentation: ProductPresentation,
+  options: PublicVariantOptions
+) {
+  const variantDetails = [
+    options.color ? `fargen ${options.color}` : null,
+    options.size ? `størrelse ${options.size}` : null
+  ].filter((value): value is string => Boolean(value))
+
+  if (variantDetails.length === 0) {
+    return presentation.description
+  }
+
+  return `${presentation.description} Denne varianten har ${variantDetails.join(' og ')}.`
 }
 
 function chooseDefaultVariant(
@@ -95,6 +113,10 @@ export function buildProductCommerceViewModel(
           publicPath,
           publicUrl: `https://utekos.no${publicPath}`,
           publicName,
+          description: buildPublicVariantDescription(
+            presentation,
+            options
+          ),
           imageAlt,
           options,
           commerce: {
@@ -158,6 +180,9 @@ export function buildProductCommerceViewModel(
     category: presentation.category,
     material: presentation.material,
     audience: presentation.audience,
+    ...(presentation.suggestedMinAge ?
+      { suggestedMinAge: presentation.suggestedMinAge }
+    : {}),
     updatedAt: rawProduct.updatedAt,
     product: {
       id: rawProduct.id,

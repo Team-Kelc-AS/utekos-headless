@@ -1,8 +1,12 @@
 import { returnPolicy } from '@/lib/policies/returnPolicy'
 import type { MerchantReturnPolicy } from 'schema-dts'
 
+export const MERCHANT_RETURN_POLICY_ID =
+  'https://utekos.no/#return-policy-no'
+
 export const merchantReturnPolicyJsonLd = {
   '@type': 'MerchantReturnPolicy',
+  '@id': MERCHANT_RETURN_POLICY_ID,
   'applicableCountry': returnPolicy.applicableCountry,
   'returnPolicyCountry': returnPolicy.returnPolicyCountry,
   'returnPolicyCategory':

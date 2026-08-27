@@ -59,7 +59,8 @@ export const productPresentationDefinitions =
       category: 'Yttertøy',
       material:
         'Luméa™-ytterstoff i nylon og syntetisk CloudWeave™-isolasjon',
-      audience: 'Unisex'
+      audience: 'Unisex',
+      suggestedMinAge: 13
     },
     {
       productKey: 'utekos-mikrofiber',
@@ -106,7 +107,8 @@ export const productPresentationDefinitions =
       category: 'Yttertøy',
       material:
         'DuraLite™ Nylon med syntetisk mikrofiberisolasjon',
-      audience: 'Unisex'
+      audience: 'Unisex',
+      suggestedMinAge: 13
     },
     {
       productKey: 'utekos-dun',
@@ -155,7 +157,8 @@ export const productPresentationDefinitions =
       },
       category: 'Yttertøy',
       material: '650 fillpower dun og DWR-behandlet nylon',
-      audience: 'Unisex'
+      audience: 'Unisex',
+      suggestedMinAge: 13
     },
     {
       productKey: 'utekos-stapper',
@@ -246,6 +249,7 @@ export const productPresentationDefinitions =
       },
       category: 'Værbeskyttende robe',
       material: 'HydroGuard™-skall og SherpaCore™-fôr',
-      audience: 'Unisex'
+      audience: 'Unisex',
+      suggestedMinAge: 13
     }
   ])

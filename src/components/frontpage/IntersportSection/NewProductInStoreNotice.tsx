@@ -2,6 +2,9 @@
 
 import { INTERSPORT_LAKSEVAG_MAPS_URL } from '@/constants/maps'
 import { useInStoreNoticeAnimation } from '@/hooks/useInStoreNoticeAnimation'
+
+
+
 import { NewProductInStoreNoticeView } from './NewProductInStoreNoticeView'
 export function NewProductInStoreNotice() {
   const { containerRef, logoBoxRef, contentRef } = useInStoreNoticeAnimation()

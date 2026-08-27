@@ -1,0 +1,53 @@
+import ExperienceModes from './ExperienceModes.mdx'
+import HeroSection from './HeroSection.mdx'
+import NavigationSection from './NavigationSection.mdx'
+import TechnologySection from './TechnologySection.mdx'
+
+export const metadata = {
+  title: 'Teknologi og materialer',
+  description: 'Utforsk teknologien bak Utekos',
+  keywords: [
+    'Utekos teknologi',
+    'TechDown',
+    'varmedress',
+    'SherpaCore',
+    'Vannsøyle 8000mm',
+    'Varmeklær teknologi',
+    'yttertøy',
+    'vinterdress',
+    '3-i-1 design'
+  ],
+  alternates: { canonical: '/handlehjelp/teknologi-materialer' },
+  openGraph: {
+    title:
+      'Teknologi & Materialer | Vitenskapen bak din komfort',
+    description:
+      'Lær om de unike materialene som gjør Utekos til det ultimate valget for nordisk vær. Se hvordan TechDown™ og HydroGuard™ fungerer.',
+    url: '/handlehjelp/teknologi-materialer',
+    siteName: 'Utekos',
+    locale: 'no_NO',
+    type: 'article',
+    images: [
+      {
+        url: '/og-image-utekos-produkter.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Nærbilde av Utekos tekniske materialer og lag-på-lag konstruksjon.'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Teknologi og materialer',
+    description:
+      'Oppdag teknologien som holder deg varm. TechDown™, HydroGuard™ og mer.',
+    images: ['/og-image-utekos-produkter.jpg']
+  }
+}
+
+<article className='text-foreground'>
+  <HeroSection />
+  <ExperienceModes />
+  <TechnologySection />
+  <NavigationSection />
+</article>

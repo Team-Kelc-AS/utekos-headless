@@ -1,0 +1,178 @@
+import { ProductSpecsView } from './components/ProductSpecsView'
+import { TechnologyBlock } from './components/TechnoloyBlock'
+import { TechnologyGroup } from './components/TechnologyGroup'
+
+<section
+  aria-labelledby='kvalitet-i-hver-fiber'
+  className='container mx-auto px-4'
+>
+  <header className='mx-auto grid max-w-4xl gap-4 px-4 text-left [&>p]:text-xl'>
+
+## Kvalitet i hver fiber
+
+Vi er kompromissløse i våre materialvalg fordi vi vet at ekte
+utekos starter med total komfort.
+
+  </header>
+
+  <ProductSpecsView initialTechnology='Luméa™ Shell'>
+    <TechnologyGroup title='Utekos TechDown™'>
+      <TechnologyBlock
+        icon='gem'
+        products={['Utekos TechDown™']}
+        title='Luméa™ Shell'
+      >
+
+Et tettvevd ytterstoff i nylon med matt finish, myk overflate og
+høy slitestyrke.
+
+      </TechnologyBlock>
+
+      <TechnologyBlock
+        icon='cloud'
+        products={['Utekos TechDown™']}
+        title='CloudWeave™ Insulation'
+      >
+
+CloudWeave™ etterligner dunets luftige loft og bevarer
+isolasjonsevnen når fuktighet får vanlig dun til å kollapse.
+
+      </TechnologyBlock>
+    </TechnologyGroup>
+
+    <TechnologyGroup title='Utekos Dun™'>
+      <TechnologyBlock
+        icon='thermometer'
+        products={['Utekos Dun™']}
+        title='Fillpower 650 – Termisk effektivitet'
+      >
+
+Fillpower 650 omslutter deg med høy varme og lav vekt, tilpasset
+nordiske temperaturer.
+
+      </TechnologyBlock>
+
+      <TechnologyBlock
+        icon='shield'
+        products={['Utekos Dun™', 'Utekos Mikrofiber™']}
+        title='DWR Performance Nylon'
+      >
+
+DWR-behandlet lettvektsnylon avviser lett nedbør og snø, puster
+godt og har flammehemmende egenskaper rundt bålet.
+
+      </TechnologyBlock>
+    </TechnologyGroup>
+
+    <TechnologyGroup title='Utekos Mikrofiber™'>
+      <TechnologyBlock
+        icon='wind'
+        products={['Utekos Mikrofiber™']}
+        title='DuraLite™ Nylon (20D/380T)'
+      >
+
+DuraLite™ kombinerer lav vekt med vindbeskyttelse, vannavvisning
+og slitestyrke for røft nordisk terreng.
+
+      </TechnologyBlock>
+
+      <TechnologyBlock
+        icon='feather'
+        products={['Utekos Mikrofiber™']}
+        title='Hurtigtørkende fiber'
+      >
+
+Hurtigtørkende mikrofiber fanger kroppsvarmen i luftlommer og
+holder på minimalt med fukt etter bruk og vask.
+
+      </TechnologyBlock>
+    </TechnologyGroup>
+
+    <TechnologyGroup title='Comfyrobe™'>
+      <TechnologyBlock
+        icon='droplet'
+        products={['Comfyrobe™']}
+        title='HydroGuard™ Shell (8000mm)'
+      >
+
+HydroGuard™ kombinerer 8 000 mm vannsøyle med pusteevne for
+beskyttelse mot kraftig regn og vind uten klam varme.
+
+      </TechnologyBlock>
+
+      <TechnologyBlock
+        icon='sun'
+        products={['Comfyrobe™']}
+        title='SherpaCore™ Thermal Lining'
+      >
+
+250 GSM Sherpa Fleece gir umiddelbar, myk varme og tar opp
+restfuktighet etter isbad og vannsport.
+
+      </TechnologyBlock>
+
+      <TechnologyBlock
+        icon='zap'
+        products={['Comfyrobe™']}
+        title='Teknisk konstruksjon'
+      >
+
+To-veis YKK®-glidelås, justerbare mansjetter, sidesplitter og
+refleksdetaljer samler varme, synlighet og fri bevegelse i én
+konstruksjon.
+
+      </TechnologyBlock>
+    </TechnologyGroup>
+
+    <TechnologyGroup title='Konstruksjon og funksjonalitet'>
+      <TechnologyBlock
+        icon='maximize-2'
+        products={[
+          'Utekos TechDown™',
+          'Utekos Dun™',
+          'Utekos Mikrofiber™'
+        ]}
+        title='3-i-1 adaptiv funksjonalitet'
+      >
+
+Integrerte snorstrammere forvandler plagget sømløst mellom varm
+fullengde, mobil mellomlengde og elegant parkas.
+
+      </TechnologyBlock>
+
+      <TechnologyBlock
+        icon='layers'
+        products={[
+          'Utekos TechDown™',
+          'Utekos Dun™',
+          'Utekos Mikrofiber™'
+        ]}
+        title='YKK® Dual V-Zip™ System'
+      >
+
+Innovativt to-spors glidelåssystem med omvendt V-profil.
+Teknologien muliggjør direkte tilgang til innvendige
+justeringsmekanismer og gir mulighet for strategisk ventilasjon
+uten å eksponere brystpartiet for kulde. Eliminerer behovet for å
+åpne hele fronten for å justere passform.
+
+      </TechnologyBlock>
+
+      <TechnologyBlock
+        icon='shirt'
+        products={[
+          'Utekos TechDown™',
+          'Utekos Dun™',
+          'Utekos Mikrofiber™'
+        ]}
+        title='Taffeta innerfôr'
+      >
+
+Silkemykt Taffeta-fôr glir lett over andre lag og gir
+bevegelsesfrihet med minimal friksjon og lav vekt.
+
+      </TechnologyBlock>
+    </TechnologyGroup>
+
+  </ProductSpecsView>
+</section>

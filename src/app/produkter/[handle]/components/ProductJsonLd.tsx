@@ -1,7 +1,7 @@
 import { techDownReviews } from '@/app/skreddersy-varmen/data/reviews'
 import { getProductCommerceViewModel } from '@/lib/products/commerce'
 import { getProductPresentation } from '@/lib/products/presentation'
-import { buildProductGroupJsonLd } from '@/lib/products/structured-data/buildProductGroupJsonLd'
+import { buildProductPageJsonLd } from '@/lib/products/structured-data/buildProductPageJsonLd'
 import { JsonLdScript } from '@/lib/seo/jsonLd/JsonLdScript'
 
 export async function ProductJsonLd({ handle }: { handle: string }) {
@@ -15,7 +15,7 @@ export async function ProductJsonLd({ handle }: { handle: string }) {
 
   if (!commerce) return null
 
-  const productGroup = buildProductGroupJsonLd(commerce, {
+  const productPage = buildProductPageJsonLd(commerce, {
     ...(presentation.productKey === 'utekos-techdown' ?
       {
         reviews: techDownReviews,
@@ -24,12 +24,5 @@ export async function ProductJsonLd({ handle }: { handle: string }) {
     : {})
   })
 
-  return (
-    <JsonLdScript
-      data={{
-        '@context': 'https://schema.org',
-        ...productGroup
-      }}
-    />
-  )
+  return <JsonLdScript data={productPage} />
 }

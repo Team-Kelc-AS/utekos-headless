@@ -6,6 +6,7 @@ import {
   createHydrogenStorefrontGateway,
   type HydrogenStorefrontGatewayConfig
 } from './createHydrogenStorefrontGateway'
+import { resolveStorefrontGatewayTokens } from './resolveStorefrontGatewayTokens'
 import type { StorefrontGateway } from './StorefrontGatewayContract'
 
 function normalizeStoreDomain(value: string | undefined): string {
@@ -39,19 +40,12 @@ export function buildStorefrontGatewayConfigFromEnvironment(
     environment.VERCEL_SHOPIFY_STORE_DOMAIN,
     environment.STORE_DOMAIN
   )
-  const storefrontAccessToken = firstConfiguredValue(
-    environment.STOREFRONT_API_ACCESS_TOKEN,
-    environment.VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN
-  )
+  const tokens = resolveStorefrontGatewayTokens(environment)
 
   return {
     storeDomain: normalizeStoreDomain(storeDomain),
     storefrontApiVersion: STOREFRONT_API_VERSION,
-    ...(storefrontAccessToken ?
-      {
-        publicStorefrontToken: storefrontAccessToken
-      }
-    : {})
+    ...tokens
   }
 }
 

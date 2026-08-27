@@ -23,10 +23,10 @@ export function HeroImage() {
   return (
     <div
       className={cn(
-        'group relative mx-auto mb-7 w-full max-w-none overflow-hidden shadow-none sm:mb-10 sm:max-w-6xl sm:rounded-2xl sm:border sm:border-foreground/12 sm:shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)] sm:dark:border-dark-foreground/12'
+        'group relative mx-auto mb-7 w-full max-w-none overflow-hidden shadow-none sm:mb-10 sm:max-w-6xl sm:rounded-2xl sm:border sm:border-foreground/12'
       )}
     >
-      <div className='relative aspect-700/775 sm:border-4 border-dark-teal sm:rounded-2xl transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 lg:aspect-video xl:aspect-video'>
+      <div className='relative aspect-700/775 sm:rounded-2xl transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 lg:aspect-video xl:aspect-video'>
         <picture className='block size-full'>
           <source
             media='(min-width: 1280px)'

@@ -1,3 +1,6 @@
+export const MERCHANT_SHIPPING_SERVICE_ID =
+  'https://utekos.no/#shipping-service-no' as const
+
 type ShippingConditionsJsonLd = {
   '@type': 'ShippingConditions'
   shippingDestination: {
@@ -35,7 +38,7 @@ type ShippingConditionsJsonLd = {
 
 export type MerchantShippingServiceJsonLd = {
   '@type': 'ShippingService'
-  '@id': 'https://utekos.no/#shipping-service-no'
+  '@id': typeof MERCHANT_SHIPPING_SERVICE_ID
   name: string
   shippingConditions: [
     ShippingConditionsJsonLd,
@@ -62,7 +65,7 @@ const norwegianTransitTime = {
 
 export const merchantShippingServiceJsonLd = {
   '@type': 'ShippingService',
-  '@id': 'https://utekos.no/#shipping-service-no',
+  '@id': MERCHANT_SHIPPING_SERVICE_ID,
   'name': 'Utekos standardfrakt i Norge',
   'shippingConditions': [
     {

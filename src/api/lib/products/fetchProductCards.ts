@@ -16,6 +16,7 @@ export async function fetchProductCards(input: {
   const res = await storefrontGateway.catalogQuery<ShopifyProductCardsOperation>(
     {
       cache: 'no-store',
+      failureImpact: 'optional',
       query: getProductCardsQuery,
       timeoutMs: input.timeoutMs,
       variables: { first: input.first },

@@ -41,6 +41,10 @@ test('metadata never promises free returns and uses the canonical page', () => {
 
 test('JSON-LD exposes the complete organization return policy', () => {
   assert.equal(
+    merchantReturnPolicyJsonLd['@id'],
+    'https://utekos.no/#return-policy-no'
+  )
+  assert.equal(
     merchantReturnPolicyJsonLd.merchantReturnDays,
     returnPolicy.returnWindowDays
   )

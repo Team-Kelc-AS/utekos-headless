@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Cloud,
   Feather,
@@ -15,7 +17,8 @@ import {
   Shirt
 } from 'lucide-react'
 import { cn } from '@/lib/utils/className'
-import type { Technology } from '../types'
+import { useActiveTechnology } from './ProductSpecsView'
+import type { ReactNode } from 'react'
 
 const iconMap: { [key: string]: React.ElementType } = {
   'thermometer': Thermometer,
@@ -34,22 +37,37 @@ const iconMap: { [key: string]: React.ElementType } = {
   'shirt': Shirt
 }
 
+const productBadgeClassNames: Record<string, string> = {
+  'Utekos TechDown™':
+    'border-transparent bg-dark-teal text-foreground',
+  'Utekos Dun™': 'border-transparent bg-muted text-foreground',
+  'Utekos Mikrofiber™':
+    'border-transparent bg-green-haze text-foreground'
+}
+
 export const TechnologyBlock = ({
-  tech,
-  isActive
+  children,
+  icon,
+  products,
+  title
 }: {
-  tech: Technology
-  isActive: boolean
+  children: ReactNode
+  icon: string
+  products: readonly string[]
+  title: string
 }) => {
-  const IconComponent = iconMap[tech.icon]
+  const activeTechnology = useActiveTechnology()
+  const isActive = activeTechnology === title
+  const IconComponent = iconMap[icon]
   if (!IconComponent) return null
 
   return (
     <div
+      data-tech-title={title}
       className={cn(
-        'relative rounded-2xl border border-transparent p-6 transition-all duration-500',
+        'relative rounded-2xl border border-transparent bg-jungle p-6 text-card-foreground transition-all duration-500',
         isActive ?
-          'border-card-foreground/10 bg-card text-card-foreground opacity-100 ring-1 ring-card-foreground/10 backdrop-blur-sm'
+          'border-card-foreground/10 opacity-100 ring-1 ring-card-foreground/10 backdrop-blur-sm'
         : 'opacity-40 hover:opacity-65'
       )}
     >
@@ -72,22 +90,19 @@ export const TechnologyBlock = ({
             : 'text-muted-foreground'
           )}
         >
-          {tech.title}
+          {title}
         </h3>
       </div>
-      <div className='prose prose-invert mt-4 max-w-none'>
-        <p className='leading-relaxed text-card-foreground/90'>
-          {tech.content}
-        </p>
+      <div className='prose prose-invert mt-4 max-w-none [&>p]:leading-relaxed [&>p]:text-card-foreground/90'>
+        {children}
         <div className='mt-4 flex flex-wrap gap-2'>
-          {tech.products.map(product => (
+          {products.map(product => (
             <span
               key={product}
               className={cn(
-                'rounded-full border px-2.5 py-1 text-sm font-medium transition-colors',
-                isActive ?
-                  'border-card-foreground/20 bg-card-foreground/10 text-card-foreground'
-                : 'border-border bg-transparent text-muted-foreground'
+                'rounded-full border px-4 py-2 text-sm font-medium transition-colors',
+                productBadgeClassNames[product] ??
+                  'border-card-foreground/20 bg-jungle-tone text-card-foreground'
               )}
             >
               {product}

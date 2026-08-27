@@ -43,9 +43,9 @@ test('builds one TechDown commerce model with three public sizes', () => {
   assert.deepEqual(
     commerce.variants.map(variant => variant.publicName),
     [
-      'Utekos TechDown™ / Havdyp / Middels / Unisex',
-      'Utekos TechDown™ / Havdyp / Stor / Unisex',
-      'Utekos TechDown™ / Havdyp / Større / Unisex'
+      'Utekos TechDown™ Havdyp - Middels',
+      'Utekos TechDown™ Havdyp - Stor',
+      'Utekos TechDown™ Havdyp - Større'
     ]
   )
   assert.equal(
@@ -56,6 +56,11 @@ test('builds one TechDown commerce model with three public sizes', () => {
     commerce.variants[1]?.imageAlt,
     'Utekos TechDown™ i Havdyp, størrelse Stor, Unisex.'
   )
+  assert.match(
+    commerce.variants[1]?.description ?? '',
+    /fargen Havdyp og størrelse Stor/
+  )
+  assert.equal(commerce.suggestedMinAge, 13)
   assert.doesNotMatch(
     JSON.stringify(
       commerce.variants.map(variant => variant.publicUrl)
@@ -125,7 +130,9 @@ test('builds the landing graph as one ItemPage and one complete ProductGroup', (
   const productGroup = graph.find(
     node => node['@type'] === 'ProductGroup'
   )
-  const itemPage = graph.find(node => node['@type'] === 'ItemPage')
+  const itemPage = graph.find(
+    node => node['@type'] === 'ItemPage'
+  )
 
   assert.equal(graph.length, 3)
   assert.deepEqual(itemPage, {
@@ -170,6 +177,36 @@ test('builds the landing graph as one ItemPage and one complete ProductGroup', (
     productGroup.hasVariant[2]?.offers.availability,
     'https://schema.org/OutOfStock'
   )
+  assert.deepEqual(
+    productGroup.hasVariant.map(
+      variant =>
+        (variant as unknown as Record<string, unknown>).gtin14
+    ),
+    ['07090062980016', '07090062980023', '07090062980030']
+  )
+  assert.deepEqual(
+    productGroup.hasVariant.map(
+      variant => variant.image[0]?.contentUrl
+    ),
+    [
+      'https://utekos.no/gtin/product-images/07090062980016.png',
+      'https://utekos.no/gtin/product-images/07090062980023.png',
+      'https://utekos.no/gtin/product-images/07090062980030.png'
+    ]
+  )
+  assert.deepEqual(
+    productGroup.hasVariant[0]?.offers.shippingDetails,
+    {
+      '@type': 'OfferShippingDetails',
+      'hasShippingService': {
+        '@id': 'https://utekos.no/#shipping-service-no'
+      }
+    }
+  )
+  assert.deepEqual(
+    productGroup.hasVariant[0]?.offers.hasMerchantReturnPolicy,
+    { '@id': 'https://utekos.no/#return-policy-no' }
+  )
   assert.equal(productGroup.aggregateRating?.reviewCount, 16)
   assert.equal(productGroup.aggregateRating?.ratingCount, 16)
   assert.equal(productGroup.aggregateRating?.bestRating, 5)
@@ -183,7 +220,7 @@ test('builds the landing graph as one ItemPage and one complete ProductGroup', (
   const serialized = JSON.stringify(data)
   assert.doesNotMatch(
     serialized,
-    /Mikrofiber|ItemList|CollectionPage|FAQPage|priceValidUntil|ListPrice|shippingDetails|hasMerchantReturnPolicy|gid:\/\/shopify|kasse\.utekos\.no|\/products\//
+    /Mikrofiber|ItemList|CollectionPage|FAQPage|priceValidUntil|ListPrice|gid:\/\/shopify|cdn\.shopify\.com|kasse\.utekos\.no|\/products\//
   )
   assert.doesNotMatch(serialized, /Rå Shopify/)
 })
