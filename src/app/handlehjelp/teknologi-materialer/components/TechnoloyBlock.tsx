@@ -47,9 +47,9 @@ export const TechnologyBlock = ({
   return (
     <div
       className={cn(
-        'relative rounded-2xl border border-transparent p-6 transition-all duration-500',
+        'relative rounded-2xl border border-transparent bg-jungle p-6 transition-all duration-500',
         isActive ?
-          'border-card-foreground/10 bg-card text-card-foreground opacity-100 ring-1 ring-card-foreground/10 backdrop-blur-sm'
+          'border-card-foreground/10 text-card-foreground opacity-100 ring-1 ring-card-foreground/10 backdrop-blur-sm'
         : 'opacity-40 hover:opacity-65'
       )}
     >

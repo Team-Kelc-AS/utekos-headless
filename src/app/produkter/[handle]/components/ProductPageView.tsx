@@ -36,6 +36,7 @@ import {
   COMFYROBE_MOBILE_THIRD_IMAGE
 } from '../utils/gallery-images/comfyrobeProductGalleryImages'
 import { TECHDOWN_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/techdown/productGalleryImages'
+import { MICROFIBER_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/mikrofiber/mikrofiberProductGalleryImages'
 
 type ProductPageViewProps = {
   productData: ProductPurchaseModel
@@ -110,6 +111,8 @@ export function ProductPageView({
       ]
     : productData.handle === 'utekos-techdown' ?
       TECHDOWN_MOBILE_GALLERY_IMAGES
+    : productData.handle === 'utekos-mikrofiber' ?
+      MICROFIBER_MOBILE_GALLERY_IMAGES
     : galleryImages
 
   const isTechDownProduct =

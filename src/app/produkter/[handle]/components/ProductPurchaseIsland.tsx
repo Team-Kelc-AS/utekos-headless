@@ -46,26 +46,41 @@ export function ProductPurchaseIsland({
         aria-labelledby='product-options'
         aria-busy={isVariantNavigationPending}
       >
-        <h2 id='product-options' className='sr-only'>
+        <h2
+          id='product-options'
+          className='font-utekos-text-medium text-lg text-foreground md:sr-only'
+        >
           Produktvalg
         </h2>
-        <div className='mt-5 flex flex-col gap-8'>
-          {sortedProductOptions.map(productOption =>
-            renderOptionComponent({
-              option: productOption,
-              allVariants,
-              selectedVariant,
-              onOptionChange: updateVariant,
-              colorHexMap,
-              productHandle: product.handle,
-              productOptions,
-              isVariantNavigationPending,
-              hasVariantSelectionError
-            })
-          )}
+        <div className='mt-4 flex flex-col gap-5 md:mt-5 md:gap-8'>
+          {sortedProductOptions.map(productOption => (
+            <section
+              key={productOption.name}
+              aria-labelledby={`product-option-${productOption.name}`}
+              className='space-y-2 md:space-y-0'
+            >
+              <h3
+                id={`product-option-${productOption.name}`}
+                className='font-utekos-text-medium text-sm text-foreground/72 md:sr-only'
+              >
+                {productOption.name}
+              </h3>
+              {renderOptionComponent({
+                option: productOption,
+                allVariants,
+                selectedVariant,
+                onOptionChange: updateVariant,
+                colorHexMap,
+                productHandle: product.handle,
+                productOptions,
+                isVariantNavigationPending,
+                hasVariantSelectionError
+              })}
+            </section>
+          ))}
         </div>
         <div
-          className='mt-3 min-h-5 text-sm text-foreground/72'
+          className='mt-3 min-h-5 text-sm text-foreground/72 max-md:empty:hidden'
           role={hasVariantSelectionError ? 'alert' : 'status'}
           aria-live='polite'
         >
@@ -76,7 +91,7 @@ export function ProductPurchaseIsland({
           : null}
         </div>
         <TrustSignals />
-        <div className='mt-8 flex flex-col gap-4'>
+        <div className='mt-5 flex flex-col gap-4 [&_form]:py-0 md:mt-8 md:[&_form]:py-6'>
           <Activity>
             <AddToCart
               product={product}

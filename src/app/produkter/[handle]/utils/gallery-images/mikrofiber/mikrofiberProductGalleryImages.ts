@@ -1,5 +1,43 @@
 import { productImage } from '@/app/produkter/[handle]/utils/pruductImage'
 import type { Image } from 'types/media'
+import mikrofiberMobile1 from '@/assets/images/mikrofiber/Mikrofiber-1000x1500-1.webp'
+import mikrofiberMobile2 from '@/assets/images/mikrofiber/Mikrofiber-1000x1500-12png.jpg'
+import mikrofiberMobile3 from '@/assets/images/mikrofiber/Mikrofiber-1000x1500-3.jpg'
+import mikrofiberMobile4 from '@/assets/images/mikrofiber/Mikrofiber-1000x1500-4.jpg'
+
+const MICROFIBER_MOBILE_IMAGE_WIDTH = 1000
+const MICROFIBER_MOBILE_IMAGE_HEIGHT = 1500
+
+export const MICROFIBER_MOBILE_GALLERY_IMAGES: Image[] = [
+  productImage(
+    'utekos-mikrofiber-mobile-1',
+    mikrofiberMobile1,
+    'To kvinner i Utekos Mikrofiber sitter sammen på en stein i skogen.',
+    MICROFIBER_MOBILE_IMAGE_WIDTH,
+    MICROFIBER_MOBILE_IMAGE_HEIGHT
+  ),
+  productImage(
+    'utekos-mikrofiber-mobile-2',
+    mikrofiberMobile2,
+    'Fjellblå Utekos Mikrofiber i full lengde forfra.',
+    MICROFIBER_MOBILE_IMAGE_WIDTH,
+    MICROFIBER_MOBILE_IMAGE_HEIGHT
+  ),
+  productImage(
+    'utekos-mikrofiber-mobile-3',
+    mikrofiberMobile3,
+    'Fjellblå Utekos Mikrofiber i full lengde bakfra.',
+    MICROFIBER_MOBILE_IMAGE_WIDTH,
+    MICROFIBER_MOBILE_IMAGE_HEIGHT
+  ),
+  productImage(
+    'utekos-mikrofiber-mobile-4',
+    mikrofiberMobile4,
+    'Fjellblå Utekos Mikrofiber i parkaslengde forfra.',
+    MICROFIBER_MOBILE_IMAGE_WIDTH,
+    MICROFIBER_MOBILE_IMAGE_HEIGHT
+  )
+]
 
 export const MICROFIBER_PRODUCT_GALLERY_IMAGES: Image[] = [
   productImage(

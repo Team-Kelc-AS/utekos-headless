@@ -5,7 +5,7 @@ import TRUSTBADGE from '@/assets/images/partners/TrustBadge.svg'
 export function TrustSignals() {
   return (
     <div
-      className='mt-6 overflow-hidden rounded-lg'
+      className='mt-5 overflow-hidden rounded-2xl md:mt-6 md:rounded-lg'
       role='complementary'
       aria-label='Trygghetsinformasjon'
     >

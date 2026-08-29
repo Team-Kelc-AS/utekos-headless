@@ -215,10 +215,10 @@ export function SizeSelector({
       </div>
 
       {!handlesToHideGuide.includes(productHandle) && (
-        <div className='dark:border-dark-card-foreground/24 flex w-full flex-col rounded-2xl border border-card-foreground/24 bg-card p-4 text-left transition-colors'>
+        <div className='dark:border-dark-card-foreground/24 flex w-full flex-col rounded-2xl border border-card-foreground/24 bg-card px-4 py-2 text-left transition-colors md:p-4'>
           <button
             onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-            className='dark:focus-visible:ring-dark-card-foreground/45 flex w-full cursor-pointer justify-between p-0 font-utekos-text-medium text-card-foreground transition-colors focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none'
+            className='dark:focus-visible:ring-dark-card-foreground/45 flex min-h-11 w-full cursor-pointer items-center justify-between p-0 font-utekos-text-medium text-card-foreground transition-colors focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none md:min-h-0'
             aria-expanded={isDetailsOpen}
             aria-controls='size-details'
           >

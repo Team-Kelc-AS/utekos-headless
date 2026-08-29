@@ -10,7 +10,7 @@ import { ProductSpecPageHeader } from './components/ProductSpecPageHeader'
 import { NavigationCTA } from './components/NavigationCTA'
 
 const modeCardClassName =
-  'group relative overflow-hidden rounded-3xl border border-card-foreground/10 bg-card p-8 text-card-foreground ring-1 ring-card-foreground/12 backdrop-blur-xl transition-all duration-500 hover:border-foreground/20 hover:shadow-2xl'
+  'group relative overflow-hidden rounded-3xl border border-card-foreground/10 bg-jungle p-8 text-card-foreground ring-1 ring-card-foreground/12 backdrop-blur-xl transition-all duration-500 hover:border-foreground/20 hover:shadow-2xl'
 
 const modeIconClassName =
   'mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-card-foreground/10 text-card-foreground ring-1 ring-card-foreground/10'
