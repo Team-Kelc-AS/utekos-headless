@@ -10,9 +10,9 @@ export function SubMenuItem({ item }: { item: MenuItem }) {
   return (
     <Link
       href={normalizeShopifyUrl(item.url) as Route}
-      className='group /88 relative flex w-full items-center justify-between rounded-xl border border-transparent bg-foreground/[0.035] px-3.5 py-3 text-foreground/88 transition-[background,border-color] hover:border-foreground/10 hover:bg-foreground/6 focus-visible:ring-2 focus-visible:ring-foreground/35 active:scale-[0.99]'
+      className='group /88 relative flex w-full items-center justify-between rounded-xl border border-transparent bg-foreground/[0.035] px-3.5 py-3 text-foreground/88 no-underline transition-[background,border-color] hover:border-foreground/10 hover:bg-foreground/6 hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground/35 active:scale-[0.99]'
     >
-      <div className='from-very-peri/74 via-ancient-water/50 absolute top-1/2 left-2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-linear-to-b to-transparent opacity-70' />
+      <div className='absolute top-1/2 left-2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-linear-to-b from-very-peri/74 via-ancient-water/50 to-transparent opacity-70' />
 
       <div className='flex min-w-0 items-center gap-3 pl-2'>
         <span className='truncate text-[14px] leading-tight font-medium tracking-[-0.01em]'>

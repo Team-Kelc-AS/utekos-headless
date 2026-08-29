@@ -26,7 +26,7 @@ const principles = [
 
 export function AboutPrinciples() {
   return (
-    <article className='w-full bg-card py-20 text-card-foreground sm:py-28'>
+    <article className='w-full bg-night py-20 text-foreground sm:py-28'>
       <div className='mx-auto flex w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8'>
         <div className='mb-12 flex max-w-3xl flex-col items-start pt-6 pb-6 md:pt-8 lg:mb-16 lg:pt-10'>
           <AboutBadge className='mb-6'>Vårt DNA</AboutBadge>
@@ -43,26 +43,24 @@ export function AboutPrinciples() {
           {principles.map(item => (
             <article
               key={item.title}
-              className='flex min-w-0 shrink-0 flex-col bg-muted/40 p-2'
+              className='flex h-full min-w-0 shrink-0 flex-col rounded-xl border border-border bg-jungle p-6 text-foreground shadow-sm sm:p-8 md:p-10'
             >
-              <div className='flex h-full flex-col rounded-xl border border-border bg-background p-6 text-foreground shadow-sm sm:p-8 md:p-10'>
-                <div className='mb-6 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-5'>
-                  <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground'>
-                    <item.icon
-                      aria-hidden='true'
-                      className='size-6'
-                      strokeWidth={1.8}
-                    />
-                  </div>
-                  <h3 className='text-left font-sans font-utekos-text-medium text-xl leading-tight sm:text-2xl'>
-                    {item.title}
-                  </h3>
+              <div className='mb-6 flex flex-row items-center gap-4 sm:gap-5'>
+                <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground'>
+                  <item.icon
+                    aria-hidden='true'
+                    className='size-6'
+                    strokeWidth={1.8}
+                  />
                 </div>
-
-                <p className='mt-auto max-w-prose text-left font-utekos-text text-base leading-relaxed text-foreground/90'>
-                  {item.text}
-                </p>
+                <h3 className='min-w-0 text-left font-sans font-utekos-text-medium text-xl leading-tight sm:text-2xl'>
+                  {item.title}
+                </h3>
               </div>
+
+              <p className='mt-auto max-w-prose text-left font-utekos-text text-base leading-relaxed text-foreground/90'>
+                {item.text}
+              </p>
             </article>
           ))}
         </div>

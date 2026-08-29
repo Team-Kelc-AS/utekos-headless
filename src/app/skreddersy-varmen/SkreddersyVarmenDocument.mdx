@@ -1,0 +1,88 @@
+import { Suspense } from 'react'
+import {
+  HeroRevealEmpathy,
+  HeroTheatre
+} from './components/HeroEmpathy'
+import { LandingCommerceUnavailable } from './components/LandingCommerceUnavailable'
+import { LandingFaq } from './components/LandingFaq'
+import { LandingPurchaseFallback } from './components/LandingPurchaseFallback'
+import { LandingPurchaseSection } from './components/LandingPurchaseSection'
+import { MetaWebsiteHighlights } from './components/MetaWebsiteHighlights'
+import { PreFooterNavigation } from './components/PreFooterNavigation'
+import { SectionSocialProof } from './components/SectionSocialProof'
+import { SectionThreeInOne } from './components/SectionThreeInOne'
+import { SkreddersyVarmenKlarnaStrip } from './components/SkreddersyVarmenKlarnaStrip'
+import { StickyMobileAction } from './components/StickyMobileAction'
+import { TechDownSlider } from './components/TechDownSlider'
+import { PromotionImpression } from '@/components/analytics/PromotionImpression'
+import { SKREDDERSY_VARMEN_PROMOTIONS } from './data/skreddersyVarmenPageModel'
+import styles from './components/SkreddersyVarmenTheatre.module.css'
+
+<div className={styles.pageRoot} data-skreddersy-route>
+  <MetaWebsiteHighlights />
+
+<StickyMobileAction {...props.stickyActionProps} />
+
+<HeroTheatre
+  commerce={props.commerce}
+  content={props.content.hero}
+/>
+<HeroRevealEmpathy content={props.content.empathy}>
+  <PromotionImpression
+    promotionId={SKREDDERSY_VARMEN_PROMOTIONS.threeInOne}
+    promotionName='Skreddersy varmen'
+    creativeName='Three in one'
+    creativeSlot='three_in_one'
+    className='w-full'
+  >
+    <SectionThreeInOne content={props.content.threeInOne} />
+  </PromotionImpression>
+
+  <SkreddersyVarmenKlarnaStrip />
+</HeroRevealEmpathy>
+
+<PromotionImpression
+  promotionId={SKREDDERSY_VARMEN_PROMOTIONS.techDown}
+  promotionName='Skreddersy varmen'
+  creativeName='TechDown slider'
+  creativeSlot='techdown_slider'
+  className='w-full'
+>
+  <TechDownSlider />
+</PromotionImpression>
+
+<div
+  id='purchase-section'
+  className='w-full scroll-mt-17.5 xl:scroll-mt-21.5'
+>
+  <PromotionImpression
+    promotionId={SKREDDERSY_VARMEN_PROMOTIONS.purchase}
+    promotionName='Skreddersy varmen'
+    creativeName='Purchase'
+    creativeSlot='purchase'
+    className='w-full'
+  >
+    {props.commerce ?
+      <Suspense fallback={<LandingPurchaseFallback />}>
+        <LandingPurchaseSection
+          commerce={props.commerce}
+          searchParams={props.searchParams}
+        />
+      </Suspense>
+    : <LandingCommerceUnavailable />}
+  </PromotionImpression>
+</div>
+
+<PromotionImpression
+  promotionId={SKREDDERSY_VARMEN_PROMOTIONS.socialProof}
+  promotionName='Skreddersy varmen'
+  creativeName='Social proof'
+  creativeSlot='social_proof'
+  className='w-full'
+>
+  <SectionSocialProof />
+</PromotionImpression>
+
+  <LandingFaq />
+  <PreFooterNavigation />
+</div>

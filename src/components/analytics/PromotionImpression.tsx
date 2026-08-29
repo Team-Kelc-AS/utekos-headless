@@ -4,12 +4,14 @@ import type { ReactNode } from 'react'
 import { useEffect, useRef } from 'react'
 import { reportCanonicalViewPromotion } from '@/lib/analytics/viewPromotionReporter'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
+import { isPromotionIntersectionVisible } from './promotionIntersectionVisibility'
 
 type PromotionImpressionProps = {
   children: ReactNode
   className?: string
   creativeName: string
   creativeSlot: string
+  minimumVisibleRatio?: number
   promotionId: string
   promotionName: string
 }
@@ -22,6 +24,7 @@ export function PromotionImpression({
   className,
   creativeName,
   creativeSlot,
+  minimumVisibleRatio = 0,
   promotionId,
   promotionName
 }: PromotionImpressionProps) {
@@ -45,7 +48,13 @@ export function PromotionImpression({
     const observer = new IntersectionObserver(
       entries => {
         const entry = entries[0]
-        if (!entry?.isIntersecting) {
+        if (
+          !entry ||
+          !isPromotionIntersectionVisible(
+            entry,
+            minimumVisibleRatio
+          )
+        ) {
           clearDwell()
           return
         }
@@ -76,7 +85,10 @@ export function PromotionImpression({
           })
         }, DWELL_MS)
       },
-      { rootMargin: VIEWPORT_EDGE_INSET, threshold: 0 }
+      {
+        rootMargin: VIEWPORT_EDGE_INSET,
+        threshold: minimumVisibleRatio
+      }
     )
 
     observer.observe(node)
@@ -85,7 +97,13 @@ export function PromotionImpression({
       clearDwell()
       observer.disconnect()
     }
-  }, [creativeName, creativeSlot, promotionId, promotionName])
+  }, [
+    creativeName,
+    creativeSlot,
+    minimumVisibleRatio,
+    promotionId,
+    promotionName
+  ])
 
   return (
     <div ref={rootRef} className={className}>

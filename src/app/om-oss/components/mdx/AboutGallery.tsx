@@ -44,7 +44,7 @@ const galleryImages = [
 
 export function AboutGallery() {
   return (
-    <article className='bg-card px-8 py-20 text-card-foreground sm:py-28 md:px-12 lg:px-16'>
+    <article className='bg-jungle px-8 py-20 text-foreground sm:py-28 md:px-12 lg:px-16'>
       <div className='max-w-360 px-4 text-left sm:px-6 lg:px-8'>
         <div className='mb-10 max-w-3xl text-left'>
           <AboutBadge className='mb-6'>

@@ -87,12 +87,12 @@ export function PromiseSection() {
               <CarouselPrevious
                 forceVisible
                 aria-label='Forrige bilde'
-                className='dark:border-dark-card-foreground/35 -foreground -foreground dark:hover:text-dark-card dark:focus-visible:outline-dark-card-foreground absolute top-1/2 left-3 z-20 size-10 -translate-y-1/2 border-card-foreground/35 bg-card-foreground text-card shadow-lg hover:bg-card-foreground hover:text-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
+                className='dark:border-dark-card-foreground/35 -foreground -foreground dark:hover:text-dark-card dark:focus-visible:outline-dark-card-foreground absolute top-1/2 -left-3 z-20 size-10 -translate-y-1/2 border-card-foreground/35 bg-card-foreground text-card shadow-lg hover:bg-card-foreground hover:text-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
               />
               <CarouselNext
                 forceVisible
                 aria-label='Neste bilde'
-                className='dark:border-dark-card-foreground/35 -foreground -foreground dark:hover:text-dark-card dark:focus-visible:outline-dark-card-foreground absolute top-1/2 right-3 z-20 size-10 -translate-y-1/2 border-card-foreground/35 bg-card-foreground text-card shadow-lg hover:bg-card-foreground hover:text-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
+                className='dark:border-dark-card-foreground/35 -foreground -foreground dark:hover:text-dark-card dark:focus-visible:outline-dark-card-foreground absolute top-1/2 -right-3 z-20 size-10 -translate-y-1/2 border-card-foreground/35 bg-card-foreground text-card shadow-lg hover:bg-card-foreground hover:text-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
               />
             </Carousel>
           </div>

@@ -7,6 +7,9 @@ export type ShopifyStorefrontEnvironment = Readonly<{
   VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN?: string
   STORE_DOMAIN?: string
   STOREFRONT_API_ACCESS_TOKEN?: string
+  STOREFRONT_API_PRIVATE_ACCESS_TOKEN?: string
+  PRIVATE_STOREFRONT_API_TOKEN?: string
+  STOREFRONT_PRIVATE_ACCESS_TOKEN?: string
 }>
 
 export const shopifyConfig = {

@@ -49,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/inspirasjon/batliv',
     '/inspirasjon/bobil',
     '/inspirasjon/grillkvelden',
-    '/inspirasjon/hytteliv',
+    '/inspirasjon/hytte',
     '/inspirasjon/terrassen'
   ]
   const inspirationPages: MetadataRoute.Sitemap =

@@ -5,13 +5,12 @@ import { variantSwatchButtonClassName } from '@/components/ProductCard/ProductCo
 import { InlineText } from '@/components/typography/TypographyInlineText'
 import { cn } from '@/lib/utils/className'
 import type { ProductVariantSelectorProps } from '@types'
-import { Fragment } from 'react'
 
 type ProductVariantSelectorViewProps =
   ProductVariantSelectorProps & { compactMobile?: boolean }
 
 const sizeOptionClassName =
-  'btn-variant-option inline-flex min-h-9 w-18 shrink-0 items-center justify-center rounded-md border px-2 py-1.5 text-sm leading-none font-medium whitespace-nowrap motion-safe:transition-colors motion-safe:duration-200 hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-card-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-card focus-visible:outline-none'
+  'btn-variant-option inline-flex min-h-9 w-18 shrink-0 touch-manipulation items-center justify-center rounded-md border px-2 py-1.5 text-sm leading-none font-medium whitespace-nowrap motion-safe:transition-colors motion-safe:duration-200 hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-card-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-card focus-visible:outline-none'
 
 const selectedSizeOptionClassName =
   'border-card-foreground bg-transparent text-card-foreground'
@@ -46,7 +45,14 @@ export function ProductVariantSelector({
             : option.optionValues
 
           return (
-            <Fragment key={option.name}>
+            <div
+              key={option.name}
+              className={cn(
+                compactMobile && isSizeOption ?
+                  'flex flex-col gap-0 md:contents'
+                : 'contents'
+              )}
+            >
               {!isSizeOption ?
                 <InlineText
                   className={cn(
@@ -62,7 +68,9 @@ export function ProductVariantSelector({
                 role='group'
                 aria-label={option.name}
                 className={cn(
-                  'flex flex-wrap items-center gap-2',
+                  isSizeOption ?
+                    'grid w-full grid-cols-3 items-center gap-2'
+                  : 'flex flex-wrap items-center gap-2',
                   compactMobile && 'gap-1 md:gap-2'
                 )}
               >
@@ -121,8 +129,9 @@ export function ProductVariantSelector({
                         }}
                         className={cn(
                           sizeOptionClassName,
+                          isSizeOption && 'w-full min-w-0',
                           compactMobile &&
-                            'min-h-8 py-1 text-[0.68rem] md:text-sm xl:min-h-9 xl:py-1.5',
+                            'min-h-11 py-1 text-[0.68rem] md:min-h-10 md:text-sm xl:min-h-9 xl:py-1.5',
                           isSelected ?
                             selectedSizeOptionClassName
                           : unselectedSizeOptionClassName
@@ -140,11 +149,11 @@ export function ProductVariantSelector({
                   className={cn(
                     'dark:focus-visible:outline-dark-card-foreground text-card-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground',
                     compactMobile &&
-                      '!text-[0.68rem] md:!text-sm'
+                      '!text-[0.68rem] max-md:min-h-11 md:!text-sm'
                   )}
                 />
               : null}
-            </Fragment>
+            </div>
           )
         })}
     </>

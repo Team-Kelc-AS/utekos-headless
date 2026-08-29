@@ -1,6 +1,6 @@
 /** Shared height lock for featured-product ATC + Klarna Express. */
 export const featuredCheckoutButtonShellClassName =
-  'flex h-16 min-h-16 max-h-16 w-full items-stretch md:h-14 md:min-h-14 md:max-h-14'
+  'flex h-14 min-h-14 max-h-14 w-full items-stretch md:h-16 md:min-h-16 md:max-h-16'
 
 export const featuredCheckoutButtonFillClassName =
-  'h-full min-h-full max-h-full w-full'
+  'h-14! min-h-14! max-h-14! w-full md:h-16! md:min-h-16! md:max-h-16!'

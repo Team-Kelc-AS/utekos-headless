@@ -12,8 +12,10 @@ import {
 import { persistAndReportAddToWishlist } from '@/lib/analytics/persistAndReportAddToWishlist'
 import { hasWishlistVariant } from '@/lib/wishlist/wishlistStore'
 import { cn } from '@/lib/utils/className'
-import { Heart, ShieldCheck } from 'lucide-react'
+import UtekosLogo from '@public/icon.png'
+import { Heart } from 'lucide-react'
 import type { Route } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -139,58 +141,69 @@ export function WishlistButton({
         open={syncDialogOpen}
         onOpenChange={setSyncDialogOpen}
       >
-        <DialogContent className='overflow-hidden p-0 sm:max-w-lg'>
-          <div className='bg-card px-6 pt-7 pb-6 text-card-foreground sm:px-8'>
-            <div className='mb-5 flex size-14 items-center justify-center rounded-2xl bg-cyan-500 text-[#172744]'>
-              <Heart
-                className='size-7 fill-current stroke-[2.25]'
-                aria-hidden='true'
-              />
+        <DialogContent className='overflow-hidden border border-foreground/18 bg-night p-0 text-foreground shadow-[0_32px_90px_-42px_color-mix(in_oklch,var(--background)_92%,black)] ring-1 ring-foreground/8 sm:max-w-lg [&_[data-slot=dialog-close]]:text-foreground [&_[data-slot=dialog-close]]:hover:bg-foreground/10 [&_[data-slot=dialog-close]]:hover:text-foreground'>
+          <div className='relative isolate overflow-hidden bg-jungle px-6 pt-7 pb-6 text-foreground sm:px-8'>
+            <div
+              aria-hidden='true'
+              className='pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_14%_0%,color-mix(in_oklch,var(--dark-teal)_88%,transparent),transparent_46%)]'
+            />
+            <div className='mb-6 flex items-center gap-3'>
+              <div className='relative size-16 shrink-0 rounded-full border border-foreground/18 bg-night p-1 shadow-[0_18px_42px_-28px_color-mix(in_oklch,var(--background)_90%,black)] ring-1 ring-foreground/8'>
+                <Image
+                  src={UtekosLogo}
+                  alt=''
+                  width={64}
+                  height={64}
+                  className='size-full rounded-full object-cover'
+                />
+                <span className='absolute -right-1 -bottom-1 flex size-7 items-center justify-center rounded-full border-2 border-jungle bg-primary text-primary-foreground'>
+                  <Heart
+                    className='size-3.5 fill-current stroke-[2.25]'
+                    aria-hidden='true'
+                  />
+                </span>
+              </div>
+              <div className='min-w-0'>
+                <p className='font-utekos-text-medium text-sm leading-tight text-foreground'>
+                  Utekos ønskeliste
+                </p>
+                <p className='mt-1 font-utekos-text text-xs leading-relaxed text-foreground/68'>
+                  Favoritten er tatt vare på
+                </p>
+              </div>
             </div>
             <DialogHeader className='pr-8'>
-              <DialogTitle className='font-utekos-text-medium text-2xl leading-tight text-card-foreground'>
-                Lagret lokalt — synk med konto?
+              <DialogTitle className='font-utekos-text-medium text-2xl leading-tight text-balance text-foreground'>
+                Du slipper å lete på nytt
               </DialogTitle>
-              <DialogDescription className='text-base leading-7 text-card-foreground/80 dark:text-card-foreground/80'>
-                Varene er lagret i denne nettleseren. Logg inn
-                hvis du vil synke ønskelisten med kontoen din
-                senere.
+              <DialogDescription className='font-utekos-text text-base leading-7 text-foreground/78 dark:text-foreground/78'>
+                Favoritten ligger klar neste gang du besøker oss
+                på denne enheten. Vil du gå til kontoen din, kan
+                du logge inn eller opprette en konto.
               </DialogDescription>
             </DialogHeader>
           </div>
 
-          <div className='space-y-5 bg-popover px-6 pt-1 pb-7 text-popover-foreground sm:px-8'>
-            <div className='dark:border-dark-border dark:bg-dark-muted/30 flex items-start gap-3 rounded-lg border border-border bg-muted/30 p-4'>
-              <ShieldCheck
-                className='mt-0.5 size-5 shrink-0 text-sidebar-primary'
-                aria-hidden='true'
-              />
-              <p className='text-sm leading-6 text-muted-foreground dark:text-popover-foreground'>
-                Innlogging håndteres sikkert av Shopify. Åpning
-                av innlogging sender ikke et nytt
-                analytics-event.
-              </p>
-            </div>
-
+          <div className='border-t border-foreground/12 bg-night px-6 pt-6 pb-7 text-foreground sm:px-8'>
             <DialogFooter className='grid gap-3 sm:grid-cols-2'>
               <Button
                 asChild
-                variant='commerce-primary'
+                variant='default'
                 size='lg'
-                className='min-h-12 rounded-full bg-cyan-500 px-6 text-base text-[#172744] shadow-sm hover:bg-cyan-400 hover:text-[#172744] dark:bg-cyan-500 dark:text-[#172744] dark:hover:bg-cyan-400 dark:hover:text-[#172744]'
+                className='hover:bg-primary-hover min-h-12 rounded-full bg-primary px-6 font-utekos-text-medium text-base text-primary-foreground shadow-[0_18px_40px_-26px_color-mix(in_oklch,var(--primary)_78%,transparent)] hover:text-primary-foreground focus-visible:ring-primary/60 focus-visible:ring-offset-night'
               >
                 <Link
                   href={loginHref}
                   data-track='WishlistLoginClick'
                 >
-                  Logg inn
+                  Gå til innlogging
                 </Link>
               </Button>
               <Button
                 asChild
                 variant='outline'
                 size='lg'
-                className='min-h-12 rounded-full px-6 text-base'
+                className='min-h-12 rounded-full border-foreground/24 bg-transparent! px-6 font-utekos-text-medium text-base text-foreground hover:bg-foreground/8 hover:text-foreground focus-visible:ring-foreground/45 focus-visible:ring-offset-night dark:border-foreground/24 dark:bg-transparent! dark:text-foreground dark:hover:bg-foreground/8 dark:hover:text-foreground'
               >
                 <Link
                   href={createAccountHref}

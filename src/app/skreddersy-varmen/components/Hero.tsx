@@ -12,11 +12,15 @@ import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/Klar
 import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { techDownReviewSummary } from '../data/reviews'
 import type { ProductCommerceViewModel } from '@/lib/products/commerce'
+import type { SkreddersyVarmenPageContent } from '../data/skreddersyVarmenPageModel'
+import styles from './SkreddersyVarmenTheatre.module.css'
 
 export function Hero({
-  commerce
+  commerce,
+  content
 }: {
   commerce: ProductCommerceViewModel | null
+  content: SkreddersyVarmenPageContent['hero']
 }) {
   const { props: desktopImage } = getImageProps({
     src: CinemaOne,
@@ -39,9 +43,11 @@ export function Hero({
   return (
     <section
       aria-labelledby='hero-headline'
-      className='dark:bg-dark-background relative min-h-[calc(100svh-70px)] w-full overflow-hidden bg-background font-sans text-foreground xl:min-h-[calc(100svh-86px)]'
+      className={`${styles.heroSection} dark:bg-dark-background relative min-h-[calc(100svh-70px)] w-full overflow-hidden bg-background font-sans text-foreground xl:min-h-[calc(100svh-86px)]`}
     >
-      <picture className='absolute inset-0 z-0 block'>
+      <picture
+        className={`${styles.heroMedia} absolute inset-0 z-0 block`}
+      >
         <source
           media='(min-width: 768px)'
           srcSet={desktopImage.srcSet}
@@ -67,7 +73,9 @@ export function Hero({
         aria-hidden
         className='dark:from-dark-background/80 dark:via-dark-background/20 absolute inset-y-0 left-0 z-1 hidden w-1/2 bg-linear-to-r from-background/80 via-background/20 to-transparent md:block'
       />
-      <div className='relative z-10 mx-auto flex min-h-[calc(100svh-70px)] w-full max-w-350 flex-col items-start justify-center px-6 pt-20 pb-16 md:px-12 md:pt-24 lg:px-20 xl:min-h-[calc(100svh-86px)]'>
+      <div
+        className={`${styles.heroContent} relative z-10 mx-auto flex min-h-[calc(100svh-70px)] w-full max-w-350 flex-col items-start justify-center px-6 pt-20 pb-16 md:px-12 md:pt-24 lg:px-20 xl:min-h-[calc(100svh-86px)]`}
+      >
         <div className='max-w-2xl'>
           <div
             className='mb-5 aspect-1281/312 h-11 text-foreground drop-shadow-lg sm:h-14 md:mb-6 md:h-16 lg:h-20'
@@ -80,18 +88,16 @@ export function Hero({
             className='font-google-sans text-left font-sans text-4xl leading-[0.92] font-bold tracking-[-0.01em] drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl'
           >
             <span className='block whitespace-nowrap text-foreground'>
-              Skreddersy varmen.
+              {content.headline}
             </span>
             <span className='dark:text-dark-primary font-google-sans mt-3 block max-w-4xl text-left font-sans text-3xl font-bold text-primary italic sm:text-4xl md:text-5xl lg:text-6xl'>
-              Forleng kvelden.
+              {content.accent}
             </span>
           </h1>
 
           <p className='leading-text-paragraph mt-7 max-w-xl font-sans text-base tracking-tight text-foreground/90 drop-shadow-md md:text-lg lg:text-xl'>
-            <span className='block'>Kompromissløs komfort</span>
-            <span className='block'>
-              og overlegen allsidighet.
-            </span>
+            <span className='block'>{content.leadFirst}</span>
+            <span className='block'>{content.leadSecond}</span>
           </p>
 
           <HeroActions />

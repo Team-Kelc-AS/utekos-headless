@@ -55,7 +55,9 @@ function NetworkOrbitSvg({
   pathVariants: Variants
   pillVariants: Variants
 }) {
-  const benefitNodes = nodes.filter(node => node.type !== 'center')
+  const benefitNodes = nodes.filter(
+    node => node.type !== 'center'
+  )
 
   return (
     <svg
@@ -63,18 +65,29 @@ function NetworkOrbitSvg({
       height='100%'
       viewBox='0 0 520 520'
       aria-hidden='true'
-      className={cn('absolute inset-0 overflow-visible', className)}
+      className={cn(
+        'absolute inset-0 overflow-visible',
+        className
+      )}
     >
       {edges.map((edge, index) => {
-        const sourceNode = nodes.find(node => node.id === edge.sourceId)
-        const targetNode = nodes.find(node => node.id === edge.targetId)
+        const sourceNode = nodes.find(
+          node => node.id === edge.sourceId
+        )
+        const targetNode = nodes.find(
+          node => node.id === edge.targetId
+        )
 
         if (!sourceNode || !targetNode) return null
 
-        const sourceX = sourceNode.position.x + sourceNode.width / 2
-        const sourceY = sourceNode.position.y + sourceNode.height / 2
-        const targetX = targetNode.position.x + targetNode.width / 2
-        const targetY = targetNode.position.y + targetNode.height / 2
+        const sourceX =
+          sourceNode.position.x + sourceNode.width / 2
+        const sourceY =
+          sourceNode.position.y + sourceNode.height / 2
+        const targetX =
+          targetNode.position.x + targetNode.width / 2
+        const targetY =
+          targetNode.position.y + targetNode.height / 2
 
         const midX = (sourceX + targetX) / 2
         const midY = (sourceY + targetY) / 2
@@ -105,20 +118,20 @@ function NetworkOrbitSvg({
           height={node.height}
         >
           <motion.div
-            className='flex size-full items-center justify-center rounded-full border border-border bg-network-pill px-3 text-card-foreground shadow-[0_18px_40px_-28px_color-mix(in_oklab,var(--card)_55%,transparent)] ring-1 ring-card-foreground/10'
+            className='flex size-full items-center justify-center rounded-full border border-foreground/15 bg-dark-teal px-3 text-foreground shadow-[0_18px_40px_-28px_color-mix(in_oklab,var(--jungle)_75%,transparent)] ring-1 ring-foreground/10'
             custom={index}
             variants={pillVariants}
           >
             {node.data ?
               <div className='flex min-w-0 items-center justify-center gap-2'>
-                <span className='flex size-7 shrink-0 items-center justify-center rounded-full border border-card-foreground/35 bg-alt-pill text-card-foreground'>
+                <span className='flex size-7 shrink-0 items-center justify-center rounded-full border border-foreground/25 bg-jungle text-foreground'>
                   <IconRenderer
                     name={node.data.icon as IconName}
                     className='size-3.5'
                   />
                 </span>
 
-                <InlineText className='font-utekos-text-medium text-xs leading-tight tracking-normal text-green-noir sm:text-sm'>
+                <InlineText className='font-utekos-text-medium text-xs leading-tight tracking-normal text-foreground sm:text-sm'>
                   {node.data.text}
                 </InlineText>
               </div>
@@ -140,18 +153,11 @@ export function CustomerNetworkView({
 
   const containerVariants: Variants = {
     hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.08
-      }
-    }
+    visible: { transition: { staggerChildren: 0.08 } }
   }
 
   const logoVariants: Variants = {
-    hidden: {
-      opacity: 0,
-      scale: shouldReduceMotion ? 1 : 0.86
-    },
+    hidden: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.86 },
     visible: {
       opacity: 1,
       scale: 1,
@@ -175,10 +181,7 @@ export function CustomerNetworkView({
   }
 
   const pillVariants: Variants = {
-    hidden: {
-      opacity: 0,
-      scale: shouldReduceMotion ? 1 : 0.92
-    },
+    hidden: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.92 },
     visible: (index: number) => ({
       opacity: 1,
       scale: 1,

@@ -1,6 +1,6 @@
 import type { Image } from 'types/media'
 import { productImage } from '@/app/produkter/[handle]/utils/pruductImage'
-import techDownMobileColorBg1 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/Product-Page-Img-Color-Bg-1000x5000-1.webp'
+import techDownMobileColorBg1 from '@/assets/images/techdown/ProduktPictureTechDown-1.webp'
 import techDownMobileColorBg2 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/2.webp'
 import techDownMobileColorBg3 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/3.webp'
 import techDownMobileColorBg4 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/4.webp'

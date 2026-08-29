@@ -29,20 +29,13 @@ const messageMotion = {
 
 const chatBubbleClassName = 'max-w-xs sm:max-w-sm'
 
-/*
-  One surface per person, like a real chat thread.
-  Hanne (incoming): accent — ink on cloud 12.55:1 (light),
-  soft on tone-30 ~10:1 (dark). WCAG 1.4.3 AA.
-*/
+/* Hanne: calm Utekos teal with a precise light-teal edge. */
 const incomingBubbleContentClassName =
-  '!rounded-2xl !rounded-tl-md !border !border-[color-mix(in_oklch,var(--accent-foreground)_12%,transparent)] !bg-accent dark:!bg-dark-accent !p-3 !text-base !leading-snug !text-accent-foreground dark:!text-dark-accent-foreground shadow-lg shadow-background/15 dark:shadow-dark-background/15'
+  '!rounded-2xl !rounded-tl-md !border !border-light-teal/24 !bg-dark-teal !p-3 !text-base !leading-snug !text-foreground shadow-[0_24px_60px_-42px_color-mix(in_oklch,var(--jungle)_92%,transparent)] ring-1 ring-inset ring-foreground/6'
 
-/*
-  Thomas (outgoing): primary — white on havdyp 14.28:1 (light),
-  ink on teal-70 7.03:1 (dark). WCAG 1.4.3 AA.
-*/
+/* Thomas: the established Facebook blue, anchored by the same card treatment. */
 const outgoingBubbleContentClassName =
-  '!rounded-2xl !rounded-tr-md !border !border-[color-mix(in_oklch,var(--primary-foreground)_28%,transparent)] !bg-primary dark:!bg-dark-primary !p-3 !text-base !leading-snug !text-primary-foreground dark:!text-dark-primary-foreground shadow-lg shadow-background/15 dark:shadow-dark-background/15'
+  '!rounded-2xl !rounded-tr-md !border !border-foreground/20 !bg-[oklch(0.5891_0.2029_257.86)] !p-3 !text-base !leading-snug !text-foreground shadow-[0_24px_60px_-42px_color-mix(in_oklch,var(--jungle)_92%,transparent)] ring-1 ring-inset ring-foreground/12'
 
 export function AnimatedChat() {
   return (
@@ -75,12 +68,7 @@ export function AnimatedChat() {
           variants={messageMotion}
           className='flex justify-end pr-8 @lg/chat:hidden'
         >
-          <NameCursor
-            name='Hanne'
-            side='left'
-            color='var(--chart-3)'
-            foreground='var(--color-secondary-source)'
-          />
+          <NameCursor name='Hanne' side='left' tone='incoming' />
         </motion.div>
         <motion.div variants={messageMotion}>
           <Message align='end'>
@@ -92,7 +80,7 @@ export function AnimatedChat() {
                 <BubbleContent
                   className={outgoingBubbleContentClassName}
                 >
-                  <P className='chat-bubble-text not-first:mt-0'>
+                  <P className='chat-bubble-text font-sans text-foreground not-first:mt-0'>
                     Slapp av, jeg tar med Utekosen min. Den er
                     alt vi trenger.
                   </P>
@@ -109,8 +97,7 @@ export function AnimatedChat() {
           <NameCursor
             name='Thomas'
             side='right'
-            color='var(--foreground)'
-            foreground='var(--background)'
+            tone='outgoing'
           />
         </motion.div>
 
@@ -143,22 +130,22 @@ export function AnimatedChat() {
                   className={outgoingBubbleContentClassName}
                 >
                   <div className='flex min-w-0 items-center gap-2'>
-                    <P className='chat-bubble-text flex min-w-0 items-center text-primary-foreground not-first:mt-0'>
-                      <InlineText className='min-w-0'>
+                    <P className='chat-bubble-text flex min-w-0 items-center text-foreground not-first:mt-0'>
+                      <InlineText className='min-w-0 font-sans text-foreground'>
                         Nettopp. Mer plass til vinen 😉
                       </InlineText>
                       <motion.span
-                        className='dark:bg-dark-primary-foreground ml-1 inline-block h-4 w-0.5 bg-primary-foreground'
+                        className='ml-1 inline-block h-4 w-0.5 bg-foreground'
                         animate={{ opacity: [1, 0, 1] }}
                         transition={{
                           duration: 0.9,
-                          ease: 'easeInOut',
+                          ease: [0.32, 0.72, 0, 1],
                           repeat: Infinity
                         }}
                       />
                     </P>
                     <span
-                      className='hidden size-5 shrink-0 items-center justify-center rounded-md bg-transparent text-primary-foreground sm:inline-flex'
+                      className='hidden size-5 shrink-0 items-center justify-center rounded-md bg-transparent text-foreground sm:inline-flex'
                       aria-hidden
                       title='Send'
                     >
@@ -175,15 +162,13 @@ export function AnimatedChat() {
         <NameCursor
           name='Hanne'
           side='left'
-          color='var(--chart-3)'
-          foreground='var(--color-secondary-source)'
+          tone='incoming'
           className='absolute top-[22%] right-[15%]'
         />
         <NameCursor
           name='Thomas'
           side='right'
-          color='var(--foreground)'
-          foreground='var(--background)'
+          tone='outgoing'
           className='absolute top-[42%] left-[18%]'
         />
       </div>

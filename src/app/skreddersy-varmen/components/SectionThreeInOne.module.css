@@ -1,0 +1,412 @@
+.section {
+  width: 100%;
+  overflow: clip;
+  color: var(--foreground);
+  background: var(--cloud-dancer);
+}
+
+.introductionTrack,
+.introduction {
+  width: 100%;
+  background: var(--evening);
+}
+
+.introductionContent {
+  width: min(100%, 72rem);
+  margin-inline: auto;
+  padding: clamp(5rem, 9vw, 9rem) clamp(1rem, 5vw, 4rem)
+    clamp(3rem, 7vw, 6rem);
+}
+
+.eyebrow {
+  margin: 0 0 0.85rem;
+  color: var(--primary);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.heading {
+  max-width: 14ch;
+  margin: 0;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: clamp(2.75rem, 7vw, 6.75rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.88;
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 48rem;
+  margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
+  color: color-mix(in srgb, var(--foreground) 86%, transparent);
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.55;
+}
+
+.updated {
+  margin: 2rem 0 0;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  font-size: 0.75rem;
+}
+
+.track {
+  width: 100%;
+  background: var(--evening);
+}
+
+.stage {
+  display: grid;
+  gap: clamp(4rem, 10vw, 9rem);
+  padding: 0 1rem clamp(6rem, 12vw, 11rem);
+}
+
+.scene {
+  display: grid;
+  width: min(100%, 90rem);
+  margin-inline: auto;
+  gap: clamp(1.5rem, 5vw, 5rem);
+}
+
+.mediaShell {
+  min-width: 0;
+  padding: clamp(0.35rem, 0.8vw, 0.65rem);
+  border-radius: clamp(1.5rem, 4vw, 3rem);
+  background: color-mix(
+    in srgb,
+    var(--cloud-dancer) 10%,
+    transparent
+  );
+  box-shadow:
+    inset 0 0 0 1px
+      color-mix(in srgb, var(--foreground) 10%, transparent),
+    0 2rem 5rem
+      color-mix(in srgb, var(--background) 20%, transparent);
+}
+
+.mediaCore {
+  position: relative;
+  min-height: 0;
+  overflow: clip;
+  border-radius: calc(clamp(1.5rem, 4vw, 3rem) - 0.5rem);
+  background: var(--jungle);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 15%, transparent),
+    inset 0 0 0 1px
+      color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+
+.picture {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+}
+
+.imageCover,
+.imageContain {
+  object-position: center;
+}
+
+.imageCover {
+  object-fit: cover;
+}
+
+.imageContain {
+  padding: clamp(1.75rem, 6vw, 5rem);
+  object-fit: contain;
+}
+
+.copy {
+  align-self: center;
+  max-width: 39rem;
+  padding-inline: clamp(0.25rem, 2vw, 1.5rem);
+}
+
+.modeLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0 0 1rem;
+  color: var(--primary);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.modeLabel span:first-child {
+  display: inline-grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(
+    in srgb,
+    var(--primary) 14%,
+    transparent
+  );
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--primary) 36%, transparent);
+}
+
+.sceneTitle {
+  max-width: 12ch;
+  margin: 0;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: clamp(2.35rem, 6vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+  text-wrap: balance;
+}
+
+.description {
+  max-width: 34rem;
+  margin: clamp(1.25rem, 3vw, 2rem) 0 0;
+  color: color-mix(in srgb, var(--foreground) 84%, transparent);
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1.35vw, 1.2rem);
+  line-height: 1.55;
+}
+
+@media (min-width: 64rem) {
+  .scene {
+    grid-template-columns: minmax(0, 1.18fr) minmax(
+        20rem,
+        0.82fr
+      );
+    align-items: center;
+    min-height: 42rem;
+  }
+
+  .mediaShell,
+  .mediaCore,
+  .picture {
+    height: min(78svh, 54rem);
+  }
+
+  .picture {
+    aspect-ratio: auto;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .track {
+      height: 360svh;
+      view-timeline-name: --three-mode-track;
+      view-timeline-axis: block;
+    }
+
+    .stage {
+      position: sticky;
+      top: 0;
+      display: block;
+      height: 100svh;
+      overflow: clip;
+      padding: 0;
+      isolation: isolate;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      width: 100%;
+      height: 100%;
+      padding: max(1rem, env(safe-area-inset-top))
+        max(1rem, env(safe-area-inset-right))
+        max(1rem, env(safe-area-inset-bottom))
+        max(1rem, env(safe-area-inset-left));
+      gap: clamp(0.8rem, 2.5vw, 3.5rem);
+      background: var(--evening);
+    }
+
+    .scene[data-mode-scene='oppjustert'] {
+      background: color-mix(
+        in srgb,
+        var(--jungle) 72%,
+        var(--evening)
+      );
+    }
+
+    .scene[data-mode-scene='parkas'] {
+      background: color-mix(
+        in srgb,
+        var(--background) 78%,
+        var(--jungle)
+      );
+    }
+
+    .scene[data-mode-transition='vertical-curtain'] {
+      z-index: 2;
+      visibility: hidden;
+      transform: translate3d(0, 100%, 0);
+      animation: three-mode-vertical-curtain 1ms
+        cubic-bezier(0.65, 0, 0.35, 1) both;
+      animation-timeline: --three-mode-track;
+      animation-range: contain 0% contain 100%;
+      will-change: transform;
+    }
+
+    .scene[data-mode-transition='horizontal-door'] {
+      z-index: 3;
+      visibility: hidden;
+      transform: translate3d(100%, 0, 0);
+      animation: three-mode-horizontal-door 1ms
+        cubic-bezier(0.76, 0, 0.24, 1) both;
+      animation-timeline: --three-mode-track;
+      animation-range: contain 0% contain 100%;
+      will-change: transform;
+    }
+
+    .mediaShell,
+    .copy {
+      min-height: 0;
+    }
+
+    .mediaCore,
+    .picture {
+      height: 100%;
+      aspect-ratio: auto;
+    }
+
+    .copy {
+      overflow: clip;
+    }
+  }
+}
+
+@media (max-width: 63.999rem) {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .section {
+        overflow: visible;
+        background: transparent;
+      }
+
+      .introductionTrack {
+        position: relative;
+        height: 200svh;
+        background: transparent;
+        contain: layout style;
+        view-timeline-name: --three-in-one-intro;
+        view-timeline-axis: block;
+      }
+
+      .introduction {
+        position: sticky;
+        top: 0;
+        display: grid;
+        height: 100svh;
+        min-height: 100svh;
+        align-items: center;
+        visibility: hidden;
+        transform: translate3d(100%, 0, 0);
+        animation-name: three-in-one-section-entry;
+        animation-duration: 1ms;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: --three-in-one-intro;
+        animation-range: contain 0% contain 100%;
+        will-change: transform;
+      }
+
+      .scene {
+        grid-template-rows: minmax(0, 58%) minmax(0, 42%);
+        align-content: stretch;
+      }
+
+      .copy {
+        align-self: start;
+        padding: 0.25rem 0.25rem 0;
+      }
+
+      .modeLabel {
+        margin-bottom: 0.65rem;
+        font-size: 0.65rem;
+      }
+
+      .modeLabel span:first-child {
+        width: 1.85rem;
+        height: 1.85rem;
+      }
+
+      .sceneTitle {
+        font-size: clamp(2rem, 10vw, 3.25rem);
+      }
+
+      .description {
+        margin-top: 0.75rem;
+        font-size: clamp(0.82rem, 3.6vw, 1rem);
+        line-height: 1.4;
+      }
+
+      .imageContain {
+        padding: clamp(1.25rem, 8vw, 3rem);
+      }
+    }
+  }
+}
+
+@keyframes three-in-one-section-entry {
+  0% {
+    visibility: hidden;
+    transform: translate3d(100%, 0, 0);
+  }
+
+  0.01% {
+    visibility: visible;
+  }
+
+  100% {
+    visibility: visible;
+    transform: none;
+  }
+}
+
+@keyframes three-mode-vertical-curtain {
+  0%,
+  12% {
+    visibility: hidden;
+    transform: translate3d(0, 100%, 0);
+  }
+
+  12.01% {
+    visibility: visible;
+  }
+
+  42%,
+  100% {
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes three-mode-horizontal-door {
+  0%,
+  61% {
+    visibility: hidden;
+    transform: translate3d(100%, 0, 0);
+  }
+
+  61.01% {
+    visibility: visible;
+  }
+
+  86%,
+  100% {
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+  }
+}

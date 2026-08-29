@@ -5,7 +5,7 @@ import { PageSection } from '@/components/layout/PageSection'
 import { cn } from '@/lib/utils/className'
 
 const nodeSectionClassName =
-  'relative isolate overflow-hidden rounded-[1.5rem] border border-border bg-dark-teal p-4 ring-1 ring-foreground/8 sm:p-8'
+  'relative isolate overflow-hidden rounded-[1.5rem] border border-border bg-jungle p-4 ring-1 ring-foreground/8 sm:p-8'
 
 export async function NodeSection() {
   return (
@@ -13,14 +13,24 @@ export async function NodeSection() {
       as='article'
       background='muted'
       className={cn(
-        'relative overflow-hidden rounded-xl text-foreground'
+        'relative mt-4 overflow-hidden rounded-xl text-foreground md:mt-0'
       )}
-      contentClassName='space-y-6 py-6 sm:py-8 md:py-10 lg:py-12'
+      contentClassName='space-y-8 py-8 sm:py-8 md:space-y-6 md:py-10 lg:py-12'
     >
-      <hgroup className='mx-auto space-y-1 text-left text-foreground'>
-        <H2 Text='Drevet av ekte opplevelser' ID='hello' className='font-sans! font-extrabold pb-1' />
-        <P Text='Våre beste produktutviklere er kundene våre.' className='font-utekos-text-medium! not-first:mt-0 text-xl text-foreground/80' />
-        <P Text='Vi lytter, lærer og designer for at du kan skape flere og bedre minner utendørs.' className='font-utekos-text-medium! not-first:mt-0 text-lg text-foreground/80!' />
+      <hgroup className='mx-auto max-w-4xl text-left text-foreground md:space-y-1'>
+        <H2
+          Text='Drevet av ekte opplevelser'
+          ID='hello'
+          className='pb-0 font-sans! font-extrabold md:pb-1'
+        />
+        <P
+          Text='Våre beste produktutviklere er kundene våre.'
+          className='mt-3! font-utekos-text-medium! text-xl leading-relaxed text-foreground/80 md:mt-0! md:leading-normal'
+        />
+        <P
+          Text='Vi lytter, lærer og designer for at du kan skape flere og bedre minner utendørs.'
+          className='mt-2! font-utekos-text-medium! text-lg leading-relaxed text-foreground/80! md:mt-0! md:leading-normal'
+        />
       </hgroup>
 
       <div
@@ -30,7 +40,7 @@ export async function NodeSection() {
         )}
       >
         <div
-          className='dark:via-border pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-border to-transparent'
+          className='pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-border to-transparent dark:via-border'
           aria-hidden='true'
         />
         <CustomerNetwork />

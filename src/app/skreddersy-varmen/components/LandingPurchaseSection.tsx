@@ -14,9 +14,10 @@ export async function LandingPurchaseSection({
   searchParams
 }: {
   commerce: ProductCommerceViewModel
-  searchParams: Promise<SearchParamsRecord>
+  searchParams?: Promise<SearchParamsRecord> | SearchParamsRecord
 }) {
-  const resolvedSearchParams = await searchParams
+  const resolvedSearchParams =
+    searchParams == null ? {} : await searchParams
 
   return (
     <PurchaseClientLanding
@@ -24,7 +25,7 @@ export async function LandingPurchaseSection({
       initialVariantId={
         resolveCommerceVariantFromSearchParams(
           commerce,
-          resolvedSearchParams
+          resolvedSearchParams ?? {}
         )?.commerce.id ?? commerce.defaultVariantId
       }
     />

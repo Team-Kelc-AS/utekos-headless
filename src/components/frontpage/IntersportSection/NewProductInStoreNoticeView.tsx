@@ -31,13 +31,11 @@ export function NewProductInStoreNoticeView({
           'relative isolate mx-auto overflow-hidden rounded-3xl border border-border bg-jungle p-6 px-4 text-card-foreground shadow-2xl sm:p-10 md:max-w-6xl md:px-8 lg:px-12'
         )}
       >
-        <div
-          className='pointer-events-none bg-jungle absolute top-0 left-1/2 -z-20 h-125 w-125 -translate-x-1/2 -translate-y-1/2 opacity-20 blur-[100px]'
-        />
+        <div className='pointer-events-none absolute top-0 left-1/2 -z-20 h-125 w-125 -translate-x-1/2 -translate-y-1/2 bg-jungle opacity-20 blur-[100px]' />
 
-        <div className='flex flex-col bg-jungle rounded-2xl items-center gap-8 text-center'>
-          <div className='relative flex h-32 w-full rounded-2xl bg-jungle items-center justify-center overflow-visible'>
-            <div className='absolute top-1/2 left-1/2 z-0 flex h-1 w-1 rounded-full bg-jungle -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-visible'>
+        <div className='flex flex-col items-center gap-8 rounded-2xl bg-jungle text-center'>
+          <div className='relative flex h-32 w-full items-center justify-center overflow-visible rounded-2xl bg-jungle'>
+            <div className='absolute top-1/2 left-1/2 z-0 flex h-1 w-1 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-visible rounded-full bg-jungle'>
               {[...Array(5)].map((_, i) => (
                 <div
                   key={`smoke-${i}`}
@@ -83,12 +81,12 @@ export function NewProductInStoreNoticeView({
           >
             <H2
               ID='intersport-laksevag-heading'
-              className='font-sans pb-0 text-left text-3xl leading-tight font-extrabold tracking-normal text-foreground md:text-4xl lg:text-5xl'
+              className='pb-0 text-left font-sans text-3xl leading-tight font-extrabold tracking-normal text-foreground md:text-4xl lg:text-5xl'
             >
               Sjekk ut Utekos på Intersport Laksevåg!
             </H2>
 
-            <P className='-mt-2 w-full max-w-4xl text-left font-utekos-text-medium text-xl leading-snug tracking-normal text-foreground sm:text-2xl'>
+            <P className='-mt-2 w-full max-w-4xl text-left font-utekos-text text-xl leading-snug tracking-normal text-foreground sm:text-2xl'>
               Se, prøve og kjenne på{' '}
               <InlineText
                 as='strong'
@@ -105,7 +103,7 @@ export function NewProductInStoreNoticeView({
               asChild
               variant='alternate'
               size='lg'
-              className='group mt-4 h-12 w-fit max-w-sm min-w-0 rounded-3xl px-8 py-6 text-center text-base leading-tight whitespace-normal sm:w-auto sm:px-12 sm:text-lg sm:whitespace-nowrap'
+              className='group hover:bg-primary-hover mt-4 h-12 w-fit max-w-sm min-w-0 rounded-3xl border-none bg-primary px-8 py-6 text-center text-base leading-tight whitespace-normal text-primary-foreground sm:w-auto sm:px-12 sm:text-lg sm:whitespace-nowrap'
             >
               <Link
                 href={mapsUrl as Route}

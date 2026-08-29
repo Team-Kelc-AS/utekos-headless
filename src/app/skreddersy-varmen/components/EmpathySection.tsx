@@ -14,19 +14,50 @@ import {
   revealItemLeft,
   revealItemRight,
   revealScale,
-  scaleXReveal,
   scaleYReveal,
   skreddersyViewport
 } from './skreddersyMotionVariants'
 
-const HEADLINE = 'Når øyeblikket er for godt til å avsluttes.'
+type LegacyEmpathyContent = {
+  heading: string
+  intro: string
+  quoteFirst: string
+  quoteSecond: string
+  body: string
+  closing: string
+  ctaLabel: string
+  imageAlt: string
+  imageEyebrow: string
+  imageQuoteFirst: string
+  imageQuoteSecond: string
+}
+
+const legacyEmpathyContent: LegacyEmpathyContent = {
+  heading: 'Når øyeblikket er for godt til å avsluttes.',
+  intro:
+    'Du kjenner følelsen. Praten går lett rundt bålpannen, flammene danser, og roen har senket seg. Så kommer den snikende trekken som truer med å bryte magien.',
+  quoteFirst: 'Det begynner å bli kaldt.',
+  quoteSecond: 'Skal vi trekke inn?',
+  body: 'Med Utekos® blir svaret enkelt. Tilpass passform, reguler ventilasjon og veksle mellom ulike funksjonelle moduser. Skreddersy varmen for å fortsette opplevelsen av kompromissløs komfort. Helt uavbrutt.',
+  closing: 'Juster, form og nyt.',
+  ctaLabel: 'Utforsk Utekos TechDown™',
+  imageAlt:
+    'Bålpanne med flammer og to personer i mørkeblå Utekos TechDown™ i bakgrunnen.',
+  imageEyebrow: 'Stemning',
+  imageQuoteFirst: 'Klokken er 23:15.',
+  imageQuoteSecond: 'Ingen vil gå inn.'
+}
 
 function scrollToModel() {
   reportLandingSelectPromotion('empathyCta')
   void scrollToElement('section-solution', { offsetY: 80 })
 }
 
-export function EmpathySection() {
+export function EmpathySection({
+  content = legacyEmpathyContent
+}: {
+  content?: LegacyEmpathyContent
+}) {
   return (
     <SkreddersyMotionProvider>
       <m.section
@@ -39,39 +70,17 @@ export function EmpathySection() {
       >
         <div className='mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-6 md:px-12 lg:grid-cols-2 lg:gap-16'>
           <div className='relative'>
-            <m.div
-              className='relative mb-4 inline-flex items-end overflow-hidden pb-1.5'
-              variants={revealItemLeft}
-            >
-              <span className='dark:text-dark-background font-sans text-sm leading-4 text-background'>
-                Det du kjenner igjen
-              </span>
-              <m.span
-                aria-hidden
-                className='dark:bg-dark-background absolute bottom-0 left-0 h-px w-full origin-left bg-background'
-                variants={scaleXReveal}
-              />
-            </m.div>
             <h2
               id='empathy-heading'
               className='dark:text-dark-background mb-5 max-w-[11ch] font-utekos-text-medium text-4xl leading-[0.92] tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
             >
               <span className='block overflow-hidden pb-[0.08em]'>
-                <m.span
+                <span
                   className='inline-block'
-                  variants={{
-                    hidden: { y: '110%' },
-                    visible: {
-                      y: '0%',
-                      transition: {
-                        duration: 0.82,
-                        ease: [0.16, 1, 0.3, 1]
-                      }
-                    }
-                  }}
+                  data-empathy-reveal-heading
                 >
-                  {HEADLINE}
-                </m.span>
+                  {content.heading}
+                </span>
               </span>
             </h2>
 
@@ -80,10 +89,7 @@ export function EmpathySection() {
                 className='relative max-w-136 font-sans'
                 variants={revealItem}
               >
-                Du kjenner følelsen. Praten går lett rundt
-                bålpannen, flammene danser, og roen har senket
-                seg. Så kommer den snikende trekken som truer med
-                å bryte magien.
+                {content.intro}
               </m.p>
               <div className='relative my-7 py-1.5'>
                 <m.span
@@ -95,23 +101,19 @@ export function EmpathySection() {
                   className='dark:text-dark-background ml-5 font-sans text-xl leading-[0.95] font-bold tracking-normal text-background italic md:ml-7 md:text-3xl'
                   variants={revealItemRight}
                 >
-                  &ldquo;Det begynner å bli kaldt. <br />
-                  Skal vi trekke inn?&rdquo;
+                  &ldquo;{content.quoteFirst} <br />
+                  {content.quoteSecond}&rdquo;
                 </m.p>
               </div>
               <m.p
                 className='dark:text-dark-background mt-6 max-w-136 font-utekos-text text-background'
                 variants={revealItem}
               >
-                Med Utekos® blir svaret enkelt. Tilpass passform,
-                reguler ventilasjon og veksle mellom ulike
-                funksjonelle moduser. Skreddersy varmen for å
-                fortsette opplevelsen av kompromissløs komfort.
-                Helt uavbrutt.
+                {content.body}
                 <br />
                 <br />
                 <span className='dark:text-dark-background font-medium text-background italic'>
-                  Juster, form og nyt.
+                  {content.closing}
                 </span>
               </m.p>
             </div>
@@ -132,7 +134,7 @@ export function EmpathySection() {
                   className='group inline-flex items-center gap-2 leading-none'
                 >
                   <span className='block leading-none'>
-                    Utforsk Utekos TechDown™
+                    {content.ctaLabel}
                   </span>
                   <span aria-hidden className='inline-flex'>
                     <ArrowRight className='size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0' />
@@ -151,7 +153,7 @@ export function EmpathySection() {
                 <div className='absolute inset-x-0 -inset-y-14'>
                   <Image
                     src='https://cdn.shopify.com/s/files/1/0634/2154/6744/files/skreddersdy-varmen-balpanne.jpg?v=1780812470'
-                    alt='Bålpanne med flammer og to personer i mørkeblå Utekos TechDown™ i bakgrunnen.'
+                    alt={content.imageAlt}
                     fill
                     className='object-cover'
                     sizes='(max-width: 1024px) 100vw, 50vw'
@@ -169,12 +171,12 @@ export function EmpathySection() {
                   variants={revealItem}
                 >
                   <p className='mb-1.5 text-sm leading-4 font-medium tracking-normal text-white/85'>
-                    Stemning
+                    {content.imageEyebrow}
                   </p>
                   <p className='font-sans text-lg leading-[0.95] font-bold tracking-normal italic drop-shadow-md md:text-2xl'>
-                    &ldquo;Klokken er 23:15.
+                    &ldquo;{content.imageQuoteFirst}
                     <br />
-                    Ingen vil gå inn.&rdquo;
+                    {content.imageQuoteSecond}&rdquo;
                   </p>
                 </m.div>
               </div>

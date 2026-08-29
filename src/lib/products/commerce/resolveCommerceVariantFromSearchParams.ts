@@ -12,9 +12,10 @@ function firstValue(value: string | string[] | undefined) {
 
 export function resolveCommerceVariantFromSearchParams(
   commerce: ProductCommerceViewModel,
-  searchParams: SearchParamsRecord
+  searchParams?: SearchParamsRecord | null
 ) {
-  const legacyVariantId = firstValue(searchParams.variant)
+  const params = searchParams ?? {}
+  const legacyVariantId = firstValue(params.variant)
   const legacyVariant = commerce.variants.find(
     variant => variant.commerce.id === legacyVariantId
   )
@@ -27,7 +28,7 @@ export function resolveCommerceVariantFromSearchParams(
     ['kjonn', 'gender']
   ] as const
   const suppliedReadableKeys = readableKeys.filter(([param]) =>
-    Boolean(firstValue(searchParams[param]))
+    Boolean(firstValue(params[param]))
   )
 
   if (suppliedReadableKeys.length > 0) {
@@ -39,7 +40,7 @@ export function resolveCommerceVariantFromSearchParams(
           optionValue &&
           publicOptionSearchParamMatches(
             optionValue,
-            firstValue(searchParams[param]) ?? ''
+            firstValue(params[param]) ?? ''
           )
         )
       })

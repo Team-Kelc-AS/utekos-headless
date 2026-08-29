@@ -43,6 +43,11 @@ export function buildStorefrontGatewayConfigFromEnvironment(
     environment.STOREFRONT_API_ACCESS_TOKEN,
     environment.VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN
   )
+  const privateStorefrontAccessToken = firstConfiguredValue(
+    environment.STOREFRONT_API_PRIVATE_ACCESS_TOKEN,
+    environment.PRIVATE_STOREFRONT_API_TOKEN,
+    environment.STOREFRONT_PRIVATE_ACCESS_TOKEN
+  )
 
   return {
     storeDomain: normalizeStoreDomain(storeDomain),
@@ -50,6 +55,11 @@ export function buildStorefrontGatewayConfigFromEnvironment(
     ...(storefrontAccessToken ?
       {
         publicStorefrontToken: storefrontAccessToken
+      }
+    : {}),
+    ...(privateStorefrontAccessToken ?
+      {
+        privateStorefrontToken: privateStorefrontAccessToken
       }
     : {})
   }

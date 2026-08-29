@@ -19,7 +19,7 @@ export function MobileMenuItem({ item }: { item: MenuItem }) {
     return (
       <Link
         href={normalizeShopifyUrl(item.url) as Route}
-        className='group relative flex w-full items-center justify-between rounded-2xl border border-foreground/10 bg-foreground/5.5 px-4 py-4 text-foreground transition-[background,border-color,transform] hover:border-foreground/18 hover:bg-foreground/7.5 focus-visible:ring-2 focus-visible:ring-foreground/38 active:scale-[0.99]'
+        className='group relative flex w-full items-center justify-between rounded-2xl border border-foreground/10 bg-foreground/5.5 px-4 py-4 text-foreground no-underline transition-[background,border-color,transform] hover:border-foreground/18 hover:bg-foreground/7.5 hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground/38 active:scale-[0.99]'
       >
         <div className='absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 [background:radial-gradient(120%_120%_at_50%_0%,color-mix(in_oklab,var(--foreground)_12%,transparent),transparent_65%)] group-active:opacity-100' />
         <div className='relative flex min-w-0 items-center gap-3'>

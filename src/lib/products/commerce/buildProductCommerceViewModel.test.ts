@@ -68,6 +68,17 @@ test('builds one TechDown commerce model with three public sizes', () => {
   )
 })
 
+test('falls back to the default variant when search params are missing', () => {
+  const commerce = buildProductCommerceViewModel(
+    createTechDownShopifyProductFixture()
+  )
+  const resolved = resolveCommerceVariantFromSearchParams(
+    commerce
+  )
+
+  assert.equal(resolved?.commerce.id, commerce.defaultVariantId)
+})
+
 test('resolves a readable sold-out variant without changing the default', () => {
   const commerce = buildProductCommerceViewModel(
     createTechDownShopifyProductFixture()

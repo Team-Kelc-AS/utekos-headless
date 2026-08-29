@@ -75,7 +75,6 @@ test('catalogQuery uses public auth and remains caller-cacheable', async () => {
   assert.equal(headers.has('shopify-storefront-private-token'), false)
   assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
-
 test('buyerQuery uses private auth with buyer IP and forces no-store', async () => {
   const { gateway, requests } = createGateway()
 
@@ -251,8 +250,41 @@ test('mutation retries with public auth when Shopify rejects the configured priv
   assert.equal(fallbackHeaders.has('shopify-storefront-buyer-ip'), false)
 })
 
-test('private buyer auth fails closed without a validated buyer IP', async () => {
+test('buyer calls fall back to public auth when a validated buyer IP is unavailable', async () => {
   const { gateway, requests } = createGateway()
+
+  await gateway.buyerQuery<TestQuery>({
+    context: { buyerIp: null },
+    query
+  })
+
+  const request = requests[0]
+  const headers = new Headers(request?.headers)
+
+  assert.equal(request?.cache, 'no-store')
+  assert.equal(
+    headers.get('x-shopify-storefront-access-token'),
+    'public-test-token'
+  )
+  assert.equal(headers.has('shopify-storefront-private-token'), false)
+  assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
+})
+
+test('private buyer auth fails closed without a validated buyer IP or public fallback', async () => {
+  const requests: RequestInit[] = []
+  const gateway = createHydrogenStorefrontGateway(
+    {
+      storeDomain: 'example.myshopify.com',
+      privateStorefrontToken: 'private-test-token',
+      storefrontApiVersion: '2026-04'
+    },
+    {
+      fetch: async (_input, init) => {
+        requests.push(init ?? {})
+        return Response.json({ data: { shop: { name: 'Utekos' } } })
+      }
+    }
+  )
 
   await assert.rejects(
     gateway.buyerQuery<TestQuery>({

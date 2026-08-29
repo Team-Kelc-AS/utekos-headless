@@ -12,34 +12,27 @@ import { P } from '@/components/typography/TypographyP'
 import { cn } from '@/lib/utils/className'
 
 const TrafficLights = ({
-  variant = 'default'
+  variant = 'back'
 }: {
-  variant?: 'default' | 'colored' | 'card'
+  variant?: 'back' | 'front'
 }) => {
   const colors =
-    variant === 'colored' ?
-      [
-        'bg-destructive dark:bg-dark-destructive',
-        'bg-chart-3 dark:bg-dark-chart-3',
-        'bg-chart-4 dark:bg-dark-chart-4'
-      ]
-    : variant === 'card' ?
-      [
-        'bg-card-foreground/45 dark:bg-dark-card-foreground/45',
-        'bg-card-foreground/65 dark:bg-dark-card-foreground/65',
-        'bg-card-foreground/85 dark:bg-dark-card-foreground/85'
-      ]
+    variant === 'front' ?
+      ['bg-foreground/35', 'bg-foreground/60', 'bg-light-teal']
     : [
-        'bg-secondary-foreground/45 dark:bg-dark-secondary-foreground/45',
-        'bg-secondary-foreground/65 dark:bg-dark-secondary-foreground/65',
-        'bg-secondary-foreground/85 dark:bg-dark-secondary-foreground/85'
+        'bg-foreground/40',
+        'bg-foreground/65',
+        'bg-foreground/90'
       ]
 
   return (
-    <div className='absolute top-[11%] left-[8%] z-20 flex gap-[0.35em]'>
-      {colors.map((color, i) => (
+    <div
+      className='absolute top-[11%] left-[8%] z-20 flex gap-[0.35em]'
+      aria-hidden
+    >
+      {colors.map(color => (
         <div
-          key={i}
+          key={color}
           className={cn(
             'aspect-square w-[0.45em] rounded-full',
             color
@@ -70,7 +63,7 @@ const cardSizeClasses =
   'absolute aspect-[1.2/1] w-[84%] @2xs/stack:aspect-[1.62/1] sm:w-[76%] sm:aspect-[2/1]! lg:w-[74%]'
 
 const cardBaseClasses =
-  '@container/card overflow-hidden rounded-xl border p-[clamp(0.875rem,4.5cqi,1.5rem)] text-[clamp(0.82rem,3.45cqi,1rem)] shadow-2xl shadow-black/16 will-change-transform'
+  '@container/card overflow-hidden rounded-xl border p-[clamp(0.875rem,4.5cqi,1.5rem)] text-[clamp(0.82rem,3.45cqi,1rem)] shadow-[0_30px_80px_-50px_rgb(0_0_0/0.68)] ring-1 ring-inset will-change-transform'
 
 const cardContentRowClasses =
   'relative z-10 flex items-start gap-[0.8em] pt-[clamp(2.15rem,9.5cqi,2.9rem)]'
@@ -90,21 +83,21 @@ const backCardClasses = cn(
   cardSizeClasses,
   cardBaseClasses,
   backCardPlacementClasses,
-  'border-card-foreground/14 bg-[color-mix(in_oklch,var(--color-card)_94%,var(--color-foreground)_6%)] text-card-foreground'
+  'border-light-teal/24 bg-[color-mix(in_oklch,var(--dark-teal)_88%,var(--light-teal)_12%)] text-foreground ring-foreground/8'
 )
 
 const frontCardClasses = cn(
   cardSizeClasses,
   cardBaseClasses,
   frontCardPlacementClasses,
-  'dark:border-dark-foreground/12 dark:bg-dark-background dark:text-dark-foreground border-foreground/12 bg-background text-foreground'
+  'border-light-teal/20 bg-jungle text-foreground ring-foreground/10'
 )
 
 const backCardIconClassName =
-  'flex size-[clamp(1.9rem,8cqi,2.35rem)] shrink-0 items-center justify-center rounded-lg border border-card-foreground/35 bg-card-foreground text-card dark:border-dark-card-foreground/35'
+  'flex size-[clamp(1.9rem,8cqi,2.35rem)] shrink-0 items-center justify-center rounded-lg border border-light-teal/24 bg-foreground text-dark-teal ring-1 ring-inset ring-foreground/12'
 
 const frontCardIconClassName =
-  'flex size-[clamp(1.9rem,8cqi,2.35rem)] shrink-0 items-center justify-center rounded-lg border border-foreground/20 bg-foreground/8 text-foreground dark:border-dark-foreground/20 dark:bg-dark-foreground/10 dark:text-dark-foreground'
+  'flex size-[clamp(1.9rem,8cqi,2.35rem)] shrink-0 items-center justify-center rounded-lg border border-light-teal/24 bg-dark-teal text-foreground ring-1 ring-inset ring-foreground/8'
 
 export function InfoCardStackView() {
   return (
@@ -113,7 +106,7 @@ export function InfoCardStackView() {
       className='@container/stack @container relative z-20 mx-auto aspect-[1/1.04] w-full max-w-[min(100%,44rem)] overflow-visible text-[clamp(0.875rem,2.8cqi,1rem)] sm:aspect-16/10'
     >
       <div
-        className='pointer-events-none absolute inset-[-6%] rounded-3xl bg-[radial-gradient(70%_64%_at_24%_18%,color-mix(in_oklch,var(--color-secondary-foreground)_10%,transparent),transparent_68%)]'
+        className='pointer-events-none absolute inset-[-6%] rounded-3xl bg-[radial-gradient(70%_64%_at_24%_18%,color-mix(in_oklch,var(--light-teal)_14%,transparent),transparent_68%)]'
         aria-hidden
       />
 
@@ -123,7 +116,7 @@ export function InfoCardStackView() {
         className={backCardClasses}
       >
         <div
-          className='pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(72%_64%_at_18%_22%,color-mix(in_oklch,var(--color-card-foreground)_10%,transparent),transparent_66%)]'
+          className='pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(72%_64%_at_18%_22%,color-mix(in_oklch,var(--light-teal)_14%,transparent),transparent_66%)]'
           aria-hidden
         />
 
@@ -135,7 +128,7 @@ export function InfoCardStackView() {
           className='pointer-events-none opacity-40'
         />
 
-        <TrafficLights variant='card' />
+        <TrafficLights variant='back' />
 
         <div className={cardContentRowClasses}>
           <div className={backCardIconClassName}>
@@ -144,10 +137,7 @@ export function InfoCardStackView() {
 
           <div className='min-w-0'>
             <H3
-              className={cn(
-                cardTitleClasses,
-                'text-card-foreground'
-              )}
+              className={cn(cardTitleClasses, 'text-foreground')}
             >
               En trygg handel
             </H3>
@@ -155,7 +145,7 @@ export function InfoCardStackView() {
             <P
               className={cn(
                 cardTextClasses,
-                'text-card-foreground/88'
+                'text-foreground/80'
               )}
             >
               Sikre betalingsløsninger og 14 dagers angrerett.
@@ -178,11 +168,11 @@ export function InfoCardStackView() {
         />
 
         <div
-          className='absolute inset-0 z-0 bg-[radial-gradient(75%_62%_at_68%_20%,color-mix(in_oklch,var(--color-foreground)_8%,transparent),transparent_62%)]'
+          className='absolute inset-0 z-0 bg-[radial-gradient(75%_62%_at_68%_20%,color-mix(in_oklch,var(--light-teal)_10%,transparent),transparent_62%)]'
           aria-hidden
         />
 
-        <TrafficLights variant='colored' />
+        <TrafficLights variant='front' />
 
         <div className='relative z-10 flex h-full min-h-0 flex-col'>
           <div className={cardContentRowClasses}>

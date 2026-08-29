@@ -65,7 +65,6 @@ type StorefrontTransportInput<
   timeoutMs?: number
   variables?: ExtractVariables<T>
 }
-
 type ShopifyRequestLogContext = {
   authMode: StorefrontAuthMode
   buyerIpPresent: boolean
@@ -696,13 +695,7 @@ function resolveAuthentication({
 
   const buyerIp = context?.buyerIp ?? null
 
-  if (hasCredential(config.privateStorefrontToken)) {
-    if (!buyerIp) {
-      throw new Error(
-        'A validated buyer IP is required for private Shopify Storefront authentication.'
-      )
-    }
-
+  if (hasCredential(config.privateStorefrontToken) && buyerIp) {
     return {
       authMode: 'private',
       buyerIpPresent: true,
@@ -716,6 +709,12 @@ function resolveAuthentication({
       buyerIpPresent: false,
       headers: client.getPublicTokenHeaders()
     }
+  }
+
+  if (hasCredential(config.privateStorefrontToken)) {
+    throw new Error(
+      'A validated buyer IP is required for private Shopify Storefront authentication.'
+    )
   }
 
   throw new Error(

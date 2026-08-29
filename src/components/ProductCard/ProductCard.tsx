@@ -226,7 +226,7 @@ export function ProductCard({
           />
         </CardContent>
 
-        <div className='dark:border-dark-card-foreground/24 flex flex-col gap-2 rounded-t-xl border-t border-card-foreground/24 bg-jungle p-3 md:gap-3 md:p-4'>
+        <div className='dark:border-dark-card-foreground/24 flex flex-col gap-2 rounded-t-xl border-t border-card-foreground/24 bg-jungle p-3 pb-0 md:gap-3 md:p-4'>
           <div className='grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-2'>
             <Link
               href={productUrl}
@@ -355,7 +355,7 @@ export function ProductCard({
         className={cn(
           'mx-auto mt-auto flex w-full flex-col items-center gap-3 bg-jungle p-6 pt-4!',
           compactMobile &&
-            'gap-2 p-3 pt-4! md:gap-3 md:p-4 md:pt-4! xl:p-6 xl:pt-4!'
+            'gap-2 p-3 max-md:pt-1! md:gap-3 md:p-4 md:pt-4! xl:p-6 xl:pt-4!'
         )}
       >
         <ProductCardFooter
@@ -371,7 +371,7 @@ export function ProductCard({
           selectedVariant={selectedVariant ?? null}
           disabled={isCartBusy}
           className='w-full'
-          buttonContainerClassName='border-none ring-0'
+          buttonContainerClassName='h-11! min-h-11! border-none ring-0 md:h-12! md:min-h-12!'
         />
       </div>
       {showWaitlistCta ?

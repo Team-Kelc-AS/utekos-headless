@@ -31,10 +31,10 @@ export function AboutPromise() {
           {promises.map(item => (
             <article
               key={item.title}
-              className='rounded-lg border border-border bg-card p-7 text-card-foreground'
+              className='rounded-2xl border border-border bg-jungle p-7 text-foreground'
             >
               <div className='flex items-center gap-4'>
-                <span className='flex size-12 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground'>
+                <span className='flex size-12 shrink-0 items-center justify-center rounded-md bg-dark-teal text-foreground'>
                   <item.icon
                     aria-hidden='true'
                     className='size-6'

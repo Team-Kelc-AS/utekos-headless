@@ -33,31 +33,36 @@ export function TrustContentView({
     <motion.div
       variants={contentMotion}
       className={cn(
-        'relative z-20 flex min-w-0 flex-col justify-start overflow-visible rounded-md bg-[color-mix(in_oklch,var(--color-card)_82%,var(--color-background)_18%)] p-4 px-6 text-card-foreground sm:px-8 md:py-6'
+        'relative z-20 flex min-w-0 flex-col justify-start overflow-visible rounded-md bg-dark-teal px-6 pt-10 pb-8 text-foreground sm:px-10 sm:pt-12 sm:pb-10 md:px-12 md:pt-14 md:pb-12'
       )}
     >
-      <div className='mb-2 max-w-prose'>
+      <div
+        className='pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(80%_52%_at_12%_0%,color-mix(in_oklch,var(--light-teal)_12%,transparent),transparent_72%)]'
+        aria-hidden
+      />
+
+      <div className='max-w-2xl'>
         <motion.div variants={revealMotion}>
           <H2
             ID='trust-section-heading'
-            className='pb-0 text-3xl! text-card-foreground'
+            className='pb-0 text-3xl! leading-tight text-foreground sm:text-4xl!'
           >
             En opplevelse bygget på tillit
           </H2>
         </motion.div>
 
         <motion.div variants={revealMotion}>
-          <P className='mt-4 mb-4 pb-2 text-base text-card-foreground/90 not-first:mt-0'>
-            Fra du besøker siden vår til du nyter kveldssolen i ditt
-            Utekos-plagg – vi er dedikerte til å levere en trygg og
-            førsteklasses opplevelse i alle ledd.
+          <P className='mt-5 text-base leading-relaxed text-foreground/82 not-first:mt-5 sm:mt-6 sm:text-lg sm:not-first:mt-6'>
+            Fra du besøker siden vår til du nyter kveldssolen i
+            ditt Utekos-plagg – vi er dedikerte til å levere en
+            trygg og førsteklasses opplevelse i alle ledd.
           </P>
         </motion.div>
       </div>
 
       <motion.div
         variants={revealMotion}
-        className='mt-10 flex w-full min-w-0 justify-center overflow-visible sm:mt-12 lg:mt-8'
+        className='mt-12 flex w-full min-w-0 justify-center overflow-visible sm:mt-14 lg:mt-12'
       >
         <InfoCardsComponent />
       </motion.div>
