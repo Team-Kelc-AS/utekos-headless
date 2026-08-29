@@ -186,32 +186,26 @@ test('builds a Pinterest TSV from the Utekos presentation contract', () => {
   assert.equal(inStockRow?.brand, 'Utekos')
   assert.equal(
     inStockRow?.image_link,
-    'https://utekos.no/Utekos-TechDown-Maritime-Blue-Unisex/Utekos-TechDown-Maritime-Blue-Unisex.png'
+    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/TechDown-Havdyp-Master.png'
   )
   assert.equal(
     inStockRow?.additional_image_link,
     [
-      'Utekos-TechDown-Zipper-Closeup.png',
-      'Utekos-TechDown-Maritime-Blue-Zipper-Detail.png',
-      'Utekos-TechDown-Maritime-Blue-Zipper-Detail-Orange-Bg.png',
-      'Utekos-TechDown-Maritime-Blue-Post-Bonfire.png',
-      'Utekos-TechDown-Maritime-Blue-Medium-Unisex-Full-Body.png',
-      'Utekos-TechDown-Maritime-Blue-Medium-Unisex-1.png',
-      'Utekos-TechDown-Maritime-Blue-Folded-Front.png',
-      'Utekos-TechDown-Maritime-Blue-Coast-House-Relax.png',
-      'Utekos-TechDown-Maritime-Blue-Close.png',
-      'Utekos-TechDown-Maritime-Blue-Close-Folded-Back.png'
+      'TechDown-Havdyp-Kyst.png',
+      'TechDown-Havdyp.png',
+      'TechDown-Havdyp-Back.png',
+      'TechDown-Havdyp-Front-Half.png',
+      'Utekos-TechDown-Maritime-Blue-Group-2.png',
+      'TechDown-Havdyp-Back-Half.png',
+      'Utekos-TechDown-Maritime-Blue-Zipper.png'
     ]
       .map(
         fileName =>
-          `https://utekos.no/Utekos-TechDown-Maritime-Blue-Unisex/${fileName}`
+          `https://cdn.shopify.com/s/files/1/0634/2154/6744/files/${fileName}`
       )
       .join(',')
   )
-  assert.doesNotMatch(
-    inStockRow?.image_link ?? '',
-    /cdn\.shopify\.com/
-  )
+  assert.doesNotMatch(inStockRow?.image_link ?? '', /[?#]/)
   assert.equal(outOfStockRow?.availability, 'out of stock')
   assert.equal(outOfStockRow?.custom_label_1, 'full_price')
   assert.equal(outOfStockRow?.shipping, 'NO:::99.00 NOK')
@@ -233,7 +227,7 @@ test('uses the latest included Shopify update as feed Last-Modified', () => {
   )
 })
 
-test('sends dedicated Mikrofiber Patriot Blue images and excludes Vargnatt', () => {
+test('sends dedicated Mikrofiber Shopify Files images and excludes Vargnatt', () => {
   const feed = buildPinterestCatalogFeed([
     {
       ...product,
@@ -276,12 +270,13 @@ test('sends dedicated Mikrofiber Patriot Blue images and excludes Vargnatt', () 
   )
   assert.equal(
     rows[0]?.image_link,
-    'https://utekos.no/Utekos-TechDown-Maritime-Blue-Unisex/Utekos-Mikrofiber-Patriot-Blue-Unisex..png'
+    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Mikroriber-Card.png'
   )
   assert.match(
     rows[0]?.additional_image_link ?? '',
-    /Utekos-Mikrofiber-Lifestyle-Woods\.png/
+    /Mikrofiber-Fjellbla-1\.png/
   )
+  assert.doesNotMatch(rows[0]?.image_link ?? '', /[?#]/)
 })
 
 test('excludes Utekos Dun from the Pinterest catalog', () => {

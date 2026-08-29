@@ -68,6 +68,8 @@
 .empathyPromotion,
 .empathyTracking,
 .empathyStory,
+.empathyMobile,
+.empathyLarge,
 .empathyTextTheatre,
 .empathyTextSticky,
 .empathyTextScene,
@@ -81,6 +83,14 @@
 .empathyResolution,
 .empathyContinuation {
   width: 100%;
+}
+
+.empathyMobile {
+  display: block;
+}
+
+.empathyLarge {
+  display: none;
 }
 
 .empathyPromotion {
@@ -226,12 +236,20 @@
 
 .empathyMediaFrame {
   position: relative;
+  box-sizing: border-box;
   width: 100%;
   overflow: clip;
   border: 1px solid rgb(255 255 255 / 16%);
   border-radius: 0.875rem;
   background: var(--background);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 5%);
+}
+
+.empathyMediaViewport {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  border-radius: inherit;
 }
 
 .empathyFrameBonfire,
@@ -357,8 +375,256 @@
 }
 
 .empathySolutionAnchor {
-  position: absolute;
-  bottom: 0;
+  position: relative;
+  display: block;
+  height: 0;
+}
+
+@media (min-width: 48rem) {
+  .empathyMobile {
+    display: none;
+  }
+
+  .empathyLarge {
+    display: block;
+    background: var(--evening);
+  }
+
+  .empathyLargeTextTheatre,
+  .empathyLargeTextSticky,
+  .empathyLargeTextScene,
+  .empathyLargeQuestionAnswerTheatre,
+  .empathyLargeQuestionAnswerSticky,
+  .empathyLargeQuestionScene,
+  .empathyLargeAnswerPanel,
+  .empathyLargeResolutionTrack,
+  .empathyLargeResolution {
+    width: 100%;
+  }
+
+  .empathyLargeTextTheatre {
+    position: relative;
+    background: var(--cloud-dancer);
+    isolation: isolate;
+  }
+
+  .empathyLargeTextSticky {
+    position: relative;
+  }
+
+  .empathyLargeTextScene,
+  .empathyLargeQuestionScene,
+  .empathyLargeAnswerPanel,
+  .empathyLargeResolution {
+    position: relative;
+    display: grid;
+    box-sizing: border-box;
+    min-height: 100svh;
+    place-items: center;
+    padding: max(5rem, env(safe-area-inset-top))
+      max(clamp(2.5rem, 7vw, 7rem), env(safe-area-inset-right))
+      max(5rem, env(safe-area-inset-bottom))
+      max(clamp(2.5rem, 7vw, 7rem), env(safe-area-inset-left));
+  }
+
+  .empathyLargeMomentScene {
+    color: var(--background);
+    background: var(--cloud-dancer);
+  }
+
+  .empathyLargeRecognitionScene,
+  .empathyLargeQuestionScene {
+    color: var(--foreground);
+    background: var(--jungle);
+  }
+
+  .empathyLargeBonfireCopyScene {
+    color: var(--foreground);
+    background: var(--evening);
+  }
+
+  .empathyLargeTextInner {
+    width: min(100%, 74rem);
+    min-width: 0;
+  }
+
+  .empathyLargeManifestoText {
+    max-width: 13ch;
+    margin: 0;
+    overflow-wrap: break-word;
+    font-family: var(--font-utekos-text-medium), sans-serif;
+    font-size: clamp(4.25rem, 7.2vw, 7.75rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .empathyLargeMediaChain {
+    width: min(89vw, 108rem);
+    margin-inline: auto;
+    background: var(--evening);
+  }
+
+  .empathyLargeMediaRow {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    min-width: 0;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .empathyLargeMediaRowBonfire {
+    background: var(--evening);
+  }
+
+  .empathyLargeMediaRowChill {
+    background: var(--evening);
+  }
+
+  .empathyLargeMediaFrame {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    padding: clamp(0.45rem, 0.85vw, 0.75rem);
+    border: 0;
+    border-radius: clamp(0.4rem, 0.8vw, 0.75rem);
+    background: color-mix(
+      in srgb,
+      var(--cloud-dancer) 10%,
+      var(--jungle)
+    );
+    box-shadow: none;
+  }
+
+  .empathyLargeMediaFrame::before {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    border: 1px solid rgb(255 255 255 / 22%);
+    border-radius: inherit;
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 8%),
+      inset 0 -1.5rem 3rem rgb(0 0 0 / 8%);
+    content: '';
+    pointer-events: none;
+  }
+
+  .empathyLargeMediaFrame .empathyMediaViewport {
+    inset: clamp(0.45rem, 0.85vw, 0.75rem);
+    border: 1px solid rgb(255 255 255 / 14%);
+    border-radius: clamp(0.25rem, 0.55vw, 0.5rem);
+    box-shadow:
+      inset 0 0 0 1px rgb(0 0 0 / 16%),
+      inset 0 1px 0 rgb(255 255 255 / 12%);
+  }
+
+  .empathyLargeRevealCover {
+    display: none;
+  }
+
+  .empathyLargeMediaStatement {
+    align-self: center;
+    max-width: 14ch;
+    margin: 0;
+    padding: clamp(2.5rem, 7vw, 7rem);
+    font-family: var(--font-utekos-text-medium), sans-serif;
+    font-size: clamp(2.75rem, 4.6vw, 5.25rem);
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .empathyLargeQuestionAnswerTheatre {
+    position: relative;
+    background: var(--jungle);
+    isolation: isolate;
+  }
+
+  .empathyLargeQuestionAnswerSticky {
+    position: relative;
+  }
+
+  .empathyLargeAnswerPanel {
+    color: var(--background);
+    background: var(--cloud-dancer);
+  }
+
+  .empathyLargeAnswerInner {
+    width: min(100%, 66rem);
+    min-width: 0;
+  }
+
+  .empathyLargeAnswerOpening {
+    max-width: 13ch;
+    margin: 0;
+    font-family: var(--font-utekos-text-medium), sans-serif;
+    font-size: clamp(4rem, 6.8vw, 7.25rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .empathyLargeAnswerSteps {
+    display: grid;
+    margin: clamp(2.5rem, 5vw, 4.5rem) 0 0;
+    padding: 0;
+    gap: clamp(1rem, 2vw, 1.75rem);
+    list-style: none;
+  }
+
+  .empathyLargeAnswerStep {
+    max-width: 22ch;
+    font-family: var(--font-utekos-text-medium), sans-serif;
+    font-size: clamp(1.85rem, 3vw, 3.35rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .empathyLargeResolutionTrack {
+    position: relative;
+    background: var(--evening);
+  }
+
+  .empathyLargeResolution {
+    background: var(--evening);
+  }
+
+  .empathyLargeResolutionInner {
+    width: min(100%, 70rem);
+    min-width: 0;
+  }
+
+  .empathyLargeResolutionBody,
+  .empathyLargeResolutionEmphasis,
+  .empathyLargeResolutionClosing {
+    font-family: var(--font-utekos-text-medium), sans-serif;
+    text-wrap: balance;
+  }
+
+  .empathyLargeResolutionBody {
+    max-width: 19ch;
+    margin: 0;
+    font-size: clamp(3.25rem, 5.6vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  .empathyLargeResolutionEmphasis {
+    max-width: 12ch;
+    margin: clamp(2rem, 4vw, 3.5rem) 0 0;
+    color: var(--primary);
+    font-size: clamp(4.25rem, 7vw, 7.5rem);
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+  }
+
+  .empathyLargeResolutionClosing {
+    margin: clamp(1.75rem, 3vw, 3rem) 0 0;
+    font-size: clamp(3rem, 4.7vw, 5rem);
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+  }
 }
 
 @media (min-width: 64rem) {
@@ -383,13 +649,6 @@
   .empathyMediaInner {
     grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
     align-items: center;
-  }
-
-  .empathyMediaFrame,
-  .empathyFrameBonfire,
-  .empathyFrameChill {
-    height: min(72svh, 45rem);
-    aspect-ratio: 4 / 5;
   }
 
   .empathyMediaStatement {
@@ -576,7 +835,7 @@
       height: auto;
     }
 
-    @media (min-width: 20rem) and (min-height: 36rem) and (max-width: 63.999rem) {
+    @media (min-width: 20rem) and (min-height: 36rem) and (max-width: 47.999rem) {
       .empathyPromotion {
         margin-top: -200svh;
       }
@@ -763,23 +1022,183 @@
       }
     }
 
-    @media (min-width: 64rem) {
-      .heroPromotion {
+    @media (min-width: 48rem) and (min-height: 40rem) {
+      .empathyPromotion {
+        margin-top: -200svh;
+      }
+
+      .empathyTracking {
+        top: 200svh;
+      }
+
+      .empathyLargeTextTheatre {
+        height: 260svh;
+        min-height: 0;
+        contain: layout paint style;
+        view-timeline-name: --empathy-large-text;
+        view-timeline-axis: block;
+      }
+
+      .empathyLargeTextSticky {
+        position: sticky;
+        top: 0;
         height: 100svh;
+        min-height: 0;
+        overflow: clip;
       }
 
-      .heroTrack {
+      .empathyLargeTextSticky > .empathyLargeTextScene {
+        position: absolute;
+        inset: 0;
         height: 100%;
+        min-height: 0;
       }
 
-      .heroSticky {
-        position: relative;
+      .empathyLargeRecognitionScene {
+        transform: translate3d(100%, 0, 0);
+        animation: skreddersy-empathy-large-recognition 1ms
+          linear both;
+        animation-timeline: --empathy-large-text;
+        animation-range: contain 62% contain 78%;
+        will-change: transform;
       }
 
-      .heroClip {
-        animation: none;
-        transform: none;
-        will-change: auto;
+      .empathyLargeBonfireCopyScene {
+        transform: translate3d(0, 100%, 0);
+        animation: skreddersy-empathy-large-bonfire-copy 1ms
+          linear both;
+        animation-timeline: --empathy-large-text;
+        animation-range: contain 82% contain 98%;
+        will-change: transform;
+      }
+
+      .empathyLargeMediaRowBonfire {
+        view-timeline-name: --empathy-large-bonfire;
+        view-timeline-axis: block;
+      }
+
+      .empathyLargeMediaRowChill {
+        view-timeline-name: --empathy-large-chill;
+        view-timeline-axis: block;
+      }
+
+      .empathyLargeRevealCover {
+        position: absolute;
+        z-index: 5;
+        inset: 0;
+        display: block;
+        border-radius: inherit;
+        background: var(--evening);
+        pointer-events: none;
+      }
+
+      .empathyLargeRevealCoverHorizontal {
+        transform: scaleX(1);
+        transform-origin: right center;
+        animation: skreddersy-empathy-large-reveal-horizontal 1ms
+          linear both;
+      }
+
+      .empathyLargeRevealCoverVertical {
+        transform: scaleY(1);
+        transform-origin: center bottom;
+        animation: skreddersy-empathy-large-reveal-vertical 1ms
+          linear both;
+      }
+
+      .empathyLargeMediaRowBonfire
+        .empathyLargeRevealCover {
+        animation-timeline: --empathy-large-bonfire;
+        animation-range: entry 15% exit 0%;
+      }
+
+      .empathyLargeMediaRowChill .empathyLargeRevealCover {
+        animation-timeline: --empathy-large-chill;
+        animation-range: entry 15% exit 0%;
+      }
+
+      .empathyLargeQuestionAnswerTheatre {
+        height: 230svh;
+        min-height: 0;
+        contain: layout paint style;
+        view-timeline-name: --empathy-large-question-answer;
+        view-timeline-axis: block;
+      }
+
+      .empathyLargeQuestionAnswerSticky {
+        position: sticky;
+        top: 0;
+        height: 100svh;
+        min-height: 0;
+        overflow: clip;
+        isolation: isolate;
+      }
+
+      .empathyLargeQuestionAnswerSticky
+        > .empathyLargeQuestionScene,
+      .empathyLargeQuestionAnswerSticky
+        > .empathyLargeAnswerPanel {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+      }
+
+      .empathyLargeAnswerPanel {
+        z-index: 2;
+        transform: translate3d(100%, 0, 0);
+        animation: skreddersy-empathy-large-answer 1ms linear
+          both;
+        animation-timeline: --empathy-large-question-answer;
+        animation-range: contain 18% contain 41%;
+        will-change: transform;
+      }
+
+      .empathyLargeAnswerStep {
+        opacity: 0;
+        transform: translate3d(0, 1.25rem, 0);
+        animation: skreddersy-empathy-large-answer-step 1ms
+          linear both;
+        animation-timeline: --empathy-large-question-answer;
+        will-change: transform, opacity;
+      }
+
+      .empathyLargeAnswerStep[data-empathy-large-answer-step='1'] {
+        animation-range: contain 45% contain 51%;
+      }
+
+      .empathyLargeAnswerStep[data-empathy-large-answer-step='2'] {
+        animation-range: contain 55% contain 61%;
+      }
+
+      .empathyLargeAnswerStep[data-empathy-large-answer-step='3'] {
+        animation-range: contain 65% contain 71%;
+      }
+
+      .empathyLargeResolutionTrack {
+        height: 180svh;
+        min-height: 0;
+        contain: layout paint style;
+        view-timeline-name: --empathy-large-resolution;
+        view-timeline-axis: block;
+      }
+
+      .empathyLargeResolution {
+        position: sticky;
+        top: 0;
+        height: 100svh;
+        min-height: 100svh;
+      }
+
+      .empathyLargeResolutionClosing {
+        opacity: 0;
+        transform: translate3d(0, 2rem, 0);
+        animation: skreddersy-empathy-large-resolution-closing
+          1ms linear both;
+        animation-timeline: --empathy-large-resolution;
+        animation-range: contain 10% contain 30%;
+        will-change: transform, opacity;
       }
     }
   }
@@ -1043,6 +1462,80 @@
   }
 
   100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes skreddersy-empathy-large-recognition {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes skreddersy-empathy-large-bonfire-copy {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes skreddersy-empathy-large-reveal-horizontal {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes skreddersy-empathy-large-reveal-vertical {
+  from {
+    transform: scaleY(1);
+  }
+
+  to {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes skreddersy-empathy-large-answer {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes skreddersy-empathy-large-answer-step {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes skreddersy-empathy-large-resolution-closing {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 2rem, 0);
+  }
+
+  to {
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }

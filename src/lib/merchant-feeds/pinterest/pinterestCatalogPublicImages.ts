@@ -1,47 +1,57 @@
+import { MERCHANT_FEED_SITE_URL } from '@/lib/merchant-feeds/merchantFeedSiteUrl'
+
+import { buildShopifyFilesCdnUrl } from './buildShopifyFilesCdnUrl'
+import {
+  PINTEREST_MAX_ADDITIONAL_IMAGES,
+  pinterestCatalogImageSetSchema
+} from './pinterestCatalogImageUrlSchema'
+
+export { PINTEREST_MAX_ADDITIONAL_IMAGES }
+
 export const PINTEREST_CATALOG_PUBLIC_IMAGE_DIRECTORY =
   '/Utekos-TechDown-Maritime-Blue-Unisex'
 
-export const PINTEREST_MAX_ADDITIONAL_IMAGES = 10
-
 export type PinterestCatalogImageSet = {
+  imageLink: string
+  additionalImageLinks: readonly string[]
+}
+
+type PinterestCatalogImageOrigin = 'shopify-files' | 'first-party'
+
+type PinterestCatalogImageSource = {
+  origin: PinterestCatalogImageOrigin
   imageFileName: string
   additionalFileNames: readonly string[]
 }
 
 const PINTEREST_CATALOG_IMAGES_BY_HANDLE: Record<
   string,
-  PinterestCatalogImageSet
+  PinterestCatalogImageSource
 > = {
   'utekos-techdown': {
-    imageFileName: 'Utekos-TechDown-Maritime-Blue-Unisex.png',
+    origin: 'shopify-files',
+    imageFileName: 'TechDown-Havdyp-Master.png',
     additionalFileNames: [
-      'Utekos-TechDown-Zipper-Closeup.png',
-      'Utekos-TechDown-Maritime-Blue-Zipper-Detail.png',
-      'Utekos-TechDown-Maritime-Blue-Zipper-Detail-Orange-Bg.png',
-      'Utekos-TechDown-Maritime-Blue-Post-Bonfire.png',
-      'Utekos-TechDown-Maritime-Blue-Medium-Unisex-Full-Body.png',
-      'Utekos-TechDown-Maritime-Blue-Medium-Unisex-1.png',
-      'Utekos-TechDown-Maritime-Blue-Folded-Front.png',
-      'Utekos-TechDown-Maritime-Blue-Coast-House-Relax.png',
-      'Utekos-TechDown-Maritime-Blue-Close.png',
-      'Utekos-TechDown-Maritime-Blue-Close-Folded-Back.png'
+      'TechDown-Havdyp-Kyst.png',
+      'TechDown-Havdyp.png',
+      'TechDown-Havdyp-Back.png',
+      'TechDown-Havdyp-Front-Half.png',
+      'Utekos-TechDown-Maritime-Blue-Group-2.png',
+      'TechDown-Havdyp-Back-Half.png',
+      'Utekos-TechDown-Maritime-Blue-Zipper.png'
     ]
   },
   'utekos-mikrofiber': {
-    imageFileName: 'Utekos-Mikrofiber-Patriot-Blue-Unisex..png',
+    origin: 'shopify-files',
+    imageFileName: 'Mikroriber-Card.png',
     additionalFileNames: [
-      'Utekos-Mikrofiber-Sleeve-Detail..png',
-      'Utekos-Mikrofiber-Patriot-Blue-Pocket-Detail..png',
-      'Utekos-Mikrofiber-Patriot-Blue-Medium-Unisex.png',
-      'Utekos-Mikrofiber-Patriot-Blue-Medium-Parkas-Mode.png',
-      'Utekos-Mikrofiber-Patriot-Blue-Medium-Parkas-Mode..png',
-      'Utekos-Mikrofiber-Patriot-Blue-Medium-Folded-Front.png',
-      'Utekos-Mikrofiber-Patriot-Blue-Backside..png',
-      'Utekos-Mikrofiber-Open-Zipper-Front.png',
-      'Utekos-Mikrofiber-Lifestyle-Woods.png'
+      'Mikrofiber-Fjellbla-1.png',
+      'Mikrofiber-Fjellbla-3.png',
+      'Mikrofiber-Fjellbla-4.png'
     ]
   },
   'comfyrobe': {
+    origin: 'first-party',
     imageFileName: 'Comfyrobe-XL-Dark-Blue.png',
     additionalFileNames: [
       'Comfyrobe-SherpaCore-Inside.png',
@@ -55,40 +65,73 @@ const PINTEREST_CATALOG_IMAGES_BY_HANDLE: Record<
     ]
   },
   'utekos-stapper': {
+    origin: 'first-party',
     imageFileName: 'Utekos-Stapper-Dark-Background.png',
     additionalFileNames: ['Utekos-Stapper-Black.png']
+  }
+}
+
+function buildFirstPartyCatalogImageUrl(fileName: string) {
+  return `${MERCHANT_FEED_SITE_URL}${PINTEREST_CATALOG_PUBLIC_IMAGE_DIRECTORY}/${encodeURIComponent(fileName)}`
+}
+
+function resolveCatalogImageUrl(
+  origin: PinterestCatalogImageOrigin,
+  fileName: string
+) {
+  switch (origin) {
+    case 'shopify-files':
+      return buildShopifyFilesCdnUrl(fileName)
+    case 'first-party':
+      return buildFirstPartyCatalogImageUrl(fileName)
+    default: {
+      const exhaustive: never = origin
+      throw new Error(
+        `Unsupported Pinterest catalog image origin: ${exhaustive}`
+      )
+    }
   }
 }
 
 export function getPinterestCatalogImageSet(
   productHandle: string
 ): PinterestCatalogImageSet {
-  const imageSet =
+  const imageSource =
     PINTEREST_CATALOG_IMAGES_BY_HANDLE[productHandle]
 
-  if (!imageSet) {
+  if (!imageSource) {
     throw new Error(
       `Pinterest catalog product ${productHandle} is missing dedicated public images`
     )
   }
 
-  if (
-    imageSet.additionalFileNames.length >
-    PINTEREST_MAX_ADDITIONAL_IMAGES
-  ) {
-    throw new Error(
-      `Pinterest catalog product ${productHandle} has more than ${PINTEREST_MAX_ADDITIONAL_IMAGES} additional images`
+  return pinterestCatalogImageSetSchema.parse({
+    imageLink: resolveCatalogImageUrl(
+      imageSource.origin,
+      imageSource.imageFileName
+    ),
+    additionalImageLinks: imageSource.additionalFileNames.map(
+      fileName =>
+        resolveCatalogImageUrl(imageSource.origin, fileName)
     )
-  }
-
-  return imageSet
+  })
 }
 
-export function listPinterestCatalogImageFileNames() {
-  return Object.values(
-    PINTEREST_CATALOG_IMAGES_BY_HANDLE
-  ).flatMap(imageSet => [
-    imageSet.imageFileName,
-    ...imageSet.additionalFileNames
-  ])
+export function listPinterestCatalogFirstPartyImageFileNames() {
+  return Object.values(PINTEREST_CATALOG_IMAGES_BY_HANDLE)
+    .filter(imageSource => imageSource.origin === 'first-party')
+    .flatMap(imageSource => [
+      imageSource.imageFileName,
+      ...imageSource.additionalFileNames
+    ])
+}
+
+export function listPinterestCatalogImageLinks() {
+  return Object.keys(PINTEREST_CATALOG_IMAGES_BY_HANDLE).flatMap(
+    productHandle => {
+      const imageSet = getPinterestCatalogImageSet(productHandle)
+
+      return [imageSet.imageLink, ...imageSet.additionalImageLinks]
+    }
+  )
 }

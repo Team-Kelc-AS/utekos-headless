@@ -855,80 +855,130 @@ test('reveals the mobile manifesto and complete bonfire panel without dead scrol
   expect(coverage.every(Boolean)).toBe(true)
 })
 
-test('keeps the empathy story static and readable on desktop', async ({
+test('reveals the first large empathy scene beneath the hero like a theatre curtain', async ({
   page
 }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto(landingUrl, { waitUntil: 'load' })
-  const headerActions = page.locator(
-    '[data-header-part="actions"]'
-  )
-  await expect(headerActions).toHaveCount(1)
-  await headerActions.evaluate(async element => {
-    await Promise.all(
-      element
-        .getAnimations()
-        .map(animation => animation.finished)
-    )
-  })
 
-  const state = await page.evaluate(() => {
-    const sticky = document.querySelector<HTMLElement>(
-      '[data-empathy-reveal-surface]'
-    )
-    const recognition = document.querySelector<HTMLElement>(
-      '[data-empathy-scene="recognition"]'
-    )
+  const geometry = await page.evaluate(() => {
     const heroPromotion = document.querySelector<HTMLElement>(
       '[class*="heroPromotion"]'
     )
-    const answerPanel = document.querySelector<HTMLElement>(
-      '[data-empathy-answer-panel]'
+    const heroSticky = heroPromotion?.querySelector<HTMLElement>(
+      '[class*="heroSticky"]'
     )
-    const questionSticky = document.querySelector<HTMLElement>(
-      '[data-empathy-question-answer-sticky]'
+    const heroClip = document.querySelector<HTMLElement>(
+      '[data-hero-reveal-surface]'
+    )
+    const empathyPromotion = document.querySelector<HTMLElement>(
+      '[data-empathy-promotion]'
+    )
+    const moment = document.querySelector<HTMLElement>(
+      '[data-empathy-large-scene="moment"]'
     )
 
     if (
-      !sticky ||
-      !recognition ||
       !heroPromotion ||
-      !answerPanel ||
-      !questionSticky
+      !heroSticky ||
+      !heroClip ||
+      !empathyPromotion ||
+      !moment
     ) {
-      throw new Error('Missing desktop fallback surfaces')
+      throw new Error('Missing large curtain surfaces')
     }
 
     return {
       heroHeight: heroPromotion.getBoundingClientRect().height,
-      mediaImages: document.querySelectorAll(
-        '[data-empathy-media-scene] img'
-      ).length,
-      recognitionTransform:
-        getComputedStyle(recognition).transform,
-      answerTransform: getComputedStyle(answerPanel).transform,
-      answerSteps: document.querySelectorAll(
-        '[data-empathy-answer-step]'
-      ).length,
-      questionStickyPosition:
-        getComputedStyle(questionSticky).position,
-      stickyPosition: getComputedStyle(sticky).position,
-      textScenes: document.querySelectorAll(
-        '[data-empathy-scene]'
-      ).length,
-      viewportWidth: innerWidth,
-      documentWidth: document.documentElement.scrollWidth
+      heroStickyPosition: getComputedStyle(heroSticky).position,
+      heroAnimationName: getComputedStyle(heroClip).animationName,
+      empathyTop:
+        empathyPromotion.getBoundingClientRect().top + scrollY,
+      momentTop: moment.getBoundingClientRect().top
     }
   })
 
-  expect(state.heroHeight).toBeCloseTo(900, 0)
-  expect(state.textScenes).toBe(4)
-  expect(state.mediaImages).toBe(2)
-  expect(state.stickyPosition).toBe('relative')
-  expect(state.questionStickyPosition).toBe('relative')
-  expect(state.recognitionTransform).toBe('none')
-  expect(state.answerTransform).toBe('none')
-  expect(state.answerSteps).toBe(3)
-  expect(state.documentWidth).toBe(state.viewportWidth)
+  expect(geometry.heroHeight).toBeCloseTo(1800, 0)
+  expect(geometry.heroStickyPosition).toBe('sticky')
+  expect(geometry.heroAnimationName).toContain(
+    'skreddersy-hero-lift'
+  )
+  expect(geometry.empathyTop).toBeCloseTo(0, 0)
+
+  const readCurtain = async (scrollTarget: number) => {
+    await page.evaluate(y => window.scrollTo(0, y), scrollTarget)
+    await page.evaluate(
+      () =>
+        new Promise<void>(resolve =>
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => resolve())
+          )
+        )
+    )
+
+    return page.evaluate(() => {
+      const hero = document.querySelector<HTMLElement>(
+        '[data-hero-reveal-surface]'
+      )
+      const moment = document.querySelector<HTMLElement>(
+        '[data-empathy-large-scene="moment"]'
+      )
+      const heading = document.querySelector<HTMLElement>(
+        '[data-empathy-large-reveal-heading]'
+      )
+      const recognition = document.querySelector<HTMLElement>(
+        '[data-empathy-large-scene="recognition"]'
+      )
+
+      if (!hero || !moment || !heading || !recognition) {
+        throw new Error('Missing large curtain scene')
+      }
+
+      const hits = document.elementsFromPoint(
+        innerWidth / 2,
+        innerHeight / 2
+      )
+      const heroTransform = new DOMMatrix(
+        getComputedStyle(hero).transform
+      )
+      const recognitionTransform = new DOMMatrix(
+        getComputedStyle(recognition).transform
+      )
+
+      return {
+        headingTop: heading.getBoundingClientRect().top,
+        heroAtCenter: hits.some(hit => hero.contains(hit)),
+        heroTranslateY: heroTransform.m42,
+        momentAtCenter: hits.some(hit => moment.contains(hit)),
+        recognitionTranslateX: recognitionTransform.m41,
+        viewportWidth: innerWidth
+      }
+    })
+  }
+
+  const closed = await readCurtain(0)
+  const halfOpen = await readCurtain(450)
+  const open = await readCurtain(900)
+  const nextSceneStarting = await readCurtain(990)
+
+  expect(closed.heroAtCenter).toBe(true)
+  expect(closed.heroTranslateY).toBeCloseTo(0, 0)
+  expect(halfOpen.heroTranslateY).toBeLessThan(-350)
+  expect(halfOpen.heroTranslateY).toBeGreaterThan(-550)
+  expect(open.heroAtCenter).toBe(false)
+  expect(open.momentAtCenter).toBe(true)
+  expect(open.heroTranslateY).toBeCloseTo(-900, 0)
+  expect(halfOpen.headingTop).toBeCloseTo(
+    closed.headingTop,
+    0
+  )
+  expect(open.headingTop).toBeCloseTo(closed.headingTop, 0)
+  expect(nextSceneStarting.recognitionTranslateX).toBeGreaterThan(
+    0
+  )
+  expect(nextSceneStarting.recognitionTranslateX).toBeLessThan(
+    nextSceneStarting.viewportWidth * 0.9
+  )
 })
 
 test('uses a curtain reveal, side-entering answer, and ordered three-step sequence', async ({
@@ -1335,5 +1385,593 @@ test('moves the complete scene surface instead of animating the image frame', as
     expect(layer.clipPath).toBe('none')
     expect(layer.transform).not.toBe('none')
     expect(layer.willChange).toContain('transform')
+  }
+})
+
+test('switches from the locked mobile story to the isolated large story at 768px', async ({
+  page
+}) => {
+  for (const width of [767, 768]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto(landingUrl, { waitUntil: 'load' })
+
+    const state = await page.evaluate(() => {
+      const mobile = document.querySelector<HTMLElement>(
+        '[data-empathy-mobile]'
+      )
+      const large = document.querySelector<HTMLElement>(
+        '[data-empathy-large]'
+      )
+      const mobileHeading = document.querySelector<HTMLElement>(
+        '#empathy-heading'
+      )
+      const largeHeading = document.querySelector<HTMLElement>(
+        '#empathy-heading-large'
+      )
+
+      if (!mobile || !large || !mobileHeading || !largeHeading) {
+        throw new Error('Missing responsive empathy variants')
+      }
+
+      return {
+        largeDisplay: getComputedStyle(large).display,
+        largeHeadingDisplay: getComputedStyle(largeHeading).display,
+        mobileDisplay: getComputedStyle(mobile).display,
+        mobileHeadingDisplay: getComputedStyle(mobileHeading).display,
+        sentinelCount: document.querySelectorAll(
+          '[data-empathy-impression-sentinel]'
+        ).length
+      }
+    })
+
+    expect(state.sentinelCount).toBe(1)
+
+    if (width < 768) {
+      expect(state.mobileDisplay).not.toBe('none')
+      expect(state.mobileHeadingDisplay).not.toBe('none')
+      expect(state.largeDisplay).toBe('none')
+    } else {
+      expect(state.mobileDisplay).toBe('none')
+      expect(state.largeDisplay).not.toBe('none')
+      expect(state.largeHeadingDisplay).not.toBe('none')
+    }
+  }
+})
+
+test('reveals the fixed large empathy frames diagonally and keeps exact corner contact', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const geometry = await page.evaluate(() => {
+    const bonfire = document.querySelector<HTMLElement>(
+      '[data-empathy-large-media-scene="bonfire"]'
+    )
+    const chill = document.querySelector<HTMLElement>(
+      '[data-empathy-large-media-scene="chill"]'
+    )
+
+    if (!bonfire || !chill) {
+      throw new Error('Missing large empathy media rows')
+    }
+
+    const bonfireRect = bonfire.getBoundingClientRect()
+    const chillRect = chill.getBoundingClientRect()
+
+    return {
+      bonfireTop: bonfireRect.top + scrollY,
+      chillTop: chillRect.top + scrollY
+    }
+  })
+
+  const readReveal = async (scrollTarget: number) => {
+    await page.evaluate(y => window.scrollTo(0, y), scrollTarget)
+    await page.evaluate(
+      () =>
+        new Promise<void>(resolve =>
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => resolve())
+          )
+        )
+    )
+
+    return page.evaluate(() => {
+      const bonfire = document.querySelector<HTMLElement>(
+        '[data-empathy-large-reveal-frame="bonfire"]'
+      )
+      const chill = document.querySelector<HTMLElement>(
+        '[data-empathy-large-reveal-frame="chill"]'
+      )
+      const horizontal = bonfire?.querySelector<HTMLElement>(
+        '[data-empathy-large-reveal-cover="horizontal"]'
+      )
+      const vertical = bonfire?.querySelector<HTMLElement>(
+        '[data-empathy-large-reveal-cover="vertical"]'
+      )
+      const image = bonfire?.querySelector<HTMLImageElement>('img')
+
+      if (
+        !bonfire ||
+        !chill ||
+        !horizontal ||
+        !vertical ||
+        !image
+      ) {
+        throw new Error('Missing large empathy reveal surfaces')
+      }
+
+      const first = bonfire.getBoundingClientRect()
+      const second = chill.getBoundingClientRect()
+      const horizontalMatrix = new DOMMatrix(
+        getComputedStyle(horizontal).transform
+      )
+      const verticalMatrix = new DOMMatrix(
+        getComputedStyle(vertical).transform
+      )
+      const frameStyle = getComputedStyle(bonfire)
+      const imageStyle = getComputedStyle(image)
+
+      return {
+        contactX: second.left - first.right,
+        contactY: second.top - first.bottom,
+        firstBottom: first.bottom,
+        firstHeight: first.height,
+        firstTop: first.top,
+        firstWidth: first.width,
+        frameClipPath: frameStyle.clipPath,
+        frameOpacity: frameStyle.opacity,
+        frameTransform: frameStyle.transform,
+        horizontalScale: horizontalMatrix.a,
+        imageObjectFit: imageStyle.objectFit,
+        imageSource: image.currentSrc,
+        verticalScale: verticalMatrix.d
+      }
+    })
+  }
+
+  const start = await readReveal(geometry.bonfireTop - 900 * 0.85)
+  const middle = await readReveal(
+    geometry.bonfireTop - 900 * 0.45
+  )
+  const complete = await readReveal(geometry.bonfireTop)
+
+  expect(start.horizontalScale).toBeGreaterThan(0.95)
+  expect(start.horizontalScale).toBeLessThanOrEqual(1)
+  expect(start.verticalScale).toBeGreaterThan(0.95)
+  expect(start.verticalScale).toBeLessThanOrEqual(1)
+  expect(middle.horizontalScale).toBeGreaterThan(0.1)
+  expect(middle.horizontalScale).toBeLessThan(0.9)
+  expect(middle.verticalScale).toBeGreaterThan(0.1)
+  expect(middle.verticalScale).toBeLessThan(0.9)
+  expect(complete.horizontalScale).toBeCloseTo(0, 2)
+  expect(complete.verticalScale).toBeCloseTo(0, 2)
+  expect(complete.firstWidth / complete.firstHeight).toBeCloseTo(
+    4 / 5,
+    3
+  )
+  expect(complete.contactX).toBeCloseTo(0, 1)
+  expect(complete.contactY).toBeCloseTo(0, 1)
+  expect(complete.frameTransform).toBe('none')
+  expect(complete.frameOpacity).toBe('1')
+  expect(complete.frameClipPath).toBe('none')
+  expect(complete.imageObjectFit).toBe('cover')
+  expect(complete.imageSource).toContain('SkreddersyVarmen-1')
+  expect(start.firstWidth).toBeCloseTo(complete.firstWidth, 1)
+  expect(start.firstHeight).toBeCloseTo(complete.firstHeight, 1)
+
+  const secondReveal = await readReveal(
+    geometry.chillTop - 900 * 0.45
+  )
+
+  expect(secondReveal.firstTop).toBeLessThan(0)
+  expect(secondReveal.firstBottom).toBeGreaterThan(0)
+  expect(secondReveal.contactX).toBeCloseTo(0, 1)
+  expect(secondReveal.contactY).toBeCloseTo(0, 1)
+})
+
+test('starts each large right-side transition promptly instead of leaving dead scroll space', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const geometry = await page.evaluate(() => {
+    const textTrack = document.querySelector<HTMLElement>(
+      '[data-empathy-large-text-theatre]'
+    )
+    const questionTrack = document.querySelector<HTMLElement>(
+      '[data-empathy-large-question-answer-theatre]'
+    )
+    const resolutionTrack = document.querySelector<HTMLElement>(
+      '[data-empathy-large-resolution-track]'
+    )
+    const modeTrack = document.querySelector<HTMLElement>(
+      '[data-mode-scene="fullengde"]'
+    )?.parentElement?.parentElement
+
+    if (
+      !textTrack ||
+      !questionTrack ||
+      !resolutionTrack ||
+      !modeTrack
+    ) {
+      throw new Error('Missing large scroll tracks')
+    }
+
+    const readTrack = (element: HTMLElement) => {
+      const rect = element.getBoundingClientRect()
+      return {
+        height: rect.height,
+        top: rect.top + scrollY
+      }
+    }
+
+    return {
+      mode: readTrack(modeTrack),
+      question: readTrack(questionTrack),
+      resolution: readTrack(resolutionTrack),
+      text: readTrack(textTrack),
+      viewportHeight: innerHeight
+    }
+  })
+
+  expect(geometry.text.height).toBeLessThanOrEqual(
+    geometry.viewportHeight * 2.6 + 1
+  )
+  expect(geometry.question.height).toBeLessThanOrEqual(
+    geometry.viewportHeight * 2.3 + 1
+  )
+  expect(geometry.resolution.height).toBeLessThanOrEqual(
+    geometry.viewportHeight * 1.8 + 1
+  )
+  expect(geometry.mode.height).toBeLessThanOrEqual(
+    geometry.viewportHeight * 3 + 1
+  )
+
+  await page.evaluate(
+    y => window.scrollTo(0, y),
+    geometry.question.top + geometry.viewportHeight * 0.25
+  )
+  await page.waitForTimeout(100)
+
+  const answerProgress = await page.evaluate(() => {
+    const answer = document.querySelector<HTMLElement>(
+      '[data-empathy-large-answer-panel]'
+    )
+    if (!answer) throw new Error('Missing large answer panel')
+
+    return new DOMMatrix(getComputedStyle(answer).transform).m41
+  })
+
+  expect(answerProgress).toBeGreaterThan(0)
+  expect(answerProgress).toBeLessThan(1440)
+
+  await page.evaluate(
+    y => window.scrollTo(0, y),
+    geometry.mode.top + geometry.viewportHeight * 1.1
+  )
+  await page.waitForTimeout(100)
+
+  const horizontalModeProgress = await page.evaluate(() => {
+    const scene = document.querySelector<HTMLElement>(
+      '[data-mode-scene="parkas"]'
+    )
+    if (!scene) throw new Error('Missing horizontal mode scene')
+
+    return new DOMMatrix(getComputedStyle(scene).transform).m41
+  })
+
+  expect(horizontalModeProgress).toBeGreaterThan(0)
+  expect(horizontalModeProgress).toBeLessThan(1440)
+})
+
+test('keeps Friheten til a velge full width before the following 50/50 mode stage', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const geometry = await page.evaluate(() => {
+    const track = document.querySelector<HTMLElement>(
+      '[data-three-in-one-intro-track]'
+    )
+    if (!track) throw new Error('Missing three-in-one intro track')
+
+    const rect = track.getBoundingClientRect()
+    return {
+      height: rect.height,
+      top: rect.top + scrollY
+    }
+  })
+
+  expect(geometry.height).toBeLessThanOrEqual(900 * 1.8 + 1)
+
+  await page.evaluate(
+    y => window.scrollTo(0, y),
+    geometry.top + (geometry.height - 900) * 0.5
+  )
+  await page.waitForTimeout(100)
+
+  const entering = await page.evaluate(() => {
+    const surface = document.querySelector<HTMLElement>(
+      '[data-three-in-one-surface]'
+    )
+    if (!surface) throw new Error('Missing three-in-one surface')
+
+    const matrix = new DOMMatrix(getComputedStyle(surface).transform)
+    return {
+      clipPath: getComputedStyle(surface).clipPath,
+      translateX: matrix.m41,
+      translateY: matrix.m42
+    }
+  })
+
+  expect(entering.translateX).toBeGreaterThan(0)
+  expect(entering.translateX).toBeLessThan(1440)
+  expect(entering.translateY).toBeGreaterThan(0)
+  expect(entering.clipPath).not.toBe('none')
+
+  await page.evaluate(
+    y => window.scrollTo(0, y),
+    geometry.top + geometry.height - 900
+  )
+  await page.waitForTimeout(100)
+
+  const settled = await page.evaluate(() => {
+    const surface = document.querySelector<HTMLElement>(
+      '[data-three-in-one-surface]'
+    )
+    const content = surface?.firstElementChild as HTMLElement | null
+    const resolution = document.querySelector<HTMLElement>(
+      '[data-empathy-large-resolution]'
+    )
+    const firstMode = document.querySelector<HTMLElement>(
+      '[data-mode-scene="fullengde"]'
+    )
+    const stage = firstMode?.parentElement
+
+    if (!surface || !content || !resolution || !stage) {
+      throw new Error('Missing large introduction composition')
+    }
+
+    const surfaceStyle = getComputedStyle(surface)
+    const resolutionStyle = getComputedStyle(resolution)
+    const surfaceRect = surface.getBoundingClientRect()
+
+    return {
+      contentWidth: content.getBoundingClientRect().width,
+      resolutionBackground: resolutionStyle.backgroundColor,
+      stageBackground: getComputedStyle(stage).backgroundImage,
+      surfaceBackground: surfaceStyle.backgroundColor,
+      surfaceBackgroundImage: surfaceStyle.backgroundImage,
+      surfaceLeft: surfaceRect.left,
+      surfaceWidth: surfaceRect.width,
+      viewportWidth: innerWidth
+    }
+  })
+
+  expect(settled.surfaceLeft).toBeCloseTo(0, 0)
+  expect(settled.surfaceWidth).toBeCloseTo(
+    settled.viewportWidth,
+    0
+  )
+  expect(settled.contentWidth).toBeGreaterThan(
+    settled.viewportWidth * 0.75
+  )
+  expect(settled.surfaceBackgroundImage).toBe('none')
+  expect(settled.surfaceBackground).not.toBe(
+    settled.resolutionBackground
+  )
+  expect(settled.stageBackground).toContain('50%')
+})
+
+test('keeps large breakpoint layouts 50/50 with five real 4:5 image frames', async ({
+  page
+}) => {
+  const viewports = [
+    { width: 834, height: 1112 },
+    { width: 1024, height: 768 },
+    { width: 1440, height: 900 }
+  ]
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport)
+    await page.goto(landingUrl, { waitUntil: 'load' })
+
+    const firstModeTop = await page.evaluate(() => {
+      const scene = document.querySelector<HTMLElement>(
+        '[data-mode-scene="fullengde"]'
+      )
+      if (!scene) throw new Error('Missing full-length scene')
+
+      return scene.getBoundingClientRect().top + scrollY
+    })
+
+    await page.evaluate(y => window.scrollTo(0, y), firstModeTop)
+    await page.waitForTimeout(100)
+
+    const state = await page.evaluate(() => {
+      const scene = document.querySelector<HTMLElement>(
+        '[data-mode-scene="fullengde"]'
+      )
+      const media = scene?.firstElementChild as HTMLElement | null
+      const copy = media?.nextElementSibling as HTMLElement | null
+      const stage = scene?.parentElement
+      const header = document.querySelector<HTMLElement>(
+        'header[data-site-header]'
+      )
+      const pictures = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '[data-mode-scene] [class*="picture"]'
+        )
+      )
+      const empathyFrames = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '[data-empathy-large-reveal-frame]'
+        )
+      )
+      const images = Array.from(
+        document.querySelectorAll<HTMLImageElement>(
+          '[data-mode-scene] img'
+        )
+      )
+
+      if (!scene || !media || !copy || !stage || !header) {
+        throw new Error('Missing large mode composition')
+      }
+
+      const mediaRect = media.getBoundingClientRect()
+      const copyRect = copy.getBoundingClientRect()
+
+      return {
+        activeLargeDisplay: getComputedStyle(
+          document.querySelector<HTMLElement>(
+            '[data-empathy-large]'
+          )!
+        ).display,
+        activeMobileDisplay: getComputedStyle(
+          document.querySelector<HTMLElement>(
+            '[data-empathy-mobile]'
+          )!
+        ).display,
+        boundary: mediaRect.right,
+        copyLeft: copyRect.left,
+        copyWidth: copyRect.width,
+        documentWidth: document.documentElement.scrollWidth,
+        empathyRatios: empathyFrames.map(frame => {
+          const rect = frame.getBoundingClientRect()
+          return rect.width / rect.height
+        }),
+        headerPosition: getComputedStyle(header).position,
+        h1Count: document.querySelectorAll('h1').length,
+        imageFits: images.map(image =>
+          getComputedStyle(image).objectFit
+        ),
+        imageSources: images.map(
+          image => image.getAttribute('src') ?? image.currentSrc
+        ),
+        mainCount: document.querySelectorAll('main').length,
+        mediaWidth: mediaRect.width,
+        modeRatios: pictures.map(picture => {
+          const rect = picture.getBoundingClientRect()
+          return rect.width / rect.height
+        }),
+        sentinelCount: document.querySelectorAll(
+          '[data-empathy-impression-sentinel]'
+        ).length,
+        stageBackground: getComputedStyle(stage).backgroundImage,
+        viewportWidth: innerWidth
+      }
+    })
+
+    expect(state.activeMobileDisplay).toBe('none')
+    expect(state.activeLargeDisplay).not.toBe('none')
+    expect(state.mainCount).toBe(1)
+    expect(state.h1Count).toBe(1)
+    expect(state.sentinelCount).toBe(1)
+    expect(state.headerPosition).toBe('fixed')
+    expect(state.documentWidth).toBe(state.viewportWidth)
+    expect(state.mediaWidth).toBeCloseTo(viewport.width / 2, 1)
+    expect(state.copyWidth).toBeCloseTo(viewport.width / 2, 1)
+    expect(state.boundary).toBeCloseTo(viewport.width / 2, 1)
+    expect(state.copyLeft).toBeCloseTo(viewport.width / 2, 1)
+    expect(state.stageBackground).toContain('50%')
+    expect(state.empathyRatios).toHaveLength(2)
+    expect(state.modeRatios).toHaveLength(3)
+
+    for (const ratio of [
+      ...state.empathyRatios,
+      ...state.modeRatios
+    ]) {
+      expect(ratio).toBeCloseTo(4 / 5, 2)
+    }
+
+    expect(state.imageFits).toEqual(['cover', 'cover', 'cover'])
+    expect(state.imageSources[0]).toContain(
+      'TechDown-1080x1350-2'
+    )
+    expect(state.imageSources[1]).toContain('UtekosTechDownMob')
+    expect(state.imageSources[2]).toContain(
+      'TechDown-Kyst-W-1600x1600'
+    )
+  }
+})
+
+test('uses static large fallbacks for reduced motion and short viewports', async ({
+  page
+}) => {
+  const cases = [
+    {
+      reducedMotion: 'reduce' as const,
+      viewport: { width: 1440, height: 900 }
+    },
+    {
+      reducedMotion: 'no-preference' as const,
+      viewport: { width: 1024, height: 600 }
+    }
+  ]
+
+  for (const testCase of cases) {
+    await page.emulateMedia({
+      reducedMotion: testCase.reducedMotion
+    })
+    await page.setViewportSize(testCase.viewport)
+    await page.goto(landingUrl, { waitUntil: 'load' })
+
+    const state = await page.evaluate(() => {
+      const textSurface = document.querySelector<HTMLElement>(
+        '[data-empathy-large-reveal-surface]'
+      )
+      const answerSurface = document.querySelector<HTMLElement>(
+        '[data-empathy-large-question-answer-sticky]'
+      )
+      const resolution = document.querySelector<HTMLElement>(
+        '[data-empathy-large-resolution]'
+      )
+      const covers = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '[data-empathy-large-reveal-cover]'
+        )
+      )
+      const scenes = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-mode-scene]')
+      )
+
+      if (!textSurface || !answerSurface || !resolution) {
+        throw new Error('Missing large fallback surfaces')
+      }
+
+      return {
+        answerPosition: getComputedStyle(answerSurface).position,
+        coverDisplays: covers.map(
+          cover => getComputedStyle(cover).display
+        ),
+        resolutionPosition: getComputedStyle(resolution).position,
+        scenePositions: scenes.map(
+          scene => getComputedStyle(scene).position
+        ),
+        sceneTransforms: scenes.map(
+          scene => getComputedStyle(scene).transform
+        ),
+        textPosition: getComputedStyle(textSurface).position
+      }
+    })
+
+    expect(state.textPosition).toBe('relative')
+    expect(state.answerPosition).toBe('relative')
+    expect(state.resolutionPosition).toBe('relative')
+    expect(state.coverDisplays).toEqual([
+      'none',
+      'none',
+      'none',
+      'none'
+    ])
+    expect(
+      state.scenePositions.every(
+        position => position === 'static' || position === 'relative'
+      )
+    ).toBe(true)
+    expect(state.sceneTransforms).toEqual(['none', 'none', 'none'])
   }
 })

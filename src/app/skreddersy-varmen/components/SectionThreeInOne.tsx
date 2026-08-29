@@ -1,4 +1,4 @@
-import Image, { getImageProps } from 'next/image'
+import Image from 'next/image'
 import { THREE_MODE_SCENE_ASSETS } from './Steps'
 import {
   parseThreeModeScenes,
@@ -13,13 +13,6 @@ type SectionThreeInOneProps = {
 
 function ModeScene({ scene }: { scene: ThreeModeScene }) {
   const asset = THREE_MODE_SCENE_ASSETS[scene.id]
-  const { props: desktopImage } = getImageProps({
-    src: asset.desktop,
-    alt: '',
-    fill: true,
-    quality: 75,
-    sizes: '(min-width: 1024px) min(54vw, 860px), 100vw'
-  })
 
   return (
     <article
@@ -29,26 +22,22 @@ function ModeScene({ scene }: { scene: ThreeModeScene }) {
     >
       <div className={styles.mediaShell}>
         <div className={styles.mediaCore}>
-          <picture className={styles.picture}>
-            <source
-              media='(min-width: 1024px)'
-              srcSet={desktopImage.srcSet}
-              sizes={desktopImage.sizes}
-            />
+          <div className={styles.picture}>
             <Image
-              src={asset.mobile}
+              src={asset.src}
               alt={scene.imageAlt}
               fill
               loading='lazy'
               quality={75}
-              sizes='(max-width: 1023px) calc(100vw - 32px), min(54vw, 860px)'
+              sizes='(max-width: 767px) calc(100vw - 32px), 50vw'
+              style={{ objectPosition: asset.objectPosition }}
               className={
                 asset.objectFit === 'contain' ?
                   styles.imageContain
                 : styles.imageCover
               }
             />
-          </picture>
+          </div>
         </div>
       </div>
 
