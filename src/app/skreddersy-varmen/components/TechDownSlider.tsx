@@ -314,17 +314,6 @@ export function TechDownSlider() {
               </AnimatePresence>
             </div>
           </m.div>
-
-          <m.p
-            className={styles.disclaimer}
-            initial='hidden'
-            whileInView='visible'
-            viewport={skreddersyViewport}
-            variants={revealItem}
-          >
-            Illustrasjonen forklarer materialprinsippet og er
-            ikke en prosentmåling eller laboratorietest.
-          </m.p>
         </div>
       </section>
     </SkreddersyMotionProvider>

@@ -270,7 +270,7 @@ test('keeps hidden header controls out of the initial keyboard order', async ({
   })
 })
 
-test('keeps every intro phase calm and strictly sequential', async ({
+test('keeps every intro phase calm and ordered', async ({
   page
 }) => {
   await page.goto(landingUrl, { waitUntil: 'load' })
@@ -380,11 +380,7 @@ test('keeps every intro phase calm and strictly sequential', async ({
     ({ transform }, index) =>
       index > hopIndex && transform.includes('translateY(0')
   )
-  const exitIndex = choreography.logo.keyframes.findIndex(
-    ({ transform }, index) =>
-      index > landingIndex &&
-      /translateY\([1-9]\d{2,}(?:\.\d+)?px\)/.test(transform)
-  )
+  const exitIndex = choreography.logo.keyframes.length - 1
   const exitStart = choreography.logo.keyframes[exitIndex - 1]
   const logoEnd =
     choreography.logo.delay + choreography.logo.duration
@@ -400,6 +396,11 @@ test('keeps every intro phase calm and strictly sequential', async ({
   expect(hopIndex).toBeGreaterThan(0)
   expect(landingIndex).toBeGreaterThan(hopIndex)
   expect(exitIndex).toBeGreaterThan(landingIndex)
+  expect(
+    choreography.logo.keyframes[exitIndex]?.transform
+  ).not.toBe(
+    choreography.logo.keyframes[landingIndex]?.transform
+  )
   expect(exitStart?.easing).toBe('cubic-bezier(0.16, 1, 0.3, 1)')
   expect(choreography.jungle.delay).toBeGreaterThanOrEqual(1500)
   expect(choreography.cloud.endTime).toBeGreaterThanOrEqual(2300)
@@ -415,12 +416,12 @@ test('keeps every intro phase calm and strictly sequential', async ({
   expect(choreography.headerActions.duration).toBe(
     choreography.headerBrand.duration
   )
-  expect(choreography.hero.delay).toBeGreaterThanOrEqual(
-    headerEnd
-  )
+  expect(choreography.hero.delay).toBeCloseTo(logoEnd, 0)
+  expect(choreography.hero.delay).toBeLessThan(headerEnd)
+  expect(choreography.hero.endTime).toBeGreaterThan(headerEnd)
 })
 
-test('never reveals a later intro layer before the active phase is finished', async ({
+test('brings the hero in immediately after the logo without revealing it early', async ({
   page
 }) => {
   await page.setViewportSize({ width: 390, height: 844 })
@@ -520,12 +521,12 @@ test('never reveals a later intro layer before the active phase is finished', as
     logo: 'hidden',
     brand: 'visible',
     actions: 'visible',
-    hero: 'hidden'
+    hero: 'visible'
   })
 
   expect(await readPhaseAt(5200)).toEqual({
     cloud: 'hidden',
-    jungle: 'visible',
+    jungle: 'hidden',
     logo: 'hidden',
     brand: 'visible',
     actions: 'visible',
@@ -692,111 +693,140 @@ test('reveals the mobile manifesto and complete bonfire panel without dead scrol
   expect(revealed.recognitionVisibility).toBe('visible')
   expect(revealed.recognitionLeft).toBeGreaterThanOrEqual(389)
 
-  await page.evaluate(() =>
-    window.scrollTo(0, innerHeight * 1.1)
-  )
-  await page.waitForTimeout(100)
-
-  const transition = await recognition.evaluate(element => {
+  const textGeometry = await textTheatre.evaluate(element => {
     const rect = element.getBoundingClientRect()
-
     return {
-      left: rect.left,
-      visibility: getComputedStyle(element).visibility
+      activeDistance: rect.height - innerHeight,
+      documentTop: rect.top + scrollY,
+      height: rect.height,
+      viewportHeight: innerHeight
     }
   })
 
+  expect(textGeometry.height).toBeCloseTo(
+    textGeometry.viewportHeight * 5.6,
+    0
+  )
+
+  const scrollTextTrack = async (
+    progress: number,
+    offset = 0
+  ) => {
+    await page.evaluate(
+      ({ activeDistance, documentTop, offset, progress }) =>
+        window.scrollTo(
+          0,
+          documentTop + activeDistance * progress + offset
+        ),
+      { ...textGeometry, offset, progress }
+    )
+    await page.waitForTimeout(100)
+  }
+
+  const readPosition = (
+    locator: typeof recognition,
+    axis: 'left' | 'top'
+  ) =>
+    locator.evaluate(
+      (element, selectedAxis) => ({
+        position: element.getBoundingClientRect()[selectedAxis],
+        timingFunction:
+          getComputedStyle(element).animationTimingFunction,
+        visibility: getComputedStyle(element).visibility
+      }),
+      axis
+    )
+
+  await scrollTextTrack(0.22, textGeometry.viewportHeight * 0.2)
+  const transition = await readPosition(recognition, 'left')
+  await scrollTextTrack(0.22, textGeometry.viewportHeight)
+  const transitionAfterOneViewport = await readPosition(
+    recognition,
+    'left'
+  )
+  await scrollTextTrack(0.47, 1)
+  const settled = await readPosition(recognition, 'left')
+
   expect(transition.visibility).toBe('visible')
-  expect(transition.left).toBeGreaterThan(1)
-  expect(transition.left).toBeLessThan(390)
-
-  await page.evaluate(() =>
-    window.scrollTo(0, innerHeight * 1.5)
+  expect(transition.position).toBeGreaterThan(390 * 0.6)
+  expect(transition.position).toBeLessThan(390)
+  expect(transition.timingFunction).toBe('linear')
+  expect(transitionAfterOneViewport.position).toBeGreaterThan(0)
+  expect(transitionAfterOneViewport.position).toBeLessThan(
+    transition.position
   )
-  await page.waitForTimeout(100)
-
-  const settled = await recognition.evaluate(element => ({
-    left: element.getBoundingClientRect().left,
-    visibility: getComputedStyle(element).visibility
-  }))
-
   expect(settled.visibility).toBe('visible')
-  expect(Math.abs(settled.left)).toBeLessThanOrEqual(1)
+  expect(Math.abs(settled.position)).toBeLessThanOrEqual(1)
 
-  await page.evaluate(() =>
-    window.scrollTo(0, innerHeight * 1.65)
+  await scrollTextTrack(0.485, textGeometry.viewportHeight * 0.2)
+  const bonfireCopyEntering = await readPosition(
+    bonfireCopy,
+    'top'
   )
-  await page.waitForTimeout(100)
-
-  const bonfireCopyEntering = await bonfireCopy.evaluate(
-    element => ({
-      top: element.getBoundingClientRect().top,
-      visibility: getComputedStyle(element).visibility
-    })
+  await scrollTextTrack(0.485, textGeometry.viewportHeight)
+  const bonfireCopyAfterOneViewport = await readPosition(
+    bonfireCopy,
+    'top'
+  )
+  await scrollTextTrack(0.735, 1)
+  const bonfireCopySettled = await readPosition(
+    bonfireCopy,
+    'top'
   )
 
   expect(bonfireCopyEntering.visibility).toBe('visible')
-  expect(bonfireCopyEntering.top).toBeGreaterThan(1)
-  expect(bonfireCopyEntering.top).toBeLessThan(844)
-
-  await page.evaluate(() =>
-    window.scrollTo(0, innerHeight * 1.95)
+  expect(bonfireCopyEntering.position).toBeGreaterThan(844 * 0.6)
+  expect(bonfireCopyEntering.position).toBeLessThan(844)
+  expect(bonfireCopyEntering.timingFunction).toBe('linear')
+  expect(bonfireCopyAfterOneViewport.position).toBeGreaterThan(0)
+  expect(bonfireCopyAfterOneViewport.position).toBeLessThan(
+    bonfireCopyEntering.position
   )
-  await page.waitForTimeout(100)
-
-  const bonfireCopySettled = await bonfireCopy.evaluate(
-    element => ({
-      top: element.getBoundingClientRect().top,
-      visibility: getComputedStyle(element).visibility
-    })
-  )
-
   expect(bonfireCopySettled.visibility).toBe('visible')
-  expect(Math.abs(bonfireCopySettled.top)).toBeLessThanOrEqual(1)
+  expect(
+    Math.abs(bonfireCopySettled.position)
+  ).toBeLessThanOrEqual(1)
 
-  await page.evaluate(() =>
-    window.scrollTo(0, innerHeight * 2.1)
+  await scrollTextTrack(0.75, textGeometry.viewportHeight * 0.2)
+  const bonfirePanelEntering = await readPosition(
+    firstMediaScene,
+    'left'
   )
-  await page.waitForTimeout(100)
-
-  const bonfirePanelEntering = await firstMediaScene.evaluate(
-    element => {
-      const rect = element.getBoundingClientRect()
-
-      return {
-        left: rect.left,
-        top: rect.top,
-        visibility: getComputedStyle(element).visibility
-      }
-    }
+  await scrollTextTrack(0.75, textGeometry.viewportHeight)
+  const bonfirePanelAfterOneViewport = await readPosition(
+    firstMediaScene,
+    'left'
+  )
+  await scrollTextTrack(1, 1)
+  const bonfirePanelSettled = await readPosition(
+    firstMediaScene,
+    'left'
   )
 
   expect(bonfirePanelEntering.visibility).toBe('visible')
-  expect(bonfirePanelEntering.left).toBeGreaterThan(1)
-  expect(bonfirePanelEntering.left).toBeLessThan(390)
-  expect(Math.abs(bonfirePanelEntering.top)).toBeLessThanOrEqual(
-    1
+  expect(bonfirePanelEntering.position).toBeGreaterThan(
+    390 * 0.6
   )
-
-  await page.evaluate(() =>
-    window.scrollTo(0, innerHeight * 2.4)
+  expect(bonfirePanelEntering.position).toBeLessThan(390)
+  expect(bonfirePanelEntering.timingFunction).toBe('linear')
+  expect(bonfirePanelAfterOneViewport.position).toBeGreaterThan(
+    0
   )
-  await page.waitForTimeout(100)
-
-  const bonfirePanelSettled = await firstMediaScene.evaluate(
-    element => ({
-      left: element.getBoundingClientRect().left,
-      visibility: getComputedStyle(element).visibility
-    })
+  expect(bonfirePanelAfterOneViewport.position).toBeLessThan(
+    bonfirePanelEntering.position
   )
-
   expect(bonfirePanelSettled.visibility).toBe('visible')
-  expect(Math.abs(bonfirePanelSettled.left)).toBeLessThanOrEqual(
-    1
-  )
+  expect(
+    Math.abs(bonfirePanelSettled.position)
+  ).toBeLessThanOrEqual(1)
 
-  await page.evaluate(() =>
-    window.scrollTo(0, innerHeight * 2.6)
+  await page.evaluate(
+    ({ documentTop, height }) =>
+      window.scrollTo(
+        0,
+        documentTop + height - innerHeight * 0.8
+      ),
+    textGeometry
   )
   await page.waitForTimeout(100)
 
@@ -821,7 +851,7 @@ test('reveals the mobile manifesto and complete bonfire panel without dead scrol
     ]
     const results: boolean[] = []
 
-    for (let progress = 0; progress <= 3.25; progress += 0.25) {
+    for (let progress = 0; progress <= 6; progress += 0.25) {
       window.scrollTo(0, innerHeight * progress)
       await new Promise<void>(resolve =>
         requestAnimationFrame(() =>
@@ -891,7 +921,8 @@ test('reveals the first large empathy scene beneath the hero like a theatre curt
     return {
       heroHeight: heroPromotion.getBoundingClientRect().height,
       heroStickyPosition: getComputedStyle(heroSticky).position,
-      heroAnimationName: getComputedStyle(heroClip).animationName,
+      heroAnimationName:
+        getComputedStyle(heroClip).animationName,
       empathyTop:
         empathyPromotion.getBoundingClientRect().top + scrollY,
       momentTop: moment.getBoundingClientRect().top
@@ -968,14 +999,11 @@ test('reveals the first large empathy scene beneath the hero like a theatre curt
   expect(open.heroAtCenter).toBe(false)
   expect(open.momentAtCenter).toBe(true)
   expect(open.heroTranslateY).toBeCloseTo(-900, 0)
-  expect(halfOpen.headingTop).toBeCloseTo(
-    closed.headingTop,
-    0
-  )
+  expect(halfOpen.headingTop).toBeCloseTo(closed.headingTop, 0)
   expect(open.headingTop).toBeCloseTo(closed.headingTop, 0)
-  expect(nextSceneStarting.recognitionTranslateX).toBeGreaterThan(
-    0
-  )
+  expect(
+    nextSceneStarting.recognitionTranslateX
+  ).toBeGreaterThan(0)
   expect(nextSceneStarting.recognitionTranslateX).toBeLessThan(
     nextSceneStarting.viewportWidth * 0.9
   )
@@ -1033,8 +1061,15 @@ test('uses a curtain reveal, side-entering answer, and ordered three-step sequen
   const geometry = await theatre.evaluate(element => ({
     activeDistance:
       element.getBoundingClientRect().height - innerHeight,
-    documentTop: element.getBoundingClientRect().top + scrollY
+    documentTop: element.getBoundingClientRect().top + scrollY,
+    height: element.getBoundingClientRect().height,
+    viewportHeight: innerHeight
   }))
+
+  expect(geometry.height).toBeCloseTo(
+    geometry.viewportHeight * 8,
+    0
+  )
 
   const scrollToProgress = async (progress: number) => {
     await page.evaluate(
@@ -1067,7 +1102,7 @@ test('uses a curtain reveal, side-entering answer, and ordered three-step sequen
 
   expect(covered).toBe(true)
 
-  await scrollToProgress(0.19)
+  await scrollToProgress(0.09)
   const curtainReveal = await page.evaluate(() => {
     const curtain = document.querySelector<HTMLElement>(
       '[data-empathy-question-curtain]'
@@ -1099,27 +1134,84 @@ test('uses a curtain reveal, side-entering answer, and ordered three-step sequen
     Math.abs(curtainReveal.questionTop)
   ).toBeLessThanOrEqual(1)
 
-  await scrollToProgress(0.43)
+  await scrollToProgress(0.2)
   const answerEntering = await answer.evaluate(element => ({
     left: element.getBoundingClientRect().left,
+    timingFunction:
+      getComputedStyle(element).animationTimingFunction,
     visibility: getComputedStyle(element).visibility
   }))
 
   expect(answerEntering.visibility).toBe('visible')
-  expect(answerEntering.left).toBeGreaterThan(1)
+  expect(answerEntering.left).toBeGreaterThan(390 * 0.75)
   expect(answerEntering.left).toBeLessThan(390)
+  expect(answerEntering.timingFunction).toBe('linear')
 
-  await scrollToProgress(0.61)
+  await page.evaluate(
+    ({ activeDistance, documentTop, viewportHeight }) =>
+      window.scrollTo(
+        0,
+        documentTop + activeDistance * 0.18 + viewportHeight
+      ),
+    geometry
+  )
+  await page.waitForTimeout(100)
+
+  const answerAfterOneViewport = await answer.evaluate(
+    element => ({ left: element.getBoundingClientRect().left })
+  )
+
+  expect(answerAfterOneViewport.left).toBeGreaterThan(0)
+  expect(answerAfterOneViewport.left).toBeLessThan(
+    answerEntering.left
+  )
+
+  await scrollToProgress(0.341)
+  expect(
+    Math.abs(
+      await answer.evaluate(
+        element => element.getBoundingClientRect().left
+      )
+    )
+  ).toBeLessThanOrEqual(1)
+
+  await scrollToProgress(0.4)
+  await expect(steps.nth(0)).toHaveCSS('opacity', '0')
+  await expect(steps.nth(1)).toHaveCSS('opacity', '0')
+  await expect(steps.nth(2)).toHaveCSS('opacity', '0')
+
+  await scrollToProgress(0.601)
   await expect(steps.nth(0)).toHaveCSS('opacity', '1')
   await expect(steps.nth(1)).toHaveCSS('opacity', '0')
   await expect(steps.nth(2)).toHaveCSS('opacity', '0')
 
-  await scrollToProgress(0.7)
+  await page.evaluate(
+    ({ activeDistance, documentTop, viewportHeight }) =>
+      window.scrollTo(
+        0,
+        documentTop + activeDistance * 0.599 + viewportHeight
+      ),
+    geometry
+  )
+  await page.waitForTimeout(100)
+
+  const afterHardScroll = await steps.evaluateAll(elements =>
+    elements.map(element =>
+      Number.parseFloat(getComputedStyle(element).opacity)
+    )
+  )
+
+  expect(afterHardScroll[0]).toBe(1)
+  expect(afterHardScroll[1]).toBeGreaterThan(0)
+  expect(afterHardScroll[1]).toBeLessThan(1)
+  expect(afterHardScroll[2]).toBe(0)
+
+  await scrollToProgress(0.771)
   await expect(steps.nth(0)).toHaveCSS('opacity', '1')
   await expect(steps.nth(1)).toHaveCSS('opacity', '1')
   await expect(steps.nth(2)).toHaveCSS('opacity', '0')
 
-  await scrollToProgress(0.8)
+  await scrollToProgress(0.941)
   await expect(steps.nth(2)).toHaveCSS('opacity', '1')
 
   const resolutionTop = await resolutionBody.evaluate(
@@ -1227,6 +1319,82 @@ test('keeps the redesigned technology instrument keyboard-operable', async ({
   expect(geometry.scrollWidth).toBe(geometry.clientWidth)
 })
 
+test('keeps the technology heading controlled across responsive sizes', async ({
+  page
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const heading = page.locator('#techdown-heading')
+  await expect(heading).toHaveCount(1, { timeout: 15_000 })
+
+  const viewports = [
+    { width: 390, height: 844, fontSize: 45.6 },
+    { width: 834, height: 1112, fontSize: 62.55 },
+    { width: 1280, height: 900, fontSize: 84 }
+  ]
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport)
+
+    const geometry = await heading.evaluate(element => {
+      const rect = element.getBoundingClientRect()
+      return {
+        documentWidth: document.documentElement.scrollWidth,
+        fontSize: Number.parseFloat(
+          getComputedStyle(element).fontSize
+        ),
+        height: rect.height,
+        viewportWidth: innerWidth
+      }
+    })
+
+    expect(geometry.fontSize).toBeCloseTo(viewport.fontSize, 0)
+    expect(geometry.height).toBeLessThan(250)
+    expect(geometry.documentWidth).toBe(geometry.viewportWidth)
+  }
+})
+
+test('keeps the material result heading subordinate across responsive sizes', async ({
+  page
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const heading = page.locator('[data-techdown-instrument] h3')
+  await expect(heading).toHaveText('Bevarer spenst og loft', {
+    timeout: 15_000
+  })
+
+  const viewports = [
+    { width: 390, height: 844, fontSize: 24 },
+    { width: 834, height: 1112, fontSize: 27.105 },
+    { width: 1280, height: 900, fontSize: 41.6 }
+  ]
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport)
+
+    const geometry = await heading.evaluate(element => {
+      const rect = element.getBoundingClientRect()
+      return {
+        documentWidth: document.documentElement.scrollWidth,
+        fontSize: Number.parseFloat(
+          getComputedStyle(element).fontSize
+        ),
+        height: rect.height,
+        viewportWidth: innerWidth
+      }
+    })
+
+    expect(geometry.fontSize).toBeCloseTo(viewport.fontSize, 0)
+    expect(geometry.height).toBeLessThan(100)
+    expect(geometry.documentWidth).toBe(geometry.viewportWidth)
+  }
+})
+
 test('holds the resolution while the complete adaptive-functionality section enters from the side', async ({
   page
 }) => {
@@ -1251,6 +1419,8 @@ test('holds the resolution while the complete adaptive-functionality section ent
 
   const trackGeometry = await resolutionTrack.evaluate(
     element => ({
+      activeDistance:
+        element.getBoundingClientRect().height - innerHeight,
       height: element.getBoundingClientRect().height,
       top: element.getBoundingClientRect().top + scrollY
     })
@@ -1271,8 +1441,9 @@ test('holds the resolution while the complete adaptive-functionality section ent
   await expect(resolutionClosing).toHaveCSS('opacity', '0')
 
   await page.evaluate(
-    y => window.scrollTo(0, y),
-    trackGeometry.top + 844 * 0.75
+    ({ activeDistance, top }) =>
+      window.scrollTo(0, top + activeDistance * 0.45 + 1),
+    trackGeometry
   )
   await page.waitForTimeout(100)
 
@@ -1333,24 +1504,275 @@ test('holds the resolution while the complete adaptive-functionality section ent
   expect(introGeometry.height).toBeCloseTo(844 * 2, -1)
 })
 
-test('keeps the route header fixed and available after the opening sequence', async ({
+test('keeps a transparent mobile header in the hero and clears it before the story images', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(landingUrl, { waitUntil: 'domcontentloaded' })
+
+  const header = page.locator('header[data-site-header]')
+  const icon = header.locator('img[src="/IconWhite.svg"]')
+  const cartButton = header.getByRole('button', {
+    name: /handlekurv/i
+  })
+  const menuButton = header.getByRole('button', {
+    name: /åpne meny/i
+  })
+
+  await expect(header).toHaveCount(1, { timeout: 15_000 })
+  await expect(icon).toBeVisible({ timeout: 5200 })
+  await expect(cartButton).toBeVisible()
+  await expect(menuButton).toBeVisible()
+  await expect(header).toHaveCSS('position', 'fixed')
+
+  const heroHeader = await header.evaluate(element => ({
+    background: getComputedStyle(element).backgroundColor,
+    beforeContent: getComputedStyle(element, '::before').content,
+    searchButtons: Array.from(
+      element.querySelectorAll('button')
+    ).filter(
+      button =>
+        button.getAttribute('aria-label')?.includes('søk') &&
+        getComputedStyle(button).display !== 'none'
+    ).length
+  }))
+
+  expect(heroHeader.background).toBe('rgba(0, 0, 0, 0)')
+  expect(heroHeader.beforeContent).toBe('none')
+  expect(heroHeader.searchButtons).toBe(0)
+
+  await page.evaluate(() => window.scrollTo(0, innerHeight + 1))
+  await page.waitForTimeout(100)
+
+  const storyHeader = await header.evaluate(element => ({
+    bottom: element.getBoundingClientRect().bottom,
+    opacity: getComputedStyle(element).opacity,
+    visibility: getComputedStyle(element).visibility
+  }))
+
+  expect(storyHeader.bottom).toBeLessThanOrEqual(1)
+  expect(storyHeader.opacity).toBe('0')
+  expect(storyHeader.visibility).toBe('hidden')
+})
+
+test('paces both mobile mode arrivals linearly across more than one viewport', async ({
   page
 }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(landingUrl, { waitUntil: 'load' })
 
-  const header = page.locator('header[data-site-header]')
-  const cartButton = header.getByRole('button', {
-    name: /handlekurv/i
+  const track = page
+    .locator('[data-mode-scene="fullengde"]')
+    .locator('..')
+    .locator('..')
+  await expect(track).toHaveCount(1, { timeout: 15_000 })
+
+  const geometry = await track.evaluate(element => {
+    const rect = element.getBoundingClientRect()
+    return {
+      activeDistance: rect.height - innerHeight,
+      documentTop: rect.top + scrollY,
+      height: rect.height,
+      viewportHeight: innerHeight
+    }
   })
 
-  await expect(header).toHaveCount(1, { timeout: 15_000 })
-  await page
-    .locator('[data-three-in-one-surface]')
-    .scrollIntoViewIfNeeded()
-  await expect(header).toHaveCSS('position', 'fixed')
-  await expect(header).toBeInViewport()
-  await expect(cartButton).toBeVisible()
+  expect(geometry.height).toBeCloseTo(
+    geometry.viewportHeight * 3.6,
+    0
+  )
+
+  const readTransform = async (
+    selector: string,
+    progress: number,
+    offset = 0
+  ) => {
+    await page.evaluate(
+      ({ activeDistance, documentTop, offset, progress }) =>
+        window.scrollTo(
+          0,
+          documentTop + activeDistance * progress + offset
+        ),
+      { ...geometry, offset, progress }
+    )
+    await page.waitForTimeout(100)
+
+    return page.locator(selector).evaluate(element => {
+      const matrix = new DOMMatrix(
+        getComputedStyle(element).transform
+      )
+      return {
+        timingFunction:
+          getComputedStyle(element).animationTimingFunction,
+        x: matrix.m41,
+        y: matrix.m42
+      }
+    })
+  }
+
+  const verticalEarly = await readTransform(
+    '[data-mode-scene="oppjustert"]',
+    0.02,
+    geometry.viewportHeight * 0.2
+  )
+  const verticalAfterOneViewport = await readTransform(
+    '[data-mode-scene="oppjustert"]',
+    0.02,
+    geometry.viewportHeight
+  )
+  const verticalComplete = await readTransform(
+    '[data-mode-scene="oppjustert"]',
+    0.45,
+    1
+  )
+
+  expect(verticalEarly.y).toBeGreaterThan(844 * 0.6)
+  expect(verticalEarly.y).toBeLessThan(844)
+  expect(verticalEarly.timingFunction).toBe('linear')
+  expect(verticalAfterOneViewport.y).toBeGreaterThan(0)
+  expect(verticalAfterOneViewport.y).toBeLessThan(
+    verticalEarly.y
+  )
+  expect(verticalComplete.y).toBeCloseTo(0, 1)
+
+  const horizontalEarly = await readTransform(
+    '[data-mode-scene="parkas"]',
+    0.48,
+    geometry.viewportHeight * 0.2
+  )
+  const horizontalAfterOneViewport = await readTransform(
+    '[data-mode-scene="parkas"]',
+    0.48,
+    geometry.viewportHeight
+  )
+  const horizontalComplete = await readTransform(
+    '[data-mode-scene="parkas"]',
+    0.91,
+    1
+  )
+
+  expect(horizontalEarly.x).toBeGreaterThan(390 * 0.6)
+  expect(horizontalEarly.x).toBeLessThan(390)
+  expect(horizontalEarly.timingFunction).toBe('linear')
+  expect(horizontalAfterOneViewport.x).toBeGreaterThan(0)
+  expect(horizontalAfterOneViewport.x).toBeLessThan(
+    horizontalEarly.x
+  )
+  expect(horizontalComplete.x).toBeCloseTo(0, 1)
+})
+
+test('keeps mobile mode images flush with their 4:5 frames on narrow screens', async ({
+  page
+}) => {
+  test.setTimeout(45_000)
+
+  const viewports = [
+    { width: 390, height: 1102 },
+    { width: 320, height: 568 },
+    { width: 240, height: 422 }
+  ]
+
+  await page.setViewportSize(viewports[0]!)
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport)
+    await page.evaluate(() => window.scrollTo(0, 0))
+    await page.waitForTimeout(100)
+
+    const scene = page.locator('[data-mode-scene="oppjustert"]')
+    const track = scene.locator('..').locator('..')
+    await expect(scene).toHaveCount(1, { timeout: 15_000 })
+
+    const geometry = await track.evaluate(element => {
+      const rect = element.getBoundingClientRect()
+      return {
+        activeDistance: rect.height - innerHeight,
+        documentTop: rect.top + scrollY
+      }
+    })
+
+    await page.evaluate(
+      ({ activeDistance, documentTop }) =>
+        window.scrollTo(
+          0,
+          documentTop + activeDistance * 0.45 + 1
+        ),
+      geometry
+    )
+    await page.waitForTimeout(100)
+
+    const image = scene.locator('img')
+    await expect
+      .poll(
+        () =>
+          image.evaluate(element => {
+            const modeImage = element as HTMLImageElement
+            return (
+              modeImage.complete && modeImage.naturalWidth > 0
+            )
+          }),
+        { timeout: 15_000 }
+      )
+      .toBe(true)
+    await expect(image).toHaveCSS('object-fit', 'cover', {
+      timeout: 15_000
+    })
+
+    const state = await scene.evaluate(element => {
+      const shell = element.firstElementChild
+      const core = shell?.firstElementChild
+      const picture = core?.firstElementChild
+      const image = picture?.querySelector('img')
+
+      if (!shell || !core || !picture || !image) {
+        throw new Error('Missing mobile mode image composition')
+      }
+
+      const readRect = (node: Element) => {
+        const rect = node.getBoundingClientRect()
+        return {
+          height: rect.height,
+          ratio: rect.width / rect.height,
+          width: rect.width
+        }
+      }
+
+      return {
+        core: readRect(core),
+        documentWidth: document.documentElement.scrollWidth,
+        image: readRect(image),
+        imageComplete: image.complete,
+        naturalWidth: image.naturalWidth,
+        objectFit: getComputedStyle(image).objectFit,
+        picture: readRect(picture),
+        shell: readRect(shell),
+        viewportWidth: innerWidth
+      }
+    })
+
+    expect(state.objectFit).toBe('cover')
+    expect(state.imageComplete).toBe(true)
+    expect(state.naturalWidth).toBeGreaterThan(0)
+    expect(state.documentWidth).toBe(state.viewportWidth)
+    expect(state.core.ratio).toBeCloseTo(4 / 5, 2)
+    expect(state.picture.ratio).toBeCloseTo(4 / 5, 2)
+    expect(state.image.ratio).toBeCloseTo(4 / 5, 2)
+    expect(state.shell.ratio).toBeGreaterThanOrEqual(0.8)
+    expect(state.shell.ratio).toBeLessThan(0.82)
+    expect(
+      Math.abs(state.core.width - state.picture.width)
+    ).toBeLessThanOrEqual(1)
+    expect(
+      Math.abs(state.core.height - state.picture.height)
+    ).toBeLessThanOrEqual(1)
+    expect(
+      Math.abs(state.picture.width - state.image.width)
+    ).toBeLessThanOrEqual(1)
+    expect(
+      Math.abs(state.picture.height - state.image.height)
+    ).toBeLessThanOrEqual(1)
+  }
 })
 
 test('moves the complete scene surface instead of animating the image frame', async ({
@@ -1415,9 +1837,11 @@ test('switches from the locked mobile story to the isolated large story at 768px
 
       return {
         largeDisplay: getComputedStyle(large).display,
-        largeHeadingDisplay: getComputedStyle(largeHeading).display,
+        largeHeadingDisplay:
+          getComputedStyle(largeHeading).display,
         mobileDisplay: getComputedStyle(mobile).display,
-        mobileHeadingDisplay: getComputedStyle(mobileHeading).display,
+        mobileHeadingDisplay:
+          getComputedStyle(mobileHeading).display,
         sentinelCount: document.querySelectorAll(
           '[data-empathy-impression-sentinel]'
         ).length
@@ -1460,7 +1884,9 @@ test('reveals the fixed large empathy frames diagonally and keeps exact corner c
     const chillRect = chill.getBoundingClientRect()
 
     return {
+      bonfireHeight: bonfireRect.height,
       bonfireTop: bonfireRect.top + scrollY,
+      chillHeight: chillRect.height,
       chillTop: chillRect.top + scrollY
     }
   })
@@ -1489,13 +1915,22 @@ test('reveals the fixed large empathy frames diagonally and keeps exact corner c
       const vertical = bonfire?.querySelector<HTMLElement>(
         '[data-empathy-large-reveal-cover="vertical"]'
       )
-      const image = bonfire?.querySelector<HTMLImageElement>('img')
+      const chillHorizontal = chill?.querySelector<HTMLElement>(
+        '[data-empathy-large-reveal-cover="horizontal"]'
+      )
+      const chillVertical = chill?.querySelector<HTMLElement>(
+        '[data-empathy-large-reveal-cover="vertical"]'
+      )
+      const image =
+        bonfire?.querySelector<HTMLImageElement>('img')
 
       if (
         !bonfire ||
         !chill ||
         !horizontal ||
         !vertical ||
+        !chillHorizontal ||
+        !chillVertical ||
         !image
       ) {
         throw new Error('Missing large empathy reveal surfaces')
@@ -1509,10 +1944,18 @@ test('reveals the fixed large empathy frames diagonally and keeps exact corner c
       const verticalMatrix = new DOMMatrix(
         getComputedStyle(vertical).transform
       )
+      const chillHorizontalMatrix = new DOMMatrix(
+        getComputedStyle(chillHorizontal).transform
+      )
+      const chillVerticalMatrix = new DOMMatrix(
+        getComputedStyle(chillVertical).transform
+      )
       const frameStyle = getComputedStyle(bonfire)
       const imageStyle = getComputedStyle(image)
 
       return {
+        chillHorizontalScale: chillHorizontalMatrix.a,
+        chillVerticalScale: chillVerticalMatrix.d,
         contactX: second.left - first.right,
         contactY: second.top - first.bottom,
         firstBottom: first.bottom,
@@ -1530,20 +1973,22 @@ test('reveals the fixed large empathy frames diagonally and keeps exact corner c
     })
   }
 
-  const start = await readReveal(geometry.bonfireTop - 900 * 0.85)
-  const middle = await readReveal(
-    geometry.bonfireTop - 900 * 0.45
+  const start = await readReveal(geometry.bonfireTop - 900 * 0.8)
+  const middle = await readReveal(geometry.bonfireTop)
+  const complete = await readReveal(
+    geometry.bonfireTop + geometry.bonfireHeight * 0.3
   )
-  const complete = await readReveal(geometry.bonfireTop)
 
-  expect(start.horizontalScale).toBeGreaterThan(0.95)
-  expect(start.horizontalScale).toBeLessThanOrEqual(1)
-  expect(start.verticalScale).toBeGreaterThan(0.95)
-  expect(start.verticalScale).toBeLessThanOrEqual(1)
-  expect(middle.horizontalScale).toBeGreaterThan(0.1)
-  expect(middle.horizontalScale).toBeLessThan(0.9)
-  expect(middle.verticalScale).toBeGreaterThan(0.1)
-  expect(middle.verticalScale).toBeLessThan(0.9)
+  expect(start.horizontalScale).toBeGreaterThan(0.5)
+  expect(start.horizontalScale).toBeLessThan(1)
+  expect(start.verticalScale).toBeGreaterThan(0.5)
+  expect(start.verticalScale).toBeLessThan(1)
+  expect(middle.horizontalScale).toBeGreaterThan(0)
+  expect(middle.horizontalScale).toBeLessThan(
+    start.horizontalScale
+  )
+  expect(middle.verticalScale).toBeGreaterThan(0)
+  expect(middle.verticalScale).toBeLessThan(start.verticalScale)
   expect(complete.horizontalScale).toBeCloseTo(0, 2)
   expect(complete.verticalScale).toBeCloseTo(0, 2)
   expect(complete.firstWidth / complete.firstHeight).toBeCloseTo(
@@ -1559,6 +2004,34 @@ test('reveals the fixed large empathy frames diagonally and keeps exact corner c
   expect(complete.imageSource).toContain('SkreddersyVarmen-1')
   expect(start.firstWidth).toBeCloseTo(complete.firstWidth, 1)
   expect(start.firstHeight).toBeCloseTo(complete.firstHeight, 1)
+
+  const handoffScroll =
+    geometry.bonfireTop + geometry.bonfireHeight * 0.3
+  const beforeHandoff = await readReveal(
+    handoffScroll - geometry.bonfireHeight * 0.05
+  )
+  const handoff = await readReveal(handoffScroll)
+  const chillMiddle = await readReveal(
+    geometry.bonfireTop + geometry.bonfireHeight * 0.65
+  )
+  const chillComplete = await readReveal(
+    geometry.bonfireTop + geometry.bonfireHeight
+  )
+
+  expect(beforeHandoff.horizontalScale).toBeGreaterThan(0)
+  expect(beforeHandoff.verticalScale).toBeGreaterThan(0)
+  expect(beforeHandoff.chillHorizontalScale).toBeCloseTo(1, 2)
+  expect(beforeHandoff.chillVerticalScale).toBeCloseTo(1, 2)
+  expect(handoff.horizontalScale).toBeCloseTo(0, 2)
+  expect(handoff.verticalScale).toBeCloseTo(0, 2)
+  expect(handoff.chillHorizontalScale).toBeCloseTo(1, 2)
+  expect(handoff.chillVerticalScale).toBeCloseTo(1, 2)
+  expect(chillMiddle.chillHorizontalScale).toBeGreaterThan(0)
+  expect(chillMiddle.chillHorizontalScale).toBeLessThan(1)
+  expect(chillMiddle.chillVerticalScale).toBeGreaterThan(0)
+  expect(chillMiddle.chillVerticalScale).toBeLessThan(1)
+  expect(chillComplete.chillHorizontalScale).toBeCloseTo(0, 2)
+  expect(chillComplete.chillVerticalScale).toBeCloseTo(0, 2)
 
   const secondReveal = await readReveal(
     geometry.chillTop - 900 * 0.45
@@ -1601,10 +2074,7 @@ test('starts each large right-side transition promptly instead of leaving dead s
 
     const readTrack = (element: HTMLElement) => {
       const rect = element.getBoundingClientRect()
-      return {
-        height: rect.height,
-        top: rect.top + scrollY
-      }
+      return { height: rect.height, top: rect.top + scrollY }
     }
 
     return {
@@ -1616,54 +2086,186 @@ test('starts each large right-side transition promptly instead of leaving dead s
     }
   })
 
-  expect(geometry.text.height).toBeLessThanOrEqual(
-    geometry.viewportHeight * 2.6 + 1
+  expect(geometry.text.height).toBeCloseTo(
+    geometry.viewportHeight * 4,
+    0
   )
-  expect(geometry.question.height).toBeLessThanOrEqual(
-    geometry.viewportHeight * 2.3 + 1
+  expect(geometry.question.height).toBeCloseTo(
+    geometry.viewportHeight * 6.5,
+    0
   )
-  expect(geometry.resolution.height).toBeLessThanOrEqual(
-    geometry.viewportHeight * 1.8 + 1
+  expect(geometry.resolution.height).toBeCloseTo(
+    geometry.viewportHeight * 2.6,
+    0
   )
-  expect(geometry.mode.height).toBeLessThanOrEqual(
-    geometry.viewportHeight * 3 + 1
+  expect(geometry.mode.height).toBeCloseTo(
+    geometry.viewportHeight * 3.8,
+    0
   )
 
-  await page.evaluate(
-    y => window.scrollTo(0, y),
-    geometry.question.top + geometry.viewportHeight * 0.25
-  )
-  await page.waitForTimeout(100)
-
-  const answerProgress = await page.evaluate(() => {
-    const answer = document.querySelector<HTMLElement>(
-      '[data-empathy-large-answer-panel]'
+  const readTransform = async (
+    selector: string,
+    scrollTarget: number
+  ) => {
+    await page.evaluate(y => window.scrollTo(0, y), scrollTarget)
+    await page.evaluate(
+      () =>
+        new Promise<void>(resolve =>
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => resolve())
+          )
+        )
     )
-    if (!answer) throw new Error('Missing large answer panel')
 
-    return new DOMMatrix(getComputedStyle(answer).transform).m41
-  })
+    return page.evaluate(target => {
+      const surface = document.querySelector<HTMLElement>(target)
+      if (!surface)
+        throw new Error(`Missing transition surface: ${target}`)
 
-  expect(answerProgress).toBeGreaterThan(0)
-  expect(answerProgress).toBeLessThan(1440)
+      const matrix = new DOMMatrix(
+        getComputedStyle(surface).transform
+      )
+      return {
+        timingFunction:
+          getComputedStyle(surface).animationTimingFunction,
+        x: matrix.m41,
+        y: matrix.m42
+      }
+    }, selector)
+  }
 
-  await page.evaluate(
-    y => window.scrollTo(0, y),
-    geometry.mode.top + geometry.viewportHeight * 1.1
+  const questionDistance = geometry.viewportHeight * (6.5 - 1)
+  const answerStart =
+    geometry.question.top + questionDistance * 0.03
+  const answerEarly = await readTransform(
+    '[data-empathy-large-answer-panel]',
+    answerStart + geometry.viewportHeight * 0.2
   )
-  await page.waitForTimeout(100)
+  const answerOneViewport = await readTransform(
+    '[data-empathy-large-answer-panel]',
+    answerStart + geometry.viewportHeight
+  )
+  const answerComplete = await readTransform(
+    '[data-empathy-large-answer-panel]',
+    geometry.question.top + questionDistance * 0.25 + 1
+  )
 
-  const horizontalModeProgress = await page.evaluate(() => {
-    const scene = document.querySelector<HTMLElement>(
-      '[data-mode-scene="parkas"]'
+  expect(answerEarly.x).toBeGreaterThan(1440 * 0.6)
+  expect(answerEarly.x).toBeLessThan(1440)
+  expect(answerEarly.timingFunction).toBe('linear')
+  expect(answerOneViewport.x).toBeGreaterThan(0)
+  expect(answerOneViewport.x).toBeLessThan(answerEarly.x)
+  expect(answerComplete.x).toBeCloseTo(0, 1)
+
+  const readAnswerSequence = async (progress: number) => {
+    await page.evaluate(
+      ({ top, distance, progress }) =>
+        window.scrollTo(0, top + distance * progress),
+      {
+        distance: questionDistance,
+        progress,
+        top: geometry.question.top
+      }
     )
-    if (!scene) throw new Error('Missing horizontal mode scene')
+    await page.evaluate(
+      () =>
+        new Promise<void>(resolve =>
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => resolve())
+          )
+        )
+    )
 
-    return new DOMMatrix(getComputedStyle(scene).transform).m41
-  })
+    return page.evaluate(() => {
+      const panel = document.querySelector<HTMLElement>(
+        '[data-empathy-large-answer-panel]'
+      )
+      const stepElements = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '[data-empathy-large-answer-step]'
+        )
+      )
 
-  expect(horizontalModeProgress).toBeGreaterThan(0)
-  expect(horizontalModeProgress).toBeLessThan(1440)
+      if (!panel || stepElements.length !== 3) {
+        throw new Error('Missing large answer sequence')
+      }
+
+      return {
+        panelLeft: panel.getBoundingClientRect().left,
+        stepOpacities: stepElements.map(element =>
+          Number.parseFloat(getComputedStyle(element).opacity)
+        )
+      }
+    })
+  }
+
+  const headingOnly = await readAnswerSequence(0.31)
+  expect(Math.abs(headingOnly.panelLeft)).toBeLessThanOrEqual(1)
+  expect(headingOnly.stepOpacities).toEqual([0, 0, 0])
+
+  const firstComplete = await readAnswerSequence(0.561)
+  expect(firstComplete.stepOpacities).toEqual([1, 0, 0])
+
+  const hardScrollProgress =
+    0.559 + geometry.viewportHeight / questionDistance
+  const afterLargeHardScroll = await readAnswerSequence(
+    hardScrollProgress
+  )
+  expect(afterLargeHardScroll.stepOpacities[0]).toBe(1)
+  expect(afterLargeHardScroll.stepOpacities[1]).toBeGreaterThan(
+    0
+  )
+  expect(afterLargeHardScroll.stepOpacities[1]).toBeLessThan(1)
+  expect(afterLargeHardScroll.stepOpacities[2]).toBe(0)
+
+  const secondComplete = await readAnswerSequence(0.761)
+  expect(secondComplete.stepOpacities).toEqual([1, 1, 0])
+
+  const thirdComplete = await readAnswerSequence(0.961)
+  expect(thirdComplete.stepOpacities).toEqual([1, 1, 1])
+
+  const modeDistance = geometry.viewportHeight * (3.8 - 1)
+  const verticalStart = geometry.mode.top + modeDistance * 0.02
+  const verticalEarly = await readTransform(
+    '[data-mode-scene="oppjustert"]',
+    verticalStart + geometry.viewportHeight * 0.2
+  )
+  const verticalOneViewport = await readTransform(
+    '[data-mode-scene="oppjustert"]',
+    verticalStart + geometry.viewportHeight
+  )
+  const verticalComplete = await readTransform(
+    '[data-mode-scene="oppjustert"]',
+    geometry.mode.top + modeDistance * 0.45 + 1
+  )
+
+  expect(verticalEarly.y).toBeGreaterThan(900 * 0.6)
+  expect(verticalEarly.y).toBeLessThan(900)
+  expect(verticalEarly.timingFunction).toBe('linear')
+  expect(verticalOneViewport.y).toBeGreaterThan(0)
+  expect(verticalOneViewport.y).toBeLessThan(verticalEarly.y)
+  expect(verticalComplete.y).toBeCloseTo(0, 1)
+
+  const horizontalStart = geometry.mode.top + modeDistance * 0.48
+  const horizontalEarly = await readTransform(
+    '[data-mode-scene="parkas"]',
+    horizontalStart + geometry.viewportHeight * 0.2
+  )
+  const horizontalOneViewport = await readTransform(
+    '[data-mode-scene="parkas"]',
+    horizontalStart + geometry.viewportHeight
+  )
+  const horizontalComplete = await readTransform(
+    '[data-mode-scene="parkas"]',
+    geometry.mode.top + modeDistance * 0.91 + 1
+  )
+
+  expect(horizontalEarly.x).toBeGreaterThan(1440 * 0.6)
+  expect(horizontalEarly.x).toBeLessThan(1440)
+  expect(horizontalEarly.timingFunction).toBe('linear')
+  expect(horizontalOneViewport.x).toBeGreaterThan(0)
+  expect(horizontalOneViewport.x).toBeLessThan(horizontalEarly.x)
+  expect(horizontalComplete.x).toBeCloseTo(0, 1)
 })
 
 test('keeps Friheten til a velge full width before the following 50/50 mode stage', async ({
@@ -1676,20 +2278,18 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
     const track = document.querySelector<HTMLElement>(
       '[data-three-in-one-intro-track]'
     )
-    if (!track) throw new Error('Missing three-in-one intro track')
+    if (!track)
+      throw new Error('Missing three-in-one intro track')
 
     const rect = track.getBoundingClientRect()
-    return {
-      height: rect.height,
-      top: rect.top + scrollY
-    }
+    return { height: rect.height, top: rect.top + scrollY }
   })
 
-  expect(geometry.height).toBeLessThanOrEqual(900 * 1.8 + 1)
+  expect(geometry.height).toBeCloseTo(900 * 2.6, 0)
 
   await page.evaluate(
     y => window.scrollTo(0, y),
-    geometry.top + (geometry.height - 900) * 0.5
+    geometry.top + 900 * 0.2
   )
   await page.waitForTimeout(100)
 
@@ -1699,7 +2299,9 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
     )
     if (!surface) throw new Error('Missing three-in-one surface')
 
-    const matrix = new DOMMatrix(getComputedStyle(surface).transform)
+    const matrix = new DOMMatrix(
+      getComputedStyle(surface).transform
+    )
     return {
       clipPath: getComputedStyle(surface).clipPath,
       translateX: matrix.m41,
@@ -1707,10 +2309,55 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
     }
   })
 
-  expect(entering.translateX).toBeGreaterThan(0)
+  expect(entering.translateX).toBeGreaterThan(1440 * 0.6)
   expect(entering.translateX).toBeLessThan(1440)
   expect(entering.translateY).toBeGreaterThan(0)
   expect(entering.clipPath).not.toBe('none')
+
+  await page.evaluate(
+    y => window.scrollTo(0, y),
+    geometry.top + 900
+  )
+  await page.waitForTimeout(100)
+
+  const oneViewport = await page.evaluate(() => {
+    const surface = document.querySelector<HTMLElement>(
+      '[data-three-in-one-surface]'
+    )
+    if (!surface) throw new Error('Missing three-in-one surface')
+
+    const matrix = new DOMMatrix(
+      getComputedStyle(surface).transform
+    )
+    return { translateX: matrix.m41, translateY: matrix.m42 }
+  })
+
+  expect(oneViewport.translateX).toBeGreaterThan(1440 * 0.1)
+  expect(oneViewport.translateX).toBeLessThan(
+    entering.translateX
+  )
+  expect(oneViewport.translateY).toBeGreaterThan(0)
+
+  await page.evaluate(
+    y => window.scrollTo(0, y),
+    geometry.top + (geometry.height - 900) * 0.88 + 1
+  )
+  await page.waitForTimeout(100)
+
+  const rangeSettled = await page.evaluate(() => {
+    const surface = document.querySelector<HTMLElement>(
+      '[data-three-in-one-surface]'
+    )
+    if (!surface) throw new Error('Missing three-in-one surface')
+
+    const matrix = new DOMMatrix(
+      getComputedStyle(surface).transform
+    )
+    return { translateX: matrix.m41, translateY: matrix.m42 }
+  })
+
+  expect(rangeSettled.translateX).toBeCloseTo(0, 1)
+  expect(rangeSettled.translateY).toBeCloseTo(0, 1)
 
   await page.evaluate(
     y => window.scrollTo(0, y),
@@ -1722,7 +2369,8 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
     const surface = document.querySelector<HTMLElement>(
       '[data-three-in-one-surface]'
     )
-    const content = surface?.firstElementChild as HTMLElement | null
+    const content =
+      surface?.firstElementChild as HTMLElement | null
     const resolution = document.querySelector<HTMLElement>(
       '[data-empathy-large-resolution]'
     )
@@ -1732,58 +2380,29 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
     const stage = firstMode?.parentElement
     const eyebrow = content?.querySelector<HTMLElement>('p')
 
-    if (!surface || !content || !resolution || !stage || !eyebrow) {
+    if (
+      !surface ||
+      !content ||
+      !resolution ||
+      !stage ||
+      !eyebrow
+    ) {
       throw new Error('Missing large introduction composition')
     }
 
     const surfaceStyle = getComputedStyle(surface)
     const resolutionStyle = getComputedStyle(resolution)
     const surfaceRect = surface.getBoundingClientRect()
-    const canvas = document.createElement('canvas')
-    canvas.width = 1
-    canvas.height = 1
-    const context = canvas.getContext('2d', {
-      willReadFrequently: true
-    })
-
-    if (!context) throw new Error('Missing color context')
-
-    const toRgb = (color: string) => {
-      context.clearRect(0, 0, 1, 1)
-      context.fillStyle = color
-      context.fillRect(0, 0, 1, 1)
-      return Array.from(context.getImageData(0, 0, 1, 1).data).slice(
-        0,
-        3
-      )
-    }
-    const luminance = (rgb: number[]) =>
-      rgb
-        .map(value => value / 255)
-        .map(value =>
-          value <= 0.04045 ?
-            value / 12.92
-          : Math.pow((value + 0.055) / 1.055, 2.4)
-        )
-        .reduce(
-          (sum, value, index) =>
-            sum + value * [0.2126, 0.7152, 0.0722][index]!,
-          0
-        )
-    const foregroundLuminance = luminance(
-      toRgb(getComputedStyle(eyebrow).color)
-    )
-    const backgroundLuminance = luminance(
-      toRgb(surfaceStyle.backgroundColor)
-    )
+    const primaryProbe = document.createElement('span')
+    primaryProbe.style.color = 'var(--primary)'
+    document.body.append(primaryProbe)
+    const primaryColor = getComputedStyle(primaryProbe).color
+    primaryProbe.remove()
 
     return {
       contentWidth: content.getBoundingClientRect().width,
-      eyebrowContrast:
-        (Math.max(foregroundLuminance, backgroundLuminance) +
-          0.05) /
-        (Math.min(foregroundLuminance, backgroundLuminance) +
-          0.05),
+      eyebrowColor: getComputedStyle(eyebrow).color,
+      primaryColor,
       resolutionBackground: resolutionStyle.backgroundColor,
       stageBackground: getComputedStyle(stage).backgroundImage,
       surfaceBackground: surfaceStyle.backgroundColor,
@@ -1802,12 +2421,85 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
   expect(settled.contentWidth).toBeGreaterThan(
     settled.viewportWidth * 0.75
   )
-  expect(settled.eyebrowContrast).toBeGreaterThanOrEqual(4.5)
+  expect(settled.eyebrowColor).toBe(settled.primaryColor)
   expect(settled.surfaceBackgroundImage).toBe('none')
   expect(settled.surfaceBackground).not.toBe(
     settled.resolutionBackground
   )
   expect(settled.stageBackground).toContain('50%')
+})
+
+test('pins the desktop purchase gallery at the composed entry moment while details continue scrolling', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 1920, height: 1243 })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const section = page
+    .locator('#purchase-section section')
+    .first()
+  const gallery = section.locator(':scope > div').first()
+  const details = section.locator(':scope > div').nth(1)
+
+  await expect(section).toHaveCount(1, { timeout: 15_000 })
+
+  const sectionTop = await section.evaluate(
+    element => element.getBoundingClientRect().top + scrollY
+  )
+  const stickyTop = 90
+
+  await page.evaluate(
+    ({ sectionTop, stickyTop }) =>
+      window.scrollTo(0, sectionTop - stickyTop),
+    { sectionTop, stickyTop }
+  )
+  await page.waitForTimeout(100)
+
+  const entry = await page.evaluate(() => {
+    const section = document.querySelector<HTMLElement>(
+      '#purchase-section section'
+    )
+    const gallery =
+      section?.firstElementChild as HTMLElement | null
+    const details =
+      gallery?.nextElementSibling as HTMLElement | null
+
+    if (!section || !gallery || !details) {
+      throw new Error('Missing desktop purchase composition')
+    }
+
+    return {
+      detailsTop: details.getBoundingClientRect().top,
+      galleryHeight: gallery.getBoundingClientRect().height,
+      galleryPosition: getComputedStyle(gallery).position,
+      galleryTop: gallery.getBoundingClientRect().top,
+      sectionTop: section.getBoundingClientRect().top
+    }
+  })
+
+  expect(entry.galleryPosition).toBe('sticky')
+  expect(entry.galleryHeight).toBeCloseTo(1243, 0)
+  expect(entry.sectionTop).toBeCloseTo(stickyTop, 0)
+  expect(entry.galleryTop).toBeCloseTo(stickyTop, 0)
+  expect(entry.detailsTop).toBeCloseTo(stickyTop, 0)
+
+  await page.evaluate(
+    ({ sectionTop }) => window.scrollTo(0, sectionTop + 210),
+    { sectionTop }
+  )
+  await page.waitForTimeout(100)
+
+  const scrolling = await Promise.all([
+    gallery.evaluate(
+      element => element.getBoundingClientRect().top
+    ),
+    details.evaluate(
+      element => element.getBoundingClientRect().top
+    )
+  ])
+
+  expect(scrolling[0]).toBeCloseTo(stickyTop, 0)
+  expect(scrolling[1]).toBeCloseTo(-210, 0)
 })
 
 test('keeps large breakpoint layouts 50/50 with five real 4:5 image frames', async ({
@@ -1839,8 +2531,10 @@ test('keeps large breakpoint layouts 50/50 with five real 4:5 image frames', asy
       const scene = document.querySelector<HTMLElement>(
         '[data-mode-scene="fullengde"]'
       )
-      const media = scene?.firstElementChild as HTMLElement | null
-      const copy = media?.nextElementSibling as HTMLElement | null
+      const media =
+        scene?.firstElementChild as HTMLElement | null
+      const copy =
+        media?.nextElementSibling as HTMLElement | null
       const stage = scene?.parentElement
       const header = document.querySelector<HTMLElement>(
         'header[data-site-header]'
@@ -1888,9 +2582,10 @@ test('keeps large breakpoint layouts 50/50 with five real 4:5 image frames', asy
           return rect.width / rect.height
         }),
         headerPosition: getComputedStyle(header).position,
+        headerVisibility: getComputedStyle(header).visibility,
         h1Count: document.querySelectorAll('h1').length,
-        imageFits: images.map(image =>
-          getComputedStyle(image).objectFit
+        imageFits: images.map(
+          image => getComputedStyle(image).objectFit
         ),
         imageSources: images.map(
           image => image.getAttribute('src') ?? image.currentSrc
@@ -1915,6 +2610,7 @@ test('keeps large breakpoint layouts 50/50 with five real 4:5 image frames', asy
     expect(state.h1Count).toBe(1)
     expect(state.sentinelCount).toBe(1)
     expect(state.headerPosition).toBe('fixed')
+    expect(state.headerVisibility).toBe('hidden')
     expect(state.documentWidth).toBe(state.viewportWidth)
     expect(state.mediaWidth).toBeCloseTo(viewport.width / 2, 1)
     expect(state.copyWidth).toBeCloseTo(viewport.width / 2, 1)
@@ -1979,7 +2675,9 @@ test('uses static large fallbacks for reduced motion and short viewports', async
         )
       )
       const scenes = Array.from(
-        document.querySelectorAll<HTMLElement>('[data-mode-scene]')
+        document.querySelectorAll<HTMLElement>(
+          '[data-mode-scene]'
+        )
       )
 
       if (!textSurface || !answerSurface || !resolution) {
@@ -1991,7 +2689,8 @@ test('uses static large fallbacks for reduced motion and short viewports', async
         coverDisplays: covers.map(
           cover => getComputedStyle(cover).display
         ),
-        resolutionPosition: getComputedStyle(resolution).position,
+        resolutionPosition:
+          getComputedStyle(resolution).position,
         scenePositions: scenes.map(
           scene => getComputedStyle(scene).position
         ),
@@ -2013,9 +2712,14 @@ test('uses static large fallbacks for reduced motion and short viewports', async
     ])
     expect(
       state.scenePositions.every(
-        position => position === 'static' || position === 'relative'
+        position =>
+          position === 'static' || position === 'relative'
       )
     ).toBe(true)
-    expect(state.sceneTransforms).toEqual(['none', 'none', 'none'])
+    expect(state.sceneTransforms).toEqual([
+      'none',
+      'none',
+      'none'
+    ])
   }
 })

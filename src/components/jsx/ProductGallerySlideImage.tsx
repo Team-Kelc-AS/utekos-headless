@@ -18,14 +18,11 @@ export function ProductGallerySlideImage({
   imageLayout,
   imageClassName
 }: ProductGallerySlideImageProps) {
-  const alt =
-    image.altText || `Bilde av ${title}`
-  const fetchPriority =
-    index === 0 ? 'high' : 'auto'
+  const alt = image.altText || `Bilde av ${title}`
+  const fetchPriority = index === 0 ? 'high' : 'auto'
   const className = cn(
     'pointer-events-none select-none',
-    imageLayout === 'cover-fill' &&
-      'object-cover object-top',
+    imageLayout === 'cover-fill' && 'object-cover object-top',
     imageLayout === 'intrinsic' &&
       'object-contain object-center',
     imageClassName
@@ -38,7 +35,7 @@ export function ProductGallerySlideImage({
           src={image.url}
           alt={alt}
           fill
-          sizes='(min-width: 1280px) 58vw, (min-width: 1024px) 54vw, 100vw'
+          sizes='(min-width: 768px) 50vw, 100vw'
           quality={95}
           className={className}
           draggable={false}
@@ -55,10 +52,7 @@ export function ProductGallerySlideImage({
           sizes='100vw'
           quality={95}
           className={className}
-          style={{
-            width: '100%',
-            height: 'auto'
-          }}
+          style={{ width: '100%', height: 'auto' }}
           draggable={false}
           fetchPriority={fetchPriority}
         />

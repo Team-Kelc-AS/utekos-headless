@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export function ProductPageSkeleton() {
   return (
-    <article className='bg-overcast relative isolate overflow-hidden py-10 md:py-14'>
+    <article className='relative isolate overflow-hidden bg-overcast py-10 md:py-14'>
       <div className='pointer-events-none absolute inset-0 -z-10'>
         <div className='absolute top-12 left-[8%] h-80 w-80 rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--ancient-water)_62%,transparent)_0%,transparent_72%)] blur-3xl' />
         <div className='absolute right-[8%] bottom-[18%] h-96 w-96 rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--very-peri)_20%,transparent)_0%,transparent_72%)] blur-3xl' />
@@ -22,8 +22,11 @@ export function ProductPageSkeleton() {
 
         <ProductPageGrid>
           <GalleryColumn>
-            <div className='mx-auto h-fit w-full max-w-lg md:sticky md:top-8'>
-              <Skeleton className='aspect-2/3 w-full rounded-3xl bg-foreground/70' />
+            <div className='mx-auto h-fit w-full md:sticky md:top-24'>
+              <div className='hidden rounded-2xl bg-jungle p-2 md:block'>
+                <Skeleton className='aspect-[9/10] w-full rounded-lg bg-foreground/70' />
+              </div>
+              <Skeleton className='aspect-2/3 w-full rounded-none bg-foreground/70 md:hidden' />
             </div>
           </GalleryColumn>
 
@@ -37,19 +40,19 @@ export function ProductPageSkeleton() {
             <div className='rounded-3xl border border-foreground/70 bg-foreground/72 p-6 md:mt-6'>
               <div className='mt-10 space-y-8'>
                 <div className='space-y-2'>
-                  <Skeleton className='bg-overcast/80 h-4 w-20' />
-                  <Skeleton className='bg-overcast/80 h-10 w-full' />
+                  <Skeleton className='h-4 w-20 bg-overcast/80' />
+                  <Skeleton className='h-10 w-full bg-overcast/80' />
                 </div>
                 <div className='space-y-2'>
-                  <Skeleton className='bg-overcast/80 h-4 w-20' />
-                  <Skeleton className='bg-overcast/80 h-10 w-full' />
+                  <Skeleton className='h-4 w-20 bg-overcast/80' />
+                  <Skeleton className='h-10 w-full bg-overcast/80' />
                 </div>
               </div>
-              <Skeleton className='bg-overcast/80 mt-8 h-12 w-full' />
+              <Skeleton className='mt-8 h-12 w-full bg-overcast/80' />
               <div className='mt-12 space-y-3'>
-                <Skeleton className='bg-overcast/80 h-4 w-full' />
-                <Skeleton className='bg-overcast/80 h-4 w-full' />
-                <Skeleton className='bg-overcast/80 h-4 w-5/6' />
+                <Skeleton className='h-4 w-full bg-overcast/80' />
+                <Skeleton className='h-4 w-full bg-overcast/80' />
+                <Skeleton className='h-4 w-5/6 bg-overcast/80' />
               </div>
             </div>
           </OptionsColumn>

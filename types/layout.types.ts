@@ -2,9 +2,7 @@ import type { Route } from 'next'
 import type React from 'react'
 import type { ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'
-import type {
-  ShopifyProduct
-} from 'types/product'
+import type { ShopifyProduct } from 'types/product'
 import type {
   ProductCardModel,
   ProductCommerceModel,
@@ -75,6 +73,7 @@ export type ProductGalleryProps = {
   imageBackgroundClassName?: string
   imageClassName?: string
   imageLayout?: ProductGalleryImageLayout
+  framed?: boolean
 }
 export type QuantitySelectorProps = {
   value: number

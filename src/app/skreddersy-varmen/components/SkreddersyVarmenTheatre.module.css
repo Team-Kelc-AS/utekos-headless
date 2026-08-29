@@ -16,10 +16,16 @@
 }
 
 :global(body):has(.pageRoot) :global(header[data-site-header]) {
-  position: fixed;
+  position: absolute;
   inset: 0 0 auto;
   z-index: 50;
   padding-top: env(safe-area-inset-top);
+  background: transparent;
+}
+
+:global(body):has(.pageRoot)
+  :global(header[data-site-header])::before {
+  content: none;
 }
 
 .heroPromotion,
@@ -658,7 +664,7 @@
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .pageRoot {
+    :global(body):has(.pageRoot) {
       timeline-scope: --hero-reveal-track;
     }
 
@@ -667,32 +673,22 @@
       --skreddersy-logo-duration: 3500ms;
       --skreddersy-logo-end: 3950ms;
       --skreddersy-jungle-start: 1650ms;
-      --skreddersy-jungle-duration: 3950ms;
+      --skreddersy-jungle-duration: 3200ms;
       --skreddersy-cloud-duration: 2500ms;
       --skreddersy-header-duration: 750ms;
-      --skreddersy-header-end: 4700ms;
+      --skreddersy-hero-start: 3950ms;
       --skreddersy-hero-duration: 900ms;
     }
 
     :global(body):has(.pageRoot)
       :global(header[data-site-header]) {
+      position: fixed;
       background: transparent;
       isolation: isolate;
-    }
-
-    :global(body):has(.pageRoot)
-      :global(header[data-site-header])::before {
-      position: absolute;
-      z-index: 0;
-      inset: 0;
-      background: var(--evening);
-      content: '';
-      opacity: 0;
-      pointer-events: none;
-      animation: skreddersy-header-surface
-        var(--skreddersy-header-duration)
-        cubic-bezier(0.16, 1, 0.3, 1) var(--skreddersy-logo-end)
-        both;
+      animation: skreddersy-route-header-exit 1ms linear both;
+      animation-timeline: --hero-reveal-track;
+      animation-range: contain 0% contain 100%;
+      will-change: transform, opacity;
     }
 
     :global(body):has(.pageRoot)
@@ -784,7 +780,7 @@
       animation: skreddersy-hero-arrival
         var(--skreddersy-hero-duration)
         cubic-bezier(0.16, 1, 0.3, 1)
-        var(--skreddersy-header-end) both;
+        var(--skreddersy-hero-start) both;
     }
 
     .introCloud,
@@ -845,7 +841,7 @@
       }
 
       .empathyTextTheatre {
-        height: 350svh;
+        height: 560svh;
         min-height: 0;
         contain: layout paint style;
         view-timeline-name: --empathy-text-theatre;
@@ -871,7 +867,7 @@
         transform: translate3d(100%, 0, 0);
         animation: skreddersy-empathy-recognition 1ms linear both;
         animation-timeline: --empathy-text-theatre;
-        animation-range: contain 42% contain 56%;
+        animation-range: contain 22% contain 47%;
         will-change: transform;
       }
 
@@ -880,7 +876,7 @@
         animation: skreddersy-empathy-bonfire-copy 1ms linear
           both;
         animation-timeline: --empathy-text-theatre;
-        animation-range: contain 60% contain 74%;
+        animation-range: contain 48.5% contain 73.5%;
         will-change: transform;
       }
 
@@ -889,7 +885,7 @@
         animation: skreddersy-empathy-bonfire-media 1ms linear
           both;
         animation-timeline: --empathy-text-theatre;
-        animation-range: contain 80% contain 94%;
+        animation-range: contain 75% contain 100%;
         will-change: transform;
       }
 
@@ -906,7 +902,7 @@
       }
 
       .empathyQuestionAnswerTheatre {
-        height: 370svh;
+        height: 800svh;
         min-height: 0;
         contain: layout paint style;
         view-timeline-name: --empathy-question-answer;
@@ -941,7 +937,7 @@
         animation: skreddersy-empathy-question-curtain 1ms linear
           both;
         animation-timeline: --empathy-question-answer;
-        animation-range: contain 0% contain 26%;
+        animation-range: contain 0% contain 16%;
         will-change: transform;
       }
 
@@ -950,7 +946,7 @@
         animation: skreddersy-empathy-answer-panel 1ms linear
           both;
         animation-timeline: --empathy-question-answer;
-        animation-range: contain 37% contain 49%;
+        animation-range: contain 18% contain 34%;
         will-change: transform;
       }
 
@@ -963,15 +959,15 @@
       }
 
       .empathyAnswerStep[data-empathy-answer-step='1'] {
-        animation-range: contain 54% contain 60%;
+        animation-range: contain 45% contain 60%;
       }
 
       .empathyAnswerStep[data-empathy-answer-step='2'] {
-        animation-range: contain 63% contain 69%;
+        animation-range: contain 62% contain 77%;
       }
 
       .empathyAnswerStep[data-empathy-answer-step='3'] {
-        animation-range: contain 72% contain 78%;
+        animation-range: contain 79% contain 94%;
       }
 
       .empathyResolutionTransition {
@@ -1011,7 +1007,7 @@
         animation: skreddersy-empathy-resolution-closing 1ms
           linear both;
         animation-timeline: --empathy-resolution-track;
-        animation-range: contain 15% contain 30%;
+        animation-range: contain 5% contain 45%;
         will-change: transform, opacity;
       }
 
@@ -1032,7 +1028,7 @@
       }
 
       .empathyLargeTextTheatre {
-        height: 260svh;
+        height: 400svh;
         min-height: 0;
         contain: layout paint style;
         view-timeline-name: --empathy-large-text;
@@ -1059,7 +1055,7 @@
         animation: skreddersy-empathy-large-recognition 1ms
           linear both;
         animation-timeline: --empathy-large-text;
-        animation-range: contain 62% contain 78%;
+        animation-range: contain 3% contain 43%;
         will-change: transform;
       }
 
@@ -1068,17 +1064,16 @@
         animation: skreddersy-empathy-large-bonfire-copy 1ms
           linear both;
         animation-timeline: --empathy-large-text;
-        animation-range: contain 82% contain 98%;
+        animation-range: contain 45% contain 85%;
         will-change: transform;
+      }
+
+      .empathyLargeMediaChain {
+        timeline-scope: --empathy-large-bonfire;
       }
 
       .empathyLargeMediaRowBonfire {
         view-timeline-name: --empathy-large-bonfire;
-        view-timeline-axis: block;
-      }
-
-      .empathyLargeMediaRowChill {
-        view-timeline-name: --empathy-large-chill;
         view-timeline-axis: block;
       }
 
@@ -1106,19 +1101,18 @@
           linear both;
       }
 
-      .empathyLargeMediaRowBonfire
-        .empathyLargeRevealCover {
+      .empathyLargeMediaRowBonfire .empathyLargeRevealCover {
         animation-timeline: --empathy-large-bonfire;
-        animation-range: entry 15% exit 0%;
+        animation-range: entry 0% exit 30%;
       }
 
       .empathyLargeMediaRowChill .empathyLargeRevealCover {
-        animation-timeline: --empathy-large-chill;
-        animation-range: entry 15% exit 0%;
+        animation-timeline: --empathy-large-bonfire;
+        animation-range: exit 30% exit 100%;
       }
 
       .empathyLargeQuestionAnswerTheatre {
-        height: 230svh;
+        height: 650svh;
         min-height: 0;
         contain: layout paint style;
         view-timeline-name: --empathy-large-question-answer;
@@ -1151,7 +1145,7 @@
         animation: skreddersy-empathy-large-answer 1ms linear
           both;
         animation-timeline: --empathy-large-question-answer;
-        animation-range: contain 18% contain 41%;
+        animation-range: contain 3% contain 25%;
         will-change: transform;
       }
 
@@ -1165,19 +1159,19 @@
       }
 
       .empathyLargeAnswerStep[data-empathy-large-answer-step='1'] {
-        animation-range: contain 45% contain 51%;
+        animation-range: contain 38% contain 56%;
       }
 
       .empathyLargeAnswerStep[data-empathy-large-answer-step='2'] {
-        animation-range: contain 55% contain 61%;
+        animation-range: contain 58% contain 76%;
       }
 
       .empathyLargeAnswerStep[data-empathy-large-answer-step='3'] {
-        animation-range: contain 65% contain 71%;
+        animation-range: contain 78% contain 96%;
       }
 
       .empathyLargeResolutionTrack {
-        height: 180svh;
+        height: 260svh;
         min-height: 0;
         contain: layout paint style;
         view-timeline-name: --empathy-large-resolution;
@@ -1197,7 +1191,7 @@
         animation: skreddersy-empathy-large-resolution-closing
           1ms linear both;
         animation-timeline: --empathy-large-resolution;
-        animation-range: contain 10% contain 30%;
+        animation-range: contain 3% contain 45%;
         will-change: transform, opacity;
       }
     }
@@ -1269,13 +1263,13 @@
     opacity: 1;
   }
 
-  21.519% {
+  26.563% {
     visibility: visible;
     opacity: 1;
     transform: scale(1.08);
   }
 
-  77.215% {
+  71.875% {
     visibility: visible;
     opacity: 1;
     transform: scale(1.08);
@@ -1355,13 +1349,18 @@
   }
 }
 
-@keyframes skreddersy-header-surface {
-  0% {
-    opacity: 0;
+@keyframes skreddersy-route-header-exit {
+  0%,
+  45% {
+    visibility: visible;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 
   100% {
-    opacity: 1;
+    visibility: hidden;
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
   }
 }
 

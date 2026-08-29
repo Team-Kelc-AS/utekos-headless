@@ -75,8 +75,10 @@
 }
 
 .mediaShell {
+  --media-shell-inset: clamp(0.35rem, 0.8vw, 0.65rem);
+
   min-width: 0;
-  padding: clamp(0.35rem, 0.8vw, 0.65rem);
+  padding: var(--media-shell-inset);
   border-radius: clamp(1.5rem, 4vw, 3rem);
   background: color-mix(
     in srgb,
@@ -202,8 +204,7 @@
     box-sizing: border-box;
     width: min(100%, 80rem);
     margin-inline: auto;
-    padding: clamp(4rem, 8vw, 8rem)
-      clamp(2rem, 5vw, 5rem);
+    padding: clamp(4rem, 8vw, 8rem) clamp(2rem, 5vw, 5rem);
   }
 
   .heading {
@@ -211,7 +212,7 @@
   }
 
   .eyebrow {
-    color: var(--primary-hover);
+    color: var(--primary);
   }
 
   .scene {
@@ -268,8 +269,7 @@
     box-shadow:
       inset 0 0 0 1px
         color-mix(in srgb, var(--background) 16%, transparent),
-      inset 0 1px 0
-        color-mix(in srgb, white 12%, transparent);
+      inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
   }
 
   .copy {
@@ -335,8 +335,7 @@
       z-index: 2;
       visibility: hidden;
       transform: translate3d(0, 100%, 0);
-      animation: three-mode-vertical-curtain 1ms
-        cubic-bezier(0.65, 0, 0.35, 1) both;
+      animation: three-mode-vertical-curtain 1ms linear both;
       animation-timeline: --three-mode-track;
       animation-range: contain 0% contain 100%;
       will-change: transform;
@@ -346,8 +345,7 @@
       z-index: 3;
       visibility: hidden;
       transform: translate3d(100%, 0, 0);
-      animation: three-mode-horizontal-door 1ms
-        cubic-bezier(0.76, 0, 0.24, 1) both;
+      animation: three-mode-horizontal-door 1ms linear both;
       animation-timeline: --three-mode-track;
       animation-range: contain 0% contain 100%;
       will-change: transform;
@@ -365,7 +363,7 @@
     }
 
     .picture {
-      width: min(100%, calc((100svh - 7rem) * 0.8));
+      width: min(100%, calc((58svh - 3rem) * 0.8));
       height: auto;
       max-height: 100%;
       aspect-ratio: 4 / 5;
@@ -377,7 +375,7 @@
 
     @media (min-width: 48rem) {
       .track {
-        height: 300svh;
+        height: 380svh;
       }
 
       .stage {
@@ -399,10 +397,12 @@
 
       .scene[data-mode-transition='vertical-curtain'] {
         animation-name: three-mode-large-vertical-curtain;
+        animation-timing-function: linear;
       }
 
       .scene[data-mode-transition='horizontal-door'] {
         animation-name: three-mode-large-horizontal-door;
+        animation-timing-function: linear;
       }
 
       .mediaCore {
@@ -459,8 +459,19 @@
       }
 
       .scene {
-        grid-template-rows: minmax(0, 58%) minmax(0, 42%);
+        grid-template-rows: fit-content(58%) minmax(0, 1fr);
         align-content: stretch;
+      }
+
+      .mediaShell {
+        width: min(
+          100%,
+          calc(
+            (58svh - 3rem) * 0.8 + var(--media-shell-inset) +
+              var(--media-shell-inset)
+          )
+        );
+        justify-self: center;
       }
 
       .copy {
@@ -500,7 +511,7 @@
     @media (prefers-reduced-motion: no-preference) and (min-height: 40rem) {
       .introductionTrack {
         position: relative;
-        height: 180svh;
+        height: 260svh;
         contain: layout style;
         view-timeline-name: --three-in-one-intro-large;
         view-timeline-axis: block;
@@ -514,17 +525,12 @@
         min-height: 100svh;
         align-items: center;
         visibility: hidden;
-        clip-path: polygon(
-          12% 0,
-          100% 0,
-          100% 100%,
-          0 100%
-        );
+        clip-path: polygon(12% 0, 100% 0, 100% 100%, 0 100%);
         transform: translate3d(100%, 12%, 0);
         animation: three-in-one-large-section-entry 1ms linear
           both;
         animation-timeline: --three-in-one-intro-large;
-        animation-range: contain 0% contain 98%;
+        animation-range: contain 0% contain 88%;
         will-change: transform, clip-path;
       }
     }
@@ -580,12 +586,7 @@
 @keyframes three-in-one-large-section-entry {
   0% {
     visibility: hidden;
-    clip-path: polygon(
-      12% 0,
-      100% 0,
-      100% 100%,
-      0 100%
-    );
+    clip-path: polygon(12% 0, 100% 0, 100% 100%, 0 100%);
     transform: translate3d(100%, 12%, 0);
   }
 
@@ -595,28 +596,23 @@
 
   100% {
     visibility: visible;
-    clip-path: polygon(
-      0 0,
-      100% 0,
-      100% 100%,
-      0 100%
-    );
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
     transform: none;
   }
 }
 
 @keyframes three-mode-vertical-curtain {
   0%,
-  12% {
+  2% {
     visibility: hidden;
     transform: translate3d(0, 100%, 0);
   }
 
-  12.01% {
+  2.01% {
     visibility: visible;
   }
 
-  42%,
+  45%,
   100% {
     visibility: visible;
     transform: translate3d(0, 0, 0);
@@ -625,16 +621,16 @@
 
 @keyframes three-mode-horizontal-door {
   0%,
-  61% {
+  48% {
     visibility: hidden;
     transform: translate3d(100%, 0, 0);
   }
 
-  61.01% {
+  48.01% {
     visibility: visible;
   }
 
-  86%,
+  91%,
   100% {
     visibility: visible;
     transform: translate3d(0, 0, 0);
@@ -643,16 +639,16 @@
 
 @keyframes three-mode-large-vertical-curtain {
   0%,
-  4% {
+  2% {
     visibility: hidden;
     transform: translate3d(0, 100%, 0);
   }
 
-  4.01% {
+  2.01% {
     visibility: visible;
   }
 
-  35%,
+  45%,
   100% {
     visibility: visible;
     transform: translate3d(0, 0, 0);
@@ -670,7 +666,7 @@
     visibility: visible;
   }
 
-  78%,
+  91%,
   100% {
     visibility: visible;
     transform: translate3d(0, 0, 0);

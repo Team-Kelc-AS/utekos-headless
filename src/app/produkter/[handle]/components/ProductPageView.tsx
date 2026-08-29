@@ -11,7 +11,6 @@ import { AnimatedBlock } from '@/components/AnimatedBlock'
 import { productMetadata } from '@/db/config/product-metadata.config'
 import { getProductPageContent } from '@/db/data/products/product-page-content'
 import ProductHeader from './ProductHeader'
-import ProductGalleryCard from './ProductGalleryCard'
 import PriceActivityPanel from './PriceActivityPanel'
 import { ProductDescription } from './ProductDescription'
 import { KlarnaDesktopPromo } from './KlarnaDesktopPromo'
@@ -27,7 +26,6 @@ import type { Image } from 'types/media'
 import { DesktopBreadcrump } from './DesktopBreadcrump'
 import { PRODUCT_GALLERY_IMAGE_OVERRIDES } from '../utils/gallery-images/productGalleryImageOverrides'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { ProductGalleryGrid } from './ProductGalleryGrid'
 import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
 import { SmartRealTimeActivity } from './SmartRealTimeActivity'
 import { ProductViewItemReporter } from './ProductViewItemReporter'
@@ -75,16 +73,12 @@ export function ProductPageView({
   const activityNode =
     currentProductMetadata?.showActivity ?
       <SmartRealTimeActivity
-        baseViewers={
-          currentProductMetadata.baseViewers ?? 3
-        }
+        baseViewers={currentProductMetadata.baseViewers ?? 3}
       />
     : undefined
 
   const overrideImages =
-    PRODUCT_GALLERY_IMAGE_OVERRIDES[
-      productData.handle
-    ]
+    PRODUCT_GALLERY_IMAGE_OVERRIDES[productData.handle]
 
   const variantImages = computeVariantImages(
     productData,
@@ -120,7 +114,6 @@ export function ProductPageView({
 
   const isTechDownProduct =
     productData.handle === 'utekos-techdown'
-  const useDesktopGrid = galleryImages.length >= 6
   const useCompactGallery = galleryImages.length === 1
 
   const galleryAspectRatio =
@@ -128,13 +121,15 @@ export function ProductPageView({
     : isTechDownProduct ? 2 / 3
     : 9 / 16
 
+  const galleryDesktopBleedClassName =
+    'md:left-auto md:w-full md:translate-x-0 md:-ml-[calc((100vw-100cqw-4rem)/4)]'
+
   const galleryFrameClassName =
     useCompactGallery ?
-      'mx-auto w-full max-w-lg sm:max-w-xl md:max-w-lg lg:max-w-xl'
-    : 'relative left-1/2 w-screen -translate-x-1/2 md:left-auto md:w-full md:translate-x-0'
+      `mx-auto w-full max-w-lg sm:max-w-xl md:mx-0 md:max-w-none ${galleryDesktopBleedClassName}`
+    : `relative left-1/2 w-screen -translate-x-1/2 ${galleryDesktopBleedClassName}`
 
-  const galleryStickyClassName =
-    `${galleryFrameClassName} md:sticky md:top-24 lg:top-20`
+  const galleryStickyClassName = `${galleryFrameClassName} md:sticky md:top-24 lg:top-20`
 
   const galleryImageClassName =
     useCompactGallery ?
@@ -144,20 +139,15 @@ export function ProductPageView({
   const klarnaPurchaseAmount =
     getKlarnaMinorUnitAmount({
       amount: selectedVariant.price.amount ?? '0',
-      currencyCode:
-        selectedVariant.price.currencyCode
+      currencyCode: selectedVariant.price.currencyCode
     }) ?? ''
 
   const priceActivityPanel = (
     <div className='! relative mt-2 pt-0 text-foreground! md:mt-0 md:pt-2'>
       <PriceActivityPanel
         productHandle={productData.handle}
-        priceAmount={
-          selectedVariant.price.amount ?? '0'
-        }
-        currencyCode={
-          selectedVariant.price.currencyCode
-        }
+        priceAmount={selectedVariant.price.amount ?? '0'}
+        currencyCode={selectedVariant.price.currencyCode}
         activityNode={activityNode}
       />
     </div>
@@ -181,7 +171,7 @@ export function ProductPageView({
         <div className='absolute right-[8%] bottom-[18%] h-96 w-96 rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--very-peri)_20%,transparent)_0%,transparent_72%)] blur-3xl' />
       </div>
 
-      <div className='container mx-auto px-4 md:px-8'>
+      <div className='@container container mx-auto px-4 md:px-8'>
         <DesktopBreadcrump
           productTitle={title}
           handle={productData.handle ?? ''}
@@ -190,68 +180,42 @@ export function ProductPageView({
         <ProductPageGrid>
           <GalleryColumn>
             <div className={galleryStickyClassName}>
-              <AspectRatio
-                ratio={galleryAspectRatio}
-                className={
-                  isTechDownProduct ?
-                    'w-full md:aspect-9/16'
-                  : 'w-full'
-                }
-              >
-                <ProductGalleryCard
-                  galleryContent={
-                    <div className='relative isolate size-full overflow-hidden rounded-none md:rounded-3xl'>
-                      {useDesktopGrid ?
-                        <>
-                          <div className='hidden size-full md:block'>
-                            <ProductGalleryGrid
-                              title={title}
-                              images={galleryImages}
-                            />
-                          </div>
-
-                          <div className='size-full md:hidden'>
-                            <ProductGallery
-                              title={title}
-                              images={
-                                mobileGalleryImages
-                              }
-                              imageLayout={
-                                isTechDownProduct ?
-                                  'intrinsic'
-                                : 'cover-fill'
-                              }
-                            />
-                          </div>
-                        </>
-                      : <ProductGallery
-                          title={title}
-                          images={galleryImages}
-                          {...(useCompactGallery ?
-                            {
-                              imageBackgroundClassName:
-                                'bg-transparent',
-                              imageClassName:
-                                galleryImageClassName as string
-                            }
-                          : {})}
-                        />
-                      }
-                    </div>
-                  }
-                  hasIntegratedBackground
-                  integratedBackgroundSize={
-                    useCompactGallery ?
-                      'compact'
-                    : 'wide'
-                  }
-                  flushOnMobile={!useCompactGallery}
-                  enableStickyOnDesktop={false}
-                  ariaLabel='Produktgalleri'
+              <div className='hidden md:block'>
+                <ProductGallery
+                  title={title}
+                  images={galleryImages}
+                  imageLayout='cover-fill'
+                  framed
                 />
-              </AspectRatio>
-            </div>
+              </div>
 
+              <div className='md:hidden'>
+                <AspectRatio
+                  ratio={galleryAspectRatio}
+                  className='w-full'
+                >
+                  <div className='relative isolate size-full overflow-hidden'>
+                    <ProductGallery
+                      title={title}
+                      images={mobileGalleryImages}
+                      imageLayout={
+                        isTechDownProduct ? 'intrinsic' : (
+                          'cover-fill'
+                        )
+                      }
+                      {...(useCompactGallery ?
+                        {
+                          imageBackgroundClassName:
+                            'bg-transparent',
+                          imageClassName:
+                            galleryImageClassName as string
+                        }
+                      : {})}
+                    />
+                  </div>
+                </AspectRatio>
+              </div>
+            </div>
           </GalleryColumn>
 
           <OptionsColumn>
@@ -261,9 +225,7 @@ export function ProductPageView({
                 selectedVariant={selectedVariant}
                 productHandle={productData.handle}
                 productTitle={title}
-                productSubtitle={
-                  productSubtitle ?? ''
-                }
+                productSubtitle={productSubtitle ?? ''}
               />
             </div>
 
@@ -285,31 +247,27 @@ export function ProductPageView({
               >
                 <KlarnaCreditPromotionAutoSize
                   id={`klarna-credit-promotion-${productData.handle}`}
-                  purchaseAmount={
-                    klarnaPurchaseAmount
-                  }
+                  purchaseAmount={klarnaPurchaseAmount}
                   theme='default'
                 />
               </div>
             </AnimatedBlock>
 
             <Suspense
-              fallback={
-                <ProductPurchaseIslandSkeleton />
-              }
+              fallback={<ProductPurchaseIslandSkeleton />}
             >
               <AsyncProductPurchaseIsland
                 product={productData}
                 selectedVariant={selectedVariant}
                 storefrontLookupHandle={storefrontLookupHandle}
-                storefrontSelectedOptions={storefrontSelectedOptions}
+                storefrontSelectedOptions={
+                  storefrontSelectedOptions
+                }
               />
             </Suspense>
 
             <ProductDescription
-              description={
-                productPageContent?.description
-              }
+              description={productPageContent?.description}
             />
 
             <KlarnaDesktopPromo />
@@ -320,9 +278,7 @@ export function ProductPageView({
 
         <ProductPageAccordion
           product={productData}
-          sections={
-            productPageContent?.accordion
-          }
+          sections={productPageContent?.accordion}
           selectedVariant={selectedVariant}
         />
 

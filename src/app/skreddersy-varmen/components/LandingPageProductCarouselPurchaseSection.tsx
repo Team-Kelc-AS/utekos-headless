@@ -32,7 +32,7 @@ export function LandingPageProductCarouselPurchaseSection() {
   ]
 
   return (
-    <div className='dark:bg-dark-background relative flex w-full flex-col items-center justify-center bg-jungle min-[900px]:sticky min-[900px]:top-0 min-[900px]:h-svh min-[900px]:self-start min-[900px]:p-8 min-[1280px]:p-12'>
+    <div className='dark:bg-dark-background relative flex w-full flex-col items-center justify-center bg-jungle min-[900px]:sticky min-[900px]:top-0 min-[900px]:h-svh min-[900px]:self-start min-[900px]:p-8 min-[1280px]:p-12 lg:top-20 xl:top-22.5'>
       <BrandBadge
         tone='promo'
         className='animate-in fade-in slide-in-from-left-2 dark:bg-dark-primary dark:text-dark-primary-foreground absolute top-4 left-4 z-20 bg-primary px-4 py-1.5 font-utekos-text-medium text-xs tracking-normal text-primary-foreground shadow-lg duration-500 min-[900px]:top-8 min-[900px]:left-8 min-[1280px]:top-12 min-[1280px]:left-12'

@@ -1,63 +1,59 @@
 import type { Image } from 'types/media'
 import { productImage } from '@/app/produkter/[handle]/utils/pruductImage'
-import techDownMobileColorBg1 from '@/assets/images/techdown/ProduktPictureTechDown-1.webp'
-import techDownMobileColorBg2 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/2.webp'
-import techDownMobileColorBg3 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/3.webp'
-import techDownMobileColorBg4 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/4.webp'
-import techDownMobileColorBg5 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/5.webp'
-import techDownMobileColorBg6 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/6.webp'
-import techDownMobileColorBg8 from '@/assets/images/techdown/ProductPage/Product-Page-Img-Color-Bg-1000x5000/8.webp'
+import techDownMobile1 from '@/assets/images/techdown/TechDown-1000x1500-1.jpg'
+import techDownMobile2 from '@/assets/images/techdown/TechDown-1000x1500-2.jpg'
+import techDownMobile3 from '@/assets/images/techdown/TechDown-1000x1500-3.jpg'
+import techDownMobile4 from '@/assets/images/techdown/TechDown-1000x1500-4.jpg'
+import techDownMobile5 from '@/assets/images/techdown/TechDown-1000x1500-5.jpg'
+import techDownMobileZipper from '@/assets/images/techdown/TechDown-1000x1500-Zipper.jpg'
+import techDownDesktop1 from '@/assets/images/techdown/TechDown-1800x2000.webp'
+import techDownDesktop2 from '@/assets/images/techdown/TechDown2-1800x2000.webp'
 
 const TECHDOWN_MOBILE_IMAGE_WIDTH = 1000
 const TECHDOWN_MOBILE_IMAGE_HEIGHT = 1500
+const TECHDOWN_DESKTOP_IMAGE_WIDTH = 1800
+const TECHDOWN_DESKTOP_IMAGE_HEIGHT = 2000
 
 export const TECHDOWN_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
-    'utekos-techdown-mobile-color-bg-1',
-    techDownMobileColorBg1,
-    'Kvinne sitter i stol med Utekos TechDown og ser i kikkert.',
+    'utekos-techdown-mobile-1',
+    techDownMobile1,
+    'Kvinne sitter på terrassen i Utekos TechDown med solbriller.',
     TECHDOWN_MOBILE_IMAGE_WIDTH,
     TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-color-bg-2',
-    techDownMobileColorBg2,
-    'Utekos TechDown i marineblå vist rett forfra med hette og fotpose i full lengde.',
+    'utekos-techdown-mobile-2',
+    techDownMobile2,
+    'Utekos TechDown i marineblå vist i trekvart profil med hette.',
     TECHDOWN_MOBILE_IMAGE_WIDTH,
     TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-color-bg-3',
-    techDownMobileColorBg3,
-    'Utekos TechDown vist fra siden i full lengde.',
+    'utekos-techdown-mobile-3',
+    techDownMobile3,
+    'Utekos TechDown sett bakfra med hette.',
     TECHDOWN_MOBILE_IMAGE_WIDTH,
     TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-color-bg-4',
-    techDownMobileColorBg4,
+    'utekos-techdown-mobile-4',
+    techDownMobile4,
+    'Utekos TechDown i full lengde forfra med hette og glidelås.',
+    TECHDOWN_MOBILE_IMAGE_WIDTH,
+    TECHDOWN_MOBILE_IMAGE_HEIGHT
+  ),
+  productImage(
+    'utekos-techdown-mobile-5',
+    techDownMobile5,
     'Utekos TechDown sett bakfra i full lengde.',
     TECHDOWN_MOBILE_IMAGE_WIDTH,
     TECHDOWN_MOBILE_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-mobile-color-bg-5',
-    techDownMobileColorBg5,
-    'Kvinne slapper av i solnedgangen på terrassen ved kysten med Utekos TechDown.',
-    TECHDOWN_MOBILE_IMAGE_WIDTH,
-    TECHDOWN_MOBILE_IMAGE_HEIGHT
-  ),
-  productImage(
-    'utekos-techdown-mobile-color-bg-6',
-    techDownMobileColorBg6,
-    'Overdelen av Utekos TechDown sett bakfra med hette.',
-    TECHDOWN_MOBILE_IMAGE_WIDTH,
-    TECHDOWN_MOBILE_IMAGE_HEIGHT
-  ),
-  productImage(
-    'utekos-techdown-mobile-color-bg-8',
-    techDownMobileColorBg8,
-    'Nærbilde av brodert norsk flagg på Utekos TechDown.',
+    'utekos-techdown-mobile-zipper',
+    techDownMobileZipper,
+    'Nærbilde av YKK-glidelås og oransje draglås på Utekos TechDown.',
     TECHDOWN_MOBILE_IMAGE_WIDTH,
     TECHDOWN_MOBILE_IMAGE_HEIGHT
   )
@@ -65,45 +61,17 @@ export const TECHDOWN_MOBILE_GALLERY_IMAGES: Image[] = [
 
 export const TECHDOWN_PRODUCT_GALLERY_IMAGES: Image[] = [
   productImage(
-    'utekos-techdown-kvinne-terrasseliv',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/kvinne-nyter-terrasselivet-med-utekos-techdown.webp',
-    'Kvinne med Utekos TechDown på terrassen.',
-    1080,
-    1350
+    'utekos-techdown-desktop-1',
+    techDownDesktop1,
+    'Utekos TechDown i marineblå, 9:10 produktbilde.',
+    TECHDOWN_DESKTOP_IMAGE_WIDTH,
+    TECHDOWN_DESKTOP_IMAGE_HEIGHT
   ),
   productImage(
-    'utekos-techdown-kvinne-balpanne',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Kvinne-Balpanne-1080x1350.png',
-    'Kvinne med Utekos TechDown smiler lurt ved bålpannen.',
-    1080,
-    1350
-  ),
-  productImage(
-    'utekos-techdown-herre-terrasseliv',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Mann-Terrasse-1080x1350.png',
-    'Mann med Utekos TechDown og solbriller slapper av på terrassen.',
-    1080,
-    1350
-  ),
-  productImage(
-    'utekos-techdown-to-kvinner-terrasselivet-mobile',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Kvinne-Kysthus-1080x1350.png',
-    'Kvinne med Utekos TechDown ved kysthus.',
-    1080,
-    1350
-  ),
-  productImage(
-    'utekos-techdown-bobil-bonfire-overlay-mobile',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Kvinne-Kikker-Terrasse-1080x1350.png',
-    'Kvinne med Utekos TechDown på terrasse ser på utsikt med kikkert.',
-    1080,
-    1350
-  ),
-  productImage(
-    'utekos-techdown-herre-kikker',
-    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Utekos-TechDown-Herre-Kikker-1080x1350.png?v=1781242515',
-    'Mann med Utekos TechDown står og bruker kikkert.',
-    1080,
-    1350
+    'utekos-techdown-desktop-2',
+    techDownDesktop2,
+    'Utekos TechDown i marineblå, andre 9:10 produktbilde.',
+    TECHDOWN_DESKTOP_IMAGE_WIDTH,
+    TECHDOWN_DESKTOP_IMAGE_HEIGHT
   )
 ]
