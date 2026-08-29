@@ -110,7 +110,12 @@ const UPSERT_SNAPSHOTS_QUERY = `
     snapshot.result_code,
     snapshot.safe_action,
     snapshot.measurements
-  from jsonb_to_recordset($1::jsonb) as snapshot(
+  -- postgres.js binds the serialized JSON text as a JSON string scalar.
+  -- Extract its text value before parsing so recordset always receives the
+  -- original top-level array.
+  from jsonb_to_recordset(
+    ($1::jsonb #>> '{}'::text[])::jsonb
+  ) as snapshot(
     run_id uuid,
     integration text,
     surface text,

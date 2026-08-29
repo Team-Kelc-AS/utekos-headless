@@ -54,6 +54,11 @@ test('persists privacy-free snapshots and returns incident counters', async () =
   assert.equal(result.incidents[0]?.recentFailureCount, 2)
   assert.equal(calls.length, 4)
   const serialized = String(calls[0]?.parameters[0])
+  assert.equal(Array.isArray(JSON.parse(serialized)), true)
+  assert.match(
+    calls[0]?.query ?? '',
+    /\$1::jsonb #>> '\{\}'::text\[\]/u
+  )
   assert.match(serialized, /"result_code":"valid_probe_rejected"/)
   assert.doesNotMatch(serialized, /authorization|cron-secret|page_url/i)
 })
