@@ -25,6 +25,8 @@ import { ShippingAndReturnComponent } from './ShippingAndReturnComponent'
 import { KlarnaLandingExpressCheckout } from './KlarnaLandingExpressCheckout'
 import { PRODUCT_VARIANTS } from '@/api/constants'
 import { TechDownSizeGuideAccordion } from './TechDownSizeGuideAccordion'
+import { PromotionImpression } from '@/components/analytics/PromotionImpression'
+import { SKREDDERSY_VARMEN_PROMOTIONS } from '../data/skreddersyVarmenPageModel'
 import type { ProductCommerceViewModel } from '@/lib/products/commerce'
 import type {
   ProductCartModel,
@@ -302,7 +304,16 @@ export function PurchaseClientViewLanding({
           </div>
 
           <div className='rounded-b-lg border-t border-background/20 bg-cloud-dancer p-6 text-background min-[900px]:p-8 min-[1280px]:p-12 md:p-12'>
-            <div className='mb-2.5 min-[900px]:mb-3 min-[1280px]:mb-3.5'>
+            <PromotionImpression
+              promotionId={
+                SKREDDERSY_VARMEN_PROMOTIONS.purchaseButton
+              }
+              promotionName='Skreddersy varmen'
+              creativeName='Purchase button'
+              creativeSlot='purchase_button'
+              minimumVisibleRatio={0.5}
+              className='mb-2.5 min-[900px]:mb-3 min-[1280px]:mb-3.5'
+            >
               <BrandBadge
                 asChild
                 bgColor='var(--primary)'
@@ -357,7 +368,7 @@ export function PurchaseClientViewLanding({
                   : null}
                 </button>
               </BrandBadge>
-            </div>
+            </PromotionImpression>
 
             <KlarnaLandingExpressCheckout
               product={shopifyProduct}

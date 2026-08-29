@@ -4342,8 +4342,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -4704,8 +4714,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -5060,8 +5080,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -5435,8 +5465,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -5589,8 +5629,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -5728,8 +5778,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -5866,8 +5926,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -6003,8 +6073,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -6139,8 +6219,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -6281,8 +6371,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -6661,8 +6761,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -7027,8 +7137,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -7148,8 +7268,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -7511,8 +7641,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -7678,8 +7818,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -7820,8 +7970,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -8188,8 +8348,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -8540,8 +8710,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -8676,8 +8856,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -8824,8 +9014,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -8984,8 +9184,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -9179,8 +9389,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -9544,8 +9764,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -9686,8 +9916,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -10037,8 +10277,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -10420,8 +10670,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"
@@ -10775,8 +11035,18 @@
           "impression_id": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/impression_id"
           },
+          "journey_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "page_url": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/page_url"
+          },
+          "previous_page_view_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "location": {
             "$ref": "../../../domains/utekos-common/0.1.0/domain.json#/components/schemas/CanonicalEventEnvelope/properties/location"

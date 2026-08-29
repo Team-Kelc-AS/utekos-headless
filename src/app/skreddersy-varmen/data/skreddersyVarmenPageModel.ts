@@ -7,6 +7,7 @@ export const SKREDDERSY_VARMEN_PROMOTIONS = {
   threeInOne: 'skreddersy-varmen-three-in-one',
   techDown: 'skreddersy-varmen-techdown',
   purchase: 'skreddersy-varmen-purchase',
+  purchaseButton: 'skreddersy-varmen-purchase-button',
   socialProof: 'skreddersy-varmen-social-proof'
 } as const
 

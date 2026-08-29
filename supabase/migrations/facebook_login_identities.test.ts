@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 
 const migrationUrl = new URL(
-  './20260824075321_add_facebook_login_identities.sql',
+  './20260824075813_add_facebook_login_identities.sql',
   import.meta.url
 )
 const marketingSchemaUrl = new URL(

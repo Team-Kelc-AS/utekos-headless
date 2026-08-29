@@ -26,7 +26,11 @@ const NO_STORE_HEADERS = {
   'Cache-Control': 'no-store, max-age=0'
 }
 
-type RateLimitInput = { sessionId: string; request: Request }
+type RateLimitInput = {
+  buyerIp?: string | undefined
+  sessionId: string
+  request: Request
+}
 
 export type AssistantRouteDependencies = {
   answer: typeof answerAssistantRequest
@@ -255,16 +259,14 @@ function measureLatency(now: () => number, startedAt: number) {
 function logAssistantOutcome({
   intent,
   latencyMs,
-  outcomeCode,
-  sessionId
+  outcomeCode
 }: {
   intent: string
   latencyMs: number
   outcomeCode: AssistantOutcome['failureCode'] | 'stream_error'
-  sessionId: string
 }) {
   console.info(
-    JSON.stringify({ sessionId, intent, outcomeCode, latencyMs })
+    JSON.stringify({ intent, outcomeCode, latencyMs })
   )
 }
 
@@ -365,6 +367,7 @@ export function createAssistantRouteHandler(
     let rateLimit
     try {
       rateLimit = await dependencies.checkRateLimit({
+        buyerIp: context.buyerIp,
         sessionId: parsed.sessionId,
         request
       })
@@ -428,7 +431,6 @@ export function createAssistantRouteHandler(
           })
 
           logAssistantOutcome({
-            sessionId: parsed.sessionId,
             intent: parsed.intent,
             outcomeCode: outcome.failureCode,
             latencyMs: measureLatency(
@@ -438,7 +440,6 @@ export function createAssistantRouteHandler(
           })
         } catch {
           logAssistantOutcome({
-            sessionId: parsed.sessionId,
             intent: parsed.intent,
             outcomeCode: 'stream_error',
             latencyMs: measureLatency(

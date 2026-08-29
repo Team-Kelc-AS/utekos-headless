@@ -3,6 +3,7 @@ import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { clearStoredSnapchatClickId } from './clickIdSessionStore'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
 import { extractClickIds } from './pageViewClientContext'
+import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 
 const COOKIEBOT_EVENTS = [
   'CookiebotOnConsentReady',
@@ -282,8 +283,10 @@ export async function sendCanonicalCollectorEvent<
   input: SendCanonicalCollectorEventInput<E>,
   event: E
 ): Promise<void> {
+  const journeyEnriched =
+    enrichCanonicalBrowserJourneyContext(event)
   const metaEnriched =
-    await enrichCanonicalEventWithMetaAttribution(event)
+    await enrichCanonicalEventWithMetaAttribution(journeyEnriched)
   const enriched =
     input.enrichEvent ?
       await input.enrichEvent(metaEnriched)

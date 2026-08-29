@@ -20,7 +20,8 @@ const ASSISTANT_EXCLUDED_ROUTE_ROOTS = [
   '/checkouts'
 ] as const
 
-const ROLLOUT_PERCENT_PATTERN = /^(?:0|[1-9]\d?|100)$/u
+const CONTROLLED_ROLLOUT_STAGES = new Set([0, 5, 25, 100])
+const ROLLOUT_PERCENT_PATTERN = /^(?:0|5|25|100)$/u
 const PRODUCT_DETAIL_PATH_PATTERN =
   /^\/produkter\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/u
 
@@ -42,11 +43,16 @@ function parseStoredBucket(value: string | null) {
 export function resolveAssistantRolloutPercent(
   environment: AssistantRolloutEnvironment
 ) {
+  if (environment.CUSTOMER_ASSISTANT_ENABLED !== 'true') {
+    return 0
+  }
+
   const value = environment.CUSTOMER_ASSISTANT_ROLLOUT_PERCENT
 
   if (!value || !ROLLOUT_PERCENT_PATTERN.test(value)) return 0
 
-  return Number(value)
+  const percent = Number(value)
+  return CONTROLLED_ROLLOUT_STAGES.has(percent) ? percent : 0
 }
 
 export function resolveAssistantPreviewRolloutPercent(

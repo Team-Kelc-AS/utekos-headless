@@ -27,6 +27,38 @@ test('event-specific app log contracts accept minimal operational fields', () =>
   assert.deepEqual(result.data, { reasonCode: 'disabled' })
 })
 
+test('client error app logs accept only sanitized triage fields', () => {
+  const parsed = appLogInputSchema.parse({
+    event: 'client.error',
+    level: 'ERROR',
+    data: {
+      source: 'window_error',
+      message: 'ChunkLoadError',
+      filename:
+        'https://utekos.no/_next/static/chunks/app.js?token=secret',
+      line: 12,
+      column: 4
+    },
+    context: { route: '/skreddersy-varmen' }
+  })
+
+  assert.equal(
+    parsed.event === 'client.error' ? parsed.data.filename : undefined,
+    '/_next/static/chunks/app.js'
+  )
+  assert.equal(JSON.stringify(parsed).includes('token=secret'), false)
+  assert.equal(
+    appLogInputSchema.safeParse({
+      ...parsed,
+      data: {
+        ...parsed.data,
+        message: 'customer@example.no'
+      }
+    }).success,
+    false
+  )
+})
+
 test('Meta Dataset Quality warning accepts only PII-free snapshot fields', () => {
   const parsed = appLogInputSchema.parse({
     context: {},

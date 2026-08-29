@@ -12,6 +12,7 @@ import {
   type PageViewDispatchObservation
 } from './pageViewDispatchObservation'
 import type { ProvisionalPageViewCaptureState } from './provisionalPageViewCapture'
+import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 
 export type CookiebotState = {
   consent?: CookiebotConsent
@@ -245,7 +246,10 @@ export function createPageViewCollectorTransport(
           cookiebot as CookiebotState,
           dependencies.getCookieHeader()
         )
-        const enriched = await dependencies.enrich(prepared)
+        const journeyEnriched =
+          enrichCanonicalBrowserJourneyContext(prepared)
+        const enriched =
+          await dependencies.enrich(journeyEnriched)
 
         if (
           dependencies.observeDispatch &&

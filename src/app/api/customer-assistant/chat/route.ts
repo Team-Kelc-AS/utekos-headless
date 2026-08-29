@@ -7,9 +7,9 @@ import {
 } from '@/lib/customer-assistant/server/assistantAdapters'
 import {
   createAssistantRouteHandler,
-  createProcessLocalAssistantRateLimiter,
   resolveAssistantRequestsPerMinute
 } from '@/lib/customer-assistant/server/createAssistantRouteHandler'
+import { createRedisAssistantRateLimiter } from '@/lib/customer-assistant/server/redisAssistantRateLimiter'
 import { fetchAssistantProducts } from '@/lib/customer-assistant/server/shopifyAssistantCatalog'
 import {
   GeminiSupportKnowledge,
@@ -62,9 +62,10 @@ export function createCustomerAssistantAnswer(
 }
 
 const now = () => Date.now()
-const checkRateLimit = createProcessLocalAssistantRateLimiter({
+const checkRateLimit = createRedisAssistantRateLimiter({
+  environment: process.env,
   limit: resolveAssistantRequestsPerMinute(process.env),
-  now
+  namespace: 'chat'
 })
 const answerCustomerAssistantRequest =
   createCustomerAssistantAnswer()

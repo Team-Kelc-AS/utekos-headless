@@ -44,6 +44,7 @@ function CustomerAssistantRuntime({
   const [suppressedAnnouncementId, setSuppressedAnnouncementId] =
     useState<string | null>(null)
   const sessionIdRef = useRef<string | null>(null)
+  const pendingFeedbackRef = useRef(new Set<string>())
   const launcherRef = useRef<HTMLButtonElement>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
   const firstActionRef = useRef<HTMLButtonElement>(null)
@@ -126,13 +127,38 @@ function CustomerAssistantRuntime({
     setIsOpen(true)
   }
 
-  function selectFeedback(
+  async function selectFeedback(
     responseId: string,
     value: AssistantFeedbackValue
   ) {
-    setFeedback(current =>
-      recordAssistantFeedback(current, responseId, value)
-    )
+    if (
+      feedback[responseId] ||
+      pendingFeedbackRef.current.has(responseId)
+    ) {
+      return
+    }
+
+    pendingFeedbackRef.current.add(responseId)
+    try {
+      const response = await fetch(
+        '/api/customer-assistant/feedback',
+        {
+          body: JSON.stringify({ responseId, value }),
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST'
+        }
+      )
+      if (!response.ok) return
+
+      setFeedback(current =>
+        recordAssistantFeedback(current, responseId, value)
+      )
+    } catch {
+      // Keep the one-shot control available when persistence is unavailable.
+    } finally {
+      pendingFeedbackRef.current.delete(responseId)
+    }
   }
 
   async function sendText(

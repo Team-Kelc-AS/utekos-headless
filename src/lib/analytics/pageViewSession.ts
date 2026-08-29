@@ -1,6 +1,7 @@
 export type PageViewContext = Readonly<{
   pageUrl: string
   pageViewId: string
+  previousPageViewId?: string
   referrerUrl?: string
 }>
 
@@ -17,7 +18,20 @@ export function createPageViewSession(
   createId: () => string = () => globalThis.crypto.randomUUID()
 ) {
   let activePageView: ActivePageView | null = null
+  const pageViewsById = new Map<string, PageViewContext>()
   const listeners = new Set<PageViewListener>()
+
+  function remember(pageView: ActivePageView) {
+    const context = toPublicContext(pageView)
+    pageViewsById.set(context.pageViewId, context)
+
+    if (pageViewsById.size > 32) {
+      const oldestPageViewId = pageViewsById.keys().next().value
+      if (oldestPageViewId) pageViewsById.delete(oldestPageViewId)
+    }
+
+    return context
+  }
 
   function ensure(input: EnsurePageViewInput): PageViewContext {
     const pageUrl = normalizeRequiredHttpUrl(input.pageUrl)
@@ -33,11 +47,24 @@ export function createPageViewSession(
     activePageView = {
       pageUrl,
       pageViewId: createId(),
+      ...(activePageView?.pageViewId ?
+        { previousPageViewId: activePageView.pageViewId }
+      : {}),
       ...(referrerUrl ? { referrerUrl } : {}),
       emitted: false
     }
 
-    return toPublicContext(activePageView)
+    return remember(activePageView)
+  }
+
+  function get(
+    pageViewId: string | undefined
+  ): PageViewContext | undefined {
+    if (!pageViewId) {
+      return activePageView ? toPublicContext(activePageView) : undefined
+    }
+
+    return pageViewsById.get(pageViewId)
   }
 
   function hasEmitted(pageViewId: string): boolean {
@@ -63,15 +90,22 @@ export function createPageViewSession(
       (activePageView?.pageUrl === pageUrl ?
         activePageView.referrerUrl
       : undefined)
+    const previousPageViewId =
+      context.previousPageViewId ??
+      pageViewsById.get(context.pageViewId)?.previousPageViewId ??
+      (activePageView?.pageUrl === pageUrl ?
+        activePageView.previousPageViewId
+      : activePageView?.pageViewId)
 
     activePageView = {
       pageUrl,
       pageViewId: context.pageViewId,
+      ...(previousPageViewId ? { previousPageViewId } : {}),
       ...(referrerUrl ? { referrerUrl } : {}),
       emitted: true
     }
 
-    const emittedContext = toPublicContext(activePageView)
+    const emittedContext = remember(activePageView)
 
     for (const listener of listeners) {
       listener(emittedContext)
@@ -88,7 +122,7 @@ export function createPageViewSession(
     }
   }
 
-  return { ensure, hasEmitted, recordEmitted, subscribe }
+  return { ensure, get, hasEmitted, recordEmitted, subscribe }
 }
 
 export const browserPageViewSession = createPageViewSession()
@@ -99,6 +133,9 @@ function toPublicContext(
   return {
     pageUrl: pageView.pageUrl,
     pageViewId: pageView.pageViewId,
+    ...(pageView.previousPageViewId ?
+      { previousPageViewId: pageView.previousPageViewId }
+    : {}),
     ...(pageView.referrerUrl ?
       { referrerUrl: pageView.referrerUrl }
     : {})

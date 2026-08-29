@@ -16,9 +16,10 @@ test('defaults to zero exposure', () => {
   assert.equal(resolveAssistantRolloutPercent({}), 0)
 })
 
-test('accepts an integer from zero through one hundred', () => {
+test('accepts only the controlled zero, five, twenty-five and one-hundred percent stages', () => {
   assert.equal(
     resolveAssistantRolloutPercent({
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
     }),
     25
@@ -31,10 +32,30 @@ test('accepts an integer from zero through one hundred', () => {
   )
   assert.equal(
     resolveAssistantRolloutPercent({
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '5'
+    }),
+    5
+  )
+  assert.equal(
+    resolveAssistantRolloutPercent({
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
     }),
     100
   )
+})
+
+test('the explicit enable flag is the fail-closed kill switch', () => {
+  for (const enabled of [undefined, 'false', 'TRUE', '1']) {
+    assert.equal(
+      resolveAssistantRolloutPercent({
+        CUSTOMER_ASSISTANT_ENABLED: enabled,
+        CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
+      }),
+      0
+    )
+  }
 })
 
 test('fails closed for unsafe values', () => {
@@ -43,12 +64,17 @@ test('fails closed for unsafe values', () => {
     '-1',
     'ten',
     '',
+    '1',
+    '10',
+    '50',
+    '99',
     '25.5',
     ' 25 ',
     '+25'
   ]) {
     assert.equal(
       resolveAssistantRolloutPercent({
+        CUSTOMER_ASSISTANT_ENABLED: 'true',
         CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: value
       }),
       0
@@ -60,6 +86,7 @@ test('enables the server rollout only for an exact preview with a positive safe 
   assert.equal(
     resolveAssistantPreviewRolloutPercent({
       VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
     }),
     25
@@ -68,18 +95,22 @@ test('enables the server rollout only for an exact preview with a positive safe 
   for (const environment of [
     {
       VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
     },
     {
       VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '0'
     },
     {
       VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: ' 25 '
     },
     {
       VERCEL_ENV: 'PREVIEW',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
     },
     { VERCEL_ENV: 'preview' }
@@ -95,6 +126,7 @@ test('enables the customer-facing rollout only in Vercel preview or production',
   assert.equal(
     resolveAssistantDeploymentRolloutPercent({
       VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
     }),
     25
@@ -102,6 +134,7 @@ test('enables the customer-facing rollout only in Vercel preview or production',
   assert.equal(
     resolveAssistantDeploymentRolloutPercent({
       VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
     }),
     25
@@ -110,14 +143,17 @@ test('enables the customer-facing rollout only in Vercel preview or production',
   for (const environment of [
     {
       VERCEL_ENV: 'development',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
     },
     {
       VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '0'
     },
     {
       VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: 'invalid'
     },
     { VERCEL_ENV: 'production' }

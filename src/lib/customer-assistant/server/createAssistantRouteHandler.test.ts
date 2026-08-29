@@ -185,6 +185,7 @@ test('route composition exposes requests only in configured Vercel deployments',
   assert.equal(
     resolveAssistantRequestsPerMinute({
       VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
     }),
     12
@@ -193,6 +194,7 @@ test('route composition exposes requests only in configured Vercel deployments',
   assert.equal(
     resolveAssistantRequestsPerMinute({
       VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
     }),
     12
@@ -201,19 +203,23 @@ test('route composition exposes requests only in configured Vercel deployments',
   for (const environment of [
     {
       VERCEL_ENV: 'development',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
     },
     {
       VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '0'
     },
     {
       VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: 'invalid'
     },
     { VERCEL_ENV: 'preview' },
     {
       VERCEL_ENV: 'PREVIEW',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
     }
   ]) {
@@ -452,7 +458,6 @@ test('streams typed text and data parts with only safe structured completion log
     assert.deepEqual(logged, [
       [
         JSON.stringify({
-          sessionId,
           intent: 'product_help',
           outcomeCode: 'none',
           latencyMs: 42
@@ -462,6 +467,7 @@ test('streams typed text and data parts with only safe structured completion log
     const serializedLogs = JSON.stringify(logged)
     assert.doesNotMatch(serializedLogs, /Jeg trenger/u)
     assert.doesNotMatch(serializedLogs, /203\.0\.113\.8/u)
+    assert.doesNotMatch(serializedLogs, new RegExp(sessionId, 'u'))
   } finally {
     console.info = originalInfo
   }
@@ -688,7 +694,6 @@ test('uses a safe stream error without exposing question, IP, or thrown text', a
     assert.deepEqual(logged, [
       [
         JSON.stringify({
-          sessionId,
           intent: 'product_help',
           outcomeCode: 'stream_error',
           latencyMs: 7

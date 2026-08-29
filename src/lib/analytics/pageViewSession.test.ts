@@ -65,6 +65,13 @@ test('uses the preceding application URL as the SPA referrer', () => {
     product.pageViewId,
     'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7'
   )
+
+  assert.equal(
+    product.previousPageViewId,
+    '0c955d6b-5e9c-47d0-b304-046df7f4bf7f'
+  )
+
+  assert.deepEqual(session.get(product.pageViewId), product)
 })
 
 test('records the emitted page_view id and notifies subscribers once', () => {

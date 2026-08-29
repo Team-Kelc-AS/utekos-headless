@@ -19,7 +19,9 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
 
   delete normalized.client_ip_address
   delete normalized.event_device_info
+  delete normalized.journey_id
   delete normalized.location
+  delete normalized.previous_page_view_id
   delete normalized.region_code
   delete deviceInfo.user_agent
 
@@ -55,6 +57,17 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
 
   const hasDeviceInfo = Object.keys(deviceInfo).length > 0
   const hasMarketingConsent = parsed.consent.marketing === 'granted'
+  const hasAnalyticsConsent =
+    parsed.consent.analytics === 'granted'
+
+  if (hasAnalyticsConsent && parsed.journey_id) {
+    normalized.journey_id = parsed.journey_id
+
+    if (parsed.previous_page_view_id) {
+      normalized.previous_page_view_id =
+        parsed.previous_page_view_id
+    }
+  }
 
   if (hasDeviceInfo) normalized.event_device_info = deviceInfo
   if (requestContext.regionCode) {

@@ -35,6 +35,14 @@ alter table partner.sources enable row level security;
 alter table partner.referrals enable row level security;
 
 alter table ops.integration_events enable row level security;
+alter table ops.integration_health_snapshots enable row level security;
+alter table ops.integration_health_snapshots force row level security;
+alter table ops.integration_health_incidents enable row level security;
+alter table ops.integration_health_incidents force row level security;
+alter table ops.integration_alert_deliveries enable row level security;
+alter table ops.integration_alert_deliveries force row level security;
+alter table ops.customer_assistant_feedback enable row level security;
+alter table ops.customer_assistant_feedback force row level security;
 alter table ops.provider_dispatch_attempts enable row level security;
 alter table ops.slo_incidents enable row level security;
 alter table ops.dead_letter_events enable row level security;
@@ -57,6 +65,14 @@ alter table ops.privacy_retention_exceptions force row level security;
 
 revoke all on table ops.vercel_edge_request_observations
   from public, anon, authenticated, service_role;
+revoke all on table ops.integration_health_snapshots
+  from public, anon, authenticated, service_role;
+revoke all on table ops.integration_health_incidents
+  from public, anon, authenticated, service_role;
+revoke all on table ops.integration_alert_deliveries
+  from public, anon, authenticated, service_role;
+revoke all on table ops.customer_assistant_feedback
+  from public, anon, authenticated, service_role;
 revoke all on table ops.vercel_trace_observations
   from public, anon, authenticated, service_role;
 revoke all on table ops.landing_consent_observations
@@ -77,6 +93,14 @@ revoke all on table ops.meta_landing_edge_health
   from public, anon, authenticated, service_role;
 grant usage on schema ops to service_role;
 grant usage on schema marketing to service_role;
+grant select, insert, update, delete
+  on table ops.integration_health_snapshots to service_role;
+grant select, insert, update, delete
+  on table ops.integration_health_incidents to service_role;
+grant select, insert, update, delete
+  on table ops.integration_alert_deliveries to service_role;
+grant select, insert, update, delete
+  on table ops.customer_assistant_feedback to service_role;
 grant select, insert, update, delete
   on table marketing.provisional_page_view_captures
   to service_role;

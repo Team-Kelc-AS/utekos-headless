@@ -1,6 +1,9 @@
 import { z } from 'zod'
 import { sanitizeOperationalPathname } from './sanitizeOperationalPathname'
-import type { AppLogInput } from './appLogContract'
+import {
+  clientErrorDataSchema,
+  type AppLogInput
+} from './appLogContract'
 
 export { sanitizeOperationalPathname }
 
@@ -10,40 +13,10 @@ const pathnameSchema = z
   .max(2_048)
   .transform(sanitizeOperationalPathname)
 
-const clientErrorMessageSchema = z
-  .string()
-  .min(1)
-  .max(240)
-  .refine(value => !/\S+@\S+\.\S+/.test(value), {
-    message: 'Client error message must not contain email-like values'
-  })
-
-const clientErrorFilenameSchema = z
-  .string()
-  .min(1)
-  .max(512)
-  .transform(sanitizeOperationalPathname)
-
 const clientErrorSchema = z.strictObject({
   event: z.literal('client_error'),
   level: z.literal('error'),
-  data: z.strictObject({
-    source: z.literal('window_error'),
-    message: clientErrorMessageSchema.optional(),
-    filename: clientErrorFilenameSchema.optional(),
-    line: z
-      .number()
-      .int()
-      .nonnegative()
-      .max(10_000_000)
-      .optional(),
-    column: z
-      .number()
-      .int()
-      .nonnegative()
-      .max(10_000_000)
-      .optional()
-  }),
+  data: clientErrorDataSchema,
   context: z.strictObject({ pathname: pathnameSchema })
 })
 
@@ -68,9 +41,22 @@ const unhandledRejectionSchema = z.strictObject({
   context: z.strictObject({ pathname: pathnameSchema })
 })
 
+const clientHealthProbeSchema = z.strictObject({
+  event: z.literal('client_health_probe'),
+  level: z.literal('info'),
+  data: z.strictObject({ source: z.literal('launch_guard') }),
+  context: z.strictObject({
+    pathname: z.literal('/skreddersy-varmen')
+  })
+})
+
 export const clientLogPayloadSchema = z.discriminatedUnion(
   'event',
-  [clientErrorSchema, unhandledRejectionSchema]
+  [
+    clientErrorSchema,
+    unhandledRejectionSchema,
+    clientHealthProbeSchema
+  ]
 )
 
 export type ClientLogPayload = z.infer<typeof clientLogPayloadSchema>
@@ -82,6 +68,15 @@ export function toAppLogInput(
     return {
       event: 'client.error',
       level: 'ERROR',
+      data: payload.data,
+      context: { route: payload.context.pathname }
+    }
+  }
+
+  if (payload.event === 'client_health_probe') {
+    return {
+      event: 'observability.client_log_health_probe',
+      level: 'INFO',
       data: payload.data,
       context: { route: payload.context.pathname }
     }

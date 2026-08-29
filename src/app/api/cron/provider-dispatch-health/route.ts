@@ -1,90 +1,129 @@
+import { randomUUID } from 'node:crypto'
 import * as Sentry from '@sentry/nextjs'
+import { start } from 'workflow/api'
 import { hasValidCronAuthorization } from '@/lib/security/hasValidCronAuthorization'
-import { postgresProviderDispatchHealthStore } from '@/lib/analytics/server/postgresProviderDispatchHealthStore'
-import { runProviderDispatchHealthCheck } from '@/lib/analytics/server/providerDispatchHealth'
+import {
+  skreddersyVarmenLaunchGuardWorkflow
+} from '@/workflows/skreddersyVarmenLaunchGuard'
 
-export const maxDuration = 300
+export const maxDuration = 60
+const PRODUCTION_ORIGIN = 'https://utekos.no'
 
-export type ProviderDispatchHealthCronDependencies = {
+type Dependencies = {
+  captureMessage: typeof Sentry.captureMessage
+  createRunId: () => string
   flush: typeof Sentry.flush
   getCronSecret: () => string | undefined
-  runHealthCheck: typeof runProviderDispatchHealthCheck
+  getEnabled: () => string | undefined
+  getOrigin: () => string
+  now: () => Date
+  startWorkflow: (input: {
+    origin: string
+    requestedAt: string
+    runId: string
+  }) => Promise<{ runId: string }>
 }
 
-const defaultDependencies: ProviderDispatchHealthCronDependencies =
-  {
-    flush: Sentry.flush,
-    getCronSecret: () => process.env.CRON_SECRET,
-    runHealthCheck: dependencies =>
-      runProviderDispatchHealthCheck(dependencies)
+const defaultDependencies: Dependencies = {
+  captureMessage: Sentry.captureMessage,
+  createRunId: randomUUID,
+  flush: Sentry.flush,
+  getCronSecret: () => process.env.CRON_SECRET,
+  getEnabled: () => process.env.LAUNCH_GUARD_ENABLED,
+  getOrigin: () =>
+    process.env.LAUNCH_GUARD_ORIGIN ?? PRODUCTION_ORIGIN,
+  now: () => new Date(),
+  startWorkflow: async input => {
+    const run = await start(
+      skreddersyVarmenLaunchGuardWorkflow,
+      [input]
+    )
+    return { runId: run.runId }
   }
+}
+
+const noStoreHeaders = { 'Cache-Control': 'no-store' } as const
+
+function normalizeOrigin(value: string) {
+  const url = new URL(value)
+  if (url.protocol !== 'https:') {
+    throw new Error('launch_guard_origin_must_use_https')
+  }
+  url.pathname = '/'
+  url.search = ''
+  url.hash = ''
+  return url.origin
+}
 
 export async function handleProviderDispatchHealthCron(
   request: Request,
-  dependencies: ProviderDispatchHealthCronDependencies = defaultDependencies
+  dependencies: Dependencies = defaultDependencies
 ) {
-  const authorized = hasValidCronAuthorization(
-    request.headers.get('authorization'),
-    dependencies.getCronSecret()
-  )
-
-  if (!authorized) {
+  if (
+    !hasValidCronAuthorization(
+      request.headers.get('authorization'),
+      dependencies.getCronSecret()
+    )
+  ) {
     return Response.json(
       { ok: false },
-      { headers: { 'Cache-Control': 'no-store' }, status: 401 }
+      { status: 401, headers: noStoreHeaders }
     )
   }
 
-  const result = await dependencies.runHealthCheck({
-    captureMessage: Sentry.captureMessage,
-    store: postgresProviderDispatchHealthStore
-  })
-  const alertDeliveryFlushed =
-    result.healthy ? null : await dependencies.flush(1_500)
-  if (alertDeliveryFlushed === false) {
-    throw new Error('Sentry provider-health alert flush timed out')
+  const enabled = dependencies.getEnabled()
+  if (enabled !== undefined && enabled !== 'true' && enabled !== 'false') {
+    return Response.json(
+      { ok: false, error: 'invalid_activation_gate' },
+      { status: 500, headers: noStoreHeaders }
+    )
+  }
+  if (enabled === 'false') {
+    return Response.json(
+      { ok: true, enabled: false },
+      { headers: noStoreHeaders }
+    )
   }
 
-  return Response.json(
-    {
-      ack_sample_size: result.ackSampleSize,
-      alert_delivery_flushed: alertDeliveryFlushed,
-      click_to_edge_baseline_day_count:
-        result.clickToEdgeBaselineDayCount,
-      click_to_edge_baseline_rate:
-        result.clickToEdgeBaselineRate,
-      click_to_edge_current_date: result.clickToEdgeCurrentDate,
-      click_to_edge_current_click_id_count:
-        result.clickToEdgeCurrentClickIdCount,
-      click_to_edge_current_edge_count:
-        result.clickToEdgeCurrentEdgeCount,
-      click_to_edge_current_outbound_clicks:
-        result.clickToEdgeCurrentOutboundClicks,
-      click_to_edge_current_signal_without_click_id_count:
-        result.clickToEdgeCurrentSignalWithoutClickIdCount,
-      click_to_edge_current_successful_edge_count:
-        result.clickToEdgeCurrentSuccessfulEdgeCount,
-      click_to_edge_rate: result.clickToEdgeRate,
-      click_to_edge_success_rate: result.clickToEdgeSuccessRate,
-      dead_lettered: result.deadLettered.length,
-      edge_meta_click_id_coverage:
-        result.edgeMetaClickIdCoverage,
-      edge_meta_landing_count: result.edgeMetaLandingCount,
-      fbc_given_fbclid_coverage: result.fbcGivenFbclidCoverage,
-      fbclid_page_view_count: result.fbclidPageViewCount,
-      healthy: result.healthy,
-      initial_pending_over_two_minutes:
-        result.initialPendingOverTwoMinutes.length,
-      invalid_ledger_events: result.invalidLedgerEvents.length,
-      missing_provider_attempts:
-        result.missingProviderAttempts.length,
-      meta_api_acceptance_rate: result.metaApiAcceptanceRate,
-      meta_eligible_sample_size: result.metaEligibleSampleSize,
-      ok: true,
-      p95_ack_latency_ms: result.p95AckLatencyMs
-    },
-    { headers: { 'Cache-Control': 'no-store' } }
-  )
+  let origin: string
+  try {
+    origin = normalizeOrigin(dependencies.getOrigin())
+  } catch {
+    return Response.json(
+      { ok: false, error: 'invalid_launch_guard_origin' },
+      { status: 500, headers: noStoreHeaders }
+    )
+  }
+
+  const launchGuardRunId = dependencies.createRunId()
+  try {
+    const workflow = await dependencies.startWorkflow({
+      origin,
+      requestedAt: dependencies.now().toISOString(),
+      runId: launchGuardRunId
+    })
+
+    return Response.json(
+      {
+        ok: true,
+        enabled: true,
+        launch_guard_run_id: launchGuardRunId,
+        workflow_run_id: workflow.runId
+      },
+      { status: 202, headers: noStoreHeaders }
+    )
+  } catch {
+    dependencies.captureMessage('Launch guard workflow start failed', {
+      fingerprint: ['launch-guard', 'workflow-start-failed'],
+      level: 'error',
+      tags: { route: 'provider-dispatch-health' }
+    })
+    await dependencies.flush(1_500)
+    return Response.json(
+      { ok: false, error: 'workflow_start_failed' },
+      { status: 503, headers: noStoreHeaders }
+    )
+  }
 }
 
 export function GET(request: Request) {

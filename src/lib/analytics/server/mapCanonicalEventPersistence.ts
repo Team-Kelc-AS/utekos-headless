@@ -1,4 +1,5 @@
 import type { CanonicalEventStoreInput } from './canonicalEventStore'
+import { stripInternalJourneyContext } from '../internalJourneyContext'
 
 type UserDataQuality = {
   email_sha256_count: number
@@ -64,6 +65,9 @@ export function mapCanonicalEventPersistence(
     phone_sha256_count:
       input.event.user_data?.phone_sha256?.length ?? 0
   }
+  const providerPayload = stripInternalJourneyContext(
+    input.event
+  )
 
   return {
     ledger: {
@@ -106,7 +110,7 @@ export function mapCanonicalEventPersistence(
           event_id: input.event.event_id,
           event_name: input.event.event_name,
           idempotency_key: idempotencyKey,
-          payload: input.event,
+          payload: providerPayload,
           provider: dispatch.provider,
           skip_reason: dispatch.skip_reason,
           status: dispatch.status
@@ -120,7 +124,7 @@ export function mapCanonicalEventPersistence(
         event_id: input.event.event_id,
         event_name: input.event.event_name,
         idempotency_key: idempotencyKey,
-        payload: input.event,
+        payload: providerPayload,
         provider: dispatch.provider,
         status: 'pending' as const
       }

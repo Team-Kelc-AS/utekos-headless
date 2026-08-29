@@ -8,6 +8,7 @@ const NO_STORE = { 'Cache-Control': 'no-store' }
 const MAX_BODY_BYTES = 8 * 1024
 
 export type ClientLogRouteDependencies = {
+  authorizeHealthProbe?: (request: Request) => boolean
   log: (input: AppLogInput) => Promise<AppLogEntry>
 }
 
@@ -60,6 +61,16 @@ export async function handleClientLogPost(
       void _exhaustive
       return unreadablyRejectedResponse()
     }
+  }
+
+  if (
+    parsed.payload.event === 'client_health_probe' &&
+    dependencies.authorizeHealthProbe?.(request) !== true
+  ) {
+    return NextResponse.json(
+      { error: 'Unauthorized health probe' },
+      { headers: NO_STORE, status: 401 }
+    )
   }
 
   try {

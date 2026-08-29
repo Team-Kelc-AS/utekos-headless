@@ -82,7 +82,9 @@ export const canonicalEventEnvelopeSchema = z.strictObject({
   event_device_info: eventDeviceInfoSchema.optional(),
   region_code: z.string().min(1).optional(),
   impression_id: z.string().min(1).optional(),
+  journey_id: z.string().uuid().optional(),
   page_url: z.string().url().optional(),
+  previous_page_view_id: z.string().uuid().optional(),
   location: locationSchema.optional(),
   signal_audit: canonicalSignalAuditSchema.optional()
 })

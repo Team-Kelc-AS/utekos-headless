@@ -30,7 +30,7 @@
     },
     {
       "path": "/api/cron/provider-dispatch-health",
-      "schedule": "*/15 * * * *"
+      "schedule": "*/5 * * * *"
     },
     {
       "path": "/api/cron/meta-dataset-quality",

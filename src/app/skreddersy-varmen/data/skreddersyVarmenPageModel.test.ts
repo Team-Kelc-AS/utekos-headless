@@ -327,6 +327,7 @@ test('retains the canonical PromotionImpression identifiers', async () => {
     threeInOne: 'skreddersy-varmen-three-in-one',
     techDown: 'skreddersy-varmen-techdown',
     purchase: 'skreddersy-varmen-purchase',
+    purchaseButton: 'skreddersy-varmen-purchase-button',
     socialProof: 'skreddersy-varmen-social-proof'
   })
 })

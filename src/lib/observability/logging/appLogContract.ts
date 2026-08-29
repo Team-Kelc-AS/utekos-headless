@@ -73,6 +73,36 @@ export const metaDatasetQualityIncompleteDataSchema = z.strictObject({
   snapshotDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
 })
 
+export const clientErrorDataSchema = z.strictObject({
+  source: z.literal('window_error'),
+  message: z
+    .string()
+    .min(1)
+    .max(240)
+    .refine(value => !/\S+@\S+\.\S+/.test(value), {
+      message: 'Client error message must not contain email-like values'
+    })
+    .optional(),
+  filename: z
+    .string()
+    .min(1)
+    .max(512)
+    .transform(sanitizeOperationalPathname)
+    .optional(),
+  line: z
+    .number()
+    .int()
+    .nonnegative()
+    .max(10_000_000)
+    .optional(),
+  column: z
+    .number()
+    .int()
+    .nonnegative()
+    .max(10_000_000)
+    .optional()
+})
+
 const eventSchemas = [
   z.strictObject({
     event: z.literal('meta_dataset_quality.incomplete'),
@@ -83,21 +113,7 @@ const eventSchemas = [
   z.strictObject({
     event: z.literal('client.error'),
     level: z.literal('ERROR'),
-    data: z.strictObject({
-      source: z.literal('window_error'),
-      line: z
-        .number()
-        .int()
-        .nonnegative()
-        .max(10_000_000)
-        .optional(),
-      column: z
-        .number()
-        .int()
-        .nonnegative()
-        .max(10_000_000)
-        .optional()
-    }),
+    data: clientErrorDataSchema,
     context: z.strictObject({
       route: z.string().min(1).max(160)
     })
@@ -122,6 +138,14 @@ const eventSchemas = [
     }),
     context: z.strictObject({
       route: z.string().min(1).max(160)
+    })
+  }),
+  z.strictObject({
+    event: z.literal('observability.client_log_health_probe'),
+    level: z.literal('INFO'),
+    data: z.strictObject({ source: z.literal('launch_guard') }),
+    context: z.strictObject({
+      route: z.literal('/skreddersy-varmen')
     })
   }),
   z.strictObject({

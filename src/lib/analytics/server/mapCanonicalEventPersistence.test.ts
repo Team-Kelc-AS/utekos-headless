@@ -13,6 +13,9 @@ const event: CanonicalPageView = {
   environment: 'test',
   page_url: 'https://utekos.no/produkter',
   page_title: 'Produkter',
+  journey_id: '11111111-1111-4111-8111-111111111111',
+  previous_page_view_id:
+    '22222222-2222-4222-8222-222222222222',
   consent: {
     analytics: 'granted',
     marketing: 'granted',
@@ -28,6 +31,12 @@ const event: CanonicalPageView = {
     ]
   }
 }
+
+const {
+  journey_id: _journeyId,
+  previous_page_view_id: _previousPageViewId,
+  ...providerEvent
+} = event
 
 test('maps one canonical ledger row with stable idempotency and quality metadata', () => {
   const result = mapCanonicalEventPersistence({
@@ -96,11 +105,19 @@ test('maps canonical Meta and Microsoft outbox rows without provider renaming', 
       event_name: 'page_view',
       idempotency_key:
         'page_view:61c2ef59-6e6f-4f56-a63a-567ca398f9de',
-      payload: event,
+      payload: providerEvent,
       provider,
       status: 'pending'
     }))
   )
+
+  for (const dispatch of result.dispatches) {
+    assert.equal(dispatch.payload.journey_id, undefined)
+    assert.equal(
+      dispatch.payload.previous_page_view_id,
+      undefined
+    )
+  }
 })
 
 test('persists a non-qualified Google row without scheduling it', () => {
@@ -130,7 +147,7 @@ test('persists a non-qualified Google row without scheduling it', () => {
     event_name: 'page_view',
     idempotency_key:
       'page_view:61c2ef59-6e6f-4f56-a63a-567ca398f9de',
-    payload: event,
+    payload: providerEvent,
     provider: 'google',
     skip_reason: 'missing_client_id',
     status: 'skipped_unqualified'

@@ -155,4 +155,3 @@ begin
   end if;
 end;
 $schedule_facebook_login_identity_purge$;
-

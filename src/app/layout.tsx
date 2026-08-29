@@ -20,7 +20,7 @@ import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustom
 import Script from 'next/script'
 import type { Metadata } from 'next'
 import { getTrackingEnvironment } from '@/lib/analytics/getTrackingEnvironment'
-import { resolveAssistantPreviewRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
+import { resolveAssistantDeploymentRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
 import { Google_Sans_Flex } from 'next/font/google'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
@@ -109,7 +109,7 @@ export default function RootLayout({
     resolveShopifyCustomerPrivacyPublicToken(process.env)
 
   const assistantRolloutPercent =
-    resolveAssistantPreviewRolloutPercent(process.env)
+    resolveAssistantDeploymentRolloutPercent(process.env)
 
   const shouldLoadMarketingScripts = shouldLoadGoogleTagManager(
     process.env.VERCEL_ENV

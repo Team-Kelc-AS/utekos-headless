@@ -4,7 +4,7 @@ import test from 'node:test'
 
 const migration = readFileSync(
   new URL(
-    './20260823214500_add_provisional_page_view_capture.sql',
+    './20260823214252_add_provisional_page_view_capture.sql',
     import.meta.url
   ),
   'utf8'
