@@ -1,6 +1,7 @@
 import 'server-only'
 
 import postgres from 'postgres'
+import { META_GRAPH_API_VERSION } from '@/lib/meta/metaAssets'
 import type { MetaAdCreativeDestination } from './metaAdCreativeDestination'
 
 let trackingSql: ReturnType<typeof postgres> | undefined
@@ -117,7 +118,7 @@ export async function upsertMetaAdCreativeDestinations(
           ${destination.accountId},
           ${destination.adId},
           ${destination.creativeId},
-          'v25.0',
+          ${META_GRAPH_API_VERSION},
           ${destination.adCreatedTime},
           ${destination.adUpdatedTime},
           ${destination.effectiveStatus},

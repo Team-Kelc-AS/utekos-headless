@@ -10,8 +10,8 @@ import {
   type MetaAdDeliveryInsightRow
 } from './metaAdDeliveryInsightsSchema'
 import { fetchMetaGraphJson, type MetaGraphFetch } from './fetchMetaGraphJson'
+import { META_GRAPH_API_VERSION } from '@/lib/meta/metaAssets'
 
-const META_ADS_API_VERSION = 'v25.0'
 const META_ADS_ACTION_REPORT_TIME = 'impression'
 const META_ADS_FIELDS = [
   'account_id',
@@ -34,7 +34,6 @@ type MetaAdDeliveryDateWindow = {
   since: string
   until: string
 }
-
 type Metric = {
   availability: 'available' | 'unavailable'
   value: number | null
@@ -176,7 +175,7 @@ function normalizeInsight(
     ...(row.ad_name ? { adName: row.ad_name } : {}),
     adsetId: row.adset_id,
     ...(row.adset_name ? { adsetName: row.adset_name } : {}),
-    apiVersion: META_ADS_API_VERSION,
+    apiVersion: META_GRAPH_API_VERSION,
     attributionSetting: 'account',
     breakdownKind: input.breakdownKind,
     campaignId: row.campaign_id,
@@ -199,7 +198,7 @@ function buildInsightsUrl(
   after?: string
 ) {
   const url = new URL(
-    `https://graph.facebook.com/${META_ADS_API_VERSION}/act_${config.accountId}/insights`
+    `https://graph.facebook.com/${META_GRAPH_API_VERSION}/act_${config.accountId}/insights`
   )
   url.searchParams.set('action_report_time', META_ADS_ACTION_REPORT_TIME)
   url.searchParams.set('fields', META_ADS_FIELDS)
@@ -241,6 +240,7 @@ export async function fetchMetaAdDeliveryInsights(
   for (let page = 0; page < META_ADS_MAX_PAGES; page += 1) {
     const response = await fetchMetaGraphJson({
       accessToken: config.accessToken,
+      ...(config.appSecret ? { appSecret: config.appSecret } : {}),
       ...(fetchImplementation ? { fetchImplementation } : {}),
       schema: metaAdDeliveryInsightsResponseSchema,
       url: buildInsightsUrl(

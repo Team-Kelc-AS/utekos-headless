@@ -10,8 +10,8 @@ import {
   fetchMetaGraphJson,
   type MetaGraphFetch
 } from './fetchMetaGraphJson'
+import { META_GRAPH_API_VERSION } from '@/lib/meta/metaAssets'
 
-const META_ADS_API_VERSION = 'v25.0'
 const META_AD_FIELDS =
   'id,created_time,updated_time,effective_status,creative{id}'
 const META_CREATIVE_FIELDS = [
@@ -28,7 +28,7 @@ const META_ADS_MAX_PAGES = 100
 
 function accountAdsUrl(accountId: string, after?: string) {
   const url = new URL(
-    `https://graph.facebook.com/${META_ADS_API_VERSION}/act_${accountId}/ads`
+    `https://graph.facebook.com/${META_GRAPH_API_VERSION}/act_${accountId}/ads`
   )
   url.searchParams.set('fields', META_AD_FIELDS)
   url.searchParams.set('limit', '500')
@@ -38,7 +38,7 @@ function accountAdsUrl(accountId: string, after?: string) {
 
 function creativeUrl(creativeId: string) {
   const url = new URL(
-    `https://graph.facebook.com/${META_ADS_API_VERSION}/${creativeId}`
+    `https://graph.facebook.com/${META_GRAPH_API_VERSION}/${creativeId}`
   )
   url.searchParams.set('fields', META_CREATIVE_FIELDS)
   return url
@@ -55,6 +55,9 @@ async function fetchAccountAds(
   for (let page = 0; page < META_ADS_MAX_PAGES; page += 1) {
     const response = await fetchMetaGraphJson({
       accessToken: config.accessToken,
+      ...(config.appSecret ?
+        { appSecret: config.appSecret }
+      : {}),
       ...(fetchImplementation ? { fetchImplementation } : {}),
       schema: metaAdCreativeAccountAdsResponseSchema,
       url: accountAdsUrl(config.accountId, after)
@@ -88,6 +91,9 @@ export async function fetchMetaAdCreativeDestinations(
   for (const ad of ads) {
     const creative = await fetchMetaGraphJson({
       accessToken: config.accessToken,
+      ...(config.appSecret ?
+        { appSecret: config.appSecret }
+      : {}),
       ...(fetchImplementation ? { fetchImplementation } : {}),
       schema: metaAdCreativeResponseSchema,
       url: creativeUrl(ad.creative.id)

@@ -3,8 +3,8 @@ type Environment = Readonly<Record<string, string | undefined>>
 export type MetaAdDeliveryInsightsConfig = {
   accessToken: string
   accountId: string
+  appSecret?: string
 }
-
 function requiredEnvironmentValue(
   environment: Environment,
   name: string
@@ -30,11 +30,14 @@ export function readMetaAdDeliveryInsightsConfig(
     throw new Error('META_AD_ACCOUNT_ID must contain digits only')
   }
 
+  const appSecret = environment.META_APP_SECRET?.trim()
+
   return {
     accessToken: requiredEnvironmentValue(
       environment,
       'META_SYSTEM_USER_TOKEN'
     ),
-    accountId
+    accountId,
+    ...(appSecret ? { appSecret } : {})
   }
 }

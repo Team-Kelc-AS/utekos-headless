@@ -47,7 +47,6 @@ test('reads the preferred Meta Dataset Quality environment values', () => {
     { accessToken: 'system-user-token', datasetId: '123' }
   )
 })
-
 test('falls back to the CAPI token for Dataset Quality reads', () => {
   assert.deepEqual(
     readMetaDatasetQualityConfig({
@@ -79,7 +78,7 @@ test('uses bearer authorization and validates the quality response', async () =>
 
   assert.equal(result.web[0]?.event_name, 'Purchase')
   assert.equal(calls.length, 1)
-  assert.equal(calls[0]?.url.pathname, '/v25.0/dataset_quality')
+  assert.equal(calls[0]?.url.pathname, '/v26.0/dataset_quality')
   assert.equal(calls[0]?.url.searchParams.get('dataset_id'), '123')
   assert.equal(calls[0]?.url.searchParams.has('access_token'), false)
   assert.match(

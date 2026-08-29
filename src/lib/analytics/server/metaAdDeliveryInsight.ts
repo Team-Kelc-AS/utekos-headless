@@ -1,3 +1,5 @@
+import type { META_GRAPH_API_VERSION } from '@/lib/meta/metaAssets'
+
 export const metaAdDeliveryBreakdownKinds = [
   'overall',
   'publisher_platform',
@@ -33,7 +35,7 @@ export type MetaAdDeliveryInsight = {
   adName?: string
   adsetId: string
   adsetName?: string
-  apiVersion: 'v25.0'
+  apiVersion: typeof META_GRAPH_API_VERSION
   attributionSetting: 'account'
   breakdownKind: MetaAdDeliveryBreakdownKind
   campaignId: string
