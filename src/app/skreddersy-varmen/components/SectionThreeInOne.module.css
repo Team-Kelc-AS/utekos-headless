@@ -210,6 +210,10 @@
     font-size: clamp(3.25rem, 6.2vw, 6.75rem);
   }
 
+  .eyebrow {
+    color: var(--primary-hover);
+  }
+
   .scene {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
@@ -520,7 +524,7 @@
         animation: three-in-one-large-section-entry 1ms linear
           both;
         animation-timeline: --three-in-one-intro-large;
-        animation-range: contain 0% contain 100%;
+        animation-range: contain 0% contain 98%;
         will-change: transform, clip-path;
       }
     }

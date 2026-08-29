@@ -1730,17 +1730,60 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
       '[data-mode-scene="fullengde"]'
     )
     const stage = firstMode?.parentElement
+    const eyebrow = content?.querySelector<HTMLElement>('p')
 
-    if (!surface || !content || !resolution || !stage) {
+    if (!surface || !content || !resolution || !stage || !eyebrow) {
       throw new Error('Missing large introduction composition')
     }
 
     const surfaceStyle = getComputedStyle(surface)
     const resolutionStyle = getComputedStyle(resolution)
     const surfaceRect = surface.getBoundingClientRect()
+    const canvas = document.createElement('canvas')
+    canvas.width = 1
+    canvas.height = 1
+    const context = canvas.getContext('2d', {
+      willReadFrequently: true
+    })
+
+    if (!context) throw new Error('Missing color context')
+
+    const toRgb = (color: string) => {
+      context.clearRect(0, 0, 1, 1)
+      context.fillStyle = color
+      context.fillRect(0, 0, 1, 1)
+      return Array.from(context.getImageData(0, 0, 1, 1).data).slice(
+        0,
+        3
+      )
+    }
+    const luminance = (rgb: number[]) =>
+      rgb
+        .map(value => value / 255)
+        .map(value =>
+          value <= 0.04045 ?
+            value / 12.92
+          : Math.pow((value + 0.055) / 1.055, 2.4)
+        )
+        .reduce(
+          (sum, value, index) =>
+            sum + value * [0.2126, 0.7152, 0.0722][index]!,
+          0
+        )
+    const foregroundLuminance = luminance(
+      toRgb(getComputedStyle(eyebrow).color)
+    )
+    const backgroundLuminance = luminance(
+      toRgb(surfaceStyle.backgroundColor)
+    )
 
     return {
       contentWidth: content.getBoundingClientRect().width,
+      eyebrowContrast:
+        (Math.max(foregroundLuminance, backgroundLuminance) +
+          0.05) /
+        (Math.min(foregroundLuminance, backgroundLuminance) +
+          0.05),
       resolutionBackground: resolutionStyle.backgroundColor,
       stageBackground: getComputedStyle(stage).backgroundImage,
       surfaceBackground: surfaceStyle.backgroundColor,
@@ -1759,6 +1802,7 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
   expect(settled.contentWidth).toBeGreaterThan(
     settled.viewportWidth * 0.75
   )
+  expect(settled.eyebrowContrast).toBeGreaterThanOrEqual(4.5)
   expect(settled.surfaceBackgroundImage).toBe('none')
   expect(settled.surfaceBackground).not.toBe(
     settled.resolutionBackground
