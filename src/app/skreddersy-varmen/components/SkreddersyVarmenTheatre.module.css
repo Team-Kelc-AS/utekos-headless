@@ -1055,7 +1055,7 @@
         animation: skreddersy-empathy-large-recognition 1ms
           linear both;
         animation-timeline: --empathy-large-text;
-        animation-range: contain 3% contain 43%;
+        animation-range: contain 37% contain 63%;
         will-change: transform;
       }
 
@@ -1064,7 +1064,7 @@
         animation: skreddersy-empathy-large-bonfire-copy 1ms
           linear both;
         animation-timeline: --empathy-large-text;
-        animation-range: contain 45% contain 85%;
+        animation-range: contain 66% contain 92%;
         will-change: transform;
       }
 

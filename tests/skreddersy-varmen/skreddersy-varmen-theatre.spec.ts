@@ -990,7 +990,8 @@ test('reveals the first large empathy scene beneath the hero like a theatre curt
   const closed = await readCurtain(0)
   const halfOpen = await readCurtain(450)
   const open = await readCurtain(900)
-  const nextSceneStarting = await readCurtain(990)
+  const firstSceneHolding = await readCurtain(990)
+  const nextSceneStarting = await readCurtain(1080)
 
   expect(closed.heroAtCenter).toBe(true)
   expect(closed.heroTranslateY).toBeCloseTo(0, 0)
@@ -1001,6 +1002,14 @@ test('reveals the first large empathy scene beneath the hero like a theatre curt
   expect(open.heroTranslateY).toBeCloseTo(-900, 0)
   expect(halfOpen.headingTop).toBeCloseTo(closed.headingTop, 0)
   expect(open.headingTop).toBeCloseTo(closed.headingTop, 0)
+  expect(open.recognitionTranslateX).toBeCloseTo(
+    open.viewportWidth,
+    0
+  )
+  expect(firstSceneHolding.recognitionTranslateX).toBeCloseTo(
+    firstSceneHolding.viewportWidth,
+    0
+  )
   expect(
     nextSceneStarting.recognitionTranslateX
   ).toBeGreaterThan(0)
