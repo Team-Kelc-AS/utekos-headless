@@ -207,10 +207,8 @@ async function runProbe(
   let validation: ProbeValidation
 
   try {
-    const url = new URL(
-      definition.path,
-      normalizeOrigin(context.origin)
-    )
+    const normalizedOrigin = normalizeOrigin(context.origin)
+    const url = new URL(definition.path, normalizedOrigin)
     const response = await context.fetch(url, {
       ...(definition.body === undefined ?
         {}
@@ -223,6 +221,7 @@ async function runProbe(
             Authorization: `Bearer ${context.cronSecret}`
           }
         : {}),
+        'Origin': normalizedOrigin.origin,
         'User-Agent': 'Utekos-Launch-Guard/1.0',
         'X-Utekos-Automation': 'synthetic'
       },

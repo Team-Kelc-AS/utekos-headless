@@ -8,6 +8,11 @@ import {
 const runId = '11111111-1111-4111-8111-111111111111'
 
 function responseFor(url: URL, init: RequestInit) {
+  assert.equal(
+    new Headers(init.headers).get('origin'),
+    'https://utekos.no'
+  )
+
   if (url.pathname === '/skreddersy-varmen') {
     return new Response('<main data-skreddersy-route></main>', {
       status: 200
