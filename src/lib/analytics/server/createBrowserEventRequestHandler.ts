@@ -232,7 +232,7 @@ export function createBrowserEventRequestHandler<
       )
     } catch (error) {
       if (error instanceof ZodError) {
-        console.error(
+        console.warn(
           '[tracking] browser event rejected: invalid_event',
           requestLogMeta(request, {
             event_name: eventName,

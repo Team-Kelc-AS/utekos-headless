@@ -108,7 +108,16 @@ test('rejects a payload larger than 32 KiB', async () => {
   assert.equal(response.status, 413)
 })
 
-test('returns a validation error for a non-canonical event', async () => {
+test('returns and warning-logs a validation error for a non-canonical event', async t => {
+  const errors: unknown[][] = []
+  const warnings: unknown[][] = []
+  t.mock.method(console, 'error', (...args: unknown[]) => {
+    errors.push(args)
+  })
+  t.mock.method(console, 'warn', (...args: unknown[]) => {
+    warnings.push(args)
+  })
+
   const response = await handleCanonicalPageViewRequest(
     request(JSON.stringify({ event_name: 'page_view' })),
     dependencies()
@@ -118,6 +127,8 @@ test('returns a validation error for a non-canonical event', async () => {
   assert.deepEqual(await response.json(), {
     error: 'invalid_event'
   })
+  assert.equal(errors.length, 0)
+  assert.equal(warnings.length, 1)
 })
 
 test('does not persist a fully denied event', async () => {

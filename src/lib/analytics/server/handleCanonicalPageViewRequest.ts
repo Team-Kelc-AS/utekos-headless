@@ -305,7 +305,7 @@ export async function handleCanonicalPageViewRequest(
     )
   } catch (error) {
     if (error instanceof ZodError) {
-      console.error(
+      console.warn(
         '[tracking] page_view request rejected: invalid_event',
         requestLogMeta(request, {
           ...summary,
