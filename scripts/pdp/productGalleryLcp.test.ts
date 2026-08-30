@@ -239,3 +239,104 @@ test('TechDown mobile gallery uses 2:3 intrinsic next/image slides', async () =>
     'TechDown mobile gallery must contain exactly the six requested stills'
   )
 })
+
+function extractExportBody(
+  source: string,
+  exportName: string
+): string {
+  const start = source.indexOf(`export const ${exportName}`)
+  assert.ok(start >= 0, `${exportName} must exist`)
+  const nextExport = source.indexOf('export const', start + 1)
+  return nextExport === -1 ?
+      source.slice(start)
+    : source.slice(start, nextExport)
+}
+
+test('Mikrofiber gallery keeps LCP leads and splits 1-10 / 11-20 by viewport', async () => {
+  const pageSource = await readSource(
+    'src/app/produkter/[handle]/components/ProductPageView.tsx'
+  )
+  const gallerySource = await readSource(
+    'src/app/produkter/[handle]/utils/gallery-images/mikrofiber/mikrofiberProductGalleryImages.ts'
+  )
+  const mobileBody = extractExportBody(
+    gallerySource,
+    'MICROFIBER_MOBILE_GALLERY_IMAGES'
+  )
+  const desktopBody = extractExportBody(
+    gallerySource,
+    'MICROFIBER_PRODUCT_GALLERY_IMAGES'
+  )
+
+  assert.match(
+    pageSource,
+    /productData\.handle === 'utekos-mikrofiber' \?/,
+    'Mikrofiber must use a dedicated mobile gallery array'
+  )
+
+  assert.match(
+    pageSource,
+    /MICROFIBER_MOBILE_GALLERY_IMAGES/,
+    'Mikrofiber mobile carousel must use MICROFIBER_MOBILE_GALLERY_IMAGES'
+  )
+
+  assert.match(
+    pageSource,
+    /className='hidden md:block'/,
+    'Desktop gallery must stay hidden below the md iPad breakpoint'
+  )
+
+  assert.match(
+    pageSource,
+    /className='md:hidden'/,
+    'Mobile gallery must stay hidden from the md iPad breakpoint and up'
+  )
+
+  assert.match(
+    mobileBody,
+    /mikrofiberMobile1,/,
+    'Mikrofiber mobile gallery must keep the existing first slide for LCP'
+  )
+
+  assert.match(
+    desktopBody,
+    /Utekos-Mikrofiber-Full-Front-1080-1350\.png/,
+    'Mikrofiber desktop gallery must keep the existing first slide for LCP'
+  )
+
+  for (const index of [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]) {
+    assert.match(
+      gallerySource,
+      new RegExp(`mikrofiber/${index}\\.webp`),
+      `Mikrofiber gallery must import ${index}.webp`
+    )
+    assert.match(
+      mobileBody,
+      new RegExp(`mikrofiberMobileStill${index},`),
+      `Mikrofiber mobile gallery must include ${index}.webp`
+    )
+    assert.doesNotMatch(
+      desktopBody,
+      new RegExp(`mikrofiberMobileStill${index},`),
+      `Mikrofiber desktop gallery must not include ${index}.webp`
+    )
+  }
+
+  for (const index of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) {
+    assert.match(
+      gallerySource,
+      new RegExp(`mikrofiber/${index}\\.webp`),
+      `Mikrofiber gallery must import ${index}.webp`
+    )
+    assert.match(
+      desktopBody,
+      new RegExp(`mikrofiberDesktopStill${index},`),
+      `Mikrofiber desktop gallery must include ${index}.webp`
+    )
+    assert.doesNotMatch(
+      mobileBody,
+      new RegExp(`mikrofiberDesktopStill${index},`),
+      `Mikrofiber mobile gallery must not include ${index}.webp`
+    )
+  }
+})
