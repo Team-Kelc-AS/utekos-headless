@@ -41,13 +41,13 @@ is already a JSONB column.
 
 ## Read-only result query
 
-Replace the timestamp below with the exact UTC time at which the
-production 50/50 rule was confirmed. The query outputs aggregates
-only; it does not expose visitor identifiers.
+The query starts at the exact UTC time at which the production
+50/50 rule was confirmed. It outputs aggregates only; it does not
+expose visitor identifiers.
 
 ```sql
 with params as (
-  select timestamptz 'YYYY-MM-DDTHH:MM:SSZ' as starts_at
+  select timestamptz '2026-08-30T15:58:57Z' as starts_at
 ),
 source_events as (
   select id, event_name, occurred_at, payload
@@ -145,3 +145,5 @@ permanent page decision.
   rule changed because `user.userId` is not a supported entity
   attribute. The implementation was corrected to the documented
   `user.id` contract before activation.
+- 2026-08-30T15:58:57Z: The production 50/50 split was confirmed
+  active by `user.id`, with `current` as the fallback variant.
