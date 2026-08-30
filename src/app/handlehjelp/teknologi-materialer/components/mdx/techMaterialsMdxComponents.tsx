@@ -4,9 +4,28 @@ import { cn } from '@/lib/utils/className'
 import { TechMaterialsCallout } from '../TechMaterialsCallout'
 import { TechMaterialsProductLine } from '../TechMaterialsProductLine'
 
-function headingPermalinkClassName(className?: string) {
+type HeadingPermalinkSize = 'comfortable' | 'compact'
+
+function headingPermalinkSizeClassName(size: HeadingPermalinkSize) {
+  switch (size) {
+    case 'comfortable':
+      return '[&_a]:min-h-11 [&_a]:min-w-11'
+    case 'compact':
+      return '[&_a]:min-h-6 [&_a]:min-w-6'
+    default: {
+      const exhaustive: never = size
+      throw new Error(`Ukjent hopplenke-størrelse: ${exhaustive}`)
+    }
+  }
+}
+
+function headingPermalinkClassName(
+  size: HeadingPermalinkSize,
+  className?: string
+) {
   return cn(
-    'scroll-mt-24 [&_a]:ms-2 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:min-w-11 [&_a]:items-center [&_a]:justify-center [&_a]:align-middle [&_a]:text-foreground/55 [&_a]:no-underline [&_a]:opacity-80 hover:[&_a]:text-primary hover:[&_a]:opacity-100 [&_a]:focus-visible:rounded-sm [&_a]:focus-visible:text-primary [&_a]:focus-visible:opacity-100 [&_a]:focus-visible:ring-2 [&_a]:focus-visible:ring-foreground [&_a]:focus-visible:ring-offset-2 [&_a]:focus-visible:ring-offset-background [&_a]:focus-visible:outline-none',
+    'scroll-mt-24 [&_a]:ms-2 [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:align-middle [&_a]:text-foreground/55 [&_a]:no-underline [&_a]:opacity-80 hover:[&_a]:text-primary hover:[&_a]:opacity-100 [&_a]:focus-visible:rounded-sm [&_a]:focus-visible:text-primary [&_a]:focus-visible:opacity-100 [&_a]:focus-visible:ring-2 [&_a]:focus-visible:ring-foreground [&_a]:focus-visible:ring-offset-2 [&_a]:focus-visible:ring-offset-background [&_a]:focus-visible:outline-none',
+    headingPermalinkSizeClassName(size),
     className
   )
 }
@@ -23,6 +42,7 @@ function TechMaterialsH2({
     <h2
       id={id}
       className={headingPermalinkClassName(
+        'comfortable',
         isTocHeading ?
           cn(
             'font-utekos-text-medium text-sm tracking-[0.14em] text-foreground/80 uppercase',
@@ -50,6 +70,7 @@ function TechMaterialsH3({
     <h3
       id={id}
       className={headingPermalinkClassName(
+        'comfortable',
         cn(
           'mt-8 font-utekos-text-medium text-2xl leading-tight tracking-tight text-foreground',
           className
@@ -72,8 +93,9 @@ function TechMaterialsH4({
     <h4
       id={id}
       className={headingPermalinkClassName(
+        'compact',
         cn(
-          'mt-8 font-utekos-text-medium text-xl tracking-tight text-foreground',
+          'mt-8 font-utekos-text-medium text-xl leading-tight tracking-tight text-foreground',
           className
         )
       )}
@@ -92,7 +114,7 @@ function TechMaterialsParagraph({
   return (
     <p
       className={cn(
-        'mt-0 max-w-[65ch] font-utekos-text text-base leading-relaxed text-foreground not-first:mt-5',
+        'mt-0 max-w-[65ch] font-utekos-text text-base leading-relaxed text-foreground',
         className
       )}
       {...props}
@@ -181,7 +203,7 @@ function TechMaterialsBlockquote({
   return (
     <blockquote
       className={cn(
-        'my-8 border-l-4 border-primary bg-jungle px-5 py-4 font-utekos-text text-lg leading-relaxed text-foreground [&_p]:mt-0 [&_p]:max-w-none',
+        'my-8 bg-jungle px-5 py-4 font-utekos-text text-lg leading-relaxed text-foreground [&_p]:mt-0 [&_p]:max-w-none',
         className
       )}
       {...props}

@@ -33,6 +33,30 @@ const articleCssSource = readFileSync(
   ),
   'utf8'
 )
+const calloutSource = readFileSync(
+  fileURLToPath(
+    new URL('./components/TechMaterialsCallout.tsx', import.meta.url)
+  ),
+  'utf8'
+)
+const productLineSource = readFileSync(
+  fileURLToPath(
+    new URL(
+      './components/TechMaterialsProductLine.tsx',
+      import.meta.url
+    )
+  ),
+  'utf8'
+)
+const mdxComponentsSource = readFileSync(
+  fileURLToPath(
+    new URL(
+      './components/mdx/techMaterialsMdxComponents.tsx',
+      import.meta.url
+    )
+  ),
+  'utf8'
+)
 
 test('document starts with Innhold so remark-toc can generate the TOC', () => {
   assert.match(documentSource, /^## Innhold/mu)
@@ -145,4 +169,59 @@ test('document wrapper passes local MDX components into the article rail', () =>
   assert.match(articleCssSource, /max-width: 48rem/u)
   assert.match(articleCssSource, /position: sticky/u)
   assert.match(articleCssSource, /#innhold \+ ul/u)
+  assert.match(articleCssSource, /:is\(h2, h3, h4\) \+ p/u)
+})
+
+test('page orange uses primary, not the yellow primary-hover token', () => {
+  assert.match(calloutSource, /text-primary/u)
+  assert.doesNotMatch(calloutSource, /primary-hover/u)
+  assert.match(
+    articleCssSource,
+    /#innhold \+ ul a:hover[\s\S]*border-color: var\(--primary\)/u
+  )
+  assert.match(
+    articleCssSource,
+    /#innhold \+ ul a:hover[\s\S]*color: var\(--foreground\)/u
+  )
+  assert.doesNotMatch(articleCssSource, /primary-hover/u)
+})
+
+test('product-line cards do not repeat an uppercase eyebrow above the heading', () => {
+  assert.doesNotMatch(productLineSource, /uppercase/u)
+  assert.doesNotMatch(productLineSource, /tracking-\[0\.12em\]/u)
+})
+
+test('TechDown card does not render the kate-linn promotional image', () => {
+  assert.match(productLineSource, /techdown: \{\s*image: null/u)
+  assert.doesNotMatch(productLineSource, /og-kate-linn-kikkert-master/u)
+})
+
+test('Mikrofiber card does not render the frontpage kate-linn image', () => {
+  assert.match(productLineSource, /mikrofiber: \{\s*image: null/u)
+  assert.doesNotMatch(productLineSource, /frontpage-kate-linn/u)
+})
+
+test('Dun card does not render the cabin coffee image', () => {
+  assert.match(productLineSource, /dun: \{\s*image: null/u)
+  assert.doesNotMatch(productLineSource, /coffe_utekos/u)
+})
+
+test('product-line cards do not paint a left color stripe', () => {
+  assert.doesNotMatch(productLineSource, /stripeClassName/u)
+  assert.doesNotMatch(productLineSource, /inset-y-0 left-0 w-1\.5/u)
+  assert.doesNotMatch(productLineSource, /bg-cyan-400/u)
+})
+
+test('h4 permalink stays compact so body copy sits closer under the heading', () => {
+  assert.match(mdxComponentsSource, /case 'compact':/u)
+  assert.match(
+    mdxComponentsSource,
+    /headingPermalinkClassName\(\s*'compact'/u
+  )
+  assert.match(mdxComponentsSource, /\[&_a\]:min-h-6/u)
+})
+
+test('blockquote has no side color stripe', () => {
+  assert.match(mdxComponentsSource, /<blockquote/u)
+  assert.doesNotMatch(mdxComponentsSource, /border-l-4/u)
 })

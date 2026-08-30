@@ -12,6 +12,7 @@ export default function TechMaterialsLayout({
       <TechJsonLd />
       <UtekosBreadcrumbBar
         surface='transparent'
+        containerClassName='sr-only'
         items={[
           { label: 'Forsiden', href: '/' },
           { label: 'Teknologi og materialer' }

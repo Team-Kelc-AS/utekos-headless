@@ -415,8 +415,7 @@ test('Comfyrobe gallery replaces product stills and splits desktop / mobile by v
     ['Comfyrobe-001.webp', 'comfyrobeDesktop001'],
     ['Comfyrobe-002.webp', 'comfyrobeDesktop002'],
     ['Comfyrobe-0003.webp', 'comfyrobeDesktop0003'],
-    ['Comfyrobe-004.webp', 'comfyrobeDesktop004'],
-    ['Comfyrobe-Sherpa-Colord-BG-1440x2160.webp', 'comfyrobeSherpaColoredBg']
+    ['Comfyrobe-004.webp', 'comfyrobeDesktop004']
   ] as const
 
   for (const [fileName, binding] of desktopStills) {
@@ -441,8 +440,7 @@ test('Comfyrobe gallery replaces product stills and splits desktop / mobile by v
     ['Comfyrobe-Mobile-001.webp', 'comfyrobeMobile001'],
     ['Comfyrobe-Mobile-002.webp', 'comfyrobeMobile002'],
     ['Comfyrobe-Mobile-003.webp', 'comfyrobeMobile003'],
-    ['Comfyrobe-Mobile-004.webp', 'comfyrobeMobile004'],
-    ['Comfyrobe-Mobile-005.webp', 'comfyrobeMobile005']
+    ['Comfyrobe-Mobile-004.webp', 'comfyrobeMobile004']
   ] as const
 
   for (const [fileName, binding] of mobileStills) {
@@ -462,4 +460,25 @@ test('Comfyrobe gallery replaces product stills and splits desktop / mobile by v
       `Comfyrobe desktop gallery must not include ${fileName}`
     )
   }
+
+  assert.match(
+    gallerySource,
+    /comfyrobe\/Sherpa\.webp/,
+    'Comfyrobe gallery must import Sherpa.webp'
+  )
+  assert.match(
+    desktopBody,
+    /comfyrobeSherpa,/,
+    'Comfyrobe desktop gallery must end with Sherpa.webp'
+  )
+  assert.match(
+    mobileBody,
+    /comfyrobeSherpa,/,
+    'Comfyrobe mobile gallery must end with Sherpa.webp'
+  )
+  assert.doesNotMatch(
+    gallerySource,
+    /Comfyrobe-Sherpa-Colord-BG-1440x2160\.webp/,
+    'Comfyrobe galleries must not keep the previous Sherpa still'
+  )
 })

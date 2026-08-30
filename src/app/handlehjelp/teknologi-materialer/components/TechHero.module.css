@@ -1,0 +1,181 @@
+:global(html):has([data-tech-hero-scene]),
+:global(body):has([data-tech-hero-scene]) {
+  overflow-x: clip;
+}
+
+:global(body):has([data-tech-hero-scene]),
+.scene {
+  --tech-scene-end: 10.7s;
+  --tech-header-duration: 0.8s;
+  --tech-header-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --tech-invite-delay: 11.35s;
+  --tech-invite-enter: 0.75s;
+}
+
+:global(body):has([data-tech-hero-scene])
+  :global(header[data-site-header]) {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  overflow-x: clip;
+  background: transparent;
+  padding-top: env(safe-area-inset-top);
+}
+
+:global(body):has([data-tech-hero-scene])
+  :global(header[data-site-header] [data-header-part]) {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+:global(body):has([data-tech-hero-scene])
+  :global(header[data-site-header] [data-header-part='brand']) {
+  animation: tech-hero-header-brand var(--tech-header-duration)
+    var(--tech-header-ease) var(--tech-scene-end) both;
+}
+
+:global(body):has([data-tech-hero-scene])
+  :global(header[data-site-header] [data-header-part='actions']) {
+  animation: tech-hero-header-actions var(--tech-header-duration)
+    var(--tech-header-ease) var(--tech-scene-end) both;
+}
+
+.invite {
+  position: absolute;
+  bottom: 1.75rem;
+  left: 50%;
+  z-index: 10;
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  translate: -50% 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--cloud-dancer);
+  outline: none;
+}
+
+.invite:focus-visible {
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--cloud-dancer) 80%, transparent);
+}
+
+.inviteMotion {
+  display: flex;
+  animation:
+    tech-hero-invite-enter var(--tech-invite-enter)
+      cubic-bezier(0.16, 1, 0.3, 1) var(--tech-invite-delay) both,
+    tech-hero-invite-pulse 2.8s ease-in-out
+      calc(var(--tech-invite-delay) + var(--tech-invite-enter)) infinite;
+}
+
+.inviteIcon {
+  height: 2rem;
+  width: 2rem;
+}
+
+@keyframes tech-hero-header-brand {
+  0% {
+    visibility: hidden;
+    opacity: 0;
+    transform: translate3d(-118%, 0, 0);
+  }
+
+  0.01% {
+    visibility: visible;
+  }
+
+  100% {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes tech-hero-header-actions {
+  0% {
+    visibility: hidden;
+    opacity: 0;
+    transform: translate3d(118%, 0, 0);
+  }
+
+  0.01% {
+    visibility: visible;
+  }
+
+  100% {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes tech-hero-invite-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.7rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes tech-hero-invite-pulse {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, 0.4rem, 0);
+  }
+}
+
+@media (max-width: 19.999rem) {
+  :global(body):has([data-tech-hero-scene])
+    :global(header[data-site-header] [data-header-part='brand']),
+  :global(body):has([data-tech-hero-scene])
+    :global(header[data-site-header] [data-header-part='actions']) {
+    animation-name: tech-hero-header-reflow;
+  }
+}
+
+@keyframes tech-hero-header-reflow {
+  0% {
+    visibility: hidden;
+    opacity: 0;
+    transform: none;
+  }
+
+  0.01% {
+    visibility: visible;
+  }
+
+  100% {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(body):has([data-tech-hero-scene])
+    :global(header[data-site-header] [data-header-part]) {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .inviteMotion {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

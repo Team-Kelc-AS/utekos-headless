@@ -17,6 +17,22 @@ const motionSource = readFileSync(
   ),
   'utf8'
 )
+const sceneSource = readFileSync(
+  fileURLToPath(new URL('./TechHero.module.css', import.meta.url)),
+  'utf8'
+)
+const inviteSource = readFileSync(
+  fileURLToPath(
+    new URL('./TechHeroScrollInvite.tsx', import.meta.url)
+  ),
+  'utf8'
+)
+const modeCardsSource = readFileSync(
+  fileURLToPath(
+    new URL('./TechMaterialsModeCards.tsx', import.meta.url)
+  ),
+  'utf8'
+)
 
 test('arrival hero shoots in JUSTER FORM NYT and drops the old comfort copy', () => {
   assert.match(arrivalSource, /JUSTER/u)
@@ -46,8 +62,9 @@ test('arrival hero shoots in JUSTER FORM NYT and drops the old comfort copy', ()
   assert.doesNotMatch(arrivalSource, /initial=["']hidden["']/u)
   assert.match(
     heroSource,
-    /-mt-34 mb-24 flex min-h-dvh items-center justify-center/u
+    /mb-24 flex min-h-dvh items-center justify-center/u
   )
+  assert.doesNotMatch(heroSource, /-mt-34/u)
   assert.doesNotMatch(heroSource, /md:items-start/u)
   assert.doesNotMatch(heroSource, /md:pt-8/u)
   assert.match(motionSource, /--arrival-delay/u)
@@ -56,6 +73,23 @@ test('arrival hero shoots in JUSTER FORM NYT and drops the old comfort copy', ()
   assert.doesNotMatch(arrivalSource, /Ett plagg/u)
   assert.doesNotMatch(arrivalSource, /Tre opplevelser/u)
   assert.doesNotMatch(heroSource, /ArrowDown|BrandBadge/u)
+  assert.match(heroSource, /data-tech-hero-scene/u)
+  assert.match(heroSource, /TechHeroScrollInvite/u)
+  assert.match(inviteSource, /ChevronDown/u)
+  assert.match(inviteSource, /Fortsett nedover til modusene/u)
+  assert.match(inviteSource, /#\$\{TECH_MODES_SECTION_ID\}/u)
+  assert.match(modeCardsSource, /id=\{TECH_MODES_SECTION_ID\}/u)
+  assert.match(modeCardsSource, /scroll-mt-24/u)
+  assert.match(sceneSource, /--tech-scene-end: 10\.7s/u)
+  assert.match(sceneSource, /position: fixed/u)
+  assert.match(sceneSource, /background: transparent/u)
+  assert.match(sceneSource, /tech-hero-header-brand/u)
+  assert.match(sceneSource, /tech-hero-header-actions/u)
+  assert.match(sceneSource, /translate3d\(-118%/u)
+  assert.match(sceneSource, /translate3d\(118%/u)
+  assert.match(sceneSource, /tech-hero-invite-pulse/u)
+  assert.match(sceneSource, /2\.8s ease-in-out/u)
+  assert.match(sceneSource, /prefers-reduced-motion: reduce/u)
   assert.match(motionSource, /translate3d\(-118%/u)
   assert.match(motionSource, /prefers-reduced-motion: reduce/u)
 })

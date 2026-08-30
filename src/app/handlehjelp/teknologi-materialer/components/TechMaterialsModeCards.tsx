@@ -1,4 +1,5 @@
 import { Coffee, Maximize2, Move } from 'lucide-react'
+import { TECH_MODES_SECTION_ID } from '@/app/handlehjelp/teknologi-materialer/constants'
 
 const modeCardClassName =
   'group relative overflow-hidden rounded-3xl border border-card-foreground/10 bg-jungle p-8 text-card-foreground ring-1 ring-card-foreground/12 backdrop-blur-xl transition-all duration-500 hover:border-foreground/20 hover:shadow-2xl'
@@ -16,7 +17,10 @@ const modeHoverGlowClassName =
 
 export function TechMaterialsModeCards() {
   return (
-    <section className='relative z-20 container mx-auto -mt-20 px-4 pb-24'>
+    <section
+      id={TECH_MODES_SECTION_ID}
+      className='relative z-20 container mx-auto -mt-20 scroll-mt-24 px-4 pb-24'
+    >
       <div className='grid gap-6 md:grid-cols-3'>
         <div className={modeCardClassName}>
           <div

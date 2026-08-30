@@ -3,6 +3,14 @@
   max-width: 48rem;
 }
 
+.document :global(p + p) {
+  margin-block-start: 1.25rem;
+}
+
+.document :global(:is(h2, h3, h4) + p) {
+  margin-block-start: 0;
+}
+
 .document > :global(#innhold + ul) {
   display: flex;
   flex-wrap: nowrap;
@@ -52,8 +60,8 @@
 
 .document > :global(#innhold + ul a:hover),
 .document > :global(#innhold + ul a:focus-visible) {
-  border-color: var(--primary-hover);
-  color: var(--primary-hover);
+  border-color: var(--primary);
+  color: var(--foreground);
 }
 
 .document > :global(#innhold + ul a:focus-visible) {

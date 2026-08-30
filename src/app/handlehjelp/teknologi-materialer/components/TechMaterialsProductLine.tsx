@@ -1,9 +1,6 @@
 import type { ReactNode } from 'react'
 import Image, { type StaticImageData } from 'next/image'
-import coffeUtekos from '@/assets/images/inspiration/coffe_utekos.webp'
-import frontpageKateLinn from '@/assets/images/about/frontpage-kate-linn.webp'
 import comfyrobeSherpa from '@/assets/images/comfyrobe/Comfyrobe-Sherpa-1440-2160.webp'
-import { cn } from '@/lib/utils/className'
 
 export const TECH_MATERIALS_PRODUCT_LINES = [
   'techdown',
@@ -24,45 +21,20 @@ type ProductLineImage = {
 }
 
 type ProductLinePresentation = {
-  name: string
-  stripeClassName: string
   image: ProductLineImage | null
 }
 
 const productLineById = {
   techdown: {
-    name: 'TechDown',
-    stripeClassName: 'bg-secondary',
-    image: {
-      src: '/og-kate-linn-kikkert-master.png',
-      alt: 'Utekos TechDown brukt ved sjøen i norsk vær',
-      width: 1200,
-      height: 630
-    }
+    image: null
   },
   dun: {
-    name: 'Dun',
-    stripeClassName: 'bg-primary',
-    image: {
-      src: coffeUtekos,
-      alt: 'Utekos Dun brukt på hytten en kald og tørr kveld',
-      width: coffeUtekos.width,
-      height: coffeUtekos.height
-    }
+    image: null
   },
   mikrofiber: {
-    name: 'Mikrofiber',
-    stripeClassName: 'bg-cyan-400',
-    image: {
-      src: frontpageKateLinn,
-      alt: 'Utekos Mikrofiber brukt som lett komfortplagg ute',
-      width: frontpageKateLinn.width,
-      height: frontpageKateLinn.height
-    }
+    image: null
   },
   comfyrobe: {
-    name: 'Comfyrobe',
-    stripeClassName: 'bg-light-teal',
     image: {
       src: comfyrobeSherpa,
       alt: 'Comfyrobe™ med SherpaCore-fôr',
@@ -71,8 +43,6 @@ const productLineById = {
     }
   },
   konstruksjon: {
-    name: 'Konstruksjon',
-    stripeClassName: 'bg-very-peri',
     image: null
   }
 } as const satisfies Record<
@@ -111,18 +81,8 @@ export function TechMaterialsProductLine({
   return (
     <section
       data-product-line={line}
-      className='relative my-12 overflow-hidden rounded-2xl border border-foreground/10 bg-jungle px-5 py-8 pl-7 md:px-8'
+      className='my-12 overflow-hidden rounded-2xl border border-foreground/10 bg-jungle px-5 py-8 md:px-8'
     >
-      <div
-        aria-hidden='true'
-        className={cn(
-          'absolute inset-y-0 left-0 w-1.5',
-          presentation.stripeClassName
-        )}
-      />
-      <p className='mb-4 font-utekos-text-medium text-sm tracking-[0.12em] text-foreground uppercase'>
-        {presentation.name}
-      </p>
       {presentation.image ?
         <div className='mb-6 overflow-hidden rounded-xl'>
           <Image

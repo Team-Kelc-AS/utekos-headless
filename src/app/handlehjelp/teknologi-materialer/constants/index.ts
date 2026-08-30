@@ -7,3 +7,4 @@ export const WEBPAGE_ID = `${PAGE_URL}#webpage`
 export const BREADCRUMB_ID = `${PAGE_URL}#breadcrumb`
 export const ARTICLE_ID = `${PAGE_URL}#article`
 export const FAQ_ID = `${PAGE_URL}#faq`
+export const TECH_MODES_SECTION_ID = 'teknologi-modus'
