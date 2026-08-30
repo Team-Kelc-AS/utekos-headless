@@ -1,10 +1,7 @@
 // Path: src/api/constants/index.ts
 export type ModelKey = 'utekos-techdown' | 'utekos-mikrofiber'
 
-export const TAGS = {
-  products: 'products',
-  cart: 'cart'
-}
+export { TAGS } from './cacheTags'
 
 export const FREE_SHIPPING_THRESHOLD = 999
 export const productName = 'Utekos TechDown™'
@@ -38,7 +35,11 @@ export const PRODUCT_VARIANTS = {
         body: 'Gjør det enkelt å tilpasse ventilasjonen og skreddersy varmen etter behovene dine.'
       }
     ],
-    features: ['Helårsbruk', 'Tre bruksformer', 'Vannavstøtende'],
+    features: [
+      'Helårsbruk',
+      'Tre bruksformer',
+      'Vannavstøtende'
+    ],
     colors: [{ name: 'Havdyp', hex: 'var(--color-havdyp)' }],
     sizes: ['Liten', 'Middels', 'Stor', 'Større'],
     images: [
@@ -75,7 +76,9 @@ export const PRODUCT_VARIANTS = {
       }
     ],
     features: ['Lett å pakke', 'Tørker raskt', 'Syntetisk fyll'],
-    colors: [{ name: 'Fjellblå', hex: 'var(--color-ocean-cavern)' }],
+    colors: [
+      { name: 'Fjellblå', hex: 'var(--color-ocean-cavern)' }
+    ],
     sizes: ['Medium', 'Large'],
     images: [
       'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/utekos-mikrofiber-helfigur-1600-1600.webp?v=1780689474',
@@ -86,9 +89,9 @@ export const PRODUCT_VARIANTS = {
   }
 }
 
-export const PRODUCT_HIDDEN_SIZE_LABELS: Partial<Record<ModelKey, readonly string[]>> = {
-  'utekos-techdown': ['Liten']
-}
+export const PRODUCT_HIDDEN_SIZE_LABELS: Partial<
+  Record<ModelKey, readonly string[]>
+> = { 'utekos-techdown': ['Liten'] }
 
 export function getSelectableSizes(
   model: ModelKey,
@@ -99,4 +102,9 @@ export function getSelectableSizes(
   return config.sizes.filter(size => !hiddenSizes.includes(size))
 }
 
-export { VIDEO_EMBED_URL, VIDEO_POSTER_URL, VIDEO_THUMBNAIL_URL, VIDEO_URL } from '@/constants'
+export {
+  VIDEO_EMBED_URL,
+  VIDEO_POSTER_URL,
+  VIDEO_THUMBNAIL_URL,
+  VIDEO_URL
+} from '@/constants'

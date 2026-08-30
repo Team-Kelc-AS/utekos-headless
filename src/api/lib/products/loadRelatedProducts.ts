@@ -2,6 +2,7 @@ import 'server-only'
 
 import { fetchProductCardsWithRetry } from '@/api/lib/products/fetchProductCardsWithRetry'
 import {
+  deleteRelatedProductsSnapshot,
   getRelatedProductsSnapshot,
   setRelatedProductsSnapshot
 } from '@/lib/cache/relatedProductsRuntimeCache'
@@ -19,11 +20,9 @@ function logRelatedProductsWarning(
     JSON.stringify({
       event,
       level: 'WARN',
-      error: error instanceof Error ? error.message : String(error),
-      context: {
-        ...context,
-        runtime: getVercelRuntimeContext()
-      }
+      error:
+        error instanceof Error ? error.message : String(error),
+      context: { ...context, runtime: getVercelRuntimeContext() }
     })
   )
 }
@@ -33,15 +32,19 @@ export async function loadRelatedProducts(
   limit: number = 12,
   dependencies: {
     fetchProductCardsWithRetry?: typeof fetchProductCardsWithRetry
+    deleteSnapshot?: typeof deleteRelatedProductsSnapshot
     getSnapshot?: typeof getRelatedProductsSnapshot
     setSnapshot?: typeof setRelatedProductsSnapshot
     runtimeCache?: RuntimeCache
   } = {}
 ): Promise<ProductCardModel[]> {
   const fetchCards =
-    dependencies.fetchProductCardsWithRetry ?? fetchProductCardsWithRetry
+    dependencies.fetchProductCardsWithRetry ??
+    fetchProductCardsWithRetry
   const getSnapshot =
     dependencies.getSnapshot ?? getRelatedProductsSnapshot
+  const deleteSnapshot =
+    dependencies.deleteSnapshot ?? deleteRelatedProductsSnapshot
   const setSnapshot =
     dependencies.setSnapshot ?? setRelatedProductsSnapshot
 
@@ -49,12 +52,21 @@ export async function loadRelatedProducts(
     const allProducts = await fetchCards({
       first: Math.max(limit * 2, 24)
     })
-    const related = getRelatedProducts(allProducts, currentHandle, limit)
+    const related = getRelatedProducts(
+      allProducts,
+      currentHandle,
+      limit
+    )
 
     if (related.length > 0) {
       await setSnapshot(
         currentHandle,
         related,
+        dependencies.runtimeCache
+      )
+    } else {
+      await deleteSnapshot(
+        currentHandle,
         dependencies.runtimeCache
       )
     }

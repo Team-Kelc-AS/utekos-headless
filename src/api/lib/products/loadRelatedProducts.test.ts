@@ -63,19 +63,25 @@ function createCard(handle: string): ProductCardModel {
 
 test('keeps the last valid related list when Shopify times out', async () => {
   const snapshot = [createCard('utekos-techdown')]
-  const related = await loadRelatedProducts('utekos-mikrofiber', 12, {
-    runtimeCache: new FakeRuntimeCache(),
-    fetchProductCardsWithRetry: async () => {
-      throw new DOMException(
-        'The operation was aborted due to timeout',
-        'TimeoutError'
-      )
-    },
-    getSnapshot: async () => snapshot,
-    setSnapshot: async () => {
-      throw new Error('must not overwrite last-good on Shopify failure')
+  const related = await loadRelatedProducts(
+    'utekos-mikrofiber',
+    12,
+    {
+      runtimeCache: new FakeRuntimeCache(),
+      fetchProductCardsWithRetry: async () => {
+        throw new DOMException(
+          'The operation was aborted due to timeout',
+          'TimeoutError'
+        )
+      },
+      getSnapshot: async () => snapshot,
+      setSnapshot: async () => {
+        throw new Error(
+          'must not overwrite last-good on Shopify failure'
+        )
+      }
     }
-  })
+  )
 
   assert.deepEqual(
     related.map(product => product.handle),
@@ -109,16 +115,42 @@ test('writes a related-products snapshot after a successful Shopify fetch', asyn
 })
 
 test('returns an empty list when Shopify fails and no snapshot exists', async () => {
-  const related = await loadRelatedProducts('utekos-techdown', 12, {
-    runtimeCache: new FakeRuntimeCache(),
-    fetchProductCardsWithRetry: async () => {
-      throw new DOMException(
-        'The operation was aborted due to timeout',
-        'TimeoutError'
-      )
-    },
-    getSnapshot: async () => null
-  })
+  const related = await loadRelatedProducts(
+    'utekos-techdown',
+    12,
+    {
+      runtimeCache: new FakeRuntimeCache(),
+      fetchProductCardsWithRetry: async () => {
+        throw new DOMException(
+          'The operation was aborted due to timeout',
+          'TimeoutError'
+        )
+      },
+      getSnapshot: async () => null
+    }
+  )
 
   assert.deepEqual(related, [])
+})
+
+test('removes an obsolete snapshot after an authoritative empty result', async () => {
+  let deletedHandle: string | undefined
+
+  const related = await loadRelatedProducts(
+    'utekos-techdown',
+    12,
+    {
+      runtimeCache: new FakeRuntimeCache(),
+      fetchProductCardsWithRetry: async () => [
+        createCard('utekos-techdown')
+      ],
+      deleteSnapshot: async handle => {
+        deletedHandle = handle
+      },
+      getSnapshot: async () => [createCard('utekos-mikrofiber')]
+    }
+  )
+
+  assert.deepEqual(related, [])
+  assert.equal(deletedHandle, 'utekos-techdown')
 })

@@ -12,20 +12,22 @@ import type {
 } from '@types'
 import type { ShopifyProduct } from 'types/product'
 import { cacheLife, cacheTag } from 'next/cache'
-import { TAGS } from '../../constants'
+import { TAGS } from '@/api/constants/cacheTags'
 
 export async function fetchProducts(
   params: GetProductsParams = {}
 ): Promise<ShopifyProduct[]> {
   const variables = { first: 12, ...params }
 
-  const res = await storefrontGateway.catalogQuery<ShopifyProductsOperation>({
-    query: getProductsQuery,
-    variables
-  })
+  const res =
+    await storefrontGateway.catalogQuery<ShopifyProductsOperation>(
+      { query: getProductsQuery, variables }
+    )
 
   if (!res.success) {
-    throw new Error(res.error.errors[0]?.message ?? 'Failed to fetch products')
+    throw new Error(
+      res.error.errors[0]?.message ?? 'Failed to fetch products'
+    )
   }
 
   if (!res.body.products) {
@@ -46,16 +48,13 @@ export async function getProducts(
   try {
     const products = await fetchProducts(params)
 
-    return {
-      success: true,
-      status: 200,
-      body: products
-    }
+    return { success: true, status: 200, body: products }
   } catch (error) {
     return {
       success: false,
       status: 500,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error:
+        error instanceof Error ? error.message : 'Unknown error'
     }
   }
 }

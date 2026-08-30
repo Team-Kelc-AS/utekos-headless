@@ -2,10 +2,12 @@
 
 import 'server-only'
 import { getProductQuery } from '@/api/graphql/queries/products'
+import { ShopifyCatalogGraphQLError } from '@/api/lib/products/ShopifyCatalogGraphQLError'
+import { getShopifyGraphQLErrorMetadata } from '@/api/shopify/request/shopifyRequestObservability'
 import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import { reshapeProduct } from '@/lib/utils/reshapeProduct'
 import { cacheTag, cacheLife } from 'next/cache'
-import { TAGS } from '@/api/constants'
+import { TAGS } from '@/api/constants/cacheTags'
 import {
   getRuntimeCachedShopifyProduct,
   normalizeShopifyProductHandle
@@ -17,15 +19,18 @@ async function fetchProductFromShopify(
   handle: string
 ): Promise<ShopifyProduct | null> {
   const response =
-    await storefrontGateway.catalogQuery<ShopifyProductOperation>({
-      query: getProductQuery,
-      variables: { handle }
-    })
+    await storefrontGateway.catalogQuery<ShopifyProductOperation>(
+      { query: getProductQuery, variables: { handle } }
+    )
 
   if (!response.success) {
-    throw new Error(
+    const graphqlError = getShopifyGraphQLErrorMetadata(
+      response.error
+    )
+    throw new ShopifyCatalogGraphQLError(
       response.error.errors[0]?.message ??
-        `Failed to fetch product: ${handle}`
+        `Failed to fetch product: ${handle}`,
+      graphqlError.code ?? null
     )
   }
 

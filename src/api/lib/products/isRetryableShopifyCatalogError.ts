@@ -1,19 +1,30 @@
 import { ShopifyCatalogGraphQLError } from './ShopifyCatalogGraphQLError'
 
-export function isRetryableShopifyCatalogError(error: unknown): boolean {
+export function isRetryableShopifyCatalogError(
+  error: unknown
+): boolean {
   if (error instanceof ShopifyCatalogGraphQLError) {
-    return false
+    return (
+      error.graphqlErrorCode === 'THROTTLED' ||
+      error.graphqlErrorCode === 'INTERNAL_SERVER_ERROR'
+    )
   }
 
   if (error instanceof DOMException) {
-    return error.name === 'TimeoutError' || error.name === 'AbortError'
+    return (
+      error.name === 'TimeoutError' ||
+      error.name === 'AbortError'
+    )
   }
 
   if (!(error instanceof Error)) {
     return false
   }
 
-  if (error.name === 'TimeoutError' || error.name === 'AbortError') {
+  if (
+    error.name === 'TimeoutError' ||
+    error.name === 'AbortError'
+  ) {
     return true
   }
 

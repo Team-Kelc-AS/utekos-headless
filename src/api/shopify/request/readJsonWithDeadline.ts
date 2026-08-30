@@ -26,7 +26,15 @@ export async function readJsonWithDeadline(
     text += decoder.decode()
     return JSON.parse(text) as unknown
   } catch (error) {
-    await reader.cancel().catch(() => undefined)
+    // Cancellation is best-effort transport cleanup. Some fetch implementations
+    // do not settle `cancel()` until the remote body closes, so awaiting it here
+    // would let cleanup outlive (and effectively defeat) the request deadline.
+    try {
+      void reader.cancel(error).catch(() => undefined)
+    } catch {
+      // Preserve the original deadline or parse error if a nonstandard reader
+      // throws synchronously while cancellation is initiated.
+    }
     throw error
   }
 }

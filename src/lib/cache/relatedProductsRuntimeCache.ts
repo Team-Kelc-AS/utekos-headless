@@ -43,13 +43,13 @@ const relatedProductCardSchema = z.looseObject({
       })
     )
   }),
-  priceRange: z.looseObject({
-    minVariantPrice: moneySchema
-  }),
+  priceRange: z.looseObject({ minVariantPrice: moneySchema }),
   options: z.array(
     z.looseObject({
       name: z.string().min(1),
-      optionValues: z.array(z.looseObject({ name: z.string().min(1) }))
+      optionValues: z.array(
+        z.looseObject({ name: z.string().min(1) })
+      )
     })
   ),
   variants: z.looseObject({
@@ -79,10 +79,13 @@ const relatedProductCardSchema = z.looseObject({
   })
 })
 
-const relatedProductsSnapshotSchema = z.array(relatedProductCardSchema)
+const relatedProductsSnapshotSchema = z.array(
+  relatedProductCardSchema
+)
 
 function getSerializedByteLength(value: unknown): number {
-  return new TextEncoder().encode(JSON.stringify(value)).byteLength
+  return new TextEncoder().encode(JSON.stringify(value))
+    .byteLength
 }
 
 function logCacheWarning(
@@ -94,20 +97,22 @@ function logCacheWarning(
     JSON.stringify({
       event,
       level: 'WARN',
-      error: error instanceof Error ? error.message : String(error),
-      context: {
-        ...context,
-        runtime: getVercelRuntimeContext()
-      }
+      error:
+        error instanceof Error ? error.message : String(error),
+      context: { ...context, runtime: getVercelRuntimeContext() }
     })
   )
 }
 
-export function getRelatedProductsRuntimeCacheKey(handle: string): string {
+export function getRelatedProductsRuntimeCacheKey(
+  handle: string
+): string {
   return `related-products:handle:${normalizeShopifyProductHandle(handle)}`
 }
 
-export function getRelatedProductsRuntimeCacheTags(handle: string): string[] {
+export function getRelatedProductsRuntimeCacheTags(
+  handle: string
+): string[] {
   const normalizedHandle = normalizeShopifyProductHandle(handle)
 
   return [
@@ -127,7 +132,8 @@ export async function getRelatedProductsSnapshot(
     return null
   }
 
-  const cacheKey = getRelatedProductsRuntimeCacheKey(normalizedHandle)
+  const cacheKey =
+    getRelatedProductsRuntimeCacheKey(normalizedHandle)
 
   try {
     const cachedValue = await cache.get(cacheKey)
@@ -135,16 +141,19 @@ export async function getRelatedProductsSnapshot(
       return null
     }
 
-    const parsed = relatedProductsSnapshotSchema.safeParse(cachedValue)
+    const parsed =
+      relatedProductsSnapshotSchema.safeParse(cachedValue)
     if (parsed.success) {
       return parsed.data as ProductCardModel[]
     }
 
     await cache.delete(cacheKey)
   } catch (error) {
-    logCacheWarning('shopify.related_products.runtime_cache.read_failed', error, {
-      cacheKey
-    })
+    logCacheWarning(
+      'shopify.related_products.runtime_cache.read_failed',
+      error,
+      { cacheKey }
+    )
   }
 
   return null
@@ -160,7 +169,8 @@ export async function setRelatedProductsSnapshot(
     return
   }
 
-  const parsed = relatedProductsSnapshotSchema.safeParse(products)
+  const parsed =
+    relatedProductsSnapshotSchema.safeParse(products)
   if (!parsed.success) {
     logCacheWarning(
       'shopify.related_products.runtime_cache.invalid_write',
@@ -172,7 +182,10 @@ export async function setRelatedProductsSnapshot(
 
   const snapshot = parsed.data as ProductCardModel[]
   const serializedBytes = getSerializedByteLength(snapshot)
-  if (serializedBytes >= SHOPIFY_PRODUCT_RUNTIME_CACHE_MAX_SAFE_BYTES) {
+  if (
+    serializedBytes >=
+    SHOPIFY_PRODUCT_RUNTIME_CACHE_MAX_SAFE_BYTES
+  ) {
     logCacheWarning(
       'shopify.related_products.runtime_cache.item_too_large',
       `Serialized related products are ${serializedBytes} bytes`,
@@ -182,7 +195,8 @@ export async function setRelatedProductsSnapshot(
   }
 
   const cache = runtimeCache ?? getShopifyCatalogRuntimeCache()
-  const cacheKey = getRelatedProductsRuntimeCacheKey(normalizedHandle)
+  const cacheKey =
+    getRelatedProductsRuntimeCacheKey(normalizedHandle)
 
   try {
     await cache.set(cacheKey, snapshot, {
@@ -191,8 +205,32 @@ export async function setRelatedProductsSnapshot(
       name: RELATED_PRODUCTS_RUNTIME_CACHE_NAME
     })
   } catch (error) {
-    logCacheWarning('shopify.related_products.runtime_cache.write_failed', error, {
-      cacheKey
-    })
+    logCacheWarning(
+      'shopify.related_products.runtime_cache.write_failed',
+      error,
+      { cacheKey }
+    )
+  }
+}
+
+export async function deleteRelatedProductsSnapshot(
+  handle: string,
+  runtimeCache?: RuntimeCache
+): Promise<void> {
+  const normalizedHandle = normalizeShopifyProductHandle(handle)
+  if (!normalizedHandle) return
+
+  const cache = runtimeCache ?? getShopifyCatalogRuntimeCache()
+  const cacheKey =
+    getRelatedProductsRuntimeCacheKey(normalizedHandle)
+
+  try {
+    await cache.delete(cacheKey)
+  } catch (error) {
+    logCacheWarning(
+      'shopify.related_products.runtime_cache.delete_failed',
+      error,
+      { cacheKey }
+    )
   }
 }
