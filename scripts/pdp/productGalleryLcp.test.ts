@@ -252,7 +252,7 @@ function extractExportBody(
     : source.slice(start, nextExport)
 }
 
-test('Mikrofiber gallery keeps LCP leads and splits 1-10 / 11-20 by viewport', async () => {
+test('Mikrofiber gallery replaces stills and splits 1-10 / 11-20 by viewport', async () => {
   const pageSource = await readSource(
     'src/app/produkter/[handle]/components/ProductPageView.tsx'
   )
@@ -294,14 +294,20 @@ test('Mikrofiber gallery keeps LCP leads and splits 1-10 / 11-20 by viewport', a
 
   assert.match(
     mobileBody,
-    /mikrofiberMobile1,/,
-    'Mikrofiber mobile gallery must keep the existing first slide for LCP'
+    /mikrofiberMobileStill11,/,
+    'Mikrofiber mobile gallery must start with 11.webp'
   )
 
   assert.match(
     desktopBody,
-    /Utekos-Mikrofiber-Full-Front-1080-1350\.png/,
-    'Mikrofiber desktop gallery must keep the existing first slide for LCP'
+    /mikrofiberDesktopStill1,/,
+    'Mikrofiber desktop gallery must start with 1.webp'
+  )
+
+  assert.doesNotMatch(
+    gallerySource,
+    /cdn\.shopify\.com|Mikrofiber-1000x1500/,
+    'Mikrofiber galleries must not keep the previous Shopify or 1000x1500 stills'
   )
 
   for (const index of [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]) {
@@ -341,7 +347,7 @@ test('Mikrofiber gallery keeps LCP leads and splits 1-10 / 11-20 by viewport', a
   }
 })
 
-test('Comfyrobe gallery keeps LCP leads and splits desktop / mobile stills by viewport', async () => {
+test('Comfyrobe gallery replaces product stills and splits desktop / mobile by viewport', async () => {
   const pageSource = await readSource(
     'src/app/produkter/[handle]/components/ProductPageView.tsx'
   )
@@ -377,14 +383,26 @@ test('Comfyrobe gallery keeps LCP leads and splits desktop / mobile stills by vi
 
   assert.match(
     mobileBody,
-    /COMFYROBE_MOBILE_LEAD_IMAGE,/,
-    'Comfyrobe mobile gallery must keep the existing first slide for LCP'
+    /comfyrobeMobile001,/,
+    'Comfyrobe mobile gallery must start with Comfyrobe-Mobile-001.webp'
   )
 
   assert.match(
     desktopBody,
-    /Comfyrobe-Front-1080x1350\.png/,
-    'Comfyrobe desktop gallery must keep the existing first slide for LCP'
+    /comfyrobeDesktop001,/,
+    'Comfyrobe desktop gallery must start with Comfyrobe-001.webp'
+  )
+
+  assert.doesNotMatch(
+    gallerySource,
+    /cdn\.shopify\.com/,
+    'Comfyrobe galleries must not keep the previous Shopify CDN stills'
+  )
+
+  assert.doesNotMatch(
+    gallerySource,
+    /comfy-mann-400-650|comfy-916|comfy-bak-916/,
+    'Comfyrobe mobile gallery must not keep the previous local stills'
   )
 
   const desktopStills = [
