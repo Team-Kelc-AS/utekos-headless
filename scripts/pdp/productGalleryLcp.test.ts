@@ -65,8 +65,8 @@ test('desktop gallery frame remains a Server Component', async () => {
 
   assert.match(
     frameSource,
-    /ratio=\{\s*9 \/ 10\s*\}/,
-    'Desktop gallery image must use aspect-ratio 9:10'
+    /ratio=\{\s*7 \/ 9\s*\}/,
+    'Desktop gallery image must use aspect-ratio 7:9'
   )
 
   assert.match(
@@ -85,6 +85,12 @@ test('desktop gallery frame remains a Server Component', async () => {
     pageSource,
     /framed/,
     'ProductPageView must render the framed desktop gallery'
+  )
+
+  assert.doesNotMatch(
+    pageSource,
+    /9 \/ 16/,
+    'Mobile gallery must not keep the previous 9:16 frame'
   )
 
   assert.doesNotMatch(
@@ -152,8 +158,8 @@ test('TechDown mobile gallery uses 2:3 intrinsic next/image slides', async () =>
 
   assert.match(
     pageSource,
-    /isTechDownProduct \? 2 \/ 3/,
-    'TechDown mobile gallery frame must use aspect-ratio 2:3'
+    /const galleryAspectRatio = 2 \/ 3/,
+    'Mobile gallery frame must use aspect-ratio 2:3 for every product'
   )
 
   assert.match(

@@ -16,10 +16,10 @@ export function ProductDesktopGalleryFrame({
     <div
       role='region'
       aria-label={ariaLabel}
-      className='relative mx-auto w-full max-w-[min(100%,calc((100dvh-8rem-1rem)*0.9))] rounded-2xl bg-jungle p-2 shadow-2xl shadow-havdyp/18'
+      className='relative mx-auto w-full max-w-[min(100%,calc((100dvh-8rem-1rem)*7/9))] rounded-2xl bg-jungle p-2 shadow-2xl shadow-havdyp/18'
     >
       <AspectRatio
-        ratio={9 / 10}
+        ratio={7 / 9}
         className='overflow-clip rounded-lg bg-jungle'
       >
         {children}
