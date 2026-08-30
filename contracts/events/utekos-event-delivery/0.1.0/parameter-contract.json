@@ -1179,10 +1179,25 @@
           "support": "supported",
           "eventName": "PageView",
           "productionStatus": "active",
-          "productionDetail": "Canonical Meta CAPI PageView outbox is active for newly accepted events. Historical blocked rows remain excluded from blind replay.",
+          "productionDetail": "The app-owned Meta Pixel is the sole browser owner and canonical Meta CAPI is the sole server owner. Meta-managed Signals Gateway mirrors Pixel delivery with the same event_id; no independent cbq bridge is active. Historical blocked rows remain excluded from blind replay.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
-          "browser": null,
+          "browser": {
+            "transport": "meta_pixel",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "metaBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data"
+              ]
+            }
+          },
           "server": {
             "transport": "meta_conversions_api",
             "status": "active",
@@ -1808,10 +1823,29 @@
           "support": "supported",
           "eventName": "ViewContent",
           "productionStatus": "active",
-          "productionDetail": "Meta CAPI delivery is active in production.",
+          "productionDetail": "The app-owned Meta Pixel and canonical Meta CAPI are active with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
-          "browser": null,
+          "browser": {
+            "transport": "meta_pixel",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "metaBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "content_type",
+                "currency",
+                "value"
+              ]
+            }
+          },
           "server": {
             "transport": "meta_conversions_api",
             "status": "active",
@@ -2308,10 +2342,28 @@
           "support": "supported",
           "eventName": "AddToCart",
           "productionStatus": "active",
-          "productionDetail": "Meta CAPI delivery is active for add_to_cart.",
+          "productionDetail": "The app-owned Meta Pixel and canonical Meta CAPI are active for add_to_cart with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
-          "browser": null,
+          "browser": {
+            "transport": "meta_pixel",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "metaBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "currency",
+                "value"
+              ]
+            }
+          },
           "server": {
             "transport": "meta_conversions_api",
             "status": "active",
@@ -2992,10 +3044,28 @@
           "support": "supported",
           "eventName": "InitiateCheckout",
           "productionStatus": "active",
-          "productionDetail": "Meta CAPI delivery is active for begin_checkout.",
+          "productionDetail": "The app-owned Meta Pixel and canonical Meta CAPI are active for begin_checkout with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
-          "browser": null,
+          "browser": {
+            "transport": "meta_pixel",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "metaBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "currency",
+                "value"
+              ]
+            }
+          },
           "server": {
             "transport": "meta_conversions_api",
             "status": "active",

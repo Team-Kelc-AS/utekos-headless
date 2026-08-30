@@ -168,6 +168,9 @@ export function shopifyOrderToCanonicalPurchase(
     ...(pageUrl ? { page_url: pageUrl } : {}),
     ...(referrerUrl ? { referrer_url: referrerUrl } : {}),
     consent: attribution.consent,
+    ...(attribution.experiment ?
+      { experiment: attribution.experiment }
+    : {}),
     ...(attribution.browser_id ?
       { browser_id: attribution.browser_id }
     : {}),

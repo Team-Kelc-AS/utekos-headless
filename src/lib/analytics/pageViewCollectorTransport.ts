@@ -13,6 +13,7 @@ import {
 } from './pageViewDispatchObservation'
 import type { ProvisionalPageViewCaptureState } from './provisionalPageViewCapture'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
+import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 
 export type CookiebotState = {
   consent?: CookiebotConsent
@@ -82,13 +83,21 @@ export function prepareCanonicalPageViewForCollector(
   delete baseEvent.click_id
   delete baseEvent.client_ip_address
   delete baseEvent.external_id
+  delete baseEvent.experiment
   delete baseEvent.impression_id
   delete baseEvent.region_code
   delete baseEvent.user_data
 
+  const experiment =
+    consent.analytics === 'granted' ?
+      (readSkreddersyVarmenLayoutAssignment() ??
+      event.experiment)
+    : undefined
+
   return canonicalPageViewSchema.parse({
     ...baseEvent,
     consent,
+    ...(experiment ? { experiment } : {}),
     ...(browserId ? { browser_id: browserId } : {}),
     ...(hasMarketingConsent && event.click_id ?
       { click_id: event.click_id }
@@ -136,7 +145,7 @@ export function createPageViewCollectorTransport(
     const consent = getConsentSnapshot(cookiebot?.consent)
     return (
         consent.analytics === 'granted' ||
-        consent.marketing === 'granted'
+          consent.marketing === 'granted'
       ) ?
         'granted'
       : 'denied'

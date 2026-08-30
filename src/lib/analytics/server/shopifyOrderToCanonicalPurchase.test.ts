@@ -25,6 +25,10 @@ function orderPaid(): OrderPaid {
         source: 'cookiebot',
         version: '1'
       },
+      experiment: {
+        key: 'skreddersy-varmen-layout-v1',
+        variant: 'legacy'
+      },
       external_id: 'anon_550e8400-e29b-41d4-a716-446655440000',
       page_url:
         'https://utekos.no/produkter/utekos-techdown?fbclid=meta-click'
@@ -157,6 +161,10 @@ test('restores checkout attribution for the purchase webhook', () => {
   })
   assert.equal(event.consent.marketing, 'granted')
   assert.equal(event.consent.analytics, 'granted')
+  assert.deepEqual(event.experiment, {
+    key: 'skreddersy-varmen-layout-v1',
+    variant: 'legacy'
+  })
   assert.equal(event.user_data?.facebook_login_id, '1234567890')
   assert.ok(
     event.user_data?.email_sha256?.includes('a'.repeat(64))

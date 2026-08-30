@@ -1,5 +1,6 @@
 import type { CanonicalEventStoreInput } from './canonicalEventStore'
 import { stripInternalJourneyContext } from '../internalJourneyContext'
+import { stripInternalExperimentAssignment } from '../internalExperimentAssignment'
 
 type UserDataQuality = {
   email_sha256_count: number
@@ -65,8 +66,8 @@ export function mapCanonicalEventPersistence(
     phone_sha256_count:
       input.event.user_data?.phone_sha256?.length ?? 0
   }
-  const providerPayload = stripInternalJourneyContext(
-    input.event
+  const providerPayload = stripInternalExperimentAssignment(
+    stripInternalJourneyContext(input.event)
   )
 
   return {

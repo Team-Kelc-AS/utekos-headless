@@ -50,6 +50,7 @@ type CreateCanonicalBeginCheckoutInput = {
   eventDeviceInfo?: EventDeviceInfoInput
   eventId: string
   eventTime: string
+  experiment?: CanonicalEventEnvelope['experiment']
   externalId?: string
   impressionId?: string
   pageTitle: string
@@ -71,7 +72,9 @@ export type BeginCheckoutDataLayerEvent = {
 export function createCanonicalBeginCheckout(
   input: CreateCanonicalBeginCheckoutInput
 ): CanonicalBeginCheckout {
-  const eventDeviceInfo = mapEventDeviceInfo(input.eventDeviceInfo)
+  const eventDeviceInfo = mapEventDeviceInfo(
+    input.eventDeviceInfo
+  )
 
   return canonicalBeginCheckoutSchema.parse({
     schema_version: 1,
@@ -81,18 +84,29 @@ export function createCanonicalBeginCheckout(
     source: 'web',
     environment: input.environment,
     page_url: input.pageUrl,
-    ...(input.pageViewId ? { page_view_id: input.pageViewId } : {}),
-    ...(input.referrerUrl ? { referrer_url: input.referrerUrl } : {}),
+    ...(input.pageViewId ?
+      { page_view_id: input.pageViewId }
+    : {}),
+    ...(input.referrerUrl ?
+      { referrer_url: input.referrerUrl }
+    : {}),
     page_title: input.pageTitle,
     consent: input.consent,
+    ...(input.experiment ?
+      { experiment: input.experiment }
+    : {}),
     custom_data: input.commerce,
     ...(input.browserId ? { browser_id: input.browserId } : {}),
     ...(input.clickId ? { click_id: input.clickId } : {}),
-    ...(input.externalId ? { external_id: input.externalId } : {}),
+    ...(input.externalId ?
+      { external_id: input.externalId }
+    : {}),
     ...(input.impressionId ?
       { impression_id: input.impressionId }
     : {}),
-    ...(eventDeviceInfo ? { event_device_info: eventDeviceInfo } : {})
+    ...(eventDeviceInfo ?
+      { event_device_info: eventDeviceInfo }
+    : {})
   })
 }
 

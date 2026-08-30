@@ -19,6 +19,7 @@ export function normalizeCanonicalPurchase(
 
   delete normalized.client_ip_address
   delete normalized.event_device_info
+  delete normalized.experiment
   delete normalized.location
   delete normalized.region_code
   delete deviceInfo.user_agent
@@ -65,6 +66,13 @@ export function normalizeCanonicalPurchase(
 
   if (preservedClientIp) {
     normalized.client_ip_address = preservedClientIp
+  }
+
+  if (
+    parsed.consent.analytics === 'granted' &&
+    parsed.experiment
+  ) {
+    normalized.experiment = parsed.experiment
   }
 
   if (!hasMarketingConsent) {

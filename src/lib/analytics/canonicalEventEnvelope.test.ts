@@ -52,8 +52,7 @@ test('accepts internal journey UUIDs in the canonical envelope', () => {
   const parsed = canonicalEventEnvelopeSchema.parse({
     ...envelope,
     journey_id: '11111111-1111-4111-8111-111111111111',
-    previous_page_view_id:
-      '22222222-2222-4222-8222-222222222222'
+    previous_page_view_id: '22222222-2222-4222-8222-222222222222'
   })
 
   assert.equal(
@@ -64,4 +63,19 @@ test('accepts internal journey UUIDs in the canonical envelope', () => {
     parsed.previous_page_view_id,
     '22222222-2222-4222-8222-222222222222'
   )
+})
+
+test('accepts a bounded PII-free experiment assignment', () => {
+  const parsed = canonicalEventEnvelopeSchema.parse({
+    ...envelope,
+    experiment: {
+      key: 'skreddersy-varmen-layout-v1',
+      variant: 'legacy'
+    }
+  })
+
+  assert.deepEqual(parsed.experiment, {
+    key: 'skreddersy-varmen-layout-v1',
+    variant: 'legacy'
+  })
 })

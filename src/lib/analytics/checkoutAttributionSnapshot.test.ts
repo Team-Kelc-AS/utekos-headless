@@ -75,6 +75,61 @@ test('round-trips consented attribution through Shopify attributes', () => {
   })
 })
 
+test('round-trips a PII-free experiment only with analytics consent', () => {
+  const experiment = {
+    key: 'skreddersy-varmen-layout-v1',
+    variant: 'legacy'
+  }
+  const granted = createCheckoutAttributionSnapshot(
+    {
+      consent: {
+        analytics: 'granted',
+        marketing: 'denied',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1'
+      },
+      experiment
+    },
+    capturedAt
+  )
+  const grantedAttributes =
+    checkoutAttributionSnapshotToShopifyAttributes(granted).map(
+      attribute => ({
+        name: attribute.key,
+        value: attribute.value
+      })
+    )
+
+  assert.deepEqual(
+    parseOrderAttributionFromNoteAttributes(grantedAttributes)
+      .experiment,
+    experiment
+  )
+
+  const denied = createCheckoutAttributionSnapshot(
+    {
+      consent: {
+        analytics: 'denied',
+        marketing: 'granted',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1'
+      },
+      experiment
+    },
+    capturedAt
+  )
+
+  assert.equal(denied.experiment, undefined)
+  assert.equal(
+    checkoutAttributionSnapshotToShopifyAttributes(denied).some(
+      attribute => attribute.key.startsWith('utekos_experiment_')
+    ),
+    false
+  )
+})
+
 test('round-trips Facebook Login match signals only with marketing consent', () => {
   const snapshot = createCheckoutAttributionSnapshot(
     {

@@ -10,8 +10,9 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
   payload: unknown,
   requestContext: CanonicalBrowserEventRequestContext
 ): TEvent {
-  const parsed = schema.parse(payload) as CanonicalEventEnvelope &
-    Record<string, unknown>
+  const parsed = schema.parse(
+    payload
+  ) as CanonicalEventEnvelope & Record<string, unknown>
   const normalized = { ...parsed } as CanonicalEventEnvelope &
     Record<string, unknown>
   const clientLocation = parsed.location
@@ -19,6 +20,7 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
 
   delete normalized.client_ip_address
   delete normalized.event_device_info
+  delete normalized.experiment
   delete normalized.journey_id
   delete normalized.location
   delete normalized.previous_page_view_id
@@ -32,7 +34,9 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
   })
 
   const serverLocation = {
-    ...(requestContext.city ? { city: requestContext.city } : {}),
+    ...(requestContext.city ?
+      { city: requestContext.city }
+    : {}),
     ...(requestContext.countryCode ?
       { country_code: requestContext.countryCode.toUpperCase() }
     : {}),
@@ -49,14 +53,14 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
     clientLocation?.source === 'browser_permission'
 
   const location =
-    mayUseBrowserLocation ?
-      clientLocation
+    mayUseBrowserLocation ? clientLocation
     : Object.keys(serverLocation).length > 0 ?
       { ...serverLocation, source: 'ip_geolocation' as const }
     : undefined
 
   const hasDeviceInfo = Object.keys(deviceInfo).length > 0
-  const hasMarketingConsent = parsed.consent.marketing === 'granted'
+  const hasMarketingConsent =
+    parsed.consent.marketing === 'granted'
   const hasAnalyticsConsent =
     parsed.consent.analytics === 'granted'
 
@@ -67,6 +71,10 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
       normalized.previous_page_view_id =
         parsed.previous_page_view_id
     }
+  }
+
+  if (hasAnalyticsConsent && parsed.experiment) {
+    normalized.experiment = parsed.experiment
   }
 
   if (hasDeviceInfo) normalized.event_device_info = deviceInfo

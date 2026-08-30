@@ -13,9 +13,12 @@ const event: CanonicalPageView = {
   environment: 'test',
   page_url: 'https://utekos.no/produkter',
   page_title: 'Produkter',
+  experiment: {
+    key: 'skreddersy-varmen-layout-v1',
+    variant: 'legacy'
+  },
   journey_id: '11111111-1111-4111-8111-111111111111',
-  previous_page_view_id:
-    '22222222-2222-4222-8222-222222222222',
+  previous_page_view_id: '22222222-2222-4222-8222-222222222222',
   consent: {
     analytics: 'granted',
     marketing: 'granted',
@@ -33,6 +36,7 @@ const event: CanonicalPageView = {
 }
 
 const {
+  experiment: _experiment,
   journey_id: _journeyId,
   previous_page_view_id: _previousPageViewId,
   ...providerEvent
@@ -117,6 +121,7 @@ test('maps canonical Meta and Microsoft outbox rows without provider renaming', 
       dispatch.payload.previous_page_view_id,
       undefined
     )
+    assert.equal(dispatch.payload.experiment, undefined)
   }
 })
 

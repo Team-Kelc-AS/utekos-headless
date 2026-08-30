@@ -1,9 +1,14 @@
 import { captureException } from '@sentry/nextjs'
+import {
+  applyCanonicalCollectionContext,
+  type CanonicalCollectionContext
+} from './applyCanonicalCollectionContext'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { clearStoredSnapchatClickId } from './clickIdSessionStore'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
 import { extractClickIds } from './pageViewClientContext'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
+import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 
 const COOKIEBOT_EVENTS = [
   'CookiebotOnConsentReady',
@@ -24,39 +29,6 @@ type CookiebotApi = {
 }
 
 type CookiebotWindow = Window & { Cookiebot?: CookiebotApi }
-
-export type CanonicalCollectionContext = {
-  analyticsBrowserId?: Record<string, string> | undefined
-  clickId?: Record<string, string> | undefined
-  consent: ConsentSnapshot
-  hasResponse: boolean
-  marketingBrowserId?: Record<string, string> | undefined
-}
-
-type EventWithConsent = {
-  consent: ConsentSnapshot
-  page_url?: string | undefined
-  browser_id?: Record<string, string> | undefined
-  click_id?: Record<string, string> | undefined
-  client_ip_address?: string | undefined
-  external_id?: string | undefined
-  impression_id?: string | undefined
-  location?:
-    | {
-        source?:
-          | 'browser_permission'
-          | 'customer_provided'
-          | 'ip_geolocation'
-          | 'server_request'
-        [key: string]: unknown
-      }
-    | undefined
-  region_code?: string | undefined
-  user_data?: unknown
-  event_device_info?:
-    | { user_agent?: string | undefined; [key: string]: unknown }
-    | undefined
-}
 
 type CreateCanonicalCollectorTransportInput<
   E extends { consent: ConsentSnapshot }
@@ -119,82 +91,6 @@ function resolveConsent(
   }
 }
 
-export function applyCanonicalCollectionContext<
-  E extends { consent: ConsentSnapshot }
->(event: E, context: CanonicalCollectionContext): E {
-  const source = event as E & EventWithConsent
-  const nextEvent = {
-    ...source,
-    consent: context.consent
-  } as E & EventWithConsent
-
-  delete nextEvent.browser_id
-  delete nextEvent.click_id
-  delete nextEvent.client_ip_address
-  delete nextEvent.external_id
-  delete nextEvent.impression_id
-  delete nextEvent.location
-  delete nextEvent.region_code
-  delete nextEvent.user_data
-
-  if (source.event_device_info) {
-    const deviceInfo = { ...source.event_device_info }
-    delete deviceInfo.user_agent
-
-    if (Object.keys(deviceInfo).length > 0) {
-      nextEvent.event_device_info = deviceInfo
-    } else {
-      delete nextEvent.event_device_info
-    }
-  }
-
-  const analyticsGranted =
-    context.consent.analytics === 'granted'
-  const marketingGranted =
-    context.consent.marketing === 'granted'
-  const preferencesGranted =
-    context.consent.preferences === 'granted'
-
-  const browserId = {
-    ...(analyticsGranted ? context.analyticsBrowserId : {}),
-    ...(marketingGranted ? source.browser_id : {}),
-    ...(marketingGranted ? context.marketingBrowserId : {})
-  }
-
-  if (Object.keys(browserId).length > 0) {
-    nextEvent.browser_id = browserId
-  }
-
-  if (marketingGranted) {
-    const clickId = { ...source.click_id, ...context.clickId }
-
-    if (Object.keys(clickId).length > 0) {
-      nextEvent.click_id = clickId
-    }
-
-    if (source.external_id) {
-      nextEvent.external_id = source.external_id
-    }
-
-    if (source.impression_id) {
-      nextEvent.impression_id = source.impression_id
-    }
-
-    if (source.user_data) {
-      nextEvent.user_data = source.user_data
-    }
-  }
-
-  if (
-    preferencesGranted &&
-    source.location?.source === 'browser_permission'
-  ) {
-    nextEvent.location = source.location
-  }
-
-  return nextEvent as E
-}
-
 function resolveBrowserCollection<
   E extends { consent: ConsentSnapshot; page_url?: string }
 >(event: E): { context: CanonicalCollectionContext; event: E } {
@@ -223,7 +119,8 @@ function resolveBrowserCollection<
       {
         analyticsBrowserId: compactRecord([
           ['ga_cookie', readCookie('_ga')]
-        ])
+        ]),
+        experiment: readSkreddersyVarmenLayoutAssignment()
       }
     : {}),
     ...(consent.marketing === 'granted' ?
@@ -286,7 +183,9 @@ export async function sendCanonicalCollectorEvent<
   const journeyEnriched =
     enrichCanonicalBrowserJourneyContext(event)
   const metaEnriched =
-    await enrichCanonicalEventWithMetaAttribution(journeyEnriched)
+    await enrichCanonicalEventWithMetaAttribution(
+      journeyEnriched
+    )
   const enriched =
     input.enrichEvent ?
       await input.enrichEvent(metaEnriched)

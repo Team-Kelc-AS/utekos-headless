@@ -9,13 +9,16 @@ const baseEvent = {
   event_id: '11111111-1111-4111-8111-111111111111',
   page_view_id: '22222222-2222-4222-8222-222222222222',
   journey_id: '33333333-3333-4333-8333-333333333333',
-  previous_page_view_id:
-    '44444444-4444-4444-8444-444444444444',
+  previous_page_view_id: '44444444-4444-4444-8444-444444444444',
   event_time: '2026-08-29T12:00:00.000Z',
   source: 'web' as const,
   environment: 'test' as const,
   page_url: 'https://utekos.no/skreddersy-varmen',
   page_title: 'Skreddersy varmen',
+  experiment: {
+    key: 'skreddersy-varmen-layout-v1',
+    variant: 'legacy'
+  },
   consent: {
     analytics: 'granted' as const,
     marketing: 'denied' as const,
@@ -37,6 +40,7 @@ test('retains internal journey context when analytics consent is granted', () =>
     normalized.previous_page_view_id,
     baseEvent.previous_page_view_id
   )
+  assert.deepEqual(normalized.experiment, baseEvent.experiment)
 })
 
 test('strips internal journey context when analytics consent is denied', () => {
@@ -44,14 +48,12 @@ test('strips internal journey context when analytics consent is denied', () => {
     canonicalPageViewSchema,
     {
       ...baseEvent,
-      consent: {
-        ...baseEvent.consent,
-        analytics: 'denied'
-      }
+      consent: { ...baseEvent.consent, analytics: 'denied' }
     },
     {}
   )
 
   assert.equal(normalized.journey_id, undefined)
   assert.equal(normalized.previous_page_view_id, undefined)
+  assert.equal(normalized.experiment, undefined)
 })

@@ -3,6 +3,7 @@ import {
   canonicalClickIdsSchema,
   canonicalSignalAuditSchema
 } from './canonicalSignalContract'
+import { canonicalExperimentAssignmentSchema } from './experimentAssignment'
 
 const consentValueSchema = z.enum(['denied', 'granted'])
 
@@ -74,6 +75,7 @@ export const canonicalEventEnvelopeSchema = z.strictObject({
     'test'
   ]),
   consent: consentSnapshotSchema,
+  experiment: canonicalExperimentAssignmentSchema.optional(),
   user_data: canonicalUserDataSchema.optional(),
   click_id: canonicalClickIdsSchema.optional(),
   external_id: z.string().min(1).optional(),

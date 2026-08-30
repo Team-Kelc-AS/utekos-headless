@@ -12,12 +12,15 @@ import {
   type CampaignAttribution
 } from './campaignAttribution'
 import { parseOrderConsentFromNoteAttributes } from './checkoutConsentSnapshot'
+import { canonicalExperimentAssignmentSchema } from './experimentAssignment'
 
 const CONSENT_ATTRIBUTE = 'utekos_consent'
 const CAPTURED_AT_ATTRIBUTE = 'utekos_attribution_captured_at'
 const EXTERNAL_ID_ATTRIBUTE = 'utekos_external_id'
 const PAGE_URL_ATTRIBUTE = 'utekos_page_url'
 const REFERRER_URL_ATTRIBUTE = 'utekos_referrer_url'
+const EXPERIMENT_KEY_ATTRIBUTE = 'utekos_experiment_key'
+const EXPERIMENT_VARIANT_ATTRIBUTE = 'utekos_experiment_variant'
 export const FACEBOOK_LOGIN_ID_ATTRIBUTE =
   'utekos_facebook_login_id'
 export const FACEBOOK_EMAIL_SHA256_ATTRIBUTE =
@@ -76,6 +79,7 @@ export const checkoutAttributionSnapshotSchema = z.strictObject({
   schema_version: z.literal(1),
   captured_at: capturedAtSchema,
   consent: canonicalEventEnvelopeSchema.shape.consent,
+  experiment: canonicalExperimentAssignmentSchema.optional(),
   browser_id: identifierMapSchema.optional(),
   campaign: campaignAttributionSchema.optional(),
   click_id: identifierMapSchema.optional(),
@@ -97,6 +101,9 @@ type CheckoutAttributionSource = {
     | Record<string, string>
     | undefined
   consent: ConsentSnapshot
+  experiment?:
+    | z.infer<typeof canonicalExperimentAssignmentSchema>
+    | undefined
   external_id?: string | undefined
   user_data?: z.infer<typeof canonicalUserDataSchema> | undefined
   page_url?: string | undefined
@@ -176,6 +183,9 @@ export function createCheckoutAttributionSnapshot(
     schema_version: 1,
     captured_at: capturedAt,
     consent: source.consent,
+    ...(hasAnalyticsConsent && source.experiment ?
+      { experiment: source.experiment }
+    : {}),
     ...(Object.keys(browserId).length > 0 ?
       { browser_id: browserId }
     : {}),
@@ -228,6 +238,22 @@ function buildCartAttributes(
     key: CAPTURED_AT_ATTRIBUTE,
     value: snapshot.captured_at
   })
+
+  if (
+    snapshot.consent.analytics === 'granted' &&
+    snapshot.experiment
+  ) {
+    attributes.push(
+      {
+        key: EXPERIMENT_KEY_ATTRIBUTE,
+        value: snapshot.experiment.key
+      },
+      {
+        key: EXPERIMENT_VARIANT_ATTRIBUTE,
+        value: snapshot.experiment.variant
+      }
+    )
+  }
 
   if (snapshot.page_url) {
     attributes.push({
@@ -314,6 +340,13 @@ export function parseOrderAttributionFromNoteAttributes(
   const clickId: Record<string, string> = {}
   const campaign: Partial<CampaignAttribution> = {}
   const userData: z.infer<typeof canonicalUserDataSchema> = {}
+  const experiment =
+    consent.analytics === 'granted' ?
+      canonicalExperimentAssignmentSchema.safeParse({
+        key: attributes.get(EXPERIMENT_KEY_ATTRIBUTE),
+        variant: attributes.get(EXPERIMENT_VARIANT_ATTRIBUTE)
+      })
+    : undefined
 
   if (consent.analytics === 'granted') {
     for (const [identifier, attributeKey] of Object.entries(
@@ -405,6 +438,9 @@ export function parseOrderAttributionFromNoteAttributes(
     schema_version: 1,
     captured_at: capturedAt,
     consent,
+    ...(experiment?.success ?
+      { experiment: experiment.data }
+    : {}),
     ...(Object.keys(browserId).length > 0 ?
       { browser_id: browserId }
     : {}),

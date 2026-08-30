@@ -189,7 +189,10 @@
             "meta": {
               "eventName": "AddToCart",
               "productionStatus": "active",
-              "browser": null,
+              "browser": {
+                "transport": "meta_pixel",
+                "status": "implemented"
+              },
               "server": {
                 "transport": "meta_conversions_api",
                 "status": "active"
@@ -555,7 +558,10 @@
             "meta": {
               "eventName": "InitiateCheckout",
               "productionStatus": "active",
-              "browser": null,
+              "browser": {
+                "transport": "meta_pixel",
+                "status": "implemented"
+              },
               "server": {
                 "transport": "meta_conversions_api",
                 "status": "active"
@@ -1904,7 +1910,10 @@
             "meta": {
               "eventName": "PageView",
               "productionStatus": "active",
-              "browser": null,
+              "browser": {
+                "transport": "meta_pixel",
+                "status": "implemented"
+              },
               "server": {
                 "transport": "meta_conversions_api",
                 "status": "active"
@@ -3764,7 +3773,10 @@
             "meta": {
               "eventName": "ViewContent",
               "productionStatus": "active",
-              "browser": null,
+              "browser": {
+                "transport": "meta_pixel",
+                "status": "implemented"
+              },
               "server": {
                 "transport": "meta_conversions_api",
                 "status": "active"
@@ -4369,6 +4381,28 @@
               "preferences",
               "source",
               "version"
+            ],
+            "additionalProperties": false
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
             ],
             "additionalProperties": false
           },
@@ -7223,6 +7257,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -7595,6 +7651,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -7960,6 +8038,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -8346,6 +8446,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -8510,6 +8632,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -8659,6 +8803,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -8807,6 +8973,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -8954,6 +9142,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -9099,6 +9309,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -9251,6 +9483,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -9642,6 +9896,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -10018,6 +10294,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -10148,6 +10446,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -10522,6 +10842,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -10699,6 +11041,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -10850,6 +11214,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -11229,6 +11615,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -11591,6 +11999,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -11736,6 +12166,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -11894,6 +12346,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -12064,6 +12538,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -12269,6 +12765,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -12645,6 +13163,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -12796,6 +13336,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -13157,6 +13719,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
@@ -13551,6 +14135,28 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
+          },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"
           },
@@ -13915,6 +14521,28 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "experiment": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "variant": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "required": [
+              "key",
+              "variant"
+            ],
+            "additionalProperties": false
           },
           "user_data": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/user_data"

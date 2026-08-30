@@ -16,6 +16,7 @@ import { enrichCanonicalEventWithGoogleAnalyticsIds } from './googleAnalyticsBro
 import { persistCheckoutAttributionSnapshot } from './persistCheckoutAttributionSnapshot'
 import { mapShopifyBeginCheckout } from './shopifyBeginCheckoutCommerce'
 import type { CheckoutMethod } from './checkoutMethod'
+import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 import type { Cart } from 'types/cart'
 
 const CHECKOUT_TASK_DEADLINE_MS = 1500
@@ -61,6 +62,10 @@ export async function reportCanonicalBeginCheckout(
 
     const eventTime = new Date().toISOString()
     const commerce = await mapShopifyBeginCheckout(input.cart)
+    const experiment =
+      clientContext.consent.analytics === 'granted' ?
+        readSkreddersyVarmenLayoutAssignment()
+      : undefined
 
     const initialEvent = createCanonicalBeginCheckout({
       environment: clientContext.environment,
@@ -73,6 +78,7 @@ export async function reportCanonicalBeginCheckout(
         { referrerUrl: pageView.referrerUrl }
       : {}),
       consent: clientContext.consent,
+      ...(experiment ? { experiment } : {}),
       commerce,
       ...(clientContext.browserId ?
         { browserId: clientContext.browserId }
