@@ -4,7 +4,10 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { revalidateProductCatalog } from '@/lib/cache/revalidateProductCatalog'
 import { verifyShopifyWebhook } from '@/lib/shopify/verifyWebhook'
-import type { ProductCatalogInvalidationResult } from '@/lib/cache/revalidateProductCatalog'
+import type {
+  ProductCatalogInvalidationOptions,
+  ProductCatalogInvalidationResult
+} from '@/lib/cache/revalidateProductCatalog'
 
 const shopifyProductWebhookSchema = z
   .object({
@@ -13,12 +16,16 @@ const shopifyProductWebhookSchema = z
   })
   .passthrough()
 
-type ShopifyProductWebhookTopic = 'products/create' | 'products/delete' | 'products/update'
+type ShopifyProductWebhookTopic =
+  | 'products/create'
+  | 'products/delete'
+  | 'products/update'
 
 type ShopifyProductCacheWebhookDependencies = {
   invalidateProductCatalog?: (
     handles: readonly string[],
-    productIds: readonly (string | number)[]
+    productIds: readonly (string | number)[],
+    options?: ProductCatalogInvalidationOptions
   ) => Promise<ProductCatalogInvalidationResult>
 }
 
@@ -35,11 +42,17 @@ export async function handleShopifyProductCacheWebhook(
   try {
     rawBody = await request.text()
   } catch {
-    return NextResponse.json({ error: 'Failed to read request body' }, { status: 400 })
+    return NextResponse.json(
+      { error: 'Failed to read request body' },
+      { status: 400 }
+    )
   }
 
   if (!verifyShopifyWebhook(rawBody, hmac)) {
-    return NextResponse.json({ error: 'Invalid webhook signature' }, { status: 401 })
+    return NextResponse.json(
+      { error: 'Invalid webhook signature' },
+      { status: 401 }
+    )
   }
 
   let productPayload: unknown
@@ -47,10 +60,14 @@ export async function handleShopifyProductCacheWebhook(
   try {
     productPayload = JSON.parse(rawBody)
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+    return NextResponse.json(
+      { error: 'Invalid JSON' },
+      { status: 400 }
+    )
   }
 
-  const parsedProduct = shopifyProductWebhookSchema.safeParse(productPayload)
+  const parsedProduct =
+    shopifyProductWebhookSchema.safeParse(productPayload)
 
   if (!parsedProduct.success) {
     return NextResponse.json(
@@ -65,10 +82,12 @@ export async function handleShopifyProductCacheWebhook(
   const handle = parsedProduct.data.handle
   const productId = parsedProduct.data.id
   const invalidateProductCatalog =
-    dependencies.invalidateProductCatalog ?? revalidateProductCatalog
+    dependencies.invalidateProductCatalog ??
+    revalidateProductCatalog
   const invalidatedTags = await invalidateProductCatalog(
     handle ? [handle] : [],
-    productId === undefined ? [] : [productId]
+    productId === undefined ? [] : [productId],
+    { purgeLastGood: topic === 'products/delete' }
   )
 
   return NextResponse.json({

@@ -72,7 +72,10 @@ test('catalogQuery uses public auth and remains caller-cacheable', async () => {
     headers.get('x-shopify-storefront-access-token'),
     'public-test-token'
   )
-  assert.equal(headers.has('shopify-storefront-private-token'), false)
+  assert.equal(
+    headers.has('shopify-storefront-private-token'),
+    false
+  )
   assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
 test('buyerQuery uses private auth with buyer IP and forces no-store', async () => {
@@ -95,7 +98,10 @@ test('buyerQuery uses private auth with buyer IP and forces no-store', async () 
     headers.get('shopify-storefront-buyer-ip'),
     '203.0.113.8'
   )
-  assert.equal(headers.has('x-shopify-storefront-access-token'), false)
+  assert.equal(
+    headers.has('x-shopify-storefront-access-token'),
+    false
+  )
 })
 
 test('mutation uses private buyer auth and forces no-store', async () => {
@@ -131,7 +137,9 @@ test('buyer calls use the public compatibility path when private auth is unavail
     {
       fetch: async (_input, init) => {
         requests.push(init ?? {})
-        return Response.json({ data: { shop: { name: 'Utekos' } } })
+        return Response.json({
+          data: { shop: { name: 'Utekos' } }
+        })
       }
     }
   )
@@ -149,7 +157,10 @@ test('buyer calls use the public compatibility path when private auth is unavail
     headers.get('x-shopify-storefront-access-token'),
     'public-test-token'
   )
-  assert.equal(headers.has('shopify-storefront-private-token'), false)
+  assert.equal(
+    headers.has('shopify-storefront-private-token'),
+    false
+  )
   assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
 
@@ -164,7 +175,9 @@ test('mutation uses the public compatibility path when private auth is unavailab
     {
       fetch: async (_input, init) => {
         requests.push(init ?? {})
-        return Response.json({ data: { cartCreate: { cart: null } } })
+        return Response.json({
+          data: { cartCreate: { cart: null } }
+        })
       }
     }
   )
@@ -182,7 +195,10 @@ test('mutation uses the public compatibility path when private auth is unavailab
     headers.get('x-shopify-storefront-access-token'),
     'public-test-token'
   )
-  assert.equal(headers.has('shopify-storefront-private-token'), false)
+  assert.equal(
+    headers.has('shopify-storefront-private-token'),
+    false
+  )
   assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
 
@@ -247,7 +263,10 @@ test('mutation retries with public auth when Shopify rejects the configured priv
     fallbackHeaders.has('shopify-storefront-private-token'),
     false
   )
-  assert.equal(fallbackHeaders.has('shopify-storefront-buyer-ip'), false)
+  assert.equal(
+    fallbackHeaders.has('shopify-storefront-buyer-ip'),
+    false
+  )
 })
 
 test('buyer calls fall back to public auth when a validated buyer IP is unavailable', async () => {
@@ -266,7 +285,10 @@ test('buyer calls fall back to public auth when a validated buyer IP is unavaila
     headers.get('x-shopify-storefront-access-token'),
     'public-test-token'
   )
-  assert.equal(headers.has('shopify-storefront-private-token'), false)
+  assert.equal(
+    headers.has('shopify-storefront-private-token'),
+    false
+  )
   assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
 
@@ -281,7 +303,9 @@ test('private buyer auth fails closed without a validated buyer IP or public fal
     {
       fetch: async (_input, init) => {
         requests.push(init ?? {})
-        return Response.json({ data: { shop: { name: 'Utekos' } } })
+        return Response.json({
+          data: { shop: { name: 'Utekos' } }
+        })
       }
     }
   )
@@ -298,45 +322,60 @@ test('private buyer auth fails closed without a validated buyer IP or public fal
 
 test('enforces a wall-clock deadline around hanging response bodies', async () => {
   let cancelled = false
-  const hangingBody = new ReadableStream({
-    start() {},
-    cancel() {
-      cancelled = true
-    }
+  let releaseCancellation: (() => void) | undefined
+  const cancellation = new Promise<void>(resolve => {
+    releaseCancellation = resolve
   })
+  const reader = {
+    read: () =>
+      new Promise<ReadableStreamReadResult<Uint8Array>>(
+        () => undefined
+      ),
+    cancel: () => {
+      cancelled = true
+      return cancellation
+    }
+  }
+  const hangingResponse = {
+    body: { locked: true, getReader: () => reader },
+    headers: new Headers({
+      'content-type': 'application/json',
+      'x-request-id': 'hanging-body'
+    }),
+    ok: true,
+    status: 200
+  } as unknown as Response
   const gateway = createHydrogenStorefrontGateway(
     {
       storeDomain: 'example.myshopify.com',
       publicStorefrontToken: 'public-test-token',
       storefrontApiVersion: '2026-04'
     },
-    {
-      fetch: async () =>
-        new Response(hangingBody, {
-          status: 200,
-          headers: {
-            'content-type': 'application/json',
-            'x-request-id': 'hanging-body'
-          }
-        })
-    }
+    { fetch: async () => hangingResponse }
   )
   const startedAt = performance.now()
-
-  await assert.rejects(
-    gateway.catalogQuery<TestQuery>({
-      query,
-      timeoutMs: 40
-    }),
-    (error: unknown) =>
-      error instanceof DOMException && error.name === 'TimeoutError'
+  const releaseTimer = setTimeout(
+    () => releaseCancellation?.(),
+    600
   )
 
-  assert.equal(cancelled, true)
-  assert.ok(
-    performance.now() - startedAt < 400,
-    'hanging JSON bodies must not outlive the Shopify deadline'
-  )
+  try {
+    await assert.rejects(
+      gateway.catalogQuery<TestQuery>({ query, timeoutMs: 40 }),
+      (error: unknown) =>
+        error instanceof DOMException &&
+        error.name === 'TimeoutError'
+    )
+
+    assert.equal(cancelled, true)
+    assert.ok(
+      performance.now() - startedAt < 400,
+      'hanging JSON bodies must not outlive the Shopify deadline'
+    )
+  } finally {
+    clearTimeout(releaseTimer)
+    releaseCancellation?.()
+  }
 })
 
 test('rejects an operation that crosses the declared gateway boundary', async () => {

@@ -85,21 +85,18 @@ export function ProductPurchaseIsland({
           aria-live='polite'
         >
           {hasVariantSelectionError ?
-            'Variantvalg er midlertidig utilgjengelig. Oppdater siden for å prøve igjen.'
+            'Variantvalg er midlertidig utilgjengelig. Valgt variant kan fortsatt legges i handlekurven.'
           : isVariantNavigationPending ?
             'Oppdaterer variant…'
           : null}
         </div>
         <TrustSignals />
-        <div className='mt-5 flex flex-col gap-4 [&_form]:py-0 md:mt-8 md:[&_form]:py-6'>
+        <div className='mt-5 flex flex-col gap-4 md:mt-8 [&_form]:py-0 md:[&_form]:py-6'>
           <Activity>
             <AddToCart
               product={product}
               selectedVariant={selectedVariant}
-              isSelectionPending={
-                isVariantNavigationPending ||
-                hasVariantSelectionError
-              }
+              isSelectionPending={isVariantNavigationPending}
               showQuickCheckoutAction={false}
               showQuantitySelector={false}
             />

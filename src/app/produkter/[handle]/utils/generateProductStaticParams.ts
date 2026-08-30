@@ -3,15 +3,51 @@
 import { getProducts } from '@/api/lib/products/getProducts'
 import { getAllProductPresentations } from '@/lib/products/presentation'
 
-export type ProductStaticParam = {
-  handle: string
+export type ProductStaticParam = { handle: string }
+
+type GenerateProductStaticParamsDependencies = {
+  fetchProducts?: typeof getProducts
 }
 
-export async function generateProductStaticParams(): Promise<ProductStaticParam[]> {
-  const response = await getProducts({ first: 250 })
+function getPresentationParams(): ProductStaticParam[] {
+  return getAllProductPresentations().map(presentation => ({
+    handle: presentation.publicHandle
+  }))
+}
+
+export async function generateProductStaticParams(
+  dependencies: GenerateProductStaticParamsDependencies = {}
+): Promise<ProductStaticParam[]> {
+  const fallbackParams = getPresentationParams()
+  let response: Awaited<ReturnType<typeof getProducts>>
+
+  try {
+    response = await (dependencies.fetchProducts ?? getProducts)(
+      { first: 250 }
+    )
+  } catch (error) {
+    console.warn(
+      JSON.stringify({
+        event: 'pdp.static_params.served_presentation_fallback',
+        level: 'WARN',
+        error:
+          error instanceof Error ? error.message : String(error),
+        context: { count: fallbackParams.length }
+      })
+    )
+    return fallbackParams
+  }
 
   if (!response.success || !response.body) {
-    throw new Error('Failed to fetch products for generateStaticParams.')
+    console.warn(
+      JSON.stringify({
+        event: 'pdp.static_params.served_presentation_fallback',
+        level: 'WARN',
+        error: 'Shopify returned no product catalog',
+        context: { count: fallbackParams.length }
+      })
+    )
+    return fallbackParams
   }
 
   const liveLookupHandles = new Set(
@@ -23,14 +59,10 @@ export async function generateProductStaticParams(): Promise<ProductStaticParam[
     .filter(presentation =>
       liveLookupHandles.has(presentation.storefrontLookupHandle)
     )
-    .map(presentation => ({
-      handle: presentation.publicHandle
-    }))
+    .map(presentation => ({ handle: presentation.publicHandle }))
 
   if (params.length === 0) {
-    throw new Error(
-      'generateStaticParams for /produkter/[handle] must return at least one product handle when cacheComponents is enabled.'
-    )
+    return fallbackParams
   }
 
   return params
