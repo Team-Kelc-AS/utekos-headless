@@ -47,6 +47,31 @@ test('builds a versioned canonical page_view with event_time and page context', 
   assert.equal(event.event_device_info?.viewport_width, 390)
 })
 
+test('omits transient zero-sized viewport telemetry without dropping the page_view', () => {
+  const event = createCanonicalPageView({
+    environment: 'production',
+    eventId: 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7',
+    pageViewId: '0c955d6b-5e9c-47d0-b304-046df7f4bf7f',
+    eventTime: '2026-08-30T08:52:14.000Z',
+    pageUrl: 'https://utekos.no/comfyrobe',
+    pageTitle: 'Comfyrobe | Utekos',
+    consent,
+    eventDeviceInfo: {
+      language: 'nb-NO',
+      screenHeight: 0,
+      screenWidth: 390,
+      viewportHeight: 0,
+      viewportWidth: 390
+    }
+  })
+
+  assert.equal(event.event_device_info?.language, 'nb-NO')
+  assert.equal(event.event_device_info?.screen_height, undefined)
+  assert.equal(event.event_device_info?.viewport_height, undefined)
+  assert.equal(event.event_device_info?.screen_width, 390)
+  assert.equal(event.event_device_info?.viewport_width, 390)
+})
+
 test('rejects malformed canonical page_view input', () => {
   assert.throws(
     () => createCanonicalPageView({

@@ -20,19 +20,13 @@ type ProbeContext = {
   runId: string
 }
 
-type ProbeValidation = {
-  ok: boolean
-  resultCode: string
-}
+type ProbeValidation = { ok: boolean; resultCode: string }
 
 type ProbeDefinition = {
   authorizeWithCronSecret?: boolean
   body?: string
   critical: boolean
-  expected: (
-    response: Response,
-    body: string
-  ) => ProbeValidation
+  expected: (response: Response, body: string) => ProbeValidation
   headers?: Readonly<Record<string, string>>
   integration: string
   method?: 'GET' | 'POST'
@@ -87,23 +81,29 @@ const probes: readonly ProbeDefinition[] = [
     surface: 'api_log_contract'
   },
   ...[
-    ['page_view_collector', '/api/events/page-view'],
-    ['add_to_cart_collector', '/api/events/add-to-cart'],
-    ['begin_checkout_collector', '/api/events/begin-checkout']
-  ].map(([surface, path]) => ({
-    body: INVALID_CONTRACT_BODY,
+    ['page_view_collector', 'page_view'],
+    ['add_to_cart_collector', 'add_to_cart'],
+    ['begin_checkout_collector', 'begin_checkout']
+  ].map(([surface, contract]) => ({
+    authorizeWithCronSecret: true,
+    body: JSON.stringify({ contract }),
     critical: true,
-    expected: (response: Response) => ({
-      ok: response.status === 400,
+    expected: (response: Response, body: string) => ({
+      ok:
+        response.status === 200 &&
+        body.includes('invalid_contract_rejected'),
       resultCode:
-        response.status === 400 ?
+        (
+          response.status === 200 &&
+          body.includes('invalid_contract_rejected')
+        ) ?
           'invalid_contract_rejected'
         : 'invalid_contract_unexpected_status'
     }),
     headers: JSON_HEADERS,
     integration: 'supabase',
     method: 'POST' as const,
-    path: path as string,
+    path: '/api/ops/launch-guard/contracts',
     surface: surface as string
   })),
   {
@@ -156,16 +156,15 @@ const probes: readonly ProbeDefinition[] = [
     critical: true,
     expected: response => {
       const noStore =
-        response.headers.get('cache-control')?.includes('no-store') ===
-        true
+        response.headers
+          .get('cache-control')
+          ?.includes('no-store') === true
 
       return {
         ok: response.status === 200 && noStore,
         resultCode:
-          response.status !== 200 ?
-            'sgtm_unexpected_status'
-          : noStore ?
-            'sgtm_healthy_no_store'
+          response.status !== 200 ? 'sgtm_unexpected_status'
+          : noStore ? 'sgtm_healthy_no_store'
           : 'sgtm_cache_policy_invalid'
       }
     },
@@ -187,7 +186,10 @@ function fingerprint(surface: string, resultCode: string) {
 function normalizeOrigin(origin: string) {
   const url = new URL(origin)
 
-  if (url.protocol !== 'https:' && url.hostname !== 'localhost') {
+  if (
+    url.protocol !== 'https:' &&
+    url.hostname !== 'localhost'
+  ) {
     throw new Error('launch_guard_origin_must_use_https')
   }
 
@@ -217,9 +219,7 @@ async function runProbe(
       headers: {
         ...definition.headers,
         ...(definition.authorizeWithCronSecret ?
-          {
-            Authorization: `Bearer ${context.cronSecret}`
-          }
+          { Authorization: `Bearer ${context.cronSecret}` }
         : {}),
         'Origin': normalizedOrigin.origin,
         'User-Agent': 'Utekos-Launch-Guard/1.0',
@@ -286,5 +286,6 @@ export async function runSyntheticProductionProbes(
   )
 }
 
-export const SYNTHETIC_PRODUCTION_PROBE_SURFACES =
-  probes.map(probe => probe.surface)
+export const SYNTHETIC_PRODUCTION_PROBE_SURFACES = probes.map(
+  probe => probe.surface
+)

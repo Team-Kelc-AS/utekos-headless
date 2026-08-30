@@ -28,8 +28,27 @@ function responseFor(url: URL, init: RequestInit) {
     return Response.json({ ok: true })
   }
 
-  if (url.pathname.startsWith('/api/events/')) {
-    return Response.json({ ok: false }, { status: 400 })
+  if (url.pathname === '/api/ops/launch-guard/contracts') {
+    assert.equal(init.method, 'POST')
+    assert.equal(
+      new Headers(init.headers).get('authorization'),
+      'Bearer cron-secret'
+    )
+    assert.equal(
+      new Headers(init.headers).get('x-utekos-automation'),
+      'synthetic'
+    )
+    const payload = JSON.parse(String(init.body)) as {
+      contract: string
+    }
+    assert.match(
+      payload.contract,
+      /^(page_view|add_to_cart|begin_checkout)$/
+    )
+    return Response.json({
+      ok: true,
+      result: 'invalid_contract_rejected'
+    })
   }
 
   if (url.pathname === '/api/cart/lines') {
@@ -41,7 +60,9 @@ function responseFor(url: URL, init: RequestInit) {
   }
 
   if (url.pathname === '/__gtg/gtm.js') {
-    return new Response('/* Google Tag Manager */', { status: 200 })
+    return new Response('/* Google Tag Manager */', {
+      status: 200
+    })
   }
 
   if (url.pathname === '/__sgtm/healthy') {
@@ -72,11 +93,16 @@ test('runs every privacy-free production probe without commerce side effects', a
     snapshots.length,
     SYNTHETIC_PRODUCTION_PROBE_SURFACES.length
   )
-  assert.ok(snapshots.every(snapshot => snapshot.status === 'healthy'))
-  assert.ok(snapshots.every(snapshot => snapshot.errorCount === 0))
+  assert.ok(
+    snapshots.every(snapshot => snapshot.status === 'healthy')
+  )
+  assert.ok(
+    snapshots.every(snapshot => snapshot.errorCount === 0)
+  )
   assert.ok(
     snapshots.every(
-      snapshot => snapshot.providerReceiptStatus === 'not_applicable'
+      snapshot =>
+        snapshot.providerReceiptStatus === 'not_applicable'
     )
   )
 })

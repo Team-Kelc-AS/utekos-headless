@@ -201,7 +201,19 @@ test('TechDown mobile gallery uses 2:3 intrinsic next/image slides', async () =>
   assert.match(
     gallerySource,
     /TechDown-1000x1500-Zipper\.jpg/,
-    'TechDown mobile gallery must end with the zipper still'
+    'TechDown mobile gallery must include the zipper still'
+  )
+
+  assert.match(
+    gallerySource,
+    /TechDownPocket\.webp/,
+    'TechDown mobile gallery must include the pocket still'
+  )
+
+  assert.match(
+    gallerySource,
+    /TechDownZipper\.webp/,
+    'TechDown mobile gallery must include the zipper detail still'
   )
 
   assert.match(

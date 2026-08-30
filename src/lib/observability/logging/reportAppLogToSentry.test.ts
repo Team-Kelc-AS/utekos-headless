@@ -97,6 +97,50 @@ test('keeps generic ERROR reporting behavior unchanged', async () => {
   )
 })
 
+test('groups unhandled rejections by safe error name and route and links the detailed client event', async () => {
+  const captures: unknown[] = []
+  const logEntry: AppLogEntry = {
+    context: { route: '/comfyrobe' },
+    data: {
+      errorName: 'ZodError',
+      reasonIsError: true,
+      reasonType: 'object',
+      sentryEventId: '0123456789abcdef0123456789abcdef',
+      source: 'unhandled_rejection'
+    },
+    event: 'client.unhandled_rejection',
+    id: 'client-log-id',
+    level: 'ERROR',
+    timestamp: '2026-08-30T08:52:14.709Z'
+  }
+
+  await reportAppLogToSentry(logEntry, {
+    captureMessage: (message, context) => {
+      captures.push({ context, message })
+      return 'generic-event-id'
+    },
+    flush: async () => true,
+    getRuntime: () => runtime
+  })
+
+  const capture = captures[0] as {
+    context: {
+      fingerprint: string[]
+      tags: Record<string, string>
+    }
+  }
+  assert.deepEqual(capture.context.fingerprint, [
+    'client.unhandled_rejection',
+    'ZodError',
+    '/comfyrobe'
+  ])
+  assert.equal(capture.context.tags.client_error_name, 'ZodError')
+  assert.equal(
+    capture.context.tags.client_sentry_event_id,
+    '0123456789abcdef0123456789abcdef'
+  )
+})
+
 test('forwards complete ad-platform event parameters in Sentry extra', async () => {
   const captures: unknown[] = []
   const logEntry: AppLogEntry = {

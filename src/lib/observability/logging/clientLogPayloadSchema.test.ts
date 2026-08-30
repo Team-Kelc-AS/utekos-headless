@@ -72,6 +72,36 @@ test('client log contract keeps only a redacted pathname and sanitized triage fi
   assert.equal(JSON.stringify(appLog).includes('dpl=secret'), false)
 })
 
+test('unhandled rejection contract keeps allowlisted triage and a correlation-only Sentry event ID', () => {
+  const parsed = clientLogPayloadSchema.parse({
+    event: 'client_unhandled_rejection',
+    level: 'error',
+    data: {
+      source: 'unhandled_rejection',
+      errorName: 'ZodError',
+      reasonType: 'object',
+      reasonIsError: true,
+      sentryEventId: '0123456789abcdef0123456789abcdef'
+    },
+    context: { pathname: '/comfyrobe?msclkid=secret' }
+  })
+
+  assert.deepEqual(toAppLogInput(parsed), {
+    event: 'client.unhandled_rejection',
+    level: 'ERROR',
+    data: parsed.data,
+    context: { route: '/comfyrobe' }
+  })
+
+  assert.equal(
+    clientLogPayloadSchema.safeParse({
+      ...parsed,
+      data: { ...parsed.data, errorName: 'Customer customer@example.no' }
+    }).success,
+    false
+  )
+})
+
 test('operational pathname sanitizer removes query and risky segments', () => {
   assert.equal(
     sanitizeOperationalPathname('/produkter/utekos-dun?gclid=secret'),

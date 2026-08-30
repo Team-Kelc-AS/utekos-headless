@@ -1,0 +1,25 @@
+.shoot {
+  animation-duration: var(--arrival-duration, 0.7s);
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+  animation-delay: var(--arrival-delay, 0s);
+  animation-name: tech-hero-shoot;
+}
+
+@keyframes tech-hero-shoot {
+  from {
+    transform: translate3d(-118%, 0, 0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shoot {
+    animation: none;
+  }
+}

@@ -18,6 +18,20 @@ export type LogPayload =
       level: 'error'
       data: {
         source: 'unhandled_rejection'
+        errorName?:
+          | 'AbortError'
+          | 'AggregateError'
+          | 'DOMException'
+          | 'Error'
+          | 'EvalError'
+          | 'OtherError'
+          | 'RangeError'
+          | 'ReferenceError'
+          | 'SyntaxError'
+          | 'TimeoutError'
+          | 'TypeError'
+          | 'URIError'
+          | 'ZodError'
         reasonType:
           | 'bigint'
           | 'boolean'
@@ -29,6 +43,7 @@ export type LogPayload =
           | 'symbol'
           | 'undefined'
         reasonIsError: boolean
+        sentryEventId?: string
       }
       context: ClientLogContext
     }

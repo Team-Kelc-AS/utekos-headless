@@ -123,6 +123,23 @@ const eventSchemas = [
     level: z.literal('ERROR'),
     data: z.strictObject({
       source: z.literal('unhandled_rejection'),
+      errorName: z
+        .enum([
+          'AbortError',
+          'AggregateError',
+          'DOMException',
+          'Error',
+          'EvalError',
+          'OtherError',
+          'RangeError',
+          'ReferenceError',
+          'SyntaxError',
+          'TimeoutError',
+          'TypeError',
+          'URIError',
+          'ZodError'
+        ])
+        .optional(),
       reasonType: z.enum([
         'bigint',
         'boolean',
@@ -134,7 +151,11 @@ const eventSchemas = [
         'symbol',
         'undefined'
       ]),
-      reasonIsError: z.boolean()
+      reasonIsError: z.boolean(),
+      sentryEventId: z
+        .string()
+        .regex(/^[a-f0-9]{32}$/)
+        .optional()
     }),
     context: z.strictObject({
       route: z.string().min(1).max(160)

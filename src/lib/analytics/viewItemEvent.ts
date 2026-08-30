@@ -8,6 +8,10 @@ import {
   type CanonicalEventEnvelope,
   type ConsentSnapshot
 } from './canonicalEventEnvelope'
+import {
+  mapEventDeviceInfo,
+  type EventDeviceInfoInput
+} from './mapEventDeviceInfo'
 
 export const canonicalViewItemCommerceSchema =
   canonicalCommerceValueSchema
@@ -28,17 +32,6 @@ export const canonicalViewItemSchema =
 export type CanonicalViewItem = z.infer<
   typeof canonicalViewItemSchema
 >
-
-type EventDeviceInfoInput = {
-  language?: string
-  pixelRatio?: number
-  platform?: string
-  screenHeight?: number
-  screenWidth?: number
-  userAgent?: string
-  viewportHeight?: number
-  viewportWidth?: number
-}
 
 type UserDataInput = {
   emailSha256?: string[]
@@ -127,37 +120,6 @@ export function buildViewItemDataLayerEvent(
     commerce: event.custom_data,
     canonical_event: event
   }
-}
-
-function mapEventDeviceInfo(
-  input: EventDeviceInfoInput | undefined
-) {
-  if (!input) return undefined
-
-  const deviceInfo = {
-    ...(input.language ? { language: input.language } : {}),
-    ...(input.pixelRatio === undefined ?
-      {}
-    : { pixel_ratio: input.pixelRatio }),
-    ...(input.platform ? { platform: input.platform } : {}),
-    ...(input.screenHeight === undefined ?
-      {}
-    : { screen_height: input.screenHeight }),
-    ...(input.screenWidth === undefined ?
-      {}
-    : { screen_width: input.screenWidth }),
-    ...(input.userAgent ? { user_agent: input.userAgent } : {}),
-    ...(input.viewportHeight === undefined ?
-      {}
-    : { viewport_height: input.viewportHeight }),
-    ...(input.viewportWidth === undefined ?
-      {}
-    : { viewport_width: input.viewportWidth })
-  }
-
-  return Object.keys(deviceInfo).length > 0 ?
-      deviceInfo
-    : undefined
 }
 
 function mapUserData(input: UserDataInput | undefined) {

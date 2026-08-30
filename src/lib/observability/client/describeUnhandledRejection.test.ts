@@ -13,7 +13,8 @@ test('classifies Error diagnostics without exposing arbitrary values', () => {
 
   assert.deepEqual(result, {
     reasonType: 'object',
-    reasonIsError: true
+    reasonIsError: true,
+    errorName: 'Error'
   })
   assert.equal(
     JSON.stringify(result).includes('observer failed'),
@@ -54,4 +55,20 @@ test('fails closed when rejection metadata uses throwing traps', () => {
     reasonType: 'object',
     reasonIsError: false
   })
+})
+
+test('reports only allowlisted error names', () => {
+  const zodError = new Error('invalid viewport')
+  zodError.name = 'ZodError'
+  assert.equal(
+    describeUnhandledRejection(zodError, undefined).errorName,
+    'ZodError'
+  )
+
+  const arbitraryError = new Error('contains private details')
+  arbitraryError.name = 'Customer customer@example.no'
+  assert.equal(
+    describeUnhandledRejection(arbitraryError, undefined).errorName,
+    'OtherError'
+  )
 })

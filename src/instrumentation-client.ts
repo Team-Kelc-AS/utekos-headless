@@ -12,6 +12,7 @@ import {
 } from '@/lib/observability/client/sanitizeClientErrorBeacon'
 import { describeUnhandledRejection } from '@/lib/observability/client/describeUnhandledRejection'
 import { filterSentryClientEvent } from '@/lib/observability/client/filterSentryClientEvent'
+import { createInjectedBrowserErrorFilter } from '@/lib/observability/client/createInjectedBrowserErrorFilter'
 import { sendClientLog } from '@/lib/observability/client/sendClientLog'
 import type { LogPayload } from 'types/observability/log/LogPayload'
 
@@ -35,6 +36,8 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 const SENTRY_DSN =
   process.env.NEXT_PUBLIC_PERFORMANCE_SENTRY_DSN ??
   process.env.NEXT_PUBLIC_SENTRY_DSN
+const isInjectedSentryNoise = createInjectedBrowserErrorFilter()
+const isInjectedBeaconNoise = createInjectedBrowserErrorFilter()
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -56,7 +59,8 @@ Sentry.init({
     BOTID_KASADA_URL_PATTERN,
     COOKIEBOT_URL_PATTERN
   ],
-  beforeSend: filterSentryClientEvent
+  beforeSend: event =>
+    filterSentryClientEvent(event, isInjectedSentryNoise)
 })
 
 const MAX_REPORTED_ERRORS = 10
@@ -93,12 +97,14 @@ try {
         event.error.stack
       : undefined
     const message = event.message || 'Unknown client error'
+    const errorDetails = {
+      message,
+      source: event.filename,
+      stack
+    }
     if (
-      isIgnorableClientError({
-        message,
-        source: event.filename,
-        stack
-      })
+      isIgnorableClientError(errorDetails) ||
+      isInjectedBeaconNoise(errorDetails)
     )
       return
 
@@ -113,7 +119,9 @@ try {
       level: 'error',
       data: {
         source: 'window_error',
-        ...(sanitizedMessage ? { message: sanitizedMessage } : {}),
+        ...(sanitizedMessage ?
+          { message: sanitizedMessage }
+        : {}),
         ...(sanitizedFilename ?
           { filename: sanitizedFilename }
         : {}),
@@ -130,10 +138,8 @@ try {
       event.promise
     )
     const message =
-      event.reason instanceof Error ?
-        event.reason.message
-      : typeof event.reason === 'string' ?
-        event.reason
+      event.reason instanceof Error ? event.reason.message
+      : typeof event.reason === 'string' ? event.reason
       : 'Unhandled promise rejection'
     const stack =
       event.reason instanceof Error ?
@@ -144,6 +150,7 @@ try {
       return
     }
 
+    let sentryEventId: string | undefined
     try {
       if (event.reason instanceof Error) {
         Sentry.withScope(scope => {
@@ -152,7 +159,13 @@ try {
             'unhandled_rejection'
           )
           scope.setTag('client_route', window.location.pathname)
-          Sentry.captureException(event.reason)
+          const capturedEventId = Sentry.captureException(
+            event.reason
+          )
+          // Correlation only: an SDK event ID is not provider receipt.
+          if (/^[a-f0-9]{32}$/.test(capturedEventId)) {
+            sentryEventId = capturedEventId
+          }
         })
       }
     } catch {
@@ -164,7 +177,8 @@ try {
       level: 'error',
       data: {
         source: 'unhandled_rejection',
-        ...rejection
+        ...rejection,
+        ...(sentryEventId ? { sentryEventId } : {})
       },
       context: { pathname: window.location.pathname }
     })

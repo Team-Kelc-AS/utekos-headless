@@ -25,6 +25,23 @@ const unhandledRejectionSchema = z.strictObject({
   level: z.literal('error'),
   data: z.strictObject({
     source: z.literal('unhandled_rejection'),
+    errorName: z
+      .enum([
+        'AbortError',
+        'AggregateError',
+        'DOMException',
+        'Error',
+        'EvalError',
+        'OtherError',
+        'RangeError',
+        'ReferenceError',
+        'SyntaxError',
+        'TimeoutError',
+        'TypeError',
+        'URIError',
+        'ZodError'
+      ])
+      .optional(),
     reasonType: z.enum([
       'bigint',
       'boolean',
@@ -36,7 +53,11 @@ const unhandledRejectionSchema = z.strictObject({
       'symbol',
       'undefined'
     ]),
-    reasonIsError: z.boolean()
+    reasonIsError: z.boolean(),
+    sentryEventId: z
+      .string()
+      .regex(/^[a-f0-9]{32}$/)
+      .optional()
   }),
   context: z.strictObject({ pathname: pathnameSchema })
 })

@@ -1,6 +1,7 @@
 import type { ErrorEvent } from '@sentry/nextjs'
 
 import { isIgnorableClientError } from './isIgnorableClientError'
+import type { ClientErrorDetails } from './isIgnorableClientError'
 
 function collectExceptionFrames(event: ErrorEvent): string[] {
   const filenames: string[] = []
@@ -20,7 +21,8 @@ function collectExceptionFrames(event: ErrorEvent): string[] {
 }
 
 export function filterSentryClientEvent(
-  event: ErrorEvent
+  event: ErrorEvent,
+  additionalFilter?: (details: ClientErrorDetails) => boolean
 ): ErrorEvent | null {
   const exceptionValues = event.exception?.values ?? []
   const rootException = [...exceptionValues]
@@ -31,11 +33,16 @@ export function filterSentryClientEvent(
   const source = frames.at(-1) ?? frames[0]
   const stack = frames.join('\n')
 
-  return isIgnorableClientError({
+  const details = {
     message,
     ...(source ? { source } : {}),
     ...(stack ? { stack } : {})
-  })
-    ? null
+  }
+
+  return (
+      isIgnorableClientError(details) ||
+        additionalFilter?.(details) === true
+    ) ?
+      null
     : event
 }

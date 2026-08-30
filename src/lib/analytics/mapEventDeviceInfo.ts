@@ -1,4 +1,4 @@
-type EventDeviceInfoInput = {
+export type EventDeviceInfoInput = {
   language?: string
   pixelRatio?: number
   platform?: string
@@ -9,26 +9,42 @@ type EventDeviceInfoInput = {
   viewportWidth?: number
 }
 
+function isPositiveFiniteNumber(
+  value: number | undefined
+): value is number {
+  return (
+    value !== undefined &&
+    Number.isFinite(value) &&
+    value > 0
+  )
+}
+
+function isPositiveInteger(
+  value: number | undefined
+): value is number {
+  return isPositiveFiniteNumber(value) && Number.isInteger(value)
+}
+
 export function mapEventDeviceInfo(input: EventDeviceInfoInput | undefined) {
   if (!input) return undefined
 
   const deviceInfo = {
     ...(input.language ? { language: input.language } : {}),
-    ...(input.pixelRatio === undefined ?
+    ...(!isPositiveFiniteNumber(input.pixelRatio) ?
       {}
     : { pixel_ratio: input.pixelRatio }),
     ...(input.platform ? { platform: input.platform } : {}),
-    ...(input.screenHeight === undefined ?
+    ...(!isPositiveInteger(input.screenHeight) ?
       {}
     : { screen_height: input.screenHeight }),
-    ...(input.screenWidth === undefined ?
+    ...(!isPositiveInteger(input.screenWidth) ?
       {}
     : { screen_width: input.screenWidth }),
     ...(input.userAgent ? { user_agent: input.userAgent } : {}),
-    ...(input.viewportHeight === undefined ?
+    ...(!isPositiveInteger(input.viewportHeight) ?
       {}
     : { viewport_height: input.viewportHeight }),
-    ...(input.viewportWidth === undefined ?
+    ...(!isPositiveInteger(input.viewportWidth) ?
       {}
     : { viewport_width: input.viewportWidth })
   }

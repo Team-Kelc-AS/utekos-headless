@@ -1,0 +1,126 @@
+.document {
+  margin-inline: auto;
+  max-width: 48rem;
+}
+
+.document > :global(#innhold + ul) {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0 0 2rem;
+  max-width: none;
+  overflow-x: auto;
+  padding: 0.25rem 0 0.75rem;
+  scrollbar-width: thin;
+}
+
+.document > :global(#innhold + ul ul) {
+  display: contents;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.document > :global(#innhold + ul ul ul) {
+  display: none;
+}
+
+.document > :global(#innhold + ul li) {
+  display: contents;
+  margin: 0;
+  max-width: none;
+  padding: 0;
+}
+
+.document > :global(#innhold + ul a) {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 2.75rem;
+  padding-inline: 0.9rem;
+  border: 1px solid color-mix(in oklch, var(--foreground) 16%, transparent);
+  border-radius: 999px;
+  background: var(--jungle);
+  color: var(--foreground);
+  font-family: var(--font-utekos-text);
+  font-size: 0.875rem;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.document > :global(#innhold + ul a:hover),
+.document > :global(#innhold + ul a:focus-visible) {
+  border-color: var(--primary-hover);
+  color: var(--primary-hover);
+}
+
+.document > :global(#innhold + ul a:focus-visible) {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+
+@media (min-width: 80rem) {
+  .document {
+    display: grid;
+    max-width: 80rem;
+    grid-template-columns: minmax(13rem, 16rem) minmax(0, 48rem);
+    column-gap: 3.5rem;
+    justify-content: center;
+    align-items: start;
+  }
+
+  .document > :global(#innhold) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .document > :global(#innhold + ul) {
+    display: block;
+    grid-column: 1;
+    grid-row: 2;
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+    overflow: visible;
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  .document > :global(#innhold + ul ul) {
+    display: block;
+    padding-inline-start: 0.75rem;
+  }
+
+  .document > :global(#innhold + ul li) {
+    display: block;
+  }
+
+  .document > :global(#innhold + ul a) {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    margin-block: 0.2rem;
+    padding-inline: 0.75rem;
+    white-space: normal;
+  }
+
+  .document > :global(*:not(#innhold)) {
+    min-width: 0;
+  }
+
+  .document > :global(#innhold + ul),
+  .document > :global(#innhold) {
+    min-width: 0;
+  }
+
+  .document > :global(*:not(#innhold)) {
+    grid-column: 2;
+  }
+
+  .document > :global(#innhold + ul) {
+    grid-column: 1;
+  }
+}

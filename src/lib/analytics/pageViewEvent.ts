@@ -3,6 +3,10 @@ import {
   canonicalEventEnvelopeSchema,
   type ConsentSnapshot
 } from './canonicalEventEnvelope'
+import {
+  mapEventDeviceInfo,
+  type EventDeviceInfoInput
+} from './mapEventDeviceInfo'
 
 export const canonicalPageViewSchema =
   canonicalEventEnvelopeSchema.extend({
@@ -19,17 +23,6 @@ export const canonicalPageViewSchema =
 export type { ConsentSnapshot } from './canonicalEventEnvelope'
 export type CanonicalPageView = z.infer<typeof canonicalPageViewSchema>
 export type TrackingEnvironment = CanonicalPageView['environment']
-
-type EventDeviceInfoInput = {
-  language?: string
-  pixelRatio?: number
-  platform?: string
-  screenHeight?: number
-  screenWidth?: number
-  userAgent?: string
-  viewportHeight?: number
-  viewportWidth?: number
-}
 
 type CreateCanonicalPageViewInput = {
   browserId?: Record<string, string>
@@ -82,21 +75,6 @@ type PageViewNavigationInput = {
 export type PageViewNavigation = {
   pageUrl: string
   referrerUrl?: string
-}
-
-function mapEventDeviceInfo(input: EventDeviceInfoInput | undefined) {
-  if (!input) return undefined
-
-  return {
-    ...(input.language ? { language: input.language } : {}),
-    ...(input.pixelRatio === undefined ? {} : { pixel_ratio: input.pixelRatio }),
-    ...(input.platform ? { platform: input.platform } : {}),
-    ...(input.screenHeight === undefined ? {} : { screen_height: input.screenHeight }),
-    ...(input.screenWidth === undefined ? {} : { screen_width: input.screenWidth }),
-    ...(input.userAgent ? { user_agent: input.userAgent } : {}),
-    ...(input.viewportHeight === undefined ? {} : { viewport_height: input.viewportHeight }),
-    ...(input.viewportWidth === undefined ? {} : { viewport_width: input.viewportWidth })
-  }
 }
 
 export function createCanonicalPageView(

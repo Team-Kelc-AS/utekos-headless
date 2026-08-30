@@ -6,6 +6,8 @@ import techDownMobile3 from '@/assets/images/techdown/TechDown-1000x1500-3.jpg'
 import techDownMobile4 from '@/assets/images/techdown/TechDown-1000x1500-4.jpg'
 import techDownMobile5 from '@/assets/images/techdown/TechDown-1000x1500-5.jpg'
 import techDownMobileZipper from '@/assets/images/techdown/TechDown-1000x1500-Zipper.jpg'
+import techDownMobilePocket from '@/assets/images/techdown/TechDownPocket.webp'
+import techDownMobileZipperDetail from '@/assets/images/techdown/TechDownZipper.webp'
 import techDownDesktop1 from '@/assets/images/techdown/TechDown-1800x2000.webp'
 import techDownDesktop2 from '@/assets/images/techdown/TechDown2-1800x2000.webp'
 import techDownSingle1 from '@/assets/images/techdown/TechDownSingle-1.webp'
@@ -18,6 +20,8 @@ import techDownGroup1 from '@/assets/images/techdown/ProduktPicTechDown-Group-1.
 
 const TECHDOWN_MOBILE_IMAGE_WIDTH = 1000
 const TECHDOWN_MOBILE_IMAGE_HEIGHT = 1500
+const TECHDOWN_MOBILE_ZIPPER_DETAIL_WIDTH = 1440
+const TECHDOWN_MOBILE_ZIPPER_DETAIL_HEIGHT = 1800
 const TECHDOWN_DESKTOP_IMAGE_WIDTH = 1800
 const TECHDOWN_DESKTOP_IMAGE_HEIGHT = 2000
 const TECHDOWN_ADDITIONAL_DESKTOP_IMAGE_WIDTH = 1440
@@ -65,6 +69,20 @@ export const TECHDOWN_MOBILE_GALLERY_IMAGES: Image[] = [
     'Nærbilde av YKK-glidelås og oransje draglås på Utekos TechDown.',
     TECHDOWN_MOBILE_IMAGE_WIDTH,
     TECHDOWN_MOBILE_IMAGE_HEIGHT
+  ),
+  productImage(
+    'utekos-techdown-mobile-pocket',
+    techDownMobilePocket,
+    'Nærbilde av lomme med oransje innvendig kant og oransje draglås på Utekos TechDown.',
+    TECHDOWN_MOBILE_IMAGE_WIDTH,
+    TECHDOWN_MOBILE_IMAGE_HEIGHT
+  ),
+  productImage(
+    'utekos-techdown-mobile-zipper-detail',
+    techDownMobileZipperDetail,
+    'Nærbilde av glidelås med oransje draglås og strammesnor på Utekos TechDown.',
+    TECHDOWN_MOBILE_ZIPPER_DETAIL_WIDTH,
+    TECHDOWN_MOBILE_ZIPPER_DETAIL_HEIGHT
   )
 ]
 
