@@ -132,3 +132,12 @@ permanent page decision.
    status alone do not prove event persistence or purchases.
 5. For immediate rollback, set the production flag to `current`;
    no code deployment is required.
+
+## Release record
+
+- 2026-08-30: The first approved `main` release commit
+  (`5fa8b12163bc954641843e0de4d1724c17ebd9d5`) was present on
+  GitHub, but Vercel had not created a deployment after more than
+  ten minutes. The release was retried through the project's
+  required `pnpm run sync` path; no direct Vercel deployment was
+  used.
