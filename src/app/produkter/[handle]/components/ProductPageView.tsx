@@ -110,10 +110,7 @@ export function ProductPageView({
     productData.handle === 'utekos-techdown'
   const useCompactGallery = galleryImages.length === 1
 
-  const galleryAspectRatio =
-    useCompactGallery ? 1
-    : isTechDownProduct ? 2 / 3
-    : 9 / 16
+  const galleryAspectRatio = 2 / 3
 
   const galleryDesktopBleedClassName =
     'md:left-auto md:w-full md:translate-x-0 md:-ml-[calc((100vw-100cqw-4rem)/4)]'
