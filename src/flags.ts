@@ -7,7 +7,7 @@ import {
 } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 
 export type SkreddersyVarmenFlagEntities = {
-  user: { userId: string }
+  user: { id: string }
 }
 
 export const skreddersyVarmenLayoutFlag = flag<

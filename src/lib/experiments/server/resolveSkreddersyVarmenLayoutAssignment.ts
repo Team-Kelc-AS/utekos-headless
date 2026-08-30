@@ -1,9 +1,9 @@
 import 'server-only'
-import { createHash } from 'node:crypto'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { skreddersyVarmenLayoutFlag } from '@/flags'
 import { hasCookiebotStatisticsConsent } from '@/lib/experiments/cookiebotStatisticsConsent'
+import { createSkreddersyVarmenFlagEntities } from '@/lib/experiments/server/createSkreddersyVarmenFlagEntities'
 import {
   SKREDDERSY_VARMEN_LAYOUT_FLAG_KEY,
   skreddersyVarmenLayoutAssignmentSchema,
@@ -15,12 +15,6 @@ const googleAnalyticsCookieSchema = z
   .min(1)
   .max(256)
   .regex(/^[A-Za-z0-9._-]+$/u)
-
-function anonymizeBucketingIdentifier(value: string) {
-  return createHash('sha256')
-    .update(SKREDDERSY_VARMEN_LAYOUT_FLAG_KEY + ':' + value)
-    .digest('hex')
-}
 
 export async function resolveSkreddersyVarmenLayoutAssignment(): Promise<
   SkreddersyVarmenLayoutAssignment | undefined
@@ -42,13 +36,9 @@ export async function resolveSkreddersyVarmenLayoutAssignment(): Promise<
   if (!googleAnalyticsCookie.success) return undefined
 
   const variant = await skreddersyVarmenLayoutFlag.run({
-    identify: {
-      user: {
-        userId: anonymizeBucketingIdentifier(
-          googleAnalyticsCookie.data
-        )
-      }
-    }
+    identify: createSkreddersyVarmenFlagEntities(
+      googleAnalyticsCookie.data
+    )
   })
 
   return skreddersyVarmenLayoutAssignmentSchema.parse({

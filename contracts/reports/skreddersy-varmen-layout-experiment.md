@@ -5,7 +5,7 @@
 - Flag key: `skreddersy-varmen-layout-v1`
 - Variants: `current` and `legacy`
 - Safe default: `current`
-- Allocation: 50/50 by `user.userId` in Vercel Flags
+- Allocation: 50/50 by `user.id` in Vercel Flags
 - Eligible population: visitors with explicit Cookiebot
   statistics consent and a valid `_ga` identifier
 - Ineligible or failed evaluation: `current`
@@ -124,7 +124,7 @@ permanent page decision.
 
 1. Keep all environments on `current` until the exact `main`
    deployment is `READY` and owns the production domain.
-2. Activate the production split at 50/50 by `user.userId`.
+2. Activate the production split at 50/50 by `user.id`.
 3. Read the flag configuration back and smoke-test the public
    page.
 4. Confirm that both variants begin appearing in the internal
@@ -141,3 +141,7 @@ permanent page decision.
   ten minutes. The release was retried through the project's
   required `pnpm run sync` path; no direct Vercel deployment was
   used.
+- 2026-08-30: Vercel rejected the first split command before any
+  rule changed because `user.userId` is not a supported entity
+  attribute. The implementation was corrected to the documented
+  `user.id` contract before activation.
