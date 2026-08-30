@@ -30,11 +30,7 @@ import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWait
 import { SmartRealTimeActivity } from './SmartRealTimeActivity'
 import { ProductViewItemReporter } from './ProductViewItemReporter'
 import { computeVariantImages } from '@/lib/utils/computeVariantImages'
-import {
-  COMFYROBE_MOBILE_LEAD_IMAGE,
-  COMFYROBE_MOBILE_SECOND_IMAGE,
-  COMFYROBE_MOBILE_THIRD_IMAGE
-} from '../utils/gallery-images/comfyrobeProductGalleryImages'
+import { COMFYROBE_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/comfyrobeProductGalleryImages'
 import { TECHDOWN_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/techdown/productGalleryImages'
 import { MICROFIBER_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/mikrofiber/mikrofiberProductGalleryImages'
 
@@ -103,12 +99,7 @@ export function ProductPageView({
 
   const mobileGalleryImages =
     productData.handle === 'comfyrobe' ?
-      [
-        COMFYROBE_MOBILE_LEAD_IMAGE,
-        COMFYROBE_MOBILE_SECOND_IMAGE,
-        COMFYROBE_MOBILE_THIRD_IMAGE,
-        ...galleryImages.slice(3)
-      ]
+      COMFYROBE_MOBILE_GALLERY_IMAGES
     : productData.handle === 'utekos-techdown' ?
       TECHDOWN_MOBILE_GALLERY_IMAGES
     : productData.handle === 'utekos-mikrofiber' ?

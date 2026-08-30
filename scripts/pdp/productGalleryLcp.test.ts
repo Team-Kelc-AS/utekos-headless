@@ -340,3 +340,102 @@ test('Mikrofiber gallery keeps LCP leads and splits 1-10 / 11-20 by viewport', a
     )
   }
 })
+
+test('Comfyrobe gallery keeps LCP leads and splits desktop / mobile stills by viewport', async () => {
+  const pageSource = await readSource(
+    'src/app/produkter/[handle]/components/ProductPageView.tsx'
+  )
+  const gallerySource = await readSource(
+    'src/app/produkter/[handle]/utils/gallery-images/comfyrobeProductGalleryImages.ts'
+  )
+  const mobileBody = extractExportBody(
+    gallerySource,
+    'COMFYROBE_MOBILE_GALLERY_IMAGES'
+  )
+  const desktopBody = extractExportBody(
+    gallerySource,
+    'COMFYROBE_PRODUCT_GALLERY_IMAGES'
+  )
+
+  assert.match(
+    pageSource,
+    /productData\.handle === 'comfyrobe' \?/,
+    'Comfyrobe must use a dedicated mobile gallery array'
+  )
+
+  assert.match(
+    pageSource,
+    /COMFYROBE_MOBILE_GALLERY_IMAGES/,
+    'Comfyrobe mobile carousel must use COMFYROBE_MOBILE_GALLERY_IMAGES'
+  )
+
+  assert.doesNotMatch(
+    pageSource,
+    /galleryImages\.slice\(3\)/,
+    'Comfyrobe must not leak desktop stills into the mobile carousel'
+  )
+
+  assert.match(
+    mobileBody,
+    /COMFYROBE_MOBILE_LEAD_IMAGE,/,
+    'Comfyrobe mobile gallery must keep the existing first slide for LCP'
+  )
+
+  assert.match(
+    desktopBody,
+    /Comfyrobe-Front-1080x1350\.png/,
+    'Comfyrobe desktop gallery must keep the existing first slide for LCP'
+  )
+
+  const desktopStills = [
+    ['Comfyrobe-001.webp', 'comfyrobeDesktop001'],
+    ['Comfyrobe-002.webp', 'comfyrobeDesktop002'],
+    ['Comfyrobe-0003.webp', 'comfyrobeDesktop0003'],
+    ['Comfyrobe-004.webp', 'comfyrobeDesktop004'],
+    ['Comfyrobe-Sherpa-Colord-BG-1440x2160.webp', 'comfyrobeSherpaColoredBg']
+  ] as const
+
+  for (const [fileName, binding] of desktopStills) {
+    assert.match(
+      gallerySource,
+      new RegExp(`comfyrobe/${fileName.replace('.', '\\.')}`),
+      `Comfyrobe gallery must import ${fileName}`
+    )
+    assert.match(
+      desktopBody,
+      new RegExp(`${binding},`),
+      `Comfyrobe desktop gallery must include ${fileName}`
+    )
+    assert.doesNotMatch(
+      mobileBody,
+      new RegExp(`${binding},`),
+      `Comfyrobe mobile gallery must not include ${fileName}`
+    )
+  }
+
+  const mobileStills = [
+    ['Comfyrobe-Mobile-001.webp', 'comfyrobeMobile001'],
+    ['Comfyrobe-Mobile-002.webp', 'comfyrobeMobile002'],
+    ['Comfyrobe-Mobile-003.webp', 'comfyrobeMobile003'],
+    ['Comfyrobe-Mobile-004.webp', 'comfyrobeMobile004'],
+    ['Comfyrobe-Mobile-005.webp', 'comfyrobeMobile005']
+  ] as const
+
+  for (const [fileName, binding] of mobileStills) {
+    assert.match(
+      gallerySource,
+      new RegExp(`comfyrobe/${fileName.replace('.', '\\.')}`),
+      `Comfyrobe gallery must import ${fileName}`
+    )
+    assert.match(
+      mobileBody,
+      new RegExp(`${binding},`),
+      `Comfyrobe mobile gallery must include ${fileName}`
+    )
+    assert.doesNotMatch(
+      desktopBody,
+      new RegExp(`${binding},`),
+      `Comfyrobe desktop gallery must not include ${fileName}`
+    )
+  }
+})
