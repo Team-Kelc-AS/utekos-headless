@@ -10,6 +10,7 @@ const PRODUCT_PATH =
 const TIMEOUT_MS = 60_000
 const WAIT_MS = 45_000
 const OPENBRIDGE_HOSTS = new Set([
+  'signals.utekos.no',
   'mpc2-prod-25-is5qnl632q-wl.a.run.app',
   '5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws'
 ])
@@ -284,19 +285,59 @@ async function main() {
       .locator('a[aria-label*="Gå til kassen"]')
       .first()
     await checkoutLink.waitFor({ state: 'visible', timeout: 15_000 })
+    const bridgeRuntime = await page.evaluate(() => ({
+      independentBridgePresent: Boolean(
+        globalThis.cbq || globalThis.__utekosSignalsGatewayState
+      ),
+      independentSdkLoaded: performance
+        .getEntriesByType('resource')
+        .some(entry =>
+          entry.name.includes('signals.utekos.no/sdk/')
+        )
+    }))
+    let dataLayerEvents = []
     await checkoutLink.click({ force: true })
 
     await waitUntil(
-      async () =>
-        page.evaluate(
-          () =>
-            (globalThis.dataLayer ?? []).some(
-              entry =>
-                entry &&
-                typeof entry === 'object' &&
-                entry.event === 'begin_checkout'
-            )
-        ),
+      async () => {
+        const events = await page
+          .evaluate(() =>
+            (globalThis.dataLayer ?? [])
+              .filter(
+                entry =>
+                  entry &&
+                  typeof entry === 'object' &&
+                  entry.event === 'begin_checkout'
+              )
+              .map(entry => ({
+                browserId: entry.canonical_event?.browser_id ?? null,
+                canonicalEventId:
+                  entry.canonical_event?.event_id ?? null,
+                clickId: entry.canonical_event?.click_id ?? null,
+                contentIds:
+                  entry.canonical_event?.custom_data?.items?.map(
+                    item => item.variant_id
+                  ) ?? null,
+                currency:
+                  entry.canonical_event?.custom_data?.currency ?? null,
+                eventId: entry.event_id ?? null,
+                grossValue:
+                  entry.canonical_event?.custom_data?.gross_value ??
+                  null,
+                itemName:
+                  entry.canonical_event?.custom_data?.items?.[0]
+                    ?.item_name ?? null,
+                value:
+                  entry.canonical_event?.custom_data?.value ?? null
+              }))
+          )
+          .catch(() => [])
+
+        if (events.length === 0) return false
+
+        dataLayerEvents = events
+        return true
+      },
       WAIT_MS,
       'dataLayer begin_checkout'
     )
@@ -313,40 +354,10 @@ async function main() {
         return facebook.length >= 1 && openBridge.length >= 1
       },
       WAIT_MS,
-      'Meta Pixel + OpenBridge InitiateCheckout'
+      'Meta Pixel + managed Signals Gateway InitiateCheckout'
     )
 
     await page.waitForTimeout(2_000)
-
-    const dataLayerEvents = await page.evaluate(() =>
-      (globalThis.dataLayer ?? [])
-        .filter(
-          entry =>
-            entry &&
-            typeof entry === 'object' &&
-            entry.event === 'begin_checkout'
-        )
-        .map(entry => ({
-          browserId: entry.canonical_event?.browser_id ?? null,
-          canonicalEventId:
-            entry.canonical_event?.event_id ?? null,
-          clickId: entry.canonical_event?.click_id ?? null,
-          contentIds:
-            entry.canonical_event?.custom_data?.items?.map(
-              item => item.variant_id
-            ) ?? null,
-          currency:
-            entry.canonical_event?.custom_data?.currency ?? null,
-          eventId: entry.event_id ?? null,
-          grossValue:
-            entry.canonical_event?.custom_data?.gross_value ??
-            null,
-          itemName:
-            entry.canonical_event?.custom_data?.items?.[0]
-              ?.item_name ?? null,
-          value: entry.canonical_event?.custom_data?.value ?? null
-        }))
-    )
 
     const facebookEvents = facebookRequests
       .map(parseFacebookEvent)
@@ -354,7 +365,11 @@ async function main() {
     const openBridgeEvents = openBridgeRequests
       .map(parseOpenBridgeEvent)
       .filter(event => event?.eventName === 'InitiateCheckout')
-
+    const openBridgeHosts = [
+      ...new Set(
+        openBridgeRequests.map(request => new URL(request.url).hostname)
+      )
+    ].sort()
     let postEventId = null
     for (const post of firstPartyPosts) {
       try {
@@ -387,7 +402,6 @@ async function main() {
     const openBridgeMatch = openBridgeEvents.filter(
       event => event?.eventId === sharedEventId
     )
-
     const checks = {
       dataLayerOrPostPresent:
         dataLayerEvents.length >= 1 || Boolean(postEventId),
@@ -397,8 +411,12 @@ async function main() {
           primary?.eventId === primary?.canonicalEventId),
       facebookPresent: facebookEvents.length >= 1,
       facebookSharedId: facebookMatch.length >= 1,
-      openBridgePresent: openBridgeEvents.length >= 1,
-      openBridgeSharedId: openBridgeMatch.length >= 1,
+      managedSignalsGatewayPresent: openBridgeEvents.length >= 1,
+      managedSignalsGatewaySharedId: openBridgeMatch.length >= 1,
+      noIndependentSignalsGatewayBridge:
+        bridgeRuntime.independentBridgePresent === false &&
+        bridgeRuntime.independentSdkLoaded === false &&
+        !openBridgeHosts.includes('signals.utekos.no'),
       postSharedId:
         Boolean(postEventId) && postEventId === sharedEventId,
       singlePrimaryUuid: Boolean(sharedEventId)
@@ -407,6 +425,7 @@ async function main() {
     report = {
       baseUrl: BASE_URL,
       blockedNavigations,
+      bridgeRuntime,
       browserVersion: majorVersion,
       checks,
       consentSelector,
@@ -423,7 +442,9 @@ async function main() {
         navigation?.status() === 200 &&
         Object.values(checks).every(Boolean),
       openBridgeEvents,
+      openBridgeHosts,
       openBridgeMatch,
+      openBridgeRequestCount: openBridgeRequests.length,
       openBridgeStatuses: openBridgeResponses.map(
         response => response.status
       ),

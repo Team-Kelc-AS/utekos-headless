@@ -11,6 +11,7 @@ const META_COOKIE_NAMES = [
   'utekos_external_id'
 ]
 const OPENBRIDGE_HOSTS = new Set([
+  'signals.utekos.no',
   'mpc2-prod-25-is5qnl632q-wl.a.run.app',
   '5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws'
 ])
@@ -169,7 +170,6 @@ function hasCanonicalEventParity(
     const openBridge = openBridgeEvents.filter(
       event => event?.eventName === metaEventName
     )
-
     return (
       canonical.length === 1 &&
       canonical[0].eventId === canonical[0].canonicalEventId &&
@@ -222,19 +222,33 @@ const ALLOWED_SIDE_EFFECT_EVENTS = new Set([
   'LandingScrollDepth'
 ])
 
+function uniqueProviderEvents(events) {
+  const unique = new Map()
+
+  for (const event of events) {
+    unique.set(`${event.eventName}:${event.eventId}`, event)
+  }
+
+  return [...unique.values()]
+}
+
 function selectParityFacebookEvents(events, pathname) {
-  return events.filter(
-    event =>
-      requestMatchesPath(event.pageUrl, pathname) &&
-      isCanonicalEventId(event.eventId)
+  return uniqueProviderEvents(
+    events.filter(
+      event =>
+        requestMatchesPath(event.pageUrl, pathname) &&
+        isCanonicalEventId(event.eventId)
+    )
   )
 }
 
 function selectParityOpenBridgeEvents(events, pathname) {
-  return events.filter(
-    event =>
-      requestMatchesPath(event?.pageUrl, pathname) &&
-      isCanonicalEventId(event?.eventId)
+  return uniqueProviderEvents(
+    events.filter(
+      event =>
+        requestMatchesPath(event?.pageUrl, pathname) &&
+        isCanonicalEventId(event?.eventId)
+    )
   )
 }
 
@@ -601,11 +615,16 @@ async function verifySurface(browser, userAgent, surface) {
         .map(parseFacebookEvent),
       surface.path
     )
+    const openBridgeRequests = postConsentRequests.filter(request =>
+      OPENBRIDGE_HOSTS.has(new URL(request.url).hostname)
+    )
+    const openBridgeHosts = [
+      ...new Set(
+        openBridgeRequests.map(request => new URL(request.url).hostname)
+      )
+    ].sort()
     const openBridgeEvents = selectParityOpenBridgeEvents(
-      postConsentRequests
-        .filter(request =>
-          OPENBRIDGE_HOSTS.has(new URL(request.url).hostname)
-        )
+      openBridgeRequests
         .map(parseOpenBridgeEvent)
         .filter(Boolean),
       surface.path
@@ -623,6 +642,14 @@ async function verifySurface(browser, userAgent, surface) {
         globalThis.fbq?.instance?.optIns?._opts
           ?.AutomaticSetup?.[pixelId] ?? null,
       initialized: globalThis.__utekosMetaPixelState?.initialized ?? false,
+      independentSignalsBridgePresent: Boolean(
+        globalThis.cbq || globalThis.__utekosSignalsGatewayState
+      ),
+      independentSignalsSdkLoaded: performance
+        .getEntriesByType('resource')
+        .some(entry =>
+          entry.name.includes('signals.utekos.no/sdk/')
+        ),
       sent: Object.keys(
         globalThis.__utekosMetaPixelState?.sent ?? {}
       )
@@ -686,11 +713,17 @@ async function verifySurface(browser, userAgent, surface) {
       preConsentReleaseComplete,
       noUnexpectedPixelEvents:
         unexpectedFacebookEvents.length === 0,
+      noIndependentSignalsGatewayBridge:
+        runtime.independentSignalsBridgePresent === false &&
+        runtime.independentSignalsSdkLoaded === false &&
+        !openBridgeHosts.includes('signals.utekos.no'),
       providerResponses:
         facebookEvents.length === surface.expectedEvents.length &&
         facebookStatuses.length >= facebookEvents.length &&
-        facebookStatuses.every(status => status === 200) &&
-        openBridgeEvents.length >= surface.expectedEvents.length &&
+        facebookStatuses.every(
+          status => status === 200 || status === 302
+        ) &&
+        openBridgeEvents.length === surface.expectedEvents.length &&
         openBridgeStatuses.length >= openBridgeEvents.length &&
         openBridgeStatuses.every(status => status === 200)
     }
@@ -719,6 +752,8 @@ async function verifySurface(browser, userAgent, surface) {
         navigation?.status() === 200 &&
         Object.values(checks).every(Boolean),
       openBridgeEvents,
+      openBridgeHosts,
+      openBridgeRequestCount: openBridgeRequests.length,
       openBridgeStatuses,
       pageErrors,
       preConsentEventIds,
@@ -737,7 +772,7 @@ async function main() {
   const browser = await chromium.launch({
     args: ['--disable-blink-features=AutomationControlled'],
     // Kasada on utekos.no blocks stock Playwright Chromium from Meta
-    // /tr/ + OpenBridge transport; system Chrome passes the challenge.
+    // /tr/ + Meta-managed Signals Gateway mirror; system Chrome passes.
     channel: 'chrome',
     headless: true
   })

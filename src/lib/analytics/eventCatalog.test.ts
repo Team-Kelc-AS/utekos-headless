@@ -352,6 +352,33 @@ test('declares Shopify Customer Events and Data Manager as the two purchase sour
   assert.equal(googlePurchase.dedupeField, 'transaction_id')
 })
 
+test('declares one Meta browser owner and one Meta server owner', () => {
+  const browserAndServerEvents = [
+    'page_view',
+    'view_item',
+    'add_to_cart',
+    'begin_checkout'
+  ] as const
+
+  for (const eventName of browserAndServerEvents) {
+    const meta = eventCatalog[eventName].providers.meta
+
+    assert.equal(meta.transport.browser, 'meta_pixel')
+    assert.equal(meta.transport.server, 'meta_conversions_api')
+    assert.equal(meta.dedupeField, 'event_id')
+    assert.equal(meta.serverOutbox, 'active')
+  }
+
+  const purchaseMeta = eventCatalog.purchase.providers.meta
+
+  assert.equal(purchaseMeta.transport.browser, null)
+  assert.equal(
+    purchaseMeta.transport.server,
+    'meta_conversions_api'
+  )
+  assert.equal(purchaseMeta.dedupeField, 'event_id')
+})
+
 test('records Shopify Admin order payment as the sole Purchase owner with reconciliation recovery', () => {
   const purchase = eventCatalog.purchase
 

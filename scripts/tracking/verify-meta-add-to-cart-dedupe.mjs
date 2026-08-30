@@ -10,6 +10,7 @@ const PRODUCT_PATH =
 const TIMEOUT_MS = 60_000
 const ATC_WAIT_MS = 45_000
 const OPENBRIDGE_HOSTS = new Set([
+  'signals.utekos.no',
   'mpc2-prod-25-is5qnl632q-wl.a.run.app',
   '5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws'
 ])
@@ -273,7 +274,7 @@ async function main() {
         return facebook.length >= 1 && openBridge.length >= 1
       },
       ATC_WAIT_MS,
-      'Meta Pixel + OpenBridge AddToCart'
+      'Meta Pixel + managed Signals Gateway AddToCart'
     )
 
     // Allow late duplicate transports to settle for inspection.
@@ -314,7 +315,11 @@ async function main() {
     const openBridgeEvents = openBridgeRequests
       .map(parseOpenBridgeEvent)
       .filter(event => event?.eventName === 'AddToCart')
-
+    const openBridgeHosts = [
+      ...new Set(
+        openBridgeRequests.map(request => new URL(request.url).hostname)
+      )
+    ].sort()
     const primary = dataLayerEvents[0] ?? null
     const sharedEventId = primary?.eventId ?? null
     const facebookMatch = facebookEvents.filter(
@@ -323,7 +328,16 @@ async function main() {
     const openBridgeMatch = openBridgeEvents.filter(
       event => event?.eventId === sharedEventId
     )
-
+    const bridgeRuntime = await page.evaluate(() => ({
+      independentBridgePresent: Boolean(
+        globalThis.cbq || globalThis.__utekosSignalsGatewayState
+      ),
+      independentSdkLoaded: performance
+        .getEntriesByType('resource')
+        .some(entry =>
+          entry.name.includes('signals.utekos.no/sdk/')
+        )
+    }))
     let postEventId = null
     for (const post of firstPartyPosts) {
       try {
@@ -351,8 +365,12 @@ async function main() {
         primary?.eventId === primary?.canonicalEventId,
       facebookPresent: facebookEvents.length >= 1,
       facebookSharedId: facebookMatch.length >= 1,
-      openBridgePresent: openBridgeEvents.length >= 1,
-      openBridgeSharedId: openBridgeMatch.length >= 1,
+      managedSignalsGatewayPresent: openBridgeEvents.length >= 1,
+      managedSignalsGatewaySharedId: openBridgeMatch.length >= 1,
+      noIndependentSignalsGatewayBridge:
+        bridgeRuntime.independentBridgePresent === false &&
+        bridgeRuntime.independentSdkLoaded === false &&
+        !openBridgeHosts.includes('signals.utekos.no'),
       postSharedId:
         postEventId === null || postEventId === sharedEventId,
       singlePrimaryUuid:
@@ -365,6 +383,7 @@ async function main() {
     report = {
       baseUrl: BASE_URL,
       browserVersion: majorVersion,
+      bridgeRuntime,
       checks,
       consentSelector,
       dataLayerEvents,
@@ -380,7 +399,9 @@ async function main() {
         navigation?.status() === 200 &&
         Object.values(checks).every(Boolean),
       openBridgeEvents,
+      openBridgeHosts,
       openBridgeMatch,
+      openBridgeRequestCount: openBridgeRequests.length,
       openBridgeStatuses: openBridgeResponses.map(
         response => response.status
       ),

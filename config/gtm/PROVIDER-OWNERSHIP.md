@@ -20,24 +20,32 @@ Cookiebot marketing consent is granted. Acceptance releases the original
 canonical occurrence with the same event ID. Explicit rejection discards the
 pending provider event and must never be replayed by a later preference change.
 
-## Required GTM cutover
+## Published GTM cutover
 
-Read-only inspection on 2026-08-23 found two published duplicate owners that
-must be paused as part of the production release:
+Readback on 2026-08-30 verified web container `GTM-5TWMJQFP` version 159,
+`Meta transport cleanup – direct Pixel + canonical CAPI`. The Signals Gateway
+browser bridge and the older GTM Meta Pixel implementations are paused. They
+remain present only as explicit rollback artifacts and must not be re-enabled
+while the app-owned Pixel and canonical CAPI are active.
 
-1. Web container `GTM-5TWMJQFP`, live version 146, tag 153,
-   `Meta – Pixel – Canonical browser parity`. The published HTML advances its
-   data-layer cursor before a consent response and can override the app bridge
-   through shared `__utekosMetaPixelState`.
-2. Server container `GTM-M8GT97CV`, live version 31, tag 42,
-   `Snap ConversionsAPI Tag`. It fires on all server events, has no consent gate,
-   creates one-year Snapchat cookies, lowercases the full URL before extracting
-   `ScCid`, and competes with the canonical Snapchat CAPI adapter.
+Version 159 was published at `2026-08-30T11:19:56Z`. Cloud Run readback shows
+the sustained independent first-party `/events` stream ending at that cutover;
+one later isolated POST is retained as an anomaly for the next complete-window
+readback. Subsequent production smokes observe only Meta's configured gateway
+mirror and reject any new `signals.utekos.no` browser transport.
 
-Pause rather than delete these live tags so rollback remains explicit. Publish
-each container change only in an isolated workspace with no unrelated pending
-changes. The web default workspace had unrelated Cookiebot and Microsoft edits
-at the time of inspection, so do not publish it as part of this cutover.
+The resulting Meta ownership is:
+
+1. Browser: `public/analytics/meta-pixel-canonical-v1.js` only.
+2. Server: canonical `meta_conversions_api` outbox only.
+3. Purchase: canonical server outbox only; no app/browser Purchase source.
+
+Meta's own Pixel configuration may mirror a browser event through the
+self-hosted Signals Gateway. That mirror is provider-managed delivery of the
+same Pixel occurrence, not another application event owner, and must preserve
+the canonical event ID. Production smokes must fail if the independent GTM
+`cbq` bridge or its SDK is observed, or if the Meta-managed mirror loses event
+ID parity.
 
 ## Release proof
 
@@ -50,6 +58,9 @@ After the GTM cutover and application deployment, verify all of the following:
 - rejection sends nothing, and changing preferences later does not release
   events recorded under the rejected decision;
 - one browser event and one canonical server event share the provider dedupe ID;
+- the next complete Meta reporting window contains no unexplained server-event
+  excess after the version 159 cutover; Meta's aggregated reporting is delayed
+  and is not interchangeable with immediate transport HTTP status;
 - new Snapchat CAPI HTTP 200 `VALID` responses are recorded as
   `accepted_unverified`, not dead-lettered;
 - no historical Snapchat dead letter is replayed without a separately approved

@@ -693,7 +693,10 @@ const pageViewProviders = {
   meta: providerMapping({
     support: 'supported',
     eventName: 'PageView',
-    transport: { browser: null, server: 'meta_conversions_api' },
+    transport: {
+      browser: 'meta_pixel',
+      server: 'meta_conversions_api'
+    },
     requiredParameters: [
       ...baseProviderParameters,
       'action_source',
@@ -705,7 +708,7 @@ const pageViewProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'Canonical Meta CAPI PageView outbox is active for newly accepted events. Historical blocked rows remain excluded from blind replay.',
+      'The app-owned Meta Pixel is the sole browser owner and canonical Meta CAPI is the sole server owner. Meta-managed Signals Gateway mirrors Pixel delivery with the same event_id; no independent cbq bridge is active. Historical blocked rows remain excluded from blind replay.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -787,7 +790,10 @@ const viewItemProviders = {
   meta: providerMapping({
     support: 'supported',
     eventName: 'ViewContent',
-    transport: { browser: null, server: 'meta_conversions_api' },
+    transport: {
+      browser: 'meta_pixel',
+      server: 'meta_conversions_api'
+    },
     requiredParameters: [
       ...baseProviderParameters,
       'action_source',
@@ -803,7 +809,7 @@ const viewItemProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'Meta CAPI delivery is active in production.',
+      'The app-owned Meta Pixel and canonical Meta CAPI are active with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -896,7 +902,10 @@ const addToCartProviders = {
   meta: providerMapping({
     support: 'supported',
     eventName: 'AddToCart',
-    transport: { browser: null, server: 'meta_conversions_api' },
+    transport: {
+      browser: 'meta_pixel',
+      server: 'meta_conversions_api'
+    },
     requiredParameters: [
       ...baseProviderParameters,
       'action_source',
@@ -911,7 +920,7 @@ const addToCartProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'Meta CAPI delivery is active for add_to_cart.',
+      'The app-owned Meta Pixel and canonical Meta CAPI are active for add_to_cart with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -1006,7 +1015,10 @@ const beginCheckoutProviders = {
   meta: providerMapping({
     support: 'supported',
     eventName: 'InitiateCheckout',
-    transport: { browser: null, server: 'meta_conversions_api' },
+    transport: {
+      browser: 'meta_pixel',
+      server: 'meta_conversions_api'
+    },
     requiredParameters: [
       ...baseProviderParameters,
       'action_source',
@@ -1021,7 +1033,7 @@ const beginCheckoutProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'Meta CAPI delivery is active for begin_checkout.',
+      'The app-owned Meta Pixel and canonical Meta CAPI are active for begin_checkout with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
