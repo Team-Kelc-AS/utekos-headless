@@ -2,6 +2,7 @@ import { getFeaturedProducts } from '@/api/lib/products/getFeaturedProducts'
 import { handles as featuredProductHandles } from '@/db/data/products/product-info'
 import { SharedProductCarousel } from './SharedProductCarousel'
 import { getProductWithoutSmallSize } from '@/components/products/getProductWithoutSmallSize'
+import { connection } from 'next/server'
 import type { ShopifyProduct } from 'types/product'
 
 type ProductCarouselProps = {
@@ -11,6 +12,7 @@ type ProductCarouselProps = {
 export async function ProductCarousel({
   productCardClassName
 }: ProductCarouselProps) {
+  await connection()
   const products = await getFeaturedProducts()
 
   if (!products || products.length === 0) {

@@ -367,6 +367,7 @@ test('enforces a wall-clock deadline around hanging response bodies', async () =
         error.name === 'TimeoutError'
     )
 
+    await new Promise(resolve => setTimeout(resolve, 0))
     assert.equal(cancelled, true)
     assert.ok(
       performance.now() - startedAt < 400,
@@ -375,6 +376,49 @@ test('enforces a wall-clock deadline around hanging response bodies', async () =
   } finally {
     clearTimeout(releaseTimer)
     releaseCancellation?.()
+  }
+})
+
+test('does not report caller cancellation as a provider failure', async () => {
+  const caller = new AbortController()
+  const capturedErrors: unknown[][] = []
+  const originalConsoleError = console.error
+  console.error = (...args: unknown[]) => {
+    capturedErrors.push(args)
+  }
+  const gateway = createHydrogenStorefrontGateway(
+    {
+      storeDomain: 'example.myshopify.com',
+      publicStorefrontToken: 'public-test-token',
+      storefrontApiVersion: '2026-04'
+    },
+    {
+      fetch: async () =>
+        new Promise<Response>(() => undefined)
+    }
+  )
+
+  try {
+    const pending = gateway.catalogQuery<TestQuery>({
+      query,
+      signal: caller.signal,
+      timeoutMs: 1_000
+    })
+    caller.abort(new Error('render cancelled'))
+
+    await assert.rejects(pending, /render cancelled/)
+    assert.equal(
+      capturedErrors.some(args =>
+        args.some(value =>
+          String(value).includes(
+            'shopify.storefront.request_failed'
+          )
+        )
+      ),
+      false
+    )
+  } finally {
+    console.error = originalConsoleError
   }
 })
 

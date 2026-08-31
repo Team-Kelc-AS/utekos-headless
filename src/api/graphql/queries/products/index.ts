@@ -14,6 +14,25 @@ export const getProductQuery = /* GraphQL */ `
   ${productFragment}
 `
 
+export const getFeaturedProductsQuery = /* GraphQL */ `
+  query getFeaturedProducts(
+    $handle0: String!
+    $handle1: String!
+    $handle2: String!
+  ) {
+    product0: product(handle: $handle0) {
+      ...product
+    }
+    product1: product(handle: $handle1) {
+      ...product
+    }
+    product2: product(handle: $handle2) {
+      ...product
+    }
+  }
+  ${productFragment}
+`
+
 export const getProductsQuery = /* GraphQL */ `
   query getProducts(
     $query: String

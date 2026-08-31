@@ -24,19 +24,65 @@ export function createShopifyRequestDeadline(input: {
 
   const controller = new AbortController()
   const timeoutError = createShopifyTimeoutError()
-  const state = { didTimeout: false, disposed: false }
+  const state: {
+    cancelled: boolean
+    didTimeout: boolean
+    disposed: boolean
+    reason: unknown
+    transportAbortScheduled: boolean
+  } = {
+    cancelled: false,
+    didTimeout: false,
+    disposed: false,
+    reason: undefined,
+    transportAbortScheduled: false
+  }
+
+  let rejectCancellation: (reason: unknown) => void = () => {}
+  const cancellation = new Promise<never>((_, reject) => {
+    rejectCancellation = reject
+  })
+
+  // A deadline can fire between the fetch and body-read races. Keep the
+  // rejection handled while no request phase is awaiting it.
+  void cancellation.catch(() => undefined)
+
+  const scheduleTransportAbort = (reason: unknown) => {
+    if (
+      state.transportAbortScheduled ||
+      controller.signal.aborted
+    ) {
+      return
+    }
+
+    state.transportAbortScheduled = true
+    setTimeout(() => {
+      if (!controller.signal.aborted) {
+        controller.abort(reason)
+      }
+    }, 0)
+  }
+
+  const cancel = (reason: unknown, didTimeout: boolean) => {
+    if (state.cancelled) return
+
+    state.cancelled = true
+    state.didTimeout = didTimeout
+    state.reason = reason
+
+    // Settle the wall-clock deadline before transport cleanup. Abort
+    // listeners run synchronously and can otherwise delay the visible timeout
+    // while a stalled fetch or response body attempts to clean itself up.
+    rejectCancellation(reason)
+    scheduleTransportAbort(reason)
+  }
 
   const timeoutId = setTimeout(() => {
-    state.didTimeout = true
-    if (!controller.signal.aborted) {
-      controller.abort(timeoutError)
-    }
+    cancel(timeoutError, true)
   }, input.timeoutMs)
 
   const onCallerAbort = () => {
-    if (!controller.signal.aborted) {
-      controller.abort(input.callerSignal?.reason)
-    }
+    cancel(input.callerSignal?.reason, false)
   }
 
   if (input.callerSignal) {
@@ -55,35 +101,14 @@ export function createShopifyRequestDeadline(input: {
       return state.didTimeout
     },
     async race<T>(promise: Promise<T>): Promise<T> {
-      if (controller.signal.aborted) {
-        throwAbortReason(controller.signal.reason ?? timeoutError)
+      if (state.cancelled) {
+        throwAbortReason(state.reason ?? timeoutError)
       }
 
-      let onAbort: (() => void) | undefined
-
-      try {
-        return await Promise.race([
-          promise,
-          new Promise<never>((_, reject) => {
-            onAbort = () => {
-              reject(controller.signal.reason ?? timeoutError)
-            }
-            controller.signal.addEventListener('abort', onAbort, {
-              once: true
-            })
-          })
-        ])
-      } finally {
-        if (onAbort) {
-          controller.signal.removeEventListener('abort', onAbort)
-        }
-      }
+      return Promise.race([promise, cancellation])
     },
     abort() {
-      state.didTimeout = true
-      if (!controller.signal.aborted) {
-        controller.abort(timeoutError)
-      }
+      cancel(timeoutError, true)
     },
     dispose() {
       if (state.disposed) {

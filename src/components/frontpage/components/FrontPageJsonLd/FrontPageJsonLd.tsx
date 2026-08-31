@@ -10,12 +10,12 @@ import type {
   WebPage,
   WebSite
 } from 'schema-dts'
-import { cacheLife, cacheTag } from 'next/cache'
 import { getFeaturedProducts } from '@/api/lib/products/getFeaturedProducts'
 import { mainMenu } from '@/db/config/menu.config'
 import { VIDEO_EMBED_URL, VIDEO_THUMBNAIL_URL, VIDEO_URL } from '@/constants'
 import { SITE_URL } from '@/constants'
 import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
+import { connection } from 'next/server'
 
 const ORGANIZATION_ID = `${SITE_URL}/#organization`
 const WEBSITE_ID = `${SITE_URL}/#website`
@@ -83,10 +83,7 @@ const buildFeaturedProductListItem = (product: FeaturedProduct, index: number): 
 }
 
 export async function FrontPageJsonLd() {
-  'use cache'
-  cacheLife('hours')
-  cacheTag('frontpage', 'products')
-
+  await connection()
   const featuredProducts = (await getFeaturedProducts()).slice(0, 4)
   const navigationUrls = mainMenu.map(item => `${SITE_URL}${item.url}`)
   const featuredProductItems = featuredProducts.map(buildFeaturedProductListItem)

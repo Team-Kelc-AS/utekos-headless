@@ -42,6 +42,7 @@ export function PreFooterNavigation({
             <Link
               key={link.href}
               href={link.href}
+              prefetch={false}
               className={cn(
                 'group flex items-center justify-between p-6',
                 'rounded-2xl border backdrop-blur-sm transition-all duration-400',

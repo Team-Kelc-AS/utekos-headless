@@ -143,19 +143,19 @@ import type {
   
   export function classifyShopifyRequestError({
     error,
-    timeoutSignal,
+    didTimeout,
     callerSignal
   }: {
     error: unknown
-    timeoutSignal: AbortSignal
+    didTimeout: boolean
     callerSignal?: AbortSignal
   }): string {
-    if (timeoutSignal.aborted) {
-      return 'timeout'
-    }
-  
-    if (callerSignal?.aborted) {
+    if (callerSignal?.aborted && !didTimeout) {
       return 'aborted'
+    }
+
+    if (didTimeout) {
+      return 'timeout'
     }
   
     if (

@@ -9,7 +9,7 @@ import type { ShopifyProduct } from 'types/product'
 
 export const SHOPIFY_CATALOG_RUNTIME_CACHE_NAMESPACE =
   'shopify-catalog:v2'
-export const SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS = 900
+export const SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS = 3_600
 export const SHOPIFY_PRODUCT_LAST_GOOD_RUNTIME_CACHE_TTL_SECONDS = 86_400
 export const SHOPIFY_PRODUCT_RUNTIME_CACHE_MAX_SAFE_BYTES = 1_900_000
 
@@ -138,6 +138,10 @@ type ProductFetcher = (
   normalizedHandle: string
 ) => Promise<ShopifyProduct | null>
 
+type ProductBatchFetcher = (
+  normalizedHandles: readonly string[]
+) => Promise<ShopifyProduct[]>
+
 export function normalizeShopifyProductHandle(
   handle: string
 ): string {
@@ -201,6 +205,35 @@ function logCacheWarning(
       context: { ...context, runtime: getVercelRuntimeContext() }
     })
   )
+}
+
+function normalizeUniqueShopifyProductHandles(
+  handles: readonly string[]
+): string[] {
+  return Array.from(
+    new Set(
+      handles
+        .map(normalizeShopifyProductHandle)
+        .filter(Boolean)
+    )
+  )
+}
+
+function orderProductsByHandles(
+  handles: readonly string[],
+  products: readonly ShopifyProduct[]
+): ShopifyProduct[] {
+  const productsByHandle = new Map(
+    products.map(product => [
+      normalizeShopifyProductHandle(product.handle),
+      product
+    ])
+  )
+
+  return handles.flatMap(handle => {
+    const product = productsByHandle.get(handle)
+    return product ? [product] : []
+  })
 }
 
 async function deleteRuntimeCacheKey(
@@ -301,11 +334,18 @@ async function storeFetchedProduct(
     getShopifyProductLastGoodRuntimeCacheKey(normalizedHandle)
 
   if (fetchedProduct === null) {
-    await deleteRuntimeCacheKey(
-      runtimeCache,
-      lastGoodCacheKey,
-      'shopify.runtime_cache.last_good_delete_failed'
-    )
+    await Promise.all([
+      deleteRuntimeCacheKey(
+        runtimeCache,
+        cacheKey,
+        'shopify.runtime_cache.missing_product_delete_failed'
+      ),
+      deleteRuntimeCacheKey(
+        runtimeCache,
+        lastGoodCacheKey,
+        'shopify.runtime_cache.last_good_delete_failed'
+      )
+    ])
     return null
   }
 
@@ -513,4 +553,89 @@ export async function getRuntimeCachedShopifyProduct(
     normalizedHandle,
     fetchedProduct
   )
+}
+
+export async function getRuntimeCachedShopifyProductsByHandles(
+  handles: readonly string[],
+  fetchProducts: ProductBatchFetcher,
+  runtimeCache: RuntimeCache = getShopifyCatalogRuntimeCache()
+): Promise<ShopifyProduct[]> {
+  const normalizedHandles =
+    normalizeUniqueShopifyProductHandles(handles)
+
+  if (normalizedHandles.length === 0) {
+    return []
+  }
+
+  const lastGoodSnapshots = await Promise.all(
+    normalizedHandles.map(handle =>
+      getLastGoodSnapshot(
+        runtimeCache,
+        getShopifyProductLastGoodRuntimeCacheKey(handle)
+      )
+    )
+  )
+
+  let fetchedProducts: ShopifyProduct[]
+
+  try {
+    fetchedProducts = await fetchProducts(normalizedHandles)
+  } catch (error) {
+    if (isRetryableShopifyCatalogError(error)) {
+      const lastGoodProducts = lastGoodSnapshots.flatMap(
+        snapshot => snapshot ? [snapshot.product] : []
+      )
+
+      if (lastGoodProducts.length > 0) {
+        logCacheWarning(
+          'shopify.runtime_cache.batch_served_last_good',
+          error,
+          {
+            requestedCount: normalizedHandles.length,
+            servedCount: lastGoodProducts.length
+          }
+        )
+
+        return orderProductsByHandles(
+          normalizedHandles,
+          lastGoodProducts
+        )
+      }
+    }
+
+    throw error
+  }
+
+  const parsedFetchedProducts = z
+    .array(shopifyRuntimeCachedProductSchema)
+    .safeParse(fetchedProducts)
+
+  if (!parsedFetchedProducts.success) {
+    throw new Error(
+      `Shopify product batch failed runtime cache validation: ${parsedFetchedProducts.error.message}`
+    )
+  }
+
+  const orderedProducts = orderProductsByHandles(
+    normalizedHandles,
+    parsedFetchedProducts.data as unknown as ShopifyProduct[]
+  )
+  const productsByHandle = new Map(
+    orderedProducts.map(product => [
+      normalizeShopifyProductHandle(product.handle),
+      product
+    ])
+  )
+
+  await Promise.all(
+    normalizedHandles.map(handle =>
+      storeFetchedProduct(
+        runtimeCache,
+        handle,
+        productsByHandle.get(handle) ?? null
+      )
+    )
+  )
+
+  return orderedProducts
 }

@@ -57,7 +57,7 @@ export function GoogleTagManagerLoader({
         src={
           googleTagManagerScriptUrl.toString()
         }
-        strategy='beforeInteractive'
+        strategy='afterInteractive'
       />
     </>
   )

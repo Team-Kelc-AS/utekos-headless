@@ -547,8 +547,8 @@ async function executeStorefrontRequest<
         const errorType =
           classifyShopifyRequestError({
             error,
-            timeoutSignal:
-              deadline.signal,
+            didTimeout:
+              deadline.didTimeout,
             ...(signal ?
               {
                 callerSignal:
@@ -603,41 +603,43 @@ async function executeStorefrontRequest<
           )
         }
 
-        logShopifyRequestFailure(
-          error,
-          {
-            authMode,
-            buyerIpPresent,
-            operationName:
-              operation.name,
-            operationType:
-              operation.type,
-            requestKind,
-            cacheMode,
-            timeoutMs:
-              resolvedTimeoutMs,
-            durationMs,
-            ...(responseHeadersMs !==
-            undefined ?
-              {
-                responseHeadersMs
-              }
-            : {}),
-            ...(responseBodyMs !==
-            undefined ?
-              {
-                responseBodyMs
-              }
-            : {}),
-            ...(status !== undefined ?
-              { status }
-            : {}),
-            errorType,
-            ...(requestId ?
-              { requestId }
-            : {})
-          }
-        )
+        if (errorType !== 'aborted') {
+          logShopifyRequestFailure(
+            error,
+            {
+              authMode,
+              buyerIpPresent,
+              operationName:
+                operation.name,
+              operationType:
+                operation.type,
+              requestKind,
+              cacheMode,
+              timeoutMs:
+                resolvedTimeoutMs,
+              durationMs,
+              ...(responseHeadersMs !==
+              undefined ?
+                {
+                  responseHeadersMs
+                }
+              : {}),
+              ...(responseBodyMs !==
+              undefined ?
+                {
+                  responseBodyMs
+                }
+              : {}),
+              ...(status !== undefined ?
+                { status }
+              : {}),
+              errorType,
+              ...(requestId ?
+                { requestId }
+              : {})
+            }
+          )
+        }
 
         throw error
       } finally {

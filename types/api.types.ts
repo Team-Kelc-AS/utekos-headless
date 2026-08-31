@@ -121,6 +121,19 @@ export type ShopifyProductOperation = ShopifyOperation<
   StorefrontProductQueryVariables
 >
 
+export type ShopifyFeaturedProductsOperation = ShopifyOperation<
+  {
+    product0: StorefrontProduct | null
+    product1: StorefrontProduct | null
+    product2: StorefrontProduct | null
+  },
+  {
+    handle0: string
+    handle1: string
+    handle2: string
+  }
+>
+
 export type ShopifyProductsOperation = ShopifyOperation<
   { products: StorefrontProductConnection },
   StorefrontProductsQueryVariables

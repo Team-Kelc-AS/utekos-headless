@@ -1,14 +1,11 @@
-import { cacheLife, cacheTag } from 'next/cache'
 import { flattenConnection } from '@shopify/hydrogen-react'
 import { getFeaturedProducts } from '@/api/lib/products/getFeaturedProducts'
 import { NewProductLaunchSection } from '@/components/frontpage/components/TechDownCampaign/NewProductLaunchSection'
 import { getProductWithoutSmallSize } from '@/components/products/getProductWithoutSmallSize'
+import { connection } from 'next/server'
 
 export async function AsyncProductLaunchWrapper() {
-  'use cache'
-  cacheLife('hours')
-  cacheTag('products')
-
+  await connection()
   const featuredProducts = await getFeaturedProducts()
 
   const techDownProduct = featuredProducts?.find(

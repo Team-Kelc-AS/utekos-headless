@@ -25,6 +25,7 @@ moduleWithLoad._load = (request, parent, isMain) => {
 const require = createRequire(import.meta.url)
 const {
   getRuntimeCachedShopifyProduct,
+  getRuntimeCachedShopifyProductsByHandles,
   getShopifyProductLastGoodRuntimeCacheKey,
   getShopifyProductRuntimeCacheKey,
   SHOPIFY_CATALOG_RUNTIME_CACHE_NAMESPACE,
@@ -452,6 +453,33 @@ test('authoritative missing products remove their last-good snapshot', async () 
   assert.equal(await cache.get(lastGoodCacheKey), null)
 })
 
+test('authoritative batch results remove stale active products that disappeared', async () => {
+  const cache = new FakeRuntimeCache()
+  const product = createProduct()
+  const productCacheKey = getShopifyProductRuntimeCacheKey(
+    product.handle
+  )
+
+  await getRuntimeCachedShopifyProduct(
+    product.handle,
+    async () => product,
+    cache
+  )
+  await getRuntimeCachedShopifyProductsByHandles(
+    [product.handle],
+    async () => [],
+    cache
+  )
+
+  assert.equal(await cache.get(productCacheKey), null)
+  assert.equal(
+    await cache.get(
+      getShopifyProductLastGoodRuntimeCacheKey(product.handle)
+    ),
+    null
+  )
+})
+
 test('does not cache products near the two megabyte item limit', async () => {
   const cache = new FakeRuntimeCache()
   const largeProduct = createProduct()
@@ -465,4 +493,89 @@ test('does not cache products near the two megabyte item limit', async () => {
 
   assert.equal(product?.id, largeProduct.id)
   assert.equal(cache.values.size, 0)
+})
+
+test('fetches featured handles in one batch and preserves requested order', async () => {
+  const cache = new FakeRuntimeCache()
+  const requestedBatches: string[][] = []
+
+  const products = await getRuntimeCachedShopifyProductsByHandles(
+    ['utekos-techdown', 'missing-product', 'comfyrobe'],
+    async requestedHandles => {
+      requestedBatches.push([...requestedHandles])
+      return [
+        createProduct('comfyrobe'),
+        createProduct('utekos-techdown')
+      ]
+    },
+    cache
+  )
+
+  assert.deepEqual(requestedBatches, [
+    ['utekos-techdown', 'missing-product', 'comfyrobe']
+  ])
+  assert.deepEqual(
+    products.map(product => product.handle),
+    ['utekos-techdown', 'comfyrobe']
+  )
+})
+
+test('serves ordered batch last-good without retrying each product upstream', async () => {
+  const cache = new FakeRuntimeCache()
+  const handles = ['utekos-techdown', 'comfyrobe'] as const
+
+  await getRuntimeCachedShopifyProductsByHandles(
+    handles,
+    async () => handles.map(createProduct),
+    cache
+  )
+  await cache.expireTag(
+    handles.map(handle => `product-handle:${handle}`)
+  )
+
+  let batchAttempts = 0
+  const products = await getRuntimeCachedShopifyProductsByHandles(
+    handles,
+    async () => {
+      batchAttempts += 1
+      throw new DOMException('Shopify timeout', 'TimeoutError')
+    },
+    cache
+  )
+
+  assert.equal(batchAttempts, 1)
+  assert.deepEqual(
+    products.map(product => product.handle),
+    [...handles]
+  )
+})
+
+test('does not turn a failed empty batch into cached success', async () => {
+  const cache = new FakeRuntimeCache()
+  let batchAttempts = 0
+
+  await assert.rejects(
+    getRuntimeCachedShopifyProductsByHandles(
+      ['utekos-techdown'],
+      async () => {
+        batchAttempts += 1
+        throw new DOMException('Shopify timeout', 'TimeoutError')
+      },
+      cache
+    ),
+    (error: unknown) =>
+      error instanceof DOMException && error.name === 'TimeoutError'
+  )
+
+  const products = await getRuntimeCachedShopifyProductsByHandles(
+    ['utekos-techdown'],
+    async () => {
+      batchAttempts += 1
+      return [createProduct()]
+    },
+    cache
+  )
+
+  assert.equal(batchAttempts, 2)
+  assert.equal(products[0]?.handle, 'utekos-techdown')
 })

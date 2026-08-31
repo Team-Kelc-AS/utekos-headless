@@ -20,7 +20,9 @@ import { FrontPageJsonLd } from '@/components/frontpage/components/FrontPageJson
 const HomePage = () => {
   return (
     <>
-      <FrontPageJsonLd />
+      <Suspense fallback={null}>
+        <FrontPageJsonLd />
+      </Suspense>
       <article>
         <HeroSection />
         <HomePageSectionFlow>
