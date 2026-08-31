@@ -77,20 +77,20 @@ export function NewProductInStoreNoticeView({
 
           <div
             ref={contentRef}
-            className='flex w-full min-w-0 flex-col gap-6 px-2 sm:px-8 md:px-12'
+            className='flex w-full min-w-0 flex-col items-center gap-3 px-2 sm:px-8 md:px-12'
           >
             <H2
               ID='intersport-laksevag-heading'
-              className='pb-0 text-left font-sans text-3xl leading-tight font-extrabold tracking-normal text-foreground md:text-4xl lg:text-5xl'
+              className='pb-0 text-center font-sans text-3xl leading-tight font-extrabold tracking-normal text-foreground md:text-4xl lg:text-5xl'
             >
               Sjekk ut Utekos på Intersport Laksevåg!
             </H2>
 
-            <P className='-mt-2 w-full max-w-4xl text-left font-utekos-text text-xl leading-snug tracking-normal text-foreground sm:text-2xl'>
+            <P className='w-full max-w-4xl text-center font-sans text-xl leading-snug tracking-normal text-foreground sm:text-2xl'>
               Se, prøve og kjenne på{' '}
               <InlineText
                 as='strong'
-                className='font-utekos-text-medium text-foreground'
+                className='font-sans font-semibold text-foreground'
               >
                 Utekos TechDown™
               </InlineText>{' '}
@@ -103,12 +103,12 @@ export function NewProductInStoreNoticeView({
               asChild
               variant='alternate'
               size='lg'
-              className='group hover:bg-primary-hover mt-4 h-12 w-fit max-w-sm min-w-0 rounded-3xl border-none bg-primary px-8 py-6 text-center text-base leading-tight whitespace-normal text-primary-foreground sm:w-auto sm:px-12 sm:text-lg sm:whitespace-nowrap'
+              className='group hover:bg-primary-hover mt-2 h-12 w-fit max-w-sm min-w-0 rounded-3xl border-none bg-primary px-8 py-6 text-center font-sans text-base leading-tight whitespace-normal text-primary-foreground sm:w-auto sm:px-12 sm:text-lg sm:whitespace-nowrap'
             >
               <Link
                 href={mapsUrl as Route}
                 target='_blank'
-                className='flex items-center gap-2 font-utekos-text'
+                className='flex items-center gap-2 font-sans'
               >
                 <InlineText>Vis vei til butikken</InlineText>
                 <InvitingArrow />

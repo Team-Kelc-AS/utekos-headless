@@ -16,7 +16,7 @@ const selectedSizeOptionClassName =
   'border-card-foreground bg-transparent text-card-foreground'
 
 const unselectedSizeOptionClassName =
-  'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/85'
+  'border-transparent bg-dark-teal text-foreground hover:bg-dark-teal/85'
 
 export function ProductVariantSelector({
   options,

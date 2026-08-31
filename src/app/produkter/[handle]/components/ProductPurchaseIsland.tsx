@@ -91,7 +91,7 @@ export function ProductPurchaseIsland({
           : null}
         </div>
         <TrustSignals />
-        <div className='mt-5 flex flex-col gap-4 md:mt-8 [&_form]:py-0 md:[&_form]:py-6'>
+        <div className='mt-5 md:mt-8 [&_form]:py-0'>
           <Activity>
             <AddToCart
               product={product}

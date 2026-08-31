@@ -1,5 +1,6 @@
 import type { MDXComponents } from 'mdx/types'
 import Image, { type ImageProps } from 'next/image'
+import { SizeGuideCallout } from '@/components/size-guide/SizeGuideCallout'
 import { H1 } from '@/components/typography/TypographyH1'
 import { H2 } from '@/components/typography/TypographyH2'
 import { H3 } from '@/components/typography/TypographyH3'
@@ -8,8 +9,10 @@ import { P } from '@/components/typography/TypographyP'
 
 // This file allows us to provide custom React components
 // to be used in MDX files. We can import and use any
-// React component  want, including inline styles,
+// React component we want, including inline styles,
 // components from other libraries, and more.
+// Page-specific MDX (e.g. size guide, teknologi-materialer)
+// still passes a local `components` map for scoped styling.
 
 const components = {
   h1: H1,
@@ -17,6 +20,7 @@ const components = {
   h3: H3,
   h4: H4,
   p: P,
+  SizeGuideCallout,
   img: props => {
     const imageProps = props as ImageProps
     return (

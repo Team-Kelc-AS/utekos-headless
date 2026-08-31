@@ -42,6 +42,37 @@ test('resolves campaign hierarchy names and ids from landing URL parameters', ()
   )
 })
 
+test('maps HubSpot Facebook url_tags to campaign, ad set, and ad ids', () => {
+  assert.deepEqual(
+    resolveCampaignAttribution(
+      'https://utekos.no/skreddersy-varmen?utm_campaign=New+Sales+Campaign&utm_source=facebook&utm_medium=paid&utm_id=120246869534650788&hsa_acc=772268237116474&hsa_cam=120246869534650788&hsa_grp=120246869534640788&hsa_ad=120246935997000788&hsa_src=fb&hsa_net=facebook&hsa_ver=3',
+      createMemoryStorage(),
+      createMemoryStorage()
+    ),
+    {
+      campaign_id: '120246869534650788',
+      campaign_name: 'New Sales Campaign',
+      adset_id: '120246869534640788',
+      ad_id: '120246935997000788'
+    }
+  )
+})
+
+test('prefers explicit campaign hierarchy keys over HubSpot aliases', () => {
+  assert.deepEqual(
+    resolveCampaignAttribution(
+      'https://utekos.no/?campaign_id=explicit-campaign&adset_id=explicit-adset&ad_id=explicit-ad&hsa_cam=hubspot-campaign&hsa_grp=hubspot-adset&hsa_ad=hubspot-ad&utm_id=utm-campaign',
+      createMemoryStorage(),
+      createMemoryStorage()
+    ),
+    {
+      campaign_id: 'explicit-campaign',
+      adset_id: 'explicit-adset',
+      ad_id: 'explicit-ad'
+    }
+  )
+})
+
 test('uses utm_campaign as the campaign name fallback', () => {
   assert.deepEqual(
     resolveCampaignAttribution(

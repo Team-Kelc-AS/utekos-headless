@@ -21,8 +21,26 @@ const ATTRIBUTION_BOUNDARY_PARAMETERS = [
   'utm_medium',
   'utm_campaign',
   'utm_content',
-  'utm_term'
+  'utm_term',
+  'utm_id',
+  'hsa_cam',
+  'hsa_grp',
+  'hsa_ad'
 ] as const
+
+function firstQueryValue(
+  searchParams: URLSearchParams,
+  keys: readonly string[]
+) {
+  for (const key of keys) {
+    const parsed = campaignAttributionValueSchema.safeParse(
+      searchParams.get(key)
+    )
+    if (parsed.success) return parsed.data
+  }
+
+  return undefined
+}
 
 type StorageLike = {
   getItem(key: string): string | null
@@ -94,25 +112,20 @@ function readDurableAttribution(
 }
 
 function readUrlAttribution(searchParams: URLSearchParams) {
-  const explicitCampaignName =
-    campaignAttributionValueSchema.safeParse(
-      searchParams.get('campaign_name')
-    )
-  const utmCampaignName =
-    campaignAttributionValueSchema.safeParse(
-      searchParams.get('utm_campaign')
-    )
-
   return parseCampaignAttribution({
-    campaign_id: searchParams.get('campaign_id'),
-    campaign_name:
-      explicitCampaignName.success ? explicitCampaignName.data
-      : utmCampaignName.success ? utmCampaignName.data
-      : undefined,
-    adset_id: searchParams.get('adset_id'),
-    adset_name: searchParams.get('adset_name'),
-    ad_id: searchParams.get('ad_id'),
-    ad_name: searchParams.get('ad_name')
+    campaign_id: firstQueryValue(searchParams, [
+      'campaign_id',
+      'hsa_cam',
+      'utm_id'
+    ]),
+    campaign_name: firstQueryValue(searchParams, [
+      'campaign_name',
+      'utm_campaign'
+    ]),
+    adset_id: firstQueryValue(searchParams, ['adset_id', 'hsa_grp']),
+    adset_name: firstQueryValue(searchParams, ['adset_name']),
+    ad_id: firstQueryValue(searchParams, ['ad_id', 'hsa_ad']),
+    ad_name: firstQueryValue(searchParams, ['ad_name'])
   })
 }
 

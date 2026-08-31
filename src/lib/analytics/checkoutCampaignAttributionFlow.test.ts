@@ -22,6 +22,48 @@ function createMemoryStorage() {
   }
 }
 
+test('writes HubSpot Facebook ad set id onto Shopify cart attributes', () => {
+  const session = createMemoryStorage()
+  const local = createMemoryStorage()
+  const now = Date.parse('2026-08-21T12:00:00.000Z')
+
+  resolveCampaignAttribution(
+    'https://utekos.no/skreddersy-varmen?utm_campaign=New+Sales+Campaign&hsa_cam=120246869534650788&hsa_grp=120246869534640788&hsa_ad=120246935997000788',
+    session,
+    local,
+    now
+  )
+  const campaign = resolveCampaignAttribution(
+    'https://utekos.no/handlehjelp/storrelsesguide',
+    session,
+    local,
+    now
+  )
+  const snapshot = createCheckoutAttributionSnapshot(
+    {
+      campaign,
+      consent: {
+        analytics: 'granted',
+        marketing: 'granted',
+        preferences: 'granted',
+        source: 'cookiebot',
+        version: '1'
+      },
+      page_url: 'https://utekos.no/handlehjelp/storrelsesguide'
+    },
+    '2026-08-21T12:00:00.000Z'
+  )
+  const attributes = Object.fromEntries(
+    checkoutAttributionSnapshotToShopifyAttributes(snapshot).map(
+      attribute => [attribute.key, attribute.value]
+    )
+  )
+
+  assert.equal(attributes.utekos_adset_id, '120246869534640788')
+  assert.equal(attributes.utekos_campaign_id, '120246869534650788')
+  assert.equal(attributes.utekos_ad_id, '120246935997000788')
+})
+
 test('carries landing campaign hierarchy through navigation into Shopify attributes', () => {
   const session = createMemoryStorage()
   const local = createMemoryStorage()

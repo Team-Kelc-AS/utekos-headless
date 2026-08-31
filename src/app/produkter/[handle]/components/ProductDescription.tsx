@@ -65,7 +65,7 @@ export function ProductDescription({
   return (
     <article
       aria-labelledby='product-description-heading'
-      className='dark:shadow-dark-background/20 mt-12 rounded-[1.25rem] border border-border bg-jungle p-5 font-utekos-text text-card-foreground shadow-lg shadow-background/20 sm:p-6'
+      className='dark:shadow-dark-background/20 mt-5 rounded-[1.25rem] border border-border bg-jungle p-5 font-utekos-text text-card-foreground shadow-lg shadow-background/20 md:mt-8 sm:p-6'
     >
       <div
         id='product-description-content'
@@ -96,14 +96,14 @@ export function ProductDescription({
       </div>
 
       {canExpand ?
-        <details className='group mt-5'>
-          <summary className='flex min-h-11 cursor-pointer list-none items-center font-utekos-text-medium text-base tracking-normal text-card-foreground underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring [&::-webkit-details-marker]:hidden'>
+        <details className='group mt-5 flex flex-col'>
+          <summary className='order-1 flex min-h-11 cursor-pointer list-none items-center font-utekos-text-medium text-base tracking-normal text-card-foreground underline-offset-4 group-open:order-last group-open:mt-6 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring [&::-webkit-details-marker]:hidden'>
             <span className='group-open:hidden'>Les mer</span>
             <span className='hidden group-open:inline'>
               Vis mindre
             </span>
           </summary>
-          <div className='mt-6 max-w-prose space-y-6'>
+          <div className='order-2 max-w-prose space-y-6'>
             {additionalBlocks.map((block, index) => (
               <ProductDescriptionBlockView
                 key={`${block.title ?? 'block'}-${index + collapsedBlockCount}`}
