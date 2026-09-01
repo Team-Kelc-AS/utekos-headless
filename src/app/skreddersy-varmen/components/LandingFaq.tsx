@@ -1,5 +1,4 @@
 // Path: src/app/skreddersy-varmen/components/LandingFaq.tsx
-import { cacheLife, cacheTag } from 'next/cache'
 import { LANDING_FAQ_ENTRIES } from '../data/landingSeoContent'
 import {
   Accordion,
@@ -13,11 +12,7 @@ import {
   landingAccordionTriggerClassName
 } from './landingAccordionStyles'
 
-export async function LandingFaq() {
-  'use cache'
-  cacheLife('weeks')
-  cacheTag('skreddersy-varmen', 'skreddersy-varmen-faq')
-
+export function LandingFaq() {
   return (
     <section
       aria-labelledby='landing-faq-heading'

@@ -266,11 +266,11 @@ test('keeps hidden header controls out of the initial keyboard order', async ({
   expect(focusedHiddenHeader).toBe(false)
 
   await expect(actions).toHaveCSS('visibility', 'visible', {
-    timeout: 5200
+    timeout: 2600
   })
 })
 
-test('keeps every intro phase calm and ordered', async ({
+test('keeps every intro phase ordered within the LCP budget', async ({
   page
 }) => {
   await page.goto(landingUrl, { waitUntil: 'load' })
@@ -391,8 +391,9 @@ test('keeps every intro phase calm and ordered', async ({
   expect(choreography.cloudBackground).toBe('rgb(255, 255, 255)')
   expect(choreography.logo.delay).toBeGreaterThanOrEqual(400)
   expect(choreography.logo.delay).toBeLessThanOrEqual(500)
-  expect(choreography.logo.duration).toBeGreaterThanOrEqual(3400)
-  expect(choreography.logo.endTime).toBeGreaterThanOrEqual(3800)
+  expect(choreography.logo.duration).toBeGreaterThanOrEqual(1000)
+  expect(choreography.logo.duration).toBeLessThanOrEqual(1200)
+  expect(choreography.logo.endTime).toBeLessThanOrEqual(1650)
   expect(hopIndex).toBeGreaterThan(0)
   expect(landingIndex).toBeGreaterThan(hopIndex)
   expect(exitIndex).toBeGreaterThan(landingIndex)
@@ -402,8 +403,9 @@ test('keeps every intro phase calm and ordered', async ({
     choreography.logo.keyframes[landingIndex]?.transform
   )
   expect(exitStart?.easing).toBe('cubic-bezier(0.16, 1, 0.3, 1)')
-  expect(choreography.jungle.delay).toBeGreaterThanOrEqual(1500)
-  expect(choreography.cloud.endTime).toBeGreaterThanOrEqual(2300)
+  expect(choreography.jungle.delay).toBeGreaterThanOrEqual(700)
+  expect(choreography.jungle.delay).toBeLessThanOrEqual(800)
+  expect(choreography.cloud.endTime).toBeLessThanOrEqual(1150)
   expect(choreography.jungle.endTime).toBeCloseTo(
     choreography.hero.endTime,
     0
@@ -419,6 +421,7 @@ test('keeps every intro phase calm and ordered', async ({
   expect(choreography.hero.delay).toBeCloseTo(logoEnd, 0)
   expect(choreography.hero.delay).toBeLessThan(headerEnd)
   expect(choreography.hero.endTime).toBeGreaterThan(headerEnd)
+  expect(choreography.hero.endTime).toBeLessThanOrEqual(2100)
 })
 
 test('brings the hero in immediately after the logo without revealing it early', async ({
@@ -488,7 +491,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(1000)).toEqual({
+  expect(await readPhaseAt(600)).toEqual({
     cloud: 'visible',
     jungle: 'hidden',
     logo: 'visible',
@@ -497,7 +500,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(2100)).toEqual({
+  expect(await readPhaseAt(900)).toEqual({
     cloud: 'visible',
     jungle: 'visible',
     logo: 'visible',
@@ -506,7 +509,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(3700)).toEqual({
+  expect(await readPhaseAt(1300)).toEqual({
     cloud: 'hidden',
     jungle: 'visible',
     logo: 'visible',
@@ -515,7 +518,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(4400)).toEqual({
+  expect(await readPhaseAt(1800)).toEqual({
     cloud: 'hidden',
     jungle: 'visible',
     logo: 'hidden',
@@ -524,7 +527,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'visible'
   })
 
-  expect(await readPhaseAt(5200)).toEqual({
+  expect(await readPhaseAt(2200)).toEqual({
     cloud: 'hidden',
     jungle: 'hidden',
     logo: 'hidden',
@@ -1824,7 +1827,9 @@ test('switches from the locked mobile story to the isolated large story at 768px
 }) => {
   for (const width of [767, 768]) {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto(landingUrl, { waitUntil: 'load' })
+    await page.goto(landingUrl, {
+      waitUntil: 'domcontentloaded'
+    })
 
     const state = await page.evaluate(() => {
       const mobile = document.querySelector<HTMLElement>(
