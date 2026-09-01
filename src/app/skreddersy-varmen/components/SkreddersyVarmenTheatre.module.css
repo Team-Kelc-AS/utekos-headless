@@ -670,14 +670,14 @@
 
     :global(body):has(.pageRoot) {
       --skreddersy-white-hold: 450ms;
-      --skreddersy-logo-duration: 1150ms;
-      --skreddersy-logo-end: 1600ms;
-      --skreddersy-jungle-start: 750ms;
-      --skreddersy-jungle-duration: 1300ms;
-      --skreddersy-cloud-duration: 1100ms;
-      --skreddersy-header-duration: 400ms;
-      --skreddersy-hero-start: 1600ms;
-      --skreddersy-hero-duration: 450ms;
+      --skreddersy-logo-duration: 750ms;
+      --skreddersy-logo-end: 1200ms;
+      --skreddersy-jungle-start: 600ms;
+      --skreddersy-jungle-duration: 850ms;
+      --skreddersy-cloud-duration: 850ms;
+      --skreddersy-header-duration: 200ms;
+      --skreddersy-hero-start: 1200ms;
+      --skreddersy-hero-duration: 250ms;
     }
 
     :global(body):has(.pageRoot)
