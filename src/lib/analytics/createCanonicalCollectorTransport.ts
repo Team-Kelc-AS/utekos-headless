@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/nextjs'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import {
   applyCanonicalCollectionContext,
   type CanonicalCollectionContext
@@ -229,12 +229,10 @@ export function createCanonicalCollectorTransport<
     input.hasCollectionConsent ?? defaultHasCollectionConsent
 
   function reportError(error: unknown) {
-    captureException(error, {
-      tags: {
-        analytics_event: input.analyticsEventName,
-        analytics_transport: 'first_party_collector'
-      }
-    })
+    reportClientCaughtError(
+      error,
+      `${input.analyticsEventName}.first_party_collector`
+    )
   }
 
   return function startCollectorTransport(event: E): () => void {

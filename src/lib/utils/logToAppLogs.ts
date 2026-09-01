@@ -4,7 +4,6 @@ import {
   type AppLogInput
 } from '@/lib/observability/logging/appLogContract'
 import { parseAppLogEntryExtras } from '@/lib/observability/logging/appLogEntryExtrasSchema'
-import { reportAppLogToSentry } from '@/lib/observability/logging/reportAppLogToSentry'
 import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
 import type {
   AppLogEntry,
@@ -13,17 +12,8 @@ import type {
 
 export type LogToAppLogsInput = AppLogInput & AppLogEntryExtras
 
-export type LogToAppLogsDependencies = {
-  report: typeof reportAppLogToSentry
-}
-
-const defaultDependencies: LogToAppLogsDependencies = {
-  report: reportAppLogToSentry
-}
-
 export async function logToAppLogs(
-  input: LogToAppLogsInput,
-  dependencies: LogToAppLogsDependencies = defaultDependencies
+  input: LogToAppLogsInput
 ): Promise<AppLogEntry> {
   const { event, level, data, context, ...extrasInput } = input
   const parsedInput = appLogInputSchema.parse({
@@ -57,17 +47,6 @@ export async function logToAppLogs(
     console.warn(serialized)
   } else {
     console.log(serialized)
-  }
-
-  if (
-    parsedInput.level === 'WARN' ||
-    parsedInput.level === 'ERROR'
-  ) {
-    try {
-      await dependencies.report(logEntry)
-    } catch {
-      console.warn('App log report delivery failed')
-    }
   }
 
   return logEntry

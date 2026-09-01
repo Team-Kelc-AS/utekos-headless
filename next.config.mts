@@ -1,6 +1,5 @@
 import type { NextConfig } from 'next'
 import bundleAnalyzer from '@next/bundle-analyzer'
-import { withSentryConfig } from '@sentry/nextjs'
 import createMDX from '@next/mdx'
 import { withWorkflow } from 'workflow/next'
 
@@ -37,14 +36,6 @@ const withMDX = createMDX({
 
 const STATIC_ASSET_CACHE_CONTROL =
   'public, max-age=31536000, immutable'
-const SENTRY_AUTH_TOKEN =
-  process.env.PERFORMANCE_SENTRY_AUTH_TOKEN ||
-  process.env.SENTRY_AUTH_TOKEN
-const SENTRY_ORG =
-  process.env.PERFORMANCE_SENTRY_ORG || process.env.SENTRY_ORG
-const SENTRY_PROJECT =
-  process.env.PERFORMANCE_SENTRY_PROJECT ||
-  process.env.SENTRY_PROJECT
 const ENABLE_BUNDLE_ANALYZER = process.env.ANALYZE === 'true'
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -310,22 +301,8 @@ const nextConfig: NextConfig = {
   }
 }
 
-const sentryOptions = {
-  ...(SENTRY_ORG ? { org: SENTRY_ORG } : {}),
-  ...(SENTRY_PROJECT ? { project: SENTRY_PROJECT } : {}),
-  ...(SENTRY_AUTH_TOKEN ? { authToken: SENTRY_AUTH_TOKEN } : {}),
-  silent: !process.env.CI,
-  telemetry: false,
-  widenClientFileUpload: true,
-  sourcemaps: { disable: !process.env.CI },
-  webpack: { treeshake: { removeDebugLogging: true } }
-}
-
 const configuredNextConfig = withWorkflow(
   withBundleAnalyzer(withMDX(nextConfig))
 )
 
-export default withSentryConfig(
-  configuredNextConfig,
-  sentryOptions
-)
+export default configuredNextConfig

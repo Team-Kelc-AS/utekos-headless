@@ -4,7 +4,7 @@ import 'server-only'
 import { getProductsQuery } from '@/api/graphql/queries/products'
 import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import { reshapeProducts } from '@/lib/utils/reshapeProducts'
-import { flattenConnection } from '@shopify/hydrogen-react'
+import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import type {
   GetProductsParams,
   GetProductsResponse,

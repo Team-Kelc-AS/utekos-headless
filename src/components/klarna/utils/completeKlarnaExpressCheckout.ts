@@ -4,8 +4,8 @@ import {
   type KlarnaExpressOrderPayload
 } from '@/components/klarna/schemas/klarnaExpressOrderSchema'
 import { KLARNA_EXPRESS_SESSION_KEY } from '@/components/klarna/constants/sessionStorage'
-import { captureException } from '@sentry/nextjs'
 import { captureBrowserCheckoutAttributionSnapshot } from '@/lib/analytics/captureBrowserCheckoutAttributionSnapshot'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 
 type CompleteKlarnaExpressCheckoutInput = {
   authorizationToken: string
@@ -44,12 +44,10 @@ export async function completeKlarnaExpressCheckout({
     attribution =
       await captureBrowserCheckoutAttributionSnapshot()
   } catch (error) {
-    captureException(error, {
-      tags: {
-        analytics_event: 'begin_checkout',
-        analytics_stage: 'klarna_attribution_handoff'
-      }
-    })
+    reportClientCaughtError(
+      error,
+      'begin_checkout.klarna_attribution_handoff'
+    )
   }
 
   const response = await fetch('/api/klarna/orders', {

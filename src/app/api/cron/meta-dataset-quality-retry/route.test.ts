@@ -8,7 +8,6 @@ test('identifies the retry route independently from the primary route', async ()
       headers: { authorization: 'Bearer correct-secret' }
     }),
     {
-      checkIn: async () => 'check-in-id',
       getCronSecret: () => 'correct-secret',
       log: async () => undefined,
       sync: async () => ({

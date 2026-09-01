@@ -21,33 +21,14 @@ function normalizeStoreDomain(value: string | undefined): string {
   return normalized
 }
 
-function firstConfiguredValue(
-  ...values: Array<string | undefined>
-): string | undefined {
-  for (const value of values) {
-    const normalized = value?.trim()
-    if (normalized) return normalized
-  }
-
-  return undefined
-}
-
 export function buildStorefrontGatewayConfigFromEnvironment(
   environment: ShopifyStorefrontEnvironment
 ): HydrogenStorefrontGatewayConfig {
-  const storeDomain = firstConfiguredValue(
-    environment.VERCEL_SHOPIFY_STORE_DOMAIN,
-    environment.STORE_DOMAIN
-  )
-  const storefrontAccessToken = firstConfiguredValue(
-    environment.STOREFRONT_API_ACCESS_TOKEN,
-    environment.VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN
-  )
-  const privateStorefrontAccessToken = firstConfiguredValue(
-    environment.STOREFRONT_API_PRIVATE_ACCESS_TOKEN,
-    environment.PRIVATE_STOREFRONT_API_TOKEN,
-    environment.STOREFRONT_PRIVATE_ACCESS_TOKEN
-  )
+  const storeDomain = environment.STORE_DOMAIN
+  const storefrontAccessToken =
+    environment.NEXT_PUBLIC_STOREFRONT_ACCESS_TOKEN?.trim()
+  const privateStorefrontAccessToken =
+    environment.STOREFRONT_PRIVATE_ACCESS_TOKEN?.trim()
 
   return {
     storeDomain: normalizeStoreDomain(storeDomain),

@@ -43,7 +43,7 @@ export type LogPayload =
           | 'symbol'
           | 'undefined'
         reasonIsError: boolean
-        sentryEventId?: string
+        message?: string
       }
       context: ClientLogContext
     }

@@ -1,8 +1,8 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
 import NextError from 'next/error'
 import { useEffect } from 'react'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 
 export default function GlobalError({
   error
@@ -10,7 +10,7 @@ export default function GlobalError({
   error: Error & { digest?: string | undefined }
 }) {
   useEffect(() => {
-    Sentry.captureException(error)
+    reportClientCaughtError(error, 'global_error_boundary')
   }, [error])
 
   return (

@@ -11,7 +11,7 @@ import {
   type MetaGraphFetch
 } from './fetchMetaGraphJson'
 
-const META_ADS_API_VERSION = 'v25.0'
+const META_ADS_API_VERSION = 'v26.0'
 const META_AD_FIELDS =
   'id,created_time,updated_time,effective_status,creative{id}'
 const META_CREATIVE_FIELDS = [

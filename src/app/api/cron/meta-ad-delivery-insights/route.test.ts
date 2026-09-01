@@ -42,7 +42,6 @@ function dependencies(
   overrides: Partial<MetaAdDeliveryInsightsCronDependencies> = {}
 ): MetaAdDeliveryInsightsCronDependencies {
   return {
-    checkIn: async () => 'check-in-id',
     getCronSecret: () => 'correct-secret',
     sync: async () => syncResult,
     ...overrides
@@ -51,14 +50,9 @@ function dependencies(
 
 test('rejects an unauthorized Meta delivery sync', async () => {
   let syncCount = 0
-  const checkIns: unknown[] = []
   const response = await handleMetaAdDeliveryInsightsCron(
     request('Bearer wrong-secret'),
     dependencies({
-      checkIn: async input => {
-        checkIns.push(input)
-        return 'check-in-id'
-      },
       sync: async () => {
         syncCount += 1
         return syncResult
@@ -69,10 +63,6 @@ test('rejects an unauthorized Meta delivery sync', async () => {
   assert.equal(response.status, 401)
   assert.equal(response.headers.get('cache-control'), 'no-store')
   assert.equal(syncCount, 0)
-  assert.deepEqual(checkIns, [
-    { status: 'in_progress' },
-    { checkInId: 'check-in-id', status: 'error' }
-  ])
 })
 
 test('runs the authorized Meta delivery sync', async () => {
@@ -91,16 +81,11 @@ test('runs the authorized Meta delivery sync', async () => {
 
 test('marks a failed sync as an error without replacing the failure', async () => {
   const expectedError = new Error('Meta returned 500')
-  const checkIns: unknown[] = []
 
   await assert.rejects(
     handleMetaAdDeliveryInsightsCron(
       request('Bearer correct-secret'),
       dependencies({
-        checkIn: async input => {
-          checkIns.push(input)
-          return 'check-in-id'
-        },
         sync: async () => {
           throw expectedError
         }
@@ -108,26 +93,4 @@ test('marks a failed sync as an error without replacing the failure', async () =
     ),
     expectedError
   )
-
-  assert.deepEqual(checkIns, [
-    { status: 'in_progress' },
-    { checkInId: 'check-in-id', status: 'error' }
-  ])
-})
-
-test('does not make Sentry availability part of cron success', async () => {
-  const response = await handleMetaAdDeliveryInsightsCron(
-    request('Bearer correct-secret'),
-    dependencies({
-      checkIn: async () => {
-        throw new Error('Sentry unavailable')
-      }
-    })
-  )
-
-  assert.equal(response.status, 200)
-  assert.deepEqual(await response.json(), {
-    ...syncResult,
-    ok: true
-  })
 })

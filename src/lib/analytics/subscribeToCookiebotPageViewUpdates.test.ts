@@ -26,3 +26,25 @@ test('Cookiebot accept observes consent and flushes the page_view queue', async 
 
   assert.deepEqual(calls, ['observe', 'flush'])
 })
+
+test('Cookiebot page_view flush rejection is handled locally', async () => {
+  const eventTarget = new EventTarget()
+  let observed = false
+
+  const unsubscribe = subscribeToCookiebotPageViewUpdates({
+    eventTarget,
+    flush: async () => {
+      throw new Error('collector unavailable')
+    },
+    observeConsent: () => {
+      observed = true
+    }
+  })
+
+  eventTarget.dispatchEvent(new Event('CookiebotOnAccept'))
+  await Promise.resolve()
+  await Promise.resolve()
+
+  assert.equal(observed, true)
+  unsubscribe()
+})

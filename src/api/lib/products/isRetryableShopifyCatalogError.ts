@@ -1,8 +1,17 @@
 import { ShopifyCatalogGraphQLError } from './ShopifyCatalogGraphQLError'
+import { isShopifyStorefrontHttpError } from '@/api/shopify/request/ShopifyStorefrontHttpError'
 
 export function isRetryableShopifyCatalogError(
   error: unknown
 ): boolean {
+  if (isShopifyStorefrontHttpError(error)) {
+    return (
+      error.status === 408 ||
+      error.status === 429 ||
+      error.status >= 500
+    )
+  }
+
   if (error instanceof ShopifyCatalogGraphQLError) {
     return (
       error.graphqlErrorCode === 'THROTTLED' ||

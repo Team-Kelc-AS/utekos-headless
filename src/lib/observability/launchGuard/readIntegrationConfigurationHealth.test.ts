@@ -25,7 +25,6 @@ test('covers the launch integration matrix without persisting secret values', ()
   )
   assert.ok(
     [
-      'sentry',
       'ga4',
       'google_data_manager',
       'meta',
@@ -61,7 +60,7 @@ test('covers the launch integration matrix without persisting secret values', ()
   )
 })
 
-test('mirrors the actual GA4, Data Manager and private Storefront runtime contracts', () => {
+test('mirrors the actual GA4, Data Manager and Storefront runtime contracts', () => {
   const snapshots = readIntegrationConfigurationHealth({
     environment: {
       NEXT_PUBLIC_GA_MEASUREMENT_ID: 'G-TEST',
@@ -69,7 +68,8 @@ test('mirrors the actual GA4, Data Manager and private Storefront runtime contra
       GCP_PROJECT_ID: 'utekos-production',
       GCP_SERVICE_ACCOUNT_EMAIL: 'service@example.invalid',
       GCP_AUDIENCE: '//iam.googleapis.com/example',
-      VERCEL_SHOPIFY_STORE_DOMAIN: 'shop.example',
+      STORE_DOMAIN: 'shop.example',
+      NEXT_PUBLIC_STOREFRONT_ACCESS_TOKEN: 'public-token',
       STOREFRONT_PRIVATE_ACCESS_TOKEN: 'private-token'
     },
     now,

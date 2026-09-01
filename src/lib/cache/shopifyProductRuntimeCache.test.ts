@@ -3,6 +3,7 @@ import Module from 'node:module'
 import { createRequire } from 'node:module'
 import test from 'node:test'
 import type { RuntimeCache } from '@vercel/functions'
+import { ShopifyStorefrontHttpError } from '@/api/shopify/request/ShopifyStorefrontHttpError'
 import type { ShopifyProduct } from 'types/product'
 
 const moduleWithLoad = Module as typeof Module & {
@@ -520,7 +521,7 @@ test('fetches featured handles in one batch and preserves requested order', asyn
   )
 })
 
-test('serves ordered batch last-good without retrying each product upstream', async () => {
+test('serves ordered batch last-good after a transient Shopify HTTP failure', async () => {
   const cache = new FakeRuntimeCache()
   const handles = ['utekos-techdown', 'comfyrobe'] as const
 
@@ -538,7 +539,7 @@ test('serves ordered batch last-good without retrying each product upstream', as
     handles,
     async () => {
       batchAttempts += 1
-      throw new DOMException('Shopify timeout', 'TimeoutError')
+      throw new ShopifyStorefrontHttpError(502)
     },
     cache
   )

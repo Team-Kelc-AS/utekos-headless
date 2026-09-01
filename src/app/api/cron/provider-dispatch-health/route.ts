@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
-import * as Sentry from '@sentry/nextjs'
 import { start } from 'workflow/api'
+import { reportOperationalError } from '@/lib/observability/reportOperationalError'
 import { hasValidCronAuthorization } from '@/lib/security/hasValidCronAuthorization'
 import {
   skreddersyVarmenLaunchGuardWorkflow
@@ -10,13 +10,12 @@ export const maxDuration = 60
 const PRODUCTION_ORIGIN = 'https://utekos.no'
 
 type Dependencies = {
-  captureMessage: typeof Sentry.captureMessage
   createRunId: () => string
-  flush: typeof Sentry.flush
   getCronSecret: () => string | undefined
   getEnabled: () => string | undefined
   getOrigin: () => string
   now: () => Date
+  reportStartFailure: (error: unknown) => void
   startWorkflow: (input: {
     origin: string
     requestedAt: string
@@ -25,14 +24,18 @@ type Dependencies = {
 }
 
 const defaultDependencies: Dependencies = {
-  captureMessage: Sentry.captureMessage,
   createRunId: randomUUID,
-  flush: Sentry.flush,
   getCronSecret: () => process.env.CRON_SECRET,
   getEnabled: () => process.env.LAUNCH_GUARD_ENABLED,
   getOrigin: () =>
     process.env.LAUNCH_GUARD_ORIGIN ?? PRODUCTION_ORIGIN,
   now: () => new Date(),
+  reportStartFailure: error =>
+    reportOperationalError({
+      error,
+      event: 'launch_guard.workflow_start_failed',
+      context: { route: 'provider-dispatch-health' }
+    }),
   startWorkflow: async input => {
     const run = await start(
       skreddersyVarmenLaunchGuardWorkflow,
@@ -112,13 +115,8 @@ export async function handleProviderDispatchHealthCron(
       },
       { status: 202, headers: noStoreHeaders }
     )
-  } catch {
-    dependencies.captureMessage('Launch guard workflow start failed', {
-      fingerprint: ['launch-guard', 'workflow-start-failed'],
-      level: 'error',
-      tags: { route: 'provider-dispatch-health' }
-    })
-    await dependencies.flush(1_500)
+  } catch (error) {
+    dependencies.reportStartFailure(error)
     return Response.json(
       { ok: false, error: 'workflow_start_failed' },
       { status: 503, headers: noStoreHeaders }

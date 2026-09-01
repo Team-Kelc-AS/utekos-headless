@@ -3,7 +3,7 @@ import test from 'node:test'
 import { dispatchIntegrationHealthAlerts } from './dispatchIntegrationHealthAlerts'
 
 const alert = {
-  channels: ['sentry', 'codex', 'twilio_sms'] as const,
+  channels: ['codex', 'twilio_sms'] as const,
   currentOpenedAt: '2026-08-29T12:00:00.000Z',
   fingerprint: 'probe:api_log_contract:abc',
   incidentId: '11111111-1111-4111-8111-111111111111',
@@ -14,16 +14,14 @@ const alert = {
   surface: 'api_log_contract'
 }
 
-test('delivers Sentry, leaves Codex pending, and suppresses SMS before the controlled receipt', async () => {
+test('leaves Codex pending and suppresses SMS before the controlled receipt', async () => {
   const updates: Array<Record<string, unknown>> = []
   let sequence = 0
   const summary = await dispatchIntegrationHealthAlerts([alert], {
-    captureMessage: () => 'sentry-event',
     environment: {},
     fetch: async () => {
       throw new Error('must not send SMS')
     },
-    flush: async () => true,
     now: () => new Date('2026-08-29T12:05:00.000Z'),
     sendSms: async () => {
       throw new Error('must not send SMS')
@@ -40,13 +38,12 @@ test('delivers Sentry, leaves Codex pending, and suppresses SMS before the contr
   assert.deepEqual(summary, {
     codexPending: 1,
     failed: 0,
-    sentrySent: 1,
     suppressed: 1,
     twilioSent: 0
   })
   assert.deepEqual(
     updates.map(update => update.status),
-    ['sent', 'suppressed']
+    ['suppressed']
   )
 })
 
@@ -55,10 +52,8 @@ test('sends SMS only after a delivered test receipt', async () => {
   const summary = await dispatchIntegrationHealthAlerts(
     [{ ...alert, channels: ['twilio_sms'] }],
     {
-      captureMessage: () => 'unused',
       environment: { LAUNCH_GUARD_SMS_ENABLED: 'true' },
       fetch: async () => Response.json({}),
-      flush: async () => true,
       now: () => new Date('2026-08-29T12:05:00.000Z'),
       sendSms: async () => ({
         status: 'sent',

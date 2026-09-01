@@ -1,7 +1,7 @@
 'use client'
 
-import { captureException } from '@sentry/nextjs'
 import { useEffect, useTransition } from 'react'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { ProductPageErrorState } from './components/ProductPageErrorState'
 
 export default function ProductPageError({
@@ -14,9 +14,7 @@ export default function ProductPageError({
   const [isRetrying, startRetry] = useTransition()
 
   useEffect(() => {
-    captureException(error, {
-      tags: { surface: 'product-page-error-boundary' }
-    })
+    reportClientCaughtError(error, 'product_page_error_boundary')
   }, [error])
 
   return (

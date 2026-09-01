@@ -1,0 +1,2022 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2026-09-01 02:58:44",
+    "containerVersion": {
+        "path": "accounts/6295468138/containers/220236256/versions/159",
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "containerVersionId": "159",
+        "name": "Meta transport cleanup – direct Pixel + canonical CAPI",
+        "container": {
+            "path": "accounts/6295468138/containers/220236256",
+            "accountId": "6295468138",
+            "containerId": "220236256",
+            "name": "Utekos Marketing | Google Tag Manager",
+            "publicId": "GTM-5TWMJQFP",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1766276010481",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6295468138/containers/220236256/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-5TWMJQFP"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "107",
+                "name": "Conversion Linker",
+                "type": "gclidw",
+                "notes": "Initialize only with marketing consent; re-evaluate on cookie_consent_update. URL passthrough stays inactive while consent is pending or denied.",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableCrossDomain",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableUrlPassthrough",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "acceptIncoming",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "linkerDomains",
+                        "value": "utekos.no, kasse.utekos.no, erling-7921.myshopify.com"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableCookieOverrides",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "formDecoration",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "urlPosition",
+                        "value": "query"
+                    }
+                ],
+                "fingerprint": "1787523687300",
+                "firingTriggerId": [
+                    "2147479553",
+                    "128"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "109",
+                "name": "Canonical Google tag - GT-MKRLF5WK",
+                "type": "googtag",
+                "notes": "Base config only; a consented canonical page_view initializes Google immediately before event delivery. send_page_view remains false.",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "tagId",
+                        "value": "GT-MKRLF5WK"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "configSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "server_container_url"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "https://utekos.no/__sgtm"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "send_page_view"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "false"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1787524057290",
+                "firingTriggerId": [
+                    "145"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "118",
+                "name": "GA4 – Canonical ecommerce events",
+                "type": "gaawe",
+                "notes": "Canonical ecommerce adapter only. page_view, search and generate_lead are handled by non-ecommerce tags.",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "getEcommerceDataFrom",
+                        "value": "dataLayer"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "event_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - event_id}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "event_time"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - event_time}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_view_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_view_id}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_location"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_location}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_referrer"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_referrer}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_title"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_title}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "event_source"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - source}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "transaction_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - transaction_id}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "{{Event}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "{{GA4 Measurement ID}}"
+                    }
+                ],
+                "fingerprint": "1787523481546",
+                "firingTriggerId": [
+                    "146"
+                ],
+                "blockingTriggerId": [
+                    "144"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "126",
+                "name": "Cookiebot CMP",
+                "type": "cvt_57SF4",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "adsDataRedaction",
+                        "value": "dynamic"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "addGeoRegion",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "serial",
+                        "value": "f2145160-1ac5-4859-8385-36dc6327495f"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "iabFramework",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "cdnRegion",
+                        "value": "eu"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "advertiserConsentModeEnabled",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "language",
+                        "value": "auto"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "urlPassthrough",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "consentModeEnabled",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "waitForUpdate",
+                        "value": "500"
+                    }
+                ],
+                "fingerprint": "1787221543440",
+                "firingTriggerId": [
+                    "2147479572"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_NEEDED"
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "127",
+                "name": "Microsoft Clarity - Official",
+                "type": "cvt_MQDKZ",
+                "notes": "Load at most once per page. All Pages handles stored consent; cookie_consent_update handles first-page grant.",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "projectId",
+                        "value": "wupwleuv2e"
+                    }
+                ],
+                "fingerprint": "1784297654339",
+                "firingTriggerId": [
+                    "2147479553",
+                    "128"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "130",
+                "name": "Base Tag(UET 97247724)",
+                "type": "baut",
+                "notes": "Loads once only after marketing consent and a canonical ID Sync VID are ready. Initial browser pageLoad is then associated with the consented session.",
+                "parameter": [
+                    {
+                        "type": "LIST",
+                        "key": "customConfigTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customConfigName",
+                                        "value": "gtmTagSource"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customConfigValue",
+                                        "value": "1"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "tagId",
+                        "value": "97247724"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "uetqName",
+                        "value": "uetq"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventType",
+                        "value": "PAGE_LOAD"
+                    }
+                ],
+                "fingerprint": "1786380386471",
+                "firingTriggerId": [
+                    "158"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_user_data"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_personalization"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "131",
+                "name": "Microsoft UET – Canonical business events",
+                "type": "baut",
+                "notes": "Official native Microsoft UET business adapter. CanonicalEvent action, event_id deduplication, value/currency, and dynamic remarketing parameters.",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "uetqName",
+                        "value": "uetq"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "customEventAction",
+                        "value": "{{Event}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventType",
+                        "value": "userDefined"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "customParamTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamName",
+                                        "value": "event_category"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamValue",
+                                        "value": "{{Event}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamName",
+                                        "value": "event_label"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamValue",
+                                        "value": "{{DLV - event_id}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamName",
+                                        "value": "event_value"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamValue",
+                                        "value": "{{DLV - commerce.value}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamName",
+                                        "value": "revenue_value"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamValue",
+                                        "value": "{{DLV - commerce.value}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamName",
+                                        "value": "currency"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamValue",
+                                        "value": "{{DLV - commerce.currency}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamName",
+                                        "value": "event_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamValue",
+                                        "value": "{{DLV - event_id}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamName",
+                                        "value": "ecomm_pagetype"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamValue",
+                                        "value": "{{Microsoft UET - page type}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamName",
+                                        "value": "ecomm_totalvalue"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamValue",
+                                        "value": "{{DLV - commerce.value}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamName",
+                                        "value": "ecomm_prodid"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "customParamValue",
+                                        "value": "{{Microsoft UET - product IDs}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1786383695523",
+                "firingTriggerId": [
+                    "122"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_user_data"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_personalization"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "148",
+                "name": "GA4 – Canonical page_view",
+                "type": "gaawe",
+                "notes": "Canonical page_view adapter. The application releases the retained event after consent with the original event_id; one exact canonical trigger owns GA4 delivery.",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "getEcommerceDataFrom",
+                        "value": "dataLayer"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "event_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - event_id}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "event_time"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - event_time}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_view_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_view_id}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_location"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_location}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_referrer"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_referrer}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_title"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_title}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "event_source"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - source}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "page_view"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "{{GA4 Measurement ID}}"
+                    }
+                ],
+                "fingerprint": "1787554396543",
+                "firingTriggerId": [
+                    "145"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "149",
+                "name": "GA4 – Canonical non-commerce events",
+                "type": "gaawe",
+                "notes": "Canonical search and generate_lead adapter. Ecommerce payload disabled.",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "event_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - event_id}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "event_time"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - event_time}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_view_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_view_id}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_location"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_location}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_referrer"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_referrer}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_title"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - page_title}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "event_source"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - source}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "{{Event}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "{{GA4 Measurement ID}}"
+                    }
+                ],
+                "fingerprint": "1787523486917",
+                "firingTriggerId": [
+                    "147"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "153",
+                "name": "Meta – Pixel – Canonical browser parity",
+                "type": "html",
+                "priority": {
+                    "type": "INTEGER",
+                    "value": "1"
+                },
+                "notes": "LandingScrollDepth via trackSingleCustom; CUSTOM_EVENTS classification. Exact eventID = canonical event_id. GTM/app source SHA-256 01d26431d6afefd044d8e2a7e83784f4bf0ef6476bb20ebe2200e03723462f0d. App-owned same-origin fallback polls every 200 ms; both owners share __utekosMetaPixelState and sent keys. Tag itself fail-closes on Cookiebot marketing consent.",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  (function (w, d) {\n    \"use strict\";\n\n    w.dataLayer = w.dataLayer || [];\n\n    var PIXEL_ID = \"1092362672918571\";\n    var EXTERNAL_ID_COOKIE = \"utekos_external_id\";\n    var EVENT_NAMES = {\n      page_view: \"PageView\",\n      view_item_list: \"ViewItemList\",\n      view_item: \"ViewContent\",\n      select_item: \"SelectItem\",\n      add_to_wishlist: \"AddToWishlist\",\n      add_to_cart: \"AddToCart\",\n      remove_from_cart: \"RemoveFromCart\",\n      view_cart: \"ViewCart\",\n      begin_checkout: \"InitiateCheckout\",\n      search: \"Search\",\n      generate_lead: \"Lead\",\n      scroll_depth: \"LandingScrollDepth\",\n      view_category: \"ViewCategory\",\n      hero_interact: \"HeroInteract\",\n      interact_with_accordion: \"InteractWithAccordion\",\n      open_quick_view: \"OpenQuickView\"\n    };\n    var CUSTOM_EVENTS = {\n      view_item_list: true,\n      select_item: true,\n      remove_from_cart: true,\n      view_cart: true,\n      scroll_depth: true,\n      view_category: true,\n      hero_interact: true,\n      interact_with_accordion: true,\n      open_quick_view: true\n    };\n    var state = w.__utekosMetaPixelState || {\n      initialized: false,\n      sent: {},\n      timer: null,\n      listening: false,\n      lastDataLayerIndex: 0,\n      poller: null\n    };\n\n    if (typeof state.lastDataLayerIndex !== \"number\") {\n      state.lastDataLayerIndex = 0;\n    }\n    if (typeof state.poller === \"undefined\") state.poller = null;\n\n    w.__utekosMetaPixelState = state;\n\n    function readCookie(name) {\n      var prefix = name + \"=\";\n      var parts = d.cookie ? d.cookie.split(\";\") : [];\n      var index;\n\n      for (index = 0; index < parts.length; index += 1) {\n        var candidate = parts[index].replace(/^\\s+|\\s+$/g, \"\");\n\n        if (candidate.indexOf(prefix) !== 0) continue;\n\n        try {\n          return decodeURIComponent(candidate.slice(prefix.length));\n        } catch (_error) {\n          return null;\n        }\n      }\n\n      return null;\n    }\n\n    function hasMarketingConsent() {\n      return Boolean(\n        w.Cookiebot &&\n        w.Cookiebot.consent &&\n        w.Cookiebot.consent.marketing === true\n      );\n    }\n\n    function ensureExternalId() {\n      var existing = readCookie(EXTERNAL_ID_COOKIE);\n\n      if (existing) return existing;\n      if (!w.crypto || typeof w.crypto.randomUUID !== \"function\") return null;\n\n      var externalId = \"anon_\" + w.crypto.randomUUID();\n      d.cookie =\n        EXTERNAL_ID_COOKIE +\n        \"=\" +\n        encodeURIComponent(externalId) +\n        \"; Path=/; Max-Age=31536000; SameSite=Lax; Secure\";\n\n      return externalId;\n    }\n\n    function installPixel(externalId) {\n      if (!w.fbq) {\n        var queue = function () {\n          if (queue.callMethod) {\n            queue.callMethod.apply(queue, arguments);\n          } else {\n            queue.queue.push(arguments);\n          }\n        };\n        var firstScript;\n        var script;\n\n        w.fbq = queue;\n        if (!w._fbq) w._fbq = queue;\n        queue.push = queue;\n        queue.loaded = true;\n        queue.version = \"2.0\";\n        queue.queue = [];\n\n        script = d.createElement(\"script\");\n        script.async = true;\n        script.src = \"https://connect.facebook.net/en_US/fbevents.js\";\n        firstScript = d.getElementsByTagName(\"script\")[0];\n\n        if (firstScript && firstScript.parentNode) {\n          firstScript.parentNode.insertBefore(script, firstScript);\n        } else if (d.head) {\n          d.head.appendChild(script);\n        }\n      }\n\n      w.fbq(\"set\", \"autoConfig\", false, PIXEL_ID);\n      w.fbq(\"init\", PIXEL_ID, externalId ? { external_id: externalId } : {});\n      state.initialized = true;\n    }\n\n    function contentId(variantId) {\n      var match = /^gid:\\/\\/shopify\\/ProductVariant\\/(\\d+)$/.exec(\n        variantId || \"\"\n      );\n\n      return match ? match[1] : null;\n    }\n\n    function finiteNumber(value) {\n      return typeof value === \"number\" && isFinite(value);\n    }\n\n    function isoCurrency(value) {\n      if (typeof value !== \"string\") return null;\n\n      var currency = value.replace(/^\\s+|\\s+$/g, \"\").toUpperCase();\n\n      return /^[A-Z]{3}$/.test(currency) ? currency : null;\n    }\n\n    function commerceData(customData) {\n      var items = customData && customData.items;\n      var contentIds = [];\n      var contents = [];\n      var index;\n      var currency;\n      var value;\n      var numItems = 0;\n\n      if (!items || !items.length) return null;\n\n      for (index = 0; index < items.length; index += 1) {\n        var item = items[index];\n        var id = contentId(item.variant_id);\n        var content;\n\n        if (!id) continue;\n\n        content = { id: id, quantity: item.quantity };\n\n        if (finiteNumber(item.gross_unit_price)) {\n          content.item_price = item.gross_unit_price;\n        }\n\n        contentIds.push(id);\n        contents.push(content);\n        if (finiteNumber(item.quantity)) numItems += item.quantity;\n      }\n\n      if (!contentIds.length) return null;\n\n      var primary = items[0];\n      var result = {\n        content_ids: contentIds,\n        contents: contents,\n        content_type: \"product\",\n        num_items: numItems\n      };\n\n      currency = isoCurrency(customData.currency);\n      value =\n        finiteNumber(customData.gross_value) ? customData.gross_value : null;\n\n      // Meta warns on invalid/empty currency; never send value without ISO currency.\n      if (currency && value !== null) {\n        result.currency = currency;\n        result.value = value;\n      }\n\n      if (primary.item_name) result.content_name = primary.item_name;\n      if (primary.item_category || primary.product_type) {\n        result.content_category = primary.item_category || primary.product_type;\n      }\n\n      var customFields = [\n        \"accordion_id\",\n        \"accordion_title\",\n        \"cart_id\",\n        \"gross_value\",\n        \"impression_sequence\",\n        \"interaction_sequence\",\n        \"interaction_type\",\n        \"item_list_id\",\n        \"item_list_name\",\n        \"open_sequence\",\n        \"source_surface\",\n        \"tax_value\",\n        \"total_item_count\",\n        \"view_sequence\"\n      ];\n\n      for (index = 0; index < customFields.length; index += 1) {\n        var field = customFields[index];\n        var fieldValue = customData[field];\n\n        if (\n          (typeof fieldValue === \"string\" && fieldValue) ||\n          finiteNumber(fieldValue)\n        ) {\n          result[field] = fieldValue;\n        }\n      }\n\n      if (finiteNumber(customData.value)) {\n        result.net_value = customData.value;\n      }\n\n      return result;\n    }\n\n    function eventData(eventName, canonicalEvent) {\n      var customData = canonicalEvent.custom_data || {};\n\n      if (\n        eventName === \"view_item\" ||\n        eventName === \"view_item_list\" ||\n        eventName === \"select_item\" ||\n        eventName === \"add_to_wishlist\" ||\n        eventName === \"add_to_cart\" ||\n        eventName === \"remove_from_cart\" ||\n        eventName === \"view_cart\" ||\n        eventName === \"begin_checkout\" ||\n        eventName === \"interact_with_accordion\" ||\n        eventName === \"open_quick_view\"\n      ) {\n        return commerceData(customData);\n      }\n\n      if (eventName === \"search\") {\n        return customData.search_term ?\n            { search_string: customData.search_term }\n          : {};\n      }\n\n      if (eventName === \"scroll_depth\") {\n        var scroll = {};\n\n        if (finiteNumber(customData.threshold)) {\n          scroll.threshold = customData.threshold;\n        }\n        if (finiteNumber(customData.percent_scrolled)) {\n          scroll.percent_scrolled = customData.percent_scrolled;\n        }\n        if (finiteNumber(customData.document_height)) {\n          scroll.document_height = customData.document_height;\n        }\n\n        return scroll;\n      }\n\n      if (eventName === \"view_category\") {\n        var category = {};\n\n        if (customData.category_id) {\n          category.content_category = customData.category_id;\n          category.category_id = customData.category_id;\n        }\n        if (customData.category_name) {\n          category.content_name = customData.category_name;\n          category.category_name = customData.category_name;\n        }\n        if (finiteNumber(customData.view_sequence)) {\n          category.view_sequence = customData.view_sequence;\n        }\n\n        return category;\n      }\n\n      if (eventName === \"hero_interact\") {\n        var hero = {};\n\n        if (customData.cta_id) {\n          hero.content_name = customData.cta_id;\n          hero.cta_id = customData.cta_id;\n        }\n        if (customData.destination_path) {\n          hero.content_category = customData.destination_path;\n          hero.destination_path = customData.destination_path;\n        }\n        if (finiteNumber(customData.click_sequence)) {\n          hero.click_sequence = customData.click_sequence;\n        }\n\n        return hero;\n      }\n\n      if (eventName === \"generate_lead\") {\n        var lead = {};\n        var leadCurrency = isoCurrency(customData.currency);\n        var leadValue =\n          finiteNumber(customData.value) ? customData.value : null;\n\n        if (leadCurrency && leadValue !== null) {\n          lead.currency = leadCurrency;\n          lead.value = leadValue;\n        }\n\n        return lead;\n      }\n\n      return {};\n    }\n\n    function isCurrentPage(canonicalEvent) {\n      if (!canonicalEvent.page_url) return true;\n\n      try {\n        var eventUrl = new w.URL(canonicalEvent.page_url, w.location.href);\n\n        return (\n          eventUrl.origin === w.location.origin &&\n          eventUrl.pathname === w.location.pathname\n        );\n      } catch (_error) {\n        return false;\n      }\n    }\n\n    function dispatch(entry) {\n      var canonicalEvent = entry.canonical_event;\n      var metaEventName = EVENT_NAMES[entry.event];\n      var eventKey;\n      var data;\n\n      if (!canonicalEvent || !metaEventName) return;\n      if (entry.event_id !== canonicalEvent.event_id) return;\n      if (!isCurrentPage(canonicalEvent)) return;\n\n      eventKey = metaEventName + \":\" + entry.event_id;\n      if (state.sent[eventKey]) return;\n\n      data = eventData(entry.event, canonicalEvent);\n      if (data === null) return;\n\n      var command =\n        CUSTOM_EVENTS[entry.event] ? \"trackSingleCustom\" : \"trackSingle\";\n\n      w.fbq(command, PIXEL_ID, metaEventName, data, {\n        eventID: entry.event_id\n      });\n      state.sent[eventKey] = true;\n    }\n\n    function scanDataLayer() {\n      var dataLayer = w.dataLayer || [];\n      var startIndex = state.lastDataLayerIndex;\n      var index;\n\n      if (startIndex > dataLayer.length) startIndex = 0;\n\n      for (index = startIndex; index < dataLayer.length; index += 1) {\n        var entry = dataLayer[index];\n\n        if (!entry || typeof entry !== \"object\") continue;\n        if (typeof entry.event_id !== \"string\" || !entry.event_id) continue;\n        dispatch(entry);\n      }\n\n      state.lastDataLayerIndex = dataLayer.length;\n    }\n\n    function scheduleConsentRetry() {\n      if (state.listening) return;\n      state.listening = true;\n\n      var retry = function () {\n        if (!hasMarketingConsent()) return;\n        run(0);\n      };\n\n      w.addEventListener(\"CookiebotOnAccept\", retry);\n      w.addEventListener(\"CookiebotOnConsentReady\", retry);\n    }\n\n    function run(attempt) {\n      state.timer = null;\n      if (!hasMarketingConsent()) {\n        scheduleConsentRetry();\n        return;\n      }\n\n      var externalId = readCookie(EXTERNAL_ID_COOKIE) || ensureExternalId();\n      var needsFbc = /(?:^|[?&])fbclid=/.test(w.location.search || \"\");\n      var fbc = readCookie(\"_fbc\");\n\n      // Install as soon as marketing is granted. Do not wait for _fbp —\n      // fbevents.js creates it. Waiting blocked SPA clicks / returning visits.\n      if (!state.initialized) installPixel(externalId);\n\n      if (attempt < 30 && needsFbc && !fbc) {\n        state.timer = w.setTimeout(function () {\n          run(attempt + 1);\n        }, 100);\n        // Still scan now; fbc retry re-scans when the cookie appears.\n      }\n\n      scanDataLayer();\n    }\n\n    function startPolling() {\n      if (state.poller !== null) return;\n\n      state.poller = w.setInterval(function () {\n        if (hasMarketingConsent()) {\n          run(0);\n        } else {\n          // Never replay events that occurred before marketing consent.\n          state.lastDataLayerIndex = (w.dataLayer || []).length;\n        }\n      }, 200);\n    }\n\n    if (state.timer === null) run(0);\n    startPolling();\n  })(window, document);\n</script>\n"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1787511576574",
+                "firingTriggerId": [
+                    "2147479553",
+                    "152",
+                    "128"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "paused": true,
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_NEEDED"
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "160",
+                "name": "Microsoft UET – Client ID Sync",
+                "type": "img",
+                "notes": "Official client-side ID Sync. Red3 uses primary Microsoft customer 254835341; VID equals the canonical CAPI anonymousId. Marketing-consent gated; once per browser page load.",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useCacheBuster",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "url",
+                        "value": "https://c.bing.com/c.gif?Red3=BACID_254835341&VID={{DLV - microsoft_vid}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "cacheBusterQueryParam",
+                        "value": "gtmcb"
+                    }
+                ],
+                "fingerprint": "1787502152831",
+                "firingTriggerId": [
+                    "158"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_NEEDED"
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "170",
+                "name": "Meta Pixel ID 868548201601695",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!-- Facebook Pixel Code -->\n<script nonce=\"VEqgCwY1\">\n!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?\nn.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;\nn.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;\nt.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,\ndocument,'script','https://connect.facebook.net/en_US/fbevents.js');\n\nfbq('init', '868548201601695');\nfbq('set','agent','tmgoogletagmanager', '868548201601695');\nfbq('track', \"PageView\");\n</script>\n<noscript><img height=\"1\" width=\"1\" style=\"display:none\"\nsrc=\"https://www.facebook.com/tr?id=868548201601695&ev=PageView&noscript=1\"\n/></noscript>\n<!-- End Facebook Pixel Code -->"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1787557018368",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "paused": true,
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_NEEDED"
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "171",
+                "name": "Signals Gateway – Canonical cbq bridge v1.0.0",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!--\n  GTM Custom HTML: Signals Gateway - Canonical cbq bridge v1\n  Trigger: All Pages, once per page\n  Consent settings: No additional consent required. This tag starts locally before\n  a decision so it can retain canonical rows, but it loads/sends nothing until\n  Cookiebot marketing consent is true. Explicitly rejected rows are discarded.\n-->\n<script>\n(function(w, d) {\n  'use strict';\n\n  var VERSION = '1.0.0';\n  var PIXEL_ID = '1633085772154426486';\n  var HOST = 'https://signals.utekos.no/';\n  var SCRIPT_URL = HOST + 'sdk/' + PIXEL_ID + '/events.js';\n  var EVENT_NAMES = {\n    page_view: 'PageView',\n    view_item_list: 'ViewItemList',\n    view_item: 'ViewContent',\n    select_item: 'SelectItem',\n    add_to_wishlist: 'AddToWishlist',\n    add_to_cart: 'AddToCart',\n    remove_from_cart: 'RemoveFromCart',\n    view_cart: 'ViewCart',\n    begin_checkout: 'InitiateCheckout',\n    search: 'Search',\n    generate_lead: 'Lead',\n    scroll_depth: 'LandingScrollDepth',\n    view_category: 'ViewCategory',\n    hero_interact: 'HeroInteract',\n    interact_with_accordion: 'InteractWithAccordion',\n    open_quick_view: 'OpenQuickView'\n  };\n  var CUSTOM_EVENTS = {\n    view_item_list: true,\n    select_item: true,\n    remove_from_cart: true,\n    view_cart: true,\n    scroll_depth: true,\n    view_category: true,\n    hero_interact: true,\n    interact_with_accordion: true,\n    open_quick_view: true\n  };\n\n  w.dataLayer = w.dataLayer || [];\n\n  if (\n    w.__utekosSignalsGatewayState &&\n    w.__utekosSignalsGatewayState.version === VERSION\n  ) {\n    return;\n  }\n\n  var state = {\n    version: VERSION,\n    initialized: false,\n    sent: {},\n    lastDataLayerIndex: 0,\n    poller: null,\n    listening: false\n  };\n\n  w.__utekosSignalsGatewayState = state;\n\n  function hasMarketingConsent() {\n    return Boolean(\n      w.Cookiebot &&\n      w.Cookiebot.consent &&\n      w.Cookiebot.consent.marketing === true\n    );\n  }\n\n  function hasConsentDecision() {\n    return Boolean(w.Cookiebot && w.Cookiebot.hasResponse === true);\n  }\n\n  function discardPendingEvents() {\n    state.lastDataLayerIndex = (w.dataLayer || []).length;\n  }\n\n  function installSignalsGatewayPixel() {\n    if (state.initialized) return;\n\n    if (!w.cbq) {\n      var queue = function() {\n        if (queue.callMethod) {\n          queue.callMethod.apply(queue, arguments);\n        } else {\n          queue.queue.push(arguments);\n        }\n      };\n      var firstScript;\n      var script;\n\n      w.cbq = queue;\n      if (!w._cbq) w._cbq = queue;\n      queue.push = queue;\n      queue.loaded = true;\n      queue.version = '2.0';\n      queue.queue = [];\n\n      script = d.createElement('script');\n      script.async = true;\n      script.src = SCRIPT_URL;\n      firstScript = d.getElementsByTagName('script')[0];\n\n      if (firstScript && firstScript.parentNode) {\n        firstScript.parentNode.insertBefore(script, firstScript);\n      } else if (d.head) {\n        d.head.appendChild(script);\n      }\n    }\n\n    w.cbq('setHost', HOST);\n    w.cbq('init', PIXEL_ID);\n    state.initialized = true;\n  }\n\n  function contentId(variantId) {\n    var match = /^gid:\\/\\/shopify\\/ProductVariant\\/(\\d+)$/.exec(\n      variantId || ''\n    );\n\n    return match ? match[1] : null;\n  }\n\n  function finiteNumber(value) {\n    return typeof value === 'number' && isFinite(value);\n  }\n\n  function isoCurrency(value) {\n    if (typeof value !== 'string') return null;\n\n    var currency = value.replace(/^\\s+|\\s+$/g, '').toUpperCase();\n\n    return /^[A-Z]{3}$/.test(currency) ? currency : null;\n  }\n\n  function commerceData(customData) {\n    var items = customData && customData.items;\n    var contentIds = [];\n    var contents = [];\n    var numItems = 0;\n    var index;\n\n    if (!items || !items.length) return null;\n\n    for (index = 0; index < items.length; index += 1) {\n      var item = items[index];\n      var id = contentId(item.variant_id);\n      var content;\n\n      if (!id) continue;\n\n      content = {\n        id: id,\n        quantity: item.quantity\n      };\n\n      if (finiteNumber(item.gross_unit_price)) {\n        content.item_price = item.gross_unit_price;\n      }\n\n      contentIds.push(id);\n      contents.push(content);\n      if (finiteNumber(item.quantity)) numItems += item.quantity;\n    }\n\n    if (!contentIds.length) return null;\n\n    var primary = items[0];\n    var currency = isoCurrency(customData.currency);\n    var value = finiteNumber(customData.gross_value) ?\n      customData.gross_value :\n      null;\n    var result = {\n      content_ids: contentIds,\n      contents: contents,\n      content_type: 'product',\n      num_items: numItems\n    };\n\n    if (currency && value !== null) {\n      result.currency = currency;\n      result.value = value;\n    }\n\n    if (primary.item_name) result.content_name = primary.item_name;\n    if (primary.item_category || primary.product_type) {\n      result.content_category = primary.item_category || primary.product_type;\n    }\n\n    var customFields = [\n      'accordion_id',\n      'accordion_title',\n      'cart_id',\n      'gross_value',\n      'impression_sequence',\n      'interaction_sequence',\n      'interaction_type',\n      'item_list_id',\n      'item_list_name',\n      'open_sequence',\n      'source_surface',\n      'tax_value',\n      'total_item_count',\n      'view_sequence'\n    ];\n\n    for (index = 0; index < customFields.length; index += 1) {\n      var field = customFields[index];\n      var fieldValue = customData[field];\n\n      if (\n        (typeof fieldValue === 'string' && fieldValue) ||\n        finiteNumber(fieldValue)\n      ) {\n        result[field] = fieldValue;\n      }\n    }\n\n    if (finiteNumber(customData.value)) {\n      result.net_value = customData.value;\n    }\n\n    return result;\n  }\n\n  function eventData(eventName, canonicalEvent) {\n    var customData = canonicalEvent.custom_data || {};\n\n    if (\n      eventName === 'view_item' ||\n      eventName === 'view_item_list' ||\n      eventName === 'select_item' ||\n      eventName === 'add_to_wishlist' ||\n      eventName === 'add_to_cart' ||\n      eventName === 'remove_from_cart' ||\n      eventName === 'view_cart' ||\n      eventName === 'begin_checkout' ||\n      eventName === 'interact_with_accordion' ||\n      eventName === 'open_quick_view'\n    ) {\n      return commerceData(customData);\n    }\n\n    if (eventName === 'search') {\n      return customData.search_term ?\n        { search_string: customData.search_term } : {};\n    }\n\n    if (eventName === 'scroll_depth') {\n      var scroll = {};\n\n      if (finiteNumber(customData.threshold)) {\n        scroll.threshold = customData.threshold;\n      }\n      if (finiteNumber(customData.percent_scrolled)) {\n        scroll.percent_scrolled = customData.percent_scrolled;\n      }\n      if (finiteNumber(customData.document_height)) {\n        scroll.document_height = customData.document_height;\n      }\n\n      return scroll;\n    }\n\n    if (eventName === 'view_category') {\n      var category = {};\n\n      if (customData.category_id) {\n        category.content_category = customData.category_id;\n        category.category_id = customData.category_id;\n      }\n      if (customData.category_name) {\n        category.content_name = customData.category_name;\n        category.category_name = customData.category_name;\n      }\n      if (finiteNumber(customData.view_sequence)) {\n        category.view_sequence = customData.view_sequence;\n      }\n\n      return category;\n    }\n\n    if (eventName === 'hero_interact') {\n      var hero = {};\n\n      if (customData.cta_id) {\n        hero.content_name = customData.cta_id;\n        hero.cta_id = customData.cta_id;\n      }\n      if (customData.destination_path) {\n        hero.content_category = customData.destination_path;\n        hero.destination_path = customData.destination_path;\n      }\n      if (finiteNumber(customData.click_sequence)) {\n        hero.click_sequence = customData.click_sequence;\n      }\n\n      return hero;\n    }\n\n    if (eventName === 'generate_lead') {\n      var lead = {};\n      var leadCurrency = isoCurrency(customData.currency);\n      var leadValue = finiteNumber(customData.value) ?\n        customData.value :\n        null;\n\n      if (leadCurrency && leadValue !== null) {\n        lead.currency = leadCurrency;\n        lead.value = leadValue;\n      }\n\n      return lead;\n    }\n\n    return {};\n  }\n\n  function isCurrentPage(canonicalEvent) {\n    if (!canonicalEvent.page_url) return true;\n\n    try {\n      var eventUrl = new w.URL(canonicalEvent.page_url, w.location.href);\n\n      return eventUrl.origin === w.location.origin &&\n        eventUrl.pathname === w.location.pathname;\n    } catch (_error) {\n      return false;\n    }\n  }\n\n  function dispatch(entry) {\n    var canonicalEvent = entry.canonical_event;\n    var metaEventName = EVENT_NAMES[entry.event];\n    var eventKey;\n    var data;\n\n    if (!canonicalEvent || !metaEventName) return;\n    if (entry.event_id !== canonicalEvent.event_id) return;\n    if (!isCurrentPage(canonicalEvent)) return;\n\n    eventKey = metaEventName + ':' + entry.event_id;\n    if (state.sent[eventKey]) return;\n\n    data = eventData(entry.event, canonicalEvent);\n    if (data === null) return;\n\n    w.cbq(\n      CUSTOM_EVENTS[entry.event] ? 'trackCustom' : 'track',\n      metaEventName,\n      data,\n      { eventID: entry.event_id }\n    );\n    state.sent[eventKey] = true;\n  }\n\n  function scanDataLayer() {\n    var dataLayer = w.dataLayer || [];\n    var startIndex = state.lastDataLayerIndex;\n    var index;\n\n    if (startIndex > dataLayer.length) startIndex = 0;\n\n    for (index = startIndex; index < dataLayer.length; index += 1) {\n      var entry = dataLayer[index];\n\n      if (!entry || typeof entry !== 'object') continue;\n      if (typeof entry.event_id !== 'string' || !entry.event_id) continue;\n      dispatch(entry);\n    }\n\n    state.lastDataLayerIndex = dataLayer.length;\n  }\n\n  function run() {\n    if (!hasMarketingConsent()) {\n      if (hasConsentDecision()) discardPendingEvents();\n      return;\n    }\n\n    installSignalsGatewayPixel();\n    scanDataLayer();\n  }\n\n  function listenForConsent() {\n    if (state.listening) return;\n    state.listening = true;\n\n    var retry = function() {\n      run();\n    };\n\n    w.addEventListener('CookiebotOnAccept', retry);\n    w.addEventListener('CookiebotOnConsentReady', retry);\n    w.addEventListener('CookiebotOnDecline', retry);\n  }\n\n  function startPolling() {\n    if (state.poller !== null) return;\n\n    state.poller = w.setInterval(function() {\n      run();\n    }, 200);\n  }\n\n  listenForConsent();\n  run();\n  startPolling();\n})(window, document);\n</script>\n"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1788088782306",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "paused": true,
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_NEEDED"
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "172",
+                "name": "GA4 – Canonical ecommerce events(Microsoft UET)",
+                "type": "baut",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "uetqName",
+                        "value": "uetq"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "customEventAction",
+                        "value": "{{Event}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventType",
+                        "value": "userDefined"
+                    }
+                ],
+                "fingerprint": "1787633353939",
+                "firingTriggerId": [
+                    "146"
+                ],
+                "blockingTriggerId": [
+                    "144"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "173",
+                "name": "GA4 – Canonical page_view(Microsoft UET)",
+                "type": "baut",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "uetqName",
+                        "value": "uetq"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "customEventAction",
+                        "value": "page_view"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventType",
+                        "value": "userDefined"
+                    }
+                ],
+                "fingerprint": "1787633354761",
+                "firingTriggerId": [
+                    "145"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "tagId": "174",
+                "name": "GA4 – Canonical non-commerce events(Microsoft UET)",
+                "type": "baut",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "uetqName",
+                        "value": "uetq"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "customEventAction",
+                        "value": "{{Event}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventType",
+                        "value": "userDefined"
+                    }
+                ],
+                "fingerprint": "1787633355534",
+                "firingTriggerId": [
+                    "147"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "122",
+                "name": "Canonical Microsoft business events",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "MATCH_REGEX",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "^(view_item_list|select_item|view_item|add_to_cart|begin_checkout|search|generate_lead)$"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1784295295713",
+                "notes": "Microsoft UET business-event trigger. page_view remains owned by the UET page-load strategy pending its dedicated canonical redesign."
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "128",
+                "name": "Consent updated – re-evaluate page tags",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "cookie_consent_update"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1784091724831"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "129",
+                "name": "All Page Views(MS Ads)",
+                "type": "PAGEVIEW",
+                "fingerprint": "1783835228306"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "144",
+                "name": "Block GA4 view_item – Google Data Manager owner",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "view_item"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1784295353453",
+                "notes": "Exact view_item exception for GA4 ecommerce tag 118 while Google Data Manager owns Google delivery."
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "145",
+                "name": "Canonical GA4 – page_view",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "page_view"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1784295228202",
+                "notes": "Exact canonical page_view trigger. Non-ecommerce GA4 adapter only."
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "146",
+                "name": "Canonical GA4 – ecommerce events",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "MATCH_REGEX",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "^(view_item_list|select_item|view_item|add_to_cart|begin_checkout)$"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1784295232918",
+                "notes": "Canonical ecommerce events only; compatible with Send Ecommerce Data."
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "147",
+                "name": "Canonical GA4 – non-commerce events",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "MATCH_REGEX",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "^(search|generate_lead)$"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1784295238466",
+                "notes": "Canonical non-commerce events; ecommerce payload disabled."
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "152",
+                "name": "Meta – Canonical browser events",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "MATCH_REGEX",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "^(page_view|view_item_list|view_item|select_item|add_to_wishlist|add_to_cart|remove_from_cart|view_cart|begin_checkout|search|generate_lead|scroll_depth|view_category|hero_interact|interact_with_accordion|open_quick_view)$"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1785076380314",
+                "notes": "Canonical Meta browser events mirrored with the CAPI event_id; includes ViewItemList, InteractWithAccordion and OpenQuickView cutover 2026-07-26."
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "158",
+                "name": "Microsoft UET – ID Sync ready",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "microsoft_uet_id_sync"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1786380321266",
+                "notes": "Fires only when the app has a consented canonical VID ready for client-side Microsoft ID Sync."
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "triggerId": "169",
+                "name": "Cookiebot – statistics granted",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "cookie_consent_statistics"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1787523840945",
+                "notes": "Post-consent category event emitted after analytics_storage is granted. Used to initialize Google and replay the canonical page_view."
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "21",
+                "name": "GA4 Measurement ID",
+                "type": "c",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "value",
+                        "value": "G-FCES3L0M9M"
+                    }
+                ],
+                "fingerprint": "1766274845988",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "66",
+                "name": "Server Container URL",
+                "type": "gtcs",
+                "parameter": [
+                    {
+                        "type": "LIST",
+                        "key": "configSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "server_container_url"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "https://utekos.no/__sgtm"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1784091924791"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "133",
+                "name": "DLV - event_id",
+                "type": "v",
+                "notes": "Canonical page_view v1 dataLayer adapter",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "event_id"
+                    }
+                ],
+                "fingerprint": "1784108568245"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "134",
+                "name": "DLV - event_time",
+                "type": "v",
+                "notes": "Canonical page_view v1 dataLayer adapter",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "event_time"
+                    }
+                ],
+                "fingerprint": "1784108577510"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "135",
+                "name": "DLV - page_view_id",
+                "type": "v",
+                "notes": "Canonical page_view v1 dataLayer adapter",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "page_view_id"
+                    }
+                ],
+                "fingerprint": "1784108580916"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "136",
+                "name": "DLV - page_referrer",
+                "type": "v",
+                "notes": "Canonical page_view v1 dataLayer adapter",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "page_referrer"
+                    }
+                ],
+                "fingerprint": "1784108584750"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "137",
+                "name": "DLV - page_location",
+                "type": "v",
+                "notes": "Canonical page_view v1 dataLayer adapter",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "page_location"
+                    }
+                ],
+                "fingerprint": "1784108588264"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "138",
+                "name": "DLV - page_title",
+                "type": "v",
+                "notes": "Canonical page_view v1 dataLayer adapter",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "page_title"
+                    }
+                ],
+                "fingerprint": "1784108592158"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "139",
+                "name": "DLV - source",
+                "type": "v",
+                "notes": "Canonical page_view v1 dataLayer adapter",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "source"
+                    }
+                ],
+                "fingerprint": "1784108596170"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "151",
+                "name": "DLV - transaction_id",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "transaction_id"
+                    }
+                ],
+                "fingerprint": "1784397769250"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "159",
+                "name": "DLV - microsoft_vid",
+                "type": "v",
+                "notes": "Consent-gated first-party GUID used as Microsoft ID Sync VID and CAPI anonymousId.",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "microsoft_vid"
+                    }
+                ],
+                "fingerprint": "1786380324005"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "163",
+                "name": "DLV - commerce.value",
+                "type": "v",
+                "notes": "CanonicalEvent net commerce value for Microsoft UET browser parity.",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "commerce.value"
+                    }
+                ],
+                "fingerprint": "1786383634497"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "164",
+                "name": "DLV - commerce.items",
+                "type": "v",
+                "notes": "CanonicalEvent commerce items for Microsoft UET product-id mapping.",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "commerce.items"
+                    }
+                ],
+                "fingerprint": "1786383636773"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "165",
+                "name": "DLV - commerce.currency",
+                "type": "v",
+                "notes": "CanonicalEvent commerce currency for Microsoft UET browser parity.",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "commerce.currency"
+                    }
+                ],
+                "fingerprint": "1786383639094"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "166",
+                "name": "Microsoft UET - product IDs",
+                "type": "jsm",
+                "notes": "Validated Shopify variant IDs aligned with Microsoft dynamic remarketing product IDs.",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n  var items = {{DLV - commerce.items}};\n  var ids = [];\n  var index;\n\n  if (!items || !items.length) return;\n\n  for (index = 0; index < items.length; index += 1) {\n    var candidate = items[index] && (items[index].variant_id || items[index].item_id);\n    var match;\n\n    if (typeof candidate !== 'string') continue;\n\n    match = /^gid:\\/\\/shopify\\/ProductVariant\\/(\\d+)$/.exec(candidate);\n    if (match) {\n      ids.push(match[1]);\n    } else if (/^[A-Za-z0-9-]{1,50}$/.test(candidate)) {\n      ids.push(candidate);\n    }\n  }\n\n  return ids.length ? ids : undefined;\n}"
+                    }
+                ],
+                "fingerprint": "1786383652597"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "variableId": "167",
+                "name": "Microsoft UET - page type",
+                "type": "jsm",
+                "notes": "CanonicalEvent to Microsoft dynamic remarketing page type.",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n  var pageTypes = {\n    add_to_cart: 'cart',\n    begin_checkout: 'cart',\n    generate_lead: 'other',\n    search: 'searchresults',\n    select_item: 'product',\n    view_item: 'product',\n    view_item_list: 'category'\n  };\n\n  return pageTypes[{{Event}}] || 'other';\n}"
+                    }
+                ],
+                "fingerprint": "1786383655464"
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "PAGE_HOSTNAME",
+                "name": "Page Hostname"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "PAGE_PATH",
+                "name": "Page Path"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "REFERRER",
+                "name": "Referrer"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "EVENT",
+                "name": "Event"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "CLICK_URL",
+                "name": "Click URL"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "CLICK_TEXT",
+                "name": "Click Text"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "FORM_ELEMENT",
+                "name": "Form Element"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "FORM_CLASSES",
+                "name": "Form Classes"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "FORM_URL",
+                "name": "Form URL"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "FORM_TEXT",
+                "name": "Form Text"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "CONTAINER_ID",
+                "name": "Container ID"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "ANALYTICS_CLIENT_ID",
+                "name": "Analytics Client ID"
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "type": "ANALYTICS_SESSION_ID",
+                "name": "Analytics Session ID"
+            }
+        ],
+        "fingerprint": "1788088796341",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6295468138/containers/220236256/versions/159?apiLink=version",
+        "customTemplate": [
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "templateId": "115",
+                "name": "Microsoft Clarity - Official",
+                "fingerprint": "1780899873054",
+                "templateData": "___TERMS_OF_SERVICE___\n\nBy creating or modifying this file you agree to Google Tag Manager's Community\nTemplate Gallery Developer Terms of Service available at\nhttps://developers.google.com/tag-manager/gallery-tos (or such other URL as\nGoogle may provide), as modified from time to time.\n\n\n___INFO___\n\n{\n  \"type\": \"TAG\",\n  \"id\": \"cvt_MQDKZ\",\n  \"version\": 1,\n  \"displayName\": \"Microsoft Clarity - Official\",\n  \"categories\": [\n    \"ANALYTICS\",\n    \"HEAT_MAP\",\n    \"SESSION_RECORDING\"\n  ],\n  \"brand\": {\n    \"id\": \"github.com_microsoft\",\n    \"displayName\": \"microsoft\",\n    \"thumbnail\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAElBMVEUAAADyUCJ/ugAApO//uQD///8951e2AAAAAXRSTlMAQObYZgAAAAFiS0dEBfhv6ccAAAAHdElNRQfkCgUWITsZUDiiAAAAS0lEQVRo3u3MQQ3AIAAEsMuCAGZhCkiwgH9NOLj3Hq2A5q1m8nxVBAKBQCAQCAQCgUAgEPSAP9jVSsapBAKBQCAQCAQCgUAgEPTgAruK0CdlWNSzAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTEwLTA1VDIyOjMzOjU5KzAwOjAwPT1n8QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0xMC0wNVQyMjozMzo1OSswMDowMExg300AAAAASUVORK5CYII\\u003d\"\n  },\n  \"description\": \"Clarity is a user behavior analytics tool, which helps you understand how users are interacting with your website. Supported features include:\\nSession Recordings\\nHeatmaps\\nML Insights\",\n  \"containerContexts\": [\n    \"WEB\"\n  ]\n}\n\n\n___TEMPLATE_PARAMETERS___\n\n[\n  {\n    \"type\": \"TEXT\",\n    \"name\": \"projectId\",\n    \"displayName\": \"Clarity Project Id\",\n    \"simpleValueType\": true,\n    \"help\": \"Copy your clarity project Id here. You can find it in the project Url from the browser. Example: https://clarity.microsoft.com/projects/view/\\\"projectId\\\"/\",\n    \"valueValidators\": [\n      {\n        \"type\": \"NON_EMPTY\",\n        \"errorMessage\": \"You must provide a clarity project Id\"\n      },\n      {\n        \"type\": \"REGEX\",\n        \"args\": [\n          \"[0-9a-z]+\"\n        ],\n        \"errorMessage\": \"Incorrect project Id. You can find it in the project Url from the browser. Example: https://clarity.microsoft.com/projects/view/\\\"projectId\\\"/\"\n      }\n    ]\n  },\n  {\n    \"type\": \"GROUP\",\n    \"name\": \"advanced\",\n    \"displayName\": \"Custom Options\",\n    \"groupStyle\": \"ZIPPY_CLOSED\",\n    \"subParams\": [\n      {\n        \"type\": \"GROUP\",\n        \"name\": \"custom_id\",\n        \"displayName\": \"Custom Identifiers\",\n        \"groupStyle\": \"NO_ZIPPY\",\n        \"subParams\": [\n          {\n            \"type\": \"TEXT\",\n            \"name\": \"userId\",\n            \"displayName\": \"Custom Id\",\n            \"simpleValueType\": true,\n            \"help\": \"Custom id such as an email, can help you view the user journey across browsers and devices\",\n            \"valueHint\": \"user@domain.com\"\n          },\n          {\n            \"type\": \"TEXT\",\n            \"name\": \"sessionId\",\n            \"displayName\": \"Session Id\",\n            \"simpleValueType\": true,\n            \"help\": \"Custom session id to help you filter for this session later\",\n            \"enablingConditions\": [\n              {\n                \"paramName\": \"userId\",\n                \"paramValue\": \"\",\n                \"type\": \"PRESENT\"\n              }\n            ],\n            \"valueHint\": \"custom-session-id\"\n          },\n          {\n            \"type\": \"TEXT\",\n            \"name\": \"pageId\",\n            \"displayName\": \"Page Id\",\n            \"simpleValueType\": true,\n            \"help\": \"Custom page id to help you filter for this page later\",\n            \"enablingConditions\": [\n              {\n                \"paramName\": \"userId\",\n                \"paramValue\": \"\",\n                \"type\": \"PRESENT\"\n              }\n            ],\n            \"valueHint\": \"custom-page-id\"\n          },\n          {\n            \"type\": \"TEXT\",\n            \"name\": \"friendlyName\",\n            \"displayName\": \"Friendly Name\",\n            \"simpleValueType\": true,\n            \"help\": \"Friendly name for the user\",\n            \"enablingConditions\": [\n              {\n                \"paramName\": \"userId\",\n                \"paramValue\": \"\",\n                \"type\": \"PRESENT\"\n              }\n            ],\n            \"valueHint\": \"Mona\"\n          }\n        ],\n        \"help\": \"Custom Identifiers are informational data values about site visitors\",\n        \"enablingConditions\": []\n      },\n      {\n        \"type\": \"SIMPLE_TABLE\",\n        \"name\": \"custom_tag\",\n        \"displayName\": \"Custom Tag\",\n        \"simpleTableColumns\": [\n          {\n            \"defaultValue\": \"\",\n            \"displayName\": \"Key\",\n            \"name\": \"key\",\n            \"type\": \"TEXT\",\n            \"valueHint\": \"\"\n          },\n          {\n            \"defaultValue\": \"\",\n            \"displayName\": \"Value\",\n            \"name\": \"value\",\n            \"type\": \"TEXT\",\n            \"valueValidators\": [\n              {\n                \"type\": \"STRING_LENGTH\",\n                \"args\": [\n                  1,\n                  255\n                ]\n              }\n            ],\n            \"valueHint\": \"\"\n          }\n        ],\n        \"help\": \"Custom tags are customizable filters that allow you to analyze recordings and heatmaps in different directions\",\n        \"valueValidators\": []\n      }\n    ]\n  }\n]\n\n\n___SANDBOXED_JS_FOR_WEB_TEMPLATE___\n\n// Require the necessary APIs\nconst injectScript = require('injectScript');\nconst queryPermission = require('queryPermission');\nconst createArgumentsQueue = require('createArgumentsQueue');\nconst encodeUri = require('encodeUri');\nconst addEventCallback = require('addEventCallback');\nconst copyFromDataLayer = require('copyFromDataLayer');\n//const log = require('logToConsole');\n\n// Create clarity const\nconst clarity = createArgumentsQueue('clarity', 'clarity.q');\n\nconst customTags = data.custom_tag || [];\n\n// Reconstruct customer clarity script URL\nconst url = \"https://www.clarity.ms/tag/\"+encodeUri(data.projectId)+\"?ref=gtm\";\n\nconst runClarityIdentify = () => {\n  const friendlyName = data.friendlyName || '';\n  const sessionId = data.sessionId || '';\n  const pageId = data.pageId || '';\n  if (data.userId) {\n    clarity(\n      \"identify\",\n      data.userId,\n      sessionId,\n      pageId,\n      friendlyName\n    );\n  }\n};\n\n// Handle Success\nconst onCustomerSuccess = () => {\n  data.gtmOnSuccess();\n};\n\n// Handle Failure\nconst onCustomerFailure = () => {\n  data.gtmOnFailure();\n};\n\n\n// If the URL input by the user matches the permissions set for the template,\n// inject the script with the onSuccess and onFailure methods as callbacks.\nif (queryPermission('inject_script', \"https://www.clarity.ms\")) {\n  for (var i = 0; i < customTags.length; i++) {\n    if (customTags[i].value) {\n      clarity('set', customTags[i].key, customTags[i].value);\n    }\n  }\n\n  if (data.userId) {\n    runClarityIdentify();\n  } else {\n    // Otherwise wait for Window Loaded event\n    addEventCallback(function(containerId, eventData) {\n      const event = copyFromDataLayer('event');\n      if (event === 'gtm.load') {\n        runClarityIdentify();\n      }\n    });\n  }\n \n  injectScript(url, onCustomerSuccess, onCustomerFailure);\n  \n} else {\n  data.gtmOnFailure();\n}\n\n\n___WEB_PERMISSIONS___\n\n[\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"inject_script\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"urls\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 1,\n                \"string\": \"https://www.clarity.ms/*\"\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"access_globals\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"keys\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"key\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"execute\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"clarity\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"key\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"execute\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"clarity.q\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"read_event_metadata\",\n        \"versionId\": \"1\"\n      },\n      \"param\": []\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"read_data_layer\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"allowedKeys\",\n          \"value\": {\n            \"type\": 1,\n            \"string\": \"specific\"\n          }\n        },\n        {\n          \"key\": \"keyPatterns\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 1,\n                \"string\": \"event\"\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  }\n]\n\n\n___TESTS___\n\nscenarios: []\n\n\n___NOTES___\n\nCreated on 2/2/2021, 12:41:15 PM\n\n\n",
+                "galleryReference": {
+                    "host": "github.com",
+                    "owner": "microsoft",
+                    "repository": "clarity-gtm-template",
+                    "version": "a4013e4a6b1ae135d6acd80cdb7dd803d849dc54",
+                    "signature": "005e0c847e851bd85c268486f2194c0774337b596daeeaae5c10020c059a9472",
+                    "galleryTemplateId": "MQDKZ"
+                }
+            },
+            {
+                "accountId": "6295468138",
+                "containerId": "220236256",
+                "templateId": "124",
+                "name": "Cookiebot CMP",
+                "fingerprint": "1783488522053",
+                "templateData": "___TERMS_OF_SERVICE___\n\nBy creating or modifying this file you agree to Google Tag Manager's Community\nTemplate Gallery Developer Terms of Service available at\nhttps://developers.google.com/tag-manager/gallery-tos (or such other URL as\nGoogle may provide), as modified from time to time.\n\n\n___INFO___\n\n{\n  \"displayName\": \"Cookiebot CMP\",\n  \"description\": \"Cookiebot is a Consent Management Platform (CMP) that helps make your use of cookies and online tracking compliant with data protection legislations like GDPR and CCPA. More on https://cookiebot.com.\",\n  \"categories\": [\n    \"TAG_MANAGEMENT\",\n    \"PERSONALIZATION\"\n  ],\n  \"id\": \"cvt_57SF4\",\n  \"type\": \"TAG\",\n  \"version\": 1,\n  \"brand\": {\n    \"thumbnail\": \"data:image/png;base64,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\",\n    \"displayName\": \"Usercentrics\",\n    \"id\": \"github.com_Usercentrics\"\n  },\n  \"containerContexts\": [\n    \"WEB\"\n  ]\n}\n\n\n___TEMPLATE_PARAMETERS___\n\n[\n  {\n    \"notSetText\": \"Please enter the \\u0027Domain Group ID\\u0027 found under the tab named \\u0027Your Scripts\\u0027 in Cookiebot in the format \\u0027XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\\u0027\",\n    \"help\": \"Create an account on Cookiebot.com and copy \\u0027Domain Group ID\\u0027 from the tab \\u0027Your Scripts\\u0027 in Cookiebot.\",\n    \"valueValidators\": [\n      {\n        \"args\": [\n          \"^(\\\\{){0,1}[0-9a-fA-F]{8}\\\\-[0-9a-fA-F]{4}\\\\-[0-9a-fA-F]{4}\\\\-[0-9a-fA-F]{4}\\\\-[0-9a-fA-F]{12}(\\\\}){0,1}$\"\n        ],\n        \"type\": \"REGEX\"\n      },\n      {\n        \"type\": \"NON_EMPTY\"\n      }\n    ],\n    \"displayName\": \"Cookiebot ID\",\n    \"simpleValueType\": true,\n    \"name\": \"serial\",\n    \"type\": \"TEXT\",\n    \"valueHint\": \"Your Cookiebot Domain Group ID\"\n  },\n  {\n    \"help\": \"Select how Cookiebot determines the language of the consent banner.\",\n    \"selectItems\": [\n      {\n        \"displayValue\": \"Default (auto-detect)\",\n        \"value\": \"auto\"\n      },\n      {\n        \"displayValue\": \"By GTM variable\",\n        \"value\": \"variable\"\n      }\n    ],\n    \"displayName\": \"Language\",\n    \"simpleValueType\": true,\n    \"name\": \"language\",\n    \"type\": \"SELECT\"\n  },\n  {\n    \"type\": \"SELECT\",\n    \"name\": \"cdnRegion\",\n    \"displayName\": \"CDN Region\",\n    \"macrosInSelect\": false,\n    \"selectItems\": [\n      {\n        \"value\": \"com\",\n        \"displayValue\": \".com\"\n      },\n      {\n        \"value\": \"eu\",\n        \"displayValue\": \".eu\"\n      }\n    ],\n    \"simpleValueType\": true,\n    \"help\": \"Select which CDN region Cookiebot uses\",\n    \"defaultValue\": \"com\"\n  },\n  {\n    \"help\": \"Select a variable that returns a two-letter ISO 639-1 language code, e.g. from current URL. In Cookiebot, create matching content versions for all languages supported on your site.\",\n    \"enablingConditions\": [\n      {\n        \"paramName\": \"language\",\n        \"type\": \"EQUALS\",\n        \"paramValue\": \"variable\"\n      }\n    ],\n    \"valueValidators\": [\n      {\n        \"type\": \"NON_EMPTY\"\n      }\n    ],\n    \"displayName\": \"Language Variable\",\n    \"simpleValueType\": true,\n    \"name\": \"languageVariable\",\n    \"type\": \"TEXT\"\n  },\n  {\n    \"type\": \"CHECKBOX\",\n    \"name\": \"addGeoRegion\",\n    \"checkboxText\": \"Add Geo Region(s)\",\n    \"simpleValueType\": true,\n    \"help\": \"Add regions where a different banner than the default should be displayed.\"\n  },\n  {\n    \"type\": \"GROUP\",\n    \"name\": \"Geo Region\",\n    \"displayName\": \"Geo Regions\",\n    \"groupStyle\": \"NO_ZIPPY\",\n    \"subParams\": [\n      {\n        \"type\": \"SIMPLE_TABLE\",\n        \"name\": \"geoRegions\",\n        \"simpleTableColumns\": [\n          {\n            \"defaultValue\": \"\",\n            \"displayName\": \"Region\",\n            \"name\": \"altRegion\",\n            \"type\": \"TEXT\",\n            \"valueValidators\": [\n              {\n                \"type\": \"REGEX\",\n                \"args\": [\n                  \"^([a-zA-Z]{2}(-[0-9]{2})?(, ?)?)+$\"\n                ],\n                \"errorMessage\": \"Must be a region ISO code, for example: \\\"us-06\\\" or \\\"gb\\\"\"\n              }\n            ],\n            \"valueHint\": \"DE, DK, AT, US-06\"\n          },\n          {\n            \"defaultValue\": \"\",\n            \"displayName\": \"Domain Group ID\",\n            \"name\": \"altCbid\",\n            \"type\": \"TEXT\",\n            \"valueValidators\": [\n              {\n                \"type\": \"REGEX\",\n                \"args\": [\n                  \"^[\\\\dA-Fa-f]{8}(-[\\\\dA-Fa-f]{4}){3}-[\\\\dA-Fa-f]{12}$\"\n                ],\n                \"errorMessage\": \"Must resemble \\\"01234567-89ab-cdef-0123-456789abcdef\\\"\"\n              }\n            ],\n            \"valueHint\": \"Your Cookiebot Domain Group ID\"\n          }\n        ]\n      }\n    ],\n    \"enablingConditions\": [\n      {\n        \"paramName\": \"addGeoRegion\",\n        \"paramValue\": true,\n        \"type\": \"EQUALS\"\n      }\n    ]\n  },\n  {\n    \"type\": \"CHECKBOX\",\n    \"name\": \"consentModeEnabled\",\n    \"checkboxText\": \"Enable Google Consent Mode\",\n    \"simpleValueType\": true,\n    \"defaultValue\": true,\n    \"help\": \"Enable Consent Mode if one or more of your tags rely on Google\\u0027s consent API. Cookiebot will then automatically signal the user\\u0027s consent to these tags.\",\n    \"alwaysInSummary\": true\n  },\n  {\n    \"type\": \"CHECKBOX\",\n    \"name\": \"iabFramework\",\n    \"checkboxText\": \"Enable IAB Transparency and Consent Framework\",\n    \"simpleValueType\": true,\n    \"help\": \"Enable IAB Europe\\u0027s Transparency \\u0026 Consent Framework if your site is displaying ads from one or more IAB Vendors.\"\n  },\n  {\n    \"type\": \"GROUP\",\n    \"name\": \"ConsentModeSettings\",\n    \"displayName\": \"Consent Mode Settings\",\n    \"groupStyle\": \"NO_ZIPPY\",\n    \"subParams\": [\n      {\n        \"type\": \"TEXT\",\n        \"name\": \"waitForUpdate\",\n        \"displayName\": \"Wait for update\",\n        \"simpleValueType\": true,\n        \"valueUnit\": \"miliseconds\",\n        \"help\": \"Set how many miliseconds to wait before firing tags waiting for consent\",\n        \"defaultValue\": 2000,\n        \"valueValidators\": [\n          {\n            \"type\": \"NON_EMPTY\"\n          },\n          {\n            \"type\": \"NON_NEGATIVE_NUMBER\"\n          }\n        ]\n      },\n      {\n        \"type\": \"SELECT\",\n        \"name\": \"adsDataRedaction\",\n        \"displayName\": \"Redact ads data\",\n        \"selectItems\": [\n          {\n            \"value\": true,\n            \"displayValue\": \"True\"\n          },\n          {\n            \"value\": false,\n            \"displayValue\": \"False\"\n          },\n          {\n            \"value\": \"dynamic\",\n            \"displayValue\": \"Dynamic (match ad_storage)\"\n          }\n        ],\n        \"simpleValueType\": true,\n        \"defaultValue\": \"dynamic\",\n        \"help\": \"When ad data redaction is true and marketing cookies are denied, ad click identifiers sent in network requests by Google Ads and Floodlight tags will be redacted. Network requests will also be sent through a cookieless domain\"\n      },\n      {\n        \"type\": \"CHECKBOX\",\n        \"name\": \"urlPassthrough\",\n        \"checkboxText\": \"Enable URL passthrough\",\n        \"simpleValueType\": true,\n        \"help\": \"When using URL passthrough, a few query parameters may be appended to links as users navigate through pages on your website\"\n      },\n      {\n        \"type\": \"CHECKBOX\",\n        \"name\": \"advertiserConsentModeEnabled\",\n        \"checkboxText\": \"Advertiser Consent Mode\",\n        \"simpleValueType\": true,\n        \"help\": \"If enabled, Google will deduce ad_storage, ad_user_data and ad_personalization data from the TC string.\",\n        \"defaultValue\": true,\n        \"enablingConditions\": [\n          {\n            \"paramName\": \"consentModeEnabled\",\n            \"paramValue\": true,\n            \"type\": \"EQUALS\"\n          }\n        ]\n      },\n      {\n        \"type\": \"GROUP\",\n        \"name\": \"DefaultConsent\",\n        \"displayName\": \"Default Consent State\",\n        \"subParams\": [\n          {\n            \"type\": \"PARAM_TABLE\",\n            \"name\": \"regionSettings\",\n            \"paramTableColumns\": [\n              {\n                \"param\": {\n                  \"type\": \"TEXT\",\n                  \"name\": \"region\",\n                  \"displayName\": \"Region (leave blank to apply globally)\",\n                  \"simpleValueType\": true\n                },\n                \"isUnique\": true\n              },\n              {\n                \"param\": {\n                  \"type\": \"SELECT\",\n                  \"name\": \"defaultConsentPreferences\",\n                  \"displayName\": \"Preferences (functionality_storage and personalization_storage)\",\n                  \"selectItems\": [\n                    {\n                      \"value\": \"denied\",\n                      \"displayValue\": \"Denied\"\n                    },\n                    {\n                      \"value\": \"granted\",\n                      \"displayValue\": \"Granted\"\n                    }\n                  ],\n                  \"simpleValueType\": true,\n                  \"help\": \"Select default consent state for preference cookies\",\n                  \"defaultValue\": \"denied\"\n                },\n                \"isUnique\": false\n              },\n              {\n                \"param\": {\n                  \"type\": \"SELECT\",\n                  \"name\": \"defaultConsentStatistics\",\n                  \"displayName\": \"Statistics (analytics_storage)\",\n                  \"selectItems\": [\n                    {\n                      \"value\": \"denied\",\n                      \"displayValue\": \"Denied\"\n                    },\n                    {\n                      \"value\": \"granted\",\n                      \"displayValue\": \"Granted\"\n                    }\n                  ],\n                  \"simpleValueType\": true,\n                  \"defaultValue\": \"denied\",\n                  \"help\": \"Select default consent state for statistics cookies\"\n                },\n                \"isUnique\": false\n              },\n              {\n                \"param\": {\n                  \"type\": \"SELECT\",\n                  \"name\": \"defaultConsentMarketing\",\n                  \"displayName\": \"Marketing (ad_storage)\",\n                  \"selectItems\": [\n                    {\n                      \"value\": \"denied\",\n                      \"displayValue\": \"Denied\"\n                    },\n                    {\n                      \"value\": \"granted\",\n                      \"displayValue\": \"Granted\"\n                    }\n                  ],\n                  \"simpleValueType\": true,\n                  \"defaultValue\": \"denied\",\n                  \"help\": \"Select default consent state for marketing cookies\"\n                },\n                \"isUnique\": false\n              },\n              {\n                \"param\": {\n                  \"type\": \"SELECT\",\n                  \"name\": \"defaultConsentMarketingAdUserData\",\n                  \"displayName\": \"Marketing (ad_user_data)\",\n                  \"selectItems\": [\n                    {\n                      \"value\": \"denied\",\n                      \"displayValue\": \"Denied\"\n                    },\n                    {\n                      \"value\": \"granted\",\n                      \"displayValue\": \"Granted\"\n                    }\n                  ],\n                  \"simpleValueType\": true,\n                  \"help\": \"Select default consent state for marketing cookies\",\n                  \"defaultValue\": \"denied\"\n                },\n                \"isUnique\": false\n              },\n              {\n                \"param\": {\n                  \"type\": \"SELECT\",\n                  \"name\": \"defaultConsentMarketingAdPersonalization\",\n                  \"displayName\": \"Marketing (ad_personalization)\",\n                  \"selectItems\": [\n                    {\n                      \"value\": \"denied\",\n                      \"displayValue\": \"Denied\"\n                    },\n                    {\n                      \"value\": \"granted\",\n                      \"displayValue\": \"Granted\"\n                    }\n                  ],\n                  \"simpleValueType\": true,\n                  \"help\": \"Select default consent state for marketing cookies\",\n                  \"defaultValue\": \"denied\"\n                },\n                \"isUnique\": false\n              }\n            ],\n            \"editRowTitle\": \"Edit region\",\n            \"newRowButtonText\": \"Add region\",\n            \"newRowTitle\": \"Add region\"\n          }\n        ],\n        \"help\": \"A default consent state of \\u0027denied\\u0027 will apply until the user has submitted a consent. You can add different default states for users in different geographical regions. Please use ISO-3166-1 alpha-2 country codes for region values.\"\n      }\n    ],\n    \"enablingConditions\": [\n      {\n        \"paramName\": \"consentModeEnabled\",\n        \"paramValue\": true,\n        \"type\": \"EQUALS\"\n      }\n    ]\n  }\n]\n\n\n___SANDBOXED_JS_FOR_WEB_TEMPLATE___\n\nconst injectScript = require('injectScript');\nconst encodeUriComponent = require('encodeUriComponent');\nconst queryPermission = require('queryPermission');\nconst gtagSet = require('gtagSet');\nconst setDefaultConsentState = require('setDefaultConsentState');\nconst getCookieValues = require('getCookieValues');\nconst updateConsentState = require('updateConsentState');\nconst cookiebotSerial = data.serial;\nconst IABEnabled = data.iabFramework;\nconst consentModeEnabled = data.consentModeEnabled;\nconst language = data.language;\nconst waitForUpdate = data.waitForUpdate;\nconst urlPassthrough = data.urlPassthrough;\nconst adsDataRedaction = data.adsDataRedaction || 'dynamic';\nconst regionSettings = data.regionSettings || [];\nconst geoRegions = data.geoRegions || [];\nconst cdnRegion = data.cdnRegion || 'com';\nlet hasDefaultState = false;\nlet advertiserConsentModeEnabled = data.advertiserConsentModeEnabled;\n\n// Fallback: existing templates that receives new fields might default to \"undefined\", even though a default value is set\nif (consentModeEnabled && advertiserConsentModeEnabled === undefined) {\n  advertiserConsentModeEnabled = true; // set to true (default) if checkbox is shown and has undefined value\n}\n\n// Adding alternate banners for specified georegions\nlet geoRegionsString = \"\";\ngeoRegions.forEach(regionObj => {\n  if (geoRegionsString != \"\") {\n    geoRegionsString += \",\";\n  }\n  \n  geoRegionsString += \"{'region':'\" + regionObj.altRegion + \"','cbid':'\" + regionObj.altCbid + \"'}\";\n});\n\nif (consentModeEnabled !== false) {\n  \n    // Turn region string (\"DK, NL, DE\") into array ([\"DK\", \"NL\", \"DE\"])\n    const getRegionArr = (regionStr) => {\n        return regionStr.split(',')\n            .map(region => region.trim())\n            .filter(region => region.length !== 0);\n    };\n\n    // Get default consent state per region\n    const getConsentRegionData = (regionObject) => {\n        const consentRegionData = {\n            ad_storage: regionObject.defaultConsentMarketing,\n            ad_user_data: regionObject.defaultConsentMarketingAdUserData,\n            ad_personalization: regionObject.defaultConsentMarketingAdPersonalization,\n            analytics_storage: regionObject.defaultConsentStatistics,\n            functionality_storage: regionObject.defaultConsentPreferences,\n            personalization_storage: regionObject.defaultConsentPreferences,\n            security_storage: 'granted'\n        };\n      \n        const regionArr = getRegionArr(regionObject.region);\n      \n        if (regionArr.length) {\n          consentRegionData.region = regionArr;\n        }\n        \n        return consentRegionData;\n    };\n  \n    // Set url_passthrough and developer ID\n    gtagSet({\n      'url_passthrough': urlPassthrough === true,\n      'developer_id.dMWZhNz': true\n    });\n\n    // Set default consent for each region\n    regionSettings.forEach(regionObj => {\n        const consentRegionData = getConsentRegionData(regionObj);\n\n        if (waitForUpdate > 0) {\n            consentRegionData.wait_for_update = waitForUpdate;\n        }\n\n        setDefaultConsentState(consentRegionData);\n      \n        if (regionObj.region === undefined || regionObj.region.trim() === '')\n        {\n          hasDefaultState = true;\n        }\n    });\n  \n    // Fallback to opt-out if no global default consent state has been defined in region settings\n    if(!hasDefaultState) {\n      setDefaultConsentState({\n        ad_storage: 'denied',\n        ad_user_data: 'denied',\n        ad_personalization: 'denied',\n        analytics_storage: 'denied',\n        functionality_storage: 'denied',\n        personalization_storage: 'denied',\n        security_storage: 'granted'\n      });\n    }\n\n    // Read existing consent from consent cookie if it exists\n    let consentObj = null;\n    \n    if (getCookieValues(\"CookieConsent\").toString() !== '') {\n        const consentString = getCookieValues(\"CookieConsent\")[0];\n\n        if ((typeof consentString !== 'undefined') && (consentString.indexOf(\"{\") === 0) && (consentString.indexOf(\"}\") > 0)) {\n            // Turn consentString into object\n            consentObj = {\n                preferences: 'denied',\n                statistics: 'denied',\n                marketing: 'denied',\n                readConsentString: function (str) {\n                    let tempA = str.replace('{', '').replace('}', '').split(\",\"),\n                        tempB = {};\n                    for (let i = 0; i < tempA.length; i += 1) {\n                        let tempC = tempA[i].split(':');\n                        tempB[tempC[0]] = tempC[1];\n                    }\n\n                    consentObj.preferences = tempB.preferences === 'true' ? 'granted' : 'denied';\n                    consentObj.statistics = tempB.statistics === 'true' ? 'granted' : 'denied';\n                    consentObj.marketing = tempB.marketing === 'true' ? 'granted' : 'denied';\n                    consentObj.region = tempB.region; // This is the region wherefrom the consent was originally submitted\n                }\n            };\n\n            consentObj.readConsentString(consentString);\n\n            updateConsentState({\n                'ad_storage': consentObj.marketing,\n                'ad_user_data': consentObj.marketing,\n                'ad_personalization': consentObj.marketing,\n                'analytics_storage': consentObj.statistics,\n                'functionality_storage': consentObj.preferences,\n                'personalization_storage': consentObj.preferences,\n                'security_storage': 'granted'\n            });\n        }\n    }\n    \n    // Set data redaction\n    const marketingConsent = consentObj ? consentObj.marketing : 'denied';\n    const marketingConsentBoolean = marketingConsent === 'granted';\n    const adsDataRedactionValue = adsDataRedaction === 'dynamic' ? !marketingConsentBoolean : adsDataRedaction === 'true';\n    \n    gtagSet({\n      'ads_data_redaction': adsDataRedactionValue\n    });\n}\n\nlet scriptUrl = 'https://consent.cookiebot.' + cdnRegion + '/uc.js?cbid=' + encodeUriComponent(cookiebotSerial) + '&implementation=gtm';\n\nif(consentModeEnabled === false)\n{\n  scriptUrl += '&consentmode=disabled';\n}\nif (consentModeEnabled === false || advertiserConsentModeEnabled === false) {\n  scriptUrl += '&advertiserConsentMode=disabled';\n}\nelse\n{\n  scriptUrl += '&consentmode-dataredaction=' + adsDataRedaction;\n}\n\nif (language === 'variable')\n{\n  scriptUrl += '&culture=' + encodeUriComponent(data.languageVariable);\n}\n\n// Add georegions to the script src\nif (geoRegionsString != \"\") {\n  scriptUrl += '&georegions=' + encodeUriComponent(geoRegionsString); \n}\n\nif(IABEnabled) {\n  scriptUrl += '&framework=TCFv2.2';\n}\n\nif (queryPermission('inject_script', scriptUrl)) {\n  injectScript(scriptUrl, data.gtmOnSuccess, data.gtmOnFailure);\n} else {\n  data.gtmOnFailure();\n}\n\n\n___WEB_PERMISSIONS___\n\n[\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"inject_script\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"urls\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 1,\n                \"string\": \"https://*.cookiebot.com/\"\n              },\n              {\n                \"type\": 1,\n                \"string\": \"https://*.cookiebot.eu/\"\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"access_consent\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"consentTypes\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"consentType\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"analytics_storage\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"consentType\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"ad_storage\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"consentType\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"functionality_storage\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"consentType\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"personalization_storage\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"consentType\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"security_storage\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"consentType\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"wait_for_update\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"consentType\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"ad_personalization\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"consentType\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"ad_user_data\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  }\n                ]\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"get_cookies\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"cookieAccess\",\n          \"value\": {\n            \"type\": 1,\n            \"string\": \"specific\"\n          }\n        },\n        {\n          \"key\": \"cookieNames\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 1,\n                \"string\": \"CookieConsent\"\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"write_data_layer\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"keyPatterns\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 1,\n                \"string\": \"ads_data_redaction\"\n              },\n              {\n                \"type\": 1,\n                \"string\": \"url_passthrough\"\n              },\n              {\n                \"type\": 1,\n                \"string\": \"developer_id.dMWZhNz\"\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  }\n]\n\n\n___TESTS___\n\nscenarios: []\n\n\n___NOTES___\n\nCookiebot CMP Tag v2.12.7\n* (No template update, only meta-data): Update Cookiebot vendor details\n\nCookiebot CMP Tag v2.12.6\n* (No template update, only meta-data): Update Cookiebot vendor details\n\nCookiebot CMP Tag v2.12.5\n* (No template update, only meta-data): Update Cookiebot vendor details\n\nCookiebot CMP Tag v2.12.4\n* (No template update, only meta-data): Update Cookiebot vendor details\n\nCookiebot CMP Tag v2.12.3\n* (No template update, only meta-data): Update Cookiebot vendor details\n\nCookiebot CMP Tag v2.12.2\n* (No template update, only meta-data): Update Cookiebot vendor details\n\nCookiebot CMP Tag v2.12.1\n* (No template update, only meta-data): Update Cookiebot vendor details\n\nCookiebot CMP Tag v2.12\n* (No template update, only meta-data): Update Cookiebot vendor details\n\nCookiebot CMP Tag v2.11\n* (No template update, only meta-data): Add Cookiebot vendor details\n\nCookiebot CMP Tag v2.10\n* Add option to disable Advertiser Consent Mode when GCM is enabled\n\nCookiebot CMP Tag v2.9\n* Add option to use .eu CDN region\n\nCookiebot CMP Tag v2.8\n* Add separate choices (dropdowns) for new Marketing bits\n\nCookiebot CMP Tag v2.7.1\n* Add missing mention of new bits\n\nCookiebot CMP Tag v2.7\n* Remove deprecated \"TCFv2.0\" dropdown option\n\nCookiebot CMP Tag v2.6\n* Add support for ad_user_data and ad_personalization GCM signals\n\nCookiebot CMP Tag v2.5.1\n* Resolved edge case issue where consentmode-dataredaction parameter is set as undefined\n\nCookiebot CMP Tag v2.5\n* Added implementation URL-parameter\n\nCookiebot CMP Tag v2.4\n* Added support for TCFv2.2\n\nCookiebot CMP Tag v2.3\n* Added support for multi-legislation configurations\n\nCookiebot CMP Tag v2.2.2\n* Added developer_id to template\n* Resolved default consent issue when using an empty region value\n\nCookiebot CMP Tag v2.2.1\n* Resolved ConsentModeEnabled default value issue\n\nCookiebot CMP Tag v2.2\n* Added checkbox to enable / disable Google Consent Mode\n* Added checkbox to enable / disable URL passthrough\n* Added dropdown to control Ads Data Redaction\n* Added \"UpdateConsentState\" support in the template code\n* Changed Default Consent State to be region-based\n\nCookiebot CMP Tag v2.1\n* Added support for wait_for_update flag\n\nCookiebot CMP Tag v2.0\n* Implemented Google Consent Mode\n\nCookiebot CMP Tag v1.0\n* Initial version\n\n\n",
+                "galleryReference": {
+                    "host": "github.com",
+                    "owner": "Usercentrics",
+                    "repository": "gtm-templates-cookiebot-cmp",
+                    "version": "493e3df6a92724b77c2511451322567fe4da7023",
+                    "signature": "f256c49405fd3746a40910c6ea930db7778d39ed44450ab0df6030e5d43ea84c",
+                    "galleryTemplateId": "57SF4"
+                }
+            }
+        ]
+    }
+}

@@ -1,4 +1,8 @@
-import * as Sentry from '@sentry/nextjs'
+import {
+  SpanStatusCode,
+  trace,
+  type Span
+} from '@opentelemetry/api'
 
 export type AnalyticsSpanOp =
   | 'db.query'
@@ -13,6 +17,7 @@ export type AnalyticsSpanOp =
   | 'queue.ack'
   | 'queue.retry'
   | 'queue.dead_letter'
+  | 'workflow'
 
 export type AnalyticsSpanAttributes = Readonly<
   Record<string, string | number | boolean>
@@ -25,21 +30,55 @@ export type StartAnalyticsSpanOptions = {
 }
 
 /**
- * Starts a low-cardinality analytics span via Sentry's active-span API.
+ * Starts a low-cardinality analytics span through the global OpenTelemetry
+ * provider registered by `@vercel/otel`.
  * Span names must be stable templates — never SQL, IDs, or payloads.
  */
 export function startAnalyticsSpan<T>(
   options: StartAnalyticsSpanOptions,
-  callback: (span: Sentry.Span) => T
+  callback: (span: Span) => T
 ): T {
-  return Sentry.startSpan(
+  const tracer = trace.getTracer('utekos-headless')
+
+  return tracer.startActiveSpan(
+    options.name,
     {
-      name: options.name,
-      op: options.op,
-      ...(options.attributes ?
-        { attributes: options.attributes }
-      : {})
+      attributes: {
+        'utekos.operation': options.op,
+        ...options.attributes
+      }
     },
-    callback
+    span => {
+      try {
+        const result = callback(span)
+
+        if (
+          result !== null &&
+          typeof result === 'object' &&
+          'then' in result &&
+          typeof result.then === 'function'
+        ) {
+          return Promise.resolve(result)
+            .catch(error => {
+              span.recordException(
+                error instanceof Error ? error : String(error)
+              )
+              span.setStatus({ code: SpanStatusCode.ERROR })
+              throw error
+            })
+            .finally(() => span.end()) as T
+        }
+
+        span.end()
+        return result
+      } catch (error) {
+        span.recordException(
+          error instanceof Error ? error : String(error)
+        )
+        span.setStatus({ code: SpanStatusCode.ERROR })
+        span.end()
+        throw error
+      }
+    }
   )
 }

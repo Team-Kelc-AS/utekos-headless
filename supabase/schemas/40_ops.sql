@@ -153,7 +153,7 @@ create table if not exists ops.integration_alert_deliveries (
   fingerprint text not null,
   idempotency_key text not null unique,
   channel text not null
-    check (channel in ('sentry', 'codex', 'twilio_sms')),
+    check (channel in ('codex', 'twilio_sms')),
   alert_kind text not null
     check (alert_kind in ('incident', 'recovery', 'test')),
   status text not null default 'pending'

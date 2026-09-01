@@ -26,6 +26,7 @@ import { ProductCardCompactVariantSelector } from './ProductCardCompactVariantSe
 import { ProductColorSwatches } from './ProductColorSwatches'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
 
 interface ExtendedProductCardProps extends ProductCardProps {
@@ -150,7 +151,12 @@ export function ProductCard({
           `${selectedVariant.title} er lagt i handlekurven!`
         )
       }
-    })()
+    })().catch(error => {
+      reportClientCaughtError(error, 'product_card.quick_buy')
+      toast.error(
+        'Beklager, produktet kunne ikke legges i handlekurven.'
+      )
+    })
   }
 
   const handleViewProduct = () => {

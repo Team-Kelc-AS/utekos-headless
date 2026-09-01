@@ -1,6 +1,5 @@
 import 'server-only'
 
-import * as Sentry from '@sentry/nextjs'
 import type { IntegrationHealthAlertInstruction } from './planIntegrationHealthAlerts'
 import { postgresIntegrationHealthStore } from './postgresIntegrationHealthStore'
 import { sendTwilioLaunchGuardSms } from './twilioLaunchGuardSms'
@@ -13,30 +12,19 @@ type Store = Pick<
 >
 
 type Dependencies = {
-  captureMessage: typeof Sentry.captureMessage
   environment: Readonly<Record<string, string | undefined>>
   fetch: typeof fetch
-  flush: typeof Sentry.flush
   now: () => Date
   sendSms: typeof sendTwilioLaunchGuardSms
   store: Store
 }
 
 const defaultDependencies: Dependencies = {
-  captureMessage: Sentry.captureMessage,
   environment: process.env,
   fetch,
-  flush: Sentry.flush,
   now: () => new Date(),
   sendSms: sendTwilioLaunchGuardSms,
   store: postgresIntegrationHealthStore
-}
-
-function safeCode(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9:_-]/gu, '_')
-    .slice(0, 120)
 }
 
 export async function dispatchIntegrationHealthAlerts(
@@ -46,7 +34,6 @@ export async function dispatchIntegrationHealthAlerts(
   const summary = {
     codexPending: 0,
     failed: 0,
-    sentrySent: 0,
     suppressed: 0,
     twilioSent: 0
   }
@@ -68,52 +55,6 @@ export async function dispatchIntegrationHealthAlerts(
 
       if (channel === 'codex') {
         summary.codexPending += 1
-        continue
-      }
-
-      if (channel === 'sentry') {
-        try {
-          const providerReceiptId = dependencies.captureMessage(
-            `Launch guard ${safeCode(alert.kind)}: ${safeCode(
-              alert.summaryCode
-            )}`,
-            {
-              fingerprint: [
-                'launch-guard',
-                safeCode(alert.fingerprint),
-                alert.kind
-              ],
-              level:
-                alert.severity === 'critical' ||
-                alert.severity === 'high' ?
-                  'error'
-                : 'warning',
-              tags: {
-                alert_kind: alert.kind,
-                integration: safeCode(alert.integration),
-                severity: alert.severity,
-                surface: safeCode(alert.surface)
-              }
-            }
-          )
-          const flushed = await dependencies.flush(1_500)
-          if (!flushed) throw new Error('sentry_flush_failed')
-          await dependencies.store.updateDelivery({
-            deliveryId,
-            now,
-            ...(providerReceiptId ? { providerReceiptId } : {}),
-            status: 'sent'
-          })
-          summary.sentrySent += 1
-        } catch {
-          await dependencies.store.updateDelivery({
-            deliveryId,
-            failureCode: 'sentry_delivery_failed',
-            now,
-            status: 'failed'
-          })
-          summary.failed += 1
-        }
         continue
       }
 

@@ -11,7 +11,7 @@ import {
 } from './metaAdDeliveryInsightsSchema'
 import { fetchMetaGraphJson, type MetaGraphFetch } from './fetchMetaGraphJson'
 
-const META_ADS_API_VERSION = 'v25.0'
+const META_ADS_API_VERSION = 'v26.0'
 const META_ADS_ACTION_REPORT_TIME = 'impression'
 const META_ADS_FIELDS = [
   'account_id',

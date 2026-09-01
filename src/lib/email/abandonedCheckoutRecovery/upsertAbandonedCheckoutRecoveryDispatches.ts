@@ -215,7 +215,7 @@ export async function upsertAbandonedCheckoutRecoveryDispatches(
      * Never propagate raw Postgres/PostgREST errors.
      *
      * Upstream errors may contain values or implementation
-     * details that should not reach Vercel logs, Sentry or
+     * details that should not reach Vercel logs or
      * an HTTP response.
      */
     throw new Error(

@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { createShopifyRequestDeadline } from '@/api/shopify/request/createShopifyRequestDeadline'
 import { fetchProductCards } from './fetchProductCards'
 import { getRelatedProductsRetryJitterMs } from './getRelatedProductsRetryJitterMs'

@@ -77,7 +77,7 @@ test('exposes only the public SDK configuration to the client', () => {
       FACEBOOK_LOGIN_APP_ID: '1234567890',
       FACEBOOK_LOGIN_APP_SECRET: 'must-not-be-exposed'
     }),
-    { apiVersion: 'v25.0', appId: '1234567890' }
+    { apiVersion: 'v26.0', appId: '1234567890' }
   )
   assert.equal(
     readFacebookLoginClientConfig({

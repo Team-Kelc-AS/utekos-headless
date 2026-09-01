@@ -1,7 +1,8 @@
 import 'server-only'
 
-import * as Sentry from '@sentry/nextjs'
 import { z } from 'zod'
+import { reportOperationalError } from '@/lib/observability/reportOperationalError'
+import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 
 import {
   shopifyAdminGraphql
@@ -304,7 +305,7 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
         : dependencies.canaryEmail
       )
 
-    return await Sentry.startSpan(
+    return await startAnalyticsSpan(
       {
         name:
           'abandoned_checkout_recovery.discovery',
@@ -426,27 +427,18 @@ export async function runAbandonedCheckoutRecoveryDiscovery(
      * to a bounded machine-readable code.
      *
      * Do not send the original Shopify/Supabase error
-     * object or message into Sentry.
+     * object or message into operational logs.
      */
     const failureCode =
       classifyFailure(error)
 
-    Sentry.withScope(scope => {
-      scope.setTag(
-        'workflow',
-        'abandoned_checkout_recovery_discovery'
-      )
-
-      scope.setTag(
-        'failure_code',
-        failureCode
-      )
-
-      Sentry.captureException(
-        new Error(
-          failureCode
-        )
-      )
+    reportOperationalError({
+      error: new Error(failureCode),
+      event: 'abandoned_checkout_recovery.discovery_failed',
+      context: {
+        failureCode,
+        workflow: 'abandoned_checkout_recovery_discovery'
+      }
     })
 
     /*

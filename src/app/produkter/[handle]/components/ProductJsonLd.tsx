@@ -1,5 +1,5 @@
-import { captureException } from '@sentry/nextjs'
 import { resolveProductJsonLdData } from '../utils/resolveProductJsonLdData'
+import { reportOperationalError } from '@/lib/observability/reportOperationalError'
 import { JsonLdScript } from '@/lib/seo/jsonLd/JsonLdScript'
 
 export async function ProductJsonLd({
@@ -9,11 +9,10 @@ export async function ProductJsonLd({
 }) {
   const data = await resolveProductJsonLdData(handle, {
     onError: (error, context) => {
-      captureException(error, {
-        tags: {
-          surface: 'product-json-ld',
-          handle: context.storefrontLookupHandle
-        }
+      reportOperationalError({
+        error,
+        event: 'pdp.product_json_ld.failed',
+        context: { surface: 'product-json-ld' }
       })
       console.warn(
         JSON.stringify({

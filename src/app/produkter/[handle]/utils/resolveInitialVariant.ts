@@ -1,5 +1,5 @@
 // Path: src/app/produkter/[handle]/utils/resolveInitialVariant.ts
-import { flattenConnection } from '@shopify/hydrogen-react'
+import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import { findVariantFromReadableParams } from './findVariantFromReadableParams'
 import { toURLSearchParams } from './toURLSearchParams'
 import { getFirstSearchParamValue } from './getFirstSearchParamValue'

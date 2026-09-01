@@ -1,11 +1,11 @@
 import 'server-only'
-import * as Sentry from '@sentry/nextjs'
 import {
   DuplicateMessageError,
   send
 } from '@vercel/queue'
 import { z } from 'zod'
 import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
+import { reportOperationalError } from '@/lib/observability/reportOperationalError'
 import type { CreatedProviderDispatchAttempt } from './canonicalEventStore'
 import {
   providerAdapterRegistry,
@@ -52,32 +52,26 @@ type QueueSend = (
 ) => Promise<{ messageId: string | null }>
 
 export type CanonicalProviderDispatchPublisherDependencies = {
-  captureException: typeof Sentry.captureException
+  reportPublishFailure: (
+    error: unknown,
+    attempt: CreatedProviderDispatchAttempt
+  ) => void
   isQueueRuntime: () => boolean
   send: QueueSend
 }
 
 const defaultDependencies: CanonicalProviderDispatchPublisherDependencies = {
-  captureException: Sentry.captureException,
+  reportPublishFailure: (error, attempt) =>
+    reportOperationalError({
+      error,
+      event: 'analytics.provider_queue.publish_failed',
+      context: {
+        adapterKey: attempt.adapterKey,
+        attemptId: attempt.attemptId
+      }
+    }),
   isQueueRuntime: () => process.env.VERCEL === '1',
   send
-}
-
-function captureQueuePublishFailure(
-  error: unknown,
-  attempt: CreatedProviderDispatchAttempt,
-  dependencies: CanonicalProviderDispatchPublisherDependencies
-) {
-  dependencies.captureException(error, {
-    extra: {
-      adapter_key: attempt.adapterKey,
-      attempt_id: attempt.attemptId
-    },
-    tags: {
-      analytics_stage: 'provider_queue_publish',
-      queue_topic: CANONICAL_PROVIDER_DISPATCH_TOPIC
-    }
-  })
 }
 
 export async function publishCanonicalProviderDispatchAttempts(
@@ -122,7 +116,7 @@ export async function publishCanonicalProviderDispatchAttempts(
             )
           } catch (error) {
             if (error instanceof DuplicateMessageError) return
-            captureQueuePublishFailure(error, attempt, dependencies)
+            dependencies.reportPublishFailure(error, attempt)
           }
         })
       )

@@ -1,7 +1,7 @@
 'use client'
 
 import { sendGTMEvent } from '@next/third-parties/google'
-import { captureException } from '@sentry/nextjs'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { readBrowserReporterContext } from './browserReporterContext'
 import { browserPageViewSession } from './pageViewSession'
 import {
@@ -117,12 +117,10 @@ export async function reportCanonicalBeginCheckout(
         event.custom_data.items
       )
     } catch (error) {
-      captureException(error, {
-        tags: {
-          analytics_event: 'begin_checkout',
-          analytics_stage: 'checkout_attribution_persist'
-        }
-      })
+      reportClientCaughtError(
+        error,
+        'begin_checkout.checkout_attribution_persist'
+      )
     }
 
     if (
@@ -139,35 +137,26 @@ export async function reportCanonicalBeginCheckout(
       )
     ])
     if (!results) {
-      captureException(
+      reportClientCaughtError(
         new Error('Checkout attribution handoff timed out'),
-        {
-          tags: {
-            analytics_event: 'begin_checkout',
-            analytics_stage: 'checkout_handoff_timeout'
-          }
-        }
+        'begin_checkout.checkout_handoff_timeout'
       )
       return
     }
 
     for (const result of results) {
       if (result.status === 'rejected') {
-        captureException(result.reason, {
-          tags: {
-            analytics_event: 'begin_checkout',
-            analytics_stage: 'checkout_handoff'
-          }
-        })
+        reportClientCaughtError(
+          result.reason,
+          'begin_checkout.checkout_handoff'
+        )
       }
     }
   } catch (error) {
-    captureException(error, {
-      tags: {
-        analytics_event: 'begin_checkout',
-        analytics_stage: 'checkout_handoff'
-      }
-    })
+    reportClientCaughtError(
+      error,
+      'begin_checkout.checkout_handoff'
+    )
   }
 }
 

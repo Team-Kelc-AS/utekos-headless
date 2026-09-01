@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/nextjs'
 import { handleCallback } from '@vercel/queue'
+import { reportOperationalError } from '@/lib/observability/reportOperationalError'
 import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import {
   CANONICAL_PROVIDER_DISPATCH_TOPIC,
@@ -11,12 +11,20 @@ import { runTargetedProviderOutboxAttempt } from '../../../../lib/analytics/serv
 export const maxDuration = 60
 
 export type CanonicalProviderDispatchQueueDependencies = {
-  captureMessage: typeof Sentry.captureMessage
+  reportInvalidMessage: () => void
   runAttempt: typeof runTargetedProviderOutboxAttempt
 }
 
 const defaultDependencies: CanonicalProviderDispatchQueueDependencies = {
-  captureMessage: Sentry.captureMessage,
+  reportInvalidMessage: () =>
+    reportOperationalError({
+      error: new Error('Invalid queue message'),
+      event: 'analytics.provider_queue.invalid_message',
+      context: {
+        analyticsStage: 'provider_queue_consume',
+        queueMessageStatus: 'invalid'
+      }
+    }),
   runAttempt: runTargetedProviderOutboxAttempt
 }
 
@@ -30,16 +38,7 @@ export async function handleCanonicalProviderDispatchQueueMessage(
   )
 
   if (!parsed.success) {
-    dependencies.captureMessage(
-      'Invalid canonical provider dispatch queue message',
-      {
-        level: 'error',
-        tags: {
-          analytics_stage: 'provider_queue_consume',
-          queue_message_status: 'invalid'
-        }
-      }
-    )
+    dependencies.reportInvalidMessage()
     return { status: 'invalid_message' as const }
   }
 

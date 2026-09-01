@@ -1,6 +1,3 @@
-'use client'
-
-import { useQuery } from '@tanstack/react-query'
 import { getFeaturedProducts } from '@/api/lib/products/getFeaturedProducts'
 import {
   Carousel,
@@ -12,11 +9,8 @@ import {
 import { initializeCarouselProducts } from '@/components/ProductCard/initializeCarouselProducts'
 import { ProductGridCard } from './ProductGridCard'
 
-export function ProductCarousel() {
-  const { data: products } = useQuery({
-    queryKey: ['products', 'featured'],
-    queryFn: getFeaturedProducts
-  })
+export async function ProductCarousel() {
+  const products = await getFeaturedProducts()
 
   if (!products || products.length === 0) {
     return null

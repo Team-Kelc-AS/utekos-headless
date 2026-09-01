@@ -43,9 +43,8 @@ function dependencies(
   const captured: unknown[] = []
   const sends: unknown[] = []
   const value: CanonicalProviderDispatchPublisherDependencies = {
-    captureException: error => {
+    reportPublishFailure: error => {
       captured.push(error)
-      return 'event-id'
     },
     isQueueRuntime: () => true,
     send: async (topic, payload, options) => {

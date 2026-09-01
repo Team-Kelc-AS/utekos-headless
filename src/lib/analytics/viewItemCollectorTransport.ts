@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/nextjs'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { clearStoredSnapchatClickId } from './clickIdSessionStore'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
 import { enrichCanonicalViewItemWithGoogleAnalyticsIds } from './googleAnalyticsBrowserIds'
@@ -286,12 +286,7 @@ async function postCanonicalViewItem(
 }
 
 function reportCollectorError(error: unknown) {
-  captureException(error, {
-    tags: {
-      analytics_event: 'view_item',
-      analytics_transport: 'first_party_collector'
-    }
-  })
+  reportClientCaughtError(error, 'view_item.first_party_collector')
 }
 
 function hasCollectionConsent(event: CanonicalViewItem) {

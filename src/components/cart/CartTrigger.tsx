@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { useCartQuery } from '@/hooks/useCartQuery'
 import { useCartStoreSnapshot } from '@/hooks/useCartStoreSnapshot'
 import { cartStore } from '@/lib/state/cartStore'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { cn } from '@/lib/utils/className'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { useQueryClient } from '@tanstack/react-query'
@@ -42,8 +43,15 @@ export function CartTrigger({
     optimisticCount > 0 ? optimisticCount : serverCount
 
   const handlePrefetch = () => {
-    queryClient.prefetchQuery(recommendedProductsOptions)
-    queryClient.prefetchQuery(accessoryProductsOptions)
+    void Promise.all([
+      queryClient.prefetchQuery(recommendedProductsOptions),
+      queryClient.prefetchQuery(accessoryProductsOptions)
+    ]).catch(error => {
+      reportClientCaughtError(
+        error,
+        'cart.product_suggestions_prefetch'
+      )
+    })
   }
 
   const handleOpen = () => {

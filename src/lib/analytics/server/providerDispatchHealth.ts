@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/nextjs'
 import { parseCanonicalEvent } from '../canonicalEvent'
 import { planCanonicalEventDispatch } from './planCanonicalEventDispatch'
 
@@ -78,7 +77,7 @@ export type ProviderDispatchHealthStore = {
 }
 
 export type ProviderDispatchHealthDependencies = {
-  captureMessage: typeof Sentry.captureMessage
+  reportIssue: (code: string, metrics: Record<string, unknown>) => void
   store: ProviderDispatchHealthStore
 }
 
@@ -221,17 +220,9 @@ export function evaluateProviderDispatchHealth(
 function captureHealthIssue(
   code: string,
   extra: Record<string, unknown>,
-  captureMessage: typeof Sentry.captureMessage
+  reportIssue: ProviderDispatchHealthDependencies['reportIssue']
 ) {
-  captureMessage(`Canonical provider dispatch health: ${code}`, {
-    extra,
-    fingerprint: ['canonical-provider-dispatch-health', code],
-    level: 'error',
-    tags: {
-      analytics_stage: 'provider_dispatch_health',
-      health_issue: code
-    }
-  })
+  reportIssue(code, extra)
 }
 
 export async function runProviderDispatchHealthCheck(
@@ -248,7 +239,7 @@ export async function runProviderDispatchHealthCheck(
         count: evaluation.missingProviderAttempts.length,
         samples: evaluation.missingProviderAttempts.slice(0, 20)
       },
-      dependencies.captureMessage
+      dependencies.reportIssue
     )
   }
 
@@ -259,7 +250,7 @@ export async function runProviderDispatchHealthCheck(
         count: evaluation.invalidLedgerEvents.length,
         samples: evaluation.invalidLedgerEvents.slice(0, 20)
       },
-      dependencies.captureMessage
+      dependencies.reportIssue
     )
   }
 
@@ -273,7 +264,7 @@ export async function runProviderDispatchHealthCheck(
           20
         )
       },
-      dependencies.captureMessage
+      dependencies.reportIssue
     )
   }
 
@@ -284,7 +275,7 @@ export async function runProviderDispatchHealthCheck(
         count: evaluation.deadLettered.length,
         samples: evaluation.deadLettered.slice(0, 20)
       },
-      dependencies.captureMessage
+      dependencies.reportIssue
     )
   }
 
@@ -298,7 +289,7 @@ export async function runProviderDispatchHealthCheck(
         ack_sample_size: evaluation.ackSampleSize,
         p95_ack_latency_ms: evaluation.p95AckLatencyMs
       },
-      dependencies.captureMessage
+      dependencies.reportIssue
     )
   }
 
@@ -316,7 +307,7 @@ export async function runProviderDispatchHealthCheck(
           'human_or_unknown_meta_signal_document_with_fbclid',
         window: '24_hours'
       },
-      dependencies.captureMessage
+      dependencies.reportIssue
     )
   }
 
@@ -350,7 +341,7 @@ export async function runProviderDispatchHealthCheck(
           'human_or_unknown_meta_signal_document_per_meta_outbound_click',
         threshold: 'below_80_percent_of_baseline'
       },
-      dependencies.captureMessage
+      dependencies.reportIssue
     )
   }
 
@@ -367,7 +358,7 @@ export async function runProviderDispatchHealthCheck(
         definition: 'consented_page_view_with_fbc_given_fbclid',
         window: '24_hours'
       },
-      dependencies.captureMessage
+      dependencies.reportIssue
     )
   }
 
@@ -384,7 +375,7 @@ export async function runProviderDispatchHealthCheck(
         eligible_sample_size: evaluation.metaEligibleSampleSize,
         provider_finality: 'not_proven'
       },
-      dependencies.captureMessage
+      dependencies.reportIssue
     )
   }
 

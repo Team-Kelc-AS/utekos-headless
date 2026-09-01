@@ -36,7 +36,6 @@ test('requires two five-minute probe failures before critical SMS', () => {
   })
 
   assert.deepEqual(alert?.channels, [
-    'sentry',
     'codex',
     'twilio_sms'
   ])
@@ -62,7 +61,6 @@ test('alerts immediately for dead letters and never sends medium deviations by S
   })
 
   assert.deepEqual(alerts[0]?.channels, [
-    'sentry',
     'codex',
     'twilio_sms'
   ])
@@ -80,12 +78,11 @@ test('sends recovery only through channels used for the incident plus Codex', ()
         integration: 'vercel',
         severity: 'critical',
         surface: 'api_log_contract',
-        wasSentrySent: true,
         wasTwilioSent: false
       }
     ]
   })
 
-  assert.deepEqual(recovery?.channels, ['sentry', 'codex'])
+  assert.deepEqual(recovery?.channels, ['codex'])
   assert.equal(recovery?.kind, 'recovery')
 })

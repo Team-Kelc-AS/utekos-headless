@@ -12,6 +12,7 @@ import { getVercelRuntimeContext } from '@/lib/runtime/getVercelRuntimeContext'
 import { cancelResponseBody } from '../request/cancelResponseBody'
 import { createShopifyRequestDeadline } from '../request/createShopifyRequestDeadline'
 import { readJsonWithDeadline } from '../request/readJsonWithDeadline'
+import { ShopifyStorefrontHttpError } from '../request/ShopifyStorefrontHttpError'
 import {
   classifyShopifyRequestError,
   DEFAULT_SHOPIFY_STOREFRONT_TIMEOUT_MS,
@@ -99,6 +100,15 @@ function normalizeRequestId(
   const normalized = value?.trim()
 
   return normalized || undefined
+}
+
+function isJsonContentType(value: string | null): boolean {
+  const mediaType = value?.split(';', 1)[0]?.trim().toLowerCase()
+
+  return (
+    mediaType === 'application/json' ||
+    mediaType?.endsWith('+json') === true
+  )
 }
 
 function createRequestLogContext(
@@ -381,11 +391,38 @@ async function executeStorefrontRequest<
         const bodyStartedAt =
           performance.now()
 
-        const body: unknown =
-          await readJsonWithDeadline(
-            response,
-            deadline
+        if (
+          !response.ok &&
+          !isJsonContentType(
+            response.headers.get('content-type')
           )
+        ) {
+          throw new ShopifyStorefrontHttpError(
+            status,
+            requestId ?? null
+          )
+        }
+
+        let body: unknown
+        try {
+          body =
+            await readJsonWithDeadline(
+              response,
+              deadline
+            )
+        } catch (error) {
+          if (
+            !response.ok &&
+            error instanceof SyntaxError
+          ) {
+            throw new ShopifyStorefrontHttpError(
+              status,
+              requestId ?? null
+            )
+          }
+
+          throw error
+        }
 
         responseBodyMs =
           elapsedMilliseconds(

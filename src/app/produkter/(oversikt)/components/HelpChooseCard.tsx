@@ -5,7 +5,7 @@ import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductLi
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
 import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
-import { flattenConnection } from '@shopify/hydrogen-react'
+import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import { AnimatePresence, motion } from 'motion/react'
 import {
   ArrowUpRight,

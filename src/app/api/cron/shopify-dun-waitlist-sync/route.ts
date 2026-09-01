@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/nextjs'
 
 import { hasValidCronAuthorization } from '@/lib/security/hasValidCronAuthorization'
 import {
@@ -41,9 +40,7 @@ const defaultDependencies: DunWaitlistShopifySyncCronDependencies = {
   runLegacyBatch: runDunWaitlistShopifySyncBatch,
   runPgmqBatch: runDunWaitlistShopifyQueueBatch,
   getQueueMetrics: getDunWaitlistShopifyQueueMetrics,
-  setBackendTag: backend => {
-    Sentry.getCurrentScope().setTag('dun_waitlist_sync_backend', backend)
-  }
+  setBackendTag: () => undefined
 }
 
 const noStoreHeaders = {

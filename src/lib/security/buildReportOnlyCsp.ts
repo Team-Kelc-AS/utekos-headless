@@ -198,9 +198,7 @@ export function buildReportOnlyCsp(): string {
     ...VERCEL_ANALYTICS_CONNECT_ORIGINS,
     ...BOTID_KASADA_CONNECT_ORIGINS,
     ...GA4_COLLECTION_ORIGINS,
-    ...GA4_ADVERTISING_ORIGINS,
-    'https://*.ingest.sentry.io',
-    'https://*.ingest.de.sentry.io'
+    ...GA4_ADVERTISING_ORIGINS
   ]
 
   // Kasada fingerprinting plays data:audio media; without media-src

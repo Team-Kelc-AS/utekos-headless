@@ -17,17 +17,6 @@ moduleWithLoad._load = (request, parent, isMain) => {
     return {}
   }
 
-  if (
-    request === '@sentry/nextjs' ||
-    request.endsWith('/@sentry/nextjs')
-  ) {
-    return {
-      getCurrentScope: () => ({
-        setTag: () => undefined
-      })
-    }
-  }
-
   return originalLoad(request, parent, isMain)
 }
 

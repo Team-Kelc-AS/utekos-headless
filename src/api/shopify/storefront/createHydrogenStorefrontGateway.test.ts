@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import type { ShopifyOperation } from '@types'
+import { ShopifyStorefrontHttpError } from '../request/ShopifyStorefrontHttpError'
 import { createHydrogenStorefrontGateway } from './createHydrogenStorefrontGateway'
 
 type TestQuery = ShopifyOperation<
@@ -376,6 +377,43 @@ test('enforces a wall-clock deadline around hanging response bodies', async () =
   } finally {
     clearTimeout(releaseTimer)
     releaseCancellation?.()
+  }
+})
+
+test('classifies a non-JSON Shopify 502 without parsing provider HTML', async () => {
+  const originalConsoleError = console.error
+  console.error = () => undefined
+  const gateway = createHydrogenStorefrontGateway(
+    {
+      storeDomain: 'example.myshopify.com',
+      publicStorefrontToken: 'public-test-token',
+      storefrontApiVersion: '2026-04'
+    },
+    {
+      fetch: async () =>
+        new Response('<!-- The provider is temporarily unavailable -->', {
+          status: 502,
+          headers: {
+            'content-type': 'text/html',
+            'x-request-id': 'shopify-502-test'
+          }
+        })
+    }
+  )
+
+  try {
+    await assert.rejects(
+      gateway.catalogQuery<TestQuery>({ query }),
+      (error: unknown) => {
+        assert.ok(error instanceof ShopifyStorefrontHttpError)
+        assert.equal(error.status, 502)
+        assert.equal(error.requestId, 'shopify-502-test')
+        assert.equal(error.message.includes('provider'), false)
+        return true
+      }
+    )
+  } finally {
+    console.error = originalConsoleError
   }
 })
 

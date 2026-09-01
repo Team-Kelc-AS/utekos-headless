@@ -31,11 +31,10 @@ export type IntegrationHealthRecovery = Readonly<{
   integration: string
   severity: 'critical' | 'high' | 'medium' | 'low'
   surface: string
-  wasSentrySent: boolean
   wasTwilioSent: boolean
 }>
 
-type AlertChannel = 'sentry' | 'codex' | 'twilio_sms'
+type AlertChannel = 'codex' | 'twilio_sms'
 type AlertKind = 'incident' | 'recovery' | 'test'
 
 let integrationHealthSql: ReturnType<typeof postgres> | undefined
@@ -266,14 +265,6 @@ const RECOVER_INCIDENTS_QUERY = `
     incident.surface,
     incident.severity,
     incident.current_opened_at::text,
-    exists (
-      select 1
-      from ops.integration_alert_deliveries delivery
-      where delivery.incident_id = incident.id
-        and delivery.channel = 'sentry'
-        and delivery.alert_kind = 'incident'
-        and delivery.status in ('sent', 'delivered')
-    ) as was_sentry_sent,
     exists (
       select 1
       from ops.integration_alert_deliveries delivery
@@ -566,7 +557,6 @@ export function createPostgresIntegrationHealthStore(
           integration: stringField(row, 'integration'),
           severity: severityField(row),
           surface: stringField(row, 'surface'),
-          wasSentrySent: row.was_sentry_sent === true,
           wasTwilioSent: row.was_twilio_sent === true
         })
       )

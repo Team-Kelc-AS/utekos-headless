@@ -33,7 +33,7 @@ export type MetaAdDeliveryInsight = {
   adName?: string
   adsetId: string
   adsetName?: string
-  apiVersion: 'v25.0'
+  apiVersion: 'v26.0'
   attributionSetting: 'account'
   breakdownKind: MetaAdDeliveryBreakdownKind
   campaignId: string

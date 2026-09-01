@@ -4,7 +4,7 @@ import type {
 } from '@/api/shopify/types/storefrontApi'
 import { normalizeProductImage } from '@/lib/helpers/normalizers/normalizeProductImage'
 import { normalizeStorefrontMoney } from '@/lib/helpers/normalizers/normalizeStorefrontMoney'
-import { flattenConnection } from '@shopify/hydrogen-react'
+import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import type { ShopifyProduct, ShopifyProductVariant } from 'types/product'
 import { reshapeMetaobject } from './reshapeMetaobject'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { flattenConnection } from '@shopify/hydrogen-react'
+import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import { reportCanonicalVariantSelect } from '@/lib/analytics/variantSelectReporter'
 import { findInitialVariant } from '@/lib/utils/findInitialVariant'
 import { selectVariantByOptions } from '@/lib/utils/selectVariantByOptions'

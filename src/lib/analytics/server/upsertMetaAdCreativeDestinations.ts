@@ -117,7 +117,7 @@ export async function upsertMetaAdCreativeDestinations(
           ${destination.accountId},
           ${destination.adId},
           ${destination.creativeId},
-          'v25.0',
+          'v26.0',
           ${destination.adCreatedTime},
           ${destination.adUpdatedTime},
           ${destination.effectiveStatus},

@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils/className'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { useQueryClient } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
@@ -31,7 +32,11 @@ export function HeaderSearch({
   useCommandK(open, setOpen)
 
   const handlePrefetch = () => {
-    queryClient.prefetchQuery(searchIndexQueryOptions)
+    void queryClient
+      .prefetchQuery(searchIndexQueryOptions)
+      .catch(error => {
+        reportClientCaughtError(error, 'header.search_prefetch')
+      })
   }
 
   const handleOpen = () => {

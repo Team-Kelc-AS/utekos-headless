@@ -34,9 +34,8 @@ const validMessage = {
 test('acks an invalid PII-free envelope after reporting it', async () => {
   const messages: string[] = []
   const dependencies: CanonicalProviderDispatchQueueDependencies = {
-    captureMessage: message => {
-      messages.push(message)
-      return 'event-id'
+    reportInvalidMessage: () => {
+      messages.push('Invalid canonical provider dispatch queue message')
     },
     runAttempt: async () => {
       throw new Error('must not run')
@@ -57,7 +56,7 @@ test('acks an invalid PII-free envelope after reporting it', async () => {
 test('dispatches exactly the attempt primary key and adapter key', async () => {
   const calls: unknown[] = []
   const dependencies: CanonicalProviderDispatchQueueDependencies = {
-    captureMessage: () => 'event-id',
+    reportInvalidMessage: () => undefined,
     runAttempt: async input => {
       calls.push(input)
       return { status: 'accepted_unverified' }
@@ -86,7 +85,7 @@ test('acks provider-classified retry and dead-letter outcomes', async () => {
     const result = await handleCanonicalProviderDispatchQueueMessage(
       validMessage,
       {
-        captureMessage: () => 'event-id',
+        reportInvalidMessage: () => undefined,
         runAttempt: async () => ({ status })
       }
     )
@@ -98,7 +97,7 @@ test('acks provider-classified retry and dead-letter outcomes', async () => {
 test('propagates infrastructure errors for Queue redelivery', async () => {
   await assert.rejects(
     handleCanonicalProviderDispatchQueueMessage(validMessage, {
-      captureMessage: () => 'event-id',
+      reportInvalidMessage: () => undefined,
       runAttempt: async () => {
         throw new Error('database connection unavailable')
       }

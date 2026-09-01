@@ -1,4 +1,4 @@
-import { getProductOptions } from '@shopify/hydrogen-react'
+import { getProductOptions } from '@shopify/hydrogen-react/getProductOptions'
 import {
   buildPublicVariantUrl,
   requireProductPresentation,

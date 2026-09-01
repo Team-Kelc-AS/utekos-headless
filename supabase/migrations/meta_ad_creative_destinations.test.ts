@@ -15,7 +15,7 @@ const rlsSchemaUrl = new URL(
   import.meta.url
 )
 
-test('Meta creative destinations use the v25 runtime and SCD contracts', async () => {
+test('Meta creative destinations use the v26 runtime and SCD contracts', async () => {
   const [migrationSql, schemaSql] = await Promise.all([
     readFile(migrationUrl, 'utf8'),
     readFile(marketingSchemaUrl, 'utf8')

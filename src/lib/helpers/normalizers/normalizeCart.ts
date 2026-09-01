@@ -4,7 +4,7 @@ import type {
   StorefrontCart,
   StorefrontCartLine
 } from '@/api/shopify/types/storefrontApi'
-import { flattenConnection } from '@shopify/hydrogen-react'
+import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import type { Cart, CartLine } from 'types/cart'
 import { normalizeProductImage } from './normalizeProductImage'
 import { normalizeStorefrontMoney } from './normalizeStorefrontMoney'

@@ -4,7 +4,7 @@ import {
   type MetaDatasetQualityResponse
 } from './metaDatasetQualitySchema'
 
-const META_DATASET_QUALITY_API_VERSION = 'v25.0'
+const META_DATASET_QUALITY_API_VERSION = 'v26.0'
 const META_DATASET_QUALITY_TIMEOUT_MS = 10_000
 const META_DATASET_QUALITY_FIELDS =
   'web{event_name,event_match_quality{composite_score,match_key_feedback{identifier,coverage{percentage},potential_aly_acr_increase{percentage,description}},diagnostics{name,description,solution,percentage,affected_event_count,total_event_count}},event_coverage{percentage,goal_percentage,description},dedupe_key_feedback{dedupe_key,browser_events_with_dedupe_key{percentage,description},server_events_with_dedupe_key{percentage,description},overall_browser_coverage_from_dedupe_key{percentage,description}},data_freshness{upload_frequency,description},acr{percentage,description},event_potential_aly_acr_increase{percentage,description}}'

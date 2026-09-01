@@ -10,7 +10,7 @@ import {
 } from './facebookLoginOAuth'
 
 const config: FacebookLoginConfig = {
-  apiVersion: 'v25.0',
+  apiVersion: 'v26.0',
   appId: '1154247890253046',
   appSecret: 'test-app-secret',
   identityKey: randomBytes(32),
@@ -45,7 +45,7 @@ test('builds the minimal server-side Facebook Login dialog', () => {
   const url = buildFacebookLoginDialogUrl(config, context)
 
   assert.equal(url.hostname, 'www.facebook.com')
-  assert.equal(url.pathname, '/v25.0/dialog/oauth')
+  assert.equal(url.pathname, '/v26.0/dialog/oauth')
   assert.equal(url.searchParams.get('response_type'), 'code')
   assert.equal(
     url.searchParams.get('scope'),
@@ -88,8 +88,8 @@ test('validates app and user identity before returning profile data', async () =
     emailPermissionGranted: true
   })
   assert.equal(calls.length, 3)
-  assert.equal(calls[1]?.pathname, '/v25.0/debug_token')
-  assert.equal(calls[2]?.pathname, '/v25.0/me')
+  assert.equal(calls[1]?.pathname, '/v26.0/debug_token')
+  assert.equal(calls[2]?.pathname, '/v26.0/me')
   assert.ok(calls[2]?.searchParams.get('appsecret_proof'))
 })
 

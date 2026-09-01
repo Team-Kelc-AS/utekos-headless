@@ -135,7 +135,7 @@ test('uses the SDK HTTP override to send one validated request', async () => {
   )
 
   const response = await service.executeRequest(
-    'https://graph.facebook.com/v25.0/pixel/events',
+    'https://graph.facebook.com/v26.0/pixel/events',
     'POST',
     { 'Content-Type': 'application/json' },
     { access_token: 'token', data: [{ event_id: 'event-1' }] }
@@ -147,7 +147,7 @@ test('uses the SDK HTTP override to send one validated request', async () => {
       data: [{ event_id: 'event-1' }]
     }),
     method: 'POST',
-    url: 'https://graph.facebook.com/v25.0/pixel/events'
+    url: 'https://graph.facebook.com/v26.0/pixel/events'
   })
   assert.deepEqual(response, {
     events_received: 1,
@@ -171,7 +171,7 @@ test('aborts a Meta transport that exceeds its deadline', async () => {
 
   await assert.rejects(
     service.executeRequest(
-      'https://graph.facebook.com/v25.0/pixel/events',
+      'https://graph.facebook.com/v26.0/pixel/events',
       'POST',
       { 'Content-Type': 'application/json' },
       { data: [] }
@@ -197,7 +197,7 @@ test('preserves retryable HTTP status and Meta error fields', async () => {
 
   await assert.rejects(
     service.executeRequest(
-      'https://graph.facebook.com/v25.0/pixel/events',
+      'https://graph.facebook.com/v26.0/pixel/events',
       'POST',
       {},
       { data: [] }

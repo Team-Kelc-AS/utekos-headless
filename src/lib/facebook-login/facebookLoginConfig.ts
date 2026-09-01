@@ -11,7 +11,7 @@ const facebookLoginEnvironmentSchema = z.object({
   VERCEL_ENV: z.string().optional()
 })
 
-const FACEBOOK_GRAPH_API_VERSION = 'v25.0'
+const FACEBOOK_GRAPH_API_VERSION = 'v26.0'
 const IDENTITY_KEY_BYTES = 32
 
 export type FacebookLoginConfig = {

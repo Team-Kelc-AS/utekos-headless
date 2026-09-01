@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { ShopifyCatalogGraphQLError } from './ShopifyCatalogGraphQLError'
+import { ShopifyStorefrontHttpError } from '@/api/shopify/request/ShopifyStorefrontHttpError'
 import { isRetryableShopifyCatalogError } from './isRetryableShopifyCatalogError'
 
 test('retries timeout and network failures', () => {
@@ -53,5 +54,26 @@ test('retries documented transient Shopify GraphQL errors', () => {
       )
     ),
     true
+  )
+})
+
+test('retries transient Shopify HTTP responses without retrying client errors', () => {
+  assert.equal(
+    isRetryableShopifyCatalogError(
+      new ShopifyStorefrontHttpError(502)
+    ),
+    true
+  )
+  assert.equal(
+    isRetryableShopifyCatalogError(
+      new ShopifyStorefrontHttpError(429)
+    ),
+    true
+  )
+  assert.equal(
+    isRetryableShopifyCatalogError(
+      new ShopifyStorefrontHttpError(401)
+    ),
+    false
   )
 })

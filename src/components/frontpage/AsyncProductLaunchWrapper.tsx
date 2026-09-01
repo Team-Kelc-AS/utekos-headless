@@ -1,4 +1,4 @@
-import { flattenConnection } from '@shopify/hydrogen-react'
+import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import { getFeaturedProducts } from '@/api/lib/products/getFeaturedProducts'
 import { NewProductLaunchSection } from '@/components/frontpage/components/TechDownCampaign/NewProductLaunchSection'
 import { getProductWithoutSmallSize } from '@/components/products/getProductWithoutSmallSize'

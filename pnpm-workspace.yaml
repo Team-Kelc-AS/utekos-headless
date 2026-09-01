@@ -1,7 +1,5 @@
 allowBuilds:
   '@google/genai': false
-  '@sentry-internal/node-cpu-profiler': true
-  '@sentry/cli': true
   '@swc/core': true
   '@vygruppen/spor-react': true
   cbor-extract: false

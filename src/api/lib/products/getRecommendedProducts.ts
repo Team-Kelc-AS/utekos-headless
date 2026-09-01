@@ -1,6 +1,7 @@
-'use server'
+import 'server-only'
 
 import { getProducts } from '@/api/lib/products/getProducts'
+import { reportOperationalError } from '@/lib/observability/reportOperationalError'
 import type { ShopifyProduct } from 'types/product'
 import { cacheTag, cacheLife } from 'next/cache'
 import { TAGS } from '@/api/constants'
@@ -22,7 +23,10 @@ export async function getRecommendedProducts(): Promise<ShopifyProduct[]> {
 
     return []
   } catch (error) {
-    console.error('Failed to fetch recommended products:', error)
+    reportOperationalError({
+      error,
+      event: 'shopify.recommended_products.fetch_failed'
+    })
 
     return []
   }

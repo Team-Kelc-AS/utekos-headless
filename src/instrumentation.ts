@@ -8,41 +8,12 @@ const OTEL_SERVICE_NAME = 'utekos-headless'
  * runtime; the Edge runtime is left untouched since `@vercel/otel` targets
  * Node and edge instrumentation would otherwise be a no-op overhead.
  *
- * Node OTel ownership: `@vercel/otel` registers the single global provider.
- * Sentry plugs in as sampler / span processor / propagator / context manager
- * after `Sentry.init({ skipOpenTelemetrySetup: true })`.
+ * `@vercel/otel` owns the single global provider.
  */
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
-    const { sentryNodeClient } = await import('../sentry.server.config')
     const { registerOTel } = await import('@vercel/otel')
-
-    if (sentryNodeClient) {
-      const Sentry = await import('@sentry/nextjs')
-      const {
-        SentryPropagator,
-        SentrySampler,
-        SentrySpanProcessor
-      } = await import('@sentry/opentelemetry')
-
-      registerOTel({
-        serviceName: OTEL_SERVICE_NAME,
-        contextManager: new Sentry.SentryContextManager(),
-        propagators: ['auto', new SentryPropagator()],
-        traceSampler: new SentrySampler(sentryNodeClient),
-        spanProcessors: ['auto', new SentrySpanProcessor()]
-      })
-
-      if (process.env.NODE_ENV !== 'production') {
-        Sentry.validateOpenTelemetrySetup()
-      }
-    } else {
-      registerOTel({ serviceName: OTEL_SERVICE_NAME })
-    }
-  }
-
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('../sentry.edge.config')
+    registerOTel(OTEL_SERVICE_NAME)
   }
 }
 
@@ -57,13 +28,6 @@ export async function register() {
  * can be correlated with the opaque digest shown to users in production.
  */
 export const onRequestError: Instrumentation.onRequestError = async (error, request, context) => {
-  try {
-    const { captureRequestError } = await import('@sentry/nextjs')
-    captureRequestError(error, request, context)
-  } catch (captureError) {
-    console.error('[next][onRequestError][sentry]', captureError)
-  }
-
   const err =
     error instanceof Error ?
       (error as Error & { digest?: string })

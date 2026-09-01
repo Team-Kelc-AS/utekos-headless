@@ -1,4 +1,4 @@
-import { flattenConnection } from '@shopify/hydrogen-react'
+import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import type {
   ShopifyProduct,
   ShopifyProductVariant

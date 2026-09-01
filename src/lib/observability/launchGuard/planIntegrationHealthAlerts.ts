@@ -4,7 +4,7 @@ import type {
 } from './postgresIntegrationHealthStore'
 
 export type IntegrationHealthAlertInstruction = Readonly<{
-  channels: readonly ('sentry' | 'codex' | 'twilio_sms')[]
+  channels: readonly ('codex' | 'twilio_sms')[]
   currentOpenedAt: string
   fingerprint: string
   incidentId: string
@@ -48,9 +48,9 @@ export function planIntegrationHealthAlerts(input: {
 
     const channels =
       incident.severity === 'critical' ?
-        (['sentry', 'codex', 'twilio_sms'] as const)
+        (['codex', 'twilio_sms'] as const)
       : incident.severity === 'high' ?
-        (['sentry', 'codex'] as const)
+        (['codex'] as const)
       : (['codex'] as const)
 
     incidents.push({
@@ -69,7 +69,6 @@ export function planIntegrationHealthAlerts(input: {
   const recoveries = input.recoveries.map(
     (recovery): IntegrationHealthAlertInstruction => ({
       channels: [
-        ...(recovery.wasSentrySent ? (['sentry'] as const) : []),
         'codex',
         ...(recovery.wasTwilioSent ?
           (['twilio_sms'] as const)

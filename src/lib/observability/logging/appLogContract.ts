@@ -103,6 +103,15 @@ export const clientErrorDataSchema = z.strictObject({
     .optional()
 })
 
+const unhandledRejectionMessageSchema = z
+  .string()
+  .min(1)
+  .max(240)
+  .refine(value => !/\S+@\S+\.\S+/.test(value), {
+    message:
+      'Unhandled rejection message must not contain email-like values'
+  })
+
 const eventSchemas = [
   z.strictObject({
     event: z.literal('meta_dataset_quality.incomplete'),
@@ -152,10 +161,7 @@ const eventSchemas = [
         'undefined'
       ]),
       reasonIsError: z.boolean(),
-      sentryEventId: z
-        .string()
-        .regex(/^[a-f0-9]{32}$/)
-        .optional()
+      message: unhandledRejectionMessageSchema.optional()
     }),
     context: z.strictObject({
       route: z.string().min(1).max(160)

@@ -1,5 +1,5 @@
 import { getProduct } from '@/api/lib/products/getProduct'
-import { flattenConnection } from '@shopify/hydrogen-react'
+import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import { Badge } from '@/components/ui/badge'
 import {
   Card,

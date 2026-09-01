@@ -14,13 +14,6 @@ type ConfigurationDefinition = Readonly<{
 
 const CONFIGURATION_DEFINITIONS: readonly ConfigurationDefinition[] = [
   {
-    integration: 'sentry',
-    requiredGroups: [
-      ['SENTRY_DSN', 'NEXT_PUBLIC_SENTRY_DSN']
-    ],
-    surface: 'error_ingestion'
-  },
-  {
     integration: 'ga4',
     requiredGroups: [
       ['NEXT_PUBLIC_GA_MEASUREMENT_ID'],
@@ -85,14 +78,11 @@ const CONFIGURATION_DEFINITIONS: readonly ConfigurationDefinition[] = [
   {
     integration: 'shopify',
     requiredGroups: [
-      ['VERCEL_SHOPIFY_STORE_DOMAIN'],
-      [
-        'STOREFRONT_API_PRIVATE_ACCESS_TOKEN',
-        'PRIVATE_STOREFRONT_API_TOKEN',
-        'STOREFRONT_PRIVATE_ACCESS_TOKEN'
-      ]
+      ['STORE_DOMAIN'],
+      ['NEXT_PUBLIC_STOREFRONT_ACCESS_TOKEN'],
+      ['STOREFRONT_PRIVATE_ACCESS_TOKEN']
     ],
-    surface: 'private_storefront_gateway'
+    surface: 'storefront_gateway'
   },
   {
     integration: 'supabase',

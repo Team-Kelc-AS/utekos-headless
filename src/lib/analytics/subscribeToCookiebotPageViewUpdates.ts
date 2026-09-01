@@ -20,7 +20,7 @@ export function subscribeToCookiebotPageViewUpdates(
 ) {
   const handleConsentUpdate = () => {
     subscription.observeConsent()
-    void subscription.flush()
+    void subscription.flush().catch(() => undefined)
   }
 
   for (const eventName of COOKIEBOT_PAGE_VIEW_EVENTS) {

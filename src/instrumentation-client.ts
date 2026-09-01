@@ -1,9 +1,4 @@
-import * as Sentry from '@sentry/nextjs'
 import {
-  BOTID_KASADA_PATH_PATTERN,
-  BOTID_KASADA_URL_PATTERN,
-  CHROME_EXTENSION_URL_PATTERN,
-  COOKIEBOT_URL_PATTERN,
   isIgnorableClientError
 } from '@/lib/observability/client/isIgnorableClientError'
 import {
@@ -11,7 +6,6 @@ import {
   sanitizeClientErrorMessage
 } from '@/lib/observability/client/sanitizeClientErrorBeacon'
 import { describeUnhandledRejection } from '@/lib/observability/client/describeUnhandledRejection'
-import { filterSentryClientEvent } from '@/lib/observability/client/filterSentryClientEvent'
 import { createInjectedBrowserErrorFilter } from '@/lib/observability/client/createInjectedBrowserErrorFilter'
 import { sendClientLog } from '@/lib/observability/client/sendClientLog'
 import type { LogPayload } from 'types/observability/log/LogPayload'
@@ -33,35 +27,7 @@ import type { LogPayload } from 'types/observability/log/LogPayload'
  */
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
-const SENTRY_DSN =
-  process.env.NEXT_PUBLIC_PERFORMANCE_SENTRY_DSN ??
-  process.env.NEXT_PUBLIC_SENTRY_DSN
-const isInjectedSentryNoise = createInjectedBrowserErrorFilter()
 const isInjectedBeaconNoise = createInjectedBrowserErrorFilter()
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-  enabled: !!SENTRY_DSN,
-  environment: process.env.NODE_ENV,
-  integrations: [],
-  sendDefaultPii: false,
-  enableLogs: true,
-  tracesSampleRate: IS_PRODUCTION ? 0.1 : 1,
-  ignoreErrors: [
-    'Unsupported Summarizer API',
-    'The requested language options are not supported',
-    'Blocked aria-hidden on an element because its descendant retained focus',
-    'CybotCookiebotDialog'
-  ],
-  denyUrls: [
-    CHROME_EXTENSION_URL_PATTERN,
-    BOTID_KASADA_PATH_PATTERN,
-    BOTID_KASADA_URL_PATTERN,
-    COOKIEBOT_URL_PATTERN
-  ],
-  beforeSend: event =>
-    filterSentryClientEvent(event, isInjectedSentryNoise)
-})
 
 const MAX_REPORTED_ERRORS = 10
 const reportedSignatures = new Set<string>()
@@ -82,7 +48,7 @@ function beaconError(payload: LogPayload) {
     void sendClientLog(payload, {
       fetch,
       sendBeacon: navigator.sendBeacon?.bind(navigator)
-    })
+    }).catch(() => undefined)
   } catch {
     // Error reporting must never throw.
   }
@@ -150,27 +116,7 @@ try {
       return
     }
 
-    let sentryEventId: string | undefined
-    try {
-      if (event.reason instanceof Error) {
-        Sentry.withScope(scope => {
-          scope.setTag(
-            'client_error_source',
-            'unhandled_rejection'
-          )
-          scope.setTag('client_route', window.location.pathname)
-          const capturedEventId = Sentry.captureException(
-            event.reason
-          )
-          // Correlation only: an SDK event ID is not provider receipt.
-          if (/^[a-f0-9]{32}$/.test(capturedEventId)) {
-            sentryEventId = capturedEventId
-          }
-        })
-      }
-    } catch {
-      // Error reporting must never throw.
-    }
+    const sanitizedMessage = sanitizeClientErrorMessage(message)
 
     beaconError({
       event: 'client_unhandled_rejection',
@@ -178,7 +124,9 @@ try {
       data: {
         source: 'unhandled_rejection',
         ...rejection,
-        ...(sentryEventId ? { sentryEventId } : {})
+        ...(sanitizedMessage ?
+          { message: sanitizedMessage }
+        : {})
       },
       context: { pathname: window.location.pathname }
     })
@@ -197,7 +145,6 @@ export function onRouterTransitionStart(
   navigationType: 'push' | 'replace' | 'traverse'
 ) {
   const pathname = new URL(url, window.location.origin).pathname
-  Sentry.captureRouterTransitionStart(pathname, navigationType)
 
   try {
     performance.mark(`nav-start:${navigationType}:${pathname}`)

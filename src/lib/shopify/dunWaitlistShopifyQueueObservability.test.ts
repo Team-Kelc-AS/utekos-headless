@@ -14,7 +14,7 @@ const spanSources = [
   'deadLetterDunWaitlistShopifyQueueMessage.ts'
 ]
 
-test('Dun PGMQ Sentry span attributes exclude PII and lead_id', () => {
+test('Dun PGMQ OpenTelemetry span attributes exclude PII and lead_id', () => {
   for (const fileName of spanSources) {
     const source = readFileSync(join(shopifyDir, fileName), 'utf8')
     const attributesBlocks = [

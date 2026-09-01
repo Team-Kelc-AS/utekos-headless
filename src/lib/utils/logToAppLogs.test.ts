@@ -14,54 +14,22 @@ const warning: AppLogInput = {
   level: 'WARN'
 }
 
-test('reports each validated warning and error exactly once', async t => {
+test('writes each validated warning and error exactly once', async t => {
   t.mock.method(console, 'warn', () => undefined)
   t.mock.method(console, 'error', () => undefined)
-  const reports: unknown[] = []
 
-  const warningResult = await logToAppLogs(warning, {
-    report: async entry => {
-      reports.push(entry)
-    }
-  })
+  const warningResult = await logToAppLogs(warning)
   const errorResult = await logToAppLogs(
     {
       context: {},
       data: { reasonCode: 'network' },
       event: 'contact.exception',
       level: 'ERROR'
-    },
-    {
-      report: async entry => {
-        reports.push(entry)
-      }
     }
   )
 
-  assert.equal(reports.length, 2)
-  assert.equal(reports[0], warningResult)
-  assert.equal(reports[1], errorResult)
-})
-
-test('returns the same ERROR log entry when reporting delivery fails', async t => {
-  t.mock.method(console, 'warn', () => undefined)
-  t.mock.method(console, 'error', () => undefined)
-
-  const errorInput: AppLogInput = {
-    context: {},
-    data: { reasonCode: 'network' },
-    event: 'newsletter.exception',
-    level: 'ERROR'
-  }
-
-  const result = await logToAppLogs(errorInput, {
-    report: async () => {
-      throw new Error('Sentry unavailable')
-    }
-  })
-
-  assert.equal(result.event, errorInput.event)
-  assert.deepEqual(result.data, errorInput.data)
+  assert.equal(warningResult.event, warning.event)
+  assert.equal(errorResult.event, 'contact.exception')
 })
 
 test('writes complete ad-platform event parameters to the runtime log line', async t => {

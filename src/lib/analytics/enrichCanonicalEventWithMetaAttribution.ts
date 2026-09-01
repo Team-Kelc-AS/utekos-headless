@@ -1,6 +1,6 @@
 'use client'
 
-import { captureException } from '@sentry/nextjs'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { buildMetaParameterContextRequestUrl } from './buildMetaParameterContextRequestUrl'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import type { CanonicalClickIds } from './canonicalSignalContract'
@@ -158,12 +158,7 @@ export async function enrichCanonicalEventWithMetaAttribution<
   try {
     identifiers = await requestMetaParameterContext(event)
   } catch (error) {
-    captureException(error, {
-      tags: {
-        analytics_provider: 'meta',
-        analytics_stage: 'parameter_context'
-      }
-    })
+    reportClientCaughtError(error, 'meta.parameter_context')
   }
 
   const fbc = identifiers.fbc ?? readCookie('_fbc')

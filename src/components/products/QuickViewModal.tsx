@@ -1,6 +1,5 @@
 'use client'
 
-import { getProductAction } from '@/api/lib/products/actions'
 import { AddToCart } from '@/components/cart/AddToCart'
 import {
   Dialog,
@@ -12,6 +11,7 @@ import {
 
 import { useLocalVariantSelection } from '@/hooks/useLocalVariantSelection'
 import { reportCanonicalOpenQuickView } from '@/lib/analytics/openQuickViewReporter'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { mapShopifyViewItem } from '@/lib/analytics/shopifyViewItemCommerce'
 import {
   advanceQuickViewReportingState,
@@ -59,7 +59,8 @@ export function QuickViewModal({
       initialVariantId
     )
 
-  const handleFetchError = useEffectEvent(() => {
+  const handleFetchError = useEffectEvent((error: unknown) => {
+    reportClientCaughtError(error, 'quick_view.product_fetch')
     toast.error(
       'Beklager, vi kunne ikke laste produktet. Vennligst prøv igjen.'
     )
@@ -67,26 +68,43 @@ export function QuickViewModal({
   })
 
   useEffect(() => {
+    if (!isOpen) return
+
+    const controller = new AbortController()
+
     async function fetchMainProduct() {
-      if (isOpen && !productData) {
-        setIsLoading(true)
-        try {
-          const mainProduct =
-            await getProductAction(productHandle)
-          setProductData(
-            mainProduct ?
-              getProductWithoutSmallSize(mainProduct)
-            : null
-          )
-        } catch {
-          handleFetchError()
-        } finally {
+      setIsLoading(true)
+      setProductData(null)
+
+      try {
+        const response = await fetch(
+          `/api/products/${encodeURIComponent(productHandle)}`,
+          { signal: controller.signal }
+        )
+
+        if (!response.ok) {
+          throw new Error(`Quick view request failed: ${response.status}`)
+        }
+
+        const mainProduct = (await response.json()) as ShopifyProduct
+        if (!controller.signal.aborted) {
+          setProductData(getProductWithoutSmallSize(mainProduct))
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          handleFetchError(error)
+        }
+      } finally {
+        if (!controller.signal.aborted) {
           setIsLoading(false)
         }
       }
     }
-    fetchMainProduct()
-  }, [isOpen, productHandle, productData])
+
+    void fetchMainProduct()
+
+    return () => controller.abort()
+  }, [isOpen, productHandle])
 
   const featuredImage =
     selectedVariant?.image ?? productData?.featuredImage

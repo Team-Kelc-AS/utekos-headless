@@ -26,7 +26,6 @@ function dependencies(
   overrides: Partial<MetaDatasetQualityCronDependencies> = {}
 ): MetaDatasetQualityCronDependencies {
   return {
-    checkIn: async () => 'check-in-id',
     getCronSecret: () => 'correct-secret',
     log: async () => undefined,
     sync: async () => syncResult,
@@ -42,12 +41,6 @@ test('rejects an unauthorized Meta quality cron', async () => {
     }
   })
 
-  const checkIns: unknown[] = []
-  cronDependencies.checkIn = async input => {
-    checkIns.push(input)
-    return 'check-in-id'
-  }
-
   const response = await handleMetaDatasetQualityCron(
     request('Bearer wrong-secret'),
     cronDependencies
@@ -59,31 +52,15 @@ test('rejects an unauthorized Meta quality cron', async () => {
     ok: false,
     runKind: 'primary'
   })
-  assert.deepEqual(checkIns, [
-    { runKind: 'primary', status: 'in_progress' },
-    {
-      checkInId: 'check-in-id',
-      runKind: 'primary',
-      status: 'error'
-    }
-  ])
 })
 
-test('finishes a thrown auth evaluation as error without masking the original failure', async () => {
-  const checkIns: unknown[] = []
+test('does not mask a thrown auth evaluation', async () => {
   const expectedError = new Error('secret store unavailable')
 
   await assert.rejects(
     handleMetaDatasetQualityCron(
       request('Bearer correct-secret'),
       dependencies({
-        checkIn: async input => {
-          checkIns.push(input)
-          if (checkIns.length === 2) {
-            throw new Error('Sentry unavailable')
-          }
-          return 'check-in-id'
-        },
         getCronSecret: () => {
           throw expectedError
         },
@@ -94,15 +71,6 @@ test('finishes a thrown auth evaluation as error without masking the original fa
     ),
     expectedError
   )
-
-  assert.deepEqual(checkIns, [
-    { runKind: 'primary', status: 'in_progress' },
-    {
-      checkInId: 'check-in-id',
-      runKind: 'primary',
-      status: 'error'
-    }
-  ])
 })
 
 test('runs the authorized Meta quality sync', async () => {
@@ -129,18 +97,13 @@ test('runs the authorized Meta quality sync', async () => {
   })
 })
 
-test('finishes a thrown sync as an error check-in without replacing the failure', async () => {
-  const checkIns: unknown[] = []
+test('does not replace a thrown sync failure', async () => {
   const expectedError = new Error('Meta returned 500')
 
   await assert.rejects(
     handleMetaDatasetQualityCron(
       request('Bearer correct-secret'),
       dependencies({
-        checkIn: async input => {
-          checkIns.push(input)
-          return 'check-in-id'
-        },
         sync: async () => {
           throw expectedError
         }
@@ -148,37 +111,9 @@ test('finishes a thrown sync as an error check-in without replacing the failure'
     ),
     expectedError
   )
-
-  assert.deepEqual(checkIns, [
-    { runKind: 'primary', status: 'in_progress' },
-    {
-      checkInId: 'check-in-id',
-      runKind: 'primary',
-      status: 'error'
-    }
-  ])
 })
 
-test('keeps the successful response unchanged when check-in delivery fails', async () => {
-  const response = await handleMetaDatasetQualityCron(
-    request('Bearer correct-secret'),
-    dependencies({
-      checkIn: async () => {
-        throw new Error('Sentry unavailable')
-      }
-    })
-  )
-
-  assert.equal(response.status, 200)
-  assert.deepEqual(await response.json(), {
-    ...syncResult,
-    ok: true,
-    runKind: 'primary'
-  })
-})
-
-test('logs one incomplete retry warning and still finishes the check-in as ok', async () => {
-  const checkIns: unknown[] = []
+test('logs one incomplete retry warning', async () => {
   const logs: unknown[] = []
   const incompleteResult = {
     ...syncResult,
@@ -192,10 +127,6 @@ test('logs one incomplete retry warning and still finishes the check-in as ok', 
   const response = await handleMetaDatasetQualityCron(
     request('Bearer correct-secret'),
     dependencies({
-      checkIn: async input => {
-        checkIns.push(input)
-        return 'check-in-id'
-      },
       log: async input => {
         logs.push(input)
       },
@@ -210,14 +141,6 @@ test('logs one incomplete retry warning and still finishes the check-in as ok', 
     ok: true,
     runKind: 'retry'
   })
-  assert.deepEqual(checkIns, [
-    { runKind: 'retry', status: 'in_progress' },
-    {
-      checkInId: 'check-in-id',
-      runKind: 'retry',
-      status: 'ok'
-    }
-  ])
   assert.deepEqual(logs, [
     {
       context: {},

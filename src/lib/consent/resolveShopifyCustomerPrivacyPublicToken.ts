@@ -6,8 +6,7 @@ export function resolveShopifyCustomerPrivacyPublicToken(
   environment: ShopifyCustomerPrivacyEnvironment = process.env
 ): string | undefined {
   const token =
-    environment.STOREFRONT_API_ACCESS_TOKEN?.trim() ||
-    environment.VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN?.trim()
+    environment.NEXT_PUBLIC_STOREFRONT_ACCESS_TOKEN?.trim()
 
   return token || undefined
 }

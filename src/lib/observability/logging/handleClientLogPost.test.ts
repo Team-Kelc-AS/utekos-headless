@@ -124,10 +124,7 @@ test('persists a production-shaped client error through the real app logger', as
   t.mock.method(console, 'error', () => undefined)
 
   const response = await handleClientLogPost(request(validBody), {
-    log: input =>
-      logToAppLogs(input, {
-        report: async () => undefined
-      })
+    log: input => logToAppLogs(input)
   })
 
   assert.equal(response.status, 200)
@@ -137,7 +134,7 @@ test('persists a production-shaped client error through the real app logger', as
 test('returns 500 when a valid payload cannot be persisted', async () => {
   const response = await handleClientLogPost(request(validBody), {
     log: async () => {
-      throw new Error('sentry unavailable')
+      throw new Error('runtime logger unavailable')
     }
   })
 

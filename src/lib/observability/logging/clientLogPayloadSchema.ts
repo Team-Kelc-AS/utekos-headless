@@ -54,9 +54,14 @@ const unhandledRejectionSchema = z.strictObject({
       'undefined'
     ]),
     reasonIsError: z.boolean(),
-    sentryEventId: z
+    message: z
       .string()
-      .regex(/^[a-f0-9]{32}$/)
+      .min(1)
+      .max(240)
+      .refine(value => !/\S+@\S+\.\S+/.test(value), {
+        message:
+          'Unhandled rejection message must not contain email-like values'
+      })
       .optional()
   }),
   context: z.strictObject({ pathname: pathnameSchema })

@@ -14,13 +14,12 @@ function request(authorization?: string) {
 
 function dependencies() {
   return {
-    captureMessage: () => 'event-id',
     createRunId: () => '11111111-1111-4111-8111-111111111111',
-    flush: async () => true,
     getCronSecret: () => 'correct-secret',
     getEnabled: () => undefined,
     getOrigin: () => 'https://utekos.no',
     now: () => new Date('2026-08-29T12:00:00.000Z'),
+    reportStartFailure: () => undefined,
     startWorkflow: async () => ({ runId: 'workflow-run' })
   }
 }
@@ -81,15 +80,14 @@ test('supports an explicit kill switch without starting work', async () => {
   })
 })
 
-test('captures a workflow start failure before returning a visible 503', async () => {
+test('reports a workflow start failure before returning a visible 503', async () => {
   const captured: string[] = []
   const response = await handleProviderDispatchHealthCron(
     request('Bearer correct-secret'),
     {
       ...dependencies(),
-      captureMessage: message => {
-        captured.push(String(message))
-        return 'event-id'
+      reportStartFailure: error => {
+        captured.push(error instanceof Error ? error.message : 'unknown')
       },
       startWorkflow: async () => {
         throw new Error('unavailable')
@@ -98,5 +96,5 @@ test('captures a workflow start failure before returning a visible 503', async (
   )
 
   assert.equal(response.status, 503)
-  assert.deepEqual(captured, ['Launch guard workflow start failed'])
+  assert.deepEqual(captured, ['unavailable'])
 })

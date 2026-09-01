@@ -72,7 +72,7 @@ test('client log contract keeps only a redacted pathname and sanitized triage fi
   assert.equal(JSON.stringify(appLog).includes('dpl=secret'), false)
 })
 
-test('unhandled rejection contract keeps allowlisted triage and a correlation-only Sentry event ID', () => {
+test('unhandled rejection contract keeps sanitized first-party triage', () => {
   const parsed = clientLogPayloadSchema.parse({
     event: 'client_unhandled_rejection',
     level: 'error',
@@ -81,7 +81,7 @@ test('unhandled rejection contract keeps allowlisted triage and a correlation-on
       errorName: 'ZodError',
       reasonType: 'object',
       reasonIsError: true,
-      sentryEventId: '0123456789abcdef0123456789abcdef'
+      message: 'Invalid product selection'
     },
     context: { pathname: '/comfyrobe?msclkid=secret' }
   })
@@ -97,6 +97,17 @@ test('unhandled rejection contract keeps allowlisted triage and a correlation-on
     clientLogPayloadSchema.safeParse({
       ...parsed,
       data: { ...parsed.data, errorName: 'Customer customer@example.no' }
+    }).success,
+    false
+  )
+
+  assert.equal(
+    clientLogPayloadSchema.safeParse({
+      ...parsed,
+      data: {
+        ...parsed.data,
+        message: 'Customer customer@example.no'
+      }
     }).success,
     false
   )

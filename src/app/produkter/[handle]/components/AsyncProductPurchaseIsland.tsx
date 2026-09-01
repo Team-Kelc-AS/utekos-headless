@@ -1,8 +1,8 @@
 import 'server-only'
 
-import { captureException } from '@sentry/nextjs'
 import { connection } from 'next/server'
 import { fetchProductOptions } from '@/api/lib/products/fetchProductOptions'
+import { reportOperationalError } from '@/lib/observability/reportOperationalError'
 import { ProductPurchaseIsland } from './ProductPurchaseIsland'
 import type { UtekosProductOptions } from '@/lib/shopify/product-options/types'
 import type {
@@ -40,11 +40,10 @@ export async function AsyncProductPurchaseIsland({
     hasVariantSelectionError = productOptions === null
   } catch (error) {
     hasVariantSelectionError = true
-    captureException(error, {
-      tags: {
-        surface: 'product-purchase-island',
-        handle: storefrontLookupHandle
-      }
+    reportOperationalError({
+      error,
+      event: 'pdp.product_purchase_island.failed',
+      context: { surface: 'product-purchase-island' }
     })
   }
 

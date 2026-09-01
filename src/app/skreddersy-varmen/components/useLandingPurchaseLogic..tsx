@@ -120,9 +120,10 @@ export function useLandingPurchaseLogic({
     }
 
     startTransition(async () => {
-      let cartId = contextCartId || (await getCartIdFromCookie())
+      let cartId = contextCartId
 
       try {
+        cartId ||= await getCartIdFromCookie()
         cartStore.send({ type: 'OPEN' })
 
         const mutationResult = await addLines([

@@ -2,7 +2,7 @@ import { fetchMetaGraphJson, type MetaGraphFetch } from './fetchMetaGraphJson'
 import { metaAdAccountResponseSchema } from './metaAdDeliveryInsightsSchema'
 import type { MetaAdDeliveryInsightsConfig } from './metaAdDeliveryInsightsConfig'
 
-const META_ADS_API_VERSION = 'v25.0'
+const META_ADS_API_VERSION = 'v26.0'
 
 export async function fetchMetaAdAccountTimezone(
   config: MetaAdDeliveryInsightsConfig,

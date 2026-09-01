@@ -219,10 +219,6 @@ export function createPrivacySections({
             adresse, emne eller checkout-lenke. Resend opplyser at kontodata,
             e-postmetadata og logger kan lagres i USA.
           </PolicyItem>
-          <PolicyItem title='Sentry'>
-            Feilovervåking med dataminimerte hendelser. Innsending av
-            standard-PII er deaktivert i klientkonfigurasjonen.
-          </PolicyItem>
           <PolicyItem title='Cookiebot by Usercentrics'>
             Samtykkegrensesnitt, kategorivalg og dokumentasjon av valg.
           </PolicyItem>
@@ -255,8 +251,7 @@ export function createPrivacySections({
           <ExternalLink href='https://privacy.shopify.com/en'>Shopify</ExternalLink>,{' '}
           <ExternalLink href='https://www.klarna.com/no/personvern/'>Klarna</ExternalLink>,{' '}
           <ExternalLink href='https://supabase.com/privacy'>Supabase</ExternalLink>,{' '}
-          <ExternalLink href='https://resend.com/legal/privacy-policy'>Resend</ExternalLink>{' '}
-          og <ExternalLink href='https://sentry.io/privacy/'>Sentry</ExternalLink>.
+          og <ExternalLink href='https://resend.com/legal/privacy-policy'>Resend</ExternalLink>.
         </p>
       </>
     )

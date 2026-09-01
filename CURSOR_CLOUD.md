@@ -43,8 +43,7 @@ missing, so Cloud Agents still get an operating contract.
 
 Use the Cloud Agents Secrets tab, not a snapshotted `.env.local`.
 
-- Storefront: `VERCEL_SHOPIFY_STORE_DOMAIN` or `STORE_DOMAIN`, and
-  `VERCEL_SHOPIFY_STOREFRONT_ACCESS_TOKEN` or
-  `STOREFRONT_API_ACCESS_TOKEN`.
+- Storefront: `STORE_DOMAIN`, `NEXT_PUBLIC_STOREFRONT_ACCESS_TOKEN`,
+  and `STOREFRONT_PRIVATE_ACCESS_TOKEN`.
 - `pnpm build`: `SHOPIFY_ADMIN_API_TOKEN`.
 - HTTP MCP: matching dashboard/OAuth credentials only as needed.

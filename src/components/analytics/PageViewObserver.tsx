@@ -132,12 +132,14 @@ export function PageViewObserver({
 
       if (!landingCorrelation || !landingPageView) return
 
-      void browserLandingConsentTransport.observe({
-        consent,
-        correlation_token: landingCorrelation.token,
-        edge_request_id: landingCorrelation.edgeRequestId,
-        page_view_id: landingPageView.pageViewId
-      })
+      void browserLandingConsentTransport
+        .observe({
+          consent,
+          correlation_token: landingCorrelation.token,
+          edge_request_id: landingCorrelation.edgeRequestId,
+          page_view_id: landingPageView.pageViewId
+        })
+        .catch(() => undefined)
     }
 
     const unsubscribe = subscribeToCookiebotPageViewUpdates({
@@ -147,7 +149,9 @@ export function PageViewObserver({
     })
 
     observeConsent()
-    void browserPageViewCollectorTransport.flush()
+    void browserPageViewCollectorTransport
+      .flush()
+      .catch(() => undefined)
 
     return unsubscribe
   }, [])
@@ -239,10 +243,9 @@ export function PageViewObserver({
       })
     }
 
-    void browserPageViewCollectorTransport.queue(
-      event,
-      landingCorrelation
-    )
+    void browserPageViewCollectorTransport
+      .queue(event, landingCorrelation)
+      .catch(() => undefined)
   }, [environment, pathname, search])
 
   return null

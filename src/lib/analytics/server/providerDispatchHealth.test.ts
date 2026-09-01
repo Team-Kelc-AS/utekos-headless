@@ -103,6 +103,11 @@ test('finds missing attempts only for consent-qualified providers', () => {
       adapterKey: 'meta:view_category',
       eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
       eventName: 'view_category'
+    },
+    {
+      adapterKey: 'pinterest:view_category',
+      eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+      eventName: 'view_category'
     }
   ])
   assert.equal(evaluation.invalidLedgerEvents.length, 1)
@@ -116,12 +121,11 @@ test('finds missing attempts only for consent-qualified providers', () => {
   assert.equal(evaluation.healthy, false)
 })
 
-test('emits one stable Sentry issue per failed health gate', async () => {
+test('emits one stable operational issue per failed health gate', async () => {
   const messages: string[] = []
   const result = await runProviderDispatchHealthCheck({
-    captureMessage: message => {
-      messages.push(message)
-      return 'event-id'
+    reportIssue: code => {
+      messages.push(`Canonical provider dispatch health: ${code}`)
     },
     store: { readSnapshot: async () => unhealthySnapshot() }
   })
@@ -143,9 +147,8 @@ test('emits one stable Sentry issue per failed health gate', async () => {
 test('does not alert merely because no low-volume event occurred', async () => {
   const messages: string[] = []
   const result = await runProviderDispatchHealthCheck({
-    captureMessage: message => {
-      messages.push(message)
-      return 'event-id'
+    reportIssue: code => {
+      messages.push(`Canonical provider dispatch health: ${code}`)
     },
     store: {
       readSnapshot: async () => ({
