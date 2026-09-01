@@ -64,14 +64,15 @@ const klarnaCheckoutStageSchema = z.enum([
   'order_creation_failed'
 ])
 
-export const metaDatasetQualityIncompleteDataSchema = z.strictObject({
-  datasetId: z.string().regex(/^\d{1,32}$/),
-  missingRequiredEvents: z
-    .array(z.enum(requiredMetaDatasetQualityEvents))
-    .min(1)
-    .max(6),
-  snapshotDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
-})
+export const metaDatasetQualityIncompleteDataSchema =
+  z.strictObject({
+    datasetId: z.string().regex(/^\d{1,32}$/),
+    missingRequiredEvents: z
+      .array(z.enum(requiredMetaDatasetQualityEvents))
+      .min(1)
+      .max(requiredMetaDatasetQualityEvents.length),
+    snapshotDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+  })
 
 export const clientErrorDataSchema = z.strictObject({
   source: z.literal('window_error'),
@@ -80,7 +81,8 @@ export const clientErrorDataSchema = z.strictObject({
     .min(1)
     .max(240)
     .refine(value => !/\S+@\S+\.\S+/.test(value), {
-      message: 'Client error message must not contain email-like values'
+      message:
+        'Client error message must not contain email-like values'
     })
     .optional(),
   filename: z
@@ -322,9 +324,7 @@ const eventSchemas = [
       eventId: z.string().uuid()
     }),
     context: z.strictObject({
-      requestPath: z.literal(
-        '/api/shopify/webhooks/orders-paid'
-      )
+      requestPath: z.literal('/api/shopify/webhooks/orders-paid')
     })
   }),
   z.strictObject({
@@ -335,9 +335,7 @@ const eventSchemas = [
       reasonCode: z.enum(['configuration', 'provider_rejected'])
     }),
     context: z.strictObject({
-      requestPath: z.literal(
-        '/api/shopify/webhooks/orders-paid'
-      )
+      requestPath: z.literal('/api/shopify/webhooks/orders-paid')
     })
   }),
   z.strictObject({

@@ -38,6 +38,13 @@ function buildPurchaseCustomData(event: CanonicalPurchase) {
     customData.setContentName(primaryItem.item_name)
   }
 
+  if (event.custom_data.customer_segmentation) {
+    customData.setCustomProperties({
+      customer_segmentation:
+        event.custom_data.customer_segmentation
+    })
+  }
+
   return customData
 }
 
@@ -69,7 +76,10 @@ export function mapCanonicalPurchaseToMeta(
 
   if (event.page_url) {
     serverEvent.setRequestContext(
-      buildMetaRequestContext({ ...event, page_url: event.page_url }),
+      buildMetaRequestContext({
+        ...event,
+        page_url: event.page_url
+      }),
       metaMarketingRequestContextPreference
     )
   }

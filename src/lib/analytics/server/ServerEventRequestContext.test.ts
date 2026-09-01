@@ -71,7 +71,7 @@ test('native request context preserves canonical identifiers and adds the builde
   )
 })
 
-test('native request context never fabricates missing fbc or fbp', () => {
+test('native request context enriches request metadata without minting late browser ids', () => {
   const event = {
     schema_version: 1,
     event_name: 'page_view',
@@ -81,7 +81,7 @@ test('native request context never fabricates missing fbc or fbp', () => {
     environment: 'test',
     consent,
     click_id: { fbclid: 'server-query-click' },
-    client_ip_address: '203.0.113.9',
+    client_ip_address: '8.8.8.8',
     page_url: 'https://utekos.no/produkter'
   } as const
   const serverEvent = new ServerEvent()
@@ -92,22 +92,38 @@ test('native request context never fabricates missing fbc or fbp', () => {
   )
 
   const payload = serverEvent.normalize() as {
-    event_source_url: string
+    event_source_url?: string
+    opt_out?: boolean
+    referrer_url?: string
     user_data: {
-      client_ip_address: string
+      client_ip_address?: string
+      external_id?: string
       fbc?: string
       fbp?: string
+      em?: string
+      country?: string
+      ct?: string
+      st?: string
+      zp?: string
     }
   }
 
-  assert.equal(payload.user_data.fbc, undefined)
-  assert.equal(payload.user_data.fbp, undefined)
+  assert.equal(payload.user_data.external_id, undefined)
+  assert.equal(payload.referrer_url, undefined)
   assert.match(
-    payload.user_data.client_ip_address,
-    /^203\.0\.113\.9\.[A-Za-z0-9]{8}$/
-  )
-  assert.match(
-    payload.event_source_url,
+    payload.event_source_url ?? '',
     /^https:\/\/utekos\.no\/produkter\.[A-Za-z0-9]{8}$/
   )
+  assert.match(
+    payload.user_data.client_ip_address ?? '',
+    /^8\.8\.8\.8\.[A-Za-z0-9]{8}$/
+  )
+  assert.equal(payload.user_data.fbc, undefined)
+  assert.equal(payload.user_data.fbp, undefined)
+  assert.equal(payload.user_data.em, undefined)
+  assert.equal(payload.opt_out, undefined)
+  assert.equal(payload.user_data.country, undefined)
+  assert.equal(payload.user_data.ct, undefined)
+  assert.equal(payload.user_data.st, undefined)
+  assert.equal(payload.user_data.zp, undefined)
 })

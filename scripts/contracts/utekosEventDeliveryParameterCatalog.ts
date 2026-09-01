@@ -1046,10 +1046,17 @@ export const deliveryIntegrations = {
     implementation:
       'src/lib/analytics/server/processMetaParameterContext.ts'
   },
+  metaClientParameterBuilder: {
+    package: 'meta-capi-param-builder-clientjs',
+    manifestVersion: '1.3.1',
+    role: 'Consent-gated early collection and persistence of fbc, fbp, and fbi',
+    implementation:
+      'src/lib/analytics/metaClientParameterBuilder.ts'
+  },
   metaBusinessSdk: {
     package: 'facebook-nodejs-business-sdk',
     manifestVersion:
-      'file:vendor/facebook-nodejs-business-sdk-25.0.3.tgz',
+      'file:vendor/facebook-nodejs-business-sdk-26.0.1.tgz',
     role: 'Meta ServerEvent, UserData, CustomData, Content, and EventRequest payloads',
     implementation: 'src/lib/analytics/server/meta'
   },

@@ -15,6 +15,7 @@ export type Customer = {
   tax_exempt: boolean
   email: string | null
   phone: string | null
+  orders_count?: number
   currency: string
   tax_exemptions: string[]
   admin_graphql_api_id: string

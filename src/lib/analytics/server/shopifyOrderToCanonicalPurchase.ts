@@ -15,6 +15,7 @@ import { parseAbsoluteHttpUrl } from './parseAbsoluteHttpUrl'
 import { readShopifyMoneyAmount } from './readShopifyMoneyAmount'
 import { resolveCanonicalEnvironment } from './resolveCanonicalEnvironment'
 import { parseOrderProductContextFromNoteAttributes } from '../checkoutProductContext'
+import { deriveMetaCustomerSegmentation } from '../metaCustomerSegmentation'
 
 function hashEmail(email: string | null | undefined) {
   if (!email) return undefined
@@ -124,6 +125,9 @@ export function shopifyOrderToCanonicalPurchase(
       order.note_attributes
     )
   )
+  const customerSegmentation = deriveMetaCustomerSegmentation(
+    order.customer?.orders_count
+  )
 
   const userData = {
     ...(attribution.user_data?.facebook_login_id ?
@@ -217,6 +221,9 @@ export function shopifyOrderToCanonicalPurchase(
       transaction_id:
         shopifyPurchaseTransactionId(orderLegacyId),
       order_name: order.name ?? String(order.order_number),
+      ...(customerSegmentation ?
+        { customer_segmentation: customerSegmentation }
+      : {}),
       items: pricing.items
     }
   })

@@ -7,6 +7,7 @@ import type { CanonicalClickIds } from './canonicalSignalContract'
 import { extractFbclidFromFbc } from './extractFbclidFromFbc'
 import { browserFirstPartyExternalIdStore } from './firstPartyExternalId'
 import { metaParameterContextResponseSchema } from './metaParameterContextContract'
+import { ensureMetaClientParameterContext } from './metaClientParameterBuilder'
 
 type MetaAttributionEvent = {
   browser_id?: Record<string, string> | undefined
@@ -156,9 +157,34 @@ export async function enrichCanonicalEventWithMetaAttribution<
   } = {}
 
   try {
-    identifiers = await requestMetaParameterContext(event)
+    const clientContext = await ensureMetaClientParameterContext(
+      {
+        consent: event.consent,
+        pageUrl: event.page_url ?? window.location.href
+      }
+    )
+    identifiers = {
+      ...(clientContext.fbc ? { fbc: clientContext.fbc } : {}),
+      ...(clientContext.fbp ? { fbp: clientContext.fbp } : {})
+    }
+
+    if (
+      !identifiers.fbp ||
+      (event.click_id?.fbclid && !identifiers.fbc)
+    ) {
+      identifiers = await requestMetaParameterContext(event)
+    }
   } catch (error) {
     reportClientCaughtError(error, 'meta.parameter_context')
+
+    try {
+      identifiers = await requestMetaParameterContext(event)
+    } catch (fallbackError) {
+      reportClientCaughtError(
+        fallbackError,
+        'meta.parameter_context_fallback'
+      )
+    }
   }
 
   const fbc = identifiers.fbc ?? readCookie('_fbc')

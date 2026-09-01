@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import { z } from 'zod'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
+import { metaCustomerSegmentationSchema } from './metaCustomerSegmentation'
 
 const purchaseItemSchema = z.strictObject({
   item_id: z.string().min(1),
@@ -32,6 +33,8 @@ export const canonicalPurchaseCommerceSchema = z.strictObject({
     .optional(),
   transaction_id: z.string().min(1),
   order_name: z.string().min(1),
+  customer_segmentation:
+    metaCustomerSegmentationSchema.optional(),
   items: z.array(purchaseItemSchema).min(1)
 })
 

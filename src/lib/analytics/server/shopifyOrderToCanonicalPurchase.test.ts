@@ -46,7 +46,8 @@ function orderPaid(): OrderPaid {
     customer: {
       id: 999,
       email: 'kunde@example.com',
-      phone: '+4799999999'
+      phone: '+4799999999',
+      orders_count: 1
     },
     email: 'kunde@example.com',
     landing_site: 'https://utekos.no/?fbclid=meta-click',
@@ -174,6 +175,10 @@ test('restores checkout attribution for the purchase webhook', () => {
   )
   assert.equal(event.custom_data.value, 1990)
   assert.equal(event.custom_data.item_revenue, 1592)
+  assert.equal(
+    event.custom_data.customer_segmentation,
+    'new_customer_to_business'
+  )
   assert.deepEqual(event.custom_data.items[0], {
     item_id: '48249962135800',
     item_name: 'Utekos TechDown',
@@ -182,6 +187,31 @@ test('restores checkout attribution for the purchase webhook', () => {
     final_unit_price: 1990,
     sku: 'UTEKOS-1'
   })
+})
+
+test('only derives existing-customer segmentation from a real Shopify order count', () => {
+  const existingCustomerOrder = orderPaid()
+  existingCustomerOrder.customer!.orders_count = 4
+  const unknownCustomerOrder = orderPaid()
+  delete unknownCustomerOrder.customer!.orders_count
+  const invalidCustomerOrder = orderPaid()
+  invalidCustomerOrder.customer!.orders_count = -1
+
+  assert.equal(
+    shopifyOrderToCanonicalPurchase(existingCustomerOrder)
+      .custom_data.customer_segmentation,
+    'existing_customer_to_business'
+  )
+  assert.equal(
+    shopifyOrderToCanonicalPurchase(unknownCustomerOrder)
+      .custom_data.customer_segmentation,
+    undefined
+  )
+  assert.equal(
+    shopifyOrderToCanonicalPurchase(invalidCustomerOrder)
+      .custom_data.customer_segmentation,
+    undefined
+  )
 })
 
 test('restores exact product brand and category for purchase dispatch', () => {

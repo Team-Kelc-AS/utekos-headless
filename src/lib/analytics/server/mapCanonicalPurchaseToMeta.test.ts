@@ -41,10 +41,14 @@ function purchase(): CanonicalPurchase {
 }
 
 test('omits a zero item price instead of reporting the gross price', () => {
-  const normalized = mapCanonicalPurchaseToMeta(purchase()).normalize()
+  const normalized =
+    mapCanonicalPurchaseToMeta(purchase()).normalize()
 
   assert.equal(normalized.custom_data.value, 0)
-  assert.equal(normalized.custom_data.contents[0]?.item_price, undefined)
+  assert.equal(
+    normalized.custom_data.contents[0]?.item_price,
+    undefined
+  )
 })
 
 test('uses the final customer-facing item price for Meta contents', () => {
@@ -53,9 +57,13 @@ test('uses the final customer-facing item price for Meta contents', () => {
   event.custom_data.items[0]!.unit_price = 159.2
   event.custom_data.items[0]!.final_unit_price = 149.25
 
-  const normalized = mapCanonicalPurchaseToMeta(event).normalize()
+  const normalized =
+    mapCanonicalPurchaseToMeta(event).normalize()
 
-  assert.equal(normalized.custom_data.contents[0]?.item_price, 149.25)
+  assert.equal(
+    normalized.custom_data.contents[0]?.item_price,
+    149.25
+  )
 })
 
 test('keeps compatibility with historical canonical purchase rows', () => {
@@ -63,7 +71,25 @@ test('keeps compatibility with historical canonical purchase rows', () => {
   delete event.custom_data.items[0]!.final_unit_price
   event.custom_data.items[0]!.unit_price = 199
 
-  const normalized = mapCanonicalPurchaseToMeta(event).normalize()
+  const normalized =
+    mapCanonicalPurchaseToMeta(event).normalize()
 
-  assert.equal(normalized.custom_data.contents[0]?.item_price, 199)
+  assert.equal(
+    normalized.custom_data.contents[0]?.item_price,
+    199
+  )
+})
+
+test('maps the verified customer segment inside custom_data', () => {
+  const event = purchase()
+  event.custom_data.customer_segmentation =
+    'existing_customer_to_business'
+
+  const normalized =
+    mapCanonicalPurchaseToMeta(event).normalize()
+
+  assert.equal(
+    normalized.custom_data.customer_segmentation,
+    'existing_customer_to_business'
+  )
 })

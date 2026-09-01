@@ -215,7 +215,8 @@ This report is generated from the canonical event catalog and the characterized 
 
 - `googleDataManager`: @google-ads/datamanager `^0.5.0`; Google server event protobuf types and transport; implementation `src/lib/analytics/server/googleDataManager`.
 - `metaParameterBuilder`: capi-param-builder-nodejs `^1.3.1`; Trusted request-context extraction for fbc, fbp, IP, source URL, referrer, and hashed PII; implementation `src/lib/analytics/server/processMetaParameterContext.ts`.
-- `metaBusinessSdk`: facebook-nodejs-business-sdk `file:vendor/facebook-nodejs-business-sdk-25.0.3.tgz`; Meta ServerEvent, UserData, CustomData, Content, and EventRequest payloads; implementation `src/lib/analytics/server/meta`.
+- `metaClientParameterBuilder`: meta-capi-param-builder-clientjs `1.3.1`; Consent-gated early collection and persistence of fbc, fbp, and fbi; implementation `src/lib/analytics/metaClientParameterBuilder.ts`.
+- `metaBusinessSdk`: facebook-nodejs-business-sdk `file:vendor/facebook-nodejs-business-sdk-26.0.1.tgz`; Meta ServerEvent, UserData, CustomData, Content, and EventRequest payloads; implementation `src/lib/analytics/server/meta`.
 - `shopifyGraphql`: @shopify/graphql-client `^1.4.2`; Shopify Storefront GraphQL transport; not a provider event SDK; implementation `src/lib/shopify`.
 - `shopifyHydrogen`: @shopify/hydrogen-react `2026.4.3`; Storefront commerce types and helpers; not a provider event SDK; implementation `src/lib/shopify`.
 - `microsoftUetCapi`: repository-owned integration; Direct HTTP plus repository-owned Zod schemas; implementation `src/lib/analytics/server/microsoftUet`.

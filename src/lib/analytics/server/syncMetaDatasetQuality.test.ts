@@ -9,7 +9,11 @@ const requiredEvents = [
   'PageView',
   'ViewContent',
   'AddToCart',
+  'AddToWishlist',
+  'RemoveFromCart',
   'InitiateCheckout',
+  'AddShippingInfo',
+  'AddPaymentInfo',
   'Purchase',
   'Lead'
 ] as const
@@ -39,7 +43,7 @@ test('marks a snapshot complete when every required event is present and ignores
 
   assert.deepEqual(result, {
     datasetId: '1092362672918571',
-    eventCount: 7,
+    eventCount: 11,
     insertedCount: 7,
     complete: true,
     missingRequiredEvents: [],

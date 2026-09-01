@@ -26,6 +26,7 @@ import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagM
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
 import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
 import { WebVitals } from '@/components/analytics/WebVitals'
+import { MetaParameterBuilderInitializer } from '@/components/analytics/MetaParameterBuilderInitializer'
 import {
   isFacebookLoginEnabled,
   isFacebookLoginPreviewAllowed,
@@ -167,6 +168,7 @@ export default function RootLayout({
         : null}
 
         <Suspense fallback={null}>
+          <MetaParameterBuilderInitializer />
           <PageViewObserver
             environment={getTrackingEnvironment()}
           />
