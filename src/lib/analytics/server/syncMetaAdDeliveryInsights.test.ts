@@ -36,7 +36,7 @@ function insight(
     actionReportTime: 'impression',
     adId: '120246491016410788',
     adsetId: '120246491016400788',
-    apiVersion: 'v25.0',
+    apiVersion: 'v26.0',
     attributionSetting: 'account',
     breakdownKind,
     campaignId: '120246491016390788',

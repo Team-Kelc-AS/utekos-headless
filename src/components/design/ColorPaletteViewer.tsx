@@ -117,11 +117,11 @@ export function ColorPaletteViewer({
       <header className='dark:border-dark-foreground/10 space-y-4 border-b border-foreground/10 pb-8'>
         <div className='flex flex-wrap items-end justify-between gap-4'>
           <div className='space-y-2'>
-            <p className='/50 font-utekos-text text-xs tracking-wide text-foreground/50'>
+            <p className='font-utekos-text text-xs tracking-wide text-foreground/50'>
               <BrandBadge
                 label='Utekos Brand'
-                backgroundColor='var(--card)'
-                textColor='var(--primary)'
+                backgroundColor='var(--primary)'
+                textColor='var(--foreground)'
               />
             </p>
             <h1 className='font-utekos-text-medium text-3xl tracking-tight text-foreground md:text-4xl'>
