@@ -36,3 +36,23 @@ test('never reflects invalid attacker strings containing personal data or secret
   })
   assert.doesNotMatch(JSON.stringify(report), /example|4712345678|super-secret|hidden/)
 })
+
+test('preserves standardized CSP blocked-resource tokens without treating them as malformed URLs', () => {
+  for (const blockedResource of [
+    'eval',
+    'inline',
+    'trusted-types-policy',
+    'trusted-types-sink',
+    'wasm-eval'
+  ]) {
+    const report = parseCspReport({
+      'csp-report': {
+        'effective-directive': 'script-src',
+        'blocked-uri': blockedResource,
+        'document-uri': 'https://utekos.no/'
+      }
+    })
+
+    assert.equal(report.blockedHost, blockedResource)
+  }
+})

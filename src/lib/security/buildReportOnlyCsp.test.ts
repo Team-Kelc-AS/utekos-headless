@@ -136,6 +136,10 @@ test('permits the third-party scripts and frames observed during report-only rol
     /connect-src[^;]*https:\/\/\*\.klarnaevt\.com/
   )
   assert.match(csp, /img-src[^;]*https:\/\/c\.bing\.com/)
+  assert.match(
+    csp,
+    /img-src[^;]*https:\/\/connect\.facebook\.net/
+  )
   assert.match(csp, /img-src[^;]*https:\/\/www\.facebook\.com/)
   assert.match(csp, /img-src[^;]*https:\/\/ct\.pinterest\.com/)
   assert.match(csp, /img-src[^;]*https:\/\/tr\.snapchat\.com/)
@@ -173,6 +177,8 @@ test('permits GA4 advertising hosts and Klarna CDN assets required by report-onl
   )
   assert.match(csp, /connect-src[^;]*https:\/\/\*\.google\.com/)
   assert.match(csp, /connect-src[^;]*https:\/\/\*\.google\.no/)
+  assert.match(csp, /connect-src[^;]*https:\/\/www\.google\.cz/)
+  assert.doesNotMatch(csp, /connect-src[^;]*https:\/\/www\.google\.fi/)
   assert.match(
     csp,
     /img-src[^;]*https:\/\/\*\.analytics\.google\.com/
@@ -183,6 +189,8 @@ test('permits GA4 advertising hosts and Klarna CDN assets required by report-onl
   )
   assert.match(csp, /img-src[^;]*https:\/\/\*\.google\.com/)
   assert.match(csp, /img-src[^;]*https:\/\/\*\.google\.no/)
+  assert.match(csp, /img-src[^;]*https:\/\/www\.google\.cz/)
+  assert.match(csp, /img-src[^;]*https:\/\/www\.google\.fi/)
   assert.match(csp, /style-src[^;]*https:\/\/x\.klarnacdn\.net/)
   assert.match(csp, /font-src[^;]*https:\/\/x\.klarnacdn\.net/)
   assert.match(csp, /media-src 'self' data: blob:/)

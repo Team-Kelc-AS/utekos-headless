@@ -42,6 +42,11 @@ const META_PIXEL_EVENT_ORIGINS = [
   'https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws'
 ] as const
 
+/** Meta Pixel can resolve image resources from its loader origin. */
+const META_PIXEL_IMAGE_ORIGINS = [
+  'https://connect.facebook.net'
+] as const
+
 /** Meta Pixel (fbevents) creates a hidden iframe to www.facebook.com. */
 const META_PIXEL_FRAME_ORIGINS = [
   'https://www.facebook.com'
@@ -102,10 +107,21 @@ const GA4_COLLECTION_ORIGINS = [
   'https://*.analytics.google.com'
 ] as const
 
-const GA4_ADVERTISING_ORIGINS = [
+const GA4_ADVERTISING_COMMON_ORIGINS = [
   'https://*.g.doubleclick.net',
   'https://*.google.com',
   'https://*.google.no'
+] as const
+
+const GA4_ADVERTISING_CONNECT_ORIGINS = [
+  ...GA4_ADVERTISING_COMMON_ORIGINS,
+  'https://www.google.cz'
+] as const
+
+const GA4_ADVERTISING_IMAGE_ORIGINS = [
+  ...GA4_ADVERTISING_COMMON_ORIGINS,
+  'https://www.google.cz',
+  'https://www.google.fi'
 ] as const
 
 const KLARNA_ASSET_ORIGINS = ['https://x.klarnacdn.net'] as const
@@ -198,7 +214,7 @@ export function buildReportOnlyCsp(): string {
     ...VERCEL_ANALYTICS_CONNECT_ORIGINS,
     ...BOTID_KASADA_CONNECT_ORIGINS,
     ...GA4_COLLECTION_ORIGINS,
-    ...GA4_ADVERTISING_ORIGINS
+    ...GA4_ADVERTISING_CONNECT_ORIGINS
   ]
 
   // Kasada fingerprinting plays data:audio media; without media-src
@@ -212,12 +228,13 @@ export function buildReportOnlyCsp(): string {
     ...STOREFRONT_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...MICROSOFT_TRACKING_ORIGINS,
+    ...META_PIXEL_IMAGE_ORIGINS,
     ...META_PIXEL_EVENT_ORIGINS,
     ...PINTEREST_TAG_EVENT_ORIGINS,
     ...SNAPCHAT_PIXEL_EVENT_ORIGINS,
     ...GOOGLE_ADS_ORIGINS,
     ...GA4_COLLECTION_ORIGINS,
-    ...GA4_ADVERTISING_ORIGINS,
+    ...GA4_ADVERTISING_IMAGE_ORIGINS,
     'https://cdn.sanity.io',
     'https://cdn.shopify.com'
   ]

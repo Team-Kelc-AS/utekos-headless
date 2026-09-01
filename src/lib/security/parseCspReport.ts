@@ -32,6 +32,14 @@ const ALLOWED_DIRECTIVES = new Set([
   'worker-src'
 ])
 
+const CSP_BLOCKED_RESOURCE_TOKENS = new Set([
+  'eval',
+  'inline',
+  'trusted-types-policy',
+  'trusted-types-sink',
+  'wasm-eval'
+])
+
 function directive(value: string | undefined): string {
   const token = value?.trim().toLowerCase()
   return token && ALLOWED_DIRECTIVES.has(token) ? token : 'unknown'
@@ -39,6 +47,8 @@ function directive(value: string | undefined): string {
 
 function hostname(value: string | undefined): string | undefined {
   if (!value) return undefined
+  const token = value.trim().toLowerCase()
+  if (CSP_BLOCKED_RESOURCE_TOKENS.has(token)) return token
   try {
     const url = new URL(value)
     return url.protocol === 'http:' || url.protocol === 'https:' ? url.hostname.toLowerCase() : 'non-http-scheme'
