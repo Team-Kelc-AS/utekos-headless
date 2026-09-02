@@ -8,7 +8,7 @@ not have two competing implementations of either transport.
 
 | Provider | Browser owner | Server owner |
 | --- | --- | --- |
-| Meta | `public/analytics/meta-pixel-canonical-v1.js` loaded by the app | canonical provider outbox adapter |
+| Meta | `MetaBrowserTransportLoader` and `public/analytics/meta-pixel-canonical-v1.js` loaded by the app | canonical provider outbox adapter |
 | Pinterest | `public/analytics/pinterest-tag-canonical-v1.js` loaded by the app | canonical provider outbox adapter |
 | Snapchat | `public/analytics/snapchat-pixel-canonical-v1.js` loaded by the app | canonical provider outbox adapter |
 | Google | web GTM with Consent Mode | server GTM / Google provider adapters according to the event catalog |
@@ -36,16 +36,20 @@ mirror and reject any new `signals.utekos.no` browser transport.
 
 The resulting Meta ownership is:
 
-1. Browser: `public/analytics/meta-pixel-canonical-v1.js` only.
-2. Server: canonical `meta_conversions_api` outbox only.
-3. Purchase: canonical server outbox only; no app/browser Purchase source.
+1. Browser event owner: `public/analytics/meta-pixel-canonical-v1.js` only.
+2. Gateway transport: the consent-gated Signals Gateway SDK may automatically
+   fork the existing `fbq(...)` calls. It must not issue manual `cbq('track')`
+   or `cbq('trackCustom')` calls.
+3. Server: canonical `meta_conversions_api` outbox only until provider readback
+   proves that the automatic fork is merged rather than counted as a second
+   server copy.
+4. Purchase: canonical server outbox only; no app/browser Purchase source.
 
-Meta's own Pixel configuration may mirror a browser event through the
-self-hosted Signals Gateway. That mirror is provider-managed delivery of the
-same Pixel occurrence, not another application event owner, and must preserve
-the canonical event ID. Production smokes must fail if the independent GTM
-`cbq` bridge or its SDK is observed, or if the Meta-managed mirror loses event
-ID parity.
+The self-hosted Signals Gateway automatic fork is transport of the same Pixel
+occurrence, not another application event owner, and must preserve the
+canonical event ID. Production smokes must fail if the independent GTM `cbq`
+bridge is enabled, if any manual `cbq('track*')` call is observed, or if the
+automatic fork loses event ID parity.
 
 ## Release proof
 

@@ -1,11 +1,14 @@
 # TRACKING.md
 
-## Aktive TAGS og PIXLER utenfor kodebasen
+## TAGS og PIXLER utenfor kodebasen
 
-[GTM Signals Gateway Canonical v1:](scripts/tracking/gtm/signals-gateway-canonical-v1.html)
-[GTM Web:](src/lib/analytics/gtm/always-updated-web-gtm-version.json)
+- Aktiv: [GTM Web](src/lib/analytics/gtm/always-updated-web-gtm-version.json)
+- Pauset rollback-artefakt, skal ikke publiseres sammen med app-loaderen:
+  [GTM Signals Gateway Canonical v1](scripts/tracking/gtm/signals-gateway-canonical-v1.html)
 
-## Aktive TAGS og PIXLER utenfor kodebasen
+Appen eier Meta `fbq(...)`-hendelsene. Signals Gateway Pixel kan bare være en
+automatisk transport/fork av disse hendelsene; manuelle `cbq('track')`- og
+`cbq('trackCustom')`-kall er forbudt.
 
 ## SIGNALS GATEWAY GCP
 
@@ -14,7 +17,9 @@
 1. .agent/signals/signals-hub.yaml
 2. .agent/signals/signals-capig.yaml
 
-**Custom domains:** None
+**Custom domain:** signals.utekos.no via the Signals Gateway GCP load balancer
+
+**App kill switch:** `SIGNALS_GATEWAY_PIXEL_ENABLED` (serverlest, default `false`)
 
 ### GTM Servers:
 1. .agent/gtm-servers/gtm-preview.yaml

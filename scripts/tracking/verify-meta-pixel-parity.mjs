@@ -1,8 +1,15 @@
 import { createHash, randomUUID } from 'node:crypto'
+import { createRequire } from 'node:module'
 import { chromium } from 'playwright'
 
+const require = createRequire(import.meta.url)
+const { version: CLIENT_PARAMETER_BUILDER_VERSION } = require(
+  'meta-capi-param-builder-clientjs/package.json'
+)
 const BASE_URL =
   process.env.META_PIXEL_SMOKE_BASE_URL ?? 'https://utekos.no'
+const SIGNALS_GATEWAY_PIXEL_EXPECTED =
+  process.env.SIGNALS_GATEWAY_PIXEL_EXPECTED === 'true'
 const PIXEL_ID = '1092362672918571'
 const TIMEOUT_MS = 45_000
 const META_COOKIE_NAMES = [
@@ -39,6 +46,33 @@ const CANONICAL_EVENT_NAMES = {
   PageView: 'page_view',
   ViewContent: 'view_item'
 }
+
+function expectedClientNetNewAppendix(version) {
+  const versionParts = version.split('.').map(Number)
+
+  if (
+    versionParts.length !== 3 ||
+    versionParts.some(
+      part => !Number.isInteger(part) || part < 0 || part > 255
+    )
+  ) {
+    throw new Error(
+      `Unsupported Meta client parameter builder version: ${version}`
+    )
+  }
+
+  return Buffer.from([
+    0x01,
+    0x06,
+    0x02,
+    ...versionParts
+  ]).toString('base64url')
+}
+
+const EXPECTED_CLIENT_NET_NEW_APPENDIX =
+  expectedClientNetNewAppendix(
+    CLIENT_PARAMETER_BUILDER_VERSION
+  )
 
 function isMetaTransport(rawUrl) {
   const url = new URL(rawUrl)
@@ -642,10 +676,13 @@ async function verifySurface(browser, userAgent, surface) {
         globalThis.fbq?.instance?.optIns?._opts
           ?.AutomaticSetup?.[pixelId] ?? null,
       initialized: globalThis.__utekosMetaPixelState?.initialized ?? false,
-      independentSignalsBridgePresent: Boolean(
-        globalThis.cbq || globalThis.__utekosSignalsGatewayState
+      legacyManualSignalsBridgePresent: Boolean(
+        globalThis.__utekosSignalsGatewayState
       ),
-      independentSignalsSdkLoaded: performance
+      signalsGatewayPixelState:
+        globalThis.__utekosSignalsGatewayPixelState ?? null,
+      signalsGatewayQueuePresent: Boolean(globalThis.cbq),
+      signalsGatewaySdkLoaded: performance
         .getEntriesByType('resource')
         .some(entry =>
           entry.name.includes('signals.utekos.no/sdk/')
@@ -673,8 +710,10 @@ async function verifySurface(browser, userAgent, surface) {
         openBridgeEvents
       ),
       cookieAppendix:
-        fbcParts.at(-1) === 'AQQCAQMB' &&
-        fbpParts.at(-1) === 'AQQCAQMB',
+        fbcParts.at(-1) ===
+          EXPECTED_CLIENT_NET_NEW_APPENDIX &&
+        fbpParts.at(-1) ===
+          EXPECTED_CLIENT_NET_NEW_APPENDIX,
       cookieAttributes:
         cookies.length === 3 &&
         cookies.every(cookie =>
@@ -713,10 +752,22 @@ async function verifySurface(browser, userAgent, surface) {
       preConsentReleaseComplete,
       noUnexpectedPixelEvents:
         unexpectedFacebookEvents.length === 0,
-      noIndependentSignalsGatewayBridge:
-        runtime.independentSignalsBridgePresent === false &&
-        runtime.independentSignalsSdkLoaded === false &&
-        !openBridgeHosts.includes('signals.utekos.no'),
+      signalsGatewayPixelContract:
+        runtime.legacyManualSignalsBridgePresent === false &&
+        (SIGNALS_GATEWAY_PIXEL_EXPECTED ?
+          runtime.signalsGatewayQueuePresent === true &&
+          runtime.signalsGatewaySdkLoaded === true &&
+          runtime.signalsGatewayPixelState?.initialized === true &&
+          runtime.signalsGatewayPixelState?.mode ===
+            'automatic_fbq_fork' &&
+          runtime.signalsGatewayPixelState?.pixelId ===
+            '1633085772154426486' &&
+          runtime.signalsGatewayPixelState?.host ===
+            'https://signals.utekos.no/' &&
+          openBridgeHosts.includes('signals.utekos.no')
+        : runtime.signalsGatewayQueuePresent === false &&
+          runtime.signalsGatewaySdkLoaded === false &&
+          !openBridgeHosts.includes('signals.utekos.no')),
       providerResponses:
         facebookEvents.length === surface.expectedEvents.length &&
         facebookStatuses.length >= facebookEvents.length &&
@@ -796,8 +847,14 @@ async function main() {
   const report = {
     baseUrl: BASE_URL,
     browserVersion: majorVersion,
+    clientParameterBuilderVersion:
+      CLIENT_PARAMETER_BUILDER_VERSION,
+    expectedClientNetNewAppendix:
+      EXPECTED_CLIENT_NET_NEW_APPENDIX,
     ok: results.every(result => result.ok),
     results,
+    signalsGatewayPixelExpected:
+      SIGNALS_GATEWAY_PIXEL_EXPECTED,
     userAgent
   }
 

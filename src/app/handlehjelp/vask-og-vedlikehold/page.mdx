@@ -1,0 +1,443 @@
+import styles from './page.module.css'
+import { H1 as PageH1 } from '@/components/typography/TypographyH1'
+
+<div className={styles.page}>
+  <header className={styles.hero}>
+    <div className={styles.container}>
+      <nav aria-label="Brødsmulesti" className={styles.breadcrumbs}>
+        <ol role="list">
+          <li><a href="/">Forsiden</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">Vask og vedlikehold</li>
+        </ol>
+      </nav>
+
+      <div className={styles.heroGrid}>
+        <div className={styles.heroCopy}>
+          <span className={styles.eyebrow}>Vask og vedlikehold</span>
+          <PageH1 ID="vedlikehold-av-utekos">{'Riktig pleie.'}<span>Varme som varer.</span></PageH1>
+          <div className={styles.lead}>
+
+En enkel veiledning for vask, tørking og oppbevaring av Utekos
+Dun, Mikrofiber, TechDown og Comfyrobe. Finn plagget ditt og følg
+rådene i riktig rekkefølge.
+
+          </div>
+          <div className={styles.updated}>
+            <time dateTime="2026-09-01">Oppdatert 1. september 2026</time>
+            <span aria-hidden="true"> · </span>
+            <span className={styles.readTime}>Omtrent 7 minutter å lese</span>
+          </div>
+        </div>
+
+        <div className={styles.heroFrame}>
+          <aside className={styles.heroPanel} aria-labelledby="fire-vaner-bevarer-plagget">
+            <span className={styles.panelLabel}>Kort fortalt</span>
+
+## Fire vaner bevarer plagget
+
+            <ol className={styles.heroSteps} role="list">
+              <li role="listitem"><span>01</span> Luft før du vasker</li>
+              <li role="listitem"><span>02</span> Velg et skånsomt program</li>
+              <li role="listitem"><span>03</span> Tørk helt og rolig</li>
+              <li role="listitem"><span>04</span> Oppbevar luftig</li>
+            </ol>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+  </header>
+
+  <nav className={styles.jumpNav} aria-labelledby="finn-plagget-ditt">
+    <div className={styles.container}>
+      <div className={styles.jumpNavInner}>
+        <div>
+          <span className={styles.eyebrow}>Gå rett til svaret</span>
+
+## Finn plagget ditt
+
+        </div>
+        <ul role="list">
+          <li><a href="#dun">Utekos Dun</a></li>
+          <li><a href="#mikrofiber">Mikrofiber</a></li>
+          <li><a href="#techdown">TechDown</a></li>
+          <li><a href="#comfyrobe">Comfyrobe</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </nav>
+
+  <section className={`${styles.section} ${styles.reveal}`} aria-labelledby="vaskelappen-gjelder-alltid">
+    <div className={`${styles.container} ${styles.introGrid}`}>
+      <div>
+        <span className={styles.eyebrow}>Før du starter</span>
+
+## Vaskelappen gjelder alltid
+
+      </div>
+      <div className={styles.readingColumn}>
+        <div className={styles.sectionLead}>
+
+Rådene her er laget for Utekos-produktene, men vaskelappen i
+akkurat ditt plagg går foran den generelle veiledningen.
+Materialblanding og produksjonsserie kan gi andre krav.
+
+        </div>
+        <ul className={styles.checkList} role="list">
+          <li>Ta bilde av vaskelappen før første vask.</li>
+          <li>Luft plagget og fjern enkeltflekker før du velger full vask.</li>
+          <li>Ikke bruk tøymykner, blekemiddel eller sterk varme uten at vaskelappen tillater det.</li>
+        </ul>
+      </div>
+    </div>
+
+  </section>
+
+  <section className={`${styles.section} ${styles.stepsSection}`} aria-labelledby="slik-tar-du-vare-på-plagget">
+    <div className={styles.container}>
+      <div className={styles.sectionHeader}>
+        <span className={styles.eyebrow}>Grunnrutinen</span>
+
+## Slik tar du vare på plagget
+
+Fire steg som gjelder på tvers av Utekos-seriene.
+
+      </div>
+
+      <ol className={styles.stepGrid} aria-label="Fire generelle vedlikeholdssteg" role="list">
+        <li className={`${styles.stepFrame} ${styles.reveal}`} role="listitem">
+          <div className={styles.stepCard}>
+            <span className={styles.stepNumber}>Steg 01</span>
+
+            <h3 id="forberedelse">Forberedelse</h3>
+
+Lukk alle glidelåser, fest borrelås og tøm lommene. Vreng plagget
+dersom vaskelappen anbefaler det. Det skåner ytterstoffet og
+reduserer unødvendig slitasje i trommelen.
+
+          </div>
+        </li>
+
+        <li className={`${styles.stepFrame} ${styles.reveal}`} role="listitem">
+          <div className={styles.stepCard}>
+            <span className={styles.stepNumber}>Steg 02</span>
+
+            <h3 id="vask">Vask</h3>
+
+Bruk skånsomt program, mildt vaskemiddel og temperaturen som står
+på vaskelappen. La plagget få god plass i trommelen. Tøymykner
+kan redusere både pusteegenskaper og isolasjon.
+
+          </div>
+        </li>
+
+        <li className={`${styles.stepFrame} ${styles.reveal}`} role="listitem">
+          <div className={styles.stepCard}>
+            <span className={styles.stepNumber}>Steg 03</span>
+
+            <h3 id="torking">Tørking</h3>
+
+Dun tørkes på lav varme med tørkeballer når vaskelappen tillater
+det. Mikrofiber, TechDown og Comfyrobe lufttørkes helst på
+henger. Plagget må være helt gjennomtørt før bruk eller lagring.
+
+          </div>
+        </li>
+
+        <li className={`${styles.stepFrame} ${styles.reveal}`} role="listitem">
+          <div className={styles.stepCard}>
+            <span className={styles.stepNumber}>Steg 04</span>
+
+            <h3 id="oppbevaring">Oppbevaring</h3>
+
+Heng plagget på en stødig henger i et tørt og luftig skap. Unngå
+langvarig oppbevaring i plast eller kompresjonspose. Isolasjonen
+trenger plass for å bevare formen og spensten.
+
+          </div>
+        </li>
+      </ol>
+    </div>
+
+  </section>
+
+  <section className={styles.materialsSection} aria-labelledby="velg-riktig-pleie">
+    <div className={styles.container}>
+      <div className={styles.materialsIntro}>
+        <div>
+          <span className={styles.eyebrow}>Plagg for plagg</span>
+
+## Velg riktig pleie
+
+        </div>
+        <div className={styles.materialsSummary}>
+
+Materialene reagerer ulikt på vann, varme og kompresjon. Derfor
+finner du alle fire veiledningene under hverandre, uten faner
+eller skjult innhold. Usikker på hva plagget består av? Les om
+[teknologi og materialer](/handlehjelp/teknologi-materialer).
+
+        </div>
+      </div>
+
+      <div className={styles.materialStack}>
+        <div className={`${styles.materialFrame} ${styles.reveal}`}>
+          <section id="dun" className={styles.materialCard} aria-labelledby="utekos-dun">
+            <div className={styles.materialIdentity}>
+              <span className={styles.materialLabel}>Naturdun · Maks 30 °C</span>
+
+### Utekos Dun
+
+Skånsom behandling bevarer den luftige varmen. Dun trenger mer
+tid til å tørke enn syntetisk isolasjon, og må være helt tørt før
+plagget legges bort.
+
+            </div>
+            <div className={styles.careColumns}>
+              <div>
+                <h4>Gjør dette</h4>
+                <ul role="list">
+                  <li>Bruk mildt dunvaskemiddel.</li>
+                  <li>Lukk glidelåser og vreng før vask.</li>
+                  <li>{'Tørk på lav varme med to til tre tørkeballer når vaskelappen tillater det.'}</li>
+                  <li>Stopp underveis og rist forsiktig ut klumper.</li>
+                </ul>
+              </div>
+              <div>
+                <h4>Unngå dette</h4>
+                <ul role="list">
+                  <li>Tøymykner, blekemiddel og kjemisk rens.</li>
+                  <li>Høy varme og ufullstendig tørking.</li>
+                  <li>Langvarig kompresjon eller tett plasttrekk.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div className={`${styles.materialFrame} ${styles.reveal}`}>
+          <section id="mikrofiber" className={styles.materialCard} aria-labelledby="utekos-mikrofiber">
+            <div className={styles.materialIdentity}>
+              <span className={styles.materialLabel}>Syntetisk fiber · Maks 30 °C</span>
+
+### Utekos Mikrofiber
+
+Mikrofiber er slitesterkt, hurtigtørkende og enkelt å
+vedlikeholde. Lav temperatur og rolig lufttørking hjelper fibrene
+med å holde formen.
+
+            </div>
+            <div className={styles.careColumns}>
+              <div>
+                <h4>Gjør dette</h4>
+                <ul role="list">
+                  <li>Bruk mildt vaskemiddel og skånsomt program.</li>
+                  <li>Lukk glidelåser før vask.</li>
+                  <li>Lufttørk på henger med god plass rundt plagget.</li>
+                  <li>Luft mellom bruk, slik at du kan vaske sjeldnere.</li>
+                </ul>
+              </div>
+              <div>
+                <h4>Unngå dette</h4>
+                <ul role="list">
+                  <li>Tøymykner og blekemiddel.</li>
+                  <li>Tørketrommel og annen høy varme.</li>
+                  <li>{'Lang tid i sterk sol eller lagring med skarpe bretter.'}</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div className={`${styles.materialFrame} ${styles.reveal}`}>
+          <section id="techdown" className={styles.materialCard} aria-labelledby="utekos-techdown">
+            <div className={styles.materialIdentity}>
+              <span className={styles.materialLabel}>Syntetisk isolasjon · Se vaskelappen</span>
+
+### Utekos TechDown
+
+TechDown er laget for ukomplisert bruk over tid. Skånsom vask og
+rolig lufttørking bevarer både ytterstoffet og isolasjonens
+spenst.
+
+            </div>
+            <div className={styles.careColumns}>
+              <div>
+                <h4>Gjør dette</h4>
+                <ul role="list">
+                  <li>Velg skånsomt program og temperaturen på vaskelappen.</li>
+                  <li>Bruk mildt vaskemiddel og lukk glidelåsene.</li>
+                  <li>Lufttørk på henger til plagget er helt tørt.</li>
+                  <li>Rist plagget lett etter vask for å fordele isolasjonen.</li>
+                </ul>
+              </div>
+              <div>
+                <h4>Unngå dette</h4>
+                <ul role="list">
+                  <li>Tøymykner og blekemiddel.</li>
+                  <li>Høy varme eller lagring mens plagget er fuktig.</li>
+                  <li>Langvarig kompresjon av isolasjonen.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div className={`${styles.materialFrame} ${styles.reveal}`}>
+          <section id="comfyrobe" className={styles.materialCard} aria-labelledby="pleie-av-comfyrobe">
+            <div className={styles.materialIdentity}>
+              <span className={styles.materialLabel}>Fleecefôr og skall · Maks 40 °C</span>
+
+### Pleie av Comfyrobe
+
+Comfyrobe kombinerer et mykt fôr med et beskyttende ytterstoff.
+God lufting etter bruk og skånsom vask bevarer både følelsen og
+den vannavvisende behandlingen.
+
+            </div>
+            <div className={styles.careColumns}>
+              <div>
+                <h4>Gjør dette</h4>
+                <ul role="list">
+                  <li>Bruk mildt vaskemiddel og lufttørk helst.</li>
+                  <li>Luft godt etter regn, bading, saltvann eller klor.</li>
+                  <li>Vask plagget rent før du frisker opp impregneringen.</li>
+                  <li>Oppbevar hengende, tørt og luftig.</li>
+                </ul>
+              </div>
+              <div>
+                <h4>Unngå dette</h4>
+                <ul role="list">
+                  <li>Tøymykner, blekemiddel og kjemisk rens.</li>
+                  <li>Høy varme eller lagring mens fôret er fuktig.</li>
+                  <li>Skarpe bretter over lang tid.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+    </div>
+
+</section>
+
+  <section className={`${styles.section} ${styles.dwrSection} ${styles.reveal}`} aria-labelledby="frisk-opp-impregneringen">
+  <div className={`${styles.container} ${styles.dwrGrid}`}>
+    <div>
+      <span className={styles.eyebrow}>Når vannet ikke lenger perler</span>
+
+## Frisk opp impregneringen
+
+      </div>
+      <ol role="list">
+        <li role="listitem"><span>1</span><span>Vask plagget rent og la det tørke helt.</span></li>
+        <li role="listitem"><span>2</span><span>Påfør egnet DWR-spray jevnt på ytterstoffet.</span></li>
+        <li role="listitem"><span>3</span><span>Aktiver med lav varme bare dersom vaskelappen og impregneringsmiddelet tillater det.</span></li>
+      </ol>
+    </div>
+
+  </section>
+
+  <section id="faq-section" className={styles.faqSection} aria-labelledby="vanlige-spørsmål">
+    <div className={styles.container}>
+      <div className={styles.sectionHeader}>
+        <span className={styles.eyebrow}>Praktiske svar</span>
+
+## Vanlige spørsmål
+
+Åpne spørsmålet du lurer på. Svarene fungerer uten JavaScript.
+
+      </div>
+
+      <div className={styles.faqList}>
+        <details className={styles.faqItem}>
+          <summary><span>Hvor ofte bør jeg vaske Utekos-plagget mitt?</span><span className={styles.faqIcon} aria-hidden="true"></span></summary>
+          <div>
+
+Vask sjeldnere enn du tror. Lufting mellom hver bruk er som regel
+nok. Vask når plagget faktisk er skittent. Hyppig vask sliter mer
+på fibrene enn vanlig bruk.
+
+          </div>
+        </details>
+
+        <details className={styles.faqItem}>
+          <summary><span>Kan jeg bruke vanlig vaskemiddel på Utekos Dun?</span><span className={styles.faqIcon} aria-hidden="true"></span></summary>
+          <div>
+
+Bruk helst et mildt vaskemiddel uten optisk hvitt, eller et eget
+dunvaskemiddel. Vanlige vaskemidler kan tørke ut dunets naturlige
+fettlag og redusere isolasjonsevnen over tid.
+
+          </div>
+        </details>
+
+        <details className={styles.faqItem}>
+          <summary><span>Hva gjør jeg hvis vann ikke lenger preller av ytterstoffet?</span><span className={styles.faqIcon} aria-hidden="true"></span></summary>
+          <div>
+
+DWR-behandlingen kan friskes opp. Vask plagget rent, tørk det
+helt og påfør en egnet impregneringsspray jevnt over
+ytterstoffet. Bruk lav varme til aktivering bare når vaskelappen
+og produktveiledningen tillater det.
+
+          </div>
+        </details>
+
+        <details className={styles.faqItem}>
+          <summary><span>Kan dunet klumpe seg under vask?</span><span className={styles.faqIcon} aria-hidden="true"></span></summary>
+          <div>
+
+Ja. Bruk tørketrommel på lav varme med tørkeballer når
+vaskelappen tillater det, og avbryt syklusen for å riste ut
+klumper underveis. Plagget skal være helt gjennomtørt før det
+legges bort.
+
+          </div>
+        </details>
+
+        <details className={styles.faqItem}>
+          <summary><span>Hvordan oppbevarer jeg plagget mellom sesonger?</span><span className={styles.faqIcon} aria-hidden="true"></span></summary>
+          <div>
+
+Heng plagget på en stødig henger i et tørt og luftig skap. Unngå
+kompresjonsposer og plastomslag over lengre tid. Isolasjonen
+trenger luft og plass for å bevare spensten.
+
+          </div>
+        </details>
+      </div>
+    </div>
+
+  </section>
+
+  <section className={styles.ctaSection} aria-labelledby="riktig-pleie-starter-med-riktig-plagg">
+    <div className={styles.container}>
+      <div className={styles.ctaFrame}>
+        <div className={styles.ctaCard}>
+          <div>
+            <span className={styles.eyebrow}>Ta vare på varmen</span>
+
+## Riktig pleie starter med riktig plagg
+
+Se hele Utekos-sortimentet og finn modellen som passer måten du
+bruker tiden ute på.
+
+          </div>
+          <a href="/produkter" className={styles.ctaLink}>
+            <span>Se alle Utekos-produkter</span>
+            <span className={styles.ctaIcon} aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M5 10h10M11 6l4 4-4 4" />
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>

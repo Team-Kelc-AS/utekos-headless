@@ -4,6 +4,8 @@ import { chromium } from 'playwright'
 
 const BASE_URL =
   process.env.META_ATC_DEDUPE_BASE_URL ?? 'https://utekos.no'
+const SIGNALS_GATEWAY_PIXEL_EXPECTED =
+  process.env.SIGNALS_GATEWAY_PIXEL_EXPECTED === 'true'
 const PRODUCT_PATH =
   process.env.META_ATC_DEDUPE_PRODUCT_PATH ??
   '/produkter/utekos-techdown'
@@ -329,10 +331,13 @@ async function main() {
       event => event?.eventId === sharedEventId
     )
     const bridgeRuntime = await page.evaluate(() => ({
-      independentBridgePresent: Boolean(
-        globalThis.cbq || globalThis.__utekosSignalsGatewayState
+      legacyManualBridgePresent: Boolean(
+        globalThis.__utekosSignalsGatewayState
       ),
-      independentSdkLoaded: performance
+      signalsGatewayPixelState:
+        globalThis.__utekosSignalsGatewayPixelState ?? null,
+      signalsGatewayQueuePresent: Boolean(globalThis.cbq),
+      signalsGatewaySdkLoaded: performance
         .getEntriesByType('resource')
         .some(entry =>
           entry.name.includes('signals.utekos.no/sdk/')
@@ -367,10 +372,19 @@ async function main() {
       facebookSharedId: facebookMatch.length >= 1,
       managedSignalsGatewayPresent: openBridgeEvents.length >= 1,
       managedSignalsGatewaySharedId: openBridgeMatch.length >= 1,
-      noIndependentSignalsGatewayBridge:
-        bridgeRuntime.independentBridgePresent === false &&
-        bridgeRuntime.independentSdkLoaded === false &&
-        !openBridgeHosts.includes('signals.utekos.no'),
+      signalsGatewayPixelContract:
+        bridgeRuntime.legacyManualBridgePresent === false &&
+        (SIGNALS_GATEWAY_PIXEL_EXPECTED ?
+          bridgeRuntime.signalsGatewayQueuePresent === true &&
+          bridgeRuntime.signalsGatewaySdkLoaded === true &&
+          bridgeRuntime.signalsGatewayPixelState?.initialized ===
+            true &&
+          bridgeRuntime.signalsGatewayPixelState?.mode ===
+            'automatic_fbq_fork' &&
+          openBridgeHosts.includes('signals.utekos.no')
+        : bridgeRuntime.signalsGatewayQueuePresent === false &&
+          bridgeRuntime.signalsGatewaySdkLoaded === false &&
+          !openBridgeHosts.includes('signals.utekos.no')),
       postSharedId:
         postEventId === null || postEventId === sharedEventId,
       singlePrimaryUuid:
@@ -408,6 +422,8 @@ async function main() {
       postEventId,
       productPath: PRODUCT_PATH,
       sharedEventId,
+      signalsGatewayPixelExpected:
+        SIGNALS_GATEWAY_PIXEL_EXPECTED,
       url: page.url(),
       userAgent
     }

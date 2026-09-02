@@ -27,6 +27,8 @@ import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveS
 import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
 import { WebVitals } from '@/components/analytics/WebVitals'
 import { MetaParameterBuilderInitializer } from '@/components/analytics/MetaParameterBuilderInitializer'
+import { MetaBrowserTransportLoader } from '@/components/analytics/MetaBrowserTransportLoader'
+import { readSignalsGatewayPixelConfig } from '@/lib/analytics/signalsGatewayPixelConfig'
 import {
   isFacebookLoginEnabled,
   isFacebookLoginPreviewAllowed,
@@ -128,6 +130,8 @@ export default function RootLayout({
     readFacebookLoginClientConfig(process.env)
   const facebookLoginPreviewAllowed =
     isFacebookLoginPreviewAllowed(process.env)
+  const signalsGatewayPixelConfig =
+    readSignalsGatewayPixelConfig(process.env)
 
   return (
     <html
@@ -143,10 +147,8 @@ export default function RootLayout({
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
         {shouldLoadMarketingScripts ?
           <>
-            <Script
-              id='meta-pixel-canonical-browser'
-              src='/analytics/meta-pixel-canonical-v1.js'
-              strategy='afterInteractive'
+            <MetaBrowserTransportLoader
+              signalsGateway={signalsGatewayPixelConfig}
             />
             {pinterestTagId ?
               <Script

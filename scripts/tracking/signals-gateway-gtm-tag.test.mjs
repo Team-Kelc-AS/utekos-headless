@@ -10,6 +10,11 @@ const html = readFileSync(
 const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1]
 
 assert.ok(script, 'GTM artifact must contain one script block')
+assert.match(
+  html,
+  /ROLLBACK ARTIFACT ONLY — DO NOT PUBLISH OR ENABLE/,
+  'Manual cbq bridge must stay marked as a disabled rollback artifact'
+)
 
 function canonicalEvent(eventName, eventId, customData = {}) {
   return {

@@ -16,10 +16,22 @@ async function readSource(
 }
 
 test(
-  'root layout bootstraps GTM before hydration so GTM-owned CMP can initialize early',
+  'root layout delegates the canonical first-party GTM bootstrap',
   async () => {
-    const source = await readSource(
+    const layoutSource = await readSource(
       'src/app/layout.tsx'
+    )
+    const source = await readSource(
+      'src/components/analytics/GoogleTagManagerLoader.tsx'
+    )
+    const bootstrapSource = await readSource(
+      'src/components/analytics/googleTagManagerBootstrap.ts'
+    )
+
+    assert.match(
+      layoutSource,
+      /<GoogleTagManagerLoader[\s\S]*?enabled=\{shouldLoadMarketingScripts\}/,
+      'Root layout must retain the canonical GTM loader'
     )
 
     assert.doesNotMatch(
@@ -43,7 +55,7 @@ test(
     assert.match(
       source,
       /const GOOGLE_TAG_MANAGER_ID\s*=\s*['"]GTM-5TWMJQFP['"]/,
-      'Root layout must retain the canonical web GTM container'
+      'GTM loader must retain the canonical web GTM container'
     )
 
     assert.match(
@@ -58,7 +70,7 @@ test(
 
     assert.ok(
       initScript,
-      'Root layout must contain the GTM initialization script'
+      'GTM loader must contain the GTM initialization script'
     )
 
     assert.match(
@@ -68,12 +80,12 @@ test(
     )
 
     assert.match(
-      source,
+      bootstrapSource,
       /['"]gtm\.start['"]/
     )
 
     assert.match(
-      source,
+      bootstrapSource,
       /event:\s*['"]gtm\.js['"]/
     )
 
@@ -83,13 +95,13 @@ test(
 
     assert.ok(
       externalGtmScript,
-      'Root layout must contain the external GTM script'
+      'GTM loader must contain the external GTM script'
     )
 
     assert.match(
       externalGtmScript[0],
-      /strategy=['"]beforeInteractive['"]/,
-      'External GTM container must load before hydration'
+      /strategy=['"]afterInteractive['"]/,
+      'External GTM container must remain outside the critical rendering path'
     )
 
     assert.match(
@@ -99,16 +111,16 @@ test(
     )
 
     const gtmPosition =
-      source.indexOf("id='_next-gtm-init'")
+      layoutSource.indexOf('<GoogleTagManagerLoader')
 
     const bodyPosition =
-      source.indexOf('<body')
+      layoutSource.indexOf('<body')
 
     assert.ok(
       gtmPosition !== -1 &&
         bodyPosition !== -1 &&
         gtmPosition < bodyPosition,
-      'GTM bootstrap must be declared before the body'
+      'GTM loader must be declared before the body'
     )
   }
 )
@@ -116,12 +128,20 @@ test(
 test(
   'Meta application fallback remains post-hydration',
   async () => {
-    const source = await readSource(
+    const layoutSource = await readSource(
       'src/app/layout.tsx'
+    )
+    const loaderSource = await readSource(
+      'src/components/analytics/MetaBrowserTransportLoader.tsx'
     )
 
     assert.match(
-      source,
+      layoutSource,
+      /<MetaBrowserTransportLoader[\s\S]*?signalsGateway=\{signalsGatewayPixelConfig\}/,
+      'Root layout must delegate consent-aware Meta transport loading'
+    )
+    assert.match(
+      loaderSource,
       /id=['"]meta-pixel-canonical-browser['"][\s\S]*?strategy=['"]afterInteractive['"]/,
       'STEP 7 must not promote the Meta application fallback into the critical path'
     )

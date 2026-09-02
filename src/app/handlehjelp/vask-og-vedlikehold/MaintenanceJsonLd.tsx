@@ -1,6 +1,12 @@
 import { cacheLife, cacheTag } from 'next/cache'
 import { SITE_URL } from '@/constants'
-import type { BreadcrumbList, FAQPage, HowTo, WebPage, Graph } from 'schema-dts'
+import type {
+  BreadcrumbList,
+  FAQPage,
+  HowTo,
+  WebPage,
+  Graph
+} from 'schema-dts'
 
 const PAGE_URL = `${SITE_URL}/handlehjelp/vask-og-vedlikehold`
 const ORG_ID = `${SITE_URL}/#organization`
@@ -19,9 +25,10 @@ export async function MaintenanceJsonLd() {
     '@type': 'WebPage',
     '@id': WEBPAGE_ID,
     'url': PAGE_URL,
-    'name': 'Vedlikehold av Utekos | Slik bevarer du varmen i mange år',
+    'name':
+      'Vedlikehold av Utekos | Slik bevarer du varmen i mange år',
     'description':
-      'En tydelig vedlikeholdsguide for Utekos Dun, Mikrofiber og Comfyrobe. Riktig vask, tørking og oppbevaring bevarer varmen, formen og kvaliteten – sesong etter sesong.',
+      'En tydelig vedlikeholdsguide for Utekos Dun, Mikrofiber, TechDown og Comfyrobe. Riktig vask, tørking og oppbevaring bevarer varmen, formen og kvaliteten – sesong etter sesong.',
     'inLanguage': 'no',
     'isPartOf': { '@id': WEBSITE_ID },
     'breadcrumb': { '@id': BREADCRUMB_ID },
@@ -68,16 +75,28 @@ export async function MaintenanceJsonLd() {
     },
     'totalTime': 'PT2H',
     'supply': [
-      { '@type': 'HowToSupply', 'name': 'Mildt vaskemiddel uten optisk hvitt' },
+      {
+        '@type': 'HowToSupply',
+        'name': 'Mildt vaskemiddel uten optisk hvitt'
+      },
       {
         '@type': 'HowToSupply',
         'name': 'Tørkeballer eller rene tennisballer (for dun)'
       },
-      { '@type': 'HowToSupply', 'name': 'DWR-impregneringsspray (valgfritt)' }
+      {
+        '@type': 'HowToSupply',
+        'name': 'DWR-impregneringsspray (valgfritt)'
+      }
     ],
     'tool': [
-      { '@type': 'HowToTool', 'name': 'Vaskemaskin med skånsomt program' },
-      { '@type': 'HowToTool', 'name': 'Tørketrommel med lav varme' }
+      {
+        '@type': 'HowToTool',
+        'name': 'Vaskemaskin med skånsomt program'
+      },
+      {
+        '@type': 'HowToTool',
+        'name': 'Tørketrommel med lav varme'
+      }
     ],
     'step': [
       {
@@ -132,25 +151,27 @@ export async function MaintenanceJsonLd() {
         'acceptedAnswer': {
           '@type': 'Answer',
           'text':
-            'Vask sjeldnere enn du tror. Lufting mellom hver bruk er som regel nok. Vask når plagget faktisk er skittent – hyppig vask sliter mer på fibrene enn vanlig bruk.'
+            'Vask sjeldnere enn du tror. Lufting mellom hver bruk er som regel nok. Vask når plagget faktisk er skittent. Hyppig vask sliter mer på fibrene enn vanlig bruk.'
         }
       },
       {
         '@type': 'Question',
-        'name': 'Kan jeg bruke vanlig vaskemiddel på Utekos Dun?',
+        'name':
+          'Kan jeg bruke vanlig vaskemiddel på Utekos Dun?',
         'acceptedAnswer': {
           '@type': 'Answer',
           'text':
-            'Bruk helst et mildt vaskemiddel uten optisk hvitt, eller et eget dun-vaskemiddel. Vanlige vaskemidler kan tørke ut dunets naturlige fettlag og redusere isolasjonsevnen over tid.'
+            'Bruk helst et mildt vaskemiddel uten optisk hvitt, eller et eget dunvaskemiddel. Vanlige vaskemidler kan tørke ut dunets naturlige fettlag og redusere isolasjonsevnen over tid.'
         }
       },
       {
         '@type': 'Question',
-        'name': 'Hva gjør jeg hvis vann ikke lenger preller av ytterstoffet?',
+        'name':
+          'Hva gjør jeg hvis vann ikke lenger preller av ytterstoffet?',
         'acceptedAnswer': {
           '@type': 'Answer',
           'text':
-            'DWR-behandlingen kan friskes opp. Vask plagget rent, tørk det helt, og påfør en impregneringsspray jevnt over ytterstoffet. Varm aktivering i tørketrommel på lav varme låser behandlingen.'
+            'DWR-behandlingen kan friskes opp. Vask plagget rent, tørk det helt og påfør en egnet impregneringsspray jevnt over ytterstoffet. Bruk lav varme til aktivering bare når vaskelappen og produktveiledningen tillater det.'
         }
       },
       {
@@ -159,16 +180,17 @@ export async function MaintenanceJsonLd() {
         'acceptedAnswer': {
           '@type': 'Answer',
           'text':
-            'Ja, hvis plagget ikke tørkes ordentlig. Bruk tørketrommel på lav varme med tørkeballer, og avbryt syklusen for å riste ut klumper underveis. Plagget skal være helt gjennomtørt før det legges bort.'
+            'Ja. Bruk tørketrommel på lav varme med tørkeballer når vaskelappen tillater det, og avbryt syklusen for å riste ut klumper underveis. Plagget skal være helt gjennomtørt før det legges bort.'
         }
       },
       {
         '@type': 'Question',
-        'name': 'Hvordan oppbevarer jeg plagget mellom sesonger?',
+        'name':
+          'Hvordan oppbevarer jeg plagget mellom sesonger?',
         'acceptedAnswer': {
           '@type': 'Answer',
           'text':
-            'Heng plagget på en stødig henger i et tørt og luftig skap. Unngå kompresjonsposer og plastomslag over lengre tid – dunet trenger luft for å bevare spensten.'
+            'Heng plagget på en stødig henger i et tørt og luftig skap. Unngå kompresjonsposer og plastomslag over lengre tid. Isolasjonen trenger luft og plass for å bevare spensten.'
         }
       }
     ]

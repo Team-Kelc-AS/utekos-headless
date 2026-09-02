@@ -708,7 +708,7 @@ const pageViewProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned Meta Pixel is the sole browser owner and canonical Meta CAPI is the sole server owner. Meta-managed Signals Gateway mirrors Pixel delivery with the same event_id; no independent cbq bridge is active. Historical blocked rows remain excluded from blind replay.',
+      'The app-owned Meta Pixel is the sole browser event owner and canonical Meta CAPI is the server owner. The consent-gated Signals Gateway SDK may automatically fork existing fbq calls with the same event_id; manual cbq tracking remains forbidden. Historical blocked rows remain excluded from blind replay.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -809,7 +809,7 @@ const viewItemProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned Meta Pixel and canonical Meta CAPI are active with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.',
+      'The app-owned Meta Pixel and canonical Meta CAPI are active with shared event_id. The consent-gated Signals Gateway SDK may automatically fork existing fbq calls; the independent manual GTM cbq bridge remains paused.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -920,7 +920,7 @@ const addToCartProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned Meta Pixel and canonical Meta CAPI are active for add_to_cart with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.',
+      'The app-owned Meta Pixel and canonical Meta CAPI are active for add_to_cart with shared event_id. The consent-gated Signals Gateway SDK may automatically fork the existing fbq call; the independent manual GTM cbq bridge remains paused.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -1033,7 +1033,7 @@ const beginCheckoutProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned Meta Pixel and canonical Meta CAPI are active for begin_checkout with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.',
+      'The app-owned Meta Pixel and canonical Meta CAPI are active for begin_checkout with shared event_id. The consent-gated Signals Gateway SDK may automatically fork the existing fbq call; the independent manual GTM cbq bridge remains paused.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
