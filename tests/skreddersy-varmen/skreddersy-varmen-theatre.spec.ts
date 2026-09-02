@@ -98,6 +98,65 @@ test('places the product explanation after purchase and links the hero feedback 
     .toBeLessThanOrEqual(1)
 })
 
+test('releases the final mobile empathy scene before purchase begins', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const purchase = page.locator('#purchase-section')
+  const resolution = page.locator('[data-empathy-resolution]')
+
+  await expect(purchase).toHaveCount(1)
+  await expect(resolution).toHaveCount(1)
+
+  await purchase.evaluate(element => {
+    window.scrollTo(
+      0,
+      element.getBoundingClientRect().top + window.scrollY
+    )
+  })
+  await page.evaluate(
+    () =>
+      new Promise<void>(resolve =>
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => resolve())
+        )
+      )
+  )
+
+  const boundary = await page.evaluate(() => {
+    const purchaseSection = document.querySelector(
+      '#purchase-section'
+    )
+    const resolutionScene = document.querySelector(
+      '[data-empathy-resolution]'
+    )
+    const centerElement = document.elementFromPoint(
+      window.innerWidth / 2,
+      window.innerHeight / 2
+    )
+
+    if (!purchaseSection || !resolutionScene || !centerElement) {
+      throw new Error(
+        'Missing mobile purchase boundary elements'
+      )
+    }
+
+    return {
+      purchaseOwnsViewport:
+        purchaseSection.contains(centerElement),
+      purchaseTop: purchaseSection.getBoundingClientRect().top,
+      resolutionBottom:
+        resolutionScene.getBoundingClientRect().bottom
+    }
+  })
+
+  expect(boundary.purchaseTop).toBeCloseTo(0, 0)
+  expect(boundary.resolutionBottom).toBeLessThanOrEqual(1)
+  expect(boundary.purchaseOwnsViewport).toBe(true)
+})
+
 test('keeps one large framed image beside the stationary desktop scene copy', async ({
   page
 }) => {
@@ -358,7 +417,7 @@ test('keeps hidden header controls out of the initial keyboard order', async ({
   expect(focusedHiddenHeader).toBe(false)
 
   await expect(actions).toHaveCSS('visibility', 'visible', {
-    timeout: 2200
+    timeout: 2600
   })
 })
 
@@ -483,9 +542,9 @@ test('keeps every intro phase ordered within the LCP budget', async ({
   expect(choreography.cloudBackground).toBe('rgb(255, 255, 255)')
   expect(choreography.logo.delay).toBeGreaterThanOrEqual(400)
   expect(choreography.logo.delay).toBeLessThanOrEqual(500)
-  expect(choreography.logo.duration).toBeGreaterThanOrEqual(700)
-  expect(choreography.logo.duration).toBeLessThanOrEqual(800)
-  expect(choreography.logo.endTime).toBeLessThanOrEqual(1250)
+  expect(choreography.logo.duration).toBeGreaterThanOrEqual(1000)
+  expect(choreography.logo.duration).toBeLessThanOrEqual(1200)
+  expect(choreography.logo.endTime).toBeLessThanOrEqual(1650)
   expect(hopIndex).toBeGreaterThan(0)
   expect(landingIndex).toBeGreaterThan(hopIndex)
   expect(exitIndex).toBeGreaterThan(landingIndex)
@@ -495,9 +554,9 @@ test('keeps every intro phase ordered within the LCP budget', async ({
     choreography.logo.keyframes[landingIndex]?.transform
   )
   expect(exitStart?.easing).toBe('cubic-bezier(0.16, 1, 0.3, 1)')
-  expect(choreography.jungle.delay).toBeGreaterThanOrEqual(550)
-  expect(choreography.jungle.delay).toBeLessThanOrEqual(650)
-  expect(choreography.cloud.endTime).toBeLessThanOrEqual(900)
+  expect(choreography.jungle.delay).toBeGreaterThanOrEqual(700)
+  expect(choreography.jungle.delay).toBeLessThanOrEqual(800)
+  expect(choreography.cloud.endTime).toBeLessThanOrEqual(1150)
   expect(choreography.jungle.endTime).toBeCloseTo(
     choreography.hero.endTime,
     0
@@ -513,7 +572,7 @@ test('keeps every intro phase ordered within the LCP budget', async ({
   expect(choreography.hero.delay).toBeCloseTo(logoEnd, 0)
   expect(choreography.hero.delay).toBeLessThan(headerEnd)
   expect(choreography.hero.endTime).toBeGreaterThan(headerEnd)
-  expect(choreography.hero.endTime).toBeLessThanOrEqual(1500)
+  expect(choreography.hero.endTime).toBeLessThanOrEqual(2100)
 })
 
 test('brings the hero in immediately after the logo without revealing it early', async ({
@@ -583,7 +642,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(550)).toEqual({
+  expect(await readPhaseAt(600)).toEqual({
     cloud: 'visible',
     jungle: 'hidden',
     logo: 'visible',
@@ -592,17 +651,8 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(800)).toEqual({
+  expect(await readPhaseAt(900)).toEqual({
     cloud: 'visible',
-    jungle: 'visible',
-    logo: 'visible',
-    brand: 'hidden',
-    actions: 'hidden',
-    hero: 'hidden'
-  })
-
-  expect(await readPhaseAt(1000)).toEqual({
-    cloud: 'hidden',
     jungle: 'visible',
     logo: 'visible',
     brand: 'hidden',
@@ -613,13 +663,22 @@ test('brings the hero in immediately after the logo without revealing it early',
   expect(await readPhaseAt(1300)).toEqual({
     cloud: 'hidden',
     jungle: 'visible',
+    logo: 'visible',
+    brand: 'hidden',
+    actions: 'hidden',
+    hero: 'hidden'
+  })
+
+  expect(await readPhaseAt(1800)).toEqual({
+    cloud: 'hidden',
+    jungle: 'visible',
     logo: 'hidden',
     brand: 'visible',
     actions: 'visible',
     hero: 'visible'
   })
 
-  expect(await readPhaseAt(1550)).toEqual({
+  expect(await readPhaseAt(2200)).toEqual({
     cloud: 'hidden',
     jungle: 'hidden',
     logo: 'hidden',

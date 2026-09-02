@@ -4,7 +4,6 @@ import heroXlImage from '@/assets/images/gallery/utekos_1400_788.webp'
 import heroSixteenTenImage from '@public/Hero-iPad.webp'
 import techdown700x775 from '@/assets/images/techdown/TechDown.700x775.webp'
 
-
 const heroMobileImage = {
   src: techdown700x775.src,
   width: techdown700x775.width,
@@ -16,17 +15,18 @@ const heroImageProps = {
   decoding: 'async',
   fetchPriority: 'high',
   loading: 'eager',
-  sizes: '(min-width: 1152px) 1152px, (min-width: 640px) calc(100vw - 2rem), 100vw'
+  sizes:
+    '(min-width: 1152px) 1152px, (min-width: 640px) calc(100vw - 2rem), 100vw'
 } as const
 
 export function HeroImage() {
   return (
     <div
       className={cn(
-        'group relative mx-auto mb-7 w-full max-w-none overflow-hidden shadow-none sm:mb-10 sm:max-w-6xl sm:rounded-2xl sm:border sm:border-foreground/12 sm:shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)] sm:dark:border-dark-foreground/12'
+        'group sm:dark:border-dark-foreground/12 relative mx-auto mb-7 w-full max-w-none overflow-hidden shadow-none sm:mb-10 sm:max-w-6xl sm:rounded-2xl sm:border sm:border-foreground/12 sm:shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)]'
       )}
     >
-      <div className='relative aspect-700/775 sm:border-4 border-dark-teal sm:rounded-2xl transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 lg:aspect-video xl:aspect-video'>
+      <div className='relative aspect-700/775 transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 sm:rounded-2xl lg:aspect-video xl:aspect-video'>
         <picture className='block size-full'>
           <source
             media='(min-width: 1280px)'
@@ -53,7 +53,7 @@ export function HeroImage() {
             fetchPriority={heroImageProps.fetchPriority}
             width={heroMobileImage.width}
             height={heroMobileImage.height}
-            className='block size-full md:rounded-xl object-cover object-[50%_45%]'
+            className='block size-full object-cover object-[50%_45%] md:rounded-xl'
           />
         </picture>
       </div>

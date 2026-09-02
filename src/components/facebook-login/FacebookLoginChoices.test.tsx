@@ -6,7 +6,7 @@ import { FacebookLoginChoices } from './FacebookLoginChoices'
 test('renders one official Meta choice and one Utekos choice only', () => {
   const markup = renderToStaticMarkup(
     <FacebookLoginChoices
-      buttonWidth={320}
+      buttonWidth={400}
       buttonContainerRef={{ current: null }}
       buttonRendered
       loginUnavailable={false}
@@ -24,15 +24,14 @@ test('renders one official Meta choice and one Utekos choice only', () => {
   assert.equal((markup.match(/<button/gu) ?? []).length, 1)
   assert.match(markup, /data-button-type="continue_with"/u)
   assert.match(markup, /data-use-continue-as="true"/u)
-  assert.match(markup, /data-size="medium"/u)
-  assert.match(markup, /data-width="320"/u)
+  assert.match(markup, /data-size="large"/u)
+  assert.match(markup, /data-width="400"/u)
   assert.match(markup, /data-scope="public_profile,email"/u)
-  assert.match(markup, /style="width:320px"/u)
-  assert.equal((markup.match(/h-\[30px\]/gu) ?? []).length, 3)
-  assert.match(markup, /gap-3/u)
-  assert.match(markup, /text-\[13px\]/u)
-  assert.match(markup, /class="flex size-5/u)
-  assert.match(markup, /class="size-3/u)
+  assert.match(markup, /style="width:400px"/u)
+  assert.equal((markup.match(/h-10/gu) ?? []).length, 3)
+  assert.match(markup, /text-base/u)
+  assert.match(markup, /class="flex size-6 shrink-0/u)
+  assert.match(markup, /class="size-3\.5/u)
   assert.match(markup, /Fortsett til Utekos/u)
   assert.doesNotMatch(markup, /<form|<input|<h[1-6]/u)
   assert.doesNotMatch(
@@ -44,7 +43,7 @@ test('renders one official Meta choice and one Utekos choice only', () => {
 test('renders a non-interactive Facebook choice for local visual preview', () => {
   const markup = renderToStaticMarkup(
     <FacebookLoginChoices
-      buttonWidth={320}
+      buttonWidth={400}
       buttonContainerRef={{ current: null }}
       buttonRendered={false}
       loginUnavailable={false}
@@ -62,5 +61,8 @@ test('renders a non-interactive Facebook choice for local visual preview', () =>
     markup,
     /Bare visuell forhåndsvisning i lokal utvikling/u
   )
+  assert.match(markup, /inline-flex items-center gap-3/u)
+  assert.match(markup, /viewBox="0 0 24 24"/u)
+  assert.equal((markup.match(/size-6/gu) ?? []).length, 2)
   assert.equal((markup.match(/<button/gu) ?? []).length, 2)
 })

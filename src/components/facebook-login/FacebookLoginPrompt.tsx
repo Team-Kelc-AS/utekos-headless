@@ -21,8 +21,8 @@ import { trackFacebookLoginFunnel } from '@/lib/facebook-login/trackFacebookLogi
 const DISMISSED_SESSION_KEY =
   'utekos-facebook-login-prompt-dismissed'
 const OPEN_DELAY_MS = 650
-const FACEBOOK_BUTTON_MAX_WIDTH = 320
-const FACEBOOK_BUTTON_MIN_WIDTH = 200
+const FACEBOOK_BUTTON_MAX_WIDTH = 400
+const FACEBOOK_BUTTON_MIN_WIDTH = 240
 const PAGE_EDGE_GAP_PX = 32
 
 const statusResponseSchema = z.strictObject({
