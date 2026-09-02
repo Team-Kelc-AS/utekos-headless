@@ -50,10 +50,10 @@ test('claims, reconciles and completes a bounded batch', async () => {
   const completed: GoogleDataManagerStatusOutcome[] = []
   const store: GoogleDataManagerStatusStore = {
     claimNext: async () => queue.shift() ?? null,
+    countOverdue: async () => 2,
     complete: async outcome => {
       completed.push(outcome)
-    },
-    expireStale: async () => 2
+    }
   }
 
   const summary = await runGoogleDataManagerStatusReconciliation(
@@ -74,11 +74,11 @@ test('claims, reconciles and completes a bounded batch', async () => {
     claimed: 2,
     deadLettered: 0,
     limitReached: false,
+    overdue: 2,
     processing: 1,
     retried: 0,
     succeeded: 1,
     succeededWithWarnings: 0,
-    timedOut: 2,
     unknown: 0
   })
   assert.deepEqual(
@@ -90,8 +90,8 @@ test('claims, reconciles and completes a bounded batch', async () => {
 test('rejects invalid batch sizes', async () => {
   const store: GoogleDataManagerStatusStore = {
     claimNext: async () => null,
-    complete: async () => undefined,
-    expireStale: async () => 0
+    countOverdue: async () => 0,
+    complete: async () => undefined
   }
 
   for (const maxItems of [0, 1.5, 101]) {

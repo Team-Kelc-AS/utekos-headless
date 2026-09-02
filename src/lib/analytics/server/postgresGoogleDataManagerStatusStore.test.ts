@@ -95,6 +95,14 @@ test('claims only executed accepted Google requests with a lease', async () => {
   )
   assert.match(fake.calls[0]?.query ?? '', /nextStatusCheckAt/i)
   assert.match(fake.calls[0]?.query ?? '', /statusCheckLease/i)
+  assert.doesNotMatch(
+    fake.calls[0]?.query ?? '',
+    /> now\(\) - interval '24 hours'/i
+  )
+  assert.match(
+    fake.calls[0]?.query ?? '',
+    /response_semantics = 'provider_status_timeout'/i
+  )
 })
 
 test('promotes provider-confirmed success to succeeded', async () => {
@@ -155,6 +163,10 @@ test('keeps processing rows accepted and eligible for another poll', async () =>
   assert.equal(
     fake.calls[0]?.parameters.at(-1),
     '2026-07-25T12:39:00.000Z'
+  )
+  assert.match(
+    fake.calls[0]?.query ?? '',
+    /statusPollingExpiredAt/i
   )
 })
 
@@ -257,23 +269,23 @@ test('dead-letters provider processing mismatches without replay', async () => {
   )
 })
 
-test('expires status checks after 24 hours as accepted unverified', async () => {
-  const fake = fakeExecutor([[{ expired_count: '2' }]])
+test('counts overdue checks without terminating provider polling', async () => {
+  const fake = fakeExecutor([[{ overdue_count: '2' }]])
   const store = createPostgresGoogleDataManagerStatusStore(
     fake.execute
   )
 
-  assert.equal(await store.expireStale(), 2)
+  assert.equal(await store.countOverdue(), 2)
   assert.match(
     fake.calls[0]?.query ?? '',
     /interval '24 hours'/i
   )
-  assert.match(
-    fake.calls[0]?.query ?? '',
-    /provider_status_timeout/i
-  )
   assert.doesNotMatch(
     fake.calls[0]?.query ?? '',
-    /status = 'dead_lettered'/i
+    /update ops\.provider_dispatch_attempts/i
+  )
+  assert.match(
+    fake.calls[0]?.query ?? '',
+    /provider_confirmed_success_with_warnings/i
   )
 })

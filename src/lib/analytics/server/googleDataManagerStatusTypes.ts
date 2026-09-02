@@ -62,8 +62,8 @@ export type GoogleDataManagerStatusOutcome =
 
 export type GoogleDataManagerStatusStore = {
   claimNext: () => Promise<GoogleDataManagerStatusClaim | null>
+  countOverdue: () => Promise<number>
   complete: (
     outcome: GoogleDataManagerStatusOutcome
   ) => Promise<void>
-  expireStale: () => Promise<number>
 }

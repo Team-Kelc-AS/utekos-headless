@@ -61,12 +61,8 @@ const CLAIM_NEXT_QUERY = `
       and request_id is not null
       and request_id <> ''
       and validation_result ->> 'validate_only' = 'false'
-      and coalesce(processed_at, created_at)
-        > now() - interval '24 hours'
-      and response_semantics not in (
-        'provider_confirmed_success_with_warnings',
-        'provider_status_timeout'
-      )
+      and response_semantics <>
+        'provider_confirmed_success_with_warnings'
       and not (coalesce(response, '{}'::jsonb) ? 'statusCheckLease')
       and (
         (
@@ -78,7 +74,13 @@ const CLAIM_NEXT_QUERY = `
           and updated_at <= now() - interval '30 minutes'
         )
       )
-    order by updated_at, created_at
+    order by
+      case
+        when response_semantics = 'provider_status_timeout' then 1
+        else 0
+      end,
+      updated_at,
+      created_at
     for update skip locked
     limit 1
   ),
@@ -117,35 +119,18 @@ const CLAIM_NEXT_QUERY = `
       as status_check_attempts
 `
 
-const EXPIRE_STALE_QUERY = `
-  with expired as (
-    update ops.provider_dispatch_attempts
-    set
-      response = (
-        (coalesce(response, '{}'::jsonb) - 'statusCheckLease')
-        - 'nextStatusCheckAt'
-      ) || jsonb_build_object(
-        'statusPollingExpiredAt', now()
-      ),
-      response_semantics = 'provider_status_timeout',
-      last_error =
-        'Google Data Manager status was not terminal within 24 hours',
-      updated_at = now()
-    where provider = 'google'
-      and status = 'accepted_unverified'
-      and request_id is not null
-      and request_id <> ''
-      and validation_result ->> 'validate_only' = 'false'
-      and coalesce(processed_at, created_at)
-        <= now() - interval '24 hours'
-      and response_semantics not in (
-        'provider_confirmed_success_with_warnings',
-        'provider_status_timeout'
-      )
-    returning id
-  )
-  select count(*)::text as expired_count
-  from expired
+const COUNT_OVERDUE_QUERY = `
+  select count(*)::text as overdue_count
+  from ops.provider_dispatch_attempts
+  where provider = 'google'
+    and status = 'accepted_unverified'
+    and request_id is not null
+    and request_id <> ''
+    and validation_result ->> 'validate_only' = 'false'
+    and coalesce(processed_at, created_at)
+      <= now() - interval '24 hours'
+    and response_semantics <>
+      'provider_confirmed_success_with_warnings'
 `
 
 const NON_TERMINAL_QUERY = `
@@ -153,7 +138,8 @@ const NON_TERMINAL_QUERY = `
   set
     status = $6,
     response = (
-      (response - 'statusCheckLease') - 'nextStatusCheckAt'
+      ((response - 'statusCheckLease') - 'nextStatusCheckAt')
+        - 'statusPollingExpiredAt'
     ) || jsonb_build_object(
       'requestStatus', $4::jsonb,
       'requestStatusCheckedAt', now()
@@ -193,7 +179,8 @@ const RETRY_QUERY = `
   update ops.provider_dispatch_attempts
   set
     response = (
-      (response - 'statusCheckLease') - 'nextStatusCheckAt'
+      ((response - 'statusCheckLease') - 'nextStatusCheckAt')
+        - 'statusPollingExpiredAt'
     ) || jsonb_build_object(
       'requestStatusCheckError', $4::text,
       'requestStatusCheckedAt', now(),
@@ -216,10 +203,12 @@ const TERMINAL_QUERY = `
     update ops.provider_dispatch_attempts
     set
       status = 'dead_lettered',
-      response = (response - 'statusCheckLease') || jsonb_build_object(
-        'requestStatus', $4::jsonb,
-        'requestStatusCheckedAt', now()
-      ),
+      response =
+        ((response - 'statusCheckLease') - 'statusPollingExpiredAt')
+        || jsonb_build_object(
+          'requestStatus', $4::jsonb,
+          'requestStatusCheckedAt', now()
+        ),
       validation_result = validation_result || jsonb_build_object(
         'provider_status', $5::text,
         'provider_confirmed', false
@@ -315,8 +304,8 @@ function statusError(
   return `Google Data Manager request ${outcome.claim.requestId} returned ${outcome.result.overallStatus}`
 }
 
-function parseExpiredCount(row: QueryRow | undefined) {
-  const value = row?.expired_count
+function parseOverdueCount(row: QueryRow | undefined) {
+  const value = row?.overdue_count
   const count = typeof value === 'string' ? Number(value) : value
 
   if (
@@ -325,7 +314,7 @@ function parseExpiredCount(row: QueryRow | undefined) {
     count < 0
   ) {
     throw new Error(
-      'Invalid Google Data Manager expired status count'
+      'Invalid Google Data Manager overdue status count'
     )
   }
 
@@ -336,21 +325,24 @@ export function createPostgresGoogleDataManagerStatusStore(
   executeQuery: GoogleDataManagerStatusQueryExecutor = executePostgresQuery
 ): GoogleDataManagerStatusStore {
   return {
-    expireStale: async () =>
+    countOverdue: async () =>
       startAnalyticsSpan(
         {
-          name: 'db.query google_dm_status.expire_stale',
+          name: 'db.query google_dm_status.count_overdue',
           op: 'db.query',
           attributes: {
             'db.system': 'postgresql',
-            'db.operation.name': 'expire_stale',
+            'db.operation.name': 'count_overdue',
             'db.namespace': 'ops'
           }
         },
         async () => {
-          const rows = await executeQuery(EXPIRE_STALE_QUERY, [])
+          const rows = await executeQuery(
+            COUNT_OVERDUE_QUERY,
+            []
+          )
 
-          return parseExpiredCount(rows[0])
+          return parseOverdueCount(rows[0])
         }
       ),
     claimNext: async () =>
@@ -433,7 +425,8 @@ export function createPostgresGoogleDataManagerStatusStore(
             succeeded ? 'provider_confirmed_success'
             : succeededWithWarnings ?
               'provider_confirmed_success_with_warnings'
-            : outcome.status === 'processing' ? 'provider_processing'
+            : outcome.status === 'processing' ?
+              'provider_processing'
             : 'provider_status_unknown',
             outcome.latencyMs,
             (

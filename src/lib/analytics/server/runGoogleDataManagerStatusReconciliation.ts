@@ -13,11 +13,11 @@ export type GoogleDataManagerStatusBatchSummary = {
   claimed: number
   deadLettered: number
   limitReached: boolean
+  overdue: number
   processing: number
   retried: number
   succeeded: number
   succeededWithWarnings: number
-  timedOut: number
   unknown: number
 }
 
@@ -79,8 +79,6 @@ export async function runGoogleDataManagerStatusReconciliation(
 ): Promise<GoogleDataManagerStatusBatchSummary> {
   validateBatchSize(input.maxItems)
 
-  const timedOut = await dependencies.store.expireStale()
-
   const claims: GoogleDataManagerStatusClaim[] = []
 
   while (claims.length < input.maxItems) {
@@ -93,11 +91,11 @@ export async function runGoogleDataManagerStatusReconciliation(
     claimed: claims.length,
     deadLettered: 0,
     limitReached: claims.length === input.maxItems,
+    overdue: 0,
     processing: 0,
     retried: 0,
     succeeded: 0,
     succeededWithWarnings: 0,
-    timedOut,
     unknown: 0
   }
 
@@ -121,6 +119,8 @@ export async function runGoogleDataManagerStatusReconciliation(
     )
     outcomes.forEach(outcome => countOutcome(summary, outcome))
   }
+
+  summary.overdue = await dependencies.store.countOverdue()
 
   return summary
 }

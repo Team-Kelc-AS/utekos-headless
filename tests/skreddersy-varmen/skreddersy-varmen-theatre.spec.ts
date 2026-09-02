@@ -110,6 +110,93 @@ test('releases the final mobile empathy scene before purchase begins', async ({
   await expect(purchase).toHaveCount(1)
   await expect(resolution).toHaveCount(1)
 
+  const settlement = await page.evaluate(async () => {
+    const purchaseSection = document.querySelector(
+      '#purchase-section'
+    )
+    const resolutionTrack = document.querySelector(
+      '[data-empathy-resolution-track]'
+    )
+    const resolutionClosing = document.querySelector(
+      '[data-empathy-resolution-closing]'
+    )
+
+    if (
+      !purchaseSection ||
+      !resolutionTrack ||
+      !resolutionClosing
+    ) {
+      throw new Error(
+        'Missing mobile resolution settlement elements'
+      )
+    }
+
+    const purchaseDocumentTop =
+      purchaseSection.getBoundingClientRect().top +
+      window.scrollY
+    const trackDocumentTop =
+      resolutionTrack.getBoundingClientRect().top +
+      window.scrollY
+    let purchaseTopWhenSettled = Number.POSITIVE_INFINITY
+    let animationStartScrollTop = Number.NaN
+    let animationEndScrollTop = Number.NaN
+
+    for (
+      let scrollTop = trackDocumentTop;
+      scrollTop <= purchaseDocumentTop - window.innerHeight + 12;
+      scrollTop += 8
+    ) {
+      window.scrollTo(0, scrollTop)
+      await new Promise<void>(resolve =>
+        requestAnimationFrame(() => resolve())
+      )
+
+      const style = getComputedStyle(resolutionClosing)
+      const transform =
+        style.transform === 'none' ?
+          new DOMMatrixReadOnly()
+        : new DOMMatrixReadOnly(style.transform)
+
+      if (
+        Number.isNaN(animationStartScrollTop) &&
+        (Number(style.opacity) > 0.001 ||
+          Math.abs(transform.m42) < 35.75)
+      ) {
+        animationStartScrollTop = scrollTop
+      }
+
+      if (
+        Number(style.opacity) >= 0.999 &&
+        Math.abs(transform.m42) <= 0.25
+      ) {
+        animationEndScrollTop = scrollTop
+        purchaseTopWhenSettled =
+          purchaseSection.getBoundingClientRect().top
+        break
+      }
+    }
+
+    return {
+      animationTravel:
+        animationEndScrollTop - animationStartScrollTop,
+      purchaseTopWhenSettled,
+      viewportHeight: window.innerHeight
+    }
+  })
+
+  expect(
+    settlement.purchaseTopWhenSettled
+  ).toBeGreaterThanOrEqual(settlement.viewportHeight - 12)
+  expect(settlement.purchaseTopWhenSettled).toBeLessThanOrEqual(
+    settlement.viewportHeight + 12
+  )
+  expect(settlement.animationTravel).toBeGreaterThanOrEqual(
+    settlement.viewportHeight * 0.55
+  )
+  expect(settlement.animationTravel).toBeLessThanOrEqual(
+    settlement.viewportHeight
+  )
+
   await purchase.evaluate(element => {
     window.scrollTo(
       0,
@@ -1001,7 +1088,9 @@ test('reveals the mobile manifesto and complete bonfire panel without dead scrol
       '[data-empathy-scene="recognition"]',
       '[data-empathy-scene="bonfire-copy"]',
       '[data-empathy-media-scene="bonfire"]',
-      '[data-empathy-media-scene="chill"]'
+      '[data-empathy-media-scene="chill"]',
+      '[data-empathy-scene="question"]',
+      '[data-empathy-answer-panel]'
     ]
     const results: boolean[] = []
 
@@ -1230,7 +1319,7 @@ test('uses a curtain reveal, side-entering answer, and ordered three-step sequen
   }))
 
   expect(geometry.height).toBeCloseTo(
-    geometry.viewportHeight * 8,
+    geometry.viewportHeight * 5,
     0
   )
 
@@ -1324,10 +1413,16 @@ test('uses a curtain reveal, side-entering answer, and ordered three-step sequen
     element => ({ left: element.getBoundingClientRect().left })
   )
 
-  expect(answerAfterOneViewport.left).toBeGreaterThan(0)
-  expect(answerAfterOneViewport.left).toBeLessThan(
-    answerEntering.left
+  expect(
+    Math.abs(answerAfterOneViewport.left)
+  ).toBeLessThanOrEqual(1)
+  const firstStepAfterOneViewport = Number.parseFloat(
+    await steps
+      .nth(0)
+      .evaluate(element => getComputedStyle(element).opacity)
   )
+  expect(firstStepAfterOneViewport).toBeGreaterThan(0)
+  expect(firstStepAfterOneViewport).toBeLessThan(1)
 
   await scrollToProgress(0.341)
   expect(
@@ -1338,12 +1433,12 @@ test('uses a curtain reveal, side-entering answer, and ordered three-step sequen
     )
   ).toBeLessThanOrEqual(1)
 
-  await scrollToProgress(0.4)
+  await scrollToProgress(0.37)
   await expect(steps.nth(0)).toHaveCSS('opacity', '0')
   await expect(steps.nth(1)).toHaveCSS('opacity', '0')
   await expect(steps.nth(2)).toHaveCSS('opacity', '0')
 
-  await scrollToProgress(0.601)
+  await scrollToProgress(0.52)
   await expect(steps.nth(0)).toHaveCSS('opacity', '1')
   await expect(steps.nth(1)).toHaveCSS('opacity', '0')
   await expect(steps.nth(2)).toHaveCSS('opacity', '0')
@@ -1352,7 +1447,7 @@ test('uses a curtain reveal, side-entering answer, and ordered three-step sequen
     ({ activeDistance, documentTop, viewportHeight }) =>
       window.scrollTo(
         0,
-        documentTop + activeDistance * 0.599 + viewportHeight
+        documentTop + activeDistance * 0.52 + viewportHeight
       ),
     geometry
   )
@@ -1365,17 +1460,40 @@ test('uses a curtain reveal, side-entering answer, and ordered three-step sequen
   )
 
   expect(afterHardScroll[0]).toBe(1)
-  expect(afterHardScroll[1]).toBeGreaterThan(0)
-  expect(afterHardScroll[1]).toBeLessThan(1)
-  expect(afterHardScroll[2]).toBe(0)
+  expect(afterHardScroll[1]).toBe(1)
+  expect(afterHardScroll[2]).toBeGreaterThan(0)
+  expect(afterHardScroll[2]).toBeLessThan(1)
 
-  await scrollToProgress(0.771)
+  await scrollToProgress(0.72)
   await expect(steps.nth(0)).toHaveCSS('opacity', '1')
   await expect(steps.nth(1)).toHaveCSS('opacity', '1')
   await expect(steps.nth(2)).toHaveCSS('opacity', '0')
 
-  await scrollToProgress(0.941)
+  await scrollToProgress(0.91)
   await expect(steps.nth(2)).toHaveCSS('opacity', '1')
+
+  await page.evaluate(
+    ({ activeDistance, documentTop, viewportHeight }) =>
+      window.scrollTo(
+        0,
+        documentTop + activeDistance * 0.91 + viewportHeight
+      ),
+    geometry
+  )
+  await page.waitForTimeout(100)
+
+  const resolutionAfterNextViewport =
+    await resolutionBody.evaluate(
+      element =>
+        element
+          .closest('[data-empathy-resolution]')!
+          .getBoundingClientRect().top
+    )
+
+  expect(resolutionAfterNextViewport).toBeGreaterThanOrEqual(0)
+  expect(resolutionAfterNextViewport).toBeLessThan(
+    geometry.viewportHeight * 0.5
+  )
 
   const resolutionTop = await resolutionBody.evaluate(
     element =>

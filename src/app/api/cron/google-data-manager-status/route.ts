@@ -42,14 +42,10 @@ export async function handleGoogleDataManagerStatusCron(
   const summary = await dependencies.runBatch({
     maxItems: CRON_BATCH_SIZE
   })
-  const ok = summary.timedOut === 0
 
   return Response.json(
-    { ...summary, ok },
-    {
-      headers: { 'Cache-Control': 'no-store' },
-      status: ok ? 200 : 503
-    }
+    { ...summary, complete: summary.overdue === 0, ok: true },
+    { headers: { 'Cache-Control': 'no-store' }, status: 200 }
   )
 }
 

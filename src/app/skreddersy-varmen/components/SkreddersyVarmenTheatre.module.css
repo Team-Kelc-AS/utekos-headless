@@ -896,7 +896,7 @@
       }
 
       .empathyQuestionAnswerTheatre {
-        height: 800svh;
+        height: 500svh;
         min-height: 0;
         contain: layout paint style;
         view-timeline-name: --empathy-question-answer;
@@ -953,15 +953,15 @@
       }
 
       .empathyAnswerStep[data-empathy-answer-step='1'] {
-        animation-range: contain 45% contain 60%;
+        animation-range: contain 38% contain 52%;
       }
 
       .empathyAnswerStep[data-empathy-answer-step='2'] {
-        animation-range: contain 62% contain 77%;
+        animation-range: contain 57% contain 71%;
       }
 
       .empathyAnswerStep[data-empathy-answer-step='3'] {
-        animation-range: contain 79% contain 94%;
+        animation-range: contain 76% contain 90%;
       }
 
       .empathyResolutionTransition {
@@ -971,7 +971,7 @@
       .empathyResolutionTrack {
         position: relative;
         z-index: 0;
-        height: 300svh;
+        height: 185svh;
         contain: layout paint style;
         view-timeline-name: --empathy-resolution-track;
         view-timeline-axis: block;
@@ -1001,7 +1001,7 @@
         animation: skreddersy-empathy-resolution-closing 1ms
           linear both;
         animation-timeline: --empathy-resolution-track;
-        animation-range: contain 5% contain 45%;
+        animation-range: contain 5% contain 100%;
         will-change: transform, opacity;
       }
 
