@@ -9,6 +9,7 @@ import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/repo
 
 const SCROLL_TARGETS = {
   purchase: 'purchase-section',
+  reviews: 'reviews-section',
   solution: 'section-solution'
 } as const
 
@@ -60,13 +61,13 @@ export function HeroActions() {
             type='button'
             onClick={() => {
               reportLandingSelectPromotion('heroSecondary')
-              smoothScrollTo(SCROLL_TARGETS.solution)
+              smoothScrollTo(SCROLL_TARGETS.reviews)
             }}
             data-track='HeroSecondaryCtaSkreddersyVarmen'
             className='group inline-flex items-center gap-2 leading-none'
           >
             <span className='block leading-none'>
-              Se løsningen
+              Se tilbakemeldingene
             </span>
             <ChevronDown
               className='size-4 shrink-0'

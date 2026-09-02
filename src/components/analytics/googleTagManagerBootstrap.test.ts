@@ -4,14 +4,12 @@ import vm from 'node:vm'
 import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from './googleTagManagerBootstrap'
 
 type CookiebotState = {
-  consent: {
-    marketing: boolean
-    statistics: boolean
-  }
+  consent: { marketing: boolean; statistics: boolean }
   hasResponse: boolean
 }
 
 type BootstrapWindow = {
+  __utekosCookiebotConsentReady?: boolean
   Cookiebot?: CookiebotState
   addEventListener: (
     eventName: string,
@@ -30,8 +28,7 @@ function runBootstrap() {
     },
     dataLayer: [],
     location: {
-      href:
-        'https://utekos.no/skreddersy-varmen?fbclid=meta-click&ScCid=snap-click&utm_source=facebook#bestill'
+      href: 'https://utekos.no/skreddersy-varmen?fbclid=meta-click&ScCid=snap-click&utm_source=facebook#bestill'
     }
   }
 
@@ -89,6 +86,19 @@ test('removes the complete query before a consent decision', () => {
     'set',
     { page_location: 'https://utekos.no/skreddersy-varmen' }
   ])
+})
+
+test('marks Cookiebot unresolved until an authoritative event arrives', () => {
+  const { browserWindow, listeners } = runBootstrap()
+
+  assert.equal(
+    browserWindow.__utekosCookiebotConsentReady,
+    false
+  )
+
+  listeners.get('CookiebotOnConsentReady')?.()
+
+  assert.equal(browserWindow.__utekosCookiebotConsentReady, true)
 })
 
 test('keeps analytics attribution but removes click IDs without marketing consent', () => {

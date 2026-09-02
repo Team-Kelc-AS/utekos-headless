@@ -11,10 +11,7 @@ export const metaIdentifierSchema = z
   .trim()
   .min(1)
   .max(512)
-export const metaUnixSecondsSchema = z
-  .number()
-  .int()
-  .positive()
+export const metaUnixSecondsSchema = z.number().int().positive()
 export const metaSha256Schema = z
   .string()
   .regex(/^[a-f0-9]{64}$/)
@@ -68,10 +65,38 @@ const metaJsonValueSchema: z.ZodType<MetaJsonValue> = z.lazy(
     ])
 )
 
+const metaCommerceContentSchema = z.strictObject({
+  brand: metaNonEmptyStringSchema.optional(),
+  category: metaNonEmptyStringSchema.optional(),
+  id: metaIdentifierSchema,
+  item_price: z.number().finite().nonnegative().optional(),
+  quantity: z.number().int().positive(),
+  title: metaNonEmptyStringSchema.optional()
+})
+
 const metaCustomDataSchema = z
   .object({
+    content_ids: z
+      .array(metaIdentifierSchema)
+      .min(1)
+      .max(100)
+      .optional(),
+    content_type: z
+      .enum(['product', 'product_group'])
+      .optional(),
+    contents: z
+      .array(metaCommerceContentSchema)
+      .min(1)
+      .max(100)
+      .optional(),
+    currency: z
+      .string()
+      .regex(/^[A-Z]{3}$/u)
+      .optional(),
     customer_segmentation:
-      metaCustomerSegmentationSchema.optional()
+      metaCustomerSegmentationSchema.optional(),
+    order_id: metaIdentifierSchema.optional(),
+    value: z.number().finite().nonnegative().optional()
   })
   .catchall(metaJsonValueSchema)
 
@@ -129,22 +154,145 @@ export const metaAppDataSchema = z.strictObject({
   windows_attribution_id: metaIdentifierSchema.optional()
 })
 
-export const metaAppEventSchema = z.strictObject({
-  advertiser_tracking_enabled: z.boolean(),
-  app_data: metaAppDataSchema,
-  custom_data: metaCustomDataSchema.optional(),
-  event_id: metaIdentifierSchema,
-  event_name: metaNonEmptyStringSchema,
-  event_time: metaUnixSecondsSchema,
-  opt_out: z.boolean().optional(),
-  original_event_data: originalEventDataSchema.optional(),
-  user_data: z.strictObject({
-    ...metaObservedUserDataShape,
-    anon_id: metaIdentifierSchema.optional(),
-    app_user_id: metaIdentifierSchema.optional(),
-    madid: metaIdentifierSchema.optional()
+export const metaAppEventSchema = z
+  .strictObject({
+    advertiser_tracking_enabled: z.boolean(),
+    app_data: metaAppDataSchema,
+    custom_data: metaCustomDataSchema.optional(),
+    event_id: metaIdentifierSchema,
+    event_name: metaNonEmptyStringSchema,
+    event_time: metaUnixSecondsSchema,
+    opt_out: z.boolean().optional(),
+    original_event_data: originalEventDataSchema.optional(),
+    user_data: z.strictObject({
+      ...metaObservedUserDataShape,
+      anon_id: metaIdentifierSchema.optional(),
+      app_user_id: metaIdentifierSchema.optional(),
+      madid: metaIdentifierSchema.optional()
+    })
   })
-})
+  .superRefine((event, context) => {
+    if (event.event_name !== 'Purchase') return
+
+    const customData = event.custom_data
+    const requiredPurchaseFields = [
+      ['currency', customData?.currency],
+      ['order_id', customData?.order_id],
+      ['value', customData?.value],
+      ['content_ids', customData?.content_ids],
+      ['contents', customData?.contents]
+    ] as const
+
+    for (const [field, value] of requiredPurchaseFields) {
+      if (value !== undefined) continue
+      context.addIssue({
+        code: 'custom',
+        message: `App Purchase requires custom_data.${field}`,
+        path: ['custom_data', field]
+      })
+    }
+  })
+
+const metaSha256ListSchema = z
+  .array(metaSha256Schema)
+  .min(1)
+  .max(10)
+
+const metaOfflineCustomDataSchema = z
+  .object({
+    content_ids: z
+      .array(metaIdentifierSchema)
+      .min(1)
+      .max(100)
+      .optional(),
+    content_type: z
+      .enum(['product', 'product_group'])
+      .optional(),
+    contents: z
+      .array(metaCommerceContentSchema)
+      .min(1)
+      .max(100)
+      .optional(),
+    currency: z
+      .string()
+      .regex(/^[A-Z]{3}$/u)
+      .optional(),
+    customer_segmentation:
+      metaCustomerSegmentationSchema.optional(),
+    order_id: metaIdentifierSchema.optional(),
+    value: z.number().finite().nonnegative().optional()
+  })
+  .catchall(metaJsonValueSchema)
+
+const metaOfflineUserDataSchema = z
+  .strictObject({
+    ...metaObservedUserDataShape,
+    city_sha256: metaSha256ListSchema.optional(),
+    country_sha256: metaSha256ListSchema.optional(),
+    date_of_birth_sha256: metaSha256ListSchema.optional(),
+    first_name_sha256: metaSha256ListSchema.optional(),
+    gender_sha256: metaSha256ListSchema.optional(),
+    last_name_sha256: metaSha256ListSchema.optional(),
+    lead_id: metaIdentifierSchema.optional(),
+    madid: metaIdentifierSchema.optional(),
+    postal_code_sha256: metaSha256ListSchema.optional(),
+    state_sha256: metaSha256ListSchema.optional()
+  })
+  .refine(
+    data =>
+      Boolean(
+        data.email_sha256 ||
+        data.phone_sha256 ||
+        data.external_id ||
+        data.fb_login_id ||
+        data.city_sha256 ||
+        data.country_sha256 ||
+        data.date_of_birth_sha256 ||
+        data.first_name_sha256 ||
+        data.gender_sha256 ||
+        data.last_name_sha256 ||
+        data.lead_id ||
+        data.madid ||
+        data.postal_code_sha256 ||
+        data.state_sha256
+      ),
+    {
+      message:
+        'Offline events need at least one observed customer match key'
+    }
+  )
+
+export const metaOfflineEventSchema = z
+  .strictObject({
+    custom_data: metaOfflineCustomDataSchema.optional(),
+    event_id: metaIdentifierSchema,
+    event_name: metaNonEmptyStringSchema,
+    event_time: metaUnixSecondsSchema,
+    opt_out: z.boolean().optional(),
+    original_event_data: originalEventDataSchema.optional(),
+    user_data: metaOfflineUserDataSchema
+  })
+  .superRefine((event, context) => {
+    if (event.event_name !== 'Purchase') return
+
+    const customData = event.custom_data
+    const requiredPurchaseFields = [
+      ['currency', customData?.currency],
+      ['order_id', customData?.order_id],
+      ['value', customData?.value],
+      ['content_ids', customData?.content_ids],
+      ['contents', customData?.contents]
+    ] as const
+
+    for (const [field, value] of requiredPurchaseFields) {
+      if (value !== undefined) continue
+      context.addIssue({
+        code: 'custom',
+        message: `Offline Purchase requires custom_data.${field}`,
+        path: ['custom_data', field]
+      })
+    }
+  })
 
 const metaBusinessMessagingBaseSchema = z.strictObject({
   custom_data: metaCustomDataSchema.optional(),
@@ -194,6 +342,9 @@ export const metaBusinessMessagingEventSchema =
 
 export type MetaAppEvent = z.infer<typeof metaAppEventSchema>
 export type MetaAppData = z.infer<typeof metaAppDataSchema>
+export type MetaOfflineEvent = z.infer<
+  typeof metaOfflineEventSchema
+>
 export type MetaBusinessMessagingEvent = z.infer<
   typeof metaBusinessMessagingEventSchema
 >

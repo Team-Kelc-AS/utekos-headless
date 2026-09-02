@@ -33,10 +33,18 @@ test('defines an explicit signal contract for every catalog event', () => {
         rule.requirement.length > 0,
         `${eventName}:${signal}: requirement`
       )
-      assert.ok(
-        rule.allowedSources.length > 0,
-        `${eventName}:${signal}: sources`
-      )
+      if (rule.requirement === 'not_applicable') {
+        assert.deepEqual(
+          rule.allowedSources,
+          [],
+          `${eventName}:${signal}: not-applicable sources`
+        )
+      } else {
+        assert.ok(
+          rule.allowedSources.length > 0,
+          `${eventName}:${signal}: sources`
+        )
+      }
       assert.ok(
         Array.isArray(rule.allowedUnavailableReasons),
         `${eventName}:${signal}: unavailable reasons`

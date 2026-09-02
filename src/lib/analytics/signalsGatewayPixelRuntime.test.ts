@@ -41,7 +41,7 @@ test('queues only Signals Gateway setup commands and initializes once', () => {
     {
       host: 'https://signals.utekos.no/',
       initialized: true,
-      mode: 'automatic_fbq_fork',
+      mode: 'canonical_fbq_cbq_pair',
       pixelId: '1633085772154426486'
     }
   )
@@ -57,10 +57,11 @@ test('rejects a second Signals Gateway Pixel configuration', () => {
   })
 
   assert.throws(
-    () => initializeSignalsGatewayPixel(browserWindow, {
-      host: 'https://other.example/',
-      pixelId: 'different'
-    }),
+    () =>
+      initializeSignalsGatewayPixel(browserWindow, {
+        host: 'https://other.example/',
+        pixelId: 'different'
+      }),
     /different configuration/
   )
 })

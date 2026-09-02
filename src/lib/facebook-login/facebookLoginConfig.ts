@@ -43,7 +43,10 @@ export function isFacebookLoginPreviewAllowed(
     Record<string, string | undefined>
   > = process.env
 ): boolean {
-  return environment.VERCEL_ENV === 'preview'
+  return (
+    environment.VERCEL_ENV === 'preview' ||
+    environment.NODE_ENV === 'development'
+  )
 }
 
 export function readFacebookLoginClientConfig(

@@ -66,7 +66,9 @@ function parseMultipartBody(body) {
 
 function parseFacebookEvent(request) {
   const url = new URL(request.url)
-  const queryFields = Object.fromEntries(url.searchParams.entries())
+  const queryFields = Object.fromEntries(
+    url.searchParams.entries()
+  )
   const bodyFields = parseMultipartBody(request.postData)
   const fields = { ...queryFields, ...bodyFields }
 
@@ -156,8 +158,7 @@ async function main() {
     userAgent
   })
   const page = await context.newPage()
-  const fbclid =
-    `codex_fbclid_bc_dedupe_${randomUUID().replaceAll('-', '')}`
+  const fbclid = `codex_fbclid_bc_dedupe_${randomUUID().replaceAll('-', '')}`
   const url = new URL(PRODUCT_PATH, BASE_URL)
   url.searchParams.set('fbclid', fbclid)
 
@@ -270,14 +271,13 @@ async function main() {
 
     await waitUntil(
       async () =>
-        page.evaluate(
-          () =>
-            (globalThis.dataLayer ?? []).some(
-              entry =>
-                entry &&
-                typeof entry === 'object' &&
-                entry.event === 'add_to_cart'
-            )
+        page.evaluate(() =>
+          (globalThis.dataLayer ?? []).some(
+            entry =>
+              entry &&
+              typeof entry === 'object' &&
+              entry.event === 'add_to_cart'
+          )
         ),
       WAIT_MS,
       'dataLayer add_to_cart'
@@ -286,7 +286,10 @@ async function main() {
     const checkoutLink = page
       .locator('a[aria-label*="Gå til kassen"]')
       .first()
-    await checkoutLink.waitFor({ state: 'visible', timeout: 15_000 })
+    await checkoutLink.waitFor({
+      state: 'visible',
+      timeout: 15_000
+    })
     const bridgeRuntime = await page.evaluate(() => ({
       legacyManualBridgePresent: Boolean(
         globalThis.__utekosSignalsGatewayState
@@ -315,7 +318,8 @@ async function main() {
                   entry.event === 'begin_checkout'
               )
               .map(entry => ({
-                browserId: entry.canonical_event?.browser_id ?? null,
+                browserId:
+                  entry.canonical_event?.browser_id ?? null,
                 canonicalEventId:
                   entry.canonical_event?.event_id ?? null,
                 clickId: entry.canonical_event?.click_id ?? null,
@@ -324,16 +328,18 @@ async function main() {
                     item => item.variant_id
                   ) ?? null,
                 currency:
-                  entry.canonical_event?.custom_data?.currency ?? null,
+                  entry.canonical_event?.custom_data?.currency ??
+                  null,
                 eventId: entry.event_id ?? null,
                 grossValue:
-                  entry.canonical_event?.custom_data?.gross_value ??
-                  null,
+                  entry.canonical_event?.custom_data
+                    ?.gross_value ?? null,
                 itemName:
                   entry.canonical_event?.custom_data?.items?.[0]
                     ?.item_name ?? null,
                 value:
-                  entry.canonical_event?.custom_data?.value ?? null
+                  entry.canonical_event?.custom_data?.value ??
+                  null
               }))
           )
           .catch(() => [])
@@ -351,10 +357,14 @@ async function main() {
       () => {
         const facebook = facebookRequests
           .map(parseFacebookEvent)
-          .filter(event => event.eventName === 'InitiateCheckout')
+          .filter(
+            event => event.eventName === 'InitiateCheckout'
+          )
         const openBridge = openBridgeRequests
           .map(parseOpenBridgeEvent)
-          .filter(event => event?.eventName === 'InitiateCheckout')
+          .filter(
+            event => event?.eventName === 'InitiateCheckout'
+          )
 
         return facebook.length >= 1 && openBridge.length >= 1
       },
@@ -372,7 +382,9 @@ async function main() {
       .filter(event => event?.eventName === 'InitiateCheckout')
     const openBridgeHosts = [
       ...new Set(
-        openBridgeRequests.map(request => new URL(request.url).hostname)
+        openBridgeRequests.map(
+          request => new URL(request.url).hostname
+        )
       )
     ].sort()
     let postEventId = null
@@ -426,7 +438,7 @@ async function main() {
           bridgeRuntime.signalsGatewayPixelState?.initialized ===
             true &&
           bridgeRuntime.signalsGatewayPixelState?.mode ===
-            'automatic_fbq_fork' &&
+            'canonical_fbq_cbq_pair' &&
           openBridgeHosts.includes('signals.utekos.no')
         : bridgeRuntime.signalsGatewayQueuePresent === false &&
           bridgeRuntime.signalsGatewaySdkLoaded === false &&

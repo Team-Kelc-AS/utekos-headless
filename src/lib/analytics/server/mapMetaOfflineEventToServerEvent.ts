@@ -5,10 +5,9 @@ import {
   CustomData
 } from 'facebook-nodejs-business-sdk'
 import {
-  metaAppEventSchema,
-  type MetaAppEvent
+  metaOfflineEventSchema,
+  type MetaOfflineEvent
 } from '../metaNonWebEventContract'
-import { buildMetaExactAppData } from './buildMetaExactAppData'
 import { buildMetaObservedUserData } from './buildMetaObservedUserData'
 import { ExactMetaServerEvent } from './ExactMetaServerEvent'
 import {
@@ -18,23 +17,43 @@ import {
   type MetaSendResult
 } from './sendMetaServerEvent'
 
-export function mapMetaAppEventToServerEvent(
-  rawEvent: MetaAppEvent
-): ExactMetaServerEvent {
-  const event = metaAppEventSchema.parse(rawEvent)
-  const userData = buildMetaObservedUserData(event.user_data)
+function setOfflineMatchKeys(
+  userData: ReturnType<typeof buildMetaObservedUserData>,
+  event: MetaOfflineEvent
+) {
+  const observed = event.user_data
 
-  if (event.user_data.anon_id) {
-    userData.setAnonId(event.user_data.anon_id)
+  if (observed.city_sha256) {
+    userData.setCities(observed.city_sha256)
   }
-  if (event.user_data.app_user_id) {
-    userData.setAppUserId(event.user_data.app_user_id)
+  if (observed.country_sha256) {
+    userData.setCountries(observed.country_sha256)
   }
-  if (event.user_data.madid) {
-    userData.setMadid(event.user_data.madid)
+  if (observed.date_of_birth_sha256) {
+    userData.setDatesOfBirth(observed.date_of_birth_sha256)
   }
+  if (observed.first_name_sha256) {
+    userData.setFirstNames(observed.first_name_sha256)
+  }
+  if (observed.gender_sha256) {
+    userData.setGenders(observed.gender_sha256)
+  }
+  if (observed.last_name_sha256) {
+    userData.setLastNames(observed.last_name_sha256)
+  }
+  if (observed.postal_code_sha256) {
+    userData.setZips(observed.postal_code_sha256)
+  }
+  if (observed.state_sha256) {
+    userData.setStates(observed.state_sha256)
+  }
+  if (observed.lead_id) userData.setLeadId(observed.lead_id)
+  if (observed.madid) userData.setMadid(observed.madid)
+}
 
-  const customData = new CustomData()
+function buildOfflineCustomData(event: MetaOfflineEvent) {
+  if (!event.custom_data) return undefined
+
   const {
     content_ids: contentIds,
     content_type: contentType,
@@ -43,7 +62,8 @@ export function mapMetaAppEventToServerEvent(
     order_id: orderId,
     value,
     ...customProperties
-  } = event.custom_data ?? {}
+  } = event.custom_data
+  const customData = new CustomData()
 
   if (contentIds) customData.setContentIds(contentIds)
   if (contentType) customData.setContentType(contentType)
@@ -71,11 +91,17 @@ export function mapMetaAppEventToServerEvent(
   if (Object.keys(customProperties).length > 0) {
     customData.setCustomProperties(customProperties)
   }
+
+  return customData
+}
+
+export function mapMetaOfflineEventToServerEvent(
+  rawEvent: MetaOfflineEvent
+): ExactMetaServerEvent {
+  const event = metaOfflineEventSchema.parse(rawEvent)
+  const userData = buildMetaObservedUserData(event.user_data)
+  const customData = buildOfflineCustomData(event)
   const serverEvent = new ExactMetaServerEvent({
-    appData: buildMetaExactAppData(
-      event.advertiser_tracking_enabled,
-      event.app_data
-    ),
     topLevel: {
       ...(event.opt_out === undefined ?
         {}
@@ -86,27 +112,25 @@ export function mapMetaAppEventToServerEvent(
     }
   })
 
+  setOfflineMatchKeys(userData, event)
   serverEvent
     .setEventName(event.event_name)
     .setEventTime(event.event_time)
     .setEventId(event.event_id)
-    .setActionSource('app')
-    .setAdvertiserTrackingEnabled(
-      event.advertiser_tracking_enabled
-    )
+    .setActionSource('physical_store')
     .setUserData(userData)
 
-  if (event.custom_data) serverEvent.setCustomData(customData)
+  if (customData) serverEvent.setCustomData(customData)
 
   return serverEvent
 }
 
-export async function sendMetaAppEvent(
-  event: MetaAppEvent,
+export async function sendMetaOfflineEvent(
+  event: MetaOfflineEvent,
   config: MetaConversionsApiConfig = readMetaConversionsApiConfig()
 ): Promise<MetaSendResult> {
   return sendMetaServerEvent(
-    mapMetaAppEventToServerEvent(event),
+    mapMetaOfflineEventToServerEvent(event),
     config
   )
 }

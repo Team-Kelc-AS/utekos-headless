@@ -11,6 +11,7 @@ export type EventSignalProfile =
   | 'website'
   | 'server_mutation'
   | 'transaction_attribution'
+  | 'meta_non_web'
   | 'blocked_browser'
   | 'blocked_mixed'
 
@@ -162,10 +163,18 @@ const blockedBrowserSignals =
 const blockedMixedSignals =
   serverMutationSignals satisfies CanonicalEventSignalPolicy
 
+const metaNonWebSignals = Object.fromEntries(
+  canonicalSignalNames.map(signal => [
+    signal,
+    signalRule('not_applicable', [], ['not_applicable'])
+  ])
+) as CanonicalEventSignalPolicy
+
 export const eventSignalPolicies = {
   website: websiteSignals,
   server_mutation: serverMutationSignals,
   transaction_attribution: transactionAttributionSignals,
+  meta_non_web: metaNonWebSignals,
   blocked_browser: blockedBrowserSignals,
   blocked_mixed: blockedMixedSignals
 } as const satisfies Readonly<
@@ -236,6 +245,17 @@ const metaSignals = {
   meta_fbp: 'send_when_available'
 } as const satisfies ProviderSignalDeliveryPolicy
 
+const metaNonWebProviderSignals = {
+  event_source_url: 'not_applicable',
+  client_ip_address: 'send_when_available',
+  client_user_agent: 'send_when_available',
+  external_id: 'send_when_available',
+  click_ids: 'not_applicable',
+  meta_fbclid: 'not_applicable',
+  meta_fbc: 'send_when_available',
+  meta_fbp: 'send_when_available'
+} as const satisfies ProviderSignalDeliveryPolicy
+
 const microsoftSignals = {
   event_source_url: 'required',
   client_ip_address: 'send_when_available',
@@ -279,6 +299,13 @@ export function resolveProviderSignalDelivery(
 ): ProviderSignalDeliveryPolicy {
   if (transport.server === 'first_party_api') {
     return firstPartyPersistenceSignals
+  }
+
+  if (
+    transport.server === 'meta_conversions_api_app' ||
+    transport.server === 'meta_conversions_api_offline'
+  ) {
+    return metaNonWebProviderSignals
   }
 
   if (

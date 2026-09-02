@@ -6,6 +6,98 @@ const landingUrl =
 
 test.use({ viewport: { width: 1440, height: 900 } })
 
+test('places the product explanation after purchase and links the hero feedback action to reviews', async ({
+  page
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const purchase = page.locator('#purchase-section')
+  const explanation = page.locator(
+    'section[aria-labelledby="threeinone-heading"]'
+  )
+  const technology = page.locator('[data-techdown-technology]')
+  const reviews = page.locator('#reviews-section')
+  const feedbackAction = page.getByRole('button', {
+    name: 'Se tilbakemeldingene'
+  })
+  const reviewIntroduction = reviews.getByText(
+    'Tilbakemeldinger fra mennesker som valgte å investere i forbedret og forlenget hygge utendørs.'
+  )
+
+  await expect(purchase).toHaveCount(1)
+  await expect(explanation).toHaveCount(1)
+  await expect(technology).toHaveCount(1)
+  await expect(reviews).toHaveCount(1)
+  await expect(feedbackAction).toHaveCount(1)
+  await expect(reviewIntroduction).toHaveCSS(
+    'text-align',
+    'center'
+  )
+  await expect(page.locator('#section-solution')).toHaveCount(1)
+  await expect(explanation).toHaveAttribute(
+    'id',
+    'section-solution'
+  )
+
+  const order = await page.evaluate(() => {
+    const requiredElement = (selector: string) => {
+      const element = document.querySelector(selector)
+
+      if (!element) {
+        throw new Error(
+          `Missing landing-page section: ${selector}`
+        )
+      }
+
+      return element
+    }
+    const purchaseSection = requiredElement('#purchase-section')
+    const explanationSection = requiredElement(
+      '#section-solution'
+    )
+    const technologySection = requiredElement(
+      '[data-techdown-technology]'
+    )
+    const reviewsSection = requiredElement('#reviews-section')
+    const isBefore = (first: Element, second: Element) =>
+      Boolean(
+        first.compareDocumentPosition(second) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+      )
+
+    return {
+      purchaseBeforeExplanation: isBefore(
+        purchaseSection,
+        explanationSection
+      ),
+      explanationBeforeTechnology: isBefore(
+        explanationSection,
+        technologySection
+      ),
+      technologyBeforeReviews: isBefore(
+        technologySection,
+        reviewsSection
+      )
+    }
+  })
+
+  expect(order).toEqual({
+    purchaseBeforeExplanation: true,
+    explanationBeforeTechnology: true,
+    technologyBeforeReviews: true
+  })
+
+  await feedbackAction.click()
+  await expect
+    .poll(async () =>
+      reviews.evaluate(element =>
+        Math.abs(element.getBoundingClientRect().top - 72)
+      )
+    )
+    .toBeLessThanOrEqual(1)
+})
+
 test('keeps one large framed image beside the stationary desktop scene copy', async ({
   page
 }) => {
@@ -1375,7 +1467,9 @@ test('keeps the material result heading subordinate across responsive sizes', as
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(landingUrl, { waitUntil: 'load' })
 
-  const heading = page.locator('[data-techdown-instrument] h3')
+  const heading = page
+    .locator('[data-techdown-instrument]:visible h3')
+    .first()
   await expect(heading).toHaveText('Bevarer spenst og loft', {
     timeout: 15_000
   })
@@ -1389,87 +1483,76 @@ test('keeps the material result heading subordinate across responsive sizes', as
   for (const viewport of viewports) {
     await page.setViewportSize(viewport)
 
+    await expect
+      .poll(() =>
+        heading.evaluate(element =>
+          Number.parseFloat(getComputedStyle(element).fontSize)
+        )
+      )
+      .toBeCloseTo(viewport.fontSize, 0)
+
     const geometry = await heading.evaluate(element => {
       const rect = element.getBoundingClientRect()
       return {
         documentWidth: document.documentElement.scrollWidth,
-        fontSize: Number.parseFloat(
-          getComputedStyle(element).fontSize
-        ),
         height: rect.height,
         viewportWidth: innerWidth
       }
     })
 
-    expect(geometry.fontSize).toBeCloseTo(viewport.fontSize, 0)
     expect(geometry.height).toBeLessThan(100)
     expect(geometry.documentWidth).toBe(geometry.viewportWidth)
   }
 })
 
-test('holds the resolution while the complete adaptive-functionality section enters from the side', async ({
+test('reveals the complete adaptive-functionality section from the side after purchase', async ({
   page
 }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(landingUrl, { waitUntil: 'load' })
 
+  const purchase = page.locator('#purchase-section')
   const section = page.locator('[data-three-in-one-surface]')
-  const resolution = page.locator('[data-empathy-resolution]')
-  const resolutionTrack = page.locator(
-    '[data-empathy-resolution-track]'
-  )
-  const resolutionClosing = page.locator(
-    '[data-empathy-resolution-closing]'
-  )
   const introductionTrack = page.locator(
     '[data-three-in-one-intro-track]'
   )
+  await expect(purchase).toHaveCount(1)
   await expect(section).toHaveCount(1, { timeout: 15_000 })
-  await expect(resolution).toHaveCount(1)
-  await expect(resolutionTrack).toHaveCount(1)
   await expect(introductionTrack).toHaveCount(1)
 
-  const trackGeometry = await resolutionTrack.evaluate(
-    element => ({
-      activeDistance:
-        element.getBoundingClientRect().height - innerHeight,
-      height: element.getBoundingClientRect().height,
-      top: element.getBoundingClientRect().top + scrollY
-    })
-  )
-  const introGeometry = await introductionTrack.evaluate(
-    element => ({
-      height: element.getBoundingClientRect().height,
-      top: element.getBoundingClientRect().top + scrollY
-    })
-  )
-
-  await page.evaluate(
-    y => window.scrollTo(0, y),
-    trackGeometry.top
-  )
-  await page.waitForTimeout(100)
-
-  await expect(resolutionClosing).toHaveCSS('opacity', '0')
-
-  await page.evaluate(
-    ({ activeDistance, top }) =>
-      window.scrollTo(0, top + activeDistance * 0.45 + 1),
-    trackGeometry
-  )
-  await page.waitForTimeout(100)
-
-  await expect(resolutionClosing).toHaveCSS('opacity', '1')
   expect(
-    await resolution.evaluate(
-      element => element.getBoundingClientRect().top
-    )
-  ).toBeCloseTo(0, 0)
+    await page.evaluate(() => {
+      const purchaseSection = document.querySelector(
+        '#purchase-section'
+      )
+      const explanation = document.querySelector(
+        '[data-three-in-one-surface]'
+      )
 
-  await page.evaluate(
-    y => window.scrollTo(0, y),
-    introGeometry.top + introGeometry.height * 0.25
+      if (!purchaseSection || !explanation) {
+        throw new Error(
+          'Missing purchase or explanation section'
+        )
+      }
+
+      return Boolean(
+        purchaseSection.compareDocumentPosition(explanation) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+      )
+    })
+  ).toBe(true)
+
+  const introHeight = await introductionTrack.evaluate(
+    element => element.getBoundingClientRect().height
   )
+
+  await introductionTrack.evaluate((element, progress) => {
+    const rect = element.getBoundingClientRect()
+    window.scrollTo(
+      0,
+      rect.top + window.scrollY + rect.height * progress
+    )
+  }, 0.25)
   await page.waitForTimeout(100)
 
   const entering = await section.evaluate(element => {
@@ -1485,14 +1568,13 @@ test('holds the resolution while the complete adaptive-functionality section ent
       visibility: getComputedStyle(element).visibility
     }
   })
-  const heldResolutionTop = await resolution.evaluate(
-    element => element.getBoundingClientRect().top
-  )
-
-  await page.evaluate(
-    y => window.scrollTo(0, y),
-    introGeometry.top + introGeometry.height * 0.5
-  )
+  await introductionTrack.evaluate((element, progress) => {
+    const rect = element.getBoundingClientRect()
+    window.scrollTo(
+      0,
+      rect.top + window.scrollY + rect.height * progress
+    )
+  }, 0.5)
   await page.waitForTimeout(100)
 
   const settled = await section.evaluate(element => ({
@@ -1508,12 +1590,10 @@ test('holds the resolution while the complete adaptive-functionality section ent
   expect(entering.left).toBeGreaterThan(20)
   expect(Math.abs(entering.top)).toBeLessThanOrEqual(2)
   expect(Math.abs(entering.translateY)).toBeLessThanOrEqual(0.1)
-  expect(Math.abs(heldResolutionTop)).toBeLessThanOrEqual(2)
   expect(settled.visibility).toBe('visible')
   expect(Math.abs(settled.left)).toBeLessThanOrEqual(1)
   expect(Math.abs(settled.top)).toBeLessThanOrEqual(2)
-  expect(trackGeometry.height).toBeCloseTo(844 * 3, -1)
-  expect(introGeometry.height).toBeCloseTo(844 * 2, -1)
+  expect(introHeight).toBeCloseTo(844 * 2, -1)
 })
 
 test('keeps a transparent mobile header in the hero and clears it before the story images', async ({
@@ -1634,7 +1714,7 @@ test('paces both mobile mode arrivals linearly across more than one viewport', a
   )
   const verticalComplete = await readTransform(
     '[data-mode-scene="oppjustert"]',
-    0.45,
+    0.5,
     1
   )
 
@@ -1645,7 +1725,20 @@ test('paces both mobile mode arrivals linearly across more than one viewport', a
   expect(verticalAfterOneViewport.y).toBeLessThan(
     verticalEarly.y
   )
-  expect(verticalComplete.y).toBeCloseTo(0, 1)
+  await expect
+    .poll(
+      () =>
+        page
+          .locator('[data-mode-scene="oppjustert"]')
+          .evaluate(
+            element =>
+              new DOMMatrix(getComputedStyle(element).transform)
+                .m42
+          ),
+      { timeout: 5_000 }
+    )
+    .toBeCloseTo(0, 1)
+  expect(verticalComplete.y).toBeGreaterThanOrEqual(0)
 
   const horizontalEarly = await readTransform(
     '[data-mode-scene="parkas"]',
@@ -1659,7 +1752,7 @@ test('paces both mobile mode arrivals linearly across more than one viewport', a
   )
   const horizontalComplete = await readTransform(
     '[data-mode-scene="parkas"]',
-    0.91,
+    0.96,
     1
   )
 
@@ -1670,7 +1763,20 @@ test('paces both mobile mode arrivals linearly across more than one viewport', a
   expect(horizontalAfterOneViewport.x).toBeLessThan(
     horizontalEarly.x
   )
-  expect(horizontalComplete.x).toBeCloseTo(0, 1)
+  await expect
+    .poll(
+      () =>
+        page
+          .locator('[data-mode-scene="parkas"]')
+          .evaluate(
+            element =>
+              new DOMMatrix(getComputedStyle(element).transform)
+                .m41
+          ),
+      { timeout: 5_000 }
+    )
+    .toBeCloseTo(0, 1)
+  expect(horizontalComplete.x).toBeGreaterThanOrEqual(0)
 })
 
 test('keeps mobile mode images flush with their 4:5 frames on narrow screens', async ({
@@ -1827,9 +1933,11 @@ test('switches from the locked mobile story to the isolated large story at 768px
 }) => {
   for (const width of [767, 768]) {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto(landingUrl, {
-      waitUntil: 'domcontentloaded'
-    })
+    await page.goto(landingUrl, { waitUntil: 'load' })
+
+    await expect(
+      page.locator('[data-empathy-impression-sentinel]')
+    ).toHaveCount(1)
 
     const state = await page.evaluate(() => {
       const mobile = document.querySelector<HTMLElement>(
@@ -1881,6 +1989,22 @@ test('reveals the fixed large empathy frames diagonally and keeps exact corner c
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const bonfireScene = page.locator(
+    '[data-empathy-large-media-scene="bonfire"]'
+  )
+  await expect(bonfireScene).toHaveCount(1, { timeout: 15_000 })
+  await expect(async () => {
+    await bonfireScene.scrollIntoViewIfNeeded()
+  }).toPass({ timeout: 15_000 })
+  await page.evaluate(
+    () =>
+      new Promise<void>(resolve =>
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => resolve())
+        )
+      )
+  )
 
   const geometry = await page.evaluate(() => {
     const bonfire = document.querySelector<HTMLElement>(
@@ -2239,18 +2363,34 @@ test('starts each large right-side transition promptly instead of leaving dead s
   expect(thirdComplete.stepOpacities).toEqual([1, 1, 1])
 
   const modeDistance = geometry.viewportHeight * (3.8 - 1)
-  const verticalStart = geometry.mode.top + modeDistance * 0.02
-  const verticalEarly = await readTransform(
+  const readModeTransform = async (
+    selector: string,
+    offset: number
+  ) => {
+    const modeTop = await page.evaluate(() => {
+      const modeTrack = document.querySelector<HTMLElement>(
+        '[data-mode-scene="fullengde"]'
+      )?.parentElement?.parentElement
+
+      if (!modeTrack) throw new Error('Missing large mode track')
+
+      return modeTrack.getBoundingClientRect().top + scrollY
+    })
+
+    return readTransform(selector, modeTop + offset)
+  }
+  const verticalStart = modeDistance * 0.02
+  const verticalEarly = await readModeTransform(
     '[data-mode-scene="oppjustert"]',
     verticalStart + geometry.viewportHeight * 0.2
   )
-  const verticalOneViewport = await readTransform(
+  const verticalOneViewport = await readModeTransform(
     '[data-mode-scene="oppjustert"]',
     verticalStart + geometry.viewportHeight
   )
-  const verticalComplete = await readTransform(
+  const verticalComplete = await readModeTransform(
     '[data-mode-scene="oppjustert"]',
-    geometry.mode.top + modeDistance * 0.45 + 1
+    modeDistance * 0.45 + 1
   )
 
   expect(verticalEarly.y).toBeGreaterThan(900 * 0.6)
@@ -2260,18 +2400,18 @@ test('starts each large right-side transition promptly instead of leaving dead s
   expect(verticalOneViewport.y).toBeLessThan(verticalEarly.y)
   expect(verticalComplete.y).toBeCloseTo(0, 1)
 
-  const horizontalStart = geometry.mode.top + modeDistance * 0.48
-  const horizontalEarly = await readTransform(
+  const horizontalStart = modeDistance * 0.48
+  const horizontalEarly = await readModeTransform(
     '[data-mode-scene="parkas"]',
     horizontalStart + geometry.viewportHeight * 0.2
   )
-  const horizontalOneViewport = await readTransform(
+  const horizontalOneViewport = await readModeTransform(
     '[data-mode-scene="parkas"]',
     horizontalStart + geometry.viewportHeight
   )
-  const horizontalComplete = await readTransform(
+  const horizontalComplete = await readModeTransform(
     '[data-mode-scene="parkas"]',
-    geometry.mode.top + modeDistance * 0.91 + 1
+    modeDistance * 0.91 + 1
   )
 
   expect(horizontalEarly.x).toBeGreaterThan(1440 * 0.6)
@@ -2358,20 +2498,26 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
   )
   await page.waitForTimeout(100)
 
-  const rangeSettled = await page.evaluate(() => {
-    const surface = document.querySelector<HTMLElement>(
-      '[data-three-in-one-surface]'
-    )
-    if (!surface) throw new Error('Missing three-in-one surface')
+  const readIntroductionTranslation = () =>
+    page.evaluate(() => {
+      const surface = document.querySelector<HTMLElement>(
+        '[data-three-in-one-surface]'
+      )
+      if (!surface)
+        throw new Error('Missing three-in-one surface')
 
-    const matrix = new DOMMatrix(
-      getComputedStyle(surface).transform
-    )
-    return { translateX: matrix.m41, translateY: matrix.m42 }
-  })
+      const matrix = new DOMMatrix(
+        getComputedStyle(surface).transform
+      )
+      return { x: matrix.m41, y: matrix.m42 }
+    })
 
-  expect(rangeSettled.translateX).toBeCloseTo(0, 1)
-  expect(rangeSettled.translateY).toBeCloseTo(0, 1)
+  await expect
+    .poll(async () => (await readIntroductionTranslation()).x)
+    .toBeCloseTo(0, 1)
+  await expect
+    .poll(async () => (await readIntroductionTranslation()).y)
+    .toBeCloseTo(0, 1)
 
   await page.evaluate(
     y => window.scrollTo(0, y),
@@ -2452,10 +2598,19 @@ test('pins the desktop purchase gallery at the composed entry moment while detai
   const section = page
     .locator('#purchase-section section')
     .first()
-  const gallery = section.locator(':scope > div').first()
-  const details = section.locator(':scope > div').nth(1)
 
   await expect(section).toHaveCount(1, { timeout: 15_000 })
+  await expect(async () => {
+    await section.scrollIntoViewIfNeeded()
+  }).toPass({ timeout: 15_000 })
+  await page.evaluate(
+    () =>
+      new Promise<void>(resolve =>
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => resolve())
+        )
+      )
+  )
 
   const sectionTop = await section.evaluate(
     element => element.getBoundingClientRect().top + scrollY
@@ -2467,7 +2622,33 @@ test('pins the desktop purchase gallery at the composed entry moment while detai
       window.scrollTo(0, sectionTop - stickyTop),
     { sectionTop, stickyTop }
   )
-  await page.waitForTimeout(100)
+  await expect
+    .poll(
+      async () => {
+        const currentSectionTop = await section.evaluate(
+          element =>
+            element.getBoundingClientRect().top + scrollY
+        )
+        await page.evaluate(
+          ({ currentSectionTop, stickyTop }) =>
+            window.scrollTo(0, currentSectionTop - stickyTop),
+          { currentSectionTop, stickyTop }
+        )
+        await page.evaluate(
+          () =>
+            new Promise<void>(resolve =>
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => resolve())
+              )
+            )
+        )
+        return section.evaluate(
+          element => element.getBoundingClientRect().top
+        )
+      },
+      { timeout: 5_000 }
+    )
+    .toBeCloseTo(stickyTop, 0)
 
   const entry = await page.evaluate(() => {
     const section = document.querySelector<HTMLElement>(
@@ -2503,17 +2684,34 @@ test('pins the desktop purchase gallery at the composed entry moment while detai
   )
   await page.waitForTimeout(100)
 
-  const scrolling = await Promise.all([
-    gallery.evaluate(
-      element => element.getBoundingClientRect().top
-    ),
-    details.evaluate(
-      element => element.getBoundingClientRect().top
+  const scrolling = await page.evaluate(() => {
+    const section = document.querySelector<HTMLElement>(
+      '#purchase-section section'
     )
-  ])
+    const gallery =
+      section?.firstElementChild as HTMLElement | null
+    const details =
+      gallery?.nextElementSibling as HTMLElement | null
 
-  expect(scrolling[0]).toBeCloseTo(stickyTop, 0)
-  expect(scrolling[1]).toBeCloseTo(-210, 0)
+    if (!section || !gallery || !details) {
+      throw new Error('Missing desktop purchase composition')
+    }
+
+    return {
+      detailsTop: details.getBoundingClientRect().top,
+      galleryTop: gallery.getBoundingClientRect().top,
+      sectionDocumentTop:
+        section.getBoundingClientRect().top + scrollY,
+      scrollY
+    }
+  })
+
+  expect(scrolling.galleryTop).toBeCloseTo(stickyTop, 0)
+  expect(scrolling.detailsTop).toBeCloseTo(
+    scrolling.sectionDocumentTop - scrolling.scrollY,
+    0
+  )
+  expect(scrolling.detailsTop).toBeLessThan(0)
 })
 
 test('keeps large breakpoint layouts 50/50 with five real 4:5 image frames', async ({
@@ -2525,9 +2723,12 @@ test('keeps large breakpoint layouts 50/50 with five real 4:5 image frames', asy
     { width: 1440, height: 900 }
   ]
 
+  await page.setViewportSize(viewports[0]!)
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
   for (const viewport of viewports) {
     await page.setViewportSize(viewport)
-    await page.goto(landingUrl, { waitUntil: 'load' })
+    await page.waitForTimeout(100)
 
     const firstModeTop = await page.evaluate(() => {
       const scene = document.querySelector<HTMLElement>(

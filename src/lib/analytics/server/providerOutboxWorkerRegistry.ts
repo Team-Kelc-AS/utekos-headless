@@ -36,6 +36,8 @@ import { metaAddToWishlistProviderAdapter } from './providerAdapters/metaAddToWi
 import { metaBeginCheckoutProviderAdapter } from './providerAdapters/metaBeginCheckoutProviderAdapter'
 import { metaGenerateLeadProviderAdapter } from './providerAdapters/metaGenerateLeadProviderAdapter'
 import { metaPageViewProviderAdapter } from './providerAdapters/metaPageViewProviderAdapter'
+import { metaAppEventProviderAdapter } from './providerAdapters/metaAppEventProviderAdapter'
+import { metaOfflineEventProviderAdapter } from './providerAdapters/metaOfflineEventProviderAdapter'
 import { metaPurchaseProviderAdapter } from './providerAdapters/metaPurchaseProviderAdapter'
 import { metaRemoveFromCartProviderAdapter } from './providerAdapters/metaRemoveFromCartProviderAdapter'
 import { metaSearchProviderAdapter } from './providerAdapters/metaSearchProviderAdapter'
@@ -185,6 +187,12 @@ export const providerOutboxWorkerRegistry = {
     ),
   'meta:open_quick_view': createPostgresProviderOutboxWorker(
     metaOpenQuickViewProviderAdapter
+  ),
+  'meta:meta_app_event': createPostgresProviderOutboxWorker(
+    metaAppEventProviderAdapter
+  ),
+  'meta:meta_offline_event': createPostgresProviderOutboxWorker(
+    metaOfflineEventProviderAdapter
   ),
   'meta:page_view': createPostgresProviderOutboxWorker(
     metaPageViewProviderAdapter

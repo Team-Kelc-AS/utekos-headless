@@ -19,7 +19,7 @@ type MetaPixelState = {
 type SignalsGatewayPixelState = {
   host: string
   initialized: boolean
-  mode: 'automatic_fbq_fork'
+  mode: 'canonical_fbq_cbq_pair'
   pixelId: string
 }
 
@@ -36,7 +36,7 @@ export function prepareSignalsGatewayPixelQueue(
 ): void {
   if (browserWindow.cbq) return
 
-  const queue = function(...args: unknown[]) {
+  const queue = function (...args: unknown[]) {
     if (queue.callMethod) {
       queue.callMethod(...args)
       return
@@ -83,7 +83,7 @@ export function initializeSignalsGatewayPixel(
   browserWindow.__utekosSignalsGatewayPixelState = {
     host: config.host,
     initialized: true,
-    mode: 'automatic_fbq_fork',
+    mode: 'canonical_fbq_cbq_pair',
     pixelId: config.pixelId
   }
 }

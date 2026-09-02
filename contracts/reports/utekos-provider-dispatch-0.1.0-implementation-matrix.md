@@ -43,6 +43,8 @@ The queue message contains only `adapter_key`, `attempt_id`, and `schema_version
 | `meta:generate_lead` | `meta` | `generate_lead` | registered adapter + worker |
 | `meta:hero_interact` | `meta` | `hero_interact` | registered adapter + worker |
 | `meta:interact_with_accordion` | `meta` | `interact_with_accordion` | registered adapter + worker |
+| `meta:meta_app_event` | `meta` | `meta_app_event` | registered adapter + worker |
+| `meta:meta_offline_event` | `meta` | `meta_offline_event` | registered adapter + worker |
 | `meta:open_quick_view` | `meta` | `open_quick_view` | registered adapter + worker |
 | `meta:page_view` | `meta` | `page_view` | registered adapter + worker |
 | `meta:purchase` | `meta` | `purchase` | registered adapter + worker |

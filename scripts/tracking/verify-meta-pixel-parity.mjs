@@ -3,20 +3,16 @@ import { createRequire } from 'node:module'
 import { chromium } from 'playwright'
 
 const require = createRequire(import.meta.url)
-const { version: CLIENT_PARAMETER_BUILDER_VERSION } = require(
-  'meta-capi-param-builder-clientjs/package.json'
-)
+const {
+  version: CLIENT_PARAMETER_BUILDER_VERSION
+} = require('meta-capi-param-builder-clientjs/package.json')
 const BASE_URL =
   process.env.META_PIXEL_SMOKE_BASE_URL ?? 'https://utekos.no'
 const SIGNALS_GATEWAY_PIXEL_EXPECTED =
   process.env.SIGNALS_GATEWAY_PIXEL_EXPECTED === 'true'
 const PIXEL_ID = '1092362672918571'
 const TIMEOUT_MS = 45_000
-const META_COOKIE_NAMES = [
-  '_fbc',
-  '_fbp',
-  'utekos_external_id'
-]
+const META_COOKIE_NAMES = ['_fbc', '_fbp', 'utekos_external_id']
 const OPENBRIDGE_HOSTS = new Set([
   'signals.utekos.no',
   'mpc2-prod-25-is5qnl632q-wl.a.run.app',
@@ -70,16 +66,15 @@ function expectedClientNetNewAppendix(version) {
 }
 
 const EXPECTED_CLIENT_NET_NEW_APPENDIX =
-  expectedClientNetNewAppendix(
-    CLIENT_PARAMETER_BUILDER_VERSION
-  )
+  expectedClientNetNewAppendix(CLIENT_PARAMETER_BUILDER_VERSION)
 
 function isMetaTransport(rawUrl) {
   const url = new URL(rawUrl)
 
   return (
     url.hostname === 'connect.facebook.net' ||
-    (url.hostname === 'www.facebook.com' && url.pathname === '/tr/') ||
+    (url.hostname === 'www.facebook.com' &&
+      url.pathname === '/tr/') ||
     OPENBRIDGE_HOSTS.has(url.hostname)
   )
 }
@@ -88,7 +83,8 @@ function isFacebookTrRequest(rawUrl) {
   try {
     const url = new URL(rawUrl)
     return (
-      url.hostname === 'www.facebook.com' && url.pathname === '/tr/'
+      url.hostname === 'www.facebook.com' &&
+      url.pathname === '/tr/'
     )
   } catch {
     return false
@@ -135,7 +131,9 @@ function parseMultipartBody(body) {
 
 function parseFacebookEvent(request) {
   const url = new URL(request.url)
-  const queryFields = Object.fromEntries(url.searchParams.entries())
+  const queryFields = Object.fromEntries(
+    url.searchParams.entries()
+  )
   const bodyFields = parseMultipartBody(request.postData)
   const fields = { ...queryFields, ...bodyFields }
 
@@ -247,7 +245,7 @@ function requestMatchesPath(pageUrl, pathname) {
 function isIgnorableConsoleError(message) {
   return (
     (message.includes('report-only Content Security Policy') &&
-      message.includes('frame-ancestors \'none\'')) ||
+      message.includes('frame-ancestors \u0027none\u0027')) ||
     message.includes('Unsupported Summarizer API languages')
   )
 }
@@ -319,7 +317,10 @@ async function acceptAllConsent(page) {
   throw new Error('Cookiebot accept-all button was not visible')
 }
 
-async function waitForMarketingConsent(page, timeoutMs = 20_000) {
+async function waitForMarketingConsent(
+  page,
+  timeoutMs = 20_000
+) {
   await page.waitForFunction(
     () => globalThis.Cookiebot?.consent?.marketing === true,
     undefined,
@@ -327,25 +328,33 @@ async function waitForMarketingConsent(page, timeoutMs = 20_000) {
   )
 }
 
-async function waitForPixelInitialized(page, timeoutMs = 20_000) {
+async function waitForPixelInitialized(
+  page,
+  timeoutMs = 20_000
+) {
   await page.waitForFunction(
-    () => globalThis.__utekosMetaPixelState?.initialized === true,
+    () =>
+      globalThis.__utekosMetaPixelState?.initialized === true,
     undefined,
     { timeout: timeoutMs }
   )
 }
 
-async function waitForPixelTransportReady(page, timeoutMs = 25_000) {
+async function waitForPixelTransportReady(
+  page,
+  timeoutMs = 25_000
+) {
   await page.waitForFunction(
     () => {
       const fbq = globalThis.fbq
       return Boolean(
-        globalThis.__utekosMetaPixelState?.initialized === true &&
-          fbq?.loaded === true &&
-          typeof fbq?.callMethod === 'function' &&
-          document.cookie.includes('_fbp=') &&
-          document.cookie.includes('_fbc=') &&
-          document.cookie.includes('utekos_external_id=')
+        globalThis.__utekosMetaPixelState?.initialized ===
+          true &&
+        fbq?.loaded === true &&
+        typeof fbq?.callMethod === 'function' &&
+        document.cookie.includes('_fbp=') &&
+        document.cookie.includes('_fbc=') &&
+        document.cookie.includes('utekos_external_id=')
       )
     },
     undefined,
@@ -360,7 +369,8 @@ async function readCanonicalEventsForPath(page, pathname) {
         entry =>
           entry &&
           typeof entry === 'object' &&
-          (entry.event === 'page_view' || entry.event === 'view_item')
+          (entry.event === 'page_view' ||
+            entry.event === 'view_item')
       )
       .filter(entry => {
         const pageUrl = entry.canonical_event?.page_url
@@ -373,7 +383,8 @@ async function readCanonicalEventsForPath(page, pathname) {
         }
       })
       .map(entry => ({
-        canonicalEventId: entry.canonical_event?.event_id ?? null,
+        canonicalEventId:
+          entry.canonical_event?.event_id ?? null,
         event: entry.event,
         eventId: entry.event_id ?? null,
         pageUrl: entry.canonical_event?.page_url ?? null,
@@ -383,8 +394,8 @@ async function readCanonicalEventsForPath(page, pathname) {
 }
 
 async function readPixelSentKeys(page) {
-  return page.evaluate(
-    () => Object.keys(globalThis.__utekosMetaPixelState?.sent ?? {})
+  return page.evaluate(() =>
+    Object.keys(globalThis.__utekosMetaPixelState?.sent ?? {})
   )
 }
 
@@ -396,7 +407,11 @@ async function readPixelSentKeys(page) {
  * Prefer Next App Router `window.next.router.push` — plain <a>.click()
  * often hard-navigates and remounts the document.
  */
-export async function softClientNavigate(page, pathname, searchParams = {}) {
+export async function softClientNavigate(
+  page,
+  pathname,
+  searchParams = {}
+) {
   const navigationMarker = `utekos_meta_smoke_nav_${randomUUID()}`
   const query = new URLSearchParams(searchParams).toString()
   const targetHref = query ? `${pathname}?${query}` : pathname
@@ -404,8 +419,9 @@ export async function softClientNavigate(page, pathname, searchParams = {}) {
   const result = await page.evaluate(
     ({ targetPath, targetHref: href, marker }) => {
       const currentQuery = location.search.replace(/^\?/, '')
-      const desiredQuery = href.includes('?')
-        ? href.slice(href.indexOf('?') + 1)
+      const desiredQuery =
+        href.includes('?') ?
+          href.slice(href.indexOf('?') + 1)
         : ''
       if (
         location.pathname === targetPath &&
@@ -428,7 +444,9 @@ export async function softClientNavigate(page, pathname, searchParams = {}) {
         if (!raw || raw.startsWith('#')) return false
 
         try {
-          return new URL(raw, location.origin).pathname === targetPath
+          return (
+            new URL(raw, location.origin).pathname === targetPath
+          )
         } catch {
           return false
         }
@@ -485,7 +503,11 @@ export async function softClientNavigate(page, pathname, searchParams = {}) {
   return result
 }
 
-async function waitUntil(predicate, timeoutMs = 20_000, label = 'condition') {
+async function waitUntil(
+  predicate,
+  timeoutMs = 20_000,
+  label = 'condition'
+) {
   const deadline = Date.now() + timeoutMs
 
   while (Date.now() < deadline) {
@@ -562,8 +584,8 @@ async function verifySurface(browser, userAgent, surface) {
 
     await page.waitForTimeout(4_000)
 
-    const beforeCookies = (await context.cookies()).filter(cookie =>
-      META_COOKIE_NAMES.includes(cookie.name)
+    const beforeCookies = (await context.cookies()).filter(
+      cookie => META_COOKIE_NAMES.includes(cookie.name)
     )
     const beforeMetaRequests = requests.length
     const preConsentEvents = latestCanonicalEventsByName(
@@ -612,11 +634,13 @@ async function verifySurface(browser, userAgent, surface) {
     await page.waitForTimeout(2_000)
 
     const sentAfterConsent = await readPixelSentKeys(page)
-    const preConsentIdsReleased = preConsentEventIds.filter(eventId =>
-      sentAfterConsent.some(key => key.endsWith(`:${eventId}`))
+    const preConsentIdsReleased = preConsentEventIds.filter(
+      eventId =>
+        sentAfterConsent.some(key => key.endsWith(`:${eventId}`))
     )
     const preConsentReleaseComplete =
-      preConsentEventIds.length === surface.expectedEvents.length &&
+      preConsentEventIds.length ===
+        surface.expectedEvents.length &&
       preConsentIdsReleased.length === preConsentEventIds.length
 
     const cookies = (await context.cookies()).filter(cookie =>
@@ -641,20 +665,27 @@ async function verifySurface(browser, userAgent, surface) {
       return event
     })
 
-    const postConsentRequests = requests.slice(consentRequestOffset)
-    const postConsentResponses = responses.slice(consentResponseOffset)
+    const postConsentRequests = requests.slice(
+      consentRequestOffset
+    )
+    const postConsentResponses = responses.slice(
+      consentResponseOffset
+    )
     const facebookEvents = selectParityFacebookEvents(
       postConsentRequests
         .filter(request => isFacebookTrRequest(request.url))
         .map(parseFacebookEvent),
       surface.path
     )
-    const openBridgeRequests = postConsentRequests.filter(request =>
-      OPENBRIDGE_HOSTS.has(new URL(request.url).hostname)
+    const openBridgeRequests = postConsentRequests.filter(
+      request =>
+        OPENBRIDGE_HOSTS.has(new URL(request.url).hostname)
     )
     const openBridgeHosts = [
       ...new Set(
-        openBridgeRequests.map(request => new URL(request.url).hostname)
+        openBridgeRequests.map(
+          request => new URL(request.url).hostname
+        )
       )
     ].sort()
     const openBridgeEvents = selectParityOpenBridgeEvents(
@@ -671,26 +702,31 @@ async function verifySurface(browser, userAgent, surface) {
         OPENBRIDGE_HOSTS.has(new URL(response.url).hostname)
       )
       .map(response => response.status)
-    const runtime = await page.evaluate(pixelId => ({
-      automaticSetup:
-        globalThis.fbq?.instance?.optIns?._opts
-          ?.AutomaticSetup?.[pixelId] ?? null,
-      initialized: globalThis.__utekosMetaPixelState?.initialized ?? false,
-      legacyManualSignalsBridgePresent: Boolean(
-        globalThis.__utekosSignalsGatewayState
-      ),
-      signalsGatewayPixelState:
-        globalThis.__utekosSignalsGatewayPixelState ?? null,
-      signalsGatewayQueuePresent: Boolean(globalThis.cbq),
-      signalsGatewaySdkLoaded: performance
-        .getEntriesByType('resource')
-        .some(entry =>
-          entry.name.includes('signals.utekos.no/sdk/')
+    const runtime = await page.evaluate(
+      pixelId => ({
+        automaticSetup:
+          globalThis.fbq?.instance?.optIns?._opts
+            ?.AutomaticSetup?.[pixelId] ?? null,
+        initialized:
+          globalThis.__utekosMetaPixelState?.initialized ??
+          false,
+        legacyManualSignalsBridgePresent: Boolean(
+          globalThis.__utekosSignalsGatewayState
         ),
-      sent: Object.keys(
-        globalThis.__utekosMetaPixelState?.sent ?? {}
-      )
-    }), PIXEL_ID)
+        signalsGatewayPixelState:
+          globalThis.__utekosSignalsGatewayPixelState ?? null,
+        signalsGatewayQueuePresent: Boolean(globalThis.cbq),
+        signalsGatewaySdkLoaded: performance
+          .getEntriesByType('resource')
+          .some(entry =>
+            entry.name.includes('signals.utekos.no/sdk/')
+          ),
+        sent: Object.keys(
+          globalThis.__utekosMetaPixelState?.sent ?? {}
+        )
+      }),
+      PIXEL_ID
+    )
     const fbcParts = fbc?.value.split('.') ?? []
     const fbpParts = fbp?.value.split('.') ?? []
     const unexpectedFacebookEvents = facebookEvents.filter(
@@ -710,14 +746,13 @@ async function verifySurface(browser, userAgent, surface) {
         openBridgeEvents
       ),
       cookieAppendix:
-        fbcParts.at(-1) ===
-          EXPECTED_CLIENT_NET_NEW_APPENDIX &&
-        fbpParts.at(-1) ===
-          EXPECTED_CLIENT_NET_NEW_APPENDIX,
+        fbcParts.at(-1) === EXPECTED_CLIENT_NET_NEW_APPENDIX &&
+        fbpParts.at(-1) === EXPECTED_CLIENT_NET_NEW_APPENDIX,
       cookieAttributes:
         cookies.length === 3 &&
-        cookies.every(cookie =>
-          cookie.path === '/' && cookie.sameSite === 'Lax'
+        cookies.every(
+          cookie =>
+            cookie.path === '/' && cookie.sameSite === 'Lax'
         ) &&
         externalId?.secure === true,
       cookieLifetimes:
@@ -736,13 +771,21 @@ async function verifySurface(browser, userAgent, surface) {
         fbcParts[0] === 'fb' &&
         fbcParts[1] === '1' &&
         fbcParts[3] === fbclid &&
-        facebookEvents.every(event => event.fbc === fbc?.value) &&
-        openBridgeEvents.every(event => event?.fbc === fbc?.value),
+        facebookEvents.every(
+          event => event.fbc === fbc?.value
+        ) &&
+        openBridgeEvents.every(
+          event => event?.fbc === fbc?.value
+        ),
       fbpParity:
         fbpParts[0] === 'fb' &&
         fbpParts[1] === '1' &&
-        facebookEvents.every(event => event.fbp === fbp?.value) &&
-        openBridgeEvents.every(event => event?.fbp === fbp?.value),
+        facebookEvents.every(
+          event => event.fbp === fbp?.value
+        ) &&
+        openBridgeEvents.every(
+          event => event?.fbp === fbp?.value
+        ),
       noConsoleErrors:
         actionableConsoleErrors.length === 0 &&
         pageErrors.length === 0,
@@ -757,9 +800,10 @@ async function verifySurface(browser, userAgent, surface) {
         (SIGNALS_GATEWAY_PIXEL_EXPECTED ?
           runtime.signalsGatewayQueuePresent === true &&
           runtime.signalsGatewaySdkLoaded === true &&
-          runtime.signalsGatewayPixelState?.initialized === true &&
+          runtime.signalsGatewayPixelState?.initialized ===
+            true &&
           runtime.signalsGatewayPixelState?.mode ===
-            'automatic_fbq_fork' &&
+            'canonical_fbq_cbq_pair' &&
           runtime.signalsGatewayPixelState?.pixelId ===
             '1633085772154426486' &&
           runtime.signalsGatewayPixelState?.host ===
@@ -769,12 +813,14 @@ async function verifySurface(browser, userAgent, surface) {
           runtime.signalsGatewaySdkLoaded === false &&
           !openBridgeHosts.includes('signals.utekos.no')),
       providerResponses:
-        facebookEvents.length === surface.expectedEvents.length &&
+        facebookEvents.length ===
+          surface.expectedEvents.length &&
         facebookStatuses.length >= facebookEvents.length &&
         facebookStatuses.every(
           status => status === 200 || status === 302
         ) &&
-        openBridgeEvents.length === surface.expectedEvents.length &&
+        openBridgeEvents.length ===
+          surface.expectedEvents.length &&
         openBridgeStatuses.length >= openBridgeEvents.length &&
         openBridgeStatuses.every(status => status === 200)
     }
@@ -853,8 +899,7 @@ async function main() {
       EXPECTED_CLIENT_NET_NEW_APPENDIX,
     ok: results.every(result => result.ok),
     results,
-    signalsGatewayPixelExpected:
-      SIGNALS_GATEWAY_PIXEL_EXPECTED,
+    signalsGatewayPixelExpected: SIGNALS_GATEWAY_PIXEL_EXPECTED,
     userAgent
   }
 

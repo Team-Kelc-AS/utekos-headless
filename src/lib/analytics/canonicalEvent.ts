@@ -30,6 +30,10 @@ import { canonicalHeroInteractSchema } from './heroInteractEvent'
 import { canonicalVideoProgressSchema } from './videoProgressEvent'
 import { canonicalInteractWithAccordionSchema } from './interactWithAccordionEvent'
 import { canonicalOpenQuickViewSchema } from './openQuickViewEvent'
+import {
+  canonicalMetaAppEventSchema,
+  canonicalMetaOfflineEventSchema
+} from './metaNonWebCanonicalEvent'
 
 export const canonicalEventSchema = z.discriminatedUnion(
   'event_name',
@@ -64,7 +68,9 @@ export const canonicalEventSchema = z.discriminatedUnion(
     canonicalHeroInteractSchema,
     canonicalInteractWithAccordionSchema,
     canonicalOpenQuickViewSchema,
-    canonicalVideoProgressSchema
+    canonicalVideoProgressSchema,
+    canonicalMetaAppEventSchema,
+    canonicalMetaOfflineEventSchema
   ]
 )
 

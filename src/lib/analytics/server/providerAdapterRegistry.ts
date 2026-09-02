@@ -34,6 +34,8 @@ import { metaAddToWishlistProviderAdapter } from './providerAdapters/metaAddToWi
 import { metaBeginCheckoutProviderAdapter } from './providerAdapters/metaBeginCheckoutProviderAdapter'
 import { metaGenerateLeadProviderAdapter } from './providerAdapters/metaGenerateLeadProviderAdapter'
 import { metaPageViewProviderAdapter } from './providerAdapters/metaPageViewProviderAdapter'
+import { metaAppEventProviderAdapter } from './providerAdapters/metaAppEventProviderAdapter'
+import { metaOfflineEventProviderAdapter } from './providerAdapters/metaOfflineEventProviderAdapter'
 import { metaPurchaseProviderAdapter } from './providerAdapters/metaPurchaseProviderAdapter'
 import { metaRemoveFromCartProviderAdapter } from './providerAdapters/metaRemoveFromCartProviderAdapter'
 import { metaSearchProviderAdapter } from './providerAdapters/metaSearchProviderAdapter'
@@ -127,6 +129,8 @@ export const providerAdapterRegistry = {
   'meta:interact_with_accordion':
     metaInteractWithAccordionProviderAdapter,
   'meta:open_quick_view': metaOpenQuickViewProviderAdapter,
+  'meta:meta_app_event': metaAppEventProviderAdapter,
+  'meta:meta_offline_event': metaOfflineEventProviderAdapter,
   'meta:page_view': metaPageViewProviderAdapter,
   'meta:purchase': metaPurchaseProviderAdapter,
   'meta:remove_from_cart': metaRemoveFromCartProviderAdapter,

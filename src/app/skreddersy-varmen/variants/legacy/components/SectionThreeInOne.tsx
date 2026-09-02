@@ -36,6 +36,7 @@ export function SectionThreeInOne() {
   return (
     <SkreddersyMotionProvider>
       <section
+        id='section-solution'
         aria-labelledby='threeinone-heading'
         className='dark:bg-dark-background w-full bg-evening text-foreground'
       >

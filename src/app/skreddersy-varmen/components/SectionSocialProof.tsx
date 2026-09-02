@@ -25,8 +25,9 @@ export function SectionSocialProof() {
   return (
     <SkreddersyMotionProvider>
       <section
+        id='reviews-section'
         aria-labelledby='socialproof-heading'
-        className='dark:border-dark-background/20 relative w-full max-w-full overflow-hidden border-t border-background/20 bg-jungle py-20 text-foreground md:py-28'
+        className='dark:border-dark-background/20 relative w-full max-w-full scroll-mt-17.5 overflow-hidden border-t border-background/20 bg-jungle py-20 text-foreground md:py-28 xl:scroll-mt-21.5'
       >
         <div className='relative z-10 mx-auto max-w-6xl px-6'>
           <m.header
@@ -73,7 +74,7 @@ export function SectionSocialProof() {
             </m.h2>
 
             <m.p
-              className='leading-text-paragraph mx-auto mt-5 max-w-[34ch] text-left text-[clamp(0.875rem,3.4vw,1.125rem)] tracking-[-0.01em] text-balance wrap-break-word text-foreground/80 md:max-w-2xl'
+              className='leading-text-paragraph mx-auto mt-5 max-w-[34ch] text-center text-[clamp(0.875rem,3.4vw,1.125rem)] tracking-[-0.01em] text-balance wrap-break-word text-foreground/80 md:max-w-2xl'
               variants={revealItem}
             >
               Tilbakemeldinger fra mennesker som valgte å

@@ -93,7 +93,9 @@ export function createInternalJourneyContextEnricher(
       journeyId = dependencies.createId()
 
       if (!UUID_PATTERN.test(journeyId)) {
-        throw new Error('journey_id_factory_returned_invalid_uuid')
+        throw new Error(
+          'journey_id_factory_returned_invalid_uuid'
+        )
       }
 
       try {
@@ -122,10 +124,11 @@ const enrichBrowserInternalJourneyContext =
   createInternalJourneyContextEnricher({
     createId: () => globalThis.crypto.randomUUID(),
     getPreviousPageViewId: pageViewId =>
-      browserPageViewSession.get(pageViewId)
-        ?.previousPageViewId,
+      browserPageViewSession.get(pageViewId)?.previousPageViewId,
     getStorage: () =>
-      typeof window === 'undefined' ? undefined : window.sessionStorage
+      typeof window === 'undefined' ? undefined : (
+        window.sessionStorage
+      )
   })
 
 export function enrichCanonicalBrowserJourneyContext<
@@ -134,8 +137,13 @@ export function enrichCanonicalBrowserJourneyContext<
   return enrichBrowserInternalJourneyContext(event)
 }
 
-export function stripInternalJourneyContext<
-  E extends JourneyCompatibleEvent
->(event: E): E {
-  return omitInternalJourneyContext(event)
+export function stripInternalJourneyContext<E extends object>(
+  event: E
+): E {
+  const nextEvent: E & InternalJourneyFields = { ...event }
+
+  delete nextEvent.journey_id
+  delete nextEvent.previous_page_view_id
+
+  return nextEvent
 }

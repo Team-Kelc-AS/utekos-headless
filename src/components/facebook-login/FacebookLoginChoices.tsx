@@ -11,7 +11,8 @@ export function FacebookLoginChoices({
   loginUnavailable,
   onContinueWithoutFacebook,
   pending,
-  sdkReady
+  sdkReady,
+  visualPreview = false
 }: {
   buttonWidth: number
   buttonContainerRef: RefObject<HTMLDivElement | null>
@@ -20,9 +21,11 @@ export function FacebookLoginChoices({
   onContinueWithoutFacebook: () => void
   pending: boolean
   sdkReady: boolean
+  visualPreview?: boolean
 }) {
   const showFacebookStatus =
-    loginUnavailable || pending || !buttonRendered
+    !visualPreview &&
+    (loginUnavailable || pending || !buttonRendered)
 
   return (
     <aside
@@ -35,7 +38,23 @@ export function FacebookLoginChoices({
         aria-busy={showFacebookStatus}
         className='relative h-[30px] w-full overflow-hidden rounded-[3px]'
       >
-        {sdkReady ?
+        {visualPreview ?
+          <button
+            type='button'
+            disabled
+            aria-describedby='facebook-login-development-preview'
+            title='Visuell forhåndsvisning – Facebook-innlogging er ikke aktivert lokalt'
+            className='relative flex h-[30px] w-full cursor-not-allowed items-center justify-center rounded-[3px] bg-[#1877F2] px-3 text-[13px] font-bold text-white'
+          >
+            <span
+              aria-hidden='true'
+              className='absolute left-3 text-[21px] leading-none font-black'
+            >
+              f
+            </span>
+            Fortsett med Facebook
+          </button>
+        : sdkReady ?
           <div
             className={`h-[30px] w-full overflow-hidden ${
               buttonRendered && !pending && !loginUnavailable ?
@@ -77,6 +96,15 @@ export function FacebookLoginChoices({
           </div>
         : null}
       </div>
+
+      {visualPreview ?
+        <span
+          id='facebook-login-development-preview'
+          className='sr-only'
+        >
+          Bare visuell forhåndsvisning i lokal utvikling
+        </span>
+      : null}
 
       <Button
         type='button'

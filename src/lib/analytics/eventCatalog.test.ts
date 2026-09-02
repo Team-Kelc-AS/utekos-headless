@@ -40,7 +40,9 @@ const expectedCanonicalEventNames = [
   'hero_interact',
   'interact_with_accordion',
   'open_quick_view',
-  'video_progress'
+  'video_progress',
+  'meta_app_event',
+  'meta_offline_event'
 ] as const
 
 const providerIds = [
@@ -52,8 +54,8 @@ const providerIds = [
   'snapchat'
 ] as const satisfies readonly ProviderId[]
 
-test('contains exactly the 33 v1 canonical events', () => {
-  assert.equal(canonicalEventNames.length, 33)
+test('contains exactly the 35 v1 canonical events', () => {
+  assert.equal(canonicalEventNames.length, 35)
   assert.deepEqual(
     [...canonicalEventNames],
     expectedCanonicalEventNames
@@ -168,7 +170,8 @@ test('defines the required owner, trigger, dedupe, consent, and provider contrac
         assert.ok(
           provider.dedupeField === 'event_id' ||
             provider.dedupeField === 'transaction_id' ||
-            provider.dedupeField === 'payment_revision'
+            provider.dedupeField === 'payment_revision' ||
+            provider.dedupeField === 'source_event_id'
         )
         assert.equal(typeof provider.adapterVersion, 'number')
         assert.ok((provider.adapterVersion ?? 0) >= 1)
@@ -453,7 +456,7 @@ test('records current mixed Microsoft delivery and historical page_view backlog 
   )
   assert.match(
     eventCatalog.page_view.providers.meta.productionDetail,
-    /Historical blocked rows/
+    /historical blocked rows/i
   )
   assert.match(
     eventCatalog.page_view.providers.microsoft_uet

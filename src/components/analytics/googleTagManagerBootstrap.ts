@@ -24,6 +24,8 @@ const serializedGoogleClickIdParameters = JSON.stringify(
 export const GOOGLE_TAG_MANAGER_BOOTSTRAP = `
   (function(w,l){
     w[l]=w[l]||[];
+    w.__utekosCookiebotConsentReady=
+      w.__utekosCookiebotConsentReady===true;
 
     var clickIdParameters=${serializedGoogleClickIdParameters};
 
@@ -82,6 +84,7 @@ export const GOOGLE_TAG_MANAGER_BOOTSTRAP = `
     w.gtag('set',{page_location:pageLocation()});
 
     function syncPageLocation(){
+      w.__utekosCookiebotConsentReady=true;
       w.gtag('set',{page_location:pageLocation()});
     }
 

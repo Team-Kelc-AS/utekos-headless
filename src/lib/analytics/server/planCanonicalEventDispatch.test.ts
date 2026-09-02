@@ -1,12 +1,20 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { CanonicalEvent } from '../canonicalEvent'
 import { canonicalAddToCartSchema } from '../addToCartEvent'
 import { canonicalBeginCheckoutSchema } from '../beginCheckoutEvent'
-import { canonicalPageViewSchema } from '../pageViewEvent'
-import { canonicalPurchaseSchema } from '../purchaseEvent'
+import {
+  canonicalPageViewSchema,
+  type CanonicalPageView
+} from '../pageViewEvent'
+import {
+  canonicalPurchaseSchema,
+  type CanonicalPurchase
+} from '../purchaseEvent'
 import { canonicalRefundSchema } from '../refundEvent'
-import { canonicalViewItemSchema } from '../viewItemEvent'
+import {
+  canonicalViewItemSchema,
+  type CanonicalViewItem
+} from '../viewItemEvent'
 import { planCanonicalEventDispatch } from './planCanonicalEventDispatch'
 
 const consent = {
@@ -100,7 +108,7 @@ isolatePinterestEnv()
 
 function purchase(
   overrides: Record<string, unknown> = {}
-): CanonicalEvent {
+): CanonicalPurchase {
   return canonicalPurchaseSchema.parse({
     schema_version: 1,
     event_name: 'purchase',
@@ -131,7 +139,7 @@ function purchase(
 const purchasePlanningNow = () =>
   Date.parse('2026-07-25T10:00:00.000Z')
 
-function pageView(): CanonicalEvent {
+function pageView(): CanonicalPageView {
   return canonicalPageViewSchema.parse({
     schema_version: 1,
     event_name: 'page_view',
@@ -147,7 +155,7 @@ function pageView(): CanonicalEvent {
   })
 }
 
-function viewItem(): CanonicalEvent {
+function viewItem(): CanonicalViewItem {
   return canonicalViewItemSchema.parse({
     schema_version: 1,
     event_name: 'view_item',

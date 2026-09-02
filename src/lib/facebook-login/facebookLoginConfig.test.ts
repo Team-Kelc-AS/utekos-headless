@@ -10,7 +10,7 @@ import {
 
 const identityKey = randomBytes(32).toString('base64')
 
-test('allows the login prompt preview override only on Vercel preview', () => {
+test('allows the login prompt preview on Vercel preview and in local development', () => {
   assert.equal(
     isFacebookLoginPreviewAllowed({ VERCEL_ENV: 'preview' }),
     true
@@ -24,12 +24,16 @@ test('allows the login prompt preview override only on Vercel preview', () => {
       NODE_ENV: 'development',
       VERCEL_ENV: 'development'
     }),
+    true
+  )
+  assert.equal(
+    isFacebookLoginPreviewAllowed({ NODE_ENV: 'production' }),
     false
   )
   assert.equal(isFacebookLoginPreviewAllowed({}), false)
 })
 
-test('enables Facebook Login only on Vercel preview', () => {
+test('enables Facebook Login only on approved preview environments', () => {
   assert.equal(
     isFacebookLoginEnabled({ FACEBOOK_LOGIN_ENABLED: 'true' }),
     false
@@ -54,6 +58,13 @@ test('enables Facebook Login only on Vercel preview', () => {
       VERCEL_ENV: 'preview'
     }),
     false
+  )
+  assert.equal(
+    isFacebookLoginEnabled({
+      FACEBOOK_LOGIN_ENABLED: 'true',
+      NODE_ENV: 'development'
+    }),
+    true
   )
 })
 

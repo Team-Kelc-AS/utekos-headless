@@ -19,7 +19,8 @@ function canonicalEvent(eventName, eventId, customData = {}) {
     canonical_event: {
       event_id: eventId,
       event_name: eventName,
-      page_url: 'https://utekos.no/produkter/utekos-techdown?fbclid=click-1',
+      page_url:
+        'https://utekos.no/produkter/utekos-techdown?fbclid=click-1',
       custom_data: customData,
       consent: { marketing: 'denied' }
     }
@@ -28,7 +29,8 @@ function canonicalEvent(eventName, eventId, customData = {}) {
 
 function createRuntime({
   marketing = true,
-  hasResponse = marketing
+  hasResponse = marketing,
+  signalsGateway = false
 } = {}) {
   const insertedScripts = []
   const intervals = []
@@ -39,17 +41,21 @@ function createRuntime({
       '_fbc=fb.1.1234567890.click-1.AQQCAQMB'
     ].join('; '),
     createElement: () => ({}),
-    getElementsByTagName: () => [{
-      parentNode: {
-        insertBefore: node => insertedScripts.push(node)
+    getElementsByTagName: () => [
+      {
+        parentNode: {
+          insertBefore: node => insertedScripts.push(node)
+        }
       }
-    }],
+    ],
     head: { appendChild: node => insertedScripts.push(node) }
   }
   const window = {
     Cookiebot: { consent: { marketing }, hasResponse },
     URL,
-    crypto: { randomUUID: () => '550e8400-e29b-41d4-a716-446655440000' },
+    crypto: {
+      randomUUID: () => '550e8400-e29b-41d4-a716-446655440000'
+    },
     dataLayer: [],
     document,
     location: new URL(
@@ -63,6 +69,15 @@ function createRuntime({
   }
 
   window.window = window
+
+  if (signalsGateway) {
+    const gatewayQueue = function () {
+      gatewayQueue.queue.push(arguments)
+    }
+
+    gatewayQueue.queue = []
+    window.cbq = gatewayQueue
+  }
 
   return {
     context: vm.createContext({ document, window }),
@@ -80,33 +95,42 @@ function queuedCalls(window) {
   )
 }
 
+function queuedGatewayCalls(window) {
+  return JSON.parse(
+    JSON.stringify(
+      (window.cbq?.queue ?? []).map(call => Array.from(call))
+    )
+  )
+}
+
 test('requires current marketing consent', () => {
   const runtime = createRuntime({ marketing: false })
   const listeners = []
   runtime.window.addEventListener = (name, handler) => {
     listeners.push([name, handler])
   }
-  runtime.window.dataLayer.push(canonicalEvent('page_view', 'event-1'))
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'event-1')
+  )
 
   vm.runInContext(script, runtime.context)
 
   assert.equal(runtime.window.fbq, undefined)
   assert.deepEqual(runtime.insertedScripts, [])
-  assert.deepEqual(
-    listeners.map(([name]) => name).sort(),
-    [
-      'CookiebotOnAccept',
-      'CookiebotOnConsentReady',
-      'CookiebotOnDecline'
-    ]
-  )
+  assert.deepEqual(listeners.map(([name]) => name).sort(), [
+    'CookiebotOnAccept',
+    'CookiebotOnConsentReady',
+    'CookiebotOnDecline'
+  ])
 })
 
 test('installs pixel without waiting for _fbp cookie', () => {
   const runtime = createRuntime({ marketing: true })
   runtime.window.document.cookie =
     'utekos_external_id=anon_550e8400-e29b-41d4-a716-446655440000'
-  runtime.window.location = new URL('https://utekos.no/produkter')
+  runtime.window.location = new URL(
+    'https://utekos.no/produkter'
+  )
   runtime.window.dataLayer.push({
     event: 'page_view',
     event_id: 'page-no-fbp',
@@ -122,7 +146,10 @@ test('installs pixel without waiting for _fbp cookie', () => {
   vm.runInContext(script, runtime.context)
 
   assert.equal(typeof runtime.window.fbq, 'function')
-  assert.equal(runtime.window.__utekosMetaPixelState.initialized, true)
+  assert.equal(
+    runtime.window.__utekosMetaPixelState.initialized,
+    true
+  )
   assert.equal(runtime.insertedScripts.length, 1)
   assert.equal(
     runtime.insertedScripts[0].src,
@@ -140,7 +167,9 @@ test('dispatches canonical events added after the app bridge loads', () => {
   const runtime = createRuntime({ marketing: true })
 
   vm.runInContext(publicScript, runtime.context)
-  runtime.window.dataLayer.push(canonicalEvent('page_view', 'future-page'))
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'future-page')
+  )
   runtime.intervals[0]()
 
   assert.deepEqual(
@@ -151,18 +180,42 @@ test('dispatches canonical events added after the app bridge loads', () => {
   )
 })
 
+test('pairs one Signals Gateway event with the canonical Meta event ID', () => {
+  const runtime = createRuntime({ signalsGateway: true })
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'paired-page')
+  )
+
+  vm.runInContext(publicScript, runtime.context)
+  runtime.intervals[0]()
+
+  assert.deepEqual(
+    queuedCalls(runtime.window)
+      .filter(call => call[0] === 'trackSingle')
+      .map(call => [call[2], call[4].eventID]),
+    [['PageView', 'paired-page']]
+  )
+  assert.deepEqual(queuedGatewayCalls(runtime.window), [
+    ['track', 'PageView', {}, { eventID: 'paired-page' }]
+  ])
+})
+
 test('releases events recorded before the first marketing decision', () => {
   const runtime = createRuntime({ marketing: false })
   runtime.window.addEventListener = () => {}
 
   vm.runInContext(publicScript, runtime.context)
-  runtime.window.dataLayer.push(canonicalEvent('page_view', 'before-consent'))
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'before-consent')
+  )
   runtime.intervals[0]()
 
   runtime.window.Cookiebot.consent.marketing = true
   runtime.window.Cookiebot.hasResponse = true
   runtime.intervals[0]()
-  runtime.window.dataLayer.push(canonicalEvent('page_view', 'after-consent'))
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'after-consent')
+  )
   runtime.intervals[0]()
 
   assert.deepEqual(
@@ -204,108 +257,111 @@ test('never releases events discarded by an explicit rejection', () => {
   )
 })
 
-test(
-  'uses trackSingleCustom for Meta custom events and preserves eventID',
-  () => {
-    const runtime = createRuntime()
+test('uses trackSingleCustom for Meta custom events and preserves eventID', () => {
+  const runtime = createRuntime()
 
-    runtime.window.dataLayer.push(
-      canonicalEvent('page_view', 'page-event'),
-      canonicalEvent('scroll_depth', 'scroll-event', {
-        threshold: 50,
-        percent_scrolled: 50,
-        document_height: 2400
-      })
-    )
-
-    vm.runInContext(script, runtime.context)
-
-    const calls = queuedCalls(runtime.window)
-    const standardEventCalls = calls.filter(
-      call => call[0] === 'trackSingle'
-    )
-    const customEventCalls = calls.filter(
-      call => call[0] === 'trackSingleCustom'
-    )
-
-    assert.deepEqual(
-      standardEventCalls.map(call => [call[2], call[4].eventID]),
-      [['PageView', 'page-event']]
-    )
-    assert.deepEqual(
-      customEventCalls.map(call => [call[2], call[4].eventID]),
-      [['LandingScrollDepth', 'scroll-event']]
-    )
-    assert.deepEqual(customEventCalls[0][3], {
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'page-event'),
+    canonicalEvent('scroll_depth', 'scroll-event', {
       threshold: 50,
       percent_scrolled: 50,
       document_height: 2400
     })
-  }
-)
+  )
 
-test(
-  'normalizes the selected Shopify variant GID and keeps variant_select out of Meta',
-  () => {
-    const runtime = createRuntime()
+  vm.runInContext(script, runtime.context)
 
-    runtime.window.dataLayer.push(
-      canonicalEvent('view_item', 'selected-view', {
-        currency: 'NOK',
-        gross_value: 1790,
-        items: [{
+  const calls = queuedCalls(runtime.window)
+  const standardEventCalls = calls.filter(
+    call => call[0] === 'trackSingle'
+  )
+  const customEventCalls = calls.filter(
+    call => call[0] === 'trackSingleCustom'
+  )
+
+  assert.deepEqual(
+    standardEventCalls.map(call => [call[2], call[4].eventID]),
+    [['PageView', 'page-event']]
+  )
+  assert.deepEqual(
+    customEventCalls.map(call => [call[2], call[4].eventID]),
+    [['LandingScrollDepth', 'scroll-event']]
+  )
+  assert.deepEqual(customEventCalls[0][3], {
+    threshold: 50,
+    percent_scrolled: 50,
+    document_height: 2400
+  })
+})
+
+test('normalizes the selected Shopify variant GID and keeps variant_select out of Meta', () => {
+  const runtime = createRuntime()
+
+  runtime.window.dataLayer.push(
+    canonicalEvent('view_item', 'selected-view', {
+      currency: 'NOK',
+      gross_value: 1790,
+      items: [
+        {
           item_id: 'gid://shopify/ProductVariant/46944403882232',
           product_id: 'gid://shopify/Product/9240112693496',
-          variant_id: 'gid://shopify/ProductVariant/46944403882232',
+          variant_id:
+            'gid://shopify/ProductVariant/46944403882232',
           quantity: 1,
           gross_unit_price: 1790
-        }]
-      }),
-      canonicalEvent('variant_select', 'selected-variant', {
-        interaction_id: 'variant-select-1',
-        product_id: 'gid://shopify/Product/9240112693496',
-        variant_id: 'gid://shopify/ProductVariant/46944403882232',
-        item_id: 'gid://shopify/ProductVariant/46944403882232',
-        item_variant: 'Utekos TechDown / Havdyp / Middels / Unisex',
-        availability: 'available'
-      })
-    )
+        }
+      ]
+    }),
+    canonicalEvent('variant_select', 'selected-variant', {
+      interaction_id: 'variant-select-1',
+      product_id: 'gid://shopify/Product/9240112693496',
+      variant_id: 'gid://shopify/ProductVariant/46944403882232',
+      item_id: 'gid://shopify/ProductVariant/46944403882232',
+      item_variant:
+        'Utekos TechDown / Havdyp / Middels / Unisex',
+      availability: 'available'
+    })
+  )
 
-    vm.runInContext(script, runtime.context)
+  vm.runInContext(script, runtime.context)
 
-    const eventCalls = queuedCalls(runtime.window).filter(
-      call => call[0] === 'trackSingle' || call[0] === 'trackSingleCustom'
-    )
-    const viewContentCall = eventCalls.find(
-      call => call[2] === 'ViewContent'
-    )
+  const eventCalls = queuedCalls(runtime.window).filter(
+    call =>
+      call[0] === 'trackSingle' ||
+      call[0] === 'trackSingleCustom'
+  )
+  const viewContentCall = eventCalls.find(
+    call => call[2] === 'ViewContent'
+  )
 
-    assert.deepEqual(viewContentCall, [
-      'trackSingle',
-      '1092362672918571',
-      'ViewContent',
-      {
-        content_ids: ['46944403882232'],
-        contents: [{
-          id: '46944403882232',
-          quantity: 1,
-          item_price: 1790
-        }],
-        content_type: 'product',
-        num_items: 1,
-        currency: 'NOK',
-        value: 1790,
-        gross_value: 1790
-      },
-      { eventID: 'selected-view' }
-    ])
-    assert.equal(JSON.stringify(viewContentCall).includes('gid://'), false)
-    assert.equal(
-      eventCalls.some(call => call[4]?.eventID === 'selected-variant'),
-      false
-    )
-  }
-)
+  assert.deepEqual(viewContentCall, [
+    'trackSingle',
+    '1092362672918571',
+    'ViewContent',
+    {
+      content_ids: ['46944403882232'],
+      contents: [
+        { id: '46944403882232', quantity: 1, item_price: 1790 }
+      ],
+      content_type: 'product',
+      num_items: 1,
+      currency: 'NOK',
+      value: 1790,
+      gross_value: 1790
+    },
+    { eventID: 'selected-view' }
+  ])
+  assert.equal(
+    JSON.stringify(viewContentCall).includes('gid://'),
+    false
+  )
+  assert.equal(
+    eventCalls.some(
+      call => call[4]?.eventID === 'selected-variant'
+    ),
+    false
+  )
+})
 
 test('initializes once and sends canonical Meta events with CAPI event IDs', () => {
   const runtime = createRuntime()
@@ -314,13 +370,16 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     gross_value: 1790,
     tax_value: 358,
     value: 1432,
-    items: [{
-      variant_id: 'gid://shopify/ProductVariant/47123456789012',
-      item_name: 'Utekos TechDown',
-      item_category: 'Uteklær',
-      quantity: 1,
-      gross_unit_price: 1790
-    }]
+    items: [
+      {
+        variant_id:
+          'gid://shopify/ProductVariant/47123456789012',
+        item_name: 'Utekos TechDown',
+        item_category: 'Uteklær',
+        quantity: 1,
+        gross_unit_price: 1790
+      }
+    ]
   }
 
   runtime.window.dataLayer.push(
@@ -334,12 +393,22 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     }),
     canonicalEvent('view_item', 'view-event', commerce),
     canonicalEvent('select_item', 'select-event', commerce),
-    canonicalEvent('add_to_wishlist', 'wishlist-event', commerce),
+    canonicalEvent(
+      'add_to_wishlist',
+      'wishlist-event',
+      commerce
+    ),
     canonicalEvent('add_to_cart', 'cart-event', commerce),
-    canonicalEvent('remove_from_cart', 'remove-cart-event', commerce),
+    canonicalEvent(
+      'remove_from_cart',
+      'remove-cart-event',
+      commerce
+    ),
     canonicalEvent('view_cart', 'view-cart-event', commerce),
     canonicalEvent('begin_checkout', 'checkout-event', commerce),
-    canonicalEvent('search', 'search-event', { search_term: 'utekos' }),
+    canonicalEvent('search', 'search-event', {
+      search_term: 'utekos'
+    }),
     canonicalEvent('scroll_depth', 'scroll-depth-event', {
       threshold: 50,
       percent_scrolled: 50,
@@ -355,19 +424,26 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
       destination_path: '/skreddersy-varmen',
       click_sequence: 1
     }),
-    canonicalEvent('interact_with_accordion', 'accordion-event', {
-      ...commerce,
-      accordion_id: 'materials',
-      accordion_title: 'Materialer',
-      interaction_sequence: 1,
-      interaction_type: 'open'
-    }),
+    canonicalEvent(
+      'interact_with_accordion',
+      'accordion-event',
+      {
+        ...commerce,
+        accordion_id: 'materials',
+        accordion_title: 'Materialer',
+        interaction_sequence: 1,
+        interaction_type: 'open'
+      }
+    ),
     canonicalEvent('open_quick_view', 'quick-view-event', {
       ...commerce,
       open_sequence: 1,
       source_surface: 'homepage_techdown_campaign'
     }),
-    canonicalEvent('generate_lead', 'lead-event', { currency: 'NOK', value: 1 })
+    canonicalEvent('generate_lead', 'lead-event', {
+      currency: 'NOK',
+      value: 1
+    })
   )
 
   vm.runInContext(script, runtime.context)
@@ -419,10 +495,14 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     ]
   )
   assert.deepEqual(
-    standardEventCalls.find(call => call[2] === 'ViewContent')?.[3],
+    standardEventCalls.find(
+      call => call[2] === 'ViewContent'
+    )?.[3],
     {
       content_ids: ['47123456789012'],
-      contents: [{ id: '47123456789012', quantity: 1, item_price: 1790 }],
+      contents: [
+        { id: '47123456789012', quantity: 1, item_price: 1790 }
+      ],
       content_type: 'product',
       num_items: 1,
       currency: 'NOK',
@@ -435,10 +515,14 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     }
   )
   assert.deepEqual(
-    customEventCalls.find(call => call[2] === 'ViewItemList')?.[3],
+    customEventCalls.find(
+      call => call[2] === 'ViewItemList'
+    )?.[3],
     {
       content_ids: ['47123456789012'],
-      contents: [{ id: '47123456789012', quantity: 1, item_price: 1790 }],
+      contents: [
+        { id: '47123456789012', quantity: 1, item_price: 1790 }
+      ],
       content_type: 'product',
       num_items: 1,
       currency: 'NOK',
@@ -455,7 +539,9 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     }
   )
   assert.deepEqual(
-    customEventCalls.find(call => call[2] === 'LandingScrollDepth')?.[3],
+    customEventCalls.find(
+      call => call[2] === 'LandingScrollDepth'
+    )?.[3],
     {
       threshold: 50,
       percent_scrolled: 50,
@@ -463,7 +549,9 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     }
   )
   assert.deepEqual(
-    customEventCalls.find(call => call[2] === 'ViewCategory')?.[3],
+    customEventCalls.find(
+      call => call[2] === 'ViewCategory'
+    )?.[3],
     {
       content_category: 'produkter',
       content_name: 'Kolleksjonen',
@@ -473,7 +561,9 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     }
   )
   assert.deepEqual(
-    customEventCalls.find(call => call[2] === 'HeroInteract')?.[3],
+    customEventCalls.find(
+      call => call[2] === 'HeroInteract'
+    )?.[3],
     {
       content_name: 'read_more_hero',
       content_category: '/skreddersy-varmen',
@@ -494,26 +584,31 @@ test('rejects mismatched IDs and events from a different page', () => {
   const mismatched = canonicalEvent('page_view', 'browser-event')
   mismatched.canonical_event.event_id = 'server-event'
   const differentPage = canonicalEvent('page_view', 'other-page')
-  differentPage.canonical_event.page_url = 'https://utekos.no/kampanje/julegaver'
+  differentPage.canonical_event.page_url =
+    'https://utekos.no/kampanje/julegaver'
 
   runtime.window.dataLayer.push(mismatched, differentPage)
   vm.runInContext(script, runtime.context)
 
   assert.deepEqual(
-    queuedCalls(runtime.window).filter(call => call[0] === 'trackSingle'),
+    queuedCalls(runtime.window).filter(
+      call => call[0] === 'trackSingle'
+    ),
     []
   )
 })
 
 test('omits currency and value when currency is empty or non-ISO', () => {
   const runtime = createRuntime()
-  const items = [{
-    variant_id: 'gid://shopify/ProductVariant/47123456789012',
-    item_name: 'Utekos TechDown',
-    item_category: 'Uteklær',
-    quantity: 1,
-    gross_unit_price: 1790
-  }]
+  const items = [
+    {
+      variant_id: 'gid://shopify/ProductVariant/47123456789012',
+      item_name: 'Utekos TechDown',
+      item_category: 'Uteklær',
+      quantity: 1,
+      gross_unit_price: 1790
+    }
+  ]
 
   runtime.window.dataLayer.push(
     canonicalEvent('view_item', 'empty-currency', {
@@ -543,12 +638,17 @@ test('omits currency and value when currency is empty or non-ISO', () => {
 
   vm.runInContext(script, runtime.context)
 
-  const eventCalls = queuedCalls(runtime.window)
-    .filter(call => call[0] === 'trackSingle')
+  const eventCalls = queuedCalls(runtime.window).filter(
+    call => call[0] === 'trackSingle'
+  )
 
   assert.equal(eventCalls.length, 5)
 
-  for (const call of [eventCalls[0], eventCalls[1], eventCalls[3]]) {
+  for (const call of [
+    eventCalls[0],
+    eventCalls[1],
+    eventCalls[3]
+  ]) {
     assert.equal('currency' in call[3], false)
     assert.equal('value' in call[3], false)
     assert.deepEqual(call[3].content_ids, ['47123456789012'])

@@ -42,7 +42,6 @@ export async function LegacySkreddersyVarmenPageRuntime({
       <SkreddersyVarmenBreadcrumbs />
       <SkreddersyVarmenKlarnaStrip />
       <HeroAndEmpathy commerce={commerce} />
-      <DeferredLandingSections />
 
       <div
         id='purchase-section'
@@ -65,6 +64,8 @@ export async function LegacySkreddersyVarmenPageRuntime({
           : <LandingCommerceUnavailable />}
         </PromotionImpression>
       </div>
+
+      <DeferredLandingSections />
 
       <PromotionImpression
         promotionId='skreddersy-varmen-social-proof'

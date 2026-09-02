@@ -60,6 +60,7 @@ export function SectionThreeInOne({
 
   return (
     <section
+      id='section-solution'
       aria-labelledby='threeinone-heading'
       className={styles.section}
     >

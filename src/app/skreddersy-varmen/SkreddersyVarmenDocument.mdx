@@ -28,28 +28,8 @@ import styles from './components/SkreddersyVarmenTheatre.module.css'
   content={props.content.hero}
 />
 <HeroRevealEmpathy content={props.content.empathy}>
-  <PromotionImpression
-    promotionId={SKREDDERSY_VARMEN_PROMOTIONS.threeInOne}
-    promotionName='Skreddersy varmen'
-    creativeName='Three in one'
-    creativeSlot='three_in_one'
-    className='w-full'
-  >
-    <SectionThreeInOne content={props.content.threeInOne} />
-  </PromotionImpression>
-
   <SkreddersyVarmenKlarnaStrip />
 </HeroRevealEmpathy>
-
-<PromotionImpression
-  promotionId={SKREDDERSY_VARMEN_PROMOTIONS.techDown}
-  promotionName='Skreddersy varmen'
-  creativeName='TechDown slider'
-  creativeSlot='techdown_slider'
-  className='w-full'
->
-  <TechDownSlider />
-</PromotionImpression>
 
 <div
   id='purchase-section'
@@ -72,6 +52,26 @@ import styles from './components/SkreddersyVarmenTheatre.module.css'
     : <LandingCommerceUnavailable />}
   </PromotionImpression>
 </div>
+
+<PromotionImpression
+  promotionId={SKREDDERSY_VARMEN_PROMOTIONS.threeInOne}
+  promotionName='Skreddersy varmen'
+  creativeName='Three in one'
+  creativeSlot='three_in_one'
+  className='w-full'
+>
+  <SectionThreeInOne content={props.content.threeInOne} />
+</PromotionImpression>
+
+<PromotionImpression
+  promotionId={SKREDDERSY_VARMEN_PROMOTIONS.techDown}
+  promotionName='Skreddersy varmen'
+  creativeName='TechDown slider'
+  creativeSlot='techdown_slider'
+  className='w-full'
+>
+  <TechDownSlider />
+</PromotionImpression>
 
 <PromotionImpression
   promotionId={SKREDDERSY_VARMEN_PROMOTIONS.socialProof}

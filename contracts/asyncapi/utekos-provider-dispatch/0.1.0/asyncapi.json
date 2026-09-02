@@ -157,6 +157,8 @@
               "meta:generate_lead",
               "meta:hero_interact",
               "meta:interact_with_accordion",
+              "meta:meta_app_event",
+              "meta:meta_offline_event",
               "meta:open_quick_view",
               "meta:page_view",
               "meta:purchase",

@@ -380,12 +380,6 @@
   letter-spacing: -0.025em;
 }
 
-.empathySolutionAnchor {
-  position: relative;
-  display: block;
-  height: 0;
-}
-
 @media (min-width: 48rem) {
   .empathyMobile {
     display: none;

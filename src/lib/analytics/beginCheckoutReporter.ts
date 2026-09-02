@@ -17,6 +17,7 @@ import { persistCheckoutAttributionSnapshot } from './persistCheckoutAttribution
 import { mapShopifyBeginCheckout } from './shopifyBeginCheckoutCommerce'
 import type { CheckoutMethod } from './checkoutMethod'
 import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
+import { waitForCookiebotConsentReady } from '@/lib/consent/waitForCookiebotConsentReady'
 import type { Cart } from 'types/cart'
 
 const CHECKOUT_TASK_DEADLINE_MS = 1500
@@ -52,6 +53,7 @@ export async function reportCanonicalBeginCheckout(
   }
 
   try {
+    await waitForCookiebotConsentReady()
     const clientContext = readBrowserReporterContext()
     const pageView = browserPageViewSession.ensure({
       pageUrl: clientContext.pageUrl,

@@ -1185,7 +1185,7 @@
           "support": "supported",
           "eventName": "PageView",
           "productionStatus": "active",
-          "productionDetail": "The app-owned Meta Pixel is the sole browser owner and canonical Meta CAPI is the sole server owner. Meta-managed Signals Gateway mirrors Pixel delivery with the same event_id; no independent cbq bridge is active. Historical blocked rows remain excluded from blind replay.",
+          "productionDetail": "The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call with the same event_id. Canonical Meta CAPI remains the server owner. The independent manual GTM cbq bridge stays paused, and historical blocked rows remain excluded from blind replay.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
@@ -1829,7 +1829,7 @@
           "support": "supported",
           "eventName": "ViewContent",
           "productionStatus": "active",
-          "productionDetail": "The app-owned Meta Pixel and canonical Meta CAPI are active with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.",
+          "productionDetail": "The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call with the same event_id. Canonical Meta CAPI remains the server owner, and the independent manual GTM cbq bridge remains paused.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
@@ -2348,7 +2348,7 @@
           "support": "supported",
           "eventName": "AddToCart",
           "productionStatus": "active",
-          "productionDetail": "The app-owned Meta Pixel and canonical Meta CAPI are active for add_to_cart with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.",
+          "productionDetail": "The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call for add_to_cart with the same event_id. Canonical Meta CAPI remains the server owner, and the independent manual GTM cbq bridge remains paused.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
@@ -3050,7 +3050,7 @@
           "support": "supported",
           "eventName": "InitiateCheckout",
           "productionStatus": "active",
-          "productionDetail": "The app-owned Meta Pixel and canonical Meta CAPI are active for begin_checkout with shared event_id. Meta-managed Signals Gateway mirrors Pixel delivery; the independent GTM cbq bridge is paused.",
+          "productionDetail": "The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call for begin_checkout with the same event_id. Canonical Meta CAPI remains the server owner, and the independent manual GTM cbq bridge remains paused.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
@@ -7041,6 +7041,249 @@
           "eventName": null,
           "productionStatus": "not_relevant",
           "productionDetail": "No v1 Snapchat conversion mapping is approved.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        }
+      }
+    },
+    "meta_app_event": {
+      "lifecycle": "active",
+      "owner": "trusted_meta_app_event_ingest",
+      "sources": [
+        "server"
+      ],
+      "prerequisites": [
+        "authenticated producer",
+        "app marketing consent",
+        "advertiser tracking state",
+        "exact 16-value app_data.extinfo",
+        "original event_id and event_time"
+      ],
+      "deduplication": {
+        "eventId": "source_type + source event_name + source event_id",
+        "reuse": "Reuse the same event_id for retries and every delivery of the same canonical occurrence.",
+        "newEvent": "A genuinely new app occurrence receives a new source event_id.",
+        "ledgerIdempotencyKey": "event_name + event_id",
+        "providerIdempotencyKey": "provider + event_name + event_id",
+        "browserServerShareEventId": false,
+        "retention": {
+          "value": 25,
+          "unit": "month",
+          "scope": "dedupe_key_only"
+        }
+      },
+      "providers": {
+        "supabase": {
+          "support": "supported",
+          "eventName": "meta_app_event",
+          "productionStatus": "active",
+          "productionDetail": "Authenticated source events are persisted in the canonical ledger.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": null,
+          "server": {
+            "transport": "first_party_api",
+            "status": "disabled",
+            "parameterContract": {
+              "parameterSets": [
+                "canonicalEnvelope"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_name",
+                "event_time",
+                "consent",
+                "meta_event"
+              ]
+            }
+          }
+        },
+        "google": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "Source-specific Meta events are not exported to Google.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "meta": {
+          "support": "supported",
+          "eventName": "source_meta_event_name",
+          "productionStatus": "active",
+          "productionDetail": "Meta Business SDK v26 outbox delivery is active for authenticated, consent-qualified source events.",
+          "consentRequirement": "marketing",
+          "dedupeField": "source_event_id",
+          "browser": null,
+          "server": {
+            "transport": "meta_conversions_api_app",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "metaServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "user_data",
+                "advertiser_tracking_enabled",
+                "app_data.extinfo"
+              ]
+            }
+          }
+        },
+        "microsoft_uet": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "Source-specific Meta events are not exported to Microsoft UET.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "Source-specific Meta events are not exported to Pinterest.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "Source-specific Meta events are not exported to Snapchat.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        }
+      }
+    },
+    "meta_offline_event": {
+      "lifecycle": "active",
+      "owner": "trusted_meta_offline_event_ingest",
+      "sources": [
+        "server"
+      ],
+      "prerequisites": [
+        "authenticated producer",
+        "offline marketing consent",
+        "observed customer match key",
+        "original event_id and event_time",
+        "Purchase order_id, currency, value and contents when applicable"
+      ],
+      "deduplication": {
+        "eventId": "source_type + source event_name + source event_id",
+        "reuse": "Reuse the same event_id for retries and every delivery of the same canonical occurrence.",
+        "newEvent": "A genuinely new physical-store occurrence receives a new source event_id.",
+        "ledgerIdempotencyKey": "event_name + event_id",
+        "providerIdempotencyKey": "provider + event_name + event_id",
+        "browserServerShareEventId": false,
+        "retention": {
+          "value": 25,
+          "unit": "month",
+          "scope": "dedupe_key_only"
+        }
+      },
+      "providers": {
+        "supabase": {
+          "support": "supported",
+          "eventName": "meta_offline_event",
+          "productionStatus": "active",
+          "productionDetail": "Authenticated source events are persisted in the canonical ledger.",
+          "consentRequirement": "marketing",
+          "dedupeField": "event_id",
+          "browser": null,
+          "server": {
+            "transport": "first_party_api",
+            "status": "disabled",
+            "parameterContract": {
+              "parameterSets": [
+                "canonicalEnvelope"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_name",
+                "event_time",
+                "consent",
+                "meta_event"
+              ]
+            }
+          }
+        },
+        "google": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "Source-specific Meta events are not exported to Google.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "meta": {
+          "support": "supported",
+          "eventName": "source_meta_event_name",
+          "productionStatus": "active",
+          "productionDetail": "Meta Business SDK v26 outbox delivery is active for authenticated, consent-qualified source events.",
+          "consentRequirement": "marketing",
+          "dedupeField": "source_event_id",
+          "browser": null,
+          "server": {
+            "transport": "meta_conversions_api_offline",
+            "status": "active",
+            "parameterContract": {
+              "parameterSets": [
+                "metaServer"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "user_data",
+                "customer_match_key",
+                "order_id",
+                "currency",
+                "value",
+                "contents"
+              ]
+            }
+          }
+        },
+        "microsoft_uet": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "Source-specific Meta events are not exported to Microsoft UET.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "pinterest": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "Source-specific Meta events are not exported to Pinterest.",
+          "consentRequirement": "none",
+          "dedupeField": null,
+          "browser": null,
+          "server": null
+        },
+        "snapchat": {
+          "support": "not_relevant",
+          "eventName": null,
+          "productionStatus": "not_relevant",
+          "productionDetail": "Source-specific Meta events are not exported to Snapchat.",
           "consentRequirement": "none",
           "dedupeField": null,
           "browser": null,

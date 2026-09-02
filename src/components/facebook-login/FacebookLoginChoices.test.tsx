@@ -40,3 +40,27 @@ test('renders one official Meta choice and one Utekos choice only', () => {
     /Legg til kontaktinformasjon|Prøv igjen|Velkommen fra Facebook/u
   )
 })
+
+test('renders a non-interactive Facebook choice for local visual preview', () => {
+  const markup = renderToStaticMarkup(
+    <FacebookLoginChoices
+      buttonWidth={320}
+      buttonContainerRef={{ current: null }}
+      buttonRendered={false}
+      loginUnavailable={false}
+      onContinueWithoutFacebook={() => undefined}
+      pending={false}
+      sdkReady={false}
+      visualPreview
+    />
+  )
+
+  assert.doesNotMatch(markup, /fb-login-button/u)
+  assert.match(markup, /Fortsett med Facebook/u)
+  assert.match(markup, /disabled=""/u)
+  assert.match(
+    markup,
+    /Bare visuell forhåndsvisning i lokal utvikling/u
+  )
+  assert.equal((markup.match(/<button/gu) ?? []).length, 2)
+})

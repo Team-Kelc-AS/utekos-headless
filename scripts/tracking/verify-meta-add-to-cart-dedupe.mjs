@@ -66,7 +66,9 @@ function parseMultipartBody(body) {
 
 function parseFacebookEvent(request) {
   const url = new URL(request.url)
-  const queryFields = Object.fromEntries(url.searchParams.entries())
+  const queryFields = Object.fromEntries(
+    url.searchParams.entries()
+  )
   const bodyFields = parseMultipartBody(request.postData)
   const fields = { ...queryFields, ...bodyFields }
 
@@ -153,8 +155,7 @@ async function main() {
     userAgent
   })
   const page = await context.newPage()
-  const fbclid =
-    `codex_fbclid_atc_dedupe_${randomUUID().replaceAll('-', '')}`
+  const fbclid = `codex_fbclid_atc_dedupe_${randomUUID().replaceAll('-', '')}`
   const url = new URL(PRODUCT_PATH, BASE_URL)
   url.searchParams.set('fbclid', fbclid)
 
@@ -319,7 +320,9 @@ async function main() {
       .filter(event => event?.eventName === 'AddToCart')
     const openBridgeHosts = [
       ...new Set(
-        openBridgeRequests.map(request => new URL(request.url).hostname)
+        openBridgeRequests.map(
+          request => new URL(request.url).hostname
+        )
       )
     ].sort()
     const primary = dataLayerEvents[0] ?? null
@@ -380,7 +383,7 @@ async function main() {
           bridgeRuntime.signalsGatewayPixelState?.initialized ===
             true &&
           bridgeRuntime.signalsGatewayPixelState?.mode ===
-            'automatic_fbq_fork' &&
+            'canonical_fbq_cbq_pair' &&
           openBridgeHosts.includes('signals.utekos.no')
         : bridgeRuntime.signalsGatewayQueuePresent === false &&
           bridgeRuntime.signalsGatewaySdkLoaded === false &&

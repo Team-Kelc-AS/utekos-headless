@@ -21,7 +21,7 @@ test('loads Signals Gateway through next/script only after consent', () => {
   assert.match(source, /onError=/)
 })
 
-test('preserves automatic fbq fork ownership', () => {
+test('preserves canonical Meta and Signals Gateway ownership', () => {
   assert.match(source, /prepareSignalsGatewayPixelQueue/)
   assert.match(source, /initializeSignalsGatewayPixel/)
   assert.match(source, /id='meta-pixel-canonical-browser'/)

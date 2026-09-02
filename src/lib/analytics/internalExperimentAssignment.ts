@@ -5,9 +5,9 @@ type ExperimentCompatibleEvent = {
 }
 
 export function stripInternalExperimentAssignment<
-  E extends ExperimentCompatibleEvent
+  E extends object
 >(event: E): E {
-  const nextEvent = { ...event }
+  const nextEvent: E & ExperimentCompatibleEvent = { ...event }
   delete nextEvent.experiment
   return nextEvent
 }

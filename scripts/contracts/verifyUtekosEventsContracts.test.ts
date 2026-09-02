@@ -55,7 +55,7 @@ test('delivery parameter contract covers every canonical event and preserves tra
     Object.keys(contract.events).sort(),
     [...canonicalEventNames].sort()
   )
-  assert.equal(Object.keys(contract.events).length, 33)
+  assert.equal(Object.keys(contract.events).length, 35)
 
   for (const [eventName, event] of Object.entries(
     contract.events

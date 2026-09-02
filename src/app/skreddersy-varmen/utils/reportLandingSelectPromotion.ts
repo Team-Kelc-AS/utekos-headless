@@ -12,7 +12,7 @@ export const LANDING_PROMOTIONS = {
   heroSecondary: {
     promotion_id: 'skreddersy-varmen-hero',
     promotion_name: 'Skreddersy varmen',
-    creative_name: 'Se løsningen',
+    creative_name: 'Se tilbakemeldingene',
     creative_slot: 'secondary_cta'
   },
   heroScrollCue: {

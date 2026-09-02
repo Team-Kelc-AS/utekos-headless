@@ -4,7 +4,10 @@ import {
   parseCanonicalEvent,
   type ImplementedCanonicalEventName
 } from './canonicalEvent'
-import { canonicalEventNames, eventCatalog } from './eventCatalog'
+import {
+  canonicalEventNames,
+  eventCatalog
+} from './eventCatalog'
 import { createCanonicalPageView } from './pageViewEvent'
 import { canonicalRefundSchema } from './refundEvent'
 import { createCanonicalViewItem } from './viewItemEvent'
@@ -22,6 +25,7 @@ test('implemented union covers every active catalog event', () => {
     'page_view',
     'view_item',
     'add_to_cart',
+    'add_shipping_info',
     'add_payment_info',
     'begin_checkout',
     'purchase',
@@ -48,7 +52,9 @@ test('implemented union covers every active catalog event', () => {
     'hero_interact',
     'interact_with_accordion',
     'open_quick_view',
-    'video_progress'
+    'video_progress',
+    'meta_app_event',
+    'meta_offline_event'
   ])
 
   for (const name of canonicalEventNames.filter(
@@ -113,10 +119,9 @@ test('parses supported page_view and view_item events', () => {
   assert.deepEqual(parseCanonicalEvent(viewItem), viewItem)
 })
 
-test('rejects blocked_source events without an implemented schema', () => {
+test('rejects blocked-source events without an implemented schema', () => {
   assert.throws(
-    () =>
-      parseCanonicalEvent({ event_name: 'add_shipping_info' }),
+    () => parseCanonicalEvent({ event_name: 'checkout_error' }),
     /Invalid discriminator value/
   )
 })

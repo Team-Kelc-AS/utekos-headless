@@ -124,6 +124,10 @@ export function FacebookLoginPrompt({
   )
 
   const excluded = isExcludedPath(pathname)
+  const visualPreview =
+    previewAllowed &&
+    process.env.NODE_ENV === 'development' &&
+    !clientConfig
 
   useEffect(() => {
     const updateButtonWidth = () => {
@@ -156,7 +160,6 @@ export function FacebookLoginPrompt({
         hostname: window.location.hostname,
         pageUrl: window.location.href
       })
-
     if (!activeOnCurrentHost || excluded) {
       return
     }
@@ -261,6 +264,8 @@ export function FacebookLoginPrompt({
     if (state !== 'login' && state !== 'error') return
 
     if (!clientConfig) {
+      if (visualPreview) return
+
       const unavailableTimer = window.setTimeout(() => {
         setLoginUnavailable(true)
         trackFacebookLoginFunnel({
@@ -384,7 +389,7 @@ export function FacebookLoginPrompt({
       sdkRef.current = null
       delete window.utekosFacebookLoginOnLogin
     }
-  }, [clientConfig, state])
+  }, [clientConfig, state, visualPreview])
 
   useEffect(() => {
     if (!sdkReady || (state !== 'login' && state !== 'error')) {
@@ -436,6 +441,7 @@ export function FacebookLoginPrompt({
       onContinueWithoutFacebook={dismiss}
       pending={pending}
       sdkReady={sdkReady}
+      visualPreview={visualPreview}
     />
   )
 }

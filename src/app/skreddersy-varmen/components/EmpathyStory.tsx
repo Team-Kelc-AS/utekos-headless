@@ -390,7 +390,9 @@ export function EmpathyStory({
                       <li
                         key={step}
                         className={styles.empathyLargeAnswerStep}
-                        data-empathy-large-answer-step={index + 1}
+                        data-empathy-large-answer-step={
+                          index + 1
+                        }
                       >
                         {step}
                       </li>
@@ -428,12 +430,6 @@ export function EmpathyStory({
           </div>
         </div>
       </section>
-
-      <div
-        id='section-solution'
-        aria-hidden
-        className={styles.empathySolutionAnchor}
-      />
 
       {children ?
         <div

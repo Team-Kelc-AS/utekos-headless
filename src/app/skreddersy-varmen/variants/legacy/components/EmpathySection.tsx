@@ -186,12 +186,6 @@ export function EmpathySection() {
             </div>
           </m.div>
         </div>
-
-        <div
-          id='section-solution'
-          aria-hidden
-          className='absolute bottom-0'
-        />
       </m.section>
     </SkreddersyMotionProvider>
   )

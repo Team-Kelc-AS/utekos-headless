@@ -5,8 +5,10 @@ import { ensureFbclidFromFbc } from './extractFbclidFromFbc'
 import { createCheckoutAttributionSnapshot } from './checkoutAttributionSnapshot'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
 import { enrichCanonicalEventWithGoogleAnalyticsIds } from './googleAnalyticsBrowserIds'
+import { waitForCookiebotConsentReady } from '@/lib/consent/waitForCookiebotConsentReady'
 
 export async function captureBrowserCheckoutAttributionSnapshot() {
+  await waitForCookiebotConsentReady()
   const context = readBrowserReporterContext()
   const clickId = ensureFbclidFromFbc({
     ...(context.browserId ?

@@ -52,6 +52,8 @@ type ServerTransport =
   | 'server_side_gtm'
   | 'google_data_manager'
   | 'meta_conversions_api'
+  | 'meta_conversions_api_app'
+  | 'meta_conversions_api_offline'
   | 'microsoft_uet_capi'
   | 'pinterest_conversions_api'
   | 'snap_conversions_api_v3'
@@ -210,6 +212,22 @@ const errorConsent = {
   piiPolicy: 'consent_gated_provider_identifiers_only'
 } as const satisfies EventConsentPolicy
 
+const metaAppConsent = {
+  browserCreation: 'authoritative_server_source',
+  firstPartyCollection: ['marketing'],
+  canonicalLedger: ['marketing'],
+  analyticsExport,
+  marketingExport,
+  googleCookielessPing: 'not_applicable',
+  operationalPurpose: 'none',
+  piiPolicy: 'consent_gated_provider_identifiers_only'
+} as const satisfies EventConsentPolicy
+
+const metaOfflineConsent = {
+  ...metaAppConsent,
+  operationalPurpose: 'order_accounting'
+} as const satisfies EventConsentPolicy
+
 const baseCanonicalParameters = [
   'event_id',
   'event_name',
@@ -248,6 +266,65 @@ function notRelevantProvider(
     productionDetail: detail,
     serverOutbox: 'disabled'
   })
+}
+
+function metaNonWebProviders(
+  eventName: 'meta_app_event' | 'meta_offline_event',
+  input: {
+    requiredParameters: readonly string[]
+    transport:
+      | 'meta_conversions_api_app'
+      | 'meta_conversions_api_offline'
+  }
+): Readonly<Record<ProviderId, ProviderCatalogEntry>> {
+  return {
+    supabase: providerMapping({
+      support: 'supported',
+      eventName,
+      transport: { browser: null, server: 'first_party_api' },
+      requiredParameters: [
+        ...baseCanonicalParameters,
+        'meta_event'
+      ],
+      dedupeField: 'event_id',
+      consentRequirement: 'marketing',
+      adapterVersion: 1,
+      productionStatus: 'active',
+      productionDetail:
+        'Authenticated source events are persisted in the canonical ledger.',
+      serverOutbox: 'disabled'
+    }),
+    google: notRelevantProvider(
+      'Source-specific Meta events are not exported to Google.'
+    ),
+    meta: providerMapping({
+      support: 'supported',
+      eventName: 'source_meta_event_name',
+      transport: { browser: null, server: input.transport },
+      requiredParameters: [
+        ...baseProviderParameters,
+        'action_source',
+        'user_data',
+        ...input.requiredParameters
+      ],
+      dedupeField: 'source_event_id',
+      consentRequirement: 'marketing',
+      adapterVersion: 1,
+      productionStatus: 'active',
+      productionDetail:
+        'Meta Business SDK v26 outbox delivery is active for authenticated, consent-qualified source events.',
+      serverOutbox: 'active'
+    }),
+    microsoft_uet: notRelevantProvider(
+      'Source-specific Meta events are not exported to Microsoft UET.'
+    ),
+    pinterest: notRelevantProvider(
+      'Source-specific Meta events are not exported to Pinterest.'
+    ),
+    snapchat: notRelevantProvider(
+      'Source-specific Meta events are not exported to Snapchat.'
+    )
+  }
 }
 
 function pinterestCatalogProvider(
@@ -708,7 +785,7 @@ const pageViewProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned Meta Pixel is the sole browser event owner and canonical Meta CAPI is the server owner. The consent-gated Signals Gateway SDK may automatically fork existing fbq calls with the same event_id; manual cbq tracking remains forbidden. Historical blocked rows remain excluded from blind replay.',
+      'The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call with the same event_id. Canonical Meta CAPI remains the server owner. The independent manual GTM cbq bridge stays paused, and historical blocked rows remain excluded from blind replay.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -738,8 +815,7 @@ const pageViewProviders = {
   snapchat: snapchatCatalogProvider('PAGE_VIEW', {
     active: true,
     browser: 'snap_pixel'
-  }),
-
+  })
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -809,7 +885,7 @@ const viewItemProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned Meta Pixel and canonical Meta CAPI are active with shared event_id. The consent-gated Signals Gateway SDK may automatically fork existing fbq calls; the independent manual GTM cbq bridge remains paused.',
+      'The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call with the same event_id. Canonical Meta CAPI remains the server owner, and the independent manual GTM cbq bridge remains paused.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -851,8 +927,7 @@ const viewItemProviders = {
       'currency',
       'value'
     ]
-  }),
-
+  })
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -920,7 +995,7 @@ const addToCartProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned Meta Pixel and canonical Meta CAPI are active for add_to_cart with shared event_id. The consent-gated Signals Gateway SDK may automatically fork the existing fbq call; the independent manual GTM cbq bridge remains paused.',
+      'The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call for add_to_cart with the same event_id. Canonical Meta CAPI remains the server owner, and the independent manual GTM cbq bridge remains paused.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -963,8 +1038,7 @@ const addToCartProviders = {
       'currency',
       'value'
     ]
-  }),
-
+  })
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1033,7 +1107,7 @@ const beginCheckoutProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned Meta Pixel and canonical Meta CAPI are active for begin_checkout with shared event_id. The consent-gated Signals Gateway SDK may automatically fork the existing fbq call; the independent manual GTM cbq bridge remains paused.',
+      'The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call for begin_checkout with the same event_id. Canonical Meta CAPI remains the server owner, and the independent manual GTM cbq bridge remains paused.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -1076,8 +1150,7 @@ const beginCheckoutProviders = {
       'currency',
       'value'
     ]
-  }),
-
+  })
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1107,7 +1180,7 @@ const addShippingInfoProviderBase = activeEventProviders(
         'currency',
         'value'
       ]
-    },
+    }
   }
 )
 const addShippingInfoGoogleTransport = {
@@ -1171,7 +1244,7 @@ const addPaymentInfoProviderBase = activeEventProviders(
         'currency',
         'value'
       ]
-    },
+    }
   }
 )
 const addPaymentInfoGoogleTransport = {
@@ -1304,8 +1377,7 @@ const purchaseProviders = {
       'value',
       'order_id'
     ]
-  }),
-
+  })
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1360,8 +1432,7 @@ const refundProviders = {
   ),
   snapchat: notRelevantProvider(
     'No v1 Snapchat refund mapping is approved.'
-  ),
-
+  )
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1483,7 +1554,7 @@ const eventCatalogBase = {
       microsoft: {
         eventName: 'select_item',
         requiredParameters: ['items']
-      },
+      }
     })
   },
   view_item: {
@@ -2067,7 +2138,7 @@ const eventCatalogBase = {
     consent: errorConsent,
     providers: activeEventProviders('form_error', {
       firstPartyConsentRequirement: 'analytics_or_operational',
-      googleRequired: ['form_id', 'error_category'],
+      googleRequired: ['form_id', 'error_category']
     })
   },
   filter_apply: {
@@ -2096,7 +2167,7 @@ const eventCatalogBase = {
     ),
     consent: behaviorConsent,
     providers: activeEventProviders('filter_apply', {
-      googleRequired: ['filter_name', 'filter_value'],
+      googleRequired: ['filter_name', 'filter_value']
     })
   },
   sort_apply: {
@@ -2125,7 +2196,7 @@ const eventCatalogBase = {
     ),
     consent: behaviorConsent,
     providers: activeEventProviders('sort_apply', {
-      googleRequired: ['sort_key'],
+      googleRequired: ['sort_key']
     })
   },
   variant_select: {
@@ -2153,7 +2224,7 @@ const eventCatalogBase = {
     ),
     consent: behaviorConsent,
     providers: activeEventProviders('variant_select', {
-      googleRequired: ['item_id', 'item_variant'],
+      googleRequired: ['item_id', 'item_variant']
     })
   },
   size_guide_view: {
@@ -2181,7 +2252,7 @@ const eventCatalogBase = {
     consent: behaviorConsent,
     providers: activeEventProviders('size_guide_view', {
       googleRequired: ['guide_id'],
-      firstPartyRequired: ['page_view_id', 'guide_id'],
+      firstPartyRequired: ['page_view_id', 'guide_id']
     })
   },
   checkout_error: {
@@ -2209,7 +2280,7 @@ const eventCatalogBase = {
     consent: errorConsent,
     providers: plannedProviders('checkout_error', {
       firstPartyConsentRequirement: 'analytics_or_operational',
-      googleRequired: ['error_category'],
+      googleRequired: ['error_category']
     })
   },
   payment_error: {
@@ -2237,7 +2308,7 @@ const eventCatalogBase = {
     consent: errorConsent,
     providers: plannedProviders('payment_error', {
       firstPartyConsentRequirement: 'analytics_or_operational',
-      googleRequired: ['error_category'],
+      googleRequired: ['error_category']
     })
   },
   scroll_depth: {
@@ -2273,7 +2344,7 @@ const eventCatalogBase = {
           'percent_scrolled',
           'document_height'
         ]
-      },
+      }
     })
   },
   view_category: {
@@ -2320,7 +2391,7 @@ const eventCatalogBase = {
       pinterest: {
         eventName: 'view_category',
         requiredParameters: ['content_category']
-      },
+      }
     })
   },
   hero_interact: {
@@ -2363,7 +2434,7 @@ const eventCatalogBase = {
           'destination_path',
           'click_sequence'
         ]
-      },
+      }
     })
   },
   interact_with_accordion: {
@@ -2419,7 +2490,7 @@ const eventCatalogBase = {
       microsoft: {
         eventName: 'interact_with_accordion',
         requiredParameters: ['items', 'accordion_id']
-      },
+      }
     })
   },
   open_quick_view: {
@@ -2474,7 +2545,7 @@ const eventCatalogBase = {
       microsoft: {
         eventName: 'open_quick_view',
         requiredParameters: ['items', 'source_surface']
-      },
+      }
     })
   },
   video_progress: {
@@ -2512,7 +2583,81 @@ const eventCatalogBase = {
         'page_view_id',
         'video_id',
         'milestone'
+      ]
+    })
+  },
+  meta_app_event: {
+    version: 1,
+    name: 'meta_app_event',
+    lifecycle: 'active',
+    owner: 'trusted_meta_app_event_ingest',
+    trigger: {
+      description:
+        'Accept an event only after the native app has observed it and supplied the complete Meta app-event contract.',
+      sources: ['server'],
+      repeatability:
+        'Once per original app event_id; retries reuse the same source event_id.',
+      eventTime: 'The original app occurrence timestamp.',
+      prerequisites: [
+        'authenticated producer',
+        'app marketing consent',
+        'advertiser tracking state',
+        'exact 16-value app_data.extinfo',
+        'original event_id and event_time'
+      ]
+    },
+    dedupe: dedupe(
+      'source_type + source event_name + source event_id',
+      'A genuinely new app occurrence receives a new source event_id.',
+      retain25Months,
+      false
+    ),
+    consent: metaAppConsent,
+    providers: metaNonWebProviders('meta_app_event', {
+      requiredParameters: [
+        'advertiser_tracking_enabled',
+        'app_data.extinfo'
       ],
+      transport: 'meta_conversions_api_app'
+    })
+  },
+  meta_offline_event: {
+    version: 1,
+    name: 'meta_offline_event',
+    lifecycle: 'active',
+    owner: 'trusted_meta_offline_event_ingest',
+    trigger: {
+      description:
+        'Accept an event only after an offline system has observed a physical-store occurrence with customer match evidence.',
+      sources: ['server'],
+      repeatability:
+        'Once per original offline event_id; retries reuse the same source event_id.',
+      eventTime:
+        'The original physical-store occurrence timestamp, no older than seven days at ingestion.',
+      prerequisites: [
+        'authenticated producer',
+        'offline marketing consent',
+        'observed customer match key',
+        'original event_id and event_time',
+        'Purchase order_id, currency, value and contents when applicable'
+      ]
+    },
+    dedupe: dedupe(
+      'source_type + source event_name + source event_id',
+      'A genuinely new physical-store occurrence receives a new source event_id.',
+      retain25Months,
+      false
+    ),
+    consent: metaOfflineConsent,
+    providers: metaNonWebProviders('meta_offline_event', {
+      requiredParameters: [
+        'customer_match_key',
+        'order_id',
+        'currency',
+        'value',
+        'contents'
+      ],
+      transport: 'meta_conversions_api_offline'
     })
   }
 } as const satisfies Record<string, EventCatalogEntryBase>
@@ -2550,7 +2695,9 @@ export const eventSignalProfiles = {
   hero_interact: 'website',
   interact_with_accordion: 'website',
   open_quick_view: 'website',
-  video_progress: 'website'
+  video_progress: 'website',
+  meta_app_event: 'meta_non_web',
+  meta_offline_event: 'meta_non_web'
 } as const satisfies {
   readonly [K in keyof typeof eventCatalogBase]: EventSignalProfile
 }
