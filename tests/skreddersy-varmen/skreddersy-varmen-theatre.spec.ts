@@ -417,7 +417,7 @@ test('keeps hidden header controls out of the initial keyboard order', async ({
   expect(focusedHiddenHeader).toBe(false)
 
   await expect(actions).toHaveCSS('visibility', 'visible', {
-    timeout: 2600
+    timeout: 2800
   })
 })
 
@@ -542,9 +542,9 @@ test('keeps every intro phase ordered within the LCP budget', async ({
   expect(choreography.cloudBackground).toBe('rgb(255, 255, 255)')
   expect(choreography.logo.delay).toBeGreaterThanOrEqual(400)
   expect(choreography.logo.delay).toBeLessThanOrEqual(500)
-  expect(choreography.logo.duration).toBeGreaterThanOrEqual(1000)
-  expect(choreography.logo.duration).toBeLessThanOrEqual(1200)
-  expect(choreography.logo.endTime).toBeLessThanOrEqual(1650)
+  expect(choreography.logo.duration).toBeGreaterThanOrEqual(1250)
+  expect(choreography.logo.duration).toBeLessThanOrEqual(1350)
+  expect(choreography.logo.endTime).toBeLessThanOrEqual(1800)
   expect(hopIndex).toBeGreaterThan(0)
   expect(landingIndex).toBeGreaterThan(hopIndex)
   expect(exitIndex).toBeGreaterThan(landingIndex)
@@ -554,9 +554,9 @@ test('keeps every intro phase ordered within the LCP budget', async ({
     choreography.logo.keyframes[landingIndex]?.transform
   )
   expect(exitStart?.easing).toBe('cubic-bezier(0.16, 1, 0.3, 1)')
-  expect(choreography.jungle.delay).toBeGreaterThanOrEqual(700)
-  expect(choreography.jungle.delay).toBeLessThanOrEqual(800)
-  expect(choreography.cloud.endTime).toBeLessThanOrEqual(1150)
+  expect(choreography.jungle.delay).toBeGreaterThanOrEqual(750)
+  expect(choreography.jungle.delay).toBeLessThanOrEqual(850)
+  expect(choreography.cloud.endTime).toBeLessThanOrEqual(1250)
   expect(choreography.jungle.endTime).toBeCloseTo(
     choreography.hero.endTime,
     0
@@ -572,7 +572,7 @@ test('keeps every intro phase ordered within the LCP budget', async ({
   expect(choreography.hero.delay).toBeCloseTo(logoEnd, 0)
   expect(choreography.hero.delay).toBeLessThan(headerEnd)
   expect(choreography.hero.endTime).toBeGreaterThan(headerEnd)
-  expect(choreography.hero.endTime).toBeLessThanOrEqual(2100)
+  expect(choreography.hero.endTime).toBeLessThanOrEqual(2300)
 })
 
 test('brings the hero in immediately after the logo without revealing it early', async ({
@@ -660,7 +660,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(1300)).toEqual({
+  expect(await readPhaseAt(1400)).toEqual({
     cloud: 'hidden',
     jungle: 'visible',
     logo: 'visible',
@@ -669,7 +669,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(1800)).toEqual({
+  expect(await readPhaseAt(1900)).toEqual({
     cloud: 'hidden',
     jungle: 'visible',
     logo: 'hidden',
@@ -678,7 +678,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'visible'
   })
 
-  expect(await readPhaseAt(2200)).toEqual({
+  expect(await readPhaseAt(2400)).toEqual({
     cloud: 'hidden',
     jungle: 'hidden',
     logo: 'hidden',
