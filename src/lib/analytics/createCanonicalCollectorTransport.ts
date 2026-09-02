@@ -35,6 +35,7 @@ type CreateCanonicalCollectorTransportInput<
 > = {
   analyticsEventName: string
   endpoint: string
+  fallbackEndpoint?: string
   enrichEvent?: (event: E) => Promise<E>
   hasCollectionConsent?: (event: E) => boolean
 }
@@ -43,7 +44,10 @@ type SendCanonicalCollectorEventInput<
   E extends { consent: ConsentSnapshot }
 > = Pick<
   CreateCanonicalCollectorTransportInput<E>,
-  'analyticsEventName' | 'endpoint' | 'enrichEvent'
+  | 'analyticsEventName'
+  | 'endpoint'
+  | 'fallbackEndpoint'
+  | 'enrichEvent'
 > & { headers?: Readonly<Record<string, string>> }
 
 function compactRecord(
@@ -190,12 +194,13 @@ export async function sendCanonicalCollectorEvent<
     input.enrichEvent ?
       await input.enrichEvent(metaEnriched)
     : metaEnriched
+  let endpoint = input.endpoint
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
     let response: Response
 
     try {
-      response = await fetch(input.endpoint, {
+      response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -209,6 +214,7 @@ export async function sendCanonicalCollectorEvent<
       })
     } catch (error) {
       if (attempt === 1) throw error
+      endpoint = input.fallbackEndpoint ?? input.endpoint
       continue
     }
 

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { applyCanonicalCollectionContext } from './applyCanonicalCollectionContext'
+import { sendCanonicalCollectorEvent } from './createCanonicalCollectorTransport'
 
 const deniedConsent = {
   analytics: 'denied' as const,
@@ -35,4 +36,37 @@ test('adds the experiment only to analytics-consented collection', () => {
 
   assert.deepEqual(granted.experiment, experiment)
   assert.equal(denied.experiment, undefined)
+})
+
+test('uses a neutral fallback after a network-level collector failure', async () => {
+  const originalFetch = globalThis.fetch
+  const requestedEndpoints: string[] = []
+
+  globalThis.fetch = async input => {
+    requestedEndpoints.push(String(input))
+
+    if (requestedEndpoints.length === 1) {
+      throw new TypeError('Failed to fetch')
+    }
+
+    return new Response(null, { status: 202 })
+  }
+
+  try {
+    await sendCanonicalCollectorEvent(
+      {
+        analyticsEventName: 'view_promotion',
+        endpoint: '/api/events/view-promotion',
+        fallbackEndpoint: '/api/e/vp'
+      },
+      { consent: deniedConsent }
+    )
+  } finally {
+    globalThis.fetch = originalFetch
+  }
+
+  assert.deepEqual(requestedEndpoints, [
+    '/api/events/view-promotion',
+    '/api/e/vp'
+  ])
 })
