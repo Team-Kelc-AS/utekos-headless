@@ -28,7 +28,6 @@ import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerL
 import { WebVitals } from '@/components/analytics/WebVitals'
 import { MetaParameterBuilderInitializer } from '@/components/analytics/MetaParameterBuilderInitializer'
 import { MetaBrowserTransportLoader } from '@/components/analytics/MetaBrowserTransportLoader'
-import { readSignalsGatewayPixelConfig } from '@/lib/analytics/signalsGatewayPixelConfig'
 import {
   isFacebookLoginEnabled,
   isFacebookLoginPreviewAllowed,
@@ -130,9 +129,6 @@ export default function RootLayout({
     readFacebookLoginClientConfig(process.env)
   const facebookLoginPreviewAllowed =
     isFacebookLoginPreviewAllowed(process.env)
-  const signalsGatewayPixelConfig =
-    readSignalsGatewayPixelConfig(process.env)
-
   return (
     <html
       lang='no'
@@ -147,9 +143,7 @@ export default function RootLayout({
       <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
         {shouldLoadMarketingScripts ?
           <>
-            <MetaBrowserTransportLoader
-              signalsGateway={signalsGatewayPixelConfig}
-            />
+            <MetaBrowserTransportLoader />
             {pinterestTagId ?
               <Script
                 id='pinterest-tag-canonical-browser'

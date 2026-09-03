@@ -4,11 +4,11 @@ import { chromium } from 'playwright'
 
 const BASE_URL =
   process.env.META_ATC_DEDUPE_BASE_URL ?? 'https://utekos.no'
-const LIST_PATH =
-  process.env.META_ATC_PRODUCTCARD_PATH ?? '/'
+const LIST_PATH = process.env.META_ATC_PRODUCTCARD_PATH ?? '/'
 const TIMEOUT_MS = 60_000
 const ATC_WAIT_MS = 45_000
 const OPENBRIDGE_HOSTS = new Set([
+  'signals.utekos.no',
   'mpc2-prod-25-is5qnl632q-wl.a.run.app',
   '5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws'
 ])
@@ -62,7 +62,9 @@ function parseMultipartBody(body) {
 
 function parseFacebookEvent(request) {
   const url = new URL(request.url)
-  const queryFields = Object.fromEntries(url.searchParams.entries())
+  const queryFields = Object.fromEntries(
+    url.searchParams.entries()
+  )
   const bodyFields = parseMultipartBody(request.postData)
   const fields = { ...queryFields, ...bodyFields }
 
@@ -137,8 +139,7 @@ async function main() {
     userAgent
   })
   const page = await context.newPage()
-  const fbclid =
-    `codex_fbclid_atc_productcard_${randomUUID().replaceAll('-', '')}`
+  const fbclid = `codex_fbclid_atc_productcard_${randomUUID().replaceAll('-', '')}`
   const url = new URL(LIST_PATH, BASE_URL)
   url.searchParams.set('fbclid', fbclid)
 
@@ -203,7 +204,9 @@ async function main() {
     // Product cards live in homepage carousels; scroll until the CTA is in view.
     for (let i = 0; i < 8; i += 1) {
       const visible = await page
-        .locator('[data-track="ProductCardFooterAddToCartClick"]')
+        .locator(
+          '[data-track="ProductCardFooterAddToCartClick"]'
+        )
         .first()
         .isVisible()
         .catch(() => false)
@@ -249,14 +252,11 @@ async function main() {
         const facebook = facebookRequests
           .map(parseFacebookEvent)
           .filter(event => event.eventName === 'AddToCart')
-        const openBridge = openBridgeRequests
-          .map(parseOpenBridgeEvent)
-          .filter(event => event?.eventName === 'AddToCart')
 
-        return facebook.length >= 1 && openBridge.length >= 1
+        return facebook.length >= 1
       },
       ATC_WAIT_MS,
-      'Meta Pixel + OpenBridge AddToCart from ProductCard'
+      'Meta Pixel AddToCart from ProductCard'
     )
 
     await page.waitForTimeout(2_000)
@@ -294,10 +294,6 @@ async function main() {
     const facebookMatch = facebookEvents.filter(
       event => event.eventId === sharedEventId
     )
-    const openBridgeMatch = openBridgeEvents.filter(
-      event => event?.eventId === sharedEventId
-    )
-
     let postEventId = null
     let postPath = null
     for (const post of firstPartyPosts) {
@@ -324,10 +320,10 @@ async function main() {
       dataLayerPresent: dataLayerEvents.length >= 1,
       facebookPresent: facebookEvents.length >= 1,
       facebookSharedId: facebookMatch.length >= 1,
-      openBridgePresent: openBridgeEvents.length >= 1,
-      openBridgeSharedId: openBridgeMatch.length >= 1,
+      openBridgeAbsent: openBridgeEvents.length === 0,
       postPresent: Boolean(postEventId),
-      postPathIsAddToCart: postPath === '/api/events/add-to-cart',
+      postPathIsAddToCart:
+        postPath === '/api/events/add-to-cart',
       postSharedId: postEventId === sharedEventId
     }
 
@@ -346,7 +342,6 @@ async function main() {
         navigation?.status() === 200 &&
         Object.values(checks).every(Boolean),
       openBridgeEvents,
-      openBridgeMatch,
       postEventId,
       postPath,
       sharedEventId,

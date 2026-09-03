@@ -180,7 +180,7 @@ test('dispatches canonical events added after the app bridge loads', () => {
   )
 })
 
-test('pairs one Signals Gateway event with the canonical Meta event ID', () => {
+test('does not dispatch browser events to Signals Gateway', () => {
   const runtime = createRuntime({ signalsGateway: true })
   runtime.window.dataLayer.push(
     canonicalEvent('page_view', 'paired-page')
@@ -195,9 +195,7 @@ test('pairs one Signals Gateway event with the canonical Meta event ID', () => {
       .map(call => [call[2], call[4].eventID]),
     [['PageView', 'paired-page']]
   )
-  assert.deepEqual(queuedGatewayCalls(runtime.window), [
-    ['track', 'PageView', {}, { eventID: 'paired-page' }]
-  ])
+  assert.deepEqual(queuedGatewayCalls(runtime.window), [])
 })
 
 test('releases events recorded before the first marketing decision', () => {

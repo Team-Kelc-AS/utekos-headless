@@ -785,7 +785,7 @@ const pageViewProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call with the same event_id. Canonical Meta CAPI remains the server owner. The independent manual GTM cbq bridge stays paused, and historical blocked rows remain excluded from blind replay.',
+      'The app-owned Meta Pixel is the sole browser event owner and the canonical Meta CAPI outbox is the sole server event owner. Signals Gateway browser transport and the manual GTM cbq bridge are disabled, and historical blocked rows remain excluded from blind replay.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -885,7 +885,7 @@ const viewItemProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call with the same event_id. Canonical Meta CAPI remains the server owner, and the independent manual GTM cbq bridge remains paused.',
+      'The app-owned Meta Pixel is the sole browser event owner and the canonical Meta CAPI outbox is the sole server event owner. Signals Gateway browser transport and the manual GTM cbq bridge are disabled.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -995,7 +995,7 @@ const addToCartProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call for add_to_cart with the same event_id. Canonical Meta CAPI remains the server owner, and the independent manual GTM cbq bridge remains paused.',
+      'The app-owned Meta Pixel is the sole browser event owner for add_to_cart and the canonical Meta CAPI outbox is the sole server event owner. Signals Gateway browser transport and the manual GTM cbq bridge are disabled.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -1107,7 +1107,7 @@ const beginCheckoutProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The app-owned browser bridge dispatches one canonical Meta Pixel call and, when the consent-gated Signals Gateway SDK is enabled, one cbq call for begin_checkout with the same event_id. Canonical Meta CAPI remains the server owner, and the independent manual GTM cbq bridge remains paused.',
+      'The app-owned Meta Pixel is the sole browser event owner for begin_checkout and the canonical Meta CAPI outbox is the sole server event owner. Signals Gateway browser transport and the manual GTM cbq bridge are disabled.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({

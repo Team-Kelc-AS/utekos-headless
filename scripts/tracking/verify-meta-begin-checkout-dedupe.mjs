@@ -4,8 +4,6 @@ import { chromium } from 'playwright'
 
 const BASE_URL =
   process.env.META_BC_DEDUPE_BASE_URL ?? 'https://utekos.no'
-const SIGNALS_GATEWAY_PIXEL_EXPECTED =
-  process.env.SIGNALS_GATEWAY_PIXEL_EXPECTED === 'true'
 const PRODUCT_PATH =
   process.env.META_BC_DEDUPE_PRODUCT_PATH ??
   '/produkter/utekos-techdown'
@@ -360,16 +358,11 @@ async function main() {
           .filter(
             event => event.eventName === 'InitiateCheckout'
           )
-        const openBridge = openBridgeRequests
-          .map(parseOpenBridgeEvent)
-          .filter(
-            event => event?.eventName === 'InitiateCheckout'
-          )
 
-        return facebook.length >= 1 && openBridge.length >= 1
+        return facebook.length >= 1
       },
       WAIT_MS,
-      'Meta Pixel + managed Signals Gateway InitiateCheckout'
+      'Meta Pixel InitiateCheckout'
     )
 
     await page.waitForTimeout(2_000)
@@ -416,9 +409,6 @@ async function main() {
     const facebookMatch = facebookEvents.filter(
       event => event.eventId === sharedEventId
     )
-    const openBridgeMatch = openBridgeEvents.filter(
-      event => event?.eventId === sharedEventId
-    )
     const checks = {
       dataLayerOrPostPresent:
         dataLayerEvents.length >= 1 || Boolean(postEventId),
@@ -428,21 +418,13 @@ async function main() {
           primary?.eventId === primary?.canonicalEventId),
       facebookPresent: facebookEvents.length >= 1,
       facebookSharedId: facebookMatch.length >= 1,
-      managedSignalsGatewayPresent: openBridgeEvents.length >= 1,
-      managedSignalsGatewaySharedId: openBridgeMatch.length >= 1,
+      managedSignalsGatewayAbsent: openBridgeEvents.length === 0,
       signalsGatewayPixelContract:
         bridgeRuntime.legacyManualBridgePresent === false &&
-        (SIGNALS_GATEWAY_PIXEL_EXPECTED ?
-          bridgeRuntime.signalsGatewayQueuePresent === true &&
-          bridgeRuntime.signalsGatewaySdkLoaded === true &&
-          bridgeRuntime.signalsGatewayPixelState?.initialized ===
-            true &&
-          bridgeRuntime.signalsGatewayPixelState?.mode ===
-            'canonical_fbq_cbq_pair' &&
-          openBridgeHosts.includes('signals.utekos.no')
-        : bridgeRuntime.signalsGatewayQueuePresent === false &&
-          bridgeRuntime.signalsGatewaySdkLoaded === false &&
-          !openBridgeHosts.includes('signals.utekos.no')),
+        bridgeRuntime.signalsGatewayQueuePresent === false &&
+        bridgeRuntime.signalsGatewaySdkLoaded === false &&
+        bridgeRuntime.signalsGatewayPixelState === null &&
+        openBridgeHosts.length === 0,
       postSharedId:
         Boolean(postEventId) && postEventId === sharedEventId,
       singlePrimaryUuid: Boolean(sharedEventId)
@@ -469,7 +451,6 @@ async function main() {
         Object.values(checks).every(Boolean),
       openBridgeEvents,
       openBridgeHosts,
-      openBridgeMatch,
       openBridgeRequestCount: openBridgeRequests.length,
       openBridgeStatuses: openBridgeResponses.map(
         response => response.status
@@ -477,8 +458,6 @@ async function main() {
       postEventId,
       productPath: PRODUCT_PATH,
       sharedEventId,
-      signalsGatewayPixelExpected:
-        SIGNALS_GATEWAY_PIXEL_EXPECTED,
       url: page.url(),
       userAgent
     }

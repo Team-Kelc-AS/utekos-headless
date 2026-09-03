@@ -397,15 +397,6 @@
       eventID: entry.event_id
     })
 
-    if (typeof w.cbq === 'function') {
-      w.cbq(
-        CUSTOM_EVENTS[entry.event] ? 'trackCustom' : 'track',
-        metaEventName,
-        data,
-        { eventID: entry.event_id }
-      )
-    }
-
     state.sent[eventKey] = true
   }
 

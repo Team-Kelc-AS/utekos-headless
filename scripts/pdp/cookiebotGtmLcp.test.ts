@@ -137,7 +137,7 @@ test(
 
     assert.match(
       layoutSource,
-      /<MetaBrowserTransportLoader[\s\S]*?signalsGateway=\{signalsGatewayPixelConfig\}/,
+      /<MetaBrowserTransportLoader\s*\/>/,
       'Root layout must delegate consent-aware Meta transport loading'
     )
     assert.match(

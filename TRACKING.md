@@ -6,9 +6,9 @@
 - Pauset rollback-artefakt, skal ikke publiseres sammen med app-loaderen:
   [GTM Signals Gateway Canonical v1](scripts/tracking/gtm/signals-gateway-canonical-v1.html)
 
-Appen eier Meta `fbq(...)`-hendelsene. Signals Gateway Pixel kan bare være en
-automatisk transport/fork av disse hendelsene; manuelle `cbq('track')`- og
-`cbq('trackCustom')`-kall er forbudt.
+Appen eier Meta `fbq(...)`-hendelsene, og den kanoniske CAPI-outboxen er eneste
+servereier. Signals Gateway Pixel og manuelle `cbq('track')`- og
+`cbq('trackCustom')`-kall er deaktivert så lenge direkte CAPI er aktiv.
 
 ## SIGNALS GATEWAY GCP
 
@@ -19,7 +19,8 @@ automatisk transport/fork av disse hendelsene; manuelle `cbq('track')`- og
 
 **Custom domain:** signals.utekos.no via the Signals Gateway GCP load balancer
 
-**App kill switch:** `SIGNALS_GATEWAY_PIXEL_ENABLED` (serverlest, default `false`)
+**Legacy Vercel switch:** `SIGNALS_GATEWAY_PIXEL_ENABLED` beholdes som `false`
+i rollback-vinduet, men leses ikke lenger av appen.
 
 ### GTM Servers:
 1. .agent/gtm-servers/gtm-preview.yaml

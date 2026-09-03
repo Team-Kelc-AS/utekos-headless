@@ -8,8 +8,6 @@ const {
 } = require('meta-capi-param-builder-clientjs/package.json')
 const BASE_URL =
   process.env.META_PIXEL_SMOKE_BASE_URL ?? 'https://utekos.no'
-const SIGNALS_GATEWAY_PIXEL_EXPECTED =
-  process.env.SIGNALS_GATEWAY_PIXEL_EXPECTED === 'true'
 const PIXEL_ID = '1092362672918571'
 const TIMEOUT_MS = 45_000
 const META_COOKIE_NAMES = ['_fbc', '_fbp', 'utekos_external_id']
@@ -797,21 +795,10 @@ async function verifySurface(browser, userAgent, surface) {
         unexpectedFacebookEvents.length === 0,
       signalsGatewayPixelContract:
         runtime.legacyManualSignalsBridgePresent === false &&
-        (SIGNALS_GATEWAY_PIXEL_EXPECTED ?
-          runtime.signalsGatewayQueuePresent === true &&
-          runtime.signalsGatewaySdkLoaded === true &&
-          runtime.signalsGatewayPixelState?.initialized ===
-            true &&
-          runtime.signalsGatewayPixelState?.mode ===
-            'canonical_fbq_cbq_pair' &&
-          runtime.signalsGatewayPixelState?.pixelId ===
-            '1633085772154426486' &&
-          runtime.signalsGatewayPixelState?.host ===
-            'https://signals.utekos.no/' &&
-          openBridgeHosts.includes('signals.utekos.no')
-        : runtime.signalsGatewayQueuePresent === false &&
-          runtime.signalsGatewaySdkLoaded === false &&
-          !openBridgeHosts.includes('signals.utekos.no')),
+        runtime.signalsGatewayQueuePresent === false &&
+        runtime.signalsGatewaySdkLoaded === false &&
+        runtime.signalsGatewayPixelState === null &&
+        openBridgeHosts.length === 0,
       providerResponses:
         facebookEvents.length ===
           surface.expectedEvents.length &&
@@ -819,10 +806,8 @@ async function verifySurface(browser, userAgent, surface) {
         facebookStatuses.every(
           status => status === 200 || status === 302
         ) &&
-        openBridgeEvents.length ===
-          surface.expectedEvents.length &&
-        openBridgeStatuses.length >= openBridgeEvents.length &&
-        openBridgeStatuses.every(status => status === 200)
+        openBridgeEvents.length === 0 &&
+        openBridgeStatuses.length === 0
     }
 
     return {
@@ -868,8 +853,8 @@ async function verifySurface(browser, userAgent, surface) {
 async function main() {
   const browser = await chromium.launch({
     args: ['--disable-blink-features=AutomationControlled'],
-    // Kasada on utekos.no blocks stock Playwright Chromium from Meta
-    // /tr/ + Meta-managed Signals Gateway mirror; system Chrome passes.
+    // Kasada on utekos.no blocks stock Playwright Chromium from Meta /tr/;
+    // system Chrome passes.
     channel: 'chrome',
     headless: true
   })
@@ -899,7 +884,6 @@ async function main() {
       EXPECTED_CLIENT_NET_NEW_APPENDIX,
     ok: results.every(result => result.ok),
     results,
-    signalsGatewayPixelExpected: SIGNALS_GATEWAY_PIXEL_EXPECTED,
     userAgent
   }
 
