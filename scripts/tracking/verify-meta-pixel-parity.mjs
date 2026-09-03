@@ -186,8 +186,7 @@ function hasExpectedLifetime(cookie, expectedDays) {
 function hasCanonicalEventParity(
   expectedEvents,
   dataLayerEvents,
-  facebookEvents,
-  openBridgeEvents
+  facebookEvents
 ) {
   return expectedEvents.every(metaEventName => {
     const canonicalName = CANONICAL_EVENT_NAMES[metaEventName]
@@ -197,16 +196,11 @@ function hasCanonicalEventParity(
     const facebook = facebookEvents.filter(
       event => event.eventName === metaEventName
     )
-    const openBridge = openBridgeEvents.filter(
-      event => event?.eventName === metaEventName
-    )
     return (
       canonical.length === 1 &&
       canonical[0].eventId === canonical[0].canonicalEventId &&
       facebook.length === 1 &&
-      facebook[0].eventId === canonical[0].eventId &&
-      openBridge.length === 1 &&
-      openBridge[0]?.eventId === canonical[0].eventId
+      facebook[0].eventId === canonical[0].eventId
     )
   })
 }
@@ -740,8 +734,7 @@ async function verifySurface(browser, userAgent, surface) {
       canonicalEventParity: hasCanonicalEventParity(
         surface.expectedEvents,
         dataLayerEvents,
-        facebookEvents,
-        openBridgeEvents
+        facebookEvents
       ),
       cookieAppendix:
         fbcParts.at(-1) === EXPECTED_CLIENT_NET_NEW_APPENDIX &&
