@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import { z } from 'zod'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
+import { orderConsentSnapshotSchema } from './checkoutConsentSnapshot'
 import { metaCustomerSegmentationSchema } from './metaCustomerSegmentation'
 
 const purchaseItemSchema = z.strictObject({
@@ -39,12 +40,15 @@ export const canonicalPurchaseCommerceSchema = z.strictObject({
 })
 
 export const canonicalPurchaseSchema =
-  canonicalEventEnvelopeSchema.extend({
-    event_name: z.literal('purchase'),
-    source: z.enum(['webhook', 'server']),
-    referrer_url: z.string().url().optional(),
-    custom_data: canonicalPurchaseCommerceSchema
-  })
+  canonicalEventEnvelopeSchema
+    .omit({ consent: true })
+    .extend({
+      consent: orderConsentSnapshotSchema,
+      event_name: z.literal('purchase'),
+      source: z.enum(['webhook', 'server']),
+      referrer_url: z.string().url().optional(),
+      custom_data: canonicalPurchaseCommerceSchema
+    })
 
 export type CanonicalPurchase = z.infer<
   typeof canonicalPurchaseSchema

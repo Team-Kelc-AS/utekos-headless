@@ -286,6 +286,24 @@ test('uses a namespaced Shopify customer id only without first-party external_id
   )
 })
 
+test('keeps a missing order consent attribute unresolved instead of recording a denial', () => {
+  const order = orderPaid()
+  order.note_attributes = order.note_attributes.filter(
+    attribute => attribute.name !== 'utekos_consent'
+  )
+
+  const event = shopifyOrderToCanonicalPurchase(order)
+
+  assert.deepEqual(event.consent, {
+    analytics: 'unknown',
+    marketing: 'unknown',
+    preferences: 'unknown',
+    source: 'shopify_order_attribute',
+    version: '1',
+    resolution: 'missing'
+  })
+})
+
 test('falls through invalid and blank higher-priority phones to a normalized shipping-address phone', () => {
   const order = orderPaid()
   order.phone = 'not-a-phone'

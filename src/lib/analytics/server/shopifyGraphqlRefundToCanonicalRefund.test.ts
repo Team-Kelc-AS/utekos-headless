@@ -122,7 +122,9 @@ test('shopifyGraphqlRefundToCanonicalRefund uses deterministic ids and server so
   assert.equal(event.custom_data.value, 50)
   assert.equal(event.custom_data.currency, 'NOK')
   assert.equal(event.custom_data.items[0]?.item_id, '88')
-  assert.equal(event.consent.marketing, 'denied')
+  assert.equal(event.consent.marketing, 'unknown')
+  assert.equal(event.consent.source, 'shopify_order_attribute')
+  assert.equal(event.consent.resolution, 'missing')
 })
 
 test('shopifyGraphqlRefundToCanonicalRefund fails closed without authoritative currency', () => {

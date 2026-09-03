@@ -12,7 +12,7 @@ import {
   type ShopifyRefundWebhook
 } from './shopifyRefundWebhookPayload'
 
-const deniedConsentSnapshot =
+const unresolvedConsentSnapshot =
   parseOrderConsentFromNoteAttributes([])
 
 function parseDecimal(value: number | string) {
@@ -84,7 +84,7 @@ export function shopifyRefundToCanonicalRefund(
     event_time: parsedRefund.created_at,
     source: 'webhook',
     environment: resolveCanonicalEnvironment(),
-    consent: deniedConsentSnapshot,
+    consent: unresolvedConsentSnapshot,
     custom_data: {
       currency: resolveRefundCurrency(parsedRefund),
       value: resolveRefundValue(parsedRefund),

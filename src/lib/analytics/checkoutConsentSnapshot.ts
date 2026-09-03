@@ -1,16 +1,39 @@
-import type { ConsentSnapshot } from './canonicalEventEnvelope'
+import { z } from 'zod'
+import {
+  consentSnapshotSchema,
+  type ConsentSnapshot
+} from './canonicalEventEnvelope'
 const CART_CONSENT_ATTRIBUTE_KEY = 'utekos_consent'
 const DEFAULT_CONSENT_VERSION = '1'
 
-const deniedConsentSnapshot = {
-  analytics: 'denied',
-  marketing: 'denied',
-  preferences: 'denied',
-  source: 'cookiebot',
-  version: DEFAULT_CONSENT_VERSION
-} as const satisfies ConsentSnapshot
+export const unresolvedOrderConsentSnapshotSchema =
+  z.strictObject({
+    analytics: z.literal('unknown'),
+    marketing: z.literal('unknown'),
+    preferences: z.literal('unknown'),
+    source: z.literal('shopify_order_attribute'),
+    version: z.string().min(1),
+    resolution: z.enum([
+      'missing',
+      'empty',
+      'invalid_json',
+      'invalid_payload'
+    ])
+  })
+
+export const orderConsentSnapshotSchema = z.union([
+  consentSnapshotSchema,
+  unresolvedOrderConsentSnapshotSchema
+])
+
+export type OrderConsentSnapshot = z.infer<
+  typeof orderConsentSnapshotSchema
+>
 
 type ConsentValue = ConsentSnapshot['analytics']
+type UnresolvedConsentResolution = z.infer<
+  typeof unresolvedOrderConsentSnapshotSchema
+>['resolution']
 
 type ParsedConsentPayload = {
   analytics?: unknown
@@ -19,8 +42,12 @@ type ParsedConsentPayload = {
   version?: unknown
 }
 
-function parseConsentValue(value: unknown): ConsentValue | undefined {
-  return value === 'granted' || value === 'denied' ? value : undefined
+function parseConsentValue(
+  value: unknown
+): ConsentValue | undefined {
+  return value === 'granted' || value === 'denied' ?
+      value
+    : undefined
 }
 
 function parseConsentPayload(
@@ -52,23 +79,40 @@ function parseConsentPayload(
   }
 }
 
+function unresolvedConsentSnapshot(
+  resolution: UnresolvedConsentResolution
+): OrderConsentSnapshot {
+  return {
+    analytics: 'unknown',
+    marketing: 'unknown',
+    preferences: 'unknown',
+    source: 'shopify_order_attribute',
+    version: DEFAULT_CONSENT_VERSION,
+    resolution
+  }
+}
+
 export function parseOrderConsentFromNoteAttributes(
   noteAttributes: ReadonlyArray<{ name: string; value: string }>
-): ConsentSnapshot {
+): OrderConsentSnapshot {
   const consentAttribute = noteAttributes.find(
     attribute => attribute.name === CART_CONSENT_ATTRIBUTE_KEY
   )
 
-  if (!consentAttribute?.value)
-    return { ...deniedConsentSnapshot }
+  if (!consentAttribute) {
+    return unresolvedConsentSnapshot('missing')
+  }
+
+  if (!consentAttribute.value.trim()) {
+    return unresolvedConsentSnapshot('empty')
+  }
 
   try {
     return (
-      parseConsentPayload(
-        JSON.parse(consentAttribute.value)
-      ) ?? { ...deniedConsentSnapshot }
+      parseConsentPayload(JSON.parse(consentAttribute.value)) ??
+      unresolvedConsentSnapshot('invalid_payload')
     )
   } catch {
-    return { ...deniedConsentSnapshot }
+    return unresolvedConsentSnapshot('invalid_json')
   }
 }

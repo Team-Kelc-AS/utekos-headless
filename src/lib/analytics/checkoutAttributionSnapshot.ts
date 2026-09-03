@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import {
   canonicalUserDataSchema,
-  canonicalEventEnvelopeSchema,
   type ConsentSnapshot
 } from './canonicalEventEnvelope'
 import type { CanonicalClickIds } from './canonicalSignalContract'
@@ -11,7 +10,10 @@ import {
   parseCampaignAttribution,
   type CampaignAttribution
 } from './campaignAttribution'
-import { parseOrderConsentFromNoteAttributes } from './checkoutConsentSnapshot'
+import {
+  orderConsentSnapshotSchema,
+  parseOrderConsentFromNoteAttributes
+} from './checkoutConsentSnapshot'
 import { canonicalExperimentAssignmentSchema } from './experimentAssignment'
 
 const CONSENT_ATTRIBUTE = 'utekos_consent'
@@ -78,7 +80,7 @@ const capturedAtSchema = z.string().datetime({ offset: true })
 export const checkoutAttributionSnapshotSchema = z.strictObject({
   schema_version: z.literal(1),
   captured_at: capturedAtSchema,
-  consent: canonicalEventEnvelopeSchema.shape.consent,
+  consent: orderConsentSnapshotSchema,
   experiment: canonicalExperimentAssignmentSchema.optional(),
   browser_id: identifierMapSchema.optional(),
   campaign: campaignAttributionSchema.optional(),

@@ -391,3 +391,41 @@ test('drops malformed or non-consented external order attributes', () => {
     }
   })
 })
+
+test('distinguishes missing, empty, invalid JSON, and invalid consent payloads from denial', () => {
+  const cases = [
+    { attributes: [], resolution: 'missing' },
+    {
+      attributes: [{ name: 'utekos_consent', value: '   ' }],
+      resolution: 'empty'
+    },
+    {
+      attributes: [{ name: 'utekos_consent', value: '{broken' }],
+      resolution: 'invalid_json'
+    },
+    {
+      attributes: [
+        {
+          name: 'utekos_consent',
+          value: JSON.stringify({ marketing: 'denied' })
+        }
+      ],
+      resolution: 'invalid_payload'
+    }
+  ] as const
+
+  for (const testCase of cases) {
+    const parsed = parseOrderAttributionFromNoteAttributes(
+      testCase.attributes
+    )
+
+    assert.deepEqual(parsed.consent, {
+      analytics: 'unknown',
+      marketing: 'unknown',
+      preferences: 'unknown',
+      source: 'shopify_order_attribute',
+      version: '1',
+      resolution: testCase.resolution
+    })
+  }
+})

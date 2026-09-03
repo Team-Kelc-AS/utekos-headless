@@ -519,6 +519,26 @@ test('does not create a Google purchase dispatch when analytics consent is denie
   )
 })
 
+test('creates no provider dispatch for unresolved Shopify order consent', () => {
+  const event = purchase({
+    consent: {
+      analytics: 'unknown',
+      marketing: 'unknown',
+      preferences: 'unknown',
+      source: 'shopify_order_attribute',
+      version: '1',
+      resolution: 'missing'
+    }
+  })
+
+  assert.deepEqual(
+    planCanonicalEventDispatch(event, {
+      now: purchasePlanningNow
+    }),
+    []
+  )
+})
+
 test('marks purchase between 48 and 72 hours as late but eligible', () => {
   const event = purchase({
     event_time: '2026-07-22T22:00:00.000Z'

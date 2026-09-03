@@ -7,7 +7,7 @@ import { canonicalExperimentAssignmentSchema } from './experimentAssignment'
 
 const consentValueSchema = z.enum(['denied', 'granted'])
 
-const consentSnapshotSchema = z.strictObject({
+export const consentSnapshotSchema = z.strictObject({
   analytics: consentValueSchema,
   marketing: consentValueSchema,
   preferences: consentValueSchema,

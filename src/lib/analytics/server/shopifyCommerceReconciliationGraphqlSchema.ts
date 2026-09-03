@@ -27,6 +27,17 @@ const addressSchema = z
   .nullable()
   .optional()
 
+const displayAddressSchema = z
+  .object({
+    zip: z.string().nullable().optional(),
+    province: z.string().nullable().optional(),
+    provinceCode: z.string().nullable().optional(),
+    country: z.string().nullable().optional(),
+    countryCodeV2: z.string().nullable().optional()
+  })
+  .nullable()
+  .optional()
+
 const discountApplicationSchema = z.object({
   allocationMethod: z.string(),
   targetType: z.string(),
@@ -125,7 +136,12 @@ export const shopifyCommerceReconciliationOrderSchema = z.object(
     createdAt: z.string(),
     processedAt: z.string().nullable().optional(),
     updatedAt: z.string(),
+    closedAt: z.string().nullable().optional(),
+    cancelledAt: z.string().nullable().optional(),
     displayFinancialStatus: z.string().nullable().optional(),
+    displayFulfillmentStatus: z.string().nullable().optional(),
+    customerAcceptsMarketing: z.boolean().nullable().optional(),
+    customerLocale: z.string().nullable().optional(),
     currencyCode: z.string(),
     presentmentCurrencyCode: z.string().nullable().optional(),
     taxesIncluded: z.boolean(),
@@ -140,8 +156,10 @@ export const shopifyCommerceReconciliationOrderSchema = z.object(
       })
     ),
     totalPriceSet: moneyBagSchema,
+    subtotalPriceSet: moneyBagSchema.optional(),
     totalTaxSet: moneyBagSchema,
     totalShippingPriceSet: moneyBagSchema,
+    totalRefundedSet: moneyBagSchema.optional(),
     discountCodes: z.array(z.string()).nullable().optional(),
     discountApplications: z.object({
       pageInfo: pageInfoSchema,
@@ -149,6 +167,7 @@ export const shopifyCommerceReconciliationOrderSchema = z.object(
     }),
     shippingAddress: addressSchema,
     billingAddress: addressSchema,
+    displayAddress: displayAddressSchema,
     customer: z
       .object({
         id: z.string(),
@@ -236,7 +255,12 @@ query ShopifyCommerceReconciliation(
       createdAt
       processedAt
       updatedAt
+      closedAt
+      cancelledAt
       displayFinancialStatus
+      displayFulfillmentStatus
+      customerAcceptsMarketing
+      customerLocale
       currencyCode
       presentmentCurrencyCode
       taxesIncluded
@@ -258,6 +282,16 @@ query ShopifyCommerceReconciliation(
           currencyCode
         }
       }
+      subtotalPriceSet {
+        shopMoney {
+          amount
+          currencyCode
+        }
+        presentmentMoney {
+          amount
+          currencyCode
+        }
+      }
       totalTaxSet {
         shopMoney {
           amount
@@ -269,6 +303,16 @@ query ShopifyCommerceReconciliation(
         }
       }
       totalShippingPriceSet {
+        shopMoney {
+          amount
+          currencyCode
+        }
+        presentmentMoney {
+          amount
+          currencyCode
+        }
+      }
+      totalRefundedSet {
         shopMoney {
           amount
           currencyCode
@@ -311,6 +355,13 @@ query ShopifyCommerceReconciliation(
         phone
         provinceCode
         zip
+        countryCodeV2
+      }
+      displayAddress {
+        zip
+        province
+        provinceCode
+        country
         countryCodeV2
       }
       customer {

@@ -13,7 +13,7 @@ import type {
   ShopifyCommerceReconciliationRefund
 } from './shopifyCommerceReconciliationGraphqlSchema'
 
-const deniedConsentSnapshot =
+const unresolvedConsentSnapshot =
   parseOrderConsentFromNoteAttributes([])
 
 function parseDecimal(value: number) {
@@ -114,7 +114,7 @@ export function shopifyGraphqlRefundToCanonicalRefund(input: {
     event_time: refund.createdAt,
     source: 'server',
     environment: resolveCanonicalEnvironment(),
-    consent: deniedConsentSnapshot,
+    consent: unresolvedConsentSnapshot,
     custom_data: {
       currency,
       value: resolveRefundValue(refund, currency),

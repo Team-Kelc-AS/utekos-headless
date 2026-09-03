@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import { z } from 'zod'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
+import { orderConsentSnapshotSchema } from './checkoutConsentSnapshot'
 
 const refundItemSchema = z.strictObject({
   item_id: z.string().min(1),
@@ -18,8 +19,10 @@ export const canonicalRefundCommerceSchema = z.strictObject({
   items: z.array(refundItemSchema)
 })
 
-export const canonicalRefundSchema =
-  canonicalEventEnvelopeSchema.extend({
+export const canonicalRefundSchema = canonicalEventEnvelopeSchema
+  .omit({ consent: true })
+  .extend({
+    consent: orderConsentSnapshotSchema,
     event_name: z.literal('refund'),
     source: z.enum(['webhook', 'server']),
     referrer_url: z.string().url().optional(),

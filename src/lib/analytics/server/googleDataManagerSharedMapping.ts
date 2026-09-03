@@ -7,30 +7,67 @@ type DataManagerParameter =
 
 export const MAX_PARAMETER_VALUE_LENGTH = 100
 export const MAX_ADDITIONAL_ITEM_PARAMETERS = 24
-export const MAX_PAGE_LOCATION_LENGTH = MAX_PARAMETER_VALUE_LENGTH
-export const MAX_PAGE_REFERRER_LENGTH = MAX_PARAMETER_VALUE_LENGTH
+export const MAX_PAGE_LOCATION_LENGTH =
+  MAX_PARAMETER_VALUE_LENGTH
+export const MAX_PAGE_REFERRER_LENGTH =
+  MAX_PARAMETER_VALUE_LENGTH
 export const MAX_PAGE_TITLE_LENGTH = MAX_PARAMETER_VALUE_LENGTH
 export const MAX_USER_IDENTIFIERS = 10
 export const IP_MATCHING_RESTRICTED_COUNTRY_CODES = new Set([
-  'AT', 'BE', 'BG', 'CH', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES',
-  'FI', 'FR', 'GB', 'GR', 'HR', 'HU', 'IE', 'IS', 'IT', 'LI',
-  'LT', 'LU', 'LV', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SE',
-  'SI', 'SK', 'UK'
+  'AT',
+  'BE',
+  'BG',
+  'CH',
+  'CY',
+  'CZ',
+  'DE',
+  'DK',
+  'EE',
+  'ES',
+  'FI',
+  'FR',
+  'GB',
+  'GR',
+  'HR',
+  'HU',
+  'IE',
+  'IS',
+  'IT',
+  'LI',
+  'LT',
+  'LU',
+  'LV',
+  'MT',
+  'NL',
+  'NO',
+  'PL',
+  'PT',
+  'RO',
+  'SE',
+  'SI',
+  'SK',
+  'UK'
 ])
 const { ConsentStatus } = protos.google.ads.datamanager.v1
 
-type MappableBrowserEvent = Pick<
-  CanonicalEventEnvelope,
-  | 'browser_id'
-  | 'click_id'
-  | 'client_ip_address'
-  | 'consent'
-  | 'event_device_info'
-  | 'external_id'
-  | 'impression_id'
-  | 'location'
-  | 'user_data'
->
+type MappableBrowserEvent = Omit<
+  Pick<
+    CanonicalEventEnvelope,
+    | 'browser_id'
+    | 'click_id'
+    | 'client_ip_address'
+    | 'consent'
+    | 'event_device_info'
+    | 'external_id'
+    | 'impression_id'
+    | 'location'
+    | 'user_data'
+  >,
+  'consent'
+> & {
+  consent: { marketing: 'denied' | 'granted' | 'unknown' }
+  referrer_url?: string | undefined
+}
 
 export function resolveGoogleClientId(
   browserId: CanonicalEventEnvelope['browser_id']
@@ -83,8 +120,8 @@ export function googleDataManagerIdentifierParameter(
   value: string | null | undefined
 ) {
   if (
-    !value
-    || Array.from(value).length > MAX_PARAMETER_VALUE_LENGTH
+    !value ||
+    Array.from(value).length > MAX_PARAMETER_VALUE_LENGTH
   ) {
     return undefined
   }
@@ -129,7 +166,9 @@ function truncateUrlToOriginAndPathname(
   return `${url.origin}${pathname.join('')}`
 }
 
-export function normalizeGoogleReferrerUrl(value: string | undefined) {
+export function normalizeGoogleReferrerUrl(
+  value: string | undefined
+) {
   if (!value) return undefined
 
   const url = new URL(value)
@@ -162,10 +201,12 @@ export function limitGooglePageLocation(value: string) {
     return url.href
   }
 
-  return truncateUrlToOriginAndPathname(
-    url,
-    MAX_PAGE_LOCATION_LENGTH
-  ) ?? url.origin
+  return (
+    truncateUrlToOriginAndPathname(
+      url,
+      MAX_PAGE_LOCATION_LENGTH
+    ) ?? url.origin
+  )
 }
 
 export function compactGoogleDataManagerParameters(
@@ -178,7 +219,7 @@ export function compactGoogleDataManagerParameters(
 }
 
 export function mapGoogleDataManagerConsent(
-  consent: CanonicalEventEnvelope['consent']
+  consent: MappableBrowserEvent['consent']
 ) {
   const advertisingConsent =
     consent.marketing === 'granted' ?
@@ -208,9 +249,9 @@ export function mapGoogleDataManagerUserData(
 
   for (
     let index = 0;
-    userIdentifiers.length < MAX_USER_IDENTIFIERS
-    && (index < emailAddresses.length
-      || index < phoneNumbers.length);
+    userIdentifiers.length < MAX_USER_IDENTIFIERS &&
+    (index < emailAddresses.length ||
+      index < phoneNumbers.length);
     index += 1
   ) {
     const emailAddress = emailAddresses[index]
@@ -218,8 +259,8 @@ export function mapGoogleDataManagerUserData(
 
     if (emailAddress) userIdentifiers.push({ emailAddress })
     if (
-      phoneNumber
-      && userIdentifiers.length < MAX_USER_IDENTIFIERS
+      phoneNumber &&
+      userIdentifiers.length < MAX_USER_IDENTIFIERS
     ) {
       userIdentifiers.push({ phoneNumber })
     }
@@ -264,14 +305,14 @@ export function mapGoogleDataManagerDeviceInfo(
   const source = event.event_device_info
   const countryCode = event.location?.country_code?.toUpperCase()
   const ipAddress =
-    countryCode &&
-    !IP_MATCHING_RESTRICTED_COUNTRY_CODES.has(countryCode) ?
+    (
+      countryCode &&
+      !IP_MATCHING_RESTRICTED_COUNTRY_CODES.has(countryCode)
+    ) ?
       event.client_ip_address
     : undefined
   const deviceInfo = {
-    ...(ipAddress ?
-      { ipAddress }
-    : {}),
+    ...(ipAddress ? { ipAddress } : {}),
     ...(source?.user_agent ?
       { userAgent: source.user_agent }
     : {}),
