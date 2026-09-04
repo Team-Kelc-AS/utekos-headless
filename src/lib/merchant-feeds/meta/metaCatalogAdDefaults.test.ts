@@ -6,9 +6,9 @@ import {
   META_CATALOG_DEFAULT_TRACKING_URL_TAGS
 } from './metaCatalogAdDefaults'
 
-test('uses the product primary image tag as the catalog creative default', () => {
+test('maps each catalog placement ratio to its preferred image tag', () => {
   assert.deepEqual(META_CATALOG_DEFAULT_PREFERRED_IMAGE_TAGS, [
-    'primary'
+    '{"DEFAULT":"primary","4_5":"ASPECT_RATIO_4_5_PREFERRED","9_16":"ASPECT_RATIO_9_16_PREFERRED"}'
   ])
 })
 
