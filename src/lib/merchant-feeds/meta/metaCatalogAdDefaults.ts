@@ -1,5 +1,11 @@
+import { META_CATALOG_IMAGE_TAGS } from './metaCatalogImageTags'
+
 export const META_CATALOG_DEFAULT_PREFERRED_IMAGE_TAGS = [
-  '{"DEFAULT":"primary","4_5":"ASPECT_RATIO_4_5_PREFERRED","9_16":"ASPECT_RATIO_9_16_PREFERRED"}'
+  JSON.stringify({
+    DEFAULT: META_CATALOG_IMAGE_TAGS.primary,
+    '4_5': META_CATALOG_IMAGE_TAGS.aspectRatio4x5Preferred,
+    '9_16': META_CATALOG_IMAGE_TAGS.aspectRatio9x16Preferred
+  })
 ] as const
 
 export const META_CATALOG_DEFAULT_TRACKING_URL_TAGS = [

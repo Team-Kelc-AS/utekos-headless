@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { buildMetaCatalogItemsBatchRequests } from './buildMetaCatalogItemsBatchRequests'
+import { getMetaCatalogMedia } from './getMetaCatalogMedia'
 import type { MetaCatalogOffer } from './metaCatalogOffer'
 
 const offer: MetaCatalogOffer = {
@@ -119,6 +120,51 @@ test('builds id-only DELETE requests for offers removed from desired state', () 
   assert.deepEqual(requests.slice(1), [
     { method: 'DELETE', data: { id: '201' } },
     { method: 'DELETE', data: { id: '202' } }
+  ])
+})
+
+test('preserves multi-ratio image tags in the v26 items_batch payload', () => {
+  const media = getMetaCatalogMedia({
+    color: 'Havdyp',
+    productHandle: 'utekos-techdown',
+    curatedImages: [
+      {
+        url: 'https://utekos.no/catalog/techdown-feed-4x5.png',
+        preferences: ['feed_4_5']
+      },
+      {
+        url: 'https://utekos.no/catalog/techdown-reels-9x16.png',
+        preferences: ['reels_9_16']
+      }
+    ]
+  })
+  const [request] = buildMetaCatalogItemsBatchRequests([
+    { ...offer, images: media.images }
+  ])
+
+  assert.equal(request?.method, 'UPDATE')
+  if (request?.method !== 'UPDATE') {
+    assert.fail('Expected an UPDATE request')
+  }
+
+  assert.deepEqual(request.data.image.slice(-2), [
+    {
+      url: 'https://utekos.no/catalog/techdown-feed-4x5.png',
+      tag: [
+        'ASPECT_RATIO_4_5_PREFERRED',
+        'family_utekos_techdown',
+        'color_havdyp'
+      ]
+    },
+    {
+      url: 'https://utekos.no/catalog/techdown-reels-9x16.png',
+      tag: [
+        'ASPECT_RATIO_9_16_PREFERRED',
+        'REELS_PREFERRED',
+        'family_utekos_techdown',
+        'color_havdyp'
+      ]
+    }
   ])
 })
 
