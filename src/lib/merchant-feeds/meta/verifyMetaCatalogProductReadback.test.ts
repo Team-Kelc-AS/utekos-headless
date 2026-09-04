@@ -27,14 +27,34 @@ const product = {
   manufacturer_part_number: offer.mpn,
   availability: offer.availability,
   visibility: offer.visibility,
-  url: offer.link
+  url: offer.link,
+  image_url: 'https://utekos.no/images/techdown-primary.png',
+  additional_image_urls: [
+    'https://utekos.no/images/techdown-additional.png'
+  ],
+  images: [
+    {
+      url: 'https://utekos.no/images/techdown-primary.png',
+      tags: ['primary', 'family_utekos_techdown']
+    },
+    {
+      url: 'https://utekos.no/images/techdown-additional.png',
+      tags: ['additional', 'family_utekos_techdown']
+    }
+  ],
+  image_fetch_status: 'FETCHED'
 } satisfies MetaCatalogProductReadback
+
+const offerWithImages = {
+  ...offer,
+  images: product.images
+} satisfies MetaCatalogOffer
 
 test('verifies Google category and MPN through their v26 readback names', () => {
   assert.deepEqual(
     verifyMetaCatalogProductReadback({
       deleteOfferIds: ['deleted-id'],
-      offers: [offer],
+      offers: [offerWithImages],
       products: [product]
     }),
     {
@@ -45,6 +65,9 @@ test('verifies Google category and MPN through their v26 readback names', () => 
       missingGtinCount: 0,
       missingMpnCount: 0,
       nonPublicUrlCount: 0,
+      catalogImageCount: 2,
+      missingImageTagCount: 0,
+      imageFetchFailureCount: 0,
       deletedProductCount: 0,
       categories: ['5598']
     }
@@ -56,9 +79,46 @@ test('fails closed when live Meta fields drift from the local plan', () => {
     () =>
       verifyMetaCatalogProductReadback({
         deleteOfferIds: [],
-        offers: [offer],
+        offers: [offerWithImages],
         products: [{ ...product, category: null }]
       }),
     /variant-id\.category: readback mismatch/
+  )
+})
+
+test('fails closed when Meta changes an image tag after ingestion', () => {
+  assert.throws(
+    () =>
+      verifyMetaCatalogProductReadback({
+        deleteOfferIds: [],
+        offers: [offerWithImages],
+        products: [
+          {
+            ...product,
+            images: [
+              product.images[0]!,
+              {
+                url: 'https://utekos.no/images/techdown-additional.png',
+                tags: ['additional']
+              }
+            ]
+          }
+        ]
+      }),
+    /variant-id\.images: URL or tag readback mismatch/
+  )
+})
+
+test('fails closed when Meta has not fetched all product images', () => {
+  assert.throws(
+    () =>
+      verifyMetaCatalogProductReadback({
+        deleteOfferIds: [],
+        offers: [offerWithImages],
+        products: [
+          { ...product, image_fetch_status: 'PARTIAL_FETCH' }
+        ]
+      }),
+    /variant-id\.image_fetch_status: images not fetched/
   )
 })

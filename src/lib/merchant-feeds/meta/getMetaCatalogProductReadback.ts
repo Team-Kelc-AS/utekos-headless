@@ -19,7 +19,11 @@ const fields = [
   'manufacturer_part_number',
   'availability',
   'visibility',
-  'url'
+  'url',
+  'image_url',
+  'additional_image_urls',
+  'images',
+  'image_fetch_status'
 ].join(',')
 
 export async function getMetaCatalogProductReadback(input: {
@@ -48,16 +52,19 @@ export async function getMetaCatalogProductReadback(input: {
       headers: { Authorization: `Bearer ${accessToken}` },
       cache: 'no-store'
     })
-    const result = metaCatalogProductsReadbackResponseSchema.parse(
-      await parseMetaGraphResponse(
-        response,
-        'Meta Catalog API product readback'
+    const result =
+      metaCatalogProductsReadbackResponseSchema.parse(
+        await parseMetaGraphResponse(
+          response,
+          'Meta Catalog API product readback'
+        )
       )
-    )
 
     products.push(...result.data)
     after =
-      result.paging?.next ? result.paging.cursors?.after : undefined
+      result.paging?.next ?
+        result.paging.cursors?.after
+      : undefined
   } while (after)
 
   return products
