@@ -6,6 +6,10 @@ const migrationUrl = new URL(
   './20260801150243_add_meta_ad_creative_destinations.sql',
   import.meta.url
 )
+const v26MigrationUrl = new URL(
+  './20260904115838_allow_meta_ad_creative_destination_v26.sql',
+  import.meta.url
+)
 const marketingSchemaUrl = new URL(
   '../schemas/20_marketing.sql',
   import.meta.url
@@ -16,8 +20,9 @@ const rlsSchemaUrl = new URL(
 )
 
 test('Meta creative destinations use the v26 runtime and SCD contracts', async () => {
-  const [migrationSql, schemaSql] = await Promise.all([
+  const [migrationSql, v26MigrationSql, schemaSql] = await Promise.all([
     readFile(migrationUrl, 'utf8'),
+    readFile(v26MigrationUrl, 'utf8'),
     readFile(marketingSchemaUrl, 'utf8')
   ])
 
@@ -46,10 +51,6 @@ test('Meta creative destinations use the v26 runtime and SCD contracts', async (
 
     assert.match(
       sql,
-      /api_version text not null default 'v25\.0' check \(api_version = 'v25\.0'\)/i
-    )
-    assert.match(
-      sql,
       /unique \(\s*account_id,\s*ad_id,\s*creative_id,\s*observed_version,\s*destination_fingerprint\s*\)/i
     )
     assert.match(sql, /observed_from <= observed_through/i)
@@ -66,6 +67,31 @@ test('Meta creative destinations use the v26 runtime and SCD contracts', async (
       /effective_until timestamptz not null/i
     )
   }
+
+  assert.match(
+    migrationSql,
+    /api_version text not null default 'v25\.0' check \(api_version = 'v25\.0'\)/i
+  )
+  assert.match(
+    schemaSql,
+    /api_version text not null default 'v26\.0' check \(\s*api_version in \('v25\.0', 'v26\.0'\)\s*\)/i
+  )
+  assert.match(
+    v26MigrationSql,
+    /drop constraint meta_ad_creative_destinations_api_version_check/i
+  )
+  assert.match(
+    v26MigrationSql,
+    /alter column api_version set default 'v26\.0'/i
+  )
+  assert.match(
+    v26MigrationSql,
+    /check \(api_version in \('v25\.0', 'v26\.0'\)\) not valid/i
+  )
+  assert.match(
+    v26MigrationSql,
+    /validate constraint meta_ad_creative_destinations_api_version_check/i
+  )
 })
 
 test('Meta creative destinations preserve every runtime source classification', async () => {

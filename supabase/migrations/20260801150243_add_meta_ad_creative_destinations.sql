@@ -3,7 +3,7 @@ create table if not exists marketing.meta_ad_creative_destinations (
   account_id text not null check (account_id ~ '^[0-9]+$'),
   ad_id text not null check (ad_id ~ '^[0-9]+$'),
   creative_id text not null check (creative_id ~ '^[0-9]+$'),
-  api_version text not null default 'v26.0' check (api_version = 'v26.0'),
+  api_version text not null default 'v25.0' check (api_version = 'v25.0'),
   ad_created_time timestamptz not null,
   ad_updated_time timestamptz not null,
   effective_status text not null check (

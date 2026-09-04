@@ -372,7 +372,9 @@ create table if not exists marketing.meta_ad_creative_destinations (
   account_id text not null check (account_id ~ '^[0-9]+$'),
   ad_id text not null check (ad_id ~ '^[0-9]+$'),
   creative_id text not null check (creative_id ~ '^[0-9]+$'),
-  api_version text not null default 'v26.0' check (api_version = 'v26.0'),
+  api_version text not null default 'v26.0' check (
+    api_version in ('v25.0', 'v26.0')
+  ),
   ad_created_time timestamptz not null,
   ad_updated_time timestamptz not null,
   effective_status text not null check (
@@ -484,7 +486,7 @@ create table if not exists marketing.meta_ad_creative_destinations (
   )
 );
 comment on table marketing.meta_ad_creative_destinations is
-  'Read-only Meta Marketing API v25 creative-destination observations. Observed periods prove configuration visibility, not the exact URL delivered for an impression or click.';
+  'Read-only Meta Marketing API creative-destination observations. api_version preserves the provider version used for each observation; observed periods prove configuration visibility, not the exact URL delivered for an impression or click.';
 comment on column marketing.meta_ad_creative_destinations.effective_period_basis is
   'unknown leaves effective timestamps null; meta_activity requires a provider activity event as the effective boundary.';
 create index if not exists meta_ad_creative_destinations_ad_observed_idx
