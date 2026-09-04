@@ -18,17 +18,17 @@ const CATALOG_PRODUCT_METADATA: Record<
   },
   'utekos-dun': {
     facebookProductCategory: '528',
-    googleProductCategory: '203',
+    googleProductCategory: '5598',
     material: 'Nylon og dunfyll',
     productType:
-      'Apparel & Accessories > Clothing > Outerwear'
+      'Apparel & Accessories > Clothing > Outerwear > Coats & Jackets'
   },
   'utekos-mikrofiber': {
     facebookProductCategory: '528',
-    googleProductCategory: '203',
+    googleProductCategory: '5598',
     material: 'Nylon og mikrofiberfyll',
     productType:
-      'Apparel & Accessories > Clothing > Outerwear'
+      'Apparel & Accessories > Clothing > Outerwear > Coats & Jackets'
   },
   'utekos-stapper': {
     facebookProductCategory: '2601',
@@ -39,10 +39,10 @@ const CATALOG_PRODUCT_METADATA: Record<
   },
   'utekos-techdown': {
     facebookProductCategory: '528',
-    googleProductCategory: '203',
+    googleProductCategory: '5598',
     material: 'Nylon og TechDown™-isolasjon',
     productType:
-      'Apparel & Accessories > Clothing > Outerwear'
+      'Apparel & Accessories > Clothing > Outerwear > Coats & Jackets'
   }
 }
 

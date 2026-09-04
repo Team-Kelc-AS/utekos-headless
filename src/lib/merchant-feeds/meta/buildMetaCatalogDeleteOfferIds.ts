@@ -1,14 +1,14 @@
+import { resolveMetaCatalogProductId } from '@/lib/analytics/metaCatalogIdentity'
 import type { CatalogSyncProduct } from '@/lib/catalog-sync/types'
 import { resolveCatalogVariantPresentation } from '@/lib/products/presentation'
 
-import { buildMetaCatalogOffer } from './buildMetaCatalogOffer'
 import { getMetaCatalogOfferDisposition } from './getMetaCatalogOfferDisposition'
 
-export function buildMetaCatalogOffers(
+export function buildMetaCatalogDeleteOfferIds(
   products: CatalogSyncProduct[]
 ) {
   return products.flatMap(product =>
-    product.variants.edges.flatMap(({ node: variant }, index) => {
+    product.variants.edges.flatMap(({ node: variant }) => {
       const publicVariant = resolveCatalogVariantPresentation({
         handle: product.handle,
         selectedOptions: variant.selectedOptions
@@ -22,17 +22,9 @@ export function buildMetaCatalogOffers(
         variant
       })
 
-      if (disposition !== 'published') return []
-
-      return [
-        buildMetaCatalogOffer({
-          disposition,
-          orderingIndex: index,
-          product,
-          publicVariant,
-          variant
-        })
-      ]
+      return disposition === 'delete' ?
+          [resolveMetaCatalogProductId(variant.id)]
+        : []
     })
   )
 }

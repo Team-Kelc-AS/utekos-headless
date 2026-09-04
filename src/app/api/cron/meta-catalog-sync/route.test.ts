@@ -9,9 +9,10 @@ import {
 const syncResult = {
   catalogId: '690208780604782',
   graphApiVersion: 'v26.0',
-  offerCount: 14,
+  offerCount: 8,
   publishedCount: 8,
-  stagingCount: 6,
+  deleteCount: 6,
+  requestCount: 14,
   publishedGroupCount: 4,
   missingGtinCount: 0,
   missingMpnCount: 0,

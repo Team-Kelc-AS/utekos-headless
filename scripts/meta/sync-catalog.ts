@@ -13,7 +13,8 @@ async function main() {
     graphApiVersion: plan.graphApiVersion,
     offerCount: plan.offerCount,
     publishedCount: plan.publishedCount,
-    stagingCount: plan.stagingCount,
+    deleteCount: plan.deleteCount,
+    requestCount: plan.requestCount,
     publishedGroupCount: plan.publishedGroupCount,
     missingGtinCount: plan.missingGtinCount,
     missingMpnCount: plan.missingMpnCount,
@@ -30,7 +31,8 @@ async function main() {
       mpn: offer.mpn,
       imageCount: offer.images.length,
       videoCount: offer.videos.length
-    }))
+    })),
+    deleteOfferIds: plan.deleteOfferIds
   }
 
   if (!apply) {

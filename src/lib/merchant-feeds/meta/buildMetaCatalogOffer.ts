@@ -104,7 +104,7 @@ function buildGender(value: string | undefined, offerId: string) {
 }
 
 export function buildMetaCatalogOffer(input: {
-  disposition: Exclude<MetaCatalogOfferDisposition, 'excluded'>
+  disposition: Extract<MetaCatalogOfferDisposition, 'published'>
   orderingIndex: number
   product: CatalogSyncProduct
   publicVariant: Extract<
@@ -182,9 +182,7 @@ export function buildMetaCatalogOffer(input: {
     'utekos',
     `family_${product.handle.replaceAll('-', '_')}`,
     `color_${slugifyVariantOption(color).replaceAll('-', '_')}`,
-    disposition === 'published' ?
-      'catalog_active'
-    : 'catalog_staging',
+    'catalog_active',
     ...(product.handle === 'utekos-stapper' ?
       ['collection_minimum_four']
     : [])
@@ -207,8 +205,7 @@ export function buildMetaCatalogOffer(input: {
     description,
     richTextDescription: `<p>${escapeHtml(description)}</p>`,
     shortDescription: normalizeText(description, 500),
-    availability:
-      disposition === 'published' ? 'in stock' : 'out of stock',
+    availability: 'in stock',
     visibility: disposition,
     condition: 'new',
     price: prices.price,

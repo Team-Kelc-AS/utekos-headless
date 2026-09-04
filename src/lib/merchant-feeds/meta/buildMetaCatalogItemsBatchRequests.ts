@@ -97,9 +97,16 @@ function buildRequest(
 }
 
 export function buildMetaCatalogItemsBatchRequests(
-  offers: readonly MetaCatalogOffer[]
+  offers: readonly MetaCatalogOffer[],
+  deleteOfferIds: readonly string[] = []
 ) {
   return metaCatalogItemsBatchRequestsSchema.parse(
-    offers.map(buildRequest)
+    [
+      ...offers.map(buildRequest),
+      ...deleteOfferIds.map(id => ({
+        method: 'DELETE' as const,
+        data: { id }
+      }))
+    ]
   )
 }

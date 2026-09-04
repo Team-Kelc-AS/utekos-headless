@@ -27,8 +27,8 @@ const itemDataSchema = z.strictObject({
   description: z.string().min(1).max(5000),
   rich_text_description: z.string().min(1).max(5000),
   short_description: z.string().min(1).max(500),
-  availability: z.enum(['in stock', 'out of stock']),
-  visibility: z.enum(['published', 'staging']),
+  availability: z.literal('in stock'),
+  visibility: z.literal('published'),
   condition: z.literal('new'),
   price: z.string().regex(/^\d+\.\d{2} NOK$/),
   sale_price: z.string().regex(/^\d+\.\d{2} NOK$/).optional(),
@@ -59,10 +59,23 @@ const itemDataSchema = z.strictObject({
   ordering_index: z.number().int().min(0)
 })
 
-export const metaCatalogItemsBatchRequestSchema = z.strictObject({
+const updateRequestSchema = z.strictObject({
   method: z.literal('UPDATE'),
   data: itemDataSchema
 })
+
+const deleteRequestSchema = z.strictObject({
+  method: z.literal('DELETE'),
+  data: z.strictObject({
+    id: z.string().min(1).max(100)
+  })
+})
+
+export const metaCatalogItemsBatchRequestSchema =
+  z.discriminatedUnion('method', [
+    updateRequestSchema,
+    deleteRequestSchema
+  ])
 
 export const metaCatalogItemsBatchRequestsSchema = z
   .array(metaCatalogItemsBatchRequestSchema)

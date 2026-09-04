@@ -1,12 +1,13 @@
 import type { CatalogSyncProduct } from '@/lib/catalog-sync/types'
 
+import { buildMetaCatalogDeleteOfferIds } from './buildMetaCatalogDeleteOfferIds'
 import { buildMetaCatalogItemsBatchRequests } from './buildMetaCatalogItemsBatchRequests'
 import { buildMetaCatalogOffers } from './buildMetaCatalogOffers'
 import {
   META_CATALOG_EXPECTED_OFFER_COUNT,
   META_CATALOG_EXPECTED_PUBLISHED_COUNT,
   META_CATALOG_EXPECTED_PUBLISHED_GROUP_COUNT,
-  META_CATALOG_EXPECTED_STAGING_COUNT,
+  META_CATALOG_EXPECTED_DELETE_COUNT,
   META_CATALOG_ID,
   META_GRAPH_API_VERSION
 } from './metaCatalogConstants'
@@ -15,12 +16,13 @@ export function buildMetaCatalogSyncPlan(
   products: CatalogSyncProduct[]
 ) {
   const offers = buildMetaCatalogOffers(products)
-  const requests = buildMetaCatalogItemsBatchRequests(offers)
+  const deleteOfferIds = buildMetaCatalogDeleteOfferIds(products)
+  const requests = buildMetaCatalogItemsBatchRequests(
+    offers,
+    deleteOfferIds
+  )
   const publishedOffers = offers.filter(
     offer => offer.visibility === 'published'
-  )
-  const stagingOffers = offers.filter(
-    offer => offer.visibility === 'staging'
   )
   const publishedGroupCount = new Set(
     publishedOffers.map(offer => offer.itemGroupId)
@@ -39,10 +41,10 @@ export function buildMetaCatalogSyncPlan(
 
   if (
     publishedOffers.length !== META_CATALOG_EXPECTED_PUBLISHED_COUNT ||
-    stagingOffers.length !== META_CATALOG_EXPECTED_STAGING_COUNT
+    deleteOfferIds.length !== META_CATALOG_EXPECTED_DELETE_COUNT
   ) {
     throw new Error(
-      `Meta catalog plan expected ${META_CATALOG_EXPECTED_PUBLISHED_COUNT} published and ${META_CATALOG_EXPECTED_STAGING_COUNT} staging offers, received ${publishedOffers.length} and ${stagingOffers.length}`
+      `Meta catalog plan expected ${META_CATALOG_EXPECTED_PUBLISHED_COUNT} published offers and ${META_CATALOG_EXPECTED_DELETE_COUNT} deleted offer IDs, received ${publishedOffers.length} and ${deleteOfferIds.length}`
     )
   }
 
@@ -70,7 +72,8 @@ export function buildMetaCatalogSyncPlan(
     graphApiVersion: META_GRAPH_API_VERSION,
     offerCount: offers.length,
     publishedCount: publishedOffers.length,
-    stagingCount: stagingOffers.length,
+    deleteCount: deleteOfferIds.length,
+    requestCount: requests.length,
     publishedGroupCount,
     missingGtinCount,
     missingMpnCount,
@@ -84,6 +87,7 @@ export function buildMetaCatalogSyncPlan(
       0
     ),
     offers,
+    deleteOfferIds,
     requests
   }
 }

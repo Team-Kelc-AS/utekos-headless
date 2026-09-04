@@ -2,7 +2,7 @@ import type { CatalogSyncWeightUnit } from '@/lib/catalog-sync/types'
 
 export type MetaCatalogOfferDisposition =
   | 'published'
-  | 'staging'
+  | 'delete'
   | 'excluded'
 
 export type MetaCatalogMediaAsset = {
@@ -23,8 +23,8 @@ export type MetaCatalogOffer = {
   description: string
   richTextDescription: string
   shortDescription: string
-  availability: 'in stock' | 'out of stock'
-  visibility: Exclude<MetaCatalogOfferDisposition, 'excluded'>
+  availability: 'in stock'
+  visibility: 'published'
   condition: 'new'
   price: string
   salePrice: string | null

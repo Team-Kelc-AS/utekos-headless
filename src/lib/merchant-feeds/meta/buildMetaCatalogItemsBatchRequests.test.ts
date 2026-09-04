@@ -25,7 +25,7 @@ const offer: MetaCatalogOffer = {
   ],
   videos: [],
   brand: 'Utekos',
-  googleProductCategory: '203',
+  googleProductCategory: '5598',
   facebookProductCategory: '528',
   productType: 'Apparel & Accessories > Clothing > Outerwear',
   gtin: '4006381333931',
@@ -79,7 +79,7 @@ test('builds a v26 items_batch UPDATE with documented product fields', () => {
     ],
     brand: 'Utekos',
     item_group_id: '100',
-    google_product_category: '203',
+    google_product_category: '5598',
     fb_product_category: '528',
     product_type: 'Apparel & Accessories > Clothing > Outerwear',
     gtin: '4006381333931',
@@ -108,6 +108,18 @@ test('builds a v26 items_batch UPDATE with documented product fields', () => {
     custom_number_0: 4,
     ordering_index: 1
   })
+})
+
+test('builds id-only DELETE requests for offers removed from desired state', () => {
+  const requests = buildMetaCatalogItemsBatchRequests(
+    [offer],
+    ['201', '202']
+  )
+
+  assert.deepEqual(requests.slice(1), [
+    { method: 'DELETE', data: { id: '201' } },
+    { method: 'DELETE', data: { id: '202' } }
+  ])
 })
 
 test('rejects a Shopify checkout URL at the batch schema boundary', () => {

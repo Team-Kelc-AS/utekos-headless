@@ -28,13 +28,13 @@ export function getMetaCatalogOfferDisposition(input: {
     return 'excluded'
   }
 
-  if (product.handle === 'utekos-dun') return 'staging'
+  if (product.handle === 'utekos-dun') return 'delete'
 
   if (
     product.handle === 'utekos-mikrofiber' &&
     publicOptions.color !== 'Fjellblå'
   ) {
-    return 'staging'
+    return 'delete'
   }
 
   if (
@@ -48,5 +48,5 @@ export function getMetaCatalogOfferDisposition(input: {
     variant.inventoryQuantity !== null &&
     variant.inventoryQuantity > 0 ?
       'published'
-    : 'staging'
+    : 'delete'
 }

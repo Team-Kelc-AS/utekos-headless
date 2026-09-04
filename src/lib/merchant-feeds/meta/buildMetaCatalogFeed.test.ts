@@ -125,7 +125,7 @@ test('publishes only in-stock variants with complete Meta fields', () => {
     'Utekos TechDown™ Havdyp - Middels'
   )
   assert.equal(rows[0]?.gtin, '4006381333931')
-  assert.equal(rows[0]?.google_product_category, '203')
+  assert.equal(rows[0]?.google_product_category, '5598')
   assert.equal(rows[0]?.fb_product_category, '528')
   assert.equal(rows[0]?.brand, 'Utekos')
   assert.equal(rows[0]?.color, 'Havdyp')
