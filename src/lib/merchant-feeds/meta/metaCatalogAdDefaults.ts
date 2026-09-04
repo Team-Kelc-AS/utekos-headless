@@ -8,5 +8,10 @@ export const META_CATALOG_DEFAULT_TRACKING_URL_TAGS = [
   'utm_campaign={{campaign.id}}',
   'utm_id={{campaign.id}}',
   'utm_term={{adset.id}}',
-  'utm_content={{ad.id}}'
+  'utm_content={{ad.id}}',
+  'campaign_id={{campaign.id}}',
+  'adset_id={{adset.id}}',
+  'ad_id={{ad.id}}',
+  'placement={{placement}}',
+  'site_source_name={{site_source_name}}'
 ].join('&')
