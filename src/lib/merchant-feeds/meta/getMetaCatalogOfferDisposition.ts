@@ -28,7 +28,10 @@ export function getMetaCatalogOfferDisposition(input: {
     return 'excluded'
   }
 
-  if (product.handle === 'utekos-dun') {
+  if (
+    product.handle === 'utekos-dun' ||
+    product.handle === 'utekos-stapper'
+  ) {
     return 'delete'
   }
 
