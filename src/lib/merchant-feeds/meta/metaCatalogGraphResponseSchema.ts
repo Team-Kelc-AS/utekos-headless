@@ -6,15 +6,18 @@ const messageSchema = z
 
 export const metaCatalogItemsBatchResponseSchema = z.object({
   handles: z.array(z.string().min(1)).max(1),
-  validation_status: z.array(
-    z
-      .object({
-        retailer_id: z.string().min(1),
-        errors: z.array(messageSchema).optional().default([]),
-        warnings: z.array(messageSchema).optional().default([])
-      })
-      .passthrough()
-  )
+  validation_status: z
+    .array(
+      z
+        .object({
+          retailer_id: z.string().min(1),
+          errors: z.array(messageSchema).optional().default([]),
+          warnings: z.array(messageSchema).optional().default([])
+        })
+        .passthrough()
+    )
+    .optional()
+    .default([])
 })
 
 const batchStatusSchema = z

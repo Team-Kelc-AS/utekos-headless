@@ -78,3 +78,17 @@ test('fails closed on immediate validation errors', async () => {
     /invalid item/
   )
 })
+
+test('accepts a v26 success response without validation_status', async () => {
+  const fetchImpl: typeof fetch = async () =>
+    Response.json({ handles: ['batch-handle'] })
+
+  const result = await postMetaCatalogItemsBatch({
+    accessToken: 'secret-token',
+    requests,
+    fetchImpl
+  })
+
+  assert.equal(result.handles[0], 'batch-handle')
+  assert.deepEqual(result.validation_status, [])
+})

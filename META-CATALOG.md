@@ -33,6 +33,8 @@ Varianttitler følger `Produkt Farge - Størrelse`, for eksempel `Utekos TechDow
 
 `pnpm run meta:catalog:sync` sender den validerte planen til `POST /v26.0/{catalog_id}/items_batch`, venter på batch-status og feiler hvis Meta rapporterer feil eller ugyldige ID-er.
 
+Meta kan utelate `validation_status` i en vellykket v26-respons når ingen umiddelbare valideringsmeldinger finnes. Klienten normaliserer dette til en tom liste, men krever fortsatt én batch-handle og fullfører alltid den separate `check_batch_request_status`-kontrollen.
+
 Produksjonscron ligger på `/api/cron/meta-catalog-sync` og kjører hvert 15. minutt. Den er fail-closed og krever alle disse miljøvariablene:
 
 - `CATALOG_API_TOKEN`
