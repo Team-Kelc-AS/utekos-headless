@@ -70,6 +70,7 @@
     "merchant:sync": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/merchant/sync.ts",
     "meta:catalog:plan": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/meta/sync-catalog.ts",
     "meta:catalog:sync": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/meta/sync-catalog.ts --apply",
+    "meta:catalog:verify": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/meta/verify-catalog.ts",
     "meta:catalog-ad:plan": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/meta/catalog-ad.ts",
     "meta:catalog-ad:validate": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/meta/catalog-ad.ts --validate",
     "meta:catalog-ad:create": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/meta/catalog-ad.ts --apply",
