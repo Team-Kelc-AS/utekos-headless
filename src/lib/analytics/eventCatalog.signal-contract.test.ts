@@ -84,6 +84,14 @@ test('requires complete Meta website matching projection', () => {
       'required',
       `meta:${eventName}: event_source_url`
     )
+    assert.ok(
+      meta.requiredParameters.includes('event_source_url'),
+      `meta:${eventName}: event_source_url parameter`
+    )
+    assert.ok(
+      meta.requiredParameters.includes('user_data'),
+      `meta:${eventName}: user_data parameter`
+    )
     assert.equal(
       meta.signalDelivery.client_ip_address,
       'send_when_available',
@@ -91,7 +99,7 @@ test('requires complete Meta website matching projection', () => {
     )
     assert.equal(
       meta.signalDelivery.client_user_agent,
-      'send_when_available',
+      'required',
       `meta:${eventName}: client_user_agent`
     )
     assert.equal(

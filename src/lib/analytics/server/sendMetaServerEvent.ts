@@ -4,6 +4,7 @@ import {
   type ServerEvent
 } from 'facebook-nodejs-business-sdk'
 import { z } from 'zod'
+import { assertMetaServerEvent } from './assertMetaServerEvent'
 
 const META_PARTNER_AGENT = 'utekos-headless'
 const META_REQUEST_TIMEOUT_MS = 10_000
@@ -251,6 +252,8 @@ export async function sendMetaServerEvent(
   config: MetaConversionsApiConfig,
   dependencies: MetaSenderDependencies = defaultDependencies
 ): Promise<MetaSendResult> {
+  assertMetaServerEvent(event)
+
   const request = dependencies
     .createRequest(config.accessToken, config.pixelId)
     .setEvents([event])

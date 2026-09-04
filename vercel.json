@@ -47,6 +47,10 @@
     {
       "path": "/api/cron/meta-ad-delivery-insights",
       "schedule": "17 10 * * *"
+    },
+    {
+      "path": "/api/cron/meta-catalog-sync",
+      "schedule": "*/15 * * * *"
     }
   ],
   "headers": [

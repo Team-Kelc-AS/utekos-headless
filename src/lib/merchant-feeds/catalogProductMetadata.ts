@@ -1,4 +1,5 @@
 export type CatalogProductMetadata = {
+  facebookProductCategory: string
   googleProductCategory: string
   material: string
   productType: string
@@ -9,32 +10,37 @@ const CATALOG_PRODUCT_METADATA: Record<
   CatalogProductMetadata
 > = {
   comfyrobe: {
-    googleProductCategory: '187',
-    material: 'Sherpa',
+    facebookProductCategory: '528',
+    googleProductCategory: '5598',
+    material: 'HydroGuard™-skall og SherpaCore™-fôr',
     productType:
       'Apparel & Accessories > Clothing > Outerwear > Coats & Jackets'
   },
   'utekos-dun': {
+    facebookProductCategory: '528',
     googleProductCategory: '203',
-    material: 'Down',
+    material: 'Nylon og dunfyll',
     productType:
       'Apparel & Accessories > Clothing > Outerwear'
   },
   'utekos-mikrofiber': {
+    facebookProductCategory: '528',
     googleProductCategory: '203',
-    material: 'Nylon',
+    material: 'Nylon og mikrofiberfyll',
     productType:
       'Apparel & Accessories > Clothing > Outerwear'
   },
   'utekos-stapper': {
-    googleProductCategory: '1013',
-    material: 'Nylon',
+    facebookProductCategory: '2601',
+    googleProductCategory: '5636',
+    material: 'Slitesterkt kompresjonsstoff',
     productType:
-      'Sporting Goods > Outdoor Recreation > Camping & Hiking'
+      'Sporting Goods > Outdoor Recreation > Camping & Hiking > Compression Sacks'
   },
   'utekos-techdown': {
+    facebookProductCategory: '528',
     googleProductCategory: '203',
-    material: 'Nylon',
+    material: 'Nylon og TechDown™-isolasjon',
     productType:
       'Apparel & Accessories > Clothing > Outerwear'
   }

@@ -1325,6 +1325,8 @@ const purchaseProviders = {
     requiredParameters: [
       ...baseProviderParameters,
       'action_source',
+      'event_source_url',
+      'user_data',
       'content_ids',
       'currency',
       'value'

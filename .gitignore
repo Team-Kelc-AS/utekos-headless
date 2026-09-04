@@ -67,6 +67,7 @@ next-env.d.ts
 # install script must be tracked. MCP configs and debug logs stay ignored.
 /.agent/
 /.agents/
+/.claude/
 /.codex/
 /.cursor/*
 !/.cursor/environment.json

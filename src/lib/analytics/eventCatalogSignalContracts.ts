@@ -237,7 +237,7 @@ const googleSignals = {
 const metaSignals = {
   event_source_url: 'required',
   client_ip_address: 'send_when_available',
-  client_user_agent: 'send_when_available',
+  client_user_agent: 'required',
   external_id: 'send_when_available',
   click_ids: 'not_applicable',
   meta_fbclid: 'derive_to_provider_format',

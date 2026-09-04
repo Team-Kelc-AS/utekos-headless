@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import type { ServerEvent } from 'facebook-nodejs-business-sdk'
+import {
+  ServerEvent,
+  UserData
+} from 'facebook-nodejs-business-sdk'
 import {
   createMetaHttpService,
   readMetaConversionsApiConfig,
@@ -59,7 +62,15 @@ test('configures one Meta request and projects its receipt', async () => {
     }
   }
   const result = await sendMetaServerEvent(
-    {} as ServerEvent,
+    new ServerEvent()
+      .setActionSource('website')
+      .setEventId('event-1')
+      .setEventName('Purchase')
+      .setEventSourceUrl('https://utekos.no/')
+      .setEventTime(1_756_684_800)
+      .setUserData(
+        new UserData().setClientUserAgent('Mozilla/5.0')
+      ),
     {
       accessToken: 'token',
       appSecret: 'secret',
@@ -103,12 +114,97 @@ test('rejects a provider response that did not accept exactly one event', async 
 
   await assert.rejects(
     sendMetaServerEvent(
-      {} as ServerEvent,
+      new ServerEvent()
+        .setActionSource('app')
+        .setEventId('app-event-1')
+        .setEventName('Purchase')
+        .setEventTime(1_756_684_800)
+        .setUserData(new UserData()),
       { accessToken: 'token', pixelId: 'pixel' },
       { createRequest: () => request }
     ),
     /received 0 events; expected 1/
   )
+})
+
+test('rejects events without the base Meta server parameters before creating a request', async () => {
+  let requestCreated = false
+
+  await assert.rejects(
+    sendMetaServerEvent(
+      new ServerEvent(),
+      { accessToken: 'token', pixelId: 'pixel' },
+      {
+        createRequest: () => {
+          requestCreated = true
+          throw new Error('request must not be created')
+        }
+      }
+    ),
+    error => {
+      assert.ok(error instanceof Error)
+      assert.match(error.message, /action_source/)
+      assert.match(error.message, /event_id/)
+      assert.match(error.message, /event_name/)
+      assert.match(error.message, /event_time/)
+      assert.match(error.message, /user_data/)
+      return true
+    }
+  )
+  assert.equal(requestCreated, false)
+})
+
+test('rejects website events without event_source_url before creating a request', async () => {
+  let requestCreated = false
+  const event = new ServerEvent()
+    .setActionSource('website')
+    .setEventId('event-1')
+    .setEventName('Purchase')
+    .setEventTime(1_756_684_800)
+    .setUserData(
+      new UserData().setClientUserAgent('Mozilla/5.0')
+    )
+
+  await assert.rejects(
+    sendMetaServerEvent(
+      event,
+      { accessToken: 'token', pixelId: 'pixel' },
+      {
+        createRequest: () => {
+          requestCreated = true
+          throw new Error('request must not be created')
+        }
+      }
+    ),
+    /event_source_url/
+  )
+  assert.equal(requestCreated, false)
+})
+
+test('rejects website events without client_user_agent before creating a request', async () => {
+  let requestCreated = false
+  const event = new ServerEvent()
+    .setActionSource('website')
+    .setEventId('event-1')
+    .setEventName('InitiateCheckout')
+    .setEventSourceUrl('https://utekos.no/produkter')
+    .setEventTime(1_756_684_800)
+    .setUserData(new UserData())
+
+  await assert.rejects(
+    sendMetaServerEvent(
+      event,
+      { accessToken: 'token', pixelId: 'pixel' },
+      {
+        createRequest: () => {
+          requestCreated = true
+          throw new Error('request must not be created')
+        }
+      }
+    ),
+    /client_user_agent/
+  )
+  assert.equal(requestCreated, false)
 })
 
 test('uses the SDK HTTP override to send one validated request', async () => {
