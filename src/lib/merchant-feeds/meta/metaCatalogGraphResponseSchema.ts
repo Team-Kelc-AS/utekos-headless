@@ -52,6 +52,9 @@ export const metaGraphErrorResponseSchema = z
         type: z.string().optional(),
         code: z.number().optional(),
         error_subcode: z.number().optional(),
+        error_user_title: z.string().optional(),
+        error_user_msg: z.string().optional(),
+        is_transient: z.boolean().optional(),
         fbtrace_id: z.string().optional()
       })
       .passthrough()
