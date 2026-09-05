@@ -69,3 +69,23 @@ test('rejects curated image URLs that Meta cannot download securely', () => {
     /must use HTTPS/
   )
 })
+
+test('uses only approved TechDown media and includes one catalog video', () => {
+  const media = getMetaCatalogMedia({
+    color: 'Havdyp',
+    productHandle: 'utekos-techdown'
+  })
+
+  assert.equal(media.images.length, 6)
+  assert.equal(media.videos.length, 1)
+  assert.deepEqual(media.images[0]?.tags, [
+    'primary',
+    'INSTAGRAM_PREFERRED',
+    'family_utekos_techdown',
+    'color_havdyp'
+  ])
+  assert.equal(
+    media.videos[0]?.url,
+    'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/9x16/video-1-1440x2560-56e99ccafb5d.mp4'
+  )
+})

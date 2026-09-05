@@ -9,6 +9,14 @@ export const META_CATALOG_IMAGE_TAGS = {
 } as const
 
 export const META_CATALOG_IMAGE_PREFERENCE_TAGS = {
+  default_1_1: [
+    META_CATALOG_IMAGE_TAGS.primary,
+    META_CATALOG_IMAGE_TAGS.instagramPreferred
+  ],
+  additional_1_1: [
+    META_CATALOG_IMAGE_TAGS.additional,
+    META_CATALOG_IMAGE_TAGS.instagramPreferred
+  ],
   instagram: [META_CATALOG_IMAGE_TAGS.instagramPreferred],
   feed_4_5: [META_CATALOG_IMAGE_TAGS.aspectRatio4x5Preferred],
   full_screen_9_16: [

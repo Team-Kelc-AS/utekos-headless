@@ -27,8 +27,20 @@ export function getMetaCatalogMedia(input: {
   curatedImages?: readonly MetaCatalogCuratedImage[]
   productHandle: string
 }) {
+  const manifest =
+    META_CATALOG_MEDIA_MANIFEST_BY_HANDLE[
+      input.productHandle as keyof typeof META_CATALOG_MEDIA_MANIFEST_BY_HANDLE
+    ]
+
+  if (!manifest) {
+    throw new Error(
+      `Meta catalog product ${input.productHandle} is missing a media manifest`
+    )
+  }
+
   const imageUrls =
-    input.productHandle === 'utekos-dun' ?
+    !manifest.includeDefaultImages ? []
+    : input.productHandle === 'utekos-dun' ?
       [`${MERCHANT_FEED_SITE_URL}/schema-bilder/utekos-dun.png`]
     : (() => {
         const images = getPinterestCatalogImageUrls(
@@ -52,17 +64,6 @@ export function getMetaCatalogMedia(input: {
       ]
     })
   )
-  const manifest =
-    META_CATALOG_MEDIA_MANIFEST_BY_HANDLE[
-      input.productHandle as keyof typeof META_CATALOG_MEDIA_MANIFEST_BY_HANDLE
-    ]
-
-  if (!manifest) {
-    throw new Error(
-      `Meta catalog product ${input.productHandle} is missing a media manifest`
-    )
-  }
-
   for (const curatedImage of input.curatedImages ?? manifest.images) {
     const url = assertCatalogMediaUrl(curatedImage.url)
     const preferenceTags = curatedImage.preferences.flatMap(
@@ -88,6 +89,12 @@ export function getMetaCatalogMedia(input: {
   if (images.length > 21) {
     throw new Error(
       `Meta catalog product ${input.productHandle} exceeds 21 images`
+    )
+  }
+
+  if (manifest.videos.length > 20) {
+    throw new Error(
+      `Meta catalog product ${input.productHandle} exceeds 20 videos`
     )
   }
 
