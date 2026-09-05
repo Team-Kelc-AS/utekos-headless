@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { getCachedProductCards } from '@/api/lib/products/getCachedProductCards'
 import { fetchProductCardsWithRetry } from '@/api/lib/products/fetchProductCardsWithRetry'
 import {
   deleteRelatedProductsSnapshot,
@@ -40,7 +41,7 @@ export async function loadRelatedProducts(
 ): Promise<ProductCardModel[]> {
   const fetchCards =
     dependencies.fetchProductCardsWithRetry ??
-    fetchProductCardsWithRetry
+    getCachedProductCards
   const getSnapshot =
     dependencies.getSnapshot ?? getRelatedProductsSnapshot
   const deleteSnapshot =
