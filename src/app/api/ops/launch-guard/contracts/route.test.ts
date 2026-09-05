@@ -31,7 +31,8 @@ test('checks every collector contract without calling a collector or store', asy
   for (const contract of [
     'page_view',
     'add_to_cart',
-    'begin_checkout'
+    'begin_checkout',
+    'cart_lines'
   ]) {
     const response = await handleLaunchGuardContractProbe(
       request(contract),

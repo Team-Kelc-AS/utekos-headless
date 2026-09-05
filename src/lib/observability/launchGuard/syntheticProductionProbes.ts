@@ -34,7 +34,6 @@ type ProbeDefinition = {
   surface: string
 }
 
-const INVALID_CONTRACT_BODY = '{}'
 const JSON_HEADERS = {
   'Accept': 'application/json',
   'Content-Type': 'application/json'
@@ -107,19 +106,25 @@ const probes: readonly ProbeDefinition[] = [
     surface: surface as string
   })),
   {
-    body: INVALID_CONTRACT_BODY,
+    authorizeWithCronSecret: true,
+    body: JSON.stringify({ contract: 'cart_lines' }),
     critical: true,
-    expected: response => ({
-      ok: response.status === 400,
+    expected: (response: Response, body: string) => ({
+      ok:
+        response.status === 200 &&
+        body.includes('invalid_contract_rejected'),
       resultCode:
-        response.status === 400 ?
+        (
+          response.status === 200 &&
+          body.includes('invalid_contract_rejected')
+        ) ?
           'invalid_cart_rejected'
         : 'invalid_cart_unexpected_status'
     }),
     headers: JSON_HEADERS,
     integration: 'shopify',
     method: 'POST',
-    path: '/api/cart/lines',
+    path: '/api/ops/launch-guard/contracts',
     surface: 'cart_contract'
   },
   {

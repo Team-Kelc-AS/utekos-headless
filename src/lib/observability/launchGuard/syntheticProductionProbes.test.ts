@@ -43,16 +43,12 @@ function responseFor(url: URL, init: RequestInit) {
     }
     assert.match(
       payload.contract,
-      /^(page_view|add_to_cart|begin_checkout)$/
+      /^(page_view|add_to_cart|begin_checkout|cart_lines)$/
     )
     return Response.json({
       ok: true,
       result: 'invalid_contract_rejected'
     })
-  }
-
-  if (url.pathname === '/api/cart/lines') {
-    return Response.json({ success: false }, { status: 400 })
   }
 
   if (url.pathname === '/api/cart/checkout') {

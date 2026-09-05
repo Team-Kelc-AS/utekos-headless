@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { canonicalAddToCartSchema } from '@/lib/analytics/addToCartEvent'
 import { canonicalBeginCheckoutSchema } from '@/lib/analytics/beginCheckoutEvent'
 import { canonicalPageViewSchema } from '@/lib/analytics/pageViewEvent'
+import { addCartLinesRequestSchema } from '@/lib/cart/addCartLinesRequestSchema'
 import { hasValidCronAuthorization } from '@/lib/security/hasValidCronAuthorization'
 
 const noStoreHeaders = { 'Cache-Control': 'no-store' } as const
@@ -10,14 +11,16 @@ const launchGuardContractProbeSchema = z.strictObject({
   contract: z.enum([
     'page_view',
     'add_to_cart',
-    'begin_checkout'
+    'begin_checkout',
+    'cart_lines'
   ])
 })
 
 const collectorContracts = {
   page_view: canonicalPageViewSchema,
   add_to_cart: canonicalAddToCartSchema,
-  begin_checkout: canonicalBeginCheckoutSchema
+  begin_checkout: canonicalBeginCheckoutSchema,
+  cart_lines: addCartLinesRequestSchema
 } as const
 
 type Dependencies = { getCronSecret: () => string | undefined }
