@@ -29,3 +29,16 @@ test('uses a canonical jpg extension for jpeg content', () => {
     'meta/catalog/v26/utekos-techdown/9x16/story-aaaaaaaaaaaa.jpg'
   )
 })
+
+test('keeps non-placement catalog primary images in the original directory', () => {
+  assert.equal(
+    buildMetaCatalogMediaBlobPathname({
+      aspectRatio: 'original',
+      contentHash: 'b'.repeat(64),
+      fileName: 'Comfy Robe Primary.png',
+      format: 'png',
+      productHandle: 'comfyrobe'
+    }),
+    'meta/catalog/v26/comfyrobe/original/comfy-robe-primary-bbbbbbbbbbbb.png'
+  )
+})

@@ -89,3 +89,31 @@ test('uses only approved TechDown media and includes one catalog video', () => {
     'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/9x16/video-1-1440x2560-56e99ccafb5d.mp4'
   )
 })
+
+test('uses only the approved Comfyrobe and Mikrofiber catalog cards', () => {
+  const comfyrobe = getMetaCatalogMedia({
+    color: 'Fjellnatt',
+    productHandle: 'comfyrobe'
+  })
+  const mikrofiber = getMetaCatalogMedia({
+    color: 'Fjellblå',
+    productHandle: 'utekos-mikrofiber'
+  })
+
+  assert.deepEqual(comfyrobe.images, [
+    {
+      url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/original/comfy-robe-1440x1800-b91987803ef1.png',
+      tags: ['primary', 'family_comfyrobe', 'color_fjellnatt']
+    }
+  ])
+  assert.deepEqual(mikrofiber.images, [
+    {
+      url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-mikrofiber/original/mikrofiber-1440x1800-master-cb3e0d8a5f1f.png',
+      tags: [
+        'primary',
+        'family_utekos_mikrofiber',
+        'color_fjellbla'
+      ]
+    }
+  ])
+})

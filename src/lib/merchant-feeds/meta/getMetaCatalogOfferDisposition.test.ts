@@ -43,7 +43,7 @@ const product: CatalogSyncProduct = {
   variants: { edges: [{ node: variant }] }
 }
 
-test('publishes Stapper when the Shopify variant is in stock', () => {
+test('deletes Stapper even when the Shopify variant is in stock', () => {
   assert.equal(
     getMetaCatalogOfferDisposition({
       product,
@@ -54,7 +54,7 @@ test('publishes Stapper when the Shopify variant is in stock', () => {
       },
       variant
     }),
-    'published'
+    'delete'
   )
 })
 

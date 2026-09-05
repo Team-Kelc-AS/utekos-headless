@@ -9,6 +9,7 @@ export const META_CATALOG_IMAGE_TAGS = {
 } as const
 
 export const META_CATALOG_IMAGE_PREFERENCE_TAGS = {
+  catalog_primary: [META_CATALOG_IMAGE_TAGS.primary],
   default_1_1: [
     META_CATALOG_IMAGE_TAGS.primary,
     META_CATALOG_IMAGE_TAGS.instagramPreferred

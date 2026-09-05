@@ -13,6 +13,7 @@ const cliInputSchema = z.strictObject({
   apply: z.boolean(),
   file: z.string().trim().min(1),
   preference: z.enum([
+    'catalog_primary',
     'instagram',
     'feed_4_5',
     'full_screen_9_16',

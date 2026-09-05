@@ -7,6 +7,7 @@ const inputSchema = z.strictObject({
   format: z.string().trim().min(1),
   height: z.number().int().positive(),
   preference: z.enum([
+    'catalog_primary',
     'instagram',
     'feed_4_5',
     'full_screen_9_16',
@@ -39,11 +40,15 @@ export function validateMetaCatalogImageMetadata(
   const isExact4x5 = parsed.width * 5 === parsed.height * 4
   const isExact9x16 = parsed.width * 16 === parsed.height * 9
   const isSquare = parsed.width === parsed.height
-  let aspectRatio: '1:1' | '4:5' | '9:16'
+  let aspectRatio: '1:1' | '4:5' | '9:16' | 'original'
   let minimumWidth: number
   let minimumHeight: number
 
-  if (parsed.preference === 'feed_4_5') {
+  if (parsed.preference === 'catalog_primary') {
+    aspectRatio = 'original'
+    minimumWidth = 500
+    minimumHeight = 500
+  } else if (parsed.preference === 'feed_4_5') {
     if (!isExact4x5) {
       throw new Error(
         `Meta catalog image ${parsed.fileName} must be exact 4:5; received ${parsed.width} x ${parsed.height}`

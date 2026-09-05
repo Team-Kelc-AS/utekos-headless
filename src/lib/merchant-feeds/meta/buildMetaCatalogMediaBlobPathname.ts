@@ -3,7 +3,7 @@ import { basename, extname } from 'node:path'
 import { z } from 'zod'
 
 const inputSchema = z.strictObject({
-  aspectRatio: z.enum(['1:1', '4:5', '9:16']),
+  aspectRatio: z.enum(['1:1', '4:5', '9:16', 'original']),
   contentHash: z.string().regex(/^[a-f0-9]{64}$/),
   fileName: z.string().trim().min(1),
   format: z.enum(['jpeg', 'png']),

@@ -12,15 +12,29 @@ type MetaCatalogMediaManifest = {
 }
 
 export const META_CATALOG_MEDIA_MANIFEST_BY_HANDLE = {
-  comfyrobe: { includeDefaultImages: true, images: [], videos: [] },
+  comfyrobe: {
+    includeDefaultImages: false,
+    images: [
+      {
+        url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/original/comfy-robe-1440x1800-b91987803ef1.png',
+        preferences: ['catalog_primary']
+      }
+    ],
+    videos: []
+  },
   'utekos-dun': {
     includeDefaultImages: true,
     images: [],
     videos: []
   },
   'utekos-mikrofiber': {
-    includeDefaultImages: true,
-    images: [],
+    includeDefaultImages: false,
+    images: [
+      {
+        url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-mikrofiber/original/mikrofiber-1440x1800-master-cb3e0d8a5f1f.png',
+        preferences: ['catalog_primary']
+      }
+    ],
     videos: []
   },
   'utekos-stapper': {

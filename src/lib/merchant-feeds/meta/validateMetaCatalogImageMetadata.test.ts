@@ -37,6 +37,33 @@ test('accepts exact high-resolution 4:5 and 9:16 catalog images', () => {
   )
 })
 
+test('accepts a high-resolution original as the catalog primary image', () => {
+  assert.equal(
+    validateMetaCatalogImageMetadata({
+      fileName: 'comfy-robe-1440x1800.png',
+      format: 'png',
+      height: 1880,
+      preference: 'catalog_primary',
+      sizeBytes: 8_000_000,
+      width: 1440
+    }).aspectRatio,
+    'original'
+  )
+
+  assert.throws(
+    () =>
+      validateMetaCatalogImageMetadata({
+        fileName: 'small-primary.png',
+        format: 'png',
+        height: 499,
+        preference: 'catalog_primary',
+        sizeBytes: 1_000_000,
+        width: 500
+      }),
+    /at least 500 x 500/
+  )
+})
+
 test('rejects a file whose name claims 4:5 but dimensions are 1440x1880', () => {
   assert.throws(
     () =>

@@ -131,7 +131,10 @@ test('publishes only in-stock variants with complete Meta fields', () => {
   assert.equal(rows[0]?.color, 'Havdyp')
   assert.equal(rows[0]?.size, 'Middels')
   assert.equal(rows[0]?.gender, 'unisex')
-  assert.match(rows[0]?.image_link ?? '', /TechDown-Havdyp-Master\.png/)
+  assert.match(
+    rows[0]?.image_link ?? '',
+    /techdown-cover-2000x2000-33791f3672be\.png/
+  )
   assert.equal(rows[0]?.shipping, 'NO::1-4 days:0.00 NOK')
   assert.equal(rows[0]?.shipping_weight, '1.3 kg')
   assert.match(rows[0]?.internal_label ?? '', /catalog_active/)
