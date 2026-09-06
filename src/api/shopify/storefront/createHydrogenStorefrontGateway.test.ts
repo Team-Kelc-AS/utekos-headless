@@ -380,6 +380,57 @@ test('enforces a wall-clock deadline around hanging response bodies', async () =
   }
 })
 
+test('aborts a hanging Shopify transport before logging its timeout', async () => {
+  const capturedErrors: string[] = []
+  const originalConsoleError = console.error
+  let transportSignal: AbortSignal | undefined
+  console.error = (...args: unknown[]) => {
+    capturedErrors.push(args.map(String).join(' '))
+  }
+  const gateway = createHydrogenStorefrontGateway(
+    {
+      storeDomain: 'example.myshopify.com',
+      publicStorefrontToken: 'public-test-token',
+      storefrontApiVersion: '2026-04'
+    },
+    {
+      fetch: async (_input, init) => {
+        transportSignal = init?.signal ?? undefined
+        return new Promise<Response>(() => undefined)
+      }
+    }
+  )
+
+  try {
+    await assert.rejects(
+      gateway.catalogQuery<TestQuery>({ query, timeoutMs: 20 }),
+      (error: unknown) =>
+        error instanceof DOMException &&
+        error.name === 'TimeoutError'
+    )
+
+    assert.equal(transportSignal?.aborted, true)
+    const timeoutLog = capturedErrors
+      .map(entry => JSON.parse(entry) as {
+        event?: string
+        context?: {
+          timeoutOvershootMs?: number
+          transportAborted?: boolean
+        }
+      })
+      .find(entry =>
+        entry.event === 'shopify.storefront.request_failed'
+      )
+
+    assert.equal(timeoutLog?.context?.transportAborted, true)
+    assert.ok(
+      (timeoutLog?.context?.timeoutOvershootMs ?? -1) >= 0
+    )
+  } finally {
+    console.error = originalConsoleError
+  }
+})
+
 test('classifies a non-JSON Shopify 502 without parsing provider HTML', async () => {
   const originalConsoleError = console.error
   console.error = () => undefined
