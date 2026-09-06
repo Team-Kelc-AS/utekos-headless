@@ -81,6 +81,8 @@ type ShopifyRequestLogContext = {
   requestId?: string
   errorType?: string
   graphqlErrorCode?: string
+  timeoutOvershootMs?: number
+  transportAborted?: boolean
 }
 
 function elapsedMilliseconds(
@@ -148,6 +150,12 @@ function createRequestLogContext(
       null,
     graphqlErrorCode:
       input.graphqlErrorCode ??
+      null,
+    timeoutOvershootMs:
+      input.timeoutOvershootMs ??
+      null,
+    transportAborted:
+      input.transportAborted ??
       null,
     runtime:
       getVercelRuntimeContext()
@@ -594,6 +602,14 @@ async function executeStorefrontRequest<
             : {})
           })
 
+        const timeoutOvershootMs =
+          deadline.didTimeout ?
+            Math.max(
+              0,
+              durationMs - resolvedTimeoutMs
+            )
+          : undefined
+
         span.setAttribute(
           'error.type',
           errorType
@@ -603,6 +619,21 @@ async function executeStorefrontRequest<
           'shopify.duration_ms',
           durationMs
         )
+
+        span.setAttribute(
+          'shopify.transport_aborted',
+          deadline.signal.aborted
+        )
+
+        if (
+          timeoutOvershootMs !==
+          undefined
+        ) {
+          span.setAttribute(
+            'shopify.timeout_overshoot_ms',
+            timeoutOvershootMs
+          )
+        }
 
         if (
           responseHeadersMs !==
@@ -671,6 +702,12 @@ async function executeStorefrontRequest<
                 { status }
               : {}),
               errorType,
+              ...(timeoutOvershootMs !==
+              undefined ?
+                { timeoutOvershootMs }
+              : {}),
+              transportAborted:
+                deadline.signal.aborted,
               ...(requestId ?
                 { requestId }
               : {})
