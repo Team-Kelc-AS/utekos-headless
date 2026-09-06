@@ -56,11 +56,14 @@ export function createShopifyRequestDeadline(input: {
     }
 
     state.transportAbortScheduled = true
-    setTimeout(() => {
+    // Keep transport cleanup in the current event-loop turn. A serverless
+    // runtime may freeze after the rejected request promise settles, leaving
+    // a zero-delay timer (and its underlying fetch) pending until thaw.
+    queueMicrotask(() => {
       if (!controller.signal.aborted) {
         controller.abort(reason)
       }
-    }, 0)
+    })
   }
 
   const cancel = (reason: unknown, didTimeout: boolean) => {
