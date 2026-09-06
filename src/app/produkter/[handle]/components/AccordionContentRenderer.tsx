@@ -23,7 +23,7 @@ function AccordionGroup({
           {group.rows.map(row => (
             <div
               key={row.label}
-              className='dark:bg-dark-background/40 rounded-lg border border-border bg-background/40 p-3'
+              className='rounded-lg border border-border bg-background/40 p-3'
             >
               <dt className='font-utekos-text-medium text-sm leading-[1.35] tracking-normal text-foreground'>
                 {row.label}
@@ -50,7 +50,7 @@ function AccordionGroup({
           {group.items.map(item => (
             <li
               key={item}
-              className='dark:marker:text-dark-card-foreground/55 list-disc marker:text-card-foreground/55'
+              className='list-disc marker:text-card-foreground/55'
             >
               {item}
             </li>
@@ -59,7 +59,7 @@ function AccordionGroup({
       )}
 
       {group.note && (
-        <div className='dark:bg-dark-background/55 rounded-lg border border-border bg-background/55 p-4 text-foreground'>
+        <div className='rounded-lg border border-border bg-background/55 p-4 text-foreground'>
           <h4 className='font-sans font-utekos-text-medium text-base leading-tight tracking-normal'>
             {group.note.title}
           </h4>

@@ -10,6 +10,11 @@ import {
 
 export function buildMetaCatalogAd(input: MetaCatalogAdInput) {
   const parsed = metaCatalogAdInputSchema.parse(input)
+  const link = new URL(parsed.link)
+
+  if (link.pathname === '/produkter/utekos-techdown') {
+    link.pathname = '/skreddersy-varmen'
+  }
 
   return metaCatalogAdRequestSchema.parse({
     name: parsed.adName,
@@ -26,7 +31,7 @@ export function buildMetaCatalogAd(input: MetaCatalogAdInput) {
         : {}),
         template_data: {
           multi_share_end_card: true,
-          link: parsed.link,
+          link: link.toString(),
           message: parsed.message,
           name: '{{product.name}}',
           description: '{{product.current_price}}',
@@ -35,11 +40,6 @@ export function buildMetaCatalogAd(input: MetaCatalogAdInput) {
             ...META_CATALOG_DEFAULT_PREFERRED_IMAGE_TAGS
           ]
         }
-      },
-      asset_feed_spec: {
-        optimization_type: 'FORMAT_AUTOMATION',
-        ad_formats: ['CAROUSEL', 'COLLECTION'],
-        descriptions: [{ text: '{{product.description}}' }]
       },
       degrees_of_freedom_spec: {
         creative_features_spec: {

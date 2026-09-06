@@ -11,7 +11,7 @@ import { UsageGroup } from './UsageGroup'
 import { Leaf, ShieldCheck, Waves, Info } from 'lucide-react'
 
 const triggerClassName =
-  'font-sans text-left text-lg font-utekos-text-medium text-foreground [&>svg]:text-foreground hover:text-foreground dark:hover:text-foreground hover:no-underline md:text-xl'
+  'font-sans text-left text-lg font-utekos-text-medium text-foreground [&>svg]:text-foreground hover:text-foreground hover:no-underline md:text-xl'
 
 const itemClassName = 'border-foreground/20'
 
@@ -247,8 +247,8 @@ export async function ProductDetailsAccordion() {
                   <li>Unngå stryking og bleking</li>
                 </ul>
 
-                <div className='dark:border-dark-primary mt-4 flex gap-3 rounded-2xl border-l-4 border-primary bg-card p-4 text-foreground'>
-                  <Info className='dark:text-dark-primary shrink-0 text-primary' />
+                <div className='mt-4 flex gap-3 rounded-2xl border-l-4 border-primary bg-card p-4 text-foreground'>
+                  <Info className='shrink-0 text-primary' />
                   <div className='leading-text-paragraph text-sm'>
                     <span className='font-google-sans mb-1 block font-bold'>
                       Viktig om oppbevaring

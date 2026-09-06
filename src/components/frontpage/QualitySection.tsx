@@ -4,6 +4,7 @@ import { AnimatedBlock } from '@/components/AnimatedBlock'
 import { H2 } from '@/components/typography/TypographyH2'
 import { H3 } from '@/components/typography/TypographyH3'
 import { PageSection } from '@/components/layout/PageSection'
+import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 import { P } from '@/components/typography/TypographyP'
 
 export async function QualitySection() {
@@ -16,7 +17,7 @@ export async function QualitySection() {
     <PageSection
       as='section'
       background='default'
-      className='overflow-hidden rounded-t-xl'
+      className={frontpageSectionStackClassName}
     >
       <article className='relative overflow-hidden'>
         <div className='cols-1 grid-bg-card grid gap-6 lg:grid-cols-3 lg:grid-rows-2'>
@@ -65,7 +66,7 @@ export async function QualitySection() {
               )}
             >
               <div className='mb-4 flex min-w-0 items-center gap-4'>
-                <div className='bg-dark-teal flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border  text-primary-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shadow-card-foreground/10 transition-transform duration-500 group-hover:scale-110'>
+                <div className='bg-dark-teal flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border text-primary-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shadow-card-foreground/10 transition-transform duration-500 group-hover:scale-110'>
                   <Feather className='size-5 stroke-[1.5]' />
                 </div>
                 <H3 className='min-w-0 pb-0 font-utekos-text-medium text-2xl leading-none tracking-normal text-card-foreground'>
@@ -91,7 +92,7 @@ export async function QualitySection() {
               )}
             >
               <div className='mb-4 flex min-w-0 items-center gap-4'>
-                <div className='bg-dark-teal dark:shadow-dark-card-foreground/10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border duration-500 group-hover:scale-110'>
+                <div className='bg-dark-teal flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border duration-500 group-hover:scale-110'>
                   <ShieldCheckIcon className='size-5 stroke-[1.5]' />
                 </div>
                 <H3 className='min-w-0 pb-0 font-utekos-text-medium text-2xl leading-none tracking-normal text-card-foreground'>

@@ -5,7 +5,7 @@ import TRUSTBADGE from '@/assets/images/partners/TrustBadge.svg'
 export function TrustSignals() {
   return (
     <div
-      className='mt-5 overflow-hidden rounded-2xl md:mt-6 md:rounded-lg'
+      className='mt-2 overflow-hidden rounded-2xl md:rounded-lg'
       role='complementary'
       aria-label='Trygghetsinformasjon'
     >
@@ -16,8 +16,8 @@ export function TrustSignals() {
         <Image
           src={TRUSTBADGE}
           alt='14 dagers åpent kjøp, rask levering med PostNord, enkelt og trygt. Betal med Vipps, Klarna, Visa, Google Pay og Apple Pay.'
-          width={1200}
-          height={812}
+          width={500}
+          height={180}
           sizes='(min-width: 1024px) 33vw, 100vw'
           className='h-auto w-full'
           quality={100}

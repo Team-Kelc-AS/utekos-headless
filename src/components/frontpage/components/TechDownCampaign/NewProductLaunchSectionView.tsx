@@ -10,6 +10,7 @@ import type { NewProductLaunchSectionViewProps } from './types'
 import DiscoverProductButton from './DiscoverProductButton'
 import { AddNewProductToCartButton } from './AddNewProductToCartButton'
 import { PageSection } from '@/components/layout/PageSection'
+import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 import { cn } from '@/lib/utils/className'
 import { H2 } from '@/components/typography/TypographyH2'
 import { InlineText } from '@/components/typography/TypographyInlineText'
@@ -25,11 +26,13 @@ export function NewProductLaunchSectionView({
       id='featured-product'
       background='default'
       className={cn(
-        'relative scroll-mt-32 text-foreground md:scroll-mt-36'
+        frontpageSectionStackClassName,
+        'scroll-mt-32 text-foreground md:scroll-mt-36'
       )}
+      contentClassName='max-w-none px-0 py-0 sm:px-0 sm:py-0 md:py-0 lg:px-0 lg:py-0'
     >
       <div className='w-full'>
-        <div className='relative isolate overflow-hidden rounded-xl bg-jungle p-4 sm:p-8 lg:p-12'>
+        <div className='relative isolate overflow-hidden bg-jungle px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-10 lg:py-24'>
           <div className='pointer-events-none absolute inset-x-6 top-0 z-3 h-px' />
 
           <div className='relative z-10 container mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-3 sm:gap-12 sm:px-6 lg:px-10 xl:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] xl:gap-12'>
@@ -57,7 +60,7 @@ export function NewProductLaunchSectionView({
               </div>
 
               <div className='w-full'>
-                <div className='border-featured-border dark:border-dark-featured-border flex w-full flex-col gap-6 border-t pt-6'>
+                <div className='border-featured-border flex w-full flex-col gap-6 border-t pt-6'>
                   <div className='flex flex-col gap-3'>
                     <div className='flex flex-wrap items-baseline gap-3'>
                       <InlineText className='font-google-sans text-4xl leading-none font-bold tracking-normal text-foreground sm:text-5xl lg:text-6xl'>
@@ -67,7 +70,7 @@ export function NewProductLaunchSectionView({
                         inkl. mva
                       </InlineText>
                       {originalPrice > currentPrice ?
-                        <InlineText className='bg-featured-foreground/10 dark:bg-dark-featured-foreground/10 decoration-featured-foreground/80 dark:decoration-dark-featured-foreground/80 ring-featured-border dark:ring-dark-featured-border font-google-sans rounded-full px-3 py-1 text-sm font-bold text-foreground line-through decoration-2 ring-1'>
+                        <InlineText className='bg-featured-foreground/10 decoration-featured-foreground/80 ring-featured-border font-google-sans rounded-full px-3 py-1 text-sm font-bold text-foreground line-through decoration-2 ring-1'>
                           {originalPrice},-
                         </InlineText>
                       : null}

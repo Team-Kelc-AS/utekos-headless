@@ -145,12 +145,12 @@ test('interactive carousel owns the Client Component boundary', async () => {
   )
 })
 
-test('TechDown mobile gallery uses 2:3 intrinsic next/image slides', async () => {
+test('TechDown mobile gallery uses 910:1450 product stills with overlays', async () => {
   const pageSource = await readSource(
     'src/app/produkter/[handle]/components/ProductPageView.tsx'
   )
-  const imageSource = await readSource(
-    'src/components/jsx/ProductGallerySlideImage.tsx'
+  const frameSource = await readSource(
+    'src/app/produkter/[handle]/components/TechDownMobileGalleryFrame.tsx'
   )
   const gallerySource = await readSource(
     'src/app/produkter/[handle]/utils/gallery-images/techdown/productGalleryImages.ts'
@@ -159,67 +159,85 @@ test('TechDown mobile gallery uses 2:3 intrinsic next/image slides', async () =>
   assert.match(
     pageSource,
     /const galleryAspectRatio = 2 \/ 3/,
-    'Mobile gallery frame must use aspect-ratio 2:3 for every product'
+    'Other mobile galleries must keep aspect-ratio 2:3'
   )
 
   assert.match(
     pageSource,
-    /imageLayout=\{\s*isTechDownProduct \?\s*'intrinsic'\s*:\s*\(?\s*'cover-fill'\s*\)?\s*\}/,
-    'TechDown mobile gallery must use intrinsic next/image sizing'
+    /TechDownMobileGalleryFrame/,
+    'TechDown mobile gallery must use TechDownMobileGalleryFrame'
   )
 
   assert.match(
-    imageSource,
-    /width=\{image\.width\}/,
-    'Intrinsic slides must set next/image width'
+    pageSource,
+    /isTechDownProduct \?\s*`w-full \$\{galleryDesktopBleedClassName\}`/,
+    'TechDown mobile gallery must stay inset inside the page container'
+  )
+
+  assert.doesNotMatch(
+    pageSource,
+    /isTechDownProduct \?\s*`relative left-1\/2 w-screen/,
+    'TechDown mobile gallery must not bleed to full viewport width'
   )
 
   assert.match(
-    imageSource,
-    /height=\{image\.height\}/,
-    'Intrinsic slides must set next/image height'
+    frameSource,
+    /ratio=\{\s*910 \/ 1450\s*\}/,
+    'TechDown mobile gallery frame must use aspect-ratio 910:1450'
   )
 
   assert.match(
-    imageSource,
-    /object-contain object-center/,
-    'Intrinsic slides must not crop with object-cover'
+    frameSource,
+    /bg-primary/,
+    'TechDown mobile gallery frame must use the primary mat behind the stills'
+  )
+
+  assert.match(
+    frameSource,
+    /-mx-4/,
+    'TechDown mobile gallery frame must absorb the page container gutter'
+  )
+
+  assert.match(
+    frameSource,
+    /px-5/,
+    'TechDown mobile gallery frame must inset the stills from the edges'
+  )
+
+  assert.match(
+    frameSource,
+    /bottom-\[calc\(118\/1450\*100%\+1rem\)\]/,
+    'Juster Form Nyt must sit inside the orange image frame'
+  )
+
+  assert.match(
+    frameSource,
+    /h-\[calc\(118\/1450\*100%\)\]/,
+    'Wordmark and wishlist must share the footer band under the frame'
+  )
+
+  assert.match(
+    frameSource,
+    /TechDownGalleryJusterFormNyt/,
+    'TechDown mobile gallery must overlay Juster Form Nyt'
+  )
+
+  assert.match(
+    frameSource,
+    /UtekosWordmark/,
+    'TechDown mobile gallery must place the wordmark under the frame'
   )
 
   assert.match(
     gallerySource,
-    /const TECHDOWN_MOBILE_IMAGE_WIDTH = 1000/,
-    'TechDown mobile next/image width must be 1000'
+    /TechDown-ProductCard-Cover_1\.webp/,
+    'TechDown mobile gallery must start with TechDown-ProductCard-Cover_1'
   )
 
   assert.match(
     gallerySource,
-    /const TECHDOWN_MOBILE_IMAGE_HEIGHT = 1500/,
-    'TechDown mobile next/image height must be 1500'
-  )
-
-  assert.match(
-    gallerySource,
-    /TechDown-1000x1500-1\.jpg/,
-    'TechDown mobile gallery must start with TechDown-1000x1500-1'
-  )
-
-  assert.match(
-    gallerySource,
-    /TechDown-1000x1500-Zipper\.jpg/,
+    /TechDown-ProductCard--Zipper\.webp/,
     'TechDown mobile gallery must include the zipper still'
-  )
-
-  assert.match(
-    gallerySource,
-    /TechDownPocket\.webp/,
-    'TechDown mobile gallery must include the pocket still'
-  )
-
-  assert.match(
-    gallerySource,
-    /TechDownZipper\.webp/,
-    'TechDown mobile gallery must include the zipper detail still'
   )
 
   assert.match(
@@ -234,15 +252,33 @@ test('TechDown mobile gallery uses 2:3 intrinsic next/image slides', async () =>
     'TechDown desktop gallery must use TechDown2-1800x2000'
   )
 
-  const mobileImageImports =
-    gallerySource.match(
-      /TechDown-1000x1500-(?:[1-5]|Zipper)\.jpg/g
-    ) ?? []
+  const mobileStills = [
+    'TechDown-ProductCard-Cover_1.webp',
+    'TechDown-ProductCard-2.webp',
+    'TechDown-ProductCard-3.webp',
+    'TechDown-ProductCard-5.webp',
+    'TechDown-ProductCard-Front.webp',
+    'TechDown-ProductCard-Inner.webp',
+    'TechDown-ProductCard--Zipper.webp'
+  ] as const
 
-  assert.equal(
-    mobileImageImports.length,
-    6,
-    'TechDown mobile gallery must contain exactly the six requested stills'
+  const mobileBody = extractExportBody(
+    gallerySource,
+    'TECHDOWN_MOBILE_GALLERY_IMAGES'
+  )
+
+  for (const fileName of mobileStills) {
+    assert.match(
+      gallerySource,
+      new RegExp(fileName.replace('.', '\\.')),
+      `TechDown mobile gallery must import ${fileName}`
+    )
+  }
+
+  assert.doesNotMatch(
+    mobileBody,
+    /TechDown-1000x1500|TechDownPocket|TechDownZipper\.webp|TechDown_ProductImage_1440x1800/,
+    'TechDown mobile gallery must not keep the previous stills'
   )
 })
 

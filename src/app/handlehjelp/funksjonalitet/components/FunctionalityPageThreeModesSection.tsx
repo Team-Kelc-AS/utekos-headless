@@ -2,7 +2,7 @@
 import { Coffee, Maximize2, Move } from 'lucide-react'
 
 const modeCardClassName =
-  'group relative overflow-hidden rounded-2xl border border-foreground/12 bg-card  p-8 ring-1 ring-foreground/12 dark:ring-foreground/12 transition-all hover:shadow-lg'
+  'group relative overflow-hidden rounded-2xl border border-foreground/12 bg-card  p-8 ring-1 ring-foreground/12 transition-all hover:shadow-lg'
 
 export function FunctionalityPageThreeModesSection() {
   return (

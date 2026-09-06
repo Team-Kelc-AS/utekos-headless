@@ -9,7 +9,7 @@ export function PersonaCards() {
   return (
     <article
       id='velg-etter-bruk'
-      className='dark:bg-dark-background bg-background py-20 text-foreground sm:py-28'
+      className='bg-background py-20 text-foreground sm:py-28'
     >
       <div className='mx-auto max-w-7xl'>
         <div className='mx-auto w-full max-w-3xl items-center justify-center px-4 text-center md:max-w-3xl lg:max-w-4xl'>
@@ -21,7 +21,7 @@ export function PersonaCards() {
           <h2 className='mx-auto text-foreground md:max-w-3xl'>
             Hva er riktig Utekos for deg?
           </h2>
-          <p className='utekos-section-lead dark:text-dark-muted-foreground mx-auto mt-6 max-w-2xl text-muted-foreground md:max-w-3xl lg:max-w-4xl'>
+          <p className='utekos-section-lead mx-auto mt-6 max-w-2xl text-muted-foreground md:max-w-3xl lg:max-w-4xl'>
             Å velge riktig Utekos handler i stor grad om å finne
             balansen mellom varme, vekt, pakkvolum og hva du
             faktisk skal bruke jakken til.
@@ -32,7 +32,7 @@ export function PersonaCards() {
           {modelRecommendations.map(model => (
             <article
               key={model.key}
-              className='group dark:border-dark-sidebar-foreground overflow-hidden border border-sidebar-foreground bg-sidebar text-sidebar-foreground'
+              className='group overflow-hidden border border-sidebar-foreground bg-sidebar text-sidebar-foreground'
             >
               <Link href={model.href as Route} className='block'>
                 <div className='relative aspect-4/3 overflow-hidden'>
@@ -70,7 +70,7 @@ export function PersonaCards() {
                       </li>
                     ))}
                   </ul>
-                  <span className='dark:decoration-dark-sidebar-foreground mt-7 inline-flex text-base font-medium text-sidebar-foreground underline decoration-sidebar-foreground underline-offset-8 transition-colors duration-300 group-hover:text-sidebar-foreground'>
+                  <span className='mt-7 inline-flex text-base font-medium text-sidebar-foreground underline decoration-sidebar-foreground underline-offset-8 transition-colors duration-300 group-hover:text-sidebar-foreground'>
                     {model.cta}
                   </span>
                 </div>

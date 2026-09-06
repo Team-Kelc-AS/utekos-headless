@@ -24,16 +24,16 @@ const utekosCardVariants = cva(
     variants: {
       palette: {
         maritime:
-          'dark:border-dark-foreground/10 dark:ring-dark-foreground/10 border-foreground/10 bg-[linear-gradient(145deg,var(--color-havdyp),var(--color-maritime-darkest))] text-foreground ring-foreground/10',
-        plum: 'dark:border-dark-foreground/10 dark:ring-dark-foreground/10 border-foreground/10 bg-[linear-gradient(145deg,var(--color-plum),var(--color-header-secondary))] text-foreground ring-foreground/10',
+          'border-foreground/10 bg-[linear-gradient(145deg,var(--color-havdyp),var(--color-maritime-darkest))] text-foreground ring-foreground/10',
+        plum: 'border-foreground/10 bg-[linear-gradient(145deg,var(--color-plum),var(--color-header-secondary))] text-foreground ring-foreground/10',
         forest:
-          'dark:border-dark-foreground/10 dark:ring-dark-foreground/10 border-foreground/10 bg-[linear-gradient(145deg,var(--color-mountain-view),var(--color-deep-forest))] text-foreground ring-foreground/10',
+          'border-foreground/10 bg-[linear-gradient(145deg,var(--color-mountain-view),var(--color-deep-forest))] text-foreground ring-foreground/10',
         ember:
-          'dark:border-dark-foreground/10 dark:ring-dark-foreground/10 border-foreground/10 bg-[linear-gradient(145deg,var(--color-ganache),var(--color-chocolate-truffle))] text-foreground ring-foreground/10',
+          'border-foreground/10 bg-[linear-gradient(145deg,var(--color-ganache),var(--color-chocolate-truffle))] text-foreground ring-foreground/10',
         sand: 'border-card-foreground/10 bg-[linear-gradient(145deg,var(--color-foreground),var(--color-white-down))] text-card-foreground ring-card-foreground/10',
         rose: 'border-card-foreground/10 bg-[linear-gradient(145deg,var(--color-fairy-tale),var(--color-bleached-mauve-light))] text-card-foreground ring-card-foreground/10',
         tide: 'border-card-foreground/10 bg-[linear-gradient(145deg,var(--color-quiet-tide),var(--color-ancient-water))] text-card-foreground ring-card-foreground/10',
-        peri: 'dark:border-dark-foreground/10 dark:ring-dark-foreground/10 border-foreground/10 bg-[linear-gradient(145deg,var(--color-eggplant),var(--color-amethyst-purple))] text-foreground ring-foreground/10'
+        peri: 'border-foreground/10 bg-[linear-gradient(145deg,var(--color-eggplant),var(--color-amethyst-purple))] text-foreground ring-foreground/10'
       },
       density: {
         compact: '[--card-spacing:--spacing(4)]',

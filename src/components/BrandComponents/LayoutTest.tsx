@@ -16,20 +16,20 @@ export function LayoutTest() {
 
 function LayoutTestBox() {
   return (
-    <div className='flex max-w-lg shrink-0 flex-col bg-gray-100 p-2 dark:bg-white/10'>
-      <div className='rounded-xl bg-white p-10 text-sm/7 text-gray-700 dark:bg-gray-950 dark:text-gray-300'>
+    <div className='flex max-w-lg shrink-0 flex-col bg-gray-100 p-2'>
+      <div className='rounded-xl bg-white p-10 text-sm/7 text-gray-700'>
         <Image
           src='logo-dark.svg'
           width={24}
           height={24}
-          className='mb-11.5 h-6 dark:hidden'
+          className='mb-11.5 h-6'
           alt='Tailwind Play'
         />
         <Image
           src='logo.svg'
           width={24}
           height={24}
-          className='mb-11.5 h-6 not-dark:hidden'
+          className='mb-11.5 h-6'
           alt='Tailwind Play'
         />
         <div className='space-y-6'>
@@ -59,12 +59,12 @@ function LayoutTestBox() {
                 />
                 <path
                   d='M8 11.5L10.5 14L14 8'
-                  className='stroke-sky-800 dark:stroke-sky-300'
+                  className='stroke-sky-800'
                 />
               </svg>
               <p className='ml-3'>
                 Customizing your theme with
-                <code className='font-mono font-medium text-gray-950 dark:text-white'>
+                <code className='font-mono font-medium text-gray-950'>
                   @theme
                 </code>
               </p>
@@ -90,12 +90,12 @@ function LayoutTestBox() {
                 />
                 <path
                   d='M8 11.5L10.5 14L14 8'
-                  className='stroke-sky-800 dark:stroke-sky-300'
+                  className='stroke-sky-800'
                 />
               </svg>
               <p className='ml-3'>
                 Adding custom utilities with
-                <code className='font-mono font-medium text-gray-950 dark:text-white'>
+                <code className='font-mono font-medium text-gray-950'>
                   @utility
                 </code>
               </p>
@@ -121,12 +121,12 @@ function LayoutTestBox() {
                 />
                 <path
                   d='M8 11.5L10.5 14L14 8'
-                  className='stroke-sky-800 dark:stroke-sky-300'
+                  className='stroke-sky-800'
                 />
               </svg>
               <p className='ml-3'>
                 Adding custom variants with
-                <code className='font-mono font-medium text-gray-950 dark:text-white'>
+                <code className='font-mono font-medium text-gray-950'>
                   @variant
                 </code>
               </p>
@@ -152,7 +152,7 @@ function LayoutTestBox() {
                 />
                 <path
                   d='M8 11.5L10.5 14L14 8'
-                  className='stroke-sky-800 dark:stroke-sky-300'
+                  className='stroke-sky-800'
                 />
               </svg>
               <p className='ml-3'>
@@ -171,7 +171,7 @@ function LayoutTestBox() {
         <p className='font-utekos-text-medium'>
           <a
             href='https://tailwindcss.com/docs'
-            className='text-gray-950 underline decoration-sky-400 underline-offset-3 hover:decoration-2 dark:text-white'
+            className='text-gray-950 underline decoration-sky-400 underline-offset-3 hover:decoration-2'
           >
             Read the docs &rarr;
           </a>

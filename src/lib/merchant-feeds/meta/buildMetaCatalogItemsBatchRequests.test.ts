@@ -17,7 +17,7 @@ const offer: MetaCatalogOffer = {
   condition: 'new',
   price: '1990.00 NOK',
   salePrice: '1790.00 NOK',
-  link: 'https://utekos.no/produkter/utekos-techdown?farge=havdyp&storrelse=stor',
+  link: 'https://utekos.no/skreddersy-varmen?farge=havdyp&storrelse=stor',
   images: [
     {
       url: 'https://cdn.shopify.com/s/files/techdown.png',
@@ -71,7 +71,7 @@ test('builds a v26 items_batch UPDATE with documented product fields', () => {
     condition: 'new',
     price: '1990.00 NOK',
     sale_price: '1790.00 NOK',
-    link: 'https://utekos.no/produkter/utekos-techdown?farge=havdyp&storrelse=stor',
+    link: 'https://utekos.no/skreddersy-varmen?farge=havdyp&storrelse=stor',
     image: [
       {
         url: 'https://cdn.shopify.com/s/files/techdown.png',

@@ -53,7 +53,7 @@ export function ProductCardHeader({
           {...productViewClickProps}
           title={title}
           className={cn(
-            'dark:focus-visible:outline-dark-card-foreground w-full min-w-0 rounded-sm font-utekos-text-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
+            'w-full min-w-0 rounded-sm font-utekos-text-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
           )}
         >
           <CardTitle

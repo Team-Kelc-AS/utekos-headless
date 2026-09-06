@@ -40,7 +40,7 @@ export function BenefitCard({
   return (
     <li
       className={cn(
-        'animate-fade-in-on-scroll group font-sans-normal dark:border-dark-border relative overflow-hidden rounded-lg border border-border bg-background p-3 text-foreground shadow-sm transition-all duration-300 hover:translate-x-1 xl:p-4'
+        'animate-fade-in-on-scroll group font-sans-normal relative overflow-hidden rounded-lg border border-border bg-background p-3 text-foreground shadow-sm transition-all duration-300 hover:translate-x-1 xl:p-4'
       )}
       style={
         { '--animation-delay': `${delay}s` } as CSSProperties

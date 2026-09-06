@@ -12,7 +12,7 @@ export function HeaderSearchInputField({
       {showShortcut ?
         <kbd
           aria-hidden
-          className='dark:border-dark-sidebar-foreground/25 -foreground/10 pointer-events-none ml-auto inline-flex items-center gap-1 rounded border border-sidebar-foreground/25 bg-sidebar-foreground/10 px-1.5 font-mono text-[10px] text-sidebar-foreground select-none'
+          className='-foreground/10 pointer-events-none ml-auto inline-flex items-center gap-1 rounded border border-sidebar-foreground/25 bg-sidebar-foreground/10 px-1.5 font-mono text-[10px] text-sidebar-foreground select-none'
         >
           <span className='text-xs'>⌘</span>K
         </kbd>

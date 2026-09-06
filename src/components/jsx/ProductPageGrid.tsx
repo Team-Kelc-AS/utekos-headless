@@ -5,7 +5,7 @@ export const ProductPageGrid = ({
 }: {
   readonly children: ReactNode
 }) => (
-  <div className='grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-8'>
+  <div className='flex flex-col gap-4 md:flex-row md:items-start md:gap-8'>
     {children}
   </div>
 )

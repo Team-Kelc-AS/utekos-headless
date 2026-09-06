@@ -9,7 +9,7 @@ import { ProductCareComfyrobe } from './ProductCareComfyrobe'
 import { ProductCareTechDown } from './ProductCareTechDown'
 
 const tabTriggerClassName =
-  'min-h-11 w-full flex-none rounded-full border-transparent bg-card  px-4 py-2.5 font-utekos-text text-sm font-medium text-card-foreground  shadow-none transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-105 focus-visible:ring-2 focus-visible:ring-primary/45 dark:focus-visible:ring-dark-primary/45 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 data-active:border-primary/35 dark:data-active:border-dark-primary/35 data-active:bg-card dark:data-active:bg-dark-card data-active:text-card-foreground dark:data-active:text-dark-card-foreground sm:w-auto sm:px-5'
+  'min-h-11 w-full flex-none rounded-full border-transparent bg-card  px-4 py-2.5 font-utekos-text text-sm font-medium text-card-foreground  shadow-none transition-[filter,transform] duration-200 hover:-translate-y-0.5 hover:brightness-105 focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 data-active:border-primary/35 data-active:bg-card data-active:text-card-foreground sm:w-auto sm:px-5'
 
 export function ProductCareBody() {
   return (

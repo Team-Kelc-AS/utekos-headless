@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { PageSection } from '@/components/layout/PageSection'
+import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 import { InvitingArrow } from '@/components/motion/InvitingArrow'
 import { cn } from '@/lib/utils/className'
 import IntersportLogo from '@/assets/images/partners/Intersport_logo.svg'
@@ -24,11 +25,15 @@ export function NewProductInStoreNoticeView({
   mapsUrl
 }: NewProductInStoreNoticeViewProps) {
   return (
-    <PageSection as='article' background='muted'>
+    <PageSection
+      as='article'
+      background='muted'
+      className={frontpageSectionStackClassName}
+    >
       <div
         ref={containerRef}
         className={cn(
-          'relative isolate mx-auto overflow-hidden rounded-3xl border border-border bg-jungle p-6 px-4 text-card-foreground shadow-2xl sm:p-10 md:max-w-6xl md:px-8 lg:px-12'
+          'relative isolate mx-auto overflow-hidden rounded-2xl border border-border bg-jungle p-6 px-4 text-card-foreground sm:p-10 md:max-w-6xl md:px-8 lg:px-12'
         )}
       >
         <div className='pointer-events-none absolute top-0 left-1/2 -z-20 h-125 w-125 -translate-x-1/2 -translate-y-1/2 bg-jungle opacity-20 blur-[100px]' />

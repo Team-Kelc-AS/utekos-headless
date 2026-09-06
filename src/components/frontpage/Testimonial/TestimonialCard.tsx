@@ -48,7 +48,7 @@ export function TestimonialCard({
         />
       </div>
 
-      <div className='relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background p-8 text-foreground shadow-[0_18px_48px_-34px_color-mix(in_oklch,var(--card)_70%,transparent)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:border-foreground/20 hover:shadow-2xl dark:hover:border-foreground/20'>
+      <div className='relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background p-8 text-foreground shadow-[0_18px_48px_-34px_color-mix(in_oklch,var(--card)_70%,transparent)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:border-foreground/20 hover:shadow-2xl'>
         <div className='pointer-events-none absolute inset-0 bg-linear-to-br from-foreground/10 via-foreground/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100' />
 
         <div className='relative z-10 flex h-full flex-col'>

@@ -64,7 +64,7 @@ export default async function CustomerAccountLoginPage({
         className='absolute right-[4%] bottom-10 -z-10 size-80 rounded-full bg-sidebar-primary/15 blur-3xl'
       />
 
-      <div className='dark:border-dark-border mx-auto grid w-full max-w-5xl overflow-hidden rounded-3xl border border-border bg-card shadow-[0_32px_90px_-48px_rgba(0,0,0,0.9)] lg:grid-cols-[0.9fr_1.1fr]'>
+      <div className='mx-auto grid w-full max-w-5xl overflow-hidden rounded-3xl border border-border bg-card shadow-[0_32px_90px_-48px_rgba(0,0,0,0.9)] lg:grid-cols-[0.9fr_1.1fr]'>
         <section className='relative isolate hidden overflow-hidden bg-sidebar-primary p-10 text-sidebar-primary-foreground lg:flex lg:flex-col lg:justify-between'>
           <div
             aria-hidden='true'
@@ -99,7 +99,7 @@ export default async function CustomerAccountLoginPage({
             <h1 className='text-3xl leading-tight font-utekos-text-medium sm:text-4xl'>
               {isCreateMode ? 'Opprett konto' : 'Logg inn'}
             </h1>
-            <p className='dark:text-dark-muted-foreground mt-4 text-base leading-7 font-utekos-text text-foreground'>
+            <p className='mt-4 text-base leading-7 font-utekos-text text-foreground'>
               {isCreateMode ?
                 'Opprett en Utekos-konto gjennom Shopify. Du trenger bare e-postadressen din for å komme i gang.'
               : 'Du kan logge inn med Utekos-kontoen din eller velge Facebook eller Google på den sikre Shopify-siden.'
@@ -145,7 +145,7 @@ export default async function CustomerAccountLoginPage({
                   inputMode='email'
                   autoComplete='email'
                   placeholder='din@epost.no'
-                  className='dark:border-dark-border dark:bg-dark-background dark:text-dark-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35 h-12 rounded-lg border-border bg-background px-4 text-base text-foreground focus-visible:border-primary focus-visible:ring-primary/35'
+                  className='h-12 rounded-lg border-border bg-background px-4 text-base text-foreground focus-visible:border-primary focus-visible:ring-primary/35'
                 />
               </div>
 
@@ -153,7 +153,7 @@ export default async function CustomerAccountLoginPage({
                 type='submit'
                 variant='commerce-primary'
                 size='lg'
-                className='min-h-12 w-full rounded-full bg-cyan-500 px-6 text-base text-[#172744] shadow-sm hover:bg-cyan-400 hover:text-[#172744] dark:bg-cyan-500 dark:text-[#172744] dark:hover:bg-cyan-400 dark:hover:text-[#172744]'
+                className='min-h-12 w-full rounded-full bg-cyan-500 px-6 text-base text-[#172744] shadow-sm hover:bg-cyan-400 hover:text-[#172744]'
               >
                 {isCreateMode ?
                   'Opprett konto hos Shopify'
@@ -166,19 +166,19 @@ export default async function CustomerAccountLoginPage({
               className='my-7 flex items-center gap-4'
               aria-hidden='true'
             >
-              <span className='dark:bg-dark-border h-px flex-1 bg-border' />
-              <span className='dark:text-dark-muted-foreground text-xs font-medium tracking-wider text-muted-foreground uppercase'>
+              <span className='h-px flex-1 bg-border' />
+              <span className='text-xs font-medium tracking-wider text-muted-foreground uppercase'>
                 Sikker innlogging
               </span>
-              <span className='dark:bg-dark-border h-px flex-1 bg-border' />
+              <span className='h-px flex-1 bg-border' />
             </div>
 
-            <div className='dark:border-dark-border dark:bg-dark-muted/25 flex items-start gap-3 rounded-xl border border-border bg-muted/25 p-4'>
+            <div className='flex items-start gap-3 rounded-xl border border-border bg-muted/25 p-4'>
               <LockKeyhole
                 className='mt-0.5 size-5 shrink-0 text-sidebar-primary'
                 aria-hidden='true'
               />
-              <p className='dark:text-dark-muted-foreground text-sm leading-6 text-muted-foreground'>
+              <p className='text-sm leading-6 text-muted-foreground'>
                 Shopify håndterer passordløs innlogging og
                 tilgjengelige valg for Facebook, Google og Shop.
                 Utekos får aldri tilgang til passordet ditt.

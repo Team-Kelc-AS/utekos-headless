@@ -1,13 +1,12 @@
 import type { Image } from 'types/media'
 import { productImage } from '@/app/produkter/[handle]/utils/pruductImage'
-import techDownMobile1 from '@/assets/images/techdown/TechDown-1000x1500-1.jpg'
-import techDownMobile2 from '@/assets/images/techdown/TechDown-1000x1500-2.jpg'
-import techDownMobile3 from '@/assets/images/techdown/TechDown-1000x1500-3.jpg'
-import techDownMobile4 from '@/assets/images/techdown/TechDown-1000x1500-4.jpg'
-import techDownMobile5 from '@/assets/images/techdown/TechDown-1000x1500-5.jpg'
-import techDownMobileZipper from '@/assets/images/techdown/TechDown-1000x1500-Zipper.jpg'
-import techDownMobilePocket from '@/assets/images/techdown/TechDownPocket.webp'
-import techDownMobileZipperDetail from '@/assets/images/techdown/TechDownZipper.webp'
+import techDownMobileCover from '@/assets/images/techdown/TechDown-ProductCard-Cover_1.webp'
+import techDownMobile2 from '@/assets/images/techdown/TechDown-ProductCard-2.webp'
+import techDownMobile3 from '@/assets/images/techdown/TechDown-ProductCard-3.webp'
+import techDownMobile5 from '@/assets/images/techdown/TechDown-ProductCard-5.webp'
+import techDownMobileFront from '@/assets/images/techdown/TechDown-ProductCard-Front.webp'
+import techDownMobileInner from '@/assets/images/techdown/TechDown-ProductCard-Inner.webp'
+import techDownMobileZipper from '@/assets/images/techdown/TechDown-ProductCard--Zipper.webp'
 import techDownDesktop1 from '@/assets/images/techdown/TechDown-1800x2000.webp'
 import techDownDesktop2 from '@/assets/images/techdown/TechDown2-1800x2000.webp'
 import techDownSingle1 from '@/assets/images/techdown/TechDownSingle-1.webp'
@@ -18,10 +17,6 @@ import techDownSingle5 from '@/assets/images/techdown/TechDownSingle-5.webp'
 import techDownSingle8 from '@/assets/images/techdown/TechDownSingle-8.webp'
 import techDownGroup1 from '@/assets/images/techdown/ProduktPicTechDown-Group-1.webp'
 
-const TECHDOWN_MOBILE_IMAGE_WIDTH = 1000
-const TECHDOWN_MOBILE_IMAGE_HEIGHT = 1500
-const TECHDOWN_MOBILE_ZIPPER_DETAIL_WIDTH = 1440
-const TECHDOWN_MOBILE_ZIPPER_DETAIL_HEIGHT = 1800
 const TECHDOWN_DESKTOP_IMAGE_WIDTH = 1800
 const TECHDOWN_DESKTOP_IMAGE_HEIGHT = 2000
 const TECHDOWN_ADDITIONAL_DESKTOP_IMAGE_WIDTH = 1440
@@ -29,60 +24,53 @@ const TECHDOWN_ADDITIONAL_DESKTOP_IMAGE_HEIGHT = 1800
 
 export const TECHDOWN_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
-    'utekos-techdown-mobile-1',
-    techDownMobile1,
+    'utekos-techdown-mobile-cover',
+    techDownMobileCover,
     'Kvinne sitter på terrassen i Utekos TechDown med solbriller.',
-    TECHDOWN_MOBILE_IMAGE_WIDTH,
-    TECHDOWN_MOBILE_IMAGE_HEIGHT
+    techDownMobileCover.width,
+    techDownMobileCover.height
   ),
   productImage(
     'utekos-techdown-mobile-2',
     techDownMobile2,
-    'Utekos TechDown i marineblå vist i trekvart profil med hette.',
-    TECHDOWN_MOBILE_IMAGE_WIDTH,
-    TECHDOWN_MOBILE_IMAGE_HEIGHT
+    'Utekos TechDown i marineblå, full lengde med hette.',
+    techDownMobile2.width,
+    techDownMobile2.height
   ),
   productImage(
     'utekos-techdown-mobile-3',
     techDownMobile3,
-    'Utekos TechDown sett bakfra med hette.',
-    TECHDOWN_MOBILE_IMAGE_WIDTH,
-    TECHDOWN_MOBILE_IMAGE_HEIGHT
-  ),
-  productImage(
-    'utekos-techdown-mobile-4',
-    techDownMobile4,
-    'Utekos TechDown i full lengde forfra med hette og glidelås.',
-    TECHDOWN_MOBILE_IMAGE_WIDTH,
-    TECHDOWN_MOBILE_IMAGE_HEIGHT
+    'Utekos TechDown sett bakfra i full lengde med hette.',
+    techDownMobile3.width,
+    techDownMobile3.height
   ),
   productImage(
     'utekos-techdown-mobile-5',
     techDownMobile5,
-    'Utekos TechDown sett bakfra i full lengde.',
-    TECHDOWN_MOBILE_IMAGE_WIDTH,
-    TECHDOWN_MOBILE_IMAGE_HEIGHT
+    'Utekos TechDown i parkaslengde sett forfra.',
+    techDownMobile5.width,
+    techDownMobile5.height
+  ),
+  productImage(
+    'utekos-techdown-mobile-front',
+    techDownMobileFront,
+    'Utekos TechDown i full lengde sett forfra med hette.',
+    techDownMobileFront.width,
+    techDownMobileFront.height
+  ),
+  productImage(
+    'utekos-techdown-mobile-inner',
+    techDownMobileInner,
+    'Innsiden av Utekos TechDown med fôr og detaljer.',
+    techDownMobileInner.width,
+    techDownMobileInner.height
   ),
   productImage(
     'utekos-techdown-mobile-zipper',
     techDownMobileZipper,
-    'Nærbilde av YKK-glidelås og oransje draglås på Utekos TechDown.',
-    TECHDOWN_MOBILE_IMAGE_WIDTH,
-    TECHDOWN_MOBILE_IMAGE_HEIGHT
-  ),
-  productImage(
-    'utekos-techdown-mobile-pocket',
-    techDownMobilePocket,
-    'Nærbilde av lomme med oransje innvendig kant og oransje draglås på Utekos TechDown.',
-    TECHDOWN_MOBILE_IMAGE_WIDTH,
-    TECHDOWN_MOBILE_IMAGE_HEIGHT
-  ),
-  productImage(
-    'utekos-techdown-mobile-zipper-detail',
-    techDownMobileZipperDetail,
-    'Nærbilde av glidelås med oransje draglås og strammesnor på Utekos TechDown.',
-    TECHDOWN_MOBILE_ZIPPER_DETAIL_WIDTH,
-    TECHDOWN_MOBILE_ZIPPER_DETAIL_HEIGHT
+    'Nærbilde av glidelås på Utekos TechDown.',
+    techDownMobileZipper.width,
+    techDownMobileZipper.height
   )
 ]
 

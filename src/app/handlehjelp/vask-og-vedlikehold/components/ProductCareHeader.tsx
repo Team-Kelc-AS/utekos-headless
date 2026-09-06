@@ -10,7 +10,7 @@ export function ProductCareHeader() {
           <li>
             <Link
               href='/'
-              className='dark:hover:text-dark-primary underline-offset-4 transition-colors hover:text-primary hover:underline'
+              className='underline-offset-4 transition-colors hover:text-primary hover:underline'
             >
               Forsiden
             </Link>
@@ -21,7 +21,7 @@ export function ProductCareHeader() {
           <li>
             <Link
               href='/handlehjelp/vask-og-vedlikehold'
-              className='dark:hover:text-dark-primary underline-offset-4 transition-colors hover:text-primary hover:underline'
+              className='underline-offset-4 transition-colors hover:text-primary hover:underline'
             >
               Handlehjelp
             </Link>
@@ -40,7 +40,7 @@ export function ProductCareHeader() {
           label='Handlehjelp'
           backgroundColor='var(--background)'
           textColor='var(--foreground)'
-          className='dark:border-dark-foreground/12 mb-4 border border-foreground/12 px-5 py-2.5 font-sans text-base tracking-wide text-foreground sm:px-8 sm:py-3'
+          className='mb-4 border border-foreground/12 px-5 py-2.5 font-sans text-base tracking-wide text-foreground sm:px-8 sm:py-3'
         />
         <h1 className='font-google-sans py-4 text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'>
           Produktvedlikehold

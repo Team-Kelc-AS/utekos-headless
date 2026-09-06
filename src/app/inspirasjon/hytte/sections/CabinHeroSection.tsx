@@ -11,7 +11,7 @@ export function CabinHeroSection({
   children?: React.ReactNode
 }) {
   return (
-    <article className=' dark:bg-dark-background relative isolate overflow-hidden border-b border-border bg-background text-foreground'>
+    <article className=' relative isolate overflow-hidden border-b border-border bg-background text-foreground'>
       <BackgroundRippleEffect
         rows={16}
         cols={42}

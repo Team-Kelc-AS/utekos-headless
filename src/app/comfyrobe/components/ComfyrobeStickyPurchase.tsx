@@ -160,7 +160,7 @@ export function ComfyrobeStickyPurchase({
           }}
           className='fixed inset-x-3 bottom-3 z-50 lg:hidden'
         >
-          <div className='dark:border-dark-foreground/15 dark:bg-dark-background/96 flex items-center gap-2 rounded-full border border-foreground/15 bg-background/96 p-2 text-foreground shadow-[0_14px_45px_rgba(0,0,0,0.3)] backdrop-blur-md'>
+          <div className='flex items-center gap-2 rounded-full border border-foreground/15 bg-background/96 p-2 text-foreground shadow-[0_14px_45px_rgba(0,0,0,0.3)] backdrop-blur-md'>
             <button
               type='button'
               aria-label='Lukk kjøpslinjen'

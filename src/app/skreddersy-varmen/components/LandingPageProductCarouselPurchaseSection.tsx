@@ -32,10 +32,10 @@ export function LandingPageProductCarouselPurchaseSection() {
   ]
 
   return (
-    <div className='dark:bg-dark-background relative flex w-full flex-col items-center justify-center bg-jungle min-[900px]:sticky min-[900px]:top-0 min-[900px]:h-svh min-[900px]:self-start min-[900px]:p-8 min-[1280px]:p-12 lg:top-20 xl:top-22.5'>
+    <div className='relative flex w-full flex-col items-center justify-center bg-jungle min-[900px]:sticky min-[900px]:top-0 min-[900px]:h-svh min-[900px]:self-start min-[900px]:p-8 min-[1280px]:p-12 lg:top-20 xl:top-22.5'>
       <BrandBadge
         tone='promo'
-        className='animate-in fade-in slide-in-from-left-2 dark:bg-dark-primary dark:text-dark-primary-foreground absolute top-4 left-4 z-20 bg-primary px-4 py-1.5 font-utekos-text-medium text-xs tracking-normal text-primary-foreground shadow-lg duration-500 min-[900px]:top-8 min-[900px]:left-8 min-[1280px]:top-12 min-[1280px]:left-12'
+        className='animate-in fade-in slide-in-from-left-2 absolute top-4 left-4 z-20 bg-primary px-4 py-1.5 font-utekos-text-medium text-xs tracking-normal text-primary-foreground shadow-lg duration-500 min-[900px]:top-8 min-[900px]:left-8 min-[1280px]:top-12 min-[1280px]:left-12'
       >
         <span className='whitespace-nowrap'>
           {currentConfig.badge}
@@ -60,7 +60,7 @@ export function LandingPageProductCarouselPurchaseSection() {
                 key={typeof src === 'string' ? src : src.src}
                 className='relative aspect-4/5 pl-0 md:aspect-3/4'
               >
-                <div className='dark:min-[900px]:ring-dark-background/10 relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10'>
+                <div className='relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10'>
                   <Image
                     src={src}
                     alt={imageAlt}
@@ -80,14 +80,14 @@ export function LandingPageProductCarouselPurchaseSection() {
             <CarouselPrevious
               aria-label='Forrige bilde'
               className={cn(
-                'dark:border-dark-background/15 dark:bg-dark-foreground/90 dark:text-dark-background dark:hover:bg-dark-foreground dark:hover:text-dark-primary left-2 size-10 border-background/15 bg-foreground/90 text-background shadow-md backdrop-blur-md hover:bg-foreground hover:text-primary md:left-4 md:size-11',
+                'left-2 size-10 border-background/15 bg-foreground/90 text-background shadow-md backdrop-blur-md hover:bg-foreground hover:text-primary md:left-4 md:size-11',
                 focusRing
               )}
             />
             <CarouselNext
               aria-label='Neste bilde'
               className={cn(
-                'dark:border-dark-background/15 dark:bg-dark-foreground/90 dark:text-dark-background dark:hover:bg-dark-foreground dark:hover:text-dark-primary right-2 size-10 border-background/15 bg-foreground/90 text-background shadow-md backdrop-blur-md hover:bg-foreground hover:text-primary md:right-4 md:size-11',
+                'right-2 size-10 border-background/15 bg-foreground/90 text-background shadow-md backdrop-blur-md hover:bg-foreground hover:text-primary md:right-4 md:size-11',
                 focusRing
               )}
             />

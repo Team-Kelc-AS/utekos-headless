@@ -98,7 +98,7 @@ export function ThreeInOneDemo() {
                   <div
                     className={`absolute z-20 hidden rounded-xl border border-white/10 bg-black/40 p-6 text-left backdrop-blur-md transition-all delay-100 duration-500 md:bottom-12 md:left-12 md:block md:w-auto md:max-w-md ${isActive ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'} `}
                   >
-                    <div className='mb-2 flex items-center gap-3 text-commerce-primary dark:text-dark-commerce-primary'>
+                    <div className='mb-2 flex items-center gap-3 text-commerce-primary'>
                       <mode.icon size={20} />
                       <h4 className='font-google-sans font-serif text-xl font-bold tracking-wide capitalize'>
                         {mode.title}
@@ -115,7 +115,7 @@ export function ThreeInOneDemo() {
 
           {activeModeData && (
             <div className='animate-fade-in-up mt-4 rounded-xl border border-white/5 bg-white/5 p-4 text-left md:hidden'>
-              <div className='mb-2 flex items-center gap-2 text-commerce-primary dark:text-dark-commerce-primary'>
+              <div className='mb-2 flex items-center gap-2 text-commerce-primary'>
                 <activeModeData.icon
                   size={18}
                   className='text-primary'

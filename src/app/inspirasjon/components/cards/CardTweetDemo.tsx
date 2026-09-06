@@ -14,13 +14,13 @@ export const CardTweetDemo = () => {
     <Card className='max-w-md'>
       <CardHeader className='flex items-center justify-between gap-3'>
         <div className='flex items-center gap-3'>
-          <Avatar className='ring-ring dark:ring-dark-ring ring-2'>
+          <Avatar className='ring-ring ring-2'>
             <AvatarImage src='https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png' alt='Hallie Richards' />
             <AvatarFallback className='text-xs'>PG</AvatarFallback>
           </Avatar>
           <div className='flex flex-col gap-0.5'>
             <CardTitle className='flex items-center gap-1 text-sm'>
-              Philip George <BadgeCheck className='text-background dark:text-dark-background size-4 fill-sky-600 dark:fill-sky-400' />
+              Philip George <BadgeCheck className='text-background size-4 fill-sky-600 ' />
             </CardTitle>
             <CardDescription>@philip20</CardDescription>
           </div>
@@ -46,13 +46,13 @@ export const CardTweetDemo = () => {
         />
         <p>
           Lost in the colors of the night 🌌✨ Sometimes the blur reveals more than clarity.{' '}
-          <a href='#' className='text-primary dark:text-dark-primary underline-offset-2 hover:underline'>
+          <a href='#' className='text-primary underline-offset-2 hover:underline'>
             #AbstractVibes
           </a>{' '}
-          <a href='#' className='text-primary dark:text-dark-primary underline-offset-2 hover:underline'>
+          <a href='#' className='text-primary underline-offset-2 hover:underline'>
             #Dreamscape
           </a>{' '}
-          <a href='#' className='text-primary dark:text-dark-primary underline-offset-2 hover:underline'>
+          <a href='#' className='text-primary underline-offset-2 hover:underline'>
             #VisualPoetry
           </a>
         </p>
@@ -61,21 +61,21 @@ export const CardTweetDemo = () => {
         <Button
           variant='ghost'
           size='sm'
-          className='hover:bg-primary/10 dark:hover:bg-dark-primary/10 dark:hover:bg-dark-primary/20'
+          className='hover:bg-primary/10'
           onClick={() => setLiked(!liked)}
         >
-          {liked ? <Heart className='fill-destructive dark:fill-dark-destructive stroke-destructive dark:stroke-dark-destructive' /> : <Heart />}
+          {liked ? <Heart className='fill-destructive stroke-destructive ' /> : <Heart />}
           2.1K
         </Button>
-        <Button variant='ghost' size='sm' className='hover:bg-primary/10 dark:hover:bg-dark-primary/10 dark:hover:bg-dark-primary/20'>
+        <Button variant='ghost' size='sm' className='hover:bg-primary/10'>
           <MessageCircleIcon />
           1.4K
         </Button>
-        <Button variant='ghost' size='sm' className='hover:bg-primary/10 dark:hover:bg-dark-primary/10 dark:hover:bg-dark-primary/20'>
+        <Button variant='ghost' size='sm' className='hover:bg-primary/10'>
           <RepeatIcon />
           669
         </Button>
-        <Button variant='ghost' size='sm' className='hover:bg-primary/10 dark:hover:bg-dark-primary/10 dark:hover:bg-dark-primary/20'>
+        <Button variant='ghost' size='sm' className='hover:bg-primary/10'>
           <SendIcon />
           1.1K
         </Button>

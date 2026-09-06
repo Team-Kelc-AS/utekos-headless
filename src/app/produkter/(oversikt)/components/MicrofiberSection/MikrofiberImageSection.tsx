@@ -80,8 +80,8 @@ export function MikrofiberImageSection() {
           ))}
         </CarouselContent>
 
-        <CarouselPrevious className='dark:border-dark-background/10 dark:text-dark-background dark:hover:bg-dark-primary dark:focus-visible:ring-dark-primary/70 left-4 hidden border-background/10 bg-foreground/86 text-background backdrop-blur-md hover:bg-primary focus-visible:ring-primary/70 sm:inline-flex' />
-        <CarouselNext className='dark:border-dark-background/10 dark:text-dark-background dark:hover:bg-dark-primary dark:focus-visible:ring-dark-primary/70 right-4 hidden border-background/10 bg-foreground/86 text-background backdrop-blur-md hover:bg-primary focus-visible:ring-primary/70 sm:inline-flex' />
+        <CarouselPrevious className='left-4 hidden border-background/10 bg-foreground/86 text-background backdrop-blur-md hover:bg-primary focus-visible:ring-primary/70 sm:inline-flex' />
+        <CarouselNext className='right-4 hidden border-background/10 bg-foreground/86 text-background backdrop-blur-md hover:bg-primary focus-visible:ring-primary/70 sm:inline-flex' />
       </Carousel>
     </div>
   )

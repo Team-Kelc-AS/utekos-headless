@@ -110,7 +110,7 @@ export function NewsletterForm() {
                 type='submit'
                 disabled={isPending}
                 aria-busy={isPending}
-                className='group dark:focus-visible:outline-dark-ring cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-60'
+                className='group cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-60'
               >
                 {isPending ? 'Sender…' : 'Meld meg inn'}
                 <ArrowRight className='ml-2 size-5 transition-transform duration-300 group-hover:translate-x-1' />

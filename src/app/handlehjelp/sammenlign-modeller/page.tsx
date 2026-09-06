@@ -51,7 +51,7 @@ export const metadata: Metadata = {
 
 export default function CompareModelsPage() {
   return (
-    <article className='bg-background dark:bg-dark-background'>
+    <article className='bg-background'>
       <CompareModelsPageHero />
       <PersonaCards />
       <ComparisonSection />

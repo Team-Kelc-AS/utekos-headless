@@ -12,7 +12,7 @@ const TechDownFeatureSection = dynamic(
     ssr: false,
     loading: () => (
       <article
-        className='dark:bg-dark-background/40 min-h-190 rounded-[1.75rem] bg-background/40 py-16 sm:min-h-210 sm:py-24'
+        className='min-h-190 rounded-[1.75rem] bg-background/40 py-16 sm:min-h-210 sm:py-24'
         aria-hidden='true'
       />
     )
@@ -21,7 +21,7 @@ const TechDownFeatureSection = dynamic(
 
 const fallback = (
   <article
-    className='dark:bg-dark-background/40 min-h-190 rounded-[1.75rem] bg-background/40 py-16 sm:min-h-210 sm:py-24'
+    className='min-h-190 rounded-[1.75rem] bg-background/40 py-16 sm:min-h-210 sm:py-24'
     aria-hidden='true'
   />
 )

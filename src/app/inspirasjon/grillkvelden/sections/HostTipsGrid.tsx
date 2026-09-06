@@ -39,7 +39,7 @@ export const hostTipsData: HostTip[] = [
 
 export function HostTipsGrid({ tips }: { tips: HostTip[] }) {
   return (
-    <SectionBox bgcolor='bg-maritime-darkest border-b border-border '>
+    <SectionBox bgcolor='bg-maritime-darkest border-b border-border'>
       <article className={dark.section}>
         <div className='container'>
           <div className='mb-6'>
@@ -81,7 +81,7 @@ export function HostTipsGrid({ tips }: { tips: HostTip[] }) {
                     <CardContent className='relative flex h-full flex-col p-6'>
                       <div className='mb-4 flex items-center gap-4'>
                         <div
-                          className='dark:border-dark-background/10 flex size-10 shrink-0 items-center justify-center rounded-full border border-background/10 transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5'
+                          className='flex size-10 shrink-0 items-center justify-center rounded-full border border-background/10 transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5'
                           style={{
                             backgroundColor: `var(${theme.iconSurface})`
                           }}

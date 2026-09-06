@@ -22,19 +22,19 @@ export function DottedGlowBackgroundSection() {
         <div>
           <h2 className='text-center text-4xl font-normal tracking-tight text-foreground sm:text-5xl md:text-left'>
             Klar til å kjøpe{' '}
-            <span className='font-google-sans font-bold dark:text-white'>
+            <span className='font-google-sans font-bold'>
               Utekos
             </span>
             ?
           </h2>
-          <p className='dark:text-dark-muted mt-4 max-w-lg text-center text-base text-muted md:text-left'>
+          <p className='mt-4 max-w-lg text-center text-base text-muted md:text-left'>
             Utekos er designet for å gi deg den beste opplevelsen
             mulig når du er ute. Vi har utviklet en helt ny
             kategori av personlig komfort.
           </p>
         </div>
         <div className='flex flex-col gap-4 sm:flex-row'>
-          <button className='inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-8 py-3 text-sm font-medium text-neutral-700 shadow-sm transition-all duration-200 hover:bg-neutral-50 hover:shadow-md dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700'>
+          <button className='inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-8 py-3 text-sm font-medium text-neutral-700 shadow-sm transition-all duration-200 hover:bg-neutral-50 hover:shadow-md'>
             Se priser
           </button>
         </div>

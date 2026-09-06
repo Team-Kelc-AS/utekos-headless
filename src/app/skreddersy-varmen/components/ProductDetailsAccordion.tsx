@@ -75,7 +75,7 @@ function Section({
                   {group.items.map(item => (
                     <li
                       key={item}
-                      className='dark:marker:text-dark-foreground/55 list-disc marker:text-foreground/55'
+                      className='list-disc marker:text-foreground/55'
                     >
                       {item}
                     </li>

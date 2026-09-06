@@ -89,7 +89,7 @@ export function DesktopSection() {
         </div>
       </div>
 
-      <div className='dark:bg-dark-background/72 border-l border-foreground/12 bg-background/72 p-8 lg:p-12'>
+      <div className='border-l border-foreground/12 bg-background/72 p-8 lg:p-12'>
         <SupportForm idPrefix='desktop-contact' />
       </div>
     </div>

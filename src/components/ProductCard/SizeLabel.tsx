@@ -13,7 +13,10 @@ import { H3 } from '@/components/typography/TypographyH3'
 import { InlineText } from '@/components/typography/TypographyInlineText'
 import { P } from '@/components/typography/TypographyP'
 
-export function SizeLabel({ className = '' }: SizeLabelProps) {
+export function SizeLabel({
+  className = '',
+  label = 'STØRRELSE'
+}: SizeLabelProps) {
   return (
     <HoverCard>
       <HoverCardTrigger
@@ -22,11 +25,11 @@ export function SizeLabel({ className = '' }: SizeLabelProps) {
         rel='noopener noreferrer'
         style={{ outlineColor: 'var(--card-foreground)' }}
         className={cn(
-          'dark:focus-visible:outline-dark-card-foreground inline-flex w-fit items-center gap-1 font-utekos-text-medium text-sm tracking-wide text-card-foreground uppercase hover:text-card-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground motion-safe:transition-colors',
+          'inline-flex w-fit items-center gap-1 font-utekos-text-medium text-sm tracking-wide text-card-foreground uppercase hover:text-card-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground motion-safe:transition-colors',
           className
         )}
       >
-        <InlineText>STØRRELSE</InlineText>
+        <InlineText>{label}</InlineText>
         <ArrowUpRight
           className='size-3.5 shrink-0 text-current'
           aria-hidden='true'
@@ -39,12 +42,12 @@ export function SizeLabel({ className = '' }: SizeLabelProps) {
         align='start'
       >
         <div className='flex items-start space-x-3'>
-          <Ruler className='dark:text-dark-popover-foreground mt-1 size-7 text-popover-foreground' />
+          <Ruler className='mt-1 size-7 text-popover-foreground' />
           <div className='space-y-1'>
-            <H3 className='dark:text-dark-popover-foreground pb-0 font-utekos-text-medium text-sm text-popover-foreground'>
+            <H3 className='pb-0 font-utekos-text-medium text-sm text-popover-foreground'>
               Usikker på størrelsen?
             </H3>
-            <P className='dark:text-dark-popover-foreground/90 text-sm text-popover-foreground/90 not-first:mt-0'>
+            <P className='text-sm text-popover-foreground/90 not-first:mt-0'>
               Klikk for å åpne vår størrelsesguide i en ny fane.
             </P>
           </div>

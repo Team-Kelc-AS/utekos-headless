@@ -132,7 +132,7 @@ export const TechDownFeatureSection = () => {
 
       <div className='container mx-auto grid grid-cols-1 items-center gap-12 py-2 lg:grid-cols-2 lg:gap-20'>
         <div className='motion-visual w-full'>
-          <div className='dark:border-dark-foreground/10 dark:bg-dark-foreground/4 relative aspect-square rounded-2xl border border-foreground/10 bg-foreground/4 p-2 shadow-[0_32px_80px_-44px_rgba(8,15,24,0.92)] backdrop-blur-sm'>
+          <div className='relative aspect-square rounded-2xl border border-foreground/10 bg-foreground/4 p-2 shadow-[0_32px_80px_-44px_rgba(8,15,24,0.92)] backdrop-blur-sm'>
             <Carousel
               className='w-full'
               slideCount={TechDownImages.length}
@@ -144,7 +144,7 @@ export const TechDownFeatureSection = () => {
                     key={image.alt}
                     className='p-3 sm:p-4'
                   >
-                    <div className='dark:bg-dark-foreground/4 relative aspect-square w-full overflow-hidden rounded-3xl bg-foreground/4 p-3 sm:p-4'>
+                    <div className='relative aspect-square w-full overflow-hidden rounded-3xl bg-foreground/4 p-3 sm:p-4'>
                       <div className='relative size-full overflow-hidden rounded-[1.15rem]'>
                         <Image
                           src={image.src}
@@ -159,8 +159,8 @@ export const TechDownFeatureSection = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className='dark:border-dark-foreground/12 dark:bg-dark-background/72 dark:hover:bg-dark-background/88 hover:text-foreground-muted left-4 border-foreground/12 bg-background/72 text-foreground backdrop-blur-md hover:bg-background/88' />
-              <CarouselNext className='dark:border-dark-foreground/12 dark:bg-dark-background/72 dark:hover:bg-dark-background/88 hover:text-foreground-muted right-4 border-foreground/12 bg-background/72 text-foreground backdrop-blur-md hover:bg-background/88' />
+              <CarouselPrevious className='hover:text-foreground-muted left-4 border-foreground/12 bg-background/72 text-foreground backdrop-blur-md hover:bg-background/88' />
+              <CarouselNext className='hover:text-foreground-muted right-4 border-foreground/12 bg-background/72 text-foreground backdrop-blur-md hover:bg-background/88' />
             </Carousel>
           </div>
         </div>
@@ -181,12 +181,12 @@ export const TechDownFeatureSection = () => {
             {TechDownfeatures.map((feature, index) => (
               <li
                 key={index}
-                className='motion-feature-item group dark:bg-dark-foreground/3 dark:hover:border-dark-foreground/14 dark:hover:bg-dark-foreground/8 flex items-center gap-4 rounded-xl border border-transparent bg-foreground/3 px-4 py-3.5 transition-all duration-300 hover:translate-x-1 hover:border-foreground/14 hover:bg-foreground/8'
+                className='motion-feature-item group flex items-center gap-4 rounded-xl border border-transparent bg-foreground/3 px-4 py-3.5 transition-all duration-300 hover:translate-x-1 hover:border-foreground/14 hover:bg-foreground/8'
               >
                 <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground transition-transform group-hover:scale-110'>
                   <feature.icon className='h-5 w-5' />
                 </div>
-                <span className='dark:group-hover:text-dark-foreground font-utekos-text-medium text-foreground/90 transition-colors group-hover:text-foreground'>
+                <span className='font-utekos-text-medium text-foreground/90 transition-colors group-hover:text-foreground'>
                   {feature.text}
                 </span>
               </li>

@@ -80,7 +80,7 @@ export function InspirationCTASection({
           backgroundColor={primaryButtonBg}
           textColor={primaryButtonText}
           className={cn(
-            'group dark:border-dark-primary/24 font-google-sans min-h-14 border border-primary/24 px-8 py-4 text-base leading-4 font-bold tracking-normal shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105',
+            'group font-google-sans min-h-14 border border-primary/24 px-8 py-4 text-base leading-4 font-bold tracking-normal shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105',
             primaryButtonClassName
           )}
         >
@@ -94,7 +94,7 @@ export function InspirationCTASection({
           backgroundColor={secondaryButtonBg}
           textColor={secondaryButtonText}
           className={cn(
-            'dark:border-dark-background/14 font-google-sans min-h-14 border border-background/14 px-8 py-4 text-base leading-4 font-bold tracking-normal shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105',
+            'font-google-sans min-h-14 border border-background/14 px-8 py-4 text-base leading-4 font-bold tracking-normal shadow-xl transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105',
             secondaryButtonClassName
           )}
         >

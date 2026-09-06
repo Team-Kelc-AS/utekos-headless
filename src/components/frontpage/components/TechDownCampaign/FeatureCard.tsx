@@ -53,7 +53,7 @@ export function FeatureCard({
   return (
     <Card
       className={cn(
-        'w-full overflow-hidden rounded-2xl bg-card p-0 text-card-foreground shadow-none dark:bg-badge dark:text-foreground',
+        'w-full overflow-hidden rounded-2xl bg-card p-0 text-card-foreground shadow-none',
         className
       )}
     >
@@ -65,7 +65,7 @@ export function FeatureCard({
       >
         <span
           className={cn(
-            'mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-badge text-secondary-foreground sm:size-11 dark:bg-card',
+            'mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-badge text-secondary-foreground sm:size-11',
             iconWrapClassName
           )}
         >

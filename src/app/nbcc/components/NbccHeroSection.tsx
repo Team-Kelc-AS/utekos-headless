@@ -25,9 +25,9 @@ export function NbccHeroSection() {
       initial='hidden'
       animate='visible'
       transition={{ staggerChildren: 0.085 }}
-      className='dark:bg-dark-background relative isolate overflow-hidden bg-background'
+      className='relative isolate overflow-hidden bg-background'
     >
-      <div className='dark:from-dark-background absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-background to-transparent' />
+      <div className='absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-background to-transparent' />
 
       <div className='relative mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-center lg:gap-x-16 lg:gap-y-0 lg:px-8 lg:py-28'>
         <motion.div
@@ -168,7 +168,7 @@ export function NbccHeroSection() {
             <BadgeCheckIcon
               size={22}
               animate='check'
-              className='dark:text-dark-primary mt-0.5 shrink-0 text-primary'
+              className='mt-0.5 shrink-0 text-primary'
               aria-hidden
             />
             <span>

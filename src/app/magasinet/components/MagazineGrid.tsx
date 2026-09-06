@@ -211,7 +211,7 @@ export function MagazineGrid({ articles }: MagazineGridProps) {
 
   if (!featuredArticle) {
     return (
-      <article className='dark:text-dark-background bg-overcast py-16 text-background'>
+      <article className='bg-overcast py-16 text-background'>
         <div className='container mx-auto px-4'>
           <p className='text-lg leading-[1.55]'>
             Ingen artikler er publisert ennå.

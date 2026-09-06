@@ -16,8 +16,8 @@ export const benefitsData: Benefit[] = [
     icon: ThermometerIcon,
     title: 'Øyeblikkelig varme',
     description: 'Fra kald morgen til koselig stund på sekunder',
-    color: 'text-primary dark:text-dark-primary',
-    bgColor: 'bg-background/24 dark:bg-dark-background/24'
+    color: 'text-primary',
+    bgColor: 'bg-background/24'
   },
   {
     icon: SparklesIcon,
@@ -25,22 +25,22 @@ export const benefitsData: Benefit[] = [
     description:
       'Tar minimal plass i bobilen, maksimal komfort på turen',
     color: 'text-dark-teal',
-    bgColor: 'bg-background/24 dark:bg-dark-background/24'
+    bgColor: 'bg-background/24'
   },
   {
     icon: CalendarIcon,
     title: 'Forleng sesongen',
     description:
       'Bruk bobilen fra tidlig vår til sen høst i komfort',
-    color: 'text-primary dark:text-dark-primary',
-    bgColor: 'bg-background/24 dark:bg-dark-background/24'
+    color: 'text-primary',
+    bgColor: 'bg-background/24'
   },
   {
     icon: UsersIcon,
     title: 'Sosial magnet',
     description: 'Bli samlingspunktet på campingplassen',
-    color: 'text-primary dark:text-dark-primary',
-    bgColor: 'bg-background/24 dark:bg-dark-background/24'
+    color: 'text-primary',
+    bgColor: 'bg-background/24'
   }
 ]
 
@@ -70,7 +70,7 @@ export function BenefitsGrid({
               const Icon = benefit.icon
               const iconBackgroundClass =
                 benefit.bgColor ??
-                'bg-background/24 dark:bg-dark-background/24'
+                'bg-background/24'
 
               return (
                 <AnimatedBlock

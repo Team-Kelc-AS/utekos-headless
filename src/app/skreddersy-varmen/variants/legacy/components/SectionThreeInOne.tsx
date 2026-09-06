@@ -38,7 +38,7 @@ export function SectionThreeInOne() {
       <section
         id='section-solution'
         aria-labelledby='threeinone-heading'
-        className='dark:bg-dark-background w-full bg-evening text-foreground'
+        className='w-full bg-evening text-foreground'
       >
         <m.div
           className='mx-auto max-w-5xl px-6 py-16 text-left md:py-24'
@@ -65,7 +65,7 @@ export function SectionThreeInOne() {
             variants={revealItem}
           >
             Det unike med Utekos
-            <span className='dark:text-dark-primary font-google-sans font-bold text-primary'>
+            <span className='font-google-sans font-bold text-primary'>
               ®
             </span>{' '}
             er transformasjonen. Fra en isolerende kokong til en
@@ -85,7 +85,7 @@ export function SectionThreeInOne() {
         <div className='w-full lg:flex'>
           <div
             aria-hidden='true'
-            className='dark:border-dark-foreground/10 sticky top-0 hidden h-screen w-1/2 items-center justify-center overflow-hidden rounded-r-lg border-r border-foreground/10 bg-jungle lg:flex'
+            className='sticky top-0 hidden h-screen w-1/2 items-center justify-center overflow-hidden rounded-r-lg border-r border-foreground/10 bg-jungle lg:flex'
           >
             {Steps.map((step, index) => (
               <m.div
@@ -100,7 +100,7 @@ export function SectionThreeInOne() {
                 initial={index === 0 ? 'active' : 'inactive'}
                 variants={stickyImageMotion}
               >
-                <div className='dark:border-dark-foreground/15 dark:bg-dark-background/40 relative aspect-square w-[min(86%,82vh)] overflow-hidden rounded-3xl border border-foreground/15 bg-background/40 shadow-2xl'>
+                <div className='relative aspect-square w-[min(86%,82vh)] overflow-hidden rounded-3xl border border-foreground/15 bg-background/40 shadow-2xl'>
                   <Image
                     src={step.image.desktop}
                     alt=''
@@ -114,7 +114,7 @@ export function SectionThreeInOne() {
                     )}
                     sizes='(max-width: 1023px) 0px, min(43vw, 82vh)'
                   />
-                  <div className='dark:from-dark-background absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-background to-transparent opacity-60' />
+                  <div className='absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-background to-transparent opacity-60' />
                 </div>
               </m.div>
             ))}
@@ -126,19 +126,19 @@ export function SectionThreeInOne() {
                   className={cn(
                     'h-1.5 rounded-full transition-all duration-500 motion-reduce:transition-none',
                     activeStep === i ?
-                      'dark:bg-dark-accent w-8 bg-accent shadow-[0_0_8px_var(--color-accent)]'
-                    : 'dark:bg-dark-foreground/30 w-2 bg-foreground/30'
+                      'w-8 bg-accent shadow-[0_0_8px_var(--color-accent)]'
+                    : 'w-2 bg-foreground/30'
                   )}
                 />
               ))}
             </div>
           </div>
 
-          <div className='dark:bg-dark-background flex w-full flex-col bg-evening pb-20 lg:w-1/2 lg:pb-0'>
+          <div className='flex w-full flex-col bg-evening pb-20 lg:w-1/2 lg:pb-0'>
             {Steps.map((step, index) => (
               <m.div
                 key={step.id}
-                className='dark:border-dark-foreground/10 mb-12 flex flex-col border-foreground/10 bg-evening last:mb-0 lg:mb-0 lg:min-h-screen lg:justify-center lg:border-b lg:px-12 lg:py-24 lg:last:border-0 xl:px-20'
+                className='mb-12 flex flex-col border-foreground/10 bg-evening last:mb-0 lg:mb-0 lg:min-h-screen lg:justify-center lg:border-b lg:px-12 lg:py-24 lg:last:border-0 xl:px-20'
                 initial='hidden'
                 whileInView='visible'
                 viewport={{
@@ -150,7 +150,7 @@ export function SectionThreeInOne() {
               >
                 <m.div
                   className={cn(
-                    'dark:border-dark-foreground/10 relative w-full overflow-hidden border-y border-foreground/10 bg-jungle lg:hidden',
+                    'relative w-full overflow-hidden border-y border-foreground/10 bg-jungle lg:hidden',
                     step.mobileAspectClassName
                   )}
                   variants={revealScale}
@@ -178,11 +178,11 @@ export function SectionThreeInOne() {
 
                 <div className='mx-auto w-full max-w-xl px-6 pt-6 md:px-8 lg:px-0 lg:pt-0'>
                   <m.div
-                    className='dark:text-dark-primary mb-2 flex items-center gap-2 font-sans text-primary lg:mb-4 lg:gap-3'
+                    className='mb-2 flex items-center gap-2 font-sans text-primary lg:mb-4 lg:gap-3'
                     variants={revealItemLeft}
                   >
                     <m.span
-                      className='dark:text-dark-primary inline-flex shrink-0 text-primary'
+                      className='inline-flex shrink-0 text-primary'
                       variants={revealPop}
                     >
                       {step.icon}

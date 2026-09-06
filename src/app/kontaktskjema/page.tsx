@@ -42,7 +42,7 @@ export default function SupportPage() {
             <TopGrid />
           </Activity>
           <Activity>
-            <div className='dark:border-dark-foreground relative overflow-hidden rounded-lg border border-foreground bg-card text-card-foreground'>
+            <div className='relative overflow-hidden rounded-lg border border-foreground bg-card text-card-foreground'>
               <Activity>
                 <CornerPluses />
               </Activity>

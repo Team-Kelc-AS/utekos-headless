@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils/className'
 import type { ProductGalleryProps } from '@types'
 
 const galleryControlClassName =
-  'border border-sidebar-foreground bg-sidebar text-sidebar-foreground shadow-none hover:bg-sidebar hover:text-sidebar-foreground dark:border-sidebar-foreground dark:hover:text-sidebar-foreground'
+  'border border-sidebar-foreground bg-sidebar text-sidebar-foreground shadow-none hover:bg-sidebar hover:text-sidebar-foreground'
 
 export function ProductGallery({
   title,

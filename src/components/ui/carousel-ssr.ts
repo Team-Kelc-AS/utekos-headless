@@ -23,9 +23,9 @@ export const CAROUSEL_SSR = {
     }
   }),
 
-  /** Product rows: `basis-[72%]` → `sm:1/2` → `md:40%` → `xl:1/3` */
+  /** Product rows: `basis-[86%]` → `sm:1/2` → `md:40%` → `xl:1/3` */
   productGrid: (slideCount: number): SsrOptionsType => ({
-    slideSizes: fillSlideSizes(slideCount, 72),
+    slideSizes: fillSlideSizes(slideCount, 86),
     breakpoints: {
       '(min-width: 640px)': {
         slideSizes: fillSlideSizes(slideCount, 50)

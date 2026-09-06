@@ -27,16 +27,16 @@ function cn(
 
 const defaultPatternCardClasses = {
   outer:
-    'bg-foreground/10 dark:bg-dark-foreground/10 dark:bg-white/10',
+    'bg-foreground/10',
   inner:
-    'bg-background/72 dark:bg-dark-background/72 text-foreground  ring-foreground/12 dark:ring-dark-foreground/12 shadow-[0_18px_46px_-38px_color-mix(in_oklab,var(--background)_90%,transparent)]',
+    'bg-background/72 text-foreground  ring-foreground/12 shadow-[0_18px_46px_-38px_color-mix(in_oklab,var(--background)_90%,transparent)]',
   list: 'text-foreground/95 /95',
   separator: 'border-(--pattern-fg)',
   footerLabel: 'text-foreground/82 /82',
-  iconCircle: 'fill-card/25 dark:fill-dark-card/25',
+  iconCircle: 'fill-card/25',
   iconRing:
-    'stroke-foreground/25 dark:stroke-dark-foreground/25',
-  iconPath: 'stroke-foreground dark:stroke-dark-foreground'
+    'stroke-foreground/25',
+  iconPath: 'stroke-foreground'
 } satisfies Required<PatternCardClasses>
 
 function PatternCheckIcon({

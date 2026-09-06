@@ -13,8 +13,8 @@ export function CTASection() {
       primaryButtonText='var(--secondary-foreground)'
       secondaryButtonBg='var(--card)'
       secondaryButtonText='var(--card-foreground)'
-      primaryButtonClassName='border-secondary/35 dark:border-dark-secondary/35'
-      secondaryButtonClassName='border-card-foreground/24 dark:border-dark-card-foreground/24'
+      primaryButtonClassName='border-secondary/35'
+      secondaryButtonClassName='border-card-foreground/24'
     />
   )
 }

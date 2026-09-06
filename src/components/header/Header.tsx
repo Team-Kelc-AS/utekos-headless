@@ -61,7 +61,7 @@ export default function Header({
           <Link
             href={'/kontaktskjema' as Route}
             data-track='HeaderCustomerServiceClick'
-            className='dark:focus-visible:ring-dark-ring hidden h-11 min-w-31 items-center justify-center gap-2 rounded-md px-3 font-utekos-text-medium text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex dark:hover:bg-accent'
+            className='hidden h-11 min-w-31 items-center justify-center gap-2 rounded-md px-3 font-utekos-text-medium text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex'
           >
             <HeadphonesIcon
               className='size-4'
@@ -72,7 +72,7 @@ export default function Header({
 
           <Cart
             showLabel
-            className='dark:hover:bg-dark-accent h-11 min-w-11 rounded-md border-transparent bg-transparent px-0 text-foreground hover:bg-accent hover:text-accent-foreground md:min-w-29 md:px-3'
+            className='h-11 min-w-11 rounded-md border-transparent bg-transparent px-0 text-foreground hover:bg-accent hover:text-accent-foreground md:min-w-29 md:px-3'
           />
 
           <ClientMobileMenu menu={menu} />

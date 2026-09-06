@@ -1,8 +1,6 @@
 @import 'tailwindcss';
 @import 'shadcn/tailwind.css';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -164,10 +162,10 @@
 
 @layer base {
   * {
-    @apply  dark:outline-dark-ring/50 border-border outline-ring/50;
+    @apply border-border outline-ring/50;
   }
 
   body {
-    @apply dark:bg-dark-background bg-background text-foreground;
+    @apply bg-background text-foreground;
   }
 }

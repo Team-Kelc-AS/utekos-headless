@@ -14,6 +14,7 @@ export function createWebVitalCollectorTransport(
 ) {
   return createCanonicalCollectorTransport<CanonicalWebVital>({
     analyticsEventName: 'web_vital',
+    beaconEndpoint: '/api/e/wv',
     endpoint: '/api/events/web-vital',
     fallbackEndpoint: '/api/e/wv',
     hasCollectionConsent: hasWebVitalCollectionConsent,

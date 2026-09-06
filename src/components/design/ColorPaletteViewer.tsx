@@ -60,10 +60,10 @@ function ColorSwatch({
       aria-label={`Kopier ${familyId}-${step.shade} som ${formatLabel(format)}`}
     >
       <span
-        className='dark:border-dark-foreground/10 dark:group-hover:ring-dark-foreground/30 dark:group-focus-visible:ring-dark-foreground/50 aspect-[1.05] min-h-16 w-full rounded-md border border-foreground/10 transition group-hover:ring-2 group-hover:ring-foreground/30 group-focus-visible:ring-2 group-focus-visible:ring-foreground/50 sm:min-h-19 lg:min-h-20'
+        className='aspect-[1.05] min-h-16 w-full rounded-md border border-foreground/10 transition group-hover:ring-2 group-hover:ring-foreground/30 group-focus-visible:ring-2 group-focus-visible:ring-foreground/50 sm:min-h-19 lg:min-h-20'
         style={{ backgroundColor: step.oklch }}
       />
-      <span className='/55 dark:group-hover:text-dark-foreground/80 truncate font-utekos-text text-xs text-foreground/55 group-hover:text-foreground/80'>
+      <span className='/55 truncate font-utekos-text text-xs text-foreground/55 group-hover:text-foreground/80'>
         {familyId}-{step.shade}
       </span>
     </button>
@@ -114,7 +114,7 @@ export function ColorPaletteViewer({
 
   return (
     <div className='space-y-10'>
-      <header className='dark:border-dark-foreground/10 space-y-4 border-b border-foreground/10 pb-8'>
+      <header className='space-y-4 border-b border-foreground/10 pb-8'>
         <div className='flex flex-wrap items-end justify-between gap-4'>
           <div className='space-y-2'>
             <p className='font-utekos-text text-xs tracking-wide text-foreground/50'>
@@ -156,11 +156,11 @@ export function ColorPaletteViewer({
             >
               <SelectTrigger
                 size='sm'
-                className='w-38r-foreground/15 dark:bg-dark-foreground/5 bg-foreground/5 text-foreground'
+                className='w-38r-foreground/15 bg-foreground/5 text-foreground'
               >
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className='dark:border-dark-foreground/15 dark:bg-dark-background border-foreground/15 bg-background text-foreground'>
+              <SelectContent className='border-foreground/15 bg-background text-foreground'>
                 <SelectItem value='hex'>HEX</SelectItem>
                 <SelectItem value='oklch'>OKLCH</SelectItem>
               </SelectContent>
@@ -176,7 +176,7 @@ export function ColorPaletteViewer({
 
       <nav
         aria-label='Fargefamilier'
-        className='dark:border-dark-foreground/10 dark:bg-dark-background/95 sticky top-0 z-20 -mx-1 overflow-x-auto border-b border-foreground/10 bg-background/95 px-1 py-3 backdrop-blur'
+        className='sticky top-0 z-20 -mx-1 overflow-x-auto border-b border-foreground/10 bg-background/95 px-1 py-3 backdrop-blur'
       >
         <ul className='flex min-w-max gap-2'>
           {families.map(family => (
@@ -184,8 +184,8 @@ export function ColorPaletteViewer({
               <a
                 href={`#${family.id}`}
                 className={cn(
-                  'dark:border-dark-foreground/10 /70 inline-flex rounded-full border border-foreground/10 px-3 py-1.5 text-xs text-foreground/70 transition-colors',
-                  'dark:hover:border-dark-foreground/25 dark:hover:bg-dark-foreground/5 dark:hover:text-dark-foreground hover:border-foreground/25 hover:bg-foreground/5 hover:text-foreground'
+                  '/70 inline-flex rounded-full border border-foreground/10 px-3 py-1.5 text-xs text-foreground/70 transition-colors',
+                  'hover:border-foreground/25 hover:bg-foreground/5 hover:text-foreground'
                 )}
               >
                 {family.title}

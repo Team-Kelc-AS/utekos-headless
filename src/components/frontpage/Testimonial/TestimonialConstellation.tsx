@@ -5,6 +5,7 @@ import { Star, StarHalf } from 'lucide-react'
 import { motion, type Variants } from 'motion/react'
 import { TestimonialSection } from './TestimonialSection'
 import { PageSection } from '@/components/layout/PageSection'
+import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 import { cn } from '@/lib/utils/className'
 import { H2 } from '@/components/typography/TypographyH2'
 import { InlineText } from '@/components/typography/TypographyInlineText'
@@ -21,7 +22,8 @@ export function TestimonialConstellation() {
       as='section'
       background='muted'
       className={cn(
-        'relative isolate overflow-hidden text-foreground'
+        frontpageSectionStackClassName,
+        'text-foreground'
       )}
       contentClassName='relative z-10'
     >
@@ -43,7 +45,7 @@ export function TestimonialConstellation() {
                 duration: 0.9,
                 ease: [0.22, 1, 0.36, 1]
               }}
-              className='dark:shadow-dark-background/20 mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-card-foreground shadow-lg shadow-background/20'
+              className='mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-card-foreground shadow-lg shadow-background/20'
               style={{
                 backgroundColor: 'var(--card)',
                 borderColor: 'var(--color-blue-green)'

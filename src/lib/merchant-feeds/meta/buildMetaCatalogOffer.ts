@@ -164,6 +164,10 @@ export function buildMetaCatalogOffer(input: {
     )
   }
 
+  if (product.handle === 'utekos-techdown') {
+    link.pathname = '/skreddersy-varmen'
+  }
+
   const media = getMetaCatalogMedia({
     color,
     productHandle: product.handle

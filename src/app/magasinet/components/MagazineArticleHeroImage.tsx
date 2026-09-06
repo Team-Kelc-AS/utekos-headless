@@ -7,7 +7,7 @@ export function MagazineArticleHeroImage({
   article
 }: MagazineArticleHeroImageProps) {
   return (
-    <figure className='dark:bg-dark-background overflow-hidden rounded-lg border border-foreground/12 bg-background shadow-[0_28px_90px_-58px_color-mix(in_oklch,var(--background)_92%,transparent)]'>
+    <figure className='overflow-hidden rounded-lg border border-foreground/12 bg-background shadow-[0_28px_90px_-58px_color-mix(in_oklch,var(--background)_92%,transparent)]'>
       <Image
         src={article.heroImage.src}
         alt={article.heroImage.alt}

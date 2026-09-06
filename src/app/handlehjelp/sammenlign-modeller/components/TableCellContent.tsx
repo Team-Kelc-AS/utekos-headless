@@ -8,11 +8,11 @@ export function TableCellContent({
 }) {
   if (typeof value === 'boolean') {
     return value ?
-        <span className='dark:bg-dark-primary dark:text-dark-background inline-flex size-8 items-center justify-center rounded-full bg-primary text-background'>
+        <span className='inline-flex size-8 items-center justify-center rounded-full bg-primary text-background'>
           <Check className='size-4' aria-hidden='true' />
           <span className='sr-only'>Ja</span>
         </span>
-      : <span className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
+      : <span className='text-sm text-muted-foreground'>
           Nei
         </span>
   }

@@ -1,10 +1,17 @@
 // Path: src/components/frontpage/FeaturedProductSection.tsx
 import { ProductCarousel } from '@/components/ProductCard/ProductCarousel'
+import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 import { H2 } from '@/components/typography/TypographyH2'
+import { cn } from '@/lib/utils/className'
 
 export async function FeaturedProductsSection() {
   return (
-    <article className='mx-auto w-full bg-background text-foreground lg:max-w-[90%]'>
+    <article
+      className={cn(
+        frontpageSectionStackClassName,
+        'mx-auto w-full bg-primary text-foreground'
+      )}
+    >
       <div className='relative mx-auto w-full px-(--product-rail) py-8 [--product-rail:1rem] sm:py-12 sm:[--product-rail:1.5rem] md:py-16 md:[--product-rail:clamp(3rem,7.42vw,4.75rem)] lg:py-24 xl:[--product-rail:6rem]'>
         <H2
           ID='featured-products-heading'

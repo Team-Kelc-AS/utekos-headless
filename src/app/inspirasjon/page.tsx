@@ -23,7 +23,7 @@ export const metadata = {
 
 export default function InspirationPage() {
   return (
-    <article className='dark:bg-dark-background bg-background py-16 text-foreground sm:py-24'>
+    <article className='bg-background py-16 text-foreground sm:py-24'>
       <div className='container mx-auto max-w-4xl px-4'>
         <UtekosBreadcrumbBar
           embedded
@@ -49,14 +49,14 @@ export default function InspirationPage() {
           <BrandBadge
             asChild
             tone='neutral'
-            className='dark:border-dark-primary/24 w-52 border border-primary/24 bg-primary px-7 py-3 font-utekos-text-medium text-base leading-4 tracking-normal text-foreground shadow-[0_18px_38px_-30px_rgba(49,42,18,0.58)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105'
+            className='w-52 border border-primary/24 bg-primary px-7 py-3 font-utekos-text-medium text-base leading-4 tracking-normal text-foreground shadow-[0_18px_38px_-30px_rgba(49,42,18,0.58)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105'
           >
             <Link href='/produkter'>Se produktene</Link>
           </BrandBadge>
           <BrandBadge
             asChild
             tone='commerce-secondary'
-            className='dark:border-dark-background/18 w-52 border border-background/18 px-7 py-3 font-utekos-text-medium text-base leading-4 tracking-normal shadow-[0_18px_38px_-32px_rgba(14,18,35,0.7)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-110'
+            className='w-52 border border-background/18 px-7 py-3 font-utekos-text-medium text-base leading-4 tracking-normal shadow-[0_18px_38px_-32px_rgba(14,18,35,0.7)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-110'
           >
             <Link href='/handlehjelp/storrelsesguide'>
               Finn riktig størrelse

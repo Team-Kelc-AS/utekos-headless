@@ -8,12 +8,10 @@ import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/Klar
 import { OptionsColumn } from '@/components/jsx/OptionsColumn'
 import { ProductPageGrid } from '@/components/jsx/ProductPageGrid'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
-import { productMetadata } from '@/db/config/product-metadata.config'
 import { getProductPageContent } from '@/db/data/products/product-page-content'
 import ProductHeader from './ProductHeader'
 import PriceActivityPanel from './PriceActivityPanel'
 import { ProductDescription } from './ProductDescription'
-import { KlarnaDesktopPromo } from './KlarnaDesktopPromo'
 import { AsyncProductPurchaseIsland } from './AsyncProductPurchaseIsland'
 import { ProductPurchaseIslandSkeleton } from './ProductPurchaseIslandSkeleton'
 import { AsyncRelatedProducts } from './AsyncRelatedProducts'
@@ -27,7 +25,8 @@ import { DesktopBreadcrump } from './DesktopBreadcrump'
 import { PRODUCT_GALLERY_IMAGE_OVERRIDES } from '../utils/gallery-images/productGalleryImageOverrides'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
-import { SmartRealTimeActivity } from './SmartRealTimeActivity'
+import { ProductHeaderWishlist } from './ProductHeaderWishlist'
+import { TechDownMobileGalleryFrame } from './TechDownMobileGalleryFrame'
 import { ProductViewItemReporter } from './ProductViewItemReporter'
 import { computeVariantImages } from '@/lib/utils/computeVariantImages'
 import { COMFYROBE_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/comfyrobeProductGalleryImages'
@@ -63,16 +62,6 @@ export function ProductPageView({
   const productPageContent = getProductPageContent(
     productData.handle
   )
-
-  const currentProductMetadata =
-    productMetadata[productData.handle]
-
-  const activityNode =
-    currentProductMetadata?.showActivity ?
-      <SmartRealTimeActivity
-        baseViewers={currentProductMetadata.baseViewers ?? 3}
-      />
-    : undefined
 
   const overrideImages =
     PRODUCT_GALLERY_IMAGE_OVERRIDES[productData.handle]
@@ -118,9 +107,11 @@ export function ProductPageView({
   const galleryFrameClassName =
     useCompactGallery ?
       `mx-auto w-full max-w-lg sm:max-w-xl md:mx-0 md:max-w-none ${galleryDesktopBleedClassName}`
+    : isTechDownProduct ?
+      `w-full ${galleryDesktopBleedClassName}`
     : `relative left-1/2 w-screen -translate-x-1/2 ${galleryDesktopBleedClassName}`
 
-  const galleryStickyClassName = `${galleryFrameClassName} md:sticky md:top-24 lg:top-20`
+  const galleryStickyClassName = `${galleryFrameClassName} xl:sticky xl:top-20`
 
   const galleryImageClassName =
     useCompactGallery ?
@@ -139,13 +130,12 @@ export function ProductPageView({
         productHandle={productData.handle}
         priceAmount={selectedVariant.price.amount ?? '0'}
         currencyCode={selectedVariant.price.currencyCode}
-        activityNode={activityNode}
       />
     </div>
   )
 
   return (
-    <article className='dark:bg-dark-background ! relative isolate overflow-x-clip bg-background py-0 text-foreground! md:py-6'>
+    <article className='relative isolate overflow-x-clip bg-background py-0 pb-8 text-foreground md:py-6'>
       <ProductViewItemReporter
         product={productData}
         variant={selectedVariant}
@@ -170,7 +160,7 @@ export function ProductPageView({
 
         <ProductPageGrid>
           <GalleryColumn>
-            <div className={galleryStickyClassName}>
+            <div className={`relative order-1 ${galleryStickyClassName}`}>
               <div className='hidden md:block'>
                 <ProductGallery
                   title={title}
@@ -181,42 +171,59 @@ export function ProductPageView({
               </div>
 
               <div className='md:hidden'>
-                <AspectRatio
-                  ratio={galleryAspectRatio}
-                  className='w-full'
-                >
-                  <div className='relative isolate size-full overflow-hidden'>
+                {isTechDownProduct ?
+                  <TechDownMobileGalleryFrame>
                     <ProductGallery
                       title={title}
                       images={mobileGalleryImages}
-                      imageLayout={
-                        isTechDownProduct ? 'intrinsic' : (
-                          'cover-fill'
-                        )
-                      }
-                      {...(useCompactGallery ?
-                        {
-                          imageBackgroundClassName:
-                            'bg-transparent',
-                          imageClassName:
-                            galleryImageClassName as string
-                        }
-                      : {})}
+                      imageLayout='cover-fill'
+                      imageBackgroundClassName='bg-primary'
                     />
-                  </div>
-                </AspectRatio>
+                  </TechDownMobileGalleryFrame>
+                : <AspectRatio
+                    ratio={galleryAspectRatio}
+                    className='w-full'
+                  >
+                    <div className='relative isolate size-full overflow-hidden'>
+                      <ProductGallery
+                        title={title}
+                        images={mobileGalleryImages}
+                        imageLayout='cover-fill'
+                        {...(useCompactGallery ?
+                          {
+                            imageBackgroundClassName:
+                              'bg-transparent',
+                            imageClassName:
+                              galleryImageClassName as string
+                          }
+                        : {})}
+                      />
+                    </div>
+                  </AspectRatio>}
               </div>
+
             </div>
+
+            <ProductPageAccordion
+              product={productData}
+              sections={productPageContent?.accordion}
+              selectedVariant={selectedVariant}
+            />
           </GalleryColumn>
 
           <OptionsColumn>
             <div className='mt-2 md:mt-0'>
               <ProductHeader
-                product={productData}
-                selectedVariant={selectedVariant}
-                productHandle={productData.handle}
                 productTitle={title}
                 productSubtitle={productSubtitle ?? ''}
+                action={
+                  <ProductHeaderWishlist
+                    product={productData}
+                    variant={selectedVariant}
+                    productTitle={title}
+                    returnTo={`/produkter/${productData.handle}`}
+                  />
+                }
               />
             </div>
 
@@ -260,25 +267,15 @@ export function ProductPageView({
             <ProductDescription
               description={productPageContent?.description}
             />
-
-            <KlarnaDesktopPromo />
           </OptionsColumn>
         </ProductPageGrid>
-
-        <div className='mt-16 sm:mt-24' />
-
-        <ProductPageAccordion
-          product={productData}
-          sections={productPageContent?.accordion}
-          selectedVariant={selectedVariant}
-        />
-
-        <Suspense fallback={null}>
-          <AsyncRelatedProducts
-            handle={storefrontLookupHandle}
-          />
-        </Suspense>
       </div>
+
+      <Suspense fallback={null}>
+        <AsyncRelatedProducts
+          handle={storefrontLookupHandle}
+        />
+      </Suspense>
     </article>
   )
 }

@@ -141,12 +141,33 @@ test('publishes only in-stock variants with complete Meta fields', () => {
   assert.equal(rows[0]?.mpn, 'UTEKOS-HAV-MIDDELS')
   assert.match(
     rows[0]?.link ?? '',
-    /^https:\/\/utekos\.no\/produkter\/utekos-techdown\?/
+    /^https:\/\/utekos\.no\/skreddersy-varmen\?/
   )
   assert.match(rows[0]?.link ?? '', /farge=havdyp/)
   assert.match(rows[0]?.link ?? '', /storrelse=middels/)
   assert.doesNotMatch(rows[0]?.link ?? '', /kasse\.utekos\.no/)
   assert.ok(feed.endsWith('\r\n'))
+})
+
+test('sends every in-stock TechDown variant to the campaign landing page with its variant parameters', () => {
+  const rows = parseFeedRows(buildMetaCatalogFeed([{
+    ...product,
+    variants: {
+      edges: product.variants.edges.map(({ node }) => ({
+        node: { ...node, inventoryQuantity: 4, availableForSale: true }
+      }))
+    }
+  }]))
+
+  assert.equal(rows.length, 2)
+  assert.deepEqual(rows.map(row => {
+    const link = new URL(row.link ?? '')
+    assert.equal(link.origin, 'https://utekos.no')
+    assert.equal(link.pathname, '/skreddersy-varmen')
+    assert.equal(link.searchParams.get('farge'), 'havdyp')
+    assert.equal(link.searchParams.get('kjonn'), 'unisex')
+    return link.searchParams.get('storrelse')
+  }), ['middels', 'stor'])
 })
 
 test('uses the newest included Shopify variant for Last-Modified', () => {

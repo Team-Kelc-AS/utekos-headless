@@ -3,7 +3,7 @@ export function ComfyrobePurchaseFallback() {
     <section
       aria-busy='true'
       aria-label='Laster produktvalg'
-      className='min-h-[780px] w-full bg-foreground px-6 py-20 text-background dark:bg-dark-foreground dark:text-dark-background'
+      className='min-h-[780px] w-full bg-foreground px-6 py-20 text-background'
     >
       <div className='mx-auto grid max-w-7xl gap-10 lg:grid-cols-2'>
         <div className='aspect-4/5 animate-pulse rounded-3xl bg-background/10 motion-reduce:animate-none' />

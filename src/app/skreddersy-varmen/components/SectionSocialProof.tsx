@@ -27,7 +27,7 @@ export function SectionSocialProof() {
       <section
         id='reviews-section'
         aria-labelledby='socialproof-heading'
-        className='dark:border-dark-background/20 relative w-full max-w-full scroll-mt-17.5 overflow-hidden border-t border-background/20 bg-jungle py-20 text-foreground md:py-28 xl:scroll-mt-21.5'
+        className='relative w-full max-w-full scroll-mt-17.5 overflow-hidden border-t border-background/20 bg-jungle py-20 text-foreground md:py-28 xl:scroll-mt-21.5'
       >
         <div className='relative z-10 mx-auto max-w-6xl px-6'>
           <m.header
@@ -38,7 +38,7 @@ export function SectionSocialProof() {
             variants={revealGroup}
           >
             <m.div
-              className='leading-text-paragraph dark:border-dark-foreground/15 dark:bg-dark-foreground/5 mb-5 inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-3.5 py-1.5 text-xs font-medium tracking-[-0.01em] text-foreground/90 backdrop-blur-sm'
+              className='leading-text-paragraph mb-5 inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-3.5 py-1.5 text-xs font-medium tracking-[-0.01em] text-foreground/90 backdrop-blur-sm'
               variants={revealPop}
             >
               <span
@@ -98,11 +98,11 @@ export function SectionSocialProof() {
         >
           <div
             aria-hidden
-            className='dark:from-dark-card pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-linear-to-r from-card to-transparent md:w-24'
+            className='pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-linear-to-r from-card to-transparent md:w-24'
           />
           <div
             aria-hidden
-            className='dark:from-dark-card pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l from-card to-transparent md:w-24'
+            className='pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l from-card to-transparent md:w-24'
           />
 
           <div className={cn(styles.track, 'flex w-max')}>

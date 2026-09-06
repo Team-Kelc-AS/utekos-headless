@@ -13,7 +13,7 @@ import { galleryImages } from '../utils/galleryImages'
 
 export function InspirationGallerySection() {
   return (
-    <article className='dark:bg-dark-background bg-background py-24 text-foreground'>
+    <article className='bg-background py-24 text-foreground'>
       <div className='container mx-auto px-4'>
         <div className='mx-auto max-w-3xl text-center md:max-w-4xl'>
           <h2 className='inline-flex items-baseline justify-center gap-x-[0.18em] whitespace-nowrap font-sans text-4xl font-extrabold text-foreground md:text-5xl'>
@@ -54,7 +54,7 @@ export function InspirationGallerySection() {
                     <h3 className='font-google-sans font-sans leading-[0.95] font-bold text-foreground'>
                       {image.title}
                     </h3>
-                    <p className='leading-text-paragraph dark:text-dark-muted-foreground mt-2 text-sm text-muted-foreground'>
+                    <p className='leading-text-paragraph mt-2 text-sm text-muted-foreground'>
                       {image.description}
                     </p>
                   </div>
@@ -64,11 +64,11 @@ export function InspirationGallerySection() {
           </CarouselContent>
           <CarouselPrevious
             aria-label='Forrige bilde'
-            className='dark:bg-dark-background/90 dark:hover:bg-dark-background dark:focus-visible:ring-dark-ring dark:focus-visible:ring-offset-dark-background left-2 hidden border-border bg-background/90 text-foreground hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex'
+            className='left-2 hidden border-border bg-background/90 text-foreground hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex'
           />
           <CarouselNext
             aria-label='Neste bilde'
-            className='dark:bg-dark-background/90 dark:hover:bg-dark-background dark:focus-visible:ring-dark-ring dark:focus-visible:ring-offset-dark-background right-2 hidden border-border bg-background/90 text-foreground hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex'
+            className='right-2 hidden border-border bg-background/90 text-foreground hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex'
           />
         </Carousel>
       </div>

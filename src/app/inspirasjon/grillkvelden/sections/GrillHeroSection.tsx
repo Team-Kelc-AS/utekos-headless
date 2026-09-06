@@ -4,7 +4,7 @@ import { SectionBox } from '@/components/layout/SectionBox'
 
 export function GrillHeroSection() {
   return (
-    <SectionBox bgcolor='bg-background dark:bg-dark-background border-b border-border '>
+    <SectionBox bgcolor='bg-background border-b border-border'>
       <hgroup>
         <H1
           ID='grillkvelden-som-aldri-tar-slutt'

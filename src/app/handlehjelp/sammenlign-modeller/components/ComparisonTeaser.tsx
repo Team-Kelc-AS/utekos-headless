@@ -19,12 +19,12 @@ const models = [
     cardClass:
       'border-border  bg-card  text-card-foreground  hover:bg-card-hover -hover',
     iconShellClass:
-      'border-border  bg-primary dark:bg-dark-primary text-primary-foreground ',
-    iconClass: 'text-primary-foreground ',
-    textClass: 'text-card-foreground ',
-    descriptionClass: 'text-card-foreground ',
+      'border-border  bg-primary text-primary-foreground',
+    iconClass: 'text-primary-foreground',
+    textClass: 'text-card-foreground',
+    descriptionClass: 'text-card-foreground',
     lesmerClass:
-      'text-card-foreground  group-hover:text-card-foreground dark:group-hover:text-foreground/90-foreground'
+      'text-card-foreground  group-hover:text-card-foreground'
   },
   {
     title: 'Utekos TechDown™',
@@ -35,12 +35,12 @@ const models = [
     cardClass:
       'border-border  bg-card  text-card-foreground  hover:bg-card-hover -hover',
     iconShellClass:
-      'border-border  bg-primary dark:bg-dark-primary text-primary-foreground ',
-    iconClass: 'text-primary-foreground ',
-    textClass: 'text-card-foreground ',
-    descriptionClass: 'text-card-foreground ',
+      'border-border  bg-primary text-primary-foreground',
+    iconClass: 'text-primary-foreground',
+    textClass: 'text-card-foreground',
+    descriptionClass: 'text-card-foreground',
     lesmerClass:
-      'text-card-foreground  group-hover:text-card-foreground dark:group-hover:text-foreground/90-foreground'
+      'text-card-foreground  group-hover:text-card-foreground'
   },
   {
     title: 'Utekos Mikrofiber™',
@@ -51,12 +51,12 @@ const models = [
     cardClass:
       'border-border  bg-card  text-card-foreground  hover:bg-card-hover -hover',
     iconShellClass:
-      'border-border  bg-primary dark:bg-dark-primary text-primary-foreground ',
-    iconClass: 'text-primary-foreground ',
-    textClass: 'text-card-foreground ',
-    descriptionClass: 'text-card-foreground ',
+      'border-border  bg-primary text-primary-foreground',
+    iconClass: 'text-primary-foreground',
+    textClass: 'text-card-foreground',
+    descriptionClass: 'text-card-foreground',
     lesmerClass:
-      'text-card-foreground  group-hover:text-card-foreground dark:group-hover:text-foreground/90-foreground'
+      'text-card-foreground  group-hover:text-card-foreground'
   }
 ]
 

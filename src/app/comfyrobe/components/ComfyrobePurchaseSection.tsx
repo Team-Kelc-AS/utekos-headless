@@ -10,12 +10,12 @@ export function ComfyrobePurchaseSection({
 }) {
   if (!product) {
     return (
-      <section className='dark:bg-dark-foreground dark:text-dark-background w-full bg-foreground px-6 py-20 text-background'>
+      <section className='w-full bg-foreground px-6 py-20 text-background'>
         <div className='mx-auto max-w-3xl rounded-3xl border border-background/15 p-8 text-center'>
           <h2 className='font-google-sans font-sans text-3xl font-bold'>
             Produktvalget er midlertidig utilgjengelig
           </h2>
-          <p className='dark:text-dark-background/80 mt-4 font-utekos-text leading-relaxed text-background/80'>
+          <p className='mt-4 font-utekos-text leading-relaxed text-background/80'>
             Vi kunne ikke hente oppdatert pris og lagerstatus
             akkurat nå. Ingen pris eller lagerpåstand vises før
             Shopify svarer.

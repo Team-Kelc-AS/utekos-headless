@@ -119,10 +119,8 @@ export function WishlistButton({
         )}
       >
         <Heart
-          className={cn(
-            'size-5 stroke-[2.25]',
-            isWished ? 'fill-current' : 'fill-transparent'
-          )}
+          className='size-5 fill-primary text-primary stroke-primary stroke-[2.25]'
+          fill='currentColor'
           aria-hidden='true'
         />
         {isLabelled ?
@@ -176,7 +174,7 @@ export function WishlistButton({
               <DialogTitle className='font-utekos-text-medium text-2xl leading-tight text-balance text-foreground'>
                 Du slipper å lete på nytt
               </DialogTitle>
-              <DialogDescription className='font-utekos-text text-base leading-7 text-foreground/78 dark:text-foreground/78'>
+              <DialogDescription className='font-utekos-text text-base leading-7 text-foreground/78'>
                 Favoritten ligger klar neste gang du besøker oss
                 på denne enheten. Vil du gå til kontoen din, kan
                 du logge inn eller opprette en konto.
@@ -203,7 +201,7 @@ export function WishlistButton({
                 asChild
                 variant='outline'
                 size='lg'
-                className='min-h-12 rounded-full border-foreground/24 bg-transparent! px-6 font-utekos-text-medium text-base text-foreground hover:bg-foreground/8 hover:text-foreground focus-visible:ring-foreground/45 focus-visible:ring-offset-night dark:border-foreground/24 dark:bg-transparent! dark:text-foreground dark:hover:bg-foreground/8 dark:hover:text-foreground'
+                className='min-h-12 rounded-full border-foreground/24 bg-transparent! px-6 font-utekos-text-medium text-base text-foreground hover:bg-foreground/8 hover:text-foreground focus-visible:ring-foreground/45 focus-visible:ring-offset-night'
               >
                 <Link
                   href={createAccountHref}

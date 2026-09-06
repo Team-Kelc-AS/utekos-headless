@@ -34,6 +34,7 @@ type CreateCanonicalCollectorTransportInput<
   E extends { consent: ConsentSnapshot }
 > = {
   analyticsEventName: string
+  beaconEndpoint?: string
   endpoint: string
   fallbackEndpoint?: string
   enrichEvent?: (event: E) => Promise<E>
@@ -45,6 +46,7 @@ type SendCanonicalCollectorEventInput<
 > = Pick<
   CreateCanonicalCollectorTransportInput<E>,
   | 'analyticsEventName'
+  | 'beaconEndpoint'
   | 'endpoint'
   | 'fallbackEndpoint'
   | 'enrichEvent'
@@ -194,6 +196,23 @@ export async function sendCanonicalCollectorEvent<
     input.enrichEvent ?
       await input.enrichEvent(metaEnriched)
     : metaEnriched
+  const body = JSON.stringify(enriched)
+
+  if (
+    input.beaconEndpoint &&
+    typeof navigator !== 'undefined' &&
+    typeof navigator.sendBeacon === 'function'
+  ) {
+    try {
+      const queued = navigator.sendBeacon(
+        input.beaconEndpoint,
+        new Blob([body], { type: 'application/json' })
+      )
+
+      if (queued) return
+    } catch {}
+  }
+
   let endpoint = input.endpoint
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -207,7 +226,7 @@ export async function sendCanonicalCollectorEvent<
           'Content-Type': 'application/json',
           ...input.headers
         },
-        body: JSON.stringify(enriched),
+        body,
         cache: 'no-store',
         credentials: 'same-origin',
         keepalive: true

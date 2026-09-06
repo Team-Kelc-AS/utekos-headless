@@ -16,7 +16,7 @@ export const popularDestinationsData: Destination[] = [
     name: 'Sørlandskysten',
     season: 'Sommer',
     highlight: 'For sene kvelder i uthavn',
-    color: 'text-primary dark:text-dark-primary'
+    color: 'text-primary'
   },
   {
     name: 'Vestlandskysten',
@@ -45,7 +45,7 @@ export function PopularDestinations({
 }) {
   return (
     <article
-      className='dark:bg-dark-background bg-background pb-24 text-foreground'
+      className='bg-background pb-24 text-foreground'
       id='populære-destinasjoner'
     >
       <div className='container mx-auto px-4'>
@@ -67,10 +67,10 @@ export function PopularDestinations({
                       className={`h-5 w-5 ${destination.color}`}
                     />
                   </div>
-                  <p className='dark:text-dark-muted-foreground mb-2 text-sm text-muted-foreground'>
+                  <p className='mb-2 text-sm text-muted-foreground'>
                     {destination.season}
                   </p>
-                  <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
+                  <p className='text-sm text-muted-foreground'>
                     {destination.highlight}
                   </p>
                 </CardContent>

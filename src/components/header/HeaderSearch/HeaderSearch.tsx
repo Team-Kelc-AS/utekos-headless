@@ -53,10 +53,10 @@ export function HeaderSearch({
     'aria-label': 'Åpne søk (⌘/Ctrl + K)',
     'className': cn(
       variant === 'nav' ?
-        'group dark:hover:bg-dark-accent dark:focus-visible:ring-dark-ring relative hidden h-11 min-w-[5.75rem] items-center justify-center gap-2 rounded-md px-3 font-utekos-text-medium text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:flex'
-      : 'group dark:border-dark-sidebar-foreground/25 -foreground/10 relative hidden h-11 w-64 items-center gap-3 rounded-md border border-sidebar-foreground/25 bg-sidebar-foreground/10 px-3 text-left text-sm text-sidebar-foreground transition outline-none md:flex lg:w-52 xl:mr-3 xl:w-56 2xl:w-60',
+        'group relative hidden h-11 min-w-[5.75rem] items-center justify-center gap-2 rounded-md px-3 font-utekos-text-medium text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:flex'
+      : 'group -foreground/10 relative hidden h-11 w-64 items-center gap-3 rounded-md border border-sidebar-foreground/25 bg-sidebar-foreground/10 px-3 text-left text-sm text-sidebar-foreground transition outline-none md:flex lg:w-52 xl:mr-3 xl:w-56 2xl:w-60',
       variant === 'default' &&
-        'dark:hover:border-dark-sidebar-foreground/45 dark:hover:bg-dark-sidebar-foreground/15 dark:focus-visible:border-dark-sidebar-foreground/55 hover:border-sidebar-foreground/45 hover:bg-sidebar-foreground/15 focus-visible:border-sidebar-foreground/55',
+        'hover:border-sidebar-foreground/45 hover:bg-sidebar-foreground/15 focus-visible:border-sidebar-foreground/55',
       className
     )
   }

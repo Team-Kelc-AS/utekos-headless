@@ -12,7 +12,7 @@ export function ProductCareGuideCard({
   items
 }: ProductCareGuideCardProps) {
   return (
-    <article className='dark:border-dark-card-foreground/12 flex h-full w-full min-w-0 flex-col rounded-xl border border-card-foreground/12 bg-card p-5 text-sm/6 text-card-foreground ring-1 ring-card-foreground/12 sm:p-6 lg:p-7'>
+    <article className='flex h-full w-full min-w-0 flex-col rounded-xl border border-card-foreground/12 bg-card p-5 text-sm/6 text-card-foreground ring-1 ring-card-foreground/12 sm:p-6 lg:p-7'>
       <p className='text-left font-sans text-xs font-medium text-card-foreground'>
         {eyebrow}
       </p>

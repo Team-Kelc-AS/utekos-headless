@@ -27,7 +27,7 @@ export function ProductCardFooter({
   }
 
   const actionButtonClassName =
-    'h-11 min-h-11 min-w-0 w-full max-w-full touch-manipulation overflow-hidden rounded-full border-none px-4 py-0 text-center font-sans text-base leading-tight font-semibold whitespace-normal text-foreground ring-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 md:h-12 md:min-h-12'
+    'h-10 min-h-10 min-w-0 w-full max-w-full touch-manipulation overflow-hidden rounded-full border-none px-3 py-0 text-center font-sans text-sm leading-tight font-semibold whitespace-normal text-foreground ring-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 md:h-12 md:min-h-12 md:px-4 md:text-base'
   return (
     <CardFooter className='flex w-full flex-col p-0'>
       <div className='flex w-full min-w-0 flex-col gap-2'>

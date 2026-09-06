@@ -36,6 +36,7 @@ export function ProductCardCompactVariantSelector({
       selectedOptions={selectedOptions}
       onOptionChange={onOptionChange}
       compactMobile
+      hideSizeLabel
     />
   )
 }

@@ -200,7 +200,7 @@ export function InfoCardStackView() {
                 behandler dine data i vår{' '}
                 <Link
                   href='/personvern'
-                  className='dark:focus-visible:outline-dark-foreground font-normal text-foreground underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground'
+                  className='font-normal text-foreground underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground'
                 >
                   <InlineText>personvernserklæring</InlineText>
                 </Link>

@@ -123,7 +123,7 @@ export function AboutCarousel() {
             }}
           >
             <div className='relative max-w-6xl overflow-hidden rounded-[1.75rem] border border-border bg-[color-mix(in_oklab,var(--foreground)_8%,transparent)] p-3 shadow-2xl shadow-black/35 backdrop-blur-sm md:p-5'>
-              <div className='dark:via-dark-primary/55 absolute top-0 right-0 left-0 h-px bg-linear-to-r from-transparent via-primary/55 to-transparent' />
+              <div className='absolute top-0 right-0 left-0 h-px bg-linear-to-r from-transparent via-primary/55 to-transparent' />
 
               <Carousel
                 setApi={setApi}
@@ -173,8 +173,8 @@ export function AboutCarousel() {
                     className={cn(
                       'h-1.5 rounded-full transition-all duration-300',
                       current === index + 1 ?
-                        'dark:bg-dark-primary w-8 bg-primary'
-                      : 'dark:bg-dark-foreground dark:hover:bg-dark-muted-foreground w-2 bg-foreground hover:bg-muted-foreground'
+                        'w-8 bg-primary'
+                      : 'w-2 bg-foreground hover:bg-muted-foreground'
                     )}
                     aria-label={`Gå til bilde ${index + 1}`}
                   />

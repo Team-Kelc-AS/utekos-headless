@@ -30,7 +30,7 @@ export function MagazineFeatureGridBlock({
         {block.items.map(item => (
           <li
             key={item.title}
-            className='dark:border-dark-background/10 rounded-lg border border-background/10 bg-foreground p-5 shadow-[0_22px_62px_-54px_color-mix(in_oklch,var(--background)_70%,transparent)]'
+            className='rounded-lg border border-background/10 bg-foreground p-5 shadow-[0_22px_62px_-54px_color-mix(in_oklch,var(--background)_70%,transparent)]'
           >
             <div className='mb-4 flex size-11 items-center justify-center rounded-lg border border-background/10 bg-(--magazine-accent) text-(--magazine-accent-foreground)'>
               <MagazineIcon

@@ -48,7 +48,7 @@ export function PreFooterNavigation({
                 'rounded-2xl border backdrop-blur-sm transition-all duration-400',
                 isComfyrobe ?
                   'border-white/10 bg-jungle hover:border-primary/55 hover:bg-jungle/90 hover:shadow-lg hover:shadow-primary/5'
-                : 'dark:border-dark-foreground/10 border-foreground/10 bg-jungle dark:hover:border-dark-primary/50 dark:hover:shadow-dark-primary/5 hover:border-secondary/50 hover:bg-jungle/90 hover:shadow-lg hover:shadow-secondary/5',
+                : 'border-foreground/10 bg-jungle hover:border-secondary/50 hover:bg-jungle/90 hover:shadow-lg hover:shadow-secondary/5',
                 index === 0 && 'md:col-span-2 lg:col-span-3',
                 link.mdOnly && 'hidden md:flex'
               )}

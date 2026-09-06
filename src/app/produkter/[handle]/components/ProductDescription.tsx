@@ -23,7 +23,7 @@ function ProductDescriptionBlockView({
       {block.paragraphs?.map(paragraph => (
         <p
           key={paragraph}
-          className='/86 text-base leading-[1.6] tracking-normal text-card-foreground/86'
+          className='font-sans text-base leading-[1.6] tracking-normal text-card-foreground/86'
         >
           {paragraph}
         </p>
@@ -33,7 +33,7 @@ function ProductDescriptionBlockView({
           {block.items.map(item => (
             <li
               key={item}
-              className='dark:marker:text-dark-card-foreground/55 list-disc marker:text-card-foreground/55'
+              className='list-disc marker:text-card-foreground/55'
             >
               {item}
             </li>
@@ -65,7 +65,7 @@ export function ProductDescription({
   return (
     <article
       aria-labelledby='product-description-heading'
-      className='dark:shadow-dark-background/20 mt-5 rounded-[1.25rem] border border-border bg-jungle p-5 font-utekos-text text-card-foreground shadow-lg shadow-background/20 md:mt-8 sm:p-6'
+      className='mt-5 rounded-[1.25rem] border border-border bg-jungle p-5 font-utekos-text text-card-foreground shadow-lg shadow-background/20 md:mt-8 sm:p-6'
     >
       <div
         id='product-description-content'
@@ -74,7 +74,7 @@ export function ProductDescription({
         <div className='space-y-3'>
           <h2
             id='product-description-heading'
-            className='font-sans font-utekos-text-medium text-2xl leading-[1.1] tracking-normal text-card-foreground sm:text-3xl'
+            className='font-sans text-2xl leading-[1.1] font-extrabold tracking-normal text-card-foreground sm:text-3xl'
           >
             {description.title}
           </h2>

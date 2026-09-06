@@ -136,7 +136,7 @@ export function ProductGridCard({
             <Button
               onClick={handleQuickBuy}
               data-track='ProductGridCardAddToCartClick'
-              className='font-utekos-text active:bg-primary-hover w-full bg-primary text-primary-foreground hover:scale-105 hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:w-auto sm:whitespace-nowrap dark:active:bg-primary/90'
+              className='font-utekos-text active:bg-primary-hover w-full bg-primary text-primary-foreground hover:scale-105 hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:w-auto sm:whitespace-nowrap'
               aria-label='Legg i handlekurv'
             >
               <ShoppingBagIcon className='mr-2 size-4' />

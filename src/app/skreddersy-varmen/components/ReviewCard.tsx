@@ -10,14 +10,14 @@ export function ReviewCard({ review }: { review: Review }) {
     <article
       className={cn(
         // Grunnstil: Mørk maritim bakgrunn som skaper kontrast til "card" bakgrunnen.
-        'group dark:border-dark-foreground/10 relative flex h-full flex-col justify-between rounded-lg border border-foreground/10 bg-night p-6 shadow-lg transition-all duration-400 md:p-7',
-        'dark:hover:border-dark-primary/50 dark:hover:shadow-dark-primary/10 hover:-translate-y-1 hover:border-primary/50 hover:bg-night/95 hover:shadow-2xl hover:shadow-primary/10'
+        'group relative flex h-full flex-col justify-between rounded-lg border border-foreground/10 bg-night p-6 shadow-lg transition-all duration-400 md:p-7',
+        'hover:-translate-y-1 hover:border-primary/50 hover:bg-night/95 hover:shadow-2xl hover:shadow-primary/10'
       )}
     >
       <header className='mb-5 flex items-center justify-between gap-3'>
         <div
           aria-hidden
-          className='dark:text-dark-primary flex gap-0.5 text-primary drop-shadow-sm'
+          className='flex gap-0.5 text-primary drop-shadow-sm'
         >
           {Array.from({ length: Math.round(review.rating) }).map(
             (_, i) => (
@@ -30,7 +30,7 @@ export function ReviewCard({ review }: { review: Review }) {
             )
           )}
         </div>
-        <span className='leading-text-paragraph dark:text-dark-primary inline-flex shrink-0 items-center gap-1 font-utekos-text-medium text-[10px] tracking-[-0.01em] text-primary'>
+        <span className='leading-text-paragraph inline-flex shrink-0 items-center gap-1 font-utekos-text-medium text-[10px] tracking-[-0.01em] text-primary'>
           Utekos TechDown™
         </span>
       </header>
@@ -46,10 +46,10 @@ export function ReviewCard({ review }: { review: Review }) {
         {review.quote}
       </p>
 
-      <footer className='dark:border-dark-foreground/10 flex items-center gap-3 border-t border-foreground/10 pt-4'>
+      <footer className='flex items-center gap-3 border-t border-foreground/10 pt-4'>
         <div
           aria-hidden
-          className='dark:border-dark-foreground/15 dark:bg-dark-foreground/5 dark:group-hover:border-dark-primary/40 dark:group-hover:bg-dark-primary/10 dark:group-hover:text-dark-foreground flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 font-utekos-text-medium text-sm text-foreground transition-colors duration-400 group-hover:border-primary/40 group-hover:bg-primary/10 group-hover:text-foreground'
+          className='flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 font-utekos-text-medium text-sm text-foreground transition-colors duration-400 group-hover:border-primary/40 group-hover:bg-primary/10 group-hover:text-foreground'
         >
           {initialsFrom(review.name)}
         </div>

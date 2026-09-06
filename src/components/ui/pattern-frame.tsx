@@ -41,9 +41,9 @@ const patternColumnClassName =
 
 const surfaceClassNames: Record<PatternFrameSurface, string> = {
   default:
-    'bg-white [--pattern-fg:color-mix(in_oklab,var(--color-gray-950)_5%,transparent)] dark:bg-gray-950 dark:[--pattern-fg:color-mix(in_oklab,var(--color-white)_10%,transparent)]',
+    'bg-white [--pattern-fg:color-mix(in_oklab,var(--color-gray-950)_5%,transparent)]',
   transparent:
-    '[--pattern-fg:color-mix(in_oklab,var(--color-gray-950)_5%,transparent)] dark:[--pattern-fg:color-mix(in_oklab,var(--color-white)_10%,transparent)]',
+    '[--pattern-fg:color-mix(in_oklab,var(--color-gray-950)_5%,transparent)]',
   dark: '[--pattern-fg:color-mix(in_oklab,var(--color-white)_10%,transparent)]'
 }
 

@@ -16,7 +16,7 @@ export function FooterNavigation() {
                 <li key={link.path}>
                   <Link
                     href={link.path}
-                    className='dark:hover:text-dark-foreground font-utekos-text text-base transition-colors hover:text-foreground'
+                    className='font-utekos-text text-base transition-colors hover:text-foreground'
                     {...(link.external && {
                       target: '_blank',
                       rel: 'noopener noreferrer'

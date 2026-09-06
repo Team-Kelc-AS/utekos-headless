@@ -196,16 +196,16 @@ export function CreatedForSection() {
 
         <div className='motion-divider my-10 h-[2px] w-32 origin-center bg-linear-to-r from-transparent via-slate-500/30 to-transparent will-change-transform' />
 
-        <p className='motion-text dark:text-dark-background/90 mx-auto max-w-2xl text-lg leading-relaxed font-light text-background/90 opacity-0 md:text-xl'>
+        <p className='motion-text mx-auto max-w-2xl text-lg leading-relaxed font-light text-background/90 opacity-0 md:text-xl'>
           Våre komfortplagg er{' '}
-          <span className='dark:text-dark-background relative inline-block font-medium text-background'>
+          <span className='relative inline-block font-medium text-background'>
             designet
             <span className='motion-desc-underline absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-slate-500' />
           </span>{' '}
           for å holde deg varm, slik at du kan{' '}
           <span className='relative inline-block px-1'>
-            <span className='motion-desc-highlight dark:text-dark-background/90 absolute inset-0 origin-left scale-x-0 -skew-x-6 rounded bg-white/10 text-background/90' />
-            <span className='dark:text-dark-background/90 relative z-10 font-medium text-background/90'>
+            <span className='motion-desc-highlight absolute inset-0 origin-left scale-x-0 -skew-x-6 rounded bg-white/10 text-background/90' />
+            <span className='relative z-10 font-medium text-background/90'>
               nyte
             </span>
           </span>{' '}

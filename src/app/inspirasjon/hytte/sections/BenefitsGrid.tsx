@@ -52,7 +52,7 @@ export function BenefitsGrid({
   benefits: Benefit[]
 }) {
   return (
-    <article className='border-featured-border dark:border-dark-featured-border bg-featured dark:bg-dark-featured w-full min-w-0 overflow-x-clip border-y border-b-foreground/20 py-24 text-foreground'>
+    <article className='border-featured-border bg-featured w-full min-w-0 overflow-x-clip border-y border-b-foreground/20 py-24 text-foreground'>
       <div className='container mx-auto bg-background px-4'>
         <div className='mb-20 max-w-3xl text-left lg:max-w-4xl'>
           <h1 className='font-sans text-4xl font-extrabold tracking-normal text-foreground md:text-5xl lg:text-7xl'>

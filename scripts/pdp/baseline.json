@@ -9,7 +9,6 @@
     "src/app/produkter/[handle]/components/ProductPurchaseIsland.tsx",
     "src/app/produkter/[handle]/components/ProductViewItemReporter.tsx",
     "src/app/produkter/[handle]/components/RelatedProducts.tsx",
-    "src/app/produkter/[handle]/components/SmartRealTimeActivity.tsx",
     "src/components/AnimatedBlock.tsx",
     "src/components/frontpage/IntersportSection/NewProductInStoreNotice.tsx",
     "src/components/jsx/Price.tsx",

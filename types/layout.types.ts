@@ -41,7 +41,6 @@ export type PriceActivityPanelProps = {
   productHandle: string
   priceAmount: string
   currencyCode: string
-  activityNode?: React.ReactNode
 }
 
 export type ProductPageAccordionProps = {
@@ -103,7 +102,6 @@ export type ColorSelectorProps = {
   isSelectionDisabled: boolean
 }
 
-export type SmartRealTimeActivityProps = { baseViewers: number }
 export type Section = {
   id: string
   title: string
@@ -116,7 +114,10 @@ export type ProductDescriptionProps = {
 
 export type ProductCarouselProps = { products: ShopifyProduct[] }
 
-export type SizeLabelProps = { className?: string }
+export type SizeLabelProps = {
+  className?: string
+  label?: string
+}
 
 export type ProductCardProps = {
   product: ProductCardModel

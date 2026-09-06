@@ -16,7 +16,7 @@ const BoatingHeroBackground = (
       }}
     />
     <div
-      className='dark:to-dark-background/55 pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-transparent to-background/55'
+      className='pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-transparent to-background/55'
       aria-hidden='true'
     />
   </>
@@ -26,7 +26,7 @@ export function BoatingHeroSection() {
   return (
     <InspirationHero
       labelledById='batliv-hero-title'
-      surfaceClassName='bg-background dark:bg-dark-background'
+      surfaceClassName='bg-background'
       background={BoatingHeroBackground}
       breadcrumb={
         <InspirationHeroBreadcrumb
@@ -54,13 +54,13 @@ export function BoatingHeroSection() {
             backgroundColor: 'var(--primary)',
             textColor: 'var(--foreground)',
             className:
-              'border-primary/35 dark:border-dark-primary/35 shadow-[0_18px_38px_-28px_color-mix(in_oklch,var(--demitasse)_72%,transparent)] hover:brightness-105 focus-visible:ring-2 focus-visible:ring-primary/70 dark:focus-visible:ring-dark-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:focus-visible:ring-offset-dark-background'
+              'border-primary/35 shadow-[0_18px_38px_-28px_color-mix(in_oklch,var(--demitasse)_72%,transparent)] hover:brightness-105 focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background'
           }}
           secondaryStyle={{
             backgroundColor: 'var(--secondary)',
             textColor: 'var(--foreground)',
             className:
-              'border-foreground/35 shadow-[0_18px_38px_-30px_color-mix(in_oklch,var(--background)_48%,transparent)] hover:bg-foreground/90 focus-visible:ring-2 focus-visible:ring-foreground/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:focus-visible:ring-offset-dark-background'
+              'border-foreground/35 shadow-[0_18px_38px_-30px_color-mix(in_oklch,var(--background)_48%,transparent)] hover:bg-foreground/90 focus-visible:ring-2 focus-visible:ring-foreground/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background'
           }}
         />
       }

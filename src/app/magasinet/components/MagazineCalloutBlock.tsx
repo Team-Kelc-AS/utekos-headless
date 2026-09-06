@@ -6,7 +6,7 @@ type MagazineCalloutBlockProps = {
 
 const calloutClassByTone = {
   quiet:
-    'border-background/12 bg-foreground text-background dark:border-dark-background/12 dark:text-dark-background',
+    'border-background/12 bg-foreground text-background',
   dark: 'border-foreground/12 bg-background text-foreground',
   accent:
     'border-transparent bg-[var(--magazine-accent)] text-[var(--magazine-accent-foreground)]',

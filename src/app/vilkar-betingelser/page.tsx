@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className='bg-docs dark:bg-dark-docs py-24 text-white [--foreground:var(--foreground)] [--muted-foreground:var(--foreground)]'>
+    <div className='bg-docs py-24 text-white [--foreground:var(--foreground)] [--muted-foreground:var(--foreground)]'>
       <article className='container mx-auto max-w-6xl px-4'>
         <div className='relative border border-white/10'>
           <GridCross className='top-0 left-0 -translate-x-1/2 -translate-y-1/2' />

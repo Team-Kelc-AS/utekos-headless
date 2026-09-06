@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 
 export default function GaveguidePage() {
   return (
-    <main className='bg-background dark:bg-dark-background'>
+    <main className='bg-background'>
       <ViewCategoryObserver
         categoryId='gaveguide'
         categoryName='Gaveguide'

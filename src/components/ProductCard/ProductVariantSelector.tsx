@@ -7,7 +7,10 @@ import { cn } from '@/lib/utils/className'
 import type { ProductVariantSelectorProps } from '@types'
 
 type ProductVariantSelectorViewProps =
-  ProductVariantSelectorProps & { compactMobile?: boolean }
+  ProductVariantSelectorProps & {
+    compactMobile?: boolean
+    hideSizeLabel?: boolean
+  }
 
 const sizeOptionClassName =
   'btn-variant-option inline-flex min-h-9 w-18 shrink-0 touch-manipulation items-center justify-center rounded-md border px-2 py-1.5 text-sm leading-none font-medium whitespace-nowrap motion-safe:transition-colors motion-safe:duration-200 hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-card-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-card focus-visible:outline-none'
@@ -23,7 +26,8 @@ export function ProductVariantSelector({
   selectedOptions,
   onOptionChange,
   colorHexMap,
-  compactMobile = false
+  compactMobile = false,
+  hideSizeLabel = false
 }: ProductVariantSelectorViewProps) {
   return (
     <>
@@ -131,7 +135,7 @@ export function ProductVariantSelector({
                           sizeOptionClassName,
                           isSizeOption && 'w-full min-w-0',
                           compactMobile &&
-                            'min-h-11 py-1 text-[0.68rem] md:min-h-10 md:text-sm xl:min-h-9 xl:py-1.5',
+                            'min-h-8 w-auto px-1 py-0 text-[0.62rem] leading-none md:min-h-9 md:px-1.5 md:py-0.5 md:text-xs xl:min-h-9 xl:px-2 xl:py-1.5 xl:text-sm',
                           isSelected ?
                             selectedSizeOptionClassName
                           : unselectedSizeOptionClassName
@@ -144,10 +148,10 @@ export function ProductVariantSelector({
                 }
               </div>
 
-              {isSizeOption ?
+              {isSizeOption && !hideSizeLabel ?
                 <SizeLabel
                   className={cn(
-                    'dark:focus-visible:outline-dark-card-foreground text-card-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground',
+                    'text-card-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground',
                     compactMobile &&
                       '!text-[0.68rem] max-md:min-h-11 md:!text-sm'
                   )}

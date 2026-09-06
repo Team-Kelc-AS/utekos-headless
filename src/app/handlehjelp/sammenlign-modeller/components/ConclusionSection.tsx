@@ -5,7 +5,7 @@ import { faqItems } from '../utils/comparisonData'
 
 export function ConclusionSection() {
   return (
-    <article className='dark:bg-dark-background bg-background py-20 text-foreground sm:py-28'>
+    <article className='bg-background py-20 text-foreground sm:py-28'>
       <div className='mx-auto max-w-7xl px-[6vw]'>
         <div className='grid gap-12 lg:grid-cols-[0.45fr_0.55fr] lg:items-start'>
           <div>
@@ -17,7 +17,7 @@ export function ConclusionSection() {
             <h2 className='font-google-sans font-sans text-4xl leading-[0.95] font-bold tracking-[-0.01em] text-foreground sm:text-6xl'>
               Et trygt valg på under ett minutt
             </h2>
-            <p className='leading-text-paragraph dark:text-dark-muted-foreground mt-6 text-lg text-muted-foreground sm:text-xl'>
+            <p className='leading-text-paragraph mt-6 text-lg text-muted-foreground sm:text-xl'>
               TechDown gir mest ro i skiftende vær. Dun gir mest
               varme per gram. Mikrofiber er lettest å pakke og
               vaske.
@@ -52,7 +52,7 @@ export function ConclusionSection() {
 
           <div
             data-nosnippet
-            className='dark:divide-dark-foreground/20 dark:border-dark-foreground/20 divide-y divide-foreground/20 border-y border-foreground/20'
+            className='divide-y divide-foreground/20 border-y border-foreground/20'
           >
             {faqItems.map(item => (
               <details
@@ -62,14 +62,14 @@ export function ConclusionSection() {
                 <summary className='font-google-sans cursor-pointer list-none font-sans text-xl leading-[1.05] font-bold tracking-[-0.01em] text-foreground marker:hidden'>
                   <span className='inline-flex w-full items-center justify-between gap-6'>
                     {item.question}
-                    <span className='dark:text-dark-muted-foreground text-2xl leading-none text-muted-foreground transition-transform duration-300 group-open:rotate-45'>
+                    <span className='text-2xl leading-none text-muted-foreground transition-transform duration-300 group-open:rotate-45'>
                       +
                     </span>
                   </span>
                 </summary>
                 <p
                   data-nosnippet
-                  className='leading-text-paragraph dark:text-dark-muted-foreground mt-4 max-w-2xl text-base text-muted-foreground'
+                  className='leading-text-paragraph mt-4 max-w-2xl text-base text-muted-foreground'
                 >
                   {item.answer}
                 </p>

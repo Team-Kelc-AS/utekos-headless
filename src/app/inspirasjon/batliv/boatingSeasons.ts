@@ -15,7 +15,7 @@ export const boatingSeasons: InspirationSeasonDefinition[] = [
     value: 'summer',
     label: 'Sommer',
     iconName: 'Sun',
-    iconColor: 'text-primary dark:text-dark-primary',
+    iconColor: 'text-primary',
     glowColor: 'var(--primary)',
     title: 'Når solen har gått ned',
     description:

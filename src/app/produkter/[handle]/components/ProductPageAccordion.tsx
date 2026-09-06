@@ -45,7 +45,7 @@ export function ProductPageAccordion({
   return (
     <article
       id={containerId}
-      className='relative overflow-hidden rounded-[1.75rem] py-6'
+      className='relative order-3 overflow-hidden rounded-[1.75rem] py-2 md:py-0 xl:py-6'
       aria-labelledby='product-details-heading'
     >
       <ProductAccordionInteractionReporter

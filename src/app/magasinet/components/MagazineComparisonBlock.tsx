@@ -16,7 +16,7 @@ export function MagazineComparisonBlock({
         {block.columns.map(column => (
           <article
             key={column.title}
-            className='dark:border-dark-background/10 rounded-lg border border-background/10 bg-foreground p-5'
+            className='rounded-lg border border-background/10 bg-foreground p-5'
           >
             <h3 className='font-google-sans font-sans text-2xl leading-[0.95] font-bold text-background'>
               {column.title}

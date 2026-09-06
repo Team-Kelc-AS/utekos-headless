@@ -45,7 +45,7 @@ export function MobileSection() {
           </li>
         </ul>
       </div>
-      <div className='dark:bg-dark-background/72 border-t border-foreground/12 bg-background/72 p-6'>
+      <div className='border-t border-foreground/12 bg-background/72 p-6'>
         <SupportForm idPrefix='mobile-contact' />
       </div>
 

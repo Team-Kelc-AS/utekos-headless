@@ -60,7 +60,7 @@ export function NbccProductCarousel({
       <button
         onClick={prev}
         aria-label='Forrige bilde'
-        className='dark:bg-dark-foreground dark:text-dark-background dark:hover:bg-dark-foreground/90 absolute top-1/2 left-2 z-10 -translate-y-1/2 rounded-full bg-foreground p-1.5 text-background opacity-0 shadow-sm transition-opacity duration-200 group-hover/carousel:opacity-100 hover:bg-foreground/90'
+        className='absolute top-1/2 left-2 z-10 -translate-y-1/2 rounded-full bg-foreground p-1.5 text-background opacity-0 shadow-sm transition-opacity duration-200 group-hover/carousel:opacity-100 hover:bg-foreground/90'
       >
         <svg
           width='16'
@@ -110,8 +110,8 @@ export function NbccProductCarousel({
               aria-hidden
               className={`h-1.5 rounded-full transition-all duration-200 ${
                 i === current ?
-                  'w-4 bg-white ring-1 ring-[#17130f]/45 dark:bg-[#17130f] dark:ring-white/55'
-                : 'w-1.5 bg-white/70 ring-1 ring-[#17130f]/35 group-hover/dot:bg-white dark:bg-[#17130f]/70 dark:ring-white/45 dark:group-hover/dot:bg-[#17130f]'
+                  'w-4 bg-white ring-1 ring-[#17130f]/45'
+                : 'w-1.5 bg-white/70 ring-1 ring-[#17130f]/35 group-hover/dot:bg-white'
               }`}
             />
           </button>

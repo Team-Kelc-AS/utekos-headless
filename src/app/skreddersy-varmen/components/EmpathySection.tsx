@@ -62,7 +62,7 @@ export function EmpathySection({
     <SkreddersyMotionProvider>
       <m.section
         aria-labelledby='empathy-heading'
-        className='dark:text-dark-background relative w-full overflow-hidden bg-cloud-dancer py-16 text-background md:py-24 lg:py-28 dark:bg-cloud-dancer'
+        className='relative w-full overflow-hidden bg-cloud-dancer py-16 text-background md:py-24 lg:py-28'
         initial='hidden'
         whileInView='visible'
         viewport={skreddersyViewport}
@@ -72,7 +72,7 @@ export function EmpathySection({
           <div className='relative'>
             <h2
               id='empathy-heading'
-              className='dark:text-dark-background mb-5 max-w-[11ch] font-utekos-text-medium text-4xl leading-[0.92] tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
+              className='mb-5 max-w-[11ch] font-utekos-text-medium text-4xl leading-[0.92] tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
             >
               <span className='block overflow-hidden pb-[0.08em]'>
                 <span
@@ -84,7 +84,7 @@ export function EmpathySection({
               </span>
             </h2>
 
-            <div className='leading-text-paragraph dark:text-dark-background max-w-none text-base text-background'>
+            <div className='leading-text-paragraph max-w-none text-base text-background'>
               <m.p
                 className='relative max-w-136 font-sans'
                 variants={revealItem}
@@ -94,11 +94,11 @@ export function EmpathySection({
               <div className='relative my-7 py-1.5'>
                 <m.span
                   aria-hidden
-                  className='dark:bg-dark-primary absolute top-4 bottom-4 left-0 w-0.75 origin-top bg-primary'
+                  className='absolute top-4 bottom-4 left-0 w-0.75 origin-top bg-primary'
                   variants={scaleYReveal}
                 />
                 <m.p
-                  className='dark:text-dark-background ml-5 font-sans text-xl leading-[0.95] font-bold tracking-normal text-background italic md:ml-7 md:text-3xl'
+                  className='ml-5 font-sans text-xl leading-[0.95] font-bold tracking-normal text-background italic md:ml-7 md:text-3xl'
                   variants={revealItemRight}
                 >
                   &ldquo;{content.quoteFirst} <br />
@@ -106,13 +106,13 @@ export function EmpathySection({
                 </m.p>
               </div>
               <m.p
-                className='dark:text-dark-background mt-6 max-w-136 font-utekos-text text-background'
+                className='mt-6 max-w-136 font-utekos-text text-background'
                 variants={revealItem}
               >
                 {content.body}
                 <br />
                 <br />
-                <span className='dark:text-dark-background font-medium text-background italic'>
+                <span className='font-medium text-background italic'>
                   {content.closing}
                 </span>
               </m.p>
@@ -125,7 +125,7 @@ export function EmpathySection({
                 asChild
                 bgColor='var(--primary)'
                 fgColor='var(--primary-foreground)'
-                className='hover:bg-primary-hover dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary-hover dark:hover:text-dark-primary-hover-foreground h-12 px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.98] md:h-14 md:px-6 md:text-base'
+                className='hover:bg-primary-hover h-12 px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.98] md:h-14 md:px-6 md:text-base'
               >
                 <button
                   type='button'
@@ -149,7 +149,7 @@ export function EmpathySection({
             variants={revealScale}
           >
             <div className='relative aspect-4/5 w-full md:aspect-square'>
-              <div className='dark:shadow-dark-background/20 relative size-full overflow-hidden rounded-sm shadow-2xl shadow-background/20'>
+              <div className='relative size-full overflow-hidden rounded-sm shadow-2xl shadow-background/20'>
                 <div className='absolute inset-x-0 -inset-y-14'>
                   <Image
                     src='https://cdn.shopify.com/s/files/1/0634/2154/6744/files/skreddersdy-varmen-balpanne.jpg?v=1780812470'
@@ -183,7 +183,7 @@ export function EmpathySection({
 
               <div
                 aria-hidden
-                className='dark:border-dark-background/10 absolute -right-6 -bottom-6 -z-10 hidden size-full rounded-sm border-2 border-background/10 md:block'
+                className='absolute -right-6 -bottom-6 -z-10 hidden size-full rounded-sm border-2 border-background/10 md:block'
               />
             </div>
           </m.div>

@@ -33,7 +33,7 @@ export function TailwindSection() {
       </p>
 
       <div className='mx-auto mt-16 grid w-full max-w-lg min-w-0 grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2'>
-        <div className='rounded-3xl rounded-t-3xl bg-dark-teal p-8 text-foreground ring-1 ring-border sm:rounded-b-none sm:p-10 lg:rounded-tr-none lg:rounded-bl-3xl dark:ring-dark-border'>
+        <div className='rounded-3xl rounded-t-3xl bg-dark-teal p-8 text-foreground ring-1 ring-border sm:rounded-b-none sm:p-10 lg:rounded-tr-none lg:rounded-bl-3xl'>
           <h3
             id='utekos-mikrofiber'
             className='font-utekos-text-medium text-base/7 text-card-foreground'

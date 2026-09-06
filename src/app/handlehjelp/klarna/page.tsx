@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 export default function KlarnaHelpPage() {
   return (
-    <article className='w-full max-w-full! min-w-full bg-foreground dark:bg-dark-foreground text-background dark:text-dark-background'>
+    <article className='w-full max-w-full! min-w-full bg-foreground text-background'>
       <KlarnaOnSiteMessagingScript />
       <article
         aria-label='Betalingsinformasjon fra Klarna'

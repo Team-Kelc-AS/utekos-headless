@@ -140,7 +140,7 @@ export default function RootLayout({
         enabled={shouldLoadMarketingScripts}
       />
 
-      <body className='scroll-smooth bg-background text-foreground antialiased dark:bg-background dark:text-foreground'>
+      <body className='scroll-smooth bg-background text-foreground antialiased'>
         {shouldLoadMarketingScripts ?
           <>
             <MetaBrowserTransportLoader />

@@ -82,7 +82,7 @@ function FeatureItem({
 }) {
   return (
     <div className='flex items-start gap-4'>
-      <div className='dark:bg-dark-primary/10 dark:text-dark-primary mt-1 rounded-full bg-primary/10 p-2 text-primary'>
+      <div className='mt-1 rounded-full bg-primary/10 p-2 text-primary'>
         <Icon size={20} />
       </div>
       <div>

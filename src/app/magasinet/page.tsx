@@ -13,7 +13,7 @@ export default async function MagazinePage() {
   const articles = await getMagazineArticles()
 
   return (
-    <main className='bg-overcast text-background dark:text-dark-background'>
+    <main className='bg-overcast text-background'>
       <JsonLdScript
         data={buildMagazineCollectionJsonLd(articles)}
       />

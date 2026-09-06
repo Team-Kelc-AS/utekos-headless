@@ -7,14 +7,14 @@ import { TableCellContent } from './TableCellContent'
 
 export function ComparisonTable() {
   return (
-    <div className='dark:border-dark-card-foreground max-w-full overflow-x-auto rounded-xl border border-card-foreground bg-card text-card-foreground contain-[paint]'>
+    <div className='max-w-full overflow-x-auto rounded-xl border border-card-foreground bg-card text-card-foreground contain-[paint]'>
       <table className='w-full min-w-[880px] border-collapse text-left'>
         <caption className='sr-only'>
           Sammenligning av Utekos Dun, Utekos Mikrofiber og
           Utekos TechDown
         </caption>
         <thead>
-          <tr className='bg-featured dark:bg-dark-featured text-foreground'>
+          <tr className='bg-featured text-foreground'>
             <th
               scope='col'
               className='font-google-sans w-[20%] p-5 font-sans text-base font-bold tracking-[-0.01em]'
@@ -36,14 +36,14 @@ export function ComparisonTable() {
           {comparisonRows.map(row => (
             <tr
               key={row.feature}
-              className='dark:border-dark-card-foreground/20 border-b border-card-foreground/20'
+              className='border-b border-card-foreground/20'
             >
               <th
                 scope='row'
                 className='font-google-sans p-5 align-top font-sans text-base leading-[1.05] font-bold tracking-[-0.01em] text-card-foreground'
               >
                 <span>{row.feature}</span>
-                <span className='dark:text-dark-muted-foreground mt-2 block text-xs leading-[1.35] font-medium text-muted-foreground'>
+                <span className='mt-2 block text-xs leading-[1.35] font-medium text-muted-foreground'>
                   {row.shortAnswer}
                 </span>
               </th>

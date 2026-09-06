@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils/className'
 
 const buttonVariants = cva(
-  'group/button dark:focus-visible:border-dark-ring dark:focus-visible:ring-dark-ring/50 dark:aria-invalid:border-dark-destructive dark:aria-invalid:ring-dark-destructive/20 dark:aria-invalid:border-dark-destructive/50 dark:aria-invalid:ring-dark-destructive/40 inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4',
+  'group/button inline-flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4',
   {
     variants: {
       variant: {
@@ -16,21 +16,21 @@ const buttonVariants = cva(
         'commerce-primary':
           'bg-primary text-foreground hover:opacity-60 rounded-2xl',
         'commerce-secondary':
-          'border-commerce-secondary bg-commerce-secondary text-commerce-secondary-foreground hover:bg-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground dark:border-dark-commerce-secondary dark:bg-dark-commerce-secondary dark:text-dark-commerce-secondary-foreground dark:hover:bg-dark-commerce-secondary-hover dark:hover:text-dark-commerce-secondary-hover-foreground',
+          'border-commerce-secondary bg-commerce-secondary text-commerce-secondary-foreground hover:bg-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground',
         'default':
           'hover:bg-primary-hover bg-primary text-primary-foreground',
         'outline':
-          'dark:border-dark-input dark:bg-dark-background dark:hover:bg-dark-accent dark:hover:text-dark-accent-foreground border-input bg-background hover:bg-accent hover:text-accent-foreground',
+          'border-input bg-background hover:bg-accent hover:text-accent-foreground',
         'seeProduct':
-          'border-border bg-sidebar-primary text-foreground shadow-xs aria-expanded:bg-accent aria-expanded:text-accent-foreground dark:border-border dark:bg-sidebar-primary dark:aria-expanded:bg-accent dark:aria-expanded:text-accent-foreground',
+          'border-border bg-sidebar-primary text-foreground shadow-xs aria-expanded:bg-accent aria-expanded:text-accent-foreground',
         'secondary':
-          'dark:aria-expanded:text-dark-secondary-foreground bg-secondary text-secondary-foreground aria-expanded:bg-secondary aria-expanded:text-secondary-foreground dark:bg-secondary dark:aria-expanded:bg-secondary',
+          'bg-secondary text-secondary-foreground aria-expanded:bg-secondary aria-expanded:text-secondary-foreground',
         'ghost':
-          'dark:aria-expanded:bg-dark-accent dark:aria-expanded:text-dark-accent-foreground text-foreground hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent aria-expanded:text-accent-foreground dark:hover:bg-accent',
+          'text-foreground hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent aria-expanded:text-accent-foreground',
         'destructive':
-          'dark:hover:bg-dark-destructive/90 dark:focus-visible:border-dark-destructive dark:focus-visible:ring-dark-destructive/30 bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-destructive/30 dark:bg-destructive dark:text-destructive-foreground',
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-destructive/30',
         'link':
-          'text-primary underline-offset-4 hover:underline dark:text-primary',
+          'text-primary underline-offset-4 hover:underline',
         'utekos':
           'bg-primary text-foreground hover:opacity-60 rounded-2xl'
       },

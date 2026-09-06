@@ -9,7 +9,7 @@ const ComfyrobeImageCarousel = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className='mx-auto aspect-square size-full rounded-[1.35rem] bg-background/45 dark:bg-dark-background/45'
+        className='mx-auto aspect-square size-full rounded-[1.35rem] bg-background/45'
         aria-hidden='true'
       />
     )
@@ -18,7 +18,7 @@ const ComfyrobeImageCarousel = dynamic(
 
 const fallback = (
   <div
-    className='mx-auto aspect-square size-full rounded-[1.35rem] bg-background/45 dark:bg-dark-background/45'
+    className='mx-auto aspect-square size-full rounded-[1.35rem] bg-background/45'
     aria-hidden='true'
   />
 )

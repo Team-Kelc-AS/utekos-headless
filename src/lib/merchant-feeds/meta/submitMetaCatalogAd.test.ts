@@ -86,6 +86,36 @@ test('creates only a paused ad after validation is explicitly bypassed', async (
   assert.equal(observed.params?.status, 'PAUSED')
 })
 
+test('rejects legacy Collection requests before calling Meta', async () => {
+  let apiCalled = false
+  const legacyRequest = {
+    ...request,
+    creative: {
+      ...request.creative,
+      asset_feed_spec: {
+        optimization_type: 'FORMAT_AUTOMATION',
+        ad_formats: ['CAROUSEL', 'COLLECTION'],
+        descriptions: [{ text: '{{product.description}}' }]
+      }
+    }
+  }
+
+  await assert.rejects(
+    submitMetaCatalogAd({
+      accessToken: 'secret-token',
+      adAccountId: '772268237116474',
+      mode: 'create',
+      request: legacyRequest,
+      apiCall: async () => {
+        apiCalled = true
+        return { id: '120247531999990788' }
+      }
+    }),
+    /asset_feed_spec/
+  )
+  assert.equal(apiCalled, false)
+})
+
 test('sanitizes SDK failures without exposing token-bearing URLs', async () => {
   await assert.rejects(
     submitMetaCatalogAd({

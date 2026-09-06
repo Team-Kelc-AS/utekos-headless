@@ -1,5 +1,6 @@
 // Path: src/components/jsx/ColorSelector/ColorSelector.tsx
 
+import { HavdypColorGuideDialog } from '@/components/color-guide/HavdypColorGuideDialog'
 import { OptionButton } from '@/components/jsx/OptionButton'
 import type { ColorSelectorProps } from '@types'
 
@@ -65,67 +66,74 @@ export function ColorSelector({
           isSelected ?
             selectedVariant.availableForSale
           : (optionValue?.variantAvailableForSale ?? true)
+        const isHavdypColor =
+          colorValue.toLowerCase() === 'havdyp' ||
+          colorLabel.toLowerCase().includes('havdyp')
 
         return (
-          <OptionButton
-            key={colorValue}
-            isSelected={isSelected}
-            isAvailable={isAvailable}
-            disabled={isDisabled}
-            ariaLabel={`${colorLabel}${
-              (
-                !exists ||
-                !hasTargetVariant ||
-                isDifferentProduct
-              ) ?
-                ', ikke tilgjengelig'
-              : !isAvailable ? ', utsolgt'
-              : ''
-            }`}
-            optionName={optionName}
-            optionValue={colorValue}
-            onClick={() => onSelect(optionName, colorValue)}
-          >
-            <span className='flex items-center gap-2 text-foreground'>
-              <span className='font-utekos-text-medium text-foreground'>
-                {colorLabel}
-              </span>
-              {(
-                !exists ||
-                !hasTargetVariant ||
-                isDifferentProduct ||
-                !isAvailable
-              ) ?
-                <span className='text-xs font-normal text-foreground/70'>
-                  {(
-                    !exists ||
-                    !hasTargetVariant ||
-                    isDifferentProduct
-                  ) ?
-                    'Ikke tilgjengelig'
-                  : 'Utsolgt'}
-                </span>
-              : null}
-            </span>
-            <div
-              className='color-swatch-container text-foreground'
-              style={
-                {
-                  '--swatch-bg': backgroundColor
-                } as React.CSSProperties
-              }
+          <div key={colorValue} className='space-y-1.5'>
+            <OptionButton
+              isSelected={isSelected}
+              isAvailable={isAvailable}
+              disabled={isDisabled}
+              ariaLabel={`${colorLabel}${
+                (
+                  !exists ||
+                  !hasTargetVariant ||
+                  isDifferentProduct
+                ) ?
+                  ', ikke tilgjengelig'
+                : !isAvailable ? ', utsolgt'
+                : ''
+              }`}
+              optionName={optionName}
+              optionValue={colorValue}
+              onClick={() => onSelect(optionName, colorValue)}
             >
+              <span className='flex items-center gap-2 text-foreground'>
+                <span className='font-utekos-text-medium text-foreground'>
+                  {colorLabel}
+                </span>
+                {(
+                  !exists ||
+                  !hasTargetVariant ||
+                  isDifferentProduct ||
+                  !isAvailable
+                ) ?
+                  <span className='text-xs font-normal text-foreground/70'>
+                    {(
+                      !exists ||
+                      !hasTargetVariant ||
+                      isDifferentProduct
+                    ) ?
+                      'Ikke tilgjengelig'
+                    : 'Utsolgt'}
+                  </span>
+                : null}
+              </span>
               <div
-                className='color-swatch-dot'
+                className='color-swatch-container text-foreground'
                 style={
                   {
-                    '--swatch-dot-color': swatchDotColor
+                    '--swatch-bg': backgroundColor
                   } as React.CSSProperties
                 }
-                data-selected={isSelected}
-              />
-            </div>
-          </OptionButton>
+              >
+                <div
+                  className='color-swatch-dot'
+                  style={
+                    {
+                      '--swatch-dot-color': swatchDotColor
+                    } as React.CSSProperties
+                  }
+                  data-selected={isSelected}
+                />
+              </div>
+            </OptionButton>
+            {isHavdypColor ?
+              <HavdypColorGuideDialog />
+            : null}
+          </div>
         )
       })}
     </div>

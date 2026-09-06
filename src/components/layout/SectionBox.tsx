@@ -14,7 +14,7 @@ export function SectionBox({
       className={cn(
         'w-full overflow-x-clip px-8 py-12 sm:px-10 md:px-12 md:py-16 lg:px-24 lg:py-24 xl:py-28',
         className,
-        bgcolor ? bgcolor : 'bg-background dark:bg-dark-background'
+        bgcolor ? bgcolor : 'bg-background'
       )}
     >
       <div className='text-left'>{children}</div>

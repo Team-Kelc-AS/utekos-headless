@@ -4,6 +4,7 @@ import { TypographyMomentsH3 } from './TypographyMomentsH3'
 import { MomentCardsGrid } from '@/components/frontpage/MomentSection/MomentCardsGrid'
 import { cn } from '@/lib/utils/className'
 import { PageSection } from '@/components/layout/PageSection'
+import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 import { Lead } from '@/components/typography/Lead'
 import {
   motion,
@@ -33,7 +34,8 @@ export function MomentsSection() {
       as='section'
       background='muted'
       className={cn(
-        'relative mx-auto overflow-hidden rounded-xl'
+        frontpageSectionStackClassName,
+        'mx-auto'
       )}
       contentClassName='py-12 sm:py-16 md:py-20 lg:py-28'
     >

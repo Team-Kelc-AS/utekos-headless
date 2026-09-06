@@ -11,7 +11,7 @@ export const metadata = returnPolicyPageMetadata
 
 export default function ShippingAndReturnsPage() {
   return (
-    <article className='dark:bg-dark-background mx-auto w-full bg-background pt-0 pb-20 md:pt-16 sm:pb-28'>
+    <article className='mx-auto w-full bg-background pt-0 pb-20 md:pt-16 sm:pb-28'>
       <ShippingReturnsMobileHero />
       <ShippingReturnsHeader />
 

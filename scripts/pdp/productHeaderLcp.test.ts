@@ -44,7 +44,7 @@ test(
 
     assert.match(
       source,
-      /className=['"]min-w-0 flex-1['"]/,
+      /<hgroup>/,
       'ProductHeader must retain the previous layout wrapper without animation'
     )
   }
@@ -65,8 +65,8 @@ test(
 
     assert.match(
       source,
-      /<div\s+className=['"]mt-6 md:hidden['"]>\s*<ProductHeader/,
-      'Mobile ProductHeader must render inside a static responsive wrapper'
+      /<div\s+className=['"]mt-2 md:mt-0['"]>\s*<ProductHeader/,
+      'ProductHeader must render inside a static responsive wrapper'
     )
 
     const productHeaderInstances =
@@ -74,8 +74,8 @@ test(
 
     assert.equal(
       productHeaderInstances.length,
-      2,
-      'PDP must retain exactly its mobile and desktop ProductHeader renders'
+      1,
+      'PDP must retain exactly one ProductHeader render'
     )
   }
 )

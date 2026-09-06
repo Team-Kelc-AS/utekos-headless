@@ -2,7 +2,7 @@
  * Grillkvelden — seksjonsbakgrunn og typografi.
  *
  * Seksjonene veksler lys/mørk i rekkefølgen de står i `page.tsx`:
- * 1. Hero — `GrillHeroSection` (bg-background, dark:bg-dark-background egen fil)
+ * 1. Hero — `GrillHeroSection` (bg-background, egen fil)
  * 2. UseCasesGrid — light
  * 3. BenefitsGrid — dark
  * 4. GrillSeasonsSection — light

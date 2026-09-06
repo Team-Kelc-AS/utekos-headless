@@ -27,7 +27,7 @@ export function KampanjeJulegaverBreadcrumbs({
       <UtekosBreadcrumbBar
         embedded
         surface='transparent'
-        className=' dark:ring-dark-border inline-flex rounded-full bg-card px-4 py-2 text-card-foreground shadow-sm ring-1 ring-border'
+        className=' inline-flex rounded-full bg-card px-4 py-2 text-card-foreground shadow-sm ring-1 ring-border'
         items={items}
       />
     </div>

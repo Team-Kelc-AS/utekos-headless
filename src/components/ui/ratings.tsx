@@ -18,12 +18,12 @@ const ratingVariants = cva('transition-colors', {
     variant: {
       default: 'fill-current text-foreground',
       destructive:
-        'dark:text-dark-destructive fill-current text-destructive',
+        'fill-current text-destructive',
       outline:
-        'dark:text-dark-muted-foreground fill-transparent stroke-current text-muted-foreground',
+        'fill-transparent stroke-current text-muted-foreground',
       secondary:
-        'dark:text-dark-muted-foreground fill-current text-muted-foreground',
-      yellow: 'fill-current text-amber-600 dark:text-amber-400'
+        'fill-current text-muted-foreground',
+      yellow: 'fill-current text-amber-600'
     }
   },
   defaultVariants: { variant: 'default' }
@@ -104,9 +104,9 @@ function RatingItem({
     const emptyIcon = React.cloneElement(Icon, {
       size,
       'className': cn(
-        'dark:fill-dark-muted-foreground/20 dark:stroke-dark-muted-foreground/10 dark:text-dark-muted-foreground/10 fill-muted-foreground/20 stroke-muted-foreground/10 text-muted-foreground/10',
+        'fill-muted-foreground/20 stroke-muted-foreground/10 text-muted-foreground/10',
         variant === 'yellow' &&
-          'fill-amber-600/30 stroke-amber-600/10 text-amber-600/10 dark:fill-amber-400/30 dark:stroke-amber-400/10'
+          'fill-amber-600/30 stroke-amber-600/10 text-amber-600/10'
       ),
       'aria-hidden': 'true'
     })
@@ -345,7 +345,7 @@ function Rating({
       data-disabled={disabled}
       data-readonly={readOnly}
       className={cn(
-        'dark:focus-visible:ring-dark-ring/50 flex gap-px focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:outline-none',
+        'flex gap-px focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:outline-none',
         disabled && 'opacity-50',
         className
       )}

@@ -20,13 +20,13 @@ const brandBadgeVariants = cva(
         'neutral':
           ' bg-card text-card-foreground',
         'promo':
-          'bg-promo dark:bg-dark-promo text-promo-foreground dark:text-dark-promo-foreground',
+          'bg-promo text-promo-foreground',
         'commerce-primary':
-          'bg-commerce-primary dark:bg-dark-commerce-primary text-commerce-primary-foreground dark:text-dark-commerce-primary-foreground hover:bg-commerce-primary-hover dark:hover:bg-dark-commerce-primary-hover hover:text-commerce-primary-hover-foreground dark:hover:text-dark-commerce-primary-hover-foreground',
+          'bg-commerce-primary text-commerce-primary-foreground hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground',
         'commerce-secondary':
-          'bg-commerce-secondary dark:bg-dark-commerce-secondary text-commerce-secondary-foreground dark:text-dark-commerce-secondary-foreground hover:bg-commerce-secondary-hover dark:hover:bg-dark-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground dark:hover:text-dark-commerce-secondary-hover-foreground',
+          'bg-commerce-secondary text-commerce-secondary-foreground hover:bg-commerce-secondary-hover hover:text-commerce-secondary-hover-foreground',
         'featured':
-          'bg-featured dark:bg-dark-featured text-foreground',
+          'bg-featured text-foreground',
         'custom':
           'bg-(--brand-badge-bg) text-(--brand-badge-text)'
       }

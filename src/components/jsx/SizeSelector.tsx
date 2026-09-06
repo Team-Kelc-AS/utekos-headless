@@ -163,7 +163,7 @@ export function SizeSelector({
               tabIndex={isSelected ? 0 : -1}
               data-selected={isSelected}
               data-available={isAvailable}
-              className='dark:focus-visible:ring-dark-card-foreground/45 flex min-h-12 cursor-pointer items-center justify-center rounded-2xl border border-transparent bg-jungle px-3 py-3 text-center text-sm text-card-foreground transition-all duration-200 ease-in-out focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45 data-[selected=true]:border-foreground data-[selected=true]:bg-background data-[selected=true]:text-foreground data-[selected=true]:shadow-[0_14px_32px_-24px_color-mix(in_oklch,var(--foreground)_72%,transparent)] data-[selected=true]:ring-2 data-[selected=true]:ring-foreground/55 md:w-full md:justify-between md:p-4 md:text-left md:text-base'
+              className='flex min-h-12 cursor-pointer items-center justify-center rounded-2xl border border-transparent bg-jungle px-3 py-3 text-center text-sm text-card-foreground transition-all duration-200 ease-in-out focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-45 data-[selected=true]:border-foreground data-[selected=true]:bg-background data-[selected=true]:text-foreground data-[selected=true]:shadow-[0_14px_32px_-24px_color-mix(in_oklch,var(--foreground)_72%,transparent)] data-[selected=true]:ring-2 data-[selected=true]:ring-foreground/55 md:w-full md:justify-between md:p-4 md:text-left md:text-base'
             >
               <span className='inline-flex flex-wrap items-center justify-center gap-2 font-sans md:justify-start'>
                 <span>{sizeValue}</span>
@@ -218,7 +218,7 @@ export function SizeSelector({
         <div className='flex w-full flex-col rounded-2xl bg-jungle px-4 py-2 text-left transition-colors md:p-4'>
           <button
             onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-            className='dark:focus-visible:ring-dark-card-foreground/45 flex min-h-11 w-full cursor-pointer items-center justify-between p-0 font-utekos-text-medium text-card-foreground transition-colors focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none md:min-h-0'
+            className='flex min-h-11 w-full cursor-pointer items-center justify-between p-0 font-utekos-text-medium text-card-foreground transition-colors focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none md:min-h-0'
             aria-expanded={isDetailsOpen}
             aria-controls='size-details'
           >
@@ -233,7 +233,7 @@ export function SizeSelector({
               fill='none'
               stroke='currentColor'
               strokeWidth='2'
-              className={`dark:ring-dark-card-foreground/45 transform rounded-full text-card-foreground ring-1 ring-card-foreground/45 transition-transform duration-200 hover:scale-105 hover:ring-2 ${isDetailsOpen ? 'rotate-45' : ''}`}
+              className={`transform rounded-full text-card-foreground ring-1 ring-card-foreground/45 transition-transform duration-200 hover:scale-105 hover:ring-2 ${isDetailsOpen ? 'rotate-45' : ''}`}
               aria-hidden='true'
             >
               <path d='M5 12h14' />

@@ -15,7 +15,7 @@ export async function TensorPixVideoCacheWrapper({ variant = 'section' }: Tensor
   if (variant === 'embed') {
     return (
       <ProductVideoPlayer
-        className='relative aspect-430/932 w-full max-w-[430px] overflow-hidden bg-background dark:bg-dark-background'
+        className='relative aspect-430/932 w-full max-w-[430px] overflow-hidden bg-background'
         src={VIDEO_EMBED_URL}
         title='Utekos produktvideo'
       />

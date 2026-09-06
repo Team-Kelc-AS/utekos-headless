@@ -98,10 +98,10 @@ export function NbccProductCardActions({
               className={[
                 'rounded-md border px-3 py-1.5 text-sm font-medium transition-all',
                 variant.label === selectedLabel ?
-                  'dark:border-dark-background dark:bg-dark-foreground dark:text-dark-background border-background bg-foreground text-background'
+                  'border-background bg-foreground text-background'
                 : !variant.availableForSale ?
-                  'dark:border-dark-foreground/10 cursor-not-allowed border-foreground/10 text-foreground/25 line-through'
-                : 'dark:border-dark-foreground/40 dark:hover:border-dark-foreground dark:hover:text-dark-foreground border-foreground/40 text-foreground/80 hover:border-foreground hover:text-foreground'
+                  'cursor-not-allowed border-foreground/10 text-foreground/25 line-through'
+                : 'border-foreground/40 text-foreground/80 hover:border-foreground hover:text-foreground'
               ].join(' ')}
             >
               {variant.label}
@@ -114,7 +114,7 @@ export function NbccProductCardActions({
         <span className='font-utekos-text-medium text-xl text-foreground'>
           {price}
         </span>
-        <span className='border-promo-foreground/20 dark:border-dark-promo-foreground/20 bg-promo dark:bg-dark-promo text-promo-foreground dark:text-dark-promo-foreground rounded-full border px-2 py-0.5 text-xs'>
+        <span className='border-promo-foreground/20 bg-promo text-promo-foreground rounded-full border px-2 py-0.5 text-xs'>
           NBCC-rabatt i kassen
         </span>
       </div>

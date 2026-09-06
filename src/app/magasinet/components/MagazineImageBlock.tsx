@@ -9,7 +9,7 @@ export function MagazineImageBlock({
   block
 }: MagazineImageBlockProps) {
   return (
-    <figure className='dark:border-dark-background/10 my-14 overflow-hidden rounded-lg border border-background/10 bg-foreground shadow-[0_24px_70px_-54px_color-mix(in_oklch,var(--background)_65%,transparent)]'>
+    <figure className='my-14 overflow-hidden rounded-lg border border-background/10 bg-foreground shadow-[0_24px_70px_-54px_color-mix(in_oklch,var(--background)_65%,transparent)]'>
       <Image
         src={block.src}
         alt={block.alt}

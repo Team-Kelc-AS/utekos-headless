@@ -33,8 +33,8 @@ export type BreadcrumbSurfaceStyles = {
 
 const lightText: BreadcrumbSurfaceStyles = {
   stripe:
-    'border-b border-border  bg-background dark:bg-dark-background text-foreground ',
-  list: 'text-foreground ',
+    'border-b border-border  bg-background text-foreground',
+  list: 'text-foreground',
   link: 'text-foreground/85 transition-colors hover:text-ceramic focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ceramic/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
   page: 'font-medium text-foreground',
   separator:
@@ -43,22 +43,22 @@ const lightText: BreadcrumbSurfaceStyles = {
 
 const darkText: BreadcrumbSurfaceStyles = {
   stripe:
-    'border-b border-background/12 dark:border-dark-background/12 bg-foreground dark:bg-dark-foreground text-background dark:text-dark-background',
-  list: 'text-background dark:text-dark-background',
-  link: 'text-background/85 dark:text-dark-background/85 transition-colors hover:text-background dark:hover:text-dark-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background/50 dark:focus-visible:ring-dark-background/50 focus-visible:ring-offset-2 focus-visible:ring-offset-foreground dark:focus-visible:ring-offset-dark-foreground',
-  page: 'font-medium text-background dark:text-dark-background',
+    'border-b border-background/12 bg-foreground text-background',
+  list: 'text-background',
+  link: 'text-background/85 transition-colors hover:text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background/50 focus-visible:ring-offset-2 focus-visible:ring-offset-foreground',
+  page: 'font-medium text-background',
   separator:
-    'text-background/55 dark:text-dark-background/55 [&>svg]:text-background/55 dark:svg]:text-dark-background/55'
+    'text-background/55 [&>svg]:text-background/55'
 }
 
 const invertedText: BreadcrumbSurfaceStyles = {
   stripe:
-    'border-b border-background/12 dark:border-dark-background/12 bg-foreground dark:bg-dark-foreground text-background dark:text-dark-background',
-  list: 'text-background dark:text-dark-background',
-  link: 'text-background/85 dark:text-dark-background/85 transition-colors hover:text-background dark:hover:text-dark-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background/50 dark:focus-visible:ring-dark-background/50 focus-visible:ring-offset-2 focus-visible:ring-offset-foreground dark:focus-visible:ring-offset-dark-foreground',
-  page: 'font-medium text-background dark:text-dark-background',
+    'border-b border-background/12 bg-foreground text-background',
+  list: 'text-background',
+  link: 'text-background/85 transition-colors hover:text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background/50 focus-visible:ring-offset-2 focus-visible:ring-offset-foreground',
+  page: 'font-medium text-background',
   separator:
-    'text-background/55 dark:text-dark-background/55 [&>svg]:text-background/55 dark:svg]:text-dark-background/55'
+    'text-background/55 [&>svg]:text-background/55'
 }
 
 const transparentText: BreadcrumbSurfaceStyles = {

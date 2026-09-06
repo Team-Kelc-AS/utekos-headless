@@ -15,7 +15,7 @@ export function MagazineRelatedArticles({
   }
 
   return (
-    <article className='dark:border-dark-background/10 border-t border-background/10 bg-muted py-16 text-foreground'>
+    <article className='border-t border-background/10 bg-muted py-16 text-foreground'>
       <div className='container mx-auto px-4'>
         <header className='mb-8 max-w-2xl'>
           <p className='font-utekos-text-medium text-sm leading-4 text-magazine-article-card-pill'>

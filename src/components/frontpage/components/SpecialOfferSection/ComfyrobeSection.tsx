@@ -4,6 +4,7 @@ import { comfyrobeMdxComponents } from './ComfyrobeMdxComponents'
 import ComfyrobeStory from './ComfyrobeStory.mdx'
 import type { ShopifyMediaImage } from 'types/media'
 import { PageSection } from '@/components/layout/PageSection'
+import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 import { cn } from '@/lib/utils/className'
 import comfyrobeProduct1200x1200 from '@/assets/images/comfyrobe/Comfyrobe-Product-1200x1200.webp'
 
@@ -24,10 +25,14 @@ export function ComfyrobeSection() {
   return (
     <PageSection
       as='section'
-      background='default'
-      className={cn('mx-auto items-center')}
+      background='none'
+      className={cn(
+        frontpageSectionStackClassName,
+        'bg-jungle text-foreground'
+      )}
+      contentClassName='max-w-none px-0 py-0 sm:px-0 sm:py-0 md:py-0 lg:px-0 lg:py-0'
     >
-      <div className='relative isolate min-w-0 overflow-hidden rounded-[2rem] border border-foreground/12 bg-jungle text-foreground shadow-[0_30px_90px_-55px_color-mix(in_oklch,var(--jungle)_95%,black)]'>
+      <div className='relative isolate min-w-0 overflow-hidden'>
         <div
           aria-hidden='true'
           className='pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_18%,color-mix(in_oklch,var(--dark-teal)_80%,transparent),transparent_42%)]'

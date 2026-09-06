@@ -35,7 +35,7 @@ export function CareList({
           <li key={item} className='flex gap-2.5'>
             <span
               aria-hidden='true'
-              className='dark:bg-dark-foreground/44 mt-[0.55em] size-1 shrink-0 rounded-full bg-foreground/44'
+              className='mt-[0.55em] size-1 shrink-0 rounded-full bg-foreground/44'
             />
             <span>{item}</span>
           </li>

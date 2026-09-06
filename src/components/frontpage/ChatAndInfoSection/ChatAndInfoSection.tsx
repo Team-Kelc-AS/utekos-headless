@@ -9,6 +9,7 @@ import { TrustContentView } from './TrustContentView'
 import { InfoCardStackView } from './InfoCardStackView'
 import { AnimatedChat } from '@/components/frontpage/ChatAndInfoSection/AnimatedChat'
 import { PageSection } from '@/components/layout/PageSection'
+import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 
 const sectionMotion = {
   hidden: {},
@@ -28,7 +29,11 @@ const panelMotion = {
 
 export function ChatAndInfoSection() {
   return (
-    <PageSection as='section' background='muted'>
+    <PageSection
+      as='section'
+      background='muted'
+      className={frontpageSectionStackClassName}
+    >
       <MotionConfig reducedMotion='user'>
         <motion.div
           className='mx-auto rounded-xl'
@@ -41,7 +46,7 @@ export function ChatAndInfoSection() {
           }}
           variants={sectionMotion}
         >
-          <div className='dark:border-dark-foreground/12 overflow-hidden rounded-xl border border-foreground/12 bg-card'>
+          <div className='overflow-hidden rounded-xl border border-foreground/12 bg-card'>
             <div className='grid min-w-0 lg:grid-cols-2'>
               <TrustContentView
                 InfoCardsComponent={InfoCardStackView}

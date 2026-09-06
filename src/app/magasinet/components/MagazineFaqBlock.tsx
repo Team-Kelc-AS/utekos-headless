@@ -18,7 +18,7 @@ export function MagazineFaqBlock({
         {block.items.map(item => (
           <div
             key={item.question}
-            className='dark:border-dark-background/10 rounded-lg border border-background/10 bg-foreground p-5'
+            className='rounded-lg border border-background/10 bg-foreground p-5'
           >
             <dt className='font-google-sans font-sans text-xl leading-[1.05] font-bold text-background'>
               {item.question}

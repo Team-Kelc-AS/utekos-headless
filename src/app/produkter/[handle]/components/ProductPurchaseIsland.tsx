@@ -61,7 +61,7 @@ export function ProductPurchaseIsland({
             >
               <h3
                 id={`product-option-${productOption.name}`}
-                className='font-utekos-text-medium text-sm text-foreground/72 md:sr-only'
+                className='font-utekos-text-medium text-lg text-primary md:sr-only'
               >
                 {productOption.name}
               </h3>
@@ -80,7 +80,7 @@ export function ProductPurchaseIsland({
           ))}
         </div>
         <div
-          className='mt-3 min-h-5 text-sm text-foreground/72 max-md:empty:hidden'
+          className='mt-3 min-h-5 text-sm text-foreground/72 empty:hidden'
           role={hasVariantSelectionError ? 'alert' : 'status'}
           aria-live='polite'
         >

@@ -4,7 +4,7 @@ import { Star, StarHalf } from 'lucide-react'
 
 export function HeroStars() {
   return (
-    <span className='flex gap-0.5 text-primary dark:text-dark-primary drop-shadow-md' aria-hidden='true'>
+    <span className='flex gap-0.5 text-primary drop-shadow-md' aria-hidden='true'>
       {[1, 2, 3, 4].map(i => (
         <Star key={i} fill='currentColor' size={15} strokeWidth={0} />
       ))}

@@ -19,7 +19,7 @@ export function ComfyrobeImageCarousel() {
         plugins={[fadePlugin]}
         slideCount={2}
         opts={{ loop: true, align: 'center' }}
-        className='relative mx-auto aspect-square w-full max-w-full overflow-hidden rounded-[1.35rem] bg-background/60 shadow-[0_24px_70px_-48px_color-mix(in_oklch,var(--background)_90%,transparent)] dark:bg-dark-background/60'
+        className='relative mx-auto aspect-square w-full max-w-full overflow-hidden rounded-[1.35rem] bg-background/60 shadow-[0_24px_70px_-48px_color-mix(in_oklch,var(--background)_90%,transparent)]'
       >
         <CarouselContent className='absolute inset-0 ml-0'>
           <CarouselItem className='absolute inset-0 basis-full pl-0'>
@@ -36,7 +36,7 @@ export function ComfyrobeImageCarousel() {
           </CarouselItem>
 
           <CarouselItem className='absolute inset-0 basis-full pl-0'>
-            <div className='relative flex size-full items-center justify-center overflow-hidden bg-background dark:bg-dark-background'>
+            <div className='relative flex size-full items-center justify-center overflow-hidden bg-background'>
               <Image
                 src={ComfyRainy}
                 alt='Comfyrobe som tåler regnvær, vist i et norsk kystlandskap.'

@@ -43,7 +43,7 @@ export function Hero({
   return (
     <section
       aria-labelledby='hero-headline'
-      className={`${styles.heroSection} dark:bg-dark-background relative min-h-[calc(100svh-70px)] w-full overflow-hidden bg-background font-sans text-foreground xl:min-h-[calc(100svh-86px)]`}
+      className={`${styles.heroSection} relative min-h-[calc(100svh-70px)] w-full overflow-hidden bg-background font-sans text-foreground xl:min-h-[calc(100svh-86px)]`}
     >
       <picture
         className={`${styles.heroMedia} absolute inset-0 z-0 block`}
@@ -67,11 +67,11 @@ export function Hero({
 
       <div
         aria-hidden
-        className='dark:from-dark-background/35 dark:via-dark-background/55 dark:to-dark-background/95 absolute inset-0 z-1 bg-linear-to-b from-background/35 via-background/55 via-50% to-background/95'
+        className='absolute inset-0 z-1 bg-linear-to-b from-background/35 via-background/55 via-50% to-background/95'
       />
       <div
         aria-hidden
-        className='dark:from-dark-background/80 dark:via-dark-background/20 absolute inset-y-0 left-0 z-1 hidden w-1/2 bg-linear-to-r from-background/80 via-background/20 to-transparent md:block'
+        className='absolute inset-y-0 left-0 z-1 hidden w-1/2 bg-linear-to-r from-background/80 via-background/20 to-transparent md:block'
       />
       <div
         className={`${styles.heroContent} relative z-10 mx-auto flex min-h-[calc(100svh-70px)] w-full max-w-350 flex-col items-start justify-center px-6 pt-20 pb-16 md:px-12 md:pt-24 lg:px-20 xl:min-h-[calc(100svh-86px)]`}
@@ -90,7 +90,7 @@ export function Hero({
             <span className='block whitespace-nowrap text-foreground'>
               {content.headline}
             </span>
-            <span className='dark:text-dark-primary mt-3 block max-w-4xl text-left font-sans text-3xl font-bold text-primary italic sm:text-4xl md:text-5xl lg:text-6xl'>
+            <span className='mt-3 block max-w-4xl text-left font-sans text-3xl font-bold text-primary italic sm:text-4xl md:text-5xl lg:text-6xl'>
               {content.accent}
             </span>
           </h1>

@@ -56,7 +56,7 @@ export function ModeToggle({
       role='group'
       aria-label='Fargetema'
       className={cn(
-        ' dark:bg-dark-muted/40 inline-flex items-center gap-0.5 rounded-md border border-border bg-muted/40 p-0.5',
+        ' inline-flex items-center gap-0.5 rounded-md border border-border bg-muted/40 p-0.5',
         className
       )}
     >
@@ -76,9 +76,9 @@ export function ModeToggle({
               'h-9 shrink-0 rounded-sm text-foreground',
               showLabel ? 'gap-1.5 px-3' : 'size-9 px-0',
               isActive &&
-                'dark:bg-dark-background bg-background text-foreground shadow-sm',
+                'bg-background text-foreground shadow-sm',
               !isActive &&
-                'dark:hover:bg-dark-accent hover:bg-accent hover:text-accent-foreground'
+                'hover:bg-accent hover:text-accent-foreground'
             )}
           >
             <Icon className='size-4' aria-hidden />

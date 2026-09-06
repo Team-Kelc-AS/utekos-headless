@@ -43,16 +43,6 @@ export const metaCatalogAdRequestSchema = z.strictObject({
         preferred_image_tags: z.array(z.string().min(1)).min(1)
       })
     }),
-    asset_feed_spec: z.strictObject({
-      optimization_type: z.literal('FORMAT_AUTOMATION'),
-      ad_formats: z.tuple([
-        z.literal('CAROUSEL'),
-        z.literal('COLLECTION')
-      ]),
-      descriptions: z.tuple([
-        z.strictObject({ text: z.literal('{{product.description}}') })
-      ])
-    }),
     degrees_of_freedom_spec: z.strictObject({
       creative_features_spec: z.strictObject({
         adapt_to_placement: z.strictObject({

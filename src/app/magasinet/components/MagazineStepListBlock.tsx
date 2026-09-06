@@ -27,9 +27,9 @@ export function MagazineStepListBlock({
         {block.steps.map((step, index) => (
           <li
             key={step.title}
-            className='dark:border-dark-background/10 grid gap-4 rounded-lg border border-background/10 bg-foreground p-5 sm:grid-cols-[3rem_1fr]'
+            className='grid gap-4 rounded-lg border border-background/10 bg-foreground p-5 sm:grid-cols-[3rem_1fr]'
           >
-            <div className='dark:bg-dark-background font-google-sans flex size-11 items-center justify-center rounded-lg bg-background font-sans text-lg leading-none font-bold text-foreground'>
+            <div className='font-google-sans flex size-11 items-center justify-center rounded-lg bg-background font-sans text-lg leading-none font-bold text-foreground'>
               {index + 1}
             </div>
             <div>

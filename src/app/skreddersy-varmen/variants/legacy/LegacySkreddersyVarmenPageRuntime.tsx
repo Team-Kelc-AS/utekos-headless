@@ -26,7 +26,7 @@ export async function LegacySkreddersyVarmenPageRuntime({
   )
 
   return (
-    <div className='dark:bg-dark-background flex min-h-screen w-full flex-col items-center justify-start overflow-x-clip bg-background'>
+    <div className='flex min-h-screen w-full flex-col items-center justify-start overflow-x-clip bg-background'>
       <MetaWebsiteHighlights />
 
       <StickyMobileAction

@@ -15,11 +15,11 @@ export const inspirationSurfaces = {
   darkSection: 'bg-mountain-view',
   darkSectionText: 'text-foreground',
   lightSection: 'bg-foreground',
-  lightSectionText: 'text-background dark:text-dark-background',
+  lightSectionText: 'text-background',
   cardOnDark:
-    'border border-foreground/12 bg-background/58 dark:bg-dark-background/58',
+    'border border-foreground/12 bg-background/58',
   cardSolid:
-    'border border-foreground/12 bg-background dark:bg-dark-background'
+    'border border-foreground/12 bg-background'
 } as const
 
 /** Hero feature-kort: theme-stil med dokumentert kontrast */

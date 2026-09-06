@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 export function SocialProof() {
   return (
-    <article className='dark:bg-dark-background bg-background py-24 text-foreground'>
+    <article className='bg-background py-24 text-foreground'>
       <div className='container mx-auto px-4'>
         <div className='mx-auto max-w-3xl text-center'>
           <h2 className='mb-8 pb-8'>Skippere elsker Utekos</h2>
@@ -16,12 +16,12 @@ export function SocialProof() {
                 måneder.&quot;
               </blockquote>
               <div className='flex items-center justify-center gap-4'>
-                <div className='dark:bg-dark-secondary h-12 w-12 rounded-full bg-secondary' />
+                <div className='h-12 w-12 rounded-full bg-secondary' />
                 <div className='text-left'>
                   <p className='font-utekos-text-medium'>
                     Kjell-Arne Larsen
                   </p>
-                  <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
+                  <p className='text-sm text-muted-foreground'>
                     Seilentusiast fra Tønsberg
                   </p>
                 </div>

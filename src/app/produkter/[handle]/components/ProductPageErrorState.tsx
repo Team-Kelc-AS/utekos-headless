@@ -47,7 +47,7 @@ export function ProductPageErrorState({
             type='button'
             onClick={onRetry}
             disabled={isRetrying}
-            className='bg-flame-orange hover:bg-flame-orange/88 dark:text-dark-background h-12 rounded-full px-7 text-background'
+            className='bg-flame-orange hover:bg-flame-orange/88 h-12 rounded-full px-7 text-background'
           >
             {isRetrying ? 'Prøver igjen...' : 'Prøv igjen'}
           </Button>

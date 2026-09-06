@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { buildMetaCatalogAd } from './buildMetaCatalogAd'
+import { metaCatalogAdRequestSchema } from './metaCatalogAdSchema'
 
 const input = {
   adName: 'UTEKOS | Advantage+ Catalog | v26',
@@ -32,11 +33,6 @@ test('builds a paused v26 Advantage+ catalog ad with preferred image tags', () =
     'preferred_image_tags' in request.creative,
     false
   )
-  assert.deepEqual(request.creative.asset_feed_spec, {
-    ad_formats: ['CAROUSEL', 'COLLECTION'],
-    descriptions: [{ text: '{{product.description}}' }],
-    optimization_type: 'FORMAT_AUTOMATION'
-  })
   assert.deepEqual(
     request.creative.degrees_of_freedom_spec,
     {
@@ -67,6 +63,34 @@ test('opts into catalog product videos only when explicitly requested', () => {
   )
 })
 
+test('builds a catalog carousel without opting the three-group assortment into Collection', () => {
+  for (const includeProductVideo of [false, true]) {
+    const request = buildMetaCatalogAd({ ...input, includeProductVideo })
+
+    assert.equal('asset_feed_spec' in request.creative, false)
+    assert.equal('format_transformation_spec' in request.creative, false)
+    assert.equal(request.creative.product_set_id, input.productSetId)
+    assert.equal(request.status, 'PAUSED')
+  }
+})
+
+test('rejects a legacy Collection format-automation request', () => {
+  const request = buildMetaCatalogAd(input)
+  const result = metaCatalogAdRequestSchema.safeParse({
+    ...request,
+    creative: {
+      ...request.creative,
+      asset_feed_spec: {
+        ad_formats: ['CAROUSEL', 'COLLECTION'],
+        descriptions: [{ text: '{{product.description}}' }],
+        optimization_type: 'FORMAT_AUTOMATION'
+      }
+    }
+  })
+
+  assert.equal(result.success, false)
+})
+
 test('rejects Shopify and non-canonical landing page origins', () => {
   for (const link of [
     'https://kasse.utekos.no/products/utekos-techdown',
@@ -78,4 +102,23 @@ test('rejects Shopify and non-canonical landing page origins', () => {
       /canonical public Utekos origin/
     )
   }
+})
+
+test('replaces a legacy TechDown creative destination while preserving URL parameters', () => {
+  const request = buildMetaCatalogAd({
+    ...input,
+    link: 'https://utekos.no/produkter/utekos-techdown?farge=havdyp&storrelse=stor&utm_source=meta'
+  })
+
+  assert.equal(
+    request.creative.object_story_spec.template_data.link,
+    'https://utekos.no/skreddersy-varmen?farge=havdyp&storrelse=stor&utm_source=meta'
+  )
+})
+
+test('preserves non-TechDown creative destinations', () => {
+  const link = 'https://utekos.no/produkter/comfyrobe?storrelse=xl'
+  const request = buildMetaCatalogAd({ ...input, link })
+
+  assert.equal(request.creative.object_story_spec.template_data.link, link)
 })

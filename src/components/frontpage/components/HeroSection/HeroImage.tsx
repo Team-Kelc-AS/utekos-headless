@@ -2,31 +2,25 @@ import { cn } from '@/lib/utils/className'
 import heroLgImage from '@/assets/images/gallery/utekos-brand-1400x735.webp'
 import heroXlImage from '@/assets/images/gallery/utekos_1400_788.webp'
 import heroSixteenTenImage from '@public/Hero-iPad.webp'
-import techdown700x775 from '@/assets/images/techdown/TechDown.700x775.webp'
-
-const heroMobileImage = {
-  src: techdown700x775.src,
-  width: techdown700x775.width,
-  height: techdown700x775.height
-} as const
+import heroMobileImage from '@public/TechDown_1.webp'
 
 const heroImageProps = {
-  alt: 'To kvinner i Utekos TechDown sitter på en terassen og nyter ost og vin.',
+  alt: 'Utekos TechDown i mørk blå, vist i helfigur.',
   decoding: 'async',
   fetchPriority: 'high',
   loading: 'eager',
   sizes:
-    '(min-width: 1152px) 1152px, (min-width: 640px) calc(100vw - 2rem), 100vw'
+    '(min-width: 1152px) 1152px, (min-width: 640px) calc(100vw - 2rem), calc(100vw - 2rem)'
 } as const
 
 export function HeroImage() {
   return (
     <div
       className={cn(
-        'group sm:dark:border-dark-foreground/12 relative mx-auto mb-7 w-full max-w-none overflow-hidden shadow-none sm:mb-10 sm:max-w-6xl sm:rounded-2xl sm:border sm:border-foreground/12 sm:shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)]'
+        'group relative mx-auto mb-7 w-full max-w-none overflow-hidden rounded-2xl border border-foreground/12 shadow-none sm:mb-10 sm:max-w-6xl sm:shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)]'
       )}
     >
-      <div className='relative aspect-700/775 transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 sm:rounded-2xl lg:aspect-video xl:aspect-video'>
+      <div className='relative aspect-1080/1704 rounded-2xl transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 lg:aspect-video xl:aspect-video'>
         <picture className='block size-full'>
           <source
             media='(min-width: 1280px)'
@@ -53,7 +47,7 @@ export function HeroImage() {
             fetchPriority={heroImageProps.fetchPriority}
             width={heroMobileImage.width}
             height={heroMobileImage.height}
-            className='block size-full object-cover object-[50%_45%] md:rounded-xl'
+            className='block size-full object-cover object-center'
           />
         </picture>
       </div>

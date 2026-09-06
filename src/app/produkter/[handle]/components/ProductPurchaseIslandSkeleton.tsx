@@ -10,7 +10,7 @@ export function ProductPurchaseIslandSkeleton() {
 
       <div className='mt-4 flex flex-col gap-5 md:mt-5 md:gap-8'>
         <div className='space-y-3'>
-          <Skeleton className='h-4 w-20' />
+          <Skeleton className='h-6 w-20' />
 
           <div className='flex flex-wrap gap-2'>
             <Skeleton className='h-11 w-24 rounded-xl' />

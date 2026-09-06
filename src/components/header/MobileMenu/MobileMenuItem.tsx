@@ -45,7 +45,7 @@ export function MobileMenuItem({ item }: { item: MenuItem }) {
       </AccordionTrigger>
 
       <AccordionContent className='pt-2 pb-0'>
-        <div className='dark:bg-dark-background/54 rounded-2xl border border-foreground/10 bg-background/54 p-2 backdrop-blur'>
+        <div className='rounded-2xl border border-foreground/10 bg-background/54 p-2 backdrop-blur'>
           <div className='space-y-1.5'>
             {item.items!.map(subItem => (
               <SubMenuItem key={subItem.title} item={subItem} />

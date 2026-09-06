@@ -72,7 +72,7 @@ export function ProductsPageHeader() {
           Vi har{' '}
           <span className='relative inline-block font-medium text-foreground'>
             redefinert
-            <span className='motion-underline dark:bg-dark-primary absolute bottom-0 left-0 h-0.5 w-full origin-left bg-primary' />
+            <span className='motion-underline absolute bottom-0 left-0 h-0.5 w-full origin-left bg-primary' />
           </span>{' '}
           utekosen gjennom teknologi og funksjonalitet.
           <br className='hidden md:block' />
@@ -87,7 +87,7 @@ export function ProductsPageHeader() {
         </p>
       </div>
 
-      <div className='dark:from-dark-background dark:via-dark-background/80 pointer-events-none absolute right-0 bottom-0 left-0 h-32 bg-linear-to-t from-background via-background/80 to-transparent' />
+      <div className='pointer-events-none absolute right-0 bottom-0 left-0 h-32 bg-linear-to-t from-background via-background/80 to-transparent' />
     </header>
   )
 }

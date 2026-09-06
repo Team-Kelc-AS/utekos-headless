@@ -15,7 +15,7 @@ export function StapperFeatureSection() {
     <Card className='relative isolate min-h-88 overflow-hidden rounded-3xl border-foreground/12 bg-foreground/[0.035] py-0 shadow-none backdrop-blur-[2px] sm:min-h-104 lg:min-h-132'>
       <CardContent className='relative flex size-full min-h-[inherit] items-center justify-center p-0'>
         <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,color-mix(in_oklab,var(--ancient-water)_18%,transparent),transparent_44%)]' />
-        <div className='dark:bg-dark-background/55 absolute inset-x-10 bottom-8 h-24 rounded-full bg-background/55 blur-3xl' />
+        <div className='absolute inset-x-10 bottom-8 h-24 rounded-full bg-background/55 blur-3xl' />
         <div className='absolute top-8 right-8 hidden rounded-full border border-border bg-card px-4 py-2 text-xs font-medium text-card-foreground uppercase sm:block'>
           100 g
         </div>
@@ -79,7 +79,7 @@ export function StapperFeatureSection() {
                 asChild
                 backgroundColor='var(--primary)'
                 textColor='var(--background)'
-                className='group dark:border-dark-primary/18 min-h-14 justify-center border border-primary/18 px-7 text-base shadow-[0_16px_36px_-24px_rgba(232,178,66,0.55)] transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-105 lg:justify-start'
+                className='group min-h-14 justify-center border border-primary/18 px-7 text-base shadow-[0_16px_36px_-24px_rgba(232,178,66,0.55)] transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-105 lg:justify-start'
               >
                 <Link
                   href={'/produkter/utekos-stapper' as Route}

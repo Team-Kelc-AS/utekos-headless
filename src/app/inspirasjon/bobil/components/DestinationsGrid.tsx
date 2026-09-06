@@ -69,7 +69,7 @@ export function DestinationsGrid({
                         <div
                           className={`absolute inset-0 ${theme.glow}`}
                         />
-                        <div className='absolute inset-x-0 top-0 h-px bg-foreground/24 dark:bg-dark-foreground/24' />
+                        <div className='absolute inset-x-0 top-0 h-px bg-foreground/24 ' />
                       </div>
 
                       <div className='relative z-10 flex grow flex-col px-8 py-5 sm:px-9 sm:py-6'>

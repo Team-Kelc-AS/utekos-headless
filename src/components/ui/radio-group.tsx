@@ -20,7 +20,7 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
     <RadioPrimitive.Root
       data-slot="radio-group-item"
       className={cn(
-        'group/radio-group-item peer relative flex aspect-square size-4 shrink-0 rounded-full border border-input dark:border-dark-input outline-none after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring dark:focus-visible:border-dark-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:focus-visible:ring-dark-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive dark:aria-invalid:border-dark-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-dark-destructive/20 aria-invalid:aria-checked:border-primary dark:aria-invalid:aria-checked:border-dark-primary dark:bg-dark-input/30 dark:aria-invalid:border-dark-destructive/50 dark:aria-invalid:ring-dark-destructive/40 data-checked:border-primary dark:data-checked:border-dark-primary data-checked:bg-primary dark:data-checked:bg-dark-primary data-checked:text-primary-foreground dark:data-checked:text-dark-primary-foreground dark:data-checked:bg-dark-primary',
+        'group/radio-group-item peer relative flex aspect-square size-4 shrink-0 rounded-full border border-input outline-none after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 aria-invalid:aria-checked:border-primary data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground',
         className
       )}
       {...props}
@@ -29,7 +29,7 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
         data-slot="radio-group-indicator"
         className="flex size-4 items-center justify-center"
       >
-        <span className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-foreground dark:bg-dark-primary-foreground" />
+        <span className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-foreground " />
       </RadioPrimitive.Indicator>
     </RadioPrimitive.Root>
   )

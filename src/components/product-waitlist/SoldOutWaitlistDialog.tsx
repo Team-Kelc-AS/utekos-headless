@@ -28,7 +28,7 @@ const initialState: ProductWaitlistActionState = {
 const DEFAULT_AUTO_OPEN_DELAY_MS = 3000
 
 const fieldClassName =
-  'h-12 rounded-lg border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35 dark:border-dark-border dark:bg-dark-background dark:text-dark-foreground dark:placeholder:text-dark-muted-foreground dark:focus-visible:border-dark-primary dark:focus-visible:ring-dark-primary/35'
+  'h-12 rounded-lg border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
 
 export type SoldOutWaitlistDialogProps = {
   open?: boolean
@@ -111,7 +111,7 @@ export function SoldOutWaitlistDialog({
               <DialogTitle className='font-utekos-text-medium text-2xl leading-tight text-card-foreground sm:text-3xl'>
                 Utsolgt akkurat nå
               </DialogTitle>
-              <DialogDescription className='text-base leading-7 text-card-foreground/80 dark:text-card-foreground/80'>
+              <DialogDescription className='text-base leading-7 text-card-foreground/80'>
                 Utekos Dun er dessverre utsolgt. Sett deg på
                 ventelisten helt kostnadsfritt, så gir vi beskjed
                 når den er tilbake.
@@ -131,7 +131,7 @@ export function SoldOutWaitlistDialog({
                 <h2 className='font-utekos-text-medium text-xl'>
                   Du står på ventelisten
                 </h2>
-                <p className='dark:text-dark-muted-foreground leading-6 text-muted-foreground'>
+                <p className='leading-6 text-muted-foreground'>
                   {state.message}
                 </p>
                 <Button
@@ -263,7 +263,7 @@ export function SoldOutWaitlistDialog({
               </div>
 
               <div className='space-y-2'>
-                <label className='dark:border-dark-border dark:bg-dark-muted/25 flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/25 p-4'>
+                <label className='flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/25 p-4'>
                   <input
                     type='checkbox'
                     name='privacy'
@@ -304,7 +304,7 @@ export function SoldOutWaitlistDialog({
               <div className='space-y-2'>
                 <label
                   htmlFor={marketingFieldId}
-                  className='dark:border-dark-border dark:bg-dark-muted/25 flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/25 p-4'
+                  className='flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/25 p-4'
                 >
                   <input
                     id={marketingFieldId}

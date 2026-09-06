@@ -90,7 +90,7 @@ export function KlarnaCartExpressCheckout({
       />
       {errorMessage ?
         <p
-          className='dark:text-dark-destructive mt-2 text-sm text-destructive'
+          className='mt-2 text-sm text-destructive'
           role='alert'
           aria-live='polite'
         >

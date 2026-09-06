@@ -26,7 +26,7 @@ export const useCasesData: UseCase[] = [
     description:
       'Nyt en stille morgen for anker med kaffekoppen, uansett hvor frisk brisen er.',
     temperature: '8-15°C',
-    color: 'from-primary/20 dark:from-dark-primary/20'
+    color: 'from-primary/20'
   },
   {
     icon: Moon,
@@ -56,14 +56,14 @@ export function UseCasesGrid({
   return (
     <article
       id='bruksomrader'
-      className='dark:text-dark-secondary-foreground bg-muted py-24 text-secondary-foreground'
+      className='bg-muted py-24 text-secondary-foreground'
     >
       <div className='container mx-auto px-4'>
         <div className='mb-16 text-center'>
-          <h2 className='dark:text-dark-secondary-foreground mx-auto max-w-3xl text-secondary-foreground'>
+          <h2 className='mx-auto max-w-3xl text-secondary-foreground'>
             Utekos gjennom båtdøgnet
           </h2>
-          <p className='utekos-section-lead dark:text-dark-secondary-foreground mx-auto mt-4 max-w-2xl text-secondary-foreground'>
+          <p className='utekos-section-lead mx-auto mt-4 max-w-2xl text-secondary-foreground'>
             Fra soloppgang i uthavn til sene kvelder ved bryggen
             – Utekos holder deg varm.
           </p>
@@ -87,7 +87,7 @@ export function UseCasesGrid({
                       <useCase.icon className='h-6 w-6 text-foreground' />
                     </div>
                     <div>
-                      <p className='dark:text-dark-muted-foreground text-sm text-muted-foreground'>
+                      <p className='text-sm text-muted-foreground'>
                         {useCase.time}
                       </p>
                       <p className='text-sm font-medium text-card-foreground'>

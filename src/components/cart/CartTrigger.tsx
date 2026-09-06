@@ -65,8 +65,8 @@ export function CartTrigger({
       aria-label={`Åpne handlekurven, ${itemCount} ${itemCount === 1 ? 'vare' : 'varer'}`}
       variant='outline'
       className={cn(
-        'dark:bg-dark-background relative flex size-11 items-center justify-center gap-2 rounded-md bg-background text-foreground',
-        'dark:hover:bg-dark-accent border border-border transition-colors hover:bg-accent hover:text-accent-foreground',
+        'relative flex size-11 items-center justify-center gap-2 rounded-md bg-background text-foreground',
+        'border border-border transition-colors hover:bg-accent hover:text-accent-foreground',
         'p-0',
         className
       )}
@@ -81,7 +81,7 @@ export function CartTrigger({
       : null}
 
       {itemCount > 0 && (
-        <div className='dark:border-dark-primary dark:bg-dark-primary pointer-events-none absolute -top-2 -right-2 z-10 grid h-4 w-4 place-items-center rounded-sm border border-primary bg-primary text-[11px] font-medium text-primary-foreground'>
+        <div className='pointer-events-none absolute -top-2 -right-2 z-10 grid h-4 w-4 place-items-center rounded-sm border border-primary bg-primary text-[11px] font-medium text-primary-foreground'>
           {itemCount}
         </div>
       )}

@@ -5,7 +5,7 @@ const cardSurfaceStyle = {
 export function JusterFormNyt() {
   return (
     <div
-      className='dark:border-dark-foreground/24 relative isolate w-fit shrink-0 self-start rounded-xl border border-foreground/24 px-5 py-3 shadow-md sm:self-center'
+      className='relative isolate w-fit shrink-0 self-start rounded-xl border border-foreground/24 px-5 py-3 shadow-md sm:self-center'
       style={cardSurfaceStyle}
     >
       <div className='font-utekos-text-medium flex flex-col gap-0 text-3xl leading-none tracking-tight sm:text-4xl'>

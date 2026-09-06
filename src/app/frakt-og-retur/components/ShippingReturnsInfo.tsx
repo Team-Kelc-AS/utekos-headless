@@ -30,9 +30,9 @@ export function ShippingReturnsInfo() {
           delay='0.2s'
         >
           <article className='mt-4 flex h-full min-w-0 flex-col rounded-2xl bg-night p-2'>
-            <div className='dark:ring-dark-border flex h-full flex-col items-start rounded-xl bg-jungle p-6 shadow-sm ring-1 ring-border sm:p-8'>
+            <div className='flex h-full flex-col items-start rounded-xl bg-jungle p-6 shadow-sm ring-1 ring-border sm:p-8'>
               <header className='mb-4 flex flex-col items-start gap-4'>
-                <div className='dark:ring-dark-border/50 flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
+                <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
                   <Truck
                     className='size-6'
                     strokeWidth={1.8}
@@ -78,7 +78,7 @@ export function ShippingReturnsInfo() {
           delay='0.4s'
         >
           <article className='mt-4 flex h-full min-w-0 flex-col rounded-2xl bg-night p-2'>
-            <div className='dark:ring-dark-border flex h-full flex-col items-start rounded-xl bg-jungle p-6 shadow-sm ring-1 ring-border sm:p-8'>
+            <div className='flex h-full flex-col items-start rounded-xl bg-jungle p-6 shadow-sm ring-1 ring-border sm:p-8'>
               <header className='mb-4 flex flex-col items-start gap-4'>
                 <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
                   <Undo2
@@ -137,7 +137,7 @@ export function ShippingReturnsInfo() {
         <article className='flex min-w-0 flex-col rounded-2xl bg-night p-2'>
           <section
             aria-labelledby='return-policy-summary-heading'
-            className='dark:ring-dark-border rounded-xl bg-jungle p-6 text-foreground shadow-sm ring-1 ring-border sm:p-8'
+            className='rounded-xl bg-jungle p-6 text-foreground shadow-sm ring-1 ring-border sm:p-8'
           >
             <h2
               id='return-policy-summary-heading'
