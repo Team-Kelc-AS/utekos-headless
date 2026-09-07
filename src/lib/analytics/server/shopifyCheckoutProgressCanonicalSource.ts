@@ -31,7 +31,9 @@ export function assertCompatibleCheckoutProgressSource(
   }
 }
 
-function analyticsBrowserIds(beginCheckout: CanonicalBeginCheckout) {
+function analyticsBrowserIds(
+  beginCheckout: CanonicalBeginCheckout
+) {
   const identifiers = {
     ...(beginCheckout.browser_id?.ga_client ?
       { ga_client: beginCheckout.browser_id.ga_client }
@@ -47,7 +49,9 @@ function analyticsBrowserIds(beginCheckout: CanonicalBeginCheckout) {
     : {})
   }
 
-  return Object.keys(identifiers).length > 0 ? identifiers : undefined
+  return Object.keys(identifiers).length > 0 ?
+      identifiers
+    : undefined
 }
 
 export function checkoutProgressCanonicalEnvelope(
@@ -65,18 +69,34 @@ export function checkoutProgressCanonicalEnvelope(
   return {
     consent: {
       analytics: 'granted' as const,
-      marketing: marketingGranted ?
-        ('granted' as const)
-      : ('denied' as const),
+      marketing:
+        marketingGranted ?
+          ('granted' as const)
+        : ('denied' as const),
       preferences:
-        beginCheckout.consent.preferences === 'granted' &&
-        observation.privacy.preferencesProcessingAllowed ?
+        (
+          beginCheckout.consent.preferences === 'granted' &&
+          observation.privacy.preferencesProcessingAllowed
+        ) ?
           ('granted' as const)
         : ('denied' as const),
       source: beginCheckout.consent.source,
       version: beginCheckout.consent.version
     },
     page_url: beginCheckout.page_url,
+    ...((
+      observation.privacy.analyticsProcessingAllowed &&
+      beginCheckout.consent.analytics === 'granted'
+    ) ?
+      {
+        ...(beginCheckout.journey_id ?
+          { journey_id: beginCheckout.journey_id }
+        : {}),
+        ...(beginCheckout.page_view_id ?
+          { page_view_id: beginCheckout.page_view_id }
+        : {})
+      }
+    : {}),
     ...(browserId ? { browser_id: browserId } : {}),
     ...(marketingGranted && beginCheckout.click_id ?
       { click_id: beginCheckout.click_id }

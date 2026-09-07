@@ -125,59 +125,66 @@ export const utekosData = [
   }
 ]
 
+export type TechDownMeasurementRow = Readonly<{
+  measurement: string
+  middels: string
+  stor: string
+  storre: string
+}>
+
 export const techDownData = [
   {
     measurement: 'Total lengde (nakke til bunn)',
-    liten: '152 cm',
     middels: '162 cm',
-    stor: '166 cm'
+    stor: '166 cm',
+    storre: '170 cm'
   },
   {
-    measurement: 'Brystvidde',
-    liten: '54 cm',
+    measurement: 'Brystvidde (flatmål)',
     middels: '56 cm',
-    stor: '58 cm'
+    stor: '58 cm',
+    storre: '61 cm'
   },
   {
-    measurement: 'Armlengde (fra senter)',
-    liten: '78 cm',
+    measurement: 'Ermlengde (fra senter)',
     middels: '82 cm',
-    stor: '87 cm'
+    stor: '87 cm',
+    storre: '92 cm'
   },
   {
-    measurement: 'Armlengde (fra armhule)',
-    liten: '51 cm',
+    measurement: 'Ermlengde (fra armhule)',
     middels: '54 cm',
-    stor: '60 cm'
+    stor: '60 cm',
+    storre: '64 cm'
   },
   {
     measurement: 'Lengde på glidelås (omvendt V)',
-    liten: '72 cm',
     middels: '73 cm',
-    stor: '74 cm'
+    stor: '74 cm',
+    storre: '75 cm'
   },
   {
     measurement: 'Lengde på glidelås (sidelomme)',
-    liten: '13.5 cm',
-    middels: '13.5 cm',
-    stor: '13.5 cm'
+    middels: '13,5 cm',
+    stor: '13,5 cm',
+    storre: '14 cm'
   },
   {
     measurement: 'Høyde på hette',
-    liten: '35 cm',
     middels: '35 cm',
-    stor: '35 cm'
+    stor: '35 cm',
+    storre: '35 cm'
   },
   {
     measurement: 'Høyde på baklomme',
-    liten: '29 cm',
     middels: '29 cm',
-    stor: '29 cm'
+    stor: '29 cm',
+    storre: '29 cm'
   },
   {
     measurement: 'Mansjetthøyde',
-    liten: '7 cm',
     middels: '8 cm',
-    stor: '8.5 cm'
+    stor: '8,5 cm',
+    storre: '9 cm'
   }
-]
+] as const satisfies readonly TechDownMeasurementRow[]

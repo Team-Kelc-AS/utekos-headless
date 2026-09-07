@@ -1,3 +1,4 @@
+import { techDownSizeSummary } from '@/app/handlehjelp/storrelsesguide/utils/techDownSizeSummary'
 import type {
   NbccAiSummaryIntent,
   NbccAiSummaryPayload
@@ -17,9 +18,9 @@ export const NBCC_AI_MODEL_FALLBACK =
   process.env.NBCC_AI_SUMMARY_FALLBACK_MODEL?.trim() ||
   'google/gemini-2.5-pro'
 
-export const NBCC_AI_SUMMARIES_CACHE_KEY = 'nbcc-ai-summary:v6'
+export const NBCC_AI_SUMMARIES_CACHE_KEY = 'nbcc-ai-summary:v7'
 export const NBCC_AI_SUMMARIES_CACHE_REVALIDATE_SECONDS = 3600
-export const NBCC_AI_SUMMARIES_TAG_PREFIX = 'nbcc-ai-summary-v6-'
+export const NBCC_AI_SUMMARIES_TAG_PREFIX = 'nbcc-ai-summary-v7-'
 
 export const FALLBACK_SUMMARIES: Record<
   NbccAiSummaryIntent,
@@ -62,13 +63,8 @@ export const FALLBACK_SUMMARIES: Record<
       {
         title: 'Utekos TechDown™',
         style: 'list',
-        body: 'TechDown™ har en lun og mer kroppsnær passform enn de mest oversized modellene, men er fortsatt laget for komfort, bevegelse og justering.',
-        items: [
-          'Liten: total lengde fra nakke til bunn er 152 cm. Passer best for deg som ønsker en kortere og nettere variant.',
-          'Middels: total lengde er 162 cm. Passer best for deg som er 170–180 cm. Er du lavere enn 170 cm, får du en romsligere passform.',
-          'Stor: total lengde er 166 cm. Passer best for deg som er 180–195 cm, eller for deg som er lavere og ønsker mer romslighet.',
-          'Ekstra Stor: passer best for deg som er 190 cm og oppover, eller for deg som ønsker maksimal romslighet, lengde i kroppen og ekstra plass i ermene.'
-        ]
+        body: 'TechDown™ har normal passform (regular), balansert over skuldre, bryst og ermer, med plass til lette lag.',
+        items: techDownSizeSummary
       },
       {
         title: 'Utekos Mikrofiber™',

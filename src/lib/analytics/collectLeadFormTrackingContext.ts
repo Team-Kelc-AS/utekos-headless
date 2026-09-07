@@ -6,9 +6,13 @@ import { browserPageViewSession } from './pageViewSession'
 import { browserFirstPartyExternalIdStore } from './firstPartyExternalId'
 import type { LeadFormTrackingContext } from './leadFormTrackingContext'
 import { LEAD_TRACKING_CONTEXT_FIELD } from './leadFormTrackingContext'
+import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 
 type CookiebotWindow = Window & {
-  Cookiebot?: { consent?: CookiebotConsent }
+  Cookiebot?: {
+    consent?: CookiebotConsent
+    hasResponse?: boolean
+  }
 }
 
 function readUtmParam(
@@ -21,8 +25,11 @@ function readUtmParam(
 
 export function collectLeadFormTrackingContext(): LeadFormTrackingContext {
   const pageUrl = window.location.href
+  const cookiebot = (window as CookiebotWindow).Cookiebot
   const consent = getConsentSnapshot(
-    (window as CookiebotWindow).Cookiebot?.consent
+    cookiebot?.hasResponse === true ?
+      cookiebot.consent
+    : undefined
   )
 
   browserFirstPartyExternalIdStore.getOrCreate(consent)
@@ -33,6 +40,12 @@ export function collectLeadFormTrackingContext(): LeadFormTrackingContext {
   })
 
   const searchParams = new URL(pageUrl).searchParams
+  const journey = enrichCanonicalBrowserJourneyContext<
+    Pick<
+      LeadFormTrackingContext,
+      'consent' | 'page_view_id' | 'journey_id'
+    >
+  >({ consent, page_view_id: pageView.pageViewId })
   const campaign = readUtmParam(searchParams, 'utm_campaign')
   const medium = readUtmParam(searchParams, 'utm_medium')
   const content = readUtmParam(searchParams, 'utm_content')
@@ -41,7 +54,14 @@ export function collectLeadFormTrackingContext(): LeadFormTrackingContext {
   return {
     consent,
     page_url: pageUrl,
-    page_view_id: pageView.pageViewId,
+    ...(consent.analytics === 'granted' ?
+      {
+        page_view_id: pageView.pageViewId,
+        ...(journey.journey_id ?
+          { journey_id: journey.journey_id }
+        : {})
+      }
+    : {}),
     ...(pageView.referrerUrl ?
       { referrer_url: pageView.referrerUrl }
     : document.referrer.startsWith('http') ?
@@ -55,7 +75,9 @@ export function collectLeadFormTrackingContext(): LeadFormTrackingContext {
   }
 }
 
-export function appendLeadTrackingContext(formData: FormData): void {
+export function appendLeadTrackingContext(
+  formData: FormData
+): void {
   formData.set(
     LEAD_TRACKING_CONTEXT_FIELD,
     JSON.stringify(collectLeadFormTrackingContext())

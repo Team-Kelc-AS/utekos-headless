@@ -1,5 +1,5 @@
 import { ZodError } from 'zod'
-import { canonicalAddToCartSchema } from '../addToCartEvent'
+import { normalizeCanonicalAddToCart } from './normalizeCanonicalAddToCart'
 import {
   acceptCanonicalAddToCart,
   type CanonicalAddToCartStore
@@ -92,9 +92,15 @@ export async function handleCanonicalAddToCartRequest(
   )
 
   try {
-    const result = await acceptCanonicalAddToCart({
+    const requestContext =
+      dependencies.getRequestContext(request)
+    const event = normalizeCanonicalAddToCart(
       payload,
-      requestContext: dependencies.getRequestContext(request),
+      requestContext
+    )
+    const result = await acceptCanonicalAddToCart({
+      payload: event,
+      requestContext,
       store: dependencies.store
     })
 
@@ -105,16 +111,13 @@ export async function handleCanonicalAddToCartRequest(
       })
     }
 
-    const event = canonicalAddToCartSchema.safeParse(payload)
-    if (event.success) {
-      await logCanonicalCommerceEvent({
-        durationMs: Date.now() - startedAt,
-        event: event.data,
-        eventName: 'add_to_cart',
-        request,
-        status: result.status
-      })
-    }
+    await logCanonicalCommerceEvent({
+      durationMs: Date.now() - startedAt,
+      event,
+      eventName: 'add_to_cart',
+      request,
+      status: result.status
+    })
 
     return jsonResponse(
       { event_id: result.event_id, status: result.status },

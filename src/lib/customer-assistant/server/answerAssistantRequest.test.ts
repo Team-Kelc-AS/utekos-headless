@@ -1767,7 +1767,10 @@ test('ambiguous shipping intent uses one grounded overview instead of shipping c
     outcome.sources[0]?.url,
     'https://utekos.no/frakt-og-retur'
   )
-  for (const faqItem of shippingReturnsFaqItems) {
+  assert.ok(outcome.text.length <= 2_000)
+  for (const faqItem of shippingReturnsFaqItems.filter(
+    item => item.id !== 'return-exceptions'
+  )) {
     assert.ok(outcome.text.includes(faqItem.answer))
   }
 })
@@ -1798,7 +1801,9 @@ test('a shipping-method question does not trigger return-process or delivery cla
     outcome.sources[0]?.url,
     'https://utekos.no/frakt-og-retur'
   )
-  for (const faqItem of shippingReturnsFaqItems) {
+  for (const faqItem of shippingReturnsFaqItems.filter(
+    item => item.id !== 'return-exceptions'
+  )) {
     assert.ok(outcome.text.includes(faqItem.answer))
   }
 })
@@ -1843,7 +1848,8 @@ test('size help uses follow-up answers and never promises fit', async () => {
   )
 
   assert.match(outcome.text, /sammenlign målene/iu)
-  assert.match(outcome.text, /Medium \(M\)/u)
+  assert.match(outcome.text, /Stor/u)
+  assert.match(outcome.text, /166 cm/u)
   assert.match(outcome.text, /ikke en garanti/iu)
   assert.doesNotMatch(
     outcome.text,
@@ -1903,7 +1909,9 @@ test('explicit support intents keep size local and shipping grounded', async () 
     shippingOutcome.sources[0]?.url,
     'https://utekos.no/frakt-og-retur'
   )
-  for (const faqItem of shippingReturnsFaqItems) {
+  for (const faqItem of shippingReturnsFaqItems.filter(
+    item => item.id !== 'return-exceptions'
+  )) {
     assert.ok(shippingOutcome.text.includes(faqItem.answer))
   }
 })

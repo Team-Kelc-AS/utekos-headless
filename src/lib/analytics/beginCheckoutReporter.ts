@@ -18,6 +18,7 @@ import { mapShopifyBeginCheckout } from './shopifyBeginCheckoutCommerce'
 import type { CheckoutMethod } from './checkoutMethod'
 import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 import { waitForCookiebotConsentReady } from '@/lib/consent/waitForCookiebotConsentReady'
+import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 import type { Cart } from 'types/cart'
 
 const CHECKOUT_TASK_DEADLINE_MS = 1500
@@ -95,10 +96,11 @@ export async function reportCanonicalBeginCheckout(
     })
     const metaEnrichedEvent =
       await enrichCanonicalEventWithMetaAttribution(initialEvent)
-    const event =
+    const event = enrichCanonicalBrowserJourneyContext(
       await enrichCanonicalEventWithGoogleAnalyticsIds(
         metaEnrichedEvent
       )
+    )
     const snapshot = createCheckoutAttributionSnapshot(
       {
         ...event,

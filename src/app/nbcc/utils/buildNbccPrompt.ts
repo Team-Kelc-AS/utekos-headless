@@ -1,4 +1,5 @@
 import type { NbccAiSummaryIntent } from '../types'
+import { techDownSizeSummary } from '@/app/handlehjelp/storrelsesguide/utils/techDownSizeSummary'
 import { formatProductFacts } from './formatProductFacts'
 import { formatStepFacts } from './formatStepFacts'
 import { formatFaqFacts } from './formatFaqFacts'
@@ -6,7 +7,9 @@ import { formatComfyrobeSizeFacts } from './formatComfyrobeSizeFacts'
 import { formatTechDownSizeFacts } from './formatTechDownSizeFacts'
 import { formatMikrofiberSizeFacts } from './formatMikrofiberSizeFacts'
 
-export function buildNbccPrompt(intent: NbccAiSummaryIntent): string {
+export function buildNbccPrompt(
+  intent: NbccAiSummaryIntent
+): string {
   const task =
     intent === 'how-to-use' ?
       `Oppgave: Forklar NBCC-fordelen på en måte som føles varm, presis og nyttig for et NBCC-medlem som allerede er på Utekos-siden.
@@ -40,10 +43,7 @@ Viktig:
 - Ikke lag en avsluttende oppsummering.
 - Ikke bare list størrelsesnavn.
 - Bruk nyttige mål, spesielt total lengde.
-- Nevn TechDown Ekstra Stor.
-- TechDown Middels: passer best 170–180 cm. Lavere enn 170 cm gir romsligere passform. Mot 180 cm blir mer kroppsnært.
-- TechDown Stor: passer best 180–195 cm. Over 195 cm anbefales Ekstra Stor.
-- TechDown Ekstra Stor: passer best 190 cm og oppover, eller for lavere personer som ønsker maksimal romslighet og lengde.
+- Bruk bare TechDown-størrelsene Middels, Stor og Større, med høyderådene og målene fra fakta under.
 - Mikrofiber Medium: total lengde 170 cm, opptil ca. 180 cm, lettere klær.
 - Mikrofiber Large: total lengde 200 cm, over 180 cm eller mer plass til tykke lag.
 - Comfyrobe: forklar den som et beskyttende skall, romslig rektangulær passform, forlenget rygg, splitter og justerbare ermer.
@@ -88,12 +88,8 @@ Beste tips: Velg normal størrelse for romslig, men kontrollerbar passform. Vurd
 ${formatComfyrobeSizeFacts()}
 
 Størrelsesguide — TechDown:
-TechDown har mer kroppsnær passform, justerbar midje og nettere design.
-Liten: total lengde fra nakke til bunn er 152 cm.
-Middels: total lengde er 162 cm. Passer best for deg som er 170–180 cm. Er du lavere enn 170 cm får du en romslig passform. Ligger du mot 180 cm får du en mer kroppsnær passform.
-Stor: total lengde er 166 cm. Passer best for deg som er 180–195 cm. Perfekt for deg over 180 cm, eller for deg som er lavere og ønsker romslighet. Er du over 195 cm anbefales Ekstra Stor.
-Ekstra Stor: passer best for deg som er 190 cm og oppover. Ekstra lengde i kroppen og ermene. Også et godt valg for deg som er lavere, men ønsker maksimal romslighet og lengde.
-Måltabellen under viser Liten, Middels og Stor. NBCC-utvalget inkluderer også Ekstra Stor for TechDown.
+TechDown har normal passform (regular), balansert over skuldre, bryst og ermer, justerbar midje og nettere design.
+${techDownSizeSummary.join('\n')}
 ${formatTechDownSizeFacts()}
 
 Størrelsesguide — Mikrofiber:

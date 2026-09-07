@@ -26,7 +26,10 @@ export const techDownSizeCards = [
     sizeCode: 'L',
     heading: 'Velg Stor hvis...',
     heightGuide: '175–185 cm',
-    fitGuidance: ['Du er lavere og ønsker romslighet.']
+    fitGuidance: [
+      'Du er lavere enn 180 cm og ønsker romslighet.',
+      'Du ligger i øvre sjiktet (mot 185 cm) og ønsker en mer kroppsnær passform.'
+    ]
   },
   {
     id: 'storre',
@@ -35,8 +38,8 @@ export const techDownSizeCards = [
     heading: 'Velg Større hvis...',
     heightGuide: '185 cm og høyere',
     fitGuidance: [
-      'Du er over 185 cm og ønsker ekstra lengde i kroppen og ermene.',
-      'Du er lavere, men ønsker maksimal romslighet og lengde.'
+      'Du er over 185 cm.',
+      'Du er lavere, men kraftig bygget og ønsker ekstra romslighet.'
     ]
   }
 ] as const satisfies readonly TechDownSizeCardData[]

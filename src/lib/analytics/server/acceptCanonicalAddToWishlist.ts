@@ -4,6 +4,7 @@ import {
   type CanonicalAddToWishlistRequestContext
 } from './normalizeCanonicalAddToWishlist'
 import { planCanonicalEventDispatch } from './planCanonicalEventDispatch'
+import { logCanonicalCommerceEvent } from '@/lib/observability/logging/logCanonicalCommerceEvent'
 
 export type CanonicalAddToWishlistStore = CanonicalEventStore
 
@@ -35,6 +36,14 @@ export async function acceptCanonicalAddToWishlist(
   const result = await input.store.accept({
     dispatches: planCanonicalEventDispatch(event),
     event
+  })
+
+  await logCanonicalCommerceEvent({
+    event,
+    eventName: 'add_to_wishlist',
+    source: 'browser_collector',
+    status:
+      result.status === 'inserted' ? 'accepted' : 'duplicate'
   })
 
   return {

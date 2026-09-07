@@ -14,13 +14,26 @@ export type AppLogJsonValue =
   | AppLogJsonValue[]
   | { readonly [key: string]: AppLogJsonValue }
 
-export type AppLogConsentSnapshot = {
-  analytics: 'denied' | 'granted'
-  marketing: 'denied' | 'granted'
-  preferences: 'denied' | 'granted'
-  source: 'cookiebot'
-  version: string
-}
+export type AppLogConsentSnapshot =
+  | {
+      analytics: 'denied' | 'granted'
+      marketing: 'denied' | 'granted'
+      preferences: 'denied' | 'granted'
+      source: 'cookiebot'
+      version: string
+    }
+  | {
+      analytics: 'unknown'
+      marketing: 'unknown'
+      preferences: 'unknown'
+      source: 'shopify_order_attribute'
+      version: string
+      resolution:
+        | 'missing'
+        | 'empty'
+        | 'invalid_json'
+        | 'invalid_payload'
+    }
 
 export type AppLogTrackingEnvironment =
   | 'development'
@@ -41,10 +54,7 @@ export type AppLogDeviceInfo = {
 export type AppLogAdPlatformEvent = {
   eventName: string
   requiredParameters: readonly string[]
-  transport: {
-    browser: string | null
-    server: string | null
-  }
+  transport: { browser: string | null; server: string | null }
   parameters: Record<string, AppLogJsonValue>
 }
 
@@ -60,6 +70,7 @@ export type AppLogEntryExtras = {
   eventId?: string
   eventName?: string
   eventTime?: string
+  journeyId?: string
   pageTitle?: string
   pageUrl?: string
   pageViewId?: string

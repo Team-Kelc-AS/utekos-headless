@@ -16,8 +16,22 @@ export type ReturnPolicy = Readonly<{
   customerPaysReturnShipping: true
   customerCreatesReturnLabel: true
   acceptsExchanges: true
-  lastUpdated: '2026-08-08'
-  lastUpdatedLabel: '8. august 2026'
+  sizeExchange: Readonly<{
+    appliesTo: 'active-garments-with-size-options'
+    sameModelAndColorOnly: true
+    noticeWindowDays: 14
+    noticeWindowStartsAt: 'physical-receipt'
+    returnShippingPaidBy: 'utekos'
+    contactEmail: 'kundeservice@kelc.no'
+    contactPhone: '+47 402 16 343'
+    contactPhoneHref: 'tel:+4740216343'
+    replacementDispatchTrigger: 'documented-return-handover'
+    subjectToStock: true
+    outOfStockResolution: 'agree-refund-or-alternative'
+    itemCondition: 'unused-unwashed-unaltered-no-odour-or-stains-tags-attached'
+  }>
+  lastUpdated: '2026-09-07'
+  lastUpdatedLabel: '7. september 2026'
 }>
 
 export const returnPolicy = {
@@ -38,8 +52,23 @@ export const returnPolicy = {
   customerPaysReturnShipping: true,
   customerCreatesReturnLabel: true,
   acceptsExchanges: true,
-  lastUpdated: '2026-08-08',
-  lastUpdatedLabel: '8. august 2026'
+  sizeExchange: {
+    appliesTo: 'active-garments-with-size-options',
+    sameModelAndColorOnly: true,
+    noticeWindowDays: 14,
+    noticeWindowStartsAt: 'physical-receipt',
+    returnShippingPaidBy: 'utekos',
+    contactEmail: 'kundeservice@kelc.no',
+    contactPhone: '+47 402 16 343',
+    contactPhoneHref: 'tel:+4740216343',
+    replacementDispatchTrigger: 'documented-return-handover',
+    subjectToStock: true,
+    outOfStockResolution: 'agree-refund-or-alternative',
+    itemCondition:
+      'unused-unwashed-unaltered-no-odour-or-stains-tags-attached'
+  },
+  lastUpdated: '2026-09-07',
+  lastUpdatedLabel: '7. september 2026'
 } as const satisfies ReturnPolicy
 
 export const returnPolicyCopy = {
@@ -63,4 +92,21 @@ export const returnPolicyCopy = {
     'Reklamasjon på en mangelfull, skadet eller feilsendt vare behandles separat fra ordinær angrerett. Kontakt kundeservice før du sender varen. Ved en gyldig reklamasjon dekker Utekos nødvendig returfrakt, og dine lovfestede reklamasjonsrettigheter begrenses ikke.'
 } as const
 
-export const returnPolicyLlmsSummary = `Returpolicyen gjelder nettkjøp levert i Norge. Kunden har ${returnPolicy.returnWindowDays} kalenderdagers angrerett fra fysisk mottak og skal sende varen uten ugrunnet opphold, senest ${returnPolicy.returnAfterNoticeDays} dager etter angremeldingen. Kunden ordner og betaler ordinær returfrakt. Returadressen er ${returnPolicy.returnAddress.recipient}, ${returnPolicy.returnAddress.streetAddress}, ${returnPolicy.returnAddress.postalCode} ${returnPolicy.returnAddress.addressLocality}. Angremelding sendes til ${returnPolicy.contactEmail}. Utekos refunderer produktbetalingen og eventuell ordinær utgående standardfrakt og initierer refusjonen innen ${returnPolicy.processRefundBusinessDays.minimum}–${returnPolicy.processRefundBusinessDays.maximum} virkedager etter mottak og kontroll. Ved gyldig reklamasjon dekker Utekos nødvendig returfrakt.`
+export const sizeExchangeCopy = {
+  eligibility:
+    'Gratis størrelsesbytte gjelder alle plagg i dagens aktive Utekos-sortiment som har størrelsesvalg, og bare bytte til samme modell og farge.',
+  notice: `Kontakt oss på ${returnPolicy.sizeExchange.contactEmail} eller telefon ${returnPolicy.sizeExchange.contactPhone} innen ${returnPolicy.sizeExchange.noticeWindowDays} kalenderdager fra dagen du fysisk mottar bestillingen.`,
+  shipping:
+    'Utekos ordner og betaler returfrakten for størrelsesbyttet. Vi sender samme plagg i riktig størrelse så snart du har sendt oss dokumentasjon på at returen er levert inn, forutsatt at størrelsen er på lager.',
+  condition:
+    'Varen må være ubrukt, uvasket og uendret, uten lukt eller flekker, og med merkelappen på.',
+  outOfStock:
+    'Hvis ønsket størrelse er utsolgt, avtaler kundeservice ordinær refusjon eller en annen løsning med deg. Vi sender aldri en annen modell eller farge automatisk.',
+  ordinaryReturn:
+    'Gratis størrelsesbytte er en frivillig byttefordel, ikke gratis generell retur. Ved ordinær angrerett oppretter og betaler du returfrakten selv. Dine lovfestede rettigheter påvirkes ikke.'
+} as const
+
+export const sizeExchangeLlmsSummary =
+  Object.values(sizeExchangeCopy).join(' ')
+
+export const returnPolicyLlmsSummary = `Returpolicyen gjelder nettkjøp levert i Norge. Kunden har ${returnPolicy.returnWindowDays} kalenderdagers angrerett fra fysisk mottak og skal sende varen uten ugrunnet opphold, senest ${returnPolicy.returnAfterNoticeDays} dager etter angremeldingen. Kunden ordner og betaler ordinær returfrakt. Returadressen er ${returnPolicy.returnAddress.recipient}, ${returnPolicy.returnAddress.streetAddress}, ${returnPolicy.returnAddress.postalCode} ${returnPolicy.returnAddress.addressLocality}. Angremelding sendes til ${returnPolicy.contactEmail}. Utekos refunderer produktbetalingen og eventuell ordinær utgående standardfrakt og initierer refusjonen innen ${returnPolicy.processRefundBusinessDays.minimum}–${returnPolicy.processRefundBusinessDays.maximum} virkedager etter mottak og kontroll. Ved gyldig reklamasjon dekker Utekos nødvendig returfrakt. ${sizeExchangeLlmsSummary}`

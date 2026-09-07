@@ -2,7 +2,8 @@ import { AnimatedBlock } from '@/components/AnimatedBlock'
 import { shippingReturnsFaqItems } from '@/app/frakt-og-retur/data/shippingReturnsContent'
 import {
   returnPolicy,
-  returnPolicyCopy
+  returnPolicyCopy,
+  sizeExchangeCopy
 } from '@/lib/policies/returnPolicy'
 import {
   Accordion,
@@ -157,7 +158,7 @@ export function ShippingReturnsInfo() {
               </div>
               <div>
                 <dt className='font-utekos-text-medium text-base'>
-                  Returfrakt
+                  Ordinær returfrakt
                 </dt>
                 <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
                   Kunden oppretter og betaler returfrakten
@@ -185,14 +186,45 @@ export function ShippingReturnsInfo() {
                   Returmetode
                 </dt>
                 <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
-                  Retur med post til den publiserte
-                  returadressen
+                  Retur med post til den publiserte returadressen
                 </dd>
               </div>
             </dl>
           </section>
         </article>
       </AnimatedBlock>
+
+      <section
+        id='storrelsesbytte'
+        aria-labelledby='size-exchange-heading'
+        className='mt-12 w-full scroll-mt-28 rounded-xl border border-foreground/20 bg-jungle p-6 text-foreground sm:p-8'
+      >
+        <h2
+          id='size-exchange-heading'
+          className='font-sans text-2xl font-bold sm:text-3xl'
+        >
+          Gratis størrelsesbytte
+        </h2>
+        <div className='mt-6 space-y-4 font-utekos-text leading-relaxed'>
+          {Object.values(sizeExchangeCopy).map(text => (
+            <p key={text}>{text}</p>
+          ))}
+          <p className='flex flex-wrap gap-x-6'>
+            <a
+              className='inline-flex min-h-12 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground'
+              href={`mailto:${returnPolicy.sizeExchange.contactEmail}`}
+            >
+              {returnPolicy.sizeExchange.contactEmail}
+            </a>
+            <a
+              className='inline-flex min-h-12 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground'
+              href={returnPolicy.sizeExchange.contactPhoneHref}
+            >
+              {returnPolicy.sizeExchange.contactPhone}
+            </a>
+          </p>
+        </div>
+      </section>
 
       <AnimatedBlock
         className='will-animate-fade-in-up mt-12 w-full'
@@ -207,7 +239,7 @@ export function ShippingReturnsInfo() {
             id='return-steps-heading'
             className='font-google-sans text-2xl font-bold sm:text-3xl'
           >
-            Slik returnerer du
+            Slik bruker du ordinær angrerett
           </h2>
           <ol className='mt-6 flex max-w-prose list-decimal flex-col gap-6 pl-6 font-utekos-text text-base leading-relaxed text-foreground/90 marker:font-bold marker:text-foreground'>
             <li>
@@ -321,7 +353,7 @@ export function ShippingReturnsInfo() {
         <section aria-labelledby='shipping-returns-faq-heading'>
           <h2
             id='shipping-returns-faq-heading'
-            className='font-google-sans text-left text-2xl leading-tight font-bold text-foreground sm:text-3xl'
+            className='text-left font-google-sans text-2xl leading-tight font-bold text-foreground sm:text-3xl'
           >
             Ofte stilte spørsmål
           </h2>

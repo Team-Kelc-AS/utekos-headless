@@ -27,6 +27,7 @@ import type { CanonicalGenerateLeadRequestContext } from './normalizeCanonicalGe
 import { postgresCanonicalEventStore } from './postgresCanonicalPageViewStore'
 import { processMetaParameterContext } from './processMetaParameterContext'
 import { resolveCanonicalEnvironment } from './resolveCanonicalEnvironment'
+import { logCanonicalCommerceEvent } from '@/lib/observability/logging/logCanonicalCommerceEvent'
 
 function readCookie(
   cookieHeader: string,
@@ -225,6 +226,7 @@ export type RecordAcceptedGenerateLeadInput = {
   leadType: LeadType
   pageUrl: string
   pageViewId?: string
+  journeyId?: string
   phone?: string
   requestContext: CanonicalGenerateLeadRequestContext
   submissionId: string
@@ -255,7 +257,9 @@ export async function recordAcceptedGenerateLead(
   )
   const extractedClickId =
     marketingGranted ?
-      nonEmptyClickIds(extractClickIds(input.pageUrl, cookieHeader))
+      nonEmptyClickIds(
+        extractClickIds(input.pageUrl, cookieHeader)
+      )
     : undefined
   const externalId =
     marketingGranted ?
@@ -342,6 +346,7 @@ export async function recordAcceptedGenerateLead(
     ...(input.pageViewId ?
       { pageViewId: input.pageViewId }
     : {}),
+    ...(input.journeyId ? { journeyId: input.journeyId } : {}),
     ...(browserId && Object.keys(browserId).length > 0 ?
       { browserId }
     : {}),
@@ -369,9 +374,17 @@ export async function recordAcceptedGenerateLead(
   if (result.status === 'rejected') {
     return { reason: 'consent_denied', status: 'skipped' }
   }
+  await logCanonicalCommerceEvent({
+    event: result.event,
+    eventName: 'generate_lead',
+    status: result.status,
+    source: 'persisted_lead_submission'
+  })
 
   return {
-    dataLayerEvent: buildGenerateLeadDataLayerEvent(result.event),
+    dataLayerEvent: buildGenerateLeadDataLayerEvent(
+      result.event
+    ),
     eventId: result.event_id,
     status: result.status
   }

@@ -17,7 +17,7 @@ export function HeroImage() {
   return (
     <div
       className={cn(
-        'group relative mx-auto mb-7 w-full max-w-none overflow-hidden rounded-2xl border border-foreground/12 shadow-none sm:mb-10 sm:max-w-6xl sm:shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)]'
+        'group relative mx-auto mb-0 w-full max-w-none overflow-hidden rounded-2xl border border-foreground/12 shadow-none sm:mb-10 sm:max-w-6xl sm:shadow-[0_28px_70px_-44px_color-mix(in_oklab,var(--card)_80%,transparent)]'
       )}
     >
       <div className='relative aspect-1080/1704 rounded-2xl transition-transform duration-300 motion-safe:group-hover:scale-[1.01] sm:aspect-16/10 lg:aspect-video xl:aspect-video'>

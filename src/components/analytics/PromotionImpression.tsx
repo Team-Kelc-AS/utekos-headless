@@ -18,6 +18,14 @@ type PromotionImpressionProps = {
 
 const DWELL_MS = 1000
 const VIEWPORT_EDGE_INSET = '-96px 0px -96px 0px'
+const JOURNEY_SECTIONS: Record<string, string> = {
+  'skreddersy-varmen-hero': 'hero',
+  'skreddersy-varmen-purchase': 'purchase',
+  'skreddersy-varmen-purchase-button': 'purchase_button',
+  'skreddersy-varmen-three-in-one': 'three_in_one',
+  'skreddersy-varmen-techdown': 'techdown',
+  'skreddersy-varmen-social-proof': 'reviews'
+}
 
 export function PromotionImpression({
   children,
@@ -106,7 +114,11 @@ export function PromotionImpression({
   ])
 
   return (
-    <div ref={rootRef} className={className}>
+    <div
+      ref={rootRef}
+      className={className}
+      data-journey-section={JOURNEY_SECTIONS[promotionId]}
+    >
       {children}
     </div>
   )

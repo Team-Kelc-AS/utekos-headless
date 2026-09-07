@@ -7,6 +7,7 @@ import {
 } from './canonicalEventEnvelope'
 import type { CanonicalClickIds } from './canonicalSignalContract'
 import { mapEventDeviceInfo } from './mapEventDeviceInfo'
+import { stripInternalJourneyContext } from './internalJourneyContext'
 
 export const canonicalGenerateLeadCustomDataSchema =
   z.strictObject({
@@ -56,6 +57,7 @@ type CreateCanonicalGenerateLeadInput = {
   impressionId?: string
   pageUrl: string
   pageViewId?: string
+  journeyId?: string
   signalAudit?: CanonicalSignalAudit
   userData?: UserDataInput
 }
@@ -101,8 +103,15 @@ export function createCanonicalGenerateLead(
     source: 'server',
     environment: input.environment,
     page_url: input.pageUrl,
-    ...(input.pageViewId ?
+    ...((
+      input.consent.analytics === 'granted' && input.pageViewId
+    ) ?
       { page_view_id: input.pageViewId }
+    : {}),
+    ...((
+      input.consent.analytics === 'granted' && input.journeyId
+    ) ?
+      { journey_id: input.journeyId }
     : {}),
     consent: input.consent,
     custom_data: input.customData,
@@ -139,6 +148,6 @@ export function buildGenerateLeadDataLayerEvent(
       { page_view_id: event.page_view_id }
     : {}),
     custom_data: event.custom_data,
-    canonical_event: event
+    canonical_event: stripInternalJourneyContext(event)
   }
 }

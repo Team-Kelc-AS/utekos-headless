@@ -37,7 +37,10 @@ export function EmpathySection() {
         viewport={skreddersyViewport}
         variants={revealGroup}
       >
-        <div className='mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-6 md:px-12 lg:grid-cols-2 lg:gap-16'>
+        <div
+          className='mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-6 md:px-12 lg:grid-cols-2 lg:gap-16'
+          data-journey-section='empathy'
+        >
           <div className='relative'>
             <m.div
               className='relative mb-4 inline-flex items-end overflow-hidden pb-1.5'

@@ -63,8 +63,8 @@ test('uses TechDown guide thresholds and measurements', () => {
   )
 
   assert.equal(result.kind, 'answer')
-  assert.match(result.text, /Medium \(M\)/u)
-  assert.match(result.text, /162 cm/u)
+  assert.match(result.text, /Stor/u)
+  assert.match(result.text, /166 cm/u)
   assert.match(result.text, /ikke en garanti/iu)
 })
 
@@ -79,6 +79,43 @@ test('uses Utekos height and layering guidance', () => {
   assert.equal(result.kind, 'answer')
   assert.match(result.text, /Large/u)
   assert.match(result.text, /200 cm/u)
+})
+
+test('TechDown guidance uses current sizes at height and fit boundaries', () => {
+  for (const [height, fit, size, length] of [
+    [165, 'tettere', 'Middels', '162 cm'],
+    [169, 'romslig', 'Middels', '162 cm'],
+    [174, 'romslig', 'Stor', '166 cm'],
+    [175, 'tettere', 'Middels', '162 cm'],
+    [176, 'tettere', 'Stor', '166 cm'],
+    [179, 'romslig', 'Stor', '166 cm'],
+    [184, 'tettere', 'Stor', '166 cm'],
+    [184, 'romslig', 'Større', '170 cm'],
+    [185, 'tettere', 'Større', '170 cm'],
+    [196, 'tettere', 'Større', '170 cm']
+  ] as const) {
+    const result = resolveAssistantSizeHelp(
+      request([`TechDown, ${height} cm, ${fit} passform.`])
+    )
+    assert.equal(result.kind, 'answer')
+    assert.ok(result.text.includes(size))
+    assert.ok(result.text.includes(length))
+    assert.doesNotMatch(result.text, /Liten|195 cm/)
+  }
+})
+
+test('wrong size gets qualified exchange terms and the correct contact', () => {
+  const result = resolveAssistantSizeHelp(
+    request(['Jeg har kjøpt feil størrelse.'])
+  )
+  assert.equal(result.kind, 'answer')
+  assert.match(result.text, /kundeservice@kelc.no/)
+  assert.match(result.text, /samme modell og farge/)
+  assert.match(result.text, /på lager/)
+  assert.match(
+    result.text,
+    /ordinær angrerett oppretter og betaler du returfrakten selv/
+  )
 })
 
 test('uses usual size and fit for Comfyrobe', () => {

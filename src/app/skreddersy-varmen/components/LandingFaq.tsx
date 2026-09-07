@@ -15,6 +15,7 @@ import {
 export function LandingFaq() {
   return (
     <section
+      data-journey-section='faq'
       aria-labelledby='landing-faq-heading'
       className='w-full bg-night px-6 py-16 text-foreground md:px-12 md:py-24'
     >

@@ -4,7 +4,7 @@ export function formatTechDownSizeFacts(): string {
   return techDownData
     .map(
       row =>
-        `- ${row.measurement}: Liten ${row.liten}, Middels ${row.middels}, Stor ${row.stor}`
+        `- ${row.measurement}: Middels ${row.middels}, Stor ${row.stor}, Større ${row.storre}`
     )
     .join('\n')
 }

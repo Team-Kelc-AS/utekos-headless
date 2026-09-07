@@ -10,6 +10,7 @@ import {
 import type { CanonicalEventEnvelope } from '../canonicalEventEnvelope'
 import type { ShopifyCheckoutObservation } from '../shopifyCheckoutObservationContract'
 import type { CanonicalEventStore } from './canonicalEventStore'
+import { logCanonicalCommerceEvent } from '@/lib/observability/logging/logCanonicalCommerceEvent'
 import { planCanonicalEventDispatch } from './planCanonicalEventDispatch'
 import type { ShopifyAddPaymentInfoCanonicalConfig } from './shopifyAddPaymentInfoCanonicalConfig'
 import {
@@ -35,7 +36,8 @@ export async function promoteShopifyAddShippingInfoObservation(
   if (
     !dependencies.config.enabled ||
     observation.schemaVersion !== 2 ||
-    observation.eventName !== 'checkout_shipping_info_submitted' ||
+    observation.eventName !==
+      'checkout_shipping_info_submitted' ||
     !observation.privacy.analyticsProcessingAllowed ||
     Date.parse(observation.occurredAt) <
       Date.parse(dependencies.config.cutoverAt)
@@ -47,9 +49,11 @@ export async function promoteShopifyAddShippingInfoObservation(
     event_id: observation.correlation.beginCheckoutEventId,
     event_name: 'begin_checkout'
   })
-  if (!source) throw new Error('canonical_begin_checkout_not_ready')
+  if (!source)
+    throw new Error('canonical_begin_checkout_not_ready')
 
-  const beginCheckout = canonicalBeginCheckoutSchema.parse(source)
+  const beginCheckout =
+    canonicalBeginCheckoutSchema.parse(source)
   assertCompatibleCheckoutProgressSource(
     observation,
     beginCheckout,
@@ -78,6 +82,14 @@ export async function promoteShopifyAddShippingInfoObservation(
         dependencies.now ?? (() => new Date())
       )().toISOString()
     }
+  })
+
+  await logCanonicalCommerceEvent({
+    event,
+    eventName: 'add_shipping_info',
+    source: 'shopify_web_pixel',
+    status:
+      accepted.status === 'inserted' ? 'accepted' : 'duplicate'
   })
 
   return { eventId: event.event_id, status: accepted.status }

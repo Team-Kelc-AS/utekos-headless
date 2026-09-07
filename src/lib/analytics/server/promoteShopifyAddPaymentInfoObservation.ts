@@ -10,6 +10,7 @@ import {
 import type { CanonicalEventEnvelope } from '../canonicalEventEnvelope'
 import type { ShopifyCheckoutObservation } from '../shopifyCheckoutObservationContract'
 import type { CanonicalEventStore } from './canonicalEventStore'
+import { logCanonicalCommerceEvent } from '@/lib/observability/logging/logCanonicalCommerceEvent'
 import { planCanonicalEventDispatch } from './planCanonicalEventDispatch'
 import type { ShopifyAddPaymentInfoCanonicalConfig } from './shopifyAddPaymentInfoCanonicalConfig'
 import {
@@ -57,7 +58,8 @@ export async function promoteShopifyAddPaymentInfoObservation(
     throw new Error('canonical_begin_checkout_not_ready')
   }
 
-  const beginCheckout = canonicalBeginCheckoutSchema.parse(source)
+  const beginCheckout =
+    canonicalBeginCheckoutSchema.parse(source)
   assertCompatibleCheckoutProgressSource(
     observation,
     beginCheckout,
@@ -89,10 +91,15 @@ export async function promoteShopifyAddPaymentInfoObservation(
     }
   })
 
-  return {
-    eventId: event.event_id,
-    status: accepted.status
-  }
+  await logCanonicalCommerceEvent({
+    event,
+    eventName: 'add_payment_info',
+    source: 'shopify_web_pixel',
+    status:
+      accepted.status === 'inserted' ? 'accepted' : 'duplicate'
+  })
+
+  return { eventId: event.event_id, status: accepted.status }
 }
 
 export function mapObservationToCanonicalAddPaymentInfo(

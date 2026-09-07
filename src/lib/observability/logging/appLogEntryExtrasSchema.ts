@@ -110,7 +110,11 @@ const appLogParameterObjectSchema = z.record(
 
 const appLogParameterValueSchema = z.union([
   appLogScalarSchema,
-  z.array(z.union([appLogScalarSchema, appLogParameterObjectSchema])).max(250),
+  z
+    .array(
+      z.union([appLogScalarSchema, appLogParameterObjectSchema])
+    )
+    .max(250),
   appLogParameterObjectSchema
 ])
 
@@ -132,10 +136,7 @@ const appLogAdPlatformEventSchema = z.strictObject({
 
 const webVitalEntriesSchema = z
   .array(
-    z.union([
-      appLogScalarSchema,
-      appLogParameterObjectSchema
-    ])
+    z.union([appLogScalarSchema, appLogParameterObjectSchema])
   )
   .max(32)
 
@@ -149,13 +150,28 @@ export const appLogEntryExtrasSchema = z.strictObject({
     })
     .optional(),
   consent: z
-    .strictObject({
-      analytics: z.enum(['denied', 'granted']),
-      marketing: z.enum(['denied', 'granted']),
-      preferences: z.enum(['denied', 'granted']),
-      source: z.literal('cookiebot'),
-      version: z.string().min(1).max(64)
-    })
+    .union([
+      z.strictObject({
+        analytics: z.enum(['denied', 'granted']),
+        marketing: z.enum(['denied', 'granted']),
+        preferences: z.enum(['denied', 'granted']),
+        source: z.literal('cookiebot'),
+        version: z.string().min(1).max(64)
+      }),
+      z.strictObject({
+        analytics: z.literal('unknown'),
+        marketing: z.literal('unknown'),
+        preferences: z.literal('unknown'),
+        source: z.literal('shopify_order_attribute'),
+        version: z.string().min(1).max(64),
+        resolution: z.enum([
+          'missing',
+          'empty',
+          'invalid_json',
+          'invalid_payload'
+        ])
+      })
+    ])
     .optional(),
   environment: z
     .enum(['development', 'preview', 'production', 'test'])
@@ -165,15 +181,36 @@ export const appLogEntryExtrasSchema = z.strictObject({
       language: z.string().min(1).max(32).optional(),
       pixelRatio: z.number().positive().max(32).optional(),
       platform: z.string().min(1).max(64).optional(),
-      screenHeight: z.number().int().positive().max(100_000).optional(),
-      screenWidth: z.number().int().positive().max(100_000).optional(),
-      viewportHeight: z.number().int().positive().max(100_000).optional(),
-      viewportWidth: z.number().int().positive().max(100_000).optional()
+      screenHeight: z
+        .number()
+        .int()
+        .positive()
+        .max(100_000)
+        .optional(),
+      screenWidth: z
+        .number()
+        .int()
+        .positive()
+        .max(100_000)
+        .optional(),
+      viewportHeight: z
+        .number()
+        .int()
+        .positive()
+        .max(100_000)
+        .optional(),
+      viewportWidth: z
+        .number()
+        .int()
+        .positive()
+        .max(100_000)
+        .optional()
     })
     .optional(),
   eventId: z.string().uuid().optional(),
   eventName: z.string().min(1).max(120).optional(),
   eventTime: z.string().min(1).max(64).optional(),
+  journeyId: z.string().uuid().optional(),
   pageTitle: z
     .string()
     .min(1)
@@ -197,7 +234,11 @@ export const appLogEntryExtrasSchema = z.strictObject({
   webVitalMetricEntries: webVitalEntriesSchema.optional(),
   webVitalMetricId: z.string().min(1).max(120).optional(),
   webVitalMetricName: z.string().min(1).max(32).optional(),
-  webVitalMetricNavigationType: z.string().min(1).max(32).optional(),
+  webVitalMetricNavigationType: z
+    .string()
+    .min(1)
+    .max(32)
+    .optional(),
   webVitalMetricRating: z.string().min(1).max(32).optional(),
   webVitalMetricValue: z.number().finite().optional()
 })

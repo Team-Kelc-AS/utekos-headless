@@ -164,7 +164,10 @@ export function buildMetaCatalogOffer(input: {
     )
   }
 
-  if (product.handle === 'utekos-techdown') {
+  if (
+    product.handle === 'utekos-techdown' ||
+    product.handle === 'utekos-mikrofiber'
+  ) {
     link.pathname = '/skreddersy-varmen'
   }
 

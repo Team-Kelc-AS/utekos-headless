@@ -7,7 +7,10 @@ import {
 } from './acceptCanonicalBeginCheckout'
 import { logCanonicalCommerceEvent } from '@/lib/observability/logging/logCanonicalCommerceEvent'
 import { enrichCanonicalPayloadWithFacebookLogin } from '@/lib/facebook-login/enrichCanonicalPayloadWithFacebookLogin'
-import type { CanonicalBeginCheckoutRequestContext } from './normalizeCanonicalBeginCheckout'
+import {
+  normalizeCanonicalBeginCheckout,
+  type CanonicalBeginCheckoutRequestContext
+} from './normalizeCanonicalBeginCheckout'
 
 const MAX_BODY_BYTES = 32 * 1024
 const NO_STORE_HEADERS = {
@@ -96,13 +99,15 @@ export async function handleCanonicalBeginCheckoutRequest(
     const checkoutMethod = readCheckoutMethod(request.headers)
     const parsedEvent =
       canonicalBeginCheckoutSchema.parse(payload)
-    const event = {
-      ...parsedEvent,
-      checkout_method: checkoutMethod
-    }
+    const requestContext =
+      dependencies.getRequestContext(request)
+    const event = normalizeCanonicalBeginCheckout(
+      { ...parsedEvent, checkout_method: checkoutMethod },
+      requestContext
+    )
     const result = await acceptCanonicalBeginCheckout({
       payload: event,
-      requestContext: dependencies.getRequestContext(request),
+      requestContext,
       store: dependencies.store
     })
 

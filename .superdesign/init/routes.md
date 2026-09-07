@@ -1,0 +1,45 @@
+# App Router routes
+
+All pages inherit `src/app/layout.tsx` (Header, SiteChrome main, Footer). Target additionally inherits `src/app/handlehjelp/storrelsesguide/layout.tsx` (breadcrumb and JSON-LD). Reference maintenance route uses page-scoped MDX/CSS. Route groups do not change public URLs.
+
+- `/` → `src/app/(home)/page.tsx`
+- `/comfyrobe` → `src/app/comfyrobe/page.tsx`
+- `/customer/account/login` → `src/app/customer/account/login/page.tsx`
+- `/design` → `src/app/design/page.tsx`
+- `/frakt-og-retur` → `src/app/frakt-og-retur/page.tsx`
+- `/gaveguide` → `src/app/gaveguide/page.tsx`
+- `/handlehjelp/funksjonalitet` → `src/app/handlehjelp/funksjonalitet/page.tsx`
+- `/handlehjelp/klarna` → `src/app/handlehjelp/klarna/page.tsx`
+- `/handlehjelp/sammenlign-modeller` → `src/app/handlehjelp/sammenlign-modeller/page.tsx`
+- `/handlehjelp/storrelsesguide` → `src/app/handlehjelp/storrelsesguide/page.mdx` (metadata and JSON-LD in `layout.tsx`)
+- `/handlehjelp/teknologi-materialer` → `src/app/handlehjelp/teknologi-materialer/page.mdx`
+- `/handlehjelp/vask-og-vedlikehold` → `src/app/handlehjelp/vask-og-vedlikehold/page.mdx`
+- `/inspirasjon/batliv` → `src/app/inspirasjon/batliv/page.tsx`
+- `/inspirasjon/bobil` → `src/app/inspirasjon/bobil/page.mdx`
+- `/inspirasjon/camping` → `src/app/inspirasjon/camping/page.mdx`
+- `/inspirasjon/cardproduction` → `src/app/inspirasjon/cardproduction/page.tsx`
+- `/inspirasjon/components/cards` → `src/app/inspirasjon/components/cards/page.tsx`
+- `/inspirasjon/components` → `src/app/inspirasjon/components/page.tsx`
+- `/inspirasjon/grillkvelden` → `src/app/inspirasjon/grillkvelden/page.tsx`
+- `/inspirasjon/hytte` → `src/app/inspirasjon/hytte/page.mdx`
+- `/inspirasjon` → `src/app/inspirasjon/page.tsx`
+- `/inspirasjon/terrassen` → `src/app/inspirasjon/terrassen/page.mdx`
+- `/kampanje/julegaver` → `src/app/kampanje/julegaver/(oversikt)/page.tsx`
+- `/kampanje/julegaver/lokal-levering` → `src/app/kampanje/julegaver/lokal-levering/page.tsx`
+- `/kjop/fullfort` → `src/app/kjop/fullfort/page.tsx`
+- `/kontaktskjema` → `src/app/kontaktskjema/page.tsx`
+- `/magasinet/[slug]` → `src/app/magasinet/[slug]/page.tsx`
+- `/magasinet/oppgradering` → `src/app/magasinet/oppgradering/page.tsx`
+- `/magasinet` → `src/app/magasinet/page.tsx`
+- `/mdx-test-page` → `src/app/mdx-test-page/page.tsx`
+- `/nbcc` → `src/app/nbcc/page.tsx`
+- `/om-oss` → `src/app/om-oss/page.mdx`
+- `/personvern` → `src/app/personvern/page.tsx`
+- `/produkter` → `src/app/produkter/(oversikt)/page.tsx`
+- `/produkter/[handle]` → `src/app/produkter/[handle]/page.tsx`
+- `/skreddersy-varmen` → `src/app/skreddersy-varmen/page.tsx`
+- `/skreddersy-varmen/utekos-orginal` → `src/app/skreddersy-varmen/utekos-orginal/page.tsx`
+- `/test-email` → `src/app/test-email/page.tsx`
+- `/utekos-magasinet/[slug]` → `src/app/utekos-magasinet/[slug]/page.tsx`
+- `/video/tensorpix` → `src/app/video/tensorpix/page.tsx`
+- `/vilkar-betingelser` → `src/app/vilkar-betingelser/page.tsx`

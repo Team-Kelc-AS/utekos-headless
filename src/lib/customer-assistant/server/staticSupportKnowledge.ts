@@ -34,6 +34,13 @@ type ShippingReturnsFaqId =
 function classifyShippingReturnsQuestion(
   normalizedQuestion: string
 ): ShippingReturnsFaqId | null {
+  if (
+    /størrelsesbytte|bytt\w*[^.!?]{0,60}størrels|(?:feil|annen) størrelse/u.test(
+      normalizedQuestion
+    )
+  ) {
+    return 'size-exchange'
+  }
   const hasReturnContext =
     /\b(?:retur(?:en)?|returner(?:e|er|t)?|tilbake|angrerett(?:en)?)\b/u.test(
       normalizedQuestion
@@ -138,7 +145,8 @@ function answerShippingReturns(
   ) {
     return {
       text: shippingReturnsFaqItems
-        .map(item => `${item.question} ${item.answer}`)
+        .filter(item => item.id !== 'return-exceptions')
+        .map(item => item.answer)
         .join('\n\n'),
       confidence: 'high',
       sources: [shippingReturnsSource]
@@ -184,8 +192,8 @@ export const staticSupportKnowledgeAdapter: SupportKnowledgeAdapter =
   {
     async answer({ question }) {
       return (
-        answerSize(question) ??
         answerShippingReturns(question) ??
+        answerSize(question) ??
         lowConfidenceResult()
       )
     }

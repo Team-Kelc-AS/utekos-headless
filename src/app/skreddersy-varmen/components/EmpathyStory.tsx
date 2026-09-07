@@ -119,7 +119,10 @@ export function EmpathyStory({
   }
 
   return (
-    <div className={styles.empathyStory}>
+    <div
+      className={styles.empathyStory}
+      data-journey-section='empathy'
+    >
       <section
         aria-labelledby='empathy-heading'
         className={styles.empathyMobile}

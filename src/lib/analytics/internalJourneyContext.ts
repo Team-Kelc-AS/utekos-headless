@@ -140,10 +140,16 @@ export function enrichCanonicalBrowserJourneyContext<
 export function stripInternalJourneyContext<E extends object>(
   event: E
 ): E {
-  const nextEvent: E & InternalJourneyFields = { ...event }
+  const nextEvent: E &
+    InternalJourneyFields & {
+      begin_checkout_event_id?: string
+      journey_link_reason?: string
+    } = { ...event }
 
   delete nextEvent.journey_id
   delete nextEvent.previous_page_view_id
+  delete nextEvent.begin_checkout_event_id
+  delete nextEvent.journey_link_reason
 
   return nextEvent
 }

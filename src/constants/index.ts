@@ -1,5 +1,6 @@
 // Path: src/constants/index.ts
 import blueFull from '@/assets/images/gallery/blue-full.png'
+import { techDownSizeCards } from '@/app/handlehjelp/storrelsesguide/utils/techDownSizeCards'
 import blueOppfestet from '@/assets/images/gallery/blue-oppfestet.png'
 import blueParkas from '@/assets/images/gallery/blue-parkas.png'
 import classicBlueJacket34 from '@/assets/images/gallery/classic-blue-jacket-3-4.png'
@@ -9,42 +10,18 @@ import utekosTechdownHalvfigurForfra1600x1600 from '@/assets/images/techdown/ute
 import utekosTechdownKvinneTerrasseliv1600x1600 from '@/assets/images/techdown/utekos-techdown-kvinne-terrasseliv-1600x1600.webp'
 
 export type ModelKey = keyof typeof PRODUCT_VARIANTS
-export const TAGS = {
-  products: 'products',
-  cart: 'cart'
-}
+export const TAGS = { products: 'products', cart: 'cart' }
 export const FREE_SHIPPING_THRESHOLD = 999
 
-export const SIZE_GUIDANCE: Record<string, { height: string; tips: string[] }> = {
-  'Liten': {
-    height: 'Opptil 170 cm',
-    tips: [
-      'Er du lavere enn 165 cm får du en romslig og lun følelse.',
-      'Er du litt høyere får du en nettere silhuett uten overflødig volum.'
-    ]
-  },
-  'Middels': {
-    height: '170 – 180 cm',
-    tips: [
-      'Er du lavere enn 170 cm får du en romslig passform.',
-      'Ligger du i øvre sjiktet (mot 180 cm) får du en mer kroppsnær passform.'
-    ]
-  },
-  'Stor': {
-    height: '180 – 195 cm',
-    tips: [
-      'Perfekt for deg over 180 cm, eller for deg som er lavere og ønsker romslighet.',
-      'Er du over 195 cm anbefaler vi heller størrelsen Større.'
-    ]
-  },
-  'Større': {
-    height: '195 cm og oppover',
-    tips: [
-      'Skreddersydd for deg over 195 cm – ekstra lengde i kroppen og ermene.',
-      'Også et godt valg for deg som er lavere, men ønsker maksimal romslighet og lengde.'
-    ]
-  }
-}
+export const SIZE_GUIDANCE: Record<
+  string,
+  { height: string; tips: string[] }
+> = Object.fromEntries(
+  techDownSizeCards.map(card => [
+    card.size,
+    { height: card.heightGuide, tips: [...card.fitGuidance] }
+  ])
+)
 
 export const productName = 'Utekos TechDown™'
 export const productHandle = 'utekos-techdown'
@@ -82,7 +59,7 @@ export const PRODUCT_VARIANTS = {
     ],
     features: ['Vannavstøtende', 'Helårsbruk', 'Slitesterk'],
     colors: [{ name: 'Havdyp', hex: '#0F2B40' }],
-    sizes: ['Liten', 'Middels', 'Stor', 'Større'],
+    sizes: ['Middels', 'Stor', 'Større'],
     images: [
       utekosTechdownKvinneTerrasseliv1600x1600,
       utekosTechdownDiagonaltFullfigur,
@@ -116,7 +93,11 @@ export const PRODUCT_VARIANTS = {
         body: 'Lett, vindtett og vannavstøtende ytre. Bygget for samme situasjoner som flaggskipet — bare lettere.'
       }
     ],
-    features: ['Hurtigtørkende', 'Mest kompakt', 'Allergivennlig'],
+    features: [
+      'Hurtigtørkende',
+      'Mest kompakt',
+      'Allergivennlig'
+    ],
     colors: [{ name: 'Fjellblå', hex: '#020244' }],
     sizes: ['Medium', 'Large'],
     images: [
@@ -129,7 +110,8 @@ export const PRODUCT_VARIANTS = {
 }
 
 export const VIDEO_YOUTUBE_ID = 'GRr_r3mhR04'
-export const VIDEO_URL = 'https://www.youtube.com/shorts/GRr_r3mhR04'
+export const VIDEO_URL =
+  'https://www.youtube.com/shorts/GRr_r3mhR04'
 export const VIDEO_THUMBNAIL_URL = `https://i.ytimg.com/vi/${VIDEO_YOUTUBE_ID}/maxresdefault.jpg`
 export const VIDEO_POSTER_URL = VIDEO_THUMBNAIL_URL
 export const VIDEO_EMBED_URL = `https://www.youtube-nocookie.com/embed/${VIDEO_YOUTUBE_ID}?rel=0&playsinline=1`

@@ -16,6 +16,7 @@ import { readShopifyMoneyAmount } from './readShopifyMoneyAmount'
 import { resolveCanonicalEnvironment } from './resolveCanonicalEnvironment'
 import { parseOrderProductContextFromNoteAttributes } from '../checkoutProductContext'
 import { deriveMetaCustomerSegmentation } from '../metaCustomerSegmentation'
+import { readBeginCheckoutEventId } from '../readBeginCheckoutEventId'
 
 function hashEmail(email: string | null | undefined) {
   if (!email) return undefined
@@ -93,6 +94,10 @@ export function shopifyOrderToCanonicalPurchase(
   const attribution = parseOrderAttributionFromNoteAttributes(
     order.note_attributes
   )
+  const beginCheckoutEventId =
+    attribution.consent.analytics === 'granted' ?
+      readBeginCheckoutEventId(order.note_attributes)
+    : undefined
   const clickId =
     attribution.consent.marketing === 'granted' ?
       ensureFbclidFromFbc({
@@ -172,6 +177,9 @@ export function shopifyOrderToCanonicalPurchase(
     ...(pageUrl ? { page_url: pageUrl } : {}),
     ...(referrerUrl ? { referrer_url: referrerUrl } : {}),
     consent: attribution.consent,
+    ...(beginCheckoutEventId ?
+      { begin_checkout_event_id: beginCheckoutEventId }
+    : {}),
     ...(attribution.experiment ?
       { experiment: attribution.experiment }
     : {}),

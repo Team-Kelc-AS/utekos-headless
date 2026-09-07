@@ -1,0 +1,332 @@
+# Utekos UI tokens
+
+Next.js 16.3.1 / React 19.2 / Tailwind CSS v4 + CSS modules / Base UI with shadcn-style primitives. Existing App Router MDX uses @next/mdx with remark-gfm, rehype-slug, and autolink headings. No separate tailwind.config is present; Tailwind configuration is in src/globals.css.
+
+Typography: Google Sans Flex (--font-sans) for headings, Utekos Text for body, Utekos Text Medium for labels. H1 30/48/60px, H2 36/48/60px in existing guide; body 18px with relaxed leading; refined guide uses 18px/1.65 body and max 65ch. No font substitution.
+
+Colors (actual active CSS): background oklch(0.1645 0.0284 190.51), foreground oklch(0.985 0 0), jungle oklch(0.2383 0.042 184.99), night oklch(0.1959 0.0341 188), dark-teal oklch(0.3507 0.0622 183.77), primary oklch(0.537541 0.156162 44.0778), card oklch(0.2943 0.0502 194.77), card-foreground oklch(0.9493 0.007 88.64). Brand reference primary #b44701, secondary #00453e, surface #012622, warm white #f0eee9. The .dark block is below, preserve actual values when reproducing. Refined guide uses dark surfaces with light foreground; avoid light muted surfaces with white text.
+
+Grid/spacing: page max 1280px (80rem), centred; 16px mobile / 32px tablet insets, 56px / 64px / 80px original section padding. Tailwind breakpoints sm 640px, md 768px, lg 1024px, xl 1280px. Guide radius 12px. Base --radius 0.625rem, xl 1.4×. Use border/tonal contrast, no decorative elevation. Responsive one column below 768px. Accessible controls minimum 44px; high-contrast focus. Native details/summary, semantic tables, reduced motion. Keep state static unless interaction requires motion.
+
+# Raw source
+
+## `src/globals.css`
+
+```css
+@import 'tailwindcss';
+@import 'shadcn/tailwind.css';
+@import './styles/view-transitions.css';
+
+@theme static {
+  --color-facebook-login-button: oklch(0.5891 0.2029 257.86);
+  --color-heart: oklch(0.6302 0.2298 25.38);
+  --color-cloud-dancer: oklch(0.9493 0.007 88.64);
+  --color-light-teal: oklch(0.8017 0.0772 182.11);
+  --color-green-300: oklch(0.8017 0.0772 182.11);
+  --color-green-400: #38b49e;
+  --color-green-500: #00957a;
+  --color-green-600: #037d67;
+  --color-green-700: #00685e;
+  --color-green-800: #00453e;
+  --color-green-900: #012622;
+  --color-green-1000: #001a18;
+  --color-green-haze: #00685e;
+  --color-evening: oklch(0.1798 0.0319 183.65);
+  --color-dark-teal: oklch(0.3507 0.0622 183.77);
+  --color-jungle: oklch(0.2383 0.042 184.99);
+  --color-jungle-tone: oklch(0.3625 0.0414 181.18);
+  --color-night: oklch(0.1959 0.0341 188);
+  --color-white-sand: oklch(0.8767 0.0086 56.3);
+  --color-alt-pill: oklch(0.5975 0.1138 173.83);
+  --color-network-pill: oklch(0.8017 0.0772 182.11);
+}
+
+@theme inline {
+  --font-sans: 'Google Sans Flex', sans-serif;
+  --font-google-sans: var(--font-sans);
+  --font-utekos-text: var(--font-utekos-text);
+  --font-utekos-text-medium: var(--font-utekos-text-medium);
+  --color-facebook-login-button: var(--facebook-login-button);
+  --color-alternate: var(--alternate);
+  --color-teal-25: var(--teal-25);
+  --color-alternate-button: var(--alternate-button);
+  --color-badge: var(--badge);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --facebook-login-button:oklch(0.5891 0.2029 257.86);
+  --color-cloud-dancer: var(--cloud-dancer);
+  --color-ceramic: var(--ceramic);
+  --color-card-foreground: var(--card-foreground);
+  --color-evening: var(--evening);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-magazine-article-card-pill: var(
+    --magazine-article-card-pill
+  );
+  --color-magazine-header: var(--magazine-header);
+  --color-havdyp: var(--havdyp);
+  --color-overcast: var(--overcast);
+  --color-ancient-water: var(--ancient-water);
+  --color-fair-orchid: var(--fair-orchid);
+  --color-very-peri: var(--very-peri);
+  --color-mountain-view: var(--mountain-view);
+  --color-heart: var(--heart);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-review-star: var(--review-star);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-jungle-tone: var(--jungle-tone);
+  --color-green-noir: var(--green-noir);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(
+    --sidebar-primary-foreground
+  );
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(
+    --sidebar-accent-foreground
+  );
+  --color-sidebar-secondary: var(--sidebar-secondary);
+  --color-magazine-article-card: var(--magazine-article-card);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --font-utekos-text: 'Utekos Text', sans-serif;
+  --font-utekos-text-medium: 'Utekos Text Medium', sans-serif;
+  --font-sans: 'Google Sans Flex', sans-serif;
+  --radius: 0.625rem;
+  --meta-button: var(--facebook-login-button);
+  --color-alt-pill: oklch(0.5975 0.1138 173.83);
+  --color-network-pill: oklch(0.8017 0.0772 182.11);
+  --background: oklch(0.1645 0.0284 190.51);
+  --cloud-dancer: oklch(0.9493 0.007 88.64);
+  --foreground: oklch(0.985 0 0);
+  --light-teal: oklch(0.8017 0.0772 182.11);
+  --green-400: #38b49e;
+  --green-500: #00957a;
+  --green-600: #037d67;
+  --green-haze: #00685e;
+  --evening: oklch(0.1798 0.0319 183.65);
+  --dark-teal: oklch(0.3507 0.0622 183.77);
+  --jungle: oklch(0.24 0.042 184.99);
+  --jungle-tone: oklch(0.3625 0.0414 181.18);
+  --night: oklch(0.1959 0.0341 188);
+  --badge: oklch(0.2357 0.0402 194.77);
+  --card: oklch(0.2943 0.0502 194.77);
+  --teal-25: oklch(0.9569 0.014 185.95);
+  --ceramic: oklch(0.6678 0.1141 194.02);
+  --white-sand: oklch(0.8767 0.0086 56.3);
+  --card-foreground: oklch(0.9493 0.007 88.64);
+  --popover: oklch(0.985 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.537541 0.156162 44.0778);
+  --primary-hover: oklch(0.69218 0.158176 62.7916);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: var(--color-teal-800);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.86 0.0237 93.36);
+  --muted-foreground: oklch(0.8974 0.0084 91.49);
+  --magazine-article-card: oklch(0.350674 0.062274 183.5177);
+  --magazine-article-card-pill: oklch(0.6787 0.0958 186.35);
+  --magazine-header: oklch(0.2419 0.0418 184.31);
+  --havdyp: oklch(0.2884 0.0366 279.42);
+  --green-noir: oklch(0.1625 0.0279 207.93);
+  --overcast: oklch(0.7983 0.0257 91.66);
+  --ancient-water: oklch(0.8733 0.0246 259.82);
+  --fair-orchid: oklch(0.7864 0.0487 359.96);
+  --heart: oklch(0.6302 0.2298 25.38);
+  --very-peri: oklch(0.5433 0.105 281.67);
+  --mountain-view: oklch(0.3424 0.0298 148.54);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --review-star: oklch(0.8302 0.1185 78.73);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.9731 0.0041 91.45);
+  --input: oklch(0.8974 0.0084 91.49);
+  --ring: oklch(0.708 0 0);
+  --alternate: oklch(0.2502 0.0478 225.89);
+  --alternate-button: oklch(0.833 0.1164 222.63);
+  --sidebar: oklch(0.4999 0.0853 194.77);
+  --sidebar-secondary: oklch(0.2991 0.0528 214.92);
+  --sidebar-foreground: oklch(0.9493 0.007 88.64);
+  --sidebar-primary: oklch(0.5765 0.0984 194.77);
+  --sidebar-primary-foreground: oklch(0.9493 0.007 88.64);
+  --sidebar-accent: oklch(0.3968 0.1269 21.18);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --facebook-login-button:blue;
+  --font-sans: 'Google Sans Flex', sans-serif;
+  --cloud-dancer: oklch(0.9493 0.007 88.64);
+  --background: oklch(0.1645 0.0284 190.51);
+  --foreground: oklch(0.985 0 0);
+  --color-alt-pill: oklch(0.5975 0.1138 173.83);
+  --teal-25: oklch(0.9569 0.014 185.95);
+  --badge: oklch(0.2357 0.0402 194.77);
+  --jungle-tone: oklch(0.3625 0.0414 181.18);
+  --magazine-article-card: oklch(0.350674 0.062274 183.5177);
+  --magazine-header: oklch(0.2419 0.0418 184.31);
+  --card: oklch(0.325 0.0503 194.96);
+  --jungle: oklch(0.2383 0.042 184.99);
+  --evening: oklch(0.1798 0.0319 183.65);
+  --ceramic: oklch(0.6678 0.1141 194.02);
+  --alternate: oklch(0.2943 0.0502 194.77);
+  --alternate-button: oklch(0.4999 0.0853 194.77);
+  --card-foreground: oklch(0.985 0 0);
+  --heart: oklch(0.6302 0.2298 25.38);
+  --popover: oklch(0.205 0.028 194.77);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.537541 0.156162 44.0778);
+  --primary-hover: oklch(0.69218 0.158176 62.7916);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.4999 0.0853 194.77);
+  --secondary-foreground: oklch(0.985 0 0);
+  --sidebar-secondary: oklch(0.2991 0.0528 214.92);
+  --muted: oklch(0.1956 0.0279 190.99);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.3393 0.0496 187);
+  --accent-foreground: oklch(0.985 0 0);
+  --review-star: oklch(0.8302 0.1185 78.73);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.145 0 0);
+  --color-network-pill: oklch(0.8017 0.0772 182.11);
+  --color-green-noir: oklch(0.1625 0.0279 207.93);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --color-light-teal: oklch(0.8017 0.0772 182.11);
+  --green-400: #38b49e;
+  --green-500: #00957a;
+  --green-600: #037d67;
+  --green-haze: #00685e;
+  --dark-teal: oklch(0.3507 0.0622 183.77);
+  --jungle: oklch(0.2383 0.042 184.99);
+  --night: oklch(0.1959 0.0341 188);
+  --ring: oklch(0.556 0 0);
+  --sidebar: oklch(0.5279 0.071 195.22);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.5765 0.0984 194.77);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background font-utekos-text text-foreground;
+  }
+}
+
+```
+
+## `src/app/fonts/font.config.ts`
+
+```tsx
+import localFont from 'next/font/local'
+
+export const utekosText = localFont({
+  src: '../../app/fonts/UtekosTextRegular.woff2',
+  weight: '400',
+  style: 'normal',
+  display: 'swap',
+  variable: '--font-utekos-text',
+  preload: true,
+  fallback: ['sans-serif', 'system-ui', 'Helvetica']
+})
+
+export const utekosTextMedium = localFont({
+  src: '../../app/fonts/UtekosTextMedium.woff2',
+  weight: '500',
+  display: 'swap',
+  style: 'normal',
+  variable: '--font-utekos-text-medium',
+  preload: false,
+  fallback: ['sans-serif', 'system-ui', 'Helvetica']
+})
+
+```
+
+## `DESIGN.md`
+
+```markdown
+---
+name: Utekos Brand
+colors:
+  primary: "##b44701"
+  secondary: "##00453e"
+  surface: "##012622"
+  on-surface: "##f0eee9"
+  error: "##ffb4ab"
+typography:
+  body-md:
+    fontFamily: Google Sans Flex
+    fontSize: 16px
+    fontWeight: 400
+rounded:
+  md: 12px
+---
+
+
+# Design System
+
+## Overview
+A focused, minimal dark interface for a developer productivity tool.
+Clean lines, low visual noise, high information density.
+
+## Colors
+- **Primary** (#b44701): CTAs, active states, key interactive elements
+- **Secondary** (#00453e): Supporting UI, chips, secondary actions
+- **Surface** (#002521): Page backgrounds
+- **On-surface** (#f0eee9): Primary text on dark backgrounds
+- **Error** (#ffb4ab): Validation errors, destructive actions
+
+## Typography
+- **Headlines**: Google Sans Flex: --font-sans, extrabold
+- **Body**: Google Sans Flex: --font-sans, regular, 16px
+- **Labels**: Google Sans Flex: --font-sans, medium, 14px, uppercase for section headers
+
+## Components
+- **Buttons**: Rounded (12px), primary uses brand primary fill
+- **Inputs**: 1px border, subtle surface-variant background
+- **Cards**: No elevation, relies on border and background contrast
+
+## Do's and Don'ts
+- Do use the primary color sparingly, only for the most important action
+- Don't mix rounded and sharp corners in the same view
+- Do maintain 4:1 contrast ratio for all text
+```

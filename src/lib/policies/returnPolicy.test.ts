@@ -7,8 +7,11 @@ import { renderShopifyRefundPolicyHtml } from '@/lib/policies/renderShopifyRefun
 import {
   returnPolicy,
   returnPolicyCopy,
-  returnPolicyLlmsSummary
+  returnPolicyLlmsSummary,
+  sizeExchangeCopy,
+  sizeExchangeLlmsSummary
 } from '@/lib/policies/returnPolicy'
+import { shippingReturnsFaqItems } from '@/app/frakt-og-retur/data/shippingReturnsContent'
 import { returnPolicyPageMetadata } from '@/lib/policies/returnPolicyMetadata'
 
 test('the canonical return policy contains every operational fact', () => {
@@ -25,6 +28,55 @@ test('the canonical return policy contains every operational fact', () => {
   )
   assert.equal(returnPolicy.customerPaysReturnShipping, true)
   assert.equal(returnPolicy.acceptsExchanges, true)
+})
+
+test('size exchange is an explicit limited benefit, never general free returns', () => {
+  assert.deepEqual(returnPolicy.sizeExchange, {
+    appliesTo: 'active-garments-with-size-options',
+    sameModelAndColorOnly: true,
+    noticeWindowDays: 14,
+    noticeWindowStartsAt: 'physical-receipt',
+    returnShippingPaidBy: 'utekos',
+    contactEmail: 'kundeservice@kelc.no',
+    contactPhone: '+47 402 16 343',
+    contactPhoneHref: 'tel:+4740216343',
+    replacementDispatchTrigger: 'documented-return-handover',
+    subjectToStock: true,
+    outOfStockResolution: 'agree-refund-or-alternative',
+    itemCondition:
+      'unused-unwashed-unaltered-no-odour-or-stains-tags-attached'
+  })
+  assert.equal(returnPolicy.lastUpdated, '2026-09-07')
+  assert.equal(
+    returnPolicy.contactEmail,
+    'kundeservice@utekos.no'
+  )
+  assert.equal(returnPolicy.customerPaysReturnShipping, true)
+  assert.equal(returnPolicy.customerCreatesReturnLabel, true)
+  assert.equal(merchantReturnPolicyExpected.acceptExchange, true)
+  assert.equal(
+    merchantReturnPolicyExpected.returnShippingFee.type,
+    'CUSTOMER_PAYING_ACTUAL_FEE'
+  )
+  assert.equal(
+    merchantReturnPolicyJsonLd.customerRemorseReturnFees,
+    'https://schema.org/ReturnFeesCustomerResponsibility'
+  )
+})
+
+test('Shopify, shipping FAQ and LLM policy share every exchange condition', () => {
+  const html = renderShopifyRefundPolicyHtml()
+  const faq = shippingReturnsFaqItems.find(
+    item => item.id === 'size-exchange'
+  )
+  assert.equal(faq?.answer, sizeExchangeLlmsSummary)
+  for (const copy of Object.values(sizeExchangeCopy)) {
+    assert.ok(html.includes(copy))
+    assert.ok(returnPolicyLlmsSummary.includes(copy))
+  }
+  assert.ok(html.includes(returnPolicyCopy.returnShipping))
+  assert.match(html, /mailto:kundeservice@kelc.no/)
+  assert.match(html, /tel:\+4740216343/)
 })
 
 test('metadata never promises free returns and uses the canonical page', () => {

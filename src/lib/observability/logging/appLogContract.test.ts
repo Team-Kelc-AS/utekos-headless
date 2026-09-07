@@ -6,10 +6,7 @@ test('event-specific app log contracts reject customer identifiers', () => {
   const result = appLogInputSchema.safeParse({
     event: 'contact.submitted',
     level: 'INFO',
-    data: {
-      delivery: 'resend',
-      email: 'customer@example.no'
-    },
+    data: { delivery: 'resend', email: 'customer@example.no' },
     context: {}
   })
 
@@ -43,17 +40,19 @@ test('client error app logs accept only sanitized triage fields', () => {
   })
 
   assert.equal(
-    parsed.event === 'client.error' ? parsed.data.filename : undefined,
+    parsed.event === 'client.error' ?
+      parsed.data.filename
+    : undefined,
     '/_next/static/chunks/app.js'
   )
-  assert.equal(JSON.stringify(parsed).includes('token=secret'), false)
+  assert.equal(
+    JSON.stringify(parsed).includes('token=secret'),
+    false
+  )
   assert.equal(
     appLogInputSchema.safeParse({
       ...parsed,
-      data: {
-        ...parsed.data,
-        message: 'customer@example.no'
-      }
+      data: { ...parsed.data, message: 'customer@example.no' }
     }).success,
     false
   )
@@ -80,10 +79,7 @@ test('Meta Dataset Quality warning accepts only PII-free snapshot fields', () =>
   assert.equal(
     appLogInputSchema.safeParse({
       ...parsed,
-      data: {
-        ...parsed.data,
-        email: 'customer@example.no'
-      }
+      data: { ...parsed.data, email: 'customer@example.no' }
     }).success,
     false
   )
@@ -103,6 +99,13 @@ test('commerce event logs accept only bounded operational fields', () => {
       durationMs: 42,
       eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
       eventName: 'begin_checkout',
+      displayName: 'InitiateCheckout',
+      actionEvidence: 'browser_reported',
+      source: 'browser_collector',
+      persistence: 'persisted',
+      providerDelivery: 'separate_receipt_required',
+      trafficClass: 'human_or_unknown',
+      journeyLinkReason: 'journey_context_missing',
       grossValue: 2499,
       itemCount: 1,
       quantity: 1,
@@ -134,13 +137,8 @@ test('commerce event logs accept only bounded operational fields', () => {
 
 test('Klarna checkout logs reject tokens and customer data', () => {
   const valid = {
-    context: {
-      requestPath: '/api/klarna/orders'
-    },
-    data: {
-      durationMs: 120,
-      stage: 'order_request_received'
-    },
+    context: { requestPath: '/api/klarna/orders' },
+    data: { durationMs: 120, stage: 'order_request_received' },
     event: 'commerce.klarna_checkout',
     level: 'INFO'
   } as const
@@ -149,10 +147,7 @@ test('Klarna checkout logs reject tokens and customer data', () => {
   assert.equal(
     appLogInputSchema.safeParse({
       ...valid,
-      data: {
-        ...valid.data,
-        authorizationToken: 'secret'
-      }
+      data: { ...valid.data, authorizationToken: 'secret' }
     }).success,
     false
   )
@@ -185,10 +180,7 @@ test('purchase notification logs reject Shopify and customer identifiers', () =>
   assert.equal(
     appLogInputSchema.safeParse({
       ...valid,
-      data: {
-        ...valid.data,
-        email: 'customer@example.no'
-      }
+      data: { ...valid.data, email: 'customer@example.no' }
     }).success,
     false
   )

@@ -13,6 +13,7 @@ export const leadFormTrackingContextSchema = z.strictObject({
   }),
   page_url: z.string().url(),
   page_view_id: z.string().uuid().optional(),
+  journey_id: z.uuid().optional(),
   referrer_url: z.string().url().optional(),
   cookie_header: z.string().max(4096).optional(),
   campaign: z.string().max(200).optional(),
@@ -42,7 +43,12 @@ export function parseLeadFormTrackingContext(
   }
 
   const result = leadFormTrackingContextSchema.safeParse(parsed)
-  return result.success ? result.data : undefined
+  if (!result.success) return undefined
+  if (result.data.consent.analytics !== 'granted') {
+    delete result.data.journey_id
+    delete result.data.page_view_id
+  }
+  return result.data
 }
 
 export function deniedCookiebotConsent(): ConsentSnapshot {

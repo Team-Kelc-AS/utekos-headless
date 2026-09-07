@@ -61,7 +61,15 @@ test('builds exactly the seven canonical documents in deterministic order', () =
 
   for (const document of first) {
     assert.equal(document.locale, 'nb-NO')
-    assert.equal(document.lastReviewed, '2026-07-24')
+    assert.equal(
+      document.lastReviewed,
+      (
+        document.id === 'shipping-returns' ||
+          document.id === 'size-guide'
+      ) ?
+        '2026-09-07'
+      : '2026-07-24'
+    )
     assert.equal(document.published, true)
     assert.ok(document.content.trim().length > 0)
     assert.ok(document.content.length <= 20_000)

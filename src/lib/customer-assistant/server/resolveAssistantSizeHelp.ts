@@ -5,6 +5,7 @@ import {
 } from '@/app/handlehjelp/storrelsesguide/utils/data'
 import type { AssistantChatRequest } from '../assistantProtocol'
 import { normalizeAssistantText } from '../assistantProductProfiles'
+import { sizeExchangeLlmsSummary } from '@/lib/policies/returnPolicy'
 
 type SizeFamily = 'comfyrobe' | 'techdown' | 'utekos'
 
@@ -130,17 +131,19 @@ function answerTechDown(
   fit: 'closer' | 'roomy'
 ) {
   const base =
-    height <= 170 ? 'small'
-    : height <= 180 ? 'medium'
-    : 'large'
+    height <= 175 ? 'middels'
+    : height < 185 ? 'stor'
+    : 'storre'
   const size =
-    fit === 'roomy' && base === 'small' ? 'medium'
-    : fit === 'roomy' && base === 'medium' ? 'large'
+    fit === 'roomy' && base === 'middels' && height >= 170 ?
+      'stor'
+    : fit === 'roomy' && base === 'stor' && height >= 180 ?
+      'storre'
     : base
   const details = {
-    small: { label: 'Liten (S)', key: 'liten' },
-    medium: { label: 'Medium (M)', key: 'middels' },
-    large: { label: 'Large (L)', key: 'stor' }
+    middels: { label: 'Middels', key: 'middels' },
+    stor: { label: 'Stor', key: 'stor' },
+    storre: { label: 'Større', key: 'storre' }
   } as const
   const selected = details[size]
   const length = measurement(
@@ -148,10 +151,6 @@ function answerTechDown(
     'Total lengde (nakke til bunn)',
     selected.key
   )
-
-  if (height > 195) {
-    return 'Størrelsesguiden opplyser at den største TechDown-størrelsen kan bli for liten over ca. 195 cm. Sammenlign derfor produktmålene med et plagg du har hjemme, eller be kundeservice vurdere målene sammen med deg.'
-  }
 
   return `Ut fra høyden og ønsket passform er ${selected.label} et naturlig utgangspunkt for TechDown. Guidens totale lengde for denne størrelsen er ${length ?? 'oppgitt i måletabellen'}. Sammenlign målene med et lignende plagg hjemme før du bestemmer deg; dette er veiledning, ikke en garanti for passform.`
 }
@@ -204,6 +203,14 @@ export function resolveAssistantSizeHelp(
 ): AssistantSizeHelpResult {
   const family = resolveSizeFamily(request)
   const texts = userTexts(request)
+
+  if (
+    /størrelsesbytte|bytt\w*[^.!?]{0,60}størrels|feil størrelse/u.test(
+      texts.at(-1) ?? ''
+    )
+  ) {
+    return { kind: 'answer', text: sizeExchangeLlmsSummary }
+  }
 
   if (!family) {
     return {

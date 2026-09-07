@@ -12,7 +12,10 @@ export function buildMetaCatalogAd(input: MetaCatalogAdInput) {
   const parsed = metaCatalogAdInputSchema.parse(input)
   const link = new URL(parsed.link)
 
-  if (link.pathname === '/produkter/utekos-techdown') {
+  if (
+    link.pathname === '/produkter/utekos-techdown' ||
+    link.pathname === '/produkter/utekos-mikrofiber'
+  ) {
     link.pathname = '/skreddersy-varmen'
   }
 

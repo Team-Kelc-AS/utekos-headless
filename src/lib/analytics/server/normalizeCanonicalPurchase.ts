@@ -23,6 +23,13 @@ export function normalizeCanonicalPurchase(
   delete normalized.location
   delete normalized.region_code
   delete deviceInfo.user_agent
+  delete normalized.journey_id
+  delete normalized.previous_page_view_id
+  delete normalized.page_view_id
+  delete normalized.journey_link_reason
+  if (parsed.consent.analytics !== 'granted') {
+    delete normalized.begin_checkout_event_id
+  }
 
   Object.assign(deviceInfo, {
     ...(requestContext.userAgent ?

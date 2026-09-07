@@ -95,8 +95,8 @@ export function getProductSizeGuideContent(
         'Finn nøyaktig TechDown™-størrelse med høydeguider, måletips og måletabell.',
       tableCaption: 'Mål for TechDown-størrelser',
       tableAriaLabel: 'Måletabell for TechDown-størrelser',
-      columns: ['Liten', 'Middels', 'Stor'],
-      rows: mapRows(techDownData, ['liten', 'middels', 'stor']),
+      columns: ['Middels', 'Stor', 'Større'],
+      rows: mapRows(techDownData, ['middels', 'stor', 'storre']),
       sizeTips: techDownSizeCards.map(card => ({
         size: card.size,
         heading: card.heading,

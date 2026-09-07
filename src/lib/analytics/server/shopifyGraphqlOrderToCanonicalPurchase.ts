@@ -1,5 +1,6 @@
 import { ensureFbclidFromFbc } from '../extractFbclidFromFbc'
 import { parseOrderAttributionFromNoteAttributes } from '../checkoutAttributionSnapshot'
+import { readBeginCheckoutEventId } from '../readBeginCheckoutEventId'
 import {
   canonicalPurchaseSchema,
   deterministicPurchaseEventId,
@@ -95,6 +96,12 @@ export function shopifyGraphqlOrderToCanonicalPurchase(
   const attribution = parseOrderAttributionFromNoteAttributes(
     mapCustomAttributesToNoteAttributes(order)
   )
+  const beginCheckoutEventId =
+    attribution.consent.analytics === 'granted' ?
+      readBeginCheckoutEventId(
+        mapCustomAttributesToNoteAttributes(order)
+      )
+    : undefined
   const clickId =
     attribution.consent.marketing === 'granted' ?
       ensureFbclidFromFbc({
@@ -173,6 +180,9 @@ export function shopifyGraphqlOrderToCanonicalPurchase(
     ...(pageUrl ? { page_url: pageUrl } : {}),
     ...(referrerUrl ? { referrer_url: referrerUrl } : {}),
     consent: attribution.consent,
+    ...(beginCheckoutEventId ?
+      { begin_checkout_event_id: beginCheckoutEventId }
+    : {}),
     ...(attribution.browser_id ?
       { browser_id: attribution.browser_id }
     : {}),

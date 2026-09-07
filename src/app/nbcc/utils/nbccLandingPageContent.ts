@@ -28,13 +28,8 @@ import techdownFullFront from '@/assets/images/techdown/TechDown-FullFront-Logo-
 import techdownBackSideHalv from '@/assets/images/techdown/TechDown-BackSide-Halv-Logo-800x800.webp'
 import techdownFrontHalv from '@/assets/images/techdown/TechDown-Front-Halv-Logo-800x800.webp'
 
-
 export const nbccHeroTracking = {
-  primary: {
-    page: 'nbcc',
-    section: 'hero',
-    target: 'products'
-  },
+  primary: { page: 'nbcc', section: 'hero', target: 'products' },
   secondary: {
     page: 'nbcc',
     section: 'hero',
@@ -85,7 +80,7 @@ export const nbccProducts = [
     ],
     href: '/produkter/utekos-techdown' as Route,
     handle: 'utekos-techdown',
-    sizes: ['Middels', 'Stor', 'Ekstra Stor'],
+    sizes: ['Middels', 'Stor', 'Større'],
     tracking: {
       page: 'nbcc',
       section: 'products',
@@ -135,7 +130,8 @@ export const nbccProducts = [
     shortTitle: 'Comfyrobe™',
     description:
       'Vindtett, 8000 vannsøyle og lun etter dusj, bad eller en våt runde over campingplassen.',
-    bestFor: 'For våte morgener, skifte etter bad og kjølige kvelder ute.',
+    bestFor:
+      'For våte morgener, skifte etter bad og kjølige kvelder ute.',
     images: [
       {
         src: comfyrobeManWall,
@@ -145,10 +141,7 @@ export const nbccProducts = [
         src: comfyrobeManOutside,
         alt: 'Mann i Comfyrobe utendørs'
       },
-      {
-        src: comfyrobeWoman,
-        alt: 'Kvinne i Comfyrobe'
-      },
+      { src: comfyrobeWoman, alt: 'Kvinne i Comfyrobe' },
       {
         src: comfyrobeFrontWall,
         alt: 'Comfyrobe forfra mot vegg'
@@ -210,11 +203,13 @@ export const nbccUseCases = [
 export const nbccSteps = [
   {
     title: 'Finn fordelen hos NBCC',
-    description: 'Som medlem finner du fordelskoden i Min Side / Gnist under medlemsfordeler.'
+    description:
+      'Som medlem finner du fordelskoden i Min Side / Gnist under medlemsfordeler.'
   },
   {
     title: 'Velg produktene hos Utekos',
-    description: 'Velg mellom TechDown, Mikrofiber og Comfyrobe, og legg i handlekurven'
+    description:
+      'Velg mellom TechDown, Mikrofiber og Comfyrobe, og legg i handlekurven'
   },
   {
     title: 'Bruk fordelen i kassen',

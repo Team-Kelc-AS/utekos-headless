@@ -20,6 +20,11 @@ export function normalizeCanonicalGenerateLead(
   delete normalized.location
   delete normalized.region_code
   delete deviceInfo.user_agent
+  if (parsed.consent.analytics !== 'granted') {
+    delete normalized.journey_id
+    delete normalized.previous_page_view_id
+    delete normalized.page_view_id
+  }
 
   Object.assign(deviceInfo, {
     ...(requestContext.userAgent ?
@@ -28,7 +33,9 @@ export function normalizeCanonicalGenerateLead(
   })
 
   const serverLocation = {
-    ...(requestContext.city ? { city: requestContext.city } : {}),
+    ...(requestContext.city ?
+      { city: requestContext.city }
+    : {}),
     ...(requestContext.countryCode ?
       { country_code: requestContext.countryCode.toUpperCase() }
     : {}),
@@ -42,7 +49,8 @@ export function normalizeCanonicalGenerateLead(
 
   const hasDeviceInfo = Object.keys(deviceInfo).length > 0
   const hasLocation = Object.keys(serverLocation).length > 0
-  const hasMarketingConsent = parsed.consent.marketing === 'granted'
+  const hasMarketingConsent =
+    parsed.consent.marketing === 'granted'
   const preservedClientIp =
     parsed.client_ip_address ?? requestContext.clientIpAddress
 
@@ -91,9 +99,11 @@ export function normalizeCanonicalGenerateLead(
     delete normalized.impression_id
     delete normalized.user_data
   } else {
-    if (parsed.browser_id) normalized.browser_id = parsed.browser_id
+    if (parsed.browser_id)
+      normalized.browser_id = parsed.browser_id
     if (parsed.click_id) normalized.click_id = parsed.click_id
-    if (parsed.external_id) normalized.external_id = parsed.external_id
+    if (parsed.external_id)
+      normalized.external_id = parsed.external_id
     if (parsed.impression_id) {
       normalized.impression_id = parsed.impression_id
     }

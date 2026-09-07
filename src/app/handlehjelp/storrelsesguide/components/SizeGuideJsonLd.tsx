@@ -1,6 +1,12 @@
 import { cacheLife, cacheTag } from 'next/cache'
 import { SITE_URL } from '@/constants'
-import type { BreadcrumbList, FAQPage, Graph, WebPage } from 'schema-dts'
+import { techDownFaq } from '../utils/techDownFaq'
+import type {
+  BreadcrumbList,
+  FAQPage,
+  Graph,
+  WebPage
+} from 'schema-dts'
 
 const PAGE_URL = `${SITE_URL}/handlehjelp/storrelsesguide`
 const WEBSITE_ID = `${SITE_URL}/#website`
@@ -20,7 +26,7 @@ export async function SizeGuideJsonLd() {
     'url': PAGE_URL,
     'name': 'Størrelsesguide for Utekos',
     'description':
-      'Størrelsesguide for Utekos Dun, Mikrofiber og Comfyrobe med praktiske mål og råd for riktig passform.',
+      'Størrelsesguide for Utekos TechDown, Dun, Mikrofiber og Comfyrobe med plaggmål, måleveiledning og råd for riktig passform.',
     'inLanguage': 'nb-NO',
     'isPartOf': { '@id': WEBSITE_ID },
     'breadcrumb': { '@id': BREADCRUMB_ID },
@@ -52,35 +58,11 @@ export async function SizeGuideJsonLd() {
     'mainEntityOfPage': { '@id': WEBPAGE_ID },
     'author': { '@id': ORGANIZATION_ID },
     'publisher': { '@id': ORGANIZATION_ID },
-    'mainEntity': [
-      {
-        '@type': 'Question',
-        'name': 'Hvilken størrelse Utekos-plagg skal jeg velge?',
-        'acceptedAnswer': {
-          '@type': 'Answer',
-          'text':
-            'Våre plagg er designet for en romslig og komfortabel passform. Vi anbefaler å se på målene for hvert spesifikke produkt i vår størrelsesguide. Et godt tips er å sammenligne målene med et favorittplagg du har hjemme.'
-        }
-      },
-      {
-        '@type': 'Question',
-        'name': 'Hva er forskjellen i størrelse mellom Utekos Dun og Comfyrobe?',
-        'acceptedAnswer': {
-          '@type': 'Answer',
-          'text':
-            'Comfyrobe har en mer detaljert størrelsesinndeling (XS/S, M/L, L/XL), mens Utekos Dun og Mikrofiber kommer i to hovedstørrelser (Medium og Large) designet for å passe et bredt spekter av kroppsfasonger. Se de nøyaktige målene for hvert produkt på vår størrelsesguide-side.'
-        }
-      },
-      {
-        '@type': 'Question',
-        'name': 'Hvordan måler jeg for å finne riktig størrelse?',
-        'acceptedAnswer': {
-          '@type': 'Answer',
-          'text':
-            'Legg et lignende plagg du eier flatt på et gulv eller bord. Mål punkter som total lengde, brystbredde og ermelengde, og sammenlign disse med målene i våre tabeller for å finne den beste matchen.'
-        }
-      }
-    ]
+    'mainEntity': techDownFaq.map(({ question, answer }) => ({
+      '@type': 'Question',
+      'name': question,
+      'acceptedAnswer': { '@type': 'Answer', 'text': answer }
+    }))
   }
 
   const jsonLd: Graph = {

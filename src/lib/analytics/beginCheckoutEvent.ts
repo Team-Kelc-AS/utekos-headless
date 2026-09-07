@@ -9,6 +9,7 @@ import {
   type ConsentSnapshot
 } from './canonicalEventEnvelope'
 import { checkoutMethodSchema } from './checkoutMethod'
+import { stripInternalJourneyContext } from './internalJourneyContext'
 import {
   mapEventDeviceInfo,
   type EventDeviceInfoInput
@@ -120,7 +121,7 @@ export function buildBeginCheckoutDataLayerEvent(
     source: event.source,
     transaction_id: event.event_id,
     commerce: event.custom_data,
-    canonical_event: event
+    canonical_event: stripInternalJourneyContext(event)
   }
 }
 

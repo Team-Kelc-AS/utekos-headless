@@ -14,6 +14,7 @@ export const canonicalAddPaymentInfoSchema =
   canonicalEventEnvelopeSchema.extend({
     event_name: z.literal('add_payment_info'),
     source: z.literal('web'),
+    page_view_id: z.uuid().optional(),
     custom_data: canonicalAddPaymentInfoCommerceSchema
   })
 

@@ -24,12 +24,46 @@ const durationMsSchema = z
   .nonnegative()
   .max(300_000)
 const commerceEventDataBase = {
-  currency: z.string().regex(/^[A-Z]{3}$/),
-  durationMs: durationMsSchema,
+  currency: z
+    .string()
+    .regex(/^[A-Z]{3}$/)
+    .optional(),
+  durationMs: durationMsSchema.optional(),
   eventId: z.string().uuid(),
-  grossValue: z.number().finite().nonnegative(),
-  itemCount: z.number().int().positive().max(250),
-  quantity: z.number().int().positive().max(10_000),
+  grossValue: z.number().finite().nonnegative().optional(),
+  itemCount: z.number().int().positive().max(250).optional(),
+  quantity: z.number().int().positive().max(10_000).optional(),
+  actionEvidence: z.enum([
+    'browser_reported',
+    'shopify_source_observed',
+    'server_confirmed'
+  ]),
+  source: z.enum([
+    'browser_collector',
+    'shopify_web_pixel',
+    'persisted_lead_submission',
+    'shopify_paid_order_webhook',
+    'shopify_paid_order_reconciliation'
+  ]),
+  persistence: z.enum(['persisted', 'duplicate']),
+  providerDelivery: z.literal('separate_receipt_required'),
+  trafficClass: z.enum([
+    'human_or_unknown',
+    'synthetic',
+    'verified_bot',
+    'automated_bot'
+  ]),
+  journeyLinkReason: z.enum([
+    'linked',
+    'analytics_consent_not_granted',
+    'journey_context_missing',
+    'begin_checkout_event_id_missing',
+    'begin_checkout_not_found',
+    'begin_checkout_mismatch',
+    'begin_checkout_journey_missing',
+    'lookup_unavailable'
+  ]),
+  beginCheckoutEventId: z.string().uuid().optional(),
   status: commerceEventStatusSchema
 }
 const commerceEventDataSchema = z.discriminatedUnion(
@@ -37,11 +71,41 @@ const commerceEventDataSchema = z.discriminatedUnion(
   [
     z.strictObject({
       eventName: z.literal('add_to_cart'),
+      displayName: z.literal('AddToCart'),
       ...commerceEventDataBase
     }),
     z.strictObject({
       checkoutMethod: checkoutMethodSchema,
       eventName: z.literal('begin_checkout'),
+      displayName: z.literal('InitiateCheckout'),
+      ...commerceEventDataBase
+    }),
+    z.strictObject({
+      eventName: z.literal('add_to_wishlist'),
+      displayName: z.literal('AddToWishlist'),
+      ...commerceEventDataBase
+    }),
+    z.strictObject({
+      eventName: z.literal('add_shipping_info'),
+      displayName: z.literal('AddShippingInfo'),
+      ...commerceEventDataBase
+    }),
+    z.strictObject({
+      eventName: z.literal('add_payment_info'),
+      displayName: z.literal('AddPaymentInfo'),
+      ...commerceEventDataBase
+    }),
+    z.strictObject({
+      eventName: z.literal('generate_lead'),
+      displayName: z.enum([
+        'Sign Up Utekos Dun',
+        'GenerateLead'
+      ]),
+      ...commerceEventDataBase
+    }),
+    z.strictObject({
+      eventName: z.literal('purchase'),
+      displayName: z.literal('Purchase'),
       ...commerceEventDataBase
     })
   ]
@@ -51,11 +115,14 @@ const commerceEventContextSchema = z.strictObject({
     .string()
     .min(1)
     .max(2_048)
-    .transform(sanitizeOperationalPathname),
-  requestPath: z.enum([
-    '/api/events/add-to-cart',
-    '/api/events/begin-checkout'
-  ]),
+    .transform(sanitizeOperationalPathname)
+    .optional(),
+  requestPath: z
+    .string()
+    .min(1)
+    .max(2_048)
+    .transform(sanitizeOperationalPathname)
+    .optional(),
   vercelId: z.string().min(1).max(256).optional()
 })
 const klarnaCheckoutStageSchema = z.enum([

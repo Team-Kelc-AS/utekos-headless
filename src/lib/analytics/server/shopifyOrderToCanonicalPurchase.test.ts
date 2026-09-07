@@ -8,6 +8,7 @@ import {
 import { hashCustomerMatchIdentifier } from '@/lib/google/data-manager/hashCustomerMatchIdentifier'
 import { shopifyOrderToCanonicalPurchase } from './shopifyOrderToCanonicalPurchase'
 import { checkoutProductContextToShopifyAttributes } from '../checkoutProductContext'
+import { BEGIN_CHECKOUT_EVENT_ATTRIBUTE } from '../checkoutAttributionSnapshot'
 
 function orderPaid(): OrderPaid {
   const attribution = createCheckoutAttributionSnapshot(
@@ -120,6 +121,35 @@ function orderPaid(): OrderPaid {
     total_tax: '398.00'
   } as unknown as OrderPaid
 }
+
+test('copies only one valid begin_checkout event ID from consented paid order attributes', () => {
+  const order = orderPaid()
+  const eventId = '33333333-3333-4333-8333-333333333333'
+  const attribute = {
+    name: BEGIN_CHECKOUT_EVENT_ATTRIBUTE,
+    value: eventId
+  }
+  order.note_attributes.push(attribute)
+  assert.equal(
+    shopifyOrderToCanonicalPurchase(order)
+      .begin_checkout_event_id,
+    eventId
+  )
+  order.note_attributes.push(attribute)
+  assert.equal(
+    shopifyOrderToCanonicalPurchase(order)
+      .begin_checkout_event_id,
+    undefined
+  )
+  order.note_attributes = [
+    { name: BEGIN_CHECKOUT_EVENT_ATTRIBUTE, value: eventId }
+  ]
+  assert.equal(
+    shopifyOrderToCanonicalPurchase(order)
+      .begin_checkout_event_id,
+    undefined
+  )
+})
 
 test('restores checkout attribution for the purchase webhook', () => {
   const order = orderPaid()

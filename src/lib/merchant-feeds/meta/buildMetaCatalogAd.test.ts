@@ -116,7 +116,19 @@ test('replaces a legacy TechDown creative destination while preserving URL param
   )
 })
 
-test('preserves non-TechDown creative destinations', () => {
+test('replaces a legacy Mikrofiber creative destination while preserving URL parameters', () => {
+  const request = buildMetaCatalogAd({
+    ...input,
+    link: 'https://utekos.no/produkter/utekos-mikrofiber?farge=fjellbla&storrelse=large&utm_source=meta'
+  })
+
+  assert.equal(
+    request.creative.object_story_spec.template_data.link,
+    'https://utekos.no/skreddersy-varmen?farge=fjellbla&storrelse=large&utm_source=meta'
+  )
+})
+
+test('preserves Comfyrobe creative destinations', () => {
   const link = 'https://utekos.no/produkter/comfyrobe?storrelse=xl'
   const request = buildMetaCatalogAd({ ...input, link })
 

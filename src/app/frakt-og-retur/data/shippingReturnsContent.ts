@@ -1,6 +1,7 @@
 import {
   returnPolicy,
-  returnPolicyCopy
+  returnPolicyCopy,
+  sizeExchangeLlmsSummary
 } from '@/lib/policies/returnPolicy'
 
 export const shippingReturnsFaqItems = [
@@ -25,6 +26,11 @@ export const shippingReturnsFaqItems = [
     id: 'return-process',
     question: 'Hvordan returnerer jeg en vare?',
     answer: `${returnPolicyCopy.notice} Send meldingen til ${returnPolicy.contactEmail}. ${returnPolicyCopy.returnDeadline} ${returnPolicyCopy.returnShipping}`
+  },
+  {
+    id: 'size-exchange',
+    question: 'Kan jeg bytte gratis til en annen størrelse?',
+    answer: sizeExchangeLlmsSummary
   },
   {
     id: 'return-exceptions',

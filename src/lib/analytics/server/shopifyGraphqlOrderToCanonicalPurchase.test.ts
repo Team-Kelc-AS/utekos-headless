@@ -7,6 +7,7 @@ import {
 import { hashCustomerMatchIdentifier } from '@/lib/google/data-manager/hashCustomerMatchIdentifier'
 import { shopifyGraphqlOrderToCanonicalPurchase } from './shopifyGraphqlOrderToCanonicalPurchase'
 import type { ShopifyCommerceReconciliationOrder } from './shopifyCommerceReconciliationGraphqlSchema'
+import { BEGIN_CHECKOUT_EVENT_ATTRIBUTE } from '../checkoutAttributionSnapshot'
 
 function money(amount: string, currencyCode = 'NOK') {
   return {
@@ -14,6 +15,28 @@ function money(amount: string, currencyCode = 'NOK') {
     presentmentMoney: { amount, currencyCode }
   }
 }
+
+test('preserves the exact consented checkout correlation for paid-order reconciliation', () => {
+  const order = paidOrder()
+  const eventId = '33333333-3333-4333-8333-333333333333'
+  order.customAttributes.push({
+    key: BEGIN_CHECKOUT_EVENT_ATTRIBUTE,
+    value: eventId
+  })
+  assert.equal(
+    shopifyGraphqlOrderToCanonicalPurchase(order)
+      .begin_checkout_event_id,
+    eventId
+  )
+  order.customAttributes = [
+    { key: BEGIN_CHECKOUT_EVENT_ATTRIBUTE, value: eventId }
+  ]
+  assert.equal(
+    shopifyGraphqlOrderToCanonicalPurchase(order)
+      .begin_checkout_event_id,
+    undefined
+  )
+})
 
 function paidOrder(
   overrides: Partial<ShopifyCommerceReconciliationOrder> = {}

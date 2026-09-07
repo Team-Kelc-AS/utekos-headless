@@ -10,7 +10,7 @@ export function ProductsPageFooter() {
     <article>
       <div className='mt-12 grid grid-cols-1 gap-8 md:mt-2 md:grid-cols-2'>
         <div className={footerCardClassName}>
-          <h3 className='font-utekos-text-medium text-xl text-background'>
+          <h3 className='font-utekos-text-medium text-lg text-background'>
             Usikker på størrelsen?
           </h3>
           <p className='mt-2 font-utekos-text-medium text-background'>

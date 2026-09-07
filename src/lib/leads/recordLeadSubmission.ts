@@ -122,6 +122,12 @@ export async function recordLeadSubmission(
       ...(input.trackingContext?.page_view_id ?
         { pageViewId: input.trackingContext.page_view_id }
       : {}),
+      ...((
+        consent.analytics === 'granted' &&
+        input.trackingContext?.journey_id
+      ) ?
+        { journeyId: input.trackingContext.journey_id }
+      : {}),
       ...(input.trackingContext?.cookie_header ?
         { cookieHeader: input.trackingContext.cookie_header }
       : {}),

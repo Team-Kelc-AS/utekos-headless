@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/handlehjelp/storrelsesguide": {
+      "targetKind": "existing-ui",
+      "projectId": "5a54a582-e414-4c4b-8ac0-fc850b91bce8",
+      "baselineDraftId": "c6c379a0-4437-4574-8d30-80b31a57bb67",
+      "baselineVersion": 1,
+      "activeDraftId": "fb717324-c592-4fd8-bbbb-f23cb2712c19",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [
+        "fd11d2cf-6ef7-4b48-8505-b1cac4a5633c",
+        "src-assets-images-brand-WordmarkWhite.svg",
+        "public-IconWhite.svg"
+      ],
+      "brandAssets": {
+        "logo": {
+          "assetKey": "src-assets-images-brand-WordmarkWhite.svg",
+          "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/5a54a582-e414-4c4b-8ac0-fc850b91bce8/brand-assets/src-assets-images-brand-WordmarkWhite.svg/WordmarkWhite.svg",
+          "sourcePath": "src/assets/images/brand/WordmarkWhite.svg"
+        },
+        "icon": {
+          "assetKey": "public-IconWhite.svg",
+          "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/5a54a582-e414-4c4b-8ac0-fc850b91bce8/brand-assets/public-IconWhite.svg/IconWhite.svg",
+          "sourcePath": "public/IconWhite.svg"
+        },
+        "font": {
+          "assetKey": "src-app-fonts-UtekosTextRegular.woff2",
+          "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/5a54a582-e414-4c4b-8ac0-fc850b91bce8/brand-assets/src-app-fonts-UtekosTextRegular.woff2/UtekosTextRegular.woff2",
+          "sourcePath": "src/app/fonts/UtekosTextRegular.woff2"
+        },
+        "mediumFont": {
+          "assetKey": "src-app-fonts-UtekosTextMedium.woff2",
+          "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/5a54a582-e414-4c4b-8ac0-fc850b91bce8/brand-assets/src-app-fonts-UtekosTextMedium.woff2/UtekosTextMedium.woff2",
+          "sourcePath": "src/app/fonts/UtekosTextMedium.woff2"
+        }
+      },
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "src/globals.css",
+        "src/app/fonts/font.config.ts",
+        "src/app/handlehjelp/storrelsesguide/page.mdx",
+        "src/app/handlehjelp/storrelsesguide/page.module.css",
+        "src/app/handlehjelp/storrelsesguide/layout.tsx",
+        "src/app/handlehjelp/storrelsesguide/utils/data.ts",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownSizeCards.ts",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownFaq.ts",
+        "src/app/handlehjelp/storrelsesguide/components/MeasurementTable.tsx",
+        "src/app/handlehjelp/storrelsesguide/components/SizeGuideJsonLd.tsx",
+        ".superdesign/context/shared-ui-1.md",
+        ".superdesign/context/shared-ui-2.md",
+        ".superdesign/size-guide-brief.md"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "a570a67f35bf992a2c080799d455ee8715688366ba264120855da3bae2573169",
+        "src/globals.css": "fcdb066c4c6cf35257daf8560fb714f8d16c90456ddc0b8152cebe421f8058a6",
+        "src/app/fonts/font.config.ts": "3615d4027a4a99939b1266f15762fe994012e0b53d28ea407f888aca9be999c3",
+        "src/app/handlehjelp/storrelsesguide/page.mdx": "65127c1af2f17edfa2175775a4288b85c7810cf0f8020935690529156bc9880e",
+        "src/app/handlehjelp/storrelsesguide/page.module.css": "c89871b5e60587bdc6ddb2dc8af68dd05ecb7ef3ec318b593b7fa223f9ade650",
+        "src/app/handlehjelp/storrelsesguide/layout.tsx": "9eb3ca2720ceea3c7f8537d50f9c117d714b9772e66190d3e2e231c5e009a31f",
+        "src/app/handlehjelp/storrelsesguide/utils/data.ts": "dd8c142690d3c7d38ffd55c925601b46917e2cfba93119e3f4d2fed7be01be00",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownSizeCards.ts": "795f06a80c1226166387a0b88627e6812889a82c936d3b225bdb8b4141f155af",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownFaq.ts": "464cd4cec3cca52264c6755730f8ec801c84c0ccacd4ef71c4742d6939098f5f",
+        "src/app/handlehjelp/storrelsesguide/components/MeasurementTable.tsx": "b5e4849d46e12d78b5315c06252eac1215d178e92b166063b4556898e9e29d74",
+        "src/app/handlehjelp/storrelsesguide/components/SizeGuideJsonLd.tsx": "e060a6cafd70b4a3ede81b2022545c15efe82e84979daae19ab8060b85886e1e",
+        ".superdesign/context/shared-ui-1.md": "28f38e68daf384102800df208ac15b36c11da93d35edd26fdabce3eda523c1c7",
+        ".superdesign/context/shared-ui-2.md": "57400968d05a578735abe93ae31b216161d126df6a29848205def5f6dfa46b0c",
+        ".superdesign/size-guide-brief.md": "1ae0a2415f2736f862032f618a84d0f4e522d309ac94fcb9c5e1ed654af6ae96"
+      },
+      "sourceContextFiles": [
+        ".superdesign/design-system.md",
+        "src/globals.css",
+        "src/app/fonts/font.config.ts",
+        "src/app/handlehjelp/storrelsesguide/layout.tsx",
+        "src/app/handlehjelp/storrelsesguide/utils/data.ts",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownSizeCards.ts",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownFeatures.ts",
+        "src/app/handlehjelp/storrelsesguide/utils/utekosSizeCards.ts",
+        "src/app/handlehjelp/storrelsesguide/utils/features.ts",
+        "src/components/header/Header.tsx",
+        "src/components/navigation/UtekosBreadcrumbBar.tsx",
+        "src/lib/navigation/breadcrumbVariants.ts",
+        "src/components/footer/components/Footer.tsx",
+        "src/components/footer/components/FooterNavigation.tsx",
+        "src/components/footer/components/NewsLetter.tsx",
+        "src/components/form/components/NewsLetterForm.tsx",
+        "src/components/footer/components/PaymentMethods.tsx",
+        "src/db/config/footer.config.ts",
+        "src/components/ui/button.tsx",
+        "src/components/ui/card.tsx",
+        "src/components/ui/table.tsx",
+        "src/components/ui/badge.tsx",
+        "src/components/ui/breadcrumb.tsx",
+        "src/components/BrandComponents/utils/BrandBadge.tsx",
+        "src/lib/utils/className.ts",
+        "src/components/ProductCard/SharedProductCarousel.tsx",
+        "src/components/ProductCard/ProductCard.tsx",
+        "src/components/ProductCard/ProductCardHeader.tsx",
+        "src/components/ProductCard/ProductCardFooter.tsx",
+        "src/app/handlehjelp/storrelsesguide/page.mdx",
+        "src/app/handlehjelp/storrelsesguide/page.module.css",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownFaq.ts",
+        "src/app/handlehjelp/storrelsesguide/components/MeasurementTable.tsx",
+        "src/app/handlehjelp/storrelsesguide/components/SizeGuideJsonLd.tsx",
+        ".superdesign/size-guide-brief.md",
+        "src/components/ProductCard/LazyFeaturedProductCarousel.tsx",
+        "src/components/ProductCard/ProductCarousel.tsx"
+      ],
+      "sourceFingerprints": {
+        ".superdesign/design-system.md": "a570a67f35bf992a2c080799d455ee8715688366ba264120855da3bae2573169",
+        "src/globals.css": "fcdb066c4c6cf35257daf8560fb714f8d16c90456ddc0b8152cebe421f8058a6",
+        "src/app/fonts/font.config.ts": "3615d4027a4a99939b1266f15762fe994012e0b53d28ea407f888aca9be999c3",
+        "src/app/handlehjelp/storrelsesguide/layout.tsx": "9eb3ca2720ceea3c7f8537d50f9c117d714b9772e66190d3e2e231c5e009a31f",
+        "src/app/handlehjelp/storrelsesguide/utils/data.ts": "dd8c142690d3c7d38ffd55c925601b46917e2cfba93119e3f4d2fed7be01be00",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownSizeCards.ts": "795f06a80c1226166387a0b88627e6812889a82c936d3b225bdb8b4141f155af",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownFeatures.ts": "fee57afa7e2092e0a7ab41d64cf6c805ab64eaca2751eed6332d68338b9348f1",
+        "src/app/handlehjelp/storrelsesguide/utils/utekosSizeCards.ts": "10d5bc20be794a252c45aeb1ed1f58912fef7acaf972b3f542aec93968a6a9ae",
+        "src/app/handlehjelp/storrelsesguide/utils/features.ts": "25302a5a91ecad2c04354e72aefe586ffc9bdfe021c1e9753650f0a4bf20e6ad",
+        "src/components/header/Header.tsx": "8f71b8d0c9d66f613540a787262e57097e3a8b60b0293952c6f7ba0c317a56d8",
+        "src/components/navigation/UtekosBreadcrumbBar.tsx": "28630c8deb0323019c917566431b1d31a8776ef9b4edbd82fe977f0892725d4a",
+        "src/lib/navigation/breadcrumbVariants.ts": "2c360e3efffd22ccd8bc29380d23a31d9a39561ce57df29274faef31b67f9fb1",
+        "src/components/footer/components/Footer.tsx": "8dd9e4337ecd5542e7a0e4efecdf89dd7963275adc1bd4a51b6e5eb12bb5f88f",
+        "src/components/footer/components/FooterNavigation.tsx": "52cf8c57bf79141ff2df6c0bb28aa2a3d463f7044086ddd043929ddee2e07bef",
+        "src/components/footer/components/NewsLetter.tsx": "d0c757d4a7e87139383d840a4effdb46f5b0f2239737c307e1d830c807e2429e",
+        "src/components/form/components/NewsLetterForm.tsx": "c8e2fae433d8b9ba851285018a1fdfabd350ebf8425b0082a14c78bc7b2c1a69",
+        "src/components/footer/components/PaymentMethods.tsx": "6d341d9a8eadffb7d54b8463d5136fbadbc3838a6dc7b3a56592e5a144c0192d",
+        "src/db/config/footer.config.ts": "1f78ed2e58504e1da10a0e19e23dde0acaa85ca48246a83de3a8706b826d6ba8",
+        "src/components/ui/button.tsx": "306156a678839f63742060af215b598120918d1b8bb8033ddcc8156bd987ac07",
+        "src/components/ui/card.tsx": "cfe44444860ad9c215c28e15d01c0d87ea74e95212db4e6d4d7f794ef5a1eac7",
+        "src/components/ui/table.tsx": "85d44d09798904846c5b63b618875e57ed5aaafb6ab86e3a4b3d491b11c65434",
+        "src/components/ui/badge.tsx": "c90d58b5ba8e8acc92019ecb80c992783f9eb24c9a2cdd77dbdb89450c9d93de",
+        "src/components/ui/breadcrumb.tsx": "4818f9f64e138bc2852eb4e9efeb2342d96369e2b6b8887208bfa9ce27ce59d6",
+        "src/components/BrandComponents/utils/BrandBadge.tsx": "5b81f4ce5c50ad912c86b16527ea2f5208257fe90a08b5f712d577c2e766ba8d",
+        "src/lib/utils/className.ts": "8af9be92fd5f22490f9b9dddc99348027d5eee20331a5729c54c84f992fde0d8",
+        "src/components/ProductCard/SharedProductCarousel.tsx": "072b7230a5fb23272d949052dc616dd4c654ca76901b865f9078fb5c076e9f98",
+        "src/components/ProductCard/ProductCard.tsx": "82f3b50d1f70c7359570ba6e37acb32facf35a7e4c8af9779b7a9e5271354189",
+        "src/components/ProductCard/ProductCardHeader.tsx": "4e4296a2e777ac40d1118a918de9ebabcc8833569236347ba5f809eec9bee0a6",
+        "src/components/ProductCard/ProductCardFooter.tsx": "3e6084d76264e1c813a693c87aa4bfc97bb426a3bca9c437c30d4f96f3efb52b",
+        "src/app/handlehjelp/storrelsesguide/page.mdx": "65127c1af2f17edfa2175775a4288b85c7810cf0f8020935690529156bc9880e",
+        "src/app/handlehjelp/storrelsesguide/page.module.css": "c89871b5e60587bdc6ddb2dc8af68dd05ecb7ef3ec318b593b7fa223f9ade650",
+        "src/app/handlehjelp/storrelsesguide/utils/techDownFaq.ts": "464cd4cec3cca52264c6755730f8ec801c84c0ccacd4ef71c4742d6939098f5f",
+        "src/app/handlehjelp/storrelsesguide/components/MeasurementTable.tsx": "b5e4849d46e12d78b5315c06252eac1215d178e92b166063b4556898e9e29d74",
+        "src/app/handlehjelp/storrelsesguide/components/SizeGuideJsonLd.tsx": "e060a6cafd70b4a3ede81b2022545c15efe82e84979daae19ab8060b85886e1e",
+        ".superdesign/size-guide-brief.md": "1ae0a2415f2736f862032f618a84d0f4e522d309ac94fcb9c5e1ed654af6ae96",
+        "src/components/ProductCard/LazyFeaturedProductCarousel.tsx": "fa6212d22f4e42fe41568022bdfb84222c35ccb40b41249ad105b387a7b18c88",
+        "src/components/ProductCard/ProductCarousel.tsx": "5e0d89e6f36f96e1f3338f1c03164ca8244adeb98d56eda30e697a75ddc3a0fc"
+      },
+      "sourceBundles": {
+        ".superdesign/context/shared-ui-1.md": [
+          "src/components/header/Header.tsx",
+          "src/components/navigation/UtekosBreadcrumbBar.tsx",
+          "src/lib/navigation/breadcrumbVariants.ts",
+          "src/components/footer/components/Footer.tsx",
+          "src/components/footer/components/FooterNavigation.tsx",
+          "src/components/footer/components/NewsLetter.tsx",
+          "src/components/form/components/NewsLetterForm.tsx",
+          "src/components/footer/components/PaymentMethods.tsx",
+          "src/db/config/footer.config.ts",
+          "src/components/ui/button.tsx",
+          "src/components/ui/card.tsx",
+          "src/components/ui/table.tsx",
+          "src/components/ui/badge.tsx",
+          "src/components/ui/breadcrumb.tsx",
+          "src/components/BrandComponents/utils/BrandBadge.tsx"
+        ],
+        ".superdesign/context/shared-ui-2.md": [
+          "src/lib/utils/className.ts",
+          "src/components/ProductCard/SharedProductCarousel.tsx",
+          "src/components/ProductCard/ProductCard.tsx",
+          "src/components/ProductCard/ProductCardHeader.tsx",
+          "src/components/ProductCard/ProductCardFooter.tsx"
+        ]
+      },
+      "components": [
+        {
+          "name": "UtekosHeader",
+          "id": "9176cd15-45aa-4856-87aa-3768c10ff976",
+          "sourcePath": "src/components/header/Header.tsx",
+          "logoAssetKey": "src-assets-images-brand-WordmarkWhite.svg",
+          "currentVersion": 3
+        },
+        {
+          "name": "UtekosBreadcrumbBar",
+          "id": "884895e6-4434-491d-b849-12611a865789",
+          "sourcePath": "src/components/navigation/UtekosBreadcrumbBar.tsx",
+          "currentVersion": 2
+        },
+        {
+          "name": "UtekosFooter",
+          "id": "41d83911-02a3-4d03-ba83-6cacef059cd3",
+          "sourcePath": "src/components/footer/components/Footer.tsx",
+          "currentVersion": 2
+        }
+      ],
+      "drafts": {
+        "fb717324-c592-4fd8-bbbb-f23cb2712c19": {
+          "title": "Utekos - Raffinert Størrelsesguide",
+          "visualDirection": "refine existing Utekos; quiet editorial sections, full measurements and native FAQ",
+          "parentDraftId": "c6c379a0-4437-4574-8d30-80b31a57bb67",
+          "currentVersion": 5
+        },
+        "c6c379a0-4437-4574-8d30-80b31a57bb67": {
+          "title": "Størrelsesguide — kildebasert referanse",
+          "visualDirection": "unchanged source-rendered sizing content; product CTA is a static link-based preview",
+          "parentDraftId": "fb717324-c592-4fd8-bbbb-f23cb2712c19",
+          "currentVersion": 1
+        },
+        "3e73d243-c1be-45d2-b1fa-cc84adc2c6dd": {
+          "title": "Størrelsesguide — raffinert mobil 390 px",
+          "visualDirection": "same refined direction; responsive mobile preview",
+          "parentDraftId": "fb717324-c592-4fd8-bbbb-f23cb2712c19",
+          "parentVersion": 5,
+          "currentVersion": 2
+        }
+      },
+      "updatedAt": "2026-09-07T15:15:00.010Z",
+      "responsivePreviewDrafts": {
+        "mobile": "3e73d243-c1be-45d2-b1fa-cc84adc2c6dd"
+      },
+      "approvalStatus": "approved-with-label-correction",
+      "archivedBaselineContext": ".superdesign/context/size-guide-ui.md",
+      "approvedLabelCorrection": "TechDown headings and table columns show only Middels, Stor and Større. EU equivalents remain only in the relevant FAQ answer.",
+      "implementationStatus": "local-browser-and-unit-checks-passed-build-pending-no-deploy",
+      "verificationDocument": "docs/size-guide-mdx-verification.md"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import {
   returnPolicy,
-  returnPolicyCopy
+  returnPolicyCopy,
+  sizeExchangeCopy
 } from '@/lib/policies/returnPolicy'
 
 export function renderShopifyRefundPolicyHtml() {
@@ -26,6 +27,11 @@ export function renderShopifyRefundPolicyHtml() {
     `<p>${returnPolicyCopy.exceptions}</p>`,
     '<h3>Reklamasjon, skade eller feilsendt vare</h3>',
     `<p>${returnPolicyCopy.complaint}</p>`,
+    '<h3>Gratis størrelsesbytte</h3>',
+    ...Object.values(sizeExchangeCopy).map(
+      text => `<p>${text}</p>`
+    ),
+    `<p><a href="mailto:${returnPolicy.sizeExchange.contactEmail}">${returnPolicy.sizeExchange.contactEmail}</a> · <a href="${returnPolicy.sizeExchange.contactPhoneHref}">${returnPolicy.sizeExchange.contactPhone}</a></p>`,
     `<p>Sist oppdatert: ${returnPolicy.lastUpdatedLabel}</p>`
   ].join('')
 }

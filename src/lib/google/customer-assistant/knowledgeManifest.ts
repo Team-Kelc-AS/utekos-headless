@@ -1,6 +1,9 @@
 import { createHash } from 'node:crypto'
 import { COMFYROBE_LANDING_FAQ } from '@/app/comfyrobe/data/comfyrobeLandingSeo'
 import { shippingReturnsFaqItems } from '@/app/frakt-og-retur/data/shippingReturnsContent'
+import { techDownSizeSummary } from '@/app/handlehjelp/storrelsesguide/utils/techDownSizeSummary'
+import { techDownFaq } from '@/app/handlehjelp/storrelsesguide/utils/techDownFaq'
+import { formatTechDownSizeFacts } from '@/app/nbcc/utils/formatTechDownSizeFacts'
 import {
   comparisonRows,
   modelRecommendations
@@ -18,7 +21,7 @@ export type AssistantKnowledgeDocument = {
     | 'materials'
     | 'care'
     | 'contact'
-  lastReviewed: '2026-07-24'
+  lastReviewed: '2026-07-24' | '2026-09-07'
   content: string
   checksum: string
   published: true
@@ -152,7 +155,7 @@ function buildKnowledgeDrafts(): AssistantKnowledgeDraft[] {
       ...canonicalDocuments[2],
       title: 'Frakt og retur',
       locale: 'nb-NO',
-      lastReviewed: REVIEW_DATE,
+      lastReviewed: '2026-09-07',
       content: `# Frakt og retur\n\n${formatQuestionAnswers(shippingReturnsFaqItems)}\n\nFull informasjon: https://utekos.no/frakt-og-retur`,
       published: true
     },
@@ -160,10 +163,17 @@ function buildKnowledgeDrafts(): AssistantKnowledgeDraft[] {
       ...canonicalDocuments[3],
       title: 'Størrelsesguide',
       locale: 'nb-NO',
-      lastReviewed: REVIEW_DATE,
+      lastReviewed: '2026-09-07',
       content: `# Størrelsesguide
 
-Bruk målene for det aktuelle produktet som veiledning, og sammenlign gjerne med et lignende plagg du har hjemme. Utekos Dun og Utekos Mikrofiber vises i Medium og Large, mens Utekos TechDown vises i Liten, Middels og Stor. Comfyrobe vises i Small, Medium og Large og er laget med en romslig unisex-passform.
+Bruk målene for det aktuelle produktet som veiledning, og sammenlign gjerne med et lignende plagg du har hjemme. Utekos Dun og Utekos Mikrofiber vises i Medium og Large, mens Utekos TechDown vises i Middels, Stor og Større. Comfyrobe vises i Small, Medium og Large og er laget med en romslig unisex-passform.
+
+## Utekos TechDown
+${techDownSizeSummary.join('\n\n')}
+
+${formatTechDownSizeFacts()}
+
+${formatQuestionAnswers(techDownFaq)}
 
 Velg normalt den størrelsen du vanligvis bruker når du ønsker en romslig passform. Vurder å gå opp dersom du ønsker ekstra plass til tykke lag eller en bevisst overdimensjonert passform. Størrelsesguiden er veiledende og kan ikke garantere passform.
 
@@ -318,7 +328,14 @@ export function validateAssistantKnowledgeDocuments(
         `Document ${document.id} must use locale nb-NO`
       )
     }
-    if (document.lastReviewed !== REVIEW_DATE) {
+    const expectedReviewDate =
+      (
+        document.id === 'shipping-returns' ||
+        document.id === 'size-guide'
+      ) ?
+        '2026-09-07'
+      : REVIEW_DATE
+    if (document.lastReviewed !== expectedReviewDate) {
       throw new Error(
         `Document ${document.id} has an invalid lastReviewed value`
       )

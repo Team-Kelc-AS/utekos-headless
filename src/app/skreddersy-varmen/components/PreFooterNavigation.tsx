@@ -16,6 +16,7 @@ export function PreFooterNavigation({
 
   return (
     <section
+      data-journey-section='bottom_navigation'
       className={cn(
         'w-full max-w-full py-16 text-foreground md:py-24',
         isComfyrobe ? 'bg-jungle' : 'bg-night'

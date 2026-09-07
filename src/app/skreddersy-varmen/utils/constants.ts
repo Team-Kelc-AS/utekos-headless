@@ -1,44 +1,24 @@
 // Path: src/app/skreddersy-varmen/utils/constants.ts (eller hvor du har denne)
+import { techDownSizeCards } from '@/app/handlehjelp/storrelsesguide/utils/techDownSizeCards'
 
 export const SIZE_GUIDANCE: Record<
   string,
   { height: string; tips: string[] }
 > = {
-  'Liten': {
-    height: 'Opptil 170 cm',
-    tips: [
-      'Er du lavere enn 165 cm får du en romslig og lun følelse.',
-      'Er du litt høyere får du en nettere silhuett uten overflødig volum.'
-    ]
-  },
-  'Middels': {
-    height: '165 – 175 cm',
-    tips: [
-      'Er du lavere enn 170 cm får du en romslig passform.',
-      'Ligger du i øvre sjiktet (mot 175 cm) får du en mer kroppsnær passform.'
-    ]
-  },
-  'Stor': {
-    height: '175 – 185 cm',
-    tips: [
-      'Eller for deg som er lavere og ønsker romslighet.'
-    ]
-  },
-  'Større': {
-    height: '185 cm og høyere',
-    tips: [
-      'Passer best for deg over 185 cm – ekstra lengde i kroppen og ermene.',
-      'Også et godt valg for deg som er lavere, men ønsker maksimal romslighet og lengde.'
-    ]
-  },
-  'Medium': {
+  ...Object.fromEntries(
+    techDownSizeCards.map(card => [
+      card.size,
+      { height: card.heightGuide, tips: [...card.fitGuidance] }
+    ])
+  ),
+  Medium: {
     height: 'Opptil ca. 175 cm',
     tips: [
       'Et godt valg for deg som ønsker lett varme med normal romslighet.',
       'Velg Large hvis du ønsker mer plass til ekstra lag under.'
     ]
   },
-  'Large': {
+  Large: {
     height: 'Fra ca. 175 cm og oppover',
     tips: [
       'Gir ekstra romslighet og mer dekning.',

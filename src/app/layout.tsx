@@ -16,6 +16,7 @@ import { OnlineStoreJsonLd } from './OnlineStoreJsonLd'
 import { CartProviderLoader } from '@/components/providers/CartProviderLoader'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
+import { JourneyObserver } from '@/components/analytics/JourneyObserver'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
 import Script from 'next/script'
 import type { Metadata } from 'next'
@@ -169,6 +170,9 @@ export default function RootLayout({
             environment={getTrackingEnvironment()}
           />
           <ScrollDepthObserver />
+          <JourneyObserver
+            environment={getTrackingEnvironment()}
+          />
         </Suspense>
         <WebVitals />
 
