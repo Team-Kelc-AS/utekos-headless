@@ -1,0 +1,17 @@
+{
+  "framework": "nextjs",
+  "frameworkOptions": {
+    "enableShims": true,
+    "customAliases": {
+      "@": "./src"
+    }
+  },
+  "components": {
+    "SizeGrid": "./src/app/handlehjelp/storrelsesguide/components/mdx/SizeGrid.tsx",
+    "FeatureGrid": "./src/app/handlehjelp/storrelsesguide/components/mdx/FeatureGrid.tsx",
+    "MeasurementTable": "./src/app/handlehjelp/storrelsesguide/components/MeasurementTable.tsx",
+    "SizeGuideFaq": "./src/app/handlehjelp/storrelsesguide/components/SizeGuideFaq.tsx",
+    "SizeGuideCallout": "./src/components/size-guide/SizeGuideCallout.tsx"
+  },
+  "enableScripts": true
+}

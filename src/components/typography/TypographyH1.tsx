@@ -29,17 +29,19 @@ export function TypographyH1({
 export function H1({
   Text,
   ID,
+  id,
   children,
   className
 }: {
   Text?: string
-  ID: string
+  ID?: string
+  id?: string
   children?: ReactNode
   className?: string
 }) {
   return (
     <h1
-      id={ID}
+      id={ID ?? id}
       className={cn(
         'scroll-m-20 text-left font-sans text-5xl font-extrabold tracking-tight text-balance md:text-6xl lg:text-7xl xl:text-8xl',
         className ?? ''

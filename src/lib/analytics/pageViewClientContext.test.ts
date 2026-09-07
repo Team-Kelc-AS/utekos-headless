@@ -6,6 +6,16 @@ import {
   getConsentSnapshot
 } from './pageViewClientContext'
 
+test('a malformed unrelated cookie cannot prevent consented identifier extraction', () => {
+  assert.deepEqual(
+    extractBrowserIds(
+      'broken=%E0%A4%A; _fbp=fb.1.123',
+      getConsentSnapshot({ marketing: true })
+    ),
+    { fbp: 'fb.1.123' }
+  )
+})
+
 test('maps missing Cookiebot state to conservative denied consent', () => {
   assert.deepEqual(getConsentSnapshot(undefined), {
     analytics: 'denied',

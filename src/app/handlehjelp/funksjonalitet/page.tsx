@@ -21,7 +21,7 @@ export default async function FunctionalityPage() {
       <FunctionalityPageVideoSection />
 
       <div className='container mx-auto mt-24 px-4 text-center'>
-        <p className='text-lg text-foreground/85'>
+        <p className='text-lg text-foreground/90'>
           Gjelder modellene TechDown, Dun og Mikrofiber.
         </p>
       </div>

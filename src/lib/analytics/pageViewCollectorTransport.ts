@@ -14,6 +14,8 @@ import {
 import type { ProvisionalPageViewCaptureState } from './provisionalPageViewCapture'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
+import { runConsentStep } from './runConsentStep'
+import { reportConsentDiagnostic } from '@/lib/observability/client/reportConsentDiagnostic'
 
 export type CookiebotState = {
   consent?: CookiebotConsent
@@ -253,12 +255,30 @@ export function createPageViewCollectorTransport(
         const prepared = prepareCanonicalPageViewForCollector(
           event,
           cookiebot as CookiebotState,
-          dependencies.getCookieHeader()
+          runConsentStep(dependencies.getCookieHeader) ?? ''
         )
         const journeyEnriched =
-          enrichCanonicalBrowserJourneyContext(prepared)
-        const enriched =
-          await dependencies.enrich(journeyEnriched)
+          runConsentStep(() =>
+            enrichCanonicalBrowserJourneyContext(prepared)
+          ) ?? prepared
+        let enriched = journeyEnriched
+        try {
+          enriched = await dependencies.enrich(journeyEnriched)
+        } catch {
+          reportConsentDiagnostic('optional_context_failed')
+        }
+        const latestCookiebot = dependencies.getCookiebot()
+        const latestConsent = getConsentSnapshot(
+          latestCookiebot?.consent
+        )
+        if (
+          !hasCookiebotDecision(latestCookiebot) ||
+          latestConsent.analytics !== consent.analytics ||
+          latestConsent.marketing !== consent.marketing ||
+          latestConsent.preferences !== consent.preferences
+        )
+          return false
+        enriched = canonicalPageViewSchema.parse(enriched)
 
         if (
           dependencies.observeDispatch &&
@@ -277,6 +297,7 @@ export function createPageViewCollectorTransport(
         }
 
         await dependencies.send(enriched)
+        return true
       })
     )
 
@@ -287,15 +308,23 @@ export function createPageViewCollectorTransport(
 
       inFlightEventIds.delete(event.event_id)
 
-      if (result.status === 'fulfilled') {
+      if (result.status === 'fulfilled' && result.value) {
         completedEventIds.add(event.event_id)
         pendingEvents.delete(event.event_id)
       }
     }
 
-    return results.some(result => result.status === 'rejected') ?
+    return (
+      results.some(result => result.status === 'rejected') ?
         'failed'
-      : 'sent'
+      : (
+        results.some(
+          result => result.status === 'fulfilled' && result.value
+        )
+      ) ?
+        'sent'
+      : 'captured'
+    )
   }
 
   async function queue(

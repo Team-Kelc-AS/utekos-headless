@@ -1,6 +1,14 @@
+import type { ConsentDiagnosticCode } from './ConsentDiagnosticCode'
+
 type ClientLogContext = { pathname: string }
 
 export type LogPayload =
+  | {
+      event: 'consent_diagnostic'
+      level: 'info'
+      data: { code: ConsentDiagnosticCode }
+      context: ClientLogContext
+    }
   | {
       event: 'client_error'
       level: 'error'

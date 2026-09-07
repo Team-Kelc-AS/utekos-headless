@@ -31,6 +31,8 @@ import {
 } from '@/lib/analytics/pageViewEvent'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
 import { subscribeToCookiebotPageViewUpdates } from '@/lib/analytics/subscribeToCookiebotPageViewUpdates'
+import { runConsentStep } from '@/lib/analytics/runConsentStep'
+import { reportConsentDiagnostic } from '@/lib/observability/client/reportConsentDiagnostic'
 
 type PageViewObserverProps = { environment: TrackingEnvironment }
 
@@ -51,10 +53,12 @@ export function PageViewObserver({
   } | null>(null)
 
   useEffect(() => {
+    let disposed = false
     const landingPageUrl = window.location.href
     const landingDocumentReferrer = document.referrer
-    const landingCorrelation =
+    const landingCorrelation = runConsentStep(() =>
       readBrowserLandingEdgeCorrelation(landingPageUrl)
+    )
     const landingPageView =
       landingCorrelation ?
         browserPageViewSession.ensure({
@@ -70,23 +74,50 @@ export function PageViewObserver({
       if (!hasCookiebotDecision(cookiebot)) return
 
       const consent = getConsentSnapshot(cookiebot?.consent)
+      reportConsentDiagnostic('decision_observed')
+
+      if (landingCorrelation && landingPageView) {
+        runConsentStep(() => {
+          void browserLandingConsentTransport
+            .observe({
+              consent,
+              correlation_token: landingCorrelation.token,
+              edge_request_id: landingCorrelation.edgeRequestId,
+              page_view_id: landingPageView.pageViewId
+            })
+            .then(result => {
+              if (result === 'sent')
+                reportConsentDiagnostic('observation_sent')
+              if (result === 'failed')
+                reportConsentDiagnostic('observation_failed')
+            })
+            .catch(() =>
+              reportConsentDiagnostic('observation_failed')
+            )
+        }, 'observation_failed')
+      }
 
       if (consent.marketing === 'granted') {
-        resolveCampaignAttribution(landingPageUrl)
-        const externalId =
+        runConsentStep(() =>
+          resolveCampaignAttribution(landingPageUrl)
+        )
+        const externalId = runConsentStep(() =>
           browserFirstPartyExternalIdStore.getOrCreate(consent)
+        )
         const pageView = currentPageView.current
 
         if (externalId) {
-          browserMicrosoftUetIdSyncEmitter.emit({
-            externalId,
-            ...(pageView ?
-              {
-                pageViewEventId: pageView.event.event_id,
-                pageViewId: pageView.event.page_view_id
-              }
-            : {})
-          })
+          runConsentStep(() =>
+            browserMicrosoftUetIdSyncEmitter.emit({
+              externalId,
+              ...(pageView ?
+                {
+                  pageViewEventId: pageView.event.event_id,
+                  pageViewId: pageView.event.page_view_id
+                }
+              : {})
+            })
+          )
         }
 
         if (
@@ -100,60 +131,67 @@ export function PageViewObserver({
           pageView.marketingReleaseScheduled = true
 
           window.setTimeout(() => {
+            pageView.marketingReleaseScheduled = false
             const activePageView = currentPageView.current
+            const latestCookiebot = getCookiebotState()
+            const latestConsent = getConsentSnapshot(
+              latestCookiebot?.consent
+            )
 
-            if (!activePageView || activePageView !== pageView) {
+            if (
+              disposed ||
+              !activePageView ||
+              activePageView !== pageView ||
+              !hasCookiebotDecision(latestCookiebot) ||
+              latestConsent.marketing !== 'granted'
+            ) {
               return
             }
 
-            const browserId = extractBrowserIds(
-              document.cookie,
-              consent
+            const cookieHeader =
+              runConsentStep(() => document.cookie) ?? ''
+            const browserId = runConsentStep(() =>
+              extractBrowserIds(cookieHeader, latestConsent)
             )
-            const clickId = extractClickIds(
-              pageView.event.page_url,
-              document.cookie,
-              true
+            const clickId = runConsentStep(() =>
+              extractClickIds(
+                pageView.event.page_url,
+                cookieHeader,
+                true
+              )
             )
             const releasedEvent =
               releaseCanonicalPageViewForConsent({
                 event: pageView.event,
-                consent,
+                consent: latestConsent,
                 ...(browserId ? { browserId } : {}),
                 ...(clickId ? { clickId } : {}),
                 ...(externalId ? { externalId } : {})
               })
 
-            pageView.event = releasedEvent
-            emitCanonicalPageView(releasedEvent)
+            runConsentStep(() => {
+              emitCanonicalPageView(releasedEvent)
+              pageView.event = releasedEvent
+            }, 'consent_processing_failed')
           }, 0)
         }
       }
-
-      if (!landingCorrelation || !landingPageView) return
-
-      void browserLandingConsentTransport
-        .observe({
-          consent,
-          correlation_token: landingCorrelation.token,
-          edge_request_id: landingCorrelation.edgeRequestId,
-          page_view_id: landingPageView.pageViewId
-        })
-        .catch(() => undefined)
     }
 
     const unsubscribe = subscribeToCookiebotPageViewUpdates({
       eventTarget: window,
+      documentTarget: document,
+      isVisible: () => document.visibilityState === 'visible',
       flush: () => browserPageViewCollectorTransport.flush(),
       observeConsent
     })
 
-    observeConsent()
-    void browserPageViewCollectorTransport
-      .flush()
-      .catch(() => undefined)
+    runConsentStep(observeConsent, 'consent_processing_failed')
 
-    return unsubscribe
+    return () => {
+      disposed = true
+      unsubscribe()
+    }
   }, [])
 
   useEffect(() => {
@@ -174,31 +212,45 @@ export function PageViewObserver({
       return
     }
 
+    const cookiebot = getCookiebotState()
     const consent = getConsentSnapshot(
-      getCookiebotState()?.consent
+      hasCookiebotDecision(cookiebot) ?
+        cookiebot?.consent
+      : undefined
     )
-    const browserId = extractBrowserIds(document.cookie, consent)
-    const clickId = extractClickIds(
-      navigation.pageUrl,
-      document.cookie,
-      consent.marketing === 'granted'
+    const cookieHeader =
+      runConsentStep(() => document.cookie) ?? ''
+    const browserId = runConsentStep(() =>
+      extractBrowserIds(cookieHeader, consent)
     )
-    const externalId =
+    const clickId = runConsentStep(() =>
+      extractClickIds(
+        navigation.pageUrl,
+        cookieHeader,
+        consent.marketing === 'granted'
+      )
+    )
+    const externalId = runConsentStep(() =>
       browserFirstPartyExternalIdStore.getOrCreate(consent)
+    )
     if (consent.marketing === 'granted') {
-      resolveCampaignAttribution(navigation.pageUrl)
+      runConsentStep(() =>
+        resolveCampaignAttribution(navigation.pageUrl)
+      )
     }
     const searchParams = new URL(navigation.pageUrl).searchParams
     const impressionId =
       searchParams.get('impression_id') ??
       searchParams.get('impressionId') ??
       undefined
-    const landingCorrelation = readBrowserLandingEdgeCorrelation(
-      navigation.pageUrl
+    const landingCorrelation = runConsentStep(() =>
+      readBrowserLandingEdgeCorrelation(navigation.pageUrl)
     )
     const edgeRequestId =
       landingCorrelation?.edgeRequestId ??
-      readBrowserLandingEdgeRequestId(navigation.pageUrl)
+      runConsentStep(() =>
+        readBrowserLandingEdgeRequestId(navigation.pageUrl)
+      )
 
     const event = createCanonicalPageView({
       environment,
@@ -233,19 +285,30 @@ export function PageViewObserver({
       marketingReleaseScheduled: false
     }
 
-    emitCanonicalPageView(event)
+    runConsentStep(
+      () => emitCanonicalPageView(event),
+      'consent_processing_failed'
+    )
 
     if (externalId) {
-      browserMicrosoftUetIdSyncEmitter.emit({
-        externalId,
-        pageViewEventId: event.event_id,
-        pageViewId: event.page_view_id
-      })
+      runConsentStep(() =>
+        browserMicrosoftUetIdSyncEmitter.emit({
+          externalId,
+          pageViewEventId: event.event_id,
+          pageViewId: event.page_view_id
+        })
+      )
     }
 
     void browserPageViewCollectorTransport
       .queue(event, landingCorrelation)
-      .catch(() => undefined)
+      .then(result => {
+        if (result === 'failed')
+          reportConsentDiagnostic('collector_failed')
+        if (result === 'sent')
+          reportConsentDiagnostic('collector_sent')
+      })
+      .catch(() => reportConsentDiagnostic('collector_failed'))
   }, [environment, pathname, search])
 
   return null

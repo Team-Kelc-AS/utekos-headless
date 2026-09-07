@@ -6,6 +6,32 @@ import {
   toAppLogInput
 } from './clientLogPayloadSchema'
 
+test('consent diagnostics accept only fixed codes and no identifiers or arbitrary data', () => {
+  const payload = {
+    event: 'consent_diagnostic',
+    level: 'info',
+    data: { code: 'awaiting_decision' },
+    context: { pathname: '/skreddersy-varmen?fbclid=private' }
+  }
+  const parsed = clientLogPayloadSchema.parse(payload)
+  assert.deepEqual(toAppLogInput(parsed), {
+    event: 'consent.diagnostic',
+    level: 'INFO',
+    data: { code: 'awaiting_decision' },
+    context: { route: '/skreddersy-varmen' }
+  })
+  for (const data of [
+    { code: 'customer@example.no' },
+    { code: 'decision_observed', event_id: 'private' },
+    { code: 'decision_observed', message: 'private' }
+  ])
+    assert.equal(
+      clientLogPayloadSchema.safeParse({ ...payload, data })
+        .success,
+      false
+    )
+})
+
 test('client log contract rejects email-like messages, stacks and full URLs', () => {
   const emailMessage = clientLogPayloadSchema.safeParse({
     event: 'client_error',
@@ -14,9 +40,7 @@ test('client log contract rejects email-like messages, stacks and full URLs', ()
       source: 'window_error',
       message: 'customer@example.no'
     },
-    context: {
-      pathname: '/konto'
-    }
+    context: { pathname: '/konto' }
   })
   assert.equal(emailMessage.success, false)
 
@@ -55,7 +79,7 @@ test('client log contract keeps only a redacted pathname and sanitized triage fi
 
   const appLog = toAppLogInput(parsed)
   assert.deepEqual(appLog.context, { route: '/ordre/:dynamic' })
-  assert.equal(parsed.event, 'client_error')
+  assert.ok(parsed.event === 'client_error')
   assert.equal(
     parsed.data.source === 'window_error' ?
       parsed.data.message
@@ -68,8 +92,14 @@ test('client log contract keeps only a redacted pathname and sanitized triage fi
     : undefined,
     '/_next/static/chunks/app.js'
   )
-  assert.equal(JSON.stringify(appLog).includes('customer@example.no'), false)
-  assert.equal(JSON.stringify(appLog).includes('dpl=secret'), false)
+  assert.equal(
+    JSON.stringify(appLog).includes('customer@example.no'),
+    false
+  )
+  assert.equal(
+    JSON.stringify(appLog).includes('dpl=secret'),
+    false
+  )
 })
 
 test('unhandled rejection contract keeps sanitized first-party triage', () => {
@@ -96,7 +126,10 @@ test('unhandled rejection contract keeps sanitized first-party triage', () => {
   assert.equal(
     clientLogPayloadSchema.safeParse({
       ...parsed,
-      data: { ...parsed.data, errorName: 'Customer customer@example.no' }
+      data: {
+        ...parsed.data,
+        errorName: 'Customer customer@example.no'
+      }
     }).success,
     false
   )
@@ -115,7 +148,9 @@ test('unhandled rejection contract keeps sanitized first-party triage', () => {
 
 test('operational pathname sanitizer removes query and risky segments', () => {
   assert.equal(
-    sanitizeOperationalPathname('/produkter/utekos-dun?gclid=secret'),
+    sanitizeOperationalPathname(
+      '/produkter/utekos-dun?gclid=secret'
+    ),
     '/produkter/utekos-dun'
   )
   assert.equal(

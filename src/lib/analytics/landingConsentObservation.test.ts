@@ -20,6 +20,22 @@ const observation: LandingConsentObservation = {
   }
 }
 
+test('a later reconciliation can recover after a failed burst without unlimited retries', async () => {
+  let attempts = 0
+  const transport = createLandingConsentTransport(
+    async () => {
+      attempts += 1
+      if (attempts <= 3) throw new Error('temporary outage')
+    },
+    { waitBeforeRetry: async () => {} }
+  )
+  assert.equal(await transport.observe(observation), 'failed')
+  assert.equal(attempts, 3)
+  assert.equal(await transport.observe(observation), 'sent')
+  assert.equal(await transport.observe(observation), 'skipped')
+  assert.equal(attempts, 4)
+})
+
 test('classifies resolved Cookiebot decisions without a pending guess', () => {
   assert.equal(
     classifyLandingConsentDecision(observation.consent),

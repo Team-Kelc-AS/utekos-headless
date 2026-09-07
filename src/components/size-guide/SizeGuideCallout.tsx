@@ -67,7 +67,7 @@ export function SizeGuideCallout({
         presentation.className
       )}
     >
-      <p className='mb-1.5 font-sans text-xs font-semibold tracking-wide text-primary uppercase'>
+      <p className='mb-1.5 font-sans text-xs font-semibold text-primary'>
         {presentation.label}
       </p>
       <div className='font-sans text-sm leading-relaxed text-foreground [&_p]:mt-0 [&_p]:max-w-none [&_strong]:font-semibold'>

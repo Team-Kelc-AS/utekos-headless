@@ -2,6 +2,7 @@ import { UtekosBreadcrumbBar } from '@/components/navigation/UtekosBreadcrumbBar
 import { SizeGuideJsonLd } from './components/SizeGuideJsonLd'
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
+import styles from './page.module.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://utekos.no'),
@@ -45,7 +46,7 @@ export default function SizeGuideLayout({
           { label: 'Størrelsesguide' }
         ]}
       />
-      {children}
+      <div className={`${styles.page} bg-night rounded-xl m-4 text-foreground`}>{children}</div>
     </>
   )
 }

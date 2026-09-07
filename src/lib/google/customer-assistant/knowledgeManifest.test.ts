@@ -208,9 +208,6 @@ test('size content uses the rendered Comfyrobe size labels', () => {
   )
 
   assert.ok(sizeGuide)
-  assert.match(
-    sizeGuide.content,
-    /Comfyrobe vises i Small, Medium og Large/u
-  )
-  assert.doesNotMatch(sizeGuide.content, /XS|M\/L|L\/XL/u)
+  assert.match(sizeGuide.content, /Comfyrobe.*XS, M\/L og XL/u)
+  assert.doesNotMatch(sizeGuide.content, /XS\/S|L\/XL/u)
 })

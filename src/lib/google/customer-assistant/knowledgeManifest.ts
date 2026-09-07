@@ -166,8 +166,7 @@ function buildKnowledgeDrafts(): AssistantKnowledgeDraft[] {
       lastReviewed: '2026-09-07',
       content: `# Størrelsesguide
 
-Bruk målene for det aktuelle produktet som veiledning, og sammenlign gjerne med et lignende plagg du har hjemme. Utekos Dun og Utekos Mikrofiber vises i Medium og Large, mens Utekos TechDown vises i Middels, Stor og Større. Comfyrobe vises i Small, Medium og Large og er laget med en romslig unisex-passform.
-
+Bruk målene for det aktuelle produktet som veiledning, og sammenlign gjerne med et lignende plagg du har hjemme. Utekos Dun og Utekos Mikrofiber vises i Medium og Large, mens Utekos TechDown vises i Middels, Stor og Større. Comfyrobe har en romslig passform og vises i XS, M/L og XL.
 ## Utekos TechDown
 ${techDownSizeSummary.join('\n\n')}
 

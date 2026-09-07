@@ -4,8 +4,7 @@ const IGNORED_ERROR_PATTERNS = [
   'webkit.messageHandlers',
   'Unsupported Summarizer API',
   'The requested language options are not supported',
-  'Blocked aria-hidden on an element because its descendant retained focus',
-  'CybotCookiebotDialog'
+  'Blocked aria-hidden on an element because its descendant retained focus'
 ]
 
 /** BotID / Kasada first-party proxy path: /{uuid}/{uuid}/… */
@@ -45,16 +44,6 @@ function isBotIdKasadaSource(
   )
 }
 
-function isCookiebotSource(
-  source?: string,
-  stack?: string
-): boolean {
-  return (
-    haystackIncludes(source, COOKIEBOT_URL_PATTERN) ||
-    haystackIncludes(stack, COOKIEBOT_URL_PATTERN)
-  )
-}
-
 export function isIgnorableClientError({
   message,
   source,
@@ -65,10 +54,6 @@ export function isIgnorableClientError({
   }
 
   if (isBotIdKasadaSource(source, stack)) {
-    return true
-  }
-
-  if (isCookiebotSource(source, stack)) {
     return true
   }
 

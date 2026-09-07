@@ -22,8 +22,13 @@ function parseCookies(
 
     const name = part.slice(0, separator).trim()
     const value = part.slice(separator + 1).trim()
-    if (name && value)
-      cookies.set(name, decodeURIComponent(value))
+    if (name && value) {
+      try {
+        cookies.set(name, decodeURIComponent(value))
+      } catch {
+        // Ignore this malformed cookie without discarding other identifiers.
+      }
+    }
   }
 
   return cookies

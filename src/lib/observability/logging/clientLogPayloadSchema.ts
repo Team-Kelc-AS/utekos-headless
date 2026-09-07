@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { sanitizeOperationalPathname } from './sanitizeOperationalPathname'
 import {
   clientErrorDataSchema,
+  consentDiagnosticDataSchema,
   type AppLogInput
 } from './appLogContract'
 
@@ -81,15 +82,31 @@ export const clientLogPayloadSchema = z.discriminatedUnion(
   [
     clientErrorSchema,
     unhandledRejectionSchema,
+    z.strictObject({
+      event: z.literal('consent_diagnostic'),
+      level: z.literal('info'),
+      data: consentDiagnosticDataSchema,
+      context: z.strictObject({ pathname: pathnameSchema })
+    }),
     clientHealthProbeSchema
   ]
 )
 
-export type ClientLogPayload = z.infer<typeof clientLogPayloadSchema>
+export type ClientLogPayload = z.infer<
+  typeof clientLogPayloadSchema
+>
 
 export function toAppLogInput(
   payload: ClientLogPayload
 ): AppLogInput {
+  if (payload.event === 'consent_diagnostic') {
+    return {
+      event: 'consent.diagnostic',
+      level: 'INFO',
+      data: payload.data,
+      context: { route: payload.context.pathname }
+    }
+  }
   if (payload.event === 'client_error') {
     return {
       event: 'client.error',

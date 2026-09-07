@@ -1,25 +1,21 @@
 .page {
   --guide-border: color-mix(
     in oklch,
-    var(--foreground) 20%,
+    var(--foreground) 80%,
     transparent
-  );
-  --guide-text: color-mix(
-    in oklch,
-    var(--foreground) 90%,
-    var(--background)
   );
   width: 100%;
   max-width: 80rem;
   margin-inline: auto;
   padding: 3rem 1rem 5rem;
   color: var(--foreground);
-  font-family: var(--font-utekos-text), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 1.125rem;
   line-height: 1.65;
 }
 
-.page :is(.hero, .section) :is(h1, h2, h3),
+.page :is(header, section, .hero, .section) :is(h1, h2, h3),
+.page #size-guide-cta > h2,
 .shopCta > h2 {
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
@@ -28,6 +24,7 @@
   scroll-margin-top: 8rem;
 }
 
+.page header h1,
 .hero h1 {
   max-width: 18ch;
   margin: 0 0 1.5rem;
@@ -35,7 +32,9 @@
   font-weight: 800;
   line-height: 1.05;
 }
+.page > article > section h2,
 .section h2,
+.page #size-guide-cta > h2,
 .shopCta > h2 {
   margin: 0 0 1.5rem;
   padding: 0;
@@ -43,6 +42,7 @@
   font-weight: 700;
   line-height: 1.12;
 }
+.page section h3,
 .section h3 {
   margin: 0 0 1rem;
   padding: 0;
@@ -50,10 +50,10 @@
   font-weight: 700;
   line-height: 1.25;
 }
-.page :where(.hero, .section) p {
+.page.page :is(header, section, .hero, .section) p {
   max-width: 65ch;
   margin: 0 0 1.5rem;
-  color: var(--guide-text);
+  color: var(--foreground);
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
@@ -84,25 +84,41 @@
 .page [id] {
   scroll-margin-top: 8rem;
 }
-.page h3 a[aria-hidden='true'] {
+.page :is(h1, h2, h3) a[aria-hidden='true'] {
   display: none;
 }
+.page header,
 .hero {
   margin-bottom: 5rem;
 }
+.page header > p:first-of-type,
+.hero > p:first-of-type,
 .page .eyebrow {
   margin-bottom: 1rem;
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 0.875rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
+.page header nav,
 .jumpNav {
+  margin-top: 2rem;
+}
+.page header nav ul,
+.jumpNav ul {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
+.page header nav li,
+.jumpNav li {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.page header nav a,
 .jumpNav a {
   display: inline-flex;
   align-items: center;
@@ -116,12 +132,15 @@
   font-size: 1rem;
   text-decoration: none;
 }
+.page header nav a:hover,
 .jumpNav a:hover {
-  background: var(--card);
+  background: var(--jungle);
 }
+.page > article > section:not(#faq, #size-guide-cta),
 .section {
   margin-bottom: 5rem;
 }
+.page > article > section:not(#faq, #size-guide-cta) + section:not(#faq, #size-guide-cta),
 .section + .section {
   padding-top: 4rem;
   border-top: 1px solid var(--guide-border);
@@ -143,19 +162,20 @@
   font-size: 1rem;
   margin-bottom: 0.75rem;
 }
-.measurementIntro {
+.page > article > section > h3,
+.section > h3 {
   margin-top: 3rem;
 }
-.measurementIntro ul {
+.page :where(section, .section, .sizeAdvice) ul {
   list-style: disc;
   padding-left: 1.4rem;
   margin: 1.5rem 0;
   max-width: 65ch;
 }
-.measurementIntro li {
+.page :where(section, .section, .sizeAdvice) li {
   padding-left: 0.25rem;
   margin-bottom: 0.75rem;
-  color: var(--guide-text);
+  color: var(--foreground);
 }
 .tableBlock {
   margin-block: 2rem 4rem;
@@ -165,7 +185,7 @@
   overflow-x: auto;
   border: 1px solid var(--guide-border);
   border-radius: 0.75rem;
-  background: var(--card);
+  background: var(--jungle);
 }
 .tableRegion table {
   width: 100%;
@@ -201,7 +221,7 @@
   z-index: 1;
   width: 40%;
   min-width: 11rem;
-  background: var(--card);
+  background: var(--jungle);
   text-align: left;
 }
 .tableRegion thead th {
@@ -223,19 +243,24 @@
   margin: 0.75rem 0 0;
   font-size: 0.875rem;
 }
+.page #faq,
 .faq {
   max-width: 56rem;
   margin-block: 4rem 2rem;
 }
+.page #faq h3,
 .faq h3 {
   margin-bottom: 1.5rem;
 }
+.page #faq details,
 .faq details {
   border-bottom: 1px solid var(--guide-border);
 }
+.page #faq details:first-of-type,
 .faq details:first-of-type {
   border-top: 1px solid var(--guide-border);
 }
+.page #faq summary,
 .faq summary {
   display: flex;
   align-items: center;
@@ -249,9 +274,11 @@
   font-size: 1.125rem;
   line-height: 1.5;
 }
+.page #faq summary::-webkit-details-marker,
 .faq summary::-webkit-details-marker {
   display: none;
 }
+.page #faq summary::after,
 .faq summary::after {
   content: '+';
   flex-shrink: 0;
@@ -260,12 +287,15 @@
   font-family: var(--font-sans), sans-serif;
   font-size: 1.5rem;
 }
+.page #faq details[open] summary::after,
 .faq details[open] summary::after {
   content: '−';
 }
+.page #faq details p,
 .faq details p {
   padding-right: 1rem;
 }
+.page aside,
 .exchangeNote {
   max-width: 56rem;
   padding: 1.5rem;
@@ -273,13 +303,16 @@
   border-radius: 0.75rem;
   background: var(--jungle);
 }
+.page aside h3,
 .exchangeNote h3 {
   font-size: 1.25rem;
 }
+.page aside p,
 .exchangeNote p {
   font-size: 1rem;
   margin-bottom: 1rem;
 }
+.page aside p:last-child,
 .exchangeNote p:last-child {
   margin-bottom: 0;
 }
@@ -291,7 +324,7 @@
   min-width: 0;
   border: 1px solid var(--guide-border);
   border-radius: 0.75rem;
-  background: var(--card);
+  background: var(--jungle);
   padding: 1.5rem;
 }
 .featureGrid h3 {
@@ -301,14 +334,16 @@
   margin-bottom: 0;
   font-size: 1rem;
 }
+.page #size-guide-cta,
 .shopCta {
   min-width: 0;
   margin-top: 3rem;
   padding: 1.5rem;
   border: 1px solid var(--guide-border);
   border-radius: 0.75rem;
-  background: var(--card);
+  background: var(--jungle);
 }
+.page #size-guide-cta h2,
 .shopCta h2 {
   margin-bottom: 2rem;
 }
@@ -324,6 +359,7 @@
   .twoColumns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .page #size-guide-cta,
   .shopCta {
     padding: 3rem;
   }

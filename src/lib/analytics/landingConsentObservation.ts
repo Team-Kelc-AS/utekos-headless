@@ -53,7 +53,7 @@ export function createLandingConsentTransport(
     ) => Promise<void>
   } = {}
 ) {
-  const maximumAttempts = options.maximumAttempts ?? 3
+  const maximumAttempts = options.maximumAttempts ?? 6
   if (
     !Number.isInteger(maximumAttempts) ||
     maximumAttempts < 1
@@ -102,9 +102,13 @@ export function createLandingConsentTransport(
         correlationQueues.get(correlationKey) ??
         Promise.resolve()
       const sendTask = predecessor.then(async () => {
+        let burstAttempts = 0
         while (
-          (attemptsByState.get(stateKey) ?? 0) < maximumAttempts
+          (attemptsByState.get(stateKey) ?? 0) <
+            maximumAttempts &&
+          burstAttempts < 3
         ) {
+          burstAttempts += 1
           const attemptNumber =
             (attemptsByState.get(stateKey) ?? 0) + 1
           attemptsByState.set(stateKey, attemptNumber)
@@ -114,7 +118,11 @@ export function createLandingConsentTransport(
             completedStates.add(stateKey)
             return 'sent' as const
           } catch {
-            if (attemptNumber >= maximumAttempts) break
+            if (
+              attemptNumber >= maximumAttempts ||
+              burstAttempts >= 3
+            )
+              break
             await waitBeforeRetry(attemptNumber)
           }
         }
@@ -151,7 +159,8 @@ export const browserLandingConsentTransport =
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         keepalive: true,
-        method: 'POST'
+        method: 'POST',
+        signal: AbortSignal.timeout(5_000)
       }
     )
 

@@ -13,7 +13,27 @@ import { getProductSizeGuideContent } from '@/lib/products/presentation/getProdu
 const source = (path: string) =>
   readFileSync(new URL(path, import.meta.url), 'utf8')
 
-test('size guide is a single content-first MDX article with eight native FAQs', () => {
+test('published size guide has a working policy link, no editorial notes and matching Comfyrobe labels', () => {
+  const page = source('./page.mdx')
+  assert.match(
+    page,
+    /\[Les hele returpolicyen her\]\(\/frakt-og-retur\)/
+  )
+  assert.doesNotMatch(
+    page,
+    /Hvorfor denne strukturen fungerer|Mindre kognitiv belastning|Størrelsestabel<|godbevegelsesfrihet/
+  )
+  const comfyrobe =
+    page
+      .split('<section id="comfyrobe"')[1]
+      ?.split('</section>')[0] ?? ''
+  for (const size of getProductSizeGuideContent('comfyrobe')
+    .columns)
+    assert.ok(comfyrobe.includes(`### Velg ${size} hvis...`))
+  assert.doesNotMatch(comfyrobe, /### Velg M hvis|XS\/S|L\/XL/)
+})
+
+test('size guide is a single content-first MDX article with eight imported FAQs', () => {
   assert.equal(
     existsSync(new URL('./page.mdx', import.meta.url)),
     true
@@ -25,29 +45,29 @@ test('size guide is a single content-first MDX article with eight native FAQs', 
   const page = source('./page.mdx')
   assert.equal(page.match(/<article\b/g)?.length, 1)
   assert.doesNotMatch(source('./layout.tsx'), /<article\b/)
-  assert.equal(page.match(/<details\b/g)?.length, 8)
-  assert.equal(page.match(/<summary\b/g)?.length, 8)
+  assert.match(
+    page,
+    /import \{ SizeGuideFaq \} from '\.\/components\/SizeGuideFaq'/
+  )
+  assert.match(page, /<SizeGuideFaq\s*\/>/)
+  assert.doesNotMatch(page, /<details\b|<summary\b/)
   assert.doesNotMatch(
     page,
     /use client|Accordion|EU M<|Middels · EU/
   )
+  const faq = source('./components/SizeGuideFaq.tsx')
+  assert.match(faq, /from '@\/components\/ui\/accordion'/)
+  assert.match(faq, /techDownFaq\.map/)
 })
 
 test('visible FAQ is word-for-word identical to the eight JSON-LD answers', () => {
-  const page = source('./page.mdx')
-  const visible = [
-    ...page.matchAll(
-      /<details>\s*<summary>(.*?)<\/summary>([\s\S]*?)<\/details>/g
-    )
-  ].map(([, question, answer]) => ({
-    question,
-    answer: answer
-      ?.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-      .replace(/\s+/g, ' ')
-      .trim()
-  }))
+  const faq = source('./components/SizeGuideFaq.tsx')
+  assert.match(
+    faq,
+    /<SizeGuideFaqAnswer answer=\{item\.answer\}/
+  )
+  assert.match(faq, /\{item\.question\}/)
   assert.equal(techDownFaq.length, 8)
-  assert.deepEqual(visible, techDownFaq)
   assert.match(
     source('./components/SizeGuideJsonLd.tsx'),
     /mainEntity': techDownFaq\.map/

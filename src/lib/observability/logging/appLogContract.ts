@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { consentDiagnosticCodes } from 'types/observability/log/ConsentDiagnosticCode'
 import { requiredMetaDatasetQualityEvents } from '@/lib/analytics/metaDatasetQualityRequiredEvents'
 import { sanitizeOperationalPathname } from './sanitizeOperationalPathname'
 
@@ -141,6 +142,10 @@ export const metaDatasetQualityIncompleteDataSchema =
     snapshotDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
   })
 
+export const consentDiagnosticDataSchema = z.strictObject({
+  code: z.enum(consentDiagnosticCodes)
+})
+
 export const clientErrorDataSchema = z.strictObject({
   source: z.literal('window_error'),
   message: z
@@ -182,6 +187,14 @@ const unhandledRejectionMessageSchema = z
   })
 
 const eventSchemas = [
+  z.strictObject({
+    event: z.literal('consent.diagnostic'),
+    level: z.literal('INFO'),
+    data: consentDiagnosticDataSchema,
+    context: z.strictObject({
+      route: z.string().min(1).max(160)
+    })
+  }),
   z.strictObject({
     event: z.literal('meta_dataset_quality.incomplete'),
     level: z.literal('WARN'),

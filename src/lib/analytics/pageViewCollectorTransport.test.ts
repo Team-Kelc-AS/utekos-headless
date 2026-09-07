@@ -17,6 +17,63 @@ const deniedConsent = {
   version: '1'
 }
 
+test('cookie access and optional enrichment failure do not discard a consented page view', async () => {
+  const sent: CanonicalPageView[] = []
+  const transport = createPageViewCollectorTransport({
+    capture: async () => {},
+    enrich: async () => {
+      throw new DOMException('Storage blocked', 'SecurityError')
+    },
+    getCookiebot: () => ({
+      hasResponse: true,
+      consent: { marketing: true }
+    }),
+    getCookieHeader: () => {
+      throw new DOMException('Storage blocked', 'SecurityError')
+    },
+    send: async event => {
+      sent.push(event)
+    }
+  })
+  const event = pageView()
+  assert.equal(await transport.queue(event), 'sent')
+  assert.equal(sent[0]?.event_id, event.event_id)
+  assert.equal(sent[0]?.browser_id, undefined)
+  assert.equal(sent[0]?.consent.marketing, 'granted')
+})
+
+test('withdrawal during asynchronous enrichment prevents collector dispatch', async () => {
+  let cookiebot: CookiebotState = {
+    hasResponse: true,
+    consent: { marketing: true }
+  }
+  let sends = 0
+  let receipts = 0
+  const transport = createPageViewCollectorTransport({
+    capture: async () => {},
+    enrich: async event => {
+      cookiebot = {
+        hasResponse: true,
+        consent: { marketing: false }
+      }
+      return event
+    },
+    getCookiebot: () => cookiebot,
+    getCookieHeader: () => '',
+    observeDispatch: async () => {
+      receipts += 1
+    },
+    send: async () => {
+      sends += 1
+    }
+  })
+  await transport.queue(pageView())
+  assert.equal(sends, 0)
+  assert.equal(receipts, 0)
+  await transport.flush()
+  assert.equal(sends, 0)
+})
+
 function pageView(
   eventId = '11111111-1111-4111-8111-111111111111',
   pageViewId = '22222222-2222-4222-8222-222222222222',

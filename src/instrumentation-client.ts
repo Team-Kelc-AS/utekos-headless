@@ -1,6 +1,4 @@
-import {
-  isIgnorableClientError
-} from '@/lib/observability/client/isIgnorableClientError'
+import { isIgnorableClientError } from '@/lib/observability/client/isIgnorableClientError'
 import {
   sanitizeClientErrorFilename,
   sanitizeClientErrorMessage
@@ -9,6 +7,8 @@ import { describeUnhandledRejection } from '@/lib/observability/client/describeU
 import { createInjectedBrowserErrorFilter } from '@/lib/observability/client/createInjectedBrowserErrorFilter'
 import { sendClientLog } from '@/lib/observability/client/sendClientLog'
 import type { LogPayload } from 'types/observability/log/LogPayload'
+import { reportConsentDiagnostic } from '@/lib/observability/client/reportConsentDiagnostic'
+import { startConsentDiagnostics } from '@/lib/observability/client/startConsentDiagnostics'
 
 /**
  * Client instrumentation — executes after the HTML document is loaded but
@@ -27,6 +27,38 @@ import type { LogPayload } from 'types/observability/log/LogPayload'
  */
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+
+try {
+  startConsentDiagnostics({
+    target: window,
+    getState: () =>
+      (
+        window as Window & {
+          Cookiebot?: {
+            hasResponse?: boolean
+            consented?: boolean
+            declined?: boolean
+          }
+        }
+      ).Cookiebot,
+    isDialogVisible: () => {
+      const dialog = document.getElementById(
+        'CybotCookiebotDialog'
+      )
+      if (!dialog) return false
+      const style = window.getComputedStyle(dialog)
+      return (
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        style.opacity !== '0' &&
+        dialog.getClientRects().length > 0
+      )
+    },
+    report: reportConsentDiagnostic
+  })
+} catch {
+  // Early consent diagnostics must not block React startup.
+}
 const isInjectedBeaconNoise = createInjectedBrowserErrorFilter()
 
 const MAX_REPORTED_ERRORS = 10
