@@ -5,13 +5,33 @@ import { fetchProductCardsWithRetry } from '@/api/lib/products/fetchProductCards
 import { cacheLife, cacheTag } from 'next/cache'
 import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 
+export type CachedProductCardsResult =
+  | { status: 'success'; products: ProductCardModel[] }
+  | {
+      status: 'unavailable'
+      error: { name: string; message: string }
+    }
+
 export async function getCachedProductCards(input: {
   first: number
-}): Promise<ProductCardModel[]> {
+}): Promise<CachedProductCardsResult> {
   'use cache: remote'
 
   cacheTag(TAGS.products)
   cacheLife('collections')
 
-  return fetchProductCardsWithRetry({ first: input.first })
+  try {
+    const products = await fetchProductCardsWithRetry({
+      first: input.first
+    })
+    return { status: 'success', products }
+  } catch (error) {
+    return {
+      status: 'unavailable',
+      error:
+        error instanceof Error
+          ? { name: error.name, message: error.message }
+          : { name: 'Error', message: String(error) }
+    }
+  }
 }
