@@ -19,6 +19,13 @@ moduleWithLoad._load = (request, parent, isMain) => {
     return {}
   }
 
+  if (
+    request === '@/api/lib/products/getCachedProductCards' ||
+    request === '@/api/lib/products/fetchProductCardsWithRetry'
+  ) {
+    return {}
+  }
+
   return originalLoad(request, parent, isMain)
 }
 
