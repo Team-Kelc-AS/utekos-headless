@@ -368,7 +368,6 @@ test('enforces a wall-clock deadline around hanging response bodies', async () =
         error.name === 'TimeoutError'
     )
 
-    await new Promise(resolve => setTimeout(resolve, 0))
     assert.equal(cancelled, true)
     assert.ok(
       performance.now() - startedAt < 400,

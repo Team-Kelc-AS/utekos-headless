@@ -29,13 +29,11 @@ export function createShopifyRequestDeadline(input: {
     didTimeout: boolean
     disposed: boolean
     reason: unknown
-    transportAbortScheduled: boolean
   } = {
     cancelled: false,
     didTimeout: false,
     disposed: false,
-    reason: undefined,
-    transportAbortScheduled: false
+    reason: undefined
   }
 
   let rejectCancellation: (reason: unknown) => void = () => {}
@@ -47,25 +45,6 @@ export function createShopifyRequestDeadline(input: {
   // rejection handled while no request phase is awaiting it.
   void cancellation.catch(() => undefined)
 
-  const scheduleTransportAbort = (reason: unknown) => {
-    if (
-      state.transportAbortScheduled ||
-      controller.signal.aborted
-    ) {
-      return
-    }
-
-    state.transportAbortScheduled = true
-    // Keep transport cleanup in the current event-loop turn. A serverless
-    // runtime may freeze after the rejected request promise settles, leaving
-    // a zero-delay timer (and its underlying fetch) pending until thaw.
-    queueMicrotask(() => {
-      if (!controller.signal.aborted) {
-        controller.abort(reason)
-      }
-    })
-  }
-
   const cancel = (reason: unknown, didTimeout: boolean) => {
     if (state.cancelled) return
 
@@ -73,11 +52,9 @@ export function createShopifyRequestDeadline(input: {
     state.didTimeout = didTimeout
     state.reason = reason
 
-    // Settle the wall-clock deadline before transport cleanup. Abort
-    // listeners run synchronously and can otherwise delay the visible timeout
-    // while a stalled fetch or response body attempts to clean itself up.
+    // Settle the wall-clock deadline before abort listeners run.
     rejectCancellation(reason)
-    scheduleTransportAbort(reason)
+    controller.abort(reason)
   }
 
   const timeoutId = setTimeout(() => {

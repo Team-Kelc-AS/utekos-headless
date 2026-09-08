@@ -32,6 +32,21 @@ test('aborts the controller when the deadline fires', async () => {
   }
 })
 
+test('aborts the transport in the same stack as deadline cancellation', async () => {
+  const deadline = createShopifyRequestDeadline({ timeoutMs: 1_000 })
+  const pending = deadline.race(new Promise(() => {}))
+
+  try {
+    deadline.abort()
+    const abortedBeforeYield = deadline.signal.aborted
+
+    await assert.rejects(pending)
+    assert.equal(abortedBeforeYield, true)
+  } finally {
+    deadline.dispose()
+  }
+})
+
 test('marks the deadline before transport abort listeners run', async () => {
   const deadline = createShopifyRequestDeadline({ timeoutMs: 20 })
   let didTimeoutAtAbort = false
