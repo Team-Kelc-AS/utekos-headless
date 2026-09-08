@@ -9,12 +9,12 @@ import {
   type CanonicalRemoveFromCart,
   type CanonicalRemoveFromCartCustomData
 } from './removeFromCartEvent'
-import { browserPageViewSession } from './pageViewSession'
+import type { RemoveFromCartPageContext } from './removeFromCartPageContext'
 import { startRemoveFromCartCollectorTransport } from './removeFromCartCollectorTransport'
 
 export type ReportCanonicalRemoveFromCartInput = {
   customData: CanonicalRemoveFromCartCustomData
-  pageViewId?: string
+  pageContext: RemoveFromCartPageContext | undefined
 }
 
 export function reportCanonicalRemoveFromCart(
@@ -24,23 +24,25 @@ export function reportCanonicalRemoveFromCart(
     return () => {}
   }
 
-  try {
-    const clientContext = readBrowserReporterContext()
-
-    const pageView = browserPageViewSession.ensure({
-      pageUrl: clientContext.pageUrl,
-      ...(clientContext.documentReferrer ?
-        { documentReferrer: clientContext.documentReferrer }
-      : {})
+  if (!input.pageContext) {
+    console.error('[remove-from-cart] Canonical reporting skipped', {
+      reason: 'missing_action_page_context'
     })
+    return () => {}
+  }
+
+  try {
+    const pageView = input.pageContext
+    // Read current consent, but attribute the confirmed mutation to its action page.
+    const clientContext = readBrowserReporterContext(pageView.pageUrl)
 
     const event = createCanonicalRemoveFromCart({
       environment: clientContext.environment,
       eventId: globalThis.crypto.randomUUID(),
       eventTime: new Date().toISOString(),
       pageUrl: clientContext.pageUrl,
-      pageTitle: clientContext.pageTitle,
-      pageViewId: input.pageViewId ?? pageView.pageViewId,
+      pageTitle: pageView.pageTitle,
+      pageViewId: pageView.pageViewId,
       ...(pageView.referrerUrl ?
         { referrerUrl: pageView.referrerUrl }
       : {}),

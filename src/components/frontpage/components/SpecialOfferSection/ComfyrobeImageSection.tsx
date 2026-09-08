@@ -17,17 +17,13 @@ export function ComfyrobeImageSection({
     <div
       ref={ref}
       className={cn(
-        'will-animate-fade-in-scale relative flex min-h-80 min-w-0 items-center justify-center overflow-hidden border-b border-foreground/12 bg-deep-fjord pt-6 sm:min-h-120 sm:pt-8 lg:min-h-150 lg:border-r lg:border-b-0 lg:pt-0',
+        'will-animate-fade-in-scale relative flex min-w-0 items-center justify-center bg-deep-fjord px-6 pt-20 pb-6 sm:px-10 sm:pt-24 sm:pb-8 lg:px-12 lg:pt-28 lg:pb-16 xl:px-16',
         isInView && 'is-in-view'
       )}
     >
-      <div className='w-full bg-deep-fjord'>
+      <div className='w-full max-w-md sm:max-w-lg lg:max-w-none'>
         <ComfyrobeProductImage image={image} />
       </div>
-      <div
-        aria-hidden='true'
-        className='pointer-events-none absolute inset-0 bg-linear-to-t from-deep-fjord/50 via-transparent to-transparent'
-      />
     </div>
   )
 }

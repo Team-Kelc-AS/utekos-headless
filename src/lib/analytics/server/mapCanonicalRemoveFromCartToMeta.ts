@@ -5,10 +5,13 @@ import { mapCanonicalCommerceEventToMeta } from './mapCanonicalCommerceEventToMe
 export function mapCanonicalRemoveFromCartToMeta(
   event: CanonicalRemoveFromCart
 ): ServerEvent {
+  if (!event.page_url) {
+    throw new Error('Meta remove_from_cart: missing_page_url')
+  }
   return mapCanonicalCommerceEventToMeta(
     {
       ...event,
-      page_url: event.page_url ?? 'https://utekos.no/'
+      page_url: event.page_url
     },
     'RemoveFromCart'
   )

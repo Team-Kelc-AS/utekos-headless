@@ -43,8 +43,9 @@ type CookiebotWindow = Window & {
   Cookiebot?: { consent?: CookiebotConsent }
 }
 
-export function readBrowserReporterContext(): BrowserReporterContext {
-  const pageUrl = window.location.href
+export function readBrowserReporterContext(
+  pageUrl: string = window.location.href
+): BrowserReporterContext {
   const consent = getConsentSnapshot(
     (window as CookiebotWindow).Cookiebot?.consent
   )

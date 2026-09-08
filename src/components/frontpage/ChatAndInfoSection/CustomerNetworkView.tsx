@@ -131,7 +131,7 @@ function NetworkOrbitSvg({
                   />
                 </span>
 
-                <InlineText className='font-utekos-text-medium text-xs leading-tight tracking-normal text-foreground sm:text-sm'>
+                <InlineText className='font-utekos-text-medium text-sm leading-tight tracking-normal text-foreground sm:text-base'>
                   {node.data.text}
                 </InlineText>
               </div>

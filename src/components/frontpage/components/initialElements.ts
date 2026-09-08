@@ -17,10 +17,10 @@ const nodeHeight = 54
 const centerNodeSize = 112
 
 /** Compact orbit — works on mobile. */
-export const networkOrbitMobile = { offsetX: 228, offsetY: 198 } as const
+export const networkOrbitMobile = { offsetX: 244, offsetY: 214 } as const
 
 /** Wider orbit — iPad / laptop / desktop (more air from center). */
-export const networkOrbitDesktop = { offsetX: 254, offsetY: 232 } as const
+export const networkOrbitDesktop = { offsetX: 254, offsetY: 248 } as const
 
 const benefitDefs = [
   {

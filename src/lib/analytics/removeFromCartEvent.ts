@@ -55,8 +55,8 @@ type CreateCanonicalRemoveFromCartInput = {
   eventTime: string
   externalId?: string
   impressionId?: string
-  pageTitle?: string
-  pageUrl?: string
+  pageTitle: string
+  pageUrl: string
   pageViewId?: string
   referrerUrl?: string
 }
@@ -83,8 +83,8 @@ export function createCanonicalRemoveFromCart(
     event_time: input.eventTime,
     source: 'web',
     environment: input.environment,
-    page_url: input.pageUrl ?? 'https://utekos.no/',
-    page_title: input.pageTitle ?? 'Utekos',
+    page_url: input.pageUrl,
+    page_title: input.pageTitle,
     ...(input.pageViewId ? { page_view_id: input.pageViewId } : {}),
     ...(input.referrerUrl ? { referrer_url: input.referrerUrl } : {}),
     consent: input.consent,

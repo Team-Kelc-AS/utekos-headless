@@ -12,7 +12,7 @@ export async function FeaturedProductsSection() {
         'mx-auto w-full bg-primary text-foreground'
       )}
     >
-      <div className='relative mx-auto w-full px-(--product-rail) pt-10 pb-16 [--product-rail:1rem] sm:pt-14 sm:pb-20 sm:[--product-rail:1.5rem] md:pt-16 md:pb-24 md:[--product-rail:clamp(3rem,7.42vw,4.75rem)] lg:pt-24 lg:pb-32 xl:[--product-rail:6rem]'>
+      <div className='relative mx-auto w-full px-(--product-rail) pt-20 pb-[calc(--spacing(20)+--spacing(5))] [--product-rail:1rem] sm:pt-24 sm:pb-[calc(--spacing(24)+--spacing(5))] sm:[--product-rail:1.5rem] md:pt-28 md:pb-[calc(--spacing(28)+--spacing(5))] md:[--product-rail:clamp(3rem,7.42vw,4.75rem)] lg:pt-32 lg:pb-[calc(--spacing(32)+--spacing(5))] xl:[--product-rail:6rem]'>
         <H2
           ID='featured-products-heading'
           className='font-google-sans mb-8 pb-0 text-left text-4xl leading-[1.2] font-extrabold tracking-normal text-foreground md:max-w-[92%] md:text-5xl lg:text-6xl'

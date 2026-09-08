@@ -33,6 +33,7 @@ type ActiveProviderDispatchIntent = {
 }
 
 type ProviderSkipReason =
+  | 'missing_page_url'
   | 'insufficient_pinterest_user_identity'
   | 'missing_capi_token'
   | 'missing_client_id'
@@ -135,6 +136,20 @@ export function planCanonicalEventDispatch(
         )
       ) {
         return []
+      }
+
+      if (
+        provider === 'meta' &&
+        event.event_name === 'remove_from_cart' &&
+        !event.page_url
+      ) {
+        return [{
+          dispatch_mode: 'server_retry',
+          event_id: event.event_id,
+          provider,
+          skip_reason: 'missing_page_url',
+          status: 'skipped_unqualified'
+        }]
       }
 
       if (

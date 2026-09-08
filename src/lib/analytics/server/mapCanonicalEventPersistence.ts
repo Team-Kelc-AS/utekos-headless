@@ -36,6 +36,7 @@ export type ProviderDispatchInsert = {
   payload: CanonicalEventStoreInput['event']
   provider: CanonicalEventStoreInput['dispatches'][number]['provider']
   skip_reason?:
+    | 'missing_page_url'
     | 'google_event_outside_72h'
     | 'insufficient_pinterest_user_identity'
     | 'missing_capi_token'

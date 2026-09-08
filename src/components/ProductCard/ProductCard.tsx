@@ -241,7 +241,7 @@ export function ProductCard({
           </div>
         </CardContent>
 
-        <div className='relative z-10 mt-3 flex flex-col gap-2.5 bg-night px-3 pt-1 pb-0 md:gap-3 md:px-4'>
+        <div className='relative z-10 mt-3 flex flex-col gap-2.5 bg-night px-5 pt-1 pb-0 md:gap-3 md:px-6'>
           <div className='grid w-full grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2'>
             <Link
               href={productUrl}
@@ -359,9 +359,10 @@ export function ProductCard({
       </div>
       <div
         className={cn(
-          'mx-auto mt-auto flex w-full flex-col items-center gap-3 bg-jungle p-6 pt-4!',
-          compactMobile &&
-            'gap-2 bg-night p-3 max-md:pt-3! md:gap-3 md:p-4 md:pt-4! xl:bg-jungle xl:p-6 xl:pt-4!'
+          'mx-auto mt-auto flex w-full flex-col items-center',
+          compactMobile ?
+            'gap-2 bg-night px-5 pt-3 pb-5 md:gap-3 md:px-6 md:pt-4 md:pb-6 xl:bg-jungle xl:px-6 xl:pt-4 xl:pb-6'
+          : 'gap-3 bg-jungle px-6 pt-4 pb-6'
         )}
       >
         <ProductCardFooter

@@ -26,6 +26,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { reportCanonicalRemoveFromCart } from '@/lib/analytics/removeFromCartReporter'
+import { captureRemoveFromCartPageContext } from '@/lib/analytics/removeFromCartPageContext'
 import { mapShopifyRemoveFromCart } from '@/lib/analytics/shopifyRemoveFromCartCommerce'
 import { resolveSuccessfulCartRemovalQuantity } from '@/lib/analytics/resolveSuccessfulCartRemovalQuantity'
 import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
@@ -72,6 +73,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
   const localQuantity = quantityOverride ?? line.quantity
 
   const handleRemoveLine = async () => {
+    const pageContext = captureRemoveFromCartPageContext()
     if (updateTimerRef.current) {
       clearTimeout(updateTimerRef.current)
       updateTimerRef.current = null
@@ -145,6 +147,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
       if (resolvedCartId && product && removedQuantity > 0) {
         const eventTime = new Date().toISOString()
         reportCanonicalRemoveFromCart({
+          pageContext,
           customData: await mapShopifyRemoveFromCart({
             cartId: resolvedCartId,
             mutationTimestamp: eventTime,
@@ -184,6 +187,8 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
     setQuantityOverride(newQuantity)
 
     const previousQuantity = line.quantity
+    const pageContext = newQuantity < previousQuantity ?
+      captureRemoveFromCartPageContext() : undefined
 
     updateTimerRef.current = setTimeout(async () => {
       updateTimerRef.current = null
@@ -214,6 +219,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
           if (product) {
             const eventTime = new Date().toISOString()
             reportCanonicalRemoveFromCart({
+              pageContext,
               customData: await mapShopifyRemoveFromCart({
                 cartId: result.cart.id,
                 mutationTimestamp: eventTime,

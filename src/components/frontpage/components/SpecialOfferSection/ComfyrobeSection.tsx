@@ -6,16 +6,16 @@ import type { ShopifyMediaImage } from 'types/media'
 import { PageSection } from '@/components/layout/PageSection'
 import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 import { cn } from '@/lib/utils/className'
-import comfyrobeProduct1200x1200 from '@/assets/images/comfyrobe/Comfyrobe-Product-1200x1200.webp'
+import comfyrobeImage from '@/assets/images/comfyrobe/Comfy.jpg'
 
 const COMFYROBE_FALLBACK_IMAGE: ShopifyMediaImage = {
   id: 'comfyrobe-fallback',
   image: {
     id: 'comfyrobe-fallback',
-    url: comfyrobeProduct1200x1200,
+    url: comfyrobeImage,
     altText: 'Comfyrobe™ - Vanntett og vindtett robe',
-    width: 1200,
-    height: 1200
+    width: 1250,
+    height: 1800
   }
 }
 
@@ -41,7 +41,7 @@ export function ComfyrobeSection() {
         <div className='relative grid min-w-0 grid-cols-1 items-stretch lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]'>
           <ComfyrobeImageSection image={comfyrobeImage} />
 
-          <div className='flex min-w-0 items-center px-6 pt-9 pb-14 sm:px-10 sm:pt-12 sm:pb-16 lg:px-12 lg:py-14 xl:px-16'>
+          <div className='flex min-w-0 items-start px-6 pt-6 pb-14 sm:px-10 sm:pt-8 sm:pb-16 lg:px-12 lg:pt-28 lg:pb-16 xl:px-16'>
             <ComfyrobeContentColumn>
               <ComfyrobeStory
                 components={comfyrobeMdxComponents}

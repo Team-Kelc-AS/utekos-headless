@@ -17,7 +17,7 @@ export async function NodeSection() {
         frontpageSectionStackClassName,
         'text-foreground'
       )}
-      contentClassName='space-y-10 px-5 pt-10 pb-16 sm:space-y-8 sm:px-6 sm:pt-12 sm:pb-18 md:space-y-6 md:pt-14 md:pb-20 lg:px-8 lg:pt-16 lg:pb-24'
+      contentClassName='space-y-10 px-5 pt-10 pb-[calc(--spacing(20)+--spacing(5))] sm:space-y-8 sm:px-6 sm:pt-12 sm:pb-[calc(--spacing(24)+--spacing(5))] md:space-y-6 md:pt-14 md:pb-[calc(--spacing(28)+--spacing(5))] lg:px-8 lg:pt-16 lg:pb-[calc(--spacing(32)+--spacing(5))]'
     >
       <hgroup className='flex w-full flex-col gap-3 text-left text-foreground sm:gap-4 md:mx-auto md:max-w-4xl md:gap-3'>
         <H2

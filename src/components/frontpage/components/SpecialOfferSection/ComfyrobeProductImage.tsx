@@ -9,8 +9,8 @@ export function ComfyrobeProductImage({
 }: ComfyrobeProductImageProps) {
   return (
     <AspectRatio
-      ratio={1 / 1}
-      className='mx-auto w-full bg-deep-fjord lg:aspect-auto! lg:h-full'
+      ratio={image.image.width / image.image.height}
+      className='mx-auto w-full overflow-hidden rounded-2xl border border-foreground/12 bg-deep-fjord'
     >
       <Image
         src={image.image.url}
@@ -20,8 +20,8 @@ export function ComfyrobeProductImage({
         }
         height={image.image.height}
         width={image.image.width}
-        className='mx-auto block size-full object-cover object-center brightness-[0.92] saturate-[0.92] transition-transform duration-700 motion-safe:hover:scale-[1.025]'
-        sizes='(max-width: 1024px) 80vw, 40vw'
+        className='mx-auto block size-full object-contain object-center brightness-[0.92] saturate-[0.92] transition-transform duration-700 motion-safe:hover:scale-[1.025]'
+        sizes='(max-width: 1024px) 32rem, 40vw'
         quality={95}
         priority
       />
