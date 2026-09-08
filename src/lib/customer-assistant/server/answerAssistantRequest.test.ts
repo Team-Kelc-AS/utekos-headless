@@ -221,6 +221,32 @@ test('product help reads Shopify, applies matching, and emits product recommenda
   assert.equal(outcome.handoff, null)
 })
 
+test('forwards the request buyer IP to the Shopify catalog adapter', async () => {
+  const catalogCalls: unknown[][] = []
+  const fetchProducts = async (...args: unknown[]) => {
+    catalogCalls.push(args)
+    return [
+      createProduct({
+        handle: 'utekos-techdown',
+        title: 'Utekos TechDown'
+      })
+    ]
+  }
+
+  await answerAssistantRequest(
+    createRequest({ text: 'Jeg skal bruke den i båt og fukt.' }),
+    context,
+    createAdapters({
+      fetchProducts:
+        fetchProducts as AssistantAdapters['fetchProducts']
+    })
+  )
+
+  assert.deepEqual(catalogCalls[0]?.[1], {
+    buyerIp: '203.0.113.8'
+  })
+})
+
 test('stock help reports only available or unavailable without quantity claims', async () => {
   for (const [available, expected] of [
     [true, 'Utekos TechDown er tilgjengelig.'],

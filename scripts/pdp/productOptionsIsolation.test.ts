@@ -76,6 +76,21 @@ test(
       asyncPurchaseSource,
       /<ProductPurchaseIsland/
     )
+
+    const fetchProductOptionsSource =
+      await readSource(
+        'src/api/lib/products/fetchProductOptions.ts'
+      )
+
+    assert.match(
+      fetchProductOptionsSource,
+      /getStorefrontBuyerContext/
+    )
+
+    assert.match(
+      fetchProductOptionsSource,
+      /context:\s*await getStorefrontBuyerContext\(\)/
+    )
   }
 )
 
