@@ -47,6 +47,36 @@ test('aborts the transport in the same stack as deadline cancellation', async ()
   }
 })
 
+test('settles the deadline reason before aborting the transport', async () => {
+  const deadline = createShopifyRequestDeadline({ timeoutMs: 1_000 })
+  let rejectTransport: (reason: unknown) => void = () => {}
+  const transport = new Promise<never>((_, reject) => {
+    rejectTransport = reject
+  })
+  const pending = deadline.race(transport)
+
+  deadline.signal.addEventListener(
+    'abort',
+    () => {
+      rejectTransport(new Error('transport abort replaced timeout'))
+    },
+    { once: true }
+  )
+
+  try {
+    deadline.abort()
+
+    await assert.rejects(
+      pending,
+      (error: unknown) =>
+        error instanceof DOMException &&
+        error.name === 'TimeoutError'
+    )
+  } finally {
+    deadline.dispose()
+  }
+})
+
 test('marks the deadline before transport abort listeners run', async () => {
   const deadline = createShopifyRequestDeadline({ timeoutMs: 20 })
   let didTimeoutAtAbort = false
