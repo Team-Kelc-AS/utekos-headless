@@ -4,10 +4,9 @@ import { createRequire } from 'node:module'
 import test from 'node:test'
 import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 
-let catalogResult: ProductCardModel[] | Error = new DOMException(
-  'The operation was aborted due to timeout',
-  'TimeoutError'
-)
+let catalogError: unknown
+let catalogProducts: ProductCardModel[] = []
+let cacheLifeCalls: unknown[] = []
 
 const moduleWithLoad = Module as typeof Module & {
   _load: (
@@ -25,7 +24,9 @@ moduleWithLoad._load = (request, parent, isMain) => {
 
   if (request === 'next/cache') {
     return {
-      cacheLife: () => undefined,
+      cacheLife: (profile: unknown) => {
+        cacheLifeCalls.push(profile)
+      },
       cacheTag: () => undefined
     }
   }
@@ -37,10 +38,10 @@ moduleWithLoad._load = (request, parent, isMain) => {
   if (request.includes('fetchProductCardsWithRetry')) {
     return {
       fetchProductCardsWithRetry: async () => {
-        if (catalogResult instanceof Error) {
-          throw catalogResult
+        if (catalogError !== undefined) {
+          throw catalogError
         }
-        return catalogResult
+        return catalogProducts
       }
     }
   }
@@ -53,10 +54,11 @@ const { getCachedProductCards } =
   require('./getCachedProductCards.ts') as typeof import('./getCachedProductCards')
 
 test('returns an unavailable result instead of rejecting on Storefront timeout', async () => {
-  catalogResult = new DOMException(
+  catalogError = new DOMException(
     'The operation was aborted due to timeout',
     'TimeoutError'
   )
+  cacheLifeCalls = []
   const result = await getCachedProductCards({ first: 24 })
 
   assert.deepEqual(result, {
@@ -66,12 +68,38 @@ test('returns an unavailable result instead of rejecting on Storefront timeout',
       name: 'TimeoutError'
     }
   })
+  assert.deepEqual(cacheLifeCalls, [
+    'collections',
+    { stale: 0, revalidate: 0, expire: 1 }
+  ])
+})
+
+test('returns a serializable unavailable result for an uncoercible thrown value', async () => {
+  catalogError = Object.create(null)
+  cacheLifeCalls = []
+
+  const result = await getCachedProductCards({ first: 24 })
+
+  assert.deepEqual(result, {
+    status: 'unavailable',
+    error: {
+      message: 'Storefront product-card fetch failed',
+      name: 'UnknownError'
+    }
+  })
+  assert.deepEqual(cacheLifeCalls, [
+    'collections',
+    { stale: 0, revalidate: 0, expire: 1 }
+  ])
 })
 
 test('returns authoritative empty products as a successful result', async () => {
-  catalogResult = []
+  catalogError = undefined
+  catalogProducts = []
+  cacheLifeCalls = []
 
   const result = await getCachedProductCards({ first: 24 })
 
   assert.deepEqual(result, { status: 'success', products: [] })
+  assert.deepEqual(cacheLifeCalls, ['collections'])
 })
