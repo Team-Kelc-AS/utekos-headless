@@ -53,13 +53,6 @@ export function MomentsSection() {
           viewport={{ once: true, amount: 0.12 }}
           variants={introMotion}
         >
-          <motion.p
-            variants={introItemMotion}
-            className='mb-5 font-utekos-text-medium text-xs tracking-[0.18em] text-light-teal uppercase sm:mb-6'
-          >
-            Tre steder. Samme følelse.
-          </motion.p>
-
           <motion.div variants={introItemMotion}>
             <TypographyMomentsH3 />
           </motion.div>

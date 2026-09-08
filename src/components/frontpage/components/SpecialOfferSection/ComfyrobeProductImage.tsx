@@ -10,7 +10,7 @@ export function ComfyrobeProductImage({
   return (
     <AspectRatio
       ratio={1 / 1}
-      className='mx-auto w-full bg-transparent lg:aspect-auto! lg:h-full'
+      className='mx-auto w-full bg-deep-fjord lg:aspect-auto! lg:h-full'
     >
       <Image
         src={image.image.url}

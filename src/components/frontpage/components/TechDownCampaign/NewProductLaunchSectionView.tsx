@@ -24,15 +24,15 @@ export function NewProductLaunchSectionView({
     <PageSection
       as='article'
       id='featured-product'
-      background='default'
+      background='none'
       className={cn(
         frontpageSectionStackClassName,
-        'scroll-mt-32 text-foreground md:scroll-mt-36'
+        'bg-night scroll-mt-32 text-foreground md:scroll-mt-36'
       )}
       contentClassName='max-w-none px-0 py-0 sm:px-0 sm:py-0 md:py-0 lg:px-0 lg:py-0'
     >
       <div className='w-full'>
-        <div className='relative isolate overflow-hidden bg-jungle px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-10 lg:py-24'>
+        <div className='relative isolate overflow-hidden bg-night px-4 pt-10 pb-20 sm:px-6 sm:pt-14 sm:pb-24 md:px-8 md:pt-16 md:pb-28 lg:px-10 lg:pt-20 lg:pb-32'>
           <div className='pointer-events-none absolute inset-x-6 top-0 z-3 h-px' />
 
           <div className='relative z-10 container mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-3 sm:gap-12 sm:px-6 lg:px-10 xl:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] xl:gap-12'>

@@ -150,9 +150,7 @@ export function buildMetaCatalogOffer(input: {
   )
   const title = normalizeText(
     buildMetaCatalogTitle({
-      color,
-      displayName: publicVariant.presentation.displayName,
-      size
+      displayName: publicVariant.presentation.displayName
     }),
     65
   )
@@ -173,6 +171,7 @@ export function buildMetaCatalogOffer(input: {
 
   const media = getMetaCatalogMedia({
     color,
+    retailerId: id,
     productHandle: product.handle
   })
 

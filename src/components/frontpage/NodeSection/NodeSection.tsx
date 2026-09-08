@@ -17,26 +17,18 @@ export async function NodeSection() {
         frontpageSectionStackClassName,
         'text-foreground'
       )}
-      contentClassName='space-y-10 px-5 py-10 sm:space-y-8 sm:px-6 sm:py-8 md:space-y-6 md:py-10 lg:px-8 lg:py-12'
+      contentClassName='space-y-10 px-5 pt-10 pb-16 sm:space-y-8 sm:px-6 sm:pt-12 sm:pb-18 md:space-y-6 md:pt-14 md:pb-20 lg:px-8 lg:pt-16 lg:pb-24'
     >
-      <hgroup className='flex w-full flex-col gap-6 text-left text-foreground md:mx-auto md:max-w-4xl md:gap-2'>
+      <hgroup className='flex w-full flex-col gap-3 text-left text-foreground sm:gap-4 md:mx-auto md:max-w-4xl md:gap-3'>
         <H2
           ID='hello'
-          className='w-full pb-1 font-sans! text-[clamp(2.35rem,10.2vw,2.5rem)] leading-[1.15] font-extrabold tracking-tight md:pb-1 md:text-5xl md:leading-none lg:text-6xl'
+          className='w-full pb-0 font-sans! text-[clamp(1.25rem,5.6vw,2.5rem)] leading-tight font-extrabold tracking-tight whitespace-nowrap sm:text-4xl md:text-5xl md:leading-none lg:text-6xl'
         >
-          Drevet av ekte
-          <br className='md:hidden' /> opplevelser
+          Drevet av ekte opplevelser
         </H2>
-        <div className='flex w-full flex-col gap-4 md:gap-1'>
-          <P
-            Text='Våre beste produktutviklere er kundene våre.'
-            className='mt-0! max-w-none font-utekos-text-medium! text-xl leading-relaxed text-foreground/85 md:leading-normal'
-          />
-          <P
-            Text='Vi lytter, lærer og designer for at du kan skape flere og bedre minner utendørs.'
-            className='mt-0! max-w-[36ch] font-utekos-text-medium! text-base leading-relaxed text-foreground/70 md:max-w-none md:text-lg md:leading-normal md:text-foreground/80!'
-          />
-        </div>
+        <P className='mt-0! max-w-3xl font-utekos-text-medium! text-base leading-relaxed text-foreground/80 sm:text-lg'>
+          Våre beste produktutviklere er kundene våre. Vi lytter, lærer og designer for at du kan skape flere og bedre minner utendørs.
+        </P>
       </hgroup>
 
       <div

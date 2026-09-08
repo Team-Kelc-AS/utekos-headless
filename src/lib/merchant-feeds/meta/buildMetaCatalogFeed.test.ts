@@ -122,7 +122,7 @@ test('publishes only in-stock variants with complete Meta fields', () => {
   assert.equal(rows[0]?.sale_price, '1790.00 NOK')
   assert.equal(
     rows[0]?.title,
-    'Utekos TechDown™ Havdyp - Middels'
+    'Utekos TechDown™'
   )
   assert.equal(rows[0]?.gtin, '4006381333931')
   assert.equal(rows[0]?.google_product_category, '5598')
@@ -160,6 +160,12 @@ test('sends every in-stock TechDown variant to the campaign landing page with it
   }]))
 
   assert.equal(rows.length, 2)
+  assert.deepEqual(rows.map(row => row.title), [
+    'Utekos TechDown™',
+    'Utekos TechDown™'
+  ])
+  assert.deepEqual(rows.map(row => row.size), ['Middels', 'Stor'])
+  assert.deepEqual(rows.map(row => row.item_group_id), ['100', '100'])
   assert.deepEqual(rows.map(row => {
     const link = new URL(row.link ?? '')
     assert.equal(link.origin, 'https://utekos.no')

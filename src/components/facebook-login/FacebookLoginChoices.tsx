@@ -31,12 +31,12 @@ export function FacebookLoginChoices({
     <aside
       aria-label='Velg hvordan du vil fortsette'
       style={{ width: buttonWidth }}
-      className='fixed inset-x-4 top-1/2 z-120 mx-auto flex max-w-[calc(100vw-2rem)] -translate-y-1/2 flex-col gap-3'
+      className='fixed inset-x-4 top-[calc(100dvh*5/6)] z-120 mx-auto flex max-w-[calc(100vw-2rem)] -translate-y-1/2 flex-col gap-3 md:top-1/2'
     >
       <div
         ref={buttonContainerRef}
         aria-busy={showFacebookStatus}
-        className='relative h-10 w-full overflow-hidden rounded-sm'
+        className='relative h-10 w-full overflow-hidden rounded-[4px]'
       >
         {visualPreview ?
           <button
@@ -44,20 +44,16 @@ export function FacebookLoginChoices({
             disabled
             aria-describedby='facebook-login-development-preview'
             title='Visuell forhåndsvisning – Facebook-innlogging er ikke aktivert lokalt'
-            className='flex h-10 w-full cursor-not-allowed items-center justify-center rounded-sm bg-[#1877F2] px-4 font-sans text-base font-bold text-white'
+            className='flex h-10 w-full cursor-not-allowed items-center justify-center rounded-[4px] bg-[#1877F2] px-3 font-sans text-base font-bold leading-none text-white'
           >
-            <span className='inline-flex items-center gap-3'>
+            <span className='inline-flex items-center gap-2'>
               <svg
                 aria-hidden='true'
                 viewBox='0 0 24 24'
-                className='size-6 shrink-0'
+                className='size-6 shrink-0 fill-white'
                 focusable='false'
               >
-                <circle cx='12' cy='12' r='12' fill='white' />
-                <path
-                  fill='#1877F2'
-                  d='M13.6 22.9v-9.8h3.3l.5-3.8h-3.8V6.9c0-1.1.3-1.8 1.9-1.8h2V1.7c-.3 0-1.5-.1-2.9-.1-2.9 0-4.9 1.8-4.9 5v2.8H6.4v3.8h3.3v9.8c.7.2 1.3.2 2 .2.6 0 1.3-.1 1.9-.3Z'
-                />
+                <path d='M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.791 8.791 0 0 0-.653-.036c-1.018 0-1.525.535-1.525 1.64v2.331h3.32l-.532 3.667h-2.788v7.98H9.101z' />
               </svg>
               <span>Fortsett med Facebook</span>
             </span>
@@ -87,7 +83,7 @@ export function FacebookLoginChoices({
         {showFacebookStatus ?
           <div
             role='status'
-            className='absolute inset-0 flex h-10 w-full items-center justify-center rounded-sm bg-[#1877F2] font-sans text-base font-bold text-white'
+            className='absolute inset-0 flex h-10 w-full items-center justify-center rounded-[4px] bg-[#1877F2] font-sans text-base font-bold leading-none text-white'
           >
             {loginUnavailable ?
               'Facebook er ikke tilgjengelig'
@@ -119,7 +115,7 @@ export function FacebookLoginChoices({
         variant='utekos'
         onClick={onContinueWithoutFacebook}
         aria-label='Fortsett til Utekos uten Facebook-innlogging'
-        className='h-10 w-full gap-3 rounded-sm border border-white/15 bg-jungle px-4 font-sans text-base leading-none text-white hover:bg-jungle-tone hover:opacity-100'
+        className='h-10 w-full gap-3 rounded-sm border border-white/15 bg-night px-4 font-sans text-base leading-none text-white hover:bg-jungle-tone hover:opacity-100'
       >
         <span
           aria-hidden='true'

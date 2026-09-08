@@ -21,6 +21,7 @@
   --color-jungle: oklch(0.2383 0.042 184.99);
   --color-jungle-tone: oklch(0.3625 0.0414 181.18);
   --color-night: oklch(0.1959 0.0341 188);
+  --color-deep-fjord: oklch(0.1363 0.0206 188.93);
   --color-white-sand: oklch(0.8767 0.0086 56.3);
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
   --color-network-pill: oklch(0.8017 0.0772 182.11);
@@ -37,6 +38,7 @@
   --color-alternate-button: var(--alternate-button);
   --color-badge: var(--badge);
   --color-background: var(--background);
+  --color-deep-fjord: var(--deep-fjord);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --facebook-login-button:oklch(0.5891 0.2029 257.86);
@@ -142,6 +144,7 @@
   --magazine-header: oklch(0.2419 0.0418 184.31);
   --havdyp: oklch(0.2884 0.0366 279.42);
   --green-noir: oklch(0.1625 0.0279 207.93);
+  --deep-fjord:oklch(0.1363 0.0206 188.93);
   --overcast: oklch(0.7983 0.0257 91.66);
   --ancient-water: oklch(0.8733 0.0246 259.82);
   --fair-orchid: oklch(0.7864 0.0487 359.96);
@@ -199,6 +202,7 @@
   --sidebar-secondary: oklch(0.2991 0.0528 214.92);
   --muted: oklch(0.1956 0.0279 190.99);
   --muted-foreground: oklch(0.708 0 0);
+  --deep-fjord:oklch(0.1363 0.0206 188.93);
   --accent: oklch(0.3393 0.0496 187);
   --accent-foreground: oklch(0.985 0 0);
   --review-star: oklch(0.8302 0.1185 78.73);

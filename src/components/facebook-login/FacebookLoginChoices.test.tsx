@@ -28,6 +28,8 @@ test('renders one official Meta choice and one Utekos choice only', () => {
   assert.match(markup, /data-width="400"/u)
   assert.match(markup, /data-scope="public_profile,email"/u)
   assert.match(markup, /style="width:400px"/u)
+  assert.match(markup, /top-\[calc\(100dvh\*5\/6\)\]/u)
+  assert.match(markup, /md:top-1\/2/u)
   assert.equal((markup.match(/h-10/gu) ?? []).length, 3)
   assert.match(markup, /text-base/u)
   assert.match(markup, /class="flex size-6 shrink-0/u)
@@ -61,8 +63,11 @@ test('renders a non-interactive Facebook choice for local visual preview', () =>
     markup,
     /Bare visuell forhåndsvisning i lokal utvikling/u
   )
-  assert.match(markup, /inline-flex items-center gap-3/u)
+  assert.match(markup, /inline-flex items-center gap-2/u)
   assert.match(markup, /viewBox="0 0 24 24"/u)
+  assert.match(markup, /fill-white/u)
+  assert.match(markup, /bg-\[#1877F2\]/u)
+  assert.doesNotMatch(markup, /<circle/u)
   assert.equal((markup.match(/size-6/gu) ?? []).length, 2)
   assert.equal((markup.match(/<button/gu) ?? []).length, 2)
 })

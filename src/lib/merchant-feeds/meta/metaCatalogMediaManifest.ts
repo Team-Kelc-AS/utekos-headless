@@ -12,7 +12,7 @@ type MetaCatalogMediaManifest = {
 }
 
 export const META_CATALOG_MEDIA_MANIFEST_BY_HANDLE = {
-  comfyrobe: {
+  'comfyrobe': {
     includeDefaultImages: false,
     images: [
       {
@@ -33,6 +33,14 @@ export const META_CATALOG_MEDIA_MANIFEST_BY_HANDLE = {
       {
         url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-mikrofiber/original/mikrofiber-1440x1800-master-cb3e0d8a5f1f.png',
         preferences: ['catalog_primary']
+      },
+      {
+        url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-mikrofiber/4x5/mikrofiber-1440xx1800-1-404090d9f5c1.png',
+        preferences: ['instagram']
+      },
+      {
+        url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-mikrofiber/4x5/mikrofiber-1440xx1800-2-6d6a2656fff8.png',
+        preferences: ['instagram']
       }
     ],
     videos: []

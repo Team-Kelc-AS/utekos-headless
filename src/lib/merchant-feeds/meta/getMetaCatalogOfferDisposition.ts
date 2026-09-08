@@ -32,10 +32,6 @@ export function getMetaCatalogOfferDisposition(input: {
     return 'delete'
   }
 
-  if (product.handle === 'utekos-stapper') {
-    return 'delete'
-  }
-
   if (
     product.handle === 'utekos-mikrofiber' &&
     publicOptions.color !== 'Fjellblå'

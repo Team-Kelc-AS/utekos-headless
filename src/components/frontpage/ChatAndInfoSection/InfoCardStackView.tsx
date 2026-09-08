@@ -83,14 +83,14 @@ const backCardClasses = cn(
   cardSizeClasses,
   cardBaseClasses,
   backCardPlacementClasses,
-  'border-light-teal/24 bg-[color-mix(in_oklch,var(--dark-teal)_88%,var(--light-teal)_12%)] text-foreground ring-foreground/8'
+  'border-light-teal/24 bg-jungle text-foreground ring-foreground/8'
 )
 
 const frontCardClasses = cn(
   cardSizeClasses,
   cardBaseClasses,
   frontCardPlacementClasses,
-  'border-light-teal/20 bg-jungle text-foreground ring-foreground/10'
+  'border-light-teal/20 bg-deep-fjord text-foreground ring-foreground/10'
 )
 
 const backCardIconClassName =

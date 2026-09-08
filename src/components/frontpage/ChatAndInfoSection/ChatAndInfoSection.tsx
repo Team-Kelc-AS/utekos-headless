@@ -10,6 +10,7 @@ import { InfoCardStackView } from './InfoCardStackView'
 import { AnimatedChat } from '@/components/frontpage/ChatAndInfoSection/AnimatedChat'
 import { PageSection } from '@/components/layout/PageSection'
 import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
+import { cn } from '@/lib/utils/className'
 
 const sectionMotion = {
   hidden: {},
@@ -31,8 +32,11 @@ export function ChatAndInfoSection() {
   return (
     <PageSection
       as='section'
-      background='muted'
-      className={frontpageSectionStackClassName}
+      background='none'
+      className={cn(
+        frontpageSectionStackClassName,
+        'bg-night text-foreground'
+      )}
     >
       <MotionConfig reducedMotion='user'>
         <motion.div

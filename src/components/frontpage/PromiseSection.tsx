@@ -52,6 +52,7 @@ export function PromiseSection() {
       as='section'
       background='default'
       className={cn(frontpageSectionStackClassName, 'mx-auto')}
+      contentClassName='pt-8 pb-20 sm:pt-12 sm:pb-24 md:pt-16 md:pb-28 lg:pt-24 lg:pb-32'
     >
       <div className='mx-auto'>
         <div className='grid grid-cols-1 gap-12'>

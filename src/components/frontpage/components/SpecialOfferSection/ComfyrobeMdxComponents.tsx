@@ -122,7 +122,7 @@ export const comfyrobeMdxComponents = {
       <Link
         href={(href ?? '/comfyrobe') as Route}
         className={cn(
-          'group hover:bg-primary-hover mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border-none bg-primary px-7 py-3 font-utekos-text-medium text-primary-foreground no-underline shadow-[0_18px_40px_-26px_color-mix(in_oklch,var(--primary)_80%,transparent)] transition-[background-color,transform] hover:scale-[1.02] hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-jungle',
+          'group hover:bg-primary-hover mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border-none bg-primary px-7 py-3 font-utekos-text-medium text-primary-foreground no-underline shadow-[0_18px_40px_-26px_color-mix(in_oklch,var(--primary)_80%,transparent)] transition-[background-color,transform] hover:scale-[1.02] hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-deep-fjord',
           className
         )}
       >

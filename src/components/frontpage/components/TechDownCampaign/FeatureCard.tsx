@@ -53,7 +53,7 @@ export function FeatureCard({
   return (
     <Card
       className={cn(
-        'w-full overflow-hidden rounded-2xl bg-card p-0 text-card-foreground shadow-none',
+        'w-full overflow-hidden rounded-2xl bg-deep-fjord p-0 text-card-foreground shadow-none',
         className
       )}
     >

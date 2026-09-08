@@ -20,16 +20,16 @@ export async function QualitySection() {
       className={frontpageSectionStackClassName}
     >
       <article className='relative overflow-hidden'>
-        <div className='cols-1 grid-bg-card grid gap-6 lg:grid-cols-3 lg:grid-rows-2'>
+        <div className='grid grid-cols-1 auto-rows-fr gap-6 lg:grid-cols-3 lg:grid-rows-2 lg:auto-rows-auto'>
           <AnimatedBlock
-            className='will-animate-fade-in-up lg:col-span-2 lg:row-span-2'
+            className='will-animate-fade-in-up flex h-full flex-col lg:col-span-2 lg:row-span-2'
             delay='0.2s'
             threshold={0.3}
           >
             <div
               className={cn(
                 cardClasses,
-                'group flex h-full flex-col justify-center bg-jungle p-8 sm:p-12 lg:p-16'
+                'group flex h-full w-full flex-col justify-center bg-jungle p-6 sm:p-8 lg:p-12'
               )}
             >
               <div
@@ -41,10 +41,10 @@ export async function QualitySection() {
                 <H2
                   Text='Kvalitet i hver fiber'
                   ID='quality-section-heading'
-                  className='text-card-foreground'
+                  className='pb-2 font-sans text-2xl font-bold tracking-tight text-card-foreground sm:text-3xl lg:text-4xl'
                 />
 
-                <P className='w-full text-left text-lg text-card-foreground not-first:mt-0 md:max-w-xl'>
+                <P className='w-full text-left text-base text-card-foreground/85 not-first:mt-1 sm:text-lg md:max-w-xl'>
                   Fra den lette spensten i dunet til slitestyrken
                   i hver søm – vi er transparente om
                   materialvalgene som definerer Utekos. Dette er
@@ -55,25 +55,25 @@ export async function QualitySection() {
           </AnimatedBlock>
 
           <AnimatedBlock
-            className='will-animate-fade-in-up h-full'
+            className='will-animate-fade-in-up flex h-full flex-col'
             delay='0.4s'
             threshold={0.3}
           >
             <div
               className={cn(
                 cardClasses,
-                'group flex h-full flex-col justify-start bg-jungle p-6 sm:p-8'
+                'group flex h-full w-full flex-col justify-center bg-jungle p-6 sm:p-8 lg:p-10'
               )}
             >
-              <div className='mb-4 flex min-w-0 items-center gap-4'>
-                <div className='bg-dark-teal flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border text-primary-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shadow-card-foreground/10 transition-transform duration-500 group-hover:scale-110'>
+              <div className='mb-3 flex min-w-0 items-center gap-3 sm:mb-4 sm:gap-4'>
+                <div className='bg-dark-teal flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border text-primary-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shadow-card-foreground/10 transition-transform duration-500 group-hover:scale-110 sm:h-12 sm:w-12'>
                   <Feather className='size-5 stroke-[1.5]' />
                 </div>
-                <H3 className='min-w-0 pb-0 font-utekos-text-medium text-2xl leading-none tracking-normal text-card-foreground'>
+                <H3 className='min-w-0 pb-0 font-utekos-text-medium text-xl leading-none tracking-normal text-card-foreground sm:text-2xl'>
                   Premium isolasjon
                 </H3>
               </div>
-              <P className='text-lg text-card-foreground not-first:mt-0'>
+              <P className='text-base text-card-foreground/85 not-first:mt-0 sm:text-lg'>
                 Kun sertifisert dun og høykvalitets syntetisk
                 fyll for optimal varme-til-vekt.
               </P>
@@ -81,25 +81,25 @@ export async function QualitySection() {
           </AnimatedBlock>
 
           <AnimatedBlock
-            className='will-animate-fade-in-up h-full'
+            className='will-animate-fade-in-up flex h-full flex-col'
             delay='0.6s'
             threshold={0.3}
           >
             <div
               className={cn(
                 cardClasses,
-                'group flex h-full flex-col justify-start bg-jungle p-6 sm:p-8'
+                'group flex h-full w-full flex-col justify-center bg-jungle p-6 sm:p-8 lg:p-10'
               )}
             >
-              <div className='mb-4 flex min-w-0 items-center gap-4'>
-                <div className='bg-dark-teal flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border duration-500 group-hover:scale-110'>
+              <div className='mb-3 flex min-w-0 items-center gap-3 sm:mb-4 sm:gap-4'>
+                <div className='bg-dark-teal flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border duration-500 group-hover:scale-110 sm:h-12 sm:w-12'>
                   <ShieldCheckIcon className='size-5 stroke-[1.5]' />
                 </div>
-                <H3 className='min-w-0 pb-0 font-utekos-text-medium text-2xl leading-none tracking-normal text-card-foreground'>
+                <H3 className='min-w-0 pb-0 font-utekos-text-medium text-xl leading-none tracking-normal text-card-foreground sm:text-2xl'>
                   Bygget for å vare
                 </H3>
               </div>
-              <P className='text-lg text-card-foreground not-first:mt-0'>
+              <P className='text-base text-card-foreground/85 not-first:mt-0 sm:text-lg'>
                 Slitesterke materialer og solide sømmer som tåler
                 aktiv bruk i norske forhold.
               </P>

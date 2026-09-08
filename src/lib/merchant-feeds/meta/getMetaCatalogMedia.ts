@@ -11,6 +11,7 @@ import {
   type MetaCatalogCuratedImage
 } from './metaCatalogMediaManifest'
 import type { MetaCatalogMediaAsset } from './metaCatalogOffer'
+import { META_TECHDOWN_VARIANT_IMAGES } from './metaTechDownVariantImages'
 
 function assertCatalogMediaUrl(value: string) {
   const url = new URL(value)
@@ -26,6 +27,7 @@ export function getMetaCatalogMedia(input: {
   color: string
   curatedImages?: readonly MetaCatalogCuratedImage[]
   productHandle: string
+  retailerId?: string
 }) {
   const manifest =
     META_CATALOG_MEDIA_MANIFEST_BY_HANDLE[
@@ -53,8 +55,8 @@ export function getMetaCatalogMedia(input: {
     `family_${input.productHandle.replaceAll('-', '_')}`,
     `color_${slugifyVariantOption(input.color).replaceAll('-', '_')}`
   ]
-  const images: { url: string; tags: string[] }[] = imageUrls.map(
-    (url, index) => ({
+  const images: { url: string; tags: string[] }[] =
+    imageUrls.map((url, index) => ({
       url: assertCatalogMediaUrl(url),
       tags: [
         index === 0 ?
@@ -62,12 +64,21 @@ export function getMetaCatalogMedia(input: {
         : META_CATALOG_IMAGE_TAGS.additional,
         ...baseTags
       ]
-    })
-  )
-  for (const curatedImage of input.curatedImages ?? manifest.images) {
+    }))
+  const variantImages =
+    (
+      input.productHandle === 'utekos-techdown' &&
+      input.retailerId
+    ) ?
+      META_TECHDOWN_VARIANT_IMAGES[input.retailerId]
+    : undefined
+  for (const curatedImage of input.curatedImages ??
+    variantImages ??
+    manifest.images) {
     const url = assertCatalogMediaUrl(curatedImage.url)
     const preferenceTags = curatedImage.preferences.flatMap(
-      preference => META_CATALOG_IMAGE_PREFERENCE_TAGS[preference]
+      preference =>
+        META_CATALOG_IMAGE_PREFERENCE_TAGS[preference]
     )
 
     if (preferenceTags.length === 0) {
