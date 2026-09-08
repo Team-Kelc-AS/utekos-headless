@@ -29,9 +29,9 @@ export async function getCachedProductCards(input: {
     return {
       status: 'unavailable',
       error:
-        error instanceof Error
-          ? { name: error.name, message: error.message }
-          : { name: 'Error', message: String(error) }
+        error instanceof Error ?
+          { name: error.name, message: error.message }
+        : { name: 'Error', message: String(error) }
     }
   }
 }
