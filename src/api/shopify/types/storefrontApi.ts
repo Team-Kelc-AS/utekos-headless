@@ -22,12 +22,16 @@ import type {
   ProductOptionValue,
   ProductVariant as HydrogenProductVariant,
   QueryRootProductArgs,
+  QueryRootProductRecommendationsArgs,
   QueryRootProductsArgs,
   Seo
 } from '@shopify/hydrogen-react/storefront-api-types'
 import type { RawMetaobject } from 'types/product/MetaobjectReference'
 
-export type StorefrontMoney = Pick<MoneyV2, 'amount' | 'currencyCode'>
+export type StorefrontMoney = Pick<
+  MoneyV2,
+  'amount' | 'currencyCode'
+>
 
 export type StorefrontImage = Pick<
   HydrogenImage,
@@ -82,9 +86,7 @@ export type StorefrontProductShell = Pick<
   compareAtPriceRange: StorefrontProductPriceRange
   priceRange: StorefrontProductPriceRange
   featuredImage: StorefrontImage | null
-  images: {
-    edges: Array<{ node: StorefrontImage }>
-  }
+  images: { edges: Array<{ node: StorefrontImage }> }
   seo: Pick<Seo, 'title' | 'description'>
 }
 
@@ -93,9 +95,7 @@ export type StorefrontProductVariantPresentation = {
   totalInventory: HydrogenProduct['totalInventory']
   availableForSale: HydrogenProduct['availableForSale']
   options: StorefrontProductOption[]
-  variants: {
-    edges: Array<{ node: StorefrontProductVariant }>
-  }
+  variants: { edges: Array<{ node: StorefrontProductVariant }> }
 }
 
 export type StorefrontProduct = StorefrontProductShell &
@@ -128,12 +128,8 @@ export type StorefrontProductCard = Pick<
   | 'availableForSale'
 > & {
   featuredImage: StorefrontImage | null
-  collections: {
-    nodes: Array<Pick<Collection, 'id' | 'title'>>
-  }
-  priceRange: {
-    minVariantPrice: StorefrontMoney
-  }
+  collections: { nodes: Array<Pick<Collection, 'id' | 'title'>> }
+  priceRange: { minVariantPrice: StorefrontMoney }
   options: StorefrontProductOption[]
   variants: {
     edges: Array<{ node: StorefrontProductCardVariant }>
@@ -147,9 +143,7 @@ export type StorefrontProductCardConnection = {
 export type StorefrontProductConnection = Pick<
   ProductConnection,
   '__typename'
-> & {
-  edges: Array<{ node: StorefrontProduct }>
-}
+> & { edges: Array<{ node: StorefrontProduct }> }
 
 export type StorefrontCartProductVariant = Pick<
   HydrogenProductVariant,
@@ -170,9 +164,7 @@ export type StorefrontCartLine = Pick<
   HydrogenCartLine,
   'id' | 'quantity'
 > & {
-  cost: {
-    totalAmount: StorefrontMoney
-  }
+  cost: { totalAmount: StorefrontMoney }
   merchandise: StorefrontCartProductVariant
 }
 
@@ -184,17 +176,13 @@ export type StorefrontCart = Pick<
     totalAmount: StorefrontMoney
     subtotalAmount: StorefrontMoney
   }
-  lines: {
-    edges: Array<{ node: StorefrontCartLine }>
-  }
+  lines: { edges: Array<{ node: StorefrontCartLine }> }
 }
 
-type CartPayloadSelection<TPayload extends { cart?: unknown }> = Pick<
-  TPayload,
-  Extract<keyof TPayload, '__typename'>
-> & {
-  cart: StorefrontCart | null
-}
+type CartPayloadSelection<TPayload extends { cart?: unknown }> =
+  Pick<TPayload, Extract<keyof TPayload, '__typename'>> & {
+    cart: StorefrontCart | null
+  }
 
 export type StorefrontCartUserError = Pick<
   CartUserError,
@@ -244,6 +232,6 @@ export type StorefrontProductsQueryVariables = Pick<
 >
 
 export type StorefrontProductCardsQueryVariables = Pick<
-  QueryRootProductsArgs,
-  'first'
+  QueryRootProductRecommendationsArgs,
+  'productHandle'
 >

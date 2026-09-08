@@ -15,7 +15,7 @@ import type {
   StorefrontCartLinesRemovePayload,
   StorefrontCartLinesUpdatePayload,
   StorefrontCartLineUpdateInput,
-  StorefrontProductCardConnection,
+  StorefrontProductCard,
   StorefrontProductConnection,
   StorefrontProduct,
   StorefrontProductQueryVariables,
@@ -39,13 +39,9 @@ export type ShopifyResponse<T> =
   | { success: true; status: number; body: T }
   | { success: false; status: number; error: string }
 
-export type Connection<T> = {
-  edges: Array<Edge<T>>
-}
+export type Connection<T> = { edges: Array<Edge<T>> }
 
-export type Edge<T> = {
-  node: T
-}
+export type Edge<T> = { node: T }
 
 export type ShopifyErrorDetail = {
   message: string
@@ -58,22 +54,17 @@ export type ShopifyCartOperation = ShopifyOperation<
   { cart: StorefrontCart | null },
   { cartId: string }
 >
-export type ShopifyDiscountCodesUpdateOperation = ShopifyOperation<
-  {
-    cartDiscountCodesUpdate: StorefrontCartDiscountCodesUpdatePayload
-  },
-  {
-    cartId: string
-    discountCodes: string[]
-  }
->
+export type ShopifyDiscountCodesUpdateOperation =
+  ShopifyOperation<
+    {
+      cartDiscountCodesUpdate: StorefrontCartDiscountCodesUpdatePayload
+    },
+    { cartId: string; discountCodes: string[] }
+  >
 
 export type ShopifyAddToCartOperation = ShopifyOperation<
   { cartLinesAdd: StorefrontCartLinesAddPayload },
-  {
-    cartId: string
-    lines: StorefrontCartLineInput[]
-  }
+  { cartId: string; lines: StorefrontCartLineInput[] }
 >
 
 export type ShopifyCreateCartOperation = ShopifyOperation<
@@ -81,28 +72,24 @@ export type ShopifyCreateCartOperation = ShopifyOperation<
   StorefrontCartCreateInput
 >
 
-export type ShopifyCartAttributesUpdateOperation = ShopifyOperation<
-  {
-    cartAttributesUpdate: StorefrontCartAttributesUpdatePayload
-  },
-  {
-    cartId: string
-    attributes: StorefrontAttributeInput[]
-  }
->
+export type ShopifyCartAttributesUpdateOperation =
+  ShopifyOperation<
+    {
+      cartAttributesUpdate: StorefrontCartAttributesUpdatePayload
+    },
+    { cartId: string; attributes: StorefrontAttributeInput[] }
+  >
 
 export type ShopifyRemoveFromCartOperation = ShopifyOperation<
   { cartLinesRemove: StorefrontCartLinesRemovePayload },
   { cartId: string; lineIds: string[] }
 >
 
-export type ShopifyUpdateCartLineQuantityOperation = ShopifyOperation<
-  { cartLinesUpdate: StorefrontCartLinesUpdatePayload },
-  {
-    cartId: string
-    lines: StorefrontCartLineUpdateInput[]
-  }
->
+export type ShopifyUpdateCartLineQuantityOperation =
+  ShopifyOperation<
+    { cartLinesUpdate: StorefrontCartLinesUpdatePayload },
+    { cartId: string; lines: StorefrontCartLineUpdateInput[] }
+  >
 
 /**
  * Defines the shape of the input for the error detail factory.
@@ -127,11 +114,7 @@ export type ShopifyFeaturedProductsOperation = ShopifyOperation<
     product1: StorefrontProduct | null
     product2: StorefrontProduct | null
   },
-  {
-    handle0: string
-    handle1: string
-    handle2: string
-  }
+  { handle0: string; handle1: string; handle2: string }
 >
 
 export type ShopifyProductsOperation = ShopifyOperation<
@@ -140,7 +123,7 @@ export type ShopifyProductsOperation = ShopifyOperation<
 >
 
 export type ShopifyProductCardsOperation = ShopifyOperation<
-  { products: StorefrontProductCardConnection },
+  { productRecommendations: StorefrontProductCard[] | null },
   StorefrontProductCardsQueryVariables
 >
 

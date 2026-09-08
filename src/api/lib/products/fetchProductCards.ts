@@ -9,33 +9,39 @@ import type { ShopifyProductCardsOperation } from '@types'
 import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 
 export async function fetchProductCards(input: {
-  first: number
+  productHandle: string
   timeoutMs: number
   signal?: AbortSignal
 }): Promise<ProductCardModel[]> {
-  const res = await storefrontGateway.catalogQuery<ShopifyProductCardsOperation>(
-    {
-      cache: 'no-store',
-      query: getProductCardsQuery,
-      timeoutMs: input.timeoutMs,
-      variables: { first: input.first },
-      ...(input.signal ? { signal: input.signal } : {})
-    }
-  )
+  const res =
+    await storefrontGateway.catalogQuery<ShopifyProductCardsOperation>(
+      {
+        cache: 'no-store',
+        query: getProductCardsQuery,
+        timeoutMs: input.timeoutMs,
+        variables: { productHandle: input.productHandle },
+        ...(input.signal ? { signal: input.signal } : {})
+      }
+    )
 
   if (!res.success) {
-    const graphqlError = getShopifyGraphQLErrorMetadata(res.error)
+    const graphqlError = getShopifyGraphQLErrorMetadata(
+      res.error
+    )
     throw new ShopifyCatalogGraphQLError(
-      res.error.errors[0]?.message ?? 'Failed to fetch product cards',
+      res.error.errors[0]?.message ??
+        'Failed to fetch product cards',
       graphqlError.code ?? null
     )
   }
 
-  if (!res.body.products) {
+  const recommendations = res.body.productRecommendations
+
+  if (!Array.isArray(recommendations)) {
     throw new ShopifyCatalogGraphQLError(
       'Invalid product card response structure'
     )
   }
 
-  return res.body.products.edges.map(edge => reshapeProductCard(edge.node))
+  return recommendations.map(reshapeProductCard)
 }
