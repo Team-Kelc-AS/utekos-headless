@@ -24,10 +24,7 @@ moduleWithLoad._load = (request, parent, isMain) => {
     }
   }
 
-  if (
-    request ===
-    '@/api/lib/products/fetchProductCardsWithRetry'
-  ) {
+  if (request.includes('fetchProductCardsWithRetry')) {
     return {
       fetchProductCardsWithRetry: async () => {
         throw new DOMException(
