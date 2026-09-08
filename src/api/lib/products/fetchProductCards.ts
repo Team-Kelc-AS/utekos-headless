@@ -9,7 +9,7 @@ import type { ShopifyProductCardsOperation } from '@types'
 import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 
 export async function fetchProductCards(input: {
-  first: number
+  productHandle: string
   timeoutMs: number
   signal?: AbortSignal
 }): Promise<ProductCardModel[]> {
@@ -18,7 +18,7 @@ export async function fetchProductCards(input: {
       cache: 'no-store',
       query: getProductCardsQuery,
       timeoutMs: input.timeoutMs,
-      variables: { first: input.first },
+      variables: { productHandle: input.productHandle },
       ...(input.signal ? { signal: input.signal } : {})
     }
   )
@@ -31,11 +31,13 @@ export async function fetchProductCards(input: {
     )
   }
 
-  if (!res.body.products) {
+  const recommendations = res.body.productRecommendations
+
+  if (!Array.isArray(recommendations)) {
     throw new ShopifyCatalogGraphQLError(
       'Invalid product card response structure'
     )
   }
 
-  return res.body.products.edges.map(edge => reshapeProductCard(edge.node))
+  return recommendations.map(reshapeProductCard)
 }

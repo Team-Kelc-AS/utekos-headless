@@ -22,6 +22,7 @@ import type {
   ProductOptionValue,
   ProductVariant as HydrogenProductVariant,
   QueryRootProductArgs,
+  QueryRootProductRecommendationsArgs,
   QueryRootProductsArgs,
   Seo
 } from '@shopify/hydrogen-react/storefront-api-types'
@@ -244,6 +245,6 @@ export type StorefrontProductsQueryVariables = Pick<
 >
 
 export type StorefrontProductCardsQueryVariables = Pick<
-  QueryRootProductsArgs,
-  'first'
+  QueryRootProductRecommendationsArgs,
+  'productHandle'
 >

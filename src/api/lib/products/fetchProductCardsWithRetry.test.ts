@@ -47,10 +47,11 @@ test('retries a timeout once with jitter inside the shared budget', async () => 
   let now = 0
   let attempts = 0
   const delays: number[] = []
+  const requestedHandles: Array<string | undefined> = []
   const cards = [createCard('utekos-techdown')]
 
   const result = await fetchProductCardsWithRetry({
-    first: 24,
+    productHandle: 'utekos-mikrofiber',
     budgetMs: 2_000,
     now: () => now,
     random: () => 0,
@@ -58,8 +59,9 @@ test('retries a timeout once with jitter inside the shared budget', async () => 
       delays.push(ms)
       now += ms
     },
-    fetchProductCards: async () => {
+    fetchProductCards: async input => {
       attempts += 1
+      requestedHandles.push(input.productHandle)
       now += 100
       if (attempts === 1) {
         throw new DOMException(
@@ -73,6 +75,10 @@ test('retries a timeout once with jitter inside the shared budget', async () => 
 
   assert.equal(attempts, 2)
   assert.deepEqual(delays, [50])
+  assert.deepEqual(requestedHandles, [
+    'utekos-mikrofiber',
+    'utekos-mikrofiber'
+  ])
   assert.equal(result[0]?.handle, 'utekos-techdown')
 })
 
@@ -81,7 +87,7 @@ test('does not retry GraphQL validation errors', async () => {
 
   await assert.rejects(
     fetchProductCardsWithRetry({
-      first: 24,
+      productHandle: 'utekos-mikrofiber',
       budgetMs: 2_000,
       now: () => 0,
       sleep: async () => {
