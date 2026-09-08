@@ -89,26 +89,21 @@ test('keeps the last valid related list when Shopify times out', async () => {
   )
 })
 
-test('fetches recommendations by current handle and writes the snapshot', async () => {
-  let requestedHandle: string | undefined
+test('writes a related-products snapshot after a successful Shopify fetch', async () => {
   const writes: ProductCardModel[][] = []
   const related = await loadRelatedProducts('utekos-dun', 12, {
     runtimeCache: new FakeRuntimeCache(),
-    fetchProductCardsWithRetry: async input => {
-      requestedHandle = input.productHandle
-      return [
-        createCard('utekos-dun'),
-        createCard('utekos-mikrofiber'),
-        createCard('utekos-techdown')
-      ]
-    },
+    fetchProductCardsWithRetry: async () => [
+      createCard('utekos-dun'),
+      createCard('utekos-mikrofiber'),
+      createCard('utekos-techdown')
+    ],
     getSnapshot: async () => null,
     setSnapshot: async (_handle, products) => {
       writes.push(products)
     }
   })
 
-  assert.equal(requestedHandle, 'utekos-dun')
   assert.deepEqual(
     related.map(product => product.handle),
     ['utekos-mikrofiber', 'utekos-techdown']

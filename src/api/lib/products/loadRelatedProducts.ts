@@ -50,11 +50,11 @@ export async function loadRelatedProducts(
     dependencies.setSnapshot ?? setRelatedProductsSnapshot
 
   try {
-    const recommendedProducts = await fetchCards({
-      productHandle: currentHandle
+    const allProducts = await fetchCards({
+      first: Math.max(limit * 2, 24)
     })
     const related = getRelatedProducts(
-      recommendedProducts,
+      allProducts,
       currentHandle,
       limit
     )
