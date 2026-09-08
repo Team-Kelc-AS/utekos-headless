@@ -102,7 +102,7 @@ test('uses only the approved Comfyrobe and Mikrofiber catalog cards', () => {
 
   assert.deepEqual(comfyrobe.images, [
     {
-      url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/original/comfy-robe-1440x1800-b91987803ef1.png',
+      url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/original/comfy-1440xx1800-1-36e7954cd457.png',
       tags: ['primary', 'family_comfyrobe', 'color_fjellnatt']
     }
   ])

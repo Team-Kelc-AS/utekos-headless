@@ -16,7 +16,7 @@ export const META_CATALOG_MEDIA_MANIFEST_BY_HANDLE = {
     includeDefaultImages: false,
     images: [
       {
-        url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/original/comfy-robe-1440x1800-b91987803ef1.png',
+        url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/original/comfy-1440xx1800-1-36e7954cd457.png',
         preferences: ['catalog_primary']
       }
     ],
