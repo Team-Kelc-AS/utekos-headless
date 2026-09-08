@@ -24,6 +24,10 @@ moduleWithLoad._load = (request, parent, isMain) => {
     }
   }
 
+  if (request === '@/api/constants') {
+    return { TAGS: { products: 'products' } }
+  }
+
   if (request.includes('fetchProductCardsWithRetry')) {
     return {
       fetchProductCardsWithRetry: async () => {
