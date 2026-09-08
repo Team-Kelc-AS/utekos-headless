@@ -12,6 +12,21 @@ export type CachedProductCardsResult =
       error: { name: string; message: string }
     }
 
+function serializeCatalogError(error: unknown) {
+  if (error instanceof Error) {
+    return { name: error.name, message: error.message }
+  }
+
+  if (typeof error === 'string') {
+    return { name: 'Error', message: error }
+  }
+
+  return {
+    name: 'UnknownError',
+    message: 'Storefront product-card fetch failed'
+  }
+}
+
 export async function getCachedProductCards(input: {
   first: number
 }): Promise<CachedProductCardsResult> {
@@ -26,12 +41,11 @@ export async function getCachedProductCards(input: {
     })
     return { status: 'success', products }
   } catch (error) {
+    cacheLife({ stale: 0, revalidate: 0, expire: 1 })
+
     return {
       status: 'unavailable',
-      error:
-        error instanceof Error ?
-          { name: error.name, message: error.message }
-        : { name: 'Error', message: String(error) }
+      error: serializeCatalogError(error)
     }
   }
 }
