@@ -244,7 +244,8 @@ export type StorefrontProductsQueryVariables = Pick<
   'first' | 'query' | 'reverse' | 'sortKey'
 >
 
-export type StorefrontProductCardsQueryVariables = Pick<
-  QueryRootProductRecommendationsArgs,
-  'productHandle'
->
+export type StorefrontProductCardsQueryVariables = {
+  productHandle: NonNullable<
+    QueryRootProductRecommendationsArgs['productHandle']
+  >
+}
