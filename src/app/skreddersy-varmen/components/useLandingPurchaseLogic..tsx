@@ -1,6 +1,11 @@
 'use client'
 
-import { useContext, useRef, useState, useTransition } from 'react'
+import {
+  useContext,
+  useRef,
+  useState,
+  useTransition
+} from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -11,10 +16,8 @@ import { useCartMutations } from '@/hooks/useCartMutations'
 import { getCartIdFromCookie } from '@/lib/actions/cart/getCartIdFromCookie'
 import { reportCanonicalAddToCart } from '@/lib/analytics/addToCartReporter'
 import { reportCanonicalVariantSelect } from '@/lib/analytics/variantSelectReporter'
-import {
-  buildPublicVariantUrl,
-  requireProductPresentation
-} from '@/lib/products/presentation'
+import { buildPublicVariantUrl } from '@/lib/products/presentation/buildPublicVariantUrl'
+import type { ProductPresentation } from '@/lib/products/presentation/getProductPresentation'
 import type { ProductCommerceViewModel } from '@/lib/products/commerce'
 import { toPurchaseVariantFromPublicCommerce } from '@/lib/products/commerce/toPurchaseVariantFromPublicCommerce'
 import type { Route } from 'next'
@@ -22,17 +25,16 @@ import type { Route } from 'next'
 type UseLandingPurchaseLogicProps = {
   commerce: ProductCommerceViewModel
   initialVariantId: string
+  presentation: ProductPresentation
 }
 
 export function useLandingPurchaseLogic({
   commerce,
-  initialVariantId
+  initialVariantId,
+  presentation
 }: UseLandingPurchaseLogicProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const presentation = requireProductPresentation(
-    commerce.publicHandle
-  )
   const validInitialVariant = commerce.variants.find(
     variant => variant.commerce.id === initialVariantId
   )
@@ -127,10 +129,7 @@ export function useLandingPurchaseLogic({
         cartStore.send({ type: 'OPEN' })
 
         const mutationResult = await addLines([
-          {
-            variantId: selectedShopifyVariant.id,
-            quantity
-          }
+          { variantId: selectedShopifyVariant.id, quantity }
         ])
 
         if (!mutationResult.success) {

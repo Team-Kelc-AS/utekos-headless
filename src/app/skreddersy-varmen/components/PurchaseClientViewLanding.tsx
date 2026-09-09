@@ -11,20 +11,14 @@ import { cn } from '@/lib/utils/className'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
-import { ProductDetailsAccordion } from './ProductDetailsAccordion'
-import { LandingPageProductCarouselPurchaseSection } from './LandingPageProductCarouselPurchaseSection'
 import {
   SIZE_GUIDANCE,
   focusRing,
   choiceGridClass,
   choicePillClass
 } from '../utils/constants'
-import { LandingProductHighlightsPanel } from './LandingProductHighlightsPanel'
-import { AnimatedBlock } from '@/components/AnimatedBlock'
 import { ShippingAndReturnComponent } from './ShippingAndReturnComponent'
 import { KlarnaLandingExpressCheckout } from './KlarnaLandingExpressCheckout'
-import { PRODUCT_VARIANTS } from '@/api/constants'
-import { TechDownSizeGuideAccordion } from './TechDownSizeGuideAccordion'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { SKREDDERSY_VARMEN_PROMOTIONS } from '../data/skreddersyVarmenPageModel'
 import type { ProductCommerceViewModel } from '@/lib/products/commerce'
@@ -33,9 +27,10 @@ import type {
   ProductPurchaseVariant
 } from 'types/product/ProductPurchaseModel'
 
-const techDownContent = PRODUCT_VARIANTS['utekos-techdown']
+import type { LandingPurchaseContent } from './landingPurchaseContent'
 
 export type PurchaseClientViewLandingProps = {
+  content: LandingPurchaseContent
   quantity: number
   setQuantity: (qty: number) => void
   selectedSize: string
@@ -63,7 +58,8 @@ export function PurchaseClientViewLanding({
   isAddToCartPending,
   commerce,
   shopifyProduct,
-  selectedShopifyVariant
+  selectedShopifyVariant,
+  content
 }: PurchaseClientViewLandingProps) {
   const guidance = SIZE_GUIDANCE[selectedSize]
   const modelName = commerce.displayName.replace(
@@ -83,7 +79,7 @@ export function PurchaseClientViewLanding({
   return (
     <>
       <section className='relative w-full max-w-full overflow-x-clip text-background min-[900px]:grid min-[900px]:grid-cols-2'>
-        <LandingPageProductCarouselPurchaseSection />
+        {content.gallery}
 
         <div className='flex w-full flex-col bg-[#F3F0E7] text-foreground'>
           <div className='flex-1 bg-[#F3F0E7] p-8 text-background min-[900px]:rounded-tl-3xl min-[1280px]:p-20 md:p-12'>
@@ -98,7 +94,7 @@ export function PurchaseClientViewLanding({
                   aria-hidden
                   className='h-[0.82em] w-auto shrink-0 translate-y-[0.04em] text-background'
                 />
-                <span className='whitespace-nowrap font-sans font-bold tracking-[-0.04em]'>
+                <span className='font-sans font-bold tracking-[-0.04em] whitespace-nowrap'>
                   {modelName}
                 </span>
               </h2>
@@ -123,44 +119,7 @@ export function PurchaseClientViewLanding({
               : null}
             </div>
 
-            <div
-              className='mb-6 space-y-6 min-[900px]:mb-12 min-[900px]:space-y-8'
-              aria-label='Produktinformasjon'
-            >
-              <AnimatedBlock
-                className='will-animate-fade-in-up'
-                delay='0.05s'
-                rootMargin='0px 0px 25% 0px'
-                threshold={0.01}
-              >
-                <div className={choiceGridClass}>
-                  {techDownContent.features.map(feature => (
-                    <span
-                      key={feature}
-                      className={cn(
-                        choicePillClass,
-                        'rounded-2xl border border-border bg-jungle-tone font-sans text-[11px] text-foreground shadow-sm min-[900px]:font-bold md:max-xl:text-[14px]'
-                      )}
-                    >
-                      {feature}
-                    </span>
-                  ))}
-                </div>
-              </AnimatedBlock>
-
-              <AnimatedBlock
-                className='will-animate-fade-in-up'
-                delay='0.1s'
-                rootMargin='0px 0px 25% 0px'
-                threshold={0.01}
-              >
-                <LandingProductHighlightsPanel
-                  modelName={modelName}
-                  selectedModel='utekos-techdown'
-                  highlights={techDownContent.highlights}
-                />
-              </AnimatedBlock>
-            </div>
+            {content.productInformation}
 
             <div className='mb-6 h-px w-full bg-background/10 min-[900px]:mb-12' />
 
@@ -239,7 +198,7 @@ export function PurchaseClientViewLanding({
                     </div>
                   : null}
 
-                  <TechDownSizeGuideAccordion />
+                  {content.sizeGuide}
                 </div>
 
                 <div className='mt-5 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-t border-foreground/10 pt-4 min-[900px]:mt-4'>
@@ -319,7 +278,7 @@ export function PurchaseClientViewLanding({
                 bgColor='var(--primary)'
                 fgColor='var(--primary-foreground)'
                 className={cn(
-                  'hover:bg-primary-hover h-14 min-h-14 w-full min-w-0 px-4 py-0 font-google-sans text-base font-normal leading-none tracking-normal shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] md:h-14 md:min-h-14 md:px-6',
+                  'hover:bg-primary-hover h-14 min-h-14 w-full min-w-0 px-4 py-0 font-google-sans text-base leading-none font-normal tracking-normal shadow-[0_4px_20px_rgba(255,180,120,0.15)] transition-[transform,filter,box-shadow] hover:text-primary-foreground hover:shadow-[0_4px_25px_rgba(255,180,120,0.3)] hover:brightness-105 active:scale-[0.985] md:h-14 md:min-h-14 md:px-6',
                   (isPending || !isAvailable) &&
                     'cursor-not-allowed opacity-80'
                 )}
@@ -377,13 +336,12 @@ export function PurchaseClientViewLanding({
               className='mb-4 min-[900px]:mb-6 min-[1280px]:mb-8'
             />
 
-
             <ShippingAndReturnComponent />
           </div>
         </div>
       </section>
 
-      <ProductDetailsAccordion selectedModel='utekos-techdown' />
+      {content.productDetails}
     </>
   )
 }

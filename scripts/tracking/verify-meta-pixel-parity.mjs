@@ -136,6 +136,7 @@ function parseFacebookEvent(request) {
   const fields = { ...queryFields, ...bodyFields }
 
   return {
+    pixelId: fields.id ?? null,
     eventId: fields.eid ?? null,
     eventName: fields.ev ?? null,
     externalIdHash: fields['ud[external_id]'] ?? null,
@@ -731,6 +732,9 @@ async function verifySurface(browser, userAgent, surface) {
     )
     const checks = {
       automaticEventsDisabled: runtime.automaticSetup === false,
+      facebookPixel: facebookEvents.every(
+        event => event.pixelId === PIXEL_ID
+      ),
       canonicalEventParity: hasCanonicalEventParity(
         surface.expectedEvents,
         dataLayerEvents,

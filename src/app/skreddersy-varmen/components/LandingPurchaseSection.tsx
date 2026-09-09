@@ -1,4 +1,9 @@
 import { PurchaseClientLanding } from './PurchaseClientLanding'
+import { LandingPageProductCarouselPurchaseSection } from './LandingPageProductCarouselPurchaseSection'
+import { LandingPurchaseProductInformation } from './LandingPurchaseProductInformation'
+import { ProductDetailsAccordion } from './ProductDetailsAccordion'
+import { TechDownSizeGuideAccordion } from './TechDownSizeGuideAccordion'
+import { requireProductPresentation } from '@/lib/products/presentation/getProductPresentation'
 import {
   resolveCommerceVariantFromSearchParams,
   type ProductCommerceViewModel
@@ -22,6 +27,24 @@ export async function LandingPurchaseSection({
   return (
     <PurchaseClientLanding
       commerce={commerce}
+      presentation={requireProductPresentation(
+        commerce.publicHandle
+      )}
+      content={{
+        gallery: <LandingPageProductCarouselPurchaseSection />,
+        productInformation: (
+          <LandingPurchaseProductInformation
+            modelName={commerce.displayName.replace(
+              /^Utekos\s+/u,
+              ''
+            )}
+          />
+        ),
+        sizeGuide: <TechDownSizeGuideAccordion />,
+        productDetails: (
+          <ProductDetailsAccordion selectedModel='utekos-techdown' />
+        )
+      }}
       initialVariantId={
         resolveCommerceVariantFromSearchParams(
           commerce,

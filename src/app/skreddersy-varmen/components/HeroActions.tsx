@@ -32,9 +32,17 @@ export function HeroActions() {
           fgColor='var(--primary-foreground)'
           className='h-12 w-full px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-xl transition-[filter,transform] hover:brightness-105 active:scale-[0.97] md:h-14 md:text-base'
         >
-          <button
-            type='button'
-            onClick={() => {
+          <a
+            href={`#${SCROLL_TARGETS.purchase}`}
+            onClick={event => {
+              if (
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              )
+                return
+              event.preventDefault()
               reportLandingSelectPromotion('heroCta')
               smoothScrollTo(SCROLL_TARGETS.purchase)
             }}
@@ -48,7 +56,7 @@ export function HeroActions() {
               className='size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1'
               aria-hidden
             />
-          </button>
+          </a>
         </BrandBadge>
 
         <BrandBadge
@@ -57,9 +65,17 @@ export function HeroActions() {
           fgColor='var(--secondary-foreground)'
           className='h-12 w-full px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.97] md:h-14 md:text-base'
         >
-          <button
-            type='button'
-            onClick={() => {
+          <a
+            href={`#${SCROLL_TARGETS.reviews}`}
+            onClick={event => {
+              if (
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              )
+                return
+              event.preventDefault()
               reportLandingSelectPromotion('heroSecondary')
               smoothScrollTo(SCROLL_TARGETS.reviews)
             }}
@@ -73,14 +89,22 @@ export function HeroActions() {
               className='size-4 shrink-0'
               aria-hidden
             />
-          </button>
+          </a>
         </BrandBadge>
       </div>
 
       {/* Bla videre pil nederst - justert til off-white for å blende elegant inn i det mørke */}
-      <button
-        type='button'
-        onClick={() => {
+      <a
+        href={`#${SCROLL_TARGETS.solution}`}
+        onClick={event => {
+          if (
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey
+          )
+            return
+          event.preventDefault()
           reportLandingSelectPromotion('heroScrollCue')
           smoothScrollTo(SCROLL_TARGETS.solution)
         }}
@@ -95,7 +119,7 @@ export function HeroActions() {
           className='animate-bounce motion-reduce:animate-none'
           aria-hidden
         />
-      </button>
+      </a>
     </>
   )
 }

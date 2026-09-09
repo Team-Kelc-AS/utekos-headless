@@ -1,20 +1,10 @@
 // Path: src/app/skreddersy-varmen/components/LandingPageProductCarouselPurchaseSection.tsx
-'use client'
+import 'server-only'
 
 import Image from 'next/image'
-import Fade from 'embla-carousel-fade'
 import TechDownTerraceImage from '@/assets/images/techdown/TechDown-Terrasse-2048x2720.webp'
-import { cn } from '@/lib/utils/className'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious
-} from '@/components/ui/carousel'
-import { CAROUSEL_SSR } from '@/components/ui/carousel-ssr'
-import { focusRing } from '../utils/constants'
+import { LandingPurchaseGallery } from './LandingPurchaseGallery'
 import { PRODUCT_VARIANTS } from '@/api/constants'
 
 const TECHDOWN_IMAGE_ALTS = [
@@ -42,58 +32,28 @@ export function LandingPageProductCarouselPurchaseSection() {
         </span>
       </BrandBadge>
 
-      <Carousel
-        slideCount={galleryImages.length}
-        ssr={CAROUSEL_SSR.fullWidth(galleryImages.length)}
-        opts={{ loop: galleryImages.length > 1, duration: 35 }}
-        plugins={galleryImages.length > 1 ? [Fade()] : []}
-        className='relative w-full min-[900px]:max-w-xl'
-      >
-        <CarouselContent className='ml-0'>
-          {galleryImages.map((src, i) => {
-            const imageAlt =
-              TECHDOWN_IMAGE_ALTS[i] ??
-              `${currentConfig.title} sett fra en ny vinkel.`
-
-            return (
-              <CarouselItem
-                key={typeof src === 'string' ? src : src.src}
-                className='relative aspect-4/5 pl-0 md:aspect-3/4'
-              >
-                <div className='relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10'>
-                  <Image
-                    src={src}
-                    alt={imageAlt}
-                    fill
-                    className='object-cover'
-                    sizes='(max-width: 899px) 100vw, 40vw'
-                    preload={i === 0}
-                  />
-                </div>
-              </CarouselItem>
-            )
-          })}
-        </CarouselContent>
-
-        {galleryImages.length > 1 && (
-          <>
-            <CarouselPrevious
-              aria-label='Forrige bilde'
-              className={cn(
-                'left-2 size-10 border-background/15 bg-foreground/90 text-background shadow-md backdrop-blur-md hover:bg-foreground hover:text-primary md:left-4 md:size-11',
-                focusRing
-              )}
-            />
-            <CarouselNext
-              aria-label='Neste bilde'
-              className={cn(
-                'right-2 size-10 border-background/15 bg-foreground/90 text-background shadow-md backdrop-blur-md hover:bg-foreground hover:text-primary md:right-4 md:size-11',
-                focusRing
-              )}
-            />
-          </>
-        )}
-      </Carousel>
+      <LandingPurchaseGallery
+        slides={galleryImages.map((src, index) => (
+          <div
+            key={typeof src === 'string' ? src : src.src}
+            className='relative aspect-4/5 md:aspect-3/4'
+          >
+            <div className='relative size-full overflow-hidden min-[900px]:rounded-2xl min-[900px]:shadow-2xl min-[900px]:ring-1 min-[900px]:ring-background/10'>
+              <Image
+                src={src}
+                alt={
+                  TECHDOWN_IMAGE_ALTS[index] ??
+                  `${currentConfig.title} sett fra en ny vinkel.`
+                }
+                fill
+                className='object-cover'
+                sizes='(max-width: 899px) 100vw, 40vw'
+                loading='lazy'
+              />
+            </div>
+          </div>
+        ))}
+      />
     </div>
   )
 }

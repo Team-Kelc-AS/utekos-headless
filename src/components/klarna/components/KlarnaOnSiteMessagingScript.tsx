@@ -5,11 +5,18 @@ import { useEffect, useState } from 'react'
 import { loadKlarnaPublicConfig } from '@/components/klarna/utils/loadKlarnaPublicConfig'
 import type { KlarnaPublicConfig } from '@/components/klarna/schemas/klarnaPublicConfigSchema'
 
-const KLARNA_ON_SITE_MESSAGING_SCRIPT_ID = 'klarna-on-site-messaging-websdk'
-const KLARNA_ON_SITE_MESSAGING_SCRIPT_URL = 'https://js.klarna.com/web-sdk/v1/klarna.js'
+const KLARNA_ON_SITE_MESSAGING_SCRIPT_ID =
+  'klarna-on-site-messaging-websdk'
+const KLARNA_ON_SITE_MESSAGING_SCRIPT_URL =
+  'https://js.klarna.com/web-sdk/v1/klarna.js'
 
-export function KlarnaOnSiteMessagingScript() {
-  const [config, setConfig] = useState<KlarnaPublicConfig | null>(null)
+export function KlarnaOnSiteMessagingScript({
+  strategy = 'afterInteractive'
+}: {
+  strategy?: 'afterInteractive' | 'lazyOnload'
+}) {
+  const [config, setConfig] =
+    useState<KlarnaPublicConfig | null>(null)
 
   useEffect(() => {
     let isActive = true
@@ -39,12 +46,15 @@ export function KlarnaOnSiteMessagingScript() {
     <Script
       id={KLARNA_ON_SITE_MESSAGING_SCRIPT_ID}
       src={KLARNA_ON_SITE_MESSAGING_SCRIPT_URL}
-      strategy='afterInteractive'
+      strategy={strategy}
       data-locale='nb-NO'
       data-client-id={config.client_id}
       data-environment={config.environment}
       onError={(error: Error) => {
-        console.error('Klarna On-site Messaging WebSDK failed to load', error)
+        console.error(
+          'Klarna On-site Messaging WebSDK failed to load',
+          error
+        )
       }}
     />
   )

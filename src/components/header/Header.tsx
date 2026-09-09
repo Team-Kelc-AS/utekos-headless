@@ -4,7 +4,7 @@ import { Cart } from '@/components/cart/Cart'
 import { HeaderSearch } from '@/components/header/HeaderSearch/HeaderSearch'
 import type { MenuItem } from '@types'
 import Image from 'next/image'
-import Link from 'next/link'
+import { HeaderNavigationLink } from './HeaderNavigationLink'
 import type { Route } from 'next'
 import { HeadphonesIcon } from 'lucide-react'
 import { ClientMobileMenu } from './ClientMobileMenu'
@@ -25,7 +25,7 @@ export default function Header({
           data-header-part='brand'
           className='flex min-w-0 items-center justify-start'
         >
-          <Link
+          <HeaderNavigationLink
             href={'/' as Route}
             aria-label='Utekos - Til forsiden'
             data-track='HeaderLogoClick'
@@ -49,7 +49,7 @@ export default function Header({
               fetchPriority='high'
               className='hidden h-7 w-auto sm:block sm:h-8 lg:h-9 xl:h-10'
             />
-          </Link>
+          </HeaderNavigationLink>
         </div>
 
         <div
@@ -58,7 +58,7 @@ export default function Header({
         >
           <HeaderSearch variant='nav' />
 
-          <Link
+          <HeaderNavigationLink
             href={'/kontaktskjema' as Route}
             data-track='HeaderCustomerServiceClick'
             className='hidden h-11 min-w-31 items-center justify-center gap-2 rounded-md px-3 font-utekos-text-medium text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex'
@@ -68,7 +68,7 @@ export default function Header({
               aria-hidden
             />
             <span>Kundeservice</span>
-          </Link>
+          </HeaderNavigationLink>
 
           <Cart
             showLabel

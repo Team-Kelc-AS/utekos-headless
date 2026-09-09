@@ -138,6 +138,8 @@
       }
     }
 
+    // The canonical PageView observer owns SPA events and their shared IDs.
+    w.fbq.disablePushState = true
     w.fbq('set', 'autoConfig', false, PIXEL_ID)
     w.fbq(
       'init',
@@ -145,6 +147,16 @@
       externalId ? { external_id: externalId } : {}
     )
     state.initialized = true
+  }
+
+  function syncPixelConsent() {
+    if (!state.initialized || typeof w.fbq !== 'function') return
+
+    var nextConsent = hasMarketingConsent() ? 'grant' : 'revoke'
+    if (state.pixelConsent === nextConsent) return
+
+    w.fbq('consent', nextConsent)
+    state.pixelConsent = nextConsent
   }
 
   function contentId(variantId) {
@@ -428,6 +440,7 @@
     state.listening = true
 
     var retry = function () {
+      syncPixelConsent()
       if (hasMarketingConsent()) {
         run(0)
       } else if (hasConsentDecision()) {
@@ -442,6 +455,7 @@
 
   function run(attempt) {
     state.timer = null
+    syncPixelConsent()
     if (!hasMarketingConsent()) {
       scheduleConsentRetry()
       if (hasConsentDecision()) discardPendingEvents()
@@ -458,6 +472,7 @@
     // Install as soon as marketing is granted. Do not wait for _fbp —
     // fbevents.js creates it. Waiting blocked SPA clicks / returning visits.
     if (!state.initialized) installPixel(externalId)
+    syncPixelConsent()
 
     if (attempt < 30 && needsFbc && !fbc) {
       state.timer = w.setTimeout(function () {
@@ -473,6 +488,7 @@
     if (state.poller !== null) return
 
     state.poller = w.setInterval(function () {
+      syncPixelConsent()
       if (hasMarketingConsent()) {
         run(0)
       } else if (hasConsentDecision()) {
@@ -484,6 +500,7 @@
     }, 200)
   }
 
+  scheduleConsentRetry()
   if (state.timer === null) run(0)
   startPolling()
 })(window, document)

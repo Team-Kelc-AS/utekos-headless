@@ -663,15 +663,15 @@
     }
 
     :global(body):has(.pageRoot) {
-      --skreddersy-white-hold: 450ms;
-      --skreddersy-logo-duration: 1300ms;
-      --skreddersy-logo-end: 1750ms;
-      --skreddersy-jungle-start: 800ms;
-      --skreddersy-jungle-duration: 1450ms;
-      --skreddersy-cloud-duration: 1200ms;
-      --skreddersy-header-duration: 450ms;
-      --skreddersy-hero-start: 1750ms;
-      --skreddersy-hero-duration: 500ms;
+      --skreddersy-white-hold: 80ms;
+      --skreddersy-logo-duration: 270ms;
+      --skreddersy-logo-end: 350ms;
+      --skreddersy-jungle-start: 160ms;
+      --skreddersy-jungle-duration: 340ms;
+      --skreddersy-cloud-duration: 240ms;
+      --skreddersy-header-duration: 120ms;
+      --skreddersy-hero-start: 350ms;
+      --skreddersy-hero-duration: 150ms;
     }
 
     :global(body):has(.pageRoot)

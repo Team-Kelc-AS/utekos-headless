@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { writeFileSync } from 'node:fs'
 import { chromium } from 'playwright'
+import { cleanupMetaSmokeCart } from './cleanup-meta-smoke-cart.mjs'
 
 const BASE_URL =
   process.env.META_ATC_DEDUPE_BASE_URL ?? 'https://utekos.no'
@@ -71,6 +72,7 @@ function parseFacebookEvent(request) {
   const fields = { ...queryFields, ...bodyFields }
 
   return {
+    pixelId: fields.id ?? null,
     contentIds: fields['cd[content_ids]'] ?? null,
     contentName: fields['cd[content_name]'] ?? null,
     contentType: fields['cd[content_type]'] ?? null,
@@ -210,6 +212,7 @@ async function main() {
   })
 
   let report
+  let attemptedCartMutation = false
 
   try {
     const navigation = await page.goto(url.toString(), {
@@ -237,13 +240,18 @@ async function main() {
     await page.waitForTimeout(4_000)
 
     const addButton = page
-      .locator('[data-track="ModalAddToCart"]')
+      .locator(
+        '[data-track="ModalAddToCart"], [data-track="SkreddersyVarmenAddToCartClick"]'
+      )
       .first()
 
     if (!(await addButton.isVisible({ timeout: 10_000 }))) {
-      throw new Error('ModalAddToCart button not visible')
+      throw new Error(
+        'Product or landing AddToCart button not visible'
+      )
     }
 
+    attemptedCartMutation = true
     await addButton.click()
 
     await waitUntil(
@@ -364,7 +372,10 @@ async function main() {
         Boolean(sharedEventId) &&
         primary?.eventId === primary?.canonicalEventId,
       facebookPresent: facebookEvents.length >= 1,
-      facebookSharedId: facebookMatch.length >= 1,
+      facebookSharedId: facebookMatch.length === 1,
+      facebookPixel: facebookEvents.every(
+        event => event.pixelId === '1092362672918571'
+      ),
       managedSignalsGatewayAbsent: openBridgeEvents.length === 0,
       signalsGatewayPixelContract:
         bridgeRuntime.legacyManualBridgePresent === false &&
@@ -373,7 +384,7 @@ async function main() {
         bridgeRuntime.signalsGatewayPixelState === null &&
         openBridgeHosts.length === 0,
       postSharedId:
-        postEventId === null || postEventId === sharedEventId,
+        Boolean(postEventId) && postEventId === sharedEventId,
       singlePrimaryUuid:
         Boolean(sharedEventId) &&
         dataLayerEvents.every(
@@ -412,6 +423,25 @@ async function main() {
       userAgent
     }
   } finally {
+    if (attemptedCartMutation) {
+      try {
+        const cleanup = await cleanupMetaSmokeCart(
+          page,
+          BASE_URL
+        )
+        if (report) report.cleanup = cleanup
+      } catch (error) {
+        if (report) {
+          report.ok = false
+          report.cleanup = { status: 'failed' }
+        }
+        console.error(
+          'Meta smoke test cart cleanup failed',
+          error
+        )
+        process.exitCode = 1
+      }
+    }
     await context.close()
     await browser.close()
   }

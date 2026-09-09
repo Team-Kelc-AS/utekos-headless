@@ -135,7 +135,7 @@ export function Hero({
                 <div
                   role='group'
                   aria-label='Betalingsinformasjon fra Klarna'
-                  className='max-w-md overflow-hidden rounded-xl bg-white text-black'
+                  className='min-h-7 max-w-md overflow-hidden rounded-xl bg-white text-black'
                 >
                   <KlarnaCreditPromotionAutoSize
                     id='klarna-credit-promotion-skreddersy-varmen-hero'
@@ -151,7 +151,7 @@ export function Hero({
       </div>
 
       {klarnaPurchaseAmount ?
-        <KlarnaOnSiteMessagingScript />
+        <KlarnaOnSiteMessagingScript strategy='lazyOnload' />
       : null}
     </section>
   )

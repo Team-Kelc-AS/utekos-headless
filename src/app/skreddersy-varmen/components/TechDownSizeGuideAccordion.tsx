@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { SizeGuideAccordionTable } from '@/components/size-guide/SizeGuideAccordionTable'
 import { TECH_DOWN_PUBLIC_SIZES } from '@/lib/products/presentation/techDownSizeContract'
 import { TechDownMobileSizeGuide } from './TechDownMobileSizeGuide'

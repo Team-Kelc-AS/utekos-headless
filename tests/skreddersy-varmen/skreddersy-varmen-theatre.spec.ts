@@ -1,10 +1,23 @@
-import { expect, test } from 'playwright/test'
+import { expect, test, type Page } from 'playwright/test'
 
 const landingUrl =
   process.env.SKREDDERSY_VARMEN_BASE_URL ??
   'http://localhost:3100/skreddersy-varmen'
 
 test.use({ viewport: { width: 1440, height: 900 } })
+
+async function waitForRenderedStory(page: Page) {
+  // Streamed Suspense content can briefly coexist with a hidden render.
+  const experiment = page.locator('[data-experiment-eligible]')
+  await expect(experiment).toHaveCount(1)
+  await expect(experiment).toBeVisible()
+  await expect(
+    page.locator('[data-empathy-large-reveal-cover]')
+  ).toHaveCount(4)
+  await page.evaluate(async () => {
+    await document.fonts.ready
+  })
+}
 
 test('places the product explanation after purchase and links the hero feedback action to reviews', async ({
   page
@@ -18,7 +31,7 @@ test('places the product explanation after purchase and links the hero feedback 
   )
   const technology = page.locator('[data-techdown-technology]')
   const reviews = page.locator('#reviews-section')
-  const feedbackAction = page.getByRole('button', {
+  const feedbackAction = page.getByRole('link', {
     name: 'Se tilbakemeldingene'
   })
   const reviewIntroduction = reviews.getByText(
@@ -627,11 +640,10 @@ test('keeps every intro phase ordered within the LCP budget', async ({
     choreography.headerBrand.duration
 
   expect(choreography.cloudBackground).toBe('rgb(255, 255, 255)')
-  expect(choreography.logo.delay).toBeGreaterThanOrEqual(400)
-  expect(choreography.logo.delay).toBeLessThanOrEqual(500)
-  expect(choreography.logo.duration).toBeGreaterThanOrEqual(1250)
-  expect(choreography.logo.duration).toBeLessThanOrEqual(1350)
-  expect(choreography.logo.endTime).toBeLessThanOrEqual(1800)
+  expect(choreography.logo.delay).toBeGreaterThanOrEqual(0)
+  expect(choreography.logo.delay).toBeLessThanOrEqual(100)
+  expect(choreography.logo.duration).toBeGreaterThan(0)
+  expect(choreography.logo.endTime).toBeLessThan(500)
   expect(hopIndex).toBeGreaterThan(0)
   expect(landingIndex).toBeGreaterThan(hopIndex)
   expect(exitIndex).toBeGreaterThan(landingIndex)
@@ -641,9 +653,11 @@ test('keeps every intro phase ordered within the LCP budget', async ({
     choreography.logo.keyframes[landingIndex]?.transform
   )
   expect(exitStart?.easing).toBe('cubic-bezier(0.16, 1, 0.3, 1)')
-  expect(choreography.jungle.delay).toBeGreaterThanOrEqual(750)
-  expect(choreography.jungle.delay).toBeLessThanOrEqual(850)
-  expect(choreography.cloud.endTime).toBeLessThanOrEqual(1250)
+  expect(choreography.jungle.delay).toBeGreaterThan(
+    choreography.logo.delay
+  )
+  expect(choreography.jungle.delay).toBeLessThan(logoEnd)
+  expect(choreography.cloud.endTime).toBeLessThan(logoEnd)
   expect(choreography.jungle.endTime).toBeCloseTo(
     choreography.hero.endTime,
     0
@@ -659,7 +673,8 @@ test('keeps every intro phase ordered within the LCP budget', async ({
   expect(choreography.hero.delay).toBeCloseTo(logoEnd, 0)
   expect(choreography.hero.delay).toBeLessThan(headerEnd)
   expect(choreography.hero.endTime).toBeGreaterThan(headerEnd)
-  expect(choreography.hero.endTime).toBeLessThanOrEqual(2300)
+  expect(choreography.hero.endTime).toBeLessThanOrEqual(500)
+  expect(headerEnd).toBeLessThanOrEqual(500)
 })
 
 test('brings the hero in immediately after the logo without revealing it early', async ({
@@ -720,7 +735,7 @@ test('brings the hero in immediately after the logo without revealing it early',
       )
     }, time)
 
-  expect(await readPhaseAt(250)).toEqual({
+  expect(await readPhaseAt(40)).toEqual({
     cloud: 'visible',
     jungle: 'hidden',
     logo: 'hidden',
@@ -729,7 +744,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(600)).toEqual({
+  expect(await readPhaseAt(130)).toEqual({
     cloud: 'visible',
     jungle: 'hidden',
     logo: 'visible',
@@ -738,7 +753,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(900)).toEqual({
+  expect(await readPhaseAt(200)).toEqual({
     cloud: 'visible',
     jungle: 'visible',
     logo: 'visible',
@@ -747,7 +762,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(1400)).toEqual({
+  expect(await readPhaseAt(300)).toEqual({
     cloud: 'hidden',
     jungle: 'visible',
     logo: 'visible',
@@ -756,7 +771,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'hidden'
   })
 
-  expect(await readPhaseAt(1900)).toEqual({
+  expect(await readPhaseAt(420)).toEqual({
     cloud: 'hidden',
     jungle: 'visible',
     logo: 'hidden',
@@ -765,7 +780,7 @@ test('brings the hero in immediately after the logo without revealing it early',
     hero: 'visible'
   })
 
-  expect(await readPhaseAt(2400)).toEqual({
+  expect(await readPhaseAt(500)).toEqual({
     cloud: 'hidden',
     jungle: 'hidden',
     logo: 'hidden',
@@ -2110,7 +2125,8 @@ test('switches from the locked mobile story to the isolated large story at 768px
 }) => {
   for (const width of [767, 768]) {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto(landingUrl, { waitUntil: 'load' })
+    await page.goto(landingUrl, { waitUntil: 'domcontentloaded' })
+    await waitForRenderedStory(page)
 
     await expect(
       page.locator('[data-empathy-impression-sentinel]')
@@ -2603,7 +2619,8 @@ test('keeps Friheten til a velge full width before the following 50/50 mode stag
   page
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto(landingUrl, { waitUntil: 'load' })
+  await page.goto(landingUrl, { waitUntil: 'domcontentloaded' })
+  await waitForRenderedStory(page)
 
   const geometry = await page.evaluate(() => {
     const track = document.querySelector<HTMLElement>(
@@ -3049,7 +3066,8 @@ test('uses static large fallbacks for reduced motion and short viewports', async
       reducedMotion: testCase.reducedMotion
     })
     await page.setViewportSize(testCase.viewport)
-    await page.goto(landingUrl, { waitUntil: 'load' })
+    await page.goto(landingUrl, { waitUntil: 'domcontentloaded' })
+    await waitForRenderedStory(page)
 
     const state = await page.evaluate(() => {
       const textSurface = document.querySelector<HTMLElement>(
