@@ -6,6 +6,7 @@ import type { ProviderAdapterKey } from './providerAdapter'
 export type CanonicalStoredEvent = CanonicalEvent
 
 export type CanonicalEventStoreInput = {
+  allowPageViewMarketingRelease?: boolean
   dispatches: ProviderDispatchIntent[]
   event: CanonicalStoredEvent
   sourceEvidence?: CanonicalEventSourceEvidence

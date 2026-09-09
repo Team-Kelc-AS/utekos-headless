@@ -130,6 +130,7 @@ export function createPageViewCollectorTransport(
   const completedEventIds = new Set<string>()
   const inFlightEventIds = new Set<string>()
   const pendingEvents = new Map<string, PendingPageView>()
+  let latestQueuedEventId: string | undefined
 
   function captureStateRank(
     state: ProvisionalPageViewCaptureState
@@ -238,7 +239,8 @@ export function createPageViewCollectorTransport(
       pendingEvents.values()
     ).filter(
       pending =>
-        !completedEventIds.has(pending.event.event_id) &&
+        (!completedEventIds.has(pending.event.event_id) ||
+          consent.marketing === 'granted') &&
         !inFlightEventIds.has(pending.event.event_id)
     )
 
@@ -310,8 +312,29 @@ export function createPageViewCollectorTransport(
 
       if (result.status === 'fulfilled' && result.value) {
         completedEventIds.add(event.event_id)
-        pendingEvents.delete(event.event_id)
+        // Analytics acceptance is not Meta delivery. Keep the current
+        // page's original identity eligible for a later marketing grant.
+        if (
+          consent.marketing === 'granted' ||
+          event.event_id !== latestQueuedEventId
+        ) {
+          pendingEvents.delete(event.event_id)
+        }
       }
+    }
+
+    // A grant can arrive while the analytics-only request is in flight.
+    // Reconcile immediately instead of relying on another CMP event/refresh.
+    const currentCookiebot = dependencies.getCookiebot()
+    if (
+      consent.marketing !== 'granted' &&
+      hasCookiebotDecision(currentCookiebot) &&
+      currentCookiebot?.consent?.marketing === true &&
+      Array.from(pendingEvents.keys()).some(eventId =>
+        completedEventIds.has(eventId)
+      )
+    ) {
+      return flush()
     }
 
     return (
@@ -336,6 +359,12 @@ export function createPageViewCollectorTransport(
       !inFlightEventIds.has(event.event_id) &&
       !pendingEvents.has(event.event_id)
     ) {
+      latestQueuedEventId = event.event_id
+      for (const eventId of pendingEvents.keys()) {
+        if (completedEventIds.has(eventId)) {
+          pendingEvents.delete(eventId)
+        }
+      }
       pendingEvents.set(event.event_id, {
         ...(correlation ? { correlation } : {}),
         event

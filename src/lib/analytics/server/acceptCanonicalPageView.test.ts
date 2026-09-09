@@ -85,6 +85,7 @@ test('accepts the event and its provider intents through one storage call', asyn
 
   assert.equal(result.status, 'accepted')
   assert.equal(writes.length, 1)
+  assert.equal(writes[0]?.allowPageViewMarketingRelease, true)
   assert.ok(writes[0]?.event.browser_id?.fbp)
   assert.deepEqual(
     writes[0]?.dispatches.map(dispatch => dispatch.provider),
@@ -144,4 +145,21 @@ test('reports an idempotent duplicate returned by storage', async () => {
     result.event_id,
     '61c2ef59-6e6f-4f56-a63a-567ca398f9de'
   )
+})
+
+test('reports acceptance when an existing page view gains its first Meta attempt', async () => {
+  const result = await acceptCanonicalPageView({
+    payload: pageView('granted', 'granted'),
+    requestContext: {},
+    store: {
+      accept: async () => ({
+        status: 'duplicate',
+        createdDispatchAttempts: [{
+          adapterKey: 'meta:page_view',
+          attemptId: '00000000-0000-4000-8000-000000000001'
+        }]
+      })
+    }
+  })
+  assert.equal(result.status, 'accepted')
 })
