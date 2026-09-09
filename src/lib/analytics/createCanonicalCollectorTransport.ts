@@ -6,6 +6,7 @@ import {
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { clearStoredSnapchatClickId } from './clickIdSessionStore'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
+import { createCollectorDeliveryError } from './createCollectorDeliveryError'
 import { extractClickIds } from './pageViewClientContext'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
@@ -186,64 +187,102 @@ export async function sendCanonicalCollectorEvent<
   input: SendCanonicalCollectorEventInput<E>,
   event: E
 ): Promise<void> {
-  const journeyEnriched =
-    enrichCanonicalBrowserJourneyContext(event)
-  const metaEnriched =
-    await enrichCanonicalEventWithMetaAttribution(
-      journeyEnriched
-    )
-  const enriched =
-    input.enrichEvent ?
-      await input.enrichEvent(metaEnriched)
-    : metaEnriched
-  const body = JSON.stringify(enriched)
-
-  if (
-    input.beaconEndpoint &&
-    typeof navigator !== 'undefined' &&
-    typeof navigator.sendBeacon === 'function'
-  ) {
-    try {
-      const queued = navigator.sendBeacon(
-        input.beaconEndpoint,
-        new Blob([body], { type: 'application/json' })
-      )
-
-      if (queued) return
-    } catch {}
-  }
-
+  let stage: Parameters<
+    typeof createCollectorDeliveryError
+  >[1]['stage'] = 'journey_context'
   let endpoint = input.endpoint
+  let attempt = 0
+  let keepalive = true
+  let bodyBytes = 0
+  let status: number | undefined
 
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    let response: Response
-
-    try {
-      response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          ...input.headers
-        },
-        body,
-        cache: 'no-store',
-        credentials: 'same-origin',
-        keepalive: true
-      })
-    } catch (error) {
-      if (attempt === 1) throw error
-      endpoint = input.fallbackEndpoint ?? input.endpoint
-      continue
-    }
-
-    if (response.ok) return
-
-    if (attempt === 1 || !isRetryableStatus(response.status)) {
-      throw new Error(
-        `${input.analyticsEventName} collector returned ${response.status}`
+  try {
+    const journeyEnriched =
+      enrichCanonicalBrowserJourneyContext(event)
+    stage = 'meta_context'
+    const metaEnriched =
+      await enrichCanonicalEventWithMetaAttribution(
+        journeyEnriched
       )
+    stage = 'event_enrichment'
+    const enriched =
+      input.enrichEvent ?
+        await input.enrichEvent(metaEnriched)
+      : metaEnriched
+    stage = 'serialize'
+    const body = JSON.stringify(enriched)
+    const beaconBody = new Blob([body], {
+      type: 'application/json'
+    })
+    bodyBytes = beaconBody.size
+    // Beacon and keepalive fetch share the browser's 64 KiB in-flight quota.
+    keepalive = bodyBytes <= 65_536
+
+    if (
+      input.beaconEndpoint &&
+      typeof navigator !== 'undefined' &&
+      typeof navigator.sendBeacon === 'function'
+    ) {
+      try {
+        const queued = navigator.sendBeacon(
+          input.beaconEndpoint,
+          beaconBody
+        )
+
+        if (queued) return
+      } catch {}
     }
+
+    stage = 'request'
+    for (attempt = 1; attempt <= 2; attempt += 1) {
+      let response: Response
+      status = undefined
+
+      try {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            ...input.headers
+          },
+          body,
+          cache: 'no-store',
+          credentials: 'same-origin',
+          keepalive
+        })
+      } catch (error) {
+        if (attempt === 2) throw error
+        endpoint = input.fallbackEndpoint ?? input.endpoint
+        // A visible document can retry outside the exhausted keepalive quota.
+        // Hidden/unloading documents retain unload protection.
+        if (
+          typeof document !== 'undefined' &&
+          document.visibilityState === 'visible'
+        ) {
+          keepalive = false
+        }
+        continue
+      }
+
+      status = response.status
+      if (response.ok) return
+
+      if (attempt === 2 || !isRetryableStatus(response.status)) {
+        throw new Error(
+          `${input.analyticsEventName} collector returned ${response.status}`
+        )
+      }
+    }
+  } catch (error) {
+    throw createCollectorDeliveryError(error, {
+      attempt,
+      bodyBytes,
+      endpoint,
+      keepalive,
+      stage,
+      ...(status !== undefined ? { status } : {})
+    })
   }
 }
 

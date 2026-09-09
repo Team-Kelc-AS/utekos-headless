@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import {
-  CLIENT_LOG_PATH,
-  sendClientLog
-} from './sendClientLog'
+import { CLIENT_LOG_PATH, sendClientLog } from './sendClientLog'
 import type { LogPayload } from 'types/observability/log/LogPayload'
 
 const payload: LogPayload = {
@@ -50,5 +47,26 @@ test('falls back to a text/plain beacon when fetch rejects', async () => {
 
   assert.equal(beacons.length, 1)
   assert.equal(beacons[0]?.url, CLIENT_LOG_PATH)
-  assert.match(beacons[0]?.type ?? '', /^text\/plain;charset=utf-8$/i)
+  assert.match(
+    beacons[0]?.type ?? '',
+    /^text\/plain;charset=utf-8$/i
+  )
+})
+
+test('does not invoke native fetch with the transport object as its receiver', async () => {
+  let calls = 0
+  let beacons = 0
+  await sendClientLog(payload, {
+    fetch: async function (this: unknown) {
+      assert.equal(this, undefined)
+      calls += 1
+      return new Response(null, { status: 204 })
+    } as typeof fetch,
+    sendBeacon: () => {
+      beacons += 1
+      return true
+    }
+  })
+  assert.equal(calls, 1)
+  assert.equal(beacons, 0)
 })

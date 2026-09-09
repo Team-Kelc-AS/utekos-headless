@@ -173,3 +173,269 @@ test('falls back to fetch when the beacon cannot queue the event', async () => {
 
   assert.deepEqual(requestedEndpoints, ['/api/events/web-vital'])
 })
+
+test('escapes a saturated keepalive queue while the page is visible without changing the event', async t => {
+  const originalDocument = Object.getOwnPropertyDescriptor(
+    globalThis,
+    'document'
+  )
+  Object.defineProperty(globalThis, 'document', {
+    configurable: true,
+    value: { visibilityState: 'visible' }
+  })
+  t.after(() => {
+    if (originalDocument)
+      Object.defineProperty(
+        globalThis,
+        'document',
+        originalDocument
+      )
+    else Reflect.deleteProperty(globalThis, 'document')
+  })
+  const requests: Array<{ path: string; init: RequestInit }> = []
+  t.mock.method(
+    globalThis,
+    'fetch',
+    async (path: string, init: RequestInit) => {
+      requests.push({ path, init })
+      if (init.keepalive) throw new TypeError('Failed to fetch')
+      return new Response(null, { status: 202 })
+    }
+  )
+  const event = {
+    consent: deniedConsent,
+    event_id: 'same-event',
+    page_url: 'https://utekos.no/skreddersy-varmen'
+  }
+
+  await sendCanonicalCollectorEvent(
+    {
+      analyticsEventName: 'view_promotion',
+      endpoint: '/api/events/view-promotion',
+      fallbackEndpoint: '/api/e/vp'
+    },
+    event
+  )
+
+  assert.equal(requests.length, 2)
+  assert.equal(requests[0]?.init.keepalive, true)
+  assert.equal(requests[1]?.init.keepalive, false)
+  assert.equal(requests[1]?.path, '/api/e/vp')
+  assert.equal(requests[0]?.init.body, requests[1]?.init.body)
+  assert.deepEqual(
+    JSON.parse(String(requests[1]?.init.body)),
+    event
+  )
+})
+
+test('keeps unload protection for retries in a hidden page and reports safe failure context', async t => {
+  const originalDocument = Object.getOwnPropertyDescriptor(
+    globalThis,
+    'document'
+  )
+  Object.defineProperty(globalThis, 'document', {
+    configurable: true,
+    value: { visibilityState: 'hidden' }
+  })
+  t.after(() => {
+    if (originalDocument)
+      Object.defineProperty(
+        globalThis,
+        'document',
+        originalDocument
+      )
+    else Reflect.deleteProperty(globalThis, 'document')
+  })
+  let attempts = 0
+  t.mock.method(
+    globalThis,
+    'fetch',
+    async (_path: string, init: RequestInit) => {
+      attempts += 1
+      assert.equal(init.keepalive, true)
+      throw new TypeError(
+        'Failed to fetch https://secret.example/?private=do-not-log'
+      )
+    }
+  )
+  await assert.rejects(
+    sendCanonicalCollectorEvent(
+      {
+        analyticsEventName: 'view_promotion',
+        endpoint: '/api/events/view-promotion',
+        fallbackEndpoint: '/api/e/vp?private=do-not-log'
+      },
+      { consent: deniedConsent }
+    ),
+    error => {
+      assert.ok(error instanceof Error)
+      assert.match(error.message, /stage=request/)
+      assert.match(error.message, /path=\/api\/e\/vp /)
+      assert.match(error.message, /attempt=2/)
+      assert.match(error.message, /visibility=hidden/)
+      assert.doesNotMatch(
+        error.message,
+        /private|secret|do-not-log/
+      )
+      return true
+    }
+  )
+  assert.equal(attempts, 2)
+})
+
+test('distinguishes preparation failures from requests without sending the event', async t => {
+  let calls = 0
+  t.mock.method(globalThis, 'fetch', async () => {
+    calls += 1
+    return new Response(null, { status: 202 })
+  })
+  await assert.rejects(
+    sendCanonicalCollectorEvent(
+      {
+        analyticsEventName: 'web_vital',
+        endpoint: '/api/events/web-vital',
+        enrichEvent: async () => {
+          throw new TypeError('Failed to fetch')
+        }
+      },
+      { consent: deniedConsent }
+    ),
+    /stage=event_enrichment/
+  )
+  assert.equal(calls, 0)
+})
+
+test('does not retry a rejected event contract', async t => {
+  let calls = 0
+  t.mock.method(globalThis, 'fetch', async () => {
+    calls += 1
+    return new Response(null, { status: 400 })
+  })
+  await assert.rejects(
+    sendCanonicalCollectorEvent(
+      {
+        analyticsEventName: 'view_promotion',
+        endpoint: '/api/events/view-promotion'
+      },
+      { consent: deniedConsent }
+    ),
+    /status=400/
+  )
+  assert.equal(calls, 1)
+})
+
+test('preserves keepalive on a retryable HTTP response and stops after success', async t => {
+  const requests: RequestInit[] = []
+  t.mock.method(
+    globalThis,
+    'fetch',
+    async (_path: string, init: RequestInit) => {
+      requests.push(init)
+      return new Response(null, {
+        status: requests.length === 1 ? 503 : 202
+      })
+    }
+  )
+  await sendCanonicalCollectorEvent(
+    {
+      analyticsEventName: 'view_promotion',
+      endpoint: '/api/events/view-promotion'
+    },
+    { consent: deniedConsent }
+  )
+  assert.equal(requests.length, 2)
+  assert.ok(requests.every(request => request.keepalive))
+})
+
+test('recovers a rejected web vital beacon when the shared keepalive budget is full', async t => {
+  const originalNavigator = Object.getOwnPropertyDescriptor(
+    globalThis,
+    'navigator'
+  )
+  const originalDocument = Object.getOwnPropertyDescriptor(
+    globalThis,
+    'document'
+  )
+  let beacons = 0
+  Object.defineProperty(globalThis, 'navigator', {
+    configurable: true,
+    value: {
+      sendBeacon: () => {
+        beacons += 1
+        return false
+      }
+    }
+  })
+  Object.defineProperty(globalThis, 'document', {
+    configurable: true,
+    value: { visibilityState: 'visible' }
+  })
+  t.after(() => {
+    if (originalNavigator)
+      Object.defineProperty(
+        globalThis,
+        'navigator',
+        originalNavigator
+      )
+    else Reflect.deleteProperty(globalThis, 'navigator')
+    if (originalDocument)
+      Object.defineProperty(
+        globalThis,
+        'document',
+        originalDocument
+      )
+    else Reflect.deleteProperty(globalThis, 'document')
+  })
+  const received: string[] = []
+  t.mock.method(
+    globalThis,
+    'fetch',
+    async (_path: string, init: RequestInit) => {
+      if (init.keepalive) throw new TypeError('Failed to fetch')
+      received.push(String(init.body))
+      return new Response(null, { status: 202 })
+    }
+  )
+  await sendCanonicalCollectorEvent(
+    {
+      analyticsEventName: 'web_vital',
+      beaconEndpoint: '/api/e/wv',
+      endpoint: '/api/events/web-vital',
+      fallbackEndpoint: '/api/e/wv'
+    },
+    { consent: deniedConsent, event_id: 'same-web-vital' }
+  )
+  assert.equal(beacons, 1)
+  assert.equal(received.length, 1)
+  assert.equal(
+    JSON.parse(received[0]!).event_id,
+    'same-web-vital'
+  )
+})
+
+test('measures UTF-8 bytes and avoids keepalive for a body above 64 KiB', async t => {
+  const event = {
+    consent: deniedConsent,
+    data: 'å'.repeat(33_000)
+  }
+  let attempts = 0
+  t.mock.method(
+    globalThis,
+    'fetch',
+    async (_path: string, init: RequestInit) => {
+      attempts += 1
+      assert.equal(init.keepalive, false)
+      assert.ok(new Blob([String(init.body)]).size > 65_536)
+      assert.deepEqual(JSON.parse(String(init.body)), event)
+      return new Response(null, { status: 202 })
+    }
+  )
+  await sendCanonicalCollectorEvent(
+    {
+      analyticsEventName: 'web_vital',
+      endpoint: '/api/events/web-vital'
+    },
+    event
+  )
+  assert.equal(attempts, 1)
+})

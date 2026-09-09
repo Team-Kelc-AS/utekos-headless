@@ -12,9 +12,10 @@ export async function sendClientLog(
   transport: SendClientLogTransport
 ): Promise<void> {
   const body = JSON.stringify(payload)
+  const sendFetch = transport.fetch
 
   try {
-    await transport.fetch(CLIENT_LOG_PATH, {
+    await sendFetch(CLIENT_LOG_PATH, {
       body,
       headers: { 'content-type': 'application/json' },
       keepalive: true,
