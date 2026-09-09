@@ -114,34 +114,32 @@ for (const viewport of [
       page.getByRole('button', { name: /^Legg i handlekurv/ })
     ).toBeEnabled()
 
-    const visibleAtBudget = await page.evaluate(() => {
+    const initialVisibility = await page.evaluate(() => {
       const selectors = [
         '[class*="heroMedia"]',
         '[class*="heroContent"]',
-        '[data-header-part="brand"]',
-        '[data-header-part="actions"]'
+        ...(window.innerWidth >= 1024 ?
+          [
+            '[data-header-part="brand"]',
+            '[data-header-part="actions"]'
+          ]
+        : [])
       ]
       return selectors.map(selector => {
         const element = document.querySelector(selector)!
-        for (const animation of element.getAnimations()) {
-          const name = (animation as CSSAnimation).animationName
-          if (
-            name.includes('skreddersy-') &&
-            !name.includes('hero-curtain')
-          ) {
-            animation.pause()
-            animation.currentTime = 500
-          }
-        }
         const style = getComputedStyle(element)
         return {
           selector,
+          animationName: style.animationName,
           opacity: style.opacity,
           visibility: style.visibility
         }
       })
     })
-    for (const element of visibleAtBudget) {
+    for (const element of initialVisibility) {
+      expect(element.animationName, element.selector).toBe(
+        'none'
+      )
       expect(element.opacity, element.selector).toBe('1')
       expect(element.visibility, element.selector).toBe(
         'visible'
@@ -291,24 +289,42 @@ test('preserves public variant URLs and the server-composed size guide', async (
   ).toBeEnabled()
 })
 
-
-test('waits for header interaction before prefetching other routes', async ({ browser }) => {
+test('waits for header interaction before prefetching other routes', async ({
+  browser
+}) => {
   for (const width of [390, 1440]) {
-    const context = await browser.newContext({ viewport: { width, height: 900 } })
+    const context = await browser.newContext({
+      viewport: { width, height: 900 }
+    })
     try {
       const page = await context.newPage()
       const otherRoutePrefetches: string[] = []
       page.on('request', request => {
         const url = new URL(request.url())
-        if (url.searchParams.has('_rsc') && url.pathname !== '/skreddersy-varmen') {
+        if (
+          url.searchParams.has('_rsc') &&
+          url.pathname !== '/skreddersy-varmen'
+        ) {
           otherRoutePrefetches.push(url.pathname)
         }
       })
       await page.goto(landingUrl, { waitUntil: 'load' })
       await page.waitForTimeout(1200)
       expect(otherRoutePrefetches).toEqual([])
-      await page.locator('[data-track="HeaderLogoClick"]').click()
-      await expect(page).toHaveURL(new URL('/', landingUrl).toString())
+      if (width < 1024) {
+        await page
+          .locator('[data-track="HeroCtaSkreddersyVarmen"]')
+          .click()
+        await expect(
+          page.locator('header[data-site-header]')
+        ).toBeVisible()
+      }
+      await page
+        .locator('[data-track="HeaderLogoClick"]')
+        .click()
+      await expect(page).toHaveURL(
+        new URL('/', landingUrl).toString()
+      )
     } finally {
       await context.close()
     }

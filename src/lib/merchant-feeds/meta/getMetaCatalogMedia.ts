@@ -2,6 +2,7 @@ import { MERCHANT_FEED_SITE_URL } from '@/lib/merchant-feeds/merchantFeedSiteUrl
 import { getPinterestCatalogImageUrls } from '@/lib/merchant-feeds/pinterest/getPinterestCatalogImageUrls'
 import { slugifyVariantOption } from '@/lib/utils/slugifyVariantOption'
 
+import { META_CATALOG_ADDITIONAL_IMAGES_BY_VARIANT } from './metaCatalogAdditionalImages'
 import {
   META_CATALOG_IMAGE_PREFERENCE_TAGS,
   META_CATALOG_IMAGE_TAGS
@@ -72,9 +73,18 @@ export function getMetaCatalogMedia(input: {
     ) ?
       META_TECHDOWN_VARIANT_IMAGES[input.retailerId]
     : undefined
-  for (const curatedImage of input.curatedImages ??
-    variantImages ??
-    manifest.images) {
+  const additionalImages =
+    input.retailerId ?
+      (META_CATALOG_ADDITIONAL_IMAGES_BY_VARIANT[
+        input.productHandle
+      ]?.[input.retailerId] ?? [])
+    : []
+  const curatedImages = input.curatedImages ?? [
+    ...(variantImages ?? manifest.images),
+    ...additionalImages
+  ]
+
+  for (const curatedImage of curatedImages) {
     const url = assertCatalogMediaUrl(curatedImage.url)
     const preferenceTags = curatedImage.preferences.flatMap(
       preference =>

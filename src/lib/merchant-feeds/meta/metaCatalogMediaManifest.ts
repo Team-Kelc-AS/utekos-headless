@@ -79,7 +79,10 @@ export const META_CATALOG_MEDIA_MANIFEST_BY_HANDLE = {
       }
     ],
     videos: [
-      'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/9x16/video-1-1440x2560-56e99ccafb5d.mp4'
+      'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/9x16/video-1-1440x2560-56e99ccafb5d.mp4',
+      'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/9x16/catalogtechdownproducts-1b8da28253b8.mp4',
+      'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/1x1/catalogtechdownproducts-2000x2000-cbb7f027ffd5.mp4',
+      'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/1x1/juster-form-nyt-2000x2000-4da0f3a28d0d.mp4'
     ]
   }
 } as const satisfies Record<string, MetaCatalogMediaManifest>

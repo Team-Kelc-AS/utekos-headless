@@ -6,8 +6,8 @@ import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 export function DesktopSection() {
   return (
     <div className='hidden lg:grid lg:grid-cols-2'>
-      <div className='flex flex-col'>
-        <div className='grow bg-jungle p-8 lg:p-12'>
+      <div className='flex flex-col bg-deep-fjord'>
+        <div className='grow bg-deep-fjord p-8 lg:p-12'>
           <BrandBadge
             label='Kundeservice'
             className='mb-6 border-none bg-primary px-4 py-2 font-utekos-text-medium text-sm leading-4 tracking-normal'
@@ -49,7 +49,7 @@ export function DesktopSection() {
 
         <div className='border-y border-foreground/12'>
           <div className='grid grid-cols-1 sm:grid-cols-2'>
-            <div className='border-r border-foreground/12 bg-jungle p-6 sm:p-8 lg:px-8 lg:py-12'>
+            <div className='border-r border-foreground/12 bg-deep-fjord p-6 sm:p-8 lg:px-8 lg:py-12'>
               <h4 className='flex items-center gap-2 font-utekos-text-medium leading-tight tracking-normal text-foreground'>
                 <Leaf className='text-soft-warm h-5 w-5' />
                 En investering i komfort
@@ -60,7 +60,7 @@ export function DesktopSection() {
               </p>
             </div>
 
-            <div className='bg-jungle p-6 sm:p-8 lg:px-8 lg:py-12'>
+            <div className='bg-deep-fjord p-6 sm:p-8 lg:px-8 lg:py-12'>
               <h4 className='leading-tighttracking-normal flex items-center gap-2 font-utekos-text-medium text-foreground'>
                 <span aria-hidden>🇳🇴</span>
                 <span className='sr-only'>Norsk</span>
@@ -76,7 +76,7 @@ export function DesktopSection() {
           </div>
         </div>
 
-        <div className='bg-jungle p-8 lg:p-12'>
+        <div className='bg-deep-fjord p-8 lg:p-12'>
           <blockquote className='leading-text-paragraph /90 text-lg tracking-normal text-foreground/90 italic'>
             &ldquo;Vårt løfte til deg er enkelt: å levere
             komfortplagg av ypperste kvalitet som lar deg
@@ -89,7 +89,7 @@ export function DesktopSection() {
         </div>
       </div>
 
-      <div className='border-l border-foreground/12 bg-background/72 p-8 lg:p-12'>
+      <div className='border-l border-foreground/12 bg-deep-fjord p-8 lg:p-12'>
         <SupportForm idPrefix='desktop-contact' />
       </div>
     </div>

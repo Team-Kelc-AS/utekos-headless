@@ -42,12 +42,15 @@ const product = {
       tags: ['additional', 'family_utekos_techdown']
     }
   ],
-  image_fetch_status: 'FETCHED'
+  image_fetch_status: 'FETCHED',
+  videos: [],
+  video_fetch_status: 'NO_STATUS'
 } satisfies MetaCatalogProductReadback
 
 const offerWithImages = {
   ...offer,
-  images: product.images
+  images: product.images,
+  videos: []
 } satisfies MetaCatalogOffer
 
 test('verifies Google category and MPN through their v26 readback names', () => {
@@ -68,6 +71,8 @@ test('verifies Google category and MPN through their v26 readback names', () => 
       catalogImageCount: 2,
       missingImageTagCount: 0,
       imageFetchFailureCount: 0,
+      catalogVideoCount: 0,
+      videoProcessingPendingProductCount: 0,
       deletedProductCount: 0,
       categories: ['5598']
     }
@@ -120,5 +125,70 @@ test('fails closed when Meta has not fetched all product images', () => {
         ]
       }),
     /variant-id\.image_fetch_status: images not fetched/
+  )
+})
+
+test('verifies video receipt independently of deferred video processing', () => {
+  const videos = [
+    {
+      url: 'https://utekos.no/catalog/techdown.mp4',
+      tags: ['product_video']
+    }
+  ]
+  const result = verifyMetaCatalogProductReadback({
+    deleteOfferIds: [],
+    offers: [{ ...offerWithImages, videos }],
+    products: [
+      { ...product, videos, video_fetch_status: 'NO_STATUS' }
+    ]
+  })
+  assert.equal(result.catalogVideoCount, 1)
+  assert.equal(result.videoProcessingPendingProductCount, 1)
+})
+
+test('rejects a missing catalog video or changed video tag', () => {
+  const videos = [
+    {
+      url: 'https://utekos.no/catalog/techdown.mp4',
+      tags: ['product_video']
+    }
+  ]
+  for (const actualVideos of [
+    [],
+    [{ ...videos[0]!, tags: ['wrong'] }]
+  ]) {
+    assert.throws(
+      () =>
+        verifyMetaCatalogProductReadback({
+          deleteOfferIds: [],
+          offers: [{ ...offerWithImages, videos }],
+          products: [{ ...product, videos: actualVideos }]
+        }),
+      /videos: URL or tag readback mismatch/
+    )
+  }
+})
+
+test('rejects a failed video fetch even when the URL was accepted', () => {
+  const videos = [
+    {
+      url: 'https://utekos.no/catalog/techdown.mp4',
+      tags: ['product_video']
+    }
+  ]
+  assert.throws(
+    () =>
+      verifyMetaCatalogProductReadback({
+        deleteOfferIds: [],
+        offers: [{ ...offerWithImages, videos }],
+        products: [
+          {
+            ...product,
+            videos,
+            video_fetch_status: 'FETCH_FAILED'
+          }
+        ]
+      }),
+    /video_fetch_status: video fetch failed/
   )
 })

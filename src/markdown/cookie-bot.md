@@ -14,12 +14,12 @@
 
 ## Consent Mode-innstillinger
 
-| Innstilling | Status |
-| --- | --- |
-| Enable Google Consent Mode | På |
-| Enable IAB Transparency and Consent Framework | Av |
-| Enable URL passthrough | På |
-| Advertiser Consent Mode | På |
+| Innstilling                                   | Status |
+| -----------------------------------------------| --------|
+| Enable Google Consent Mode                    | På     |
+| Enable IAB Transparency and Consent Framework | Av     |
+| Enable URL passthrough                        | På     |
+| Advertiser Consent Mode                       | På     |
 
 | Felt | Verdi |
 | --- | --- |

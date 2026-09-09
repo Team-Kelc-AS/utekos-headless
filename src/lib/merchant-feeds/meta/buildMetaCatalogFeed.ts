@@ -36,9 +36,7 @@ export const META_CATALOG_FEED_COLUMNS = [
   'custom_label_2',
   'custom_label_3',
   'custom_label_4',
-  'video[0].url',
-  'video[1].url',
-  'video[2].url'
+  'video'
 ] as const
 
 type MetaCatalogFeedColumn =
@@ -56,9 +54,16 @@ function encodeFeedUrl(value: string) {
   return value.replaceAll(',', '%2C')
 }
 
-function buildFeedRow(offer: MetaCatalogOffer): MetaCatalogFeedRow {
-  const [customLabel0, customLabel1, customLabel2, customLabel3, customLabel4] =
-    offer.customLabels
+function buildFeedRow(
+  offer: MetaCatalogOffer
+): MetaCatalogFeedRow {
+  const [
+    customLabel0,
+    customLabel1,
+    customLabel2,
+    customLabel3,
+    customLabel4
+  ] = offer.customLabels
 
   return {
     id: offer.id,
@@ -96,9 +101,15 @@ function buildFeedRow(offer: MetaCatalogOffer): MetaCatalogFeedRow {
     custom_label_2: customLabel2,
     custom_label_3: customLabel3,
     custom_label_4: customLabel4,
-    'video[0].url': offer.videos[0]?.url ?? '',
-    'video[1].url': offer.videos[1]?.url ?? '',
-    'video[2].url': offer.videos[2]?.url ?? ''
+    video:
+      offer.videos.length > 0 ?
+        JSON.stringify(
+          offer.videos.map(asset => ({
+            url: asset.url,
+            tag: [...asset.tags]
+          }))
+        )
+      : ''
   }
 }
 

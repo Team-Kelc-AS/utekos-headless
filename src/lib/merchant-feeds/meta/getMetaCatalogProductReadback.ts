@@ -23,7 +23,9 @@ const fields = [
   'image_url',
   'additional_image_urls',
   'images',
-  'image_fetch_status'
+  'image_fetch_status',
+  'videos',
+  'video_fetch_status'
 ].join(',')
 
 export async function getMetaCatalogProductReadback(input: {

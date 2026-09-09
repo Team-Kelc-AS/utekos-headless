@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import type { ReactNode } from 'react'
 import { Hero } from './Hero'
 import { EmpathyStory } from './EmpathyStory'
@@ -32,19 +31,6 @@ export function HeroTheatre({
             data-hero-reveal-surface
           >
             <Hero commerce={commerce} content={content} />
-
-            <div aria-hidden className={styles.introCloud} />
-            <div aria-hidden className={styles.introJungle} />
-            <div aria-hidden className={styles.introLogo}>
-              <Image
-                src='/HorizontalSVGLogo.svg'
-                alt=''
-                width={400}
-                height={250}
-                loading='eager'
-                sizes='(max-width: 767px) 64vw, 360px'
-              />
-            </div>
           </div>
         </div>
       </div>
@@ -72,10 +58,7 @@ export function HeroRevealEmpathy({
         minimumVisibleRatio={0.5}
         className={styles.empathyTracking!}
       >
-        <span
-          aria-hidden
-          data-empathy-impression-sentinel
-        />
+        <span aria-hidden data-empathy-impression-sentinel />
       </PromotionImpression>
 
       <EmpathyStory content={content}>{children}</EmpathyStory>

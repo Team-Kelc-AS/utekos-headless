@@ -37,7 +37,7 @@ type ContactFormData = z.infer<typeof ClientContactFormSchema>
 
 const initialState: ContactFormState = { message: '' }
 const contactFieldClassName =
-  'h-12 rounded-lg border-foreground bg-jungle font-utekos-text text-foreground/70 tracking-normal placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
+  'h-12 rounded-lg border-foreground bg-night font-utekos-text text-foreground/70 tracking-normal placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
 
 export function SupportForm({
   idPrefix = 'contact'
@@ -184,10 +184,10 @@ export function SupportForm({
                       name={field.name}
                       value={field.value ?? ''}
                     />
-                    <SelectTrigger className='h-12 w-full rounded-lg border-foreground bg-jungle tracking-normal text-foreground/70 focus-visible:border-primary focus-visible:ring-primary/35 data-placeholder:text-muted-foreground [&_svg:not([class*=text-])]:text-card-foreground'>
+                    <SelectTrigger className='h-12 w-full rounded-lg border-foreground bg-night tracking-normal text-foreground/70 focus-visible:border-primary focus-visible:ring-primary/35 data-placeholder:text-muted-foreground [&_svg:not([class*=text-])]:text-card-foreground'>
                       <SelectValue
                         placeholder='Velg ditt land'
-                        className='bg-jungle text-foreground/70'
+                        className='bg-night text-foreground/70'
                       />
                     </SelectTrigger>
                   </div>
@@ -253,7 +253,7 @@ export function SupportForm({
                         form.clearErrors('message')
                       }
                     }}
-                    className='min-h-40 rounded-lg border-foreground bg-jungle font-utekos-text tracking-normal text-foreground/70 placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
+                    className='min-h-40 rounded-lg border-foreground bg-night font-utekos-text tracking-normal text-foreground/70 placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
                   />
                 </FormControl>
                 <div className='leading-text-paragraph mt-1 flex items-center justify-between text-xs tracking-normal text-foreground'>

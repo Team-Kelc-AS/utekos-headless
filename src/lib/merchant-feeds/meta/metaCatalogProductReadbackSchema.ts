@@ -34,6 +34,11 @@ export const metaCatalogProductReadbackSchema = z
       .array(metaCatalogProductImageReadbackSchema)
       .nullish()
       .transform(value => value ?? []),
+    videos: z
+      .array(metaCatalogProductImageReadbackSchema)
+      .nullish()
+      .transform(value => value ?? []),
+    video_fetch_status: z.string().min(1).nullish(),
     image_fetch_status: z
       .enum([
         'DIRECT_UPLOAD',

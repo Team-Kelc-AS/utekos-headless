@@ -89,6 +89,22 @@ export function verifyMetaCatalogProductReadback(input: {
     ) {
       failures.push(`${id}.images: URL or tag readback mismatch`)
     }
+
+    if (
+      serializeImages(product.videos) !==
+      serializeImages(offer.videos)
+    ) {
+      failures.push(`${id}.videos: URL or tag readback mismatch`)
+    }
+
+    if (
+      offer.videos.length > 0 &&
+      product.video_fetch_status === 'FETCH_FAILED'
+    ) {
+      failures.push(
+        `${id}.video_fetch_status: video fetch failed`
+      )
+    }
   }
 
   for (const id of actual.keys()) {
@@ -138,6 +154,15 @@ export function verifyMetaCatalogProductReadback(input: {
     ),
     imageFetchFailureCount: input.products.filter(
       product => product.image_fetch_status !== 'FETCHED'
+    ).length,
+    catalogVideoCount: input.products.reduce(
+      (count, product) => count + product.videos.length,
+      0
+    ),
+    videoProcessingPendingProductCount: input.products.filter(
+      product =>
+        product.videos.length > 0 &&
+        product.video_fetch_status !== 'FETCHED'
     ).length,
     deletedProductCount: input.deleteOfferIds.filter(id =>
       actual.has(id)

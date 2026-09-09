@@ -6,7 +6,7 @@ import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 export function MobileSection() {
   return (
     <div className='lg:hidden'>
-      <div className='rounded-lg bg-jungle p-6'>
+      <div className='rounded-lg bg-deep-fjord p-6'>
         <BrandBadge
           label='Kundeservice'
           className='mb-5 border-none bg-primary px-4 py-2 font-utekos-text-medium text-sm leading-4 tracking-normal'
@@ -45,7 +45,7 @@ export function MobileSection() {
           </li>
         </ul>
       </div>
-      <div className='border-t border-foreground/12 bg-background/72 p-6'>
+      <div className='border-t border-foreground/12 bg-background p-6'>
         <SupportForm idPrefix='mobile-contact' />
       </div>
 

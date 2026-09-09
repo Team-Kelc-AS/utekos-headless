@@ -8,6 +8,7 @@ import {
   buildMetaCatalogFeedDocument,
   META_CATALOG_FEED_COLUMNS
 } from './buildMetaCatalogFeed'
+import { getMetaCatalogMedia } from './getMetaCatalogMedia'
 
 const product: CatalogSyncProduct = {
   id: 'gid://shopify/Product/100',
@@ -23,9 +24,7 @@ const product: CatalogSyncProduct = {
     url: 'https://cdn.shopify.com/s/files/techdown.jpg?v=1'
   },
   images: [
-    {
-      url: 'https://cdn.shopify.com/s/files/additional.jpg?v=3'
-    }
+    { url: 'https://cdn.shopify.com/s/files/additional.jpg?v=3' }
   ],
   variants: {
     edges: [
@@ -103,6 +102,26 @@ function parseFeedRows(feed: string) {
   })
 }
 
+test('serializes every catalog video and its tags without the old three-video truncation', () => {
+  const rows = parseFeedRows(buildMetaCatalogFeed([product]))
+  const videos = JSON.parse(rows[0]!.video!)
+  const media = getMetaCatalogMedia({
+    productHandle: 'utekos-techdown',
+    color: 'Havdyp'
+  })
+  assert.equal(videos.length, 4)
+  assert.deepEqual(
+    videos,
+    media.videos.map(asset => ({
+      url: asset.url,
+      tag: asset.tags
+    }))
+  )
+  const fourthVideo = videos[3]
+  assert.ok(fourthVideo)
+  assert.ok(fourthVideo.url.includes('juster-form-nyt-2000x2000-'))
+})
+
 test('publishes only in-stock variants with complete Meta fields', () => {
   const feed = buildMetaCatalogFeed([product])
   const rows = parseFeedRows(feed)
@@ -120,10 +139,7 @@ test('publishes only in-stock variants with complete Meta fields', () => {
   assert.equal(rows[0]?.availability, 'in stock')
   assert.equal(rows[0]?.price, '1990.00 NOK')
   assert.equal(rows[0]?.sale_price, '1790.00 NOK')
-  assert.equal(
-    rows[0]?.title,
-    'Utekos TechDown™'
-  )
+  assert.equal(rows[0]?.title, 'Utekos TechDown™')
   assert.equal(rows[0]?.gtin, '4006381333931')
   assert.equal(rows[0]?.google_product_category, '5598')
   assert.equal(rows[0]?.fb_product_category, '528')
@@ -150,30 +166,47 @@ test('publishes only in-stock variants with complete Meta fields', () => {
 })
 
 test('sends every in-stock TechDown variant to the campaign landing page with its variant parameters', () => {
-  const rows = parseFeedRows(buildMetaCatalogFeed([{
-    ...product,
-    variants: {
-      edges: product.variants.edges.map(({ node }) => ({
-        node: { ...node, inventoryQuantity: 4, availableForSale: true }
-      }))
-    }
-  }]))
+  const rows = parseFeedRows(
+    buildMetaCatalogFeed([
+      {
+        ...product,
+        variants: {
+          edges: product.variants.edges.map(({ node }) => ({
+            node: {
+              ...node,
+              inventoryQuantity: 4,
+              availableForSale: true
+            }
+          }))
+        }
+      }
+    ])
+  )
 
   assert.equal(rows.length, 2)
-  assert.deepEqual(rows.map(row => row.title), [
-    'Utekos TechDown™',
-    'Utekos TechDown™'
-  ])
-  assert.deepEqual(rows.map(row => row.size), ['Middels', 'Stor'])
-  assert.deepEqual(rows.map(row => row.item_group_id), ['100', '100'])
-  assert.deepEqual(rows.map(row => {
-    const link = new URL(row.link ?? '')
-    assert.equal(link.origin, 'https://utekos.no')
-    assert.equal(link.pathname, '/skreddersy-varmen')
-    assert.equal(link.searchParams.get('farge'), 'havdyp')
-    assert.equal(link.searchParams.get('kjonn'), 'unisex')
-    return link.searchParams.get('storrelse')
-  }), ['middels', 'stor'])
+  assert.deepEqual(
+    rows.map(row => row.title),
+    ['Utekos TechDown™', 'Utekos TechDown™']
+  )
+  assert.deepEqual(
+    rows.map(row => row.size),
+    ['Middels', 'Stor']
+  )
+  assert.deepEqual(
+    rows.map(row => row.item_group_id),
+    ['100', '100']
+  )
+  assert.deepEqual(
+    rows.map(row => {
+      const link = new URL(row.link ?? '')
+      assert.equal(link.origin, 'https://utekos.no')
+      assert.equal(link.pathname, '/skreddersy-varmen')
+      assert.equal(link.searchParams.get('farge'), 'havdyp')
+      assert.equal(link.searchParams.get('kjonn'), 'unisex')
+      return link.searchParams.get('storrelse')
+    }),
+    ['middels', 'stor']
+  )
 })
 
 test('uses the newest included Shopify variant for Last-Modified', () => {
@@ -189,9 +222,7 @@ test('uses the newest included Shopify variant for Last-Modified', () => {
 test('fails closed when no active public variants remain', () => {
   assert.throws(
     () =>
-      buildMetaCatalogFeed([
-        { ...product, status: 'DRAFT' }
-      ]),
+      buildMetaCatalogFeed([{ ...product, status: 'DRAFT' }]),
     /contains no active in-stock offers/
   )
 })

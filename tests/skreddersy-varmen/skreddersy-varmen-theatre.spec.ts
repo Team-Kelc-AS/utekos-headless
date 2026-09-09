@@ -291,8 +291,8 @@ test('uses the readable static document flow for reduced motion', async ({
     const scenes = Array.from(
       document.querySelectorAll<HTMLElement>('[data-mode-scene]')
     )
-    const introLogo = document.querySelector<HTMLImageElement>(
-      'img[src*="HorizontalSVGLogo.svg"]'
+    const introOverlays = document.querySelectorAll(
+      '[class*="introCloud"], [class*="introJungle"], [class*="introLogo"]'
     )
     const actions = document.querySelector<HTMLElement>(
       '[data-header-part="actions"]'
@@ -312,10 +312,7 @@ test('uses the readable static document flow for reduced motion', async ({
       scenePositions: scenes.map(
         scene => getComputedStyle(scene).position
       ),
-      introDisplay:
-        introLogo?.parentElement ?
-          getComputedStyle(introLogo.parentElement).display
-        : null,
+      introCount: introOverlays.length,
       headerVisibility:
         actions ? getComputedStyle(actions).visibility : null,
       empathyMediaImages: document.querySelectorAll(
@@ -338,7 +335,7 @@ test('uses the readable static document flow for reduced motion', async ({
     'static',
     'static'
   ])
-  expect(state.introDisplay).toBe('none')
+  expect(state.introCount).toBe(0)
   expect(state.headerVisibility).toBe('visible')
   expect(state.empathyMediaImages).toBe(2)
   expect(state.empathyRecognitionTransform).toBe('none')
@@ -495,300 +492,53 @@ test('uses the static empathy flow at a 200-percent equivalent motion viewport',
   expect(state.documentWidth).toBe(state.viewportWidth)
 })
 
-test('keeps hidden header controls out of the initial keyboard order', async ({
-  page
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto(landingUrl, { waitUntil: 'domcontentloaded' })
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 1440, height: 900 }
+]) {
+  for (const reducedMotion of [
+    'no-preference',
+    'reduce'
+  ] as const) {
+    test(`shows the hero without an entrance animation at ${viewport.width}px (${reducedMotion})`, async ({
+      page
+    }) => {
+      await page.setViewportSize(viewport)
+      await page.emulateMedia({ reducedMotion })
+      await page.goto(landingUrl, { waitUntil: 'load' })
 
-  const actions = page.locator('[data-header-part="actions"]')
-
-  await expect(actions).toHaveCSS('visibility', 'hidden')
-  await page.keyboard.press('Tab')
-
-  const focusedHiddenHeader = await page.evaluate(() =>
-    Boolean(
-      document.activeElement?.closest(
-        '[data-header-part="actions"]'
-      )
-    )
-  )
-
-  expect(focusedHiddenHeader).toBe(false)
-
-  await expect(actions).toHaveCSS('visibility', 'visible', {
-    timeout: 2800
-  })
-})
-
-test('keeps every intro phase ordered within the LCP budget', async ({
-  page
-}) => {
-  await page.goto(landingUrl, { waitUntil: 'load' })
-
-  const introCloud = page.locator('[class*="introCloud"]')
-  const introJungle = page.locator('[class*="introJungle"]')
-  const introLogo = page
-    .locator('img[src*="HorizontalSVGLogo.svg"]')
-    .locator('..')
-  const headerBrand = page.locator('[data-header-part="brand"]')
-  const headerActions = page.locator(
-    '[data-header-part="actions"]'
-  )
-  const heroMedia = page.locator('[class*="heroMedia"]')
-
-  await expect(introCloud).toHaveCount(1, { timeout: 15_000 })
-  await expect(introJungle).toHaveCount(1)
-  await expect(introLogo).toHaveCount(1)
-  await expect(headerBrand).toHaveCount(1)
-  await expect(headerActions).toHaveCount(1)
-  await expect(heroMedia).toHaveCount(1)
-
-  const choreography = await page.evaluate(() => {
-    const requiredElement = <T extends Element>(
-      selector: string
-    ) => {
-      const element = document.querySelector<T>(selector)
-
-      if (!element) {
-        throw new Error(
-          `Missing choreography element: ${selector}`
+      await expect(
+        page.locator(
+          '[class*="introCloud"], [class*="introJungle"], [class*="introLogo"]'
         )
+      ).toHaveCount(0)
+
+      for (const selector of [
+        '[class*="heroMedia"]',
+        '[class*="heroContent"]',
+        ...(viewport.width >= 1024 ?
+          [
+            '[data-header-part="brand"]',
+            '[data-header-part="actions"]'
+          ]
+        : [])
+      ]) {
+        const element = page.locator(`${selector}:visible`)
+        await expect(element).toBeVisible()
+        await expect(element).toHaveCSS('visibility', 'visible')
+        await expect(element).toHaveCSS('opacity', '1')
+        await expect(element).toHaveCSS('animation-name', 'none')
+        await expect(element).toHaveCSS('transform', 'none')
       }
 
-      return element
-    }
-    const logoImage = requiredElement<HTMLImageElement>(
-      'img[src*="HorizontalSVGLogo.svg"]'
-    )
-    const logo = logoImage.parentElement
-
-    if (!logo) {
-      throw new Error('Missing intro logo surface')
-    }
-
-    const elements = {
-      cloud: requiredElement<HTMLElement>(
-        '[class*="introCloud"]'
-      ),
-      jungle: requiredElement<HTMLElement>(
-        '[class*="introJungle"]'
-      ),
-      logo,
-      headerBrand: requiredElement<HTMLElement>(
-        '[data-header-part="brand"]'
-      ),
-      headerActions: requiredElement<HTMLElement>(
-        '[data-header-part="actions"]'
-      ),
-      hero: requiredElement<HTMLElement>('[class*="heroMedia"]')
-    }
-    const milliseconds = (value: string) =>
-      value.endsWith('ms') ?
-        Number.parseFloat(value)
-      : Number.parseFloat(value) * 1000
-
-    const animationDetails = (element: Element) => {
-      const styles = getComputedStyle(element)
-      const animation = element.getAnimations()[0]
-      const effect = animation?.effect as KeyframeEffect | null
-
-      return {
-        delay: milliseconds(styles.animationDelay),
-        duration: milliseconds(styles.animationDuration),
-        endTime: Number(
-          animation?.effect?.getComputedTiming().endTime ?? 0
-        ),
-        keyframes: (effect?.getKeyframes() ?? []).map(
-          (keyframe: ComputedKeyframe) => ({
-            easing: keyframe.easing,
-            offset: keyframe.computedOffset,
-            transform:
-              typeof keyframe.transform === 'string' ?
-                keyframe.transform
-              : ''
-          })
-        )
-      }
-    }
-
-    return {
-      cloudBackground: getComputedStyle(elements.cloud)
-        .backgroundColor,
-      cloud: animationDetails(elements.cloud),
-      jungle: animationDetails(elements.jungle),
-      logo: animationDetails(elements.logo),
-      headerBrand: animationDetails(elements.headerBrand),
-      headerActions: animationDetails(elements.headerActions),
-      hero: animationDetails(elements.hero)
-    }
-  })
-
-  const hopIndex = choreography.logo.keyframes.findIndex(
-    ({ transform }) => transform.includes('translateY(-')
-  )
-  const landingIndex = choreography.logo.keyframes.findIndex(
-    ({ transform }, index) =>
-      index > hopIndex && transform.includes('translateY(0')
-  )
-  const exitIndex = choreography.logo.keyframes.length - 1
-  const exitStart = choreography.logo.keyframes[exitIndex - 1]
-  const logoEnd =
-    choreography.logo.delay + choreography.logo.duration
-  const headerEnd =
-    choreography.headerBrand.delay +
-    choreography.headerBrand.duration
-
-  expect(choreography.cloudBackground).toBe('rgb(255, 255, 255)')
-  expect(choreography.logo.delay).toBeGreaterThanOrEqual(0)
-  expect(choreography.logo.delay).toBeLessThanOrEqual(100)
-  expect(choreography.logo.duration).toBeGreaterThan(0)
-  expect(choreography.logo.endTime).toBeLessThan(500)
-  expect(hopIndex).toBeGreaterThan(0)
-  expect(landingIndex).toBeGreaterThan(hopIndex)
-  expect(exitIndex).toBeGreaterThan(landingIndex)
-  expect(
-    choreography.logo.keyframes[exitIndex]?.transform
-  ).not.toBe(
-    choreography.logo.keyframes[landingIndex]?.transform
-  )
-  expect(exitStart?.easing).toBe('cubic-bezier(0.16, 1, 0.3, 1)')
-  expect(choreography.jungle.delay).toBeGreaterThan(
-    choreography.logo.delay
-  )
-  expect(choreography.jungle.delay).toBeLessThan(logoEnd)
-  expect(choreography.cloud.endTime).toBeLessThan(logoEnd)
-  expect(choreography.jungle.endTime).toBeCloseTo(
-    choreography.hero.endTime,
-    0
-  )
-  expect(choreography.headerBrand.delay).toBeCloseTo(logoEnd, 0)
-  expect(choreography.headerActions.delay).toBeCloseTo(
-    logoEnd,
-    0
-  )
-  expect(choreography.headerActions.duration).toBe(
-    choreography.headerBrand.duration
-  )
-  expect(choreography.hero.delay).toBeCloseTo(logoEnd, 0)
-  expect(choreography.hero.delay).toBeLessThan(headerEnd)
-  expect(choreography.hero.endTime).toBeGreaterThan(headerEnd)
-  expect(choreography.hero.endTime).toBeLessThanOrEqual(500)
-  expect(headerEnd).toBeLessThanOrEqual(500)
-})
-
-test('brings the hero in immediately after the logo without revealing it early', async ({
-  page
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto(landingUrl, { waitUntil: 'load' })
-  await expect(
-    page.locator('img[src*="HorizontalSVGLogo.svg"]')
-  ).toHaveCount(1, { timeout: 15_000 })
-
-  const readPhaseAt = (time: number) =>
-    page.evaluate(currentTime => {
-      const logoImage = document.querySelector<HTMLImageElement>(
-        'img[src*="HorizontalSVGLogo.svg"]'
+      const cta = page.locator(
+        '[data-track="HeroCtaSkreddersyVarmen"]'
       )
-      const elements = {
-        cloud: document.querySelector<HTMLElement>(
-          '[class*="introCloud"]'
-        ),
-        jungle: document.querySelector<HTMLElement>(
-          '[class*="introJungle"]'
-        ),
-        logo: logoImage?.parentElement ?? null,
-        brand: document.querySelector<HTMLElement>(
-          '[data-header-part="brand"]'
-        ),
-        actions: document.querySelector<HTMLElement>(
-          '[data-header-part="actions"]'
-        ),
-        hero: document.querySelector<HTMLElement>(
-          '[class*="heroMedia"]'
-        )
-      }
-
-      for (const element of Object.values(elements)) {
-        for (const animation of element?.getAnimations() ?? []) {
-          const name = (animation as CSSAnimation).animationName
-
-          if (
-            name.includes('skreddersy-') &&
-            !name.includes('hero-curtain')
-          ) {
-            animation.pause()
-            animation.currentTime = currentTime
-          }
-        }
-      }
-
-      const visibility = (element: Element | null) =>
-        element ? getComputedStyle(element).visibility : null
-
-      return Object.fromEntries(
-        Object.entries(elements).map(([key, element]) => [
-          key,
-          visibility(element)
-        ])
-      )
-    }, time)
-
-  expect(await readPhaseAt(40)).toEqual({
-    cloud: 'visible',
-    jungle: 'hidden',
-    logo: 'hidden',
-    brand: 'hidden',
-    actions: 'hidden',
-    hero: 'hidden'
-  })
-
-  expect(await readPhaseAt(130)).toEqual({
-    cloud: 'visible',
-    jungle: 'hidden',
-    logo: 'visible',
-    brand: 'hidden',
-    actions: 'hidden',
-    hero: 'hidden'
-  })
-
-  expect(await readPhaseAt(200)).toEqual({
-    cloud: 'visible',
-    jungle: 'visible',
-    logo: 'visible',
-    brand: 'hidden',
-    actions: 'hidden',
-    hero: 'hidden'
-  })
-
-  expect(await readPhaseAt(300)).toEqual({
-    cloud: 'hidden',
-    jungle: 'visible',
-    logo: 'visible',
-    brand: 'hidden',
-    actions: 'hidden',
-    hero: 'hidden'
-  })
-
-  expect(await readPhaseAt(420)).toEqual({
-    cloud: 'hidden',
-    jungle: 'visible',
-    logo: 'hidden',
-    brand: 'visible',
-    actions: 'visible',
-    hero: 'visible'
-  })
-
-  expect(await readPhaseAt(500)).toEqual({
-    cloud: 'hidden',
-    jungle: 'hidden',
-    logo: 'hidden',
-    brand: 'visible',
-    actions: 'visible',
-    hero: 'visible'
-  })
-})
+      await cta.focus()
+      await expect(cta).toBeFocused()
+    })
+  }
+}
 
 test('reveals the mobile manifesto and complete bonfire panel without dead scroll space', async ({
   page
@@ -1788,56 +1538,93 @@ test('reveals the complete adaptive-functionality section from the side after pu
   expect(introHeight).toBeCloseTo(844 * 2, -1)
 })
 
-test('keeps a transparent mobile header in the hero and clears it before the story images', async ({
-  page
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto(landingUrl, { waitUntil: 'domcontentloaded' })
+for (const reducedMotion of [
+  'no-preference',
+  'reduce'
+] as const) {
+  test(`keeps the mobile cart header exclusive to purchase and restores the order shortcut (${reducedMotion})`, async ({
+    page
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.emulateMedia({ reducedMotion })
+    await page.goto(landingUrl, { waitUntil: 'load' })
 
-  const header = page.locator('header[data-site-header]')
-  const icon = header.locator('img[src="/IconWhite.svg"]')
-  const cartButton = header.getByRole('button', {
-    name: /handlekurv/i
+    const header = page.locator('header[data-site-header]')
+    const shortcut = page.getByRole('region', {
+      name: 'Snarvei til bestilling'
+    })
+    const purchase = page.locator('#purchase-section')
+    await expect(header).toBeHidden()
+    await expect(shortcut).toBeHidden()
+
+    await page.evaluate(() => window.scrollTo(0, 1000))
+    await expect(header).toBeHidden()
+    await expect(shortcut).toBeVisible()
+    await shortcut
+      .getByRole('button', {
+        name: 'Til bestilling',
+        exact: true
+      })
+      .click()
+    await expect
+      .poll(() =>
+        purchase.evaluate(element =>
+          Math.abs(element.getBoundingClientRect().top - 72)
+        )
+      )
+      .toBeLessThanOrEqual(1)
+
+    await expect(shortcut).toBeHidden()
+    await expect(header).toBeVisible()
+    await expect(header).toHaveCSS('position', 'fixed')
+    await expect(header).toHaveCSS('animation-name', 'none')
+    await expect(header).toHaveCSS('transform', 'none')
+    await header
+      .getByRole('button', { name: /åpne handlekurven/i })
+      .click()
+    await expect(
+      page.getByRole('dialog', {
+        name: 'Handlekurv',
+        exact: true
+      })
+    ).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(
+      page.getByRole('dialog', {
+        name: 'Handlekurv',
+        exact: true
+      })
+    ).toBeHidden()
+
+    await purchase.evaluate(element =>
+      window.scrollTo(
+        0,
+        element.getBoundingClientRect().bottom +
+          window.scrollY +
+          1
+      )
+    )
+    await expect(header).toBeHidden()
+    await expect(shortcut).toBeVisible()
+    await shortcut
+      .getByRole('button', { name: 'Lukk', exact: true })
+      .press('Enter')
+    await expect(shortcut).toBeHidden()
+
+    await purchase.evaluate(element =>
+      window.scrollTo(
+        0,
+        element.getBoundingClientRect().top + window.scrollY - 72
+      )
+    )
+    await expect(header).toBeVisible()
+    await expect(
+      header.getByRole('button', { name: /åpne handlekurven/i })
+    ).toBeEnabled()
+    await page.evaluate(() => window.scrollTo(0, 0))
+    await expect(header).toBeHidden()
   })
-  const menuButton = header.getByRole('button', {
-    name: /åpne meny/i
-  })
-
-  await expect(header).toHaveCount(1, { timeout: 15_000 })
-  await expect(icon).toBeVisible({ timeout: 5200 })
-  await expect(cartButton).toBeVisible()
-  await expect(menuButton).toBeVisible()
-  await expect(header).toHaveCSS('position', 'fixed')
-
-  const heroHeader = await header.evaluate(element => ({
-    background: getComputedStyle(element).backgroundColor,
-    beforeContent: getComputedStyle(element, '::before').content,
-    searchButtons: Array.from(
-      element.querySelectorAll('button')
-    ).filter(
-      button =>
-        button.getAttribute('aria-label')?.includes('søk') &&
-        getComputedStyle(button).display !== 'none'
-    ).length
-  }))
-
-  expect(heroHeader.background).toBe('rgba(0, 0, 0, 0)')
-  expect(heroHeader.beforeContent).toBe('none')
-  expect(heroHeader.searchButtons).toBe(0)
-
-  await page.evaluate(() => window.scrollTo(0, innerHeight + 1))
-  await page.waitForTimeout(100)
-
-  const storyHeader = await header.evaluate(element => ({
-    bottom: element.getBoundingClientRect().bottom,
-    opacity: getComputedStyle(element).opacity,
-    visibility: getComputedStyle(element).visibility
-  }))
-
-  expect(storyHeader.bottom).toBeLessThanOrEqual(1)
-  expect(storyHeader.opacity).toBe('0')
-  expect(storyHeader.visibility).toBe('hidden')
-})
+}
 
 test('paces both mobile mode arrivals linearly across more than one viewport', async ({
   page
@@ -2125,7 +1912,9 @@ test('switches from the locked mobile story to the isolated large story at 768px
 }) => {
   for (const width of [767, 768]) {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto(landingUrl, { waitUntil: 'domcontentloaded' })
+    await page.goto(landingUrl, {
+      waitUntil: 'domcontentloaded'
+    })
     await waitForRenderedStory(page)
 
     await expect(
@@ -3066,7 +2855,9 @@ test('uses static large fallbacks for reduced motion and short viewports', async
       reducedMotion: testCase.reducedMotion
     })
     await page.setViewportSize(testCase.viewport)
-    await page.goto(landingUrl, { waitUntil: 'domcontentloaded' })
+    await page.goto(landingUrl, {
+      waitUntil: 'domcontentloaded'
+    })
     await waitForRenderedStory(page)
 
     const state = await page.evaluate(() => {

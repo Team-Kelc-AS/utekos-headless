@@ -50,6 +50,32 @@ for (const variant of ['current', 'legacy']) {
     await expect(
       page.locator('[data-experiment-variant]')
     ).toHaveAttribute('data-experiment-variant', variant)
+    const header = page.locator('header[data-site-header]')
+    const shortcut = page.getByRole('region', {
+      name: 'Snarvei til bestilling'
+    })
+    await expect(header).toBeHidden()
+    await page.evaluate(() => window.scrollTo(0, 1000))
+    await expect(shortcut).toBeVisible()
+    await expect(header).toBeHidden()
+    await shortcut
+      .getByRole('button', {
+        name: 'Til bestilling',
+        exact: true
+      })
+      .click()
+    await expect(header).toBeVisible()
+    await expect(shortcut).toBeHidden()
+    await header
+      .getByRole('button', { name: /åpne handlekurven/i })
+      .click()
+    await expect(
+      page.getByRole('dialog', {
+        name: 'Handlekurv',
+        exact: true
+      })
+    ).toBeVisible()
+    await page.keyboard.press('Escape')
     await expect(
       page.getByRole('button', { name: /^Legg i handlekurv/ })
     ).toBeEnabled()
@@ -71,5 +97,13 @@ for (const variant of ['current', 'legacy']) {
     await expect(
       page.getByRole('region', { name: 'Størrelsesveiledning' })
     ).toBeVisible()
+    await header
+      .getByRole('link', {
+        name: 'Utekos - Til forsiden',
+        exact: true
+      })
+      .click()
+    await expect(page).toHaveURL(new URL('/', landingUrl).href)
+    await expect(header).toBeVisible()
   })
 }

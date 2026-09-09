@@ -6,7 +6,6 @@ import { BottomGrid } from './components/BottomGrid'
 import { CornerPluses } from './components/CornerPluses'
 import { DesktopSection } from './components/DesktopSection'
 import { MobileSection } from './components/MobileSection'
-import { TopGrid } from './components/TopGrid'
 import { Activity } from 'react'
 
 export const metadata: Metadata = {
@@ -36,13 +35,10 @@ export const metadata: Metadata = {
 export default function SupportPage() {
   return (
     <>
-      <article className='container mx-auto my-24 max-w-304 px-4 tracking-normal text-foreground sm:my-32'>
+      <article className='container mx-auto mt-4 mb-20 max-w-304 px-4 tracking-normal text-foreground sm:mt-6 sm:mb-28'>
         <div>
           <Activity>
-            <TopGrid />
-          </Activity>
-          <Activity>
-            <div className='relative overflow-hidden rounded-lg border border-foreground bg-card text-card-foreground'>
+            <div className='relative overflow-hidden rounded-lg border border-foreground/40 bg-card text-card-foreground'>
               <Activity>
                 <CornerPluses />
               </Activity>

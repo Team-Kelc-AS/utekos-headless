@@ -65,12 +65,6 @@
   visibility: visible;
 }
 
-.introCloud,
-.introJungle,
-.introLogo {
-  display: none;
-}
-
 .empathyPromotion,
 .empathyTracking,
 .empathyStory,
@@ -662,18 +656,6 @@
       timeline-scope: --hero-reveal-track;
     }
 
-    :global(body):has(.pageRoot) {
-      --skreddersy-white-hold: 80ms;
-      --skreddersy-logo-duration: 270ms;
-      --skreddersy-logo-end: 350ms;
-      --skreddersy-jungle-start: 160ms;
-      --skreddersy-jungle-duration: 340ms;
-      --skreddersy-cloud-duration: 240ms;
-      --skreddersy-header-duration: 120ms;
-      --skreddersy-hero-start: 350ms;
-      --skreddersy-hero-duration: 150ms;
-    }
-
     :global(body):has(.pageRoot)
       :global(header[data-site-header]) {
       position: fixed;
@@ -688,46 +670,6 @@
     :global(body):has(.pageRoot)
       :global(header[data-site-header] > div) {
       z-index: 1;
-    }
-
-    :global(body):has(.pageRoot)
-      :global(header[data-site-header] [data-header-part]) {
-      visibility: hidden;
-    }
-
-    :global(body):has(.pageRoot)
-      :global(
-        header[data-site-header] [data-header-part='brand']
-      ) {
-      animation: skreddersy-header-brand
-        var(--skreddersy-header-duration)
-        cubic-bezier(0.16, 1, 0.3, 1) var(--skreddersy-logo-end)
-        both;
-    }
-
-    :global(body):has(.pageRoot)
-      :global(
-        header[data-site-header] [data-header-part='actions']
-      ) {
-      animation: skreddersy-header-actions
-        var(--skreddersy-header-duration)
-        cubic-bezier(0.16, 1, 0.3, 1) var(--skreddersy-logo-end)
-        both;
-    }
-
-    @media (max-width: 19.999rem) {
-      :global(body):has(.pageRoot)
-        :global(
-          header[data-site-header] [data-header-part='brand']
-        ),
-      :global(body):has(.pageRoot)
-        :global(
-          header[data-site-header] [data-header-part='actions']
-        ) {
-        animation: skreddersy-header-reflow
-          var(--skreddersy-header-duration) ease-out
-          var(--skreddersy-logo-end) both;
-      }
     }
 
     .heroPromotion {
@@ -765,64 +707,6 @@
     .heroContent {
       height: 100svh;
       min-height: 100svh;
-    }
-
-    .heroMedia,
-    .heroContent {
-      visibility: hidden;
-      opacity: 0;
-      animation: skreddersy-hero-arrival
-        var(--skreddersy-hero-duration)
-        cubic-bezier(0.16, 1, 0.3, 1)
-        var(--skreddersy-hero-start) both;
-    }
-
-    .introCloud,
-    .introJungle,
-    .introLogo {
-      position: absolute;
-      inset: 0;
-      display: block;
-      pointer-events: none;
-    }
-
-    .introCloud {
-      z-index: 20;
-      visibility: visible;
-      background: #fff;
-      animation: skreddersy-cloud-exit
-        var(--skreddersy-cloud-duration) linear both;
-    }
-
-    .introJungle {
-      z-index: 21;
-      visibility: hidden;
-      border-radius: clamp(2rem, 12vw, 9rem);
-      background: var(--jungle);
-      transform: scale(0.025, 0.04);
-      animation: skreddersy-jungle-arrival
-        var(--skreddersy-jungle-duration)
-        cubic-bezier(0.65, 0, 0.35, 1)
-        var(--skreddersy-jungle-start) both;
-      transform-origin: center;
-    }
-
-    .introLogo {
-      z-index: 22;
-      display: grid;
-      visibility: hidden;
-      place-items: center;
-      backface-visibility: hidden;
-      animation: skreddersy-logo-flight
-        var(--skreddersy-logo-duration)
-        cubic-bezier(0.32, 0.72, 0, 1)
-        var(--skreddersy-white-hold) both;
-      will-change: transform, opacity;
-    }
-
-    .introLogo img {
-      width: min(64vw, 22.5rem);
-      height: auto;
     }
 
     @media (min-width: 20rem) and (min-height: 36rem) and (max-width: 47.999rem) {
@@ -1191,157 +1075,6 @@
   }
 }
 
-@keyframes skreddersy-logo-flight {
-  0% {
-    visibility: hidden;
-    opacity: 0;
-    transform: scale(0.06, 0.1);
-  }
-
-  0.01% {
-    visibility: visible;
-    opacity: 1;
-  }
-
-  20% {
-    visibility: visible;
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  34.286%,
-  58.571% {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  68.571% {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
-  }
-
-  74.857% {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(-2.2svh) scale(0.99);
-    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
-  }
-
-  80% {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  100% {
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(72svh) scale(0.94);
-  }
-}
-
-@keyframes skreddersy-jungle-arrival {
-  0% {
-    visibility: hidden;
-    opacity: 0;
-    transform: scale(0.025, 0.04);
-  }
-
-  0.01% {
-    visibility: visible;
-    opacity: 1;
-  }
-
-  26.563% {
-    visibility: visible;
-    opacity: 1;
-    transform: scale(1.08);
-  }
-
-  71.875% {
-    visibility: visible;
-    opacity: 1;
-    transform: scale(1.08);
-  }
-
-  100% {
-    visibility: hidden;
-    opacity: 0;
-    transform: scale(1.08);
-  }
-}
-
-@keyframes skreddersy-cloud-exit {
-  0%,
-  99.99% {
-    visibility: visible;
-    opacity: 1;
-  }
-
-  100% {
-    visibility: hidden;
-    opacity: 1;
-  }
-}
-
-@keyframes skreddersy-hero-arrival {
-  0% {
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(1rem) scale(1.008);
-  }
-
-  0.01% {
-    visibility: visible;
-  }
-
-  100% {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes skreddersy-header-brand {
-  0% {
-    visibility: hidden;
-    opacity: 0;
-    transform: translateX(-115%);
-  }
-
-  0.01% {
-    visibility: visible;
-  }
-
-  100% {
-    visibility: visible;
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes skreddersy-header-actions {
-  0% {
-    visibility: hidden;
-    opacity: 0;
-    transform: translateX(115%);
-  }
-
-  0.01% {
-    visibility: visible;
-  }
-
-  100% {
-    visibility: visible;
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 @keyframes skreddersy-route-header-exit {
   0%,
   45% {
@@ -1404,24 +1137,6 @@
 
   100% {
     transform: translate3d(0, -100%, 0);
-  }
-}
-
-@keyframes skreddersy-header-reflow {
-  0% {
-    visibility: hidden;
-    opacity: 0;
-    transform: none;
-  }
-
-  0.01% {
-    visibility: visible;
-  }
-
-  100% {
-    visibility: visible;
-    opacity: 1;
-    transform: none;
   }
 }
 

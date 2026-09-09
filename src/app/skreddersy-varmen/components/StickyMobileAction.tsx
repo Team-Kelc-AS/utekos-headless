@@ -16,6 +16,7 @@ import { reportCanonicalViewPromotion } from '@/lib/analytics/viewPromotionRepor
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import type { Money } from 'types/commerce/Money'
+import styles from './MobileLandingNavigation.module.css'
 
 const DISMISS_KEY = 'utekos:sticky-mobile-dismissed'
 const IMPRESSION_DWELL_MS = 1000
@@ -33,6 +34,8 @@ export function StickyMobileAction({
   const reduced = useReducedMotion()
   const [isVisible, setIsVisible] = useState(false)
   const [isDismissed, setIsDismissed] = useState(false)
+  const [isPurchaseVisible, setIsPurchaseVisible] =
+    useState(false)
   const rafRef = useRef<number | null>(null)
   const reportedPromotionPageViewId = useRef<string | null>(null)
 
@@ -59,22 +62,17 @@ export function StickyMobileAction({
 
   useEffect(() => {
     const compute = () => {
-      if (isDismissed) {
-        setIsVisible(false)
-        return
-      }
-      const show = window.scrollY > 800
       const purchaseSection = document.getElementById(
         'purchase-section'
       )
-      if (purchaseSection) {
-        const rect = purchaseSection.getBoundingClientRect()
-        if (rect.top < window.innerHeight && rect.bottom >= 0) {
-          setIsVisible(false)
-          return
-        }
-      }
-      setIsVisible(show)
+      const rect = purchaseSection?.getBoundingClientRect()
+      const purchaseVisible = Boolean(
+        rect && rect.top < window.innerHeight && rect.bottom > 0
+      )
+      setIsPurchaseVisible(purchaseVisible)
+      setIsVisible(
+        window.scrollY > 800 && !purchaseVisible && !isDismissed
+      )
     }
 
     const onScroll = () => {
@@ -87,11 +85,21 @@ export function StickyMobileAction({
     window.addEventListener('scroll', onScroll, {
       passive: true
     })
+    window.addEventListener('resize', onScroll)
+    const purchaseSection = document.getElementById(
+      'purchase-section'
+    )
+    const observer = new ResizeObserver(onScroll)
+    if (purchaseSection) observer.observe(purchaseSection)
     compute()
     return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', onScroll)
       window.removeEventListener('scroll', onScroll)
-      if (rafRef.current != null)
+      if (rafRef.current != null) {
         cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
     }
   }, [isDismissed])
 
@@ -148,97 +156,113 @@ export function StickyMobileAction({
   }
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          role='region'
-          aria-label='Snarvei til bestilling'
-          initial={
-            reduced ? { opacity: 0 } : { y: '120%', opacity: 0 }
-          }
-          animate={
-            reduced ? { opacity: 1 } : { y: 0, opacity: 1 }
-          }
-          exit={
-            reduced ? { opacity: 0 } : { y: '120%', opacity: 0 }
-          }
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className='fixed inset-x-3 bottom-3 z-50 lg:hidden'
-        >
-          {/* Glasspanel-baren: Bruker background/95 for å gi en solid kontrast, uansett hvilken farge seksjonen bak har */}
-          <div className='flex items-center gap-2 rounded-full border border-foreground/15 bg-background/95 p-2 text-foreground shadow-[0_10px_40px_rgba(0,0,0,0.3)] backdrop-blur-md'>
-            <button
-              type='button'
-              onClick={handleDismiss}
-              data-track='SkreddersyVarmenStickyClose'
-              aria-label='Lukk'
-              className={cn(
-                'flex size-9 shrink-0 items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground/60 transition-colors hover:bg-foreground/10 hover:text-foreground sm:size-10',
-                focusRing
-              )}
-            >
-              <X size={14} aria-hidden className='sm:hidden' />
-              <X
-                size={16}
-                aria-hidden
-                className='hidden sm:block'
-              />
-            </button>
-
-            <button
-              type='button'
-              onClick={() => scrollToPurchase('stickyCta')}
-              data-track='SkreddersyVarmenStickyCta'
-              className={cn(
-                'group flex min-w-0 flex-1 flex-col justify-center rounded-3xl px-1.5 py-1 text-left transition-[opacity,transform] hover:opacity-90 active:scale-[0.99]',
-                focusRing
-              )}
-            >
-              <span className='sr-only'>Utekos TechDown™</span>
-              <span
-                aria-hidden
-                className='flex min-w-0 items-baseline gap-1.5 leading-none'
-              >
-                <span className='truncate font-utekos-text-medium text-[11px] tracking-normal text-foreground sm:text-xs'>
-                  Utekos
-                </span>
-                <span className='truncate font-utekos-text-medium text-[11px] tracking-normal text-foreground sm:text-xs'>
-                  TechDown™
-                </span>
-              </span>
-              <span className='/75 mt-0.5 truncate text-[13px] leading-tight font-medium text-foreground/75 sm:text-sm'>
-                {price ?
-                  `${formatPrice(price)} · ${availableForSale ? 'På lager' : 'Utsolgt'}`
-                : 'Velg størrelse'}
-              </span>
-            </button>
-
-            <BrandBadge
-              asChild
-              bgColor='var(--primary)'
-              fgColor='var(--primary-foreground)'
-              className={cn(
-                'hover:bg-primary-hover font-google-sans h-11 shrink-0 gap-1.5 px-3.5 py-0 text-xs font-bold tracking-normal shadow-[0_4px_15px_rgba(255,180,120,0.15)] transition-[filter,transform,box-shadow] hover:text-primary-foreground hover:brightness-105 active:scale-[0.985] sm:px-5 sm:text-sm',
-                focusRing
-              )}
-            >
+    <>
+      <span
+        hidden
+        className={styles.navigationState}
+        data-purchase-visible={
+          isPurchaseVisible ? 'true' : 'false'
+        }
+      />
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            role='region'
+            aria-label='Snarvei til bestilling'
+            initial={
+              reduced ?
+                { opacity: 0 }
+              : { y: '120%', opacity: 0 }
+            }
+            animate={
+              reduced ? { opacity: 1 } : { y: 0, opacity: 1 }
+            }
+            exit={
+              reduced ?
+                { opacity: 0 }
+              : { y: '120%', opacity: 0 }
+            }
+            transition={{
+              duration: 0.5,
+              ease: [0.16, 1, 0.3, 1]
+            }}
+            className='fixed inset-x-3 bottom-3 z-50 lg:hidden'
+          >
+            {/* Glasspanel-baren: Bruker background/95 for å gi en solid kontrast, uansett hvilken farge seksjonen bak har */}
+            <div className='flex items-center gap-2 rounded-full border border-foreground/15 bg-background/95 p-2 text-foreground shadow-[0_10px_40px_rgba(0,0,0,0.3)] backdrop-blur-md'>
               <button
                 type='button'
-                onClick={() => scrollToPurchase('stickyOrder')}
-                data-track='SkreddersyVarmenTilBestilling'
+                onClick={handleDismiss}
+                data-track='SkreddersyVarmenStickyClose'
+                aria-label='Lukk'
+                className={cn(
+                  'flex size-9 shrink-0 items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground/60 transition-colors hover:bg-foreground/10 hover:text-foreground sm:size-10',
+                  focusRing
+                )}
               >
-                <span className='whitespace-nowrap'>
-                  Til bestilling
-                </span>
-                <ArrowDown
-                  className='size-3.5 shrink-0 transition-transform group-hover:translate-y-0.5'
+                <X size={14} aria-hidden className='sm:hidden' />
+                <X
+                  size={16}
                   aria-hidden
+                  className='hidden sm:block'
                 />
               </button>
-            </BrandBadge>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+
+              <button
+                type='button'
+                onClick={() => scrollToPurchase('stickyCta')}
+                data-track='SkreddersyVarmenStickyCta'
+                className={cn(
+                  'group flex min-w-0 flex-1 flex-col justify-center rounded-3xl px-1.5 py-1 text-left transition-[opacity,transform] hover:opacity-90 active:scale-[0.99]',
+                  focusRing
+                )}
+              >
+                <span className='sr-only'>Utekos TechDown™</span>
+                <span
+                  aria-hidden
+                  className='flex min-w-0 items-baseline gap-1.5 leading-none'
+                >
+                  <span className='truncate font-utekos-text-medium text-[11px] tracking-normal text-foreground sm:text-xs'>
+                    Utekos
+                  </span>
+                  <span className='truncate font-utekos-text-medium text-[11px] tracking-normal text-foreground sm:text-xs'>
+                    TechDown™
+                  </span>
+                </span>
+                <span className='/75 mt-0.5 truncate text-[13px] leading-tight font-medium text-foreground/75 sm:text-sm'>
+                  {price ?
+                    `${formatPrice(price)} · ${availableForSale ? 'På lager' : 'Utsolgt'}`
+                  : 'Velg størrelse'}
+                </span>
+              </button>
+
+              <BrandBadge
+                asChild
+                bgColor='var(--primary)'
+                fgColor='var(--primary-foreground)'
+                className={cn(
+                  'hover:bg-primary-hover h-11 shrink-0 gap-1.5 px-3.5 py-0 font-google-sans text-xs font-bold tracking-normal shadow-[0_4px_15px_rgba(255,180,120,0.15)] transition-[filter,transform,box-shadow] hover:text-primary-foreground hover:brightness-105 active:scale-[0.985] sm:px-5 sm:text-sm',
+                  focusRing
+                )}
+              >
+                <button
+                  type='button'
+                  onClick={() => scrollToPurchase('stickyOrder')}
+                  data-track='SkreddersyVarmenTilBestilling'
+                >
+                  <span className='whitespace-nowrap'>
+                    Til bestilling
+                  </span>
+                  <ArrowDown
+                    className='size-3.5 shrink-0 transition-transform group-hover:translate-y-0.5'
+                    aria-hidden
+                  />
+                </button>
+              </BrandBadge>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
