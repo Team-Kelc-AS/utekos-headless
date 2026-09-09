@@ -3,6 +3,7 @@ import type { MetaCatalogImagePreference } from './metaCatalogImageTags'
 export type MetaCatalogCuratedImage = {
   url: string
   preferences: readonly MetaCatalogImagePreference[]
+  replacePreferences?: boolean
 }
 
 type MetaCatalogMediaManifest = {

@@ -132,9 +132,9 @@ test('selects the approved Instagram Feed alternatives independently of Facebook
     const instagram = media.images.filter(image =>
       image.tags.includes('INSTAGRAM_PREFERRED')
     )
-    assert.equal(instagram.length, 2)
+    assert.equal(instagram.length, 1)
     assert.ok(
-      instagram[0]?.url.includes('techdown-maritime-1440x1800-')
+      instagram[0]?.url.includes('techdown-1440x1800-90-')
     )
     assert.ok(
       instagram.every(
@@ -171,7 +171,7 @@ test('selects the approved Instagram Feed alternatives independently of Facebook
   }
 })
 
-test('keeps Facebook Feed and square images bound to their approved TechDown variant', () => {
+test('replaces TechDown primary square and Facebook Feed images while preserving Stories and Reels', () => {
   const cases = [
     [
       '46944403882232',
@@ -190,7 +190,7 @@ test('keeps Facebook Feed and square images bound to their approved TechDown var
     ]
   ] as const
 
-  for (const [retailerId, feedFiles, squareFile] of cases) {
+  for (const [retailerId] of cases) {
     const media = getMetaCatalogMedia({
       color: 'Havdyp',
       productHandle: 'utekos-techdown',
@@ -199,10 +199,18 @@ test('keeps Facebook Feed and square images bound to their approved TechDown var
     const feed = media.images.filter(image =>
       image.tags.includes('ASPECT_RATIO_4_5_PREFERRED')
     )
-    assert.equal(feed.length, feedFiles.length + 1)
-    for (const [index, fragment] of feedFiles.entries())
-      assert.ok(feed[index]?.url.includes(fragment))
-    assert.ok(media.images[0]?.url.includes(squareFile))
+    assert.equal(feed.length, 1)
+    assert.ok(feed[0]?.url.includes('techdown-1440x1800-93-'))
+    assert.ok(
+      media.images[0]?.url.includes('techdown-2000x2000-90-')
+    )
+    assert.equal(
+      media.images.filter(image =>
+        image.tags.includes('primary')
+      ).length,
+      1
+    )
+    assert.ok(media.images[0]?.tags.includes('primary'))
     const stories = media.images.filter(image =>
       image.tags.includes('STORY_PREFERRED')
     )
@@ -235,7 +243,7 @@ test('keeps Facebook Feed and square images bound to their approved TechDown var
   }
 })
 
-test('binds new Comfyrobe media to the correct size without replacing existing cards', () => {
+test('replaces Comfyrobe primary images with the correct new size-specific media', () => {
   for (const [retailerId, count, included, excluded] of [
     ['43959919051000', 2, 'comfyrobe-xs-', 'comfyrobe-xl-'],
     ['43959919116536', 4, 'comfyrobe-xl-', 'comfyrobe-xs-']
@@ -247,8 +255,30 @@ test('binds new Comfyrobe media to the correct size without replacing existing c
     })
     assert.equal(media.images.length, count)
     assert.ok(
-      media.images[0]?.url.includes('comfy-1440xx1800-1-')
+      media.images[0]?.url.includes(
+        retailerId === '43959919051000' ? 'comfyrobe-xs-' : (
+          'comfyrobe-xl-3-'
+        )
+      )
     )
+    assert.equal(
+      media.images.filter(image =>
+        image.tags.includes('primary')
+      ).length,
+      1
+    )
+    const feed = media.images.filter(image =>
+      image.tags.includes('ASPECT_RATIO_4_5_PREFERRED')
+    )
+    assert.equal(feed.length, 1)
+    assert.ok(
+      feed[0]?.url.includes(
+        retailerId === '43959919051000' ? 'comfyrobe-xs-' : (
+          'comfyrobe-xl-1-'
+        )
+      )
+    )
+    assert.ok(feed[0]?.tags.includes('INSTAGRAM_PREFERRED'))
     assert.ok(
       media.images.some(image => image.url.includes(included))
     )
@@ -326,5 +356,28 @@ test('does not append variant additions to an explicit curated override', () => 
   assert.deepEqual(
     media.images.map(image => image.url),
     ['https://utekos.no/approved.png']
+  )
+})
+
+test('rejects competing replacements for the same image preference', () => {
+  assert.throws(
+    () =>
+      getMetaCatalogMedia({
+        productHandle: 'utekos-techdown',
+        color: 'Havdyp',
+        curatedImages: [
+          {
+            url: 'https://utekos.no/a.png',
+            preferences: ['catalog_primary'],
+            replacePreferences: true
+          },
+          {
+            url: 'https://utekos.no/b.png',
+            preferences: ['catalog_primary'],
+            replacePreferences: true
+          }
+        ]
+      }),
+    /Conflicting Meta catalog primary images/
   )
 })

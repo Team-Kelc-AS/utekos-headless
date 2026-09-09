@@ -3,15 +3,18 @@ import type { MetaCatalogCuratedImage } from './metaCatalogMediaManifest'
 const techDownImages: readonly MetaCatalogCuratedImage[] = [
   {
     url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/4x5/techdown-1440x1800-93-afacc4f6eb31.jpg',
-    preferences: ['feed_4_5']
+    preferences: ['feed_4_5'],
+    replacePreferences: true
   },
   {
     url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/4x5/techdown-1440x1800-90-ab2e0a71e23d.jpg',
-    preferences: ['instagram']
+    preferences: ['instagram'],
+    replacePreferences: true
   },
   {
     url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/1x1/techdown-2000x2000-90-8af6f3c3d8de.jpg',
-    preferences: ['catalog_primary']
+    preferences: ['catalog_primary'],
+    replacePreferences: true
   },
   {
     url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/utekos-techdown/9x16/pinktechdown-1440x2560-d6f62c2f62e5.png',
@@ -37,13 +40,15 @@ export const META_CATALOG_ADDITIONAL_IMAGES_BY_VARIANT: Readonly<
     '43959919051000': [
       {
         url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/4x5/comfyrobe-xs-1440x1800-5b5eefd9e44d.png',
-        preferences: ['feed_4_5']
+        preferences: ['catalog_primary', 'feed_4_5', 'instagram'],
+        replacePreferences: true
       }
     ],
     '43959919116536': [
       {
         url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/4x5/comfyrobe-xl-1-1440x1800-592e8a2d0dfd.png',
-        preferences: ['feed_4_5']
+        preferences: ['feed_4_5', 'instagram'],
+        replacePreferences: true
       },
       {
         url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/4x5/comfyrobe-xl-2-1440x1800-164aae173ad0.png',
@@ -51,7 +56,8 @@ export const META_CATALOG_ADDITIONAL_IMAGES_BY_VARIANT: Readonly<
       },
       {
         url: 'https://lgvy0jmfdbczo2dz.public.blob.vercel-storage.com/meta/catalog/v26/comfyrobe/1x1/comfyrobe-xl-3-2000x2000-c85a2600ae90.png',
-        preferences: ['catalog_primary']
+        preferences: ['catalog_primary'],
+        replacePreferences: true
       }
     ]
   },

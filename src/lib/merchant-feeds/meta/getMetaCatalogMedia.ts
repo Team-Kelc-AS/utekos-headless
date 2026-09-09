@@ -13,6 +13,7 @@ import {
 } from './metaCatalogMediaManifest'
 import type { MetaCatalogMediaAsset } from './metaCatalogOffer'
 import { META_TECHDOWN_VARIANT_IMAGES } from './metaTechDownVariantImages'
+import { prioritizeMetaCatalogImages } from './prioritizeMetaCatalogImages'
 
 function assertCatalogMediaUrl(value: string) {
   const url = new URL(value)
@@ -120,7 +121,7 @@ export function getMetaCatalogMedia(input: {
   }
 
   return {
-    images: images satisfies MetaCatalogMediaAsset[],
+    images: prioritizeMetaCatalogImages(images, curatedImages),
     videos: manifest.videos.map(url => ({
       url: assertCatalogMediaUrl(url),
       tags: ['product_video', ...baseTags]

@@ -102,6 +102,35 @@ function parseFeedRows(feed: string) {
   })
 }
 
+test('publishes the new TechDown square as image_link rather than only as an additional image', () => {
+  const variant = product.variants.edges[0]!.node
+  const rows = parseFeedRows(
+    buildMetaCatalogFeed([
+      {
+        ...product,
+        variants: {
+          edges: [
+            {
+              node: {
+                ...variant,
+                id: 'gid://shopify/ProductVariant/46944403882232'
+              }
+            }
+          ]
+        }
+      }
+    ])
+  )
+  assert.ok(
+    rows[0]?.image_link?.includes('techdown-2000x2000-90-')
+  )
+  assert.ok(
+    !rows[0]?.additional_image_link?.includes(
+      'techdown-2000x2000-90-'
+    )
+  )
+})
+
 test('serializes every catalog video and its tags without the old three-video truncation', () => {
   const rows = parseFeedRows(buildMetaCatalogFeed([product]))
   const videos = JSON.parse(rows[0]!.video!)
@@ -119,7 +148,9 @@ test('serializes every catalog video and its tags without the old three-video tr
   )
   const fourthVideo = videos[3]
   assert.ok(fourthVideo)
-  assert.ok(fourthVideo.url.includes('juster-form-nyt-2000x2000-'))
+  assert.ok(
+    fourthVideo.url.includes('juster-form-nyt-2000x2000-')
+  )
 })
 
 test('publishes only in-stock variants with complete Meta fields', () => {
