@@ -6,6 +6,7 @@ import {
   createCanonicalEventStore,
   type CanonicalEventTransaction
 } from './createCanonicalEventStore'
+import { canReleasePageViewMarketing } from './canReleasePageViewMarketing'
 
 function input(): CanonicalEventStoreInput & {
   event: CanonicalPageView
@@ -245,4 +246,100 @@ test('rejects mismatched source evidence before any transaction write', async ()
     /source_evidence_event_id_mismatch/
   )
   assert.equal(writes, 0)
+})
+
+test('late marketing consent adds one Meta attempt without another ledger row or other provider replays', async () => {
+  const original = input().event
+  original.consent = { ...original.consent, marketing: 'denied' }
+  let ledger: typeof original | null = null
+  let ledgerInserts = 0
+  const attempts = new Map<
+    string,
+    Parameters<CanonicalEventTransaction['insertDispatch']>[0]
+  >()
+  const transaction: CanonicalEventTransaction = {
+    findLedger: async () => ledger,
+    insertLedger: async row => {
+      if (ledger) return false
+      assert.equal(row.payload.event_name, 'page_view')
+      ledger = row.payload as typeof original
+      ledgerInserts += 1
+      return true
+    },
+    upsertSourceEvidence: async () => {},
+    insertDispatch: async row => {
+      const key = `${row.provider}:${row.idempotency_key}`
+      if (attempts.has(key)) return null
+      attempts.set(key, row)
+      return `attempt-${attempts.size}`
+    }
+  }
+  const store = createCanonicalEventStore(work =>
+    work(transaction)
+  )
+  await store.accept({ event: original, dispatches: [] })
+  const release = {
+    ...input(),
+    allowPageViewMarketingRelease: true
+  }
+  const first = await store.accept(release)
+  const repeated = await store.accept(release)
+
+  assert.equal(ledgerInserts, 1)
+  assert.equal(
+    (await transaction.findLedger?.(original))?.consent.marketing,
+    'denied'
+  )
+  assert.equal(attempts.size, 1)
+  const attempt = Array.from(attempts.values())[0]!
+  assert.equal(attempt.provider, 'meta')
+  assert.equal(attempt.consent_basis.marketing, 'granted')
+  assert.equal(attempt.payload.event_id, original.event_id)
+  assert.equal(attempt.payload.event_time, original.event_time)
+  assert.equal(first.createdDispatchAttempts.length, 1)
+  assert.equal(repeated.createdDispatchAttempts.length, 0)
+})
+
+test('marketing release requires the original page identity and a new marketing grant', () => {
+  const incoming = input().event
+  const original = {
+    ...incoming,
+    consent: {
+      ...incoming.consent,
+      marketing: 'denied' as const
+    }
+  }
+  assert.equal(
+    canReleasePageViewMarketing(original, incoming),
+    true
+  )
+  assert.equal(
+    canReleasePageViewMarketing(null, incoming),
+    false
+  )
+  assert.equal(
+    canReleasePageViewMarketing(incoming, incoming),
+    false
+  )
+  assert.equal(
+    canReleasePageViewMarketing(original, original),
+    false
+  )
+  for (const patch of [
+    { event_id: 'other-event' },
+    { page_view_id: 'other-page' },
+    { event_time: '2026-07-15T10:01:00.000Z' },
+    { page_url: 'https://utekos.no/other' },
+    { referrer_url: 'https://example.com/' },
+    { edge_request_id: 'other-request' },
+    { environment: 'production' as const }
+  ]) {
+    assert.equal(
+      canReleasePageViewMarketing(original, {
+        ...incoming,
+        ...patch
+      }),
+      false
+    )
+  }
 })

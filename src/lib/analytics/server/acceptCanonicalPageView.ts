@@ -62,7 +62,9 @@ export async function acceptCanonicalPageView(
     ...(normalized.browser_id ?
       { browserId: normalized.browser_id }
     : {}),
-    ...(normalized.click_id ? { clickId: normalized.click_id } : {}),
+    ...(normalized.click_id ?
+      { clickId: normalized.click_id }
+    : {}),
     ...(input.requestContext.clientIpAddress ?
       { clientIpAddress: input.requestContext.clientIpAddress }
     : {}),
@@ -78,16 +80,24 @@ export async function acceptCanonicalPageView(
 
   const event = canonicalPageViewSchema.parse({
     ...normalized,
-    ...(ensured.browserId ? { browser_id: ensured.browserId } : {}),
+    ...(ensured.browserId ?
+      { browser_id: ensured.browserId }
+    : {}),
     ...(ensured.clickId ? { click_id: ensured.clickId } : {})
   })
 
   const result = await input.store.accept({
+    allowPageViewMarketingRelease: true,
     dispatches: planCanonicalEventDispatch(event),
     event
   })
   const status =
-    result.status === 'inserted' ? 'accepted' : 'duplicate'
+    (
+      result.status === 'inserted' ||
+      result.createdDispatchAttempts.length > 0
+    ) ?
+      'accepted'
+    : 'duplicate'
 
   console.info(
     '[tracking] page_view store result',
@@ -100,12 +110,16 @@ export async function acceptCanonicalPageView(
       page_url: redactPageUrlForLog(event.page_url),
       environment: event.environment,
       status,
-      cookies_to_set: ensured.cookiesToSet.map(cookie => cookie.name),
+      cookies_to_set: ensured.cookiesToSet.map(
+        cookie => cookie.name
+      ),
       has_click_id: Boolean(event.click_id),
       has_client_ip_address: Boolean(
         input.requestContext.clientIpAddress
       ),
-      has_client_user_agent: Boolean(input.requestContext.userAgent),
+      has_client_user_agent: Boolean(
+        input.requestContext.userAgent
+      ),
       has_fbp: Boolean(event.browser_id?.fbp),
       has_fbc: Boolean(event.browser_id?.fbc),
       has_external_id: Boolean(event.external_id)

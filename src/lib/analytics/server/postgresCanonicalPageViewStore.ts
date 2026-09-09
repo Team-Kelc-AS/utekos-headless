@@ -28,6 +28,16 @@ const runPostgresTransaction: CanonicalEventTransactionRunner =
   work =>
     getTrackingSql().begin(async sql =>
       work({
+        findLedger: async identity => {
+          const rows = await sql`
+            select payload
+            from marketing.event_ledger
+            where idempotency_key = ${`${identity.event_name}:${identity.event_id}`}
+          `
+          return rows.length === 1 ?
+              parseCanonicalEvent(rows[0]?.payload)
+            : null
+        },
         insertLedger: async row => {
           const inserted = await sql`
             insert into marketing.event_ledger (
@@ -203,7 +213,8 @@ const transactionalCanonicalEventStore =
 
 export const postgresCanonicalEventStore: CanonicalEventStore = {
   accept: async input => {
-    const result = await transactionalCanonicalEventStore.accept(input)
+    const result =
+      await transactionalCanonicalEventStore.accept(input)
 
     await publishCanonicalProviderDispatchAttempts(
       result.createdDispatchAttempts

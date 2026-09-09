@@ -1,7 +1,9 @@
 import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import type {
   CanonicalEventAcceptance,
+  CanonicalEventLookup,
   CanonicalEventStore,
+  CanonicalStoredEvent,
   CreatedProviderDispatchAttempt
 } from './canonicalEventStore'
 import {
@@ -13,8 +15,12 @@ import {
   type CanonicalLedgerInsert,
   type ProviderDispatchInsert
 } from './mapCanonicalEventPersistence'
+import { canReleasePageViewMarketing } from './canReleasePageViewMarketing'
 
 export type CanonicalEventTransaction = {
+  findLedger?: (
+    identity: CanonicalEventLookup
+  ) => Promise<CanonicalStoredEvent | null>
   insertDispatch: (
     row: ProviderDispatchInsert
   ) => Promise<string | null>
@@ -60,20 +66,44 @@ export function createCanonicalEventStore(
             )
 
             if (sourceEvidence) {
-              await transaction.upsertSourceEvidence(sourceEvidence)
+              await transaction.upsertSourceEvidence(
+                sourceEvidence
+              )
             }
 
+            let dispatches = rows.dispatches
             if (!inserted) {
-              return {
-                createdDispatchAttempts: [],
-                status: 'duplicate'
+              const stored =
+                (
+                  input.allowPageViewMarketingRelease &&
+                  input.event.event_name === 'page_view' &&
+                  input.event.consent.marketing === 'granted' &&
+                  transaction.findLedger
+                ) ?
+                  await transaction.findLedger(input.event)
+                : null
+
+              if (
+                !canReleasePageViewMarketing(stored, input.event)
+              ) {
+                return {
+                  createdDispatchAttempts: [],
+                  status: 'duplicate'
+                }
               }
+
+              // Preserve the original ledger observation and its consent.
+              // The new Meta attempt records the later grant in consent_basis.
+              // Its existing provider/idempotency key prevents duplicate sends.
+              dispatches = dispatches.filter(
+                dispatch => dispatch.provider === 'meta'
+              )
             }
 
             const createdDispatchAttempts: CreatedProviderDispatchAttempt[] =
               []
 
-            for (const dispatch of rows.dispatches) {
+            for (const dispatch of dispatches) {
               const attemptId =
                 await transaction.insertDispatch(dispatch)
 
@@ -87,7 +117,7 @@ export function createCanonicalEventStore(
 
             return {
               createdDispatchAttempts,
-              status: 'inserted'
+              status: inserted ? 'inserted' : 'duplicate'
             }
           })
       )

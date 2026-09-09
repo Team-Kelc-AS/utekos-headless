@@ -315,6 +315,125 @@ test('sends after analytics-only consent without marketing identifiers', async (
   assert.equal(context.sent[0]?.impression_id, undefined)
 })
 
+test('releases the same page view to the collector when marketing is granted after analytics', async () => {
+  const context = harness({
+    hasResponse: true,
+    consent: { statistics: true, marketing: false }
+  })
+  const event = pageView()
+  assert.equal(await context.transport.queue(event), 'sent')
+  assert.equal(context.sent[0]?.consent.marketing, 'denied')
+  assert.equal(await context.transport.flush(), 'skipped')
+
+  context.setCookiebot({
+    hasResponse: true,
+    consent: { statistics: true, marketing: true }
+  })
+  await Promise.all([
+    context.transport.flush(),
+    context.transport.flush()
+  ])
+
+  assert.equal(context.sent.length, 2)
+  assert.equal(context.sent[1]?.consent.marketing, 'granted')
+  assert.equal(context.sent[1]?.event_id, event.event_id)
+  assert.equal(context.sent[1]?.page_view_id, event.page_view_id)
+  assert.equal(context.sent[1]?.event_time, event.event_time)
+  assert.equal(context.sent[1]?.page_url, event.page_url)
+  assert.equal(await context.transport.flush(), 'skipped')
+})
+
+test('a later marketing grant does not replay earlier analytics-only SPA pages', async () => {
+  const context = harness({
+    hasResponse: true,
+    consent: { statistics: true, marketing: false }
+  })
+  await context.transport.queue(pageView())
+  const current = pageView(
+    '33333333-3333-4333-8333-333333333333',
+    '44444444-4444-4444-8444-444444444444',
+    'https://utekos.no/skreddersy-varmen'
+  )
+  await context.transport.queue(current)
+  context.setCookiebot({
+    hasResponse: true,
+    consent: { statistics: true, marketing: true }
+  })
+  await context.transport.flush()
+
+  assert.equal(context.sent.length, 3)
+  const released = context.sent.filter(
+    event => event.consent.marketing === 'granted'
+  )
+  assert.deepEqual(
+    released.map(event => event.event_id),
+    [current.event_id]
+  )
+})
+
+test('a grant during analytics-only delivery releases without another consent event', async () => {
+  let cookiebot: CookiebotState = {
+    hasResponse: true,
+    consent: { statistics: true, marketing: false }
+  }
+  const sent: CanonicalPageView[] = []
+  const transport = createPageViewCollectorTransport({
+    capture: async () => {},
+    enrich: async event => event,
+    getCookiebot: () => cookiebot,
+    getCookieHeader: () => '',
+    send: async event => {
+      sent.push(event)
+      cookiebot = {
+        hasResponse: true,
+        consent: { statistics: true, marketing: true }
+      }
+      // The real CMP listener may flush before the first request completes.
+      assert.equal(await transport.flush(), 'skipped')
+    }
+  })
+  const event = pageView()
+  await transport.queue(event)
+  assert.deepEqual(
+    sent.map(item => item.consent.marketing),
+    ['denied', 'granted']
+  )
+  assert.equal(sent[1]?.event_id, event.event_id)
+  assert.equal(await transport.flush(), 'skipped')
+})
+
+test('a failed marketing release retries with the original identity', async () => {
+  let grant = false
+  let attempts = 0
+  const sent: CanonicalPageView[] = []
+  const transport = createPageViewCollectorTransport({
+    capture: async () => {},
+    enrich: async event => event,
+    getCookiebot: () => ({
+      hasResponse: true,
+      consent: { statistics: true, marketing: grant }
+    }),
+    getCookieHeader: () => '',
+    send: async event => {
+      if (
+        event.consent.marketing === 'granted' &&
+        ++attempts === 1
+      ) {
+        throw new Error('temporary collector failure')
+      }
+      sent.push(event)
+    }
+  })
+  const event = pageView()
+  await transport.queue(event)
+  grant = true
+  assert.equal(await transport.flush(), 'failed')
+  assert.equal(await transport.flush(), 'sent')
+  assert.equal(sent[1]?.event_id, event.event_id)
+  assert.equal(attempts, 2)
+  assert.equal(await transport.flush(), 'skipped')
+})
+
 test('sends after marketing-only consent with consented identifiers', async () => {
   const context = harness({
     consented: true,

@@ -33,6 +33,41 @@ i rollback-vinduet, men leses ikke lenger av appen.
 
 **This has to be optimized at all times.**
 
+### Landing-page signal coverage
+
+The target is to minimize implementation loss for eligible events, including
+late marketing consent without a refresh. Purchase optimization does not make
+upstream funnel observations irrelevant. A low reported LPV rate alone does not
+establish a page-load failure or a specific auction penalty.
+
+Keep these evidence stages separate in monitoring:
+
+| Stage | Evidence and limit |
+| --- | --- |
+| Click arrival | Correlated production edge request; filter automation and repeated requests. It is not a unique Meta click. |
+| Successful page/app render | Requires browser render evidence. HTTP 200 and the root PageView observer alone do not prove the destination content finished rendering. Mark this unknown where evidence is absent. |
+| Internal PageView occurrence | Check both provisional captures and the canonical ledger, deduplicated by event identity. Provisional captures have bounded retention and are not Meta delivery. |
+| Consent eligibility | Distinguish pending, explicit denial, analytics-only, and marketing grant. A missing observation is not an explicit denial. |
+| Meta dispatch | Inspect the Meta outbox attempt and its own `consent_basis`. A later grant may differ from the immutable ledger's initial consent. |
+| Meta receipt | `accepted_unverified` means API acceptance, not verified attribution or an Ads Manager LPV. |
+| Meta-reported LPV | Use the explicit Insights action, campaign/ad scope, account timezone and reporting window. Missing/null is not zero. |
+| Downstream conversion | Correlate ViewContent, AddToCart, Checkout and Purchase only using deterministic identities and eligible processing. Orders in the same time window are not automatically Meta-attributed. |
+
+Use the same denominator when comparing LPV/link clicks and LPV/outbound clicks;
+these are different rates. Consent-related exclusions, unknown render state,
+collector failures and provider failures must be reported separately.
+
+For an analytics-only PageView followed by a marketing grant on the current
+page, reuse the original `event_id`, `page_view_id`, `event_time` and URL. The
+collector may accept the same observation again to add its missing Meta attempt.
+Keep the initial ledger row and consent unchanged; the new attempt records the
+later grant. The existing provider/idempotency key prevents another Meta send.
+Do not replay older analytics-only SPA pages or other providers during this
+release. Browser and server use the same canonical identity for deduplication.
+
+This contract does not authorize additional pre-consent collection or forwarding
+denied events. Deployment readiness and live LPV impact require separate evidence.
+
 ### Shopify order snapshots and unresolved consent
 
 The local 2026-09-03 release candidate restores continuous updates to the
