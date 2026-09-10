@@ -13,6 +13,11 @@ All repository-owned MCP configuration, ChatGPT profiles, tunnels, MCP servers,
 provider diagnostics, and local authentication helpers are owned by the
 independent local `utekos-platform-tools` repository.
 
+Meta Catalog plans, preview generation and Graph API operations are likewise
+owned by `utekos-platform-tools/providers/meta-catalog`. The storefront has no
+Meta Catalog feed, webhook, synchronization route, scheduled job or Catalog
+credential.
+
 This application must not depend on platform-tools for install, build, tests, or
 production runtime. Generated MCP editor files in this checkout are ignored
 operator configuration, not release inputs.
