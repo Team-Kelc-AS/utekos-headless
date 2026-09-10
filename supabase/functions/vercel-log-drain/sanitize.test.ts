@@ -2,9 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import type { DrainRuntimeConfig } from './contracts.ts'
-import { computeHmacHex } from './crypto.ts'
 import { sanitizeVercelLogBatch } from './sanitize.ts'
-import { deriveLandingEdgeRequestId } from '../_shared/landing-edge-request-id.ts'
 
 const config: DrainRuntimeConfig = {
   allowedHosts: ['utekos.no', 'www.utekos.no'],
@@ -59,96 +57,88 @@ function validEntry(
   }
 }
 
-test('keeps only a sanitized Meta landing observation', async () => {
+test('operational v1 never retains attribution, browser classification or raw URL data', async () => {
   const result = await sanitizeVercelLogBatch(
     [validEntry()],
     config
   )
-  const observation = result.observations[0]
-
-  assert.ok(observation)
-  assert.equal(result.duplicateCount, 0)
-  assert.equal(result.rejectedCount, 0)
-  assert.equal(observation.edge_request_id, edgeRequestId)
+  const observation = result.observations[0]!
+  assert.equal(observation.data_policy, 'operational_v1')
   assert.equal(observation.route_pathname, '/skreddersy-varmen')
-  assert.equal(observation.referrer_host, 'l.facebook.com')
-  assert.equal(observation.in_app_browser, 'facebook')
-  assert.equal(observation.device_class, 'mobile')
-  assert.equal(observation.os_class, 'ios')
-  assert.equal(observation.automation_class, 'human_or_unknown')
-  assert.equal(observation.fbclid_present, true)
-  assert.equal(
-    observation.fbclid_hmac,
-    await computeHmacHex(
-      fbclid,
-      config.fbclidHmacSecret!,
-      'SHA-256'
-    )
-  )
-  assert.equal(observation.meta_ad_id, '120246491016410788')
-  assert.equal(observation.trace_id, traceId.toLowerCase())
-  assert.equal(
-    observation.meta_campaign_id,
-    '120246491016410700'
-  )
-  assert.equal(
-    observation.meta_placement,
-    'Facebook_Mobile_Feed'
-  )
-
+  assert.equal(observation.status_code, 200)
+  assert.equal(observation.response_bytes, 312000)
+  assert.equal(observation.request_id, 'request-1')
+  for (const key of [
+    'edge_request_id',
+    'fbclid_hmac',
+    'referrer_host',
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_term',
+    'utm_content',
+    'meta_campaign_id',
+    'meta_adset_id',
+    'meta_ad_id',
+    'meta_placement',
+    'meta_site_source_name'
+  ] as const)
+    assert.equal(observation[key], null)
+  assert.equal(observation.fbclid_present, false)
+  assert.equal(observation.device_class, 'unknown')
+  assert.equal(observation.os_class, 'unknown')
+  assert.equal(observation.in_app_browser, 'unknown')
   const serialized = JSON.stringify(observation)
-  assert.equal(serialized.includes(fbclid), false)
-  assert.equal(serialized.includes('192.0.2.10'), false)
-  assert.equal(serialized.includes('Mozilla/5.0'), false)
-  assert.equal(serialized.includes('?'), false)
+  for (const value of [
+    fbclid,
+    '192.0.2.10',
+    'Mozilla',
+    'FBAN',
+    '120246491016410788'
+  ])
+    assert.equal(serialized.includes(value), false)
 })
-
-test('parses edge_request_id only from the exact strict structured message', async () => {
-  const variants = [
-    validEntry({
-      id: 'log-extra',
-      requestId: undefined,
-      message: `[landing-edge] {"edge_request_id":"${edgeRequestId}","extra":true}`
-    }),
-    validEntry({
-      id: 'log-prefix',
-      requestId: undefined,
-      message: `prefix [landing-edge] {"edge_request_id":"${edgeRequestId}"}`
-    }),
-    validEntry({
-      id: 'log-invalid',
-      requestId: undefined,
-      message: '[landing-edge] {"edge_request_id":"not-a-uuid"}'
-    }),
-    validEntry({
-      id: 'log-valid',
-      requestId: undefined,
-      message: `[landing-edge] {"edge_request_id":"${edgeRequestId}"}`
-    })
-  ]
-
-  const result = await sanitizeVercelLogBatch(variants, config)
-  assert.deepEqual(
-    result.observations.map(
-      observation => observation.edge_request_id
-    ),
-    [null, null, null, edgeRequestId]
-  )
+test('unknown path segments cannot carry names or other identifiers into operations', async () => {
+  const proxy = validEntry().proxy as Record<string, unknown>
+  for (const path of [
+    '/John-Smith',
+    '/produkter/private-name',
+    '/magasinet/private-name'
+  ]) {
+    const result = await sanitizeVercelLogBatch(
+      [validEntry({ proxy: { ...proxy, path } })],
+      config
+    )
+    assert.doesNotMatch(
+      result.observations[0]!.route_pathname,
+      /John|private-name/
+    )
+  }
 })
-
-test('derives edge_request_id from the Log Drain request id when the proxy row has no structured message', async () => {
-  const requestId = 'cdwvz-1785574222361-9968da94ed15'
+test('same-site document observations remain included without a referrer or person identity', async () => {
+  const proxy = validEntry().proxy as Record<string, unknown>
   const result = await sanitizeVercelLogBatch(
-    [validEntry({ message: undefined, requestId })],
+    [
+      validEntry({
+        proxy: {
+          ...proxy,
+          referer: 'https://utekos.no/produkter'
+        }
+      })
+    ],
     config
   )
-
-  assert.equal(
-    result.observations[0]?.edge_request_id,
-    await deriveLandingEdgeRequestId(requestId)
-  )
+  assert.equal(result.observations.length, 1)
+  assert.equal(result.observations[0]!.referrer_host, null)
 })
-
+test('repeated vercel log IDs are deduplicated before the atomic database insert', async () => {
+  const result = await sanitizeVercelLogBatch(
+    [validEntry(), validEntry()],
+    config
+  )
+  assert.equal(result.observations.length, 1)
+  assert.equal(result.duplicateCount, 1)
+})
 test('rejects wrong project, environment, host, method and non-document paths', async () => {
   const baseProxy = validEntry().proxy as Record<string, unknown>
   const values = [
@@ -188,166 +178,10 @@ test('rejects wrong project, environment, host, method and non-document paths', 
         path: '/produkter/utekos-dun?_rsc=abc123'
       }
     }),
-    validEntry({
-      id: 'same-site',
-      proxy: {
-        ...baseProxy,
-        referer: 'https://utekos.no/skreddersy-varmen'
-      }
-    }),
     validEntry({ id: 'build', source: 'build' })
   ]
 
   const result = await sanitizeVercelLogBatch(values, config)
   assert.deepEqual(result.observations, [])
   assert.equal(result.rejectedCount, values.length)
-})
-
-test('normalizes Instagram Android, redirects and known automation classes', async () => {
-  const baseProxy = validEntry().proxy as Record<string, unknown>
-  const instagram = validEntry({
-    id: 'instagram',
-    proxy: {
-      ...baseProxy,
-      path: '/comfyrobe',
-      statusCode: 307,
-      userAgent: [
-        'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 Mobile Safari/537.36 Instagram 390.0.0.0 Android'
-      ]
-    },
-    source: 'redirect'
-  })
-  const bot = validEntry({
-    id: 'bot',
-    proxy: {
-      ...baseProxy,
-      path: '/produkter/utekos-dun',
-      userAgent: [
-        'Googlebot/2.1 (+https://www.google.com/bot.html)'
-      ]
-    },
-    source: 'firewall'
-  })
-  const synthetic = validEntry({
-    id: 'synthetic',
-    proxy: {
-      ...baseProxy,
-      path: '/produkter/utekos-techdown?utm_campaign=codex_join_canary_1',
-      userAgent: ['Mozilla/5.0 (Macintosh; Intel Mac OS X)']
-    }
-  })
-
-  const result = await sanitizeVercelLogBatch(
-    [instagram, bot, synthetic],
-    config
-  )
-  assert.equal(
-    result.observations[0]?.in_app_browser,
-    'instagram'
-  )
-  assert.equal(result.observations[0]?.device_class, 'mobile')
-  assert.equal(result.observations[0]?.os_class, 'android')
-  assert.equal(
-    result.observations[0]?.observation_type,
-    'redirect'
-  )
-  assert.equal(
-    result.observations[1]?.automation_class,
-    'known_bot_user_agent'
-  )
-  assert.equal(result.observations[1]?.device_class, 'bot')
-  assert.equal(
-    result.observations[2]?.automation_class,
-    'synthetic_client'
-  )
-})
-
-test('classifies current Meta crawlers as known bots', async () => {
-  const baseProxy = validEntry().proxy as Record<string, unknown>
-  const userAgents = [
-    'meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)',
-    'meta-webindexer/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)',
-    'meta-externalads/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)',
-    'meta-externalfetcher/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)'
-  ]
-  const entries = userAgents.map((userAgent, index) =>
-    validEntry({
-      id: `meta-crawler-${index}`,
-      proxy: {
-        ...baseProxy,
-        path: `/crawler-test-${index}`,
-        userAgent: [userAgent]
-      }
-    })
-  )
-
-  const result = await sanitizeVercelLogBatch(entries, config)
-
-  assert.equal(result.observations.length, userAgents.length)
-  for (const observation of result.observations) {
-    assert.equal(
-      observation.automation_class,
-      'known_bot_user_agent'
-    )
-    assert.equal(observation.device_class, 'bot')
-  }
-})
-
-test('deduplicates repeated Vercel log ids before the database write', async () => {
-  const result = await sanitizeVercelLogBatch(
-    [validEntry(), validEntry()],
-    config
-  )
-
-  assert.equal(result.observations.length, 1)
-  assert.equal(result.duplicateCount, 1)
-  assert.equal(result.rejectedCount, 0)
-})
-
-test('uses only a numeric utm_content value as a guarded Meta ad id fallback', async () => {
-  const baseProxy = validEntry().proxy as Record<string, unknown>
-  const result = await sanitizeVercelLogBatch(
-    [
-      validEntry({
-        id: 'numeric-utm-content',
-        proxy: {
-          ...baseProxy,
-          path: '/skreddersy-varmen?utm_content=120246491016410788'
-        }
-      }),
-      validEntry({
-        id: 'descriptive-utm-content',
-        proxy: {
-          ...baseProxy,
-          path: '/skreddersy-varmen?utm_content=warm-creative-a'
-        }
-      }),
-      validEntry({
-        id: 'explicit-ad-id-wins',
-        proxy: {
-          ...baseProxy,
-          path: '/skreddersy-varmen?ad_id=120246491016410700&utm_content=120246491016410788'
-        }
-      })
-    ],
-    config
-  )
-
-  assert.deepEqual(
-    result.observations.map(observation => ({
-      metaAdId: observation.meta_ad_id,
-      utmContent: observation.utm_content
-    })),
-    [
-      {
-        metaAdId: '120246491016410788',
-        utmContent: '120246491016410788'
-      },
-      { metaAdId: null, utmContent: 'warm-creative-a' },
-      {
-        metaAdId: '120246491016410700',
-        utmContent: '120246491016410788'
-      }
-    ]
-  )
 })

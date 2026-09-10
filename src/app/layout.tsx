@@ -5,8 +5,7 @@ import {
   utekosText,
   utekosTextMedium
 } from '@/app/fonts/font.config'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+import { VercelTelemetry } from '@/components/analytics/VercelTelemetry'
 import { Suspense } from 'react'
 import { mainMenu } from '@/db/config/menu.config'
 import Footer from '@/components/footer/components/Footer'
@@ -17,6 +16,7 @@ import { CartProviderLoader } from '@/components/providers/CartProviderLoader'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
 import { JourneyObserver } from '@/components/analytics/JourneyObserver'
+import { ConsentPresentationBridge } from '@/components/consent/ConsentPresentationBridge'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
 import Script from 'next/script'
 import type { Metadata } from 'next'
@@ -137,11 +137,15 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
-      <GoogleTagManagerLoader
-        enabled={shouldLoadMarketingScripts}
-      />
-
       <body className='scroll-smooth bg-background text-foreground antialiased'>
+        <Script
+          id='utekos-consent-presentation'
+          src='/consent/utekos-presentation.js'
+          strategy='beforeInteractive'
+        />
+        <GoogleTagManagerLoader
+          enabled={shouldLoadMarketingScripts}
+        />
         {shouldLoadMarketingScripts ?
           <>
             <MetaBrowserTransportLoader />
@@ -196,8 +200,10 @@ export default function RootLayout({
         <ShopifyCustomerPrivacyBridge
           storefrontAccessToken={storefrontAccessToken || ''}
         />
-        <Analytics mode='production' />
-        <SpeedInsights />
+        <Suspense fallback={null}>
+          <ConsentPresentationBridge />
+        </Suspense>
+        <VercelTelemetry />
       </body>
     </html>
   )

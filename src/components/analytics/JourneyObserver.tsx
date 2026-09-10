@@ -6,7 +6,8 @@ import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
 import { enrichCanonicalBrowserJourneyContext } from '@/lib/analytics/internalJourneyContext'
 import {
   COOKIEBOT_CONSENT_EVENTS,
-  hasCookiebotStatisticsConsent
+  hasCookiebotStatisticsConsent,
+  hasCookiebotMarketingConsent
 } from '@/lib/consent/cookiebotConsent'
 import type { CookiebotApi } from '@/lib/consent/cookiebotConsent'
 import { createJourneySession } from '@/lib/observability/journey/createJourneySession'
@@ -21,7 +22,10 @@ const session = createJourneySession({
 const getCookiebot = () =>
   (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
 const allowed = () =>
-  hasCookiebotStatisticsConsent(getCookiebot())
+  hasCookiebotStatisticsConsent(getCookiebot()) &&
+  hasCookiebotMarketingConsent(getCookiebot()) &&
+  !(window as Window & { __utekosConsentReloading?: boolean })
+    .__utekosConsentReloading
 const transport = createJourneyTransport({
   fetch: (...args) => fetch(...args),
   allowed
@@ -56,11 +60,7 @@ export function JourneyObserver({
       if (!allowed()) {
         stop?.('consent')
         stop = undefined
-        if (
-          hadAnalyticsConsent ||
-          getCookiebot()?.hasResponse === true
-        )
-          session.revoke()
+        if (hadAnalyticsConsent) session.revoke()
         hadAnalyticsConsent = false
         backForwardUrl = undefined
         transport.revoke()

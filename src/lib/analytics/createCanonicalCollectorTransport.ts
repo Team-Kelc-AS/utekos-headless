@@ -1,23 +1,18 @@
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
+import { hasCookiebotExplicitResponse } from '@/lib/consent/cookiebotConsent'
 import {
   applyCanonicalCollectionContext,
   type CanonicalCollectionContext
 } from './applyCanonicalCollectionContext'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
-import { clearStoredSnapchatClickId } from './clickIdSessionStore'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
 import { createCollectorDeliveryError } from './createCollectorDeliveryError'
 import { extractClickIds } from './pageViewClientContext'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 
-const COOKIEBOT_EVENTS = [
-  'CookiebotOnConsentReady',
-  'CookiebotOnAccept',
-  'CookiebotOnDecline'
-] as const
-
 type CookiebotConsent = {
+  method?: string | null
   marketing?: boolean
   preferences?: boolean
   statistics?: boolean
@@ -80,6 +75,8 @@ function resolveConsent(
   cookiebot: CookiebotApi | undefined,
   version: string
 ): ConsentSnapshot {
+  if (!hasCookiebotExplicitResponse(cookiebot))
+    cookiebot = undefined
   return {
     analytics:
       cookiebot?.consent?.statistics === true ?
@@ -106,18 +103,20 @@ function resolveBrowserCollection<
       (window as CookiebotWindow).Cookiebot
     )
 
-  const consent = resolveConsent(
-    cookiebot,
-    event.consent.version
-  )
-  const pageUrl = event.page_url ?? 'https://utekos.no/'
-  const hasResponse =
-    cookiebot?.hasResponse === true ||
-    cookiebot?.declined === true
-
-  if (hasResponse && consent.marketing !== 'granted') {
-    clearStoredSnapchatClickId()
+  const live = resolveConsent(cookiebot, event.consent.version)
+  const consent = {
+    ...live,
+    analytics:
+      event.consent.analytics === 'granted' ?
+        live.analytics
+      : ('denied' as const),
+    marketing:
+      event.consent.marketing === 'granted' ?
+        live.marketing
+      : ('denied' as const)
   }
+  const pageUrl = event.page_url ?? 'https://utekos.no/'
+  const hasResponse = hasCookiebotExplicitResponse(cookiebot)
 
   const context: CanonicalCollectionContext = {
     consent,
@@ -152,22 +151,6 @@ function resolveBrowserCollection<
   }
 }
 
-function subscribeToCookiebotChanges(
-  listener: () => void
-): () => void {
-  if (typeof window === 'undefined') return () => {}
-
-  for (const eventName of COOKIEBOT_EVENTS) {
-    window.addEventListener(eventName, listener)
-  }
-
-  return () => {
-    for (const eventName of COOKIEBOT_EVENTS) {
-      window.removeEventListener(eventName, listener)
-    }
-  }
-}
-
 function isRetryableStatus(status: number) {
   return status === 408 || status === 429 || status >= 500
 }
@@ -187,6 +170,26 @@ export async function sendCanonicalCollectorEvent<
   input: SendCanonicalCollectorEventInput<E>,
   event: E
 ): Promise<void> {
+  if (!defaultHasCollectionConsent(event)) return
+  const isStillPermitted = () => {
+    if (typeof window === 'undefined') return true
+    if (
+      (window as Window & { __utekosConsentReloading?: boolean })
+        .__utekosConsentReloading
+    )
+      return false
+    const current = resolveConsent(
+      (window as CookiebotWindow).Cookiebot,
+      event.consent.version
+    )
+    return (
+      (event.consent.analytics !== 'granted' ||
+        current.analytics === 'granted') &&
+      (event.consent.marketing !== 'granted' ||
+        current.marketing === 'granted')
+    )
+  }
+  if (!isStillPermitted()) return
   let stage: Parameters<
     typeof createCollectorDeliveryError
   >[1]['stage'] = 'journey_context'
@@ -204,11 +207,13 @@ export async function sendCanonicalCollectorEvent<
       await enrichCanonicalEventWithMetaAttribution(
         journeyEnriched
       )
+    if (!isStillPermitted()) return
     stage = 'event_enrichment'
     const enriched =
       input.enrichEvent ?
         await input.enrichEvent(metaEnriched)
       : metaEnriched
+    if (!isStillPermitted()) return
     stage = 'serialize'
     const body = JSON.stringify(enriched)
     const beaconBody = new Blob([body], {
@@ -235,6 +240,7 @@ export async function sendCanonicalCollectorEvent<
 
     stage = 'request'
     for (attempt = 1; attempt <= 2; attempt += 1) {
+      if (!isStillPermitted()) return
       let response: Response
       status = undefined
 
@@ -300,45 +306,102 @@ export function createCanonicalCollectorTransport<
   }
 
   return function startCollectorTransport(event: E): () => void {
-    if (typeof window === 'undefined') {
+    const tracked = new Set([
+      'add_to_wishlist',
+      'view_cart',
+      'view_item',
+      'view_item_list',
+      'select_item'
+    ])
+    const eventName =
+      'event_name' in event &&
+      typeof (event as { event_name?: unknown }).event_name ===
+        'string' ?
+        (event as { event_name: string }).event_name
+      : input.analyticsEventName
+    const eventTime =
+      'event_time' in event &&
+      typeof (event as { event_time?: unknown }).event_time ===
+        'string' ?
+        (event as { event_time: string }).event_time
+      : null
+    const logCollector = (
+      dropReason: string | null,
+      currentEvent: E = event
+    ) => {
+      if (!tracked.has(eventName)) return
+      const record = currentEvent as {
+        browser_id?: { fbc?: string }
+        click_id?: { fbclid?: string }
+        consent?: { analytics?: string; marketing?: string }
+      }
+      // #region agent log
+      fetch(
+        'http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Debug-Session-Id': '2aed25'
+          },
+          body: JSON.stringify({
+            sessionId: '2aed25',
+            runId: 'pre-fix',
+            hypothesisId: 'H3',
+            location:
+              'createCanonicalCollectorTransport.ts:start',
+            message: 'canonical collector start',
+            data: {
+              eventName,
+              dropReason,
+              delayMs:
+                eventTime ?
+                  Date.now() - Date.parse(eventTime)
+                : null,
+              analytics: record.consent?.analytics ?? null,
+              marketing: record.consent?.marketing ?? null,
+              hasFbc: Boolean(record.browser_id?.fbc),
+              hasFbclid: Boolean(record.click_id?.fbclid)
+            },
+            timestamp: Date.now()
+          })
+        }
+      ).catch(() => {})
+      // #endregion
+    }
+    if (
+      typeof window === 'undefined' ||
+      (window as Window & { __utekosConsentReloading?: boolean })
+        .__utekosConsentReloading ||
+      !hasCollectionConsent(event)
+    ) {
+      logCollector(
+        typeof window === 'undefined' ? 'ssr'
+        : (window as Window & { __utekosConsentReloading?: boolean })
+            .__utekosConsentReloading ?
+          'reloading'
+        : 'no_collection_consent'
+      )
       return () => {}
     }
-
-    let finished = false
-    let unsubscribe: () => void = () => {}
-
-    const finish = () => {
-      if (finished) return
-      finished = true
-      unsubscribe()
+    const current = resolveBrowserCollection(event)
+    if (
+      current.context.hasResponse &&
+      hasCollectionConsent(current.event)
+    ) {
+      logCollector(null, current.event)
+      void sendCanonicalCollectorEvent(
+        input,
+        current.event
+      ).catch(reportError)
+    } else {
+      logCollector(
+        current.context.hasResponse ?
+          'live_consent_denied'
+        : 'cookiebot_no_response',
+        current.event
+      )
     }
-
-    const evaluate = () => {
-      if (finished) return
-
-      const current = resolveBrowserCollection(event)
-
-      if (hasCollectionConsent(current.event)) {
-        finish()
-        void sendCanonicalCollectorEvent(
-          input,
-          current.event
-        ).catch(reportError)
-        return
-      }
-
-      if (current.context.hasResponse) {
-        finish()
-      }
-    }
-
-    evaluate()
-
-    if (!finished) {
-      unsubscribe = subscribeToCookiebotChanges(evaluate)
-      evaluate()
-    }
-
-    return finish
+    return () => {}
   }
 }

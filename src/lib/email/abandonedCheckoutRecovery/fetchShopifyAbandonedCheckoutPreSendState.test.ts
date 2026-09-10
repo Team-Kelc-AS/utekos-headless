@@ -55,7 +55,45 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
                       currencyCode: 'NOK'
                     }
                   },
-                  product: { handle: 'utekos-techdown' }
+                  image: {
+                    url:
+                      'https://cdn.shopify.com/s/files/1/line-item.jpg?v=1',
+                    altText: 'TechDown fra Shopify'
+                  },
+                  variant: {
+                    id: 'gid://shopify/ProductVariant/4001',
+                    barcode: ' 07090062980009 ',
+                    recoveryEmailImage: {
+                      reference: {
+                        image: {
+                          url:
+                            'https://cdn.shopify.com/s/files/1/recovery.jpg?v=2',
+                          altText: 'Kurert TechDown-bilde'
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  title: 'Comfyrobe',
+                  quantity: 2,
+                  variantTitle: 'XL',
+                  discountedTotalPriceSet: {
+                    shopMoney: {
+                      amount: '3380.00',
+                      currencyCode: 'NOK'
+                    }
+                  },
+                  image: {
+                    url:
+                      'https://cdn.shopify.com/s/files/1/comfyrobe.jpg',
+                    altText: null
+                  },
+                  variant: {
+                    id: 'gid://shopify/ProductVariant/4002',
+                    barcode: null,
+                    recoveryEmailImage: null
+                  }
                 }
               ],
               pageInfo: { hasNextPage: false }
@@ -75,6 +113,18 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
       }
     }
   ])
+  assert.match(
+    SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY,
+    /recoveryEmailImage: metafield\([\s\S]*namespace: "utekos"[\s\S]*key: "recovery_email_image"/u
+  )
+  assert.match(
+    SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY,
+    /image \{[\s\S]*url[\s\S]*altText/u
+  )
+  assert.match(
+    SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY,
+    /variant \{[\s\S]*id[\s\S]*barcode/u
+  )
   assert.deepEqual(state, {
     abandonmentId: 'gid://shopify/Abandonment/3001',
     createdAt: '2026-08-09T08:30:00Z',
@@ -107,7 +157,33 @@ test('fetches and normalizes the authoritative Shopify abandonment state', async
           variantTitle: null,
           priceAmount: '1790.00',
           priceCurrencyCode: 'NOK',
-          productHandle: 'utekos-techdown'
+          variantId: 'gid://shopify/ProductVariant/4001',
+          barcode: '07090062980009',
+          recoveryEmailImage: {
+            url:
+              'https://cdn.shopify.com/s/files/1/recovery.jpg?v=2',
+            altText: 'Kurert TechDown-bilde'
+          },
+          shopifyLineItemImage: {
+            url:
+              'https://cdn.shopify.com/s/files/1/line-item.jpg?v=1',
+            altText: 'TechDown fra Shopify'
+          }
+        },
+        {
+          title: 'Comfyrobe',
+          quantity: 2,
+          variantTitle: 'XL',
+          priceAmount: '3380.00',
+          priceCurrencyCode: 'NOK',
+          variantId: 'gid://shopify/ProductVariant/4002',
+          barcode: null,
+          recoveryEmailImage: null,
+          shopifyLineItemImage: {
+            url:
+              'https://cdn.shopify.com/s/files/1/comfyrobe.jpg',
+            altText: null
+          }
         }
       ]
     }

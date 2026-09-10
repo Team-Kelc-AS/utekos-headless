@@ -70,3 +70,32 @@ test('does not invoke native fetch with the transport object as its receiver', a
   assert.equal(calls, 1)
   assert.equal(beacons, 0)
 })
+
+test('minimizes arbitrary error text and route identifiers before network serialization', async () => {
+  let body = ''
+  await sendClientLog(
+    {
+      ...payload,
+      data: {
+        source: 'window_error',
+        message:
+          'TypeError: customer phone 12345678 and secret-click'
+      },
+      context: {
+        pathname: '/kunde/private-person?fbclid=secret-click'
+      }
+    },
+    {
+      fetch: (async (_url, init) => {
+        body = String(init?.body)
+        return new Response(null, { status: 204 })
+      }) as typeof fetch
+    }
+  )
+  assert.equal(JSON.parse(body).data.message, 'TypeError')
+  assert.equal(JSON.parse(body).context.pathname, '/:other')
+  assert.doesNotMatch(
+    body,
+    /12345678|private-person|secret-click/
+  )
+})

@@ -58,10 +58,7 @@ test('creates one analytics-consented journey per session and links the precedin
   })
 
   assert.equal(first.journey_id, journeyId)
-  assert.equal(
-    first.previous_page_view_id,
-    previousPageViewId
-  )
+  assert.equal(first.previous_page_view_id, previousPageViewId)
   assert.equal(repeated.journey_id, journeyId)
   assert.equal(creates, 1)
   assert.equal(
@@ -70,7 +67,7 @@ test('creates one analytics-consented journey per session and links the precedin
   )
 })
 
-test('does not create or retain journey identifiers without analytics consent', () => {
+test('does not access existing journey storage without analytics consent', () => {
   const journeyId = '11111111-1111-4111-8111-111111111111'
   const storage = createStorage(journeyId)
   let creates = 0
@@ -81,23 +78,21 @@ test('does not create or retain journey identifiers without analytics consent', 
     },
     getPreviousPageViewId: () =>
       '22222222-2222-4222-8222-222222222222',
-    getStorage: () => storage
+    getStorage: () => {
+      throw new Error('Denied consent must not access storage')
+    }
   })
 
   const denied = enrich({
-    consent: {
-      ...grantedConsent,
-      analytics: 'denied' as const
-    },
+    consent: { ...grantedConsent, analytics: 'denied' as const },
     journey_id: journeyId,
-    previous_page_view_id:
-      '22222222-2222-4222-8222-222222222222'
+    previous_page_view_id: '22222222-2222-4222-8222-222222222222'
   })
 
   assert.equal(denied.journey_id, undefined)
   assert.equal(denied.previous_page_view_id, undefined)
   assert.equal(creates, 0)
-  assert.equal(storage.values.size, 0)
+  assert.equal(storage.values.size, 1)
 })
 
 test('reuses a valid session journey without generating a replacement', () => {

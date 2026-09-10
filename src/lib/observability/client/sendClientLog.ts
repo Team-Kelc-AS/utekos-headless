@@ -1,4 +1,6 @@
 import type { LogPayload } from 'types/observability/log/LogPayload'
+import { clientLogPayloadSchema } from '../logging/clientLogPayloadSchema'
+import { sanitizeClientErrorMessage } from './sanitizeClientErrorBeacon'
 
 export const CLIENT_LOG_PATH = '/api/log'
 
@@ -11,7 +13,25 @@ export async function sendClientLog(
   payload: LogPayload,
   transport: SendClientLogTransport
 ): Promise<void> {
-  const body = JSON.stringify(payload)
+  const minimized =
+    payload.event === 'consent_diagnostic' ?
+      payload
+    : {
+        ...payload,
+        data: {
+          ...payload.data,
+          ...(payload.data.message ?
+            {
+              message: sanitizeClientErrorMessage(
+                payload.data.message
+              )
+            }
+          : {})
+        }
+      }
+  const parsed = clientLogPayloadSchema.safeParse(minimized)
+  if (!parsed.success) return
+  const body = JSON.stringify(parsed.data)
   const sendFetch = transport.fetch
 
   try {

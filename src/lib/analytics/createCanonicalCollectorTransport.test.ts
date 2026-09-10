@@ -59,7 +59,12 @@ test('uses a neutral fallback after a network-level collector failure', async ()
         endpoint: '/api/events/view-promotion',
         fallbackEndpoint: '/api/e/vp'
       },
-      { consent: deniedConsent }
+      {
+        consent: {
+          ...deniedConsent,
+          analytics: 'granted' as const
+        }
+      }
     )
   } finally {
     globalThis.fetch = originalFetch
@@ -106,7 +111,13 @@ test('queues web vitals on the neutral beacon endpoint when available', async ()
         endpoint: '/api/events/web-vital',
         fallbackEndpoint: '/api/e/wv'
       },
-      { consent: deniedConsent, event_name: 'web_vital' }
+      {
+        consent: {
+          ...deniedConsent,
+          analytics: 'granted' as const
+        },
+        event_name: 'web_vital'
+      }
     )
   } finally {
     globalThis.fetch = originalFetch
@@ -127,7 +138,13 @@ test('queues web vitals on the neutral beacon endpoint when available', async ()
   assert.equal(beacons[0]?.body.type, 'application/json')
   assert.deepEqual(
     JSON.parse((await beacons[0]?.body.text()) ?? '{}'),
-    { consent: deniedConsent, event_name: 'web_vital' }
+    {
+      consent: {
+        ...deniedConsent,
+        analytics: 'granted' as const
+      },
+      event_name: 'web_vital'
+    }
   )
 })
 
@@ -156,7 +173,13 @@ test('falls back to fetch when the beacon cannot queue the event', async () => {
         endpoint: '/api/events/web-vital',
         fallbackEndpoint: '/api/e/wv'
       },
-      { consent: deniedConsent, event_name: 'web_vital' }
+      {
+        consent: {
+          ...deniedConsent,
+          analytics: 'granted' as const
+        },
+        event_name: 'web_vital'
+      }
     )
   } finally {
     globalThis.fetch = originalFetch
@@ -203,7 +226,7 @@ test('escapes a saturated keepalive queue while the page is visible without chan
     }
   )
   const event = {
-    consent: deniedConsent,
+    consent: { ...deniedConsent, analytics: 'granted' as const },
     event_id: 'same-event',
     page_url: 'https://utekos.no/skreddersy-varmen'
   }
@@ -265,7 +288,12 @@ test('keeps unload protection for retries in a hidden page and reports safe fail
         endpoint: '/api/events/view-promotion',
         fallbackEndpoint: '/api/e/vp?private=do-not-log'
       },
-      { consent: deniedConsent }
+      {
+        consent: {
+          ...deniedConsent,
+          analytics: 'granted' as const
+        }
+      }
     ),
     error => {
       assert.ok(error instanceof Error)
@@ -298,7 +326,12 @@ test('distinguishes preparation failures from requests without sending the event
           throw new TypeError('Failed to fetch')
         }
       },
-      { consent: deniedConsent }
+      {
+        consent: {
+          ...deniedConsent,
+          analytics: 'granted' as const
+        }
+      }
     ),
     /stage=event_enrichment/
   )
@@ -317,7 +350,12 @@ test('does not retry a rejected event contract', async t => {
         analyticsEventName: 'view_promotion',
         endpoint: '/api/events/view-promotion'
       },
-      { consent: deniedConsent }
+      {
+        consent: {
+          ...deniedConsent,
+          analytics: 'granted' as const
+        }
+      }
     ),
     /status=400/
   )
@@ -341,7 +379,12 @@ test('preserves keepalive on a retryable HTTP response and stops after success',
       analyticsEventName: 'view_promotion',
       endpoint: '/api/events/view-promotion'
     },
-    { consent: deniedConsent }
+    {
+      consent: {
+        ...deniedConsent,
+        analytics: 'granted' as const
+      }
+    }
   )
   assert.equal(requests.length, 2)
   assert.ok(requests.every(request => request.keepalive))
@@ -403,7 +446,13 @@ test('recovers a rejected web vital beacon when the shared keepalive budget is f
       endpoint: '/api/events/web-vital',
       fallbackEndpoint: '/api/e/wv'
     },
-    { consent: deniedConsent, event_id: 'same-web-vital' }
+    {
+      consent: {
+        ...deniedConsent,
+        analytics: 'granted' as const
+      },
+      event_id: 'same-web-vital'
+    }
   )
   assert.equal(beacons, 1)
   assert.equal(received.length, 1)
@@ -415,7 +464,7 @@ test('recovers a rejected web vital beacon when the shared keepalive budget is f
 
 test('measures UTF-8 bytes and avoids keepalive for a body above 64 KiB', async t => {
   const event = {
-    consent: deniedConsent,
+    consent: { ...deniedConsent, analytics: 'granted' as const },
     data: 'å'.repeat(33_000)
   }
   let attempts = 0

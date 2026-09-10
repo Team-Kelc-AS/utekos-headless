@@ -35,7 +35,13 @@ const ShopMoneySchema = z.object({
   currencyCode: z.string().min(1)
 })
 
-const LineItemNodeSchema = z.object({
+const ProductImageSchema = z.strictObject({
+  url: z.string().url().max(2048),
+
+  altText: z.string().max(500).nullable()
+})
+
+const LineItemNodeSchema = z.strictObject({
   title: z.string().min(1),
 
   quantity: z.number().int().positive(),
@@ -46,9 +52,25 @@ const LineItemNodeSchema = z.object({
     shopMoney: ShopMoneySchema
   }),
 
-  product: z
-    .object({
-      handle: z.string().min(1)
+  image: ProductImageSchema.nullable(),
+
+  variant: z
+    .strictObject({
+      id: z.string().regex(
+        /^gid:\/\/shopify\/ProductVariant\/\d+$/u
+      ),
+
+      barcode: z.string().max(128).nullable(),
+
+      recoveryEmailImage: z
+        .strictObject({
+          reference: z
+            .strictObject({
+              image: ProductImageSchema
+            })
+            .nullable()
+        })
+        .nullable()
     })
     .nullable()
 })
@@ -177,8 +199,26 @@ export const SHOPIFY_ABANDONED_CHECKOUT_PRE_SEND_QUERY = `#graphql
                 currencyCode
               }
             }
-            product {
-              handle
+            image {
+              url
+              altText
+            }
+            variant {
+              id
+              barcode
+              recoveryEmailImage: metafield(
+                namespace: "utekos"
+                key: "recovery_email_image"
+              ) {
+                reference {
+                  ... on MediaImage {
+                    image {
+                      url
+                      altText
+                    }
+                  }
+                }
+              }
             }
           }
           pageInfo {
@@ -247,15 +287,24 @@ function resolveVariantTitle(
 function toCheckoutLineItems(
   lineItems: z.infer<typeof LineItemNodeSchema>[]
 ): ShopifyAbandonedCheckoutPreSendState['checkout']['lineItems'] {
-  return lineItems.map(lineItem => ({
-    title: lineItem.title.trim(),
-    quantity: lineItem.quantity,
-    variantTitle: resolveVariantTitle(lineItem.variantTitle),
-    priceAmount: lineItem.discountedTotalPriceSet.shopMoney.amount,
-    priceCurrencyCode:
-      lineItem.discountedTotalPriceSet.shopMoney.currencyCode,
-    productHandle: lineItem.product?.handle ?? null
-  }))
+  return lineItems.map(lineItem => {
+    const barcode = lineItem.variant?.barcode?.trim() ?? null
+    const recoveryEmailImage =
+      lineItem.variant?.recoveryEmailImage?.reference?.image ?? null
+
+    return {
+      title: lineItem.title.trim(),
+      quantity: lineItem.quantity,
+      variantTitle: resolveVariantTitle(lineItem.variantTitle),
+      priceAmount: lineItem.discountedTotalPriceSet.shopMoney.amount,
+      priceCurrencyCode:
+        lineItem.discountedTotalPriceSet.shopMoney.currencyCode,
+      variantId: lineItem.variant?.id ?? null,
+      barcode: barcode && barcode.length > 0 ? barcode : null,
+      recoveryEmailImage,
+      shopifyLineItemImage: lineItem.image
+    }
+  })
 }
 
 async function safelyReconcileNativeAbandonment(input: {

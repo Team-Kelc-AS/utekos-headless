@@ -1,5 +1,9 @@
 'use client'
 
+import {
+  hasCookiebotMarketingConsent,
+  type CookiebotApi
+} from '@/lib/consent/cookiebotConsent'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { buildMetaParameterContextRequestUrl } from './buildMetaParameterContextRequestUrl'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
@@ -18,11 +22,21 @@ type MetaAttributionEvent = {
   referrer_url?: string | undefined
 }
 
+function marketingAllowed() {
+  return (
+    typeof window !== 'undefined' &&
+    hasCookiebotMarketingConsent(
+      (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
+    )
+  )
+}
+
 const completedContextKeys = new Set<string>()
 const META_PARAMETER_CONTEXT_TIMEOUT_MS = 2500
 let contextSequence: Promise<void> = Promise.resolve()
 
 function readCookie(name: string): string | undefined {
+  if (!marketingAllowed()) return undefined
   const prefix = `${name}=`
   const candidate = document.cookie
     .split('; ')
@@ -66,6 +80,7 @@ function readPersistedMetaIdentifiers(
 async function fetchMetaParameterContext(
   event: MetaAttributionEvent
 ) {
+  if (!marketingAllowed()) throw new Error('consent_required')
   const pageUrl = event.page_url ?? window.location.href
   const fbclid = event.click_id?.fbclid
 
@@ -146,7 +161,8 @@ export async function enrichCanonicalEventWithMetaAttribution<
 >(event: E): Promise<E> {
   if (
     typeof window === 'undefined' ||
-    event.consent.marketing !== 'granted'
+    event.consent.marketing !== 'granted' ||
+    !marketingAllowed()
   ) {
     return event
   }
@@ -163,6 +179,7 @@ export async function enrichCanonicalEventWithMetaAttribution<
         pageUrl: event.page_url ?? window.location.href
       }
     )
+    if (!marketingAllowed()) return event
     identifiers = {
       ...(clientContext.fbc ? { fbc: clientContext.fbc } : {}),
       ...(clientContext.fbp ? { fbp: clientContext.fbp } : {})

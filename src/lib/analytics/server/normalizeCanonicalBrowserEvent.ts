@@ -1,4 +1,6 @@
 import type { z } from 'zod'
+import { withoutTrackingQuery } from '../withoutTrackingQuery'
+import { filterConsentedBrowserIds } from '../filterConsentedBrowserIds'
 import type { CanonicalEventEnvelope } from '../canonicalEventEnvelope'
 import type { CanonicalPageViewRequestContext } from './normalizeCanonicalPageView'
 
@@ -18,6 +20,7 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
   const clientLocation = parsed.location
   const deviceInfo = { ...parsed.event_device_info }
 
+  delete normalized.edge_request_id
   delete normalized.client_ip_address
   delete normalized.event_device_info
   delete normalized.experiment
@@ -64,6 +67,13 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
   const hasAnalyticsConsent =
     parsed.consent.analytics === 'granted'
 
+  const browserIds = filterConsentedBrowserIds(
+    parsed.browser_id,
+    parsed.consent
+  )
+  if (browserIds) normalized.browser_id = browserIds
+  else delete normalized.browser_id
+
   if (hasAnalyticsConsent && parsed.journey_id) {
     normalized.journey_id = parsed.journey_id
 
@@ -84,29 +94,12 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
   if (location) normalized.location = location
 
   if (!hasMarketingConsent) {
-    const analyticsBrowserId = {
-      ...(parsed.browser_id?.ga_client ?
-        { ga_client: parsed.browser_id.ga_client }
-      : {}),
-      ...(parsed.browser_id?.ga_client_id ?
-        { ga_client_id: parsed.browser_id.ga_client_id }
-      : {}),
-      ...(parsed.browser_id?.ga_cookie ?
-        { ga_cookie: parsed.browser_id.ga_cookie }
-      : {}),
-      ...(parsed.browser_id?.ga_session_id ?
-        { ga_session_id: parsed.browser_id.ga_session_id }
-      : {})
-    }
-
-    if (
-      parsed.consent.analytics === 'granted' &&
-      Object.keys(analyticsBrowserId).length > 0
-    ) {
-      normalized.browser_id = analyticsBrowserId
-    } else {
-      delete normalized.browser_id
-    }
+    if (typeof parsed.page_url === 'string')
+      normalized.page_url = withoutTrackingQuery(parsed.page_url)
+    if (typeof parsed.referrer_url === 'string')
+      normalized.referrer_url = withoutTrackingQuery(
+        parsed.referrer_url
+      )
     delete normalized.click_id
     delete normalized.external_id
     delete normalized.impression_id

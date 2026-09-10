@@ -1,10 +1,17 @@
 import { sanitizeOperationalPathname } from '../logging/sanitizeOperationalPathname'
 
 export function sanitizeJourneyPath(value: string): string {
-  const path = sanitizeOperationalPathname(value)
   const sensitive =
     /\/(?:checkouts?|orders?|account|auth|kunde|api)(?:\/|$)/i
-  if (sensitive.test(path)) return '/:private'
+  let pathname: string
+  try {
+    pathname = new URL(value, 'https://utekos.no').pathname
+  } catch {
+    return '/:private'
+  }
+  if (pathname === '/:private' || sensitive.test(pathname))
+    return '/:private'
+  const path = sanitizeOperationalPathname(pathname)
 
   return path
     .split('/')

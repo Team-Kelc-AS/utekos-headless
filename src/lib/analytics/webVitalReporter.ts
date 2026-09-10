@@ -2,6 +2,10 @@
 
 import { sendGTMEvent } from '@next/third-parties/google'
 import { readBrowserReporterContext } from './browserReporterContext'
+import {
+  hasCookiebotStatisticsConsent,
+  type CookiebotApi
+} from '@/lib/consent/cookiebotConsent'
 import { logWebVital } from './logWebVital'
 import { browserPageViewSession } from './pageViewSession'
 import { serializeWebVitalEntries } from './serializeWebVitalEntries'
@@ -27,12 +31,11 @@ export type ReportableWebVitalMetric = {
   value: number
 }
 
-const startWebVitalCollectorTransport = createWebVitalCollectorTransport(
-  async event => {
+const startWebVitalCollectorTransport =
+  createWebVitalCollectorTransport(async event => {
     sendGTMEvent(buildWebVitalDataLayerEvent(event))
     return event
-  }
-)
+  })
 
 function readAttribution(
   metric: ReportableWebVitalMetric
@@ -59,6 +62,12 @@ export function reportCanonicalWebVital(
   if (typeof window === 'undefined') {
     return () => {}
   }
+  if (
+    !hasCookiebotStatisticsConsent(
+      (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
+    )
+  )
+    return () => {}
 
   const pathname = window.location.pathname || '/'
   logWebVital({
@@ -70,6 +79,11 @@ export function reportCanonicalWebVital(
 
   try {
     const clientContext = readBrowserReporterContext()
+    if (
+      !clientContext ||
+      clientContext.consent.analytics !== 'granted'
+    )
+      return () => {}
     const pageView = browserPageViewSession.ensure({
       pageUrl: clientContext.pageUrl,
       ...(clientContext.documentReferrer ?

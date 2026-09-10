@@ -27,7 +27,8 @@ export function createPageViewSession(
 
     if (pageViewsById.size > 32) {
       const oldestPageViewId = pageViewsById.keys().next().value
-      if (oldestPageViewId) pageViewsById.delete(oldestPageViewId)
+      if (oldestPageViewId)
+        pageViewsById.delete(oldestPageViewId)
     }
 
     return context
@@ -61,7 +62,9 @@ export function createPageViewSession(
     pageViewId: string | undefined
   ): PageViewContext | undefined {
     if (!pageViewId) {
-      return activePageView ? toPublicContext(activePageView) : undefined
+      return activePageView ?
+          toPublicContext(activePageView)
+        : undefined
     }
 
     return pageViewsById.get(pageViewId)
@@ -92,7 +95,8 @@ export function createPageViewSession(
       : undefined)
     const previousPageViewId =
       context.previousPageViewId ??
-      pageViewsById.get(context.pageViewId)?.previousPageViewId ??
+      pageViewsById.get(context.pageViewId)
+        ?.previousPageViewId ??
       (activePageView?.pageUrl === pageUrl ?
         activePageView.previousPageViewId
       : activePageView?.pageViewId)
@@ -122,7 +126,19 @@ export function createPageViewSession(
     }
   }
 
-  return { ensure, get, hasEmitted, recordEmitted, subscribe }
+  function clear() {
+    activePageView = null
+    pageViewsById.clear()
+  }
+
+  return {
+    clear,
+    ensure,
+    get,
+    hasEmitted,
+    recordEmitted,
+    subscribe
+  }
 }
 
 export const browserPageViewSession = createPageViewSession()

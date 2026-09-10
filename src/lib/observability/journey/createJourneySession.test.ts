@@ -9,7 +9,11 @@ const page1 = '33333333-3333-4333-8333-333333333333'
 const page2 = '44444444-4444-4444-8444-444444444444'
 const accepted = {
   hasResponse: true,
-  consent: { statistics: true, marketing: false }
+  consent: {
+    method: 'explicit',
+    statistics: true,
+    marketing: true
+  }
 }
 const landing = {
   pageUrl:
@@ -44,9 +48,25 @@ function fixture(blocked = false) {
   }
 }
 
-test('missing, unknown, denied and marketing-only consent never open a behavioral journey', () => {
+test('missing, unknown, implied, statistics-only and marketing-only consent never open an advertising-linked journey', () => {
   for (const cookiebot of [
     undefined,
+    {
+      hasResponse: true,
+      consent: {
+        method: 'explicit',
+        statistics: true,
+        marketing: false
+      }
+    },
+    {
+      hasResponse: true,
+      consent: {
+        method: 'implied',
+        statistics: true,
+        marketing: true
+      }
+    },
     { hasResponse: false, consent: { statistics: true } },
     {
       hasResponse: true,
@@ -62,7 +82,7 @@ test('missing, unknown, denied and marketing-only consent never open a behaviora
   }
 })
 
-test('late analytics-only consent starts fresh observations and keeps only validated UTM labels', () => {
+test('late explicit statistics plus marketing consent starts fresh observations with validated UTM labels', () => {
   const { session } = fixture()
   session.open({ cookiebot: undefined, pageView: landing })
   const page = session.open({
@@ -73,7 +93,7 @@ test('late analytics-only consent starts fresh observations and keeps only valid
   assert.deepEqual(page.utm, { utm_source: 'facebook' })
   assert.equal(page.maxScrollY, 0)
   assert.equal(page.sections.size, 0)
-  assert.equal(page.consent.marketing, 'denied')
+  assert.equal(page.consent.marketing, 'granted')
   assert.equal(page.pagePath, '/skreddersy-varmen')
   assert.equal(
     session.open({ cookiebot: accepted, pageView: landing }),

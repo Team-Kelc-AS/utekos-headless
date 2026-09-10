@@ -9,734 +9,271 @@ import {
   type CanonicalPageView
 } from './pageViewEvent'
 
-const deniedConsent = {
-  analytics: 'denied' as const,
-  marketing: 'denied' as const,
-  preferences: 'denied' as const,
-  source: 'cookiebot' as const,
+const denied = {
+  analytics: 'denied',
+  marketing: 'denied',
+  preferences: 'denied',
+  source: 'cookiebot',
   version: '1'
-}
-
-test('cookie access and optional enrichment failure do not discard a consented page view', async () => {
-  const sent: CanonicalPageView[] = []
-  const transport = createPageViewCollectorTransport({
-    capture: async () => {},
-    enrich: async () => {
-      throw new DOMException('Storage blocked', 'SecurityError')
-    },
-    getCookiebot: () => ({
-      hasResponse: true,
-      consent: { marketing: true }
-    }),
-    getCookieHeader: () => {
-      throw new DOMException('Storage blocked', 'SecurityError')
-    },
-    send: async event => {
-      sent.push(event)
-    }
-  })
-  const event = pageView()
-  assert.equal(await transport.queue(event), 'sent')
-  assert.equal(sent[0]?.event_id, event.event_id)
-  assert.equal(sent[0]?.browser_id, undefined)
-  assert.equal(sent[0]?.consent.marketing, 'granted')
-})
-
-test('withdrawal during asynchronous enrichment prevents collector dispatch', async () => {
-  let cookiebot: CookiebotState = {
-    hasResponse: true,
-    consent: { marketing: true }
-  }
-  let sends = 0
-  let receipts = 0
-  const transport = createPageViewCollectorTransport({
-    capture: async () => {},
-    enrich: async event => {
-      cookiebot = {
-        hasResponse: true,
-        consent: { marketing: false }
-      }
-      return event
-    },
-    getCookiebot: () => cookiebot,
-    getCookieHeader: () => '',
-    observeDispatch: async () => {
-      receipts += 1
-    },
-    send: async () => {
-      sends += 1
-    }
-  })
-  await transport.queue(pageView())
-  assert.equal(sends, 0)
-  assert.equal(receipts, 0)
-  await transport.flush()
-  assert.equal(sends, 0)
-})
-
+} as const
 function pageView(
-  eventId = '11111111-1111-4111-8111-111111111111',
-  pageViewId = '22222222-2222-4222-8222-222222222222',
-  pageUrl = 'https://utekos.no/',
-  edgeRequestId?: string
+  consent: CanonicalPageView['consent'] = {
+    ...denied,
+    marketing: 'granted'
+  },
+  id = '11111111-1111-4111-8111-111111111111'
 ) {
   return createCanonicalPageView({
-    ...(edgeRequestId ? { edgeRequestId } : {}),
     environment: 'test',
-    eventId,
-    pageViewId,
-    eventTime: '2026-07-15T12:00:00.000Z',
-    pageUrl,
+    eventId: id,
+    pageViewId: crypto.randomUUID(),
+    eventTime: new Date().toISOString(),
+    pageUrl:
+      'https://utekos.no/skreddersy-varmen?fbclid=private&utm_content=ad',
     pageTitle: 'Utekos',
-    consent: deniedConsent,
-    browserId: { fbp: 'fb.1.existing' },
-    clickId: { fbclid: 'meta-click', gclid: 'google-click' },
-    impressionId: 'impression-1'
+    consent,
+    browserId: { fbp: 'fb.1.2.3' },
+    clickId: { fbclid: 'private' }
   })
 }
-
-function harness(initialCookiebot: CookiebotState | undefined) {
-  let cookiebot = initialCookiebot
-  const captures: Array<{
-    event: CanonicalPageView
-    state: 'pending' | 'denied' | 'granted'
-  }> = []
-  const sent: CanonicalPageView[] = []
-
-  const transport = createPageViewCollectorTransport({
-    capture: async (event, state) => {
-      captures.push({ event, state })
+function harness(initial?: CookiebotState) {
+  let current = initial,
+    reads = 0
+  const captures: CanonicalPageView[] = [],
+    sent: CanonicalPageView[] = []
+  const deps = {
+    capture: async (event: CanonicalPageView) => {
+      captures.push(event)
     },
-    enrich: async event => event,
-    getCookiebot: () => cookiebot,
-    getCookieHeader: () =>
-      [
-        '_fbp=fb.1.123',
-        '_fbc=fb.1.456',
-        '_ga=GA1.1.123.456'
-      ].join('; '),
-    send: async event => {
+    enrich: async (event: CanonicalPageView) => event,
+    getCookiebot: () => current,
+    getCookieHeader: () => {
+      reads++
+      return '_fbp=fb.1.2.3; _ga=GA1.1.1.2'
+    },
+    send: async (event: CanonicalPageView) => {
       sent.push(event)
     }
-  })
-
+  }
   return {
-    captures,
+    deps,
     sent,
-    setCookiebot(value: CookiebotState) {
-      cookiebot = value
-    },
-    transport
+    captures,
+    reads: () => reads,
+    consent: (next: CookiebotState) => {
+      current = next
+    }
   }
 }
+const marketing = {
+  hasResponse: true,
+  consent: { method: 'explicit', marketing: true }
+}
+const statistics = {
+  hasResponse: true,
+  consent: { method: 'explicit', statistics: true }
+}
 
-test('holds page_view while consent is pending', async () => {
-  const context = harness(undefined)
-  const event = pageView()
-
-  await context.transport.queue(event)
-
-  assert.equal(context.sent.length, 0)
-  assert.equal(context.captures.length, 1)
-  assert.equal(context.captures[0]?.state, 'pending')
-  assert.deepEqual(
-    context.captures[0]?.event.click_id,
-    event.click_id
-  )
-
-  context.setCookiebot({
-    hasResponse: true,
-    consent: {
-      marketing: false,
-      preferences: false,
-      statistics: true
+test('pending and denied events are not captured, retained, enriched or read from storage', async () => {
+  for (const initial of [
+    undefined,
+    { hasResponse: false },
+    {
+      hasResponse: true,
+      consent: { method: 'explicit', marketing: false }
     }
-  })
-
-  await context.transport.flush()
-
-  assert.equal(context.sent.length, 1)
-  assert.equal(context.captures.at(-1)?.state, 'granted')
-  assert.equal(context.sent[0]?.event_id, event.event_id)
-  assert.equal(context.sent[0]?.event_time, event.event_time)
+  ]) {
+    const h = harness(initial),
+      t = createPageViewCollectorTransport(h.deps)
+    assert.equal(await t.queue(pageView(denied)), 'skipped')
+    h.consent(marketing)
+    await t.flush()
+    assert.equal(h.reads(), 0)
+    assert.equal(h.captures.length, 0)
+    assert.equal(h.sent.length, 0)
+  }
 })
-
-test('does not send when analytics and marketing are denied', async () => {
-  const context = harness({
-    declined: true,
-    hasResponse: true,
-    consent: {
-      marketing: false,
-      preferences: false,
-      statistics: false
-    }
-  })
-
-  await context.transport.queue(pageView())
-  await context.transport.flush()
-
-  assert.equal(context.sent.length, 0)
-  assert.equal(context.captures.length, 1)
-  assert.equal(context.captures[0]?.state, 'denied')
-  assert.deepEqual(context.captures[0]?.event.click_id, {
-    fbclid: 'meta-click',
-    gclid: 'google-click'
-  })
-})
-
-test('sends the pending current page_view once after late consent grant', async () => {
-  const context = harness({
-    declined: true,
-    hasResponse: true,
-    consent: {
-      marketing: false,
-      preferences: false,
-      statistics: false
-    }
-  })
-  const event = pageView()
-
-  assert.equal(await context.transport.queue(event), 'captured')
-  assert.equal(context.sent.length, 0)
-
-  context.setCookiebot({
-    consented: true,
-    hasResponse: true,
-    consent: {
-      marketing: true,
-      preferences: false,
-      statistics: true
-    }
-  })
-
-  assert.deepEqual(
-    await Promise.all([
-      context.transport.flush(),
-      context.transport.flush(),
-      context.transport.queue(event)
-    ]),
-    ['sent', 'skipped', 'skipped']
-  )
-  assert.equal(context.sent.length, 1)
-  assert.equal(context.sent[0]?.event_id, event.event_id)
-  assert.equal(context.sent[0]?.page_view_id, event.page_view_id)
-  assert.equal(context.sent[0]?.event_time, event.event_time)
-  assert.equal(context.sent[0]?.consent.analytics, 'granted')
-  assert.equal(context.sent[0]?.consent.marketing, 'granted')
-  assert.deepEqual(context.sent[0]?.click_id, event.click_id)
-  assert.deepEqual(context.sent[0]?.browser_id, {
-    fbc: 'fb.1.456',
-    fbp: 'fb.1.123',
-    ga_client: 'GA1.1.123.456'
-  })
-  assert.equal(await context.transport.flush(), 'skipped')
-  assert.equal(context.sent.length, 1)
-})
-
-test('late grant sends only the latest page viewed while denied', async () => {
-  const context = harness({
-    declined: true,
-    hasResponse: true,
-    consent: {
-      marketing: false,
-      preferences: false,
-      statistics: false
-    }
-  })
-
-  await context.transport.queue(
-    pageView(
-      '11111111-1111-4111-8111-111111111111',
-      '22222222-2222-4222-8222-222222222222',
-      'https://utekos.no/skreddersy-varmen'
+test('missing or implied consent method cannot open collection', async () => {
+  for (const method of [undefined, 'implied']) {
+    const h = harness({
+      hasResponse: true,
+      consent: { ...(method ? { method } : {}), marketing: true }
+    })
+    await createPageViewCollectorTransport(h.deps).queue(
+      pageView()
     )
-  )
-
-  await context.transport.queue(
-    pageView(
-      '33333333-3333-4333-8333-333333333333',
-      '44444444-4444-4444-8444-444444444444',
-      'https://utekos.no/produkter'
-    )
-  )
-
-  assert.deepEqual(
-    context.captures.map(capture => capture.event.page_url),
-    [
-      'https://utekos.no/skreddersy-varmen',
-      'https://utekos.no/produkter'
-    ]
-  )
-
-  context.setCookiebot({
-    consented: true,
-    hasResponse: true,
-    consent: {
-      marketing: true,
-      preferences: false,
-      statistics: true
-    }
-  })
-
-  assert.equal(await context.transport.flush(), 'sent')
-  assert.deepEqual(
-    context.sent.map(event => ({
-      eventId: event.event_id,
-      pageUrl: event.page_url,
-      pageViewId: event.page_view_id
-    })),
-    [
-      {
-        eventId: '33333333-3333-4333-8333-333333333333',
-        pageUrl: 'https://utekos.no/produkter',
-        pageViewId: '44444444-4444-4444-8444-444444444444'
-      }
-    ]
-  )
+    assert.equal(h.sent.length, 0)
+    assert.equal(h.reads(), 0)
+  }
 })
-
-test('sends after analytics-only consent without marketing identifiers', async () => {
-  const context = harness({
-    hasResponse: true,
-    consent: {
-      marketing: false,
-      preferences: false,
-      statistics: true
-    }
-  })
-
-  await context.transport.queue(pageView())
-
-  assert.equal(context.sent.length, 1)
-  assert.equal(context.sent[0]?.consent.analytics, 'granted')
-  assert.equal(context.sent[0]?.consent.marketing, 'denied')
-  assert.equal(context.sent[0]?.browser_id, undefined)
-  assert.equal(context.sent[0]?.click_id, undefined)
-  assert.equal(context.sent[0]?.impression_id, undefined)
+test('a fresh current-page event after explicit consent is captured and sent once with original IDs', async () => {
+  const h = harness(marketing),
+    t = createPageViewCollectorTransport(h.deps),
+    event = pageView()
+  assert.equal(await t.queue(event), 'sent')
+  await t.queue(event)
+  await t.flush()
+  assert.equal(h.sent.length, 1)
+  assert.equal(h.captures.length, 1)
+  assert.equal(h.sent[0]?.event_id, event.event_id)
+  assert.equal(h.sent[0]?.page_view_id, event.page_view_id)
+  assert.equal(h.sent[0]?.event_time, event.event_time)
+  assert.equal(h.sent[0]?.click_id?.fbclid, 'private')
 })
-
-test('releases the same page view to the collector when marketing is granted after analytics', async () => {
-  const context = harness({
-    hasResponse: true,
-    consent: { statistics: true, marketing: false }
-  })
-  const event = pageView()
-  assert.equal(await context.transport.queue(event), 'sent')
-  assert.equal(context.sent[0]?.consent.marketing, 'denied')
-  assert.equal(await context.transport.flush(), 'skipped')
-
-  context.setCookiebot({
-    hasResponse: true,
-    consent: { statistics: true, marketing: true }
-  })
-  await Promise.all([
-    context.transport.flush(),
-    context.transport.flush()
-  ])
-
-  assert.equal(context.sent.length, 2)
-  assert.equal(context.sent[1]?.consent.marketing, 'granted')
-  assert.equal(context.sent[1]?.event_id, event.event_id)
-  assert.equal(context.sent[1]?.page_view_id, event.page_view_id)
-  assert.equal(context.sent[1]?.event_time, event.event_time)
-  assert.equal(context.sent[1]?.page_url, event.page_url)
-  assert.equal(await context.transport.flush(), 'skipped')
-})
-
-test('a later marketing grant does not replay earlier analytics-only SPA pages', async () => {
-  const context = harness({
-    hasResponse: true,
-    consent: { statistics: true, marketing: false }
-  })
-  await context.transport.queue(pageView())
-  const current = pageView(
-    '33333333-3333-4333-8333-333333333333',
-    '44444444-4444-4444-8444-444444444444',
+test('statistics only strips click IDs, marketing cookies and URL queries', async () => {
+  const h = harness(statistics)
+  await createPageViewCollectorTransport(h.deps).queue(
+    pageView({ ...denied, analytics: 'granted' })
+  )
+  const event = h.sent[0]!
+  assert.equal(event.click_id, undefined)
+  assert.equal(
+    event.page_url,
     'https://utekos.no/skreddersy-varmen'
   )
-  await context.transport.queue(current)
-  context.setCookiebot({
-    hasResponse: true,
-    consent: { statistics: true, marketing: true }
-  })
-  await context.transport.flush()
-
-  assert.equal(context.sent.length, 3)
-  const released = context.sent.filter(
-    event => event.consent.marketing === 'granted'
-  )
-  assert.deepEqual(
-    released.map(event => event.event_id),
-    [current.event_id]
-  )
+  assert.deepEqual(event.browser_id, { ga_client: 'GA1.1.1.2' })
 })
-
-test('a grant during analytics-only delivery releases without another consent event', async () => {
-  let cookiebot: CookiebotState = {
+test('a later marketing grant does not upgrade a previously statistics-only event', async () => {
+  const h = harness(statistics),
+    t = createPageViewCollectorTransport(h.deps)
+  await t.queue(pageView({ ...denied, analytics: 'granted' }))
+  h.consent({
     hasResponse: true,
-    consent: { statistics: true, marketing: false }
+    consent: {
+      method: 'explicit',
+      statistics: true,
+      marketing: true
+    }
+  })
+  await t.flush()
+  assert.equal(h.sent.length, 1)
+  assert.equal(h.sent[0]?.consent.marketing, 'denied')
+})
+test('withdrawal during enrichment prevents capture and send', async () => {
+  const h = harness(marketing)
+  h.deps.enrich = async event => {
+    h.consent({
+      hasResponse: true,
+      consent: { method: 'explicit' }
+    })
+    return event
   }
-  const sent: CanonicalPageView[] = []
-  const transport = createPageViewCollectorTransport({
-    capture: async () => {},
-    enrich: async event => event,
-    getCookiebot: () => cookiebot,
-    getCookieHeader: () => '',
-    send: async event => {
-      sent.push(event)
-      cookiebot = {
-        hasResponse: true,
-        consent: { statistics: true, marketing: true }
-      }
-      // The real CMP listener may flush before the first request completes.
-      assert.equal(await transport.flush(), 'skipped')
-    }
-  })
-  const event = pageView()
-  await transport.queue(event)
-  assert.deepEqual(
-    sent.map(item => item.consent.marketing),
-    ['denied', 'granted']
+  await createPageViewCollectorTransport(h.deps).queue(
+    pageView()
   )
-  assert.equal(sent[1]?.event_id, event.event_id)
-  assert.equal(await transport.flush(), 'skipped')
-})
-
-test('a failed marketing release retries with the original identity', async () => {
-  let grant = false
-  let attempts = 0
-  const sent: CanonicalPageView[] = []
-  const transport = createPageViewCollectorTransport({
-    capture: async () => {},
-    enrich: async event => event,
-    getCookiebot: () => ({
-      hasResponse: true,
-      consent: { statistics: true, marketing: grant }
-    }),
-    getCookieHeader: () => '',
-    send: async event => {
-      if (
-        event.consent.marketing === 'granted' &&
-        ++attempts === 1
-      ) {
-        throw new Error('temporary collector failure')
-      }
-      sent.push(event)
-    }
-  })
-  const event = pageView()
-  await transport.queue(event)
-  grant = true
-  assert.equal(await transport.flush(), 'failed')
-  assert.equal(await transport.flush(), 'sent')
-  assert.equal(sent[1]?.event_id, event.event_id)
-  assert.equal(attempts, 2)
-  assert.equal(await transport.flush(), 'skipped')
-})
-
-test('sends after marketing-only consent with consented identifiers', async () => {
-  const context = harness({
-    consented: true,
-    hasResponse: true,
-    consent: {
-      marketing: true,
-      preferences: false,
-      statistics: false
-    }
-  })
-
-  await context.transport.queue(pageView())
-
-  assert.equal(context.sent.length, 1)
-  assert.equal(context.sent[0]?.consent.analytics, 'denied')
-  assert.equal(context.sent[0]?.consent.marketing, 'granted')
-  assert.deepEqual(context.sent[0]?.browser_id, {
-    fbc: 'fb.1.456',
-    fbp: 'fb.1.123'
-  })
-  assert.deepEqual(context.sent[0]?.click_id, {
-    fbclid: 'meta-click',
-    gclid: 'google-click'
-  })
-})
-
-test('repeated consent updates do not resend the event', async () => {
-  const context = harness(undefined)
-
-  await context.transport.queue(pageView())
-
-  context.setCookiebot({
-    consented: true,
-    hasResponse: true,
-    consent: {
-      marketing: true,
-      preferences: false,
-      statistics: true
-    }
-  })
-
-  await Promise.all([
-    context.transport.flush(),
-    context.transport.flush(),
-    context.transport.flush()
-  ])
-
-  assert.equal(context.sent.length, 1)
-})
-
-test('the same event_id is attempted at most once', async () => {
-  const context = harness({
-    hasResponse: true,
-    consent: {
-      marketing: false,
-      preferences: false,
-      statistics: true
-    }
-  })
-  const event = pageView()
-
-  await context.transport.queue(event)
-  await context.transport.queue(event)
-
-  assert.equal(context.sent.length, 1)
-})
-
-test('starts a signed browser receipt before collector send after consent', async () => {
-  const order: string[] = []
-  const observations: unknown[] = []
-  const edgeRequestId = '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
-  const token =
-    '1754029200.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq'
-  const transport = createPageViewCollectorTransport({
-    capture: async () => undefined,
-    enrich: async event => event,
-    getCookiebot: () => ({
-      hasResponse: true,
-      consent: {
-        marketing: false,
-        preferences: false,
-        statistics: true
-      }
-    }),
-    getCookieHeader: () => '',
-    observeDispatch: async observation => {
-      order.push('browser_dispatch')
-      observations.push(observation)
-    },
-    send: async () => {
-      order.push('collector_send')
-    }
-  })
-  const event = pageView(
-    undefined,
-    undefined,
-    undefined,
-    edgeRequestId
-  )
-
+  assert.equal(h.captures.length, 0)
+  assert.equal(h.sent.length, 0)
   assert.equal(
-    await transport.queue(event, { edgeRequestId, token }),
-    'sent'
+    h.reads(),
+    1,
+    'no cookie reads after the asynchronous withdrawal'
   )
-  await new Promise<void>(resolve => setImmediate(resolve))
-
-  assert.deepEqual(order, ['browser_dispatch', 'collector_send'])
-  assert.deepEqual(observations, [
-    {
-      correlation_token: token,
-      edge_request_id: edgeRequestId,
-      event_id: event.event_id,
-      event_name: 'page_view',
-      page_view_id: event.page_view_id
-    }
-  ])
+})
+test('withdrawal during capture prevents subsequent collector send', async () => {
+  const h = harness(marketing)
+  h.deps.capture = async () => {
+    h.consent({
+      hasResponse: true,
+      consent: { method: 'explicit' }
+    })
+  }
+  await createPageViewCollectorTransport(h.deps).queue(
+    pageView()
+  )
+  assert.equal(h.sent.length, 0)
+  assert.equal(
+    h.reads(),
+    2,
+    'no cookie reads after withdrawal during capture'
+  )
+})
+test('no cookie read or retained event when live consent is for a different purpose', async () => {
+  const h = harness(statistics)
+  const transport = createPageViewCollectorTransport(h.deps)
+  assert.equal(await transport.queue(pageView()), 'skipped')
+  assert.equal(h.reads(), 0)
+  h.consent(marketing)
+  await transport.flush()
+  assert.equal(h.sent.length, 0)
 })
 
-test('collector send continues when browser receipt fails', async () => {
-  let sends = 0
-  const edgeRequestId = '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
-  const transport = createPageViewCollectorTransport({
-    capture: async () => undefined,
-    enrich: async event => event,
-    getCookiebot: () => ({
-      hasResponse: true,
-      consent: {
-        marketing: false,
-        preferences: false,
-        statistics: true
-      }
-    }),
-    getCookieHeader: () => '',
-    observeDispatch: async () => {
-      throw new Error('receipt unavailable')
-    },
-    send: async () => {
-      sends += 1
-    }
-  })
-
+test('marketing-only PageView never sends a statistical journey ID', async () => {
+  const h = harness(marketing)
+  const event = {
+    ...pageView(),
+    journey_id: crypto.randomUUID(),
+    previous_page_view_id: crypto.randomUUID()
+  }
+  await createPageViewCollectorTransport(h.deps).queue(event)
+  assert.equal(h.sent.length, 1)
+  assert.equal(h.sent[0]?.journey_id, undefined)
+  assert.equal(h.sent[0]?.previous_page_view_id, undefined)
+})
+test('storage or optional enrichment failure still permits an explicitly consented event', async () => {
+  const h = harness(marketing)
+  h.deps.getCookieHeader = () => {
+    throw new Error('storage unavailable')
+  }
+  h.deps.enrich = async () => {
+    throw new Error('optional enrichment unavailable')
+  }
   assert.equal(
-    await transport.queue(
-      pageView(undefined, undefined, undefined, edgeRequestId),
-      {
-        edgeRequestId,
-        token:
-          '1754029200.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq'
-      }
+    await createPageViewCollectorTransport(h.deps).queue(
+      pageView()
     ),
     'sent'
   )
-  assert.equal(sends, 1)
+  assert.equal(h.sent.length, 1)
 })
-
-test('retries a failed page_view on a later flush', async () => {
+test('failed send retries with the same event ID and does not duplicate a completed delivery', async () => {
+  const h = harness(marketing),
+    event = pageView()
   let attempts = 0
-  const sent: CanonicalPageView[] = []
-  const transport = createPageViewCollectorTransport({
-    capture: async () => undefined,
-    enrich: async event => event,
-    getCookiebot: () => ({
-      hasResponse: true,
-      consent: {
-        marketing: false,
-        preferences: false,
-        statistics: true
-      }
-    }),
-    getCookieHeader: () => '',
-    send: async event => {
-      attempts += 1
-      if (attempts === 1) {
-        throw new Error('transient collector failure')
-      }
-      sent.push(event)
-    }
-  })
-  const event = pageView()
-
-  assert.equal(await transport.queue(event), 'failed')
-  assert.equal(await transport.flush(), 'sent')
-  assert.equal(await transport.flush(), 'skipped')
-  assert.equal(attempts, 2)
-  assert.deepEqual(
-    sent.map(sentEvent => sentEvent.event_id),
-    [event.event_id]
-  )
+  h.deps.send = async next => {
+    if (++attempts === 1) throw new Error('offline')
+    h.sent.push(next)
+  }
+  const t = createPageViewCollectorTransport(h.deps)
+  assert.equal(await t.queue(event), 'failed')
+  assert.equal(await t.flush(), 'sent')
+  await t.flush()
+  assert.equal(h.sent.length, 1)
+  assert.equal(h.sent[0]?.event_id, event.event_id)
 })
-
-test('does not send an in-flight page_view concurrently', async () => {
-  let attempts = 0
-  let releaseSend: (() => void) | undefined
-  const sendGate = new Promise<void>(resolve => {
-    releaseSend = resolve
-  })
-  const transport = createPageViewCollectorTransport({
-    capture: async () => undefined,
-    enrich: async event => event,
-    getCookiebot: () => ({
-      hasResponse: true,
-      consent: {
-        marketing: false,
-        preferences: false,
-        statistics: true
-      }
-    }),
-    getCookieHeader: () => '',
-    send: async () => {
-      attempts += 1
-      await sendGate
-    }
-  })
-  const event = pageView()
-
-  const firstSend = transport.queue(event)
-  const concurrentFlush = transport.flush()
-  const concurrentQueue = transport.queue(event)
-
-  await new Promise<void>(resolve => setImmediate(resolve))
-  assert.equal(attempts, 1)
-
-  releaseSend?.()
-  const results = await Promise.all([
-    firstSend,
-    concurrentFlush,
-    concurrentQueue
-  ])
-  assert.equal(
-    results.filter(result => result === 'sent').length,
-    1
-  )
-  assert.equal(
-    results.filter(result => result === 'skipped').length,
-    2
-  )
-  assert.equal(await transport.queue(event), 'skipped')
-  assert.equal(attempts, 1)
+test('concurrent flush cannot dispatch the same event twice', async () => {
+  const h = harness(marketing)
+  let resume!: () => void
+  h.deps.enrich = event =>
+    new Promise(resolve => {
+      resume = () => resolve(event)
+    })
+  const t = createPageViewCollectorTransport(h.deps),
+    pending = t.queue(pageView())
+  await t.flush()
+  resume()
+  await pending
+  assert.equal(h.sent.length, 1)
 })
-
-test('distinct SPA page views are each sent once', async () => {
-  const context = harness({
-    hasResponse: true,
-    consent: {
-      marketing: false,
-      preferences: false,
-      statistics: true
-    }
-  })
-
-  await context.transport.queue(
-    pageView(
-      '11111111-1111-4111-8111-111111111111',
-      '22222222-2222-4222-8222-222222222222',
-      'https://utekos.no/'
-    )
-  )
-  await context.transport.queue(
-    pageView(
-      '33333333-3333-4333-8333-333333333333',
-      '44444444-4444-4444-8444-444444444444',
-      'https://utekos.no/produkter'
-    )
-  )
-
-  assert.equal(context.sent.length, 2)
-  assert.notEqual(
-    context.sent[0]?.event_id,
-    context.sent[1]?.event_id
-  )
+test('clearing the consented queue cancels a pending enrichment', async () => {
+  const h = harness(marketing)
+  let resume!: () => void
+  h.deps.enrich = event =>
+    new Promise(resolve => {
+      resume = () => resolve(event)
+    })
+  const t = createPageViewCollectorTransport(h.deps),
+    pending = t.queue(pageView())
+  t.clear()
+  resume()
+  await pending
+  assert.equal(h.sent.length, 0)
 })
-
-test('keeps every SPA page view while consent is pending', async () => {
-  const context = harness(undefined)
-
-  await context.transport.queue(
-    pageView(
-      '11111111-1111-4111-8111-111111111111',
-      '22222222-2222-4222-8222-222222222222',
-      'https://utekos.no/'
-    )
+test('distinct consented SPA views each dispatch once', async () => {
+  const h = harness(marketing),
+    t = createPageViewCollectorTransport(h.deps)
+  await t.queue(pageView())
+  await t.queue(
+    pageView(undefined, '22222222-2222-4222-8222-222222222222')
   )
-  await context.transport.queue(
-    pageView(
-      '33333333-3333-4333-8333-333333333333',
-      '44444444-4444-4444-8444-444444444444',
-      'https://utekos.no/produkter'
-    )
-  )
-
-  context.setCookiebot({
-    hasResponse: true,
-    consent: {
-      marketing: false,
-      preferences: false,
-      statistics: true
-    }
-  })
-
-  await context.transport.flush()
-
-  assert.deepEqual(
-    context.sent.map(event => event.page_url),
-    ['https://utekos.no/', 'https://utekos.no/produkter']
-  )
+  assert.equal(h.sent.length, 2)
 })

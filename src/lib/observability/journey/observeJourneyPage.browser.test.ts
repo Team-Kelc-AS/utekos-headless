@@ -44,9 +44,15 @@ const bundle = buildSync({
     }
     window.journeyHarness = {
       events,
-      consent(statistics, marketing = false) {
-        allowed = statistics === true
-        cookie = statistics === undefined ? undefined : {hasResponse: true, consent: {statistics, marketing}}
+      consent(statistics, marketing = true) {
+        const nextAllowed =
+          statistics === true && marketing === true
+        if (allowed && !nextAllowed) {
+          session.revoke()
+          pageViews.clear()
+        }
+        allowed = nextAllowed
+        cookie = statistics === undefined ? undefined : {hasResponse: true, consent: {method: 'explicit', statistics, marketing}}
         start()
       },
       navigate(path) {

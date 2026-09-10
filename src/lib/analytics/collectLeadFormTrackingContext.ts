@@ -7,6 +7,8 @@ import { browserFirstPartyExternalIdStore } from './firstPartyExternalId'
 import type { LeadFormTrackingContext } from './leadFormTrackingContext'
 import { LEAD_TRACKING_CONTEXT_FIELD } from './leadFormTrackingContext'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
+import { hasCookiebotExplicitResponse } from '@/lib/consent/cookiebotConsent'
+import { withoutTrackingQuery } from './withoutTrackingQuery'
 
 type CookiebotWindow = Window & {
   Cookiebot?: {
@@ -27,16 +29,29 @@ export function collectLeadFormTrackingContext(): LeadFormTrackingContext {
   const pageUrl = window.location.href
   const cookiebot = (window as CookiebotWindow).Cookiebot
   const consent = getConsentSnapshot(
-    cookiebot?.hasResponse === true ?
-      cookiebot.consent
+    hasCookiebotExplicitResponse(cookiebot) ?
+      cookiebot?.consent
     : undefined
   )
+
+  if (
+    consent.analytics !== 'granted' &&
+    consent.marketing !== 'granted'
+  ) {
+    return { consent, page_url: withoutTrackingQuery(pageUrl) }
+  }
 
   browserFirstPartyExternalIdStore.getOrCreate(consent)
 
   const pageView = browserPageViewSession.ensure({
-    pageUrl,
-    documentReferrer: document.referrer
+    pageUrl:
+      consent.marketing === 'granted' ?
+        pageUrl
+      : withoutTrackingQuery(pageUrl),
+    documentReferrer:
+      consent.marketing === 'granted' ?
+        document.referrer
+      : withoutTrackingQuery(document.referrer)
   })
 
   const searchParams = new URL(pageUrl).searchParams
@@ -53,7 +68,10 @@ export function collectLeadFormTrackingContext(): LeadFormTrackingContext {
 
   return {
     consent,
-    page_url: pageUrl,
+    page_url:
+      consent.marketing === 'granted' ?
+        pageUrl
+      : withoutTrackingQuery(pageUrl),
     ...(consent.analytics === 'granted' ?
       {
         page_view_id: pageView.pageViewId,
@@ -63,15 +81,43 @@ export function collectLeadFormTrackingContext(): LeadFormTrackingContext {
       }
     : {}),
     ...(pageView.referrerUrl ?
-      { referrer_url: pageView.referrerUrl }
+      {
+        referrer_url:
+          consent.marketing === 'granted' ?
+            pageView.referrerUrl
+          : withoutTrackingQuery(pageView.referrerUrl)
+      }
     : document.referrer.startsWith('http') ?
-      { referrer_url: document.referrer }
+      {
+        referrer_url:
+          consent.marketing === 'granted' ?
+            document.referrer
+          : withoutTrackingQuery(document.referrer)
+      }
     : {}),
-    cookie_header: document.cookie.slice(0, 4096),
-    ...(campaign ? { campaign } : {}),
-    ...(medium ? { medium } : {}),
-    ...(content ? { content } : {}),
-    ...(term ? { term } : {})
+    ...(consent.marketing === 'granted' ?
+      {
+        cookie_header: document.cookie
+          .split(';')
+          .filter(part =>
+            /^\s*(?:_fbp|_fbc|_scid|_uetmsclkid|_uetsid|_uetvid|_gcl_au|utekos_external_id)=/.test(
+              part
+            )
+          )
+          .join(';')
+          .slice(0, 4096)
+      }
+    : {}),
+    ...(consent.marketing === 'granted' && campaign ?
+      { campaign }
+    : {}),
+    ...(consent.marketing === 'granted' && medium ?
+      { medium }
+    : {}),
+    ...(consent.marketing === 'granted' && content ?
+      { content }
+    : {}),
+    ...(consent.marketing === 'granted' && term ? { term } : {})
   }
 }
 

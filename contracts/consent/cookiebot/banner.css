@@ -1,0 +1,93 @@
+#utekos-consent-dialog {
+  box-sizing: border-box;
+  max-width: 42rem;
+  width: calc(100% - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin: auto;
+  padding: 1.5rem;
+  border: 2px solid #00453e;
+  border-radius: 12px;
+  background: #f0eee9;
+  color: #002521;
+  font:
+    400 1rem/1.5 var(--font-sans, system-ui),
+    sans-serif;
+}
+#utekos-consent-dialog:not([open]) {
+  display: none;
+}
+#utekos-consent-dialog::backdrop {
+  background: rgb(0 37 33 / 65%);
+}
+#utekos-consent-dialog h2 {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  margin: 0 0 1rem;
+}
+#utekos-consent-dialog p {
+  margin: 1rem 0;
+}
+#utekos-consent-dialog fieldset {
+  border: 0;
+  padding: 0;
+  margin: 1rem 0;
+}
+#utekos-consent-dialog legend {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+#utekos-consent-dialog label {
+  display: flex;
+  align-items: start;
+  gap: 0.75rem;
+  padding: 0.625rem 0;
+  cursor: pointer;
+}
+#utekos-consent-dialog small {
+  display: block;
+  font-size: 0.9375rem;
+}
+#utekos-consent-dialog input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.2rem;
+  flex: 0 0 auto;
+  accent-color: #00453e;
+}
+#utekos-consent-dialog a {
+  color: #00453e;
+  text-decoration: underline;
+}
+.utekos-consent-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.625rem;
+}
+#utekos-consent-dialog button {
+  min-height: 48px;
+  padding: 0.625rem;
+  border: 2px solid #00453e;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  color: #f0eee9;
+  background: #00453e;
+  cursor: pointer;
+}
+#utekos-consent-dialog :focus-visible {
+  outline: 3px solid #b44701;
+  outline-offset: 3px;
+}
+#utekos-consent-dialog #utekos-consent-error:empty {
+  display: none;
+}
+@media (max-width: 480px) {
+  .utekos-consent-actions {
+    grid-template-columns: 1fr;
+  }
+  #utekos-consent-dialog {
+    padding: 1rem;
+  }
+}

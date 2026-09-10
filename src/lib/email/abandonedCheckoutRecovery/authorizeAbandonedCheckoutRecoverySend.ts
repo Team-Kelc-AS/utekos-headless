@@ -22,7 +22,16 @@ export type AbandonedCheckoutRecoveryCheckoutLineItem = {
   variantTitle: string | null
   priceAmount: string
   priceCurrencyCode: string
-  productHandle: string | null
+  variantId: string | null
+  barcode: string | null
+  recoveryEmailImage: {
+    url: string
+    altText: string | null
+  } | null
+  shopifyLineItemImage: {
+    url: string
+    altText: string | null
+  } | null
 }
 
 export type AbandonedCheckoutRecoveryEmailLineItem = {
@@ -89,6 +98,18 @@ export type AuthorizeAbandonedCheckoutRecoverySendResult =
 const INVALID_STATE_ERROR =
   'abandoned_checkout_recovery_shopify_state_invalid'
 
+const ALLOWED_RECOVERY_URL_HOSTNAMES = new Set([
+  'checkout.shopify.com',
+  'kasse.utekos.no',
+  'utekos.no',
+  'www.utekos.no'
+])
+
+function isAllowedRecoveryUrlHostname(hostname: string): boolean {
+  return ALLOWED_RECOVERY_URL_HOSTNAMES.has(hostname)
+    || /^[a-z0-9][a-z0-9-]*\.myshopify\.com$/u.test(hostname)
+}
+
 function toEmailLineItems(
   lineItems: readonly AbandonedCheckoutRecoveryCheckoutLineItem[]
 ): AbandonedCheckoutRecoveryEmailLineItem[] {
@@ -116,7 +137,13 @@ function toEmailLineItems(
         currencyCode: 'NOK'
       }),
       imageUrl: resolveAbandonedCheckoutRecoveryProductImageUrl(
-        lineItem.productHandle
+        {
+          variantId: lineItem.variantId,
+          barcode: lineItem.barcode,
+          curatedImageUrl: lineItem.recoveryEmailImage?.url ?? null,
+          shopifyLineItemImageUrl:
+            lineItem.shopifyLineItemImage?.url ?? null
+        }
       )
     }
   })
@@ -175,7 +202,9 @@ function assertValidIdentityAndTimeline(
     recoveryUrl.protocol !== 'https:' ||
     recoveryUrl.username !== '' ||
     recoveryUrl.password !== '' ||
-    recoveryUrl.hostname === ''
+    recoveryUrl.port !== '' ||
+    recoveryUrl.hash !== '' ||
+    !isAllowedRecoveryUrlHostname(recoveryUrl.hostname)
   ) {
     throw new Error(INVALID_STATE_ERROR)
   }

@@ -617,6 +617,87 @@ export type Database = {
         }
         Relationships: []
       }
+      facebook_login_identities: {
+        Row: {
+          ad_id: string | null
+          ad_name: string | null
+          adset_id: string | null
+          adset_name: string | null
+          app_id: string
+          campaign_id: string | null
+          campaign_name: string | null
+          contact_updated_at: string | null
+          created_at: string
+          email_ciphertext: string | null
+          email_permission_granted: boolean
+          email_sha256: string | null
+          expires_at: string
+          external_id: string
+          facebook_login_id: string
+          fbc: string | null
+          fbclid: string | null
+          first_login_at: string
+          id: string
+          last_login_at: string
+          login_count: number
+          phone_ciphertext: string | null
+          phone_sha256: string | null
+          updated_at: string
+        }
+        Insert: {
+          ad_id?: string | null
+          ad_name?: string | null
+          adset_id?: string | null
+          adset_name?: string | null
+          app_id: string
+          campaign_id?: string | null
+          campaign_name?: string | null
+          contact_updated_at?: string | null
+          created_at?: string
+          email_ciphertext?: string | null
+          email_permission_granted?: boolean
+          email_sha256?: string | null
+          expires_at?: string
+          external_id: string
+          facebook_login_id: string
+          fbc?: string | null
+          fbclid?: string | null
+          first_login_at?: string
+          id?: string
+          last_login_at?: string
+          login_count?: number
+          phone_ciphertext?: string | null
+          phone_sha256?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ad_id?: string | null
+          ad_name?: string | null
+          adset_id?: string | null
+          adset_name?: string | null
+          app_id?: string
+          campaign_id?: string | null
+          campaign_name?: string | null
+          contact_updated_at?: string | null
+          created_at?: string
+          email_ciphertext?: string | null
+          email_permission_granted?: boolean
+          email_sha256?: string | null
+          expires_at?: string
+          external_id?: string
+          facebook_login_id?: string
+          fbc?: string | null
+          fbclid?: string | null
+          first_login_at?: string
+          id?: string
+          last_login_at?: string
+          login_count?: number
+          phone_ciphertext?: string | null
+          phone_sha256?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           campaign: string | null
@@ -848,6 +929,163 @@ export type Database = {
         }
         Relationships: []
       }
+      meta_audience_registry_runs: {
+        Row: {
+          account_id: string
+          aggregate_report: Json
+          api_version: string
+          created_at: string
+          observed_at: string
+          run_id: string
+          status: string
+        }
+        Insert: {
+          account_id: string
+          aggregate_report: Json
+          api_version: string
+          created_at?: string
+          observed_at: string
+          run_id: string
+          status?: string
+        }
+        Update: {
+          account_id?: string
+          aggregate_report?: Json
+          api_version?: string
+          created_at?: string
+          observed_at?: string
+          run_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      meta_audience_segment_snapshots: {
+        Row: {
+          aggregate_counts: Json
+          audience_ids: string[]
+          definition: string
+          planned_label: string
+          run_id: string
+          segment_key: string
+          source_manifest: Json
+        }
+        Insert: {
+          aggregate_counts: Json
+          audience_ids: string[]
+          definition: string
+          planned_label: string
+          run_id: string
+          segment_key: string
+          source_manifest: Json
+        }
+        Update: {
+          aggregate_counts?: Json
+          audience_ids?: string[]
+          definition?: string
+          planned_label?: string
+          run_id?: string
+          segment_key?: string
+          source_manifest?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meta_audience_segment_snapshots_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "meta_audience_registry_runs"
+            referencedColumns: ["run_id"]
+          },
+        ]
+      }
+      meta_audience_snapshots: {
+        Row: {
+          audience_id: string
+          audience_name: string
+          customer_file_source: string | null
+          is_value_based: boolean | null
+          labels: string[]
+          metadata: Json
+          run_id: string
+          segment_key: string | null
+          source_status: string
+          subtype: string
+        }
+        Insert: {
+          audience_id: string
+          audience_name: string
+          customer_file_source?: string | null
+          is_value_based?: boolean | null
+          labels: string[]
+          metadata: Json
+          run_id: string
+          segment_key?: string | null
+          source_status: string
+          subtype: string
+        }
+        Update: {
+          audience_id?: string
+          audience_name?: string
+          customer_file_source?: string | null
+          is_value_based?: boolean | null
+          labels?: string[]
+          metadata?: Json
+          run_id?: string
+          segment_key?: string | null
+          source_status?: string
+          subtype?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meta_audience_snapshots_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "meta_audience_registry_runs"
+            referencedColumns: ["run_id"]
+          },
+        ]
+      }
+      meta_audience_upload_batches: {
+        Row: {
+          account_id: string
+          audience_id: string
+          batch_seq: number
+          batch_size: number
+          dataset_hash: string
+          invalid_count: number | null
+          last_batch: boolean
+          observed_at: string
+          receipt_count: number | null
+          session_id: string
+          state: string
+        }
+        Insert: {
+          account_id: string
+          audience_id: string
+          batch_seq: number
+          batch_size: number
+          dataset_hash: string
+          invalid_count?: number | null
+          last_batch: boolean
+          observed_at?: string
+          receipt_count?: number | null
+          session_id: string
+          state: string
+        }
+        Update: {
+          account_id?: string
+          audience_id?: string
+          batch_seq?: number
+          batch_size?: number
+          dataset_hash?: string
+          invalid_count?: number | null
+          last_batch?: boolean
+          observed_at?: string
+          receipt_count?: number | null
+          session_id?: string
+          state?: string
+        }
+        Relationships: []
+      }
       meta_high_value_customer_audience_additions_20260731: {
         Row: {
           age: number | null
@@ -1001,6 +1239,45 @@ export type Database = {
         }
         Relationships: []
       }
+      provisional_page_view_captures: {
+        Row: {
+          capture_count: number
+          capture_state: string
+          captured_at: string
+          edge_request_id: string | null
+          event_id: string
+          expires_at: string
+          occurred_at: string
+          page_view_id: string
+          payload: Json
+          updated_at: string
+        }
+        Insert: {
+          capture_count?: number
+          capture_state: string
+          captured_at?: string
+          edge_request_id?: string | null
+          event_id: string
+          expires_at?: string
+          occurred_at: string
+          page_view_id: string
+          payload: Json
+          updated_at?: string
+        }
+        Update: {
+          capture_count?: number
+          capture_state?: string
+          captured_at?: string
+          edge_request_id?: string | null
+          event_id?: string
+          expires_at?: string
+          occurred_at?: string
+          page_view_id?: string
+          payload?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       shopify_customer_emails_over_500: {
         Row: {
           email: string
@@ -1015,6 +1292,7 @@ export type Database = {
       }
       shopify_customers: {
         Row: {
+          country_code: string | null
           currency_code: string | null
           email: string | null
           first_name: string | null
@@ -1027,8 +1305,10 @@ export type Database = {
           shopify_updated_at: string | null
           synced_at: string
           total_spent: number
+          zip: string | null
         }
         Insert: {
+          country_code?: string | null
           currency_code?: string | null
           email?: string | null
           first_name?: string | null
@@ -1041,8 +1321,10 @@ export type Database = {
           shopify_updated_at?: string | null
           synced_at?: string
           total_spent?: number
+          zip?: string | null
         }
         Update: {
+          country_code?: string | null
           currency_code?: string | null
           email?: string | null
           first_name?: string | null
@@ -1055,6 +1337,7 @@ export type Database = {
           shopify_updated_at?: string | null
           synced_at?: string
           total_spent?: number
+          zip?: string | null
         }
         Relationships: []
       }
@@ -1275,6 +1558,47 @@ export type Database = {
   }
   ops: {
     Tables: {
+      abandoned_checkout_recovery_delivery_audit: {
+        Row: {
+          dispatch_id: string
+          expires_at: string
+          recipient_ciphertext: string
+          recipient_fingerprint: string
+          recorded_at: string
+          recovery_url_ciphertext: string
+          recovery_url_fingerprint: string
+          resend_email_id: string
+        }
+        Insert: {
+          dispatch_id: string
+          expires_at: string
+          recipient_ciphertext: string
+          recipient_fingerprint: string
+          recorded_at: string
+          recovery_url_ciphertext: string
+          recovery_url_fingerprint: string
+          resend_email_id: string
+        }
+        Update: {
+          dispatch_id?: string
+          expires_at?: string
+          recipient_ciphertext?: string
+          recipient_fingerprint?: string
+          recorded_at?: string
+          recovery_url_ciphertext?: string
+          recovery_url_fingerprint?: string
+          resend_email_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "abandoned_checkout_recovery_delivery_audit_dispatch_id_fkey"
+            columns: ["dispatch_id"]
+            isOneToOne: true
+            referencedRelation: "abandoned_checkout_recovery_dispatches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       abandoned_checkout_recovery_dispatches: {
         Row: {
           attempt_count: number
@@ -1347,6 +1671,101 @@ export type Database = {
         }
         Relationships: []
       }
+      abandoned_checkout_recovery_resend_events: {
+        Row: {
+          dispatch_id: string
+          event_type: string
+          id: string
+          occurred_at: string
+          received_at: string
+          resend_email_id: string
+          resend_event_id: string
+        }
+        Insert: {
+          dispatch_id: string
+          event_type: string
+          id?: string
+          occurred_at: string
+          received_at?: string
+          resend_email_id: string
+          resend_event_id: string
+        }
+        Update: {
+          dispatch_id?: string
+          event_type?: string
+          id?: string
+          occurred_at?: string
+          received_at?: string
+          resend_email_id?: string
+          resend_event_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "abandoned_checkout_recovery_resend_events_dispatch_id_fkey"
+            columns: ["dispatch_id"]
+            isOneToOne: false
+            referencedRelation: "abandoned_checkout_recovery_dispatches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_assistant_feedback: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          rating: string
+          response_fingerprint: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          rating: string
+          response_fingerprint: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          rating?: string
+          response_fingerprint?: string
+        }
+        Relationships: []
+      }
+      daily_operational_traffic: {
+        Row: {
+          day: string
+          environment: string
+          observations: number
+          project_id: string
+          response_bytes: number
+          route: string
+          source: string
+          status_code: number
+        }
+        Insert: {
+          day: string
+          environment: string
+          observations: number
+          project_id: string
+          response_bytes: number
+          route: string
+          source: string
+          status_code: number
+        }
+        Update: {
+          day?: string
+          environment?: string
+          observations?: number
+          project_id?: string
+          response_bytes?: number
+          route?: string
+          source?: string
+          status_code?: number
+        }
+        Relationships: []
+      }
       dead_letter_events: {
         Row: {
           created_at: string
@@ -1386,6 +1805,62 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_alert_deliveries: {
+        Row: {
+          acknowledged_at: string | null
+          alert_kind: string
+          attempted_at: string | null
+          channel: string
+          created_at: string
+          failure_code: string | null
+          fingerprint: string
+          id: string
+          idempotency_key: string
+          incident_id: string
+          provider_receipt_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          alert_kind: string
+          attempted_at?: string | null
+          channel: string
+          created_at?: string
+          failure_code?: string | null
+          fingerprint: string
+          id?: string
+          idempotency_key: string
+          incident_id: string
+          provider_receipt_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          alert_kind?: string
+          attempted_at?: string | null
+          channel?: string
+          created_at?: string
+          failure_code?: string | null
+          fingerprint?: string
+          id?: string
+          idempotency_key?: string
+          incident_id?: string
+          provider_receipt_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_alert_deliveries_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "integration_health_incidents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       integration_events: {
         Row: {
           created_at: string
@@ -1419,6 +1894,146 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_health_incidents: {
+        Row: {
+          alert_state: string
+          alert_suppressed_until: string | null
+          created_at: string
+          current_opened_at: string
+          evidence: Json
+          fingerprint: string
+          first_observed_at: string
+          id: string
+          integration: string
+          last_alerted_at: string | null
+          last_observed_at: string
+          last_snapshot_id: string | null
+          observation_count: number
+          recovered_at: string | null
+          safe_retry_count: number
+          severity: string
+          status: string
+          summary_code: string
+          surface: string
+          updated_at: string
+        }
+        Insert: {
+          alert_state?: string
+          alert_suppressed_until?: string | null
+          created_at?: string
+          current_opened_at: string
+          evidence?: Json
+          fingerprint: string
+          first_observed_at: string
+          id?: string
+          integration: string
+          last_alerted_at?: string | null
+          last_observed_at: string
+          last_snapshot_id?: string | null
+          observation_count?: number
+          recovered_at?: string | null
+          safe_retry_count?: number
+          severity: string
+          status?: string
+          summary_code: string
+          surface: string
+          updated_at?: string
+        }
+        Update: {
+          alert_state?: string
+          alert_suppressed_until?: string | null
+          created_at?: string
+          current_opened_at?: string
+          evidence?: Json
+          fingerprint?: string
+          first_observed_at?: string
+          id?: string
+          integration?: string
+          last_alerted_at?: string | null
+          last_observed_at?: string
+          last_snapshot_id?: string | null
+          observation_count?: number
+          recovered_at?: string | null
+          safe_retry_count?: number
+          severity?: string
+          status?: string
+          summary_code?: string
+          surface?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_health_incidents_last_snapshot_id_fkey"
+            columns: ["last_snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "integration_health_snapshots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_health_snapshots: {
+        Row: {
+          checked_at: string
+          created_at: string
+          data_freshness_seconds: number | null
+          error_count: number
+          error_fingerprint: string | null
+          evidence_level: string
+          id: string
+          integration: string
+          measurements: Json
+          provider_receipt_status: string
+          result_code: string
+          run_id: string
+          safe_action: string | null
+          sample_count: number
+          severity: string
+          status: string
+          surface: string
+          traffic_window_seconds: number | null
+        }
+        Insert: {
+          checked_at: string
+          created_at?: string
+          data_freshness_seconds?: number | null
+          error_count?: number
+          error_fingerprint?: string | null
+          evidence_level: string
+          id?: string
+          integration: string
+          measurements?: Json
+          provider_receipt_status?: string
+          result_code: string
+          run_id: string
+          safe_action?: string | null
+          sample_count?: number
+          severity: string
+          status: string
+          surface: string
+          traffic_window_seconds?: number | null
+        }
+        Update: {
+          checked_at?: string
+          created_at?: string
+          data_freshness_seconds?: number | null
+          error_count?: number
+          error_fingerprint?: string | null
+          evidence_level?: string
+          id?: string
+          integration?: string
+          measurements?: Json
+          provider_receipt_status?: string
+          result_code?: string
+          run_id?: string
+          safe_action?: string | null
+          sample_count?: number
+          severity?: string
+          status?: string
+          surface?: string
+          traffic_window_seconds?: number | null
+        }
+        Relationships: []
+      }
       integration_job_leases: {
         Row: {
           acquired_at: string
@@ -1443,6 +2058,60 @@ export type Database = {
           lease_owner?: string
           metadata?: Json
           updated_at?: string
+        }
+        Relationships: []
+      }
+      journey_events: {
+        Row: {
+          commit_sha: string | null
+          consent: Json
+          deployment_id: string | null
+          environment: string
+          event_id: string
+          event_name: string
+          journey_id: string
+          occurred_at: string
+          page_path: string
+          page_view_id: string
+          payload: Json
+          payload_sha256: string
+          previous_page_view_id: string | null
+          received_at: string
+          traffic_classification: string
+        }
+        Insert: {
+          commit_sha?: string | null
+          consent: Json
+          deployment_id?: string | null
+          environment: string
+          event_id: string
+          event_name: string
+          journey_id: string
+          occurred_at: string
+          page_path: string
+          page_view_id: string
+          payload: Json
+          payload_sha256: string
+          previous_page_view_id?: string | null
+          received_at?: string
+          traffic_classification: string
+        }
+        Update: {
+          commit_sha?: string | null
+          consent?: Json
+          deployment_id?: string | null
+          environment?: string
+          event_id?: string
+          event_name?: string
+          journey_id?: string
+          occurred_at?: string
+          page_path?: string
+          page_view_id?: string
+          payload?: Json
+          payload_sha256?: string
+          previous_page_view_id?: string | null
+          received_at?: string
+          traffic_classification?: string
         }
         Relationships: []
       }
@@ -1485,6 +2154,27 @@ export type Database = {
           source?: string
           traffic_classification?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      operational_statistics_control: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          enabled: boolean
+          singleton: boolean
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          enabled?: boolean
+          singleton?: boolean
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          enabled?: boolean
+          singleton?: boolean
         }
         Relationships: []
       }
@@ -1689,6 +2379,182 @@ export type Database = {
         }
         Relationships: []
       }
+      shopify_checkout_recovery_evidence: {
+        Row: {
+          begin_checkout_event_id: string
+          buyer_accepts_email_marketing: boolean
+          buyer_accepts_sms_marketing: boolean | null
+          checkout_created_at: string | null
+          checkout_token: string
+          contract_name: string
+          created_at: string
+          event_id: string
+          event_name: string
+          event_sequence: number | null
+          expires_at: string
+          first_observed_at: string
+          has_address1: boolean | null
+          has_address2: boolean | null
+          has_city: boolean | null
+          has_contact_phone: boolean | null
+          has_country_code: boolean | null
+          has_first_name: boolean | null
+          has_last_name: boolean | null
+          has_postal_code: boolean | null
+          has_shipping_phone: boolean | null
+          idempotency_key: string
+          last_observed_at: string
+          observation_count: number
+          occurred_at: string
+          payload_sha256: string
+          recipient_fingerprint: string
+          schema_version: number
+          shop_domain: string | null
+          source: string
+          updated_at: string
+          verification_status: string
+        }
+        Insert: {
+          begin_checkout_event_id: string
+          buyer_accepts_email_marketing: boolean
+          buyer_accepts_sms_marketing?: boolean | null
+          checkout_created_at?: string | null
+          checkout_token: string
+          contract_name: string
+          created_at?: string
+          event_id: string
+          event_name: string
+          event_sequence?: number | null
+          expires_at: string
+          first_observed_at?: string
+          has_address1?: boolean | null
+          has_address2?: boolean | null
+          has_city?: boolean | null
+          has_contact_phone?: boolean | null
+          has_country_code?: boolean | null
+          has_first_name?: boolean | null
+          has_last_name?: boolean | null
+          has_postal_code?: boolean | null
+          has_shipping_phone?: boolean | null
+          idempotency_key: string
+          last_observed_at?: string
+          observation_count?: number
+          occurred_at: string
+          payload_sha256: string
+          recipient_fingerprint: string
+          schema_version: number
+          shop_domain?: string | null
+          source: string
+          updated_at?: string
+          verification_status: string
+        }
+        Update: {
+          begin_checkout_event_id?: string
+          buyer_accepts_email_marketing?: boolean
+          buyer_accepts_sms_marketing?: boolean | null
+          checkout_created_at?: string | null
+          checkout_token?: string
+          contract_name?: string
+          created_at?: string
+          event_id?: string
+          event_name?: string
+          event_sequence?: number | null
+          expires_at?: string
+          first_observed_at?: string
+          has_address1?: boolean | null
+          has_address2?: boolean | null
+          has_city?: boolean | null
+          has_contact_phone?: boolean | null
+          has_country_code?: boolean | null
+          has_first_name?: boolean | null
+          has_last_name?: boolean | null
+          has_postal_code?: boolean | null
+          has_shipping_phone?: boolean | null
+          idempotency_key?: string
+          last_observed_at?: string
+          observation_count?: number
+          occurred_at?: string
+          payload_sha256?: string
+          recipient_fingerprint?: string
+          schema_version?: number
+          shop_domain?: string | null
+          source?: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Relationships: []
+      }
+      shopify_transactional_email_deliveries: {
+        Row: {
+          expires_at: string
+          idempotency_key: string
+          last_event_occurred_at: string | null
+          last_event_type: string | null
+          notification_type: string
+          resend_email_id: string
+          sent_at: string
+          shopify_fulfillment_id: string | null
+          shopify_order_id: string
+        }
+        Insert: {
+          expires_at: string
+          idempotency_key: string
+          last_event_occurred_at?: string | null
+          last_event_type?: string | null
+          notification_type: string
+          resend_email_id: string
+          sent_at: string
+          shopify_fulfillment_id?: string | null
+          shopify_order_id: string
+        }
+        Update: {
+          expires_at?: string
+          idempotency_key?: string
+          last_event_occurred_at?: string | null
+          last_event_type?: string | null
+          notification_type?: string
+          resend_email_id?: string
+          sent_at?: string
+          shopify_fulfillment_id?: string | null
+          shopify_order_id?: string
+        }
+        Relationships: []
+      }
+      shopify_transactional_email_resend_events: {
+        Row: {
+          event_type: string
+          idempotency_key: string
+          occurred_at: string
+          received_at: string
+          resend_email_id: string
+          resend_event_id: string
+        }
+        Insert: {
+          event_type: string
+          idempotency_key: string
+          occurred_at: string
+          received_at: string
+          resend_email_id: string
+          resend_event_id: string
+        }
+        Update: {
+          event_type?: string
+          idempotency_key?: string
+          occurred_at?: string
+          received_at?: string
+          resend_email_id?: string
+          resend_event_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopify_transactional_email_resend_events_idempotency_key_fkey"
+            columns: ["idempotency_key"]
+            isOneToOne: false
+            referencedRelation: "shopify_transactional_email_deliveries"
+            referencedColumns: ["idempotency_key"]
+          },
+        ]
+      }
       slo_incidents: {
         Row: {
           created_at: string
@@ -1792,6 +2658,7 @@ export type Database = {
         Row: {
           automation_class: string
           cache_status: string | null
+          data_policy: string
           deployment_id: string
           device_class: string
           edge_region: string
@@ -1835,6 +2702,7 @@ export type Database = {
         Insert: {
           automation_class: string
           cache_status?: string | null
+          data_policy?: string
           deployment_id: string
           device_class: string
           edge_region: string
@@ -1878,6 +2746,7 @@ export type Database = {
         Update: {
           automation_class?: string
           cache_status?: string | null
+          data_policy?: string
           deployment_id?: string
           device_class?: string
           edge_region?: string
@@ -2114,6 +2983,48 @@ export type Database = {
       }
     }
     Functions: {
+      claim_abandoned_checkout_recovery_dispatches: {
+        Args: {
+          p_lease_seconds: number
+          p_limit: number
+          p_now: string
+          p_processing_owner: string
+        }
+        Returns: {
+          attempt_count: number
+          checkout_created_at: string
+          checkout_updated_at: string
+          due_at: string
+          id: string
+          processing_expires_at: string
+          sequence_version: number
+          shopify_abandoned_checkout_id: string
+          shopify_customer_id: string
+          step: number
+        }[]
+      }
+      complete_abandoned_checkout_recovery_dispatch: {
+        Args: {
+          p_id: string
+          p_now: string
+          p_processing_owner: string
+          p_resend_email_id: string
+        }
+        Returns: boolean
+      }
+      complete_abandoned_checkout_recovery_dispatch_v3: {
+        Args: {
+          p_id: string
+          p_now: string
+          p_processing_owner: string
+          p_recipient_ciphertext: string
+          p_recipient_fingerprint: string
+          p_recovery_url_ciphertext: string
+          p_recovery_url_fingerprint: string
+          p_resend_email_id: string
+        }
+        Returns: boolean
+      }
       has_active_privacy_retention_exception: {
         Args: {
           p_at: string
@@ -2123,6 +3034,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      purge_expired_abandoned_checkout_recovery_delivery_audit: {
+        Args: { p_now: string }
+        Returns: number
+      }
+      purge_expired_customer_assistant_feedback: {
+        Args: never
+        Returns: number
+      }
+      purge_expired_facebook_login_identities: { Args: never; Returns: number }
+      purge_expired_journey_events: { Args: never; Returns: number }
       purge_expired_landing_observations: { Args: never; Returns: Json }
       purge_expired_meta_ad_creative_destinations: {
         Args: never
@@ -2134,12 +3055,68 @@ export type Database = {
         Returns: number
       }
       purge_expired_privacy_data: { Args: never; Returns: Json }
+      purge_expired_provisional_page_view_captures: {
+        Args: never
+        Returns: number
+      }
       purge_expired_shopify_checkout_observations: {
         Args: never
         Returns: number
       }
+      purge_expired_shopify_checkout_recovery_evidence: {
+        Args: { p_now: string }
+        Returns: number
+      }
       purge_expired_shopify_dun_waitlist_pgmq_archive: {
         Args: { retention_days?: number }
+        Returns: number
+      }
+      purge_expired_shopify_transactional_email_audit: {
+        Args: { p_now: string }
+        Returns: number
+      }
+      purge_operational_v1: { Args: never; Returns: undefined }
+      record_abandoned_checkout_recovery_resend_event: {
+        Args: {
+          p_event_type: string
+          p_occurred_at: string
+          p_received_at: string
+          p_resend_email_id: string
+          p_resend_event_id: string
+        }
+        Returns: boolean
+      }
+      renew_abandoned_checkout_recovery_dispatch_lease: {
+        Args: {
+          p_id: string
+          p_lease_seconds: number
+          p_now: string
+          p_processing_owner: string
+        }
+        Returns: boolean
+      }
+      retry_abandoned_checkout_recovery_dispatch: {
+        Args: {
+          p_error_code: string
+          p_id: string
+          p_max_attempts: number
+          p_now: string
+          p_processing_owner: string
+          p_retry_at: string
+        }
+        Returns: string
+      }
+      suppress_abandoned_checkout_recovery_dispatch: {
+        Args: {
+          p_id: string
+          p_now: string
+          p_processing_owner: string
+          p_suppression_reason: string
+        }
+        Returns: boolean
+      }
+      suppress_abandoned_checkout_recovery_dispatches_for_customer: {
+        Args: { p_now: string; p_shopify_customer_id: string }
         Returns: number
       }
       upsert_abandoned_checkout_recovery_dispatches: {
@@ -2248,12 +3225,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2277,11 +3254,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2302,11 +3279,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2327,11 +3304,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2344,11 +3321,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

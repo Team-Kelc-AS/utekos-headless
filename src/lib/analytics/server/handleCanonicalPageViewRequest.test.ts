@@ -267,7 +267,7 @@ test('collector acceptance continues when receipt scheduling fails', async () =>
   }
 })
 
-test('redacts PageView queries from logs without changing the persisted payload', async () => {
+test('removes advertising query values from logs and statistics-only PageViews', async () => {
   const pageUrl =
     'https://utekos.no/skreddersy-varmen?fbclid=AbC-123&utm_source=facebook#bestill'
   const logCalls: unknown[][] = []
@@ -294,7 +294,10 @@ test('redacts PageView queries from logs without changing the persisted payload'
     console.info = originalConsoleInfo
   }
 
-  assert.equal(persistedPageUrl, pageUrl)
+  assert.equal(
+    persistedPageUrl,
+    'https://utekos.no/skreddersy-varmen'
+  )
 
   const serializedLogs = JSON.stringify(logCalls)
   assert.match(

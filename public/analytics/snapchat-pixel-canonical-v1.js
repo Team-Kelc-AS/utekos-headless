@@ -31,7 +31,11 @@
   }
 
   function hasMarketingConsent() {
-    return window.Cookiebot?.consent?.marketing === true
+    return (
+      window.Cookiebot?.hasResponse === true &&
+      window.Cookiebot?.consent?.method === 'explicit' &&
+      window.Cookiebot?.consent?.marketing === true
+    )
   }
 
   function hasConsentDecision() {
@@ -108,9 +112,8 @@
       : undefined
     if (!candidate) return undefined
     const value = candidate.trim()
-    const gidMatch = /^gid:\/\/shopify\/ProductVariant\/([0-9]+)$/.exec(
-      value
-    )
+    const gidMatch =
+      /^gid:\/\/shopify\/ProductVariant\/([0-9]+)$/.exec(value)
     if (gidMatch) return gidMatch[1]
     return /^[0-9]+$/.test(value) ? value : undefined
   }
@@ -181,7 +184,12 @@
     if (!asRecord(canonicalEvent)) return
     if (canonicalEvent.schema_version !== 1) return
     if (typeof canonicalEvent.event_id !== 'string') return
-    if (!hasMarketingConsent()) return
+    if (
+      !hasMarketingConsent() ||
+      canonicalEvent.consent?.marketing !== 'granted' ||
+      window.__utekosConsentReloading
+    )
+      return
     if (!isProductionEvent(canonicalEvent)) return
 
     const eventName = EVENT_MAP[canonicalEvent.event_name]
@@ -240,7 +248,11 @@
   }
 
   function onConsentChanged() {
-    if (window.Cookiebot?.consent?.marketing === true) {
+    if (
+      window.Cookiebot?.hasResponse === true &&
+      window.Cookiebot?.consent?.method === 'explicit' &&
+      window.Cookiebot?.consent?.marketing === true
+    ) {
       processExistingDataLayer()
       return
     }

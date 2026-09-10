@@ -1,27 +1,33 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-
 import {
   sanitizeClientErrorFilename,
   sanitizeClientErrorMessage
 } from './sanitizeClientErrorBeacon'
-
-test('redacts email-like tokens and truncates long messages', () => {
+test('only a coarse error class survives; no arbitrary message, click ID or customer content', () => {
+  for (const value of [
+    'boom customer@example.no failed',
+    'fbclid=private',
+    'Jane Doe 99999999',
+    'x'.repeat(300)
+  ]) {
+    assert.equal(
+      sanitizeClientErrorMessage(value),
+      'ClientError'
+    )
+  }
   assert.equal(
-    sanitizeClientErrorMessage('boom customer@example.no failed'),
-    'boom [redacted] failed'
-  )
-  assert.equal(
-    sanitizeClientErrorMessage('x'.repeat(300)).length,
-    240
+    sanitizeClientErrorMessage(
+      'TypeError: bad URL ?fbclid=secret'
+    ),
+    'TypeError'
   )
 })
-
-test('reduces script URLs to operational pathnames', () => {
+test('operational script path contains no filename or query', () => {
   assert.equal(
     sanitizeClientErrorFilename(
       'https://utekos.no/_next/static/chunks/app.js?dpl=secret'
     ),
-    '/_next/static/chunks/app.js'
+    '/_next/:asset'
   )
 })

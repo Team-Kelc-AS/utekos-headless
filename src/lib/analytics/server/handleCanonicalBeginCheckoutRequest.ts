@@ -1,3 +1,4 @@
+import { browserPayloadConsentDenied } from './browserPayloadConsent'
 import { ZodError } from 'zod'
 import { canonicalBeginCheckoutSchema } from '../beginCheckoutEvent'
 import { readCheckoutMethod } from '../checkoutMethod'
@@ -90,6 +91,15 @@ export async function handleCanonicalBeginCheckoutRequest(
   } catch {
     return jsonResponse({ error: 'invalid_json' }, 400)
   }
+  if (browserPayloadConsentDenied(payload))
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Cache-Control': 'no-store',
+        'X-Utekos-Rejection': 'consent_required'
+      }
+    })
+
   payload = enrichCanonicalPayloadWithFacebookLogin(
     payload,
     request.headers.get('cookie') ?? undefined

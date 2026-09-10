@@ -95,6 +95,35 @@ export async function recordLeadSubmission(
   }
 
   const pageUrl = input.trackingContext?.page_url
+  // #region agent log
+  fetch(
+    'http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Debug-Session-Id': '2aed25'
+      },
+      body: JSON.stringify({
+        sessionId: '2aed25',
+        runId: 'pre-fix',
+        hypothesisId: 'H7',
+        location: 'recordLeadSubmission.ts:beforeCanonical',
+        message: 'lead submission before generate_lead',
+        data: {
+          formId: input.formId,
+          hasPageUrl: Boolean(pageUrl),
+          analytics: consent.analytics,
+          marketing: consent.marketing,
+          hasCookieHeader: Boolean(
+            input.trackingContext?.cookie_header
+          )
+        },
+        timestamp: Date.now()
+      })
+    }
+  ).catch(() => {})
+  // #endregion
   if (!pageUrl) {
     await logToAppLogs({
       event: 'lead.record_skipped',
@@ -135,6 +164,31 @@ export async function recordLeadSubmission(
     })
 
     if (result.status === 'skipped') {
+      // #region agent log
+      fetch(
+        'http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Debug-Session-Id': '2aed25'
+          },
+          body: JSON.stringify({
+            sessionId: '2aed25',
+            runId: 'pre-fix',
+            hypothesisId: 'H7',
+            location: 'recordLeadSubmission.ts:skipped',
+            message: 'generate_lead skipped',
+            data: {
+              formId: input.formId,
+              analytics: consent.analytics,
+              marketing: consent.marketing
+            },
+            timestamp: Date.now()
+          })
+        }
+      ).catch(() => {})
+      // #endregion
       return { leadId: input.leadId }
     }
 

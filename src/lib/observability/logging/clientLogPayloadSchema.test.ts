@@ -78,7 +78,7 @@ test('client log contract keeps only a redacted pathname and sanitized triage fi
   })
 
   const appLog = toAppLogInput(parsed)
-  assert.deepEqual(appLog.context, { route: '/ordre/:dynamic' })
+  assert.deepEqual(appLog.context, { route: '/:other' })
   assert.ok(parsed.event === 'client_error')
   assert.equal(
     parsed.data.source === 'window_error' ?
@@ -90,7 +90,7 @@ test('client log contract keeps only a redacted pathname and sanitized triage fi
     parsed.data.source === 'window_error' ?
       parsed.data.filename
     : undefined,
-    '/_next/static/chunks/app.js'
+    '/_next/:asset'
   )
   assert.equal(
     JSON.stringify(appLog).includes('customer@example.no'),
@@ -119,8 +119,8 @@ test('unhandled rejection contract keeps sanitized first-party triage', () => {
   assert.deepEqual(toAppLogInput(parsed), {
     event: 'client.unhandled_rejection',
     level: 'ERROR',
-    data: parsed.data,
-    context: { route: '/comfyrobe' }
+    data: { ...parsed.data, message: 'ClientError' },
+    context: { route: '/:other' }
   })
 
   assert.equal(
@@ -151,10 +151,10 @@ test('operational pathname sanitizer removes query and risky segments', () => {
     sanitizeOperationalPathname(
       '/produkter/utekos-dun?gclid=secret'
     ),
-    '/produkter/utekos-dun'
+    '/produkter/:product'
   )
   assert.equal(
     sanitizeOperationalPathname('/kunde/customer%40example.no'),
-    '/kunde/:dynamic'
+    '/:other'
   )
 })

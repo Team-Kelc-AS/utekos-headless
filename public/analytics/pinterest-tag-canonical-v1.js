@@ -34,7 +34,11 @@
   }
 
   function hasMarketingConsent() {
-    return window.Cookiebot?.consent?.marketing === true
+    return (
+      window.Cookiebot?.hasResponse === true &&
+      window.Cookiebot?.consent?.method === 'explicit' &&
+      window.Cookiebot?.consent?.marketing === true
+    )
   }
 
   function hasConsentDecision() {
@@ -151,7 +155,8 @@
 
   function readCookie(name) {
     const prefix = `${name}=`
-    const parts = document.cookie ? document.cookie.split(';') : []
+    const parts =
+      document.cookie ? document.cookie.split(';') : []
 
     for (const rawPart of parts) {
       const part = rawPart.trim()
@@ -297,7 +302,12 @@
     if (canonicalEvent.schema_version !== 1) return
     if (typeof canonicalEvent.event_id !== 'string') return
     if (typeof canonicalEvent.event_name !== 'string') return
-    if (!hasMarketingConsent()) return
+    if (
+      !hasMarketingConsent() ||
+      canonicalEvent.consent?.marketing !== 'granted' ||
+      window.__utekosConsentReloading
+    )
+      return
     if (!isProductionEvent(canonicalEvent)) return
 
     const pinterestEventName =
@@ -312,7 +322,12 @@
     try {
       const enhancedMatch =
         await buildEnhancedMatch(canonicalEvent)
-      if (!loadPinterestTag(enhancedMatch)) return
+      if (
+        !hasMarketingConsent() ||
+        window.__utekosConsentReloading ||
+        !loadPinterestTag(enhancedMatch)
+      )
+        return
 
       window.pintrk(
         'track',

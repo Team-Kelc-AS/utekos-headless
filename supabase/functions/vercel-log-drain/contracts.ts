@@ -139,7 +139,7 @@ export const drainRuntimeConfigSchema = z.object({
   projectId: boundedIdentifierSchema,
   environment: vercelEnvironmentSchema,
   allowedHosts: z.array(hostnameSchema).min(1).max(20),
-  fbclidHmacSecret: z.string().min(32).max(512)
+  fbclidHmacSecret: z.string().min(32).max(512).optional()
 })
 
 export type DrainRuntimeConfig = z.infer<
@@ -148,6 +148,7 @@ export type DrainRuntimeConfig = z.infer<
 export type VercelLogEntry = z.infer<typeof vercelLogEntrySchema>
 
 export interface VercelEdgeRequestObservation {
+  data_policy: 'operational_v1'
   vercel_log_id: string
   edge_request_id: string | null
   deployment_id: string

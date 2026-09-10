@@ -25,16 +25,20 @@ export function reportCanonicalRemoveFromCart(
   }
 
   if (!input.pageContext) {
-    console.error('[remove-from-cart] Canonical reporting skipped', {
-      reason: 'missing_action_page_context'
-    })
+    console.error(
+      '[remove-from-cart] Canonical reporting skipped',
+      { reason: 'missing_action_page_context' }
+    )
     return () => {}
   }
 
   try {
     const pageView = input.pageContext
     // Read current consent, but attribute the confirmed mutation to its action page.
-    const clientContext = readBrowserReporterContext(pageView.pageUrl)
+    const clientContext = readBrowserReporterContext(
+      pageView.pageUrl
+    )
+    if (!clientContext) return () => {}
 
     const event = createCanonicalRemoveFromCart({
       environment: clientContext.environment,

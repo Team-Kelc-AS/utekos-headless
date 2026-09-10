@@ -132,6 +132,7 @@ next-env.d.ts
 /summary
 summary
 */playwright-mcp/
+/work/consent-database.*/
 
 # Accidental local SDK and tooling trees
 /merchant-api-samples/

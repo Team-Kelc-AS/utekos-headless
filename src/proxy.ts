@@ -102,6 +102,9 @@ async function createLandingEdgeCorrelation(
     )
   )
 
+  if (!synthetic && !clearSynthetic)
+    return { clearSynthetic, edgeRequestId, synthetic: false }
+
   const secret =
     process.env.LANDING_OBSERVABILITY_SIGNING_SECRET?.trim()
   if (!secret) {
@@ -127,7 +130,11 @@ function withLandingEdgeCorrelation<T extends NextResponse>(
   response: T,
   correlation: LandingEdgeCorrelation | undefined
 ): T {
-  if (!correlation) return response
+  if (
+    !correlation ||
+    (!correlation.synthetic && !correlation.clearSynthetic)
+  )
+    return response
 
   response.headers.append(
     'Server-Timing',

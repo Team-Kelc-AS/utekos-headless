@@ -21,10 +21,7 @@ function memoryStorage(initial: Record<string, string> = {}) {
   }
 }
 
-function loadPixel(
-  marketing = false,
-  hasResponse = marketing
-) {
+function loadPixel(marketing = false, hasResponse = marketing) {
   const calls: unknown[][] = []
   const appendedScripts: Array<Record<string, unknown>> = []
   const listeners = new Map<string, () => void>()
@@ -43,7 +40,10 @@ function loadPixel(
     }
   }
   const window = {
-    Cookiebot: { consent: { marketing }, hasResponse },
+    Cookiebot: {
+      consent: { marketing, method: 'explicit' },
+      hasResponse
+    },
     addEventListener(name: string, listener: () => void) {
       listeners.set(name, listener)
     },
@@ -108,7 +108,7 @@ test('does not load or call Snapchat before marketing consent', () => {
   assert.equal(harness.appendedScripts.length, 0)
 })
 
-test('releases the original pre-consent event after acceptance', () => {
+test('discards pre-consent events even after subsequent acceptance', () => {
   const harness = loadPixel(false, false)
   harness.window.dataLayer.push({
     canonical_event: canonicalEvent('page_view', false)
@@ -123,13 +123,7 @@ test('releases the original pre-consent event after acceptance', () => {
   const trackCalls = harness.calls.filter(
     call => call[0] === 'track'
   )
-  assert.equal(trackCalls.length, 1)
-  assert.equal(trackCalls[0]?.[1], 'PAGE_VIEW')
-  assert.equal(
-    (trackCalls[0]?.[2] as Record<string, unknown>)
-      .client_dedup_id,
-    'event-page_view'
-  )
+  assert.equal(trackCalls.length, 0)
 })
 
 test('does not release an event after explicit rejection', () => {

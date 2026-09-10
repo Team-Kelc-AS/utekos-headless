@@ -187,7 +187,7 @@ test('resolveClickIds lets a fresh URL epik win over the Pinterest cookie', () =
   )
 })
 
-test('keeps ScCid ephemeral until marketing consent allows persistence', () => {
+test('does not retain or replay a Snapchat click observed before marketing consent', () => {
   clearEphemeralSnapchatClickId()
   const session = createMemoryStorage()
   const local = createMemoryStorage()
@@ -202,7 +202,7 @@ test('keeps ScCid ephemeral until marketing consent allows persistence', () => {
       {},
       false
     ),
-    { sc_click_id: ' AbC-._+/= ' }
+    undefined
   )
   assert.deepEqual(session.dump(), {})
   assert.deepEqual(local.dump(), {})
@@ -216,11 +216,24 @@ test('keeps ScCid ephemeral until marketing consent allows persistence', () => {
       {},
       true
     ),
-    { sc_click_id: ' AbC-._+/= ' }
+    undefined
+  )
+  assert.deepEqual(session.dump(), {})
+  assert.deepEqual(local.dump(), {})
+  assert.deepEqual(
+    resolveClickIds(
+      'https://utekos.no/?ScCid=current-consented-click',
+      session,
+      local,
+      now,
+      {},
+      true
+    ),
+    { sc_click_id: 'current-consented-click' }
   )
   assert.equal(
     session.getItem(CLICK_ID_SESSION_KEY),
-    JSON.stringify({ sc_click_id: ' AbC-._+/= ' })
+    JSON.stringify({ sc_click_id: 'current-consented-click' })
   )
   clearEphemeralSnapchatClickId()
 })

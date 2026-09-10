@@ -11,7 +11,9 @@ import {
   resolveCampaignAttribution,
   type CampaignAttribution
 } from './campaignAttributionSessionStore'
-import { resolveTrackingEnvironment } from './viewItemReporter'
+import { resolveTrackingEnvironment } from './resolveTrackingEnvironment'
+import { hasBrowserCollectionConsent } from './hasBrowserCollectionConsent'
+import { withoutTrackingQuery } from './withoutTrackingQuery'
 import type {
   ConsentSnapshot,
   TrackingEnvironment
@@ -44,17 +46,18 @@ type CookiebotWindow = Window & {
 }
 
 export function readBrowserReporterContext(
-  pageUrl: string = window.location.href
-): BrowserReporterContext {
+  pageUrl?: string
+): BrowserReporterContext | null {
+  if (!hasBrowserCollectionConsent()) return null
+  pageUrl ??= window.location.href
   const consent = getConsentSnapshot(
     (window as CookiebotWindow).Cookiebot?.consent
   )
   const browserId = extractBrowserIds(document.cookie, consent)
-  const clickId = extractClickIds(
-    pageUrl,
-    document.cookie,
-    consent.marketing === 'granted'
-  )
+  const clickId =
+    consent.marketing === 'granted' ?
+      extractClickIds(pageUrl, document.cookie, true)
+    : undefined
   const campaignAttribution =
     consent.marketing === 'granted' ?
       resolveCampaignAttribution(pageUrl)
@@ -63,8 +66,14 @@ export function readBrowserReporterContext(
     browserFirstPartyExternalIdStore.getOrCreate(consent)
 
   return {
-    pageUrl,
-    documentReferrer: document.referrer,
+    pageUrl:
+      consent.marketing === 'granted' ?
+        pageUrl
+      : withoutTrackingQuery(pageUrl),
+    documentReferrer:
+      consent.marketing === 'granted' ?
+        document.referrer
+      : withoutTrackingQuery(document.referrer),
     pageTitle: document.title || 'Utekos',
     environment: resolveTrackingEnvironment(
       pageUrl,

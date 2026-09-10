@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { sanitizeClientErrorMessage } from '@/lib/observability/client/sanitizeClientErrorBeacon'
 import { sanitizeOperationalPathname } from './sanitizeOperationalPathname'
 import {
   clientErrorDataSchema,
@@ -111,7 +112,16 @@ export function toAppLogInput(
     return {
       event: 'client.error',
       level: 'ERROR',
-      data: payload.data,
+      data: {
+        ...payload.data,
+        ...(payload.data.message ?
+          {
+            message: sanitizeClientErrorMessage(
+              payload.data.message
+            )
+          }
+        : {})
+      },
       context: { route: payload.context.pathname }
     }
   }
@@ -128,7 +138,16 @@ export function toAppLogInput(
   return {
     event: 'client.unhandled_rejection',
     level: 'ERROR',
-    data: payload.data,
+    data: {
+      ...payload.data,
+      ...(payload.data.message ?
+        {
+          message: sanitizeClientErrorMessage(
+            payload.data.message
+          )
+        }
+      : {})
+    },
     context: { route: payload.context.pathname }
   }
 }

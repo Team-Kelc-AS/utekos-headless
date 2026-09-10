@@ -2,6 +2,7 @@
 
 import { sendGTMEvent } from '@next/third-parties/google'
 import { readBrowserReporterContext } from './browserReporterContext'
+import { isBrowserEventConsentCurrent } from './isBrowserEventConsentCurrent'
 import { browserPageViewSession } from './pageViewSession'
 import {
   buildAddToCartDataLayerEvent,
@@ -58,6 +59,7 @@ async function reportCanonicalAddToCartEvent(
   isCancelled: () => boolean
 ) {
   const clientContext = readBrowserReporterContext()
+  if (!clientContext) return () => {}
   const pageView = browserPageViewSession.ensure({
     pageUrl: clientContext.pageUrl,
     ...(clientContext.documentReferrer ?
@@ -77,7 +79,11 @@ async function reportCanonicalAddToCartEvent(
     variant: input.variant
   })
 
-  if (isCancelled()) return () => {}
+  if (
+    isCancelled() ||
+    !isBrowserEventConsentCurrent(clientContext.consent)
+  )
+    return () => {}
 
   const event = createCanonicalAddToCart({
     environment: clientContext.environment,

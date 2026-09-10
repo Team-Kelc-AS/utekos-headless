@@ -25,7 +25,10 @@ async function main() {
   const token = z
     .string()
     .min(1)
-    .parse(process.env.CATALOG_API_TOKEN)
+    .parse(
+      process.env.META_SYSTEM_USER_TOKEN ??
+        process.env.META_ACCESS_TOKEN
+    )
   const root = join(homedir(), 'Lister')
   const files = (await readdir(root))
     .filter(name =>

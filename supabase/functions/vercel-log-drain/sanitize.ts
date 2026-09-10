@@ -1,24 +1,13 @@
-import { z } from 'zod'
-
 import {
   type DrainRuntimeConfig,
   type VercelEdgeRequestObservation,
   type VercelLogEntry,
   vercelLogEntrySchema
 } from './contracts.ts'
-import { computeHmacHex } from './crypto.ts'
-import { deriveLandingEdgeRequestId } from '../_shared/landing-edge-request-id.ts'
-
-const EDGE_MESSAGE_PREFIX = '[landing-edge] '
-const MAX_EDGE_MESSAGE_LENGTH = 96
-const edgeRequestMessageSchema = z
-  .object({ edge_request_id: z.string().uuid() })
-  .strict()
+import { operationalRoute } from '../_shared/operational-route.ts'
 
 const ASSET_PATH_PATTERN =
   /\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$/i
-const SAFE_MARKETING_TOKEN_PATTERN = /^[A-Za-z0-9._~:+/-]+$/
-const META_ID_PATTERN = /^\d{5,32}$/
 const TRACE_ID_PATTERN = /^[0-9a-fA-F]{32}$/
 
 function normalizeHostname(value: string): string | null {
@@ -35,18 +24,6 @@ function normalizeHostname(value: string): string | null {
   }
 
   return normalized
-}
-
-function readReferrerHost(
-  value: string | undefined
-): string | null {
-  if (!value) return null
-
-  try {
-    return normalizeHostname(new URL(value).hostname)
-  } catch {
-    return null
-  }
 }
 
 function readDocumentUrl(path: string): URL | null {
@@ -84,122 +61,11 @@ function readDocumentUrl(path: string): URL | null {
   }
 }
 
-function readSafeMarketingToken(
-  parameters: URLSearchParams,
-  name: string,
-  maxLength = 128
-): string | null {
-  const value = parameters.get(name)?.trim()
-  if (
-    !value ||
-    value.length > maxLength ||
-    !SAFE_MARKETING_TOKEN_PATTERN.test(value)
-  ) {
-    return null
-  }
-
-  return value
-}
-
-function readMetaId(
-  parameters: URLSearchParams,
-  names: string[]
-): string | null {
-  for (const name of names) {
-    const value = parameters.get(name)?.trim()
-    if (value && META_ID_PATTERN.test(value)) return value
-  }
-
-  return null
-}
-
-function parseEdgeRequestId(
-  message: string | undefined
-): string | null {
-  if (
-    !message ||
-    message.length > MAX_EDGE_MESSAGE_LENGTH ||
-    !message.startsWith(EDGE_MESSAGE_PREFIX)
-  ) {
-    return null
-  }
-
-  try {
-    const parsed = edgeRequestMessageSchema.safeParse(
-      JSON.parse(message.slice(EDGE_MESSAGE_PREFIX.length))
-    )
-    return parsed.success ? parsed.data.edge_request_id : null
-  } catch {
-    return null
-  }
-}
-
 function readTraceId(entry: VercelLogEntry): string | null {
   const value = entry.traceId ?? entry['trace.id']
   return value && TRACE_ID_PATTERN.test(value) ?
       value.toLowerCase()
     : null
-}
-
-interface UserAgentClassification {
-  inAppBrowser: VercelEdgeRequestObservation['in_app_browser']
-  deviceClass: VercelEdgeRequestObservation['device_class']
-  osClass: VercelEdgeRequestObservation['os_class']
-  automationClass: VercelEdgeRequestObservation['automation_class']
-}
-
-function classifyUserAgent(
-  userAgents: string[],
-  verifiedSyntheticMarker: boolean
-): UserAgentClassification {
-  const userAgent = userAgents.join(' ').trim()
-  const normalized = userAgent.toLowerCase()
-
-  const automationClass: UserAgentClassification['automationClass'] =
-    verifiedSyntheticMarker ? 'synthetic_client'
-    : (
-      /googlebot|bingbot|duckduckbot|baiduspider|yandexbot|facebookexternalhit|facebot|meta-externalagent|meta-webindexer|meta-externalads|meta-externalfetcher|twitterbot|slackbot|linkedinbot|pinterestbot|applebot|bytespider|semrushbot|ahrefsbot|mj12bot/.test(
-        normalized
-      )
-    ) ?
-      'known_bot_user_agent'
-    : (
-      /curl\/|wget\/|python-requests|python-httpx|postmanruntime|insomnia|uptimerobot|pingdom|k6\/|artillery|node-fetch|axios\/|undici/.test(
-        normalized
-      )
-    ) ?
-      'synthetic_client'
-    : (
-      /headlesschrome|playwright|puppeteer|selenium|phantomjs|webdriver/.test(
-        normalized
-      )
-    ) ?
-      'browser_automation'
-    : 'human_or_unknown'
-
-  const inAppBrowser: UserAgentClassification['inAppBrowser'] =
-    !userAgent ? 'unknown'
-    : /instagram/i.test(userAgent) ? 'instagram'
-    : /FBAN|FBAV|FB_IAB|FB4A|FBIOS/i.test(userAgent) ? 'facebook'
-    : 'none'
-
-  const deviceClass: UserAgentClassification['deviceClass'] =
-    automationClass === 'known_bot_user_agent' ? 'bot'
-    : /iphone|ipod|mobile/i.test(userAgent) ? 'mobile'
-    : /ipad|tablet|android/i.test(userAgent) ? 'tablet'
-    : /windows|macintosh|x11|linux/i.test(userAgent) ? 'desktop'
-    : 'unknown'
-
-  const osClass: UserAgentClassification['osClass'] =
-    /iphone|ipad|ipod/i.test(userAgent) ? 'ios'
-    : /android/i.test(userAgent) ? 'android'
-    : /windows/i.test(userAgent) ? 'windows'
-    : /macintosh|mac os x/i.test(userAgent) ? 'macos'
-    : /linux|x11/i.test(userAgent) ? 'linux'
-    : userAgent ? 'other'
-    : 'unknown'
-
-  return { automationClass, deviceClass, inAppBrowser, osClass }
 }
 
 async function mapEntryToObservation(
@@ -233,38 +99,10 @@ async function mapEntryToObservation(
   )
     return null
 
-  const referrerHost = readReferrerHost(proxy.referer)
-  if (referrerHost && config.allowedHosts.includes(referrerHost))
-    return null
-
-  const utmCampaign = readSafeMarketingToken(
-    documentUrl.searchParams,
-    'utm_campaign'
-  )
-  const verifiedSyntheticMarker =
-    /^(?:codex|edgeidprobe)[_-]/i.test(utmCampaign ?? '')
-
-  const fbclid = documentUrl.searchParams.get('fbclid')?.trim()
-  const fbclidPresent = Boolean(fbclid)
-  const fbclidHmac =
-    fbclid ?
-      await computeHmacHex(
-        fbclid,
-        config.fbclidHmacSecret,
-        'SHA-256'
-      )
-    : null
-  const userAgent = classifyUserAgent(
-    proxy.userAgent,
-    verifiedSyntheticMarker
-  )
-
   return {
+    data_policy: 'operational_v1',
     vercel_log_id: entry.id,
-    edge_request_id:
-      parseEdgeRequestId(entry.message) ??
-      (await deriveLandingEdgeRequestId(entry.requestId)) ??
-      null,
+    edge_request_id: null,
     deployment_id: entry.deploymentId,
     project_id: entry.projectId,
     environment: entry.environment,
@@ -279,7 +117,7 @@ async function mapEntryToObservation(
     request_id: entry.requestId ?? null,
     trace_id: readTraceId(entry),
     vercel_id: proxy.vercelId ?? null,
-    route_pathname: documentUrl.pathname,
+    route_pathname: operationalRoute(documentUrl.pathname),
     host,
     method,
     source: entry.source,
@@ -292,52 +130,23 @@ async function mapEntryToObservation(
     execution_region: entry.executionRegion ?? null,
     lambda_region: proxy.lambdaRegion ?? null,
     response_bytes: proxy.responseByteSize ?? null,
-    referrer_host: referrerHost,
-    in_app_browser: userAgent.inAppBrowser,
-    device_class: userAgent.deviceClass,
-    os_class: userAgent.osClass,
-    automation_class: userAgent.automationClass,
-    fbclid_present: fbclidPresent,
-    fbclid_hmac: fbclidHmac,
-    utm_source: readSafeMarketingToken(
-      documentUrl.searchParams,
-      'utm_source'
-    ),
-    utm_medium: readSafeMarketingToken(
-      documentUrl.searchParams,
-      'utm_medium'
-    ),
-    utm_campaign: utmCampaign,
-    utm_content: readSafeMarketingToken(
-      documentUrl.searchParams,
-      'utm_content'
-    ),
-    utm_term: readSafeMarketingToken(
-      documentUrl.searchParams,
-      'utm_term'
-    ),
-    meta_campaign_id: readMetaId(documentUrl.searchParams, [
-      'campaign_id',
-      'utm_campaign_id',
-      'utm_id'
-    ]),
-    meta_adset_id: readMetaId(documentUrl.searchParams, [
-      'adset_id'
-    ]),
-    meta_ad_id: readMetaId(documentUrl.searchParams, [
-      'ad_id',
-      'utm_content'
-    ]),
-    meta_placement: readSafeMarketingToken(
-      documentUrl.searchParams,
-      'placement',
-      64
-    ),
-    meta_site_source_name: readSafeMarketingToken(
-      documentUrl.searchParams,
-      'site_source_name',
-      32
-    )
+    referrer_host: null,
+    in_app_browser: 'unknown',
+    device_class: 'unknown',
+    os_class: 'unknown',
+    automation_class: 'human_or_unknown',
+    fbclid_present: false,
+    fbclid_hmac: null,
+    utm_source: null,
+    utm_medium: null,
+    utm_campaign: null,
+    utm_content: null,
+    utm_term: null,
+    meta_campaign_id: null,
+    meta_adset_id: null,
+    meta_ad_id: null,
+    meta_placement: null,
+    meta_site_source_name: null
   }
 }
 

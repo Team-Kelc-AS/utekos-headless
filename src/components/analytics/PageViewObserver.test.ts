@@ -1,40 +1,29 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
-
 const source = readFileSync(
   new URL('./PageViewObserver.tsx', import.meta.url),
   'utf8'
 )
-
-test('landing consent registration precedes optional attribution and identity work', () => {
-  const callback = source.slice(
-    source.indexOf('const observeConsent =')
-  )
-  const record = callback.search(
-    /browserLandingConsentTransport\s*\.observe/
-  )
-  assert.ok(record >= 0)
+test('creates the event only after reading a permitted current-page context', () => {
   assert.ok(
-    record < callback.indexOf('resolveCampaignAttribution')
-  )
-  assert.ok(
-    record <
-      callback.indexOf(
-        'browserFirstPartyExternalIdStore.getOrCreate'
-      )
-  )
-})
-
-test('deferred browser release rechecks authoritative consent and preserves the original event', () => {
-  const release = source.slice(
-    source.indexOf('window.setTimeout')
+    source.indexOf('if (!context)') <
+      source.indexOf('const event = createCanonicalPageView')
   )
   assert.match(
-    release,
-    /hasCookiebotDecision\(latestCookiebot\)/
+    source,
+    /eventTime: new Date\(\)\.toISOString\(\)/
   )
-  assert.match(release, /latestConsent.marketing !== 'granted'/)
-  assert.match(release, /event: pageView.event/)
-  assert.match(release, /consent: latestConsent/)
+  assert.match(source, /pageUrl: context.pageUrl/)
+  assert.doesNotMatch(
+    source,
+    /browserLandingConsentTransport|landingEdgeCorrelation|releaseCanonicalPageViewForConsent/
+  )
+})
+test('revocation clears only consented page-view state and transport', () => {
+  assert.match(source, /browserPageViewSession.clear\(\)/)
+  assert.match(
+    source,
+    /browserPageViewCollectorTransport.clear\(\)/
+  )
 })

@@ -65,7 +65,7 @@ function commerceRequest(
     body: JSON.stringify(body),
     headers: {
       'content-type': 'application/json',
-      origin: 'https://utekos.no',
+      'origin': 'https://utekos.no',
       ...headers
     },
     method: 'POST'
@@ -104,8 +104,11 @@ test('accepted add_to_cart writes the structured runtime log', async t => {
   }
   assert.equal(entry.event, 'commerce.event')
   assert.equal(entry.data.eventName, 'add_to_cart')
-  assert.equal(entry.context.pagePath, '/produkter/utekos-techdown')
-  assert.equal(JSON.stringify(entry).includes('shopify/Cart'), false)
+  assert.equal(entry.context.pagePath, '/produkter/:product')
+  assert.equal(
+    JSON.stringify(entry).includes('shopify/Cart'),
+    false
+  )
   assert.equal(JSON.stringify(entry).includes('fbclid'), false)
 })
 
@@ -162,7 +165,10 @@ test('accepted Klarna begin_checkout writes the checkout method', async t => {
   assert.equal(entry.event, 'commerce.event')
   assert.equal(entry.data.eventName, 'begin_checkout')
   assert.equal(entry.data.checkoutMethod, 'klarna_express')
-  assert.equal(JSON.stringify(entry).includes('checkout-secret'), false)
+  assert.equal(
+    JSON.stringify(entry).includes('checkout-secret'),
+    false
+  )
 })
 
 test('begin_checkout persists the server-validated default method', async t => {

@@ -17,6 +17,7 @@ export function reportCanonicalInteractWithAccordion(
 
   try {
     const clientContext = readBrowserReporterContext()
+    if (!clientContext) return () => {}
     const pageView = browserPageViewSession.ensure({
       pageUrl: clientContext.pageUrl,
       ...(clientContext.documentReferrer ?

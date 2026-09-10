@@ -1,3 +1,4 @@
+import { hasBrowserCollectionConsent } from './hasBrowserCollectionConsent'
 import {
   browserPageViewSession,
   type PageViewContext
@@ -30,6 +31,11 @@ export function captureRemoveFromCartPageContext(
   dependencies: Dependencies = defaultDependencies
 ): RemoveFromCartPageContext | undefined {
   try {
+    if (
+      dependencies === defaultDependencies &&
+      !hasBrowserCollectionConsent()
+    )
+      return undefined
     const page = dependencies.readPage()
     if (!page.pageTitle.trim()) return undefined
     return Object.freeze({

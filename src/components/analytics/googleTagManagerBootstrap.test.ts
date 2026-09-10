@@ -4,7 +4,11 @@ import vm from 'node:vm'
 import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from './googleTagManagerBootstrap'
 
 type CookiebotState = {
-  consent: { marketing: boolean; statistics: boolean }
+  consent: {
+    marketing: boolean
+    statistics: boolean
+    method?: string
+  }
   hasResponse: boolean
 }
 
@@ -101,10 +105,14 @@ test('marks Cookiebot unresolved until an authoritative event arrives', () => {
   assert.equal(browserWindow.__utekosCookiebotConsentReady, true)
 })
 
-test('keeps analytics attribution but removes click IDs without marketing consent', () => {
+test('statistics-only consent does not expose campaign attribution or click IDs to Google', () => {
   const { browserWindow, listeners } = runBootstrap()
   browserWindow.Cookiebot = {
-    consent: { marketing: false, statistics: true },
+    consent: {
+      marketing: false,
+      statistics: true,
+      method: 'explicit'
+    },
     hasResponse: true
   }
 
@@ -113,17 +121,18 @@ test('keeps analytics attribution but removes click IDs without marketing consen
   const commands = commandArguments(browserWindow)
   assert.deepEqual(commands.at(-1), [
     'set',
-    {
-      page_location:
-        'https://utekos.no/skreddersy-varmen?utm_source=facebook'
-    }
+    { page_location: 'https://utekos.no/skreddersy-varmen' }
   ])
 })
 
 test('restores the paid landing URL only after marketing consent', () => {
   const { browserWindow, listeners } = runBootstrap()
   browserWindow.Cookiebot = {
-    consent: { marketing: true, statistics: true },
+    consent: {
+      marketing: true,
+      statistics: true,
+      method: 'explicit'
+    },
     hasResponse: true
   }
 
@@ -137,4 +146,23 @@ test('restores the paid landing URL only after marketing consent', () => {
         'https://utekos.no/skreddersy-varmen?fbclid=meta-click&ScCid=snap-click&utm_source=facebook'
     }
   ])
+})
+
+test('missing and implied marketing responses cannot expose the paid landing URL', () => {
+  for (const method of [undefined, 'implied']) {
+    const { browserWindow, listeners } = runBootstrap()
+    browserWindow.Cookiebot = {
+      hasResponse: true,
+      consent: {
+        marketing: true,
+        statistics: true,
+        ...(method ? { method } : {})
+      }
+    }
+    listeners.get('CookiebotOnConsentReady')?.()
+    assert.deepEqual(commandArguments(browserWindow).at(-1), [
+      'set',
+      { page_location: 'https://utekos.no/skreddersy-varmen' }
+    ])
+  }
 })

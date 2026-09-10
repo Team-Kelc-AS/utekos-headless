@@ -1,4 +1,6 @@
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
+import { withoutTrackingQuery } from './withoutTrackingQuery'
+import { filterConsentedBrowserIds } from './filterConsentedBrowserIds'
 import type { SkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 
 export type CanonicalCollectionContext = {
@@ -11,6 +13,10 @@ export type CanonicalCollectionContext = {
 }
 
 type EventWithConsent = {
+  campaign?: unknown
+  journey_id?: string | undefined
+  previous_page_view_id?: string | undefined
+  edge_request_id?: string | undefined
   browser_id?: Record<string, string> | undefined
   click_id?: Record<string, string> | undefined
   client_ip_address?: string | undefined
@@ -32,6 +38,7 @@ type EventWithConsent = {
       }
     | undefined
   page_url?: string | undefined
+  referrer_url?: string | undefined
   region_code?: string | undefined
   user_data?: unknown
 }
@@ -54,6 +61,7 @@ export function applyCanonicalCollectionContext<
   delete nextEvent.location
   delete nextEvent.region_code
   delete nextEvent.user_data
+  delete nextEvent.edge_request_id
 
   if (source.event_device_info) {
     const deviceInfo = { ...source.event_device_info }
@@ -72,18 +80,39 @@ export function applyCanonicalCollectionContext<
     context.consent.marketing === 'granted'
   const preferencesGranted =
     context.consent.preferences === 'granted'
+  if (!marketingGranted) {
+    delete nextEvent.campaign
+    if (nextEvent.page_url)
+      nextEvent.page_url = withoutTrackingQuery(
+        nextEvent.page_url
+      )
+    if (nextEvent.referrer_url)
+      nextEvent.referrer_url = withoutTrackingQuery(
+        nextEvent.referrer_url
+      )
+  }
+  if (!analyticsGranted) {
+    delete nextEvent.journey_id
+    delete nextEvent.previous_page_view_id
+  }
   const experiment =
     analyticsGranted ?
       (context.experiment ?? source.experiment)
     : undefined
 
-  const browserId = {
-    ...(analyticsGranted ? context.analyticsBrowserId : {}),
-    ...(marketingGranted ? source.browser_id : {}),
-    ...(marketingGranted ? context.marketingBrowserId : {})
-  }
+  const browserId = filterConsentedBrowserIds(
+    {
+      ...filterConsentedBrowserIds(
+        source.browser_id,
+        context.consent
+      ),
+      ...(analyticsGranted ? context.analyticsBrowserId : {}),
+      ...(marketingGranted ? context.marketingBrowserId : {})
+    },
+    context.consent
+  )
 
-  if (Object.keys(browserId).length > 0) {
+  if (browserId) {
     nextEvent.browser_id = browserId
   }
 

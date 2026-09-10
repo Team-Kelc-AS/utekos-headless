@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared_not_published",
+  "capturedAt": "2026-09-10",
+  "accountId": "6295468138",
+  "containerId": "220236256",
+  "containerPublicId": "GTM-5TWMJQFP",
+  "basedOnVersion": {
+    "id": "160",
+    "fingerprint": "1788910255855",
+    "path": "accounts/6295468138/containers/220236256/versions/160"
+  },
+  "source": "https://developers.google.com/tag-platform/tag-manager/api/reference/rest/v2/accounts.containers.workspaces.tags",
+  "preconditions": [
+    "Separate GTM publish approval",
+    "Read live version again; abort on drift",
+    "Keep tag 126 as sole Cookiebot loader with default-denied Consent Mode; no implied consent",
+    "Do not unpause 153, 170 or 171"
+  ],
+  "changes": [
+    {
+      "tagId": "160",
+      "name": "Microsoft UET – Client ID Sync",
+      "type": "img",
+      "fingerprint": "1787502152831",
+      "beforeConsentSettings": {
+        "consentStatus": "notNeeded"
+      },
+      "afterConsentSettings": {
+        "consentStatus": "needed",
+        "consentType": {
+          "type": "list",
+          "list": [
+            {
+              "type": "template",
+              "value": "ad_storage"
+            },
+            {
+              "type": "template",
+              "value": "ad_user_data"
+            },
+            {
+              "type": "template",
+              "value": "ad_personalization"
+            }
+          ]
+        }
+      },
+      "unchanged": "All other fields including parameters, triggers and paused state"
+    },
+    {
+      "tagId": "172",
+      "name": "GA4 – Canonical ecommerce events(Microsoft UET)",
+      "type": "baut",
+      "fingerprint": "1787633353939",
+      "beforeConsentSettings": {
+        "consentStatus": "notSet"
+      },
+      "afterConsentSettings": {
+        "consentStatus": "needed",
+        "consentType": {
+          "type": "list",
+          "list": [
+            {
+              "type": "template",
+              "value": "ad_storage"
+            },
+            {
+              "type": "template",
+              "value": "ad_user_data"
+            },
+            {
+              "type": "template",
+              "value": "ad_personalization"
+            }
+          ]
+        }
+      },
+      "unchanged": "All other fields including parameters, triggers and paused state"
+    },
+    {
+      "tagId": "173",
+      "name": "GA4 – Canonical page_view(Microsoft UET)",
+      "type": "baut",
+      "fingerprint": "1787633354761",
+      "beforeConsentSettings": {
+        "consentStatus": "notSet"
+      },
+      "afterConsentSettings": {
+        "consentStatus": "needed",
+        "consentType": {
+          "type": "list",
+          "list": [
+            {
+              "type": "template",
+              "value": "ad_storage"
+            },
+            {
+              "type": "template",
+              "value": "ad_user_data"
+            },
+            {
+              "type": "template",
+              "value": "ad_personalization"
+            }
+          ]
+        }
+      },
+      "unchanged": "All other fields including parameters, triggers and paused state"
+    },
+    {
+      "tagId": "174",
+      "name": "GA4 – Canonical non-commerce events(Microsoft UET)",
+      "type": "baut",
+      "fingerprint": "1787633355534",
+      "beforeConsentSettings": {
+        "consentStatus": "notSet"
+      },
+      "afterConsentSettings": {
+        "consentStatus": "needed",
+        "consentType": {
+          "type": "list",
+          "list": [
+            {
+              "type": "template",
+              "value": "ad_storage"
+            },
+            {
+              "type": "template",
+              "value": "ad_user_data"
+            },
+            {
+              "type": "template",
+              "value": "ad_personalization"
+            }
+          ]
+        }
+      },
+      "unchanged": "All other fields including parameters, triggers and paused state"
+    }
+  ],
+  "verification": [
+    "Exactly one uc.js request; implementation=gtm",
+    "Default-denied before choice",
+    "No Microsoft UET network requests before marketing or with statistics-only",
+    "Current consented events only; no retroactive event replay",
+    "Reject/withdraw prevents subsequent sends"
+  ]
+}

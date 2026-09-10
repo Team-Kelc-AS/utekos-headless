@@ -75,13 +75,9 @@
     return Boolean(
       w.Cookiebot &&
       w.Cookiebot.consent &&
+      w.Cookiebot.hasResponse === true &&
+      w.Cookiebot.consent.method === 'explicit' &&
       w.Cookiebot.consent.marketing === true
-    )
-  }
-
-  function hasConsentDecision() {
-    return Boolean(
-      w.Cookiebot && w.Cookiebot.hasResponse === true
     )
   }
 
@@ -390,7 +386,14 @@
     var eventKey
     var data
 
-    if (!canonicalEvent || !metaEventName) return
+    if (
+      !canonicalEvent ||
+      !metaEventName ||
+      !canonicalEvent.consent ||
+      canonicalEvent.consent.marketing !== 'granted' ||
+      w.__utekosConsentReloading
+    )
+      return
     if (entry.event_id !== canonicalEvent.event_id) return
     if (!isCurrentPage(canonicalEvent)) return
 
@@ -443,7 +446,7 @@
       syncPixelConsent()
       if (hasMarketingConsent()) {
         run(0)
-      } else if (hasConsentDecision()) {
+      } else {
         discardPendingEvents()
       }
     }
@@ -458,7 +461,7 @@
     syncPixelConsent()
     if (!hasMarketingConsent()) {
       scheduleConsentRetry()
-      if (hasConsentDecision()) discardPendingEvents()
+      discardPendingEvents()
       return
     }
 
@@ -491,10 +494,8 @@
       syncPixelConsent()
       if (hasMarketingConsent()) {
         run(0)
-      } else if (hasConsentDecision()) {
-        // Explicitly rejected events are discarded. Before the visitor
-        // answers, retain canonical rows so the original event ID and
-        // captured landing context can be released on acceptance.
+      } else {
+        // Only events observed with marketing consent are eligible.
         discardPendingEvents()
       }
     }, 200)

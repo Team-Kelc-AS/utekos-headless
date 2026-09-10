@@ -1,7 +1,7 @@
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { browserPageViewSession } from './pageViewSession'
 
-const JOURNEY_STORAGE_KEY = 'utekos:analytics:journey:v1'
+export const JOURNEY_STORAGE_KEY = 'utekos:analytics:journey:v1'
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu
 
@@ -50,24 +50,16 @@ export function createInternalJourneyContextEnricher(
     E extends JourneyCompatibleEvent
   >(event: E): E & InternalJourneyFields {
     const nextEvent = omitInternalJourneyContext(event)
+    if (event.consent.analytics !== 'granted') {
+      inMemoryJourneyId = undefined
+      return nextEvent
+    }
     let storage: JourneyStorage | undefined
 
     try {
       storage = dependencies.getStorage()
     } catch {
       storage = undefined
-    }
-
-    if (event.consent.analytics !== 'granted') {
-      inMemoryJourneyId = undefined
-
-      try {
-        storage?.removeItem(JOURNEY_STORAGE_KEY)
-      } catch {
-        // Storage access is best effort. Denied events remain unlinked.
-      }
-
-      return nextEvent
     }
 
     let journeyId = inMemoryJourneyId
@@ -134,6 +126,7 @@ const enrichBrowserInternalJourneyContext =
 export function enrichCanonicalBrowserJourneyContext<
   E extends JourneyCompatibleEvent
 >(event: E): E {
+  if (typeof window === 'undefined') return event
   return enrichBrowserInternalJourneyContext(event)
 }
 

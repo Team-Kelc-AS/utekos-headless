@@ -183,21 +183,20 @@ function getDefaultLocalStorage(): StorageLike | undefined {
  * which in turn win over session/local values for the same key.
  * Newly seen URL/cookie values are merged into sessionStorage and a
  * 90-day localStorage record so click attribution survives navigation
- * and the cross-domain Shopify checkout handoff. ScCid remains only in
- * module memory until the caller authorizes marketing persistence.
+ * and the cross-domain Shopify checkout handoff. No access is permitted
+ * until the caller authorizes marketing collection.
  */
 export function resolveClickIds(
   pageUrl: string,
-  sessionStorageLike:
-    | StorageLike
-    | undefined = getDefaultSessionStorage(),
-  localStorageLike:
-    | StorageLike
-    | undefined = getDefaultLocalStorage(),
+  sessionStorageLike: StorageLike | undefined = undefined,
+  localStorageLike: StorageLike | undefined = undefined,
   nowMs: number = Date.now(),
   observedClickIds: Record<string, string> = {},
   persist: boolean = true
 ): Record<string, string> | undefined {
+  if (!persist) return undefined
+  sessionStorageLike ??= getDefaultSessionStorage()
+  localStorageLike ??= getDefaultLocalStorage()
   const fromUrl = readClickIdsFromSearchParams(
     new URL(pageUrl).searchParams
   )

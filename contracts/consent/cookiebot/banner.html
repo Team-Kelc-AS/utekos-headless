@@ -1,0 +1,90 @@
+<dialog
+  id="utekos-consent-dialog"
+  aria-labelledby="utekos-consent-title"
+  closedby="none"
+>
+  <h2 id="utekos-consent-title" tabindex="-1">
+    Du velger hva du vil dele
+  </h2>
+  <p>
+    Nettbutikken fungerer uten valgfrie informasjonskapsler. Du
+    kan tillate statistikk for å hjelpe oss å forbedre butikken,
+    og markedsføring for å måle annonser og vise mer relevante
+    tilbud.
+  </p>
+  <fieldset>
+    <legend>Dine personvernvalg</legend>
+    <label
+      ><input type="checkbox" checked disabled />
+      <span
+        ><strong>Nødvendige</strong
+        ><small
+          >Brukes blant annet til sikkerhet, handlekurv og til å
+          huske samtykkevalget ditt.</small
+        ></span
+      ></label
+    >
+    <label
+      ><input id="utekos-consent-preferences" type="checkbox" />
+      <span
+        ><strong>Preferanser</strong
+        ><small
+          >Husker valg som ikke er nødvendige for at nettbutikken
+          skal fungere.</small
+        ></span
+      ></label
+    >
+    <label
+      ><input id="utekos-consent-statistics" type="checkbox" />
+      <span
+        ><strong>Statistikk</strong
+        ><small
+          >Måler bruk av nettbutikken og ytelse. Kan omfatte
+          nettleseropplysninger og identifikatorer.</small
+        ></span
+      ></label
+    >
+    <label
+      ><input id="utekos-consent-marketing" type="checkbox" />
+      <span
+        ><strong>Markedsføring</strong
+        ><small
+          >Måler annonser og kjøp, knytter aktivitet til
+          annonseklikk og brukes til tilpasset annonsering hos
+          annonsepartnere.</small
+        ></span
+      ></label
+    >
+  </fieldset>
+  <p>
+    Du kan endre eller trekke tilbake valget via
+    «Personverninnstillinger». Se
+    <a href="/personvern" target="_blank" rel="noopener"
+      >personvernerklæringen</a
+    >
+    og
+    <a href="/personvern#cookies" target="_blank" rel="noopener"
+      >oversikten over informasjonskapsler og leverandører</a
+    >.
+  </p>
+  <div class="utekos-consent-actions">
+    <button
+      id="utekos-consent-reject"
+      type="button"
+      data-consent-action="reject"
+    >
+      Avvis valgfrie
+    </button>
+    <button type="button" data-consent-action="save">
+      Lagre valg
+    </button>
+    <button type="button" data-consent-action="all">
+      Godta alle
+    </button>
+  </div>
+  <p
+    id="utekos-consent-error"
+    role="status"
+    aria-live="polite"
+  ></p>
+</dialog>

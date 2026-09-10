@@ -103,10 +103,7 @@ test('Magasinet upgrade redirect preserves the complete query string', async () 
       response.headers.get('location'),
       'https://utekos.no/magasinet/oppgradering?fbclid=AbC-123&utm_source=facebook&utm_campaign=Vinter%20Norge'
     )
-    assert.match(
-      response.headers.get('server-timing') ?? '',
-      /^utekos_edge;desc="[0-9a-f-]{36}", utekos_edge_auth;desc="\d{10}\.[A-Za-z0-9_-]{43}"$/i
-    )
+    assert.equal(response.headers.get('server-timing'), null)
   } finally {
     console.info = originalInfo
     restoreSigningSecret()
@@ -153,13 +150,7 @@ test('correlates a document request without logging its landing query', async ()
       ),
       edgeRequestId
     )
-    assert.match(
-      response.headers.get('server-timing') ?? '',
-      new RegExp(
-        `^utekos_edge;desc="${edgeRequestId}", utekos_edge_auth;desc="\\d{10}\\.[A-Za-z0-9_-]{43}"$`,
-        'i'
-      )
-    )
+    assert.equal(response.headers.get('server-timing'), null)
     assert.equal(response.headers.get('set-cookie'), null)
   } finally {
     console.info = originalInfo
@@ -316,10 +307,7 @@ test('leaves user-agent enforcement to Vercel Firewall', async () => {
     )
 
     assert.equal(response.status, 200)
-    assert.match(
-      response.headers.get('server-timing') ?? '',
-      /utekos_edge;desc="[0-9a-f-]{36}"/u
-    )
+    assert.equal(response.headers.get('server-timing'), null)
   } finally {
     console.info = originalInfo
     restoreSigningSecret()
@@ -343,7 +331,7 @@ test('keeps document navigation available when the signing secret is invalid', a
 
     assert.equal(response.status, 200)
     const timing = response.headers.get('server-timing') ?? ''
-    assert.match(timing, /utekos_edge;desc="[0-9a-f-]{36}"/u)
+    assert.equal(timing, '')
     assert.doesNotMatch(timing, /utekos_edge_auth/u)
     assert.equal(response.headers.get('set-cookie'), null)
   } finally {

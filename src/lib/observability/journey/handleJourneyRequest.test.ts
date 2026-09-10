@@ -20,7 +20,7 @@ const sample = {
   page_path: '/skreddersy-varmen',
   consent: {
     analytics: 'granted',
-    marketing: 'denied',
+    marketing: 'granted',
     preferences: 'denied',
     source: 'cookiebot',
     version: '1'
@@ -59,7 +59,7 @@ const dependencies = (
   ...extra
 })
 
-test('requires analytics consent independently of marketing and rejects undeclared data', async () => {
+test('requires analytics and marketing for the advertising-linked journey and rejects undeclared data', async () => {
   for (const consent of [
     undefined,
     { ...sample.consent, analytics: 'denied' },
@@ -109,12 +109,37 @@ test('requires analytics consent independently of marketing and rejects undeclar
   )
 })
 
+test('statistics-only legacy advertising-journey requests are rejected before storage or logs', async () => {
+  let writes = 0,
+    logs = 0
+  const response = await handleJourneyRequest(
+    request({
+      ...sample,
+      consent: { ...sample.consent, marketing: 'denied' }
+    }),
+    dependencies({
+      store: {
+        accept: async () => {
+          writes++
+          return 'persisted'
+        }
+      },
+      log: () => {
+        logs++
+      }
+    })
+  )
+  assert.equal(response.status, 403)
+  assert.equal(writes, 0)
+  assert.equal(logs, 0)
+})
+
 test('sanitizes links and rejects raw paths, ad identifiers, and non-landing UTM events', () => {
   assert.equal(
     sanitizeJourneyPath(
       '/produkter/utekos-dun?fbclid=secret#details'
     ),
-    '/produkter/utekos-dun'
+    '/produkter/:dynamic'
   )
   assert.equal(
     sanitizeJourneyPath('/checkout/rawCheckoutToken'),

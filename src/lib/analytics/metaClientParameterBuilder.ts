@@ -1,9 +1,21 @@
 'use client'
 
+import {
+  hasCookiebotMarketingConsent,
+  type CookiebotApi
+} from '@/lib/consent/cookiebotConsent'
 import type { ClientParamBuilder } from 'meta-capi-param-builder-clientjs'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { metaClientIpResponseSchema } from './metaClientIpContract'
 
+function marketingAllowed() {
+  return (
+    typeof window !== 'undefined' &&
+    hasCookiebotMarketingConsent(
+      (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
+    )
+  )
+}
 const META_CLIENT_IP_TIMEOUT_MS = 2500
 const completedPageUrls = new Set<string>()
 let contextSequence: Promise<void> = Promise.resolve()
@@ -37,6 +49,7 @@ async function loadClientParamBuilder(): Promise<ClientParamBuilder> {
 async function getConsentedClientIpAddress(
   consent: ConsentSnapshot
 ) {
+  if (!marketingAllowed()) return ''
   const response = await fetch('/api/meta/client-ip', {
     body: JSON.stringify({ consent }),
     cache: 'no-store',
@@ -75,13 +88,16 @@ export async function ensureMetaClientParameterContext(
 ): Promise<MetaClientParameterContext> {
   if (
     typeof window === 'undefined' ||
-    input.consent.marketing !== 'granted'
+    input.consent.marketing !== 'granted' ||
+    !marketingAllowed()
   ) {
     return {}
   }
 
   return enqueueContextRequest(async () => {
+    if (!marketingAllowed()) return {}
     const builder = await loadClientParamBuilder()
+    if (!marketingAllowed()) return {}
 
     if (completedPageUrls.has(input.pageUrl)) {
       return readIdentifiers(builder)
@@ -90,6 +106,7 @@ export async function ensureMetaClientParameterContext(
     await builder.processAndCollectAllParams(input.pageUrl, () =>
       getConsentedClientIpAddress(input.consent)
     )
+    if (!marketingAllowed()) return {}
     completedPageUrls.add(input.pageUrl)
 
     return readIdentifiers(builder)

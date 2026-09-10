@@ -14,10 +14,7 @@ const CANONICAL_ITEM_ID =
   'gid://shopify/ProductVariant/123456789'
 const PINTEREST_PRODUCT_ID = '123456789'
 
-function loadTag(
-  marketing = true,
-  hasResponse = marketing
-) {
+function loadTag(marketing = true, hasResponse = marketing) {
   const tracked: unknown[][] = []
   const listeners = new Map<string, () => void>()
   const pintrk = Object.assign(
@@ -39,7 +36,10 @@ function loadTag(
     head: { appendChild() {} }
   }
   const window = {
-    Cookiebot: { consent: { marketing }, hasResponse },
+    Cookiebot: {
+      consent: { marketing, method: 'explicit' },
+      hasResponse
+    },
     pintrk,
     crypto: webcrypto,
     dataLayer: [] as unknown[],
@@ -75,7 +75,7 @@ function canonicalPageView(marketing = false) {
   }
 }
 
-test('releases the original pre-consent event after acceptance', async () => {
+test('discards pre-consent events even after subsequent acceptance', async () => {
   const harness = loadTag(false, false)
   harness.window.dataLayer.push({
     canonical_event: canonicalPageView(false)
@@ -91,11 +91,7 @@ test('releases the original pre-consent event after acceptance', async () => {
   const trackCall = harness.tracked.find(
     call => call[0] === 'track'
   )
-  assert.equal(trackCall?.[1], 'ViewCategory')
-  assert.equal(
-    (trackCall?.[2] as Record<string, unknown>)?.event_id,
-    'pending-pinterest-event'
-  )
+  assert.equal(trackCall, undefined)
 })
 
 test('does not release an event after explicit rejection', async () => {
@@ -153,7 +149,10 @@ test('Pinterest Tag sends matching product identity and Enhanced Match', async (
     eventData.line_items?.[0]?.product_id,
     PINTEREST_PRODUCT_ID
   )
-  assert.equal(eventData.line_items?.[0]?.product_brand, 'Utekos')
+  assert.equal(
+    eventData.line_items?.[0]?.product_brand,
+    'Utekos'
+  )
   assert.equal(
     eventData.line_items?.[0]?.product_category,
     'Ponchoer'

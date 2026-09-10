@@ -63,7 +63,47 @@ test('passes formatted NOK line items through on authorized sends', () => {
           variantTitle: 'XL',
           priceAmount: '3580.00',
           priceCurrencyCode: 'NOK',
-          productHandle: 'utekos-techdown'
+          variantId: 'gid://shopify/ProductVariant/4001',
+          barcode: null,
+          recoveryEmailImage: {
+            url:
+              'https://cdn.shopify.com/s/files/1/recovery.jpg?v=2',
+            altText: 'Kurert TechDown-bilde'
+          },
+          shopifyLineItemImage: {
+            url:
+              'https://cdn.shopify.com/s/files/1/line-item.jpg',
+            altText: null
+          }
+        },
+        {
+          title: 'Comfyrobe',
+          quantity: 1,
+          variantTitle: null,
+          priceAmount: '1690.00',
+          priceCurrencyCode: 'NOK',
+          variantId: 'gid://shopify/ProductVariant/4002',
+          barcode: '07090062980009',
+          recoveryEmailImage: null,
+          shopifyLineItemImage: {
+            url:
+              'https://cdn.shopify.com/s/files/1/comfyrobe.jpg',
+            altText: null
+          }
+        },
+        {
+          title: 'Utekos Sitteunderlag',
+          quantity: 1,
+          variantTitle: null,
+          priceAmount: '490.00',
+          priceCurrencyCode: 'NOK',
+          variantId: null,
+          barcode: null,
+          recoveryEmailImage: {
+            url: 'https://example.com/unsafe.jpg',
+            altText: null
+          },
+          shopifyLineItemImage: null
         }
       ]
     })
@@ -80,6 +120,26 @@ test('passes formatted NOK line items through on authorized sends', () => {
         quantity: 2,
         priceLabel: formatPrice({
           amount: '3580.00',
+          currencyCode: 'NOK'
+        }),
+        imageUrl:
+          'https://cdn.shopify.com/s/files/1/recovery.jpg?v=2'
+      },
+      {
+        title: 'Comfyrobe',
+        quantity: 1,
+        priceLabel: formatPrice({
+          amount: '1690.00',
+          currencyCode: 'NOK'
+        }),
+        imageUrl:
+          'https://utekos.no/gtin/product-images/07090062980009.png'
+      },
+      {
+        title: 'Utekos Sitteunderlag',
+        quantity: 1,
+        priceLabel: formatPrice({
+          amount: '490.00',
           currencyCode: 'NOK'
         }),
         imageUrl: null
@@ -101,11 +161,29 @@ test('fails closed when a line item is not priced in NOK', () => {
               variantTitle: null,
               priceAmount: '1790.00',
               priceCurrencyCode: 'EUR',
-              productHandle: 'utekos-techdown'
+              variantId: null,
+              barcode: null,
+              recoveryEmailImage: null,
+              shopifyLineItemImage: null
             }
           ]
         })
       }),
+    {
+      message: 'abandoned_checkout_recovery_shopify_state_invalid'
+    }
+  )
+})
+
+test('fails closed when Shopify returns a recovery URL on a foreign host', () => {
+  assert.throws(
+    () => authorizeAbandonedCheckoutRecoverySend({
+      claim,
+      state: createState({
+        recoveryUrl:
+          'https://example.com/recover/opaque-shopify-token'
+      })
+    }),
     {
       message: 'abandoned_checkout_recovery_shopify_state_invalid'
     }

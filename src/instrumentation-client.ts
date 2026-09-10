@@ -42,9 +42,10 @@ try {
         }
       ).Cookiebot,
     isDialogVisible: () => {
-      const dialog = document.getElementById(
-        'CybotCookiebotDialog'
-      )
+      const dialog =
+        document.querySelector(
+          'dialog#utekos-consent-dialog[open]'
+        ) ?? document.getElementById('CybotCookiebotDialog')
       if (!dialog) return false
       const style = window.getComputedStyle(dialog)
       return (

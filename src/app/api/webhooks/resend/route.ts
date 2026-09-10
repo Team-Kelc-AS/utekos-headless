@@ -6,6 +6,9 @@ import {
   recordAbandonedCheckoutRecoveryResendEvent,
   type AbandonedCheckoutRecoveryResendEventType
 } from '@/lib/email/abandonedCheckoutRecovery/recordAbandonedCheckoutRecoveryResendEvent'
+import {
+  recordShopifyTransactionalEmailResendEvent
+} from '@/lib/email/shopifyTransactional/recordShopifyTransactionalEmailResendEvent'
 
 type VerifiedWebhookPayload = {
   type: string
@@ -37,7 +40,13 @@ type Dependencies = {
 const defaultDependencies: Dependencies = {
   getWebhookSecret: () => process.env.RESEND_WEBHOOK_SECRET,
   verify: input => getResendClient().webhooks.verify(input),
-  record: recordAbandonedCheckoutRecoveryResendEvent
+  record: async input => {
+    if (await recordAbandonedCheckoutRecoveryResendEvent(input)) {
+      return true
+    }
+
+    return recordShopifyTransactionalEmailResendEvent(input)
+  }
 }
 
 const eventSchema = z.strictObject({

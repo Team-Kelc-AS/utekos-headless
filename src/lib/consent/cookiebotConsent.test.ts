@@ -10,7 +10,12 @@ import {
 test('consent gates fail closed before Cookiebot has a response', () => {
   const cookiebot = {
     hasResponse: false,
-    consent: { statistics: true, marketing: true, preferences: true }
+    consent: {
+      method: 'explicit',
+      statistics: true,
+      marketing: true,
+      preferences: true
+    }
   }
 
   assert.equal(hasCookiebotStatisticsConsent(cookiebot), false)
@@ -22,14 +27,14 @@ test('YouTube marketing gate follows the resolved Cookiebot choice', () => {
   assert.equal(
     hasCookiebotMarketingConsent({
       hasResponse: true,
-      consent: { marketing: true }
+      consent: { method: 'explicit', marketing: true }
     }),
     true
   )
   assert.equal(
     hasCookiebotMarketingConsent({
       hasResponse: true,
-      consent: { marketing: false }
+      consent: { method: 'explicit', marketing: false }
     }),
     false
   )
@@ -60,7 +65,12 @@ test('Shopify headless consent uses the verified storefront domains', () => {
 test('Cookiebot categories map exactly to Shopify consent purposes', () => {
   const cookiebot = {
     hasResponse: true,
-    consent: { statistics: true, marketing: false, preferences: true }
+    consent: {
+      method: 'explicit',
+      statistics: true,
+      marketing: false,
+      preferences: true
+    }
   }
 
   assert.equal(hasCookiebotStatisticsConsent(cookiebot), true)
@@ -76,6 +86,7 @@ test('withdrawal maps every withdrawn category to false', () => {
     mapCookiebotConsentToShopify({
       hasResponse: true,
       consent: {
+        method: 'explicit',
         statistics: false,
         marketing: false,
         preferences: false
@@ -83,4 +94,20 @@ test('withdrawal maps every withdrawn category to false', () => {
     }),
     { analytics: false, marketing: false, preferences: false }
   )
+})
+
+test('missing or implied response method never grants any optional category', () => {
+  for (const method of [undefined, null, 'implied']) {
+    const api = {
+      hasResponse: true,
+      consent: {
+        ...(method !== undefined ? { method } : {}),
+        statistics: true,
+        marketing: true
+      }
+    }
+    assert.equal(hasCookiebotMarketingConsent(api), false)
+    assert.equal(hasCookiebotStatisticsConsent(api), false)
+    assert.equal(mapCookiebotConsentToShopify(api), null)
+  }
 })

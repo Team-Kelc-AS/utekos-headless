@@ -57,3 +57,41 @@ test('strips internal journey context when analytics consent is denied', () => {
   assert.equal(normalized.previous_page_view_id, undefined)
   assert.equal(normalized.experiment, undefined)
 })
+
+test('marketing-only consent cannot retain statistical browser IDs', () => {
+  const normalized = normalizeCanonicalBrowserEvent(
+    canonicalPageViewSchema,
+    {
+      ...baseEvent,
+      browser_id: {
+        fbp: 'fb.1.123',
+        ga_client_id: '123.456',
+        ga_session_id: '789'
+      },
+      consent: {
+        ...baseEvent.consent,
+        analytics: 'denied',
+        marketing: 'granted'
+      }
+    },
+    {}
+  )
+  assert.deepEqual(normalized.browser_id, { fbp: 'fb.1.123' })
+})
+
+test('statistics-only consent cannot retain marketing browser IDs or URL queries', () => {
+  const normalized = normalizeCanonicalBrowserEvent(
+    canonicalPageViewSchema,
+    {
+      ...baseEvent,
+      browser_id: { fbp: 'fb.1.123', ga_client_id: '123.456' },
+      page_url:
+        'https://utekos.no/skreddersy-varmen?fbclid=secret'
+    },
+    {}
+  )
+  assert.deepEqual(normalized.browser_id, {
+    ga_client_id: '123.456'
+  })
+  assert.equal(normalized.page_url, baseEvent.page_url)
+})

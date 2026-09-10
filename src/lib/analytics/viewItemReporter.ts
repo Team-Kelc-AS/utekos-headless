@@ -1,13 +1,9 @@
 'use client'
 
 import { sendGTMEvent } from '@next/third-parties/google'
-import {
-  extractBrowserIds,
-  extractClickIds,
-  getConsentSnapshot,
-  type CookiebotConsent
-} from './pageViewClientContext'
-import { browserFirstPartyExternalIdStore } from './firstPartyExternalId'
+import { hasBrowserCollectionConsent } from './hasBrowserCollectionConsent'
+import { COOKIEBOT_CONSENT_EVENTS } from '@/lib/consent/cookiebotConsent'
+import { readBrowserReporterContext } from './browserReporterContext'
 import {
   browserPageViewSession,
   type PageViewContext
@@ -66,7 +62,7 @@ type PageViewSessionPort = {
 
 type ViewItemReporterDependencies = {
   pageViewSession: PageViewSessionPort
-  readClientContext: () => ViewItemClientContext
+  readClientContext: () => ViewItemClientContext | null
   mapCommerce(input: {
     product: ProductCommerceModel
     variant: ProductPurchaseVariant
@@ -91,6 +87,7 @@ export function createViewItemReporter(
     input: ReportCanonicalViewItemInput
   ): () => void {
     const initialContext = dependencies.readClientContext()
+    if (!initialContext) return () => {}
 
     const expectedPageUrl = normalizePageUrl(
       initialContext.pageUrl
@@ -136,6 +133,10 @@ export function createViewItemReporter(
       }
 
       const clientContext = dependencies.readClientContext()
+      if (!clientContext) {
+        stop()
+        return
+      }
 
       if (
         normalizePageResource(clientContext.pageUrl) !==
@@ -207,34 +208,11 @@ export function createViewItemReporter(
   }
 }
 
-export function resolveTrackingEnvironment(
-  pageUrl: string,
-  nodeEnvironment: string | undefined
-): TrackingEnvironment {
-  if (nodeEnvironment === 'test') {
-    return 'test'
-  }
-
-  const hostname = new URL(pageUrl).hostname.toLowerCase()
-
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'development'
-  }
-
-  if (nodeEnvironment !== 'production') {
-    return 'development'
-  }
-
-  return (
-      hostname === 'utekos.no' || hostname === 'www.utekos.no'
-    ) ?
-      'production'
-    : 'preview'
-}
+export { resolveTrackingEnvironment } from './resolveTrackingEnvironment'
 
 const browserReporter = createViewItemReporter({
   pageViewSession: browserPageViewSession,
-  readClientContext: readBrowserClientContext,
+  readClientContext: readBrowserReporterContext,
   mapCommerce: mapShopifyViewItem,
   createEvent: createCanonicalViewItem,
   createEventId: () => globalThis.crypto.randomUUID(),
@@ -253,60 +231,19 @@ const browserReporter = createViewItemReporter({
 export function reportCanonicalViewItem(
   input: ReportCanonicalViewItemInput
 ): () => void {
-  return browserReporter(input)
-}
-
-type CookiebotWindow = Window & {
-  Cookiebot?: { consent?: CookiebotConsent }
-}
-
-function readBrowserClientContext(): ViewItemClientContext {
-  const pageUrl = window.location.href
-
-  const consent = getConsentSnapshot(
-    (window as CookiebotWindow).Cookiebot?.consent
-  )
-
-  const browserId = extractBrowserIds(document.cookie, consent)
-
-  const clickId = extractClickIds(
-    pageUrl,
-    document.cookie,
-    consent.marketing === 'granted'
-  )
-  const externalId =
-    browserFirstPartyExternalIdStore.getOrCreate(consent)
-
-  const searchParams = new URL(pageUrl).searchParams
-
-  const impressionId =
-    searchParams.get('impression_id') ??
-    searchParams.get('impressionId') ??
-    undefined
-
-  return {
-    pageUrl,
-    documentReferrer: document.referrer,
-    pageTitle: document.title || 'Utekos',
-    environment: resolveTrackingEnvironment(
-      pageUrl,
-      process.env.NODE_ENV
-    ),
-    consent,
-    ...(browserId ? { browserId } : {}),
-    ...(clickId ? { clickId } : {}),
-    ...(externalId ? { externalId } : {}),
-    ...(impressionId ? { impressionId } : {}),
-    eventDeviceInfo: {
-      language: navigator.language,
-      pixelRatio: window.devicePixelRatio,
-      platform: navigator.platform,
-      screenHeight: window.screen.height,
-      screenWidth: window.screen.width,
-      userAgent: navigator.userAgent,
-      viewportHeight: window.innerHeight,
-      viewportWidth: window.innerWidth
-    }
+  if (typeof window === 'undefined') return () => {}
+  let cleanup: (() => void) | undefined
+  const evaluate = () => {
+    if (cleanup || !hasBrowserCollectionConsent()) return
+    cleanup = browserReporter(input)
+  }
+  for (const name of COOKIEBOT_CONSENT_EVENTS)
+    window.addEventListener(name, evaluate)
+  evaluate()
+  return () => {
+    for (const name of COOKIEBOT_CONSENT_EVENTS)
+      window.removeEventListener(name, evaluate)
+    cleanup?.()
   }
 }
 

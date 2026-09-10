@@ -3,6 +3,8 @@ import { fileURLToPath } from 'node:url'
 
 import { z } from 'zod'
 
+import { isSafeAbandonedCheckoutRecoveryProductImageUrl } from './resolveAbandonedCheckoutRecoveryProductImageUrl'
+
 const EMAIL_TEMPLATE = readFileSync(
   fileURLToPath(
     new URL(
@@ -13,37 +15,47 @@ const EMAIL_TEMPLATE = readFileSync(
   'utf8'
 )
 
-const firstPartyImageUrlSchema = z
+const publicProductImageUrlSchema = z
   .string()
   .url()
   .max(2048)
+  .refine(isSafeAbandonedCheckoutRecoveryProductImageUrl)
+
+const recoveryUrlSchema = z
+  .string()
+  .url()
+  .max(4096)
   .refine(value => {
-    let url: URL
+    const url = new URL(value)
 
-    try {
-      url = new URL(value)
-    } catch {
-      return false
-    }
-
-    return (
-      url.protocol === 'https:'
-      && url.hostname === 'utekos.no'
+    return url.protocol === 'https:'
       && url.username === ''
       && url.password === ''
-    )
+      && url.port === ''
+      && url.hash === ''
+      && (
+        [
+          'checkout.shopify.com',
+          'kasse.utekos.no',
+          'utekos.no',
+          'www.utekos.no'
+        ].includes(url.hostname)
+        || /^[a-z0-9][a-z0-9-]*\.myshopify\.com$/u.test(
+          url.hostname
+        )
+      )
   })
 
 const lineItemSchema = z.strictObject({
   title: z.string().trim().min(1).max(200),
   quantity: z.number().int().min(1).max(99),
   priceLabel: z.string().trim().min(1).max(40),
-  imageUrl: firstPartyImageUrlSchema.nullable()
+  imageUrl: publicProductImageUrlSchema.nullable()
 })
 
 const inputSchema = z.strictObject({
   step: z.number().int().min(1).max(3),
-  recoveryUrl: z.string().url().max(4096),
+  recoveryUrl: recoveryUrlSchema,
   unsubscribeUrl: z.string().url().max(4096),
   lineItems: z.array(lineItemSchema).max(10)
 })
@@ -57,18 +69,18 @@ const contentByStep = {
     ctaLabel: 'Fortsett utsjekkingen'
   },
   2: {
-    subject: 'Et gavekort på 10 % venter på deg',
-    preheader: 'Bruk det på neste kjøp, eller gi det bort',
-    heading: '10 % å bruke eller gi bort',
-    body: 'Handlekurven din venter fortsatt. Vi har et gavekort på 10 % klart til deg. Bruk det på neste kjøp, eller gi det til noen du vil varme.',
-    ctaLabel: 'Hent gavekortet'
+    subject: 'Handlekurven din venter fortsatt',
+    preheader: 'Fortsett der du slapp hos Utekos',
+    heading: 'Fortsatt interessert?',
+    body: 'Vi har tatt vare på varene fra utsjekkingen din. Du kan gå tilbake til den samme kassen og fortsette der du slapp.',
+    ctaLabel: 'Tilbake til kassen'
   },
   3: {
-    subject: '50 % på Comfyrobe og 10 % i gavekort',
+    subject: 'Siste påminnelse om handlekurven din',
     preheader: 'Siste e-post om denne handlekurven',
-    heading: 'Siste mulighet i denne runden',
-    body: 'Dette er den siste e-posten om denne handlekurven. Fullfør bestillingen og få 50 % på Comfyrobe, pluss et gavekort med 10 % rabatt.',
-    ctaLabel: 'Hent tilbudene'
+    heading: 'Siste påminnelse i denne runden',
+    body: 'Dette er den siste e-posten om denne handlekurven. Dersom du fortsatt ønsker varene, kan du gå direkte tilbake til kassen.',
+    ctaLabel: 'Åpne handlekurven'
   }
 } as const
 
@@ -131,7 +143,7 @@ function buildLineItemsHtml(
         : [
             '<td style="width:72px;padding-top:0;padding-right:12px;padding-bottom:16px;padding-left:0;vertical-align:top;">',
             `<a href="${recoveryUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">`,
-            `<img src="${escapeHtml(lineItem.imageUrl)}" alt="${safeTitle}" width="72" height="72" border="0" style="display:block;border-width:0;outline:none;text-decoration:none;border-radius:8px;width:72px;height:72px;" />`,
+            `<img src="${escapeHtml(lineItem.imageUrl)}" alt="${safeTitle}" width="72" height="72" border="0" style="display:block;border-width:0;outline:none;text-decoration:none;border-radius:8px;width:72px;max-width:100%;height:auto;" />`,
             '</a>',
             '</td>'
           ].join('')
@@ -156,74 +168,6 @@ function buildLineItemsHtml(
     ...rows,
     '</table>'
   ].join('')
-}
-
-function buildOfferCardHtml(title: string, body: string): string {
-  return [
-    '<table border="0" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin-top:16px;">',
-    '<tr>',
-    '<td bgcolor="#012622" style="background-color:#012622;border-width:1px;border-style:solid;border-color:#00453e;border-radius:12px;padding-top:16px;padding-right:16px;padding-bottom:16px;padding-left:16px;">',
-    `<p style="margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;font-size:20px;line-height:26px;font-weight:700;color:#f0eee9;text-align:center;">${title}</p>`,
-    `<p style="margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;font-size:14px;line-height:21px;font-weight:400;color:#d6e3e1;text-align:center;">${body}</p>`,
-    '</td>',
-    '</tr>',
-    '</table>'
-  ].join('')
-}
-
-function buildOfferHtml(step: 1 | 2 | 3): string {
-  switch (step) {
-    case 1:
-      return ''
-    case 2:
-      return buildOfferCardHtml(
-        'Gavekort 10 %',
-        'Gjelder neste kjøp hos Utekos. Du kan også gi det bort.'
-      )
-    case 3:
-      return [
-        buildOfferCardHtml(
-          '50 % på Comfyrobe',
-          'Rabatten gjelder Comfyrobe når du fullfører utsjekkingen.'
-        ),
-        buildOfferCardHtml(
-          'Gavekort 10 %',
-          'Bruk det på et senere kjøp, eller gi det bort.'
-        )
-      ].join('')
-    default: {
-      const exhaustive: never = step
-      throw new Error(
-        `abandoned_checkout_recovery_offer_unhandled:${String(exhaustive)}`
-      )
-    }
-  }
-}
-
-function buildOfferText(step: 1 | 2 | 3): string {
-  switch (step) {
-    case 1:
-      return ''
-    case 2:
-      return [
-        'Gavekort 10 %',
-        'Gjelder neste kjøp hos Utekos. Du kan også gi det bort.'
-      ].join('\n')
-    case 3:
-      return [
-        '50 % på Comfyrobe',
-        'Rabatten gjelder Comfyrobe når du fullfører utsjekkingen.',
-        '',
-        'Gavekort 10 %',
-        'Bruk det på et senere kjøp, eller gi det bort.'
-      ].join('\n')
-    default: {
-      const exhaustive: never = step
-      throw new Error(
-        `abandoned_checkout_recovery_offer_unhandled:${String(exhaustive)}`
-      )
-    }
-  }
 }
 
 function buildLineItemsText(
@@ -273,7 +217,6 @@ export function getAbandonedCheckoutRecoveryEmailContent(
     safeRecoveryUrl
   )
   const lineItemsText = buildLineItemsText(parsed.data.lineItems)
-  const offerText = buildOfferText(step)
 
   return {
     subject: content.subject,
@@ -281,7 +224,7 @@ export function getAbandonedCheckoutRecoveryEmailContent(
       PREHEADER: escapeHtml(content.preheader),
       HEADING: escapeHtml(content.heading),
       BODY: escapeHtml(content.body),
-      OFFER: buildOfferHtml(step),
+      OFFER: '',
       CTA_LABEL: escapeHtml(content.ctaLabel),
       RECOVERY_URL: safeRecoveryUrl,
       LINE_ITEMS: lineItemsHtml,
@@ -292,7 +235,6 @@ export function getAbandonedCheckoutRecoveryEmailContent(
       '',
       content.body,
       '',
-      offerText,
       lineItemsText,
       `${content.ctaLabel}: ${parsed.data.recoveryUrl}`,
       '',

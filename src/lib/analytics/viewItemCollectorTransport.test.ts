@@ -111,7 +111,10 @@ test('sender straks én gang når analytics-samtykke finnes', () => {
     }
   })
 
-  start(baseEvent)
+  start({
+    ...baseEvent,
+    consent: { ...deniedConsent, analytics: 'granted' }
+  })
 
   assert.equal(sent.length, 1)
   assert.equal(subscriptionCount, 0)
@@ -131,51 +134,29 @@ test('sender straks én gang når analytics-samtykke finnes', () => {
   })
 })
 
-test('venter på Cookiebot og sender bare én gang etter marketing-samtykke', () => {
-  const sent: CanonicalViewItem[] = []
-  let unsubscribeCount = 0
-  let listener: () => void = () => {}
-  let context: ViewItemCollectionContext = {
-    consent: deniedConsent,
-    hasResponse: false
-  }
+test('pending view-item is discarded, never subscribed for later replay', () => {
+  let sends = 0,
+    subscriptions = 0
   const start = createViewItemCollectorTransport({
-    postEvent: async event => {
-      sent.push(event)
+    postEvent: async () => {
+      sends++
     },
     reportError: error => {
       throw error
     },
-    resolveCurrentCollection: () => resolveCollection(context),
-    subscribeToConsentChanges: nextListener => {
-      listener = nextListener
-      return () => {
-        unsubscribeCount += 1
-      }
+    resolveCurrentCollection: () =>
+      resolveCollection({
+        consent: deniedConsent,
+        hasResponse: false
+      }),
+    subscribeToConsentChanges: () => {
+      subscriptions++
+      return () => {}
     }
   })
-
   start(baseEvent)
-  assert.equal(sent.length, 0)
-
-  context = {
-    clickId: { fbclid: 'new-fbclid' },
-    consent: { ...deniedConsent, marketing: 'granted' },
-    hasResponse: true,
-    marketingBrowserId: { fbp: 'new-fbp' }
-  }
-  listener()
-  listener()
-
-  assert.equal(sent.length, 1)
-  assert.equal(unsubscribeCount, 1)
-
-  const sentEvent = sent[0]
-  assert.ok(sentEvent)
-  assert.deepEqual(sentEvent.browser_id, { fbp: 'new-fbp' })
-  assert.deepEqual(sentEvent.click_id, { fbclid: 'new-fbclid' })
-  assert.equal(sentEvent.external_id, 'external-1')
-  assert.deepEqual(sentEvent.user_data, baseEvent.user_data)
+  assert.equal(sends, 0)
+  assert.equal(subscriptions, 0)
 })
 
 test('avslutter uten sending etter et eksplisitt avslag', () => {

@@ -1,19 +1,19 @@
+import {
+  hasCookiebotStatisticsConsent,
+  type CookiebotApi
+} from '@/lib/consent/cookiebotConsent'
 import { GA_MEASUREMENT_ID } from '../../api/constants/monitoring'
 import type { CanonicalViewItem } from './viewItemEvent'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 
 const GOOGLE_TAG_TIMEOUT_MS = 500
 
-export type GoogleAnalyticsField =
-  | 'client_id'
-  | 'session_id'
+export type GoogleAnalyticsField = 'client_id' | 'session_id'
 
 type GoogleTagCallback = (value: unknown) => void
 
 export type GoogleAnalyticsBrowserIdDependencies = {
-  clearTimer: (
-    timer: ReturnType<typeof setTimeout>
-  ) => void
+  clearTimer: (timer: ReturnType<typeof setTimeout>) => void
   getGoogleTagValue: (
     field: GoogleAnalyticsField,
     callback: GoogleTagCallback
@@ -58,21 +58,30 @@ function getGoogleTagValue(
     return
   }
 
+  if (
+    !hasCookiebotStatisticsConsent(
+      (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
+    )
+  ) {
+    callback(undefined)
+    return
+  }
   const currentWindow = window as GoogleTagWindow
   const dataLayer = currentWindow.dataLayer ?? []
   currentWindow.dataLayer = dataLayer
   queueGoogleTagGet(dataLayer, field, callback)
 }
 
-const defaultDependencies: GoogleAnalyticsBrowserIdDependencies = {
-  clearTimer: timer => {
-    clearTimeout(timer)
-  },
-  getGoogleTagValue,
-  setTimer: (callback, timeoutMs) =>
-    setTimeout(callback, timeoutMs),
-  timeoutMs: GOOGLE_TAG_TIMEOUT_MS
-}
+const defaultDependencies: GoogleAnalyticsBrowserIdDependencies =
+  {
+    clearTimer: timer => {
+      clearTimeout(timer)
+    },
+    getGoogleTagValue,
+    setTimer: (callback, timeoutMs) =>
+      setTimeout(callback, timeoutMs),
+    timeoutMs: GOOGLE_TAG_TIMEOUT_MS
+  }
 
 function normalizeGoogleTagValue(
   value: unknown
@@ -126,8 +135,7 @@ export async function enrichCanonicalEventWithGoogleAnalyticsIds<
   }
 >(
   event: E,
-  dependencies: GoogleAnalyticsBrowserIdDependencies =
-    defaultDependencies
+  dependencies: GoogleAnalyticsBrowserIdDependencies = defaultDependencies
 ): Promise<E> {
   if (event.consent.analytics !== 'granted') return event
 
@@ -150,8 +158,7 @@ export async function enrichCanonicalEventWithGoogleAnalyticsIds<
 
 export function enrichCanonicalViewItemWithGoogleAnalyticsIds(
   event: CanonicalViewItem,
-  dependencies: GoogleAnalyticsBrowserIdDependencies =
-    defaultDependencies
+  dependencies: GoogleAnalyticsBrowserIdDependencies = defaultDependencies
 ) {
   return enrichCanonicalEventWithGoogleAnalyticsIds(
     event,

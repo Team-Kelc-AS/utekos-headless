@@ -1,6 +1,10 @@
 import type { ConsentSnapshot } from '@/lib/analytics/canonicalEventEnvelope'
+import { JOURNEY_STORAGE_KEY } from '@/lib/analytics/internalJourneyContext'
 import type { CookiebotApi } from '@/lib/consent/cookiebotConsent'
-import { hasCookiebotStatisticsConsent } from '@/lib/consent/cookiebotConsent'
+import {
+  hasCookiebotStatisticsConsent,
+  hasCookiebotMarketingConsent
+} from '@/lib/consent/cookiebotConsent'
 import { getConsentSnapshot } from '@/lib/analytics/pageViewClientContext'
 import type { PageViewContext } from '@/lib/analytics/pageViewSession'
 import {
@@ -47,7 +51,7 @@ export function createJourneySession(dependencies: {
   let lastPageViewId: string | undefined
   const pages = new Map<string, JourneyPage>()
 
-  function revoke() {
+  function revoke(clearStorage = true) {
     cohortId = undefined
     lastPageViewId = undefined
     pages.clear()
@@ -55,7 +59,11 @@ export function createJourneySession(dependencies: {
       consent: getConsentSnapshot(undefined)
     })
     try {
-      dependencies.getStorage()?.removeItem(COHORT_KEY)
+      if (clearStorage) {
+        const storage = dependencies.getStorage()
+        storage?.removeItem(COHORT_KEY)
+        storage?.removeItem(JOURNEY_STORAGE_KEY)
+      }
     } catch {
       /* Storage may be blocked. */
     }
@@ -65,8 +73,11 @@ export function createJourneySession(dependencies: {
     cookiebot: CookiebotApi | undefined
     pageView: PageViewContext
   }): JourneyPage | undefined {
-    if (!hasCookiebotStatisticsConsent(input.cookiebot)) {
-      revoke()
+    if (
+      !hasCookiebotStatisticsConsent(input.cookiebot) ||
+      !hasCookiebotMarketingConsent(input.cookiebot)
+    ) {
+      revoke(false)
       return undefined
     }
     const consent = {

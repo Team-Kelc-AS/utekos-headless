@@ -3,8 +3,11 @@
 import { useReportWebVitals } from 'next/web-vitals'
 import { reportCanonicalWebVital } from '@/lib/analytics/webVitalReporter'
 import { webVitalMetricNameSchema } from '@/lib/analytics/webVitalMetricName'
+import { useCookiebotConsent } from '@/lib/consent/useCookiebotConsent'
 
-type ReportWebVitalsCallback = Parameters<typeof useReportWebVitals>[0]
+type ReportWebVitalsCallback = Parameters<
+  typeof useReportWebVitals
+>[0]
 type NextWebVitalMetric = Parameters<ReportWebVitalsCallback>[0]
 
 function readMetricAttribution(
@@ -27,11 +30,16 @@ function readMetricAttribution(
 }
 
 const handleWebVitals: ReportWebVitalsCallback = metric => {
-  const parsedName = webVitalMetricNameSchema.safeParse(metric.name)
+  const parsedName = webVitalMetricNameSchema.safeParse(
+    metric.name
+  )
   if (!parsedName.success) {
     console.warn('[web-vital]', {
       name: metric.name,
-      pathname: typeof window === 'undefined' ? '' : window.location.pathname,
+      pathname:
+        typeof window === 'undefined' ? '' : (
+          window.location.pathname
+        ),
       value: metric.value
     })
     return
@@ -53,7 +61,9 @@ const handleWebVitals: ReportWebVitalsCallback = metric => {
       reportCanonicalWebVital({
         ...(attribution ? { attribution } : {}),
         delta: metric.delta,
-        ...(metric.entries ? { entries: [...metric.entries] } : {}),
+        ...(metric.entries ?
+          { entries: [...metric.entries] }
+        : {}),
         id: metric.id,
         name: metricName,
         ...(metric.navigationType ?
@@ -71,7 +81,12 @@ const handleWebVitals: ReportWebVitalsCallback = metric => {
   }
 }
 
-export function WebVitals() {
+function ConsentedWebVitals() {
   useReportWebVitals(handleWebVitals)
   return null
+}
+
+export function WebVitals() {
+  const consent = useCookiebotConsent()
+  return consent.statistics ? <ConsentedWebVitals /> : null
 }

@@ -46,7 +46,9 @@ test('maps Cookiebot categories to the canonical consent snapshot', () => {
 test('extracts supported click identifiers from the current URL', () => {
   assert.deepEqual(
     extractClickIds(
-      'https://utekos.no/?gclid=google-1&fbclid=meta-1&unknown=no'
+      'https://utekos.no/?gclid=google-1&fbclid=meta-1&unknown=no',
+      undefined,
+      true
     ),
     { gclid: 'google-1', fbclid: 'meta-1' }
   )
@@ -56,7 +58,8 @@ test('extracts the Pinterest click id from its documented _epik cookie', () => {
   assert.deepEqual(
     extractClickIds(
       'https://utekos.no/produkter/comfyrobe',
-      '_epik=pinterest-cookie-1; unrelated=value'
+      '_epik=pinterest-cookie-1; unrelated=value',
+      true
     ),
     { epik: 'pinterest-cookie-1' }
   )

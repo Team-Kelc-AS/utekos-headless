@@ -2,6 +2,7 @@ import { ZodError } from 'zod'
 import { provisionalPageViewCaptureSchema } from '../provisionalPageViewCapture'
 import type { ProvisionalPageViewCaptureStore } from './provisionalPageViewCaptureStore'
 import { redactPageUrlForLog } from './redactPageUrlForLog'
+import { applyCanonicalCollectionContext } from '../applyCanonicalCollectionContext'
 
 const MAX_BODY_BYTES = 32 * 1024
 const NO_STORE_HEADERS = {
@@ -72,6 +73,37 @@ export async function handleProvisionalPageViewCaptureRequest(
     const capture = provisionalPageViewCaptureSchema.parse(
       JSON.parse(body)
     )
+    const consent = capture.event.consent
+    if (
+      capture.capture_state !== 'granted' ||
+      (consent.analytics !== 'granted' &&
+        consent.marketing !== 'granted')
+    ) {
+      return Response.json(
+        { error: 'consent_required' },
+        { headers: NO_STORE_HEADERS, status: 403 }
+      )
+    }
+    capture.event = applyCanonicalCollectionContext(
+      capture.event,
+      {
+        consent,
+        hasResponse: true,
+        analyticsBrowserId:
+          consent.analytics === 'granted' ?
+            capture.event.browser_id
+          : undefined
+      }
+    )
+    if (consent.marketing !== 'granted') {
+      const allowed = Object.entries(
+        capture.event.browser_id ?? {}
+      ).filter(([key]) => key.startsWith('ga_'))
+      if (allowed.length)
+        capture.event.browser_id = Object.fromEntries(allowed)
+      else delete capture.event.browser_id
+    }
+    delete capture.event.edge_request_id
     const status = await store.capture(capture)
 
     console.info('[tracking] provisional page_view captured', {

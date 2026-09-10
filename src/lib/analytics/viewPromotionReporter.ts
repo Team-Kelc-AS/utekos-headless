@@ -25,6 +25,7 @@ export function reportCanonicalViewPromotion(
 
   try {
     const clientContext = readBrowserReporterContext()
+    if (!clientContext) return () => {}
     const pageView = browserPageViewSession.ensure({
       pageUrl: clientContext.pageUrl,
       ...(clientContext.documentReferrer ?

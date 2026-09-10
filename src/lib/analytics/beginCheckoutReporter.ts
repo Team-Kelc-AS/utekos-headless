@@ -3,6 +3,7 @@
 import { sendGTMEvent } from '@next/third-parties/google'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { readBrowserReporterContext } from './browserReporterContext'
+import { isBrowserEventConsentCurrent } from './isBrowserEventConsentCurrent'
 import { browserPageViewSession } from './pageViewSession'
 import {
   buildBeginCheckoutDataLayerEvent,
@@ -56,6 +57,7 @@ export async function reportCanonicalBeginCheckout(
   try {
     await waitForCookiebotConsentReady()
     const clientContext = readBrowserReporterContext()
+    if (!clientContext) return
     const pageView = browserPageViewSession.ensure({
       pageUrl: clientContext.pageUrl,
       ...(clientContext.documentReferrer ?
@@ -65,6 +67,8 @@ export async function reportCanonicalBeginCheckout(
 
     const eventTime = new Date().toISOString()
     const commerce = await mapShopifyBeginCheckout(input.cart)
+    if (!isBrowserEventConsentCurrent(clientContext.consent))
+      return
     const experiment =
       clientContext.consent.analytics === 'granted' ?
         readSkreddersyVarmenLayoutAssignment()
@@ -96,11 +100,15 @@ export async function reportCanonicalBeginCheckout(
     })
     const metaEnrichedEvent =
       await enrichCanonicalEventWithMetaAttribution(initialEvent)
+    if (!isBrowserEventConsentCurrent(clientContext.consent))
+      return
     const event = enrichCanonicalBrowserJourneyContext(
       await enrichCanonicalEventWithGoogleAnalyticsIds(
         metaEnrichedEvent
       )
     )
+    if (!isBrowserEventConsentCurrent(clientContext.consent))
+      return
     const snapshot = createCheckoutAttributionSnapshot(
       {
         ...event,

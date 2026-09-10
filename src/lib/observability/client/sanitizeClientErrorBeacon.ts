@@ -1,16 +1,12 @@
 import { sanitizeOperationalPathname } from '@/lib/observability/logging/sanitizeOperationalPathname'
 
-const EMAIL_LIKE = /\S+@\S+\.\S+/g
-const MAX_MESSAGE_LENGTH = 240
+const KNOWN_ERROR =
+  /\b(?:AbortError|TypeError|ReferenceError|SyntaxError|RangeError|TimeoutError|URIError|ZodError|Error)\b/
 
 export function sanitizeClientErrorMessage(
   message: string
 ): string {
-  return message
-    .replace(EMAIL_LIKE, '[redacted]')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, MAX_MESSAGE_LENGTH)
+  return message.match(KNOWN_ERROR)?.[0] ?? 'ClientError'
 }
 
 export function sanitizeClientErrorFilename(

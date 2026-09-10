@@ -1,4 +1,5 @@
 import type { Instrumentation } from 'next'
+import { sanitizeServerRequestError } from './lib/observability/logging/sanitizeServerRequestError'
 
 const OTEL_SERVICE_NAME = 'utekos-headless'
 
@@ -27,26 +28,13 @@ export async function register() {
  * `digest` is the stable identifier React/Next assigns to the error, so it
  * can be correlated with the opaque digest shown to users in production.
  */
-export const onRequestError: Instrumentation.onRequestError = async (error, request, context) => {
-  const err =
-    error instanceof Error ?
-      (error as Error & { digest?: string })
-    : { name: 'NonError', message: String(error), digest: undefined, stack: undefined }
-
-  console.error('[next][onRequestError]', {
-    name: err.name,
-    message: err.message,
-    digest: err.digest,
-    stack: err.stack,
-    path: request.path,
-    method: request.method,
-    edgeRequestId:
-      request.headers['x-utekos-edge-request-id'] ??
-      undefined,
-    routerKind: context.routerKind,
-    routePath: context.routePath,
-    routeType: context.routeType,
-    renderSource: context.renderSource,
-    revalidateReason: context.revalidateReason
-  })
-}
+export const onRequestError: Instrumentation.onRequestError =
+  async (error, request, context) => {
+    console.error('[next][onRequestError]', {
+      ...sanitizeServerRequestError(error, request),
+      routerKind: context.routerKind,
+      routeType: context.routeType,
+      renderSource: context.renderSource,
+      revalidateReason: context.revalidateReason
+    })
+  }

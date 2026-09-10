@@ -22,7 +22,7 @@ function canonicalEvent(eventName, eventId, customData = {}) {
       page_url:
         'https://utekos.no/produkter/utekos-techdown?fbclid=click-1',
       custom_data: customData,
-      consent: { marketing: 'denied' }
+      consent: { marketing: 'granted' }
     }
   }
 }
@@ -52,13 +52,17 @@ function createRuntime({
     head: { appendChild: node => insertedScripts.push(node) }
   }
   const window = {
-    Cookiebot: { consent: { marketing }, hasResponse },
+    Cookiebot: {
+      consent: { marketing, method: 'explicit' },
+      hasResponse
+    },
     URL,
     crypto: {
       randomUUID: () => '550e8400-e29b-41d4-a716-446655440000'
     },
     dataLayer: [],
-    addEventListener: (name, handler) => listeners.set(name, handler),
+    addEventListener: (name, handler) =>
+      listeners.set(name, handler),
     document,
     location: new URL(
       'https://utekos.no/produkter/utekos-techdown?fbclid=click-1'
@@ -201,7 +205,7 @@ test('does not dispatch browser events to Signals Gateway', () => {
   assert.deepEqual(queuedGatewayCalls(runtime.window), [])
 })
 
-test('releases events recorded before the first marketing decision', () => {
+test('discards events recorded before the first marketing decision', () => {
   const runtime = createRuntime({ marketing: false })
   runtime.window.addEventListener = () => {}
 
@@ -223,10 +227,7 @@ test('releases events recorded before the first marketing decision', () => {
     queuedCalls(runtime.window)
       .filter(call => call[0] === 'trackSingle')
       .map(call => [call[2], call[4].eventID]),
-    [
-      ['PageView', 'before-consent'],
-      ['PageView', 'after-consent']
-    ]
+    [['PageView', 'after-consent']]
   )
 })
 
@@ -660,10 +661,11 @@ test('omits currency and value when currency is empty or non-ISO', () => {
   assert.deepEqual(eventCalls[4][3], {})
 })
 
-
 test('keeps SDK history PageViews disabled and forwards consent changes once', () => {
   const runtime = createRuntime()
-  runtime.window.dataLayer.push(canonicalEvent('page_view', 'first-page'))
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'first-page')
+  )
   vm.runInContext(script, runtime.context)
   vm.runInContext(script, runtime.context)
   assert.equal(runtime.window.fbq.disablePushState, true)
@@ -671,26 +673,41 @@ test('keeps SDK history PageViews disabled and forwards consent changes once', (
 
   runtime.window.Cookiebot.consent.marketing = false
   runtime.listeners.get('CookiebotOnConsentReady')()
-  runtime.window.dataLayer.push(canonicalEvent('page_view', 'denied-page'))
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'denied-page')
+  )
   runtime.intervals[0]()
   runtime.listeners.get('CookiebotOnDecline')()
-  assert.deepEqual(queuedCalls(runtime.window).filter(call => call[0] === 'consent'), [
-    ['consent', 'grant'],
-    ['consent', 'revoke']
-  ])
+  assert.deepEqual(
+    queuedCalls(runtime.window).filter(
+      call => call[0] === 'consent'
+    ),
+    [
+      ['consent', 'grant'],
+      ['consent', 'revoke']
+    ]
+  )
 
   runtime.window.Cookiebot.consent.marketing = true
   runtime.listeners.get('CookiebotOnAccept')()
-  runtime.window.dataLayer.push(canonicalEvent('page_view', 'new-granted-page'))
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'new-granted-page')
+  )
   runtime.intervals[0]()
   runtime.listeners.get('CookiebotOnConsentReady')()
   const calls = queuedCalls(runtime.window)
-  assert.deepEqual(calls.filter(call => call[0] === 'consent'), [
-    ['consent', 'grant'],
-    ['consent', 'revoke'],
-    ['consent', 'grant']
-  ])
-  assert.deepEqual(calls.filter(call => call[0] === 'trackSingle').map(call => call[4].eventID), [
-    'first-page', 'new-granted-page'
-  ])
+  assert.deepEqual(
+    calls.filter(call => call[0] === 'consent'),
+    [
+      ['consent', 'grant'],
+      ['consent', 'revoke'],
+      ['consent', 'grant']
+    ]
+  )
+  assert.deepEqual(
+    calls
+      .filter(call => call[0] === 'trackSingle')
+      .map(call => call[4].eventID),
+    ['first-page', 'new-granted-page']
+  )
 })

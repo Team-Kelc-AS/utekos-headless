@@ -2,6 +2,7 @@ import type { ConsentSnapshot } from './pageViewEvent'
 import { resolveClickIds } from './clickIdSessionStore'
 
 export type CookiebotConsent = {
+  method?: string | null
   marketing?: boolean
   preferences?: boolean
   statistics?: boolean
@@ -51,6 +52,7 @@ export function extractClickIds(
   cookieHeader: string = '',
   marketingConsentGranted: boolean = false
 ) {
+  if (!marketingConsentGranted) return undefined
   const epik = parseCookies(cookieHeader).get('_epik')
 
   return resolveClickIds(

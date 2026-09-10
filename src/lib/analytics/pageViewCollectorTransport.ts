@@ -1,3 +1,4 @@
+import { hasCookiebotExplicitResponse } from '@/lib/consent/cookiebotConsent'
 import {
   extractBrowserIds,
   getConsentSnapshot,
@@ -7,15 +8,11 @@ import {
   canonicalPageViewSchema,
   type CanonicalPageView
 } from './pageViewEvent'
-import {
-  browserPageViewDispatchObservationTransport,
-  type PageViewDispatchObservation
-} from './pageViewDispatchObservation'
+import type { PageViewDispatchObservation } from './pageViewDispatchObservation'
 import type { ProvisionalPageViewCaptureState } from './provisionalPageViewCapture'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
-import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
-import { runConsentStep } from './runConsentStep'
-import { reportConsentDiagnostic } from '@/lib/observability/client/reportConsentDiagnostic'
+import { withoutTrackingQuery } from './withoutTrackingQuery'
+import { filterConsentedBrowserIds } from './filterConsentedBrowserIds'
 
 export type CookiebotState = {
   consent?: CookiebotConsent
@@ -23,8 +20,7 @@ export type CookiebotState = {
   declined?: boolean
   hasResponse?: boolean
 }
-
-type PageViewCollectorTransportDependencies = {
+type Dependencies = {
   capture: (
     event: CanonicalPageView,
     state: ProvisionalPageViewCaptureState
@@ -39,403 +35,242 @@ type PageViewCollectorTransportDependencies = {
   ) => Promise<unknown>
   send: (event: CanonicalPageView) => Promise<void>
 }
-
 export type PageViewCollectorCorrelation = {
   edgeRequestId: string
   token: string
 }
-
-type PendingPageView = {
-  correlation?: PageViewCollectorCorrelation
-  event: CanonicalPageView
-}
-
 export type PageViewCollectorResult =
   | 'captured'
   | 'failed'
   | 'sent'
   | 'skipped'
-
-export function hasCookiebotDecision(
-  cookiebot: CookiebotState | undefined
-) {
-  return (
-    cookiebot?.hasResponse === true ||
-    cookiebot?.consented === true ||
-    cookiebot?.declined === true
-  )
-}
+export const hasCookiebotDecision = hasCookiebotExplicitResponse
 
 export function prepareCanonicalPageViewForCollector(
   event: CanonicalPageView,
   cookiebot: CookiebotState,
   cookieHeader: string
 ): CanonicalPageView {
-  const consent = getConsentSnapshot(cookiebot.consent)
-  const hasMarketingConsent = consent.marketing === 'granted'
-
-  const browserId =
-    hasMarketingConsent ?
-      extractBrowserIds(cookieHeader, consent)
+  const live = getConsentSnapshot(
+    hasCookiebotDecision(cookiebot) ?
+      cookiebot.consent
     : undefined
-
-  const baseEvent = { ...event }
-
-  delete baseEvent.browser_id
-  delete baseEvent.click_id
-  delete baseEvent.client_ip_address
-  delete baseEvent.external_id
-  delete baseEvent.experiment
-  delete baseEvent.impression_id
-  delete baseEvent.region_code
-  delete baseEvent.user_data
-
-  const experiment =
-    consent.analytics === 'granted' ?
-      (readSkreddersyVarmenLayoutAssignment() ??
-      event.experiment)
-    : undefined
-
-  return canonicalPageViewSchema.parse({
-    ...baseEvent,
-    consent,
-    ...(experiment ? { experiment } : {}),
-    ...(browserId ? { browser_id: browserId } : {}),
-    ...(hasMarketingConsent && event.click_id ?
-      { click_id: event.click_id }
-    : {}),
-    ...(hasMarketingConsent && event.external_id ?
-      { external_id: event.external_id }
-    : {}),
-    ...(hasMarketingConsent && event.impression_id ?
-      { impression_id: event.impression_id }
-    : {}),
-    ...(hasMarketingConsent && event.user_data ?
-      { user_data: event.user_data }
-    : {})
-  })
+  )
+  const consent = {
+    ...live,
+    analytics:
+      event.consent.analytics === 'granted' ?
+        live.analytics
+      : ('denied' as const),
+    marketing:
+      event.consent.marketing === 'granted' ?
+        live.marketing
+      : ('denied' as const)
+  }
+  const next = { ...event, consent }
+  delete next.edge_request_id
+  delete next.browser_id
+  delete next.client_ip_address
+  if (consent.marketing !== 'granted') {
+    delete next.click_id
+    delete next.external_id
+    delete next.impression_id
+    delete next.region_code
+    delete next.user_data
+    next.page_url = withoutTrackingQuery(next.page_url)
+    if (next.referrer_url)
+      next.referrer_url = withoutTrackingQuery(next.referrer_url)
+  }
+  if (consent.analytics !== 'granted') {
+    delete next.experiment
+    delete next.journey_id
+    delete next.previous_page_view_id
+  }
+  const browserId = filterConsentedBrowserIds(
+    {
+      ...event.browser_id,
+      ...extractBrowserIds(cookieHeader, consent)
+    },
+    consent
+  )
+  if (browserId) next.browser_id = browserId
+  return canonicalPageViewSchema.parse(next)
 }
-
-export function createPageViewCollectorTransport(
-  dependencies: PageViewCollectorTransportDependencies
+function permitsCollection(event: CanonicalPageView) {
+  return (
+    event.consent.analytics === 'granted' ||
+    event.consent.marketing === 'granted'
+  )
+}
+function permitsLiveEvent(
+  event: CanonicalPageView,
+  current: CookiebotState | undefined
 ) {
-  const capturedEventStates = new Map<
-    string,
-    ProvisionalPageViewCaptureState
-  >()
-  const captureInFlightEvents = new Map<
-    string,
-    Promise<boolean>
-  >()
-  const completedEventIds = new Set<string>()
-  const inFlightEventIds = new Set<string>()
-  const pendingEvents = new Map<string, PendingPageView>()
-  let latestQueuedEventId: string | undefined
-
-  function captureStateRank(
-    state: ProvisionalPageViewCaptureState
-  ) {
-    if (state === 'granted') return 2
-    if (state === 'denied') return 1
-    return 0
+  return (
+    hasCookiebotDecision(current) &&
+    ((event.consent.analytics === 'granted' &&
+      current?.consent?.statistics === true) ||
+      (event.consent.marketing === 'granted' &&
+        current?.consent?.marketing === true))
+  )
+}
+export function createPageViewCollectorTransport(
+  dependencies: Dependencies
+) {
+  const pending = new Map<string, CanonicalPageView>()
+  const inFlight = new Set<string>()
+  const completed = new Set<string>()
+  let generation = 0
+  function clear() {
+    generation += 1
+    pending.clear()
+    completed.clear()
   }
-
-  function resolveCaptureState(
-    cookiebot: CookiebotState | undefined
-  ): ProvisionalPageViewCaptureState {
-    if (!hasCookiebotDecision(cookiebot)) return 'pending'
-
-    const consent = getConsentSnapshot(cookiebot?.consent)
-    return (
-        consent.analytics === 'granted' ||
-          consent.marketing === 'granted'
-      ) ?
-        'granted'
-      : 'denied'
+  function cookieHeader() {
+    try {
+      return dependencies.getCookieHeader()
+    } catch {
+      return ''
+    }
   }
-
-  async function capturePendingEvent(
-    pending: PendingPageView,
-    state: ProvisionalPageViewCaptureState
-  ) {
-    const eventId = pending.event.event_id
-    const capturedState = capturedEventStates.get(eventId)
-
+  async function flush(): Promise<PageViewCollectorResult> {
+    const current = dependencies.getCookiebot()
     if (
-      capturedState &&
-      captureStateRank(capturedState) >= captureStateRank(state)
+      !hasCookiebotDecision(current) ||
+      (!current?.consent?.statistics &&
+        !current?.consent?.marketing)
     ) {
-      return true
+      clear()
+      return 'skipped'
     }
-
-    const inFlight = captureInFlightEvents.get(eventId)
-    if (inFlight) {
-      await inFlight
-      return capturePendingEvent(pending, state)
-    }
-
-    const operation = (async () => {
+    const version = generation
+    let result: PageViewCollectorResult = 'skipped'
+    for (const [id, event] of pending) {
+      if (inFlight.has(id)) continue
+      inFlight.add(id)
       try {
-        await dependencies.capture(pending.event, state)
-        capturedEventStates.set(eventId, state)
-        return true
+        const beforePrepare = dependencies.getCookiebot()
+        if (!permitsLiveEvent(event, beforePrepare)) {
+          pending.delete(id)
+          continue
+        }
+        const prepared = prepareCanonicalPageViewForCollector(
+          event,
+          beforePrepare!,
+          cookieHeader()
+        )
+        if (!permitsCollection(prepared)) {
+          pending.delete(id)
+          continue
+        }
+        let enriched =
+          enrichCanonicalBrowserJourneyContext(prepared)
+        try {
+          enriched = await dependencies.enrich(enriched)
+        } catch {
+          /* Optional enrichment does not block a consented event. */
+        }
+        if (version !== generation) continue
+        const latest = dependencies.getCookiebot()
+        if (!permitsLiveEvent(enriched, latest)) {
+          clear()
+          continue
+        }
+        const finalEvent = prepareCanonicalPageViewForCollector(
+          enriched,
+          latest!,
+          cookieHeader()
+        )
+        if (!permitsCollection(finalEvent)) {
+          clear()
+          continue
+        }
+        await dependencies.capture(finalEvent, 'granted')
+        if (version !== generation) continue
+        const beforeSend = dependencies.getCookiebot()
+        if (!permitsLiveEvent(finalEvent, beforeSend)) {
+          clear()
+          continue
+        }
+        const sendEvent = prepareCanonicalPageViewForCollector(
+          finalEvent,
+          beforeSend!,
+          cookieHeader()
+        )
+        if (!permitsCollection(sendEvent)) {
+          clear()
+          continue
+        }
+        await dependencies.send(sendEvent)
+        pending.delete(id)
+        completed.add(id)
+        if (completed.size > 128)
+          completed.delete(completed.values().next().value!)
+        result = 'sent'
       } catch {
-        return false
+        result = 'failed'
+      } finally {
+        inFlight.delete(id)
       }
-    })()
-
-    captureInFlightEvents.set(eventId, operation)
-    const result = await operation
-    if (captureInFlightEvents.get(eventId) === operation) {
-      captureInFlightEvents.delete(eventId)
     }
     return result
   }
-
-  function retainLatestPendingEvent() {
-    let latestEvent: PendingPageView | undefined
-
-    for (const event of pendingEvents.values()) {
-      latestEvent = event
-    }
-
-    pendingEvents.clear()
-
-    if (latestEvent) {
-      pendingEvents.set(latestEvent.event.event_id, latestEvent)
-    }
-  }
-
-  async function flush(): Promise<PageViewCollectorResult> {
-    if (pendingEvents.size === 0) return 'skipped'
-
-    const cookiebot = dependencies.getCookiebot()
-
-    if (!hasCookiebotDecision(cookiebot)) {
-      const results = await Promise.all(
-        Array.from(pendingEvents.values()).map(pending =>
-          capturePendingEvent(pending, 'pending')
-        )
-      )
-      return results.every(Boolean) ? 'captured' : 'failed'
-    }
-
-    const consent = getConsentSnapshot(cookiebot?.consent)
-    const hasPermittedPurpose =
-      consent.analytics === 'granted' ||
-      consent.marketing === 'granted'
-
-    if (!hasPermittedPurpose) {
-      const results = await Promise.all(
-        Array.from(pendingEvents.values()).map(pending =>
-          capturePendingEvent(pending, 'denied')
-        )
-      )
-      retainLatestPendingEvent()
-      return results.every(Boolean) ? 'captured' : 'failed'
-    }
-
-    const pendingPageViews = Array.from(
-      pendingEvents.values()
-    ).filter(
-      pending =>
-        (!completedEventIds.has(pending.event.event_id) ||
-          consent.marketing === 'granted') &&
-        !inFlightEventIds.has(pending.event.event_id)
-    )
-
-    for (const pending of pendingPageViews) {
-      inFlightEventIds.add(pending.event.event_id)
-    }
-
-    if (pendingPageViews.length === 0) return 'skipped'
-
-    const results = await Promise.allSettled(
-      pendingPageViews.map(async pending => {
-        const { correlation, event } = pending
-        await capturePendingEvent(pending, 'granted')
-        const prepared = prepareCanonicalPageViewForCollector(
-          event,
-          cookiebot as CookiebotState,
-          runConsentStep(dependencies.getCookieHeader) ?? ''
-        )
-        const journeyEnriched =
-          runConsentStep(() =>
-            enrichCanonicalBrowserJourneyContext(prepared)
-          ) ?? prepared
-        let enriched = journeyEnriched
-        try {
-          enriched = await dependencies.enrich(journeyEnriched)
-        } catch {
-          reportConsentDiagnostic('optional_context_failed')
-        }
-        const latestCookiebot = dependencies.getCookiebot()
-        const latestConsent = getConsentSnapshot(
-          latestCookiebot?.consent
-        )
-        if (
-          !hasCookiebotDecision(latestCookiebot) ||
-          latestConsent.analytics !== consent.analytics ||
-          latestConsent.marketing !== consent.marketing ||
-          latestConsent.preferences !== consent.preferences
-        )
-          return false
-        enriched = canonicalPageViewSchema.parse(enriched)
-
-        if (
-          dependencies.observeDispatch &&
-          correlation &&
-          enriched.edge_request_id === correlation.edgeRequestId
-        ) {
-          void dependencies
-            .observeDispatch({
-              correlation_token: correlation.token,
-              edge_request_id: correlation.edgeRequestId,
-              event_id: enriched.event_id,
-              event_name: 'page_view',
-              page_view_id: enriched.page_view_id
-            })
-            .catch(() => undefined)
-        }
-
-        await dependencies.send(enriched)
-        return true
-      })
-    )
-
-    for (const [index, result] of results.entries()) {
-      const pending = pendingPageViews[index]
-      if (!pending) continue
-      const { event } = pending
-
-      inFlightEventIds.delete(event.event_id)
-
-      if (result.status === 'fulfilled' && result.value) {
-        completedEventIds.add(event.event_id)
-        // Analytics acceptance is not Meta delivery. Keep the current
-        // page's original identity eligible for a later marketing grant.
-        if (
-          consent.marketing === 'granted' ||
-          event.event_id !== latestQueuedEventId
-        ) {
-          pendingEvents.delete(event.event_id)
-        }
-      }
-    }
-
-    // A grant can arrive while the analytics-only request is in flight.
-    // Reconcile immediately instead of relying on another CMP event/refresh.
-    const currentCookiebot = dependencies.getCookiebot()
-    if (
-      consent.marketing !== 'granted' &&
-      hasCookiebotDecision(currentCookiebot) &&
-      currentCookiebot?.consent?.marketing === true &&
-      Array.from(pendingEvents.keys()).some(eventId =>
-        completedEventIds.has(eventId)
-      )
-    ) {
-      return flush()
-    }
-
-    return (
-      results.some(result => result.status === 'rejected') ?
-        'failed'
-      : (
-        results.some(
-          result => result.status === 'fulfilled' && result.value
-        )
-      ) ?
-        'sent'
-      : 'captured'
-    )
-  }
-
   async function queue(
     event: CanonicalPageView,
-    correlation?: PageViewCollectorCorrelation
+    _correlation?: PageViewCollectorCorrelation
   ) {
+    const current = dependencies.getCookiebot()
     if (
-      !completedEventIds.has(event.event_id) &&
-      !inFlightEventIds.has(event.event_id) &&
-      !pendingEvents.has(event.event_id)
+      !permitsCollection(event) ||
+      !permitsLiveEvent(event, current)
     ) {
-      latestQueuedEventId = event.event_id
-      for (const eventId of pendingEvents.keys()) {
-        if (completedEventIds.has(eventId)) {
-          pendingEvents.delete(eventId)
-        }
-      }
-      pendingEvents.set(event.event_id, {
-        ...(correlation ? { correlation } : {}),
-        event
-      })
+      clear()
+      return 'skipped' as const
     }
-
-    const pending = pendingEvents.get(event.event_id)
-    if (pending) {
-      await capturePendingEvent(
-        pending,
-        resolveCaptureState(dependencies.getCookiebot())
-      )
-    }
-
+    if (
+      !completed.has(event.event_id) &&
+      !pending.has(event.event_id)
+    )
+      pending.set(event.event_id, event)
     return flush()
   }
-
-  return { flush, queue }
+  return { clear, flush, queue }
 }
-
-type CookiebotWindow = Window & { Cookiebot?: CookiebotState }
-
+async function post(endpoint: string, body: unknown) {
+  const response = await fetch(endpoint, {
+    body: JSON.stringify(body),
+    cache: 'no-store',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    keepalive: true,
+    method: 'POST'
+  })
+  if (!response.ok)
+    throw new Error(
+      `Page-view collector returned ${response.status}`
+    )
+}
 export const browserPageViewCollectorTransport =
   createPageViewCollectorTransport({
-    capture: async (event, captureState) => {
-      const response = await fetch(
-        '/api/events/page-view/capture',
-        {
-          body: JSON.stringify({
-            capture_state: captureState,
-            event
-          }),
-          cache: 'no-store',
-          credentials: 'same-origin',
-          headers: { 'Content-Type': 'application/json' },
-          keepalive: true,
-          method: 'POST'
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(
-          `Page-view capture returned ${response.status}`
-        )
-      }
-    },
+    capture: (event, captureState) =>
+      post('/api/events/page-view/capture', {
+        capture_state: captureState,
+        event
+      }),
     enrich: async event => {
       const { enrichCanonicalEventWithMetaAttribution } =
         await import('./enrichCanonicalEventWithMetaAttribution')
       return enrichCanonicalEventWithMetaAttribution(event)
     },
-    getCookiebot: () => (window as CookiebotWindow).Cookiebot,
-    getCookieHeader: () => document.cookie,
-    observeDispatch: observation =>
-      browserPageViewDispatchObservationTransport.observe(
-        observation
-      ),
-    send: async event => {
-      const response = await fetch('/api/events/page-view', {
-        body: JSON.stringify(event),
-        cache: 'no-store',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        keepalive: true,
-        method: 'POST'
-      })
-
-      if (!response.ok) {
-        throw new Error(
-          `Page-view collector returned ${response.status}`
-        )
+    getCookiebot: () => {
+      const target = window as Window & {
+        Cookiebot?: CookiebotState
+        __utekosConsentReloading?: boolean
       }
-    }
+      return target.__utekosConsentReloading ? undefined : (
+          target.Cookiebot
+        )
+    },
+    getCookieHeader: () => document.cookie,
+    send: event => post('/api/events/page-view', event)
   })

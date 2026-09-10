@@ -57,6 +57,8 @@ export async function handleJourneyRequest(
   }
   if (!parsed.success)
     return respond({ error: 'invalid_event_or_consent' }, 400)
+  if (parsed.data.consent.marketing !== 'granted')
+    return respond({ error: 'consent_required' }, 403)
 
   const now = dependencies.now()
   const eventTime = Date.parse(parsed.data.occurred_at)
