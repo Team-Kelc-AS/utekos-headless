@@ -67,55 +67,6 @@ export function WishlistButton({
   const isLabelled = buttonVariant === 'labelled'
 
   function handleWishlistClick() {
-    // #region agent log
-    {
-      const cookiebot = (
-        window as Window & {
-          Cookiebot?: {
-            hasResponse?: boolean
-            consent?: {
-              marketing?: boolean
-              method?: string | null
-              statistics?: boolean
-            }
-          }
-          __utekosConsentReloading?: boolean
-        }
-      ).Cookiebot
-      fetch(
-        'http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Debug-Session-Id': '2aed25'
-          },
-          body: JSON.stringify({
-            sessionId: '2aed25',
-            runId: 'pre-fix',
-            hypothesisId: 'H4',
-            location: 'WishlistButton.tsx:handleWishlistClick',
-            message: 'wishlist button clicked',
-            data: {
-              hasVariant: Boolean(variant),
-              cookiebotHasResponse: cookiebot?.hasResponse === true,
-              consentMethod: cookiebot?.consent?.method ?? null,
-              marketing: cookiebot?.consent?.marketing === true,
-              statistics: cookiebot?.consent?.statistics === true,
-              reloading: Boolean(
-                (
-                  window as Window & {
-                    __utekosConsentReloading?: boolean
-                  }
-                ).__utekosConsentReloading
-              )
-            },
-            timestamp: Date.now()
-          })
-        }
-      ).catch(() => {})
-    }
-    // #endregion
     if (!variant) {
       toast.error(
         'Velg en variant før du legger til i ønskelisten'

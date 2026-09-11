@@ -282,6 +282,42 @@ test('TechDown mobile gallery uses 910:1450 product stills with overlays', async
   )
 })
 
+test('PDP gallery stays sticky only within the purchase-details row', async () => {
+  const [pageSource, gridSource, galleryColumnSource, optionsColumnSource, accordionSource] =
+    await Promise.all([
+      readSource('src/app/produkter/[handle]/components/ProductPageView.tsx'),
+      readSource('src/components/jsx/ProductPageGrid.tsx'),
+      readSource('src/components/jsx/GalleryColumn.tsx'),
+      readSource('src/components/jsx/OptionsColumn.tsx'),
+      readSource('src/app/produkter/[handle]/components/ProductPageAccordion.tsx')
+    ])
+
+  assert.match(
+    pageSource,
+    /galleryStickyClassName = `\$\{galleryFrameClassName\} md:sticky md:top-24 lg:top-20`/,
+    'The gallery must remain sticky from iPad-sized viewports upward'
+  )
+  assert.match(
+    gridSource,
+    /md:grid-cols-\[minmax\(0,2fr\)_minmax\(0,1fr\)\]/,
+    'The desktop layout must use independent gallery and purchase columns'
+  )
+  assert.match(galleryColumnSource, /md:col-start-1 md:row-start-1/)
+  assert.match(optionsColumnSource, /md:col-start-2 md:row-start-1/)
+  assert.match(accordionSource, /md:col-start-1 md:row-start-2/)
+
+  const galleryEnd = pageSource.indexOf('</GalleryColumn>')
+  const optionsEnd = pageSource.indexOf('</OptionsColumn>')
+  const accordionStart = pageSource.indexOf('<ProductPageAccordion', galleryEnd)
+
+  assert.ok(galleryEnd >= 0, 'The gallery column must close before the accordion')
+  assert.ok(optionsEnd > galleryEnd, 'The purchase column must follow the gallery')
+  assert.ok(
+    accordionStart > optionsEnd,
+    'The accordion must be a separate grid item after the sticky gallery row'
+  )
+})
+
 function extractExportBody(
   source: string,
   exportName: string

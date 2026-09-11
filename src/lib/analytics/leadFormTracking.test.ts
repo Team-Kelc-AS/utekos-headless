@@ -70,6 +70,7 @@ test('createCanonicalGenerateLead includes form metadata and hashed user_data', 
     eventId: submissionId,
     eventTime: '2026-07-18T10:00:00.000Z',
     pageUrl: 'https://utekos.no/produkter/utekos-dun',
+    referrerUrl: 'https://utekos.no/produkter',
     journeyId: '11111111-1111-4111-8111-111111111111',
     pageViewId: '22222222-2222-4222-8222-222222222222',
     userData: hashes
@@ -86,6 +87,7 @@ test('createCanonicalGenerateLead includes form metadata and hashed user_data', 
   assert.equal(event.custom_data.value, 0)
   assert.equal(event.user_data?.email_sha256?.length, 1)
   assert.equal(event.user_data?.phone_sha256?.length, 1)
+  assert.equal(event.referrer_url, 'https://utekos.no/produkter')
 
   const dataLayer = buildGenerateLeadDataLayerEvent(event)
   assert.equal(dataLayer.event, 'generate_lead')

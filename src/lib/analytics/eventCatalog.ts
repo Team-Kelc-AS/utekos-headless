@@ -1321,7 +1321,10 @@ const purchaseProviders = {
   meta: providerMapping({
     support: 'supported',
     eventName: 'Purchase',
-    transport: { browser: null, server: 'meta_conversions_api' },
+    transport: {
+      browser: 'shopify_customer_events',
+      server: 'meta_conversions_api'
+    },
     requiredParameters: [
       ...baseProviderParameters,
       'action_source',
@@ -1336,7 +1339,7 @@ const purchaseProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'Meta CAPI purchase outbox is active when checkout marketing consent was granted.',
+      'The marketing-consented Shopify Customer Events browser Purchase is implemented locally and pending provider publication; Meta CAPI remains active. Both reuse the deterministic order event_id for deduplication.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({

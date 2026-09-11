@@ -374,7 +374,10 @@ test('declares one Meta browser owner and one Meta server owner', () => {
 
   const purchaseMeta = eventCatalog.purchase.providers.meta
 
-  assert.equal(purchaseMeta.transport.browser, null)
+  assert.equal(
+    purchaseMeta.transport.browser,
+    'shopify_customer_events'
+  )
   assert.equal(
     purchaseMeta.transport.server,
     'meta_conversions_api'

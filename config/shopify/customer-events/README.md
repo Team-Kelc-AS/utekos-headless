@@ -4,6 +4,44 @@ These files are reviewed source artifacts for Shopify Admin
 Customer Events. A repository or Vercel deployment does not
 publish them to Shopify.
 
+## Meta Purchase
+
+`meta-purchase-pixel.js` subscribes only to Shopify's documented
+`checkout_completed` event and sends Meta Pixel event `Purchase`.
+It:
+
+- fails closed unless Shopify reports
+  `marketingAllowed === true`;
+- derives the same deterministic Purchase `event_id` as the
+  canonical Shopify paid-order path so Pixel and Conversions API
+  can deduplicate;
+- sends the numeric Shopify variant IDs used by the Meta catalog,
+  item quantities and prices, order value and currency;
+- hashes a checkout email in the sandbox before using it for Meta
+  advanced matching; and
+- neither logs nor persists the email.
+
+Shopify documents that `checkout_completed` can be absent if the
+Thank you or first post-purchase page does not load. The
+server-side paid-order path therefore remains the authoritative
+and redundant Meta Purchase source.
+
+Publishing or replacing this Shopify Custom Pixel is a
+provider-resource mutation and requires explicit production
+approval. After activation, a natural marketing-consented
+purchase must prove exactly one browser Purchase, one server
+Purchase, identical `event_id` values, matching commerce values,
+successful Meta deduplication and no raw customer data in logs or
+inspection artifacts. Do not create a real payment or order as a
+smoke test.
+
+Official sources:
+
+- [Meta Conversions API best practices](https://developers.facebook.com/documentation/ads-commerce/conversions-api/best-practices)
+- [Meta event deduplication](https://www.facebook.com/business/help/823677331451951)
+- [Shopify `checkout_completed`](https://shopify.dev/docs/api/web-pixels-api/standard-events/checkout_completed)
+- [Shopify Web Pixels privacy API](https://shopify.dev/docs/api/web-pixels-api/pixel-privacy)
+
 ## Pinterest Checkout
 
 `pinterest-checkout-pixel.js` subscribes only to Shopify's

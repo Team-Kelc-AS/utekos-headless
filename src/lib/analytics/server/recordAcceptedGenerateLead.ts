@@ -226,6 +226,7 @@ export type RecordAcceptedGenerateLeadInput = {
   leadType: LeadType
   pageUrl: string
   pageViewId?: string
+  referrerUrl?: string
   journeyId?: string
   phone?: string
   requestContext: CanonicalGenerateLeadRequestContext
@@ -342,6 +343,9 @@ export async function recordAcceptedGenerateLead(
     eventId: input.submissionId,
     eventTime,
     pageUrl: input.pageUrl,
+    ...(input.referrerUrl ?
+      { referrerUrl: input.referrerUrl }
+    : {}),
     signalAudit,
     ...(input.pageViewId ?
       { pageViewId: input.pageViewId }

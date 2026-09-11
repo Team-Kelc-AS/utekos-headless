@@ -14,14 +14,12 @@ export async function AsyncRelatedProducts({
 }: AsyncRelatedProductsProps) {
   await connection()
 
+  let products: Awaited<
+    ReturnType<typeof getCachedRelatedProducts>
+  >
+
   try {
-    const products = await getCachedRelatedProducts(handle)
-
-    if (products.length === 0) {
-      return null
-    }
-
-    return <RelatedProducts products={products} />
+    products = await getCachedRelatedProducts(handle)
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -36,4 +34,10 @@ export async function AsyncRelatedProducts({
     )
     return null
   }
+
+  if (products.length === 0) {
+    return null
+  }
+
+  return <RelatedProducts products={products} />
 }

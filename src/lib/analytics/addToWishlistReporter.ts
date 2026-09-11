@@ -32,33 +32,6 @@ export function reportCanonicalAddToWishlist(
 
   try {
     const clientContext = readBrowserReporterContext()
-    // #region agent log
-    fetch(
-      'http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Debug-Session-Id': '2aed25'
-        },
-        body: JSON.stringify({
-          sessionId: '2aed25',
-          runId: 'pre-fix',
-          hypothesisId: 'H1',
-          location: 'addToWishlistReporter.ts:context',
-          message: 'wishlist reporter context',
-          data: {
-            hasContext: Boolean(clientContext),
-            analytics: clientContext?.consent.analytics ?? null,
-            marketing: clientContext?.consent.marketing ?? null,
-            hasFbc: Boolean(clientContext?.browserId?.fbc),
-            hasFbclid: Boolean(clientContext?.clickId?.fbclid)
-          },
-          timestamp: Date.now()
-        })
-      }
-    ).catch(() => {})
-    // #endregion
     if (!clientContext) return () => {}
     const pageView = browserPageViewSession.ensure({
       pageUrl: clientContext.pageUrl,

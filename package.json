@@ -82,7 +82,9 @@
     "test:cart-cookie-bootstrap": "tsx --test src/lib/cart/*.test.ts",
     "ppr:shell:smoke": "node scripts/next/verify-ppr-shell-integrity.mjs",
     "test:ppr-rsc-probe": "node --test scripts/next/ppr-rsc-probe.test.mjs",
-    "ppr:rsc:probe": "node scripts/next/ppr-rsc-probe.mjs"
+    "ppr:rsc:probe": "node scripts/next/ppr-rsc-probe.mjs",
+    "meta:insights:live": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/meta/fetch-live-insights.ts",
+    "meta:insights:live:test": "tsx --test src/lib/meta-insights/*.test.ts"
   },
   "dependencies": {
     "@adobe/leonardo-contrast-colors": "^1.1.0",

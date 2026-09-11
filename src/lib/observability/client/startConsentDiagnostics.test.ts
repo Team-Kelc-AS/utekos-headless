@@ -6,12 +6,14 @@ import type { ConsentDiagnosticCode } from 'types/observability/log/ConsentDiagn
 test('distinguishes unavailable CMP, visible dialog and real decision without inferring consent', () => {
   const target = new EventTarget()
   const timers: (() => void)[] = []
-  let state: { hasResponse?: boolean } | undefined
+  const state: {
+    current: { hasResponse?: boolean } | undefined
+  } = { current: undefined }
   let visible = false
   const codes: ConsentDiagnosticCode[] = []
   const cleanup = startConsentDiagnostics({
     target,
-    getState: () => state,
+    getState: () => state.current,
     isDialogVisible: () => visible,
     report: code => {
       codes.push(code)
@@ -26,13 +28,13 @@ test('distinguishes unavailable CMP, visible dialog and real decision without in
   assert.deepEqual(codes, [])
   timers.at(-1)?.()
   assert.deepEqual(codes, ['cmp_unavailable'])
-  state = { hasResponse: false }
+  state.current = { hasResponse: false }
   target.dispatchEvent(new Event('CookiebotOnConsentReady'))
   assert.equal(codes.at(-1), 'awaiting_decision')
   visible = true
   timers[1]?.()
   assert.equal(codes.at(-1), 'dialog_visible')
-  state.hasResponse = true
+  state.current.hasResponse = true
   target.dispatchEvent(new Event('CookiebotOnDecline'))
   assert.equal(codes.at(-1), 'decision_observed')
   cleanup()

@@ -73,8 +73,8 @@
     "shopifyCustomerEvents": {
       "package": null,
       "manifestVersion": null,
-      "role": "Shopify-hosted browser pixel for checkout_completed to GA4/sGTM",
-      "implementation": "config/shopify/customer-events/ga4-commerce-pixel.js"
+      "role": "Shopify-hosted browser pixels for consented checkout_completed delivery",
+      "implementation": "config/shopify/customer-events/"
     }
   },
   "invariants": [
@@ -3642,10 +3642,28 @@
           "support": "supported",
           "eventName": "Purchase",
           "productionStatus": "active",
-          "productionDetail": "Meta CAPI purchase outbox is active when checkout marketing consent was granted.",
+          "productionDetail": "The marketing-consented Shopify Customer Events browser Purchase is implemented locally and pending provider publication; Meta CAPI remains active. Both reuse the deterministic order event_id for deduplication.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
-          "browser": null,
+          "browser": {
+            "transport": "shopify_customer_events",
+            "status": "implemented",
+            "parameterContract": {
+              "parameterSets": [
+                "metaBrowser"
+              ],
+              "logicalRequiredParameters": [
+                "event_id",
+                "event_time",
+                "action_source",
+                "event_source_url",
+                "user_data",
+                "content_ids",
+                "currency",
+                "value"
+              ]
+            }
+          },
           "server": {
             "transport": "meta_conversions_api",
             "status": "active",

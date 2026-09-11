@@ -9,8 +9,6 @@ const SERVER_TAG_MANAGER_PATH = '/__sgtm'
 const GOOGLE_TAG_MANAGER_ORIGIN =
   'https://www.googletagmanager.com'
 
-const SERVER_TAG_MANAGER_ORIGIN =
-  'https://cloud.server.utekos.no'
 const LEGACY_TECHDOWN_IMAGE_PATH =
   '/tech-diagonal-halv-maritime-blue-bg.png'
 const CURRENT_TECHDOWN_IMAGE_PATH =
@@ -193,7 +191,7 @@ const nextConfig: NextConfig = {
         },
         {
           source: `${SERVER_TAG_MANAGER_PATH}/:path*`,
-          destination: `${SERVER_TAG_MANAGER_ORIGIN}/:path*`
+          destination: '/api/tracking/server-gtm/:path*'
         },
         {
           source: '/',

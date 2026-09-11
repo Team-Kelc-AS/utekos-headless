@@ -80,7 +80,7 @@ This report is generated from the canonical event catalog and the characterized 
 | `add_payment_info` | `active` | `snapchat` | shopify_customer_events (implemented; event-specific logical requirements) | snap_conversions_api_v3 (active; event-specific logical requirements) | Utekos-owned Snap Pixel and Conversions API v3 outbox are active. |
 | `purchase` | `active` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Operational ledger persistence via Shopify orders-paid webhook. |
 | `purchase` | `active` | `google` | shopify_customer_events (implemented; shopifyPurchaseBrowser) | google_data_manager (active; shopifyPurchaseBrowser) | Shopify Customer Events is the browser source and the Data Manager purchase outbox is the supplementary server source when checkout analytics consent was granted. Both use transaction_id for GA4 deduplication. |
-| `purchase` | `active` | `meta` | none | meta_conversions_api (active; metaServer) | Meta CAPI purchase outbox is active when checkout marketing consent was granted. |
+| `purchase` | `active` | `meta` | shopify_customer_events (implemented; metaBrowser) | meta_conversions_api (active; metaServer) | The marketing-consented Shopify Customer Events browser Purchase is implemented locally and pending provider publication; Meta CAPI remains active. Both reuse the deterministic order event_id for deduplication. |
 | `purchase` | `active` | `microsoft_uet` | none | microsoft_uet_capi (active; microsoftServer) | Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and at least one Microsoft-supported userData identifier is present. |
 | `purchase` | `active` | `pinterest` | pinterest_tag (implemented; pinterestBrowser) | pinterest_conversions_api (active; pinterestServer) | Pinterest Tag and Conversions API outbox are active. |
 | `purchase` | `active` | `snapchat` | shopify_customer_events (implemented; event-specific logical requirements) | snap_conversions_api_v3 (active; event-specific logical requirements) | Utekos-owned Snap Pixel and Conversions API v3 outbox are active. |
@@ -233,7 +233,7 @@ This report is generated from the canonical event catalog and the characterized 
 - `shopifyHydrogen`: @shopify/hydrogen-react `2026.4.3`; Storefront commerce types and helpers; not a provider event SDK; implementation `src/lib/shopify`.
 - `microsoftUetCapi`: repository-owned integration; Direct HTTP plus repository-owned Zod schemas; implementation `src/lib/analytics/server/microsoftUet`.
 - `pinterestConversionsApi`: repository-owned integration; Direct HTTP to Pinterest Conversions API v5 events; implementation `src/lib/analytics/server/dispatchCanonicalEventToPinterest.ts`.
-- `shopifyCustomerEvents`: repository-owned integration; Shopify-hosted browser pixel for checkout_completed to GA4/sGTM; implementation `config/shopify/customer-events/ga4-commerce-pixel.js`.
+- `shopifyCustomerEvents`: repository-owned integration; Shopify-hosted browser pixels for consented checkout_completed delivery; implementation `config/shopify/customer-events/`.
 
 ## Official provider sources
 

@@ -9,6 +9,7 @@ import { metaMarketingRequestContextPreference } from './metaMarketingRequestCon
 
 type MetaLeadEvent = CanonicalEventEnvelope & {
   page_url?: string | undefined
+  referrer_url?: string | undefined
   custom_data: {
     currency?: string | undefined
     value?: number | undefined

@@ -1,13 +1,12 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import Link from "next/link"
-import type { Route } from "next"
+import * as React from 'react'
+import Link from 'next/link'
+import type { Route } from 'next'
 import {
   CircleAlertIcon,
-  CircleCheckIcon,
-  CircleDashedIcon,
-} from "lucide-react"
+  CircleDashedIcon
+} from 'lucide-react'
 
 import {
   NavigationMenu,
@@ -16,32 +15,32 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
+  navigationMenuTriggerStyle
+} from '@/components/ui/navigation-menu'
 
 const components: { title: string; href: Route; description: string }[] = [
   {
-    title: "Utekos Dun™",
-    href: "/produkter/utekos-dun" as Route,
+    title: 'Utekos Dun™',
+    href: '/produkter/utekos-dun' as Route,
     description:
-      "NOK 2490,-",
+      'NOK 2490,-'
   },
   {
-    title: "Utekos TechDown™",
-    href: "/produkter/utekos-techdown?farge=havdyp&storrelse=middels&kjonn=unisex" as Route,
+    title: 'Utekos TechDown™',
+    href: '/produkter/utekos-techdown?farge=havdyp&storrelse=middels&kjonn=unisex' as Route,
     description:
-      "NOK 1990,-",
+      'NOK 1990,-'
   },
   {
-    title: "Utekos Mikrofiber™",
-    href: "/produkter/utekos-techdown?farge=havdyp&storrelse=stor&kjonn=unisex" as Route,
+    title: 'Utekos Mikrofiber™',
+    href: '/produkter/utekos-techdown?farge=havdyp&storrelse=stor&kjonn=unisex' as Route,
     description:
-      "NOK 1790,-",
+      'NOK 1790,-'
   },
   {
-    title: "Comfyrobe™",
-    href: "/produkter/utekos-techdown?farge=havdyp&storrelse=storre&kjonn=unisex" as Route,
-    description: "NOK 899,-",
+    title: 'Comfyrobe™',
+    href: '/produkter/utekos-techdown?farge=havdyp&storrelse=storre&kjonn=unisex' as Route,
+    description: 'NOK 899,-'
   }
 ]
 
@@ -130,7 +129,7 @@ function ListItem({
   children,
   href,
   ...props
-}: React.ComponentPropsWithoutRef<"li"> & { href: Route }) {
+}: React.ComponentPropsWithoutRef<'li'> & { href: Route }) {
   return (
     <li {...props}>
       <NavigationMenuLink render={<Link href={href}><div className="flex flex-col gap-1 text-sm">

@@ -1088,9 +1088,8 @@ export const deliveryIntegrations = {
   shopifyCustomerEvents: {
     package: null,
     manifestVersion: null,
-    role: 'Shopify-hosted browser pixel for checkout_completed to GA4/sGTM',
-    implementation:
-      'config/shopify/customer-events/ga4-commerce-pixel.js'
+    role: 'Shopify-hosted browser pixels for consented checkout_completed delivery',
+    implementation: 'config/shopify/customer-events/'
   }
 } as const
 

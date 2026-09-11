@@ -240,3 +240,7 @@
     @apply bg-background font-utekos-text text-foreground;
   }
 }
+
+#CookiebotWidget {
+  display: none !important;
+}

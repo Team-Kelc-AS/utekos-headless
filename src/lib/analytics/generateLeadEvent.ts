@@ -30,6 +30,7 @@ export const canonicalGenerateLeadSchema =
     event_name: z.literal('generate_lead'),
     source: z.literal('server'),
     page_url: z.url(),
+    referrer_url: z.url().optional(),
     page_view_id: z.uuid().optional(),
     custom_data: canonicalGenerateLeadCustomDataSchema
   })
@@ -57,6 +58,7 @@ type CreateCanonicalGenerateLeadInput = {
   impressionId?: string
   pageUrl: string
   pageViewId?: string
+  referrerUrl?: string
   journeyId?: string
   signalAudit?: CanonicalSignalAudit
   userData?: UserDataInput
@@ -103,6 +105,9 @@ export function createCanonicalGenerateLead(
     source: 'server',
     environment: input.environment,
     page_url: input.pageUrl,
+    ...(input.referrerUrl ?
+      { referrer_url: input.referrerUrl }
+    : {}),
     ...((
       input.consent.analytics === 'granted' && input.pageViewId
     ) ?

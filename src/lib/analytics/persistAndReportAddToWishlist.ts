@@ -46,27 +46,6 @@ export function persistAndReportAddToWishlist(
     }
 
     if (!result.added) {
-      // #region agent log
-      fetch(
-        'http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Debug-Session-Id': '2aed25'
-          },
-          body: JSON.stringify({
-            sessionId: '2aed25',
-            runId: 'pre-fix',
-            hypothesisId: 'H2',
-            location: 'persistAndReportAddToWishlist.ts:alreadyPresent',
-            message: 'wishlist already present, no emit',
-            data: { added: false, persisted: true },
-            timestamp: Date.now()
-          })
-        }
-      ).catch(() => {})
-      // #endregion
       return {
         emitted: false,
         persisted: true,
@@ -80,55 +59,12 @@ export function persistAndReportAddToWishlist(
       wishlistMutationId: result.mutationId
     })
 
-    // #region agent log
-    fetch(
-      'http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Debug-Session-Id': '2aed25'
-        },
-        body: JSON.stringify({
-          sessionId: '2aed25',
-          runId: 'pre-fix',
-          hypothesisId: 'H2',
-          location: 'persistAndReportAddToWishlist.ts:emitted',
-          message: 'wishlist persisted and reporter invoked',
-          data: { added: true, persisted: true },
-          timestamp: Date.now()
-        })
-      }
-    ).catch(() => {})
-    // #endregion
-
     return {
       emitted: true,
       persisted: true,
       alreadyPresent: false
     }
   } catch {
-    // #region agent log
-    fetch(
-      'http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Debug-Session-Id': '2aed25'
-        },
-        body: JSON.stringify({
-          sessionId: '2aed25',
-          runId: 'pre-fix',
-          hypothesisId: 'H2',
-          location: 'persistAndReportAddToWishlist.ts:catch',
-          message: 'wishlist persist/report threw',
-          data: { emitted: false },
-          timestamp: Date.now()
-        })
-      }
-    ).catch(() => {})
-    // #endregion
     return { emitted: false, persisted: false, alreadyPresent: false }
   }
 }

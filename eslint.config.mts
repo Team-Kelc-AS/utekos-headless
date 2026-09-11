@@ -43,6 +43,8 @@ const eslintConfig = defineConfig([
     '.devtools/**',
     'merchant-api-samples/**',
     'next-env.d.ts',
+    'src/types/supabase/database.types.ts',
+    'work/**',
     'docs/md-docs/**',
     'docs/**/*.md',
     'src/components/klarna/dev/docs/**'

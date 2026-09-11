@@ -4,19 +4,7 @@ import {
   syncMetaDatasetQuality,
   type MetaDatasetQualitySyncDependencies
 } from './syncMetaDatasetQuality'
-
-const requiredEvents = [
-  'PageView',
-  'ViewContent',
-  'AddToCart',
-  'AddToWishlist',
-  'RemoveFromCart',
-  'InitiateCheckout',
-  'AddShippingInfo',
-  'AddPaymentInfo',
-  'Purchase',
-  'Lead'
-] as const
+import { requiredMetaDatasetQualityEvents } from '../metaDatasetQualityRequiredEvents'
 
 test('marks a snapshot complete when every required event is present and ignores extras', async () => {
   const measuredAt = new Date('2026-07-18T21:20:00.000Z')
@@ -24,8 +12,10 @@ test('marks a snapshot complete when every required event is present and ignores
   const dependencies: MetaDatasetQualitySyncDependencies = {
     fetchQuality: async () => ({
       web: [
-        ...requiredEvents.map(event_name => ({ event_name })),
-        { event_name: 'ViewCategory' }
+        ...requiredMetaDatasetQualityEvents.map(event_name => ({
+          event_name
+        })),
+        { event_name: 'Search' }
       ]
     }),
     getConfig: () => ({
@@ -43,7 +33,7 @@ test('marks a snapshot complete when every required event is present and ignores
 
   assert.deepEqual(result, {
     datasetId: '1092362672918571',
-    eventCount: 11,
+    eventCount: 19,
     insertedCount: 7,
     complete: true,
     missingRequiredEvents: [],
@@ -55,7 +45,7 @@ test('marks a snapshot complete when every required event is present and ignores
 test('reports Lead as missing without turning a successful sync into a failure', async () => {
   const dependencies: MetaDatasetQualitySyncDependencies = {
     fetchQuality: async () => ({
-      web: requiredEvents
+      web: requiredMetaDatasetQualityEvents
         .filter(eventName => eventName !== 'Lead')
         .map(event_name => ({ event_name }))
     }),

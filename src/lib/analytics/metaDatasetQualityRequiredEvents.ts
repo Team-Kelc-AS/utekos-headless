@@ -1,13 +1,21 @@
 export const requiredMetaDatasetQualityEvents = [
+  'LandingScrollDepth',
   'PageView',
   'ViewContent',
+  'ViewItemList',
+  'ViewCart',
+  'InteractWithAccordion',
   'AddToCart',
-  'AddToWishlist',
-  'RemoveFromCart',
+  'ViewCategory',
   'InitiateCheckout',
-  'AddShippingInfo',
-  'AddPaymentInfo',
+  'SelectItem',
+  'HeroInteract',
+  'RemoveFromCart',
   'Purchase',
+  'AddToWishlist',
+  'OpenQuickView',
+  'AddPaymentInfo',
+  'AddShippingInfo',
   'Lead'
 ] as const
 

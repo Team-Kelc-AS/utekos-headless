@@ -27,6 +27,10 @@ denne implementeringsrunden.
   Cookiebot-laster**. Appens nye skript styrer bare presentasjon;
   det laster ikke `uc.js`, lagrer ikke samtykke og sender ikke
   engasjementsdata.
+- Den egendefinerte, norske knappen er eneste synlige kontroll
+  for å åpne personverninnstillingene. Cookiebots separate
+  `#CookiebotWidget` skjules for å unngå en duplikat kontroll som
+  overlapper både knappen og samtykkedialogen på små skjermer.
 - Eksplisitt, gyldig kategorivalg kreves før appen leser
   sporingslagring, bygger sporingshendelser, beriker,
   mellomlagrer eller sender dem. Manglende/implisitte valg åpner

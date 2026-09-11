@@ -162,7 +162,8 @@ function baseInput(
     trackingContext: {
       consent: grantedConsent,
       page_url: 'https://utekos.no/nyhetsbrev',
-      page_view_id: PAGE_VIEW_ID
+      page_view_id: PAGE_VIEW_ID,
+      referrer_url: 'https://utekos.no/produkter'
     },
     ...overrides
   }
@@ -188,6 +189,10 @@ test('granted lead persists once and returns canonical browser evidence for its 
   assert.equal(recordCalls.length, 1)
   assert.equal(recordCalls[0]?.submissionId, LEAD_ID)
   assert.equal(recordCalls[0]?.consent.marketing, 'granted')
+  assert.equal(
+    recordCalls[0]?.referrerUrl,
+    'https://utekos.no/produkter'
+  )
   assert.equal(result.leadId, LEAD_ID)
   assert.equal(result.eventId, LEAD_ID)
   assert.equal(result.dataLayerEvent?.event_id, LEAD_ID)

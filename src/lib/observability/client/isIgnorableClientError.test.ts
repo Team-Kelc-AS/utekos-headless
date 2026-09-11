@@ -22,7 +22,7 @@ test('ignores errors whose script source is a Chrome extension', () => {
   assert.equal(
     isIgnorableClientError({
       message:
-        "Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window'",
+        'Uncaught DataCloneError: Failed to execute \'postMessage\' on \'Window\'',
       source:
         'chrome-extension://dmbjdmncfodongiidmmonmkomhijolad/src/setup.js',
       stack:
@@ -36,7 +36,7 @@ test('keeps first-party and Clarity errors actionable', () => {
   assert.equal(
     isIgnorableClientError({
       message:
-        "Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window'",
+        'Uncaught DataCloneError: Failed to execute \'postMessage\' on \'Window\'',
       source: 'https://utekos.no/_next/static/chunks/app.js',
       stack:
         'at https://scripts.clarity.ms/0.8.67/clarity.js:2:31578'

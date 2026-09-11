@@ -111,7 +111,7 @@ export function ProductPageView({
       `w-full ${galleryDesktopBleedClassName}`
     : `relative left-1/2 w-screen -translate-x-1/2 ${galleryDesktopBleedClassName}`
 
-  const galleryStickyClassName = `${galleryFrameClassName} xl:sticky xl:top-20`
+  const galleryStickyClassName = `${galleryFrameClassName} md:sticky md:top-24 lg:top-20`
 
   const galleryImageClassName =
     useCompactGallery ?
@@ -160,7 +160,7 @@ export function ProductPageView({
 
         <ProductPageGrid>
           <GalleryColumn>
-            <div className={`relative order-1 ${galleryStickyClassName}`}>
+            <div className={`relative ${galleryStickyClassName}`}>
               <div className='hidden md:block'>
                 <ProductGallery
                   title={title}
@@ -201,14 +201,7 @@ export function ProductPageView({
                     </div>
                   </AspectRatio>}
               </div>
-
             </div>
-
-            <ProductPageAccordion
-              product={productData}
-              sections={productPageContent?.accordion}
-              selectedVariant={selectedVariant}
-            />
           </GalleryColumn>
 
           <OptionsColumn>
@@ -268,6 +261,12 @@ export function ProductPageView({
               description={productPageContent?.description}
             />
           </OptionsColumn>
+
+          <ProductPageAccordion
+            product={productData}
+            sections={productPageContent?.accordion}
+            selectedVariant={selectedVariant}
+          />
         </ProductPageGrid>
       </div>
 

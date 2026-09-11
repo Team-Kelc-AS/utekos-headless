@@ -12,6 +12,7 @@ function lead(): CanonicalGenerateLead {
     source: 'server',
     environment: 'test',
     page_url: 'https://utekos.no/skreddersy-varmen',
+    referrer_url: 'https://www.facebook.com/',
     page_view_id: '11111111-1111-4111-8111-111111111111',
     consent: {
       analytics: 'granted',
@@ -51,6 +52,7 @@ test('maps canonical generate_lead to deduplicated Meta Lead', () => {
     event_id: string
     event_name: string
     event_source_url: string
+    referrer_url: string
     user_data: { em: string[]; fbc: string; fbp: string }
   }
 
@@ -58,6 +60,10 @@ test('maps canonical generate_lead to deduplicated Meta Lead', () => {
   assert.equal(normalized.event_id, event.event_id)
   assert.equal(normalized.action_source, 'website')
   assert.match(normalized.event_source_url, /^https:\/\/utekos\.no\//)
+  assert.match(
+    normalized.referrer_url,
+    /^https:\/\/www\.facebook\.com\/\.[A-Za-z0-9]{8}$/
+  )
   assert.equal(normalized.custom_data.currency, 'NOK')
   assert.equal(normalized.custom_data.value, 0)
   assert.match(

@@ -306,82 +306,12 @@ export function createCanonicalCollectorTransport<
   }
 
   return function startCollectorTransport(event: E): () => void {
-    const tracked = new Set([
-      'add_to_wishlist',
-      'view_cart',
-      'view_item',
-      'view_item_list',
-      'select_item'
-    ])
-    const eventName =
-      'event_name' in event &&
-      typeof (event as { event_name?: unknown }).event_name ===
-        'string' ?
-        (event as { event_name: string }).event_name
-      : input.analyticsEventName
-    const eventTime =
-      'event_time' in event &&
-      typeof (event as { event_time?: unknown }).event_time ===
-        'string' ?
-        (event as { event_time: string }).event_time
-      : null
-    const logCollector = (
-      dropReason: string | null,
-      currentEvent: E = event
-    ) => {
-      if (!tracked.has(eventName)) return
-      const record = currentEvent as {
-        browser_id?: { fbc?: string }
-        click_id?: { fbclid?: string }
-        consent?: { analytics?: string; marketing?: string }
-      }
-      // #region agent log
-      fetch(
-        'http://127.0.0.1:7626/ingest/3d726327-2da6-4157-aa0a-bb33dbbbefd1',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Debug-Session-Id': '2aed25'
-          },
-          body: JSON.stringify({
-            sessionId: '2aed25',
-            runId: 'pre-fix',
-            hypothesisId: 'H3',
-            location:
-              'createCanonicalCollectorTransport.ts:start',
-            message: 'canonical collector start',
-            data: {
-              eventName,
-              dropReason,
-              delayMs:
-                eventTime ?
-                  Date.now() - Date.parse(eventTime)
-                : null,
-              analytics: record.consent?.analytics ?? null,
-              marketing: record.consent?.marketing ?? null,
-              hasFbc: Boolean(record.browser_id?.fbc),
-              hasFbclid: Boolean(record.click_id?.fbclid)
-            },
-            timestamp: Date.now()
-          })
-        }
-      ).catch(() => {})
-      // #endregion
-    }
     if (
       typeof window === 'undefined' ||
       (window as Window & { __utekosConsentReloading?: boolean })
         .__utekosConsentReloading ||
       !hasCollectionConsent(event)
     ) {
-      logCollector(
-        typeof window === 'undefined' ? 'ssr'
-        : (window as Window & { __utekosConsentReloading?: boolean })
-            .__utekosConsentReloading ?
-          'reloading'
-        : 'no_collection_consent'
-      )
       return () => {}
     }
     const current = resolveBrowserCollection(event)
@@ -389,18 +319,10 @@ export function createCanonicalCollectorTransport<
       current.context.hasResponse &&
       hasCollectionConsent(current.event)
     ) {
-      logCollector(null, current.event)
       void sendCanonicalCollectorEvent(
         input,
         current.event
       ).catch(reportError)
-    } else {
-      logCollector(
-        current.context.hasResponse ?
-          'live_consent_denied'
-        : 'cookiebot_no_response',
-        current.event
-      )
     }
     return () => {}
   }

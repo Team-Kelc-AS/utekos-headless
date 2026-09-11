@@ -9207,6 +9207,10 @@
           "signal_audit": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/signal_audit"
           },
+          "referrer_url": {
+            "type": "string",
+            "format": "uri"
+          },
           "page_view_id": {
             "type": "string",
             "format": "uuid",
