@@ -3,6 +3,7 @@ import 'server-only'
 import Script from 'next/script'
 import { SITE_URL } from '@/constants'
 import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from './googleTagManagerBootstrap'
+import { GoogleTagManagerContainerScript } from './GoogleTagManagerContainerScript'
 
 const GOOGLE_TAG_MANAGER_ID =
   'GTM-5TWMJQFP'
@@ -51,13 +52,8 @@ export function GoogleTagManagerLoader({
         }}
       />
 
-      <Script
-        id='_next-gtm'
-        data-ntpc='GTM'
-        src={
-          googleTagManagerScriptUrl.toString()
-        }
-        strategy='afterInteractive'
+      <GoogleTagManagerContainerScript
+        src={googleTagManagerScriptUrl.toString()}
       />
     </>
   )

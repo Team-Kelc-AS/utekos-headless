@@ -24,6 +24,9 @@ test(
     const source = await readSource(
       'src/components/analytics/GoogleTagManagerLoader.tsx'
     )
+    const containerSource = await readSource(
+      'src/components/analytics/GoogleTagManagerContainerScript.tsx'
+    )
     const bootstrapSource = await readSource(
       'src/components/analytics/googleTagManagerBootstrap.ts'
     )
@@ -89,38 +92,31 @@ test(
       /event:\s*['"]gtm\.js['"]/
     )
 
-    const externalGtmScript = source.match(
-      /<Script[\s\S]*?id=['"]_next-gtm['"][\s\S]*?\/>/
-    )
-
-    assert.ok(
-      externalGtmScript,
-      'GTM loader must contain the external GTM script'
-    )
-
     assert.match(
-      externalGtmScript[0],
-      /strategy=['"]afterInteractive['"]/,
-      'External GTM container must remain outside the critical rendering path'
-    )
-
-    assert.match(
-      externalGtmScript[0],
-      /src=\{\s*googleTagManagerScriptUrl\.toString\(\)\s*\}/,
+      source,
+      /<GoogleTagManagerContainerScript[\s\S]*?src=\{googleTagManagerScriptUrl\.toString\(\)\}/,
       'GTM must continue through the first-party tag gateway'
     )
 
-    const gtmPosition =
-      layoutSource.indexOf('<GoogleTagManagerLoader')
-
-    const bodyPosition =
-      layoutSource.indexOf('<body')
-
-    assert.ok(
-      gtmPosition !== -1 &&
-        bodyPosition !== -1 &&
-        gtmPosition < bodyPosition,
-      'GTM loader must be declared before the body'
+    assert.match(
+      containerSource,
+      /scheduleDeferredMarketingContainer/,
+      'GTM container must wait for stored consent, LCP/idle, or interaction'
+    )
+    assert.match(
+      containerSource,
+      /hasStoredCookiebotDecision/,
+      'Returning visitors with Cookiebot must still load GTM immediately'
+    )
+    assert.match(
+      containerSource,
+      /id=['"]_next-gtm['"][\s\S]*?strategy=['"]afterInteractive['"]/,
+      'External GTM container must remain outside the critical rendering path'
+    )
+    assert.doesNotMatch(
+      containerSource,
+      /consent\.cookiebot\.(?:com|eu)/,
+      'Cookiebot must remain owned by the GTM CMP template'
     )
   }
 )
@@ -152,13 +148,24 @@ test(
   'Pinterest Tag loader remains post-hydration behind the marketing script gate',
   async () => {
     const source = await readSource('src/app/layout.tsx')
+    const loader = await readSource(
+      'src/components/analytics/ConsentGrantedScript.tsx'
+    )
 
     assert.match(
       source,
-      /id=['"]pinterest-tag-canonical-browser['"][\s\S]*?src=['"]\/analytics\/pinterest-tag-canonical-v1\.js['"][\s\S]*?data-tag-id=\{pinterestTagId\}/,
-      'Pinterest Tag must load afterInteractive with the public tag id'
+      /<ConsentGrantedScript[\s\S]*?id=['"]pinterest-tag-canonical-browser['"][\s\S]*?src=['"]\/analytics\/pinterest-tag-canonical-v1\.js['"][\s\S]*?data-tag-id=\{pinterestTagId\}/,
+      'Pinterest Tag must wait for marketing consent before loading'
     )
     assert.match(source, /NEXT_PUBLIC_PINTEREST_TAG_ID/)
+    assert.match(
+      source,
+      /<ConsentGrantedScript[\s\S]*?id=['"]snapchat-pixel-canonical-browser['"]/,
+      'Snapchat Pixel must use the same marketing-consent loader'
+    )
+    assert.match(loader, /useCookiebotConsent/)
+    assert.match(loader, /consent\.marketing/)
+    assert.doesNotMatch(loader, /beforeInteractive/)
   }
 )
 
