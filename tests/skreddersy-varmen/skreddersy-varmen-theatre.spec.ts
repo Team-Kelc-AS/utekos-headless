@@ -649,6 +649,9 @@ test('reveals the mobile manifesto and complete bonfire panel without dead scrol
     return {
       headingCenter: headingRect.top + headingRect.height / 2,
       headingCoveredByHero: Boolean(hit && hero.contains(hit)),
+      headingOpacity: Number.parseFloat(
+        getComputedStyle(heading).opacity
+      ),
       heroAnimationName: getComputedStyle(hero).animationName,
       heroTop: hero.getBoundingClientRect().top,
       recognitionLeft: recognition.getBoundingClientRect().left,
@@ -680,6 +683,9 @@ test('reveals the mobile manifesto and complete bonfire panel without dead scrol
 
     return {
       headingCenter: headingRect.top + headingRect.height / 2,
+      headingOpacity: Number.parseFloat(
+        getComputedStyle(heading).opacity
+      ),
       heroBottom: hero.getBoundingClientRect().bottom,
       recognitionLeft: recognition.getBoundingClientRect().left,
       recognitionVisibility:
@@ -690,11 +696,13 @@ test('reveals the mobile manifesto and complete bonfire panel without dead scrol
   expect(initial.heroAnimationName).toContain('hero-lift')
   expect(Math.abs(initial.heroTop)).toBeLessThanOrEqual(1)
   expect(initial.headingCoveredByHero).toBe(true)
+  expect(initial.headingOpacity).toBeCloseTo(0, 2)
   expect(initial.headingCenter).toBeCloseTo(844 / 2, -1)
   expect(initial.recognitionVisibility).toBe('visible')
   expect(initial.recognitionLeft).toBeGreaterThanOrEqual(389)
   expect(initial.stickyPosition).toBe('sticky')
   expect(revealed.heroBottom).toBeLessThanOrEqual(1)
+  expect(revealed.headingOpacity).toBeCloseTo(1, 2)
   expect(revealed.headingCenter).toBeCloseTo(844 / 2, -1)
   expect(revealed.recognitionVisibility).toBe('visible')
   expect(revealed.recognitionLeft).toBeGreaterThanOrEqual(389)
@@ -985,6 +993,9 @@ test('reveals the first large empathy scene beneath the hero like a theatre curt
       )
 
       return {
+        headingOpacity: Number.parseFloat(
+          getComputedStyle(heading).opacity
+        ),
         headingTop: heading.getBoundingClientRect().top,
         heroAtCenter: hits.some(hit => hero.contains(hit)),
         heroTranslateY: heroTransform.m42,
@@ -1003,6 +1014,9 @@ test('reveals the first large empathy scene beneath the hero like a theatre curt
 
   expect(closed.heroAtCenter).toBe(true)
   expect(closed.heroTranslateY).toBeCloseTo(0, 0)
+  expect(closed.headingOpacity).toBeCloseTo(0, 2)
+  expect(halfOpen.headingOpacity).toBeCloseTo(1, 2)
+  expect(open.headingOpacity).toBeCloseTo(1, 2)
   expect(halfOpen.heroTranslateY).toBeLessThan(-350)
   expect(halfOpen.heroTranslateY).toBeGreaterThan(-550)
   expect(open.heroAtCenter).toBe(false)

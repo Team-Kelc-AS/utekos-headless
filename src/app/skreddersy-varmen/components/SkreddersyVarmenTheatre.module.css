@@ -718,6 +718,19 @@
         top: 200svh;
       }
 
+      /*
+        Overlap keeps the manifesto under the sticky hero, but Chromium
+        still treats that in-viewport text as LCP. Hold it at opacity 0
+        until the hero lift actually reveals it.
+      */
+      .empathyMomentScene .empathyManifestoText {
+        opacity: 0;
+        animation: skreddersy-empathy-overlapped-copy-arm 1ms
+          linear both;
+        animation-timeline: --hero-reveal-track;
+        animation-range: contain 0% contain 18%;
+      }
+
       .empathyTextTheatre {
         height: 560svh;
         min-height: 0;
@@ -902,6 +915,14 @@
 
       .empathyTracking {
         top: 200svh;
+      }
+
+      .empathyLargeMomentScene .empathyLargeManifestoText {
+        opacity: 0;
+        animation: skreddersy-empathy-overlapped-copy-arm 1ms
+          linear both;
+        animation-timeline: --hero-reveal-track;
+        animation-range: contain 0% contain 18%;
       }
 
       .empathyLargeTextTheatre {
@@ -1097,6 +1118,16 @@
 
   100% {
     transform: translate3d(0, -100%, 0);
+  }
+}
+
+@keyframes skreddersy-empathy-overlapped-copy-arm {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
