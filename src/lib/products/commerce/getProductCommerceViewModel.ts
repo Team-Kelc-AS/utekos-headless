@@ -4,21 +4,12 @@ import { getProduct } from '@/api/lib/products/getProduct'
 import { requireProductPresentation } from '@/lib/products/presentation/getProductPresentation'
 import { hasExactTechDownPublicSizes } from '@/lib/products/presentation/hasExactTechDownPublicSizes'
 import { TECH_DOWN_PUBLIC_SIZES } from '@/lib/products/presentation/techDownSizeContract'
-import { cacheLife, cacheTag } from 'next/cache'
 import { buildProductCommerceViewModel } from './buildProductCommerceViewModel'
 
 export async function getProductCommerceViewModel(
   publicHandle: string
 ) {
-  'use cache: remote'
-
   const presentation = requireProductPresentation(publicHandle)
-
-  cacheLife('products')
-  cacheTag(
-    'products',
-    `product-${presentation.storefrontLookupHandle}`
-  )
 
   const product = await getProduct(
     presentation.storefrontLookupHandle

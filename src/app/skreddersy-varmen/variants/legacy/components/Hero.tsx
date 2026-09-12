@@ -6,15 +6,10 @@ import MobileOne from '@/assets/images/campaign/skreddersy-varmen-hero-mobile.we
 import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { HeroActions } from '@/app/skreddersy-varmen/components/HeroActions'
 import { HeroStars } from '@/app/skreddersy-varmen/components/HeroStars'
-import { formatPrice } from '@/lib/utils/formatPrice'
+import { HeroCommerceStatusSlot } from '@/app/skreddersy-varmen/components/HeroCommerceStatus'
 import { techDownReviewSummary } from '@/app/skreddersy-varmen/data/reviews'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
 
-export function Hero({
-  commerce
-}: {
-  commerce: ProductCommerceViewModel | null
-}) {
+export function Hero() {
   const { props: desktopImage } = getImageProps({
     src: CinemaOne,
     alt: '',
@@ -22,9 +17,6 @@ export function Hero({
     quality: 85,
     sizes: '100vw'
   })
-  const defaultVariant = commerce?.variants.find(
-    variant => variant.commerce.id === commerce.defaultVariantId
-  )
 
   return (
     <section
@@ -96,26 +88,7 @@ export function Hero({
             </span>
           </div>
 
-          {defaultVariant ?
-            <div className='mt-5 space-y-3'>
-              <p
-                className='leading-text-paragraph flex w-fit max-w-full flex-wrap items-center gap-x-2 gap-y-1 font-sans text-xs font-medium tracking-normal text-foreground/80 md:text-sm'
-                aria-live='polite'
-              >
-                <span>
-                  {formatPrice(defaultVariant.commerce.price)}
-                </span>
-                <span aria-hidden>·</span>
-                <span>
-                  {defaultVariant.commerce.availableForSale ?
-                    'På lager'
-                  : 'Utsolgt'}
-                </span>
-                <span aria-hidden>·</span>
-                <span>Rask levering</span>
-              </p>
-            </div>
-          : null}
+          <HeroCommerceStatusSlot />
         </div>
       </div>
     </section>

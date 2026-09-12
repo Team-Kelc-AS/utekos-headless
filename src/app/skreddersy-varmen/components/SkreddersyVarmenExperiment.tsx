@@ -1,18 +1,34 @@
 import { FlagValues } from 'flags/react'
-import { SkreddersyVarmenPageRuntime } from './SkreddersyVarmenPageRuntime'
 import { resolveSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/server/resolveSkreddersyVarmenLayoutAssignment'
-import { SKREDDERSY_VARMEN_LAYOUT_FLAG_KEY } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
+import {
+  SKREDDERSY_VARMEN_LAYOUT_FLAG_KEY,
+  type SkreddersyVarmenLayoutVariant
+} from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 import { LegacySkreddersyVarmenPageRuntime } from '../variants/legacy/LegacySkreddersyVarmenPageRuntime'
-import type { LandingSearchParams } from './SkreddersyVarmenPageRuntime'
-import type { SkreddersyVarmenPageContent } from '../data/skreddersyVarmenPageModel'
 
-export async function SkreddersyVarmenExperiment({
-  content,
-  searchParams
-}: {
-  content: SkreddersyVarmenPageContent
-  searchParams: LandingSearchParams
-}) {
+function renderAssignedOverlay(
+  variant: SkreddersyVarmenLayoutVariant
+) {
+  switch (variant) {
+    case 'legacy':
+      return (
+        <>
+          <style>{'[data-skreddersy-route]{display:none!important}'}</style>
+          <LegacySkreddersyVarmenPageRuntime />
+        </>
+      )
+    case 'current':
+      return null
+    default: {
+      const _exhaustive: never = variant
+      throw new Error(
+        `Unhandled skreddersy-varmen layout variant: ${String(_exhaustive)}`
+      )
+    }
+  }
+}
+
+export async function SkreddersyVarmenExperiment() {
   const assignment =
     await resolveSkreddersyVarmenLayoutAssignment()
   const variant = assignment?.variant ?? 'current'
@@ -27,6 +43,7 @@ export async function SkreddersyVarmenExperiment({
         />
       : null}
       <div
+        hidden
         {...(assignment ?
           {
             'data-experiment-key': assignment.key,
@@ -34,17 +51,8 @@ export async function SkreddersyVarmenExperiment({
           }
         : {})}
         data-experiment-eligible={assignment ? 'true' : 'false'}
-      >
-        {variant === 'legacy' ?
-          <LegacySkreddersyVarmenPageRuntime
-            searchParams={searchParams}
-          />
-        : <SkreddersyVarmenPageRuntime
-            content={content}
-            searchParams={searchParams}
-          />
-        }
-      </div>
+      />
+      {renderAssignedOverlay(variant)}
     </>
   )
 }

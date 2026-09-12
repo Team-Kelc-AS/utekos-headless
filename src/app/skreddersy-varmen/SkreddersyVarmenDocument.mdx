@@ -1,19 +1,18 @@
-import { Suspense } from 'react'
 import {
   HeroRevealEmpathy,
   HeroTheatre
 } from './components/HeroEmpathy'
-import { LandingCommerceUnavailable } from './components/LandingCommerceUnavailable'
 import { LandingFaq } from './components/LandingFaq'
-import { LandingPurchaseFallback } from './components/LandingPurchaseFallback'
-import { LandingPurchaseSection } from './components/LandingPurchaseSection'
+import {
+  LandingPurchaseSlot,
+  StickyMobileActionSlot
+} from './components/SkreddersyVarmenCommerceSlots'
 import { MetaWebsiteHighlights } from './components/MetaWebsiteHighlights'
 import { PreFooterNavigation } from './components/PreFooterNavigation'
 import { SectionSocialProof } from './components/SectionSocialProof'
 import { SectionThreeInOne } from './components/SectionThreeInOne'
 import { SkreddersyVarmenKlarnaStrip } from './components/SkreddersyVarmenKlarnaStrip'
 import { DeferredKlarnaOnSiteMessaging } from './components/DeferredKlarnaOnSiteMessaging'
-import { StickyMobileAction } from './components/StickyMobileAction'
 import { TechDownSlider } from './components/TechDownSlider'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { SKREDDERSY_VARMEN_PROMOTIONS } from './data/skreddersyVarmenPageModel'
@@ -22,12 +21,9 @@ import styles from './components/SkreddersyVarmenTheatre.module.css'
 <div className={styles.pageRoot} data-skreddersy-route>
   <MetaWebsiteHighlights />
 
-<StickyMobileAction {...props.stickyActionProps} />
+<StickyMobileActionSlot />
 
-<HeroTheatre
-  commerce={props.commerce}
-  content={props.content.hero}
-/>
+<HeroTheatre content={props.content.hero} />
 <HeroRevealEmpathy content={props.content.empathy}>
   <SkreddersyVarmenKlarnaStrip />
 </HeroRevealEmpathy>
@@ -44,14 +40,7 @@ import styles from './components/SkreddersyVarmenTheatre.module.css'
     creativeSlot='purchase'
     className='w-full'
   >
-    {props.commerce ?
-      <Suspense fallback={<LandingPurchaseFallback />}>
-        <LandingPurchaseSection
-          commerce={props.commerce}
-          searchParams={props.searchParams}
-        />
-      </Suspense>
-    : <LandingCommerceUnavailable />}
+    <LandingPurchaseSlot />
   </PromotionImpression>
 </div>
 

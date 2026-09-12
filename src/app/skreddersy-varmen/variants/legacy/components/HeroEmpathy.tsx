@@ -2,13 +2,8 @@
 import { Hero } from './Hero'
 import { EmpathySection } from './EmpathySection'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
 
-export function HeroAndEmpathy({
-  commerce
-}: {
-  commerce: ProductCommerceViewModel | null
-}) {
+export function HeroAndEmpathy() {
   return (
     <>
       <PromotionImpression
@@ -18,7 +13,7 @@ export function HeroAndEmpathy({
         creativeSlot='hero'
         className='w-full'
       >
-        <Hero commerce={commerce} />
+        <Hero />
       </PromotionImpression>
       <PromotionImpression
         promotionId='skreddersy-varmen-empathy'
