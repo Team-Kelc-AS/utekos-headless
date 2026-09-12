@@ -27,7 +27,7 @@ const NewsletterSignupDialog = dynamic(
   { ssr: false }
 )
 
-const CustomerAssistant = dynamic(
+const CustomerAssistantShell = dynamic(
   () =>
     import('@/components/customer-assistant/CustomerAssistant').then(
       module => module.CustomerAssistant
@@ -95,7 +95,7 @@ function AssistantRolloutMount({
   if (exposure !== 'assistant') return null
 
   return (
-    <CustomerAssistant
+    <CustomerAssistantShell
       rolloutPercent={rolloutPercent}
       productHandle={resolveAssistantProductHandle(pathname)}
     />

@@ -17,7 +17,8 @@ const ASSISTANT_EXCLUDED_ROUTE_ROOTS = [
   '/kjop',
   '/kasse',
   '/checkout',
-  '/checkouts'
+  '/checkouts',
+  '/skreddersy-varmen'
 ] as const
 
 const CONTROLLED_ROLLOUT_STAGES = new Set([0, 5, 25, 100])

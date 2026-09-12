@@ -287,17 +287,6 @@ test('shows the accessible launcher, stable bucket, and quick actions', async ({
     exact: true
   })
   await expect(launcher).toBeVisible()
-  await expect
-    .poll(async () => {
-      await assistantGraph.settle()
-      return assistantGraph.paths.size
-    })
-    .toBeGreaterThan(0)
-  await attachAssistantTransportGraph(
-    testInfo,
-    'assistant-graph-positive.json',
-    assistantGraph.paths
-  )
   await expect(launcher).toHaveAttribute(
     'aria-expanded',
     'false'
@@ -313,6 +302,17 @@ test('shows the accessible launcher, stable bucket, and quick actions', async ({
   await page.keyboard.press('Enter')
   const dialog = page.getByRole('dialog', { name: 'Kjøpshjelp' })
   await expect(dialog).toBeVisible()
+  await expect
+    .poll(async () => {
+      await assistantGraph.settle()
+      return assistantGraph.paths.size
+    })
+    .toBeGreaterThan(0)
+  await attachAssistantTransportGraph(
+    testInfo,
+    'assistant-graph-positive.json',
+    assistantGraph.paths
+  )
   await expect(
     page.getByRole('heading', { name: 'Kjøpshjelp' })
   ).toBeFocused()
@@ -709,7 +709,7 @@ test('keeps a positive preview holdout free of the assistant transport graph', a
   ).toBe('0.9')
 })
 
-test('does not mount on design or checkout-like routes', async ({
+test('does not mount on design, checkout-like, or ads landing routes', async ({
   page
 }, testInfo) => {
   const assistantGraph = observeAssistantTransportGraph(page)
@@ -735,6 +735,17 @@ test('does not mount on design or checkout-like routes', async ({
   ).toBeNull()
 
   await page.goto('/kjop/fullfort')
+  await expect(launcher).toHaveCount(0)
+  await assistantGraph.settle()
+  expect([...assistantGraph.paths]).toEqual([])
+  expect(
+    await page.evaluate(
+      key => localStorage.getItem(key),
+      ASSISTANT_BUCKET_STORAGE_KEY
+    )
+  ).toBeNull()
+
+  await page.goto('/skreddersy-varmen')
   await expect(launcher).toHaveCount(0)
   await assistantGraph.settle()
   expect([...assistantGraph.paths]).toEqual([])
