@@ -14,8 +14,8 @@ import { CartMutationContext } from '@/lib/context/CartMutationContext'
 import { cartStore } from '@/lib/state/cartStore'
 import { useCartMutations } from '@/hooks/useCartMutations'
 import { getCartIdFromCookie } from '@/lib/actions/cart/getCartIdFromCookie'
-import { reportCanonicalAddToCart } from '@/lib/analytics/addToCartReporter'
-import { reportCanonicalVariantSelect } from '@/lib/analytics/variantSelectReporter'
+import { loadAddToCartReporter } from '@/lib/analytics/loadAddToCartReporter'
+import { loadVariantSelectReporter } from '@/lib/analytics/loadVariantSelectReporter'
 import { buildPublicVariantUrl } from '@/lib/products/presentation/buildPublicVariantUrl'
 import type { ProductPresentation } from '@/lib/products/presentation/getProductPresentation'
 import type { ProductCommerceViewModel } from '@/lib/products/commerce'
@@ -68,19 +68,23 @@ export function useLandingPurchaseLogic({
     }
 
     lastReportedVariantId.current = variant.commerce.id
-    reportCanonicalVariantSelect({
-      customData: {
-        interaction_id: globalThis.crypto.randomUUID(),
-        product_id: commerce.product.id,
-        variant_id: variant.commerce.id,
-        item_id: variant.commerce.id,
-        item_variant: variant.publicName,
-        availability:
-          variant.commerce.availableForSale ?
-            'available'
-          : 'unavailable'
+    void loadVariantSelectReporter().then(
+      ({ reportCanonicalVariantSelect }) => {
+        reportCanonicalVariantSelect({
+          customData: {
+            interaction_id: globalThis.crypto.randomUUID(),
+            product_id: commerce.product.id,
+            variant_id: variant.commerce.id,
+            item_id: variant.commerce.id,
+            item_variant: variant.publicName,
+            availability:
+              variant.commerce.availableForSale ?
+                'available'
+              : 'unavailable'
+          }
+        })
       }
-    })
+    )
   }
 
   const setQuantity = (nextQuantity: number) => {
@@ -157,12 +161,17 @@ export function useLandingPurchaseLogic({
         }
 
         if (cartId) {
-          reportCanonicalAddToCart({
-            cartId,
-            product: commerce.product,
-            quantity,
-            variant: selectedShopifyVariant
-          })
+          const reportedCartId = cartId
+          void loadAddToCartReporter().then(
+            ({ reportCanonicalAddToCart }) => {
+              reportCanonicalAddToCart({
+                cartId: reportedCartId,
+                product: commerce.product,
+                quantity,
+                variant: selectedShopifyVariant
+              })
+            }
+          )
         }
       } catch (error) {
         console.error('Kunne ikke legge til vare:', error)

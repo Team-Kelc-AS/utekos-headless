@@ -12,6 +12,7 @@ import { PreFooterNavigation } from './components/PreFooterNavigation'
 import { SectionSocialProof } from './components/SectionSocialProof'
 import { SectionThreeInOne } from './components/SectionThreeInOne'
 import { SkreddersyVarmenKlarnaStrip } from './components/SkreddersyVarmenKlarnaStrip'
+import { DeferredKlarnaOnSiteMessaging } from './components/DeferredKlarnaOnSiteMessaging'
 import { StickyMobileAction } from './components/StickyMobileAction'
 import { TechDownSlider } from './components/TechDownSlider'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
@@ -35,6 +36,7 @@ import styles from './components/SkreddersyVarmenTheatre.module.css'
   id='purchase-section'
   className='w-full scroll-mt-17.5 xl:scroll-mt-21.5'
 >
+  <DeferredKlarnaOnSiteMessaging />
   <PromotionImpression
     promotionId={SKREDDERSY_VARMEN_PROMOTIONS.purchase}
     promotionName='Skreddersy varmen'

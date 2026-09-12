@@ -18,7 +18,7 @@ import {
   choicePillClass
 } from '../utils/constants'
 import { ShippingAndReturnComponent } from './ShippingAndReturnComponent'
-import { KlarnaLandingExpressCheckout } from './KlarnaLandingExpressCheckout'
+import dynamic from 'next/dynamic'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { SKREDDERSY_VARMEN_PROMOTIONS } from '../data/skreddersyVarmenPageModel'
 import type { ProductCommerceViewModel } from '@/lib/products/commerce'
@@ -26,6 +26,17 @@ import type {
   ProductCartModel,
   ProductPurchaseVariant
 } from 'types/product/ProductPurchaseModel'
+
+const KlarnaLandingExpressCheckout = dynamic(
+  () =>
+    import('./KlarnaLandingExpressCheckout').then(module => ({
+      default: module.KlarnaLandingExpressCheckout
+    })),
+  {
+    ssr: false,
+    loading: () => <div className='h-14 min-h-14' />
+  }
+)
 
 import type { LandingPurchaseContent } from './landingPurchaseContent'
 

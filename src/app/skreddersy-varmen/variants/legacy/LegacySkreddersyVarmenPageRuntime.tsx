@@ -8,6 +8,7 @@ import { MetaWebsiteHighlights } from '@/app/skreddersy-varmen/components/MetaWe
 import { PreFooterNavigation } from '@/app/skreddersy-varmen/components/PreFooterNavigation'
 import { SectionSocialProof } from '@/app/skreddersy-varmen/components/SectionSocialProof'
 import { SkreddersyVarmenKlarnaStrip } from '@/app/skreddersy-varmen/components/SkreddersyVarmenKlarnaStrip'
+import { DeferredKlarnaOnSiteMessaging } from '@/app/skreddersy-varmen/components/DeferredKlarnaOnSiteMessaging'
 import { StickyMobileAction } from '@/app/skreddersy-varmen/components/StickyMobileAction'
 import { resolveSkreddersyVarmenCommerce } from '@/app/skreddersy-varmen/data/resolveSkreddersyVarmenCommerce'
 import type { LandingSearchParams } from '@/app/skreddersy-varmen/components/SkreddersyVarmenPageRuntime'
@@ -47,6 +48,7 @@ export async function LegacySkreddersyVarmenPageRuntime({
         id='purchase-section'
         className='w-full scroll-mt-17.5 xl:scroll-mt-21.5'
       >
+        <DeferredKlarnaOnSiteMessaging />
         <PromotionImpression
           promotionId='skreddersy-varmen-purchase'
           promotionName='Skreddersy varmen'

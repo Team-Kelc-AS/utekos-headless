@@ -7,9 +7,6 @@ import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { HeroActions } from '@/app/skreddersy-varmen/components/HeroActions'
 import { HeroStars } from '@/app/skreddersy-varmen/components/HeroStars'
 import { formatPrice } from '@/lib/utils/formatPrice'
-import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/KlarnaCreditPromotionAutoSize'
-import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/KlarnaOnSiteMessagingScript'
-import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { techDownReviewSummary } from '@/app/skreddersy-varmen/data/reviews'
 import type { ProductCommerceViewModel } from '@/lib/products/commerce'
 
@@ -28,13 +25,6 @@ export function Hero({
   const defaultVariant = commerce?.variants.find(
     variant => variant.commerce.id === commerce.defaultVariantId
   )
-  const klarnaPurchaseAmount =
-    defaultVariant ?
-      getKlarnaMinorUnitAmount({
-        amount: defaultVariant.commerce.price.amount,
-        currencyCode: defaultVariant.commerce.price.currencyCode
-      })
-    : undefined
 
   return (
     <section
@@ -124,29 +114,10 @@ export function Hero({
                 <span aria-hidden>·</span>
                 <span>Rask levering</span>
               </p>
-
-              {klarnaPurchaseAmount ?
-                <div
-                  role='group'
-                  aria-label='Betalingsinformasjon fra Klarna'
-                  className='min-h-7 max-w-md overflow-hidden rounded-xl bg-white text-black'
-                >
-                  <KlarnaCreditPromotionAutoSize
-                    id='klarna-credit-promotion-skreddersy-varmen-hero'
-                    className='klarna-osm-light'
-                    purchaseAmount={klarnaPurchaseAmount}
-                    theme='default'
-                  />
-                </div>
-              : null}
             </div>
           : null}
         </div>
       </div>
-
-      {klarnaPurchaseAmount ?
-        <KlarnaOnSiteMessagingScript strategy='lazyOnload' />
-      : null}
     </section>
   )
 }
