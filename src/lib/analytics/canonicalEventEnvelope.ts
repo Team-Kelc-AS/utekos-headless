@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { metaAudienceSchema } from './metaAudience'
 import {
   canonicalClickIdsSchema,
   canonicalSignalAuditSchema
@@ -75,6 +76,7 @@ export const canonicalEventEnvelopeSchema = z.strictObject({
     'test'
   ]),
   consent: consentSnapshotSchema,
+  meta_audience: metaAudienceSchema.optional(),
   experiment: canonicalExperimentAssignmentSchema.optional(),
   user_data: canonicalUserDataSchema.optional(),
   click_id: canonicalClickIdsSchema.optional(),

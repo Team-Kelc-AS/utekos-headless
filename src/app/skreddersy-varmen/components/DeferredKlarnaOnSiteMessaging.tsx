@@ -15,15 +15,16 @@ export function DeferredKlarnaOnSiteMessaging({
   useEffect(() => {
     if (shouldLoad) return
 
-    if (window.location.hash === '#purchase-section') {
-      setShouldLoad(true)
-      return
-    }
-
     const target = document.getElementById('purchase-section')
-    if (!target || typeof IntersectionObserver === 'undefined') {
-      setShouldLoad(true)
-      return
+    if (
+      window.location.hash === '#purchase-section' ||
+      !target ||
+      typeof IntersectionObserver === 'undefined'
+    ) {
+      const frame = window.requestAnimationFrame(() => {
+        setShouldLoad(true)
+      })
+      return () => window.cancelAnimationFrame(frame)
     }
 
     const observer = new IntersectionObserver(

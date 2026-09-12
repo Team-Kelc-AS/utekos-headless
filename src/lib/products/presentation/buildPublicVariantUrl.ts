@@ -11,11 +11,14 @@ type SearchParamsInput =
 
 function toSearchParams(input: SearchParamsInput) {
   if (!input) return new URLSearchParams()
-  if (typeof input === 'string') return new URLSearchParams(input)
+  if (typeof input === 'string')
+    return new URLSearchParams(input)
   return new URLSearchParams(input.toString())
 }
 
-function getReservedParamNames(presentation: ProductPresentation) {
+function getReservedParamNames(
+  presentation: ProductPresentation
+) {
   return new Set([
     'variant',
     ...presentation.options.flatMap(option => [
@@ -36,19 +39,21 @@ export function buildPublicVariantUrl(input: {
   const reservedParamNames = getReservedParamNames(presentation)
   const nextParams = new URLSearchParams()
 
-  for (const optionKey of presentation.publicOptionOrder) {
-    const option = presentation.options.find(
-      candidate => candidate.key === optionKey
-    )
-    const value = options[optionKey]
+  for (const option of presentation.options) {
+    const value = options[option.key]
 
-    if (option && value) {
-      nextParams.set(option.publicParam, slugifyVariantOption(value))
+    if (value) {
+      nextParams.set(
+        option.publicParam,
+        slugifyVariantOption(value)
+      )
     }
   }
 
   const preservedEntries = [...sourceParams.entries()]
-    .filter(([key]) => !reservedParamNames.has(key.toLowerCase()))
+    .filter(
+      ([key]) => !reservedParamNames.has(key.toLowerCase())
+    )
     .sort(([leftKey, leftValue], [rightKey, rightValue]) =>
       leftKey === rightKey ?
         leftValue.localeCompare(rightValue)

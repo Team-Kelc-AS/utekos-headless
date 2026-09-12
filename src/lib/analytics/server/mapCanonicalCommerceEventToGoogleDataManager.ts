@@ -1,3 +1,4 @@
+import { consentedMetaAudience } from '../metaAudience'
 import { protos } from '@google-ads/datamanager'
 import type { CanonicalCommerceItem } from '../canonicalCommerceItem'
 import type { CanonicalEventEnvelope } from '../canonicalEventEnvelope'
@@ -145,6 +146,7 @@ function mapGoogleCommerceEvent(
     ...(eventDeviceInfo ? { eventDeviceInfo } : {}),
     ...(eventLocation ? { eventLocation } : {}),
     additionalEventParameters: compactGoogleDataManagerParameters([
+      googleDataManagerParameter('audience', consentedMetaAudience(event)),
       googleDataManagerIdentifierParameter('event_id', event.event_id),
       googleDataManagerIdentifierParameter(
         'page_view_id',

@@ -4384,6 +4384,14 @@
             ],
             "additionalProperties": false
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -7257,6 +7265,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -7651,6 +7667,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -8038,6 +8062,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -8446,6 +8478,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -8632,6 +8672,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -8803,6 +8851,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -8973,6 +9029,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -9141,6 +9205,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -9313,6 +9385,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -9487,6 +9567,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -9900,6 +9988,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -10298,6 +10394,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -10450,6 +10554,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -10846,6 +10958,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -11045,6 +11165,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -11218,6 +11346,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -11619,6 +11755,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -12003,6 +12147,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -12170,6 +12322,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -12350,6 +12510,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -12542,6 +12710,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -12769,6 +12945,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -13167,6 +13351,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -13340,6 +13532,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -13723,6 +13923,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -14139,6 +14347,14 @@
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -14525,6 +14741,14 @@
           },
           "consent": {
             "$ref": "#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",

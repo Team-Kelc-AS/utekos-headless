@@ -1,3 +1,4 @@
+import { enrichBrowserMetaAudience } from './browserMetaAudience'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { hasCookiebotExplicitResponse } from '@/lib/consent/cookiebotConsent'
 import {
@@ -200,8 +201,9 @@ export async function sendCanonicalCollectorEvent<
   let status: number | undefined
 
   try {
-    const journeyEnriched =
-      enrichCanonicalBrowserJourneyContext(event)
+    const journeyEnriched = enrichCanonicalBrowserJourneyContext(
+      enrichBrowserMetaAudience(event)
+    )
     stage = 'meta_context'
     const metaEnriched =
       await enrichCanonicalEventWithMetaAttribution(

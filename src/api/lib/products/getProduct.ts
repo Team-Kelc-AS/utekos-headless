@@ -7,10 +7,12 @@ import { getShopifyGraphQLErrorMetadata } from '@/api/shopify/request/shopifyReq
 import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import { reshapeProduct } from '@/lib/utils/reshapeProduct'
 import { cacheTag, cacheLife } from 'next/cache'
+import { unstable_rethrow } from 'next/navigation'
 import { TAGS } from '@/api/constants/cacheTags'
 import {
-  getRuntimeCachedShopifyProduct,
-  normalizeShopifyProductHandle
+  fetchShopifyProductWithFallback,
+  normalizeShopifyProductHandle,
+  SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE
 } from '@/lib/cache/shopifyProductRuntimeCache'
 import type { ShopifyProduct } from 'types/product'
 import type { ShopifyProductOperation } from '@types'
@@ -20,7 +22,11 @@ async function fetchProductFromShopify(
 ): Promise<ShopifyProduct | null> {
   const response =
     await storefrontGateway.catalogQuery<ShopifyProductOperation>(
-      { query: getProductQuery, variables: { handle } }
+      {
+        query: getProductQuery,
+        variables: { handle },
+        cache: 'no-store'
+      }
     )
 
   if (!response.success) {
@@ -40,17 +46,42 @@ async function fetchProductFromShopify(
   return reshapeProduct(rawProduct)
 }
 
-export async function getProduct(
-  handle: string
-): Promise<ShopifyProduct | null> {
+async function getCachedShopifyProduct(
+  normalizedHandle: string
+) {
   'use cache: remote'
 
-  const normalizedHandle = normalizeShopifyProductHandle(handle)
   cacheTag(`product-${normalizedHandle}`, TAGS.products)
   cacheLife('products')
 
-  return getRuntimeCachedShopifyProduct(
-    normalizedHandle,
-    fetchProductFromShopify
+  try {
+    const result = await fetchShopifyProductWithFallback(
+      normalizedHandle,
+      fetchProductFromShopify
+    )
+    if (result.isFallback) {
+      cacheLife(SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE)
+    }
+    return { success: true as const, product: result.data }
+  } catch (error) {
+    unstable_rethrow(error)
+    cacheLife(SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE)
+    return {
+      success: false as const,
+      error:
+        error instanceof Error ?
+          error.message
+        : 'Product fetch failed'
+    }
+  }
+}
+
+export async function getProduct(
+  handle: string
+): Promise<ShopifyProduct | null> {
+  const result = await getCachedShopifyProduct(
+    normalizeShopifyProductHandle(handle)
   )
+  if (!result.success) throw new Error(result.error)
+  return result.product
 }

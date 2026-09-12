@@ -6,14 +6,14 @@ import {
   SKREDDERSY_VARMEN_PROMOTIONS,
   type SkreddersyVarmenPageContent
 } from '../data/skreddersyVarmenPageModel'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
+import type { ProductModel } from '@/lib/products/commerce'
 import styles from './SkreddersyVarmenTheatre.module.css'
 
 export function HeroTheatre({
   commerce,
   content
 }: {
-  commerce: ProductCommerceViewModel | null
+  commerce: ProductModel | null
   content: SkreddersyVarmenPageContent['hero']
 }) {
   return (

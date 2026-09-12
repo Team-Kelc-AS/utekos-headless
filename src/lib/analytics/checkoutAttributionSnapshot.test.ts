@@ -178,7 +178,7 @@ test('round-trips Facebook Login match signals only with marketing consent', () 
   assert.equal(denied.user_data, undefined)
 })
 
-test('persists only the consent decision after a full denial', () => {
+test('persists the consent decision and clears any stale audience after a full denial', () => {
   const snapshot = createCheckoutAttributionSnapshot(
     {
       browser_id: { fbp: 'should-not-persist' },
@@ -200,7 +200,11 @@ test('persists only the consent decision after a full denial', () => {
     checkoutAttributionSnapshotToShopifyAttributes(snapshot).map(
       attribute => attribute.key
     ),
-    ['utekos_consent']
+    ['utekos_meta_audience', 'utekos_consent']
+  )
+  assert.equal(
+    checkoutAttributionSnapshotToShopifyAttributes(snapshot).find(attribute => attribute.key === 'utekos_meta_audience')?.value,
+    ''
   )
 })
 
@@ -427,5 +431,23 @@ test('distinguishes missing, empty, invalid JSON, and invalid consent payloads f
       version: '1',
       resolution: testCase.resolution
     })
+  }
+})
+
+
+test('audience survives Shopify attributes only with both consent purposes', () => {
+  for (const analytics of ['granted', 'denied'] as const) {
+    for (const marketing of ['granted', 'denied'] as const) {
+      const consent = { analytics, marketing, preferences: 'denied' as const, source: 'cookiebot' as const, version: '1' }
+      const snapshot = createCheckoutAttributionSnapshot({ consent, meta_audience: 'engaged_audience' }, capturedAt)
+      const attributes = checkoutAttributionSnapshotToShopifyAttributes(snapshot)
+      const expected = analytics === 'granted' && marketing === 'granted' ? 'engaged_audience' : undefined
+      assert.equal(attributes.find(item => item.key === 'utekos_meta_audience')?.value, expected ?? '')
+      const notes = attributes.map(item => ({ name: item.key, value: item.value }))
+      assert.equal(parseOrderAttributionFromNoteAttributes(notes).meta_audience, expected)
+      const forged = notes.filter(item => item.name !== 'utekos_meta_audience')
+      forged.push({ name: 'utekos_meta_audience', value: 'arbitrary' })
+      assert.equal(parseOrderAttributionFromNoteAttributes(forged).meta_audience, undefined)
+    }
   }
 })

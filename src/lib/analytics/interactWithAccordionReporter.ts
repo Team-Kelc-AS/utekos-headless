@@ -1,6 +1,6 @@
 'use client'
 
-import { sendGTMEvent } from '@next/third-parties/google'
+import { sendCanonicalGTMEvent as sendGTMEvent } from './sendCanonicalGTMEvent'
 import { readBrowserReporterContext } from './browserReporterContext'
 import {
   buildInteractWithAccordionDataLayerEvent,

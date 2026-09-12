@@ -9,8 +9,14 @@ import type { ShopifyProduct } from 'types/product'
 
 export const SHOPIFY_CATALOG_RUNTIME_CACHE_NAMESPACE =
   'shopify-catalog:v2'
-export const SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS = 3_600
 export const SHOPIFY_PRODUCT_LAST_GOOD_RUNTIME_CACHE_TTL_SECONDS = 86_400
+export const SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE = {
+  // Keep the page shell prerenderable while retrying transient failures promptly.
+  // https://nextjs.org/docs/app/api-reference/functions/cacheLife#prerendering-behavior
+  stale: 300,
+  revalidate: 30,
+  expire: 300
+} as const
 export const SHOPIFY_PRODUCT_RUNTIME_CACHE_MAX_SAFE_BYTES = 1_900_000
 
 const RUNTIME_CACHE_SPAN_ATTRIBUTES = {
@@ -163,12 +169,6 @@ export function getShopifyCatalogRuntimeCache(): RuntimeCache {
   })
 }
 
-export function getShopifyProductRuntimeCacheKey(
-  handle: string
-): string {
-  return `product:handle:${normalizeShopifyProductHandle(handle)}`
-}
-
 export function getShopifyProductLastGoodRuntimeCacheKey(
   handle: string
 ): string {
@@ -212,9 +212,7 @@ function normalizeUniqueShopifyProductHandles(
 ): string[] {
   return Array.from(
     new Set(
-      handles
-        .map(normalizeShopifyProductHandle)
-        .filter(Boolean)
+      handles.map(normalizeShopifyProductHandle).filter(Boolean)
     )
   )
 }
@@ -250,8 +248,10 @@ async function deleteRuntimeCacheKey(
 
 async function getLastGoodSnapshot(
   runtimeCache: RuntimeCache,
-  cacheKey: string
+  normalizedHandle: string
 ): Promise<ShopifyProductLastGoodSnapshot | null> {
+  const cacheKey =
+    getShopifyProductLastGoodRuntimeCacheKey(normalizedHandle)
   let cachedValue: unknown | null
 
   try {
@@ -270,7 +270,20 @@ async function getLastGoodSnapshot(
   const parsed =
     shopifyProductLastGoodSnapshotSchema.safeParse(cachedValue)
   if (parsed.success) {
-    return parsed.data as unknown as ShopifyProductLastGoodSnapshot
+    const ageMs = Date.now() - Date.parse(parsed.data.cachedAt)
+    const maxAgeMs =
+      (SHOPIFY_PRODUCT_LAST_GOOD_RUNTIME_CACHE_TTL_SECONDS -
+        SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE.expire) *
+      1000
+    if (
+      ageMs >= 0 &&
+      ageMs < maxAgeMs &&
+      normalizeShopifyProductHandle(
+        parsed.data.product.handle
+      ) === normalizedHandle
+    ) {
+      return parsed.data as unknown as ShopifyProductLastGoodSnapshot
+    }
   }
 
   await deleteRuntimeCacheKey(
@@ -329,23 +342,14 @@ async function storeFetchedProduct(
   fetchedProduct: ShopifyProduct | null
 ): Promise<ShopifyProduct | null> {
   const cacheKey =
-    getShopifyProductRuntimeCacheKey(normalizedHandle)
-  const lastGoodCacheKey =
     getShopifyProductLastGoodRuntimeCacheKey(normalizedHandle)
 
   if (fetchedProduct === null) {
-    await Promise.all([
-      deleteRuntimeCacheKey(
-        runtimeCache,
-        cacheKey,
-        'shopify.runtime_cache.missing_product_delete_failed'
-      ),
-      deleteRuntimeCacheKey(
-        runtimeCache,
-        lastGoodCacheKey,
-        'shopify.runtime_cache.last_good_delete_failed'
-      )
-    ])
+    await deleteRuntimeCacheKey(
+      runtimeCache,
+      cacheKey,
+      'shopify.runtime_cache.last_good_delete_failed'
+    )
     return null
   }
 
@@ -359,6 +363,14 @@ async function storeFetchedProduct(
 
   const product =
     parsedFetchedProduct.data as unknown as ShopifyProduct
+  if (
+    normalizeShopifyProductHandle(product.handle) !==
+    normalizedHandle
+  ) {
+    throw new Error(
+      `Shopify returned a different product for ${normalizedHandle}`
+    )
+  }
   const serializedBytes = getSerializedByteLength(product)
   if (
     serializedBytes >=
@@ -372,209 +384,83 @@ async function storeFetchedProduct(
     return product
   }
 
-  const normalizedProductId = normalizeShopifyProductId(
-    product.id
+  await setLastGoodSnapshot(
+    runtimeCache,
+    normalizedHandle,
+    product,
+    serializedBytes
   )
-
-  await Promise.all([
-    setLastGoodSnapshot(
-      runtimeCache,
-      normalizedHandle,
-      product,
-      serializedBytes
-    ),
-    (async () => {
-      try {
-        await startAnalyticsSpan(
-          {
-            name: 'cache.put shopify_product',
-            op: 'cache.put',
-            attributes: {
-              ...RUNTIME_CACHE_SPAN_ATTRIBUTES,
-              'cache.item_size': serializedBytes
-            }
-          },
-          () =>
-            runtimeCache.set(cacheKey, product, {
-              ttl: SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS,
-              tags: [
-                `product:${normalizedProductId}`,
-                `product-handle:${normalizedHandle}`,
-                'catalog'
-              ]
-            })
-        )
-      } catch (error) {
-        logCacheWarning(
-          'shopify.runtime_cache.write_failed',
-          error,
-          { cacheKey }
-        )
-      }
-    })()
-  ])
 
   return product
 }
 
-export async function getRuntimeCachedShopifyProduct(
+export async function fetchShopifyProductWithFallback(
   handle: string,
   fetchProduct: ProductFetcher,
   runtimeCache: RuntimeCache = getShopifyCatalogRuntimeCache()
-): Promise<ShopifyProduct | null> {
+): Promise<{
+  data: ShopifyProduct | null
+  isFallback: boolean
+}> {
   const normalizedHandle = normalizeShopifyProductHandle(handle)
   if (!normalizedHandle) {
     throw new Error('A Shopify product handle is required')
   }
-
-  const cacheKey =
-    getShopifyProductRuntimeCacheKey(normalizedHandle)
-  const lastGoodCacheKey =
-    getShopifyProductLastGoodRuntimeCacheKey(normalizedHandle)
-  let cachedValue: unknown | null = null
-  let cachedProduct: ShopifyProduct | null = null
-
-  await startAnalyticsSpan(
-    {
-      name: 'cache.get shopify_product',
-      op: 'cache.get',
-      attributes: RUNTIME_CACHE_SPAN_ATTRIBUTES
-    },
-    async span => {
-      try {
-        cachedValue = await runtimeCache.get(cacheKey)
-      } catch (error) {
-        span.setAttribute('cache.hit', false)
-        logCacheWarning(
-          'shopify.runtime_cache.read_failed',
-          error,
-          { cacheKey }
-        )
-        return
-      }
-
-      if (cachedValue === null) {
-        span.setAttribute('cache.hit', false)
-        return
-      }
-
-      const parsedCachedValue =
-        shopifyRuntimeCachedProductSchema.safeParse(cachedValue)
-      if (parsedCachedValue.success) {
-        span.setAttribute('cache.hit', true)
-        cachedProduct =
-          parsedCachedValue.data as unknown as ShopifyProduct
-        return
-      }
-
-      span.setAttribute('cache.hit', false)
-    }
-  )
-
-  if (cachedProduct) {
-    const existingLastGood = await getLastGoodSnapshot(
-      runtimeCache,
-      lastGoodCacheKey
-    )
-
-    if (!existingLastGood) {
-      const serializedBytes =
-        getSerializedByteLength(cachedProduct)
-      if (
-        serializedBytes <
-        SHOPIFY_PRODUCT_RUNTIME_CACHE_MAX_SAFE_BYTES
-      ) {
-        await setLastGoodSnapshot(
-          runtimeCache,
-          normalizedHandle,
-          cachedProduct,
-          serializedBytes
-        )
-      }
-    }
-
-    return cachedProduct
-  }
-
-  if (cachedValue !== null) {
-    try {
-      await startAnalyticsSpan(
-        {
-          name: 'cache.remove shopify_product',
-          op: 'cache.remove',
-          attributes: RUNTIME_CACHE_SPAN_ATTRIBUTES
-        },
-        () => runtimeCache.delete(cacheKey)
-      )
-    } catch (error) {
-      logCacheWarning(
-        'shopify.runtime_cache.invalid_delete_failed',
-        error,
-        { cacheKey }
-      )
-    }
-  }
-
-  const lastGoodSnapshot = await getLastGoodSnapshot(
-    runtimeCache,
-    lastGoodCacheKey
-  )
 
   let fetchedProduct: ShopifyProduct | null
 
   try {
     fetchedProduct = await fetchProduct(normalizedHandle)
   } catch (error) {
-    if (
-      lastGoodSnapshot &&
-      isRetryableShopifyCatalogError(error)
-    ) {
-      logCacheWarning(
-        'shopify.runtime_cache.served_last_good',
-        error,
-        {
-          cacheKey: lastGoodCacheKey,
-          cachedAt: lastGoodSnapshot.cachedAt,
-          ageMs: Math.max(
-            0,
-            Date.now() -
-              new Date(lastGoodSnapshot.cachedAt).getTime()
-          )
-        }
+    if (isRetryableShopifyCatalogError(error)) {
+      const lastGoodSnapshot = await getLastGoodSnapshot(
+        runtimeCache,
+        normalizedHandle
       )
-      return lastGoodSnapshot.product
+      if (lastGoodSnapshot) {
+        logCacheWarning(
+          'shopify.runtime_cache.served_last_good',
+          error,
+          {
+            cacheKey:
+              getShopifyProductLastGoodRuntimeCacheKey(
+                normalizedHandle
+              ),
+            cachedAt: lastGoodSnapshot.cachedAt,
+            ageMs:
+              Date.now() - Date.parse(lastGoodSnapshot.cachedAt)
+          }
+        )
+        return {
+          data: lastGoodSnapshot.product,
+          isFallback: true
+        }
+      }
     }
-
     throw error
   }
 
-  return storeFetchedProduct(
-    runtimeCache,
-    normalizedHandle,
-    fetchedProduct
-  )
+  return {
+    data: await storeFetchedProduct(
+      runtimeCache,
+      normalizedHandle,
+      fetchedProduct
+    ),
+    isFallback: false
+  }
 }
 
-export async function getRuntimeCachedShopifyProductsByHandles(
+export async function fetchShopifyProductsWithFallback(
   handles: readonly string[],
   fetchProducts: ProductBatchFetcher,
   runtimeCache: RuntimeCache = getShopifyCatalogRuntimeCache()
-): Promise<ShopifyProduct[]> {
+): Promise<{ data: ShopifyProduct[]; isFallback: boolean }> {
   const normalizedHandles =
     normalizeUniqueShopifyProductHandles(handles)
 
   if (normalizedHandles.length === 0) {
-    return []
+    return { data: [], isFallback: false }
   }
-
-  const lastGoodSnapshots = await Promise.all(
-    normalizedHandles.map(handle =>
-      getLastGoodSnapshot(
-        runtimeCache,
-        getShopifyProductLastGoodRuntimeCacheKey(handle)
-      )
-    )
-  )
 
   let fetchedProducts: ShopifyProduct[]
 
@@ -582,8 +468,13 @@ export async function getRuntimeCachedShopifyProductsByHandles(
     fetchedProducts = await fetchProducts(normalizedHandles)
   } catch (error) {
     if (isRetryableShopifyCatalogError(error)) {
+      const lastGoodSnapshots = await Promise.all(
+        normalizedHandles.map(handle =>
+          getLastGoodSnapshot(runtimeCache, handle)
+        )
+      )
       const lastGoodProducts = lastGoodSnapshots.flatMap(
-        snapshot => snapshot ? [snapshot.product] : []
+        snapshot => (snapshot ? [snapshot.product] : [])
       )
 
       if (lastGoodProducts.length > 0) {
@@ -596,10 +487,13 @@ export async function getRuntimeCachedShopifyProductsByHandles(
           }
         )
 
-        return orderProductsByHandles(
-          normalizedHandles,
-          lastGoodProducts
-        )
+        return {
+          data: orderProductsByHandles(
+            normalizedHandles,
+            lastGoodProducts
+          ),
+          isFallback: true
+        }
       }
     }
 
@@ -637,5 +531,5 @@ export async function getRuntimeCachedShopifyProductsByHandles(
     )
   )
 
-  return orderedProducts
+  return { data: orderedProducts, isFallback: false }
 }

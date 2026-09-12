@@ -18,8 +18,14 @@ test('renders an honest commerce fallback without price or purchase action', asy
     <fallbackModule.LandingCommerceUnavailable />
   )
 
-  assert.match(markup, /Kjøpsvalget er midlertidig utilgjengelig/)
-  assert.match(markup, /Shopify/)
+  assert.match(
+    markup,
+    /Kjøpsvalget er midlertidig utilgjengelig/
+  )
+  assert.match(markup, /pris og lagerstatus/)
   assert.doesNotMatch(markup, /\b\d[\d\s.,]*\s?kr\b/i)
-  assert.doesNotMatch(markup, /<button\b|Legg i handlekurv|Kjøp nå/i)
+  assert.doesNotMatch(
+    markup,
+    /<button\b|Legg i handlekurv|Kjøp nå/i
+  )
 })

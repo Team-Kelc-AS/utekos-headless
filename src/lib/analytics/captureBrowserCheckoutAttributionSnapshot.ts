@@ -25,6 +25,9 @@ export async function captureBrowserCheckoutAttributionSnapshot() {
   })
   const initialContext = {
     consent: context.consent,
+    ...(context.metaAudience ?
+      { meta_audience: context.metaAudience }
+    : {}),
     page_url: context.pageUrl,
     ...(context.documentReferrer ?
       { referrer_url: context.documentReferrer }

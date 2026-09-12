@@ -1,3 +1,9 @@
+import { TECH_DOWN_PUBLIC_SIZE_DEFINITIONS } from '@/lib/products/techDownSizes'
+
+const listFormatter = new Intl.ListFormat('nb', {
+  type: 'conjunction'
+})
+
 export const techDownFaq = [
   {
     question: 'Er denne normal i størrelsen?',
@@ -26,13 +32,11 @@ export const techDownFaq = [
   },
   {
     question: 'Hvor langt/bredt er selve plagget?',
-    answer:
-      'Hovedmålene er lengde, brystvidde og ermlengde: Middels er 162 / 56 / 82 cm, Stor er 166 / 58 / 87 cm og Større er 170 / 61 / 92 cm. Se den komplette måltabellen rett over for de øvrige plaggmålene.'
+    answer: `Hovedmålene er lengde, brystvidde og ermlengde: ${listFormatter.format(TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(({ size, measurements }) => `${size} er ${[measurements.length, measurements.chest, measurements.armCenter].map(value => value.replace(' cm', '')).join(' / ')} cm`))}. Se den komplette måltabellen rett over for de øvrige plaggmålene.`
   },
   {
     question: 'Hva tilsvarer dette i andre størrelsessystemer?',
-    answer:
-      'Utekos bruker EU-størrelser. For TechDown™ tilsvarer Middels EU M, Stor EU L og Større EU XL.'
+    answer: `Utekos bruker EU-størrelser. For TechDown™ tilsvarer ${listFormatter.format(TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(({ size, sizeCode }) => `${size} EU ${sizeCode}`))}.`
   },
   {
     question: 'Hva gjør jeg hvis jeg har kjøpt feil størrelse?',

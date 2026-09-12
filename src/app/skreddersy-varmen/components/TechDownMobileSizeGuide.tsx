@@ -5,14 +5,10 @@ import {
   TabsTrigger
 } from '@/components/ui/tabs'
 
-type TechDownMobileSizeGuideSize = {
-  size: string
-  height: string
-  tips: readonly string[]
-}
+import type { PublicTechDownSizeDefinition } from '@/lib/products/techDownSizes'
 
 type TechDownMobileSizeGuideProps = {
-  sizes: readonly TechDownMobileSizeGuideSize[]
+  sizes: readonly PublicTechDownSizeDefinition[]
 }
 
 export function TechDownMobileSizeGuide({
@@ -38,7 +34,7 @@ export function TechDownMobileSizeGuide({
           ))}
         </TabsList>
 
-        {sizes.map(({ size, height, tips }) => (
+        {sizes.map(({ size, heightGuide, fitGuidance }) => (
           <TabsContent key={size} value={size} className='mt-0'>
             <section className='px-4 pt-4 pb-4'>
               <h3 className='font-utekos-text-medium text-xs tracking-[0.08em] text-foreground/80 uppercase'>
@@ -48,7 +44,7 @@ export function TechDownMobileSizeGuide({
                 <div className='flex min-h-14 items-center justify-center rounded-xl bg-background px-3 py-2 text-center'>
                   <dt className='sr-only'>{size}</dt>
                   <dd className='font-utekos-text-medium text-sm leading-snug text-foreground'>
-                    {height}
+                    {heightGuide}
                   </dd>
                 </div>
               </dl>
@@ -63,7 +59,7 @@ export function TechDownMobileSizeGuide({
                   {size}
                 </h4>
                 <ul className='mt-1.5 space-y-1.5 text-sm leading-relaxed text-foreground/90'>
-                  {tips.map(tip => (
+                  {fitGuidance.map(tip => (
                     <li
                       key={tip}
                       className='relative pl-3 before:absolute before:top-[0.65em] before:left-0 before:size-1 before:rounded-full before:bg-primary'

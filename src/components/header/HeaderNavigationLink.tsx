@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, type ComponentProps } from 'react'
+import { resolveSkreddersyVarmenPublicPathname } from '@/lib/experiments/skreddersyVarmenLayoutRoute'
 
 export function HeaderNavigationLink({
   prefetch = null,
@@ -10,8 +11,11 @@ export function HeaderNavigationLink({
   onFocus,
   ...props
 }: ComponentProps<typeof Link>) {
-  const pathname = usePathname()
-  const [intentPath, setIntentPath] = useState<string | null>(null)
+  const pathname =
+    resolveSkreddersyVarmenPublicPathname(usePathname())
+  const [intentPath, setIntentPath] = useState<string | null>(
+    null
+  )
   const waitForIntent =
     pathname === '/skreddersy-varmen' && intentPath !== pathname
 

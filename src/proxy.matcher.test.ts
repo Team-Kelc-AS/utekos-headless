@@ -70,3 +70,34 @@ test('matches only document navigations and required proxy routes', () => {
     false
   )
 })
+
+test('also matches layout selection on RSC, prefetch and direct internal URLs', () => {
+  const requests: Record<string, string>[] = [
+    { accept: 'text/x-component', rsc: '1' },
+    { 'next-router-prefetch': '1', 'purpose': 'prefetch' },
+    {}
+  ]
+  for (const headers of requests) {
+    assert.equal(
+      proxyMatches(
+        'https://utekos.no/skreddersy-varmen',
+        headers
+      ),
+      true
+    )
+    assert.equal(
+      proxyMatches(
+        'https://utekos.no/skreddersy-varmen/layout/current',
+        headers
+      ),
+      true
+    )
+    assert.equal(
+      proxyMatches(
+        'https://utekos.no/skreddersy-varmen/layout/legacy',
+        headers
+      ),
+      true
+    )
+  }
+})

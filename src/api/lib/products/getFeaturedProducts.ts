@@ -1,4 +1,3 @@
-'use cache'
 import 'server-only'
 
 import { handles } from '@/db/data/products/product-info'
@@ -7,11 +6,13 @@ import { ShopifyCatalogGraphQLError } from '@/api/lib/products/ShopifyCatalogGra
 import { getShopifyGraphQLErrorMetadata } from '@/api/shopify/request/shopifyRequestObservability'
 import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
 import {
-  getRuntimeCachedShopifyProductsByHandles,
-  normalizeShopifyProductHandle
+  fetchShopifyProductsWithFallback,
+  normalizeShopifyProductHandle,
+  SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE
 } from '@/lib/cache/shopifyProductRuntimeCache'
 import { reshapeProduct } from '@/lib/utils/reshapeProduct'
 import { cacheLife, cacheTag } from 'next/cache'
+import { unstable_rethrow } from 'next/navigation'
 import { cacheSignal } from 'react'
 import type { ShopifyFeaturedProductsOperation } from '@types'
 import type { ShopifyProduct } from 'types/product'
@@ -31,6 +32,7 @@ async function fetchFeaturedProductsFromShopify(
     await storefrontGateway.catalogQuery<ShopifyFeaturedProductsOperation>(
       {
         query: getFeaturedProductsQuery,
+        cache: 'no-store',
         variables: { handle0, handle1, handle2 },
         ...(signal ? { signal } : {})
       }
@@ -56,8 +58,10 @@ async function fetchFeaturedProductsFromShopify(
     .map(reshapeProduct)
 }
 
-export async function getFeaturedProducts() {
-  cacheLife('hours')
+async function getCachedFeaturedProducts() {
+  'use cache: remote'
+
+  cacheLife('products')
   cacheTag('products')
 
   const normalizedHandles = handles
@@ -65,9 +69,34 @@ export async function getFeaturedProducts() {
     .filter(Boolean)
   const signal = cacheSignal()
 
-  return getRuntimeCachedShopifyProductsByHandles(
-    normalizedHandles,
-    requestedHandles =>
-      fetchFeaturedProductsFromShopify(requestedHandles, signal)
-  )
+  try {
+    const result = await fetchShopifyProductsWithFallback(
+      normalizedHandles,
+      requestedHandles =>
+        fetchFeaturedProductsFromShopify(
+          requestedHandles,
+          signal
+        )
+    )
+    if (result.isFallback) {
+      cacheLife(SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE)
+    }
+    return { success: true as const, products: result.data }
+  } catch (error) {
+    unstable_rethrow(error)
+    cacheLife(SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE)
+    return {
+      success: false as const,
+      error:
+        error instanceof Error ?
+          error.message
+        : 'Product batch fetch failed'
+    }
+  }
+}
+
+export async function getFeaturedProducts() {
+  const result = await getCachedFeaturedProducts()
+  if (!result.success) throw new Error(result.error)
+  return result.products
 }

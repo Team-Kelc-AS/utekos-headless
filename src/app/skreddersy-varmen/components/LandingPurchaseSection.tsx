@@ -6,7 +6,7 @@ import { TechDownSizeGuideAccordion } from './TechDownSizeGuideAccordion'
 import { requireProductPresentation } from '@/lib/products/presentation/getProductPresentation'
 import {
   resolveCommerceVariantFromSearchParams,
-  type ProductCommerceViewModel
+  type ProductModel
 } from '@/lib/products/commerce'
 
 type SearchParamsRecord = Record<
@@ -18,7 +18,7 @@ export async function LandingPurchaseSection({
   commerce,
   searchParams
 }: {
-  commerce: ProductCommerceViewModel
+  commerce: ProductModel
   searchParams?: Promise<SearchParamsRecord> | SearchParamsRecord
 }) {
   const resolvedSearchParams =
@@ -27,17 +27,12 @@ export async function LandingPurchaseSection({
   return (
     <DeferredPurchaseClientLanding
       commerce={commerce}
-      presentation={requireProductPresentation(
-        commerce.publicHandle
-      )}
+      presentation={requireProductPresentation(commerce.handle)}
       content={{
         gallery: <LandingPageProductCarouselPurchaseSection />,
         productInformation: (
           <LandingPurchaseProductInformation
-            modelName={commerce.displayName.replace(
-              /^Utekos\s+/u,
-              ''
-            )}
+            modelName={commerce.title.replace(/^Utekos\s+/u, '')}
           />
         ),
         sizeGuide: <TechDownSizeGuideAccordion />,
@@ -49,7 +44,7 @@ export async function LandingPurchaseSection({
         resolveCommerceVariantFromSearchParams(
           commerce,
           resolvedSearchParams ?? {}
-        )?.commerce.id ?? commerce.defaultVariantId
+        )?.id ?? commerce.defaultVariantId
       }
     />
   )

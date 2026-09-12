@@ -25,9 +25,8 @@ moduleWithLoad._load = (request, parent, isMain) => {
 }
 
 const require = createRequire(import.meta.url)
-const {
-  buildProductCommerceViewModel
-} = require('../../src/lib/products/commerce/buildProductCommerceViewModel.ts') as typeof import('../../src/lib/products/commerce/buildProductCommerceViewModel')
+const { buildProductModel } =
+  require('../../src/lib/products/commerce/buildProductModel.ts') as typeof import('../../src/lib/products/commerce/buildProductModel')
 
 type JsonLdNode = Record<string, unknown>
 type ValidationResult = {
@@ -37,21 +36,22 @@ type ValidationResult = {
   suggestions: unknown[]
 }
 
-function readTextResult(result: Awaited<ReturnType<Client['callTool']>>) {
-  const text = result.content.find(content => content.type === 'text')
+function readTextResult(
+  result: Awaited<ReturnType<Client['callTool']>>
+) {
+  const text = result.content.find(
+    content => content.type === 'text'
+  )
 
   assert.ok(text && text.type === 'text')
   return text.text
 }
 
 function withContext(node: JsonLdNode): JsonLdNode {
-  return {
-    '@context': 'https://schema.org',
-    ...node
-  }
+  return { '@context': 'https://schema.org', ...node }
 }
 
-const commerce = buildProductCommerceViewModel(
+const commerce = buildProductModel(
   createTechDownShopifyProductFixture()
 )
 const landingGraph = buildSkreddersyVarmenJsonLd(commerce)
@@ -62,7 +62,9 @@ const productGroup = landingGraph['@graph'].find(
 assert.ok(productGroup && 'hasVariant' in productGroup)
 
 if (!productGroup || !('hasVariant' in productGroup)) {
-  throw new Error('TechDown ProductGroup is missing from the landing graph')
+  throw new Error(
+    'TechDown ProductGroup is missing from the landing graph'
+  )
 }
 
 const variants = productGroup.hasVariant

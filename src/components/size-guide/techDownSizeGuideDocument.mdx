@@ -5,8 +5,10 @@ description:
   måletabell.'
 ---
 
-import { techDownData } from '@/app/handlehjelp/storrelsesguide/utils/data'
-import { techDownSizeCards } from '@/app/handlehjelp/storrelsesguide/utils/techDownSizeCards'
+import {
+  TECH_DOWN_MEASUREMENT_ROWS,
+  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS
+} from '@/lib/products/techDownSizes'
 
 # Størrelsesguide: Utekos TechDown™
 
@@ -27,7 +29,7 @@ utgangspunkt for å finne størrelsen som passer ditt behov.
 
 ## Hvilken størrelse bør du velge?
 
-{techDownSizeCards.map(card => (
+{TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(card => (
 
   <section key={card.id} className="my-6">
     <h3 className="mb-2 text-xl font-semibold">{card.size}</h3>
@@ -75,7 +77,7 @@ direkte på kroppen med et mykt målebånd.
         <th scope='col' className='p-3 text-left'>
           Mål
         </th>
-        {techDownSizeCards.map(card => (
+        {TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(card => (
           <th
             key={card.id}
             scope='col'
@@ -87,7 +89,7 @@ direkte på kroppen med et mykt målebånd.
       </tr>
     </thead>
     <tbody>
-      {techDownData.map(row => (
+      {TECH_DOWN_MEASUREMENT_ROWS.map(row => (
         <tr
           key={row.measurement}
           className='border-t border-foreground/20'
@@ -95,14 +97,16 @@ direkte på kroppen med et mykt målebånd.
           <th scope='row' className='p-3 text-left font-medium'>
             {row.measurement}
           </th>
-          {techDownSizeCards.map(card => (
-            <td
-              key={card.id}
-              className='p-3 text-right whitespace-nowrap'
-            >
-              {row[card.id]}
-            </td>
-          ))}
+          {TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(
+            (card, index) => (
+              <td
+                key={card.id}
+                className='p-3 text-right whitespace-nowrap'
+              >
+                {row.values[index]}
+              </td>
+            )
+          )}
         </tr>
       ))}
     </tbody>

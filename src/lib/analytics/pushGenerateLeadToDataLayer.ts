@@ -1,3 +1,4 @@
+import { enrichBrowserMetaAudience } from './browserMetaAudience'
 import type { GenerateLeadDataLayerEvent } from './generateLeadEvent'
 
 type DataLayerWindow = Window & {
@@ -9,6 +10,7 @@ export function pushGenerateLeadToDataLayer(
 ): void {
   const dataLayerWindow = window as unknown as DataLayerWindow
   dataLayerWindow.dataLayer = dataLayerWindow.dataLayer ?? []
+  const canonical = enrichBrowserMetaAudience(event.canonical_event)
   dataLayerWindow.dataLayer.push({
     event: event.event,
     event_id: event.event_id,
@@ -18,6 +20,7 @@ export function pushGenerateLeadToDataLayer(
       { page_view_id: event.page_view_id }
     : {}),
     custom_data: event.custom_data,
-    canonical_event: event.canonical_event
+    canonical_event: canonical,
+    meta_audience: canonical.meta_audience ?? null
   })
 }

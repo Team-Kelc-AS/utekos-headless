@@ -4330,6 +4330,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -4724,6 +4732,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -5111,6 +5127,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -5519,6 +5543,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -5705,6 +5737,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -5876,6 +5916,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -6046,6 +6094,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -6214,6 +6270,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -6386,6 +6450,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -6560,6 +6632,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -6973,6 +7053,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -7371,6 +7459,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -7523,6 +7619,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -7919,6 +8023,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -8118,6 +8230,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -8291,6 +8411,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -8692,6 +8820,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -9076,6 +9212,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -9243,6 +9387,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -9423,6 +9575,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -9615,6 +9775,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -9842,6 +10010,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -10240,6 +10416,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -10413,6 +10597,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -10796,6 +10988,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",
@@ -11212,6 +11412,14 @@
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -11598,6 +11806,14 @@
           },
           "consent": {
             "$ref": "https://api.swaggerhub.com/domains/kelc/UtekosCommon/0.1.0#/components/schemas/CanonicalEventEnvelope/properties/consent"
+          },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
           },
           "experiment": {
             "type": "object",

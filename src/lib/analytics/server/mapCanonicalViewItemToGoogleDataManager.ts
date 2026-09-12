@@ -1,3 +1,4 @@
+import { consentedMetaAudience } from '../metaAudience'
 import { protos } from '@google-ads/datamanager'
 import type { CanonicalViewItem } from '../viewItemEvent'
 import {
@@ -87,6 +88,7 @@ function mapItem(
 
 function mapEventParameters(event: CanonicalViewItem) {
   return compactGoogleDataManagerParameters([
+    googleDataManagerParameter('audience', consentedMetaAudience(event)),
     googleDataManagerIdentifierParameter('event_id', event.event_id),
     googleDataManagerIdentifierParameter('page_view_id', event.page_view_id),
     googleDataManagerParameter(

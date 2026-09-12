@@ -14,6 +14,7 @@ export type CanonicalCollectionContext = {
 
 type EventWithConsent = {
   campaign?: unknown
+  meta_audience?: unknown
   journey_id?: string | undefined
   previous_page_view_id?: string | undefined
   edge_request_id?: string | undefined
@@ -80,6 +81,8 @@ export function applyCanonicalCollectionContext<
     context.consent.marketing === 'granted'
   const preferencesGranted =
     context.consent.preferences === 'granted'
+  if (!context.hasResponse || !analyticsGranted || !marketingGranted)
+    delete nextEvent.meta_audience
   if (!marketingGranted) {
     delete nextEvent.campaign
     if (nextEvent.page_url)

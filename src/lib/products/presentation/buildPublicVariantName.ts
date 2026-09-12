@@ -5,8 +5,8 @@ export function buildPublicVariantName(
   presentation: ProductPresentation,
   options: PublicVariantOptions
 ) {
-  const optionLabels = presentation.publicOptionOrder
-    .map(optionKey => options[optionKey])
+  const optionLabels = presentation.options
+    .map(option => options[option.key])
     .filter((value): value is string => Boolean(value))
 
   return [presentation.displayName, ...optionLabels].join(' / ')

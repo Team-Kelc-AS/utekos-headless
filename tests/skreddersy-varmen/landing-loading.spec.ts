@@ -241,14 +241,41 @@ test('keeps the gallery usable and stable while its optional module is delayed',
   }
 })
 
-test('preserves public variant URLs and the server-composed size guide', async ({
+test('changes sizes without server navigation and preserves public URLs and the size guide', async ({
   page
 }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.emulateMedia({ reducedMotion: 'reduce' })
   const url = new URL(landingUrl)
   url.searchParams.set('utm_source', 'landing-loading-smoke')
+  url.searchParams.set('storrelse', 'middels')
+  url.hash = 'purchase-section'
   await page.goto(url.toString(), { waitUntil: 'load' })
+  await expect(
+    page.getByRole('radio', {
+      name: 'Størrelse Middels',
+      exact: true
+    })
+  ).toHaveAttribute('aria-checked', 'true')
+  const historyLength = await page.evaluate(() => history.length)
+  const navigationRequests: string[] = []
+  page.on('request', request => {
+    if (
+      (request.isNavigationRequest() &&
+        request.frame() === page.mainFrame()) ||
+      request.headers().rsc === '1' ||
+      new URL(request.url()).searchParams.has('_rsc')
+    ) {
+      navigationRequests.push(request.url())
+    }
+  })
+  await page
+    .getByRole('radio', {
+      name: 'Størrelse Større',
+      exact: true
+    })
+    .click()
+  await expect(page).toHaveURL(/storrelse=storre/)
   const size = page.getByRole('radio', {
     name: 'Størrelse Stor',
     exact: true
@@ -259,6 +286,10 @@ test('preserves public variant URLs and the server-composed size guide', async (
   expect(
     new URL(page.url()).searchParams.get('utm_source')
   ).toBe('landing-loading-smoke')
+  expect(new URL(page.url()).hash).toBe('#purchase-section')
+  expect(await page.evaluate(() => history.length)).toBe(
+    historyLength
+  )
   await page
     .getByRole('button', {
       name: 'Størrelsestabell',
@@ -287,6 +318,56 @@ test('preserves public variant URLs and the server-composed size guide', async (
   await expect(
     page.getByRole('button', { name: /^Legg i handlekurv/ })
   ).toBeEnabled()
+  expect(navigationRequests).toEqual([])
+  await page.reload({ waitUntil: 'load' })
+  await expect(size).toHaveAttribute('aria-checked', 'true')
+})
+
+test('restores the URL-selected size through browser back and forward', async ({
+  page
+}) => {
+  const mediumUrl = new URL(landingUrl)
+  mediumUrl.searchParams.set('storrelse', 'middels')
+  await page.goto(mediumUrl.toString(), { waitUntil: 'load' })
+  await expect(
+    page.getByRole('radio', {
+      name: 'Størrelse Middels',
+      exact: true
+    })
+  ).toHaveAttribute('aria-checked', 'true')
+  const largeUrl = new URL(landingUrl)
+  largeUrl.searchParams.set('storrelse', 'stor')
+  await page.goto(largeUrl.toString(), { waitUntil: 'load' })
+  const larger = page.getByRole('radio', {
+    name: 'Størrelse Større',
+    exact: true
+  })
+  await larger.click()
+  await expect(larger).toHaveAttribute('aria-checked', 'true')
+  await expect(page).toHaveURL(/storrelse=storre/)
+  await page.goBack()
+  await expect(page).toHaveURL(mediumUrl.toString())
+  await expect(
+    page.getByRole('radio', {
+      name: 'Størrelse Middels',
+      exact: true
+    })
+  ).toHaveAttribute('aria-checked', 'true')
+  await page.goForward()
+  await expect(page).toHaveURL(/storrelse=storre/)
+  await expect(larger).toHaveAttribute('aria-checked', 'true')
+  await page
+    .getByRole('link', {
+      name: 'Alt om frakt og retur',
+      exact: true
+    })
+    .click()
+  await expect(page).toHaveURL(
+    new URL('/frakt-og-retur', landingUrl).href
+  )
+  await page.goBack()
+  await expect(page).toHaveURL(/storrelse=storre/)
+  await expect(larger).toHaveAttribute('aria-checked', 'true')
 })
 
 test('waits for header interaction before prefetching other routes', async ({
@@ -362,8 +443,9 @@ test('keeps mobile LCP on the hero headline instead of overlapped manifesto copy
           const element = entry?.element ?? null
           const headline =
             document.getElementById('hero-headline')
-          const manifesto =
-            document.getElementById('empathy-heading')
+          const manifesto = document.getElementById(
+            'empathy-heading'
+          )
 
           resolve({
             headingOpacity:
@@ -384,9 +466,7 @@ test('keeps mobile LCP on the hero headline instead of overlapped manifesto copy
               .trim(),
             url: entry?.url ?? '',
             withinHeadline: Boolean(
-              headline &&
-                element &&
-                headline.contains(element)
+              headline && element && headline.contains(element)
             )
           })
         }

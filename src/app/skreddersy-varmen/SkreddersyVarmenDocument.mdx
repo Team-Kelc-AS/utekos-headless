@@ -44,14 +44,14 @@ import styles from './components/SkreddersyVarmenTheatre.module.css'
     creativeSlot='purchase'
     className='w-full'
   >
-    {props.commerce ?
-      <Suspense fallback={<LandingPurchaseFallback />}>
+    <Suspense fallback={<LandingPurchaseFallback />}>
+      {props.commerce ?
         <LandingPurchaseSection
           commerce={props.commerce}
           searchParams={props.searchParams}
         />
-      </Suspense>
-    : <LandingCommerceUnavailable />}
+      : <LandingCommerceUnavailable />}
+    </Suspense>
   </PromotionImpression>
 </div>
 

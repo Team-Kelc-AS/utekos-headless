@@ -1,6 +1,6 @@
 'use client'
 
-import { sendGTMEvent } from '@next/third-parties/google'
+import { sendCanonicalGTMEvent as sendGTMEvent } from './sendCanonicalGTMEvent'
 import { hasBrowserCollectionConsent } from './hasBrowserCollectionConsent'
 import { COOKIEBOT_CONSENT_EVENTS } from '@/lib/consent/cookiebotConsent'
 import { readBrowserReporterContext } from './browserReporterContext'

@@ -55,9 +55,32 @@ export function slimMetaInsightsLiveSnapshot(
               landingPageViews: row?.landingPageViews ?? null,
               addToCart: row?.addToCart ?? null,
               initiateCheckout: row?.initiateCheckout ?? null,
-              purchase: row?.purchase ?? null
+              purchase: row?.purchase ?? null,
+              placements: [...value.insights.adsPlatformPosition]
+                .filter(insight => insight.adId === ad.id)
+                .sort((left, right) => right.spend - left.spend)
+                .map(insight => ({
+                  platform: insight.publisherPlatform ?? null,
+                  position: insight.platformPosition ?? null,
+                  spend: insight.spend,
+                  impressions: insight.impressions,
+                  clicks: insight.clicks,
+                  cpm: insight.cpm
+                }))
             }
           }),
+          adPlacements: [...value.insights.adsPlatformPosition]
+            .sort((left, right) => right.spend - left.spend)
+            .map(row => ({
+              adId: row.adId ?? null,
+              adName: row.adName ?? null,
+              platform: row.publisherPlatform ?? null,
+              position: row.platformPosition ?? null,
+              spend: row.spend,
+              impressions: row.impressions,
+              clicks: row.clicks,
+              cpm: row.cpm
+            })),
           targeting:
             value.targeting ?
               {

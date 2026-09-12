@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { cacheLife, cacheTag } from 'next/cache'
 import { nbccProducts } from '../utils/nbccLandingPageContent'
 import { resolveVariantsForSizes } from '../utils/resolveVariantsForSizes'
 import { toNbccCartProduct } from '../utils/toNbccCartProduct'
@@ -17,10 +16,6 @@ import { NbccProductCardActions } from './NbccProductCardActions'
 import { NbccReveal, NbccRevealGroup } from './NbccReveal'
 
 export async function NbccProductSection() {
-  'use cache'
-  cacheLife('hours')
-  cacheTag('products')
-
   const fetched = await Promise.all(
     nbccProducts.map(p => getProduct(p.handle))
   )
@@ -33,7 +28,9 @@ export async function NbccProductSection() {
       <div className='mx-auto max-w-7xl'>
         <NbccReveal className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
           <div>
-            <Badge variant='promo'>Utekos for NBCC-medlemmer</Badge>
+            <Badge variant='promo'>
+              Utekos for NBCC-medlemmer
+            </Badge>
             <h2 className='mt-5 max-w-2xl font-sans text-3xl text-balance text-foreground sm:text-4xl'>
               Skreddersy din campingopplevelse
             </h2>
@@ -64,7 +61,9 @@ export async function NbccProductSection() {
                   className='group overflow-hidden rounded-lg border-foreground/60 bg-jungle py-0 shadow-none'
                 >
                   <CardHeader className='p-0'>
-                    <NbccProductCarousel images={product.images} />
+                    <NbccProductCarousel
+                      images={product.images}
+                    />
                   </CardHeader>
                   <CardContent className='px-6 pb-6'>
                     <p className='font-utekos-text-medium text-sm text-foreground'>

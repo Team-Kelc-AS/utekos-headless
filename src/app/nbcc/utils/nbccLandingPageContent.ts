@@ -1,3 +1,4 @@
+import { TECH_DOWN_PUBLIC_SIZES } from '@/lib/products/techDownSizes'
 import type { Route } from 'next'
 
 import type {
@@ -80,7 +81,7 @@ export const nbccProducts = [
     ],
     href: '/produkter/utekos-techdown' as Route,
     handle: 'utekos-techdown',
-    sizes: ['Middels', 'Stor', 'Større'],
+    sizes: TECH_DOWN_PUBLIC_SIZES,
     tracking: {
       page: 'nbcc',
       section: 'products',

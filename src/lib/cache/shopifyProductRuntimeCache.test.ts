@@ -25,13 +25,12 @@ moduleWithLoad._load = (request, parent, isMain) => {
 
 const require = createRequire(import.meta.url)
 const {
-  getRuntimeCachedShopifyProduct,
-  getRuntimeCachedShopifyProductsByHandles,
+  fetchShopifyProductWithFallback,
+  fetchShopifyProductsWithFallback,
   getShopifyProductLastGoodRuntimeCacheKey,
-  getShopifyProductRuntimeCacheKey,
   SHOPIFY_CATALOG_RUNTIME_CACHE_NAMESPACE,
   SHOPIFY_PRODUCT_LAST_GOOD_RUNTIME_CACHE_TTL_SECONDS,
-  SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS
+  SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE
 } =
   require('./shopifyProductRuntimeCache.ts') as typeof import('./shopifyProductRuntimeCache')
 
@@ -136,447 +135,365 @@ function createProduct(
   } as unknown as ShopifyProduct
 }
 
-test('uses the v2 namespace for the enriched product payload', () => {
+test('keeps the compatible fallback namespace', () => {
   assert.equal(
     SHOPIFY_CATALOG_RUNTIME_CACHE_NAMESPACE,
     'shopify-catalog:v2'
   )
 })
 
-test('replaces a legacy cache hit without variant tax data', async () => {
+test('always fetches the source on a Next cache miss and stores only a fallback', async () => {
   const cache = new FakeRuntimeCache()
-  const key = getShopifyProductRuntimeCacheKey('utekos-techdown')
-  const legacyProduct = createProduct() as unknown as {
-    variants: { edges: Array<{ node: Record<string, unknown> }> }
+  const handles: string[] = []
+  cache.get = async () => {
+    throw new Error('healthy fetches must not read the fallback')
   }
-  legacyProduct.variants.edges = [
-    {
-      node: {
-        availableForSale: true,
-        barcode: null,
-        compareAtPrice: null,
-        currentlyNotInStock: false,
-        id: 'gid://shopify/ProductVariant/456',
-        image: null,
-        metafield: null,
-        price: { amount: '1790.00', currencyCode: 'NOK' },
-        quantityAvailable: 10,
-        selectedOptions: [],
-        sku: 'TECHDOWN-M',
-        title: 'Middels',
-        variantProfile: null,
-        weight: null,
-        weightUnit: 'GRAMS'
-      }
+  const fetchProduct = async (handle: string) => {
+    handles.push(handle)
+    return {
+      ...createProduct(handle),
+      totalInventory: handles.length
     }
-  ]
-  cache.values.set(key, legacyProduct)
-
-  const freshProduct = createProduct() as unknown as {
-    variants: { edges: Array<{ node: Record<string, unknown> }> }
   }
-  freshProduct.variants.edges = [
-    {
-      node: {
-        availableForSale: true,
-        barcode: null,
-        compareAtPrice: null,
-        currentlyNotInStock: false,
-        id: 'gid://shopify/ProductVariant/456',
-        image: null,
-        metafield: null,
-        price: { amount: '1790.00', currencyCode: 'NOK' },
-        quantityAvailable: 10,
-        selectedOptions: [],
-        sku: 'TECHDOWN-M',
-        taxable: true,
-        title: 'Middels',
-        variantProfile: null,
-        weight: null,
-        weightUnit: 'GRAMS'
-      }
-    }
-  ]
-
-  let fetchCount = 0
-  const result = await getRuntimeCachedShopifyProduct(
-    'utekos-techdown',
-    async () => {
-      fetchCount += 1
-      return freshProduct as unknown as ShopifyProduct
-    },
-    cache
-  )
-
-  assert.equal(fetchCount, 1)
-  assert.equal(result?.variants.edges[0]?.node.taxable, true)
-})
-
-test('serves miss then hit with the expected key, TTL and tags', async () => {
-  const cache = new FakeRuntimeCache()
-  let fetchCount = 0
-  const fetchProduct = async () => {
-    fetchCount += 1
-    return createProduct()
-  }
-
-  const first = await getRuntimeCachedShopifyProduct(
+  const first = await fetchShopifyProductWithFallback(
     ' UTEKOS-TECHDOWN ',
     fetchProduct,
     cache
   )
-  const second = await getRuntimeCachedShopifyProduct(
+  const second = await fetchShopifyProductWithFallback(
     'utekos-techdown',
     fetchProduct,
     cache
   )
-
-  assert.equal(first?.id, 'gid://shopify/Product/123')
-  assert.equal(second?.id, first?.id)
-  assert.equal(fetchCount, 1)
-  assert.equal(
-    getShopifyProductRuntimeCacheKey(' UTEKOS-TECHDOWN '),
-    'product:handle:utekos-techdown'
-  )
-  const productCacheKey = getShopifyProductRuntimeCacheKey(
+  assert.deepEqual(handles, [
+    'utekos-techdown',
+    'utekos-techdown'
+  ])
+  assert.equal(first.data?.totalInventory, 1)
+  assert.equal(second.data?.totalInventory, 2)
+  assert.equal(second.isFallback, false)
+  const key = getShopifyProductLastGoodRuntimeCacheKey(
     'utekos-techdown'
   )
-  const lastGoodCacheKey =
-    getShopifyProductLastGoodRuntimeCacheKey('utekos-techdown')
+  assert.deepEqual([...cache.values.keys()], [key])
   assert.equal(
-    cache.setOptions.get(productCacheKey)?.ttl,
-    SHOPIFY_PRODUCT_RUNTIME_CACHE_TTL_SECONDS
-  )
-  assert.deepEqual(cache.setOptions.get(productCacheKey)?.tags, [
-    'product:123',
-    'product-handle:utekos-techdown',
-    'catalog'
-  ])
-  assert.equal(
-    cache.setOptions.get(lastGoodCacheKey)?.ttl,
+    cache.setOptions.get(key)?.ttl,
     SHOPIFY_PRODUCT_LAST_GOOD_RUNTIME_CACHE_TTL_SECONDS
   )
-  assert.deepEqual(
-    cache.setOptions.get(lastGoodCacheKey)?.tags,
-    [
-      'product-last-good',
-      'product-last-good:123',
-      'product-last-good-handle:utekos-techdown'
-    ]
-  )
-  assert.equal(
-    cache.setCounts.get(lastGoodCacheKey),
-    1,
-    'a fresh Runtime Cache hit must not extend the last-good snapshot age'
-  )
+  assert.deepEqual(cache.setOptions.get(key)?.tags, [
+    'product-last-good',
+    'product-last-good:123',
+    'product-last-good-handle:utekos-techdown'
+  ])
 })
 
-test('seeds a missing last-good snapshot from a valid fresh cache entry', async () => {
+test('serves a validated snapshot after timeout without renewing its age', async () => {
   const cache = new FakeRuntimeCache()
   const product = createProduct()
-  const lastGoodCacheKey =
-    getShopifyProductLastGoodRuntimeCacheKey(product.handle)
-  cache.values.set(
-    getShopifyProductRuntimeCacheKey(product.handle),
-    product
-  )
-
-  const result = await getRuntimeCachedShopifyProduct(
-    product.handle,
-    async () => {
-      throw new Error('fresh cache hits must not fetch Shopify')
-    },
-    cache
-  )
-
-  assert.equal(result?.id, product.id)
-  assert.notEqual(await cache.get(lastGoodCacheKey), null)
-  assert.equal(cache.setCounts.get(lastGoodCacheKey), 1)
-})
-
-test('deletes an invalid cache hit and fetches a valid replacement', async () => {
-  const cache = new FakeRuntimeCache()
-  const key = getShopifyProductRuntimeCacheKey('utekos-techdown')
-  cache.values.set(key, { id: 'invalid' })
-  let fetchCount = 0
-
-  const product = await getRuntimeCachedShopifyProduct(
-    'utekos-techdown',
-    async () => {
-      fetchCount += 1
-      return createProduct()
-    },
-    cache
-  )
-
-  assert.equal(product?.handle, 'utekos-techdown')
-  assert.equal(fetchCount, 1)
-  assert.equal(
-    ((await cache.get(key)) as { handle: string }).handle,
-    'utekos-techdown'
-  )
-})
-
-test('does not cache null products', async () => {
-  const cache = new FakeRuntimeCache()
-  const product = await getRuntimeCachedShopifyProduct(
-    'missing-product',
-    async () => null,
-    cache
-  )
-
-  assert.equal(product, null)
-  assert.equal(cache.values.size, 0)
-})
-
-test('does not cache fetch failures', async () => {
-  const cache = new FakeRuntimeCache()
-
-  await assert.rejects(
-    getRuntimeCachedShopifyProduct(
-      'utekos-techdown',
-      async () => {
-        throw new Error('Shopify unavailable')
-      },
-      cache
-    ),
-    /Shopify unavailable/
-  )
-
-  assert.equal(cache.values.size, 0)
-})
-
-test('serves a validated last-good product after a retryable timeout', async () => {
-  const cache = new FakeRuntimeCache()
-  const product = createProduct()
-
-  await getRuntimeCachedShopifyProduct(
+  await fetchShopifyProductWithFallback(
     product.handle,
     async () => product,
     cache
   )
-  await cache.expireTag(`product-handle:${product.handle}`)
-
-  const result = await getRuntimeCachedShopifyProduct(
-    product.handle,
-    async () => {
-      throw new DOMException(
-        'Shopify request timed out',
-        'TimeoutError'
-      )
-    },
-    cache
-  )
-
-  assert.equal(result?.id, product.id)
-  assert.notEqual(
-    await cache.get(
-      getShopifyProductLastGoodRuntimeCacheKey(product.handle)
-    ),
-    null
-  )
-})
-
-test('does not hide non-retryable product fetch errors with last-good data', async () => {
-  const cache = new FakeRuntimeCache()
-  const product = createProduct()
-
-  await getRuntimeCachedShopifyProduct(
-    product.handle,
-    async () => product,
-    cache
-  )
-  await cache.expireTag(`product-handle:${product.handle}`)
-
-  await assert.rejects(
-    getRuntimeCachedShopifyProduct(
-      product.handle,
-      async () => {
-        throw new Error('Invalid product query')
-      },
-      cache
-    ),
-    /Invalid product query/
-  )
-})
-
-test('never serves a structurally incomplete last-good product', async () => {
-  const cache = new FakeRuntimeCache()
-  const lastGoodCacheKey =
-    getShopifyProductLastGoodRuntimeCacheKey('utekos-techdown')
-  cache.values.set(lastGoodCacheKey, {
-    cachedAt: new Date().toISOString(),
-    product: {
-      id: 'gid://shopify/Product/123',
-      handle: 'utekos-techdown',
-      title: 'Incomplete product'
-    }
-  })
-
-  await assert.rejects(
-    getRuntimeCachedShopifyProduct(
-      'utekos-techdown',
-      async () => {
-        throw new DOMException(
-          'Shopify request timed out',
-          'TimeoutError'
-        )
-      },
-      cache
-    ),
-    (error: unknown) =>
-      error instanceof DOMException &&
-      error.name === 'TimeoutError'
-  )
-  assert.equal(await cache.get(lastGoodCacheKey), null)
-})
-
-test('authoritative missing products remove their last-good snapshot', async () => {
-  const cache = new FakeRuntimeCache()
-  const product = createProduct()
-  const lastGoodCacheKey =
-    getShopifyProductLastGoodRuntimeCacheKey(product.handle)
-
-  await getRuntimeCachedShopifyProduct(
-    product.handle,
-    async () => product,
-    cache
-  )
-  await cache.expireTag(`product-handle:${product.handle}`)
-
-  const result = await getRuntimeCachedShopifyProduct(
-    product.handle,
-    async () => null,
-    cache
-  )
-
-  assert.equal(result, null)
-  assert.equal(await cache.get(lastGoodCacheKey), null)
-})
-
-test('authoritative batch results remove stale active products that disappeared', async () => {
-  const cache = new FakeRuntimeCache()
-  const product = createProduct()
-  const productCacheKey = getShopifyProductRuntimeCacheKey(
+  const key = getShopifyProductLastGoodRuntimeCacheKey(
     product.handle
   )
+  const snapshot = cache.values.get(key)
+  const result = await fetchShopifyProductWithFallback(
+    product.handle,
+    async () => {
+      throw new DOMException('Shopify timed out', 'TimeoutError')
+    },
+    cache
+  )
+  assert.deepEqual(result, { data: product, isFallback: true })
+  assert.equal(cache.values.get(key), snapshot)
+  assert.equal(cache.setCounts.get(key), 1)
+})
 
-  await getRuntimeCachedShopifyProduct(
+test('does not mask a query or authentication error with a snapshot', async () => {
+  const cache = new FakeRuntimeCache()
+  const product = createProduct()
+  await fetchShopifyProductWithFallback(
     product.handle,
     async () => product,
     cache
   )
-  await getRuntimeCachedShopifyProductsByHandles(
+  for (const error of [
+    new Error('Invalid product query'),
+    new ShopifyStorefrontHttpError(401)
+  ]) {
+    await assert.rejects(
+      fetchShopifyProductWithFallback(
+        product.handle,
+        async () => {
+          throw error
+        },
+        cache
+      ),
+      error
+    )
+  }
+})
+
+test('rejects a cold timeout and recovers on the next successful fetch', async () => {
+  const cache = new FakeRuntimeCache()
+  const error = new DOMException(
+    'Shopify timed out',
+    'TimeoutError'
+  )
+  await assert.rejects(
+    fetchShopifyProductWithFallback(
+      'utekos-techdown',
+      async () => {
+        throw error
+      },
+      cache
+    ),
+    error
+  )
+  assert.equal(cache.values.size, 0)
+  const recovered = await fetchShopifyProductWithFallback(
+    'utekos-techdown',
+    async () => createProduct(),
+    cache
+  )
+  assert.equal(recovered.data?.handle, 'utekos-techdown')
+  assert.equal(recovered.isFallback, false)
+})
+
+test('a failed fallback write does not discard a healthy Shopify response', async () => {
+  const cache = new FakeRuntimeCache()
+  cache.set = async () => {
+    throw new Error('Cache unavailable')
+  }
+  const product = createProduct()
+  const result = await fetchShopifyProductWithFallback(
+    product.handle,
+    async () => product,
+    cache
+  )
+  assert.deepEqual(result, { data: product, isFallback: false })
+})
+
+test('a failed fallback read preserves the original backend error', async () => {
+  const cache = new FakeRuntimeCache()
+  cache.get = async () => {
+    throw new Error('Cache unavailable')
+  }
+  const error = new DOMException(
+    'Shopify timed out',
+    'TimeoutError'
+  )
+  await assert.rejects(
+    fetchShopifyProductWithFallback(
+      'utekos-techdown',
+      async () => {
+        throw error
+      },
+      cache
+    ),
+    error
+  )
+})
+
+test('rejects incomplete, expired, future-dated and mismatched fallback snapshots', async () => {
+  const product = createProduct()
+  const now = Date.now()
+  const snapshots = [
+    {
+      cachedAt: new Date(now).toISOString(),
+      product: { id: product.id }
+    },
+    {
+      cachedAt: new Date(now - 86_400_000).toISOString(),
+      product
+    },
+    { cachedAt: new Date(now + 60_000).toISOString(), product },
+    {
+      cachedAt: new Date(now).toISOString(),
+      product: createProduct('wrong-product')
+    },
+    {
+      cachedAt: new Date(
+        now -
+          (86_400 -
+            SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE.expire +
+            1) *
+            1000
+      ).toISOString(),
+      product
+    }
+  ]
+  for (const snapshot of snapshots) {
+    const cache = new FakeRuntimeCache()
+    const key = getShopifyProductLastGoodRuntimeCacheKey(
+      product.handle
+    )
+    cache.values.set(key, snapshot)
+    const error = new DOMException(
+      'Shopify timed out',
+      'TimeoutError'
+    )
+    await assert.rejects(
+      fetchShopifyProductWithFallback(
+        product.handle,
+        async () => {
+          throw error
+        },
+        cache
+      ),
+      error
+    )
+    assert.equal(cache.values.has(key), false)
+  }
+})
+
+test('validates successful product data before replacing the fallback', async () => {
+  const cache = new FakeRuntimeCache()
+  const product = createProduct()
+  await fetchShopifyProductWithFallback(
+    product.handle,
+    async () => product,
+    cache
+  )
+  const key = getShopifyProductLastGoodRuntimeCacheKey(
+    product.handle
+  )
+  const snapshot = cache.values.get(key)
+  for (const invalid of [
+    { id: product.id },
+    createProduct('wrong-product')
+  ]) {
+    await assert.rejects(
+      fetchShopifyProductWithFallback(
+        product.handle,
+        async () => invalid as ShopifyProduct,
+        cache
+      )
+    )
+    assert.equal(cache.values.get(key), snapshot)
+  }
+})
+
+test('an authoritative missing product removes its fallback', async () => {
+  const cache = new FakeRuntimeCache()
+  const product = createProduct()
+  await fetchShopifyProductWithFallback(
+    product.handle,
+    async () => product,
+    cache
+  )
+  const result = await fetchShopifyProductWithFallback(
+    product.handle,
+    async () => null,
+    cache
+  )
+  assert.deepEqual(result, { data: null, isFallback: false })
+  assert.equal(cache.values.size, 0)
+})
+
+test('does not store products near the two megabyte item limit', async () => {
+  const cache = new FakeRuntimeCache()
+  const product = {
+    ...createProduct(),
+    title: 'x'.repeat(1_900_000)
+  }
+  const result = await fetchShopifyProductWithFallback(
+    product.handle,
+    async () => product,
+    cache
+  )
+  assert.equal(result.data?.id, product.id)
+  assert.equal(cache.values.size, 0)
+})
+
+test('fetches unique featured handles in one batch and preserves requested order', async () => {
+  const cache = new FakeRuntimeCache()
+  const batches: string[][] = []
+  const result = await fetchShopifyProductsWithFallback(
+    [
+      ' UTEKOS-TECHDOWN ',
+      'missing-product',
+      'comfyrobe',
+      'comfyrobe'
+    ],
+    async handles => {
+      batches.push([...handles])
+      return [createProduct('comfyrobe'), createProduct()]
+    },
+    cache
+  )
+  assert.deepEqual(batches, [
+    ['utekos-techdown', 'missing-product', 'comfyrobe']
+  ])
+  assert.deepEqual(
+    result.data.map(p => p.handle),
+    ['utekos-techdown', 'comfyrobe']
+  )
+  assert.equal(result.isFallback, false)
+})
+
+test('an authoritative batch removes snapshots of products that disappeared', async () => {
+  const cache = new FakeRuntimeCache()
+  const product = createProduct()
+  await fetchShopifyProductWithFallback(
+    product.handle,
+    async () => product,
+    cache
+  )
+  await fetchShopifyProductsWithFallback(
     [product.handle],
     async () => [],
     cache
   )
-
-  assert.equal(await cache.get(productCacheKey), null)
-  assert.equal(
-    await cache.get(
-      getShopifyProductLastGoodRuntimeCacheKey(product.handle)
-    ),
-    null
-  )
-})
-
-test('does not cache products near the two megabyte item limit', async () => {
-  const cache = new FakeRuntimeCache()
-  const largeProduct = createProduct()
-  largeProduct.title = 'x'.repeat(1_900_000)
-
-  const product = await getRuntimeCachedShopifyProduct(
-    largeProduct.handle,
-    async () => largeProduct,
-    cache
-  )
-
-  assert.equal(product?.id, largeProduct.id)
   assert.equal(cache.values.size, 0)
 })
 
-test('fetches featured handles in one batch and preserves requested order', async () => {
+test('serves ordered batch fallback after a transient HTTP failure', async () => {
   const cache = new FakeRuntimeCache()
-  const requestedBatches: string[][] = []
-
-  const products = await getRuntimeCachedShopifyProductsByHandles(
-    ['utekos-techdown', 'missing-product', 'comfyrobe'],
-    async requestedHandles => {
-      requestedBatches.push([...requestedHandles])
-      return [
-        createProduct('comfyrobe'),
-        createProduct('utekos-techdown')
-      ]
-    },
-    cache
-  )
-
-  assert.deepEqual(requestedBatches, [
-    ['utekos-techdown', 'missing-product', 'comfyrobe']
-  ])
-  assert.deepEqual(
-    products.map(product => product.handle),
-    ['utekos-techdown', 'comfyrobe']
-  )
-})
-
-test('serves ordered batch last-good after a transient Shopify HTTP failure', async () => {
-  const cache = new FakeRuntimeCache()
-  const handles = ['utekos-techdown', 'comfyrobe'] as const
-
-  await getRuntimeCachedShopifyProductsByHandles(
+  const handles = ['utekos-techdown', 'comfyrobe']
+  await fetchShopifyProductsWithFallback(
     handles,
     async () => handles.map(createProduct),
     cache
   )
-  await cache.expireTag(
-    handles.map(handle => `product-handle:${handle}`)
-  )
-
-  let batchAttempts = 0
-  const products = await getRuntimeCachedShopifyProductsByHandles(
+  const result = await fetchShopifyProductsWithFallback(
     handles,
     async () => {
-      batchAttempts += 1
       throw new ShopifyStorefrontHttpError(502)
     },
     cache
   )
-
-  assert.equal(batchAttempts, 1)
   assert.deepEqual(
-    products.map(product => product.handle),
-    [...handles]
+    result.data.map(p => p.handle),
+    handles
   )
+  assert.equal(result.isFallback, true)
 })
 
 test('does not turn a failed empty batch into cached success', async () => {
   const cache = new FakeRuntimeCache()
-  let batchAttempts = 0
-
+  const error = new DOMException(
+    'Shopify timeout',
+    'TimeoutError'
+  )
   await assert.rejects(
-    getRuntimeCachedShopifyProductsByHandles(
+    fetchShopifyProductsWithFallback(
       ['utekos-techdown'],
       async () => {
-        batchAttempts += 1
-        throw new DOMException('Shopify timeout', 'TimeoutError')
+        throw error
       },
       cache
     ),
-    (error: unknown) =>
-      error instanceof DOMException && error.name === 'TimeoutError'
+    error
   )
-
-  const products = await getRuntimeCachedShopifyProductsByHandles(
+  assert.equal(cache.values.size, 0)
+  const result = await fetchShopifyProductsWithFallback(
     ['utekos-techdown'],
-    async () => {
-      batchAttempts += 1
-      return [createProduct()]
-    },
+    async () => [createProduct()],
     cache
   )
-
-  assert.equal(batchAttempts, 2)
-  assert.equal(products[0]?.handle, 'utekos-techdown')
+  assert.equal(result.data[0]?.handle, 'utekos-techdown')
+  assert.equal(result.isFallback, false)
 })

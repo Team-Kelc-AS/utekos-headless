@@ -1,7 +1,6 @@
 import 'server-only'
-import { cookies } from 'next/headers'
+import type { NextRequest } from 'next/server'
 import { z } from 'zod'
-import { skreddersyVarmenLayoutFlag } from '@/flags'
 import { hasCookiebotStatisticsConsent } from '@/lib/experiments/cookiebotStatisticsConsent'
 import { createSkreddersyVarmenFlagEntities } from '@/lib/experiments/server/createSkreddersyVarmenFlagEntities'
 import {
@@ -16,10 +15,10 @@ const googleAnalyticsCookieSchema = z
   .max(256)
   .regex(/^[A-Za-z0-9._-]+$/u)
 
-export async function resolveSkreddersyVarmenLayoutAssignment(): Promise<
-  SkreddersyVarmenLayoutAssignment | undefined
-> {
-  const cookieStore = await cookies()
+export async function resolveSkreddersyVarmenLayoutAssignment(
+  request: NextRequest
+): Promise<SkreddersyVarmenLayoutAssignment | undefined> {
+  const cookieStore = request.cookies
 
   if (
     !hasCookiebotStatisticsConsent(
@@ -35,7 +34,9 @@ export async function resolveSkreddersyVarmenLayoutAssignment(): Promise<
     )
   if (!googleAnalyticsCookie.success) return undefined
 
+  const { skreddersyVarmenLayoutFlag } = await import('@/flags')
   const variant = await skreddersyVarmenLayoutFlag.run({
+    request,
     identify: createSkreddersyVarmenFlagEntities(
       googleAnalyticsCookie.data
     )

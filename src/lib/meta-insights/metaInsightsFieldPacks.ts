@@ -13,7 +13,7 @@ export const metaInsightsFieldPacks = {
   conversionTotals:
     'adset_id,adset_name,campaign_id,campaign_name,ad_id,ad_name,spend,impressions,clicks,cpc,cpm,cpp,ctr,reach,frequency,actions,action_values,cost_per_action_type,outbound_clicks,inline_link_clicks,inline_link_click_ctr,website_ctr,purchase_roas,website_purchase_roas,conversions,conversion_values,cost_per_conversion,quality_ranking,engagement_rate_ranking,conversion_rate_ranking,video_play_actions,video_thruplay_watched_actions,catalog_segment_value,catalog_segment_actions,attribution_setting,objective,results,cost_per_result,auction_bid,auction_competitiveness,date_start,date_stop,cost_per_inline_link_click,landing_page_view_per_link_click,inline_post_engagement,optimization_goal,wish_bid,unique_clicks,unique_inline_link_clicks,cost_per_unique_click',
   delivery:
-    'adset_id,adset_name,campaign_id,campaign_name,spend,impressions,clicks,cpm,ctr,cpc,inline_link_clicks,date_start,date_stop',
+    'adset_id,adset_name,campaign_id,campaign_name,ad_id,ad_name,spend,impressions,clicks,cpm,ctr,cpc,inline_link_clicks,date_start,date_stop',
   customconversions:
     'id,name,custom_event_type,event_source_id,is_unavailable,retention_days',
   audience:

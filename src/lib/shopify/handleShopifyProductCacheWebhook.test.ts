@@ -3,9 +3,8 @@ import crypto from 'node:crypto'
 import test from 'node:test'
 import type { RuntimeCache } from '@vercel/functions'
 import {
-  getRuntimeCachedShopifyProduct,
-  getShopifyProductLastGoodRuntimeCacheKey,
-  getShopifyProductRuntimeCacheKey
+  fetchShopifyProductWithFallback,
+  getShopifyProductLastGoodRuntimeCacheKey
 } from '@/lib/cache/shopifyProductRuntimeCache'
 import { revalidateProductCatalog } from '@/lib/cache/revalidateProductCatalog'
 import { handleShopifyProductCacheWebhook } from './handleShopifyProductCacheWebhook'
@@ -100,17 +99,17 @@ test('signed product update revalidates fresh data while preserving last-good', 
       return createProduct()
     }
 
-    await getRuntimeCachedShopifyProduct(
+    await fetchShopifyProductWithFallback(
       'utekos-techdown',
       fetchProduct,
       cache
     )
-    await getRuntimeCachedShopifyProduct(
+    await fetchShopifyProductWithFallback(
       'utekos-techdown',
       fetchProduct,
       cache
     )
-    assert.equal(fetchCount, 1)
+    assert.equal(fetchCount, 2)
 
     const body = JSON.stringify({
       id: 123,
@@ -175,15 +174,9 @@ test('signed product update revalidates fresh data while preserving last-good', 
     const responseBody = (await response.json()) as {
       invalidatedTags: { runtimeTags: string[] }
     }
-    assert.deepEqual(responseBody.invalidatedTags.runtimeTags, [
-      'product-handle:utekos-techdown',
-      'product:123'
-    ])
-    assert.equal(
-      await cache.get(
-        getShopifyProductRuntimeCacheKey('utekos-techdown')
-      ),
-      null
+    assert.deepEqual(
+      responseBody.invalidatedTags.runtimeTags,
+      []
     )
     assert.notEqual(
       await cache.get(
@@ -194,21 +187,22 @@ test('signed product update revalidates fresh data while preserving last-good', 
       null
     )
 
-    const fallbackProduct = await getRuntimeCachedShopifyProduct(
-      'utekos-techdown',
-      async () => {
-        throw new DOMException(
-          'Shopify request timed out',
-          'TimeoutError'
-        )
-      },
-      cache
-    )
+    const fallbackProduct =
+      await fetchShopifyProductWithFallback(
+        'utekos-techdown',
+        async () => {
+          throw new DOMException(
+            'Shopify request timed out',
+            'TimeoutError'
+          )
+        },
+        cache
+      )
     assert.equal(
-      fallbackProduct?.id,
+      fallbackProduct.data?.id,
       'gid://shopify/Product/123'
     )
-    assert.equal(fetchCount, 1)
+    assert.equal(fetchCount, 2)
   } finally {
     if (previousSecret === undefined)
       delete process.env.SHOPIFY_WEBHOOK_SECRET
@@ -227,7 +221,7 @@ test('signed product delete purges the product last-good snapshot', async () => 
       profile: unknown
       tag: string
     }> = []
-    await getRuntimeCachedShopifyProduct(
+    await fetchShopifyProductWithFallback(
       product.handle,
       async () => product,
       cache
@@ -269,6 +263,15 @@ test('signed product delete purges the product last-good snapshot', async () => 
             {
               runtimeCache: cache,
               revalidateNextTag: (tag, profile) => {
+                assert.equal(
+                  cache.values.has(
+                    getShopifyProductLastGoodRuntimeCacheKey(
+                      product.handle
+                    )
+                  ),
+                  false,
+                  'purge fallback before allowing Next to regenerate'
+                )
                 revalidatedNextTags.push({ tag, profile })
               }
             }

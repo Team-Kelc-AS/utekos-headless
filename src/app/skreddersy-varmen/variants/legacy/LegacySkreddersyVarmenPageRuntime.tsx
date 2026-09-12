@@ -23,7 +23,7 @@ export async function LegacySkreddersyVarmenPageRuntime({
 }) {
   const commerce = await resolveSkreddersyVarmenCommerce()
   const defaultVariant = commerce?.variants.find(
-    variant => variant.commerce.id === commerce.defaultVariantId
+    variant => variant.id === commerce.defaultVariantId
   )
 
   return (
@@ -33,9 +33,8 @@ export async function LegacySkreddersyVarmenPageRuntime({
       <StickyMobileAction
         {...(defaultVariant ?
           {
-            price: defaultVariant.commerce.price,
-            availableForSale:
-              defaultVariant.commerce.availableForSale
+            price: defaultVariant.price,
+            availableForSale: defaultVariant.availableForSale
           }
         : {})}
       />
@@ -56,14 +55,14 @@ export async function LegacySkreddersyVarmenPageRuntime({
           creativeSlot='purchase'
           className='w-full'
         >
-          {commerce ?
-            <Suspense fallback={<LandingPurchaseFallback />}>
+          <Suspense fallback={<LandingPurchaseFallback />}>
+            {commerce ?
               <LandingPurchaseSection
                 commerce={commerce}
                 searchParams={searchParams}
               />
-            </Suspense>
-          : <LandingCommerceUnavailable />}
+            : <LandingCommerceUnavailable />}
+          </Suspense>
         </PromotionImpression>
       </div>
 

@@ -8,12 +8,12 @@ import { HeroActions } from '@/app/skreddersy-varmen/components/HeroActions'
 import { HeroStars } from '@/app/skreddersy-varmen/components/HeroStars'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { techDownReviewSummary } from '@/app/skreddersy-varmen/data/reviews'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
+import type { ProductModel } from '@/lib/products/commerce'
 
 export function Hero({
   commerce
 }: {
-  commerce: ProductCommerceViewModel | null
+  commerce: ProductModel | null
 }) {
   const { props: desktopImage } = getImageProps({
     src: CinemaOne,
@@ -23,7 +23,7 @@ export function Hero({
     sizes: '100vw'
   })
   const defaultVariant = commerce?.variants.find(
-    variant => variant.commerce.id === commerce.defaultVariantId
+    variant => variant.id === commerce.defaultVariantId
   )
 
   return (
@@ -102,12 +102,10 @@ export function Hero({
                 className='leading-text-paragraph flex w-fit max-w-full flex-wrap items-center gap-x-2 gap-y-1 font-sans text-xs font-medium tracking-normal text-foreground/80 md:text-sm'
                 aria-live='polite'
               >
-                <span>
-                  {formatPrice(defaultVariant.commerce.price)}
-                </span>
+                <span>{formatPrice(defaultVariant.price)}</span>
                 <span aria-hidden>·</span>
                 <span>
-                  {defaultVariant.commerce.availableForSale ?
+                  {defaultVariant.availableForSale ?
                     'På lager'
                   : 'Utsolgt'}
                 </span>

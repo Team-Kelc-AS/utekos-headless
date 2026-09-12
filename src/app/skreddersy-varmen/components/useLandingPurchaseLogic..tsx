@@ -6,7 +6,7 @@ import {
   useState,
   useTransition
 } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { CartIdContext } from '@/lib/context/CartIdContext'
@@ -18,12 +18,11 @@ import { loadAddToCartReporter } from '@/lib/analytics/loadAddToCartReporter'
 import { loadVariantSelectReporter } from '@/lib/analytics/loadVariantSelectReporter'
 import { buildPublicVariantUrl } from '@/lib/products/presentation/buildPublicVariantUrl'
 import type { ProductPresentation } from '@/lib/products/presentation/getProductPresentation'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
-import { toPurchaseVariantFromPublicCommerce } from '@/lib/products/commerce/toPurchaseVariantFromPublicCommerce'
-import type { Route } from 'next'
+import type { ProductModel } from '@/lib/products/commerce'
+import { resolveCommerceVariantFromSearchParams } from '@/lib/products/commerce/resolveCommerceVariantFromSearchParams'
 
 type UseLandingPurchaseLogicProps = {
-  commerce: ProductCommerceViewModel
+  commerce: ProductModel
   initialVariantId: string
   presentation: ProductPresentation
 }
@@ -33,14 +32,7 @@ export function useLandingPurchaseLogic({
   initialVariantId,
   presentation
 }: UseLandingPurchaseLogicProps) {
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const validInitialVariant = commerce.variants.find(
-    variant => variant.commerce.id === initialVariantId
-  )
-  const [selectedVariantId, setSelectedVariantId] = useState(
-    validInitialVariant?.commerce.id ?? commerce.defaultVariantId
-  )
   const [quantity, setQuantityState] = useState(1)
   const [isTransitioning, startTransition] = useTransition()
   const lastReportedVariantId = useRef<string | null>(null)
@@ -51,36 +43,33 @@ export function useLandingPurchaseLogic({
   const isPendingFromMachine = CartMutationContext.useSelector(
     state => state.matches('mutating')
   )
-  const selectedVariant =
-    commerce.variants.find(
-      variant => variant.commerce.id === selectedVariantId
-    ) ?? commerce.variants[0]
-  const selectedShopifyVariant =
-    selectedVariant ?
-      toPurchaseVariantFromPublicCommerce(selectedVariant)
-    : null
+  const selectedVariant = resolveCommerceVariantFromSearchParams(
+    commerce,
+    searchParams ?? { variant: initialVariantId }
+  )
+  const selectedShopifyVariant = selectedVariant ?? null
 
   const reportVariantSelect = (
-    variant: ProductCommerceViewModel['variants'][number]
+    variant: ProductModel['variants'][number]
   ) => {
-    if (lastReportedVariantId.current === variant.commerce.id) {
+    if (lastReportedVariantId.current === variant.id) {
       return
     }
 
-    lastReportedVariantId.current = variant.commerce.id
+    lastReportedVariantId.current = variant.id
     void loadVariantSelectReporter().then(
       ({ reportCanonicalVariantSelect }) => {
         reportCanonicalVariantSelect({
           customData: {
             interaction_id: globalThis.crypto.randomUUID(),
-            product_id: commerce.product.id,
-            variant_id: variant.commerce.id,
-            item_id: variant.commerce.id,
-            item_variant: variant.publicName,
+            product_id: commerce.id,
+            variant_id: variant.id,
+            item_id: variant.id,
+            item_variant: variant.title,
             availability:
-              variant.commerce.availableForSale ?
-                'available'
-              : 'unavailable'
+              variant.availableForSale ? 'available' : (
+                'unavailable'
+              )
           }
         })
       }
@@ -98,17 +87,19 @@ export function useLandingPurchaseLogic({
 
     if (!nextVariant) return
 
-    setSelectedVariantId(nextVariant.commerce.id)
-    reportVariantSelect(nextVariant)
-
     const nextUrl = buildPublicVariantUrl({
       presentation,
       options: nextVariant.options,
-      searchParams,
+      searchParams: window.location.search,
       path: '/skreddersy-varmen'
     })
 
-    router.replace(nextUrl as Route, { scroll: false })
+    window.history.replaceState(
+      null,
+      '',
+      `${nextUrl}${window.location.hash}`
+    )
+    reportVariantSelect(nextVariant)
   }
 
   const handleAddToCart = () => {
@@ -166,7 +157,7 @@ export function useLandingPurchaseLogic({
             ({ reportCanonicalAddToCart }) => {
               reportCanonicalAddToCart({
                 cartId: reportedCartId,
-                product: commerce.product,
+                product: commerce,
                 quantity,
                 variant: selectedShopifyVariant
               })
@@ -192,14 +183,14 @@ export function useLandingPurchaseLogic({
     selectedSize: selectedVariant?.options.size ?? '',
     setSelectedSize,
     sizeOptions: commerce.variants.map(variant => ({
-      label: variant.options.size ?? variant.publicName,
-      availableForSale: variant.commerce.availableForSale
+      label: variant.options.size ?? variant.title,
+      availableForSale: variant.availableForSale
     })),
     handleAddToCart,
     isPending: isTransitioning || isPendingFromMachine,
     isAddToCartPending: isTransitioning,
     commerce,
-    shopifyProduct: commerce.product,
+    shopifyProduct: commerce,
     selectedShopifyVariant
   }
 }

@@ -181,6 +181,8 @@ test('snapshot maps a mock Graph batch without putting tokens in the request', a
   }
   for (const operation of operations) {
     if (operation.name.startsWith('insights:')) {
+      const adPlacement =
+        operation.name.endsWith(':ads_platform_position')
       bodies[operation.name] = {
         data: [
           {
@@ -188,6 +190,14 @@ test('snapshot maps a mock Graph batch without putting tokens in the request', a
             impressions: '100',
             clicks: '4',
             cpm: '105',
+            ...(adPlacement ?
+              {
+                ad_id: '1',
+                ad_name: 'Ad 1',
+                publisher_platform: 'facebook',
+                platform_position: 'feed'
+              }
+            : {}),
             actions: [
               { action_type: 'omni_add_to_cart', value: '2' }
             ],
@@ -275,6 +285,10 @@ test('snapshot maps a mock Graph batch without putting tokens in the request', a
   const slim = slimMetaInsightsLiveSnapshot(snapshot)
   assert.equal(slim.adSets.atc?.spend, 10.5)
   assert.equal(Array.isArray(slim.adSets.atc?.placements), true)
+  assert.equal(Array.isArray(slim.adSets.atc?.adPlacements), true)
+  assert.equal(slim.adSets.atc?.adPlacements[0]?.adId, '1')
+  assert.equal(slim.adSets.atc?.adPlacements[0]?.position, 'feed')
+  assert.equal(slim.adSets.atc?.ads[0]?.placements[0]?.position, 'feed')
   assert.equal(Array.isArray(slim.adSets.atc?.ageGender), true)
   assert.equal(slim.pixelStats.h1.AddToCart, 2)
 })
@@ -347,6 +361,21 @@ test('live plan fills the Graph batch with sentences, custom conversions and ad 
   const names = plan.map(query => query.name)
   assert.equal(names.includes('insights:copy:totals'), true)
   assert.equal(names.includes('insights:copy:ads'), true)
+  assert.equal(
+    names.includes('insights:copy:ads_platform_position'),
+    true
+  )
+  const adPlacement = plan.find(
+    query => query.name === 'insights:copy:ads_platform_position'
+  )
+  assert.equal(adPlacement?.level, 'ad')
+  assert.equal(adPlacement?.pack, 'delivery')
+  assert.deepEqual(adPlacement?.breakdowns, [
+    'publisher_platform',
+    'platform_position'
+  ])
+  assert.equal(adPlacement?.fields, metaInsightsFieldPacks.delivery)
+  assert.equal(metaInsightsFieldPacks.delivery.includes('ad_id'), true)
   assert.equal(names.includes('stats:m15'), true)
   assert.equal(names.includes('stats:h1'), true)
   assert.equal(names.includes('stats:h1_web'), true)

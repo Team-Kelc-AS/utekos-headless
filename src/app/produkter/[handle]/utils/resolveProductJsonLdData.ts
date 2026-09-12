@@ -3,7 +3,7 @@ import { getProductPresentation } from '@/lib/products/presentation'
 import { buildProductGroupJsonLd } from '@/lib/products/structured-data/buildProductGroupJsonLd'
 
 type LoadCommerce =
-  (typeof import('@/lib/products/commerce'))['getProductCommerceViewModel']
+  (typeof import('@/lib/products/commerce'))['getProductModel']
 
 type ProductJsonLdErrorContext = {
   publicHandle: string
@@ -19,9 +19,9 @@ type ProductJsonLdDependencies = {
 }
 
 async function loadProductCommerce(publicHandle: string) {
-  const { getProductCommerceViewModel } =
+  const { getProductModel } =
     await import('@/lib/products/commerce')
-  return getProductCommerceViewModel(publicHandle)
+  return getProductModel(publicHandle)
 }
 
 export async function resolveProductJsonLdData(
@@ -40,7 +40,7 @@ export async function resolveProductJsonLdData(
     if (!commerce) return null
 
     const productGroup = buildProductGroupJsonLd(commerce, {
-      ...(presentation.productKey === 'utekos-techdown' ?
+      ...(presentation.publicHandle === 'utekos-techdown' ?
         {
           reviews: techDownReviews,
           includeAggregateRatingOnly: true
@@ -53,8 +53,7 @@ export async function resolveProductJsonLdData(
     try {
       dependencies.onError?.(error, {
         publicHandle: presentation.publicHandle,
-        storefrontLookupHandle:
-          presentation.storefrontLookupHandle
+        storefrontLookupHandle: presentation.publicHandle
       })
     } catch {
       // Observability must never make noncritical structured data fatal.

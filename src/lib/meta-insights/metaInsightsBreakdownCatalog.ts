@@ -26,7 +26,15 @@ export const metaInsightsDocs = {
   valueRules:
     'https://developers.facebook.com/documentation/ads-commerce/marketing-api/bidding/value-rules',
   valueRulesBreakdown:
-    'https://www.facebook.com/business/help/1643671879847552'
+    'https://www.facebook.com/business/help/1643671879847552',
+  changelog:
+    'https://developers.facebook.com/docs/graph-api/changelog/',
+  changelogV26:
+    'https://developers.facebook.com/docs/graph-api/changelog/version26.0/',
+  marketingChangelog:
+    'https://developers.facebook.com/documentation/ads-commerce/marketing-api/marketing-api-changelog',
+  featureSettings:
+    'https://developers.facebook.com/documentation/ads-commerce/marketing-api/insights/feature-settings'
 } as const
 
 export const metaInsightsType1Breakdowns = [
@@ -67,6 +75,7 @@ export type MetaInsightsBreakdownSlice = {
   breakdowns: readonly string[]
   pack: 'conversion' | 'delivery'
   cadence: 'live' | 'deferred'
+  level?: 'adset' | 'ad'
   why: string
 }
 
@@ -138,6 +147,14 @@ export const metaInsightsBreakdownSlices: readonly MetaInsightsBreakdownSlice[] 
       why: 'Official permutation. Delivery pack only — conversion fields plus implicit action_type have failed on this account.'
     },
     {
+      id: 'ads_platform_position',
+      breakdowns: ['publisher_platform', 'platform_position'],
+      pack: 'delivery',
+      cadence: 'live',
+      level: 'ad',
+      why: 'Official permutation at level=ad. Spend and clicks per ad × placement. Delivery pack only — same conversion-pack failure as the ad-set slice. Catalog ads report per ad + creative id, not Dynamic Creative asset ids.'
+    },
+    {
       id: 'device_platform',
       breakdowns: ['device_platform'],
       pack: 'conversion',
@@ -156,7 +173,7 @@ export const metaInsightsBreakdownSlices: readonly MetaInsightsBreakdownSlice[] 
       breakdowns: ['publisher_platform', 'impression_device'],
       pack: 'delivery',
       cadence: 'deferred',
-      why: 'May require Insights feature-settings enablement. Availability notice from 2026-08-06.'
+      why: 'Official permutation. Feature Settings GET on this account already shows impression_device enabled. Still deferred so the 15-minute tick stays lean; promoting it requires a separate OK.'
     },
     {
       id: 'hourly_audience',
@@ -165,7 +182,7 @@ export const metaInsightsBreakdownSlices: readonly MetaInsightsBreakdownSlice[] 
       ],
       pack: 'delivery',
       cadence: 'deferred',
-      why: 'Type 1. Audience-local hour. Same feature-settings caveat as impression_device from 2026-08-06.'
+      why: 'Type 1. Audience-local hour. Feature Settings GET on this account already shows time_of_day_viewer_tz enabled. Still deferred; promoting it requires a separate OK.'
     },
     {
       id: 'country',

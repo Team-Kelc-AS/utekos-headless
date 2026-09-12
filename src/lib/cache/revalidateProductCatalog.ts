@@ -43,7 +43,6 @@ export async function revalidateProductCatalog(
       normalizedHandles.push(normalizedHandle)
       tags.add(`product-${normalizedHandle}`)
       tags.add(`related-products-${normalizedHandle}`)
-      runtimeTags.add(`product-handle:${normalizedHandle}`)
     }
   }
 
@@ -52,15 +51,7 @@ export async function revalidateProductCatalog(
       normalizeShopifyProductId(productId)
     if (normalizedProductId) {
       normalizedProductIds.push(normalizedProductId)
-      runtimeTags.add(`product:${normalizedProductId}`)
     }
-  }
-
-  if (
-    normalizedHandles.length === 0 &&
-    normalizedProductIds.length === 0
-  ) {
-    runtimeTags.add('catalog')
   }
 
   if (options.purgeLastGood) {
@@ -84,6 +75,13 @@ export async function revalidateProductCatalog(
     }
   }
 
+  if (runtimeTags.size > 0) {
+    const runtimeCache =
+      dependencies.runtimeCache ??
+      getShopifyCatalogRuntimeCache()
+    await runtimeCache.expireTag(Array.from(runtimeTags))
+  }
+
   const revalidateNextTag =
     dependencies.revalidateNextTag ?? revalidateTag
   for (const tag of tags) {
@@ -95,12 +93,6 @@ export async function revalidateProductCatalog(
       tag,
       options.purgeLastGood ? 'seconds' : 'max'
     )
-  }
-
-  const runtimeCache =
-    dependencies.runtimeCache ?? getShopifyCatalogRuntimeCache()
-  if (runtimeTags.size > 0) {
-    await runtimeCache.expireTag(Array.from(runtimeTags))
   }
 
   return {

@@ -3,9 +3,9 @@
 import { getProduct } from '@/api/lib/products/getProduct'
 import { reshapeProductWithMetafields } from '@/hooks/useProductWithMetafields'
 
-export async function getCachedProductForMetadata(handle: string) {
-  'use cache'
-
+export async function getCachedProductForMetadata(
+  handle: string
+) {
   const rawProduct = await getProduct(handle)
 
   if (!rawProduct) {

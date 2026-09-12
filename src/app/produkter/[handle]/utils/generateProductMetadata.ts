@@ -63,7 +63,7 @@ export async function generateProductMetadata(
   try {
     product = await (
       dependencies.loadProduct ?? getCachedProductForMetadata
-    )(presentation.storefrontLookupHandle)
+    )(presentation.publicHandle)
   } catch (error) {
     console.warn(
       JSON.stringify({

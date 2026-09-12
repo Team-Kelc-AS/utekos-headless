@@ -1,7 +1,7 @@
 'use client'
 
 // Wired via product list click helper (ProductCard / ProductGridCard).
-import { sendGTMEvent } from '@next/third-parties/google'
+import { sendCanonicalGTMEvent as sendGTMEvent } from './sendCanonicalGTMEvent'
 import { readBrowserReporterContext } from './browserReporterContext'
 import { browserPageViewSession } from './pageViewSession'
 import { mapShopifySelectItem } from './shopifySelectItemCommerce'

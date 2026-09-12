@@ -3,8 +3,7 @@ import { ProductPageView } from './ProductPageView'
 import { getCachedProductPageData } from '../utils/getCachedProductPageData'
 import { reshapeProductWithMetafields } from '@/hooks/useProductWithMetafields'
 import {
-  buildPresentedProductPurchaseModel,
-  buildProductCommerceViewModel,
+  buildProductModel,
   resolveCommerceVariantFromSearchParams
 } from '@/lib/products/commerce'
 import { getProductPresentation } from '@/lib/products/presentation'
@@ -36,10 +35,9 @@ export async function AsyncProductContent({
 
   const productWithMetafields =
     reshapeProductWithMetafields(product) || product
-  const commerce = buildProductCommerceViewModel(
-    productWithMetafields,
-    presentation.publicHandle
-  )
+  const commerce = buildProductModel(productWithMetafields, {
+    includeVariantProfiles: true
+  })
   const selectedCommerceVariant =
     resolveCommerceVariantFromSearchParams(
       commerce,
@@ -50,30 +48,20 @@ export async function AsyncProductContent({
     notFound()
   }
 
-  const purchaseModel = buildPresentedProductPurchaseModel(
-    productWithMetafields,
-    presentation.publicHandle
-  )
-  const selectedPurchaseVariant = purchaseModel.variants.find(
-    variant => variant.id === selectedCommerceVariant.commerce.id
-  )
   const selectedStorefrontVariant =
     productWithMetafields.variants.edges.find(
-      ({ node }) =>
-        node.id === selectedCommerceVariant.commerce.id
+      ({ node }) => node.id === selectedCommerceVariant.id
     )?.node
 
-  if (!selectedPurchaseVariant || !selectedStorefrontVariant) {
+  if (!selectedStorefrontVariant) {
     notFound()
   }
 
   return (
     <ProductPageView
-      productData={purchaseModel}
-      selectedVariant={selectedPurchaseVariant}
-      storefrontLookupHandle={
-        presentation.storefrontLookupHandle
-      }
+      productData={commerce}
+      selectedVariant={selectedCommerceVariant}
+      storefrontLookupHandle={presentation.publicHandle}
       storefrontSelectedOptions={
         selectedStorefrontVariant.selectedOptions
       }

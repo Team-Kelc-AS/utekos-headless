@@ -77,14 +77,6 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   reactCompiler: true,
   cacheComponents: true,
-  turbopack: {
-    root: process.cwd(),
-    rules: {
-      '*.mp4': {
-        type: 'asset'
-      }
-    }
-  },
   cacheLife: {
     products: { stale: 300, revalidate: 900, expire: 3600 },
     collections: { stale: 600, revalidate: 1800, expire: 7200 },
@@ -99,10 +91,6 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 180,
 
   experimental: {
-    turbopackRustReactCompiler: true,
-    turbopackFileSystemCacheForDev: true,
-    turbopackFileSystemCacheForBuild: true,
-    serverComponentsHmrCache: true,
     webVitalsAttribution: ['CLS', 'INP', 'LCP', 'FCP', 'TTFB'],
     optimizePackageImports: [
       'zod',

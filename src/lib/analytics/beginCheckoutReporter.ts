@@ -1,6 +1,8 @@
 'use client'
 
-import { sendGTMEvent } from '@next/third-parties/google'
+import { enrichBrowserMetaAudience } from './browserMetaAudience'
+
+import { sendCanonicalGTMEvent as sendGTMEvent } from './sendCanonicalGTMEvent'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { readBrowserReporterContext } from './browserReporterContext'
 import { isBrowserEventConsentCurrent } from './isBrowserEventConsentCurrent'
@@ -99,7 +101,9 @@ export async function reportCanonicalBeginCheckout(
       eventDeviceInfo: clientContext.eventDeviceInfo
     })
     const metaEnrichedEvent =
-      await enrichCanonicalEventWithMetaAttribution(initialEvent)
+      await enrichCanonicalEventWithMetaAttribution(
+        enrichBrowserMetaAudience(initialEvent)
+      )
     if (!isBrowserEventConsentCurrent(clientContext.consent))
       return
     const event = enrichCanonicalBrowserJourneyContext(

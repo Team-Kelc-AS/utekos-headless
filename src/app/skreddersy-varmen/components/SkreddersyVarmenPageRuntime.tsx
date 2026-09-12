@@ -15,14 +15,13 @@ export async function SkreddersyVarmenPageRuntime({
 }) {
   const commerce = await resolveSkreddersyVarmenCommerce()
   const defaultVariant = commerce?.variants.find(
-    variant => variant.commerce.id === commerce.defaultVariantId
+    variant => variant.id === commerce.defaultVariantId
   )
   const stickyActionProps =
     defaultVariant ?
       {
-        price: defaultVariant.commerce.price,
-        availableForSale:
-          defaultVariant.commerce.availableForSale
+        price: defaultVariant.price,
+        availableForSale: defaultVariant.availableForSale
       }
     : {}
 

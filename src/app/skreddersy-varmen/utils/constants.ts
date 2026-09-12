@@ -1,32 +1,3 @@
-// Path: src/app/skreddersy-varmen/utils/constants.ts (eller hvor du har denne)
-import { techDownSizeCards } from '@/app/handlehjelp/storrelsesguide/utils/techDownSizeCards'
-
-export const SIZE_GUIDANCE: Record<
-  string,
-  { height: string; tips: string[] }
-> = {
-  ...Object.fromEntries(
-    techDownSizeCards.map(card => [
-      card.size,
-      { height: card.heightGuide, tips: [...card.fitGuidance] }
-    ])
-  ),
-  Medium: {
-    height: 'Opptil ca. 175 cm',
-    tips: [
-      'Et godt valg for deg som ønsker lett varme med normal romslighet.',
-      'Velg Large hvis du ønsker mer plass til ekstra lag under.'
-    ]
-  },
-  Large: {
-    height: 'Fra ca. 175 cm og oppover',
-    tips: [
-      'Gir ekstra romslighet og mer dekning.',
-      'Passer også lavere brukere som ønsker en mer generøs følelse.'
-    ]
-  }
-}
-
 // Bytter fra generisk 'primary' til 'very-peri' for å gi fokus-ringer en lekker merkevare-look
 export const focusRing =
   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-very-peri'

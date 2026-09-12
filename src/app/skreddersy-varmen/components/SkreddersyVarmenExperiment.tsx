@@ -1,20 +1,20 @@
 import { FlagValues } from 'flags/react'
 import { SkreddersyVarmenPageRuntime } from './SkreddersyVarmenPageRuntime'
-import { resolveSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/server/resolveSkreddersyVarmenLayoutAssignment'
-import { SKREDDERSY_VARMEN_LAYOUT_FLAG_KEY } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
+import {
+  SKREDDERSY_VARMEN_LAYOUT_FLAG_KEY,
+  type SkreddersyVarmenLayoutAssignment
+} from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 import { LegacySkreddersyVarmenPageRuntime } from '../variants/legacy/LegacySkreddersyVarmenPageRuntime'
 import type { LandingSearchParams } from './SkreddersyVarmenPageRuntime'
-import type { SkreddersyVarmenPageContent } from '../data/skreddersyVarmenPageModel'
+import { skreddersyVarmenPageContent } from '../data/skreddersyVarmenPageContent'
 
-export async function SkreddersyVarmenExperiment({
-  content,
+export function SkreddersyVarmenExperiment({
+  assignment,
   searchParams
 }: {
-  content: SkreddersyVarmenPageContent
+  assignment?: SkreddersyVarmenLayoutAssignment
   searchParams: LandingSearchParams
 }) {
-  const assignment =
-    await resolveSkreddersyVarmenLayoutAssignment()
   const variant = assignment?.variant ?? 'current'
 
   return (
@@ -40,7 +40,7 @@ export async function SkreddersyVarmenExperiment({
             searchParams={searchParams}
           />
         : <SkreddersyVarmenPageRuntime
-            content={content}
+            content={skreddersyVarmenPageContent}
             searchParams={searchParams}
           />
         }

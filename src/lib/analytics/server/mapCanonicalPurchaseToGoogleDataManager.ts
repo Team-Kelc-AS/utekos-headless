@@ -1,3 +1,4 @@
+import { consentedMetaAudience } from '../metaAudience'
 import { protos } from '@google-ads/datamanager'
 import type { CanonicalPurchase } from '../purchaseEvent'
 import {
@@ -41,6 +42,10 @@ function mapPurchaseItem(
 
 function mapPurchaseEventParameters(event: CanonicalPurchase) {
   return compactGoogleDataManagerParameters([
+    googleDataManagerParameter(
+      'audience',
+      consentedMetaAudience(event)
+    ),
     googleDataManagerIdentifierParameter(
       'event_id',
       event.event_id

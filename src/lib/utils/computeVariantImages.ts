@@ -1,11 +1,12 @@
 import type { Image } from 'types/media'
-import type { MetaobjectReference } from 'types/product/MetaobjectReference'
+import type { ProductPurchaseVariant } from 'types/product/ProductPurchaseModel'
 
 export function computeVariantImages(
   product: { featuredImage: Image | null },
-  variant: {
-    variantProfileData?: Partial<MetaobjectReference>
-  } | null
+  variant: Pick<
+    ProductPurchaseVariant,
+    'variantProfileData'
+  > | null
 ): Image[] {
   const images = variant?.variantProfileData?.images
 

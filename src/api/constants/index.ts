@@ -1,12 +1,23 @@
+import { requireProductPresentation } from '@/lib/products/presentation/getProductPresentation'
+import {
+  TECH_DOWN_PUBLIC_SIZES,
+  TECH_DOWN_HIDDEN_SIZES
+} from '@/lib/products/techDownSizes'
 // Path: src/api/constants/index.ts
 export type ModelKey = 'utekos-techdown' | 'utekos-mikrofiber'
 
 export { TAGS } from './cacheTags'
 
 export const FREE_SHIPPING_THRESHOLD = 999
-export const productName = 'Utekos TechDown™'
-export const productHandle = 'utekos-techdown'
-export const productUrl = `/produkter/${productHandle}`
+const techDownPresentation = requireProductPresentation(
+  'utekos-techdown'
+)
+const microfiberPresentation = requireProductPresentation(
+  'utekos-mikrofiber'
+)
+export const productName = techDownPresentation.displayName
+export const productHandle = techDownPresentation.publicHandle
+export const productUrl = techDownPresentation.canonicalPath
 export const originalPrice = 1990
 export const discountAmount = 0
 export const currentPrice = originalPrice - discountAmount
@@ -14,8 +25,8 @@ export const GID_PREFIX = 'gid://shopify/ProductVariant/'
 
 export const PRODUCT_VARIANTS = {
   'utekos-techdown': {
-    id: 'utekos-techdown',
-    title: 'Utekos TechDown™',
+    id: techDownPresentation.publicHandle,
+    title: techDownPresentation.displayName,
     subtitle: 'Vår nyeste, varmeste og mest allsidige modell.',
     price: 1990,
     badge: 'Bestselger',
@@ -41,7 +52,7 @@ export const PRODUCT_VARIANTS = {
       'Vannavstøtende'
     ],
     colors: [{ name: 'Havdyp', hex: 'var(--color-havdyp)' }],
-    sizes: ['Middels', 'Stor', 'Større'],
+    sizes: TECH_DOWN_PUBLIC_SIZES,
     images: [
       'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/kvinne-nyter-terrasselivet-med-utekos-techdown.webp?v=1780689292',
       'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/utekos-techdown-diagonalt-fullfigur.webp?v=1780689364',
@@ -50,8 +61,8 @@ export const PRODUCT_VARIANTS = {
     ]
   },
   'utekos-mikrofiber': {
-    id: 'utekos-mikrofiber',
-    title: 'Utekos Mikrofiber™',
+    id: microfiberPresentation.publicHandle,
+    title: microfiberPresentation.displayName,
     subtitle: 'Lett varme som tar lite plass',
     price: 1790,
     badge: 'Reisefavoritt',
@@ -91,7 +102,7 @@ export const PRODUCT_VARIANTS = {
 
 export const PRODUCT_HIDDEN_SIZE_LABELS: Partial<
   Record<ModelKey, readonly string[]>
-> = { 'utekos-techdown': ['Liten'] }
+> = { 'utekos-techdown': TECH_DOWN_HIDDEN_SIZES }
 
 export function getSelectableSizes(
   model: ModelKey,

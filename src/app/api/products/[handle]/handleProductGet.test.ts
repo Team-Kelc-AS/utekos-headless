@@ -11,7 +11,7 @@ function context(handle: string) {
   return { params: Promise.resolve({ handle }) }
 }
 
-test('returns a cached public product response', async () => {
+test('returns product data without adding a browser or CDN cache', async () => {
   const product = {
     id: 'gid://shopify/Product/1',
     handle: 'utekos-techdown',
@@ -28,10 +28,7 @@ test('returns a cached public product response', async () => {
   )
 
   assert.equal(response.status, 200)
-  assert.match(
-    response.headers.get('cache-control') ?? '',
-    /s-maxage=300/
-  )
+  assert.equal(response.headers.get('cache-control'), 'no-store')
   assert.deepEqual(await response.json(), product)
 })
 

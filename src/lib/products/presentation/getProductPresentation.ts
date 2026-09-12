@@ -1,65 +1,51 @@
 import { productPresentationDefinitions } from './productPresentationDefinitions'
 import type { ProductPresentationDefinition } from './productPresentationSchema'
 
-const SITE_ORIGIN = 'https://utekos.no'
-
-const presentationsByPublicHandle = new Map(
-  productPresentationDefinitions.map(definition => [
-    definition.publicHandle,
-    definition
-  ])
-)
-
-const presentationsByLookupHandle = new Map(
-  productPresentationDefinitions.map(definition => [
-    definition.storefrontLookupHandle,
-    definition
-  ])
-)
-
 export type ProductPresentation =
   ProductPresentationDefinition & {
+    canonicalPath: string
     canonicalUrl: string
     productGroupUrl: string
   }
 
-function withDerivedUrls(
-  definition: ProductPresentationDefinition
-): ProductPresentation {
-  const canonicalUrl = `${SITE_ORIGIN}${definition.canonicalPath}`
-
-  return {
-    ...definition,
-    canonicalUrl,
-    productGroupUrl: `${canonicalUrl}#product-group`
-  }
-}
+const presentations: ProductPresentation[] =
+  productPresentationDefinitions.map(definition => {
+    const canonicalPath = `/produkter/${definition.publicHandle}`
+    const canonicalUrl = `https://utekos.no${canonicalPath}`
+    return {
+      ...definition,
+      canonicalPath,
+      canonicalUrl,
+      productGroupUrl: `${canonicalUrl}#product-group`
+    }
+  })
+const presentationsByHandle = new Map(
+  presentations.map(presentation => [
+    presentation.publicHandle,
+    presentation
+  ])
+)
 
 export function getProductPresentation(
   handle: string
 ): ProductPresentation | null {
-  const normalizedHandle = handle.trim().toLowerCase()
-  const definition =
-    presentationsByPublicHandle.get(normalizedHandle) ??
-    presentationsByLookupHandle.get(normalizedHandle)
-
-  return definition ? withDerivedUrls(definition) : null
+  return (
+    presentationsByHandle.get(handle.trim().toLowerCase()) ??
+    null
+  )
 }
 
 export function requireProductPresentation(
   handle: string
 ): ProductPresentation {
   const presentation = getProductPresentation(handle)
-
-  if (!presentation) {
+  if (!presentation)
     throw new Error(
       `Missing Utekos product presentation for "${handle}"`
     )
-  }
-
   return presentation
 }
 
 export function getAllProductPresentations(): ProductPresentation[] {
-  return productPresentationDefinitions.map(withDerivedUrls)
+  return [...presentations]
 }

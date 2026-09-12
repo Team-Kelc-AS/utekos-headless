@@ -1,5 +1,10 @@
 import { z } from 'zod'
 import {
+  consentedMetaAudience,
+  metaAudienceSchema,
+  type MetaAudience
+} from './metaAudience'
+import {
   canonicalUserDataSchema,
   type ConsentSnapshot
 } from './canonicalEventEnvelope'
@@ -16,6 +21,7 @@ import {
 } from './checkoutConsentSnapshot'
 import { canonicalExperimentAssignmentSchema } from './experimentAssignment'
 
+const META_AUDIENCE_ATTRIBUTE = 'utekos_meta_audience'
 const CONSENT_ATTRIBUTE = 'utekos_consent'
 const CAPTURED_AT_ATTRIBUTE = 'utekos_attribution_captured_at'
 const EXTERNAL_ID_ATTRIBUTE = 'utekos_external_id'
@@ -84,6 +90,7 @@ export const checkoutAttributionSnapshotSchema = z.strictObject({
   experiment: canonicalExperimentAssignmentSchema.optional(),
   browser_id: identifierMapSchema.optional(),
   campaign: campaignAttributionSchema.optional(),
+  meta_audience: metaAudienceSchema.optional(),
   click_id: identifierMapSchema.optional(),
   external_id: identifierValueSchema.optional(),
   user_data: canonicalUserDataSchema.optional(),
@@ -98,6 +105,7 @@ export type CheckoutAttributionSnapshot = z.infer<
 type CheckoutAttributionSource = {
   browser_id?: Record<string, string> | undefined
   campaign?: CampaignAttribution | undefined
+  meta_audience?: MetaAudience | undefined
   click_id?:
     | CanonicalClickIds
     | Record<string, string>
@@ -155,6 +163,7 @@ export function createCheckoutAttributionSnapshot(
   source: CheckoutAttributionSource,
   capturedAt = new Date().toISOString()
 ): CheckoutAttributionSnapshot {
+  const metaAudience = consentedMetaAudience(source)
   const hasAnalyticsConsent =
     source.consent.analytics === 'granted'
   const hasMarketingConsent =
@@ -199,6 +208,7 @@ export function createCheckoutAttributionSnapshot(
         )
       }
     : {}),
+    ...(metaAudience ? { meta_audience: metaAudience } : {}),
     ...(hasMarketingConsent && source.campaign ?
       { campaign: source.campaign }
     : {}),
@@ -223,6 +233,10 @@ function buildCartAttributes(
   snapshot: CheckoutAttributionSnapshot
 ) {
   const attributes = [
+    {
+      key: META_AUDIENCE_ATTRIBUTE,
+      value: consentedMetaAudience(snapshot) ?? ''
+    },
     {
       key: CONSENT_ATTRIBUTE,
       value: JSON.stringify(snapshot.consent)
@@ -423,6 +437,10 @@ export function parseOrderAttributionFromNoteAttributes(
     consent.marketing === 'granted' ?
       parseIdentifier(attributes.get(EXTERNAL_ID_ATTRIBUTE))
     : undefined
+  const metaAudience = consentedMetaAudience({
+    consent,
+    meta_audience: attributes.get(META_AUDIENCE_ATTRIBUTE)
+  })
   const parsedCampaign = parseCampaignAttribution(campaign)
   const hasPermittedPurpose =
     consent.analytics === 'granted' ||
@@ -449,6 +467,7 @@ export function parseOrderAttributionFromNoteAttributes(
     ...(Object.keys(clickId).length > 0 ?
       { click_id: clickId }
     : {}),
+    ...(metaAudience ? { meta_audience: metaAudience } : {}),
     ...(parsedCampaign ? { campaign: parsedCampaign } : {}),
     ...(externalId ? { external_id: externalId } : {}),
     ...(Object.keys(userData).length > 0 ?

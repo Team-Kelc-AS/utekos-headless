@@ -57,7 +57,7 @@ export async function generateProductStaticParams(
   )
   const params = getAllProductPresentations()
     .filter(presentation =>
-      liveLookupHandles.has(presentation.storefrontLookupHandle)
+      liveLookupHandles.has(presentation.publicHandle)
     )
     .map(presentation => ({ handle: presentation.publicHandle }))
 

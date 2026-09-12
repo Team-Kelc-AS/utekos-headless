@@ -1,10 +1,7 @@
 import { z } from 'zod'
 
-export const publicProductOptionKeySchema = z.enum([
-  'color',
-  'size',
-  'gender'
-])
+import { publicProductOptionKeySchema } from '../publicVariantOptionsSchema'
+export { publicProductOptionKeySchema } from '../publicVariantOptionsSchema'
 
 const publicProductOptionSchema = z.strictObject({
   key: publicProductOptionKeySchema,
@@ -22,17 +19,9 @@ const productMediaPresentationSchema = z.strictObject({
 
 export const productPresentationDefinitionSchema = z
   .strictObject({
-    productKey: z.string().regex(/^[a-z0-9-]+$/),
     publicHandle: z.string().regex(/^[a-z0-9-]+$/),
-    canonicalPath: z.string().startsWith('/produkter/'),
-    storefrontLookupHandle: z.string().regex(/^[a-z0-9-]+$/),
     displayName: z.string().min(1),
-    productGroupID: z.string().regex(/^[a-z0-9-]+$/),
-    contentKey: z.string().regex(/^[a-z0-9-]+$/),
     description: z.string().min(40),
-    publicOptionOrder: z
-      .array(publicProductOptionKeySchema)
-      .max(3),
     options: z.array(publicProductOptionSchema).max(3),
     hiddenOptionValues: z
       .partialRecord(
@@ -46,19 +35,9 @@ export const productPresentationDefinitionSchema = z
     audience: z.string().min(1)
   })
   .superRefine((definition, context) => {
-    if (
-      definition.canonicalPath !==
-      `/produkter/${definition.publicHandle}`
-    ) {
-      context.addIssue({
-        code: 'custom',
-        path: ['canonicalPath'],
-        message:
-          'canonicalPath must use the registered publicHandle'
-      })
-    }
-
-    const optionKeys = definition.options.map(option => option.key)
+    const optionKeys = definition.options.map(
+      option => option.key
+    )
     const uniqueOptionKeys = new Set(optionKeys)
 
     if (uniqueOptionKeys.size !== optionKeys.length) {
@@ -66,19 +45,6 @@ export const productPresentationDefinitionSchema = z
         code: 'custom',
         path: ['options'],
         message: 'Option keys must be unique'
-      })
-    }
-
-    if (
-      definition.publicOptionOrder.some(
-        optionKey => !uniqueOptionKeys.has(optionKey)
-      )
-    ) {
-      context.addIssue({
-        code: 'custom',
-        path: ['publicOptionOrder'],
-        message:
-          'Every public option must have a matching option contract'
       })
     }
   })

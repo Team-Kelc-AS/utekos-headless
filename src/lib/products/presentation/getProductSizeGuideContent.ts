@@ -1,9 +1,12 @@
 import {
   comfyrobeData,
-  techDownData,
   utekosData
 } from '@/app/handlehjelp/storrelsesguide/utils/data'
-import { techDownSizeCards } from '@/app/handlehjelp/storrelsesguide/utils/techDownSizeCards'
+import {
+  TECH_DOWN_PUBLIC_SIZES,
+  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS,
+  TECH_DOWN_MEASUREMENT_ROWS
+} from '../techDownSizes'
 import { utekosSizeCards } from '@/app/handlehjelp/storrelsesguide/utils/utekosSizeCards'
 import type { ProductSizeGuideFamily } from './resolveProductSizeGuideFamily'
 
@@ -95,11 +98,11 @@ export function getProductSizeGuideContent(
         'Finn nøyaktig TechDown™-størrelse med høydeguider, måletips og måletabell.',
       tableCaption: 'Mål for TechDown-størrelser',
       tableAriaLabel: 'Måletabell for TechDown-størrelser',
-      columns: ['Middels', 'Stor', 'Større'],
-      rows: mapRows(techDownData, ['middels', 'stor', 'storre']),
-      sizeTips: techDownSizeCards.map(card => ({
+      columns: TECH_DOWN_PUBLIC_SIZES,
+      rows: TECH_DOWN_MEASUREMENT_ROWS,
+      sizeTips: TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(card => ({
         size: card.size,
-        heading: card.heading,
+        heading: `Velg ${card.size} hvis...`,
         heightGuide: card.heightGuide,
         fitGuidance: card.fitGuidance
       }))

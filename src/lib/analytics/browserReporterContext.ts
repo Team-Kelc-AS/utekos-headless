@@ -13,6 +13,8 @@ import {
 } from './campaignAttributionSessionStore'
 import { resolveTrackingEnvironment } from './resolveTrackingEnvironment'
 import { hasBrowserCollectionConsent } from './hasBrowserCollectionConsent'
+import { readBrowserMetaAudience } from './browserMetaAudience'
+import type { MetaAudience } from './metaAudience'
 import { withoutTrackingQuery } from './withoutTrackingQuery'
 import type {
   ConsentSnapshot,
@@ -22,6 +24,7 @@ import type {
 export type BrowserReporterContext = {
   browserId?: Record<string, string>
   campaignAttribution?: CampaignAttribution
+  metaAudience?: MetaAudience
   clickId?: Record<string, string>
   consent: ConsentSnapshot
   documentReferrer: string
@@ -53,6 +56,7 @@ export function readBrowserReporterContext(
   const consent = getConsentSnapshot(
     (window as CookiebotWindow).Cookiebot?.consent
   )
+  const metaAudience = readBrowserMetaAudience(consent)
   const browserId = extractBrowserIds(document.cookie, consent)
   const clickId =
     consent.marketing === 'granted' ?
@@ -80,6 +84,7 @@ export function readBrowserReporterContext(
       process.env.NODE_ENV
     ),
     consent,
+    ...(metaAudience ? { metaAudience } : {}),
     ...(browserId ? { browserId } : {}),
     ...(campaignAttribution ? { campaignAttribution } : {}),
     ...(clickId ? { clickId } : {}),

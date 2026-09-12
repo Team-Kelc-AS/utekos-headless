@@ -5,10 +5,10 @@ import {
   LANDING_PAGE_URL
 } from '../data/landingSeoContent'
 import { buildProductGroupJsonLd } from '@/lib/products/structured-data/buildProductGroupJsonLd'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
+import type { ProductModel } from '@/lib/products/commerce'
 
 export function buildSkreddersyVarmenJsonLd(
-  commerce: ProductCommerceViewModel
+  commerce: ProductModel
 ) {
   const productGroup = buildProductGroupJsonLd(commerce, {
     reviews: techDownReviews

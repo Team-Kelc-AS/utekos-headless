@@ -1,23 +1,28 @@
-import { publicOptionSearchParamMatches } from '@/lib/products/presentation'
-import type { ProductCommerceViewModel } from './productCommerceViewModelSchema'
+import { publicOptionSearchParamMatches } from '@/lib/products/presentation/publicOptionSearchParamMatches'
+import type { ProductModel } from '../productModelSchema'
 
 type SearchParamsRecord = Record<
   string,
   string | string[] | undefined
 >
 
-function firstValue(value: string | string[] | undefined) {
+function firstValue(
+  params: SearchParamsRecord | URLSearchParams,
+  name: string
+) {
+  if (params instanceof URLSearchParams) return params.get(name)
+  const value = params[name]
   return Array.isArray(value) ? value[0] : value
 }
 
 export function resolveCommerceVariantFromSearchParams(
-  commerce: ProductCommerceViewModel,
-  searchParams?: SearchParamsRecord | null
+  commerce: ProductModel,
+  searchParams?: SearchParamsRecord | URLSearchParams | null
 ) {
   const params = searchParams ?? {}
-  const legacyVariantId = firstValue(params.variant)
+  const legacyVariantId = firstValue(params, 'variant')
   const legacyVariant = commerce.variants.find(
-    variant => variant.commerce.id === legacyVariantId
+    variant => variant.id === legacyVariantId
   )
 
   if (legacyVariant) return legacyVariant
@@ -28,7 +33,7 @@ export function resolveCommerceVariantFromSearchParams(
     ['kjonn', 'gender']
   ] as const
   const suppliedReadableKeys = readableKeys.filter(([param]) =>
-    Boolean(firstValue(params[param]))
+    Boolean(firstValue(params, param))
   )
 
   if (suppliedReadableKeys.length > 0) {
@@ -40,7 +45,7 @@ export function resolveCommerceVariantFromSearchParams(
           optionValue &&
           publicOptionSearchParamMatches(
             optionValue,
-            firstValue(params[param]) ?? ''
+            firstValue(params, param) ?? ''
           )
         )
       })
@@ -51,7 +56,7 @@ export function resolveCommerceVariantFromSearchParams(
 
   return (
     commerce.variants.find(
-      variant => variant.commerce.id === commerce.defaultVariantId
+      variant => variant.id === commerce.defaultVariantId
     ) ?? commerce.variants[0]
   )
 }

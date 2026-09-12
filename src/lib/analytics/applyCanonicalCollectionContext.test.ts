@@ -31,6 +31,7 @@ const source = {
   },
   click_id: { fbclid: 'click' },
   campaign: { utm_source: 'meta' },
+  meta_audience: 'engaged_audience',
   journey_id: 'journey',
   previous_page_view_id: 'previous',
   edge_request_id: 'request',
@@ -50,6 +51,7 @@ test('statistics-only cannot inherit marketing fields from current context or an
   })
   assert.equal(event.click_id, undefined)
   assert.equal(event.campaign, undefined)
+  assert.equal(event.meta_audience, undefined)
   assert.equal(event.page_url, 'https://utekos.no/')
   assert.equal(event.edge_request_id, undefined)
   assert.equal(event.event_id, 'unchanged')
@@ -63,6 +65,7 @@ test('marketing-only preserves consented attribution but never analytics journey
     fbp: 'fb.1.2.3',
     fbc: 'fb.1.2.click'
   })
+  assert.equal(event.meta_audience, undefined)
   assert.equal(event.journey_id, undefined)
   assert.equal(event.previous_page_view_id, undefined)
   assert.equal(event.event_time, 'unchanged')

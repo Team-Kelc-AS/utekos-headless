@@ -1,4 +1,4 @@
-import { sendGTMEvent } from '@next/third-parties/google'
+import { sendCanonicalGTMEvent as sendGTMEvent } from './sendCanonicalGTMEvent'
 import {
   buildPageViewDataLayerEvent,
   type CanonicalPageView

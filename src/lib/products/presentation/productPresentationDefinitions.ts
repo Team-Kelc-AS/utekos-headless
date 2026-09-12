@@ -2,41 +2,31 @@ import { productPresentationDefinitionSchema } from './productPresentationSchema
 import {
   TECH_DOWN_HIDDEN_SIZES,
   TECH_DOWN_SIZE_VALUE_MAP
-} from './techDownSizeContract'
+} from '../techDownSizes'
 
 const commonGenderOption = {
   key: 'gender',
   publicName: 'Kjønn',
   publicParam: 'kjonn',
   shopifyNames: ['Kjønn', 'Gender'],
-  valueMap: {
-    unisex: 'Unisex'
-  },
+  valueMap: { unisex: 'Unisex' },
   defaultPublicValue: 'Unisex'
 } as const
 
 export const productPresentationDefinitions =
   productPresentationDefinitionSchema.array().parse([
     {
-      productKey: 'utekos-techdown',
       publicHandle: 'utekos-techdown',
-      canonicalPath: '/produkter/utekos-techdown',
-      storefrontLookupHandle: 'utekos-techdown',
       displayName: 'Utekos TechDown™',
-      productGroupID: 'utekos-techdown',
-      contentKey: 'utekos-techdown',
       description:
         'Utekos TechDown™ er et varmt og allsidig 3-i-1-plagg med Luméa™-ytterstoff og CloudWeave™-isolasjon for terrasse, hytte, båt og bobil.',
-      publicOptionOrder: ['color', 'size', 'gender'],
       options: [
         {
           key: 'color',
           publicName: 'Farge',
           publicParam: 'farge',
           shopifyNames: ['Farge', 'Color'],
-          valueMap: {
-            havdyp: 'Havdyp'
-          },
+          valueMap: { havdyp: 'Havdyp' },
           defaultPublicValue: 'Havdyp'
         },
         {
@@ -48,12 +38,9 @@ export const productPresentationDefinitions =
         },
         commonGenderOption
       ],
-      hiddenOptionValues: {
-        size: TECH_DOWN_HIDDEN_SIZES
-      },
+      hiddenOptionValues: { size: TECH_DOWN_HIDDEN_SIZES },
       media: {
-        defaultAlt:
-          'Utekos TechDown™ i mørkeblå Havdyp.',
+        defaultAlt: 'Utekos TechDown™ i mørkeblå Havdyp.',
         variantAltPrefix: 'Utekos TechDown™'
       },
       category: 'Yttertøy',
@@ -62,16 +49,10 @@ export const productPresentationDefinitions =
       audience: 'Unisex'
     },
     {
-      productKey: 'utekos-mikrofiber',
       publicHandle: 'utekos-mikrofiber',
-      canonicalPath: '/produkter/utekos-mikrofiber',
-      storefrontLookupHandle: 'utekos-mikrofiber',
       displayName: 'Utekos Mikrofiber™',
-      productGroupID: 'utekos-mikrofiber',
-      contentKey: 'utekos-mikrofiber',
       description:
         'Utekos Mikrofiber™ er et lett, pakkbart og hurtigtørkende 3-i-1-plagg for bobil, båt, hytte, terrasse og reise.',
-      publicOptionOrder: ['color', 'size', 'gender'],
       options: [
         {
           key: 'color',
@@ -109,16 +90,10 @@ export const productPresentationDefinitions =
       audience: 'Unisex'
     },
     {
-      productKey: 'utekos-dun',
       publicHandle: 'utekos-dun',
-      canonicalPath: '/produkter/utekos-dun',
-      storefrontLookupHandle: 'utekos-dun',
       displayName: 'Utekos Dun™',
-      productGroupID: 'utekos-dun',
-      contentKey: 'utekos-dun',
       description:
         'Utekos Dun™ er et varmt 3-i-1-plagg med 650 fillpower dun for kalde og tørre kvelder på terrasse, hytte og tur.',
-      publicOptionOrder: ['color', 'size', 'gender'],
       options: [
         {
           key: 'color',
@@ -158,26 +133,17 @@ export const productPresentationDefinitions =
       audience: 'Unisex'
     },
     {
-      productKey: 'utekos-stapper',
       publicHandle: 'utekos-stapper',
-      canonicalPath: '/produkter/utekos-stapper',
-      storefrontLookupHandle: 'utekos-stapper',
       displayName: 'Utekos Stapper™',
-      productGroupID: 'utekos-stapper',
-      contentKey: 'utekos-stapper',
       description:
         'Utekos Stapper™ er en lett kompresjonsbag med fire justerbare stropper for klær, soveposer og utstyr på tur, i båt og bobil.',
-      publicOptionOrder: ['color', 'size', 'gender'],
       options: [
         {
           key: 'color',
           publicName: 'Farge',
           publicParam: 'farge',
           shopifyNames: ['Farge', 'Color'],
-          valueMap: {
-            vargnatt: 'Vargnatt',
-            svart: 'Vargnatt'
-          },
+          valueMap: { vargnatt: 'Vargnatt', svart: 'Vargnatt' },
           defaultPublicValue: 'Vargnatt'
         },
         {
@@ -186,7 +152,7 @@ export const productPresentationDefinitions =
           publicParam: 'storrelse',
           shopifyNames: ['Størrelse', 'Size', 'Str'],
           valueMap: {
-            onesize: 'OneSize',
+            'onesize': 'OneSize',
             'one size': 'OneSize'
           },
           defaultPublicValue: 'OneSize'
@@ -203,25 +169,17 @@ export const productPresentationDefinitions =
       audience: 'Unisex'
     },
     {
-      productKey: 'comfyrobe',
       publicHandle: 'comfyrobe',
-      canonicalPath: '/produkter/comfyrobe',
-      storefrontLookupHandle: 'comfyrobe',
       displayName: 'Comfyrobe™',
-      productGroupID: 'comfyrobe',
-      contentKey: 'comfyrobe',
       description:
         'Comfyrobe™ er en værbeskyttende og romslig robe med varm SherpaCore™-innside for før og etter isbad, bading og annen aktivitet ute.',
-      publicOptionOrder: ['color', 'size', 'gender'],
       options: [
         {
           key: 'color',
           publicName: 'Farge',
           publicParam: 'farge',
           shopifyNames: ['Farge', 'Color'],
-          valueMap: {
-            fjellnatt: 'Fjellnatt'
-          },
+          valueMap: { fjellnatt: 'Fjellnatt' },
           defaultPublicValue: 'Fjellnatt'
         },
         {

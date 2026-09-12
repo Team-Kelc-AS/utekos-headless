@@ -93,6 +93,14 @@
             ],
             "additionalProperties": false
           },
+          "meta_audience": {
+            "type": "string",
+            "enum": [
+              "new_audience",
+              "engaged_audience",
+              "existing_customers"
+            ]
+          },
           "experiment": {
             "type": "object",
             "properties": {

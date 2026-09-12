@@ -23,7 +23,7 @@ export function createVariantSelectionUrl({
 
   if (!options) {
     throw new Error(
-      `Cannot build a public variant URL for ${presentation.productKey}`
+      `Cannot build a public variant URL for ${presentation.publicHandle}`
     )
   }
 

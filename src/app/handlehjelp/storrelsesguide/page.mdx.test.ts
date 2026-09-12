@@ -1,11 +1,8 @@
+import { TECH_DOWN_MEASUREMENT_ROWS } from '@/lib/products/techDownSizes'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
 import test from 'node:test'
-import {
-  comfyrobeData,
-  techDownData,
-  utekosData
-} from './utils/data'
+import { comfyrobeData, utekosData } from './utils/data'
 import { techDownFaq } from './utils/techDownFaq'
 import { sizeExchangeCopy } from '@/lib/policies/returnPolicy'
 import { getProductSizeGuideContent } from '@/lib/products/presentation/getProductSizeGuideContent'
@@ -120,8 +117,8 @@ test('product dialog reads both size guidance and measurements from shared TypeS
   const dialog = source(
     '../../../components/size-guide/techDownSizeGuideDocument.mdx'
   )
-  assert.match(dialog, /techDownData\.map/)
-  assert.match(dialog, /techDownSizeCards\.map/)
+  assert.match(dialog, /TECH_DOWN_MEASUREMENT_ROWS\.map/)
+  assert.match(dialog, /TECH_DOWN_PUBLIC_SIZE_DEFINITIONS\.map/)
   assert.doesNotMatch(dialog, /Liten|\| 162 cm/)
 })
 
@@ -137,11 +134,9 @@ test('all 27 published TechDown values match the agreed contract and product dia
     ['29 cm', '29 cm', '29 cm'],
     ['8 cm', '8,5 cm', '9 cm']
   ]
-  const actual = techDownData.map(row => {
-    const values = row as Record<string, string>
-    assert.equal('liten' in row, false)
-    return [values.middels, values.stor, values.storre]
-  })
+  const actual = TECH_DOWN_MEASUREMENT_ROWS.map(
+    row => row.values
+  )
   assert.deepEqual(actual, expected)
   const dialog = getProductSizeGuideContent('techdown')
   assert.deepEqual(dialog.columns, ['Middels', 'Stor', 'Større'])
@@ -153,18 +148,6 @@ test('all 27 published TechDown values match the agreed contract and product dia
     source('./page.mdx')
       .split('<MeasurementTable')[1]
       ?.split('</MeasurementTable>')[0] ?? ''
-  const rows = table
-    .split('\n')
-    .filter(line => /^\|/.test(line))
-    .map(line =>
-      line
-        .split('|')
-        .slice(1, -1)
-        .map(cell => cell.trim())
-    )
-  assert.deepEqual(rows[0], ['Mål', 'Middels', 'Stor', 'Større'])
-  assert.deepEqual(
-    rows.slice(2).map(row => row.slice(1)),
-    expected
-  )
+  assert.match(table, /TECH_DOWN_MEASUREMENT_ROWS.map/)
+  assert.match(table, /TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map/)
 })

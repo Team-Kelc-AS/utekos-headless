@@ -1,5 +1,7 @@
 'use client'
 
+import { TECH_DOWN_PUBLIC_SIZE_DEFINITIONS } from '@/lib/products/techDownSizes'
+
 import {
   Minus,
   Plus,
@@ -12,7 +14,6 @@ import { formatPrice } from '@/lib/utils/formatPrice'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import {
-  SIZE_GUIDANCE,
   focusRing,
   choiceGridClass,
   choicePillClass
@@ -21,7 +22,7 @@ import { ShippingAndReturnComponent } from './ShippingAndReturnComponent'
 import dynamic from 'next/dynamic'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { SKREDDERSY_VARMEN_PROMOTIONS } from '../data/skreddersyVarmenPageModel'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
+import type { ProductModel } from '@/lib/products/commerce'
 import type {
   ProductCartModel,
   ProductPurchaseVariant
@@ -53,7 +54,7 @@ export type PurchaseClientViewLandingProps = {
   handleAddToCart: () => void
   isPending: boolean
   isAddToCartPending: boolean
-  commerce: ProductCommerceViewModel
+  commerce: ProductModel
   shopifyProduct: ProductCartModel
   selectedShopifyVariant: ProductPurchaseVariant | null
 }
@@ -72,11 +73,10 @@ export function PurchaseClientViewLanding({
   selectedShopifyVariant,
   content
 }: PurchaseClientViewLandingProps) {
-  const guidance = SIZE_GUIDANCE[selectedSize]
-  const modelName = commerce.displayName.replace(
-    /^Utekos\s+/u,
-    ''
+  const guidance = TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.find(
+    size => size.size === selectedSize
   )
+  const modelName = commerce.title.replace(/^Utekos\s+/u, '')
   const isAvailable =
     selectedShopifyVariant?.availableForSale ?? false
   const currentPrice = selectedShopifyVariant?.price
@@ -191,12 +191,12 @@ export function PurchaseClientViewLanding({
                         <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
                           <Ruler className='size-4 text-primary' />
                           <span className='font-utekos-text text-sm font-bold tracking-normal text-foreground'>
-                            Anbefaling: For deg mellom{' '}
-                            {guidance.height}
+                            Anbefalt høyde:{' '}
+                            {guidance.heightGuide}
                           </span>
                         </div>
                         <ul className='mt-2 space-y-1.5'>
-                          {guidance.tips.map(tip => (
+                          {guidance.fitGuidance.map(tip => (
                             <li
                               key={tip}
                               className='leading-text-paragraph text-sm text-foreground/90'

@@ -1,3 +1,7 @@
+import {
+  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS,
+  TECH_DOWN_MEASUREMENT_ROWS
+} from '@/lib/products/techDownSizes'
 import { FeatureGrid } from './components/mdx/FeatureGrid'
 import { SizeGrid } from './components/mdx/SizeGrid'
 import { MeasurementTable } from './components/MeasurementTable'
@@ -9,11 +13,12 @@ import { LazyFeaturedProductCarousel } from '@/components/ProductCard/LazyFeatur
 
 Størrelsesguide
 
-<h1 id="storrelsesguide">Finn din perfekte passform</h1>
+<h1 id='storrelsesguide'>Finn din perfekte passform</h1>
 
 Vi designer produkter som skal prestere og vare. Ta deg tid til å
 finne din nøyaktige størrelse - mål gjerne to ganger, så får du
 et plagg du vil trives med lenge.
+
 <nav aria-label="Gå til størrelsesguide for ditt plagg">
 
 - [TechDown™](#techdown)
@@ -28,56 +33,40 @@ et plagg du vil trives med lenge.
 <span id="tech-down-size-guide" />
 <span id="tech-down-size-guide-heading" />
 
-<h2 id="techdown-heading">Utekos TechDown™ - Størrelsestabell</h2>
+<h2 id='techdown-heading'>
+  Utekos TechDown™ - Størrelsestabell
+</h2>
 
-Utekos TechDown™ har normal passform, balansert over
-skuldre, bryst og ermer. Dette gir deg god bevegelsesfrihet
-og effektiv varme, pakket inn i et nettere design. Perfekt for et
-aktivt liv på hytten, i bobilen eller på kjølige kvelder på
-terrassen.
+Utekos TechDown™ har normal passform, balansert over skuldre,
+bryst og ermer. Dette gir deg god bevegelsesfrihet og effektiv
+varme, pakket inn i et nettere design. Perfekt for et aktivt liv
+på hytten, i bobilen eller på kjølige kvelder på terrassen.
 
 Velg størrelse etter høyden din, hvordan du vil bruke plagget og
 hvor mye rom du ønsker til klær under.
 
 <SizeGrid>
-
-### Middels
-
-**165–175 cm**
-
-Anbefalt til deg som er mellom 165-175 cm.
-
-- Kan også være det riktige valget for deg som er mellom 160-165 cm, og som ønsker en romslig passform.
-- Kan være det ideelle valget for deg som er rundt 180 cm, og ønsker en tettsittende og kroppsnær passform.
-
-### Stor
-
-**175–185 cm**
-
-Anbefalt til deg som er mellom 175-185 cm.
-
-- Kan også være det riktige valget for deg som er mellom 170-175 cm, og som ønsker en romslig passform.
-- Kan være det ideelle valget for deg som er rundt 190 cm, og ønsker en tettsittende og kroppsnær passform.
-
-### Større
-
-**185–195 cm**
-
-Anbefalt til deg som er mellom 185-195 cm.
-
-- Kan også være det riktige valget for deg som er mellom 180-185 cm, og som ønsker en romslig passform.
-- Kan være det ideelle valget for deg som er rundt 200 cm (eller over), og ønsker en tettsittende og kroppsnær passform.
-
+  {TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.flatMap(size => [
+    <h3 key={`${size.id}-title`}>{size.size}</h3>,
+    <p key={`${size.id}-height`}>
+      <strong>{size.heightGuide}</strong>
+    </p>,
+    <ul key={`${size.id}-guidance`}>
+      {size.fitGuidance.map(tip => (
+        <li key={tip}>{tip}</li>
+      ))}
+    </ul>
+  ])}
 </SizeGrid>
 
-<span id="tech-down-details" />
-<span id="tech-down-details-heading" />
+<span id='tech-down-details' />
+<span id='tech-down-details-heading' />
 
 Utekos TechDown™ gir full bevegelsesfrihet uten unødvendig volum.
 Innvendig snorstramming lar deg forme silhuetten og stenge den
 kalde trekken ute. Plagget har YKK®-glidelåser.
 
-<span id="tech-down-measurements-heading" />
+<span id='tech-down-measurements-heading' />
 
 ### Måleveiledning
 
@@ -96,23 +85,32 @@ brystomkrets.** Legg plagget flatt når du sammenligner bredden.
 
 <MeasurementTable id="tech-down-measurements" caption="TechDown™ — plaggmål i centimeter">
 
-| Mål                            | Middels |    Stor | Større |
-| :----------------------------- | ------: | ------: | -----: |
-| Total lengde (nakke til bunn)  |  162 cm |  166 cm | 170 cm |
-| Brystvidde (flatmål)           |   56 cm |   58 cm |  61 cm |
-| Ermlengde (fra senter)         |   82 cm |   87 cm |  92 cm |
-| Ermlengde (fra armhule)        |   54 cm |   60 cm |  64 cm |
-| Lengde på glidelås (omvendt V) |   73 cm |   74 cm |  75 cm |
-| Lengde på glidelås (sidelomme) | 13,5 cm | 13,5 cm |  14 cm |
-| Høyde på hette                 |   35 cm |   35 cm |  35 cm |
-| Høyde på baklomme              |   29 cm |   29 cm |  29 cm |
-| Mansjetthøyde                  |    8 cm |  8,5 cm |   9 cm |
+<table>
+  <thead>
+    <tr>
+      <th>Mål</th>
+      {TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(size => (
+        <th key={size.id}>{size.size}</th>
+      ))}
+    </tr>
+  </thead>
+  <tbody>
+    {TECH_DOWN_MEASUREMENT_ROWS.map(row => (
+      <tr key={row.measurement}>
+        <th>{row.measurement}</th>
+        {row.values.map((value, index) => (
+          <td key={index}>{value}</td>
+        ))}
+      </tr>
+    ))}
+  </tbody>
+</table>
 
 </MeasurementTable>
 
 <section id="faq" aria-labelledby="techdown-faq-heading">
 
-<h3 id="techdown-faq-heading">FAQ for Utekos TechDown™</h3>
+<h3 id='techdown-faq-heading'>FAQ for Utekos TechDown™</h3>
 
 <SizeGuideFaq />
 
@@ -120,24 +118,40 @@ brystomkrets.** Legg plagget flatt når du sammenligner bredden.
 
 <aside id="storrelsesbytte" aria-labelledby="storrelsesbytte-heading">
 
-<h3 id="storrelsesbytte-heading">Gratis størrelsesbytte – Slik fungerer det</h3>
+<h3 id='storrelsesbytte-heading'>
+  Gratis størrelsesbytte – Slik fungerer det
+</h3>
 
-Gratis størrelsesbytte gjelder alle plagg i dagens aktive Utekos-sortiment som har størrelsesvalg, og bare bytte til samme modell og farge.
+Gratis størrelsesbytte gjelder alle plagg i dagens aktive
+Utekos-sortiment som har størrelsesvalg, og bare bytte til samme
+modell og farge.
 
 **Vilkår for bytte**
 
-* **Tidsfrist:** Kontakt oss på kundeservice@kelc.no eller telefon +47 402 16 343 innen 14 kalenderdager fra dagen du fysisk mottar bestillingen.
-* **Tilstand:** Varen må være ubrukt, uvasket og uendret, uten lukt eller flekker, og med merkelappen på.
-* **Rask utsendelse:** Utekos ordner og betaler returfrakten for størrelsesbyttet. Vi sender samme plagg i riktig størrelse så snart du har sendt oss dokumentasjon på at returen er levert inn, forutsatt at størrelsen er på lager.
-* **Utsolgt størrelse?** Hvis ønsket størrelse er utsolgt, avtaler kundeservice ordinær refusjon eller en annen løsning med deg. Vi sender aldri en annen modell eller farge automatisk.
+- **Tidsfrist:** Kontakt oss på kundeservice@kelc.no eller
+  telefon +47 402 16 343 innen 14 kalenderdager fra dagen du
+  fysisk mottar bestillingen.
+- **Tilstand:** Varen må være ubrukt, uvasket og uendret, uten
+  lukt eller flekker, og med merkelappen på.
+- **Rask utsendelse:** Utekos ordner og betaler returfrakten for
+  størrelsesbyttet. Vi sender samme plagg i riktig størrelse så
+  snart du har sendt oss dokumentasjon på at returen er levert
+  inn, forutsatt at størrelsen er på lager.
+- **Utsolgt størrelse?** Hvis ønsket størrelse er utsolgt,
+  avtaler kundeservice ordinær refusjon eller en annen løsning
+  med deg. Vi sender aldri en annen modell eller farge
+  automatisk.
 
 **Slik går du frem**
 
-Kontakt kundeservice, så hjelper vi deg videre med returetikett og bytte.
+Kontakt kundeservice, så hjelper vi deg videre med returetikett
+og bytte.
 
 **Viktig om angrerett**
 
-Gratis størrelsesbytte er en frivillig byttefordel, ikke gratis generell retur. Ved ordinær angrerett oppretter og betaler du returfrakten selv. Dine lovfestede rettigheter påvirkes ikke.
+Gratis størrelsesbytte er en frivillig byttefordel, ikke gratis
+generell retur. Ved ordinær angrerett oppretter og betaler du
+returfrakten selv. Dine lovfestede rettigheter påvirkes ikke.
 
 [Les hele returpolicyen her](/frakt-og-retur)
 
@@ -148,7 +162,9 @@ Gratis størrelsesbytte er en frivillig byttefordel, ikke gratis generell retur.
 <section id="mikrofiber" aria-labelledby="utekos-size-guide-heading">
 <span id="utekos-size-guide" />
 
-<h2 id="utekos-size-guide-heading">En unik tilnærming til passform</h2>
+<h2 id='utekos-size-guide-heading'>
+  En unik tilnærming til passform
+</h2>
 
 Vi har designet Utekos Dun og Mikrofiber med en filosofi om
 ultimat komfort gjennom suveren tilpasningsevne. Du vil legge
@@ -201,7 +217,7 @@ den helt ned over beina for en full kokong-effekt.
 
 <section id="size-guide-adapt" aria-labelledby="utekos-measurements-heading">
 
-<h2 id="utekos-measurements-heading">Skapt for å tilpasses</h2>
+<h2 id='utekos-measurements-heading'>Skapt for å tilpasses</h2>
 
 <FeatureGrid>
 
@@ -227,13 +243,15 @@ slippe ut overskuddsvarme.
 <section id="comfyrobe" aria-labelledby="comfyrobe-size-guide-heading">
 <span id="comfyrobe-size-guide" />
 
-<h2 id="comfyrobe-size-guide-heading">Comfyrobe™ — Ditt personlige beskyttende skall</h2>
+<h2 id='comfyrobe-size-guide-heading'>
+  Comfyrobe™ — Ditt personlige beskyttende skall
+</h2>
 
 Comfyrobe™ er designet som ditt personlige, beskyttende skall.
-Den romslige passformen er ment å være omsluttende
-og komfortabel, ikke figurnær. Hensikten er at den enkelt skal
-kunne trekkes over alt du har på deg, samtidig som smarte
-detaljer sikrer deg full bevegelsesfrihet.
+Den romslige passformen er ment å være omsluttende og
+komfortabel, ikke figurnær. Hensikten er at den enkelt skal kunne
+trekkes over alt du har på deg, samtidig som smarte detaljer
+sikrer deg full bevegelsesfrihet.
 
 Den rektangulære unisex-passformen er bevisst romslig for å
 enkelt passe over alt fra våte klær til en tykk genser. Splitt i
@@ -291,7 +309,7 @@ kropp, skuldre og hette.
 
 <section id="size-guide-cta" aria-labelledby="size-guide-cta-heading">
 
-<h2 id="size-guide-cta-heading">Klar for å kjøpe din Utekos?</h2>
+<h2 id='size-guide-cta-heading'>Klar for å kjøpe din Utekos?</h2>
 
 <LazyFeaturedProductCarousel />
 

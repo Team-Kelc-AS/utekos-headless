@@ -1,3 +1,4 @@
+import { mapCanonicalPurchaseToGoogleDataManager } from './mapCanonicalPurchaseToGoogleDataManager'
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import type { OrderPaid } from 'types/commerce/order/OrderPaid'
@@ -487,4 +488,23 @@ test('keeps presentment currency and transaction-level discounts coherent', () =
   assert.equal(event.custom_data.items[0]?.unit_price, 100)
   assert.equal(event.custom_data.items[0]?.final_unit_price, 80)
   assert.equal(event.custom_data.items[0]?.discount, undefined)
+})
+
+
+test('passes Meta audience through the paid order to GA4 without changing purchase identity', () => {
+  for (const value of ['new_audience', 'engaged_audience', 'existing_customers']) {
+    const order = orderPaid()
+    const original = shopifyOrderToCanonicalPurchase(order)
+    order.note_attributes.push({ name: 'utekos_meta_audience', value })
+    const purchase = shopifyOrderToCanonicalPurchase(order)
+    assert.equal(purchase.meta_audience, value)
+    assert.equal(purchase.event_id, original.event_id)
+    assert.equal(purchase.custom_data.transaction_id, original.custom_data.transaction_id)
+    const mapped = mapCanonicalPurchaseToGoogleDataManager(purchase)
+    assert.equal(mapped.additionalEventParameters?.find(item => item.parameterName === 'audience')?.value, value)
+    assert.equal(purchase.consent.source, 'cookiebot')
+    if (purchase.consent.source !== 'cookiebot') throw new Error('Test fixture requires explicit consent')
+    const denied = { ...purchase, consent: { ...purchase.consent, marketing: 'denied' as const } }
+    assert.equal(mapCanonicalPurchaseToGoogleDataManager(denied).additionalEventParameters?.some(item => item.parameterName === 'audience'), false)
+  }
 })

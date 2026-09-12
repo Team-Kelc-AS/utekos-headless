@@ -1,15 +1,10 @@
 import { slugifyVariantOption } from '@/lib/utils/slugifyVariantOption'
 import type { ProductPresentation } from './getProductPresentation'
-import type { PublicProductOptionKey } from './productPresentationSchema'
 
-export type ShopifySelectedOption = {
-  name: string
-  value: string
-}
-
-export type PublicVariantOptions = Partial<
-  Record<PublicProductOptionKey, string | undefined>
->
+import type { PublicVariantOptions } from '../productModelSchema'
+import type { SelectedOption } from 'types/product/ProductTypes'
+export type { PublicVariantOptions } from '../productModelSchema'
+export type ShopifySelectedOption = SelectedOption
 
 function normalizeLookupValue(value: string) {
   return slugifyVariantOption(value).replaceAll('-', ' ')
@@ -24,7 +19,8 @@ export function resolvePublicOptionValue(
   const optionContract = presentation.options.find(option =>
     option.shopifyNames.some(
       shopifyName =>
-        normalizeLookupValue(shopifyName) === normalizedOptionName
+        normalizeLookupValue(shopifyName) ===
+        normalizedOptionName
     )
   )
 
@@ -49,13 +45,7 @@ export function resolvePublicVariantOptions(
 ): PublicVariantOptions | null {
   const resolved: PublicVariantOptions = {}
 
-  for (const optionKey of presentation.publicOptionOrder) {
-    const optionContract = presentation.options.find(
-      option => option.key === optionKey
-    )
-
-    if (!optionContract) return null
-
+  for (const optionContract of presentation.options) {
     const shopifyNames = new Set(
       optionContract.shopifyNames.map(normalizeLookupValue)
     )
@@ -73,7 +63,7 @@ export function resolvePublicVariantOptions(
 
     if (!mappedValue) return null
 
-    resolved[optionKey] = mappedValue
+    resolved[optionContract.key] = mappedValue
   }
 
   return resolved
@@ -83,7 +73,7 @@ export function isHiddenPublicVariant(
   presentation: ProductPresentation,
   options: PublicVariantOptions
 ) {
-  return presentation.publicOptionOrder.some(optionKey => {
+  return presentation.options.some(({ key: optionKey }) => {
     const value = options[optionKey]
     const hiddenValues =
       presentation.hiddenOptionValues[optionKey] ?? []
@@ -96,13 +86,10 @@ export function toPublicSelectedOptions(
   presentation: ProductPresentation,
   options: PublicVariantOptions
 ): ShopifySelectedOption[] {
-  return presentation.publicOptionOrder.flatMap(optionKey => {
-    const value = options[optionKey]
-    const optionContract = presentation.options.find(
-      option => option.key === optionKey
-    )
+  return presentation.options.flatMap(optionContract => {
+    const value = options[optionContract.key]
 
-    return value && optionContract ?
+    return value ?
         [{ name: optionContract.publicName, value }]
       : []
   })

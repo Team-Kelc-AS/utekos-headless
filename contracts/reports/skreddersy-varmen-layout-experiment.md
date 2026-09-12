@@ -15,6 +15,61 @@ scoped to the flag. The raw `_ga` value is never sent to Vercel
 for flag evaluation. A visitor keeps the same variant while the
 underlying analytics identifier remains stable.
 
+## Rendering path
+
+Proxy resolves consent, the analytics identifier and the flag
+before selecting a page. Eligible requests are rewritten to the
+fixed internal routes `/skreddersy-varmen/layout/current` or
+`/skreddersy-varmen/layout/legacy`. Ineligible requests use the
+public page without an experiment assignment. The browser URL,
+query string, canonical URL and analytics identifiers keep their
+existing public values. Direct visits to an internal route are
+redirected to `/skreddersy-varmen`, preserving the query string.
+
+The same routing applies to HTML, RSC and prefetch requests.
+Only document navigations receive landing-edge correlation.
+Header navigation normalizes the two internal paths so that
+active links and prefetch-on-intent agree before and after
+hydration.
+
+Each of these three pages can prerender its hero, image and
+assignment marker using the existing product cache. No cookie
+read sits above the page content. Purchase selection from
+`searchParams` and structured data retain their own Suspense
+boundaries. The flag allocation, consent gate, hash, commerce
+cache policies and event contract are unchanged.
+
+After `pnpm build`, run
+`node scripts/next/verify-skreddersy-prerender.mjs` to check the
+actual generated HTML for all three states. This check requires
+the heading, prioritized hero image, public canonical and
+correct assignment marker in the prerendered output. Also verify
+both variants in a local browser and verify the exact deployed
+commit before calling production behavior confirmed.
+
+React's streamed HTML can contain the shared route loading
+fallback even when the completed page is included in that same
+prerendered output. The mere presence of loading text is not a
+failure; the check selects the hero by its labelled section and
+checks the completed content rather than the first picture in
+the document, which may belong to the footer.
+
+Documentation: [Flags SDK static pages](https://flags-sdk.dev/frameworks/next/precompute),
+[Next.js Cache Components](https://nextjs.org/docs/app/getting-started/caching),
+[Proxy and RSC rewrites](https://nextjs.org/docs/app/api-reference/file-conventions/proxy#rsc-requests-and-rewrites),
+[usePathname with rewrites](https://nextjs.org/docs/app/api-reference/functions/use-pathname#avoid-hydration-mismatch-with-rewrites).
+Next.js behavior was also checked against the documentation
+shipped with the installed `next@16.3.1` package.
+
+Local verification on 2026-09-12 passed: the production build
+and TypeScript check, all three prerendered HTML checks, 21
+focused proxy/experiment tests, and targeted lint. Browser
+checks covered both layouts, mobile and desktop hero sources,
+consent denial, purchase navigation, size selection, the cart
+dialog, size guidance, URL preservation and back navigation.
+The change is not deployed; production behavior remains
+unverified until the exact commit is deployed and checked.
+
 ## Measurement path
 
 The internal canonical event envelope carries:

@@ -1,7 +1,7 @@
 'use client'
 
 // Reporter used by the canonical 50%-for-one-second list visibility detector.
-import { sendGTMEvent } from '@next/third-parties/google'
+import { sendCanonicalGTMEvent as sendGTMEvent } from './sendCanonicalGTMEvent'
 import { readBrowserReporterContext } from './browserReporterContext'
 import { browserPageViewSession } from './pageViewSession'
 import {

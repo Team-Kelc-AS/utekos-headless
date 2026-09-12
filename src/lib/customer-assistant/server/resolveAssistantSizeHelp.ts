@@ -1,6 +1,6 @@
+import { TECH_DOWN_PUBLIC_SIZE_DEFINITIONS } from '@/lib/products/techDownSizes'
 import {
   comfyrobeData,
-  techDownData,
   utekosData
 } from '@/app/handlehjelp/storrelsesguide/utils/data'
 import type { AssistantChatRequest } from '../assistantProtocol'
@@ -140,19 +140,12 @@ function answerTechDown(
     : fit === 'roomy' && base === 'stor' && height >= 180 ?
       'storre'
     : base
-  const details = {
-    middels: { label: 'Middels', key: 'middels' },
-    stor: { label: 'Stor', key: 'stor' },
-    storre: { label: 'Større', key: 'storre' }
-  } as const
-  const selected = details[size]
-  const length = measurement(
-    techDownData,
-    'Total lengde (nakke til bunn)',
-    selected.key
-  )
+  const selected = TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.find(
+    definition => definition.id === size
+  )!
+  const length = selected.measurements.length
 
-  return `Ut fra høyden og ønsket passform er ${selected.label} et naturlig utgangspunkt for TechDown. Guidens totale lengde for denne størrelsen er ${length ?? 'oppgitt i måletabellen'}. Sammenlign målene med et lignende plagg hjemme før du bestemmer deg; dette er veiledning, ikke en garanti for passform.`
+  return `Ut fra høyden og ønsket passform er ${selected.size} et naturlig utgangspunkt for TechDown. Guidens totale lengde for denne størrelsen er ${length ?? 'oppgitt i måletabellen'}. Sammenlign målene med et lignende plagg hjemme før du bestemmer deg; dette er veiledning, ikke en garanti for passform.`
 }
 
 function answerUtekos(height: number, fit: 'closer' | 'roomy') {

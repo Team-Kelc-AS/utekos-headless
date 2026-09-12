@@ -1,3 +1,4 @@
+import { enrichBrowserMetaAudience } from './browserMetaAudience'
 import { hasCookiebotExplicitResponse } from '@/lib/consent/cookiebotConsent'
 import {
   extractBrowserIds,
@@ -68,6 +69,8 @@ export function prepareCanonicalPageViewForCollector(
       : ('denied' as const)
   }
   const next = { ...event, consent }
+  if (consent.analytics !== 'granted' || consent.marketing !== 'granted')
+    delete next.meta_audience
   delete next.edge_request_id
   delete next.browser_id
   delete next.client_ip_address
@@ -163,8 +166,9 @@ export function createPageViewCollectorTransport(
           pending.delete(id)
           continue
         }
-        let enriched =
-          enrichCanonicalBrowserJourneyContext(prepared)
+        let enriched = enrichCanonicalBrowserJourneyContext(
+          enrichBrowserMetaAudience(prepared)
+        )
         try {
           enriched = await dependencies.enrich(enriched)
         } catch {

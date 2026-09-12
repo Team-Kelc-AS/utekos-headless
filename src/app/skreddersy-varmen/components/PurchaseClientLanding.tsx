@@ -5,7 +5,7 @@ import { useLandingPurchaseLogic } from './useLandingPurchaseLogic.'
 import { PurchaseClientViewLanding } from './PurchaseClientViewLanding'
 import { loadViewItemReporter } from '@/lib/analytics/loadViewItemReporter'
 import { createViewItemReportKey } from '@/lib/analytics/viewItemReportKey'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
+import type { ProductModel } from '@/lib/products/commerce'
 import type { LandingPurchaseContent } from './landingPurchaseContent'
 import type { ProductPresentation } from '@/lib/products/presentation/getProductPresentation'
 
@@ -15,7 +15,7 @@ export function PurchaseClientLanding({
   presentation,
   content
 }: {
-  commerce: ProductCommerceViewModel
+  commerce: ProductModel
   initialVariantId: string
   presentation: ProductPresentation
   content: LandingPurchaseContent
@@ -43,16 +43,18 @@ export function PurchaseClientLanding({
     let cancelled = false
     let cleanup = () => {}
 
-    void loadViewItemReporter().then(({ reportCanonicalViewItem }) => {
-      if (cancelled) return
-      cleanup = reportCanonicalViewItem({
-        product: shopifyProduct,
-        variant: selectedShopifyVariant,
-        onEmitted: () => {
-          reportedViewItemKey.current = reportKey
-        }
-      })
-    })
+    void loadViewItemReporter().then(
+      ({ reportCanonicalViewItem }) => {
+        if (cancelled) return
+        cleanup = reportCanonicalViewItem({
+          product: shopifyProduct,
+          variant: selectedShopifyVariant,
+          onEmitted: () => {
+            reportedViewItemKey.current = reportKey
+          }
+        })
+      }
+    )
 
     return () => {
       cancelled = true

@@ -4,9 +4,7 @@ import { getProduct } from '@/api/lib/products/getProduct'
 import { reportOperationalError } from '@/lib/observability/reportOperationalError'
 import type { ShopifyProduct } from 'types/product'
 
-type ProductGetContext = {
-  params: Promise<{ handle: string }>
-}
+type ProductGetContext = { params: Promise<{ handle: string }> }
 
 type ProductGetDependencies = {
   getProduct: (handle: string) => Promise<ShopifyProduct | null>
@@ -48,10 +46,7 @@ export async function handleProductGet(
     }
 
     return Response.json(product, {
-      headers: {
-        'Cache-Control':
-          'public, max-age=60, s-maxage=300, stale-while-revalidate=900'
-      }
+      headers: { 'Cache-Control': 'no-store' }
     })
   } catch (error) {
     dependencies.reportError({

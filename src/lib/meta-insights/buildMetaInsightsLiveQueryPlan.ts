@@ -125,7 +125,7 @@ export function buildMetaInsightsLiveQueryPlan(
             : metaInsightsFieldPacks[slice.pack],
         pack: slice.pack,
         datePreset: 'today',
-        level: 'adset',
+        level: slice.level ?? 'adset',
         ...(slice.breakdowns.length > 0
           ? { breakdowns: slice.breakdowns }
           : {})

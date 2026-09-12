@@ -303,6 +303,12 @@ export function buildMetaInsightsLiveSnapshot(input: {
                 `insights:${adSet.key}:platform_position`
               )
             ),
+            adsPlatformPosition: parseInsightRows(
+              requireItem(
+                input.items,
+                `insights:${adSet.key}:ads_platform_position`
+              )
+            ),
             ads:
               adInsightsRead?.ok ?
                 parseInsightRows(adInsightsRead.body)

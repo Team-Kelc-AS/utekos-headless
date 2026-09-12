@@ -13,6 +13,11 @@ import {
 import { createLandingEdgeCorrelationToken } from '@/lib/analytics/landingEdgeCorrelationToken'
 import { hasVerifiedSyntheticSignature } from '@/lib/analytics/syntheticTrafficSignature'
 import { deriveLandingEdgeRequestId } from '../supabase/functions/_shared/landing-edge-request-id'
+import { resolveSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/server/resolveSkreddersyVarmenLayoutAssignment'
+import {
+  SKREDDERSY_VARMEN_PATH,
+  SKREDDERSY_VARMEN_LAYOUT_PATH
+} from '@/lib/experiments/skreddersyVarmenLayoutRoute'
 
 const allowedReferrers = new Set([
   'nbocc.no',
@@ -182,7 +187,8 @@ function isAllowedNboccReferrer(request: NextRequest) {
 
 function continueDocumentRequest(
   request: NextRequest,
-  correlation?: LandingEdgeCorrelation
+  correlation?: LandingEdgeCorrelation,
+  rewriteUrl?: URL
 ): NextResponse {
   const requestHeaders = new Headers(request.headers)
   if (correlation) {
@@ -193,7 +199,13 @@ function continueDocumentRequest(
   }
 
   return withLandingEdgeCorrelation(
-    NextResponse.next({ request: { headers: requestHeaders } }),
+    rewriteUrl ?
+      NextResponse.rewrite(rewriteUrl, {
+        request: { headers: requestHeaders }
+      })
+    : NextResponse.next({
+        request: { headers: requestHeaders }
+      }),
     correlation
   )
 }
@@ -266,11 +278,39 @@ export async function proxy(request: NextRequest) {
     )
   }
 
+  if (
+    pathname === SKREDDERSY_VARMEN_LAYOUT_PATH ||
+    pathname.startsWith(`${SKREDDERSY_VARMEN_LAYOUT_PATH}/`)
+  ) {
+    const publicUrl = request.nextUrl.clone()
+    publicUrl.pathname = SKREDDERSY_VARMEN_PATH
+    return withLandingEdgeCorrelation(
+      NextResponse.redirect(publicUrl, 307),
+      correlation
+    )
+  }
+
+  if (pathname === SKREDDERSY_VARMEN_PATH) {
+    const assignment =
+      await resolveSkreddersyVarmenLayoutAssignment(request)
+    if (assignment) {
+      const layoutUrl = request.nextUrl.clone()
+      layoutUrl.pathname = `${SKREDDERSY_VARMEN_LAYOUT_PATH}/${assignment.variant}`
+      return continueDocumentRequest(
+        request,
+        correlation,
+        layoutUrl
+      )
+    }
+  }
+
   return continueDocumentRequest(request, correlation)
 }
 
 export const config = {
   matcher: [
+    '/skreddersy-varmen',
+    '/skreddersy-varmen/layout/:path*',
     {
       source:
         '/((?!api(?:/|$)|\\.well-known/workflow(?:/|$)|sporing(?:/|$)|__gtg(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|videos(?:/|$)|favicon\\.ico$|sitemap\\.xml$|robots\\.txt$|apple-icon(?:\\.[^/]+)?$|icon(?:\\.[^/]+)?$|manifest(?:\\.[^/]+)?$|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)',

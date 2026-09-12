@@ -2,12 +2,12 @@
 import { Hero } from './Hero'
 import { EmpathySection } from './EmpathySection'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
+import type { ProductModel } from '@/lib/products/commerce'
 
 export function HeroAndEmpathy({
   commerce
 }: {
-  commerce: ProductCommerceViewModel | null
+  commerce: ProductModel | null
 }) {
   return (
     <>
