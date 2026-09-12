@@ -40,7 +40,7 @@ const googleSansFlex = Google_Sans_Flex({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
-  preload: false,
+  preload: true,
   fallback: ['Geist', 'system-ui', 'sans-serif']
 })
 

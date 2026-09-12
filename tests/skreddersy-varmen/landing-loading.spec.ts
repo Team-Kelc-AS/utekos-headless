@@ -330,3 +330,91 @@ test('waits for header interaction before prefetching other routes', async ({
     }
   }
 })
+
+test('keeps mobile LCP on the hero headline instead of overlapped manifesto copy', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+  await page.evaluate(() => document.fonts.ready)
+  await page.waitForTimeout(2000)
+
+  const lcp = await page.evaluate(
+    () =>
+      new Promise<{
+        headingOpacity: number | null
+        id: string
+        size: number
+        startTime: number | null
+        tag: string
+        text: string
+        url: string
+        withinHeadline: boolean
+      }>(resolve => {
+        const report = (
+          entry?: PerformanceEntry & {
+            element?: Element | null
+            size?: number
+            url?: string
+          }
+        ) => {
+          const element = entry?.element ?? null
+          const headline =
+            document.getElementById('hero-headline')
+          const manifesto =
+            document.getElementById('empathy-heading')
+
+          resolve({
+            headingOpacity:
+              manifesto ?
+                Number.parseFloat(
+                  getComputedStyle(manifesto).opacity
+                )
+              : null,
+            id:
+              element && 'id' in element ?
+                String(element.id)
+              : '',
+            size: entry?.size ?? 0,
+            startTime: entry?.startTime ?? null,
+            tag: element?.tagName ?? '',
+            text: (element?.textContent ?? '')
+              .replace(/\s+/g, ' ')
+              .trim(),
+            url: entry?.url ?? '',
+            withinHeadline: Boolean(
+              headline &&
+                element &&
+                headline.contains(element)
+            )
+          })
+        }
+
+        const observer = new PerformanceObserver(list => {
+          const last = list.getEntries().at(-1)
+          observer.disconnect()
+          report(
+            last as PerformanceEntry & {
+              element?: Element | null
+              size?: number
+              url?: string
+            }
+          )
+        })
+
+        observer.observe({
+          type: 'largest-contentful-paint',
+          buffered: true
+        })
+      })
+  )
+
+  expect(lcp.headingOpacity).toBeCloseTo(0, 2)
+  expect(lcp.id).not.toBe('empathy-heading')
+  expect(lcp.text).not.toMatch(/Når øyeblikket/i)
+  expect(lcp.text).not.toMatch(/Personverninnstillinger/i)
+  expect(lcp.withinHeadline || lcp.id === 'hero-headline').toBe(
+    true
+  )
+})
