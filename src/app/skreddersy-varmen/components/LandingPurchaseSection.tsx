@@ -1,4 +1,4 @@
-import { PurchaseClientLanding } from './PurchaseClientLanding'
+import { DeferredPurchaseClientLanding } from './DeferredPurchaseClientLanding'
 import { LandingPageProductCarouselPurchaseSection } from './LandingPageProductCarouselPurchaseSection'
 import { LandingPurchaseProductInformation } from './LandingPurchaseProductInformation'
 import { ProductDetailsAccordion } from './ProductDetailsAccordion'
@@ -25,7 +25,7 @@ export async function LandingPurchaseSection({
     searchParams == null ? {} : await searchParams
 
   return (
-    <PurchaseClientLanding
+    <DeferredPurchaseClientLanding
       commerce={commerce}
       presentation={requireProductPresentation(
         commerce.publicHandle

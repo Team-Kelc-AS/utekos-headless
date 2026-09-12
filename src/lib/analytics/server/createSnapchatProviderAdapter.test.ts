@@ -119,6 +119,7 @@ test('registers Snapchat without exposing its token to browser code', async () =
 
   assert.match(layout, /SNAPCHAT_PIXEL_ENABLED/)
   assert.match(layout, /NEXT_PUBLIC_SNAPCHAT_PIXEL_ID/)
+  assert.match(layout, /ConsentGrantedScript/)
   assert.match(layout, /snapchat-pixel-canonical-v1\.js/)
   assert.doesNotMatch(
     layout,

@@ -75,6 +75,7 @@ test('layout loads the first-party Pinterest Tag behind the marketing script gat
     'utf8'
   )
 
+  assert.match(source, /ConsentGrantedScript/)
   assert.match(
     source,
     /id=['"]pinterest-tag-canonical-browser['"]/

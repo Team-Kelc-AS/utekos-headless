@@ -9,15 +9,20 @@ test('keeps consent default before hydration and defers external GTM', async () 
   const source = await readSource(
     '../../../components/analytics/GoogleTagManagerLoader.tsx'
   )
+  const container = await readSource(
+    '../../../components/analytics/GoogleTagManagerContainerScript.tsx'
+  )
 
   assert.match(
     source,
     /id='_next-gtm-init'[\s\S]*?strategy='beforeInteractive'/
   )
+  assert.match(source, /GoogleTagManagerContainerScript/)
   assert.match(
-    source,
+    container,
     /id='_next-gtm'[\s\S]*?strategy='afterInteractive'/
   )
+  assert.match(container, /scheduleDeferredMarketingContainer/)
 })
 
 test('does not prefetch unrelated routes from end-of-page navigation', async () => {

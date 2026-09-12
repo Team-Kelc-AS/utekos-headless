@@ -26,6 +26,7 @@ import { Google_Sans_Flex } from 'next/font/google'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
 import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
+import { ConsentGrantedScript } from '@/components/analytics/ConsentGrantedScript'
 import { WebVitals } from '@/components/analytics/WebVitals'
 import { MetaParameterBuilderInitializer } from '@/components/analytics/MetaParameterBuilderInitializer'
 import { MetaBrowserTransportLoader } from '@/components/analytics/MetaBrowserTransportLoader'
@@ -150,18 +151,16 @@ export default function RootLayout({
           <>
             <MetaBrowserTransportLoader />
             {pinterestTagId ?
-              <Script
+              <ConsentGrantedScript
                 id='pinterest-tag-canonical-browser'
                 src='/analytics/pinterest-tag-canonical-v1.js'
-                strategy='afterInteractive'
                 data-tag-id={pinterestTagId}
               />
             : null}
             {snapchatPixelEnabled && snapchatPixelId ?
-              <Script
+              <ConsentGrantedScript
                 id='snapchat-pixel-canonical-browser'
                 src='/analytics/snapchat-pixel-canonical-v1.js'
-                strategy='afterInteractive'
                 data-pixel-id={snapchatPixelId}
               />
             : null}

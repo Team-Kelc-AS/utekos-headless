@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { useLandingPurchaseLogic } from './useLandingPurchaseLogic.'
 import { PurchaseClientViewLanding } from './PurchaseClientViewLanding'
-import { reportCanonicalViewItem } from '@/lib/analytics/viewItemReporter'
+import { loadViewItemReporter } from '@/lib/analytics/loadViewItemReporter'
 import { createViewItemReportKey } from '@/lib/analytics/viewItemReportKey'
 import type { ProductCommerceViewModel } from '@/lib/products/commerce'
 import type { LandingPurchaseContent } from './landingPurchaseContent'
@@ -40,13 +40,24 @@ export function PurchaseClientLanding({
 
     if (reportedViewItemKey.current === reportKey) return
 
-    return reportCanonicalViewItem({
-      product: shopifyProduct,
-      variant: selectedShopifyVariant,
-      onEmitted: () => {
-        reportedViewItemKey.current = reportKey
-      }
+    let cancelled = false
+    let cleanup = () => {}
+
+    void loadViewItemReporter().then(({ reportCanonicalViewItem }) => {
+      if (cancelled) return
+      cleanup = reportCanonicalViewItem({
+        product: shopifyProduct,
+        variant: selectedShopifyVariant,
+        onEmitted: () => {
+          reportedViewItemKey.current = reportKey
+        }
+      })
     })
+
+    return () => {
+      cancelled = true
+      cleanup()
+    }
   }, [shopifyProduct, selectedShopifyVariant])
 
   return (
