@@ -11,7 +11,7 @@ import {
 import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 
 export type FetchProductCardsAttempt = (input: {
-  first: number
+  productHandle: string
   timeoutMs: number
   signal: AbortSignal
 }) => Promise<ProductCardModel[]>
@@ -21,7 +21,7 @@ function remainingBudgetMs(startedAt: number, budgetMs: number, now: () => numbe
 }
 
 export async function fetchProductCardsWithRetry(input: {
-  first: number
+  productHandle: string
   budgetMs?: number
   fetchProductCards?: FetchProductCardsAttempt
   now?: () => number
@@ -46,7 +46,7 @@ export async function fetchProductCardsWithRetry(input: {
 
     try {
       return await fetchCards({
-        first: input.first,
+        productHandle: input.productHandle,
         timeoutMs,
         signal: deadline.signal
       })
@@ -69,7 +69,7 @@ export async function fetchProductCardsWithRetry(input: {
       }
 
       return await fetchCards({
-        first: input.first,
+        productHandle: input.productHandle,
         timeoutMs: retryTimeoutMs,
         signal: deadline.signal
       })

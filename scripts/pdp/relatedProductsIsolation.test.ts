@@ -131,7 +131,7 @@ test(
 )
 
 test(
-  'related products use a dedicated product-card query instead of the full product fragment',
+  'related products query Shopify recommendations by current product handle',
   async () => {
     const [
       querySource,
@@ -145,7 +145,12 @@ test(
       )
     ])
 
-    assert.match(querySource, /query getProductCards/)
+    assert.match(querySource, /query getProductCards\(\$productHandle: String!\)/)
+    assert.match(
+      querySource,
+      /productRecommendations\(\s*productHandle: \$productHandle\s*intent: RELATED\s*\)/
+    )
+    assert.doesNotMatch(querySource, /products\(first:/)
     assert.doesNotMatch(querySource, /productFragment/)
     assert.doesNotMatch(querySource, /VariantHandler/)
     assert.doesNotMatch(querySource, /compareAtPriceRange/)
