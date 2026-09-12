@@ -1,7 +1,10 @@
 import { Suspense } from 'react'
 import { frontmatter } from './skreddersyVarmenContent.mdx'
-import { type LandingSearchParams } from './components/SkreddersyVarmenPageRuntime'
 import { SkreddersyVarmenExperiment } from './components/SkreddersyVarmenExperiment'
+import {
+  SkreddersyVarmenPageRuntime,
+  type LandingSearchParams
+} from './components/SkreddersyVarmenPageRuntime'
 import {
   buildSkreddersyVarmenMetadata,
   parseSkreddersyVarmenPageContent
@@ -18,17 +21,15 @@ export default function SkreddersyVarmenPage({
 }: {
   searchParams: LandingSearchParams
 }) {
+  const staticPage = (
+    <SkreddersyVarmenPageRuntime
+      content={content}
+      searchParams={searchParams}
+    />
+  )
+
   return (
-    <Suspense
-      fallback={
-        <div
-          aria-busy='true'
-          className='min-h-screen w-full bg-background'
-        >
-          <span className='sr-only'>Laster siden</span>
-        </div>
-      }
-    >
+    <Suspense fallback={staticPage}>
       <SkreddersyVarmenExperiment
         content={content}
         searchParams={searchParams}

@@ -36,6 +36,11 @@ test('ads LP heroes do not load Klarna OSM on first paint', async () => {
       /KlarnaCreditPromotionAutoSize/,
       `${label} must not mount Klarna OSM placements`
     )
+    assert.doesNotMatch(
+      source,
+      /LandingPurchaseSection|PurchaseClientLanding/,
+      `${label} must not import the purchase island`
+    )
   }
 })
 

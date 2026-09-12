@@ -1,10 +1,47 @@
 import { FlagValues } from 'flags/react'
-import { SkreddersyVarmenPageRuntime } from './SkreddersyVarmenPageRuntime'
+import {
+  SkreddersyVarmenPageRuntime,
+  type LandingSearchParams
+} from './SkreddersyVarmenPageRuntime'
 import { resolveSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/server/resolveSkreddersyVarmenLayoutAssignment'
-import { SKREDDERSY_VARMEN_LAYOUT_FLAG_KEY } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
+import {
+  SKREDDERSY_VARMEN_LAYOUT_FLAG_KEY,
+  type SkreddersyVarmenLayoutVariant
+} from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 import { LegacySkreddersyVarmenPageRuntime } from '../variants/legacy/LegacySkreddersyVarmenPageRuntime'
-import type { LandingSearchParams } from './SkreddersyVarmenPageRuntime'
 import type { SkreddersyVarmenPageContent } from '../data/skreddersyVarmenPageModel'
+
+function renderAssignedLayout({
+  content,
+  searchParams,
+  variant
+}: {
+  content: SkreddersyVarmenPageContent
+  searchParams: LandingSearchParams
+  variant: SkreddersyVarmenLayoutVariant
+}) {
+  switch (variant) {
+    case 'legacy':
+      return (
+        <LegacySkreddersyVarmenPageRuntime
+          searchParams={searchParams}
+        />
+      )
+    case 'current':
+      return (
+        <SkreddersyVarmenPageRuntime
+          content={content}
+          searchParams={searchParams}
+        />
+      )
+    default: {
+      const _exhaustive: never = variant
+      throw new Error(
+        `Unhandled skreddersy-varmen layout variant: ${String(_exhaustive)}`
+      )
+    }
+  }
+}
 
 export async function SkreddersyVarmenExperiment({
   content,
@@ -35,15 +72,11 @@ export async function SkreddersyVarmenExperiment({
         : {})}
         data-experiment-eligible={assignment ? 'true' : 'false'}
       >
-        {variant === 'legacy' ?
-          <LegacySkreddersyVarmenPageRuntime
-            searchParams={searchParams}
-          />
-        : <SkreddersyVarmenPageRuntime
-            content={content}
-            searchParams={searchParams}
-          />
-        }
+        {renderAssignedLayout({
+          content,
+          searchParams,
+          variant
+        })}
       </div>
     </>
   )

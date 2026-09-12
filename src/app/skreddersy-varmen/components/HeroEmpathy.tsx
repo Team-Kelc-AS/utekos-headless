@@ -6,14 +6,11 @@ import {
   SKREDDERSY_VARMEN_PROMOTIONS,
   type SkreddersyVarmenPageContent
 } from '../data/skreddersyVarmenPageModel'
-import type { ProductCommerceViewModel } from '@/lib/products/commerce'
 import styles from './SkreddersyVarmenTheatre.module.css'
 
 export function HeroTheatre({
-  commerce,
   content
 }: {
-  commerce: ProductCommerceViewModel | null
   content: SkreddersyVarmenPageContent['hero']
 }) {
   return (
@@ -30,7 +27,7 @@ export function HeroTheatre({
             className={styles.heroClip}
             data-hero-reveal-surface
           >
-            <Hero commerce={commerce} content={content} />
+            <Hero content={content} />
           </div>
         </div>
       </div>
