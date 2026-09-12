@@ -13,16 +13,29 @@ test('PPR fallback is the current landing page, not a full-page loader', async (
   const page = await readSource(
     'src/app/skreddersy-varmen/page.tsx'
   )
+  const loading = await readSource(
+    'src/app/skreddersy-varmen/loading.tsx'
+  )
 
   assert.match(
     page,
-    /fallback=\{staticPage\}/,
-    'The Suspense fallback must be the static current page'
+    /<SkreddersyVarmenPageRuntime content=\{content\} \/>/,
+    'The current landing document must render in the static page tree'
   )
   assert.match(
     page,
-    /<SkreddersyVarmenPageRuntime/,
-    'The static shell must render the current landing document'
+    /<Suspense fallback=\{null\}>[\s\S]*<SkreddersyVarmenExperiment/,
+    'Cookie assignment must be a sibling hole, not the page body'
+  )
+  assert.doesNotMatch(
+    page,
+    /searchParams/,
+    'The page entry must not take searchParams or the root loading UI becomes the shell'
+  )
+  assert.match(
+    loading,
+    /<SkreddersyVarmenPageRuntime content=\{content\} \/>/,
+    'Client navigations must keep the current landing document, not app/loading.tsx'
   )
   assert.doesNotMatch(
     page,
@@ -30,9 +43,19 @@ test('PPR fallback is the current landing page, not a full-page loader', async (
     'The prerendered shell must not be the full-page loading fallback'
   )
   assert.doesNotMatch(
+    loading,
+    /Laster siden|RouteLoadingState/,
+    'The route loading UI must not reuse the generic skeleton loader'
+  )
+  assert.doesNotMatch(
     page,
     /resolveSkreddersyVarmenLayoutAssignment|resolveSkreddersyVarmenCommerce|cookies\(/,
     'The page entry must not read cookies or commerce before painting the shell'
+  )
+  assert.doesNotMatch(
+    loading,
+    /searchParams|cookies\(|resolveSkreddersyVarmen/,
+    'The route loading shell must stay free of request data'
   )
 })
 
@@ -64,13 +87,18 @@ test('cookie assignment only wraps variant choice, not the static hero tree', as
   )
   assert.doesNotMatch(
     experiment,
+    /from ['"]\.\/SkreddersyVarmenPageRuntime['"]|SkreddersyVarmenDocument/,
+    'The current page must not wait on experiment assignment'
+  )
+  assert.doesNotMatch(
+    experiment,
     /resolveSkreddersyVarmenCommerce/,
     'Experiment assignment must not await Shopify before choosing a layout'
   )
   assert.doesNotMatch(
     runtime,
-    /await |resolveSkreddersyVarmenCommerce/,
-    'The current page body must stay synchronous and commerce-free'
+    /await |resolveSkreddersyVarmenCommerce|searchParams/,
+    'The current page body must stay synchronous and request-free'
   )
   assert.match(
     document,
@@ -79,8 +107,8 @@ test('cookie assignment only wraps variant choice, not the static hero tree', as
   )
   assert.doesNotMatch(
     document,
-    /commerce=\{/,
-    'The document must not wait on a commerce prop before rendering chrome'
+    /commerce=\{|searchParams/,
+    'The document must not wait on commerce or search params before rendering chrome'
   )
 })
 

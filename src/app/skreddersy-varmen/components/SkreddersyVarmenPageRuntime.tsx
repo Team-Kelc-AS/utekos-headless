@@ -6,16 +6,9 @@ export type LandingSearchParams = Promise<
 >
 
 export function SkreddersyVarmenPageRuntime({
-  content,
-  searchParams
+  content
 }: {
   content: SkreddersyVarmenPageContent
-  searchParams?: LandingSearchParams
 }) {
-  return (
-    <SkreddersyVarmenDocument
-      content={content}
-      searchParams={searchParams}
-    />
-  )
+  return <SkreddersyVarmenDocument content={content} />
 }

@@ -46,6 +46,9 @@ test('hero headline is the intentional first-screen text LCP', async () => {
   const page = await readSource(
     'src/app/skreddersy-varmen/page.tsx'
   )
+  const loading = await readSource(
+    'src/app/skreddersy-varmen/loading.tsx'
+  )
   const layout = await readSource('src/app/layout.tsx')
   const fonts = await readSource('src/app/fonts/font.config.ts')
 
@@ -69,10 +72,20 @@ test('hero headline is the intentional first-screen text LCP', async () => {
     /<SkreddersyVarmenPageRuntime/,
     'The PPR shell must include the current page that owns the hero'
   )
+  assert.match(
+    loading,
+    /<SkreddersyVarmenPageRuntime/,
+    'The route loading shell must own the same current hero page'
+  )
   assert.doesNotMatch(
     page,
     /Laster siden/,
     'A full-page loader must not replace the hero on the critical path'
+  )
+  assert.doesNotMatch(
+    loading,
+    /Laster siden|RouteLoadingState/,
+    'Route loading must not hide the hero behind the generic skeleton'
   )
 
   assert.match(

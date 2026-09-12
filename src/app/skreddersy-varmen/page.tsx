@@ -1,10 +1,7 @@
 import { Suspense } from 'react'
 import { frontmatter } from './skreddersyVarmenContent.mdx'
 import { SkreddersyVarmenExperiment } from './components/SkreddersyVarmenExperiment'
-import {
-  SkreddersyVarmenPageRuntime,
-  type LandingSearchParams
-} from './components/SkreddersyVarmenPageRuntime'
+import { SkreddersyVarmenPageRuntime } from './components/SkreddersyVarmenPageRuntime'
 import {
   buildSkreddersyVarmenMetadata,
   parseSkreddersyVarmenPageContent
@@ -16,24 +13,13 @@ export const metadata = buildSkreddersyVarmenMetadata(
   content.seo
 )
 
-export default function SkreddersyVarmenPage({
-  searchParams
-}: {
-  searchParams: LandingSearchParams
-}) {
-  const staticPage = (
-    <SkreddersyVarmenPageRuntime
-      content={content}
-      searchParams={searchParams}
-    />
-  )
-
+export default function SkreddersyVarmenPage() {
   return (
-    <Suspense fallback={staticPage}>
-      <SkreddersyVarmenExperiment
-        content={content}
-        searchParams={searchParams}
-      />
-    </Suspense>
+    <>
+      <SkreddersyVarmenPageRuntime content={content} />
+      <Suspense fallback={null}>
+        <SkreddersyVarmenExperiment />
+      </Suspense>
+    </>
   )
 }

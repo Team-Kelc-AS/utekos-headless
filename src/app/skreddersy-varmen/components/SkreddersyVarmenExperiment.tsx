@@ -1,39 +1,24 @@
 import { FlagValues } from 'flags/react'
-import {
-  SkreddersyVarmenPageRuntime,
-  type LandingSearchParams
-} from './SkreddersyVarmenPageRuntime'
 import { resolveSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/server/resolveSkreddersyVarmenLayoutAssignment'
 import {
   SKREDDERSY_VARMEN_LAYOUT_FLAG_KEY,
   type SkreddersyVarmenLayoutVariant
 } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
 import { LegacySkreddersyVarmenPageRuntime } from '../variants/legacy/LegacySkreddersyVarmenPageRuntime'
-import type { SkreddersyVarmenPageContent } from '../data/skreddersyVarmenPageModel'
 
-function renderAssignedLayout({
-  content,
-  searchParams,
-  variant
-}: {
-  content: SkreddersyVarmenPageContent
-  searchParams: LandingSearchParams
+function renderAssignedOverlay(
   variant: SkreddersyVarmenLayoutVariant
-}) {
+) {
   switch (variant) {
     case 'legacy':
       return (
-        <LegacySkreddersyVarmenPageRuntime
-          searchParams={searchParams}
-        />
+        <>
+          <style>{'[data-skreddersy-route]{display:none!important}'}</style>
+          <LegacySkreddersyVarmenPageRuntime />
+        </>
       )
     case 'current':
-      return (
-        <SkreddersyVarmenPageRuntime
-          content={content}
-          searchParams={searchParams}
-        />
-      )
+      return null
     default: {
       const _exhaustive: never = variant
       throw new Error(
@@ -43,13 +28,7 @@ function renderAssignedLayout({
   }
 }
 
-export async function SkreddersyVarmenExperiment({
-  content,
-  searchParams
-}: {
-  content: SkreddersyVarmenPageContent
-  searchParams: LandingSearchParams
-}) {
+export async function SkreddersyVarmenExperiment() {
   const assignment =
     await resolveSkreddersyVarmenLayoutAssignment()
   const variant = assignment?.variant ?? 'current'
@@ -64,6 +43,7 @@ export async function SkreddersyVarmenExperiment({
         />
       : null}
       <div
+        hidden
         {...(assignment ?
           {
             'data-experiment-key': assignment.key,
@@ -71,13 +51,8 @@ export async function SkreddersyVarmenExperiment({
           }
         : {})}
         data-experiment-eligible={assignment ? 'true' : 'false'}
-      >
-        {renderAssignedLayout({
-          content,
-          searchParams,
-          variant
-        })}
-      </div>
+      />
+      {renderAssignedOverlay(variant)}
     </>
   )
 }

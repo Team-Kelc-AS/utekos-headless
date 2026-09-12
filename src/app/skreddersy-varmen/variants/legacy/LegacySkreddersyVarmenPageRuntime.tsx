@@ -9,16 +9,11 @@ import { PreFooterNavigation } from '@/app/skreddersy-varmen/components/PreFoote
 import { SectionSocialProof } from '@/app/skreddersy-varmen/components/SectionSocialProof'
 import { SkreddersyVarmenKlarnaStrip } from '@/app/skreddersy-varmen/components/SkreddersyVarmenKlarnaStrip'
 import { DeferredKlarnaOnSiteMessaging } from '@/app/skreddersy-varmen/components/DeferredKlarnaOnSiteMessaging'
-import type { LandingSearchParams } from '@/app/skreddersy-varmen/components/SkreddersyVarmenPageRuntime'
 import { DeferredLandingSections } from './components/DeferredLandingSections'
 import { HeroAndEmpathy } from './components/HeroEmpathy'
 import { SkreddersyVarmenBreadcrumbs } from './components/SkreddersyVarmenBreadcrumbs'
 
-export function LegacySkreddersyVarmenPageRuntime({
-  searchParams
-}: {
-  searchParams: LandingSearchParams
-}) {
+export function LegacySkreddersyVarmenPageRuntime() {
   return (
     <div className='flex min-h-screen w-full flex-col items-center justify-start overflow-x-clip bg-background'>
       <MetaWebsiteHighlights />
@@ -41,7 +36,7 @@ export function LegacySkreddersyVarmenPageRuntime({
           creativeSlot='purchase'
           className='w-full'
         >
-          <LandingPurchaseSlot searchParams={searchParams} />
+          <LandingPurchaseSlot />
         </PromotionImpression>
       </div>
 
