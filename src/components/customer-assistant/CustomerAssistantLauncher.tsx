@@ -2,6 +2,7 @@ import { MessageCircleIcon } from 'lucide-react'
 import type { RefObject } from 'react'
 
 type CustomerAssistantLauncherProps = {
+  busy?: boolean
   controls: string
   expanded: boolean
   launcherRef: RefObject<HTMLButtonElement | null>
@@ -9,6 +10,7 @@ type CustomerAssistantLauncherProps = {
 }
 
 export function CustomerAssistantLauncher({
+  busy = false,
   controls,
   expanded,
   launcherRef,
@@ -18,6 +20,7 @@ export function CustomerAssistantLauncher({
     <button
       ref={launcherRef}
       type='button'
+      aria-busy={busy || undefined}
       aria-controls={controls}
       aria-expanded={expanded}
       onClick={onClick}

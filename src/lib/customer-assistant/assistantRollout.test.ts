@@ -283,14 +283,16 @@ test('fails closed when a replacement bucket is invalid', () => {
   assert.deepEqual(writes, [])
 })
 
-test('excludes design and checkout-like paths only at route boundaries', () => {
+test('excludes design, checkout-like, and ads landing paths only at route boundaries', () => {
   for (const pathname of [
     '/design',
     '/design/colors',
     '/kjop/fullfort',
     '/kasse',
     '/checkout/payment',
-    '/checkouts/session'
+    '/checkouts/session',
+    '/skreddersy-varmen',
+    '/skreddersy-varmen/utekos-orginal'
   ]) {
     assert.equal(isAssistantExcludedPathname(pathname), true)
   }
@@ -300,7 +302,8 @@ test('excludes design and checkout-like paths only at route boundaries', () => {
     '/produkter',
     '/produkter/comfyrobe',
     '/designer',
-    '/kjoperad'
+    '/kjoperad',
+    '/skreddersy-varmen-guide'
   ]) {
     assert.equal(isAssistantExcludedPathname(pathname), false)
   }
