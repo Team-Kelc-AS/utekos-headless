@@ -1,7 +1,6 @@
 import 'server-only'
 
 import { getCachedProductCards } from '@/api/lib/products/getCachedProductCards'
-import { fetchProductCardsWithRetry } from '@/api/lib/products/fetchProductCardsWithRetry'
 import {
   deleteRelatedProductsSnapshot,
   getRelatedProductsSnapshot,
@@ -32,7 +31,7 @@ export async function loadRelatedProducts(
   currentHandle: string,
   limit: number = 12,
   dependencies: {
-    fetchProductCardsWithRetry?: typeof fetchProductCardsWithRetry
+    fetchProductCardsWithRetry?: typeof getCachedProductCards
     deleteSnapshot?: typeof deleteRelatedProductsSnapshot
     getSnapshot?: typeof getRelatedProductsSnapshot
     setSnapshot?: typeof setRelatedProductsSnapshot
@@ -50,11 +49,15 @@ export async function loadRelatedProducts(
     dependencies.setSnapshot ?? setRelatedProductsSnapshot
 
   try {
-    const allProducts = await fetchCards({
+    const result = await fetchCards({
       first: Math.max(limit * 2, 24)
     })
+    if (result.status === 'unavailable') {
+      throw new Error(result.error.message)
+    }
+
     const related = getRelatedProducts(
-      allProducts,
+      result.products,
       currentHandle,
       limit
     )
