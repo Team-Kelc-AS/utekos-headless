@@ -7,11 +7,9 @@ export function cancelResponseBody(
     return
   }
 
-  setTimeout(() => {
-    try {
-      void body.cancel().catch(() => undefined)
-    } catch {
-      // Best-effort cleanup must not replace the original request failure.
-    }
-  }, 0)
+  try {
+    void body.cancel().catch(() => undefined)
+  } catch {
+    // Best-effort cleanup must not replace the original request failure.
+  }
 }

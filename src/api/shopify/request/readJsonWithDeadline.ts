@@ -26,15 +26,11 @@ export async function readJsonWithDeadline(
     text += decoder.decode()
     return JSON.parse(text) as unknown
   } catch (error) {
-    // Schedule even the invocation: nonstandard readers can block
-    // synchronously before returning their cancellation promise.
-    setTimeout(() => {
-      try {
-        void reader.cancel(error).catch(() => undefined)
-      } catch {
-        // Preserve the original deadline or parse error.
-      }
-    }, 0)
+    try {
+      void reader.cancel(error).catch(() => undefined)
+    } catch {
+      // Preserve the original deadline or parse error.
+    }
     throw error
   }
 }
