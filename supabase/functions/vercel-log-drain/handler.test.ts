@@ -70,7 +70,10 @@ test('authenticates, sanitizes and writes an accepted Vercel JSON batch', async 
     config,
     insertObservations: async observations => {
       written = observations
-      return observations.length
+      return {
+        insertedCount: observations.length,
+        diagnosticInsertedCount: 0
+      }
     }
   })
 
@@ -95,7 +98,7 @@ test('rejects an invalid signature before parsing or writing', async () => {
     config,
     insertObservations: async () => {
       writes += 1
-      return 0
+      return { insertedCount: 0, diagnosticInsertedCount: 0 }
     }
   })
   const response = await handler(
@@ -119,7 +122,10 @@ test('rejects an invalid signature before parsing or writing', async () => {
 test('enforces method, encoding, body and array bounds', async () => {
   const handler = createVercelLogDrainHandler({
     config,
-    insertObservations: async () => 0
+    insertObservations: async () => ({
+      insertedCount: 0,
+      diagnosticInsertedCount: 0
+    })
   })
 
   const getResponse = await handler(
@@ -203,4 +209,33 @@ test('returns retryable failure when the database write fails', async () => {
   assert.deepEqual(await response.json(), {
     code: 'database_unavailable'
   })
+})
+
+test('writes API diagnostics even when no document is selected and exposes deduplication', async () => {
+  const handler = createVercelLogDrainHandler({
+    config,
+    insertObservations: async (observations, diagnostics) => {
+      assert.equal(observations.length, 0)
+      assert.equal(diagnostics.length, 1)
+      assert.equal(diagnostics[0]?.category, 'ClientError')
+      return { insertedCount: 0, diagnosticInsertedCount: 0 }
+    }
+  })
+  const value = {
+    ...validEntry(),
+    level: 'error',
+    proxy: undefined,
+    message: 'ClientError'
+  }
+  const response = await handler(
+    await signedRequest([value, value, { invalid: true }])
+  )
+  const body = await response.json()
+  assert.equal(response.status, 200)
+  assert.equal(body.diagnostics.duplicate_count, 2)
+  assert.equal(
+    body.diagnostics.excluded_by_reason.invalid_schema,
+    1
+  )
+  assert.equal(body.diagnostics.selected_count, 1)
 })

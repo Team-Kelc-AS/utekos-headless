@@ -9,6 +9,7 @@ import {
 } from './contracts.ts'
 import type { ObservationWriter } from './database.ts'
 import { sanitizeVercelLogBatch } from './sanitize.ts'
+import { sanitizeDiagnosticBatch } from './diagnostics.ts'
 
 export interface VercelLogDrainHandlerDependencies {
   config: DrainRuntimeConfig
@@ -50,10 +51,36 @@ export function createVercelLogDrainHandler({
 
     const { duplicateCount, observations, rejectedCount } =
       await sanitizeVercelLogBatch(batch.data, config)
+    const diagnostics = sanitizeDiagnosticBatch(
+      batch.data,
+      config
+    )
 
     try {
-      const insertedCount =
-        await insertObservations(observations)
+      const { insertedCount, diagnosticInsertedCount } =
+        await insertObservations(
+          observations,
+          diagnostics.observations
+        )
+      const diagnosticSummary = {
+        selected_count: diagnostics.observations.length,
+        inserted_count: diagnosticInsertedCount,
+        duplicate_count:
+          diagnostics.duplicates +
+          diagnostics.observations.length -
+          diagnosticInsertedCount,
+        excluded_by_reason: diagnostics.reasons
+      }
+      const summary = {
+        component: 'vercel-log-drain',
+        event: 'batch_processed',
+        received_count: batch.data.length,
+        document_inserted_count: insertedCount,
+        diagnostics: diagnosticSummary
+      }
+      if (diagnostics.reasons.invalid_schema > 0)
+        console.warn(JSON.stringify(summary))
+      else console.info(JSON.stringify(summary))
       return jsonDrainResponse(
         {
           duplicate_count:
@@ -62,12 +89,20 @@ export function createVercelLogDrainHandler({
           received_count: batch.data.length,
           rejected_count: rejectedCount,
           selected_count: observations.length,
-          success: true
+          success: true,
+          diagnostics: diagnosticSummary
         },
         200
       )
     } catch {
-      console.error('[vercel-log-drain] database write failed')
+      console.error(
+        JSON.stringify({
+          component: 'vercel-log-drain',
+          event: 'database_write_failed',
+          retryable: true,
+          received_count: batch.data.length
+        })
+      )
       return jsonDrainResponse(
         { code: 'database_unavailable' },
         503

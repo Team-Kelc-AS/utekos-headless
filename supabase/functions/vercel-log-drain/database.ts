@@ -1,10 +1,15 @@
 import postgres from 'postgres'
 
 import type { VercelEdgeRequestObservation } from './contracts.ts'
+import type { DiagnosticObservation } from './diagnostics.ts'
 
 export type ObservationWriter = (
-  observations: VercelEdgeRequestObservation[]
-) => Promise<number>
+  observations: VercelEdgeRequestObservation[],
+  diagnostics: DiagnosticObservation[]
+) => Promise<{
+  insertedCount: number
+  diagnosticInsertedCount: number
+}>
 
 export function createObservationWriter(
   databaseUrl: string
@@ -16,15 +21,31 @@ export function createObservationWriter(
     prepare: false
   })
 
-  return async observations => {
-    if (observations.length === 0) return 0
-
-    const result = await sql`
+  return async (observations, diagnostics) => {
+    if (observations.length === 0 && diagnostics.length === 0)
+      return { insertedCount: 0, diagnosticInsertedCount: 0 }
+    return sql.begin(async transaction => {
+      const insertedCount =
+        observations.length ?
+          (
+            await transaction`
       insert into ops.vercel_edge_request_observations
-      ${sql(observations)}
+      ${transaction(observations)}
       on conflict (vercel_log_id) do nothing
     `
-
-    return result.count
+          ).count
+        : 0
+      const diagnosticInsertedCount =
+        diagnostics.length ?
+          (
+            await transaction`
+      insert into ops.vercel_runtime_diagnostics
+      ${transaction(diagnostics)}
+      on conflict (vercel_log_id) do nothing
+    `
+          ).count
+        : 0
+      return { insertedCount, diagnosticInsertedCount }
+    })
   }
 }
