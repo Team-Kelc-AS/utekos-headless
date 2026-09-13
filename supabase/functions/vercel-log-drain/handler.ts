@@ -94,11 +94,22 @@ export function createVercelLogDrainHandler({
         },
         200
       )
-    } catch {
+    } catch (error) {
+      const code =
+        (
+          typeof error === 'object' &&
+          error !== null &&
+          'code' in error &&
+          typeof error.code === 'string' &&
+          /^[0-9A-Z]{5}$/.test(error.code)
+        ) ?
+          error.code
+        : 'unknown'
       console.error(
         JSON.stringify({
           component: 'vercel-log-drain',
           event: 'database_write_failed',
+          sqlstate: code,
           retryable: true,
           received_count: batch.data.length
         })

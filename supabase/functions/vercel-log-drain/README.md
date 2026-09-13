@@ -53,13 +53,13 @@ Each committed batch emits a structured `batch_processed` event in the **Supabas
 
 The diagnostic counts reconcile as `received = selected + within-batch duplicates + all exclusion reasons`. Response `duplicate_count` also includes IDs already in the database. Document and diagnostic selections overlap and must not be added together.
 
-`database_write_failed` is a structured error with `retryable: true`; it never exposes database exception text/credentials. An HTTP 200 with no diagnostic rows is not enough to declare a period error-free: confirm recent batch summaries, absence of schema/write failures, provider delivery/sampling coverage and available retention. Supabase's generic MCP log sample may be capped; it is not a complete time-window audit.
+`database_write_failed` is a structured error with `retryable: true`; it exposes a validated SQLSTATE code when available, never database exception text/credentials. An HTTP 200 with no diagnostic rows is not enough to declare a period error-free: confirm recent batch summaries, absence of schema/write failures, provider delivery/sampling coverage and available retention. Supabase's generic MCP log sample may be capped; it is not a complete time-window audit.
 
 ## Access, retention and release
 
 The new table forces RLS, has no public/anon/authenticated grants and grants only select/insert to `service_role`. The summary view uses `security_invoker`. The existing hourly `ops.purge_operational_v1()` cleanup gains this table with the same seven-day policy, one-hour safety margin and time-limited legal holds. No new job or statistics aggregation is enabled.
 
-Apply `20260913110000_add_vercel_runtime_diagnostics.sql` **before** deploying the changed Edge Function. The legacy function can run with the additive table present; the new function must not run before it exists. Verify the configured database role can insert both tables and the existing purge job is active and succeeding. A Vercel app deployment alone does not deploy this Supabase function.
+Apply `20260913110000_add_vercel_runtime_diagnostics.sql` and `20260913111500_fix_vercel_diagnostic_request_id_constraint.sql` **before** deploying the changed Edge Function. The legacy function can run with the additive table present; the new function must not run before it exists. Verify the configured database role can insert both tables and the existing purge job is active and succeeding. A Vercel app deployment alone does not deploy this Supabase function.
 
 Production migration/function deployment require the repository's explicit release approval. Read back schema, grants, migration history and deployed function, then verify an actual delivered diagnostic row and a batch summary. Provider sampling and filters determine coverage and are not modified here. Roll back the function first if needed; preserve the additive table and existing cleanup pending investigation.
 

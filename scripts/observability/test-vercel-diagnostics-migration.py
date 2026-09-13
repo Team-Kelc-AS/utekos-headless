@@ -27,12 +27,13 @@ bootstrap += baseline[:baseline.index('create index if not exists event_ledger_e
 bootstrap += privacy[:privacy.index('create or replace function ops.purge_expired_privacy_data()')]
 bootstrap += policy[:policy.index("select cron.schedule('purge_operational_v1'")]
 migration = source('20260913110000_add_vercel_runtime_diagnostics.sql')
+migration += source('20260913111500_fix_vercel_diagnostic_request_id_constraint.sql')
 checks = '''
 insert into ops.vercel_runtime_diagnostics
  (vercel_log_id, project_id, deployment_id, environment, observed_at, level, source,
-  request_route, context_route, status_code, category, message_policy)
+  request_route, context_route, status_code, category, message_policy, request_id)
 values ('fresh','project','deployment','production',statement_timestamp() - interval '1 minute',
- 'error','lambda','/api/log','/skreddersy-varmen',200,'ClientError','classified_raw_omitted');
+ 'error','lambda','/api/log','/skreddersy-varmen',200,'ClientError','classified_raw_omitted','req_123');
 insert into ops.vercel_runtime_diagnostics select * from ops.vercel_runtime_diagnostics
 on conflict (vercel_log_id) do nothing;
 do $$
@@ -41,7 +42,7 @@ begin
  select count(*) into n from ops.vercel_runtime_diagnostics;
  if n <> 1 then raise exception 'deduplication failed'; end if;
  select count(*) into n from ops.vercel_runtime_diagnostics_2h
- where log_entries=1 and entries_without_request_id=1 and distinct_known_request_ids=0
+ where log_entries=1 and entries_without_request_id=0 and distinct_known_request_ids=1
  and request_route='/api/log' and context_route='/skreddersy-varmen' and status_code=200;
  if n <> 1 then raise exception 'grouping failed'; end if;
  if has_table_privilege('anon','ops.vercel_runtime_diagnostics','SELECT')
@@ -56,6 +57,12 @@ begin
    and relrowsecurity and relforcerowsecurity) then raise exception 'RLS missing'; end if;
  if not exists (select 1 from pg_class where oid='ops.vercel_runtime_diagnostics_2h'::regclass
    and 'security_invoker=true'=any(reloptions)) then raise exception 'view unsafe'; end if;
+ update ops.vercel_runtime_diagnostics set request_id=repeat('a',256);
+ begin
+   update ops.vercel_runtime_diagnostics set request_id=repeat('a',257);
+   raise exception 'oversized request ID accepted';
+ exception when check_violation then null;
+ end;
  begin
    update ops.vercel_runtime_diagnostics set level='info', status_code=null;
    raise exception 'null status incorrectly accepted as info diagnostic';
