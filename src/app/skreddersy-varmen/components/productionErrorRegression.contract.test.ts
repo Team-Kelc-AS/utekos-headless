@@ -46,3 +46,29 @@ test('fetches featured handles through one exact aliased operation', async () =>
   )
   assert.doesNotMatch(loaderSource, /handle:\$\{handle\}/)
 })
+
+test('keeps healthy Shopify product reads webhook-driven', async () => {
+  const [featuredSource, productSource, invalidationSource] =
+    await Promise.all([
+      readSource('../../../api/lib/products/getFeaturedProducts.ts'),
+      readSource('../../../api/lib/products/getProduct.ts'),
+      readSource('../../../lib/cache/revalidateProductCatalog.ts')
+    ])
+
+  for (const source of [featuredSource, productSource]) {
+    assert.doesNotMatch(source, /cacheLife\('products'\)/)
+    assert.match(source, /if \(result\.isFallback\)/)
+    assert.match(source, /cacheLife\(SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE\)/)
+    assert.match(source, /cacheLife\('max'\)/)
+  }
+
+  assert.match(featuredSource, /cacheTag\('products'\)/)
+  assert.match(
+    productSource,
+    /cacheTag\(`product-\$\{normalizedHandle\}`, TAGS\.products\)/
+  )
+  assert.match(
+    invalidationSource,
+    /revalidateNextTag\(\s*tag,\s*options\.purgeLastGood \? 'seconds' : 'max'\s*\)/
+  )
+})

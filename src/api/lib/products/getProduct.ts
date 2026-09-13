@@ -52,7 +52,6 @@ async function getCachedShopifyProduct(
   'use cache: remote'
 
   cacheTag(`product-${normalizedHandle}`, TAGS.products)
-  cacheLife('products')
 
   try {
     const result = await fetchShopifyProductWithFallback(
@@ -61,6 +60,8 @@ async function getCachedShopifyProduct(
     )
     if (result.isFallback) {
       cacheLife(SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE)
+    } else {
+      cacheLife('max')
     }
     return { success: true as const, product: result.data }
   } catch (error) {
