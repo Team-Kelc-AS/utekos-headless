@@ -61,7 +61,6 @@ async function fetchFeaturedProductsFromShopify(
 async function getCachedFeaturedProducts() {
   'use cache: remote'
 
-  cacheLife('products')
   cacheTag('products')
 
   const normalizedHandles = handles
@@ -80,6 +79,8 @@ async function getCachedFeaturedProducts() {
     )
     if (result.isFallback) {
       cacheLife(SHOPIFY_PRODUCT_RECOVERY_CACHE_LIFE)
+    } else {
+      cacheLife('max')
     }
     return { success: true as const, products: result.data }
   } catch (error) {
