@@ -22,6 +22,7 @@ export type StorefrontCatalogQueryInput<
   T extends ShopifyOperation<unknown, object>
 > = StorefrontRequestInput<T> & {
   cache?: RequestCache
+  context?: StorefrontBuyerContext
 }
 
 export type StorefrontBuyerQueryInput<

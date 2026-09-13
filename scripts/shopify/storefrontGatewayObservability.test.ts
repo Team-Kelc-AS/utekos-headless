@@ -298,6 +298,11 @@ test(
 
     assert.match(
       source,
+      /^import ['"]server-only['"]/
+    )
+
+    assert.match(
+      source,
       /getPublicTokenHeaders\(/
     )
 
