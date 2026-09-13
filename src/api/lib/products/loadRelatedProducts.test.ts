@@ -19,6 +19,13 @@ moduleWithLoad._load = (request, parent, isMain) => {
     return {}
   }
 
+  if (
+    request === '@/api/lib/products/getCachedProductCards' ||
+    request === '@/api/lib/products/fetchProductCardsWithRetry'
+  ) {
+    return {}
+  }
+
   return originalLoad(request, parent, isMain)
 }
 
@@ -89,21 +96,26 @@ test('keeps the last valid related list when Shopify times out', async () => {
   )
 })
 
-test('writes a related-products snapshot after a successful Shopify fetch', async () => {
+test('fetches recommendations by current handle and writes the snapshot', async () => {
+  let requestedHandle: string | undefined
   const writes: ProductCardModel[][] = []
   const related = await loadRelatedProducts('utekos-dun', 12, {
     runtimeCache: new FakeRuntimeCache(),
-    fetchProductCardsWithRetry: async () => [
-      createCard('utekos-dun'),
-      createCard('utekos-mikrofiber'),
-      createCard('utekos-techdown')
-    ],
+    fetchProductCardsWithRetry: async input => {
+      requestedHandle = input.productHandle
+      return [
+        createCard('utekos-dun'),
+        createCard('utekos-mikrofiber'),
+        createCard('utekos-techdown')
+      ]
+    },
     getSnapshot: async () => null,
     setSnapshot: async (_handle, products) => {
       writes.push(products)
     }
   })
 
+  assert.equal(requestedHandle, 'utekos-dun')
   assert.deepEqual(
     related.map(product => product.handle),
     ['utekos-mikrofiber', 'utekos-techdown']

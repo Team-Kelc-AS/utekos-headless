@@ -6,12 +6,14 @@ import { cacheLife, cacheTag } from 'next/cache'
 import type { ProductCardModel } from 'types/product/ProductPurchaseModel'
 
 export async function getCachedProductCards(input: {
-  first: number
+  productHandle: string
 }): Promise<ProductCardModel[]> {
   'use cache: remote'
 
   cacheTag(TAGS.products)
   cacheLife('collections')
 
-  return fetchProductCardsWithRetry({ first: input.first })
+  return fetchProductCardsWithRetry({
+    productHandle: input.productHandle
+  })
 }
