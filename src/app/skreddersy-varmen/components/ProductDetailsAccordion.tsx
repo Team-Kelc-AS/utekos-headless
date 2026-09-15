@@ -1,5 +1,4 @@
 // Path: src/app/skreddersy-varmen/components/ProductDetailsAccordion.tsx
-import 'server-only'
 
 import {
   Accordion,

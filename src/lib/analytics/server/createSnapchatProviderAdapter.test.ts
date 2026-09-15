@@ -106,7 +106,7 @@ test('registers Snapchat without exposing its token to browser code', async () =
   assert.equal(adapter.key, 'snapchat:page_view')
 
   const layout = await readFile(
-    new URL('../../../app/layout.tsx', import.meta.url),
+    new URL('../../../app/(store)/layout.tsx', import.meta.url),
     'utf8'
   )
   const bridge = await readFile(

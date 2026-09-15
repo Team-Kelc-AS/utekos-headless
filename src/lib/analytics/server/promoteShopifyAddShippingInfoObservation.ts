@@ -35,7 +35,8 @@ export async function promoteShopifyAddShippingInfoObservation(
 ) {
   if (
     !dependencies.config.enabled ||
-    observation.schemaVersion !== 2 ||
+    (observation.schemaVersion !== 2 &&
+      observation.schemaVersion !== 3) ||
     observation.eventName !==
       'checkout_shipping_info_submitted' ||
     !observation.privacy.analyticsProcessingAllowed ||
@@ -96,13 +97,21 @@ export async function promoteShopifyAddShippingInfoObservation(
 }
 
 export function mapObservationToCanonicalAddShippingInfo(
-  observation: Extract<
-    ShopifyCheckoutObservation,
-    {
-      schemaVersion: 2
-      eventName: 'checkout_shipping_info_submitted'
-    }
-  >,
+  observation:
+    | Extract<
+        ShopifyCheckoutObservation,
+        {
+          schemaVersion: 2
+          eventName: 'checkout_shipping_info_submitted'
+        }
+      >
+    | Extract<
+        ShopifyCheckoutObservation,
+        {
+          schemaVersion: 3
+          eventName: 'checkout_shipping_info_submitted'
+        }
+      >,
   beginCheckout: CanonicalBeginCheckout,
   environment: CanonicalEventEnvelope['environment']
 ): CanonicalAddShippingInfo {

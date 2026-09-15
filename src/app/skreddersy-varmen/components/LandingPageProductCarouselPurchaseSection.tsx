@@ -1,5 +1,4 @@
 // Path: src/app/skreddersy-varmen/components/LandingPageProductCarouselPurchaseSection.tsx
-import 'server-only'
 
 import Image from 'next/image'
 import TechDownTerraceImage from '@/assets/images/techdown/TechDown-Terrasse-2048x2720.webp'

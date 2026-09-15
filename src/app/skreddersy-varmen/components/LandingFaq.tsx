@@ -1,12 +1,6 @@
 // Path: src/app/skreddersy-varmen/components/LandingFaq.tsx
 import { LANDING_FAQ_ENTRIES } from '../data/landingSeoContent'
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from '@/components/ui/accordion'
-import {
   landingAccordionContentClassName,
   landingAccordionItemClassName,
   landingAccordionTriggerClassName
@@ -26,37 +20,32 @@ export function LandingFaq() {
           </p>
           <h2
             id='landing-faq-heading'
-            className='font-google-sans max-w-[12ch] font-sans text-4xl leading-[0.95] font-bold tracking-normal text-foreground md:text-5xl'
+            className='max-w-[12ch] font-google-sans font-sans text-4xl leading-[0.95] font-bold tracking-normal text-foreground md:text-5xl'
           >
             FAQ
           </h2>
         </div>
 
-        <Accordion
-          multiple={false}
-          className='w-full max-w-4xl gap-3'
-        >
+        <div className='w-full max-w-4xl gap-3'>
           {LANDING_FAQ_ENTRIES.map(entry => (
-            <AccordionItem
+            <details
+              name='landing-faq'
               key={entry.question}
-              value={entry.question}
               className={landingAccordionItemClassName}
             >
-              <AccordionTrigger
+              <summary
                 className={landingAccordionTriggerClassName}
               >
                 {entry.question}
-              </AccordionTrigger>
-              <AccordionContent
-                className={landingAccordionContentClassName}
-              >
+              </summary>
+              <div className={landingAccordionContentClassName}>
                 <p className='leading-text-paragraph max-w-2xl text-base text-foreground/82'>
                   {entry.answer}
                 </p>
-              </AccordionContent>
-            </AccordionItem>
+              </div>
+            </details>
           ))}
-        </Accordion>
+        </div>
       </div>
     </section>
   )

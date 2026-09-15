@@ -19,7 +19,7 @@ test(
   async () => {
     const asyncProductContentSource =
       await readSource(
-        'src/app/produkter/[handle]/components/AsyncProductContent.tsx'
+        'src/app/(store)/produkter/[handle]/components/AsyncProductContent.tsx'
       )
 
     assert.doesNotMatch(
@@ -49,7 +49,7 @@ test(
   async () => {
     const asyncPurchaseSource =
       await readSource(
-        'src/app/produkter/[handle]/components/AsyncProductPurchaseIsland.tsx'
+        'src/app/(store)/produkter/[handle]/components/AsyncProductPurchaseIsland.tsx'
       )
 
     assert.match(
@@ -84,7 +84,7 @@ test(
   async () => {
     const productPageViewSource =
       await readSource(
-        'src/app/produkter/[handle]/components/ProductPageView.tsx'
+        'src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'
       )
 
     assert.match(

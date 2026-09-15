@@ -1,4 +1,8 @@
-import { shopifyCheckoutObservationSchema } from '../shopifyCheckoutObservationContract'
+import {
+  shopifyCheckoutMetaObservationInputSchema,
+  shopifyCheckoutObservationSchema
+} from '../shopifyCheckoutObservationContract'
+import { protectShopifyCheckoutMetaObservation } from './protectShopifyCheckoutMetaObservation'
 import type { ShopifyCheckoutObservationStore } from './shopifyCheckoutObservationStore'
 import type { ShopifyAddPaymentInfoPromotionResult } from './promoteShopifyAddPaymentInfoObservation'
 
@@ -103,9 +107,30 @@ export async function handleShopifyCheckoutObservation(
     )
   }
 
-  const parsed =
+  const parsedObservation =
     shopifyCheckoutObservationSchema.safeParse(candidate)
-  if (!parsed.success) {
+  const parsedMetaInput =
+    parsedObservation.success ? null : (
+      shopifyCheckoutMetaObservationInputSchema.safeParse(
+        candidate
+      )
+    )
+
+  if (!parsedObservation.success && !parsedMetaInput?.success) {
+    return jsonResponse(
+      { accepted: false, reason: 'invalid_observation' },
+      400
+    )
+  }
+
+  let observation
+  if (parsedObservation.success) {
+    observation = parsedObservation.data
+  } else if (parsedMetaInput?.success) {
+    observation = protectShopifyCheckoutMetaObservation(
+      parsedMetaInput.data
+    )
+  } else {
     return jsonResponse(
       { accepted: false, reason: 'invalid_observation' },
       400
@@ -114,7 +139,7 @@ export async function handleShopifyCheckoutObservation(
 
   let result
   try {
-    result = await dependencies.store.persist(parsed.data)
+    result = await dependencies.store.persist(observation)
   } catch {
     return jsonResponse(
       { accepted: false, reason: 'storage_unavailable' },
@@ -129,9 +154,11 @@ export async function handleShopifyCheckoutObservation(
     )
   }
 
-  let canonicalResult: ShopifyAddPaymentInfoPromotionResult | undefined
+  let canonicalResult:
+    | ShopifyAddPaymentInfoPromotionResult
+    | undefined
   try {
-    canonicalResult = await dependencies.promote?.(parsed.data)
+    canonicalResult = await dependencies.promote?.(observation)
   } catch {
     return jsonResponse(
       {

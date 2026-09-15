@@ -71,7 +71,7 @@ test('projects Pinterest CAPI counts into the provider receipt', () => {
 
 test('layout loads the first-party Pinterest Tag behind the marketing script gate', () => {
   const source = readFileSync(
-    path.join(process.cwd(), 'src/app/layout.tsx'),
+    path.join(process.cwd(), 'src/app/(store)/layout.tsx'),
     'utf8'
   )
 

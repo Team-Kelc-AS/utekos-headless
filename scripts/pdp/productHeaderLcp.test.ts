@@ -15,7 +15,7 @@ test(
   'ProductHeader renders the product H1 without an animation dependency',
   async () => {
     const source = await readSource(
-      'src/app/produkter/[handle]/components/ProductHeader.tsx'
+      'src/app/(store)/produkter/[handle]/components/ProductHeader.tsx'
     )
 
     assert.doesNotMatch(
@@ -54,7 +54,7 @@ test(
   'mobile ProductHeader renders without an AnimatedBlock wrapper',
   async () => {
     const source = await readSource(
-      'src/app/produkter/[handle]/components/ProductPageView.tsx'
+      'src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'
     )
 
     assert.doesNotMatch(
@@ -84,7 +84,7 @@ test(
   'non-LCP PDP content may retain its existing animations',
   async () => {
     const source = await readSource(
-      'src/app/produkter/[handle]/components/ProductPageView.tsx'
+      'src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'
     )
 
     assert.match(

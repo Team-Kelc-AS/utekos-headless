@@ -28,10 +28,10 @@ const observation: ShopifyCanonicalCheckoutProgressObservation =
       itemQuantity: 1
     },
     privacy: {
-      analyticsProcessingAllowed: true,
-      marketingAllowed: true,
+      analyticsProcessingAllowed: true as const,
+      marketingAllowed: true as const,
       preferencesProcessingAllowed: false,
-      saleOfDataAllowed: false
+      saleOfDataAllowed: true as const
     }
   }
 const beginCheckout = canonicalBeginCheckoutSchema.parse({
@@ -133,6 +133,54 @@ test('promotes correlated shipping submission to canonical Meta outbox', async (
       accepted[0]!.event.page_view_id,
     beginCheckout.page_view_id
   )
+})
+
+test('adds consented Shopify checkout customer hashes to the Meta event', async () => {
+  const accepted: CanonicalEventStoreInput[] = []
+  const hash = 'a'.repeat(64)
+  const store: Required<CanonicalEventStore> = {
+    async find() {
+      return beginCheckout
+    },
+    async accept(input) {
+      accepted.push(input)
+      return { createdDispatchAttempts: [], status: 'inserted' }
+    }
+  }
+
+  await promoteShopifyAddShippingInfoObservation(
+    {
+      ...observation,
+      schemaVersion: 3,
+      customerMatch: {
+        email_sha256: [hash],
+        first_name_sha256: [hash],
+        last_name_sha256: [hash],
+        phone_sha256: [hash]
+      },
+      privacy: {
+        ...observation.privacy,
+        analyticsProcessingAllowed: true as const,
+        marketingAllowed: true as const,
+        saleOfDataAllowed: true as const
+      }
+    },
+    {
+      config: {
+        enabled: true,
+        cutoverAt: '2026-08-17T10:04:00.000Z'
+      },
+      environment: 'production',
+      store
+    }
+  )
+
+  assert.deepEqual(accepted[0]?.event.user_data, {
+    email_sha256: [hash],
+    first_name_sha256: [hash],
+    last_name_sha256: [hash],
+    phone_sha256: [hash]
+  })
 })
 
 test('wrong source event and denied analytics never persist or log completed shipping', async t => {

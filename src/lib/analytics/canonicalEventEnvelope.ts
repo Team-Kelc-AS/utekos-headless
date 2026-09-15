@@ -33,6 +33,12 @@ const identifierMapSchema = z.record(
 )
 
 export const canonicalUserDataSchema = z.strictObject({
+  city_sha256: z
+    .array(z.string().regex(/^[a-f0-9]{64}$/))
+    .optional(),
+  country_sha256: z
+    .array(z.string().regex(/^[a-f0-9]{64}$/))
+    .optional(),
   email_sha256: z
     .array(z.string().regex(/^[a-f0-9]{64}$/))
     .optional(),
@@ -41,7 +47,19 @@ export const canonicalUserDataSchema = z.strictObject({
     .regex(/^\d+$/u)
     .max(64)
     .optional(),
+  first_name_sha256: z
+    .array(z.string().regex(/^[a-f0-9]{64}$/))
+    .optional(),
+  last_name_sha256: z
+    .array(z.string().regex(/^[a-f0-9]{64}$/))
+    .optional(),
   phone_sha256: z
+    .array(z.string().regex(/^[a-f0-9]{64}$/))
+    .optional(),
+  postal_code_sha256: z
+    .array(z.string().regex(/^[a-f0-9]{64}$/))
+    .optional(),
+  state_sha256: z
     .array(z.string().regex(/^[a-f0-9]{64}$/))
     .optional()
 })

@@ -52,14 +52,16 @@ test('purchase client JS loads through an explicit dynamic import', async () => 
 
   assert.doesNotMatch(section, PURCHASE_STATIC_IMPORT)
   assert.match(section, /DeferredPurchaseClientLanding/)
+  assert.match(loader, /import\('\.\/PurchaseClientLanding'\)/u)
   assert.match(
-    loader,
-    /import\('\.\/PurchaseClientLanding'\)/u
+    deferred,
+    /import\('\.\/LandingPurchaseRuntime'\)/
   )
-  assert.match(deferred, /loadPurchaseClientLanding/)
+  assert.match(deferred, /IntersectionObserver/)
+  assert.match(deferred, /utekos:landing:purchase/)
   assert.doesNotMatch(
     deferred,
-    /from ['"]\.\/PurchaseClientLanding['"]/u
+    /import\s+\{[^}]*PurchaseClientLanding[^}]*\}\s+from/u
   )
 })
 

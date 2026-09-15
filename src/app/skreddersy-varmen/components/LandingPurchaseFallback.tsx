@@ -10,6 +10,12 @@ export function LandingPurchaseFallback() {
         <p className='mt-2 text-sm leading-relaxed text-background/75'>
           Siden er klar, og kjøpsvalgene lastes inn.
         </p>
+        <a
+          href='/produkter/utekos-techdown'
+          className='mt-4 inline-block underline'
+        >
+          Åpne produktet og velg størrelse
+        </a>
       </div>
     </div>
   )

@@ -98,7 +98,6 @@
     "@google-ads/datamanager": "^0.5.0",
     "@google-cloud/discoveryengine": "2.9.0",
     "@google-cloud/retail": "4.4.0",
-    "@google/genai": "^2.10.0",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.4.0",
     "@mcp-b/react-webmcp": "^4.0.0",

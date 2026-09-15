@@ -14,7 +14,7 @@ async function readSource(
 
 test('PDP renders ProductGallery directly from the server component', async () => {
   const source = await readSource(
-    'src/app/produkter/[handle]/components/ProductPageView.tsx'
+    'src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'
   )
 
   assert.match(
@@ -39,7 +39,7 @@ test('PDP renders ProductGallery directly from the server component', async () =
 test('redundant ProductGalleryClient wrapper no longer exists', () => {
   const wrapperPath = join(
     repoRoot,
-    'src/app/produkter/[handle]/components/ProductGalleryClient.tsx'
+    'src/app/(store)/produkter/[handle]/components/ProductGalleryClient.tsx'
   )
 
   assert.equal(
@@ -51,10 +51,10 @@ test('redundant ProductGalleryClient wrapper no longer exists', () => {
 
 test('desktop gallery frame remains a Server Component', async () => {
   const frameSource = await readSource(
-    'src/app/produkter/[handle]/components/ProductDesktopGalleryFrame.tsx'
+    'src/app/(store)/produkter/[handle]/components/ProductDesktopGalleryFrame.tsx'
   )
   const pageSource = await readSource(
-    'src/app/produkter/[handle]/components/ProductPageView.tsx'
+    'src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'
   )
 
   assert.doesNotMatch(
@@ -147,13 +147,13 @@ test('interactive carousel owns the Client Component boundary', async () => {
 
 test('TechDown mobile gallery uses 910:1450 product stills with overlays', async () => {
   const pageSource = await readSource(
-    'src/app/produkter/[handle]/components/ProductPageView.tsx'
+    'src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'
   )
   const frameSource = await readSource(
-    'src/app/produkter/[handle]/components/TechDownMobileGalleryFrame.tsx'
+    'src/app/(store)/produkter/[handle]/components/TechDownMobileGalleryFrame.tsx'
   )
   const gallerySource = await readSource(
-    'src/app/produkter/[handle]/utils/gallery-images/techdown/productGalleryImages.ts'
+    'src/app/(store)/produkter/[handle]/utils/gallery-images/techdown/productGalleryImages.ts'
   )
 
   assert.match(
@@ -285,11 +285,11 @@ test('TechDown mobile gallery uses 910:1450 product stills with overlays', async
 test('PDP gallery stays sticky only within the purchase-details row', async () => {
   const [pageSource, gridSource, galleryColumnSource, optionsColumnSource, accordionSource] =
     await Promise.all([
-      readSource('src/app/produkter/[handle]/components/ProductPageView.tsx'),
+      readSource('src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'),
       readSource('src/components/jsx/ProductPageGrid.tsx'),
       readSource('src/components/jsx/GalleryColumn.tsx'),
       readSource('src/components/jsx/OptionsColumn.tsx'),
-      readSource('src/app/produkter/[handle]/components/ProductPageAccordion.tsx')
+      readSource('src/app/(store)/produkter/[handle]/components/ProductPageAccordion.tsx')
     ])
 
   assert.match(
@@ -332,10 +332,10 @@ function extractExportBody(
 
 test('Mikrofiber gallery replaces stills and splits 1-10 / 11-20 by viewport', async () => {
   const pageSource = await readSource(
-    'src/app/produkter/[handle]/components/ProductPageView.tsx'
+    'src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'
   )
   const gallerySource = await readSource(
-    'src/app/produkter/[handle]/utils/gallery-images/mikrofiber/mikrofiberProductGalleryImages.ts'
+    'src/app/(store)/produkter/[handle]/utils/gallery-images/mikrofiber/mikrofiberProductGalleryImages.ts'
   )
   const mobileBody = extractExportBody(
     gallerySource,
@@ -427,10 +427,10 @@ test('Mikrofiber gallery replaces stills and splits 1-10 / 11-20 by viewport', a
 
 test('Comfyrobe gallery replaces product stills and splits desktop / mobile by viewport', async () => {
   const pageSource = await readSource(
-    'src/app/produkter/[handle]/components/ProductPageView.tsx'
+    'src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'
   )
   const gallerySource = await readSource(
-    'src/app/produkter/[handle]/utils/gallery-images/comfyrobeProductGalleryImages.ts'
+    'src/app/(store)/produkter/[handle]/utils/gallery-images/comfyrobeProductGalleryImages.ts'
   )
   const mobileBody = extractExportBody(
     gallerySource,

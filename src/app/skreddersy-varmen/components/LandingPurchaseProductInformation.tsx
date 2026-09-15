@@ -1,4 +1,3 @@
-import 'server-only'
 
 import { PRODUCT_VARIANTS } from '@/api/constants'
 import { AnimatedBlock } from '@/components/AnimatedBlock'

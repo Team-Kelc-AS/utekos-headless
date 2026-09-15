@@ -19,7 +19,7 @@ test(
   'root layout delegates the canonical first-party GTM bootstrap',
   async () => {
     const layoutSource = await readSource(
-      'src/app/layout.tsx'
+      'src/app/(store)/layout.tsx'
     )
     const source = await readSource(
       'src/components/analytics/GoogleTagManagerLoader.tsx'
@@ -125,7 +125,7 @@ test(
   'Meta application fallback remains post-hydration',
   async () => {
     const layoutSource = await readSource(
-      'src/app/layout.tsx'
+      'src/app/(store)/layout.tsx'
     )
     const loaderSource = await readSource(
       'src/components/analytics/MetaBrowserTransportLoader.tsx'
@@ -147,7 +147,7 @@ test(
 test(
   'Pinterest Tag loader remains post-hydration behind the marketing script gate',
   async () => {
-    const source = await readSource('src/app/layout.tsx')
+    const source = await readSource('src/app/(store)/layout.tsx')
     const loader = await readSource(
       'src/components/analytics/ConsentGrantedScript.tsx'
     )

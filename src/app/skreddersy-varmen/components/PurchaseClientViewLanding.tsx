@@ -136,7 +136,12 @@ export function PurchaseClientViewLanding({
 
             <div className='mb-0 space-y-12 text-foreground min-[900px]:mb-4'>
               <div className='overflow-hidden rounded-xl bg-jungle p-6 min-[900px]:p-6'>
-                <div className='mb-4 flex items-center justify-between min-[900px]:mb-4'>
+                <div
+                  id='landing-size-selection'
+                  data-landing-size-ready
+                  tabIndex={-1}
+                  className='mb-4 flex items-center justify-between min-[900px]:mb-4'
+                >
                   <span className='font-sans text-sm font-bold tracking-normal text-foreground'>
                     Størrelse
                   </span>

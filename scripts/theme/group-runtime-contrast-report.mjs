@@ -91,7 +91,7 @@ function routeOwners(route) {
 
   if (route === '/produkter') {
     return [
-      'src/app/produkter/(oversikt)',
+      'src/app/(store)/produkter/(oversikt)',
       'src/components/ProductCard',
       'src/components/ProductGrid',
       'src/components/ui'
@@ -100,7 +100,7 @@ function routeOwners(route) {
 
   if (route.startsWith('/produkter/')) {
     return [
-      'src/app/produkter/[handle]',
+      'src/app/(store)/produkter/[handle]',
       'src/components/ProductPage',
       'src/components/ProductCard',
       'src/components/ui'

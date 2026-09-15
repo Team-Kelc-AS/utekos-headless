@@ -1,4 +1,3 @@
-import 'server-only'
 
 import { SizeGuideAccordionTable } from '@/components/size-guide/SizeGuideAccordionTable'
 import {

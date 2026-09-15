@@ -9,12 +9,11 @@ import { LandingPurchaseFallback } from './components/LandingPurchaseFallback'
 import { LandingPurchaseSection } from './components/LandingPurchaseSection'
 import { MetaWebsiteHighlights } from './components/MetaWebsiteHighlights'
 import { PreFooterNavigation } from './components/PreFooterNavigation'
-import { SectionSocialProof } from './components/SectionSocialProof'
+import { DeferredLandingSection } from './components/DeferredLandingSection'
 import { SectionThreeInOne } from './components/SectionThreeInOne'
 import { SkreddersyVarmenKlarnaStrip } from './components/SkreddersyVarmenKlarnaStrip'
 import { DeferredKlarnaOnSiteMessaging } from './components/DeferredKlarnaOnSiteMessaging'
 import { StickyMobileAction } from './components/StickyMobileAction'
-import { TechDownSlider } from './components/TechDownSlider'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { SKREDDERSY_VARMEN_PROMOTIONS } from './data/skreddersyVarmenPageModel'
 import styles from './components/SkreddersyVarmenTheatre.module.css'
@@ -72,7 +71,7 @@ import styles from './components/SkreddersyVarmenTheatre.module.css'
   creativeSlot='techdown_slider'
   className='w-full'
 >
-  <TechDownSlider />
+  <DeferredLandingSection section="slider" />
 </PromotionImpression>
 
 <PromotionImpression
@@ -82,7 +81,7 @@ import styles from './components/SkreddersyVarmenTheatre.module.css'
   creativeSlot='social_proof'
   className='w-full'
 >
-  <SectionSocialProof />
+  <DeferredLandingSection section="reviews" />
 </PromotionImpression>
 
   <LandingFaq />

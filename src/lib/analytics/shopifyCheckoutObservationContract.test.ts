@@ -4,7 +4,11 @@ import { Validator } from '@cfworker/json-schema'
 import type { Schema } from '@cfworker/json-schema'
 import v1ContractSchema from '../../../contracts/shopify/checkout-observation/v1/schema.json'
 import v2ContractSchema from '../../../contracts/shopify/checkout-observation/v2/schema.json'
-import { shopifyCheckoutObservationSchema } from './shopifyCheckoutObservationContract'
+import v3ContractSchema from '../../../contracts/shopify/checkout-observation/v3/schema.json'
+import {
+  shopifyCheckoutMetaObservationInputSchema,
+  shopifyCheckoutObservationSchema
+} from './shopifyCheckoutObservationContract'
 
 const privacy = {
   analyticsProcessingAllowed: true,
@@ -37,8 +41,7 @@ const canonicalPaymentObservation = {
   eventId: 'shopify-event-payment-1',
   eventName: 'payment_info_submitted',
   correlation: {
-    beginCheckoutEventId:
-      '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
+    beginCheckoutEventId: '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
   }
 } as const
 
@@ -46,8 +49,7 @@ const canonicalShippingObservation = {
   ...shippingObservation,
   schemaVersion: 2,
   correlation: {
-    beginCheckoutEventId:
-      '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
+    beginCheckoutEventId: '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
   }
 } as const
 
@@ -108,7 +110,10 @@ test('accepts an allowlisted alert type without free text', () => {
 })
 
 test('accepts PII-free contact and delivery validation alerts', () => {
-  for (const type of ['CONTACT_ERROR', 'DELIVERY_ERROR'] as const) {
+  for (const type of [
+    'CONTACT_ERROR',
+    'DELIVERY_ERROR'
+  ] as const) {
     assert.equal(
       shopifyCheckoutObservationSchema.safeParse({
         contract: 'utekos.shopify.checkout_observation',
@@ -245,5 +250,52 @@ test('the normative v2 JSON Schema rejects PII and unknown correlation fields', 
       }
     }).valid,
     false
+  )
+})
+
+test('the v3 ingress contract requires marketing consent and limits completion to an order id', () => {
+  const input = {
+    ...canonicalShippingObservation,
+    schemaVersion: 3,
+    customer: { email: 'kari@example.no' },
+    privacy: {
+      ...privacy,
+      marketingAllowed: true,
+      saleOfDataAllowed: true
+    }
+  } as const
+  const validator = new Validator(
+    v3ContractSchema as Schema,
+    '2020-12',
+    false
+  )
+
+  assert.equal(
+    shopifyCheckoutMetaObservationInputSchema.safeParse(input)
+      .success,
+    true
+  )
+  assert.equal(validator.validate(input).valid, true)
+  assert.equal(
+    validator.validate({
+      ...input,
+      privacy: { ...input.privacy, marketingAllowed: false }
+    }).valid,
+    false
+  )
+  assert.equal(
+    validator.validate({
+      ...input,
+      eventName: 'checkout_completed'
+    }).valid,
+    false
+  )
+  assert.equal(
+    validator.validate({
+      ...input,
+      eventName: 'checkout_completed',
+      orderLegacyId: '12345'
+    }).valid,
+    true
   )
 })

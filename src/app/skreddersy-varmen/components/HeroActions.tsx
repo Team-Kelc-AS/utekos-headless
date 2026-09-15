@@ -2,13 +2,14 @@
 
 'use client'
 
+import { scrollToLandingSize } from './scrollToLandingSize'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { scrollToElement } from '@/lib/motion/scrollToElement'
 import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
 
 const SCROLL_TARGETS = {
-  purchase: 'purchase-section',
+  purchase: 'landing-size-selection',
   reviews: 'reviews-section',
   solution: 'section-solution'
 } as const
@@ -44,7 +45,7 @@ export function HeroActions() {
                 return
               event.preventDefault()
               reportLandingSelectPromotion('heroCta')
-              smoothScrollTo(SCROLL_TARGETS.purchase)
+              scrollToLandingSize()
             }}
             data-track='HeroCtaSkreddersyVarmen'
             className='group inline-flex items-center gap-2 leading-none'

@@ -29,8 +29,14 @@ function hashExternalId(value: string) {
 export function buildMetaUserData(event: MetaUserDataEvent) {
   const userData = new UserData()
   const emailHashes = event.user_data?.email_sha256
+  const firstNameHashes = event.user_data?.first_name_sha256
+  const lastNameHashes = event.user_data?.last_name_sha256
   const facebookLoginId = event.user_data?.facebook_login_id
   const phoneHashes = event.user_data?.phone_sha256
+  const cityHashes = event.user_data?.city_sha256
+  const stateHashes = event.user_data?.state_sha256
+  const postalCodeHashes = event.user_data?.postal_code_sha256
+  const countryHashes = event.user_data?.country_sha256
   const externalId =
     event.external_id ?
       hashExternalId(event.external_id)
@@ -45,8 +51,19 @@ export function buildMetaUserData(event: MetaUserDataEvent) {
     location?.source === 'customer_provided'
 
   if (emailHashes?.length) userData.setEmails(emailHashes)
+  if (firstNameHashes?.length) {
+    userData.setFirstNames(firstNameHashes)
+  }
+  if (lastNameHashes?.length) {
+    userData.setLastNames(lastNameHashes)
+  }
   if (facebookLoginId) userData.setFbLoginId(facebookLoginId)
   if (phoneHashes?.length) userData.setPhones(phoneHashes)
+  if (cityHashes?.length) userData.setCities(cityHashes)
+  if (stateHashes?.length) userData.setStates(stateHashes)
+  if (postalCodeHashes?.length)
+    userData.setZips(postalCodeHashes)
+  if (countryHashes?.length) userData.setCountries(countryHashes)
   if (externalId) userData.setExternalId(externalId)
   if (event.client_ip_address) {
     userData.setClientIpAddress(event.client_ip_address)

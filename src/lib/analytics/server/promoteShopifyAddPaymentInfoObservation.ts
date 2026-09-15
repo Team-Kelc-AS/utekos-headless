@@ -40,7 +40,8 @@ export async function promoteShopifyAddPaymentInfoObservation(
 ): Promise<ShopifyAddPaymentInfoPromotionResult> {
   if (
     !dependencies.config.enabled ||
-    observation.schemaVersion !== 2 ||
+    (observation.schemaVersion !== 2 &&
+      observation.schemaVersion !== 3) ||
     observation.eventName !== 'payment_info_submitted' ||
     !observation.privacy.analyticsProcessingAllowed ||
     Date.parse(observation.occurredAt) <
@@ -103,10 +104,15 @@ export async function promoteShopifyAddPaymentInfoObservation(
 }
 
 export function mapObservationToCanonicalAddPaymentInfo(
-  observation: Extract<
-    ShopifyCheckoutObservation,
-    { schemaVersion: 2 }
-  >,
+  observation:
+    | Extract<
+        ShopifyCheckoutObservation,
+        { schemaVersion: 2; eventName: 'payment_info_submitted' }
+      >
+    | Extract<
+        ShopifyCheckoutObservation,
+        { schemaVersion: 3; eventName: 'payment_info_submitted' }
+      >,
   beginCheckout: CanonicalBeginCheckout,
   environment: CanonicalEventEnvelope['environment']
 ): CanonicalAddPaymentInfo {

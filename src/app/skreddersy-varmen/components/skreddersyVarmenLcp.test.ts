@@ -43,7 +43,7 @@ test('hero headline is the intentional first-screen text LCP', async () => {
   const hero = await readSource(
     'src/app/skreddersy-varmen/components/Hero.tsx'
   )
-  const layout = await readSource('src/app/layout.tsx')
+  const layout = await readSource('src/app/skreddersy-varmen/layout.tsx')
   const fonts = await readSource('src/app/fonts/font.config.ts')
 
   assert.match(

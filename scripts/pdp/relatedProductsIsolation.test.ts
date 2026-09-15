@@ -22,10 +22,10 @@ test(
       asyncProductContentSource
     ] = await Promise.all([
       readSource(
-        'src/app/produkter/[handle]/utils/getCachedProductPageData.ts'
+        'src/app/(store)/produkter/[handle]/utils/getCachedProductPageData.ts'
       ),
       readSource(
-        'src/app/produkter/[handle]/components/AsyncProductContent.tsx'
+        'src/app/(store)/produkter/[handle]/components/AsyncProductContent.tsx'
       )
     ])
 
@@ -59,10 +59,10 @@ test(
       asyncRelatedProductsSource
     ] = await Promise.all([
       readSource(
-        'src/app/produkter/[handle]/components/ProductPageView.tsx'
+        'src/app/(store)/produkter/[handle]/components/ProductPageView.tsx'
       ),
       readSource(
-        'src/app/produkter/[handle]/components/AsyncRelatedProducts.tsx'
+        'src/app/(store)/produkter/[handle]/components/AsyncRelatedProducts.tsx'
       )
     ])
 

@@ -1,11 +1,15 @@
 import { after } from 'next/server'
 
-import { shopifyCheckoutObservationSchema } from '@/lib/analytics/shopifyCheckoutObservationContract'
+import {
+  shopifyCheckoutMetaObservationInputSchema,
+  shopifyCheckoutObservationSchema
+} from '@/lib/analytics/shopifyCheckoutObservationContract'
 import { handleShopifyCheckoutObservation } from '@/lib/analytics/server/handleShopifyCheckoutObservation'
 import { postgresShopifyCheckoutObservationStore } from '@/lib/analytics/server/postgresShopifyCheckoutObservationStore'
 import { postgresCanonicalEventStore } from '@/lib/analytics/server/postgresCanonicalPageViewStore'
 import { promoteShopifyAddPaymentInfoObservation } from '@/lib/analytics/server/promoteShopifyAddPaymentInfoObservation'
 import { promoteShopifyAddShippingInfoObservation } from '@/lib/analytics/server/promoteShopifyAddShippingInfoObservation'
+import { protectShopifyCheckoutMetaObservation } from '@/lib/analytics/server/protectShopifyCheckoutMetaObservation'
 import { readShopifyAddPaymentInfoCanonicalConfig } from '@/lib/analytics/server/shopifyAddPaymentInfoCanonicalConfig'
 import { reconcileShopifyCheckoutObservation } from '@/lib/commerce/checkoutSession/reconcileShopifyCheckoutAttempt'
 
@@ -19,12 +23,29 @@ async function reconcileRegistryObservation(
 
     const parsed =
       shopifyCheckoutObservationSchema.safeParse(candidate)
+    const parsedMeta =
+      parsed.success ? null : (
+        shopifyCheckoutMetaObservationInputSchema.safeParse(
+          candidate
+        )
+      )
 
-    if (!parsed.success) {
+    if (!parsed.success && !parsedMeta?.success) {
       return
     }
 
-    await reconcileShopifyCheckoutObservation(parsed.data)
+    let observation
+    if (parsed.success) {
+      observation = parsed.data
+    } else if (parsedMeta?.success) {
+      observation = protectShopifyCheckoutMetaObservation(
+        parsedMeta.data
+      )
+    } else {
+      return
+    }
+
+    await reconcileShopifyCheckoutObservation(observation)
   } catch {
     /*
      * Checkout Session Registry reconciliation is
@@ -56,7 +77,7 @@ async function handle(request: Request) {
         process.env.SHOPIFY_CHECKOUT_OBSERVATIONS_ENABLED ===
         'true',
 
-      promote: observation => {
+      promote: async observation => {
         const dependencies = {
           config: readShopifyAddPaymentInfoCanonicalConfig(
             process.env
@@ -71,16 +92,27 @@ async function handle(request: Request) {
           }
         }
 
-        return observation.eventName ===
-          'checkout_shipping_info_submitted' ?
-            promoteShopifyAddShippingInfoObservation(
-              observation,
-              dependencies
-            )
-          : promoteShopifyAddPaymentInfoObservation(
-              observation,
-              dependencies
-            )
+        if (
+          observation.eventName ===
+          'checkout_shipping_info_submitted'
+        ) {
+          return promoteShopifyAddShippingInfoObservation(
+            observation,
+            dependencies
+          )
+        }
+
+        if (
+          observation.eventName ===
+          'payment_info_submitted'
+        ) {
+          return promoteShopifyAddPaymentInfoObservation(
+            observation,
+            dependencies
+          )
+        }
+
+        return { status: 'not_applicable' }
       },
 
       store: postgresShopifyCheckoutObservationStore

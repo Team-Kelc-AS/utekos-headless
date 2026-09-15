@@ -65,6 +65,14 @@ export function checkoutProgressCanonicalEnvelope(
     marketingGranted ?
       beginCheckout.browser_id
     : analyticsBrowserIds(beginCheckout)
+  const checkoutCustomerMatch =
+    observation.schemaVersion === 3 ?
+      observation.customerMatch
+    : undefined
+  const customerMatch =
+    marketingGranted ?
+      { ...beginCheckout.user_data, ...checkoutCustomerMatch }
+    : undefined
 
   return {
     consent: {
@@ -104,8 +112,8 @@ export function checkoutProgressCanonicalEnvelope(
     ...(marketingGranted && beginCheckout.external_id ?
       { external_id: beginCheckout.external_id }
     : {}),
-    ...(marketingGranted && beginCheckout.user_data ?
-      { user_data: beginCheckout.user_data }
+    ...(customerMatch && Object.keys(customerMatch).length > 0 ?
+      { user_data: customerMatch }
     : {}),
     ...(marketingGranted && beginCheckout.client_ip_address ?
       { client_ip_address: beginCheckout.client_ip_address }

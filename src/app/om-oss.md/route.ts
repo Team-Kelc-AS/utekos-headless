@@ -1,9 +1,9 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { frontmatter } from '../om-oss/page.mdx'
-import { parseAboutPageFrontmatter, toAbsoluteUrl } from '../om-oss/seo/aboutPageSeo'
+import { frontmatter } from '../(store)/om-oss/page.mdx'
+import { parseAboutPageFrontmatter, toAbsoluteUrl } from '../(store)/om-oss/seo/aboutPageSeo'
 
-const sourceFile = join(process.cwd(), 'src/app/om-oss/page.mdx')
+const sourceFile = join(process.cwd(), 'src/app/(store)/om-oss/page.mdx')
 const page = parseAboutPageFrontmatter(frontmatter)
 
 export async function GET() {

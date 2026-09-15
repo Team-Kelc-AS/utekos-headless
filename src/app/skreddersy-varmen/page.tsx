@@ -1,5 +1,6 @@
 import { type LandingSearchParams } from './components/SkreddersyVarmenPageRuntime'
-import { SkreddersyVarmenExperiment } from './components/SkreddersyVarmenExperiment'
+import { SkreddersyVarmenPageRuntime } from './components/SkreddersyVarmenPageRuntime'
+import { skreddersyVarmenPageContent } from './data/skreddersyVarmenPageContent'
 
 export { metadata } from './data/skreddersyVarmenPageContent'
 
@@ -9,6 +10,9 @@ export default function SkreddersyVarmenPage({
   searchParams: LandingSearchParams
 }) {
   return (
-    <SkreddersyVarmenExperiment searchParams={searchParams} />
+    <SkreddersyVarmenPageRuntime
+      content={skreddersyVarmenPageContent}
+      searchParams={searchParams}
+    />
   )
 }

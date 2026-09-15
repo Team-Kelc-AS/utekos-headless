@@ -198,6 +198,47 @@ test('rejects PII before storage', async () => {
   assert.equal(store.persisted.length, 0)
 })
 
+test('accepts v3 ingress but persists and promotes only protected customer data', async () => {
+  const store = new TestStore()
+  let promoted: ShopifyCheckoutObservation | undefined
+  const response = await post(
+    JSON.stringify({
+      ...observations[0],
+      schemaVersion: 3,
+      correlation: {
+        beginCheckoutEventId:
+          '71c2ef59-6e6f-4f56-a63a-567ca398f9de'
+      },
+      customer: {
+        email: 'kari@example.no',
+        phone: '+47 999 99 999',
+        firstName: 'Kari',
+        lastName: 'Nordmann'
+      },
+      privacy: {
+        ...privacy,
+        marketingAllowed: true,
+        saleOfDataAllowed: true
+      }
+    }),
+    store,
+    async observation => {
+      promoted = observation
+      return { status: 'inserted' }
+    }
+  )
+
+  assert.equal(response.status, 204)
+  assert.equal(store.persisted.length, 1)
+  assert.deepEqual(promoted, store.persisted[0])
+  const serialized = JSON.stringify(store.persisted[0])
+  assert.doesNotMatch(
+    serialized,
+    /Kari|Nordmann|example[.]no|999 99 999/u
+  )
+  assert.match(serialized, /"email_sha256":\["[a-f0-9]{64}"\]/u)
+})
+
 test('rejects a body larger than 16 KiB before storage', async () => {
   const store = new TestStore()
   const response = await post(

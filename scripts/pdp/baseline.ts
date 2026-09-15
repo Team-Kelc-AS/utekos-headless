@@ -14,7 +14,7 @@ const root = path.resolve(scriptDir, '../..')
 const tsConfigFilePath = path.join(root, 'tsconfig.json')
 const snapshotPath = path.join(scriptDir, 'baseline.json')
 
-const ENTRY = 'src/app/produkter/[handle]/page.tsx'
+const ENTRY = 'src/app/(store)/produkter/[handle]/page.tsx'
 
 const GATE_ID_SCHEMA = z.enum([
   'dehydrated-product-query',

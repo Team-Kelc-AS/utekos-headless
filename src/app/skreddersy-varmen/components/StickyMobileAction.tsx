@@ -2,15 +2,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion
-} from 'motion/react'
 import { ArrowDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils/className'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
-import { scrollToElement } from '@/lib/motion/scrollToElement'
+import { scrollToLandingSize } from './scrollToLandingSize'
 import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
 import { reportCanonicalViewPromotion } from '@/lib/analytics/viewPromotionReporter'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
@@ -31,7 +26,6 @@ export function StickyMobileAction({
   price?: Money
   availableForSale?: boolean
 }) {
-  const reduced = useReducedMotion()
   const [isVisible, setIsVisible] = useState(false)
   const [isDismissed, setIsDismissed] = useState(false)
   const [isPurchaseVisible, setIsPurchaseVisible] =
@@ -139,10 +133,7 @@ export function StickyMobileAction({
     promotion: 'stickyCta' | 'stickyOrder'
   ) => {
     reportLandingSelectPromotion(promotion)
-    void scrollToElement('purchase-section', {
-      offsetY: 72,
-      reducedMotion: reduced
-    })
+    scrollToLandingSize()
   }
 
   const handleDismiss = () => {
@@ -164,29 +155,12 @@ export function StickyMobileAction({
           isPurchaseVisible ? 'true' : 'false'
         }
       />
-      <AnimatePresence>
+      <>
         {isVisible && (
-          <motion.div
+          <div
             role='region'
             aria-label='Snarvei til bestilling'
-            initial={
-              reduced ?
-                { opacity: 0 }
-              : { y: '120%', opacity: 0 }
-            }
-            animate={
-              reduced ? { opacity: 1 } : { y: 0, opacity: 1 }
-            }
-            exit={
-              reduced ?
-                { opacity: 0 }
-              : { y: '120%', opacity: 0 }
-            }
-            transition={{
-              duration: 0.5,
-              ease: [0.16, 1, 0.3, 1]
-            }}
-            className='fixed inset-x-3 bottom-3 z-50 lg:hidden'
+            className='landing-sticky-enter fixed inset-x-3 bottom-3 z-50 lg:hidden'
           >
             {/* Glasspanel-baren: Bruker background/95 for å gi en solid kontrast, uansett hvilken farge seksjonen bak har */}
             <div className='flex items-center gap-2 rounded-full border border-foreground/15 bg-background/95 p-2 text-foreground shadow-[0_10px_40px_rgba(0,0,0,0.3)] backdrop-blur-md'>
@@ -260,9 +234,9 @@ export function StickyMobileAction({
                 </button>
               </BrandBadge>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </>
     </>
   )
 }

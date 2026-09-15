@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:utekos:shopify:checkout-observation:v3",
+  "title": "Utekos Shopify Meta checkout observation v3",
+  "description": "Marketing-consented Shopify checkout observation. The public receiver replaces the transient customer object with normalized SHA-256 customerMatch values before persistence or canonical promotion. checkout_completed remains observed evidence and does not create an authoritative Purchase.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "const": "utekos.shopify.checkout_observation"
+    },
+    "schemaVersion": {
+      "const": 3
+    },
+    "source": {
+      "const": "shopify_app_web_pixel"
+    },
+    "verificationStatus": {
+      "const": "observed"
+    },
+    "eventId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "eventName": {
+      "enum": [
+        "checkout_shipping_info_submitted",
+        "payment_info_submitted",
+        "checkout_completed"
+      ]
+    },
+    "eventSequence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "checkoutToken": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "correlation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "beginCheckoutEventId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "beginCheckoutEventId"
+      ]
+    },
+    "commerce": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "currencyCode": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "itemQuantity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      },
+      "required": [
+        "currencyCode",
+        "value",
+        "itemQuantity"
+      ]
+    },
+    "customer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "city": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "countryCode": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 255
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 320
+        },
+        "firstName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "lastName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "postalCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "provinceCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "orderLegacyId": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "maxLength": 32
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "analyticsProcessingAllowed": {
+          "const": true
+        },
+        "marketingAllowed": {
+          "const": true
+        },
+        "preferencesProcessingAllowed": {
+          "type": "boolean"
+        },
+        "saleOfDataAllowed": {
+          "const": true
+        }
+      },
+      "required": [
+        "analyticsProcessingAllowed",
+        "marketingAllowed",
+        "preferencesProcessingAllowed",
+        "saleOfDataAllowed"
+      ]
+    }
+  },
+  "required": [
+    "contract",
+    "schemaVersion",
+    "source",
+    "verificationStatus",
+    "eventId",
+    "eventName",
+    "eventSequence",
+    "occurredAt",
+    "checkoutToken",
+    "correlation",
+    "commerce",
+    "customer",
+    "privacy"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "eventName": {
+            "const": "checkout_completed"
+          }
+        },
+        "required": [
+          "eventName"
+        ]
+      },
+      "then": {
+        "required": [
+          "orderLegacyId"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "orderLegacyId"
+          ]
+        }
+      }
+    }
+  ]
+}
