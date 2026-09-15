@@ -6,6 +6,7 @@ import {
 } from '@/lib/consent/cookiebotConsent'
 import type { ClientParamBuilder } from 'meta-capi-param-builder-clientjs'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
+import { mapMetaClientParameterContext } from './mapMetaClientParameterContext'
 import { metaClientIpResponseSchema } from './metaClientIpContract'
 
 function marketingAllowed() {
@@ -103,12 +104,13 @@ export async function ensureMetaClientParameterContext(
       return readIdentifiers(builder)
     }
 
-    await builder.processAndCollectAllParams(input.pageUrl, () =>
-      getConsentedClientIpAddress(input.consent)
+    const parameters = await builder.processAndCollectAllParams(
+      input.pageUrl,
+      () => getConsentedClientIpAddress(input.consent)
     )
     if (!marketingAllowed()) return {}
     completedPageUrls.add(input.pageUrl)
 
-    return readIdentifiers(builder)
+    return mapMetaClientParameterContext(parameters)
   })
 }

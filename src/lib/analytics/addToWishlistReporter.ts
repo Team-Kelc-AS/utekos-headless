@@ -23,16 +23,23 @@ export type ReportCanonicalAddToWishlistInput = {
   wishlistMutationId: string
 }
 
+export type ReportCanonicalAddToWishlistResult = {
+  cleanup: () => void
+  emitted: boolean
+}
+
 export function reportCanonicalAddToWishlist(
   input: ReportCanonicalAddToWishlistInput
-): () => void {
+): ReportCanonicalAddToWishlistResult {
   if (typeof window === 'undefined') {
-    return () => {}
+    return { cleanup: () => {}, emitted: false }
   }
 
   try {
     const clientContext = readBrowserReporterContext()
-    if (!clientContext) return () => {}
+    if (!clientContext) {
+      return { cleanup: () => {}, emitted: false }
+    }
     const pageView = browserPageViewSession.ensure({
       pageUrl: clientContext.pageUrl,
       ...(clientContext.documentReferrer ?
@@ -73,13 +80,15 @@ export function reportCanonicalAddToWishlist(
       eventDeviceInfo: clientContext.eventDeviceInfo
     })
 
+    const cleanup = startAddToWishlistCollectorTransport(event)
     sendGTMEvent(buildAddToWishlistDataLayerEvent(event))
-    return startAddToWishlistCollectorTransport(event)
+
+    return { cleanup, emitted: true }
   } catch (error) {
     queueMicrotask(() => {
       throw error
     })
-    return () => {}
+    return { cleanup: () => {}, emitted: false }
   }
 }
 

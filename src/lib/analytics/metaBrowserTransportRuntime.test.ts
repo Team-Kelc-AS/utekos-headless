@@ -17,6 +17,7 @@ test('marks every pre-rejection canonical row as consumed', () => {
   discardRejectedMetaBrowserEvents(browserWindow)
 
   assert.deepEqual(browserWindow.__utekosMetaPixelState, {
+    canonicalEventListening: false,
     initialized: false,
     lastDataLayerIndex: 2,
     listening: false,

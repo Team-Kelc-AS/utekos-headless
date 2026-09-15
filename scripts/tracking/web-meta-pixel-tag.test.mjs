@@ -127,7 +127,8 @@ test('requires current marketing consent', () => {
   assert.deepEqual(listeners.map(([name]) => name).sort(), [
     'CookiebotOnAccept',
     'CookiebotOnConsentReady',
-    'CookiebotOnDecline'
+    'CookiebotOnDecline',
+    'utekos:meta-canonical-browser-event'
   ])
 })
 
@@ -184,6 +185,37 @@ test('dispatches canonical events added after the app bridge loads', () => {
       .filter(call => call[0] === 'trackSingle')
       .map(call => [call[2], call[4].eventID]),
     [['PageView', 'future-page']]
+  )
+})
+
+test('dispatches navigation events synchronously with the exact CAPI event ID', () => {
+  const runtime = createRuntime({ marketing: true })
+  const event = canonicalEvent('select_item', 'navigation-select', {
+    currency: 'NOK',
+    gross_value: 1790,
+    items: [
+      {
+        variant_id:
+          'gid://shopify/ProductVariant/47123456789012',
+        quantity: 1,
+        gross_unit_price: 1790
+      }
+    ]
+  })
+
+  vm.runInContext(publicScript, runtime.context)
+  runtime.window.location = new URL(
+    'https://utekos.no/produkter/et-annet-produkt'
+  )
+  runtime.listeners.get(
+    'utekos:meta-canonical-browser-event'
+  )({ detail: event })
+
+  assert.deepEqual(
+    queuedCalls(runtime.window)
+      .filter(call => call[0] === 'trackSingleCustom')
+      .map(call => [call[2], call[4].eventID]),
+    [['SelectItem', 'navigation-select']]
   )
 })
 
@@ -581,7 +613,7 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
   )
 })
 
-test('rejects mismatched IDs and events from a different page', () => {
+test('rejects mismatched IDs and preserves granted events across navigation', () => {
   const runtime = createRuntime()
   const mismatched = canonicalEvent('page_view', 'browser-event')
   mismatched.canonical_event.event_id = 'server-event'
@@ -593,10 +625,10 @@ test('rejects mismatched IDs and events from a different page', () => {
   vm.runInContext(script, runtime.context)
 
   assert.deepEqual(
-    queuedCalls(runtime.window).filter(
-      call => call[0] === 'trackSingle'
-    ),
-    []
+    queuedCalls(runtime.window)
+      .filter(call => call[0] === 'trackSingle')
+      .map(call => [call[2], call[4].eventID]),
+    [['PageView', 'other-page']]
   )
 })
 
@@ -669,7 +701,7 @@ test('keeps SDK history PageViews disabled and forwards consent changes once', (
   vm.runInContext(script, runtime.context)
   vm.runInContext(script, runtime.context)
   assert.equal(runtime.window.fbq.disablePushState, true)
-  assert.equal(runtime.listeners.size, 3)
+  assert.equal(runtime.listeners.size, 4)
 
   runtime.window.Cookiebot.consent.marketing = false
   runtime.listeners.get('CookiebotOnConsentReady')()

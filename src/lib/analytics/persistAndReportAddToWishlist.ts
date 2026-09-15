@@ -53,14 +53,14 @@ export function persistAndReportAddToWishlist(
       }
     }
 
-    reportCanonicalAddToWishlist({
+    const report = reportCanonicalAddToWishlist({
       product: input.product,
       variant: input.variant,
       wishlistMutationId: result.mutationId
     })
 
     return {
-      emitted: true,
+      emitted: report.emitted,
       persisted: true,
       alreadyPresent: false
     }

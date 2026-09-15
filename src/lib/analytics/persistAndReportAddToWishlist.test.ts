@@ -51,6 +51,7 @@ test('persists once and marks alreadyPresent on second call without rethrow', ()
     storage
   })
   assert.equal(first.persisted, true)
+  assert.equal(first.emitted, false)
   assert.equal(first.alreadyPresent, false)
 
   const second = persistAndReportAddToWishlist({

@@ -5,6 +5,8 @@
 
   var PIXEL_ID = '1092362672918571'
   var EXTERNAL_ID_COOKIE = 'utekos_external_id'
+  var CANONICAL_BROWSER_EVENT =
+    'utekos:meta-canonical-browser-event'
   var EVENT_NAMES = {
     page_view: 'PageView',
     view_item_list: 'ViewItemList',
@@ -40,6 +42,7 @@
     sent: {},
     timer: null,
     listening: false,
+    canonicalEventListening: false,
     lastDataLayerIndex: 0,
     poller: null
   }
@@ -48,6 +51,9 @@
     state.lastDataLayerIndex = 0
   }
   if (typeof state.poller === 'undefined') state.poller = null
+  if (typeof state.canonicalEventListening === 'undefined') {
+    state.canonicalEventListening = false
+  }
 
   w.__utekosMetaPixelState = state
 
@@ -362,24 +368,6 @@
     return {}
   }
 
-  function isCurrentPage(canonicalEvent) {
-    if (!canonicalEvent.page_url) return true
-
-    try {
-      var eventUrl = new w.URL(
-        canonicalEvent.page_url,
-        w.location.href
-      )
-
-      return (
-        eventUrl.origin === w.location.origin &&
-        eventUrl.pathname === w.location.pathname
-      )
-    } catch (_error) {
-      return false
-    }
-  }
-
   function dispatch(entry) {
     var canonicalEvent = entry.canonical_event
     var metaEventName = EVENT_NAMES[entry.event]
@@ -395,7 +383,6 @@
     )
       return
     if (entry.event_id !== canonicalEvent.event_id) return
-    if (!isCurrentPage(canonicalEvent)) return
 
     eventKey = metaEventName + ':' + entry.event_id
     if (state.sent[eventKey]) return
@@ -413,6 +400,16 @@
     })
 
     state.sent[eventKey] = true
+  }
+
+  function listenForCanonicalEvents() {
+    if (state.canonicalEventListening) return
+    state.canonicalEventListening = true
+
+    w.addEventListener(CANONICAL_BROWSER_EVENT, function (event) {
+      if (!hasMarketingConsent()) return
+      dispatch(event && event.detail)
+    })
   }
 
   function scanDataLayer() {
@@ -503,5 +500,6 @@
 
   scheduleConsentRetry()
   if (state.timer === null) run(0)
+  listenForCanonicalEvents()
   startPolling()
 })(window, document)

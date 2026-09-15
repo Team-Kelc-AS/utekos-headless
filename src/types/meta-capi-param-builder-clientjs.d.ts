@@ -1,8 +1,8 @@
 declare module 'meta-capi-param-builder-clientjs' {
   export type ClientMetaParameters = {
-    client_ip_address?: string | undefined
-    fbc?: string | undefined
-    fbp?: string | undefined
+    _fbc?: string | undefined
+    _fbi?: string | undefined
+    _fbp?: string | undefined
   }
 
   export type ClientParamBuilder = {

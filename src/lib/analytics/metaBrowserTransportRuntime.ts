@@ -1,4 +1,5 @@
 type MetaPixelState = {
+  canonicalEventListening: boolean
   initialized: boolean
   lastDataLayerIndex: number
   listening: boolean
@@ -24,6 +25,7 @@ export function discardRejectedMetaBrowserEvents(
   }
 
   browserWindow.__utekosMetaPixelState = {
+    canonicalEventListening: false,
     initialized: false,
     lastDataLayerIndex: dataLayerLength,
     listening: false,

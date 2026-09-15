@@ -11,7 +11,12 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
     globalThis,
     'window'
   )
+  const previousCustomEvent = Object.getOwnPropertyDescriptor(
+    globalThis,
+    'CustomEvent'
+  )
   const data = new Map<string, string>()
+  const dispatched: Array<{ detail: unknown; type: string }> = []
   const host = {
     dataLayer: [] as Array<Record<string, unknown>>,
     location: {
@@ -34,10 +39,26 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
         data.delete(key)
       }
     },
-    addEventListener: () => {}
+    addEventListener: () => {},
+    dispatchEvent: (event: { detail: unknown; type: string }) => {
+      dispatched.push(event)
+      return true
+    }
   }
   Object.defineProperty(globalThis, 'window', {
     value: host,
+    configurable: true
+  })
+  Object.defineProperty(globalThis, 'CustomEvent', {
+    value: class {
+      detail: unknown
+      type: string
+
+      constructor(type: string, init: { detail: unknown }) {
+        this.type = type
+        this.detail = init.detail
+      }
+    },
     configurable: true
   })
   try {
@@ -67,6 +88,11 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
       ...event,
       meta_audience: 'engaged_audience'
     })
+    assert.equal(
+      dispatched[0]?.type,
+      'utekos:meta-canonical-browser-event'
+    )
+    assert.deepEqual(dispatched[0]?.detail, host.dataLayer[0])
     assert.equal(event.meta_audience, undefined)
     host.Cookiebot.consent.marketing = false
     sendCanonicalGTMEvent(buildPageViewDataLayerEvent(event))
@@ -77,5 +103,12 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
     if (previous)
       Object.defineProperty(globalThis, 'window', previous)
     else Reflect.deleteProperty(globalThis, 'window')
+    if (previousCustomEvent)
+      Object.defineProperty(
+        globalThis,
+        'CustomEvent',
+        previousCustomEvent
+      )
+    else Reflect.deleteProperty(globalThis, 'CustomEvent')
   }
 })

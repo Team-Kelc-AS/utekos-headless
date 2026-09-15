@@ -79,7 +79,7 @@ export function WishlistButton({
       variant
     })
 
-    if (result.emitted) {
+    if (result.persisted && !result.alreadyPresent) {
       setIsWished(true)
       toast.success(`${productTitle} er lagt til i ønskelisten`)
       setSyncDialogOpen(true)
