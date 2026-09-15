@@ -13,19 +13,19 @@ import {
 const PRODUCT_CONFIG = [
   {
     handle: 'utekos-techdown',
-    glowColor: '#0ea5e9',
+    glowColor: '#212a42',
     fallbackTitle: 'Utekos TechDown™',
     fallbackPrice: '1 990 kr'
   },
   {
     handle: 'utekos-mikrofiber',
-    glowColor: '#a3a3a3',
+    glowColor: '#414679',
     fallbackTitle: 'Utekos Mikrofiber™',
     fallbackPrice: '1 790 kr'
   },
   {
     handle: 'comfyrobe',
-    glowColor: '#f59e0b',
+    glowColor: '#202734',
     fallbackTitle: 'Comfyrobe™',
     fallbackPrice: '990 kr'
   }
@@ -44,24 +44,12 @@ export async function HelpChooseSection() {
   }
 
   return (
-    <article className='relative mb-24 w-full px-4 md:px-6'>
+    <article className='relative mb-12 w-full px-4 md:px-6'>
       <div className='absolute inset-0 -z-10 overflow-hidden opacity-30'>
         <div
-          className='absolute top-0 left-1/4 h-[300px] w-[300px] blur-[100px]'
-          style={{
-            background:
-              'radial-gradient(circle, #0ea5e9 0%, transparent 70%)'
-          }}
-        />
-        <div
-          className='absolute right-1/4 bottom-0 h-[300px] w-[300px] blur-[100px]'
-          style={{
-            background:
-              'radial-gradient(circle, #06b6d4 0%, transparent 70%)'
-          }}
+          className='absolute bg-night top-0 left-1/4 h-750 w-750 blur-[100px]'
         />
       </div>
-
       <div className='mx-auto max-w-7xl'>
         <Carousel
           slideCount={cards.length}
