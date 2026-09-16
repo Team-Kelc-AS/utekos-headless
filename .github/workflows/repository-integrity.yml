@@ -1,0 +1,64 @@
+name: Repository integrity
+
+on:
+  pull_request:
+    branches: [main]
+  merge_group:
+    types: [checks_requested]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  src-structure:
+    name: src structure guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Resolve comparison range
+        id: range
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+            echo "head=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event_name }}" == "merge_group" ]]; then
+            echo "base=${{ github.event.merge_group.base_sha }}" >> "$GITHUB_OUTPUT"
+            echo "head=${{ github.event.merge_group.head_sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "base=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
+            echo "head=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Reject mass src deletions or relocations
+        shell: bash
+        run: bash scripts/repository/guard-src-structure.sh "${{ steps.range.outputs.base }}" "${{ steps.range.outputs.head }}"
+        env:
+          # The guard uses Vercel's inverted ignoreCommand exit semantics.
+          # Force production mode here so a blocked delta returns success=0;
+          # the assertion below converts that result into a failing CI check.
+          VERCEL_ENV: production
+
+      - name: Assert guard did not request production block
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.range.outputs.base }}"
+          HEAD="${{ steps.range.outputs.head }}"
+          set +e
+          VERCEL_ENV=production bash scripts/repository/guard-src-structure.sh "$BASE" "$HEAD"
+          code=$?
+          set -e
+          if [[ "$code" -eq 0 ]]; then
+            echo "Repository integrity check failed: production guard would block this structural delta."
+            exit 1
+          fi
+          exit 0
