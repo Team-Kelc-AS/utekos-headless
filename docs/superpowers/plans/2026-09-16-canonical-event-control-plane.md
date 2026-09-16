@@ -6,6 +6,8 @@ Implementation branch: codex/canonical-event-control-plane-20260916
 Inspected source baseline: ff6306dfa426e6cf07413f3c8e9acf48762aa6dd
 Status: planning and source review only; no control-plane runtime implementation or deployment is claimed by this document.
 
+> Continuation note, 2026-09-16: the operator has since supplied the existing Mac checkout, Node 24 runtime, local MCP wrappers and a successful local Cloud Run MCP initialize result. See the appended handover below. The original blocker section is preserved as a historical session snapshot; it is not a description of the Mac or a current GCP IAM diagnosis.
+
 ## Goal and authority
 
 Make the existing CanonicalEvent ecosystem discoverable, inspectable and verifiable by agents through a read-only control-plane core and an MCP binding. Index, link and verify the existing implementation, contracts, configuration and receipts. Do not create a second event pipeline, business-event schema, provider registry or warehouse.
@@ -150,3 +152,69 @@ Project implementation and the supplied inventory define business semantics. Ext
 - https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization
 
 These are explicitly versioned references, not a claim that the existing host uses those revisions or that they are the latest revision. Verify the actual host and negotiated protocol before binding.
+
+## Continuation handover — 2026-09-16
+
+### Evidence source and local execution environment
+
+The following connection and Mac details were supplied by the operator in the conversation. They are operator-reported observations, not fresh commands executed by this assistant. This handover supersedes any interpretation of the historical sandbox limitations as deficiencies on the Mac.
+
+- Existing storefront checkout: `~/utekos-headless`.
+- Operator-reported default Node: `v24.17.0`; the project requires `24.x`.
+- Existing platform tooling: `~/dev/utekos-platform-tools/packages/mcp-config`.
+- Do not request another clone, install another Node version, or create a replacement provider MCP server merely because this chat's execution sandbox differs from the Mac.
+- Before any local edits, inspect the actual local branch, HEAD, worktree changes and applicable instructions. Do not reset, clean, stash or switch over unreviewed local work automatically.
+- GitHub writes to this plan's feature branch do not establish that the Mac checkout has changed or that tests have run there.
+
+### Cloud Run HTTP connection supplied by the operator
+
+| Field | Value |
+|---|---|
+| Project | `project-c683eb2c-20ae-4ec2-ac3` |
+| Region | `europe-west1` |
+| MCP service | `cloud-run-mcp` |
+| Upstream MCP endpoint | `https://cloud-run-mcp-rojbi5yl5q-ew.a.run.app/mcp` |
+| Local Cursor proxy endpoint | `http://127.0.0.1:3000/mcp` |
+| ID-token audience | `https://cloud-run-mcp-rojbi5yl5q-ew.a.run.app` |
+| Upstream authentication | `Authorization: Bearer <Google ID token>` |
+| Locally impersonated service account | `741353863697-compute@developer.gserviceaccount.com` |
+| Existing proxy script | `cloud-run-mcp-http-proxy.mjs` |
+| Operator-reported local result | POST `/mcp` initialize returned HTTP 200 with server name `cloud-run` |
+
+The operator reports that the proxy mints the ID token locally using gcloud service-account impersonation and injects it into the upstream request. Preserve the exact supplied upstream audience: no `/mcp`, no local proxy address and no trailing slash. No token, API key or private service-account key is to be copied into this plan or the conversation.
+
+A separate local stdio entry named `cloudrun`, launched with `npx @google-cloud/cloud-run-mcp`, also exists according to the operator. Do not silently substitute it for the IAM-protected HTTP connection, since that would change the execution and authentication path under examination.
+
+The impersonated account identifies the caller into the IAM-protected service. The account used by the MCP container for downstream Google Cloud API calls must be read from its actual runtime/credential configuration; it must not be inferred solely from the incoming ID token. The operator has identified the same account for GCP calls, but independent downstream readback is still outstanding.
+
+### Next read-only verification on the existing connection
+
+- [ ] Use the existing locally authorized MCP client and its negotiated protocol. Retain its initialized session, or perform the required initialization and initialized notification when starting a new session; preserve protocol/session headers required by that negotiated transport.
+- [ ] Enumerate `tools/list`, following returned pagination. Select a real advertised read operation and validate its actual input schema; do not invent a `get_service` or `list_services` signature from a different server or version.
+- [ ] Call the advertised read operation for `cloud-run-mcp` and `gtm-server` in the project and region above. Keep MCP-host health separate from sGTM production health.
+- [ ] Capture bounded, redacted evidence for the revisions receiving traffic, image identity, service identity, configuration references and readiness. Do not return secret values or full environment dumps.
+- [ ] Discover whether the actual tool catalog exposes Cloud Logging and Monitoring reads. Missing tools are capability gaps, not evidence that those Google Cloud services are empty or unavailable.
+- [ ] Read scoped logs/metrics only through available authorized operations. A successful initialize or tools/list does not by itself prove downstream read permissions or current sGTM state.
+
+### Session access versus service health
+
+Fresh tool discovery in the current chat did not expose invokable Cloud Run, Grok Bot Control or Webcmd actions. Plugin directory lookup did not resolve a callable Cloud Run integration. No new Cloud Run API invocation was made in this continuation, and no new GCP IAM failure was observed.
+
+The local proxy's successful operator-reported initialization is retained as evidence for that local path. It does not establish that a remotely executing chat tool can access the Mac's loopback listener. The remaining chat execution gap must not be addressed by publishing an unauthenticated proxy, adding allUsers invocation, pasting ID tokens, or rebuilding a working MCP host. Use an authorized local execution connection or an already authorized remote connector.
+
+### Existing Meta integration remains separate
+
+The operator identifies the existing Meta Ads remote endpoint and local wrapper under `~/dev/utekos-platform-tools/packages/mcp-config`, including `scripts/mcp/run-server.mjs`, `config/mcp/servers.base.json` and `config/mcp/cursor-runtime.json`. Inspect these existing files before any authentication fix or extension. Do not build a parallel Meta Ads MCP server.
+
+`pnpm meta:insights:live` in the storefront checkout remains the operator-designated campaign-data entry point. Meta MCP is an optional overlay while its authentication is repaired. An existing provider transport wrapper is not by itself evidence that Utekos-specific CanonicalEvent inspection tools are already registered; inspect the existing Utekos extension point before binding them.
+
+### Documentation checked for this handover
+
+These references support protocol/identity distinctions, not claims about this deployment:
+
+- Google Cloud Run service-to-service authentication: https://docs.cloud.google.com/run/docs/authenticating/service-to-service
+- Google Cloud Run service identity: https://docs.cloud.google.com/run/docs/securing/service-identity
+- MCP lifecycle, explicitly versioned reference: https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle
+- MCP tool discovery and invocation, explicitly versioned reference: https://modelcontextprotocol.io/specification/2025-11-25/server/tools
+
+This continuation changes documentation only. It does not modify the local proxy, MCP registration, runtime code, IAM, Cloud Run revisions or the production event pipeline.
