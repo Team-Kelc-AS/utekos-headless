@@ -39,16 +39,6 @@ jobs:
 
       - name: Reject mass src deletions or relocations
         shell: bash
-        run: bash scripts/repository/guard-src-structure.sh "${{ steps.range.outputs.base }}" "${{ steps.range.outputs.head }}"
-        env:
-          # The guard uses Vercel's inverted ignoreCommand exit semantics.
-          # Force production mode here so a blocked delta returns success=0;
-          # the assertion below converts that result into a failing CI check.
-          VERCEL_ENV: production
-
-      - name: Assert guard did not request production block
-        if: always()
-        shell: bash
         run: |
           set -euo pipefail
           BASE="${{ steps.range.outputs.base }}"
@@ -57,8 +47,17 @@ jobs:
           VERCEL_ENV=production bash scripts/repository/guard-src-structure.sh "$BASE" "$HEAD"
           code=$?
           set -e
+
+          # Vercel ignoreCommand semantics are intentionally inverted:
+          # 0 = skip/block deployment, 1 = continue deployment.
           if [[ "$code" -eq 0 ]]; then
             echo "Repository integrity check failed: production guard would block this structural delta."
             exit 1
           fi
-          exit 0
+
+          if [[ "$code" -ne 1 ]]; then
+            echo "Repository integrity guard returned unexpected exit code: $code"
+            exit 1
+          fi
+
+          echo "Repository integrity check passed."
