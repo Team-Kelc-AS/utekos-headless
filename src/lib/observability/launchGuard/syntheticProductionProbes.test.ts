@@ -55,7 +55,7 @@ function responseFor(url: URL, init: RequestInit) {
     return new Response(null, { status: 303 })
   }
 
-  if (url.pathname === '/__gtg/gtm.js') {
+  if (url.pathname === '/__sgtm/apgqnrnczg.js') {
     return new Response('/* Google Tag Manager */', {
       status: 200
     })

@@ -7,6 +7,8 @@ import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { Suspense, type ReactNode } from 'react'
 import { SkreddersyVarmenJsonLd } from './structured-data/SkreddersyVarmenJsonLd'
 import { resolveSkreddersyVarmenCommerce } from './data/resolveSkreddersyVarmenCommerce'
+import { GoogleTagManagerNoScript } from '@/components/analytics/GoogleTagManagerNoScript'
+import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 
 async function SkreddersyVarmenStructuredData() {
   const commerce = await resolveSkreddersyVarmenCommerce()
@@ -38,6 +40,11 @@ export default function LandingPageLayout({
       className={landingFont.variable}
     >
       <body>
+        <GoogleTagManagerNoScript
+          enabled={shouldLoadGoogleTagManager(
+            process.env.VERCEL_ENV
+          )}
+        />
         <LandingTelemetry />
         <header className='landing-header' data-site-header>
           <a href='/' aria-label='Utekos – forsiden'>

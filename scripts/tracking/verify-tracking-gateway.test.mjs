@@ -4,7 +4,7 @@ import { verifyTrackingGateway } from './verify-tracking-gateway.mjs'
 
 function createFetch({ cacheControl = 'no-store', vercelCache = 'MISS' } = {}) {
   return async url => {
-    if (url.includes('/__gtg/')) {
+    if (url.includes('/__sgtm/apgqnrnczg.js')) {
       return new Response('/* GTM-5TWMJQFP */', {
         status: 200,
         headers: { 'content-type': 'application/javascript; charset=UTF-8' }

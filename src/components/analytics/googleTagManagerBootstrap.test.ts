@@ -80,6 +80,16 @@ test('defaults Consent Mode to denied before GTM starts', () => {
     'ads_data_redaction',
     true
   ])
+  assert.equal(
+    browserWindow.dataLayer.some(
+      value =>
+        value !== null &&
+        typeof value === 'object' &&
+        'event' in value &&
+        value.event === 'gtm.js'
+    ),
+    false
+  )
 })
 
 test('removes the complete query before a consent decision', () => {

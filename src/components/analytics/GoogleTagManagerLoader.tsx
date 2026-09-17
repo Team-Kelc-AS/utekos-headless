@@ -1,34 +1,8 @@
 import 'server-only'
 
 import Script from 'next/script'
-import { SITE_URL } from '@/constants'
 import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from './googleTagManagerBootstrap'
-import { GoogleTagManagerContainerScript } from './GoogleTagManagerContainerScript'
-
-const GOOGLE_TAG_MANAGER_ID =
-  'GTM-5TWMJQFP'
-
-const googleTagGatewayOrigin =
-  (
-    process.env.VERCEL_ENV === 'preview' &&
-    process.env.VERCEL_URL
-  ) ?
-    `https://${process.env.VERCEL_URL}`
-  : process.env.NODE_ENV ===
-      'development' ?
-    'http://localhost:3000'
-  : SITE_URL
-
-const googleTagManagerScriptUrl =
-  new URL(
-    '/__gtg/gtm.js',
-    googleTagGatewayOrigin
-  )
-
-googleTagManagerScriptUrl.searchParams.set(
-  'id',
-  GOOGLE_TAG_MANAGER_ID
-)
+import { STAPE_CUSTOM_LOADER } from './stapeCustomLoader'
 
 type GoogleTagManagerLoaderProps = {
   enabled: boolean
@@ -44,7 +18,7 @@ export function GoogleTagManagerLoader({
   return (
     <>
       <Script
-        id='_next-gtm-init'
+        id='_next-gtm-consent-defaults'
         strategy='beforeInteractive'
         dangerouslySetInnerHTML={{
           __html:
@@ -52,8 +26,12 @@ export function GoogleTagManagerLoader({
         }}
       />
 
-      <GoogleTagManagerContainerScript
-        src={googleTagManagerScriptUrl.toString()}
+      <Script
+        id='_next-stape-custom-loader'
+        strategy='beforeInteractive'
+        dangerouslySetInnerHTML={{
+          __html: STAPE_CUSTOM_LOADER
+        }}
       />
     </>
   )

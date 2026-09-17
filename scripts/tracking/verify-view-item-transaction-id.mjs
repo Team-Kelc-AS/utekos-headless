@@ -81,7 +81,7 @@ async function main() {
 
   page.on('request', request => {
     const url = request.url()
-    if (url.includes('/__sgtm/') || url.includes('cloud.server.utekos.no')) {
+    if (url.includes('/__sgtm/') || url.includes('edge.utekos.no')) {
       sgtmRequests.push({
         url,
         method: request.method(),

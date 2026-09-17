@@ -12,7 +12,7 @@ const STOREFRONT_ORIGINS = [
 
 const TAG_GATEWAY_ORIGINS = [
   'https://www.googletagmanager.com',
-  'https://cloud.server.utekos.no',
+  'https://edge.utekos.no',
   ...COOKIEBOT_ORIGINS
 ] as const
 

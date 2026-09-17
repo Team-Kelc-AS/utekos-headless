@@ -17,7 +17,7 @@ const serverGtmPathSchema = z
   .max(32)
   .refine(segments => segments.join('/').length <= 2048)
 
-const SERVER_GTM_ORIGIN = 'https://cloud.server.utekos.no'
+const SERVER_GTM_ORIGIN = 'https://edge.utekos.no'
 
 export function buildServerGtmUpstreamUrl(
   path: unknown,

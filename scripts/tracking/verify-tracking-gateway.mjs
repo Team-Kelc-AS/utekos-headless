@@ -1,6 +1,9 @@
 import { pathToFileURL } from 'node:url'
 
 const GTM_ID = 'GTM-5TWMJQFP'
+const CUSTOM_LOADER_PATH = '/__sgtm/apgqnrnczg.js'
+const CUSTOM_LOADER_QUERY =
+  'ds4bay5=Dh5eKSYjXFIzLS4kIyghQRFHUUBDSBUJWg8XCxkBAkkJFUUdHR5MSDglEAkGAw%3D%3D'
 const DEFAULT_BASE_URL = 'http://localhost:3000'
 const REQUEST_TIMEOUT_MS = 15_000
 
@@ -28,7 +31,7 @@ export async function verifyTrackingGateway({
   fetchImpl = fetch
 } = {}) {
   const origin = normalizeBaseUrl(baseUrl)
-  const gtmUrl = `${origin}/__gtg/gtm.js?id=${GTM_ID}`
+  const gtmUrl = `${origin}${CUSTOM_LOADER_PATH}?${CUSTOM_LOADER_QUERY}`
   const healthUrl = `${origin}/__sgtm/healthy`
 
   const [gtmResponse, healthResponse] = await Promise.all([

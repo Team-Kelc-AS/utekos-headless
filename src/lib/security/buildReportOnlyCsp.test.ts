@@ -29,8 +29,9 @@ test('protects structural directives and permits the consent-aware tag gateways'
   )
   assert.match(
     csp,
-    /connect-src[^;]*https:\/\/cloud\.server\.utekos\.no/
+    /connect-src[^;]*https:\/\/edge\.utekos\.no/
   )
+  assert.match(csp, /frame-src[^;]*https:\/\/edge\.utekos\.no/)
   assert.match(
     csp,
     /connect-src[^;]*https:\/\/pagead2\.googlesyndication\.com/

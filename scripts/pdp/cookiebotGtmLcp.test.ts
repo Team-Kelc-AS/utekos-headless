@@ -24,17 +24,25 @@ test(
     const source = await readSource(
       'src/components/analytics/GoogleTagManagerLoader.tsx'
     )
-    const containerSource = await readSource(
-      'src/components/analytics/GoogleTagManagerContainerScript.tsx'
-    )
     const bootstrapSource = await readSource(
       'src/components/analytics/googleTagManagerBootstrap.ts'
+    )
+    const stapeLoaderSource = await readSource(
+      'src/components/analytics/stapeCustomLoader.ts'
+    )
+    const noScriptSource = await readSource(
+      'src/components/analytics/GoogleTagManagerNoScript.tsx'
     )
 
     assert.match(
       layoutSource,
       /<GoogleTagManagerLoader[\s\S]*?enabled=\{shouldLoadMarketingScripts\}/,
       'Root layout must retain the canonical GTM loader'
+    )
+    assert.match(
+      layoutSource,
+      /<body[^>]*>[\s\S]*?<GoogleTagManagerNoScript[\s\S]*?<Script/,
+      'The GTM noscript fallback must be the first body child'
     )
 
     assert.doesNotMatch(
@@ -57,18 +65,18 @@ test(
 
     assert.match(
       source,
-      /const GOOGLE_TAG_MANAGER_ID\s*=\s*['"]GTM-5TWMJQFP['"]/,
-      'GTM loader must retain the canonical web GTM container'
+      /STAPE_CUSTOM_LOADER/,
+      'GTM loader must use the generated Stape Custom Loader'
     )
 
     assert.match(
-      source,
-      /googleTagManagerScriptUrl\.searchParams\.set\(\s*['"]id['"],\s*GOOGLE_TAG_MANAGER_ID\s*\)/,
-      'First-party GTM script URL must receive the container ID'
+      stapeLoaderSource,
+      /https:\/\/utekos\.no\/__sgtm\/apgqnrnczg\.js\?/,
+      'Stape Custom Loader must continue through the first-party server gateway'
     )
 
     const initScript = source.match(
-      /<Script[\s\S]*?id=['"]_next-gtm-init['"][\s\S]*?\/?>[\s\S]*?(?:<\/Script>)?/
+      /<Script[\s\S]*?id=['"]_next-gtm-consent-defaults['"][\s\S]*?\/?>[\s\S]*?(?:<\/Script>)?/
     )
 
     assert.ok(
@@ -82,39 +90,23 @@ test(
       'GTM dataLayer initialization must happen before hydration'
     )
 
-    assert.match(
+    assert.doesNotMatch(
       bootstrapSource,
-      /['"]gtm\.start['"]/
+      /['"]gtm\.start['"]/,
+      'Consent defaults must not emit a second gtm.js start event'
     )
-
-    assert.match(
-      bootstrapSource,
-      /event:\s*['"]gtm\.js['"]/
-    )
-
     assert.match(
       source,
-      /<GoogleTagManagerContainerScript[\s\S]*?src=\{googleTagManagerScriptUrl\.toString\(\)\}/,
-      'GTM must continue through the first-party tag gateway'
-    )
-
-    assert.match(
-      containerSource,
-      /scheduleDeferredMarketingContainer/,
-      'GTM container must wait for stored consent, LCP/idle, or interaction'
+      /id=['"]_next-gtm-consent-defaults['"][\s\S]*?GOOGLE_TAG_MANAGER_BOOTSTRAP[\s\S]*?id=['"]_next-stape-custom-loader['"][\s\S]*?STAPE_CUSTOM_LOADER/,
+      'Consent defaults must execute before the Stape Custom Loader'
     )
     assert.match(
-      containerSource,
-      /hasStoredCookiebotDecision/,
-      'Returning visitors with Cookiebot must still load GTM immediately'
-    )
-    assert.match(
-      containerSource,
-      /id=['"]_next-gtm['"][\s\S]*?strategy=['"]afterInteractive['"]/,
-      'External GTM container must remain outside the critical rendering path'
+      noScriptSource,
+      /https:\/\/edge\.utekos\.no\/ns\.html\?id=GTM-5TWMJQFP/,
+      'The noscript fallback must use the configured Stape custom domain'
     )
     assert.doesNotMatch(
-      containerSource,
+      source,
       /consent\.cookiebot\.(?:com|eu)/,
       'Cookiebot must remain owned by the GTM CMP template'
     )

@@ -5,24 +5,20 @@ import test from 'node:test'
 const readSource = (path: string) =>
   readFile(new URL(path, import.meta.url), 'utf8')
 
-test('keeps consent default before hydration and defers external GTM', async () => {
+test('runs consent defaults before the exact Stape Custom Loader', async () => {
   const source = await readSource(
     '../../../components/analytics/GoogleTagManagerLoader.tsx'
-  )
-  const container = await readSource(
-    '../../../components/analytics/GoogleTagManagerContainerScript.tsx'
   )
 
   assert.match(
     source,
-    /id='_next-gtm-init'[\s\S]*?strategy='beforeInteractive'/
+    /id='_next-gtm-consent-defaults'[\s\S]*?strategy='beforeInteractive'/
   )
-  assert.match(source, /GoogleTagManagerContainerScript/)
   assert.match(
-    container,
-    /id='_next-gtm'[\s\S]*?strategy='afterInteractive'/
+    source,
+    /id='_next-gtm-consent-defaults'[\s\S]*?GOOGLE_TAG_MANAGER_BOOTSTRAP[\s\S]*?id='_next-stape-custom-loader'[\s\S]*?STAPE_CUSTOM_LOADER/
   )
-  assert.match(container, /scheduleDeferredMarketingContainer/)
+  assert.doesNotMatch(source, /GoogleTagManagerContainerScript/)
 })
 
 test('does not prefetch unrelated routes from end-of-page navigation', async () => {

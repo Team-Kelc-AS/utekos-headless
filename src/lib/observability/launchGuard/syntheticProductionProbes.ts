@@ -5,7 +5,8 @@ import { parseIntegrationHealthSnapshot } from './integrationHealthSnapshot'
 import type { IntegrationHealthSnapshot } from './integrationHealthSnapshot'
 
 const PROBE_TIMEOUT_MS = 8_000
-const GTM_ID = 'GTM-5TWMJQFP'
+const STAPE_CUSTOM_LOADER_QUERY =
+  'ds4bay5=Dh5eKSYjXFIzLS4kIyghQRFHUUBDSBUJWg8XCxkBAkkJFUUdHR5MSDglEAkGAw%3D%3D'
 
 type FetchLike = (
   input: string | URL | Request,
@@ -154,7 +155,7 @@ const probes: readonly ProbeDefinition[] = [
         : 'gtm_unexpected_status'
     }),
     integration: 'gtm',
-    path: `/__gtg/gtm.js?id=${GTM_ID}`,
+    path: `/__sgtm/apgqnrnczg.js?${STAPE_CUSTOM_LOADER_QUERY}`,
     surface: 'web_container_loader'
   },
   {

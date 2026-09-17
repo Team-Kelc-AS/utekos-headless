@@ -25,6 +25,7 @@ import { Google_Sans_Flex } from 'next/font/google'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
 import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
+import { GoogleTagManagerNoScript } from '@/components/analytics/GoogleTagManagerNoScript'
 import { ConsentGrantedScript } from '@/components/analytics/ConsentGrantedScript'
 import { WebVitals } from '@/components/analytics/WebVitals'
 import { MetaParameterBuilderInitializer } from '@/components/analytics/MetaParameterBuilderInitializer'
@@ -80,6 +81,9 @@ export default function RootLayout({
       className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
     >
       <body className='scroll-smooth bg-background text-foreground antialiased'>
+        <GoogleTagManagerNoScript
+          enabled={shouldLoadMarketingScripts}
+        />
         <Script
           id='utekos-consent-presentation'
           src='/consent/utekos-presentation.js'

@@ -59,9 +59,5 @@ export const GOOGLE_TAG_MANAGER_BOOTSTRAP = `
     w.addEventListener('CookiebotOnAccept',syncPageLocation);
     w.addEventListener('CookiebotOnDecline',syncPageLocation);
 
-    w[l].push({
-      'gtm.start':new Date().getTime(),
-      event:'gtm.js'
-    });
   })(window,'dataLayer');
 `

@@ -41,7 +41,7 @@ test('proxies a server GTM request and forces final no-store headers', async () 
 
   assert.equal(
     capturedUrl?.href,
-    'https://cloud.server.utekos.no/g/collect?v=2&tid=GT-1'
+    'https://edge.utekos.no/g/collect?v=2&tid=GT-1'
   )
   assert.equal(capturedInit?.method, 'POST')
   assert.equal(
