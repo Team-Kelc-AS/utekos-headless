@@ -10,7 +10,7 @@ async function readSource(relativePath: string): Promise<string> {
 }
 
 test(
-  'related products share one webhook-invalidated catalog snapshot across handles',
+  'related products cache handle-specific recommendations with webhook invalidation',
   async () => {
     const [loaderSource, cachedCardsSource] = await Promise.all([
       readSource('src/api/lib/products/loadRelatedProducts.ts'),
@@ -22,7 +22,12 @@ test(
       loaderSource,
       /dependencies\.fetchProductCardsWithRetry\s*\?\?\s*getCachedProductCards/
     )
+    assert.match(
+      loaderSource,
+      /productHandle: currentHandle/
+    )
     assert.match(cachedCardsSource, /'use cache: remote'/)
+    assert.match(cachedCardsSource, /productHandle: string/)
     assert.match(cachedCardsSource, /cacheTag\(TAGS\.products\)/)
     assert.match(cachedCardsSource, /cacheLife\('collections'\)/)
     assert.match(cachedCardsSource, /fetchProductCardsWithRetry/)
