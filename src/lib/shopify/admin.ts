@@ -5,6 +5,12 @@ import type {
   CatalogSyncWeightUnit
 } from '@/lib/catalog-sync/types'
 import { getShopifyAdminConfig } from '@/lib/shopify/getShopifyAdminConfig'
+import {
+  hasShopifyAdminGraphqlErrorCode,
+  retryShopifyAdminThrottle,
+  ShopifyAdminThrottleError,
+  SHOPIFY_ADMIN_THROTTLE_RETRY_DELAY_MS
+} from '@/lib/shopify/retryShopifyAdminThrottle'
 
 const PRODUCT_PAGE_SIZE = 100
 const VARIANT_PAGE_SIZE = 250
@@ -258,46 +264,71 @@ async function fetchCatalogSyncProductPage(
     }
   `
 
-  const response = await fetch(graphqlUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': accessToken
+  return retryShopifyAdminThrottle(
+    async () => {
+      const response = await fetch(graphqlUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': accessToken
+        },
+        body: JSON.stringify({ query, variables: { cursor } })
+      })
+
+      if (!response.ok) {
+        const text = await response.text()
+        const message = `Shopify Admin API Error (${response.status}): ${text}`
+
+        if (response.status === 429) {
+          throw new ShopifyAdminThrottleError(message)
+        }
+
+        throw new Error(message)
+      }
+
+      const json =
+        (await response.json()) as ShopifyCatalogSyncQueryResponse
+
+      if (json.errors) {
+        const message = `GraphQL Errors: ${JSON.stringify(json.errors)}`
+
+        if (
+          hasShopifyAdminGraphqlErrorCode(
+            json.errors,
+            'THROTTLED'
+          )
+        ) {
+          throw new ShopifyAdminThrottleError(message)
+        }
+
+        throw new Error(message)
+      }
+
+      const productsConnection = json.data?.products
+
+      if (!productsConnection) {
+        return { products: [], nextCursor: null }
+      }
+
+      return {
+        products: productsConnection.edges.map(edge =>
+          mapProduct(edge.node)
+        ),
+        nextCursor:
+          productsConnection.pageInfo.hasNextPage ?
+            productsConnection.pageInfo.endCursor
+          : null
+      }
     },
-    body: JSON.stringify({ query, variables: { cursor } })
-  })
-
-  if (!response.ok) {
-    const text = await response.text()
-    throw new Error(
-      `Shopify Admin API Error (${response.status}): ${text}`
-    )
-  }
-
-  const json =
-    (await response.json()) as ShopifyCatalogSyncQueryResponse
-
-  if (json.errors) {
-    throw new Error(
-      `GraphQL Errors: ${JSON.stringify(json.errors)}`
-    )
-  }
-
-  const productsConnection = json.data?.products
-
-  if (!productsConnection) {
-    return { products: [], nextCursor: null }
-  }
-
-  return {
-    products: productsConnection.edges.map(edge =>
-      mapProduct(edge.node)
-    ),
-    nextCursor:
-      productsConnection.pageInfo.hasNextPage ?
-        productsConnection.pageInfo.endCursor
-      : null
-  }
+    {
+      onRetry: error => {
+        console.warn(
+          `[Shopify Admin] Rate limited; retrying catalog page in ${SHOPIFY_ADMIN_THROTTLE_RETRY_DELAY_MS}ms:`,
+          error.message
+        )
+      }
+    }
+  )
 }
 
 function mapCustomerMatchCustomer(
