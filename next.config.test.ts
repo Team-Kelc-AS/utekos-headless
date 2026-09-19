@@ -4,9 +4,9 @@ import type { NextConfig } from 'next'
 
 test('serves security headers globally outside Proxy', async () => {
   const configModulePath = './next.config.mts'
-  const { default: nextConfig } = (await import(
-    configModulePath
-  )) as { default: NextConfig }
+  const { nextConfig } = (await import(configModulePath)) as {
+    nextConfig: NextConfig
+  }
   const headersFactory = nextConfig.headers
   if (typeof headersFactory !== 'function') {
     assert.fail('next.config must define global headers')
@@ -37,9 +37,9 @@ test('serves security headers globally outside Proxy', async () => {
 
 test('permanently redirects legacy Shopify product URLs to public product URLs', async () => {
   const configModulePath = './next.config.mts'
-  const { default: nextConfig } = (await import(
-    configModulePath
-  )) as { default: NextConfig }
+  const { nextConfig } = (await import(configModulePath)) as {
+    nextConfig: NextConfig
+  }
   const redirectsFactory = nextConfig.redirects
   if (typeof redirectsFactory !== 'function') {
     assert.fail('next.config must define redirects')
@@ -57,4 +57,47 @@ test('permanently redirects legacy Shopify product URLs to public product URLs',
       permanent: true
     }
   )
+})
+
+test('proxies Vercel telemetry through first-party paths', async () => {
+  const configModulePath = './next.config.mts'
+  const { nextConfig } = (await import(configModulePath)) as {
+    nextConfig: NextConfig
+  }
+  const rewritesFactory = nextConfig.rewrites
+  if (typeof rewritesFactory !== 'function') {
+    assert.fail('next.config must define rewrites')
+  }
+
+  const rewrites = await rewritesFactory()
+  assert.ok(!Array.isArray(rewrites))
+  const beforeFiles = rewrites.beforeFiles
+  assert.ok(beforeFiles)
+
+  const telemetryRewrites = beforeFiles.filter(rule =>
+    rule.source.startsWith('/telemetry/v1/')
+  )
+
+  assert.deepEqual(telemetryRewrites, [
+    {
+      source: '/telemetry/v1/web.js',
+      destination: '/_vercel/insights/script.js'
+    },
+    {
+      source: '/telemetry/v1/view',
+      destination: '/_vercel/insights/view'
+    },
+    {
+      source: '/telemetry/v1/event',
+      destination: '/_vercel/insights/event'
+    },
+    {
+      source: '/telemetry/v1/speed.js',
+      destination: '/_vercel/speed-insights/script.js'
+    },
+    {
+      source: '/telemetry/v1/vitals',
+      destination: '/_vercel/speed-insights/vitals'
+    }
+  ])
 })

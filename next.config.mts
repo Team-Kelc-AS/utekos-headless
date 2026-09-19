@@ -5,6 +5,7 @@ import { withWorkflow } from 'workflow/next'
 
 const GOOGLE_TAG_GATEWAY_PATH = '/__gtg'
 const SERVER_TAG_MANAGER_PATH = '/__sgtm'
+const VERCEL_TELEMETRY_PATH = '/telemetry/v1'
 
 const GOOGLE_TAG_MANAGER_ORIGIN =
   'https://www.googletagmanager.com'
@@ -68,7 +69,6 @@ async function buildSecurityHeaders() {
   ]
   /* eslint-enable quotes */
 }
-
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
@@ -182,6 +182,26 @@ const nextConfig: NextConfig = {
           destination: '/api/tracking/server-gtm/:path*'
         },
         {
+          source: `${VERCEL_TELEMETRY_PATH}/web.js`,
+          destination: '/_vercel/insights/script.js'
+        },
+        {
+          source: `${VERCEL_TELEMETRY_PATH}/view`,
+          destination: '/_vercel/insights/view'
+        },
+        {
+          source: `${VERCEL_TELEMETRY_PATH}/event`,
+          destination: '/_vercel/insights/event'
+        },
+        {
+          source: `${VERCEL_TELEMETRY_PATH}/speed.js`,
+          destination: '/_vercel/speed-insights/script.js'
+        },
+        {
+          source: `${VERCEL_TELEMETRY_PATH}/vitals`,
+          destination: '/_vercel/speed-insights/vitals'
+        },
+        {
           source: '/',
           has: [{ type: 'host', value: 'feed.utekos.no' }],
           destination: '/klarna-feed.xml'
@@ -291,4 +311,5 @@ const configuredNextConfig = withWorkflow(
   withBundleAnalyzer(withMDX(nextConfig))
 )
 
+export { nextConfig }
 export default configuredNextConfig
