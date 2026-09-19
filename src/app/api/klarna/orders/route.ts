@@ -1,3 +1,4 @@
+import { flattenError } from 'zod/v4/core'
 import {
   klarnaCreateOrderRequestSchema,
   type KlarnaCreateOrderRequest
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: 'Invalid request body',
-        details: parsed.error.flatten()
+        details: flattenError(parsed.error)
       },
       { status: 400 }
     )

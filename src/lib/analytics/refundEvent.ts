@@ -19,7 +19,8 @@ export const canonicalRefundCommerceSchema = z.strictObject({
   items: z.array(refundItemSchema)
 })
 
-export const canonicalRefundSchema = canonicalEventEnvelopeSchema
+export const canonicalRefundSchema = z
+  .strictObject(canonicalEventEnvelopeSchema.shape)
   .omit({ consent: true })
   .extend({
     consent: orderConsentSnapshotSchema,

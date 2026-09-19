@@ -1,9 +1,9 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
-const uuidSchema = z.string().uuid()
+const uuidSchema = z.string().check(z.uuid())
 const anonymousExternalIdSchema = z
   .string()
-  .regex(/^anon_([0-9a-f-]{36})$/i)
+  .check(z.regex(/^anon_([0-9a-f-]{36})$/i))
 
 type MicrosoftIdentitySource = {
   browser_id?: Record<string, string> | undefined

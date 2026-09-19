@@ -1,3 +1,4 @@
+import { array } from '@/lib/validation/zodMini'
 import { productPresentationDefinitionSchema } from './productPresentationSchema'
 import {
   TECH_DOWN_HIDDEN_SIZES,
@@ -13,8 +14,12 @@ const commonGenderOption = {
   defaultPublicValue: 'Unisex'
 } as const
 
+const productPresentationDefinitionsSchema = array(
+  productPresentationDefinitionSchema
+)
+
 export const productPresentationDefinitions =
-  productPresentationDefinitionSchema.array().parse([
+  productPresentationDefinitionsSchema.parse([
     {
       publicHandle: 'utekos-techdown',
       displayName: 'Utekos TechDown™',

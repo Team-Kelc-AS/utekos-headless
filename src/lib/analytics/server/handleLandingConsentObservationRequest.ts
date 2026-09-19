@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { $ZodError } from 'zod/v4/core'
 import {
   classifyLandingConsentDecision,
   landingConsentObservationSchema,
@@ -102,7 +102,7 @@ export async function handleLandingConsentObservationRequest(
     return response(
       {
         error:
-          error instanceof z.ZodError ?
+          error instanceof $ZodError ?
             'invalid_observation'
           : 'invalid_json'
       },

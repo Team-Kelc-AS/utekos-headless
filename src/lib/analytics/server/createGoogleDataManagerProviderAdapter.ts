@@ -1,12 +1,10 @@
-import type { z } from 'zod'
+import type * as z from 'zod/v4/core'
 import type { CanonicalEvent } from '../canonicalEvent'
 import type {
   ProviderAdapter,
   ProviderAdapterKey
 } from './providerAdapter'
-import type {
-  GoogleDataManagerSendResult
-} from './sendGoogleDataManagerEvent'
+import type { GoogleDataManagerSendResult } from './sendGoogleDataManagerEvent'
 
 const RETRYABLE_GRPC_CODES = new Set([1, 4, 8, 10, 13, 14, 16])
 const RETRYABLE_NETWORK_CODES = new Set([
@@ -65,10 +63,14 @@ function isRetryableGoogleError(error: unknown) {
   const cause = asRecord(current?.cause)
   const code = current?.code
   const networkCode =
-    stringProperty(current, 'code') ?? stringProperty(cause, 'code')
+    stringProperty(current, 'code') ??
+    stringProperty(cause, 'code')
   const message = stringProperty(current, 'message') ?? ''
 
-  if (typeof code === 'number' && RETRYABLE_GRPC_CODES.has(code)) {
+  if (
+    typeof code === 'number' &&
+    RETRYABLE_GRPC_CODES.has(code)
+  ) {
     return true
   }
   if (networkCode && RETRYABLE_NETWORK_CODES.has(networkCode)) {
@@ -112,11 +114,12 @@ export function createGoogleDataManagerProviderAdapter<
   dispatch: (event: E) => Promise<R>
   eventName: E['event_name']
   key: ProviderAdapterKey
-  schema: z.ZodType<E>
+  schema: z.$ZodType<E>
 }): ProviderAdapter<E, R> {
   return {
     deadLetterReasons: {
-      attemptsExhausted: 'google_data_manager_attempts_exhausted',
+      attemptsExhausted:
+        'google_data_manager_attempts_exhausted',
       invalidPayload: 'invalid_canonical_payload',
       permanentError: 'google_data_manager_permanent_error'
     },
@@ -134,7 +137,12 @@ export function createGoogleDataManagerProviderAdapter<
     }),
     provider: 'google',
     retryPolicy: {
-      delaysMs: [60_000, 5 * 60_000, 30 * 60_000, 2 * 60 * 60_000],
+      delaysMs: [
+        60_000,
+        5 * 60_000,
+        30 * 60_000,
+        2 * 60 * 60_000
+      ],
       maxAttempts: 5,
       positiveJitterRatio: 0.2
     },

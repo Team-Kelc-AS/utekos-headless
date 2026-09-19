@@ -11,7 +11,8 @@ import {
 import { mapEventDeviceInfo } from './mapEventDeviceInfo'
 
 export const canonicalInteractWithAccordionCustomDataSchema =
-  canonicalCommerceValueSchema.extend({
+  z.strictObject({
+    ...canonicalCommerceValueSchema.shape,
     accordion_id: z.string().min(1),
     accordion_title: z.string().min(1),
     interaction_sequence: z.number().int().positive(),
@@ -24,7 +25,8 @@ export type CanonicalInteractWithAccordionCustomData = z.infer<
 >
 
 export const canonicalInteractWithAccordionSchema =
-  canonicalEventEnvelopeSchema.extend({
+  z.strictObject({
+    ...canonicalEventEnvelopeSchema.shape,
     event_name: z.literal('interact_with_accordion'),
     source: z.literal('web'),
     page_url: z.string().url(),
@@ -68,7 +70,9 @@ export type InteractWithAccordionDataLayerEvent = {
 export function createCanonicalInteractWithAccordion(
   input: CreateCanonicalInteractWithAccordionInput
 ): CanonicalInteractWithAccordion {
-  const eventDeviceInfo = mapEventDeviceInfo(input.eventDeviceInfo)
+  const eventDeviceInfo = mapEventDeviceInfo(
+    input.eventDeviceInfo
+  )
 
   return canonicalInteractWithAccordionSchema.parse({
     schema_version: 1,
@@ -80,14 +84,22 @@ export function createCanonicalInteractWithAccordion(
     page_url: input.pageUrl,
     page_view_id: input.pageViewId,
     page_title: input.pageTitle,
-    ...(input.referrerUrl ? { referrer_url: input.referrerUrl } : {}),
+    ...(input.referrerUrl ?
+      { referrer_url: input.referrerUrl }
+    : {}),
     consent: input.consent,
     custom_data: input.customData,
     ...(input.browserId ? { browser_id: input.browserId } : {}),
     ...(input.clickId ? { click_id: input.clickId } : {}),
-    ...(input.externalId ? { external_id: input.externalId } : {}),
-    ...(input.impressionId ? { impression_id: input.impressionId } : {}),
-    ...(eventDeviceInfo ? { event_device_info: eventDeviceInfo } : {})
+    ...(input.externalId ?
+      { external_id: input.externalId }
+    : {}),
+    ...(input.impressionId ?
+      { impression_id: input.impressionId }
+    : {}),
+    ...(eventDeviceInfo ?
+      { event_device_info: eventDeviceInfo }
+    : {})
   })
 }
 

@@ -201,9 +201,9 @@ function camelEventFile(name: string) {
 }
 
 function canonicalSchemaByEventName() {
-  const schemas = new Map<string, z.ZodType>()
+  const schemas = new Map<string, z.core.$ZodType>()
   for (const schema of canonicalEventSchema.options) {
-    const eventName = schema.shape.event_name.value
+    const eventName = schema.shape.event_name._zod.def.values[0]
     if (
       typeof eventName !== 'string' ||
       schemas.has(eventName)

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   consentedMetaAudience,
   metaAudienceSchema,
@@ -75,27 +75,33 @@ const campaignAttributeKeys = {
   string
 >
 
-const identifierValueSchema = z.string().min(1).max(4096)
+const identifierValueSchema = z
+  .string()
+  .check(z.minLength(1), z.maxLength(4096))
 const identifierMapSchema = z.record(
-  z.string().min(1),
+  z.string().check(z.minLength(1)),
   identifierValueSchema
 )
-const attributionUrlSchema = z.string().url().max(4096)
-const capturedAtSchema = z.string().datetime({ offset: true })
+const attributionUrlSchema = z
+  .string()
+  .check(z.url(), z.maxLength(4096))
+const capturedAtSchema = z
+  .string()
+  .check(z.iso.datetime({ offset: true }))
 
 export const checkoutAttributionSnapshotSchema = z.strictObject({
   schema_version: z.literal(1),
   captured_at: capturedAtSchema,
   consent: orderConsentSnapshotSchema,
-  experiment: canonicalExperimentAssignmentSchema.optional(),
-  browser_id: identifierMapSchema.optional(),
-  campaign: campaignAttributionSchema.optional(),
-  meta_audience: metaAudienceSchema.optional(),
-  click_id: identifierMapSchema.optional(),
-  external_id: identifierValueSchema.optional(),
-  user_data: canonicalUserDataSchema.optional(),
-  page_url: attributionUrlSchema.optional(),
-  referrer_url: attributionUrlSchema.optional()
+  experiment: z.optional(canonicalExperimentAssignmentSchema),
+  browser_id: z.optional(identifierMapSchema),
+  campaign: z.optional(campaignAttributionSchema),
+  meta_audience: z.optional(metaAudienceSchema),
+  click_id: z.optional(identifierMapSchema),
+  external_id: z.optional(identifierValueSchema),
+  user_data: z.optional(canonicalUserDataSchema),
+  page_url: z.optional(attributionUrlSchema),
+  referrer_url: z.optional(attributionUrlSchema)
 })
 
 export type CheckoutAttributionSnapshot = z.infer<
@@ -483,16 +489,17 @@ export function checkoutAttributionSnapshotToShopifyAttributes(
   beginCheckoutEventId?: string
 ) {
   const attributes = buildCartAttributes(snapshot)
-
   if (
     snapshot.consent.analytics === 'granted' &&
     beginCheckoutEventId
   ) {
     attributes.push({
       key: BEGIN_CHECKOUT_EVENT_ATTRIBUTE,
-      value: z.string().uuid().parse(beginCheckoutEventId)
+      value: z
+        .string()
+        .check(z.uuid())
+        .parse(beginCheckoutEventId)
     })
   }
-
   return attributes
 }

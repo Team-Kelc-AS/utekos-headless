@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   canonicalCommerceValueSchema,
   type CanonicalCommerceValue
@@ -13,26 +13,30 @@ import {
   type EventDeviceInfoInput
 } from './mapEventDeviceInfo'
 
-export const canonicalAddToCartCommerceSchema =
-  canonicalCommerceValueSchema.extend({
-    cart_mutation_id: z.string().min(1),
-    cart_id: z.string().min(1)
-  })
+export const canonicalAddToCartCommerceSchema = z.extend(
+  canonicalCommerceValueSchema,
+  {
+    cart_mutation_id: z.string().check(z.minLength(1)),
+    cart_id: z.string().check(z.minLength(1))
+  }
+)
 
 export type CanonicalAddToCartCommerce = z.infer<
   typeof canonicalAddToCartCommerceSchema
 >
 
-export const canonicalAddToCartSchema =
-  canonicalEventEnvelopeSchema.extend({
+export const canonicalAddToCartSchema = z.extend(
+  canonicalEventEnvelopeSchema,
+  {
     event_name: z.literal('add_to_cart'),
     source: z.literal('web'),
-    page_view_id: z.uuid().optional(),
+    page_view_id: z.optional(z.uuid()),
     page_url: z.url(),
-    referrer_url: z.url().optional(),
-    page_title: z.string().min(1),
+    referrer_url: z.optional(z.url()),
+    page_title: z.string().check(z.minLength(1)),
     custom_data: canonicalAddToCartCommerceSchema
-  })
+  }
+)
 
 export type CanonicalAddToCart = z.infer<
   typeof canonicalAddToCartSchema
@@ -68,7 +72,9 @@ export type AddToCartDataLayerEvent = {
 export function createCanonicalAddToCart(
   input: CreateCanonicalAddToCartInput
 ): CanonicalAddToCart {
-  const eventDeviceInfo = mapEventDeviceInfo(input.eventDeviceInfo)
+  const eventDeviceInfo = mapEventDeviceInfo(
+    input.eventDeviceInfo
+  )
 
   return canonicalAddToCartSchema.parse({
     schema_version: 1,
@@ -78,18 +84,26 @@ export function createCanonicalAddToCart(
     source: 'web',
     environment: input.environment,
     page_url: input.pageUrl,
-    ...(input.pageViewId ? { page_view_id: input.pageViewId } : {}),
-    ...(input.referrerUrl ? { referrer_url: input.referrerUrl } : {}),
+    ...(input.pageViewId ?
+      { page_view_id: input.pageViewId }
+    : {}),
+    ...(input.referrerUrl ?
+      { referrer_url: input.referrerUrl }
+    : {}),
     page_title: input.pageTitle,
     consent: input.consent,
     custom_data: input.commerce,
     ...(input.browserId ? { browser_id: input.browserId } : {}),
     ...(input.clickId ? { click_id: input.clickId } : {}),
-    ...(input.externalId ? { external_id: input.externalId } : {}),
+    ...(input.externalId ?
+      { external_id: input.externalId }
+    : {}),
     ...(input.impressionId ?
       { impression_id: input.impressionId }
     : {}),
-    ...(eventDeviceInfo ? { event_device_info: eventDeviceInfo } : {})
+    ...(eventDeviceInfo ?
+      { event_device_info: eventDeviceInfo }
+    : {})
   })
 }
 

@@ -24,7 +24,7 @@ const providerIdentifierSchema = z
 const sha256Schema = z.string().regex(/^[a-f0-9]{64}$/u)
 
 export const facebookLoginOAuthContextSchema = z.strictObject({
-  attribution: campaignAttributionSchema.optional(),
+  attribution: z.optional(campaignAttributionSchema),
   externalId: anonymousExternalIdSchema,
   fbc: providerIdentifierSchema.optional(),
   fbclid: providerIdentifierSchema.optional(),

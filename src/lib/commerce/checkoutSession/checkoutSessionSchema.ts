@@ -16,9 +16,7 @@ export type CheckoutSessionEnvironment = z.infer<
   typeof checkoutSessionEnvironmentSchema
 >
 
-const isoDateTimeSchema = z.string().datetime({
-  offset: true
-})
+const isoDateTimeSchema = z.string().datetime({ offset: true })
 
 const nullableIsoDateTimeSchema = isoDateTimeSchema.nullable()
 
@@ -46,23 +44,16 @@ const shopifyVariantGidSchema = z
   .string()
   .regex(/^gid:\/\/shopify\/ProductVariant\/\d+$/)
 
-  const SHOPIFY_CART_LINE_GID_PREFIX =
+const SHOPIFY_CART_LINE_GID_PREFIX =
   'gid://shopify/CartLine/' as const
 
-const MAX_SHOPIFY_OPAQUE_ID_LENGTH =
-  4_096
+const MAX_SHOPIFY_OPAQUE_ID_LENGTH = 4_096
 
 const shopifyCartLineGidSchema = z
   .string()
-  .min(
-    SHOPIFY_CART_LINE_GID_PREFIX.length + 1
-  )
-  .max(
-    MAX_SHOPIFY_OPAQUE_ID_LENGTH
-  )
-  .startsWith(
-    SHOPIFY_CART_LINE_GID_PREFIX
-  )
+  .min(SHOPIFY_CART_LINE_GID_PREFIX.length + 1)
+  .max(MAX_SHOPIFY_OPAQUE_ID_LENGTH)
+  .startsWith(SHOPIFY_CART_LINE_GID_PREFIX)
 
 const shopifyOrderGidSchema = z
   .string()
@@ -118,9 +109,7 @@ export const checkoutSessionLineItemSchema = z.strictObject({
 
   line_total: checkoutSessionMoneySchema.nullable(),
 
-  selected_options: z.array(
-    checkoutSessionSelectedOptionSchema
-  ),
+  selected_options: z.array(checkoutSessionSelectedOptionSchema),
 
   image_url: nullableUrlSchema,
 
@@ -143,117 +132,109 @@ export type CheckoutSessionCartSource = z.infer<
   typeof checkoutSessionCartSourceSchema
 >
 
-export const checkoutSessionShopifyCartSchema =
-  z
-    .strictObject({
-      cart_gid: shopifyCartGidSchema,
+export const checkoutSessionShopifyCartSchema = z
+  .strictObject({
+    cart_gid: shopifyCartGidSchema,
 
-      cart_token: z.string().min(1).max(512),
+    cart_token: z.string().min(1).max(512),
 
-      source: checkoutSessionCartSourceSchema,
+    source: checkoutSessionCartSourceSchema,
 
-      line_items: z.array(checkoutSessionLineItemSchema),
+    line_items: z.array(checkoutSessionLineItemSchema),
 
-      total_quantity: z.number().int().nonnegative(),
+    total_quantity: z.number().int().nonnegative(),
 
-      subtotal: checkoutSessionMoneySchema,
+    subtotal: checkoutSessionMoneySchema,
 
-      total: checkoutSessionMoneySchema,
+    total: checkoutSessionMoneySchema,
 
-      provider_updated_at: nullableIsoDateTimeSchema,
+    provider_updated_at: nullableIsoDateTimeSchema,
 
-      first_observed_at: isoDateTimeSchema,
+    first_observed_at: isoDateTimeSchema,
 
-      last_observed_at: isoDateTimeSchema
-    })
-    .superRefine((cart, context) => {
-      const lineQuantity = cart.line_items.reduce(
-        (sum, line) => sum + line.quantity,
-        0
-      )
+    last_observed_at: isoDateTimeSchema
+  })
+  .superRefine((cart, context) => {
+    const lineQuantity = cart.line_items.reduce(
+      (sum, line) => sum + line.quantity,
+      0
+    )
 
-      if (lineQuantity !== cart.total_quantity) {
+    if (lineQuantity !== cart.total_quantity) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['total_quantity'],
+        message:
+          'total_quantity must equal the sum of line item quantities'
+      })
+    }
+
+    if (
+      cart.subtotal.currency_code !== cart.total.currency_code
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['total', 'currency_code'],
+        message: 'subtotal and total must use the same currency'
+      })
+    }
+
+    for (
+      let index = 0;
+      index < cart.line_items.length;
+      index += 1
+    ) {
+      const line = cart.line_items[index]
+
+      if (
+        line &&
+        line.unit_price.currency_code !==
+          cart.total.currency_code
+      ) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['total_quantity'],
-          message:
-            'total_quantity must equal the sum of line item quantities'
+          path: [
+            'line_items',
+            index,
+            'unit_price',
+            'currency_code'
+          ],
+          message: 'line item currency must equal cart currency'
         })
       }
 
       if (
-        cart.subtotal.currency_code !==
-        cart.total.currency_code
+        line?.line_total &&
+        line.line_total.currency_code !==
+          cart.total.currency_code
       ) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['total', 'currency_code'],
-          message:
-            'subtotal and total must use the same currency'
+          path: [
+            'line_items',
+            index,
+            'line_total',
+            'currency_code'
+          ],
+          message: 'line total currency must equal cart currency'
         })
       }
-
-      for (
-        let index = 0;
-        index < cart.line_items.length;
-        index += 1
-      ) {
-        const line = cart.line_items[index]
-
-        if (
-          line &&
-          line.unit_price.currency_code !==
-            cart.total.currency_code
-        ) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [
-              'line_items',
-              index,
-              'unit_price',
-              'currency_code'
-            ],
-            message:
-              'line item currency must equal cart currency'
-          })
-        }
-
-        if (
-          line?.line_total &&
-          line.line_total.currency_code !==
-            cart.total.currency_code
-        ) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [
-              'line_items',
-              index,
-              'line_total',
-              'currency_code'
-            ],
-            message:
-              'line total currency must equal cart currency'
-          })
-        }
-      }
-    })
+    }
+  })
 
 export type CheckoutSessionShopifyCart = z.infer<
   typeof checkoutSessionShopifyCartSchema
 >
 
-export const checkoutAttemptMilestonesSchema =
-  z.strictObject({
-    began_at: isoDateTimeSchema,
+export const checkoutAttemptMilestonesSchema = z.strictObject({
+  began_at: isoDateTimeSchema,
 
-    shipping_info_submitted_at:
-      nullableIsoDateTimeSchema,
+  shipping_info_submitted_at: nullableIsoDateTimeSchema,
 
-    payment_info_submitted_at:
-      nullableIsoDateTimeSchema,
+  payment_info_submitted_at: nullableIsoDateTimeSchema,
 
-    completed_at: nullableIsoDateTimeSchema
-  })
+  completed_at: nullableIsoDateTimeSchema
+})
 
 export type CheckoutAttemptMilestones = z.infer<
   typeof checkoutAttemptMilestonesSchema
@@ -273,81 +254,67 @@ export type ShopifyCheckoutAttemptStatus = z.infer<
   typeof shopifyCheckoutAttemptStatusSchema
 >
 
-export const shopifyCheckoutAttemptStateSchema =
-  z.strictObject({
-    status: shopifyCheckoutAttemptStatusSchema,
+export const shopifyCheckoutAttemptStateSchema = z.strictObject({
+  status: shopifyCheckoutAttemptStatusSchema,
 
-    /**
-     * Token identifying the Shopify checkout/recovery resource.
-     *
-     * This is deliberately separate from:
-     * - Storefront Cart token
-     * - checkout recovery key
-     */
-    checkout_token: z
-      .string()
-      .min(1)
-      .max(512)
-      .nullable(),
+  /**
+   * Token identifying the Shopify checkout/recovery resource.
+   *
+   * This is deliberately separate from:
+   * - Storefront Cart token
+   * - checkout recovery key
+   */
+  checkout_token: z.string().min(1).max(512).nullable(),
 
-    /**
-     * PRIVATE CAPABILITY URL.
-     *
-     * May contain Shopify capability credentials.
-     * Must NEVER be copied to:
-     * - canonical analytics events
-     * - Pinterest
-     * - GTM
-     * - Meta
-     * - Microsoft
-     * - Vercel Web Analytics
-     * - ordinary unredacted runtime logs
-     */
-    private_checkout_url: nullableUrlSchema,
+  /**
+   * PRIVATE CAPABILITY URL.
+   *
+   * May contain Shopify capability credentials.
+   * Must NEVER be copied to:
+   * - canonical analytics events
+   * - Pinterest
+   * - GTM
+   * - Meta
+   * - Microsoft
+   * - Vercel Web Analytics
+   * - ordinary unredacted runtime logs
+   */
+  private_checkout_url: nullableUrlSchema,
 
-    /**
-     * Safe correlation fingerprint for observability.
-     *
-     * Format:
-     * sha256:<64 lowercase hexadecimal characters>
-     */
-    checkout_url_fingerprint:
-      sha256FingerprintSchema.nullable(),
+  /**
+   * Safe correlation fingerprint for observability.
+   *
+   * Format:
+   * sha256:<64 lowercase hexadecimal characters>
+   */
+  checkout_url_fingerprint: sha256FingerprintSchema.nullable(),
 
-    abandoned_checkout_id:
-      shopifyAbandonedCheckoutGidSchema.nullable(),
+  abandoned_checkout_id:
+    shopifyAbandonedCheckoutGidSchema.nullable(),
 
-    /**
-     * PRIVATE recovery capability URL from Shopify.
-     */
-    private_abandoned_checkout_url: nullableUrlSchema,
+  /**
+   * PRIVATE recovery capability URL from Shopify.
+   */
+  private_abandoned_checkout_url: nullableUrlSchema,
 
-    abandoned_checkout_created_at:
-      nullableIsoDateTimeSchema,
+  abandoned_checkout_created_at: nullableIsoDateTimeSchema,
 
-    abandoned_checkout_updated_at:
-      nullableIsoDateTimeSchema,
+  abandoned_checkout_updated_at: nullableIsoDateTimeSchema,
 
-    most_recent_step: z
-      .string()
-      .min(1)
-      .max(255)
-      .nullable(),
+  most_recent_step: z.string().min(1).max(255).nullable(),
 
-    inventory_available: z.boolean().nullable(),
+  inventory_available: z.boolean().nullable(),
 
-    native_email_state: z
-      .string()
-      .min(1)
-      .max(255)
-      .nullable(),
+  native_email_state: z.string().min(1).max(255).nullable(),
 
-    customer_has_no_order_since_abandonment:
-      z.boolean().nullable(),
+  customer_has_no_order_since_abandonment: z
+    .boolean()
+    .nullable(),
 
-    customer_has_no_draft_order_since_abandonment:
-      z.boolean().nullable()
-  })
+  customer_has_no_draft_order_since_abandonment: z
+    .boolean()
+    .nullable()
+})
 
 export type ShopifyCheckoutAttemptState = z.infer<
   typeof shopifyCheckoutAttemptStateSchema
@@ -368,58 +335,45 @@ export type KlarnaExpressAttemptStatus = z.infer<
   typeof klarnaExpressAttemptStatusSchema
 >
 
-export const klarnaExpressAttemptStateSchema =
-  z.strictObject({
-    status: klarnaExpressAttemptStatusSchema,
+export const klarnaExpressAttemptStateSchema = z.strictObject({
+  status: klarnaExpressAttemptStatusSchema,
 
-    /**
-     * Raw Klarna authorization tokens are intentionally forbidden
-     * from the Checkout Session Registry.
-     *
-     * Only a one-way fingerprint can be persisted.
-     */
-    authorization_token_fingerprint:
-      sha256FingerprintSchema.nullable(),
+  /**
+   * Raw Klarna authorization tokens are intentionally forbidden
+   * from the Checkout Session Registry.
+   *
+   * Only a one-way fingerprint can be persisted.
+   */
+  authorization_token_fingerprint:
+    sha256FingerprintSchema.nullable(),
 
-    klarna_order_id: z
-      .string()
-      .min(1)
-      .max(512)
-      .nullable(),
+  klarna_order_id: z.string().min(1).max(512).nullable(),
 
-    fraud_status: z
-      .enum(['ACCEPTED', 'PENDING', 'REJECTED'])
-      .nullable(),
+  fraud_status: z
+    .enum(['ACCEPTED', 'PENDING', 'REJECTED'])
+    .nullable(),
 
-    shopify_draft_order_id:
-      shopifyDraftOrderGidSchema.nullable(),
+  shopify_draft_order_id: shopifyDraftOrderGidSchema.nullable(),
 
-    shopify_order_id:
-      shopifyOrderGidSchema.nullable(),
+  shopify_order_id: shopifyOrderGidSchema.nullable(),
 
-    /**
-     * Klarna may return a redirect URL as part of successful
-     * completion. Keep it private because its future semantics
-     * are provider-owned.
-     */
-    private_redirect_url: nullableUrlSchema,
+  /**
+   * Klarna may return a redirect URL as part of successful
+   * completion. Keep it private because its future semantics
+   * are provider-owned.
+   */
+  private_redirect_url: nullableUrlSchema,
 
-    shipping_address_collected_at:
-      nullableIsoDateTimeSchema,
+  shipping_address_collected_at: nullableIsoDateTimeSchema,
 
-    authorization_completed_at:
-      nullableIsoDateTimeSchema,
+  authorization_completed_at: nullableIsoDateTimeSchema,
 
-    order_created_at: nullableIsoDateTimeSchema,
+  order_created_at: nullableIsoDateTimeSchema,
 
-    failed_at: nullableIsoDateTimeSchema,
+  failed_at: nullableIsoDateTimeSchema,
 
-    failure_code: z
-      .string()
-      .min(1)
-      .max(255)
-      .nullable()
-  })
+  failure_code: z.string().min(1).max(255).nullable()
+})
 
 export type KlarnaExpressAttemptState = z.infer<
   typeof klarnaExpressAttemptStateSchema
@@ -429,10 +383,7 @@ export const checkoutAttemptSchema = z
   .strictObject({
     attempt_id: z.string().uuid(),
 
-    begin_checkout_event_id: z
-      .string()
-      .uuid()
-      .nullable(),
+    begin_checkout_event_id: z.string().uuid().nullable(),
 
     method: checkoutMethodSchema,
 
@@ -487,9 +438,7 @@ export const checkoutAttemptSchema = z
       }
     }
 
-    if (
-      attempt.milestones.began_at !== attempt.started_at
-    ) {
+    if (attempt.milestones.began_at !== attempt.started_at) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['milestones', 'began_at'],
@@ -517,59 +466,23 @@ export const privateCheckoutSessionCustomerSchema =
   z.strictObject({
     source: checkoutSessionCustomerSourceSchema,
 
-    email: z
-      .string()
-      .email()
-      .max(320)
-      .nullable(),
+    email: z.string().email().max(320).nullable(),
 
-    phone: z
-      .string()
-      .min(1)
-      .max(64)
-      .nullable(),
+    phone: z.string().min(1).max(64).nullable(),
 
-    first_name: z
-      .string()
-      .min(1)
-      .max(255)
-      .nullable(),
+    first_name: z.string().min(1).max(255).nullable(),
 
-    last_name: z
-      .string()
-      .min(1)
-      .max(255)
-      .nullable(),
+    last_name: z.string().min(1).max(255).nullable(),
 
-    address1: z
-      .string()
-      .min(1)
-      .max(500)
-      .nullable(),
+    address1: z.string().min(1).max(500).nullable(),
 
-    address2: z
-      .string()
-      .min(1)
-      .max(500)
-      .nullable(),
+    address2: z.string().min(1).max(500).nullable(),
 
-    postal_code: z
-      .string()
-      .min(1)
-      .max(32)
-      .nullable(),
+    postal_code: z.string().min(1).max(32).nullable(),
 
-    city: z
-      .string()
-      .min(1)
-      .max(255)
-      .nullable(),
+    city: z.string().min(1).max(255).nullable(),
 
-    region: z
-      .string()
-      .min(1)
-      .max(255)
-      .nullable(),
+    region: z.string().min(1).max(255).nullable(),
 
     country_code: z
       .string()
@@ -604,55 +517,39 @@ export type CheckoutRecoveryTarget = z.infer<
   typeof checkoutRecoveryTargetSchema
 >
 
-export const checkoutSessionRecoverySchema =
-  z.strictObject({
-    status: checkoutRecoveryStatusSchema,
+export const checkoutSessionRecoverySchema = z.strictObject({
+  status: checkoutRecoveryStatusSchema,
 
-    preferred_target:
-      checkoutRecoveryTargetSchema.nullable(),
+  preferred_target: checkoutRecoveryTargetSchema.nullable(),
 
-    /**
-     * Public opaque identifier used by a future
-     * Utekos-owned recovery route.
-     *
-     * It must NOT itself contain Shopify/Klarna secrets.
-     */
-    public_recovery_id: z
-      .string()
-      .min(16)
-      .max(255)
-      .nullable(),
+  /**
+   * Public opaque identifier used by a future
+   * Utekos-owned recovery route.
+   *
+   * It must NOT itself contain Shopify/Klarna secrets.
+   */
+  public_recovery_id: z.string().min(16).max(255).nullable(),
 
-    last_evaluated_at: nullableIsoDateTimeSchema,
+  last_evaluated_at: nullableIsoDateTimeSchema,
 
-    suppression_reason: z
-      .string()
-      .min(1)
-      .max(500)
-      .nullable()
-  })
+  suppression_reason: z.string().min(1).max(500).nullable()
+})
 
 export type CheckoutSessionRecovery = z.infer<
   typeof checkoutSessionRecoverySchema
 >
 
-export const checkoutSessionConversionSchema =
-  z.strictObject({
-    occurred_at: isoDateTimeSchema,
+export const checkoutSessionConversionSchema = z.strictObject({
+  occurred_at: isoDateTimeSchema,
 
-    attempt_id: z.string().uuid().nullable(),
+  attempt_id: z.string().uuid().nullable(),
 
-    method: checkoutMethodSchema.nullable(),
+  method: z.nullable(checkoutMethodSchema),
 
-    shopify_order_id:
-      shopifyOrderGidSchema.nullable(),
+  shopify_order_id: shopifyOrderGidSchema.nullable(),
 
-    shopify_order_name: z
-      .string()
-      .min(1)
-      .max(255)
-      .nullable()
-  })
+  shopify_order_name: z.string().min(1).max(255).nullable()
+})
 
 export type CheckoutSessionConversion = z.infer<
   typeof checkoutSessionConversionSchema
@@ -728,19 +625,14 @@ export const checkoutSessionSchema = z
       index < session.checkout_attempts.length;
       index += 1
     ) {
-      const attempt =
-        session.checkout_attempts[index]
+      const attempt = session.checkout_attempts[index]
 
       if (!attempt) continue
 
       if (attemptIds.has(attempt.attempt_id)) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
-          path: [
-            'checkout_attempts',
-            index,
-            'attempt_id'
-          ],
+          path: ['checkout_attempts', index, 'attempt_id'],
           message:
             'checkout attempt IDs must be unique within a session'
         })
@@ -766,16 +658,13 @@ export const checkoutSessionSchema = z
         context.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['conversion'],
-          message:
-            'converted sessions require conversion state'
+          message: 'converted sessions require conversion state'
         })
       }
 
       if (
         session.conversion?.attempt_id &&
-        !attemptIds.has(
-          session.conversion.attempt_id
-        )
+        !attemptIds.has(session.conversion.attempt_id)
       ) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
@@ -827,8 +716,7 @@ export const checkoutSessionSchema = z
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['expires_at'],
-        message:
-          'expires_at must be later than last_seen_at'
+        message: 'expires_at must be later than last_seen_at'
       })
     }
   })

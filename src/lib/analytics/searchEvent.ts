@@ -7,7 +7,8 @@ export const canonicalSearchCustomDataSchema = z.strictObject({
   result_state: z.enum(['results', 'empty', 'error']).optional()
 })
 
-export const canonicalSearchSchema = canonicalEventEnvelopeSchema.extend({
+export const canonicalSearchSchema = z.strictObject({
+  ...canonicalEventEnvelopeSchema.shape,
   event_name: z.literal('search'),
   source: z.literal('web'),
   page_url: z.string().url(),
@@ -17,4 +18,6 @@ export const canonicalSearchSchema = canonicalEventEnvelopeSchema.extend({
   custom_data: canonicalSearchCustomDataSchema
 })
 
-export type CanonicalSearch = z.infer<typeof canonicalSearchSchema>
+export type CanonicalSearch = z.infer<
+  typeof canonicalSearchSchema
+>

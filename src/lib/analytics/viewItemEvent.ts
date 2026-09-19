@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   canonicalCommerceValueSchema,
   type CanonicalCommerceValue
@@ -18,16 +18,18 @@ export const canonicalViewItemCommerceSchema =
 
 export type CanonicalViewItemCommerce = CanonicalCommerceValue
 
-export const canonicalViewItemSchema =
-  canonicalEventEnvelopeSchema.extend({
+export const canonicalViewItemSchema = z.extend(
+  canonicalEventEnvelopeSchema,
+  {
     event_name: z.literal('view_item'),
     source: z.literal('web'),
-    page_view_id: z.string().uuid(),
-    page_url: z.string().url(),
-    referrer_url: z.string().url().optional(),
-    page_title: z.string().min(1),
+    page_view_id: z.string().check(z.uuid()),
+    page_url: z.string().check(z.url()),
+    referrer_url: z.optional(z.string().check(z.url())),
+    page_title: z.string().check(z.minLength(1)),
     custom_data: canonicalViewItemCommerceSchema
-  })
+  }
+)
 
 export type CanonicalViewItem = z.infer<
   typeof canonicalViewItemSchema

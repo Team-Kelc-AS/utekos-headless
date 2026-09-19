@@ -1,6 +1,6 @@
+import { $ZodError } from 'zod/v4/core'
 import 'server-only'
 
-import { ZodError } from 'zod'
 import { acceptCanonicalRefund } from '@/lib/analytics/server/acceptCanonicalRefund'
 import { postgresCanonicalEventStore } from '@/lib/analytics/server/postgresCanonicalPageViewStore'
 import { createShopifyWebhookCommerceSourceEvidence } from '@/lib/analytics/server/shopifyCommerceSourceEvidence'
@@ -91,7 +91,7 @@ export async function handleShopifyRefundsCreateWebhook(
       result.status === 'accepted' ? 202 : 200
     )
   } catch (error) {
-    if (error instanceof ZodError) {
+    if (error instanceof $ZodError) {
       return jsonResponse({ error: 'invalid_event' }, 400)
     }
 

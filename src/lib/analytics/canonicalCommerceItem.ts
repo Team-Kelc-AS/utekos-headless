@@ -1,46 +1,47 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
 export const selectedOptionSchema = z.strictObject({
-  name: z.string().min(1),
-  value: z.string().min(1)
+  name: z.string().check(z.minLength(1)),
+  value: z.string().check(z.minLength(1))
 })
 
 export const canonicalCommerceItemSchema = z.strictObject({
-  item_id: z.string().min(1),
-  product_id: z.string().min(1),
-  variant_id: z.string().min(1),
-  item_name: z.string().min(1),
-  item_brand: z.string().min(1).optional(),
-  item_variant: z.string().min(1).optional(),
-  item_category: z.string().min(1).optional(),
-  item_category2: z.string().min(1).optional(),
-  item_category3: z.string().min(1).optional(),
-  item_category4: z.string().min(1).optional(),
-  item_category5: z.string().min(1).optional(),
-  product_handle: z.string().min(1),
-  product_type: z.string().min(1).optional(),
-  sku: z.string().min(1).optional(),
-  gtin: z.string().min(1).optional(),
-  quantity: z.number().int().positive(),
-  unit_price: z.number().nonnegative(),
-  gross_unit_price: z.number().nonnegative(),
-
-  compare_at_unit_price: z.number().nonnegative().optional(),
-  gross_compare_at_unit_price: z.number().nonnegative().optional(),
-
-  discount: z.number().nonnegative().optional(),
-  gross_discount: z.number().nonnegative().optional(),
-
-  tax_amount: z.number().nonnegative(),
-  tax_rate: z.number().min(0).max(1),
+  item_id: z.string().check(z.minLength(1)),
+  product_id: z.string().check(z.minLength(1)),
+  variant_id: z.string().check(z.minLength(1)),
+  item_name: z.string().check(z.minLength(1)),
+  item_brand: z.optional(z.string().check(z.minLength(1))),
+  item_variant: z.optional(z.string().check(z.minLength(1))),
+  item_category: z.optional(z.string().check(z.minLength(1))),
+  item_category2: z.optional(z.string().check(z.minLength(1))),
+  item_category3: z.optional(z.string().check(z.minLength(1))),
+  item_category4: z.optional(z.string().check(z.minLength(1))),
+  item_category5: z.optional(z.string().check(z.minLength(1))),
+  product_handle: z.string().check(z.minLength(1)),
+  product_type: z.optional(z.string().check(z.minLength(1))),
+  sku: z.optional(z.string().check(z.minLength(1))),
+  gtin: z.optional(z.string().check(z.minLength(1))),
+  quantity: z.number().check(z.int(), z.gt(0)),
+  unit_price: z.number().check(z.gte(0)),
+  gross_unit_price: z.number().check(z.gte(0)),
+  compare_at_unit_price: z.optional(z.number().check(z.gte(0))),
+  gross_compare_at_unit_price: z.optional(
+    z.number().check(z.gte(0))
+  ),
+  discount: z.optional(z.number().check(z.gte(0))),
+  gross_discount: z.optional(z.number().check(z.gte(0))),
+  tax_amount: z.number().check(z.gte(0)),
+  tax_rate: z.number().check(z.gte(0), z.lte(1)),
   taxable: z.boolean(),
   price_includes_tax: z.boolean(),
   available_for_sale: z.boolean(),
   currently_not_in_stock: z.boolean(),
-  quantity_available: z.number().int().nonnegative().nullable(),
+  quantity_available: z.nullable(
+    z.number().check(z.int(), z.gte(0))
+  ),
   selected_options: z.array(selectedOptionSchema),
-  collection_ids: z.array(z.string().min(1)),
-  collection_titles: z.array(z.string().min(1))
+  collection_ids: z.array(z.string().check(z.minLength(1))),
+  collection_titles: z.array(z.string().check(z.minLength(1)))
 })
 
 export type CanonicalCommerceItem = z.infer<
@@ -48,11 +49,13 @@ export type CanonicalCommerceItem = z.infer<
 >
 
 export const canonicalCommerceValueSchema = z.strictObject({
-  currency: z.string().regex(/^[A-Z]{3}$/),
-  value: z.number().nonnegative(),
-  gross_value: z.number().nonnegative(),
-  tax_value: z.number().nonnegative(),
-  items: z.array(canonicalCommerceItemSchema).min(1)
+  currency: z.string().check(z.regex(/^[A-Z]{3}$/)),
+  value: z.number().check(z.gte(0)),
+  gross_value: z.number().check(z.gte(0)),
+  tax_value: z.number().check(z.gte(0)),
+  items: z
+    .array(canonicalCommerceItemSchema)
+    .check(z.minLength(1))
 })
 
 export type CanonicalCommerceValue = z.infer<

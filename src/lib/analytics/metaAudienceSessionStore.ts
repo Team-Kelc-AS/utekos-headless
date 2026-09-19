@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   metaAudienceSchema,
   type MetaAudience
@@ -17,7 +17,7 @@ type AudienceStorage = Pick<
 >
 const storedSchema = z.strictObject({
   value: metaAudienceSchema,
-  touchedAt: z.number().finite().nonnegative()
+  touchedAt: z.number().check(z.gte(0))
 })
 const boundaries = [
   ...CLICK_ID_PARAMETERS,

@@ -1,18 +1,26 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 
 export const metaParameterContextRequestSchema = z.strictObject({
-  consent: canonicalEventEnvelopeSchema.shape.consent.refine(
-    consent => consent.marketing === 'granted',
-    { message: 'Marketing consent is required' }
+  consent: canonicalEventEnvelopeSchema.shape.consent.check(
+    z.refine(consent => consent.marketing === 'granted', {
+      message: 'Marketing consent is required'
+    })
   ),
-  fbclid: z.string().trim().min(1).max(4096).optional(),
-  page_url: z.string().url().max(4096),
-  referrer_url: z.string().url().max(4096).optional()
+  fbclid: z.optional(
+    z.string().check(z.trim(), z.minLength(1), z.maxLength(4096))
+  ),
+  page_url: z.string().check(z.url(), z.maxLength(4096)),
+  referrer_url: z.optional(
+    z.string().check(z.url(), z.maxLength(4096))
+  )
 })
 
 export const metaParameterContextResponseSchema = z.strictObject(
-  { fbc: z.string().min(1).optional(), fbp: z.string().min(1) }
+  {
+    fbc: z.optional(z.string().check(z.minLength(1))),
+    fbp: z.string().check(z.minLength(1))
+  }
 )
 
 export type MetaParameterContextRequest = z.infer<

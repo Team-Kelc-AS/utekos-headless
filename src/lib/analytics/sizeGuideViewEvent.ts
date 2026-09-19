@@ -1,12 +1,14 @@
 import { z } from 'zod'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 
-export const canonicalSizeGuideViewCustomDataSchema = z.strictObject({
-  guide_id: z.string().min(1),
-  open_sequence: z.number().int().positive()
-})
+export const canonicalSizeGuideViewCustomDataSchema =
+  z.strictObject({
+    guide_id: z.string().min(1),
+    open_sequence: z.number().int().positive()
+  })
 
-export const canonicalSizeGuideViewSchema = canonicalEventEnvelopeSchema.extend({
+export const canonicalSizeGuideViewSchema = z.strictObject({
+  ...canonicalEventEnvelopeSchema.shape,
   event_name: z.literal('size_guide_view'),
   source: z.literal('web'),
   page_url: z.string().url(),

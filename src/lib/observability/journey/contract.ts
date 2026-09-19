@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import { consentSnapshotSchema } from '@/lib/analytics/canonicalEventEnvelope'
 import { sanitizeJourneyPath } from './sanitizeJourneyPath'
 
@@ -18,51 +18,55 @@ export const journeySectionSchema = z.enum([
 
 export type JourneySection = z.infer<typeof journeySectionSchema>
 
-const safePath = z
-  .string()
-  .min(1)
-  .max(256)
-  .refine(
+const safePath = z.string().check(
+  z.minLength(1),
+  z.maxLength(256),
+  z.refine(
     value =>
       value.startsWith('/') &&
       sanitizeJourneyPath(value) === value,
     'Expected a sanitized public pathname without query or identifiers'
   )
-const utmValue = z
-  .string()
-  .trim()
-  .min(1)
-  .max(128)
-  .regex(/^[\p{L}\p{N} _().-]+$/u)
-  .refine(
+)
+const utmValue = z.string().check(
+  z.trim(),
+  z.minLength(1),
+  z.maxLength(128),
+  z.regex(/^[\p{L}\p{N} _().-]+$/u),
+  z.refine(
     value => !/\d{7,}/.test(value),
     'Identifiers are not campaign labels'
   )
+)
 
 export const journeyUtmSchema = z
   .strictObject({
-    utm_source: utmValue.optional(),
-    utm_medium: utmValue.optional(),
-    utm_campaign: utmValue.optional(),
-    utm_content: utmValue.optional(),
-    utm_term: utmValue.optional()
+    utm_source: z.optional(utmValue),
+    utm_medium: z.optional(utmValue),
+    utm_campaign: z.optional(utmValue),
+    utm_content: z.optional(utmValue),
+    utm_term: z.optional(utmValue)
   })
-  .refine(
-    value => Object.keys(value).length > 0,
-    'At least one validated UTM is required'
+  .check(
+    z.refine(
+      value => Object.keys(value).length > 0,
+      'At least one validated UTM is required'
+    )
   )
 
 const envelope = z.strictObject({
   schema_version: z.literal(1),
-  event_id: z.string().uuid(),
-  journey_id: z.string().uuid(),
-  page_view_id: z.string().uuid(),
-  previous_page_view_id: z.string().uuid().optional(),
-  occurred_at: z.string().datetime({ offset: true }),
+  event_id: z.string().check(z.uuid()),
+  journey_id: z.string().check(z.uuid()),
+  page_view_id: z.string().check(z.uuid()),
+  previous_page_view_id: z.optional(z.string().check(z.uuid())),
+  occurred_at: z
+    .string()
+    .check(z.iso.datetime({ offset: true })),
   page_path: safePath,
-  consent: consentSnapshotSchema.extend({
+  consent: z.extend(consentSnapshotSchema, {
     analytics: z.literal('granted'),
-    version: z.string().min(1).max(64)
+    version: z.string().check(z.minLength(1), z.maxLength(64))
   }),
   source: z.literal('browser'),
   environment: z.enum([
@@ -76,12 +80,12 @@ const envelope = z.strictObject({
 export const journeyEventSchema = z.discriminatedUnion(
   'event_name',
   [
-    envelope.extend({
+    z.extend(envelope, {
       event_name: z.literal('utm_landing_page_view'),
       page_path: z.literal('/skreddersy-varmen'),
       data: journeyUtmSchema
     }),
-    envelope.extend({
+    z.extend(envelope, {
       event_name: z.literal('page_arrival'),
       data: z.strictObject({
         navigation_type: z.enum([
@@ -91,22 +95,26 @@ export const journeyEventSchema = z.discriminatedUnion(
         ])
       })
     }),
-    envelope.extend({
+    z.extend(envelope, {
       event_name: z.literal('section_view'),
       data: z.strictObject({
         section_id: journeySectionSchema,
-        dwell_ms: z.number().int().min(1000).max(86_400_000)
+        dwell_ms: z
+          .number()
+          .check(z.int(), z.gte(1000), z.lte(86400000))
       })
     }),
-    envelope.extend({
+    z.extend(envelope, {
       event_name: z.literal('internal_link_click'),
       data: z.strictObject({
         link_id: z
           .string()
-          .min(1)
-          .max(128)
-          .regex(/^[a-zA-Z0-9_:.\/-]+$/),
-        source_section: journeySectionSchema.optional(),
+          .check(
+            z.minLength(1),
+            z.maxLength(128),
+            z.regex(/^[a-zA-Z0-9_:.\/-]+$/)
+          ),
+        source_section: z.optional(journeySectionSchema),
         target_path: safePath,
         navigation_type: z.enum([
           'same_page',
@@ -115,22 +123,22 @@ export const journeyEventSchema = z.discriminatedUnion(
         ])
       })
     }),
-    envelope.extend({
+    z.extend(envelope, {
       event_name: z.literal('journey_progress'),
       data: z.strictObject({
-        max_scroll_y: z.number().int().min(0).max(10_000_000),
-        max_scroll_percent: z.number().min(0).max(100),
+        max_scroll_y: z
+          .number()
+          .check(z.int(), z.gte(0), z.lte(10000000)),
+        max_scroll_percent: z
+          .number()
+          .check(z.gte(0), z.lte(100)),
         document_height: z
           .number()
-          .int()
-          .positive()
-          .max(10_000_000),
+          .check(z.int(), z.gt(0), z.lte(10000000)),
         viewport_height: z
           .number()
-          .int()
-          .positive()
-          .max(100_000),
-        last_visible_section: journeySectionSchema.optional(),
+          .check(z.int(), z.gt(0), z.lte(100000)),
+        last_visible_section: z.optional(journeySectionSchema),
         reason: z.enum([
           'interval',
           'hidden',

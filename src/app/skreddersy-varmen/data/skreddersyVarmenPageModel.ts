@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
 export const SKREDDERSY_VARMEN_PROMOTIONS = {
   hero: 'skreddersy-varmen-hero',
@@ -210,33 +210,29 @@ export function parseThreeModeScenes(
   }))
 }
 
-const requiredText = z.string().min(1)
+const requiredText = z.string().check(z.minLength(1))
 
-const empathyTextSceneSchema = z
-  .object({
-    id: z.enum([
-      'moment',
-      'recognition',
-      'bonfire-copy',
-      'question'
-    ]),
-    kind: z.literal('text'),
-    copy: requiredText
-  })
-  .strict()
+const empathyTextSceneSchema = z.strictObject({
+  id: z.enum([
+    'moment',
+    'recognition',
+    'bonfire-copy',
+    'question'
+  ]),
+  kind: z.literal('text'),
+  copy: requiredText
+})
 
-const empathyMediaSceneSchema = z
-  .object({
-    id: z.enum(['bonfire', 'chill']),
-    kind: z.literal('media'),
-    copy: requiredText,
-    imageSrc: z.enum([
-      '/src/assets/images/techdown/SkreddersyVarmen-1.webp',
-      '/src/assets/images/techdown/UtekosTechDownMElegense.webp'
-    ]),
-    imageAlt: requiredText
-  })
-  .strict()
+const empathyMediaSceneSchema = z.strictObject({
+  id: z.enum(['bonfire', 'chill']),
+  kind: z.literal('media'),
+  copy: requiredText,
+  imageSrc: z.enum([
+    '/src/assets/images/techdown/SkreddersyVarmen-1.webp',
+    '/src/assets/images/techdown/UtekosTechDownMElegense.webp'
+  ]),
+  imageAlt: requiredText
+})
 
 const empathySceneSchema = z.discriminatedUnion('kind', [
   empathyTextSceneSchema,
@@ -322,8 +318,8 @@ const pageContentSchema = z.object({
     canonical: z.url(),
     socialImage: z.object({
       url: z.url(),
-      width: z.number().positive(),
-      height: z.number().positive(),
+      width: z.number().check(z.gt(0)),
+      height: z.number().check(z.gt(0)),
       type: requiredText,
       alt: requiredText
     })

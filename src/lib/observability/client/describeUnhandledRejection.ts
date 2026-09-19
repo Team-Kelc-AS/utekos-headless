@@ -40,6 +40,7 @@ function safeErrorName(
   error: Error
 ): SafeUnhandledRejectionErrorName {
   try {
+    if (error.name === '$ZodError') return 'ZodError'
     return SAFE_ERROR_NAMES.has(error.name) ?
         (error.name as SafeUnhandledRejectionErrorName)
       : 'OtherError'
@@ -72,6 +73,8 @@ export function describeUnhandledRejection(
   return {
     reasonType: reason === null ? 'null' : typeof reason,
     reasonIsError,
-    ...(reasonIsError ? { errorName: safeErrorName(reason) } : {})
+    ...(reasonIsError ?
+      { errorName: safeErrorName(reason) }
+    : {})
   }
 }

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   consentSnapshotSchema,
   type ConsentSnapshot
@@ -12,7 +12,7 @@ export const unresolvedOrderConsentSnapshotSchema =
     marketing: z.literal('unknown'),
     preferences: z.literal('unknown'),
     source: z.literal('shopify_order_attribute'),
-    version: z.string().min(1),
+    version: z.string().check(z.minLength(1)),
     resolution: z.enum([
       'missing',
       'empty',

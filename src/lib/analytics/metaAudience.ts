@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
 // A Meta ad-click segment, never a verified customer classification.
 export const metaAudienceSchema = z.enum([

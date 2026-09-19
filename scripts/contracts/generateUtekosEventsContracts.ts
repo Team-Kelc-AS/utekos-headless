@@ -99,7 +99,7 @@ const generatedPaths = {
   )
 } as const
 
-function toOpenApiSchema(schema: z.ZodType): JsonObject {
+function toOpenApiSchema(schema: z.core.$ZodType): JsonObject {
   return z.toJSONSchema(schema, {
     target: 'openapi-3.0',
     unrepresentable: 'throw'
@@ -368,7 +368,7 @@ function buildEventSchemas() {
 
   return Object.fromEntries(
     utekosEventsContractCatalog.map(event => {
-      const parsedExample = event.schema.parse(event.example)
+      const parsedExample = z.parse(event.schema, event.example)
       const generated = toOpenApiSchema(event.schema)
       const generatedProperties = getObjectProperty(
         generated,
@@ -558,7 +558,7 @@ function buildOperation(
           schema: {
             $ref: `#/components/schemas/${event.componentName}`
           },
-          example: event.schema.parse(event.example)
+          example: z.parse(event.schema, event.example)
         }
       }
     },
@@ -886,7 +886,7 @@ function buildReadyApiCases() {
       operationId: `collect${event.componentName}`,
       method: 'POST',
       path: `/api/events/${event.routeSegment}`,
-      validBody: event.schema.parse(event.example),
+      validBody: z.parse(event.schema, event.example),
       implementation: {
         requestHandler: event.requestHandlerFile,
         schema: event.schemaFile

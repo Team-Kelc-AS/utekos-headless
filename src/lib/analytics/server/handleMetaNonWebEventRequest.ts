@@ -1,4 +1,4 @@
-import { ZodError } from 'zod'
+import { $ZodError } from 'zod/v4/core'
 import { hasValidBearerAuthorization } from '@/lib/security/hasValidBearerAuthorization'
 import { metaNonWebEventIngestSchema } from '../metaNonWebIngestContract'
 import { acceptMetaNonWebEvent } from './acceptMetaNonWebEvent'
@@ -121,7 +121,7 @@ export async function handleMetaNonWebEventRequest(
         422
       )
     }
-    if (error instanceof ZodError) {
+    if (error instanceof $ZodError) {
       return jsonResponse({ error: 'invalid_event' }, 400)
     }
 

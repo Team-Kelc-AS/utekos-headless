@@ -1,4 +1,4 @@
-import type { z } from 'zod'
+import type * as z from 'zod/v4/core'
 import type { CanonicalEvent } from '../canonicalEvent'
 import { dispatchCanonicalEventToPinterest } from './dispatchCanonicalEventToPinterest'
 import type {
@@ -109,7 +109,9 @@ function summarizePinterestError(error: unknown) {
     stringProperty(current, 'message') ??
     'Unknown Pinterest Conversions API error'
 
-  return `${name}: ${message}`.replaceAll(/\s+/g, ' ').slice(0, 1000)
+  return `${name}: ${message}`
+    .replaceAll(/\s+/g, ' ')
+    .slice(0, 1000)
 }
 
 export function createPinterestProviderAdapter<
@@ -117,7 +119,7 @@ export function createPinterestProviderAdapter<
 >(input: {
   eventName: E['event_name']
   key: ProviderAdapterKey
-  schema: z.ZodType<E>
+  schema: z.$ZodType<E>
 }): ProviderAdapter<E, PinterestDispatchReceipt> {
   return {
     deadLetterReasons: {
@@ -126,7 +128,8 @@ export function createPinterestProviderAdapter<
       permanentError: 'pinterest_permanent_error'
     },
     dispatch: async event => {
-      const result = await dispatchCanonicalEventToPinterest(event)
+      const result =
+        await dispatchCanonicalEventToPinterest(event)
 
       if (result.status === 'disabled') {
         throw new PinterestConversionsApiConfigError('disabled')
@@ -159,7 +162,12 @@ export function createPinterestProviderAdapter<
     }),
     provider: 'pinterest',
     retryPolicy: {
-      delaysMs: [60_000, 5 * 60_000, 30 * 60_000, 2 * 60 * 60_000],
+      delaysMs: [
+        60_000,
+        5 * 60_000,
+        30 * 60_000,
+        2 * 60 * 60_000
+      ],
       maxAttempts: 5,
       positiveJitterRatio: 0
     },

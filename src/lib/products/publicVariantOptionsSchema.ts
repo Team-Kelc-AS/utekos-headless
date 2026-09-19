@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
 export const publicProductOptionKeySchema = z.enum([
   'color',
@@ -8,7 +8,7 @@ export const publicProductOptionKeySchema = z.enum([
 
 export const publicVariantOptionsSchema = z.partialRecord(
   publicProductOptionKeySchema,
-  z.string().min(1)
+  z.string().check(z.minLength(1))
 )
 
 export type PublicVariantOptions = z.infer<

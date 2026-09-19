@@ -1,3 +1,4 @@
+import { safeParse } from 'zod/v4/core'
 import { startAnalyticsSpan } from '@/lib/observability/tracing/startAnalyticsSpan'
 import type { CanonicalEvent } from '../canonicalEvent'
 import type { ProviderAdapter } from './providerAdapter'
@@ -56,7 +57,8 @@ export function createProviderOutboxStore<
   ) {
     if (!claimed) return null
 
-    const parsed = adapter.schema.safeParse(
+    const parsed = safeParse(
+      adapter.schema,
       parseStoredPayload(claimed.payload)
     )
 

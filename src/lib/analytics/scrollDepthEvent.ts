@@ -1,33 +1,45 @@
-import { z } from 'zod'
-import { canonicalEventEnvelopeSchema, type CanonicalEventEnvelope, type ConsentSnapshot } from './canonicalEventEnvelope'
+import * as z from '@/lib/validation/zodMini'
+import {
+  canonicalEventEnvelopeSchema,
+  type CanonicalEventEnvelope,
+  type ConsentSnapshot
+} from './canonicalEventEnvelope'
 import { mapEventDeviceInfo } from './mapEventDeviceInfo'
 
-export const canonicalScrollDepthCustomDataSchema = z.strictObject({
-  threshold: z.union([
-    z.literal(25),
-    z.literal(50),
-    z.literal(75),
-    z.literal(90)
-  ]),
-  percent_scrolled: z.number().int().min(1).max(100),
-  document_height: z.number().int().positive()
-})
+export const canonicalScrollDepthCustomDataSchema =
+  z.strictObject({
+    threshold: z.union([
+      z.literal(25),
+      z.literal(50),
+      z.literal(75),
+      z.literal(90)
+    ]),
+    percent_scrolled: z
+      .number()
+      .check(z.int(), z.gte(1), z.lte(100)),
+    document_height: z.number().check(z.int(), z.gt(0))
+  })
 
 export type CanonicalScrollDepthCustomData = z.infer<
   typeof canonicalScrollDepthCustomDataSchema
 >
 
-export const canonicalScrollDepthSchema = canonicalEventEnvelopeSchema.extend({
-  event_name: z.literal('scroll_depth'),
-  source: z.literal('web'),
-    page_url: z.string().url(),
-    referrer_url: z.string().url().optional(),
-    page_title: z.string().min(1),
-  page_view_id: z.string().uuid(),
-  custom_data: canonicalScrollDepthCustomDataSchema
-})
+export const canonicalScrollDepthSchema = z.extend(
+  canonicalEventEnvelopeSchema,
+  {
+    event_name: z.literal('scroll_depth'),
+    source: z.literal('web'),
+    page_url: z.string().check(z.url()),
+    referrer_url: z.optional(z.string().check(z.url())),
+    page_title: z.string().check(z.minLength(1)),
+    page_view_id: z.string().check(z.uuid()),
+    custom_data: canonicalScrollDepthCustomDataSchema
+  }
+)
 
-export type CanonicalScrollDepth = z.infer<typeof canonicalScrollDepthSchema>
+export type CanonicalScrollDepth = z.infer<
+  typeof canonicalScrollDepthSchema
+>
 
 type CreateCanonicalScrollDepthInput = {
   browserId?: Record<string, string>
@@ -59,7 +71,9 @@ export type ScrollDepthDataLayerEvent = {
 export function createCanonicalScrollDepth(
   input: CreateCanonicalScrollDepthInput
 ): CanonicalScrollDepth {
-  const eventDeviceInfo = mapEventDeviceInfo(input.eventDeviceInfo)
+  const eventDeviceInfo = mapEventDeviceInfo(
+    input.eventDeviceInfo
+  )
 
   return canonicalScrollDepthSchema.parse({
     schema_version: 1,
@@ -69,16 +83,26 @@ export function createCanonicalScrollDepth(
     source: 'web',
     environment: input.environment,
     ...(input.pageUrl ? { page_url: input.pageUrl } : {}),
-    ...(input.pageViewId ? { page_view_id: input.pageViewId } : {}),
-    ...(input.referrerUrl ? { referrer_url: input.referrerUrl } : {}),
+    ...(input.pageViewId ?
+      { page_view_id: input.pageViewId }
+    : {}),
+    ...(input.referrerUrl ?
+      { referrer_url: input.referrerUrl }
+    : {}),
     ...(input.pageTitle ? { page_title: input.pageTitle } : {}),
     consent: input.consent,
     custom_data: input.customData,
     ...(input.browserId ? { browser_id: input.browserId } : {}),
     ...(input.clickId ? { click_id: input.clickId } : {}),
-    ...(input.externalId ? { external_id: input.externalId } : {}),
-    ...(input.impressionId ? { impression_id: input.impressionId } : {}),
-    ...(eventDeviceInfo ? { event_device_info: eventDeviceInfo } : {})
+    ...(input.externalId ?
+      { external_id: input.externalId }
+    : {}),
+    ...(input.impressionId ?
+      { impression_id: input.impressionId }
+    : {}),
+    ...(eventDeviceInfo ?
+      { event_device_info: eventDeviceInfo }
+    : {})
   })
 }
 
@@ -90,7 +114,9 @@ export function buildScrollDepthDataLayerEvent(
     event_id: event.event_id,
     event_time: event.event_time,
     source: event.source,
-    ...(event.page_view_id ? { page_view_id: event.page_view_id } : {}),
+    ...(event.page_view_id ?
+      { page_view_id: event.page_view_id }
+    : {}),
     custom_data: event.custom_data,
     canonical_event: event
   }

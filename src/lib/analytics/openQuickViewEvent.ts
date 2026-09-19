@@ -11,7 +11,8 @@ import {
 import { mapEventDeviceInfo } from './mapEventDeviceInfo'
 
 export const canonicalOpenQuickViewCustomDataSchema =
-  canonicalCommerceValueSchema.extend({
+  z.strictObject({
+    ...canonicalCommerceValueSchema.shape,
     items: z.array(canonicalCommerceItemSchema).length(1),
     open_sequence: z.number().int().positive(),
     source_surface: z.string().min(1)
@@ -21,16 +22,16 @@ export type CanonicalOpenQuickViewCustomData = z.infer<
   typeof canonicalOpenQuickViewCustomDataSchema
 >
 
-export const canonicalOpenQuickViewSchema =
-  canonicalEventEnvelopeSchema.extend({
-    event_name: z.literal('open_quick_view'),
-    source: z.literal('web'),
-    page_url: z.string().url(),
-    referrer_url: z.string().url().optional(),
-    page_title: z.string().min(1),
-    page_view_id: z.string().uuid(),
-    custom_data: canonicalOpenQuickViewCustomDataSchema
-  })
+export const canonicalOpenQuickViewSchema = z.strictObject({
+  ...canonicalEventEnvelopeSchema.shape,
+  event_name: z.literal('open_quick_view'),
+  source: z.literal('web'),
+  page_url: z.string().url(),
+  referrer_url: z.string().url().optional(),
+  page_title: z.string().min(1),
+  page_view_id: z.string().uuid(),
+  custom_data: canonicalOpenQuickViewCustomDataSchema
+})
 
 export type CanonicalOpenQuickView = z.infer<
   typeof canonicalOpenQuickViewSchema
@@ -66,7 +67,9 @@ export type OpenQuickViewDataLayerEvent = {
 export function createCanonicalOpenQuickView(
   input: CreateCanonicalOpenQuickViewInput
 ): CanonicalOpenQuickView {
-  const eventDeviceInfo = mapEventDeviceInfo(input.eventDeviceInfo)
+  const eventDeviceInfo = mapEventDeviceInfo(
+    input.eventDeviceInfo
+  )
 
   return canonicalOpenQuickViewSchema.parse({
     schema_version: 1,
@@ -78,14 +81,22 @@ export function createCanonicalOpenQuickView(
     page_url: input.pageUrl,
     page_view_id: input.pageViewId,
     page_title: input.pageTitle,
-    ...(input.referrerUrl ? { referrer_url: input.referrerUrl } : {}),
+    ...(input.referrerUrl ?
+      { referrer_url: input.referrerUrl }
+    : {}),
     consent: input.consent,
     custom_data: input.customData,
     ...(input.browserId ? { browser_id: input.browserId } : {}),
     ...(input.clickId ? { click_id: input.clickId } : {}),
-    ...(input.externalId ? { external_id: input.externalId } : {}),
-    ...(input.impressionId ? { impression_id: input.impressionId } : {}),
-    ...(eventDeviceInfo ? { event_device_info: eventDeviceInfo } : {})
+    ...(input.externalId ?
+      { external_id: input.externalId }
+    : {}),
+    ...(input.impressionId ?
+      { impression_id: input.impressionId }
+    : {}),
+    ...(eventDeviceInfo ?
+      { event_device_info: eventDeviceInfo }
+    : {})
   })
 }
 

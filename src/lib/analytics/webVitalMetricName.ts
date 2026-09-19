@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
 export const webVitalMetricNameSchema = z.enum([
   'CLS',
@@ -12,4 +12,6 @@ export const webVitalMetricNameSchema = z.enum([
   'Next.js-render'
 ])
 
-export type WebVitalMetricName = z.infer<typeof webVitalMetricNameSchema>
+export type WebVitalMetricName = z.infer<
+  typeof webVitalMetricNameSchema
+>

@@ -43,7 +43,7 @@ test('client error app logs accept only sanitized triage fields', () => {
     parsed.event === 'client.error' ?
       parsed.data.filename
     : undefined,
-    '/_next/static/chunks/app.js'
+    '/_next/:asset'
   )
   assert.equal(
     JSON.stringify(parsed).includes('token=secret'),
@@ -119,10 +119,7 @@ test('commerce event logs accept only bounded operational fields', () => {
     assert.fail('Expected commerce.event log')
   }
 
-  assert.equal(
-    parsed.context.pagePath,
-    '/produkter/utekos-techdown'
-  )
+  assert.equal(parsed.context.pagePath, '/produkter/:product')
   assert.equal(
     appLogInputSchema.safeParse({
       ...parsed,

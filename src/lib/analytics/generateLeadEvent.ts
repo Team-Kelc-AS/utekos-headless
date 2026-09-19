@@ -25,15 +25,15 @@ export type CanonicalGenerateLeadCustomData = z.infer<
   typeof canonicalGenerateLeadCustomDataSchema
 >
 
-export const canonicalGenerateLeadSchema =
-  canonicalEventEnvelopeSchema.extend({
-    event_name: z.literal('generate_lead'),
-    source: z.literal('server'),
-    page_url: z.url(),
-    referrer_url: z.url().optional(),
-    page_view_id: z.uuid().optional(),
-    custom_data: canonicalGenerateLeadCustomDataSchema
-  })
+export const canonicalGenerateLeadSchema = z.strictObject({
+  ...canonicalEventEnvelopeSchema.shape,
+  event_name: z.literal('generate_lead'),
+  source: z.literal('server'),
+  page_url: z.url(),
+  referrer_url: z.url().optional(),
+  page_view_id: z.uuid().optional(),
+  custom_data: canonicalGenerateLeadCustomDataSchema
+})
 
 export type CanonicalGenerateLead = z.infer<
   typeof canonicalGenerateLeadSchema

@@ -1,18 +1,17 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
-export const CHECKOUT_METHOD_HEADER =
-  'X-Utekos-Checkout-Method'
+export const CHECKOUT_METHOD_HEADER = 'X-Utekos-Checkout-Method'
 
 export const checkoutMethodSchema = z.enum([
   'shopify_checkout',
   'klarna_express'
 ])
 
-export type CheckoutMethod = z.infer<
-  typeof checkoutMethodSchema
->
+export type CheckoutMethod = z.infer<typeof checkoutMethodSchema>
 
-export function readCheckoutMethod(headers: Headers): CheckoutMethod {
+export function readCheckoutMethod(
+  headers: Headers
+): CheckoutMethod {
   const parsed = checkoutMethodSchema.safeParse(
     headers.get(CHECKOUT_METHOD_HEADER)
   )

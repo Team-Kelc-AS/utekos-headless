@@ -1,16 +1,16 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
 export const canonicalClickIdsSchema = z.strictObject({
-  dclid: z.string().min(1).optional(),
-  epik: z.string().min(1).optional(),
-  fbclid: z.string().min(1).optional(),
-  gbraid: z.string().min(1).optional(),
-  gclid: z.string().min(1).optional(),
-  msclkid: z.string().min(1).optional(),
-  sc_click_id: z.string().min(1).optional(),
-  ttclid: z.string().min(1).optional(),
-  twclid: z.string().min(1).optional(),
-  wbraid: z.string().min(1).optional()
+  dclid: z.optional(z.string().check(z.minLength(1))),
+  epik: z.optional(z.string().check(z.minLength(1))),
+  fbclid: z.optional(z.string().check(z.minLength(1))),
+  gbraid: z.optional(z.string().check(z.minLength(1))),
+  gclid: z.optional(z.string().check(z.minLength(1))),
+  msclkid: z.optional(z.string().check(z.minLength(1))),
+  sc_click_id: z.optional(z.string().check(z.minLength(1))),
+  ttclid: z.optional(z.string().check(z.minLength(1))),
+  twclid: z.optional(z.string().check(z.minLength(1))),
+  wbraid: z.optional(z.string().check(z.minLength(1)))
 })
 
 export type CanonicalClickIds = z.infer<

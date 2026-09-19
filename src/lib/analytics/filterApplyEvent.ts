@@ -1,15 +1,17 @@
 import { z } from 'zod'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 
-export const canonicalFilterApplyCustomDataSchema = z.strictObject({
-  interaction_id: z.string().min(1),
-  result_revision: z.number().int().positive(),
-  filter_name: z.string().min(1),
-  filter_value: z.string().min(1),
-  result_count: z.number().int().nonnegative()
-})
+export const canonicalFilterApplyCustomDataSchema =
+  z.strictObject({
+    interaction_id: z.string().min(1),
+    result_revision: z.number().int().positive(),
+    filter_name: z.string().min(1),
+    filter_value: z.string().min(1),
+    result_count: z.number().int().nonnegative()
+  })
 
-export const canonicalFilterApplySchema = canonicalEventEnvelopeSchema.extend({
+export const canonicalFilterApplySchema = z.strictObject({
+  ...canonicalEventEnvelopeSchema.shape,
   event_name: z.literal('filter_apply'),
   source: z.literal('web'),
   page_url: z.string().url(),
@@ -19,4 +21,6 @@ export const canonicalFilterApplySchema = canonicalEventEnvelopeSchema.extend({
   custom_data: canonicalFilterApplyCustomDataSchema
 })
 
-export type CanonicalFilterApply = z.infer<typeof canonicalFilterApplySchema>
+export type CanonicalFilterApply = z.infer<
+  typeof canonicalFilterApplySchema
+>

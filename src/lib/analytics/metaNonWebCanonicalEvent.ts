@@ -19,15 +19,15 @@ const metaOfflineConsentSchema = metaAppConsentSchema.extend({
   source: z.literal('offline')
 })
 
-const canonicalMetaAppEventBaseSchema =
-  canonicalEventEnvelopeSchema
-    .omit({ consent: true })
-    .extend({
-      consent: metaAppConsentSchema,
-      event_name: z.literal('meta_app_event'),
-      meta_event: metaAppEventSchema,
-      source: z.literal('server')
-    })
+const canonicalMetaAppEventBaseSchema = z
+  .strictObject(canonicalEventEnvelopeSchema.shape)
+  .omit({ consent: true })
+  .extend({
+    consent: metaAppConsentSchema,
+    event_name: z.literal('meta_app_event'),
+    meta_event: metaAppEventSchema,
+    source: z.literal('server')
+  })
 
 export const canonicalMetaAppEventSchema =
   canonicalMetaAppEventBaseSchema.superRefine(
@@ -49,15 +49,15 @@ export const canonicalMetaAppEventSchema =
     }
   )
 
-const canonicalMetaOfflineEventBaseSchema =
-  canonicalEventEnvelopeSchema
-    .omit({ consent: true })
-    .extend({
-      consent: metaOfflineConsentSchema,
-      event_name: z.literal('meta_offline_event'),
-      meta_event: metaOfflineEventSchema,
-      source: z.literal('server')
-    })
+const canonicalMetaOfflineEventBaseSchema = z
+  .strictObject(canonicalEventEnvelopeSchema.shape)
+  .omit({ consent: true })
+  .extend({
+    consent: metaOfflineConsentSchema,
+    event_name: z.literal('meta_offline_event'),
+    meta_event: metaOfflineEventSchema,
+    source: z.literal('server')
+  })
 
 export const canonicalMetaOfflineEventSchema =
   canonicalMetaOfflineEventBaseSchema.superRefine(

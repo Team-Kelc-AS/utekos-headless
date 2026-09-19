@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
 export const CAMPAIGN_ATTRIBUTION_KEYS = [
   'campaign_id',
@@ -11,26 +11,26 @@ export const CAMPAIGN_ATTRIBUTION_KEYS = [
 
 export const campaignAttributionValueSchema = z
   .string()
-  .trim()
-  .min(1)
-  .max(500)
+  .check(z.trim(), z.minLength(1), z.maxLength(500))
 
 export const campaignAttributionSchema = z
   .strictObject({
-    campaign_id: campaignAttributionValueSchema.optional(),
-    campaign_name: campaignAttributionValueSchema.optional(),
-    adset_id: campaignAttributionValueSchema.optional(),
-    adset_name: campaignAttributionValueSchema.optional(),
-    ad_id: campaignAttributionValueSchema.optional(),
-    ad_name: campaignAttributionValueSchema.optional()
+    campaign_id: z.optional(campaignAttributionValueSchema),
+    campaign_name: z.optional(campaignAttributionValueSchema),
+    adset_id: z.optional(campaignAttributionValueSchema),
+    adset_name: z.optional(campaignAttributionValueSchema),
+    ad_id: z.optional(campaignAttributionValueSchema),
+    ad_name: z.optional(campaignAttributionValueSchema)
   })
-  .refine(
-    attribution =>
-      CAMPAIGN_ATTRIBUTION_KEYS.some(key => attribution[key]),
-    {
-      message:
-        'Campaign attribution requires at least one value.'
-    }
+  .check(
+    z.refine(
+      attribution =>
+        CAMPAIGN_ATTRIBUTION_KEYS.some(key => attribution[key]),
+      {
+        message:
+          'Campaign attribution requires at least one value.'
+      }
+    )
   )
 
 export type CampaignAttribution = z.infer<

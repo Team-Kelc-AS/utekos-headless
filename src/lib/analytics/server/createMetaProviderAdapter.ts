@@ -1,4 +1,4 @@
-import type { z } from 'zod'
+import type * as z from 'zod/v4/core'
 import type { CanonicalEvent } from '../canonicalEvent'
 import type {
   ProviderAdapter,
@@ -44,7 +44,8 @@ function isRetryableMetaError(error: unknown) {
   const status = numericProperty(current, 'status')
   const metaCode = numericProperty(response, 'code')
   const networkCode =
-    stringProperty(current, 'code') ?? stringProperty(cause, 'code')
+    stringProperty(current, 'code') ??
+    stringProperty(cause, 'code')
 
   if (response?.is_transient === true) return true
   if (metaCode && RETRYABLE_META_CODES.has(metaCode)) return true
@@ -62,7 +63,10 @@ function isRetryableMetaError(error: unknown) {
     return true
   }
 
-  return current?.name === 'FacebookRequestError' && status === undefined
+  return (
+    current?.name === 'FacebookRequestError' &&
+    status === undefined
+  )
 }
 
 function summarizeMetaError(error: unknown) {
@@ -71,7 +75,9 @@ function summarizeMetaError(error: unknown) {
   const message =
     stringProperty(current, 'message') ?? 'Unknown Meta error'
 
-  return `${name}: ${message}`.replaceAll(/\s+/g, ' ').slice(0, 1000)
+  return `${name}: ${message}`
+    .replaceAll(/\s+/g, ' ')
+    .slice(0, 1000)
 }
 
 type MetaDispatchReceipt = {
@@ -89,7 +95,7 @@ export function createMetaProviderAdapter<
   dispatch: (event: E) => Promise<R>
   eventName: E['event_name']
   key: ProviderAdapterKey
-  schema: z.ZodType<E>
+  schema: z.$ZodType<E>
 }): ProviderAdapter<E, R> {
   return {
     ...(input.claimNotBefore ?
@@ -117,7 +123,12 @@ export function createMetaProviderAdapter<
     }),
     provider: 'meta',
     retryPolicy: {
-      delaysMs: [60_000, 5 * 60_000, 30 * 60_000, 2 * 60 * 60_000],
+      delaysMs: [
+        60_000,
+        5 * 60_000,
+        30 * 60_000,
+        2 * 60 * 60_000
+      ],
       maxAttempts: 5,
       positiveJitterRatio: 0
     },

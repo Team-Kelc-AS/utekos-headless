@@ -1,4 +1,4 @@
-import type { z } from 'zod'
+import type * as z from 'zod/v4/core'
 import type { CanonicalEvent } from '../canonicalEvent'
 import type {
   ProviderAdapter,
@@ -64,18 +64,19 @@ function isRetryableMicrosoftUetError(error: unknown) {
 
   if (error instanceof MicrosoftUetCapiHttpError) {
     return (
-      error.status === 408
-      || error.status === 409
-      || error.status === 425
-      || error.status === 429
-      || error.status >= 500
+      error.status === 408 ||
+      error.status === 409 ||
+      error.status === 425 ||
+      error.status === 429 ||
+      error.status >= 500
     )
   }
 
   const current = asRecord(error)
   const cause = asRecord(current?.cause)
   const networkCode =
-    stringProperty(current, 'code') ?? stringProperty(cause, 'code')
+    stringProperty(current, 'code') ??
+    stringProperty(cause, 'code')
   const status = numericProperty(current, 'status')
 
   if (networkCode && RETRYABLE_NETWORK_CODES.has(networkCode)) {
@@ -83,11 +84,11 @@ function isRetryableMicrosoftUetError(error: unknown) {
   }
 
   return (
-    status === 408
-    || status === 409
-    || status === 425
-    || status === 429
-    || (status !== undefined && status >= 500)
+    status === 408 ||
+    status === 409 ||
+    status === 425 ||
+    status === 429 ||
+    (status !== undefined && status >= 500)
   )
 }
 
@@ -105,10 +106,12 @@ function summarizeMicrosoftUetError(error: unknown) {
   const current = asRecord(error)
   const name = stringProperty(current, 'name') ?? 'Error'
   const message =
-    stringProperty(current, 'message')
-    ?? 'Unknown Microsoft UET CAPI error'
+    stringProperty(current, 'message') ??
+    'Unknown Microsoft UET CAPI error'
 
-  return `${name}: ${message}`.replaceAll(/\s+/g, ' ').slice(0, 1000)
+  return `${name}: ${message}`
+    .replaceAll(/\s+/g, ' ')
+    .slice(0, 1000)
 }
 
 export function createMicrosoftUetProviderAdapter<
@@ -118,7 +121,7 @@ export function createMicrosoftUetProviderAdapter<
   dispatch: (event: E) => Promise<R>
   eventName: E['event_name']
   key: ProviderAdapterKey
-  schema: z.ZodType<E>
+  schema: z.$ZodType<E>
 }): ProviderAdapter<E, R> {
   return {
     deadLetterReasons: {
@@ -146,7 +149,12 @@ export function createMicrosoftUetProviderAdapter<
     }),
     provider: 'microsoft_uet',
     retryPolicy: {
-      delaysMs: [60_000, 5 * 60_000, 30 * 60_000, 2 * 60 * 60_000],
+      delaysMs: [
+        60_000,
+        5 * 60_000,
+        30 * 60_000,
+        2 * 60 * 60_000
+      ],
       maxAttempts: 5,
       positiveJitterRatio: 0
     },

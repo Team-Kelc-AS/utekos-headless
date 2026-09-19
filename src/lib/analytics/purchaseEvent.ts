@@ -40,20 +40,20 @@ export const canonicalPurchaseCommerceSchema = z.strictObject({
   items: z.array(purchaseItemSchema).min(1)
 })
 
-export const canonicalPurchaseSchema =
-  canonicalEventEnvelopeSchema
-    .omit({ consent: true })
-    .extend({
-      consent: orderConsentSnapshotSchema,
-      event_name: z.literal('purchase'),
-      source: z.enum(['webhook', 'server']),
-      page_view_id: z.uuid().optional(),
-      begin_checkout_event_id: z.uuid().optional(),
-      journey_link_reason:
-        checkoutJourneyLinkReasonSchema.optional(),
-      referrer_url: z.string().url().optional(),
-      custom_data: canonicalPurchaseCommerceSchema
-    })
+export const canonicalPurchaseSchema = z
+  .strictObject(canonicalEventEnvelopeSchema.shape)
+  .omit({ consent: true })
+  .extend({
+    consent: orderConsentSnapshotSchema,
+    event_name: z.literal('purchase'),
+    source: z.enum(['webhook', 'server']),
+    page_view_id: z.uuid().optional(),
+    begin_checkout_event_id: z.uuid().optional(),
+    journey_link_reason:
+      checkoutJourneyLinkReasonSchema.optional(),
+    referrer_url: z.string().url().optional(),
+    custom_data: canonicalPurchaseCommerceSchema
+  })
 
 export type CanonicalPurchase = z.infer<
   typeof canonicalPurchaseSchema

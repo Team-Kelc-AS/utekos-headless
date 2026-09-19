@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   canonicalEventEnvelopeSchema,
   type CanonicalEventEnvelope,
@@ -6,7 +6,10 @@ import {
 } from './canonicalEventEnvelope'
 import { gaWebVitalIntegerValue } from './gaWebVitalIntegerValue'
 import { mapEventDeviceInfo } from './mapEventDeviceInfo'
-import { webVitalMetricNameSchema, type WebVitalMetricName } from './webVitalMetricName'
+import {
+  webVitalMetricNameSchema,
+  type WebVitalMetricName
+} from './webVitalMetricName'
 
 export const webVitalRatingSchema = z.enum([
   'good',
@@ -15,15 +18,15 @@ export const webVitalRatingSchema = z.enum([
 ])
 
 export const canonicalWebVitalCustomDataSchema = z.strictObject({
-  attribution: z.record(z.string(), z.unknown()).optional(),
+  attribution: z.optional(z.record(z.string(), z.unknown())),
   delta: z.number(),
   entries: z.array(z.unknown()),
-  ga_integer_value: z.number().int(),
-  metric_id: z.string().min(1),
+  ga_integer_value: z.number().check(z.int()),
+  metric_id: z.string().check(z.minLength(1)),
   name: webVitalMetricNameSchema,
-  navigation_type: z.string().min(1).optional(),
-  pathname: z.string().min(1),
-  rating: webVitalRatingSchema.optional(),
+  navigation_type: z.optional(z.string().check(z.minLength(1))),
+  pathname: z.string().check(z.minLength(1)),
+  rating: z.optional(webVitalRatingSchema),
   value: z.number()
 })
 
@@ -31,19 +34,24 @@ export type CanonicalWebVitalCustomData = z.infer<
   typeof canonicalWebVitalCustomDataSchema
 >
 
-export const canonicalWebVitalSchema = canonicalEventEnvelopeSchema.extend({
-  event_name: z.literal('web_vital'),
-  event_id: z.uuid(),
-  event_time: z.iso.datetime({ offset: true }),
-  source: z.literal('web'),
-  page_url: z.url(),
-  referrer_url: z.url().optional(),
-  page_title: z.string().min(1),
-  page_view_id: z.uuid(),
-  custom_data: canonicalWebVitalCustomDataSchema
-})
+export const canonicalWebVitalSchema = z.extend(
+  canonicalEventEnvelopeSchema,
+  {
+    event_name: z.literal('web_vital'),
+    event_id: z.uuid(),
+    event_time: z.iso.datetime({ offset: true }),
+    source: z.literal('web'),
+    page_url: z.url(),
+    referrer_url: z.optional(z.url()),
+    page_title: z.string().check(z.minLength(1)),
+    page_view_id: z.uuid(),
+    custom_data: canonicalWebVitalCustomDataSchema
+  }
+)
 
-export type CanonicalWebVital = z.infer<typeof canonicalWebVitalSchema>
+export type CanonicalWebVital = z.infer<
+  typeof canonicalWebVitalSchema
+>
 
 type CreateCanonicalWebVitalInput = {
   browserId?: Record<string, string>
@@ -83,7 +91,9 @@ export type WebVitalDataLayerEvent = {
 export function createCanonicalWebVital(
   input: CreateCanonicalWebVitalInput
 ): CanonicalWebVital {
-  const eventDeviceInfo = mapEventDeviceInfo(input.eventDeviceInfo)
+  const eventDeviceInfo = mapEventDeviceInfo(
+    input.eventDeviceInfo
+  )
 
   return canonicalWebVitalSchema.parse({
     schema_version: 1,
@@ -93,16 +103,26 @@ export function createCanonicalWebVital(
     source: 'web',
     environment: input.environment,
     ...(input.pageUrl ? { page_url: input.pageUrl } : {}),
-    ...(input.pageViewId ? { page_view_id: input.pageViewId } : {}),
-    ...(input.referrerUrl ? { referrer_url: input.referrerUrl } : {}),
+    ...(input.pageViewId ?
+      { page_view_id: input.pageViewId }
+    : {}),
+    ...(input.referrerUrl ?
+      { referrer_url: input.referrerUrl }
+    : {}),
     ...(input.pageTitle ? { page_title: input.pageTitle } : {}),
     consent: input.consent,
     custom_data: input.customData,
     ...(input.browserId ? { browser_id: input.browserId } : {}),
     ...(input.clickId ? { click_id: input.clickId } : {}),
-    ...(input.externalId ? { external_id: input.externalId } : {}),
-    ...(input.impressionId ? { impression_id: input.impressionId } : {}),
-    ...(eventDeviceInfo ? { event_device_info: eventDeviceInfo } : {})
+    ...(input.externalId ?
+      { external_id: input.externalId }
+    : {}),
+    ...(input.impressionId ?
+      { impression_id: input.impressionId }
+    : {}),
+    ...(eventDeviceInfo ?
+      { event_device_info: eventDeviceInfo }
+    : {})
   })
 }
 
@@ -118,13 +138,20 @@ export function buildWebVitalCustomData(input: {
   value: number
 }): CanonicalWebVitalCustomData {
   return canonicalWebVitalCustomDataSchema.parse({
-    ...(input.attribution ? { attribution: input.attribution } : {}),
+    ...(input.attribution ?
+      { attribution: input.attribution }
+    : {}),
     delta: input.delta,
     entries: input.entries,
-    ga_integer_value: gaWebVitalIntegerValue(input.name, input.value),
+    ga_integer_value: gaWebVitalIntegerValue(
+      input.name,
+      input.value
+    ),
     metric_id: input.metricId,
     name: input.name,
-    ...(input.navigationType ? { navigation_type: input.navigationType } : {}),
+    ...(input.navigationType ?
+      { navigation_type: input.navigationType }
+    : {}),
     pathname: input.pathname,
     ...(input.rating ? { rating: input.rating } : {}),
     value: input.value
@@ -139,12 +166,16 @@ export function buildWebVitalDataLayerEvent(
     event_id: event.event_id,
     event_time: event.event_time,
     source: event.source,
-    ...(event.page_view_id ? { page_view_id: event.page_view_id } : {}),
+    ...(event.page_view_id ?
+      { page_view_id: event.page_view_id }
+    : {}),
     id: event.custom_data.metric_id,
     name: event.custom_data.name,
     value: event.custom_data.value,
     delta: event.custom_data.delta,
-    ...(event.custom_data.rating ? { rating: event.custom_data.rating } : {}),
+    ...(event.custom_data.rating ?
+      { rating: event.custom_data.rating }
+    : {}),
     ...(event.custom_data.navigation_type ?
       { navigationType: event.custom_data.navigation_type }
     : {}),

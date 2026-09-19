@@ -1,76 +1,58 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import { CART_CHECKOUT_PATH } from '@/lib/cart/cartCheckoutPath'
 import { shopifyPublicCartIdSchema } from '@/lib/cart/shopifyPublicCartIdSchema'
 
-const moneySchema = z
-  .object({
-    amount: z.string(),
-    currencyCode: z.string().length(3)
-  })
-  .strict()
+const moneySchema = z.strictObject({
+  amount: z.string(),
+  currencyCode: z.string().check(z.length(3))
+})
 
-const imageSchema = z
-  .object({
+const imageSchema = z.strictObject({
+  id: z.string(),
+  url: z.string().check(z.url()),
+  altText: z.string(),
+  width: z.number(),
+  height: z.number()
+})
+
+const cartLineSchema = z.strictObject({
+  id: z.string(),
+  quantity: z.number().check(z.int(), z.gte(0)),
+  cost: z.strictObject({ totalAmount: moneySchema }),
+  merchandise: z.looseObject({
     id: z.string(),
-    url: z.string().url(),
-    altText: z.string(),
-    width: z.number(),
-    height: z.number()
+    title: z.string(),
+    availableForSale: z.boolean(),
+    price: moneySchema,
+    image: z.nullable(imageSchema),
+    compareAtPrice: z.nullable(moneySchema),
+    selectedOptions: z.array(
+      z.strictObject({ name: z.string(), value: z.string() })
+    ),
+    product: z.strictObject({
+      id: z.string(),
+      title: z.string(),
+      handle: z.string(),
+      vendor: z.string(),
+      productType: z.string()
+    })
   })
-  .strict()
+})
 
-const cartLineSchema = z
-  .object({
-    id: z.string(),
-    quantity: z.number().int().nonnegative(),
-    cost: z.object({ totalAmount: moneySchema }).strict(),
-    merchandise: z
-      .object({
-        id: z.string(),
-        title: z.string(),
-        availableForSale: z.boolean(),
-        price: moneySchema,
-        image: imageSchema.nullable(),
-        compareAtPrice: moneySchema.nullable(),
-        selectedOptions: z.array(
-          z
-            .object({ name: z.string(), value: z.string() })
-            .strict()
-        ),
-        product: z
-          .object({
-            id: z.string(),
-            title: z.string(),
-            handle: z.string(),
-            vendor: z.string(),
-            productType: z.string()
-          })
-          .strict()
-      })
-      .passthrough()
-  })
-  .strict()
+const cartSchema = z.strictObject({
+  id: shopifyPublicCartIdSchema,
+  checkoutUrl: z.literal(CART_CHECKOUT_PATH),
+  totalQuantity: z.number().check(z.int(), z.gte(0)),
+  cost: z.strictObject({
+    totalAmount: moneySchema,
+    subtotalAmount: moneySchema
+  }),
+  lines: z.array(cartLineSchema)
+})
 
-const cartSchema = z
-  .object({
-    id: shopifyPublicCartIdSchema,
-    checkoutUrl: z.literal(CART_CHECKOUT_PATH),
-    totalQuantity: z.number().int().nonnegative(),
-    cost: z
-      .object({
-        totalAmount: moneySchema,
-        subtotalAmount: moneySchema
-      })
-      .strict(),
-    lines: z.array(cartLineSchema)
-  })
-  .strict()
-
-export const cartActionsResultSchema = z
-  .object({
-    success: z.boolean(),
-    message: z.string(),
-    cart: cartSchema.nullable().optional(),
-    error: z.string().nullable().optional()
-  })
-  .strict()
+export const cartActionsResultSchema = z.strictObject({
+  success: z.boolean(),
+  message: z.string(),
+  cart: z.optional(z.nullable(cartSchema)),
+  error: z.optional(z.nullable(z.string()))
+})

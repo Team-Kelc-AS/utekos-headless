@@ -1,5 +1,5 @@
+import { $ZodError } from 'zod/v4/core'
 import { browserPayloadConsentDenied } from './browserPayloadConsent'
-import { ZodError } from 'zod'
 import type { CanonicalEventStore } from './canonicalEventStore'
 import type { CanonicalBrowserEventRequestContext } from './normalizeCanonicalBrowserEvent'
 import { redactPageUrlForLog } from './redactPageUrlForLog'
@@ -241,7 +241,7 @@ export function createBrowserEventRequestHandler<
         result.status === 'accepted' ? 202 : 200
       )
     } catch (error) {
-      if (error instanceof ZodError) {
+      if (error instanceof $ZodError) {
         console.warn(
           '[tracking] browser event rejected: invalid_event',
           requestLogMeta(request, {

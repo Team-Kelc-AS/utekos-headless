@@ -1,7 +1,10 @@
 import { z } from 'zod'
-import { consentDiagnosticCodes } from 'types/observability/log/ConsentDiagnosticCode'
 import { requiredMetaDatasetQualityEvents } from '@/lib/analytics/metaDatasetQualityRequiredEvents'
 import { sanitizeOperationalPathname } from './sanitizeOperationalPathname'
+import { clientErrorDataSchema } from './clientErrorDataSchema'
+import { consentDiagnosticDataSchema } from './consentDiagnosticDataSchema'
+
+export { clientErrorDataSchema, consentDiagnosticDataSchema }
 
 const emptyDataSchema = z.strictObject({})
 const failureReasonSchema = z.enum([
@@ -141,41 +144,6 @@ export const metaDatasetQualityIncompleteDataSchema =
       .max(requiredMetaDatasetQualityEvents.length),
     snapshotDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
   })
-
-export const consentDiagnosticDataSchema = z.strictObject({
-  code: z.enum(consentDiagnosticCodes)
-})
-
-export const clientErrorDataSchema = z.strictObject({
-  source: z.literal('window_error'),
-  message: z
-    .string()
-    .min(1)
-    .max(240)
-    .refine(value => !/\S+@\S+\.\S+/.test(value), {
-      message:
-        'Client error message must not contain email-like values'
-    })
-    .optional(),
-  filename: z
-    .string()
-    .min(1)
-    .max(512)
-    .transform(sanitizeOperationalPathname)
-    .optional(),
-  line: z
-    .number()
-    .int()
-    .nonnegative()
-    .max(10_000_000)
-    .optional(),
-  column: z
-    .number()
-    .int()
-    .nonnegative()
-    .max(10_000_000)
-    .optional()
-})
 
 const unhandledRejectionMessageSchema = z
   .string()

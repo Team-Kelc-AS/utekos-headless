@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 export const CHECKOUT_PRODUCT_CONTEXT_ATTRIBUTE =
@@ -8,19 +8,17 @@ const SHOPIFY_ATTRIBUTE_VALUE_MAX_LENGTH = 65_535
 
 const productContextValueSchema = z
   .string()
-  .trim()
-  .min(1)
-  .max(255)
+  .check(z.trim(), z.minLength(1), z.maxLength(255))
 
 const checkoutProductContextItemSchema = z.strictObject({
   item_id: productContextValueSchema,
-  item_brand: productContextValueSchema.optional(),
-  item_category: productContextValueSchema.optional()
+  item_brand: z.optional(productContextValueSchema),
+  item_category: z.optional(productContextValueSchema)
 })
 
 const checkoutProductContextSchema = z
   .array(checkoutProductContextItemSchema)
-  .max(100)
+  .check(z.maxLength(100))
 
 export type CheckoutProductContextItem = z.infer<
   typeof checkoutProductContextItemSchema

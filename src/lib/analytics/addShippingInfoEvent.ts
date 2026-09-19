@@ -4,19 +4,20 @@ import { canonicalCommerceValueSchema } from './canonicalCommerceItem'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 
 export const canonicalAddShippingInfoCommerceSchema =
-  canonicalCommerceValueSchema.extend({
+  z.strictObject({
+    ...canonicalCommerceValueSchema.shape,
     checkout_id: z.string().min(1),
     shipping_revision: z.string().min(1).max(255),
     begin_checkout_event_id: z.string().uuid()
   })
 
-export const canonicalAddShippingInfoSchema =
-  canonicalEventEnvelopeSchema.extend({
-    event_name: z.literal('add_shipping_info'),
-    source: z.literal('web'),
-    page_view_id: z.uuid().optional(),
-    custom_data: canonicalAddShippingInfoCommerceSchema
-  })
+export const canonicalAddShippingInfoSchema = z.strictObject({
+  ...canonicalEventEnvelopeSchema.shape,
+  event_name: z.literal('add_shipping_info'),
+  source: z.literal('web'),
+  page_view_id: z.uuid().optional(),
+  custom_data: canonicalAddShippingInfoCommerceSchema
+})
 
 export type CanonicalAddShippingInfo = z.infer<
   typeof canonicalAddShippingInfoSchema

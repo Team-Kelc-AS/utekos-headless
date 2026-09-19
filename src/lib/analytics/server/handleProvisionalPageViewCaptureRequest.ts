@@ -1,4 +1,4 @@
-import { ZodError } from 'zod'
+import { $ZodError } from 'zod/v4/core'
 import { provisionalPageViewCaptureSchema } from '../provisionalPageViewCapture'
 import type { ProvisionalPageViewCaptureStore } from './provisionalPageViewCaptureStore'
 import { redactPageUrlForLog } from './redactPageUrlForLog'
@@ -124,7 +124,7 @@ export async function handleProvisionalPageViewCaptureRequest(
     )
   } catch (error) {
     if (
-      error instanceof ZodError ||
+      error instanceof $ZodError ||
       error instanceof SyntaxError
     ) {
       return Response.json(

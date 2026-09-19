@@ -1,5 +1,5 @@
+import { $ZodError } from 'zod/v4/core'
 import { browserPayloadConsentDenied } from './browserPayloadConsent'
-import { ZodError } from 'zod'
 import {
   acceptCanonicalViewItem,
   type CanonicalViewItemStore
@@ -116,7 +116,7 @@ export async function handleCanonicalViewItemRequest(
       result.status === 'accepted' ? 202 : 200
     )
   } catch (error) {
-    if (error instanceof ZodError) {
+    if (error instanceof $ZodError) {
       return jsonResponse({ error: 'invalid_event' }, 400)
     }
 

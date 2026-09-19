@@ -1,6 +1,6 @@
+import { $ZodError } from 'zod/v4/core'
 import 'server-only'
 
-import { ZodError } from 'zod'
 import { acceptCanonicalRemoveFromCart } from '@/lib/analytics/server/acceptCanonicalRemoveFromCart'
 import { createShopifyCartWebhookSourceEvidence } from '@/lib/analytics/server/createShopifyCartWebhookSourceEvidence'
 import {
@@ -90,7 +90,8 @@ export async function handleShopifyCartsUpdateRemoveFromCartWebhook(
   }
 
   try {
-    const payload = shopifyCartsUpdateWebhookSchema.parse(payloadJson)
+    const payload =
+      shopifyCartsUpdateWebhookSchema.parse(payloadJson)
     const observedAt = now()
     const currentSnapshot = buildShopifyCartSnapshot(
       payload,
@@ -126,12 +127,13 @@ export async function handleShopifyCartsUpdateRemoveFromCartWebhook(
     }> = []
 
     for (const removal of removals) {
-      const canonical = await shopifyCartRemovalToCanonicalRemoveFromCart({
-        cartToken,
-        priorLine: removal.prior_line,
-        quantityRemoved: removal.quantity_removed,
-        updatedAt: payload.updated_at
-      })
+      const canonical =
+        await shopifyCartRemovalToCanonicalRemoveFromCart({
+          cartToken,
+          priorLine: removal.prior_line,
+          quantityRemoved: removal.quantity_removed,
+          updatedAt: payload.updated_at
+        })
       const sourceEvidence = createSourceEvidence({
         cartToken,
         eventId: canonical.event_id,
@@ -184,11 +186,14 @@ export async function handleShopifyCartsUpdateRemoveFromCartWebhook(
       status === 'accepted' ? 202 : 200
     )
   } catch (error) {
-    if (error instanceof ZodError) {
+    if (error instanceof $ZodError) {
       return jsonResponse({ error: 'invalid_event' }, 400)
     }
 
-    console.error('[carts-update-remove-from-cart] failed', error)
+    console.error(
+      '[carts-update-remove-from-cart] failed',
+      error
+    )
     return jsonResponse({ error: 'internal_error' }, 500)
   }
 }

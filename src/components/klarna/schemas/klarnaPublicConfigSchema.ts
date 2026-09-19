@@ -1,11 +1,13 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 
 export const klarnaPublicConfigSchema = z.object({
   client_id: z
     .string()
-    .trim()
-    .startsWith('klarna_live_client_')
-    .regex(/^\S+$/),
+    .check(
+      z.trim(),
+      z.startsWith('klarna_live_client_'),
+      z.regex(/^\S+$/)
+    ),
   environment: z.enum(['production', 'playground'])
 })
 

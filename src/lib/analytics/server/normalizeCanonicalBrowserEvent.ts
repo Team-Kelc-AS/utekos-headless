@@ -1,4 +1,4 @@
-import type { z } from 'zod'
+import * as z from 'zod/v4/core'
 import { withoutTrackingQuery } from '../withoutTrackingQuery'
 import { filterConsentedBrowserIds } from '../filterConsentedBrowserIds'
 import type { CanonicalEventEnvelope } from '../canonicalEventEnvelope'
@@ -8,11 +8,12 @@ export type CanonicalBrowserEventRequestContext =
   CanonicalPageViewRequestContext
 
 export function normalizeCanonicalBrowserEvent<TEvent>(
-  schema: z.ZodType<TEvent>,
+  schema: z.$ZodType<TEvent>,
   payload: unknown,
   requestContext: CanonicalBrowserEventRequestContext
 ): TEvent {
-  const parsed = schema.parse(
+  const parsed = z.parse(
+    schema,
     payload
   ) as CanonicalEventEnvelope & Record<string, unknown>
   const normalized = { ...parsed } as CanonicalEventEnvelope &
@@ -108,5 +109,5 @@ export function normalizeCanonicalBrowserEvent<TEvent>(
     normalized.client_ip_address = requestContext.clientIpAddress
   }
 
-  return schema.parse(normalized)
+  return z.parse(schema, normalized)
 }

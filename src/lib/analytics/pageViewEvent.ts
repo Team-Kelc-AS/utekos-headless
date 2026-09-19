@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   canonicalEventEnvelopeSchema,
   type ConsentSnapshot
@@ -8,21 +8,26 @@ import {
   type EventDeviceInfoInput
 } from './mapEventDeviceInfo'
 
-export const canonicalPageViewSchema =
-  canonicalEventEnvelopeSchema.extend({
+export const canonicalPageViewSchema = z.extend(
+  canonicalEventEnvelopeSchema,
+  {
     event_name: z.literal('page_view'),
     source: z.literal('web'),
-    edge_request_id: z.string().uuid().optional(),
-    page_view_id: z.string().uuid(),
-    page_url: z.string().url(),
-    referrer_url: z.string().url().optional(),
-    page_title: z.string().min(1),
-    custom_data: z.record(z.string(), z.unknown()).optional()
-  })
+    edge_request_id: z.optional(z.string().check(z.uuid())),
+    page_view_id: z.string().check(z.uuid()),
+    page_url: z.string().check(z.url()),
+    referrer_url: z.optional(z.string().check(z.url())),
+    page_title: z.string().check(z.minLength(1)),
+    custom_data: z.optional(z.record(z.string(), z.unknown()))
+  }
+)
 
 export type { ConsentSnapshot } from './canonicalEventEnvelope'
-export type CanonicalPageView = z.infer<typeof canonicalPageViewSchema>
-export type TrackingEnvironment = CanonicalPageView['environment']
+export type CanonicalPageView = z.infer<
+  typeof canonicalPageViewSchema
+>
+export type TrackingEnvironment =
+  CanonicalPageView['environment']
 
 type CreateCanonicalPageViewInput = {
   browserId?: Record<string, string>
@@ -80,7 +85,9 @@ export type PageViewNavigation = {
 export function createCanonicalPageView(
   input: CreateCanonicalPageViewInput
 ): CanonicalPageView {
-  const eventDeviceInfo = mapEventDeviceInfo(input.eventDeviceInfo)
+  const eventDeviceInfo = mapEventDeviceInfo(
+    input.eventDeviceInfo
+  )
 
   return canonicalPageViewSchema.parse({
     schema_version: 1,
@@ -94,14 +101,22 @@ export function createCanonicalPageView(
     source: 'web',
     environment: input.environment,
     page_url: input.pageUrl,
-    ...(input.referrerUrl ? { referrer_url: input.referrerUrl } : {}),
+    ...(input.referrerUrl ?
+      { referrer_url: input.referrerUrl }
+    : {}),
     page_title: input.pageTitle,
     consent: input.consent,
     ...(input.browserId ? { browser_id: input.browserId } : {}),
     ...(input.clickId ? { click_id: input.clickId } : {}),
-    ...(input.externalId ? { external_id: input.externalId } : {}),
-    ...(input.impressionId ? { impression_id: input.impressionId } : {}),
-    ...(eventDeviceInfo ? { event_device_info: eventDeviceInfo } : {})
+    ...(input.externalId ?
+      { external_id: input.externalId }
+    : {}),
+    ...(input.impressionId ?
+      { impression_id: input.impressionId }
+    : {}),
+    ...(eventDeviceInfo ?
+      { event_device_info: eventDeviceInfo }
+    : {})
   })
 }
 
@@ -123,12 +138,8 @@ export function releaseCanonicalPageViewForConsent(
   return canonicalPageViewSchema.parse({
     ...capturedEvent,
     consent: input.consent,
-    ...(input.browserId ?
-      { browser_id: input.browserId }
-    : {}),
-    ...(input.clickId ?
-      { click_id: input.clickId }
-    : {}),
+    ...(input.browserId ? { browser_id: input.browserId } : {}),
+    ...(input.clickId ? { click_id: input.clickId } : {}),
     ...(input.externalId ?
       { external_id: input.externalId }
     : {})
@@ -153,7 +164,9 @@ export function buildPageViewDataLayerEvent(
     event_time: event.event_time,
     page_view_id: event.page_view_id,
     page_location: event.page_url,
-    ...(event.referrer_url ? { page_referrer: event.referrer_url } : {}),
+    ...(event.referrer_url ?
+      { page_referrer: event.referrer_url }
+    : {}),
     page_title: event.page_title,
     source: event.source,
     canonical_event: event

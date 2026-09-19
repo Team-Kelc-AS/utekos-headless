@@ -1,14 +1,14 @@
 'use client'
 
 import { sendGTMEvent } from '@next/third-parties/google'
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import { findMicrosoftUetAnonymousId } from './microsoftUetIdentity'
 
 const microsoftUetIdSyncEventSchema = z.strictObject({
   event: z.literal('microsoft_uet_id_sync'),
-  microsoft_vid: z.string().uuid(),
-  page_view_event_id: z.string().uuid().optional(),
-  page_view_id: z.string().uuid().optional()
+  microsoft_vid: z.string().check(z.uuid()),
+  page_view_event_id: z.optional(z.string().check(z.uuid())),
+  page_view_id: z.optional(z.string().check(z.uuid()))
 })
 
 export type MicrosoftUetIdSyncEvent = z.infer<

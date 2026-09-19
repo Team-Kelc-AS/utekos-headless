@@ -1,5 +1,5 @@
+import { $ZodError } from 'zod/v4/core'
 import { browserPayloadConsentDenied } from './browserPayloadConsent'
-import { ZodError } from 'zod'
 import {
   acceptCanonicalPageView,
   type CanonicalPageViewStore
@@ -311,7 +311,7 @@ export async function handleCanonicalPageViewRequest(
       readPageUrl(payload)
     )
   } catch (error) {
-    if (error instanceof ZodError) {
+    if (error instanceof $ZodError) {
       console.warn(
         '[tracking] page_view request rejected: invalid_event',
         requestLogMeta(request, {

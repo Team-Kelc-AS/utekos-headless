@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   canonicalCommerceValueSchema,
   type CanonicalCommerceValue
@@ -15,28 +15,32 @@ import {
   type EventDeviceInfoInput
 } from './mapEventDeviceInfo'
 
-export const canonicalBeginCheckoutCommerceSchema =
-  canonicalCommerceValueSchema.extend({
-    cart_id: z.string().min(1),
-    checkout_id: z.string().min(1),
-    creation_revision: z.string().min(1)
-  })
+export const canonicalBeginCheckoutCommerceSchema = z.extend(
+  canonicalCommerceValueSchema,
+  {
+    cart_id: z.string().check(z.minLength(1)),
+    checkout_id: z.string().check(z.minLength(1)),
+    creation_revision: z.string().check(z.minLength(1))
+  }
+)
 
 export type CanonicalBeginCheckoutCommerce = z.infer<
   typeof canonicalBeginCheckoutCommerceSchema
 >
 
-export const canonicalBeginCheckoutSchema =
-  canonicalEventEnvelopeSchema.extend({
+export const canonicalBeginCheckoutSchema = z.extend(
+  canonicalEventEnvelopeSchema,
+  {
     event_name: z.literal('begin_checkout'),
     source: z.literal('web'),
-    checkout_method: checkoutMethodSchema.optional(),
-    page_view_id: z.uuid().optional(),
+    checkout_method: z.optional(checkoutMethodSchema),
+    page_view_id: z.optional(z.uuid()),
     page_url: z.url(),
-    referrer_url: z.url().optional(),
-    page_title: z.string().min(1),
+    referrer_url: z.optional(z.url()),
+    page_title: z.string().check(z.minLength(1)),
     custom_data: canonicalBeginCheckoutCommerceSchema
-  })
+  }
+)
 
 export type CanonicalBeginCheckout = z.infer<
   typeof canonicalBeginCheckoutSchema

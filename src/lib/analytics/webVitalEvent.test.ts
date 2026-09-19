@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { z } from 'zod'
+import * as z from 'zod/v4/core'
 import { gaWebVitalIntegerValue } from './gaWebVitalIntegerValue'
 import {
   buildWebVitalCustomData,
@@ -89,8 +89,8 @@ test('strictObject rejects unknown custom_data keys and Zod 4 format fields fail
         extra: true
       }),
     (error: unknown) => {
-      assert.equal(error instanceof z.ZodError, true)
-      const issues = (error as z.ZodError).issues
+      assert.equal(error instanceof z.$ZodError, true)
+      const issues = (error as z.$ZodError).issues
       assert.ok(issues.length > 0)
       assert.ok(
         issues.some(issue => issue.code === 'unrecognized_keys')

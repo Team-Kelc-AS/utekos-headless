@@ -4,19 +4,20 @@ import { canonicalCommerceValueSchema } from './canonicalCommerceItem'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 
 export const canonicalAddPaymentInfoCommerceSchema =
-  canonicalCommerceValueSchema.extend({
+  z.strictObject({
+    ...canonicalCommerceValueSchema.shape,
     checkout_id: z.string().min(1),
     payment_revision: z.string().min(1).max(255),
     begin_checkout_event_id: z.uuid()
   })
 
-export const canonicalAddPaymentInfoSchema =
-  canonicalEventEnvelopeSchema.extend({
-    event_name: z.literal('add_payment_info'),
-    source: z.literal('web'),
-    page_view_id: z.uuid().optional(),
-    custom_data: canonicalAddPaymentInfoCommerceSchema
-  })
+export const canonicalAddPaymentInfoSchema = z.strictObject({
+  ...canonicalEventEnvelopeSchema.shape,
+  event_name: z.literal('add_payment_info'),
+  source: z.literal('web'),
+  page_view_id: z.uuid().optional(),
+  custom_data: canonicalAddPaymentInfoCommerceSchema
+})
 
 export type CanonicalAddPaymentInfo = z.infer<
   typeof canonicalAddPaymentInfoSchema

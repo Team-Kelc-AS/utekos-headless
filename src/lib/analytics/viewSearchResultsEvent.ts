@@ -1,14 +1,16 @@
 import { z } from 'zod'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 
-export const canonicalViewSearchResultsCustomDataSchema = z.strictObject({
-  search_id: z.string().min(1),
-  result_revision: z.number().int().positive(),
-  search_term: z.string().min(1),
-  result_count: z.number().int().nonnegative()
-})
+export const canonicalViewSearchResultsCustomDataSchema =
+  z.strictObject({
+    search_id: z.string().min(1),
+    result_revision: z.number().int().positive(),
+    search_term: z.string().min(1),
+    result_count: z.number().int().nonnegative()
+  })
 
-export const canonicalViewSearchResultsSchema = canonicalEventEnvelopeSchema.extend({
+export const canonicalViewSearchResultsSchema = z.strictObject({
+  ...canonicalEventEnvelopeSchema.shape,
   event_name: z.literal('view_search_results'),
   source: z.literal('web'),
   page_url: z.string().url(),

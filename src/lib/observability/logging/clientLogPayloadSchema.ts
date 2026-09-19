@@ -1,19 +1,16 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import { sanitizeClientErrorMessage } from '@/lib/observability/client/sanitizeClientErrorBeacon'
 import { sanitizeOperationalPathname } from './sanitizeOperationalPathname'
-import {
-  clientErrorDataSchema,
-  consentDiagnosticDataSchema,
-  type AppLogInput
-} from './appLogContract'
+import type { AppLogInput } from './appLogContract'
+import { clientErrorDataSchema } from './clientErrorDataSchema'
+import { consentDiagnosticDataSchema } from './consentDiagnosticDataSchema'
 
 export { sanitizeOperationalPathname }
 
-const pathnameSchema = z
-  .string()
-  .min(1)
-  .max(2_048)
-  .transform(sanitizeOperationalPathname)
+const pathnameSchema = z.pipe(
+  z.string().check(z.minLength(1), z.maxLength(2_048)),
+  z.transform(sanitizeOperationalPathname)
+)
 
 const clientErrorSchema = z.strictObject({
   event: z.literal('client_error'),
@@ -27,8 +24,8 @@ const unhandledRejectionSchema = z.strictObject({
   level: z.literal('error'),
   data: z.strictObject({
     source: z.literal('unhandled_rejection'),
-    errorName: z
-      .enum([
+    errorName: z.optional(
+      z.enum([
         'AbortError',
         'AggregateError',
         'DOMException',
@@ -43,7 +40,7 @@ const unhandledRejectionSchema = z.strictObject({
         'URIError',
         'ZodError'
       ])
-      .optional(),
+    ),
     reasonType: z.enum([
       'bigint',
       'boolean',
@@ -56,15 +53,16 @@ const unhandledRejectionSchema = z.strictObject({
       'undefined'
     ]),
     reasonIsError: z.boolean(),
-    message: z
-      .string()
-      .min(1)
-      .max(240)
-      .refine(value => !/\S+@\S+\.\S+/.test(value), {
-        message:
-          'Unhandled rejection message must not contain email-like values'
-      })
-      .optional()
+    message: z.optional(
+      z.string().check(
+        z.minLength(1),
+        z.maxLength(240),
+        z.refine(value => !/\S+@\S+\.\S+/.test(value), {
+          message:
+            'Unhandled rejection message must not contain email-like values'
+        })
+      )
+    )
   }),
   context: z.strictObject({ pathname: pathnameSchema })
 })

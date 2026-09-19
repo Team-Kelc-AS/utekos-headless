@@ -32,15 +32,15 @@
     "source_files": [
       {
         "path": "src/lib/analytics/addToCartEvent.ts",
-        "sha256": "14eca77b2ffa74f23446eb74cfdbf7e6da6f3aefac5f072f5f069a534e1380fb"
+        "sha256": "02cfb04446471e6ccb02b7c073923a3191110ad8df5c89a51b9e8e827774cff3"
       },
       {
         "path": "src/lib/analytics/beginCheckoutEvent.ts",
-        "sha256": "aa5a853cc343d9e90ec821493dedebf90e5f9b03557d4553f9c7336efd53eb18"
+        "sha256": "0b35f9732193d55e99fba8d0a536327d65ad3c702c45616c7b733d68a249ef87"
       },
       {
         "path": "src/lib/analytics/purchaseEvent.ts",
-        "sha256": "0e0fe093dfe7f81b6769e85c34ae011bb08030be0c2000e8ec75f569b6ea857e"
+        "sha256": "f3f2b52cc62fda0be2a89c72ff9f9ad3612d25a4c2fe47d2b4fea426c34479f2"
       },
       {
         "path": "src/lib/analytics/canonicalEvent.ts",
@@ -48,7 +48,7 @@
       },
       {
         "path": "src/lib/analytics/canonicalEventEnvelope.ts",
-        "sha256": "ccffc8e64e498fca9fccec63062e22f37b021ee1f34f2dd6e9a26f96a0001f21"
+        "sha256": "9b3525132e80089dd95e40400351ec6d707726ad98829046d76d11659c0dc188"
       },
       {
         "path": "src/lib/analytics/eventCatalog.ts",
@@ -60,7 +60,7 @@
       },
       {
         "path": "scripts/contracts/utekosEventsContractCatalog.ts",
-        "sha256": "45c3a1492148815964a318eeb19d46febf987c3efbe73778f1b26e40b8f49570"
+        "sha256": "9cb8c2e7b633a3a64c529c4d11aaa14b5fbe3bdf2cf7ba24f6f448fbd8e44edb"
       },
       {
         "path": "scripts/contracts/utekosEventDeliveryParameterCatalog.ts",

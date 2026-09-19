@@ -1,13 +1,16 @@
 import { z } from 'zod'
 import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 
-export const canonicalFormErrorCustomDataSchema = z.strictObject({
-  attempt_id: z.string().min(1),
-  form_id: z.string().min(1),
-  error_category: z.string().min(1)
-})
+export const canonicalFormErrorCustomDataSchema = z.strictObject(
+  {
+    attempt_id: z.string().min(1),
+    form_id: z.string().min(1),
+    error_category: z.string().min(1)
+  }
+)
 
-export const canonicalFormErrorSchema = canonicalEventEnvelopeSchema.extend({
+export const canonicalFormErrorSchema = z.strictObject({
+  ...canonicalEventEnvelopeSchema.shape,
   event_name: z.literal('form_error'),
   source: z.literal('web'),
   page_url: z.string().url(),
@@ -17,4 +20,6 @@ export const canonicalFormErrorSchema = canonicalEventEnvelopeSchema.extend({
   custom_data: canonicalFormErrorCustomDataSchema
 })
 
-export type CanonicalFormError = z.infer<typeof canonicalFormErrorSchema>
+export type CanonicalFormError = z.infer<
+  typeof canonicalFormErrorSchema
+>

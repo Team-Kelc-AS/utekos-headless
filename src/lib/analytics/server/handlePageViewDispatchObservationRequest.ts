@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { $ZodError } from 'zod/v4/core'
 import { pageViewDispatchObservationSchema } from '../pageViewDispatchObservation'
 import type { BrowserEventTrafficVerdict } from './classifyBrowserEventTraffic'
 import type { PageViewFunnelObservationStore } from './pageViewFunnelObservationStore'
@@ -82,7 +82,7 @@ export async function handlePageViewDispatchObservationRequest(
     return response(
       {
         error:
-          error instanceof z.ZodError ?
+          error instanceof $ZodError ?
             'invalid_observation'
           : 'invalid_json'
       },

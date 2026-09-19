@@ -1,4 +1,4 @@
-import type { z } from 'zod'
+import type * as z from 'zod/v4/core'
 import type { CanonicalEvent } from '../canonicalEvent'
 import { dispatchCanonicalEventToSnapchat } from './dispatchCanonicalEventToSnapchat'
 import type {
@@ -146,7 +146,7 @@ export function createSnapchatProviderAdapter<
 >(input: {
   eventName: E['event_name']
   key: ProviderAdapterKey
-  schema: z.ZodType<E>
+  schema: z.$ZodType<E>
 }): ProviderAdapter<E, SnapchatDispatchReceipt> {
   return {
     deadLetterReasons: {

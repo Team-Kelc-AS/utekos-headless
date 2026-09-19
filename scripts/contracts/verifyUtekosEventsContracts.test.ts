@@ -214,7 +214,9 @@ test('each catalog entry traces to its route, handlers, normalizer, and schema',
       )
     }
 
-    assert.doesNotThrow(() => event.schema.parse(event.example))
+    assert.doesNotThrow(() =>
+      z.parse(event.schema, event.example)
+    )
   }
 })
 
@@ -273,7 +275,7 @@ test('OpenAPI paths and component schemas match the route catalog and Zod schema
     assert.deepEqual(
       openapi.paths[`/api/events/${event.routeSegment}`].post
         .requestBody.content['application/json'].example,
-      event.schema.parse(event.example)
+      z.parse(event.schema, event.example)
     )
   }
 })
@@ -312,7 +314,7 @@ test('shared request handler characterizes common HTTP outcomes', async () => {
 
   const handler = createBrowserEventRequestHandler(
     async ({ payload }) => {
-      schema.parse(payload)
+      z.parse(schema, payload)
       if (outcome === 'error')
         throw new Error('store unavailable')
       if (outcome === 'rejected') {
