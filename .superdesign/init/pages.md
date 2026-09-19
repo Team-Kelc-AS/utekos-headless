@@ -726,8 +726,6 @@ The following complete dependency snapshot describes the source used for the bas
                     - src/lib/cart/shopifyPublicCartIdSchema.ts
                   - src/components/klarna/constants/sessionStorage.ts
                   - src/lib/analytics/captureBrowserCheckoutAttributionSnapshot.ts
-                    - src/lib/consent/waitForCookiebotConsentReady.ts
-                      - src/lib/consent/cookiebotConsent.ts
                 - src/components/klarna/utils/classifyKlarnaAuthorizationResult.ts
                   - src/components/klarna/types/index.ts
                 - src/components/klarna/utils/loadKlarnaExpressCheckoutSdk.ts

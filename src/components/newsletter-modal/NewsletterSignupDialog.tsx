@@ -29,9 +29,7 @@ import { Input } from '@/components/ui/input'
 
 import { NEWSLETTER_DISCOUNT_PERCENT } from './newsletterModalConfig'
 import {
-  getCookiebotFromWindow,
   getNewsletterModalRuntimeState,
-  isCookiebotBannerVisible,
   persistNewsletterModalDismissal,
   readNewsletterModalDismissals
 } from './newsletterModalRuntime'
@@ -42,8 +40,6 @@ import newsletterImageComfyKlarna2 from '@/assets/images/partners/newsletter-ima
 const initialState: ActionState = { status: 'idle', message: '' }
 
 const OPEN_DELAY_MS = 3500
-const DEVELOPMENT_INITIAL_DELAY_MS = 1500
-const DEVELOPMENT_POLL_INTERVAL_MS = 500
 
 type BrowserStorageName = 'localStorage' | 'sessionStorage'
 
@@ -57,24 +53,11 @@ function getBrowserStorage(
   }
 }
 
-function isDevelopmentLocalhost(): boolean {
-  if (process.env.NODE_ENV !== 'development') {
-    return false
-  }
-
-  return ['localhost', '127.0.0.1', '::1'].includes(
-    window.location.hostname
-  )
-}
-
 function persistDismissal(): void {
-  const cookiebot = getCookiebotFromWindow(window)
-
   persistNewsletterModalDismissal({
     localStorage: getBrowserStorage('localStorage'),
     sessionStorage: getBrowserStorage('sessionStorage'),
-    preferencesConsentGranted:
-      cookiebot?.consent?.preferences === true
+    preferencesConsentGranted: true
   })
 }
 
@@ -93,27 +76,15 @@ export function NewsletterSignupDialog() {
     let resolved = false
 
     let openTimer: number | undefined
-    let initialTimer: number | undefined
-    let developmentPoll: number | undefined
 
     const localStorage = getBrowserStorage('localStorage')
 
     const sessionStorage = getBrowserStorage('sessionStorage')
 
-    const stopDevelopmentPoll = () => {
-      if (developmentPoll !== undefined) {
-        window.clearInterval(developmentPoll)
-
-        developmentPoll = undefined
-      }
-    }
-
     const evaluate = () => {
       if (disposed || resolved) {
         return
       }
-
-      const cookiebot = getCookiebotFromWindow(window)
 
       const dismissals = readNewsletterModalDismissals(
         localStorage,
@@ -121,19 +92,11 @@ export function NewsletterSignupDialog() {
       )
 
       const runtime = getNewsletterModalRuntimeState({
-        cookiebot,
-        hostname: window.location.hostname,
-        nodeEnvironment: process.env.NODE_ENV,
-        cookieBannerVisible: isCookiebotBannerVisible(
-          document,
-          window
-        ),
         ...dismissals
       })
 
       if (runtime.suppressed) {
         resolved = true
-        stopDevelopmentPoll()
         return
       }
 
@@ -152,21 +115,12 @@ export function NewsletterSignupDialog() {
           return
         }
 
-        const latestCookiebot = getCookiebotFromWindow(window)
-
         const latestDismissals = readNewsletterModalDismissals(
           localStorage,
           sessionStorage
         )
 
         const latestRuntime = getNewsletterModalRuntimeState({
-          cookiebot: latestCookiebot,
-          hostname: window.location.hostname,
-          nodeEnvironment: process.env.NODE_ENV,
-          cookieBannerVisible: isCookiebotBannerVisible(
-            document,
-            window
-          ),
           ...latestDismissals
         })
 
@@ -175,72 +129,19 @@ export function NewsletterSignupDialog() {
         }
 
         resolved = true
-        stopDevelopmentPoll()
         setOpen(true)
       }, OPEN_DELAY_MS)
     }
 
-    const handleCookiebotChange = () => {
-      evaluate()
-    }
-
-    window.addEventListener(
-      'CookiebotOnConsentReady',
-      handleCookiebotChange
-    )
-
-    window.addEventListener(
-      'CookiebotOnAccept',
-      handleCookiebotChange
-    )
-
-    window.addEventListener(
-      'CookiebotOnDecline',
-      handleCookiebotChange
-    )
-
-    if (isDevelopmentLocalhost()) {
-      initialTimer = window.setTimeout(() => {
-        evaluate()
-
-        if (!resolved) {
-          developmentPoll = window.setInterval(
-            evaluate,
-            DEVELOPMENT_POLL_INTERVAL_MS
-          )
-        }
-      }, DEVELOPMENT_INITIAL_DELAY_MS)
-    } else {
-      evaluate()
-    }
+    evaluate()
 
     return () => {
       disposed = true
-
-      window.removeEventListener(
-        'CookiebotOnConsentReady',
-        handleCookiebotChange
-      )
-
-      window.removeEventListener(
-        'CookiebotOnAccept',
-        handleCookiebotChange
-      )
-
-      window.removeEventListener(
-        'CookiebotOnDecline',
-        handleCookiebotChange
-      )
 
       if (openTimer !== undefined) {
         window.clearTimeout(openTimer)
       }
 
-      if (initialTimer !== undefined) {
-        window.clearTimeout(initialTimer)
-      }
-
-      stopDevelopmentPoll()
     }
   }, [])
 

@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import {
-  createPageViewCollectorTransport,
-  type CookiebotState
-} from './pageViewCollectorTransport'
+import { createPageViewCollectorTransport } from './pageViewCollectorTransport'
 import {
   createCanonicalPageView,
   type CanonicalPageView
@@ -36,9 +33,8 @@ function pageView(
     clickId: { fbclid: 'private' }
   })
 }
-function harness(initial?: CookiebotState) {
-  let current = initial,
-    reads = 0
+function harness() {
+  let reads = 0
   const captures: CanonicalPageView[] = [],
     sent: CanonicalPageView[] = []
   const deps = {
@@ -46,7 +42,7 @@ function harness(initial?: CookiebotState) {
       captures.push(event)
     },
     enrich: async (event: CanonicalPageView) => event,
-    getCookiebot: () => current,
+    getTrackingAuthorization: () => ({}),
     getCookieHeader: () => {
       reads++
       return '_fbp=fb.1.2.3; _ga=GA1.1.1.2'
@@ -59,55 +55,29 @@ function harness(initial?: CookiebotState) {
     deps,
     sent,
     captures,
-    reads: () => reads,
-    consent: (next: CookiebotState) => {
-      current = next
-    }
+    reads: () => reads
   }
-}
-const marketing = {
-  hasResponse: true,
-  consent: { method: 'explicit', marketing: true }
-}
-const statistics = {
-  hasResponse: true,
-  consent: { method: 'explicit', statistics: true }
 }
 
-test('pending and denied events are not captured, retained, enriched or read from storage', async () => {
-  for (const initial of [
-    undefined,
-    { hasResponse: false },
-    {
-      hasResponse: true,
-      consent: { method: 'explicit', marketing: false }
-    }
-  ]) {
-    const h = harness(initial),
-      t = createPageViewCollectorTransport(h.deps)
-    assert.equal(await t.queue(pageView(denied)), 'skipped')
-    h.consent(marketing)
-    await t.flush()
-    assert.equal(h.reads(), 0)
-    assert.equal(h.captures.length, 0)
-    assert.equal(h.sent.length, 0)
-  }
+test('denied events are not captured, retained, enriched or read from storage', async () => {
+  const h = harness(),
+    t = createPageViewCollectorTransport(h.deps)
+  assert.equal(await t.queue(pageView(denied)), 'skipped')
+  await t.flush()
+  assert.equal(h.reads(), 0)
+  assert.equal(h.captures.length, 0)
+  assert.equal(h.sent.length, 0)
 })
-test('missing or implied consent method cannot open collection', async () => {
-  for (const method of [undefined, 'implied']) {
-    const h = harness({
-      hasResponse: true,
-      consent: { ...(method ? { method } : {}), marketing: true }
-    })
-    await createPageViewCollectorTransport(h.deps).queue(
-      pageView()
-    )
-    assert.equal(h.sent.length, 0)
-    assert.equal(h.reads(), 0)
-  }
+test('operator policy collects a marketing-granted event with original IDs', async () => {
+  const h = harness()
+  await createPageViewCollectorTransport(h.deps).queue(pageView())
+  assert.equal(h.sent.length, 1)
+  assert(h.reads() > 0)
+  assert.equal(h.sent[0]?.consent.source, 'cookiebot')
+  assert.equal(h.sent[0]?.click_id?.fbclid, 'private')
 })
-test('a fresh current-page event after explicit consent is captured and sent once with original IDs', async () => {
-  const h = harness(marketing),
+test('a fresh current-page event is captured and sent once with original IDs', async () => {
+  const h = harness(),
     t = createPageViewCollectorTransport(h.deps),
     event = pageView()
   assert.equal(await t.queue(event), 'sent')
@@ -120,8 +90,8 @@ test('a fresh current-page event after explicit consent is captured and sent onc
   assert.equal(h.sent[0]?.event_time, event.event_time)
   assert.equal(h.sent[0]?.click_id?.fbclid, 'private')
 })
-test('statistics only strips click IDs, marketing cookies and URL queries', async () => {
-  const h = harness(statistics)
+test('analytics-only strips click IDs, marketing cookies and URL queries', async () => {
+  const h = harness()
   await createPageViewCollectorTransport(h.deps).queue(
     pageView({ ...denied, analytics: 'granted' })
   )
@@ -133,72 +103,8 @@ test('statistics only strips click IDs, marketing cookies and URL queries', asyn
   )
   assert.deepEqual(event.browser_id, { ga_client: 'GA1.1.1.2' })
 })
-test('a later marketing grant does not upgrade a previously statistics-only event', async () => {
-  const h = harness(statistics),
-    t = createPageViewCollectorTransport(h.deps)
-  await t.queue(pageView({ ...denied, analytics: 'granted' }))
-  h.consent({
-    hasResponse: true,
-    consent: {
-      method: 'explicit',
-      statistics: true,
-      marketing: true
-    }
-  })
-  await t.flush()
-  assert.equal(h.sent.length, 1)
-  assert.equal(h.sent[0]?.consent.marketing, 'denied')
-})
-test('withdrawal during enrichment prevents capture and send', async () => {
-  const h = harness(marketing)
-  h.deps.enrich = async event => {
-    h.consent({
-      hasResponse: true,
-      consent: { method: 'explicit' }
-    })
-    return event
-  }
-  await createPageViewCollectorTransport(h.deps).queue(
-    pageView()
-  )
-  assert.equal(h.captures.length, 0)
-  assert.equal(h.sent.length, 0)
-  assert.equal(
-    h.reads(),
-    1,
-    'no cookie reads after the asynchronous withdrawal'
-  )
-})
-test('withdrawal during capture prevents subsequent collector send', async () => {
-  const h = harness(marketing)
-  h.deps.capture = async () => {
-    h.consent({
-      hasResponse: true,
-      consent: { method: 'explicit' }
-    })
-  }
-  await createPageViewCollectorTransport(h.deps).queue(
-    pageView()
-  )
-  assert.equal(h.sent.length, 0)
-  assert.equal(
-    h.reads(),
-    2,
-    'no cookie reads after withdrawal during capture'
-  )
-})
-test('no cookie read or retained event when live consent is for a different purpose', async () => {
-  const h = harness(statistics)
-  const transport = createPageViewCollectorTransport(h.deps)
-  assert.equal(await transport.queue(pageView()), 'skipped')
-  assert.equal(h.reads(), 0)
-  h.consent(marketing)
-  await transport.flush()
-  assert.equal(h.sent.length, 0)
-})
-
 test('marketing-only PageView never sends a statistical journey ID', async () => {
-  const h = harness(marketing)
+  const h = harness()
   const event = {
     ...pageView(),
     journey_id: crypto.randomUUID(),
@@ -209,8 +115,8 @@ test('marketing-only PageView never sends a statistical journey ID', async () =>
   assert.equal(h.sent[0]?.journey_id, undefined)
   assert.equal(h.sent[0]?.previous_page_view_id, undefined)
 })
-test('storage or optional enrichment failure still permits an explicitly consented event', async () => {
-  const h = harness(marketing)
+test('storage or optional enrichment failure still permits a granted event', async () => {
+  const h = harness()
   h.deps.getCookieHeader = () => {
     throw new Error('storage unavailable')
   }
@@ -226,7 +132,7 @@ test('storage or optional enrichment failure still permits an explicitly consent
   assert.equal(h.sent.length, 1)
 })
 test('failed send retries with the same event ID and does not duplicate a completed delivery', async () => {
-  const h = harness(marketing),
+  const h = harness(),
     event = pageView()
   let attempts = 0
   h.deps.send = async next => {
@@ -241,7 +147,7 @@ test('failed send retries with the same event ID and does not duplicate a comple
   assert.equal(h.sent[0]?.event_id, event.event_id)
 })
 test('concurrent flush cannot dispatch the same event twice', async () => {
-  const h = harness(marketing)
+  const h = harness()
   let resume!: () => void
   h.deps.enrich = event =>
     new Promise(resolve => {
@@ -255,7 +161,7 @@ test('concurrent flush cannot dispatch the same event twice', async () => {
   assert.equal(h.sent.length, 1)
 })
 test('clearing the consented queue cancels a pending enrichment', async () => {
-  const h = harness(marketing)
+  const h = harness()
   let resume!: () => void
   h.deps.enrich = event =>
     new Promise(resolve => {
@@ -269,7 +175,7 @@ test('clearing the consented queue cancels a pending enrichment', async () => {
   assert.equal(h.sent.length, 0)
 })
 test('distinct consented SPA views each dispatch once', async () => {
-  const h = harness(marketing),
+  const h = harness(),
     t = createPageViewCollectorTransport(h.deps)
   await t.queue(pageView())
   await t.queue(

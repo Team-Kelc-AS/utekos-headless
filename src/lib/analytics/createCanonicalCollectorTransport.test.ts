@@ -12,8 +12,8 @@ const deniedConsent = {
 }
 
 const experiment = {
-  key: 'skreddersy-varmen-layout-v1' as const,
-  variant: 'legacy' as const
+  key: 'example-experiment' as const,
+  variant: 'control' as const
 }
 
 test('adds the experiment only to analytics-consented collection', () => {

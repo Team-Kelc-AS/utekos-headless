@@ -8,22 +8,13 @@ import {
 import { prepareCanonicalPageViewForCollector } from './pageViewCollectorTransport'
 import { createCanonicalPageView } from './pageViewEvent'
 
-test('live explicit consent gates navigation, delayed events, checkout and withdrawal', () => {
+test('granted consent gates navigation, delayed events and checkout', () => {
   const previous = Object.getOwnPropertyDescriptor(
     globalThis,
     'window'
   )
   const data = new Map<string, string>()
-  const listeners = new Map<string, (() => void)[]>()
   const host = {
-    Cookiebot: {
-      hasResponse: true,
-      consent: {
-        method: 'explicit',
-        statistics: true,
-        marketing: true
-      }
-    },
     location: {
       href: 'https://utekos.no/?audience=engaged_audience'
     },
@@ -36,12 +27,7 @@ test('live explicit consent gates navigation, delayed events, checkout and withd
         data.delete(key)
       }
     },
-    addEventListener: (name: string, listener: () => void) => {
-      listeners.set(name, [
-        ...(listeners.get(name) ?? []),
-        listener
-      ])
-    }
+    addEventListener: () => {}
   }
   const consent = {
     analytics: 'granted',
@@ -50,6 +36,11 @@ test('live explicit consent gates navigation, delayed events, checkout and withd
     source: 'cookiebot',
     version: '1'
   } as const
+  const denied = {
+    ...consent,
+    analytics: 'denied' as const,
+    marketing: 'denied' as const
+  }
   Object.defineProperty(globalThis, 'window', {
     value: host,
     configurable: true
@@ -87,26 +78,14 @@ test('live explicit consent gates navigation, delayed events, checkout and withd
       enrichBrowserMetaAudience(product).meta_audience,
       undefined
     )
-    host.Cookiebot.consent.marketing = false
-    for (const listener of listeners.get('CookiebotOnDecline') ??
-      [])
-      listener()
-    assert.equal(data.size, 0)
     assert.equal(
-      enrichBrowserMetaAudience({ consent }).meta_audience,
+      enrichBrowserMetaAudience({ consent: denied })
+        .meta_audience,
       undefined
     )
-    host.Cookiebot.consent.marketing = true
-    host.Cookiebot.hasResponse = false
     assert.equal(
       enrichBrowserMetaAudience({ consent }).meta_audience,
-      undefined
-    )
-    host.Cookiebot.hasResponse = true
-    host.Cookiebot.consent.method = 'implied'
-    assert.equal(
-      enrichBrowserMetaAudience({ consent }).meta_audience,
-      undefined
+      'existing_customers'
     )
   } finally {
     if (previous)
@@ -116,35 +95,45 @@ test('live explicit consent gates navigation, delayed events, checkout and withd
 })
 
 test('PageView final preparation removes a segment after either purpose is withdrawn', () => {
-  const event = {
-    ...createCanonicalPageView({
-      environment: 'test',
-      eventId: crypto.randomUUID(),
-      pageViewId: crypto.randomUUID(),
-      eventTime: new Date().toISOString(),
-      pageUrl: 'https://utekos.no/',
-      pageTitle: 'Utekos',
-      consent: {
-        analytics: 'granted',
-        marketing: 'granted',
-        preferences: 'denied',
-        source: 'cookiebot',
-        version: '1'
-      }
-    }),
-    meta_audience: 'engaged_audience' as const
-  }
+  const granted = createCanonicalPageView({
+    environment: 'test',
+    eventId: crypto.randomUUID(),
+    pageViewId: crypto.randomUUID(),
+    eventTime: new Date().toISOString(),
+    pageUrl: 'https://utekos.no/',
+    pageTitle: 'Utekos',
+    consent: {
+      analytics: 'granted',
+      marketing: 'granted',
+      preferences: 'denied',
+      source: 'cookiebot',
+      version: '1'
+    }
+  })
   for (const consent of [
-    { statistics: false, marketing: true },
-    { statistics: true, marketing: false }
+    {
+      analytics: 'denied' as const,
+      marketing: 'granted' as const,
+      preferences: 'denied' as const,
+      source: 'cookiebot' as const,
+      version: '1'
+    },
+    {
+      analytics: 'granted' as const,
+      marketing: 'denied' as const,
+      preferences: 'denied' as const,
+      source: 'cookiebot' as const,
+      version: '1'
+    }
   ]) {
     assert.equal(
       prepareCanonicalPageViewForCollector(
-        event,
         {
-          hasResponse: true,
-          consent: { ...consent, method: 'explicit' }
+          ...granted,
+          consent,
+          meta_audience: 'engaged_audience'
         },
+        {},
         ''
       ).meta_audience,
       undefined

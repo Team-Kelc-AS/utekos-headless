@@ -14,29 +14,21 @@ const OSM_IMPORT =
 const PURCHASE_STATIC_IMPORT =
   /from ['"]\.\/PurchaseClientLanding['"]/u
 
-test('ads LP heroes do not load Klarna OSM on first paint', async () => {
+test('ads LP hero does not load Klarna OSM on first paint', async () => {
   const hero = await readSource(
     'src/app/skreddersy-varmen/components/Hero.tsx'
   )
-  const legacyHero = await readSource(
-    'src/app/skreddersy-varmen/variants/legacy/components/Hero.tsx'
-  )
 
-  for (const [label, source] of [
-    ['current hero', hero],
-    ['legacy hero', legacyHero]
-  ] as const) {
-    assert.doesNotMatch(
-      source,
-      OSM_IMPORT,
-      `${label} must not import Klarna OSM`
-    )
-    assert.doesNotMatch(
-      source,
-      /KlarnaCreditPromotionAutoSize/,
-      `${label} must not mount Klarna OSM placements`
-    )
-  }
+  assert.doesNotMatch(
+    hero,
+    OSM_IMPORT,
+    'hero must not import Klarna OSM'
+  )
+  assert.doesNotMatch(
+    hero,
+    /KlarnaCreditPromotionAutoSize/,
+    'hero must not mount Klarna OSM placements'
+  )
 })
 
 test('purchase client JS loads through an explicit dynamic import', async () => {

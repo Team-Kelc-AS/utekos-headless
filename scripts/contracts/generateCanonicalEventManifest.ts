@@ -15,6 +15,7 @@ const repositoryRoot = resolve(
   '../..'
 )
 const manifestVersion = 'canonical-event-manifest.v1'
+const operatorPolicyVersion = 'operator-policy-v1'
 const selectedEventNames = [
   'add_to_cart',
   'begin_checkout',
@@ -33,6 +34,18 @@ export const canonicalEventManifestSchema = z.strictObject({
   source_of_truth: z.strictObject({
     statement: z.string().min(1),
     normative_sources: z.array(z.string().min(1)).min(1)
+  }),
+  tracking_authorization: z.strictObject({
+    mode: z.literal('operator_policy'),
+    version: z.literal(operatorPolicyVersion),
+    authorization: z.strictObject({
+      analytics: z.literal('granted'),
+      marketing: z.literal('granted'),
+      preferences: z.literal('granted')
+    }),
+    cookiebot_state: z.literal(
+      'not_used_for_tracking_authorization'
+    )
   }),
   evidence_statuses: z.array(evidenceStatusSchema).min(1),
   generated_from: z.strictObject({
@@ -106,7 +119,9 @@ const sourceFiles = [
   'src/lib/analytics/beginCheckoutEvent.ts',
   'src/lib/analytics/purchaseEvent.ts',
   'src/lib/analytics/canonicalEvent.ts',
+  'src/lib/analytics/canonicalEventEnvelope.ts',
   'src/lib/analytics/eventCatalog.ts',
+  'src/lib/consent/resolveTrackingAuthorization.ts',
   'scripts/contracts/utekosEventsContractCatalog.ts',
   'scripts/contracts/utekosEventDeliveryParameterCatalog.ts'
 ] as const
@@ -270,10 +285,22 @@ function buildManifest() {
         'Manifestet er den offisielle Control Plane-outputen, men normative TypeScript/Zod-schemas, contracts og eksplisitte provider mappings forblir source of truth som manifestet genereres fra.',
       normative_sources: [
         'src/lib/analytics/*Event.ts',
+        'src/lib/analytics/canonicalEventEnvelope.ts',
         'src/lib/analytics/eventCatalog.ts',
+        'src/lib/consent/resolveTrackingAuthorization.ts',
         'scripts/contracts/utekosEventsContractCatalog.ts',
         'scripts/contracts/utekosEventDeliveryParameterCatalog.ts'
       ]
+    },
+    tracking_authorization: {
+      mode: 'operator_policy',
+      version: operatorPolicyVersion,
+      authorization: {
+        analytics: 'granted',
+        marketing: 'granted',
+        preferences: 'granted'
+      },
+      cookiebot_state: 'not_used_for_tracking_authorization'
     },
     evidence_statuses: [
       'static_verified',

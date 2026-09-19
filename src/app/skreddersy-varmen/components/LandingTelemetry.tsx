@@ -1,5 +1,4 @@
 import { Suspense } from 'react'
-import Script from 'next/script'
 import { VercelTelemetry } from '@/components/analytics/VercelTelemetry'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
@@ -28,11 +27,6 @@ export function LandingTelemetry() {
     resolveShopifyCustomerPrivacyPublicToken(process.env)
   return (
     <>
-      <Script
-        id='utekos-consent-presentation'
-        src='/consent/utekos-presentation.js'
-        strategy='beforeInteractive'
-      />
       <GoogleTagManagerLoader
         enabled={shouldLoadMarketingScripts}
       />

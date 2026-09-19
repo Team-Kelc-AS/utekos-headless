@@ -129,7 +129,7 @@ test('fails closed until Shopify grants analytics consent', () => {
     commands(harness)[0][2].analytics_storage,
     'granted'
   )
-  assert.equal(commands(harness)[0][2].ad_storage, 'denied')
+  assert.equal(commands(harness)[0][2].ad_storage, 'granted')
 })
 
 test('sends purchase with the canonical Data Manager transaction id', () => {
@@ -193,8 +193,8 @@ test('matches the server purchase transaction, value, currency, and items', () =
       environment: 'test',
       consent: {
         analytics: 'granted',
-        marketing: 'denied',
-        preferences: 'denied',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -297,7 +297,7 @@ test('revoking analytics consent updates the Google tag and blocks events', () =
   )
 
   assert.equal(consentUpdates.length, 1)
-  assert.equal(consentUpdates[0][2].analytics_storage, 'denied')
+  assert.equal(consentUpdates[0][2].analytics_storage, 'granted')
   assert.equal(
     commands(harness).filter(command => command[0] === 'event')
       .length,

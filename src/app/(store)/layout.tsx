@@ -17,7 +17,6 @@ import { PageViewObserver } from '@/components/analytics/PageViewObserver'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
 import { JourneyObserver } from '@/components/analytics/JourneyObserver'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
-import Script from 'next/script'
 import { getTrackingEnvironment } from '@/lib/analytics/getTrackingEnvironment'
 import { resolveAssistantDeploymentRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
 import { Google_Sans_Flex } from 'next/font/google'
@@ -82,11 +81,6 @@ export default function RootLayout({
       <body className='scroll-smooth bg-background text-foreground antialiased'>
         <GoogleTagManagerNoScript
           enabled={shouldLoadMarketingScripts}
-        />
-        <Script
-          id='utekos-consent-presentation'
-          src='/consent/utekos-presentation.js'
-          strategy='beforeInteractive'
         />
         <GoogleTagManagerLoader
           enabled={shouldLoadMarketingScripts}

@@ -2,7 +2,7 @@ import 'server-only'
 
 import type { GenerateLeadDataLayerEvent } from '@/lib/analytics/generateLeadEvent'
 import {
-  deniedCookiebotConsent,
+  defaultTrackingAuthorization,
   type LeadFormTrackingContext
 } from '@/lib/analytics/leadFormTrackingContext'
 import { getLeadRequestContextFromHeaders } from '@/lib/analytics/server/getLeadRequestContextFromHeaders'
@@ -39,7 +39,7 @@ export async function recordLeadSubmission(
   input: RecordLeadSubmissionInput
 ): Promise<RecordLeadSubmissionResult> {
   const consent =
-    input.trackingContext?.consent ?? deniedCookiebotConsent()
+    input.trackingContext?.consent ?? defaultTrackingAuthorization()
   const consentedAt =
     consent.marketing === 'granted' ?
       new Date().toISOString()
@@ -65,7 +65,7 @@ export async function recordLeadSubmission(
         { term: input.trackingContext.term }
       : {}),
       consentMarketing: consent.marketing === 'granted',
-      consentSource: 'cookiebot',
+      consentSource: consent.source,
       ...(consentedAt ? { consentedAt } : {}),
       metadata: {
         form_id: input.formId,

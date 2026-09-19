@@ -155,7 +155,7 @@ export const appLogEntryExtrasSchema = z.strictObject({
         analytics: z.enum(['denied', 'granted']),
         marketing: z.enum(['denied', 'granted']),
         preferences: z.enum(['denied', 'granted']),
-        source: z.literal('cookiebot'),
+        source: z.enum(['cookiebot', 'operator_policy']),
         version: z.string().min(1).max(64)
       }),
       z.strictObject({

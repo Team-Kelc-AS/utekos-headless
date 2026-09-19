@@ -1,7 +1,3 @@
-import {
-  hasCookiebotStatisticsConsent,
-  type CookiebotApi
-} from '@/lib/consent/cookiebotConsent'
 import { GA_MEASUREMENT_ID } from '../../api/constants/monitoring'
 import type { CanonicalViewItem } from './viewItemEvent'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
@@ -58,14 +54,6 @@ function getGoogleTagValue(
     return
   }
 
-  if (
-    !hasCookiebotStatisticsConsent(
-      (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
-    )
-  ) {
-    callback(undefined)
-    return
-  }
   const currentWindow = window as GoogleTagWindow
   const dataLayer = currentWindow.dataLayer ?? []
   currentWindow.dataLayer = dataLayer

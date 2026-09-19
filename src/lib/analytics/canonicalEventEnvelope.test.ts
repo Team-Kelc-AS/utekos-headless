@@ -69,13 +69,13 @@ test('accepts a bounded PII-free experiment assignment', () => {
   const parsed = canonicalEventEnvelopeSchema.parse({
     ...envelope,
     experiment: {
-      key: 'skreddersy-varmen-layout-v1',
-      variant: 'legacy'
+      key: 'example-experiment',
+      variant: 'control'
     }
   })
 
   assert.deepEqual(parsed.experiment, {
-    key: 'skreddersy-varmen-layout-v1',
-    variant: 'legacy'
+    key: 'example-experiment',
+    variant: 'control'
   })
 })

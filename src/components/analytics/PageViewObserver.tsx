@@ -11,7 +11,6 @@ import {
   type TrackingEnvironment
 } from '@/lib/analytics/pageViewEvent'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
-import { subscribeToCookiebotPageViewUpdates } from '@/lib/analytics/subscribeToCookiebotPageViewUpdates'
 import { runConsentStep } from '@/lib/analytics/runConsentStep'
 
 export function PageViewObserver({
@@ -68,15 +67,7 @@ export function PageViewObserver({
       }
       void browserPageViewCollectorTransport.queue(event)
     }
-    const unsubscribe = subscribeToCookiebotPageViewUpdates({
-      eventTarget: window,
-      documentTarget: document,
-      isVisible: () => document.visibilityState === 'visible',
-      flush: () => browserPageViewCollectorTransport.flush(),
-      observeConsent
-    })
     runConsentStep(observeConsent, 'consent_processing_failed')
-    return unsubscribe
   }, [environment, pathname, search])
   return null
 }

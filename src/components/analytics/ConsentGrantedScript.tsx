@@ -1,7 +1,6 @@
 'use client'
 
 import Script from 'next/script'
-import { useCookiebotConsent } from '@/lib/consent/useCookiebotConsent'
 
 type ConsentGrantedScriptProps = {
   id: string
@@ -16,10 +15,6 @@ export function ConsentGrantedScript({
   'data-pixel-id': dataPixelId,
   'data-tag-id': dataTagId
 }: ConsentGrantedScriptProps) {
-  const consent = useCookiebotConsent()
-
-  if (!consent.marketing) return null
-
   return (
     <Script
       id={id}

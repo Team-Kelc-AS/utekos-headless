@@ -28,8 +28,6 @@ function canonicalEvent(eventName, eventId, customData = {}) {
 }
 
 function createRuntime({
-  marketing = true,
-  hasResponse = marketing,
   signalsGateway = false
 } = {}) {
   const insertedScripts = []
@@ -52,10 +50,6 @@ function createRuntime({
     head: { appendChild: node => insertedScripts.push(node) }
   }
   const window = {
-    Cookiebot: {
-      consent: { marketing, method: 'explicit' },
-      hasResponse
-    },
     URL,
     crypto: {
       randomUUID: () => '550e8400-e29b-41d4-a716-446655440000'
@@ -110,8 +104,8 @@ function queuedGatewayCalls(window) {
   )
 }
 
-test('requires current marketing consent', () => {
-  const runtime = createRuntime({ marketing: false })
+test('installs the pixel under the operator tracking policy', () => {
+  const runtime = createRuntime()
   const listeners = []
   runtime.window.addEventListener = (name, handler) => {
     listeners.push([name, handler])
@@ -122,18 +116,14 @@ test('requires current marketing consent', () => {
 
   vm.runInContext(script, runtime.context)
 
-  assert.equal(runtime.window.fbq, undefined)
-  assert.deepEqual(runtime.insertedScripts, [])
-  assert.deepEqual(listeners.map(([name]) => name).sort(), [
-    'CookiebotOnAccept',
-    'CookiebotOnConsentReady',
-    'CookiebotOnDecline',
+  assert.equal(typeof runtime.window.fbq, 'function')
+  assert.deepEqual(listeners.map(([name]) => name), [
     'utekos:meta-canonical-browser-event'
   ])
 })
 
 test('installs pixel without waiting for _fbp cookie', () => {
-  const runtime = createRuntime({ marketing: true })
+  const runtime = createRuntime()
   runtime.window.document.cookie =
     'utekos_external_id=anon_550e8400-e29b-41d4-a716-446655440000'
   runtime.window.location = new URL(
@@ -172,7 +162,7 @@ test('installs pixel without waiting for _fbp cookie', () => {
 })
 
 test('dispatches canonical events added after the app bridge loads', () => {
-  const runtime = createRuntime({ marketing: true })
+  const runtime = createRuntime()
 
   vm.runInContext(publicScript, runtime.context)
   runtime.window.dataLayer.push(
@@ -189,7 +179,7 @@ test('dispatches canonical events added after the app bridge loads', () => {
 })
 
 test('dispatches navigation events synchronously with the exact CAPI event ID', () => {
-  const runtime = createRuntime({ marketing: true })
+  const runtime = createRuntime()
   const event = canonicalEvent('select_item', 'navigation-select', {
     currency: 'NOK',
     gross_value: 1790,
@@ -237,18 +227,18 @@ test('does not dispatch browser events to Signals Gateway', () => {
   assert.deepEqual(queuedGatewayCalls(runtime.window), [])
 })
 
-test('discards events recorded before the first marketing decision', () => {
-  const runtime = createRuntime({ marketing: false })
+test('does not send canonical events without marketing granted', () => {
+  const runtime = createRuntime()
   runtime.window.addEventListener = () => {}
 
   vm.runInContext(publicScript, runtime.context)
-  runtime.window.dataLayer.push(
-    canonicalEvent('page_view', 'before-consent')
-  )
-  runtime.intervals[0]()
-
-  runtime.window.Cookiebot.consent.marketing = true
-  runtime.window.Cookiebot.hasResponse = true
+  runtime.window.dataLayer.push({
+    ...canonicalEvent('page_view', 'denied-event'),
+    canonical_event: {
+      ...canonicalEvent('page_view', 'denied-event').canonical_event,
+      consent: { marketing: 'denied' }
+    }
+  })
   runtime.intervals[0]()
   runtime.window.dataLayer.push(
     canonicalEvent('page_view', 'after-consent')
@@ -260,34 +250,6 @@ test('discards events recorded before the first marketing decision', () => {
       .filter(call => call[0] === 'trackSingle')
       .map(call => [call[2], call[4].eventID]),
     [['PageView', 'after-consent']]
-  )
-})
-
-test('never releases events discarded by an explicit rejection', () => {
-  const runtime = createRuntime({
-    marketing: false,
-    hasResponse: true
-  })
-  runtime.window.addEventListener = () => {}
-  runtime.window.dataLayer.push(
-    canonicalEvent('page_view', 'rejected-event')
-  )
-
-  vm.runInContext(publicScript, runtime.context)
-  runtime.intervals[0]()
-
-  runtime.window.Cookiebot.consent.marketing = true
-  runtime.intervals[0]()
-  runtime.window.dataLayer.push(
-    canonicalEvent('page_view', 'accepted-event')
-  )
-  runtime.intervals[0]()
-
-  assert.deepEqual(
-    queuedCalls(runtime.window)
-      .filter(call => call[0] === 'trackSingle')
-      .map(call => [call[2], call[4].eventID]),
-    [['PageView', 'accepted-event']]
   )
 })
 
@@ -693,7 +655,7 @@ test('omits currency and value when currency is empty or non-ISO', () => {
   assert.deepEqual(eventCalls[4][3], {})
 })
 
-test('keeps SDK history PageViews disabled and forwards consent changes once', () => {
+test('keeps SDK history PageViews disabled under the operator policy', () => {
   const runtime = createRuntime()
   runtime.window.dataLayer.push(
     canonicalEvent('page_view', 'first-page')
@@ -701,45 +663,25 @@ test('keeps SDK history PageViews disabled and forwards consent changes once', (
   vm.runInContext(script, runtime.context)
   vm.runInContext(script, runtime.context)
   assert.equal(runtime.window.fbq.disablePushState, true)
-  assert.equal(runtime.listeners.size, 4)
-
-  runtime.window.Cookiebot.consent.marketing = false
-  runtime.listeners.get('CookiebotOnConsentReady')()
-  runtime.window.dataLayer.push(
-    canonicalEvent('page_view', 'denied-page')
-  )
-  runtime.intervals[0]()
-  runtime.listeners.get('CookiebotOnDecline')()
-  assert.deepEqual(
-    queuedCalls(runtime.window).filter(
-      call => call[0] === 'consent'
-    ),
-    [
-      ['consent', 'grant'],
-      ['consent', 'revoke']
-    ]
+  assert.equal(runtime.listeners.size, 1)
+  assert.equal(
+    [...runtime.listeners.keys()][0],
+    'utekos:meta-canonical-browser-event'
   )
 
-  runtime.window.Cookiebot.consent.marketing = true
-  runtime.listeners.get('CookiebotOnAccept')()
   runtime.window.dataLayer.push(
-    canonicalEvent('page_view', 'new-granted-page')
+    canonicalEvent('page_view', 'second-page')
   )
   runtime.intervals[0]()
-  runtime.listeners.get('CookiebotOnConsentReady')()
   const calls = queuedCalls(runtime.window)
   assert.deepEqual(
     calls.filter(call => call[0] === 'consent'),
-    [
-      ['consent', 'grant'],
-      ['consent', 'revoke'],
-      ['consent', 'grant']
-    ]
+    [['consent', 'grant']]
   )
   assert.deepEqual(
     calls
       .filter(call => call[0] === 'trackSingle')
       .map(call => call[4].eventID),
-    ['first-page', 'new-granted-page']
+    ['first-page', 'second-page']
   )
 })

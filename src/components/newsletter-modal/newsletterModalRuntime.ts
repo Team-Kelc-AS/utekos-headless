@@ -2,20 +2,8 @@ import {
   NEWSLETTER_MODAL_LOCAL_STORAGE_KEY,
   NEWSLETTER_MODAL_SESSION_STORAGE_KEY,
   getNewsletterModalStorageMode,
-  isNewsletterModalSuppressed,
-  shouldBypassCookiebotGate
+  isNewsletterModalSuppressed
 } from './newsletterModalConfig'
-
-export type CookiebotConsent = { preferences?: boolean }
-
-export type CookiebotApi = {
-  hasResponse?: boolean
-  consent?: CookiebotConsent
-}
-
-export type CookiebotWindow = Window & {
-  Cookiebot?: CookiebotApi
-}
 
 type StorageLike = Pick<
   Storage,
@@ -23,10 +11,6 @@ type StorageLike = Pick<
 >
 
 type NewsletterModalRuntimeInput = {
-  cookiebot: CookiebotApi | undefined
-  hostname: string
-  nodeEnvironment: string | undefined
-  cookieBannerVisible: boolean
   localDismissedAt: string | null
   sessionDismissedAt: string | null
   now?: number
@@ -35,43 +19,17 @@ type NewsletterModalRuntimeInput = {
 export type NewsletterModalRuntimeState = {
   canOpen: boolean
   preferencesConsentGranted: boolean
-  cookiebotResolved: boolean
-  developmentBypassActive: boolean
   suppressed: boolean
 }
 
-export function hasCookiebotResolved(
-  cookiebot: CookiebotApi | undefined
-): boolean {
-  return cookiebot?.hasResponse === true
-}
-
-export function hasCookiebotPreferencesConsent(
-  cookiebot: CookiebotApi | undefined
-): boolean {
-  return cookiebot?.consent?.preferences === true
-}
-
 export function getNewsletterModalRuntimeState({
-  cookiebot,
-  hostname,
-  nodeEnvironment,
-  cookieBannerVisible,
   localDismissedAt,
   sessionDismissedAt,
   now
 }: NewsletterModalRuntimeInput): NewsletterModalRuntimeState {
   const evaluatedAt = now ?? Date.now()
 
-  const preferencesConsentGranted =
-    hasCookiebotPreferencesConsent(cookiebot)
-
-  const cookiebotResolved = hasCookiebotResolved(cookiebot)
-
-  const developmentBypassActive = shouldBypassCookiebotGate(
-    hostname,
-    nodeEnvironment
-  )
+  const preferencesConsentGranted = true
 
   const localSuppressed =
     preferencesConsentGranted &&
@@ -84,17 +42,11 @@ export function getNewsletterModalRuntimeState({
 
   const suppressed = localSuppressed || sessionSuppressed
 
-  const consentGatePassed =
-    cookiebotResolved || developmentBypassActive
-
-  const canOpen =
-    consentGatePassed && !cookieBannerVisible && !suppressed
+  const canOpen = !suppressed
 
   return {
     canOpen,
     preferencesConsentGranted,
-    cookiebotResolved,
-    developmentBypassActive,
     suppressed
   }
 }
@@ -205,36 +157,4 @@ export function persistNewsletterModalDismissal({
     NEWSLETTER_MODAL_SESSION_STORAGE_KEY,
     timestamp
   )
-}
-
-export function getCookiebotFromWindow(
-  browserWindow: Window
-): CookiebotApi | undefined {
-  return (browserWindow as CookiebotWindow).Cookiebot
-}
-
-export function isCookiebotBannerVisible(
-  browserDocument: Document,
-  browserWindow: Window
-): boolean {
-  const dialog = browserDocument.getElementById(
-    'CybotCookiebotDialog'
-  )
-
-  if (!(dialog instanceof HTMLElement)) {
-    return false
-  }
-
-  const styles = browserWindow.getComputedStyle(dialog)
-
-  if (
-    styles.display === 'none' ||
-    styles.visibility === 'hidden' ||
-    styles.opacity === '0' ||
-    dialog.getAttribute('aria-hidden') === 'true'
-  ) {
-    return false
-  }
-
-  return dialog.getClientRects().length > 0
 }

@@ -1,10 +1,5 @@
 import type { ConsentSnapshot } from '@/lib/analytics/canonicalEventEnvelope'
 import { JOURNEY_STORAGE_KEY } from '@/lib/analytics/internalJourneyContext'
-import type { CookiebotApi } from '@/lib/consent/cookiebotConsent'
-import {
-  hasCookiebotStatisticsConsent,
-  hasCookiebotMarketingConsent
-} from '@/lib/consent/cookiebotConsent'
 import { getConsentSnapshot } from '@/lib/analytics/pageViewClientContext'
 import type { PageViewContext } from '@/lib/analytics/pageViewSession'
 import {
@@ -56,7 +51,11 @@ export function createJourneySession(dependencies: {
     lastPageViewId = undefined
     pages.clear()
     dependencies.enrich({
-      consent: getConsentSnapshot(undefined)
+      consent: {
+        ...getConsentSnapshot(),
+        analytics: 'denied',
+        marketing: 'denied'
+      }
     })
     try {
       if (clearStorage) {
@@ -70,18 +69,10 @@ export function createJourneySession(dependencies: {
   }
 
   function open(input: {
-    cookiebot: CookiebotApi | undefined
     pageView: PageViewContext
   }): JourneyPage | undefined {
-    if (
-      !hasCookiebotStatisticsConsent(input.cookiebot) ||
-      !hasCookiebotMarketingConsent(input.cookiebot)
-    ) {
-      revoke(false)
-      return undefined
-    }
     const consent = {
-      ...getConsentSnapshot(input.cookiebot?.consent),
+      ...getConsentSnapshot(),
       analytics: 'granted' as const
     }
     const context = dependencies.enrich({

@@ -39,6 +39,7 @@ type ParsedConsentPayload = {
   analytics?: unknown
   marketing?: unknown
   preferences?: unknown
+  source?: unknown
   version?: unknown
 }
 
@@ -74,7 +75,10 @@ function parseConsentPayload(
     analytics,
     marketing,
     preferences,
-    source: 'cookiebot',
+    source:
+      payload.source === 'operator_policy' ?
+        'operator_policy'
+      : 'cookiebot',
     version
   }
 }

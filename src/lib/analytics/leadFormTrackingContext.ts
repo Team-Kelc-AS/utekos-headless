@@ -1,16 +1,12 @@
 import { z } from 'zod'
-import type { ConsentSnapshot } from './canonicalEventEnvelope'
-
-const consentValueSchema = z.enum(['denied', 'granted'])
+import {
+  consentSnapshotSchema,
+  type ConsentSnapshot
+} from './canonicalEventEnvelope'
+import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAuthorization'
 
 export const leadFormTrackingContextSchema = z.strictObject({
-  consent: z.strictObject({
-    analytics: consentValueSchema,
-    marketing: consentValueSchema,
-    preferences: consentValueSchema,
-    source: z.literal('cookiebot'),
-    version: z.string().min(1)
-  }),
+  consent: consentSnapshotSchema,
   page_url: z.string().url(),
   page_view_id: z.string().uuid().optional(),
   journey_id: z.uuid().optional(),
@@ -51,12 +47,6 @@ export function parseLeadFormTrackingContext(
   return result.data
 }
 
-export function deniedCookiebotConsent(): ConsentSnapshot {
-  return {
-    analytics: 'denied',
-    marketing: 'denied',
-    preferences: 'denied',
-    source: 'cookiebot',
-    version: '1'
-  }
+export function defaultTrackingAuthorization(): ConsentSnapshot {
+  return resolveTrackingAuthorization()
 }

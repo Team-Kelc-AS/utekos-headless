@@ -1,16 +1,6 @@
 import type { ConsentSnapshot } from './pageViewEvent'
 import { resolveClickIds } from './clickIdSessionStore'
-
-export type CookiebotConsent = {
-  method?: string | null
-  marketing?: boolean
-  preferences?: boolean
-  statistics?: boolean
-}
-
-function granted(value: boolean | undefined) {
-  return value === true ? 'granted' : 'denied'
-}
+import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAuthorization'
 
 function parseCookies(
   cookieHeader: string
@@ -35,16 +25,8 @@ function parseCookies(
   return cookies
 }
 
-export function getConsentSnapshot(
-  consent: CookiebotConsent | undefined
-): ConsentSnapshot {
-  return {
-    analytics: granted(consent?.statistics),
-    marketing: granted(consent?.marketing),
-    preferences: granted(consent?.preferences),
-    source: 'cookiebot',
-    version: '1'
-  }
+export function getConsentSnapshot(): ConsentSnapshot {
+  return resolveTrackingAuthorization()
 }
 
 export function extractClickIds(

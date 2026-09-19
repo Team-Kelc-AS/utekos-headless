@@ -8,9 +8,9 @@ test.use({ viewport: { width: 1440, height: 900 } })
 
 async function waitForRenderedStory(page: Page) {
   // Streamed Suspense content can briefly coexist with a hidden render.
-  const experiment = page.locator('[data-experiment-eligible]')
-  await expect(experiment).toHaveCount(1)
-  await expect(experiment).toBeVisible()
+  const story = page.locator('main')
+  await expect(story).toHaveCount(1)
+  await expect(story).toBeVisible()
   await expect(
     page.locator('[data-empathy-large-reveal-cover]')
   ).toHaveCount(4)

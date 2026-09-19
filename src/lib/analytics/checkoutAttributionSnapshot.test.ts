@@ -77,8 +77,8 @@ test('round-trips consented attribution through Shopify attributes', () => {
 
 test('round-trips a PII-free experiment only with analytics consent', () => {
   const experiment = {
-    key: 'skreddersy-varmen-layout-v1',
-    variant: 'legacy'
+    key: 'example-experiment',
+    variant: 'control'
   }
   const granted = createCheckoutAttributionSnapshot(
     {

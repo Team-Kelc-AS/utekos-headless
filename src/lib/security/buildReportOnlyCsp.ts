@@ -1,10 +1,3 @@
-const COOKIEBOT_ORIGINS = [
-  'https://consent.cookiebot.com',
-  'https://consent.cookiebot.eu',
-  'https://consentcdn.cookiebot.com',
-  'https://consentcdn.cookiebot.eu'
-] as const
-
 const STOREFRONT_ORIGINS = [
   'https://utekos.no',
   'https://www.utekos.no'
@@ -12,8 +5,7 @@ const STOREFRONT_ORIGINS = [
 
 const TAG_GATEWAY_ORIGINS = [
   'https://www.googletagmanager.com',
-  'https://edge.utekos.no',
-  ...COOKIEBOT_ORIGINS
+  'https://edge.utekos.no'
 ] as const
 
 /* eslint-disable quotes -- CSP keywords require ASCII single quotes inside JavaScript string literals. */
@@ -157,7 +149,7 @@ const BOTID_KASADA_CONNECT_ORIGINS = [
 
 /**
  * Shopify Customer Privacy / consent-tracking API loaded by
- * ShopifyCustomerPrivacyBridge after Cookiebot choice.
+ * ShopifyCustomerPrivacyBridge with the operator tracking policy.
  * connect-src hosts are evidenced from production report-only
  * violations: checkout GraphQL + Monorail produce.
  */

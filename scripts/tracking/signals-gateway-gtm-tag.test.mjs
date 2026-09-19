@@ -25,12 +25,12 @@ function canonicalEvent(eventName, eventId, customData = {}) {
       event_name: eventName,
       page_url: 'https://utekos.no/produkter/utekos-techdown?fbclid=click-1',
       custom_data: customData,
-      consent: { marketing: 'denied' }
+      consent: { marketing: 'granted' }
     }
   }
 }
 
-function createRuntime({ marketing = true, hasResponse = marketing } = {}) {
+function createRuntime() {
   const insertedScripts = []
   const intervals = []
   const listeners = new Map()
@@ -46,7 +46,6 @@ function createRuntime({ marketing = true, hasResponse = marketing } = {}) {
   }
   const window = {
     Boolean,
-    Cookiebot: { consent: { marketing }, hasResponse },
     URL,
     dataLayer: [],
     document,
@@ -81,44 +80,18 @@ function queuedCalls(window) {
   )
 }
 
-test('retains pre-decision rows and sends only after marketing consent', () => {
-  const runtime = createRuntime({ marketing: false, hasResponse: false })
+test('sends granted canonical events after the rollback artifact loads', () => {
+  const runtime = createRuntime()
   runtime.window.dataLayer.push(
-    canonicalEvent('page_view', 'page-before-consent')
+    canonicalEvent('page_view', 'accepted-page')
   )
 
   vm.runInContext(script, runtime.context)
-
-  assert.equal(runtime.window.cbq, undefined)
-  assert.deepEqual(runtime.insertedScripts, [])
-
-  runtime.window.Cookiebot.consent.marketing = true
-  runtime.window.Cookiebot.hasResponse = true
-  runtime.listeners.get('CookiebotOnAccept')()
 
   assert.deepEqual(
     runtime.insertedScripts.map(item => item.src),
     ['https://signals.utekos.no/sdk/1633085772154426486/events.js']
   )
-  assert.deepEqual(queuedCalls(runtime.window), [
-    ['setHost', 'https://signals.utekos.no/'],
-    ['init', '1633085772154426486'],
-    ['track', 'PageView', {}, { eventID: 'page-before-consent' }]
-  ])
-  assert.deepEqual(runtime.fbqCalls, [])
-})
-
-test('discards explicitly rejected rows and never releases them later', () => {
-  const runtime = createRuntime({ marketing: false, hasResponse: true })
-  runtime.window.dataLayer.push(canonicalEvent('page_view', 'rejected-page'))
-
-  vm.runInContext(script, runtime.context)
-
-  runtime.window.Cookiebot.consent.marketing = true
-  runtime.listeners.get('CookiebotOnAccept')()
-  runtime.window.dataLayer.push(canonicalEvent('page_view', 'accepted-page'))
-  runtime.intervals[0]()
-
   const tracks = queuedCalls(runtime.window).filter(
     call => call[0] === 'track' || call[0] === 'trackCustom'
   )

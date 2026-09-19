@@ -1,9 +1,7 @@
 import { enrichBrowserMetaAudience } from './browserMetaAudience'
-import { hasCookiebotExplicitResponse } from '@/lib/consent/cookiebotConsent'
 import {
   extractBrowserIds,
-  getConsentSnapshot,
-  type CookiebotConsent
+  getConsentSnapshot
 } from './pageViewClientContext'
 import {
   canonicalPageViewSchema,
@@ -15,12 +13,7 @@ import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 import { withoutTrackingQuery } from './withoutTrackingQuery'
 import { filterConsentedBrowserIds } from './filterConsentedBrowserIds'
 
-export type CookiebotState = {
-  consent?: CookiebotConsent
-  consented?: boolean
-  declined?: boolean
-  hasResponse?: boolean
-}
+export type TrackingAuthorizationState = Record<string, never>
 type Dependencies = {
   capture: (
     event: CanonicalPageView,
@@ -29,7 +22,7 @@ type Dependencies = {
   enrich: (
     event: CanonicalPageView
   ) => Promise<CanonicalPageView>
-  getCookiebot: () => CookiebotState | undefined
+  getTrackingAuthorization: () => TrackingAuthorizationState
   getCookieHeader: () => string
   observeDispatch?: (
     observation: PageViewDispatchObservation
@@ -45,18 +38,12 @@ export type PageViewCollectorResult =
   | 'failed'
   | 'sent'
   | 'skipped'
-export const hasCookiebotDecision = hasCookiebotExplicitResponse
-
 export function prepareCanonicalPageViewForCollector(
   event: CanonicalPageView,
-  cookiebot: CookiebotState,
+  _authorization: TrackingAuthorizationState,
   cookieHeader: string
 ): CanonicalPageView {
-  const live = getConsentSnapshot(
-    hasCookiebotDecision(cookiebot) ?
-      cookiebot.consent
-    : undefined
-  )
+  const live = getConsentSnapshot()
   const consent = {
     ...live,
     analytics:
@@ -107,14 +94,14 @@ function permitsCollection(event: CanonicalPageView) {
 }
 function permitsLiveEvent(
   event: CanonicalPageView,
-  current: CookiebotState | undefined
+  _current: TrackingAuthorizationState
 ) {
+  const live = getConsentSnapshot()
   return (
-    hasCookiebotDecision(current) &&
-    ((event.consent.analytics === 'granted' &&
-      current?.consent?.statistics === true) ||
-      (event.consent.marketing === 'granted' &&
-        current?.consent?.marketing === true))
+    (event.consent.analytics !== 'granted' ||
+      live.analytics === 'granted') &&
+    (event.consent.marketing !== 'granted' ||
+      live.marketing === 'granted')
   )
 }
 export function createPageViewCollectorTransport(
@@ -137,11 +124,11 @@ export function createPageViewCollectorTransport(
     }
   }
   async function flush(): Promise<PageViewCollectorResult> {
-    const current = dependencies.getCookiebot()
+    const current = dependencies.getTrackingAuthorization()
+    const live = getConsentSnapshot()
     if (
-      !hasCookiebotDecision(current) ||
-      (!current?.consent?.statistics &&
-        !current?.consent?.marketing)
+      live.analytics !== 'granted' &&
+      live.marketing !== 'granted'
     ) {
       clear()
       return 'skipped'
@@ -152,14 +139,14 @@ export function createPageViewCollectorTransport(
       if (inFlight.has(id)) continue
       inFlight.add(id)
       try {
-        const beforePrepare = dependencies.getCookiebot()
+        const beforePrepare = dependencies.getTrackingAuthorization()
         if (!permitsLiveEvent(event, beforePrepare)) {
           pending.delete(id)
           continue
         }
         const prepared = prepareCanonicalPageViewForCollector(
           event,
-          beforePrepare!,
+          beforePrepare,
           cookieHeader()
         )
         if (!permitsCollection(prepared)) {
@@ -175,14 +162,14 @@ export function createPageViewCollectorTransport(
           /* Optional enrichment does not block a consented event. */
         }
         if (version !== generation) continue
-        const latest = dependencies.getCookiebot()
+        const latest = dependencies.getTrackingAuthorization()
         if (!permitsLiveEvent(enriched, latest)) {
           clear()
           continue
         }
         const finalEvent = prepareCanonicalPageViewForCollector(
           enriched,
-          latest!,
+          latest,
           cookieHeader()
         )
         if (!permitsCollection(finalEvent)) {
@@ -191,14 +178,14 @@ export function createPageViewCollectorTransport(
         }
         await dependencies.capture(finalEvent, 'granted')
         if (version !== generation) continue
-        const beforeSend = dependencies.getCookiebot()
+        const beforeSend = dependencies.getTrackingAuthorization()
         if (!permitsLiveEvent(finalEvent, beforeSend)) {
           clear()
           continue
         }
         const sendEvent = prepareCanonicalPageViewForCollector(
           finalEvent,
-          beforeSend!,
+          beforeSend,
           cookieHeader()
         )
         if (!permitsCollection(sendEvent)) {
@@ -223,7 +210,7 @@ export function createPageViewCollectorTransport(
     event: CanonicalPageView,
     _correlation?: PageViewCollectorCorrelation
   ) {
-    const current = dependencies.getCookiebot()
+    const current = dependencies.getTrackingAuthorization()
     if (
       !permitsCollection(event) ||
       !permitsLiveEvent(event, current)
@@ -266,15 +253,7 @@ export const browserPageViewCollectorTransport =
         await import('./enrichCanonicalEventWithMetaAttribution')
       return enrichCanonicalEventWithMetaAttribution(event)
     },
-    getCookiebot: () => {
-      const target = window as Window & {
-        Cookiebot?: CookiebotState
-        __utekosConsentReloading?: boolean
-      }
-      return target.__utekosConsentReloading ? undefined : (
-          target.Cookiebot
-        )
-    },
+    getTrackingAuthorization: () => ({}),
     getCookieHeader: () => document.cookie,
     send: event => post('/api/events/page-view', event)
   })

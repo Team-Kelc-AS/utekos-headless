@@ -13,9 +13,6 @@ export const BOTID_KASADA_PATH_PATTERN =
 
 export const BOTID_KASADA_URL_PATTERN = /x-kpsdk/i
 
-export const COOKIEBOT_URL_PATTERN =
-  /(?:consent\.cookiebot\.(?:com|eu)|consentcdn\.cookiebot\.(?:com|eu)|cookiebot\.eu|CybotCookiebot)/i
-
 export const CHROME_EXTENSION_URL_PATTERN =
   /^chrome-extension:\/\//i
 

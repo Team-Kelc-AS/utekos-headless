@@ -7,7 +7,7 @@ import {
   buildGenerateLeadDataLayerEvent
 } from './generateLeadEvent'
 import {
-  deniedCookiebotConsent,
+  defaultTrackingAuthorization,
   parseLeadFormTrackingContext,
   LEAD_TRACKING_CONTEXT_FIELD
 } from './leadFormTrackingContext'
@@ -141,15 +141,18 @@ test('parseLeadFormTrackingContext accepts valid payload and rejects invalid', (
     ),
     undefined
   )
-  assert.deepEqual(deniedCookiebotConsent().marketing, 'denied')
+  assert.deepEqual(defaultTrackingAuthorization().marketing, 'granted')
 })
 
 test('lead context drops linked identifiers without analytics even when marketing is granted', () => {
   const context = parseLeadFormTrackingContext(
     JSON.stringify({
       consent: {
-        ...deniedCookiebotConsent(),
-        marketing: 'granted'
+        analytics: 'denied',
+        marketing: 'granted',
+        preferences: 'denied',
+        source: 'cookiebot',
+        version: '1',
       },
       page_url: 'https://utekos.no/produkter/utekos-dun',
       page_view_id: '22222222-2222-4222-8222-222222222222',

@@ -21,10 +21,9 @@ function memoryStorage(initial: Record<string, string> = {}) {
   }
 }
 
-function loadPixel(marketing = false, hasResponse = marketing) {
+function loadPixel() {
   const calls: unknown[][] = []
   const appendedScripts: Array<Record<string, unknown>> = []
-  const listeners = new Map<string, () => void>()
   const snaptr = (...args: unknown[]) => calls.push(args)
   const document = {
     cookie: '',
@@ -40,13 +39,6 @@ function loadPixel(marketing = false, hasResponse = marketing) {
     }
   }
   const window = {
-    Cookiebot: {
-      consent: { marketing, method: 'explicit' },
-      hasResponse
-    },
-    addEventListener(name: string, listener: () => void) {
-      listeners.set(name, listener)
-    },
     dataLayer: [] as unknown[],
     document,
     localStorage: memoryStorage(),
@@ -69,7 +61,6 @@ function loadPixel(marketing = false, hasResponse = marketing) {
   return {
     appendedScripts,
     calls,
-    listeners,
     processCanonicalEvent,
     window
   }
@@ -98,8 +89,8 @@ function canonicalEvent(eventName: string, marketing = true) {
   }
 }
 
-test('does not load or call Snapchat before marketing consent', () => {
-  const harness = loadPixel(false)
+test('does not load or call Snapchat without marketing granted', () => {
+  const harness = loadPixel()
   harness.processCanonicalEvent(
     canonicalEvent('view_item', false)
   )
@@ -108,38 +99,17 @@ test('does not load or call Snapchat before marketing consent', () => {
   assert.equal(harness.appendedScripts.length, 0)
 })
 
-test('discards pre-consent events even after subsequent acceptance', () => {
-  const harness = loadPixel(false, false)
+test('does not send dataLayer events without marketing granted', () => {
+  const harness = loadPixel()
   harness.window.dataLayer.push({
     canonical_event: canonicalEvent('page_view', false)
   })
-
-  assert.equal(harness.calls.length, 0)
-
-  harness.window.Cookiebot.consent.marketing = true
-  harness.window.Cookiebot.hasResponse = true
-  harness.listeners.get('CookiebotOnAccept')?.()
-
-  const trackCalls = harness.calls.filter(
-    call => call[0] === 'track'
-  )
-  assert.equal(trackCalls.length, 0)
-})
-
-test('does not release an event after explicit rejection', () => {
-  const harness = loadPixel(false, true)
-  harness.window.dataLayer.push({
-    canonical_event: canonicalEvent('page_view', false)
-  })
-
-  harness.window.Cookiebot.consent.marketing = true
-  harness.listeners.get('CookiebotOnAccept')?.()
 
   assert.equal(harness.calls.length, 0)
 })
 
 test('maps the four headless events once with canonical dedupe ids', () => {
-  const harness = loadPixel(true)
+  const harness = loadPixel()
   const cases = [
     ['page_view', 'PAGE_VIEW'],
     ['view_item', 'VIEW_CONTENT'],
@@ -188,7 +158,7 @@ test('maps the four headless events once with canonical dedupe ids', () => {
 })
 
 test('ignores checkout-only and non-production events', () => {
-  const harness = loadPixel(true)
+  const harness = loadPixel()
   harness.processCanonicalEvent(canonicalEvent('purchase'))
   harness.processCanonicalEvent({
     ...canonicalEvent('page_view'),
@@ -199,40 +169,9 @@ test('ignores checkout-only and non-production events', () => {
   assert.equal(harness.appendedScripts.length, 0)
 })
 
-test('stops calls and removes Utekos-owned Snapchat identifiers after consent withdrawal', () => {
-  const harness = loadPixel(true)
-  harness.window.sessionStorage.setItem(
-    'utekos_click_ids',
-    JSON.stringify({ gclid: 'keep', sc_click_id: 'remove' })
-  )
-  harness.window.localStorage.setItem(
-    'utekos_click_ids_v1',
-    JSON.stringify({
-      identifiers: { gclid: 'keep', sc_click_id: 'remove' },
-      updatedAt: '2026-08-23T10:00:00.000Z'
-    })
-  )
-
-  harness.window.Cookiebot.consent.marketing = false
-  harness.window.Cookiebot.hasResponse = true
-  harness.listeners.get('CookiebotOnDecline')?.()
-  harness.processCanonicalEvent(canonicalEvent('view_item'))
+test('does not call Snapchat for events without marketing granted', () => {
+  const harness = loadPixel()
+  harness.processCanonicalEvent(canonicalEvent('view_item', false))
 
   assert.equal(harness.calls.length, 0)
-  assert.deepEqual(
-    JSON.parse(
-      harness.window.sessionStorage.getItem(
-        'utekos_click_ids'
-      ) || '{}'
-    ),
-    { gclid: 'keep' }
-  )
-  assert.deepEqual(
-    JSON.parse(
-      harness.window.localStorage.getItem(
-        'utekos_click_ids_v1'
-      ) || '{}'
-    ).identifiers,
-    { gclid: 'keep' }
-  )
 })

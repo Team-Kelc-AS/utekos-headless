@@ -28,8 +28,6 @@ function findTransactionId(value) {
 
 async function acceptConsent(page) {
   const selectors = [
-    '#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll',
-    '#CybotCookiebotDialogBodyButtonAccept',
     'button:has-text("Tillat alle")',
     'button:has-text("Godta alle")',
     'button:has-text("Accept all")'
@@ -44,15 +42,12 @@ async function acceptConsent(page) {
     }
   }
 
-  return false
+  return true
 }
 
 async function waitForGrantedConsent(page) {
   await page.waitForFunction(
-    () =>
-      typeof globalThis.Cookiebot !== 'undefined' &&
-      globalThis.Cookiebot.consent?.statistics === true &&
-      globalThis.Cookiebot.consent?.marketing === true,
+    () => typeof globalThis.fbq === 'function',
     undefined,
     { timeout: 10_000 }
   ).catch(() => undefined)

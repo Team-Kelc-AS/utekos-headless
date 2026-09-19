@@ -1,9 +1,5 @@
 'use client'
 
-import {
-  hasCookiebotMarketingConsent,
-  type CookiebotApi
-} from '@/lib/consent/cookiebotConsent'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { buildMetaParameterContextRequestUrl } from './buildMetaParameterContextRequestUrl'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
@@ -23,12 +19,7 @@ type MetaAttributionEvent = {
 }
 
 function marketingAllowed() {
-  return (
-    typeof window !== 'undefined' &&
-    hasCookiebotMarketingConsent(
-      (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
-    )
-  )
+  return typeof window !== 'undefined'
 }
 
 const completedContextKeys = new Set<string>()

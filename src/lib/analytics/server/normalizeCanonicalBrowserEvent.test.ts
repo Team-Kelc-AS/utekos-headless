@@ -16,8 +16,8 @@ const baseEvent = {
   page_url: 'https://utekos.no/skreddersy-varmen',
   page_title: 'Skreddersy varmen',
   experiment: {
-    key: 'skreddersy-varmen-layout-v1',
-    variant: 'legacy'
+    key: 'example-experiment',
+    variant: 'control'
   },
   consent: {
     analytics: 'granted' as const,

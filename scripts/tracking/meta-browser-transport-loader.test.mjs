@@ -17,19 +17,13 @@ const publicPixelSource = readFileSync(
   'utf8'
 )
 
-test('loads Meta Pixel through next/script only after consent', () => {
+test('loads Meta Pixel through next/script', () => {
   assert.match(source, /^'use client'/)
   assert.match(source, /from 'next\/script'/)
-  assert.match(source, /hasCookiebotMarketingConsent/)
-  assert.match(source, /consentState !== 'granted'/)
   assert.match(source, /id='meta-pixel-canonical-browser'/)
   assert.match(source, /strategy='afterInteractive'/)
   assert.doesNotMatch(source, /signals-gateway-pixel-sdk/)
   assert.doesNotMatch(source, /signals\.utekos\.no/)
-})
-
-test('preserves rejected-consent event isolation', () => {
-  assert.match(source, /discardRejectedMetaBrowserEvents/)
 })
 
 test('keeps direct CAPI as the only Meta server transport', () => {

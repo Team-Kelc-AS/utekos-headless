@@ -4,31 +4,11 @@ import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { reportCanonicalViewCategory } from '@/lib/analytics/viewCategoryReporter'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
-import { hasCookiebotDecision } from '@/lib/analytics/pageViewCollectorTransport'
 
 export type ViewCategoryObserverProps = {
   categoryId: string
   categoryName: string
 }
-
-type CookiebotWindow = Window & {
-  Cookiebot?: {
-    consent?: {
-      marketing?: boolean
-      preferences?: boolean
-      statistics?: boolean
-    }
-    consented?: boolean
-    declined?: boolean
-    hasResponse?: boolean
-  }
-}
-
-const COOKIEBOT_EVENTS = [
-  'CookiebotOnConsentReady',
-  'CookiebotOnAccept',
-  'CookiebotOnDecline'
-] as const
 
 function emitViewCategory(
   categoryId: string,
@@ -64,8 +44,6 @@ export function ViewCategoryObserver({
     }
 
     let cancelled = false
-    const listeners: Array<() => void> = []
-
     function tryEmit() {
       if (cancelled) return
 
@@ -80,28 +58,14 @@ export function ViewCategoryObserver({
         return
       }
 
-      const cookiebot = (window as CookiebotWindow).Cookiebot
-      if (!hasCookiebotDecision(cookiebot)) {
-        return
-      }
-
       emittedForPageViewRef.current = pageView.pageViewId
       emitViewCategory(categoryId, categoryName)
     }
 
     tryEmit()
 
-    for (const eventName of COOKIEBOT_EVENTS) {
-      const handler = () => tryEmit()
-      window.addEventListener(eventName, handler)
-      listeners.push(() => window.removeEventListener(eventName, handler))
-    }
-
     return () => {
       cancelled = true
-      for (const dispose of listeners) {
-        dispose()
-      }
     }
   }, [pathname, categoryId, categoryName])
 

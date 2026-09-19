@@ -36,7 +36,7 @@ test('a later reconciliation can recover after a failed burst without unlimited 
   assert.equal(attempts, 4)
 })
 
-test('classifies resolved Cookiebot decisions without a pending guess', () => {
+test('classifies resolved consent decisions without a pending guess', () => {
   assert.equal(
     classifyLandingConsentDecision(observation.consent),
     'partial'

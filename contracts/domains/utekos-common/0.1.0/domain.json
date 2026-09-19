@@ -76,7 +76,8 @@
               "source": {
                 "type": "string",
                 "enum": [
-                  "cookiebot"
+                  "cookiebot",
+                  "operator_policy"
                 ]
               },
               "version": {
@@ -1083,7 +1084,8 @@
           "source": {
             "type": "string",
             "enum": [
-              "cookiebot"
+              "cookiebot",
+              "operator_policy"
             ]
           },
           "version": {

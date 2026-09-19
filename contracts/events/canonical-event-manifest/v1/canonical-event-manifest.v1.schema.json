@@ -28,6 +28,53 @@
       ],
       "additionalProperties": false
     },
+    "tracking_authorization": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "const": "operator_policy"
+        },
+        "version": {
+          "type": "string",
+          "const": "operator-policy-v1"
+        },
+        "authorization": {
+          "type": "object",
+          "properties": {
+            "analytics": {
+              "type": "string",
+              "const": "granted"
+            },
+            "marketing": {
+              "type": "string",
+              "const": "granted"
+            },
+            "preferences": {
+              "type": "string",
+              "const": "granted"
+            }
+          },
+          "required": [
+            "analytics",
+            "marketing",
+            "preferences"
+          ],
+          "additionalProperties": false
+        },
+        "cookiebot_state": {
+          "type": "string",
+          "const": "not_used_for_tracking_authorization"
+        }
+      },
+      "required": [
+        "mode",
+        "version",
+        "authorization",
+        "cookiebot_state"
+      ],
+      "additionalProperties": false
+    },
     "evidence_statuses": {
       "minItems": 1,
       "type": "array",
@@ -251,6 +298,7 @@
   "required": [
     "manifest_version",
     "source_of_truth",
+    "tracking_authorization",
     "evidence_statuses",
     "generated_from",
     "events"

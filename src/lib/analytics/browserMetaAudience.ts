@@ -1,9 +1,3 @@
-import {
-  COOKIEBOT_CONSENT_EVENTS,
-  hasCookiebotMarketingConsent,
-  hasCookiebotStatisticsConsent,
-  type CookiebotApi
-} from '@/lib/consent/cookiebotConsent'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { createMetaAudienceSessionStore } from './metaAudienceSessionStore'
 import type { MetaAudience } from './metaAudience'
@@ -13,30 +7,13 @@ const store = createMetaAudienceSessionStore(() =>
     window.sessionStorage
   )
 )
-let listening = false
 function allowed() {
-  if (typeof window === 'undefined') return false
-  const host = window as Window & {
-    Cookiebot?: CookiebotApi
-    __utekosConsentReloading?: boolean
-  }
-  return (
-    !host.__utekosConsentReloading &&
-    hasCookiebotStatisticsConsent(host.Cookiebot) &&
-    hasCookiebotMarketingConsent(host.Cookiebot)
-  )
+  return typeof window !== 'undefined'
 }
 export function readBrowserMetaAudience(
   consent: ConsentSnapshot
 ): MetaAudience | undefined {
   if (typeof window === 'undefined') return undefined
-  if (!listening) {
-    for (const event of COOKIEBOT_CONSENT_EVENTS)
-      window.addEventListener(event, () => {
-        if (!allowed()) store.clear()
-      })
-    listening = true
-  }
   return store.resolve(
     window.location.href,
     allowed() &&

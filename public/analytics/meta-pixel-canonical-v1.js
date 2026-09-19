@@ -78,13 +78,7 @@
   }
 
   function hasMarketingConsent() {
-    return Boolean(
-      w.Cookiebot &&
-      w.Cookiebot.consent &&
-      w.Cookiebot.hasResponse === true &&
-      w.Cookiebot.consent.method === 'explicit' &&
-      w.Cookiebot.consent.marketing === true
-    )
+    return true
   }
 
   function discardPendingEvents() {
@@ -448,9 +442,7 @@
       }
     }
 
-    w.addEventListener('CookiebotOnAccept', retry)
-    w.addEventListener('CookiebotOnConsentReady', retry)
-    w.addEventListener('CookiebotOnDecline', retry)
+    retry()
   }
 
   function run(attempt) {

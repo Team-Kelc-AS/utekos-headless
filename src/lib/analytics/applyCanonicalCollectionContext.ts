@@ -1,13 +1,13 @@
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { withoutTrackingQuery } from './withoutTrackingQuery'
 import { filterConsentedBrowserIds } from './filterConsentedBrowserIds'
-import type { SkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
+import type { CanonicalExperimentAssignment } from './experimentAssignment'
 
 export type CanonicalCollectionContext = {
   analyticsBrowserId?: Record<string, string> | undefined
   clickId?: Record<string, string> | undefined
   consent: ConsentSnapshot
-  experiment?: SkreddersyVarmenLayoutAssignment | undefined
+  experiment?: CanonicalExperimentAssignment | undefined
   hasResponse: boolean
   marketingBrowserId?: Record<string, string> | undefined
 }
@@ -25,7 +25,7 @@ type EventWithConsent = {
   event_device_info?:
     | { user_agent?: string | undefined; [key: string]: unknown }
     | undefined
-  experiment?: SkreddersyVarmenLayoutAssignment | undefined
+  experiment?: CanonicalExperimentAssignment | undefined
   external_id?: string | undefined
   impression_id?: string | undefined
   location?:

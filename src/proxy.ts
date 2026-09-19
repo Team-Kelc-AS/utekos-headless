@@ -13,11 +13,10 @@ import {
 import { createLandingEdgeCorrelationToken } from '@/lib/analytics/landingEdgeCorrelationToken'
 import { hasVerifiedSyntheticSignature } from '@/lib/analytics/syntheticTrafficSignature'
 import { deriveLandingEdgeRequestId } from '../supabase/functions/_shared/landing-edge-request-id'
-import { resolveSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/server/resolveSkreddersyVarmenLayoutAssignment'
-import {
-  SKREDDERSY_VARMEN_PATH,
-  SKREDDERSY_VARMEN_LAYOUT_PATH
-} from '@/lib/experiments/skreddersyVarmenLayoutRoute'
+
+const SKREDDERSY_VARMEN_PATH = '/skreddersy-varmen'
+const SKREDDERSY_VARMEN_LAYOUT_PATH =
+  '/skreddersy-varmen/layout'
 
 const allowedReferrers = new Set([
   'nbocc.no',
@@ -288,20 +287,6 @@ export async function proxy(request: NextRequest) {
       NextResponse.redirect(publicUrl, 307),
       correlation
     )
-  }
-
-  if (pathname === SKREDDERSY_VARMEN_PATH) {
-    const assignment =
-      await resolveSkreddersyVarmenLayoutAssignment(request)
-    if (assignment) {
-      const layoutUrl = request.nextUrl.clone()
-      layoutUrl.pathname = `${SKREDDERSY_VARMEN_LAYOUT_PATH}/${assignment.variant}`
-      return continueDocumentRequest(
-        request,
-        correlation,
-        layoutUrl
-      )
-    }
   }
 
   return continueDocumentRequest(request, correlation)

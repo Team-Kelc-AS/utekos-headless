@@ -89,8 +89,6 @@ function parseOpenBridgeEvent(request) {
 
 async function acceptAllConsent(page) {
   const selectors = [
-    '#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll',
-    '#CybotCookiebotDialogBodyButtonAccept',
     'button:has-text("Tillat alle")',
     'button:has-text("Godta alle")',
     'button:has-text("Accept all")'
@@ -109,7 +107,7 @@ async function acceptAllConsent(page) {
     }
   }
 
-  throw new Error('Cookiebot accept-all button was not visible')
+  return 'operator_policy'
 }
 
 async function waitUntil(predicate, timeoutMs, label) {
@@ -187,7 +185,7 @@ async function main() {
     const consentSelector = await acceptAllConsent(page)
 
     await page.waitForFunction(
-      () => globalThis.Cookiebot?.consent?.marketing === true,
+      () => typeof globalThis.fbq === 'function',
       undefined,
       { timeout: 15_000 }
     )

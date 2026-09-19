@@ -30,6 +30,16 @@ test('canonical manifest retains the three phase-one events with parameter prove
     manifest.events.map(event => event.name),
     ['add_to_cart', 'begin_checkout', 'purchase']
   )
+  assert.deepEqual(manifest.tracking_authorization, {
+    mode: 'operator_policy',
+    version: 'operator-policy-v1',
+    authorization: {
+      analytics: 'granted',
+      marketing: 'granted',
+      preferences: 'granted'
+    },
+    cookiebot_state: 'not_used_for_tracking_authorization'
+  })
   for (const event of manifest.events) {
     assert.equal(event.membership, 'canonical')
     assert.equal(event.evidence.static, 'static_verified')

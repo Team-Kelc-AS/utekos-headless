@@ -1,21 +1,12 @@
 import {
-  getConsentSnapshot,
-  type CookiebotConsent
+  getConsentSnapshot
 } from './pageViewClientContext'
 import { browserPageViewSession } from './pageViewSession'
 import { browserFirstPartyExternalIdStore } from './firstPartyExternalId'
 import type { LeadFormTrackingContext } from './leadFormTrackingContext'
 import { LEAD_TRACKING_CONTEXT_FIELD } from './leadFormTrackingContext'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
-import { hasCookiebotExplicitResponse } from '@/lib/consent/cookiebotConsent'
 import { withoutTrackingQuery } from './withoutTrackingQuery'
-
-type CookiebotWindow = Window & {
-  Cookiebot?: {
-    consent?: CookiebotConsent
-    hasResponse?: boolean
-  }
-}
 
 function readUtmParam(
   searchParams: URLSearchParams,
@@ -27,12 +18,7 @@ function readUtmParam(
 
 export function collectLeadFormTrackingContext(): LeadFormTrackingContext {
   const pageUrl = window.location.href
-  const cookiebot = (window as CookiebotWindow).Cookiebot
-  const consent = getConsentSnapshot(
-    hasCookiebotExplicitResponse(cookiebot) ?
-      cookiebot?.consent
-    : undefined
-  )
+  const consent = getConsentSnapshot()
 
   if (
     consent.analytics !== 'granted' &&

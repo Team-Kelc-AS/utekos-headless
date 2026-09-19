@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { useCookiebotConsent } from '@/lib/consent/useCookiebotConsent'
 import { hasBrowserCollectionConsent } from '@/lib/analytics/hasBrowserCollectionConsent'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { reportCanonicalScrollDepth } from '@/lib/analytics/scrollDepthReporter'
@@ -11,16 +10,12 @@ import { readBrowserReporterContext } from '@/lib/analytics/browserReporterConte
 const THRESHOLDS = [25, 50, 75, 90] as const
 
 export function ScrollDepthObserver() {
-  const consent = useCookiebotConsent()
-  const permitted = consent.statistics || consent.marketing
   const pathname = usePathname()
   const search = useSearchParams().toString()
   const emittedRef = useRef(new Set<number>())
 
   useEffect(() => {
     emittedRef.current = new Set()
-    if (!permitted) return
-
     function handleScroll() {
       if (!hasBrowserCollectionConsent()) return
       const clientContext = readBrowserReporterContext()
@@ -78,7 +73,7 @@ export function ScrollDepthObserver() {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [pathname, search, permitted])
+  }, [pathname, search])
 
   return null
 }

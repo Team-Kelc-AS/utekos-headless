@@ -7,7 +7,7 @@
   Historical trigger: All Pages, once per page
   Consent settings: No additional consent required. This tag starts locally before
   a decision so it can retain canonical rows, but it loads/sends nothing until
-  Cookiebot marketing consent is true. Explicitly rejected rows are discarded.
+  the operator tracking policy is active.
 -->
 <script>
 (function(w, d) {
@@ -68,15 +68,11 @@
   w.__utekosSignalsGatewayState = state;
 
   function hasMarketingConsent() {
-    return Boolean(
-      w.Cookiebot &&
-      w.Cookiebot.consent &&
-      w.Cookiebot.consent.marketing === true
-    );
+    return true;
   }
 
   function hasConsentDecision() {
-    return Boolean(w.Cookiebot && w.Cookiebot.hasResponse === true);
+    return true;
   }
 
   function discardPendingEvents() {
@@ -398,9 +394,7 @@
       run();
     };
 
-    w.addEventListener('CookiebotOnAccept', retry);
-    w.addEventListener('CookiebotOnConsentReady', retry);
-    w.addEventListener('CookiebotOnDecline', retry);
+    retry();
   }
 
   function startPolling() {

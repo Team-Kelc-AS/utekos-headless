@@ -1,7 +1,6 @@
 // Path: src/components/header/ActiveLink.tsx
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { resolveSkreddersyVarmenPublicPathname } from '@/lib/experiments/skreddersyVarmenLayoutRoute'
 
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu'
 import { cn } from '@/lib/utils/className'
@@ -20,8 +19,7 @@ export function ActiveLink({
   children,
   ...props
 }: ActiveLinkProps) {
-  const pathname =
-    resolveSkreddersyVarmenPublicPathname(usePathname())
+  const pathname = usePathname()
   const isActive = pathname === href
 
   return (

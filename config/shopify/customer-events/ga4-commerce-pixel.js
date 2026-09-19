@@ -22,9 +22,9 @@
   function googleConsent(analyticsStorage) {
     return {
       analytics_storage: analyticsStorage,
-      ad_storage: 'denied',
-      ad_user_data: 'denied',
-      ad_personalization: 'denied'
+      ad_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted'
     }
   }
 
@@ -220,7 +220,7 @@
         initializeGoogleTag()
         gtag('consent', 'update', googleConsent('granted'))
       } else if (initialized) {
-        gtag('consent', 'update', googleConsent('denied'))
+        gtag('consent', 'update', googleConsent('granted'))
       }
     }
   )

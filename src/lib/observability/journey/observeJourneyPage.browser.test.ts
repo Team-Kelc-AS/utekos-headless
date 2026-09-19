@@ -29,7 +29,6 @@ const bundle = buildSync({
     import { createPageViewSession } from '../../analytics/pageViewSession'
     let allowed = false
     let stop
-    let cookie = undefined
     const events = []
     const pageViews = createPageViewSession()
     const session = createJourneySession({
@@ -39,7 +38,7 @@ const bundle = buildSync({
     function start() {
       stop?.('consent')
       stop = undefined
-      const page = session.open({cookiebot: cookie, pageView: pageViews.ensure({pageUrl: location.href})})
+      const page = session.open({pageView: pageViews.ensure({pageUrl: location.href})})
       if (page) stop = observeJourneyPage({page, environment: 'test', send: event => events.push(event), allowed: () => allowed})
     }
     window.journeyHarness = {
@@ -52,7 +51,6 @@ const bundle = buildSync({
           pageViews.clear()
         }
         allowed = nextAllowed
-        cookie = statistics === undefined ? undefined : {hasResponse: true, consent: {method: 'explicit', statistics, marketing}}
         start()
       },
       navigate(path) {

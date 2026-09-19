@@ -22,14 +22,6 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
     location: {
       href: 'https://utekos.no/?audience=engaged_audience'
     },
-    Cookiebot: {
-      hasResponse: true,
-      consent: {
-        method: 'explicit',
-        statistics: true,
-        marketing: true
-      }
-    },
     sessionStorage: {
       getItem: (key: string) => data.get(key) ?? null,
       setItem: (key: string, value: string) => {
@@ -94,11 +86,24 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
     )
     assert.deepEqual(dispatched[0]?.detail, host.dataLayer[0])
     assert.equal(event.meta_audience, undefined)
-    host.Cookiebot.consent.marketing = false
-    sendCanonicalGTMEvent(buildPageViewDataLayerEvent(event))
+    sendCanonicalGTMEvent(
+      buildPageViewDataLayerEvent({
+        ...event,
+        consent: {
+          ...event.consent,
+          marketing: 'denied'
+        }
+      })
+    )
     assert.equal(host.dataLayer.length, 2)
     assert.equal(host.dataLayer[1]?.meta_audience, null)
-    assert.deepEqual(host.dataLayer[1]?.canonical_event, event)
+    assert.deepEqual(host.dataLayer[1]?.canonical_event, {
+      ...event,
+      consent: {
+        ...event.consent,
+        marketing: 'denied'
+      }
+    })
   } finally {
     if (previous)
       Object.defineProperty(globalThis, 'window', previous)

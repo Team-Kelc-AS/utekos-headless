@@ -10,37 +10,20 @@ test('a malformed unrelated cookie cannot prevent consented identifier extractio
   assert.deepEqual(
     extractBrowserIds(
       'broken=%E0%A4%A; _fbp=fb.1.123',
-      getConsentSnapshot({ marketing: true })
+      getConsentSnapshot()
     ),
     { fbp: 'fb.1.123' }
   )
 })
 
-test('maps missing Cookiebot state to conservative denied consent', () => {
-  assert.deepEqual(getConsentSnapshot(undefined), {
-    analytics: 'denied',
-    marketing: 'denied',
-    preferences: 'denied',
+test('uses the operator tracking policy for live consent snapshots', () => {
+  assert.deepEqual(getConsentSnapshot(), {
+    analytics: 'granted',
+    marketing: 'granted',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   })
-})
-
-test('maps Cookiebot categories to the canonical consent snapshot', () => {
-  assert.deepEqual(
-    getConsentSnapshot({
-      marketing: true,
-      preferences: false,
-      statistics: true
-    }),
-    {
-      analytics: 'granted',
-      marketing: 'granted',
-      preferences: 'denied',
-      source: 'cookiebot',
-      version: '1'
-    }
-  )
 })
 
 test('extracts supported click identifiers from the current URL', () => {

@@ -251,9 +251,6 @@
     font-weight: 800;
   }
 }
-#CookiebotWidget {
-  display: none !important;
-}
 .landing-header {
   position: absolute;
   z-index: 50;

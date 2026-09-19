@@ -3,33 +3,14 @@ import test from 'node:test'
 import vm from 'node:vm'
 import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from './googleTagManagerBootstrap'
 
-type CookiebotState = {
-  consent: {
-    marketing: boolean
-    statistics: boolean
-    method?: string
-  }
-  hasResponse: boolean
-}
-
 type BootstrapWindow = {
-  __utekosCookiebotConsentReady?: boolean
-  Cookiebot?: CookiebotState
-  addEventListener: (
-    eventName: string,
-    listener: () => void
-  ) => void
   dataLayer: unknown[]
   gtag?: (...args: unknown[]) => void
   location: { href: string }
 }
 
 function runBootstrap() {
-  const listeners = new Map<string, () => void>()
   const browserWindow: BootstrapWindow = {
-    addEventListener(eventName, listener) {
-      listeners.set(eventName, listener)
-    },
     dataLayer: [],
     location: {
       href: 'https://utekos.no/skreddersy-varmen?fbclid=meta-click&ScCid=snap-click&utm_source=facebook#bestill'
@@ -45,7 +26,7 @@ function runBootstrap() {
     window: browserWindow
   })
 
-  return { browserWindow, listeners }
+  return { browserWindow }
 }
 
 function commandArguments(browserWindow: BootstrapWindow) {
@@ -61,7 +42,7 @@ function commandArguments(browserWindow: BootstrapWindow) {
   return JSON.parse(JSON.stringify(commands)) as unknown[][]
 }
 
-test('defaults Consent Mode to denied before GTM starts', () => {
+test('defaults Consent Mode to the operator tracking policy before GTM starts', () => {
   const { browserWindow } = runBootstrap()
   const commands = commandArguments(browserWindow)
 
@@ -69,16 +50,16 @@ test('defaults Consent Mode to denied before GTM starts', () => {
     'consent',
     'default',
     {
-      ad_storage: 'denied',
-      ad_user_data: 'denied',
-      ad_personalization: 'denied',
-      analytics_storage: 'denied'
+      ad_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted',
+      analytics_storage: 'granted'
     }
   ])
   assert.deepEqual(commands[1], [
     'set',
     'ads_data_redaction',
-    true
+    false
   ])
   assert.equal(
     browserWindow.dataLayer.some(
@@ -92,87 +73,15 @@ test('defaults Consent Mode to denied before GTM starts', () => {
   )
 })
 
-test('removes the complete query before a consent decision', () => {
+test('keeps the paid landing URL under the operator policy', () => {
   const { browserWindow } = runBootstrap()
   const commands = commandArguments(browserWindow)
 
   assert.deepEqual(commands[2], [
-    'set',
-    { page_location: 'https://utekos.no/skreddersy-varmen' }
-  ])
-})
-
-test('marks Cookiebot unresolved until an authoritative event arrives', () => {
-  const { browserWindow, listeners } = runBootstrap()
-
-  assert.equal(
-    browserWindow.__utekosCookiebotConsentReady,
-    false
-  )
-
-  listeners.get('CookiebotOnConsentReady')?.()
-
-  assert.equal(browserWindow.__utekosCookiebotConsentReady, true)
-})
-
-test('statistics-only consent does not expose campaign attribution or click IDs to Google', () => {
-  const { browserWindow, listeners } = runBootstrap()
-  browserWindow.Cookiebot = {
-    consent: {
-      marketing: false,
-      statistics: true,
-      method: 'explicit'
-    },
-    hasResponse: true
-  }
-
-  listeners.get('CookiebotOnAccept')?.()
-
-  const commands = commandArguments(browserWindow)
-  assert.deepEqual(commands.at(-1), [
-    'set',
-    { page_location: 'https://utekos.no/skreddersy-varmen' }
-  ])
-})
-
-test('restores the paid landing URL only after marketing consent', () => {
-  const { browserWindow, listeners } = runBootstrap()
-  browserWindow.Cookiebot = {
-    consent: {
-      marketing: true,
-      statistics: true,
-      method: 'explicit'
-    },
-    hasResponse: true
-  }
-
-  listeners.get('CookiebotOnConsentReady')?.()
-
-  const commands = commandArguments(browserWindow)
-  assert.deepEqual(commands.at(-1), [
     'set',
     {
       page_location:
         'https://utekos.no/skreddersy-varmen?fbclid=meta-click&ScCid=snap-click&utm_source=facebook'
     }
   ])
-})
-
-test('missing and implied marketing responses cannot expose the paid landing URL', () => {
-  for (const method of [undefined, 'implied']) {
-    const { browserWindow, listeners } = runBootstrap()
-    browserWindow.Cookiebot = {
-      hasResponse: true,
-      consent: {
-        marketing: true,
-        statistics: true,
-        ...(method ? { method } : {})
-      }
-    }
-    listeners.get('CookiebotOnConsentReady')?.()
-    assert.deepEqual(commandArguments(browserWindow).at(-1), [
-      'set',
-      { page_location: 'https://utekos.no/skreddersy-varmen' }
-    ])
-  }
 })

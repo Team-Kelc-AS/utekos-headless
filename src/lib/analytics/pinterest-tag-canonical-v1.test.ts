@@ -14,9 +14,8 @@ const CANONICAL_ITEM_ID =
   'gid://shopify/ProductVariant/123456789'
 const PINTEREST_PRODUCT_ID = '123456789'
 
-function loadTag(marketing = true, hasResponse = marketing) {
+function loadTag() {
   const tracked: unknown[][] = []
-  const listeners = new Map<string, () => void>()
   const pintrk = Object.assign(
     (...args: unknown[]) => {
       tracked.push(args)
@@ -36,16 +35,10 @@ function loadTag(marketing = true, hasResponse = marketing) {
     head: { appendChild() {} }
   }
   const window = {
-    Cookiebot: {
-      consent: { marketing, method: 'explicit' },
-      hasResponse
-    },
     pintrk,
     crypto: webcrypto,
     dataLayer: [] as unknown[],
-    addEventListener(name: string, listener: () => void) {
-      listeners.set(name, listener)
-    },
+    addEventListener() {},
     document
   }
   const sandbox = { TextEncoder, Uint8Array, window, document }
@@ -61,7 +54,7 @@ function loadTag(marketing = true, hasResponse = marketing) {
     }
   ).__utekosPinterestCanonical.processCanonicalEvent
 
-  return { listeners, tracked, processCanonicalEvent, window }
+  return { tracked, processCanonicalEvent, window }
 }
 
 function canonicalPageView(marketing = false) {
@@ -75,35 +68,12 @@ function canonicalPageView(marketing = false) {
   }
 }
 
-test('discards pre-consent events even after subsequent acceptance', async () => {
-  const harness = loadTag(false, false)
+test('does not send canonical events without marketing granted', async () => {
+  const harness = loadTag()
   harness.window.dataLayer.push({
     canonical_event: canonicalPageView(false)
   })
-
-  assert.equal(harness.tracked.length, 0)
-
-  harness.window.Cookiebot.consent.marketing = true
-  harness.window.Cookiebot.hasResponse = true
-  harness.listeners.get('CookiebotOnAccept')?.()
   await new Promise(resolve => setImmediate(resolve))
-
-  const trackCall = harness.tracked.find(
-    call => call[0] === 'track'
-  )
-  assert.equal(trackCall, undefined)
-})
-
-test('does not release an event after explicit rejection', async () => {
-  const harness = loadTag(false, true)
-  harness.window.dataLayer.push({
-    canonical_event: canonicalPageView(false)
-  })
-
-  harness.window.Cookiebot.consent.marketing = true
-  harness.listeners.get('CookiebotOnAccept')?.()
-  await new Promise(resolve => setImmediate(resolve))
-
   assert.equal(harness.tracked.length, 0)
 })
 

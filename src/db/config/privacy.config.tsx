@@ -1,6 +1,5 @@
 import React from 'react'
 import type { Section } from '@types'
-import { CookieDeclaration } from '@/components/legal/CookieDeclaration'
 
 function PolicyItem({
   title,
@@ -31,14 +30,10 @@ function ExternalLink({
   )
 }
 
-export const lastUpdated = '24. august 2026'
-export const lastUpdatedIso = '2026-08-24'
+export const lastUpdated = '19. september 2026'
+export const lastUpdatedIso = '2026-09-19'
 
-export function createPrivacySections({
-  includeCookieDeclaration = true
-}: {
-  includeCookieDeclaration?: boolean
-} = {}): Section[] {
+export function createPrivacySections(): Section[] {
   return [
   {
     id: 'ansvarlig',
@@ -219,20 +214,14 @@ export function createPrivacySections({
             adresse, emne eller checkout-lenke. Resend opplyser at kontodata,
             e-postmetadata og logger kan lagres i USA.
           </PolicyItem>
-          <PolicyItem title='Cookiebot by Usercentrics'>
-            Samtykkegrensesnitt, kategorivalg og dokumentasjon av valg.
-          </PolicyItem>
           <PolicyItem title='Google, Meta og Microsoft'>
             Tagstyring, analyse, annonsemåling, attribusjon, målgrupper og
-            annonsering i samsvar med valgt statistikk- og/eller
-            markedsføringskategori. Google Tag Manager kan sende redigerte,
-            cookieløse Consent Mode-signaler med standard avslag; øvrige
-            ikke-nødvendige tagger er kategori-gatet.
+            annonsering. Nettleser- og serverhendelser kan inneholde
+            annonseidentifikatorer og attribusjonsdata.
           </PolicyItem>
           <PolicyItem title='YouTube'>
-            Videoavspilling. Cookiebot klassifiserer den innebygde
-            YouTube-tjenesten som markedsføring, og iframe og tilhørende
-            lagring aktiveres derfor først med markedsføringssamtykke.
+            Videoavspilling. Innebygde videoer kan laste ressurser og lagring
+            fra YouTube når videoflaten vises.
           </PolicyItem>
         </ul>
         <p>
@@ -258,49 +247,31 @@ export function createPrivacySections({
   },
   {
     id: 'cookies',
-    title: 'Informasjonskapsler og samtykke',
+    title: 'Informasjonskapsler og sporing',
     content: (
       <>
         <p>
           Informasjonskapsler er små tekstfiler som lagres på enheten din. Vi
-          bruker Cookiebot som eneste samtykkegrensesnitt for nødvendige,
-          preferanse-, statistikk- og markedsføringskategorier. Det skal være
-          like enkelt å avslå som å godta ikke-nødvendig behandling.
+          bruker nødvendige informasjonskapsler for butikkfunksjoner og
+          sporings­teknologier for analyse, attribusjon og annonsering.
         </p>
         <p>
           Nødvendige teknologier støtter blant annet sikkerhet, handlekurv,
-          checkout og lagring av personvernvalget. Preferanser husker valgte
-          innstillinger. Statistikk måler bruk og ytelse. Markedsføring måler
-          annonser og kan knytte besøk til annonseplattformer. Du kan trekke
-          tilbake eller endre et valg når som helst; videre innsamling i den
-          aktuelle kategorien stoppes.
+          checkout. Analyse måler bruk og ytelse. Annonseringsmåling kan knytte
+          besøk og handlinger til annonseplattformer og deres identifikatorer.
         </p>
         <p>
-          Cookiebot synkroniserer valget med Shopify Customer Privacy API slik
-          at checkout kan respektere samme valg. Vi viser ikke et ekstra
-          Shopify-banner. Nettstedet svarer ikke særskilt på den eldre
+          Nettstedet sender den aktive sporingspolicyen til Shopify Customer
+          Privacy API. Nettstedet svarer ikke særskilt på den eldre
           nettleserinnstillingen «Do Not Track», fordi den ikke har en entydig
           standard. Der leverandøren støtter Global Privacy Control, kan dette
           signalet bli håndtert av leverandørens personvernmekanisme.
         </p>
         <p>
-          Listen nedenfor lastes direkte fra Cookiebots siste skann og viser
-          navn, leverandør, formål, type og varighet. Den er derfor mer presis
-          enn et hardkodet antall cookies. Du kan også slette eller blokkere
-          cookies i nettleseren; nødvendige funksjoner som handlekurv og
-          checkout kan da slutte å virke.
+          Du kan slette eller blokkere informasjonskapsler i nettleseren.
+          Nødvendige funksjoner som handlekurv og checkout kan da slutte å
+          virke.
         </p>
-        {includeCookieDeclaration ?
-          <CookieDeclaration />
-        : <p>
-            Den dynamiske Cookiebot-erklæringen vises på{' '}
-            <ExternalLink href='https://utekos.no/personvern#cookies'>
-              utekos.no/personvern
-            </ExternalLink>
-            . Der finner du den til enhver tid oppdaterte listen og kan endre
-            valgene dine.
-          </p>
-        }
       </>
     )
   },

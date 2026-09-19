@@ -71,7 +71,7 @@ test('matches only document navigations and required proxy routes', () => {
   )
 })
 
-test('also matches layout selection on RSC, prefetch and direct internal URLs', () => {
+test('also matches retired layout URLs so they can redirect to the public landing', () => {
   const requests: Record<string, string>[] = [
     { accept: 'text/x-component', rsc: '1' },
     { 'next-router-prefetch': '1', 'purpose': 'prefetch' },

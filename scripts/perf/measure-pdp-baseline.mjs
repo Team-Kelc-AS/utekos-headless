@@ -16,15 +16,12 @@ import { z } from 'zod'
 const DEFAULT_BASE_URL = 'https://utekos.no'
 const HYDRATION_SETTLE_MS = 5_000
 const NAVIGATION_TIMEOUT_MS = 45_000
-const CONSENT_TIMEOUT_MS = 10_000
 
 const VIEWPORT = { width: 1440, height: 900 }
 const USER_AGENT =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' +
   ' (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36'
 
-const CONSENT_DECLINE_SELECTOR =
-  '#CybotCookiebotDialogBodyButtonDecline'
 const NEWSLETTER_DISMISSAL_KEY =
   'utekos-newsletter-modal-dismissed-session'
 
@@ -418,18 +415,8 @@ function summarizeConsole(messages) {
   }
 }
 
-async function dismissConsent(page) {
-  const decline = page.locator(CONSENT_DECLINE_SELECTOR).first()
-  try {
-    await decline.waitFor({
-      state: 'visible',
-      timeout: CONSENT_TIMEOUT_MS
-    })
-    await decline.click({ timeout: CONSENT_TIMEOUT_MS })
-    return true
-  } catch {
-    return false
-  }
+async function dismissConsent() {
+  return false
 }
 
 async function dismissOpenDialog(page) {

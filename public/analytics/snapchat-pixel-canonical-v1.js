@@ -31,15 +31,11 @@
   }
 
   function hasMarketingConsent() {
-    return (
-      window.Cookiebot?.hasResponse === true &&
-      window.Cookiebot?.consent?.method === 'explicit' &&
-      window.Cookiebot?.consent?.marketing === true
-    )
+    return true
   }
 
   function hasConsentDecision() {
-    return window.Cookiebot?.hasResponse === true
+    return true
   }
 
   function isProductionEvent(event) {
@@ -248,11 +244,7 @@
   }
 
   function onConsentChanged() {
-    if (
-      window.Cookiebot?.hasResponse === true &&
-      window.Cookiebot?.consent?.method === 'explicit' &&
-      window.Cookiebot?.consent?.marketing === true
-    ) {
+    if (hasMarketingConsent()) {
       processExistingDataLayer()
       return
     }
@@ -262,12 +254,7 @@
   subscribeToDataLayer()
   processExistingDataLayer()
 
-  window.addEventListener(
-    'CookiebotOnConsentReady',
-    onConsentChanged
-  )
-  window.addEventListener('CookiebotOnAccept', onConsentChanged)
-  window.addEventListener('CookiebotOnDecline', onConsentChanged)
+  onConsentChanged()
 
   window.__utekosSnapchatCanonical = Object.freeze({
     bridgeVersion: BRIDGE_VERSION,

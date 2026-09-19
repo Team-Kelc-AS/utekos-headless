@@ -14,8 +14,8 @@ const event: CanonicalPageView = {
   page_url: 'https://utekos.no/produkter',
   page_title: 'Produkter',
   experiment: {
-    key: 'skreddersy-varmen-layout-v1',
-    variant: 'legacy'
+    key: 'example-experiment',
+    variant: 'control'
   },
   journey_id: '11111111-1111-4111-8111-111111111111',
   previous_page_view_id: '22222222-2222-4222-8222-222222222222',

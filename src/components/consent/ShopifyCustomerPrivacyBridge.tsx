@@ -1,49 +1,50 @@
 'use client'
 
 import Script from 'next/script'
-import { useEffect, useRef, useState } from 'react'
-import {
-  buildShopifyTrackingConsent,
-  COOKIEBOT_CONSENT_EVENTS,
-  mapCookiebotConsentToShopify,
-  type CookiebotApi,
-  type ShopifyTrackingConsent
-} from '@/lib/consent/cookiebotConsent'
 
 const SHOPIFY_CUSTOMER_PRIVACY_SRC =
   'https://cdn.shopify.com/shopifycloud/consent-tracking-api/v0.1/consent-tracking-api.js'
 
-type ShopifyConsent = {
+type ShopifyTrackingAuthorization = {
   analytics: boolean
   marketing: boolean
   preferences: boolean
+  headlessStorefront: true
+  checkoutRootDomain: 'kasse.utekos.no'
+  storefrontRootDomain: 'utekos.no'
+  storefrontAccessToken: string
 }
 
 type ShopifyCustomerPrivacyApi = {
   setTrackingConsent: (
-    consent: ShopifyTrackingConsent,
+    consent: ShopifyTrackingAuthorization,
     callback: (error?: unknown) => void
   ) => void
 }
 
-type ConsentBridgeWindow = Window & {
-  Cookiebot?: CookiebotApi
+type PrivacyBridgeWindow = Window & {
   Shopify?: { customerPrivacy?: ShopifyCustomerPrivacyApi }
 }
 
 function submitShopifyConsent({
-  consent,
   storefrontAccessToken
 }: {
-  consent: ShopifyConsent
   storefrontAccessToken: string
 }): void {
-  const api = (window as ConsentBridgeWindow).Shopify
+  const api = (window as PrivacyBridgeWindow).Shopify
     ?.customerPrivacy
   if (!api) return
 
   api.setTrackingConsent(
-    buildShopifyTrackingConsent({ consent, storefrontAccessToken }),
+    {
+      analytics: true,
+      marketing: true,
+      preferences: true,
+      headlessStorefront: true,
+      checkoutRootDomain: 'kasse.utekos.no',
+      storefrontRootDomain: 'utekos.no',
+      storefrontAccessToken
+    },
     error => {
       if (error && process.env.NODE_ENV !== 'production') {
         console.warn(
@@ -59,48 +60,7 @@ export function ShopifyCustomerPrivacyBridge({
 }: {
   storefrontAccessToken?: string
 }) {
-  const [shouldLoadApi, setShouldLoadApi] = useState(false)
-  const apiLoadedRef = useRef(false)
-  const pendingConsentRef = useRef<ShopifyConsent | null>(null)
-
-  useEffect(() => {
-    if (!storefrontAccessToken) return
-
-    const submitPendingConsent = () => {
-      const consent = pendingConsentRef.current
-      if (!consent || !apiLoadedRef.current) return
-
-      submitShopifyConsent({ consent, storefrontAccessToken })
-    }
-
-    const syncCookiebotChoice = () => {
-      const consent = mapCookiebotConsentToShopify(
-        (window as ConsentBridgeWindow).Cookiebot
-      )
-      if (!consent) return
-
-      pendingConsentRef.current = consent
-      setShouldLoadApi(true)
-      submitPendingConsent()
-    }
-
-    for (const eventName of COOKIEBOT_CONSENT_EVENTS) {
-      window.addEventListener(eventName, syncCookiebotChoice)
-    }
-
-    syncCookiebotChoice()
-
-    return () => {
-      for (const eventName of COOKIEBOT_CONSENT_EVENTS) {
-        window.removeEventListener(
-          eventName,
-          syncCookiebotChoice
-        )
-      }
-    }
-  }, [storefrontAccessToken])
-
-  if (!storefrontAccessToken || !shouldLoadApi) return null
+  if (!storefrontAccessToken) return null
 
   return (
     <Script
@@ -108,11 +68,7 @@ export function ShopifyCustomerPrivacyBridge({
       src={SHOPIFY_CUSTOMER_PRIVACY_SRC}
       strategy='afterInteractive'
       onLoad={() => {
-        apiLoadedRef.current = true
-        const consent = pendingConsentRef.current
-        if (!consent) return
-
-        submitShopifyConsent({ consent, storefrontAccessToken })
+        submitShopifyConsent({ storefrontAccessToken })
       }}
     />
   )

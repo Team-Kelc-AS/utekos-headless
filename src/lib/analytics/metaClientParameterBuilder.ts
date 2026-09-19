@@ -1,21 +1,12 @@
 'use client'
 
-import {
-  hasCookiebotMarketingConsent,
-  type CookiebotApi
-} from '@/lib/consent/cookiebotConsent'
 import type { ClientParamBuilder } from 'meta-capi-param-builder-clientjs'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { mapMetaClientParameterContext } from './mapMetaClientParameterContext'
 import { metaClientIpResponseSchema } from './metaClientIpContract'
 
 function marketingAllowed() {
-  return (
-    typeof window !== 'undefined' &&
-    hasCookiebotMarketingConsent(
-      (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
-    )
-  )
+  return typeof window !== 'undefined'
 }
 const META_CLIENT_IP_TIMEOUT_MS = 2500
 const completedPageUrls = new Set<string>()

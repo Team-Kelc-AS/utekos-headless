@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { scheduleDeferredMarketingContainer } from './scheduleDeferredMarketingContainer'
 
-test('loads immediately when Cookiebot already stored a decision', () => {
+test('loads immediately when a stored decision is present', () => {
   let loads = 0
   const cancel = scheduleDeferredMarketingContainer(() => {
     loads += 1

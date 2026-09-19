@@ -1,6 +1,5 @@
 import { enrichBrowserMetaAudience } from './browserMetaAudience'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
-import { hasCookiebotExplicitResponse } from '@/lib/consent/cookiebotConsent'
 import {
   applyCanonicalCollectionContext,
   type CanonicalCollectionContext
@@ -10,22 +9,7 @@ import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventW
 import { createCollectorDeliveryError } from './createCollectorDeliveryError'
 import { extractClickIds } from './pageViewClientContext'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
-import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
-
-type CookiebotConsent = {
-  method?: string | null
-  marketing?: boolean
-  preferences?: boolean
-  statistics?: boolean
-}
-
-type CookiebotApi = {
-  consent?: CookiebotConsent
-  declined?: boolean
-  hasResponse?: boolean
-}
-
-type CookiebotWindow = Window & { Cookiebot?: CookiebotApi }
+import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAuthorization'
 
 type CreateCanonicalCollectorTransportInput<
   E extends { consent: ConsentSnapshot }
@@ -72,39 +56,10 @@ function readCookie(name: string): string | undefined {
   return cookie?.slice(prefix.length) || undefined
 }
 
-function resolveConsent(
-  cookiebot: CookiebotApi | undefined,
-  version: string
-): ConsentSnapshot {
-  if (!hasCookiebotExplicitResponse(cookiebot))
-    cookiebot = undefined
-  return {
-    analytics:
-      cookiebot?.consent?.statistics === true ?
-        'granted'
-      : 'denied',
-    marketing:
-      cookiebot?.consent?.marketing === true ?
-        'granted'
-      : 'denied',
-    preferences:
-      cookiebot?.consent?.preferences === true ?
-        'granted'
-      : 'denied',
-    source: 'cookiebot',
-    version
-  }
-}
-
 function resolveBrowserCollection<
   E extends { consent: ConsentSnapshot; page_url?: string }
 >(event: E): { context: CanonicalCollectionContext; event: E } {
-  const cookiebot =
-    typeof window === 'undefined' ? undefined : (
-      (window as CookiebotWindow).Cookiebot
-    )
-
-  const live = resolveConsent(cookiebot, event.consent.version)
+  const live = resolveTrackingAuthorization()
   const consent = {
     ...live,
     analytics:
@@ -117,7 +72,7 @@ function resolveBrowserCollection<
       : ('denied' as const)
   }
   const pageUrl = event.page_url ?? 'https://utekos.no/'
-  const hasResponse = hasCookiebotExplicitResponse(cookiebot)
+  const hasResponse = true
 
   const context: CanonicalCollectionContext = {
     consent,
@@ -126,8 +81,7 @@ function resolveBrowserCollection<
       {
         analyticsBrowserId: compactRecord([
           ['ga_cookie', readCookie('_ga')]
-        ]),
-        experiment: readSkreddersyVarmenLayoutAssignment()
+        ])
       }
     : {}),
     ...(consent.marketing === 'granted' ?
@@ -174,15 +128,7 @@ export async function sendCanonicalCollectorEvent<
   if (!defaultHasCollectionConsent(event)) return
   const isStillPermitted = () => {
     if (typeof window === 'undefined') return true
-    if (
-      (window as Window & { __utekosConsentReloading?: boolean })
-        .__utekosConsentReloading
-    )
-      return false
-    const current = resolveConsent(
-      (window as CookiebotWindow).Cookiebot,
-      event.consent.version
-    )
+    const current = resolveTrackingAuthorization()
     return (
       (event.consent.analytics !== 'granted' ||
         current.analytics === 'granted') &&

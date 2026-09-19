@@ -4,9 +4,7 @@ import {
   lastUpdated
 } from '../../src/db/config/privacy.config'
 
-const sections = createPrivacySections({
-  includeCookieDeclaration: false
-})
+const sections = createPrivacySections()
 
 const html = renderToStaticMarkup(
   <>

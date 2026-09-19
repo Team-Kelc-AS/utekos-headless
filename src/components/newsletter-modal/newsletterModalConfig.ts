@@ -60,18 +60,3 @@ export function getNewsletterModalStorageMode(
 ): NewsletterModalStorageMode {
   return preferencesConsentGranted ? 'local' : 'session'
 }
-
-export function shouldBypassCookiebotGate(
-  hostname: string,
-  nodeEnvironment: string | undefined
-): boolean {
-  if (nodeEnvironment !== 'development') {
-    return false
-  }
-
-  return (
-    hostname === 'localhost' ||
-    hostname === '127.0.0.1' ||
-    hostname === '::1'
-  )
-}

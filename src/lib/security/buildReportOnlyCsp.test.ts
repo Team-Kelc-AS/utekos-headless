@@ -15,14 +15,7 @@ test('protects structural directives and permits the consent-aware tag gateways'
   assert.match(csp, /connect-src[^;]*https:\/\/utekos\.no/)
   assert.match(csp, /script-src[^;]*https:\/\/www\.utekos\.no/)
   assert.match(csp, /connect-src[^;]*https:\/\/www\.utekos\.no/)
-  assert.match(
-    csp,
-    /script-src[^;]*https:\/\/consent\.cookiebot\.com/
-  )
-  assert.match(
-    csp,
-    /script-src[^;]*https:\/\/consent\.cookiebot\.eu/
-  )
+  assert.doesNotMatch(csp, /cookiebot/i)
   assert.match(
     csp,
     /script-src[^;]*https:\/\/www\.googletagmanager\.com/
@@ -43,10 +36,6 @@ test('protects structural directives and permits the consent-aware tag gateways'
 test('permits the third-party scripts and frames observed during report-only rollout', () => {
   const csp = buildReportOnlyCsp()
 
-  assert.match(
-    csp,
-    /script-src[^;]*https:\/\/consentcdn\.cookiebot\.eu/
-  )
   assert.match(csp, /script-src[^;]*https:\/\/x\.klarnacdn\.net/)
   assert.match(csp, /script-src[^;]*https:\/\/\*\.clarity\.ms/)
   assert.match(csp, /script-src[^;]*https:\/\/bat\.bing\.com/)
@@ -80,10 +69,6 @@ test('permits the third-party scripts and frames observed during report-only rol
   assert.match(
     csp,
     /connect-src[^;]*https:\/\/monorail-edge\.shopifysvc\.com/
-  )
-  assert.match(
-    csp,
-    /connect-src[^;]*https:\/\/consentcdn\.cookiebot\.eu/
   )
   assert.match(
     csp,

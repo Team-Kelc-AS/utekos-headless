@@ -3,8 +3,7 @@
 import {
   extractBrowserIds,
   extractClickIds,
-  getConsentSnapshot,
-  type CookiebotConsent
+  getConsentSnapshot
 } from './pageViewClientContext'
 import { browserFirstPartyExternalIdStore } from './firstPartyExternalId'
 import {
@@ -44,18 +43,12 @@ export type BrowserReporterContext = {
   pageUrl: string
 }
 
-type CookiebotWindow = Window & {
-  Cookiebot?: { consent?: CookiebotConsent }
-}
-
 export function readBrowserReporterContext(
   pageUrl?: string
 ): BrowserReporterContext | null {
   if (!hasBrowserCollectionConsent()) return null
   pageUrl ??= window.location.href
-  const consent = getConsentSnapshot(
-    (window as CookiebotWindow).Cookiebot?.consent
-  )
+  const consent = getConsentSnapshot()
   const metaAudience = readBrowserMetaAudience(consent)
   const browserId = extractBrowserIds(document.cookie, consent)
   const clickId =

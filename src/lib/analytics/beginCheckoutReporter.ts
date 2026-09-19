@@ -19,8 +19,6 @@ import { enrichCanonicalEventWithGoogleAnalyticsIds } from './googleAnalyticsBro
 import { persistCheckoutAttributionSnapshot } from './persistCheckoutAttributionSnapshot'
 import { mapShopifyBeginCheckout } from './shopifyBeginCheckoutCommerce'
 import type { CheckoutMethod } from './checkoutMethod'
-import { readSkreddersyVarmenLayoutAssignment } from '@/lib/experiments/skreddersyVarmenLayoutExperiment'
-import { waitForCookiebotConsentReady } from '@/lib/consent/waitForCookiebotConsentReady'
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 import type { Cart } from 'types/cart'
 
@@ -57,7 +55,6 @@ export async function reportCanonicalBeginCheckout(
   }
 
   try {
-    await waitForCookiebotConsentReady()
     const clientContext = readBrowserReporterContext()
     if (!clientContext) return
     const pageView = browserPageViewSession.ensure({
@@ -71,10 +68,6 @@ export async function reportCanonicalBeginCheckout(
     const commerce = await mapShopifyBeginCheckout(input.cart)
     if (!isBrowserEventConsentCurrent(clientContext.consent))
       return
-    const experiment =
-      clientContext.consent.analytics === 'granted' ?
-        readSkreddersyVarmenLayoutAssignment()
-      : undefined
 
     const initialEvent = createCanonicalBeginCheckout({
       environment: clientContext.environment,
@@ -87,7 +80,6 @@ export async function reportCanonicalBeginCheckout(
         { referrerUrl: pageView.referrerUrl }
       : {}),
       consent: clientContext.consent,
-      ...(experiment ? { experiment } : {}),
       commerce,
       ...(clientContext.browserId ?
         { browserId: clientContext.browserId }

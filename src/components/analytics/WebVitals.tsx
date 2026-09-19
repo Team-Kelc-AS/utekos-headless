@@ -3,7 +3,6 @@
 import { useReportWebVitals } from 'next/web-vitals'
 import { reportCanonicalWebVital } from '@/lib/analytics/webVitalReporter'
 import { webVitalMetricNameSchema } from '@/lib/analytics/webVitalMetricName'
-import { useCookiebotConsent } from '@/lib/consent/useCookiebotConsent'
 
 type ReportWebVitalsCallback = Parameters<
   typeof useReportWebVitals
@@ -81,12 +80,7 @@ const handleWebVitals: ReportWebVitalsCallback = metric => {
   }
 }
 
-function ConsentedWebVitals() {
+export function WebVitals() {
   useReportWebVitals(handleWebVitals)
   return null
-}
-
-export function WebVitals() {
-  const consent = useCookiebotConsent()
-  return consent.statistics ? <ConsentedWebVitals /> : null
 }

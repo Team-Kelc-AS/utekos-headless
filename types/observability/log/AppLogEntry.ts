@@ -19,7 +19,7 @@ export type AppLogConsentSnapshot =
       analytics: 'denied' | 'granted'
       marketing: 'denied' | 'granted'
       preferences: 'denied' | 'granted'
-      source: 'cookiebot'
+      source: 'cookiebot' | 'operator_policy'
       version: string
     }
   | {

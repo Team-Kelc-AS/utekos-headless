@@ -7,14 +7,6 @@ const journey1 = '11111111-1111-4111-8111-111111111111'
 const journey2 = '22222222-2222-4222-8222-222222222222'
 const page1 = '33333333-3333-4333-8333-333333333333'
 const page2 = '44444444-4444-4444-8444-444444444444'
-const accepted = {
-  hasResponse: true,
-  consent: {
-    method: 'explicit',
-    statistics: true,
-    marketing: true
-  }
-}
 const landing = {
   pageUrl:
     'https://utekos.no/skreddersy-varmen?utm_source=facebook&utm_content=123456789012&email=private@example.com',
@@ -48,64 +40,31 @@ function fixture(blocked = false) {
   }
 }
 
-test('missing, unknown, implied, statistics-only and marketing-only consent never open an advertising-linked journey', () => {
-  for (const cookiebot of [
-    undefined,
-    {
-      hasResponse: true,
-      consent: {
-        method: 'explicit',
-        statistics: true,
-        marketing: false
-      }
-    },
-    {
-      hasResponse: true,
-      consent: {
-        method: 'implied',
-        statistics: true,
-        marketing: true
-      }
-    },
-    { hasResponse: false, consent: { statistics: true } },
-    {
-      hasResponse: true,
-      consent: { statistics: false, marketing: true }
-    }
-  ]) {
-    const { session, values } = fixture()
-    assert.equal(
-      session.open({ cookiebot, pageView: landing }),
-      undefined
-    )
-    assert.equal(values.size, 0)
-  }
+test('operator policy opens the advertising-linked journey without a presented choice', () => {
+  const { session } = fixture()
+  const page = session.open({ pageView: landing })
+  assert.ok(page)
+  assert.equal(page.consent.source, 'cookiebot')
+  assert.equal(page.consent.marketing, 'granted')
 })
 
-test('late explicit statistics plus marketing consent starts fresh observations with validated UTM labels', () => {
+test('operator policy starts observations with validated UTM labels', () => {
   const { session } = fixture()
-  session.open({ cookiebot: undefined, pageView: landing })
-  const page = session.open({
-    cookiebot: accepted,
-    pageView: landing
-  })!
+  session.open({ pageView: landing })
+  const page = session.open({ pageView: landing })!
   assert.equal(page.journeyId, journey1)
   assert.deepEqual(page.utm, { utm_source: 'facebook' })
   assert.equal(page.maxScrollY, 0)
   assert.equal(page.sections.size, 0)
   assert.equal(page.consent.marketing, 'granted')
   assert.equal(page.pagePath, '/skreddersy-varmen')
-  assert.equal(
-    session.open({ cookiebot: accepted, pageView: landing }),
-    page
-  )
+  assert.equal(session.open({ pageView: landing }), page)
 })
 
 test('internal navigation reuses the journey and links only measured pages', () => {
   const { session } = fixture()
-  session.open({ cookiebot: accepted, pageView: landing })
+  session.open({ pageView: landing })
   const next = session.open({
-    cookiebot: accepted,
     pageView: {
       pageUrl: 'https://utekos.no/produkter/utekos-dun',
       pageViewId: page2
@@ -116,20 +75,14 @@ test('internal navigation reuses the journey and links only measured pages', () 
   assert.equal(next.utm, undefined)
 })
 
-test('withdrawal destroys the cohort and a later grant creates a new unlinked journey', () => {
+test('revoke destroys the cohort and a later open creates a new unlinked journey', () => {
   const { session, values } = fixture()
-  const old = session.open({
-    cookiebot: accepted,
-    pageView: landing
-  })!
+  const old = session.open({ pageView: landing })!
   old.sections.add('purchase')
   old.maxScrollY = 1000
   session.revoke()
   assert.equal(values.size, 0)
-  const fresh = session.open({
-    cookiebot: accepted,
-    pageView: landing
-  })!
+  const fresh = session.open({ pageView: landing })!
   assert.equal(fresh.journeyId, journey2)
   assert.equal(fresh.maxScrollY, 0)
   assert.equal(fresh.sections.size, 0)
@@ -138,12 +91,8 @@ test('withdrawal destroys the cohort and a later grant creates a new unlinked jo
 
 test('blocked storage preserves same-tab navigation in memory', () => {
   const { session } = fixture(true)
-  const first = session.open({
-    cookiebot: accepted,
-    pageView: landing
-  })!
+  const first = session.open({ pageView: landing })!
   const next = session.open({
-    cookiebot: accepted,
     pageView: {
       pageUrl: 'https://utekos.no/produkter',
       pageViewId: page2
@@ -162,7 +111,6 @@ test('unqualified pages do not start cohorts; invalid and duplicate UTM fields a
   ]) {
     assert.equal(
       session.open({
-        cookiebot: accepted,
         pageView: {
           ...landing,
           pageUrl: `https://utekos.no${path}`

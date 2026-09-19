@@ -2,7 +2,6 @@
 
 import { sendCanonicalGTMEvent as sendGTMEvent } from './sendCanonicalGTMEvent'
 import { hasBrowserCollectionConsent } from './hasBrowserCollectionConsent'
-import { COOKIEBOT_CONSENT_EVENTS } from '@/lib/consent/cookiebotConsent'
 import { readBrowserReporterContext } from './browserReporterContext'
 import {
   browserPageViewSession,
@@ -232,18 +231,10 @@ export function reportCanonicalViewItem(
   input: ReportCanonicalViewItemInput
 ): () => void {
   if (typeof window === 'undefined') return () => {}
-  let cleanup: (() => void) | undefined
-  const evaluate = () => {
-    if (cleanup || !hasBrowserCollectionConsent()) return
-    cleanup = browserReporter(input)
-  }
-  for (const name of COOKIEBOT_CONSENT_EVENTS)
-    window.addEventListener(name, evaluate)
-  evaluate()
+  if (!hasBrowserCollectionConsent()) return () => {}
+  const cleanup = browserReporter(input)
   return () => {
-    for (const name of COOKIEBOT_CONSENT_EVENTS)
-      window.removeEventListener(name, evaluate)
-    cleanup?.()
+    cleanup()
   }
 }
 

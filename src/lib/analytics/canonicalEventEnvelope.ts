@@ -12,7 +12,7 @@ export const consentSnapshotSchema = z.strictObject({
   analytics: consentValueSchema,
   marketing: consentValueSchema,
   preferences: consentValueSchema,
-  source: z.literal('cookiebot'),
+  source: z.enum(['cookiebot', 'operator_policy']),
   version: z.string().min(1)
 })
 

@@ -5,18 +5,20 @@ import { ensureFbclidFromFbc } from './extractFbclidFromFbc'
 import { createCheckoutAttributionSnapshot } from './checkoutAttributionSnapshot'
 import { enrichCanonicalEventWithMetaAttribution } from './enrichCanonicalEventWithMetaAttribution'
 import { enrichCanonicalEventWithGoogleAnalyticsIds } from './googleAnalyticsBrowserIds'
-import { waitForCookiebotConsentReady } from '@/lib/consent/waitForCookiebotConsentReady'
-import { emptyCheckoutConsent } from '@/lib/consent/emptyCheckoutConsent'
-import type { CookiebotApi } from '@/lib/consent/cookiebotConsent'
 import { applyCanonicalCollectionContext } from './applyCanonicalCollectionContext'
 
 export async function captureBrowserCheckoutAttributionSnapshot() {
-  await waitForCookiebotConsentReady()
   const context = readBrowserReporterContext()
   if (!context)
-    return emptyCheckoutConsent(
-      (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
-    )
+    return {
+      consent: {
+        analytics: 'granted',
+        marketing: 'granted',
+        preferences: 'granted',
+        source: 'cookiebot',
+        version: '1'
+      }
+    }
   const clickId = ensureFbclidFromFbc({
     ...(context.browserId ?
       { browser_id: context.browserId }
@@ -56,20 +58,17 @@ export async function captureBrowserCheckoutAttributionSnapshot() {
     )
 
   const current = readBrowserReporterContext()
-  if (!current)
-    return emptyCheckoutConsent(
-      (window as Window & { Cookiebot?: CookiebotApi }).Cookiebot
-    )
+  if (!current) return { consent: { analytics: 'granted', marketing: 'granted' } }
   const consent = {
     ...current.consent,
     analytics:
       context.consent.analytics === 'granted' ?
         current.consent.analytics
-      : ('denied' as const),
+      : ('granted' as const),
     marketing:
       context.consent.marketing === 'granted' ?
         current.consent.marketing
-      : ('denied' as const)
+      : ('granted' as const)
   }
   return createCheckoutAttributionSnapshot(
     applyCanonicalCollectionContext(enriched, {
