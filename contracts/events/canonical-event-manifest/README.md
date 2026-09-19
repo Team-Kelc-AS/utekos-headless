@@ -17,6 +17,11 @@ cookie, and an exact user + organization allowlist. Verified email is required;
 impersonation is rejected. No customer session or local-auth bypass is used.
 The existing admin callback remains unchanged. Session cookies expire after
 one hour. Local logout clears only the Control session, not the wiki session.
+The approved Vercel-linked operator belongs to the dedicated `Utekos Canonical
+Event Control` organization with the Member role (no WorkOS management
+permissions). The legacy wiki operator and organization are not authorized for
+Control. Identity selection uses the verified WorkOS user ID, not an assumed
+match between a Vercel email and an existing wiki account.
 
 The protected `GET /canonical-control/context` accepts either `name`, `query`,
 or neither (inventory), plus an integer `limit` between 1 and 5. It returns the

@@ -13,15 +13,15 @@ if (!sourcePath || !process.argv.includes('--apply-production'))
   )
 const source = parse(readFileSync(resolve(sourcePath)))
 const clientId = 'client_01KM0M9W4MW8M80P7DHD3WT1A3'
-const userId = 'user_01KNPY3TRKJV183C7PFS9C1J7B'
-const organizationId = 'org_01KNPYFFE8P9FA0ZZKA6NF4STB'
+const userId = 'user_01M2XFXJMPENVYTPXEWP1NE2BN'
+const organizationId = 'org_01M2XJ94909VYXHGNZVXB0P3AM'
 if (source.WORKOS_PROD_CLIENT_ID !== clientId)
   throw new Error('Production WorkOS client mismatch')
 const apiKey = source.WORKOS_PROD_API_KEY
 if (!apiKey) throw new Error('Production WorkOS API key missing')
 const workos = new WorkOS(apiKey, { clientId })
 const user = await workos.userManagement.getUser(userId)
-if (!user.emailVerified || user.email !== 'kristoffer@utekos.no')
+if (!user.emailVerified || user.email !== 'santini91yt@gmail.com')
   throw new Error('Operator identity verification failed')
 const localPath = resolve('.env.canonical-control.local')
 const existing =
