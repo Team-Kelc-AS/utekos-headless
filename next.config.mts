@@ -92,6 +92,7 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 180,
 
   experimental: {
+    inlineCss: true,
     webVitalsAttribution: ['CLS', 'INP', 'LCP', 'FCP', 'TTFB'],
     optimizePackageImports: [
       'zod',

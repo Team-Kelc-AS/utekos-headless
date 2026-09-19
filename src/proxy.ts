@@ -15,8 +15,7 @@ import { hasVerifiedSyntheticSignature } from '@/lib/analytics/syntheticTrafficS
 import { deriveLandingEdgeRequestId } from '../supabase/functions/_shared/landing-edge-request-id'
 
 const SKREDDERSY_VARMEN_PATH = '/skreddersy-varmen'
-const SKREDDERSY_VARMEN_LAYOUT_PATH =
-  '/skreddersy-varmen/layout'
+const SKREDDERSY_VARMEN_LAYOUT_PATH = '/skreddersy-varmen/layout'
 
 const allowedReferrers = new Set([
   'nbocc.no',
@@ -222,6 +221,15 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const hostname = request.nextUrl.hostname
 
+  if (
+    pathname === '/canonical-control' ||
+    pathname.startsWith('/canonical-control/')
+  ) {
+    const { controlProxy } =
+      await import('@/lib/canonical-control/controlProxy')
+    return controlProxy(request)
+  }
+
   const correlation = await createLandingEdgeCorrelation(request)
 
   if (isKlarnaFeedHost(hostname)) {
@@ -294,6 +302,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/canonical-control/:path*',
     '/skreddersy-varmen',
     '/skreddersy-varmen/layout/:path*',
     {

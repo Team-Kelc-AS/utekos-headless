@@ -7,6 +7,9 @@ import { canonicalEventSchema } from '../../src/lib/analytics/canonicalEvent'
 import { eventCatalog } from '../../src/lib/analytics/eventCatalog'
 import { utekosEventsContractCatalog } from './utekosEventsContractCatalog'
 import { buildUtekosEventDeliveryParameterContract } from './utekosEventDeliveryParameterCatalog'
+import { readCanonicalManifestSources } from './readCanonicalManifestSources'
+import { OPERATOR_TRACKING_AUTHORIZATION } from '../../src/lib/consent/resolveTrackingAuthorization'
+import { readCanonicalPipeline } from './readCanonicalPipeline'
 
 type JsonObject = Record<string, unknown>
 
@@ -16,11 +19,15 @@ const repositoryRoot = resolve(
 )
 const manifestVersion = 'canonical-event-manifest.v1'
 const operatorPolicyVersion = 'operator-policy-v1'
-const selectedEventNames = [
-  'add_to_cart',
-  'begin_checkout',
-  'purchase'
-] as const
+const selectedEventNames = canonicalEventSchema.options.map(
+  schema => {
+    const name =
+      schema._zod.def.shape.event_name._zod.def.values[0]
+    if (typeof name !== 'string')
+      throw new Error('Invalid canonical event name')
+    return name
+  }
+)
 const evidenceStatusSchema = z.enum([
   'static_verified',
   'runtime_observed',
@@ -58,10 +65,45 @@ export const canonicalEventManifestSchema = z.strictObject({
       )
       .min(1)
   }),
+  catalog_only: z.array(
+    z.strictObject({
+      name: z.string().min(1),
+      membership: z.literal('catalog_only'),
+      policy: z.record(z.string(), z.unknown())
+    })
+  ),
+  limitations: z.array(z.string().min(1)),
+  pipeline: z.strictObject({
+    evidence: z.literal('source_only'),
+    queue_topic: z.string().min(1),
+    stages: z.array(
+      z.strictObject({ stage: z.string(), source: z.string() })
+    ),
+    adapters: z.array(
+      z.strictObject({
+        key: z.string(),
+        registry: z.string(),
+        implementation: z.strictObject({
+          path: z.string(),
+          symbol: z.string()
+        })
+      })
+    ),
+    workers: z.array(
+      z.strictObject({
+        key: z.string(),
+        registry: z.string(),
+        implementation: z.strictObject({
+          path: z.string(),
+          symbol: z.string()
+        })
+      })
+    )
+  }),
   events: z
     .array(
       z.strictObject({
-        name: z.enum(selectedEventNames),
+        name: z.string().min(1),
         membership: z.literal('canonical'),
         schema: z.strictObject({
           source: z.string().min(1),
@@ -113,18 +155,6 @@ const generatedPaths = {
     'contracts/events/canonical-event-manifest/v1/canonical-event-manifest.v1.sha256'
   )
 } as const
-
-const sourceFiles = [
-  'src/lib/analytics/addToCartEvent.ts',
-  'src/lib/analytics/beginCheckoutEvent.ts',
-  'src/lib/analytics/purchaseEvent.ts',
-  'src/lib/analytics/canonicalEvent.ts',
-  'src/lib/analytics/canonicalEventEnvelope.ts',
-  'src/lib/analytics/eventCatalog.ts',
-  'src/lib/consent/resolveTrackingAuthorization.ts',
-  'scripts/contracts/utekosEventsContractCatalog.ts',
-  'scripts/contracts/utekosEventDeliveryParameterCatalog.ts'
-] as const
 
 function sha256(value: string | Buffer) {
   return createHash('sha256').update(value).digest('hex')
@@ -196,14 +226,11 @@ function parameterLineage(
   )
 }
 
-function camelEventFile(name: string) {
-  return `src/lib/analytics/${name.replace(/_([a-z])/gu, (_, letter: string) => letter.toUpperCase())}Event.ts`
-}
-
 function canonicalSchemaByEventName() {
   const schemas = new Map<string, z.core.$ZodType>()
   for (const schema of canonicalEventSchema.options) {
-    const eventName = schema.shape.event_name._zod.def.values[0]
+    const eventName =
+      schema._zod.def.shape.event_name._zod.def.values[0]
     if (
       typeof eventName !== 'string' ||
       schemas.has(eventName)
@@ -216,6 +243,10 @@ function canonicalSchemaByEventName() {
 }
 
 function buildManifest() {
+  const sources = readCanonicalManifestSources(repositoryRoot)
+  const pipeline = readCanonicalPipeline(repositoryRoot)
+  if (sources.schemaFiles.length !== selectedEventNames.length)
+    throw new Error('Canonical source membership mismatch')
   const deliveryContract =
     buildUtekosEventDeliveryParameterContract()
   const contractByEvent = new Map(
@@ -226,7 +257,7 @@ function buildManifest() {
   )
   const schemasByEvent = canonicalSchemaByEventName()
 
-  const events = selectedEventNames.map(name => {
+  const events = selectedEventNames.map((name, index) => {
     const contract = contractByEvent.get(name)
     const policy = eventCatalog[name]
     const delivery = deliveryContract.events[name]
@@ -234,8 +265,9 @@ function buildManifest() {
     if (!policy || !delivery || !schema) {
       throw new Error(`Missing normative source for ${name}`)
     }
-    const schemaFile =
-      contract?.schemaFile ?? camelEventFile(name)
+    const schemaFile = sources.schemaFiles[index]
+    if (!schemaFile)
+      throw new Error(`Missing schema source for ${name}`)
 
     return {
       name,
@@ -296,9 +328,9 @@ function buildManifest() {
       mode: 'operator_policy',
       version: operatorPolicyVersion,
       authorization: {
-        analytics: 'granted',
-        marketing: 'granted',
-        preferences: 'granted'
+        analytics: OPERATOR_TRACKING_AUTHORIZATION.analytics,
+        marketing: OPERATOR_TRACKING_AUTHORIZATION.marketing,
+        preferences: OPERATOR_TRACKING_AUTHORIZATION.preferences
       },
       cookiebot_state: 'not_used_for_tracking_authorization'
     },
@@ -310,8 +342,29 @@ function buildManifest() {
       'not_queried'
     ],
     generated_from: {
-      source_files: sourceFiles.map(sourceDigest)
+      source_files: [
+        ...new Set([
+          ...sources.sourceFiles,
+          ...pipeline.sourceFiles,
+          ...events.flatMap(event => event.contract.source_files)
+        ])
+      ]
+        .sort()
+        .map(sourceDigest)
     },
+    catalog_only: Object.entries(eventCatalog)
+      .filter(([name]) => !schemasByEvent.has(name))
+      .map(([name, policy]) => ({
+        name,
+        membership: 'catalog_only',
+        policy
+      })),
+    limitations: [
+      'JSON Schema describes structural validation; custom Zod refinements remain authoritative in the referenced source.',
+      'Catalog consent requirements are declarations. The current web tracking authorization is operator_policy; Cookiebot state is not consulted.',
+      'Provider mappings and lifecycle labels are source declarations, not deployment, delivery, reporting or attribution evidence.'
+    ],
+    pipeline: pipeline.definition,
     events
   })
 }

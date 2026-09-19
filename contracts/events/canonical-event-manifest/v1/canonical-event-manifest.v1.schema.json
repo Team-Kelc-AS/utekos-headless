@@ -120,20 +120,164 @@
       ],
       "additionalProperties": false
     },
-    "events": {
-      "minItems": 3,
-      "maxItems": 3,
+    "catalog_only": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
           "name": {
             "type": "string",
-            "enum": [
-              "add_to_cart",
-              "begin_checkout",
-              "purchase"
-            ]
+            "minLength": 1
+          },
+          "membership": {
+            "type": "string",
+            "const": "catalog_only"
+          },
+          "policy": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "name",
+          "membership",
+          "policy"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "pipeline": {
+      "type": "object",
+      "properties": {
+        "evidence": {
+          "type": "string",
+          "const": "source_only"
+        },
+        "queue_topic": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stage": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "stage",
+              "source"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "adapters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "registry": {
+                "type": "string"
+              },
+              "implementation": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "symbol": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "symbol"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "key",
+              "registry",
+              "implementation"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "workers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "registry": {
+                "type": "string"
+              },
+              "implementation": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "symbol": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "symbol"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "key",
+              "registry",
+              "implementation"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "evidence",
+        "queue_topic",
+        "stages",
+        "adapters",
+        "workers"
+      ],
+      "additionalProperties": false
+    },
+    "events": {
+      "minItems": 33,
+      "maxItems": 33,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
           },
           "membership": {
             "type": "string",
@@ -301,6 +445,9 @@
     "tracking_authorization",
     "evidence_statuses",
     "generated_from",
+    "catalog_only",
+    "limitations",
+    "pipeline",
     "events"
   ],
   "additionalProperties": false
