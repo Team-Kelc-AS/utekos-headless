@@ -62,6 +62,14 @@ test('purchase client JS loads through an explicit dynamic import', async () => 
   const scrollHelper = await readSource(
     'src/app/skreddersy-varmen/components/scrollToLandingSize.ts'
   )
+  const heroActions = await readSource(
+    'src/app/skreddersy-varmen/components/HeroActions.tsx'
+  )
+  assert.match(
+    heroActions,
+    /purchase: 'purchase-section'/,
+    'the unhydrated hero CTA must target the purchase shell that exists in the initial HTML'
+  )
   assert.match(
     scrollHelper,
     /\[data-landing-size-ready\], #landing-size-selection, #purchase-section/,
