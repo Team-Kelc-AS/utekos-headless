@@ -6,6 +6,7 @@ import { withWorkflow } from 'workflow/next'
 const GOOGLE_TAG_GATEWAY_PATH = '/__gtg'
 const SERVER_TAG_MANAGER_PATH = '/__sgtm'
 const VERCEL_TELEMETRY_PATH = '/telemetry/v1'
+const VERCEL_PRODUCTION_ORIGIN = 'https://utekos.no'
 
 const GOOGLE_TAG_MANAGER_ORIGIN =
   'https://www.googletagmanager.com'
@@ -183,23 +184,23 @@ const nextConfig: NextConfig = {
         },
         {
           source: `${VERCEL_TELEMETRY_PATH}/web.js`,
-          destination: '/_vercel/insights/script.js'
+          destination: `${VERCEL_PRODUCTION_ORIGIN}/_vercel/insights/script.js`
         },
         {
           source: `${VERCEL_TELEMETRY_PATH}/view`,
-          destination: '/_vercel/insights/view'
+          destination: `${VERCEL_PRODUCTION_ORIGIN}/_vercel/insights/view`
         },
         {
           source: `${VERCEL_TELEMETRY_PATH}/event`,
-          destination: '/_vercel/insights/event'
+          destination: `${VERCEL_PRODUCTION_ORIGIN}/_vercel/insights/event`
         },
         {
           source: `${VERCEL_TELEMETRY_PATH}/speed.js`,
-          destination: '/_vercel/speed-insights/script.js'
+          destination: `${VERCEL_PRODUCTION_ORIGIN}/_vercel/speed-insights/script.js`
         },
         {
           source: `${VERCEL_TELEMETRY_PATH}/vitals`,
-          destination: '/_vercel/speed-insights/vitals'
+          destination: `${VERCEL_PRODUCTION_ORIGIN}/_vercel/speed-insights/vitals`
         },
         {
           source: '/',

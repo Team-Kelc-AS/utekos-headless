@@ -81,23 +81,25 @@ test('proxies Vercel telemetry through first-party paths', async () => {
   assert.deepEqual(telemetryRewrites, [
     {
       source: '/telemetry/v1/web.js',
-      destination: '/_vercel/insights/script.js'
+      destination: 'https://utekos.no/_vercel/insights/script.js'
     },
     {
       source: '/telemetry/v1/view',
-      destination: '/_vercel/insights/view'
+      destination: 'https://utekos.no/_vercel/insights/view'
     },
     {
       source: '/telemetry/v1/event',
-      destination: '/_vercel/insights/event'
+      destination: 'https://utekos.no/_vercel/insights/event'
     },
     {
       source: '/telemetry/v1/speed.js',
-      destination: '/_vercel/speed-insights/script.js'
+      destination:
+        'https://utekos.no/_vercel/speed-insights/script.js'
     },
     {
       source: '/telemetry/v1/vitals',
-      destination: '/_vercel/speed-insights/vitals'
+      destination:
+        'https://utekos.no/_vercel/speed-insights/vitals'
     }
   ])
 })
