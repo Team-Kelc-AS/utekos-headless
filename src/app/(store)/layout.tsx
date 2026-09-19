@@ -16,7 +16,6 @@ import { CartProviderLoader } from '@/components/providers/CartProviderLoader'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
 import { JourneyObserver } from '@/components/analytics/JourneyObserver'
-import { ConsentPresentationBridge } from '@/components/consent/ConsentPresentationBridge'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
 import Script from 'next/script'
 import { getTrackingEnvironment } from '@/lib/analytics/getTrackingEnvironment'
@@ -144,9 +143,6 @@ export default function RootLayout({
         <ShopifyCustomerPrivacyBridge
           storefrontAccessToken={storefrontAccessToken || ''}
         />
-        <Suspense fallback={null}>
-          <ConsentPresentationBridge />
-        </Suspense>
         <VercelTelemetry />
       </body>
     </html>
