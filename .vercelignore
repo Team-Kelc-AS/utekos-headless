@@ -68,13 +68,19 @@ project_info_1/
 # Keep contracts/shopify/ so Next typecheck can resolve checkout-observation schemas.
 contracts/asyncapi/
 contracts/domains/
-contracts/events/
+contracts/events/*
+!contracts/events/canonical-event-manifest/
 contracts/governance/
 contracts/openapi/
 contracts/readyapi/
 contracts/reports/
 contracts/README.md
-scripts/contracts/
+scripts/contracts/*
+!scripts/contracts/generateCanonicalEventManifest.ts
+!scripts/contracts/readCanonicalManifestSources.ts
+!scripts/contracts/readCanonicalPipeline.ts
+!scripts/contracts/utekosEventsContractCatalog.ts
+!scripts/contracts/utekosEventDeliveryParameterCatalog.ts
 
 # Klarna local agent docs (runtime components stay deployable)
 src/components/klarna/dev/

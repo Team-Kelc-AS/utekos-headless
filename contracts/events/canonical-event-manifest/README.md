@@ -7,6 +7,9 @@ provider registries are authoritative. The v1 manifest is generated from these
 sources, not maintained as a second hand-written event list. It covers the full
 canonical union and explicitly separates catalog-only entries. Source hashes
 bind the generated artifact to its inputs; `prebuild` rejects drift.
+The Vercel source allowlist retains this manifest directory and the five
+generator/catalog modules required by that check; other contract exports stay
+excluded. A local build alone does not verify deployment packaging.
 
 `/canonical-control` is the private operator surface. It uses the existing
 Utekos WorkOS Production application, a dedicated host-only encrypted session
