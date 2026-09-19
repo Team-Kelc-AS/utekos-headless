@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "const": "canonical-event-manifest.v1"
+    },
+    "source_of_truth": {
+      "type": "object",
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "normative_sources": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "statement",
+        "normative_sources"
+      ],
+      "additionalProperties": false
+    },
+    "evidence_statuses": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "static_verified",
+          "runtime_observed",
+          "provider_accepted",
+          "provider_reported",
+          "not_queried"
+        ]
+      }
+    },
+    "generated_from": {
+      "type": "object",
+      "properties": {
+        "source_files": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "source_files"
+      ],
+      "additionalProperties": false
+    },
+    "events": {
+      "minItems": 3,
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "add_to_cart",
+              "begin_checkout",
+              "purchase"
+            ]
+          },
+          "membership": {
+            "type": "string",
+            "const": "canonical"
+          },
+          "schema": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "json_schema": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              }
+            },
+            "required": [
+              "source",
+              "json_schema"
+            ],
+            "additionalProperties": false
+          },
+          "contract": {
+            "type": "object",
+            "properties": {
+              "route": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_files": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "route",
+              "source_files"
+            ],
+            "additionalProperties": false
+          },
+          "policy": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          },
+          "provider_mappings": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          },
+          "parameter_lineage": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "delivery": {
+                  "type": "string",
+                  "enum": [
+                    "browser",
+                    "server"
+                  ]
+                },
+                "target_parameter": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "requirement": {
+                  "type": "string",
+                  "enum": [
+                    "required",
+                    "conditional",
+                    "recommended",
+                    "optional"
+                  ]
+                },
+                "rule": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "provider",
+                "delivery",
+                "target_parameter",
+                "source",
+                "requirement",
+                "rule"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "evidence": {
+            "type": "object",
+            "properties": {
+              "static": {
+                "type": "string",
+                "const": "static_verified"
+              },
+              "runtime": {
+                "type": "string",
+                "const": "not_queried"
+              },
+              "provider_accepted": {
+                "type": "string",
+                "const": "not_queried"
+              },
+              "provider_reported": {
+                "type": "string",
+                "const": "not_queried"
+              }
+            },
+            "required": [
+              "static",
+              "runtime",
+              "provider_accepted",
+              "provider_reported"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "name",
+          "membership",
+          "schema",
+          "contract",
+          "policy",
+          "provider_mappings",
+          "parameter_lineage",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "manifest_version",
+    "source_of_truth",
+    "evidence_statuses",
+    "generated_from",
+    "events"
+  ],
+  "additionalProperties": false
+}

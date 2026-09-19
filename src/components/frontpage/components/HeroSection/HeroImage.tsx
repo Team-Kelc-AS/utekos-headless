@@ -2,10 +2,10 @@ import { cn } from '@/lib/utils/className'
 import heroLgImage from '@/assets/images/gallery/utekos-brand-1400x735.webp'
 import heroXlImage from '@/assets/images/gallery/utekos_1400_788.webp'
 import heroSixteenTenImage from '@public/Hero-iPad.webp'
-import heroMobileImage from '@public/TechDown_1.webp'
+import heroMobileImage from '@public/TechDown_1080x1704px_Last.jpg'
 
 const heroImageProps = {
-  alt: 'Utekos TechDown i mørk blå, vist i helfigur.',
+  alt: 'Utekos TechDown™ i mørk blå, fotografert utendørs.',
   decoding: 'async',
   fetchPriority: 'high',
   loading: 'eager',
