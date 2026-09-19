@@ -32,7 +32,7 @@ export default function ControlConsole() {
         setAuthenticated(true)
         setStatus(
           next.contexts.length ?
-            `${next.total_matches} treff${next.truncated ? ', viser de første 3' : ''}.`
+            `${next.total_matches} treff${next.truncated ? `, viser de første ${next.contexts.length}` : ''}.`
           : 'Kilderegister lastet. Velg et event eller søk etter en parameter.'
         )
       }

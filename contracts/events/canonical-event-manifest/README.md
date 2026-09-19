@@ -35,6 +35,10 @@ owned AbortSignal; logout/unmount removes it. Execution rechecks authentication
 on the server. Browsers without native support retain the ordinary UI. Native
 registration, browser invocation and compatibility with a particular agent are
 separate verification claims; no polyfill is used to claim native support.
+Some browser agent bridges omit the invocation AbortSignal. In that case the
+tool retains its owned registration signal; when an invocation signal exists,
+both cancellation signals are honored. Logout/unmount cancellation is never
+optional.
 
 The local Insight MCP implementation remains owned by `utekos-platform-tools`.
 Its `canonical_event_context` combines the same manifest with the live source

@@ -12,7 +12,7 @@ export type ControlModelContext = {
       }
       execute: (
         input: unknown,
-        options: { signal: AbortSignal }
+        options?: { signal?: AbortSignal }
       ) => Promise<unknown>
     },
     options: { signal: AbortSignal }
@@ -40,10 +40,10 @@ export async function registerControlTool(
       },
       execute: async (input, options) => {
         signal.throwIfAborted()
-        const execution = AbortSignal.any([
-          signal,
-          options.signal
-        ])
+        const execution =
+          options?.signal === undefined ?
+            signal
+          : AbortSignal.any([signal, options.signal])
         execution.throwIfAborted()
         return execute(input, execution)
       }

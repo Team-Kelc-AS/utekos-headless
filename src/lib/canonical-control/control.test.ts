@@ -114,7 +114,20 @@ test('WebMCP owns registration signal, validates through domain service and canc
   await assert.rejects(
     tool!.execute({ limit: 999 }, { signal: executeSignal })
   )
+  for (const options of [undefined, {}]) {
+    const inventory = controlResultSchema.parse(
+      await tool!.execute({}, options)
+    )
+    assert.equal(inventory.inventory.length, 33)
+  }
+  const cancelledInvocation = new AbortController()
+  cancelledInvocation.abort()
+  await assert.rejects(
+    tool!.execute({}, { signal: cancelledInvocation.signal }),
+    { name: 'AbortError' }
+  )
   controller.abort()
+  await assert.rejects(tool!.execute({}), { name: 'AbortError' })
   await assert.rejects(
     tool!.execute({}, { signal: executeSignal }),
     { name: 'AbortError' }
