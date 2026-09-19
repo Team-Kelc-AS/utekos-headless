@@ -59,6 +59,22 @@ test('purchase client JS loads through an explicit dynamic import', async () => 
   )
   assert.match(deferred, /IntersectionObserver/)
   assert.match(deferred, /utekos:landing:purchase/)
+  const scrollHelper = await readSource(
+    'src/app/skreddersy-varmen/components/scrollToLandingSize.ts'
+  )
+  const heroActions = await readSource(
+    'src/app/skreddersy-varmen/components/HeroActions.tsx'
+  )
+  assert.match(
+    heroActions,
+    /purchase: 'purchase-section'/,
+    'the unhydrated hero CTA must target the purchase shell that exists in the initial HTML'
+  )
+  assert.match(
+    scrollHelper,
+    /\[data-landing-size-ready\], #landing-size-selection, #purchase-section/,
+    'the hero CTA must scroll to the loading placeholder so the deferred purchase island can enter the viewport and hydrate'
+  )
   assert.doesNotMatch(
     deferred,
     /import\s+\{[^}]*PurchaseClientLanding[^}]*\}\s+from/u

@@ -2,7 +2,7 @@ export function scrollToLandingSize() {
   window.dispatchEvent(new Event('utekos:landing:purchase'))
   const scroll = () => {
     const target = document.querySelector<HTMLElement>(
-      '[data-landing-size-ready]'
+      '[data-landing-size-ready], #landing-size-selection, #purchase-section'
     )
     if (!target) return false
     target.scrollIntoView({
