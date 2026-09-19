@@ -9,7 +9,7 @@ import { scrollToElement } from '@/lib/motion/scrollToElement'
 import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
 
 const SCROLL_TARGETS = {
-  purchase: 'landing-size-selection',
+  purchase: 'purchase-section',
   reviews: 'reviews-section',
   solution: 'section-solution'
 } as const
