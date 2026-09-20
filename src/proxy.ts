@@ -3,6 +3,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest, ProxyConfig } from 'next/server'
 import { isKlarnaFeedHost } from '@/lib/merchant-feeds/klarna/klarnaFeedHost'
+import { filterRedirectSearch } from '@/lib/navigation/filterRedirectSearch'
+import { captureProxyMetaCookies } from '@/lib/analytics/server/captureProxyMetaCookies'
+import { applyProxyMetaCookies } from '@/lib/analytics/server/applyProxyMetaCookies'
 import { isMagazineViewTransitionPreviewEnabled } from '@/app/magasinet/utils/isMagazineViewTransitionPreviewEnabled'
 import {
   LANDING_EDGE_AUTH_SERVER_TIMING_NAME,
@@ -217,7 +220,7 @@ function rewriteKlarnaFeedRoot(
   return NextResponse.rewrite(feedUrl)
 }
 
-export async function proxy(request: NextRequest) {
+async function routeRequest(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const hostname = request.nextUrl.hostname
 
@@ -253,7 +256,10 @@ export async function proxy(request: NextRequest) {
       request.url
     )
 
-    redirectUrl.search = request.nextUrl.search
+    redirectUrl.search = filterRedirectSearch(
+      request.nextUrl.search,
+      'nbcc'
+    )
 
     return withLandingEdgeCorrelation(
       NextResponse.redirect(redirectUrl, 307),
@@ -277,7 +283,10 @@ export async function proxy(request: NextRequest) {
       MAGASINET_UPGRADE_PATH,
       request.url
     )
-    upgradeUrl.search = request.nextUrl.search
+    upgradeUrl.search = filterRedirectSearch(
+      request.nextUrl.search,
+      'magazine'
+    )
 
     return withLandingEdgeCorrelation(
       NextResponse.redirect(upgradeUrl),
@@ -291,6 +300,10 @@ export async function proxy(request: NextRequest) {
   ) {
     const publicUrl = request.nextUrl.clone()
     publicUrl.pathname = SKREDDERSY_VARMEN_PATH
+    publicUrl.search = filterRedirectSearch(
+      request.nextUrl.search,
+      'landing'
+    )
     return withLandingEdgeCorrelation(
       NextResponse.redirect(publicUrl, 307),
       correlation
@@ -298,6 +311,31 @@ export async function proxy(request: NextRequest) {
   }
 
   return continueDocumentRequest(request, correlation)
+}
+
+export async function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+  const excluded =
+    /^(?:\/api(?:\/|$)|\/canonical-control(?:\/|$)|\/sporing(?:\/|$)|\/__gtg(?:\/|$)|\/__sgtm(?:\/|$)|\/_next(?:\/|$)|\/_vercel(?:\/|$)|\/\.well-known(?:\/|$))/.test(
+      pathname
+    )
+  const eligible =
+    !excluded &&
+    !isKlarnaFeedHost(request.nextUrl.hostname) &&
+    isDocumentNavigation(request)
+  const synthetic =
+    eligible &&
+    (await hasVerifiedSyntheticSignature(
+      request,
+      process.env,
+      Math.floor(Date.now() / 1000)
+    ))
+  const cookies =
+    eligible && !synthetic ?
+      captureProxyMetaCookies(request)
+    : []
+  const response = await routeRequest(request)
+  return applyProxyMetaCookies(response, request, cookies)
 }
 
 export const config = {

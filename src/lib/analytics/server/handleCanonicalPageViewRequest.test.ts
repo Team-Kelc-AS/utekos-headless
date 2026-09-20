@@ -2,6 +2,8 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import type { CanonicalPageViewStore } from './acceptCanonicalPageView'
 import { handleCanonicalPageViewRequest } from './handleCanonicalPageViewRequest'
+import { mapCanonicalPageViewToMeta } from './mapCanonicalPageViewToMeta'
+import { canonicalPageViewSchema } from '../pageViewEvent'
 import type { PageViewFunnelObservationIdentity } from './pageViewFunnelObservationStore'
 
 const endpoint = 'https://utekos.no/api/events/page-view'
@@ -156,6 +158,79 @@ test('returns accepted after atomic persistence', async () => {
     event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
     status: 'accepted'
   })
+})
+
+test('keeps refreshed landing fbc identical in storage, Set-Cookie and Meta mapping', async () => {
+  const writes: Parameters<
+    CanonicalPageViewStore['accept']
+  >[0][] = []
+  const fbp = 'fb.1.1784194900000.123456789.AQQCAQMB'
+  const fbc = 'fb.1.1784195000000.previous-click.AQQCAQMB'
+  const payload = {
+    ...pageView('granted', 'granted'),
+    page_url:
+      'https://utekos.no/produkter?fbclid=New-Landing-Click',
+    browser_id: { fbp, fbc }
+  }
+  const response = await handleCanonicalPageViewRequest(
+    request(JSON.stringify(payload), {
+      cookie: `_fbp=${fbp}; _fbc=${fbc}`
+    }),
+    {
+      getRequestContext: currentRequest => ({
+        cookieHeader: currentRequest.headers.get('cookie') ?? '',
+        clientIpAddress: '203.0.113.10',
+        userAgent: 'test-browser-agent',
+        requestUrl: currentRequest.url
+      }),
+      store: {
+        accept: async input => {
+          writes.push(input)
+          return insertedAcceptance
+        }
+      }
+    }
+  )
+
+  assert.equal(response.status, 202)
+  assert.equal(writes.length, 1)
+  const event = canonicalPageViewSchema.parse(writes[0]?.event)
+  assert.equal(event.event_id, payload.event_id)
+  assert.equal(event.event_time, payload.event_time)
+  assert.equal(event.browser_id?.fbp, fbp)
+  assert.equal(
+    event.browser_id?.fbc?.split('.')[3],
+    'New-Landing-Click'
+  )
+  const fbcCookie = response.headers
+    .getSetCookie()
+    .find(value => value.startsWith('_fbc='))
+  assert.ok(fbcCookie)
+  assert.ok(
+    fbcCookie?.startsWith(`_fbc=${event.browser_id?.fbc};`)
+  )
+  assert.match(fbcCookie, /Max-Age=7776000/)
+  assert.match(fbcCookie, /SameSite=Lax/)
+  assert.match(fbcCookie, /Secure/)
+  assert.match(
+    response.headers.get('cache-control') ?? '',
+    /no-store/
+  )
+
+  const meta = mapCanonicalPageViewToMeta(event).normalize()
+  assert.equal(meta.event_name, 'PageView')
+  assert.equal(meta.event_id, payload.event_id)
+  assert.equal(
+    meta.event_time,
+    Date.parse(payload.event_time) / 1000
+  )
+  assert.equal(meta.user_data.fbc, event.browser_id?.fbc)
+  assert.equal(meta.user_data.fbp, fbp)
+  assert.equal(meta.user_data.client_ip_address, '203.0.113.10')
+  assert.equal(
+    meta.user_data.client_user_agent,
+    'test-browser-agent'
+  )
 })
 
 test('releases the provisional row only after canonical acceptance', async () => {

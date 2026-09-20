@@ -31,10 +31,10 @@ function mapQueryParameters(
   const queryParameters = Object.fromEntries(
     pageUrl.searchParams.entries()
   )
-
-  if (!queryParameters.fbclid && fallbackFbclid) {
-    queryParameters.fbclid = fallbackFbclid
-  }
+  const fbclid =
+    pageUrl.searchParams.get('fbclid') || fallbackFbclid
+  if (fbclid) queryParameters.fbclid = fbclid
+  else delete queryParameters.fbclid
 
   return queryParameters
 }

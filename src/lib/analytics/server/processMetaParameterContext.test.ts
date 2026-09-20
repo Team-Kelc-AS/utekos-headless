@@ -10,6 +10,17 @@ const consent = {
   version: '1'
 } as const
 
+test('uses the first repeated URL click consistently with canonical and browser readers', () => {
+  const result = processMetaParameterContext({
+    cookies: {},
+    payload: {
+      consent,
+      page_url: 'https://utekos.no/?fbclid=First&fbclid=Second'
+    }
+  })
+  assert.equal(result.identifiers.fbc?.split('.')[3], 'First')
+})
+
 test('creates first-party fbp and fbc from the observed landing fbclid', () => {
   const before = Date.now()
   const processed = processMetaParameterContext({

@@ -47,13 +47,13 @@ test('redirects retired internal layout URLs to the public landing with attribut
   for (const variant of ['current', 'legacy', 'unknown']) {
     const response = await proxy(
       new NextRequest(
-        `https://utekos.no/skreddersy-varmen/layout/${variant}?variant=123&utm_source=test`
+        `https://utekos.no/skreddersy-varmen/layout/${variant}?variant=123&farge=patriot-blue&storrelse=XL&kjonn=unisex&utm_source=test&ScCid=AbC%2B%2f%3D&email=synthetic%40example.invalid&unknown=removed`
       )
     )
     assert.equal(response.status, 307)
     assert.equal(
       response.headers.get('location'),
-      'https://utekos.no/skreddersy-varmen?variant=123&utm_source=test'
+      'https://utekos.no/skreddersy-varmen?variant=123&farge=patriot-blue&storrelse=XL&kjonn=unisex&utm_source=test&ScCid=AbC%2B%2f%3D'
     )
   }
 })

@@ -57,9 +57,9 @@ function readFbclidFromUrl(urlValue: string | undefined) {
 
 /**
  * CanonicalEvent-first Meta browser-id enhancement for server accept.
- * Reads fbclid from request URL query, then page_url query, then click_id,
+ * Reads fbclid from page_url query, then request URL query, then click_id,
  * then existing _fbc. Mints first-party _fbp/_fbc via ParamBuilder when
- * marketing is granted and cookies are missing (landing race).
+ * marketing is granted and cookies are missing or a new URL click is observed.
  */
 export function ensureCanonicalMetaBrowserIds(
   input: EnsureCanonicalMetaBrowserIdsInput
@@ -74,8 +74,11 @@ export function ensureCanonicalMetaBrowserIds(
 
   const fbclidFromRequest = readFbclidFromUrl(input.requestUrl)
   const fbclidFromPage = readFbclidFromUrl(input.pageUrl)
-  const fbclidFromClick = existingClickId?.fbclid?.trim() || undefined
-  const fbclidFromFbc = extractFbclidFromFbc(existingBrowserId?.fbc)
+  const fbclidFromClick =
+    existingClickId?.fbclid?.trim() || undefined
+  const fbclidFromFbc = extractFbclidFromFbc(
+    existingBrowserId?.fbc
+  )
   // Document URL query is Meta's primary source; API request query is fallback.
   const fbclid =
     fbclidFromPage ??
@@ -105,8 +108,12 @@ export function ensureCanonicalMetaBrowserIds(
 
   const needsFbp = !fbp
   const needsFbc = Boolean(fbclid) && !fbc
+  const observedFbclid = fbclidFromPage ?? fbclidFromRequest
+  const hasNewUrlClick =
+    Boolean(observedFbclid) &&
+    observedFbclid !== extractFbclidFromFbc(fbc)
 
-  if (needsFbp || needsFbc) {
+  if (needsFbp || needsFbc || hasNewUrlClick) {
     const derived = processMetaParameterContext({
       ...(input.clientIpAddress ?
         { clientIpAddress: input.clientIpAddress }

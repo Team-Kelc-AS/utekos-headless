@@ -84,7 +84,7 @@ function signedSyntheticHeaders(url: string) {
   }
 }
 
-test('Magasinet upgrade redirect preserves the complete query string', async () => {
+test('Magasinet upgrade redirect preserves attribution and removes unrelated query parameters', async () => {
   const originalInfo = console.info
   const restoreSigningSecret = installSigningSecret()
   console.info = () => {}
@@ -93,7 +93,7 @@ test('Magasinet upgrade redirect preserves the complete query string', async () 
     const { proxy } = await productionProxy
     const response = await proxy(
       new NextRequest(
-        'https://utekos.no/magasinet/artikkel?fbclid=AbC-123&utm_source=facebook&utm_campaign=Vinter%20Norge',
+        'https://utekos.no/magasinet/artikkel?fbclid=AbC-123&email=synthetic%40example.invalid&utm_source=facebook&utm_campaign=Vinter%20Norge&variant=123',
         { headers: { accept: 'text/html' } }
       )
     )
@@ -107,6 +107,73 @@ test('Magasinet upgrade redirect preserves the complete query string', async () 
   } finally {
     console.info = originalInfo
     restoreSigningSecret()
+  }
+})
+
+test('NBCC redirect forwards exact attribution and captures Meta cookies without logging query values', async () => {
+  const messages: string[] = []
+  const originalInfo = console.info
+  console.info = message => messages.push(String(message))
+  const query =
+    'utm_source=SnapChat&utm_medium=paid_social&utm_campaign=Vinter%20Norge&utm_content=Kreativ+1&utm_term=test&utm_id=1&dclid=AbC&epik=AbC&fbclid=AbC&gclid=AbC&gbraid=AbC&wbraid=AbC&msclkid=AbC&sc_click_id=legacy&ScCid=%20AbC%2b%2F%3D%20&ttclid=AbC&twclid=AbC&campaign_id=1&campaign_name=Campaign&adset_id=2&adset_name=Set&ad_id=3&ad_name=Ad&hsa_cam=1&hsa_grp=2&hsa_ad=3'
+  try {
+    const { proxy } = await productionProxy
+    const request = new NextRequest(
+      `https://utekos.no/?${query}&email=synthetic%40example.invalid&token=private&variant=123`,
+      {
+        headers: {
+          accept: 'text/html',
+          referer: 'https://bergenhordaland.nbocc.no/'
+        }
+      }
+    )
+    const originalUrl = request.url
+    const response = await proxy(request)
+    assert.equal(response.status, 307)
+    assert.equal(
+      response.headers.get('location'),
+      `https://utekos.no/nbcc?${query}`
+    )
+    assert.equal(request.url, originalUrl)
+    assert.ok(response.cookies.get('_fbp'))
+    assert.equal(
+      response.cookies.get('_fbc')?.value.split('.')[3],
+      'AbC'
+    )
+    assert.equal(response.headers.get('server-timing'), null)
+    assert.equal(response.headers.get('vary'), null)
+    assert.ok(messages.length > 0)
+    for (const message of messages) {
+      assert.equal(
+        /utm_|ScCid|synthetic@|example.invalid|private/.test(
+          message
+        ),
+        false
+      )
+    }
+  } finally {
+    console.info = originalInfo
+  }
+})
+
+test('redirects without approved parameters have a clean destination URL', async () => {
+  const { proxy } = await productionProxy
+  for (const [source, destination] of [
+    ['/', '/nbcc'],
+    ['/magasinet/artikkel', '/magasinet/oppgradering'],
+    ['/skreddersy-varmen/layout/legacy', '/skreddersy-varmen']
+  ]) {
+    const response = await proxy(
+      new NextRequest(
+        `https://utekos.no${source}?email=synthetic%40example.invalid&token=private`,
+        { headers: { referer: 'https://nbocc.no/' } }
+      )
+    )
+    assert.equal(response.status, 307)
+    assert.equal(
+      response.headers.get('location'),
+      `https://utekos.no${destination}`
+    )
   }
 })
 
@@ -151,10 +218,49 @@ test('correlates a document request without logging its landing query', async ()
       edgeRequestId
     )
     assert.equal(response.headers.get('server-timing'), null)
-    assert.equal(response.headers.get('set-cookie'), null)
+    assert.ok(response.cookies.get('_fbp'))
+    assert.equal(
+      response.cookies.get('_fbc')?.value.split('.')[3],
+      'secret-click'
+    )
   } finally {
     console.info = originalInfo
     restoreSigningSecret()
+  }
+})
+
+test('forwards existing cookie and user-agent headers internally without exposing or reminting them', async () => {
+  const { proxy } = await productionProxy
+  const cookie =
+    '_fbp=fb.1.1784194900000.123456789; _fbc=fb.1.1784195000000.observed-click'
+  for (const pathname of [
+    '/',
+    '/produkter',
+    '/skreddersy-varmen'
+  ]) {
+    const response = await proxy(
+      new NextRequest(`https://utekos.no${pathname}`, {
+        headers: {
+          'accept': 'text/html',
+          'sec-fetch-dest': 'document',
+          cookie,
+          'user-agent': 'proxy-test-browser'
+        }
+      })
+    )
+
+    assert.equal(
+      response.headers.get('x-middleware-request-cookie'),
+      cookie
+    )
+    assert.equal(
+      response.headers.get('x-middleware-request-user-agent'),
+      'proxy-test-browser'
+    )
+    assert.equal(response.headers.get('cookie'), null)
+    assert.equal(response.headers.get('user-agent'), null)
+    assert.equal(response.headers.get('set-cookie'), null)
+    assert.equal(response.headers.get('location'), null)
   }
 })
 
@@ -333,7 +439,13 @@ test('keeps document navigation available when the signing secret is invalid', a
     const timing = response.headers.get('server-timing') ?? ''
     assert.equal(timing, '')
     assert.doesNotMatch(timing, /utekos_edge_auth/u)
-    assert.equal(response.headers.get('set-cookie'), null)
+    assert.ok(response.cookies.get('_fbp'))
+    assert.equal(
+      response.cookies.get(
+        LANDING_SYNTHETIC_CORRELATION_COOKIE_NAME
+      ),
+      undefined
+    )
   } finally {
     console.error = originalError
     if (originalSecret === undefined) {
