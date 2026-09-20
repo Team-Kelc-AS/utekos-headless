@@ -602,7 +602,7 @@ create table if not exists ops.shopify_checkout_observations (
     default 'utekos.shopify.checkout_observation'
     check (contract_name = 'utekos.shopify.checkout_observation'),
   schema_version smallint not null default 1
-    check (schema_version in (1, 2)),
+    check (schema_version in (1, 2, 3)),
   source text not null default 'shopify_app_web_pixel'
     check (source = 'shopify_app_web_pixel'),
   verification_status text not null default 'observed'

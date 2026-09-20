@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select extensions.plan(19);
+select extensions.plan(20);
 
 select extensions.has_table(
   'ops',
@@ -188,7 +188,7 @@ select extensions.lives_ok(
   'accepts a strictly validated version 2 payment observation'
 );
 
-select extensions.throws_ok(
+select extensions.lives_ok(
   $sql$
     insert into ops.shopify_checkout_observations (
       idempotency_key,
@@ -218,6 +218,22 @@ select extensions.throws_ok(
       false,
       'checkout-token-v3',
       1
+    )
+  $sql$,
+  'accepts a strictly validated version 3 payment observation'
+);
+
+select extensions.throws_ok(
+  $sql$
+    insert into ops.shopify_checkout_observations (
+      idempotency_key, payload_sha256, schema_version, event_name,
+      event_id, event_sequence, occurred_at, analytics_processing_allowed,
+      marketing_allowed, preferences_processing_allowed, sale_of_data_allowed,
+      checkout_token, item_quantity
+    ) values (
+      'utekos.shopify.checkout_observation:4:shopify_app_web_pixel:payment_info_submitted:evt-payment-v4',
+      repeat('e', 64), 4, 'payment_info_submitted', 'evt-payment-v4', 4,
+      '2026-08-03T18:00:45Z', true, false, false, false, 'checkout-token-v4', 1
     )
   $sql$,
   '23514'::char(5),
