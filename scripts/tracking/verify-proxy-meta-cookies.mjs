@@ -37,9 +37,10 @@ assert.equal(first.response.status, 200)
 assert.match(first.values._fbp ?? '', /^fb\.\d+\.\d+\.\d+/)
 assert.equal(first.values._fbc, undefined)
 assert.match(first.response.headers.get('cache-control') ?? '', /no-store/)
-assert.notEqual(first.response.headers.get('x-vercel-cache'), 'HIT')
 const isolated = await read('/produkter')
+assert.ok(isolated.values._fbp)
 assert.notEqual(isolated.values._fbp, first.values._fbp)
+assert.match(isolated.response.headers.get('cache-control') ?? '', /private.*no-store/)
 const cookie = `_fbp=${first.values._fbp}`
 const repeated = await read('/produkter', cookie)
 assert.equal(repeated.values._fbp, undefined)
@@ -61,6 +62,28 @@ const repeatedDuplicates = await read('/produkter?fbclid=First-HTTP-Click&fbclid
 assert.equal(repeatedDuplicates.values._fbc, undefined)
 assert.equal(repeatedDuplicates.values._fbp, undefined)
 
+const cachedLandingIds = new Set()
+const cacheStatuses = []
+for (let index = 0; index < 4; index++) {
+  const sample = await read('/produkter?fbclid=Proxy-Cache-Verification')
+  assert.equal(sample.response.status, 200)
+  assert.ok(sample.values._fbp)
+  assert.equal(sample.values._fbc?.split('.')[3], 'Proxy-Cache-Verification')
+  assert.match(sample.response.headers.get('cache-control') ?? '', /private.*no-store/)
+  cachedLandingIds.add(sample.values._fbp)
+  cacheStatuses.push(sample.response.headers.get('x-vercel-cache'))
+  if (origin.protocol === 'https:') {
+    for (const name of ['_fbp', '_fbc']) {
+      const cookieHeader = sample.setCookies.find(value => value.startsWith(`${name}=`)) ?? ''
+      assert.match(cookieHeader, /; Secure/i)
+      assert.match(cookieHeader, /; SameSite=Lax/i)
+      assert.match(cookieHeader, /; Max-Age=7776000/i)
+      assert.doesNotMatch(cookieHeader, /; HttpOnly/i)
+    }
+  }
+}
+assert.equal(cachedLandingIds.size, 4, 'Cached document content must not share browser identifiers')
+
 for (const [path, referer] of [
   ['/?fbclid=Proxy-Redirect-Verification', 'https://nbocc.no/'],
   ['/magasinet/artikkel?fbclid=Proxy-Redirect-Verification', ''],
@@ -77,7 +100,8 @@ assert.equal(prefetch.values._fbp, undefined)
 assert.equal(prefetch.values._fbc, undefined)
 console.log(JSON.stringify({
   ok: true, origin: origin.origin,
-  checks: ['initial_capture', 'isolated_browser_ids', 'no_repeat_write', 'new_click', 'same_click', 'repeated_query_keys', 'three_redirects', 'prefetch_excluded', 'internal_headers_not_exposed'],
+  checks: ['initial_capture', 'isolated_browser_ids', 'no_repeat_write', 'new_click', 'same_click', 'repeated_query_keys', 'cached_content_cookie_isolation', 'three_redirects', 'prefetch_excluded', 'internal_headers_not_exposed'],
+  cacheStatuses,
   browserJavaScriptExecuted: false,
   eventsSubmitted: false
 }, null, 2))

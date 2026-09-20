@@ -113,6 +113,7 @@ Markdown fetched directly where the Meta MCP returned excerpts only:
 - [NextResponse](https://nextjs.org/docs/app/api-reference/functions/next-response)
 - [MDN Set-Cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie)
 - [MDN URLSearchParams.get](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get)
+- [Vercel Routing Middleware](https://vercel.com/docs/routing-middleware)
 
 The requested Next.js document set was read previously in this thread; the
 installed Next.js 16.3.1 Proxy guide and NextResponse reference were also checked.
@@ -148,3 +149,37 @@ Production verification follows the authorized release: require exact Git/Vercel
 SHA and READY/aliases, run `verify-proxy-meta-cookies.mjs https://utekos.no
 --production`, gateway smoke, browser checks and relevant runtime logs. Provider
 receipt, finality, matching and attribution must not be inferred from these checks.
+
+## Production readback and cache-test correction
+
+The app changes were deployed through `pnpm sync` as commit
+`19b598b14288557665448c6955c744a6f50be0f1`; deployment
+`dpl_AKew3PFa7jPUGZSkTXyFaSJf3QqP` was READY with production aliases including
+`utekos.no`, matching local and origin/main. Cookie and gateway HTTP smokes passed.
+Production Set-Cookie readback verified Secure, SameSite=Lax, 90-day lifetime,
+root path and the Utekos domain. The inspected runtime-error window was empty;
+Vercel build logs contained the existing font fallback and build-region warnings.
+
+A follow-up verification-only correction removes the assumption that any
+`x-vercel-cache: HIT` means the Proxy cookie response is shared. Vercel documents
+Routing Middleware execution before the cache. Four independent production
+requests to the same landing URL returned HIT for content but four distinct
+`_fbp` values and private/no-store headers. The smoke now verifies identity
+isolation directly across four repeated requests, records cache statuses, and
+checks HTTPS cookie attributes. This does not change application behavior.
+
+Browser readback observed canonical PageView and commerce endpoint 202 responses,
+Meta browser requests and sGTM responses, and Consent Mode defaults granted for
+analytics_storage, ad_storage, ad_user_data and ad_personalization. These are
+browser/transport observations, not warehouse/provider finality. The browser also
+reported Meta currency-format and Klarna locale/timeout warnings and blocked
+third-party requests; this release must not be reported as an all-provider clean bill.
+
+Representative production commerce smoke used TechDown Havdyp/Middels/Unisex:
+selected variant `46944403882232` matched the cart request and authoritative
+Shopify-backed response. Quantity 1→2→1 updated totals 1990→3980→1990 NOK.
+Shopify checkout opened at `kasse.utekos.no`; Klarna could be selected, with the
+documented handoff message visible. No identity/payment form was filled and no
+order/payment was submitted. The test line was removed; cart returned to zero.
+Klarna authorization, payment completion, purchase events and every possible
+commerce render placement are not claimed as verified.
