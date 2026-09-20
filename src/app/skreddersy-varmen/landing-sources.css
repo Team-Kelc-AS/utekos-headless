@@ -1,6 +1,5 @@
 @source 'SkreddersyVarmenDocument.mdx';
 @source 'components/DeferredKlarnaOnSiteMessaging.tsx';
-@source 'components/DeferredLandingSection.tsx';
 @source 'components/DeferredPurchaseClientLanding.tsx';
 @source 'components/EmpathyStory.tsx';
 @source 'components/Hero.tsx';
@@ -83,7 +82,6 @@
 @source '../../components/providers/CartIdProvider.tsx';
 @source '../../components/providers/CartProviderLoader.tsx';
 @source '../../components/providers/Providers.tsx';
-@source '../../components/providers/ThemeProvider.tsx';
 @source '../../components/size-guide/SizeGuideAccordionTable.tsx';
 @source '../../components/ui/accordion.tsx';
 @source '../../components/ui/alert-dialog.tsx';

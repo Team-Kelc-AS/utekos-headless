@@ -10,7 +10,7 @@ export function AboutRetailer() {
   return (
     <article className='bg-night py-20 text-foreground sm:py-28'>
       <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-        <div className='grid grid-cols-1 items-center gap-10 rounded-3xl border border-border bg-jungle p-6 text-foreground md:grid-cols-[0.85fr_1.15fr] md:p-8 lg:p-10'>
+        <div className='grid grid-cols-1 items-center gap-10 rounded-3xl border border-border bg-night p-6 text-foreground md:grid-cols-[0.85fr_1.15fr] md:p-8 lg:p-10'>
           <div className='flex min-h-48 items-center justify-center rounded-lg border border-border bg-white p-8'>
             <Image
               src={IntersportLogo}
@@ -37,7 +37,7 @@ export function AboutRetailer() {
             <Button
               asChild
               variant='secondary'
-              className='mt-8 min-h-12 gap-2 rounded-3xl px-8 py-3 font-sans font-semibold text-base'
+              className='mt-8 min-h-12 gap-2 rounded-3xl border-border bg-jungle px-8 py-3 font-sans font-semibold text-base text-foreground hover:bg-jungle'
               size='lg'
             >
               <Link

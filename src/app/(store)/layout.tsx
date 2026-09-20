@@ -9,6 +9,7 @@ import Header from '@/components/header/Header'
 import { SiteChrome } from '@/components/layout/SiteChrome'
 import { OnlineStoreJsonLd } from '@/app/OnlineStoreJsonLd'
 import { CartProviderLoader } from '@/components/providers/CartProviderLoader'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { PageViewObserver } from '@/components/analytics/PageViewObserver'
 import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
 import { JourneyObserver } from '@/components/analytics/JourneyObserver'
@@ -102,20 +103,28 @@ export default function RootLayout({
 
         <OnlineStoreJsonLd />
 
-        <CartProviderLoader>
-          <SiteChrome
-            assistantRolloutPercent={assistantRolloutPercent}
-            facebookLoginEnabled={facebookLoginEnabled}
-            facebookLoginClientConfig={facebookLoginClientConfig}
-            facebookLoginPreviewAllowed={
-              facebookLoginPreviewAllowed
-            }
-            header={<Header menu={mainMenu} />}
-            footer={<Footer />}
-          >
-            {children}
-          </SiteChrome>
-        </CartProviderLoader>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='dark'
+          forcedTheme='dark'
+          disableTransitionOnChange
+          enableColorScheme
+        >
+          <CartProviderLoader>
+            <SiteChrome
+              assistantRolloutPercent={assistantRolloutPercent}
+              facebookLoginEnabled={facebookLoginEnabled}
+              facebookLoginClientConfig={facebookLoginClientConfig}
+              facebookLoginPreviewAllowed={
+                facebookLoginPreviewAllowed
+              }
+              header={<Header menu={mainMenu} />}
+              footer={<Footer />}
+            >
+              {children}
+            </SiteChrome>
+          </CartProviderLoader>
+        </ThemeProvider>
 
         <ShopifyCustomerPrivacyBridge
           storefrontAccessToken={storefrontAccessToken || ''}

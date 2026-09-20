@@ -8,7 +8,13 @@ import { MobileMenuPanel } from '@/components/header/MobileMenu/MobileMenuPanel'
 import { menuReducer } from '@/lib/utils/menuReducer'
 import type { MenuItem } from '@types'
 
-export function MobileMenuClient({ menu }: { menu: MenuItem[] }) {
+export function MobileMenuClient({
+  menu,
+  iconOnly = false
+}: {
+  menu: MenuItem[]
+  iconOnly?: boolean
+}) {
   const [state, dispatch] = useReducer(menuReducer, { status: 'CLOSED' })
   const pathname = usePathname()
 
@@ -34,6 +40,7 @@ export function MobileMenuClient({ menu }: { menu: MenuItem[] }) {
   return (
     <MobileMenuPanel
       menu={menu}
+      iconOnly={iconOnly}
       isOpen={state.status === 'OPEN'}
       onOpenChange={isOpen => {
         if (isOpen) {

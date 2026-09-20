@@ -53,7 +53,7 @@ export function AboutEvents() {
                 key={`${event.name}-${event.date}`}
                 className='flex gap-4'
               >
-                <div className='flex size-11 shrink-0 items-center justify-center rounded-md bg-muted text-ceramic'>
+                <div className='flex size-11 shrink-0 items-center justify-center rounded-md bg-jungle text-ceramic'>
                   <MapPin
                     aria-hidden='true'
                     className='size-5'

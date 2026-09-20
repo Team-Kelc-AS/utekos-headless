@@ -2,6 +2,7 @@
 
 'use client'
 
+import { scrollToLandingReviews } from './scrollToLandingReviews'
 import { scrollToLandingSize } from './scrollToLandingSize'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
@@ -77,8 +78,9 @@ export function HeroActions() {
               )
                 return
               event.preventDefault()
+              event.stopPropagation()
               reportLandingSelectPromotion('heroSecondary')
-              smoothScrollTo(SCROLL_TARGETS.reviews)
+              scrollToLandingReviews()
             }}
             data-track='HeroSecondaryCtaSkreddersyVarmen'
             className='group inline-flex items-center gap-2 leading-none'

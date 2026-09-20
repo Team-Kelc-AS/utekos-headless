@@ -111,6 +111,33 @@ test('places the product explanation after purchase and links the hero feedback 
     .toBeLessThanOrEqual(1)
 })
 
+test('jumps to visible review cards instantly from the hero feedback action', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(landingUrl, { waitUntil: 'load' })
+
+  const reviews = page.locator('#reviews-section')
+  const firstCard = reviews.getByRole('article').first()
+  const startedAt = Date.now()
+
+  await page
+    .getByRole('link', { name: 'Se tilbakemeldingene' })
+    .click()
+
+  await expect
+    .poll(async () =>
+      reviews.evaluate(element =>
+        Math.abs(element.getBoundingClientRect().top - 72)
+      )
+    )
+    .toBeLessThanOrEqual(2)
+
+  expect(Date.now() - startedAt).toBeLessThan(1000)
+  await expect(firstCard).toBeVisible()
+  await expect(firstCard).toContainText('Marit')
+})
+
 test('releases the final mobile empathy scene before purchase begins', async ({
   page
 }) => {

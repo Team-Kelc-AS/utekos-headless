@@ -17,9 +17,11 @@ const MobileMenu = dynamic(
 )
 
 export function ClientMobileMenu({
-  menu
+  menu,
+  iconOnly = false
 }: {
   menu: MenuItem[]
+  iconOnly?: boolean
 }) {
   const isMounted = useSyncExternalStore(
     () => () => {},
@@ -31,5 +33,5 @@ export function ClientMobileMenu({
     return <div aria-hidden className='h-11 min-w-11 shrink-0 md:min-w-23' />
   }
 
-  return <MobileMenu menu={menu} />
+  return <MobileMenu menu={menu} iconOnly={iconOnly} />
 }

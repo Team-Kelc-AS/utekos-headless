@@ -1,6 +1,6 @@
 import Image, { type StaticImageData } from 'next/image'
 import type { ReactNode } from 'react'
-import bonfireImage from '@public/Skreddersy_1440x1800_2.jpg'
+import bonfireImage from '@public/Skreddersy_1440x1800_2.webp'
 import chillImage from '../../../assets/images/techdown/UtekosTechDownMElegense.webp'
 import type {
   EmpathyMediaImageSrc,
@@ -14,7 +14,7 @@ const empathyImages: Record<
   EmpathyMediaImageSrc,
   StaticImageData
 > = {
-  '/Skreddersy_1440x1800_2.jpg': bonfireImage,
+  '/Skreddersy_1440x1800_2.webp': bonfireImage,
   '/src/assets/images/techdown/UtekosTechDownMElegense.webp':
     chillImage
 }

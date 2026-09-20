@@ -57,7 +57,7 @@ export type EmpathyTextSceneId =
 export type EmpathyMediaSceneId = 'bonfire' | 'chill'
 
 export type EmpathyMediaImageSrc =
-  | '/Skreddersy_1440x1800_2.jpg'
+  | '/Skreddersy_1440x1800_2.webp'
   | '/src/assets/images/techdown/UtekosTechDownMElegense.webp'
 
 export type EmpathyTextSceneContent = {
@@ -228,7 +228,7 @@ const empathyMediaSceneSchema = z.strictObject({
   kind: z.literal('media'),
   copy: requiredText,
   imageSrc: z.enum([
-    '/Skreddersy_1440x1800_2.jpg',
+    '/Skreddersy_1440x1800_2.webp',
     '/src/assets/images/techdown/UtekosTechDownMElegense.webp'
   ]),
   imageAlt: requiredText
@@ -247,7 +247,7 @@ const empathySceneContract = [
     id: 'bonfire',
     kind: 'media',
     imageSrc:
-      '/Skreddersy_1440x1800_2.jpg'
+      '/Skreddersy_1440x1800_2.webp'
   },
   {
     id: 'chill',

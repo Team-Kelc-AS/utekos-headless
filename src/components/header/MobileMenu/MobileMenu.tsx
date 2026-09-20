@@ -5,6 +5,12 @@
 import { MobileMenuClient } from '@/components/header/MobileMenu/MobileMenuClient'
 import type { MenuItem } from '@types'
 
-export function MobileMenu({ menu }: { menu: MenuItem[] }) {
-  return <MobileMenuClient menu={menu} />
+export function MobileMenu({
+  menu,
+  iconOnly = false
+}: {
+  menu: MenuItem[]
+  iconOnly?: boolean
+}) {
+  return <MobileMenuClient menu={menu} iconOnly={iconOnly} />
 }

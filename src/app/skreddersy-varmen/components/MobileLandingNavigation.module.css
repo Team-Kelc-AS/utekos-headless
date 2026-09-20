@@ -1,3 +1,18 @@
 .navigationState {
   display: none;
 }
+
+:global(body):has(
+    .navigationState[data-purchase-visible='true']
+  )
+  :global(header[data-site-header]) {
+  position: fixed;
+  inset: 0 0 auto;
+  visibility: visible;
+  padding-top: calc(env(safe-area-inset-top) + 1.25rem);
+  background: var(--night);
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  animation: none;
+}

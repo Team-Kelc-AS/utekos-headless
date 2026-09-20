@@ -14,7 +14,7 @@ export function AboutCta() {
   return (
     <article className='bg-jungle py-20 text-foreground sm:py-28'>
       <div className='mx-auto max-w-5xl px-4 sm:px-6 lg:px-8'>
-        <div className='rounded-3xl border border-border bg-dark-teal p-8 text-center text-foreground sm:p-12'>
+        <div className='rounded-3xl border border-border bg-night p-8 text-center text-foreground sm:p-12'>
           <AboutBadge className='mb-6'>
             Oppdag vår kolleksjon
           </AboutBadge>

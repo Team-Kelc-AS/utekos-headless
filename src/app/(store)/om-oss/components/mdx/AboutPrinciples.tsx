@@ -28,7 +28,7 @@ export function AboutPrinciples() {
   return (
     <article className='w-full bg-night py-20 text-foreground sm:py-28'>
       <div className='mx-auto flex w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8'>
-        <div className='mb-12 flex max-w-3xl flex-col items-start pt-6 pb-6 md:pt-8 lg:mb-16 lg:pt-10'>
+        <div className='mb-12 flex max-w-3xl flex-col items-start pb-6 lg:mb-16'>
           <AboutBadge className='mb-6'>Vårt DNA</AboutBadge>
           <h2 className='font-google-sans text-left font-sans text-4xl leading-tight font-bold text-inherit sm:text-5xl'>
             Kjernen i alt vi gjør

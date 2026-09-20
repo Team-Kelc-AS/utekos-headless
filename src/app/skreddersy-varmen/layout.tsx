@@ -3,12 +3,14 @@ import { LandingCartButton } from './components/LandingCartButton'
 import { Google_Sans_Flex } from 'next/font/google'
 import { LandingTelemetry } from './components/LandingTelemetry'
 import { siteMetadata } from '@/app/siteMetadata'
-import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import { Suspense, type ReactNode } from 'react'
+import Image from 'next/image'
+import { mainMenu } from '@/db/config/menu.config'
 import { SkreddersyVarmenJsonLd } from './structured-data/SkreddersyVarmenJsonLd'
 import { resolveSkreddersyVarmenCommerce } from './data/resolveSkreddersyVarmenCommerce'
 import { GoogleTagManagerNoScript } from '@/components/analytics/GoogleTagManagerNoScript'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
+import { ClientMobileMenu } from '@/components/header/ClientMobileMenu'
 
 async function SkreddersyVarmenStructuredData() {
   const commerce = await resolveSkreddersyVarmenCommerce()
@@ -47,12 +49,23 @@ export default function LandingPageLayout({
         />
         <LandingTelemetry />
         <header className='landing-header' data-site-header>
-          <a href='/' aria-label='Utekos – forsiden'>
-            <UtekosWordmark />
+          <a
+            href='/'
+            aria-label='Utekos – forsiden'
+            className='landing-header-brand'
+          >
+            <Image
+              src='/IconWhite.svg'
+              alt=''
+              width={1280}
+              height={1109}
+              className='size-9'
+              priority
+            />
           </a>
           <nav aria-label='Hovedmeny'>
-            <a href='/produkter'>Produkter</a>
-            <LandingCartButton />
+            <LandingCartButton className='landing-header-action' />
+            <ClientMobileMenu menu={mainMenu} iconOnly />
           </nav>
         </header>
         <main>

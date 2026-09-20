@@ -6,4 +6,4 @@ export type LandingPurchaseGalleryCarouselProps = {
 }
 
 export const landingGalleryButtonClassName =
-  'size-10 border-background/15 bg-foreground/90 text-background shadow-md backdrop-blur-md hover:bg-foreground hover:text-primary md:size-11'
+  'size-10 border-foreground/80 bg-night text-foreground shadow-lg shadow-black/40 hover:bg-dark-teal hover:text-foreground md:size-11'
