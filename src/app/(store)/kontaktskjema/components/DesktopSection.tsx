@@ -10,7 +10,7 @@ export function DesktopSection() {
         <div className='grow bg-deep-fjord p-8 lg:p-12'>
           <BrandBadge
             label='Kundeservice'
-            className='mb-6 border-none bg-primary px-4 py-2 font-utekos-text-medium text-sm leading-4 tracking-normal'
+            className='mb-6 border-none bg-primary px-4 py-2 font-sans font-semibold text-sm leading-4 tracking-normal'
           />
           <h1 className='font-sans text-4xl leading-[0.95] font-bold tracking-normal text-foreground'>
             Snakk med Utekos
@@ -23,7 +23,7 @@ export function DesktopSection() {
             <li className='flex items-start gap-4'>
               <HelpCircle className='shrink-0-ancient-water h-6 w-6' />
               <div>
-                <h3 className='leading-tighttracking-normal font-utekos-text-medium text-foreground'>
+                <h3 className='leading-tighttracking-normal font-sans font-semibold text-foreground'>
                   Få personlig veiledning
                 </h3>
                 <p className='leading-text-paragraph /90 mt-1 text-base tracking-normal text-foreground/90'>
@@ -35,7 +35,7 @@ export function DesktopSection() {
             <li className='flex items-start gap-4'>
               <Package className='shrink-0-ancient-water h-6 w-6' />
               <div>
-                <h3 className='font-utekos-text-medium leading-tight tracking-normal text-foreground'>
+                <h3 className='font-sans font-semibold leading-tight tracking-normal text-foreground'>
                   Hjelp med din bestilling
                 </h3>
                 <p className='leading-text-paragraph /90 mt-1 text-base tracking-normal text-foreground/90'>
@@ -50,7 +50,7 @@ export function DesktopSection() {
         <div className='border-y border-foreground/12'>
           <div className='grid grid-cols-1 sm:grid-cols-2'>
             <div className='border-r border-foreground/12 bg-deep-fjord p-6 sm:p-8 lg:px-8 lg:py-12'>
-              <h4 className='flex items-center gap-2 font-utekos-text-medium leading-tight tracking-normal text-foreground'>
+              <h4 className='flex items-center gap-2 font-sans font-semibold leading-tight tracking-normal text-foreground'>
                 <Leaf className='text-soft-warm h-5 w-5' />
                 En investering i komfort
               </h4>
@@ -61,7 +61,7 @@ export function DesktopSection() {
             </div>
 
             <div className='bg-deep-fjord p-6 sm:p-8 lg:px-8 lg:py-12'>
-              <h4 className='leading-tighttracking-normal flex items-center gap-2 font-utekos-text-medium text-foreground'>
+              <h4 className='leading-tighttracking-normal flex items-center gap-2 font-sans font-semibold text-foreground'>
                 <span aria-hidden>🇳🇴</span>
                 <span className='sr-only'>Norsk</span>
                 Skapt for norske forhold
@@ -83,7 +83,7 @@ export function DesktopSection() {
             forlenge de gode stundene utendørs, uansett
             vær.&rdquo;
           </blockquote>
-          <p className='mt-4 font-utekos-text-medium leading-tight tracking-normal text-foreground'>
+          <p className='mt-4 font-sans font-semibold leading-tight tracking-normal text-foreground'>
             - Utekos
           </p>
         </div>

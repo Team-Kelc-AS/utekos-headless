@@ -13,7 +13,7 @@ function AccordionGroup({
   return (
     <article className='space-y-3'>
       {group.title && (
-        <h3 className='font-sans font-utekos-text-medium text-lg leading-[1.2] tracking-normal text-card-foreground'>
+        <h3 className='font-sans font-semibold text-lg leading-[1.2] tracking-normal text-card-foreground'>
           {group.title}
         </h3>
       )}
@@ -25,7 +25,7 @@ function AccordionGroup({
               key={row.label}
               className='rounded-lg border border-border bg-background/40 p-3'
             >
-              <dt className='font-utekos-text-medium text-sm leading-[1.35] tracking-normal text-foreground'>
+              <dt className='font-sans font-semibold text-sm leading-[1.35] tracking-normal text-foreground'>
                 {row.label}
               </dt>
               <dd className='/82 mt-1 text-sm leading-normal tracking-normal text-foreground/82'>
@@ -60,7 +60,7 @@ function AccordionGroup({
 
       {group.note && (
         <div className='rounded-lg border border-border bg-background/55 p-4 text-foreground'>
-          <h4 className='font-sans font-utekos-text-medium text-base leading-tight tracking-normal'>
+          <h4 className='font-sans font-semibold text-base leading-tight tracking-normal'>
             {group.note.title}
           </h4>
           <p className='/86 mt-2 text-sm leading-[1.6] tracking-normal text-foreground/86'>
@@ -86,7 +86,7 @@ export function AccordionContentRenderer({
         className
       )}
     >
-      <div className='max-w-prose space-y-6 font-utekos-text'>
+      <div className='max-w-prose space-y-6 font-sans'>
         {content.groups.map((group, index) => (
           <AccordionGroup
             key={`${group.title ?? content.id}-${index}`}

@@ -46,7 +46,7 @@ export function InspirationHeroHeading({
 
       <p
         className={cn(
-          'font-utekos-text-medium mt-10 max-w-4xl text-3xl leading-10 tracking-wide text-foreground sm:mt-12',
+          'font-sans font-semibold mt-10 max-w-4xl text-3xl leading-10 tracking-wide text-foreground sm:mt-12',
           align === 'center' ?
             'mx-auto text-center'
           : 'text-left',

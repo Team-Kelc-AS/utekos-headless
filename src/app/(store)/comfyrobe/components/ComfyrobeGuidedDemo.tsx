@@ -89,7 +89,7 @@ export function ComfyrobeGuidedDemo() {
         variants={comfyrobeRevealGroup}
       >
         <m.p
-          className='font-utekos-text-medium text-sm tracking-wide text-primary'
+          className='font-sans font-semibold text-sm tracking-wide text-primary'
           variants={comfyrobeRevealItem}
         >
           Bygget lag for lag
@@ -102,7 +102,7 @@ export function ComfyrobeGuidedDemo() {
         Tøff mot været, komfortabel mot deg
         </m.h2>
         <m.p
-          className='mx-auto mt-6 max-w-2xl font-utekos-text text-lg leading-relaxed text-white/75'
+          className='mx-auto mt-6 max-w-2xl font-sans text-lg leading-relaxed text-white/75'
           variants={comfyrobeRevealItem}
         >
           Tre gjennomtenkte lag mellom deg og ruskeværet.
@@ -140,7 +140,7 @@ export function ComfyrobeGuidedDemo() {
                   variants={comfyrobeRevealItem}
                 >
                   <Icon className='size-5' aria-hidden />
-                  <span className='font-utekos-text-medium text-sm tracking-wide'>
+                  <span className='font-sans font-semibold text-sm tracking-wide'>
                     {step.number} · {step.eyebrow}
                   </span>
                 </m.div>
@@ -151,7 +151,7 @@ export function ComfyrobeGuidedDemo() {
                   {step.title}
                 </m.h3>
                 <m.p
-                  className='mt-4 font-utekos-text text-base leading-7 text-white/74 md:text-lg'
+                  className='mt-4 font-sans text-base leading-7 text-white/74 md:text-lg'
                   variants={comfyrobeRevealItem}
                 >
                   {step.description}
@@ -231,7 +231,7 @@ export function ComfyrobeGuidedDemo() {
                     variants={comfyrobeRevealItem}
                   >
                     <Icon className='size-6' aria-hidden />
-                    <span className='font-utekos-text-medium tracking-wide'>
+                    <span className='font-sans font-semibold tracking-wide'>
                       {step.number} · {step.eyebrow}
                     </span>
                   </m.div>
@@ -242,7 +242,7 @@ export function ComfyrobeGuidedDemo() {
                     {step.title}
                   </m.h3>
                   <m.p
-                    className='mt-6 font-utekos-text text-xl leading-relaxed text-white/72'
+                    className='mt-6 font-sans text-xl leading-relaxed text-white/72'
                     variants={comfyrobeRevealItem}
                   >
                     {step.description}

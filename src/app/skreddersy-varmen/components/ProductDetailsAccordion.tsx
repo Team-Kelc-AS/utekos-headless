@@ -33,7 +33,7 @@ function Section({
       <AccordionContent
         className={landingAccordionContentClassName}
       >
-        <div className='max-w-prose space-y-6 font-utekos-text'>
+        <div className='max-w-prose space-y-6 font-sans'>
           {section.groups.map((group, index) => (
             <section
               key={`${group.title ?? section.id}-${index}`}
@@ -86,7 +86,7 @@ function Section({
                   <h4 className='font-sans text-base leading-tight tracking-normal'>
                     {group.note.title}
                   </h4>
-                  <p className='utekos-text mt-2 text-sm leading-[1.6] tracking-normal text-foreground/90'>
+                  <p className='mt-2 font-sans text-sm leading-[1.6] tracking-normal text-foreground/90'>
                     {group.note.text}
                   </p>
                 </div>

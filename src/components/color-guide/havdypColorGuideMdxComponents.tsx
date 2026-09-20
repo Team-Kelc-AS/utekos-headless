@@ -11,7 +11,7 @@ function ColorGuideH1({
   return (
     <h1
       className={cn(
-        'col-start-1 row-start-1 self-center font-utekos-text-medium text-2xl leading-tight tracking-tight text-foreground sm:text-3xl',
+        'col-start-1 row-start-1 self-center font-sans font-semibold text-2xl leading-tight tracking-tight text-foreground sm:text-3xl',
         className
       )}
       {...props}
@@ -83,7 +83,7 @@ function ColorGuideStrong({
   return (
     <strong
       className={cn(
-        'block font-utekos-text-medium text-primary',
+        'block font-sans font-semibold text-primary',
         className
       )}
       {...props}
@@ -105,7 +105,7 @@ function ColorGuideAnchor({
     <a
       href={href}
       className={cn(
-        'col-span-2 mt-3 mr-5 inline-flex min-h-11 items-center font-utekos-text-medium text-sm text-foreground underline decoration-foreground/70 underline-offset-4 hover:text-foreground/80 focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-primary focus-visible:outline-none sm:text-base',
+        'col-span-2 mt-3 mr-5 inline-flex min-h-11 items-center font-sans font-semibold text-sm text-foreground underline decoration-foreground/70 underline-offset-4 hover:text-foreground/80 focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-primary focus-visible:outline-none sm:text-base',
         className
       )}
       {...(isExternal ?

@@ -69,7 +69,7 @@ export async function QualitySection() {
                 <div className='bg-dark-teal flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border text-primary-foreground shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shadow-card-foreground/10 transition-transform duration-500 group-hover:scale-110 sm:h-12 sm:w-12'>
                   <Feather className='size-5 stroke-[1.5]' />
                 </div>
-                <H3 className='min-w-0 pb-0 font-utekos-text-medium text-xl leading-none tracking-normal text-card-foreground sm:text-2xl'>
+                <H3 className='min-w-0 pb-0 font-sans font-semibold text-xl leading-none tracking-normal text-card-foreground sm:text-2xl'>
                   Premium isolasjon
                 </H3>
               </div>
@@ -95,7 +95,7 @@ export async function QualitySection() {
                 <div className='bg-dark-teal flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border duration-500 group-hover:scale-110 sm:h-12 sm:w-12'>
                   <ShieldCheckIcon className='size-5 stroke-[1.5]' />
                 </div>
-                <H3 className='min-w-0 pb-0 font-utekos-text-medium text-xl leading-none tracking-normal text-card-foreground sm:text-2xl'>
+                <H3 className='min-w-0 pb-0 font-sans font-semibold text-xl leading-none tracking-normal text-card-foreground sm:text-2xl'>
                   Bygget for å vare
                 </H3>
               </div>

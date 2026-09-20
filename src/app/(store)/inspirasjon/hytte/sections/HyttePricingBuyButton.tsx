@@ -37,7 +37,7 @@ export function HyttePricingBuyButton({
         type='button'
         variant={variant}
         className={cn(
-          'font-utekos-text-medium',
+          'font-sans font-semibold',
           className,
           buttonClassName
         )}

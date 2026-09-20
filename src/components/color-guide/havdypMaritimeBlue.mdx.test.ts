@@ -85,7 +85,7 @@ test('Les om fargen sits next to the Havdyp color card', () => {
 test('Farge and Størrelse labels use larger primary type', () => {
   assert.match(
     purchaseIslandSource,
-    /font-utekos-text-medium text-lg text-primary md:sr-only/
+    /font-sans font-semibold text-lg text-primary md:sr-only/
   )
   assert.doesNotMatch(
     purchaseIslandSource,

@@ -9,7 +9,7 @@ export function MobileSection() {
       <div className='rounded-lg bg-deep-fjord p-6'>
         <BrandBadge
           label='Kundeservice'
-          className='mb-5 border-none bg-primary px-4 py-2 font-utekos-text-medium text-sm leading-4 tracking-normal'
+          className='mb-5 border-none bg-primary px-4 py-2 font-sans font-semibold text-sm leading-4 tracking-normal'
         />
         <h1 className='font-sans text-3xl leading-[0.95] font-extrabold tracking-normal text-foreground'>
           Snakk med Utekos
@@ -22,7 +22,7 @@ export function MobileSection() {
           <li className='flex items-start gap-3'>
             <HelpCircle className='h-5 w-5 shrink-0 text-ancient-water' />
             <div>
-              <h3 className='font-utekos-text-medium text-sm leading-[1.3] tracking-normal text-foreground'>
+              <h3 className='font-sans font-semibold text-sm leading-[1.3] tracking-normal text-foreground'>
                 Få personlig veiledning
               </h3>
               <p className='leading-text-paragraph mt-1 text-sm tracking-normal text-foreground'>
@@ -34,7 +34,7 @@ export function MobileSection() {
           <li className='flex items-start gap-3'>
             <Package className='h-5 w-5 shrink-0 text-ancient-water' />
             <div>
-              <h3 className='font-utekos-text-medium text-sm leading-[1.3] tracking-normal text-foreground'>
+              <h3 className='font-sans font-semibold text-sm leading-[1.3] tracking-normal text-foreground'>
                 Hjelp med din bestilling
               </h3>
               <p className='leading-text-paragraph mt-1 text-sm tracking-normal text-foreground'>
@@ -52,11 +52,11 @@ export function MobileSection() {
       <div className='border-t border-foreground/12'>
         <div className='grid grid-cols-2'>
           <div className='border-r border-foreground/12 bg-jungle p-6'>
-            <h4 className='flex items-start gap-1.5 font-utekos-text-medium text-xs leading-[1.3] tracking-normal text-foreground'>
+            <h4 className='flex items-start gap-1.5 font-sans font-semibold text-xs leading-[1.3] tracking-normal text-foreground'>
               <span aria-hidden>🇳🇴</span>
               For norske forhold
             </h4>
-            <p className='leading-text-paragraph mt-1.5 font-utekos-text text-xs tracking-normal text-foreground'>
+            <p className='leading-text-paragraph mt-1.5 font-sans text-xs tracking-normal text-foreground'>
               Våre produkter er utviklet for å forlenge de gode
               stundene utendørs, enten det er på en kjølig
               sommerkveld på hytten eller en frisk høstdag i
@@ -64,11 +64,11 @@ export function MobileSection() {
             </p>
           </div>
           <div className='bg-jungle p-6'>
-            <h4 className='flex items-start gap-1.5 font-utekos-text-medium text-xs leading-[1.3] tracking-normal text-foreground'>
+            <h4 className='flex items-start gap-1.5 font-sans font-semibold text-xs leading-[1.3] tracking-normal text-foreground'>
               <Leaf className='text-soft-warm h-4 w-4' />
               Investering i komfort
             </h4>
-            <p className='leading-text-paragraph mt-1.5 font-utekos-text text-xs tracking-normal text-foreground'>
+            <p className='leading-text-paragraph mt-1.5 font-sans text-xs tracking-normal text-foreground'>
               Mer enn bare et plagg; det er et verktøy designet
               for å gi deg utallige timer med varme og velvære.
             </p>
@@ -76,12 +76,12 @@ export function MobileSection() {
         </div>
       </div>
       <div className='border-t border-foreground/12 bg-jungle p-6'>
-        <blockquote className='leading-text-paragraph font-utekos-text text-sm tracking-normal text-foreground italic'>
+        <blockquote className='leading-text-paragraph font-sans text-sm tracking-normal text-foreground italic'>
           &ldquo;Vårt løfte til deg er enkelt: å levere
           komfortplagg av ypperste kvalitet som lar deg forlenge
           de gode stundene utendørs, uansett vær.&rdquo;
         </blockquote>
-        <p className='mt-3 font-utekos-text-medium text-sm leading-[1.3] tracking-normal text-foreground'>
+        <p className='mt-3 font-sans font-semibold text-sm leading-[1.3] tracking-normal text-foreground'>
           - Utekos Teamet
         </p>
       </div>

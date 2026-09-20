@@ -48,7 +48,7 @@ export function QuantitySelector({
         disabled={quantity <= 1}
       >
         <MinusIcon className='size-4' />
-        <span className='sr-only font-utekos-text-medium'>
+        <span className='sr-only font-sans font-semibold'>
           Reduser antall
         </span>
       </Button>

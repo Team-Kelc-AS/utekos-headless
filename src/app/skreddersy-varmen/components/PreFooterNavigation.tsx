@@ -24,7 +24,7 @@ export function PreFooterNavigation({
     >
       <div className='mx-auto max-w-5xl px-6'>
         <div className='mb-12 text-left'>
-          <h2 className='leading-heading-level-two mb-4 font-sans font-utekos-text-medium text-5xl text-foreground md:text-6xl'>
+          <h2 className='leading-heading-level-two mb-4 font-sans font-semibold text-5xl text-foreground md:text-6xl'>
             <span className='block'>Utforsk mer</span>
             <span className='flex items-baseline gap-3'>
               <span>

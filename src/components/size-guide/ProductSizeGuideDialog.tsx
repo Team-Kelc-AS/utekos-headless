@@ -72,7 +72,7 @@ export function ProductSizeGuideDialog({
           </>
         : <>
             <DialogHeader className='shrink-0 border-b border-foreground/12 px-6 py-6 pr-14 sm:px-8 sm:py-7 sm:pr-14'>
-              <p className='font-utekos-text-medium text-xs tracking-wide text-primary uppercase'>
+              <p className='font-sans font-semibold text-xs tracking-wide text-primary uppercase'>
                 {content.badge}
               </p>
               <DialogTitle className='font-sans text-2xl font-bold tracking-tight sm:text-3xl'>

@@ -218,11 +218,11 @@ export function SizeSelector({
         <div className='flex w-full flex-col rounded-2xl bg-jungle px-4 py-2 text-left transition-colors md:p-4'>
           <button
             onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-            className='flex min-h-11 w-full cursor-pointer items-center justify-between p-0 font-utekos-text-medium text-card-foreground transition-colors focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none md:min-h-0'
+            className='flex min-h-11 w-full cursor-pointer items-center justify-between p-0 font-sans font-semibold text-card-foreground transition-colors focus-visible:ring-2 focus-visible:ring-card-foreground/45 focus-visible:outline-none md:min-h-0'
             aria-expanded={isDetailsOpen}
             aria-controls='size-details'
           >
-            <span className='font-utekos-text-medium'>
+            <span className='font-sans font-semibold'>
               Usikker på størrelsen?
             </span>
             <svg

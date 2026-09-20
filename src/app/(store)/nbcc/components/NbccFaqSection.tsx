@@ -13,7 +13,7 @@ export function NbccFaqSection() {
     <article className='bg-background px-4 py-20 sm:px-6 lg:px-8'>
       <div className='mx-auto grid w-full max-w-4xl gap-10'>
         <NbccReveal>
-          <p className='mx-auto font-utekos-text-medium text-sm tracking-[0.18em] text-foreground uppercase md:text-2xl'>
+          <p className='mx-auto font-sans font-semibold text-sm tracking-[0.18em] text-foreground uppercase md:text-2xl'>
             Spørsmål og svar
           </p>
         </NbccReveal>

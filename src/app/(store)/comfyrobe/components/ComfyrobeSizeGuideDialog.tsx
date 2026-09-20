@@ -48,13 +48,13 @@ export function ComfyrobeSizeGuideDialog({
 
       <DialogContent className='inset-0 top-0 left-0 flex h-svh max-h-svh max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none bg-background p-0 text-foreground ring-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:h-auto sm:max-h-[calc(100svh-3rem)] sm:max-w-2xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:ring-1'>
         <DialogHeader className='shrink-0 border-b border-foreground/12 px-6 py-6 pr-14 sm:px-8 sm:py-7 sm:pr-14'>
-          <p className='font-utekos-text-medium text-xs tracking-wide text-primary uppercase'>
+          <p className='font-sans font-semibold text-xs tracking-wide text-primary uppercase'>
             Comfyrobe™
           </p>
           <DialogTitle className='font-sans text-2xl font-bold tracking-tight sm:text-3xl'>
             Størrelsesguide
           </DialogTitle>
-          <DialogDescription className='max-w-xl font-utekos-text text-sm leading-6 text-foreground/72 sm:text-base'>
+          <DialogDescription className='max-w-xl font-sans text-sm leading-6 text-foreground/72 sm:text-base'>
             Sammenlign målene med et lignende plagg du allerede
             har. Alle mål er oppgitt i centimeter.
           </DialogDescription>
@@ -75,13 +75,13 @@ export function ComfyrobeSizeGuideDialog({
                 <TableRow className='hover:bg-transparent'>
                   <TableHead
                     scope='col'
-                    className='h-12 min-w-44 px-4 font-utekos-text-medium text-foreground'
+                    className='h-12 min-w-44 px-4 font-sans font-semibold text-foreground'
                   >
                     Måling
                   </TableHead>
                   <TableHead
                     scope='col'
-                    className='h-12 px-3 text-right font-utekos-text-medium text-foreground'
+                    className='h-12 px-3 text-right font-sans font-semibold text-foreground'
                   >
                     XL
                   </TableHead>
@@ -90,10 +90,10 @@ export function ComfyrobeSizeGuideDialog({
               <TableBody>
                 {comfyrobeData.map(row => (
                   <TableRow key={row.measurement}>
-                    <TableCell className='px-4 py-3 font-utekos-text-medium whitespace-normal'>
+                    <TableCell className='px-4 py-3 font-sans font-semibold whitespace-normal'>
                       {row.measurement}
                     </TableCell>
-                    <TableCell className='bg-primary/8 px-3 py-3 text-right font-utekos-text-medium tabular-nums'>
+                    <TableCell className='bg-primary/8 px-3 py-3 text-right font-sans font-semibold tabular-nums'>
                       {row.lxl}
                     </TableCell>
                   </TableRow>
@@ -108,7 +108,7 @@ export function ComfyrobeSizeGuideDialog({
             render={
               <Button
                 type='button'
-                className='min-h-12 w-full rounded-xl bg-primary font-utekos-text-medium text-foreground hover:bg-primary/90 sm:w-auto sm:min-w-32'
+                className='min-h-12 w-full rounded-xl bg-primary font-sans font-semibold text-foreground hover:bg-primary/90 sm:w-auto sm:min-w-32'
               />
             }
           >

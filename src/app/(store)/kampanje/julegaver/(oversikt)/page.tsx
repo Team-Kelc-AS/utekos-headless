@@ -79,7 +79,7 @@ export default async function ChristmasCampaign() {
           <div className='mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row'>
             <Link
               href='#bestselgere'
-              className='inline-flex h-12 items-center justify-center rounded-full bg-red-800 px-8 text-sm font-medium text-white shadow-lg shadow-red-900/20 transition-all hover:scale-105 hover:bg-red-700'
+              className='inline-flex h-12 items-center justify-center rounded-full bg-campaign px-8 text-sm font-medium text-white shadow-lg shadow-campaign/20 transition-all hover:scale-105 hover:bg-campaign'
             >
               Se gavetipsene
               <ArrowRight className='ml-2 h-4 w-4' />
@@ -98,10 +98,10 @@ export default async function ChristmasCampaign() {
             {/* 1. Lager/Logistikk - Erstatter "Bestill innen..." */}
             <div className='flex flex-col items-center gap-3'>
               <div className='flex h-12 w-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10'>
-                <MapPin className='h-6 w-6 text-red-400' />{' '}
+                <MapPin className='h-6 w-6 text-campaign' />{' '}
               </div>
               <div>
-                <h3 className='font-utekos-text-medium text-foreground'>
+                <h3 className='font-sans font-semibold text-foreground'>
                   Sendes samme dag
                 </h3>
                 <p className='text-sm text-muted-foreground'>
@@ -114,10 +114,10 @@ export default async function ChristmasCampaign() {
             {/* 2. Bytterett (Beholdes) */}
             <div className='flex flex-col items-center gap-3'>
               <div className='flex h-12 w-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10'>
-                <ShieldCheck className='h-6 w-6 text-red-400' />
+                <ShieldCheck className='h-6 w-6 text-campaign' />
               </div>
               <div>
-                <h3 className='font-utekos-text-medium text-foreground'>
+                <h3 className='font-sans font-semibold text-foreground'>
                   Utvidet bytterett
                 </h3>
                 <p className='text-sm text-muted-foreground'>
@@ -128,10 +128,10 @@ export default async function ChristmasCampaign() {
 
             <div className='flex flex-col items-center gap-3'>
               <div className='flex h-12 w-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10'>
-                <CreditCard className='h-6 w-6 text-red-400' />
+                <CreditCard className='h-6 w-6 text-campaign' />
               </div>
               <div>
-                <h3 className='font-utekos-text-medium text-foreground'>
+                <h3 className='font-sans font-semibold text-foreground'>
                   Sikker betaling
                 </h3>
                 <p className='text-sm text-muted-foreground'>
@@ -161,12 +161,12 @@ export default async function ChristmasCampaign() {
         <div className='grid gap-8 md:grid-cols-2 lg:gap-12'>
           {/* Produkt 1: TechDown */}
           <div className='group relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all hover:border-commerce-primary/40'>
-            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-red-800 px-3 py-1 text-xs font-bold text-white shadow-lg'>
+            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-campaign px-3 py-1 text-xs font-bold text-white shadow-lg'>
               JULERABATT
             </div>
 
             {/* ENDRING: Bruker 'aspect-square' som er tryggere for 1:1 enn aspect-square */}
-            <div className='relative aspect-square w-full overflow-hidden bg-neutral-900'>
+            <div className='relative aspect-square w-full overflow-hidden bg-night'>
               <Image
                 src={techdown1080}
                 alt='Utekos TechDown - Vår varmeste dunponcho'
@@ -192,7 +192,7 @@ export default async function ChristmasCampaign() {
               </div>
               <Link
                 href='/produkter/utekos-techdown'
-                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-utekos-text-medium text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
+                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-sans font-semibold text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
               >
                 Kjøp TechDown
               </Link>
@@ -200,11 +200,11 @@ export default async function ChristmasCampaign() {
           </div>
 
           <div className='group relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all hover:border-commerce-primary/40'>
-            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-blue-900 px-3 py-1 text-xs font-bold text-white shadow-lg'>
+            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-havdyp px-3 py-1 text-xs font-bold text-white shadow-lg'>
               BESTSELGER
             </div>
 
-            <div className='relative aspect-square w-full overflow-hidden bg-neutral-900'>
+            <div className='relative aspect-square w-full overflow-hidden bg-night'>
               <Image
                 src={dunFrontHvitBakgrunn1080}
                 alt='Utekos Mikrofiber - Den originale skifteroben'
@@ -229,7 +229,7 @@ export default async function ChristmasCampaign() {
               </div>
               <Link
                 href='/produkter/utekos-mikrofiber'
-                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-utekos-text-medium text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
+                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-sans font-semibold text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
               >
                 Kjøp Mikrofiber
               </Link>
@@ -237,11 +237,11 @@ export default async function ChristmasCampaign() {
           </div>
 
           <div className='group relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all hover:border-commerce-primary/40'>
-            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-orange-900 px-3 py-1 text-xs font-bold text-white shadow-lg'>
+            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-primary px-3 py-1 text-xs font-bold text-white shadow-lg'>
               FÅ IGJEN
             </div>
 
-            <div className='relative aspect-square w-full overflow-hidden bg-neutral-900'>
+            <div className='relative aspect-square w-full overflow-hidden bg-night'>
               <Image
                 src={mikroFront1080}
                 alt='Utekos Dun - Premium kvalitet'
@@ -268,7 +268,7 @@ export default async function ChristmasCampaign() {
               </div>
               <Link
                 href='/produkter/utekos-dun'
-                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-utekos-text-medium text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
+                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-sans font-semibold text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
               >
                 Kjøp Dun
               </Link>
@@ -276,11 +276,11 @@ export default async function ChristmasCampaign() {
           </div>
 
           <div className='group relative overflow-hidden rounded-2xl border border-border bg-card text-card-foreground transition-all hover:border-commerce-primary/40'>
-            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-neutral-800 px-3 py-1 text-xs font-bold text-white shadow-lg'>
+            <div className='font-google-sans absolute top-4 right-4 z-10 rounded-full bg-card px-3 py-1 text-xs font-bold text-white shadow-lg'>
               ALLROUNDER
             </div>
 
-            <div className='relative aspect-square w-full overflow-hidden bg-neutral-900'>
+            <div className='relative aspect-square w-full overflow-hidden bg-night'>
               <Image
                 src={comfyFrontUBakgrunn1080}
                 alt='Utekos Comfyrobe'
@@ -308,7 +308,7 @@ export default async function ChristmasCampaign() {
               </div>
               <Link
                 href='/produkter/comfyrobe'
-                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-utekos-text-medium text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
+                className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-sans font-semibold text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
               >
                 Kjøp Comfyrobe
               </Link>
@@ -324,7 +324,7 @@ export default async function ChristmasCampaign() {
           </h2>
           <Link
             href='/kampanje/julegaver/lokal-levering'
-            className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-utekos-text-medium text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
+            className='mt-6 block w-full rounded-lg bg-commerce-primary py-3 text-center font-sans font-semibold text-commerce-primary-foreground transition-colors hover:bg-commerce-primary-hover hover:text-commerce-primary-hover-foreground'
           >
             Trykk for å se eksklusivt lokal-tilbud!
           </Link>
@@ -334,10 +334,10 @@ export default async function ChristmasCampaign() {
             href='/produkter'
             className='group hover:bg-card-hover -hover flex flex-col items-center rounded-xl bg-card p-8 text-center text-card-foreground transition-colors'
           >
-            <div className='mb-4 rounded-full bg-red-900/20 p-4 transition-transform group-hover:scale-110'>
-              <Gift className='h-8 w-8 text-red-400' />
+            <div className='mb-4 rounded-full bg-campaign/20 p-4 transition-transform group-hover:scale-110'>
+              <Gift className='h-8 w-8 text-campaign' />
             </div>
-            <h3 className='font-utekos-text-medium text-lg'>
+            <h3 className='font-sans font-semibold text-lg'>
               Hele kolleksjonen
             </h3>
             <p className='text-sm text-muted-foreground'>
@@ -349,10 +349,10 @@ export default async function ChristmasCampaign() {
             href='/handlehjelp/teknologi-materialer'
             className='group hover:bg-card-hover -hover flex flex-col items-center rounded-xl bg-card p-8 text-center text-card-foreground transition-colors'
           >
-            <div className='mb-4 rounded-full bg-blue-900/20 p-4 transition-transform group-hover:scale-110'>
-              <ShieldCheck className='h-8 w-8 text-blue-400' />
+            <div className='mb-4 rounded-full bg-havdyp/20 p-4 transition-transform group-hover:scale-110'>
+              <ShieldCheck className='h-8 w-8 text-ancient-water' />
             </div>
-            <h3 className='font-utekos-text-medium text-lg'>
+            <h3 className='font-sans font-semibold text-lg'>
               Lær mer
             </h3>
             <p className='text-sm text-muted-foreground'>
@@ -367,7 +367,7 @@ export default async function ChristmasCampaign() {
             <div className='mb-4 rounded-full bg-jungle/20 p-4 transition-transform group-hover:scale-110'>
               <Calendar className='h-8 w-8 text-green-400' />
             </div>
-            <h3 className='font-utekos-text-medium text-lg'>
+            <h3 className='font-sans font-semibold text-lg'>
               Usikker på størrelse?
             </h3>
             <p className='text-sm text-muted-foreground'>

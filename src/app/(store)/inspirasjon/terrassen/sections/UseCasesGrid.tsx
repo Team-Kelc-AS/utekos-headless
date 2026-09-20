@@ -81,7 +81,7 @@ export function UseCasesGrid({
                           aria-hidden='true'
                         />
                       </div>
-                      <P className='text-left font-utekos-text-medium leading-[1.35] text-[var(--terrace-copper)] not-first:mt-0'>
+                      <P className='text-left font-sans font-semibold leading-[1.35] text-[var(--terrace-copper)] not-first:mt-0'>
                         {useCase.time}
                       </P>
                     </div>

@@ -20,11 +20,11 @@ export const AddNewProductToCartButton = ({
         onClick={onAddToCartClick}
         variant='checkout'
         className={cn(
-          'group focus-visible:ring-offset-featured rounded-full px-6 py-0 font-utekos-text-medium text-lg tracking-[-0.01em] transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-offset-2',
+          'group focus-visible:ring-offset-featured rounded-full px-6 py-0 font-sans font-semibold text-lg tracking-[-0.01em] transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-offset-2',
           featuredCheckoutButtonFillClassName
         )}
       >
-        <InlineText className='font-utekos-text-medium'>
+        <InlineText className='font-sans font-semibold'>
           Legg i handlekurv
         </InlineText>
       </Button>

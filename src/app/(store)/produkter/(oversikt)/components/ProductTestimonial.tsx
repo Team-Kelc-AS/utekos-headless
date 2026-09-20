@@ -9,14 +9,14 @@ export function ProductTestimonial() {
         delay='0s'
         threshold={0.5}
       >
-        <Card className='-foreground border-neutral-800 bg-sidebar-foreground'>
+        <Card className='-foreground border-card bg-sidebar-foreground'>
           <CardContent className='p-12 text-center'>
             <blockquote className='/90 text-xl text-foreground/90 italic'>
               &quot;Utekos har totalt forandret hvordan vi bruker
               hytten om høsten. Kvaliteten er helt fantastisk.
               Anbefales på det varmeste!&quot;
             </blockquote>
-            <p className='mt-6 font-utekos-text-medium'>
+            <p className='mt-6 font-sans font-semibold'>
               - Anne, hytteeier
             </p>
           </CardContent>

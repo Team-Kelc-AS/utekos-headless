@@ -17,13 +17,13 @@ export function NbccHowToUseSection() {
       <div className='mx-auto max-w-7xl'>
         <div className='grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start'>
           <NbccReveal>
-            <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-foreground uppercase'>
+            <p className='font-sans font-semibold text-sm tracking-[0.18em] text-foreground uppercase'>
               NBCC MEDLEMSFORDEL
             </p>
-            <h2 className='mt-4 max-w-xl font-utekos-text-medium text-3xl tracking-normal text-balance text-foreground sm:text-4xl'>
+            <h2 className='mt-4 max-w-xl font-sans font-semibold text-3xl tracking-normal text-balance text-foreground sm:text-4xl'>
               Fra medlemskode til ekte Utekos.
             </h2>
-            <p className='mt-5 max-w-xl font-utekos-text text-base text-foreground'>
+            <p className='mt-5 max-w-xl font-sans text-base text-foreground'>
               Som medlem får du en hyggelig prisrabatt på hele
               vårt hovedsortiment. Følg de tre enkle stegene for
               å hente koden din, eller hopp rett til kassen om du
@@ -31,7 +31,7 @@ export function NbccHowToUseSection() {
             </p>
             <Button
               asChild
-              className='hover:bg-primary-muted mt-8 h-12 rounded-xl bg-primary px-6 font-utekos-text-medium text-foreground'
+              className='hover:bg-primary-muted mt-8 h-12 rounded-xl bg-primary px-6 font-sans font-semibold text-foreground'
             >
               <Link
                 href={'/produkter' as Route}
@@ -67,10 +67,10 @@ export function NbccHowToUseSection() {
                     />
                   </span>
                   <div>
-                    <p className='font-utekos-text-medium text-sm text-foreground'>
+                    <p className='font-sans font-semibold text-sm text-foreground'>
                       Steg {index + 1}
                     </p>
-                    <h3 className='mt-1 font-utekos-text-medium text-xl text-foreground'>
+                    <h3 className='mt-1 font-sans font-semibold text-xl text-foreground'>
                       {step.title}
                     </h3>
                     <p className='mt-2 text-sm leading-7 text-foreground'>

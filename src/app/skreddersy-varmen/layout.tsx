@@ -20,7 +20,7 @@ async function SkreddersyVarmenStructuredData() {
 
 const landingFont = Google_Sans_Flex({
   subsets: ['latin'],
-  weight: ['500', '800'],
+  weight: ['400', '600', '800'],
   adjustFontFallback: false,
   display: 'swap',
   variable: '--landing-font',

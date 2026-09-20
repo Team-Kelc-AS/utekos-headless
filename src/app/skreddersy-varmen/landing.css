@@ -29,8 +29,6 @@
 @theme inline {
   --font-sans: var(--landing-font);
   --font-google-sans: var(--font-sans);
-  --font-utekos-text: var(--font-utekos-text);
-  --font-utekos-text-medium: var(--font-utekos-text-medium);
   --color-facebook-login-button: var(--facebook-login-button);
   --color-alternate: var(--alternate);
   --color-teal-25: var(--teal-25);
@@ -103,8 +101,6 @@
 }
 
 :root {
-  --font-utekos-text: var(--landing-font);
-  --font-utekos-text-medium: var(--landing-font);
   --font-sans: var(--landing-font);
   --radius: 0.625rem;
   --meta-button: var(--facebook-login-button);

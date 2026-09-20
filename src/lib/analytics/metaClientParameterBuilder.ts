@@ -4,6 +4,7 @@ import type { ClientParamBuilder } from 'meta-capi-param-builder-clientjs'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { mapMetaClientParameterContext } from './mapMetaClientParameterContext'
 import { metaClientIpResponseSchema } from './metaClientIpContract'
+import { shouldCollectMetaClientIp } from './shouldCollectMetaClientIp'
 
 function marketingAllowed() {
   return typeof window !== 'undefined'
@@ -41,24 +42,31 @@ async function loadClientParamBuilder(): Promise<ClientParamBuilder> {
 async function getConsentedClientIpAddress(
   consent: ConsentSnapshot
 ) {
-  if (!marketingAllowed()) return ''
-  const response = await fetch('/api/meta/client-ip', {
-    body: JSON.stringify({ consent }),
-    cache: 'no-store',
-    credentials: 'same-origin',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    keepalive: true,
-    method: 'POST',
-    signal: AbortSignal.timeout(META_CLIENT_IP_TIMEOUT_MS)
-  })
+  if (!marketingAllowed()) return undefined
 
-  if (!response.ok) return ''
+  try {
+    const response = await fetch('/api/meta/client-ip', {
+      body: JSON.stringify({ consent }),
+      cache: 'no-store',
+      credentials: 'same-origin',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      keepalive: true,
+      method: 'POST',
+      signal: AbortSignal.timeout(META_CLIENT_IP_TIMEOUT_MS)
+    })
 
-  return metaClientIpResponseSchema.parse(await response.json())
-    .client_ip_address
+    if (!response.ok) return undefined
+
+    const parsed = metaClientIpResponseSchema.safeParse(
+      await response.json()
+    )
+    return parsed.success ? parsed.data.client_ip_address : undefined
+  } catch {
+    return undefined
+  }
 }
 
 function readIdentifiers(
@@ -95,9 +103,17 @@ export async function ensureMetaClientParameterContext(
       return readIdentifiers(builder)
     }
 
+    const clientIpAddress =
+      shouldCollectMetaClientIp(
+        input.pageUrl,
+        process.env.NODE_ENV
+      ) ?
+        await getConsentedClientIpAddress(input.consent)
+      : undefined
+
     const parameters = await builder.processAndCollectAllParams(
       input.pageUrl,
-      () => getConsentedClientIpAddress(input.consent)
+      clientIpAddress ? async () => clientIpAddress : undefined
     )
     if (!marketingAllowed()) return {}
     completedPageUrls.add(input.pageUrl)

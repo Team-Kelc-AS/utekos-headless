@@ -48,7 +48,7 @@ export function ProductPurchaseIsland({
       >
         <h2
           id='product-options'
-          className='font-utekos-text-medium text-lg text-foreground md:sr-only'
+          className='font-sans font-semibold text-lg text-foreground md:sr-only'
         >
           Produktvalg
         </h2>
@@ -61,7 +61,7 @@ export function ProductPurchaseIsland({
             >
               <h3
                 id={`product-option-${productOption.name}`}
-                className='font-utekos-text-medium text-lg text-primary md:sr-only'
+                className='font-sans font-semibold text-lg text-primary md:sr-only'
               >
                 {productOption.name}
               </h3>

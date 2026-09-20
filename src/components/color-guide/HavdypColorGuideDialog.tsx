@@ -28,7 +28,7 @@ export function HavdypColorGuideDialog({
           <button
             type='button'
             className={cn(
-              'relative inline-flex cursor-pointer items-center font-utekos-text-medium text-sm text-primary underline decoration-primary/70 underline-offset-4 hover:text-primary/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+              'relative inline-flex cursor-pointer items-center font-sans font-semibold text-sm text-primary underline decoration-primary/70 underline-offset-4 hover:text-primary/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
               triggerClassName
             )}
           />

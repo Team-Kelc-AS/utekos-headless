@@ -13,7 +13,7 @@ export function Lead({
   return (
     <p
       className={cn(
-        'font-utekos-text-medium pb-4 text-lg tracking-normal md:pb-6 md:text-2xl lg:pb-8 lg:text-3xl',
+        'font-sans font-semibold pb-4 text-lg tracking-normal md:pb-6 md:text-2xl lg:pb-8 lg:text-3xl',
         className ?? ''
       )}
     >

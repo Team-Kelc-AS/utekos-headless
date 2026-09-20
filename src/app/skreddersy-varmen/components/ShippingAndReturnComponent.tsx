@@ -25,7 +25,7 @@ export function ShippingAndReturnComponent() {
               aria-hidden
             />
             <div className='min-w-0'>
-              <p className='font-utekos-text-medium text-sm text-foreground'>
+              <p className='font-sans font-semibold text-sm text-foreground'>
                 Rask levering
               </p>
             </div>
@@ -38,7 +38,7 @@ export function ShippingAndReturnComponent() {
               aria-hidden
             />
             <div className='min-w-0'>
-              <p className='font-utekos-text-medium text-sm text-foreground'>
+              <p className='font-sans font-semibold text-sm text-foreground'>
                 14 dagers åpent kjøp
               </p>
             </div>
@@ -51,7 +51,7 @@ export function ShippingAndReturnComponent() {
               aria-hidden
             />
             <div className='min-w-0'>
-              <p className='font-utekos-text-medium text-sm text-foreground'>
+              <p className='font-sans font-semibold text-sm text-foreground'>
                 Trygg betaling
               </p>
             </div>

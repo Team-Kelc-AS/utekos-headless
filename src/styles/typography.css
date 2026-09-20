@@ -1,7 +1,7 @@
 /* src/styles/typography.css */
 
 .utekos-text {
-    font-family: var(--font-utekos-text, system-ui), sans-serif;
+    font-family: var(--font-sans, system-ui), sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
@@ -10,9 +10,9 @@
   
   .utekos-medium {
     font-family:
-      var(--font-utekos-text-medium, system-ui), sans-serif;
+      var(--font-sans, system-ui), sans-serif;
     font-optical-sizing: auto;
-    font-weight: 500;
+    font-weight: 600;
     font-style: normal;
     font-size: 1.1rem;
   }
@@ -33,15 +33,6 @@
     font-variation-settings: 'GRAD' 0;
   }
   
-  .font-utekos-text {
-    font-family: var(--font-utekos-text, system-ui), sans-serif;
-  }
-  
-  .font-utekos-text-medium {
-    font-family:
-      var(--font-utekos-text-medium, system-ui), sans-serif;
-  }
-  
   .leading-text-paragraph {
     line-height: var(--leading-text-paragraph);
   }
@@ -59,7 +50,7 @@
   }
   
   .utekos-section-lead {
-    font-family: var(--font-utekos-text, system-ui), sans-serif;
+    font-family: var(--font-sans, system-ui), sans-serif;
     font-size: var(--text-section-lead);
     line-height: var(--text-section-lead--line-height);
     letter-spacing: var(--text-section-lead--letter-spacing);
@@ -97,7 +88,7 @@
     font-size: clamp(0.875rem, 0.75rem + 0.5vw, 1rem);
     line-height: 1.3;
     letter-spacing: var(--tracking-wide);
-    font-family: var(--font-utekos-text, system-ui), sans-serif;
+    font-family: var(--font-sans, system-ui), sans-serif;
   }
   
   .inspirational-page-hero-card-heading {

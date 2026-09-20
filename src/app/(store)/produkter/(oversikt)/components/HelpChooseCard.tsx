@@ -193,8 +193,8 @@ export function HelpChooseCard({
         data-track='HelpChooseCardViewMoreClick'
         onClick={handleViewProduct}
       >
-        <div className='relative flex aspect-2/3 h-full flex-col overflow-hidden rounded-3xl border border-white/5 bg-neutral-900 shadow-2xl transition-transform duration-300 md:hover:-translate-y-1'>
-          <div className='absolute inset-0 z-0 bg-neutral-800'>
+        <div className='relative flex aspect-2/3 h-full flex-col overflow-hidden rounded-3xl border border-white/5 bg-night shadow-2xl transition-transform duration-300 md:hover:-translate-y-1'>
+          <div className='absolute inset-0 z-0 bg-card'>
             <AnimatePresence mode='wait'>
               <motion.div
                 key={resolveImageSrc(activeImage)}
@@ -225,7 +225,7 @@ export function HelpChooseCard({
 
           <div className='absolute top-0 left-0 z-30 flex w-full items-start justify-between p-3'>
             <div className='flex items-center justify-center rounded-full border border-white/10 bg-black/20 px-2 py-0.5 backdrop-blur-md md:px-2.5 md:py-1'>
-              <span className='font-utekos-text-medium text-[9px] tracking-wider text-white/90 uppercase md:text-[10px]'>
+              <span className='font-sans font-semibold text-[9px] tracking-wider text-white/90 uppercase md:text-[10px]'>
                 Unisex
               </span>
             </div>
@@ -255,7 +255,7 @@ export function HelpChooseCard({
                     className='grid grid-cols-[1fr_auto] gap-2'
                   >
                     <div className='flex h-10 items-center justify-center gap-2 rounded-full bg-white/10 backdrop-blur-md transition-colors duration-300 md:group-hover:bg-white/20'>
-                      <span className='font-utekos-text-medium text-xs text-white'>
+                      <span className='font-sans font-semibold text-xs text-white'>
                         Les mer
                       </span>
                       <ArrowUpRight className='h-3.5 w-3.5 text-white/80' />
@@ -295,7 +295,7 @@ export function HelpChooseCard({
                         e.stopPropagation()
                         setIsSelectingSize(false)
                       }}
-                      className='flex h-8 w-8 min-w-8 items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200'
+                      className='flex h-8 w-8 min-w-8 items-center justify-center rounded-full bg-cloud-dancer hover:bg-white-sand'
                       aria-label='Lukk'
                     >
                       <X className='h-4 w-4 text-black' />
@@ -326,7 +326,7 @@ export function HelpChooseCard({
                       ))}
 
                       {availableSizes.length === 0 && (
-                        <div className='flex h-8 items-center justify-center rounded-full bg-neutral-200 px-3 font-utekos-text-medium text-[11px] whitespace-nowrap text-black'>
+                        <div className='flex h-8 items-center justify-center rounded-full bg-white-sand px-3 font-sans font-semibold text-[11px] whitespace-nowrap text-black'>
                           Ingen størrelser
                         </div>
                       )}

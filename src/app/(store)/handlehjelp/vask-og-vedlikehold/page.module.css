@@ -84,7 +84,7 @@
   align-items: center;
   padding: 0;
   margin: 0;
-  font-family: var(--font-utekos-text);
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   color: var(--care-muted);
   list-style: none;
@@ -128,7 +128,7 @@
 .materialLabel,
 .stepNumber {
   margin: 0;
-  font-family: var(--font-utekos-text-medium);
+  font-family: var(--font-sans);
   font-size: 0.73rem;
   font-weight: 600;
   line-height: 1.2;
@@ -179,7 +179,7 @@
 .lead > p {
   max-width: 60ch;
   margin: clamp(2rem, 4vw, 3rem) 0 0;
-  font-family: var(--font-utekos-text);
+  font-family: var(--font-sans);
   font-size: clamp(1.15rem, 1.7vw, 1.45rem);
   line-height: 1.65;
   color: var(--care-muted);
@@ -187,7 +187,8 @@
 
 .updated {
   margin: 1.5rem 0 0;
-  font-family: var(--font-utekos-text-medium);
+  font-family: var(--font-sans);
+  font-weight: 600;
   font-size: 0.88rem;
   line-height: 1.6;
   color: color-mix(in oklab, var(--care-ink) 58%, transparent);
@@ -304,7 +305,8 @@
   min-height: 3rem;
   padding: 0.75rem 1rem;
   place-items: center;
-  font-family: var(--font-utekos-text-medium);
+  font-family: var(--font-sans);
+  font-weight: 600;
   font-size: 0.95rem;
   color: var(--care-ink);
   text-align: center;
@@ -579,7 +581,7 @@
 .careColumns h4 {
   padding: 0;
   margin: 0 0 1.25rem;
-  font-family: var(--font-utekos-text-medium);
+  font-family: var(--font-sans);
   font-size: 1.15rem;
   font-weight: 600;
   color: var(--care-ink);
@@ -786,7 +788,8 @@
   justify-content: space-between;
   min-height: 3.5rem;
   padding: 0.35rem 0.35rem 0.35rem 1.35rem;
-  font-family: var(--font-utekos-text-medium);
+  font-family: var(--font-sans);
+  font-weight: 600;
   font-size: 1rem;
   color: var(--primary-foreground);
   text-decoration: none;

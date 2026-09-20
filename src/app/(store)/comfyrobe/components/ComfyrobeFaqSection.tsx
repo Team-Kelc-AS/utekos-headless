@@ -10,7 +10,7 @@ export function ComfyrobeFaqSection() {
     >
       <div className='mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(16rem,0.38fr)_minmax(0,1fr)] lg:items-start lg:gap-16 xl:gap-24'>
         <header className='max-w-md lg:pt-2'>
-          <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-primary uppercase'>
+          <p className='font-sans font-semibold text-sm tracking-[0.18em] text-primary uppercase'>
             FAQ
           </p>
           <h2
@@ -19,7 +19,7 @@ export function ComfyrobeFaqSection() {
           >
             Ofte stilte spørsmål
           </h2>
-          <p className='mt-5 font-utekos-text text-base leading-relaxed text-pretty text-foreground/80 md:text-lg'>
+          <p className='mt-5 font-sans text-base leading-relaxed text-pretty text-foreground/80 md:text-lg'>
             Kort om passform, værbeskyttelse, varme og retur før
             du velger størrelse.
           </p>
@@ -37,7 +37,7 @@ export function ComfyrobeFaqSection() {
                   />
                 </span>
               </summary>
-              <p className='max-w-2xl pb-6 font-utekos-text leading-relaxed text-pretty text-foreground/78'>
+              <p className='max-w-2xl pb-6 font-sans leading-relaxed text-pretty text-foreground/78'>
                 {item.answer}
               </p>
             </details>

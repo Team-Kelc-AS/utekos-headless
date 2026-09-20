@@ -39,7 +39,7 @@ export default function InspirationPage() {
         <h1 className='font-sans text-4xl leading-[0.95] font-extrabold tracking-normal sm:text-5xl lg:text-6xl'>
           Inspirasjon for mer Utekos
         </h1>
-        <p className='leading-text-paragraph /90 mx-auto mt-6 max-w-2xl font-utekos-text text-lg tracking-normal text-foreground/90'>
+        <p className='leading-text-paragraph /90 mx-auto mt-6 max-w-2xl font-sans text-lg tracking-normal text-foreground/90'>
           Utforsk praktiske guider for hytteliv, bobil, båtliv,
           terrasse og grillkvelder. Finn situasjonen som ligner
           din, og se hvordan Utekos forlenger de gode øyeblikkene
@@ -49,14 +49,14 @@ export default function InspirationPage() {
           <BrandBadge
             asChild
             tone='neutral'
-            className='w-52 border border-primary/24 bg-primary px-7 py-3 font-utekos-text-medium text-base leading-4 tracking-normal text-foreground shadow-[0_18px_38px_-30px_rgba(49,42,18,0.58)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105'
+            className='w-52 border border-primary/24 bg-primary px-7 py-3 font-sans font-semibold text-base leading-4 tracking-normal text-foreground shadow-[0_18px_38px_-30px_rgba(49,42,18,0.58)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-105'
           >
             <Link href='/produkter'>Se produktene</Link>
           </BrandBadge>
           <BrandBadge
             asChild
             tone='commerce-secondary'
-            className='w-52 border border-background/18 px-7 py-3 font-utekos-text-medium text-base leading-4 tracking-normal shadow-[0_18px_38px_-32px_rgba(14,18,35,0.7)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-110'
+            className='w-52 border border-background/18 px-7 py-3 font-sans font-semibold text-base leading-4 tracking-normal shadow-[0_18px_38px_-32px_rgba(14,18,35,0.7)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-110'
           >
             <Link href='/handlehjelp/storrelsesguide'>
               Finn riktig størrelse

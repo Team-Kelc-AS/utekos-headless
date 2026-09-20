@@ -4,7 +4,7 @@ import Welcome from '@/markdown/welcome.mdx'
 
 function CustomH1({ children }: ComponentPropsWithoutRef<'h1'>) {
   return (
-    <h1 className='font-utekos-text-medium text-4xl text-foreground'>
+    <h1 className='font-sans font-semibold text-4xl text-foreground'>
       {children}
     </h1>
   )

@@ -41,7 +41,7 @@ function classNames(...classes: (string | boolean)[]) {
 
 export default function PricingSection() {
   return (
-    <div className='relative isolate bg-gray-900 px-6 py-24 sm:py-32 lg:px-8'>
+    <div className='relative isolate bg-night px-6 py-24 sm:py-32 lg:px-8'>
       <div
         aria-hidden='true'
         className='absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl'
@@ -55,14 +55,14 @@ export default function PricingSection() {
         />
       </div>
       <div className='mx-auto max-w-4xl text-center'>
-        <h2 className='font-utekos-text-medium text-base/7 text-indigo-400'>
+        <h2 className='font-sans font-semibold text-base/7 text-havdyp'>
           Pricing
         </h2>
-        <p className='mt-2 font-utekos-text-medium text-5xl tracking-tight text-balance text-white sm:text-6xl'>
+        <p className='mt-2 font-sans font-semibold text-5xl tracking-tight text-balance text-white sm:text-6xl'>
           Choose the right plan for you
         </p>
       </div>
-      <p className='mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-gray-400 sm:text-xl/8'>
+      <p className='mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-muted-foreground sm:text-xl/8'>
         Choose an affordable plan that’s packed with the best
         features for engaging your audience, creating customer
         loyalty, and driving sales.
@@ -73,7 +73,7 @@ export default function PricingSection() {
             key={tier.id}
             className={classNames(
               tier.featured ?
-                'relative bg-gray-800'
+                'relative bg-card'
               : 'bg-white/2.5 sm:mx-8 lg:mx-0',
               tier.featured ? ''
               : tierIdx === 0 ?
@@ -86,9 +86,9 @@ export default function PricingSection() {
               id={tier.id}
               className={classNames(
                 tier.featured ?
-                  'text-indigo-400'
-                : 'text-indigo-400',
-                'font-utekos-text-medium text-base/7'
+                  'text-havdyp'
+                : 'text-havdyp',
+                'font-sans font-semibold text-base/7'
               )}
             >
               {tier.name}
@@ -97,15 +97,15 @@ export default function PricingSection() {
               <span
                 className={classNames(
                   tier.featured ? 'text-white' : 'text-white',
-                  'font-utekos-text-medium text-5xl tracking-tight'
+                  'font-sans font-semibold text-5xl tracking-tight'
                 )}
               >
                 {tier.priceMonthly}
               </span>
               <span
                 className={classNames(
-                  tier.featured ? 'text-gray-400' : (
-                    'text-gray-400'
+                  tier.featured ? 'text-muted-foreground' : (
+                    'text-muted-foreground'
                   ),
                   'text-base'
                 )}
@@ -115,8 +115,8 @@ export default function PricingSection() {
             </p>
             <p
               className={classNames(
-                tier.featured ? 'text-gray-300' : (
-                  'text-gray-300'
+                tier.featured ? 'text-white-sand' : (
+                  'text-white-sand'
                 ),
                 'mt-6 text-base/7'
               )}
@@ -126,8 +126,8 @@ export default function PricingSection() {
             <ul
               role='list'
               className={classNames(
-                tier.featured ? 'text-gray-300' : (
-                  'text-gray-300'
+                tier.featured ? 'text-white-sand' : (
+                  'text-white-sand'
                 ),
                 'mt-8 space-y-3 text-sm/6 sm:mt-10'
               )}
@@ -138,8 +138,8 @@ export default function PricingSection() {
                     aria-hidden='true'
                     className={classNames(
                       tier.featured ?
-                        'text-indigo-400'
-                      : 'text-indigo-400',
+                        'text-havdyp'
+                      : 'text-havdyp',
                       'h-6 w-5 flex-none'
                     )}
                   />
@@ -152,9 +152,9 @@ export default function PricingSection() {
               aria-describedby={tier.id}
               className={classNames(
                 tier.featured ?
-                  'bg-indigo-500 text-white hover:bg-indigo-400 focus-visible:outline-indigo-500'
+                  'bg-havdyp text-white hover:bg-havdyp focus-visible:outline-havdyp'
                 : 'bg-white/10 text-white inset-ring inset-ring-white/5 hover:bg-white/20 focus-visible:outline-white/75',
-                'mt-8 block rounded-md px-3.5 py-2.5 text-center font-utekos-text-medium text-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10'
+                'mt-8 block rounded-md px-3.5 py-2.5 text-center font-sans font-semibold text-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10'
               )}
             >
               Get started today

@@ -5,11 +5,11 @@ export function ShippingReturnsHeader() {
         <h1 className='font-google-sans hidden font-sans text-4xl font-bold text-foreground md:block md:text-5xl lg:text-6xl'>
           Frakt, retur og refusjon
         </h1>
-        <p className='mx-auto mt-4 text-left font-utekos-text text-lg text-foreground md:text-xl'>
+        <p className='mx-auto mt-4 text-left font-sans text-lg text-foreground md:text-xl'>
           Vi ønsker at din handleopplevelse skal være like trygg
           og komfortabel som produktene våre.
         </p>
-        <p className='mx-auto text-left font-utekos-text text-lg text-foreground md:text-xl'>
+        <p className='mx-auto text-left font-sans text-lg text-foreground md:text-xl'>
           Her finner du alt du trenger å vite om vår levering og
           returprosess.
         </p>
@@ -19,25 +19,25 @@ export function ShippingReturnsHeader() {
         >
           <a
             href='#slik-returnerer-du'
-            className='font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
+            className='font-sans font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
           >
             Slik returnerer du
           </a>
           <a
             href='#refusjon'
-            className='font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
+            className='font-sans font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
           >
             Refusjon
           </a>
           <a
             href='#varens-tilstand'
-            className='font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
+            className='font-sans font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
           >
             Varens tilstand
           </a>
           <a
             href='#reklamasjon'
-            className='font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
+            className='font-sans font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground'
           >
             Reklamasjon
           </a>
@@ -45,16 +45,16 @@ export function ShippingReturnsHeader() {
       </header>
 
       <div className='container mx-auto px-8 pt-4'>
-        <p className='text-left font-utekos-text text-lg text-foreground md:text-xl'>
+        <p className='text-left font-sans text-lg text-foreground md:text-xl'>
           Gjennom vår distribusjonspartner PostNord leveres
           bestillingen din innen 2–5 arbeidsdager etter at
           PostNord har hentet pakken fra varehuset.
         </p>
-        <p className='text-left font-utekos-text text-lg text-foreground md:text-xl'>
+        <p className='text-left font-sans text-lg text-foreground md:text-xl'>
           Sporing av tilsendelsen gjøres enkelt med
           sendingsnummeret du vil få tilsendt.
         </p>
-        <p className='text-left font-utekos-text text-lg text-foreground md:text-xl'>
+        <p className='text-left font-sans text-lg text-foreground md:text-xl'>
           Vi sender alle bestillinger som gjøres før kl. 16 samme
           dag, bortsett fra (man-fre). Hvor lang tid akkurat din bestilling tar er avhengig av destinasjonen.
         </p>

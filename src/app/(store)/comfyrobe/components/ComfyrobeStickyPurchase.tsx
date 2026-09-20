@@ -177,7 +177,7 @@ export function ComfyrobeStickyPurchase({
               data-track='ComfyrobeStickyPrice'
               className='min-w-0 flex-1 rounded-2xl px-1 py-1 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
             >
-              <span className='block truncate font-utekos-text-medium text-xs'>
+              <span className='block truncate font-sans font-semibold text-xs'>
                 Comfyrobe™
               </span>
               <span className='font-google-sans mt-0.5 block truncate text-sm font-bold tabular-nums'>

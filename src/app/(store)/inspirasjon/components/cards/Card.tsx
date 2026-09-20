@@ -47,7 +47,7 @@ function CardTitle({
     <Tag
       data-slot='card-title'
       className={cn(
-        'font-utekos-text-medium leading-normal tracking-wide text-wrap text-foreground group-data-[size=sm]/card:text-2xl md:text-pretty',
+        'font-sans font-semibold leading-normal tracking-wide text-wrap text-foreground group-data-[size=sm]/card:text-2xl md:text-pretty',
         className
       )}
       {...props}
@@ -96,7 +96,7 @@ function CardDescription({
     <Tag
       data-slot='card-description'
       className={cn(
-        'text-description-foreground font-utekos-text text-base tracking-wide text-pretty',
+        'text-description-foreground font-sans text-base tracking-wide text-pretty',
         className
       )}
       {...props}

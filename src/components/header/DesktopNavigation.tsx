@@ -17,7 +17,7 @@ export const DesktopNavigation = ({
   menu?: MenuItem[]
 }) => {
   const desktopNavTextClassName =
-    'h-10 px-4 text-base font-utekos-text-medium text-foreground  hover:bg-accent hover:text-accent-foreground  focus-visible:ring-ring data-[state=open]:bg-accent data-[state=open]:text-accent-foreground xl:h-11 xl:text-lg'
+    'h-10 px-4 text-base font-sans font-semibold text-foreground  hover:bg-accent hover:text-accent-foreground  focus-visible:ring-ring data-[state=open]:bg-accent data-[state=open]:text-accent-foreground xl:h-11 xl:text-lg'
 
   return (
     <nav

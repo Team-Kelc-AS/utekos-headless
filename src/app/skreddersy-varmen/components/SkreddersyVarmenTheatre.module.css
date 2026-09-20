@@ -181,7 +181,8 @@
   max-width: 12ch;
   margin: 0;
   overflow-wrap: break-word;
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: clamp(3.25rem, 14vw, 5.5rem);
   line-height: 0.94;
   letter-spacing: -0.025em;
@@ -264,7 +265,8 @@
 .empathyMediaStatement {
   max-width: 15ch;
   margin: 0;
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: clamp(2.5rem, 10.8vw, 4.75rem);
   line-height: 0.95;
   letter-spacing: -0.025em;
@@ -301,7 +303,8 @@
 .empathyAnswerOpening {
   max-width: 13ch;
   margin: 0;
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: clamp(3rem, 12vw, 5.5rem);
   line-height: 0.94;
   letter-spacing: -0.025em;
@@ -319,7 +322,8 @@
 .empathyAnswerStep {
   max-width: 19ch;
   margin: 0;
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: clamp(1.85rem, 7.8vw, 3.5rem);
   line-height: 0.98;
   letter-spacing: -0.02em;
@@ -348,7 +352,8 @@
 .empathyResolutionBody {
   max-width: 18ch;
   margin: 0;
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: clamp(2.25rem, 9.5vw, 5.25rem);
   line-height: 0.98;
   letter-spacing: -0.025em;
@@ -359,7 +364,8 @@
   max-width: 12ch;
   margin: clamp(2.25rem, 8vw, 4rem) 0 0;
   color: var(--primary);
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: clamp(3rem, 13vw, 6.5rem);
   line-height: 0.9;
   letter-spacing: -0.035em;
@@ -368,7 +374,8 @@
 
 .empathyResolutionClosing {
   margin: clamp(2rem, 7vw, 3.75rem) 0 0;
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: clamp(2.25rem, 9vw, 4.75rem);
   line-height: 0.96;
   letter-spacing: -0.025em;
@@ -446,7 +453,8 @@
     max-width: 13ch;
     margin: 0;
     overflow-wrap: break-word;
-    font-family: var(--font-utekos-text-medium), sans-serif;
+    font-family: var(--font-sans), sans-serif;
+    font-weight: 600;
     font-size: clamp(4.25rem, 7.2vw, 7.75rem);
     line-height: 0.92;
     letter-spacing: -0.035em;
@@ -521,7 +529,8 @@
     max-width: 14ch;
     margin: 0;
     padding: clamp(2.5rem, 7vw, 7rem);
-    font-family: var(--font-utekos-text-medium), sans-serif;
+    font-family: var(--font-sans), sans-serif;
+    font-weight: 600;
     font-size: clamp(2.75rem, 4.6vw, 5.25rem);
     line-height: 0.94;
     letter-spacing: -0.03em;
@@ -551,7 +560,8 @@
   .empathyLargeAnswerOpening {
     max-width: 13ch;
     margin: 0;
-    font-family: var(--font-utekos-text-medium), sans-serif;
+    font-family: var(--font-sans), sans-serif;
+    font-weight: 600;
     font-size: clamp(4rem, 6.8vw, 7.25rem);
     line-height: 0.92;
     letter-spacing: -0.035em;
@@ -568,7 +578,8 @@
 
   .empathyLargeAnswerStep {
     max-width: 22ch;
-    font-family: var(--font-utekos-text-medium), sans-serif;
+    font-family: var(--font-sans), sans-serif;
+    font-weight: 600;
     font-size: clamp(1.85rem, 3vw, 3.35rem);
     line-height: 0.98;
     letter-spacing: -0.02em;
@@ -592,7 +603,8 @@
   .empathyLargeResolutionBody,
   .empathyLargeResolutionEmphasis,
   .empathyLargeResolutionClosing {
-    font-family: var(--font-utekos-text-medium), sans-serif;
+    font-family: var(--font-sans), sans-serif;
+    font-weight: 600;
     text-wrap: balance;
   }
 

@@ -115,7 +115,7 @@ export function StapperFeatureSection() {
                 />
               </div>
               <div>
-                <h3 className='font-utekos-text-medium text-base leading-tight text-foreground'>
+                <h3 className='font-sans font-semibold text-base leading-tight text-foreground'>
                   {feature.title}
                 </h3>
                 <p className='/90 mt-2 text-sm leading-relaxed text-foreground/90'>

@@ -11,7 +11,7 @@ export function P({
   className?: string
 }) {
   return (
-    <p className={cn('leading-normal font-utekos-text text-left mt-0 text-base not-first:mt-6', className ?? '')}  >
+    <p className={cn('leading-normal font-sans text-left mt-0 text-base not-first:mt-6', className ?? '')}  >
       {children ?? Text}
     </p>
   )

@@ -196,10 +196,10 @@ export function StickyMobileAction({
                   aria-hidden
                   className='flex min-w-0 items-baseline gap-1.5 leading-none'
                 >
-                  <span className='truncate font-utekos-text-medium text-[11px] tracking-normal text-foreground sm:text-xs'>
+                  <span className='truncate font-sans font-semibold text-[11px] tracking-normal text-foreground sm:text-xs'>
                     Utekos
                   </span>
-                  <span className='truncate font-utekos-text-medium text-[11px] tracking-normal text-foreground sm:text-xs'>
+                  <span className='truncate font-sans font-semibold text-[11px] tracking-normal text-foreground sm:text-xs'>
                     TechDown™
                   </span>
                 </span>

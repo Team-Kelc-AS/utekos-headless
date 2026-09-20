@@ -24,7 +24,7 @@ export function MagazineCtaBlock({
           asChild
           backgroundColor='var(--primary)'
           textColor='var(--primary-foreground)'
-          className='group min-h-12 gap-2 border border-primary/40 px-6 py-3 font-utekos-text-medium text-base leading-[1.35] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+          className='group min-h-12 gap-2 border border-primary/40 px-6 py-3 font-sans font-semibold text-base leading-[1.35] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
         >
           <Link
             href={block.primary.href as Route}
@@ -42,7 +42,7 @@ export function MagazineCtaBlock({
             asChild
             backgroundColor='var(--foreground)'
             textColor='var(--background)'
-            className='min-h-12 border border-foreground/24 px-6 py-3 font-utekos-text-medium text-base leading-[1.35] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+            className='min-h-12 border border-foreground/24 px-6 py-3 font-sans font-semibold text-base leading-[1.35] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
           >
             <Link
               href={block.secondary.href as Route}

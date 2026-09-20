@@ -53,7 +53,7 @@ export function AboutGallery() {
           <h2 className='font-google-sans text-left font-sans text-5xl leading-[0.95] font-bold text-inherit sm:text-5xl'>
             Et glimt av opplevelsen
           </h2>
-          <p className='mt-5 max-w-2xl text-left font-utekos-text-medium text-lg leading-8 text-inherit/80'>
+          <p className='mt-5 max-w-2xl text-left font-sans font-semibold text-lg leading-8 text-inherit/80'>
             Se hvordan kompromissløs komfort gir liv til dine
             favorittøyeblikk utendørs.
           </p>

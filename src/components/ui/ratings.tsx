@@ -23,7 +23,7 @@ const ratingVariants = cva('transition-colors', {
         'fill-transparent stroke-current text-muted-foreground',
       secondary:
         'fill-current text-muted-foreground',
-      yellow: 'fill-current text-amber-600'
+      yellow: 'fill-current text-review-star'
     }
   },
   defaultVariants: { variant: 'default' }
@@ -106,7 +106,7 @@ function RatingItem({
       'className': cn(
         'fill-muted-foreground/20 stroke-muted-foreground/10 text-muted-foreground/10',
         variant === 'yellow' &&
-          'fill-amber-600/30 stroke-amber-600/10 text-amber-600/10'
+          'fill-review-star/30 stroke-review-star/10 text-review-star/10'
       ),
       'aria-hidden': 'true'
     })

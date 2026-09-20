@@ -54,7 +54,7 @@ export default function MagazineUpgradePage() {
       />
       <article className='container mx-auto flex min-h-[72vh] items-center px-4 py-20 sm:py-28'>
         <div className='mx-auto max-w-5xl text-center'>
-          <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-secondary'>
+          <p className='font-sans font-semibold text-sm tracking-[0.18em] text-secondary'>
             Utekos Magasinet
           </p>
 
@@ -73,7 +73,7 @@ export default function MagazineUpgradePage() {
           <div className='mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row'>
             <Link
               href='/produkter'
-              className='hover:bg-primary-hover inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 py-3 font-utekos-text-medium text-base leading-[1.35] text-primary-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+              className='hover:bg-primary-hover inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 py-3 font-sans font-semibold text-base leading-[1.35] text-primary-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
             >
               Se produktene
               <ArrowRight className='size-4' aria-hidden />
@@ -81,7 +81,7 @@ export default function MagazineUpgradePage() {
 
             <Link
               href='/inspirasjon'
-              className='hover:bg-secondary-hover inline-flex min-h-12 items-center justify-center rounded-full bg-secondary px-7 py-3 font-utekos-text-medium text-base leading-[1.35] text-secondary-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+              className='hover:bg-secondary-hover inline-flex min-h-12 items-center justify-center rounded-full bg-secondary px-7 py-3 font-sans font-semibold text-base leading-[1.35] text-secondary-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
             >
               Gå til inspirasjon
             </Link>
@@ -109,7 +109,7 @@ export default function MagazineUpgradePage() {
                     {link.description}
                   </p>
 
-                  <span className='mt-5 inline-flex items-center gap-2 font-utekos-text-medium text-sm text-secondary'>
+                  <span className='mt-5 inline-flex items-center gap-2 font-sans font-semibold text-sm text-secondary'>
                     Gå videre
                     <ArrowRight
                       className='size-4 transition-transform group-hover:translate-x-1'

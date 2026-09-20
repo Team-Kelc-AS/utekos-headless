@@ -16,9 +16,9 @@ export function FunctionalityPageThreeModesSection() {
         </h2>
         <div className='grid gap-8 md:grid-cols-3'>
           <div
-            className={`${modeCardClassName} hover:border-sky-300/40`}
+            className={`${modeCardClassName} hover:border-ceramic/40`}
           >
-            <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-sky-900/30 text-foreground'>
+            <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-jungle/30 text-foreground'>
               <Maximize2 className='size-6' aria-hidden />
             </div>
             <h3 className='font-google-sans mb-3 text-xl font-bold text-foreground'>
@@ -27,7 +27,7 @@ export function FunctionalityPageThreeModesSection() {
             <p className='mb-4 pb-2 text-foreground md:text-2xl'>
               For maksimal varme og ro
             </p>
-            <p className='/90 mt-2 font-utekos-text! tracking-wide text-foreground/90 md:text-xl!'>
+            <p className='/90 mt-2 font-sans! tracking-wide text-foreground/90 md:text-xl!'>
               Dette er utgangspunktet for selve utekosen. Her
               henger plagget i sin fulle lengde og fungerer som
               en isolerende kokong. Perfekt når du sitter i
@@ -38,9 +38,9 @@ export function FunctionalityPageThreeModesSection() {
           </div>
 
           <div
-            className={`${modeCardClassName} hover:border-orange-300/40`}
+            className={`${modeCardClassName} hover:border-primary/40`}
           >
-            <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-orange-900/30 text-orange-300'>
+            <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-primary/30 text-primary'>
               <Coffee className='size-6' aria-hidden />
             </div>
             <h3 className='font-google-sans mb-3 text-xl font-bold text-foreground'>

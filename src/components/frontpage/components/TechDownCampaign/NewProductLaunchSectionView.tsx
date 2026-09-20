@@ -50,7 +50,7 @@ export function NewProductLaunchSectionView({
                 </InlineText>
               </H2>
 
-              <div className='mb-8 w-full space-y-3 font-utekos-text text-foreground sm:space-y-4'>
+              <div className='mb-8 w-full space-y-3 font-sans text-foreground sm:space-y-4'>
                 {newProductFeatures.map(feature => (
                   <TechDownFeatureCard
                     key={feature.title}

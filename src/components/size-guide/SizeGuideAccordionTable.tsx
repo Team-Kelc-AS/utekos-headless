@@ -58,7 +58,7 @@ export function SizeGuideAccordionTable({
               triggerClassName ?? 'font-medium text-[#F4F1EA]'
             )}
           >
-            <span className='flex items-center gap-3 font-utekos-text-medium'>
+            <span className='flex items-center gap-3 font-sans font-semibold'>
               <Ruler
                 size={20}
                 className='text-[#E07A5F]'

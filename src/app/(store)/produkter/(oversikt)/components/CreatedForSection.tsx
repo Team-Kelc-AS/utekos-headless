@@ -187,20 +187,20 @@ export function CreatedForSection() {
           </span>
           <span className='block overflow-hidden pb-2'>
             <span className='motion-title-line block will-change-transform'>
-              <span className='animate-shine bg-linear-to-r from-slate-900 via-slate-400 to-slate-900 bg-[length:200%_auto] bg-clip-text py-1 text-transparent'>
+              <span className='animate-shine bg-linear-to-r from-night via-muted-foreground to-night bg-[length:200%_auto] bg-clip-text py-1 text-transparent'>
                 din Utekos
               </span>
             </span>
           </span>
         </h2>
 
-        <div className='motion-divider my-10 h-[2px] w-32 origin-center bg-linear-to-r from-transparent via-slate-500/30 to-transparent will-change-transform' />
+        <div className='motion-divider my-10 h-[2px] w-32 origin-center bg-linear-to-r from-transparent via-muted-foreground/30 to-transparent will-change-transform' />
 
         <p className='motion-text mx-auto max-w-2xl text-lg leading-relaxed font-light text-background/90 opacity-0 md:text-xl'>
           Våre komfortplagg er{' '}
           <span className='relative inline-block font-medium text-background'>
             designet
-            <span className='motion-desc-underline absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-slate-500' />
+            <span className='motion-desc-underline absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-muted-foreground' />
           </span>{' '}
           for å holde deg varm, slik at du kan{' '}
           <span className='relative inline-block px-1'>

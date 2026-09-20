@@ -22,11 +22,11 @@ export function ProductShowcase() {
                 <span className='font-sans font-extrabold'>
                   Utekos®
                 </span>
-                <span className='mt-2 block font-utekos-text-medium text-2xl text-[#F4F1EA] md:text-3xl'>
+                <span className='mt-2 block font-sans font-semibold text-2xl text-[#F4F1EA] md:text-3xl'>
                   Lettvekt møter kompromissløs varme.
                 </span>
               </h2>
-              <p className='max-w-xl font-utekos-text text-lg leading-relaxed font-light text-[#F4F1EA]/80'>
+              <p className='max-w-xl font-sans text-lg leading-relaxed font-light text-[#F4F1EA]/80'>
                 Designet for nordiske forhold. Med smart
                 termofiber får du følelsen av dun, men med
                 egenskapene som kreves når været skifter. Robust
@@ -86,10 +86,10 @@ function FeatureItem({
         <Icon size={20} />
       </div>
       <div>
-        <h3 className='font-utekos-text-medium text-lg text-[#F4F1EA]'>
+        <h3 className='font-sans font-semibold text-lg text-[#F4F1EA]'>
           {title}
         </h3>
-        <p className='font-utekos-text text-sm leading-snug text-[#F4F1EA]/60'>
+        <p className='font-sans text-sm leading-snug text-[#F4F1EA]/60'>
           {desc}
         </p>
       </div>

@@ -58,8 +58,8 @@ export function NewProductInStoreNoticeView({
                   key={`spark-${i}`}
                   className={`spark-particle absolute h-1 w-1 rounded-full blur-[1px] ${
                     i % 2 === 0 ?
-                      'bg-yellow-500'
-                    : 'bg-yellow-600'
+                      'bg-review-star'
+                    : 'bg-review-star'
                   }`}
                   style={{ left: i * 2, top: i * 2 }}
                 />

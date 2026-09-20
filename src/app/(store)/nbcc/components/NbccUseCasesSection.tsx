@@ -10,10 +10,10 @@ export function NbccUseCasesSection() {
       <div className='mx-auto max-w-7xl'>
         <NbccReveal className='grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end'>
           <div>
-            <p className='font-utekos-text-medium text-sm text-foreground'>
+            <p className='font-sans font-semibold text-sm text-foreground'>
               Campinglivet har mange former
             </p>
-            <h2 className='mt-4 max-w-xl font-utekos-text-medium text-3xl tracking-normal text-balance text-foreground sm:text-4xl'>
+            <h2 className='mt-4 max-w-xl font-sans font-semibold text-3xl tracking-normal text-balance text-foreground sm:text-4xl'>
               Fra morgenkaffe til den siste praten i forteltet.
             </h2>
           </div>
@@ -43,10 +43,10 @@ export function NbccUseCasesSection() {
                     className='mb-5 text-primary'
                     aria-hidden
                   />
-                  <h3 className='font-utekos-text-medium text-lg text-foreground'>
+                  <h3 className='font-sans font-semibold text-lg text-foreground'>
                     {useCase.title}
                   </h3>
-                  <p className='mt-3 font-utekos-text text-sm leading-7 text-foreground'>
+                  <p className='mt-3 font-sans text-sm leading-7 text-foreground'>
                     {useCase.description}
                   </p>
                 </article>

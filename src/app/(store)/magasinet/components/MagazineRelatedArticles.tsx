@@ -18,7 +18,7 @@ export function MagazineRelatedArticles({
     <article className='border-t border-background/10 bg-muted py-16 text-foreground'>
       <div className='container mx-auto px-4'>
         <header className='mb-8 max-w-2xl'>
-          <p className='font-utekos-text-medium text-sm leading-4 text-magazine-article-card-pill'>
+          <p className='font-sans font-semibold text-sm leading-4 text-magazine-article-card-pill'>
             Les videre
           </p>
           <h2 className='font-google-sans mt-2 font-sans text-4xl leading-[0.95] font-bold text-foreground'>
@@ -44,7 +44,7 @@ export function MagazineRelatedArticles({
                   <h3 className='font-google-sans font-sans text-2xl leading-[0.98] font-bold text-foreground transition-colors group-hover:text-magazine-article-card-pill'>
                     {article.title}
                   </h3>
-                  <p className='mt-3 flex-1 font-utekos-text text-sm leading-[1.3] tracking-normal text-foreground'>
+                  <p className='mt-3 flex-1 font-sans text-sm leading-[1.3] tracking-normal text-foreground'>
                     {article.excerpt}
                   </p>
                 </div>

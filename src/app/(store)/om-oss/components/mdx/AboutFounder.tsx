@@ -37,7 +37,7 @@ export function AboutFounder() {
             </div>
           </blockquote>
 
-          <div className='space-y-6 font-utekos-text-medium text-lg leading-relaxed text-foreground/90'>
+          <div className='space-y-6 font-sans font-semibold text-lg leading-relaxed text-foreground/90'>
             {storyParagraphs.map(paragraph => (
               <p key={paragraph} className='max-w-prose'>
                 {paragraph}

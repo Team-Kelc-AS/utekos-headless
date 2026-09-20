@@ -44,7 +44,7 @@ export function LandingProductHighlightsPanel({
           >
             <AccordionTrigger
               className={cn(
-                'bg-jungle px-5 py-4 text-left font-utekos-text-medium text-sm sm:px-6 sm:text-base',
+                'bg-jungle px-5 py-4 text-left font-sans font-semibold text-sm sm:px-6 sm:text-base',
                 'text-foreground hover:text-white hover:no-underline hover:opacity-85',
                 'data-[state=open]:text-primary'
               )}

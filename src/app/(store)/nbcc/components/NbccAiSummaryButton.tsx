@@ -211,7 +211,7 @@ export function NbccAiSummaryButton({
                     />
                     {payload.kicker}
                   </div>
-                  <h3 className='mt-2 font-utekos-text-medium text-base leading-snug text-white sm:text-lg'>
+                  <h3 className='mt-2 font-sans font-semibold text-base leading-snug text-white sm:text-lg'>
                     {payload.title}
                   </h3>
                 </header>
@@ -227,7 +227,7 @@ export function NbccAiSummaryButton({
                         key={section.title}
                         className='rounded-lg border border-white/10 bg-white/3 px-4 py-4'
                       >
-                        <h4 className='font-utekos-text-medium text-sm text-white'>
+                        <h4 className='font-sans font-semibold text-sm text-white'>
                           {section.title}
                         </h4>
 
@@ -248,7 +248,7 @@ export function NbccAiSummaryButton({
                         href={
                           '/handlehjelp/storrelsesguide' as Route
                         }
-                        className='font-utekos-text-medium text-[#f0c36a] underline decoration-[#f0c36a]/40 underline-offset-4 hover:text-[#ffd886]'
+                        className='font-sans font-semibold text-[#f0c36a] underline decoration-[#f0c36a]/40 underline-offset-4 hover:text-[#ffd886]'
                       >
                         størrelsesguiden vår
                       </Link>

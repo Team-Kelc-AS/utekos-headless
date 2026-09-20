@@ -86,11 +86,11 @@ export function BenefitsGrid({
                 </div>
                 <H3
                   Text={benefit.title}
-                  className='font-google-sans mb-2 font-utekos-text-medium text-lg leading-[1.15] font-bold tracking-[-0.01em] text-foreground'
+                  className='font-google-sans mb-2 font-sans font-semibold text-lg leading-[1.15] font-bold tracking-[-0.01em] text-foreground'
                 ></H3>
                 <P
                   Text={benefit.description}
-                  className='mx-auto px-8 text-center font-utekos-text text-base tracking-[-0.02em] text-balance text-foreground md:text-lg'
+                  className='mx-auto px-8 text-center font-sans text-base tracking-[-0.02em] text-balance text-foreground md:text-lg'
                 ></P>
               </AnimatedBlock>
             ))}

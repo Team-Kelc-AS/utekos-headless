@@ -46,7 +46,8 @@
 @source '../../components/AnimatedBlock.tsx';
 @source '../../components/BrandComponents/utils/BrandBadge.tsx';
 @source '../../components/BrandComponents/utils/UtekosWordmark.tsx';
-@source '../../components/analytics/ConsentGrantedScript.tsx';
+@source '../../components/analytics/CanonicalBrowserProviderBridges.tsx';
+@source '../../components/analytics/CanonicalBrowserProviderScript.tsx';
 @source '../../components/analytics/GoogleTagManagerLoader.tsx';
 @source '../../components/analytics/GoogleTagManagerNoScript.tsx';
 @source '../../components/analytics/JourneyObserver.tsx';

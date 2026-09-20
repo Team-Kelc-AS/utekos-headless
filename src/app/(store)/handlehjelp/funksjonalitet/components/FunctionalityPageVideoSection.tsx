@@ -24,7 +24,7 @@ export function FunctionalityPageVideoSection() {
 
               <Link
                 href='/produkter/utekos-techdown'
-                className='mt-8 inline-flex items-center font-utekos-text-medium text-lg text-foreground hover:text-sky-300 hover:underline'
+                className='mt-8 inline-flex items-center font-sans font-semibold text-lg text-foreground hover:text-ceramic hover:underline'
               >
                 Utforsk kolleksjonen
                 <ArrowRight

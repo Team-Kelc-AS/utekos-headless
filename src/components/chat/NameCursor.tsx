@@ -68,7 +68,7 @@ export function NameCursor({
         />
         <span
           className={cn(
-            'rounded-full border px-2.5 py-1 font-utekos-text-medium text-xs leading-none',
+            'rounded-full border px-2.5 py-1 font-sans font-semibold text-xs leading-none',
             toneClasses.label
           )}
         >

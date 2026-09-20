@@ -45,7 +45,7 @@ export function MicrofiberView({
               <h2 className='mb-4 font-sans text-3xl font-extrabold text-foreground md:text-5xl'>
                 Sikre deg varmen nå.
               </h2>
-              <p className='mb-8 font-utekos-text text-lg leading-relaxed text-foreground'>
+              <p className='mb-8 font-sans text-lg leading-relaxed text-foreground'>
                 Invester i kvalitetstid. Utekos Mikrofiber™ er
                 laget for å vare, sesong etter sesong.
               </p>

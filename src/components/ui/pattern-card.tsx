@@ -97,7 +97,7 @@ export function PatternCard({
           cardClasses.inner
         )}
       >
-        <h3 className='font-utekos-text-medium text-xl leading-7'>
+        <h3 className='font-sans font-semibold text-xl leading-7'>
           {title}
         </h3>
 
@@ -124,7 +124,7 @@ export function PatternCard({
             <p className={cn('mb-3', cardClasses.footerLabel)}>
               {footerLabel}
             </p>
-            <p className='font-utekos-text-medium'>{footer}</p>
+            <p className='font-sans font-semibold'>{footer}</p>
           </div>
         )}
       </div>

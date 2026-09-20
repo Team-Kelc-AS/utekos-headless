@@ -22,7 +22,7 @@ export const popularDestinationsData: Destination[] = [
     name: 'Vestlandskysten',
     season: 'Vår/Sommer',
     highlight: 'Perfekt i uforutsigbart vær',
-    color: 'text-emerald-500'
+    color: 'text-green-400'
   },
   {
     name: 'Oslofjorden',
@@ -60,7 +60,7 @@ export function PopularDestinations({
               <Card className='hover:bg-card-hover -hover border-border bg-card text-card-foreground transition-colors'>
                 <CardContent className='p-6'>
                   <div className='mb-3 flex items-start justify-between'>
-                    <h3 className='font-utekos-text-medium text-lg'>
+                    <h3 className='font-sans font-semibold text-lg'>
                       {destination.name}
                     </h3>
                     <MapPinIcon

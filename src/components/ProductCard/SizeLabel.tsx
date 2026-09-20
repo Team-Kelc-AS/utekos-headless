@@ -25,7 +25,7 @@ export function SizeLabel({
         rel='noopener noreferrer'
         style={{ outlineColor: 'var(--card-foreground)' }}
         className={cn(
-          'inline-flex w-fit items-center gap-1 font-utekos-text-medium text-sm tracking-wide text-card-foreground uppercase hover:text-card-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground motion-safe:transition-colors',
+          'inline-flex w-fit items-center gap-1 font-sans font-semibold text-sm tracking-wide text-card-foreground uppercase hover:text-card-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground motion-safe:transition-colors',
           className
         )}
       >
@@ -44,7 +44,7 @@ export function SizeLabel({
         <div className='flex items-start space-x-3'>
           <Ruler className='mt-1 size-7 text-popover-foreground' />
           <div className='space-y-1'>
-            <H3 className='pb-0 font-utekos-text-medium text-sm text-popover-foreground'>
+            <H3 className='pb-0 font-sans font-semibold text-sm text-popover-foreground'>
               Usikker på størrelsen?
             </H3>
             <P className='text-sm text-popover-foreground/90 not-first:mt-0'>

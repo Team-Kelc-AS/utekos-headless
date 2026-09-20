@@ -40,11 +40,11 @@ export function ShippingReturnsInfo() {
                     aria-hidden='true'
                   />
                 </div>
-                <h2 className='text-left font-utekos-text-medium text-xl leading-tight text-foreground'>
+                <h2 className='text-left font-sans font-semibold text-xl leading-tight text-foreground'>
                   Frakt og levering
                 </h2>
               </header>
-              <p className='mb-6 max-w-prose text-left font-utekos-text text-base leading-relaxed text-foreground/80'>
+              <p className='mb-6 max-w-prose text-left font-sans text-base leading-relaxed text-foreground/80'>
                 Frakt koster 99 kr på bestillinger under 999 kr.
                 Bestillinger over 999 kr sendes fraktfritt i
                 Norge.
@@ -88,11 +88,11 @@ export function ShippingReturnsInfo() {
                     aria-hidden='true'
                   />
                 </div>
-                <h2 className='text-left font-utekos-text-medium text-xl leading-tight text-foreground'>
+                <h2 className='text-left font-sans font-semibold text-xl leading-tight text-foreground'>
                   Retur og angrerett
                 </h2>
               </header>
-              <p className='mb-6 max-w-prose text-left font-utekos-text text-base leading-relaxed text-foreground/80'>
+              <p className='mb-6 max-w-prose text-left font-sans text-base leading-relaxed text-foreground/80'>
                 {returnPolicyCopy.summary}
               </p>
               <ul className='mt-auto flex w-full flex-col gap-4 text-left'>
@@ -148,27 +148,27 @@ export function ShippingReturnsInfo() {
             </h2>
             <dl className='mt-6 grid gap-6 sm:grid-cols-2'>
               <div>
-                <dt className='font-utekos-text-medium text-base'>
+                <dt className='font-sans font-semibold text-base'>
                   Angrefrist
                 </dt>
-                <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
+                <dd className='mt-1 font-sans leading-relaxed text-foreground/90'>
                   {returnPolicy.returnWindowDays} kalenderdager
                   fra fysisk mottak
                 </dd>
               </div>
               <div>
-                <dt className='font-utekos-text-medium text-base'>
+                <dt className='font-sans font-semibold text-base'>
                   Ordinær returfrakt
                 </dt>
-                <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
+                <dd className='mt-1 font-sans leading-relaxed text-foreground/90'>
                   Kunden oppretter og betaler returfrakten
                 </dd>
               </div>
               <div>
-                <dt className='font-utekos-text-medium text-base'>
+                <dt className='font-sans font-semibold text-base'>
                   Behandlingstid
                 </dt>
-                <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
+                <dd className='mt-1 font-sans leading-relaxed text-foreground/90'>
                   {
                     returnPolicy.processRefundBusinessDays
                       .minimum
@@ -182,10 +182,10 @@ export function ShippingReturnsInfo() {
                 </dd>
               </div>
               <div>
-                <dt className='font-utekos-text-medium text-base'>
+                <dt className='font-sans font-semibold text-base'>
                   Returmetode
                 </dt>
-                <dd className='mt-1 font-utekos-text leading-relaxed text-foreground/90'>
+                <dd className='mt-1 font-sans leading-relaxed text-foreground/90'>
                   Retur med post til den publiserte returadressen
                 </dd>
               </div>
@@ -205,7 +205,7 @@ export function ShippingReturnsInfo() {
         >
           Gratis størrelsesbytte
         </h2>
-        <div className='mt-6 space-y-4 font-utekos-text leading-relaxed'>
+        <div className='mt-6 space-y-4 font-sans leading-relaxed'>
           {Object.values(sizeExchangeCopy).map(text => (
             <p key={text}>{text}</p>
           ))}
@@ -241,13 +241,13 @@ export function ShippingReturnsInfo() {
           >
             Slik bruker du ordinær angrerett
           </h2>
-          <ol className='mt-6 flex max-w-prose list-decimal flex-col gap-6 pl-6 font-utekos-text text-base leading-relaxed text-foreground/90 marker:font-bold marker:text-foreground'>
+          <ol className='mt-6 flex max-w-prose list-decimal flex-col gap-6 pl-6 font-sans text-base leading-relaxed text-foreground/90 marker:font-bold marker:text-foreground'>
             <li>
               {returnPolicyCopy.notice}{' '}
               <a
                 href={`mailto:${returnPolicy.contactEmail}`}
                 data-track='ShippingReturnsEmailClick'
-                className='font-utekos-text-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground'
+                className='font-sans font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground'
               >
                 {returnPolicy.contactEmail}
               </a>
@@ -258,7 +258,7 @@ export function ShippingReturnsInfo() {
           </ol>
 
           <div className='mt-8 max-w-prose rounded-2xl border border-border bg-muted/40 p-6'>
-            <h3 className='font-utekos-text-medium text-lg'>
+            <h3 className='font-sans font-semibold text-lg'>
               Returadresse
             </h3>
             <address className='mt-3 leading-relaxed text-foreground/90 not-italic'>
@@ -284,7 +284,7 @@ export function ShippingReturnsInfo() {
           >
             Refusjon og behandlingstid
           </h2>
-          <div className='mt-5 flex max-w-prose flex-col gap-4 font-utekos-text text-base leading-relaxed text-foreground/90'>
+          <div className='mt-5 flex max-w-prose flex-col gap-4 font-sans text-base leading-relaxed text-foreground/90'>
             <p>{returnPolicyCopy.refund}</p>
             <p>{returnPolicyCopy.refundTiming}</p>
           </div>
@@ -301,7 +301,7 @@ export function ShippingReturnsInfo() {
           >
             Varens tilstand og verdireduksjon
           </h2>
-          <p className='mt-5 max-w-prose font-utekos-text text-base leading-relaxed text-foreground/90'>
+          <p className='mt-5 max-w-prose font-sans text-base leading-relaxed text-foreground/90'>
             {returnPolicyCopy.condition}
           </p>
         </section>
@@ -317,7 +317,7 @@ export function ShippingReturnsInfo() {
           >
             Unntak fra angreretten
           </h2>
-          <p className='mt-5 max-w-prose font-utekos-text text-base leading-relaxed text-foreground/90'>
+          <p className='mt-5 max-w-prose font-sans text-base leading-relaxed text-foreground/90'>
             {returnPolicyCopy.exceptions}
           </p>
         </section>
@@ -333,7 +333,7 @@ export function ShippingReturnsInfo() {
           >
             Reklamasjon, skade eller feilsendt vare
           </h2>
-          <p className='mt-5 max-w-prose font-utekos-text text-base leading-relaxed text-foreground/90'>
+          <p className='mt-5 max-w-prose font-sans text-base leading-relaxed text-foreground/90'>
             {returnPolicyCopy.complaint}
           </p>
         </section>

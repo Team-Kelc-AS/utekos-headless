@@ -67,7 +67,7 @@ function ComfyrobeHeroPurchaseActions({
           reportHeroSelection('Legg i handlekurv', 'primary_cta')
           void performAddToCart(1)
         }}
-        className='h-14 w-full rounded-full bg-primary font-utekos-text-medium text-base text-foreground hover:bg-primary/90 md:text-lg'
+        className='h-14 w-full rounded-full bg-primary font-sans font-semibold text-base text-foreground hover:bg-primary/90 md:text-lg'
       >
         {isAddToCartPending ?
           <>
@@ -107,7 +107,7 @@ export function ComfyrobeHeroActions({
         />
       : <BrandBadge
           asChild
-          className='min-h-13 w-full gap-2 bg-primary px-6 py-3 font-utekos-text-medium text-foreground transition-[filter,transform] hover:brightness-105 active:scale-[0.985] sm:w-auto'
+          className='min-h-13 w-full gap-2 bg-primary px-6 py-3 font-sans font-semibold text-foreground transition-[filter,transform] hover:brightness-105 active:scale-[0.985] sm:w-auto'
         >
           <a
             href='#purchase-section'

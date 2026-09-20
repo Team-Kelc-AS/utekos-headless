@@ -73,6 +73,7 @@
     "merchant:sync": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/merchant/sync.ts",
     "scan:public": "tsx scripts/public/scan-unused-assets.ts",
     "brand:sync": "node scripts/brand/parse-brand-colors.mjs",
+    "check:theme-sync": "node scripts/check-theme-sync.mjs",
     "brand:color2": "node scripts/brand/parse-color-2-scales.mjs",
     "build:google-docs-sources": "node scripts/google-docs/build-sources.mjs",
     "normalize:google-docs": "node scripts/google-docs/normalize.mjs --write",

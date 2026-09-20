@@ -37,7 +37,7 @@ export function TechMaterialsModeCards() {
               </h3>
             </div>
             <p className={modeClaimClassName}>Maksimal isolasjon</p>
-            <p className='leading-text-paragraph font-utekos-text! tracking-wide text-card-foreground/90 md:text-xl!'>
+            <p className='leading-text-paragraph font-sans! tracking-wide text-card-foreground/90 md:text-xl!'>
               Utgangspunktet for selve utekosen. Plagget henger i
               full lengde som en isolerende kokong. Perfekt for
               solveggen, hengekøyen eller lange kvelder på

@@ -123,7 +123,7 @@ export function FacebookLoginChoices({
         >
           <span className="size-3.5 bg-white [mask-image:url('/IconWhite.svg')] [mask-size:contain] [mask-position:center] [mask-repeat:no-repeat]" />
         </span>
-        <span className='font-utekos-text-medium'>
+        <span className='font-sans font-semibold'>
           Fortsett til Utekos
         </span>
       </Button>

@@ -51,7 +51,7 @@
   border-radius: 999px;
   background: var(--jungle);
   color: var(--foreground);
-  font-family: var(--font-utekos-text);
+  font-family: var(--font-sans);
   font-size: 0.875rem;
   line-height: 1.2;
   text-decoration: none;

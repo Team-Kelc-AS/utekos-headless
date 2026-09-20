@@ -16,9 +16,9 @@ type DottedGlowBackgroundProps = {
   glowColor?: string
   /** optional glow color for dark mode */
   darkGlowColor?: string
-  /** optional CSS variable name for light dot color (e.g. --color-zinc-900) */
+  /** optional CSS variable name for light dot color (e.g. --color-night) */
   colorLightVar?: string
-  /** optional CSS variable name for dark dot color (e.g. --color-zinc-100) */
+  /** optional CSS variable name for dark dot color (e.g. --color-cloud-dancer) */
   colorDarkVar?: string
   /** optional CSS variable name for light glow color */
   glowColorLightVar?: string

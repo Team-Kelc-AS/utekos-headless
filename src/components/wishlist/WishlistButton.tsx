@@ -113,7 +113,7 @@ export function WishlistButton({
         className={cn(
           'border border-border bg-muted text-foreground shadow-[0_12px_30px_-16px_rgba(0,0,0,0.85)] hover:bg-muted/90 hover:text-foreground focus-visible:border-foreground/40 focus-visible:ring-foreground/40',
           isLabelled ?
-            'h-11 rounded-full px-4 font-utekos-text-medium text-sm'
+            'h-11 rounded-full px-4 font-sans font-semibold text-sm'
           : 'size-12 rounded-2xl',
           className
         )}
@@ -162,19 +162,19 @@ export function WishlistButton({
                 </span>
               </div>
               <div className='min-w-0'>
-                <p className='font-utekos-text-medium text-sm leading-tight text-foreground'>
+                <p className='font-sans font-semibold text-sm leading-tight text-foreground'>
                   Utekos ønskeliste
                 </p>
-                <p className='mt-1 font-utekos-text text-xs leading-relaxed text-foreground/68'>
+                <p className='mt-1 font-sans text-xs leading-relaxed text-foreground/68'>
                   Favoritten er tatt vare på
                 </p>
               </div>
             </div>
             <DialogHeader className='pr-8'>
-              <DialogTitle className='font-utekos-text-medium text-2xl leading-tight text-balance text-foreground'>
+              <DialogTitle className='font-sans font-semibold text-2xl leading-tight text-balance text-foreground'>
                 Du slipper å lete på nytt
               </DialogTitle>
-              <DialogDescription className='font-utekos-text text-base leading-7 text-foreground/78'>
+              <DialogDescription className='font-sans text-base leading-7 text-foreground/78'>
                 Favoritten ligger klar neste gang du besøker oss
                 på denne enheten. Vil du gå til kontoen din, kan
                 du logge inn eller opprette en konto.
@@ -188,7 +188,7 @@ export function WishlistButton({
                 asChild
                 variant='default'
                 size='lg'
-                className='hover:bg-primary-hover min-h-12 rounded-full bg-primary px-6 font-utekos-text-medium text-base text-primary-foreground shadow-[0_18px_40px_-26px_color-mix(in_oklch,var(--primary)_78%,transparent)] hover:text-primary-foreground focus-visible:ring-primary/60 focus-visible:ring-offset-night'
+                className='hover:bg-primary-hover min-h-12 rounded-full bg-primary px-6 font-sans font-semibold text-base text-primary-foreground shadow-[0_18px_40px_-26px_color-mix(in_oklch,var(--primary)_78%,transparent)] hover:text-primary-foreground focus-visible:ring-primary/60 focus-visible:ring-offset-night'
               >
                 <Link
                   href={loginHref}
@@ -201,7 +201,7 @@ export function WishlistButton({
                 asChild
                 variant='outline'
                 size='lg'
-                className='min-h-12 rounded-full border-foreground/24 bg-transparent! px-6 font-utekos-text-medium text-base text-foreground hover:bg-foreground/8 hover:text-foreground focus-visible:ring-foreground/45 focus-visible:ring-offset-night'
+                className='min-h-12 rounded-full border-foreground/24 bg-transparent! px-6 font-sans font-semibold text-base text-foreground hover:bg-foreground/8 hover:text-foreground focus-visible:ring-foreground/45 focus-visible:ring-offset-night'
               >
                 <Link
                   href={createAccountHref}

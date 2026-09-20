@@ -18,10 +18,10 @@ export function TailwindSection() {
       contentClassName='w-full min-w-0 px-6 py-24 sm:py-32 lg:px-8'
     >
       <div className='mx-auto max-w-4xl text-center'>
-        <h2 className='font-utekos-text-medium text-base/7 text-foreground'>
+        <h2 className='font-sans font-semibold text-base/7 text-foreground'>
           Pris
         </h2>
-        <p className='mt-2 font-utekos-text-medium text-5xl tracking-tight text-balance text-foreground sm:text-6xl'>
+        <p className='mt-2 font-sans font-semibold text-5xl tracking-tight text-balance text-foreground sm:text-6xl'>
           Velg din favoritt
         </p>
       </div>
@@ -36,12 +36,12 @@ export function TailwindSection() {
         <div className='rounded-3xl rounded-t-3xl bg-dark-teal p-8 text-foreground ring-1 ring-border sm:rounded-b-none sm:p-10 lg:rounded-tr-none lg:rounded-bl-3xl'>
           <h3
             id='utekos-mikrofiber'
-            className='font-utekos-text-medium text-base/7 text-card-foreground'
+            className='font-sans font-semibold text-base/7 text-card-foreground'
           >
             Utekos Mikrofiber™
           </h3>
           <p className='mt-4 flex items-baseline gap-x-2'>
-            <span className='font-utekos-text-medium text-5xl tracking-tight text-card-foreground'>
+            <span className='font-sans font-semibold text-5xl tracking-tight text-card-foreground'>
               1790
             </span>
             <span className='text-base text-card-foreground'>
@@ -133,12 +133,12 @@ export function TailwindSection() {
         <div className='relative rounded-3xl border-none bg-jungle p-8 text-foreground sm:p-10'>
           <h3
             id='utekos-techdown'
-            className='font-utekos-text-medium text-base/7 text-foreground'
+            className='font-sans font-semibold text-base/7 text-foreground'
           >
             Utekos TechDown™
           </h3>
           <p className='mt-4 flex items-baseline gap-x-2'>
-            <span className='font-utekos-text-medium text-5xl tracking-tight text-foreground'>
+            <span className='font-sans font-semibold text-5xl tracking-tight text-foreground'>
               1990
             </span>
             <span className='text-base text-foreground'>kr</span>

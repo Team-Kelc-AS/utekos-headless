@@ -142,7 +142,7 @@ export function MobileMenuPanel({
           render={
             <Button
               variant='outline'
-              className='h-11 min-w-11 rounded-md border-transparent bg-transparent px-0 font-utekos-text-medium text-sm text-foreground hover:bg-accent hover:text-accent-foreground md:min-w-[5.75rem] md:px-3'
+              className='h-11 min-w-11 rounded-md border-transparent bg-transparent px-0 font-sans font-semibold text-sm text-foreground hover:bg-accent hover:text-accent-foreground md:min-w-[5.75rem] md:px-3'
               aria-label='Åpne meny'
               data-track='MobileMenuClick'
             />

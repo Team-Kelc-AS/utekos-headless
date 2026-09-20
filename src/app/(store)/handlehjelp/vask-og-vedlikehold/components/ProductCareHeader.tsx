@@ -45,7 +45,7 @@ export function ProductCareHeader() {
         <h1 className='font-google-sans py-4 text-3xl leading-[1.05] font-bold text-foreground md:text-5xl lg:text-6xl'>
           Produktvedlikehold
         </h1>
-        <p className='/90 mt-5 max-w-2xl font-utekos-text text-lg leading-relaxed text-foreground/90'>
+        <p className='/90 mt-5 max-w-2xl font-sans text-lg leading-relaxed text-foreground/90'>
           Du har investert i komfort og kvalitet som er ment å
           vare, men ingen plagg opprettholder ytelsen over tid
           uten vedlikehold.

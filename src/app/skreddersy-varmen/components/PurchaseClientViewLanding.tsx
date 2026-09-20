@@ -94,7 +94,7 @@ export function PurchaseClientViewLanding({
 
         <div className='flex w-full flex-col bg-[#F3F0E7] text-foreground'>
           <div className='flex-1 bg-[#F3F0E7] p-8 text-background min-[900px]:rounded-tl-3xl min-[1280px]:p-20 md:p-12'>
-            <div className='mb-4 font-utekos-text-medium text-sm text-background/80'>
+            <div className='mb-4 font-sans font-semibold text-sm text-background/80'>
               Utekos TechDown™ · Bestselger
             </div>
 
@@ -192,10 +192,10 @@ export function PurchaseClientViewLanding({
                       key={selectedSize}
                       className='animate-in fade-in slide-in-from-top-2 duration-300'
                     >
-                      <div className='relative overflow-hidden rounded-2xl border-none bg-jungle-tone p-4 font-utekos-text text-foreground shadow-md md:p-6'>
+                      <div className='relative overflow-hidden rounded-2xl border-none bg-jungle-tone p-4 font-sans text-foreground shadow-md md:p-6'>
                         <div className='mb-2 flex items-center gap-2 border-b border-foreground/15 pb-2'>
                           <Ruler className='size-4 text-primary' />
-                          <span className='font-utekos-text text-sm font-bold tracking-normal text-foreground'>
+                          <span className='font-sans text-sm font-bold tracking-normal text-foreground'>
                             Anbefalt høyde:{' '}
                             {guidance.heightGuide}
                           </span>
@@ -219,10 +219,10 @@ export function PurchaseClientViewLanding({
 
                 <div className='mt-5 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 border-t border-foreground/10 pt-4 min-[900px]:mt-4'>
                   <div className='min-w-0'>
-                    <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-foreground/80'>
+                    <span className='mb-2 block font-sans font-semibold text-xs tracking-normal text-foreground/80'>
                       FARGE
                     </span>
-                    <div className='mt-1 inline-flex h-10 w-29 items-center justify-center gap-2 rounded-full border-none bg-cloud-dancer px-3 font-utekos-text-medium text-sm text-background shadow-sm ring-1 ring-background'>
+                    <div className='mt-1 inline-flex h-10 w-29 items-center justify-center gap-2 rounded-full border-none bg-cloud-dancer px-3 font-sans font-semibold text-sm text-background shadow-sm ring-1 ring-background'>
                       <span
                         aria-hidden
                         className='size-4 shrink-0 rounded-full border border-background/20 shadow-sm'
@@ -238,7 +238,7 @@ export function PurchaseClientViewLanding({
                   </div>
 
                   <div className='shrink-0'>
-                    <span className='mb-2 block font-utekos-text-medium text-xs tracking-normal text-foreground/80'>
+                    <span className='mb-2 block font-sans font-semibold text-xs tracking-normal text-foreground/80'>
                       ANTALL
                     </span>
                     <div className='mt-1 flex h-10 items-center rounded-full border border-background/15 bg-cloud-dancer text-background'>
@@ -254,7 +254,7 @@ export function PurchaseClientViewLanding({
                         <Minus size={17} aria-hidden />
                       </button>
                       <span
-                        className='w-9 text-center font-utekos-text-medium text-base text-background tabular-nums'
+                        className='w-9 text-center font-sans font-semibold text-base text-background tabular-nums'
                         aria-live='polite'
                         aria-atomic='true'
                       >

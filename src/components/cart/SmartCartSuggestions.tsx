@@ -165,7 +165,7 @@ export function SmartCartSuggestions({
     <div className='border-t border-border bg-background p-6'>
       <FreeShippingConfirmation />
       <div className='mt-6'>
-        <h3 className='text-center font-utekos-text-medium text-sm text-foreground'>
+        <h3 className='text-center font-sans font-semibold text-sm text-foreground'>
           {title}
         </h3>
         <div className='mt-4 space-y-4'>

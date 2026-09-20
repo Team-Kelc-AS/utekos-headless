@@ -92,7 +92,7 @@ export function HostTipsGrid({ tips }: { tips: HostTip[] }) {
                           />
                         </div>
                         <h3
-                          className={`font-utekos-text-medium text-lg leading-[1.1] tracking-[-0.01em] ${theme.text}`}
+                          className={`font-sans font-semibold text-lg leading-[1.1] tracking-[-0.01em] ${theme.text}`}
                         >
                           {tip.name}
                         </h3>

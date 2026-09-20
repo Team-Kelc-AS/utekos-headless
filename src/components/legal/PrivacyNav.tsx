@@ -39,7 +39,7 @@ export function PrivacyNav({ sections }: PrivacyNavProps) {
       className='sticky top-28 hidden lg:block'
       aria-label='På denne siden'
     >
-      <h3 className='mb-4 font-utekos-text-medium text-sm'>
+      <h3 className='mb-4 font-sans font-semibold text-sm'>
         På denne siden
       </h3>
       <ul className='space-y-3'>

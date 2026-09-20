@@ -45,7 +45,7 @@ export function SizeGuideTable() {
           <h3 className='mb-4 font-sans text-3xl font-extrabold text-[#F4F1EA]'>
             Skapt for å tilpasses deg
           </h3>
-          <p className='mx-auto max-w-2xl font-utekos-text text-[#F4F1EA]/70'>
+          <p className='mx-auto max-w-2xl font-sans text-[#F4F1EA]/70'>
             Mer enn bare en størrelse – en garanti for komfort.
             Vi har designet spranget mellom Medium og Large
             bevisst stort, slik at du kan velge basert på hvor

@@ -244,7 +244,7 @@ function UtekosCardTitle({
     <h3
       data-slot='utekos-card-title'
       className={cn(
-        'bg-transparent font-sans font-utekos-text-medium text-xl leading-[1.05] tracking-normal text-balance text-current md:text-2xl',
+        'bg-transparent font-sans font-semibold text-xl leading-[1.05] tracking-normal text-balance text-current md:text-2xl',
         className
       )}
       {...props}

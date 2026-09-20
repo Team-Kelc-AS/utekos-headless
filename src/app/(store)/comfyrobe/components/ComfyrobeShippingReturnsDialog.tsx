@@ -36,13 +36,13 @@ export function ComfyrobeShippingReturnsDialog({
 
       <DialogContent className='inset-0 top-0 left-0 flex h-svh max-h-svh max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none bg-background p-0 text-foreground ring-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:h-auto sm:max-h-[calc(100svh-3rem)] sm:max-w-2xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:ring-1'>
         <DialogHeader className='shrink-0 border-b border-foreground/12 px-6 py-6 pr-14 sm:px-8 sm:py-7 sm:pr-14'>
-          <p className='font-utekos-text-medium text-xs tracking-wide text-primary uppercase'>
+          <p className='font-sans font-semibold text-xs tracking-wide text-primary uppercase'>
             Comfyrobe™
           </p>
           <DialogTitle className='font-sans text-2xl font-bold tracking-tight sm:text-3xl'>
             Frakt og retur
           </DialogTitle>
-          <DialogDescription className='max-w-xl font-utekos-text text-sm leading-6 text-foreground/72 sm:text-base'>
+          <DialogDescription className='max-w-xl font-sans text-sm leading-6 text-foreground/72 sm:text-base'>
             Alt du trenger å vite om levering, bytte og retur.
           </DialogDescription>
         </DialogHeader>
@@ -51,11 +51,11 @@ export function ComfyrobeShippingReturnsDialog({
           <section aria-labelledby='comfyrobe-shipping-heading'>
             <h2
               id='comfyrobe-shipping-heading'
-              className='font-utekos-text-medium text-lg'
+              className='font-sans font-semibold text-lg'
             >
               Fraktinformasjon
             </h2>
-            <p className='mt-3 font-utekos-text text-sm leading-6 text-foreground/82 sm:text-base sm:leading-7'>
+            <p className='mt-3 font-sans text-sm leading-6 text-foreground/82 sm:text-base sm:leading-7'>
               Vi gjør vårt beste for å behandle og sende
               bestillinger innen samme virkedag (mandag–fredag
               før kl. 16, unntatt helligdager). Vi ber pent om at
@@ -66,7 +66,7 @@ export function ComfyrobeShippingReturnsDialog({
             </p>
             <Link
               href='/frakt-og-retur'
-              className='mt-4 inline-flex min-h-11 items-center font-utekos-text-medium text-sm text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary'
+              className='mt-4 inline-flex min-h-11 items-center font-sans font-semibold text-sm text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary'
             >
               Mer informasjon
             </Link>
@@ -75,11 +75,11 @@ export function ComfyrobeShippingReturnsDialog({
           <section aria-labelledby='comfyrobe-returns-heading'>
             <h2
               id='comfyrobe-returns-heading'
-              className='font-utekos-text-medium text-lg'
+              className='font-sans font-semibold text-lg'
             >
               Retur og bytte
             </h2>
-            <div className='mt-3 space-y-4 font-utekos-text text-sm leading-6 text-foreground/82 sm:text-base sm:leading-7'>
+            <div className='mt-3 space-y-4 font-sans text-sm leading-6 text-foreground/82 sm:text-base sm:leading-7'>
               <p>
                 Er du usikker på størrelsen din? Klarer du ikke å
                 velge? Vår kundeservice er her for å hjelpe – jo
@@ -101,7 +101,7 @@ export function ComfyrobeShippingReturnsDialog({
             </div>
             <Link
               href='/kontaktskjema'
-              className='mt-4 inline-flex min-h-11 items-center font-utekos-text-medium text-sm text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary'
+              className='mt-4 inline-flex min-h-11 items-center font-sans font-semibold text-sm text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary'
             >
               Kundeservice
             </Link>
@@ -113,7 +113,7 @@ export function ComfyrobeShippingReturnsDialog({
             render={
               <Button
                 type='button'
-                className='min-h-12 w-full rounded-xl bg-primary font-utekos-text-medium text-foreground hover:bg-primary/90 sm:w-auto sm:min-w-32'
+                className='min-h-12 w-full rounded-xl bg-primary font-sans font-semibold text-foreground hover:bg-primary/90 sm:w-auto sm:min-w-32'
               />
             }
           >

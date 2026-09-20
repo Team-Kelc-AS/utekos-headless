@@ -166,7 +166,7 @@ const Glow = ({ delay }: { delay: number }) => {
         delay: delay
       }}
       exit={{ opacity: 0 }}
-      className='absolute left-1/2 z-10 h-[4px] w-[4px] -translate-x-1/2 rounded-full bg-blue-500 shadow-2xl shadow-blue-400 blur-[1px]'
+      className='absolute left-1/2 z-10 h-[4px] w-[4px] -translate-x-1/2 rounded-full bg-ancient-water shadow-2xl shadow-ancient-water blur-[1px]'
     />
   )
 }

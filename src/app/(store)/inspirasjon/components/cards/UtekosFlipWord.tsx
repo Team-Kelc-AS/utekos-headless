@@ -10,7 +10,7 @@ export function UtekosFlipWord() {
           duration={900}
           animateLetters={false}
           random
-          className='font-utekos-text-medium px-0 text-4xl whitespace-nowrap text-foreground sm:text-5xl'
+          className='font-sans font-semibold px-0 text-4xl whitespace-nowrap text-foreground sm:text-5xl'
         />
       </div>
     </div>

@@ -16,7 +16,7 @@ export function ProductCardSkeleton() {
         </AspectRatio>
       </CardContent>
 
-      <CardHeader className='grow border-t border-neutral-800 p-6 pb-4'>
+      <CardHeader className='grow border-t border-card p-6 pb-4'>
         <Skeleton className='mb-3 h-7 w-5/6' />
         {/* Variant Selectors Skeleton */}
         <div className='flex flex-col gap-4'>

@@ -35,12 +35,12 @@ export default function UtekosAdFrame() {
       {/* MAKROFORMAT / "HERO PRODUCT" (33% av skjermen)
         Fastlåst proporsjon som alltid viser tekstur eller et massivt utsnitt.
       */}
-      <figure className='relative min-h-[400px] w-full shrink-0 border-t-8 border-(--brand-light) bg-gray-200 md:col-span-4 md:h-full md:border-t-0 md:border-l-8'>
+      <figure className='relative min-h-[400px] w-full shrink-0 border-t-8 border-(--brand-light) bg-white-sand md:col-span-4 md:h-full md:border-t-0 md:border-l-8'>
         {/* Bilde-placeholder. 
           Regel: Ikke vis hele jakken. Zoom inn på glidelåsen, CloudWeave-fyllet eller en strukturell søm slik at teksturen blir nesten abstrakt stor. 
         */}
-        <div className='absolute inset-0 flex items-center justify-center bg-gray-300 p-8'>
-          <span className='font-google-sans p-4 text-center font-bold text-gray-700'>
+        <div className='absolute inset-0 flex items-center justify-center bg-white-sand p-8'>
+          <span className='font-google-sans p-4 text-center font-bold text-muted-foreground'>
             [Makro-bilde av Stadionjakke-detalj]
           </span>
         </div>

@@ -44,7 +44,6 @@ test('hero headline is the intentional first-screen text LCP', async () => {
     'src/app/skreddersy-varmen/components/Hero.tsx'
   )
   const layout = await readSource('src/app/skreddersy-varmen/layout.tsx')
-  const fonts = await readSource('src/app/fonts/font.config.ts')
 
   assert.match(
     hero,
@@ -66,10 +65,5 @@ test('hero headline is the intentional first-screen text LCP', async () => {
     layout,
     /Google_Sans_Flex\(\{[\s\S]*?preload:\s*true/,
     'Google Sans Flex must preload so the hero headline can win text LCP'
-  )
-  assert.match(
-    fonts,
-    /export const utekosTextMedium = localFont\(\{[\s\S]*?preload:\s*false/,
-    'Later-scene Utekos Text Medium must stay off the critical path'
   )
 })

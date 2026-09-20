@@ -23,10 +23,10 @@ export function MagazineCategoryBadge({ category }: MagazineCategoryBadgeProps) 
     <BrandBadge
       backgroundColor='var(--color-magazine-article-card-pill)'
       textColor='var(--background)'
-      className='font-utekos-text-medium gap-1.5 rounded-lg border border-background/15 px-4 py-2 text-sm leading-[1.35] tracking-tight'
+      className='font-sans font-semibold gap-1.5 rounded-lg border border-background/15 px-4 py-2 text-sm leading-[1.35] tracking-tight'
     >
       <Icon className='size-3 shrink-0' aria-hidden />
-      <small className='font-utekos-text-medium text-sm tracking-tight'>{category}</small>
+      <small className='font-sans font-semibold text-sm tracking-tight'>{category}</small>
     </BrandBadge>
   )
 }

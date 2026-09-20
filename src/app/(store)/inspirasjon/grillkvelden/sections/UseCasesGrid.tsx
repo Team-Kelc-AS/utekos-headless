@@ -85,15 +85,15 @@ export function UseCasesGrid({
                           aria-hidden
                         />
                       </div>
-                      <p className='font-utekos-text-medium text-base tracking-[-0.02em] text-foreground'>
+                      <p className='font-sans font-semibold text-base tracking-[-0.02em] text-foreground'>
                         {useCase.time}
                       </p>
                     </div>
 
-                    <h3 className='mb-2 font-utekos-text-medium text-xl leading-[1.1] tracking-[-0.01em] text-foreground'>
+                    <h3 className='mb-2 font-sans font-semibold text-xl leading-[1.1] tracking-[-0.01em] text-foreground'>
                       {useCase.title}
                     </h3>
-                    <p className='font-utekos-text text-base tracking-[-0.02em] text-foreground'>
+                    <p className='font-sans text-base tracking-[-0.02em] text-foreground'>
                       {useCase.description}
                     </p>
                   </CardContent>

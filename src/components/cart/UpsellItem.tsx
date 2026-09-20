@@ -103,7 +103,7 @@ export function UpsellItem({
       </div>
 
       {showDiscountHint && (
-        <div className='flex items-center justify-center border-t border-secondary/20 pt-2 font-utekos-text-medium text-xs text-secondary'>
+        <div className='flex items-center justify-center border-t border-secondary/20 pt-2 font-sans font-semibold text-xs text-secondary'>
           <PercentIcon
             className='mr-1.5 h-3 w-3'
             aria-hidden='true'

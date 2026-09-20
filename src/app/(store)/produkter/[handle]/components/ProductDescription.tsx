@@ -16,7 +16,7 @@ function ProductDescriptionBlockView({
   return (
     <article className='space-y-3'>
       {block.title && (
-        <h3 className='font-sans font-utekos-text-medium text-xl leading-[1.15] tracking-normal text-card-foreground sm:text-2xl'>
+        <h3 className='font-sans font-semibold text-xl leading-[1.15] tracking-normal text-card-foreground sm:text-2xl'>
           {block.title}
         </h3>
       )}
@@ -65,7 +65,7 @@ export function ProductDescription({
   return (
     <article
       aria-labelledby='product-description-heading'
-      className='mt-5 rounded-[1.25rem] border border-border bg-jungle p-5 font-utekos-text text-card-foreground shadow-lg shadow-background/20 md:mt-8 sm:p-6'
+      className='mt-5 rounded-[1.25rem] border border-border bg-jungle p-5 font-sans text-card-foreground shadow-lg shadow-background/20 md:mt-8 sm:p-6'
     >
       <div
         id='product-description-content'
@@ -97,7 +97,7 @@ export function ProductDescription({
 
       {canExpand ?
         <details className='group mt-5 flex flex-col'>
-          <summary className='order-1 flex min-h-11 cursor-pointer list-none items-center font-utekos-text-medium text-base tracking-normal text-card-foreground underline-offset-4 group-open:order-last group-open:mt-6 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring [&::-webkit-details-marker]:hidden'>
+          <summary className='order-1 flex min-h-11 cursor-pointer list-none items-center font-sans font-semibold text-base tracking-normal text-card-foreground underline-offset-4 group-open:order-last group-open:mt-6 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring [&::-webkit-details-marker]:hidden'>
             <span className='group-open:hidden'>Les mer</span>
             <span className='hidden group-open:inline'>
               Vis mindre

@@ -30,7 +30,7 @@ export function ReviewCard({ review }: { review: Review }) {
             )
           )}
         </div>
-        <span className='leading-text-paragraph inline-flex shrink-0 items-center gap-1 font-utekos-text-medium text-[10px] tracking-[-0.01em] text-primary'>
+        <span className='leading-text-paragraph inline-flex shrink-0 items-center gap-1 font-sans font-semibold text-[10px] tracking-[-0.01em] text-primary'>
           Utekos TechDown™
         </span>
       </header>
@@ -49,12 +49,12 @@ export function ReviewCard({ review }: { review: Review }) {
       <footer className='flex items-center gap-3 border-t border-foreground/10 pt-4'>
         <div
           aria-hidden
-          className='flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 font-utekos-text-medium text-sm text-foreground transition-colors duration-400 group-hover:border-primary/40 group-hover:bg-primary/10 group-hover:text-foreground'
+          className='flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 font-sans font-semibold text-sm text-foreground transition-colors duration-400 group-hover:border-primary/40 group-hover:bg-primary/10 group-hover:text-foreground'
         >
           {initialsFrom(review.name)}
         </div>
         <div className='min-w-0'>
-          <p className='leading-text-paragraph truncate font-utekos-text-medium text-sm tracking-[-0.01em] text-foreground'>
+          <p className='leading-text-paragraph truncate font-sans font-semibold text-sm tracking-[-0.01em] text-foreground'>
             {review.name}
           </p>
           {(review.role || review.location) && (

@@ -28,7 +28,7 @@ const benefitsData = [
     title: 'Sosial magnet',
     description:
       'Gjør din båt til det naturlige samlingspunktet i havna.',
-    color: 'text-rose-500'
+    color: 'text-heart'
   }
 ]
 
@@ -58,7 +58,7 @@ export function BenefitsGrid() {
                 <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground'>
                   <Icon className={`h-8 w-8 ${benefit.color}`} />
                 </div>
-                <h3 className='mb-2 font-utekos-text-medium text-lg'>
+                <h3 className='mb-2 font-sans font-semibold text-lg'>
                   {benefit.title}
                 </h3>
                 <p className='text-sm text-muted-foreground'>

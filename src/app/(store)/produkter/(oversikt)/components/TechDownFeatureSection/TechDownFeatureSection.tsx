@@ -186,7 +186,7 @@ export const TechDownFeatureSection = () => {
                 <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground transition-transform group-hover:scale-110'>
                   <feature.icon className='h-5 w-5' />
                 </div>
-                <span className='font-utekos-text-medium text-foreground/90 transition-colors group-hover:text-foreground'>
+                <span className='font-sans font-semibold text-foreground/90 transition-colors group-hover:text-foreground'>
                   {feature.text}
                 </span>
               </li>

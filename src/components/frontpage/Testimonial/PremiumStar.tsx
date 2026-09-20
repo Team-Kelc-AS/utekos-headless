@@ -19,7 +19,7 @@ export function PremiumStar({ isFull, isHalf, seed }: PremiumStarProps) {
   if (!isFull && !isHalf) {
     return (
       <svg viewBox='0 0 24 24' className='h-4 w-4 drop-shadow-sm' aria-hidden='true' focusable='false'>
-        <path d={sharpStarPath} className='fill-neutral-800/80 stroke-neutral-800 stroke-1' />
+        <path d={sharpStarPath} className='fill-card/80 stroke-card stroke-1' />
       </svg>
     )
   }

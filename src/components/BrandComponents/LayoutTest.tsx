@@ -16,8 +16,8 @@ export function LayoutTest() {
 
 function LayoutTestBox() {
   return (
-    <div className='flex max-w-lg shrink-0 flex-col bg-gray-100 p-2'>
-      <div className='rounded-xl bg-white p-10 text-sm/7 text-gray-700'>
+    <div className='flex max-w-lg shrink-0 flex-col bg-cloud-dancer p-2'>
+      <div className='rounded-xl bg-white p-10 text-sm/7 text-muted-foreground'>
         <Image
           src='logo-dark.svg'
           width={24}
@@ -49,22 +49,22 @@ function LayoutTestBox() {
                   cx='11'
                   cy='11'
                   r='11'
-                  className='fill-sky-400/25'
+                  className='fill-ceramic/25'
                 />
                 <circle
                   cx='11'
                   cy='11'
                   r='10.5'
-                  className='stroke-sky-400/25'
+                  className='stroke-ceramic/25'
                 />
                 <path
                   d='M8 11.5L10.5 14L14 8'
-                  className='stroke-sky-800'
+                  className='stroke-dark-teal'
                 />
               </svg>
               <p className='ml-3'>
                 Customizing your theme with
-                <code className='font-mono font-medium text-gray-950'>
+                <code className='font-mono font-medium text-deep-fjord'>
                   @theme
                 </code>
               </p>
@@ -80,22 +80,22 @@ function LayoutTestBox() {
                   cx='11'
                   cy='11'
                   r='11'
-                  className='fill-sky-400/25'
+                  className='fill-ceramic/25'
                 />
                 <circle
                   cx='11'
                   cy='11'
                   r='10.5'
-                  className='stroke-sky-400/25'
+                  className='stroke-ceramic/25'
                 />
                 <path
                   d='M8 11.5L10.5 14L14 8'
-                  className='stroke-sky-800'
+                  className='stroke-dark-teal'
                 />
               </svg>
               <p className='ml-3'>
                 Adding custom utilities with
-                <code className='font-mono font-medium text-gray-950'>
+                <code className='font-mono font-medium text-deep-fjord'>
                   @utility
                 </code>
               </p>
@@ -111,22 +111,22 @@ function LayoutTestBox() {
                   cx='11'
                   cy='11'
                   r='11'
-                  className='fill-sky-400/25'
+                  className='fill-ceramic/25'
                 />
                 <circle
                   cx='11'
                   cy='11'
                   r='10.5'
-                  className='stroke-sky-400/25'
+                  className='stroke-ceramic/25'
                 />
                 <path
                   d='M8 11.5L10.5 14L14 8'
-                  className='stroke-sky-800'
+                  className='stroke-dark-teal'
                 />
               </svg>
               <p className='ml-3'>
                 Adding custom variants with
-                <code className='font-mono font-medium text-gray-950'>
+                <code className='font-mono font-medium text-deep-fjord'>
                   @variant
                 </code>
               </p>
@@ -142,17 +142,17 @@ function LayoutTestBox() {
                   cx='11'
                   cy='11'
                   r='11'
-                  className='fill-sky-400/25'
+                  className='fill-ceramic/25'
                 />
                 <circle
                   cx='11'
                   cy='11'
                   r='10.5'
-                  className='stroke-sky-400/25'
+                  className='stroke-ceramic/25'
                 />
                 <path
                   d='M8 11.5L10.5 14L14 8'
-                  className='stroke-sky-800'
+                  className='stroke-dark-teal'
                 />
               </svg>
               <p className='ml-3'>
@@ -168,10 +168,10 @@ function LayoutTestBox() {
         </div>
         <hr className='my-6 w-full border-(--pattern-fg)' />
         <p className='mb-3'>Want to dig deeper into Tailwind?</p>
-        <p className='font-utekos-text-medium'>
+        <p className='font-sans font-semibold'>
           <a
             href='https://tailwindcss.com/docs'
-            className='text-gray-950 underline decoration-sky-400 underline-offset-3 hover:decoration-2'
+            className='text-deep-fjord underline decoration-ceramic underline-offset-3 hover:decoration-2'
           >
             Read the docs &rarr;
           </a>

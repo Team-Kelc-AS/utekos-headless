@@ -20,7 +20,7 @@ export const CardTweetDemo = () => {
           </Avatar>
           <div className='flex flex-col gap-0.5'>
             <CardTitle className='flex items-center gap-1 text-sm'>
-              Philip George <BadgeCheck className='text-background size-4 fill-sky-600 ' />
+              Philip George <BadgeCheck className='text-background size-4 fill-ceramic ' />
             </CardTitle>
             <CardDescription>@philip20</CardDescription>
           </div>

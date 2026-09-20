@@ -212,8 +212,8 @@
   min-width: 7rem;
 }
 .tableRegion th {
-  font-family: var(--font-utekos-text-medium), sans-serif;
-  font-weight: 500;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
 }
 .tableRegion th:first-child {
   position: sticky;
@@ -270,7 +270,8 @@
   padding: 1rem 0;
   list-style: none;
   cursor: pointer;
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: 1.125rem;
   line-height: 1.5;
 }

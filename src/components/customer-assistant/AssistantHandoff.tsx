@@ -43,7 +43,7 @@ export function AssistantHandoff({
     >
       <h3
         id={headingId}
-        className='font-utekos-text-medium text-base'
+        className='font-sans font-semibold text-base'
       >
         Snakk med kundeservice
       </h3>
@@ -55,7 +55,7 @@ export function AssistantHandoff({
       <div className='mt-4 grid gap-2'>
         <Link
           href={handoff.contactPath as Route}
-          className='hover:bg-primary-hover inline-flex min-h-11 items-center gap-3 rounded-xl bg-primary px-4 py-2.5 font-utekos-text-medium text-sm text-primary-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
+          className='hover:bg-primary-hover inline-flex min-h-11 items-center gap-3 rounded-xl bg-primary px-4 py-2.5 font-sans font-semibold text-sm text-primary-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
         >
           <MessageSquareTextIcon
             className='size-4'
@@ -97,7 +97,7 @@ export function AssistantHandoff({
           <button
             type='button'
             onClick={copySummary}
-            className='mt-2 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-border bg-popover px-4 py-2.5 font-utekos-text-medium text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
+            className='mt-2 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-border bg-popover px-4 py-2.5 font-sans font-semibold text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
           >
             {copyStatus === 'copied' ?
               <CheckIcon className='size-4' aria-hidden='true' />

@@ -29,7 +29,7 @@ export function LinkedSectionBody({
         href={NBCC_LOGIN_URL}
         target='_blank'
         rel='noreferrer'
-        className='font-utekos-text-medium text-[#f0c36a] underline decoration-[#f0c36a]/40 underline-offset-4 hover:text-[#ffd886]'
+        className='font-sans font-semibold text-[#f0c36a] underline decoration-[#f0c36a]/40 underline-offset-4 hover:text-[#ffd886]'
       >
         Min Side hos NBCC
       </a>

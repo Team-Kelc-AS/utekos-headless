@@ -57,7 +57,7 @@ export default async function CustomerAccountLoginPage({
     <div className='relative isolate min-h-[calc(100svh-5rem)] overflow-hidden bg-background px-4 py-12 text-foreground sm:px-6 sm:py-20'>
       <div
         aria-hidden='true'
-        className='absolute top-8 left-[8%] -z-10 size-64 rounded-full bg-cyan-500/10 blur-3xl'
+        className='absolute top-8 left-[8%] -z-10 size-64 rounded-full bg-ancient-water/10 blur-3xl'
       />
       <div
         aria-hidden='true'
@@ -70,17 +70,17 @@ export default async function CustomerAccountLoginPage({
             aria-hidden='true'
             className='absolute -top-16 -right-16 -z-10 size-64 rounded-full border-42 border-white/10'
           />
-          <div className='flex size-20 items-center justify-center rounded-[1.35rem] bg-cyan-500 text-[#172744] shadow-xl shadow-black/20'>
+          <div className='flex size-20 items-center justify-center rounded-[1.35rem] bg-ancient-water text-[#172744] shadow-xl shadow-black/20'>
             <Heart
               className='size-10 fill-current stroke-[2.25]'
               aria-hidden='true'
             />
           </div>
           <div className='space-y-4'>
-            <p className='text-sm font-utekos-text-medium tracking-[0.18em] opacity-75'>
+            <p className='text-sm font-sans font-semibold tracking-[0.18em] opacity-75'>
               Din Utekos-konto
             </p>
-            <p className='max-w-sm text-3xl leading-tight font-utekos-text-medium text-balance'>
+            <p className='max-w-sm text-3xl leading-tight font-sans font-semibold text-balance'>
               Lagre favoritter og finn dem igjen når det passer
               deg.
             </p>
@@ -89,17 +89,17 @@ export default async function CustomerAccountLoginPage({
 
         <section className='bg-popover px-6 py-9 text-popover-foreground sm:px-10 sm:py-12 lg:px-14'>
           <div className='mx-auto max-w-md'>
-            <div className='mb-7 flex size-14 items-center justify-center rounded-2xl bg-cyan-500 text-[#172744] lg:hidden'>
+            <div className='mb-7 flex size-14 items-center justify-center rounded-2xl bg-ancient-water text-[#172744] lg:hidden'>
               <Heart
                 className='size-7 fill-current stroke-[2.25]'
                 aria-hidden='true'
               />
             </div>
 
-            <h1 className='text-3xl leading-tight font-utekos-text-medium sm:text-4xl'>
+            <h1 className='text-3xl leading-tight font-sans font-semibold sm:text-4xl'>
               {isCreateMode ? 'Opprett konto' : 'Logg inn'}
             </h1>
-            <p className='mt-4 text-base leading-7 font-utekos-text text-foreground'>
+            <p className='mt-4 text-base leading-7 font-sans text-foreground'>
               {isCreateMode ?
                 'Opprett en Utekos-konto gjennom Shopify. Du trenger bare e-postadressen din for å komme i gang.'
               : 'Du kan logge inn med Utekos-kontoen din eller velge Facebook eller Google på den sikre Shopify-siden.'
@@ -153,7 +153,7 @@ export default async function CustomerAccountLoginPage({
                 type='submit'
                 variant='commerce-primary'
                 size='lg'
-                className='min-h-12 w-full rounded-full bg-cyan-500 px-6 text-base text-[#172744] shadow-sm hover:bg-cyan-400 hover:text-[#172744]'
+                className='min-h-12 w-full rounded-full bg-ancient-water px-6 text-base text-[#172744] shadow-sm hover:bg-ancient-water hover:text-[#172744]'
               >
                 {isCreateMode ?
                   'Opprett konto hos Shopify'

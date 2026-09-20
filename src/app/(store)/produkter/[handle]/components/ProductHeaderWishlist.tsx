@@ -44,7 +44,7 @@ export function ProductHeaderWishlist({
         side='bottom'
         align='end'
         sideOffset={8}
-        className='w-fit rounded-xl border border-foreground/12 bg-night px-3.5 py-2 font-utekos-text-medium text-sm tracking-tight text-foreground shadow-[0_16px_36px_-22px_rgba(0,0,0,0.72)]'
+        className='w-fit rounded-xl border border-foreground/12 bg-night px-3.5 py-2 font-sans font-semibold text-sm tracking-tight text-foreground shadow-[0_16px_36px_-22px_rgba(0,0,0,0.72)]'
       >
         Legg i ønskeliste?
       </HoverCardContent>

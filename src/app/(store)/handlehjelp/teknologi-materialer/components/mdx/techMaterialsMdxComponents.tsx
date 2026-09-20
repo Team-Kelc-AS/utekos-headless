@@ -45,11 +45,11 @@ function TechMaterialsH2({
         'comfortable',
         isTocHeading ?
           cn(
-            'font-utekos-text-medium text-sm tracking-[0.14em] text-foreground/80 uppercase',
+            'font-sans font-semibold text-sm tracking-[0.14em] text-foreground/80 uppercase',
             className
           )
         : cn(
-            'mt-12 font-utekos-text-medium text-3xl tracking-tight text-foreground first:mt-0 md:text-4xl',
+            'mt-12 font-sans font-semibold text-3xl tracking-tight text-foreground first:mt-0 md:text-4xl',
             className
           )
       )}
@@ -72,7 +72,7 @@ function TechMaterialsH3({
       className={headingPermalinkClassName(
         'comfortable',
         cn(
-          'mt-8 font-utekos-text-medium text-2xl leading-tight tracking-tight text-foreground',
+          'mt-8 font-sans font-semibold text-2xl leading-tight tracking-tight text-foreground',
           className
         )
       )}
@@ -95,7 +95,7 @@ function TechMaterialsH4({
       className={headingPermalinkClassName(
         'compact',
         cn(
-          'mt-8 font-utekos-text-medium text-xl leading-tight tracking-tight text-foreground',
+          'mt-8 font-sans font-semibold text-xl leading-tight tracking-tight text-foreground',
           className
         )
       )}
@@ -114,7 +114,7 @@ function TechMaterialsParagraph({
   return (
     <p
       className={cn(
-        'mt-0 max-w-[65ch] font-utekos-text text-base leading-relaxed text-foreground',
+        'mt-0 max-w-[65ch] font-sans text-base leading-relaxed text-foreground',
         className
       )}
       {...props}
@@ -133,7 +133,7 @@ function TechMaterialsTable({
     <div className='my-6 overflow-x-auto rounded-xl border border-foreground/12 bg-background/40'>
       <table
         className={cn(
-          'w-full min-w-xl border-collapse text-left font-utekos-text text-sm text-foreground',
+          'w-full min-w-xl border-collapse text-left font-sans text-sm text-foreground',
           className
         )}
         {...props}
@@ -167,7 +167,7 @@ function TechMaterialsTableHeaderCell({
   return (
     <th
       className={cn(
-        'px-4 py-3 font-utekos-text-medium text-foreground',
+        'px-4 py-3 font-sans font-semibold text-foreground',
         className
       )}
       {...props}
@@ -203,7 +203,7 @@ function TechMaterialsBlockquote({
   return (
     <blockquote
       className={cn(
-        'my-8 bg-jungle px-5 py-4 font-utekos-text text-lg leading-relaxed text-foreground [&_p]:mt-0 [&_p]:max-w-none',
+        'my-8 bg-jungle px-5 py-4 font-sans text-lg leading-relaxed text-foreground [&_p]:mt-0 [&_p]:max-w-none',
         className
       )}
       {...props}
@@ -221,7 +221,7 @@ function TechMaterialsUnorderedList({
   return (
     <ul
       className={cn(
-        'my-5 list-disc space-y-2 pl-5 font-utekos-text marker:text-primary',
+        'my-5 list-disc space-y-2 pl-5 font-sans marker:text-primary',
         className
       )}
       {...props}
@@ -274,7 +274,7 @@ function TechMaterialsFigcaption({
   return (
     <figcaption
       className={cn(
-        'mb-3 font-utekos-text-medium text-sm tracking-wide text-foreground/75',
+        'mb-3 font-sans font-semibold text-sm tracking-wide text-foreground/75',
         className
       )}
       {...props}

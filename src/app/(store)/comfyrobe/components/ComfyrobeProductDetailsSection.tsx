@@ -13,7 +13,7 @@ function ProductSpecGroup({
   return (
     <div className='space-y-3'>
       {group.title ?
-        <h4 className='font-utekos-text-medium text-base leading-snug text-foreground'>
+        <h4 className='font-sans font-semibold text-base leading-snug text-foreground'>
           {group.title}
         </h4>
       : null}
@@ -22,7 +22,7 @@ function ProductSpecGroup({
         <dl className='grid gap-3 sm:grid-cols-2'>
           {group.rows.map(row => (
             <div key={row.label}>
-              <dt className='font-utekos-text-medium text-sm leading-[1.35] text-foreground'>
+              <dt className='font-sans font-semibold text-sm leading-[1.35] text-foreground'>
                 {row.label}
               </dt>
               <dd className='mt-1 text-sm leading-normal text-pretty text-foreground/82'>
@@ -106,7 +106,7 @@ export function ComfyrobeProductDetailsSection() {
     >
       <div className='mx-auto max-w-7xl'>
         <header className='max-w-2xl'>
-          <p className='font-utekos-text-medium text-sm tracking-[0.18em] text-primary uppercase'>
+          <p className='font-sans font-semibold text-sm tracking-[0.18em] text-primary uppercase'>
             Produktdetaljer
           </p>
           <h2
@@ -115,7 +115,7 @@ export function ComfyrobeProductDetailsSection() {
           >
             Stoff, snitt og stell
           </h2>
-          <p className='mt-5 max-w-xl font-utekos-text text-base leading-relaxed text-pretty text-foreground/80 md:text-lg'>
+          <p className='mt-5 max-w-xl font-sans text-base leading-relaxed text-pretty text-foreground/80 md:text-lg'>
             HydroGuard™-skall, SherpaCore™-fôr og en romslig
             unisex-passform – med stell som bevarer
             vanntettheten.
@@ -135,7 +135,7 @@ export function ComfyrobeProductDetailsSection() {
                 <h3 className='font-google-sans text-2xl leading-tight font-bold tracking-tight text-foreground'>
                   {section.title}
                 </h3>
-                <div className='mt-5 max-w-prose space-y-6 font-utekos-text'>
+                <div className='mt-5 max-w-prose space-y-6 font-sans'>
                   {section.groups.map((group, index) => (
                     <ProductSpecGroup
                       key={`${group.title ?? section.id}-${index}`}

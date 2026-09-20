@@ -18,7 +18,7 @@ export const BuyButton: React.FC<ButtonPreviewProps> = ({
   const getVariantStyles = () => {
     switch (variant) {
       case 'solid':
-        return 'bg-white text-black hover:bg-gray-200 active:scale-95 shadow-white/10'
+        return 'bg-white text-black hover:bg-white-sand active:scale-95 shadow-white/10'
       case 'outline':
         return 'bg-transparent border-2 border-white/40 text-white hover:bg-white/10 active:scale-95'
       case 'filled':
@@ -37,7 +37,7 @@ export const BuyButton: React.FC<ButtonPreviewProps> = ({
       case 'outline':
         return 'bg-white/40'
       default:
-        return 'bg-blue-500'
+        return 'bg-ancient-water'
     }
   }
 

@@ -25,7 +25,7 @@ export function AboutRetailer() {
             <AboutBadge className='mb-6'>
               Fysisk butikk i Bergen
             </AboutBadge>
-            <h2 className='font-sans font-utekos-text-medium text-3xl leading-tight text-foreground sm:text-4xl'>
+            <h2 className='font-sans font-semibold text-3xl leading-tight text-foreground sm:text-4xl'>
               Opplev Utekos hos Intersport Laksevåg
             </h2>
             <p className='/80 mt-5 max-w-2xl text-lg leading-8 text-foreground/80'>
@@ -37,7 +37,7 @@ export function AboutRetailer() {
             <Button
               asChild
               variant='secondary'
-              className='mt-8 min-h-12 gap-2 rounded-3xl px-8 py-3 font-utekos-text-medium text-base'
+              className='mt-8 min-h-12 gap-2 rounded-3xl px-8 py-3 font-sans font-semibold text-base'
               size='lg'
             >
               <Link

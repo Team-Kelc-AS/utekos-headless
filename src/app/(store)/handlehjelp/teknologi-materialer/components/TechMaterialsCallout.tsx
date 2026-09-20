@@ -67,10 +67,10 @@ export function TechMaterialsCallout({
         presentation.className
       )}
     >
-      <p className='mb-2 font-utekos-text-medium text-sm tracking-wide text-primary'>
+      <p className='mb-2 font-sans font-semibold text-sm tracking-wide text-primary'>
         {presentation.label}
       </p>
-      <div className='font-utekos-text text-[0.95rem] leading-relaxed [&_p]:mt-0 [&_p]:max-w-none'>
+      <div className='font-sans text-[0.95rem] leading-relaxed [&_p]:mt-0 [&_p]:max-w-none'>
         {children}
       </div>
     </aside>

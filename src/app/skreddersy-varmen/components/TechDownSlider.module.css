@@ -53,7 +53,8 @@
   display: block;
   margin-bottom: 1.25rem;
   color: var(--primary);
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: clamp(0.875rem, 2vw, 1rem);
   line-height: 1;
   letter-spacing: 0.08em;
@@ -83,7 +84,7 @@
   max-width: 34rem;
   margin: 0;
   color: color-mix(in srgb, var(--foreground) 82%, transparent);
-  font-family: var(--font-utekos-text), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: clamp(1.05rem, 2.8vw, 1.35rem);
   line-height: 1.5;
 }
@@ -94,7 +95,8 @@
   gap: 0.7rem;
   margin: 1.75rem 0 0;
   color: var(--foreground);
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: 0.9rem;
 }
 
@@ -170,7 +172,8 @@
     var(--evening) 88%,
     transparent
   );
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: 0.75rem;
   line-height: 1;
   letter-spacing: 0.04em;
@@ -245,14 +248,15 @@
 }
 
 .controlCopy label {
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: clamp(0.95rem, 2vw, 1.05rem);
 }
 
 .controlCopy output {
   flex: none;
   color: color-mix(in srgb, var(--foreground) 62%, transparent);
-  font-family: var(--font-utekos-text), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 0.78rem;
   font-variant-numeric: tabular-nums;
 }
@@ -280,7 +284,7 @@
   justify-content: space-between;
   margin-top: 0.25rem;
   color: color-mix(in srgb, var(--foreground) 54%, transparent);
-  font-family: var(--font-utekos-text), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 0.72rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -337,7 +341,8 @@
   display: block;
   margin-bottom: 0.5rem;
   color: var(--primary);
-  font-family: var(--font-utekos-text-medium), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
   font-size: 0.76rem;
   line-height: 1;
   letter-spacing: 0.08em;
@@ -359,7 +364,7 @@
   max-width: 38rem;
   margin: 0;
   color: color-mix(in srgb, var(--foreground) 80%, transparent);
-  font-family: var(--font-utekos-text), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: clamp(1rem, 2.6vw, 1.2rem);
   line-height: 1.55;
 }

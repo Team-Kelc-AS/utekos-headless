@@ -26,7 +26,7 @@ export async function NodeSection() {
         >
           Drevet av ekte opplevelser
         </H2>
-        <P className='mt-0! max-w-3xl font-utekos-text-medium! text-base leading-relaxed text-foreground/80 sm:text-lg'>
+        <P className='mt-0! max-w-3xl font-sans! font-semibold text-base leading-relaxed text-foreground/80 sm:text-lg'>
           Våre beste produktutviklere er kundene våre. Vi lytter, lærer og designer for at du kan skape flere og bedre minner utendørs.
         </P>
       </hgroup>

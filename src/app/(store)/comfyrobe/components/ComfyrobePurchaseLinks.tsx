@@ -18,7 +18,7 @@ export function ComfyrobePurchaseLinks({
   className?: string
 }) {
   const triggerClassName =
-    'flex min-h-11 items-center gap-2 font-utekos-text-medium text-sm underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary'
+    'flex min-h-11 items-center gap-2 font-sans font-semibold text-sm underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary'
 
   return (
     <div className={cn('flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-2', className)}>

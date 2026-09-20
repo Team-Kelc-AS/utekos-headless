@@ -97,7 +97,7 @@ export function Hero({
             aria-label='Kundeanmeldelser'
           >
             <HeroStars />
-            <span className='font-utekos-text-medium text-foreground'>
+            <span className='font-sans font-semibold text-foreground'>
               {techDownReviewSummary.ratingValue.toFixed(1)}/5
             </span>
           </div>

@@ -85,7 +85,7 @@ export function FacebookLoginConnectionControl() {
     >
       <h2
         id='facebook-tilkobling-title'
-        className='font-utekos-text-medium text-2xl'
+        className='font-sans font-semibold text-2xl'
       >
         Facebook-tilkobling
       </h2>

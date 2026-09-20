@@ -99,7 +99,7 @@ function AddToCartButton() {
   return (
     <button
       className={cn(
-        'font-google-sans transform rounded-full px-12 py-4 font-utekos-text font-bold tracking-normal transition-colors duration-200 hover:scale-105'
+        'font-google-sans transform rounded-full px-12 py-4 font-sans font-bold tracking-normal transition-colors duration-200 hover:scale-105'
       )}
     >
       Legg i handlekurv

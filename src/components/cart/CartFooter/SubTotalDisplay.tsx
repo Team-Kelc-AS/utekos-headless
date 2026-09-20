@@ -7,7 +7,7 @@ export const SubtotalDisplay = ({
 }: {
   subtotal: string
 }): React.JSX.Element => (
-  <div className='flex justify-between font-utekos-text-medium'>
+  <div className='flex justify-between font-sans font-semibold'>
     <span>Delsum</span>
     <span>{subtotal}</span>
   </div>

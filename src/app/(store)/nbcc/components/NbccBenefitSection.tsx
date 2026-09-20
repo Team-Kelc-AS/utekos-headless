@@ -11,7 +11,7 @@ export function NbccBenefitSection() {
       <div className='mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-start'>
         <NbccReveal>
           <Badge variant='promo'>Medlemsfordel for NBCC-medlemmer</Badge>
-          <h2 className='mt-6 max-w-2xl font-utekos-text-medium text-3xl tracking-normal text-balance text-foreground sm:text-4xl'>
+          <h2 className='mt-6 max-w-2xl font-sans font-semibold text-3xl tracking-normal text-balance text-foreground sm:text-4xl'>
             En varm fordel for de lange utekveldene.
           </h2>
         </NbccReveal>
@@ -39,7 +39,7 @@ export function NbccBenefitSection() {
             aria-hidden
           />
           <div>
-            <h3 className='font-utekos-text-medium text-foreground'>
+            <h3 className='font-sans font-semibold text-foreground'>
               Din NBCC-fordel
             </h3>
             <p className='mt-2 text-sm leading-6 text-muted-foreground'>
@@ -56,7 +56,7 @@ export function NbccBenefitSection() {
             aria-hidden
           />
           <div>
-            <h3 className='font-utekos-text-medium text-foreground'>
+            <h3 className='font-sans font-semibold text-foreground'>
               Bred campingrelevans
             </h3>
             <p className='mt-2 text-sm leading-6 text-muted-foreground'>
@@ -73,7 +73,7 @@ export function NbccBenefitSection() {
             aria-hidden
           />
           <div>
-            <h3 className='font-utekos-text-medium text-foreground'>
+            <h3 className='font-sans font-semibold text-foreground'>
               Klar for neste samling
             </h3>
             <p className='mt-2 text-sm leading-6 text-muted-foreground'>

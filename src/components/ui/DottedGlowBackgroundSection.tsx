@@ -34,7 +34,7 @@ export function DottedGlowBackgroundSection() {
           </p>
         </div>
         <div className='flex flex-col gap-4 sm:flex-row'>
-          <button className='inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-8 py-3 text-sm font-medium text-neutral-700 shadow-sm transition-all duration-200 hover:bg-neutral-50 hover:shadow-md'>
+          <button className='inline-flex items-center justify-center rounded-lg border border-white-sand bg-white px-8 py-3 text-sm font-medium text-jungle-tone shadow-sm transition-all duration-200 hover:bg-cloud-dancer hover:shadow-md'>
             Se priser
           </button>
         </div>

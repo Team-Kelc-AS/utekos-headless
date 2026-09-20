@@ -108,7 +108,7 @@ export function SoldOutWaitlistDialog({
               <Clock3 className='size-7' aria-hidden='true' />
             </div>
             <DialogHeader className='pr-8'>
-              <DialogTitle className='font-utekos-text-medium text-2xl leading-tight text-card-foreground sm:text-3xl'>
+              <DialogTitle className='font-sans font-semibold text-2xl leading-tight text-card-foreground sm:text-3xl'>
                 Utsolgt akkurat nå
               </DialogTitle>
               <DialogDescription className='text-base leading-7 text-card-foreground/80'>
@@ -128,7 +128,7 @@ export function SoldOutWaitlistDialog({
                 <span className='flex size-14 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground'>
                   <Check className='size-7' aria-hidden='true' />
                 </span>
-                <h2 className='font-utekos-text-medium text-xl'>
+                <h2 className='font-sans font-semibold text-xl'>
                   Du står på ventelisten
                 </h2>
                 <p className='leading-6 text-muted-foreground'>
@@ -335,7 +335,7 @@ export function SoldOutWaitlistDialog({
                 size='lg'
                 disabled={isPending}
                 aria-busy={isPending}
-                className='min-h-12 w-full rounded-full bg-primary px-6 text-base text-foreground font-utekos-text-medium shadow-sm hover:opacity-60'
+                className='min-h-12 w-full rounded-full bg-primary px-6 text-base text-foreground font-sans font-semibold shadow-sm hover:opacity-60'
               >
                 {isPending ?
                   <>

@@ -11,7 +11,7 @@ export function MagazineHeadingBlock({
     return (
       <div className='pt-4'>
         {block.eyebrow && (
-          <p className='mb-3 font-utekos-text-medium text-sm leading-4 text-magazine-article-card-pill'>
+          <p className='mb-3 font-sans font-semibold text-sm leading-4 text-magazine-article-card-pill'>
             {block.eyebrow}
           </p>
         )}
@@ -25,7 +25,7 @@ export function MagazineHeadingBlock({
   return (
     <div className='pt-6'>
       {block.eyebrow && (
-        <p className='mb-3 font-utekos-text-medium text-sm leading-4 text-magazine-article-card-pill'>
+        <p className='mb-3 font-sans font-semibold text-sm leading-4 text-magazine-article-card-pill'>
           {block.eyebrow}
         </p>
       )}

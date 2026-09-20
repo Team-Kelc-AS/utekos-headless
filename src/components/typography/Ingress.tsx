@@ -13,7 +13,7 @@ export function Ingress({
   return (
     <p
       className={cn(
-        'font-utekos-text-medium text-xl tracking-normal md:text-2xl lg:max-w-4xl lg:text-3xl',
+        'font-sans font-semibold text-xl tracking-normal md:text-2xl lg:max-w-4xl lg:text-3xl',
         className ?? ''
       )}
     >

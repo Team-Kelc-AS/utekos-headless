@@ -2,19 +2,19 @@
 
 import Script from 'next/script'
 
-type ConsentGrantedScriptProps = {
+type CanonicalBrowserProviderScriptProps = {
   id: string
   src: string
   'data-pixel-id'?: string
   'data-tag-id'?: string
 }
 
-export function ConsentGrantedScript({
+export function CanonicalBrowserProviderScript({
   id,
   src,
   'data-pixel-id': dataPixelId,
   'data-tag-id': dataTagId
-}: ConsentGrantedScriptProps) {
+}: CanonicalBrowserProviderScriptProps) {
   return (
     <Script
       id={id}

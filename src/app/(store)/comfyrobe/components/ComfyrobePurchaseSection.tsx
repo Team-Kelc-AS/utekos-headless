@@ -15,14 +15,14 @@ export function ComfyrobePurchaseSection({
           <h2 className='font-google-sans font-sans text-3xl font-bold'>
             Produktvalget er midlertidig utilgjengelig
           </h2>
-          <p className='mt-4 font-utekos-text leading-relaxed text-background/80'>
+          <p className='mt-4 font-sans leading-relaxed text-background/80'>
             Vi kunne ikke hente oppdatert pris og lagerstatus
             akkurat nå. Ingen pris eller lagerpåstand vises før
             Shopify svarer.
           </p>
           <Link
             href='/produkter/comfyrobe'
-            className='mt-6 inline-flex font-utekos-text-medium underline underline-offset-4'
+            className='mt-6 inline-flex font-sans font-semibold underline underline-offset-4'
           >
             Åpne produktsiden
           </Link>

@@ -54,7 +54,7 @@ export function ComfyrobeProofBridge() {
           variants={comfyrobeRevealItem}
         >
           <div>
-            <p className='font-utekos-text-medium text-sm tracking-wide text-primary'>
+            <p className='font-sans font-semibold text-sm tracking-wide text-primary'>
               Romslig og funksjonell passform
             </p>
             <h2
@@ -64,7 +64,7 @@ export function ComfyrobeProofBridge() {
              Skreddersy varmen
             </h2>
           </div>
-          <p className='max-w-2xl font-utekos-text text-lg leading-relaxed text-foreground/80 lg:justify-self-end'>
+          <p className='max-w-2xl font-sans text-lg leading-relaxed text-foreground/80 lg:justify-self-end'>
             Comfyrobe™ kombinerer banebrytende innovasjon med tidløs eleganse.
             Fra hundeturen til sidelinjen, hytten og raske
           </p>
@@ -83,7 +83,7 @@ export function ComfyrobeProofBridge() {
                 className='border-b border-border py-6 last:border-b-0 sm:nth-3:border-b-0 lg:border-b-0 lg:px-6 lg:first:pl-0 lg:last:pr-0'
                 variants={comfyrobeRevealItem}
               >
-                <dt className='font-google-sans flex items-center gap-3 font-utekos-text-medium font-bold text-foreground'>
+                <dt className='font-google-sans flex items-center gap-3 font-sans font-semibold font-bold text-foreground'>
                   <Icon
                     className='size-5 shrink-0 text-primary'
                     aria-hidden

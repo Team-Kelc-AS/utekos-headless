@@ -43,7 +43,7 @@ export function ComfyrobePurchaseClient({
           <h2 className='font-google-sans font-sans text-3xl font-bold'>
             Comfyrobe™ er midlertidig utsolgt
           </h2>
-          <p className='mt-4 font-utekos-text text-foreground/90'>
+          <p className='mt-4 font-sans text-foreground/90'>
             Produktet kan ikke bestilles før Shopify rapporterer
             en tilgjengelig variant.
           </p>

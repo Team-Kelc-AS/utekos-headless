@@ -66,10 +66,10 @@ export async function NbccProductSection() {
                     />
                   </CardHeader>
                   <CardContent className='px-6 pb-6'>
-                    <p className='font-utekos-text-medium text-sm text-foreground'>
+                    <p className='font-sans font-semibold text-sm text-foreground'>
                       {product.shortTitle}
                     </p>
-                    <CardTitle className='mt-3 font-utekos-text-medium text-2xl text-foreground'>
+                    <CardTitle className='mt-3 font-sans font-semibold text-2xl text-foreground'>
                       {product.title}
                     </CardTitle>
                     <div className='mt-5'>

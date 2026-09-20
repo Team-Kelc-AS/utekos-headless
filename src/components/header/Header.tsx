@@ -61,7 +61,7 @@ export default function Header({
           <HeaderNavigationLink
             href={'/kontaktskjema' as Route}
             data-track='HeaderCustomerServiceClick'
-            className='hidden h-11 min-w-31 items-center justify-center gap-2 rounded-md px-3 font-utekos-text-medium text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex'
+            className='hidden h-11 min-w-31 items-center justify-center gap-2 rounded-md px-3 font-sans font-semibold text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex'
           >
             <HeadphonesIcon
               className='size-4'

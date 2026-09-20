@@ -107,14 +107,14 @@ export function CustomerAssistantPanel({
     >
       <header className='flex items-start justify-between gap-4 border-b border-border px-5 py-4'>
         <div>
-          <p className='font-utekos-text-medium text-xs tracking-wide text-popover-foreground/65 uppercase'>
+          <p className='font-sans font-semibold text-xs tracking-wide text-popover-foreground/65 uppercase'>
             Utekos
           </p>
           <h2
             ref={headingRef}
             id={headingId}
             tabIndex={-1}
-            className='mt-1 font-utekos-text-medium text-xl leading-tight outline-none focus-visible:ring-2 focus-visible:ring-ring'
+            className='mt-1 font-sans font-semibold text-xl leading-tight outline-none focus-visible:ring-2 focus-visible:ring-ring'
           >
             Kjøpshjelp
           </h2>
@@ -169,7 +169,7 @@ export function CustomerAssistantPanel({
             <button
               type='button'
               onClick={onRetry}
-              className='inline-flex min-h-11 items-center justify-center rounded-xl border border-border bg-background px-4 py-2 font-utekos-text-medium text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
+              className='inline-flex min-h-11 items-center justify-center rounded-xl border border-border bg-background px-4 py-2 font-sans font-semibold text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
             >
               Prøv igjen
             </button>

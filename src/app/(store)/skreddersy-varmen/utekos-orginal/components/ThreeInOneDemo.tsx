@@ -15,7 +15,7 @@ export function ThreeInOneDemo() {
     <article className='w-full overflow-hidden bg-jungle py-16 text-[#F4F1EA] md:py-24'>
       <div className='mx-auto max-w-6xl px-4 text-center md:px-6'>
         <AnimatedBlock className='animate-on-scroll mb-6 md:mb-12'>
-          <span className='mb-3 block font-utekos-text-medium text-xs tracking-wide text-primary uppercase md:text-sm'>
+          <span className='mb-3 block font-sans font-semibold text-xs tracking-wide text-primary uppercase md:text-sm'>
             Modulært system
           </span>
           <h3 className='mb-4 font-serif text-3xl md:mb-6 md:text-5xl'>

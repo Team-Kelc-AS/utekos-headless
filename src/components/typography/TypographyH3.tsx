@@ -18,7 +18,7 @@ export function H3({
     <h3
       id={ID ?? id}
       className={cn(
-        'scroll-m-20 pb-4 font-sans font-utekos-text-medium text-2xl leading-tight tracking-tight md:text-3xl',
+        'scroll-m-20 pb-4 font-sans font-semibold text-2xl leading-tight tracking-tight md:text-3xl',
         className ?? ''
       )}
     >

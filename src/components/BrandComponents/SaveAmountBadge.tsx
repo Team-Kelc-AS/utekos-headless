@@ -8,7 +8,7 @@ export const SaveAmountBadge = ({
   return (
     <Badge
       variant='secondary'
-      className='font-utekos-text px-7 py-6 text-base'
+      className='font-sans px-7 py-6 text-base'
     >
       Spar {savingsAmount} kr
     </Badge>

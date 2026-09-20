@@ -81,7 +81,7 @@ export function AboutCarousel() {
               <BrandBadge
                 backgroundColor='var(--color-primary)'
                 textColor='var(--foreground)'
-                className='mb-12 gap-2 font-utekos-text-medium! shadow-[0_18px_44px_-28px_color-mix(in_oklab,var(--color-primary)_80%,transparent)]'
+                className='mb-12 gap-2 font-sans! font-semibold shadow-[0_18px_44px_-28px_color-mix(in_oklab,var(--color-primary)_80%,transparent)]'
               >
                 <Camera className='size-5' strokeWidth={1.6} />
                 <span>Livet med Utekos</span>
@@ -105,7 +105,7 @@ export function AboutCarousel() {
                 duration: 0.75,
                 ease: [0.22, 1, 0.36, 1]
               }}
-              className='font-utekos-text-medium text-foreground'
+              className='font-sans font-semibold text-foreground'
             >
               Se hvordan kompromissløs komfort gir liv til dine
               favorittøyeblikk utendørs.

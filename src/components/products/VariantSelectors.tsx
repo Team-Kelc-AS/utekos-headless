@@ -34,7 +34,7 @@ export function VariantSelectors({
           if (option.optionValues.length === 1) {
             return (
               <div key={option.name} className='space-y-2'>
-                <h3 className='font-utekos-text-medium text-sm tracking-wide text-foreground uppercase'>
+                <h3 className='font-sans font-semibold text-sm tracking-wide text-foreground uppercase'>
                   {option.name}
                 </h3>
                 <p className='flex items-center gap-2 text-base font-medium text-foreground'>
@@ -52,7 +52,7 @@ export function VariantSelectors({
 
           return (
             <div key={option.name} className='space-y-3'>
-              <h3 className='font-utekos-text-medium text-sm tracking-wide text-foreground uppercase'>
+              <h3 className='font-sans font-semibold text-sm tracking-wide text-foreground uppercase'>
                 {option.name}
               </h3>
 

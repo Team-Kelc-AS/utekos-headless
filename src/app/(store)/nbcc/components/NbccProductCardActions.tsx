@@ -111,7 +111,7 @@ export function NbccProductCardActions({
       </div>
 
       <div className='flex items-center justify-between gap-3'>
-        <span className='font-utekos-text-medium text-xl text-foreground'>
+        <span className='font-sans font-semibold text-xl text-foreground'>
           {price}
         </span>
         <span className='border-promo-foreground/20 bg-promo text-promo-foreground rounded-full border px-2 py-0.5 text-xs'>
@@ -126,7 +126,7 @@ export function NbccProductCardActions({
             isPending || isCartBusy || !isAvailable || !purchaseVariant
           }
           variant='checkout'
-          className='h-11 w-full rounded-3xl bg-primary font-utekos-text-medium text-base text-foreground hover:bg-primary/90'
+          className='h-11 w-full rounded-3xl bg-primary font-sans font-semibold text-base text-foreground hover:bg-primary/90'
         >
           {isPending ?
             <Loader2 className='size-4 animate-spin' />

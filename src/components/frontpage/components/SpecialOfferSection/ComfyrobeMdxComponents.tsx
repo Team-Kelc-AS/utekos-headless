@@ -13,7 +13,7 @@ export const comfyrobeMdxComponents = {
   }: ComponentProps<'blockquote'>) => (
     <blockquote
       className={cn(
-        'mb-5 inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/6 px-4 py-2 text-foreground shadow-[inset_0_1px_0_color-mix(in_oklab,var(--foreground)_10%,transparent)] [&_p]:m-0 [&_p]:font-utekos-text-medium [&_p]:text-sm [&_p]:leading-none [&_p]:text-foreground',
+        'mb-5 inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/6 px-4 py-2 text-foreground shadow-[inset_0_1px_0_color-mix(in_oklab,var(--foreground)_10%,transparent)] [&_p]:m-0 [&_p]:font-sans font-semibold [&_p]:text-sm [&_p]:leading-none [&_p]:text-foreground',
         className
       )}
       {...props}
@@ -29,7 +29,7 @@ export const comfyrobeMdxComponents = {
   }: ComponentProps<'h2'>) => (
     <h2
       className={cn(
-        'max-w-xl font-utekos-text-medium text-3xl leading-[1.02] tracking-[-0.035em] text-balance text-foreground sm:text-4xl lg:text-[2.75rem]',
+        'max-w-xl font-sans font-semibold text-3xl leading-[1.02] tracking-[-0.035em] text-balance text-foreground sm:text-4xl lg:text-[2.75rem]',
         className
       )}
       {...props}
@@ -44,7 +44,7 @@ export const comfyrobeMdxComponents = {
   }: ComponentProps<'p'>) => (
     <p
       className={cn(
-        'mt-5 max-w-2xl font-utekos-text text-base leading-relaxed tracking-normal text-foreground/82 sm:text-lg',
+        'mt-5 max-w-2xl font-sans text-base leading-relaxed tracking-normal text-foreground/82 sm:text-lg',
         className
       )}
       {...props}
@@ -92,7 +92,7 @@ export const comfyrobeMdxComponents = {
   }: ComponentProps<'strong'>) => (
     <strong
       className={cn(
-        'font-utekos-text-medium text-foreground',
+        'font-sans font-semibold text-foreground',
         className
       )}
       {...props}
@@ -122,7 +122,7 @@ export const comfyrobeMdxComponents = {
       <Link
         href={(href ?? '/comfyrobe') as Route}
         className={cn(
-          'group hover:bg-primary-hover mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border-none bg-primary px-7 py-3 font-utekos-text-medium text-primary-foreground no-underline shadow-[0_18px_40px_-26px_color-mix(in_oklch,var(--primary)_80%,transparent)] transition-[background-color,transform] hover:scale-[1.02] hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-deep-fjord',
+          'group hover:bg-primary-hover mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border-none bg-primary px-7 py-3 font-sans font-semibold text-primary-foreground no-underline shadow-[0_18px_40px_-26px_color-mix(in_oklch,var(--primary)_80%,transparent)] transition-[background-color,transform] hover:scale-[1.02] hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-deep-fjord',
           className
         )}
       >

@@ -103,7 +103,7 @@ export function TerrasseCarousel() {
           <BrandBadge
             backgroundColor='var(--jungle)'
             textColor='var(--foreground)'
-            className='mb-4 gap-2 border border-[var(--terrace-line-dark)] px-4 py-2 font-utekos-text text-sm leading-4 shadow-none'
+            className='mb-4 gap-2 border border-[var(--terrace-line-dark)] px-4 py-2 font-sans text-sm leading-4 shadow-none'
           >
             <Camera className='size-4' aria-hidden='true' />
             <span className='inline-flex items-baseline gap-[0.28em] leading-none'>

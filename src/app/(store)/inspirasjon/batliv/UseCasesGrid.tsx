@@ -95,7 +95,7 @@ export function UseCasesGrid({
                       </p>
                     </div>
                   </div>
-                  <h3 className='mb-2 font-utekos-text-medium text-xl'>
+                  <h3 className='mb-2 font-sans font-semibold text-xl'>
                     {useCase.title}
                   </h3>
                   <p className='text-foreground/90'>

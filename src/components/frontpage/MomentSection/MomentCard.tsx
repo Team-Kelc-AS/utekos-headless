@@ -85,7 +85,7 @@ export function MomentCard({
           )}
         >
           <div className='flex items-center justify-between gap-4'>
-            <p className='font-utekos-text-medium text-[0.68rem] tracking-[0.16em] text-light-teal uppercase'>
+            <p className='font-sans font-semibold text-[0.68rem] tracking-[0.16em] text-light-teal uppercase'>
               {String(index + 1).padStart(2, '0')} /{' '}
               {moment.eyebrow}
             </p>
@@ -103,7 +103,7 @@ export function MomentCard({
             <CardTitle className='min-w-0 text-foreground'>
               <H3
                 ID={titleId}
-                className='pb-0 font-utekos-text-medium text-2xl leading-tight tracking-normal text-balance text-foreground'
+                className='pb-0 font-sans font-semibold text-2xl leading-tight tracking-normal text-balance text-foreground'
               >
                 {moment.title}
               </H3>
@@ -111,7 +111,7 @@ export function MomentCard({
           </CardHeader>
 
           <CardContent className='flex flex-1 px-0 pb-0 text-foreground'>
-            <CardDescription className='font-utekos-text text-base leading-relaxed tracking-normal text-foreground/82'>
+            <CardDescription className='font-sans text-base leading-relaxed tracking-normal text-foreground/82'>
               <P className='text-base leading-relaxed tracking-normal text-foreground/82 not-first:mt-0'>
                 {moment.description}
               </P>

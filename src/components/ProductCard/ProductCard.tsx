@@ -250,7 +250,7 @@ export function ProductCard({
               onClick={handleViewProduct}
               className='min-w-0 flex-1 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-card-foreground'
             >
-              <h3 className='truncate font-utekos-text-medium text-base leading-6 tracking-tight text-card-foreground md:text-lg md:leading-7'>
+              <h3 className='truncate font-sans font-semibold text-base leading-6 tracking-tight text-card-foreground md:text-lg md:leading-7'>
                 {product.title}
               </h3>
             </Link>

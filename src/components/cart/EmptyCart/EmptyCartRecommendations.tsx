@@ -20,7 +20,7 @@ export function EmptyCartRecommendations() {
 
   return (
     <div className='text-left'>
-      <h4 className='mb-4 font-utekos-text-medium text-base text-foreground'>
+      <h4 className='mb-4 font-sans font-semibold text-base text-foreground'>
         Legg til for å starte din Utekos
       </h4>
       <div className='space-y-4'>

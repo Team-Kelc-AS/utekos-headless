@@ -10,7 +10,7 @@ function PolicyItem({
 }) {
   return (
     <li>
-      <span className='block font-utekos-text-medium text-white'>{title}</span>
+      <span className='block font-sans font-semibold text-white'>{title}</span>
       <span className='block text-white/90'>{children}</span>
     </li>
   )

@@ -22,7 +22,7 @@ export function AboutPromise() {
         <h2 className='font-google-sans text-left font-sans text-5xl leading-[0.95] font-bold text-foreground sm:text-5xl'>
           Vårt løfte til deg
         </h2>
-        <p className='mt-5 max-w-2xl text-left font-utekos-text-medium text-xl leading-8 text-foreground'>
+        <p className='mt-5 max-w-2xl text-left font-sans font-semibold text-xl leading-8 text-foreground'>
           Komforten skal merkes med en gang, og kvaliteten skal
           fortsette å bære øyeblikkene ute.
         </p>
@@ -41,7 +41,7 @@ export function AboutPromise() {
                     strokeWidth={1.8}
                   />
                 </span>
-                <h3 className='font-utekos-text-medium text-2xl text-inherit'>
+                <h3 className='font-sans font-semibold text-2xl text-inherit'>
                   {item.title}
                 </h3>
               </div>

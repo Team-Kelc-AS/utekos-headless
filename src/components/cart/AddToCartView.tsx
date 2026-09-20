@@ -36,7 +36,7 @@ export function AddToCartView({
           <div className='space-y-2'>
             <label
               className={cn(
-                'block font-utekos-text-medium text-sm tracking-wide text-foreground',
+                'block font-sans font-semibold text-sm tracking-wide text-foreground',
                 checkoutPresentation === 'balanced' &&
                   'uppercase'
               )}

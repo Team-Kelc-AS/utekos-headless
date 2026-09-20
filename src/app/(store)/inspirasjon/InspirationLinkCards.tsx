@@ -38,7 +38,7 @@ export function InspirationLinkCards() {
                 </CardTitle>
               </CardHeader>
               <CardFooter className='gap-1.5 text-sm text-foreground/70'>
-                <span className='font-utekos-text-medium text-lg'>
+                <span className='font-sans font-semibold text-lg'>
                   Utforsk
                 </span>
                 <ArrowUpRight

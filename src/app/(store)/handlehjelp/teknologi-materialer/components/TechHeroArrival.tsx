@@ -50,7 +50,7 @@ export function TechHeroArrival() {
       <div className='mt-8 max-w-136 md:mt-10'>
         <div className='overflow-hidden py-1'>
           <p
-            className={`${styles.shoot} flex items-center gap-[0.32em] font-utekos-text text-xl leading-none text-cloud-dancer md:text-2xl`}
+            className={`${styles.shoot} flex items-center gap-[0.32em] font-sans text-xl leading-none text-cloud-dancer md:text-2xl`}
             style={
               {
                 '--arrival-delay': '4.7s',
@@ -62,7 +62,7 @@ export function TechHeroArrival() {
             <span>gir deg friheten til å velge.</span>
           </p>
         </div>
-        <p className='mt-3 flex flex-wrap items-baseline gap-x-[0.35em] font-utekos-text text-xl text-cloud-dancer md:mt-3.5 md:text-2xl'>
+        <p className='mt-3 flex flex-wrap items-baseline gap-x-[0.35em] font-sans text-xl text-cloud-dancer md:mt-3.5 md:text-2xl'>
           <span className='overflow-hidden'>
             <span
               className={`${styles.shoot} inline-block`}
@@ -78,7 +78,7 @@ export function TechHeroArrival() {
           </span>
           <span className='overflow-hidden pb-1'>
             <span
-              className={`${styles.shoot} inline-block font-utekos-text-medium leading-[1.1] italic`}
+              className={`${styles.shoot} inline-block font-sans font-semibold leading-[1.1] italic`}
               style={
                 {
                   '--arrival-delay': '9.55s',

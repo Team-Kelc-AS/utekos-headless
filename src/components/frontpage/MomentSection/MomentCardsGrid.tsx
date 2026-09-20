@@ -49,7 +49,7 @@ export function MomentCardsGrid() {
               className='@container/moment-card relative h-full min-w-0 pl-12 md:pl-0'
             >
               <motion.span
-                className='absolute top-7 left-0 z-10 flex size-9 items-center justify-center rounded-full border border-light-teal/30 bg-jungle font-utekos-text-medium text-[0.7rem] text-light-teal ring-4 ring-muted md:hidden'
+                className='absolute top-7 left-0 z-10 flex size-9 items-center justify-center rounded-full border border-light-teal/30 bg-jungle font-sans font-semibold text-[0.7rem] text-light-teal ring-4 ring-muted md:hidden'
                 initial={{ opacity: 0, scale: 0.7 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true, amount: 0.8 }}

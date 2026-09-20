@@ -25,7 +25,7 @@ export function SizeGuideFaq() {
             <AccordionTrigger className='min-h-17 py-5 text-left font-sans text-lg leading-snug text-foreground transition-[color,transform] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:no-underline focus-visible:ring-2 focus-visible:ring-foreground/50 focus-visible:ring-offset-2 focus-visible:ring-offset-card active:scale-[0.995] **:data-[slot=accordion-trigger-icon]:size-5 **:data-[slot=accordion-trigger-icon]:text-primary sm:text-xl'>
               {item.question}
             </AccordionTrigger>
-            <AccordionContent className='pb-6 font-utekos-text text-base leading-relaxed text-foreground sm:text-lg'>
+            <AccordionContent className='pb-6 font-sans text-base leading-relaxed text-foreground sm:text-lg'>
               <SizeGuideFaqAnswer answer={item.answer} />
             </AccordionContent>
           </AccordionItem>

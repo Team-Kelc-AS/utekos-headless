@@ -1,10 +1,6 @@
 // Path: src/app/(store)/layout.tsx
 
 import '../../globals.css'
-import {
-  utekosText,
-  utekosTextMedium
-} from '@/app/fonts/font.config'
 import { VercelTelemetry } from '@/components/analytics/VercelTelemetry'
 import { Suspense } from 'react'
 import { mainMenu } from '@/db/config/menu.config'
@@ -24,10 +20,9 @@ import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagM
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
 import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
 import { GoogleTagManagerNoScript } from '@/components/analytics/GoogleTagManagerNoScript'
-import { ConsentGrantedScript } from '@/components/analytics/ConsentGrantedScript'
+import { CanonicalBrowserProviderBridges } from '@/components/analytics/CanonicalBrowserProviderBridges'
 import { WebVitals } from '@/components/analytics/WebVitals'
 import { MetaParameterBuilderInitializer } from '@/components/analytics/MetaParameterBuilderInitializer'
-import { MetaBrowserTransportLoader } from '@/components/analytics/MetaBrowserTransportLoader'
 import {
   isFacebookLoginEnabled,
   isFacebookLoginPreviewAllowed,
@@ -37,6 +32,7 @@ import {
 const googleSansFlex = Google_Sans_Flex({
   subsets: ['latin'],
   display: 'swap',
+  weight: ['400', '500', '600', '700', '800', '900'],
   variable: '--font-sans',
   preload: true,
   fallback: ['Geist', 'system-ui', 'sans-serif']
@@ -76,7 +72,7 @@ export default function RootLayout({
       lang='no'
       translate='no'
       suppressHydrationWarning
-      className={`${utekosText.variable} ${utekosTextMedium.variable} ${googleSansFlex.variable}`}
+      className={`${googleSansFlex.variable}`}
     >
       <body className='scroll-smooth bg-background text-foreground antialiased'>
         <GoogleTagManagerNoScript
@@ -85,25 +81,12 @@ export default function RootLayout({
         <GoogleTagManagerLoader
           enabled={shouldLoadMarketingScripts}
         />
-        {shouldLoadMarketingScripts ?
-          <>
-            <MetaBrowserTransportLoader />
-            {pinterestTagId ?
-              <ConsentGrantedScript
-                id='pinterest-tag-canonical-browser'
-                src='/analytics/pinterest-tag-canonical-v1.js'
-                data-tag-id={pinterestTagId}
-              />
-            : null}
-            {snapchatPixelEnabled && snapchatPixelId ?
-              <ConsentGrantedScript
-                id='snapchat-pixel-canonical-browser'
-                src='/analytics/snapchat-pixel-canonical-v1.js'
-                data-pixel-id={snapchatPixelId}
-              />
-            : null}
-          </>
-        : null}
+        <CanonicalBrowserProviderBridges
+          enabled={shouldLoadMarketingScripts}
+          pinterestTagId={pinterestTagId}
+          snapchatPixelEnabled={snapchatPixelEnabled}
+          snapchatPixelId={snapchatPixelId}
+        />
 
         <Suspense fallback={null}>
           <MetaParameterBuilderInitializer />

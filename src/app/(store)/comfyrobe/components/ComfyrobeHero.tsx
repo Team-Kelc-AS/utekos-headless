@@ -90,7 +90,7 @@ export function ComfyrobeHero({
                 imageClassName='object-cover object-center'
               />
             </div>
-            <Badge className='absolute bottom-4 left-4 z-10 h-auto rounded-lg bg-cloud-dancer px-3 py-2 font-utekos-text-medium text-sm text-background md:bottom-6 md:left-6'>
+            <Badge className='absolute bottom-4 left-4 z-10 h-auto rounded-lg bg-cloud-dancer px-3 py-2 font-sans font-semibold text-sm text-background md:bottom-6 md:left-6'>
               Fjellnatt
             </Badge>
           </div>
@@ -100,7 +100,7 @@ export function ComfyrobeHero({
               <div className='flex w-full max-w-165 flex-col'>
                 <Link
                   href='/produkter/utekos-techdown?farge=havdyp&storrelse=stor&kjonn=unisex'
-                  className='mb-4 inline-flex min-h-11 items-center font-utekos-text text-sm text-white/82 underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'
+                  className='mb-4 inline-flex min-h-11 items-center font-sans text-sm text-white/82 underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'
                 >
                   <ChevronLeft
                     strokeWidth={2.5}
@@ -110,7 +110,7 @@ export function ComfyrobeHero({
                   Utekos TechDown™ Havdyp
                 </Link>
 
-                <div className='mb-0 font-utekos-text-medium text-white md:mb-2 md:text-sm'>
+                <div className='mb-0 font-sans font-semibold text-white md:mb-2 md:text-sm'>
                   <h1
                     id='comfyrobe-hero-heading'
                     className='font-google-sans mb-3 flex items-baseline gap-2 font-sans text-[clamp(1.5rem,6.5vw,2.25rem)] leading-tight font-bold tracking-tight whitespace-nowrap text-white md:mb-5 md:gap-3 md:text-4xl lg:text-5xl'
@@ -202,7 +202,7 @@ export function ComfyrobeHero({
                   : null}
                 </div>
 
-                <p className='order-3 mt-3 max-w-xl font-utekos-text text-base leading-7 text-white/92 md:order-2 md:mt-3 md:text-lg md:leading-relaxed'>
+                <p className='order-3 mt-3 max-w-xl font-sans text-base leading-7 text-white/92 md:order-2 md:mt-3 md:text-lg md:leading-relaxed'>
                   Møt skiftende høstvær i en lang og romslig
                   jakke-robe som kombinerer tidløst design med
                   pålitelig værbeskyttelse. Med en vannsøyle på 8

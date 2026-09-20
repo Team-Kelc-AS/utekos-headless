@@ -5,10 +5,9 @@ import { ScrollDepthObserver } from '@/components/analytics/ScrollDepthObserver'
 import { JourneyObserver } from '@/components/analytics/JourneyObserver'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
 import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
-import { ConsentGrantedScript } from '@/components/analytics/ConsentGrantedScript'
+import { CanonicalBrowserProviderBridges } from '@/components/analytics/CanonicalBrowserProviderBridges'
 import { WebVitals } from '@/components/analytics/WebVitals'
 import { MetaParameterBuilderInitializer } from '@/components/analytics/MetaParameterBuilderInitializer'
-import { MetaBrowserTransportLoader } from '@/components/analytics/MetaBrowserTransportLoader'
 import { getTrackingEnvironment } from '@/lib/analytics/getTrackingEnvironment'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
@@ -30,25 +29,12 @@ export function LandingTelemetry() {
       <GoogleTagManagerLoader
         enabled={shouldLoadMarketingScripts}
       />
-      {shouldLoadMarketingScripts ?
-        <>
-          <MetaBrowserTransportLoader />
-          {pinterestTagId ?
-            <ConsentGrantedScript
-              id='pinterest-tag-canonical-browser'
-              src='/analytics/pinterest-tag-canonical-v1.js'
-              data-tag-id={pinterestTagId}
-            />
-          : null}
-          {snapchatPixelEnabled && snapchatPixelId ?
-            <ConsentGrantedScript
-              id='snapchat-pixel-canonical-browser'
-              src='/analytics/snapchat-pixel-canonical-v1.js'
-              data-pixel-id={snapchatPixelId}
-            />
-          : null}
-        </>
-      : null}
+      <CanonicalBrowserProviderBridges
+        enabled={shouldLoadMarketingScripts}
+        pinterestTagId={pinterestTagId}
+        snapchatPixelEnabled={snapchatPixelEnabled}
+        snapchatPixelId={snapchatPixelId}
+      />
 
       <Suspense fallback={null}>
         <MetaParameterBuilderInitializer />

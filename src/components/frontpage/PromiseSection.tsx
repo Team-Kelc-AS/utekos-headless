@@ -57,7 +57,7 @@ export function PromiseSection() {
       <div className='mx-auto'>
         <div className='grid grid-cols-1 gap-12'>
           {/* Karusell: Vises kun på mobil (skjules fra md og oppover) */}
-          <div className='relative flex items-center justify-center rounded-xl border border-neutral-800 p-2 md:hidden'>
+          <div className='relative flex items-center justify-center rounded-xl border border-card p-2 md:hidden'>
             <Carousel
               plugins={[plugin]}
               className='w-full'

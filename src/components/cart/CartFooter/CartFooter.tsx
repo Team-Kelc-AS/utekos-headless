@@ -58,7 +58,7 @@ export const CartFooter = ({
           {...(disabledReason === undefined ? {} : { disabledReason })}
           cart={cart!}
           variant='checkout'
-          className='h-auto min-h-11 py-3.5 rounded-4xl hover:opacity-60 text-base font-utekos-text-medium text-foreground hover:bg-primary/90'
+          className='h-auto min-h-11 py-3.5 rounded-4xl hover:opacity-60 text-base font-sans font-semibold text-foreground hover:bg-primary/90'
         />
         <KlarnaCartExpressCheckout
           cart={cart!}

@@ -22,7 +22,7 @@ export function SocialProof() {
           <Card className='rounded-lg border-none bg-jungle text-[var(--terrace-cream)] shadow-[0_28px_80px_-54px_rgb(0_0_0/0.86)] ring-0'>
             <CardContent className='p-8 sm:p-12'>
               <blockquote className='mb-8'>
-                <P className='text-center font-utekos-text-medium text-xl leading-relaxed text-[var(--terrace-cream)] not-first:mt-0 md:text-2xl'>
+                <P className='text-center font-sans font-semibold text-xl leading-relaxed text-[var(--terrace-cream)] not-first:mt-0 md:text-2xl'>
                   &quot;Vi har doblet bruken av terrassen etter at
                   vi fikk Utekos i hus. Den brukes av hele
                   familien, fra tenåringen som vil sitte ute med
@@ -41,7 +41,7 @@ export function SocialProof() {
                   className='size-12 rounded-full object-cover'
                 />
                 <div className='text-left'>
-                  <P className='font-utekos-text-medium leading-tight tracking-normal text-[var(--terrace-cream)] not-first:mt-0'>
+                  <P className='font-sans font-semibold leading-tight tracking-normal text-[var(--terrace-cream)] not-first:mt-0'>
                     Kristin
                   </P>
                   <P className='text-sm leading-relaxed tracking-normal text-[var(--terrace-sage-soft)] not-first:mt-1'>

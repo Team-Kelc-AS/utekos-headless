@@ -69,7 +69,7 @@ const cardContentRowClasses =
   'relative z-10 flex items-start gap-[0.8em] pt-[clamp(2.15rem,9.5cqi,2.9rem)]'
 
 const cardTitleClasses =
-  'pb-0 text-[1.15em] leading-[1.12] font-utekos-text-medium'
+  'pb-0 text-[1.15em] leading-[1.12] font-sans font-semibold'
 
 const cardTextClasses =
   'mt-[0.42em] text-[0.95em] leading-snug font-normal not-first:mt-0'

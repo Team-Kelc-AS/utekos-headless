@@ -50,7 +50,7 @@ export function HeroSection() {
             Skreddersy varmen
           </span>{' '}
           <br className='hidden md:block' />
-          <span className='mt-2 block font-utekos-text-medium text-2xl leading-[0.95] tracking-[-0.01em] text-foreground italic opacity-90 md:my-6 md:text-[3.5rem] lg:text-[4rem]'>
+          <span className='mt-2 block font-sans font-semibold text-2xl leading-[0.95] tracking-[-0.01em] text-foreground italic opacity-90 md:my-6 md:text-[3.5rem] lg:text-[4rem]'>
             Forleng de gode stundene
           </span>
         </h1>

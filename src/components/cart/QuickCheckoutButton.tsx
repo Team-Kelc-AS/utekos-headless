@@ -32,7 +32,7 @@ export function QuickCheckoutButton({
         className='size-5 shrink-0 text-foreground'
         aria-hidden='true'
       />
-      <span className='truncate font-utekos-text-medium text-lg'>
+      <span className='truncate font-sans font-semibold text-lg'>
         {isPending ? 'Åpner...' : 'Gå til kassen'}
       </span>
     </Button>

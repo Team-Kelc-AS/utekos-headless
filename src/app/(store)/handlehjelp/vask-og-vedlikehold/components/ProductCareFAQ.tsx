@@ -21,7 +21,7 @@ export function ProductCareFaq() {
         >
           Vanlige spørsmål
         </h2>
-        <p className='/90 mt-5 text-left font-utekos-text-medium text-lg leading-8 text-foreground/90'>
+        <p className='/90 mt-5 text-left font-sans font-semibold text-lg leading-8 text-foreground/90'>
           Svar på det kundene våre oftest lurer på om vask og
           vedlikehold.
         </p>
@@ -37,10 +37,10 @@ export function ProductCareFaq() {
             value={`faq-${index + 1}`}
             className='rounded-xl border-t border-border bg-background p-4'
           >
-            <AccordionTrigger className='py-4 text-left font-sans font-utekos-text-medium text-base text-foreground hover:no-underline **:data-[slot=accordion-trigger-icon]:text-primary sm:py-5 sm:text-lg'>
+            <AccordionTrigger className='py-4 text-left font-sans font-semibold text-base text-foreground hover:no-underline **:data-[slot=accordion-trigger-icon]:text-primary sm:py-5 sm:text-lg'>
               {faq.question}
             </AccordionTrigger>
-            <AccordionContent className='/90 pb-4 text-left font-utekos-text-medium text-base leading-relaxed text-foreground/90 sm:pb-5'>
+            <AccordionContent className='/90 pb-4 text-left font-sans font-semibold text-base leading-relaxed text-foreground/90 sm:pb-5'>
               {faq.answer}
             </AccordionContent>
           </AccordionItem>

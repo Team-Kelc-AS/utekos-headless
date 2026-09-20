@@ -11,7 +11,7 @@ function PolicyItem({
 }) {
   return (
     <li>
-      <span className='block font-utekos-text-medium text-foreground'>
+      <span className='block font-sans font-semibold text-foreground'>
         {title}
       </span>
       <span className='block text-muted-foreground'>

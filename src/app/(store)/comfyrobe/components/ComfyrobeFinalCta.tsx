@@ -49,7 +49,7 @@ export function ComfyrobeFinalCta({
         variants={comfyrobeRevealGroup}
       >
         <m.p
-          className='font-utekos-text-medium text-sm tracking-wide text-primary'
+          className='font-sans font-semibold text-sm tracking-wide text-primary'
           variants={comfyrobeRevealItem}
         >
           Klar når været ikke er det
@@ -64,7 +64,7 @@ export function ComfyrobeFinalCta({
         <m.div className='mt-8' variants={comfyrobeRevealItem}>
           <BrandBadge
             asChild
-            className='min-h-13 bg-primary px-7 py-3 font-utekos-text-medium text-foreground transition-[filter,transform] hover:brightness-105 active:scale-[0.985]'
+            className='min-h-13 bg-primary px-7 py-3 font-sans font-semibold text-foreground transition-[filter,transform] hover:brightness-105 active:scale-[0.985]'
           >
             <button
               type='button'

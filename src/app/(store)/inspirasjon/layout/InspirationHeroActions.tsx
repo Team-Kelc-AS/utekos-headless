@@ -28,7 +28,7 @@ export function InspirationHeroActions({
   secondaryHref = '#bruksomrader'
 }: InspirationHeroActionsProps) {
   const baseClassName =
-    'border px-7 py-3 text-base leading-4 font-utekos-text-medium tracking-[-0.01em] transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+    'border px-7 py-3 text-base leading-4 font-sans font-semibold tracking-[-0.01em] transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0'
 
   return (
     <>

@@ -83,16 +83,16 @@ function FeaturedArticleCard({
                 category={article.category}
               />
             </div>
-            <h2 className='font-google-sans font-utekos-text-medium text-4xl leading-[0.95] font-bold text-balance transition-colors group-hover:text-magazine-article-card-pill sm:text-5xl'>
+            <h2 className='font-google-sans font-sans font-semibold text-4xl leading-[0.95] font-bold text-balance transition-colors group-hover:text-magazine-article-card-pill sm:text-5xl'>
               {article.title}
             </h2>
-            <p className='mt-5 font-utekos-text text-lg leading-[1.3] tracking-normal text-foreground/86'>
+            <p className='mt-5 font-sans text-lg leading-[1.3] tracking-normal text-foreground/86'>
               {article.excerpt}
             </p>
             <BrandBadge
               backgroundColor='var(--color-magazine-article-card-pill)'
               textColor='var(--background)'
-              className='mt-8 w-fit gap-2 rounded-lg border border-background/15 px-4 py-2 font-utekos-text-medium text-sm leading-[1.35] tracking-tight'
+              className='mt-8 w-fit gap-2 rounded-lg border border-background/15 px-4 py-2 font-sans font-semibold text-sm leading-[1.35] tracking-tight'
             >
               <span>Les hele saken</span>
               <ArrowRight
@@ -154,10 +154,10 @@ function MagazineArticleCard({
                 category={article.category}
               />
             </div>
-            <h3 className='font-google-sans font-utekos-text-medium text-lg leading-[0.98] font-bold tracking-normal transition-colors group-hover:text-magazine-article-card-pill'>
+            <h3 className='font-google-sans font-sans font-semibold text-lg leading-[0.98] font-bold tracking-normal transition-colors group-hover:text-magazine-article-card-pill'>
               {article.title}
             </h3>
-            <p className='mt-3 flex-1 font-utekos-text text-sm leading-[1.3] tracking-normal text-foreground/86'>
+            <p className='mt-3 flex-1 font-sans text-sm leading-[1.3] tracking-normal text-foreground/86'>
               {article.excerpt}
             </p>
           </div>
@@ -194,10 +194,10 @@ function MagazineArticleCard({
           <div className='mb-4'>
             <MagazineCategoryBadge category={article.category} />
           </div>
-          <h3 className='font-google-sans font-utekos-text-medium text-lg leading-[0.98] font-bold tracking-normal transition-colors group-hover:text-magazine-article-card-pill'>
+          <h3 className='font-google-sans font-sans font-semibold text-lg leading-[0.98] font-bold tracking-normal transition-colors group-hover:text-magazine-article-card-pill'>
             {article.title}
           </h3>
-          <p className='mt-3 flex-1 font-utekos-text text-sm leading-[1.3] tracking-normal text-foreground/86'>
+          <p className='mt-3 flex-1 font-sans text-sm leading-[1.3] tracking-normal text-foreground/86'>
             {article.excerpt}
           </p>
         </div>
@@ -230,7 +230,7 @@ export function MagazineGrid({ articles }: MagazineGridProps) {
       >
         <div className='container mx-auto px-6 sm:px-4'>
           <header className='mb-8 max-w-2xl'>
-            <p className='font-utekos-text-medium text-sm leading-4 text-magazine-article-card-pill'>
+            <p className='font-sans font-semibold text-sm leading-4 text-magazine-article-card-pill'>
               Siste fra magasinet
             </p>
             <h2

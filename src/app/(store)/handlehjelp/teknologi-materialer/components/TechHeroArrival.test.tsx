@@ -50,7 +50,7 @@ test('arrival hero shoots in JUSTER FORM NYT and drops the old comfort copy', ()
   assert.match(arrivalSource, /gir deg friheten til å velge\./u)
   assert.match(arrivalSource, /Vi kaller det/u)
   assert.match(arrivalSource, /adaptiv funksjonalitet\./u)
-  assert.match(arrivalSource, /font-utekos-text-medium leading-\[1\.1\] italic/u)
+  assert.match(arrivalSource, /font-sans font-semibold leading-\[1\.1\] italic/u)
   assert.match(arrivalSource, /9\.55s/u)
   assert.match(
     arrivalSource,

@@ -18,7 +18,7 @@ export function H4({
     <h4
       id={ID ?? id}
       className={cn(
-        'scroll-m-20 font-sans font-utekos-text-medium text-lg tracking-tight md:text-xl',
+        'scroll-m-20 font-sans font-semibold text-lg tracking-tight md:text-xl',
         className ?? ''
       )}
     >

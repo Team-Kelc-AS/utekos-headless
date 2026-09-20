@@ -43,7 +43,7 @@ export function SectionSocialProof() {
             >
               <span
                 aria-hidden
-                className='flex gap-0.5 text-yellow-300 drop-shadow-sm'
+                className='flex gap-0.5 text-review-star drop-shadow-sm'
               >
                 {[1, 2, 3, 4].map(i => (
                   <Star
@@ -60,7 +60,7 @@ export function SectionSocialProof() {
                   strokeWidth={0}
                 />
               </span>
-              <span className='font-utekos-text-medium text-foreground'>
+              <span className='font-sans font-semibold text-foreground'>
                 {averageRating}
               </span>
             </m.div>

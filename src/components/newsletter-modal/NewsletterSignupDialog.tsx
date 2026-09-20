@@ -220,12 +220,12 @@ export function NewsletterSignupDialog() {
                 Rabattkoden er på vei
               </DialogTitle>
 
-              <DialogDescription className='max-w-md font-utekos-text-medium text-base leading-7 text-popover-foreground/80'>
+              <DialogDescription className='max-w-md font-sans font-semibold text-base leading-7 text-popover-foreground/80'>
                 {state.message}
               </DialogDescription>
             </DialogHeader>
 
-            <p className='mx-auto mt-4 max-w-md font-utekos-text text-sm leading-6 text-popover-foreground/70'>
+            <p className='mx-auto mt-4 max-w-md font-sans text-sm leading-6 text-popover-foreground/70'>
               Sjekk også søppelpostmappen dersom e-posten ikke
               dukker opp med en gang.
             </p>
@@ -254,7 +254,7 @@ export function NewsletterSignupDialog() {
               </DialogClose>
             </div>
           </section>
-        : <section className='rounded-xl bg-popover font-utekos-text text-popover-foreground lg:grid lg:grid-cols-2'>
+        : <section className='rounded-xl bg-popover font-sans text-popover-foreground lg:grid lg:grid-cols-2'>
             <div className='relative min-w-0 overflow-hidden bg-muted lg:aspect-[4/5]'>
               <Image
                 src={newsletterImageComfyKlarna}
@@ -301,7 +301,7 @@ export function NewsletterSignupDialog() {
                     Comfyrobe™
                   </DialogTitle>
 
-                  <DialogDescription className='max-w-lg font-utekos-text-medium text-sm leading-6 text-popover-foreground/85 sm:text-base sm:leading-7'>
+                  <DialogDescription className='max-w-lg font-sans font-semibold text-sm leading-6 text-popover-foreground/85 sm:text-base sm:leading-7'>
                     Meld deg på nyhetsbrevet og få allerede
                     nedsatte Comfyrobe™ for{' '}
                     <strong className='text-popover-foreground'>
@@ -321,7 +321,7 @@ export function NewsletterSignupDialog() {
                 <div className='space-y-2'>
                   <label
                     htmlFor='newsletter-modal-email'
-                    className='block font-utekos-text-medium text-sm text-popover-foreground'
+                    className='block font-sans font-semibold text-sm text-popover-foreground'
                   >
                     E-postadresse
                   </label>
@@ -343,13 +343,13 @@ export function NewsletterSignupDialog() {
                       autoFocus
                       aria-invalid={state.status === 'error'}
                       aria-describedby={emailDescription}
-                      className='h-12 rounded-full border-input bg-popover pr-5 pl-12 font-utekos-text text-base text-popover-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/30 md:text-base'
+                      className='h-12 rounded-full border-input bg-popover pr-5 pl-12 font-sans text-base text-popover-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/30 md:text-base'
                     />
                   </div>
 
                   <p
                     id='newsletter-modal-email-help'
-                    className='font-utekos-text text-sm leading-6 text-popover-foreground/70'
+                    className='font-sans text-sm leading-6 text-popover-foreground/70'
                   >
                     Rabattkoden sendes til denne e-postadressen.
                   </p>
@@ -359,7 +359,7 @@ export function NewsletterSignupDialog() {
                   <p
                     id='newsletter-modal-error'
                     role='alert'
-                    className='rounded-xl border border-destructive/25 bg-destructive px-4 py-3 font-utekos-text text-sm leading-6 text-destructive-foreground'
+                    className='rounded-xl border border-destructive/25 bg-destructive px-4 py-3 font-sans text-sm leading-6 text-destructive-foreground'
                   >
                     {state.message}
                   </p>
@@ -373,7 +373,7 @@ export function NewsletterSignupDialog() {
                       size='lg'
                       disabled={isPending}
                       aria-busy={isPending}
-                      className='min-h-12 w-full rounded-full bg-primary px-6 font-utekos-text-medium text-base text-foreground'
+                      className='min-h-12 w-full rounded-full bg-primary px-6 font-sans font-semibold text-base text-foreground'
                     >
                       {isPending ?
                         <>
@@ -392,7 +392,7 @@ export function NewsletterSignupDialog() {
                           type='button'
                           variant='outline'
                           size='lg'
-                          className='min-h-12 w-full rounded-full border-input bg-transparent px-6 font-utekos-text-medium text-base text-popover-foreground hover:bg-accent hover:text-accent-foreground'
+                          className='min-h-12 w-full rounded-full border-input bg-transparent px-6 font-sans font-semibold text-base text-popover-foreground hover:bg-accent hover:text-accent-foreground'
                         />
                       }
                     >
@@ -400,13 +400,13 @@ export function NewsletterSignupDialog() {
                     </DialogClose>
                   </div>
 
-                  <p className='text-center font-utekos-text text-xs leading-5 tracking-tight text-popover-foreground/70'>
+                  <p className='text-center font-sans text-xs leading-5 tracking-tight text-popover-foreground/70'>
                     Når du melder deg på, samtykker du til å
                     motta nyheter og tilbud fra Utekos. Du kan
                     melde deg av når som helst. Les vår{' '}
                     <Link
                       href='/personvern'
-                      className='font-utekos-text-medium text-popover-foreground underline underline-offset-4'
+                      className='font-sans font-semibold text-popover-foreground underline underline-offset-4'
                     >
                       personvernerklæring
                     </Link>

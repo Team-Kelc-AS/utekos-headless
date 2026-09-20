@@ -68,7 +68,7 @@ export function ProductCareGeneralGuide() {
         >
           Slik tar du vare på plagget
         </h2>
-        <p className='/90 mt-5 text-left font-utekos-text-medium text-lg leading-8 text-foreground/90'>
+        <p className='/90 mt-5 text-left font-sans font-semibold text-lg leading-8 text-foreground/90'>
           Fire steg som gjelder for alle Utekos-plagg.
           Materialspesifikke detaljer finner du lenger ned.
         </p>

@@ -50,7 +50,7 @@ export function NbccHeroSection() {
             className='relative z-10 -my-6 h-28 w-auto object-contain sm:h-32'
           />
           <span className='inline-flex items-center rounded-md border border-[#17130f]/15 bg-white px-3 py-2 shadow-sm'>
-            <span className='font-utekos-text-medium text-sm text-[#17130f]'>
+            <span className='font-sans font-semibold text-sm text-[#17130f]'>
               Medlemsfordel
             </span>
           </span>
@@ -65,7 +65,7 @@ export function NbccHeroSection() {
           data-nbcc-hero
           data-nbcc-animate
           data-nbcc-hero-content
-          className='font-utekos-text-medium text-5xl leading-[1.08] tracking-[-0.02em] text-balance text-foreground sm:text-6xl sm:leading-[1.06] lg:col-start-1 lg:text-7xl lg:leading-[1.05]'
+          className='font-sans font-semibold text-5xl leading-[1.08] tracking-[-0.02em] text-balance text-foreground sm:text-6xl sm:leading-[1.06] lg:col-start-1 lg:text-7xl lg:leading-[1.05]'
         >
           NBCC-medlemsfordel hos Utekos
         </motion.h1>
@@ -124,7 +124,7 @@ export function NbccHeroSection() {
             asChild
             size='lg'
             variant='commerce-primary'
-            className='h-12 w-full min-w-0 justify-center gap-2 rounded-2xl px-6 font-utekos-text-medium text-base'
+            className='h-12 w-full min-w-0 justify-center gap-2 rounded-2xl px-6 font-sans font-semibold text-base'
           >
             <Link
               href='#produkter'
@@ -149,7 +149,7 @@ export function NbccHeroSection() {
             trackingData={nbccHeroTracking.secondary}
             containerClassName='min-w-0 w-full'
             panelClassName='w-full'
-            buttonClassName='h-12 w-full min-w-0 justify-center gap-2 rounded-2xl border border-commerce-secondary bg-dark-teal px-6 text-base font-utekos-text-medium text-foreground hover:opacity-60'
+            buttonClassName='h-12 w-full min-w-0 justify-center gap-2 rounded-2xl border border-commerce-secondary bg-dark-teal px-6 text-base font-sans font-semibold text-foreground hover:opacity-60'
           />
         </motion.div>
 

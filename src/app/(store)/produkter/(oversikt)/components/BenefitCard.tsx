@@ -99,7 +99,7 @@ export function BenefitCard({
 
         <div className='flex-1'>
           <span
-            className='font-utekos-text-medium'
+            className='font-sans font-semibold'
             style={{ color: surface.textColor }}
           >
             {benefit.label}

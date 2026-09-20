@@ -18,7 +18,7 @@ export function SocialProof() {
               <div className='flex items-center justify-center gap-4'>
                 <div className='h-12 w-12 rounded-full bg-secondary' />
                 <div className='text-left'>
-                  <p className='font-utekos-text-medium'>
+                  <p className='font-sans font-semibold'>
                     Kjell-Arne Larsen
                   </p>
                   <p className='text-sm text-muted-foreground'>

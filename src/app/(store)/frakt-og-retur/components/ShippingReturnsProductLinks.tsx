@@ -20,7 +20,7 @@ const productLinks = [
 ] as const
 
 const productLinkClassName =
-  'hover:bg-primary-hover flex min-h-12 w-full items-center justify-center rounded-3xl border border-secondary/30 bg-primary px-6 py-3 font-utekos-text-medium text-base font-bold text-secondary-foreground shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none'
+  'hover:bg-primary-hover flex min-h-12 w-full items-center justify-center rounded-3xl border border-secondary/30 bg-primary px-6 py-3 font-sans font-semibold text-base font-bold text-secondary-foreground shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none'
 
 export function ShippingReturnsProductLinks() {
   return (

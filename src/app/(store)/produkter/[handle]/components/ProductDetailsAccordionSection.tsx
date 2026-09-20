@@ -29,7 +29,7 @@ export function ProductDetailsAccordionSection({
               aria-hidden='true'
             />
           </span>
-          <span className='text-md font-utekos-text-medium leading-[1.2] tracking-[-0.01em]'>
+          <span className='text-md font-sans font-semibold leading-[1.2] tracking-[-0.01em]'>
             {title}
           </span>
         </span>

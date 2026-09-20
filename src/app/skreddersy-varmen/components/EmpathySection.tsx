@@ -72,7 +72,7 @@ export function EmpathySection({
           <div className='relative'>
             <h2
               id='empathy-heading'
-              className='mb-5 max-w-[11ch] font-utekos-text-medium text-4xl leading-[0.92] tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
+              className='mb-5 max-w-[11ch] font-sans font-semibold text-4xl leading-[0.92] tracking-[-0.01em] text-background sm:text-4xl md:text-5xl'
             >
               <span className='block overflow-hidden pb-[0.08em]'>
                 <span
@@ -106,7 +106,7 @@ export function EmpathySection({
                 </m.p>
               </div>
               <m.p
-                className='mt-6 max-w-136 font-utekos-text text-background'
+                className='mt-6 max-w-136 font-sans text-background'
                 variants={revealItem}
               >
                 {content.body}
@@ -125,7 +125,7 @@ export function EmpathySection({
                 asChild
                 bgColor='var(--primary)'
                 fgColor='var(--primary-foreground)'
-                className='hover:bg-primary-hover h-12 px-5 py-0 font-utekos-text-medium text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.98] md:h-14 md:px-6 md:text-base'
+                className='hover:bg-primary-hover h-12 px-5 py-0 font-sans font-semibold text-sm leading-none tracking-normal shadow-sm transition-[filter,transform] hover:brightness-110 active:scale-[0.98] md:h-14 md:px-6 md:text-base'
               >
                 <button
                   type='button'
