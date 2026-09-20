@@ -36,10 +36,6 @@ export function TrustContentView({
         'relative z-20 flex min-w-0 flex-col justify-start overflow-visible rounded-md bg-night px-6 pt-10 pb-8 text-foreground sm:px-10 sm:pt-12 sm:pb-10 md:px-12 md:pt-14 md:pb-12'
       )}
     >
-      <div
-        className='pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(80%_52%_at_12%_0%,color-mix(in_oklch,var(--light-teal)_12%,transparent),transparent_72%)]'
-        aria-hidden
-      />
 
       <div className='max-w-2xl'>
         <motion.div variants={revealMotion}>

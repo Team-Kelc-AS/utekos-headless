@@ -31,6 +31,23 @@ test('ads LP hero does not load Klarna OSM on first paint', async () => {
   )
 })
 
+test('Klarna OSM is primed before purchase without shifting it', async () => {
+  const deferred = await readSource(
+    'src/app/skreddersy-varmen/components/DeferredKlarnaOnSiteMessaging.tsx'
+  )
+  const strip = await readSource(
+    'src/app/skreddersy-varmen/components/SkreddersyVarmenKlarnaStrip.tsx'
+  )
+
+  assert.match(deferred, /DEFAULT_ROOT_MARGIN = '4000px 0px'/u)
+  assert.match(
+    deferred,
+    /KlarnaOnSiteMessagingScript strategy='afterInteractive'/u
+  )
+  assert.doesNotMatch(deferred, /strategy='lazyOnload'/u)
+  assert.match(strip, /min-h-\[2\.625rem\]/u)
+})
+
 test('purchase client JS loads through an explicit dynamic import', async () => {
   const section = await readSource(
     'src/app/skreddersy-varmen/components/LandingPurchaseSection.tsx'

@@ -8,25 +8,25 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel'
-import kvinneNyterTerrasselivetMedUtekosTechdown from '@/assets/images/techdown/kvinne-nyter-terrasselivet-med-utekos-techdown.webp'
-import utekosTechdownBaksideFullmodus16001793 from '@/assets/images/techdown/utekos-techdown-bakside-fullmodus-1600-1793.webp'
-import utekosTechdownDiagonaltFullfigur from '@/assets/images/techdown/utekos-techdown-diagonalt-fullfigur.webp'
+import techDownOutdoorPortrait from '@public/TechDown_1080x1704px_Last.jpg'
+import techDownPortraitSmile from '@public/1080×1704_02.jpg'
+import techDownPortraitLookingAside from '@public/1080×1704_03.jpg'
+
+const portraitFrameClassName =
+  'bg-teal relative aspect-1080/1704 overflow-hidden rounded-2xl sm:rounded-[1.25rem]'
 
 const images = [
   {
-    src: utekosTechdownDiagonaltFullfigur,
-    alt: 'Utekos TechDown diagonalt fullfigur',
-    imageClassName: 'object-contain object-center p-1 sm:p-0'
+    src: techDownOutdoorPortrait,
+    alt: 'Utekos TechDown™ i mørk blå, fotografert utendørs.'
   },
   {
-    src: kvinneNyterTerrasselivetMedUtekosTechdown,
-    alt: 'Utekos TechDown i bruk på en terrasse',
-    imageClassName: 'object-cover object-center'
+    src: techDownPortraitSmile,
+    alt: 'Utekos TechDown™ i mørk blå, fotografert utendørs med hette oppe.'
   },
   {
-    src: utekosTechdownBaksideFullmodus16001793,
-    alt: 'Utekos TechDown sett bakfra',
-    imageClassName: 'object-contain object-center p-1 sm:p-0'
+    src: techDownPortraitLookingAside,
+    alt: 'Utekos TechDown™ i mørk blå, fotografert utendørs med hendene i lommene.'
   }
 ]
 
@@ -45,7 +45,7 @@ export function ImageColumn() {
           <CarouselContent>
             {images.map((image, index) => (
               <CarouselItem key={image.alt} className='h-fit'>
-                <div className='bg-teal relative aspect-square overflow-hidden rounded-2xl sm:aspect-3/4 sm:rounded-[1.25rem] lg:aspect-3/4'>
+                <div className={portraitFrameClassName}>
                   <Image
                     src={image.src}
                     alt={image.alt}
@@ -54,7 +54,7 @@ export function ImageColumn() {
                     loading={index === 0 ? 'eager' : 'lazy'}
                     fetchPriority={index === 0 ? 'high' : 'auto'}
                     decoding='async'
-                    className={image.imageClassName}
+                    className='object-cover object-center'
                     sizes='(max-width: 640px) calc(100vw - 56px), (max-width: 768px) 560px, (max-width: 1280px) 620px, (max-width: 1536px) 45vw, 540px'
                   />
                 </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/KlarnaOnSiteMessagingScript'
 
-const DEFAULT_ROOT_MARGIN = '800px 0px'
+const DEFAULT_ROOT_MARGIN = '4000px 0px'
 
 export function DeferredKlarnaOnSiteMessaging({
   rootMargin = DEFAULT_ROOT_MARGIN
@@ -42,5 +42,7 @@ export function DeferredKlarnaOnSiteMessaging({
 
   if (!shouldLoad) return null
 
-  return <KlarnaOnSiteMessagingScript strategy='lazyOnload' />
+  return (
+    <KlarnaOnSiteMessagingScript strategy='afterInteractive' />
+  )
 }

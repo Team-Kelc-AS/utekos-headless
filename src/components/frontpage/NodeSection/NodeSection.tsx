@@ -12,10 +12,10 @@ export async function NodeSection() {
   return (
     <PageSection
       as='article'
-      background='muted'
+      background='none'
       className={cn(
         frontpageSectionStackClassName,
-        'text-foreground'
+        'bg-night text-foreground'
       )}
       contentClassName='space-y-10 px-5 pt-10 pb-[calc(--spacing(20)+--spacing(5))] sm:space-y-8 sm:px-6 sm:pt-12 sm:pb-[calc(--spacing(24)+--spacing(5))] md:space-y-6 md:pt-14 md:pb-[calc(--spacing(28)+--spacing(5))] lg:px-8 lg:pt-16 lg:pb-[calc(--spacing(32)+--spacing(5))]'
     >

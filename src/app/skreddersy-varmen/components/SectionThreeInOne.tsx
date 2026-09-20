@@ -27,7 +27,7 @@ function ModeScene({ scene }: { scene: ThreeModeScene }) {
               src={asset.src}
               alt={scene.imageAlt}
               fill
-              loading='lazy'
+              loading='eager'
               quality={75}
               sizes='(max-width: 767px) calc(100vw - 32px), 50vw'
               style={{ objectPosition: asset.objectPosition }}

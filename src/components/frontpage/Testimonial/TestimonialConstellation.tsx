@@ -20,10 +20,10 @@ export function TestimonialConstellation() {
   return (
     <PageSection
       as='section'
-      background='muted'
+      background='none'
       className={cn(
         frontpageSectionStackClassName,
-        'text-foreground'
+        'bg-night text-foreground'
       )}
       contentClassName='relative z-10'
     >

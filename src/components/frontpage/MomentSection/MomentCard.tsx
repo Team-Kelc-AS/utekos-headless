@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/card'
 import { H3 } from '@/components/typography/TypographyH3'
 import { P } from '@/components/typography/TypographyP'
-import { cn } from '@/lib/utils/className'
 
 const cardMotion = {
   hidden: { opacity: 0, y: 32, scale: 0.985 },
@@ -43,14 +42,7 @@ const iconClassName =
   'flex size-12 shrink-0 items-center justify-center rounded-xl border border-light-teal/20 bg-dark-teal text-foreground shadow-[inset_0_1px_1px_color-mix(in_oklch,var(--foreground)_14%,transparent)] ring-1 ring-inset ring-foreground/8'
 
 const cardClassName =
-  'h-full rounded-[1.25rem] border border-light-teal/14 p-6 text-foreground shadow-[0_30px_80px_-58px_color-mix(in_oklch,var(--jungle)_96%,black)] ring-1 ring-inset ring-foreground/6 sm:p-7 lg:p-8'
-
-const momentThemeClasses: Record<Moment['theme'], string> = {
-  jungle:
-    'bg-[color-mix(in_oklch,var(--jungle)_92%,var(--dark-teal)_8%)]',
-  pine: 'bg-[color-mix(in_oklch,var(--jungle)_82%,var(--dark-teal)_18%)]',
-  teal: 'bg-[color-mix(in_oklch,var(--jungle)_72%,var(--dark-teal)_28%)]'
-}
+  'h-full rounded-[1.25rem] border border-light-teal/14 bg-jungle p-6 text-foreground shadow-[0_30px_80px_-58px_color-mix(in_oklch,var(--jungle)_96%,black)] ring-1 ring-inset ring-foreground/6 sm:p-7 lg:p-8'
 
 export function MomentCard({
   moment,
@@ -78,12 +70,7 @@ export function MomentCard({
       className={articleClassName}
     >
       <div className='h-full rounded-[1.65rem] bg-foreground/4 p-1.5 ring-1 ring-foreground/8'>
-        <Card
-          className={cn(
-            cardClassName,
-            momentThemeClasses[moment.theme]
-          )}
-        >
+        <Card className={cardClassName}>
           <div className='flex items-center justify-between gap-4'>
             <p className='font-sans font-semibold text-[0.68rem] tracking-[0.16em] text-light-teal uppercase'>
               {String(index + 1).padStart(2, '0')} /{' '}
