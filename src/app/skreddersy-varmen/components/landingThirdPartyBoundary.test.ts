@@ -38,19 +38,25 @@ test('purchase client JS loads through an explicit dynamic import', async () => 
   const deferred = await readSource(
     'src/app/skreddersy-varmen/components/DeferredPurchaseClientLanding.tsx'
   )
-  const loader = await readSource(
-    'src/app/skreddersy-varmen/components/loadPurchaseClientLanding.ts'
+  const fallback = await readSource(
+    'src/app/skreddersy-varmen/components/LandingPurchaseFallback.tsx'
   )
 
   assert.doesNotMatch(section, PURCHASE_STATIC_IMPORT)
   assert.match(section, /DeferredPurchaseClientLanding/)
-  assert.match(loader, /import\('\.\/PurchaseClientLanding'\)/u)
+  assert.match(section, /commerce=\{commerce\}/u)
+  assert.match(section, /requireProductPresentation/u)
   assert.match(
     deferred,
     /import\('\.\/LandingPurchaseRuntime'\)/
   )
-  assert.match(deferred, /IntersectionObserver/)
-  assert.match(deferred, /utekos:landing:purchase/)
+  assert.doesNotMatch(deferred, /getLandingPurchaseData/u)
+  assert.doesNotMatch(deferred, /IntersectionObserver/u)
+  assert.doesNotMatch(deferred, /ssr:\s*false/u)
+  assert.match(deferred, /utekos:landing:cart/u)
+  assert.match(fallback, /aria-busy='true'/u)
+  assert.doesNotMatch(fallback, /Siden er klar/u)
+  assert.doesNotMatch(fallback, /Åpne produktet/u)
   const scrollHelper = await readSource(
     'src/app/skreddersy-varmen/components/scrollToLandingSize.ts'
   )

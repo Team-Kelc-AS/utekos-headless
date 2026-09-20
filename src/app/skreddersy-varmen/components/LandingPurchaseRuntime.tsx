@@ -9,13 +9,17 @@ import { LandingPageProductCarouselPurchaseSection } from './LandingPageProductC
 import { LandingPurchaseProductInformation } from './LandingPurchaseProductInformation'
 import { ProductDetailsAccordion } from './ProductDetailsAccordion'
 import { TechDownSizeGuideAccordion } from './TechDownSizeGuideAccordion'
-import type { getLandingPurchaseData } from './getLandingPurchaseData'
+import type { ProductModel } from '@/lib/products/commerce'
+import type { ProductPresentation } from '@/lib/products/presentation/getProductPresentation'
 
 export default function LandingPurchaseRuntime({
   cartRequest,
   ...props
-}: Awaited<ReturnType<typeof getLandingPurchaseData>> & {
+}: {
   cartRequest: number
+  commerce: ProductModel
+  initialVariantId: string
+  presentation: ProductPresentation
 }) {
   useEffect(() => {
     if (cartRequest > 0) cartStore.send({ type: 'OPEN' })

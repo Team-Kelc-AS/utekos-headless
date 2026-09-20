@@ -1,22 +1,29 @@
-// Path: src/app/skreddersy-varmen/components/LandingPurchaseFallback.tsx
-
 export function LandingPurchaseFallback() {
   return (
-    <div className='bg-foreground-muted w-full px-6 py-16 text-background'>
-      <div className='mx-auto max-w-3xl rounded-sm border border-background/12 bg-foreground p-6 text-center shadow-sm'>
-        <p className='font-google-sans font-sans text-xl font-bold'>
-          Henter produktvalg
-        </p>
-        <p className='mt-2 text-sm leading-relaxed text-background/75'>
-          Siden er klar, og kjøpsvalgene lastes inn.
-        </p>
-        <a
-          href='/produkter/utekos-techdown'
-          className='mt-4 inline-block underline'
-        >
-          Åpne produktet og velg størrelse
-        </a>
+    <section
+      aria-busy='true'
+      aria-label='Laster produktvalg'
+      role='status'
+      className='bg-foreground-muted min-h-[40rem] w-full px-6 py-16 text-background'
+    >
+      <span className='sr-only'>Laster produktvalg</span>
+      <div
+        aria-hidden='true'
+        className='mx-auto grid max-w-7xl gap-10 min-[900px]:grid-cols-2'
+      >
+        <div className='aspect-4/5 animate-pulse rounded-2xl bg-background/10 motion-reduce:animate-none' />
+        <div className='space-y-6 py-8'>
+          <div className='h-5 w-28 animate-pulse rounded bg-background/10 motion-reduce:animate-none' />
+          <div className='h-11 w-2/3 animate-pulse rounded bg-background/10 motion-reduce:animate-none' />
+          <div className='h-7 w-1/3 animate-pulse rounded bg-background/10 motion-reduce:animate-none' />
+          <div className='grid grid-cols-3 gap-3'>
+            <div className='h-12 animate-pulse rounded-xl bg-background/10 motion-reduce:animate-none' />
+            <div className='h-12 animate-pulse rounded-xl bg-background/10 motion-reduce:animate-none' />
+            <div className='h-12 animate-pulse rounded-xl bg-background/10 motion-reduce:animate-none' />
+          </div>
+          <div className='h-14 w-full animate-pulse rounded-xl bg-background/10 motion-reduce:animate-none' />
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
