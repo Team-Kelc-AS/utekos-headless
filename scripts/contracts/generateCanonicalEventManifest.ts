@@ -10,8 +10,9 @@ import { buildUtekosEventDeliveryParameterContract } from './utekosEventDelivery
 import { readCanonicalManifestSources } from './readCanonicalManifestSources'
 import { OPERATOR_TRACKING_AUTHORIZATION } from '../../src/lib/consent/resolveTrackingAuthorization'
 import { readCanonicalPipeline } from './readCanonicalPipeline'
-
-type JsonObject = Record<string, unknown>
+import { canonicalEventManifestSchema } from '../../src/lib/canonical-control/controlManifest'
+import { controlResultSchema } from '../../src/lib/canonical-control/controlResult'
+import { readCanonicalPilotRules } from './readCanonicalPilotRules'
 
 const repositoryRoot = resolve(
   dirname(fileURLToPath(import.meta.url)),
@@ -28,118 +29,7 @@ const selectedEventNames = canonicalEventSchema.options.map(
     return name
   }
 )
-const evidenceStatusSchema = z.enum([
-  'static_verified',
-  'runtime_observed',
-  'provider_accepted',
-  'provider_reported',
-  'not_queried'
-])
-
-export const canonicalEventManifestSchema = z.strictObject({
-  manifest_version: z.literal(manifestVersion),
-  source_of_truth: z.strictObject({
-    statement: z.string().min(1),
-    normative_sources: z.array(z.string().min(1)).min(1)
-  }),
-  tracking_authorization: z.strictObject({
-    mode: z.literal('operator_policy'),
-    version: z.literal(operatorPolicyVersion),
-    authorization: z.strictObject({
-      analytics: z.literal('granted'),
-      marketing: z.literal('granted'),
-      preferences: z.literal('granted')
-    }),
-    cookiebot_state: z.literal(
-      'not_used_for_tracking_authorization'
-    )
-  }),
-  evidence_statuses: z.array(evidenceStatusSchema).min(1),
-  generated_from: z.strictObject({
-    source_files: z
-      .array(
-        z.strictObject({
-          path: z.string().min(1),
-          sha256: z.string().regex(/^[a-f0-9]{64}$/)
-        })
-      )
-      .min(1)
-  }),
-  catalog_only: z.array(
-    z.strictObject({
-      name: z.string().min(1),
-      membership: z.literal('catalog_only'),
-      policy: z.record(z.string(), z.unknown())
-    })
-  ),
-  limitations: z.array(z.string().min(1)),
-  pipeline: z.strictObject({
-    evidence: z.literal('source_only'),
-    queue_topic: z.string().min(1),
-    stages: z.array(
-      z.strictObject({ stage: z.string(), source: z.string() })
-    ),
-    adapters: z.array(
-      z.strictObject({
-        key: z.string(),
-        registry: z.string(),
-        implementation: z.strictObject({
-          path: z.string(),
-          symbol: z.string()
-        })
-      })
-    ),
-    workers: z.array(
-      z.strictObject({
-        key: z.string(),
-        registry: z.string(),
-        implementation: z.strictObject({
-          path: z.string(),
-          symbol: z.string()
-        })
-      })
-    )
-  }),
-  events: z
-    .array(
-      z.strictObject({
-        name: z.string().min(1),
-        membership: z.literal('canonical'),
-        schema: z.strictObject({
-          source: z.string().min(1),
-          json_schema: z.record(z.string(), z.unknown())
-        }),
-        contract: z.strictObject({
-          route: z.string().min(1).nullable(),
-          source_files: z.array(z.string().min(1)).min(1)
-        }),
-        policy: z.record(z.string(), z.unknown()),
-        provider_mappings: z.record(z.string(), z.unknown()),
-        parameter_lineage: z.array(
-          z.strictObject({
-            provider: z.string().min(1),
-            delivery: z.enum(['browser', 'server']),
-            target_parameter: z.string().min(1),
-            source: z.string().min(1),
-            requirement: z.enum([
-              'required',
-              'conditional',
-              'recommended',
-              'optional'
-            ]),
-            rule: z.string().min(1)
-          })
-        ),
-        evidence: z.strictObject({
-          static: z.literal('static_verified'),
-          runtime: z.literal('not_queried'),
-          provider_accepted: z.literal('not_queried'),
-          provider_reported: z.literal('not_queried')
-        })
-      })
-    )
-    .length(selectedEventNames.length)
-})
+export { canonicalEventManifestSchema } from '../../src/lib/canonical-control/controlManifest'
 
 const generatedPaths = {
   schema: resolve(
@@ -175,7 +65,10 @@ function parameterLineage(
   eventName: (typeof selectedEventNames)[number],
   deliveryContract: ReturnType<
     typeof buildUtekosEventDeliveryParameterContract
-  >
+  >,
+  runtimeRules: ReturnType<
+    typeof readCanonicalPilotRules
+  >['events'][string]['rules']
 ) {
   const event = deliveryContract.events[eventName]
   if (!event) {
@@ -186,6 +79,14 @@ function parameterLineage(
       typeof canonicalEventManifestSchema
     >['events'][number]['parameter_lineage'][number]
   > = []
+  const microsoftCommerceRules = runtimeRules.filter(
+    (
+      rule
+    ): rule is Extract<
+      (typeof runtimeRules)[number],
+      { kind: 'microsoft_commerce' }
+    > => rule.kind === 'microsoft_commerce'
+  )
 
   for (const [provider, mapping] of Object.entries(
     event.providers
@@ -206,10 +107,25 @@ function parameterLineage(
           throw new Error(`Unknown parameter set ${setName}`)
         }
         for (const parameter of parameters) {
+          if (
+            provider === 'microsoft_uet' &&
+            delivery === 'server' &&
+            microsoftCommerceRules.some(rule =>
+              [
+                ...rule.transaction_id_targets,
+                rule.item_price_target
+              ].some(
+                target => parameter.path === `data[].${target}`
+              )
+            )
+          )
+            continue
           lines.push({
             provider,
             delivery,
             target_parameter: parameter.path,
+            authority: 'catalog_declaration',
+            runtime_rule_id: null,
             source: parameter.source,
             requirement: parameter.requirement,
             rule: parameter.rule
@@ -217,6 +133,32 @@ function parameterLineage(
         }
       }
     }
+  }
+
+  for (const rule of microsoftCommerceRules) {
+    const shared = {
+      provider: 'microsoft_uet',
+      delivery: 'server' as const,
+      authority: 'runtime_rule' as const,
+      runtime_rule_id: rule.id,
+      requirement: 'required' as const
+    }
+    for (const target of rule.transaction_id_targets) {
+      lines.push({
+        ...shared,
+        target_parameter: `data[].${target}`,
+        source: `custom_data.${rule.transaction_id_source}`,
+        rule: `Copy the transaction source selected by ${rule.id}.`
+      })
+    }
+    lines.push({
+      ...shared,
+      target_parameter: `data[].${rule.item_price_target}`,
+      source: rule.item_price_sources
+        .map(source => `custom_data.items[].${source}`)
+        .join(' ?? '),
+      rule: `${rule.selection}; rule ${rule.id}.`
+    })
   }
 
   return lines.toSorted((left, right) =>
@@ -242,9 +184,10 @@ function canonicalSchemaByEventName() {
   return schemas
 }
 
-function buildManifest() {
+export function buildCanonicalEventManifest() {
   const sources = readCanonicalManifestSources(repositoryRoot)
   const pipeline = readCanonicalPipeline(repositoryRoot)
+  const pilotRules = readCanonicalPilotRules(repositoryRoot)
   if (sources.schemaFiles.length !== selectedEventNames.length)
     throw new Error('Canonical source membership mismatch')
   const deliveryContract =
@@ -277,7 +220,7 @@ function buildManifest() {
         json_schema: z.toJSONSchema(schema, {
           target: 'draft-2020-12',
           unrepresentable: 'throw'
-        }) as JsonObject
+        })
       },
       contract: {
         route:
@@ -297,9 +240,20 @@ function buildManifest() {
       },
       policy: structuredClone(policy),
       provider_mappings: structuredClone(delivery.providers),
+      runtime_contract: {
+        coverage:
+          name in pilotRules.events ?
+            'pilot_event_runtime_and_provider_connections'
+          : 'not_migrated',
+        rules: pilotRules.events[name]?.rules ?? [],
+        connections: pilotRules.events[name]?.connections ?? [],
+        remaining_metadata:
+          'catalog_declarations_not_runtime_verified'
+      },
       parameter_lineage: parameterLineage(
         name,
-        deliveryContract
+        deliveryContract,
+        pilotRules.events[name]?.rules ?? []
       ),
       evidence: {
         static: 'static_verified' as const,
@@ -312,6 +266,17 @@ function buildManifest() {
 
   return canonicalEventManifestSchema.parse({
     manifest_version: manifestVersion,
+    agent_contract: {
+      path: 'contracts/events/canonical-event-manifest/v1/canonical-event-context.v2.schema.json',
+      sha256: sha256(
+        serialize(
+          z.toJSONSchema(controlResultSchema, {
+            target: 'draft-2020-12',
+            unrepresentable: 'throw'
+          })
+        )
+      )
+    },
     source_of_truth: {
       statement:
         'Manifestet er den offisielle Control Plane-outputen, men normative TypeScript/Zod-schemas, contracts og eksplisitte provider mappings forblir source of truth som manifestet genereres fra.',
@@ -319,6 +284,11 @@ function buildManifest() {
         'src/lib/analytics/*Event.ts',
         'src/lib/analytics/canonicalEventEnvelope.ts',
         'src/lib/analytics/eventCatalog.ts',
+        'src/lib/analytics/googleCommerceEventMapping.ts',
+        'src/lib/analytics/metaCommerceEventMapping.ts',
+        'src/lib/analytics/microsoftCommerceRules.ts',
+        'src/lib/analytics/pinterestEventMapping.ts',
+        'src/lib/analytics/snapchatEventMapping.ts',
         'src/lib/consent/resolveTrackingAuthorization.ts',
         'scripts/contracts/utekosEventsContractCatalog.ts',
         'scripts/contracts/utekosEventDeliveryParameterCatalog.ts'
@@ -346,6 +316,7 @@ function buildManifest() {
         ...new Set([
           ...sources.sourceFiles,
           ...pipeline.sourceFiles,
+          ...pilotRules.sourceFiles,
           ...events.flatMap(event => event.contract.source_files)
         ])
       ]
@@ -362,7 +333,9 @@ function buildManifest() {
     limitations: [
       'JSON Schema describes structural validation; custom Zod refinements remain authoritative in the referenced source.',
       'Catalog consent requirements are declarations. The current web tracking authorization is operator_policy; Cookiebot state is not consulted.',
-      'Provider mappings and lifecycle labels are source declarations, not deployment, delivery, reporting or attribution evidence.'
+      'Provider mappings and lifecycle labels are source declarations, not deployment, delivery, reporting or attribution evidence.',
+      'For add_to_cart and purchase, runtime_contract records source-verified collection, persistence, dispatch registry, adapter, mapper and sender bindings. This is a static code graph, not runtime, deployment or provider evidence.',
+      'Only the Microsoft commerce parameter lineage is migrated to executable ownership. Other parameter descriptions remain unverified catalog declarations. Mapper guards may still inspect the supplied event snapshot; operator_policy does not prove their absence.'
     ],
     pipeline: pipeline.definition,
     events
@@ -387,7 +360,7 @@ function writeOrCheck(
 }
 
 export function generateCanonicalEventManifest(check = false) {
-  const manifest = buildManifest()
+  const manifest = buildCanonicalEventManifest()
   const manifestContent = serialize(manifest)
   const schemaContent = serialize(
     z.toJSONSchema(canonicalEventManifestSchema, {
@@ -400,6 +373,19 @@ export function generateCanonicalEventManifest(check = false) {
   writeOrCheck(generatedPaths.schema, schemaContent, check)
   writeOrCheck(generatedPaths.manifest, manifestContent, check)
   writeOrCheck(generatedPaths.sha256, checksumContent, check)
+  writeOrCheck(
+    resolve(
+      repositoryRoot,
+      'contracts/events/canonical-event-manifest/v1/canonical-event-context.v2.schema.json'
+    ),
+    serialize(
+      z.toJSONSchema(controlResultSchema, {
+        target: 'draft-2020-12',
+        unrepresentable: 'throw'
+      })
+    ),
+    check
+  )
 }
 
 const isDirectExecution =

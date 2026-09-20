@@ -4,6 +4,7 @@ import {
   ServerEvent
 } from 'facebook-nodejs-business-sdk'
 import { resolveMetaCatalogProductId } from '../metaCatalogIdentity'
+import { META_COMMERCE_EVENT_MAP } from '../metaCommerceEventMapping'
 import type { CanonicalPurchase } from '../purchaseEvent'
 import { buildMetaUserData } from './buildMetaUserData'
 import { buildMetaRequestContext } from './buildMetaRequestContext'
@@ -67,7 +68,7 @@ export function mapCanonicalPurchaseToMeta(
 
   const serverEvent = new ServerEvent()
   serverEvent
-    .setEventName('Purchase')
+    .setEventName(META_COMMERCE_EVENT_MAP.purchase.server)
     .setEventTime(eventTime)
     .setUserData(buildMetaUserData(event))
     .setCustomData(buildPurchaseCustomData(event))

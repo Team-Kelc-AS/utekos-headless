@@ -111,7 +111,10 @@ export function readCanonicalManifestSources(root: string) {
     'src/lib/analytics/eventCatalog.ts',
     'src/lib/consent/resolveTrackingAuthorization.ts',
     'scripts/contracts/utekosEventsContractCatalog.ts',
-    'scripts/contracts/utekosEventDeliveryParameterCatalog.ts'
+    'scripts/contracts/utekosEventDeliveryParameterCatalog.ts',
+    'src/lib/canonical-control/controlResult.ts',
+    'src/lib/canonical-control/controlManifest.ts',
+    'src/lib/canonical-control/buildCanonicalContext.ts'
   ])
     visit(file)
   sourceFiles.add(

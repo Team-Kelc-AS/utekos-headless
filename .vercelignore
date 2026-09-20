@@ -79,6 +79,7 @@ scripts/contracts/*
 !scripts/contracts/generateCanonicalEventManifest.ts
 !scripts/contracts/readCanonicalManifestSources.ts
 !scripts/contracts/readCanonicalPipeline.ts
+!scripts/contracts/readCanonicalPilotRules.ts
 !scripts/contracts/utekosEventsContractCatalog.ts
 !scripts/contracts/utekosEventDeliveryParameterCatalog.ts
 

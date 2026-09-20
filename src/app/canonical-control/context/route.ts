@@ -1,6 +1,9 @@
 import { getControlSession } from '@/lib/canonical-control/getControlSession'
-import { getCanonicalContext } from '@/lib/canonical-control/getCanonicalContext'
 import { controlInputSchema } from '@/lib/canonical-control/controlInput'
+import {
+  createControlContextResponse,
+  controlErrorSchema
+} from '@/lib/canonical-control/createControlContextResponse'
 
 export async function GET(request: Request) {
   const headers = {
@@ -10,7 +13,7 @@ export async function GET(request: Request) {
   }
   if (!(await getControlSession()))
     return Response.json(
-      { error: 'AUTH_REQUIRED' },
+      controlErrorSchema.parse({ error: 'AUTH_REQUIRED' }),
       { status: 401, headers }
     )
   const url = new URL(request.url)
@@ -20,7 +23,7 @@ export async function GET(request: Request) {
     new Set(entries.map(([key]) => key)).size !== entries.length
   )
     return Response.json(
-      { error: 'INVALID_INPUT' },
+      controlErrorSchema.parse({ error: 'INVALID_INPUT' }),
       { status: 400, headers }
     )
   const input = Object.fromEntries(entries) as Record<
@@ -32,17 +35,8 @@ export async function GET(request: Request) {
   const parsed = controlInputSchema.safeParse(input)
   if (!parsed.success)
     return Response.json(
-      { error: 'INVALID_INPUT' },
+      controlErrorSchema.parse({ error: 'INVALID_INPUT' }),
       { status: 400, headers }
     )
-  try {
-    return Response.json(getCanonicalContext(parsed.data), {
-      headers
-    })
-  } catch {
-    return Response.json(
-      { error: 'EVENT_NOT_FOUND' },
-      { status: 404, headers }
-    )
-  }
+  return createControlContextResponse(parsed.data, headers)
 }

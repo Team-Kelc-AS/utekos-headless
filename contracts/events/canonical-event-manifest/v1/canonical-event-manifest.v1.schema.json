@@ -6,6 +6,24 @@
       "type": "string",
       "const": "canonical-event-manifest.v1"
     },
+    "agent_contract": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "const": "contracts/events/canonical-event-manifest/v1/canonical-event-context.v2.schema.json"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
     "source_of_truth": {
       "type": "object",
       "properties": {
@@ -135,10 +153,519 @@
           },
           "policy": {
             "type": "object",
-            "propertyNames": {
-              "type": "string"
+            "properties": {
+              "version": {
+                "type": "number",
+                "const": 1
+              },
+              "name": {
+                "type": "string"
+              },
+              "lifecycle": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "planned",
+                  "blocked_source"
+                ]
+              },
+              "owner": {
+                "type": "string"
+              },
+              "trigger": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "browser",
+                        "server",
+                        "webhook"
+                      ]
+                    }
+                  },
+                  "repeatability": {
+                    "type": "string"
+                  },
+                  "eventTime": {
+                    "type": "string"
+                  },
+                  "prerequisites": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "description",
+                  "sources",
+                  "repeatability",
+                  "eventTime",
+                  "prerequisites"
+                ],
+                "additionalProperties": false
+              },
+              "dedupe": {
+                "type": "object",
+                "properties": {
+                  "eventId": {
+                    "type": "string"
+                  },
+                  "reuse": {
+                    "type": "string"
+                  },
+                  "newEvent": {
+                    "type": "string"
+                  },
+                  "ledgerIdempotencyKey": {
+                    "type": "string"
+                  },
+                  "providerIdempotencyKey": {
+                    "type": "string"
+                  },
+                  "browserServerShareEventId": {
+                    "type": "boolean"
+                  },
+                  "retention": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "enum": [
+                          "day",
+                          "month",
+                          "year"
+                        ]
+                      },
+                      "scope": {
+                        "type": "string",
+                        "const": "dedupe_key_only"
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "unit",
+                      "scope"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "eventId",
+                  "reuse",
+                  "newEvent",
+                  "ledgerIdempotencyKey",
+                  "providerIdempotencyKey",
+                  "browserServerShareEventId",
+                  "retention"
+                ],
+                "additionalProperties": false
+              },
+              "consent": {
+                "type": "object",
+                "properties": {
+                  "browserCreation": {
+                    "type": "string",
+                    "enum": [
+                      "local_ephemeral_allowed",
+                      "after_authoritative_response",
+                      "authoritative_server_source"
+                    ]
+                  },
+                  "firstPartyCollection": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "analytics",
+                        "marketing",
+                        "operational"
+                      ]
+                    }
+                  },
+                  "canonicalLedger": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "analytics",
+                        "marketing",
+                        "operational"
+                      ]
+                    }
+                  },
+                  "analyticsExport": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "const": "analytics"
+                    }
+                  },
+                  "marketingExport": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "const": "marketing"
+                    }
+                  },
+                  "googleCookielessPing": {
+                    "type": "string",
+                    "enum": [
+                      "allowed_by_consent_mode",
+                      "not_applicable"
+                    ]
+                  },
+                  "operationalPurpose": {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "commerce_mutation",
+                      "order_accounting",
+                      "lead_fulfilment",
+                      "error_diagnostics"
+                    ]
+                  },
+                  "piiPolicy": {
+                    "type": "string",
+                    "const": "consent_gated_provider_identifiers_only"
+                  }
+                },
+                "required": [
+                  "browserCreation",
+                  "firstPartyCollection",
+                  "canonicalLedger",
+                  "analyticsExport",
+                  "marketingExport",
+                  "googleCookielessPing",
+                  "operationalPurpose",
+                  "piiPolicy"
+                ],
+                "additionalProperties": false
+              },
+              "providers": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "enum": [
+                    "supabase",
+                    "google",
+                    "meta",
+                    "microsoft_uet",
+                    "pinterest",
+                    "snapchat"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "support": {
+                      "type": "string",
+                      "enum": [
+                        "supported",
+                        "planned",
+                        "not_relevant",
+                        "blocked"
+                      ]
+                    },
+                    "eventName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "transport": {
+                      "type": "object",
+                      "properties": {
+                        "browser": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "google_tag_manager",
+                                "shopify_customer_events",
+                                "meta_pixel",
+                                "microsoft_uet",
+                                "pinterest_tag",
+                                "snap_pixel",
+                                "first_party_api",
+                                "server_side_gtm",
+                                "google_data_manager",
+                                "meta_conversions_api",
+                                "meta_conversions_api_app",
+                                "meta_conversions_api_offline",
+                                "microsoft_uet_capi",
+                                "pinterest_conversions_api",
+                                "snap_conversions_api_v3"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "server": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "google_tag_manager",
+                                "shopify_customer_events",
+                                "meta_pixel",
+                                "microsoft_uet",
+                                "pinterest_tag",
+                                "snap_pixel",
+                                "first_party_api",
+                                "server_side_gtm",
+                                "google_data_manager",
+                                "meta_conversions_api",
+                                "meta_conversions_api_app",
+                                "meta_conversions_api_offline",
+                                "microsoft_uet_capi",
+                                "pinterest_conversions_api",
+                                "snap_conversions_api_v3"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "browser",
+                        "server"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "requiredParameters": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "dedupeField": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "consentRequirement": {
+                      "type": "string",
+                      "enum": [
+                        "analytics",
+                        "marketing",
+                        "analytics_or_marketing",
+                        "analytics_or_operational",
+                        "operational",
+                        "none"
+                      ]
+                    },
+                    "adapterVersion": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "productionStatus": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "planned",
+                        "blocked",
+                        "not_implemented",
+                        "not_relevant"
+                      ]
+                    },
+                    "productionDetail": {
+                      "type": "string"
+                    },
+                    "serverOutbox": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "disabled",
+                        "blocked_no_worker"
+                      ]
+                    },
+                    "signalDelivery": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string",
+                        "enum": [
+                          "event_source_url",
+                          "client_ip_address",
+                          "client_user_agent",
+                          "external_id",
+                          "click_ids",
+                          "meta_fbclid",
+                          "meta_fbc",
+                          "meta_fbp"
+                        ]
+                      },
+                      "additionalProperties": {
+                        "type": "string",
+                        "enum": [
+                          "required",
+                          "send_when_available",
+                          "send_when_supported_and_permitted",
+                          "derive_to_provider_format",
+                          "persist_canonical",
+                          "not_applicable"
+                        ]
+                      },
+                      "required": [
+                        "event_source_url",
+                        "client_ip_address",
+                        "client_user_agent",
+                        "external_id",
+                        "click_ids",
+                        "meta_fbclid",
+                        "meta_fbc",
+                        "meta_fbp"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "support",
+                    "eventName",
+                    "transport",
+                    "requiredParameters",
+                    "dedupeField",
+                    "consentRequirement",
+                    "adapterVersion",
+                    "productionStatus",
+                    "productionDetail",
+                    "serverOutbox",
+                    "signalDelivery"
+                  ],
+                  "additionalProperties": false
+                },
+                "required": [
+                  "supabase",
+                  "google",
+                  "meta",
+                  "microsoft_uet",
+                  "pinterest",
+                  "snapchat"
+                ]
+              },
+              "signals": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "enum": [
+                    "event_source_url",
+                    "client_ip_address",
+                    "client_user_agent",
+                    "external_id",
+                    "click_ids",
+                    "meta_fbclid",
+                    "meta_fbc",
+                    "meta_fbp"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "requirement": {
+                      "type": "string",
+                      "enum": [
+                        "required",
+                        "required_when_marketing_granted",
+                        "required_when_observed",
+                        "required_from_attribution_snapshot",
+                        "not_applicable"
+                      ]
+                    },
+                    "allowedSources": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "browser_request_url",
+                          "browser_document",
+                          "first_party_cookie",
+                          "durable_click_id_store",
+                          "first_party_external_id_cookie",
+                          "vercel_request_context",
+                          "server_request",
+                          "verified_shopify_webhook",
+                          "checkout_attribution_snapshot",
+                          "shopify_order_attribute",
+                          "meta_parameter_builder"
+                        ]
+                      }
+                    },
+                    "allowedUnavailableReasons": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "consent_denied",
+                          "not_observed",
+                          "no_applicable_click",
+                          "not_applicable",
+                          "untrusted_source",
+                          "expired",
+                          "missing_attribution_snapshot"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "requirement",
+                    "allowedSources",
+                    "allowedUnavailableReasons"
+                  ],
+                  "additionalProperties": false
+                },
+                "required": [
+                  "event_source_url",
+                  "client_ip_address",
+                  "client_user_agent",
+                  "external_id",
+                  "click_ids",
+                  "meta_fbclid",
+                  "meta_fbc",
+                  "meta_fbp"
+                ]
+              }
             },
-            "additionalProperties": {}
+            "required": [
+              "version",
+              "name",
+              "lifecycle",
+              "owner",
+              "trigger",
+              "dedupe",
+              "consent",
+              "providers",
+              "signals"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
@@ -269,8 +796,7 @@
       "additionalProperties": false
     },
     "events": {
-      "minItems": 33,
-      "maxItems": 33,
+      "minItems": 1,
       "type": "array",
       "items": {
         "type": "object",
@@ -291,11 +817,7 @@
                 "minLength": 1
               },
               "json_schema": {
-                "type": "object",
-                "propertyNames": {
-                  "type": "string"
-                },
-                "additionalProperties": {}
+                "$ref": "#/$defs/__schema0"
               }
             },
             "required": [
@@ -335,17 +857,748 @@
           },
           "policy": {
             "type": "object",
-            "propertyNames": {
-              "type": "string"
+            "properties": {
+              "version": {
+                "type": "number",
+                "const": 1
+              },
+              "name": {
+                "type": "string"
+              },
+              "lifecycle": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "planned",
+                  "blocked_source"
+                ]
+              },
+              "owner": {
+                "type": "string"
+              },
+              "trigger": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "browser",
+                        "server",
+                        "webhook"
+                      ]
+                    }
+                  },
+                  "repeatability": {
+                    "type": "string"
+                  },
+                  "eventTime": {
+                    "type": "string"
+                  },
+                  "prerequisites": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "description",
+                  "sources",
+                  "repeatability",
+                  "eventTime",
+                  "prerequisites"
+                ],
+                "additionalProperties": false
+              },
+              "dedupe": {
+                "type": "object",
+                "properties": {
+                  "eventId": {
+                    "type": "string"
+                  },
+                  "reuse": {
+                    "type": "string"
+                  },
+                  "newEvent": {
+                    "type": "string"
+                  },
+                  "ledgerIdempotencyKey": {
+                    "type": "string"
+                  },
+                  "providerIdempotencyKey": {
+                    "type": "string"
+                  },
+                  "browserServerShareEventId": {
+                    "type": "boolean"
+                  },
+                  "retention": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "enum": [
+                          "day",
+                          "month",
+                          "year"
+                        ]
+                      },
+                      "scope": {
+                        "type": "string",
+                        "const": "dedupe_key_only"
+                      }
+                    },
+                    "required": [
+                      "value",
+                      "unit",
+                      "scope"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "eventId",
+                  "reuse",
+                  "newEvent",
+                  "ledgerIdempotencyKey",
+                  "providerIdempotencyKey",
+                  "browserServerShareEventId",
+                  "retention"
+                ],
+                "additionalProperties": false
+              },
+              "consent": {
+                "type": "object",
+                "properties": {
+                  "browserCreation": {
+                    "type": "string",
+                    "enum": [
+                      "local_ephemeral_allowed",
+                      "after_authoritative_response",
+                      "authoritative_server_source"
+                    ]
+                  },
+                  "firstPartyCollection": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "analytics",
+                        "marketing",
+                        "operational"
+                      ]
+                    }
+                  },
+                  "canonicalLedger": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "analytics",
+                        "marketing",
+                        "operational"
+                      ]
+                    }
+                  },
+                  "analyticsExport": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "const": "analytics"
+                    }
+                  },
+                  "marketingExport": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "const": "marketing"
+                    }
+                  },
+                  "googleCookielessPing": {
+                    "type": "string",
+                    "enum": [
+                      "allowed_by_consent_mode",
+                      "not_applicable"
+                    ]
+                  },
+                  "operationalPurpose": {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "commerce_mutation",
+                      "order_accounting",
+                      "lead_fulfilment",
+                      "error_diagnostics"
+                    ]
+                  },
+                  "piiPolicy": {
+                    "type": "string",
+                    "const": "consent_gated_provider_identifiers_only"
+                  }
+                },
+                "required": [
+                  "browserCreation",
+                  "firstPartyCollection",
+                  "canonicalLedger",
+                  "analyticsExport",
+                  "marketingExport",
+                  "googleCookielessPing",
+                  "operationalPurpose",
+                  "piiPolicy"
+                ],
+                "additionalProperties": false
+              },
+              "providers": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "enum": [
+                    "supabase",
+                    "google",
+                    "meta",
+                    "microsoft_uet",
+                    "pinterest",
+                    "snapchat"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "support": {
+                      "type": "string",
+                      "enum": [
+                        "supported",
+                        "planned",
+                        "not_relevant",
+                        "blocked"
+                      ]
+                    },
+                    "eventName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "transport": {
+                      "type": "object",
+                      "properties": {
+                        "browser": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "google_tag_manager",
+                                "shopify_customer_events",
+                                "meta_pixel",
+                                "microsoft_uet",
+                                "pinterest_tag",
+                                "snap_pixel",
+                                "first_party_api",
+                                "server_side_gtm",
+                                "google_data_manager",
+                                "meta_conversions_api",
+                                "meta_conversions_api_app",
+                                "meta_conversions_api_offline",
+                                "microsoft_uet_capi",
+                                "pinterest_conversions_api",
+                                "snap_conversions_api_v3"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "server": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "google_tag_manager",
+                                "shopify_customer_events",
+                                "meta_pixel",
+                                "microsoft_uet",
+                                "pinterest_tag",
+                                "snap_pixel",
+                                "first_party_api",
+                                "server_side_gtm",
+                                "google_data_manager",
+                                "meta_conversions_api",
+                                "meta_conversions_api_app",
+                                "meta_conversions_api_offline",
+                                "microsoft_uet_capi",
+                                "pinterest_conversions_api",
+                                "snap_conversions_api_v3"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "browser",
+                        "server"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "requiredParameters": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "dedupeField": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "consentRequirement": {
+                      "type": "string",
+                      "enum": [
+                        "analytics",
+                        "marketing",
+                        "analytics_or_marketing",
+                        "analytics_or_operational",
+                        "operational",
+                        "none"
+                      ]
+                    },
+                    "adapterVersion": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "productionStatus": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "planned",
+                        "blocked",
+                        "not_implemented",
+                        "not_relevant"
+                      ]
+                    },
+                    "productionDetail": {
+                      "type": "string"
+                    },
+                    "serverOutbox": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "disabled",
+                        "blocked_no_worker"
+                      ]
+                    },
+                    "signalDelivery": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string",
+                        "enum": [
+                          "event_source_url",
+                          "client_ip_address",
+                          "client_user_agent",
+                          "external_id",
+                          "click_ids",
+                          "meta_fbclid",
+                          "meta_fbc",
+                          "meta_fbp"
+                        ]
+                      },
+                      "additionalProperties": {
+                        "type": "string",
+                        "enum": [
+                          "required",
+                          "send_when_available",
+                          "send_when_supported_and_permitted",
+                          "derive_to_provider_format",
+                          "persist_canonical",
+                          "not_applicable"
+                        ]
+                      },
+                      "required": [
+                        "event_source_url",
+                        "client_ip_address",
+                        "client_user_agent",
+                        "external_id",
+                        "click_ids",
+                        "meta_fbclid",
+                        "meta_fbc",
+                        "meta_fbp"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "support",
+                    "eventName",
+                    "transport",
+                    "requiredParameters",
+                    "dedupeField",
+                    "consentRequirement",
+                    "adapterVersion",
+                    "productionStatus",
+                    "productionDetail",
+                    "serverOutbox",
+                    "signalDelivery"
+                  ],
+                  "additionalProperties": false
+                },
+                "required": [
+                  "supabase",
+                  "google",
+                  "meta",
+                  "microsoft_uet",
+                  "pinterest",
+                  "snapchat"
+                ]
+              },
+              "signals": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string",
+                  "enum": [
+                    "event_source_url",
+                    "client_ip_address",
+                    "client_user_agent",
+                    "external_id",
+                    "click_ids",
+                    "meta_fbclid",
+                    "meta_fbc",
+                    "meta_fbp"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "requirement": {
+                      "type": "string",
+                      "enum": [
+                        "required",
+                        "required_when_marketing_granted",
+                        "required_when_observed",
+                        "required_from_attribution_snapshot",
+                        "not_applicable"
+                      ]
+                    },
+                    "allowedSources": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "browser_request_url",
+                          "browser_document",
+                          "first_party_cookie",
+                          "durable_click_id_store",
+                          "first_party_external_id_cookie",
+                          "vercel_request_context",
+                          "server_request",
+                          "verified_shopify_webhook",
+                          "checkout_attribution_snapshot",
+                          "shopify_order_attribute",
+                          "meta_parameter_builder"
+                        ]
+                      }
+                    },
+                    "allowedUnavailableReasons": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "consent_denied",
+                          "not_observed",
+                          "no_applicable_click",
+                          "not_applicable",
+                          "untrusted_source",
+                          "expired",
+                          "missing_attribution_snapshot"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "requirement",
+                    "allowedSources",
+                    "allowedUnavailableReasons"
+                  ],
+                  "additionalProperties": false
+                },
+                "required": [
+                  "event_source_url",
+                  "client_ip_address",
+                  "client_user_agent",
+                  "external_id",
+                  "click_ids",
+                  "meta_fbclid",
+                  "meta_fbc",
+                  "meta_fbp"
+                ]
+              }
             },
-            "additionalProperties": {}
+            "required": [
+              "version",
+              "name",
+              "lifecycle",
+              "owner",
+              "trigger",
+              "dedupe",
+              "consent",
+              "providers",
+              "signals"
+            ],
+            "additionalProperties": false
           },
           "provider_mappings": {
             "type": "object",
             "propertyNames": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "supabase",
+                "google",
+                "meta",
+                "microsoft_uet",
+                "pinterest",
+                "snapchat"
+              ]
             },
-            "additionalProperties": {}
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "support": {
+                  "type": "string",
+                  "enum": [
+                    "supported",
+                    "planned",
+                    "not_relevant",
+                    "blocked"
+                  ]
+                },
+                "eventName": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "productionStatus": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "planned",
+                    "blocked",
+                    "not_implemented",
+                    "not_relevant"
+                  ]
+                },
+                "productionDetail": {
+                  "type": "string"
+                },
+                "consentRequirement": {
+                  "type": "string",
+                  "enum": [
+                    "analytics",
+                    "marketing",
+                    "analytics_or_marketing",
+                    "analytics_or_operational",
+                    "operational",
+                    "none"
+                  ]
+                },
+                "dedupeField": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "browser": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "transport": {
+                          "type": "string",
+                          "enum": [
+                            "google_tag_manager",
+                            "shopify_customer_events",
+                            "meta_pixel",
+                            "microsoft_uet",
+                            "pinterest_tag",
+                            "snap_pixel",
+                            "first_party_api",
+                            "server_side_gtm",
+                            "google_data_manager",
+                            "meta_conversions_api",
+                            "meta_conversions_api_app",
+                            "meta_conversions_api_offline",
+                            "microsoft_uet_capi",
+                            "pinterest_conversions_api",
+                            "snap_conversions_api_v3"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "implemented",
+                            "active",
+                            "disabled",
+                            "blocked_no_worker"
+                          ]
+                        },
+                        "parameterContract": {
+                          "type": "object",
+                          "properties": {
+                            "parameterSets": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "logicalRequiredParameters": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "required": [
+                            "parameterSets",
+                            "logicalRequiredParameters"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "transport",
+                        "status",
+                        "parameterContract"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "server": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "transport": {
+                          "type": "string",
+                          "enum": [
+                            "google_tag_manager",
+                            "shopify_customer_events",
+                            "meta_pixel",
+                            "microsoft_uet",
+                            "pinterest_tag",
+                            "snap_pixel",
+                            "first_party_api",
+                            "server_side_gtm",
+                            "google_data_manager",
+                            "meta_conversions_api",
+                            "meta_conversions_api_app",
+                            "meta_conversions_api_offline",
+                            "microsoft_uet_capi",
+                            "pinterest_conversions_api",
+                            "snap_conversions_api_v3"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "implemented",
+                            "active",
+                            "disabled",
+                            "blocked_no_worker"
+                          ]
+                        },
+                        "parameterContract": {
+                          "type": "object",
+                          "properties": {
+                            "parameterSets": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "logicalRequiredParameters": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "required": [
+                            "parameterSets",
+                            "logicalRequiredParameters"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "transport",
+                        "status",
+                        "parameterContract"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "support",
+                "eventName",
+                "productionStatus",
+                "productionDetail",
+                "consentRequirement",
+                "dedupeField",
+                "browser",
+                "server"
+              ],
+              "additionalProperties": false
+            },
+            "required": [
+              "supabase",
+              "google",
+              "meta",
+              "microsoft_uet",
+              "pinterest",
+              "snapchat"
+            ]
           },
           "parameter_lineage": {
             "type": "array",
@@ -366,6 +1619,24 @@
                 "target_parameter": {
                   "type": "string",
                   "minLength": 1
+                },
+                "authority": {
+                  "type": "string",
+                  "enum": [
+                    "runtime_rule",
+                    "catalog_declaration"
+                  ]
+                },
+                "runtime_rule_id": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "source": {
                   "type": "string",
@@ -389,12 +1660,360 @@
                 "provider",
                 "delivery",
                 "target_parameter",
+                "authority",
+                "runtime_rule_id",
                 "source",
                 "requirement",
                 "rule"
               ],
               "additionalProperties": false
             }
+          },
+          "runtime_contract": {
+            "type": "object",
+            "properties": {
+              "coverage": {
+                "type": "string",
+                "enum": [
+                  "not_migrated",
+                  "pilot_event_runtime_and_provider_connections"
+                ]
+              },
+              "rules": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "kind": {
+                          "type": "string",
+                          "const": "microsoft_commerce"
+                        },
+                        "event": {
+                          "type": "string",
+                          "enum": [
+                            "add_to_cart",
+                            "purchase"
+                          ]
+                        },
+                        "provider": {
+                          "type": "string",
+                          "const": "microsoft_uet"
+                        },
+                        "browser_event_name": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "server_event_name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "transaction_id_source": {
+                          "type": "string",
+                          "enum": [
+                            "cart_mutation_id",
+                            "transaction_id"
+                          ]
+                        },
+                        "transaction_id_targets": {
+                          "type": "array",
+                          "prefixItems": [
+                            {
+                              "type": "string",
+                              "const": "customData.transactionId"
+                            },
+                            {
+                              "type": "string",
+                              "const": "customData.eventLabel"
+                            }
+                          ]
+                        },
+                        "item_price_sources": {
+                          "minItems": 1,
+                          "maxItems": 2,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "final_unit_price",
+                              "unit_price"
+                            ]
+                          }
+                        },
+                        "item_price_target": {
+                          "type": "string",
+                          "const": "customData.items[].price"
+                        },
+                        "selection": {
+                          "type": "string",
+                          "const": "first_non_nullish"
+                        },
+                        "source": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "kind",
+                        "event",
+                        "provider",
+                        "browser_event_name",
+                        "server_event_name",
+                        "transaction_id_source",
+                        "transaction_id_targets",
+                        "item_price_sources",
+                        "item_price_target",
+                        "selection",
+                        "source"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "kind": {
+                          "type": "string",
+                          "const": "provider_event_mapping"
+                        },
+                        "event": {
+                          "type": "string",
+                          "enum": [
+                            "add_to_cart",
+                            "purchase"
+                          ]
+                        },
+                        "provider": {
+                          "type": "string",
+                          "enum": [
+                            "google",
+                            "meta",
+                            "microsoft_uet",
+                            "pinterest",
+                            "snapchat"
+                          ]
+                        },
+                        "browser_event_name": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "server_event_name": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "source": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "source_symbol": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "kind",
+                        "event",
+                        "provider",
+                        "browser_event_name",
+                        "server_event_name",
+                        "source",
+                        "source_symbol"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "kind": {
+                          "type": "string",
+                          "const": "provider_dispatch"
+                        },
+                        "event": {
+                          "type": "string",
+                          "enum": [
+                            "add_to_cart",
+                            "purchase"
+                          ]
+                        },
+                        "provider": {
+                          "type": "string",
+                          "enum": [
+                            "supabase",
+                            "google",
+                            "meta",
+                            "microsoft_uet",
+                            "pinterest",
+                            "snapchat"
+                          ]
+                        },
+                        "lifecycle": {
+                          "type": "string",
+                          "const": "active"
+                        },
+                        "support": {
+                          "type": "string",
+                          "const": "supported"
+                        },
+                        "consent_requirement": {
+                          "type": "string",
+                          "enum": [
+                            "analytics",
+                            "marketing",
+                            "analytics_or_marketing",
+                            "operational"
+                          ]
+                        },
+                        "production_status": {
+                          "type": "string",
+                          "const": "active"
+                        },
+                        "server_outbox": {
+                          "type": "string",
+                          "enum": [
+                            "active",
+                            "disabled"
+                          ]
+                        },
+                        "source": {
+                          "type": "string",
+                          "const": "src/lib/analytics/eventCatalog.ts"
+                        },
+                        "source_symbol": {
+                          "type": "string",
+                          "const": "eventCatalog"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "kind",
+                        "event",
+                        "provider",
+                        "lifecycle",
+                        "support",
+                        "consent_requirement",
+                        "production_status",
+                        "server_outbox",
+                        "source",
+                        "source_symbol"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              },
+              "connections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "from": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "symbol": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "to": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "symbol": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "path",
+                        "symbol"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "relation": {
+                      "type": "string",
+                      "enum": [
+                        "calls",
+                        "dispatches",
+                        "maps",
+                        "persists",
+                        "plans",
+                        "reads_definition",
+                        "registers",
+                        "sends",
+                        "uses_dependencies",
+                        "uses_mapping"
+                      ]
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "const": "source_verified"
+                    }
+                  },
+                  "required": [
+                    "from",
+                    "to",
+                    "relation",
+                    "evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "remaining_metadata": {
+                "type": "string",
+                "const": "catalog_declarations_not_runtime_verified"
+              }
+            },
+            "required": [
+              "coverage",
+              "rules",
+              "connections",
+              "remaining_metadata"
+            ],
+            "additionalProperties": false
           },
           "evidence": {
             "type": "object",
@@ -433,6 +2052,7 @@
           "policy",
           "provider_mappings",
           "parameter_lineage",
+          "runtime_contract",
           "evidence"
         ],
         "additionalProperties": false
@@ -441,6 +2061,7 @@
   },
   "required": [
     "manifest_version",
+    "agent_contract",
     "source_of_truth",
     "tracking_authorization",
     "evidence_statuses",
@@ -450,5 +2071,195 @@
     "pipeline",
     "events"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "$id": {
+          "type": "string"
+        },
+        "$ref": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "object",
+            "array",
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "const": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "enum": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "format": {
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "minimum": {
+          "type": "number"
+        },
+        "maximum": {
+          "type": "number"
+        },
+        "exclusiveMinimum": {
+          "type": "number"
+        },
+        "exclusiveMaximum": {
+          "type": "number"
+        },
+        "multipleOf": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "minLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "minItems": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxItems": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "uniqueItems": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "readOnly": {
+          "type": "boolean"
+        },
+        "properties": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        "$defs": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        "items": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/__schema0"
+            }
+          ]
+        },
+        "prefixItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        "additionalProperties": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/__schema0"
+            }
+          ]
+        },
+        "propertyNames": {
+          "$ref": "#/$defs/__schema0"
+        },
+        "anyOf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        "oneOf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          }
+        },
+        "allOf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/__schema0"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }

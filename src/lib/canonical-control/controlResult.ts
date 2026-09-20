@@ -1,33 +1,43 @@
 import { z } from 'zod'
+import {
+  controlAuthorizationSchema,
+  controlCollectorSchema,
+  controlDefinitionSchema,
+  controlPipelineSchema,
+  controlSourceSchema
+} from './controlDefinition'
 
-export const controlResultSchema = z.object({
-  manifest_version: z.string(),
+export const controlResultSchema = z.strictObject({
+  result_version: z.literal('canonical-event-context.v2'),
+  manifest_version: z.literal('canonical-event-manifest.v1'),
   manifest_sha256: z.string().regex(/^[a-f0-9]{64}$/),
   deployment_sha: z.string().nullable(),
-  tracking_authorization: z.record(z.string(), z.unknown()),
+  tracking_authorization: controlAuthorizationSchema,
   inventory: z.array(
-    z.object({
+    z.strictObject({
       name: z.string(),
       membership: z.literal('canonical')
     })
   ),
   catalog_only: z.array(
-    z.object({
+    z.strictObject({
       name: z.string(),
       membership: z.literal('catalog_only')
     })
   ),
-  contexts: z.array(
-    z.object({
-      definition: z.object({ name: z.string() }).passthrough(),
-      pipeline: z.record(z.string(), z.unknown())
-    })
-  ),
+  contexts: z
+    .array(
+      z.strictObject({
+        definition: controlDefinitionSchema,
+        pipeline: controlPipelineSchema.extend({
+          collector: controlCollectorSchema
+        })
+      })
+    )
+    .max(5),
   total_matches: z.number().int().nonnegative(),
   truncated: z.boolean(),
-  sources: z.array(
-    z.object({ path: z.string(), sha256: z.string() })
-  ),
+  sources: z.array(controlSourceSchema),
   limitations: z.array(z.string()),
   live_evidence: z.literal('not_queried')
 })

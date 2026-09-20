@@ -7,6 +7,11 @@ import {
   resolveProviderSignalDelivery,
   type EventSignalProfile
 } from './eventCatalogSignalContracts'
+import { GOOGLE_COMMERCE_EVENT_MAP } from './googleCommerceEventMapping'
+import { META_COMMERCE_EVENT_MAP } from './metaCommerceEventMapping'
+import { microsoftCommerceRules } from './microsoftCommerceRules'
+import { PINTEREST_CANONICAL_EVENT_MAP } from './pinterestEventMapping'
+import { SNAPCHAT_CANONICAL_EVENT_MAP } from './snapchatEventMapping'
 
 export type CatalogLifecycle =
   | 'active'
@@ -953,7 +958,7 @@ const addToCartProviders = {
   }),
   google: providerMapping({
     support: 'supported',
-    eventName: 'add_to_cart',
+    eventName: GOOGLE_COMMERCE_EVENT_MAP.add_to_cart.server,
     transport: {
       browser: 'google_tag_manager',
       server: 'google_data_manager'
@@ -976,7 +981,7 @@ const addToCartProviders = {
   }),
   meta: providerMapping({
     support: 'supported',
-    eventName: 'AddToCart',
+    eventName: META_COMMERCE_EVENT_MAP.add_to_cart.server,
     transport: {
       browser: 'meta_pixel',
       server: 'meta_conversions_api'
@@ -1000,7 +1005,8 @@ const addToCartProviders = {
   }),
   microsoft_uet: providerMapping({
     support: 'supported',
-    eventName: 'add_to_cart',
+    eventName:
+      microsoftCommerceRules.add_to_cart.server_event_name,
     transport: {
       browser: 'microsoft_uet',
       server: 'microsoft_uet_capi'
@@ -1020,25 +1026,31 @@ const addToCartProviders = {
       'Browser UET is active; Microsoft UET CAPI add_to_cart outbox is active when marketing consent is granted and at least one Microsoft-supported userData identifier is present.',
     serverOutbox: 'active'
   }),
-  pinterest: pinterestCatalogProvider('add_to_cart', {
-    active: true,
-    requiredParameters: [
-      'content_ids',
-      'contents',
-      'currency',
-      'value'
-    ]
-  }),
-  snapchat: snapchatCatalogProvider('ADD_CART', {
-    active: true,
-    browser: 'snap_pixel',
-    requiredParameters: [
-      'content_ids',
-      'contents',
-      'currency',
-      'value'
-    ]
-  })
+  pinterest: pinterestCatalogProvider(
+    PINTEREST_CANONICAL_EVENT_MAP.add_to_cart.api,
+    {
+      active: true,
+      requiredParameters: [
+        'content_ids',
+        'contents',
+        'currency',
+        'value'
+      ]
+    }
+  ),
+  snapchat: snapchatCatalogProvider(
+    SNAPCHAT_CANONICAL_EVENT_MAP.add_to_cart,
+    {
+      active: true,
+      browser: 'snap_pixel',
+      requiredParameters: [
+        'content_ids',
+        'contents',
+        'currency',
+        'value'
+      ]
+    }
+  )
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >
@@ -1297,7 +1309,7 @@ const purchaseProviders = {
   }),
   google: providerMapping({
     support: 'supported',
-    eventName: 'purchase',
+    eventName: GOOGLE_COMMERCE_EVENT_MAP.purchase.server,
     transport: {
       browser: 'shopify_customer_events',
       server: 'google_data_manager'
@@ -1320,7 +1332,7 @@ const purchaseProviders = {
   }),
   meta: providerMapping({
     support: 'supported',
-    eventName: 'Purchase',
+    eventName: META_COMMERCE_EVENT_MAP.purchase.server,
     transport: {
       browser: 'shopify_customer_events',
       server: 'meta_conversions_api'
@@ -1344,7 +1356,7 @@ const purchaseProviders = {
   }),
   microsoft_uet: providerMapping({
     support: 'supported',
-    eventName: 'purchase',
+    eventName: microsoftCommerceRules.purchase.server_event_name,
     transport: { browser: null, server: 'microsoft_uet_capi' },
     requiredParameters: [
       ...baseProviderParameters,
@@ -1361,28 +1373,34 @@ const purchaseProviders = {
       'Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and at least one Microsoft-supported userData identifier is present.',
     serverOutbox: 'active'
   }),
-  pinterest: pinterestCatalogProvider('checkout', {
-    active: true,
-    requiredParameters: [
-      'content_ids',
-      'contents',
-      'currency',
-      'value',
-      'order_id'
-    ]
-  }),
-  snapchat: snapchatCatalogProvider('PURCHASE', {
-    active: true,
-    browser: 'shopify_customer_events',
-    dedupeField: 'transaction_id',
-    requiredParameters: [
-      'content_ids',
-      'contents',
-      'currency',
-      'value',
-      'order_id'
-    ]
-  })
+  pinterest: pinterestCatalogProvider(
+    PINTEREST_CANONICAL_EVENT_MAP.purchase.api,
+    {
+      active: true,
+      requiredParameters: [
+        'content_ids',
+        'contents',
+        'currency',
+        'value',
+        'order_id'
+      ]
+    }
+  ),
+  snapchat: snapchatCatalogProvider(
+    SNAPCHAT_CANONICAL_EVENT_MAP.purchase,
+    {
+      active: true,
+      browser: 'shopify_customer_events',
+      dedupeField: 'transaction_id',
+      requiredParameters: [
+        'content_ids',
+        'contents',
+        'currency',
+        'value',
+        'order_id'
+      ]
+    }
+  )
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >

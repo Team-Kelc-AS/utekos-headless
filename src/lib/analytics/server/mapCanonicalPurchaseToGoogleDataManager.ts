@@ -1,6 +1,7 @@
 import { consentedMetaAudience } from '../metaAudience'
 import { protos } from '@google-ads/datamanager'
 import type { CanonicalPurchase } from '../purchaseEvent'
+import { GOOGLE_COMMERCE_EVENT_MAP } from '../googleCommerceEventMapping'
 import {
   compactGoogleDataManagerParameters,
   googleDataManagerIdentifierParameter,
@@ -120,7 +121,7 @@ export function mapCanonicalPurchaseToGoogleDataManager(
   }
 
   return DataManagerEvent.create({
-    eventName: 'purchase',
+    eventName: GOOGLE_COMMERCE_EVENT_MAP.purchase.server,
     transactionId: event.custom_data.transaction_id,
     eventTimestamp: mapGoogleDataManagerTimestamp(
       event.event_time

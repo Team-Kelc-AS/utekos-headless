@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 import type { CanonicalPurchase } from '../purchaseEvent'
+import { resolveMicrosoftCommerceRule } from '../resolveMicrosoftCommerceRule'
 import {
   buildMicrosoftUetCapiUserData,
   microsoftUetCapiUserDataSchema
@@ -46,7 +47,10 @@ export const microsoftUetCapiPurchaseEventSchema = z
 export const microsoftUetCapiRequestSchema = z
   .object({
     continueOnValidationError: z.boolean(),
-    data: z.array(microsoftUetCapiPurchaseEventSchema).min(1).max(1000),
+    data: z
+      .array(microsoftUetCapiPurchaseEventSchema)
+      .min(1)
+      .max(1000),
     dataProvider: z.literal('utekos-headless')
   })
   .strict()
@@ -68,7 +72,9 @@ export function mapCanonicalPurchaseToMicrosoftUet(
     )
   }
 
-  const eventTime = Math.floor(Date.parse(event.event_time) / 1000)
+  const eventTime = Math.floor(
+    Date.parse(event.event_time) / 1000
+  )
 
   if (!Number.isFinite(eventTime) || eventTime <= 0) {
     throw new Error(
@@ -76,15 +82,16 @@ export function mapCanonicalPurchaseToMicrosoftUet(
     )
   }
 
-  const items = event.custom_data.items.map(item => ({
+  const commerceRule = resolveMicrosoftCommerceRule(event)
+  const items = event.custom_data.items.map((item, index) => ({
     id: cleanShopifyId(item.item_id) ?? item.item_id,
     name: item.item_name,
-    price: item.final_unit_price ?? item.unit_price,
+    price: commerceRule.itemPrices[index],
     quantity: item.quantity
   }))
   const itemIds = items.map(item => item.id)
   const value = event.custom_data.value
-  const transactionId = event.custom_data.transaction_id
+  const transactionId = commerceRule.transactionId
 
   return microsoftUetCapiPurchaseEventSchema.parse({
     adStorageConsent: 'G',
@@ -101,8 +108,10 @@ export function mapCanonicalPurchaseToMicrosoftUet(
       value
     },
     eventId: event.event_id,
-    eventName: 'purchase',
-    ...(event.page_url ? { eventSourceUrl: event.page_url } : {}),
+    eventName: commerceRule.serverEventName,
+    ...(event.page_url ?
+      { eventSourceUrl: event.page_url }
+    : {}),
     eventTime,
     eventType: 'custom',
     userData: buildMicrosoftUetCapiUserData(event)

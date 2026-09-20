@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 import type { CanonicalAddToCart } from '../addToCartEvent'
+import { resolveMicrosoftCommerceRule } from '../resolveMicrosoftCommerceRule'
 import {
   buildMicrosoftUetCapiUserData,
   microsoftUetCapiUserDataSchema
@@ -72,7 +73,9 @@ export function mapCanonicalAddToCartToMicrosoftUet(
     )
   }
 
-  const eventTime = Math.floor(Date.parse(event.event_time) / 1000)
+  const eventTime = Math.floor(
+    Date.parse(event.event_time) / 1000
+  )
 
   if (!Number.isFinite(eventTime) || eventTime <= 0) {
     throw new Error(
@@ -80,15 +83,16 @@ export function mapCanonicalAddToCartToMicrosoftUet(
     )
   }
 
-  const items = event.custom_data.items.map(item => ({
+  const commerceRule = resolveMicrosoftCommerceRule(event)
+  const items = event.custom_data.items.map((item, index) => ({
     id: cleanShopifyId(item.item_id) ?? item.item_id,
     name: item.item_name,
-    price: item.unit_price,
+    price: commerceRule.itemPrices[index],
     quantity: item.quantity
   }))
   const itemIds = items.map(item => item.id)
   const value = event.custom_data.value
-  const transactionId = event.custom_data.cart_mutation_id
+  const transactionId = commerceRule.transactionId
 
   return microsoftUetCapiAddToCartEventSchema.parse({
     adStorageConsent: 'G',
@@ -105,8 +109,10 @@ export function mapCanonicalAddToCartToMicrosoftUet(
       value
     },
     eventId: event.event_id,
-    eventName: 'add_to_cart',
-    ...(event.page_url ? { eventSourceUrl: event.page_url } : {}),
+    eventName: commerceRule.serverEventName,
+    ...(event.page_url ?
+      { eventSourceUrl: event.page_url }
+    : {}),
     eventTime,
     eventType: 'custom',
     ...(event.page_view_id ?
