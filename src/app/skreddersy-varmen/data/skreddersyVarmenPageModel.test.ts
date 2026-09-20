@@ -64,7 +64,7 @@ const empathyScenes = [
     kind: 'media',
     copy: 'Flammene danser og roen har senket seg.',
     imageSrc:
-      '/src/assets/images/techdown/SkreddersyVarmen-1.webp',
+      '/Skreddersy_1440x1800_2.jpg',
     imageAlt:
       'Bålpanne med levende flammer og to personer i mørkeblå Utekos TechDown™ i bakgrunnen.'
   },

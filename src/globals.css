@@ -55,7 +55,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-jungle: var(--jungle);
   --color-jungle-tone: var(--jungle-tone);
+  --color-night: var(--night);
+  --color-dark-teal: var(--dark-teal);
   --color-green-noir: var(--green-noir);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);

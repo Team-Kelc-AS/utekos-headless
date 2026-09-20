@@ -6,7 +6,7 @@ export function MagazineOverviewHero({
   articleCount
 }: MagazineOverviewHeroProps) {
   return (
-    <article className='bg-muted py-10 text-foreground sm:py-14'>
+    <article className='bg-night py-10 text-foreground sm:py-14'>
       <div className='container mx-auto px-4'>
         <div className='max-w-5xl'>
           <span className='inline-flex items-center rounded-2xl bg-magazine-article-card px-5 py-3.5 font-sans font-semibold text-xl leading-none tracking-[-0.01em] text-white drop-shadow-lg/50 sm:px-6 sm:py-4 sm:text-2xl'>

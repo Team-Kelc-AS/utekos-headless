@@ -148,7 +148,7 @@ function MagazineArticleCard({
             sizes='30vw'
             className='aspect-16/10 h-auto w-full shrink-0 object-cover'
           />
-          <div className='flex flex-1 flex-col bg-muted p-5 text-foreground'>
+          <div className='flex flex-1 flex-col bg-jungle p-5 text-foreground'>
             <div className='mb-4'>
               <MagazineCategoryBadge
                 category={article.category}
@@ -190,7 +190,7 @@ function MagazineArticleCard({
             className='aspect-16/10 h-auto w-full shrink-0 object-cover'
           />
         </MagazineHeroViewTransition>
-        <div className='flex flex-1 flex-col bg-muted p-5 text-foreground'>
+        <div className='flex flex-1 flex-col bg-jungle p-5 text-foreground'>
           <div className='mb-4'>
             <MagazineCategoryBadge category={article.category} />
           </div>

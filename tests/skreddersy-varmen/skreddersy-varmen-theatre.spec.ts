@@ -588,7 +588,7 @@ test('reveals the mobile manifesto and complete bonfire panel without dead scrol
   )
   await expect(firstMediaScene.locator('img')).toHaveAttribute(
     'src',
-    /SkreddersyVarmen-1/
+    /Skreddersy_1440x1800_2/
   )
   await expect(chillMediaScene.locator('img')).toHaveAttribute(
     'src',
@@ -2135,7 +2135,7 @@ test('reveals the fixed large empathy frames diagonally and keeps exact corner c
   expect(complete.frameOpacity).toBe('1')
   expect(complete.frameClipPath).toBe('none')
   expect(complete.imageObjectFit).toBe('cover')
-  expect(complete.imageSource).toContain('SkreddersyVarmen-1')
+  expect(complete.imageSource).toContain('Skreddersy_1440x1800_2')
   expect(start.firstWidth).toBeCloseTo(complete.firstWidth, 1)
   expect(start.firstHeight).toBeCloseTo(complete.firstHeight, 1)
 

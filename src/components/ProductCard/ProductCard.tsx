@@ -181,7 +181,7 @@ export function ProductCard({
 
   const compactProductCardContent =
     compactMobile ?
-      <div className='flex flex-col bg-night xl:hidden'>
+      <div className='flex flex-col bg-night! xl:hidden'>
         <CardContent className='relative overflow-hidden rounded-t-xl bg-night p-0'>
           <Link
             href={productUrl}
@@ -241,7 +241,7 @@ export function ProductCard({
           </div>
         </CardContent>
 
-        <div className='relative z-10 mt-3 flex flex-col gap-2.5 bg-night px-5 pt-1 pb-0 md:gap-3 md:px-6'>
+        <div className='relative z-10 mt-3 flex flex-col gap-2.5 bg-night! px-5 pt-1 pb-0 md:gap-3 md:px-6'>
           <div className='grid w-full grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2'>
             <Link
               href={productUrl}
@@ -272,9 +272,10 @@ export function ProductCard({
     <Card
       ref={cardRef}
       className={cn(
-        'group flex h-full flex-col gap-0 overflow-hidden border border-border bg-card p-0 text-card-foreground shadow-[0_18px_56px_-42px_rgba(8,10,24,0.85)]',
+        'group flex h-full flex-col gap-0 overflow-hidden border border-border p-0 text-card-foreground shadow-[0_18px_56px_-42px_rgba(8,10,24,0.85)]',
+        compactMobile ? 'bg-night' : 'bg-card',
         cardClassName,
-        compactMobile && 'max-xl:bg-night'
+        compactMobile && 'bg-night'
       )}
     >
       {compactProductCardContent}
@@ -361,7 +362,7 @@ export function ProductCard({
         className={cn(
           'mx-auto mt-auto flex w-full flex-col items-center',
           compactMobile ?
-            'gap-2 bg-night px-5 pt-3 pb-5 md:gap-3 md:px-6 md:pt-4 md:pb-6 xl:bg-jungle xl:px-6 xl:pt-4 xl:pb-6'
+            'gap-2 bg-night px-5 pt-3 pb-5 md:gap-3 md:px-6 md:pt-4 md:pb-6'
           : 'gap-3 bg-jungle px-6 pt-4 pb-6'
         )}
       >

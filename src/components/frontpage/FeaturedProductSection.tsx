@@ -22,7 +22,7 @@ export async function FeaturedProductsSection() {
         <div className='-mr-(--product-rail) xl:mr-0'>
           <ProductCarousel
             productCardClassName={
-              'border border-foreground/12 bg-card '
+              'border border-foreground/12 bg-night '
             }
           />
         </div>

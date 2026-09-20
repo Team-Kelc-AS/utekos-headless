@@ -21,8 +21,8 @@ export function MagazineCategoryBadge({ category }: MagazineCategoryBadgeProps) 
 
   return (
     <BrandBadge
-      backgroundColor='var(--color-magazine-article-card-pill)'
-      textColor='var(--background)'
+      backgroundColor='var(--dark-teal)'
+      textColor='var(--foreground)'
       className='font-sans font-semibold gap-1.5 rounded-lg border border-background/15 px-4 py-2 text-sm leading-[1.35] tracking-tight'
     >
       <Icon className='size-3 shrink-0' aria-hidden />
