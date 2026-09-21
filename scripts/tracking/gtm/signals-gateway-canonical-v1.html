@@ -268,6 +268,8 @@
 
     if (eventName === 'view_category') {
       var category = {};
+      var categoryContentIds = [];
+      var categoryIndex;
 
       if (customData.category_id) {
         category.content_category = customData.category_id;
@@ -279,6 +281,26 @@
       }
       if (finiteNumber(customData.view_sequence)) {
         category.view_sequence = customData.view_sequence;
+      }
+      if (Array.isArray(customData.content_ids)) {
+        for (
+          categoryIndex = 0;
+          categoryIndex < customData.content_ids.length &&
+          categoryContentIds.length < 10;
+          categoryIndex += 1
+        ) {
+          var categoryContentId = customData.content_ids[categoryIndex];
+          if (
+            typeof categoryContentId === 'string' &&
+            /^\d+$/.test(categoryContentId)
+          ) {
+            categoryContentIds.push(categoryContentId);
+          }
+        }
+        if (categoryContentIds.length > 0) {
+          category.content_ids = categoryContentIds;
+          category.content_type = 'product';
+        }
       }
 
       return category;

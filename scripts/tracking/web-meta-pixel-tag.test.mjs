@@ -413,7 +413,8 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     canonicalEvent('view_category', 'view-category-event', {
       category_id: 'produkter',
       category_name: 'Kolleksjonen',
-      view_sequence: 1
+      view_sequence: 1,
+      content_ids: ['48249962135800']
     }),
     canonicalEvent('hero_interact', 'hero-interact-event', {
       cta_id: 'read_more_hero',
@@ -553,7 +554,9 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
       content_name: 'Kolleksjonen',
       category_id: 'produkter',
       category_name: 'Kolleksjonen',
-      view_sequence: 1
+      view_sequence: 1,
+      content_ids: ['48249962135800'],
+      content_type: 'product'
     }
   )
   assert.deepEqual(

@@ -1,13 +1,6 @@
-import { Google_Sans_Flex } from 'next/font/google'
+import { googleSansFlex } from '@/lib/fonts'
 import type { ReactNode } from 'react'
 import './control.css'
-
-const font = Google_Sans_Flex({
-  subsets: ['latin'],
-  weight: ['500', '800'],
-  display: 'swap',
-  variable: '--control-font'
-})
 
 export const metadata = {
   title: 'Canonical Event Control | Utekos',
@@ -20,7 +13,7 @@ export default function ControlLayout({
   children: ReactNode
 }) {
   return (
-    <html lang='nb' className={font.variable}>
+    <html lang='nb' className={googleSansFlex.variable}>
       <body>{children}</body>
     </html>
   )

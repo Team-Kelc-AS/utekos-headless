@@ -16,7 +16,7 @@ import {
 } from '@/lib/actions/submitProductWaitlist'
 import { appendLeadTrackingContext } from '@/lib/analytics/collectLeadFormTrackingContext'
 import { pushGenerateLeadToDataLayer } from '@/lib/analytics/pushGenerateLeadToDataLayer'
-import { Check, Clock3, Loader2 } from 'lucide-react'
+import { Check, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useActionState, useEffect, useId, useState } from 'react'
 
@@ -28,7 +28,7 @@ const initialState: ProductWaitlistActionState = {
 const DEFAULT_AUTO_OPEN_DELAY_MS = 3000
 
 const fieldClassName =
-  'h-12 rounded-lg border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/35'
+  'h-12 rounded-lg border-border bg-jungle px-4 text-base text-foreground placeholder:text-foreground/45 focus-visible:border-primary focus-visible:ring-primary/35'
 
 export type SoldOutWaitlistDialogProps = {
   open?: boolean
@@ -97,41 +97,45 @@ export function SoldOutWaitlistDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className='max-h-[calc(100svh-2rem)] overflow-y-auto p-0 sm:max-w-xl'>
-        <div className='overflow-hidden rounded-xl'>
-          <div className='relative isolate overflow-hidden bg-card px-6 pt-7 pb-6 text-card-foreground sm:px-8'>
-            <div
-              aria-hidden='true'
-              className='absolute -top-16 -right-12 -z-10 size-48 rounded-full bg-sidebar-primary/35 blur-3xl'
-            />
-            <div className='mb-5 flex size-14 items-center justify-center rounded-2xl bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-black/15'>
-              <Clock3 className='size-7' aria-hidden='true' />
+      <DialogContent className='max-h-[calc(100svh-2rem)] gap-0 overflow-y-auto border-0 bg-night p-0 text-foreground ring-foreground/15 sm:max-w-lg'>
+        <div className='px-6 pt-6 pr-14 pb-0 sm:px-7 sm:pt-7'>
+          <DialogHeader className='gap-0'>
+            <div className='flex items-start gap-3'>
+              <img
+                src='/low_stock.svg'
+                alt=''
+                aria-hidden='true'
+                className='mt-0.5 size-9 shrink-0 sm:size-10'
+              />
+              <div className='min-w-0 space-y-3'>
+                <DialogTitle className='font-sans font-semibold text-[1.65rem] leading-[1.15] tracking-[-0.02em] text-foreground sm:text-3xl'>
+                  Sikre deg førsterett!
+                </DialogTitle>
+                <DialogDescription className='max-w-[40ch] text-[0.95rem] leading-6 text-foreground/78'>
+                  Utekos Dun ble revet bort raskere enn
+                  forventet, men en ny leveranse er rett rundt
+                  hjørnet! Meld deg på vår gratis venteliste for
+                  å få førsterett og sikre deg din før vi åpner
+                  salget for alle andre.
+                </DialogDescription>
+              </div>
             </div>
-            <DialogHeader className='pr-8'>
-              <DialogTitle className='font-sans font-semibold text-2xl leading-tight text-card-foreground sm:text-3xl'>
-                Utsolgt akkurat nå
-              </DialogTitle>
-              <DialogDescription className='text-base leading-7 text-card-foreground/80'>
-                Utekos Dun er dessverre utsolgt. Sett deg på
-                ventelisten helt kostnadsfritt, så gir vi beskjed
-                når den er tilbake.
-              </DialogDescription>
-            </DialogHeader>
-          </div>
+          </DialogHeader>
+        </div>
 
           {state.status === 'success' ?
             <div
-              className='grid min-h-72 place-items-center bg-popover px-6 py-10 text-center text-popover-foreground'
+              className='grid place-items-center px-6 py-8 text-center sm:px-7'
               aria-live='polite'
             >
-              <div className='flex max-w-sm flex-col items-center gap-4'>
-                <span className='flex size-14 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground'>
-                  <Check className='size-7' aria-hidden='true' />
+              <div className='flex max-w-sm flex-col items-center gap-3'>
+                <span className='flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground'>
+                  <Check className='size-6' aria-hidden='true' />
                 </span>
                 <h2 className='font-sans font-semibold text-xl'>
                   Du står på ventelisten
                 </h2>
-                <p className='leading-6 text-muted-foreground'>
+                <p className='leading-6 text-foreground/72'>
                   {state.message}
                 </p>
                 <Button
@@ -139,7 +143,7 @@ export function SoldOutWaitlistDialog({
                   variant='outline'
                   size='lg'
                   onClick={() => setOpen(false)}
-                  className='mt-2 min-h-11 px-6'
+                  className='mt-1 min-h-11 border-border px-6'
                 >
                   Fortsett å se
                 </Button>
@@ -147,7 +151,7 @@ export function SoldOutWaitlistDialog({
             </div>
           : <form
               action={handleSubmit}
-              className='space-y-5 bg-popover px-6 py-7 text-popover-foreground sm:px-8'
+              className='space-y-4 px-6 pt-5 pb-6 sm:px-7 sm:pb-7'
               noValidate
             >
               <input
@@ -192,7 +196,7 @@ export function SoldOutWaitlistDialog({
                 : null}
               </div>
 
-              <div className='grid gap-5 sm:grid-cols-2'>
+              <div className='grid gap-4 sm:grid-cols-2'>
                 <div className='space-y-2'>
                   <label
                     htmlFor={phoneFieldId}
@@ -262,8 +266,8 @@ export function SoldOutWaitlistDialog({
                 </div>
               </div>
 
-              <div className='space-y-2'>
-                <label className='flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/25 p-4'>
+              <div className='space-y-3 border-t border-border/70 pt-4'>
+                <label className='flex cursor-pointer items-start gap-3'>
                   <input
                     type='checkbox'
                     name='privacy'
@@ -274,20 +278,19 @@ export function SoldOutWaitlistDialog({
                         privacyErrorId
                       : undefined
                     }
-                    className='mt-1 size-4 shrink-0 accent-primary'
+                    className='mt-0.5 size-4 shrink-0 accent-primary'
                   />
-                  <span className='text-sm leading-6'>
-                    Jeg bekrefter at jeg har lest{' '}
+                  <span className='text-sm leading-5 text-foreground/80'>
+                    Jeg har lest{' '}
                     <Link
                       href='/personvern'
-                      className='font-medium underline underline-offset-4'
+                      className='font-medium text-foreground underline underline-offset-4'
                     >
                       personvernerklæringen
                     </Link>
-                    , som forklarer hvordan Utekos bruker
-                    opplysningene til å kontakte meg om Utekos
-                    Dun. Dette er ikke påmelding til
-                    markedsføring.
+                    {' '}
+                    og godtar at Utekos kontakter meg om Utekos
+                    Dun. Dette er ikke markedsføring.
                   </span>
                 </label>
                 {state.errors?.privacy?.[0] ?
@@ -299,23 +302,19 @@ export function SoldOutWaitlistDialog({
                     {state.errors.privacy[0]}
                   </p>
                 : null}
-              </div>
-
-              <div className='space-y-2'>
                 <label
                   htmlFor={marketingFieldId}
-                  className='flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-muted/25 p-4'
+                  className='flex cursor-pointer items-start gap-3'
                 >
                   <input
                     id={marketingFieldId}
                     type='checkbox'
                     name='marketing'
-                    className='mt-1 size-4 shrink-0 accent-primary'
+                    className='mt-0.5 size-4 shrink-0 accent-primary'
                   />
-                  <span className='text-sm leading-6'>
-                    Jeg samtykker til å motta nyheter og
-                    eksklusive tilbud fra Utekos på e-post. Du kan
-                    når som helst melde deg av.
+                  <span className='text-sm leading-5 text-foreground/80'>
+                    Send meg nyheter og tilbud på e-post. Jeg kan
+                    melde meg av når som helst.
                   </span>
                 </label>
               </div>
@@ -329,27 +328,28 @@ export function SoldOutWaitlistDialog({
                 </p>
               : null}
 
-              <Button
-                type='submit'
-                variant='commerce-primary'
-                size='lg'
-                disabled={isPending}
-                aria-busy={isPending}
-                className='min-h-12 w-full rounded-full bg-primary px-6 text-base text-foreground font-sans font-semibold shadow-sm hover:opacity-60'
-              >
-                {isPending ?
-                  <>
-                    <Loader2
-                      className='animate-spin'
-                      aria-hidden='true'
-                    />
-                    Registrerer…
-                  </>
-                : 'Sett meg på ventelisten'}
-              </Button>
+              <div className='space-y-2 pt-1'>
+                <Button
+                  type='submit'
+                  variant='commerce-primary'
+                  size='lg'
+                  disabled={isPending}
+                  aria-busy={isPending}
+                  className='min-h-12 w-full rounded-full bg-primary px-6 font-sans font-semibold text-base text-primary-foreground shadow-none hover:bg-primary/90'
+                >
+                  {isPending ?
+                    <>
+                      <Loader2
+                        className='animate-spin'
+                        aria-hidden='true'
+                      />
+                      Registrerer…
+                    </>
+                  : 'Sikre førsterett'}
+                </Button>
+              </div>
             </form>
           }
-        </div>
       </DialogContent>
     </Dialog>
   )

@@ -27,7 +27,7 @@
 }
 
 @theme inline {
-  --font-sans: var(--landing-font);
+  --font-sans: var(--font-google-sans-flex);
   --font-google-sans: var(--font-sans);
   --color-facebook-login-button: var(--facebook-login-button);
   --color-alternate: var(--alternate);
@@ -101,7 +101,7 @@
 }
 
 :root {
-  --font-sans: var(--landing-font);
+  --font-sans: var(--font-google-sans-flex);
   --radius: 0.625rem;
   --meta-button: var(--facebook-login-button);
   --color-alt-pill: oklch(0.5975 0.1138 173.83);
@@ -169,7 +169,7 @@
 
 .dark {
   --facebook-login-button: blue;
-  --font-sans: var(--landing-font);
+  --font-sans: var(--font-google-sans-flex);
   --cloud-dancer: oklch(0.9493 0.007 88.64);
   --background: oklch(0.1645 0.0284 190.51);
   --foreground: oklch(0.985 0 0);
@@ -238,7 +238,7 @@
     margin: 0;
     background: #001a18;
     color: #f0eee9;
-    font-family: var(--landing-font), sans-serif;
+    font-family: var(--font-google-sans-flex), sans-serif;
     font-weight: 500;
   }
   h1,

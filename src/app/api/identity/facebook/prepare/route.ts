@@ -39,7 +39,13 @@ export async function POST(request: NextRequest) {
       config.identityKey
     )
     const response = NextResponse.json(
-      { status: 'ready' },
+      {
+        status: 'ready',
+        clientConfig: {
+          appId: config.appId,
+          apiVersion: config.apiVersion
+        }
+      },
       { headers: NO_STORE_HEADERS }
     )
 

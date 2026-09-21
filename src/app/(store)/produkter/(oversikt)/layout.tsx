@@ -2,6 +2,8 @@ import { ProductListJsonLd } from './components/ProductListJsonLd'
 import { ProductOverviewBreadcrumbJsonLd } from './components/ProductOverviewBreadcrumbJsonLd'
 import { ProductOverviewBreadcrumbs } from './components/ProductOverviewBreadcrumbs'
 import { ViewCategoryObserver } from '@/components/analytics/ViewCategoryObserver'
+import { resolveCategoryMetaContentIds } from '@/lib/analytics/resolveCategoryMetaContentIds'
+import { fetchProductsWithRetry } from './utils/fetchProductsWithRetry'
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
 
@@ -31,12 +33,22 @@ export const metadata: Metadata = {
   }
 }
 
-export default function ProductListLayout({ children }: { children: ReactNode }) {
+export default async function ProductListLayout({ children }: { children: ReactNode }) {
+  let contentIds: string[] = []
+
+  try {
+    const products = await fetchProductsWithRetry()
+    contentIds = resolveCategoryMetaContentIds(products ?? [])
+  } catch {
+    contentIds = []
+  }
+
   return (
     <>
       <ViewCategoryObserver
         categoryId='produkter'
         categoryName='Kolleksjonen'
+        contentIds={contentIds}
       />
       <ProductOverviewBreadcrumbJsonLd />
       <ProductListJsonLd />

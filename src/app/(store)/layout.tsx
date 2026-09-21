@@ -16,7 +16,7 @@ import { JourneyObserver } from '@/components/analytics/JourneyObserver'
 import { ShopifyCustomerPrivacyBridge } from '@/components/consent/ShopifyCustomerPrivacyBridge'
 import { getTrackingEnvironment } from '@/lib/analytics/getTrackingEnvironment'
 import { resolveAssistantDeploymentRolloutPercent } from '@/lib/customer-assistant/assistantRollout'
-import { Google_Sans_Flex } from 'next/font/google'
+import { googleSansFlex } from '@/lib/fonts'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
 import { GoogleTagManagerLoader } from '@/components/analytics/GoogleTagManagerLoader'
@@ -29,15 +29,6 @@ import {
   isFacebookLoginPreviewAllowed,
   readFacebookLoginClientConfig
 } from '@/lib/facebook-login/facebookLoginConfig'
-
-const googleSansFlex = Google_Sans_Flex({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['400', '500', '600', '700', '800', '900'],
-  variable: '--font-sans',
-  preload: true,
-  fallback: ['Geist', 'system-ui', 'sans-serif']
-})
 
 export { siteMetadata as metadata } from '@/app/siteMetadata'
 
@@ -73,7 +64,7 @@ export default function RootLayout({
       lang='no'
       translate='no'
       suppressHydrationWarning
-      className={`${googleSansFlex.variable}`}
+      className={googleSansFlex.variable}
     >
       <body className='scroll-smooth bg-background text-foreground antialiased'>
         <GoogleTagManagerNoScript

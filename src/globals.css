@@ -11,7 +11,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Google Sans Flex', sans-serif;
+  --font-sans: var(--font-google-sans-flex);
   --font-google-sans: var(--font-sans);
   --color-facebook-login-button: var(--facebook-login-button);
   --color-alternate: var(--alternate);
@@ -84,7 +84,7 @@
 }
 
 :root {
-  --font-sans: 'Google Sans Flex', sans-serif;
+  --font-sans: var(--font-google-sans-flex);
   --radius: 0.625rem;
   --facebook-login-button: blue;
   --meta-button: var(--facebook-login-button);

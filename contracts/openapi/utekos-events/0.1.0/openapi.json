@@ -3530,6 +3530,9 @@
                 "custom_data": {
                   "category_id": "outdoor-living",
                   "category_name": "Outdoor living",
+                  "content_ids": [
+                    "48249962135800"
+                  ],
                   "view_sequence": 1
                 }
               }
@@ -10513,6 +10516,15 @@
                 "type": "string",
                 "minLength": 1
               },
+              "content_ids": {
+                "minItems": 1,
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^\\d+$"
+                }
+              },
               "view_sequence": {
                 "type": "integer",
                 "minimum": 0,
@@ -10563,6 +10575,9 @@
           "custom_data": {
             "category_id": "outdoor-living",
             "category_name": "Outdoor living",
+            "content_ids": [
+              "48249962135800"
+            ],
             "view_sequence": 1
           }
         },

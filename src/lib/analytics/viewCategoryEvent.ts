@@ -6,10 +6,17 @@ import {
 } from './canonicalEventEnvelope'
 import { mapEventDeviceInfo } from './mapEventDeviceInfo'
 
+export const VIEW_CATEGORY_MAX_CONTENT_IDS = 10
+
 export const canonicalViewCategoryCustomDataSchema =
   z.strictObject({
     category_id: z.string().min(1),
     category_name: z.string().min(1),
+    content_ids: z
+      .array(z.string().regex(/^\d+$/))
+      .min(1)
+      .max(VIEW_CATEGORY_MAX_CONTENT_IDS)
+      .optional(),
     view_sequence: z.number().int().positive()
   })
 

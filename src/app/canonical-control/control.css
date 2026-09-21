@@ -2,7 +2,7 @@
   color-scheme: dark;
   background: #001a18;
   color: #f0eee9;
-  font-family: var(--control-font), sans-serif;
+  font-family: var(--font-google-sans-flex), sans-serif;
   font-weight: 500;
 }
 * {

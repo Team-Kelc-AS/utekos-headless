@@ -1,4 +1,5 @@
 import type { CanonicalEventStore } from './canonicalEventStore'
+import { flushCreatedMetaDispatchAttempts } from './flushCreatedMetaDispatchAttempts'
 import {
   normalizeCanonicalViewCategory,
   type CanonicalViewCategoryRequestContext
@@ -11,6 +12,7 @@ type AcceptCanonicalViewCategoryInput = {
   payload: unknown
   requestContext: CanonicalViewCategoryRequestContext
   store: CanonicalViewCategoryStore
+  flushMetaDispatch?: typeof flushCreatedMetaDispatchAttempts
 }
 
 export type AcceptCanonicalViewCategoryResult =
@@ -36,6 +38,10 @@ export async function acceptCanonicalViewCategory(
     dispatches: planCanonicalEventDispatch(event),
     event
   })
+  const flushMetaDispatch =
+    input.flushMetaDispatch ?? flushCreatedMetaDispatchAttempts
+
+  await flushMetaDispatch(result.createdDispatchAttempts)
 
   return {
     event_id: event.event_id,

@@ -134,7 +134,8 @@ test('maps every cutover event to its exact Meta name and canonical event id', (
         custom_data: {
           category_id: 'all_products',
           category_name: 'Alle produkter',
-          view_sequence: 1
+          view_sequence: 1,
+          content_ids: ['48249962135800']
         }
       } as CanonicalViewCategory).normalize()
     },
@@ -192,6 +193,14 @@ test('maps every cutover event to its exact Meta name and canonical event id', (
       current.expectedProperty[1]
     )
   }
+
+  const viewCategory = cases.find(
+    current => current.expectedName === 'ViewCategory'
+  )?.normalized as NormalizedMetaEvent
+  assert.deepEqual(viewCategory.custom_data?.content_ids, [
+    '48249962135800'
+  ])
+  assert.equal(viewCategory.custom_data?.content_type, 'product')
 })
 
 test('does not create fbc or fbp during provider mapping when absent', () => {

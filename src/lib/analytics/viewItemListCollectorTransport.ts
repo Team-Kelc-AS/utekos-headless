@@ -1,8 +1,16 @@
-import { createCanonicalCollectorTransport } from './createCanonicalCollectorTransport'
+import { collectCanonicalEventUntilAccepted } from './createCanonicalCollectorTransport'
 import type { CanonicalViewItemList } from './viewItemListEvent'
 
-export const startViewItemListCollectorTransport =
-  createCanonicalCollectorTransport<CanonicalViewItemList>({
-    analyticsEventName: 'view_item_list',
-    endpoint: '/api/events/view-item-list'
-  })
+const viewItemListCollectorInput = {
+  analyticsEventName: 'view_item_list',
+  endpoint: '/api/events/view-item-list'
+}
+
+export function collectViewItemListUntilAccepted(
+  event: CanonicalViewItemList
+) {
+  return collectCanonicalEventUntilAccepted(
+    viewItemListCollectorInput,
+    event
+  )
+}

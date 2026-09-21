@@ -31,7 +31,16 @@ type SendCanonicalCollectorEventInput<
   | 'endpoint'
   | 'fallbackEndpoint'
   | 'enrichEvent'
-> & { headers?: Readonly<Record<string, string>> }
+> & {
+  headers?: Readonly<Record<string, string>>
+  httpAckOnly?: boolean
+}
+
+export function isCollectorAcceptStatus(
+  status: number | undefined
+) {
+  return status === 200 || status === 202
+}
 
 function compactRecord(
   entries: Array<[string, string | undefined]>
@@ -124,8 +133,8 @@ export async function sendCanonicalCollectorEvent<
 >(
   input: SendCanonicalCollectorEventInput<E>,
   event: E
-): Promise<void> {
-  if (!defaultHasCollectionConsent(event)) return
+): Promise<number | undefined> {
+  if (!defaultHasCollectionConsent(event)) return undefined
   const isStillPermitted = () => {
     if (typeof window === 'undefined') return true
     const current = resolveTrackingAuthorization()
@@ -136,7 +145,7 @@ export async function sendCanonicalCollectorEvent<
         current.marketing === 'granted')
     )
   }
-  if (!isStillPermitted()) return
+  if (!isStillPermitted()) return undefined
   let stage: Parameters<
     typeof createCollectorDeliveryError
   >[1]['stage'] = 'journey_context'
@@ -155,13 +164,13 @@ export async function sendCanonicalCollectorEvent<
       await enrichCanonicalEventWithMetaAttribution(
         journeyEnriched
       )
-    if (!isStillPermitted()) return
+    if (!isStillPermitted()) return undefined
     stage = 'event_enrichment'
     const enriched =
       input.enrichEvent ?
         await input.enrichEvent(metaEnriched)
       : metaEnriched
-    if (!isStillPermitted()) return
+    if (!isStillPermitted()) return undefined
     stage = 'serialize'
     const body = JSON.stringify(enriched)
     const beaconBody = new Blob([body], {
@@ -172,6 +181,7 @@ export async function sendCanonicalCollectorEvent<
     keepalive = bodyBytes <= 65_536
 
     if (
+      !input.httpAckOnly &&
       input.beaconEndpoint &&
       typeof navigator !== 'undefined' &&
       typeof navigator.sendBeacon === 'function'
@@ -182,13 +192,13 @@ export async function sendCanonicalCollectorEvent<
           beaconBody
         )
 
-        if (queued) return
+        if (queued) return undefined
       } catch {}
     }
 
     stage = 'request'
     for (attempt = 1; attempt <= 2; attempt += 1) {
-      if (!isStillPermitted()) return
+      if (!isStillPermitted()) return undefined
       let response: Response
       status = undefined
 
@@ -220,7 +230,7 @@ export async function sendCanonicalCollectorEvent<
       }
 
       status = response.status
-      if (response.ok) return
+      if (response.ok) return status
 
       if (attempt === 2 || !isRetryableStatus(response.status)) {
         throw new Error(
@@ -274,4 +284,37 @@ export function createCanonicalCollectorTransport<
     }
     return () => {}
   }
+}
+
+export async function collectCanonicalEventUntilAccepted<
+  E extends { consent: ConsentSnapshot }
+>(
+  input: CreateCanonicalCollectorTransportInput<E>,
+  event: E
+): Promise<boolean> {
+  const hasCollectionConsent =
+    input.hasCollectionConsent ?? defaultHasCollectionConsent
+
+  if (
+    typeof window === 'undefined' ||
+    (window as Window & { __utekosConsentReloading?: boolean })
+      .__utekosConsentReloading ||
+    !hasCollectionConsent(event)
+  ) {
+    return false
+  }
+
+  const current = resolveBrowserCollection(event)
+  if (
+    !current.context.hasResponse ||
+    !hasCollectionConsent(current.event)
+  ) {
+    return false
+  }
+
+  const status = await sendCanonicalCollectorEvent(
+    { ...input, httpAckOnly: true },
+    current.event
+  )
+  return isCollectorAcceptStatus(status)
 }

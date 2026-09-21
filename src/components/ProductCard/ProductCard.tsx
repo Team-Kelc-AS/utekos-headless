@@ -236,7 +236,7 @@ export function ProductCard({
               variant={selectedVariant}
               productTitle={product.title}
               returnTo={productUrl}
-              className='pointer-events-auto size-9 rounded-lg p-0 shadow-none'
+              className='pointer-events-auto size-9 rounded-lg bg-night p-0 shadow-none hover:bg-night/90'
             />
           </div>
         </CardContent>
@@ -339,7 +339,7 @@ export function ProductCard({
             productTitle={product.title}
             returnTo={productUrl}
             className={cn(
-              'absolute right-4 bottom-10 z-20',
+              'absolute right-4 bottom-10 z-20 bg-night hover:bg-night/90',
               compactMobile &&
                 'right-2 bottom-8 size-10 rounded-xl md:right-4 md:bottom-10 md:size-12 md:rounded-2xl'
             )}

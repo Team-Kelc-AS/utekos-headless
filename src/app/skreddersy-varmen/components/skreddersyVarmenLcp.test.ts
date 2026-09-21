@@ -43,6 +43,7 @@ test('hero headline is the intentional first-screen text LCP', async () => {
   const hero = await readSource(
     'src/app/skreddersy-varmen/components/Hero.tsx'
   )
+  const fonts = await readSource('src/lib/fonts.ts')
   const layout = await readSource('src/app/skreddersy-varmen/layout.tsx')
 
   assert.match(
@@ -62,8 +63,18 @@ test('hero headline is the intentional first-screen text LCP', async () => {
   )
 
   assert.match(
-    layout,
+    fonts,
     /Google_Sans_Flex\(\{[\s\S]*?preload:\s*true/,
     'Google Sans Flex must preload so the hero headline can win text LCP'
+  )
+  assert.match(
+    fonts,
+    /adjustFontFallback:\s*false/,
+    'Google Sans Flex has no capsize metrics; skip Next fallback generation'
+  )
+  assert.match(
+    layout,
+    /googleSansFlex\.variable/,
+    'Landing root must apply the shared preloaded sans'
   )
 })

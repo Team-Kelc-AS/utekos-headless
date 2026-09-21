@@ -61,7 +61,7 @@
       },
       {
         "path": "scripts/contracts/utekosEventsContractCatalog.ts",
-        "sha256": "9cb8c2e7b633a3a64c529c4d11aaa14b5fbe3bdf2cf7ba24f6f448fbd8e44edb"
+        "sha256": "b1a32ebc9f879a4c90e11d1b998bfcabb73c6a180f8e0feb0b7ce258c1b6b8d2"
       },
       {
         "path": "src/app/api/events/add-to-cart/route.ts",
@@ -125,7 +125,7 @@
       },
       {
         "path": "src/lib/analytics/eventCatalog.ts",
-        "sha256": "21ee3a7e80e8c0dfc6673bb62cc5811f3d2fe67c390df6c3b2156bf1b38b6187"
+        "sha256": "5cfad482a0a9553a4bde1bf355da3792976a35b14572338c1fe9a44c88b5d46d"
       },
       {
         "path": "src/lib/analytics/eventCatalogSignalContracts.ts",
@@ -341,7 +341,7 @@
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewCategory.ts",
-        "sha256": "a03d4536d90d587a57766b825728096bde376a3f706379a897624e2887cc9910"
+        "sha256": "767519a875901e1d8be07b2f12f6686a6de9a51fb64a9cfe58d12d1a049e179a"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewItem.ts",
@@ -349,7 +349,7 @@
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewItemList.ts",
-        "sha256": "725678b0735ae4c1ad13275015f7a7a12d56f071d0128647d1591a6c0bdae96d"
+        "sha256": "751160a6d1da35a6c22bb6af2a924aa0f3a33601dc6a974195c7e5c9c3ef6ff5"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewPromotion.ts",
@@ -1125,7 +1125,7 @@
       },
       {
         "path": "src/lib/analytics/viewCategoryEvent.ts",
-        "sha256": "a0c067c442fd32ced961d06050fe76c12c029dc49d504bc5ce33b891bc96b49d"
+        "sha256": "3203370083365d3007ba19bc2ba4930b03fa6893f347eddbfa6ec4c64ccc2bce"
       },
       {
         "path": "src/lib/analytics/viewItemEvent.ts",
@@ -73661,6 +73661,15 @@
                   "type": "string",
                   "minLength": 1
                 },
+                "content_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 10,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^\\d+$"
+                  }
+                },
                 "view_sequence": {
                   "type": "integer",
                   "maximum": 9007199254740991,
@@ -73816,7 +73825,9 @@
               "user_data",
               "category_id",
               "category_name",
-              "view_sequence"
+              "view_sequence",
+              "content_ids",
+              "content_type"
             ],
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
@@ -74113,7 +74124,9 @@
                 "user_data",
                 "category_id",
                 "category_name",
-                "view_sequence"
+                "view_sequence",
+                "content_ids",
+                "content_type"
               ]
             }
           },
@@ -74132,7 +74145,9 @@
                 "user_data",
                 "category_id",
                 "category_name",
-                "view_sequence"
+                "view_sequence",
+                "content_ids",
+                "content_type"
               ]
             }
           }

@@ -1,6 +1,6 @@
 import './landing.css'
 import { LandingCartButton } from './components/LandingCartButton'
-import { Google_Sans_Flex } from 'next/font/google'
+import { googleSansFlex } from '@/lib/fonts'
 import { LandingTelemetry } from './components/LandingTelemetry'
 import { siteMetadata } from '@/app/siteMetadata'
 import { Suspense, type ReactNode } from 'react'
@@ -20,14 +20,6 @@ async function SkreddersyVarmenStructuredData() {
     : null
 }
 
-const landingFont = Google_Sans_Flex({
-  subsets: ['latin'],
-  weight: ['400', '600', '800'],
-  adjustFontFallback: false,
-  display: 'swap',
-  variable: '--landing-font',
-  preload: true
-})
 export const metadata = siteMetadata
 
 export default function LandingPageLayout({
@@ -39,7 +31,7 @@ export default function LandingPageLayout({
     <html
       lang='no'
       translate='no'
-      className={landingFont.variable}
+      className={googleSansFlex.variable}
     >
       <body>
         <GoogleTagManagerNoScript

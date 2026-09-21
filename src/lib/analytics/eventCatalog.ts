@@ -2408,7 +2408,9 @@ const eventCatalogBase = {
         requiredParameters: [
           'category_id',
           'category_name',
-          'view_sequence'
+          'view_sequence',
+          'content_ids',
+          'content_type'
         ]
       },
       pinterest: {

@@ -597,6 +597,7 @@ export const utekosEventsContractCatalog = [
       custom_data: {
         category_id: 'outdoor-living',
         category_name: 'Outdoor living',
+        content_ids: ['48249962135800'],
         view_sequence: 1
       }
     },

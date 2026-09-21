@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
@@ -14,16 +13,28 @@ import { hasWishlistVariant } from '@/lib/wishlist/wishlistStore'
 import { cn } from '@/lib/utils/className'
 import UtekosLogo from '@public/icon.png'
 import { Heart } from 'lucide-react'
-import type { Route } from 'next'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import type {
   ProductCartModel,
   ProductPurchaseVariant
 } from 'types/product/ProductPurchaseModel'
-import { buildCustomerLoginHref } from './buildCustomerLoginHref'
+
+const WishlistAccountForm = dynamic(
+  () =>
+    import('./WishlistAccountForm').then(
+      module => module.WishlistAccountForm
+    ),
+  {
+    loading: () => (
+      <p role='status' className='text-sm text-foreground'>
+        Laster innlogging …
+      </p>
+    )
+  }
+)
 
 type WishlistButtonProps = {
   product: ProductCartModel
@@ -31,6 +42,7 @@ type WishlistButtonProps = {
   productTitle: string
   returnTo: string
   buttonVariant?: 'icon' | 'labelled'
+  surface?: 'chip' | 'plain'
   className?: string
 }
 
@@ -40,6 +52,7 @@ export function WishlistButton({
   productTitle,
   returnTo,
   buttonVariant = 'icon',
+  surface = 'chip',
   className
 }: WishlistButtonProps) {
   const [isWished, setIsWished] = useState(false)
@@ -56,14 +69,6 @@ export function WishlistButton({
     return () => window.clearTimeout(syncTimer)
   }, [variant?.id])
 
-  const loginHref = buildCustomerLoginHref({
-    mode: 'login',
-    returnTo
-  }) as Route
-  const createAccountHref = buildCustomerLoginHref({
-    mode: 'create',
-    returnTo
-  }) as Route
   const isLabelled = buttonVariant === 'labelled'
 
   function handleWishlistClick() {
@@ -111,16 +116,25 @@ export function WishlistButton({
         data-track='WishlistButtonAddClick'
         onClick={handleWishlistClick}
         className={cn(
-          'border border-border bg-muted text-foreground shadow-[0_12px_30px_-16px_rgba(0,0,0,0.85)] hover:bg-muted/90 hover:text-foreground focus-visible:border-foreground/40 focus-visible:ring-foreground/40',
+          surface === 'plain' ?
+            'border-0 bg-transparent text-foreground shadow-none hover:bg-transparent hover:text-heart focus-visible:border-transparent focus-visible:ring-foreground/40'
+          : 'border border-border bg-muted text-foreground shadow-[0_12px_30px_-16px_rgba(0,0,0,0.85)] hover:bg-muted/90 hover:text-foreground focus-visible:border-foreground/40 focus-visible:ring-foreground/40',
           isLabelled ?
-            'h-11 rounded-full px-4 font-sans font-semibold text-sm'
+            'h-11 rounded-full px-4 font-sans text-sm font-semibold'
           : 'size-12 rounded-2xl',
           className
         )}
       >
         <Heart
-          className='size-5 fill-primary text-primary stroke-primary stroke-[2.25]'
-          fill='currentColor'
+          className={cn(
+            'size-5 stroke-[2.25]',
+            surface === 'plain' ?
+              cn(
+                'fill-transparent stroke-foreground text-foreground transition-colors group-hover/button:fill-heart group-hover/button:stroke-heart group-hover/button:text-heart',
+                isWished && 'fill-heart stroke-heart text-heart'
+              )
+            : 'fill-primary stroke-primary text-primary'
+          )}
           aria-hidden='true'
         />
         {isLabelled ?
@@ -139,13 +153,13 @@ export function WishlistButton({
         open={syncDialogOpen}
         onOpenChange={setSyncDialogOpen}
       >
-        <DialogContent className='overflow-hidden border border-foreground/18 bg-night p-0 text-foreground shadow-[0_32px_90px_-42px_color-mix(in_oklch,var(--background)_92%,black)] ring-1 ring-foreground/8 sm:max-w-lg [&_[data-slot=dialog-close]]:text-foreground [&_[data-slot=dialog-close]]:hover:bg-foreground/10 [&_[data-slot=dialog-close]]:hover:text-foreground'>
+        <DialogContent className='max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg gap-0 overflow-y-auto border border-foreground/18 bg-night p-0 text-foreground shadow-[0_32px_90px_-42px_color-mix(in_oklch,var(--background)_92%,black)] ring-1 ring-foreground/8 sm:max-w-lg [&_[data-slot=dialog-close]]:text-foreground [&_[data-slot=dialog-close]]:hover:bg-foreground/10 [&_[data-slot=dialog-close]]:hover:text-foreground'>
           <div className='relative isolate overflow-hidden bg-jungle px-6 pt-7 pb-6 text-foreground sm:px-8'>
             <div
               aria-hidden='true'
               className='pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_14%_0%,color-mix(in_oklch,var(--dark-teal)_88%,transparent),transparent_46%)]'
             />
-            <div className='mb-6 flex items-center gap-3'>
+            <div className='flex items-center gap-4 pr-6'>
               <div className='relative size-16 shrink-0 rounded-full border border-foreground/18 bg-night p-1 shadow-[0_18px_42px_-28px_color-mix(in_oklch,var(--background)_90%,black)] ring-1 ring-foreground/8'>
                 <Image
                   src={UtekosLogo}
@@ -161,56 +175,21 @@ export function WishlistButton({
                   />
                 </span>
               </div>
-              <div className='min-w-0'>
-                <p className='font-sans font-semibold text-sm leading-tight text-foreground'>
+              <DialogHeader className='min-w-0'>
+                <DialogTitle className='font-sans text-2xl leading-tight font-extrabold tracking-tight text-balance text-foreground sm:text-3xl'>
                   Utekos ønskeliste
-                </p>
-                <p className='mt-1 font-sans text-xs leading-relaxed text-foreground/68'>
+                </DialogTitle>
+                <DialogDescription className='font-sans text-sm leading-relaxed text-foreground/78'>
                   Favoritten er tatt vare på
-                </p>
-              </div>
+                </DialogDescription>
+              </DialogHeader>
             </div>
-            <DialogHeader className='pr-8'>
-              <DialogTitle className='font-sans font-semibold text-2xl leading-tight text-balance text-foreground'>
-                Du slipper å lete på nytt
-              </DialogTitle>
-              <DialogDescription className='font-sans text-base leading-7 text-foreground/78'>
-                Favoritten ligger klar neste gang du besøker oss
-                på denne enheten. Vil du gå til kontoen din, kan
-                du logge inn eller opprette en konto.
-              </DialogDescription>
-            </DialogHeader>
           </div>
 
-          <div className='border-t border-foreground/12 bg-night px-6 pt-6 pb-7 text-foreground sm:px-8'>
-            <DialogFooter className='grid gap-3 sm:grid-cols-2'>
-              <Button
-                asChild
-                variant='default'
-                size='lg'
-                className='hover:bg-primary-hover min-h-12 rounded-full bg-primary px-6 font-sans font-semibold text-base text-primary-foreground shadow-[0_18px_40px_-26px_color-mix(in_oklch,var(--primary)_78%,transparent)] hover:text-primary-foreground focus-visible:ring-primary/60 focus-visible:ring-offset-night'
-              >
-                <Link
-                  href={loginHref}
-                  data-track='WishlistLoginClick'
-                >
-                  Gå til innlogging
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant='outline'
-                size='lg'
-                className='min-h-12 rounded-full border-foreground/24 bg-transparent! px-6 font-sans font-semibold text-base text-foreground hover:bg-foreground/8 hover:text-foreground focus-visible:ring-foreground/45 focus-visible:ring-offset-night'
-              >
-                <Link
-                  href={createAccountHref}
-                  data-track='WishlistCreateAccountClick'
-                >
-                  Opprett konto
-                </Link>
-              </Button>
-            </DialogFooter>
+          <div className='border-t border-foreground/12 bg-night px-5 pt-6 pb-7 text-foreground sm:px-8'>
+            {syncDialogOpen ?
+              <WishlistAccountForm returnTo={returnTo} />
+            : null}
           </div>
         </DialogContent>
       </Dialog>

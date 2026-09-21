@@ -1,4 +1,5 @@
 import type { CanonicalEventStore } from './canonicalEventStore'
+import { flushCreatedMetaDispatchAttempts } from './flushCreatedMetaDispatchAttempts'
 import {
   normalizeCanonicalViewItemList,
   type CanonicalViewItemListRequestContext
@@ -11,6 +12,7 @@ type AcceptCanonicalViewItemListInput = {
   payload: unknown
   requestContext: CanonicalViewItemListRequestContext
   store: CanonicalViewItemListStore
+  flushMetaDispatch?: typeof flushCreatedMetaDispatchAttempts
 }
 
 export type AcceptCanonicalViewItemListResult =
@@ -36,6 +38,10 @@ export async function acceptCanonicalViewItemList(
     dispatches: planCanonicalEventDispatch(event),
     event
   })
+  const flushMetaDispatch =
+    input.flushMetaDispatch ?? flushCreatedMetaDispatchAttempts
+
+  await flushMetaDispatch(result.createdDispatchAttempts)
 
   return {
     event_id: event.event_id,

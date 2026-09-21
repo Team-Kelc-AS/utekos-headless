@@ -148,6 +148,59 @@ test('queues web vitals on the neutral beacon endpoint when available', async ()
   )
 })
 
+test('http ack collection skips sendBeacon and returns the collector status', async () => {
+  const originalNavigator = Object.getOwnPropertyDescriptor(
+    globalThis,
+    'navigator'
+  )
+  const originalFetch = globalThis.fetch
+  let fetchCalls = 0
+
+  Object.defineProperty(globalThis, 'navigator', {
+    configurable: true,
+    value: {
+      sendBeacon: () => {
+        throw new Error('beacon must not be used for pixel ack')
+      }
+    }
+  })
+  globalThis.fetch = async () => {
+    fetchCalls += 1
+    return new Response(null, { status: 202 })
+  }
+
+  try {
+    const status = await sendCanonicalCollectorEvent(
+      {
+        analyticsEventName: 'view_category',
+        beaconEndpoint: '/api/e/vc',
+        endpoint: '/api/events/view-category',
+        httpAckOnly: true
+      },
+      {
+        consent: {
+          ...deniedConsent,
+          analytics: 'granted' as const
+        }
+      }
+    )
+
+    assert.equal(status, 202)
+    assert.equal(fetchCalls, 1)
+  } finally {
+    globalThis.fetch = originalFetch
+    if (originalNavigator) {
+      Object.defineProperty(
+        globalThis,
+        'navigator',
+        originalNavigator
+      )
+    } else {
+      Reflect.deleteProperty(globalThis, 'navigator')
+    }
+  }
+})
+
 test('falls back to fetch when the beacon cannot queue the event', async () => {
   const originalNavigator = Object.getOwnPropertyDescriptor(
     globalThis,

@@ -8,11 +8,13 @@ import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
 export type ViewCategoryObserverProps = {
   categoryId: string
   categoryName: string
+  contentIds?: readonly string[]
 }
 
 function emitViewCategory(
   categoryId: string,
-  categoryName: string
+  categoryName: string,
+  contentIds: readonly string[] | undefined
 ) {
   const pageView = browserPageViewSession.ensure({
     pageUrl: window.location.href,
@@ -21,19 +23,23 @@ function emitViewCategory(
     : {})
   })
 
-  reportCanonicalViewCategory({
+  return reportCanonicalViewCategory({
     pageViewId: pageView.pageViewId,
     customData: {
       category_id: categoryId,
       category_name: categoryName,
-      view_sequence: 1
+      view_sequence: 1,
+      ...(contentIds && contentIds.length > 0 ?
+        { content_ids: [...contentIds] }
+      : {})
     }
   })
 }
 
 export function ViewCategoryObserver({
   categoryId,
-  categoryName
+  categoryName,
+  contentIds
 }: ViewCategoryObserverProps) {
   const pathname = usePathname()
   const emittedForPageViewRef = useRef<string | null>(null)
@@ -44,6 +50,8 @@ export function ViewCategoryObserver({
     }
 
     let cancelled = false
+    let stopReporter = () => {}
+
     function tryEmit() {
       if (cancelled) return
 
@@ -59,15 +67,20 @@ export function ViewCategoryObserver({
       }
 
       emittedForPageViewRef.current = pageView.pageViewId
-      emitViewCategory(categoryId, categoryName)
+      stopReporter = emitViewCategory(
+        categoryId,
+        categoryName,
+        contentIds
+      )
     }
 
     tryEmit()
 
     return () => {
       cancelled = true
+      stopReporter()
     }
-  }, [pathname, categoryId, categoryName])
+  }, [pathname, categoryId, categoryName, contentIds])
 
   return null
 }

@@ -30,7 +30,13 @@ const {
 
 type WebEventCustomData = Record<
   string,
-  string | number | boolean | CanonicalCommerceItem[] | null | undefined
+  | string
+  | number
+  | boolean
+  | string[]
+  | CanonicalCommerceItem[]
+  | null
+  | undefined
 >
 
 type GoogleWebEvent = CanonicalEventEnvelope & {
