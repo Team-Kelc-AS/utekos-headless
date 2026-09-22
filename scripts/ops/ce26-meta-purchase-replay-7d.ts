@@ -133,9 +133,10 @@ async function fetchPaidOrders(windowStartIso: string) {
     after = parsed.data.orders.pageInfo.endCursor
   }
 
-  return nodes.filter(order =>
-    PAID_STATUSES.has(order.displayFinancialStatus)
-  )
+  return nodes.filter(order => {
+    const status = order.displayFinancialStatus
+    return typeof status === 'string' && PAID_STATUSES.has(status)
+  })
 }
 
 async function main() {
