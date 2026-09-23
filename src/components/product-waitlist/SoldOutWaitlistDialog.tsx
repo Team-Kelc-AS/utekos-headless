@@ -17,6 +17,7 @@ import {
 import { appendLeadTrackingContext } from '@/lib/analytics/collectLeadFormTrackingContext'
 import { pushGenerateLeadToDataLayer } from '@/lib/analytics/pushGenerateLeadToDataLayer'
 import { Check, Loader2 } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useActionState, useEffect, useId, useState } from 'react'
 
@@ -44,7 +45,8 @@ export function SoldOutWaitlistDialog({
   entryPoint = 'product_page'
 }: SoldOutWaitlistDialogProps = {}) {
   const fieldId = useId()
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false)
+  const [uncontrolledOpen, setUncontrolledOpen] =
+    useState(false)
   const isControlled = openProp !== undefined
   const open = isControlled ? openProp : uncontrolledOpen
 
@@ -76,7 +78,10 @@ export function SoldOutWaitlistDialog({
   }, [autoOpenDelayMs, isControlled, onOpenChange])
 
   useEffect(() => {
-    if (state.status === 'success' && state.dataLayerEvent) {
+    if (
+      state.status === 'success' &&
+      state.dataLayerEvent
+    ) {
       pushGenerateLeadToDataLayer(state.dataLayerEvent)
     }
   }, [state])
@@ -101,16 +106,21 @@ export function SoldOutWaitlistDialog({
         <div className='px-6 pt-6 pr-14 pb-0 sm:px-7 sm:pt-7'>
           <DialogHeader className='gap-0'>
             <div className='flex items-start gap-3'>
-              <img
+              <Image
                 src='/low_stock.svg'
                 alt=''
                 aria-hidden='true'
+                width={40}
+                height={40}
+                unoptimized
                 className='mt-0.5 size-9 shrink-0 sm:size-10'
               />
+
               <div className='min-w-0 space-y-3'>
                 <DialogTitle className='font-sans font-semibold text-[1.65rem] leading-[1.15] tracking-[-0.02em] text-foreground sm:text-3xl'>
                   Sikre deg førsterett!
                 </DialogTitle>
+
                 <DialogDescription className='max-w-[40ch] text-[0.95rem] leading-6 text-foreground/78'>
                   Utekos Dun ble revet bort raskere enn
                   forventet, men en ny leveranse er rett rundt
@@ -123,233 +133,262 @@ export function SoldOutWaitlistDialog({
           </DialogHeader>
         </div>
 
-          {state.status === 'success' ?
-            <div
-              className='grid place-items-center px-6 py-8 text-center sm:px-7'
-              aria-live='polite'
-            >
-              <div className='flex max-w-sm flex-col items-center gap-3'>
-                <span className='flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground'>
-                  <Check className='size-6' aria-hidden='true' />
-                </span>
-                <h2 className='font-sans font-semibold text-xl'>
-                  Du står på ventelisten
-                </h2>
-                <p className='leading-6 text-foreground/72'>
-                  {state.message}
-                </p>
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='lg'
-                  onClick={() => setOpen(false)}
-                  className='mt-1 min-h-11 border-border px-6'
-                >
-                  Fortsett å se
-                </Button>
-              </div>
-            </div>
-          : <form
-              action={handleSubmit}
-              className='space-y-4 px-6 pt-5 pb-6 sm:px-7 sm:pb-7'
-              noValidate
-            >
-              <input
-                type='hidden'
-                name='productHandle'
-                value='utekos-dun'
-              />
-              <input
-                type='hidden'
-                name='entryPoint'
-                value={entryPoint}
-              />
-              <input type='hidden' name='website' value='' />
+        {state.status === 'success' ?
+          <div
+            className='grid place-items-center px-6 py-8 text-center sm:px-7'
+            aria-live='polite'
+          >
+            <div className='flex max-w-sm flex-col items-center gap-3'>
+              <span className='flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground'>
+                <Check
+                  className='size-6'
+                  aria-hidden='true'
+                />
+              </span>
 
+              <h2 className='font-sans font-semibold text-xl'>
+                Du står på ventelisten
+              </h2>
+
+              <p className='leading-6 text-foreground/72'>
+                {state.message}
+              </p>
+
+              <Button
+                type='button'
+                variant='outline'
+                size='lg'
+                onClick={() => setOpen(false)}
+                className='mt-1 min-h-11 border-border px-6'
+              >
+                Fortsett å se
+              </Button>
+            </div>
+          </div>
+        : <form
+            action={handleSubmit}
+            className='space-y-4 px-6 pt-5 pb-6 sm:px-7 sm:pb-7'
+            noValidate
+          >
+            <input
+              type='hidden'
+              name='productHandle'
+              value='utekos-dun'
+            />
+
+            <input
+              type='hidden'
+              name='entryPoint'
+              value={entryPoint}
+            />
+
+            <input
+              type='hidden'
+              name='website'
+              value=''
+            />
+
+            <div className='space-y-2'>
+              <label
+                htmlFor={nameFieldId}
+                className='text-sm font-medium'
+              >
+                Navn
+              </label>
+
+              <Input
+                id={nameFieldId}
+                name='name'
+                autoComplete='name'
+                placeholder='Ditt navn'
+                required
+                aria-invalid={Boolean(state.errors?.name)}
+                aria-describedby={
+                  state.errors?.name ?
+                    nameErrorId
+                  : undefined
+                }
+                className={fieldClassName}
+              />
+
+              {state.errors?.name?.[0] ?
+                <p
+                  id={nameErrorId}
+                  role='alert'
+                  className='text-sm text-destructive'
+                >
+                  {state.errors.name[0]}
+                </p>
+              : null}
+            </div>
+
+            <div className='grid gap-4 sm:grid-cols-2'>
               <div className='space-y-2'>
                 <label
-                  htmlFor={nameFieldId}
+                  htmlFor={phoneFieldId}
                   className='text-sm font-medium'
                 >
-                  Navn
+                  Telefon
                 </label>
+
                 <Input
-                  id={nameFieldId}
-                  name='name'
-                  autoComplete='name'
-                  placeholder='Ditt navn'
+                  id={phoneFieldId}
+                  name='phone'
+                  type='tel'
+                  inputMode='tel'
+                  autoComplete='tel'
+                  placeholder='+47 123 45 678'
                   required
-                  aria-invalid={Boolean(state.errors?.name)}
+                  aria-invalid={Boolean(
+                    state.errors?.phone
+                  )}
                   aria-describedby={
-                    state.errors?.name ? nameErrorId : undefined
+                    state.errors?.phone ?
+                      phoneErrorId
+                    : undefined
                   }
                   className={fieldClassName}
                 />
-                {state.errors?.name?.[0] ?
+
+                {state.errors?.phone?.[0] ?
                   <p
-                    id={nameErrorId}
+                    id={phoneErrorId}
                     role='alert'
                     className='text-sm text-destructive'
                   >
-                    {state.errors.name[0]}
+                    {state.errors.phone[0]}
                   </p>
                 : null}
               </div>
 
-              <div className='grid gap-4 sm:grid-cols-2'>
-                <div className='space-y-2'>
-                  <label
-                    htmlFor={phoneFieldId}
-                    className='text-sm font-medium'
-                  >
-                    Telefon
-                  </label>
-                  <Input
-                    id={phoneFieldId}
-                    name='phone'
-                    type='tel'
-                    inputMode='tel'
-                    autoComplete='tel'
-                    placeholder='+47 123 45 678'
-                    required
-                    aria-invalid={Boolean(state.errors?.phone)}
-                    aria-describedby={
-                      state.errors?.phone ?
-                        phoneErrorId
-                      : undefined
-                    }
-                    className={fieldClassName}
-                  />
-                  {state.errors?.phone?.[0] ?
-                    <p
-                      id={phoneErrorId}
-                      role='alert'
-                      className='text-sm text-destructive'
-                    >
-                      {state.errors.phone[0]}
-                    </p>
-                  : null}
-                </div>
-
-                <div className='space-y-2'>
-                  <label
-                    htmlFor={emailFieldId}
-                    className='text-sm font-medium'
-                  >
-                    E-post
-                  </label>
-                  <Input
-                    id={emailFieldId}
-                    name='email'
-                    type='email'
-                    inputMode='email'
-                    autoComplete='email'
-                    placeholder='din@epost.no'
-                    required
-                    aria-invalid={Boolean(state.errors?.email)}
-                    aria-describedby={
-                      state.errors?.email ?
-                        emailErrorId
-                      : undefined
-                    }
-                    className={fieldClassName}
-                  />
-                  {state.errors?.email?.[0] ?
-                    <p
-                      id={emailErrorId}
-                      role='alert'
-                      className='text-sm text-destructive'
-                    >
-                      {state.errors.email[0]}
-                    </p>
-                  : null}
-                </div>
-              </div>
-
-              <div className='space-y-3 border-t border-border/70 pt-4'>
-                <label className='flex cursor-pointer items-start gap-3'>
-                  <input
-                    type='checkbox'
-                    name='privacy'
-                    required
-                    aria-invalid={Boolean(state.errors?.privacy)}
-                    aria-describedby={
-                      state.errors?.privacy ?
-                        privacyErrorId
-                      : undefined
-                    }
-                    className='mt-0.5 size-4 shrink-0 accent-primary'
-                  />
-                  <span className='text-sm leading-5 text-foreground/80'>
-                    Jeg har lest{' '}
-                    <Link
-                      href='/personvern'
-                      className='font-medium text-foreground underline underline-offset-4'
-                    >
-                      personvernerklæringen
-                    </Link>
-                    {' '}
-                    og godtar at Utekos kontakter meg om Utekos
-                    Dun. Dette er ikke markedsføring.
-                  </span>
-                </label>
-                {state.errors?.privacy?.[0] ?
-                  <p
-                    id={privacyErrorId}
-                    role='alert'
-                    className='text-sm text-destructive'
-                  >
-                    {state.errors.privacy[0]}
-                  </p>
-                : null}
+              <div className='space-y-2'>
                 <label
-                  htmlFor={marketingFieldId}
-                  className='flex cursor-pointer items-start gap-3'
+                  htmlFor={emailFieldId}
+                  className='text-sm font-medium'
                 >
-                  <input
-                    id={marketingFieldId}
-                    type='checkbox'
-                    name='marketing'
-                    className='mt-0.5 size-4 shrink-0 accent-primary'
-                  />
-                  <span className='text-sm leading-5 text-foreground/80'>
-                    Send meg nyheter og tilbud på e-post. Jeg kan
-                    melde meg av når som helst.
-                  </span>
+                  E-post
                 </label>
-              </div>
 
-              {state.status === 'error' && state.message ?
+                <Input
+                  id={emailFieldId}
+                  name='email'
+                  type='email'
+                  inputMode='email'
+                  autoComplete='email'
+                  placeholder='din@epost.no'
+                  required
+                  aria-invalid={Boolean(
+                    state.errors?.email
+                  )}
+                  aria-describedby={
+                    state.errors?.email ?
+                      emailErrorId
+                    : undefined
+                  }
+                  className={fieldClassName}
+                />
+
+                {state.errors?.email?.[0] ?
+                  <p
+                    id={emailErrorId}
+                    role='alert'
+                    className='text-sm text-destructive'
+                  >
+                    {state.errors.email[0]}
+                  </p>
+                : null}
+              </div>
+            </div>
+
+            <div className='space-y-3 border-t border-border/70 pt-4'>
+              <label className='flex cursor-pointer items-start gap-3'>
+                <input
+                  type='checkbox'
+                  name='privacy'
+                  required
+                  aria-invalid={Boolean(
+                    state.errors?.privacy
+                  )}
+                  aria-describedby={
+                    state.errors?.privacy ?
+                      privacyErrorId
+                    : undefined
+                  }
+                  className='mt-0.5 size-4 shrink-0 accent-primary'
+                />
+
+                <span className='text-sm leading-5 text-foreground/80'>
+                  Jeg har lest{' '}
+                  <Link
+                    href='/personvern'
+                    className='font-medium text-foreground underline underline-offset-4'
+                  >
+                    personvernerklæringen
+                  </Link>{' '}
+                  og godtar at Utekos kontakter meg om Utekos
+                  Dun. Dette er ikke markedsføring.
+                </span>
+              </label>
+
+              {state.errors?.privacy?.[0] ?
                 <p
+                  id={privacyErrorId}
                   role='alert'
-                  className='rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive'
+                  className='text-sm text-destructive'
                 >
-                  {state.message}
+                  {state.errors.privacy[0]}
                 </p>
               : null}
 
-              <div className='space-y-2 pt-1'>
-                <Button
-                  type='submit'
-                  variant='commerce-primary'
-                  size='lg'
-                  disabled={isPending}
-                  aria-busy={isPending}
-                  className='min-h-12 w-full rounded-full bg-primary px-6 font-sans font-semibold text-base text-primary-foreground shadow-none hover:bg-primary/90'
-                >
-                  {isPending ?
-                    <>
-                      <Loader2
-                        className='animate-spin'
-                        aria-hidden='true'
-                      />
-                      Registrerer…
-                    </>
-                  : 'Sikre førsterett'}
-                </Button>
-              </div>
-            </form>
-          }
+              <label
+                htmlFor={marketingFieldId}
+                className='flex cursor-pointer items-start gap-3'
+              >
+                <input
+                  id={marketingFieldId}
+                  type='checkbox'
+                  name='marketing'
+                  className='mt-0.5 size-4 shrink-0 accent-primary'
+                />
+
+                <span className='text-sm leading-5 text-foreground/80'>
+                  Send meg nyheter og tilbud på e-post. Jeg kan
+                  melde meg av når som helst.
+                </span>
+              </label>
+            </div>
+
+            {state.status === 'error' && state.message ?
+              <p
+                role='alert'
+                className='rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive'
+              >
+                {state.message}
+              </p>
+            : null}
+
+            <div className='space-y-2 pt-1'>
+              <Button
+                type='submit'
+                variant='commerce-primary'
+                size='lg'
+                disabled={isPending}
+                aria-busy={isPending}
+                className='min-h-12 w-full rounded-full bg-primary px-6 font-sans font-semibold text-base text-primary-foreground shadow-none hover:bg-primary/90'
+              >
+                {isPending ?
+                  <>
+                    <Loader2
+                      className='animate-spin'
+                      aria-hidden='true'
+                    />
+                    Registrerer…
+                  </>
+                : 'Sikre førsterett'}
+              </Button>
+            </div>
+          </form>
+        }
       </DialogContent>
     </Dialog>
   )

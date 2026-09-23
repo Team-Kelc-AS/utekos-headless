@@ -1,4 +1,5 @@
 import type {
+  Collection,
   Product,
   ProductOption,
   ProductOptionValue,
@@ -6,10 +7,22 @@ import type {
   SelectedOptionInput
 } from '@shopify/hydrogen-react/storefront-api-types'
 
+type ProductOptionMoney = { amount: string; currencyCode: 'NOK' }
+
 export type StorefrontProductOptionVariant = Pick<
   ProductVariant,
   'id' | 'availableForSale' | 'selectedOptions'
-> & { product: Pick<Product, 'handle'> }
+> & {
+  product: Pick<Product, 'handle'>
+  title: string
+  barcode: string | null
+  currentlyNotInStock: boolean
+  taxable: boolean
+  quantityAvailable: number | null
+  sku: string | null
+  price: ProductOptionMoney
+  compareAtPrice: ProductOptionMoney | null
+}
 
 type StorefrontProductOptionValue = Pick<
   ProductOptionValue,
@@ -24,8 +37,9 @@ type StorefrontProductOption = Pick<ProductOption, 'name'> & {
 
 export type StorefrontProductOptions = Pick<
   Product,
-  'handle'
+  'id' | 'title' | 'handle' | 'productType' | 'vendor'
 > & {
+  collections: { nodes: Array<Pick<Collection, 'id' | 'title'>> }
   encodedVariantExistence: string
   encodedVariantAvailability: string
   options: StorefrontProductOption[]

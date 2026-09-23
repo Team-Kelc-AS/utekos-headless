@@ -66,6 +66,8 @@ test('uses TechDown guide thresholds and measurements', () => {
   assert.match(result.text, /Stor/u)
   assert.match(result.text, /166 cm/u)
   assert.match(result.text, /ikke en garanti/iu)
+  assert.match(result.text, /bytte gratis/iu)
+  assert.match(result.text, /14 kalenderdager/u)
 })
 
 test('uses Utekos height and layering guidance', () => {
@@ -79,6 +81,20 @@ test('uses Utekos height and layering guidance', () => {
   assert.equal(result.kind, 'answer')
   assert.match(result.text, /Large/u)
   assert.match(result.text, /200 cm/u)
+  assert.match(result.text, /bytte gratis/iu)
+})
+
+test('keeps Medium for a roomy Dun fit under 180 cm without thick layers', () => {
+  const result = resolveAssistantSizeHelp(
+    request([
+      'Det gjelder Dun.',
+      'Jeg er 172 cm og ønsker en romslig passform.'
+    ])
+  )
+
+  assert.equal(result.kind, 'answer')
+  assert.match(result.text, /Medium/u)
+  assert.doesNotMatch(result.text, /Large/u)
 })
 
 test('TechDown guidance uses current sizes at height and fit boundaries', () => {
@@ -91,7 +107,8 @@ test('TechDown guidance uses current sizes at height and fit boundaries', () => 
     [179, 'romslig', 'Stor', '166 cm'],
     [184, 'tettere', 'Stor', '166 cm'],
     [184, 'romslig', 'Større', '170 cm'],
-    [185, 'tettere', 'Større', '170 cm'],
+    [185, 'tettere', 'Stor', '166 cm'],
+    [185, 'romslig', 'Større', '170 cm'],
     [196, 'tettere', 'Større', '170 cm']
   ] as const) {
     const result = resolveAssistantSizeHelp(
@@ -127,7 +144,7 @@ test('uses usual size and fit for Comfyrobe', () => {
   )
 
   assert.equal(result.kind, 'answer')
-  assert.match(result.text, /\bM\b/u)
+  assert.match(result.text, /M\/L/u)
   assert.match(result.text, /105 cm/u)
   assert.match(result.text, /71 cm/u)
 })

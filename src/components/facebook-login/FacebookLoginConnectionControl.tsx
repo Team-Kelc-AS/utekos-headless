@@ -1,15 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { z } from 'zod'
+import { facebookLoginStatusResponseSchema } from '@/components/facebook-login/facebookLoginClientResponseSchema'
 import { Button } from '@/components/ui/button'
 import { trackFacebookLoginFunnel } from '@/lib/facebook-login/trackFacebookLoginFunnel'
-
-const statusResponseSchema = z.strictObject({
-  connected: z.boolean().optional(),
-  linked: z.boolean().optional(),
-  needs_contact: z.boolean().optional()
-})
 
 type ConnectionState =
   | 'loading'
@@ -32,7 +26,9 @@ export function FacebookLoginConnectionControl() {
         if (!response.ok) {
           throw new Error('facebook_login_status_failed')
         }
-        return statusResponseSchema.parse(await response.json())
+        return facebookLoginStatusResponseSchema.parse(
+          await response.json()
+        )
       })
       .then(status => {
         if (!disposed) {

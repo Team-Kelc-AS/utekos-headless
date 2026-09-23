@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useState } from 'react'
+import { useContext, useState, type ReactNode } from 'react'
 
 import {
   KlarnaExpressCheckoutButton,
@@ -28,6 +28,8 @@ type KlarnaProductExpressCheckoutProps = {
   theme?: KlarnaExpressCheckoutTheme
   className?: string
   buttonContainerClassName?: string
+  buttonSizing?: 'fill' | 'natural'
+  loadingFallback?: ReactNode
 }
 
 export function KlarnaProductExpressCheckout({
@@ -37,10 +39,13 @@ export function KlarnaProductExpressCheckout({
   disabled = false,
   theme = 'default',
   className,
-  buttonContainerClassName
+  buttonContainerClassName,
+  buttonSizing = 'fill',
+  loadingFallback
 }: KlarnaProductExpressCheckoutProps) {
   const { addLines } = useCartMutations()
   const contextCartId = useContext(CartIdContext)
+  const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<
     string | null
   >(null)
@@ -71,11 +76,14 @@ export function KlarnaProductExpressCheckout({
         className
       )}
     >
+      {isLoading && loadingFallback}
       <KlarnaExpressCheckoutButton
         key={`${selectedVariant.id}-${quantity}-${orderPayload.order_amount}-${theme}`}
         orderPayload={orderPayload}
         disabled={disabled || !selectedVariant.availableForSale}
         theme={theme}
+        buttonSizing={buttonSizing}
+        onReady={() => setIsLoading(false)}
         className='h-full min-h-0'
         {...(buttonContainerClassName ?
           { buttonContainerClassName }
@@ -109,6 +117,7 @@ export function KlarnaProductExpressCheckout({
           }
         }}
         onError={message => {
+          setIsLoading(false)
           setErrorMessage(message)
         }}
       />

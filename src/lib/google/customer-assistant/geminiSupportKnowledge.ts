@@ -1,13 +1,9 @@
-import { GoogleAuth } from 'google-auth-library'
+import { generateText, gateway, Output } from 'ai'
 import { z } from 'zod'
 import type {
   SupportKnowledgeAdapter,
   SupportKnowledgeResult
 } from '@/lib/customer-assistant/server/assistantAdapters'
-import {
-  createGoogleCloudClientOptions,
-  type GoogleCloudClientOptions
-} from '@/lib/google/auth/createGoogleCloudClientOptions'
 import {
   buildAssistantKnowledgeDocuments,
   type AssistantKnowledgeDocument
@@ -17,8 +13,10 @@ type Environment = Readonly<Record<string, string | undefined>>
 
 export const CUSTOMER_ASSISTANT_GEMINI_MODEL =
   'gemini-3.6-flash' as const
-export const CUSTOMER_ASSISTANT_GEMINI_LOCATION =
-  'global' as const
+export const CUSTOMER_ASSISTANT_GATEWAY_MODEL =
+  `google/${CUSTOMER_ASSISTANT_GEMINI_MODEL}` as const
+export const CUSTOMER_ASSISTANT_GATEWAY_PROVIDER =
+  'vertex' as const
 
 const GENERATE_CONTENT_TIMEOUT_MS = 8_000
 const MAX_ANSWER_LENGTH = 2_000
@@ -26,9 +24,6 @@ const MAX_OUTPUT_LENGTH = 8_000
 const MAX_SOURCE_COUNT = 5
 const SAFE_NO_ANSWER_TEXT =
   'Jeg fant ikke et sikkert svar i det godkjente Utekos-innholdet.'
-const CLOUD_PLATFORM_SCOPE =
-  'https://www.googleapis.com/auth/cloud-platform'
-
 type GeminiGenerateContentRequest = {
   contents: [{ parts: [{ text: string }]; role: 'user' }]
   generationConfig: {
@@ -53,20 +48,15 @@ type GeminiGenerateContentClient = {
 export type GeminiSupportKnowledgeDependencies = {
   buildKnowledgeDocuments: () => AssistantKnowledgeDocument[]
   createClient: (options: {
-    authClient?: GoogleCloudClientOptions['authClient']
-    endpoint: string
-    location: typeof CUSTOMER_ASSISTANT_GEMINI_LOCATION
-    projectId: string
+    gatewayModel: typeof CUSTOMER_ASSISTANT_GATEWAY_MODEL
+    provider: typeof CUSTOMER_ASSISTANT_GATEWAY_PROVIDER
   }) => GeminiGenerateContentClient
-  createGoogleCloudClientOptions: (
-    environment: Environment
-  ) => GoogleCloudClientOptions | undefined
 }
 
 export type GeminiSupportKnowledgeConfig = {
-  location: typeof CUSTOMER_ASSISTANT_GEMINI_LOCATION
+  gatewayModel: typeof CUSTOMER_ASSISTANT_GATEWAY_MODEL
   model: typeof CUSTOMER_ASSISTANT_GEMINI_MODEL
-  projectId: string
+  provider: typeof CUSTOMER_ASSISTANT_GATEWAY_PROVIDER
 }
 
 const generateContentEnvelopeSchema = z
@@ -102,47 +92,113 @@ const groundedAnswerSchema = z.strictObject({
   source_urls: z.array(z.string().url()).max(MAX_SOURCE_COUNT)
 })
 
+function readApprovedSourceUrls(
+  responseSchema: Record<string, unknown>
+) {
+  const properties = responseSchema.properties
+  if (!properties || typeof properties !== 'object') return []
+
+  const sourceUrls = (
+    properties as { source_urls?: { items?: { enum?: unknown } } }
+  ).source_urls?.items?.enum
+
+  return Array.isArray(sourceUrls) ?
+      sourceUrls.filter(
+        (url): url is string => typeof url === 'string'
+      )
+    : []
+}
+
 const defaultDependencies: GeminiSupportKnowledgeDependencies = {
   buildKnowledgeDocuments: buildAssistantKnowledgeDocuments,
-  createClient: ({ authClient, endpoint }) => {
-    const googleAuth =
-      authClient ? undefined : (
-        new GoogleAuth({ scopes: [CLOUD_PLATFORM_SCOPE] })
+  createClient: ({ gatewayModel }) => ({
+    async create(request, options) {
+      const sourceUrls = readApprovedSourceUrls(
+        request.generationConfig.responseSchema
       )
+      const answerSchema = z.strictObject({
+        answer: z.string().trim().min(1).max(MAX_ANSWER_LENGTH),
+        answerable: z.boolean(),
+        source_urls:
+          sourceUrls.length > 0 ?
+            z
+              .array(z.enum(sourceUrls as [string, ...string[]]))
+              .max(MAX_SOURCE_COUNT)
+          : z.array(z.string()).max(0)
+      })
 
-    return {
-      async create(request, options) {
-        const requestAuthClient =
-          authClient ?? (await googleAuth!.getClient())
-        const authHeaders =
-          await requestAuthClient.getRequestHeaders(endpoint)
-        const headers = new Headers()
-
-        for (const [name, value] of authHeaders) {
-          headers.set(name, value)
-        }
-        headers.set('Accept', 'application/json')
-        headers.set('Content-Type', 'application/json')
-
-        const response = await fetch(endpoint, {
-          body: JSON.stringify(request),
-          headers,
-          method: 'POST',
-          signal: AbortSignal.timeout(options.timeout_ms)
+      try {
+        const result = await generateText({
+          maxOutputTokens:
+            request.generationConfig.maxOutputTokens,
+          maxRetries: 0,
+          model: gateway(gatewayModel),
+          output: Output.object({ schema: answerSchema }),
+          prompt: request.contents[0].parts[0].text,
+          providerOptions: {
+            gateway: {
+              disallowPromptTraining: true,
+              only: [CUSTOMER_ASSISTANT_GATEWAY_PROVIDER]
+            }
+          },
+          system: request.systemInstruction.parts[0].text,
+          timeout: options.timeout_ms
         })
+        const canonicalSlug = (
+          result.providerMetadata?.gateway?.routing as
+            | { canonicalSlug?: unknown }
+            | undefined
+        )?.canonicalSlug
 
-        if (!response.ok) {
+        return {
+          candidates: [
+            {
+              content: {
+                parts: [{ text: JSON.stringify(result.output) }],
+                role: 'model' as const
+              },
+              finishReason:
+                result.finishReason === 'stop' ?
+                  ('STOP' as const)
+                : ('OTHER' as const)
+            }
+          ],
+          modelVersion:
+            typeof canonicalSlug === 'string' ?
+              canonicalSlug
+            : gatewayModel
+        }
+      } catch (error) {
+        const statusCode = getSafeProviderErrorCode(error)
+        if (statusCode !== 'UNKNOWN') {
           throw Object.assign(
-            new Error('gcp_gemini_generate_content_http_error'),
-            { statusCode: response.status }
+            new Error('ai_gateway_generate_content_http_error'),
+            { statusCode }
           )
         }
 
-        return response.json()
+        if (
+          error instanceof Error &&
+          error.name === 'AI_NoObjectGeneratedError'
+        ) {
+          return {
+            candidates: [
+              {
+                content: {
+                  parts: [{ text: 'not-json' }],
+                  role: 'model' as const
+                },
+                finishReason: 'STOP' as const
+              }
+            ],
+            modelVersion: gatewayModel
+          }
+        }
+
+        throw error
       }
     }
-  },
-  createGoogleCloudClientOptions
+  })
 }
 
 export class GeminiSupportKnowledgeConfigurationError extends Error {
@@ -167,38 +223,20 @@ export class GeminiSupportKnowledgeProviderError extends Error {
 export function readGeminiSupportKnowledgeConfig(
   environment: Environment = process.env
 ): GeminiSupportKnowledgeConfig {
-  const projectId = environment.GCP_PROJECT_ID?.trim()
-  const serviceAccountEmail =
-    environment.GCP_CUSTOMER_ASSISTANT_SERVICE_ACCOUNT_EMAIL?.trim()
+  const hasGatewayKey = Boolean(
+    environment.AI_GATEWAY_API_KEY?.trim()
+  )
+  const onVercel = environment.VERCEL === '1'
 
-  if (
-    !projectId ||
-    (environment.VERCEL === '1' && !serviceAccountEmail)
-  ) {
-    throw new GeminiSupportKnowledgeConfigurationError()
-  }
-
-  const configuredLocation =
-    environment.GCP_GEMINI_LOCATION?.trim() ||
-    CUSTOMER_ASSISTANT_GEMINI_LOCATION
-
-  if (
-    configuredLocation !== CUSTOMER_ASSISTANT_GEMINI_LOCATION
-  ) {
+  if (!hasGatewayKey && !onVercel) {
     throw new GeminiSupportKnowledgeConfigurationError()
   }
 
   return {
-    location: CUSTOMER_ASSISTANT_GEMINI_LOCATION,
+    gatewayModel: CUSTOMER_ASSISTANT_GATEWAY_MODEL,
     model: CUSTOMER_ASSISTANT_GEMINI_MODEL,
-    projectId
+    provider: CUSTOMER_ASSISTANT_GATEWAY_PROVIDER
   }
-}
-
-export function createGeminiGenerateContentEndpoint(
-  projectId: string
-) {
-  return `https://aiplatform.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/locations/${CUSTOMER_ASSISTANT_GEMINI_LOCATION}/publishers/google/models/${CUSTOMER_ASSISTANT_GEMINI_MODEL}:generateContent`
 }
 
 function lowConfidenceResult(): SupportKnowledgeResult {
@@ -272,6 +310,7 @@ function createResponseFormat(
 function usesExpectedModel(model: string) {
   return (
     model === CUSTOMER_ASSISTANT_GEMINI_MODEL ||
+    model === CUSTOMER_ASSISTANT_GATEWAY_MODEL ||
     model.endsWith(`/models/${CUSTOMER_ASSISTANT_GEMINI_MODEL}`)
   )
 }
@@ -310,7 +349,6 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
   readonly #config: GeminiSupportKnowledgeConfig
   readonly #dependencies: GeminiSupportKnowledgeDependencies
   readonly #documents: readonly AssistantKnowledgeDocument[]
-  readonly #environment: Environment
   #client: GeminiGenerateContentClient | undefined
 
   constructor(
@@ -318,7 +356,6 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
     dependencies: GeminiSupportKnowledgeDependencies = defaultDependencies
   ) {
     this.#config = readGeminiSupportKnowledgeConfig(environment)
-    this.#environment = environment
     this.#dependencies = dependencies
     this.#documents = dependencies.buildKnowledgeDocuments()
     this.#approvedSources = new Map(
@@ -332,35 +369,9 @@ export class GeminiSupportKnowledge implements SupportKnowledgeAdapter {
   #getClient() {
     if (this.#client) return this.#client
 
-    const customerAssistantServiceAccountEmail =
-      this.#environment.GCP_CUSTOMER_ASSISTANT_SERVICE_ACCOUNT_EMAIL?.trim()
-    const googleCloudOptions =
-      this.#dependencies.createGoogleCloudClientOptions(
-        customerAssistantServiceAccountEmail ?
-          {
-            ...this.#environment,
-            GCP_SERVICE_ACCOUNT_EMAIL:
-              customerAssistantServiceAccountEmail
-          }
-        : this.#environment
-      )
-
-    if (
-      googleCloudOptions &&
-      googleCloudOptions.projectId !== this.#config.projectId
-    ) {
-      throw new GeminiSupportKnowledgeConfigurationError()
-    }
-
     this.#client = this.#dependencies.createClient({
-      ...(googleCloudOptions ?
-        { authClient: googleCloudOptions.authClient }
-      : {}),
-      endpoint: createGeminiGenerateContentEndpoint(
-        this.#config.projectId
-      ),
-      location: this.#config.location,
-      projectId: this.#config.projectId
+      gatewayModel: this.#config.gatewayModel,
+      provider: this.#config.provider
     })
 
     return this.#client

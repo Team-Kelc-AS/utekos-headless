@@ -2,7 +2,11 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useContext, useSyncExternalStore } from 'react'
+import {
+  useContext,
+  useSyncExternalStore,
+  type ReactNode
+} from 'react'
 import { CartTrigger } from '@/components/cart/CartTrigger'
 import { useCartOpen } from '@/hooks/useCartOpen'
 import { CartBootstrapContext } from '@/lib/context/CartBootstrapContext'
@@ -21,9 +25,11 @@ const getServerSnapshot = () => false
 
 export function Cart({
   className,
+  icon,
   showLabel = false
 }: {
   className?: string
+  icon?: ReactNode
   showLabel?: boolean
 }) {
   const isMounted = useSyncExternalStore(
@@ -39,13 +45,19 @@ export function Cart({
       <div
         aria-hidden
         className={className ?? 'size-11 shrink-0'}
-      />
+      >
+        {icon}
+      </div>
     )
   }
 
   return (
     <>
-      <CartTrigger className={className} showLabel={showLabel} />
+      <CartTrigger
+        className={className}
+        showLabel={showLabel}
+        icon={icon}
+      />
       {open ?
         <CartDrawer />
       : null}

@@ -1,7 +1,21 @@
 const productOptionVariant = /* GraphQL */ `
   fragment productOptionVariant on ProductVariant {
     id
+    title
+    barcode
     availableForSale
+    currentlyNotInStock
+    taxable
+    quantityAvailable
+    sku
+    price {
+      amount
+      currencyCode
+    }
+    compareAtPrice {
+      amount
+      currencyCode
+    }
     product {
       handle
     }
@@ -18,7 +32,17 @@ export const getProductOptionsQuery = /* GraphQL */ `
     $selectedOptions: [SelectedOptionInput!]
   ) {
     product(handle: $handle) {
+      id
+      title
       handle
+      productType
+      vendor
+      collections(first: 5) {
+        nodes {
+          id
+          title
+        }
+      }
       encodedVariantExistence
       encodedVariantAvailability
       options {

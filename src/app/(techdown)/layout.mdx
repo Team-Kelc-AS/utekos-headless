@@ -1,0 +1,30 @@
+import '../../globals.css'
+import './document.css'
+import { TechdownDocumentTelemetry } from './TechdownDocumentTelemetry'
+import { TechdownIntro } from './produkter/techdown/TechdownIntro'
+import { StickyCTA } from '@/components/commerce/StickyCTA'
+import { googleSansFlex } from '@/lib/fonts'
+
+export const metadata = {
+  title: 'Utekos TechDown',
+  description:
+    'Utekos TechDown™ er en lang, marineblå unisex ytterjakke for rolige stunder ute og hjemme.',
+  alternates: {
+    canonical: 'https://utekos.no/produkter/utekos-techdown'
+  }
+}
+
+<html lang='nb' className={googleSansFlex.variable}>
+  <body>
+    <TechdownIntro
+      mobileContent={
+        <>
+          <TechdownDocumentTelemetry />
+          <StickyCTA />
+        </>
+      }
+    >
+      {props.children}
+    </TechdownIntro>
+  </body>
+</html>

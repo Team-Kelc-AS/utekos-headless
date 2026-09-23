@@ -1,38 +1,68 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import type {
   StorefrontProductOptions,
   StorefrontProductOptionsVariables
 } from '@/api/shopify/types/storefrontProductOptions'
 
 const selectedOptionSchema = z.object({
-  name: z.string().min(1),
-  value: z.string().min(1)
+  name: z.string().check(z.minLength(1)),
+  value: z.string().check(z.minLength(1))
 })
 
 const storefrontProductOptionsVariablesSchema = z.object({
-  handle: z.string().min(1),
+  handle: z.string().check(z.minLength(1)),
   selectedOptions: z.array(selectedOptionSchema)
 })
 
+const moneySchema = z.object({
+  amount: z.string().check(z.regex(/^\d+(?:\.\d+)?$/)),
+  currencyCode: z.literal('NOK')
+})
+
 const productOptionVariantSchema = z.object({
-  id: z.string().min(1),
+  id: z.string().check(z.minLength(1)),
   availableForSale: z.boolean(),
-  product: z.object({ handle: z.string().min(1) }),
-  selectedOptions: z.array(selectedOptionSchema).min(1)
+  product: z.object({
+    handle: z.string().check(z.minLength(1))
+  }),
+  selectedOptions: z
+    .array(selectedOptionSchema)
+    .check(z.minLength(1)),
+  title: z.string().check(z.minLength(1)),
+  barcode: z.nullable(z.string()),
+  currentlyNotInStock: z.boolean(),
+  taxable: z.boolean(),
+  quantityAvailable: z.nullable(z.number()),
+  sku: z.nullable(z.string()),
+  price: moneySchema,
+  compareAtPrice: z.nullable(moneySchema)
 })
 
 const storefrontProductOptionsSchema = z.object({
-  handle: z.string().min(1),
+  id: z.string().check(z.minLength(1)),
+  title: z.string().check(z.minLength(1)),
+  handle: z.string().check(z.minLength(1)),
+  productType: z.string(),
+  vendor: z.string(),
+  collections: z.object({
+    nodes: z.array(
+      z.object({
+        id: z.string().check(z.minLength(1)),
+        title: z.string()
+      })
+    )
+  }),
   encodedVariantExistence: z.string(),
   encodedVariantAvailability: z.string(),
   options: z.array(
     z.object({
-      name: z.string().min(1),
+      name: z.string().check(z.minLength(1)),
       optionValues: z.array(
         z.object({
-          name: z.string().min(1),
-          firstSelectableVariant:
-            productOptionVariantSchema.nullable()
+          name: z.string().check(z.minLength(1)),
+          firstSelectableVariant: z.nullable(
+            productOptionVariantSchema
+          )
         })
       )
     })

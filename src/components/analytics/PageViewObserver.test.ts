@@ -27,3 +27,24 @@ test('revocation clears only consented page-view state and transport', () => {
     /browserPageViewCollectorTransport.clear\(\)/
   )
 })
+test('reads environment in an effect event and refires only for a new visit', () => {
+  const eventStart = source.indexOf('useEffectEvent')
+  const effectStart = source.indexOf('useEffect(')
+  assert.ok(eventStart >= 0)
+  assert.ok(effectStart > eventStart)
+  const eventBody = source.slice(eventStart, effectStart)
+  assert.match(eventBody, /environment/)
+  assert.match(source, /emitPageView\(pathname, search\)/)
+  assert.match(source, /\}, \[pathname, search\]\)/)
+  assert.doesNotMatch(
+    source,
+    /\[environment, pathname, search\]/
+  )
+})
+
+test('does not synchronously read viewport geometry for the initial page view', () => {
+  assert.match(
+    source,
+    /readBrowserReporterContext\(undefined, \{\s*includeViewport: false\s*\}\)/
+  )
+})

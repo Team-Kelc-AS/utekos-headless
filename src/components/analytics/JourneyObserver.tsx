@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useEffectEvent } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
 import { enrichCanonicalBrowserJourneyContext } from '@/lib/analytics/internalJourneyContext'
@@ -27,6 +27,9 @@ export function JourneyObserver({
 }) {
   const pathname = usePathname()
   const search = useSearchParams().toString()
+  const readVisitEnvironment = useEffectEvent(
+    (_pathname: string, _search: string) => environment
+  )
 
   useEffect(() => {
     function backForward() {
@@ -44,6 +47,10 @@ export function JourneyObserver({
   useEffect(() => {
     let stop: ReturnType<typeof observeJourneyPage> | undefined
     function reconcile() {
+      const visitEnvironment = readVisitEnvironment(
+        pathname,
+        search
+      )
       stop?.('navigation')
       stop = undefined
       if (document.visibilityState !== 'visible') return
@@ -57,7 +64,7 @@ export function JourneyObserver({
         if (page)
           stop = observeJourneyPage({
             page,
-            environment,
+            environment: visitEnvironment,
             send: transport.send,
             allowed,
             ...(backForwardUrl === window.location.href ?
@@ -81,6 +88,6 @@ export function JourneyObserver({
       stop?.('navigation')
       document.removeEventListener('visibilitychange', resume)
     }
-  }, [environment, pathname, search])
+  }, [pathname, search])
   return null
 }

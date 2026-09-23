@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 const META_WEBSITE_HIGHLIGHT_IMAGES = [
   {
     src: '/Utekos-Partner-2160x2160.jpg',
@@ -35,8 +37,7 @@ export function MetaWebsiteHighlights() {
   return (
     <div className='hidden' aria-hidden='true'>
       {META_WEBSITE_HIGHLIGHT_IMAGES.map(image => (
-        // eslint-disable-next-line @next/next/no-img-element -- Meta must receive one direct public URL without an optimized srcset.
-        <img
+        <Image
           key={image.src}
           src={image.src}
           alt=''
@@ -44,6 +45,7 @@ export function MetaWebsiteHighlights() {
           height={image.height}
           loading='lazy'
           decoding='async'
+          unoptimized
         />
       ))}
     </div>

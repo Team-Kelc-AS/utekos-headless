@@ -21,7 +21,15 @@ function createVariant(
 ): StorefrontProductOptionVariant {
   return {
     id,
+    title: `${color} / ${size} / Unisex`,
+    barcode: null,
     availableForSale,
+    currentlyNotInStock: !availableForSale,
+    taxable: true,
+    quantityAvailable: availableForSale ? 3 : 0,
+    sku: `SKU-${id.split('/').at(-1)}`,
+    price: { amount: '1990.00', currencyCode: 'NOK' },
+    compareAtPrice: null,
     product: { handle },
     selectedOptions: [
       { name: 'Farge', value: color },
@@ -61,7 +69,12 @@ function createProductOptions(
   adjacentVariants: StorefrontProductOptionVariant[]
 ): StorefrontProductOptions {
   return {
+    id: 'gid://shopify/Product/1',
+    title: 'Utekos Mikrofiber™',
     handle: PARENT_HANDLE,
+    productType: 'Yttertøy',
+    vendor: 'Utekos',
+    collections: { nodes: [] },
     encodedVariantExistence: 'v1_0:0:0,1:0,,1:0:0,1:0,,',
     encodedVariantAvailability: 'v1_0:0:0,,1:0:0,1:0,,',
     options: [
@@ -275,7 +288,12 @@ test('keeps TechDown Stor available when Shopify names XL as Større', () => {
     'utekos-techdown'
   )
   const productOptions = createUtekosProductOptions({
+    id: 'gid://shopify/Product/2',
+    title: 'Utekos TechDown™',
     handle: 'utekos-techdown',
+    productType: 'Yttertøy',
+    vendor: 'Utekos',
+    collections: { nodes: [] },
     encodedVariantExistence: 'v1_0:0:0,1:0,2:0,,',
     encodedVariantAvailability: 'v1_0:0:0,1:0,2:0,,',
     options: [
@@ -314,7 +332,10 @@ test('keeps TechDown Stor available when Shopify names XL as Større', () => {
   const storre = findValue(productOptions, 'Størrelse', 'Større')
 
   assert.equal(productOptions.selectedVariantId, havdypStor.id)
-  assert.equal(productOptions.selectedVariantAvailableForSale, true)
+  assert.equal(
+    productOptions.selectedVariantAvailableForSale,
+    true
+  )
   assert.equal(stor.variantAvailableForSale, true)
   assert.equal(storre.name, 'Større')
   assert.equal(storre.variantId, havdypStorere.id)

@@ -20,13 +20,24 @@ type ProductOptionsOperation = ShopifyOperation<
 export async function fetchProductOptions(
   variables: StorefrontProductOptionsVariables
 ) {
+  const product = await fetchStorefrontProductOptions(variables)
+
+  return product ? createUtekosProductOptions(product) : null
+}
+
+export async function fetchStorefrontProductOptions(
+  variables: StorefrontProductOptionsVariables
+) {
   const parsedVariables =
     parseStorefrontProductOptionsVariables(variables)
-  const response = await storefrontGateway.catalogQuery<ProductOptionsOperation>({
-    cache: 'no-store',
-    query: getProductOptionsQuery,
-    variables: parsedVariables
-  })
+  const response =
+    await storefrontGateway.catalogQuery<ProductOptionsOperation>(
+      {
+        cache: 'no-store',
+        query: getProductOptionsQuery,
+        variables: parsedVariables
+      }
+    )
 
   if (!response.success) {
     throw new Error(
@@ -37,9 +48,5 @@ export async function fetchProductOptions(
 
   if (!response.body.product) return null
 
-  const product = parseStorefrontProductOptions(
-    response.body.product
-  )
-
-  return createUtekosProductOptions(product)
+  return parseStorefrontProductOptions(response.body.product)
 }

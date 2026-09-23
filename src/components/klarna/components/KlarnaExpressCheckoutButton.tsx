@@ -36,8 +36,10 @@ type KlarnaExpressCheckoutButtonProps = {
   theme?: KlarnaExpressCheckoutTheme
   className?: string
   buttonContainerClassName?: string
+  buttonSizing?: 'fill' | 'natural'
   onError?: (message: string) => void
   onAuthorizing?: () => void
+  onReady?: () => void
   onPrepareAuthorize?: () => Promise<KlarnaExpressPreparedAuthorize | null>
 }
 
@@ -64,23 +66,27 @@ export function KlarnaExpressCheckoutButton({
   theme = 'default',
   className,
   buttonContainerClassName,
+  buttonSizing = 'fill',
   onError,
   onAuthorizing,
+  onReady,
   onPrepareAuthorize
 }: KlarnaExpressCheckoutButtonProps) {
   const containerSuffix = useId().replace(/:/g, '')
   const containerId = `klarna-express-checkout-${containerSuffix}`
-  const [setContainerRef, isNearViewport] = useInView<HTMLDivElement>({
-    threshold: 0,
-    triggerOnce: true,
-    // Prefetch shortly before the CTA enters view; avoids eager Kasada/Klarna
-    // work on cold homepage loads while keeping cart/drawer mounts snappy.
-    rootMargin: '240px 0px'
-  })
+  const [setContainerRef, isNearViewport] =
+    useInView<HTMLDivElement>({
+      threshold: 0,
+      triggerOnce: true,
+      // Prefetch shortly before the CTA enters view; avoids eager Kasada/Klarna
+      // work on cold homepage loads while keeping cart/drawer mounts snappy.
+      rootMargin: '240px 0px'
+    })
   const payloadRef = useRef(orderPayload)
   const cartIdRef = useRef(shopifyCartId)
   const onErrorRef = useRef(onError)
   const onAuthorizingRef = useRef(onAuthorizing)
+  const onReadyRef = useRef(onReady)
   const onPrepareAuthorizeRef = useRef(onPrepareAuthorize)
   const hasInitializedRef = useRef(false)
 
@@ -89,9 +95,11 @@ export function KlarnaExpressCheckoutButton({
     cartIdRef.current = shopifyCartId
     onErrorRef.current = onError
     onAuthorizingRef.current = onAuthorizing
+    onReadyRef.current = onReady
     onPrepareAuthorizeRef.current = onPrepareAuthorize
   }, [
     onAuthorizing,
+    onReady,
     onError,
     onPrepareAuthorize,
     orderPayload,
@@ -240,6 +248,8 @@ export function KlarnaExpressCheckoutButton({
               onErrorRef.current?.(
                 'Klarna express button is not available for this order'
               )
+            } else {
+              onReadyRef.current?.()
             }
           }
         )
@@ -273,8 +283,12 @@ export function KlarnaExpressCheckoutButton({
       <div
         id={containerId}
         className={cn(
-          styles.host,
-          'h-12 min-h-12 ring-1 ring-card-foreground/50 ring-inset md:h-12 md:min-h-12',
+          buttonSizing === 'natural' ?
+            styles.naturalHost
+          : [
+              styles.host,
+              'h-12 min-h-12 ring-1 ring-card-foreground/50 ring-inset md:h-12 md:min-h-12'
+            ],
           buttonContainerClassName
         )}
       />

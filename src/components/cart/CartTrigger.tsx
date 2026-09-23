@@ -1,6 +1,8 @@
 // Path: src/components/cart/CartTrigger.tsx
 'use client'
 
+import type { ReactNode } from 'react'
+
 import { Button } from '@/components/ui/button'
 import { useCartQuery } from '@/hooks/useCartQuery'
 import { useCartStoreSnapshot } from '@/hooks/useCartStoreSnapshot'
@@ -26,9 +28,11 @@ const getOptimisticCount = (
 
 export function CartTrigger({
   className,
+  icon,
   showLabel = false
 }: {
   className?: string | undefined
+  icon?: ReactNode
   showLabel?: boolean
 }): React.JSX.Element {
   const { optimisticCartLines } = useCartStoreSnapshot().context
@@ -73,9 +77,11 @@ export function CartTrigger({
       onClick={handleOpen}
       onMouseEnter={handlePrefetch}
     >
-      <ShoppingCartIcon className='size-4 transition-all ease-in-out hover:scale-110' />
+      {icon ?? (
+        <ShoppingCartIcon className='size-4 transition-all ease-in-out hover:scale-110' />
+      )}
       {showLabel ?
-        <span className='hidden font-sans font-semibold text-sm md:inline'>
+        <span className='hidden font-sans text-sm font-semibold md:inline'>
           Handlekurv
         </span>
       : null}

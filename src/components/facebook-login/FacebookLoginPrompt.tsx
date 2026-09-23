@@ -2,8 +2,11 @@
 
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { z } from 'zod'
 import { FacebookLoginChoices } from '@/components/facebook-login/FacebookLoginChoices'
+import {
+  facebookLoginCompleteResponseSchema,
+  facebookLoginStatusResponseSchema
+} from '@/components/facebook-login/facebookLoginClientResponseSchema'
 import type { FacebookLoginClientConfig } from '@/lib/facebook-login/facebookLoginConfig'
 import {
   detectFacebookLoginTraffic,
@@ -24,16 +27,6 @@ const OPEN_DELAY_MS = 650
 const FACEBOOK_BUTTON_MAX_WIDTH = 400
 const FACEBOOK_BUTTON_MIN_WIDTH = 240
 const PAGE_EDGE_GAP_PX = 32
-
-const statusResponseSchema = z.strictObject({
-  connected: z.boolean().optional(),
-  linked: z.boolean().optional(),
-  needs_contact: z.boolean().optional()
-})
-
-const completeResponseSchema = z.strictObject({
-  status: z.enum(['connected', 'needs_contact'])
-})
 
 type PromptState = 'hidden' | 'login' | 'error'
 
@@ -214,7 +207,9 @@ export function FacebookLoginPrompt({
     })
       .then(async response => {
         if (!response.ok) return undefined
-        return statusResponseSchema.parse(await response.json())
+        return facebookLoginStatusResponseSchema.parse(
+          await response.json()
+        )
       })
       .then(status => {
         if (disposed) return
@@ -332,7 +327,7 @@ export function FacebookLoginPrompt({
                       'facebook_login_complete_failed'
                     )
                   }
-                  return completeResponseSchema.parse(
+                  return facebookLoginCompleteResponseSchema.parse(
                     await completeResponse.json()
                   )
                 })

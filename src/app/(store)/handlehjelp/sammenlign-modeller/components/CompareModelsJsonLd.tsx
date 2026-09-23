@@ -14,7 +14,6 @@ import type {
   Offer,
   Product as ProductSchema,
   ProductGroup,
-  Review,
   UnitPriceSpecification,
   WebPage
 } from 'schema-dts'
@@ -32,7 +31,6 @@ type ResolvedModel = {
 
 type ReviewMarkup = {
   aggregateRating?: AggregateRating
-  review?: Review[]
 }
 
 type ProductSchemaWithReviews = ProductSchema & ReviewMarkup
@@ -142,33 +140,7 @@ const getReviewMarkup = (handle: string): ReviewMarkup => {
     'worstRating': bundle.aggregateRating.worstRating
   }
 
-  const review: Review[] = bundle.reviews
-    .filter(item => sanitizeText(item.reviewBody).length > 0)
-    .map(item => ({
-      '@type': 'Review',
-      'author': {
-        '@type': 'Person',
-        'name': sanitizeText(item.author) || 'Verifisert kunde'
-      },
-      'publisher': {
-        '@id': ORGANIZATION_ID,
-        'sameAs': [
-          'https://www.facebook.com/utekosen',
-          'https://www.instagram.com/utekos.no',
-          'https://www.wikidata.org/wiki/Q138904544'
-        ]
-      },
-      'datePublished': item.datePublished,
-      'reviewBody': sanitizeText(item.reviewBody),
-      'reviewRating': {
-        '@type': 'Rating',
-        'ratingValue': item.ratingValue,
-        'bestRating': 5,
-        'worstRating': bundle.aggregateRating.worstRating
-      }
-    }))
-
-  return review.length > 0 ? { aggregateRating, review } : { aggregateRating }
+  return { aggregateRating }
 }
 
 const buildProductOffer = (model: ModelRecommendation, product: ProductData | null): ProductOffer => {

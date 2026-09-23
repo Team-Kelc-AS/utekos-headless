@@ -6,12 +6,14 @@ import {
 } from '../data/landingSeoContent'
 import { buildProductGroupJsonLd } from '@/lib/products/structured-data/buildProductGroupJsonLd'
 import type { ProductModel } from '@/lib/products/commerce'
+import { techDownReviewBundle } from '@/db/data/reviews/productReviews'
 
 export function buildSkreddersyVarmenJsonLd(
   commerce: ProductModel
 ) {
   const productGroup = buildProductGroupJsonLd(commerce, {
-    reviews: techDownReviews
+    reviews: techDownReviews,
+    aggregateRating: techDownReviewBundle.aggregateRating
   })
 
   return {

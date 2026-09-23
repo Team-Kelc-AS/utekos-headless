@@ -110,7 +110,7 @@ export function RecommendedItem({
       </div>
       <Button
         size='sm'
-        variant='secondary'
+        variant='default'
         onClick={handleAddToCart}
         disabled={!selectedVariant || isPending || isCartBusy}
       >

@@ -3,6 +3,10 @@ import { getProducts } from '@/api/lib/products/getProducts'
 import { getMagazineArticles } from '@/app/magasinet/utils/getMagazineArticles'
 import { toAbsoluteUrl } from '@/app/magasinet/utils/toAbsoluteUrl'
 import { returnPolicy } from '@/lib/policies/returnPolicy'
+import {
+  knowledgeArticleList,
+  knowledgeOverview
+} from '@/lib/knowledge/knowledgeArticles'
 import { getProductPresentation } from '@/lib/products/presentation'
 import type { MetadataRoute } from 'next'
 
@@ -103,12 +107,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   ]
 
+  const knowledgePages: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}${knowledgeOverview.path}`,
+      lastModified: knowledgeOverview.updatedAt,
+      changeFrequency: 'weekly',
+      priority: 0.8
+    },
+    ...knowledgeArticleList.map(article => ({
+      url: `${BASE_URL}${article.path}`,
+      lastModified: article.updatedAt,
+      changeFrequency: 'monthly' as const,
+      priority: 0.75
+    }))
+  ]
+
   const productsResponse = await getProducts()
 
   const productUrls: MetadataRoute.Sitemap =
     productsResponse.success && productsResponse.body ?
       productsResponse.body.flatMap(product => {
-        const presentation = getProductPresentation(product.handle)
+        const presentation = getProductPresentation(
+          product.handle
+        )
 
         if (!presentation) return []
 
@@ -145,6 +166,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...corePages,
     ...inspirationPages,
     ...utilityPages,
+    ...knowledgePages,
     ...productUrls,
     ...articleUrls
   ]

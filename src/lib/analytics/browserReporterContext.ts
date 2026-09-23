@@ -35,16 +35,21 @@ export type BrowserReporterContext = {
     screenHeight: number
     screenWidth: number
     userAgent: string
-    viewportHeight: number
-    viewportWidth: number
+    viewportHeight?: number
+    viewportWidth?: number
   }
   externalId?: string
   pageTitle: string
   pageUrl: string
 }
 
+export type BrowserReporterContextOptions = {
+  includeViewport?: boolean
+}
+
 export function readBrowserReporterContext(
-  pageUrl?: string
+  pageUrl?: string,
+  { includeViewport = true }: BrowserReporterContextOptions = {}
 ): BrowserReporterContext | null {
   if (!hasBrowserCollectionConsent()) return null
   pageUrl ??= window.location.href
@@ -89,8 +94,12 @@ export function readBrowserReporterContext(
       screenHeight: window.screen.height,
       screenWidth: window.screen.width,
       userAgent: navigator.userAgent,
-      viewportHeight: window.innerHeight,
-      viewportWidth: window.innerWidth
+      ...(includeViewport ?
+        {
+          viewportHeight: window.innerHeight,
+          viewportWidth: window.innerWidth
+        }
+      : {})
     }
   }
 }

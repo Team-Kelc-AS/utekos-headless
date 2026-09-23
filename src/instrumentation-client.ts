@@ -5,7 +5,6 @@ import {
 } from '@/lib/observability/client/sanitizeClientErrorBeacon'
 import { describeUnhandledRejection } from '@/lib/observability/client/describeUnhandledRejection'
 import { createInjectedBrowserErrorFilter } from '@/lib/observability/client/createInjectedBrowserErrorFilter'
-import { sendClientLog } from '@/lib/observability/client/sendClientLog'
 import type { LogPayload } from 'types/observability/log/LogPayload'
 
 /**
@@ -43,14 +42,14 @@ function beaconError(payload: LogPayload) {
     return
   }
 
-  try {
-    void sendClientLog(payload, {
-      fetch,
-      sendBeacon: navigator.sendBeacon?.bind(navigator)
-    }).catch(() => undefined)
-  } catch {
-    // Error reporting must never throw.
-  }
+  void import('@/lib/observability/client/sendClientLog')
+    .then(({ sendClientLog }) =>
+      sendClientLog(payload, {
+        fetch,
+        sendBeacon: navigator.sendBeacon?.bind(navigator)
+      })
+    )
+    .catch(() => undefined)
 }
 
 try {

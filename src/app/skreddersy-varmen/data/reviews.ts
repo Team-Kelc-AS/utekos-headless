@@ -1,3 +1,5 @@
+import { techDownReviewBundle } from '@/db/data/reviews/productReviews'
+
 export type Review = {
   id: number
   name: string
@@ -158,10 +160,6 @@ export const techDownReviews: Review[] = [
 ]
 
 export const techDownReviewSummary = {
-  ratingValue:
-    techDownReviews.reduce(
-      (total, review) => total + review.rating,
-      0
-    ) / techDownReviews.length,
-  reviewCount: techDownReviews.length
+  ratingValue: techDownReviewBundle.aggregateRating.ratingValue,
+  reviewCount: techDownReviewBundle.aggregateRating.reviewCount
 } as const

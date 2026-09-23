@@ -12,8 +12,17 @@ export type ProductReviewPresentation = {
   rating: number
 }
 
+export type ProductAggregateRatingPresentation = {
+  ratingValue: number
+  reviewCount: number
+  ratingCount: number
+  bestRating: number
+  worstRating: number
+}
+
 type BuildProductGroupJsonLdOptions = {
   reviews?: readonly ProductReviewPresentation[]
+  aggregateRating?: ProductAggregateRatingPresentation
   includeAggregateRatingOnly?: boolean
 }
 
@@ -103,21 +112,29 @@ function buildVariantNode(
 
 function buildReviewMarkup(
   reviews: readonly ProductReviewPresentation[],
-  includeAggregateRatingOnly: boolean
+  includeAggregateRatingOnly: boolean,
+  explicitAggregate?: ProductAggregateRatingPresentation
 ) {
-  if (reviews.length === 0) return {}
+  if (reviews.length === 0 && !explicitAggregate) return {}
 
-  const ratingValue =
-    reviews.reduce((total, review) => total + review.rating, 0) /
-    reviews.length
-  const aggregateRating = {
-    '@type': 'AggregateRating',
-    'ratingValue': Number(ratingValue.toFixed(2)),
-    'reviewCount': reviews.length,
-    'ratingCount': reviews.length,
-    'bestRating': 5,
-    'worstRating': 1
-  }
+  const aggregateRating = explicitAggregate ?
+      { '@type': 'AggregateRating', ...explicitAggregate }
+    : (() => {
+        const ratingValue =
+          reviews.reduce(
+            (total, review) => total + review.rating,
+            0
+          ) / reviews.length
+
+        return {
+          '@type': 'AggregateRating',
+          'ratingValue': Number(ratingValue.toFixed(2)),
+          'reviewCount': reviews.length,
+          'ratingCount': reviews.length,
+          'bestRating': 5,
+          'worstRating': 1
+        }
+      })()
 
   if (includeAggregateRatingOnly) {
     return { aggregateRating }
@@ -177,7 +194,8 @@ export function buildProductGroupJsonLd(
     ),
     ...buildReviewMarkup(
       reviews,
-      options.includeAggregateRatingOnly ?? false
+      options.includeAggregateRatingOnly ?? false,
+      options.aggregateRating
     )
   }
 }

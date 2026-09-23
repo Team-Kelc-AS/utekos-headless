@@ -5,7 +5,10 @@ import {
 } from '@/app/handlehjelp/storrelsesguide/utils/data'
 import type { AssistantChatRequest } from '../assistantProtocol'
 import { normalizeAssistantText } from '../assistantProductProfiles'
-import { sizeExchangeLlmsSummary } from '@/lib/policies/returnPolicy'
+import {
+  returnPolicy,
+  sizeExchangeLlmsSummary
+} from '@/lib/policies/returnPolicy'
 
 type SizeFamily = 'comfyrobe' | 'techdown' | 'utekos'
 
@@ -18,6 +21,12 @@ const roomyPattern =
   /\b(?:romslig|oversized|overdimensjonert|tykke?\s+lag|boblejakke|ekstra\s+plass|maksimal\s+(?:plass|dekning))\b/u
 const closerPattern =
   /\b(?:tettere|kroppsnær|nettere|normal|balansert|uten\s+ekstra)\b/u
+const thickLayerPattern =
+  /\b(?:tykke?\s+lag|boblejakke|overdimensjonert|kokong|maksimal\s+(?:plass|dekning))\b/u
+
+function sizeChoiceAdvice() {
+  return `Velger du feil størrelse, kan du bytte gratis til samme modell og farge innen ${returnPolicy.sizeExchange.noticeWindowDays} kalenderdager fra dagen du fysisk mottar bestillingen.`
+}
 
 function userTexts(request: AssistantChatRequest) {
   return request.messages
@@ -132,7 +141,8 @@ function answerTechDown(
 ) {
   const base =
     height <= 175 ? 'middels'
-    : height < 185 ? 'stor'
+    : height < 185 || (height === 185 && fit === 'closer') ?
+      'stor'
     : 'storre'
   const size =
     fit === 'roomy' && base === 'middels' && height >= 170 ?
@@ -145,11 +155,18 @@ function answerTechDown(
   )!
   const length = selected.measurements.length
 
-  return `Ut fra høyden og ønsket passform er ${selected.size} et naturlig utgangspunkt for TechDown. Guidens totale lengde for denne størrelsen er ${length ?? 'oppgitt i måletabellen'}. Sammenlign målene med et lignende plagg hjemme før du bestemmer deg; dette er veiledning, ikke en garanti for passform.`
+  return `Ut fra høyden og ønsket passform er ${selected.size} et naturlig utgangspunkt for TechDown. Guidens totale lengde for denne størrelsen er ${length ?? 'oppgitt i måletabellen'}. Sammenlign målene med et lignende plagg hjemme før du bestemmer deg; dette er veiledning, ikke en garanti for passform. ${sizeChoiceAdvice()}`
 }
 
-function answerUtekos(height: number, fit: 'closer' | 'roomy') {
-  const size = height > 180 || fit === 'roomy' ? 'L' : 'M'
+function wantsThickLayers(texts: readonly string[]) {
+  return thickLayerPattern.test(texts.join(' '))
+}
+
+function answerUtekos(
+  height: number,
+  texts: readonly string[]
+) {
+  const size = height > 180 || wantsThickLayers(texts) ? 'L' : 'M'
   const key = size === 'M' ? 'm' : 'l'
   const length = measurement(
     utekosData,
@@ -157,7 +174,7 @@ function answerUtekos(height: number, fit: 'closer' | 'roomy') {
     key
   )
 
-  return `Ut fra størrelsesguiden er ${size === 'M' ? 'Medium' : 'Large'} et naturlig utgangspunkt for Utekos Dun og Mikrofiber. ${size === 'M' ? 'Medium anbefales normalt opptil ca. 180 cm når du ønsker en romslig, men tettere passform.' : 'Large anbefales over ca. 180 cm eller når du ønsker ekstra plass til tykke lag.'} Guidens totale lengde er ${length ?? 'oppgitt i måletabellen'}. Sammenlign målene med et lignende plagg hjemme; dette er veiledning, ikke en garanti.`
+  return `Ut fra størrelsesguiden er ${size === 'M' ? 'Medium' : 'Large'} et naturlig utgangspunkt for Utekos Dun og Mikrofiber. ${size === 'M' ? 'Medium anbefales normalt opptil ca. 180 cm når du ønsker en romslig, men tettere passform.' : 'Large anbefales over ca. 180 cm eller når du ønsker plass til tykke lag.'} Guidens totale lengde er ${length ?? 'oppgitt i måletabellen'}. Sammenlign målene med et lignende plagg hjemme; dette er veiledning, ikke en garanti. ${sizeChoiceAdvice()}`
 }
 
 function answerComfyrobe(
@@ -187,8 +204,9 @@ function answerComfyrobe(
     'Bredde over bryst',
     selected.key
   )
+  const label = size === 'M' ? 'M/L' : size
 
-  return `Comfyrobe har en bevisst romslig unisex-passform. Ut fra vanlig størrelse og ønsket passform er ${size} et naturlig utgangspunkt. Guiden oppgir ${length ?? 'målt lengde i tabellen'} total lengde og ${width ?? 'målt brystbredde i tabellen'} brystbredde for dette alternativet. Sammenlign med et plagg du liker passformen på; dette er veiledning, ikke en garanti.`
+  return `Comfyrobe har en bevisst romslig unisex-passform. Ut fra vanlig størrelse og ønsket passform er ${label} et naturlig utgangspunkt. Guiden oppgir ${length ?? 'målt lengde i tabellen'} total lengde og ${width ?? 'målt brystbredde i tabellen'} brystbredde for dette alternativet. Sammenlign med et plagg du liker passformen på; dette er veiledning, ikke en garanti. ${sizeChoiceAdvice()}`
 }
 
 export function resolveAssistantSizeHelp(
@@ -242,6 +260,6 @@ export function resolveAssistantSizeHelp(
     text:
       family === 'techdown' ?
         answerTechDown(height, fit)
-      : answerUtekos(height, fit)
+      : answerUtekos(height, texts)
   }
 }

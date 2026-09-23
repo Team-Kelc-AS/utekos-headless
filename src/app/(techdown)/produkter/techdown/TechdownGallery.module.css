@@ -1,0 +1,100 @@
+.gallery {
+  min-width: 0;
+}
+
+.viewport {
+  display: flex;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.viewport::-webkit-scrollbar,
+.thumbnails::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  position: relative;
+  flex: 0 0 100%;
+  min-width: 0;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.mainImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.thumbnails {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.thumbnail {
+  position: relative;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.thumbnail img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: inherit;
+}
+
+.thumbnail[aria-pressed='true']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px solid white;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 2px #000;
+  pointer-events: none;
+}
+
+.viewport:focus-visible,
+.thumbnail:focus-visible,
+.error button:focus-visible {
+  outline: 3px solid white;
+  outline-offset: -5px;
+  box-shadow: inset 0 0 0 7px #000;
+}
+
+.error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.error button {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  cursor: pointer;
+}

@@ -2,7 +2,6 @@
 
 import NextError from 'next/error'
 import { useEffect } from 'react'
-import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 
 export default function GlobalError({
   error
@@ -10,7 +9,11 @@ export default function GlobalError({
   error: Error & { digest?: string | undefined }
 }) {
   useEffect(() => {
-    reportClientCaughtError(error, 'global_error_boundary')
+    void import(
+      '@/lib/observability/client/reportClientCaughtError'
+    ).then(({ reportClientCaughtError }) => {
+      reportClientCaughtError(error, 'global_error_boundary')
+    })
   }, [error])
 
   return (

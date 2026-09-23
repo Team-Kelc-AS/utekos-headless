@@ -1,0 +1,44 @@
+html {
+  color-scheme: dark;
+  scroll-padding-block-start: 92px;
+  scroll-padding-block-end: calc(
+    var(--sticky-cta-offset, 132px) + 24px
+  );
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  overflow-x: clip;
+  background-color: oklch(0.2253 0.0216 276.51);
+  color: #f0eee9;
+  font-family: var(--font-google-sans-flex), ui-sans-serif,
+    system-ui, sans-serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'opsz' 120;
+  font-weight: 500;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.techdown-redirect {
+  padding: 2rem;
+}
+
+.techdown-redirect a {
+  display: inline-block;
+  padding-block: 1rem;
+  text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+  .techdown-redirect {
+    visibility: hidden;
+  }
+}
+
+@media (scripting: none) {
+  .techdown-redirect {
+    visibility: visible;
+  }
+}

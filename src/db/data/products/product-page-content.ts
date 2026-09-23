@@ -85,13 +85,9 @@ export const PRODUCT_PAGE_CONTENT = {
         groups: [
           {
             rows: [
-              { label: 'Fôrstoff', value: '100 % polyester' },
-              { label: 'Skallstoff', value: '100 % nylon' },
-              { label: 'GSM', value: '38' },
-              { label: 'Trådtetthet', value: '380T' },
-              { label: 'Trådtykkelse', value: '20D' },
-              { label: 'Fyll', value: '620 g' },
-              { label: 'Vekt', value: '1400 g' },
+              { label: 'Ytterstoff', value: '100 % nylon, 38 g/m²' },
+              { label: 'Innerfôr', value: '100 % nylon, 38 g/m²' },
+              { label: 'Isolasjonsfyll', value: 'Polyester' },
               { label: 'Glidelåser', value: 'YKK®' }
             ]
           }

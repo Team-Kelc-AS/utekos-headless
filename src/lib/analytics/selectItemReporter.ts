@@ -8,7 +8,8 @@ import { mapShopifySelectItem } from './shopifySelectItemCommerce'
 import {
   buildSelectItemDataLayerEvent,
   createCanonicalSelectItem,
-  type CanonicalSelectItem
+  type CanonicalSelectItem,
+  type CanonicalSelectItemCustomData
 } from './selectItemEvent'
 import { startSelectItemCollectorTransport } from './selectItemCollectorTransport'
 import type {
@@ -18,6 +19,8 @@ import type {
 
 export type ReportCanonicalSelectItemInput = {
   destinationUrl?: string
+  eventId?: string
+  interactionId?: string
   itemListId: string
   pageViewId?: string
   product: ProductCommerceModel
@@ -25,8 +28,51 @@ export type ReportCanonicalSelectItemInput = {
   variant: ProductPurchaseVariant
 }
 
+export type ReportCanonicalSelectItemCustomDataInput = {
+  customData: CanonicalSelectItemCustomData
+  eventId?: string
+  pageViewId?: string
+}
+
 export function reportCanonicalSelectItem(
   input: ReportCanonicalSelectItemInput
+): () => void {
+  if (typeof window === 'undefined') {
+    return () => {}
+  }
+
+  try {
+    const customData = mapShopifySelectItem({
+      product: input.product,
+      variant: input.variant,
+      itemListId: input.itemListId,
+      interactionId:
+        input.interactionId ?? globalThis.crypto.randomUUID(),
+      ...(input.destinationUrl ?
+        { destinationUrl: input.destinationUrl }
+      : {}),
+      ...(input.quantity !== undefined ?
+        { quantity: input.quantity }
+      : {})
+    })
+
+    return reportCanonicalSelectItemCustomData({
+      customData,
+      ...(input.eventId ? { eventId: input.eventId } : {}),
+      ...(input.pageViewId ?
+        { pageViewId: input.pageViewId }
+      : {})
+    })
+  } catch (error) {
+    queueMicrotask(() => {
+      throw error
+    })
+    return () => {}
+  }
+}
+
+export function reportCanonicalSelectItemCustomData(
+  input: ReportCanonicalSelectItemCustomDataInput
 ): () => void {
   if (typeof window === 'undefined') {
     return () => {}
@@ -42,22 +88,9 @@ export function reportCanonicalSelectItem(
       : {})
     })
 
-    const customData = mapShopifySelectItem({
-      product: input.product,
-      variant: input.variant,
-      itemListId: input.itemListId,
-      interactionId: globalThis.crypto.randomUUID(),
-      ...(input.destinationUrl ?
-        { destinationUrl: input.destinationUrl }
-      : {}),
-      ...(input.quantity !== undefined ?
-        { quantity: input.quantity }
-      : {})
-    })
-
     const event = createCanonicalSelectItem({
       environment: clientContext.environment,
-      eventId: globalThis.crypto.randomUUID(),
+      eventId: input.eventId ?? globalThis.crypto.randomUUID(),
       eventTime: new Date().toISOString(),
       pageUrl: clientContext.pageUrl,
       pageTitle: clientContext.pageTitle,
@@ -66,7 +99,7 @@ export function reportCanonicalSelectItem(
         { referrerUrl: pageView.referrerUrl }
       : {}),
       consent: clientContext.consent,
-      customData,
+      customData: input.customData,
       ...(clientContext.browserId ?
         { browserId: clientContext.browserId }
       : {}),

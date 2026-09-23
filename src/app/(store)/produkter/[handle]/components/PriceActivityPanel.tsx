@@ -1,7 +1,7 @@
 import { Price } from '@/components/jsx/Price'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { Star } from 'lucide-react'
-import { techDownReviewSummary } from '@/app/skreddersy-varmen/data/reviews'
+import { techDownReviewBundle } from '@/db/data/reviews/productReviews'
 import type { CurrencyCode } from 'types/commerce/CurrencyCode'
 
 export interface PriceActivityPanelProps {
@@ -22,14 +22,14 @@ const OFFERS = {
 function getProductReviewSummary(productHandle: string) {
   if (productHandle !== 'utekos-techdown') return null
 
-  const averageRating = techDownReviewSummary.ratingValue
+  const averageRating = techDownReviewBundle.aggregateRating.ratingValue
 
   return {
     averageRating,
-    count: techDownReviewSummary.reviewCount,
+    count: techDownReviewBundle.aggregateRating.reviewCount,
     formattedAverage: averageRating.toLocaleString('nb-NO', {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     })
   }
 }

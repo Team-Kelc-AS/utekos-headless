@@ -65,6 +65,8 @@ export type SelectItemDataLayerEvent = {
   event_time: string
   source: 'web'
   page_view_id?: string
+  transaction_id: string
+  commerce: CanonicalSelectItemCustomData
   custom_data: CanonicalSelectItemCustomData
   canonical_event: CanonicalSelectItem
 }
@@ -118,6 +120,8 @@ export function buildSelectItemDataLayerEvent(
     ...(event.page_view_id ?
       { page_view_id: event.page_view_id }
     : {}),
+    transaction_id: event.event_id,
+    commerce: event.custom_data,
     custom_data: event.custom_data,
     canonical_event: event
   }

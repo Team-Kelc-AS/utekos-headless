@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  buildSelectItemDataLayerEvent,
   canonicalSelectItemCustomDataSchema,
   createCanonicalSelectItem
 } from './selectItemEvent'
@@ -54,7 +55,8 @@ test('createCanonicalSelectItem accepts full commerce select payload', () => {
     customData: {
       interaction_id: 'int-1',
       item_list_id: 'frontpage_featured',
-      destination_url: 'https://utekos.no/produkter/utekos-techdown',
+      destination_url:
+        'https://utekos.no/produkter/utekos-techdown',
       currency: 'NOK',
       value: 1432,
       gross_value: 1790,
@@ -64,6 +66,14 @@ test('createCanonicalSelectItem accepts full commerce select payload', () => {
   })
 
   assert.equal(event.event_name, 'select_item')
-  assert.equal(event.custom_data.item_list_id, 'frontpage_featured')
+  assert.equal(
+    event.custom_data.item_list_id,
+    'frontpage_featured'
+  )
   assert.equal(event.custom_data.gross_value, 1790)
+
+  const dataLayerEvent = buildSelectItemDataLayerEvent(event)
+  assert.equal(dataLayerEvent.transaction_id, event.event_id)
+  assert.equal(dataLayerEvent.commerce, event.custom_data)
+  assert.equal(dataLayerEvent.custom_data, event.custom_data)
 })

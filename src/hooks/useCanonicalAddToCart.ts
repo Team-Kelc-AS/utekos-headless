@@ -1,7 +1,6 @@
 'use client'
 
 import { useContext, useState } from 'react'
-import { toast } from 'sonner'
 import { CartIdContext } from '@/lib/context/CartIdContext'
 import { CartMutationContext } from '@/lib/context/CartMutationContext'
 import { cartStore } from '@/lib/state/cartStore'
@@ -13,6 +12,14 @@ import type {
   ProductCartModel,
   ProductPurchaseVariant
 } from 'types/product/ProductPurchaseModel'
+
+function showAddToCartError(message: string) {
+  void import('sonner')
+    .then(({ toast }) => {
+      toast.error(message)
+    })
+    .catch(() => {})
+}
 
 export type CanonicalAddToCartParams = {
   product: ProductCartModel
@@ -57,7 +64,7 @@ export function useCanonicalAddToCart() {
       })
 
       if (!result.success) {
-        toast.error(result.message)
+        showAddToCartError(result.message)
         return { success: false }
       }
 

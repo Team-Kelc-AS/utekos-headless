@@ -1,0 +1,179 @@
+.breadcrumbs {
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  color: var(--knowledge-ink-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.breadcrumbs .breadcrumbList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.breadcrumbs .breadcrumbItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+}
+
+.breadcrumbs .breadcrumbItem + .breadcrumbItem {
+  margin-top: 0;
+}
+
+.breadcrumbLink {
+  color: var(--knowledge-link);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.22em;
+}
+
+.breadcrumbCurrent {
+  max-width: 42ch;
+  overflow: hidden;
+  color: var(--knowledge-ink-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.authorCard {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+  margin: 2rem 0 3.5rem;
+  padding: 1rem;
+  border: 1px solid var(--knowledge-border-strong);
+  border-radius: 1rem;
+  background: var(--knowledge-surface);
+  box-shadow: 0 0.75rem 2.5rem rgb(28 27 26 / 8%);
+}
+
+.logoFrame {
+  display: flex;
+  width: 5rem;
+  aspect-ratio: 8 / 5;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0.65rem;
+}
+
+.logoFrame .logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 0;
+  border-radius: 0;
+}
+
+.authorCard .authorName {
+  margin: 0;
+  color: var(--knowledge-ink);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.authorLink {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--knowledge-link-soft);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.22em;
+}
+
+.authorCard .publicationLine {
+  margin: 0.35rem 0 0;
+  color: var(--knowledge-ink-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.references {
+  margin-top: clamp(4rem, 9vw, 6rem);
+  padding-top: clamp(2.5rem, 6vw, 4rem);
+  border-top: 1px solid var(--knowledge-border);
+}
+
+.referenceList {
+  margin: 1.5rem 0 0;
+  padding-left: 1.4rem;
+}
+
+.referenceItem {
+  padding-left: 0.4rem;
+  color: var(--knowledge-ink-muted);
+  font-size: 0.95em;
+  line-height: 1.65;
+}
+
+.referenceItem + .referenceItem {
+  margin-top: 1rem;
+}
+
+.referenceTitle {
+  color: var(--knowledge-ink);
+  font-style: normal;
+  font-weight: 800;
+}
+
+.callout {
+  margin: 2.5rem 0;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid;
+  border-left-width: 0.35rem;
+  border-radius: 0.85rem;
+  color: var(--knowledge-ink);
+  box-shadow: 0 0.6rem 1.8rem rgb(28 27 26 / 6%);
+}
+
+.callout[data-tone='evidence'] {
+  border-color: #596576;
+  background: #e6eaf0;
+}
+
+.callout[data-tone='note'] {
+  border-color: #75647d;
+  background: #ece8f0;
+}
+
+.callout[data-tone='caution'] {
+  border-color: #96532f;
+  background: #f5e8dc;
+}
+
+.callout .calloutTitle {
+  margin: 0;
+  color: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.calloutBody {
+  margin-top: 0.65rem;
+  color: var(--knowledge-ink);
+  font-weight: 500;
+}
+
+.calloutBody > :first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 30rem) {
+  .authorCard {
+    grid-template-columns: 1fr;
+  }
+
+  .logoFrame {
+    width: 4.5rem;
+  }
+}

@@ -20,3 +20,9 @@
   display: block !important;
   border: 0 !important;
 }
+
+/* Keep the SDK's own width and height; only cap at the available viewport. */
+.naturalHost {
+  flex: none;
+  max-width: 100%;
+}

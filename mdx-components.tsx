@@ -1,8 +1,7 @@
 import type { MDXComponents } from 'mdx/types'
 import Image, { type ImageProps } from 'next/image'
-import { FeatureGrid } from '@/app/handlehjelp/storrelsesguide/components/mdx/FeatureGrid'
-import { SizeGrid } from '@/app/handlehjelp/storrelsesguide/components/mdx/SizeGrid'
 import { SizeGuideCallout } from '@/components/size-guide/SizeGuideCallout'
+import { KnowledgeCallout } from '@/components/knowledge/KnowledgeCallout'
 import { H1 } from '@/components/typography/TypographyH1'
 import { H2 } from '@/components/typography/TypographyH2'
 import { H3 } from '@/components/typography/TypographyH3'
@@ -15,15 +14,14 @@ const components = {
   h3: H3,
   h4: H4,
   p: P,
+  KnowledgeCallout,
   SizeGuideCallout,
-  SizeGrid,
-  FeatureGrid,
   img: props => {
     const imageProps = props as ImageProps
     return (
       <Image
         sizes='100vw'
-        className='aspect-square h-auto w-full object-cover'
+        className='h-auto max-w-full'
         {...imageProps}
         alt={imageProps.alt ?? ''}
       />

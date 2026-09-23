@@ -1,8 +1,12 @@
 'use client'
 
 import { QueryClientProvider } from '@tanstack/react-query'
-import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
 
 import { getQueryClient } from '@/api/lib/getQueryClient'
 import { CartMutationProvider } from '@/clients/CartMutationProvider'
@@ -21,16 +25,19 @@ import type { Cart as CartModel } from 'types/cart'
 
 const CART_BOOTSTRAP_TIMEOUT_MS = 3000
 
-const ReactQueryDevtools =
-  process.env.NODE_ENV === 'development' ?
-    dynamic(
-      () =>
-        import('@tanstack/react-query-devtools').then(
-          module => module.ReactQueryDevtools
-        ),
-      { ssr: false }
+const CartProvidersPresentContext = createContext(false)
+
+/** Reuse the page's cart runtime, or supply it on standalone landing pages. */
+export function EnsureCartProviders({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  const hasProviders = useContext(CartProvidersPresentContext)
+  return hasProviders ? children : (
+      <Providers cartId={null}>{children}</Providers>
     )
-  : null
+}
 
 interface ProvidersProps {
   children: React.ReactNode
@@ -123,25 +130,23 @@ export default function Providers({
   }, [])
 
   return (
-    <CartBootstrapContext.Provider value={cartBootstrapStatus}>
-      <QueryClientProvider client={queryClient}>
-        <CartIdProvider value={cartId}>
-          <CartIdentityActionsContext.Provider
-            value={{ adoptCartIdentity }}
-          >
-            <CartMutationProvider
-              actions={serverActions}
-              adoptCartIdentity={adoptCartIdentity}
+    <CartProvidersPresentContext.Provider value={true}>
+      <CartBootstrapContext.Provider value={cartBootstrapStatus}>
+        <QueryClientProvider client={queryClient}>
+          <CartIdProvider value={cartId}>
+            <CartIdentityActionsContext.Provider
+              value={{ adoptCartIdentity }}
             >
-              {children}
-            </CartMutationProvider>
-          </CartIdentityActionsContext.Provider>
-        </CartIdProvider>
-
-        {ReactQueryDevtools ?
-          <ReactQueryDevtools initialIsOpen={false} />
-        : null}
-      </QueryClientProvider>
-    </CartBootstrapContext.Provider>
+              <CartMutationProvider
+                actions={serverActions}
+                adoptCartIdentity={adoptCartIdentity}
+              >
+                {children}
+              </CartMutationProvider>
+            </CartIdentityActionsContext.Provider>
+          </CartIdProvider>
+        </QueryClientProvider>
+      </CartBootstrapContext.Provider>
+    </CartProvidersPresentContext.Provider>
   )
 }

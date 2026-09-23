@@ -11,6 +11,7 @@ async function readSource(relativePath: string) {
 
 const layoutPaths = [
   'src/app/(store)/layout.tsx',
+  'src/app/(techdown)/layout.mdx',
   'src/app/skreddersy-varmen/layout.tsx',
   'src/app/canonical-control/layout.tsx'
 ]

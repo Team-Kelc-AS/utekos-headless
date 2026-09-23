@@ -3,17 +3,37 @@ import heroLgImage from '@/assets/images/gallery/utekos-brand-1400x735.webp'
 import heroXlImage from '@/assets/images/gallery/utekos_1400_788.webp'
 import heroSixteenTenImage from '@public/Hero-iPad.webp'
 import heroMobileImage from '@public/TechDown_1.webp'
+import Image, {
+  getImageProps,
+  type StaticImageData
+} from 'next/image'
 
-const heroImageProps = {
-  alt: 'Utekos TechDown i mørk blå, vist i helfigur.',
-  decoding: 'async',
-  fetchPriority: 'high',
-  loading: 'eager',
-  sizes:
-    '(min-width: 1152px) 1152px, (min-width: 640px) calc(100vw - 2rem), calc(100vw - 2rem)'
-} as const
+const HERO_ALT =
+  'Utekos TechDown i mørk blå, vist i helfigur.'
+
+const HERO_SIZES =
+  '(min-width: 1152px) 1152px, (min-width: 640px) calc(100vw - 2rem), calc(100vw - 2rem)'
+
+function getHeroSrcSet(src: StaticImageData) {
+  const {
+    props: { srcSet }
+  } = getImageProps({
+    src,
+    alt: HERO_ALT,
+    fill: true,
+    sizes: HERO_SIZES
+  })
+
+  return srcSet
+}
 
 export function HeroImage() {
+  const heroXlSrcSet = getHeroSrcSet(heroXlImage)
+  const heroLgSrcSet = getHeroSrcSet(heroLgImage)
+  const heroSixteenTenSrcSet = getHeroSrcSet(
+    heroSixteenTenImage
+  )
+
   return (
     <div
       className={cn(
@@ -24,30 +44,31 @@ export function HeroImage() {
         <picture className='block size-full'>
           <source
             media='(min-width: 1280px)'
-            srcSet={`${heroXlImage.src} ${heroXlImage.width}w`}
+            srcSet={heroXlSrcSet}
+            sizes={HERO_SIZES}
           />
+
           <source
             media='(min-width: 1024px)'
-            srcSet={`${heroLgImage.src} ${heroLgImage.width}w`}
+            srcSet={heroLgSrcSet}
+            sizes={HERO_SIZES}
           />
+
           <source
             media='(min-width: 640px)'
-            srcSet={`${heroSixteenTenImage.src} ${heroSixteenTenImage.width}w`}
+            srcSet={heroSixteenTenSrcSet}
+            sizes={HERO_SIZES}
           />
-          <source
-            srcSet={`${heroMobileImage.src} ${heroMobileImage.width}w`}
-          />
-          <img
-            alt={heroImageProps.alt}
-            src={heroMobileImage.src}
-            srcSet={`${heroMobileImage.src} ${heroMobileImage.width}w`}
-            sizes={heroImageProps.sizes}
-            loading={heroImageProps.loading}
-            decoding={heroImageProps.decoding}
-            fetchPriority={heroImageProps.fetchPriority}
-            width={heroMobileImage.width}
-            height={heroMobileImage.height}
-            className='block size-full object-cover object-center'
+
+          <Image
+            src={heroMobileImage}
+            alt={HERO_ALT}
+            fill
+            sizes={HERO_SIZES}
+            loading='eager'
+            fetchPriority='high'
+            decoding='async'
+            className='object-cover object-center'
           />
         </picture>
       </div>

@@ -1,4 +1,4 @@
-import { techDownReviews } from '@/app/skreddersy-varmen/data/reviews'
+import { techDownReviewBundle } from '@/db/data/reviews/productReviews'
 import { getProductPresentation } from '@/lib/products/presentation'
 import { buildProductGroupJsonLd } from '@/lib/products/structured-data/buildProductGroupJsonLd'
 
@@ -42,7 +42,7 @@ export async function resolveProductJsonLdData(
     const productGroup = buildProductGroupJsonLd(commerce, {
       ...(presentation.publicHandle === 'utekos-techdown' ?
         {
-          reviews: techDownReviews,
+          aggregateRating: techDownReviewBundle.aggregateRating,
           includeAggregateRatingOnly: true
         }
       : {})

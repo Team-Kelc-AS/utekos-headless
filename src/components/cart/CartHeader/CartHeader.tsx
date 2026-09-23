@@ -11,7 +11,7 @@ export const CartHeader = () => (
       size='icon'
       variant='outline'
       onClick={() => cartStore.send({ type: 'CLOSE' })}
-      className='h-10 w-10 border-border bg-muted text-foreground hover:bg-accent hover:text-accent-foreground'
+      className='h-10 w-10 border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
     >
       <XMarkIcon className='h-5 w-5' aria-hidden='true' />
       <span className='sr-only'>Lukk handlekurven</span>
