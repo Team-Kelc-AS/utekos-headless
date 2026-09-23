@@ -14,7 +14,9 @@ export async function POST(request: Request) {
   try {
     const report = parseCspReport(JSON.parse(body))
     if (shouldLogCspReport(report)) {
-      console.warn('csp-report', JSON.stringify(report))
+      // Report-Only CSP observations are expected while the policy is tuned.
+      // Keep them searchable without inflating the runtime warning count.
+      console.info('csp-report', JSON.stringify(report))
     }
     return new NextResponse(null, { status: 204 })
   } catch {
