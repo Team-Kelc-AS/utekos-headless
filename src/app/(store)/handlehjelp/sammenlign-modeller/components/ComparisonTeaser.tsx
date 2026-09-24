@@ -63,13 +63,13 @@ const models = [
 export function ComparisonTeaser() {
   return (
     <article className='mb-24 px-4 py-12 md:py-16'>
-      <div className='container mx-auto overflow-hidden rounded-3xl border border-white/5 bg-muted shadow-2xl'>
+      <div className='container mx-auto overflow-hidden rounded-3xl border border-white/5 bg-background shadow-2xl'>
         <div className='absolute inset-0 -z-10 opacity-20'>
           <div className='absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-size-[24px_24px]' />
         </div>
 
         <div className='p-6 text-center max-sm:text-left md:p-16'>
-          <h2 className='font-google-sans font-sans text-4xl font-bold text-foreground sm:text-5xl md:text-6xl'>
+          <h2 className='font-sans text-4xl font-bold text-foreground sm:text-5xl md:text-6xl'>
             Usikker på hvilken Utekos du skal velge?
           </h2>
 
