@@ -200,12 +200,16 @@ test('route composition exposes requests only in configured Vercel deployments',
     12
   )
 
-  for (const environment of [
-    {
+  assert.equal(
+    resolveAssistantRequestsPerMinute({
       VERCEL_ENV: 'development',
       CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
-    },
+    }),
+    12
+  )
+
+  for (const environment of [
     {
       VERCEL_ENV: 'preview',
       CUSTOMER_ASSISTANT_ENABLED: 'true',

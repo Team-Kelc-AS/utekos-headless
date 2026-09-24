@@ -1,11 +1,11 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import { Suspense } from 'react'
 import {
   ArrowLeftRight,
   PersonStanding,
   SlidersHorizontal,
-  Sofa
+  Sofa,
+  Truck
 } from 'lucide-react'
 import { techDownReviewBundle } from '@/db/data/reviews/productReviews'
 import { TechdownRatingStars } from './TechdownRatingStars'
@@ -13,6 +13,7 @@ import {
   TechdownSizeSelector,
   TechdownSizeSelectorFallback
 } from './TechdownSizeSelector'
+import { TechdownSpecsAccordion } from './TechdownSpecsAccordion'
 import styles from './TechdownContent.module.css'
 
 const { ratingValue, reviewCount } =
@@ -21,6 +22,18 @@ const formattedRating = ratingValue.toLocaleString('nb-NO', {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2
 })
+
+function TrustFootnoteMark() {
+  return (
+    <a href='#levering-vilkar' className={styles.trustRef}>
+      <span aria-hidden='true'>*</span>
+      <span className='sr-only'>
+        Mer om sending samme dag lenger ned
+      </span>
+    </a>
+  )
+}
+
 export function TechdownContent() {
   return (
     <div className={styles.content}>
@@ -30,36 +43,33 @@ export function TechdownContent() {
         aria-labelledby='trust-heading'
       >
         <h2 id='trust-heading' className='sr-only'>
-          Frakt, bytte og betaling
+          Vurderinger, frakt, bytte og sending
         </h2>
+        <a
+          className={styles.judgeSummary}
+          href='#anmeldelser'
+          data-journey-link='techdown-review-summary'
+          aria-label={`${ratingValue.toFixed(1)}/5 · ${reviewCount} anmeldelser. Gå til anmeldelser.`}
+        >
+          <span className={styles.judgeLogoSurface}>
+            <Image
+              src='/judge_me.svg'
+              alt='Judge.me Reviews'
+              width={277}
+              height={53}
+              unoptimized
+            />
+          </span>
+          <TechdownRatingStars
+            rating={ratingValue}
+            label={`${formattedRating} av 5`}
+          />
+          <span className={styles.judgeCount}>
+            {ratingValue.toFixed(1)}/5 · {reviewCount}{' '}
+            anmeldelser
+          </span>
+        </a>
         <div className={styles.trustGrid}>
-          <a
-            className={styles.judgeSummary}
-            href='#anmeldelser'
-            data-journey-link='techdown-review-summary'
-            aria-label={`${ratingValue.toFixed(1)}/5 · ${reviewCount} anmeldelser. Gå til anmeldelser.`}
-          >
-            <span className={styles.judgeLogoSurface}>
-              <Image
-                src='/judge_me.svg'
-                alt='Judge.me Reviews'
-                width={277}
-                height={53}
-                unoptimized
-              />
-            </span>
-            <span className={styles.judgeScore}>
-              <TechdownRatingStars
-                rating={ratingValue}
-                label={`${formattedRating} av 5`}
-              />
-              <span>
-                {ratingValue.toFixed(1)}/5 · {reviewCount}{' '}
-                anmeldelser
-              </span>
-            </span>
-          </a>
-
           <div className={styles.trustRow}>
             <span className={styles.trustIconSurface}>
               <Image
@@ -70,10 +80,7 @@ export function TechdownContent() {
                 unoptimized
               />
             </span>
-            <div>
-              <h3>Gratis frakt</h3>
-              <Link href='/frakt-og-retur'>Se fraktvilkår</Link>
-            </div>
+            <h3>Gratis frakt</h3>
           </div>
           <div className={styles.trustRow}>
             <span
@@ -82,12 +89,19 @@ export function TechdownContent() {
             >
               <ArrowLeftRight />
             </span>
-            <div>
-              <h3>Gratis bytte</h3>
-              <Link href='/frakt-og-retur#storrelsesbytte'>
-                Se vilkår for bytte
-              </Link>
-            </div>
+            <h3>Gratis bytte</h3>
+          </div>
+          <div className={styles.trustRow}>
+            <span
+              className={styles.exchangeIcon}
+              aria-hidden='true'
+            >
+              <Truck />
+            </span>
+            <h3>
+              Sendes samme dag
+              <TrustFootnoteMark />
+            </h3>
           </div>
         </div>
         <Suspense fallback={<TechdownSizeSelectorFallback />}>
@@ -149,14 +163,13 @@ export function TechdownContent() {
       >
         <div className={styles.sectionHeading}>
           <p className={styles.eyebrow}>
-            Varme som tilpasser seg dagen
+            Skreddersy varmen
           </p>
           <h2 id='outcomes-heading'>
-            Hold varmen. Bli ute lenger.
+            Optimaliser og forleng
           </h2>
           <p>
-            Utekos TechDown™ er et varmt og allsidig 3-i-1-plagg
-            for terrasse, hytte, båt og bobil.
+            Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Det værbestandige Luméa™-skallet og spesialutviklet CloudWeave™-isolasjon forenes i et intuitivt 3-i-1-design, skapt for å forlenge de gode stundene utendørs. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen, mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt.
           </p>
         </div>
         <ul className={styles.benefits}>
@@ -192,6 +205,16 @@ export function TechdownContent() {
           </li>
         </ul>
       </section>
+      <TechdownSpecsAccordion />
+      <aside
+        id='levering-vilkar'
+        className={styles.trustEndnote}
+      >
+        <p>
+          <span aria-hidden='true'>*</span> Sending samme dag
+          gjelder etter vilkårene for frakt og retur.
+        </p>
+      </aside>
     </div>
   )
 }

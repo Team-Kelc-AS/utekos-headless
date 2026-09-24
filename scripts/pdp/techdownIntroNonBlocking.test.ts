@@ -41,4 +41,14 @@ test('TechDown intro keeps commerce interactive and does not load media', async 
     /\.intro\s*\{[\s\S]*?pointer-events:\s*none;/,
     'The visual transition must not intercept input'
   )
+  assert.match(
+    stylesheet,
+    /\.header\s*\{[\s\S]*?position:\s*relative;/,
+    'The header must scroll with the page like the rest of the canvas'
+  )
+  assert.doesNotMatch(
+    stylesheet,
+    /\.header\s*\{[\s\S]*?position:\s*(fixed|sticky);/,
+    'The header must not remain pinned while the page scrolls'
+  )
 })

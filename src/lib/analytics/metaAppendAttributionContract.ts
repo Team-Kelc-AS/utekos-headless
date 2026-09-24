@@ -10,12 +10,18 @@ import {
 export const META_APPEND_ATTRIBUTION_MAX_DELAY_SECONDS =
   48 * 60 * 60
 
+export const META_CUSTOM_ATTRIBUTION_SOURCE_NAME =
+  'ClickToAddAttribution' as const
+
 const metaAdIdSchema = z.string().regex(/^\d+$/u).max(64)
 const metaCurrencySchema = z.string().regex(/^[A-Z]{3}$/u)
 
 const metaAppendAttributionDataSchema = z.strictObject({
   ad_id: metaAdIdSchema,
   attribution_share: z.number().finite().min(0).max(1),
+  attribution_source: z.literal(
+    META_CUSTOM_ATTRIBUTION_SOURCE_NAME
+  ),
   touchpoint_ts: metaUnixSecondsSchema
 })
 

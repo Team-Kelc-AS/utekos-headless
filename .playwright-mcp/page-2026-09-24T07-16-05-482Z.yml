@@ -1,0 +1,670 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Utekos - Til forsiden" [ref=e5] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e6]:
+        - button "Åpne søk (⌘/Ctrl + K)" [ref=e7]:
+          - generic [ref=e11]: Søk
+        - link "Kundeservice" [ref=e12] [cursor=pointer]:
+          - /url: /kontaktskjema
+        - button "Åpne handlekurven, 0 varer" [ref=e431] [cursor=pointer]:
+          - generic [ref=e432]: Handlekurv
+          - generic [ref=e433]: 0 varer i handlekurven
+        - button "Åpne meny" [ref=e435] [cursor=pointer]:
+          - generic [ref=e436]: Meny
+  - main [ref=e18]:
+    - article [ref=e20]:
+      - navigation "Brødsmuler" [ref=e21]:
+        - list [ref=e22]:
+          - listitem [ref=e23]:
+            - link "Forsiden" [ref=e24] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e25]:
+            - generic [aria-hidden] [ref=e26]: /
+            - link "Kunnskap" [ref=e27] [cursor=pointer]:
+              - /url: /kunnskap
+          - listitem [ref=e28]:
+            - generic [aria-hidden] [ref=e29]: /
+            - generic [ref=e30]: Hvordan holder man seg varm ute?
+      - generic [ref=e31]:
+        - heading "Hvordan holder man seg varm ute?" [level=1] [ref=e32]
+        - paragraph [ref=e33]: "Å holde varmen ute er et varmeregnskap: kroppen produserer varme, klærne hindrer at den forsvinner. Lær hvordan aktivitet, lag-på-lag, vind og fukt endrer regnestykket."
+        - complementary "Forfatter og publiseringsinformasjon" [ref=e34]:
+          - img "Utekos" [ref=e36]
+          - generic [ref=e37]:
+            - paragraph [ref=e38]:
+              - text: Av
+              - link "Utekos" [ref=e39] [cursor=pointer]:
+                - /url: /om-oss
+            - paragraph [ref=e40]:
+              - text: Publisert
+              - time [ref=e41]: 23. september 2026 kl. 10:05
+              - text: · Oppdatert
+              - time [ref=e42]: 24. september 2026 kl. 09:30
+              - text: · 17 min lesetid
+      - region [ref=e43]:
+        - heading "Hva du vil lære" [level=2] [ref=e44]
+        - list [ref=e45]:
+          - listitem [ref=e46]: "Kroppens varmeregnskap: hvordan varmeproduksjon og varmetap (konveksjon, konduksjon, stråling og fordampning) avgjør om du fryser."
+          - listitem [ref=e47]: "Aktivitet mot stillesitting: hvorfor du skal starte småkald, og hvordan svette og pauser endrer isolasjonsbehovet."
+          - listitem [ref=e48]: "Lag på lag: innerlag for fukttransport, mellomlag for stillestående luft og ytterlag mot vind og nedbør."
+          - listitem [ref=e49]: "Vind og fukt: hvorfor vindavkjøling og våte klær stjeler varme – og hvordan du beskytter deg."
+          - listitem [ref=e50]: "Hender og føtter: hvorfor fingre og tær blir kalde først, og hvordan du får varmen tilbake."
+      - navigation [ref=e51]:
+        - heading "I denne artikkelen" [level=2] [ref=e52]
+        - list [ref=e53]:
+          - listitem [ref=e54]:
+            - link "Hva bestemmer om du holder varmen?" [ref=e55] [cursor=pointer]:
+              - /url: "#hva-bestemmer-om-du-holder-varmen"
+          - listitem [ref=e56]:
+            - link "Aktivitet kontra stillesitting" [ref=e57] [cursor=pointer]:
+              - /url: "#aktivitet-kontra-stillesitting"
+          - listitem [ref=e58]:
+            - link "Hva bør man ha innerst?" [ref=e59] [cursor=pointer]:
+              - /url: "#hva-bør-man-ha-innerst"
+          - listitem [ref=e60]:
+            - link "Hva skal isolasjonslaget gjøre?" [ref=e61] [cursor=pointer]:
+              - /url: "#hva-skal-isolasjonslaget-gjøre"
+          - listitem [ref=e62]:
+            - link "Hva bør man ha ytterst?" [ref=e63] [cursor=pointer]:
+              - /url: "#hva-bør-man-ha-ytterst"
+          - listitem [ref=e64]:
+            - link "Hvor mye betyr vinden?" [ref=e65] [cursor=pointer]:
+              - /url: "#hvor-mye-betyr-vinden"
+          - listitem [ref=e66]:
+            - link "Hva når det regner?" [ref=e67] [cursor=pointer]:
+              - /url: "#hva-når-det-regner"
+          - listitem [ref=e68]:
+            - link "Hender og føtter" [ref=e69] [cursor=pointer]:
+              - /url: "#hender-og-føtter"
+          - listitem [ref=e70]:
+            - link "Når kulde går fra ubehag til risiko" [ref=e71] [cursor=pointer]:
+              - /url: "#når-kulde-går-fra-ubehag-til-risiko"
+          - listitem [ref=e72]:
+            - link "Hva forskningen ikke kan si sikkert" [ref=e73] [cursor=pointer]:
+              - /url: "#hva-forskningen-ikke-kan-si-sikkert"
+          - listitem [ref=e74]:
+            - link "Oppsummering" [ref=e75] [cursor=pointer]:
+              - /url: "#oppsummering"
+      - paragraph [ref=e76]:
+        - text: "Mange tror at det å holde varmen bare handler om en tykkest mulig jakke. Regnestykket er mer presist: kroppen produserer varme, og klærne endrer hvor fort den forsvinner – gjennom luftlag, fukt, vind og blodsirkulasjon"
+        - superscript [ref=e77]:
+          - text: "["
+          - link "1" [ref=e79] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=e80]:
+            - text: ","
+            - link "2" [ref=e81] [cursor=pointer]:
+              - /url: "#kilde-2"
+          - text: "]"
+        - text: . Denne artikkelen går gjennom varmeregnskapet, lag-på-lag, og det som skjer når du går, sitter stille, blir våt eller mister varmen i hender og føtter.
+      - heading "Hva bestemmer om du holder varmen?" [level=2] [ref=e82]
+      - paragraph [ref=e83]:
+        - text: Menneskekroppen kan beskrives som et varmeregnskap. Kjernen skal holdes nær 37 °C; skallet – hud, fett og overflatemuskulatur – kan variere for å verne kjernen
+        - superscript [ref=e84]:
+          - text: "["
+          - link "2" [ref=e86] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - text: "]"
+        - text: . Metabolsk varmeproduksjon minus mekanisk arbeid skal veies mot tap gjennom fordampning, stråling, konveksjon (vind) og ledning (kontakt). Er tapet større enn produksjonen, synker den lagrede varmen, og du fryser
+        - superscript [ref=e87]:
+          - text: "["
+          - link "2" [ref=e89] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e90]:
+        - text: "Evnen til å holde balansen påvirkes av utmattelse: en sliten kropp har ofte svekket varmeproduserende respons"
+        - superscript [ref=e91]:
+          - text: "["
+          - link "1" [ref=e93] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - text: "]"
+        - text: . Vasokonstriksjon – innsnevring av blodårer i huden – styres av det sympatiske nervesystemet når hud- og kjernetemperatur faller
+        - superscript [ref=e94]:
+          - text: "["
+          - link "1" [ref=e96] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e97]:
+        - text: ISO 11079 beregner nødvendig klesisolasjon (IREQ, ofte i clo eller m²K/W) ut fra temperatur, vind og fukt, for å unngå både lokal nedkjøling og hypotermi
+        - superscript [ref=e98]:
+          - text: "["
+          - link "10" [ref=e100] [cursor=pointer]:
+            - /url: "#kilde-10"
+          - text: "]"
+        - text: ". Standarden behandler komfort i kulde som et regnestykke: du må isolere proporsjonalt med det miljøet stjeler, minus det du produserer selv"
+        - superscript [ref=e101]:
+          - text: "["
+          - link "10" [ref=e103] [cursor=pointer]:
+            - /url: "#kilde-10"
+          - text: "]"
+        - text: .
+      - heading "Aktivitet kontra stillesitting" [level=2] [ref=e104]
+      - paragraph [ref=e105]: I ro er den metabolske varmeproduksjonen lav. Da er du avhengig av isolasjonen i klærne. Når du beveger deg, endres fysiologien.
+      - paragraph [ref=e106]:
+        - text: "I hvile kan muskelvevet utgjøre opptil 80 prosent av kroppens isolasjon: blodstrømmen til musklene begrenses, og de ligger som et lag over kjernen"
+        - superscript [ref=e107]:
+          - text: "["
+          - link "2" [ref=e109] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - text: "]"
+        - text: . Under aktivitet øker blodgjennomstrømmingen for å levere oksygen, og varme føres fra kjernen ut til huden. Muskulaturens isolasjonsevne faller mot null ved høy intensitet
+        - superscript [ref=e110]:
+          - text: "["
+          - link "2" [ref=e112] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - text: "]"
+        - text: ". ISO 11079 tar inn aktivitetsnivået: nødvendig isolasjon (IREQ) synker når ganghastigheten øker"
+        - superscript [ref=e113]:
+          - text: "["
+          - link "10" [ref=e115] [cursor=pointer]:
+            - /url: "#kilde-10"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e116]:
+        - text: Varmeproduksjonen kan bli nesten åtte ganger så høy når du går i motbakke med vinterbekledning, sammenliknet med ro
+        - superscript [ref=e117]:
+          - text: "["
+          - link "9" [ref=e119] [cursor=pointer]:
+            - /url: "#kilde-9"
+          - text: "]"
+        - text: .
+      - 'complementary "Tommelregel: start småkald" [ref=e120]':
+        - paragraph [ref=e121]: "Tommelregel: start småkald"
+        - paragraph [ref=e123]:
+          - text: Du skal føle deg litt småkald når turen starter. Er du god og varm før du har begynt å gå, overopphetes du, svetter ut klærne – og fryser i første pause
+          - superscript [ref=e124]:
+            - text: "["
+            - link "8" [ref=e126] [cursor=pointer]:
+              - /url: "#kilde-8"
+            - generic [ref=e127]:
+              - text: ","
+              - link "9" [ref=e128] [cursor=pointer]:
+                - /url: "#kilde-9"
+            - text: "]"
+          - text: .
+      - paragraph [ref=e129]:
+        - text: Svette i kleslagene er ødeleggende for isolasjonen over tid, fordi vann leder varme mye raskere enn luft
+        - superscript [ref=e130]:
+          - text: "["
+          - link "3" [ref=e132] [cursor=pointer]:
+            - /url: "#kilde-3"
+          - text: "]"
+        - text: . Fukt i klærne kan redusere den faktiske isolasjonen med opptil 25 prosent
+        - superscript [ref=e133]:
+          - text: "["
+          - link "9" [ref=e135] [cursor=pointer]:
+            - /url: "#kilde-9"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e136]:
+        - text: Energibehovet i felt kan overstige 7000 kilokalorier om dagen. Kroppen trenger drivstoff for å produsere varme, så jevnt inntak av mat og drikke teller like mye som klærne – også når du ikke kjenner sult eller tørst
+        - superscript [ref=e137]:
+          - text: "["
+          - link "8" [ref=e139] [cursor=pointer]:
+            - /url: "#kilde-8"
+          - text: "]"
+        - text: . I pauser faller produksjonen brått, mens fukten sitter igjen. Isolasjon – en tykk vest, et skjørt, en dunshorts – skal på med én gang du stopper
+        - superscript [ref=e140]:
+          - text: "["
+          - link "8" [ref=e142] [cursor=pointer]:
+            - /url: "#kilde-8"
+          - text: "]"
+        - text: .
+      - heading "Hva bør man ha innerst?" [level=2] [ref=e143]
+      - paragraph [ref=e144]:
+        - text: Innerlagets jobb er først og fremst å transportere fukt vekk fra huden, ikke å isolere alene. Tykkelsen i et flerlags-system påvirker isolasjonen, men
+        - emphasis [ref=e145]: fibermaterialet
+        - text: avgjør fukthåndteringen
+        - superscript [ref=e146]:
+          - text: "["
+          - link "3" [ref=e148] [cursor=pointer]:
+            - /url: "#kilde-3"
+          - text: "]"
+        - text: . Hydrofile fibre (ull) og visse hydrofobe syntetiske fibre (polypropylen, polyamid) oppfører seg forskjellig; begge slår bomull. Bomull binder fukten og kollapser, og varmetapet øker når aktiviteten opphører
+        - superscript [ref=e149]:
+          - text: "["
+          - link "3" [ref=e151] [cursor=pointer]:
+            - /url: "#kilde-3"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e152]:
+        - text: Bruk ull eller syntetisk innerst, og unngå bomull hvis du ikke kan skifte med én gang du blir svett
+        - superscript [ref=e153]:
+          - text: "["
+          - link "8" [ref=e155] [cursor=pointer]:
+            - /url: "#kilde-8"
+          - text: "]"
+        - text: . Netting isolerer fordi den fanger luft i hullene under neste lag, og ventilerer under høy aktivitet fordi den eksponerer huden
+        - superscript [ref=e156]:
+          - text: "["
+          - link "9" [ref=e158] [cursor=pointer]:
+            - /url: "#kilde-9"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e159]:
+        - text: "Når ull absorberer fukt, skjer en eksoterm reaksjon: ulla frigjør varme – opptil 2,5 ganger mer enn polyamid"
+        - superscript [ref=e160]:
+          - text: "["
+          - link "4" [ref=e162] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: . En fuktig ulltrøye kan derfor fortsatt føles varm, mens en syntetisk trøye oftere føles klam når du stopper. Ull som innerlag ga i Jussilas avhandling det laveste varmekravet for fordampning, noe som reduserer etter-nedkjøling i hvile
+        - superscript [ref=e163]:
+          - text: "["
+          - link "4" [ref=e165] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: . Mer om materialvalget står i
+        - link "Hva skal man ha innerst" [ref=e166] [cursor=pointer]:
+          - /url: /kunnskap/hva-skal-man-ha-innerst
+        - text: .
+      - heading "Hva skal isolasjonslaget gjøre?" [level=2] [ref=e167]
+      - paragraph [ref=e168]:
+        - text: Mellomlaget skal fange stillestående luft. Luften har lav varmeledningsevne, og i et vinterantrekk står luften mellom fibrene for 80–95 prosent av isolasjonen; fibrene selv for 5–20 prosent
+        - superscript [ref=e169]:
+          - text: "["
+          - link "4" [ref=e171] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e172]:
+        - text: 3D-skanning av luftlag under flerlags vinterbekledning viser at isolasjonen ikke bare øker lineært med tykkelsen. For et tre-lags system ble maksimal effektiv isolasjon målt når luftlaget mellom plaggene rundt livet var om lag 2,2–2,4 cm. Ble gapet for stort, begynte luften å sirkulere (skorsteinseffekt), og tapet via intern konveksjon økte
+        - superscript [ref=e173]:
+          - text: "["
+          - link "4" [ref=e175] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e176]:
+        - text: Isolasjonslaget – fleece eller tykk ull – må være porøst nok til å fange luft, men ikke så tungt at det komprimerer lagene under
+        - superscript [ref=e177]:
+          - text: "["
+          - link "2" [ref=e179] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - text: "]"
+        - text: . Klærne bør sitte litt løst. Trange plagg presser ut den isolerende luften. En tykk genser klemt flat av en for trang skalljakke mister mye av effekten
+        - superscript [ref=e180]:
+          - text: "["
+          - link "8" [ref=e182] [cursor=pointer]:
+            - /url: "#kilde-8"
+          - text: "]"
+        - text: .
+      - heading "Hva bør man ha ytterst?" [level=2] [ref=e183]
+      - paragraph [ref=e184]: Ytterlaget skal verne mikroklimaet mot vind og nedbør.
+      - paragraph [ref=e185]:
+        - text: "I vindstille gir en svært romslig skalljakke høy isolasjon fordi den rommer mye luft. I gangfart eller vind skaper et for stort ytterplagg pumpeeffekt: luft presses inn og ut av hals, ermer og glidelåser"
+        - superscript [ref=e186]:
+          - text: "["
+          - link "4" [ref=e188] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: . Passform og lukkede åpninger reduserer den effekten. Helt vanntett (impermeabel) bekledning stanser konveksjon, men låser fukt fra kroppen inne
+        - superscript [ref=e189]:
+          - text: "["
+          - link "4" [ref=e191] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e192]:
+        - text: Ytterlaget er et kompromiss mellom beskyttelse og ventilasjon. Membranjakker slipper ut damp, men under høy aktivitet i kulde kondenserer svetten ofte på innsiden før den rekker å dampe ut, fordi temperaturforskjellen er stor
+        - superscript [ref=e193]:
+          - text: "["
+          - link "6" [ref=e195] [cursor=pointer]:
+            - /url: "#kilde-6"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e196]:
+        - text: Mekanisk lufting – glidelåser under armene og langs buksesidene – lar deg kvitte deg med overskuddsvarme uten å kle av deg
+        - superscript [ref=e197]:
+          - text: "["
+          - link "8" [ref=e199] [cursor=pointer]:
+            - /url: "#kilde-8"
+          - generic [ref=e200]:
+            - text: ","
+            - link "9" [ref=e201] [cursor=pointer]:
+              - /url: "#kilde-9"
+          - text: "]"
+        - text: . Ytterlaget bør være vind- og vanntett, men også la deg kaste på et forsterkningsplagg utenpå i pausene
+        - superscript [ref=e202]:
+          - text: "["
+          - link "8" [ref=e204] [cursor=pointer]:
+            - /url: "#kilde-8"
+          - text: "]"
+        - text: .
+      - heading "Hvor mye betyr vinden?" [level=2] [ref=e205]
+      - paragraph [ref=e206]: Vind endrer klærnes egenskaper, ikke bare hvordan kulden kjennes.
+      - paragraph [ref=e207]:
+        - text: Utenpå klær og hud ligger et grenselag av luft, typisk 4–8 mm i rolige omgivelser, som isolerer. Vind blåser laget vekk
+        - superscript [ref=e208]:
+          - text: "["
+          - link "2" [ref=e210] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e211]:
+        - text: Moderat til sterk vind (8 m/s) har redusert total klesisolasjon med opptil 33 prosent
+        - superscript [ref=e212]:
+          - text: "["
+          - link "4" [ref=e214] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: ". Tre mekanismer:"
+      - list [ref=e215]:
+        - listitem [ref=e216]: Grenselaget på utsiden av klærne brytes ned.
+        - listitem [ref=e217]: Klærne presses flate på lo-siden, luftlagene inni komprimeres, og ledningen øker.
+        - listitem [ref=e218]: Undertrykk på le-siden suger varm luft ut gjennom åpninger.
+      - paragraph [ref=e219]:
+        - text: Vind øker risikoen for frostskader, særlig på bar hud
+        - superscript [ref=e220]:
+          - text: "["
+          - link "8" [ref=e222] [cursor=pointer]:
+            - /url: "#kilde-8"
+          - text: "]"
+        - text: . Kombineres vind med bevegelse, ble den samlede reduksjonen i isolasjon omtrent 80 prosent av summen av de to effektene hver for seg
+        - superscript [ref=e223]:
+          - text: "["
+          - link "4" [ref=e225] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: . Går du raskt over en forblåst rygg, kan bekledningen miste en stor del av isolasjonen sammenliknet med stillestående i en lun dal. Ansikt, hals og glipper mellom votter, jakke, bukse og sko er kritiske.
+      - heading "Hva når det regner?" [level=2] [ref=e226]
+      - paragraph [ref=e227]:
+        - text: Fukt rundt frysepunktet er ofte mer krevende enn tørr sprengkulde. Vann leder varme omtrent 25 ganger raskere enn luft
+        - superscript [ref=e228]:
+          - text: "["
+          - link "3" [ref=e230] [cursor=pointer]:
+            - /url: "#kilde-3"
+          - generic [ref=e231]:
+            - text: ","
+            - link "6" [ref=e232] [cursor=pointer]:
+              - /url: "#kilde-6"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e233]:
+        - text: Fukt kan komme innenfra (svette) eller utenfra (regn, slaps). Når tekstilene mettes, fortrenger vannet luften i isolasjonen. Huden varmer da vann i stedet for luft, og ledningen stjeler varme raskt
+        - superscript [ref=e234]:
+          - text: "["
+          - link "2" [ref=e236] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - generic [ref=e237]:
+            - text: ","
+            - link "3" [ref=e238] [cursor=pointer]:
+              - /url: "#kilde-3"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e239]:
+        - text: Intern fukt (svetting) har redusert tørr isolasjon med 22–46 prosent i løpet av en halvtime og økt varmetapet med i gjennomsnitt 110 watt
+        - superscript [ref=e240]:
+          - text: "["
+          - link "4" [ref=e242] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: . Ekstern fukt reduserte isolasjonen med 0–40 prosent, avhengig av ytterstoffet – og i motsetning til svette, som kan fordampe hvis du står i ro med pustende lag, ga ytre fukt et mer langvarig fall
+        - superscript [ref=e243]:
+          - text: "["
+          - link "4" [ref=e245] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: .
+      - 'complementary "Tommelregel: fukta er fienden i kulda" [ref=e246]':
+        - paragraph [ref=e247]: "Tommelregel: fukta er fienden i kulda"
+        - paragraph [ref=e249]:
+          - text: Har du svettet ut underklærne, eller de er våte av sludd, skal de av. Et tørt ullskift i vanntett pose i sekken er den praktiske reserven
+          - superscript [ref=e250]:
+            - text: "["
+            - link "8" [ref=e252] [cursor=pointer]:
+              - /url: "#kilde-8"
+            - generic [ref=e253]:
+              - text: ","
+              - link "9" [ref=e254] [cursor=pointer]:
+                - /url: "#kilde-9"
+            - text: "]"
+          - text: .
+      - heading "Hender og føtter" [level=2] [ref=e255]
+      - paragraph [ref=e256]:
+        - text: Hender og føtter har stor overflate i forhold til volumet og lite muskelmasse som kan produsere varme. For å hindre at kaldt blod fra ekstremitetene senker kjernen, struper kroppen blodårene (vasokonstriksjon). Uten varmt blod faller hudtemperaturen på fingrene raskt mot omgivelsestemperaturen
+        - superscript [ref=e257]:
+          - text: "["
+          - link "5" [ref=e259] [cursor=pointer]:
+            - /url: "#kilde-5"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e260]:
+        - text: Kuldeindusert vasodilatasjon (CIVD, «hunting response») åpner deretter kortvarig spesielle årer (arteriovenøse anastomoser) i fingre og tær. En bølge av varmt blod sendes ut før årene strammes igjen. Fingerens temperatur kan stige med omtrent 10 °C i en slik fase. En varm kjerne er en forutsetning for at responsen skal inntreffe
+        - superscript [ref=e261]:
+          - text: "["
+          - link "5" [ref=e263] [cursor=pointer]:
+            - /url: "#kilde-5"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e264]:
+        - text: Er hendene iskalde i starten av turen, hold tempoet oppe til kjernen er varm. Når du
+        - emphasis [ref=e265]: så
+        - text: stopper, har kroppen overskuddsvarme og kan sende blod ut i fingrene
+        - superscript [ref=e266]:
+          - text: "["
+          - link "9" [ref=e268] [cursor=pointer]:
+            - /url: "#kilde-9"
+          - text: "]"
+        - text: ". Sving armene i store sirkler: sentrifugalkraften presser blodet ut i fingertuppene."
+      - 'complementary "Tommelregel: votter når det er skikkelig kaldt" [ref=e269]':
+        - paragraph [ref=e270]: "Tommelregel: votter når det er skikkelig kaldt"
+        - paragraph [ref=e272]:
+          - text: Votter har mindre overflate enn fem separate fingre. Mindre overflate gir mindre tap. Blir det for varmt, bytt til hansker. Skoene skal være romslige, slik at luften isolerer og ingenting strammer over vristen
+          - superscript [ref=e273]:
+            - text: "["
+            - link "8" [ref=e275] [cursor=pointer]:
+              - /url: "#kilde-8"
+            - generic [ref=e276]:
+              - text: ","
+              - link "9" [ref=e277] [cursor=pointer]:
+                - /url: "#kilde-9"
+            - text: "]"
+          - text: .
+      - paragraph [ref=e278]:
+        - text: Hender og føtter har færre kuldesensorer under aktivitet. Forfrysning i tærne merkes ofte sent
+        - superscript [ref=e279]:
+          - text: "["
+          - link "8" [ref=e281] [cursor=pointer]:
+            - /url: "#kilde-8"
+          - text: "]"
+        - text: .
+      - heading "Når kulde går fra ubehag til risiko" [level=2] [ref=e282]
+      - paragraph [ref=e283]:
+        - text: Ubeskyttet opphold i kulde over tid fører til varmetap
+        - superscript [ref=e284]:
+          - text: "["
+          - link "1" [ref=e286] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - text: "]"
+        - text: . Når kjernetemperaturen synker mot 35 °C (starten på hypotermi), svekkes fingerferdighet og muskelstyrke, og skjelvingen blir ukontrollert – kroppens siste forsøk på muskulær varmeproduksjon. Videre fall påvirker dømmekraften
+        - superscript [ref=e287]:
+          - text: "["
+          - link "7" [ref=e289] [cursor=pointer]:
+            - /url: "#kilde-7"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e290]:
+        - text: Frostskader oppstår når iskrystaller dannes i vannet i hud og vev. Ikke-frysende kuldeskader, som skyttergravsfot, kommer av langvarig fukt og kulde uten at vevet fryser
+        - superscript [ref=e291]:
+          - text: "["
+          - link "7" [ref=e293] [cursor=pointer]:
+            - /url: "#kilde-7"
+          - text: "]"
+        - text: . Metall mot huden – klokke, smykke, glidelås mot hake – leder varme raskt bort og kan gi dype skader på kort tid i vind og kulde
+        - superscript [ref=e294]:
+          - text: "["
+          - link "8" [ref=e296] [cursor=pointer]:
+            - /url: "#kilde-8"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e297]:
+        - text: Kulden vinner hvis varmebalansen er negativ lenge nok. Det finnes ingen vilje som opphever fysikken
+        - superscript [ref=e298]:
+          - text: "["
+          - link "1" [ref=e300] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=e301]:
+            - text: ","
+            - link "7" [ref=e302] [cursor=pointer]:
+              - /url: "#kilde-7"
+          - text: "]"
+        - text: .
+      - heading "Hva forskningen ikke kan si sikkert" [level=2] [ref=e303]
+      - paragraph [ref=e304]:
+        - text: IREQ og vindavkjølingsindekser beskriver standardiserte forhold, ikke din kombinasjon av svette, vindkast, bekledning og dagsform
+        - superscript [ref=e305]:
+          - text: "["
+          - link "2" [ref=e307] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - generic [ref=e308]:
+            - text: ","
+            - link "10" [ref=e309] [cursor=pointer]:
+              - /url: "#kilde-10"
+          - text: "]"
+        - text: . Luftlagene på 2,2–2,4 cm er målt i et bestemt trelags-system; et annet sett plagg gir andre gap
+        - superscript [ref=e310]:
+          - text: "["
+          - link "4" [ref=e312] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: . Individuell kuldetoleranse spriker med alder, fettprosent, form og sykdom
+        - superscript [ref=e313]:
+          - text: "["
+          - link "1" [ref=e315] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - text: "]"
+        - text: . Og for materialspørsmål – nøyaktig hvor mye bedre ull enn syntetisk er over en hel feltdag – varierer resultatene med forsøksoppsett, slik vi beskriver i
+        - link "Hva skal man ha innerst" [ref=e316] [cursor=pointer]:
+          - /url: /kunnskap/hva-skal-man-ha-innerst
+        - text: .
+      - heading "Oppsummering" [level=2] [ref=e317]
+      - paragraph [ref=e318]:
+        - text: Hold varmen ved å styre produksjon og tap, ikke ved å ta på «nok jakke»
+        - superscript [ref=e319]:
+          - text: "["
+          - link "1" [ref=e321] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=e322]:
+            - text: ","
+            - link "2" [ref=e323] [cursor=pointer]:
+              - /url: "#kilde-2"
+          - text: "]"
+        - text: ". Start småkald, bygg luftlag, og få isolasjon på i pausen. Innerst: ull eller syntetisk, aldri bomull. I midten: romslig isolasjon som får lov å holde luft. Ytterst: vind og nedbør ute, med lufting når du går"
+        - superscript [ref=e324]:
+          - text: "["
+          - link "3" [ref=e326] [cursor=pointer]:
+            - /url: "#kilde-3"
+          - generic [ref=e327]:
+            - text: ","
+            - link "4" [ref=e328] [cursor=pointer]:
+              - /url: "#kilde-4"
+          - generic [ref=e329]:
+            - text: ","
+            - link "8" [ref=e330] [cursor=pointer]:
+              - /url: "#kilde-8"
+          - text: "]"
+        - text: . Vind og fukt stjeler isolasjon; votter, romslige sko og tørt skift begrenser tapet i ekstremitetene
+        - superscript [ref=e331]:
+          - text: "["
+          - link "5" [ref=e333] [cursor=pointer]:
+            - /url: "#kilde-5"
+          - generic [ref=e334]:
+            - text: ","
+            - link "9" [ref=e335] [cursor=pointer]:
+              - /url: "#kilde-9"
+          - text: "]"
+        - text: .
+      - paragraph [ref=e336]:
+        - link "Tilbake til toppen av artikkelen" [ref=e337] [cursor=pointer]:
+          - /url: "#top"
+          - generic [aria-hidden] [ref=e338]: ↑
+          - text: Tilbake til toppen
+      - region [ref=e339]:
+        - group [ref=e340]:
+          - generic "Kilder (10)" [ref=e341] [cursor=pointer]
+  - contentinfo [ref=e343]:
+    - generic [ref=e344]:
+      - generic [ref=e345]:
+        - generic [ref=e346]:
+          - heading "Handlehjelp" [level=3] [ref=e347]
+          - navigation "Handlehjelp navigasjon" [ref=e348]:
+            - list [ref=e349]:
+              - listitem [ref=e350]:
+                - link "Kontakt oss" [ref=e351] [cursor=pointer]:
+                  - /url: /kontaktskjema
+              - listitem [ref=e352]:
+                - link "Teknologi og materialer" [ref=e353] [cursor=pointer]:
+                  - /url: /handlehjelp/teknologi-materialer
+              - listitem [ref=e354]:
+                - link "Vask og vedlikehold" [ref=e355] [cursor=pointer]:
+                  - /url: /handlehjelp/vask-og-vedlikehold
+              - listitem [ref=e356]:
+                - link "Størrelsesguide" [ref=e357] [cursor=pointer]:
+                  - /url: /handlehjelp/storrelsesguide
+        - generic [ref=e358]:
+          - heading "Kundeservice" [level=3] [ref=e359]
+          - navigation "Kundeservice navigasjon" [ref=e360]:
+            - list [ref=e361]:
+              - listitem [ref=e362]:
+                - link "Kundeservice" [ref=e363] [cursor=pointer]:
+                  - /url: /kontaktskjema
+              - listitem [ref=e364]:
+                - 'link "Tlf: +47 40 21 63 43" [ref=e365] [cursor=pointer]':
+                  - /url: tel:+4740216343
+              - listitem [ref=e366]:
+                - 'link "E-post: kundeservice@utekos.no" [ref=e367] [cursor=pointer]':
+                  - /url: mailto:kundeservice@utekos.no
+        - generic [ref=e368]:
+          - heading "Informasjon" [level=3] [ref=e369]
+          - navigation "Informasjon navigasjon" [ref=e370]:
+            - list [ref=e371]:
+              - listitem [ref=e372]:
+                - link "Om oss" [ref=e373] [cursor=pointer]:
+                  - /url: /om-oss
+              - listitem [ref=e374]:
+                - link "Frakt og retur" [ref=e375] [cursor=pointer]:
+                  - /url: /frakt-og-retur
+              - listitem [ref=e376]:
+                - link "Personvern" [ref=e377] [cursor=pointer]:
+                  - /url: /personvern
+              - listitem [ref=e378]:
+                - link "Vilkår og betingelser" [ref=e379] [cursor=pointer]:
+                  - /url: /vilkar-betingelser
+        - generic [ref=e380]:
+          - heading "Bedriftsinformasjon" [level=3] [ref=e381]
+          - navigation "Bedriftsinformasjon navigasjon" [ref=e382]:
+            - list [ref=e383]:
+              - listitem [ref=e384]:
+                - link "KELC AS" [ref=e385] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e386]:
+                - link "Lille Damsgårdsveien 25" [ref=e387] [cursor=pointer]:
+                  - /url: map:Lille Damsgårdsveien 25
+              - listitem [ref=e388]:
+                - link "5162, Laksevåg" [ref=e389] [cursor=pointer]:
+                  - /url: map:Lille Damsgårdsveien 25, 5162, Bergen
+              - listitem [ref=e390]:
+                - link "Org.nr 925 820 393" [ref=e391] [cursor=pointer]:
+                  - /url: /kontaktskjema
+      - article [ref=e394]:
+        - region [ref=e395]:
+          - generic [ref=e396]:
+            - generic [ref=e397]:
+              - heading "Meld deg på Utekos sitt nyhetsbrev!" [level=2] [ref=e403]
+              - generic [ref=e404]:
+                - paragraph [ref=e405]: Som medlem i vår kundeklubb får du personlige varsler om tilbud, salg og kampanjer.
+                - paragraph [ref=e406]: Du får også tips, inspirasjon og nye artikler fra Utekos-magasinet.
+            - generic [ref=e407]:
+              - generic [ref=e408]: Din e-postadresse
+              - textbox "Din e-postadresse" [ref=e409]:
+                - /placeholder: Din e-postadresse…
+              - button "Meld meg inn" [ref=e410] [cursor=pointer]
+      - 'img "Betalingsmetoder: Klarna, Vipps, Visa og Mastercard" [ref=e414]'
+      - paragraph [ref=e416]: © 2026 Kelc AS. Alle rettigheter forbeholdt. Utekos® er et registrert varemerke i Norge.
+  - button "Open Next.js Dev Tools" [ref=e437] [cursor=pointer]
+  - alert [ref=e430]

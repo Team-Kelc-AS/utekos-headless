@@ -13,7 +13,11 @@ export default function ControlLayout({
   children: ReactNode
 }) {
   return (
-    <html lang='nb' className={googleSansFlex.variable}>
+    <html
+      lang='nb'
+      suppressHydrationWarning
+      className={googleSansFlex.variable}
+    >
       <body>{children}</body>
     </html>
   )

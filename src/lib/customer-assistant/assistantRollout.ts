@@ -65,13 +65,26 @@ export function resolveAssistantPreviewRolloutPercent(
   return percent > 0 ? percent : 0
 }
 
+function isAssistantCustomerSurface(
+  environment: AssistantRolloutEnvironment
+) {
+  const vercelEnv = environment.VERCEL_ENV
+
+  if (vercelEnv === 'preview' || vercelEnv === 'production') {
+    return true
+  }
+
+  return (
+    vercelEnv === 'development' ||
+    (vercelEnv === undefined &&
+      environment.NODE_ENV === 'development')
+  )
+}
+
 export function resolveAssistantDeploymentRolloutPercent(
   environment: AssistantRolloutEnvironment
 ) {
-  if (
-    environment.VERCEL_ENV !== 'preview' &&
-    environment.VERCEL_ENV !== 'production'
-  ) {
+  if (!isAssistantCustomerSurface(environment)) {
     return 0
   }
 

@@ -23,6 +23,7 @@ import {
   type GoogleDataManagerEventFreshness
 } from './googleDataManagerEventFreshness'
 import { resolveMicrosoftUetCapiTokenFromEnv } from './microsoftUetCapiTokenEnvKeys'
+import { isInternalTrafficEvent } from './internalTrafficExclusion'
 
 type ActiveProviderDispatchIntent = {
   dispatch_mode: 'server_retry'
@@ -35,6 +36,7 @@ type ActiveProviderDispatchIntent = {
 type ProviderSkipReason =
   | 'missing_page_url'
   | 'insufficient_pinterest_user_identity'
+  | 'internal_traffic'
   | 'missing_capi_token'
   | 'missing_client_id'
   | 'missing_google_analytics_identifier'
@@ -136,6 +138,16 @@ export function planCanonicalEventDispatch(
         )
       ) {
         return []
+      }
+
+      if (provider === 'meta' && isInternalTrafficEvent(event)) {
+        return [{
+          dispatch_mode: 'server_retry',
+          event_id: event.event_id,
+          provider,
+          skip_reason: 'internal_traffic',
+          status: 'skipped_unqualified'
+        }]
       }
 
       if (

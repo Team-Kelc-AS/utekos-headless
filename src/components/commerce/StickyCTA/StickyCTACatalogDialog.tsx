@@ -11,19 +11,26 @@ type StickyCatalogResponse = { products: StickyCatalogProduct[] }
 
 export default function StickyCTACatalogDialog({
   selectedVariantId,
+  products: initialProducts,
   onClose,
   onSelect
 }: {
   selectedVariantId: string | null
+  products?: StickyCatalogProduct[]
   onClose: () => void
   onSelect: (purchase: StickyCatalogProduct) => void
 }) {
   const [catalog, setCatalog] = useState<StickyCatalogProduct[] | null>(
-    null
+    initialProducts ?? null
   )
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
+    if (initialProducts) {
+      setCatalog(initialProducts)
+      return
+    }
+
     const controller = new AbortController()
 
     void fetch('/api/commerce/sticky-catalog', {
@@ -42,7 +49,7 @@ export default function StickyCTACatalogDialog({
       })
 
     return () => controller.abort()
-  }, [])
+  }, [initialProducts])
 
   return (
     <PopoverPrimitive.Root defaultOpen onOpenChange={open => !open && onClose()}>
@@ -58,10 +65,14 @@ export default function StickyCTACatalogDialog({
             <div className={styles.heading}>
               <div>
                 <PopoverPrimitive.Title className={styles.title}>
-                  Velg din Utekos
+                  {initialProducts?.length === 1 ?
+                    'Velg variant'
+                  : 'Velg din Utekos'}
                 </PopoverPrimitive.Title>
                 <PopoverPrimitive.Description className={styles.description}>
-                  Velg produkt og størrelse.
+                  {initialProducts?.length === 1 ?
+                    'Velg TechDown-størrelse.'
+                  : 'Velg produkt og størrelse.'}
                 </PopoverPrimitive.Description>
               </div>
               <PopoverPrimitive.Close

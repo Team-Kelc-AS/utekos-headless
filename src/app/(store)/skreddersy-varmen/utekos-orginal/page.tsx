@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Skreddersy varmen |',
     description:
-      'Skreddersy varmen med Utekos. Oppdag genial funksjonalitet og kompromissløs komfort for dine utendørsopplevelser. Juster, form og nyt.',
+      'Skreddersyvarmen med Utekos.  Genial funksjonalitet og kompromissløs komfort. Juster, form og nyt.',
     images: ['/og-image-utekos-original.jpg']
   }
 }

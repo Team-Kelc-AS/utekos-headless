@@ -21,6 +21,8 @@ export function TechdownHeader() {
             alt=''
             width={36}
             height={32}
+            unoptimized
+            className='h-8 w-auto'
           />
         </Link>
         <details
@@ -71,6 +73,8 @@ export function TechdownHeader() {
               alt=''
               width={36}
               height={36}
+              unoptimized
+              className='h-9 w-auto'
             />
           }
         />

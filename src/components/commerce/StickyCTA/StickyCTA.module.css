@@ -124,6 +124,10 @@
   letter-spacing: -0.011em;
   box-shadow: 0 8px 24px rgb(0 0 0 / 28%);
 }
+
+.tooltipContent :global([class*='rotate-45']) {
+  display: none;
+}
 .tooltipContent p {
   margin: 0;
 }

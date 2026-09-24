@@ -1,7 +1,8 @@
 .canvas {
   width: min(100%, 48rem);
   margin-inline: auto;
-  padding: 7rem 1.5rem 0;
+  overflow-x: clip;
+  padding: 1.25rem 1.5rem 0;
   font-family: var(--font-google-sans-flex), ui-sans-serif,
     system-ui, sans-serif;
 }
@@ -43,13 +44,16 @@
 }
 
 .header {
-  position: fixed;
+  position: relative;
   z-index: 45;
-  top: max(16px, env(safe-area-inset-top, 0px));
-  inset-inline: 16px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  width: auto;
+  min-height: 56px;
+  margin-inline: 16px;
+  padding-top: max(16px, env(safe-area-inset-top, 0px));
+  overflow: visible;
   background: transparent;
   pointer-events: none;
 }

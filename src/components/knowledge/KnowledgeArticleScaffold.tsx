@@ -1,8 +1,12 @@
 import type { KnowledgeArticle } from '@/lib/knowledge/knowledgeArticles'
 import type { ReactNode } from 'react'
+import { BackToTop } from './BackToTop'
 import { KnowledgeArticleBreadcrumbs } from './KnowledgeArticleBreadcrumbs'
+import { KnowledgeArticleIntro } from './KnowledgeArticleIntro'
 import { KnowledgeArticleJsonLd } from './KnowledgeArticleJsonLd'
-import { KnowledgeReferences } from './KnowledgeReferences'
+import { KnowledgeLearnings } from './KnowledgeLearnings'
+import { KnowledgeSources } from './KnowledgeSources'
+import { KnowledgeToc } from './KnowledgeToc'
 import articleStyles from '@/app/(store)/kunnskap/knowledgeArticle.module.css'
 
 export function KnowledgeArticleScaffold({
@@ -13,13 +17,18 @@ export function KnowledgeArticleScaffold({
   children: ReactNode
 }) {
   return (
-    <article className={articleStyles.article}>
+    <article
+      id='top'
+      className={articleStyles.article}
+    >
       <KnowledgeArticleJsonLd article={article} />
       <KnowledgeArticleBreadcrumbs article={article} />
+      <KnowledgeArticleIntro article={article} />
+      <KnowledgeLearnings article={article} />
+      <KnowledgeToc article={article} />
       {children}
-      {article.referencesVisibleInBody ? null : (
-        <KnowledgeReferences article={article} />
-      )}
+      <BackToTop />
+      <KnowledgeSources article={article} />
     </article>
   )
 }

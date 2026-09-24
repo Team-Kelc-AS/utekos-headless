@@ -31,6 +31,7 @@ export default function LandingPageLayout({
     <html
       lang='no'
       translate='no'
+      suppressHydrationWarning
       className={googleSansFlex.variable}
     >
       <body>

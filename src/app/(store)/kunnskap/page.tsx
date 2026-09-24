@@ -89,12 +89,9 @@ export default function KnowledgeOverviewPage() {
         <div className={styles.contentWidth}>
           <KnowledgeOverviewBreadcrumbs />
           <p className={styles.eyebrow}>Utekos kunnskap</p>
-          <h1>Kunnskap som gjør kulde lettere å forstå</h1>
+          <h1>Kunsten å holde varmen</h1>
           <p className={styles.intro}>
-            Utforsk kildebaserte guider om kroppens møte med
-            kulde, lag-på-lag og isolerende materialer. Hver
-            artikkel viser forfatter, publiseringstidspunkt og
-            referanser.
+           Utekos handler om å trives ute, uansett temperatur. Her har vi samlet dypdykk og guider som forklarer hvordan kroppen reagerer på kulde, og hvilke materialer som faktisk fungerer når det røyner på. Vitenskapen bak utstyret. Fortalt på en måte du har bruk for.
           </p>
         </div>
       </header>

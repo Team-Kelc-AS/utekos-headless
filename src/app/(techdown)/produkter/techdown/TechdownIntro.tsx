@@ -27,12 +27,10 @@ export function TechdownIntro({
       <StickyCTAEntranceContext value={true}>
         <EnsureCartProviders>
           <div id='techdown-stage' className={styles.mobilePage}>
+            <TechdownHeader />
             {children}
           </div>
-          <TechdownMobileOnly>
-            <TechdownHeader />
-            {mobileContent}
-          </TechdownMobileOnly>
+          <TechdownMobileOnly>{mobileContent}</TechdownMobileOnly>
         </EnsureCartProviders>
         <div
           id='techdown-intro'

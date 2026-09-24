@@ -30,9 +30,9 @@ export function KnowledgeArticleMeta({
       <div className={styles.logoFrame}>
         <Image
           className={styles.logo}
-          src={author.image}
-          width={400}
-          height={250}
+          src={author.avatarImage}
+          width={96}
+          height={96}
           sizes='80px'
           alt='Utekos'
         />
@@ -61,6 +61,8 @@ export function KnowledgeArticleMeta({
               </time>
             </>
           : null}
+          {' · '}
+          {article.readingMinutes} min lesetid
         </p>
       </div>
     </aside>

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  ensureFbcFromFbclid,
   ensureFbclidFromFbc,
   extractFbclidFromFbc
 } from './extractFbclidFromFbc'
@@ -48,5 +49,42 @@ test('ensureFbclidFromFbc keeps an existing fbclid', () => {
       click_id: { fbclid: 'existing-click', gclid: 'google-1' }
     }),
     { fbclid: 'existing-click', gclid: 'google-1' }
+  )
+})
+
+test('ensureFbcFromFbclid prefers an existing fbc cookie value', () => {
+  assert.equal(
+    ensureFbcFromFbclid({
+      fbc: 'fb.1.1784477611824.existing-click',
+      fbclid: 'other-click'
+    }),
+    'fb.1.1784477611824.existing-click'
+  )
+})
+
+test('ensureFbcFromFbclid synthesizes fbc from a genuine fbclid', () => {
+  assert.equal(
+    ensureFbcFromFbclid({
+      fbclid: 'IwY2xjawExample',
+      nowMs: 1789797150590
+    }),
+    'fb.1.1789797150590.IwY2xjawExample'
+  )
+})
+
+test('ensureFbcFromFbclid rejects missing or malformed input', () => {
+  assert.equal(ensureFbcFromFbclid({}), undefined)
+  assert.equal(ensureFbcFromFbclid({ fbclid: '' }), undefined)
+  assert.equal(
+    ensureFbcFromFbclid({ fbclid: 'has space' }),
+    undefined
+  )
+  assert.equal(
+    ensureFbcFromFbclid({ fbclid: 'has.dot' }),
+    undefined
+  )
+  assert.equal(
+    ensureFbcFromFbclid({ fbclid: 'ok-click', nowMs: NaN }),
+    undefined
   )
 })

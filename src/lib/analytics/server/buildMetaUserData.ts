@@ -4,10 +4,12 @@ import {
 } from 'capi-param-builder-nodejs'
 import { UserData } from 'facebook-nodejs-business-sdk'
 import type { CanonicalEventEnvelope } from '../canonicalEventEnvelope'
+import { ensureFbcFromFbclid } from '../extractFbclidFromFbc'
 
 type MetaUserDataEvent = Pick<
   CanonicalEventEnvelope,
   | 'browser_id'
+  | 'click_id'
   | 'client_ip_address'
   | 'event_device_info'
   | 'external_id'
@@ -44,6 +46,16 @@ export function buildMetaUserData(event: MetaUserDataEvent) {
   const clientUserAgent = event.event_device_info?.user_agent
   const fbc = event.browser_id?.fbc
   const fbp = event.browser_id?.fbp
+  // Landing race: the fbclid was captured but the _fbc cookie never
+  // formed before the event fired. Serialize the genuine click instead
+  // of dropping the match key. Callers guarantee marketing consent.
+  const resolvedFbc =
+    ensureFbcFromFbclid({
+      ...(fbc ? { fbc } : {}),
+      ...(event.click_id?.fbclid ?
+        { fbclid: event.click_id.fbclid }
+      : {})
+    }) ?? fbc
   const location = event.location
   // Only customer-provided address belongs in Meta ct/zp/st/country.
   // IP geolocation must not be sent as declared customer address fields.
@@ -71,7 +83,7 @@ export function buildMetaUserData(event: MetaUserDataEvent) {
   if (clientUserAgent) {
     userData.setClientUserAgent(clientUserAgent)
   }
-  if (fbc) userData.setFbc(fbc)
+  if (resolvedFbc) userData.setFbc(resolvedFbc)
   if (fbp) userData.setFbp(fbp)
 
   if (useCustomerAddressFields && location?.city) {

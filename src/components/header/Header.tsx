@@ -6,7 +6,7 @@ import type { MenuItem } from '@types'
 import Image from 'next/image'
 import { HeaderNavigationLink } from './HeaderNavigationLink'
 import type { Route } from 'next'
-import { HeadphonesIcon } from 'lucide-react'
+import { BookOpenIcon, HeadphonesIcon } from 'lucide-react'
 import { ClientMobileMenu } from './ClientMobileMenu'
 import wordmarkwhite from '@/assets/images/brand/WordmarkWhite.svg'
 
@@ -57,6 +57,18 @@ export default function Header({
           className='flex min-w-0 items-center justify-end gap-1.5 sm:gap-2 lg:gap-3'
         >
           <HeaderSearch variant='nav' />
+
+          <HeaderNavigationLink
+            href={'/kunnskap' as Route}
+            data-track='HeaderKnowledgeClick'
+            className='hidden h-11 items-center justify-center gap-2 rounded-md px-3 font-sans font-semibold text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex'
+          >
+            <BookOpenIcon
+              className='size-4'
+              aria-hidden
+            />
+            <span>Kunnskap</span>
+          </HeaderNavigationLink>
 
           <HeaderNavigationLink
             href={'/kontaktskjema' as Route}

@@ -1,4 +1,8 @@
 import type { ProductModel } from '@/lib/products/commerce'
+import type {
+  ProductCartModel,
+  ProductPurchaseVariant
+} from 'types/product/ProductPurchaseModel'
 import { getStickyVariantLabel } from './selection'
 
 export type TechdownPurchaseData = {
@@ -12,6 +16,44 @@ export type TechdownPurchaseData = {
     label: string
     price: ProductModel['variants'][number]['price']
   }>
+  checkout: {
+    product: ProductCartModel
+    variants: ProductPurchaseVariant[]
+  }
+}
+
+function toCartProduct(product: ProductModel): ProductCartModel {
+  return {
+    id: product.id,
+    title: product.title,
+    handle: product.handle,
+    productType: product.productType,
+    vendor: product.vendor,
+    collections: product.collections,
+    featuredImage: product.featuredImage
+  }
+}
+
+function toPurchaseVariant(
+  variant: ProductModel['variants'][number]
+): ProductPurchaseVariant {
+  return {
+    id: variant.id,
+    title: variant.title,
+    barcode: variant.barcode,
+    availableForSale: variant.availableForSale,
+    currentlyNotInStock: variant.currentlyNotInStock,
+    taxable: variant.taxable,
+    selectedOptions: variant.selectedOptions,
+    price: variant.price,
+    image: variant.image,
+    compareAtPrice: variant.compareAtPrice,
+    quantityAvailable: variant.quantityAvailable,
+    ...(variant.sku ? { sku: variant.sku } : {}),
+    ...(variant.variantProfileData ?
+      { variantProfileData: variant.variantProfileData }
+    : {})
+  }
 }
 
 export function createTechdownPurchaseData(
@@ -34,7 +76,11 @@ export function createStickyCatalogProduct(
       label: getStickyVariantLabel(variant.options),
       price: variant.price,
       availableForSale: variant.availableForSale
-    }))
+    })),
+    checkout: {
+      product: toCartProduct(product),
+      variants: product.variants.map(toPurchaseVariant)
+    }
   }
 }
 

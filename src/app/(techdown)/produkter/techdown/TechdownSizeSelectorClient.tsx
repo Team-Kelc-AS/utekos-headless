@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, type KeyboardEvent } from 'react'
-import Link from 'next/link'
 import { useStickyCTASelection } from '@/components/commerce/StickyCTA/StickyCTASelectionContext'
 import type { TechdownSizeSelectorModel } from './techdownSizeSelectorModel'
 import styles from './TechdownContent.module.css'
@@ -149,9 +148,6 @@ export function TechdownSizeSelectorClient({
     >
       <div className={styles.sizeSelectorHeading}>
         <h3 id='techdown-size-heading'>Velg størrelse</h3>
-        <Link href='/handlehjelp/storrelsesguide'>
-          Størrelsesguide
-        </Link>
       </div>
       <div
         className={styles.sizeOptions}

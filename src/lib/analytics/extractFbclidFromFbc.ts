@@ -48,3 +48,29 @@ export function ensureFbclidFromFbc(input: {
     fbclid: derived
   }
 }
+
+const SYNTHESIZED_FBC_CLICK_ID_PATTERN = /^[A-Za-z0-9_-]+$/
+
+/**
+ * Synthesizes a Meta `_fbc` value from a genuine fbclid when the browser
+ * cookie never formed — typically the landing race where the first
+ * commerce event fires before the pixel writes the cookie.
+ *
+ * This is serialization of an actually observed click, not a fabricated
+ * identity: it must only be called with a real fbclid on a
+ * marketing-consented dispatch. Returns undefined for anything else.
+ */
+export function ensureFbcFromFbclid(input: {
+  fbc?: string | undefined
+  fbclid?: string | undefined
+  nowMs?: number | undefined
+}): string | undefined {
+  if (input.fbc) return input.fbc
+  const fbclid = input.fbclid?.trim()
+  if (!fbclid || !SYNTHESIZED_FBC_CLICK_ID_PATTERN.test(fbclid)) {
+    return undefined
+  }
+  const nowMs = input.nowMs ?? Date.now()
+  if (!Number.isFinite(nowMs) || nowMs <= 0) return undefined
+  return `fb.1.${Math.floor(nowMs)}.${fbclid}`
+}

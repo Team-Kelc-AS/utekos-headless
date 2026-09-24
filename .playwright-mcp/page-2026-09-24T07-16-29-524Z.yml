@@ -1,0 +1,496 @@
+- generic [active] [ref=f2e1]:
+  - banner [ref=f2e2]:
+    - generic [ref=f2e3]:
+      - link "Utekos - Til forsiden" [ref=f2e5] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f2e6]:
+        - button "Åpne søk (⌘/Ctrl + K)" [ref=f2e7]:
+          - generic [ref=f2e11]: Søk
+        - link "Kundeservice" [ref=f2e12] [cursor=pointer]:
+          - /url: /kontaktskjema
+  - main [ref=f2e18]:
+    - article [ref=f2e20]:
+      - navigation "Brødsmuler" [ref=f2e21]:
+        - list [ref=f2e22]:
+          - listitem [ref=f2e23]:
+            - link "Forsiden" [ref=f2e24] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=f2e25]:
+            - generic [aria-hidden] [ref=f2e26]: /
+            - link "Kunnskap" [ref=f2e27] [cursor=pointer]:
+              - /url: /kunnskap
+          - listitem [ref=f2e28]:
+            - generic [aria-hidden] [ref=f2e29]: /
+            - generic [ref=f2e30]: CloudWeave™, dun og det norske klimaet
+      - generic [ref=f2e31]:
+        - heading "CloudWeave™, dun og det norske klimaet" [level=1] [ref=f2e32]
+        - paragraph [ref=f2e33]: Mange tror at en tykk jakke i seg selv produserer varme. Sannheten er at det er du som er varmekilden – jakkens eneste jobb er å forhindre at denne varmen forsvinner ut i omgivelsene.
+        - complementary "Forfatter og publiseringsinformasjon" [ref=f2e34]:
+          - img "Utekos" [ref=f2e36]
+          - generic [ref=f2e37]:
+            - paragraph [ref=f2e38]:
+              - text: Av
+              - link "Utekos" [ref=f2e39] [cursor=pointer]:
+                - /url: /om-oss
+            - paragraph [ref=f2e40]:
+              - text: Publisert
+              - time [ref=f2e41]: 23. september 2026 kl. 12:53
+              - text: · Oppdatert
+              - time [ref=f2e42]: 24. september 2026 kl. 09:30
+              - text: · 9 min lesetid
+      - region [ref=f2e43]:
+        - heading "Hva du vil lære" [level=2] [ref=f2e44]
+        - list [ref=f2e45]:
+          - listitem [ref=f2e46]: De grunnleggende fysiske prinsippene bak hvordan klær holder deg varm.
+          - listitem [ref=f2e47]: Forskjellene på tradisjonelt dun og moderne syntetisk isolasjon.
+          - listitem [ref=f2e48]: Hvordan fuktighet påvirker kroppens varmetap og isolasjonsmaterialets yteevne.
+          - listitem [ref=f2e49]: Hvorfor det norske klimaet stiller unike krav til yttertøyet ditt.
+          - listitem [ref=f2e50]: Teknologien og konstruksjonen bak CloudWeave™ og Utekos TechDown™.
+      - navigation [ref=f2e51]:
+        - heading "I denne artikkelen" [level=2] [ref=f2e52]
+        - list [ref=f2e53]:
+          - listitem [ref=f2e54]:
+            - link "Hva er CloudWeave™?" [ref=f2e55] [cursor=pointer]:
+              - /url: "#hva-er-cloudweave"
+          - listitem [ref=f2e56]:
+            - link "Hvordan fungerer isolasjon?" [ref=f2e57] [cursor=pointer]:
+              - /url: "#hvordan-fungerer-isolasjon"
+          - listitem [ref=f2e58]:
+            - link "CloudWeave vs. dun" [ref=f2e59] [cursor=pointer]:
+              - /url: "#cloudweave-vs-dun"
+          - listitem [ref=f2e60]:
+            - link "Hva skjer ved fukt?" [ref=f2e61] [cursor=pointer]:
+              - /url: "#hva-skjer-ved-fukt"
+          - listitem [ref=f2e62]:
+            - link "Norsk klima og bruk" [ref=f2e63] [cursor=pointer]:
+              - /url: "#norsk-klima-og-bruk"
+          - listitem [ref=f2e64]:
+            - link "Når er dun et godt valg?" [ref=f2e65] [cursor=pointer]:
+              - /url: "#når-er-dun-et-godt-valg"
+          - listitem [ref=f2e66]:
+            - link "CloudWeave i TechDown" [ref=f2e67] [cursor=pointer]:
+              - /url: "#cloudweave-i-techdown"
+          - listitem [ref=f2e68]:
+            - link "Hva forskningen ikke kan si sikkert" [ref=f2e69] [cursor=pointer]:
+              - /url: "#hva-forskningen-ikke-kan-si-sikkert"
+          - listitem [ref=f2e70]:
+            - link "Oppsummering" [ref=f2e71] [cursor=pointer]:
+              - /url: "#oppsummering"
+      - paragraph [ref=f2e72]:
+        - text: Isolasjon varmer ikke. Den fanger stillestående luft, og det er luften som bremser varmetapet fra kroppen
+        - superscript [ref=f2e73]:
+          - text: "["
+          - link "3" [ref=f2e75] [cursor=pointer]:
+            - /url: "#kilde-3"
+          - generic [ref=f2e76]:
+            - text: ","
+            - link "5" [ref=f2e77] [cursor=pointer]:
+              - /url: "#kilde-5"
+          - text: "]"
+        - text: . CloudWeave™ er Utekos' løse, dunlignende syntetiske fyll – bygd for norsk nullføre, der fukt og plussgrader ødelegger tradisjonelt dun
+        - superscript [ref=f2e78]:
+          - text: "["
+          - link "1" [ref=f2e80] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=f2e81]:
+            - text: ","
+            - link "2" [ref=f2e82] [cursor=pointer]:
+              - /url: "#kilde-2"
+          - text: "]"
+        - text: . Denne artikkelen forklarer mekanikken, forskjellen på syntet og dun, og når hvert materiale faktisk passer.
+      - heading "Hva er CloudWeave™?" [level=2] [ref=f2e83]
+      - paragraph [ref=f2e84]:
+        - text: CloudWeave™ er en konstruksjon for syntetisk isolasjon med frie, løse fibre – ikke stive, sammenhengende plater (batts)
+        - superscript [ref=f2e85]:
+          - text: "["
+          - link "1" [ref=f2e87] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - text: "]"
+        - text: ". Fibrene blåses inn i isolerte kamre med kontrollert fyllvekt, slik at de kan ekspandere og skape loft: luftvolumet som gir isolasjonen tykkelse uten tilsvarende vekt"
+        - superscript [ref=f2e88]:
+          - text: "["
+          - link "1" [ref=f2e90] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=f2e91]:
+            - text: ","
+            - link "3" [ref=f2e92] [cursor=pointer]:
+              - /url: "#kilde-3"
+          - text: "]"
+        - text: .
+      - paragraph [ref=f2e93]:
+        - text: "Systemet har flere lag: de løse fibrene, kamrene som holder dem på plass, et innvendig konstruksjonslag og et innerfôr mot kroppen"
+        - superscript [ref=f2e94]:
+          - text: "["
+          - link "1" [ref=f2e96] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - text: "]"
+        - text: ". Målet er det samme som for dun: et tredimensjonalt stillas som fanger luft og hindrer den i å sirkulere"
+        - superscript [ref=f2e97]:
+          - text: "["
+          - link "2" [ref=f2e99] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - generic [ref=f2e100]:
+            - text: ","
+            - link "3" [ref=f2e101] [cursor=pointer]:
+              - /url: "#kilde-3"
+          - text: "]"
+        - text: .
+      - heading "Hvordan fungerer isolasjon?" [level=2] [ref=f2e102]
+      - paragraph [ref=f2e103]:
+        - text: Kroppen produserer varme. Er omgivelsene kaldere, vil varmen utjevne temperaturforskjellen. Tapet skjer gjennom ledning (konduksjon), stråling og luftutskiftning (konveksjon)
+        - superscript [ref=f2e104]:
+          - text: "["
+          - link "3" [ref=f2e106] [cursor=pointer]:
+            - /url: "#kilde-3"
+          - generic [ref=f2e107]:
+            - text: ","
+            - link "5" [ref=f2e108] [cursor=pointer]:
+              - /url: "#kilde-5"
+          - text: "]"
+        - text: .
+      - paragraph [ref=f2e109]:
+        - text: Et isolert plagg bremser alle tre. Ytterstoffet hindrer kald luft i å blåse inn på huden. Fyllet lager luftlommer som bremser ledningen. Materialer med høyt loft har lav tetthet og består stort sett av luft – enten fibrene er fra fugl eller polymer
+        - superscript [ref=f2e110]:
+          - text: "["
+          - link "2" [ref=f2e112] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - generic [ref=f2e113]:
+            - text: ","
+            - link "3" [ref=f2e114] [cursor=pointer]:
+              - /url: "#kilde-3"
+          - text: "]"
+        - text: .
+      - 'complementary "Tommelregel: luft isolerer, tekstil veier" [ref=f2e115]':
+        - paragraph [ref=f2e116]: "Tommelregel: luft isolerer, tekstil veier"
+        - paragraph [ref=f2e118]:
+          - text: Fibermassen i et vinterplagg står for en liten del av isolasjonen. Det er den stillestående luften mellom fibrene som gjør jobben. Komprimeres luften – dårlig loft, for trangt plagg, vått fyll – faller isolasjonen
+          - superscript [ref=f2e119]:
+            - text: "["
+            - link "3" [ref=f2e121] [cursor=pointer]:
+              - /url: "#kilde-3"
+            - generic [ref=f2e122]:
+              - text: ","
+              - link "5" [ref=f2e123] [cursor=pointer]:
+                - /url: "#kilde-5"
+            - text: "]"
+          - text: .
+      - heading "CloudWeave vs. dun" [level=2] [ref=f2e124]
+      - paragraph [ref=f2e125]:
+        - text: Dun fra gjess og ender har en sentral kjerne med mikroskopiske forgreninger. Strukturen fanger mye luft i forhold til vekten og kan komprimeres hardt
+        - superscript [ref=f2e126]:
+          - text: "["
+          - link "2" [ref=f2e128] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - generic [ref=f2e129]:
+            - text: ","
+            - link "4" [ref=f2e130] [cursor=pointer]:
+              - /url: "#kilde-4"
+          - text: "]"
+        - text: .
+      - paragraph [ref=f2e131]:
+        - text: CloudWeave™ etterligner den tredimensjonale strukturen med finspunnede syntetiske fibre
+        - superscript [ref=f2e132]:
+          - text: "["
+          - link "1" [ref=f2e134] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=f2e135]:
+            - text: ","
+            - link "2" [ref=f2e136] [cursor=pointer]:
+              - /url: "#kilde-2"
+          - text: "]"
+        - text: ". Forskjellen viser seg i vedlikehold og fukt. Dun er et organisk proteinmateriale som krever skånsom vask, lang tørketid og plass til å holde loftet. CloudWeave™ er bygd av hydrofobe (vannavvisende) polymerer: det tar opp lite vann, tørker raskere og skiller seg etter maskinvask"
+        - superscript [ref=f2e137]:
+          - text: "["
+          - link "1" [ref=f2e139] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=f2e140]:
+            - text: ","
+            - link "2" [ref=f2e141] [cursor=pointer]:
+              - /url: "#kilde-2"
+          - generic [ref=f2e142]:
+            - text: ","
+            - link "4" [ref=f2e143] [cursor=pointer]:
+              - /url: "#kilde-4"
+          - text: "]"
+        - text: . Syntetisk fyll er også et alternativ for den som ikke vil bruke animalske materialer
+        - superscript [ref=f2e144]:
+          - text: "["
+          - link "2" [ref=f2e146] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - text: "]"
+        - text: .
+      - heading "Hva skjer ved fukt?" [level=2] [ref=f2e147]
+      - paragraph [ref=f2e148]:
+        - text: Vann leder varme omtrent 25 ganger raskere enn luft. Fylles isolasjonen med vann i stedet for luft, leder plagget varmen
+        - emphasis [ref=f2e149]: bort
+        - text: fra kroppen
+        - superscript [ref=f2e150]:
+          - text: "["
+          - link "5" [ref=f2e152] [cursor=pointer]:
+            - /url: "#kilde-5"
+          - text: "]"
+        - text: .
+      - paragraph [ref=f2e153]:
+        - text: Det er dunets svake punkt. Forgreningene absorberer fukt og klistrer seg sammen; stillaset kollapser, luften presses ut, og isolasjonen faller
+        - superscript [ref=f2e154]:
+          - text: "["
+          - link "4" [ref=f2e156] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - generic [ref=f2e157]:
+            - text: ","
+            - link "5" [ref=f2e158] [cursor=pointer]:
+              - /url: "#kilde-5"
+          - text: "]"
+        - text: . Ubehandlet dun kan bli nesten ubrukelig til det er tørt – vanskelig ute
+        - superscript [ref=f2e159]:
+          - text: "["
+          - link "4" [ref=f2e161] [cursor=pointer]:
+            - /url: "#kilde-4"
+          - text: "]"
+        - text: .
+      - paragraph [ref=f2e162]:
+        - text: Syntetiske fibre tar opp svært lite vann, ofte under én prosent av egen vekt, og holder formen bedre når de blir våte
+        - superscript [ref=f2e163]:
+          - text: "["
+          - link "2" [ref=f2e165] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - generic [ref=f2e166]:
+            - text: ","
+            - link "5" [ref=f2e167] [cursor=pointer]:
+              - /url: "#kilde-5"
+          - text: "]"
+        - text: . Fukt kan ligge mellom fibrene, men fibrene selv kollapser ikke like lett. Et plagg med CloudWeave™ beholder derfor mer av isolasjonsverdien i vått vær, og tørker raskere enn dun
+        - superscript [ref=f2e168]:
+          - text: "["
+          - link "1" [ref=f2e170] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=f2e171]:
+            - text: ","
+            - link "2" [ref=f2e172] [cursor=pointer]:
+              - /url: "#kilde-2"
+          - text: "]"
+        - text: .
+      - heading "Norsk klima og bruk" [level=2] [ref=f2e173]
+      - paragraph [ref=f2e174]:
+        - text: "Langs kysten og i lavereliggende strøk svinger vinteren ofte rundt null grader: sludd, våt snø og vinterregn. I stabil sprengkulde er nedbøren frossen og tørr. I nullføre angripes kroppen av både kulde og flytende fukt"
+        - superscript [ref=f2e175]:
+          - text: "["
+          - link "2" [ref=f2e177] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - text: "]"
+        - text: .
+      - 'complementary "Tommelregel: syntetisk i nullføre, dun i tørr kulde" [ref=f2e178]':
+        - paragraph [ref=f2e179]: "Tommelregel: syntetisk i nullføre, dun i tørr kulde"
+        - paragraph [ref=f2e181]:
+          - text: Når temperaturen pendler rundt null og nedbøren er våt, gir syntetisk fyll en mer forutsigbar isolasjon enn ubehandlet dun. Dun passer bedre når luften er tørr og du kan holde plagget tørt
+          - superscript [ref=f2e182]:
+            - text: "["
+            - link "2" [ref=f2e184] [cursor=pointer]:
+              - /url: "#kilde-2"
+            - generic [ref=f2e185]:
+              - text: ","
+              - link "4" [ref=f2e186] [cursor=pointer]:
+                - /url: "#kilde-4"
+            - text: "]"
+          - text: .
+      - paragraph [ref=f2e187]:
+        - text: "Under slike skiftende forhold gir syntetisk isolasjon en sikkerhetsmargin: isolasjonen fortsetter å fange luft selv om skuldrene blir våte av sludd"
+        - superscript [ref=f2e188]:
+          - text: "["
+          - link "1" [ref=f2e190] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=f2e191]:
+            - text: ","
+            - link "2" [ref=f2e192] [cursor=pointer]:
+              - /url: "#kilde-2"
+          - text: "]"
+        - text: . Det er den vanlige norske hverdagen – terrasse, ruskevær, fuktig kveld – mer enn ekspedisjon i innlandet.
+      - heading "Når er dun et godt valg?" [level=2] [ref=f2e193]
+      - paragraph [ref=f2e194]:
+        - text: "Dun er fortsatt sterkt på ett punkt: varme per gram og pakkvolum under"
+        - emphasis [ref=f2e195]: tørre
+        - text: forhold
+        - superscript [ref=f2e196]:
+          - text: "["
+          - link "2" [ref=f2e198] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - generic [ref=f2e199]:
+            - text: ","
+            - link "4" [ref=f2e200] [cursor=pointer]:
+              - /url: "#kilde-4"
+          - text: "]"
+        - text: .
+      - paragraph [ref=f2e201]:
+        - text: På vinterekspedisjon i innlandet eller i høyden, der temperaturen ligger stabilt under frysepunktet og regn er usannsynlig, gir dun med høy fyldevne (fillpower, ofte 650–800+ cuin) mer varme per vekt enn de fleste syntetiske fyll
+        - superscript [ref=f2e202]:
+          - text: "["
+          - link "2" [ref=f2e204] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - text: "]"
+        - text: . For den som pakker minimalt og kan holde dunet tørt – tørt klima, telt, eller vanntett skall utenpå – er dun et rasjonelt valg
+        - superscript [ref=f2e205]:
+          - text: "["
+          - link "2" [ref=f2e207] [cursor=pointer]:
+            - /url: "#kilde-2"
+          - generic [ref=f2e208]:
+            - text: ","
+            - link "4" [ref=f2e209] [cursor=pointer]:
+              - /url: "#kilde-4"
+          - text: "]"
+        - text: .
+      - heading "CloudWeave i TechDown" [level=2] [ref=f2e210]
+      - paragraph [ref=f2e211]:
+        - text: I Utekos TechDown™ sitter CloudWeave™ i kamre bak Luméa™ Shell, et tettvevd ytterstoff med vannavvisende overflate
+        - superscript [ref=f2e212]:
+          - text: "["
+          - link "1" [ref=f2e214] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - text: "]"
+        - text: . Kamrenes form skal hindre at fibrene klumper seg eller lager kalde soner
+        - superscript [ref=f2e215]:
+          - text: "["
+          - link "1" [ref=f2e217] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - text: "]"
+        - text: .
+      - paragraph [ref=f2e218]:
+        - text: "Plagget har et 3-i-1 justeringssystem: full lengde, parkas eller hevet for mer bevegelse. YKK® Dual V-Zip™ gir tilgang til strammesnorene og ventilasjon nedenfra uten å åpne brystet mot vinden"
+        - superscript [ref=f2e219]:
+          - text: "["
+          - link "1" [ref=f2e221] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - text: "]"
+        - text: . Det er en konstruksjon som tilpasser isolasjonen til aktiviteten – ikke et materiale som «produserer» varme.
+      - heading "Hva forskningen ikke kan si sikkert" [level=2] [ref=f2e222]
+      - paragraph [ref=f2e223]:
+        - text: Laboratorietall for våt isolasjon gjelder standardiserte fyll og tykkelser, ikke din konkrete kombinasjon av svette, sludd og vask
+        - superscript [ref=f2e224]:
+          - text: "["
+          - link "5" [ref=f2e226] [cursor=pointer]:
+            - /url: "#kilde-5"
+          - text: "]"
+        - text: . Hvor mye isolasjon CloudWeave™ beholder etter ti vintre, avhenger av slitasje og vedlikehold som ikke er isolert i de siterte kildene.
+      - paragraph [ref=f2e227]:
+        - text: Både dun og syntet har miljøkostnader. Dun reiser spørsmål om dyrevelferd og sporbarhet. Syntetiske fibre kommer fra petrokjemisk industri og avgir mikrofibre i vask og bruk
+        - superscript [ref=f2e228]:
+          - text: "["
+          - link "3" [ref=f2e230] [cursor=pointer]:
+            - /url: "#kilde-3"
+          - generic [ref=f2e231]:
+            - text: ","
+            - link "6" [ref=f2e232] [cursor=pointer]:
+              - /url: "#kilde-6"
+          - text: "]"
+        - text: . Et slitesterkt plagg som brukes i mange sesonger reduserer utskifting, men det finnes ikke en ferdig global infrastruktur for å skille og gjenvinne blandingsmaterialer (polyester, nylon, polyuretan) når plagget er utslitt
+        - superscript [ref=f2e233]:
+          - text: "["
+          - link "6" [ref=f2e235] [cursor=pointer]:
+            - /url: "#kilde-6"
+          - text: "]"
+        - text: .
+      - heading "Oppsummering" [level=2] [ref=f2e236]
+      - paragraph [ref=f2e237]:
+        - text: Valget av isolasjon er valg av verktøy. Dun gir mer varme per gram når det er tørt. CloudWeave™ er syntetisk isolasjon bygd for å holde loft når fukten kommer – det norske nullføret
+        - superscript [ref=f2e238]:
+          - text: "["
+          - link "1" [ref=f2e240] [cursor=pointer]:
+            - /url: "#kilde-1"
+          - generic [ref=f2e241]:
+            - text: ","
+            - link "2" [ref=f2e242] [cursor=pointer]:
+              - /url: "#kilde-2"
+          - generic [ref=f2e243]:
+            - text: ","
+            - link "5" [ref=f2e244] [cursor=pointer]:
+              - /url: "#kilde-5"
+          - text: "]"
+        - text: . Hold fyllet luftig, hold det så tørt du kan, og velg materiale etter været du faktisk går i, ikke etter været du håper på.
+      - paragraph [ref=f2e245]:
+        - link "Tilbake til toppen av artikkelen" [ref=f2e246] [cursor=pointer]:
+          - /url: "#top"
+          - generic [aria-hidden] [ref=f2e247]: ↑
+          - text: Tilbake til toppen
+      - region [ref=f2e248]:
+        - group [ref=f2e249]:
+          - generic "Kilder (6)" [ref=f2e250] [cursor=pointer]
+  - contentinfo [ref=f2e252]:
+    - generic [ref=f2e253]:
+      - generic [ref=f2e254]:
+        - generic [ref=f2e255]:
+          - heading "Handlehjelp" [level=3] [ref=f2e256]
+          - navigation "Handlehjelp navigasjon" [ref=f2e257]:
+            - list [ref=f2e258]:
+              - listitem [ref=f2e259]:
+                - link "Kontakt oss" [ref=f2e260] [cursor=pointer]:
+                  - /url: /kontaktskjema
+              - listitem [ref=f2e261]:
+                - link "Teknologi og materialer" [ref=f2e262] [cursor=pointer]:
+                  - /url: /handlehjelp/teknologi-materialer
+              - listitem [ref=f2e263]:
+                - link "Vask og vedlikehold" [ref=f2e264] [cursor=pointer]:
+                  - /url: /handlehjelp/vask-og-vedlikehold
+              - listitem [ref=f2e265]:
+                - link "Størrelsesguide" [ref=f2e266] [cursor=pointer]:
+                  - /url: /handlehjelp/storrelsesguide
+        - generic [ref=f2e267]:
+          - heading "Kundeservice" [level=3] [ref=f2e268]
+          - navigation "Kundeservice navigasjon" [ref=f2e269]:
+            - list [ref=f2e270]:
+              - listitem [ref=f2e271]:
+                - link "Kundeservice" [ref=f2e272] [cursor=pointer]:
+                  - /url: /kontaktskjema
+              - listitem [ref=f2e273]:
+                - 'link "Tlf: +47 40 21 63 43" [ref=f2e274] [cursor=pointer]':
+                  - /url: tel:+4740216343
+              - listitem [ref=f2e275]:
+                - 'link "E-post: kundeservice@utekos.no" [ref=f2e276] [cursor=pointer]':
+                  - /url: mailto:kundeservice@utekos.no
+        - generic [ref=f2e277]:
+          - heading "Informasjon" [level=3] [ref=f2e278]
+          - navigation "Informasjon navigasjon" [ref=f2e279]:
+            - list [ref=f2e280]:
+              - listitem [ref=f2e281]:
+                - link "Om oss" [ref=f2e282] [cursor=pointer]:
+                  - /url: /om-oss
+              - listitem [ref=f2e283]:
+                - link "Frakt og retur" [ref=f2e284] [cursor=pointer]:
+                  - /url: /frakt-og-retur
+              - listitem [ref=f2e285]:
+                - link "Personvern" [ref=f2e286] [cursor=pointer]:
+                  - /url: /personvern
+              - listitem [ref=f2e287]:
+                - link "Vilkår og betingelser" [ref=f2e288] [cursor=pointer]:
+                  - /url: /vilkar-betingelser
+        - generic [ref=f2e289]:
+          - heading "Bedriftsinformasjon" [level=3] [ref=f2e290]
+          - navigation "Bedriftsinformasjon navigasjon" [ref=f2e291]:
+            - list [ref=f2e292]:
+              - listitem [ref=f2e293]:
+                - link "KELC AS" [ref=f2e294] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=f2e295]:
+                - link "Lille Damsgårdsveien 25" [ref=f2e296] [cursor=pointer]:
+                  - /url: map:Lille Damsgårdsveien 25
+              - listitem [ref=f2e297]:
+                - link "5162, Laksevåg" [ref=f2e298] [cursor=pointer]:
+                  - /url: map:Lille Damsgårdsveien 25, 5162, Bergen
+              - listitem [ref=f2e299]:
+                - link "Org.nr 925 820 393" [ref=f2e300] [cursor=pointer]:
+                  - /url: /kontaktskjema
+      - article [ref=f2e303]:
+        - region [ref=f2e304]:
+          - generic [ref=f2e305]:
+            - generic [ref=f2e306]:
+              - heading "Meld deg på Utekos sitt nyhetsbrev!" [level=2] [ref=f2e312]
+              - generic [ref=f2e313]:
+                - paragraph [ref=f2e314]: Som medlem i vår kundeklubb får du personlige varsler om tilbud, salg og kampanjer.
+                - paragraph [ref=f2e315]: Du får også tips, inspirasjon og nye artikler fra Utekos-magasinet.
+            - generic [ref=f2e316]:
+              - generic [ref=f2e317]: Din e-postadresse
+              - textbox "Din e-postadresse" [ref=f2e318]:
+                - /placeholder: Din e-postadresse…
+              - button "Meld meg inn" [ref=f2e319] [cursor=pointer]
+      - 'img "Betalingsmetoder: Klarna, Vipps, Visa og Mastercard" [ref=f2e323]'
+      - paragraph [ref=f2e325]: © 2026 Kelc AS. Alle rettigheter forbeholdt. Utekos® er et registrert varemerke i Norge.
+  - button "Open Next.js Dev Tools" [ref=f2e331] [cursor=pointer]
+  - alert [ref=f2e335]

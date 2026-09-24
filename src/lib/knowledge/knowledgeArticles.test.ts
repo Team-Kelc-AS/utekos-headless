@@ -20,7 +20,7 @@ import {
 } from './knowledgeArticles'
 
 test('knowledge metadata is unique, canonical and source-linked', () => {
-  assert.equal(knowledgeArticleList.length, 4)
+  assert.equal(knowledgeArticleList.length, 5)
   assert.equal(
     new Set(knowledgeArticleList.map(article => article.path))
       .size,
@@ -95,36 +95,118 @@ test('knowledge overview is canonical and lists every registered article', () =>
   )
 })
 
-test('visible MDX keeps the original copy while removing broken Gemini links', async () => {
+test('visible MDX has no external search links and matches registry structure', async () => {
   const knowledgeRoot = path.join(
     process.cwd(),
     'src/app/(store)/kunnskap'
   )
-  const cloudWeave = await readFile(
-    path.join(knowledgeRoot, 'cloudweave/page.mdx'),
-    'utf8'
-  )
-  const baseLayer = await readFile(
-    path.join(knowledgeRoot, 'hva-skal-man-ha-innerst/page.mdx'),
-    'utf8'
-  )
-  const whyCold = await readFile(
-    path.join(knowledgeRoot, 'hvorfor-blir-man-kald/page.mdx'),
-    'utf8'
-  )
-
-  const originalOpening =
-    'Mange tror at en tykk jakke i seg selv produserer varme.'
-  assert.ok(cloudWeave.includes(originalOpening))
-  assert.ok(baseLayer.includes(originalOpening))
-  assert.ok(
-    whyCold.includes(
-      'Det er en klassisk vintermorgen. To personer står og venter på bussen.'
+  const bodies = await Promise.all(
+    knowledgeArticleList.map(article =>
+      readFile(
+        path.join(knowledgeRoot, article.slug, 'page.mdx'),
+        'utf8'
+      ).then(body => ({ article, body }))
     )
   )
-  assert.ok(!whyCold.includes('https://gemini.google.com/'))
+
+  for (const { article, body } of bodies) {
+    assert.ok(
+      !body.includes('google.com/search'),
+      `${article.slug} must not link out to search engines`
+    )
+    assert.ok(
+      !body.match(/^# /m),
+      `${article.slug} must not render its own H1; the scaffold owns it`
+    )
+    assert.ok(
+      !body.startsWith('---'),
+      `${article.slug} must not keep metadata in MDX frontmatter; the registry owns it`
+    )
+    assert.ok(
+      !body.match(/^## (Kilder|Referanser|Innhold|Hva du vil lære)/m),
+      `${article.slug} must not render sources, learnings or ToC in the MDX body`
+    )
+    assert.ok(
+      body.includes('## Hva forskningen ikke kan si sikkert'),
+      `${article.slug} must include the research-limits section`
+    )
+    assert.ok(
+      body.includes('## Oppsummering'),
+      `${article.slug} must end the body with Oppsummering`
+    )
+    for (const entry of article.toc) {
+      assert.match(
+        entry.id,
+        /^[a-z0-9æøå]+(?:-+[a-z0-9æøå]+)*$/u,
+        `${article.slug} toc id must be a valid anchor slug`
+      )
+      assert.ok(
+        body.includes(`## ${entry.label}`),
+        `${article.slug} must render H2 "${entry.label}" so «I denne artikkelen» can link`
+      )
+    }
+    assert.ok(
+      article.learnings.length >= 3 && article.learnings.length <= 6,
+      `${article.slug} must list 3–6 learnings`
+    )
+    assert.ok(
+      article.readingMinutes > 0,
+      `${article.slug} must declare reading time`
+    )
+    assert.ok(
+      article.references.length > 0,
+      `${article.slug} must declare references`
+    )
+    for (const reference of article.references) {
+      assert.ok(reference.title.trim().length > 0)
+      assert.ok(reference.attribution.trim().length > 0)
+      if (reference.url !== undefined) {
+        assert.ok(reference.url.startsWith('https://'))
+      }
+    }
+  }
+
+  assert.ok(
+    knowledgeArticles.cloudweave.description.includes(
+      'Mange tror at en tykk jakke i seg selv produserer varme.'
+    )
+  )
   assert.equal(
     knowledgeArticles.cloudweave.title,
     'CloudWeave™, dun og det norske klimaet'
   )
+})
+
+test('in-text citations resolve against the registry source list', async () => {
+  const knowledgeRoot = path.join(
+    process.cwd(),
+    'src/app/(store)/kunnskap'
+  )
+
+  for (const article of knowledgeArticleList) {
+    const body = await readFile(
+      path.join(knowledgeRoot, article.slug, 'page.mdx'),
+      'utf8'
+    )
+    const cited = new Set<number>()
+    for (const match of body.matchAll(
+      /<Cite ids=\{\[([\d,\s]+)\]\} \/>/g
+    )) {
+      const group = match[1] ?? ''
+      for (const id of group.split(',')) {
+        cited.add(Number(id.trim()))
+      }
+    }
+    assert.ok(
+      cited.size > 0,
+      `${article.slug} must use in-text citations`
+    )
+    const maxId = article.references.length
+    for (const id of cited) {
+      assert.ok(
+        Number.isInteger(id) && id >= 1 && id <= maxId,
+        `${article.slug} citation ${id} must map to the registry source list`
+      )
+    }
+  }
 })

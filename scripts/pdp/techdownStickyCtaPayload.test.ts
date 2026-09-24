@@ -35,13 +35,23 @@ test('TechDown StickyCTA serializes only its purchase summary', async () => {
   )
   assert.doesNotMatch(
     clientSource,
-    /KlarnaProductExpressCheckout|@base-ui\/react|lucide-react/,
-    'Checkout and modal dependencies must not be part of the initial sticky CTA'
+    /KlarnaProductExpressCheckout|lucide-react/,
+    'Klarna SDK and catalog icons must not be part of the initial sticky CTA'
+  )
+  assert.match(
+    clientSource,
+    /dynamic\([\s\S]*?StickyCTAKlarna[\s\S]*?ssr:\s*false/,
+    'Klarna must stay client-only and load after idle'
   )
   assert.match(
     clientSource,
     /dynamic\([\s\S]*?StickyCTACatalogDialog[\s\S]*?ssr:\s*false/,
-    'The catalog dialog must remain client-only and code split'
+    'The variant dialog must remain client-only and code split'
+  )
+  assert.match(
+    dataSource,
+    /checkout:\s*\{/,
+    'The DTO must carry the existing Klarna cart payload without a second product fetch'
   )
   assert.match(
     catalogSource,

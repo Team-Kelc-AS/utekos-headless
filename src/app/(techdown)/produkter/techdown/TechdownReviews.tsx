@@ -77,7 +77,6 @@ function ReviewSection({
         <p className={styles.eyebrow}>
           Verifiserte produktomtaler
         </p>
-        <h2 id='reviews-heading'>Dette sier kundene</h2>
         <p className={styles.reviewSummary}>
           {formattedRating} av 5 fra {reviewCount} verifiserte
           anmeldelser via Judge.me

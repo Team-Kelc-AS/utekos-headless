@@ -20,18 +20,13 @@ const helpfulLinks = [
 
 export default function NotFound() {
   return (
-    <main className='mx-auto flex w-full max-w-2xl flex-col items-center px-5 py-16 text-center sm:py-24'>
-      <p className='text-sm font-medium tracking-wide text-muted-foreground'>
-        Feilkode 404
-      </p>
-      <h1 className='mt-2 text-3xl font-semibold text-balance sm:text-4xl'>
-        Siden ble ikke funnet
+    <main className='mx-auto flex w-full max-w-2xl flex-col items-center text-left px-5 py-16 sm:py-24'>
+      <h1 className='mt-2 text-3xl font-semibold text-left! sm:text-4xl'>
+        Beklager
       </h1>
-      <p className='mt-4 max-w-prose text-base text-pretty text-muted-foreground'>
-        Beklager – adressen du forsøkte å åpne finnes ikke hos Utekos.
-        Sjekk adressen for skrivefeil, eller bruk en av lenkene under
-        for å finne frem.
-      </p>
+      <p className='mt-4 max-w-prose text-base text-pretty text-left text-muted-foreground'>
+        Nettadressen du forsøkte å åpne finnes ikke hos Utekos.
+        Fortsett der du slapp via en av lenkene under.</p>
       <nav aria-label='Nyttige lenker' className='mt-8 w-full'>
         <ul className='grid gap-3 sm:grid-cols-2'>
           {helpfulLinks.map(link => (

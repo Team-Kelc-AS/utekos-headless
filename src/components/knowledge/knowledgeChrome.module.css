@@ -177,3 +177,196 @@
     width: 4.5rem;
   }
 }
+
+.intro {
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+
+.title {
+  margin: 0 0 1rem;
+  text-wrap: balance;
+}
+
+.ingress {
+  margin: 0;
+  color: var(--knowledge-ink);
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.logoFrame {
+  width: 5rem;
+  aspect-ratio: 1 / 1;
+  background: #000;
+  border-radius: 50%;
+}
+
+.logoFrame .logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.learnings {
+  margin: 0 0 clamp(2rem, 5vw, 3rem);
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--knowledge-border-strong);
+  border-radius: 1rem;
+  background: var(--knowledge-surface);
+}
+
+.learnings h2,
+.toc h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.learningsList {
+  margin: 0;
+  padding-left: 1.3rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.toc {
+  margin: 0 0 clamp(2.5rem, 6vw, 4rem);
+}
+
+.tocList {
+  margin: 0;
+  padding-left: 1.3rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem 2rem;
+}
+
+@media (max-width: 40rem) {
+  .tocList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sources {
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding-top: clamp(2rem, 5vw, 3rem);
+  border-top: 1px solid var(--knowledge-border);
+}
+
+.sourcesDetails {
+  margin: 0;
+}
+
+.sourcesSummary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--knowledge-link);
+  font-weight: 800;
+  font-size: 1.05rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.sourcesSummary::-webkit-details-marker {
+  display: none;
+}
+
+.sourcesSummary::after {
+  content: '';
+  width: 0.6em;
+  height: 0.6em;
+  border-right: 0.16em solid currentColor;
+  border-bottom: 0.16em solid currentColor;
+  transform: rotate(45deg) translateY(-0.15em);
+}
+
+.sourcesDetails[open] .sourcesSummary::after {
+  transform: rotate(-135deg) translateY(-0.1em);
+}
+
+.sourcesSummary:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+
+.sourcesList {
+  margin: 1.5rem 0 0;
+  padding-left: 1.4rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.sourcesItem {
+  padding-left: 0.4rem;
+  color: var(--knowledge-ink-muted);
+  font-size: 0.95em;
+  line-height: 1.65;
+  scroll-margin-top: 6rem;
+}
+
+.sourcesTitle {
+  color: var(--knowledge-ink);
+  font-style: normal;
+  font-weight: 800;
+}
+
+.cite {
+  font-size: 0.78em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cite a {
+  color: var(--knowledge-link);
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.18em;
+}
+
+.backToTopWrap {
+  margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+  text-align: center;
+}
+
+.backToTop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.6rem;
+  border: 1px solid var(--knowledge-border-strong);
+  border-radius: 999px;
+  color: var(--knowledge-ink);
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-decoration: none;
+  background: var(--knowledge-surface);
+}
+
+.backToTop:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+
+.figure {
+  margin: clamp(2rem, 5vw, 3rem) 0;
+}
+
+.figureFrame {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.figureImage {
+  object-fit: cover;
+}
+
+.figcaption {
+  margin-top: 0.6rem;
+  color: var(--knowledge-ink-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}

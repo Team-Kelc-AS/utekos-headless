@@ -129,6 +129,9 @@ importers:
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@16.3.1(patch_hash=6a5f82cdb8e7da24e1d23585231185f8e91088c9ef12a50869fbd031474f7a1b)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@types/node@25.9.4)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@vercel/config':
+        specifier: ^0.7.1
+        version: 0.7.1
       '@vercel/connect':
         specifier: ^0.5.0
         version: 0.5.0(@ai-sdk/mcp@2.0.16(zod@4.6.5))(ai@6.0.208(zod@4.6.5))
@@ -3309,6 +3312,10 @@ packages:
     resolution: {integrity: sha512-kQF8LGie/Hbdq9/psJxLE7owRTcqMQMhgybU04gCeR7cbQAr5t8OrjefDNColJv1QSSucFt4pLwRiARVmlOnug==}
     engines: {node: '>= 18'}
 
+  '@vercel/config@0.7.1':
+    resolution: {integrity: sha512-ciMhs9EzAYnrUMHSti/vhTbJmiyJu+WLPRAppb9WytoZvyOpw4OQCVVQdKs7G+fuQWL8O54THM/tHgGDXtwuFQ==}
+    hasBin: true
+
   '@vercel/connect@0.5.0':
     resolution: {integrity: sha512-iaorL0iwPY+tC/6Qn937AVk+lbwq42nRI2s+d/MIoAblE+1FJUXCmyMn/Ni66FQ4U8ICMjufFzbyp3OCKoDerg==}
     peerDependencies:
@@ -3395,6 +3402,9 @@ packages:
     peerDependenciesMeta:
       '@opentelemetry/api':
         optional: true
+
+  '@vercel/routing-utils@6.6.0':
+    resolution: {integrity: sha512-Z74zwk1ixcIsMN7Sp788SsZuOEqmJZ4N36WHusr6Vtck5eFAcjyD4oBpjDYRhkxovsh8t13s0L+uVbJYxUPa5w==}
 
   '@vercel/speed-insights@2.0.0':
     resolution: {integrity: sha512-jwkNcrTeafWxjmWq4AHBaptSqZiJkYU5adLC9QBSqeim0GcqDMgN5Ievh8OG1rJ6W3A4l1oiP7qr9CWxGuzu3w==}
@@ -6832,6 +6842,9 @@ packages:
     resolution: {integrity: sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==}
     engines: {node: 18 || 20 || >=22}
 
+  path-to-regexp@6.1.0:
+    resolution: {integrity: sha512-h9DqehX3zZZDCEm+xbfU0ZmwCGFCAAraPJWMXJ4+v32NjZJilVg3k1TcKsRgIb8IQ/izZSaydDc1OhJCZvs2Dw==}
+
   path-to-regexp@6.3.0:
     resolution: {integrity: sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ==}
 
@@ -7166,6 +7179,10 @@ packages:
     resolution: {integrity: sha512-N2MylSdi48+5N/6S5j+maeHbUSIzzZ5uOcX5Hm4QpV8Dkb1HFjfAKTKX6yNPJQD9AhcT3ifHNB66tWTTJDi11Q==}
     engines: {node: '>=14'}
     hasBin: true
+
+  pretty-cache-header@1.0.0:
+    resolution: {integrity: sha512-xtXazslu25CdnGnUkByU1RoOjK55TqwatJkjjJLg5ZAdz2Lngko/mmaUgeET36P2GMlNwh3fdM7FWBO717pNcw==}
+    engines: {node: '>=12.13'}
 
   pretty-ms@9.3.0:
     resolution: {integrity: sha512-gjVS5hOP+M3wMm5nmNOucbIrqudzs9v/57bWRHQWLYklXqoXKrVfYW2W9+glfGsqtPgpiz5WwyEEB+ksXIx3gQ==}
@@ -7983,6 +8000,10 @@ packages:
   time-span@5.1.0:
     resolution: {integrity: sha512-75voc/9G4rDIJleOo4jPvN4/YC4GRZrY8yy1uU4lwrB3XEQbWve8zXoO5No4eFrGcTAMYyoY67p8jRQdtA1HbA==}
     engines: {node: '>=12'}
+
+  timestring@6.0.0:
+    resolution: {integrity: sha512-wMctrWD2HZZLuIlchlkE2dfXJh7J2KDI9Dwl+2abPYg0mswQHfOAyQW3jJg1pY5VfttSINZuKcXoB3FGypVklA==}
+    engines: {node: '>=8'}
 
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
@@ -11272,6 +11293,12 @@ snapshots:
     dependencies:
       execa: 5.1.1
 
+  '@vercel/config@0.7.1':
+    dependencies:
+      '@vercel/routing-utils': 6.6.0
+      pretty-cache-header: 1.0.0
+      zod: 3.25.76
+
   '@vercel/connect@0.5.0(@ai-sdk/mcp@2.0.16(zod@4.6.5))(ai@6.0.208(zod@4.6.5))':
     dependencies:
       '@vercel/oidc': 3.8.1
@@ -11339,6 +11366,13 @@ snapshots:
       picocolors: 1.1.1
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
+
+  '@vercel/routing-utils@6.6.0':
+    dependencies:
+      path-to-regexp: 6.1.0
+      path-to-regexp-updated: path-to-regexp@6.3.0
+    optionalDependencies:
+      ajv: 6.15.0
 
   '@vercel/speed-insights@2.0.0(next@16.3.1(patch_hash=6a5f82cdb8e7da24e1d23585231185f8e91088c9ef12a50869fbd031474f7a1b)(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@types/node@25.9.4)(babel-plugin-macros@3.1.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     optionalDependencies:
@@ -15545,6 +15579,8 @@ snapshots:
       lru-cache: 11.5.1
       minipass: 7.1.3
 
+  path-to-regexp@6.1.0: {}
+
   path-to-regexp@6.3.0: {}
 
   path-to-regexp@8.4.2: {}
@@ -15871,6 +15907,10 @@ snapshots:
       prettier: 3.8.4
 
   prettier@3.8.4: {}
+
+  pretty-cache-header@1.0.0:
+    dependencies:
+      timestring: 6.0.0
 
   pretty-ms@9.3.0:
     dependencies:
@@ -16979,6 +17019,8 @@ snapshots:
   time-span@5.1.0:
     dependencies:
       convert-hrtime: 5.0.0
+
+  timestring@6.0.0: {}
 
   tiny-invariant@1.3.3: {}
 

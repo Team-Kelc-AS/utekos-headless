@@ -13,6 +13,10 @@ import type {
 import { answerAssistantRequest } from './answerAssistantRequest'
 import { staticSupportKnowledgeAdapter } from './staticSupportKnowledge'
 
+const M = "Middels"
+const L = "Stor"
+const XL = "Ekstra stor"
+
 const sessionId = 'd8b18b30-9ce4-4a55-b40f-ffbc3bda9aa7'
 const useQuestion =
   'Hvor ser du først og fremst for deg å bruke plagget – for eksempel på hytten, i båten, i bobilen eller i hverdagen?'
@@ -415,13 +419,13 @@ test('stock help resolves an explicitly requested variant option exactly', async
         id: 'variant-m',
         title: 'Medium',
         availableForSale: false,
-        selectedOptions: [{ name: 'Størrelse', value: 'M' }]
+        selectedOptions: [{ name: 'Størrelse', value: 'Middels' }]
       },
       {
         id: 'variant-l',
         title: 'Large',
         availableForSale: true,
-        selectedOptions: [{ name: 'Størrelse', value: 'L' }]
+        selectedOptions: [{ name: 'Størrelse', value: 'Stor' }]
       }
     ]
   })

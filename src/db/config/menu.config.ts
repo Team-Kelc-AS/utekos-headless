@@ -47,6 +47,11 @@ export const mainMenu: MenuItem[] = [
     ]
   },
   {
+    title: 'Kunnskap',
+    url: '/kunnskap',
+    items: []
+  },
+  {
     title: 'Magasinet',
     url: '/magasinet',
     items: []

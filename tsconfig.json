@@ -59,8 +59,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "src/app/inspirasjon/components/Badge",
-    "src/app/inspirasjon/camping/page.mdx",
-    "src/app/inspirasjon/terrassen/page.mdx",
     "src/app/inspirasjon/page.tsx"
   ],
   "exclude": [

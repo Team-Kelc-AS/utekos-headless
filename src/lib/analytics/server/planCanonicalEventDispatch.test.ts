@@ -1109,3 +1109,66 @@ test('plans Snapchat CAPI v3 for a qualified post-cutover event', () => {
     }
   )
 })
+
+test('skips Meta dispatch for localhost traffic', () => {
+  const event = purchase({
+    environment: 'production',
+    page_url: 'http://localhost:3000/produkter/techdown'
+  })
+  const meta = planCanonicalEventDispatch(event, {
+    now: purchasePlanningNow
+  }).find(intent => intent.provider === 'meta')
+
+  assert.deepEqual(meta, {
+    dispatch_mode: 'server_retry',
+    event_id: event.event_id,
+    provider: 'meta',
+    skip_reason: 'internal_traffic',
+    status: 'skipped_unqualified'
+  })
+})
+
+test('skips Meta dispatch for allowlisted work ips', () => {
+  const previous = process.env.INTERNAL_TRAFFIC_IPS
+  process.env.INTERNAL_TRAFFIC_IPS = '84.48.12.34, 158.36.0.0/16'
+
+  try {
+    const listed = purchase({
+      client_ip_address: '158.36.200.11',
+      environment: 'production'
+    })
+    assert.deepEqual(
+      planCanonicalEventDispatch(listed, {
+        now: purchasePlanningNow
+      }).find(intent => intent.provider === 'meta'),
+      {
+        dispatch_mode: 'server_retry',
+        event_id: listed.event_id,
+        provider: 'meta',
+        skip_reason: 'internal_traffic',
+        status: 'skipped_unqualified'
+      }
+    )
+
+    const unlisted = purchase({
+      client_ip_address: '146.247.138.10',
+      environment: 'production'
+    })
+    assert.deepEqual(
+      planCanonicalEventDispatch(unlisted, {
+        now: purchasePlanningNow
+      }).find(intent => intent.provider === 'meta'),
+      {
+        dispatch_mode: 'server_retry',
+        event_id: unlisted.event_id,
+        provider: 'meta'
+      }
+    )
+  } finally {
+    if (previous === undefined) {
+      delete process.env.INTERNAL_TRAFFIC_IPS
+    } else {
+      process.env.INTERNAL_TRAFFIC_IPS = previous
+    }
+  }
+})

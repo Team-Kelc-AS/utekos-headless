@@ -30,7 +30,7 @@ export function AboutPrinciples() {
       <div className='mx-auto flex w-full max-w-7xl flex-col px-4 sm:px-6 lg:px-8'>
         <div className='mb-12 flex max-w-3xl flex-col items-start pb-6 lg:mb-16'>
           <AboutBadge className='mb-6'>Vårt DNA</AboutBadge>
-          <h2 className='font-google-sans text-left font-sans text-4xl leading-tight font-bold text-inherit sm:text-5xl'>
+          <h2 className='text-left font-sans text-4xl leading-tight font-bold text-inherit sm:text-5xl'>
             Kjernen i alt vi gjør
           </h2>
           <p className='mt-6 max-w-prose text-left font-sans font-semibold text-lg leading-relaxed text-inherit/90'>

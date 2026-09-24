@@ -39,6 +39,7 @@ export type ProviderDispatchInsert = {
     | 'missing_page_url'
     | 'google_event_outside_72h'
     | 'insufficient_pinterest_user_identity'
+    | 'internal_traffic'
     | 'missing_capi_token'
     | 'missing_client_id'
     | 'missing_google_analytics_identifier'

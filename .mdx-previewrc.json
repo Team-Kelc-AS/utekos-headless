@@ -7,11 +7,14 @@
     }
   },
   "components": {
-    "SizeGrid": "./src/app/handlehjelp/storrelsesguide/components/mdx/SizeGrid.tsx",
-    "FeatureGrid": "./src/app/handlehjelp/storrelsesguide/components/mdx/FeatureGrid.tsx",
-    "MeasurementTable": "./src/app/handlehjelp/storrelsesguide/components/MeasurementTable.tsx",
-    "SizeGuideFaq": "./src/app/handlehjelp/storrelsesguide/components/SizeGuideFaq.tsx",
-    "SizeGuideCallout": "./src/components/size-guide/SizeGuideCallout.tsx"
+    "SizeGrid": "./src/app/(store)/handlehjelp/storrelsesguide/components/mdx/SizeGrid.tsx",
+    "FeatureGrid": "./src/app/(store)/handlehjelp/storrelsesguide/components/mdx/FeatureGrid.tsx",
+    "MeasurementTable": "./src/app/(store)/handlehjelp/storrelsesguide/components/MeasurementTable.tsx",
+    "SizeGuideFaq": "./src/app/(store)/handlehjelp/storrelsesguide/components/SizeGuideFaq.tsx",
+    "SizeGuideCallout": "./src/components/size-guide/SizeGuideCallout.tsx",
+    "Cite": "./src/components/knowledge/Cite.tsx",
+    "ArticleImage": "./src/components/knowledge/ArticleImage.tsx",
+    "KnowledgeCallout": "./src/components/knowledge/KnowledgeCallout.tsx"
   },
   "enableScripts": true
 }
