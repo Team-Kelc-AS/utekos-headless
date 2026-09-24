@@ -14,9 +14,6 @@ const HERO_DESTINATION = '/skreddersy-varmen'
 export function MotionContentView() {
   return (
     <>
-      <h1 id='hero-h1' className='sr-only'>
-        Skreddersy varmen
-      </h1>
       <div className='hidden w-full px-4 sm:block sm:px-0'>
         <TypographyH2 />
 

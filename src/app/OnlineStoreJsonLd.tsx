@@ -1,10 +1,14 @@
-// Path: src/app/OrganizationJsonLd.tsx
+// Path: src/app/OnlineStoreJsonLd.tsx
 
-import type { OnlineStore, WithContext } from 'schema-dts'
+import type { Graph, OnlineStore } from 'schema-dts'
 import { cacheLife } from 'next/cache'
 import { PINTEREST_PROFILE_URL } from '@/lib/merchant-feeds/pinterest/pinterestProfileUrl'
 import { merchantReturnPolicyJsonLd } from '@/lib/policies/merchantReturnPolicyJsonLd'
 import { merchantShippingServiceJsonLd } from '@/lib/policies/merchantShippingServiceJsonLd'
+import {
+  ORGANIZATION_ID,
+  buildOrganizationJsonLd
+} from '@/lib/seo/organizationJsonLd'
 
 type OnlineStoreWithShippingService = OnlineStore & {
   hasShippingService: typeof merchantShippingServiceJsonLd
@@ -14,10 +18,9 @@ export async function OnlineStoreJsonLd() {
   'use cache'
   cacheLife('max')
 
-  const jsonLd: WithContext<OnlineStoreWithShippingService> = {
-    '@context': 'https://schema.org',
+  const onlineStoreNode: OnlineStoreWithShippingService = {
     '@type': 'OnlineStore',
-    '@id': 'https://utekos.no/#organization',
+    '@id': ORGANIZATION_ID,
     'name': 'Utekos',
     'legalName': 'Kelc As',
     'url': 'https://utekos.no',
@@ -57,6 +60,11 @@ export async function OnlineStoreJsonLd() {
 
     'hasShippingService': merchantShippingServiceJsonLd,
     'hasMerchantReturnPolicy': merchantReturnPolicyJsonLd
+  }
+
+  const jsonLd: Graph = {
+    '@context': 'https://schema.org',
+    '@graph': [buildOrganizationJsonLd(), onlineStoreNode]
   }
 
   return (

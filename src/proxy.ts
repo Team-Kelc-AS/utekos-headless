@@ -7,6 +7,7 @@ import { filterRedirectSearch } from '@/lib/navigation/filterRedirectSearch'
 import { captureProxyMetaCookies } from '@/lib/analytics/server/captureProxyMetaCookies'
 import { applyProxyMetaCookies } from '@/lib/analytics/server/applyProxyMetaCookies'
 import { isMagazineViewTransitionPreviewEnabled } from '@/app/magasinet/utils/isMagazineViewTransitionPreviewEnabled'
+import { wantsMarkdown } from '@/lib/agents/markdownNegotiation'
 import {
   LANDING_EDGE_AUTH_SERVER_TIMING_NAME,
   LANDING_EDGE_SERVER_TIMING_NAME,
@@ -186,6 +187,38 @@ function isAllowedNboccReferrer(request: NextRequest) {
   }
 }
 
+const MARKDOWN_PASSTHROUGH_PATH_PATTERN =
+  /^(?:\/home\.md|\/om-oss\.md|\/llms(?:-full)?\.txt|\/sitemap\.xml|\/robots\.txt|\/manifest(?:\.[^/]+)?|\/favicon\.ico|\/icon(?:\.[^/]+)?|\/apple-icon(?:\.[^/]+)?)$/
+const MARKDOWN_EXCLUDED_PATH_PATTERN =
+  /^(?:\/api(?:\/|$)|\/canonical-control(?:\/|$)|\/sporing(?:\/|$)|\/__gtg(?:\/|$)|\/__sgtm(?:\/|$)|\/_next(?:\/|$)|\/_vercel(?:\/|$)|\/\.well-known(?:\/|$)|\/videos(?:\/|$)|\/analytics(?:\/|$))/
+
+function markdownRewrite(request: NextRequest): NextResponse | undefined {
+  if (request.method !== 'GET') return undefined
+  if (!wantsMarkdown(request.headers.get('accept'))) return undefined
+  if (request.headers.has('next-router-prefetch')) return undefined
+  if (request.headers.get('rsc') === '1') return undefined
+  const pathname = request.nextUrl.pathname
+  if (STATIC_ASSET_PATH_PATTERN.test(pathname)) return undefined
+  if (MARKDOWN_PASSTHROUGH_PATH_PATTERN.test(pathname)) return undefined
+  if (MARKDOWN_EXCLUDED_PATH_PATTERN.test(pathname)) return undefined
+  if (pathname === '/') {
+    return NextResponse.rewrite(new URL('/home.md', request.url))
+  }
+  const resolverUrl = new URL('/api/agent-md', request.url)
+  resolverUrl.searchParams.set('path', pathname)
+  return NextResponse.rewrite(resolverUrl)
+}
+
+function withVaryAccept<T extends NextResponse>(response: T): T {
+  const vary = response.headers.get('Vary')
+  const values =
+    vary?.split(',').map(value => value.trim().toLowerCase()) ?? []
+  if (!values.includes('accept')) {
+    response.headers.append('Vary', 'Accept')
+  }
+  return response
+}
+
 function continueDocumentRequest(
   request: NextRequest,
   correlation?: LandingEdgeCorrelation,
@@ -200,13 +233,15 @@ function continueDocumentRequest(
   }
 
   return withLandingEdgeCorrelation(
-    rewriteUrl ?
-      NextResponse.rewrite(rewriteUrl, {
-        request: { headers: requestHeaders }
-      })
-    : NextResponse.next({
-        request: { headers: requestHeaders }
-      }),
+    withVaryAccept(
+      rewriteUrl ?
+        NextResponse.rewrite(rewriteUrl, {
+          request: { headers: requestHeaders }
+        })
+      : NextResponse.next({
+          request: { headers: requestHeaders }
+        })
+    ),
     correlation
   )
 }
@@ -334,6 +369,10 @@ export async function proxy(request: NextRequest) {
     eligible && !synthetic ?
       captureProxyMetaCookies(request)
     : []
+  const agentMarkdownResponse = markdownRewrite(request)
+  if (agentMarkdownResponse) {
+    return applyProxyMetaCookies(agentMarkdownResponse, request, [])
+  }
   const response = await routeRequest(request)
   return applyProxyMetaCookies(response, request, cookies)
 }
@@ -343,6 +382,15 @@ export const config = {
     '/canonical-control/:path*',
     '/skreddersy-varmen',
     '/skreddersy-varmen/layout/:path*',
+    {
+      source: '/:path*',
+      has: [{ type: 'header', key: 'accept', value: '.*text/markdown.*' }],
+      missing: [
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+        { type: 'header', key: 'rsc', value: '1' }
+      ]
+    },
     {
       source:
         '/((?!api(?:/|$)|\\.well-known/workflow(?:/|$)|sporing(?:/|$)|__gtg(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|videos(?:/|$)|favicon\\.ico$|sitemap\\.xml$|robots\\.txt$|apple-icon(?:\\.[^/]+)?$|icon(?:\\.[^/]+)?$|manifest(?:\\.[^/]+)?$|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)',

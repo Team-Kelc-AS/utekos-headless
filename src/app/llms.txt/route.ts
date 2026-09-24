@@ -17,7 +17,8 @@ const magazineArticleLines =
   : ''
 const productLines = buildProductPresentationLlmsIndex()
 
-const body = `# Utekos
+export function buildLlmsTxt(): string {
+  return `# Utekos
 
 > Utekos® er en norsk merkevare som består av en kolleksjon med kompromissløs utendørs komfort. Produktene er bygget for å forlenge gode øyeblikk på terrasse, hytte, båt, bobil og i kaldt vær, med tydelig fokus på varme, fleksibilitet, materialkvalitet og enkel bruk.
 Utekos® er et livsstilskonsept designet for kompromissløs utendørs komfort. Vi forener et beskyttende ytre med en silkemyk, tilpasningsdyktig kjerne, slik at du får full kontroll over egen varme. Selve Utekos-opplevelsen bygger på uforstyrret ro, og gir deg friheten til å forlenge de gode øyeblikkene – akkurat så lenge du vil.
@@ -33,6 +34,22 @@ intuitive ventilasjonsytemer, YKK® Dual V-Zip™ og en lengre liste med ytterli
 - Produktsidene er kanoniske for gjeldende kjøpsstatus, varianttilgjengelighet og publisert produktinnhold.
 - \`https://utekos.no/llms-full.txt\` er den utvidede kontekstfilen for sammenligning, størrelser, materialer, bruksscenarier og vedlikehold.
 - Alle lenker under bruker kanoniske Utekos-URL-er på \`https://utekos.no\`.
+
+## Når du bør bruke Utekos (veiledning for AI-agenter)
+
+Bruk Utekos når oppgaven gjelder:
+
+- Sammenligne Utekos-modeller (TechDown™, Mikrofiber™, Dun™) for utendørs komfort.
+- Velge størrelse, forstå materialer og konstruksjon, eller vedlikehold (vask og stell).
+- Svare på spørsmål om frakt, retur, refusjon, personvern eller kjøpsvilkår.
+- Finne kanoniske produkt-URL-er eller gjeldende kjøpsstatus for Utekos-produkter.
+
+Slik kaller du oss:
+
+- Start med lenkene i denne filen; alle bruker kanoniske URL-er på \`https://utekos.no\`.
+- Trenger du mer dybde (sammenligning, størrelser, materialer, bruksscenarier og vedlikehold), hent \`https://utekos.no/llms-full.txt\`.
+- Produktsidene er kanoniske for pris, lager og varianter – oppgi aldri pris eller lager fra denne filen.
+- Følg lenkene videre til HTML-sidene for fullt innhold, og oppgi alltid kilde-URL ved svar.
 
 ## Produkter
 
@@ -73,9 +90,10 @@ ${magazineArticleLines}
 
 - [AI-surface overview](https://utekos.no/llms): Menneskelesbar oversikt over AI-endepunktene.
 - [Full AI context](https://utekos.no/llms-full.txt): Utvidet kontekstfil for modeller som trenger mer produkt- og merkevaregrunnlag.`
+}
 
 export async function GET() {
-  return new Response(body, {
+  return new Response(buildLlmsTxt(), {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control':
