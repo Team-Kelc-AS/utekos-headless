@@ -176,6 +176,31 @@ test('uses documented product handle lookups without buyer context', async () =>
   )
 })
 
+test('passes buyer context to request-bound Storefront catalog calls', async () => {
+  let request: unknown
+  const fetchProducts =
+    __TEST_ONLY__.createFetchAssistantProducts(async input => {
+      request = input
+      return {
+        success: true,
+        body: { product0: rawProduct }
+      }
+    }) as unknown as (
+      input: { handles: string[] },
+      context: { buyerIp: string | null }
+    ) => Promise<unknown>
+
+  await fetchProducts(
+    { handles: ['utekos-techdown'] },
+    { buyerIp: '203.0.113.8' }
+  )
+
+  assert.deepEqual(
+    (request as { context?: unknown }).context,
+    { buyerIp: '203.0.113.8' }
+  )
+})
+
 test('lists up to twenty products without a buyer IP header when handles are absent', async () => {
   let request: unknown
   const fetchProducts =

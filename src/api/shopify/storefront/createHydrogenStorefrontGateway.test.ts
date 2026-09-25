@@ -79,6 +79,88 @@ test('catalogQuery uses public auth and remains caller-cacheable', async () => {
   )
   assert.equal(headers.has('shopify-storefront-buyer-ip'), false)
 })
+
+test('catalogQuery uses private auth and forwards a supplied buyer IP', async () => {
+  const { gateway, requests } = createGateway()
+  const input = {
+    cache: 'force-cache',
+    context: { buyerIp: '203.0.113.8' },
+    query
+  } as Parameters<typeof gateway.catalogQuery<TestQuery>>[0]
+
+  await gateway.catalogQuery<TestQuery>(input)
+
+  const request = requests[0]
+  const headers = new Headers(request?.headers)
+
+  assert.equal(request?.cache, 'force-cache')
+  assert.equal(
+    headers.get('shopify-storefront-private-token'),
+    'private-test-token'
+  )
+  assert.equal(
+    headers.get('shopify-storefront-buyer-ip'),
+    '203.0.113.8'
+  )
+  assert.equal(
+    headers.has('x-shopify-storefront-access-token'),
+    false
+  )
+  assert.equal(
+    String(request?.body).includes('203.0.113.8'),
+    false
+  )
+})
+
+test('catalog failures report when a buyer IP was forwarded', async () => {
+  const capturedErrors: string[] = []
+  const originalConsoleError = console.error
+  console.error = (...args: unknown[]) => {
+    capturedErrors.push(args.map(String).join(' '))
+  }
+  const gateway = createHydrogenStorefrontGateway(
+    {
+      storeDomain: 'example.myshopify.com',
+      publicStorefrontToken: 'public-test-token',
+      privateStorefrontToken: 'private-test-token',
+      storefrontApiVersion: '2026-04'
+    },
+    {
+      fetch: async () => {
+        throw new TypeError('fetch failed')
+      }
+    }
+  )
+  const input = {
+    context: { buyerIp: '2001:db8::8' },
+    query
+  } as Parameters<typeof gateway.catalogQuery<TestQuery>>[0]
+
+  try {
+    await assert.rejects(
+      gateway.catalogQuery<TestQuery>(input),
+      /fetch failed/
+    )
+
+    const failure = capturedErrors
+      .map(entry => JSON.parse(entry) as {
+        event?: string
+        context?: {
+          authMode?: string
+          buyerIpPresent?: boolean
+        }
+      })
+      .find(entry =>
+        entry.event === 'shopify.storefront.request_failed'
+      )
+
+    assert.equal(failure?.context?.authMode, 'private')
+    assert.equal(failure?.context?.buyerIpPresent, true)
+  } finally {
+    console.error = originalConsoleError
+  }
+})
+
 test('buyerQuery uses private auth with buyer IP and forces no-store', async () => {
   const { gateway, requests } = createGateway()
 

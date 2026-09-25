@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { isGraphQLErrorResponse } from '@/api/graphql/response/isGraphQLErrorResponse'
 import { isGraphQLSuccessResponse } from '@/api/graphql/response/isGraphQLSuccessResponse'
 import { createStorefrontClient } from '@shopify/hydrogen-react/storefront-client'
@@ -755,6 +757,16 @@ function resolveAuthentication({
   buyerIpPresent: boolean
   headers: Record<string, string>
 } {
+  const buyerIp = context?.buyerIp ?? null
+
+  if (hasCredential(config.privateStorefrontToken) && buyerIp) {
+    return {
+      authMode: 'private',
+      buyerIpPresent: true,
+      headers: client.getPrivateTokenHeaders({ buyerIp })
+    }
+  }
+
   if (requestKind === 'catalog') {
     if (!hasCredential(config.publicStorefrontToken)) {
       throw new Error(
@@ -766,16 +778,6 @@ function resolveAuthentication({
       authMode: 'public',
       buyerIpPresent: false,
       headers: client.getPublicTokenHeaders()
-    }
-  }
-
-  const buyerIp = context?.buyerIp ?? null
-
-  if (hasCredential(config.privateStorefrontToken) && buyerIp) {
-    return {
-      authMode: 'private',
-      buyerIpPresent: true,
-      headers: client.getPrivateTokenHeaders({ buyerIp })
     }
   }
 
@@ -886,7 +888,7 @@ export function createHydrogenStorefrontGateway(
 
   return {
     catalogQuery: async input =>
-      dispatch('catalog', input, undefined, input.cache),
+      dispatch('catalog', input, input.context, input.cache),
     buyerQuery: async input =>
       dispatch('buyer', input, input.context, 'no-store'),
     mutation: async input =>
