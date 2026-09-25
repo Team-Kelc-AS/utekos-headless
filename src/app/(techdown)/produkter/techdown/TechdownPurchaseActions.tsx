@@ -15,6 +15,18 @@ export type TechdownPurchasePayload = {
   variants: ProductPurchaseVariant[]
 }
 
+function reportDeferredLead() {
+  void import('@/lib/analytics/reportCommerceInterestLead')
+    .then(({ reportTechdownAddToCartLead }) => {
+      reportTechdownAddToCartLead()
+    })
+    .catch(error => {
+      queueMicrotask(() => {
+        throw error
+      })
+    })
+}
+
 export function TechdownPurchaseActions({
   payload
 }: {
@@ -35,12 +47,31 @@ export function TechdownPurchaseActions({
   function addSelectedVariant() {
     if (!selectedVariant || !canBuy || busy) return
 
-    void addToCart({
-      product: payload.product,
-      variant: selectedVariant,
-      quantity: 1,
-      openCart: true
-    })
+    void (async () => {
+      const { success } = await addToCart({
+        product: payload.product,
+        variant: selectedVariant,
+        quantity: 1,
+        openCart: true
+      })
+
+      if (success) {
+        reportDeferredLead()
+      }
+    })()
+  }
+
+  const leadTrackData = {
+    page: 'techdown',
+    section: 'purchase',
+    target: 'add-to-cart',
+    product_handle: payload.product.handle,
+    ...(selectedVariant ?
+      {
+        variant_id: selectedVariant.id,
+        variant_title: selectedVariant.title
+      }
+    : {})
   }
 
   return (
@@ -48,6 +79,8 @@ export function TechdownPurchaseActions({
       <button
         type='button'
         className={styles.addToCart}
+        data-track='Lead'
+        data-track-data={JSON.stringify(leadTrackData)}
         disabled={!canBuy || busy}
         aria-busy={isPending}
         onClick={addSelectedVariant}

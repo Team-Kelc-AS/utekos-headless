@@ -20,6 +20,10 @@ function orderPaid(): OrderPaid {
         ga_client_id: '123456789.1784368600'
       },
       click_id: { fbclid: 'meta-click', gclid: 'google-click' },
+      campaign: {
+        ad_id: '120246935997000788',
+        source: 'meta'
+      },
       consent: {
         analytics: 'granted',
         marketing: 'granted',
@@ -122,6 +126,13 @@ function orderPaid(): OrderPaid {
     total_tax: '398.00'
   } as unknown as OrderPaid
 }
+
+test('preserves the consented paid-channel identity from checkout', () => {
+  assert.deepEqual(shopifyOrderToCanonicalPurchase(orderPaid()).campaign, {
+    ad_id: '120246935997000788',
+    source: 'meta'
+  })
+})
 
 test('copies only one valid begin_checkout event ID from consented paid order attributes', () => {
   const order = orderPaid()

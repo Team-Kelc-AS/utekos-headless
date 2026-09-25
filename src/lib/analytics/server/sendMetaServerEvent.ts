@@ -252,11 +252,23 @@ export async function sendMetaServerEvent(
   config: MetaConversionsApiConfig,
   dependencies: MetaSenderDependencies = defaultDependencies
 ): Promise<MetaSendResult> {
-  assertMetaServerEvent(event)
+  return sendMetaServerEvents([event], config, dependencies)
+}
+
+export async function sendMetaServerEvents(
+  events: readonly ServerEvent[],
+  config: MetaConversionsApiConfig,
+  dependencies: MetaSenderDependencies = defaultDependencies
+): Promise<MetaSendResult> {
+  if (events.length === 0) {
+    throw new Error('Meta Conversions API requires at least one event')
+  }
+
+  for (const event of events) assertMetaServerEvent(event)
 
   const request = dependencies
     .createRequest(config.accessToken, config.pixelId)
-    .setEvents([event])
+    .setEvents([...events])
     .setPartnerAgent(META_PARTNER_AGENT)
 
   if (config.appSecret) {
@@ -268,9 +280,9 @@ export async function sendMetaServerEvent(
 
   const response = await request.execute()
 
-  if (response.events_received !== 1) {
+  if (response.events_received !== events.length) {
     throw new Error(
-      `Meta Conversions API received ${response.events_received} events; expected 1`
+      `Meta Conversions API received ${response.events_received} events; expected ${events.length}`
     )
   }
 

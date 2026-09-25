@@ -433,8 +433,13 @@ export function readCanonicalPilotRules(root: string) {
       const senderSymbol =
         provider === 'google' ?
           'sendGoogleDataManagerEvent'
+        : event === 'purchase' ?
+          'sendMetaServerEvents'
         : 'sendMetaServerEvent'
-      const senderPath = `src/lib/analytics/server/${senderSymbol}.ts`
+      const senderPath =
+        provider === 'google' ?
+          'src/lib/analytics/server/sendGoogleDataManagerEvent.ts'
+        : 'src/lib/analytics/server/sendMetaServerEvent.ts'
       specs.push(
         {
           fromPath:

@@ -13,7 +13,10 @@ import {
   TechdownSizeSelector,
   TechdownSizeSelectorFallback
 } from './TechdownSizeSelector'
-import { TechdownSpecsAccordion } from './TechdownSpecsAccordion'
+import {
+  TechdownSpecsAccordion,
+  TechdownSpecsAccordionFallback
+} from './TechdownSpecsAccordion'
 import styles from './TechdownContent.module.css'
 
 const { ratingValue, reviewCount } =
@@ -205,14 +208,16 @@ export function TechdownContent() {
           </li>
         </ul>
       </section>
-      <TechdownSpecsAccordion />
+      <Suspense fallback={<TechdownSpecsAccordionFallback />}>
+        <TechdownSpecsAccordion />
+      </Suspense>
       <aside
         id='levering-vilkar'
         className={styles.trustEndnote}
       >
         <p>
-          <span aria-hidden='true'>*</span> Sending samme dag
-          gjelder etter vilkårene for frakt og retur.
+          <span aria-hidden='true'>*</span> Sending av samme dag
+          gjelder ved bestilling man-fre før kl 14.
         </p>
       </aside>
     </div>

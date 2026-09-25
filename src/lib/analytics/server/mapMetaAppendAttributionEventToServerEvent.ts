@@ -57,13 +57,8 @@ export function mapMetaAppendAttributionEventToServerEvent(
         ad_id: event.attribution_data.ad_id,
         attribution_share:
           event.attribution_data.attribution_share,
-        attribution_source:
-          event.attribution_data.attribution_source,
         attribution_value:
-          calculateMetaAppendAttributionValue(
-            event.conversion_value,
-            event.attribution_data.attribution_share
-          ),
+          event.attribution_data.attribution_value,
         touchpoint_ts: event.attribution_data.touchpoint_ts
       },
       original_event_data: event.original_event_data,

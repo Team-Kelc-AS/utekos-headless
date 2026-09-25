@@ -14,10 +14,10 @@
 }
 
 .judgeSummary {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  column-gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   padding-bottom: 16px;
   border-bottom: 1px solid rgb(240 238 233 / 18%);
   color: inherit;
@@ -27,12 +27,13 @@
 .judgeLogoSurface {
   display: flex;
   align-items: center;
+  flex: none;
   width: min(100%, 132px);
   height: 36px;
 }
 
 .judgeSummary .rating {
-  justify-self: center;
+  flex: none;
   line-height: 0;
 }
 
@@ -44,6 +45,7 @@
 }
 
 .judgeCount {
+  flex: none;
   font-size: 12px;
   line-height: 1.35;
   text-align: right;
@@ -118,7 +120,7 @@
   position: relative;
   display: inline;
   margin-inline-start: 0.12em;
-  color: #e97b35;
+  color: #b44701;
   font-size: 0.8em;
   font-weight: 700;
   line-height: 1;
@@ -387,7 +389,7 @@
 }
 
 .eyebrow {
-  color: #e97b35;
+  color: #b44701;
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -417,7 +419,7 @@
   width: 26px;
   height: 26px;
   margin-top: 2px;
-  color: #e97b35;
+  color: #b44701;
 }
 
 .benefits div {
@@ -541,7 +543,7 @@
   display: grid;
   gap: 24px;
   margin-top: 44px;
-  padding-bottom: calc(var(--sticky-cta-offset, 132px) + 32px);
+  padding-bottom: 32px;
   scroll-margin-block: 104px
     calc(var(--sticky-cta-offset, 132px) + 24px);
 }
@@ -639,6 +641,65 @@
 
 .trustEndnote p {
   margin: 0;
+}
+
+.deferredSiteChrome {
+  margin-top: 12px;
+  padding-bottom: calc(var(--sticky-cta-offset, 132px) + 24px);
+}
+
+.siteChrome {
+  display: grid;
+  gap: 0;
+  color: var(--foreground, #f0eee9);
+}
+
+.siteChrome :global([data-journey-section='bottom_navigation']) {
+  background-color: transparent;
+}
+
+.siteChrome
+  :global([data-journey-section='bottom_navigation'] a.bg-jungle) {
+  background-color: #001a18;
+}
+
+.siteChrome
+  :global(
+    [data-journey-section='bottom_navigation'] a.bg-jungle:hover
+  ) {
+  background-color: #010b0a;
+}
+
+.siteChrome
+  :global(
+    [data-journey-section='bottom_navigation'] a .rounded-full.bg-muted
+  ) {
+  background-color: #012622;
+}
+
+.siteChrome
+  :global(
+    [data-journey-section='bottom_navigation']
+      a:hover
+      .rounded-full.bg-muted
+  ) {
+  background-color: #010b0a;
+}
+
+.siteChrome :global(footer .mt-12.border-t) {
+  border-color: color-mix(
+    in oklab,
+    var(--foreground, #f0eee9) 80%,
+    transparent
+  );
+}
+
+.siteChrome :global(section[aria-labelledby='newsletter-heading']) {
+  background-color: transparent;
+}
+
+.siteChromePlaceholder {
+  min-height: 48px;
 }
 
 .judgeSummary:focus-visible,

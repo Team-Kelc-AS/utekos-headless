@@ -53,8 +53,28 @@ test('maps HubSpot Facebook url_tags to campaign, ad set, and ad ids', () => {
       campaign_id: '120246869534650788',
       campaign_name: 'New Sales Campaign',
       adset_id: '120246869534640788',
-      ad_id: '120246935997000788'
+      ad_id: '120246935997000788',
+      source: 'meta'
     }
+  )
+})
+
+test('records one unambiguous paid source and rejects conflicting click sources', () => {
+  assert.deepEqual(
+    resolveCampaignAttribution(
+      'https://utekos.no/?fbclid=meta-click&ad_id=1203',
+      createMemoryStorage(),
+      createMemoryStorage()
+    ),
+    { ad_id: '1203', source: 'meta' }
+  )
+  assert.deepEqual(
+    resolveCampaignAttribution(
+      'https://utekos.no/?fbclid=meta-click&gclid=google-click&ad_id=1203',
+      createMemoryStorage(),
+      createMemoryStorage()
+    ),
+    { ad_id: '1203' }
   )
 })
 

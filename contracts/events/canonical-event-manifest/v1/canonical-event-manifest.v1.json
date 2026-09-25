@@ -49,7 +49,7 @@
       },
       {
         "path": "scripts/contracts/readCanonicalPilotRules.ts",
-        "sha256": "c1e873ec87f4a9df0c9f200549a4e211a42606eec4662ba7d7c31eca199b6513"
+        "sha256": "e111aeba48f95d23ce902bc934a5542e5a7e5fd094521ce74b6c8bdac37749d3"
       },
       {
         "path": "scripts/contracts/readCanonicalPipeline.ts",
@@ -94,6 +94,10 @@
       {
         "path": "src/lib/analytics/beginCheckoutEvent.ts",
         "sha256": "0b35f9732193d55e99fba8d0a536327d65ad3c702c45616c7b733d68a249ef87"
+      },
+      {
+        "path": "src/lib/analytics/campaignAttribution.ts",
+        "sha256": "9fff957b2d308fcb266a55f645598318f2f34a5cfaba64b36d80b4b94d664ed8"
       },
       {
         "path": "src/lib/analytics/canonicalCommerceItem.ts",
@@ -217,7 +221,7 @@
       },
       {
         "path": "src/lib/analytics/purchaseEvent.ts",
-        "sha256": "f3f2b52cc62fda0be2a89c72ff9f9ad3612d25a4c2fe47d2b4fea426c34479f2"
+        "sha256": "e4645cc154166af12ce01c45bbb2adfbcdc2776ea78b12c61f6f15b827e4349e"
       },
       {
         "path": "src/lib/analytics/refundEvent.ts",
@@ -405,7 +409,7 @@
       },
       {
         "path": "src/lib/analytics/server/dispatchCanonicalPurchaseToMeta.ts",
-        "sha256": "4a0b4c7bf65a01ca34d073000a03e7775bece9d54f42159ec42c9a9b1366b4f6"
+        "sha256": "5d35864d632d2ee0038920debb159333474085a0a36ec031e2f92722dd9cc3ba"
       },
       {
         "path": "src/lib/analytics/server/dispatchCanonicalPurchaseToMicrosoftUet.ts",
@@ -1073,7 +1077,7 @@
       },
       {
         "path": "src/lib/analytics/server/sendMetaServerEvent.ts",
-        "sha256": "1fe320a814de586ac4c24459d3ff83962c8c40fe016a6c43d38b34b3891627b4"
+        "sha256": "7ebfcf5892a1c6568c952e6a20d67895e48571cd020c866f4be42186e13a50ea"
       },
       {
         "path": "src/lib/analytics/server/sendMicrosoftUetCapiAddToCart.ts",
@@ -22357,6 +22361,54 @@
                 }
               ]
             },
+            "campaign": {
+              "type": "object",
+              "properties": {
+                "campaign_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "campaign_name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "adset_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "adset_name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "ad_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "ad_name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "source": {
+                  "type": "string",
+                  "enum": [
+                    "google",
+                    "meta",
+                    "microsoft",
+                    "pinterest",
+                    "snapchat",
+                    "tiktok",
+                    "x"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
             "page_view_id": {
               "type": "string",
               "format": "uuid",
@@ -24783,7 +24835,7 @@
             },
             "to": {
               "path": "src/lib/analytics/server/sendMetaServerEvent.ts",
-              "symbol": "sendMetaServerEvent"
+              "symbol": "sendMetaServerEvents"
             },
             "relation": "sends",
             "evidence": "source_verified"

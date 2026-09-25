@@ -1,4 +1,5 @@
 import {
+  campaignAttributionSourceSchema,
   campaignAttributionValueSchema,
   parseCampaignAttribution,
   type CampaignAttribution
@@ -125,8 +126,62 @@ function readUrlAttribution(searchParams: URLSearchParams) {
     adset_id: firstQueryValue(searchParams, ['adset_id', 'hsa_grp']),
     adset_name: firstQueryValue(searchParams, ['adset_name']),
     ad_id: firstQueryValue(searchParams, ['ad_id', 'hsa_ad']),
-    ad_name: firstQueryValue(searchParams, ['ad_name'])
+    ad_name: firstQueryValue(searchParams, ['ad_name']),
+    source: resolvePaidAttributionSource(searchParams)
   })
+}
+
+const PAID_CLICK_SOURCE_PARAMETERS = {
+  google: ['dclid', 'gbraid', 'gclid', 'wbraid'],
+  meta: ['fbclid'],
+  microsoft: ['msclkid'],
+  pinterest: ['epik'],
+  snapchat: ['sc_click_id', SNAPCHAT_CLICK_ID_QUERY_PARAMETER],
+  tiktok: ['ttclid'],
+  x: ['twclid']
+} as const
+
+const UTM_SOURCE_ALIASES = {
+  bing: 'microsoft',
+  facebook: 'meta',
+  fb: 'meta',
+  google: 'google',
+  ig: 'meta',
+  instagram: 'meta',
+  meta: 'meta',
+  microsoft: 'microsoft',
+  pinterest: 'pinterest',
+  snapchat: 'snapchat',
+  tiktok: 'tiktok',
+  twitter: 'x',
+  x: 'x'
+} as const
+
+function resolvePaidAttributionSource(
+  searchParams: URLSearchParams
+) {
+  const clickSources = Object.entries(
+    PAID_CLICK_SOURCE_PARAMETERS
+  ).flatMap(([source, parameters]) =>
+    parameters.some(parameter => searchParams.has(parameter)) ?
+      [source]
+    : []
+  )
+
+  if (clickSources.length === 1) {
+    return campaignAttributionSourceSchema.parse(clickSources[0])
+  }
+  if (clickSources.length > 1) return undefined
+
+  const utmSource = searchParams
+    .get('utm_source')
+    ?.trim()
+    .toLowerCase()
+  if (!utmSource) return undefined
+
+  return UTM_SOURCE_ALIASES[
+    utmSource as keyof typeof UTM_SOURCE_ALIASES
+  ]
 }
 
 function hasFreshAttributionBoundary(

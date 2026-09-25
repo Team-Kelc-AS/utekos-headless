@@ -111,6 +111,11 @@ function createDependencies(
   return {
     answer: async () => outcome,
     checkRateLimit: async () => ({ allowed: true }),
+    environment: {
+      VERCEL_ENV: 'preview',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
+    },
     now: () => 1_000,
     ...overrides
   }
@@ -179,6 +184,34 @@ test('rejects missing and cross-origin requests', async t => {
 
 test('the direct AI SDK 6 message type is compatible with the installed React client type', () => {
   assert.equal(clientMessageTypeIsCompatible, true)
+})
+
+test('returns not found before parsing or invoking dependencies in production', async () => {
+  let dependencyCalls = 0
+  const handler = createAssistantRouteHandler(
+    createDependencies({
+      answer: async () => {
+        dependencyCalls += 1
+        return outcome
+      },
+      checkRateLimit: async () => {
+        dependencyCalls += 1
+        return { allowed: true }
+      },
+      environment: {
+        VERCEL_ENV: 'production',
+        CUSTOMER_ASSISTANT_ENABLED: 'true',
+        CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
+      }
+    })
+  )
+
+  await assertErrorResponse(
+    await handler(createRequest({ body: 'not-json' })),
+    404,
+    'not_found'
+  )
+  assert.equal(dependencyCalls, 0)
 })
 
 test('route composition exposes requests only in configured Vercel deployments', () => {

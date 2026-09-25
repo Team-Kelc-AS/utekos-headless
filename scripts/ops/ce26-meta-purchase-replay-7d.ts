@@ -268,7 +268,9 @@ async function main() {
         const receipt = await dispatchCanonicalPurchaseToMeta(
           event,
           {
+            mapAppendEvent: () => undefined,
             mapEvent: mapCanonicalPurchaseToMeta,
+            nowUnixSeconds: () => Math.floor(Date.now() / 1000),
             readConfig: () => {
               const config = readMetaConversionsApiConfig()
               return {
@@ -279,7 +281,15 @@ async function main() {
                 : {})
               }
             },
-            sendEvent: sendMetaServerEvent
+            sendEvents: async (events, config) => {
+              const [metaEvent] = events
+              if (!metaEvent || events.length !== 1) {
+                throw new Error(
+                  'Purchase replay requires exactly one Meta event'
+                )
+              }
+              return sendMetaServerEvent(metaEvent, config)
+            }
           }
         )
         summary.sent += 1

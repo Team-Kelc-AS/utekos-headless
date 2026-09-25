@@ -8,6 +8,7 @@ import {
   createMetaHttpService,
   readMetaConversionsApiConfig,
   sendMetaServerEvent,
+  sendMetaServerEvents,
   type MetaEventRequest
 } from './sendMetaServerEvent'
 
@@ -125,6 +126,41 @@ test('rejects a provider response that did not accept exactly one event', async 
     ),
     /received 0 events; expected 1/
   )
+})
+
+test('sends a validated Meta event batch and requires full acceptance', async () => {
+  let eventCount = 0
+  const request = {
+    execute: async () => ({ events_received: 2 }),
+    setAppSecret() { return this },
+    setEvents(events: ServerEvent[]) {
+      eventCount = events.length
+      return this
+    },
+    setHttpService() { return this },
+    setPartnerAgent() { return this },
+    setTestEventCode() { return this }
+  } satisfies MetaEventRequest
+  const events = ['Purchase', 'AppendAttribution'].map(name =>
+    new ServerEvent()
+      .setActionSource('website')
+      .setEventId(`${name}-id`)
+      .setEventName(name)
+      .setEventSourceUrl('https://utekos.no/')
+      .setEventTime(1_756_684_800)
+      .setUserData(
+        new UserData().setClientUserAgent('Mozilla/5.0')
+      )
+  )
+
+  const result = await sendMetaServerEvents(
+    events,
+    { accessToken: 'token', pixelId: 'pixel' },
+    { createRequest: () => request }
+  )
+
+  assert.equal(eventCount, 2)
+  assert.equal(result.eventsReceived, 2)
 })
 
 test('rejects events without the base Meta server parameters before creating a request', async () => {

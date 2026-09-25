@@ -282,6 +282,11 @@ export function KlarnaExpressCheckoutButton({
     >
       <div
         id={containerId}
+        data-track='Lead'
+        data-track-data={JSON.stringify({
+          target: 'klarna_express_checkout',
+          events: ['Lead', 'InitiateCheckout']
+        })}
         className={cn(
           buttonSizing === 'natural' ?
             styles.naturalHost

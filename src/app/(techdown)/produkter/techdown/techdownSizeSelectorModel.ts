@@ -25,11 +25,13 @@ export type TechdownSizeChoice = {
   href: string
   label: string
   tracking: Omit<CanonicalSelectItemCustomData, 'interaction_id'>
+  variant: ProductPurchaseVariant
   variantId: string
 }
 
 export type TechdownSizeSelectorModel = {
   initialVariantId: string
+  product: ProductCommerceModel
   choices: TechdownSizeChoice[]
 }
 
@@ -188,12 +190,14 @@ export function createTechdownSizeSelectorModel(
       href,
       label: size.size,
       tracking: trackingData,
+      variant,
       variantId: optionValue.variantId
     }
   })
 
   return {
     initialVariantId: publicOptions.selectedVariantId,
+    product: commerceProduct,
     choices
   }
 }

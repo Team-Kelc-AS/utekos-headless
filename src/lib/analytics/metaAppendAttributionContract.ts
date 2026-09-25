@@ -10,6 +10,9 @@ import {
 export const META_APPEND_ATTRIBUTION_MAX_DELAY_SECONDS =
   48 * 60 * 60
 
+// Events Manager label for the configured Custom Attribution Source.
+// Meta infers the source from the destination dataset; this value is not
+// part of the AppendAttribution Conversions API payload.
 export const META_CUSTOM_ATTRIBUTION_SOURCE_NAME =
   'ClickToAddAttribution' as const
 
@@ -19,15 +22,12 @@ const metaCurrencySchema = z.string().regex(/^[A-Z]{3}$/u)
 const metaAppendAttributionDataSchema = z.strictObject({
   ad_id: metaAdIdSchema,
   attribution_share: z.number().finite().min(0).max(1),
-  attribution_source: z.literal(
-    META_CUSTOM_ATTRIBUTION_SOURCE_NAME
-  ),
+  attribution_value: z.number().finite().nonnegative(),
   touchpoint_ts: metaUnixSecondsSchema
 })
 
 const commonAppendAttributionShape = {
   attribution_data: metaAppendAttributionDataSchema,
-  conversion_value: z.number().finite().nonnegative(),
   custom_data: z.strictObject({
     currency: metaCurrencySchema
   }),

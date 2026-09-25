@@ -72,6 +72,7 @@ const answerCustomerAssistantRequest =
 const handleAssistantRequest = createAssistantRouteHandler({
   answer: answerCustomerAssistantRequest,
   checkRateLimit,
+  environment: process.env,
   now
 })
 

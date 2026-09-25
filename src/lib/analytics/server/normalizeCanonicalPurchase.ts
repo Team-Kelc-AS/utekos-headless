@@ -108,12 +108,14 @@ export function normalizeCanonicalPurchase(
     }
 
     delete normalized.click_id
+    delete normalized.campaign
     delete normalized.external_id
     delete normalized.impression_id
     delete normalized.user_data
   } else {
     if (parsed.browser_id)
       normalized.browser_id = parsed.browser_id
+    if (parsed.campaign) normalized.campaign = parsed.campaign
     if (parsed.click_id) normalized.click_id = parsed.click_id
     if (parsed.external_id)
       normalized.external_id = parsed.external_id

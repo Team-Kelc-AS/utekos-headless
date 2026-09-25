@@ -1,4 +1,5 @@
 // Path: src/components/frontpage/PreFooterNavigation.tsx
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
@@ -7,10 +8,29 @@ import { NavLinks } from './NavLinks'
 
 type PreFooterNavigationProps = {
   variant?: 'default' | 'comfyrobe'
+  title?: ReactNode
+}
+
+function DefaultTitle() {
+  return (
+    <>
+      <span className='block'>Utforsk mer</span>
+      <span className='flex items-baseline gap-3'>
+        <span>
+          av <span className='sr-only'>Utekos</span>
+        </span>
+        <UtekosWordmark
+          aria-hidden
+          className='h-[0.72em] w-auto translate-y-[0.04em] text-foreground'
+        />
+      </span>
+    </>
+  )
 }
 
 export function PreFooterNavigation({
-  variant = 'default'
+  variant = 'default',
+  title
 }: PreFooterNavigationProps) {
   const isComfyrobe = variant === 'comfyrobe'
 
@@ -25,16 +45,7 @@ export function PreFooterNavigation({
       <div className='mx-auto max-w-5xl px-6'>
         <div className='mb-12 text-left'>
           <h2 className='leading-heading-level-two mb-4 font-sans font-semibold text-5xl text-foreground md:text-6xl'>
-            <span className='block'>Utforsk mer</span>
-            <span className='flex items-baseline gap-3'>
-              <span>
-                av <span className='sr-only'>Utekos</span>
-              </span>
-              <UtekosWordmark
-                aria-hidden
-                className='h-[0.72em] w-auto translate-y-[0.04em] text-foreground'
-              />
-            </span>
+            {title ?? <DefaultTitle />}
           </h2>
         </div>
 

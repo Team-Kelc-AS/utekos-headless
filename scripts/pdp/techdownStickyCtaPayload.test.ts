@@ -35,8 +35,13 @@ test('TechDown StickyCTA serializes only its purchase summary', async () => {
   )
   assert.doesNotMatch(
     clientSource,
-    /KlarnaProductExpressCheckout|lucide-react/,
-    'Klarna SDK and catalog icons must not be part of the initial sticky CTA'
+    /KlarnaProductExpressCheckout|lucide-react|@\/components\/ui\/tooltip/,
+    'Klarna SDK, catalog icons, and tooltip must not be part of the initial sticky CTA'
+  )
+  assert.match(
+    clientSource,
+    /anchor=\{triggerRef/,
+    'Variant popover must anchor to the product trigger without baking Popover into the initial chunk'
   )
   assert.match(
     clientSource,
@@ -55,7 +60,13 @@ test('TechDown StickyCTA serializes only its purchase summary', async () => {
   )
   assert.match(
     catalogSource,
-    /fetch\(['"]\/api\/commerce\/sticky-catalog['"]/
+    /createPortal/,
+    'Variant list must portal above the sticky bar without Base UI Popover dismiss races'
+  )
+  assert.doesNotMatch(
+    catalogSource,
+    /@base-ui\/react\/popover/,
+    'Variant list must not depend on Popover in the deferred catalog chunk'
   )
   assert.match(
     routeSource,
@@ -72,10 +83,30 @@ test('TechDown StickyCTA serializes only its purchase summary', async () => {
     /availableForSale: variant\.availableForSale/,
     'The DTO must retain variant availability'
   )
+  assert.doesNotMatch(
+    clientSource,
+    /from ['"]@\/lib\/analytics\/selectItemReporter['"]/,
+    'select_item must stay deferred so it does not inflate the sticky CTA chunk'
+  )
+  assert.doesNotMatch(
+    clientSource,
+    /from ['"]@\/lib\/analytics\/viewItemReporter['"]/,
+    'view_item must stay deferred so it does not inflate the sticky CTA chunk'
+  )
   assert.match(
-    dataSource,
-    /price: variant\.price/,
-    'The DTO must retain variant price'
+    clientSource,
+    /import\(['"]@\/lib\/analytics\/selectItemReporter['"]\)/,
+    'Catalog variant picks must report select_item'
+  )
+  assert.match(
+    clientSource,
+    /import\(['"]@\/lib\/analytics\/viewItemReporter['"]\)/,
+    'Catalog variant picks must report view_item'
+  )
+  assert.match(
+    clientSource,
+    /itemListId:\s*['"]sticky-cta-catalog['"]/,
+    'Sticky catalog selections must use a dedicated item_list_id'
   )
 })
 

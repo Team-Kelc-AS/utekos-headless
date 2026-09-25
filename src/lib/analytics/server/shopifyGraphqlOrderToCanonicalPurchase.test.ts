@@ -39,6 +39,19 @@ test('preserves the exact consented checkout correlation for paid-order reconcil
   )
 })
 
+test('preserves consented paid-channel identity during reconciliation', () => {
+  const order = paidOrder()
+  order.customAttributes.push(
+    { key: 'utekos_ad_id', value: '120246935997000788' },
+    { key: 'utekos_campaign_source', value: 'meta' }
+  )
+
+  assert.deepEqual(
+    shopifyGraphqlOrderToCanonicalPurchase(order).campaign,
+    { ad_id: '120246935997000788', source: 'meta' }
+  )
+})
+
 function paidOrder(
   overrides: Partial<ShopifyCommerceReconciliationOrder> = {}
 ): ShopifyCommerceReconciliationOrder {

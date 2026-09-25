@@ -6,10 +6,105 @@ import {
   useEffect,
   useRef,
   useState,
-  type KeyboardEvent
+  type KeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+  type RefObject
 } from 'react'
 import { techdownImages as images } from './techdownImages'
 import styles from './TechdownGallery.module.css'
+
+const AXIS_LOCK_PX = 10
+
+type AxisDrag = {
+  pointerId: number
+  startX: number
+  startY: number
+  originScroll: number
+  axis: 'x' | 'y' | null
+}
+
+function useHorizontalSwipe(
+  scrollerRef: RefObject<HTMLElement | null>,
+  onCommit?: (scrollLeft: number) => void
+) {
+  const drag = useRef<AxisDrag | null>(null)
+
+  const endDrag = useCallback(
+    (event: ReactPointerEvent<HTMLElement>) => {
+      const state = drag.current
+      const scroller = scrollerRef.current
+      if (!state || state.pointerId !== event.pointerId) return
+
+      if (
+        scroller?.hasPointerCapture(event.pointerId)
+      ) {
+        scroller.releasePointerCapture(event.pointerId)
+      }
+
+      if (state.axis === 'x' && scroller) {
+        onCommit?.(scroller.scrollLeft)
+      }
+
+      scroller?.removeAttribute('data-dragging')
+      drag.current = null
+    },
+    [onCommit, scrollerRef]
+  )
+
+  return {
+    onPointerDown(event: ReactPointerEvent<HTMLElement>) {
+      if (event.pointerType === 'mouse' && event.button !== 0) {
+        return
+      }
+      const scroller = scrollerRef.current
+      if (!scroller) return
+
+      drag.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        originScroll: scroller.scrollLeft,
+        axis: null
+      }
+    },
+    onPointerMove(event: ReactPointerEvent<HTMLElement>) {
+      const state = drag.current
+      const scroller = scrollerRef.current
+      if (!state || state.pointerId !== event.pointerId || !scroller) {
+        return
+      }
+
+      const dx = event.clientX - state.startX
+      const dy = event.clientY - state.startY
+
+      if (state.axis === null) {
+        if (
+          Math.abs(dx) < AXIS_LOCK_PX &&
+          Math.abs(dy) < AXIS_LOCK_PX
+        ) {
+          return
+        }
+
+        // Only claim the gesture for the carousel on clear horizontal intent.
+        if (Math.abs(dx) <= Math.abs(dy)) {
+          drag.current = null
+          return
+        }
+
+        state.axis = 'x'
+        scroller.setPointerCapture(event.pointerId)
+        scroller.dataset.dragging = 'true'
+      }
+
+      if (state.axis !== 'x') return
+
+      event.preventDefault()
+      scroller.scrollLeft = state.originScroll - dx
+    },
+    onPointerUp: endDrag,
+    onPointerCancel: endDrag
+  }
+}
 
 export function TechdownGallery() {
   const [active, setActive] = useState(0)
@@ -67,6 +162,24 @@ export function TechdownGallery() {
     [request]
   )
 
+  const commitViewportSwipe = useCallback(
+    (scrollLeft: number) => {
+      const width = viewport.current?.clientWidth ?? 1
+      const index = Math.round(scrollLeft / width)
+      select(
+        Math.max(0, Math.min(images.length - 1, index)),
+        true
+      )
+    },
+    [select]
+  )
+
+  const viewportSwipe = useHorizontalSwipe(
+    viewport,
+    commitViewportSwipe
+  )
+  const thumbnailSwipe = useHorizontalSwipe(thumbnails)
+
   useEffect(() => {
     const root = viewport.current
     if (!root) return
@@ -82,13 +195,19 @@ export function TechdownGallery() {
             (entry.target as HTMLElement).dataset.index
           )
           request(index)
-          if (entry.intersectionRatio >= 0.6) select(index)
+          if (
+            entry.intersectionRatio >= 0.6 &&
+            root.dataset.dragging !== 'true'
+          ) {
+            select(index)
+          }
         }
       },
       { root, threshold: [0, 0.01, 0.6] }
     )
     for (const slide of root.children) observer.observe(slide)
     const resize = new ResizeObserver(() => {
+      if (root.dataset.dragging === 'true') return
       select(activeIndex.current, true)
     })
     resize.observe(root)
@@ -133,8 +252,9 @@ export function TechdownGallery() {
         className={`${styles.viewport} rounded-lg`}
         tabIndex={0}
         role='group'
-        aria-label='Hovedbilder. Sveip eller bruk piltastene for å bytte bilde.'
+        aria-label='Hovedbilder. Sveip horisontalt eller bruk piltastene for å bytte bilde.'
         onKeyDown={event => navigate(event)}
+        {...viewportSwipe}
       >
         {images.map((image, index) => (
           <div
@@ -145,7 +265,7 @@ export function TechdownGallery() {
             role='group'
             aria-roledescription='bilde'
             aria-label={`${image.id} av ${images.length}`}
-            inert={active !== index}
+            aria-hidden={active !== index}
           >
             {requested.has(index) && !failed.has(index) && (
               <Image
@@ -209,6 +329,7 @@ export function TechdownGallery() {
         role='group'
         aria-label='Velg produktbilde'
         onKeyDown={event => navigate(event, true)}
+        {...thumbnailSwipe}
       >
         {images.map((image, index) => (
           <button

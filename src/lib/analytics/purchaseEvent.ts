@@ -4,6 +4,7 @@ import { canonicalEventEnvelopeSchema } from './canonicalEventEnvelope'
 import { orderConsentSnapshotSchema } from './checkoutConsentSnapshot'
 import { metaCustomerSegmentationSchema } from './metaCustomerSegmentation'
 import { checkoutJourneyLinkReasonSchema } from './checkoutJourneyLinkReason'
+import { campaignAttributionSchema } from './campaignAttribution'
 
 const purchaseItemSchema = z.strictObject({
   item_id: z.string().min(1),
@@ -47,6 +48,7 @@ export const canonicalPurchaseSchema = z
     consent: orderConsentSnapshotSchema,
     event_name: z.literal('purchase'),
     source: z.enum(['webhook', 'server']),
+    campaign: z.optional(campaignAttributionSchema),
     page_view_id: z.uuid().optional(),
     begin_checkout_event_id: z.uuid().optional(),
     journey_link_reason:

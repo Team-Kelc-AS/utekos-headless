@@ -82,6 +82,20 @@ export function TechdownSizeSelectorClient({
         )
       })
 
+    void import('@/lib/analytics/viewItemReporter')
+      .then(({ reportCanonicalViewItem }) => {
+        reportCanonicalViewItem({
+          product: model.product,
+          variant: choice.variant
+        })
+      })
+      .catch(error => {
+        reportDeferredTrackingError(
+          error,
+          'techdown.size_selector.view_item_tracking_import'
+        )
+      })
+
     void import('@vercel/analytics')
       .then(({ track }) => {
         const item = customData.items[0]

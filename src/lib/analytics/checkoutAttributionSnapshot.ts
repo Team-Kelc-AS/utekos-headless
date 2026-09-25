@@ -10,7 +10,6 @@ import {
 } from './canonicalEventEnvelope'
 import type { CanonicalClickIds } from './canonicalSignalContract'
 import {
-  CAMPAIGN_ATTRIBUTION_KEYS,
   campaignAttributionSchema,
   parseCampaignAttribution,
   type CampaignAttribution
@@ -69,11 +68,9 @@ const campaignAttributeKeys = {
   adset_id: 'utekos_adset_id',
   adset_name: 'utekos_adset_name',
   ad_id: 'utekos_ad_id',
-  ad_name: 'utekos_ad_name'
-} as const satisfies Record<
-  (typeof CAMPAIGN_ATTRIBUTION_KEYS)[number],
-  string
->
+  ad_name: 'utekos_ad_name',
+  source: 'utekos_campaign_source'
+} as const
 
 const identifierValueSchema = z
   .string()
@@ -360,7 +357,7 @@ export function parseOrderAttributionFromNoteAttributes(
     parseOrderConsentFromNoteAttributes(noteAttributes)
   const browserId: Record<string, string> = {}
   const clickId: Record<string, string> = {}
-  const campaign: Partial<CampaignAttribution> = {}
+  const campaign: Record<string, string> = {}
   const userData: z.infer<typeof canonicalUserDataSchema> = {}
   const experiment =
     consent.analytics === 'granted' ?
@@ -386,7 +383,7 @@ export function parseOrderAttributionFromNoteAttributes(
     )) {
       const value = attributes.get(attributeKey)
       if (value) {
-        campaign[field as keyof CampaignAttribution] = value
+        campaign[field] = value
       }
     }
 

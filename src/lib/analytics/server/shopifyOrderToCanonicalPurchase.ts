@@ -189,6 +189,9 @@ export function shopifyOrderToCanonicalPurchase(
     ...(attribution.browser_id ?
       { browser_id: attribution.browser_id }
     : {}),
+    ...(attribution.campaign ?
+      { campaign: attribution.campaign }
+    : {}),
     ...(clickId ? { click_id: clickId } : {}),
     ...(attribution.external_id ?
       { external_id: attribution.external_id }

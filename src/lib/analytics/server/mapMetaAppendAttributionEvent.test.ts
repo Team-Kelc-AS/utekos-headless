@@ -3,7 +3,6 @@ import test from 'node:test'
 import {
   assertMetaAppendAttributionIsSendable,
   getObservedMetaFbcCreationTimestamp,
-  META_CUSTOM_ATTRIBUTION_SOURCE_NAME,
   type MetaAppendAttributionEvent
 } from '../metaAppendAttributionContract'
 import {
@@ -58,10 +57,9 @@ const webEvent: MetaAppendAttributionEvent = {
   attribution_data: {
     ad_id: '120312345678901234',
     attribution_share: 0.25,
-    attribution_source: META_CUSTOM_ATTRIBUTION_SOURCE_NAME,
+    attribution_value: 447.5,
     touchpoint_ts: touchpointTime
   },
-  conversion_value: 1790,
   custom_data: { currency: 'NOK' },
   event_id: 'append-order-1001-ad-120312345678901234',
   event_name: 'AppendAttribution',
@@ -99,7 +97,6 @@ type NormalizedAppendAttribution = {
   attribution_data: {
     ad_id: string
     attribution_share: number
-    attribution_source: typeof META_CUSTOM_ATTRIBUTION_SOURCE_NAME
     attribution_value: number
     touchpoint_ts: number
   }
@@ -140,7 +137,6 @@ test('maps a consented website attribution passback with exact match keys', () =
   assert.deepEqual(normalized.attribution_data, {
     ad_id: '120312345678901234',
     attribution_share: 0.25,
-    attribution_source: META_CUSTOM_ATTRIBUTION_SOURCE_NAME,
     attribution_value: 447.5,
     touchpoint_ts: touchpointTime
   })
@@ -181,10 +177,9 @@ test('maps iOS attribution app_data and preserves disabled tracking flags', () =
     attribution_data: {
       ad_id: '120312345678901234',
       attribution_share: 1,
-      attribution_source: META_CUSTOM_ATTRIBUTION_SOURCE_NAME,
+      attribution_value: 1790,
       touchpoint_ts: touchpointTime
     },
-    conversion_value: 1790,
     custom_data: { currency: 'NOK' },
     event_id: 'append-app-order-1001',
     event_name: 'AppendAttribution',
@@ -230,7 +225,7 @@ test('maps iOS attribution app_data and preserves disabled tracking flags', () =
   assert.equal(normalized.attribution_data.attribution_value, 1790)
 })
 
-test('rejects any attribution source other than ClickToAddAttribution', () => {
+test('rejects the legacy attribution_source payload field', () => {
   assert.throws(() =>
     mapMetaAppendAttributionEventToServerEvent({
       ...webEvent,
@@ -248,7 +243,8 @@ test('retains a zero attribution share instead of dropping it', () => {
       ...webEvent,
       attribution_data: {
         ...webEvent.attribution_data,
-        attribution_share: 0
+        attribution_share: 0,
+        attribution_value: 0
       },
       event_id: 'append-zero-credit'
     }).normalize() as unknown as NormalizedAppendAttribution
@@ -304,10 +300,9 @@ test('requires iOS campaign_ids and Android madid', () => {
     attribution_data: {
       ad_id: '120312345678901234',
       attribution_share: 1,
-      attribution_source: META_CUSTOM_ATTRIBUTION_SOURCE_NAME,
+      attribution_value: 1790,
       touchpoint_ts: touchpointTime
     },
-    conversion_value: 1790,
     custom_data: { currency: 'NOK' },
     event_id: 'append-app-invalid',
     event_name: 'AppendAttribution',

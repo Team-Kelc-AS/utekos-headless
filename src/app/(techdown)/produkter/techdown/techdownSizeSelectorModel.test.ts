@@ -111,4 +111,7 @@ test('builds the public TechDown size model from adjacent Shopify variants', () 
     model.choices[0]?.tracking.items[0]?.variant_id,
     medium.id
   )
+  assert.equal(model.product.handle, 'utekos-techdown')
+  assert.equal(model.choices[0]?.variant.id, medium.id)
+  assert.equal(model.choices[1]?.variant.id, large.id)
 })

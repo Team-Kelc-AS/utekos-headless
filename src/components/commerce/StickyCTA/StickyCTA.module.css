@@ -106,45 +106,6 @@
   text-align: left;
   cursor: pointer;
 }
-.tooltipPositioner {
-  z-index: 100;
-}
-.tooltipContent {
-  position: relative;
-  z-index: 100;
-  margin: 0;
-  border: 0;
-  border-radius: 16px;
-  padding: 10px 16px;
-  background: #fff;
-  color: #111;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: -0.011em;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 28%);
-}
-
-.tooltipContent :global([class*='rotate-45']) {
-  display: none;
-}
-.tooltipContent p {
-  margin: 0;
-}
-.tooltipContent::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -6px;
-  width: 12px;
-  height: 12px;
-  background: #fff;
-  border-bottom-right-radius: 3px;
-  transform: translateX(-50%) rotate(45deg);
-}
-.tooltipArrow {
-  display: none;
-}
 .productName {
   min-width: 0;
   margin: 0;
@@ -168,7 +129,7 @@
   width: 44px;
   height: 52px;
   border-radius: 8px;
-  object-fit: cover;
+  object-fit: contain;
 }
 .check {
   flex: none;
@@ -275,15 +236,39 @@
   font-size: 13px;
   cursor: not-allowed;
 }
-.positioner {
+.catalogLayer {
+  position: fixed;
+  inset: 0;
   z-index: 50;
+  pointer-events: none;
+}
+.backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: color-mix(
+    in srgb,
+    var(--background, #012622) 45%,
+    transparent
+  );
+  cursor: pointer;
+  pointer-events: auto;
 }
 .popup {
-  font-weight: 400;
+  pointer-events: auto;
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  right: 12px;
+  bottom: calc(var(--sticky-cta-offset, 120px) + 8px);
+  margin-inline: auto;
+  font-weight: 500;
   display: flex;
   flex-direction: column;
   width: min(440px, calc(100vw - 24px));
-  max-height: min(520px, var(--available-height));
+  max-height: min(520px, calc(100dvh - var(--sticky-cta-offset, 120px) - 24px));
   overflow: hidden;
   border: 1px solid
     color-mix(
@@ -318,7 +303,7 @@
   margin: 0;
   font-size: 20px;
   line-height: 1.25;
-  font-weight: 650;
+  font-weight: 800;
 }
 .description {
   margin: 4px 0 0;
@@ -425,7 +410,7 @@
 }
 @media (min-width: 768px) {
   .reserve,
-  .positioner {
+  .catalogLayer {
     display: none;
   }
 }

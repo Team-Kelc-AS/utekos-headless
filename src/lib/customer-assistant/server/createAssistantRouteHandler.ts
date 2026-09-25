@@ -37,6 +37,7 @@ export type AssistantRouteDependencies = {
   checkRateLimit: (
     input: RateLimitInput
   ) => Promise<{ allowed: boolean }>
+  environment: AssistantRolloutEnvironment
   now: () => number
 }
 
@@ -326,6 +327,14 @@ export function createAssistantRouteHandler(
     request: Request,
     context: AssistantRouteRequestContext = {}
   ): Promise<Response> {
+    if (
+      resolveAssistantDeploymentRolloutPercent(
+        dependencies.environment
+      ) === 0
+    ) {
+      return errorResponse('not_found', 404)
+    }
+
     if (!hasSameOrigin(request)) {
       return errorResponse('forbidden_origin', 403)
     }

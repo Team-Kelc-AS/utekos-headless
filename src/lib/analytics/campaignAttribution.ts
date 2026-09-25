@@ -13,6 +13,16 @@ export const campaignAttributionValueSchema = z
   .string()
   .check(z.trim(), z.minLength(1), z.maxLength(500))
 
+export const campaignAttributionSourceSchema = z.enum([
+  'google',
+  'meta',
+  'microsoft',
+  'pinterest',
+  'snapchat',
+  'tiktok',
+  'x'
+])
+
 export const campaignAttributionSchema = z
   .strictObject({
     campaign_id: z.optional(campaignAttributionValueSchema),
@@ -20,7 +30,8 @@ export const campaignAttributionSchema = z
     adset_id: z.optional(campaignAttributionValueSchema),
     adset_name: z.optional(campaignAttributionValueSchema),
     ad_id: z.optional(campaignAttributionValueSchema),
-    ad_name: z.optional(campaignAttributionValueSchema)
+    ad_name: z.optional(campaignAttributionValueSchema),
+    source: z.optional(campaignAttributionSourceSchema)
   })
   .check(
     z.refine(
@@ -56,6 +67,11 @@ export function parseCampaignAttribution(
       campaignAttributionValueSchema.safeParse(value)
     if (parsed.success) candidate[key] = parsed.data
   }
+
+  const source = campaignAttributionSourceSchema.safeParse(
+    (input as Record<string, unknown>).source
+  )
+  if (source.success) candidate.source = source.data
 
   const parsed = campaignAttributionSchema.safeParse(candidate)
   return parsed.success ? parsed.data : undefined
