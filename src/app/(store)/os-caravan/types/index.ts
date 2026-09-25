@@ -24,11 +24,9 @@ export type NbccProduct = {
 
 export type NbccUseCase = { title: string; description: string }
 
-export type NbccStep = { title: string; description: string }
-
 export type NbccFaqItem = { question: string; answer: string }
 
-export type NbccAiSummaryIntent = 'how-to-use' | 'sizes'
+export type NbccAiSummaryIntent = 'sizes'
 
 export type NbccAiSummarySection = {
   title: string
@@ -117,7 +115,6 @@ export type NbccAiSummaryButtonProps = {
 }
 
 export type NbccAiSummarySectionBodyProps = {
-  intent: NbccAiSummaryIntent
   section: NbccAiSummarySection
 }
 
@@ -150,7 +147,6 @@ export type NbccProductCarouselProps = {
 
 export type NbccHeroTracking = {
   primary: NbccTrackingData
-  secondary: NbccTrackingData
 }
 
 export type NbccProductSectionVariantMatch = {

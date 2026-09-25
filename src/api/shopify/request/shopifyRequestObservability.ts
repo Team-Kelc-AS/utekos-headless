@@ -32,6 +32,9 @@ import type {
   const requestIdInMessagePattern =
     /Request ID:\s*([A-Za-z0-9-]+)/i
 
+  const NEXT_PRERENDER_FETCH_ABORT_MESSAGE =
+    'During prerendering, fetch() rejects when the prerender is complete'
+
   function isShopifyGraphQLOperationType(
     value: string | undefined
   ): value is ShopifyGraphQLOperationType {
@@ -141,6 +144,17 @@ import type {
     }
   }
   
+  function isNextPrerenderFetchAbort(
+    error: unknown
+  ): boolean {
+    return (
+      error instanceof Error &&
+      error.message.includes(
+        NEXT_PRERENDER_FETCH_ABORT_MESSAGE
+      )
+    )
+  }
+
   export function classifyShopifyRequestError({
     error,
     didTimeout,
@@ -150,6 +164,10 @@ import type {
     didTimeout: boolean
     callerSignal?: AbortSignal
   }): string {
+    if (isNextPrerenderFetchAbort(error)) {
+      return 'aborted'
+    }
+
     if (callerSignal?.aborted && !didTimeout) {
       return 'aborted'
     }

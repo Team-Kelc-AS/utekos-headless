@@ -152,10 +152,10 @@ export function NbccAiSummaryButton({
       >
         {isThinking ?
           <BrainCircuitIcon
-            className='size-[18px] shrink-0 animate-pulse'
+            className='size-4.5rink-0 animate-pulse'
             aria-hidden
           />
-        : <BrainIcon className='size-[18px] shrink-0' aria-hidden />}
+        : <BrainIcon className='size-4.5 shrink-0' aria-hidden />}
         <span className='truncate'>{buttonLabel}</span>
         {isCompleted ?
           <ChevronDownIcon
@@ -232,7 +232,6 @@ export function NbccAiSummaryButton({
                         </h4>
 
                         <LinkedSectionBody
-                          intent={intent}
                           section={section}
                         />
 
@@ -241,20 +240,18 @@ export function NbccAiSummaryButton({
                     ))}
                   </div>
 
-                  {intent === 'sizes' ?
-                    <p className='mt-4 border-t border-white/10 pt-4 text-sm leading-6 text-[#f5efe4]/72'>
-                      Er du fremdeles usikker? Ta en rask titt i{' '}
-                      <Link
-                        href={
-                          '/handlehjelp/storrelsesguide' as Route
-                        }
-                        className='font-sans font-semibold text-[#f0c36a] underline decoration-[#f0c36a]/40 underline-offset-4 hover:text-[#ffd886]'
-                      >
-                        størrelsesguiden vår
-                      </Link>
-                      .
-                    </p>
-                  : null}
+                  <p className='mt-4 border-t border-white/10 pt-4 text-sm leading-6 text-[#f5efe4]/72'>
+                    Er du fremdeles usikker? Ta en rask titt i{' '}
+                    <Link
+                      href={
+                        '/handlehjelp/storrelsesguide' as Route
+                      }
+                      className='font-sans font-semibold text-[#f0c36a] underline decoration-[#f0c36a]/40 underline-offset-4 hover:text-[#ffd886]'
+                    >
+                      størrelsesguiden vår
+                    </Link>
+                    .
+                  </p>
 
                   <div className='mt-5 flex justify-end border-t border-white/10 pt-4'>
                     <Button

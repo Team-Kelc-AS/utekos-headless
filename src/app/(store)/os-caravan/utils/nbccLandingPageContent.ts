@@ -5,16 +5,9 @@ import type {
   NbccFaqItem,
   NbccHeroTracking,
   NbccProduct,
-  NbccStep,
   NbccTrackingData,
   NbccUseCase
 } from '../types'
-import comfyrobeManWall from '@/assets/images/comfyrobe/Comfyrobe-Man-Wall-Logo-800x800.webp'
-import comfyrobeManOutside from '@/assets/images/comfyrobe/Comfyrobe-Man-Outside-Logo-800x800.webp'
-import comfyrobeWoman from '@/assets/images/comfyrobe/Comfyrobe-Woman-Logo-800x800.webp'
-import comfyrobeFrontWall from '@/assets/images/comfyrobe/Comfyrobe-FrontWall-Logo-800x800.webp'
-import comfyrobeBacksideWall from '@/assets/images/comfyrobe/Comfyrobe-Backside-Wall-Logo-800x800.webp'
-import comfyrobeCampaignV2 from '@/assets/images/comfyrobe/Comfyrobe-Campaign.v2-Logo-800x800.webp'
 import mikrofiberWoodsOff from '@/assets/images/mikrofiber/Mikrofiber-Woods-Off-Logo-800x800.webp'
 import mikrofiberWoman from '@/assets/images/mikrofiber/Mikrofiber-Woman-Logo-800x800.webp'
 import mikrofiberFrontFull from '@/assets/images/mikrofiber/Mikrofiber-Front-Full-Logo-800x800.webp'
@@ -30,12 +23,7 @@ import techdownBackSideHalv from '@/assets/images/techdown/TechDown-BackSide-Hal
 import techdownFrontHalv from '@/assets/images/techdown/TechDown-Front-Halv-Logo-800x800.webp'
 
 export const nbccHeroTracking = {
-  primary: { page: 'nbcc', section: 'hero', target: 'products' },
-  secondary: {
-    page: 'nbcc',
-    section: 'hero',
-    target: 'how-to-use'
-  }
+  primary: { page: 'nbcc', section: 'hero', target: 'products' }
 } satisfies NbccHeroTracking
 
 export const nbccProducts = [
@@ -125,46 +113,6 @@ export const nbccProducts = [
       section: 'products',
       product: 'utekos-mikrofiber'
     }
-  },
-  {
-    title: 'Comfyrobe™',
-    shortTitle: 'Comfyrobe™',
-    description:
-      'Vindtett, 8000 vannsøyle og lun etter dusj, bad eller en våt runde over campingplassen.',
-    bestFor:
-      'For våte morgener, skifte etter bad og kjølige kvelder ute.',
-    images: [
-      {
-        src: comfyrobeManWall,
-        alt: 'Mann i Comfyrobe foran vegg'
-      },
-      {
-        src: comfyrobeManOutside,
-        alt: 'Mann i Comfyrobe utendørs'
-      },
-      { src: comfyrobeWoman, alt: 'Kvinne i Comfyrobe' },
-      {
-        src: comfyrobeFrontWall,
-        alt: 'Comfyrobe forfra mot vegg'
-      },
-      {
-        src: comfyrobeBacksideWall,
-        alt: 'Comfyrobe sett bakfra mot vegg'
-      },
-      {
-        src: comfyrobeCampaignV2,
-        alt: 'Comfyrobe kampanjebilde'
-      }
-    ],
-    href: '/produkter/comfyrobe' as Route,
-    handle: 'comfyrobe',
-    sizes: ['XS', 'XL'],
-    color: 'Fjellnatt',
-    tracking: {
-      page: 'nbcc',
-      section: 'products',
-      product: 'comfyrobe'
-    }
   }
 ] satisfies NbccProduct[]
 
@@ -200,24 +148,6 @@ export const nbccUseCases = [
       'Fremtrer med sin aktualitet fastplassen, men også når du er på hytten, i båten eller bare skal rett ut på terrassen hjemme.'
   }
 ] satisfies NbccUseCase[]
-
-export const nbccSteps = [
-  {
-    title: 'Finn fordelen hos NBCC',
-    description:
-      'Som medlem finner du fordelskoden i Min Side / Gnist under medlemsfordeler.'
-  },
-  {
-    title: 'Velg produktene hos Utekos',
-    description:
-      'Velg mellom TechDown, Mikrofiber og Comfyrobe, og legg i handlekurven'
-  },
-  {
-    title: 'Bruk fordelen i kassen',
-    description:
-      'Når du har funnet det du ønsker deg, legger du bare inn koden i kassen. Da oppdateres prisen til din unike medlemspris helt automatisk.'
-  }
-] satisfies NbccStep[]
 
 export const nbccFaqItems = [
   {

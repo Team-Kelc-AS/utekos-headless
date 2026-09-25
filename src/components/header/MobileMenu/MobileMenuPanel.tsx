@@ -147,7 +147,7 @@ export function MobileMenuPanel({
               className={
                 iconOnly ?
                   'size-11 rounded-md border-transparent bg-transparent p-0 text-foreground hover:bg-accent hover:text-accent-foreground'
-                : 'h-11 min-w-11 rounded-md border-transparent bg-transparent px-0 font-sans font-semibold text-sm text-foreground hover:bg-accent hover:text-accent-foreground md:min-w-[5.75rem] md:px-3'
+                : 'h-11 min-w-11 rounded-md border-transparent bg-transparent px-0 font-sans font-semibold text-sm text-foreground hover:bg-accent hover:text-accent-foreground md:min-w-23 md:px-3'
               }
               aria-label='Åpne meny'
               data-track='MobileMenuClick'

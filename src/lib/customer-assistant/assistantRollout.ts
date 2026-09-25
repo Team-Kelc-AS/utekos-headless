@@ -70,11 +70,12 @@ function isAssistantCustomerSurface(
 ) {
   const vercelEnv = environment.VERCEL_ENV
 
-  if (vercelEnv === 'preview' || vercelEnv === 'production') {
-    return true
+  if (vercelEnv === 'production') {
+    return false
   }
 
   return (
+    vercelEnv === 'preview' ||
     vercelEnv === 'development' ||
     (vercelEnv === undefined &&
       environment.NODE_ENV === 'development')

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { unstable_rethrow } from 'next/navigation'
+import { connection } from 'next/server'
 import { fetchStorefrontProductOptions } from '@/api/lib/products/fetchProductOptions'
 import { getProductModel } from '@/lib/products/commerce/getProductModel'
 import { reportOperationalError } from '@/lib/observability/reportOperationalError'
@@ -101,6 +102,8 @@ async function loadTechdownProductModel() {
 }
 
 export async function TechdownSizeSelector() {
+  await connection()
+
   let model: ReturnType<
     typeof createTechdownSizeSelectorModel
   > | null = null

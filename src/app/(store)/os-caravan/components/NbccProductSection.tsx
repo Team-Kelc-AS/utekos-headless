@@ -37,7 +37,7 @@ export async function NbccProductSection() {
           </div>
         </NbccReveal>
 
-        <NbccRevealGroup className='mt-12 grid gap-5 lg:grid-cols-3'>
+        <NbccRevealGroup className='mt-12 grid gap-5 lg:grid-cols-2'>
           {nbccProducts.map((product, index) => {
             const shopifyProduct = fetched[index]
             const variants =

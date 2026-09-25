@@ -167,6 +167,17 @@ const VIDEO_FRAME_ORIGINS = [
   'https://www.youtube-nocookie.com'
 ] as const
 
+/** Maps Embed API iframe hosts. */
+const MAPS_EMBED_FRAME_ORIGINS = [
+  'https://www.google.com',
+  'https://www.openstreetmap.org'
+] as const
+
+/** Google Weather API condition icons. */
+const WEATHER_ICON_IMAGE_ORIGINS = [
+  'https://maps.gstatic.com'
+] as const
+
 function joinOrigins(origins: readonly string[]): string {
   return origins.join(' ')
 }
@@ -228,7 +239,8 @@ export function buildReportOnlyCsp(): string {
     ...GA4_COLLECTION_ORIGINS,
     ...GA4_ADVERTISING_IMAGE_ORIGINS,
     'https://cdn.sanity.io',
-    'https://cdn.shopify.com'
+    'https://cdn.shopify.com',
+    ...WEATHER_ICON_IMAGE_ORIGINS
   ]
 
   const frameSrc = [
@@ -240,6 +252,7 @@ export function buildReportOnlyCsp(): string {
     ...PINTEREST_TAG_FRAME_ORIGINS,
     ...SNAPCHAT_PIXEL_FRAME_ORIGINS,
     ...VIDEO_FRAME_ORIGINS,
+    ...MAPS_EMBED_FRAME_ORIGINS,
     ...VERCEL_LIVE_ORIGINS
   ]
 

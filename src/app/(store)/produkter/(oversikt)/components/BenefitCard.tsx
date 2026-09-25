@@ -30,11 +30,11 @@ const surfaceStyles: Record<
   }
 > = {
   dazzle: {
-    background: 'var(--card)',
+    background: 'var(--night',
     borderColor: 'var(--border)',
-    textColor: 'var(--card-foreground)',
-    descriptionColor: 'var(--card-foreground)',
-    iconColor: 'var(--sidebar-primary-foreground)'
+    textColor: 'var(--foreground)',
+    descriptionColor: 'var(--foreground)',
+    iconColor: 'var(--primary)'
   },
   orange: {
     background: 'var(--promo)',
@@ -43,12 +43,12 @@ const surfaceStyles: Record<
     textColor: 'var(--promo-foreground)',
     descriptionColor: 'var(--promo-foreground)'
   },
-  dazzleagain: {
-    background: 'var(--card)',
+  dazzlea: {
+    background: 'var(--night',
     borderColor: 'var(--border)',
-    textColor: 'var(--card-foreground)',
-    descriptionColor: 'var(--card-foreground)',
-    iconColor: 'var(--sidebar-primary-foreground)'
+    textColor: 'var(--foreground)',
+    descriptionColor: 'var(--foreground)',
+    iconColor: 'var(--primary)'
   }
 }
 
@@ -78,7 +78,7 @@ export function BenefitCard({
         }}
       />
 
-      <div className='relative z-10 flex min-h-[3.75rem] items-center gap-3 px-4 py-3.5'>
+      <div className='relative z-10 flex min-h-15 items-center gap-3 px-4 py-3.5'>
         <div
           className='flex size-8 shrink-0 items-center justify-center rounded-lg border transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none'
           style={{

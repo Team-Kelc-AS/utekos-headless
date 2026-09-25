@@ -12,7 +12,7 @@ import { stapperFeatures } from './stapperFeatures'
 
 export function StapperFeatureSection() {
   const imagePanel = (
-    <Card className='relative isolate min-h-88 overflow-hidden rounded-3xl border-foreground/12 bg-foreground/[0.035] py-0 shadow-none backdrop-blur-[2px] sm:min-h-104 lg:min-h-132'>
+    <Card className='relative isolate min-h-88 overflow-hidden rounded-3xl border-foreground/12 bg-night py-0 shadow-none backdrop-blur-[2px] sm:min-h-104 lg:min-h-132'>
       <CardContent className='relative flex size-full min-h-[inherit] items-center justify-center p-0'>
         <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,color-mix(in_oklab,var(--ancient-water)_18%,transparent),transparent_44%)]' />
         <div className='absolute inset-x-10 bottom-8 h-24 rounded-full bg-background/55 blur-3xl' />
@@ -31,7 +31,7 @@ export function StapperFeatureSection() {
   )
 
   return (
-    <article className='relative mb-8 overflow-hidden rounded-[1.75rem] border border-border bg-muted px-5 py-8 text-foreground sm:px-8 sm:py-10 lg:px-10 xl:px-12'>
+    <article className='relative mb-8 overflow-hidden rounded-[1.75rem] border border-border bg-night px-5 py-8 text-foreground sm:px-8 sm:py-10 lg:px-10 xl:px-12'>
       <div
         aria-hidden='true'
         className='pointer-events-none absolute inset-0 -z-10 opacity-40'
@@ -41,7 +41,7 @@ export function StapperFeatureSection() {
         }}
       />
 
-      <div className='pointer-events-none absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent via-foreground/30 to-transparent' />
+      <div className='pointer-events-none absolute inset-x-6 top-0 h-px bg-night' />
 
       <div className='mx-auto max-w-312'>
         <div className='grid gap-8 lg:grid-cols-[minmax(0,0.86fr)_minmax(28rem,1.14fr)] lg:items-center xl:gap-12'>
@@ -79,7 +79,7 @@ export function StapperFeatureSection() {
                 asChild
                 backgroundColor='var(--primary)'
                 textColor='var(--background)'
-                className='group min-h-14 justify-center border border-primary/18 px-7 text-base shadow-[0_16px_36px_-24px_rgba(232,178,66,0.55)] transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-105 lg:justify-start'
+                className='group min-h-14 justify-center border border-primary/18 px-7 text-base transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-105 lg:justify-start'
               >
                 <Link
                   href={'/produkter/utekos-stapper' as Route}

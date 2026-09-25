@@ -18,10 +18,6 @@ const ProductsPage = async () => {
         <ProductsPageHeader />
         <HelpChooseSection />
 
-        <Suspense fallback={<VideoSkeleton />}>
-          <ProductVideoSection />
-        </Suspense>
-
         <LazyTechDownFeatureSection />
 
         <ComparisonTeaser />

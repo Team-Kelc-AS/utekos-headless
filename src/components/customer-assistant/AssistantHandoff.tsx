@@ -39,7 +39,7 @@ export function AssistantHandoff({
   return (
     <section
       aria-labelledby={headingId}
-      className='rounded-2xl border border-border bg-muted p-4 text-popover-foreground'
+      className='rounded-2xl border border-border bg-night p-4 text-foreground'
     >
       <h3
         id={headingId}
@@ -47,7 +47,7 @@ export function AssistantHandoff({
       >
         Snakk med kundeservice
       </h3>
-      <p className='mt-1 text-sm leading-6 text-popover-foreground/75'>
+      <p className='mt-1 text-sm leading-6 text-foreground/75'>
         Du velger selv hvordan du vil ta kontakt. Ingenting
         sendes automatisk.
       </p>

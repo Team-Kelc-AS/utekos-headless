@@ -468,6 +468,50 @@ test('classifies a non-JSON Shopify 502 without parsing provider HTML', async ()
   }
 })
 
+test('does not report Next.js prerender fetch abort as a provider failure', async () => {
+  const capturedErrors: unknown[][] = []
+  const originalConsoleError = console.error
+  console.error = (...args: unknown[]) => {
+    capturedErrors.push(args)
+  }
+  const gateway = createHydrogenStorefrontGateway(
+    {
+      storeDomain: 'example.myshopify.com',
+      publicStorefrontToken: 'public-test-token',
+      storefrontApiVersion: '2026-04'
+    },
+    {
+      fetch: async () => {
+        throw new Error(
+          'During prerendering, fetch() rejects when the prerender is complete. Typically these errors are handled by React but if you move fetch() to a different context by using `setTimeout`, `after`, or similar functions you may observe this error and you should handle it in that context. This occurred at route "/produkter/techdown".'
+        )
+      }
+    }
+  )
+
+  try {
+    await assert.rejects(
+      gateway.catalogQuery<TestQuery>({
+        cache: 'no-store',
+        query
+      }),
+      /During prerendering, fetch\(\) rejects when the prerender is complete/
+    )
+    assert.equal(
+      capturedErrors.some(args =>
+        args.some(value =>
+          String(value).includes(
+            'shopify.storefront.request_failed'
+          )
+        )
+      ),
+      false
+    )
+  } finally {
+    console.error = originalConsoleError
+  }
+})
+
 test('does not report caller cancellation as a provider failure', async () => {
   const caller = new AbortController()
   const capturedErrors: unknown[][] = []

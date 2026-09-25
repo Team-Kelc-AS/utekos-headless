@@ -56,7 +56,7 @@ export function UseCasesGrid({
   return (
     <article
       id='bruksomrader'
-      className='bg-muted py-24 text-secondary-foreground'
+      className='bg-night py-24 text-secondary-foreground'
     >
       <div className='container mx-auto px-4'>
         <div className='mb-16 text-center'>

@@ -1,36 +1,15 @@
 import type { NbccAiSummaryIntent } from '../types'
 import { techDownSizeSummary } from '@/app/handlehjelp/storrelsesguide/utils/techDownSizeSummary'
 import { formatProductFacts } from './formatProductFacts'
-import { formatStepFacts } from './formatStepFacts'
 import { formatFaqFacts } from './formatFaqFacts'
 import { formatComfyrobeSizeFacts } from './formatComfyrobeSizeFacts'
 import { formatTechDownSizeFacts } from './formatTechDownSizeFacts'
 import { formatMikrofiberSizeFacts } from './formatMikrofiberSizeFacts'
 
 export function buildNbccPrompt(
-  intent: NbccAiSummaryIntent
+  _intent: NbccAiSummaryIntent
 ): string {
-  const task =
-    intent === 'how-to-use' ?
-      `Oppgave: Forklar NBCC-fordelen på en måte som føles varm, presis og nyttig for et NBCC-medlem som allerede er på Utekos-siden.
-
-Svaret skal ha denne strukturen:
-- intro: én varm introduksjon om samarbeidet med NBCC og medlemsrabatten.
-- sections[0]: "Støtt din lokalavdeling" med forklaring om lokalavdelingens dedikerte rabattkode.
-- sections[1]: "Hvor finner jeg koden?" med forklaring om Min Side hos NBCC og Gnist-appen.
-- sections[2]: "Slik bruker du fordelen din" som steg-for-steg-liste.
-
-Viktig:
-- Ikke lag en avsluttende oppsummering.
-- Ikke skriv "Det viktigste er enkelt".
-- Ikke lag tre varianter av samme forklaring.
-- Ikke bruk en CTA som sender brukeren bort fra Utekos.
-- Ikke skriv "for eksempel" om Min Side eller Gnist.
-- Ikke anta at kunden skal på tur.
-- Bruk "Utekos-favorittene dine" eller tilsvarende inkluderende formulering.
-- Forklar at rabattkoden skrives inn i kassen og at rabatten trekkes fra før betaling.
-- Ikke legg til prosenter, priser eller vilkår som ikke står i fakta.`
-    : `Oppgave: Lag en størrelsesveiledning som hjelper NBCC-medlemmer å velge riktig Utekos-størrelse.
+  const task = `Oppgave: Lag en størrelsesveiledning som hjelper NBCC-medlemmer å velge riktig Utekos-størrelse.
 
 Svaret skal ha denne strukturen:
 - title: "Finn din størrelse"
@@ -75,9 +54,6 @@ Generelle regler:
 
 Produkter på NBCC-siden:
 ${formatProductFacts()}
-
-Slik brukes fordelen:
-${formatStepFacts()}
 
 FAQ-fakta:
 ${formatFaqFacts()}

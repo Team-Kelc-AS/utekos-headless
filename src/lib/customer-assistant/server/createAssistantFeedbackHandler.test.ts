@@ -4,7 +4,7 @@ import { createAssistantFeedbackHandler } from './createAssistantFeedbackHandler
 
 const responseId = 'assistant-response_123'
 const enabledEnvironment = {
-  VERCEL_ENV: 'production',
+  VERCEL_ENV: 'preview',
   CUSTOMER_ASSISTANT_ENABLED: 'true',
   CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '5',
   CUSTOMER_ASSISTANT_FEEDBACK_SECRET:
@@ -43,6 +43,21 @@ function dependencies(
 test('is unavailable when the assistant kill switch is off', async () => {
   const handler = createAssistantFeedbackHandler(
     dependencies({ environment: {} })
+  )
+  const response = await handler(request())
+
+  assert.equal(response.status, 404)
+  assert.deepEqual(await response.json(), { error: 'not_found' })
+})
+
+test('is unavailable in production even when rollout flags are on', async () => {
+  const handler = createAssistantFeedbackHandler(
+    dependencies({
+      environment: {
+        ...enabledEnvironment,
+        VERCEL_ENV: 'production'
+      }
+    })
   )
   const response = await handler(request())
 

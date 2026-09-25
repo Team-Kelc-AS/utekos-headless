@@ -1,7 +1,12 @@
 import type { BreadcrumbList, FAQPage, Graph, WebPage } from 'schema-dts'
 import { cacheLife } from 'next/cache'
 
-import { NBCC_URL, ORGANIZATION_ID, SITE_URL, WEBSITE_ID } from '../constants'
+import {
+  ORGANIZATION_ID,
+  OS_CARAVAN_URL,
+  SITE_URL,
+  WEBSITE_ID
+} from '../constants'
 import { nbccFaqItems } from '../utils/nbccLandingPageContent'
 
 export async function NbccPageJsonLd() {
@@ -10,11 +15,11 @@ export async function NbccPageJsonLd() {
 
   const webpageNode: WebPage = {
     '@type': 'WebPage',
-    '@id': `${NBCC_URL}#webpage`,
-    'url': NBCC_URL,
-    'name': 'NBCC-medlemsfordel hos Utekos',
+    '@id': `${OS_CARAVAN_URL}#webpage`,
+    'url': OS_CARAVAN_URL,
+    'name': 'Eventyrdager hos Os Caravan & Fritid AS',
     'description':
-      'Partnerlandingsside for NBCC-medlemmer med Utekos-produkter for camping, bobil, caravan, fortelt og kjølige kvelder ute.',
+      'Møt Utekos under Eventyrdagene hos Os Caravan & Fritid AS. Se bobiler og campingvogner, og sikre deg Utekos til eksklusiv messepris.',
     'inLanguage': 'nb-NO',
     'isPartOf': {
       '@id': WEBSITE_ID
@@ -24,16 +29,14 @@ export async function NbccPageJsonLd() {
     },
     'primaryImageOfPage': {
       '@type': 'ImageObject',
-      'url': `${SITE_URL}/og-utekos-nbcc-1200x630.jpg`,
-      'width': '1200',
-      'height': '630',
-      'caption': 'NBCC-medlemsfordel hos Utekos'
+      'url': `${SITE_URL}/caravan-inngang.jpg`,
+      'caption': 'Eventyrdager hos Os Caravan & Fritid AS'
     }
   }
 
   const faqNode: FAQPage = {
     '@type': 'FAQPage',
-    '@id': `${NBCC_URL}#faq`,
+    '@id': `${OS_CARAVAN_URL}#faq`,
     'mainEntity': nbccFaqItems.map(item => ({
       '@type': 'Question',
       'name': item.question,
@@ -46,7 +49,7 @@ export async function NbccPageJsonLd() {
 
   const breadcrumbNode: BreadcrumbList = {
     '@type': 'BreadcrumbList',
-    '@id': `${NBCC_URL}#breadcrumb`,
+    '@id': `${OS_CARAVAN_URL}#breadcrumb`,
     'itemListElement': [
       {
         '@type': 'ListItem',
@@ -57,8 +60,8 @@ export async function NbccPageJsonLd() {
       {
         '@type': 'ListItem',
         'position': 2,
-        'name': 'NBCC',
-        'item': NBCC_URL
+        'name': 'Os Caravan & Fritid',
+        'item': OS_CARAVAN_URL
       }
     ]
   }

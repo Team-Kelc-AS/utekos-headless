@@ -4,11 +4,9 @@ import type {
   NbccAiSummaryPayload
 } from '../types'
 
-export const NBCC_LOGIN_URL =
-  'https://gnist.styreweb.com/Account/Login?ReturnUrl=%2F'
 export const MINIMUM_THINKING_TIME_MS = 2500
 export const SITE_URL = 'https://utekos.no'
-export const NBCC_URL = `${SITE_URL}/nbcc`
+export const OS_CARAVAN_URL = `${SITE_URL}/os-caravan`
 export const ORGANIZATION_ID = `${SITE_URL}/#organization`
 export const WEBSITE_ID = `${SITE_URL}/#website`
 export const NBCC_AI_MODEL =
@@ -26,34 +24,6 @@ export const FALLBACK_SUMMARIES: Record<
   NbccAiSummaryIntent,
   NbccAiSummaryPayload
 > = {
-  'how-to-use': {
-    kicker: 'Medlemsfordel',
-    title: 'Slik bruker du NBCC-fordelen',
-    intro:
-      'Som samarbeidspartner med NBCC gleder vi oss over å kunne tilby deg en hyggelig medlemsrabatt. Det er vår måte å bidra til at de gode øyeblikkene ute kan bli enda litt lunere, mer komfortable og vare enda lenger.',
-    sections: [
-      {
-        title: 'Støtt din lokalavdeling',
-        style: 'paragraph',
-        body: 'Et lite tips før du bestiller: Sjekk gjerne om lokalavdelingen din har en egen avtale med Utekos. Da anbefaler vi at du bruker deres dedikerte rabattkode. Prisen for deg blir akkurat den samme, samtidig som du støtter det viktige sosiale arbeidet i ditt nærområde.'
-      },
-      {
-        title: 'Hvor finner jeg koden?',
-        style: 'paragraph',
-        body: 'Du finner rabattkoden din ved å logge inn på Min Side hos NBCC, eller under medlemsfordelene dine i Gnist-appen.'
-      },
-      {
-        title: 'Slik bruker du fordelen din',
-        style: 'steps',
-        items: [
-          'Hent rabattkoden din via Min Side hos NBCC eller Gnist-appen.',
-          'Legg Utekos-favorittene dine i handlekurven her hos oss.',
-          'Gå til kassen og skriv inn koden i rabattfeltet.',
-          'Medlemsrabatten trekkes fra automatisk før du betaler.'
-        ]
-      }
-    ]
-  },
   'sizes': {
     kicker: 'Størrelseshjelp',
     title: 'Finn din størrelse',

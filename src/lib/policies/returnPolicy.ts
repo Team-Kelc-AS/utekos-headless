@@ -103,7 +103,7 @@ export const sizeExchangeCopy = {
   outOfStock:
     'Hvis ønsket størrelse er utsolgt, avtaler kundeservice ordinær refusjon eller en annen løsning med deg. Vi sender aldri en annen modell eller farge automatisk.',
   ordinaryReturn:
-    'Gratis størrelsesbytte er en frivillig byttefordel, ikke gratis generell retur. Ved ordinær angrerett oppretter og betaler du returfrakten selv. Dine lovfestede rettigheter påvirkes ikke.'
+    'Gratis størrelsesbytte er en byttefordel, ikke gratis generell retur.'
 } as const
 
 export const sizeExchangeLlmsSummary =

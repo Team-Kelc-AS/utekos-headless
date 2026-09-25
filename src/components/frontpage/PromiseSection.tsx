@@ -56,7 +56,6 @@ export function PromiseSection() {
     >
       <div className='mx-auto'>
         <div className='grid grid-cols-1 gap-12'>
-          {/* Karusell: Vises kun på mobil (skjules fra md og oppover) */}
           <div className='relative flex items-center justify-center rounded-xl border border-card p-2 md:hidden'>
             <Carousel
               plugins={[plugin]}
@@ -104,10 +103,10 @@ export function PromiseSection() {
               <div className='relative w-full'>
                 <Image
                   src='https://cdn.shopify.com/s/files/1/0634/2154/6744/files/JUSTER-FORM-NYT-1920-1080.png'
-                  alt='JUSTER, FORM OG NYT.'
+                  alt='JUSTER. FORM. NYT.'
                   width={1980}
                   height={1080}
-                  quality={100}
+                  quality={95}
                   className='h-auto w-full object-cover'
                   sizes='100vw, 1980px'
                   priority

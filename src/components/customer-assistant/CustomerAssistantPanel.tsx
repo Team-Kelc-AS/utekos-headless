@@ -4,7 +4,9 @@ import type {
   AssistantIntent,
   AssistantUIMessage
 } from '@/lib/customer-assistant/assistantProtocol'
+import wordmarkWhite from '@/assets/images/brand/WordmarkWhite.svg'
 import { SendIcon, XIcon } from 'lucide-react'
+import Image from 'next/image'
 import type { KeyboardEvent, RefObject } from 'react'
 import { AssistantHandoff } from './AssistantHandoff'
 import {
@@ -107,9 +109,13 @@ export function CustomerAssistantPanel({
     >
       <header className='flex items-start justify-between gap-4 border-b border-border px-5 py-4'>
         <div>
-          <p className='font-sans font-semibold text-xs tracking-wide text-popover-foreground/65 uppercase'>
-            Utekos
-          </p>
+          <Image
+            src={wordmarkWhite}
+            alt='Utekos'
+            width={300}
+            height={73}
+            className='h-4 w-auto'
+          />
           <h2
             ref={headingRef}
             id={headingId}
@@ -155,7 +161,7 @@ export function CustomerAssistantPanel({
             className='mt-4 text-sm text-popover-foreground/70'
           >
             {status === 'submitted' ?
-              'Finner et trygt svar …'
+              'Tenker...'
             : 'Svarer …'}
           </p>
         )}
@@ -214,10 +220,6 @@ export function CustomerAssistantPanel({
             <span className='sr-only'>Send spørsmål</span>
           </button>
         </div>
-        <p className='mt-2 text-xs text-popover-foreground/60'>
-          Ikke skriv inn ordre-, betalings- eller
-          kontaktopplysninger.
-        </p>
       </form>
     </section>
   )

@@ -1,0 +1,141 @@
+- generic [ref=e2]:
+  - banner:
+    - generic [ref=e3]:
+      - link "Utekos – forsiden" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - group [ref=e5]:
+        - generic "Åpne meny" [ref=e6] [cursor=pointer]
+  - main [ref=e11]:
+    - heading "Utekos TechDown™" [level=1] [ref=e12]
+    - region "Produktbilder av Utekos TechDown™" [ref=e13]:
+      - group "Hovedbilder. Sveip eller bruk piltastene for å bytte bilde." [ref=e14]:
+        - group "1 av 16" [ref=e15]:
+          - img "Kvinne med hetten oppe i marineblå Utekos TechDown™ i skogen." [ref=e16]
+        - group "2 av 16" [ref=e17]
+        - group "3 av 16" [ref=e18]
+        - group "4 av 16" [ref=e19]
+        - group "5 av 16" [ref=e20]
+        - group "6 av 16" [ref=e21]
+        - group "7 av 16" [ref=e22]
+        - group "8 av 16" [ref=e23]
+        - group "9 av 16" [ref=e24]
+        - group "10 av 16" [ref=e25]
+        - group "11 av 16" [ref=e26]
+        - group "12 av 16" [ref=e27]
+        - group "13 av 16" [ref=e28]
+        - group "14 av 16" [ref=e29]
+        - group "15 av 16" [ref=e30]
+        - group "16 av 16" [ref=e31]
+      - group "Velg produktbilde" [ref=e32]:
+        - 'button "Vis bilde 1: Kvinne med hetten oppe i marineblå Utekos TechDown™ i skogen." [pressed] [ref=e33] [cursor=pointer]'
+        - 'button "Vis bilde 2: Marineblå Utekos TechDown™ med hette og hendene i frontlommen, sett forfra." [ref=e34] [cursor=pointer]'
+        - 'button "Vis bilde 3: Kvinne som smiler i marineblå Utekos TechDown™ med hetten oppe." [ref=e35] [cursor=pointer]'
+        - 'button "Vis bilde 4: To menn sitter i marineblå Utekos TechDown™ på en terrasse." [ref=e36] [cursor=pointer]'
+        - 'button "Vis bilde 5: En mann og en kvinne i marineblå Utekos TechDown™ sitter med en kopp på terrassen." [ref=e37] [cursor=pointer]'
+        - 'button "Vis bilde 6: To kvinner i marineblå Utekos TechDown™ på terrassen; den ene ser i kikkert." [ref=e38] [cursor=pointer]'
+        - 'button "Vis bilde 7: To kvinner i marineblå Utekos TechDown™ deler snacks ved et lite terrassebord." [ref=e39] [cursor=pointer]'
+        - 'button "Vis bilde 8: Kvinne i lang, marineblå Utekos TechDown™ med armene utstrakt ved vannet." [ref=e40] [cursor=pointer]'
+        - 'button "Vis bilde 9: Nærbilde av hetten, kragen og den oransje glidelåsdetaljen på Utekos TechDown™." [ref=e41] [cursor=pointer]'
+        - 'button "Vis bilde 10: Kvinne i marineblå Utekos TechDown™ sitter i skogen med en varm kopp og en soppkurv." [ref=e42] [cursor=pointer]'
+        - 'button "Vis bilde 11: Marineblå Utekos TechDown™ i full lengde, sett skrått forfra." [ref=e43] [cursor=pointer]'
+        - 'button "Vis bilde 12: Marineblå Utekos TechDown™ i full lengde, sett bakfra med hetten oppe." [ref=e44] [cursor=pointer]'
+        - 'button "Vis bilde 13: Baksiden av marineblå Utekos TechDown™ i kort utgave, med hette." [ref=e45] [cursor=pointer]'
+        - 'button "Vis bilde 14: Nærbilde av lommeglidelås med oransje detaljer og Utekos-symbol." [ref=e46] [cursor=pointer]'
+        - 'button "Vis bilde 15: Nærbilde av glidelås, snorstramming og Utekos-symbol ved kragen." [ref=e47] [cursor=pointer]'
+        - 'button "Vis bilde 16: Åpen front på marineblå Utekos TechDown™, med innside og oransje glidelåsdetaljer." [ref=e48] [cursor=pointer]'
+    - generic [ref=e49]:
+      - region [ref=e50]:
+        - heading "Vurderinger, frakt, bytte og sending" [level=2] [ref=e51]
+        - link "4.9/5 · 21 anmeldelser. Gå til anmeldelser." [ref=e52] [cursor=pointer]:
+          - /url: "#anmeldelser"
+          - img "Judge.me Reviews" [ref=e54]
+          - generic [ref=e55]: 4,93 av 5
+          - generic [ref=e93]: 4.9/5 · 21 anmeldelser
+        - generic [ref=e94]:
+          - generic [ref=e95]:
+            - img "PostNord" [ref=e97]
+            - heading "Gratis frakt" [level=3] [ref=e98]
+          - heading "Gratis bytte" [level=3] [ref=e104]
+          - heading [level=3] [ref=e112]:
+            - text: Sendes samme dag
+            - link "Mer om sending samme dag lenger ned" [ref=e113] [cursor=pointer]:
+              - /url: "#levering-vilkar"
+              - text: "*"
+        - status [ref=e115]:
+          - generic [ref=e116]: Laster størrelser…
+        - generic "Betalingsmetoder" [ref=e118]:
+          - img "Klarna" [ref=e119]
+          - img "Visa" [ref=e120]
+          - img "Vipps" [ref=e121]
+          - img "Google Pay" [ref=e122]
+          - img "Apple Pay" [ref=e123]
+      - region [ref=e124]:
+        - generic [ref=e125]:
+          - paragraph [ref=e126]: Skreddersy varmen
+          - heading "Optimaliser og forleng" [level=2] [ref=e127]
+          - paragraph [ref=e128]: Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Det værbestandige Luméa™-skallet og spesialutviklet CloudWeave™-isolasjon forenes i et intuitivt 3-i-1-design, skapt for å forlenge de gode stundene utendørs. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen, mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt.
+        - list [ref=e129]:
+          - listitem [ref=e130]:
+            - generic [ref=e134]:
+              - strong [ref=e135]: Bli sittende ute lenger
+              - generic [ref=e136]: Fullengdemodus gir et varmt, heldekkende plagg når du sitter i ro.
+          - listitem [ref=e137]:
+            - generic [ref=e142]:
+              - strong [ref=e143]: Behold varmen når du beveger deg
+              - generic [ref=e144]: Hev lengden eller bruk parkasmodus når du skal gå uten å ta av plagget.
+          - listitem [ref=e145]:
+            - generic [ref=e147]:
+              - strong [ref=e148]: Juster plagget til kroppen
+              - generic [ref=e149]: Innvendig snorstramming i livet gjør passformen justerbar.
+      - region [ref=e150]:
+        - heading "Produktspesifikasjoner" [level=2] [ref=e151]
+        - generic [ref=e152]:
+          - heading [level=3] [ref=e154]:
+            - button "Materialer" [ref=e155]
+          - heading [level=3] [ref=e157]:
+            - button "Funksjoner" [ref=e158]
+          - heading [level=3] [ref=e160]:
+            - button "Egenskaper" [ref=e161]
+          - heading [level=3] [ref=e163]:
+            - button "Bruksområder" [ref=e164]
+          - heading [level=3] [ref=e166]:
+            - button "Passform" [ref=e167]
+          - heading [level=3] [ref=e169]:
+            - button "Vaskeanvisning" [ref=e170]
+      - complementary [ref=e171]:
+        - paragraph [ref=e172]: "* Sending samme dag gjelder etter vilkårene for frakt og retur."
+    - region [ref=e173]:
+      - generic [ref=e174]:
+        - paragraph [ref=e175]: Verifiserte produktomtaler
+        - paragraph [ref=e176]: 4,93 av 5 fra 21 verifiserte anmeldelser via Judge.me
+        - paragraph [ref=e177]: Her viser vi 11 produktomtaler fra de 21 verifiserte anmeldelsene.
+      - generic [ref=e178]:
+        - article [ref=e179]:
+          - generic [ref=e180]: 5 av 5 stjerner
+          - paragraph [ref=e218]: Fantastisk plagg. Mange som bestiller nå etter Camp Expo på Hellerudsletta.
+          - generic [ref=e219]:
+            - generic [ref=e220]:
+              - strong [ref=e221]: Edvin Ole Holstad
+              - generic [ref=e225]: Verifisert kjøper
+              - generic [ref=e226]: gjennom Judge.me
+            - time [ref=e228]: 1 dag siden
+        - article [ref=e229]:
+          - generic [ref=e230]: 5 av 5 stjerner
+          - paragraph [ref=e268]: Veldig bra. Kjøpt stor, og den var varm, passe romslig og lang nok, jeg er 172 cm. Kan både gå med den, og lukkes nede ved bena når jeg sitter.
+          - generic [ref=e269]:
+            - generic [ref=e270]:
+              - strong [ref=e271]: Lisa Holtermann
+              - generic [ref=e275]: Verifisert kjøper
+              - generic [ref=e276]: gjennom Judge.me
+            - time [ref=e278]: 21 dager siden
+        - article [ref=e279]:
+          - generic [ref=e280]: 4 av 5 stjerner
+          - paragraph [ref=e317]: "Gave til fruen: Tilbakemeldingen var Meget bra og anbefalte at jeg og bestilte en til meg. Kommer til å bestille 1 stk til."
+          - generic [ref=e318]:
+            - generic [ref=e319]:
+              - strong [ref=e320]: Per Erik Skei
+              - generic [ref=e324]: Verifisert kjøper
+              - generic [ref=e325]: gjennom Judge.me
+            - time [ref=e327]: 30 dager siden
+      - group [ref=e328]:
+        - generic "Vis 8 flere anmeldelser" [ref=e329] [cursor=pointer]

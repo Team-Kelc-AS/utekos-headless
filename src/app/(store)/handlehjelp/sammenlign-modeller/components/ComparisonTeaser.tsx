@@ -17,7 +17,7 @@ const models = [
       '(UTSOLGT) - Alternativet for deg som ønsker dun.',
     icon: Feather,
     cardClass:
-      'border-border  bg-card  text-card-foreground  hover:bg-card-hover -hover',
+      'border-border  bg-night  text-card-foreground  hover:bg-card-hover -hover',
     iconShellClass:
       'border-border  bg-primary text-primary-foreground',
     iconClass: 'text-primary-foreground',
@@ -33,7 +33,7 @@ const models = [
       'Vår nyeste, varmeste og mest allsidige modell.',
     icon: Droplets,
     cardClass:
-      'border-border  bg-card  text-card-foreground  hover:bg-card-hover -hover',
+      'border-border  bg-night  text-card-foreground  hover:bg-night/90',
     iconShellClass:
       'border-border  bg-primary text-primary-foreground',
     iconClass: 'text-primary-foreground',
@@ -49,9 +49,9 @@ const models = [
       'For for bruk i aktivitet eller varmere temperaturer.',
     icon: Layers,
     cardClass:
-      'border-border  bg-card  text-card-foreground  hover:bg-card-hover -hover',
+      'border-border  bg-night  text-card-foreground  hover:bg-night -hover',
     iconShellClass:
-      'border-border  bg-primary text-primary-foreground',
+      'border-border  bg-nigh ttext-primary-foreground',
     iconClass: 'text-primary-foreground',
     textClass: 'text-card-foreground',
     descriptionClass: 'text-card-foreground',
@@ -108,7 +108,7 @@ export function ComparisonTeaser() {
                   </div>
                   <h3
                     className={cn(
-                      'font-google-sans font-sans text-lg font-bold transition-colors',
+                      'font-google-sans text-lg font-bold transition-colors',
                       model.textClass
                     )}
                   >

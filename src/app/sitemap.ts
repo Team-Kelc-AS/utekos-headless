@@ -41,6 +41,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8
     },
     {
+      url: `${BASE_URL}/os-caravan`,
+      changeFrequency: 'weekly',
+      priority: 0.9
+    },
+    {
       url: `${BASE_URL}/skreddersy-varmen`,
       lastModified: SKREDDERSY_VARMEN_LAST_MODIFIED,
       changeFrequency: 'weekly',
@@ -68,6 +73,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE_URL}/kontaktskjema`,
       changeFrequency: 'yearly',
       priority: 0.3
+    },
+    {
+      url: `${BASE_URL}/dun-venteliste`,
+      changeFrequency: 'weekly',
+      priority: 0.6
     },
     {
       url: `${BASE_URL}/personvern`,

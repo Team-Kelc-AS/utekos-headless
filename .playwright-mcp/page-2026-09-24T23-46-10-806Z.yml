@@ -1,0 +1,219 @@
+- generic [active] [ref=f1e1]:
+  - banner [ref=f1e2]:
+    - link "Utekos - Til forsiden" [ref=f1e5] [cursor=pointer]:
+      - /url: /
+  - main [ref=f1e9]:
+    - article [ref=f1e10]:
+      - navigation "breadcrumb" [ref=f1e12]:
+        - list [ref=f1e13]:
+          - listitem [ref=f1e14]:
+            - link "Forsiden" [ref=f1e15] [cursor=pointer]:
+              - /url: /
+          - listitem [aria-hidden] [ref=f1e16]
+          - listitem [ref=f1e19]:
+            - link "Om oss" [disabled] [ref=f1e20]
+      - article [ref=f1e21]:
+        - img "Stemningsfullt bilde av norsk natur i skumringen" [ref=f1e22]
+        - generic [ref=f1e24]:
+          - heading "Om Utekos" [level=1] [ref=f1e25]
+          - generic [ref=f1e34]: Skreddersy varmen
+          - paragraph [ref=f1e35]: Drevet av kalde kvelder og et løfte om å aldri la været stoppe de gode øyeblikkene.
+      - article [ref=f1e36]:
+        - generic [ref=f1e37]:
+          - generic [ref=f1e38]:
+            - generic [ref=f1e39]: Vår historie
+            - heading "Fra idé til virkelighet" [level=2] [ref=f1e40]
+            - blockquote [ref=f1e41]:
+              - paragraph [ref=f1e47]: «Jeg var lei av stive pledd og gode øyeblikk som ble kuttet kort av kulden. Det måtte finnes en bedre måte å holde varmen på.»
+            - generic [ref=f1e48]:
+              - paragraph [ref=f1e49]: "Jeg har alltid elsket de små, verdifulle øyeblikkene: den stille kaffekoppen på en kjølig morgen, den gode samtalen rundt bålpannen, eller roen i båten rett etter at solen har gått ned. Men frustrasjonen var alltid den samme: lag på lag med klær som gjorde meg mer til en Michelin-mann enn en avslappet livsnyter."
+              - paragraph [ref=f1e50]: Jeg lette etter ett enkelt, kompromissløst plagg. Et verktøy for komfort som var så behagelig at jeg glemte jeg hadde det på, men så funksjonelt at det lot meg eie øyeblikket. Svaret fantes ikke. Så jeg bestemte meg for å lage det selv.
+              - paragraph [ref=f1e51]: Det ble en reise som tok måneder med design, utallige prototyper, jakt på de rette materialene, og testing i pøsende bergensregn og på kalde fjelltopper. Resultatet ble Utekos. Ikke bare et produkt, men en hyllest til de små, verdifulle øyeblikkene i en travel hverdag.
+          - figure "Erling Holthe Grunnlegger" [ref=f1e53]:
+            - img "Portrett av Erling Holthe, grunnlegger av Utekos" [ref=f1e55]
+            - generic [ref=f1e56]:
+              - generic [ref=f1e57]: Erling Holthe
+              - generic [ref=f1e58]: Grunnlegger
+      - article [ref=f1e59]:
+        - generic [ref=f1e60]:
+          - generic [ref=f1e61]:
+            - generic [ref=f1e62]: Vårt DNA
+            - heading "Kjernen i alt vi gjør" [level=2] [ref=f1e63]
+            - paragraph [ref=f1e64]: Fire ufravikelige prinsipper som sikrer at du alltid får den opplevelsen du fortjener.
+          - generic [ref=f1e65]:
+            - article [ref=f1e66]:
+              - heading "Designet for hygge" [level=3] [ref=f1e71]
+              - paragraph [ref=f1e72]: Vi vet at en sommerkveld kan bli kjølig og en høstdag krever ekstra varme. Derfor er produktene våre designet med en dyp forståelse for den norske livsstilen og behovet for å forlenge de sosiale, gode øyeblikkene utendørs.
+            - article [ref=f1e73]:
+              - heading "Kompromissløs komfort" [level=3] [ref=f1e79]
+              - paragraph [ref=f1e80]: Kvalitet er en følelse. Vi velger materialer som er myke, funksjonelle og behagelige, slik at du kan slappe helt av og nyte stunden.
+            - article [ref=f1e81]:
+              - heading "Et bevisst valg" [level=3] [ref=f1e87]
+              - paragraph [ref=f1e88]: I en verden av rask mote, fokuserer vi på tidløs design og solid håndverk som tåler å bli brukt igjen og igjen. Et Utekos-plagg er et bevisst valg for deg, og et mer ansvarlig valg for naturen vi alle setter pris på.
+            - article [ref=f1e89]:
+              - heading "Mer utekos" [level=3] [ref=f1e97]
+              - paragraph [ref=f1e98]: "Utekos handler for oss om å verdsette de rolige øyeblikkene: en kaffekopp på en kjølig morgen, en god samtale rundt bålpannen, eller en solnedgang fra terrassen."
+      - article [ref=f1e99]:
+        - generic [ref=f1e100]:
+          - generic [ref=f1e101]: Vårt løfte
+          - heading "Vårt løfte til deg" [level=2] [ref=f1e102]
+          - paragraph [ref=f1e103]: Komforten skal merkes med en gang, og kvaliteten skal fortsette å bære øyeblikkene ute.
+          - generic [ref=f1e104]:
+            - article [ref=f1e105]:
+              - heading "Mer enn et plagg" [level=3] [ref=f1e110]
+              - paragraph [ref=f1e111]: Vi lover deg følelsen av umiddelbar varme og velvære. En garanti for at du kan nyte øyeblikket lenger, uten å fryse.
+            - article [ref=f1e112]:
+              - heading "En varig verdi" [level=3] [ref=f1e118]
+              - paragraph [ref=f1e119]: Se på det som en investering i din egen livskvalitet. Kompromissløs komfort og overlegen allsidighet, designet for å gi deg flere timer utendørs, år etter år.
+      - article [ref=f1e120]:
+        - generic [ref=f1e121]:
+          - generic [ref=f1e122]:
+            - generic [ref=f1e123]: Livet med Utekos
+            - heading "Et glimt av opplevelsen" [level=2] [ref=f1e124]
+            - paragraph [ref=f1e125]: Se hvordan kompromissløs komfort gir liv til dine favorittøyeblikk utendørs.
+          - region "Livet med Utekos" [ref=f1e126]:
+            - generic [ref=f1e128]:
+              - group [ref=f1e129]:
+                - figure [ref=f1e130]:
+                  - img "To personer i Utekos-plagg nyter utsikten fra en fjelltopp." [ref=f1e132]
+              - group [ref=f1e133]:
+                - figure [ref=f1e134]:
+                  - img "En kvinne iført Utekos-plagg sitter på terrassen i snørike omgivelser." [ref=f1e136]
+              - group [ref=f1e137]:
+                - figure [ref=f1e138]:
+                  - img "En familie samlet rundt en bålpanne, alle kledd i Utekos." [ref=f1e140]
+              - group [ref=f1e141]:
+                - figure [ref=f1e142]:
+                  - img "Nærbilde av materialet og sømmene på et Utekos-produkt." [ref=f1e144]
+              - group [ref=f1e145]:
+                - figure [ref=f1e146]:
+                  - img "En person med en kaffekopp utenfor en bobil en kjølig høstmorgen." [ref=f1e148]
+              - group [ref=f1e149]:
+                - figure [ref=f1e150]:
+                  - img "Utekos-plagg henger klare til bruk på en hyttevegg." [ref=f1e152]
+      - article [ref=f1e153]:
+        - generic [ref=f1e154]:
+          - generic [ref=f1e155]:
+            - generic [ref=f1e156]: Møteplasser
+            - heading "Der du har møtt oss" [level=2] [ref=f1e157]
+            - paragraph [ref=f1e158]: Vi elsker å prate med folk. Derfor er vi jevnlig på messer og stands, og her har vi fått verdifulle innspill fra kunder som faktisk har kjent komforten.
+            - generic [ref=f1e159]:
+              - article [ref=f1e160]:
+                - generic [ref=f1e165]:
+                  - heading "Boligmesse Sotra" [level=3] [ref=f1e166]
+                  - paragraph [ref=f1e167]: Sotra · 21.-23. mars 2025
+              - article [ref=f1e168]:
+                - generic [ref=f1e173]:
+                  - heading "Smien, Laksevåg" [level=3] [ref=f1e174]
+                  - paragraph [ref=f1e175]: Bergen · 3.-4. desember 2022
+              - article [ref=f1e176]:
+                - generic [ref=f1e181]:
+                  - heading "Båt- og caravan messe" [level=3] [ref=f1e182]
+                  - paragraph [ref=f1e183]: Ålesund · 3.-5. mars 2023
+          - generic [ref=f1e184]:
+            - img "Bilde fra Utekos-stand eller messe 1" [ref=f1e186]
+            - img "Bilde fra Utekos-stand eller messe 2" [ref=f1e188]
+            - img "Bilde fra Utekos-stand eller messe 3" [ref=f1e190]
+            - img "Bilde fra Utekos-stand eller messe 4" [ref=f1e192]
+      - article [ref=f1e193]:
+        - generic [ref=f1e195]:
+          - img "Intersport logo" [ref=f1e197]
+          - generic [ref=f1e198]:
+            - generic [ref=f1e199]: Fysisk butikk i Bergen
+            - heading "Opplev Utekos hos Intersport Laksevåg" [level=2] [ref=f1e200]
+            - paragraph [ref=f1e201]: Lyst til å kjenne på kvaliteten og finne den perfekte passformen? Som eneste fysiske forhandler i Bergen finner du et utvalg av våre produkter hos våre venner på Laksevåg Senter.
+            - link "Få veibeskrivelse" [ref=f1e202] [cursor=pointer]:
+              - /url: https://www.google.com/maps/place/INTERSPORT/@60.389279,5.2774875,16z/data=!4m6!3m5!1s0x463cfc74b2fdcbe3:0x610e4e94951a1998!8m2!3d60.389279!4d5.2864997!16s%2Fg%2F1ttdlkr4?entry=ttu&g_ep=EgoyMDI1MTAyNi4wIKXMDSoASAFQAw%3D%3D
+      - article [ref=f1e203]:
+        - generic [ref=f1e205]:
+          - generic [ref=f1e206]: Oppdag vår kolleksjon
+          - heading "Klar til å skreddersy varmen?" [level=2] [ref=f1e207]
+          - paragraph [ref=f1e208]: Opplev hvordan gjennomtenkt funksjon og tidløs komfort kan forvandle en kjølig kveld til ditt favorittøyeblikk.
+          - link "Se alle produkter" [ref=f1e209] [cursor=pointer]:
+            - /url: /produkter
+          - generic [ref=f1e212]:
+            - generic [ref=f1e213]: Skapt for norske forhold
+            - generic [ref=f1e217]: Fri frakt over 999,-
+            - generic [ref=f1e221]:
+              - generic [ref=f1e222]: Trygg handel med
+              - img "Vipps" [ref=f1e223]
+              - img "Klarna" [ref=f1e225]
+  - contentinfo [ref=f1e230]:
+    - generic [ref=f1e231]:
+      - generic [ref=f1e232]:
+        - generic [ref=f1e233]:
+          - heading "Handlehjelp" [level=3] [ref=f1e234]
+          - navigation "Handlehjelp navigasjon" [ref=f1e235]:
+            - list [ref=f1e236]:
+              - listitem [ref=f1e237]:
+                - link "Kontakt oss" [ref=f1e238] [cursor=pointer]:
+                  - /url: /kontaktskjema
+              - listitem [ref=f1e239]:
+                - link "Teknologi og materialer" [ref=f1e240] [cursor=pointer]:
+                  - /url: /handlehjelp/teknologi-materialer
+              - listitem [ref=f1e241]:
+                - link "Vask og vedlikehold" [ref=f1e242] [cursor=pointer]:
+                  - /url: /handlehjelp/vask-og-vedlikehold
+              - listitem [ref=f1e243]:
+                - link "Størrelsesguide" [ref=f1e244] [cursor=pointer]:
+                  - /url: /handlehjelp/storrelsesguide
+        - generic [ref=f1e245]:
+          - heading "Kundeservice" [level=3] [ref=f1e246]
+          - navigation "Kundeservice navigasjon" [ref=f1e247]:
+            - list [ref=f1e248]:
+              - listitem [ref=f1e249]:
+                - link "Kundeservice" [ref=f1e250] [cursor=pointer]:
+                  - /url: /kontaktskjema
+              - listitem [ref=f1e251]:
+                - 'link "Tlf: +47 40 21 63 43" [ref=f1e252] [cursor=pointer]':
+                  - /url: tel:+4740216343
+              - listitem [ref=f1e253]:
+                - 'link "E-post: kundeservice@utekos.no" [ref=f1e254] [cursor=pointer]':
+                  - /url: mailto:kundeservice@utekos.no
+        - generic [ref=f1e255]:
+          - heading "Informasjon" [level=3] [ref=f1e256]
+          - navigation "Informasjon navigasjon" [ref=f1e257]:
+            - list [ref=f1e258]:
+              - listitem [ref=f1e259]:
+                - link "Om oss" [ref=f1e260] [cursor=pointer]:
+                  - /url: /om-oss
+              - listitem [ref=f1e261]:
+                - link "Frakt og retur" [ref=f1e262] [cursor=pointer]:
+                  - /url: /frakt-og-retur
+              - listitem [ref=f1e263]:
+                - link "Personvern" [ref=f1e264] [cursor=pointer]:
+                  - /url: /personvern
+              - listitem [ref=f1e265]:
+                - link "Vilkår og betingelser" [ref=f1e266] [cursor=pointer]:
+                  - /url: /vilkar-betingelser
+        - generic [ref=f1e267]:
+          - heading "Bedriftsinformasjon" [level=3] [ref=f1e268]
+          - navigation "Bedriftsinformasjon navigasjon" [ref=f1e269]:
+            - list [ref=f1e270]:
+              - listitem [ref=f1e271]:
+                - link "KELC AS" [ref=f1e272] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=f1e273]:
+                - link "Lille Damsgårdsveien 25" [ref=f1e274] [cursor=pointer]:
+                  - /url: map:Lille Damsgårdsveien 25
+              - listitem [ref=f1e275]:
+                - link "5162, Laksevåg" [ref=f1e276] [cursor=pointer]:
+                  - /url: map:Lille Damsgårdsveien 25, 5162, Bergen
+              - listitem [ref=f1e277]:
+                - link "Org.nr 925 820 393" [ref=f1e278] [cursor=pointer]:
+                  - /url: /kontaktskjema
+      - article [ref=f1e281]:
+        - region [ref=f1e282]:
+          - generic [ref=f1e283]:
+            - generic [ref=f1e284]:
+              - heading "Meld deg på Utekos sitt nyhetsbrev!" [level=2] [ref=f1e290]
+              - generic [ref=f1e291]:
+                - paragraph [ref=f1e292]: Som medlem i vår kundeklubb får du personlige varsler om tilbud, salg og kampanjer.
+                - paragraph [ref=f1e293]: Du får også tips, inspirasjon og nye artikler fra Utekos-magasinet.
+            - generic [ref=f1e294]:
+              - generic [ref=f1e295]: Din e-postadresse
+              - textbox "Din e-postadresse" [ref=f1e296]:
+                - /placeholder: Din e-postadresse…
+              - button "Meld meg inn" [ref=f1e297] [cursor=pointer]
+      - 'img "Betalingsmetoder: Klarna, Vipps, Visa og Mastercard" [ref=f1e301]'
+      - paragraph [ref=f1e303]: © 2026 Kelc AS. Alle rettigheter forbeholdt. Utekos® er et registrert varemerke i Norge.

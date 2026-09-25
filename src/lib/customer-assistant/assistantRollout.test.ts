@@ -122,18 +122,10 @@ test('enables the server rollout only for an exact preview with a positive safe 
   }
 })
 
-test('enables the customer-facing rollout in preview, production, and local development', () => {
+test('enables the customer-facing rollout in preview and local development only', () => {
   assert.equal(
     resolveAssistantDeploymentRolloutPercent({
       VERCEL_ENV: 'preview',
-      CUSTOMER_ASSISTANT_ENABLED: 'true',
-      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
-    }),
-    25
-  )
-  assert.equal(
-    resolveAssistantDeploymentRolloutPercent({
-      VERCEL_ENV: 'production',
       CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
     }),
@@ -157,6 +149,16 @@ test('enables the customer-facing rollout in preview, production, and local deve
   )
 
   for (const environment of [
+    {
+      VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
+    },
+    {
+      VERCEL_ENV: 'production',
+      CUSTOMER_ASSISTANT_ENABLED: 'true',
+      CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '25'
+    },
     {
       VERCEL_ENV: 'production',
       CUSTOMER_ASSISTANT_ENABLED: 'true',

@@ -197,7 +197,7 @@ test('route composition exposes requests only in configured Vercel deployments',
       CUSTOMER_ASSISTANT_ENABLED: 'true',
       CUSTOMER_ASSISTANT_ROLLOUT_PERCENT: '100'
     }),
-    12
+    0
   )
 
   assert.equal(
