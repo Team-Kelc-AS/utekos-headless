@@ -16,6 +16,7 @@ import {
   type CanonicalViewItem
 } from '../viewItemEvent'
 import { planCanonicalEventDispatch } from './planCanonicalEventDispatch'
+import { createCanonicalGenerateLead } from '../generateLeadEvent'
 
 const consent = {
   analytics: 'granted' as const,
@@ -154,6 +155,58 @@ function pageView(): CanonicalPageView {
     consent
   })
 }
+
+test('Dun waitlist sends page views only to Meta, including query strings and trailing slash', () => {
+  for (const path of [
+    '/dun-venteliste',
+    '/dun-venteliste/?utm_source=meta'
+  ]) {
+    const event = {
+      ...pageView(),
+      page_url: `https://utekos.no${path}`
+    }
+    assert.deepEqual(
+      planCanonicalEventDispatch(event).map(
+        intent => intent.provider
+      ),
+      ['meta']
+    )
+  }
+})
+
+test('Dun waitlist suppresses nonessential events without changing other routes', () => {
+  assert.deepEqual(
+    planCanonicalEventDispatch({
+      ...viewItem(),
+      page_url: 'https://utekos.no/dun-venteliste'
+    }),
+    []
+  )
+  assert.ok(planCanonicalEventDispatch(viewItem()).length > 0)
+})
+
+test('Dun waitlist Lead creates only a Meta dispatch', () => {
+  const event = createCanonicalGenerateLead({
+    consent,
+    environment: 'test',
+    eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+    eventTime: '2026-09-25T10:00:00.000Z',
+    pageUrl: 'https://utekos.no/dun-venteliste',
+    customData: {
+      submission_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+      form_id: 'product_waitlist_utekos_dun',
+      lead_type: 'product_waitlist',
+      currency: 'NOK',
+      value: 0
+    }
+  })
+  assert.deepEqual(
+    planCanonicalEventDispatch(event).map(
+      intent => intent.provider
+    ),
+    ['meta']
+  )
+})
 
 function viewItem(): CanonicalViewItem {
   return canonicalViewItemSchema.parse({

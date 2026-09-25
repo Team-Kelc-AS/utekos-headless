@@ -46,14 +46,19 @@ export type ProcessDunWaitlistShopifyQueueMessageDependencies = {
 const leadRowSchema = z.strictObject({
   email: z.string().nullable(),
   first_name: z.string().nullable(),
-  phone: z.string().nullable()
+  phone: z.string().nullable(),
+  estimated_size: z
+    .enum(['Small', 'Medium', 'Large'])
+    .nullable()
+    .optional()
 })
 
 const LOAD_LEAD_QUERY = `
   select
     email,
     first_name,
-    phone
+    phone,
+    metadata ->> 'estimated_size' as estimated_size
   from marketing.leads
   where id = $1::uuid
     and source = 'product_waitlist_utekos_dun'
@@ -81,8 +86,7 @@ function permanentFailure(
 
 export async function processDunWaitlistShopifyQueueMessage(
   record: DunWaitlistShopifyQueueRecord,
-  dependencies: ProcessDunWaitlistShopifyQueueMessageDependencies =
-    defaultDependencies
+  dependencies: ProcessDunWaitlistShopifyQueueMessageDependencies = defaultDependencies
 ): Promise<ProcessDunWaitlistShopifyQueueMessageResult> {
   return startAnalyticsSpan(
     {
@@ -90,16 +94,18 @@ export async function processDunWaitlistShopifyQueueMessage(
       op: 'queue.process',
       attributes: {
         'messaging.system': 'postgres_pgmq',
-        'messaging.destination.name': DUN_WAITLIST_SHOPIFY_QUEUE_NAME,
+        'messaging.destination.name':
+          DUN_WAITLIST_SHOPIFY_QUEUE_NAME,
         'messaging.operation.type': 'process',
         'messaging.message.id': record.msg_id,
         'messaging.message.delivery_count': record.read_ct
       }
     },
     async () => {
-      const payload = dunWaitlistShopifyQueueMessageSchema.safeParse(
-        record.message
-      )
+      const payload =
+        dunWaitlistShopifyQueueMessageSchema.safeParse(
+          record.message
+        )
 
       if (!payload.success) {
         return permanentFailure('invalid_queue_message')
@@ -141,7 +147,10 @@ export async function processDunWaitlistShopifyQueueMessage(
         const synced = await dependencies.syncCustomer({
           email: lead.data.email,
           firstName: lead.data.first_name,
-          phone: lead.data.phone
+          phone: lead.data.phone,
+          ...(lead.data.estimated_size ?
+            { estimatedSize: lead.data.estimated_size }
+          : {})
         })
 
         return {
@@ -151,7 +160,8 @@ export async function processDunWaitlistShopifyQueueMessage(
         }
       } catch (error: unknown) {
         const reason = failureReasonFromUnknown(error)
-        const classification = classifyDunWaitlistShopifyFailure(reason)
+        const classification =
+          classifyDunWaitlistShopifyFailure(reason)
 
         return {
           status: 'failure',

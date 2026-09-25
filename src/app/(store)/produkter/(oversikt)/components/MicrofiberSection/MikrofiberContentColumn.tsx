@@ -66,7 +66,7 @@ export function MikrofiberContentColumn() {
             }
           >
             <BrandBadge
-              backgroundColor='var(--sidebar-primary)'
+              backgroundColor='var(--night)'
               textColor='var(--sidebar-primary-foreground)'
               className='gap-2 border border-sidebar-primary-foreground/12 px-4 py-2 text-sm font-medium'
             >
@@ -134,7 +134,7 @@ export function MikrofiberContentColumn() {
               asChild
               variant='seeProduct'
               size='lg'
-              className='group min-h-12 w-full gap-2 rounded-full px-6 py-3 font-sans font-semibold text-base leading-[1.35] whitespace-normal shadow-[0_18px_40px_-28px_color-mix(in_oklch,var(--sidebar-primary)_70%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto sm:whitespace-nowrap'
+              className='group min-h-12 bg-primary! w-full gap-2 rounded-full px-6 py-3 font-sans font-semibold text-base leading-[1.35] whitespace-normal shadow-[0_18px_40px_-28px_color-mix(in_oklch,var(--sidebar-primary)_70%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto sm:whitespace-nowrap'
             >
               <Link
                 href='/produkter/utekos-mikrofiber'

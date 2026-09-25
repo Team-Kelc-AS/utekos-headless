@@ -118,8 +118,19 @@ export function planCanonicalEventDispatch(
 
   if (catalogEntry.lifecycle !== 'active') return []
 
+  const isDunWaitlist =
+    event.page_url &&
+    new URL(event.page_url).pathname.replace(/\/$/, '') ===
+      '/dun-venteliste'
+  if (
+    isDunWaitlist &&
+    !['page_view', 'generate_lead'].includes(event.event_name)
+  )
+    return []
+
   return outboxProviderIds.flatMap(
     (provider): ProviderDispatchIntent[] => {
+      if (isDunWaitlist && provider !== 'meta') return []
       const providerEntry = catalogEntry.providers[provider]
 
       if (providerEntry.serverOutbox !== 'active') return []
@@ -141,13 +152,15 @@ export function planCanonicalEventDispatch(
       }
 
       if (provider === 'meta' && isInternalTrafficEvent(event)) {
-        return [{
-          dispatch_mode: 'server_retry',
-          event_id: event.event_id,
-          provider,
-          skip_reason: 'internal_traffic',
-          status: 'skipped_unqualified'
-        }]
+        return [
+          {
+            dispatch_mode: 'server_retry',
+            event_id: event.event_id,
+            provider,
+            skip_reason: 'internal_traffic',
+            status: 'skipped_unqualified'
+          }
+        ]
       }
 
       if (
@@ -155,13 +168,15 @@ export function planCanonicalEventDispatch(
         event.event_name === 'remove_from_cart' &&
         !event.page_url
       ) {
-        return [{
-          dispatch_mode: 'server_retry',
-          event_id: event.event_id,
-          provider,
-          skip_reason: 'missing_page_url',
-          status: 'skipped_unqualified'
-        }]
+        return [
+          {
+            dispatch_mode: 'server_retry',
+            event_id: event.event_id,
+            provider,
+            skip_reason: 'missing_page_url',
+            status: 'skipped_unqualified'
+          }
+        ]
       }
 
       if (

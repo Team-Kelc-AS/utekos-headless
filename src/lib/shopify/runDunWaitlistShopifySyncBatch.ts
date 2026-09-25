@@ -10,9 +10,7 @@ import {
 
 type QueryRow = Record<string, unknown>
 
-export type DunWaitlistSyncQueryExecutor = <
-  T extends QueryRow
->(
+export type DunWaitlistSyncQueryExecutor = <T extends QueryRow>(
   query: string,
   parameters: readonly unknown[]
 ) => Promise<T[]>
@@ -51,7 +49,11 @@ const claimedJobSchema = z.strictObject({
 const leadRowSchema = z.strictObject({
   email: z.string().nullable(),
   first_name: z.string().nullable(),
-  phone: z.string().nullable()
+  phone: z.string().nullable(),
+  estimated_size: z
+    .enum(['Small', 'Medium', 'Large'])
+    .nullable()
+    .optional()
 })
 
 const maxItemsSchema = z.number().int().min(1).max(50)
@@ -77,9 +79,7 @@ const permanentFailureReasons = new Set<string>([
   'shopify_tags_add_rejected'
 ])
 
-let trackingSql:
-  | ReturnType<typeof postgres>
-  | undefined
+let trackingSql: ReturnType<typeof postgres> | undefined
 
 function getTrackingSql() {
   const connectionString =
@@ -109,13 +109,11 @@ const executePostgresQuery: DunWaitlistSyncQueryExecutor =
     parameters: readonly unknown[]
   ) => {
     const sql = getTrackingSql()
-    const postgresParameters =
-      parameters as Parameters<typeof sql.unsafe>[1]
+    const postgresParameters = parameters as Parameters<
+      typeof sql.unsafe
+    >[1]
 
-    return sql.unsafe<T[]>(
-      query,
-      postgresParameters
-    )
+    return sql.unsafe<T[]>(query, postgresParameters)
   }
 
 const defaultDependencies: RunDunWaitlistShopifySyncBatchDependencies =
@@ -244,7 +242,8 @@ const LOAD_LEAD_QUERY = `
   select
     email,
     first_name,
-    phone
+    phone,
+    metadata ->> 'estimated_size' as estimated_size
   from marketing.leads
   where id = $1::uuid
     and source = 'product_waitlist_utekos_dun'
@@ -328,24 +327,15 @@ const MARK_DEAD_LETTERED_QUERY = `
 `
 
 function failureReason(error: unknown): string {
-  const message =
-    error instanceof Error ? error.message : ''
+  const message = error instanceof Error ? error.message : ''
 
-  const parsed =
-    providerFailureReasonSchema.safeParse(message)
+  const parsed = providerFailureReasonSchema.safeParse(message)
 
-  return parsed.success ?
-      parsed.data
-    : 'unexpected_error'
+  return parsed.success ? parsed.data : 'unexpected_error'
 }
 
-function retryDelayMinutes(
-  attemptCount: number
-): number {
-  return Math.min(
-    60,
-    5 * 2 ** Math.max(0, attemptCount - 1)
-  )
+function retryDelayMinutes(attemptCount: number): number {
+  return Math.min(60, 5 * 2 ** Math.max(0, attemptCount - 1))
 }
 
 function ensureSingleUpdate(
@@ -361,22 +351,19 @@ function ensureSingleUpdate(
 
 export async function runDunWaitlistShopifySyncBatch(
   input: { maxItems: number },
-  dependencies: RunDunWaitlistShopifySyncBatchDependencies =
-    defaultDependencies
+  dependencies: RunDunWaitlistShopifySyncBatchDependencies = defaultDependencies
 ): Promise<DunWaitlistShopifySyncSummary> {
-  const maxItems =
-    maxItemsSchema.parse(input.maxItems)
+  const maxItems = maxItemsSchema.parse(input.maxItems)
 
-  const enqueuedRows =
-    await dependencies.executeQuery<QueryRow>(
-      ENQUEUE_MISSING_QUERY,
-      [
-        ENQUEUE_LOCK_NAMESPACE,
-        ENQUEUE_LOCK_KEY,
-        PROVIDER,
-        EVENT_TYPE
-      ]
-    )
+  const enqueuedRows = await dependencies.executeQuery<QueryRow>(
+    ENQUEUE_MISSING_QUERY,
+    [
+      ENQUEUE_LOCK_NAMESPACE,
+      ENQUEUE_LOCK_KEY,
+      PROVIDER,
+      EVENT_TYPE
+    ]
+  )
 
   const summary: DunWaitlistShopifySyncSummary = {
     claimed: 0,
@@ -387,74 +374,51 @@ export async function runDunWaitlistShopifySyncBatch(
     succeeded: 0
   }
 
-  for (
-    let index = 0;
-    index < maxItems;
-    index += 1
-  ) {
+  for (let index = 0; index < maxItems; index += 1) {
     const claimedRows =
       await dependencies.executeQuery<QueryRow>(
         CLAIM_NEXT_QUERY,
-        [
-          PROVIDER,
-          EVENT_TYPE,
-          STALE_PROCESSING_AFTER
-        ]
+        [PROVIDER, EVENT_TYPE, STALE_PROCESSING_AFTER]
       )
 
     if (claimedRows.length === 0) {
       return summary
     }
 
-    const claimed =
-      claimedJobSchema.parse(claimedRows[0])
+    const claimed = claimedJobSchema.parse(claimedRows[0])
 
     summary.claimed += 1
 
-    const leadRows =
-      await dependencies.executeQuery<QueryRow>(
-        LOAD_LEAD_QUERY,
-        [claimed.lead_id]
-      )
+    const leadRows = await dependencies.executeQuery<QueryRow>(
+      LOAD_LEAD_QUERY,
+      [claimed.lead_id]
+    )
 
     if (leadRows.length !== 1) {
-      const updated =
-        await dependencies.executeQuery<QueryRow>(
-          MARK_DEAD_LETTERED_QUERY,
-          [
-            claimed.id,
-            claimed.attempt_count,
-            'lead_not_found'
-          ]
-        )
-
-      ensureSingleUpdate(
-        updated,
-        'dead_letter'
+      const updated = await dependencies.executeQuery<QueryRow>(
+        MARK_DEAD_LETTERED_QUERY,
+        [claimed.id, claimed.attempt_count, 'lead_not_found']
       )
+
+      ensureSingleUpdate(updated, 'dead_letter')
 
       summary.deadLettered += 1
       continue
     }
 
-    const lead =
-      leadRowSchema.safeParse(leadRows[0])
+    const lead = leadRowSchema.safeParse(leadRows[0])
 
     if (!lead.success || !lead.data.email) {
-      const updated =
-        await dependencies.executeQuery<QueryRow>(
-          MARK_DEAD_LETTERED_QUERY,
-          [
-            claimed.id,
-            claimed.attempt_count,
-            'invalid_lead_record'
-          ]
-        )
-
-      ensureSingleUpdate(
-        updated,
-        'dead_letter'
+      const updated = await dependencies.executeQuery<QueryRow>(
+        MARK_DEAD_LETTERED_QUERY,
+        [
+          claimed.id,
+          claimed.attempt_count,
+          'invalid_lead_record'
+        ]
       )
+
+      ensureSingleUpdate(updated, 'dead_letter')
 
       summary.deadLettered += 1
       continue
@@ -464,88 +428,66 @@ export async function runDunWaitlistShopifySyncBatch(
       await dependencies.syncCustomer({
         email: lead.data.email,
         firstName: lead.data.first_name,
-        phone: lead.data.phone
+        phone: lead.data.phone,
+        ...(lead.data.estimated_size ?
+          { estimatedSize: lead.data.estimated_size }
+        : {})
       })
 
-      const updated =
-        await dependencies.executeQuery<QueryRow>(
-          MARK_SUCCEEDED_QUERY,
-          [
-            claimed.id,
-            claimed.attempt_count
-          ]
-        )
-
-      ensureSingleUpdate(
-        updated,
-        'success'
+      const updated = await dependencies.executeQuery<QueryRow>(
+        MARK_SUCCEEDED_QUERY,
+        [claimed.id, claimed.attempt_count]
       )
+
+      ensureSingleUpdate(updated, 'success')
 
       summary.succeeded += 1
     } catch (error: unknown) {
       const reason = failureReason(error)
 
-      const isPermanent =
-        permanentFailureReasons.has(reason)
+      const isPermanent = permanentFailureReasons.has(reason)
 
       const attemptsExhausted =
         claimed.attempt_count >= MAX_ATTEMPTS
 
-      if (
-        isPermanent ||
-        attemptsExhausted
-      ) {
+      if (isPermanent || attemptsExhausted) {
         const updated =
           await dependencies.executeQuery<QueryRow>(
             MARK_DEAD_LETTERED_QUERY,
-            [
-              claimed.id,
-              claimed.attempt_count,
-              reason
-            ]
+            [claimed.id, claimed.attempt_count, reason]
           )
 
-        ensureSingleUpdate(
-          updated,
-          'dead_letter'
-        )
+        ensureSingleUpdate(updated, 'dead_letter')
 
         summary.deadLettered += 1
         continue
       }
 
-      const delayMinutes =
-        retryDelayMinutes(
-          claimed.attempt_count
-        )
+      const delayMinutes = retryDelayMinutes(
+        claimed.attempt_count
+      )
 
       const nextAttemptAt = new Date(
-        dependencies.now().getTime() +
-          delayMinutes * 60_000
+        dependencies.now().getTime() + delayMinutes * 60_000
       ).toISOString()
 
-      const updated =
-        await dependencies.executeQuery<QueryRow>(
-          MARK_RETRY_QUERY,
-          [
-            claimed.id,
-            claimed.attempt_count,
-            reason,
-            nextAttemptAt
-          ]
-        )
-
-      ensureSingleUpdate(
-        updated,
-        'retry'
+      const updated = await dependencies.executeQuery<QueryRow>(
+        MARK_RETRY_QUERY,
+        [
+          claimed.id,
+          claimed.attempt_count,
+          reason,
+          nextAttemptAt
+        ]
       )
+
+      ensureSingleUpdate(updated, 'retry')
 
       summary.retryScheduled += 1
     }
   }
 
-  summary.limitReached =
-    summary.claimed === maxItems
+  summary.limitReached = summary.claimed === maxItems
 
   return summary
 }

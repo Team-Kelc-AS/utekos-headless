@@ -25,6 +25,8 @@ test('a valid signup records a Dun waitlist lead and returns the confirmation', 
           input: Record<string, unknown>
         ) => {
           submissions.push(input)
+          if (input.email === 'failure@example.com')
+            return { leadId: 'unused', persisted: false }
           return {
             leadId: '11111111-1111-4111-8111-111111111111',
             eventId: '11111111-1111-4111-8111-111111111111',
@@ -52,6 +54,7 @@ test('a valid signup records a Dun waitlist lead and returns the confirmation', 
     form.set('email', 'Kari@Example.com')
     form.set('phone', '+47 400 00 000')
     form.set('website', '')
+    form.set('estimatedSize', 'Medium')
 
     const result = await submitDunWaitlistPage(
       { status: 'idle', message: '' },
@@ -63,6 +66,7 @@ test('a valid signup records a Dun waitlist lead and returns the confirmation', 
     assert.equal(submissions.length, 1)
     assert.equal(submissions[0]?.email, 'kari@example.com')
     assert.equal(submissions[0]?.phone, '+47 400 00 000')
+    assert.equal(submissions[0]?.estimatedSize, 'Medium')
     assert.equal(
       submissions[0]?.source,
       'product_waitlist_utekos_dun'
@@ -73,11 +77,32 @@ test('a valid signup records a Dun waitlist lead and returns the confirmation', 
     )
     assert.equal(submissions[0]?.leadType, 'product_waitlist')
     assert.equal(submissions[0]?.productHandle, 'utekos-dun')
-    assert.equal(
-      submissions[0]?.entryPoint,
-      'dun_waitlist_page'
-    )
+    assert.equal(submissions[0]?.entryPoint, 'dun_waitlist_page')
     assert.equal('firstName' in (submissions[0] ?? {}), false)
+
+    form.delete('estimatedSize')
+    const skippedSize = await submitDunWaitlistPage(
+      { status: 'idle', message: '' },
+      form
+    )
+    assert.equal(skippedSize.status, 'success')
+    assert.equal(submissions[1]?.estimatedSize, undefined)
+
+    form.set('email', 'failure@example.com')
+    const failed = await submitDunWaitlistPage(
+      { status: 'idle', message: '' },
+      form
+    )
+    assert.equal(failed.status, 'error')
+    assert.equal(failed.dataLayerEvent, undefined)
+
+    form.set('estimatedSize', 'XL')
+    const invalidSize = await submitDunWaitlistPage(
+      { status: 'idle', message: '' },
+      form
+    )
+    assert.equal(invalidSize.status, 'error')
+    assert.equal(submissions.length, 3)
   } finally {
     moduleWithLoad._load = originalLoad
   }

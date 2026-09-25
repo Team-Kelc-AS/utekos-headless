@@ -21,9 +21,7 @@ import { z } from 'zod'
 export type DunWaitlistPageActionState = {
   status: 'idle' | 'success' | 'error'
   message: string
-  errors?: Partial<
-    Record<keyof DunWaitlistPageData, string[]>
-  >
+  errors?: Partial<Record<keyof DunWaitlistPageData, string[]>>
   eventId?: string
   dataLayerEvent?: GenerateLeadDataLayerEvent
 }
@@ -35,7 +33,8 @@ export async function submitDunWaitlistPage(
   const result = DunWaitlistPageSchema.safeParse({
     email: formData.get('email'),
     phone: formData.get('phone'),
-    website: formData.get('website') ?? ''
+    website: formData.get('website') ?? '',
+    estimatedSize: formData.get('estimatedSize') ?? undefined
   })
 
   if (!result.success) {
@@ -67,8 +66,18 @@ export async function submitDunWaitlistPage(
     source: LEAD_SOURCES.productWaitlistUtekosDun,
     productHandle: 'utekos-dun',
     entryPoint: 'dun_waitlist_page',
+    ...(result.data.estimatedSize ?
+      { estimatedSize: result.data.estimatedSize }
+    : {}),
     ...(trackingContext ? { trackingContext } : {})
   })
+
+  if (leadResult.persisted === false) {
+    return {
+      status: 'error',
+      message: 'Påmeldingen kunne ikke lagres. Prøv igjen.'
+    }
+  }
 
   return {
     status: 'success',

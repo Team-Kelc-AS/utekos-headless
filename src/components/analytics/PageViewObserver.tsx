@@ -14,9 +14,11 @@ import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
 import { runConsentStep } from '@/lib/analytics/runConsentStep'
 
 export function PageViewObserver({
-  environment
+  environment,
+  metaOnly = false
 }: {
   environment: TrackingEnvironment
+  metaOnly?: boolean
 }) {
   const pathname = usePathname()
   const search = useSearchParams().toString()
@@ -38,7 +40,9 @@ export function PageViewObserver({
             { documentReferrer: context.documentReferrer }
           : {})
         })
-        if (browserPageViewSession.hasEmitted(pageView.pageViewId))
+        if (
+          browserPageViewSession.hasEmitted(pageView.pageViewId)
+        )
           return
         const event = createCanonicalPageView({
           environment,
@@ -54,14 +58,16 @@ export function PageViewObserver({
           ...(context.browserId ?
             { browserId: context.browserId }
           : {}),
-          ...(context.clickId ? { clickId: context.clickId } : {}),
+          ...(context.clickId ?
+            { clickId: context.clickId }
+          : {}),
           ...(context.externalId ?
             { externalId: context.externalId }
           : {}),
           eventDeviceInfo: context.eventDeviceInfo
         })
-        emitCanonicalPageView(event)
-        if (context.externalId) {
+        emitCanonicalPageView(event, metaOnly)
+        if (context.externalId && !metaOnly) {
           browserMicrosoftUetIdSyncEmitter.emit({
             externalId: context.externalId,
             pageViewEventId: event.event_id,

@@ -18,6 +18,7 @@ import { insertMarketingLead } from './insertMarketingLead'
 
 export type RecordLeadSubmissionInput = {
   email: string
+  estimatedSize?: 'Small' | 'Medium' | 'Large'
   entryPoint?: string
   firstName?: string
   formId: LeadFormId
@@ -30,6 +31,7 @@ export type RecordLeadSubmissionInput = {
 }
 
 export type RecordLeadSubmissionResult = {
+  persisted?: boolean
   dataLayerEvent?: GenerateLeadDataLayerEvent
   eventId?: string
   leadId: string
@@ -39,7 +41,8 @@ export async function recordLeadSubmission(
   input: RecordLeadSubmissionInput
 ): Promise<RecordLeadSubmissionResult> {
   const consent =
-    input.trackingContext?.consent ?? defaultTrackingAuthorization()
+    input.trackingContext?.consent ??
+    defaultTrackingAuthorization()
   const consentedAt =
     consent.marketing === 'granted' ?
       new Date().toISOString()
@@ -70,6 +73,9 @@ export async function recordLeadSubmission(
       metadata: {
         form_id: input.formId,
         lead_type: input.leadType,
+        ...(input.estimatedSize ?
+          { estimated_size: input.estimatedSize }
+        : {}),
         ...(input.trackingContext?.page_url ?
           { page_url: input.trackingContext.page_url }
         : {}),
@@ -91,7 +97,7 @@ export async function recordLeadSubmission(
       },
       context: {}
     })
-    return { leadId: input.leadId }
+    return { leadId: input.leadId, persisted: false }
   }
 
   const pageUrl = input.trackingContext?.page_url

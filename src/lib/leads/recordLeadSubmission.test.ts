@@ -26,8 +26,9 @@ const insertCalls: InsertMarketingLeadInput[] = []
 const recordCalls: RecordAcceptedGenerateLeadInput[] = []
 const logCalls: AppLogInput[] = []
 
-let insertImpl: (input: InsertMarketingLeadInput) => Promise<void> =
-  async () => {}
+let insertImpl: (
+  input: InsertMarketingLeadInput
+) => Promise<void> = async () => {}
 let recordImpl: (
   input: RecordAcceptedGenerateLeadInput
 ) => Promise<RecordAcceptedGenerateLeadResult> = async input =>
@@ -57,8 +58,12 @@ moduleWithLoad._load = (request, parent, isMain) => {
   }
 
   if (
-    request === '@/lib/analytics/server/getLeadRequestContextFromHeaders' ||
-    isRelativeRequest(request, 'getLeadRequestContextFromHeaders')
+    request ===
+      '@/lib/analytics/server/getLeadRequestContextFromHeaders' ||
+    isRelativeRequest(
+      request,
+      'getLeadRequestContextFromHeaders'
+    )
   ) {
     return {
       getLeadRequestContextFromHeaders: async () => ({
@@ -69,7 +74,8 @@ moduleWithLoad._load = (request, parent, isMain) => {
   }
 
   if (
-    request === '@/lib/analytics/server/recordAcceptedGenerateLead' ||
+    request ===
+      '@/lib/analytics/server/recordAcceptedGenerateLead' ||
     isRelativeRequest(request, 'recordAcceptedGenerateLead')
   ) {
     return {
@@ -95,7 +101,9 @@ moduleWithLoad._load = (request, parent, isMain) => {
 
   if (isRelativeRequest(request, 'insertMarketingLead')) {
     return {
-      insertMarketingLead: async (input: InsertMarketingLeadInput) => {
+      insertMarketingLead: async (
+        input: InsertMarketingLeadInput
+      ) => {
         insertCalls.push(input)
         await insertImpl(input)
         return { id: input.id }
@@ -107,13 +115,12 @@ moduleWithLoad._load = (request, parent, isMain) => {
 }
 
 const require = createRequire(import.meta.url)
-const { recordLeadSubmission } = require(
-  './recordLeadSubmission.ts'
-) as {
-  recordLeadSubmission: (
-    input: RecordLeadSubmissionInput
-  ) => Promise<RecordLeadSubmissionResult>
-}
+const { recordLeadSubmission } =
+  require('./recordLeadSubmission.ts') as {
+    recordLeadSubmission: (
+      input: RecordLeadSubmissionInput
+    ) => Promise<RecordLeadSubmissionResult>
+  }
 
 const LEAD_ID = '33333333-3333-4333-8333-333333333333'
 const PAGE_VIEW_ID = '44444444-4444-4444-8444-444444444444'
@@ -174,7 +181,10 @@ function assertLogsExcludeSubmittedCustomerValues() {
 
   assert.equal(serializedDiagnostic.includes(testEmail), false)
   assert.equal(serializedDiagnostic.includes(testPhone), false)
-  assert.equal(serializedDiagnostic.includes(testFirstName), false)
+  assert.equal(
+    serializedDiagnostic.includes(testFirstName),
+    false
+  )
 }
 
 test('granted lead persists once and returns canonical browser evidence for its submission ID', async () => {
@@ -269,6 +279,16 @@ test('persistence failure logs once and does not attempt tracking', async () => 
       level: 'ERROR'
     }
   ])
-  assert.deepEqual(result, { leadId: LEAD_ID })
+  assert.deepEqual(result, { leadId: LEAD_ID, persisted: false })
   assertLogsExcludeSubmittedCustomerValues()
+})
+
+test('optional Dun size stays in lead metadata and not the advertising event', async () => {
+  resetSpies()
+  await recordLeadSubmission({
+    ...baseInput(),
+    estimatedSize: 'Large'
+  })
+  assert.equal(insertCalls[0]?.metadata.estimated_size, 'Large')
+  assert.equal('estimatedSize' in (recordCalls[0] ?? {}), false)
 })

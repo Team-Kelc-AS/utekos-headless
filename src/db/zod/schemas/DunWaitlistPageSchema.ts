@@ -15,7 +15,8 @@ export const DunWaitlistPageSchema = z.object({
       /^[+\d][\d\s().-]+$/,
       'Skriv inn et gyldig mobilnummer.'
     ),
-  website: z.string().max(200).optional()
+  website: z.string().max(200).optional(),
+  estimatedSize: z.enum(['Small', 'Medium', 'Large']).optional()
 })
 
 export type DunWaitlistPageData = z.infer<

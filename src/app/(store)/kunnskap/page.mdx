@@ -1,0 +1,43 @@
+import { KnowledgeOverviewBreadcrumbs } from '@/components/knowledge/KnowledgeOverviewBreadcrumbs'
+import {
+  KnowledgeFeaturedStories,
+  KnowledgeTopicLibrary,
+  KnowledgeOverviewStructuredData
+} from './KnowledgeOverviewStories'
+import { buildKnowledgeOverviewMetadata } from '@/lib/knowledge/buildKnowledgeMetadata'
+import styles from './knowledgeOverview.module.css'
+
+export const metadata = buildKnowledgeOverviewMetadata()
+
+<div className={styles.overview}>
+  <KnowledgeOverviewStructuredData />
+  <div className={styles.contentWidth}>
+    <div className={styles.breadcrumbs}><KnowledgeOverviewBreadcrumbs /></div>
+    <header className={styles.hero}>
+
+# Kunsten å holde varmen
+
+Kunnskap om kroppen, klærne og materialene. For deg som vil
+forstå mer og trives bedre ute.
+
+<a className={styles.heroLink} href='#artikler'>
+  {'Utforsk artiklene '}<span aria-hidden='true'>↗</span>
+</a>
+
+    </header>
+    <section className={styles.featuredSection} aria-labelledby='fremhevet-kunnskap'>
+      <h2 className={styles.sectionTitle} id='fremhevet-kunnskap'>Aktuelt fra Utekos kunnskap</h2>
+      <KnowledgeFeaturedStories />
+    </section>
+    <section className={styles.librarySection} aria-labelledby='artikler'>
+
+<h2 className={styles.libraryTitle} id='artikler'>
+  {'Hva vil du vite mer om?'}
+</h2>
+
+<KnowledgeTopicLibrary />
+
+    </section>
+
+  </div>
+</div>

@@ -9,7 +9,8 @@ const DUNVARSEL_TAG = 'dunvarsel'
 const dunWaitlistCustomerSchema = z.strictObject({
   email: z.string().trim().email().max(254),
   firstName: z.string().trim().max(100).nullable().optional(),
-  phone: z.string().trim().max(30).nullable().optional()
+  phone: z.string().trim().max(30).nullable().optional(),
+  estimatedSize: z.enum(['Small', 'Medium', 'Large']).optional()
 })
 
 const shopifyCustomerSchema = z.strictObject({
@@ -23,26 +24,14 @@ const customerLookupSchema = z.strictObject({
 const customerCreateSchema = z.strictObject({
   customerCreate: z.strictObject({
     customer: shopifyCustomerSchema.nullable(),
-    userErrors: z.array(
-      z.strictObject({
-        message: z.string()
-      })
-    )
+    userErrors: z.array(z.strictObject({ message: z.string() }))
   })
 })
 
 const tagsAddSchema = z.strictObject({
   tagsAdd: z.strictObject({
-    node: z
-      .strictObject({
-        id: z.string()
-      })
-      .nullable(),
-    userErrors: z.array(
-      z.strictObject({
-        message: z.string()
-      })
-    )
+    node: z.strictObject({ id: z.string() }).nullable(),
+    userErrors: z.array(z.strictObject({ message: z.string() }))
   })
 })
 
@@ -93,9 +82,8 @@ export type SyncDunWaitlistCustomerDependencies = {
   graphql: ShopifyAdminGraphqlClient
 }
 
-const defaultDependencies: SyncDunWaitlistCustomerDependencies = {
-  graphql: shopifyAdminGraphql
-}
+const defaultDependencies: SyncDunWaitlistCustomerDependencies =
+  { graphql: shopifyAdminGraphql }
 
 function normalizeNorwegianPhone(
   phone: string | null | undefined
@@ -143,19 +131,13 @@ async function findCustomerIdByEmail(
 }
 
 async function createCustomer(
-  input: {
-    email: string
-    firstName?: string
-    phone?: string
-  },
+  input: { email: string; firstName?: string; phone?: string },
   graphql: ShopifyAdminGraphqlClient
 ): Promise<string> {
   let response: unknown
 
   try {
-    response = await graphql(CUSTOMER_CREATE_MUTATION, {
-      input
-    })
+    response = await graphql(CUSTOMER_CREATE_MUTATION, { input })
   } catch {
     throw new Error('shopify_customer_create_failed')
   }
@@ -177,11 +159,7 @@ async function createCustomer(
 }
 
 async function resolveCustomerId(
-  input: {
-    email: string
-    firstName?: string
-    phone?: string
-  },
+  input: { email: string; firstName?: string; phone?: string },
   graphql: ShopifyAdminGraphqlClient
 ): Promise<string> {
   const existingCustomerId = await findCustomerIdByEmail(
@@ -234,14 +212,20 @@ async function resolveCustomerId(
 
 async function addDunvarselTag(
   customerId: string,
-  graphql: ShopifyAdminGraphqlClient
+  graphql: ShopifyAdminGraphqlClient,
+  estimatedSize?: 'Small' | 'Medium' | 'Large'
 ): Promise<void> {
   let response: unknown
 
   try {
     response = await graphql(TAGS_ADD_MUTATION, {
       id: customerId,
-      tags: [DUNVARSEL_TAG]
+      tags: [
+        DUNVARSEL_TAG,
+        ...(estimatedSize ?
+          [`dunvarsel-size-${estimatedSize.toLowerCase()}`]
+        : [])
+      ]
     })
   } catch {
     throw new Error('shopify_tags_add_failed')
@@ -263,8 +247,7 @@ async function addDunvarselTag(
 
 export async function syncDunWaitlistCustomerToShopify(
   input: DunWaitlistCustomer,
-  dependencies: SyncDunWaitlistCustomerDependencies =
-    defaultDependencies
+  dependencies: SyncDunWaitlistCustomerDependencies = defaultDependencies
 ): Promise<{ customerId: string }> {
   const parsed = dunWaitlistCustomerSchema.safeParse(input)
 
@@ -273,8 +256,7 @@ export async function syncDunWaitlistCustomerToShopify(
   }
 
   const email = parsed.data.email.toLowerCase()
-  const firstName =
-    parsed.data.firstName?.trim() || undefined
+  const firstName = parsed.data.firstName?.trim() || undefined
   const phone = normalizeNorwegianPhone(parsed.data.phone)
 
   const customerId = await resolveCustomerId(
@@ -286,7 +268,11 @@ export async function syncDunWaitlistCustomerToShopify(
     dependencies.graphql
   )
 
-  await addDunvarselTag(customerId, dependencies.graphql)
+  await addDunvarselTag(
+    customerId,
+    dependencies.graphql,
+    parsed.data.estimatedSize
+  )
 
   return { customerId }
 }

@@ -2,6 +2,36 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { DunWaitlistPageSchema } from './DunWaitlistPageSchema'
 
+test('estimated size is optional and only accepts the three offered sizes', () => {
+  const signup = {
+    email: 'kari@example.com',
+    phone: '+47 400 00 000'
+  }
+  for (const estimatedSize of [
+    undefined,
+    'Small',
+    'Medium',
+    'Large'
+  ]) {
+    assert.equal(
+      DunWaitlistPageSchema.safeParse({
+        ...signup,
+        estimatedSize
+      }).success,
+      true
+    )
+  }
+  for (const estimatedSize of ['', 'XL', 'small', 1]) {
+    assert.equal(
+      DunWaitlistPageSchema.safeParse({
+        ...signup,
+        estimatedSize
+      }).success,
+      false
+    )
+  }
+})
+
 test('accepts email and mobile number without a name', () => {
   const result = DunWaitlistPageSchema.safeParse({
     email: 'kari@example.com',

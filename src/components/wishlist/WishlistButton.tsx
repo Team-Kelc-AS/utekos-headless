@@ -118,7 +118,7 @@ export function WishlistButton({
         className={cn(
           surface === 'plain' ?
             'border-0 bg-transparent text-foreground shadow-none hover:bg-transparent hover:text-heart focus-visible:border-transparent focus-visible:ring-foreground/40'
-          : 'border border-border bg-muted text-foreground shadow-[0_12px_30px_-16px_rgba(0,0,0,0.85)] hover:bg-muted/90 hover:text-foreground focus-visible:border-foreground/40 focus-visible:ring-foreground/40',
+          : 'border border-border bg-transparent text-foreground shadow-[0_12px_30px_-16px_rgba(0,0,0,0.85)] hover:text-foreground focus-visible:border-foreground/40 focus-visible:ring-foreground/40',
           isLabelled ?
             'h-11 rounded-full px-4 font-sans text-sm font-semibold'
           : 'size-12 rounded-2xl',

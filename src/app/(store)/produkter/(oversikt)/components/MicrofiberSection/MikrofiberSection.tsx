@@ -7,7 +7,7 @@ export async function MikrofiberSection() {
   return (
     <article className='mx-auto w-full py-10 sm:py-16'>
       <div className='container mx-auto px-4'>
-        <div className='relative overflow-hidden rounded-[1.75rem] border border-border bg-muted p-5 text-foreground shadow-[0_28px_90px_-62px_color-mix(in_oklch,var(--background)_72%,transparent)] sm:p-8 lg:p-12'>
+        <div className='relative overflow-hidden rounded-[1.75rem] border border-border bg-jungle p-5 text-foreground shadow-[0_28px_90px_-62px_color-mix(in_oklch,var(--background)_72%,transparent)] sm:p-8 lg:p-12'>
           <div className='pointer-events-none absolute inset-0 opacity-70'>
             <div
               className='size-136rounded-full absolute top-0 -left-20 blur-3xl'
