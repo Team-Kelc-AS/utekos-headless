@@ -5,9 +5,5 @@ export function TechdownSpecsAccordion() {
   const specSections =
     PRODUCT_PAGE_CONTENT['utekos-techdown'].accordion
 
-  if (!specSections || specSections.length === 0) {
-    return null
-  }
-
   return <TechdownSpecsAccordionClient sections={specSections} />
 }

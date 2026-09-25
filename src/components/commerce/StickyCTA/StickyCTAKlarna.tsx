@@ -21,8 +21,8 @@ export default function StickyCTAKlarna({
       selectedVariant={selectedVariant}
       quantity={1}
       theme='default'
-      className={styles.klarna}
-      buttonContainerClassName={styles.klarnaButton}
+      className={styles.klarna ?? ''}
+      buttonContainerClassName={styles.klarnaButton ?? ''}
       loadingFallback={
         <span className={styles.klarnaLoading} role='status'>
           Laster Klarna…
