@@ -1,3 +1,9 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion'
 import { CompassIcon } from '@/components/animate-icons/icons/compass'
 import { nbccUseCases } from '../utils/nbccLandingPageContent'
 import { useCaseIcons } from '../utils/useCaseIcons'
@@ -33,23 +39,32 @@ export function NbccUseCasesSection() {
             const Icon = useCaseIcons[index] ?? CompassIcon
             return (
               <NbccReveal item key={useCase.title}>
-                <article
+                <Accordion
                   data-nbcc-usecase-card
-                  className='rounded-lg border border-foreground/15 bg-jungle p-6 text-foreground'
+                  className='rounded-lg border border-foreground/15 bg-jungle text-foreground'
                 >
-                  <Icon
-                    size={28}
-                    animateOnHover='default'
-                    className='mb-5 text-primary'
-                    aria-hidden
-                  />
-                  <h3 className='font-sans font-semibold text-lg text-foreground'>
-                    {useCase.title}
-                  </h3>
-                  <p className='mt-3 font-sans text-sm leading-7 text-foreground'>
-                    {useCase.description}
-                  </p>
-                </article>
+                  <AccordionItem
+                    value={useCase.title}
+                    className='border-none'
+                  >
+                    <AccordionTrigger className='items-center gap-3 px-6 py-5 text-left hover:no-underline hover:text-primary focus-visible:ring-foreground/30'>
+                      <span className='flex min-w-0 flex-1 items-center gap-3'>
+                        <Icon
+                          size={28}
+                          animateOnHover='default'
+                          className='shrink-0 text-primary'
+                          aria-hidden
+                        />
+                        <span className='font-sans font-semibold text-lg text-foreground'>
+                          {useCase.title}
+                        </span>
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className='px-6 pb-6 text-sm leading-7 text-foreground'>
+                      {useCase.description}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </NbccReveal>
             )
           })}

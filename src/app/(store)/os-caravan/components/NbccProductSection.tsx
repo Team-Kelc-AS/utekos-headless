@@ -1,6 +1,5 @@
 import { getProduct } from '@/api/lib/products/getProduct'
 import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
-import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -28,10 +27,7 @@ export async function NbccProductSection() {
       <div className='mx-auto max-w-7xl'>
         <NbccReveal className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
           <div>
-            <Badge variant='promo'>
-              Utekos for NBCC-medlemmer
-            </Badge>
-            <h2 className='mt-5 max-w-2xl font-sans text-3xl text-balance text-foreground sm:text-4xl'>
+            <h2 className='max-w-2xl font-sans text-3xl font-extrabold text-balance text-foreground sm:text-4xl'>
               Skreddersy din campingopplevelse
             </h2>
           </div>

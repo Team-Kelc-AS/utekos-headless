@@ -33,7 +33,7 @@ export const metadata: Metadata = {
       'Utekos møter Os Caravan under Eventyrdagene – bobiler, campingvogner og komfortplagg til messepris.',
     images: [
       {
-        url: '/caravan-inngang.jpg',
+        url: '/Eventyrdager.webp',
         width: 1200,
         height: 630,
         alt: 'Eventyrdager hos Os Caravan & Fritid AS'
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: 'Eventyrdager hos Os Caravan & Fritid AS',
     description:
       'Møt Utekos hos Os Caravan & Fritid AS – messepris fra 1 790,-.',
-    images: ['/caravan-inngang.jpg']
+    images: ['/Eventyrdager.webp']
   }
 }
 

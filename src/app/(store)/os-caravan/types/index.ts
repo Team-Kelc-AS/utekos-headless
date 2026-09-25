@@ -147,6 +147,7 @@ export type NbccProductCarouselProps = {
 
 export type NbccHeroTracking = {
   primary: NbccTrackingData
+  directions: NbccTrackingData
 }
 
 export type NbccProductSectionVariantMatch = {

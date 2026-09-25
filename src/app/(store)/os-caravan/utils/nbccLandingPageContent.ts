@@ -23,7 +23,12 @@ import techdownBackSideHalv from '@/assets/images/techdown/TechDown-BackSide-Hal
 import techdownFrontHalv from '@/assets/images/techdown/TechDown-Front-Halv-Logo-800x800.webp'
 
 export const nbccHeroTracking = {
-  primary: { page: 'nbcc', section: 'hero', target: 'products' }
+  primary: { page: 'os-caravan', section: 'hero', target: 'size-guide' },
+  directions: {
+    page: 'os-caravan',
+    section: 'hero',
+    target: 'directions'
+  }
 } satisfies NbccHeroTracking
 
 export const nbccProducts = [

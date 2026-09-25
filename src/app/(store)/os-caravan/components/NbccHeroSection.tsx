@@ -3,15 +3,15 @@
 import { BadgeCheckIcon } from '@/components/animate-icons/icons/badge-check'
 import { ClockIcon } from '@/components/animate-icons/icons/clock'
 import { CompassIcon } from '@/components/animate-icons/icons/compass'
-import { MoveRightIcon } from '@/components/animate-icons/icons/move-right'
 import { Button } from '@/components/ui/button'
-import heroImage from '@public/caravan-inngang.jpg'
+import heroImage from '@public/Eventyrdager.webp'
 import Image from 'next/image'
-import Link from 'next/link'
 import { motion, type Variants } from 'motion/react'
 import UtekosWordmark from '@/components/BrandComponents/utils/UtekosWordmark'
 import osCaravanLogo from '@public/os-caravan.svg'
 import { nbccHeroTracking } from '../utils/nbccLandingPageContent'
+import { OS_CARAVAN_VENUE } from '../constants/venue'
+import { OsCaravanSizeGuideDialog } from './OsCaravanSizeGuideDialog'
 
 const heroContentVariants: Variants = {
   hidden: { opacity: 0, y: 14 },
@@ -68,7 +68,7 @@ export function NbccHeroSection() {
         >
           <Image
             src={heroImage}
-            alt='Inngangen til Os Caravan & Fritid med bobil parkert foran bygget'
+            alt='Eventyrdager hos Os Caravan & Fritid AS'
             fill
             priority
             sizes='(max-width: 1024px) 100vw, 50vw'
@@ -110,27 +110,35 @@ export function NbccHeroSection() {
           data-nbcc-hero
           data-nbcc-animate
           data-nbcc-hero-content
-          className='lg:col-start-1 lg:mt-9'
+          className='flex flex-col gap-3 lg:col-start-1 lg:mt-9 sm:flex-row sm:items-start'
         >
+          <OsCaravanSizeGuideDialog
+            trackingData={nbccHeroTracking.primary}
+            triggerClassName='h-12 w-full min-w-0 justify-center gap-2 rounded-2xl px-6 font-sans font-semibold text-base sm:flex-1'
+          />
+
           <Button
             asChild
             size='lg'
-            variant='commerce-primary'
-            className='h-12 w-full min-w-0 justify-center gap-2 rounded-2xl px-6 font-sans font-semibold text-base sm:w-auto'
+            variant='commerce-secondary'
+            className='h-12 w-full min-w-0 justify-center gap-2 rounded-2xl border-foreground/20 bg-jungle px-6 font-sans font-semibold text-base text-foreground hover:bg-jungle/80 hover:text-foreground sm:flex-1'
           >
-            <Link
-              href='#produkter'
-              data-track='NbccHeroProductsClick'
+            <a
+              href={OS_CARAVAN_VENUE.directionsHref}
+              target='_blank'
+              rel='noopener noreferrer'
+              data-track='Lead'
               data-track-data={JSON.stringify(
-                nbccHeroTracking.primary
+                nbccHeroTracking.directions
               )}
             >
-              <span className='truncate'>Finn din favoritt</span>
-              <MoveRightIcon
+              <span className='truncate'>Få veibeskrivelse</span>
+              <span className='sr-only'> (åpnes i ny fane)</span>
+              <CompassIcon
                 size={18}
                 animateOnHover='default'
               />
-            </Link>
+            </a>
           </Button>
         </motion.div>
 

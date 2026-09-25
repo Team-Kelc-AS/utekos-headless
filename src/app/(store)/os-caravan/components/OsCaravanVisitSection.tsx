@@ -219,12 +219,9 @@ export function OsCaravanVisitSection() {
       <div className='mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-end'>
         <NbccReveal className='flex flex-col gap-6'>
           <div>
-            <p className='font-sans font-semibold text-sm tracking-[0.18em] text-foreground uppercase'>
-              Finn oss
-            </p>
             <h2
               id='os-caravan-visit-heading'
-              className='mt-4 max-w-xl font-sans font-semibold text-3xl tracking-normal text-balance text-foreground sm:text-4xl'
+              className='max-w-xl font-sans font-semibold text-3xl tracking-normal text-balance text-foreground sm:text-4xl'
             >
               Os Caravan & Fritid
             </h2>

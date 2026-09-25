@@ -29,7 +29,7 @@ export async function NbccPageJsonLd() {
     },
     'primaryImageOfPage': {
       '@type': 'ImageObject',
-      'url': `${SITE_URL}/caravan-inngang.jpg`,
+      'url': `${SITE_URL}/Eventyrdager.webp`,
       'caption': 'Eventyrdager hos Os Caravan & Fritid AS'
     }
   }
