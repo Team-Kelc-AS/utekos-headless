@@ -43,15 +43,12 @@ function signedSyntheticRequest(timestamp = String(nowSeconds)) {
         [SYNTHETIC_TIMESTAMP_HEADER]: timestamp
       }
     }),
-    environment: {
-      UTEKOS_SYNTHETIC_TRAFFIC_SECRET: secret
-    }
+    environment: { UTEKOS_SYNTHETIC_TRAFFIC_SECRET: secret }
   }
 }
 
 test('excludes a signed synthetic browser collector request', async () => {
-  const { request, environment } =
-    signedSyntheticRequest()
+  const { request, environment } = signedSyntheticRequest()
 
   const verdict = await classifyBrowserEventTraffic(
     request,
@@ -66,8 +63,7 @@ test('excludes a signed synthetic browser collector request', async () => {
 
 test('excludes a browser request carrying a server-signed synthetic correlation', async () => {
   const secret = 'landing-observability-test-secret-value'
-  const edgeRequestId =
-    '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
+  const edgeRequestId = '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
   const token = await createLandingEdgeCorrelationToken({
     edgeRequestId,
     issuedAtSeconds: nowSeconds,
@@ -100,8 +96,7 @@ test('excludes a browser request carrying a server-signed synthetic correlation'
 
 test('does not trust an expired synthetic correlation cookie', async () => {
   const secret = 'landing-observability-test-secret-value'
-  const edgeRequestId =
-    '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
+  const edgeRequestId = '47fc9196-2afa-4aaa-beb8-6c1e98a0d0bd'
   const token = await createLandingEdgeCorrelationToken({
     edgeRequestId,
     issuedAtSeconds:
@@ -152,9 +147,7 @@ test('does not trust a caller-supplied BotID header', async () => {
   const request = new Request(
     'https://utekos.no/api/events/page-view',
     {
-      headers: {
-        'x-is-human': JSON.stringify({ b: 1, d: 1 })
-      },
+      headers: { 'x-is-human': JSON.stringify({ b: 1, d: 1 }) },
       method: 'POST'
     }
   )
@@ -212,5 +205,22 @@ test('does not exclude an ordinary Chrome user agent', async () => {
   assert.deepEqual(verdict, {
     classification: 'human_or_unknown',
     excludeFromMarketingDispatch: false
+  })
+})
+
+test('excludes self-reported HeadlessChrome without treating it as verified', async () => {
+  const verdict = await classifyBrowserEventTraffic(
+    new Request('https://utekos.no/api/e/wv', {
+      method: 'POST',
+      headers: {
+        'user-agent':
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.0 Safari/537.36'
+      }
+    }),
+    dependencies()
+  )
+  assert.deepEqual(verdict, {
+    classification: 'automated_bot',
+    excludeFromMarketingDispatch: true
   })
 })

@@ -47,8 +47,7 @@ async function hasVerifiedSyntheticCorrelation(
   dependencies: BrowserEventTrafficDependencies
 ) {
   const secret =
-    dependencies.environment.LANDING_OBSERVABILITY_SIGNING_SECRET
-      ?.trim()
+    dependencies.environment.LANDING_OBSERVABILITY_SIGNING_SECRET?.trim()
   const correlation = readLandingSyntheticCorrelationCookie(
     request.headers.get('cookie') ?? ''
   )
@@ -65,8 +64,7 @@ async function hasVerifiedSyntheticCorrelation(
 
 export async function classifyBrowserEventTraffic(
   request: Request,
-  dependencies: BrowserEventTrafficDependencies =
-    defaultDependencies
+  dependencies: BrowserEventTrafficDependencies = defaultDependencies
 ): Promise<BrowserEventTrafficVerdict> {
   if (
     (await hasVerifiedSyntheticSignature(
@@ -88,6 +86,19 @@ export async function classifyBrowserEventTraffic(
   if (isVerifiedCookiebotScanner(request)) {
     return {
       classification: 'verified_bot',
+      excludeFromMarketingDispatch: true
+    }
+  }
+
+  // This self-reported marker only opts out of collection. It grants no
+  // access and must never be used to bypass validation for accepted events.
+  if (
+    /\bHeadlessChrome\/[\d.]+/.test(
+      request.headers.get('user-agent') ?? ''
+    )
+  ) {
+    return {
+      classification: 'automated_bot',
       excludeFromMarketingDispatch: true
     }
   }

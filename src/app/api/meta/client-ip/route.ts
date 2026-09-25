@@ -1,5 +1,6 @@
 import { ipAddress } from '@vercel/functions'
 import { NextResponse, type NextRequest } from 'next/server'
+import { createBrowserEventRouteHandler } from '@/lib/analytics/server/createBrowserEventRouteHandler'
 import {
   metaClientIpRequestSchema,
   metaClientIpResponseSchema
@@ -32,7 +33,13 @@ function hasJsonMediaType(request: Request) {
   )
 }
 
-export async function POST(request: NextRequest) {
+const handleRoute = createBrowserEventRouteHandler()
+
+export function POST(request: NextRequest) {
+  return handleRoute(request, { collect: collectClientIp })
+}
+
+async function collectClientIp(request: Request) {
   if (!hasSameOrigin(request)) {
     return NextResponse.json(
       { error: 'forbidden_origin' },

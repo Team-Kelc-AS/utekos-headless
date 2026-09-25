@@ -54,3 +54,36 @@ test('rejects denied consent and cross-origin requests', async () => {
   assert.equal(denied.status, 400)
   assert.equal(crossOrigin.status, 403)
 })
+
+test('excludes HeadlessChrome without returning an IP or reading its body', async () => {
+  const incoming = new NextRequest(
+    'https://utekos.no/api/meta/client-ip',
+    {
+      method: 'POST',
+      body: 'not json',
+      headers: {
+        'user-agent': 'HeadlessChrome/141.0.7390.0',
+        'x-real-ip': '203.0.113.8'
+      }
+    }
+  )
+  const response = await POST(incoming)
+  assert.equal(response.status, 204)
+  assert.equal(
+    response.headers.get('x-utekos-traffic-classification'),
+    'automated_bot'
+  )
+  assert.equal(await response.text(), '')
+  assert.equal(incoming.bodyUsed, false)
+})
+
+test('ordinary browser without Origin remains forbidden', async () => {
+  const incoming = request({ consent })
+  incoming.headers.delete('origin')
+  incoming.headers.set('user-agent', 'Chrome/141.0.7390.0')
+  const response = await POST(incoming)
+  assert.equal(response.status, 403)
+  assert.deepEqual(await response.json(), {
+    error: 'forbidden_origin'
+  })
+})
