@@ -15,7 +15,7 @@ import type {
   StorefrontCartLinesRemovePayload,
   StorefrontCartLinesUpdatePayload,
   StorefrontCartLineUpdateInput,
-  StorefrontProductCardConnection,
+  StorefrontProductCard,
   StorefrontProductConnection,
   StorefrontProduct,
   StorefrontProductQueryVariables,
@@ -140,7 +140,7 @@ export type ShopifyProductsOperation = ShopifyOperation<
 >
 
 export type ShopifyProductCardsOperation = ShopifyOperation<
-  { products: StorefrontProductCardConnection },
+  { productRecommendations: StorefrontProductCard[] | null },
   StorefrontProductCardsQueryVariables
 >
 
