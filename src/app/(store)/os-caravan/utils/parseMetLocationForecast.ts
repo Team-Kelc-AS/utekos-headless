@@ -129,17 +129,30 @@ function toDayLabel(dateKey: string, index: number): string {
   }
 
   const [year, month, day] = dateKey.split('-').map(Number)
+  if (
+    year === undefined ||
+    month === undefined ||
+    day === undefined
+  ) {
+    return dateKey
+  }
+
   return weekdayFormatter
     .format(new Date(Date.UTC(year, month - 1, day, 12)))
     .replace(/\.$/, '')
 }
 
 function pickDaytimePoint<T extends { time: string }>(points: T[]): T {
+  const fallback = points[0]
+  if (fallback === undefined) {
+    throw new Error('MET Locationforecast day has no timeseries points')
+  }
+
   return (
     points.find(point => {
       const hour = toOsloHour(point.time)
       return hour >= 12 && hour <= 15
-    }) ?? points[0]
+    }) ?? fallback
   )
 }
 
@@ -149,6 +162,10 @@ export function parseMetLocationForecast(
   const forecast = locationForecastSchema.parse(payload)
   const series = forecast.properties.timeseries
   const current = series[0]
+  if (current === undefined) {
+    throw new Error('MET Locationforecast has no timeseries points')
+  }
+
   const currentSymbol =
     current.data.next_1_hours?.summary?.symbol_code ??
     current.data.next_6_hours?.summary?.symbol_code

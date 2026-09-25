@@ -78,6 +78,10 @@ export function describeOsCaravanOpenState(
   }
 
   const [hour, minute] = osloClock.format(now).split(':').map(Number)
+  if (hour === undefined || minute === undefined) {
+    return 'Stengt nå'
+  }
+
   const minutes = hour * 60 + minute
   const [opens, closes] = window
 

@@ -30,7 +30,7 @@ const surfaceStyles: Record<
   }
 > = {
   dazzle: {
-    background: 'var(--night',
+    background: 'var(--night)',
     borderColor: 'var(--border)',
     textColor: 'var(--foreground)',
     descriptionColor: 'var(--foreground)',
@@ -43,8 +43,8 @@ const surfaceStyles: Record<
     textColor: 'var(--promo-foreground)',
     descriptionColor: 'var(--promo-foreground)'
   },
-  dazzlea: {
-    background: 'var(--night',
+  dazzleagain: {
+    background: 'var(--night)',
     borderColor: 'var(--border)',
     textColor: 'var(--foreground)',
     descriptionColor: 'var(--foreground)',

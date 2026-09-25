@@ -134,6 +134,43 @@ const klarnaCheckoutStageSchema = z.enum([
   'order_created',
   'order_creation_failed'
 ])
+const metaStandardEventNameSchema = z.enum([
+  'AddToCart',
+  'Purchase',
+  'InitiateCheckout',
+  'Lead',
+  'ViewContent'
+])
+const metaStandardCanonicalEventNameSchema = z.enum([
+  'add_to_cart',
+  'purchase',
+  'begin_checkout',
+  'generate_lead',
+  'view_item'
+])
+const metaStandardParameterNamesSchema = z
+  .array(z.string().min(1).max(64))
+  .max(64)
+const metaStandardEventDataSchema = z.strictObject({
+  canonicalEventName: metaStandardCanonicalEventNameSchema,
+  complete: z.boolean(),
+  eventId: z.string().min(1).max(256),
+  eventName: metaStandardEventNameSchema,
+  hasClientIp: z.boolean(),
+  hasClientUserAgent: z.boolean(),
+  hasEmail: z.boolean(),
+  hasEventSourceUrl: z.boolean(),
+  hasExternalId: z.boolean(),
+  hasFbc: z.boolean(),
+  hasFbp: z.boolean(),
+  hasOrderId: z.boolean(),
+  hasPhone: z.boolean(),
+  hasUserData: z.boolean(),
+  missingParameters: metaStandardParameterNamesSchema,
+  presentParameters: metaStandardParameterNamesSchema,
+  recommendedMissing: metaStandardParameterNamesSchema,
+  requiredParameters: metaStandardParameterNamesSchema
+})
 
 export const metaDatasetQualityIncompleteDataSchema =
   z.strictObject({
@@ -167,6 +204,12 @@ const eventSchemas = [
     event: z.literal('meta_dataset_quality.incomplete'),
     level: z.literal('WARN'),
     data: metaDatasetQualityIncompleteDataSchema,
+    context: emptyDataSchema
+  }),
+  z.strictObject({
+    event: z.literal('meta_capi.standard_event'),
+    level: z.enum(['INFO', 'WARN']),
+    data: metaStandardEventDataSchema,
     context: emptyDataSchema
   }),
   z.strictObject({

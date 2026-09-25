@@ -85,6 +85,43 @@ test('Meta Dataset Quality warning accepts only PII-free snapshot fields', () =>
   )
 })
 
+test('Meta standard event logs accept only bounded field-presence data', () => {
+  const valid = {
+    context: {},
+    data: {
+      canonicalEventName: 'purchase',
+      complete: true,
+      eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+      eventName: 'Purchase',
+      hasClientIp: true,
+      hasClientUserAgent: true,
+      hasEmail: true,
+      hasEventSourceUrl: true,
+      hasExternalId: true,
+      hasFbc: true,
+      hasFbp: true,
+      hasOrderId: true,
+      hasPhone: true,
+      hasUserData: true,
+      missingParameters: [],
+      presentParameters: ['event_id', 'event_name'],
+      recommendedMissing: [],
+      requiredParameters: ['event_id', 'event_name']
+    },
+    event: 'meta_capi.standard_event',
+    level: 'INFO'
+  } as const
+
+  assert.equal(appLogInputSchema.safeParse(valid).success, true)
+  assert.equal(
+    appLogInputSchema.safeParse({
+      ...valid,
+      data: { ...valid.data, email: 'customer@example.no' }
+    }).success,
+    false
+  )
+})
+
 test('commerce event logs accept only bounded operational fields', () => {
   const parsed = appLogInputSchema.parse({
     context: {

@@ -37,12 +37,18 @@ async function readJson(
     headers.set('X-Goog-FieldMask', init.fieldMask)
   }
 
-  const response = await fetch(url, {
-    method: init?.method,
-    body: init?.body,
+  const requestInit: RequestInit = {
     headers,
     signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS)
-  })
+  }
+  if (init?.method !== undefined) {
+    requestInit.method = init.method
+  }
+  if (init?.body !== undefined) {
+    requestInit.body = init.body
+  }
+
+  const response = await fetch(url, requestInit)
 
   if (!response.ok) {
     throw new Error(`Os Caravan lookup returned ${response.status}`)

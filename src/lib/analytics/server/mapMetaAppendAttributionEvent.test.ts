@@ -238,7 +238,7 @@ test('rejects any attribution source other than ClickToAddAttribution', () => {
         ...webEvent.attribution_data,
         attribution_source: 'Standard'
       }
-    } as MetaAppendAttributionEvent)
+    } as unknown as MetaAppendAttributionEvent)
   )
 })
 
