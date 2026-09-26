@@ -25,6 +25,14 @@ test(
     assert.match(cachedCardsSource, /'use cache: remote'/)
     assert.match(cachedCardsSource, /cacheTag\(TAGS\.products\)/)
     assert.match(cachedCardsSource, /cacheLife\('collections'\)/)
+    assert.match(
+      cachedCardsSource,
+      /status: 'unavailable'/
+    )
+    assert.match(
+      cachedCardsSource,
+      /cacheLife\(\{ stale: 0, revalidate: 0, expire: 1 \}\)/
+    )
     assert.match(cachedCardsSource, /fetchProductCardsWithRetry/)
   }
 )

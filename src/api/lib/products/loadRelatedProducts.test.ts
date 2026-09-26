@@ -61,6 +61,17 @@ function createCard(handle: string): ProductCardModel {
   }
 }
 
+function success(products: ProductCardModel[]) {
+  return { status: 'success' as const, products }
+}
+
+function unavailable(message: string) {
+  return {
+    status: 'unavailable' as const,
+    error: { name: 'TimeoutError', message }
+  }
+}
+
 test('keeps the last valid related list when Shopify times out', async () => {
   const snapshot = [createCard('utekos-techdown')]
   const related = await loadRelatedProducts(
@@ -68,12 +79,8 @@ test('keeps the last valid related list when Shopify times out', async () => {
     12,
     {
       runtimeCache: new FakeRuntimeCache(),
-      fetchProductCardsWithRetry: async () => {
-        throw new DOMException(
-          'The operation was aborted due to timeout',
-          'TimeoutError'
-        )
-      },
+      fetchProductCardsWithRetry: async () =>
+        unavailable('The operation was aborted due to timeout'),
       getSnapshot: async () => snapshot,
       setSnapshot: async () => {
         throw new Error(
@@ -93,11 +100,12 @@ test('writes a related-products snapshot after a successful Shopify fetch', asyn
   const writes: ProductCardModel[][] = []
   const related = await loadRelatedProducts('utekos-dun', 12, {
     runtimeCache: new FakeRuntimeCache(),
-    fetchProductCardsWithRetry: async () => [
-      createCard('utekos-dun'),
-      createCard('utekos-mikrofiber'),
-      createCard('utekos-techdown')
-    ],
+    fetchProductCardsWithRetry: async () =>
+      success([
+        createCard('utekos-dun'),
+        createCard('utekos-mikrofiber'),
+        createCard('utekos-techdown')
+      ]),
     getSnapshot: async () => null,
     setSnapshot: async (_handle, products) => {
       writes.push(products)
@@ -120,12 +128,8 @@ test('returns an empty list when Shopify fails and no snapshot exists', async ()
     12,
     {
       runtimeCache: new FakeRuntimeCache(),
-      fetchProductCardsWithRetry: async () => {
-        throw new DOMException(
-          'The operation was aborted due to timeout',
-          'TimeoutError'
-        )
-      },
+      fetchProductCardsWithRetry: async () =>
+        unavailable('The operation was aborted due to timeout'),
       getSnapshot: async () => null
     }
   )
@@ -141,9 +145,8 @@ test('removes an obsolete snapshot after an authoritative empty result', async (
     12,
     {
       runtimeCache: new FakeRuntimeCache(),
-      fetchProductCardsWithRetry: async () => [
-        createCard('utekos-techdown')
-      ],
+      fetchProductCardsWithRetry: async () =>
+        success([createCard('utekos-techdown')]),
       deleteSnapshot: async handle => {
         deletedHandle = handle
       },
