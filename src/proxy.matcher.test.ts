@@ -71,6 +71,46 @@ test('matches only document navigations and required proxy routes', () => {
   )
 })
 
+test('always matches Magasinet route requests, including client navigations', () => {
+  const requests: Array<{
+    headers?: Record<string, string>
+    path: string
+  }> = [
+    { path: '/magasinet' },
+    {
+      path: '/magasinet',
+      headers: { accept: 'text/x-component', rsc: '1' }
+    },
+    {
+      path: '/magasinet/hva-er-utekos',
+      headers: {
+        accept: 'text/x-component',
+        'next-router-prefetch': '1',
+        purpose: 'prefetch',
+        rsc: '1'
+      }
+    },
+    {
+      path: '/magasinet/hva-er-utekos',
+      headers: { accept: 'text/markdown' }
+    }
+  ]
+
+  for (const { headers, path } of requests) {
+    assert.equal(
+      proxyMatches(`https://utekos.no${path}`, headers),
+      true
+    )
+  }
+
+  assert.equal(
+    proxyMatches('https://utekos.no/magasinet/hero.png', {
+      accept: 'image/avif,image/webp,image/*'
+    }),
+    false
+  )
+})
+
 test('also matches retired layout URLs so they can redirect to the public landing', () => {
   const requests: Record<string, string>[] = [
     { accept: 'text/x-component', rsc: '1' },

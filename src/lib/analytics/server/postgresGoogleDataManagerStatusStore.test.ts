@@ -95,14 +95,46 @@ test('claims only executed accepted Google requests with a lease', async () => {
   )
   assert.match(fake.calls[0]?.query ?? '', /nextStatusCheckAt/i)
   assert.match(fake.calls[0]?.query ?? '', /statusCheckLease/i)
-  assert.doesNotMatch(
+  assert.match(
     fake.calls[0]?.query ?? '',
-    /> now\(\) - interval '24 hours'/i
+    /coalesce\(processed_at, created_at\)\s*> now\(\) - interval '24 hours'/i
   )
   assert.match(
     fake.calls[0]?.query ?? '',
-    /response_semantics = 'provider_status_timeout'/i
+    /when coalesce\(\(response ->> 'statusCheckAttempts'\)::integer, 0\) = 0 then 0\s*else 1/i
   )
+})
+
+test('prioritizes first checks without weakening eligibility or lease guards', async () => {
+  const fake = fakeExecutor([[]])
+  const store = createPostgresGoogleDataManagerStatusStore(
+    fake.execute
+  )
+
+  assert.equal(await store.claimNext(), null)
+  const query = fake.calls[0]?.query ?? ''
+  const candidate = query.split('lease as (')[0] ?? ''
+
+  assert.match(candidate, /request_id is not null/i)
+  assert.match(candidate, /request_id <> ''/i)
+  assert.match(
+    candidate,
+    /provider_confirmed_success_with_warnings/i
+  )
+  assert.match(
+    candidate,
+    /not \(coalesce\(response, '\{\}'::jsonb\) \? 'statusCheckLease'\)/i
+  )
+  assert.match(
+    candidate,
+    /nextStatusCheckAt'\)::timestamptz <= now\(\)/i
+  )
+  assert.match(
+    candidate,
+    /order by[\s\S]*statusCheckAttempts[\s\S]*updated_at,\s*created_at,\s*id/i
+  )
+  assert.match(candidate, /for update skip locked\s*limit 1/i)
+  assert.doesNotMatch(candidate, /\b(update|delete) ops\./i)
 })
 
 test('promotes provider-confirmed success to succeeded', async () => {
@@ -269,7 +301,7 @@ test('dead-letters provider processing mismatches without replay', async () => {
   )
 })
 
-test('counts overdue checks without terminating provider polling', async () => {
+test('keeps historical status debt visible without rewriting provider evidence', async () => {
   const fake = fakeExecutor([[{ overdue_count: '2' }]])
   const store = createPostgresGoogleDataManagerStatusStore(
     fake.execute
@@ -278,7 +310,7 @@ test('counts overdue checks without terminating provider polling', async () => {
   assert.equal(await store.countOverdue(), 2)
   assert.match(
     fake.calls[0]?.query ?? '',
-    /interval '24 hours'/i
+    /coalesce\(processed_at, created_at\)\s*<= now\(\) - interval '24 hours'/i
   )
   assert.doesNotMatch(
     fake.calls[0]?.query ?? '',

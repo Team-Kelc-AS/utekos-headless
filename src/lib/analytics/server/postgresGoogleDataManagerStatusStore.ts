@@ -52,6 +52,10 @@ const executePostgresQuery: GoogleDataManagerStatusQueryExecutor =
     return sql.unsafe<T[]>(query, postgresParameters)
   }
 
+// Google's documented diagnostics example bounds ordinary polling at 24 hours.
+// Keep older requests unchanged and visible through countOverdue(); age alone
+// is neither provider failure nor success. Historical follow-up is read-only
+// and operator-directed, outside this cron's finite capacity.
 const CLAIM_NEXT_QUERY = `
   with candidate as (
     select id
@@ -61,6 +65,8 @@ const CLAIM_NEXT_QUERY = `
       and request_id is not null
       and request_id <> ''
       and validation_result ->> 'validate_only' = 'false'
+      and coalesce(processed_at, created_at)
+        > now() - interval '24 hours'
       and response_semantics <>
         'provider_confirmed_success_with_warnings'
       and not (coalesce(response, '{}'::jsonb) ? 'statusCheckLease')
@@ -76,11 +82,12 @@ const CLAIM_NEXT_QUERY = `
       )
     order by
       case
-        when response_semantics = 'provider_status_timeout' then 1
-        else 0
+        when coalesce((response ->> 'statusCheckAttempts')::integer, 0) = 0 then 0
+        else 1
       end,
       updated_at,
-      created_at
+      created_at,
+      id
     for update skip locked
     limit 1
   ),

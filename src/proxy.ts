@@ -6,7 +6,6 @@ import { isKlarnaFeedHost } from '@/lib/merchant-feeds/klarna/klarnaFeedHost'
 import { filterRedirectSearch } from '@/lib/navigation/filterRedirectSearch'
 import { captureProxyMetaCookies } from '@/lib/analytics/server/captureProxyMetaCookies'
 import { applyProxyMetaCookies } from '@/lib/analytics/server/applyProxyMetaCookies'
-import { isMagazineViewTransitionPreviewEnabled } from '@/app/magasinet/utils/isMagazineViewTransitionPreviewEnabled'
 import { wantsMarkdown } from '@/lib/agents/markdownNegotiation'
 import {
   LANDING_EDGE_AUTH_SERVER_TIMING_NAME,
@@ -30,12 +29,6 @@ const NBCC_DESTINATION_PATH = '/nbcc'
 
 const MAGASINET_UPGRADE_ENABLED = true
 const MAGASINET_UPGRADE_PATH = '/magasinet/oppgradering'
-const MAGASINET_VIEW_TRANSITION_PREVIEW_ENABLED =
-  isMagazineViewTransitionPreviewEnabled({
-    VERCEL_ENV: process.env.VERCEL_ENV,
-    MAGAZINE_VIEW_TRANSITIONS_PREVIEW_ENABLED:
-      process.env.MAGAZINE_VIEW_TRANSITIONS_PREVIEW_ENABLED
-  })
 const KLARNA_FEED_PATH = '/klarna-feed.xml'
 const STATIC_ASSET_PATH_PATTERN =
   /\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$/i
@@ -43,6 +36,21 @@ export const LANDING_EDGE_REQUEST_ID_HEADER =
   'x-utekos-edge-request-id'
 
 let hasLoggedMissingLandingSigningSecret = false
+
+function shouldRedirectToMagazineUpgrade(pathname: string) {
+  const isMagazinePath =
+    pathname === '/magasinet' ||
+    pathname.startsWith('/magasinet/')
+  const isUpgradePath =
+    pathname === MAGASINET_UPGRADE_PATH ||
+    pathname.startsWith(`${MAGASINET_UPGRADE_PATH}/`)
+
+  return (
+    MAGASINET_UPGRADE_ENABLED &&
+    isMagazinePath &&
+    !isUpgradePath
+  )
+}
 
 function logLandingCorrelationUnavailable(
   reason: 'missing' | 'invalid'
@@ -302,18 +310,7 @@ async function routeRequest(request: NextRequest) {
     )
   }
 
-  if (
-    MAGASINET_UPGRADE_ENABLED &&
-    !MAGASINET_VIEW_TRANSITION_PREVIEW_ENABLED &&
-    pathname.startsWith('/magasinet')
-  ) {
-    if (
-      pathname === MAGASINET_UPGRADE_PATH ||
-      pathname.startsWith(`${MAGASINET_UPGRADE_PATH}/`)
-    ) {
-      return continueDocumentRequest(request, correlation)
-    }
-
+  if (shouldRedirectToMagazineUpgrade(pathname)) {
     const upgradeUrl = new URL(
       MAGASINET_UPGRADE_PATH,
       request.url
@@ -369,7 +366,10 @@ export async function proxy(request: NextRequest) {
     eligible && !synthetic ?
       captureProxyMetaCookies(request)
     : []
-  const agentMarkdownResponse = markdownRewrite(request)
+  const agentMarkdownResponse =
+    shouldRedirectToMagazineUpgrade(pathname) ?
+      undefined
+    : markdownRewrite(request)
   if (agentMarkdownResponse) {
     return applyProxyMetaCookies(agentMarkdownResponse, request, [])
   }
@@ -380,6 +380,8 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     '/canonical-control/:path*',
+    '/magasinet',
+    '/magasinet/((?!.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)',
     '/skreddersy-varmen',
     '/skreddersy-varmen/layout/:path*',
     {

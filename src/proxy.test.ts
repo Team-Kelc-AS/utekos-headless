@@ -110,6 +110,23 @@ test('Magasinet upgrade redirect preserves attribution and removes unrelated que
   }
 })
 
+test('Magasinet upgrade redirect takes precedence over Markdown negotiation', async () => {
+  const { proxy } = await productionProxy
+  const response = await proxy(
+    new NextRequest(
+      'https://utekos.no/magasinet/hva-er-utekos?utm_source=assistant',
+      { headers: { accept: 'text/markdown' } }
+    )
+  )
+
+  assert.equal(response.status, 307)
+  assert.equal(
+    response.headers.get('location'),
+    'https://utekos.no/magasinet/oppgradering?utm_source=assistant'
+  )
+  assert.equal(response.headers.get('x-middleware-rewrite'), null)
+})
+
 test('NBCC redirect forwards exact attribution and captures Meta cookies without logging query values', async () => {
   const messages: string[] = []
   const originalInfo = console.info
