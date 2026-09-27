@@ -80,7 +80,6 @@ export async function createVippsCheckout(
           ).toISOString(),
           tags: [
             'vipps-express',
-            reference,
             `vipps-${config.environment}`
           ],
           customAttributes: [

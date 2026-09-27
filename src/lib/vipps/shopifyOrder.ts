@@ -8,7 +8,7 @@ import {
   type VippsPayment
 } from './payment'
 
-const draftFields = 'id tags totalPriceSet { presentmentMoney { amount currencyCode } } order { id name displayFinancialStatus }'
+const draftFields = 'id tags customAttributes { key value } totalPriceSet { presentmentMoney { amount currencyCode } } order { id name displayFinancialStatus }'
 export const vippsShopifyQueries = {
   productByHandle: `query VippsProductByHandle($identifier: ProductIdentifierInput!) { shop { currencyCode } product: productByIdentifier(identifier:$identifier) { id handle variants(first:250) { nodes { id price inventoryQuantity inventoryPolicy } } } }`,
   read: `query VippsDraft($id: ID!) { draftOrder(id:$id) { ${draftFields} } }`,
@@ -24,6 +24,9 @@ const orderSchema = z.object({
 const draftSchema = z.object({
   id: z.string(),
   tags: z.array(z.string()),
+  customAttributes: z.array(
+    z.object({ key: z.string(), value: z.string() })
+  ),
   totalPriceSet: z.object({
     presentmentMoney: z.object({
       amount: z.string(),
@@ -213,7 +216,11 @@ export function createVippsShopifyOrders(
     amount: number
   ) => {
     if (
-      !draft.tags.includes(reference) ||
+      !draft.customAttributes.some(
+        attribute =>
+          attribute.key === 'vipps_reference' &&
+          attribute.value === reference
+      ) ||
       toMinorUnits(
         draft.totalPriceSet.presentmentMoney.amount
       ) !== amount

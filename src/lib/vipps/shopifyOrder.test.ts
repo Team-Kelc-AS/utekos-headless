@@ -31,6 +31,7 @@ const order = {
 const draft = {
   id,
   tags: [reference],
+  customAttributes: [{ key: 'vipps_reference', value: reference }],
   totalPriceSet: {
     presentmentMoney: { amount: '1790.00', currencyCode: 'NOK' }
   },
@@ -333,7 +334,12 @@ test('Shopify completion HTTP success without paid order does not report paid', 
 })
 test('a different draft reference fails before any mutation', async () => {
   const h = harness(() => ({
-    draftOrder: { ...draft, tags: ['another-reference'] }
+    draftOrder: {
+      ...draft,
+      customAttributes: [
+        { key: 'vipps_reference', value: 'another-reference' }
+      ]
+    }
   }))
   await assert.rejects(
     h.adapter.completePaid(id, reference, 179000, payment()),
