@@ -6,7 +6,6 @@ import {
 } from '@/components/frontpage/lazy/LazyHeavyClients'
 
 import { HeroSection } from '@/components/frontpage/components/HeroSection/HeroSection'
-import { JudgeMeReviewsCarousel } from '@/components/frontpage/JudgeMeCarousel/JudgeMeReviewsCarousel'
 import { HomePageSectionFlow } from '@/components/frontpage/layout/HomePageSectionFlow'
 import { MomentsSection } from '@/components/frontpage/MomentSection/MomentsSection'
 import { CachedPromiseSection } from '@/components/frontpage/components/CachedPromiseSection'
@@ -26,9 +25,6 @@ const HomePage = () => {
       </Suspense>
       <article>
         <HeroSection />
-        <Suspense fallback={null}>
-          <JudgeMeReviewsCarousel />
-        </Suspense>
         <HomePageSectionFlow>
           <div className='flex flex-col'>
             <Suspense fallback={null}>
