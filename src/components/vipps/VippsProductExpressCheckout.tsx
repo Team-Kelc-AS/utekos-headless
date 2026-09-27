@@ -1,56 +1,33 @@
 'use client'
 
 import { useEffect, useId, useRef, useState } from 'react'
-import Link from 'next/link'
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription
-} from '@/components/ui/dialog'
 import { mountVippsButton } from './vippsWidget'
 
+type CheckoutResult = {
+  redirectUrl: string
+  checkoutMode: 'shopify' | 'vipps'
+}
+
 function VippsButton({
-  action,
+  resolve,
   onError
 }: {
-  action:
-    | { click: () => void }
-    | {
-        resolve: () => Promise<{
-          redirectUrl: string
-          checkoutMode: 'shopify' | 'vipps'
-        }>
-      }
+  resolve: () => Promise<CheckoutResult>
   onError: (message: string) => void
 }) {
   const id = `vipps-${useId().replace(/[^a-zA-Z0-9-]/g, '')}`
-  const actionRef = useRef(action)
+  const resolveRef = useRef(resolve)
   const errorRef = useRef(onError)
   useEffect(() => {
-    actionRef.current = action
+    resolveRef.current = resolve
     errorRef.current = onError
-  }, [action, onError])
+  }, [resolve, onError])
   useEffect(() => {
     let disposed = false
     let unmount: (() => void) | undefined
-    const stableAction =
-      'resolve' in actionRef.current ?
-        {
-          resolve: async () => {
-            const current = actionRef.current
-            if (!('resolve' in current))
-              throw new Error('Payment unavailable')
-            return current.resolve()
-          }
-        }
-      : {
-          click: () => {
-            const current = actionRef.current
-            if ('click' in current) current.click()
-          }
-        }
-    void mountVippsButton(`#${id}`, stableAction)
+    void mountVippsButton(`#${id}`, {
+      resolve: () => resolveRef.current()
+    })
       .then(cleanup => {
         if (disposed) cleanup()
         else unmount = cleanup
@@ -71,57 +48,27 @@ function VippsButton({
 export function VippsProductExpressCheckout({
   handle,
   variantId,
-  title,
-  variantTitle,
-  price,
   disabled = false
 }: {
   handle: string
   variantId: string
-  title: string
-  variantTitle: string
-  price: string
   disabled?: boolean
 }) {
-  const [open, setOpen] = useState(false)
-  const [accepted, setAccepted] = useState(false)
   const [error, setError] = useState('')
-  const [discountCode, setDiscountCode] = useState('')
-  const [busy, setBusy] = useState(false)
   const attempt = useRef<string | null>(null)
+  const attemptedItem = useRef<string | null>(null)
   const inFlight = useRef<
-    Promise<{
-      redirectUrl: string
-      checkoutMode: 'shopify' | 'vipps'
-    }> | null
+    Promise<CheckoutResult> | null
   >(null)
-  const [selected, setSelected] = useState({
-    handle,
-    variantId,
-    title,
-    variantTitle,
-    price
-  })
-  function showTerms() {
-    if (disabled || busy) return
-    const changed = selected.variantId !== variantId
-    setSelected({
-      handle,
-      variantId,
-      title,
-      variantTitle,
-      price
-    })
-    if (changed) attempt.current = null
-    setAccepted(false)
-    setError('')
-    setOpen(true)
-  }
-  async function start() {
-    if (!accepted) throw new Error('Terms must be accepted')
+
+  async function start(): Promise<CheckoutResult> {
     if (inFlight.current) return inFlight.current
+    const item = `${handle}:${variantId}`
+    if (attemptedItem.current !== item) {
+      attemptedItem.current = item
+      attempt.current = null
+    }
     attempt.current ??= crypto.randomUUID()
-    setBusy(true)
     setError('')
     inFlight.current = (async () => {
       try {
@@ -129,13 +76,9 @@ export function VippsProductExpressCheckout({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            handle: selected.handle,
-            variantId: selected.variantId,
-            attemptId: attempt.current,
-            ...(discountCode.trim() ?
-              { discountCode: discountCode.trim() }
-            : {}),
-            termsAccepted: true
+            handle,
+            variantId,
+            attemptId: attempt.current
           })
         })
         const result: unknown = await response.json()
@@ -160,7 +103,6 @@ export function VippsProductExpressCheckout({
         )
         throw new Error('Vipps checkout could not be started')
       } finally {
-        setBusy(false)
         inFlight.current = null
       }
     })()
@@ -173,99 +115,15 @@ export function VippsProductExpressCheckout({
     >
       <div inert={disabled} aria-disabled={disabled}>
         <VippsButton
-          action={{ click: showTerms }}
+          resolve={start}
           onError={setError}
         />
       </div>
-      {!open && error ?
+      {error ?
         <p role='alert' className='mt-2 text-sm'>
           {error}
         </p>
       : null}
-      <Dialog
-        open={open}
-        onOpenChange={value => {
-          if (!busy) setOpen(value)
-        }}
-      >
-        <DialogContent>
-          <DialogTitle>Kjøp med Vipps</DialogTitle>
-          <DialogDescription>
-            Kontroller varianten. Leveringsadresse og frakt
-            velges i Vipps.
-          </DialogDescription>
-          <div>
-            <p className='font-medium'>{selected.title}</p>
-            <p>{selected.variantTitle}</p>
-            <p>{selected.price}</p>
-          </div>
-          <p className='text-sm'>
-            Du kjøper én av denne varianten. Andre varer i
-            handlekurven er ikke med. Endelig totalpris,
-            inkludert frakt, vises i Vipps før du godkjenner.
-          </p>
-          <label className='grid gap-1 text-sm'>
-            Rabattkode (valgfritt)
-            <input
-              value={discountCode}
-              disabled={busy}
-              onChange={event => {
-                attempt.current = null
-                setDiscountCode(event.target.value)
-              }}
-              autoComplete='off'
-              className='rounded border px-3 py-2'
-            />
-          </label>
-          <label className='flex items-start gap-3 text-sm'>
-            <input
-              type='checkbox'
-              checked={accepted}
-              disabled={busy}
-              onChange={event =>
-                setAccepted(event.target.checked)
-              }
-              className='mt-1 size-5 shrink-0'
-            />
-            <span>
-              Jeg godtar{' '}
-              <Link
-                href='/vilkar-betingelser'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='underline'
-              >
-                salgsbetingelsene
-              </Link>{' '}
-              og har lest{' '}
-              <Link
-                href='/personvern'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='underline'
-              >
-                personvernerklæringen
-              </Link>
-              .
-            </span>
-          </label>
-          {accepted ?
-            <VippsButton
-              action={{ resolve: start }}
-              onError={setError}
-            />
-          : <p className='text-sm'>
-              Godta salgsbetingelsene for å fortsette til Vipps.
-            </p>
-          }
-          {busy ?
-            <p role='status'>Starter Vipps …</p>
-          : null}
-          {error ?
-            <p role='alert'>{error}</p>
-          : null}
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

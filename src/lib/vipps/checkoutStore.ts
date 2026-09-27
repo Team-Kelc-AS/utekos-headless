@@ -18,7 +18,10 @@ export const checkoutStateSchema = z.object({
     'paid',
     'terminal'
   ]),
-  termsAcceptedAt: z.string(),
+  // Existing attempts used the former termsAcceptedAt field. Keep accepting
+  // them so a deployed checkout can still be reconciled after this UI change.
+  termsAcceptedAt: z.string().optional(),
+  checkoutStartedAt: z.string().optional(),
   amount: z.number().int().positive().optional(),
   shippingAmount: z.number().int().nonnegative().optional(),
   draftId: z.string().optional(),
@@ -29,7 +32,10 @@ export const checkoutStateSchema = z.object({
     .object({ id: z.string(), name: z.string() })
     .optional(),
   lastError: z.string().optional()
-})
+}).refine(
+  state => Boolean(state.checkoutStartedAt ?? state.termsAcceptedAt),
+  { message: 'Vipps checkout start time missing' }
+)
 export type VippsCheckoutState = z.infer<
   typeof checkoutStateSchema
 >

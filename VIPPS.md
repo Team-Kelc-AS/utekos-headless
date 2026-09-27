@@ -21,7 +21,7 @@ Neither a browser redirect, SDK success event, webhook payload alone, nor HTTP 2
 ## Ownership and entry points
 
 - `src/components/ProductCard/ProductCard.tsx`: replaces the shared available-product add-to-cart CTA when the public feature flag is enabled. Klarna and sold-out behavior are retained.
-- `src/components/vipps`: official Vipps Widget SDK, terms/variant confirmation, and return-page polling. Buys one selected variant; it does not include other cart items.
+- `src/components/vipps`: official Vipps Widget SDK and return-page polling. The SDK owns the button, desktop dialog and mobile app-switch; no Utekos confirmation dialog is shown. Buys one selected variant; it does not include other cart items.
 - `POST /api/vipps/checkout`: same-origin, rate-limited server checkout creation. Price and availability come from Shopify, not browser-supplied totals.
 - `POST /api/vipps/webhook`: signed raw-body verification, configured MSN and reference-prefix isolation, authoritative reconciliation.
 - `POST /api/vipps/status`: same-origin, signed-capability reconciliation for the return page. Returns no customer profile or address.
@@ -34,7 +34,7 @@ Shipping initially follows the existing `merchantShippingServiceJsonLd` policy: 
 
 ## Discount codes
 
-The ProductCard confirmation dialog accepts one optional Shopify discount code. It is normalized to uppercase and passed as `DraftOrderInput.discountCodes`; Shopify is the authority for whether that code is active and applicable. The exact applied code is retained as a Draft Order attribute for support/reconciliation.
+The checkout API accepts an optional Shopify discount code from approved first-party flows. It is normalized to uppercase and passed as `DraftOrderInput.discountCodes`; Shopify is the authority for whether that code is active and applicable. The ProductCard Vipps button deliberately does not add a merchant-built discount dialog ahead of the Vipps-hosted payment dialog. The exact applied code is retained as a Draft Order attribute for support/reconciliation.
 
 Vipps requires the merchandise amount submitted to ePayment to be at least NOK 1.00. If an applied code reduces the merchandise amount below that threshold (including `KRISTOFFERTESTRABATT` on Utekos Stapper™), the server verifies that Shopify retained the code and returns the Draft Order's `invoiceUrl`. The browser then goes **directly to Shopify checkout**. It does not give that URL to the Vipps Widget SDK. All other eligible purchases still hand the ePayment `redirectUrl` to the Widget SDK and keep the Vipps Express modal/app-switch flow.
 
@@ -62,7 +62,7 @@ Presence check during this work found the new test-Shopify, origin, return-secre
 
 1. Storage migration and server-role access verified. Still exercise concurrent claims across separate connections and lease expiry; the initial sequential exclusion test is not concurrency proof.
 2. Configure a Shopify development store/catalog and HTTPS test origin. Register the Vipps test webhook with explicit authorization and store its secret securely. Use the Merchant Test app for Express; the force-approve endpoint does not support Express.
-3. Complete an actual test purchase on mobile and desktop. Verify SDK modal/focus handling alongside the confirmation dialog, back/cancel paths, return URL fragment preservation, and full-page redirect fallback. UI, WCAG and provider end-to-end behavior remain unverified by the unit tests.
+3. Complete an actual test purchase on mobile and desktop. Verify the Vipps-hosted SDK modal/focus handling, back/cancel paths, return URL fragment preservation, and full-page redirect fallback. UI, WCAG and provider end-to-end behavior remain unverified by the unit tests.
 4. Verify that signed webhook reconciliation succeeds when the customer never returns. Vipps retries after 10 seconds without a response; the current synchronous multi-call handler can exceed that. Measure latency and harden bounded progress/recovery before launch. Do not silently acknowledge unfinished work or introduce background jobs under the current prohibition.
 5. Integrate Vipps into the existing canonical checkout attribution and BeginCheckout contract. The existing enum supports only `shopify_checkout` and `klarna_express`; this work has not changed tracking or emitted live events. Preserve consent and provider deduplication. Validate that Shopify `orders/paid` produces exactly one canonical Purchase with the correct Vipps checkout method. Do not map Vipps to Klarna or silently rely on a fallback.
 6. Establish the refund/cancellation/reconciliation operating path. Low-level Vipps refund/cancel client methods exist, but there is no approved operator UI or Shopify refund synchronization. Native Shopify Vipps/Klarna apps must not be assumed to refund this custom external payment. A manual Shopify paid/refunded marker is not proof of a Vipps movement.

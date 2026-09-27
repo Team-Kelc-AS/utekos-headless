@@ -2,7 +2,14 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { parseVippsCheckoutState } from './checkoutStore'
 
-const state = {
+const currentState = {
+  handle: 'vipps-express-test',
+  variantId: 'gid://shopify/ProductVariant/1',
+  stage: 'new' as const,
+  checkoutStartedAt: '2026-09-27T00:00:00.000Z'
+}
+
+const legacyState = {
   handle: 'vipps-express-test',
   variantId: 'gid://shopify/ProductVariant/1',
   stage: 'new' as const,
@@ -10,13 +17,20 @@ const state = {
 }
 
 test('checkout storage accepts JSONB returned as an object or serialized text', () => {
-  assert.deepEqual(parseVippsCheckoutState(state), state)
-  assert.deepEqual(parseVippsCheckoutState(JSON.stringify(state)), state)
+  assert.deepEqual(parseVippsCheckoutState(currentState), currentState)
+  assert.deepEqual(
+    parseVippsCheckoutState(JSON.stringify(currentState)),
+    currentState
+  )
+})
+
+test('checkout storage preserves legacy attempts without falsely requiring new UI data', () => {
+  assert.deepEqual(parseVippsCheckoutState(legacyState), legacyState)
 })
 
 test('checkout storage preserves an idempotent Shopify checkout fallback', () => {
   const fallback = {
-    ...state,
+    ...currentState,
     stage: 'shopify_checkout_ready' as const,
     draftId: 'gid://shopify/DraftOrder/1',
     amount: 9900,

@@ -16,8 +16,7 @@ export const vippsCheckoutInputSchema = z.object({
     .toUpperCase()
     .regex(/^[A-Z0-9_-]{1,255}$/)
     .optional(),
-  attemptId: z.uuid(),
-  termsAccepted: z.literal(true)
+  attemptId: z.uuid()
 })
 
 export function vippsStandardShippingAmount(subtotal: number) {
@@ -117,8 +116,11 @@ export async function createVippsCheckout(
               ]
             : []),
             {
-              key: 'utekos_terms_accepted_at',
-              value: state.termsAcceptedAt
+              key: 'utekos_checkout_started_at',
+              value:
+                state.checkoutStartedAt ??
+                state.termsAcceptedAt ??
+                new Date().toISOString()
             }
           ],
           note: `Vipps Express ${reference}. Payment is only completed after verified capture.`
@@ -251,7 +253,7 @@ export async function createVippsCheckout(
       ...(input.discountCode ?
         { discountCode: input.discountCode }
       : {}),
-      termsAcceptedAt: new Date().toISOString(),
+      checkoutStartedAt: new Date().toISOString(),
       stage: 'new'
     }
   )
