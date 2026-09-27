@@ -31,6 +31,14 @@ export type VippsCheckoutState = z.infer<
   typeof checkoutStateSchema
 >
 
+// postgres serializers may return JSONB either as an object or as its JSON text.
+// Normalize at the storage boundary so orchestration never depends on driver mode.
+export function parseVippsCheckoutState(value: unknown) {
+  return checkoutStateSchema.parse(
+    typeof value === 'string' ? JSON.parse(value) : value
+  )
+}
+
 export async function withVippsCheckout<T>(
   config: VippsConfig,
   reference: string,
@@ -67,7 +75,7 @@ export async function withVippsCheckout<T>(
   }
   try {
     return await operation(
-      checkoutStateSchema.parse(rows[0].state),
+      parseVippsCheckoutState(rows[0].state),
       save
     )
   } finally {
