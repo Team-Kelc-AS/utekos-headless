@@ -34,8 +34,11 @@ export async function POST(request: Request) {
     return Response.json(result, {
       headers: { 'Cache-Control': 'no-store' }
     })
-  } catch {
-    console.error('vipps.checkout.creation_failed')
+  } catch (error) {
+    console.error(
+      'vipps.checkout.creation_failed',
+      error instanceof Error ? error.message : 'unknown_error'
+    )
     return Response.json(
       {
         message:
