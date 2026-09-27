@@ -160,6 +160,33 @@ test('NOK amounts convert exactly and reject excess precision', () => {
   ])
     assert.throws(() => toMinorUnits(invalid))
 })
+test('test catalog availability uses Admin money scalars and the shop currency', async () => {
+  const h = harness(({ query }) => {
+    assert.match(query, /VippsProductByHandle/)
+    return {
+      shop: { currencyCode: 'NOK' },
+      product: {
+        handle: 'fixture-product',
+        variants: {
+          nodes: [
+            {
+              id: 'gid://shopify/ProductVariant/999',
+              price: '20.00',
+              inventoryQuantity: 0,
+              inventoryPolicy: 'CONTINUE'
+            }
+          ]
+        }
+      }
+    }
+  })
+  await assert.doesNotReject(
+    h.adapter.findAvailableVariant(
+      'fixture-product',
+      'gid://shopify/ProductVariant/999'
+    )
+  )
+})
 test('reservation, partial capture and refunded capture cannot mark Shopify paid', async () => {
   const h = harness(() => {
     throw new Error('must not call Shopify')

@@ -10,7 +10,7 @@ import {
 
 const draftFields = 'id tags totalPriceSet { presentmentMoney { amount currencyCode } } order { id name displayFinancialStatus }'
 export const vippsShopifyQueries = {
-  productByHandle: `query VippsProductByHandle($identifier: ProductIdentifierInput!) { product: productByIdentifier(identifier:$identifier) { id handle variants(first:250) { nodes { id price inventoryQuantity inventoryPolicy } } } }`,
+  productByHandle: `query VippsProductByHandle($identifier: ProductIdentifierInput!) { shop { currencyCode } product: productByIdentifier(identifier:$identifier) { id handle variants(first:250) { nodes { id price inventoryQuantity inventoryPolicy } } } }`,
   read: `query VippsDraft($id: ID!) { draftOrder(id:$id) { ${draftFields} } }`,
   create: `mutation VippsDraftCreate($input:DraftOrderInput!) { draftOrderCreate(input:$input) { draftOrder { ${draftFields} } userErrors { field message } } }`,
   update: `mutation VippsDraftUpdate($id:ID!,$input:DraftOrderInput!) { draftOrderUpdate(id:$id,input:$input) { draftOrder { ${draftFields} } userErrors { field message } } }`,
@@ -35,7 +35,7 @@ const draftSchema = z.object({
 export type VippsDraft = z.infer<typeof draftSchema>
 const variantSchema = z.object({
   id: z.string(),
-  price: z.object({ amount: z.string(), currencyCode: z.literal('NOK') }),
+  price: z.string(),
   inventoryQuantity: z.number().int().nullable(),
   inventoryPolicy: z.enum(['CONTINUE', 'DENY'])
 })
@@ -227,6 +227,7 @@ export function createVippsShopifyOrders(
     async findAvailableVariant(handle: string, variantId: string) {
       const result = z
         .object({
+          shop: z.object({ currencyCode: z.literal('NOK') }),
           product: z
             .object({
               handle: z.string(),
