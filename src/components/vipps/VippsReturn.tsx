@@ -12,9 +12,18 @@ export function VippsReturn() {
     let stopped = false
     let timer: ReturnType<typeof setTimeout> | undefined
     const controller = new AbortController()
-    const params = new URLSearchParams(
+    // Current Vipps redirects carry the capability as query parameters. Retain
+    // fragment support for a redirect already started by an earlier deployment.
+    const queryParams = new URLSearchParams(
+      window.location.search
+    )
+    const fragmentParams = new URLSearchParams(
       window.location.hash.slice(1)
     )
+    const params =
+      queryParams.has('reference') || queryParams.has('token') ?
+        queryParams
+      : fragmentParams
     const reference = params.get('reference'),
       token = params.get('token')
     let identity:

@@ -78,10 +78,7 @@ export async function createVippsCheckout(
           reserveInventoryUntil: new Date(
             Date.now() + 30 * 60 * 1000
           ).toISOString(),
-          tags: [
-            'vipps-express',
-            `vipps-${config.environment}`
-          ],
+          tags: ['vipps-express', `vipps-${config.environment}`],
           customAttributes: [
             { key: 'vipps_reference', value: reference },
             { key: 'vipps_msn', value: config.msn },
@@ -138,8 +135,10 @@ export async function createVippsCheckout(
           userFlow: 'WEB_REDIRECT',
           profile: { scope: 'name phoneNumber email address' },
           paymentDescription: 'Kjøp hos Utekos',
-          // The status capability stays in the fragment, not server/referrer/analytics URL queries.
-          returnUrl: `${origin}/vipps/retur#reference=${encodeURIComponent(reference)}&token=${encodeURIComponent(token)}`,
+          // Vipps requires a redirect URL it can validate and redirect to. The return
+          // page consumes this short-lived capability immediately and removes it from
+          // the browser URL before making any further navigation.
+          returnUrl: `${origin}/vipps/retur?reference=${encodeURIComponent(reference)}&token=${encodeURIComponent(token)}`,
           shipping: {
             allowedCountries: ['NO'],
             fixedOptions: [
