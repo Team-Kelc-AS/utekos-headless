@@ -60,16 +60,6 @@ export function ProductCardFooter({
                 Meld på venteliste
               </InlineText>
             </Button>
-            <Button
-              type='button'
-              disabled
-              variant='checkout'
-              className={`${actionButtonClassName} bg-night hover:translate-y-0 hover:scale-100 hover:opacity-100 disabled:opacity-100`}
-            >
-              <InlineText className='font-sans font-semibold'>
-                Utsolgt
-              </InlineText>
-            </Button>
           </>
         : <ProductCardSoldOut />}
       </div>

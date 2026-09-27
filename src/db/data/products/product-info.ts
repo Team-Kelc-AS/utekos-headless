@@ -5,4 +5,4 @@ export const BEREDSKAPSPRODUKTER = [
   'utekos-mikrofiber'
 ]
 
-export const handles = ['utekos-techdown', 'utekos-mikrofiber', 'comfyrobe']
+export const handles = ['utekos-dun', 'utekos-techdown', 'utekos-mikrofiber']

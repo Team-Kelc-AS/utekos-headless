@@ -20,7 +20,7 @@ Neither a browser redirect, SDK success event, webhook payload alone, nor HTTP 2
 
 ## Ownership and entry points
 
-- `src/components/ProductCard/ProductCard.tsx`: replaces the shared available-product add-to-cart CTA when the public feature flag is enabled. Klarna and sold-out behavior are retained.
+- `src/components/ProductCard/ProductCard.tsx`: replaces the shared available-product add-to-cart CTA when the public feature flag is enabled. Sold-out Utekos Dun cards use a single waitlist CTA; Klarna remains available only for in-stock products.
 - `src/components/vipps`: official Vipps Widget SDK and return-page polling. The SDK owns the button, desktop dialog and mobile app-switch; no Utekos confirmation dialog is shown. Buys one selected variant; it does not include other cart items.
 - `POST /api/vipps/checkout`: same-origin, rate-limited server checkout creation. Price and availability come from Shopify, not browser-supplied totals.
 - `POST /api/vipps/webhook`: signed raw-body verification, configured MSN and reference-prefix isolation, authoritative reconciliation.
