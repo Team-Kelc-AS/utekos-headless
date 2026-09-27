@@ -12,6 +12,7 @@ type PayloadSummary = {
   activeProducts: number
   variantsScanned: number
   validInputs: number
+  withPrice: number
   withGtins: number
   withItemGroupId: number
   withGoogleProductCategory: number
@@ -26,6 +27,10 @@ type PayloadSummary = {
 type ProcessedProductSummary = {
   totalProcessedProducts: number
   managedProducts: number
+  sourceCounts: Record<string, number>
+  withPrice: number
+  missingPrice: number
+  priceIssues: Record<string, number>
   withGtins: number
   withItemGroupId: number
   withGoogleProductCategory: number
@@ -58,6 +63,7 @@ async function summarizeLocalPayload(): Promise<PayloadSummary> {
     activeProducts: 0,
     variantsScanned: 0,
     validInputs: 0,
+    withPrice: 0,
     withGtins: 0,
     withItemGroupId: 0,
     withGoogleProductCategory: 0,
@@ -94,6 +100,14 @@ async function summarizeLocalPayload(): Promise<PayloadSummary> {
       summary.validInputs += 1
       incrementCounter(summary.identifierStrategies, builtInput.identifierStrategy)
 
+      if (
+        typeof attributes.price === 'object' &&
+        attributes.price !== null &&
+        'amountMicros' in attributes.price &&
+        'currencyCode' in attributes.price
+      ) {
+        summary.withPrice += 1
+      }
       if (gtins.length > 0) summary.withGtins += 1
       if (readStringAttribute(attributes, 'itemGroupId')) summary.withItemGroupId += 1
       if (readStringAttribute(attributes, 'googleProductCategory')) summary.withGoogleProductCategory += 1
@@ -145,6 +159,10 @@ async function summarizeMerchantApiState() {
     const processedSummary: ProcessedProductSummary = {
       totalProcessedProducts: processedProducts.length,
       managedProducts: managedProducts.length,
+      sourceCounts: {},
+      withPrice: 0,
+      missingPrice: 0,
+      priceIssues: {},
       withGtins: 0,
       withItemGroupId: 0,
       withGoogleProductCategory: 0,
@@ -152,6 +170,28 @@ async function summarizeMerchantApiState() {
       withAdditionalImageLinks: 0,
       withProductTypes: 0,
       samples: []
+    }
+
+    for (const product of processedProducts) {
+      incrementCounter(
+        processedSummary.sourceCounts,
+        product.dataSource ?? '<unspecified>'
+      )
+
+      if (product.productAttributes?.price) {
+        processedSummary.withPrice += 1
+      } else {
+        processedSummary.missingPrice += 1
+      }
+
+      for (const issue of product.productStatus?.itemLevelIssues ?? []) {
+        if (issue.attribute?.toLowerCase() === 'price') {
+          incrementCounter(
+            processedSummary.priceIssues,
+            `${issue.code ?? '<no code>'} | ${issue.severity ?? '<no severity>'}`
+          )
+        }
+      }
     }
 
     for (const product of managedProducts) {

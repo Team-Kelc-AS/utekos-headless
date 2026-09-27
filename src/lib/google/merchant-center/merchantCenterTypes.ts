@@ -61,7 +61,13 @@ export const merchantProcessedProductSchema = z
         title: z.string().optional(),
         link: z.string().optional(),
         canonicalLink: z.string().optional(),
-        imageLink: z.string().optional()
+        imageLink: z.string().optional(),
+        price: z
+          .object({
+            amountMicros: z.string(),
+            currencyCode: z.string()
+          })
+          .optional()
       })
       .partial()
       .loose()

@@ -74,7 +74,7 @@ test('sends the Utekos presentation to Google Merchant Center', () => {
   )
   assert.equal(
     result.input.productAttributes.description,
-    'Utekos TechDown™ er et varmt og allsidig 3-i-1-plagg med Luméa™-ytterstoff og CloudWeave™-isolasjon for terrasse, hytte, båt og bobil.'
+    'Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Det værbestandige Luméa™-skallet og spesialutviklet CloudWeave™-isolasjon forenes i et intuitivt 3-i-1-design, skapt for å forlenge de gode stundene utendørs. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt'
   )
   assert.equal(
     result.input.productAttributes.link,
