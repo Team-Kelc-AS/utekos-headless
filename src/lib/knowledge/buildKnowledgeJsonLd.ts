@@ -66,7 +66,7 @@ export function buildKnowledgeOverviewBreadcrumbJsonLd(): WithContext<Breadcrumb
       {
         '@type': 'ListItem',
         'position': 2,
-        'name': 'Kunnskap',
+        'name': 'Uteguiden',
         'item': `${SITE_URL}${knowledgeOverview.path}`
       }
     ]
@@ -132,7 +132,7 @@ export function buildKnowledgeBreadcrumbJsonLd(
       {
         '@type': 'ListItem',
         'position': 2,
-        'name': 'Kunnskap',
+        'name': 'Uteguiden',
         'item': `${SITE_URL}${knowledgeOverview.path}`
       },
       {

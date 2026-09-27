@@ -56,7 +56,7 @@ test('knowledge metadata is unique, canonical and source-linked', () => {
     assert.equal(breadcrumbJsonLd.itemListElement.length, 3)
     assert.equal(
       breadcrumbJsonLd.itemListElement[1]?.item,
-      `${SITE_URL}/kunnskap`
+      `${SITE_URL}/uteguiden`
     )
   }
 })
@@ -91,14 +91,14 @@ test('knowledge overview is canonical and lists every registered article', () =>
   assert.equal(breadcrumbJsonLd.itemListElement.length, 2)
   assert.equal(
     breadcrumbJsonLd.itemListElement[1]?.item,
-    `${SITE_URL}/kunnskap`
+    `${SITE_URL}/uteguiden`
   )
 })
 
 test('visible MDX has no external search links and matches registry structure', async () => {
   const knowledgeRoot = path.join(
     process.cwd(),
-    'src/app/(store)/kunnskap'
+    'src/app/(store)/uteguiden'
   )
   const bodies = await Promise.all(
     knowledgeArticleList.map(article =>
@@ -180,7 +180,7 @@ test('visible MDX has no external search links and matches registry structure', 
 test('in-text citations resolve against the registry source list', async () => {
   const knowledgeRoot = path.join(
     process.cwd(),
-    'src/app/(store)/kunnskap'
+    'src/app/(store)/uteguiden'
   )
 
   for (const article of knowledgeArticleList) {

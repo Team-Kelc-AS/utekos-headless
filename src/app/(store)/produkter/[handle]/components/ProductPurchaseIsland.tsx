@@ -90,7 +90,6 @@ export function ProductPurchaseIsland({
             'Oppdaterer variant…'
           : null}
         </div>
-        <TrustSignals />
         <div className='mt-5 md:mt-8 [&_form]:py-0'>
           <Activity>
             <AddToCart
@@ -102,6 +101,7 @@ export function ProductPurchaseIsland({
             />
           </Activity>
         </div>
+        <TrustSignals />
       </article>
     </AnimatedBlock>
   )

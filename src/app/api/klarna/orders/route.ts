@@ -6,6 +6,8 @@ import {
 import { fetchCart } from '@/lib/helpers/cart/fetchCart'
 import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { createKlarnaOrderFromAuthorization } from '@/lib/klarna/createKlarnaOrderFromAuthorization'
+import { getKlarnaManagedOrder } from '@/lib/klarna/getKlarnaManagedOrder'
+import { resolveKlarnaCustomerAddress } from '@/lib/klarna/resolveKlarnaCustomerAddress'
 import { createOrderFromKlarnaExpress } from '@/lib/shopify/createOrderFromKlarnaExpress'
 import { KLARNA_EXPRESS_SESSION_KEY } from '@/components/klarna/constants/sessionStorage'
 import { NextResponse } from 'next/server'
@@ -113,6 +115,28 @@ export async function POST(req: NextRequest) {
       }
     )
 
+    // Express SDK collected_shipping_address is often sparse; Klarna OM
+    // holds the authoritative customer details after create-order.
+    let managedShipping = collectedShippingAddress
+    let managedBilling: typeof collectedShippingAddress | undefined
+
+    try {
+      const managedOrder = await getKlarnaManagedOrder(
+        klarnaOrder.order_id
+      )
+      managedShipping =
+        managedOrder.shipping_address ?? collectedShippingAddress
+      managedBilling = managedOrder.billing_address
+    } catch {
+      // Fall back to Express-collected address if OM lookup fails.
+    }
+
+    const shopifyCustomerAddress = resolveKlarnaCustomerAddress({
+      collectedShippingAddress,
+      shippingAddress: managedShipping,
+      ...(managedBilling ? { billingAddress: managedBilling } : {})
+    })
+
     const enrichedAttribution =
       enrichCheckoutAttributionWithFacebookLogin(
         attribution,
@@ -122,7 +146,7 @@ export async function POST(req: NextRequest) {
     const shopifyOrder = await createOrderFromKlarnaExpress({
       cart,
       orderPayload,
-      collectedShippingAddress,
+      collectedShippingAddress: shopifyCustomerAddress,
       klarnaOrderId: klarnaOrder.order_id,
       ...(enrichedAttribution ?
         { attribution: enrichedAttribution }

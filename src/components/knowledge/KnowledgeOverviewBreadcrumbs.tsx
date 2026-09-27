@@ -16,7 +16,7 @@ export function KnowledgeOverviewBreadcrumbs() {
             className={styles.breadcrumbCurrent}
             aria-current='page'
           >
-            Kunnskap
+            Uteguiden
           </span>
         </li>
       </ol>

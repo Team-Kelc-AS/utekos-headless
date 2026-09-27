@@ -295,6 +295,16 @@ const nextConfig: NextConfig = {
         source: '/pages/kundeservice',
         destination: '/kontaktskjema',
         permanent: true
+      },
+      {
+        source: '/kunnskap',
+        destination: '/uteguiden',
+        permanent: true
+      },
+      {
+        source: '/kunnskap/:path*',
+        destination: '/uteguiden/:path*',
+        permanent: true
       }
     ]
   },

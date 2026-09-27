@@ -19,9 +19,9 @@ export function KnowledgeArticleBreadcrumbs({
           <span aria-hidden='true'>/</span>
           <Link
             className={styles.breadcrumbLink}
-            href='/kunnskap'
+            href='/uteguiden'
           >
-            Kunnskap
+            Uteguiden
           </Link>
         </li>
         <li className={styles.breadcrumbItem}>

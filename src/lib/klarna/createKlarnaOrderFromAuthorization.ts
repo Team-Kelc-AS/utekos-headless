@@ -21,10 +21,15 @@ export async function createKlarnaOrderFromAuthorization({
   collectedShippingAddress
 }: CreateKlarnaOrderInput) {
   const config = getKlarnaServerConfig()
-  const requestBody = applyShippingAddressToOrderPayload(
-    orderPayload,
-    collectedShippingAddress
-  )
+  // Default Klarna behaviour is already non-capture, but set explicitly so
+  // we stay covered by Merchant Protection (capture only at fulfillment).
+  const requestBody = {
+    ...applyShippingAddressToOrderPayload(
+      orderPayload,
+      collectedShippingAddress
+    ),
+    auto_capture: false as const
+  }
 
   const response = await fetch(
     `${config.KLARNA_API_BASE_URL}/payments/v1/authorizations/${encodeURIComponent(authorizationToken)}/order`,

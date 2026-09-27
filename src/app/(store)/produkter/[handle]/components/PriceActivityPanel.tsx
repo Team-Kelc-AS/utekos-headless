@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Price } from '@/components/jsx/Price'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { Star } from 'lucide-react'
@@ -135,32 +136,44 @@ export default function PriceActivityPanel({
           className='mt-2 text-sm text-foreground'
           aria-label={`${reviewSummary.formattedAverage} av 5 basert på ${reviewSummary.count} anmeldelser`}
         >
-          <div className='flex flex-wrap items-center gap-x-2 gap-y-1'>
-            <div
-              className='flex items-center gap-0.5 text-primary'
-              aria-hidden='true'
-            >
-              {Array.from({ length: 5 }, (_, index) => (
-                <Star
-                  key={index}
-                  className='size-4 fill-primary text-primary'
-                  fill='currentColor'
-                  strokeWidth={1.5}
-                  opacity={
-                    (
-                      index <
-                      Math.round(reviewSummary.averageRating)
-                    ) ?
-                      1
-                    : 0.28
-                  }
-                />
-              ))}
-            </div>
-            <span>
-              {reviewSummary.formattedAverage} av 5 fra{' '}
-              {reviewSummary.count} anmeldelser
+          <div className='flex flex-col items-start gap-y-2.5 md:flex-row md:flex-wrap md:items-center md:gap-x-2 md:gap-y-1'>
+            <span className='my-1 inline-flex h-5 w-[6.5rem] shrink-0 items-center md:my-0 md:h-4 md:w-[5.25rem]'>
+              <Image
+                src='/judge_me.svg'
+                alt=''
+                width={277}
+                height={53}
+                unoptimized
+                className='h-5 w-auto md:h-4'
+              />
             </span>
+            <div className='flex flex-wrap items-center gap-x-2 gap-y-1'>
+              <div
+                className='flex items-center gap-0.5 text-primary'
+                aria-hidden='true'
+              >
+                {Array.from({ length: 5 }, (_, index) => (
+                  <Star
+                    key={index}
+                    className='size-4 fill-primary text-primary'
+                    fill='currentColor'
+                    strokeWidth={1.5}
+                    opacity={
+                      (
+                        index <
+                        Math.round(reviewSummary.averageRating)
+                      ) ?
+                        1
+                      : 0.28
+                    }
+                  />
+                ))}
+              </div>
+              <span>
+                {reviewSummary.formattedAverage} av 5 fra{' '}
+                {reviewSummary.count} anmeldelser
+              </span>
+            </div>
           </div>
         </div>
       )}

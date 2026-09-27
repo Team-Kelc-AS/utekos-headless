@@ -19,7 +19,7 @@ export function buildKnowledgeOverviewMetadata(): Metadata {
     ],
     creator: knowledgeAuthors.utekos.name,
     publisher: knowledgeAuthors.utekos.name,
-    category: 'Kunnskap',
+    category: 'Uteguiden',
     openGraph: {
       type: 'website',
       locale: 'nb_NO',

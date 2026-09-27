@@ -112,6 +112,14 @@ export async function createOrderFromKlarnaExpress({
     )
   }
 
+  const email = collectedShippingAddress.email?.trim()
+
+  if (!email) {
+    throw new Error(
+      'Klarna express order is missing customer email for Shopify'
+    )
+  }
+
   const shippingAddress = mapKlarnaAddressToShopify(
     collectedShippingAddress
   )
@@ -153,7 +161,7 @@ export async function createOrderFromKlarnaExpress({
       draftOrderCreateMutation,
       {
         input: {
-          email: collectedShippingAddress.email,
+          email,
           lineItems,
           shippingAddress,
           billingAddress,

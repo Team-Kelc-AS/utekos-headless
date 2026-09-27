@@ -59,7 +59,7 @@ export default function Header({
           <HeaderSearch variant='nav' />
 
           <HeaderNavigationLink
-            href={'/kunnskap' as Route}
+            href={'/uteguiden' as Route}
             data-track='HeaderKnowledgeClick'
             className='hidden h-11 items-center justify-center gap-2 rounded-md px-3 font-sans font-semibold text-sm text-foreground transition outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring md:inline-flex'
           >
@@ -67,7 +67,7 @@ export default function Header({
               className='size-4'
               aria-hidden
             />
-            <span>Kunnskap</span>
+            <span>Uteguiden</span>
           </HeaderNavigationLink>
 
           <HeaderNavigationLink

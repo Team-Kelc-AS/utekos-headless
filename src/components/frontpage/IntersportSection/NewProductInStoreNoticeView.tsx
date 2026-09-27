@@ -30,24 +30,24 @@ export function NewProductInStoreNoticeView({
       background='none'
       className={cn(
         frontpageSectionStackClassName,
-        'bg-deep-fjord text-foreground'
+        'bg-night text-foreground'
       )}
       contentClassName='max-w-none px-0 py-0 sm:px-0 sm:py-0 md:py-0 lg:px-0 lg:py-0'
     >
       <div
         ref={containerRef}
-        className='relative isolate mx-auto w-full overflow-hidden bg-deep-fjord px-4 pt-12 pb-24 text-card-foreground sm:px-6 sm:pt-16 sm:pb-28 md:px-8 md:pt-20 md:pb-32 lg:px-12 lg:pt-24 lg:pb-36'
+        className='relative isolate mx-auto w-full overflow-hidden bg-night px-4 pt-12 pb-24 text-card-foreground sm:px-6 sm:pt-16 sm:pb-28 md:px-8 md:pt-20 md:pb-32 lg:px-12 lg:pt-24 lg:pb-36'
       >
-        <div className='pointer-events-none absolute top-0 left-1/2 -z-20 h-125 w-125 -translate-x-1/2 -translate-y-1/2 bg-deep-fjord opacity-20 blur-[100px]' />
+        <div className='pointer-events-none absolute top-0 left-1/2 -z-20 h-125 w-125 -translate-x-1/2 -translate-y-1/2 bg-night opacity-20 blur-[100px]' />
 
         <div className='container mx-auto flex max-w-5xl flex-col items-center gap-8 text-center'>
           <div className='relative flex h-32 w-full items-center justify-center overflow-visible'>
-            <div className='absolute top-1/2 left-1/2 z-0 flex h-1 w-1 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-visible rounded-full bg-deep-fjord'>
+            <div className='absolute top-1/2 left-1/2 z-0 flex h-1 w-1 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-visible rounded-full bg-night'>
               {[...Array(5)].map((_, i) => (
                 <div
                   key={`smoke-${i}`}
                   className={`smoke-particle absolute h-20 w-20 rounded-full blur-xl ${
-                    i % 2 === 0 ? 'bg-deep-fjord/80' : 'bg-deep-fjord'
+                    i % 2 === 0 ? 'bg-night/80' : 'bg-night'
                   }`}
                   style={{ left: i * 5, top: i * 2 }}
                 />

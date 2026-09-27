@@ -7,7 +7,7 @@ import { KnowledgeArticleJsonLd } from './KnowledgeArticleJsonLd'
 import { KnowledgeLearnings } from './KnowledgeLearnings'
 import { KnowledgeSources } from './KnowledgeSources'
 import { KnowledgeToc } from './KnowledgeToc'
-import articleStyles from '@/app/(store)/kunnskap/knowledgeArticle.module.css'
+import articleStyles from '@/app/(store)/uteguiden/knowledgeArticle.module.css'
 
 export function KnowledgeArticleScaffold({
   article,

@@ -15,7 +15,7 @@ const KNOWN_SECTION_PREFIXES = [
   '/produkter',
   '/magasinet',
   '/inspirasjon',
-  '/kunnskap',
+  '/uteguiden',
   '/handlehjelp',
   '/skreddersy-varmen',
   '/kampanje',

@@ -14,7 +14,7 @@ export type KnowledgeTocEntry = {
 
 export type KnowledgeArticle = {
   slug: string
-  path: `/kunnskap/${string}`
+  path: `/uteguiden/${string}`
   title: string
   metaTitle: string
   description: string
@@ -34,9 +34,9 @@ export type KnowledgeArticle = {
 }
 
 export const knowledgeOverview = {
-  path: '/kunnskap',
-  title: 'Kunnskap om kulde, varme og isolasjon',
-  metaTitle: 'Kunnskap om kulde, varme og isolasjon | Utekos',
+  path: '/uteguiden',
+  title: 'Uteguiden – kulde, varme og isolasjon',
+  metaTitle: 'Uteguiden – kulde, varme og isolasjon | Utekos',
   description:
     'Kildebaserte guider fra Utekos om kulde, varme, bekledning og isolasjon – skrevet for å gjøre det enklere å forstå hva som holder deg varm ute.',
   updatedAt: '2026-09-24T09:30:00+02:00'
@@ -88,7 +88,7 @@ const cloudWeaveReferences = [
 export const knowledgeArticles = {
   cloudweave: {
     slug: 'cloudweave',
-    path: '/kunnskap/cloudweave',
+    path: '/uteguiden/cloudweave',
     title: 'CloudWeave™, dun og det norske klimaet',
     metaTitle: 'CloudWeave™, dun og det norske klimaet | Utekos',
     description: sharedDescription,
@@ -134,7 +134,7 @@ export const knowledgeArticles = {
   },
   baseLayer: {
     slug: 'hva-skal-man-ha-innerst',
-    path: '/kunnskap/hva-skal-man-ha-innerst',
+    path: '/uteguiden/hva-skal-man-ha-innerst',
     title: 'Hva skal man ha innerst når det er kaldt?',
     metaTitle: 'Hva skal man ha innerst? Ull vs. syntetisk | Utekos',
     description:
@@ -236,7 +236,7 @@ export const knowledgeArticles = {
   },
   keepWarm: {
     slug: 'hvordan-holde-varmen-ute',
-    path: '/kunnskap/hvordan-holde-varmen-ute',
+    path: '/uteguiden/hvordan-holde-varmen-ute',
     title: 'Hvordan holder man seg varm ute?',
     metaTitle: 'Hvordan holder man seg varm ute? | Utekos',
     description:
@@ -353,7 +353,7 @@ export const knowledgeArticles = {
   },
   cold: {
     slug: 'hvorfor-blir-man-kald',
-    path: '/kunnskap/hvorfor-blir-man-kald',
+    path: '/uteguiden/hvorfor-blir-man-kald',
     title: 'Hvorfor blir man kald?',
     metaTitle: 'Hvorfor blir man kald? | Utekos',
     description:
@@ -454,7 +454,7 @@ export const knowledgeArticles = {
   },
   ykk: {
     slug: 'ykk',
-    path: '/kunnskap/ykk',
+    path: '/uteguiden/ykk',
     title: 'Slik fungerer glidelåsen – mekanikk, kvalitet og vedlikehold',
     metaTitle: 'Slik fungerer glidelåsen – mekanikk og vedlikehold | Utekos',
     description:
@@ -507,7 +507,7 @@ export const knowledgeArticles = {
     ],
     references: [
       {
-        title: "To begin with, what's the structure of a zipper?",
+        title: 'To begin with, what\'s the structure of a zipper?',
         attribution: 'YKK (u.å.)',
         url: 'https://www.ykk.com/english/ykk/tech/01.html',
         suffix: '. Hentet fra ykk.com'
@@ -519,7 +519,7 @@ export const knowledgeArticles = {
         suffix: '. Hentet fra ykk.com'
       },
       {
-        title: "Why zippers don't come open on their own",
+        title: 'Why zippers don\'t come open on their own',
         attribution: 'YKK (u.å.)',
         url: 'https://www.ykk.com/english/ykk/tech/03.html',
         suffix: '. Hentet fra ykk.com'
