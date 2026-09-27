@@ -1,31 +1,16 @@
+'use client'
+
 import { useQuery } from '@tanstack/react-query'
 import { RecommendedItem } from './RecommendedItem'
+import { EmptyCartComfyrobeKlarnaDeal } from './EmptyCartComfyrobeKlarnaDeal'
 import { recommendedProductsOptions } from '@/api/lib/products/cartSuggestionOptions'
-import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/KlarnaCreditPromotionAutoSize'
-import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/KlarnaOnSiteMessagingScript'
 
 export function EmptyCartRecommendations() {
   const { data: products } = useQuery(recommendedProductsOptions)
 
   return (
     <div className='w-full max-w-md text-left'>
-      <div className='mb-5 rounded-xl bg-muted/40 px-4 py-3'>
-        <p className='font-sans text-sm text-foreground'>
-          Handlekurven er tom — se hvordan Klarna kan gjøre
-          neste kjøp enklere.
-        </p>
-        <div
-          className='mt-2 min-h-10'
-          role='group'
-          aria-label='Klarna-tilbud for tom handlekurv'
-        >
-          <KlarnaOnSiteMessagingScript strategy='lazyOnload' />
-          <KlarnaCreditPromotionAutoSize
-            id='klarna-credit-promotion-empty-cart'
-            theme='default'
-          />
-        </div>
-      </div>
+      <EmptyCartComfyrobeKlarnaDeal />
 
       {!products || products.length === 0 ?
         <div className='text-center text-muted-foreground'>

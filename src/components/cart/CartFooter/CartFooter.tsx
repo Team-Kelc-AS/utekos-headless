@@ -3,6 +3,9 @@ import * as React from 'react'
 
 import { CheckoutButton } from '@/components/cart/CheckoutButton/CheckoutButton'
 import { KlarnaCartExpressCheckout } from '@/components/klarna/components/KlarnaCartExpressCheckout'
+import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/KlarnaCreditPromotionAutoSize'
+import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/KlarnaOnSiteMessagingScript'
+import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { DrawerFooter } from '@/components/ui/drawer'
 import { useCartPending } from '@/hooks/useCartPending'
 import { formatPrice } from '@/lib/utils/formatPrice'
@@ -29,6 +32,9 @@ export const CartFooter = ({
   const isCheckoutPending = isPending > 0
 
   const subtotalFormatted = formatPrice(cart!.cost.subtotalAmount)
+  const klarnaPurchaseAmount = getKlarnaMinorUnitAmount(
+    cart!.cost.totalAmount
+  )
 
   const disabledReason =
     hasUnavailableLines ?
@@ -48,6 +54,17 @@ export const CartFooter = ({
       )}
 
       <SubtotalDisplay subtotal={subtotalFormatted} />
+
+      {klarnaPurchaseAmount ?
+        <div className='mt-2 min-h-10'>
+          <KlarnaOnSiteMessagingScript strategy='lazyOnload' />
+          <KlarnaCreditPromotionAutoSize
+            id='klarna-credit-promotion-cart'
+            purchaseAmount={klarnaPurchaseAmount}
+            theme='dark'
+          />
+        </div>
+      : null}
 
       <div className='mt-4 grid gap-3'>
         <CheckoutButton
