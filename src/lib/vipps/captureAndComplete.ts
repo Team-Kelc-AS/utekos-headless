@@ -23,7 +23,9 @@ export function vippsCaptureKey(
       `${checkout.environment}:${checkout.msn}:${checkout.reference}:${checkout.amount}:full-v1`
     )
     .digest('hex')
-    .slice(0, 48)}`
+    // `capture-` plus 42 hex chars keeps the key within Vipps' 50-character
+    // idempotency-key limit while retaining 168 bits of deterministic entropy.
+    .slice(0, 42)}`
 }
 
 type Dependencies<T> = {

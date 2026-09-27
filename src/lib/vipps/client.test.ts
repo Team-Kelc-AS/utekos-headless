@@ -121,6 +121,9 @@ test('invalid operations are rejected before any request', async () => {
     h.client.capture(reference, 1.5, 'capture-stable-key')
   )
   await assert.rejects(h.client.capture(reference, 100, 'short'))
+  await assert.rejects(
+    h.client.capture(reference, 100, 'a'.repeat(51))
+  )
   await assert.rejects(h.client.getPayment('../outside'))
   assert.equal(h.calls.length, 0)
 })

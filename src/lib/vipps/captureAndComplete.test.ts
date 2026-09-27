@@ -75,6 +75,9 @@ test('authorized -> validate order -> capture -> authoritative read -> PAID, wit
     'paid'
   ])
 })
+test('capture idempotency key fits Vipps 50-character limit', () => {
+  assert.ok(vippsCaptureKey(checkout).length <= 50)
+})
 test('successful HTTP capture is insufficient when captured amount remains zero', async () => {
   const h = harness(payment(), payment())
   await assert.rejects(

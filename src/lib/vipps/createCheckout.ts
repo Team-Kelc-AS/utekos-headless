@@ -174,7 +174,10 @@ export async function createVippsCheckout(
         )
       const payment = await client.createPayment(
         state.paymentRequest,
-        reference
+        // Vipps accepts a 64-character payment reference but limits
+        // Idempotency-Key to 50. The client attempt UUID is stable across a
+        // retry of this checkout and remains within that narrower limit.
+        input.attemptId
       )
       if (payment.reference !== reference)
         throw new Error('Vipps returned unexpected reference')

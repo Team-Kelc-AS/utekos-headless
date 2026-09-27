@@ -86,7 +86,7 @@ export function createVippsClient(
   ) {
     if (
       method === 'POST' &&
-      (!key || !/^[a-zA-Z0-9-]{8,64}$/.test(key))
+      (!key || !/^[a-zA-Z0-9-]{8,50}$/.test(key))
     ) {
       throw new Error(
         'A stable Vipps idempotency key is required'
