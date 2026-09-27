@@ -6,9 +6,9 @@ export function FreeShippingConfirmation() {
       className='animate-fade-in-down text-sm'
       style={{ animationDuration: '0.5s' }}
     >
-      <div className='flex items-center justify-center gap-3 rounded-lg border border-secondary/30 bg-muted px-4 py-3 text-foreground'>
+      <div className='flex items-center justify-center gap-3 rounded-lg border border-light-teal/30 bg-night px-4 py-3 text-foreground'>
         <CheckCircleIcon
-          className='h-5 w-5 text-secondary'
+          className='h-5 w-5 text-light-teal'
           aria-hidden='true'
         />
         <span className='font-sans font-semibold'>
