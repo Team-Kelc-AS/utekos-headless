@@ -8,7 +8,6 @@ import { VideoSkeleton } from './components/VideoSkeleton'
 import { Suspense } from 'react'
 import { StapperFeatureSection } from './components/StapperFeatureSection/StapperFeatureSection'
 import { ProductVideoSection } from './components/Video/ProductVideoSection'
-import { LazyTechDownFeatureSection } from './components/LazyTechDownFeatureSection'
 import { MikrofiberSection } from './components/MicrofiberSection/MikrofiberSection'
 
 const ProductsPage = async () => {
@@ -17,8 +16,6 @@ const ProductsPage = async () => {
       <article className='container mx-auto px-4 pt-0 pb-16 sm:pb-24'>
         <ProductsPageHeader />
         <HelpChooseSection />
-
-        <LazyTechDownFeatureSection />
 
         <ComparisonTeaser />
 

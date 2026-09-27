@@ -9,6 +9,9 @@ import { H2 } from '@/components/typography/TypographyH2'
 import { H3 } from '@/components/typography/TypographyH3'
 import { H4 } from '@/components/typography/TypographyH4'
 import { P } from '@/components/typography/TypographyP'
+import { ArticleTableOfContents } from '@/components/articles/ArticleTableOfContents'
+import { ArticleSection } from '@/components/articles/ArticleSection'
+import { ArticleReferences } from '@/components/articles/ArticleReferences'
 
 const components = {
   h1: H1,
@@ -20,6 +23,9 @@ const components = {
   Cite,
   KnowledgeCallout,
   SizeGuideCallout,
+  ArticleTableOfContents,
+  ArticleSection,
+  ArticleReferences,
   img: props => {
     const imageProps = props as ImageProps
     return (

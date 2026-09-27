@@ -1,0 +1,216 @@
+import Link from 'next/link'
+import { PersonaCards } from './components/PersonaCards'
+import { ComparisonAccordion } from './components/ComparisonAccordion'
+import { ComparisonFaq } from './components/ComparisonFaq'
+import { ComparisonReference as Reference } from './components/ComparisonReference'
+import { comparisonArticle } from './utils/comparisonArticle'
+import { modelRecommendations } from './utils/comparisonData'
+import styles from './comparisonGuide.module.css'
+
+<ArticleSection id="velg-etter-bruk" labelledBy="model-choice-title">
+<div className={styles.sectionHeader}>
+<span className={styles.pill}>Velg etter bruk</span>
+<h2 id="model-choice-title">Hva er viktigst for deg: varme, vekt eller allsidighet?</h2>
+
+Sammenlign **isolasjon, vekt og vedlikehold** før du velger.
+Brukssituasjonene under er forslag, ikke begrensninger på hvor
+plaggene kan brukes.
+
+</div>
+<PersonaCards />
+</ArticleSection>
+
+<ArticleSection id="sammenligning" labelledBy="comparison-table-title" tone="contrast">
+<div className={styles.sectionHeader}>
+<span className={styles.pill}>Detaljert sammenligning</span>
+<h2 id="comparison-table-title">Hva er forskjellen på Utekos-modellene?</h2>
+
+Sammenlign **modellenes egenskaper**. Isolasjonstypen er
+forskjellig, og vekt og vedlikehold kan være like viktig som
+varme når du skal velge.
+
+</div>
+<ComparisonAccordion />
+
+<p className={styles.note}>Vektene er omtrentlige produktopplysninger, ikke mål for alle størrelser. Varmeopplevelsen avhenger av temperatur, vind, aktivitet og klærne du har under. Sammenligningen er ikke en temperaturklassifisering.</p>
+</ArticleSection>
+
+<ArticleSection id="faglig-grunnlag" labelledBy="technical-evidence-title">
+<div className={styles.sectionHeader}>
+<h2 id="technical-evidence-title">Varme, fukt og materialvalg</h2>
+
+Forskning forklarer hvorfor **aktivitet, fukt og bekledning**
+påvirker komforten. Kildene under beskriver kroppens varmebalanse
+og materialegenskaper. Materialmålinger og målinger av et ferdig
+plagg må leses med sine respektive testbetingelser.
+
+</div>
+<div className={styles.evidenceText}>
+<section aria-labelledby="activity-evidence-title">
+<h3 id="activity-evidence-title">Behovet for isolasjon endrer seg når du stopper</h3>
+
+<p>
+  {
+    'SINTEF omtaler nesten åtte ganger høyere varmeproduksjon ved rask gange i motbakke med vinterbekledning enn i hvile. Forskerne beskriver også at fukt fra svette kan redusere bekledningens isolasjon med opptil 25 prosent. Dette er situasjonsavhengige funn, ikke faste verdier for alle personer eller plagg. '
+  }
+  <Reference id='sintef' />
+</p>
+
+<KnowledgeCallout title="Praktisk valg" tone="note" appearance="dark">
+
+Tilpass isolasjon og lufting etter aktivitet, og ha tørre klær
+tilgjengelig til pausen. Vurder også tildekking av beina når du
+sitter stille. <Reference id="sintef" />
+
+</KnowledgeCallout>
+</section>
+<section aria-labelledby="clo-evidence-title">
+<h3 id="clo-evidence-title">CLO beskriver isolasjon – ikke en garanti i regn</h3>
+
+3M oppgir termisk motstand i CLO sammen med materiale, arealvekt
+og testmetode. I databladet for Thinsulate Type C/CS/CDS er
+typiske verdier blant annet 1,3 CLO ved 105 g/m² og 2,5 CLO ved
+210 g/m², målt etter ASTM F1868. Dette er **materialverdier for
+de angitte variantene og arealvektene**. <Reference id="3m" />
+
+For TechDown må CLO-verdien knyttes til den konkrete
+isolasjonsvarianten og arealvekten som brukes. Materialets
+termiske motstand og hele plaggets isolasjon er ulike målinger.
+Vannavvisning i ytterstoffet er heller ikke det samme som
+vanntetthet.
+
+</section>
+<section aria-labelledby="microfibres-evidence-title">
+<h3 id="microfibres-evidence-title">Mikroplast: overflaten alene avgjør ikke utslippene</h3>
+
+Klinkhammer og medforfattere undersøkte fiberutslipp fra
+polyesterbaserte plagg i husholdningsvask. Fleece avga ikke
+generelt mer enn plagg uten børstet overflate; både plagget og
+vaskebetingelsene hadde betydning. Studien gir derfor ikke
+grunnlag for å si at Utekos’ nylonstoff avgir mindre mikroplast
+enn fleece. <Reference id="klinkhammer" />
+
+**Produktspesifikke miljøpåstander krever egne data.** En glatt
+overflate eller betegnelsene 20D og 380T dokumenterer ikke i seg
+selv hvor mye et ferdig plagg avgir i vask.
+
+</section>
+</div>
+</ArticleSection>
+
+<ArticleSection labelledBy="sammenlign-modeller-deep-dive-heading">
+<div className={styles.sectionHeader}>
+<span className={styles.pill}>Slik velger du</span>
+<h2 id="sammenlign-modeller-deep-dive-heading">Hvordan skal du bruke Utekos?</h2>
+
+Ta utgangspunkt i **været, hvor mye du beveger deg og hva du skal
+pakke med deg**. Samme modell kan brukes både hjemme og på tur.
+
+</div>
+<div className={styles.deepGrid}>
+<section aria-labelledby="use-case-0" className={styles.deepCard}>
+
+Isolasjon og vedlikehold
+
+<h3 id='use-case-0'>Dun eller Mikrofiber?</h3>
+
+Utekos Dun™ har dunisolasjon med 650 fillpower. Utekos
+Mikrofiber™ har syntetisk fyll og lavere oppgitt totalvekt. Velg
+etter om du prioriterer dunisolasjon eller lav vekt og enkelt
+vedlikehold.
+
+- Vi anbefaler Dun til rolige, tørre kvelder.
+- Mikrofiber passer best når plagget ofte pakkes, vaskes og tas
+  med på tur.
+- Begge gir lun komfort, men de løser ulike behov.
+
+</section>
+<section aria-labelledby="use-case-1" className={styles.deepCard}>
+
+For bruk i båt
+
+<h3 id='use-case-1'>Når passer TechDown?</h3>
+
+Utekos TechDown™ har syntetisk CloudWeave™-isolasjon og
+Luméa™-ytterstoff. Vi anbefaler modellen når du vil bruke samme
+plagg i ulike situasjoner, fra terrassen til camping eller
+båttur.
+
+- Juster lengde og ventilasjon etter aktiviteten.
+- Vurder hvor mye plass og vekt du vil ta med.
+- Isolasjon og vannavvisning er ikke det samme som vanntetthet.
+
+</section>
+<section aria-labelledby="use-case-2" className={styles.deepCard}>
+
+Til hytte og bobil
+
+<h3 id='use-case-2'>Hva skal du prioritere på tur?</h3>
+
+Til hytte og bobil kan alle tre modeller være aktuelle. Se på
+været du bruker plagget i, hvor mye du vil bære, og hvordan du
+får vasket og tørket det underveis.
+
+- Vekt: sammenlign ca. 800 g, 1000 g og 1300 g i
+  modelloversikten.
+- Vedlikehold: følg anvisningen for den enkelte modellen.
+- Passform: sjekk størrelsesguiden og klærne du skal ha under.
+
+</section>
+</div>
+</ArticleSection>
+
+<ArticleSection
+  id='vanlige-sporsmal'
+  labelledBy='comparison-faq-title'
+  tone='contrast'
+>
+  <div className={styles.sectionHeader}>
+    <span className={styles.pill}>Spørsmål og svar</span>
+    <h2 id='comparison-faq-title'>
+      Vanlige spørsmål om Utekos-modellene
+    </h2>
+  </div>
+  <ComparisonFaq />
+</ArticleSection>
+
+<ArticleSection labelledBy="comparison-next-step-title">
+<div className={styles.sectionHeader}>
+<h2 id="comparison-next-step-title">Klar for å finne din Utekos?</h2>
+
+Se **størrelser, tilgjengelighet og gjeldende pris** på
+produktsiden. Trenger du hjelp til å velge, kan du spørre oss før
+du bestiller.
+
+<div className={styles.actions}>
+<Link href="/produkter" data-track="SammenlignModellerConclusionAllProductsClick" className={styles.button}>Se hele kolleksjonen</Link>
+<Link href="/kontaktskjema" data-track="SammenlignModellerConclusionContactClick" className={styles.button}>Få råd fra oss</Link>
+</div>
+</div>
+<aside className={styles.sources} aria-labelledby="comparison-sources-title">
+<h3 id="comparison-sources-title">Grunnlaget for sammenligningen</h3>
+
+Modellspesifikasjonene bygger på Utekos’ egne
+produktopplysninger. Bruksrådene er våre anbefalinger, ikke en
+uavhengig test. Se produkt- og vedlikeholdssidene for detaljer.
+Generell forskning er omtalt separat med
+[kilder og faglitteratur](#kilder).
+
+<ul>
+{modelRecommendations.map(model => <li key={model.key}><a href={model.href}>{model.name}</a></li>)}
+<li><Link href="/handlehjelp/vask-og-vedlikehold">Vask og vedlikehold</Link></li>
+<li><Link href="/handlehjelp/storrelsesguide">Størrelsesguide</Link></li>
+</ul>
+</aside>
+</ArticleSection>
+
+<ArticleSection id="kilder" labelledBy="technical-references-title">
+<div className={styles.sectionHeader}>
+<h2 id="technical-references-title">Kilder og faglitteratur</h2>
+
+Kildenes virkeområde er oppgitt for å skille generell forskning
+fra dokumentasjon av et bestemt produkt.
+
+</div>
+<ArticleReferences references={comparisonArticle.references} />
+</ArticleSection>

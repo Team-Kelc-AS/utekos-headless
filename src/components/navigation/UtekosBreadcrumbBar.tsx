@@ -58,10 +58,12 @@ export function UtekosBreadcrumbBar({
             <BreadcrumbItem
               key={`breadcrumb-item-${item.label}`}
             >
-              {isLast || !item.href ?
+              {isLast ?
                 <BreadcrumbPage className={styles.page}>
                   {item.label}
                 </BreadcrumbPage>
+              : !item.href ?
+                <span className={styles.link}>{item.label}</span>
               : <BreadcrumbLink
                   className={styles.link}
                   render={<Link href={item.href as Route} />}

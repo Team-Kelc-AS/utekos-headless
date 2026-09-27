@@ -168,6 +168,14 @@
   margin-top: 0;
 }
 
+/* Opt-in dark article appearance; existing knowledge pages remain unchanged. */
+.callout[data-appearance='dark'] {
+  --knowledge-ink: #f0eee9;
+  border-color: #f0eee9;
+  background: #012622;
+  box-shadow: none;
+}
+
 @media (max-width: 30rem) {
   .authorCard {
     grid-template-columns: 1fr;

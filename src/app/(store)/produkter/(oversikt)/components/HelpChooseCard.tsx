@@ -1,29 +1,29 @@
 'use client'
 
+import { KlarnaProductExpressCheckout } from '@/components/klarna/components/KlarnaProductExpressCheckout'
+import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { useAddToCartAction } from '@/hooks/useAddToCartAction'
 import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductListVisibility'
-import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
-import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
+import { cn } from '@/lib/utils/className'
 import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
-import { AnimatePresence, motion } from 'motion/react'
-import {
-  ArrowUpRight,
-  Loader2,
-  ShoppingBag,
-  X
-} from 'lucide-react'
+import { Loader2, ShoppingBag } from 'lucide-react'
+import { motion } from 'motion/react'
 import type { Route } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import type {
   ShopifyProduct,
   ShopifyProductVariant
 } from 'types/product'
+import styles from './HelpChooseCard.module.css'
 
 interface HelpChooseCardProps {
   product: ShopifyProduct
+  displayTitle: string
+  imageSrc: string
+  sizeLabel: string
   index: number
   glowColor: string
   totalItemCount: number
@@ -39,116 +39,84 @@ type ProductVariantsShape =
 function normalizeVariants(
   product: ShopifyProduct
 ): ShopifyProductVariant[] {
-  const v = product.variants as ProductVariantsShape
-  if (Array.isArray(v)) return v
-  if (v?.nodes) return flattenConnection({ nodes: v.nodes })
-  if (v?.edges) return flattenConnection({ edges: v.edges })
+  const variants = product.variants as ProductVariantsShape
+  if (Array.isArray(variants)) return variants
+  if (variants?.nodes) {
+    return flattenConnection({ nodes: variants.nodes })
+  }
+  if (variants?.edges) {
+    return flattenConnection({ edges: variants.edges })
+  }
   return []
 }
 
-function getDefaultColor(
-  variants: ShopifyProductVariant[]
-): string | null {
-  for (const variant of variants) {
-    const color = variant.selectedOptions.find(
-      o => o.name === 'Color' || o.name === 'Farge'
-    )?.value
-    if (color) return color
-  }
-  return null
+function getOptionValue(
+  variant: ShopifyProductVariant,
+  optionNames: readonly string[]
+) {
+  return variant.selectedOptions.find(option =>
+    optionNames.includes(option.name)
+  )?.value
+}
+
+function findCardVariant(
+  variants: ShopifyProductVariant[],
+  sizeLabel: string
+) {
+  const preferredColor = variants
+    .filter(variant => variant.availableForSale)
+    .map(variant => getOptionValue(variant, ['Color', 'Farge']))
+    .find(Boolean)
+
+  return (
+    variants.find(
+      variant =>
+        getOptionValue(variant, ['Size', 'Størrelse']) ===
+          sizeLabel &&
+        (!preferredColor ||
+          getOptionValue(variant, ['Color', 'Farge']) ===
+            preferredColor)
+    ) ??
+    variants.find(
+      variant =>
+        getOptionValue(variant, ['Size', 'Størrelse']) ===
+        sizeLabel
+    ) ??
+    null
+  )
 }
 
 export function HelpChooseCard({
   product,
+  displayTitle,
+  imageSrc,
+  sizeLabel,
   index,
   glowColor,
   totalItemCount
 }: HelpChooseCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const variants = normalizeVariants(product)
-  const defaultColor = getDefaultColor(variants)
-
-  const [isSelectingSize, setIsSelectingSize] = useState(false)
-  const [selectedVariant, setSelectedVariant] =
-    useState<ShopifyProductVariant | null>(null)
-
-  const selectedColor = defaultColor
-
-  const colorImage =
-    selectedColor ?
-      variants.find(v =>
-        v.selectedOptions.some(
-          o =>
-            (o.name === 'Color' || o.name === 'Farge') &&
-            o.value === selectedColor
-        )
-      )?.image?.url
-    : null
-
-  const availableSizes =
-    selectedColor ?
-      variants
-        .filter(v => {
-          const vColor = v.selectedOptions.find(
-            o => o.name === 'Color' || o.name === 'Farge'
-          )?.value
-          return vColor === selectedColor && v.availableForSale
-        })
-        .map(v => ({
-          id: v.id,
-          title:
-            v.selectedOptions.find(
-              o => o.name === 'Size' || o.name === 'Størrelse'
-            )?.value || 'One Size',
-          variant: v
-        }))
-    : variants
-        .filter(v => v.availableForSale)
-        .map(v => ({
-          id: v.id,
-          title:
-            v.selectedOptions.find(
-              o => o.name === 'Size' || o.name === 'Størrelse'
-            )?.value || 'One Size',
-          variant: v
-        }))
+  const selectedVariant = findCardVariant(variants, sizeLabel)
+  const isAvailable = selectedVariant?.availableForSale === true
+  const variantQuery =
+    selectedVariant ?
+      `?variant=${encodeURIComponent(selectedVariant.id)}`
+    : ''
+  const productUrl =
+    `/produkter/${product.handle}${variantQuery}` as Route
+  const price =
+    selectedVariant?.price.amount ??
+    product.priceRange.minVariantPrice.amount
+  const formattedPrice = `${Number(price).toLocaleString(
+    'no-NO',
+    { maximumFractionDigits: 0 }
+  )} kr`
 
   const { performAddToCart, isPending } = useAddToCartAction({
     product,
-    selectedVariant: selectedVariant
+    selectedVariant
   })
-
-  const handleBuyClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    if (!product.availableForSale) return
-    setIsSelectingSize(true)
-  }
-
-  const handleSizeSelect = (
-    e: React.MouseEvent,
-    variant: ShopifyProductVariant
-  ) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setSelectedVariant(variant)
-    void performAddToCart(1, variant)
-  }
-
-  const activeImage =
-    colorImage || product.featuredImage?.url || ''
-
-  const price = product.priceRange.minVariantPrice.amount
-  const formattedPrice = `${parseInt(price).toLocaleString('no-NO')} kr`
-  const isOutOfStock = !product.availableForSale
-  const selectItemVariant =
-    selectedVariant ??
-    availableSizes[0]?.variant ??
-    variants.find(variant => variant.availableForSale) ??
-    variants[0] ??
-    null
-  const productUrl = `/produkter/${product.handle}` as Route
 
   useCanonicalProductListVisibility({
     elementRef: cardRef,
@@ -156,7 +124,7 @@ export function HelpChooseCard({
     itemListName: 'Hjelp meg å velge',
     product,
     totalItemCount,
-    variant: selectItemVariant
+    variant: selectedVariant
   })
 
   const handleViewProduct = () => {
@@ -167,10 +135,15 @@ export function HelpChooseCard({
 
     reportProductListSelectItem({
       product,
-      variant: selectItemVariant,
+      variant: selectedVariant,
       itemListId: 'help_choose_carousel',
       destinationUrl
     })
+  }
+
+  const handleAddToCart = () => {
+    if (!selectedVariant || !isAvailable || isPending) return
+    void performAddToCart(1, selectedVariant)
   }
 
   return (
@@ -185,176 +158,115 @@ export function HelpChooseCard({
         ease: 'easeOut'
       }}
       className='group relative size-full'
-      onMouseLeave={() => setIsSelectingSize(false)}
     >
-      <Link
-        href={productUrl}
-        className='block size-full'
-        data-track='HelpChooseCardViewMoreClick'
-        onClick={handleViewProduct}
+      <div
+        className={cn(
+          'relative flex aspect-2/3 h-full flex-col overflow-hidden rounded-3xl border border-white/5 bg-card shadow-2xl transition-transform duration-300 md:hover:-translate-y-1',
+          styles.brandFontVariant
+        )}
       >
-        <div className='relative flex aspect-2/3 h-full flex-col overflow-hidden rounded-3xl border border-white/5 bg-night shadow-2xl transition-transform duration-300 md:hover:-translate-y-1'>
-          <div className='absolute inset-0 z-0 bg-card'>
-            <AnimatePresence mode='wait'>
-              <motion.div
-                key={resolveImageSrc(activeImage)}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-                className='absolute inset-0'
-              >
-                <Image
-                  src={activeImage}
-                  alt={product.title}
-                  fill
-                  quality={95}
-                  sizes='(max-width: 640px) 50vw, 25vw'
-                  loading='lazy'
-                  fetchPriority='low'
-                  className={`object-cover transition-transform duration-700 will-change-transform ${
-                    isSelectingSize ?
-                      'scale-105 blur-[2px]'
-                    : 'group-hover:scale-105'
-                  }`}
-                />
-              </motion.div>
-            </AnimatePresence>
-            <div className='absolute inset-0 bg-linear-to-t from-black/90 via-transparent to-transparent opacity-80' />
-          </div>
-
-          <div className='absolute top-0 left-0 z-30 flex w-full items-start justify-between p-3'>
-            <div className='flex items-center justify-center rounded-full border border-white/10 bg-black/20 px-2 py-0.5 backdrop-blur-md md:px-2.5 md:py-1'>
-              <span className='font-sans font-semibold text-[9px] tracking-wider text-white/90 uppercase md:text-[10px]'>
-                Unisex
-              </span>
-            </div>
-          </div>
-
-          <div className='relative z-10 mt-auto flex flex-col p-3 pb-3 md:p-4 md:pb-4'>
-            <div className='mb-3'>
-              <h3 className='font-heading font-google-sans text-base leading-tight font-bold text-white md:text-xl'>
-                {product.title}
-              </h3>
-              <div className='mt-0.5 flex items-baseline gap-2'>
-                <span className='font-google-sans text-sm font-bold text-white/90 md:text-base'>
-                  {formattedPrice}
-                </span>
-              </div>
-            </div>
-
-            <div className='relative h-10 w-full'>
-              <AnimatePresence mode='wait' initial={false}>
-                {!isSelectingSize ?
-                  <motion.div
-                    key='default-actions'
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className='grid grid-cols-[1fr_auto] gap-2'
-                  >
-                    <div className='flex h-10 items-center justify-center gap-2 rounded-full bg-white/10 backdrop-blur-md transition-colors duration-300 md:group-hover:bg-white/20'>
-                      <span className='font-sans font-semibold text-xs text-white'>
-                        Les mer
-                      </span>
-                      <ArrowUpRight className='h-3.5 w-3.5 text-white/80' />
-                    </div>
-
-                    <button
-                      onClick={handleBuyClick}
-                      disabled={isOutOfStock}
-                      className={`flex h-10 w-12 items-center justify-center rounded-full bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-transform active:scale-90 md:w-auto md:px-5 ${
-                        isOutOfStock ? 'opacity-50' : ''
-                      }`}
-                    >
-                      {isOutOfStock ?
-                        <span className='font-google-sans text-[10px] font-bold'>
-                          TOMT
-                        </span>
-                      : <>
-                          <ShoppingBag className='h-4 w-4 md:mr-2' />
-                          <span className='font-google-sans hidden text-xs font-bold md:block'>
-                            Kjøp nå
-                          </span>
-                        </>
-                      }
-                    </button>
-                  </motion.div>
-                : <motion.div
-                    key='size-selector'
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.18 }}
-                    className='flex h-10 w-full items-center gap-1 overflow-hidden rounded-full bg-white p-1 pr-1 shadow-xl'
-                  >
-                    <button
-                      onClick={e => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        setIsSelectingSize(false)
-                      }}
-                      className='flex h-8 w-8 min-w-8 items-center justify-center rounded-full bg-cloud-dancer hover:bg-white-sand'
-                      aria-label='Lukk'
-                    >
-                      <X className='h-4 w-4 text-black' />
-                    </button>
-
-                    <div className='no-scrollbar flex flex-1 items-center gap-1 overflow-x-auto px-1'>
-                      {availableSizes.map(size => (
-                        <button
-                          key={size.id}
-                          onClick={e =>
-                            handleSizeSelect(e, size.variant)
-                          }
-                          disabled={isPending}
-                          className='font-google-sans flex h-8 max-w-17 min-w-9 flex-1 items-center justify-center overflow-hidden rounded-full bg-black px-2 text-xs font-bold text-white transition-transform active:scale-95'
-                          aria-label={`Velg størrelse ${size.title}`}
-                          title={size.title}
-                        >
-                          {(
-                            isPending &&
-                            selectedVariant?.id === size.id
-                          ) ?
-                            <Loader2 className='h-3 w-3 animate-spin' />
-                          : <span className='min-w-0 truncate whitespace-nowrap'>
-                              {size.title}
-                            </span>
-                          }
-                        </button>
-                      ))}
-
-                      {availableSizes.length === 0 && (
-                        <div className='flex h-8 items-center justify-center rounded-full bg-white-sand px-3 font-sans font-semibold text-[11px] whitespace-nowrap text-black'>
-                          Ingen størrelser
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                }
-              </AnimatePresence>
-            </div>
-          </div>
-
-          <div
-            className='pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 md:group-hover:opacity-100'
-            style={{
-              boxShadow: `inset 0 0 20px ${glowColor}20`,
-              borderColor: `${glowColor}40`
-            }}
+        <Link
+          href={productUrl}
+          aria-label={`Se ${displayTitle}`}
+          className='absolute inset-0 z-0 rounded-3xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white'
+          data-track='HelpChooseCardViewMoreClick'
+          onClick={handleViewProduct}
+        >
+          <Image
+            src={imageSrc}
+            alt={`${displayTitle} i Havdyp`}
+            fill
+            quality={95}
+            sizes='(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 33vw'
+            loading='lazy'
+            fetchPriority='low'
+            className='object-contain'
           />
+          <span className='absolute inset-0 bg-linear-to-t from-black/90 via-transparent to-transparent opacity-80' />
+        </Link>
+
+        <div className='pointer-events-none absolute top-0 left-0 z-20 flex w-full items-start justify-between p-3'>
+          <span className='flex items-center justify-center rounded-full border border-white/10 bg-black/20 px-2 py-0.5 font-sans text-[9px] font-medium tracking-normal text-white/90 backdrop-blur-md md:px-2.5 md:py-1 md:text-[10px]'>
+            Unisex
+          </span>
         </div>
-      </Link>
+
+        <div className='pointer-events-none relative z-10 mt-auto flex flex-col p-3 pb-3 md:p-4 md:pb-4'>
+          <div className='mb-3'>
+            <h3 className='font-google-sans text-base leading-tight font-extrabold text-white md:text-xl'>
+              {displayTitle}
+            </h3>
+            <p className='mt-0.5 font-google-sans text-sm font-medium text-white/90 md:text-base'>
+              {formattedPrice}
+            </p>
+          </div>
+
+          <div className='pointer-events-auto grid w-full grid-cols-1 gap-2 sm:grid-cols-2'>
+            <button
+              type='button'
+              onClick={handleAddToCart}
+              disabled={!isAvailable || isPending}
+              data-track='HelpChooseCardAddToCartClick'
+              aria-busy={isPending}
+              className='flex h-11 min-w-0 items-center justify-center gap-2 rounded-full bg-white/10 px-2 font-google-sans text-xs font-medium whitespace-nowrap text-white backdrop-blur-md transition-colors duration-300 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-60'
+            >
+              {isPending ?
+                <Loader2 className='size-4 shrink-0 motion-safe:animate-spin' />
+              : <ShoppingBag className='size-4 shrink-0 sm:hidden xl:block' />
+              }
+              <span>
+                {isAvailable ? 'Legg i handlekurv' : 'Utsolgt'}
+              </span>
+            </button>
+
+            {isAvailable && selectedVariant ?
+              <div
+                className='flex h-11 min-w-0 items-stretch overflow-hidden rounded-full'
+                aria-label={`Betal ${displayTitle} med Klarna`}
+              >
+                <KlarnaProductExpressCheckout
+                  product={product}
+                  selectedVariant={selectedVariant}
+                  quantity={1}
+                  disabled={isPending}
+                  theme='default'
+                  className='h-full min-h-0 w-full min-w-0'
+                  buttonContainerClassName='h-11! min-h-11! border-none ring-0'
+                  loadingFallback={
+                    <span
+                      className='flex h-11 w-full items-center justify-center rounded-full bg-white px-2 font-google-sans text-xs font-medium text-black'
+                      role='status'
+                    >
+                      Laster Klarna…
+                    </span>
+                  }
+                />
+              </div>
+            : <button
+                type='button'
+                disabled
+                className='h-11 rounded-full bg-white px-3 font-google-sans text-xs font-medium text-black opacity-60'
+              >
+                Utsolgt
+              </button>
+            }
+          </div>
+        </div>
+
+        <div
+          className='pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 md:group-hover:opacity-100'
+          style={{
+            boxShadow: `inset 0 0 20px ${glowColor}20`,
+            borderColor: `${glowColor}40`
+          }}
+        />
+      </div>
+
       <WishlistButton
         product={product}
-        variant={
-          selectedVariant ??
-          availableSizes[0]?.variant ??
-          variants[0]
-        }
-        productTitle={product.title}
-        returnTo={`/produkter/${product.handle}`}
+        variant={selectedVariant ?? variants[0]}
+        productTitle={displayTitle}
+        returnTo={productUrl}
         surface='plain'
         className='absolute top-3 right-3 z-50 size-11 rounded-xl md:top-3 md:right-3 md:size-12 md:rounded-2xl'
       />

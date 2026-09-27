@@ -189,6 +189,7 @@ export function buildReportOnlyCsp(): string {
     "'unsafe-eval'",
     ...STOREFRONT_ORIGINS,
     ...KLARNA_ORIGINS,
+    'https://cdn.vippsmobilepay.com',
     ...TAG_GATEWAY_ORIGINS,
     ...MICROSOFT_TRACKING_ORIGINS,
     ...META_PIXEL_SCRIPT_ORIGINS,
@@ -245,6 +246,10 @@ export function buildReportOnlyCsp(): string {
 
   const frameSrc = [
     "'self'",
+    'https://pay.vipps.no',
+    'https://api.vipps.no',
+    'https://pay-mt.vipps.no',
+    'https://apitest.vipps.no',
     ...STOREFRONT_ORIGINS,
     ...KLARNA_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
@@ -260,7 +265,7 @@ export function buildReportOnlyCsp(): string {
     "default-src 'self'",
     `script-src ${joinOrigins(scriptSrc)}`,
     `style-src ${joinOrigins(["'self'", "'unsafe-inline'", ...KLARNA_ASSET_ORIGINS])}`,
-    `font-src ${joinOrigins(["'self'", 'data:', ...KLARNA_ASSET_ORIGINS])}`,
+    `font-src ${joinOrigins(["'self'", 'data:', ...KLARNA_ASSET_ORIGINS, 'https://designsystem.vippsmobilepay.com'])}`,
     "object-src 'none'",
     "base-uri 'self'",
     `connect-src ${joinOrigins(connectSrc)}`,

@@ -1,0 +1,122 @@
+.section {
+  padding-block: clamp(3.5rem, 6vw, 6rem);
+  scroll-margin-top: 7rem;
+  border-top: 1px solid rgb(240 238 233 / 16%);
+}
+.section[data-tone='contrast'] {
+  background: #010b0a;
+}
+.container {
+  width: min(100% - 3rem, 76rem);
+  margin-inline: auto;
+}
+.toc {
+  margin-top: 2.5rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  border: 1px solid rgb(240 238 233 / 30%);
+  border-radius: 1.25rem;
+  background: #012622;
+  color: #f0eee9;
+}
+.tocSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.tocSummary::-webkit-details-marker {
+  display: none;
+}
+.tocSummary:focus-visible {
+  outline: 2px solid #f0eee9;
+  outline-offset: 5px;
+}
+.tocChevron {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+.tocDisclosure[open] .tocChevron {
+  transform: rotate(180deg);
+}
+.tocList {
+  display: grid;
+  gap: 0.5rem 2.5rem;
+  margin: 1.5rem 0 0;
+  padding-left: 1.75rem;
+  list-style: decimal;
+}
+.tocList li {
+  min-width: 0;
+  padding-left: 0.25rem;
+}
+.tocList li::marker {
+  font-weight: 800;
+}
+.tocList a {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 44px;
+  padding-block: 0.75rem;
+  color: inherit;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.tocList a > span {
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.tocList small {
+  margin-top: 0.35rem;
+  font-size: 0.9375rem;
+}
+.tocList a:hover > span {
+  text-decoration-thickness: 2px;
+}
+.tocList a:focus-visible,
+.references a:focus-visible {
+  outline: 2px solid #f0eee9;
+  outline-offset: 4px;
+}
+.references {
+  max-width: 70ch;
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+.references li {
+  padding-left: 0.5rem;
+  scroll-margin-top: 7rem;
+  overflow-wrap: anywhere;
+}
+.references li + li {
+  margin-top: 1.5rem;
+}
+.references li::marker {
+  font-weight: 800;
+}
+.references cite {
+  font-style: normal;
+  font-weight: 800;
+}
+.references a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.references p + p {
+  margin-top: 0.5rem;
+}
+@media (min-width: 48rem) {
+  .tocList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

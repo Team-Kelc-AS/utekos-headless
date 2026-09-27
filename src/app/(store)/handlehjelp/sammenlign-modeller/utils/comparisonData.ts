@@ -1,8 +1,7 @@
-import type { StaticImageData } from 'next/image'
-import frontpageKateLinn from '@/assets/images/about/frontpage-kate-linn.webp'
-import coffeUtekos from '@/assets/images/inspiration/coffe_utekos.webp'
-
-export type ModelKey = 'utekos-dun' | 'utekos-mikrofiber' | 'utekos-techdown'
+export type ModelKey =
+  | 'utekos-dun'
+  | 'utekos-mikrofiber'
+  | 'utekos-techdown'
 
 export type ComparisonRow = {
   feature: string
@@ -15,8 +14,6 @@ export type ModelRecommendation = {
   name: string
   shortName: string
   href: string
-  imageSrc: string | StaticImageData
-  imageAlt: string
   badge: string
   bestFor: string
   description: string
@@ -30,71 +27,85 @@ export const modelRecommendations: ModelRecommendation[] = [
     name: 'Utekos Dun™',
     shortName: 'Dun™',
     href: '/produkter/utekos-dun',
-    imageSrc: coffeUtekos,
-    imageAlt: 'Utekos Dun brukt på hytten en kald og tørr kveld',
-    badge: 'Mest varme per gram',
+    badge: 'Dunisolasjon',
     bestFor: 'Tørre, kalde kvelder på hytten',
     description:
-      'Velg Utekos Dun når du du primært søker varme. Denne modellen gir mest varme i forhold til vekt, og er godt  valg for tørre vinterkvelder. Varianten kan også benyttes som sovepose ved temperaturer ned mot 0 °C.',
+      'Utekos Dun™ har dunisolasjon med 650 fillpower. Vi anbefaler modellen når du ønsker dun til rolige, tørre kvelder. Dun krever omtanke ved vask og grundig tørking.',
     cta: 'Se Utekos Dun',
-    proofPoints: ['650 fillpower', 'Høy varme-til-vekt forhold', 'Komprimeres godt']
+    proofPoints: [
+      '650 fillpower',
+      'Ca. 1000 g',
+      'Justerbar hette og toveis glidelås'
+    ]
   },
   {
     key: 'utekos-mikrofiber',
     name: 'Utekos Mikrofiber™',
     shortName: 'Mikrofiber™',
     href: '/produkter/utekos-mikrofiber',
-    imageSrc: frontpageKateLinn,
-    imageAlt: 'Utekos Mikrofiber brukt som lett komfortplagg ute',
-    badge: 'Enklest i bruk',
+    badge: 'Lavest oppgitt vekt',
     bestFor: 'Bobil, reise og daglig bruk',
     description:
-      'Velg Utekos Mikrofiber når du vil ha et lett plagg som tørker raskt og er lett å pakke. Best egnet for de mer lune dagene og kveldene, eller hvis du planlegger å bruke Utekos i aktivitet. Et godt valg for bobil, reise og hverdagsbruk.',
+      'Utekos Mikrofiber™ har syntetisk fyll og en oppgitt vekt på ca. 800 g. Vi anbefaler modellen når lav vekt, enkel pakking og vedlikehold er viktig, for eksempel på reise eller i bobil.',
     cta: 'Se Utekos Mikrofiber',
-    proofPoints: ['Lavest vekt', 'Tørker raskt', 'Maskinvask']
+    proofPoints: [
+      'Ca. 800 g',
+      'Syntetisk mikrofiberisolasjon',
+      'Maskinvask etter vaskeanvisningen'
+    ]
   },
   {
     key: 'utekos-techdown',
     name: 'Utekos TechDown™',
     shortName: 'TechDown™',
     href: '/produkter/utekos-techdown',
-    imageSrc: '/og-kate-linn-kikkert-master.png',
-    imageAlt: 'Utekos TechDown brukt ved sjøen i norsk vær',
-    badge: 'Mest allsidig',
-    bestFor: 'Fleksibel - egner seg alle årstider.',
+    badge: 'CloudWeave™-isolasjon',
+    bestFor: 'Skiftende vær og rolige stunder ute',
     description:
-      'Velg TechDown hvis du vil ha det mest allsidige alternativet. Den holder varmer når du holder deg i ro, og lar seg justere etter behov ved aktivitet. Har egenskaper som gjør den egnet til bruk i både tørt og fuktig vær. ',
+      'Utekos TechDown™ kombinerer syntetisk CloudWeave™-isolasjon med Luméa™-ytterstoff. Vi anbefaler modellen til variert utebruk når du ønsker justerbar tildekking og syntetisk isolasjon.',
     cta: 'Se Utekos TechDown',
-    proofPoints: ['CloudWeave™', 'Robust ytterstoff', 'Helårsbruk']
+    proofPoints: [
+      'CloudWeave™-isolasjon',
+      'Luméa™-ytterstoff',
+      'Ca. 1300 g'
+    ]
   }
 ]
 
 export const comparisonRows: ComparisonRow[] = [
   {
-    feature: 'Best for',
+    feature: 'Aktuelle bruksområder',
     shortAnswer: 'Brukssituasjon',
     values: {
       'utekos-dun': 'Hytte, terrasse og tørre vinterkvelder.',
-      'utekos-mikrofiber': 'Bobil, reise, hverdagsbruk og turer med lav pakkevekt.',
-      'utekos-techdown': 'Båt, kyst, camping og helårsbruk i norsk vær.'
+      'utekos-mikrofiber':
+        'Bobil, reise, hverdagsbruk og turer med lav pakkevekt.',
+      'utekos-techdown':
+        'Rolige stunder i båt, på camping og på terrassen. Tilpass bekledningen etter vær og aktivitet.'
     }
   },
   {
-    feature: 'Varme i tørt vær',
-    shortAnswer: 'Dun gir mest varme per gram.',
+    feature: 'Tørre kvelder',
+    shortAnswer: 'Veiledende bruksråd, ikke en temperaturtest.',
     values: {
-      'utekos-dun': 'Svært høy varme i lav vekt.',
-      'utekos-mikrofiber': 'God og jevn varme for de fleste dager.',
-      'utekos-techdown': 'Høy varme med mer robust konstruksjon.'
+      'utekos-dun': 'For deg som foretrekker dunisolasjon.',
+      'utekos-mikrofiber':
+        'For deg som prioriterer lav vekt og enkel pakking.',
+      'utekos-techdown':
+        'For deg som ønsker syntetisk isolasjon og justerbar tildekking.'
     }
   },
   {
-    feature: 'Varme i fuktig vær',
-    shortAnswer: 'Syntetisk isolasjon tåler fukt best.',
+    feature: 'Ved fukt og tørking',
+    shortAnswer:
+      'Følg alltid plaggets vaske- og tørkeanvisning.',
     values: {
-      'utekos-dun': 'God, men ekte dun krever mer omsorg hvis plagget blir vått.',
-      'utekos-mikrofiber': 'Svært trygg i fukt fordi syntetisk fyll tørker raskt.',
-      'utekos-techdown': 'Svært trygg i fukt med CloudWeave™-isolasjon.'
+      'utekos-dun':
+        'Dun krever grundig tørking for å bevare spensten.',
+      'utekos-mikrofiber':
+        'Syntetisk fyll og hurtigtørkende materiale.',
+      'utekos-techdown':
+        'Syntetisk CloudWeave™-isolasjon, utviklet for variert utebruk.'
     }
   },
   {
@@ -108,20 +119,21 @@ export const comparisonRows: ComparisonRow[] = [
   },
   {
     feature: 'Vedlikehold',
-    shortAnswer: 'Mikrofiber og TechDown er enklest å vaske.',
+    shortAnswer: 'Følg vaskeanvisningen for hver modell.',
     values: {
       'utekos-dun': 'Skånsom vask og god tørk bevarer spensten.',
       'utekos-mikrofiber': 'Maskinvask og rask tørk.',
-      'utekos-techdown': 'Maskinvask og rask tørk.'
+      'utekos-techdown': 'Maskinvask etter vaskeanvisningen.'
     }
   },
   {
     feature: 'Isolasjon',
     shortAnswer: 'Tre ulike isolasjonstyper.',
     values: {
-      'utekos-dun': '90 % andedun, 650 FP.',
+      'utekos-dun': '90 % dun, 650 fillpower.',
       'utekos-mikrofiber': 'Syntetisk mikrofiber.',
-      'utekos-techdown': 'CloudWeave™, en dunlignende syntetisk isolasjon.'
+      'utekos-techdown':
+        'CloudWeave™, en dunlignende syntetisk isolasjon.'
     }
   },
   {
@@ -135,58 +147,26 @@ export const comparisonRows: ComparisonRow[] = [
   }
 ]
 
-export const deepDiveSections = [
-  {
-    eyebrow: 'Utekos Dun sammelignet med Utekos Mikrofiber',
-    title: 'Velg Dun for tørr kulde og Mikrofiber for enkel bruk',
-    body: 'Utekos Dun gir mest varme i forhold til vekt. Utekos Mikrofiber er lettere å bruke ofte fordi den tåler mer fukt, tørker raskt og er lett å pakke.',
-    points: [
-      'Dun passer best når været er tørt og kaldt.',
-      'Mikrofiber passer best når plagget ofte pakkes, vaskes og tas med på tur.',
-      'Begge gir lun komfort, men de løser ulike behov.'
-    ]
-  },
-  {
-    eyebrow: 'For bruk i båt',
-    title: 'Velg TechDown når været skifter',
-    body: 'Utekos TechDown er laget for fuktige kvelder, kystluft og mer variert bruk. Den gir trygg varme når vær, underlag og temperatur endrer seg raskt.',
-    points: [
-      'Best valg til båt og kyst.',
-      'Trygg til bobil og camping når plagget brukes ofte ute.',
-      'Mer robust følelse enn de letteste modellene.'
-    ]
-  },
-  {
-    eyebrow: 'Til hytte og bobil',
-    title: 'Bruken din avgjør riktig modell',
-    body: 'Start med hvor plagget skal ligge klart. På hytten er Dun ofte riktig. I bobilen er Mikrofiber lett å pakke. I båten gir TechDown mest ro.',
-    points: [
-      'Hytte: Dun når lav vekt og høy varme er viktigst.',
-      'Bobil: Mikrofiber når pakking og vask skal være lett.',
-      'Båt: TechDown når fukt og vind ofte er en del av kvelden.'
-    ]
-  }
-]
-
 export const faqItems = [
   {
     question: 'Hvilken Utekos er best?',
     answer:
-      'Utekos TechDown er mest allsidig i norsk vær. Utekos Dun er varmest i forhold til vekt i tørt vær. Utekos Mikrofiber er lettest og enklest å pakke.'
+      'Det avhenger av bruken. Vi anbefaler Utekos Dun™ hvis du foretrekker dunisolasjon til tørre kvelder, Utekos Mikrofiber™ når lav vekt og enkel pakking er viktig, og Utekos TechDown™ til variert utebruk med syntetisk CloudWeave™-isolasjon.'
   },
   {
-    question: 'Hva er forskjellen på Utekos Dun og Utekos Mikrofiber?',
+    question:
+      'Hva er forskjellen på Utekos Dun og Utekos Mikrofiber?',
     answer:
-      'Utekos Dun bruker ekte dun og gir mest varme per gram. Utekos Mikrofiber bruker syntetisk fyll, veier mindre, tørker raskere og er enklere å vaske ofte.'
+      'Utekos Dun™ har dunisolasjon med 650 fillpower og veier ca. 1000 g. Utekos Mikrofiber™ har syntetisk mikrofiberisolasjon og veier ca. 800 g. Dun og syntetisk fyll har ulike behov ved vask og tørking; følg anvisningen på plagget.'
   },
   {
     question: 'Hvilken Utekos passer best til bobil?',
     answer:
-      'Utekos Mikrofiber passer svært godt til bobil fordi den er lett, pakkbar og rask å tørke. Velg TechDown hvis du ofte sitter ute i fuktig eller skiftende vær.'
+      'Vi anbefaler Utekos Mikrofiber™ når lav vekt og enkel pakking er viktig i bobilen. Utekos TechDown™ er et alternativ når du ønsker CloudWeave™-isolasjon til variert utebruk. Se også på plass, vedlikehold og passform.'
   },
   {
     question: 'Hvilken Utekos passer best til båt?',
     answer:
-      'Utekos TechDown passer best til båt fordi isolasjonen tåler fuktig kystluft og skiftende vær bedre.'
+      'Vi anbefaler å vurdere Utekos TechDown™ til rolige stunder i båten, med syntetisk CloudWeave™-isolasjon og justerbar tildekking. Valget avhenger også av vær og aktivitet. Et varmt plagg erstatter ikke regntøy eller nødvendig sikkerhetsutstyr.'
   }
 ]

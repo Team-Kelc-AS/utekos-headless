@@ -28,6 +28,7 @@ import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
+import { VippsProductExpressCheckout } from '@/components/vipps/VippsProductExpressCheckout'
 
 interface ExtendedProductCardProps extends ProductCardProps {
   isPriority?: boolean
@@ -368,14 +369,29 @@ export function ProductCard({
           : 'gap-3 bg-jungle px-6 pt-4 pb-6'
         )}
       >
-        <ProductCardFooter
-          isAvailable={isAvailable}
-          isPending={isPending}
-          isDisabled={isPending || isCartBusy}
-          onQuickBuy={handleQuickBuy}
-          showWaitlistCta={showWaitlistCta}
-          onWaitlistClick={handleWaitlistClick}
-        />
+        {(
+          process.env.NEXT_PUBLIC_VIPPS_EXPRESS_ENABLED ===
+            'true' &&
+          isAvailable &&
+          selectedVariant
+        ) ?
+          <VippsProductExpressCheckout
+            handle={product.handle}
+            variantId={selectedVariant.id}
+            title={product.title}
+            variantTitle={selectedVariant.title}
+            price={price}
+            disabled={isCartBusy}
+          />
+        : <ProductCardFooter
+            isAvailable={isAvailable}
+            isPending={isPending}
+            isDisabled={isPending || isCartBusy}
+            onQuickBuy={handleQuickBuy}
+            showWaitlistCta={showWaitlistCta}
+            onWaitlistClick={handleWaitlistClick}
+          />
+        }
         <KlarnaProductExpressCheckout
           product={product}
           selectedVariant={selectedVariant ?? null}

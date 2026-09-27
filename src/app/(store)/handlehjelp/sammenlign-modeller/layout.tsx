@@ -14,6 +14,7 @@ export default function CompareModelsLayout({
         surface='transparent'
         items={[
           { label: 'Forsiden', href: '/' },
+          { label: 'Handlehjelp' },
           { label: 'Sammenlign modeller' }
         ]}
       />
