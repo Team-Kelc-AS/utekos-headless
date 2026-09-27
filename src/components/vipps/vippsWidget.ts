@@ -7,11 +7,15 @@ type ButtonBuilder = {
   variant(value: 'primary'): ButtonBuilder
   stretched(value: boolean): ButtonBuilder
   rounded(value: boolean): ButtonBuilder
-  onclick(handler: () => void): ButtonBuilder
+  onclick(handler: () => void | Promise<void>): ButtonBuilder
   mount(selector: string): ButtonBuilder
   unmount(): void
 }
-type Trigger = { button(): ButtonBuilder; close(): void }
+type Trigger = {
+  button(): ButtonBuilder
+  close(): void
+  open(): void
+}
 type VippsSdk = {
   host(): { start(): void; stop(): void }
   consent(value: {
@@ -61,17 +65,41 @@ export async function mountVippsButton(
   selector: string,
   action:
     | { click: () => void }
-    | { resolve: () => Promise<string> }
+    | {
+        resolve: () => Promise<{
+          redirectUrl: string
+          checkoutMode: 'shopify' | 'vipps'
+        }>
+      }
 ) {
   const sdk = await load()
   if (consumers++ === 0) {
     host = sdk.host()
     host.start()
   }
+  let redirectUrl: string | undefined
   const trigger =
-    'resolve' in action ? sdk.trigger(action.resolve) : undefined
-  let button = trigger ? trigger.button() : sdk.button()
+    'resolve' in action ?
+      sdk.trigger(async () => {
+        if (!redirectUrl)
+          throw new Error('Vipps payment URL is unavailable')
+        const next = redirectUrl
+        redirectUrl = undefined
+        return next
+      })
+    : undefined
+  let button = sdk.button()
   if ('click' in action) button = button.onclick(action.click)
+  if ('resolve' in action)
+    button = button.onclick(async () => {
+      const result = await action.resolve()
+      if (result.checkoutMode === 'shopify') {
+        window.location.assign(result.redirectUrl)
+        return
+      }
+      redirectUrl = result.redirectUrl
+      trigger!.open()
+    })
   button
     .brand('vipps')
     .language('no')

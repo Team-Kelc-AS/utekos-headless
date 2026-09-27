@@ -8,13 +8,16 @@ import {
   type VippsPayment
 } from './payment'
 
-const draftFields = 'id tags customAttributes { key value } totalPriceSet { presentmentMoney { amount currencyCode } } order { id name displayFinancialStatus }'
+const draftFields =
+  'id invoiceUrl tags discountCodes customAttributes { key value } totalPriceSet { presentmentMoney { amount currencyCode } } order { id name displayFinancialStatus }'
 export const vippsShopifyQueries = {
-  productByHandle: `query VippsProductByHandle($identifier: ProductIdentifierInput!) { shop { currencyCode } product: productByIdentifier(identifier:$identifier) { id handle variants(first:250) { nodes { id price inventoryQuantity inventoryPolicy } } } }`,
+  productByHandle:
+    'query VippsProductByHandle($identifier: ProductIdentifierInput!) { shop { currencyCode } product: productByIdentifier(identifier:$identifier) { id handle variants(first:250) { nodes { id price inventoryQuantity inventoryPolicy } } } }',
   read: `query VippsDraft($id: ID!) { draftOrder(id:$id) { ${draftFields} } }`,
   create: `mutation VippsDraftCreate($input:DraftOrderInput!) { draftOrderCreate(input:$input) { draftOrder { ${draftFields} } userErrors { field message } } }`,
   update: `mutation VippsDraftUpdate($id:ID!,$input:DraftOrderInput!) { draftOrderUpdate(id:$id,input:$input) { draftOrder { ${draftFields} } userErrors { field message } } }`,
-  complete: 'mutation VippsComplete($id:ID!) { draftOrderComplete(id:$id) { draftOrder { id order { id name displayFinancialStatus } } userErrors { field message } } }'
+  complete:
+    'mutation VippsComplete($id:ID!) { draftOrderComplete(id:$id) { draftOrder { id order { id name displayFinancialStatus } } userErrors { field message } } }'
 }
 const orderSchema = z.object({
   id: z.string(),
@@ -23,7 +26,9 @@ const orderSchema = z.object({
 })
 const draftSchema = z.object({
   id: z.string(),
+  invoiceUrl: z.string().url().nullable(),
   tags: z.array(z.string()),
+  discountCodes: z.array(z.string()).default([]),
   customAttributes: z.array(
     z.object({ key: z.string(), value: z.string() })
   ),
@@ -63,11 +68,15 @@ export function createVippsShopifyAdminTokenProvider(
     : env.SHOPIFY_ADMIN_API_TOKEN
   if (staticToken) return async () => staticToken
   if (config.environment !== 'test')
-    throw new Error('Vipps Shopify environment is not configured')
+    throw new Error(
+      'Vipps Shopify environment is not configured'
+    )
   const clientId = env.SHOPIFY_EVENTHANDLER_APP_CLIENT_ID
   const clientSecret = env.SHOPIFY_EVENTHANDLER_APP_CLIENT_SECRET
   if (!clientId || !clientSecret)
-    throw new Error('Vipps Shopify test credentials are not configured')
+    throw new Error(
+      'Vipps Shopify test credentials are not configured'
+    )
   let cached: AdminToken | undefined
   let inflight: Promise<string> | undefined
   return async () => {
@@ -99,7 +108,9 @@ export function createVippsShopifyAdminTokenProvider(
         })
         .safeParse(response.ok ? await response.json() : null)
       if (!payload.success)
-        throw new Error('Vipps Shopify test token request failed')
+        throw new Error(
+          'Vipps Shopify test token request failed'
+        )
       cached = {
         value: payload.data.access_token,
         expiresAt: now() + payload.data.expires_in * 1000
@@ -231,14 +242,19 @@ export function createVippsShopifyOrders(
     }
   }
   return {
-    async findAvailableVariant(handle: string, variantId: string) {
+    async findAvailableVariant(
+      handle: string,
+      variantId: string
+    ) {
       const result = z
         .object({
           shop: z.object({ currencyCode: z.literal('NOK') }),
           product: z
             .object({
               handle: z.string(),
-              variants: z.object({ nodes: z.array(variantSchema) })
+              variants: z.object({
+                nodes: z.array(variantSchema)
+              })
             })
             .nullable()
         })

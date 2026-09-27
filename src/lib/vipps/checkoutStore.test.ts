@@ -13,3 +13,17 @@ test('checkout storage accepts JSONB returned as an object or serialized text', 
   assert.deepEqual(parseVippsCheckoutState(state), state)
   assert.deepEqual(parseVippsCheckoutState(JSON.stringify(state)), state)
 })
+
+test('checkout storage preserves an idempotent Shopify checkout fallback', () => {
+  const fallback = {
+    ...state,
+    stage: 'shopify_checkout_ready' as const,
+    draftId: 'gid://shopify/DraftOrder/1',
+    amount: 9900,
+    shippingAmount: 9900,
+    discountCode: 'KRISTOFFERTESTRABATT',
+    shopifyCheckoutUrl:
+      'https://erling-7921.myshopify.com/1/invoices/fixture'
+  }
+  assert.deepEqual(parseVippsCheckoutState(fallback), fallback)
+})

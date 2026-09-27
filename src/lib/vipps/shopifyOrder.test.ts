@@ -30,7 +30,9 @@ const order = {
 }
 const draft = {
   id,
+  invoiceUrl: 'https://test-fixture.myshopify.com/123/invoices/fixture',
   tags: [reference],
+  discountCodes: [],
   customAttributes: [{ key: 'vipps_reference', value: reference }],
   totalPriceSet: {
     presentmentMoney: { amount: '1790.00', currencyCode: 'NOK' }
@@ -187,6 +189,14 @@ test('test catalog availability uses Admin money scalars and the shop currency',
       'gid://shopify/ProductVariant/999'
     )
   )
+})
+test('draft order operations request the checkout URL and applied discount codes', async () => {
+  const h = harness(({ query }) => {
+    assert.match(query, /invoiceUrl/)
+    assert.match(query, /discountCodes/)
+    return { draftOrder: draft }
+  })
+  assert.deepEqual(await h.adapter.read(id), draft)
 })
 test('reservation, partial capture and refunded capture cannot mark Shopify paid', async () => {
   const h = harness(() => {

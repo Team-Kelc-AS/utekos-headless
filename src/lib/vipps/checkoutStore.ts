@@ -7,10 +7,12 @@ import type { VippsConfig } from './config'
 export const checkoutStateSchema = z.object({
   handle: z.string(),
   variantId: z.string(),
+  discountCode: z.string().optional(),
   stage: z.enum([
     'new',
     'draft_creating',
     'draft_ready',
+    'shopify_checkout_ready',
     'payment_creating',
     'payment_ready',
     'paid',
@@ -20,6 +22,7 @@ export const checkoutStateSchema = z.object({
   amount: z.number().int().positive().optional(),
   shippingAmount: z.number().int().nonnegative().optional(),
   draftId: z.string().optional(),
+  shopifyCheckoutUrl: z.string().url().optional(),
   redirectUrl: z.string().optional(),
   paymentRequest: z.record(z.string(), z.unknown()).optional(),
   order: z

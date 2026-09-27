@@ -10,6 +10,12 @@ export const vippsCheckoutInputSchema = z.object({
   variantId: z
     .string()
     .regex(/^gid:\/\/shopify\/ProductVariant\/\d+$/),
+  discountCode: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z0-9_-]{1,255}$/)
+    .optional(),
   attemptId: z.uuid(),
   termsAccepted: z.literal(true)
 })
@@ -42,16 +48,25 @@ export async function createVippsCheckout(
     async (state, save) => {
       if (
         state.handle !== input.handle ||
-        state.variantId !== input.variantId
+        state.variantId !== input.variantId ||
+        state.discountCode !== input.discountCode
       )
         throw new Error(
           'Vipps attempt belongs to another variant'
         )
       if (state.stage === 'paid' || state.stage === 'terminal')
         throw new Error('Vipps attempt already finished')
+      if (state.shopifyCheckoutUrl)
+        return {
+          redirectUrl: state.shopifyCheckoutUrl,
+          checkoutMode: 'shopify' as const,
+          reference,
+          token
+        }
       if (state.redirectUrl)
         return {
           redirectUrl: state.redirectUrl,
+          checkoutMode: 'vipps' as const,
           reference,
           token
         }
@@ -75,6 +90,9 @@ export async function createVippsCheckout(
           ],
           presentmentCurrencyCode: 'NOK',
           acceptAutomaticDiscounts: true,
+          ...(state.discountCode ?
+            { discountCodes: [state.discountCode] }
+          : {}),
           reserveInventoryUntil: new Date(
             Date.now() + 30 * 60 * 1000
           ).toISOString(),
@@ -90,6 +108,14 @@ export async function createVippsCheckout(
               key: 'utekos_checkout_method',
               value: 'vipps_express'
             },
+            ...(state.discountCode ?
+              [
+                {
+                  key: 'utekos_discount_code',
+                  value: state.discountCode
+                }
+              ]
+            : []),
             {
               key: 'utekos_terms_accepted_at',
               value: state.termsAcceptedAt
@@ -123,8 +149,33 @@ export async function createVippsCheckout(
         const amount = toMinorUnits(
           draft.totalPriceSet.presentmentMoney.amount
         )
-        if (amount - state.shippingAmount! < 100)
-          throw new Error('Invalid Vipps order amount')
+        if (amount - state.shippingAmount! < 100) {
+          if (!state.discountCode)
+            throw new Error(
+              'Vipps Express requires a positive merchandise amount'
+            )
+          if (!draft.discountCodes.includes(state.discountCode))
+            throw new Error(
+              'Shopify did not apply the supplied discount code'
+            )
+          if (!draft.invoiceUrl)
+            throw new Error(
+              'Shopify checkout URL is unavailable for this discounted order'
+            )
+          state = {
+            ...state,
+            stage: 'shopify_checkout_ready',
+            amount,
+            shopifyCheckoutUrl: draft.invoiceUrl
+          }
+          await save(state)
+          return {
+            redirectUrl: draft.invoiceUrl,
+            checkoutMode: 'shopify' as const,
+            reference,
+            token
+          }
+        }
         const paymentRequest = {
           reference,
           amount: {
@@ -189,6 +240,7 @@ export async function createVippsCheckout(
       await save(state)
       return {
         redirectUrl: payment.redirectUrl,
+        checkoutMode: 'vipps' as const,
         reference,
         token
       }
@@ -196,6 +248,9 @@ export async function createVippsCheckout(
     {
       handle: input.handle,
       variantId: input.variantId,
+      ...(input.discountCode ?
+        { discountCode: input.discountCode }
+      : {}),
       termsAcceptedAt: new Date().toISOString(),
       stage: 'new'
     }

@@ -16,7 +16,12 @@ function VippsButton({
 }: {
   action:
     | { click: () => void }
-    | { resolve: () => Promise<string> }
+    | {
+        resolve: () => Promise<{
+          redirectUrl: string
+          checkoutMode: 'shopify' | 'vipps'
+        }>
+      }
   onError: (message: string) => void
 }) {
   const id = `vipps-${useId().replace(/[^a-zA-Z0-9-]/g, '')}`
@@ -81,9 +86,15 @@ export function VippsProductExpressCheckout({
   const [open, setOpen] = useState(false)
   const [accepted, setAccepted] = useState(false)
   const [error, setError] = useState('')
+  const [discountCode, setDiscountCode] = useState('')
   const [busy, setBusy] = useState(false)
   const attempt = useRef<string | null>(null)
-  const inFlight = useRef<Promise<string> | null>(null)
+  const inFlight = useRef<
+    Promise<{
+      redirectUrl: string
+      checkoutMode: 'shopify' | 'vipps'
+    }> | null
+  >(null)
   const [selected, setSelected] = useState({
     handle,
     variantId,
@@ -121,6 +132,9 @@ export function VippsProductExpressCheckout({
             handle: selected.handle,
             variantId: selected.variantId,
             attemptId: attempt.current,
+            ...(discountCode.trim() ?
+              { discountCode: discountCode.trim() }
+            : {}),
             termsAccepted: true
           })
         })
@@ -130,10 +144,16 @@ export function VippsProductExpressCheckout({
           typeof result !== 'object' ||
           result === null ||
           !('redirectUrl' in result) ||
-          typeof result.redirectUrl !== 'string'
+          typeof result.redirectUrl !== 'string' ||
+          !('checkoutMode' in result) ||
+          (result.checkoutMode !== 'shopify' &&
+            result.checkoutMode !== 'vipps')
         )
           throw new Error('checkout failed')
-        return result.redirectUrl
+        return {
+          redirectUrl: result.redirectUrl,
+          checkoutMode: result.checkoutMode
+        }
       } catch {
         setError(
           'Betalingen kunne ikke startes. Prøv igjen; vi bruker samme betalingsforsøk for å unngå dobbeltbetaling.'
@@ -184,6 +204,19 @@ export function VippsProductExpressCheckout({
             handlekurven er ikke med. Endelig totalpris,
             inkludert frakt, vises i Vipps før du godkjenner.
           </p>
+          <label className='grid gap-1 text-sm'>
+            Rabattkode (valgfritt)
+            <input
+              value={discountCode}
+              disabled={busy}
+              onChange={event => {
+                attempt.current = null
+                setDiscountCode(event.target.value)
+              }}
+              autoComplete='off'
+              className='rounded border px-3 py-2'
+            />
+          </label>
           <label className='flex items-start gap-3 text-sm'>
             <input
               type='checkbox'

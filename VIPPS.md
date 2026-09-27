@@ -1,8 +1,8 @@
-# Vipps Express — local implementation, not activated
+# Vipps Express — implementation and launch evidence
 
-Status 2026-09-27: local implementation, isolated automated tests and authorized database setup. The private ledger migration was applied to the existing Supabase project hkoawfbomhnzupcsdggb. Readback verified RLS enabled, only owner postgres in table ACL, and zero rows. The configured server database connection verified insert/delete access and sequential lease exclusion (first claim 1, competing claim 0); the synthetic row was removed in the same transaction. This was not a concurrent multi-connection or lease-expiry test. No webhook registration, payment, Shopify order, portal setting change or deployment was performed by this implementation work.
+Status 2026-09-27: the server implementation is deployed, but the public ProductCard flag is still off. The private ledger migration was applied to the existing Supabase project hkoawfbomhnzupcsdggb. Readback verified RLS enabled, only owner postgres in table ACL, and zero rows. The configured server database connection verified insert/delete access and sequential lease exclusion (first claim 1, competing claim 0); the synthetic row was removed in the same transaction. This was not a concurrent multi-connection or lease-expiry test.
 
-Latest read-only Vipps test probe after the user reported a second webhook: token HTTP 200 and GET /webhooks/v1/webhooks HTTP 200 with no registrations for MSN 230890. Local VIPPS_WEBHOOK_URL points to a Heroku gateway, not this integration's /api/vipps/webhook. VIPPS_WEBHOOK_SECRET and VIPPS_CHECKOUT_ORIGIN remain absent. Confirm provider, environment, sales unit and destination before changing or duplicating any user-created webhook.
+The Vipps **test** webhook is registered for `https://utekos.no/api/vipps/webhook` for authorized and captured payment events. The existing production portal webhook points to the separate Heroku gateway and remains untouched. Vercel Production currently has the test-only server configuration and secrets needed for the integration, while `NEXT_PUBLIC_VIPPS_EXPRESS_ENABLED` is absent; no customer-facing Vipps control is therefore active. No production payment, Shopify paid order or public feature-flag activation has been performed.
 
 ## Accepted capture decision
 
@@ -31,6 +31,12 @@ Neither a browser redirect, SDK success event, webhook payload alone, nor HTTP 2
 - `supabase/migrations/20260927120000_vipps_express_checkouts.sql`: applied storage migration. No public/client/service-role access is granted; configured direct server database role verified as postgres.
 
 Shipping initially follows the existing `merchantShippingServiceJsonLd` policy: Norway only, standard shipping NOK 99 below NOK 999, free from NOK 999. It is labelled as generic standard shipping, not a promised carrier/pickup-point service. Vipps adds the selected shipping amount to the item amount; capture verifies the complete total. This still needs merchant/staging confirmation, including tax, discount and threshold cases.
+
+## Discount codes
+
+The ProductCard confirmation dialog accepts one optional Shopify discount code. It is normalized to uppercase and passed as `DraftOrderInput.discountCodes`; Shopify is the authority for whether that code is active and applicable. The exact applied code is retained as a Draft Order attribute for support/reconciliation.
+
+Vipps requires the merchandise amount submitted to ePayment to be at least NOK 1.00. If an applied code reduces the merchandise amount below that threshold (including `KRISTOFFERTESTRABATT` on Utekos Stapper™), the server verifies that Shopify retained the code and returns the Draft Order's `invoiceUrl`. The browser then goes **directly to Shopify checkout**. It does not give that URL to the Vipps Widget SDK. All other eligible purchases still hand the ePayment `redirectUrl` to the Widget SDK and keep the Vipps Express modal/app-switch flow.
 
 ## Configuration — names only, never paste secrets into chat or logs
 
@@ -73,7 +79,7 @@ corepack pnpm exec tsc --noEmit --incremental false
 corepack pnpm exec eslint src/lib/vipps src/components/vipps src/app/api/vipps 'src/app/(store)/vipps' src/components/ProductCard/ProductCard.tsx src/lib/security/buildReportOnlyCsp.ts
 ```
 
-Verified local results: 38 Vipps-focused tests plus 3 existing CSP regression tests passed (41 total); scoped ESLint passed; full TypeScript check passed; `corepack pnpm run build` passed with all 189 static pages generated. The first build found three incompatible `runtime` route exports under Next.js 16.3.1 Cache Components; these were removed according to installed official docs/source (Node.js remains the default), then the full build passed. Local QueueClient region and runtime-cache fallback warnings remained; no warning suppression was added.
+Verified local results before the latest discount-flow update: 38 Vipps-focused tests plus 3 existing CSP regression tests passed (41 total); scoped ESLint passed; full TypeScript check passed; `corepack pnpm run build` passed with all 189 static pages generated. The current discount update adds 3 focused tests (44 total) and passed its TypeScript check; the full build is rerun for every deploy candidate. The first build found three incompatible `runtime` route exports under Next.js 16.3.1 Cache Components; these were removed according to installed official docs/source (Node.js remains the default), then the full build passed. Local QueueClient region and runtime-cache fallback warnings remained; no warning suppression was added.
 
 The tests use synthetic fetch responses, not provider writes. Covered: reservation vs capture, partial amounts, cancellation/refund guards, identity mismatch, timeouts, same-key retries, same-draft completion, token refresh, profile fields, test/live isolation and webhook signature tampering. Four Shopify GraphQL operations were also checked with the official schema validator. These checks do not prove provider delivery, capture settlement or UI correctness.
 
