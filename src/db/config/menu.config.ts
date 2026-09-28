@@ -35,18 +35,6 @@ export const mainMenu: MenuItem[] = [
     ]
   },
   {
-    title: 'Inspirasjon',
-    url: '/inspirasjon',
-    items: [
-      { title: 'Hytteliv', url: '/inspirasjon/hytte', items: [] },
-      { title: 'Bobil og camping', url: '/inspirasjon/bobil', items: [] },
-      { title: 'Båtliv', url: '/inspirasjon/batliv', items: [] },
-      { title: 'Terrassen', url: '/inspirasjon/terrassen', items: [] },
-      { title: 'Grillkvelden', url: '/inspirasjon/grillkvelden', items: [] },
-      { title: 'Skreddersy varmen', url: '/skreddersy-varmen', items: [] }
-    ]
-  },
-  {
     title: 'Uteguiden',
     url: '/uteguiden',
     items: []

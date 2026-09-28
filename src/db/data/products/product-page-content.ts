@@ -100,19 +100,19 @@ export const PRODUCT_PAGE_CONTENT = {
           {
             title: 'CloudWeave™',
             paragraphs: [
-              'Avansert isolasjonsteknologi utviklet for optimal varmeeffekt. Løsningen kombinerer høy isolasjonsgrad med utmerket pusteevne og opprettholder varmen også under fuktige forhold.'
+              'CloudWeave™ har en avansert syntetisk isolasjonsstruktur. Materialet er hydrofobisk og utviklet for å etterligne dunets loft, slik at det opprettholder isolasjonsverdien (CLO) selv under fuktige forhold hvor tradisjonelt dun ville ha kollapset.'
             ]
           },
           {
             title: 'Luméa™',
             paragraphs: [
-              'Et slitesterkt, lett og vannavstøtende stoff som oppmuntrer til full loft. Materialet har en matt, myk overflate, pustende egenskaper og robust beskyttelse.'
+              'En tettvevd nylonkonstruksjon spesifikt utviklet for TechDown™-serien. Stoffet leverer en matt finish, er behandlet for å være naturlig vannavvisende, og balanserer komfort med høy slitestyrke.'
             ]
           },
           {
             title: 'YKK® Dual V-Zip™',
             paragraphs: [
-              'To-spors glidelåssystem med omvendt V-profil. Gir direkte tilgang til innvendig justering og ventilasjon uten at frontpartiet må åpnes helt opp.'
+              'Dette er et to-spors glidelåssystem med omvendt V-profil som gir direkte tilgang til innvendig justering og muliggjør strategisk ventilasjon uten å måtte åpne hele fronten'
             ]
           },
           {

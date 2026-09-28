@@ -181,8 +181,7 @@ export function TechdownContent() {
             <div>
               <strong>Bli sittende ute lenger</strong>
               <span>
-                Fullengdemodus gir et varmt, heldekkende plagg
-                når du sitter i ro.
+               Lukk bunnen og sitt deilig innpakket, samtidig som du har hendene fri til kaffekoppen eller en god bok.
               </span>
             </div>
           </li>
@@ -201,7 +200,7 @@ export function TechdownContent() {
             <div>
               <strong>Juster plagget til kroppen</strong>
               <span>
-                Innvendig snorstramming i livet gjør passformen
+                Innvendig og utvendig snorstramming i livet gjør passformen
                 justerbar.
               </span>
             </div>

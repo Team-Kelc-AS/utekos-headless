@@ -13,7 +13,7 @@ import { UtekosBreadcrumbBar } from '@/components/navigation/UtekosBreadcrumbBar
 export const metadata: Metadata = {
   title: 'Utekos Magasinet er under oppgradering | Utekos',
   description:
-    'Utekos Magasinet er midlertidig under oppgradering. Finn veien videre til produkter, inspirasjon eller forsiden.',
+    'Utekos Magasinet er midlertidig under oppgradering. Finn veien videre til produkter, Uteguiden eller forsiden.',
   robots: { index: false, follow: true }
 }
 
@@ -26,10 +26,10 @@ const links = [
     icon: ShoppingBag
   },
   {
-    href: '/inspirasjon',
-    label: 'Gå til inspirasjon',
+    href: '/uteguiden',
+    label: 'Gå til Uteguiden',
     description:
-      'Finn ideer for hytte, båt, bobil og gode øyeblikk ute.',
+      'Les guider om lag på lag, varme og hvordan du får mer ut av tiden ute.',
     icon: BookOpen
   },
   {
@@ -65,9 +65,9 @@ export default function MagazineUpgradePage() {
           <p className='mx-auto mt-6 max-w-3xl text-lg leading-[1.6] text-foreground sm:text-xl'>
             Vi oppdaterer magasinet vårt for å gi deg en enda
             bedre opplevelse, med mer relevante guider, artikler
-            og inspirasjon. Mens vi gjør de siste justeringene,
+            og råd. Mens vi gjør de siste justeringene,
             kan du gjerne utforske produktene våre, besøke
-            inspirasjonssidene eller gå direkte til forsiden.
+            Uteguiden eller gå direkte til forsiden.
           </p>
 
           <div className='mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row'>
@@ -80,10 +80,10 @@ export default function MagazineUpgradePage() {
             </Link>
 
             <Link
-              href='/inspirasjon'
+              href='/uteguiden'
               className='hover:bg-secondary-hover inline-flex min-h-12 items-center justify-center rounded-full bg-secondary px-7 py-3 font-sans font-semibold text-base leading-[1.35] text-secondary-foreground transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
             >
-              Gå til inspirasjon
+              Gå til Uteguiden
             </Link>
           </div>
 
@@ -95,17 +95,17 @@ export default function MagazineUpgradePage() {
                 <Link
                   key={link.href}
                   href={link.href as Route}
-                  className='group rounded-lg border border-foreground bg-card p-5 text-card-foreground shadow-[0_22px_62px_-54px_color-mix(in_oklch,var(--foreground)_35%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+                  className='group rounded-lg border border-foreground bg-jungle p-5 text-foreground shadow-[0_22px_62px_-54px_color-mix(in_oklch,var(--foreground)_35%,transparent)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
                 >
                   <div className='mb-4 flex size-11 items-center justify-center rounded-lg bg-primary text-primary-foreground'>
                     <Icon className='size-5' aria-hidden />
                   </div>
 
-                  <h2 className='font-google-sans font-sans text-2xl leading-[0.95] font-bold text-card-foreground'>
+                  <h2 className='font-google-sans font-sans text-2xl leading-[0.95] font-bold text-foreground'>
                     {link.label}
                   </h2>
 
-                  <p className='mt-3 text-base leading-[1.55] text-card-foreground'>
+                  <p className='mt-3 text-base leading-[1.55] text-foreground'>
                     {link.description}
                   </p>
 
