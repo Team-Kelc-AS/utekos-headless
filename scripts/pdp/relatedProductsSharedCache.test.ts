@@ -24,7 +24,11 @@ test(
     )
     assert.match(cachedCardsSource, /'use cache: remote'/)
     assert.match(cachedCardsSource, /cacheTag\(TAGS\.products\)/)
-    assert.match(cachedCardsSource, /cacheLife\('collections'\)/)
+    assert.doesNotMatch(
+      cachedCardsSource,
+      /cacheLife\('collections'\)/
+    )
+    assert.match(cachedCardsSource, /cacheLife\('max'\)/)
     assert.match(
       cachedCardsSource,
       /status: 'unavailable'/
