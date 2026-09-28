@@ -170,10 +170,16 @@ test('test catalog availability uses Admin money scalars and the shop currency',
       shop: { currencyCode: 'NOK' },
       product: {
         handle: 'fixture-product',
+        title: 'Utekos TechDown™',
         variants: {
           nodes: [
             {
               id: 'gid://shopify/ProductVariant/999',
+              selectedOptions: [
+                { name: 'Farge', value: 'Havdyp' },
+                { name: 'Størrelse', value: 'Middels' },
+                { name: 'Kjønn', value: 'Unisex' }
+              ],
               price: '20.00',
               inventoryQuantity: 0,
               inventoryPolicy: 'CONTINUE'
@@ -183,11 +189,23 @@ test('test catalog availability uses Admin money scalars and the shop currency',
       }
     }
   })
-  await assert.doesNotReject(
-    h.adapter.findAvailableVariant(
+  assert.deepEqual(
+    await h.adapter.findAvailableVariant(
       'fixture-product',
       'gid://shopify/ProductVariant/999'
-    )
+    ),
+    {
+      id: 'gid://shopify/ProductVariant/999',
+      selectedOptions: [
+        { name: 'Farge', value: 'Havdyp' },
+        { name: 'Størrelse', value: 'Middels' },
+        { name: 'Kjønn', value: 'Unisex' }
+      ],
+      price: '20.00',
+      inventoryQuantity: 0,
+      inventoryPolicy: 'CONTINUE',
+      productTitle: 'Utekos TechDown™'
+    }
   )
 })
 test('draft order operations request the checkout URL and applied discount codes', async () => {

@@ -32,6 +32,8 @@ Neither a browser redirect, SDK success event, webhook payload alone, nor HTTP 2
 
 Shipping initially follows the existing `merchantShippingServiceJsonLd` policy: Norway only, standard shipping NOK 99 below NOK 999, free from NOK 999. It is labelled as generic standard shipping, not a promised carrier/pickup-point service. Vipps adds the selected shipping amount to the item amount; capture verifies the complete total. This still needs merchant/staging confirmation, including tax, discount and threshold cases.
 
+New Vipps payment attempts use the server-verified Shopify product title, color and size as `paymentDescription`, for example `Utekos TechDown™ Havdyp, Middels`. Gender and Shopify's combined variant title are deliberately omitted. Products without a recognized color or size use only the product title. Existing immutable attempts retain the description they were created with. The Vipps-hosted dialog controls where the description is rendered; local tests verify the submitted payload, not its provider-side placement.
+
 ## Discount codes
 
 The checkout API accepts an optional Shopify discount code from approved first-party flows. It is normalized to uppercase and passed as `DraftOrderInput.discountCodes`; Shopify is the authority for whether that code is active and applicable. The ProductCard Vipps button deliberately does not add a merchant-built discount dialog ahead of the Vipps-hosted payment dialog. The exact applied code is retained as a Draft Order attribute for support/reconciliation.

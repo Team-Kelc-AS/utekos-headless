@@ -12,7 +12,7 @@ const draftFields =
   'id invoiceUrl tags discountCodes customAttributes { key value } totalPriceSet { presentmentMoney { amount currencyCode } } order { id name displayFinancialStatus }'
 export const vippsShopifyQueries = {
   productByHandle:
-    'query VippsProductByHandle($identifier: ProductIdentifierInput!) { shop { currencyCode } product: productByIdentifier(identifier:$identifier) { id handle variants(first:250) { nodes { id price inventoryQuantity inventoryPolicy } } } }',
+    'query VippsProductByHandle($identifier: ProductIdentifierInput!) { shop { currencyCode } product: productByIdentifier(identifier:$identifier) { id handle title variants(first:250) { nodes { id selectedOptions { name value } price inventoryQuantity inventoryPolicy } } } }',
   read: `query VippsDraft($id: ID!) { draftOrder(id:$id) { ${draftFields} } }`,
   create: `mutation VippsDraftCreate($input:DraftOrderInput!) { draftOrderCreate(input:$input) { draftOrder { ${draftFields} } userErrors { field message } } }`,
   update: `mutation VippsDraftUpdate($id:ID!,$input:DraftOrderInput!) { draftOrderUpdate(id:$id,input:$input) { draftOrder { ${draftFields} } userErrors { field message } } }`,
@@ -43,6 +43,12 @@ const draftSchema = z.object({
 export type VippsDraft = z.infer<typeof draftSchema>
 const variantSchema = z.object({
   id: z.string(),
+  selectedOptions: z.array(
+    z.object({
+      name: z.string().min(1),
+      value: z.string().min(1)
+    })
+  ),
   price: z.string(),
   inventoryQuantity: z.number().int().nullable(),
   inventoryPolicy: z.enum(['CONTINUE', 'DENY'])
@@ -252,6 +258,7 @@ export function createVippsShopifyOrders(
           product: z
             .object({
               handle: z.string(),
+              title: z.string().min(1),
               variants: z.object({
                 nodes: z.array(variantSchema)
               })
@@ -263,16 +270,18 @@ export function createVippsShopifyOrders(
             identifier: { handle }
           })
         )
-      const variant = result.product?.variants.nodes.find(
+      const product = result.product
+      const variant = product?.variants.nodes.find(
         item => item.id === variantId
       )
       if (
+        !product ||
         !variant ||
         (variant.inventoryPolicy === 'DENY' &&
           (variant.inventoryQuantity ?? 0) <= 0)
       )
         throw new Error('Variant unavailable for Vipps Express')
-      return variant
+      return { ...variant, productTitle: product.title }
     },
     read,
     async create(input: Record<string, unknown>) {

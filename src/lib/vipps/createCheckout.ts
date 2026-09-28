@@ -32,6 +32,79 @@ export function vippsStandardShippingAmount(subtotal: number) {
   return Math.round(rule.shippingRate.value * 100)
 }
 
+export function vippsPaymentDescription(
+  productTitle: string,
+  selectedOptions: Array<{ name: string; value: string }>
+) {
+  const product = productTitle.trim()
+  if (!product) throw new Error('Vipps product title is missing')
+  const optionValue = (names: string[]) =>
+    selectedOptions
+      .find(option =>
+        names.includes(
+          option.name.trim().toLocaleLowerCase('nb-NO')
+        )
+      )
+      ?.value.trim()
+  const color = optionValue(['farge', 'color'])
+  const size = optionValue(['størrelse', 'size'])
+  const details = [color, size].filter(
+    (value): value is string => Boolean(value)
+  )
+  return details.length ?
+      `${product} ${details.join(', ')}`
+    : product
+}
+
+export function buildVippsPaymentRequest(input: {
+  reference: string
+  amount: number
+  shippingAmount: number
+  productTitle: string
+  selectedOptions: Array<{ name: string; value: string }>
+  origin: string
+  token: string
+}) {
+  return {
+    reference: input.reference,
+    amount: {
+      currency: 'NOK',
+      value: input.amount - input.shippingAmount
+    },
+    paymentMethod: { type: 'WALLET' },
+    userFlow: 'WEB_REDIRECT',
+    profile: { scope: 'name phoneNumber email address' },
+    paymentDescription: vippsPaymentDescription(
+      input.productTitle,
+      input.selectedOptions
+    ),
+    // Vipps requires a redirect URL it can validate and redirect to. The return
+    // page consumes this short-lived capability immediately and removes it from
+    // the browser URL before making any further navigation.
+    returnUrl: `${input.origin}/vipps/retur?reference=${encodeURIComponent(input.reference)}&token=${encodeURIComponent(input.token)}`,
+    shipping: {
+      allowedCountries: ['NO'],
+      fixedOptions: [
+        {
+          brand: 'OTHER',
+          type: 'OTHER',
+          options: [
+            {
+              id: 'utekos-standard-no',
+              name: 'Standardfrakt i Norge',
+              isDefault: true,
+              amount: {
+                currency: 'NOK',
+                value: input.shippingAmount
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+
 export async function createVippsCheckout(
   input: z.infer<typeof vippsCheckoutInputSchema>
 ) {
@@ -45,6 +118,15 @@ export async function createVippsCheckout(
     config,
     reference,
     async (state, save) => {
+      let verifiedVariant:
+        | {
+            productTitle: string
+            selectedOptions: Array<{
+              name: string
+              value: string
+            }>
+          }
+        | undefined
       if (
         state.handle !== input.handle ||
         state.variantId !== input.variantId ||
@@ -74,7 +156,7 @@ export async function createVippsCheckout(
           'Shopify draft creation needs reconciliation; do not duplicate'
         )
       if (state.stage === 'new') {
-        await shopify.findAvailableVariant(
+        verifiedVariant = await shopify.findAvailableVariant(
           input.handle,
           input.variantId
         )
@@ -178,41 +260,19 @@ export async function createVippsCheckout(
             token
           }
         }
-        const paymentRequest = {
+        verifiedVariant ??= await shopify.findAvailableVariant(
+          input.handle,
+          input.variantId
+        )
+        const paymentRequest = buildVippsPaymentRequest({
           reference,
-          amount: {
-            currency: 'NOK',
-            value: amount - state.shippingAmount!
-          },
-          paymentMethod: { type: 'WALLET' },
-          userFlow: 'WEB_REDIRECT',
-          profile: { scope: 'name phoneNumber email address' },
-          paymentDescription: 'Kjøp hos Utekos',
-          // Vipps requires a redirect URL it can validate and redirect to. The return
-          // page consumes this short-lived capability immediately and removes it from
-          // the browser URL before making any further navigation.
-          returnUrl: `${origin}/vipps/retur?reference=${encodeURIComponent(reference)}&token=${encodeURIComponent(token)}`,
-          shipping: {
-            allowedCountries: ['NO'],
-            fixedOptions: [
-              {
-                brand: 'OTHER',
-                type: 'OTHER',
-                options: [
-                  {
-                    id: 'utekos-standard-no',
-                    name: 'Standardfrakt i Norge',
-                    isDefault: true,
-                    amount: {
-                      currency: 'NOK',
-                      value: state.shippingAmount
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        }
+          amount,
+          shippingAmount: state.shippingAmount!,
+          productTitle: verifiedVariant.productTitle,
+          selectedOptions: verifiedVariant.selectedOptions,
+          origin,
+          token
+        })
         state = {
           ...state,
           stage: 'payment_creating',
