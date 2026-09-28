@@ -70,7 +70,7 @@ test('serializes a Storefront timeout inside the remote cache boundary', async (
   ])
 })
 
-test('uses the catalog cache profile only after a successful fetch', async () => {
+test('keeps successful catalog snapshots webhook-driven', async () => {
   catalogError = undefined
   catalogProducts = []
   cacheLifeCalls = []
@@ -78,5 +78,5 @@ test('uses the catalog cache profile only after a successful fetch', async () =>
   const result = await getCachedProductCards({ first: 24 })
 
   assert.deepEqual(result, { status: 'success', products: [] })
-  assert.deepEqual(cacheLifeCalls, ['collections'])
+  assert.deepEqual(cacheLifeCalls, ['max'])
 })
