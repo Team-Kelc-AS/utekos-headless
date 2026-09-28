@@ -38,7 +38,11 @@ export async function getCachedProductCards(input: {
     const products = await fetchProductCardsWithRetry({
       first: input.first
     })
-    cacheLife('collections')
+    // Healthy catalog snapshots are invalidated by the signed Shopify
+    // product webhooks through TAGS.products. Avoid periodic background
+    // revalidation: a frozen serverless invocation cannot advance its
+    // JavaScript timeout until it resumes.
+    cacheLife('max')
     return { status: 'success', products }
   } catch (error) {
     cacheLife({ stale: 0, revalidate: 0, expire: 1 })
