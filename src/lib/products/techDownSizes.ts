@@ -16,19 +16,13 @@ export const TECH_DOWN_SIZES = [
     aliases: ['medium', 'm'],
     heightGuide: '165–175 cm',
     fitGuidance: [
-      'Du er lavere enn 170 cm og ønsker en romslig passform.',
+      'Du er mellom 165–175 cm og ønsker en romslig passform.',
       'Du ligger i øvre sjiktet (mot 175 cm) og ønsker en mer kroppsnær passform.'
     ],
     measurements: {
       length: '162 cm',
       chest: '56 cm',
-      armCenter: '82 cm',
-      armPit: '54 cm',
-      frontZip: '73 cm',
-      pocketZip: '13,5 cm',
-      hood: '35 cm',
-      pocket: '29 cm',
-      cuff: '8 cm'
+      armCenter: '82 cm'
     }
   },
   {
@@ -39,19 +33,13 @@ export const TECH_DOWN_SIZES = [
     aliases: ['large', 'l'],
     heightGuide: '175–185 cm',
     fitGuidance: [
-      'Du er lavere enn 180 cm og ønsker romslighet.',
+      'Du er mellom 175–185 cm og ønsker romslighet.',
       'Du ligger i øvre sjiktet (mot 185 cm) og ønsker en mer kroppsnær passform.'
     ],
     measurements: {
       length: '166 cm',
       chest: '58 cm',
-      armCenter: '87 cm',
-      armPit: '60 cm',
-      frontZip: '74 cm',
-      pocketZip: '13,5 cm',
-      hood: '35 cm',
-      pocket: '29 cm',
-      cuff: '8,5 cm'
+      armCenter: '87 cm'
     }
   },
   {
@@ -68,13 +56,7 @@ export const TECH_DOWN_SIZES = [
     measurements: {
       length: '170 cm',
       chest: '61 cm',
-      armCenter: '92 cm',
-      armPit: '64 cm',
-      frontZip: '75 cm',
-      pocketZip: '14 cm',
-      hood: '35 cm',
-      pocket: '29 cm',
-      cuff: '9 cm'
+      armCenter: '92 cm'
     }
   }
 ] as const
@@ -114,20 +96,22 @@ export function resolveTechDownSizeValue(
 }
 
 const measurementLabels = {
-  length: 'Total lengde (nakke til bunn)',
-  chest: 'Brystvidde (flatmål)',
-  armCenter: 'Ermlengde (fra senter)',
-  armPit: 'Ermlengde (fra armhule)',
-  frontZip: 'Lengde på glidelås (omvendt V)',
-  pocketZip: 'Lengde på glidelås (sidelomme)',
-  hood: 'Høyde på hette',
-  pocket: 'Høyde på baklomme',
-  cuff: 'Mansjetthøyde'
+  length: 'Lengde',
+  chest: 'Bryst',
+  armCenter: 'Ermlengde'
 } as const satisfies Record<
   keyof PublicTechDownSizeDefinition['measurements'],
   string
 >
 
+export const TECH_DOWN_MEASUREMENT_COLUMNS = (
+  Object.entries(measurementLabels) as [
+    keyof typeof measurementLabels,
+    (typeof measurementLabels)[keyof typeof measurementLabels]
+  ][]
+).map(([key, label]) => ({ key, label }))
+
+/** One row per measurement — used by text/NBCC facts. */
 export const TECH_DOWN_MEASUREMENT_ROWS = Object.entries(
   measurementLabels
 ).map(([key, measurement]) => ({
@@ -137,3 +121,12 @@ export const TECH_DOWN_MEASUREMENT_ROWS = Object.entries(
       size.measurements[key as keyof typeof measurementLabels]
   )
 }))
+
+/** One row per size — used by visible size charts. */
+export const TECH_DOWN_SIZE_ROWS =
+  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(size => ({
+    size: size.size,
+    values: TECH_DOWN_MEASUREMENT_COLUMNS.map(
+      column => size.measurements[column.key]
+    )
+  }))

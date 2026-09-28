@@ -7,123 +7,62 @@ type TechdownImage = {
   width: number
 }
 
-const galleryPath = '/images/techdown/gallery'
+const SQUARE_IMAGE_SIZE = 1080
 
-function image(
-  id: number,
-  width: number,
-  height: number,
-  alt: string,
-  thumbnail = String(id)
-): TechdownImage {
+function image(id: number, alt: string): TechdownImage {
+  const src = `/${id}.webp`
+
   return {
     id,
-    main: `${galleryPath}/main/${id}.webp`,
-    thumbnail: `${galleryPath}/thumbnails/${thumbnail}.jpg`,
-    width,
-    height,
+    main: src,
+    thumbnail: src,
+    width: SQUARE_IMAGE_SIZE,
+    height: SQUARE_IMAGE_SIZE,
     alt
   }
 }
 
-// Public URLs avoid serializing static-image blur metadata into the gallery bundle.
-// Dimensions are the original files' intrinsic dimensions; images are never transformed here.
+// These are the supplied square TechDown™ source images in public/.
+// Their intrinsic 1:1 dimensions are preserved in both the main gallery and thumbnails.
 export const techdownImages = [
   image(
     1,
-    1000,
-    1500,
-    'Kvinne med hetten oppe i marineblå Utekos TechDown™ i skogen.'
+    'Kvinne i marineblå Utekos TechDown™ med hette i skogen.'
   ),
   image(
     2,
-    1000,
-    1500,
-    'Marineblå Utekos TechDown™ med hette og hendene i frontlommen, sett forfra.'
+    'Kvinne i marineblå Utekos TechDown™ med hette og armene foran kroppen.'
   ),
   image(
     3,
-    1000,
-    1500,
-    'Kvinne som smiler i marineblå Utekos TechDown™ med hetten oppe.'
+    'Smilende kvinne i marineblå Utekos TechDown™ med hette i skogen.'
   ),
   image(
     4,
-    1000,
-    1500,
-    'To menn sitter i marineblå Utekos TechDown™ på en terrasse.'
-  ),
-  image(
-    5,
-    1000,
-    1500,
-    'En mann og en kvinne i marineblå Utekos TechDown™ sitter med en kopp på terrassen.'
-  ),
-  image(
-    6,
-    1000,
-    1500,
-    'To kvinner i marineblå Utekos TechDown™ på terrassen; den ene ser i kikkert.',
-    '6-corrected'
+    'Utekos TechDown™ sett bakfra, med hette, ved et rekkverk.'
   ),
   image(
     7,
-    1000,
-    1500,
-    'To kvinner i marineblå Utekos TechDown™ deler snacks ved et lite terrassebord.'
+    'To personer i marineblå Utekos TechDown™ i hengekøyer i skogen.'
   ),
   image(
     8,
-    1000,
-    1500,
-    'Kvinne i lang, marineblå Utekos TechDown™ med armene utstrakt ved vannet.'
+    'To personer i marineblå Utekos TechDown™ som ligger i hengekøyer.'
   ),
   image(
     9,
-    1000,
-    1500,
-    'Nærbilde av hetten, kragen og den oransje glidelåsdetaljen på Utekos TechDown™.'
-  ),
-  image(
-    10,
-    1000,
-    1500,
-    'Kvinne i marineblå Utekos TechDown™ sitter i skogen med en varm kopp og en soppkurv.'
-  ),
-  image(
-    11,
-    1000,
-    1500,
-    'Marineblå Utekos TechDown™ i full lengde, sett skrått forfra.'
+    'To personer i marineblå Utekos TechDown™ i hengekøyer med kopper.'
   ),
   image(
     12,
-    1875,
-    2813,
-    'Marineblå Utekos TechDown™ i full lengde, sett bakfra med hetten oppe.'
+    'Nærbilde av hette, krage og glidelåsdetaljer på marineblå Utekos TechDown™.'
   ),
   image(
     13,
-    1875,
-    2813,
-    'Baksiden av marineblå Utekos TechDown™ i kort utgave, med hette.'
+    'To personer i marineblå Utekos TechDown™ som ligger i hengekøyer, sett ovenfra.'
   ),
   image(
     14,
-    1000,
-    1500,
-    'Nærbilde av lommeglidelås med oransje detaljer og Utekos-symbol.'
-  ),
-  image(
-    15,
-    1000,
-    1500,
-    'Nærbilde av glidelås, snorstramming og Utekos-symbol ved kragen.'
-  ),
-  image(
-    16,
-    1000,
-    1500,
-    'Åpen front på marineblå Utekos TechDown™, med innside og oransje glidelåsdetaljer.'
+    'Nærbilde av to personer i marineblå Utekos TechDown™ i hengekøyer.'
   )
 ] as const

@@ -1,0 +1,268 @@
+import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import test from 'node:test'
+
+import type { CanonicalViewItem } from '@/lib/analytics/viewItemEvent'
+import type { CanonicalPurchase } from '@/lib/analytics/purchaseEvent'
+import { mapCanonicalEventToPinterest } from '@/lib/analytics/server/mapCanonicalEventToPinterest'
+
+const CANONICAL_ITEM_ID =
+  'gid://shopify/ProductVariant/123456789'
+const CANONICAL_PRODUCT_ID = 'gid://shopify/Product/1'
+const CANONICAL_VARIANT_ID =
+  'gid://shopify/ProductVariant/123456789'
+const PINTEREST_PRODUCT_ID = '123456789'
+
+function viewItem(
+  overrides: Partial<CanonicalViewItem> = {}
+): CanonicalViewItem {
+  return {
+    schema_version: 1,
+    event_name: 'view_item',
+    event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
+    page_view_id: 'ed4fb82a-f2f2-41f9-978a-3f99cf64ec2f',
+    event_time: '2026-08-16T10:00:00.000Z',
+    source: 'web',
+    environment: 'test',
+    page_url: 'https://utekos.no/produkter/comfyrobe',
+    page_title: 'Comfyrobe™ | Utekos',
+    consent: {
+      analytics: 'granted',
+      marketing: 'granted',
+      preferences: 'denied',
+      source: 'cookiebot',
+      version: '1'
+    },
+    custom_data: {
+      currency: 'NOK',
+      value: 799.2,
+      gross_value: 999,
+      tax_value: 199.8,
+      items: [
+        {
+          item_id: CANONICAL_ITEM_ID,
+          product_id: CANONICAL_PRODUCT_ID,
+          variant_id: CANONICAL_VARIANT_ID,
+          item_name: 'Comfyrobe™',
+          item_brand: 'Utekos',
+          item_category: 'Ponchoer',
+          product_handle: 'comfyrobe',
+          quantity: 1,
+          unit_price: 799.2,
+          gross_unit_price: 999,
+          tax_amount: 199.8,
+          tax_rate: 0.25,
+          taxable: true,
+          price_includes_tax: true,
+          available_for_sale: true,
+          currently_not_in_stock: false,
+          quantity_available: 20,
+          selected_options: [
+            { name: 'Farge', value: 'Fjellnatt' }
+          ],
+          collection_ids: [],
+          collection_titles: []
+        }
+      ]
+    },
+    ...overrides
+  }
+}
+
+function purchase(): CanonicalPurchase {
+  return {
+    schema_version: 1,
+    event_name: 'purchase',
+    event_id: '69143bcb-d302-4881-bca2-a58a381e2ae7',
+    event_time: '2026-08-21T08:00:00.000Z',
+    source: 'webhook',
+    environment: 'test',
+    page_url: 'https://utekos.no/produkter/comfyrobe',
+    consent: {
+      analytics: 'granted',
+      marketing: 'granted',
+      preferences: 'denied',
+      source: 'cookiebot',
+      version: '1'
+    },
+    click_id: { epik: 'PinterestCheckoutClickId-1' },
+    external_id: 'anon_ce5f010a-804c-4bc6-8738-febd9f4eafbf',
+    client_ip_address: '192.0.2.1',
+    event_device_info: { user_agent: 'Utekos test agent' },
+    user_data: {
+      email_sha256: [
+        createHash('sha256')
+          .update('kunde@example.no')
+          .digest('hex')
+      ]
+    },
+    custom_data: {
+      currency: 'NOK',
+      value: 2036.4,
+      transaction_id: 'shopify_order_6968683004152',
+      order_name: '#1902',
+      items: [
+        {
+          item_id: CANONICAL_ITEM_ID,
+          item_name: 'Comfyrobe™',
+          item_brand: 'Utekos',
+          item_category: 'Ponchoer',
+          quantity: 2,
+          unit_price: 799
+        }
+      ]
+    }
+  }
+}
+
+test('maps Canonical GID item_id to Pinterest Catalog product ids', () => {
+  const event = viewItem()
+  const mapped = mapCanonicalEventToPinterest(event)
+
+  assert.equal(
+    event.custom_data.items[0]?.item_id,
+    CANONICAL_ITEM_ID
+  )
+  assert.equal(
+    event.custom_data.items[0]?.product_id,
+    CANONICAL_PRODUCT_ID
+  )
+  assert.equal(
+    event.custom_data.items[0]?.variant_id,
+    CANONICAL_VARIANT_ID
+  )
+  assert.deepEqual(mapped?.custom_data?.content_ids, [
+    PINTEREST_PRODUCT_ID
+  ])
+  assert.equal(
+    mapped?.custom_data?.contents?.[0]?.id,
+    PINTEREST_PRODUCT_ID
+  )
+})
+
+test('does not use Canonical product_id as the Pinterest content id', () => {
+  const event = viewItem()
+  event.custom_data.items[0]!.product_id =
+    'gid://shopify/Product/999'
+  event.custom_data.items[0]!.variant_id =
+    'gid://shopify/ProductVariant/999'
+
+  const mapped = mapCanonicalEventToPinterest(event)
+
+  assert.equal(
+    mapped?.custom_data?.contents?.[0]?.id,
+    PINTEREST_PRODUCT_ID
+  )
+  assert.equal(
+    event.custom_data.items[0]?.item_id,
+    CANONICAL_ITEM_ID
+  )
+  assert.equal(
+    event.custom_data.items[0]?.product_id,
+    'gid://shopify/Product/999'
+  )
+  assert.equal(
+    event.custom_data.items[0]?.variant_id,
+    'gid://shopify/ProductVariant/999'
+  )
+})
+
+test('forwards Canonical epik as Pinterest user_data.click_id', () => {
+  const mapped = mapCanonicalEventToPinterest(
+    viewItem({
+      click_id: { epik: 'PinterestClickId-1' }
+    })
+  )
+
+  assert.equal(mapped?.user_data.click_id, 'PinterestClickId-1')
+})
+
+test('sends hashed external_id as a Pinterest user_data array', () => {
+  const mapped = mapCanonicalEventToPinterest(
+    viewItem({
+      external_id: 'anon_ce5f010a-804c-4bc6-8738-febd9f4eafbf'
+    })
+  )
+
+  assert.deepEqual(mapped?.user_data.external_id, [
+    createHash('sha256')
+      .update('anon_ce5f010a-804c-4bc6-8738-febd9f4eafbf', 'utf8')
+      .digest('hex')
+  ])
+})
+
+test('sends trusted location match keys in Pinterest format', () => {
+  const mapped = mapCanonicalEventToPinterest(
+    viewItem({
+      location: {
+        city: 'Oslo',
+        country_code: 'NO',
+        postal_code: '0150',
+        region_code: '03',
+        source: 'ip_geolocation'
+      }
+    })
+  )
+
+  assert.deepEqual(mapped?.user_data.ct, [
+    createHash('sha256').update('oslo').digest('hex')
+  ])
+  assert.deepEqual(mapped?.user_data.country, [
+    createHash('sha256').update('no').digest('hex')
+  ])
+  assert.deepEqual(mapped?.user_data.zp, [
+    createHash('sha256').update('0150').digest('hex')
+  ])
+  assert.equal(mapped?.user_data.st, undefined)
+})
+
+test('includes product brand and category in Pinterest contents', () => {
+  const mapped = mapCanonicalEventToPinterest(viewItem())
+
+  assert.equal(
+    mapped?.custom_data?.contents?.[0]?.item_brand,
+    'Utekos'
+  )
+  assert.equal(
+    mapped?.custom_data?.contents?.[0]?.item_category,
+    'Ponchoer'
+  )
+})
+
+test('maps purchase to Checkout with match keys and complete product context', () => {
+  const mapped = mapCanonicalEventToPinterest(purchase())
+
+  assert.equal(mapped?.event_name, 'checkout')
+  assert.equal(
+    mapped?.event_id,
+    '69143bcb-d302-4881-bca2-a58a381e2ae7'
+  )
+  assert.equal(
+    mapped?.user_data.click_id,
+    'PinterestCheckoutClickId-1'
+  )
+  assert.equal(
+    mapped?.custom_data?.order_id,
+    'shopify_order_6968683004152'
+  )
+  assert.equal(mapped?.custom_data?.value, '2036.4')
+  assert.equal(mapped?.custom_data?.currency, 'NOK')
+  assert.equal(mapped?.custom_data?.num_items, 2)
+  assert.deepEqual(mapped?.custom_data?.content_ids, [
+    PINTEREST_PRODUCT_ID
+  ])
+  assert.deepEqual(mapped?.custom_data?.contents, [
+    {
+      id: PINTEREST_PRODUCT_ID,
+      item_brand: 'Utekos',
+      item_category: 'Ponchoer',
+      item_name: 'Comfyrobe™',
+      item_price: '799',
+      quantity: 2
+    }
+  ])
+  assert.deepEqual(
+    mapped?.user_data.em,
+    purchase().user_data?.email_sha256
+  )
+})

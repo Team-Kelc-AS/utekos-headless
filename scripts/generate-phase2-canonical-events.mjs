@@ -154,8 +154,8 @@ const EVENTS = [
   submission_id: z.string().min(1),
   form_id: z.string().min(1),
   lead_type: z.string().min(1).optional(),
-  currency: z.string().regex(/^[A-Z]{3}$/).optional(),
-  value: z.number().finite().nonnegative().optional()
+  currency: z.string().regex(/^[A-Z]{3}$/),
+  value: z.number().positive()
 })`,
     reporterOnly:
       'Server-only event; call acceptCanonicalGenerateLead from lead submission services.'

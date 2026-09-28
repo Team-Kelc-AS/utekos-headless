@@ -36,7 +36,7 @@
 .section h2,
 .page #size-guide-cta > h2,
 .shopCta > h2 {
-  margin: 0 0 1.5rem;
+  margin: 0 0 0.75rem;
   padding: 0;
   font-size: clamp(1.875rem, 3.5vw, 3rem);
   font-weight: 700;
@@ -164,7 +164,7 @@
 }
 .page > article > section > h3,
 .section > h3 {
-  margin-top: 3rem;
+  margin-top: 1.25rem;
 }
 .page :where(section, .section, .sizeAdvice) ul {
   list-style: disc;
@@ -233,10 +233,50 @@
 .tableRegion td {
   white-space: nowrap;
 }
+.tableBlockSizeRows {
+  margin-block: 2rem 2.5rem;
+}
+.tableRegionSizeRows table {
+  min-width: 0;
+}
+.tableRegionSizeRows :is(th, td) {
+  text-align: center;
+  min-width: 0;
+}
+.tableRegionSizeRows th:first-child,
+.tableRegionSizeRows td:first-child {
+  position: static;
+  width: auto;
+  min-width: 0;
+  text-align: left;
+}
+.tableRegionSizeRows tbody tr:nth-child(even) :is(th, td) {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--jungle));
+}
 @media (width < 48rem) {
+  .tableBlock {
+    margin-block: 1.25rem 2rem;
+  }
+  .tableBlockSizeRows {
+    margin-block: 1rem 1.5rem;
+  }
+  .tableRegion caption {
+    padding: 0.5rem 0.75rem;
+  }
+  .tableRegion :is(th, td) {
+    padding: 0.5rem 0.75rem;
+  }
   .tableRegion th:first-child {
     width: 11.875rem;
     min-width: 11.875rem;
+  }
+  .tableRegionSizeRows th:first-child,
+  .tableRegionSizeRows td:first-child {
+    width: auto;
+    min-width: 0;
+  }
+  .page .scrollHint {
+    margin: 0.5rem 0 0;
   }
 }
 .page .scrollHint {

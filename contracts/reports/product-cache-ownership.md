@@ -126,7 +126,7 @@ and `pnpm exec tsx --test`. The helper matches Next's server
 navigation alias and provides static image imports for direct
 Node tests. Client tests run without the `react-server`
 condition. The four API tests run directly with
-`pnpm exec tsx 'src/app/api/products/[handle]/handleProductGet.test.ts'`
+`pnpm exec tsx 'tests/unit/app/api/products/[handle]/handleProductGet.test.ts'`
 under the server options, avoiding bracket-path glob
 interpretation.
 

@@ -1,6 +1,7 @@
 import {
   TECH_DOWN_PUBLIC_SIZE_DEFINITIONS,
-  TECH_DOWN_MEASUREMENT_ROWS
+  TECH_DOWN_MEASUREMENT_COLUMNS,
+  TECH_DOWN_SIZE_ROWS
 } from '@/lib/products/techDownSizes'
 import { FeatureGrid } from './components/mdx/FeatureGrid'
 import { SizeGrid } from './components/mdx/SizeGrid'
@@ -33,9 +34,9 @@ et plagg du vil trives med lenge.
 <span id="tech-down-size-guide" />
 <span id="tech-down-size-guide-heading" />
 
-<h2 id='techdown-heading'>
-  Utekos TechDown™ - Størrelsestabell
-</h2>
+<h2 id='techdown-heading'>Størrelsestabell</h2>
+
+<h3>Utekos TechDown™</h3>
 
 Utekos TechDown™ har normal passform, balansert over skuldre,
 bryst og ermer. Dette gir deg god bevegelsesfrihet og effektiv
@@ -62,9 +63,8 @@ hvor mye rom du ønsker til klær under.
 <span id='tech-down-details' />
 <span id='tech-down-details-heading' />
 
-Utekos TechDown™ gir full bevegelsesfrihet uten unødvendig volum.
-Innvendig snorstramming lar deg forme silhuetten og stenge den
-kalde trekken ute. Plagget har YKK®-glidelåser.
+Utekos TechDown™ kombinerer en fyldig, isolert konstruksjon med en passform du kan tilpasse. Innvendig snorstramming lar deg forme silhuetten og trekke plagget tettere rundt kroppen for å redusere kald trekk.
+Plagget har YKK®-glidelåser.
 
 <span id='tech-down-measurements-heading' />
 
@@ -83,21 +83,21 @@ Sammenlign også gjerne med et plagg som sitter godt.
 **Brystvidden i tabellen er plaggets flatmål, ikke kroppens
 brystomkrets.** Legg plagget flatt når du sammenligner bredden.
 
-<MeasurementTable id="tech-down-measurements" caption="TechDown™ — plaggmål i centimeter">
+<MeasurementTable id="tech-down-measurements" caption="TechDown™ — plaggmål i centimeter" layout="sizeRows">
 
 <table>
   <thead>
     <tr>
-      <th>Mål</th>
-      {TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(size => (
-        <th key={size.id}>{size.size}</th>
+      <th>Størrelse</th>
+      {TECH_DOWN_MEASUREMENT_COLUMNS.map(column => (
+        <th key={column.key}>{column.label}</th>
       ))}
     </tr>
   </thead>
   <tbody>
-    {TECH_DOWN_MEASUREMENT_ROWS.map(row => (
-      <tr key={row.measurement}>
-        <th>{row.measurement}</th>
+    {TECH_DOWN_SIZE_ROWS.map(row => (
+      <tr key={row.size}>
+        <th>{row.size}</th>
         {row.values.map((value, index) => (
           <td key={index}>{value}</td>
         ))}
@@ -162,9 +162,7 @@ returfrakten selv. Dine lovfestede rettigheter påvirkes ikke.
 <section id="mikrofiber" aria-labelledby="utekos-size-guide-heading">
 <span id="utekos-size-guide" />
 
-<h2 id='utekos-size-guide-heading'>
-  En unik tilnærming til passform
-</h2>
+<h2 id='utekos-size-guide-heading'>En unik tilnærming til passform</h2>
 
 Vi har designet Utekos Dun og Mikrofiber med en filosofi om
 ultimat komfort gjennom suveren tilpasningsevne. Du vil legge
@@ -243,9 +241,7 @@ slippe ut overskuddsvarme.
 <section id="comfyrobe" aria-labelledby="comfyrobe-size-guide-heading">
 <span id="comfyrobe-size-guide" />
 
-<h2 id='comfyrobe-size-guide-heading'>
-  Comfyrobe™ — Ditt personlige beskyttende skall
-</h2>
+<h2 id='comfyrobe-size-guide-heading'>Comfyrobe™ — Ditt personlige beskyttende skall</h2>
 
 Comfyrobe™ er designet som ditt personlige, beskyttende skall.
 Den romslige passformen er ment å være omsluttende og

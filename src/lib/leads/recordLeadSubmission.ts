@@ -14,6 +14,10 @@ import type {
   LeadSource,
   LeadType
 } from './leadFormIds'
+import {
+  LEAD_VALUE_POLICY,
+  monetaryValueForLead
+} from './leadValuePolicy'
 import { insertMarketingLead } from './insertMarketingLead'
 
 export type RecordLeadSubmissionInput = {
@@ -40,6 +44,7 @@ export type RecordLeadSubmissionResult = {
 export async function recordLeadSubmission(
   input: RecordLeadSubmissionInput
 ): Promise<RecordLeadSubmissionResult> {
+  const monetaryValue = monetaryValueForLead(input.formId)
   const consent =
     input.trackingContext?.consent ??
     defaultTrackingAuthorization()
@@ -73,6 +78,9 @@ export async function recordLeadSubmission(
       metadata: {
         form_id: input.formId,
         lead_type: input.leadType,
+        lead_value: monetaryValue.value,
+        lead_value_currency: monetaryValue.currency,
+        lead_value_policy_version: LEAD_VALUE_POLICY.version,
         ...(input.estimatedSize ?
           { estimated_size: input.estimatedSize }
         : {}),
@@ -122,6 +130,7 @@ export async function recordLeadSubmission(
       submissionId: input.leadId,
       formId: input.formId,
       leadType: input.leadType,
+      monetaryValue,
       email: input.email,
       pageUrl,
       ...(input.phone ? { phone: input.phone } : {}),

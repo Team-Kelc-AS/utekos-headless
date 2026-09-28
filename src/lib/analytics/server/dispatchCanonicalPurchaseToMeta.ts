@@ -2,7 +2,6 @@ import type { ServerEvent } from 'facebook-nodejs-business-sdk'
 import type { CanonicalPurchase } from '../purchaseEvent'
 import { mapCanonicalPurchaseToMeta } from './mapCanonicalPurchaseToMeta'
 import { mapCanonicalPurchaseToMetaAppendAttribution } from './mapCanonicalPurchaseToMetaAppendAttribution'
-import { mapMetaAppendAttributionEventToServerEvent } from './mapMetaAppendAttributionEventToServerEvent'
 import {
   readMetaConversionsApiConfig,
   sendMetaServerEvents,
@@ -32,16 +31,7 @@ export type MetaPurchaseDispatchReceipt = {
 }
 
 const defaultDependencies: MetaPurchaseDispatchDependencies = {
-  mapAppendEvent: (event, nowUnixSeconds) => {
-    const appendEvent =
-      mapCanonicalPurchaseToMetaAppendAttribution(
-        event,
-        nowUnixSeconds
-      )
-    return appendEvent ?
-        mapMetaAppendAttributionEventToServerEvent(appendEvent)
-      : undefined
-  },
+  mapAppendEvent: mapCanonicalPurchaseToMetaAppendAttribution,
   mapEvent: mapCanonicalPurchaseToMeta,
   nowUnixSeconds: () => Math.floor(Date.now() / 1000),
   readConfig: readMetaConversionsApiConfig,

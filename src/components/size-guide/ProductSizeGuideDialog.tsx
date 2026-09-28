@@ -130,7 +130,7 @@ export function ProductSizeGuideDialog({
                           scope='col'
                           className='h-12 min-w-44 px-4 font-sans font-semibold text-foreground'
                         >
-                          Måling
+                          {content.rowHeader}
                         </TableHead>
                         {content.columns.map(column => (
                           <TableHead

@@ -439,7 +439,7 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
     }),
     canonicalEvent('generate_lead', 'lead-event', {
       currency: 'NOK',
-      value: 1
+      value: 396.61
     })
   )
 
@@ -571,6 +571,13 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
       click_sequence: 1
     }
   )
+  assert.deepEqual(
+    standardEventCalls.find(call => call[2] === 'Lead')?.[3],
+    {
+      currency: 'NOK',
+      value: 396.61
+    }
+  )
   assert.equal(runtime.insertedScripts.length, 1)
   assert.equal(
     runtime.insertedScripts[0].src,
@@ -597,7 +604,7 @@ test('rejects mismatched IDs and preserves granted events across navigation', ()
   )
 })
 
-test('omits currency and value when currency is empty or non-ISO', () => {
+test('omits invalid or non-positive currency-value pairs', () => {
   const runtime = createRuntime()
   const items = [
     {
@@ -632,6 +639,10 @@ test('omits currency and value when currency is empty or non-ISO', () => {
     canonicalEvent('generate_lead', 'lead-empty-currency', {
       currency: '',
       value: 1
+    }),
+    canonicalEvent('generate_lead', 'lead-zero-value', {
+      currency: 'NOK',
+      value: 0
     })
   )
 
@@ -641,7 +652,7 @@ test('omits currency and value when currency is empty or non-ISO', () => {
     call => call[0] === 'trackSingle'
   )
 
-  assert.equal(eventCalls.length, 5)
+  assert.equal(eventCalls.length, 6)
 
   for (const call of [
     eventCalls[0],
@@ -656,6 +667,7 @@ test('omits currency and value when currency is empty or non-ISO', () => {
   assert.equal(eventCalls[2][3].currency, 'NOK')
   assert.equal(eventCalls[2][3].value, 1790)
   assert.deepEqual(eventCalls[4][3], {})
+  assert.deepEqual(eventCalls[5][3], {})
 })
 
 test('keeps SDK history PageViews disabled under the operator policy', () => {

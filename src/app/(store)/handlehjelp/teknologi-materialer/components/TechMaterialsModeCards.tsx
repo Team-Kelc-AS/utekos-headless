@@ -68,7 +68,7 @@ export function TechMaterialsModeCards() {
               plutselig på kjøkkenet eller svare telefonen? Heis
               opp plagget til ønsket lengde, stram snoren i livet
               og bli mobil på sekunder. Beveg deg trygt og
-              subbefritt – uten å miste varmen.
+              subbefritt, uten å miste varmen.
             </p>
           </div>
         </div>

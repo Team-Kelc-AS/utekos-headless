@@ -6,8 +6,9 @@ description:
 ---
 
 import {
-  TECH_DOWN_MEASUREMENT_ROWS,
-  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS
+  TECH_DOWN_MEASUREMENT_COLUMNS,
+  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS,
+  TECH_DOWN_SIZE_ROWS
 } from '@/lib/products/techDownSizes'
 
 # Størrelsesguide: Utekos TechDown™
@@ -68,45 +69,43 @@ direkte på kroppen med et mykt målebånd.
   tabIndex={0}
   className='my-5 overflow-x-auto rounded-xl border border-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground'
 >
-  <table className='w-full min-w-lg border-collapse text-sm tabular-nums'>
+  <table className='w-full border-collapse text-sm tabular-nums'>
     <caption className='p-3 text-left'>
       TechDown™ — plaggmål i centimeter
     </caption>
     <thead className='bg-jungle'>
       <tr>
         <th scope='col' className='p-3 text-left'>
-          Mål
+          Størrelse
         </th>
-        {TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(card => (
+        {TECH_DOWN_MEASUREMENT_COLUMNS.map(column => (
           <th
-            key={card.id}
+            key={column.key}
             scope='col'
-            className='p-3 text-right'
+            className='p-3 text-center'
           >
-            {card.size}
+            {column.label}
           </th>
         ))}
       </tr>
     </thead>
     <tbody>
-      {TECH_DOWN_MEASUREMENT_ROWS.map(row => (
+      {TECH_DOWN_SIZE_ROWS.map(row => (
         <tr
-          key={row.measurement}
+          key={row.size}
           className='border-t border-foreground/20'
         >
           <th scope='row' className='p-3 text-left font-medium'>
-            {row.measurement}
+            {row.size}
           </th>
-          {TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(
-            (card, index) => (
-              <td
-                key={card.id}
-                className='p-3 text-right whitespace-nowrap'
-              >
-                {row.values[index]}
-              </td>
-            )
-          )}
+          {row.values.map((value, index) => (
+            <td
+              key={TECH_DOWN_MEASUREMENT_COLUMNS[index]?.key}
+              className='p-3 text-center whitespace-nowrap'
+            >
+              {value}
+            </td>
+          ))}
         </tr>
       ))}
     </tbody>

@@ -87,7 +87,10 @@ export const PRODUCT_PAGE_CONTENT = {
             rows: [
               { label: 'Ytterstoff', value: '100 % nylon, 38 g/m²' },
               { label: 'Innerfôr', value: '100 % nylon, 38 g/m²' },
-              { label: 'Isolasjonsfyll', value: 'Polyester' },
+              {
+                label: 'Isolasjonsfyll',
+                value: 'Hydrofobisk syntetisk dun'
+              },
               { label: 'Glidelåser', value: 'YKK®' }
             ]
           }

@@ -4,6 +4,7 @@ import { ServerEvent } from 'facebook-nodejs-business-sdk'
 
 type MetaPayloadExtensions = {
   appData?: Record<string, unknown> | undefined
+  basePayload?: Readonly<Record<string, unknown>> | undefined
   topLevel?: Record<string, unknown> | undefined
   userData?: Record<string, unknown> | undefined
 }
@@ -17,10 +18,10 @@ export class ExactMetaServerEvent extends ServerEvent {
   }
 
   override normalize(): Record<string, unknown> {
-    const normalized = super.normalize() as Record<
-      string,
-      unknown
-    >
+    const normalized =
+      this.#extensions.basePayload ?
+        { ...this.#extensions.basePayload }
+      : (super.normalize() as Record<string, unknown>)
     const normalizedUserData =
       (
         normalized.user_data &&

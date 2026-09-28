@@ -32,7 +32,7 @@ export const techDownFaq = [
   },
   {
     question: 'Hvor langt/bredt er selve plagget?',
-    answer: `Hovedmålene er lengde, brystvidde og ermlengde: ${listFormatter.format(TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(({ size, measurements }) => `${size} er ${[measurements.length, measurements.chest, measurements.armCenter].map(value => value.replace(' cm', '')).join(' / ')} cm`))}. Se den komplette måltabellen rett over for de øvrige plaggmålene.`
+    answer: `Hovedmålene er lengde, brystvidde og ermlengde: ${listFormatter.format(TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(({ size, measurements }) => `${size} er ${[measurements.length, measurements.chest, measurements.armCenter].map(value => value.replace(' cm', '')).join(' / ')} cm`))}. Se måltabellen rett over.`
   },
   {
     question: 'Hva tilsvarer dette i andre størrelsessystemer?',

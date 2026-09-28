@@ -4,6 +4,7 @@ import { merchantShippingServiceJsonLd } from '@/lib/policies/merchantShippingSe
 import { getVippsRuntime, vippsStatusToken } from './runtime'
 import { withVippsCheckout } from './checkoutStore'
 import { toMinorUnits } from './shopifyOrder'
+import { vippsPaymentDescription } from './productDescription'
 
 export const vippsCheckoutInputSchema = z.object({
   handle: z.string().regex(/^[a-z0-9-]{1,100}$/),
@@ -30,30 +31,6 @@ export function vippsStandardShippingAmount(subtotal: number) {
     )
   if (!rule) throw new Error('No Norwegian shipping policy')
   return Math.round(rule.shippingRate.value * 100)
-}
-
-export function vippsPaymentDescription(
-  productTitle: string,
-  selectedOptions: Array<{ name: string; value: string }>
-) {
-  const product = productTitle.trim()
-  if (!product) throw new Error('Vipps product title is missing')
-  const optionValue = (names: string[]) =>
-    selectedOptions
-      .find(option =>
-        names.includes(
-          option.name.trim().toLocaleLowerCase('nb-NO')
-        )
-      )
-      ?.value.trim()
-  const color = optionValue(['farge', 'color'])
-  const size = optionValue(['størrelse', 'size'])
-  const details = [color, size].filter(
-    (value): value is string => Boolean(value)
-  )
-  return details.length ?
-      `${product} ${details.join(', ')}`
-    : product
 }
 
 export function buildVippsPaymentRequest(input: {

@@ -111,15 +111,6 @@ export function KlarnaProductExpressCheckout({
           }
 
           setErrorMessage(null)
-          void import('@/lib/analytics/reportCommerceInterestLead')
-            .then(({ reportKlarnaExpressLead }) => {
-              reportKlarnaExpressLead()
-            })
-            .catch(error => {
-              queueMicrotask(() => {
-                throw error
-              })
-            })
           return {
             orderPayload: prepared.orderPayload,
             shopifyCartId: prepared.shopifyCartId

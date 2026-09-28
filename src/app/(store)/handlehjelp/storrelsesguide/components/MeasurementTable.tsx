@@ -12,11 +12,13 @@ type TableNodeProps = { children?: ReactNode; scope?: string }
 export function MeasurementTable({
   children,
   caption,
-  id
+  id,
+  layout = 'measurementRows'
 }: {
   children: ReactNode
   caption: string
   id: string
+  layout?: 'measurementRows' | 'sizeRows'
 }) {
   const table = Children.toArray(children).find(
     child =>
@@ -28,9 +30,20 @@ export function MeasurementTable({
   }
 
   return (
-    <div className={styles.tableBlock} id={id}>
+    <div
+      className={
+        layout === 'sizeRows' ?
+          `${styles.tableBlock} ${styles.tableBlockSizeRows}`
+        : styles.tableBlock
+      }
+      id={id}
+    >
       <div
-        className={styles.tableRegion}
+        className={
+          layout === 'sizeRows' ?
+            `${styles.tableRegion} ${styles.tableRegionSizeRows}`
+          : styles.tableRegion
+        }
         role='region'
         aria-labelledby={`${id}-caption`}
         tabIndex={0}
@@ -77,9 +90,11 @@ export function MeasurementTable({
           })}
         </table>
       </div>
-      <p className={styles.scrollHint}>
-        Rull sidelengs for å se alle størrelsene →
-      </p>
+      {layout === 'measurementRows' ?
+        <p className={styles.scrollHint}>
+          Rull sidelengs for å se alle størrelsene →
+        </p>
+      : null}
     </div>
   )
 }

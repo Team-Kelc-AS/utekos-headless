@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import {
   metaAppDataSchema,
+  metaCommerceContentSchema,
+  metaCustomDataSchema,
   metaIdentifierSchema,
   metaNonEmptyStringSchema,
   metaObservedUserDataShape,
@@ -9,10 +11,12 @@ import {
 
 export const META_APPEND_ATTRIBUTION_MAX_DELAY_SECONDS =
   48 * 60 * 60
+export const META_APPEND_CLICK_ATTRIBUTION_EVENT_NAME =
+  'AppendClickAttribution' as const
 
 // Events Manager label for the configured Custom Attribution Source.
 // Meta infers the source from the destination dataset; this value is not
-// part of the AppendAttribution Conversions API payload.
+// part of the AppendClickAttribution Conversions API payload.
 export const META_CUSTOM_ATTRIBUTION_SOURCE_NAME =
   'ClickToAddAttribution' as const
 
@@ -26,13 +30,27 @@ const metaAppendAttributionDataSchema = z.strictObject({
   touchpoint_ts: metaUnixSecondsSchema
 })
 
+const metaAppendCustomDataSchema = metaCustomDataSchema.extend({
+  currency: metaCurrencySchema
+})
+
+const metaWebAppendCustomDataSchema =
+  metaAppendCustomDataSchema.extend({
+    content_ids: z.array(metaIdentifierSchema).min(1).max(100),
+    content_type: z.enum(['product', 'product_group']),
+    contents: z
+      .array(metaCommerceContentSchema)
+      .min(1)
+      .max(100),
+    value: z.number().finite().nonnegative()
+  })
+
 const commonAppendAttributionShape = {
   attribution_data: metaAppendAttributionDataSchema,
-  custom_data: z.strictObject({
-    currency: metaCurrencySchema
-  }),
   event_id: metaIdentifierSchema,
-  event_name: z.literal('AppendAttribution'),
+  event_name: z.literal(
+    META_APPEND_CLICK_ATTRIBUTION_EVENT_NAME
+  ),
   event_time: metaUnixSecondsSchema,
   marketing_consent: z.literal('granted'),
   opt_out: z.boolean().optional()
@@ -45,8 +63,10 @@ const commonAppendUserDataShape = {
 const metaWebAppendAttributionSchema = z.strictObject({
   ...commonAppendAttributionShape,
   action_source: z.literal('website'),
+  custom_data: metaWebAppendCustomDataSchema,
   event_source_url: z.string().url().max(4096),
   original_event_data: z.strictObject({
+    event_id: metaIdentifierSchema,
     event_name: z.literal('Purchase'),
     event_time: metaUnixSecondsSchema,
     order_id: metaIdentifierSchema.optional()
@@ -63,6 +83,7 @@ const metaAppAppendAttributionSchema = z.strictObject({
   action_source: z.literal('app'),
   advertiser_tracking_enabled: z.boolean(),
   app_data: metaAppDataSchema,
+  custom_data: metaAppendCustomDataSchema,
   original_event_data: z.strictObject({
     event_name: z.literal('fb_mobile_purchase'),
     event_time: metaUnixSecondsSchema,
@@ -100,7 +121,7 @@ export const metaAppendAttributionEventSchema = z
       context.addIssue({
         code: 'custom',
         message:
-          'AppendAttribution event_time cannot precede the original event',
+          'AppendClickAttribution event_time cannot precede the original event',
         path: ['event_time']
       })
     }
@@ -112,7 +133,7 @@ export const metaAppendAttributionEventSchema = z
       context.addIssue({
         code: 'custom',
         message:
-          'AppendAttribution must be generated within 48 hours of the original event',
+          'AppendClickAttribution must be generated within 48 hours of the original event',
         path: ['event_time']
       })
     }
@@ -124,7 +145,7 @@ export const metaAppendAttributionEventSchema = z
       context.addIssue({
         code: 'custom',
         message:
-          'campaign_ids is required for iOS AppendAttribution events',
+          'campaign_ids is required for iOS AppendClickAttribution events',
         path: ['app_data', 'campaign_ids']
       })
     }
@@ -132,7 +153,7 @@ export const metaAppendAttributionEventSchema = z
       context.addIssue({
         code: 'custom',
         message:
-          'madid is required for Android AppendAttribution events',
+          'madid is required for Android AppendClickAttribution events',
         path: ['user_data', 'madid']
       })
     }
@@ -181,7 +202,7 @@ export function assertMetaAppendAttributionIsSendable(
 
   if (event.event_time > nowUnixSeconds) {
     throw new Error(
-      'AppendAttribution event_time cannot be in the future'
+      'AppendClickAttribution event_time cannot be in the future'
     )
   }
   if (
@@ -189,7 +210,7 @@ export function assertMetaAppendAttributionIsSendable(
     META_APPEND_ATTRIBUTION_MAX_DELAY_SECONDS
   ) {
     throw new Error(
-      'AppendAttribution send window has exceeded 48 hours'
+      'AppendClickAttribution send window has exceeded 48 hours'
     )
   }
 

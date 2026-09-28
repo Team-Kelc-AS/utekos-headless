@@ -53,7 +53,7 @@ export async function TechJsonLd() {
     '@id': ARTICLE_ID,
     'headline': 'Teknologien og materialene som definerer Utekos®',
     'description':
-      'En detaljert teknisk gjennomgang av TechDown™, HydroGuard™ og SherpaCore™ – materialene som sikrer varme, komfort og lang levetid i Utekos-produkter.',
+      'En detaljert teknisk gjennomgang av TechDown™, HydroGuard™ og SherpaCore™, materialene som sikrer varme, komfort og lang levetid i Utekos-produkter.',
     'image': ['https://cdn.shopify.com/s/files/1/0634/2154/6744/files/damentilpederbilde.png?v=1746789037'],
     'author': {
       '@type': 'Organization',
@@ -89,7 +89,17 @@ export async function TechJsonLd() {
         'acceptedAnswer': {
           '@type': 'Answer',
           'text':
-            'TechDown™ er vår nyeste og mest allside produkt. Den etterligner dunets varmeeffekt og lette vekt, men er hydrofobisk, noe som betyr at den beholder isolasjonsevnen selv under fuktige forhold.'
+            'TechDown™ er vår nyeste og mest allsidige produktlinje. Den etterligner dunets varmeeffekt og lette vekt, men er hydrofobisk, noe som betyr at den beholder isolasjonsevnen selv under fuktige forhold.'
+        }
+      },
+      {
+        '@type': 'Question',
+        'name':
+          'Hvordan påvirker kanalstørrelse isolasjonsverdien ved samme isolasjonsvekt?',
+        'acceptedAnswer': {
+          '@type': 'Answer',
+          'text':
+            'Ved en fast isolasjonsvekt på 200 g/m² endres ytelsen markant med kanalstørrelsen. Større sømavstand gir mer loft: tykkelsen kan øke fra 1,5 cm til 3,0 cm, og termisk motstand nesten fordobles fra 2,3 clo (1,5” × 1,5” kanal) til 4,1 clo (4” × 4” kanal) med samme mengde fiber.'
         }
       },
       {

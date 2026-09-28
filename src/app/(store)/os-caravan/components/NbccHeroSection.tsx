@@ -127,7 +127,7 @@ export function NbccHeroSection() {
               href={OS_CARAVAN_VENUE.directionsHref}
               target='_blank'
               rel='noopener noreferrer'
-              data-track='Lead'
+              data-track='OsCaravanDirectionsClick'
               data-track-data={JSON.stringify(
                 nbccHeroTracking.directions
               )}

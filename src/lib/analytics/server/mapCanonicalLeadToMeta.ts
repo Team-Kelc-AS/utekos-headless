@@ -32,22 +32,27 @@ export function mapCanonicalLeadToMeta(
     throw new Error('Meta event_time must be a valid timestamp')
   }
 
-  const customData = new CustomData()
-  if (event.custom_data.currency) {
-    customData.setCurrency(event.custom_data.currency)
-  }
-  if (event.custom_data.value !== undefined) {
-    customData.setValue(event.custom_data.value)
-  }
-
   const serverEvent = new ServerEvent()
   serverEvent
     .setEventName('Lead')
     .setEventTime(eventTime)
     .setUserData(buildMetaUserData(event))
-    .setCustomData(customData)
     .setActionSource('website')
     .setEventId(event.event_id)
+
+  const leadValue = event.custom_data.value
+  if (
+    event.custom_data.currency &&
+    leadValue !== undefined &&
+    Number.isFinite(leadValue) &&
+    leadValue > 0
+  ) {
+    serverEvent.setCustomData(
+      new CustomData()
+        .setCurrency(event.custom_data.currency)
+        .setValue(leadValue)
+    )
+  }
 
   if (event.page_url) {
     serverEvent.setRequestContext(

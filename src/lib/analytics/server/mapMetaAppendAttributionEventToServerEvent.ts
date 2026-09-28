@@ -1,6 +1,5 @@
 import 'server-only'
 
-import { CustomData } from 'facebook-nodejs-business-sdk'
 import {
   assertMetaAppendAttributionIsSendable,
   metaAppendAttributionEventSchema,
@@ -61,6 +60,7 @@ export function mapMetaAppendAttributionEventToServerEvent(
           event.attribution_data.attribution_value,
         touchpoint_ts: event.attribution_data.touchpoint_ts
       },
+      custom_data: event.custom_data,
       original_event_data: event.original_event_data,
       ...(event.opt_out === undefined ?
         {}
@@ -73,11 +73,6 @@ export function mapMetaAppendAttributionEventToServerEvent(
     .setEventTime(event.event_time)
     .setEventId(event.event_id)
     .setActionSource(event.action_source)
-    .setCustomData(
-      new CustomData().setCurrency(
-        event.custom_data.currency
-      )
-    )
     .setUserData(userData)
 
   if (event.action_source === 'website') {

@@ -65,7 +65,7 @@ const metaJsonValueSchema: z.ZodType<MetaJsonValue> = z.lazy(
     ])
 )
 
-const metaCommerceContentSchema = z.strictObject({
+export const metaCommerceContentSchema = z.strictObject({
   brand: metaNonEmptyStringSchema.optional(),
   category: metaNonEmptyStringSchema.optional(),
   id: metaIdentifierSchema,
@@ -74,7 +74,7 @@ const metaCommerceContentSchema = z.strictObject({
   title: metaNonEmptyStringSchema.optional()
 })
 
-const metaCustomDataSchema = z
+export const metaCustomDataSchema = z
   .object({
     content_ids: z
       .array(metaIdentifierSchema)

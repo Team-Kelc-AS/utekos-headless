@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { metaParameterBuilderUserDataSchema } from './metaParameterBuilderUserData'
 
 export const SHOPIFY_CHECKOUT_OBSERVATION_CONTRACT =
   'utekos.shopify.checkout_observation' as const
@@ -135,6 +136,8 @@ const metaObservationShape = {
   }),
   commerce: commerceSchema,
   customerMatch: metaCustomerMatchSchema,
+  metaParameterBuilderMatch:
+    metaParameterBuilderUserDataSchema.optional(),
   privacy: metaPrivacySchema
 }
 

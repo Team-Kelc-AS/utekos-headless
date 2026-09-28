@@ -4573,7 +4573,8 @@
       "prerequisites": [
         "submission_id",
         "form_id",
-        "lead classification without PII"
+        "lead classification without PII",
+        "approved versioned monetary-value policy"
       ],
       "deduplication": {
         "eventId": "submission_id",
@@ -4630,9 +4631,7 @@
               "logicalRequiredParameters": [
                 "event_id",
                 "event_time",
-                "client_id",
-                "currency",
-                "value"
+                "client_id"
               ]
             }
           },
@@ -4646,9 +4645,7 @@
               "logicalRequiredParameters": [
                 "event_id",
                 "event_time",
-                "client_id",
-                "currency",
-                "value"
+                "client_id"
               ]
             }
           }

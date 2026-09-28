@@ -69,6 +69,10 @@ export function checkoutProgressCanonicalEnvelope(
     observation.schemaVersion === 3 ?
       observation.customerMatch
     : undefined
+  const metaParameterBuilderMatch =
+    observation.schemaVersion === 3 ?
+      observation.metaParameterBuilderMatch
+    : undefined
   const customerMatch =
     marketingGranted ?
       { ...beginCheckout.user_data, ...checkoutCustomerMatch }
@@ -114,6 +118,17 @@ export function checkoutProgressCanonicalEnvelope(
     : {}),
     ...(customerMatch && Object.keys(customerMatch).length > 0 ?
       { user_data: customerMatch }
+    : {}),
+    ...((
+      marketingGranted &&
+      metaParameterBuilderMatch &&
+      Object.keys(metaParameterBuilderMatch).length > 0
+    ) ?
+      {
+        meta_parameter_builder: {
+          user_data: metaParameterBuilderMatch
+        }
+      }
     : {}),
     ...(marketingGranted && beginCheckout.client_ip_address ?
       { client_ip_address: beginCheckout.client_ip_address }

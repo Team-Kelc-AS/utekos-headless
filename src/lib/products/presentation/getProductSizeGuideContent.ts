@@ -3,9 +3,9 @@ import {
   utekosData
 } from '@/app/handlehjelp/storrelsesguide/utils/data'
 import {
-  TECH_DOWN_PUBLIC_SIZES,
   TECH_DOWN_PUBLIC_SIZE_DEFINITIONS,
-  TECH_DOWN_MEASUREMENT_ROWS
+  TECH_DOWN_MEASUREMENT_COLUMNS,
+  TECH_DOWN_SIZE_ROWS
 } from '../techDownSizes'
 import { utekosSizeCards } from '@/app/handlehjelp/storrelsesguide/utils/utekosSizeCards'
 import type { ProductSizeGuideFamily } from './resolveProductSizeGuideFamily'
@@ -28,6 +28,7 @@ export type ProductSizeGuideContent = {
   description: string
   tableCaption: string
   tableAriaLabel: string
+  rowHeader: string
   columns: readonly string[]
   rows: readonly ProductSizeGuideMeasurementRow[]
   sizeTips: readonly ProductSizeGuideSizeTip[]
@@ -84,6 +85,7 @@ export function getProductSizeGuideContent(
         'Sammenlign målene med et lignende plagg du allerede har. Alle mål er oppgitt i centimeter.',
       tableCaption: 'Mål for Comfyrobe-størrelser',
       tableAriaLabel: 'Måletabell for Comfyrobe-størrelser',
+      rowHeader: 'Måling',
       columns: ['XS', 'M/L', 'XL'],
       rows: mapRows(comfyrobeData, ['xs', 'ml', 'lxl']),
       sizeTips: comfyrobeSizeTips
@@ -98,8 +100,14 @@ export function getProductSizeGuideContent(
         'Finn nøyaktig TechDown™-størrelse med høydeguider, måletips og måletabell.',
       tableCaption: 'Mål for TechDown-størrelser',
       tableAriaLabel: 'Måletabell for TechDown-størrelser',
-      columns: TECH_DOWN_PUBLIC_SIZES,
-      rows: TECH_DOWN_MEASUREMENT_ROWS,
+      rowHeader: 'Størrelse',
+      columns: TECH_DOWN_MEASUREMENT_COLUMNS.map(
+        column => column.label
+      ),
+      rows: TECH_DOWN_SIZE_ROWS.map(row => ({
+        measurement: row.size,
+        values: row.values
+      })),
       sizeTips: TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(card => ({
         size: card.size,
         heading: `Velg ${card.size} hvis...`,
@@ -117,6 +125,7 @@ export function getProductSizeGuideContent(
     tableCaption: 'Mål for Utekos Dun og Mikrofiber',
     tableAriaLabel:
       'Måletabell for Utekos Dun og Mikrofiber størrelser',
+    rowHeader: 'Måling',
     columns: ['Medium', 'Large'],
     rows: mapRows(utekosData, ['m', 'l']),
     sizeTips: utekosSizeCards.map(card => ({

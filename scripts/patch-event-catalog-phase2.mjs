@@ -220,7 +220,6 @@ const eventConfigs = {
   generate_lead: {
     lifecycle: 'active',
     providers: `activeEventProviders('generate_lead', {
-      googleRequired: ['currency', 'value'],
       meta: { eventName: 'Lead' },
       microsoft: { eventName: 'generate_lead' }
     })`

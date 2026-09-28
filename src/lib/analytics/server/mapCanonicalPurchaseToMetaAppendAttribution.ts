@@ -2,11 +2,13 @@ import 'server-only'
 
 import {
   META_APPEND_ATTRIBUTION_MAX_DELAY_SECONDS,
+  META_APPEND_CLICK_ATTRIBUTION_EVENT_NAME,
   getObservedMetaFbcCreationTimestamp,
-  metaAppendAttributionEventSchema,
-  type MetaAppendAttributionEvent
+  metaAppendAttributionEventSchema
 } from '../metaAppendAttributionContract'
 import type { CanonicalPurchase } from '../purchaseEvent'
+import { ExactMetaServerEvent } from './ExactMetaServerEvent'
+import { mapCanonicalPurchaseToMeta } from './mapCanonicalPurchaseToMeta'
 
 export const META_LAST_PAID_CLICK_WINDOW_SECONDS =
   7 * 24 * 60 * 60
@@ -23,7 +25,7 @@ function unixSeconds(value: string) {
 export function mapCanonicalPurchaseToMetaAppendAttribution(
   event: CanonicalPurchase,
   nowUnixSeconds = Math.floor(Date.now() / 1000)
-): MetaAppendAttributionEvent | undefined {
+): ExactMetaServerEvent | undefined {
   if (event.consent.marketing !== 'granted') return undefined
   if (event.campaign?.source !== 'meta') return undefined
   if (!event.campaign.ad_id || !/^\d+$/u.test(event.campaign.ad_id)) {
@@ -56,7 +58,10 @@ export function mapCanonicalPurchaseToMetaAppendAttribution(
     return undefined
   }
 
-  return metaAppendAttributionEventSchema.parse({
+  const originalEvent = mapCanonicalPurchaseToMeta(event)
+  const originalPayload =
+    originalEvent.normalize() as Record<string, unknown>
+  const appendEvent = metaAppendAttributionEventSchema.parse({
     action_source: 'website',
     attribution_data: {
       ad_id: event.campaign.ad_id,
@@ -64,13 +69,14 @@ export function mapCanonicalPurchaseToMetaAppendAttribution(
       attribution_value: event.custom_data.value,
       touchpoint_ts: touchpointTime
     },
-    custom_data: { currency: event.custom_data.currency },
+    custom_data: originalPayload.custom_data,
     event_id: `${event.event_id}:${META_LAST_PAID_CLICK_MODEL_VERSION}`,
-    event_name: 'AppendAttribution',
+    event_name: META_APPEND_CLICK_ATTRIBUTION_EVENT_NAME,
     event_source_url: event.page_url,
     event_time: nowUnixSeconds,
     marketing_consent: 'granted',
     original_event_data: {
+      event_id: event.event_id,
       event_name: 'Purchase',
       event_time: purchaseTime,
       order_id: event.custom_data.transaction_id
@@ -99,6 +105,19 @@ export function mapCanonicalPurchaseToMetaAppendAttribution(
       ...(event.user_data?.phone_sha256 ?
         { phone_sha256: event.user_data.phone_sha256 }
       : {})
+    }
+  })
+
+  return new ExactMetaServerEvent({
+    basePayload: {
+      ...originalPayload,
+      event_id: appendEvent.event_id,
+      event_name: appendEvent.event_name,
+      event_time: appendEvent.event_time
+    },
+    topLevel: {
+      attribution_data: appendEvent.attribution_data,
+      original_event_data: appendEvent.original_event_data
     }
   })
 }

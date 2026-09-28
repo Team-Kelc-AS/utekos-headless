@@ -378,6 +378,9 @@ export function ProductCard({
           <VippsProductExpressCheckout
             handle={product.handle}
             variantId={selectedVariant.id}
+            productTitle={product.title}
+            selectedOptions={selectedVariant.selectedOptions}
+            price={price}
             disabled={isCartBusy}
           />
         : <ProductCardFooter

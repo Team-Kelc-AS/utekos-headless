@@ -13,7 +13,7 @@ DOTENV_CONFIG_PATH=.env.local pnpm exec tsx -r dotenv/config scripts/meta/audit-
 DOTENV_CONFIG_PATH=.env.local pnpm exec tsx -r dotenv/config scripts/meta/persist-audience-registry.ts --file=<private-registry.json>
 DOTENV_CONFIG_PATH=.env.local pnpm exec tsx -r dotenv/config scripts/meta/persist-audience-registry.ts --file=<private-registry.json> --apply
 pnpm exec tsx scripts/meta/prepare-audience-review.ts <private-registry.json>
-pnpm exec tsx --test src/lib/meta-audiences/*.test.ts supabase/migrations/meta_audience_registry.test.ts
+pnpm exec tsx --test tests/unit/lib/meta-audiences/*.test.ts supabase/migrations/meta_audience_registry.test.ts
 ```
 
 `audit-audiences` reads the eight reviewed partitions under `~/Lister`, reads current Shopify profiles in memory, and reads Meta audience/adset/rule metadata with pagination. Generated reports go to a new private directory under `Lister/Meta-audience-governance`. No customer rows are emitted, persisted in the repository, or uploaded to Meta. Phone support is deliberately limited to ordinary Norwegian eight-digit national numbers beginning 2–9; other formats are quarantined, not repaired or declared rejected by Meta. E-mail matching is exact after trim/lowercase. Names and postcodes are never automatic identity keys.

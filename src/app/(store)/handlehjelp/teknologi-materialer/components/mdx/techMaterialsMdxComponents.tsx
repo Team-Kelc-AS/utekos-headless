@@ -6,7 +6,9 @@ import { TechMaterialsProductLine } from '../TechMaterialsProductLine'
 
 type HeadingPermalinkSize = 'comfortable' | 'compact'
 
-function headingPermalinkSizeClassName(size: HeadingPermalinkSize) {
+function headingPermalinkSizeClassName(
+  size: HeadingPermalinkSize
+) {
   switch (size) {
     case 'comfortable':
       return '[&_a]:min-h-11 [&_a]:min-w-11'
@@ -14,7 +16,9 @@ function headingPermalinkSizeClassName(size: HeadingPermalinkSize) {
       return '[&_a]:min-h-6 [&_a]:min-w-6'
     default: {
       const exhaustive: never = size
-      throw new Error(`Ukjent hopplenke-størrelse: ${exhaustive}`)
+      throw new Error(
+        `Ukjent hopplenke-størrelse: ${exhaustive}`
+      )
     }
   }
 }
@@ -36,22 +40,15 @@ function TechMaterialsH2({
   id,
   ...props
 }: ComponentProps<'h2'>) {
-  const isTocHeading = id === 'innhold'
-
   return (
     <h2
       id={id}
       className={headingPermalinkClassName(
         'comfortable',
-        isTocHeading ?
-          cn(
-            'font-sans font-semibold text-sm tracking-[0.14em] text-foreground/80 uppercase',
-            className
-          )
-        : cn(
-            'mt-12 font-sans font-semibold text-3xl tracking-tight text-foreground first:mt-0 md:text-4xl',
-            className
-          )
+        cn(
+          'mt-12 font-sans text-3xl font-extrabold tracking-tight text-foreground first:mt-0 md:text-4xl',
+          className
+        )
       )}
       {...props}
     >
@@ -72,7 +69,7 @@ function TechMaterialsH3({
       className={headingPermalinkClassName(
         'comfortable',
         cn(
-          'mt-8 font-sans font-semibold text-2xl leading-tight tracking-tight text-foreground',
+          'mt-8 font-sans text-2xl leading-tight font-extrabold tracking-tight text-foreground',
           className
         )
       )}
@@ -95,7 +92,7 @@ function TechMaterialsH4({
       className={headingPermalinkClassName(
         'compact',
         cn(
-          'mt-8 font-sans font-semibold text-xl leading-tight tracking-tight text-foreground',
+          'mt-8 font-sans text-xl leading-tight font-extrabold tracking-tight text-foreground',
           className
         )
       )}
@@ -114,7 +111,7 @@ function TechMaterialsParagraph({
   return (
     <p
       className={cn(
-        'mt-0 max-w-[65ch] font-sans text-base leading-relaxed text-foreground',
+        'mt-0 max-w-[65ch] font-sans text-[1.0625rem] leading-[1.7] font-medium text-foreground md:text-lg',
         className
       )}
       {...props}
@@ -151,7 +148,10 @@ function TechMaterialsTableHead({
 }: ComponentProps<'thead'>) {
   return (
     <thead
-      className={cn('border-b border-foreground/12 bg-jungle', className)}
+      className={cn(
+        'border-b border-foreground/12 bg-jungle',
+        className
+      )}
       {...props}
     >
       {children}
@@ -203,7 +203,7 @@ function TechMaterialsBlockquote({
   return (
     <blockquote
       className={cn(
-        'my-8 bg-jungle px-5 py-4 font-sans text-lg leading-relaxed text-foreground [&_p]:mt-0 [&_p]:max-w-none',
+        'my-8 bg-jungle px-6 py-5 font-sans text-lg leading-[1.7] text-foreground md:px-8 md:py-6 md:text-xl [&_p]:mt-0 [&_p]:max-w-none',
         className
       )}
       {...props}
@@ -221,7 +221,7 @@ function TechMaterialsUnorderedList({
   return (
     <ul
       className={cn(
-        'my-5 list-disc space-y-2 pl-5 font-sans marker:text-primary',
+        'my-5 list-disc space-y-2 pl-5 font-sans text-[1.0625rem] marker:text-primary md:text-lg',
         className
       )}
       {...props}
@@ -238,7 +238,10 @@ function TechMaterialsListItem({
 }: ComponentProps<'li'>) {
   return (
     <li
-      className={cn('max-w-[65ch] leading-relaxed text-foreground', className)}
+      className={cn(
+        'max-w-[65ch] leading-relaxed text-foreground',
+        className
+      )}
       {...props}
     >
       {children}
@@ -274,7 +277,7 @@ function TechMaterialsFigcaption({
   return (
     <figcaption
       className={cn(
-        'mb-3 font-sans font-semibold text-sm tracking-wide text-foreground/75',
+        'mb-3 font-sans text-sm font-semibold tracking-wide text-foreground/75',
         className
       )}
       {...props}

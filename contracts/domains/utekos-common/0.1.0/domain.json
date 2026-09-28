@@ -102,6 +102,93 @@
               "existing_customers"
             ]
           },
+          "meta_parameter_builder": {
+            "type": "object",
+            "properties": {
+              "user_data": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "minItems": 1,
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                    }
+                  },
+                  "country": {
+                    "minItems": 1,
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                    }
+                  },
+                  "email": {
+                    "minItems": 1,
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                    }
+                  },
+                  "first_name": {
+                    "minItems": 1,
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                    }
+                  },
+                  "last_name": {
+                    "minItems": 1,
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                    }
+                  },
+                  "phone": {
+                    "minItems": 1,
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                    }
+                  },
+                  "postal_code": {
+                    "minItems": 1,
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                    }
+                  },
+                  "state": {
+                    "minItems": 1,
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "user_data"
+            ],
+            "additionalProperties": false
+          },
           "experiment": {
             "type": "object",
             "properties": {
@@ -1216,6 +1303,93 @@
             ]
           }
         },
+        "additionalProperties": false
+      },
+      "MetaParameterBuilderContext": {
+        "type": "object",
+        "properties": {
+          "user_data": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                }
+              },
+              "country": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                }
+              },
+              "email": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                }
+              },
+              "first_name": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                }
+              },
+              "last_name": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                }
+              },
+              "phone": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                }
+              },
+              "postal_code": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                }
+              },
+              "state": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}\\.[A-Za-z0-9_-]{8}$"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "user_data"
+        ],
         "additionalProperties": false
       },
       "PageUrl": {

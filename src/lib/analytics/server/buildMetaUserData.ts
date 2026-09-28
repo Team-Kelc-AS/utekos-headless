@@ -14,6 +14,7 @@ type MetaUserDataEvent = Pick<
   | 'event_device_info'
   | 'external_id'
   | 'location'
+  | 'meta_parameter_builder'
   | 'user_data'
 >
 
@@ -30,15 +31,33 @@ function hashExternalId(value: string) {
 
 export function buildMetaUserData(event: MetaUserDataEvent) {
   const userData = new UserData()
-  const emailHashes = event.user_data?.email_sha256
-  const firstNameHashes = event.user_data?.first_name_sha256
-  const lastNameHashes = event.user_data?.last_name_sha256
+  const parameterBuilderUserData =
+    event.meta_parameter_builder?.user_data
+  const emailHashes =
+    parameterBuilderUserData?.email ??
+    event.user_data?.email_sha256
+  const firstNameHashes =
+    parameterBuilderUserData?.first_name ??
+    event.user_data?.first_name_sha256
+  const lastNameHashes =
+    parameterBuilderUserData?.last_name ??
+    event.user_data?.last_name_sha256
   const facebookLoginId = event.user_data?.facebook_login_id
-  const phoneHashes = event.user_data?.phone_sha256
-  const cityHashes = event.user_data?.city_sha256
-  const stateHashes = event.user_data?.state_sha256
-  const postalCodeHashes = event.user_data?.postal_code_sha256
-  const countryHashes = event.user_data?.country_sha256
+  const phoneHashes =
+    parameterBuilderUserData?.phone ??
+    event.user_data?.phone_sha256
+  const cityHashes =
+    parameterBuilderUserData?.city ??
+    event.user_data?.city_sha256
+  const stateHashes =
+    parameterBuilderUserData?.state ??
+    event.user_data?.state_sha256
+  const postalCodeHashes =
+    parameterBuilderUserData?.postal_code ??
+    event.user_data?.postal_code_sha256
+  const countryHashes =
+    parameterBuilderUserData?.country ??
+    event.user_data?.country_sha256
   const externalId =
     event.external_id ?
       hashExternalId(event.external_id)

@@ -228,6 +228,10 @@ export type RecordAcceptedGenerateLeadInput = {
   pageViewId?: string
   referrerUrl?: string
   journeyId?: string
+  monetaryValue: {
+    currency: string
+    value: number
+  }
   phone?: string
   requestContext: CanonicalGenerateLeadRequestContext
   submissionId: string
@@ -336,8 +340,7 @@ export async function recordAcceptedGenerateLead(
       submission_id: input.submissionId,
       form_id: input.formId,
       lead_type: input.leadType,
-      currency: 'NOK',
-      value: 0
+      ...input.monetaryValue
     },
     environment: resolveCanonicalEnvironment(),
     eventId: input.submissionId,

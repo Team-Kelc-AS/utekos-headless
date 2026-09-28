@@ -2063,7 +2063,8 @@ const eventCatalogBase = {
       prerequisites: [
         'submission_id',
         'form_id',
-        'lead classification without PII'
+        'lead classification without PII',
+        'approved versioned monetary-value policy'
       ]
     },
     dedupe: dedupe(
@@ -2073,7 +2074,6 @@ const eventCatalogBase = {
     ),
     consent: leadConsent,
     providers: activeEventProviders('generate_lead', {
-      googleRequired: ['currency', 'value'],
       meta: { eventName: 'Lead' },
       microsoft: { eventName: 'generate_lead' },
       pinterest: { eventName: 'lead' }

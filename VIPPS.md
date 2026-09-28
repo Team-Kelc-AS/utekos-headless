@@ -21,7 +21,7 @@ Neither a browser redirect, SDK success event, webhook payload alone, nor HTTP 2
 ## Ownership and entry points
 
 - `src/components/ProductCard/ProductCard.tsx`: replaces the shared available-product add-to-cart CTA when the public feature flag is enabled. Sold-out Utekos Dun cards use a single waitlist CTA; Klarna remains available only for in-stock products.
-- `src/components/vipps`: official Vipps Widget SDK and return-page polling. The SDK owns the button, desktop dialog and mobile app-switch; no Utekos confirmation dialog is shown. Buys one selected variant; it does not include other cart items.
+- `src/components/vipps`: a merchant-controlled, Vipps-styled purchase check shows the selected product, color, size and amount before handoff. It does not collect a phone number or payment data. The official Widget SDK still owns the payment button, desktop phone-number dialog and mobile app-switch. The flow buys one selected variant; it does not include other cart items.
 - `POST /api/vipps/checkout`: same-origin, rate-limited server checkout creation. Price and availability come from Shopify, not browser-supplied totals.
 - `POST /api/vipps/webhook`: signed raw-body verification, configured MSN and reference-prefix isolation, authoritative reconciliation.
 - `POST /api/vipps/status`: same-origin, signed-capability reconciliation for the return page. Returns no customer profile or address.
@@ -76,7 +76,7 @@ Presence check during this work found the new test-Shopify, origin, return-secre
 
 ```sh
 source "$HOME/.nvm/nvm.sh" && nvm use --silent
-NODE_OPTIONS='--conditions=react-server' corepack pnpm exec tsx --test src/lib/vipps/*.test.ts
+NODE_OPTIONS='--conditions=react-server' corepack pnpm exec tsx --test tests/unit/lib/vipps/*.test.ts
 corepack pnpm exec tsc --noEmit --incremental false
 corepack pnpm exec eslint src/lib/vipps src/components/vipps src/app/api/vipps 'src/app/(store)/vipps' src/components/ProductCard/ProductCard.tsx src/lib/security/buildReportOnlyCsp.ts
 ```
@@ -94,4 +94,4 @@ The tests use synthetic fetch responses, not provider writes. Covered: reservati
 - [Shopify DraftOrderInput, pinned version](https://shopify.dev/docs/api/admin-graphql/2026-04/input-objects/DraftOrderInput)
 - Official Shopify MCP schema/operation validator; installed Vipps Developer skills for ePayment, payment lifecycle, Widget SDK, webhooks, access tokens and test/go-live.
 
-Utekos brand rules were kept for the surrounding confirmation/return UI; the payment button itself is rendered by Vipps' official SDK. No product images or logos were altered.
+The purchase check uses the supplied Vipps Display and Vipps Text web fonts, the approved Vipps palette and the unmodified 300 × 300 payment-integration illustration. The official payment button is rendered by Vipps' Widget SDK; the return UI remains owned by Utekos. The two supplied speech-bubble SVGs are not used because they contain visible placeholder copy. No product images or logos were altered.

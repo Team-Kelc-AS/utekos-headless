@@ -373,7 +373,7 @@
       var leadValue =
         finiteNumber(customData.value) ? customData.value : null
 
-      if (leadCurrency && leadValue !== null) {
+      if (leadCurrency && leadValue !== null && leadValue > 0) {
         lead.currency = leadCurrency
         lead.value = leadValue
       }

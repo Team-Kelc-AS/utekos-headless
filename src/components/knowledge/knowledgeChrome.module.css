@@ -232,6 +232,11 @@
   font-size: 1.05rem;
 }
 
+/* Keep the learning-card heading inside its card; article-body H2 spacing is not applicable here. */
+.learnings.learnings > h2:first-child {
+  margin-top: 0;
+}
+
 .learningsList {
   margin: 0;
   padding-left: 1.3rem;

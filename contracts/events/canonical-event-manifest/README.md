@@ -147,8 +147,8 @@ After normative source changes:
 pnpm contracts:canonical-manifest:generate
 pnpm contracts:canonical-manifest:check
 pnpm contracts:canonical-manifest:test
-pnpm exec tsx --test src/lib/canonical-control/control.test.ts
-pnpm exec tsx --test src/lib/canonical-control/strictControl.test.ts scripts/contracts/canonicalPilot.test.ts
+pnpm exec tsx --test tests/unit/lib/canonical-control/control.test.ts
+pnpm exec tsx --test tests/unit/lib/canonical-control/strictControl.test.ts scripts/contracts/canonicalPilot.test.ts
 ```
 
 Release additionally requires Next type generation, app and edge

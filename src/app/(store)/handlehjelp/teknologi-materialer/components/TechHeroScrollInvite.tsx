@@ -1,10 +1,11 @@
 import { ChevronDown } from 'lucide-react'
 import { TECH_MODES_SECTION_ID } from '@/app/handlehjelp/teknologi-materialer/constants'
 import styles from './TechHero.module.css'
+import Link from 'next/link'
 
 export function TechHeroScrollInvite() {
   return (
-    <a
+    <Link
       href={`#${TECH_MODES_SECTION_ID}`}
       className={styles.invite}
       aria-label='Fortsett nedover til modusene'
@@ -17,6 +18,6 @@ export function TechHeroScrollInvite() {
           aria-hidden
         />
       </span>
-    </a>
+    </Link>
   )
 }

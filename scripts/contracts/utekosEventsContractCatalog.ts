@@ -294,7 +294,9 @@ export const utekosEventsContractCatalog = [
       custom_data: {
         submission_id: 'submission-1',
         form_id: 'contact',
-        lead_type: 'contact'
+        lead_type: 'contact',
+        currency: 'NOK',
+        value: 396.61
       }
     },
     routeSegment: 'generate-lead',

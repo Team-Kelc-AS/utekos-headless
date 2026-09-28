@@ -2,8 +2,8 @@
 
 import { Ruler } from 'lucide-react'
 import {
-  TECH_DOWN_MEASUREMENT_ROWS,
-  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS
+  TECH_DOWN_MEASUREMENT_COLUMNS,
+  TECH_DOWN_SIZE_ROWS
 } from '@/lib/products/techDownSizes'
 import { Button } from '@/components/ui/button'
 import {
@@ -44,7 +44,7 @@ export function OsCaravanSizeGuideDialog({
             type='button'
             size='lg'
             variant='commerce-primary'
-            data-track='Lead'
+            data-track='OsCaravanSizeGuideOpen'
             data-track-data={JSON.stringify(trackingData)}
             className={triggerClassName}
           />
@@ -111,33 +111,31 @@ export function OsCaravanSizeGuideDialog({
                 <TableRow className='hover:bg-transparent'>
                   <TableHead
                     scope='col'
-                    className='h-12 min-w-44 px-4 font-sans font-semibold text-foreground'
+                    className='h-12 px-4 font-sans font-semibold text-foreground'
                   >
-                    Måling
+                    Størrelse
                   </TableHead>
-                  {TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(
-                    size => (
-                      <TableHead
-                        key={size.size}
-                        scope='col'
-                        className='h-12 px-3 text-right font-sans font-semibold text-foreground'
-                      >
-                        {size.size}
-                      </TableHead>
-                    )
-                  )}
+                  {TECH_DOWN_MEASUREMENT_COLUMNS.map(column => (
+                    <TableHead
+                      key={column.key}
+                      scope='col'
+                      className='h-12 px-3 text-center font-sans font-semibold text-foreground'
+                    >
+                      {column.label}
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {TECH_DOWN_MEASUREMENT_ROWS.map(row => (
-                  <TableRow key={row.measurement}>
+                {TECH_DOWN_SIZE_ROWS.map(row => (
+                  <TableRow key={row.size}>
                     <TableCell className='px-4 py-3 font-sans font-semibold whitespace-normal'>
-                      {row.measurement}
+                      {row.size}
                     </TableCell>
                     {row.values.map((value, index) => (
                       <TableCell
-                        key={`${row.measurement}-${TECH_DOWN_PUBLIC_SIZE_DEFINITIONS[index]?.size}`}
-                        className='px-3 py-3 text-right font-sans font-semibold tabular-nums'
+                        key={`${row.size}-${TECH_DOWN_MEASUREMENT_COLUMNS[index]?.key}`}
+                        className='px-3 py-3 text-center font-sans font-semibold tabular-nums'
                       >
                         {value}
                       </TableCell>

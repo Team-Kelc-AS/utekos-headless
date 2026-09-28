@@ -1,5 +1,6 @@
 import * as z from '@/lib/validation/zodMini'
 import { metaAudienceSchema } from './metaAudience'
+import { metaParameterBuilderContextSchema } from './metaParameterBuilderUserData'
 import {
   canonicalClickIdsSchema,
   canonicalSignalAuditSchema
@@ -97,6 +98,9 @@ export const canonicalEventEnvelopeSchema = z.strictObject({
   ]),
   consent: consentSnapshotSchema,
   meta_audience: z.optional(metaAudienceSchema),
+  meta_parameter_builder: z.optional(
+    metaParameterBuilderContextSchema
+  ),
   experiment: z.optional(canonicalExperimentAssignmentSchema),
   user_data: z.optional(canonicalUserDataSchema),
   click_id: z.optional(canonicalClickIdsSchema),

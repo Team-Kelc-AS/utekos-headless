@@ -14,11 +14,8 @@ export const canonicalGenerateLeadCustomDataSchema =
     submission_id: z.string().min(1),
     form_id: z.string().min(1),
     lead_type: z.string().min(1).optional(),
-    currency: z
-      .string()
-      .regex(/^[A-Z]{3}$/)
-      .optional(),
-    value: z.number().nonnegative().optional()
+    currency: z.string().regex(/^[A-Z]{3}$/),
+    value: z.number().positive()
   })
 
 export type CanonicalGenerateLeadCustomData = z.infer<

@@ -169,7 +169,7 @@ export function TechdownContent() {
             Skreddersy varmen
           </p>
           <h2 id='outcomes-heading'>
-            Optimaliser og forleng
+            Juster, form og nyt.
           </h2>
           <p>
             Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Det værbestandige Luméa™-skallet og spesialutviklet CloudWeave™-isolasjon forenes i et intuitivt 3-i-1-design, skapt for å forlenge de gode stundene utendørs. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen, mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt.
@@ -179,9 +179,11 @@ export function TechdownContent() {
           <li>
             <Sofa aria-hidden='true' />
             <div>
-              <strong>Bli sittende ute lenger</strong>
+              <strong>43 ganger bedre enn dun</strong>
               <span>
-               Lukk bunnen og sitt deilig innpakket, samtidig som du har hendene fri til kaffekoppen eller en god bok.
+                Målinger av hydroskopiske egenskaper ved høy relativ
+                luftfuktighet dokumenterer at CloudWeave™ har over 43 ganger
+                bedre fuktmotstand enn tradisjonell dun.
               </span>
             </div>
           </li>
