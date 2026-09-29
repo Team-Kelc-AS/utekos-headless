@@ -52,7 +52,7 @@ export function OsCaravanSizeGuideDialog({
         }
       >
         <span className='truncate'>Størrelsesguide</span>
-        <Ruler className='size-[18px]' aria-hidden />
+        <Ruler className='size-4.5' aria-hidden />
       </DialogTrigger>
 
       <DialogContent className='inset-0 top-0 left-0 flex h-svh max-h-svh max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none bg-background p-0 text-foreground ring-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:h-auto sm:max-h-[calc(100svh-3rem)] sm:max-w-3xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:ring-1'>
