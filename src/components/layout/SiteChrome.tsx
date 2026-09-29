@@ -16,8 +16,6 @@ import {
 } from '@/components/newsletter-modal/newsletterModalConfig'
 
 import { NavigationProgress } from './NavigationProgress'
-import { FacebookLoginPrompt } from '@/components/facebook-login/FacebookLoginPrompt'
-import type { FacebookLoginClientConfig } from '@/lib/facebook-login/facebookLoginConfig'
 
 const NewsletterSignupDialog = dynamic(
   () =>
@@ -38,11 +36,6 @@ const CustomerAssistantShell = dynamic(
 type SiteChromeProps = {
   assistantRolloutPercent: number
   children: React.ReactNode
-  facebookLoginEnabled: boolean
-  facebookLoginClientConfig:
-    | FacebookLoginClientConfig
-    | undefined
-  facebookLoginPreviewAllowed: boolean
   header: React.ReactNode
   footer: React.ReactNode
 }
@@ -105,9 +98,6 @@ function AssistantRolloutMount({
 export function SiteChrome({
   assistantRolloutPercent,
   children,
-  facebookLoginEnabled,
-  facebookLoginClientConfig,
-  facebookLoginPreviewAllowed,
   header,
   footer
 }: SiteChromeProps) {
@@ -131,12 +121,6 @@ export function SiteChrome({
       {showNewsletterModal ?
         <NewsletterSignupDialog />
       : null}
-
-      <FacebookLoginPrompt
-        enabled={facebookLoginEnabled}
-        clientConfig={facebookLoginClientConfig}
-        previewAllowed={facebookLoginPreviewAllowed}
-      />
 
       {header}
 

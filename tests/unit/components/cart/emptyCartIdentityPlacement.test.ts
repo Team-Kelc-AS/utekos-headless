@@ -16,8 +16,15 @@ const recommendations = readFileSync(
   ),
   'utf8'
 )
+const siteChrome = readFileSync(
+  new URL(
+    '../../../../src/components/layout/SiteChrome.tsx',
+    import.meta.url
+  ),
+  'utf8'
+)
 
-test('shows identity choices only through the empty-cart branch', () => {
+test('keeps provider choices in the cart and never mounts them globally', () => {
   assert.match(
     cartBody,
     /if \(isEmpty && !isPending\)[\s\S]*?<EmptyCartRecommendations \/>/u
@@ -27,20 +34,19 @@ test('shows identity choices only through the empty-cart branch', () => {
     recommendations,
     /import \{ EmptyCartIdentityChoices \}/u
   )
+  assert.match(recommendations, /<EmptyCartIdentityChoices \/>/u)
+  assert.doesNotMatch(siteChrome, /FacebookLoginPrompt/u)
+  assert.doesNotMatch(siteChrome, /EmptyCartIdentityChoices/u)
 })
 
-test('places identity choices after the offer and all other recommendations', () => {
+test('keeps the existing offer and product recommendations in place', () => {
   const comfyrobeIndex = recommendations.indexOf(
     '<EmptyCartComfyrobeKlarnaDeal />'
   )
   const productIndex = recommendations.indexOf(
     'otherProducts.map'
   )
-  const identityIndex = recommendations.indexOf(
-    '<EmptyCartIdentityChoices />'
-  )
 
   assert.ok(comfyrobeIndex >= 0)
   assert.ok(productIndex > comfyrobeIndex)
-  assert.ok(identityIndex > productIndex)
 })

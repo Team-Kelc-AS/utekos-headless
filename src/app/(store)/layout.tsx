@@ -24,11 +24,6 @@ import { GoogleTagManagerNoScript } from '@/components/analytics/GoogleTagManage
 import { CanonicalBrowserProviderBridges } from '@/components/analytics/CanonicalBrowserProviderBridges'
 import { WebVitals } from '@/components/analytics/WebVitals'
 import { MetaParameterBuilderInitializer } from '@/components/analytics/MetaParameterBuilderInitializer'
-import {
-  isFacebookLoginEnabled,
-  isFacebookLoginPreviewAllowed,
-  readFacebookLoginClientConfig
-} from '@/lib/facebook-login/facebookLoginConfig'
 
 export { siteMetadata as metadata } from '@/app/siteMetadata'
 
@@ -52,13 +47,6 @@ export default function RootLayout({
     process.env.SNAPCHAT_PIXEL_ENABLED === 'true'
   const snapchatPixelId =
     process.env.NEXT_PUBLIC_SNAPCHAT_PIXEL_ID?.trim()
-  const facebookLoginEnabled = isFacebookLoginEnabled(
-    process.env
-  )
-  const facebookLoginClientConfig =
-    readFacebookLoginClientConfig(process.env)
-  const facebookLoginPreviewAllowed =
-    isFacebookLoginPreviewAllowed(process.env)
   return (
     <html
       lang='no'
@@ -104,11 +92,6 @@ export default function RootLayout({
           <CartProviderLoader>
             <SiteChrome
               assistantRolloutPercent={assistantRolloutPercent}
-              facebookLoginEnabled={facebookLoginEnabled}
-              facebookLoginClientConfig={facebookLoginClientConfig}
-              facebookLoginPreviewAllowed={
-                facebookLoginPreviewAllowed
-              }
               header={<Header menu={mainMenu} />}
               footer={<Footer />}
             >
