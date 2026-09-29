@@ -33,6 +33,9 @@ const normalizeCartLine = (
     },
     merchandise: {
       id: node.merchandise.id,
+      ...(node.merchandise.sku ?
+        { sku: node.merchandise.sku }
+      : {}),
       title: node.merchandise.title,
       availableForSale: node.merchandise.availableForSale,
       price: normalizeStorefrontMoney(node.merchandise.price),

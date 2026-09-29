@@ -24,6 +24,17 @@ export const klarnaOrderLineSchema = z
       .number()
       .check(z.int(), z.gte(0), z.lte(200000000)),
     reference: z.optional(z.string().check(z.maxLength(255))),
+    product_url: z.optional(
+      z.string().check(z.url(), z.maxLength(1024))
+    ),
+    product_identifiers: z.optional(
+      z.object({
+        brand: z.optional(z.string().check(z.maxLength(70))),
+        category_path: z.optional(
+          z.string().check(z.maxLength(750))
+        )
+      })
+    ),
     type: z.optional(klarnaOrderLineTypeSchema),
     tax_rate: z.optional(
       z.number().check(z.int(), z.gte(0), z.lte(10000))

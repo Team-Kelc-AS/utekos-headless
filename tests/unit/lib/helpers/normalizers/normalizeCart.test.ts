@@ -34,6 +34,7 @@ test('normalizes Storefront cart data without replacing Utekos cart models', () 
             cost: { totalAmount: money },
             merchandise: {
               id: 'gid://shopify/ProductVariant/1',
+              sku: 'COMFYROBE-FJELLNATT-S',
               title: 'Medium',
               availableForSale: true,
               selectedOptions: [
@@ -55,6 +56,10 @@ test('normalizes Storefront cart data without replacing Utekos cart models', () 
   assert.equal(cart.cost.totalAmount.currencyCode, 'NOK')
   assert.equal(cart.id, 'gid://shopify/Cart/opaque')
   assert.equal(cart.checkoutUrl, '/api/cart/checkout')
+  assert.equal(
+    cart.lines[0]?.merchandise.sku,
+    'COMFYROBE-FJELLNATT-S'
+  )
   assert.deepEqual(cart.lines[0]?.merchandise.product, {
     id: 'gid://shopify/Product/1',
     title: 'Utekos Comfyrobe',

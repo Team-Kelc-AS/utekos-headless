@@ -11,8 +11,10 @@ const KLARNA_ON_SITE_MESSAGING_SCRIPT_URL =
   'https://js.klarna.com/web-sdk/v1/klarna.js'
 
 export function KlarnaOnSiteMessagingScript({
+  onReady,
   strategy = 'afterInteractive'
 }: {
+  onReady?: () => void
   strategy?: 'afterInteractive' | 'lazyOnload'
 }) {
   const [config, setConfig] =
@@ -50,6 +52,7 @@ export function KlarnaOnSiteMessagingScript({
       data-locale='nb-NO'
       data-client-id={config.client_id}
       data-environment={config.environment}
+      {...(onReady ? { onReady } : {})}
       onError={(error: Error) => {
         console.error(
           'Klarna On-site Messaging WebSDK failed to load',

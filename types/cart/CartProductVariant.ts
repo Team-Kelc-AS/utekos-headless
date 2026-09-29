@@ -6,6 +6,7 @@ import type { CartProduct } from './CartProduct'
 
 export type CartProductVariant = {
   id: string
+  sku?: string
   title: string
   availableForSale: boolean
   price: Money

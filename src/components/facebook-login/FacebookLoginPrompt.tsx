@@ -39,6 +39,7 @@ function isExcludedPath(pathname: string | null) {
     '/api',
     '/customer/account/callback',
     '/design',
+    '/klarna/identity/callback',
     '/personvern'
   ].some(
     excluded =>

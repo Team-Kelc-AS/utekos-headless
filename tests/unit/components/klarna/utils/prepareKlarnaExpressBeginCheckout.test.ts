@@ -36,12 +36,15 @@ const minimalCart = {
       },
       merchandise: {
         id: 'gid://shopify/ProductVariant/1',
+        sku: 'TECHDOWN-TEST-1',
         title: 'Default Title',
         price: { amount: '2499.00', currencyCode: 'NOK' },
         product: {
           id: 'gid://shopify/Product/1',
           title: 'Utekos TechDown',
-          handle: 'utekos-techdown'
+          handle: 'utekos-techdown',
+          productType: 'Isolasjonsplagg',
+          vendor: 'Utekos'
         }
       }
     }
@@ -83,6 +86,19 @@ test('success reports begin_checkout once and matches cart id', async () => {
   assert.equal(result.shopifyCartId, cartId)
   assert.equal(result.orderPayload.merchant_reference1, cartId)
   assert.equal(result.orderPayload.order_amount, 249900)
+  assert.deepEqual(result.orderPayload.order_lines[0], {
+    name: 'Utekos TechDown',
+    quantity: 1,
+    unit_price: 249900,
+    total_amount: 249900,
+    type: 'physical',
+    reference: 'TECHDOWN-TEST-1',
+    product_url: 'https://utekos.no/produkter/utekos-techdown',
+    product_identifiers: {
+      brand: 'Utekos',
+      category_path: 'Isolasjonsplagg'
+    }
+  })
 })
 
 test('addLines failure skips begin_checkout and authorize inputs', async () => {

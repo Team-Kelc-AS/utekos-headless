@@ -29,6 +29,7 @@ const cart = /* GraphQL */ `
           merchandise {
             ... on ProductVariant {
               id
+              sku
               title
               image {
                 url

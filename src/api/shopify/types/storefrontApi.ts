@@ -153,7 +153,11 @@ export type StorefrontProductConnection = Pick<
 
 export type StorefrontCartProductVariant = Pick<
   HydrogenProductVariant,
-  'id' | 'title' | 'availableForSale' | 'selectedOptions'
+  | 'id'
+  | 'title'
+  | 'availableForSale'
+  | 'selectedOptions'
+  | 'sku'
 > & {
   price: StorefrontMoney
   compareAtPrice: StorefrontMoney | null

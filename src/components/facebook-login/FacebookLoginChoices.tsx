@@ -2,7 +2,7 @@
 
 import { Loader2 } from 'lucide-react'
 import type { RefObject } from 'react'
-import { Button } from '@/components/ui/button'
+import { KlarnaIdentityButton } from '@/components/klarna/components/KlarnaIdentityButton'
 
 export function FacebookLoginChoices({
   buttonWidth,
@@ -110,23 +110,18 @@ export function FacebookLoginChoices({
         </span>
       : null}
 
-      <Button
+      <KlarnaIdentityButton
+        width={buttonWidth}
+        onSignIn={onContinueWithoutFacebook}
+      />
+
+      <button
         type='button'
-        variant='utekos'
         onClick={onContinueWithoutFacebook}
-        aria-label='Fortsett til Utekos uten Facebook-innlogging'
-        className='h-10 w-full gap-3 rounded-sm border border-white/15 bg-night px-4 font-sans text-base leading-none text-white hover:bg-jungle-tone hover:opacity-100'
+        className='mx-auto min-h-11 px-4 font-sans font-medium text-sm text-white underline decoration-white/50 underline-offset-4 hover:decoration-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white'
       >
-        <span
-          aria-hidden='true'
-          className='flex size-6 shrink-0 items-center justify-center rounded-full bg-primary'
-        >
-          <span className="size-3.5 bg-white [mask-image:url('/IconWhite.svg')] [mask-size:contain] [mask-position:center] [mask-repeat:no-repeat]" />
-        </span>
-        <span className='font-sans font-semibold'>
-          Fortsett til Utekos
-        </span>
-      </Button>
+        Fortsett uten innlogging
+      </button>
     </aside>
   )
 }

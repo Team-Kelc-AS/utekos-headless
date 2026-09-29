@@ -12,7 +12,10 @@ import type {
 } from 'types/product/ProductPurchaseModel'
 
 type BuildLineInput = {
+  brand?: string | undefined
+  categoryPath?: string | undefined
   name: string
+  productUrl?: string
   quantity: number
   unitPriceAmount: string
   currencyCode: string
@@ -20,7 +23,10 @@ type BuildLineInput = {
 }
 
 function buildKlarnaOrderLine({
+  brand,
+  categoryPath,
   name,
+  productUrl,
   quantity,
   unitPriceAmount,
   currencyCode,
@@ -44,7 +50,16 @@ function buildKlarnaOrderLine({
     unit_price,
     total_amount,
     type: 'physical',
-    ...(reference ? { reference } : {})
+    ...(reference ? { reference } : {}),
+    ...(productUrl ? { product_url: productUrl } : {}),
+    ...(brand || categoryPath ?
+      {
+        product_identifiers: {
+          ...(brand ? { brand } : {}),
+          ...(categoryPath ? { category_path: categoryPath } : {})
+        }
+      }
+    : {})
   }
 }
 
@@ -72,11 +87,15 @@ export function buildKlarnaExpressOrderPayloadFromCart(
         : productTitle
 
       return buildKlarnaOrderLine({
+        brand: line.merchandise.product.vendor || undefined,
+        categoryPath:
+          line.merchandise.product.productType || undefined,
         name,
+        productUrl: `${getKlarnaSiteOrigin()}/produkter/${line.merchandise.product.handle}`,
         quantity: line.quantity,
         unitPriceAmount: line.merchandise.price.amount,
         currencyCode,
-        reference: line.merchandise.id
+        reference: line.merchandise.sku || line.merchandise.id
       })
     })
     .filter((line): line is KlarnaOrderLine => line !== null)
@@ -126,11 +145,14 @@ export function buildKlarnaExpressOrderPayloadFromProductLine({
     : product.title
 
   const orderLine = buildKlarnaOrderLine({
+    brand: product.vendor,
+    categoryPath: product.productType,
     name,
+    productUrl: `${getKlarnaSiteOrigin()}/produkter/${product.handle}`,
     quantity,
     unitPriceAmount: variant.price.amount,
     currencyCode,
-    reference: variant.id
+    reference: variant.sku || variant.id
   })
 
   if (!orderLine) {

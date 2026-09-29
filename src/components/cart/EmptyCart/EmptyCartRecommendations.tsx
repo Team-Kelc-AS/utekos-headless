@@ -7,12 +7,15 @@ import { recommendedProductsOptions } from '@/api/lib/products/cartSuggestionOpt
 
 export function EmptyCartRecommendations() {
   const { data: products } = useQuery(recommendedProductsOptions)
+  const otherProducts = products?.filter(
+    product => product.handle !== 'comfyrobe'
+  )
 
   return (
     <div className='w-full max-w-md text-left'>
       <EmptyCartComfyrobeKlarnaDeal />
 
-      {!products || products.length === 0 ?
+      {!otherProducts || otherProducts.length === 0 ?
         <div className='text-center text-muted-foreground'>
           <p className='text-base text-foreground'>
             Handlekurven din er tom
@@ -26,11 +29,11 @@ export function EmptyCartRecommendations() {
             Legg til for å starte din Utekos
           </h4>
           <div className='space-y-4'>
-            {products.map(product => (
+            {otherProducts.map(product => (
               <RecommendedItem
                 key={product.id}
                 product={product}
-                totalItemCount={products.length}
+                totalItemCount={otherProducts.length}
               />
             ))}
           </div>

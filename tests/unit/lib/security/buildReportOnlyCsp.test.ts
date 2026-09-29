@@ -121,6 +121,18 @@ test('permits the third-party scripts and frames observed during report-only rol
     csp,
     /connect-src[^;]*https:\/\/\*\.klarnaevt\.com/
   )
+  assert.match(
+    csp,
+    /connect-src[^;]*https:\/\/login\.klarna\.com/
+  )
+  assert.match(
+    csp,
+    /frame-src[^;]*https:\/\/login\.klarna\.com/
+  )
+  assert.doesNotMatch(
+    csp,
+    /script-src[^;]*https:\/\/login\.klarna\.com/
+  )
   assert.match(csp, /img-src[^;]*https:\/\/c\.bing\.com/)
   assert.match(
     csp,

@@ -16,6 +16,10 @@ const KLARNA_ORIGINS = [
   'https://*.klarnaevt.com'
 ] as const
 
+const KLARNA_IDENTITY_ORIGINS = [
+  'https://login.klarna.com'
+] as const
+
 const MICROSOFT_TRACKING_ORIGINS = [
   'https://bat.bing.com',
   'https://c.bing.com',
@@ -205,6 +209,7 @@ export function buildReportOnlyCsp(): string {
     "'self'",
     ...STOREFRONT_ORIGINS,
     ...KLARNA_ORIGINS,
+    ...KLARNA_IDENTITY_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...MICROSOFT_TRACKING_ORIGINS,
     ...META_PIXEL_SCRIPT_ORIGINS,
@@ -252,6 +257,7 @@ export function buildReportOnlyCsp(): string {
     'https://apitest.vipps.no',
     ...STOREFRONT_ORIGINS,
     ...KLARNA_ORIGINS,
+    ...KLARNA_IDENTITY_ORIGINS,
     ...TAG_GATEWAY_ORIGINS,
     ...META_PIXEL_FRAME_ORIGINS,
     ...PINTEREST_TAG_FRAME_ORIGINS,
