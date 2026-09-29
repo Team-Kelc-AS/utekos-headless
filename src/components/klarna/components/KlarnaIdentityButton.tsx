@@ -1,6 +1,7 @@
 'use client'
 
 import { Loader2 } from 'lucide-react'
+import type { CSSProperties } from 'react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { loadKlarnaPublicConfig } from '@/components/klarna/utils/loadKlarnaPublicConfig'
 import { loadKlarnaIdentitySdk } from '@/components/klarna/utils/loadKlarnaIdentitySdk'
@@ -22,12 +23,14 @@ const KLARNA_IDENTITY_SCOPES = [
   'profile:locale'
 ].join(' ')
 
+export const KLARNA_IDENTITY_BUTTON_THEME = 'default' as const
+
 export function KlarnaIdentityButton({
   onSignIn,
   width
 }: {
   onSignIn: () => void
-  width: number
+  width: CSSProperties['width']
 }) {
   const reactId = useId()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -71,7 +74,7 @@ export function KlarnaIdentityButton({
           redirectUri: `${window.location.origin}/klarna/identity/callback`,
           scope: KLARNA_IDENTITY_SCOPES,
           shape: 'default',
-          theme: 'outlined'
+          theme: KLARNA_IDENTITY_BUTTON_THEME
         })
         button.on('render', async () => {
           if (active) setStatus('ready')
@@ -90,31 +93,40 @@ export function KlarnaIdentityButton({
   }, [reactId])
 
   return (
-    <div
-      className='relative h-12 w-full overflow-hidden rounded-[4px]'
-      style={{ width }}
-    >
+    <div className='relative h-12 w-full' style={{ width }}>
       <div
         ref={containerRef}
-        id='klarna-identity-button-container'
         className={`h-12 w-full ${status === 'ready' ? 'visible' : 'invisible'}`}
         aria-busy={status === 'loading'}
       />
 
-      {status !== 'ready' ?
+      {status === 'loading' ?
         <div
           role='status'
-          className='absolute inset-0 flex h-12 items-center justify-center rounded-[4px] border border-[#0B051D] bg-[#F9F8F5] font-sans font-semibold text-base text-[#0B051D]'
+          aria-busy='true'
+          className='absolute inset-0 flex h-12 items-center justify-center rounded-[4px] bg-[#FFA8CD] text-black'
         >
-          {status === 'error' ?
-            'Klarna er ikke tilgjengelig'
-          : <>
-              <Loader2
-                aria-hidden='true'
-                className='mr-2 size-4 animate-spin'
-              />
-              Laster Klarna
-            </>}
+          {/* The original provider SVG is intentionally served unchanged. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src='/klarna_orig.svg'
+            alt=''
+            width={69}
+            height={30}
+            aria-hidden='true'
+          />
+          <Loader2
+            aria-hidden='true'
+            className='ml-2 size-4 animate-spin'
+          />
+          <span className='sr-only'>Laster Klarna</span>
+        </div>
+      : status === 'error' ?
+        <div
+          role='status'
+          className='absolute inset-0 flex h-12 items-center justify-center rounded-[4px] border border-[#F0EEE9]/10 bg-[#012622] px-4 font-sans text-base font-medium text-[#F0EEE9]'
+        >
+          Klarna er ikke tilgjengelig
         </div>
       : null}
     </div>

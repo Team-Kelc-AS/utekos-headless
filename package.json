@@ -166,6 +166,7 @@
     "next-themes": "^0.4.6",
     "npm": "^11.17.0",
     "openai": "^6.45.0",
+    "openid-client": "^6.8.8",
     "pagespeed-mcp-server": "^2.0.1",
     "playwright": "^1.61.0",
     "postcss-preset-env": "^11.3.0",

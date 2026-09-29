@@ -30,9 +30,13 @@ test('renders the official Meta and Klarna choices', () => {
   assert.match(markup, /style="width:400px"/u)
   assert.match(markup, /top-\[calc\(100dvh\*5\/6\)\]/u)
   assert.match(markup, /md:top-1\/2/u)
-  assert.match(markup, /klarna-identity-button-container/u)
+  assert.doesNotMatch(
+    markup,
+    /klarna-identity-button-container/u
+  )
   assert.match(markup, /Laster Klarna/u)
-  assert.match(markup, /text-base/u)
+  assert.match(markup, /bg-\[#FFA8CD\]/u)
+  assert.match(markup, /klarna_orig\.svg/u)
   assert.match(markup, /Fortsett uten innlogging/u)
   assert.doesNotMatch(markup, /Fortsett til Utekos/u)
   assert.doesNotMatch(markup, /<form|<input|<h[1-6]/u)
@@ -68,7 +72,10 @@ test('renders a non-interactive Facebook choice for local visual preview', () =>
   assert.match(markup, /fill-white/u)
   assert.match(markup, /bg-\[#1877F2\]/u)
   assert.doesNotMatch(markup, /<circle/u)
-  assert.match(markup, /klarna-identity-button-container/u)
+  assert.doesNotMatch(
+    markup,
+    /klarna-identity-button-container/u
+  )
   assert.match(markup, /Laster Klarna/u)
   assert.equal((markup.match(/<button/gu) ?? []).length, 2)
 })

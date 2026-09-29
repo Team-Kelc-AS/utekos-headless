@@ -58,6 +58,19 @@ Shopify test credentials: `VIPPS_SHOPIFY_TEST_STORE_DOMAIN` plus either an optio
 
 Vipps production credentials: `VIPPS_MSN`, `VIPPS_CLIENT_ID`, `VIPPS_CLIENT_SECRET`, `VIPPS_OCP_APIM_PRIMARY`. Production runtime additionally requires MSN `728093`. Shopify uses existing `STORE_DOMAIN` and `SHOPIFY_ADMIN_API_TOKEN`.
 
+### Vipps Login — separate identity boundary
+
+The empty CartDrawer has a separate Vipps Login entry point. It uses the Login API browser flow through `openid-client`, the provider's discovery document, fresh encrypted state, PKCE S256, `client_secret_basic`, validated ID-token claims and Login userinfo. It requests only `openid`; it does not use the payment Widget SDK, create a payment, send an event or establish a Shopify Customer Account session.
+
+Login stays fail-closed until all of these names are configured:
+
+- `VIPPS_LOGIN_ENABLED=true` only after the selected sales unit has Login enabled.
+- `VIPPS_LOGIN_REDIRECT_ORIGIN`: the exact origin whose callback is registered as `${VIPPS_LOGIN_REDIRECT_ORIGIN}/api/identity/vipps/callback`. Test and preview require this value explicitly.
+- `VIPPS_LOGIN_SESSION_SECRET`: a dedicated base64-encoded 32-byte key for the encrypted short-lived OAuth context and provider-identity cookie. Do not reuse a payment secret.
+- The environment-specific existing client pair: `VIPPS_TEST_CLIENT_ID` and `VIPPS_TEST_CLIENT_SECRET` for test, or `VIPPS_CLIENT_ID` and `VIPPS_CLIENT_SECRET` for production.
+
+See `.env.vipps-login.example` for names only. The code change does not verify or mutate the Vipps portal configuration. Production Login activation, provider-rendered callback behavior and any future account-linking bridge remain separate launch gates.
+
 Presence check during this work found the new test-Shopify, origin, return-secret, webhook-secret and feature-flag variables absent from `.env.local`. No values were printed or changed.
 
 ## Outstanding launch gates — do not enable production yet

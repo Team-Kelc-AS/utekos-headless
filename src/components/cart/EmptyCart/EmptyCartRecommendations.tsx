@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { RecommendedItem } from './RecommendedItem'
 import { EmptyCartComfyrobeKlarnaDeal } from './EmptyCartComfyrobeKlarnaDeal'
+import { EmptyCartIdentityChoices } from './EmptyCartIdentityChoices'
 import { recommendedProductsOptions } from '@/api/lib/products/cartSuggestionOptions'
 
 export function EmptyCartRecommendations() {
@@ -25,7 +26,7 @@ export function EmptyCartRecommendations() {
           </p>
         </div>
       : <>
-          <h4 className='mb-4 font-sans font-semibold text-base text-foreground'>
+          <h4 className='mb-4 font-sans text-base font-semibold text-foreground'>
             Legg til for å starte din Utekos
           </h4>
           <div className='space-y-4'>
@@ -39,6 +40,8 @@ export function EmptyCartRecommendations() {
           </div>
         </>
       }
+
+      <EmptyCartIdentityChoices />
     </div>
   )
 }
