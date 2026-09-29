@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogTitle
 } from '@/components/ui/dialog'
 import {
@@ -22,28 +21,47 @@ type CheckoutResult = {
   checkoutMode: 'shopify' | 'vipps'
 }
 
+type VippsButtonAction = Parameters<typeof mountVippsButton>[1]
+
 function VippsButton({
-  resolve,
+  action,
   onError,
   className
 }: {
-  resolve: () => Promise<CheckoutResult>
+  action: VippsButtonAction
   onError: (message: string) => void
   className?: string | undefined
 }) {
   const id = `vipps-${useId().replace(/[^a-zA-Z0-9-]/g, '')}`
-  const resolveRef = useRef(resolve)
+  const actionRef = useRef(action)
   const errorRef = useRef(onError)
+  const actionType = 'resolve' in action ? 'resolve' : 'click'
   useEffect(() => {
-    resolveRef.current = resolve
+    actionRef.current = action
     errorRef.current = onError
-  }, [resolve, onError])
+  }, [action, onError])
   useEffect(() => {
     let disposed = false
     let unmount: (() => void) | undefined
-    void mountVippsButton(`#${id}`, {
-      resolve: () => resolveRef.current()
-    })
+    const mountedAction: VippsButtonAction =
+      actionType === 'resolve' ?
+        {
+          resolve: () => {
+            const current = actionRef.current
+            if (!('resolve' in current))
+              throw new Error('Vipps button action changed')
+            return current.resolve()
+          }
+        }
+      : {
+          click: () => {
+            const current = actionRef.current
+            if (!('click' in current))
+              throw new Error('Vipps button action changed')
+            return current.click()
+          }
+        }
+    void mountVippsButton(`#${id}`, mountedAction)
       .then(cleanup => {
         if (disposed) cleanup()
         else unmount = cleanup
@@ -57,7 +75,7 @@ function VippsButton({
       disposed = true
       unmount?.()
     }
-  }, [id])
+  }, [actionType, id])
   return (
     <div id={id} className={className ?? 'min-h-12 w-full'} />
   )
@@ -145,18 +163,24 @@ export function VippsProductExpressCheckout({
       className='w-full'
       onClick={event => event.stopPropagation()}
     >
-      <button
-        type='button'
-        className={`${styles.trigger} ${vippsText.variable}`}
-        disabled={disabled}
-        aria-haspopup='dialog'
-        onClick={() => {
-          setError('')
-          setOpen(true)
-        }}
-      >
-        Sjekk kjøpet
-      </button>
+      <div inert={disabled} aria-disabled={disabled}>
+        <VippsButton
+          action={{
+            click: () => {
+              setError('')
+              setOpen(true)
+            }
+          }}
+          onError={setError}
+          className={styles.vippsButton}
+        />
+      </div>
+
+      {!open && error ?
+        <p role='alert' className={styles.error}>
+          {error}
+        </p>
+      : null}
 
       <Dialog
         open={open}
@@ -199,18 +223,13 @@ export function VippsProductExpressCheckout({
 
           <div className={styles.content}>
             <DialogTitle className={styles.title}>
-              Sjekk kjøpet
+              Utekos TechDown™
             </DialogTitle>
-            <DialogDescription className={styles.description}>
-              Se at produkt, farge og størrelse stemmer før du
-              går videre til Vipps.
-            </DialogDescription>
 
             <section
               className={styles.purchase}
               aria-label='Produkt som skal betales med Vipps'
             >
-              <p className={styles.eyebrow}>Dette kjøper du</p>
               <p className={styles.product}>{itemName}</p>
               <p className={styles.price}>{price}</p>
             </section>
@@ -218,7 +237,7 @@ export function VippsProductExpressCheckout({
             <div className={styles.actions}>
               <div inert={disabled} aria-disabled={disabled}>
                 <VippsButton
-                  resolve={start}
+                  action={{ resolve: start }}
                   onError={setError}
                   className={styles.vippsButton}
                 />

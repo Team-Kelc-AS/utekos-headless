@@ -7,7 +7,6 @@ import {
   currentPrice
 } from '@/api/constants'
 import type { NewProductLaunchSectionViewProps } from './types'
-import DiscoverProductButton from './DiscoverProductButton'
 import { AddNewProductToCartButton } from './AddNewProductToCartButton'
 import { PageSection } from '@/components/layout/PageSection'
 import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
@@ -16,9 +15,7 @@ import { H2 } from '@/components/typography/TypographyH2'
 import { InlineText } from '@/components/typography/TypographyInlineText'
 
 export function NewProductLaunchSectionView({
-  onQuickViewClick,
-  product,
-  selectedVariant
+  onQuickViewClick
 }: NewProductLaunchSectionViewProps) {
   return (
     <PageSection
@@ -76,14 +73,9 @@ export function NewProductLaunchSectionView({
                       : null}
                     </div>
                   </div>
-                  <div className='mt-4 grid w-full grid-cols-1 items-stretch gap-3 md:mt-0 md:grid-cols-2'>
+                  <div className='mt-4 grid w-full grid-cols-1 items-stretch gap-3 md:mt-0'>
                     <AddNewProductToCartButton
                       onAddToCartClick={onQuickViewClick}
-                    />
-
-                    <DiscoverProductButton
-                      product={product}
-                      selectedVariant={selectedVariant}
                     />
                   </div>
                 </div>

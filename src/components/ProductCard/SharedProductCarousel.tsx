@@ -20,6 +20,7 @@ interface SharedProductCarouselProps {
   cardClassName?: string
   itemListId: string
   itemListName: string
+  showExpressCheckout?: boolean
 }
 
 export function SharedProductCarousel({
@@ -27,7 +28,8 @@ export function SharedProductCarousel({
   navigationClassName,
   cardClassName,
   itemListId,
-  itemListName
+  itemListName,
+  showExpressCheckout
 }: SharedProductCarouselProps) {
   if (products.length === 0) {
     return null
@@ -64,6 +66,9 @@ export function SharedProductCarousel({
                 itemListId={itemListId}
                 itemListName={itemListName}
                 itemListTotalCount={products.length}
+                {...(showExpressCheckout === undefined ?
+                  {}
+                : { showExpressCheckout })}
                 {...(cardClassName ? { cardClassName } : {})}
               />
             </CarouselItem>

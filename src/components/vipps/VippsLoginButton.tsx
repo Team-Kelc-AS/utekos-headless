@@ -69,7 +69,7 @@ export function VippsLoginButton() {
         language: 'no',
         ref: buttonRef,
         stretched: 'true',
-        variant: 'primary',
+        variant: 'light',
         verb: 'login'
       })}
 

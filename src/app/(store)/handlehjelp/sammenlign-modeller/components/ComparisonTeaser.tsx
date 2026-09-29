@@ -141,9 +141,9 @@ export function ComparisonTeaser() {
           <div className='mt-12'>
             <Button
               asChild
-              variant='seeProduct'
+              variant='default'
               size='lg'
-              className='h-12 rounded-full px-8 transition-all'
+              className='h-12 bg-primary rounded-full px-8 transition-all'
             >
               <Link
                 href={

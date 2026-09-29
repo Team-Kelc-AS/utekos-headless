@@ -43,7 +43,11 @@ function statusMessage(status: IdentityStatus) {
   return null
 }
 
-export function EmptyCartIdentityChoices() {
+export function EmptyCartIdentityChoices({
+  className = 'mt-8'
+}: {
+  className?: string
+} = {}) {
   const vippsStatus = useSyncExternalStore(
     subscribeToStaticLocation,
     readVippsStatus,
@@ -52,23 +56,14 @@ export function EmptyCartIdentityChoices() {
   const [klarnaStatus, setKlarnaStatus] =
     useState<IdentityStatus>()
   const status = klarnaStatus ?? vippsStatus
+  const message = statusMessage(status)
 
   return (
     <section
-      aria-labelledby='empty-cart-identity-title'
-      className='mt-8 rounded-lg border border-[#F0EEE9]/10 bg-[#012622] p-4'
+      aria-label='Innlogging'
+      className={`rounded-lg border border-[#010B0A]/10 bg-white p-4 ${className}`}
     >
-      <h3
-        id='empty-cart-identity-title'
-        className='font-google-sans text-lg font-extrabold text-[#F0EEE9]'
-      >
-        Velg innlogging
-      </h3>
-      <p className='mt-2 font-sans text-sm font-medium text-[#F0EEE9]/80'>
-        Bekreft identiteten din med Vipps eller Klarna.
-      </p>
-
-      <div className='mt-4 space-y-3'>
+      <div className='space-y-3'>
         <VippsLoginButton />
         <KlarnaIdentityButton
           width='100%'
@@ -76,16 +71,14 @@ export function EmptyCartIdentityChoices() {
         />
       </div>
 
-      <p
-        aria-live='polite'
-        className='mt-3 min-h-5 font-sans text-sm font-medium text-[#F0EEE9]'
-      >
-        {statusMessage(status)}
-      </p>
-      <p className='mt-2 font-sans text-xs font-medium text-[#F0EEE9]/70'>
-        Identiteten bekreftes hos leverandøren, men kobles ikke
-        til en Utekos-konto.
-      </p>
+      {message ?
+        <p
+          aria-live='polite'
+          className='mt-3 font-sans text-sm font-medium text-[#010B0A]'
+        >
+          {message}
+        </p>
+      : null}
     </section>
   )
 }

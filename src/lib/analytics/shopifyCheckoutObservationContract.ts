@@ -3,12 +3,25 @@ import { metaParameterBuilderUserDataSchema } from './metaParameterBuilderUserDa
 
 export const SHOPIFY_CHECKOUT_OBSERVATION_CONTRACT =
   'utekos.shopify.checkout_observation' as const
+
 export const SHOPIFY_CHECKOUT_OBSERVATION_SCHEMA_VERSION =
   1 as const
+
 export const SHOPIFY_CHECKOUT_OBSERVATION_CANONICAL_SCHEMA_VERSION =
   2 as const
+
 export const SHOPIFY_CHECKOUT_OBSERVATION_META_SCHEMA_VERSION =
   3 as const
+
+export const SHOPIFY_CHECKOUT_OBSERVATION_PURCHASE_SCHEMA_VERSION =
+  4 as const
+
+const privacySchema = z.strictObject({
+  analyticsProcessingAllowed: z.boolean(),
+  marketingAllowed: z.boolean(),
+  preferencesProcessingAllowed: z.boolean(),
+  saleOfDataAllowed: z.boolean()
+})
 
 const commonObservationShape = {
   contract: z.literal(SHOPIFY_CHECKOUT_OBSERVATION_CONTRACT),
@@ -24,12 +37,7 @@ const commonObservationShape = {
     .nonnegative()
     .max(2_147_483_647),
   occurredAt: z.string().datetime({ offset: true }),
-  privacy: z.strictObject({
-    analyticsProcessingAllowed: z.boolean(),
-    marketingAllowed: z.boolean(),
-    preferencesProcessingAllowed: z.boolean(),
-    saleOfDataAllowed: z.boolean()
-  })
+  privacy: privacySchema
 }
 
 const commerceSchema = z
@@ -39,7 +47,11 @@ const commerceSchema = z
       .regex(/^[A-Z]{3}$/)
       .nullable(),
     value: z.number().finite().nonnegative().nullable(),
-    itemQuantity: z.number().int().nonnegative().max(1_000_000)
+    itemQuantity: z
+      .number()
+      .int()
+      .nonnegative()
+      .max(1_000_000)
   })
   .superRefine((commerce, context) => {
     if (
@@ -194,6 +206,72 @@ const rawMetaCompletedObservationSchema = z.strictObject({
   orderLegacyId: z.string().regex(/^\d+$/u).max(32)
 })
 
+/*
+ * Schema v4 is intentionally provider-neutral.
+ *
+ * It carries only Shopify's checkout-completion commerce data required
+ * downstream for Purchase delivery. It contains no raw customer identity
+ * and the ingress schema does not require marketing consent. The Shopify
+ * pixel extension can still be load-gated by its customer_privacy manifest.
+ *
+ * Provider-specific consent decisions remain downstream concerns.
+ *
+ * The Shopify paid-order webhook remains the authoritative canonical
+ * Purchase source. A v4 browser observation must never independently
+ * establish payment truth.
+ */
+const purchaseItemSchema = z.strictObject({
+  itemId: z.string().regex(/^\d+$/u),
+  itemName: z.string().min(1),
+  quantity: z.number().int().positive(),
+  price: z.number().finite().nonnegative().optional(),
+  sku: z.string().min(1).optional(),
+  variantTitle: z.string().min(1).optional()
+})
+
+const purchaseCommerceSchema = z.strictObject({
+  currencyCode: z.string().regex(/^[A-Z]{3}$/),
+  value: z.number().finite().nonnegative(),
+  itemQuantity: z
+    .number()
+    .int()
+    .positive()
+    .max(1_000_000),
+  tax: z.number().finite().nonnegative().nullable(),
+  shipping: z.number().finite().nonnegative().nullable(),
+  items: z.array(purchaseItemSchema).min(1)
+})
+
+export const shopifyCheckoutPurchaseObservationSchema =
+  z.strictObject({
+    ...commonObservationShape,
+    schemaVersion: z.literal(
+      SHOPIFY_CHECKOUT_OBSERVATION_PURCHASE_SCHEMA_VERSION
+    ),
+    eventName: z.literal('checkout_completed'),
+    checkoutToken: z.string().min(1).max(255),
+    orderLegacyId: z.string().regex(/^\d+$/u).max(32),
+
+    /*
+     * Correlation improves journey linkage when available, but absence
+     * must not suppress a legitimate Shopify checkout_completed signal.
+     */
+    correlation: z
+      .strictObject({
+        beginCheckoutEventId: z.string().uuid()
+      })
+      .optional(),
+
+    commerce: purchaseCommerceSchema,
+
+    /*
+     * v4 itself is provider-neutral. Keeping the complete Shopify
+     * privacy snapshot allows every downstream provider to make its
+     * own explicit authorization decision.
+     */
+    privacy: privacySchema
+  })
+
 const alertObservationSchema = z.strictObject({
   ...commonObservationShape,
   eventName: z.literal('alert_displayed'),
@@ -223,7 +301,8 @@ export const shopifyCheckoutObservationSchema = z.union([
     canonicalShippingObservationSchema,
     canonicalPaymentObservationSchema
   ]),
-  shopifyCheckoutMetaObservationSchema
+  shopifyCheckoutMetaObservationSchema,
+  shopifyCheckoutPurchaseObservationSchema
 ])
 
 export const shopifyCheckoutMetaObservationInputSchema =
@@ -251,19 +330,28 @@ export const shopifyCanonicalPaymentObservationSchema =
 export type ShopifyCheckoutProgressObservation = z.infer<
   typeof shopifyCheckoutProgressObservationSchema
 >
+
 export type ShopifyCheckoutObservation = z.infer<
   typeof shopifyCheckoutObservationSchema
 >
+
 export type ShopifyCanonicalPaymentObservation = z.infer<
   typeof shopifyCanonicalPaymentObservationSchema
 >
+
 export type ShopifyCanonicalCheckoutProgressObservation =
   z.infer<
     typeof shopifyCanonicalCheckoutProgressObservationSchema
   >
+
 export type ShopifyCheckoutMetaObservationInput = z.infer<
   typeof shopifyCheckoutMetaObservationInputSchema
 >
+
 export type ShopifyCheckoutMetaObservation = z.infer<
   typeof shopifyCheckoutMetaObservationSchema
+>
+
+export type ShopifyCheckoutPurchaseObservation = z.infer<
+  typeof shopifyCheckoutPurchaseObservationSchema
 >

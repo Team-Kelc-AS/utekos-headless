@@ -73,31 +73,67 @@ export function createCanonicalEventStore(
 
             let dispatches = rows.dispatches
             if (!inserted) {
-              const stored =
-                (
-                  input.allowPageViewMarketingRelease &&
-                  input.event.event_name === 'page_view' &&
-                  input.event.consent.marketing === 'granted' &&
-                  transaction.findLedger
-                ) ?
-                  await transaction.findLedger(input.event)
-                : null
+              const releaseProviders =
+                input.releaseProvidersOnDuplicate
 
-              if (
-                !canReleasePageViewMarketing(stored, input.event)
-              ) {
-                return {
-                  createdDispatchAttempts: [],
-                  status: 'duplicate'
+              if (releaseProviders?.length) {
+                if (!transaction.findLedger) {
+                  throw new Error(
+                    'duplicate_provider_release_requires_ledger_lookup'
+                  )
                 }
-              }
 
-              // Preserve the original ledger observation and its consent.
-              // The new Meta attempt records the later grant in consent_basis.
-              // Its existing provider/idempotency key prevents duplicate sends.
-              dispatches = dispatches.filter(
-                dispatch => dispatch.provider === 'meta'
-              )
+                const stored = await transaction.findLedger(
+                  input.event
+                )
+
+                if (
+                  !stored ||
+                  stored.event_id !== input.event.event_id ||
+                  stored.event_name !== input.event.event_name
+                ) {
+                  throw new Error(
+                    'duplicate_provider_release_event_mismatch'
+                  )
+                }
+
+                const providerAllowlist = new Set(
+                  releaseProviders
+                )
+                dispatches = dispatches.filter(dispatch =>
+                  providerAllowlist.has(dispatch.provider)
+                )
+              } else {
+                const stored =
+                  (
+                    input.allowPageViewMarketingRelease &&
+                    input.event.event_name === 'page_view' &&
+                    input.event.consent.marketing ===
+                      'granted' &&
+                    transaction.findLedger
+                  ) ?
+                    await transaction.findLedger(input.event)
+                  : null
+
+                if (
+                  !canReleasePageViewMarketing(
+                    stored,
+                    input.event
+                  )
+                ) {
+                  return {
+                    createdDispatchAttempts: [],
+                    status: 'duplicate'
+                  }
+                }
+
+                // Preserve the original ledger observation and its consent.
+                // The new Meta attempt records the later grant in consent_basis.
+                // Its existing provider/idempotency key prevents duplicate sends.
+                dispatches = dispatches.filter(
+                  dispatch => dispatch.provider === 'meta'
+                )
+              }
             }
 
             const createdDispatchAttempts: CreatedProviderDispatchAttempt[] =

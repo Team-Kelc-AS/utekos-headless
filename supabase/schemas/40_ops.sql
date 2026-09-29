@@ -602,7 +602,7 @@ create table if not exists ops.shopify_checkout_observations (
     default 'utekos.shopify.checkout_observation'
     check (contract_name = 'utekos.shopify.checkout_observation'),
   schema_version smallint not null default 1
-    check (schema_version in (1, 2, 3)),
+    check (schema_version in (1, 2, 3, 4)),
   source text not null default 'shopify_app_web_pixel'
     check (source = 'shopify_app_web_pixel'),
   verification_status text not null default 'observed'
@@ -612,6 +612,7 @@ create table if not exists ops.shopify_checkout_observations (
       event_name in (
         'checkout_shipping_info_submitted',
         'payment_info_submitted',
+        'checkout_completed',
         'alert_displayed'
       )
     ),
@@ -677,14 +678,45 @@ create table if not exists ops.shopify_checkout_observations (
           'checkout_shipping_info_submitted',
           'payment_info_submitted'
         )
+        and schema_version in (1, 2, 3)
         and checkout_token is not null
         and item_quantity is not null
         and alert_type is null
-        and (commerce_value is null or currency_code is not null)
+        and (
+          commerce_value is null
+          or currency_code is not null
+        )
+      )
+      or (
+        event_name = 'checkout_completed'
+        and schema_version = 3
+        and checkout_token is not null
+        and item_quantity is not null
+        and alert_type is null
+        and (
+          commerce_value is null
+          or currency_code is not null
+        )
+      )
+      or (
+        event_name = 'checkout_completed'
+        and schema_version = 4
+        and checkout_token is not null
+        and currency_code is not null
+        and commerce_value is not null
+        and item_quantity is not null
+        and item_quantity between 1 and 1000000
+        and alert_type is null
       )
       or (
         event_name = 'alert_displayed'
-        and alert_type in ('CHECKOUT_ERROR', 'PAYMENT_ERROR')
+        and schema_version = 1
+        and alert_type in (
+          'CHECKOUT_ERROR',
+          'CONTACT_ERROR',
+          'DELIVERY_ERROR',
+          'PAYMENT_ERROR'
+        )
         and checkout_token is null
         and currency_code is null
         and commerce_value is null
@@ -698,7 +730,7 @@ create table if not exists ops.shopify_checkout_observations (
 );
 
 comment on table ops.shopify_checkout_observations is
-  'Thirty-day, PII-free Shopify Web Pixel checkout observations. Rows are public browser observations only: they are not canonical events, payment truth, provider outbox entries or delivery evidence. Raw payloads, names, email, phone, addresses, URLs, query strings, cookies, click ids, client ids, user agents, line items, payment methods, gateways, alert text and provider data are forbidden.';
+  'Thirty-day, PII-free Shopify Web Pixel checkout observations. Rows are public browser observations only: they are not canonical payment truth or provider-delivery evidence. Schema v4 checkout_completed stores only the minimized commerce summary; validated order identity and line-item detail remain transient receiver input and are not persisted in this table. Raw payloads, names, email, phone, addresses, URLs, query strings, cookies, click ids, client ids, user agents, line items, payment methods, gateways, alert text and provider data are forbidden from durable row storage.';
 comment on column ops.shopify_checkout_observations.idempotency_key is
   'Versioned source identity. A matching payload hash is an identical replay; a different hash is an idempotency conflict and must never overwrite the first observation.';
 comment on column ops.shopify_checkout_observations.payload_sha256 is

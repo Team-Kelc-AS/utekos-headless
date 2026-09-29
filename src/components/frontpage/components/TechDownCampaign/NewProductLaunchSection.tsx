@@ -21,8 +21,8 @@ type NewProductLaunchSectionProps = {
 }
 
 export function NewProductLaunchSection({
-  product,
-  selectedVariant
+  product: _product,
+  selectedVariant: _selectedVariant
 }: NewProductLaunchSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -34,8 +34,6 @@ export function NewProductLaunchSection({
     <>
       <NewProductLaunchSectionView
         onQuickViewClick={handleQuickViewClick}
-        product={product}
-        selectedVariant={selectedVariant}
       />
 
       <QuickViewModal

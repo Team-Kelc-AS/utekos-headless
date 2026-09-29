@@ -79,11 +79,11 @@ This report is generated from the canonical event catalog and the characterized 
 | `add_payment_info` | `active` | `pinterest` | none | none | No v1 Pinterest conversion mapping is approved. |
 | `add_payment_info` | `active` | `snapchat` | shopify_customer_events (implemented; event-specific logical requirements) | snap_conversions_api_v3 (active; event-specific logical requirements) | Utekos-owned Snap Pixel and Conversions API v3 outbox are active. |
 | `purchase` | `active` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Operational ledger persistence via Shopify orders-paid webhook. |
-| `purchase` | `active` | `google` | shopify_customer_events (implemented; shopifyPurchaseBrowser) | google_data_manager (active; shopifyPurchaseBrowser) | Shopify Customer Events is the browser source and the Data Manager purchase outbox is the supplementary server source when checkout analytics consent was granted. Both use transaction_id for GA4 deduplication. |
-| `purchase` | `active` | `meta` | shopify_customer_events (implemented; metaBrowser) | meta_conversions_api (active; metaServer) | The marketing-consented Shopify Customer Events browser Purchase is implemented locally and pending provider publication; Meta CAPI remains active. Both reuse the deterministic order event_id for deduplication. |
-| `purchase` | `active` | `microsoft_uet` | none | microsoft_uet_capi (active; microsoftServer) | Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and at least one Microsoft-supported userData identifier is present. |
-| `purchase` | `active` | `pinterest` | pinterest_tag (implemented; pinterestBrowser) | pinterest_conversions_api (active; pinterestServer) | Pinterest Tag and Conversions API outbox are active. |
-| `purchase` | `active` | `snapchat` | shopify_customer_events (implemented; event-specific logical requirements) | snap_conversions_api_v3 (active; event-specific logical requirements) | Utekos-owned Snap Pixel and Conversions API v3 outbox are active. |
+| `purchase` | `active` | `google` | shopify_app_web_pixel (implemented; shopifyPurchaseBrowser) | google_data_manager (active; shopifyPurchaseBrowser) | The Shopify App Web Pixel checkout_completed observation is the browser source. Google Data Manager remains the authoritative paid-order server delivery when checkout analytics consent was granted. Both use transaction_id for deduplication; the Shopify Admin Custom Pixel is not an owner. |
+| `purchase` | `active` | `meta` | shopify_app_web_pixel (implemented; metaBrowser) | meta_conversions_api (active; metaServer) | The marketing-consented Shopify App Web Pixel checkout_completed observation is the browser source; Meta CAPI remains the authoritative paid-order server delivery. Both reuse the deterministic order event_id for deduplication; the Shopify Admin Custom Pixel is not an owner. |
+| `purchase` | `active` | `microsoft_uet` | none | microsoft_uet_capi (disabled; microsoftServer) | Microsoft Purchase delivery is inactive; the retained adapter is not eligible for new outbox work. |
+| `purchase` | `active` | `pinterest` | pinterest_tag (disabled; pinterestBrowser) | pinterest_conversions_api (disabled; pinterestServer) | Pinterest Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery. |
+| `purchase` | `active` | `snapchat` | shopify_customer_events (disabled; event-specific logical requirements) | snap_conversions_api_v3 (disabled; event-specific logical requirements) | Snapchat Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery. |
 | `refund` | `active` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Operational ledger persistence via Shopify refunds-create webhook. |
 | `refund` | `active` | `google` | none | google_data_manager (active; googleServer) | Data Manager refund outbox is active when analytics consent is available. |
 | `refund` | `active` | `meta` | none | none | No v1 Meta refund mapping is approved. |
@@ -163,13 +163,13 @@ This report is generated from the canonical event catalog and the characterized 
 | `size_guide_view` | `active` | `pinterest` | none | none | No v1 Pinterest conversion mapping is approved. |
 | `size_guide_view` | `active` | `snapchat` | none | none | No v1 Snapchat conversion mapping is approved. |
 | `checkout_error` | `blocked_source` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Canonical schema, collector, and ledger mapping are not active yet. |
-| `checkout_error` | `blocked_source` | `google` | google_tag_manager (planned; googleBrowserDataLayer) | server_side_gtm (disabled; googleServer) | Provider mapping is specified but canonical routing is not active. |
+| `checkout_error` | `blocked_source` | `google` | google_tag_manager (disabled; googleBrowserDataLayer) | server_side_gtm (disabled; googleServer) | Provider mapping is specified but canonical routing is not active. |
 | `checkout_error` | `blocked_source` | `meta` | none | none | No v1 marketing use case justifies a Meta export. |
 | `checkout_error` | `blocked_source` | `microsoft_uet` | none | none | No v1 marketing use case justifies a Microsoft UET export. |
 | `checkout_error` | `blocked_source` | `pinterest` | none | none | No v1 Pinterest conversion mapping is approved. |
 | `checkout_error` | `blocked_source` | `snapchat` | none | none | No v1 Snapchat conversion mapping is approved. |
 | `payment_error` | `blocked_source` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Canonical schema, collector, and ledger mapping are not active yet. |
-| `payment_error` | `blocked_source` | `google` | google_tag_manager (planned; googleBrowserDataLayer) | server_side_gtm (disabled; googleServer) | Provider mapping is specified but canonical routing is not active. |
+| `payment_error` | `blocked_source` | `google` | google_tag_manager (disabled; googleBrowserDataLayer) | server_side_gtm (disabled; googleServer) | Provider mapping is specified but canonical routing is not active. |
 | `payment_error` | `blocked_source` | `meta` | none | none | No v1 marketing use case justifies a Meta export. |
 | `payment_error` | `blocked_source` | `microsoft_uet` | none | none | No v1 marketing use case justifies a Microsoft UET export. |
 | `payment_error` | `blocked_source` | `pinterest` | none | none | No v1 Pinterest conversion mapping is approved. |
@@ -240,4 +240,4 @@ This report is generated from the canonical event catalog and the characterized 
 - [Meta Conversions API parameters and deduplication](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/server-event)
 - [Google Data Manager API Event](https://developers.google.com/data-manager/api/reference/rest/v1/events)
 - [Microsoft UET Conversion API integration](https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration?view=bingads-13)
-- [Shopify Customer Events checkout_completed](https://shopify.dev/docs/api/web-pixels-api/standard-events/checkout_completed)
+- [Shopify App Web Pixel checkout_completed](https://shopify.dev/docs/api/web-pixels-api/standard-events/checkout_completed)

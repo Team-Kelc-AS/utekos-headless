@@ -46,6 +46,7 @@ type ProviderProductionStatus =
 
 type BrowserTransport =
   | 'google_tag_manager'
+  | 'shopify_app_web_pixel'
   | 'shopify_customer_events'
   | 'meta_pixel'
   | 'microsoft_uet'
@@ -1314,7 +1315,7 @@ const purchaseProviders = {
     support: 'supported',
     eventName: GOOGLE_COMMERCE_EVENT_MAP.purchase.server,
     transport: {
-      browser: 'shopify_customer_events',
+      browser: 'shopify_app_web_pixel',
       server: 'google_data_manager'
     },
     requiredParameters: [
@@ -1330,14 +1331,14 @@ const purchaseProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'Shopify Customer Events is the browser source and the Data Manager purchase outbox is the supplementary server source when checkout analytics consent was granted. Both use transaction_id for GA4 deduplication.',
+      'The Shopify App Web Pixel checkout_completed observation is the browser source. Google Data Manager remains the authoritative paid-order server delivery when checkout analytics consent was granted. Both use transaction_id for deduplication; the Shopify Admin Custom Pixel is not an owner.',
     serverOutbox: 'active'
   }),
   meta: providerMapping({
     support: 'supported',
     eventName: META_COMMERCE_EVENT_MAP.purchase.server,
     transport: {
-      browser: 'shopify_customer_events',
+      browser: 'shopify_app_web_pixel',
       server: 'meta_conversions_api'
     },
     requiredParameters: [
@@ -1354,7 +1355,7 @@ const purchaseProviders = {
     adapterVersion: 1,
     productionStatus: 'active',
     productionDetail:
-      'The marketing-consented Shopify Customer Events browser Purchase is implemented locally and pending provider publication; Meta CAPI remains active. Both reuse the deterministic order event_id for deduplication.',
+      'The marketing-consented Shopify App Web Pixel checkout_completed observation is the browser source; Meta CAPI remains the authoritative paid-order server delivery. Both reuse the deterministic order event_id for deduplication; the Shopify Admin Custom Pixel is not an owner.',
     serverOutbox: 'active'
   }),
   microsoft_uet: providerMapping({
@@ -1371,39 +1372,51 @@ const purchaseProviders = {
     dedupeField: 'event_id',
     consentRequirement: 'marketing',
     adapterVersion: 2,
-    productionStatus: 'active',
+    productionStatus: 'not_implemented',
     productionDetail:
-      'Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and at least one Microsoft-supported userData identifier is present.',
-    serverOutbox: 'active'
+      'Microsoft Purchase delivery is inactive; the retained adapter is not eligible for new outbox work.',
+    serverOutbox: 'disabled'
   }),
-  pinterest: pinterestCatalogProvider(
-    PINTEREST_CANONICAL_EVENT_MAP.purchase.api,
-    {
-      active: true,
-      requiredParameters: [
-        'content_ids',
-        'contents',
-        'currency',
-        'value',
-        'order_id'
-      ]
-    }
-  ),
-  snapchat: snapchatCatalogProvider(
-    SNAPCHAT_CANONICAL_EVENT_MAP.purchase,
-    {
-      active: true,
-      browser: 'shopify_customer_events',
-      dedupeField: 'transaction_id',
-      requiredParameters: [
-        'content_ids',
-        'contents',
-        'currency',
-        'value',
-        'order_id'
-      ]
-    }
-  )
+  pinterest: {
+    ...pinterestCatalogProvider(
+      PINTEREST_CANONICAL_EVENT_MAP.purchase.api,
+      {
+        active: false,
+        requiredParameters: [
+          'content_ids',
+          'contents',
+          'currency',
+          'value',
+          'order_id'
+        ]
+      }
+    ),
+    productionStatus: 'not_implemented',
+    productionDetail:
+      'Pinterest Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery.',
+    serverOutbox: 'disabled'
+  },
+  snapchat: {
+    ...snapchatCatalogProvider(
+      SNAPCHAT_CANONICAL_EVENT_MAP.purchase,
+      {
+        active: false,
+        browser: 'shopify_customer_events',
+        dedupeField: 'transaction_id',
+        requiredParameters: [
+          'content_ids',
+          'contents',
+          'currency',
+          'value',
+          'order_id'
+        ]
+      }
+    ),
+    productionStatus: 'not_implemented',
+    productionDetail:
+      'Snapchat Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery.',
+    serverOutbox: 'disabled'
+  }
 } as const satisfies Readonly<
   Record<ProviderId, ProviderCatalogEntry>
 >

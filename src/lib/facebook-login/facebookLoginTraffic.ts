@@ -32,10 +32,11 @@ export function isFacebookLoginPromptActive(input: {
   hostname: string
   previewAllowed: boolean
 }) {
+  // Keep the first-visit prompt off public storefront domains even
+  // when Facebook Login itself remains enabled for explicit sign-in.
   return (
-    isFacebookLoginPreviewHostname(input.hostname) ?
-      input.previewAllowed || input.enabled
-    : input.enabled
+    input.previewAllowed &&
+    isFacebookLoginPreviewHostname(input.hostname)
   )
 }
 

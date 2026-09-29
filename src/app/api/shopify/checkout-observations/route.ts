@@ -9,6 +9,7 @@ import { postgresShopifyCheckoutObservationStore } from '@/lib/analytics/server/
 import { postgresCanonicalEventStore } from '@/lib/analytics/server/postgresCanonicalPageViewStore'
 import { promoteShopifyAddPaymentInfoObservation } from '@/lib/analytics/server/promoteShopifyAddPaymentInfoObservation'
 import { promoteShopifyAddShippingInfoObservation } from '@/lib/analytics/server/promoteShopifyAddShippingInfoObservation'
+import { promoteShopifyCheckoutPurchaseObservation } from '@/lib/analytics/server/promoteShopifyCheckoutPurchaseObservation'
 import { protectShopifyCheckoutMetaObservation } from '@/lib/analytics/server/protectShopifyCheckoutMetaObservation'
 import { readShopifyAddPaymentInfoCanonicalConfig } from '@/lib/analytics/server/shopifyAddPaymentInfoCanonicalConfig'
 import { reconcileShopifyCheckoutObservation } from '@/lib/commerce/checkoutSession/reconcileShopifyCheckoutAttempt'
@@ -92,6 +93,13 @@ async function handle(request: Request) {
           }
         }
 
+        if (observation.eventName === 'checkout_completed') {
+          return promoteShopifyCheckoutPurchaseObservation(
+            observation,
+            { store: dependencies.store }
+          )
+        }
+
         if (
           observation.eventName ===
           'checkout_shipping_info_submitted'
@@ -102,10 +110,7 @@ async function handle(request: Request) {
           )
         }
 
-        if (
-          observation.eventName ===
-          'payment_info_submitted'
-        ) {
+        if (observation.eventName === 'payment_info_submitted') {
           return promoteShopifyAddPaymentInfoObservation(
             observation,
             dependencies

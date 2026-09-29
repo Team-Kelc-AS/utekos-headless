@@ -4,9 +4,19 @@ These files are reviewed source artifacts for Shopify Admin
 Customer Events. A repository or Vercel deployment does not
 publish them to Shopify.
 
+They are legacy/rollback artifacts for Purchase. The
+desired-state Purchase browser source is the
+`canonical-checkout-events` Shopify **App Web Pixel**, which is
+distinct from Shopify Admin Customer Events / Custom Pixels. Do
+not publish these files as a second Purchase owner. The
+production cutover and Custom Pixel disconnection remain
+externally unverified until a separately approved Shopify
+activation and natural-order verification are complete.
+
 ## Meta Purchase
 
-`meta-purchase-pixel.js` subscribes only to Shopify's documented
+`meta-purchase-pixel.js` is the former Custom Pixel
+implementation. It subscribes only to Shopify's documented
 `checkout_completed` event and sends Meta Pixel event `Purchase`.
 It:
 
@@ -26,14 +36,12 @@ Thank you or first post-purchase page does not load. The
 server-side paid-order path therefore remains the authoritative
 and redundant Meta Purchase source.
 
-Publishing or replacing this Shopify Custom Pixel is a
-provider-resource mutation and requires explicit production
-approval. After activation, a natural marketing-consented
-purchase must prove exactly one browser Purchase, one server
-Purchase, identical `event_id` values, matching commerce values,
-successful Meta deduplication and no raw customer data in logs or
-inspection artifacts. Do not create a real payment or order as a
-smoke test.
+Publishing or replacing this Shopify Custom Pixel would
+reintroduce a second browser owner and is not part of the App Web
+Pixel cutover. A natural, marketing-consented purchase must
+instead prove the App Web Pixel v4 observation, canonical
+paid-order match, Meta outbox attempt and provider result. Do not
+create a real payment or order as a smoke test.
 
 Official sources:
 
@@ -78,12 +86,9 @@ Official sources:
 
 ## Activation gate
 
-The Pinterest file is not production-active merely because it
-exists in this directory. Publishing or replacing a Shopify
-Custom Pixel is a provider-resource mutation and requires
-explicit production approval. After activation, verification must
-use a natural, marketing-consented purchase. Do not create a real
-payment or order as a smoke test.
+Pinterest Purchase delivery is inactive. The file remains
+reviewable history only; publishing it is outside the
+Meta-and-Google Purchase scope.
 
 The required proof is:
 
@@ -101,12 +106,15 @@ The required proof is:
 8. Pinterest Event Quality/dashboard evidence after provider
    processing, kept separate from browser and CAPI acceptance.
 
-`ga4-commerce-pixel.js` remains the independent
-analytics-consented GA4/sGTM purchase pixel.
+`ga4-commerce-pixel.js` is the former analytics-consented
+GA4/sGTM Custom Pixel Purchase owner. It must not remain
+connected after the App Web Pixel cutover is verified, or Google
+can receive two browser-owned purchases.
 
 ## Snapchat Commerce
 
-`snapchat-commerce-pixel.js` is a separate, marketing-consented
+Snapchat Purchase delivery is inactive.
+`snapchat-commerce-pixel.js` is a historical, marketing-consented
 Shopify Customer Events pixel for `payment_info_submitted` and
 `checkout_completed`. It initializes the shared Utekos SnapPixel
 without browser PII or automatic page views, uses numeric Shopify
@@ -115,6 +123,5 @@ values as the canonical CAPI v3 mapping.
 
 The file is fail-closed through Shopify's privacy API. Its
 presence in this repository does not publish or connect the
-Custom Pixel. Publishing and connecting it remains a provider
-mutation behind the production cutover approval and must not be
-combined with the existing GA4 pixel.
+Custom Pixel, and it must not be connected as part of the
+Meta-and-Google Purchase cutover.

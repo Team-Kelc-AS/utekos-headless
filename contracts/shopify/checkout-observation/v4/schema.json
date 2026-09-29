@@ -1,0 +1,188 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:utekos:shopify:checkout-observation:v4",
+    "title": "Utekos Shopify checkout purchase observation v4",
+    "description": "Provider-neutral checkout_completed observation emitted by the Utekos Shopify App Web Pixel. The observation carries consent-state and purchase commerce data for downstream provider delivery while Shopify paid-order server evidence remains the authoritative canonical Purchase source.",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "contract": {
+            "const": "utekos.shopify.checkout_observation"
+        },
+        "schemaVersion": {
+            "const": 4
+        },
+        "source": {
+            "const": "shopify_app_web_pixel"
+        },
+        "verificationStatus": {
+            "const": "observed"
+        },
+        "eventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+        },
+        "eventName": {
+            "const": "checkout_completed"
+        },
+        "eventSequence": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+        },
+        "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "checkoutToken": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+        },
+        "orderLegacyId": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "maxLength": 32
+        },
+        "correlation": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "beginCheckoutEventId": {
+                    "type": "string",
+                    "format": "uuid"
+                }
+            },
+            "required": [
+                "beginCheckoutEventId"
+            ]
+        },
+        "commerce": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "currencyCode": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                },
+                "value": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "itemQuantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000000
+                },
+                "tax": {
+                    "oneOf": [
+                        {
+                            "type": "number",
+                            "minimum": 0
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "shipping": {
+                    "oneOf": [
+                        {
+                            "type": "number",
+                            "minimum": 0
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "itemId": {
+                                "type": "string",
+                                "pattern": "^[0-9]+$"
+                            },
+                            "itemName": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "minimum": 1
+                            },
+                            "price": {
+                                "type": "number",
+                                "minimum": 0
+                            },
+                            "sku": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "variantTitle": {
+                                "type": "string",
+                                "minLength": 1
+                            }
+                        },
+                        "required": [
+                            "itemId",
+                            "itemName",
+                            "quantity"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "currencyCode",
+                "value",
+                "itemQuantity",
+                "tax",
+                "shipping",
+                "items"
+            ]
+        },
+        "privacy": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "analyticsProcessingAllowed": {
+                    "type": "boolean"
+                },
+                "marketingAllowed": {
+                    "type": "boolean"
+                },
+                "preferencesProcessingAllowed": {
+                    "type": "boolean"
+                },
+                "saleOfDataAllowed": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "analyticsProcessingAllowed",
+                "marketingAllowed",
+                "preferencesProcessingAllowed",
+                "saleOfDataAllowed"
+            ]
+        }
+    },
+    "required": [
+        "contract",
+        "schemaVersion",
+        "source",
+        "verificationStatus",
+        "eventId",
+        "eventName",
+        "eventSequence",
+        "occurredAt",
+        "checkoutToken",
+        "orderLegacyId",
+        "commerce",
+        "privacy"
+    ]
+}

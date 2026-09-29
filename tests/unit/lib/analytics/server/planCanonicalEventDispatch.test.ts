@@ -370,7 +370,7 @@ test('records consented Google events without a valid client ID as unqualified',
   })
 })
 
-test('routes consented purchase with msclkid and UET token to Microsoft outbox', () => {
+test('routes consented purchase only to Google and Meta when inactive provider identifiers are present', () => {
   const previous = process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
   process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = 'test-uet-token'
 
@@ -418,13 +418,7 @@ test('routes consented purchase with msclkid and UET token to Microsoft outbox',
           dispatch_mode: 'server_retry',
           event_id: event.event_id,
           provider: 'meta'
-        },
-        {
-          dispatch_mode: 'server_retry',
-          event_id: event.event_id,
-          provider: 'microsoft_uet'
-        },
-        pinterestMissingToken(event.event_id)
+        }
       ]
     )
   } finally {
@@ -436,7 +430,7 @@ test('routes consented purchase with msclkid and UET token to Microsoft outbox',
   }
 })
 
-test('skips Microsoft purchase without a supported identifier', () => {
+test('does not create a Microsoft purchase row without a supported identifier', () => {
   const previous = process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
   process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = 'test-uet-token'
 
@@ -470,13 +464,7 @@ test('skips Microsoft purchase without a supported identifier', () => {
       now: () => Date.parse('2026-07-17T10:06:00.000Z')
     }).find(intent => intent.provider === 'microsoft_uet')
 
-    assert.deepEqual(microsoft, {
-      dispatch_mode: 'server_retry',
-      event_id: event.event_id,
-      provider: 'microsoft_uet',
-      skip_reason: 'missing_microsoft_uet_identifier',
-      status: 'skipped_unqualified'
-    })
+    assert.equal(microsoft, undefined)
   } finally {
     if (previous === undefined) {
       delete process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
@@ -486,7 +474,7 @@ test('skips Microsoft purchase without a supported identifier', () => {
   }
 })
 
-test('routes Microsoft purchase with external ID when msclkid is absent', () => {
+test('does not route Purchase to inactive Microsoft when external ID is present', () => {
   const previous = process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
   process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN = 'test-uet-token'
 
@@ -498,11 +486,7 @@ test('routes Microsoft purchase with external ID when msclkid is absent', () => 
       now: purchasePlanningNow
     }).find(intent => intent.provider === 'microsoft_uet')
 
-    assert.deepEqual(microsoft, {
-      dispatch_mode: 'server_retry',
-      event_id: event.event_id,
-      provider: 'microsoft_uet'
-    })
+    assert.equal(microsoft, undefined)
   } finally {
     if (previous === undefined) {
       delete process.env.MICROSOFT_UET_CAPI_ACCESS_TOKEN
@@ -1018,7 +1002,7 @@ test('enqueues Pinterest view_item when CAPI is configured and IP plus UA are pr
   })
 })
 
-test('enqueues Pinterest purchase when CAPI is configured and email hash is present', () => {
+test('does not enqueue inactive Pinterest Purchase when CAPI is configured', () => {
   withIsolatedPinterestEnv(() => {
     process.env.PINTEREST_CONVERSIONS_API_ENABLED = 'true'
     process.env.PINTEREST_CONVERSIONS_ACCESS_TOKEN = 'test-token'
@@ -1031,11 +1015,7 @@ test('enqueues Pinterest purchase when CAPI is configured and email hash is pres
       now: purchasePlanningNow
     }).find(intent => intent.provider === 'pinterest')
 
-    assert.deepEqual(pinterest, {
-      dispatch_mode: 'server_retry',
-      event_id: event.event_id,
-      provider: 'pinterest'
-    })
+    assert.equal(pinterest, undefined)
   })
 })
 

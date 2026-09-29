@@ -4,7 +4,6 @@ import {
 } from '../shopifyCheckoutObservationContract'
 import { protectShopifyCheckoutMetaObservation } from './protectShopifyCheckoutMetaObservation'
 import type { ShopifyCheckoutObservationStore } from './shopifyCheckoutObservationStore'
-import type { ShopifyAddPaymentInfoPromotionResult } from './promoteShopifyAddPaymentInfoObservation'
 
 export const MAX_SHOPIFY_CHECKOUT_OBSERVATION_BYTES = 16 * 1_024
 
@@ -25,8 +24,13 @@ type HandlerDependencies = {
     observation: Parameters<
       ShopifyCheckoutObservationStore['persist']
     >[0]
-  ) => Promise<ShopifyAddPaymentInfoPromotionResult>
+  ) => Promise<ShopifyCheckoutObservationPromotionResult>
   store: ShopifyCheckoutObservationStore
+}
+
+export type ShopifyCheckoutObservationPromotionResult = {
+  eventId?: string
+  status: 'duplicate' | 'inserted' | 'not_applicable'
 }
 
 export async function handleShopifyCheckoutObservation(
@@ -155,7 +159,7 @@ export async function handleShopifyCheckoutObservation(
   }
 
   let canonicalResult:
-    | ShopifyAddPaymentInfoPromotionResult
+    | ShopifyCheckoutObservationPromotionResult
     | undefined
   try {
     canonicalResult = await dependencies.promote?.(observation)

@@ -121,6 +121,43 @@ test('records source evidence but returns duplicate without writing dispatches w
   assert.equal(dispatchWrites, 0)
 })
 
+test('releases only allowlisted missing provider attempts for a verified duplicate', async () => {
+  const eventInput = input()
+  const attempts = new Map<string, string>()
+  const transaction: CanonicalEventTransaction = {
+    findLedger: async () => eventInput.event,
+    insertLedger: async () => false,
+    upsertSourceEvidence: async () => {},
+    insertDispatch: async dispatch => {
+      const key = `${dispatch.provider}:${dispatch.idempotency_key}`
+
+      if (attempts.has(key)) return null
+
+      const attemptId = `attempt-${attempts.size + 1}`
+      attempts.set(key, attemptId)
+      return attemptId
+    }
+  }
+  const store = createCanonicalEventStore(work =>
+    work(transaction)
+  )
+  const release = {
+    ...eventInput,
+    releaseProvidersOnDuplicate: ['meta'] as const
+  }
+
+  const first = await store.accept(release)
+  const replay = await store.accept(release)
+
+  assert.deepEqual(Array.from(attempts.keys()), [
+    `meta:page_view:${eventInput.event.event_id}`
+  ])
+  assert.deepEqual(first.createdDispatchAttempts, [
+    { adapterKey: 'meta:page_view', attemptId: 'attempt-1' }
+  ])
+  assert.deepEqual(replay.createdDispatchAttempts, [])
+})
+
 test('returns only newly inserted pending attempts for queue publication', async () => {
   const transaction: CanonicalEventTransaction = {
     insertLedger: async () => true,
@@ -287,7 +324,8 @@ test('late marketing consent adds one Meta attempt without another ledger row or
 
   assert.equal(ledgerInserts, 1)
   assert.equal(
-    (await transaction.findLedger?.(original))?.consent.marketing,
+    (await transaction.findLedger?.(original))?.consent
+      .marketing,
     'denied'
   )
   assert.equal(attempts.size, 1)

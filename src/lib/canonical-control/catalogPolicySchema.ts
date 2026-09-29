@@ -41,6 +41,7 @@ const signalName = z.enum([
 ])
 const transport = z.enum([
   'google_tag_manager',
+  'shopify_app_web_pixel',
   'shopify_customer_events',
   'meta_pixel',
   'microsoft_uet',

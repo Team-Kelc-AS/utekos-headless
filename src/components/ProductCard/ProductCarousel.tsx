@@ -6,10 +6,12 @@ import type { ShopifyProduct } from 'types/product'
 
 type ProductCarouselProps = {
   productCardClassName?: string
+  showExpressCheckout?: boolean
 }
 
 export async function ProductCarousel({
-  productCardClassName
+  productCardClassName,
+  showExpressCheckout
 }: ProductCarouselProps) {
   const products = await getFeaturedProducts()
 
@@ -42,6 +44,9 @@ export async function ProductCarousel({
       itemListId='frontpage_featured_products'
       itemListName='Kundenes favoritter'
       navigationClassName='bg-card '
+      {...(showExpressCheckout === undefined ?
+        {}
+      : { showExpressCheckout })}
       {...cardStyleProps}
     />
   )

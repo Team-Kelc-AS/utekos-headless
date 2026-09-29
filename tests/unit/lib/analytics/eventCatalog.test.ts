@@ -275,7 +275,7 @@ test('marks all non-blocked catalog events as active', () => {
   ])
 })
 
-test('allows active Google, Meta, and Microsoft purchase server outboxes', () => {
+test('keeps Purchase delivery active only for Google and Meta', () => {
   const activeOutboxes = canonicalEventNames.flatMap(eventName =>
     providerIds.flatMap(providerId =>
       (
@@ -293,7 +293,9 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   assert.ok(activeOutboxes.includes('meta:add_shipping_info'))
   assert.ok(activeOutboxes.includes('meta:add_payment_info'))
   assert.ok(activeOutboxes.includes('meta:search'))
-  assert.ok(activeOutboxes.includes('microsoft_uet:purchase'))
+  assert.ok(activeOutboxes.includes('google:purchase'))
+  assert.ok(activeOutboxes.includes('meta:purchase'))
+  assert.ok(!activeOutboxes.includes('microsoft_uet:purchase'))
   assert.ok(activeOutboxes.includes('microsoft_uet:add_to_cart'))
   assert.ok(
     activeOutboxes.includes('microsoft_uet:begin_checkout')
@@ -301,7 +303,7 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   assert.ok(activeOutboxes.includes('pinterest:view_item'))
   assert.ok(activeOutboxes.includes('pinterest:add_to_cart'))
   assert.ok(activeOutboxes.includes('pinterest:begin_checkout'))
-  assert.ok(activeOutboxes.includes('pinterest:purchase'))
+  assert.ok(!activeOutboxes.includes('pinterest:purchase'))
   assert.ok(activeOutboxes.includes('pinterest:search'))
   assert.ok(activeOutboxes.includes('pinterest:view_category'))
   assert.ok(activeOutboxes.includes('pinterest:add_to_wishlist'))
@@ -311,7 +313,7 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   assert.ok(activeOutboxes.includes('snapchat:add_to_cart'))
   assert.ok(activeOutboxes.includes('snapchat:begin_checkout'))
   assert.ok(activeOutboxes.includes('snapchat:add_payment_info'))
-  assert.ok(activeOutboxes.includes('snapchat:purchase'))
+  assert.ok(!activeOutboxes.includes('snapchat:purchase'))
   assert.equal(
     eventCatalog.page_view.providers.pinterest.support,
     'not_relevant'
@@ -332,16 +334,24 @@ test('allows active Google, Meta, and Microsoft purchase server outboxes', () =>
   )
   assert.equal(
     eventCatalog.purchase.providers.microsoft_uet.serverOutbox,
-    'active'
+    'disabled'
+  )
+  assert.equal(
+    eventCatalog.purchase.providers.pinterest.serverOutbox,
+    'disabled'
+  )
+  assert.equal(
+    eventCatalog.purchase.providers.snapchat.serverOutbox,
+    'disabled'
   )
 })
 
-test('declares Shopify Customer Events and Data Manager as the two purchase sources', () => {
+test('declares the Shopify App Web Pixel and Data Manager as the two Google purchase sources', () => {
   const googlePurchase = eventCatalog.purchase.providers.google
 
   assert.equal(
     googlePurchase.transport.browser,
-    'shopify_customer_events'
+    'shopify_app_web_pixel'
   )
   assert.equal(
     googlePurchase.transport.server,
@@ -376,7 +386,7 @@ test('declares one Meta browser owner and one Meta server owner', () => {
 
   assert.equal(
     purchaseMeta.transport.browser,
-    'shopify_customer_events'
+    'shopify_app_web_pixel'
   )
   assert.equal(
     purchaseMeta.transport.server,

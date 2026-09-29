@@ -930,7 +930,7 @@ const shopifyPurchaseBrowser = [
   parameter(
     'event',
     'required',
-    'Shopify Customer Events',
+    'Shopify App Web Pixel',
     'Subscribed source event is checkout_completed.'
   ),
   parameter(
@@ -991,7 +991,7 @@ const shopifyPurchaseBrowser = [
     'event_id',
     'required',
     'Shopify event.id',
-    'Shopify Customer Events correlation ID.'
+    'Shopify App Web Pixel correlation ID.'
   ),
   parameter(
     'tax',
@@ -1027,7 +1027,7 @@ export const deliveryDocumentation = {
     url: 'https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration?view=bingads-13'
   },
   shopify: {
-    title: 'Shopify Customer Events checkout_completed',
+    title: 'Shopify App Web Pixel checkout_completed',
     url: 'https://shopify.dev/docs/api/web-pixels-api/standard-events/checkout_completed'
   }
 } as const
@@ -1211,7 +1211,7 @@ export function buildUtekosEventDeliveryParameterContract() {
                         status:
                           mapping.productionStatus === 'active' ?
                             'implemented'
-                          : mapping.productionStatus,
+                          : 'disabled',
                         parameterContract: parametersFor(
                           provider,
                           'browser',

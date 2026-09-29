@@ -402,6 +402,14 @@ export function readCanonicalPilotRules(root: string) {
 
     for (const provider of dispatchProviderOrder) {
       const providerPolicy = policy.providers[provider]
+
+      if (
+        providerPolicy.productionStatus !== 'active' ||
+        providerPolicy.support !== 'supported'
+      ) {
+        continue
+      }
+
       rules.push(
         controlRuntimeRuleSchema.parse({
           id: `${provider}.${event}.dispatch.v1`,
@@ -431,10 +439,8 @@ export function readCanonicalPilotRules(root: string) {
       const mapperSymbol = `mapCanonical${flow.suffix}To${target}`
       const mapperPath = `src/lib/analytics/server/${mapperSymbol}.ts`
       const senderSymbol =
-        provider === 'google' ?
-          'sendGoogleDataManagerEvent'
-        : event === 'purchase' ?
-          'sendMetaServerEvents'
+        provider === 'google' ? 'sendGoogleDataManagerEvent'
+        : event === 'purchase' ? 'sendMetaServerEvents'
         : 'sendMetaServerEvent'
       const senderPath =
         provider === 'google' ?

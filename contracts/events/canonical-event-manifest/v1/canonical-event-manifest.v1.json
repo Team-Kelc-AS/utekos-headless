@@ -2,7 +2,7 @@
   "manifest_version": "canonical-event-manifest.v1",
   "agent_contract": {
     "path": "contracts/events/canonical-event-manifest/v1/canonical-event-context.v2.schema.json",
-    "sha256": "62779ac7d9c40ed587c1c0c1decbb7890e4670f70db554520b8979a181bbd24d"
+    "sha256": "5b0478ef6349082838f0313f3d8b233aa983ab97dd95e667ead561427d212b57"
   },
   "source_of_truth": {
     "statement": "Manifestet er den offisielle Control Plane-outputen, men normative TypeScript/Zod-schemas, contracts og eksplisitte provider mappings forblir source of truth som manifestet genereres fra.",
@@ -49,7 +49,7 @@
       },
       {
         "path": "scripts/contracts/readCanonicalPilotRules.ts",
-        "sha256": "e111aeba48f95d23ce902bc934a5542e5a7e5fd094521ce74b6c8bdac37749d3"
+        "sha256": "bb8e4fab629a3e789dd016126a0787753c89513ba52239c4c73f26e67ec69430"
       },
       {
         "path": "scripts/contracts/readCanonicalPipeline.ts",
@@ -57,7 +57,7 @@
       },
       {
         "path": "scripts/contracts/utekosEventDeliveryParameterCatalog.ts",
-        "sha256": "5a4e862ce9dc66fc060ebb84e9ddffe6b4f9c8ad2c8976c836f9f4388753ec05"
+        "sha256": "dc8e06515dbbb1a8a968f382088c2d4a62a2a20c450162a0ab30dbee99d6b962"
       },
       {
         "path": "scripts/contracts/utekosEventsContractCatalog.ts",
@@ -129,7 +129,7 @@
       },
       {
         "path": "src/lib/analytics/eventCatalog.ts",
-        "sha256": "61766dcbe2920e600baf1f7f2afbcf8852b43415b33d2623c39eea0e18379f14"
+        "sha256": "f0e8e901414abb6d08012c8400e690ce23892fb2b6cf182c2d099815e7487d48"
       },
       {
         "path": "src/lib/analytics/eventCatalogSignalContracts.ts",
@@ -373,7 +373,7 @@
       },
       {
         "path": "src/lib/analytics/server/createCanonicalEventStore.ts",
-        "sha256": "ecd76ff1a6a79b808d361c4164cce9e697031db9029c173976d16f63f5bc11dc"
+        "sha256": "c637587533d986f52f4f009959cbaadf47eb56dbdeef252f1c2718d0fd86e769"
       },
       {
         "path": "src/lib/analytics/server/createPinterestProviderAdapter.ts",
@@ -1157,7 +1157,7 @@
       },
       {
         "path": "src/lib/canonical-control/catalogPolicySchema.ts",
-        "sha256": "87eded5e92bf0dcb1a1c183068cde62ff910e739cba9a7bfc2d463f3dd416b60"
+        "sha256": "9db7cd04a5481d402720862f72dab907ae1669b28f7d70b4fb220fe5855f3829"
       },
       {
         "path": "src/lib/canonical-control/controlDefinition.ts",
@@ -23277,7 +23277,7 @@
             "support": "supported",
             "eventName": "purchase",
             "transport": {
-              "browser": "shopify_customer_events",
+              "browser": "shopify_app_web_pixel",
               "server": "google_data_manager"
             },
             "requiredParameters": [
@@ -23293,7 +23293,7 @@
             "consentRequirement": "analytics",
             "adapterVersion": 1,
             "productionStatus": "active",
-            "productionDetail": "Shopify Customer Events is the browser source and the Data Manager purchase outbox is the supplementary server source when checkout analytics consent was granted. Both use transaction_id for GA4 deduplication.",
+            "productionDetail": "The Shopify App Web Pixel checkout_completed observation is the browser source. Google Data Manager remains the authoritative paid-order server delivery when checkout analytics consent was granted. Both use transaction_id for deduplication; the Shopify Admin Custom Pixel is not an owner.",
             "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "send_when_supported_and_permitted",
@@ -23310,7 +23310,7 @@
             "support": "supported",
             "eventName": "Purchase",
             "transport": {
-              "browser": "shopify_customer_events",
+              "browser": "shopify_app_web_pixel",
               "server": "meta_conversions_api"
             },
             "requiredParameters": [
@@ -23327,7 +23327,7 @@
             "consentRequirement": "marketing",
             "adapterVersion": 1,
             "productionStatus": "active",
-            "productionDetail": "The marketing-consented Shopify Customer Events browser Purchase is implemented locally and pending provider publication; Meta CAPI remains active. Both reuse the deterministic order event_id for deduplication.",
+            "productionDetail": "The marketing-consented Shopify App Web Pixel checkout_completed observation is the browser source; Meta CAPI remains the authoritative paid-order server delivery. Both reuse the deterministic order event_id for deduplication; the Shopify Admin Custom Pixel is not an owner.",
             "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
@@ -23358,9 +23358,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 2,
-            "productionStatus": "active",
-            "productionDetail": "Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and at least one Microsoft-supported userData identifier is present.",
-            "serverOutbox": "active",
+            "productionStatus": "not_implemented",
+            "productionDetail": "Microsoft Purchase delivery is inactive; the retained adapter is not eligible for new outbox work.",
+            "serverOutbox": "disabled",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -23393,9 +23393,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "active",
-            "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
-            "serverOutbox": "active",
+            "productionStatus": "not_implemented",
+            "productionDetail": "Pinterest Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery.",
+            "serverOutbox": "disabled",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -23429,9 +23429,9 @@
             "dedupeField": "transaction_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "active",
-            "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
-            "serverOutbox": "active",
+            "productionStatus": "not_implemented",
+            "productionDetail": "Snapchat Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery.",
+            "serverOutbox": "disabled",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -23561,11 +23561,11 @@
           "support": "supported",
           "eventName": "purchase",
           "productionStatus": "active",
-          "productionDetail": "Shopify Customer Events is the browser source and the Data Manager purchase outbox is the supplementary server source when checkout analytics consent was granted. Both use transaction_id for GA4 deduplication.",
+          "productionDetail": "The Shopify App Web Pixel checkout_completed observation is the browser source. Google Data Manager remains the authoritative paid-order server delivery when checkout analytics consent was granted. Both use transaction_id for deduplication; the Shopify Admin Custom Pixel is not an owner.",
           "consentRequirement": "analytics",
           "dedupeField": "transaction_id",
           "browser": {
-            "transport": "shopify_customer_events",
+            "transport": "shopify_app_web_pixel",
             "status": "implemented",
             "parameterContract": {
               "parameterSets": [
@@ -23605,11 +23605,11 @@
           "support": "supported",
           "eventName": "Purchase",
           "productionStatus": "active",
-          "productionDetail": "The marketing-consented Shopify Customer Events browser Purchase is implemented locally and pending provider publication; Meta CAPI remains active. Both reuse the deterministic order event_id for deduplication.",
+          "productionDetail": "The marketing-consented Shopify App Web Pixel checkout_completed observation is the browser source; Meta CAPI remains the authoritative paid-order server delivery. Both reuse the deterministic order event_id for deduplication; the Shopify Admin Custom Pixel is not an owner.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
-            "transport": "shopify_customer_events",
+            "transport": "shopify_app_web_pixel",
             "status": "implemented",
             "parameterContract": {
               "parameterSets": [
@@ -23650,14 +23650,14 @@
         "microsoft_uet": {
           "support": "supported",
           "eventName": "purchase",
-          "productionStatus": "active",
-          "productionDetail": "Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and at least one Microsoft-supported userData identifier is present.",
+          "productionStatus": "not_implemented",
+          "productionDetail": "Microsoft Purchase delivery is inactive; the retained adapter is not eligible for new outbox work.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": null,
           "server": {
             "transport": "microsoft_uet_capi",
-            "status": "active",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [
                 "microsoftServer"
@@ -23676,13 +23676,13 @@
         "pinterest": {
           "support": "supported",
           "eventName": "checkout",
-          "productionStatus": "active",
-          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "productionStatus": "not_implemented",
+          "productionDetail": "Pinterest Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "pinterest_tag",
-            "status": "implemented",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [
                 "pinterestBrowser"
@@ -23702,7 +23702,7 @@
           },
           "server": {
             "transport": "pinterest_conversions_api",
-            "status": "active",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [
                 "pinterestServer"
@@ -23724,13 +23724,13 @@
         "snapchat": {
           "support": "supported",
           "eventName": "PURCHASE",
-          "productionStatus": "active",
-          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+          "productionStatus": "not_implemented",
+          "productionDetail": "Snapchat Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery.",
           "consentRequirement": "marketing",
           "dedupeField": "transaction_id",
           "browser": {
             "transport": "shopify_customer_events",
-            "status": "implemented",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -23749,7 +23749,7 @@
           },
           "server": {
             "transport": "snap_conversions_api_v3",
-            "status": "active",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -23785,7 +23785,7 @@
           "target_parameter": "event",
           "authority": "catalog_declaration",
           "runtime_rule_id": null,
-          "source": "Shopify Customer Events",
+          "source": "Shopify App Web Pixel",
           "requirement": "required",
           "rule": "Subscribed source event is checkout_completed."
         },
@@ -23797,7 +23797,7 @@
           "runtime_rule_id": null,
           "source": "Shopify event.id",
           "requirement": "required",
-          "rule": "Shopify Customer Events correlation ID."
+          "rule": "Shopify App Web Pixel correlation ID."
         },
         {
           "provider": "google",
@@ -23925,7 +23925,7 @@
           "target_parameter": "event",
           "authority": "catalog_declaration",
           "runtime_rule_id": null,
-          "source": "Shopify Customer Events",
+          "source": "Shopify App Web Pixel",
           "requirement": "required",
           "rule": "Subscribed source event is checkout_completed."
         },
@@ -23937,7 +23937,7 @@
           "runtime_rule_id": null,
           "source": "Shopify event.id",
           "requirement": "required",
-          "rule": "Shopify Customer Events correlation ID."
+          "rule": "Shopify App Web Pixel correlation ID."
         },
         {
           "provider": "google",
@@ -25164,45 +25164,6 @@
             "kind": "provider_dispatch",
             "event": "purchase",
             "provider": "meta",
-            "lifecycle": "active",
-            "support": "supported",
-            "consent_requirement": "marketing",
-            "production_status": "active",
-            "server_outbox": "active",
-            "source": "src/lib/analytics/eventCatalog.ts",
-            "source_symbol": "eventCatalog"
-          },
-          {
-            "id": "microsoft_uet.purchase.dispatch.v1",
-            "kind": "provider_dispatch",
-            "event": "purchase",
-            "provider": "microsoft_uet",
-            "lifecycle": "active",
-            "support": "supported",
-            "consent_requirement": "marketing",
-            "production_status": "active",
-            "server_outbox": "active",
-            "source": "src/lib/analytics/eventCatalog.ts",
-            "source_symbol": "eventCatalog"
-          },
-          {
-            "id": "pinterest.purchase.dispatch.v1",
-            "kind": "provider_dispatch",
-            "event": "purchase",
-            "provider": "pinterest",
-            "lifecycle": "active",
-            "support": "supported",
-            "consent_requirement": "marketing",
-            "production_status": "active",
-            "server_outbox": "active",
-            "source": "src/lib/analytics/eventCatalog.ts",
-            "source_symbol": "eventCatalog"
-          },
-          {
-            "id": "snapchat.purchase.dispatch.v1",
-            "kind": "provider_dispatch",
-            "event": "purchase",
-            "provider": "snapchat",
             "lifecycle": "active",
             "support": "supported",
             "consent_requirement": "marketing",

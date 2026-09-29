@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select extensions.plan(20);
+select extensions.plan(24);
 
 select extensions.has_table(
   'ops',
@@ -223,6 +223,40 @@ select extensions.lives_ok(
   'accepts a strictly validated version 3 payment observation'
 );
 
+select extensions.lives_ok(
+  $sql$
+    insert into ops.shopify_checkout_observations (
+      idempotency_key, payload_sha256, schema_version, event_name,
+      event_id, event_sequence, occurred_at, analytics_processing_allowed,
+      marketing_allowed, preferences_processing_allowed, sale_of_data_allowed,
+      checkout_token, item_quantity
+    ) values (
+      'utekos.shopify.checkout_observation:3:shopify_app_web_pixel:checkout_completed:evt-completed-v3',
+      repeat('c', 64), 3, 'checkout_completed', 'evt-completed-v3', 4,
+      '2026-09-29T12:00:00Z', true, false, false, false,
+      'checkout-token-completed-v3', 0
+    )
+  $sql$,
+  'accepts an existing-contract version 3 checkout completion observation'
+);
+
+select extensions.lives_ok(
+  $sql$
+    insert into ops.shopify_checkout_observations (
+      idempotency_key, payload_sha256, schema_version, event_name,
+      event_id, event_sequence, occurred_at, analytics_processing_allowed,
+      marketing_allowed, preferences_processing_allowed, sale_of_data_allowed,
+      checkout_token, currency_code, commerce_value, item_quantity
+    ) values (
+      'utekos.shopify.checkout_observation:4:shopify_app_web_pixel:checkout_completed:evt-completed-v4',
+      repeat('b', 64), 4, 'checkout_completed', 'evt-completed-v4', 5,
+      '2026-09-29T12:00:01Z', true, false, false, false,
+      'checkout-token-completed-v4', 'NOK', 1790, 1
+    )
+  $sql$,
+  'accepts a complete version 4 purchase summary without durable line items'
+);
+
 select extensions.throws_ok(
   $sql$
     insert into ops.shopify_checkout_observations (
@@ -237,8 +271,45 @@ select extensions.throws_ok(
     )
   $sql$,
   '23514'::char(5),
-  'new row for relation "shopify_checkout_observations" violates check constraint "shopify_checkout_observations_schema_version_check"',
-  'rejects unsupported observation contract versions'
+  'new row for relation "shopify_checkout_observations" violates check constraint "shopify_checkout_observations_shape_check"',
+  'rejects version 4 payment observations at the event-shape boundary'
+);
+
+select extensions.throws_ok(
+  $sql$
+    insert into ops.shopify_checkout_observations (
+      idempotency_key, payload_sha256, schema_version, event_name,
+      event_id, event_sequence, occurred_at, analytics_processing_allowed,
+      marketing_allowed, preferences_processing_allowed, sale_of_data_allowed,
+      checkout_token, currency_code, commerce_value
+    ) values (
+      'utekos.shopify.checkout_observation:4:shopify_app_web_pixel:checkout_completed:evt-completed-v4-no-quantity',
+      repeat('9', 64), 4, 'checkout_completed',
+      'evt-completed-v4-no-quantity', 6, '2026-09-29T12:00:02Z',
+      true, false, false, false, 'checkout-token-v4-no-quantity', 'NOK', 1790
+    )
+  $sql$,
+  '23514'::char(5),
+  'new row for relation "shopify_checkout_observations" violates check constraint "shopify_checkout_observations_shape_check"',
+  'rejects a version 4 purchase summary without mandatory item quantity'
+);
+
+select extensions.throws_ok(
+  $sql$
+    insert into ops.shopify_checkout_observations (
+      idempotency_key, payload_sha256, schema_version, event_name,
+      event_id, event_sequence, occurred_at, analytics_processing_allowed,
+      marketing_allowed, preferences_processing_allowed, sale_of_data_allowed,
+      alert_type
+    ) values (
+      'utekos.shopify.checkout_observation:2:shopify_app_web_pixel:alert_displayed:evt-alert-v2',
+      repeat('8', 64), 2, 'alert_displayed', 'evt-alert-v2', 7,
+      '2026-09-29T12:00:03Z', true, false, false, false, 'PAYMENT_ERROR'
+    )
+  $sql$,
+  '23514'::char(5),
+  'new row for relation "shopify_checkout_observations" violates check constraint "shopify_checkout_observations_shape_check"',
+  'keeps alert observations on schema version 1'
 );
 
 select extensions.lives_ok(

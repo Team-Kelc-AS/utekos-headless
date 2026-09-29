@@ -21,9 +21,6 @@ export function EmptyCartRecommendations() {
           <p className='text-base text-foreground'>
             Handlekurven din er tom
           </p>
-          <p className='mt-1 text-sm'>
-            Legg til produkter for å komme i gang.
-          </p>
         </div>
       : <>
           <h4 className='mb-4 font-sans text-base font-semibold text-foreground'>
@@ -38,7 +35,7 @@ export function EmptyCartRecommendations() {
               />
             ))}
           </div>
-        </>
+      </>
       }
 
       <EmptyCartIdentityChoices />

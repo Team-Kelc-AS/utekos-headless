@@ -17,7 +17,7 @@
       "url": "https://learn.microsoft.com/en-us/advertising/guides/uet-conversion-api-integration?view=bingads-13"
     },
     "shopify": {
-      "title": "Shopify Customer Events checkout_completed",
+      "title": "Shopify App Web Pixel checkout_completed",
       "url": "https://shopify.dev/docs/api/web-pixels-api/standard-events/checkout_completed"
     }
   },
@@ -1007,7 +1007,7 @@
       {
         "path": "event",
         "requirement": "required",
-        "source": "Shopify Customer Events",
+        "source": "Shopify App Web Pixel",
         "rule": "Subscribed source event is checkout_completed."
       },
       {
@@ -1068,7 +1068,7 @@
         "path": "event_id",
         "requirement": "required",
         "source": "Shopify event.id",
-        "rule": "Shopify Customer Events correlation ID."
+        "rule": "Shopify App Web Pixel correlation ID."
       },
       {
         "path": "tax",
@@ -1522,7 +1522,7 @@
     },
     "select_item": {
       "lifecycle": "active",
-      "owner": "storefront_product_link",
+      "owner": "storefront_product_selection",
       "sources": [
         "browser"
       ],
@@ -1530,7 +1530,7 @@
         "interaction_id",
         "item_list_id",
         "selected item",
-        "destination URL"
+        "resolved destination or variant URL"
       ],
       "deduplication": {
         "eventId": "interaction_id",
@@ -3598,11 +3598,11 @@
           "support": "supported",
           "eventName": "purchase",
           "productionStatus": "active",
-          "productionDetail": "Shopify Customer Events is the browser source and the Data Manager purchase outbox is the supplementary server source when checkout analytics consent was granted. Both use transaction_id for GA4 deduplication.",
+          "productionDetail": "The Shopify App Web Pixel checkout_completed observation is the browser source. Google Data Manager remains the authoritative paid-order server delivery when checkout analytics consent was granted. Both use transaction_id for deduplication; the Shopify Admin Custom Pixel is not an owner.",
           "consentRequirement": "analytics",
           "dedupeField": "transaction_id",
           "browser": {
-            "transport": "shopify_customer_events",
+            "transport": "shopify_app_web_pixel",
             "status": "implemented",
             "parameterContract": {
               "parameterSets": [
@@ -3642,11 +3642,11 @@
           "support": "supported",
           "eventName": "Purchase",
           "productionStatus": "active",
-          "productionDetail": "The marketing-consented Shopify Customer Events browser Purchase is implemented locally and pending provider publication; Meta CAPI remains active. Both reuse the deterministic order event_id for deduplication.",
+          "productionDetail": "The marketing-consented Shopify App Web Pixel checkout_completed observation is the browser source; Meta CAPI remains the authoritative paid-order server delivery. Both reuse the deterministic order event_id for deduplication; the Shopify Admin Custom Pixel is not an owner.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
-            "transport": "shopify_customer_events",
+            "transport": "shopify_app_web_pixel",
             "status": "implemented",
             "parameterContract": {
               "parameterSets": [
@@ -3687,14 +3687,14 @@
         "microsoft_uet": {
           "support": "supported",
           "eventName": "purchase",
-          "productionStatus": "active",
-          "productionDetail": "Microsoft UET CAPI purchase outbox is active when checkout marketing consent was granted and at least one Microsoft-supported userData identifier is present.",
+          "productionStatus": "not_implemented",
+          "productionDetail": "Microsoft Purchase delivery is inactive; the retained adapter is not eligible for new outbox work.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": null,
           "server": {
             "transport": "microsoft_uet_capi",
-            "status": "active",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [
                 "microsoftServer"
@@ -3713,13 +3713,13 @@
         "pinterest": {
           "support": "supported",
           "eventName": "checkout",
-          "productionStatus": "active",
-          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+          "productionStatus": "not_implemented",
+          "productionDetail": "Pinterest Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "pinterest_tag",
-            "status": "implemented",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [
                 "pinterestBrowser"
@@ -3739,7 +3739,7 @@
           },
           "server": {
             "transport": "pinterest_conversions_api",
-            "status": "active",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [
                 "pinterestServer"
@@ -3761,13 +3761,13 @@
         "snapchat": {
           "support": "supported",
           "eventName": "PURCHASE",
-          "productionStatus": "active",
-          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+          "productionStatus": "not_implemented",
+          "productionDetail": "Snapchat Purchase delivery is inactive; the retained adapter and Custom Pixel artifact are not eligible for new delivery.",
           "consentRequirement": "marketing",
           "dedupeField": "transaction_id",
           "browser": {
             "transport": "shopify_customer_events",
-            "status": "implemented",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -3786,7 +3786,7 @@
           },
           "server": {
             "transport": "snap_conversions_api_v3",
-            "status": "active",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -5755,7 +5755,7 @@
           "dedupeField": "event_id",
           "browser": {
             "transport": "google_tag_manager",
-            "status": "planned",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [
                 "googleBrowserDataLayer"
@@ -5883,7 +5883,7 @@
           "dedupeField": "event_id",
           "browser": {
             "transport": "google_tag_manager",
-            "status": "planned",
+            "status": "disabled",
             "parameterContract": {
               "parameterSets": [
                 "googleBrowserDataLayer"

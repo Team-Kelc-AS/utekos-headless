@@ -172,7 +172,7 @@ export function TechdownContent() {
             Juster, form og nyt.
           </h2>
           <p>
-            Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Det værbestandige Luméa™-skallet og spesialutviklet CloudWeave™-isolasjon forenes i et intuitivt 3-i-1-design, skapt for å forlenge de gode stundene utendørs. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen, mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt.
+            Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen, mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt.
           </p>
         </div>
         <ul className={styles.benefits}>

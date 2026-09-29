@@ -37,6 +37,7 @@ interface ExtendedProductCardProps extends ProductCardProps {
   cardClassName?: string
   itemListName?: string
   itemListTotalCount?: number
+  showExpressCheckout?: boolean
 }
 
 export function ProductCard({
@@ -48,7 +49,8 @@ export function ProductCard({
   cardClassName,
   itemListId = 'product_card',
   itemListName = 'Produktkort',
-  itemListTotalCount = 1
+  itemListTotalCount = 1,
+  showExpressCheckout = true
 }: ExtendedProductCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [selectedOptions, setSelectedOptions] = useState(
@@ -370,6 +372,7 @@ export function ProductCard({
         )}
       >
         {(
+          showExpressCheckout &&
           process.env.NEXT_PUBLIC_VIPPS_EXPRESS_ENABLED ===
             'true' &&
           isAvailable &&
@@ -392,13 +395,15 @@ export function ProductCard({
             onWaitlistClick={handleWaitlistClick}
           />
         }
-        <KlarnaProductExpressCheckout
-          product={product}
-          selectedVariant={selectedVariant ?? null}
-          disabled={isCartBusy}
-          className='w-full'
-          buttonContainerClassName='h-10! min-h-10! border-none ring-0 md:h-12! md:min-h-12!'
-        />
+        {showExpressCheckout ?
+          <KlarnaProductExpressCheckout
+            product={product}
+            selectedVariant={selectedVariant ?? null}
+            disabled={isCartBusy}
+            className='w-full'
+            buttonContainerClassName='h-10! min-h-10! border-none ring-0 md:h-12! md:min-h-12!'
+          />
+        : null}
       </div>
       {showWaitlistCta ?
         <SoldOutWaitlistDialog

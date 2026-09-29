@@ -37,5 +37,8 @@ test('declarative checkout observation schema supports exactly the application v
     /create table if not exists ops\.shopify_checkout_observations \([\s\S]*?\n\);/
   )?.[0]
   assert.ok(table)
-  assert.match(table, /check \(schema_version in \(1, 2, 3\)\)/)
+  assert.match(
+    table,
+    /check \(schema_version in \(1, 2, 3, 4\)\)/
+  )
 })
