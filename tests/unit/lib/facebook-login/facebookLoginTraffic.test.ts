@@ -23,18 +23,18 @@ test('limits the Facebook Login prompt to preview hosts', () => {
   )
 })
 
-test('never activates the Facebook Login prompt on production hosts', () => {
+test('activates the Facebook Login prompt on production only when enabled', () => {
   assert.equal(
     isFacebookLoginPromptActive({
       enabled: true,
       hostname: 'utekos.no',
       previewAllowed: false
     }),
-    false
+    true
   )
   assert.equal(
     isFacebookLoginPromptActive({
-      enabled: true,
+      enabled: false,
       hostname: 'www.utekos.no',
       previewAllowed: true
     }),

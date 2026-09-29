@@ -57,7 +57,7 @@
       },
       {
         "path": "scripts/contracts/utekosEventDeliveryParameterCatalog.ts",
-        "sha256": "d8c5c2f2a2fe744921e1a0c0b928a688efe18f2c04f500ef8e66849dac8874f2"
+        "sha256": "5a4e862ce9dc66fc060ebb84e9ddffe6b4f9c8ad2c8976c836f9f4388753ec05"
       },
       {
         "path": "scripts/contracts/utekosEventsContractCatalog.ts",
@@ -129,7 +129,7 @@
       },
       {
         "path": "src/lib/analytics/eventCatalog.ts",
-        "sha256": "fed5b09a50fb99c26483fdd8b68f70261ef79fd6794843fa83d2568a82a79f26"
+        "sha256": "61766dcbe2920e600baf1f7f2afbcf8852b43415b33d2623c39eea0e18379f14"
       },
       {
         "path": "src/lib/analytics/eventCatalogSignalContracts.ts",
@@ -32523,9 +32523,9 @@
         "version": 1,
         "name": "select_item",
         "lifecycle": "active",
-        "owner": "storefront_product_link",
+        "owner": "storefront_product_selection",
         "trigger": {
-          "description": "Create when an accepted product selection initiates navigation from a resolved list.",
+          "description": "Create when an accepted product or variant selection resolves its destination and selected item context.",
           "sources": [
             "browser"
           ],
@@ -32535,7 +32535,7 @@
             "interaction_id",
             "item_list_id",
             "selected item",
-            "destination URL"
+            "resolved destination or variant URL"
           ]
         },
         "dedupe": {
@@ -32659,7 +32659,7 @@
             "consentRequirement": "marketing",
             "adapterVersion": 1,
             "productionStatus": "active",
-            "productionDetail": "Meta CAPI delivery is active.",
+            "productionDetail": "Meta Pixel and CAPI map TechDown size-selector interactions to the standard CustomizeProduct event; other select_item surfaces remain SelectItem.",
             "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
@@ -32934,7 +32934,7 @@
           "support": "supported",
           "eventName": "SelectItem",
           "productionStatus": "active",
-          "productionDetail": "Meta CAPI delivery is active.",
+          "productionDetail": "Meta Pixel and CAPI map TechDown size-selector interactions to the standard CustomizeProduct event; other select_item surfaces remain SelectItem.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {

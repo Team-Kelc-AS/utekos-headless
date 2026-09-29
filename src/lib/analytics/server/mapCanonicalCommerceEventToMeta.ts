@@ -35,6 +35,7 @@ function buildContent(item: CanonicalCommerceItem) {
 
 function buildCustomData(
   event: MetaCommerceEvent,
+  metaEventName: string,
   customProperties?: Record<
     string,
     boolean | number | string
@@ -52,13 +53,17 @@ function buildCustomData(
     .setContentIds(contentIds)
     .setContents(contents)
     .setContentType('product')
-    .setNumItems(
+
+  if (metaEventName === 'InitiateCheckout') {
+    customData.setNumItems(
       items.reduce((sum, item) => sum + item.quantity, 0)
     )
-
-  if (customProperties) {
-    customData.setCustomProperties(customProperties)
   }
+
+  customData.setCustomProperties({
+    country: 'Norway',
+    ...customProperties
+  })
 
   if (primaryItem) {
     customData.setContentName(primaryItem.item_name)
@@ -95,7 +100,9 @@ export function mapCanonicalCommerceEventToMeta(
     .setEventName(metaEventName)
     .setEventTime(eventTime)
     .setUserData(buildMetaUserData(event))
-    .setCustomData(buildCustomData(event, customProperties))
+    .setCustomData(
+      buildCustomData(event, metaEventName, customProperties)
+    )
     .setActionSource('website')
     .setEventId(event.event_id)
 

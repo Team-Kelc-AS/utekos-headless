@@ -404,6 +404,7 @@ type PlannedProviderInput = {
   googleRequired?: readonly string[]
   meta?: {
     eventName: string
+    productionDetail?: string
     requiredParameters?: readonly string[]
   }
   microsoft?: {
@@ -627,7 +628,9 @@ function activeEventProviders(
           consentRequirement: 'marketing',
           adapterVersion: 1,
           productionStatus: 'active',
-          productionDetail: 'Meta CAPI delivery is active.',
+          productionDetail:
+            input.meta.productionDetail ??
+            'Meta CAPI delivery is active.',
           serverOutbox: 'active'
         })
       : notRelevantProvider(
@@ -1541,10 +1544,10 @@ const eventCatalogBase = {
     version: 1,
     name: 'select_item',
     lifecycle: 'active',
-    owner: 'storefront_product_link',
+    owner: 'storefront_product_selection',
     trigger: {
       description:
-        'Create when an accepted product selection initiates navigation from a resolved list.',
+        'Create when an accepted product or variant selection resolves its destination and selected item context.',
       sources: ['browser'],
       repeatability:
         'Each accepted product-selection interaction is new.',
@@ -1553,7 +1556,7 @@ const eventCatalogBase = {
         'interaction_id',
         'item_list_id',
         'selected item',
-        'destination URL'
+        'resolved destination or variant URL'
       ]
     },
     dedupe: dedupe(
@@ -1567,6 +1570,8 @@ const eventCatalogBase = {
       googleRequired: ['item_list_id', 'items'],
       meta: {
         eventName: 'SelectItem',
+        productionDetail:
+          'Meta Pixel and CAPI map TechDown size-selector interactions to the standard CustomizeProduct event; other select_item surfaces remain SelectItem.',
         requiredParameters: [
           'currency',
           'value',

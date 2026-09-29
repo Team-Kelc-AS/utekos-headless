@@ -12,6 +12,7 @@ function marketingAllowed() {
 const META_CLIENT_IP_TIMEOUT_MS = 2500
 const completedPageUrls = new Set<string>()
 let contextSequence: Promise<void> = Promise.resolve()
+let hasCollectedClientIpForDocument = false
 
 type EnsureMetaClientParameterContextInput = {
   consent: ConsentSnapshot
@@ -42,7 +43,7 @@ async function loadClientParamBuilder(): Promise<ClientParamBuilder> {
 async function getConsentedClientIpAddress(
   consent: ConsentSnapshot
 ) {
-  if (!marketingAllowed()) return undefined
+  if (!marketingAllowed()) return ''
 
   try {
     const response = await fetch('/api/meta/client-ip', {
@@ -58,14 +59,14 @@ async function getConsentedClientIpAddress(
       signal: AbortSignal.timeout(META_CLIENT_IP_TIMEOUT_MS)
     })
 
-    if (!response.ok) return undefined
+    if (!response.ok) return ''
 
     const parsed = metaClientIpResponseSchema.safeParse(
       await response.json()
     )
-    return parsed.success ? parsed.data.client_ip_address : undefined
+    return parsed.success ? parsed.data.client_ip_address : ''
   } catch {
-    return undefined
+    return ''
   }
 }
 
@@ -103,19 +104,21 @@ export async function ensureMetaClientParameterContext(
       return readIdentifiers(builder)
     }
 
-    const clientIpAddress =
+    const shouldCollectClientIp =
+      !hasCollectedClientIpForDocument &&
       shouldCollectMetaClientIp(
         input.pageUrl,
         process.env.NODE_ENV
-      ) ?
-        await getConsentedClientIpAddress(input.consent)
-      : undefined
+      )
 
     const parameters = await builder.processAndCollectAllParams(
       input.pageUrl,
-      clientIpAddress ? async () => clientIpAddress : undefined
+      shouldCollectClientIp ?
+        () => getConsentedClientIpAddress(input.consent)
+      : undefined
     )
     if (!marketingAllowed()) return {}
+    if (parameters._fbi) hasCollectedClientIpForDocument = true
     completedPageUrls.add(input.pageUrl)
 
     return mapMetaClientParameterContext(parameters)

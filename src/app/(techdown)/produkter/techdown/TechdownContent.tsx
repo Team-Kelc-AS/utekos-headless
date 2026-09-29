@@ -2,9 +2,9 @@ import Image from 'next/image'
 import { Suspense } from 'react'
 import {
   ArrowLeftRight,
+  Feather,
   PersonStanding,
   SlidersHorizontal,
-  Sofa,
   Truck
 } from 'lucide-react'
 import { techDownReviewBundle } from '@/db/data/reviews/productReviews'
@@ -177,7 +177,7 @@ export function TechdownContent() {
         </div>
         <ul className={styles.benefits}>
           <li>
-            <Sofa aria-hidden='true' />
+            <Feather aria-hidden='true' />
             <div>
               <strong>43 ganger bedre enn dun</strong>
               <span>

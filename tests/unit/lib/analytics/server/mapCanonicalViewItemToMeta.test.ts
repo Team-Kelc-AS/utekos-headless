@@ -6,8 +6,8 @@ import { mapCanonicalViewItemToMeta } from '@/lib/analytics/server/mapCanonicalV
 
 const emailHash = 'a'.repeat(64)
 const phoneHash = 'b'.repeat(64)
-const prehashedAppendix = 'AQQAAQMB'
-const normalizedAppendix = 'AQQCAQMB'
+const prehashedAppendix = 'AQQAAQMC'
+const normalizedAppendix = 'AQQCAQMC'
 
 function sha256(value: string) {
   return createHash('sha256').update(value).digest('hex')
@@ -79,7 +79,7 @@ test('maps canonical view_item to a catalog-compatible Meta ViewContent event', 
       em: [`${emailHash}.${prehashedAppendix}`],
       ph: [`${phoneHash}.${prehashedAppendix}`],
       external_id: [
-        '47b360efda81ae521d5388c4cd14f96456ebdddda7cad245a7040f40070e9f87.AQQCAQMB'
+        '47b360efda81ae521d5388c4cd14f96456ebdddda7cad245a7040f40070e9f87.AQQCAQMC'
       ],
       ct: [`${sha256('oslo')}.${normalizedAppendix}`],
       zp: [`${sha256('0150')}.${normalizedAppendix}`],
@@ -106,12 +106,13 @@ test('maps canonical view_item to a catalog-compatible Meta ViewContent event', 
           category: 'Poncho'
         }
       ],
-      content_type: 'product'
+      content_type: 'product',
+      country: 'Norway'
     },
     action_source: 'website',
     event_id: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
     event_source_url:
-      'https://utekos.no/produkter/utekos-techdown.AQQCAQMB'
+      'https://utekos.no/produkter/utekos-techdown.AQQCAQMC'
   })
 })
 

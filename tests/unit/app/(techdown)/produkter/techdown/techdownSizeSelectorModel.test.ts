@@ -33,10 +33,18 @@ function variant(
 
 test('builds the public TechDown size model from adjacent Shopify variants', () => {
   const small = variant('variant-small', 'Liten', false)
-  const medium = variant('variant-medium', 'Middels', true)
-  const large = variant('variant-large', 'Stor', true)
+  const medium = variant(
+    'gid://shopify/ProductVariant/46944403882232',
+    'Middels',
+    true
+  )
+  const large = variant(
+    'gid://shopify/ProductVariant/46944403915000',
+    'Stor',
+    true
+  )
   const extraLarge = variant(
-    'variant-extra-large',
+    'gid://shopify/ProductVariant/48249962135800',
     'Større',
     true
   )
@@ -114,4 +122,63 @@ test('builds the public TechDown size model from adjacent Shopify variants', () 
   assert.equal(model.product.handle, 'utekos-techdown')
   assert.equal(model.choices[0]?.variant.id, medium.id)
   assert.equal(model.choices[1]?.variant.id, large.id)
+})
+
+test('fails closed when a Shopify variant drifts from the verified Meta content ID', () => {
+  const small = variant('variant-small', 'Liten', false)
+  const medium = variant(
+    'gid://shopify/ProductVariant/99999999999999',
+    'Middels',
+    true
+  )
+  const large = variant(
+    'gid://shopify/ProductVariant/46944403915000',
+    'Stor',
+    true
+  )
+  const extraLarge = variant(
+    'gid://shopify/ProductVariant/48249962135800',
+    'Større',
+    true
+  )
+  const product: StorefrontProductOptions = {
+    id: 'gid://shopify/Product/9240112693496',
+    title: 'Utekos TechDown™',
+    handle: 'utekos-techdown',
+    productType: 'Yttertøy',
+    vendor: 'Utekos',
+    collections: { nodes: [] },
+    encodedVariantExistence: 'v1_0:0:0,1:0,2:0,3:0,,',
+    encodedVariantAvailability: 'v1_0:1:0,2:0,3:0,,',
+    options: [
+      {
+        name: 'Farge',
+        optionValues: [
+          { name: 'Havdyp', firstSelectableVariant: medium }
+        ]
+      },
+      {
+        name: 'Størrelse',
+        optionValues: [
+          { name: 'Liten', firstSelectableVariant: small },
+          { name: 'Middels', firstSelectableVariant: medium },
+          { name: 'Stor', firstSelectableVariant: large },
+          { name: 'Større', firstSelectableVariant: extraLarge }
+        ]
+      },
+      {
+        name: 'Kjønn',
+        optionValues: [
+          { name: 'Unisex', firstSelectableVariant: medium }
+        ]
+      }
+    ],
+    selectedOrFirstAvailableVariant: medium,
+    adjacentVariants: [small, large, extraLarge]
+  }
+
+  assert.throws(
+    () => createTechdownSizeSelectorModel(product),
+    /TechDown Meta catalog identity mismatch for Middels/
+  )
 })

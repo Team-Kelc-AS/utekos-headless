@@ -3,6 +3,7 @@
 import { Ruler } from 'lucide-react'
 import {
   TECH_DOWN_MEASUREMENT_COLUMNS,
+  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS,
   TECH_DOWN_SIZE_ROWS
 } from '@/lib/products/techDownSizes'
 import { Button } from '@/components/ui/button'

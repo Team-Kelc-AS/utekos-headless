@@ -5,16 +5,32 @@ import test from 'node:test'
 
 const repoRoot = process.cwd()
 
-async function readSource(relativePath: string): Promise<string> {
+async function readSource(
+  relativePath: string
+): Promise<string> {
   return readFile(join(repoRoot, relativePath), 'utf8')
 }
 
 test('TechDown StickyCTA serializes only its purchase summary', async () => {
-  const [serverSource, clientSource, dataSource, catalogSource, routeSource] = await Promise.all([
-    readSource('src/components/commerce/StickyCTA/StickyCTA.tsx'),
-    readSource('src/components/commerce/StickyCTA/StickyCTAClient.tsx'),
-    readSource('src/components/commerce/StickyCTA/techdownPurchaseData.ts'),
-    readSource('src/components/commerce/StickyCTA/StickyCTACatalogDialog.tsx'),
+  const [
+    serverSource,
+    clientSource,
+    dataSource,
+    catalogSource,
+    routeSource
+  ] = await Promise.all([
+    readSource(
+      'src/components/commerce/StickyCTA/StickyCTA.tsx'
+    ),
+    readSource(
+      'src/components/commerce/StickyCTA/StickyCTAClient.tsx'
+    ),
+    readSource(
+      'src/components/commerce/StickyCTA/techdownPurchaseData.ts'
+    ),
+    readSource(
+      'src/components/commerce/StickyCTA/StickyCTACatalogDialog.tsx'
+    ),
     readSource('src/app/api/commerce/sticky-catalog/route.ts')
   ])
 
@@ -98,10 +114,10 @@ test('TechDown StickyCTA serializes only its purchase summary', async () => {
     /import\(['"]@\/lib\/analytics\/selectItemReporter['"]\)/,
     'Catalog variant picks must report select_item'
   )
-  assert.match(
+  assert.doesNotMatch(
     clientSource,
     /import\(['"]@\/lib\/analytics\/viewItemReporter['"]\)/,
-    'Catalog variant picks must report view_item'
+    'Catalog variant picks must use CustomizeProduct rather than emit another ViewContent'
   )
   assert.match(
     clientSource,
@@ -110,8 +126,47 @@ test('TechDown StickyCTA serializes only its purchase summary', async () => {
   )
 })
 
+test('TechDown reports the initial product view and does not repeat ViewContent on size selection', async () => {
+  const source = await readSource(
+    'src/app/(techdown)/produkter/techdown/TechdownSizeSelectorClient.tsx'
+  )
+
+  assert.match(
+    source,
+    /model\.choices\.find\([\s\S]*?model\.initialVariantId/,
+    'The initial ViewContent must use the resolved initial Shopify variant'
+  )
+  assert.match(
+    source,
+    /reportCanonicalViewItem\(\{[\s\S]*?product:\s*model\.product,[\s\S]*?variant:\s*initialChoice\.variant/,
+    'The TechDown landing must report one canonical initial view_item'
+  )
+  assert.match(
+    source,
+    /onEmitted:\s*\(\)\s*=>\s*\{[\s\S]*?reportedInitialViewItem\.current\s*=\s*true/,
+    'The initial view must only be marked complete after emission'
+  )
+  assert.equal(
+    source.match(/reportCanonicalViewItem\(/g)?.length,
+    1,
+    'Size selections must not emit a second ViewContent'
+  )
+  assert.match(
+    source,
+    /item_list_id:\s*interactionId|interaction_id:\s*interactionId/,
+    'Size clicks must retain a unique interaction ID for CustomizeProduct'
+  )
+  assert.doesNotMatch(
+    source,
+    /if \(choice\.variantId === selectedVariantId\) return/,
+    'Clicking the already selected Middels size must still report CustomizeProduct'
+  )
+})
+
 test('Sonner loads only when an add-to-cart error needs a toast', async () => {
-  const source = await readSource('src/hooks/useCanonicalAddToCart.ts')
+  const source = await readSource(
+    'src/hooks/useCanonicalAddToCart.ts'
+  )
 
   assert.doesNotMatch(
     source,

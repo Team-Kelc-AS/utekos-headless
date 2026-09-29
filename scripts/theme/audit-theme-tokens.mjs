@@ -25,7 +25,6 @@ const IGNORED_SOURCE_DIRECTORIES = new Set([
   '__generated__'
 ])
 const DEFAULT_SOURCE_FILES = [
-  'src/components/ModeToggle.tsx',
   'src/components/header/ActiveLink.tsx',
   'src/components/header/DesktopNavigation.tsx',
   'src/components/header/Header.tsx',

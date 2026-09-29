@@ -26,7 +26,7 @@ This report is generated from the canonical event catalog and the characterized 
 | `view_item_list` | `active` | `snapchat` | none | none | No v1 Snapchat conversion mapping is approved. |
 | `select_item` | `active` | `supabase` | none | first_party_api (disabled; canonicalEnvelope) | Canonical first-party persistence is active. |
 | `select_item` | `active` | `google` | google_tag_manager (implemented; googleBrowserDataLayer) | google_data_manager (active; googleServer) | GTM/sGTM and Data Manager outbox are active. |
-| `select_item` | `active` | `meta` | meta_pixel (implemented; metaBrowser) | meta_conversions_api (active; metaServer) | Meta CAPI delivery is active. |
+| `select_item` | `active` | `meta` | meta_pixel (implemented; metaBrowser) | meta_conversions_api (active; metaServer) | Meta Pixel and CAPI map TechDown size-selector interactions to the standard CustomizeProduct event; other select_item surfaces remain SelectItem. |
 | `select_item` | `active` | `microsoft_uet` | microsoft_uet (implemented; microsoftBrowser) | microsoft_uet_capi (blocked_no_worker; microsoftServer) | Browser UET is active; server delivery is blocked because no UET CAPI worker exists. |
 | `select_item` | `active` | `pinterest` | none | none | No v1 Pinterest conversion mapping is approved. |
 | `select_item` | `active` | `snapchat` | none | none | No v1 Snapchat conversion mapping is approved. |
@@ -226,8 +226,8 @@ This report is generated from the canonical event catalog and the characterized 
 ## Installed integration owners
 
 - `googleDataManager`: @google-ads/datamanager `^0.5.0`; Google server event protobuf types and transport; implementation `src/lib/analytics/server/googleDataManager`.
-- `metaParameterBuilder`: capi-param-builder-nodejs `^1.3.1`; Trusted request-context extraction for fbc, fbp, IP, source URL, referrer, and hashed PII; implementation `src/lib/analytics/server/processMetaParameterContext.ts`.
-- `metaClientParameterBuilder`: meta-capi-param-builder-clientjs `1.3.1`; Consent-gated early collection and persistence of fbc, fbp, and fbi; implementation `src/lib/analytics/metaClientParameterBuilder.ts`.
+- `metaParameterBuilder`: capi-param-builder-nodejs `1.3.2`; Trusted request-context extraction for fbc, fbp, IP, source URL, referrer, and hashed PII; implementation `src/lib/analytics/server/processMetaParameterContext.ts`.
+- `metaClientParameterBuilder`: meta-capi-param-builder-clientjs `1.3.2`; Consent-gated early collection and persistence of fbc, fbp, and fbi; implementation `src/lib/analytics/metaClientParameterBuilder.ts`.
 - `metaBusinessSdk`: facebook-nodejs-business-sdk `file:vendor/facebook-nodejs-business-sdk-26.0.1.tgz`; Meta ServerEvent, UserData, CustomData, Content, and EventRequest payloads; implementation `src/lib/analytics/server/meta`.
 - `shopifyGraphql`: @shopify/graphql-client `^1.4.2`; Shopify Storefront GraphQL transport; not a provider event SDK; implementation `src/lib/shopify`.
 - `shopifyHydrogen`: @shopify/hydrogen-react `2026.4.3`; Storefront commerce types and helpers; not a provider event SDK; implementation `src/lib/shopify`.

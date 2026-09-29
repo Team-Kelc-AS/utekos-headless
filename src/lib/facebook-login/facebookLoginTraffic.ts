@@ -33,8 +33,9 @@ export function isFacebookLoginPromptActive(input: {
   previewAllowed: boolean
 }) {
   return (
-    input.previewAllowed &&
-    isFacebookLoginPreviewHostname(input.hostname)
+    input.enabled ||
+    (input.previewAllowed &&
+      isFacebookLoginPreviewHostname(input.hostname))
   )
 }
 

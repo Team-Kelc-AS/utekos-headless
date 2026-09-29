@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, type KeyboardEvent } from 'react'
+import { useEffect, useRef, type KeyboardEvent } from 'react'
 import { useStickyCTASelection } from '@/components/commerce/StickyCTA/StickyCTASelectionContext'
 import type { TechdownSizeSelectorModel } from './techdownSizeSelectorModel'
 import styles from './TechdownContent.module.css'
@@ -48,14 +48,53 @@ export function TechdownSizeSelectorClient({
     choice => choice.variantId === selectedVariantId
   )
   const optionRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const reportedInitialViewItem = useRef(false)
+
+  useEffect(() => {
+    if (reportedInitialViewItem.current) return
+
+    const initialChoice = model.choices.find(
+      choice => choice.variantId === model.initialVariantId
+    )
+    if (!initialChoice) return
+
+    let cancelled = false
+    let cleanup = () => {}
+
+    void import('@/lib/analytics/viewItemReporter')
+      .then(({ reportCanonicalViewItem }) => {
+        if (cancelled) return
+        cleanup = reportCanonicalViewItem({
+          product: model.product,
+          variant: initialChoice.variant,
+          onEmitted: () => {
+            reportedInitialViewItem.current = true
+          }
+        })
+      })
+      .catch(error => {
+        reportDeferredTrackingError(
+          error,
+          'techdown.initial_view_item_tracking_import'
+        )
+      })
+
+    return () => {
+      cancelled = true
+      cleanup()
+    }
+  }, [model])
 
   function selectChoice(
     choice: TechdownSizeSelectorModel['choices'][number]
   ) {
-    if (choice.variantId === selectedVariantId) return
+    const selectionChanged =
+      choice.variantId !== selectedVariantId
 
-    selectionContext?.setSelectedVariantId(choice.variantId)
-    replaceVariantUrl(choice.href)
+    if (selectionChanged) {
+      selectionContext?.setSelectedVariantId(choice.variantId)
+      replaceVariantUrl(choice.href)
+    }
 
     const eventId = globalThis.crypto.randomUUID()
     const interactionId = globalThis.crypto.randomUUID()
@@ -79,20 +118,6 @@ export function TechdownSizeSelectorClient({
         reportDeferredTrackingError(
           error,
           'techdown.size_selector.canonical_tracking_import'
-        )
-      })
-
-    void import('@/lib/analytics/viewItemReporter')
-      .then(({ reportCanonicalViewItem }) => {
-        reportCanonicalViewItem({
-          product: model.product,
-          variant: choice.variant
-        })
-      })
-      .catch(error => {
-        reportDeferredTrackingError(
-          error,
-          'techdown.size_selector.view_item_tracking_import'
         )
       })
 

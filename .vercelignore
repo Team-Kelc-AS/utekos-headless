@@ -66,10 +66,10 @@ project_info_1/
 
 # OpenAPI/AsyncAPI characterization artifacts — not a Vercel runtime input.
 # Keep contracts/shopify/ so Next typecheck can resolve checkout-observation schemas.
+# Keep contracts/events/canonical-event-manifest/ for the build-time --check gate.
 contracts/asyncapi/
 contracts/domains/
-contracts/events/*
-!contracts/events/canonical-event-manifest/
+contracts/events/utekos-event-delivery/
 contracts/governance/
 contracts/openapi/
 contracts/readyapi/

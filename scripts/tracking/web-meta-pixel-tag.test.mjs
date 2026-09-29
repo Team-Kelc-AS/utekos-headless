@@ -27,9 +27,7 @@ function canonicalEvent(eventName, eventId, customData = {}) {
   }
 }
 
-function createRuntime({
-  signalsGateway = false
-} = {}) {
+function createRuntime({ signalsGateway = false } = {}) {
   const insertedScripts = []
   const intervals = []
   const listeners = new Map()
@@ -117,9 +115,10 @@ test('installs the pixel under the operator tracking policy', () => {
   vm.runInContext(script, runtime.context)
 
   assert.equal(typeof runtime.window.fbq, 'function')
-  assert.deepEqual(listeners.map(([name]) => name), [
-    'utekos:meta-canonical-browser-event'
-  ])
+  assert.deepEqual(
+    listeners.map(([name]) => name),
+    ['utekos:meta-canonical-browser-event']
+  )
 })
 
 test('installs pixel without waiting for _fbp cookie', () => {
@@ -159,6 +158,42 @@ test('installs pixel without waiting for _fbp cookie', () => {
       .map(call => [call[2], call[4].eventID]),
     [['PageView', 'page-no-fbp']]
   )
+  assert.equal(
+    runtime.window.__utekosMetaPixelState.scriptStatus,
+    'loading'
+  )
+  assert.deepEqual(
+    JSON.parse(
+      JSON.stringify(
+        runtime.window.__utekosMetaPixelState.dispatches[
+          'PageView:page-no-fbp'
+        ]
+      )
+    ),
+    {
+      eventId: 'page-no-fbp',
+      eventName: 'PageView',
+      scriptStatus: 'loading'
+    }
+  )
+})
+
+test('records Meta Pixel script load and error outcomes', () => {
+  const loadedRuntime = createRuntime()
+  vm.runInContext(script, loadedRuntime.context)
+  loadedRuntime.insertedScripts[0].onload()
+  assert.equal(
+    loadedRuntime.window.__utekosMetaPixelState.scriptStatus,
+    'loaded'
+  )
+
+  const failedRuntime = createRuntime()
+  vm.runInContext(script, failedRuntime.context)
+  failedRuntime.insertedScripts[0].onerror()
+  assert.equal(
+    failedRuntime.window.__utekosMetaPixelState.scriptStatus,
+    'failed'
+  )
 })
 
 test('dispatches canonical events added after the app bridge loads', () => {
@@ -180,26 +215,30 @@ test('dispatches canonical events added after the app bridge loads', () => {
 
 test('dispatches navigation events synchronously with the exact CAPI event ID', () => {
   const runtime = createRuntime()
-  const event = canonicalEvent('select_item', 'navigation-select', {
-    currency: 'NOK',
-    gross_value: 1790,
-    items: [
-      {
-        variant_id:
-          'gid://shopify/ProductVariant/47123456789012',
-        quantity: 1,
-        gross_unit_price: 1790
-      }
-    ]
-  })
+  const event = canonicalEvent(
+    'select_item',
+    'navigation-select',
+    {
+      currency: 'NOK',
+      gross_value: 1790,
+      items: [
+        {
+          variant_id:
+            'gid://shopify/ProductVariant/47123456789012',
+          quantity: 1,
+          gross_unit_price: 1790
+        }
+      ]
+    }
+  )
 
   vm.runInContext(publicScript, runtime.context)
   runtime.window.location = new URL(
     'https://utekos.no/produkter/et-annet-produkt'
   )
-  runtime.listeners.get(
-    'utekos:meta-canonical-browser-event'
-  )({ detail: event })
+  runtime.listeners.get('utekos:meta-canonical-browser-event')({
+    detail: event
+  })
 
   assert.deepEqual(
     queuedCalls(runtime.window)
@@ -235,7 +274,8 @@ test('does not send canonical events without marketing granted', () => {
   runtime.window.dataLayer.push({
     ...canonicalEvent('page_view', 'denied-event'),
     canonical_event: {
-      ...canonicalEvent('page_view', 'denied-event').canonical_event,
+      ...canonicalEvent('page_view', 'denied-event')
+        .canonical_event,
       consent: { marketing: 'denied' }
     }
   })
@@ -340,7 +380,8 @@ test('normalizes the selected Shopify variant GID and keeps variant_select out o
         { id: '46944403882232', quantity: 1, item_price: 1790 }
       ],
       content_type: 'product',
-      num_items: 1,
+      country: 'Norway',
+      product_catalog_id: '690208780604782',
       currency: 'NOK',
       value: 1790,
       gross_value: 1790
@@ -357,6 +398,55 @@ test('normalizes the selected Shopify variant GID and keeps variant_select out o
     ),
     false
   )
+})
+
+test('maps TechDown size selections to standard CustomizeProduct', () => {
+  const runtime = createRuntime()
+
+  runtime.window.dataLayer.push(
+    canonicalEvent('select_item', 'customize-techdown-size', {
+      interaction_id: 'size-selection-1',
+      item_list_id: 'techdown-size-selector',
+      currency: 'NOK',
+      gross_value: 1790,
+      items: [
+        {
+          item_id: 'gid://shopify/ProductVariant/46944403882232',
+          product_id: 'gid://shopify/Product/9240112693496',
+          variant_id:
+            'gid://shopify/ProductVariant/46944403882232',
+          quantity: 1,
+          gross_unit_price: 1790
+        }
+      ]
+    })
+  )
+
+  vm.runInContext(script, runtime.context)
+
+  const customizeCall = queuedCalls(runtime.window).find(
+    call => call[2] === 'CustomizeProduct'
+  )
+
+  assert.deepEqual(customizeCall, [
+    'trackSingle',
+    '1092362672918571',
+    'CustomizeProduct',
+    {
+      content_ids: ['46944403882232'],
+      contents: [
+        { id: '46944403882232', quantity: 1, item_price: 1790 }
+      ],
+      content_type: 'product',
+      country: 'Norway',
+      product_catalog_id: '690208780604782',
+      currency: 'NOK',
+      value: 1790,
+      gross_value: 1790,
+      item_list_id: 'techdown-size-selector'
+    },
+    { eventID: 'customize-techdown-size' }
+  ])
 })
 
 test('initializes once and sends canonical Meta events with CAPI event IDs', () => {
@@ -501,6 +591,27 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
         { id: '47123456789012', quantity: 1, item_price: 1790 }
       ],
       content_type: 'product',
+      country: 'Norway',
+      currency: 'NOK',
+      value: 1790,
+      content_name: 'Utekos TechDown',
+      content_category: 'Uteklær',
+      gross_value: 1790,
+      tax_value: 358,
+      net_value: 1432
+    }
+  )
+  assert.deepEqual(
+    standardEventCalls.find(
+      call => call[2] === 'InitiateCheckout'
+    )?.[3],
+    {
+      content_ids: ['47123456789012'],
+      contents: [
+        { id: '47123456789012', quantity: 1, item_price: 1790 }
+      ],
+      content_type: 'product',
+      country: 'Norway',
       num_items: 1,
       currency: 'NOK',
       value: 1790,
@@ -521,7 +632,7 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
         { id: '47123456789012', quantity: 1, item_price: 1790 }
       ],
       content_type: 'product',
-      num_items: 1,
+      country: 'Norway',
       currency: 'NOK',
       value: 1790,
       content_name: 'Utekos TechDown',
@@ -573,10 +684,7 @@ test('initializes once and sends canonical Meta events with CAPI event IDs', () 
   )
   assert.deepEqual(
     standardEventCalls.find(call => call[2] === 'Lead')?.[3],
-    {
-      currency: 'NOK',
-      value: 396.61
-    }
+    { currency: 'NOK', value: 396.61 }
   )
   assert.equal(runtime.insertedScripts.length, 1)
   assert.equal(

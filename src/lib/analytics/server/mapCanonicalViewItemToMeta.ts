@@ -38,6 +38,7 @@ function buildCustomData(event: CanonicalViewItem) {
     .setContentIds(contentIds)
     .setContents(contents)
     .setContentType('product')
+    .setCustomProperties({ country: 'Norway' })
 
   if (primaryItem) {
     customData.setContentName(primaryItem.item_name)

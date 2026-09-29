@@ -169,8 +169,8 @@ importers:
         specifier: ^4.12.1
         version: 4.12.1
       capi-param-builder-nodejs:
-        specifier: ^1.3.1
-        version: 1.3.1
+        specifier: 1.3.2
+        version: 1.3.2
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -226,8 +226,8 @@ importers:
         specifier: ^1.20.0
         version: 1.21.0(react@19.2.8)
       meta-capi-param-builder-clientjs:
-        specifier: 1.3.1
-        version: 1.3.1
+        specifier: 1.3.2
+        version: 1.3.2
       motion:
         specifier: ^12.40.0
         version: 12.40.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4033,8 +4033,8 @@ packages:
   caniuse-lite@1.0.30001799:
     resolution: {integrity: sha512-hG1bReV+OUU+MOqK4t/ZWI0tZOyz3rqS9XuhOUz1cIcbwBKjOyJEJuw9ER5JuNyqxNk8u/JUVbGibBOL1yrjFw==}
 
-  capi-param-builder-nodejs@1.3.1:
-    resolution: {integrity: sha512-4shIh8QAZ5rQHt7hd+CAHU9uYdvEmUnn//gxJT5NFP+KZCWpajLmeWb49QBp0s21xmRxKDVVZb1jpTiJeFATcg==}
+  capi-param-builder-nodejs@1.3.2:
+    resolution: {integrity: sha512-P+VYIcO1JKPcoR1L5rK2mhwANh2JqF2rRNJD6Sj7u88ykDmHmQH/2SW9iqw/EIf2iqEDles1hV2IqauTppfFUw==}
 
   cbor-extract@2.2.2:
     resolution: {integrity: sha512-hlSxxI9XO2yQfe9g6msd3g4xCfDqK5T5P0fRMLuaLHhxn4ViPrm+a+MUfhrvH2W962RGxcBwEGzLQyjbDG1gng==}
@@ -6197,8 +6197,8 @@ packages:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
 
-  meta-capi-param-builder-clientjs@1.3.1:
-    resolution: {integrity: sha512-9KfOeZKvj5QF0Z+BP5mwuAswQh8iFfHXPCTauIukxE0wFkB48lD9nDM1rjK5iklQeRwD7J7HCDxg48KPOMIcaw==}
+  meta-capi-param-builder-clientjs@1.3.2:
+    resolution: {integrity: sha512-dvGEUETT4gvvjdrk8TN6yOGecHSwsEpXWFobGHl689gbfiRN+hp3k661uO//hVNrQ02Z2HdNtYAmyOmLHVvRbw==}
     engines: {node: '>=20'}
 
   micromark-core-commonmark@2.0.3:
@@ -12273,7 +12273,7 @@ snapshots:
 
   caniuse-lite@1.0.30001799: {}
 
-  capi-param-builder-nodejs@1.3.1: {}
+  capi-param-builder-nodejs@1.3.2: {}
 
   cbor-extract@2.2.2:
     dependencies:
@@ -13409,7 +13409,7 @@ snapshots:
   facebook-nodejs-business-sdk@file:vendor/facebook-nodejs-business-sdk-26.0.1.tgz(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1):
     dependencies:
       axios: 1.18.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      capi-param-builder-nodejs: 1.3.1
+      capi-param-builder-nodejs: 1.3.2
       currency-codes: 1.5.1
       email-validator: 2.0.4
       iso-3166-1: 2.1.1
@@ -14835,7 +14835,7 @@ snapshots:
 
   merge2@1.4.1: {}
 
-  meta-capi-param-builder-clientjs@1.3.1: {}
+  meta-capi-param-builder-clientjs@1.3.2: {}
 
   micromark-core-commonmark@2.0.3:
     dependencies:

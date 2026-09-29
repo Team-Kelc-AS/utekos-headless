@@ -137,7 +137,7 @@
     return /^[A-Z]{3}$/.test(currency) ? currency : null;
   }
 
-  function commerceData(customData) {
+  function commerceData(eventName, customData) {
     var items = customData && customData.items;
     var contentIds = [];
     var contents = [];
@@ -178,8 +178,12 @@
       content_ids: contentIds,
       contents: contents,
       content_type: 'product',
-      num_items: numItems
+      country: 'Norway'
     };
+
+    if (eventName === 'begin_checkout') {
+      result.num_items = numItems;
+    }
 
     if (currency && value !== null) {
       result.currency = currency;
@@ -230,6 +234,10 @@
   function eventData(eventName, canonicalEvent) {
     var customData = canonicalEvent.custom_data || {};
 
+    if (eventName === 'page_view') {
+      return { country: 'Norway' };
+    }
+
     if (
       eventName === 'view_item' ||
       eventName === 'view_item_list' ||
@@ -242,7 +250,7 @@
       eventName === 'interact_with_accordion' ||
       eventName === 'open_quick_view'
     ) {
-      return commerceData(customData);
+      return commerceData(eventName, customData);
     }
 
     if (eventName === 'search') {

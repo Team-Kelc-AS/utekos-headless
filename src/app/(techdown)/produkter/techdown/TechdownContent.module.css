@@ -194,6 +194,62 @@
   outline-offset: 3px;
 }
 
+.facebookPage {
+  display: grid;
+  width: 100%;
+  gap: 16px;
+}
+
+.facebookPage h2 {
+  margin: 0;
+  font-size: clamp(24px, 7vw, 32px);
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+.facebookFollowLink {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #b44701;
+  border-radius: 999px;
+  padding: 10px 20px;
+  background: #b44701;
+  color: #f0eee9;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+.facebookFollowLink:hover {
+  background: transparent;
+  color: #f0eee9;
+}
+
+.facebookFollowLink:focus-visible {
+  outline: 3px solid #f0eee9;
+  outline-offset: 3px;
+}
+
+.facebookPagePlugin {
+  width: 100%;
+  min-width: 180px;
+  max-width: 500px;
+  overflow: hidden;
+}
+
+.facebookPageIframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  overflow: hidden;
+}
+
 .expressCheckout {
   min-height: 52px;
 }
@@ -330,6 +386,8 @@
 .paymentRow {
   display: grid;
   gap: 12px;
+  /* Center between Klarna CTA (trustPanel gap 20px) and outcomes heading (content gap 44px). */
+  margin-top: 24px;
   padding: 16px 14px;
   background-color: oklch(0.28 0.022 276.51);
 }
@@ -659,31 +717,35 @@
 }
 
 .siteChrome
-  :global([data-journey-section='bottom_navigation'] a.bg-jungle) {
-  background-color: #001a18;
+  :global([data-journey-section='bottom_navigation'] .grid > a) {
+  background-color: #101a21 !important;
 }
 
 .siteChrome
   :global(
-    [data-journey-section='bottom_navigation'] a.bg-jungle:hover
+    [data-journey-section='bottom_navigation'] .grid > a:hover
   ) {
-  background-color: #010b0a;
-}
-
-.siteChrome
-  :global(
-    [data-journey-section='bottom_navigation'] a .rounded-full.bg-muted
-  ) {
-  background-color: #012622;
+  background-color: #0c1419 !important;
 }
 
 .siteChrome
   :global(
     [data-journey-section='bottom_navigation']
-      a:hover
+      .grid
+      > a
       .rounded-full.bg-muted
   ) {
-  background-color: #010b0a;
+  background-color: #182430;
+}
+
+.siteChrome
+  :global(
+    [data-journey-section='bottom_navigation']
+      .grid
+      > a:hover
+      .rounded-full.bg-muted
+  ) {
+  background-color: #0c1419;
 }
 
 .siteChrome :global(footer .mt-12.border-t) {

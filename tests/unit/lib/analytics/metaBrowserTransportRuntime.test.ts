@@ -18,11 +18,13 @@ test('marks every pre-rejection canonical row as consumed', () => {
 
   assert.deepEqual(browserWindow.__utekosMetaPixelState, {
     canonicalEventListening: false,
+    dispatches: {},
     initialized: false,
     lastDataLayerIndex: 2,
     listening: false,
     poller: null,
     sent: {},
+    scriptStatus: 'idle',
     timer: null
   })
 

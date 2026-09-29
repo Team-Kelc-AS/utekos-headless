@@ -39,15 +39,19 @@ test('maps canonical page_view to a server-side Meta PageView', () => {
     event_id: string
     event_name: string
     event_source_url: string
+    custom_data: { country: string }
     user_data: { fbc: string; fbp: string }
   }
 
   assert.equal(normalized.event_name, 'PageView')
   assert.equal(normalized.action_source, 'website')
   assert.equal(normalized.event_id, pageView().event_id)
+  assert.deepEqual(normalized.custom_data, {
+    country: 'Norway'
+  })
   assert.equal(
     normalized.event_source_url,
-    `${pageView().page_url}.AQQCAQMB`
+    `${pageView().page_url}.AQQCAQMC`
   )
   assert.equal(
     normalized.user_data.fbc,

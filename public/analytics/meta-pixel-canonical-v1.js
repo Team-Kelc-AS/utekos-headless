@@ -5,6 +5,12 @@
 
   var PIXEL_ID = '1092362672918571'
   var EXTERNAL_ID_COOKIE = 'utekos_external_id'
+  var TECHDOWN_PRODUCT_CATALOG_ID = '690208780604782'
+  var TECHDOWN_CONTENT_IDS = {
+    '46944403882232': true,
+    '46944403915000': true,
+    '48249962135800': true
+  }
   var CANONICAL_BROWSER_EVENT =
     'utekos:meta-canonical-browser-event'
   var EVENT_NAMES = {
@@ -40,6 +46,8 @@
   var state = w.__utekosMetaPixelState || {
     initialized: false,
     sent: {},
+    dispatches: {},
+    scriptStatus: 'idle',
     timer: null,
     listening: false,
     canonicalEventListening: false,
@@ -51,6 +59,10 @@
     state.lastDataLayerIndex = 0
   }
   if (typeof state.poller === 'undefined') state.poller = null
+  if (!state.dispatches) state.dispatches = {}
+  if (typeof state.scriptStatus !== 'string') {
+    state.scriptStatus = 'idle'
+  }
   if (typeof state.canonicalEventListening === 'undefined') {
     state.canonicalEventListening = false
   }
@@ -125,6 +137,13 @@
       script.async = true
       script.src =
         'https://connect.facebook.net/en_US/fbevents.js'
+      state.scriptStatus = 'loading'
+      script.onload = function () {
+        state.scriptStatus = 'loaded'
+      }
+      script.onerror = function () {
+        state.scriptStatus = 'failed'
+      }
       firstScript = d.getElementsByTagName('script')[0]
 
       if (firstScript && firstScript.parentNode) {
@@ -175,7 +194,7 @@
     return /^[A-Z]{3}$/.test(currency) ? currency : null
   }
 
-  function commerceData(customData) {
+  function commerceData(eventName, customData) {
     var items = customData && customData.items
     var contentIds = []
     var contents = []
@@ -211,7 +230,19 @@
       content_ids: contentIds,
       contents: contents,
       content_type: 'product',
-      num_items: numItems
+      country: 'Norway'
+    }
+
+    if (
+      contentIds.every(function (id) {
+        return TECHDOWN_CONTENT_IDS[id] === true
+      })
+    ) {
+      result.product_catalog_id = TECHDOWN_PRODUCT_CATALOG_ID
+    }
+
+    if (eventName === 'begin_checkout') {
+      result.num_items = numItems
     }
 
     currency = isoCurrency(customData.currency)
@@ -272,6 +303,10 @@
   function eventData(eventName, canonicalEvent) {
     var customData = canonicalEvent.custom_data || {}
 
+    if (eventName === 'page_view') {
+      return { country: 'Norway' }
+    }
+
     if (
       eventName === 'view_item' ||
       eventName === 'view_item_list' ||
@@ -284,7 +319,7 @@
       eventName === 'interact_with_accordion' ||
       eventName === 'open_quick_view'
     ) {
-      return commerceData(customData)
+      return commerceData(eventName, customData)
     }
 
     if (eventName === 'search') {
@@ -332,7 +367,8 @@
           categoryContentIds.length < 10;
           categoryIndex += 1
         ) {
-          var categoryContentId = customData.content_ids[categoryIndex]
+          var categoryContentId =
+            customData.content_ids[categoryIndex]
           if (
             typeof categoryContentId === 'string' &&
             /^\d+$/.test(categoryContentId)
@@ -384,9 +420,26 @@
     return {}
   }
 
+  function metaEventNameForEntry(entry) {
+    var canonicalEvent = entry && entry.canonical_event
+    var customData = canonicalEvent && canonicalEvent.custom_data
+    var itemListId = customData && customData.item_list_id
+
+    if (
+      entry &&
+      entry.event === 'select_item' &&
+      (itemListId === 'techdown-size-selector' ||
+        itemListId === 'sticky-cta-catalog')
+    ) {
+      return 'CustomizeProduct'
+    }
+
+    return entry ? EVENT_NAMES[entry.event] : null
+  }
+
   function dispatch(entry) {
     var canonicalEvent = entry.canonical_event
-    var metaEventName = EVENT_NAMES[entry.event]
+    var metaEventName = metaEventNameForEntry(entry)
     var eventKey
     var data
 
@@ -407,7 +460,10 @@
     if (data === null) return
 
     var command =
-      CUSTOM_EVENTS[entry.event] ?
+      (
+        CUSTOM_EVENTS[entry.event] &&
+        metaEventName !== 'CustomizeProduct'
+      ) ?
         'trackSingleCustom'
       : 'trackSingle'
 
@@ -415,6 +471,11 @@
       eventID: entry.event_id
     })
 
+    state.dispatches[eventKey] = {
+      eventId: entry.event_id,
+      eventName: metaEventName,
+      scriptStatus: state.scriptStatus
+    }
     state.sent[eventKey] = true
   }
 
@@ -422,10 +483,13 @@
     if (state.canonicalEventListening) return
     state.canonicalEventListening = true
 
-    w.addEventListener(CANONICAL_BROWSER_EVENT, function (event) {
-      if (!hasMarketingConsent()) return
-      dispatch(event && event.detail)
-    })
+    w.addEventListener(
+      CANONICAL_BROWSER_EVENT,
+      function (event) {
+        if (!hasMarketingConsent()) return
+        dispatch(event && event.detail)
+      }
+    )
   }
 
   function scanDataLayer() {

@@ -1041,14 +1041,14 @@ export const deliveryIntegrations = {
   },
   metaParameterBuilder: {
     package: 'capi-param-builder-nodejs',
-    manifestVersion: '^1.3.1',
+    manifestVersion: '1.3.2',
     role: 'Trusted request-context extraction for fbc, fbp, IP, source URL, referrer, and hashed PII',
     implementation:
       'src/lib/analytics/server/processMetaParameterContext.ts'
   },
   metaClientParameterBuilder: {
     package: 'meta-capi-param-builder-clientjs',
-    manifestVersion: '1.3.1',
+    manifestVersion: '1.3.2',
     role: 'Consent-gated early collection and persistence of fbc, fbp, and fbi',
     implementation:
       'src/lib/analytics/metaClientParameterBuilder.ts'

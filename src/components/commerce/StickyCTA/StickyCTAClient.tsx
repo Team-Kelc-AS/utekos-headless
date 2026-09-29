@@ -1,6 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState, type RefObject } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type RefObject
+} from 'react'
 import dynamic from 'next/dynamic'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import styles from './StickyCTA.module.css'
@@ -13,9 +18,10 @@ const StickyCTACatalogDialog = dynamic(
   { ssr: false }
 )
 
-const StickyCTAKlarna = dynamic(() => import('./StickyCTAKlarna'), {
-  ssr: false
-})
+const StickyCTAKlarna = dynamic(
+  () => import('./StickyCTAKlarna'),
+  { ssr: false }
+)
 
 function preloadCheckoutChunks() {
   void import('./StickyCTAKlarna')
@@ -35,12 +41,9 @@ function reportDeferredTrackingError(
 
 function reportStickyVariantSelection(input: {
   destinationUrl: string
-  previousVariantId: string | null
   product: TechdownPurchaseData['checkout']['product']
   variant: TechdownPurchaseData['checkout']['variants'][number]
 }) {
-  if (input.variant.id === input.previousVariantId) return
-
   const eventId = globalThis.crypto.randomUUID()
   const interactionId = globalThis.crypto.randomUUID()
 
@@ -59,20 +62,6 @@ function reportStickyVariantSelection(input: {
       reportDeferredTrackingError(
         error,
         'sticky_cta.catalog.select_item_import'
-      )
-    })
-
-  void import('@/lib/analytics/viewItemReporter')
-    .then(({ reportCanonicalViewItem }) => {
-      reportCanonicalViewItem({
-        product: input.product,
-        variant: input.variant
-      })
-    })
-    .catch(error => {
-      reportDeferredTrackingError(
-        error,
-        'sticky_cta.catalog.view_item_import'
       )
     })
 
@@ -105,7 +94,8 @@ export function StickyCTAClient({
   purchase: TechdownPurchaseData
 }) {
   const triggerRef = useRef<HTMLButtonElement>(null)
-  const [currentPurchase, setCurrentPurchase] = useState(purchase)
+  const [currentPurchase, setCurrentPurchase] =
+    useState(purchase)
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [checkoutReady, setCheckoutReady] = useState(false)
   const selectionContext = useStickyCTASelection()
@@ -172,7 +162,10 @@ export function StickyCTAClient({
               setCatalogOpen(true)
             }}
           >
-            <span className={styles.productName} aria-live='polite'>
+            <span
+              className={styles.productName}
+              aria-live='polite'
+            >
               {currentPurchase.productName}
             </span>
             {selectedVariant && (
@@ -181,25 +174,33 @@ export function StickyCTAClient({
                   {selectedVariant.label}
                 </span>
                 <span className={styles.priceSeparator}>-</span>
-                <strong>{formatPrice(selectedVariant.price)}</strong>
+                <strong>
+                  {formatPrice(selectedVariant.price)}
+                </strong>
               </span>
             )}
           </button>
         </div>
         <div className={styles.checkout}>
-          {checkoutReady &&
-          checkoutVariant?.availableForSale === true ?
+          {(
+            checkoutReady &&
+            checkoutVariant?.availableForSale === true
+          ) ?
             <StickyCTAKlarna
               product={currentPurchase.checkout.product}
               selectedVariant={checkoutVariant}
             />
           : <div className={styles.klarna} aria-busy='true'>
-              <span className={styles.klarnaLoading} role='status'>
+              <span
+                className={styles.klarnaLoading}
+                role='status'
+              >
                 {selectedVariant?.availableForSale === false ?
                   'Utsolgt'
                 : 'Laster Klarna…'}
               </span>
-            </div>}
+            </div>
+          }
         </div>
       </div>
       {catalogOpen && (
@@ -212,7 +213,8 @@ export function StickyCTAClient({
             const nextVariant =
               selectedPurchase.checkout.variants.find(
                 variant =>
-                  variant.id === selectedPurchase.initialVariantId
+                  variant.id ===
+                  selectedPurchase.initialVariantId
               ) ?? null
 
             if (nextVariant) {
@@ -221,7 +223,6 @@ export function StickyCTAClient({
                   selectedPurchase.productPath,
                   window.location.origin
                 ).href,
-                previousVariantId: selectedId,
                 product: selectedPurchase.checkout.product,
                 variant: nextVariant
               })

@@ -33,21 +33,31 @@ test('allows the login prompt preview on Vercel preview and in local development
   assert.equal(isFacebookLoginPreviewAllowed({}), false)
 })
 
-test('enables Facebook Login only on approved preview environments', () => {
+test('enables Facebook Login in production only with a complete configuration', () => {
+  const completeConfig = {
+    FACEBOOK_LOGIN_APP_ID: '1234567890',
+    FACEBOOK_LOGIN_APP_SECRET: 'consumer-secret',
+    FACEBOOK_LOGIN_ENABLED: 'true',
+    FACEBOOK_LOGIN_IDENTITY_KEY: identityKey,
+    FACEBOOK_LOGIN_REDIRECT_ORIGIN: 'https://utekos.no'
+  }
+
   assert.equal(
     isFacebookLoginEnabled({ FACEBOOK_LOGIN_ENABLED: 'true' }),
     false
   )
   assert.equal(
     isFacebookLoginEnabled({
-      FACEBOOK_LOGIN_ENABLED: 'true',
+      ...completeConfig,
       VERCEL_ENV: 'production'
     }),
-    false
+    true
   )
   assert.equal(
     isFacebookLoginEnabled({
-      FACEBOOK_LOGIN_ENABLED: 'true',
+      ...completeConfig,
+      FACEBOOK_LOGIN_REDIRECT_ORIGIN:
+        'https://utekos-headless-example.vercel.app',
       VERCEL_ENV: 'preview'
     }),
     true
@@ -61,7 +71,7 @@ test('enables Facebook Login only on approved preview environments', () => {
   )
   assert.equal(
     isFacebookLoginEnabled({
-      FACEBOOK_LOGIN_ENABLED: 'true',
+      ...completeConfig,
       NODE_ENV: 'development'
     }),
     true

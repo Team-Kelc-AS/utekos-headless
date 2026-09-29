@@ -97,7 +97,12 @@ test('sends granted canonical events after the rollback artifact loads', () => {
   )
 
   assert.deepEqual(tracks, [
-    ['track', 'PageView', {}, { eventID: 'accepted-page' }]
+    [
+      'track',
+      'PageView',
+      { country: 'Norway' },
+      { eventID: 'accepted-page' }
+    ]
   ])
 })
 
@@ -105,6 +110,19 @@ test('preserves canonical IDs, payloads and standard/custom commands', () => {
   const runtime = createRuntime()
   runtime.window.dataLayer.push(
     canonicalEvent('view_item', 'view-event', {
+      currency: 'nok',
+      gross_value: 1790,
+      value: 1432,
+      tax_value: 358,
+      items: [{
+        variant_id: 'gid://shopify/ProductVariant/47123456789012',
+        item_name: 'Utekos TechDown',
+        item_category: 'Uteklær',
+        quantity: 1,
+        gross_unit_price: 1790
+      }]
+    }),
+    canonicalEvent('begin_checkout', 'checkout-event', {
       currency: 'nok',
       gross_value: 1790,
       value: 1432,
@@ -145,7 +163,7 @@ test('preserves canonical IDs, payloads and standard/custom commands', () => {
           item_price: 1790
         }],
         content_type: 'product',
-        num_items: 1,
+        country: 'Norway',
         currency: 'NOK',
         value: 1790,
         content_name: 'Utekos TechDown',
@@ -155,6 +173,29 @@ test('preserves canonical IDs, payloads and standard/custom commands', () => {
         net_value: 1432
       },
       { eventID: 'view-event' }
+    ],
+    [
+      'track',
+      'InitiateCheckout',
+      {
+        content_ids: ['47123456789012'],
+        contents: [{
+          id: '47123456789012',
+          quantity: 1,
+          item_price: 1790
+        }],
+        content_type: 'product',
+        country: 'Norway',
+        num_items: 1,
+        currency: 'NOK',
+        value: 1790,
+        content_name: 'Utekos TechDown',
+        content_category: 'Uteklær',
+        gross_value: 1790,
+        tax_value: 358,
+        net_value: 1432
+      },
+      { eventID: 'checkout-event' }
     ],
     [
       'trackCustom',

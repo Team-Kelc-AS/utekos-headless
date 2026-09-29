@@ -18,6 +18,7 @@ import type {
   ProductCommerceModel,
   ProductPurchaseVariant
 } from 'types/product/ProductPurchaseModel'
+import { requireTechdownMetaContentId } from '../../techdownMeta'
 
 export type TechdownSizeChoice = {
   available: boolean
@@ -159,6 +160,7 @@ export function createTechdownSizeSelectorModel(
     }
 
     const variant = requirePurchaseVariant(sourceVariant)
+    requireTechdownMetaContentId(size.size, variant.id)
     const resolvedOptions = resolvePublicVariantOptions(
       presentation,
       sourceVariant.selectedOptions
