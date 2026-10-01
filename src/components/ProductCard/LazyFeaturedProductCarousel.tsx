@@ -2,10 +2,20 @@ import { ProductGridSkeleton } from '@/components/frontpage/Skeletons/ProductGri
 import { ProductCarousel } from './ProductCarousel'
 import { Suspense } from 'react'
 
-export function LazyFeaturedProductCarousel() {
+type LazyFeaturedProductCarouselProps = {
+  productHandleToMoveLast?: string
+}
+
+export function LazyFeaturedProductCarousel({
+  productHandleToMoveLast
+}: LazyFeaturedProductCarouselProps) {
   return (
     <Suspense fallback={<ProductGridSkeleton />}>
-      <ProductCarousel />
+      <ProductCarousel
+        {...(productHandleToMoveLast ?
+          { productHandleToMoveLast }
+        : {})}
+      />
     </Suspense>
   )
 }

@@ -6,16 +6,15 @@ import type { ShopifyMediaImage } from 'types/media'
 import { PageSection } from '@/components/layout/PageSection'
 import { frontpageSectionStackClassName } from '@/components/frontpage/layout/frontpageSectionStack'
 import { cn } from '@/lib/utils/className'
-import comfyrobeImage from '@/assets/images/comfyrobe/Comfy.jpg'
 
 const COMFYROBE_FALLBACK_IMAGE: ShopifyMediaImage = {
   id: 'comfyrobe-fallback',
   image: {
     id: 'comfyrobe-fallback',
-    url: comfyrobeImage,
+    url: '/Flytende_marineblue_vinterparkas.webp',
     altText: 'Comfyrobe™ - Vanntett og vindtett robe',
-    width: 1250,
-    height: 1800
+    width: 1024,
+    height: 1536
   }
 }
 

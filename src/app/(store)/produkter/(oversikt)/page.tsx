@@ -20,7 +20,9 @@ const ProductsPage = async () => {
         <ComparisonTeaser />
 
         <article className='mb-24'>
-          <LazyFeaturedProductCarousel />
+          <LazyFeaturedProductCarousel
+            productHandleToMoveLast='utekos-techdown'
+          />
         </article>
 
         <ComfyrobeFeatureSection />

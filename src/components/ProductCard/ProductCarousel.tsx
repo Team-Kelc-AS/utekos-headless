@@ -6,11 +6,13 @@ import type { ShopifyProduct } from 'types/product'
 
 type ProductCarouselProps = {
   productCardClassName?: string
+  productHandleToMoveLast?: string
   showExpressCheckout?: boolean
 }
 
 export async function ProductCarousel({
   productCardClassName,
+  productHandleToMoveLast,
   showExpressCheckout
 }: ProductCarouselProps) {
   const products = await getFeaturedProducts()
@@ -22,7 +24,18 @@ export async function ProductCarousel({
   const productsByHandle = new Map(
     products.map(product => [product.handle, product])
   )
-  const featuredProducts = featuredProductHandles
+  const productHandles =
+    productHandleToMoveLast &&
+    featuredProductHandles.includes(productHandleToMoveLast) ?
+      [
+        ...featuredProductHandles.filter(
+          handle => handle !== productHandleToMoveLast
+        ),
+        productHandleToMoveLast
+      ]
+    : featuredProductHandles
+
+  const featuredProducts = productHandles
     .map(handle => productsByHandle.get(handle))
     .filter((product): product is ShopifyProduct =>
       Boolean(product)

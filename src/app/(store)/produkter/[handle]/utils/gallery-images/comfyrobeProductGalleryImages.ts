@@ -5,7 +5,6 @@ import comfyrobeDesktop002 from '@/assets/images/comfyrobe/Comfyrobe-002.webp'
 import comfyrobeDesktop0003 from '@/assets/images/comfyrobe/Comfyrobe-0003.webp'
 import comfyrobeDesktop004 from '@/assets/images/comfyrobe/Comfyrobe-004.webp'
 import comfyrobeSherpa from '@/assets/images/comfyrobe/Sherpa.webp'
-import comfyrobeMobile001 from '@/assets/images/comfyrobe/Comfyrobe-Mobile-001.webp'
 import comfyrobeMobile002 from '@/assets/images/comfyrobe/Comfyrobe-Mobile-002.webp'
 import comfyrobeMobile003 from '@/assets/images/comfyrobe/Comfyrobe-Mobile-003.webp'
 import comfyrobeMobile004 from '@/assets/images/comfyrobe/Comfyrobe-Mobile-004.webp'
@@ -59,9 +58,9 @@ export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
 
 export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
-    'comfyrobe-mobile-still-001',
-    comfyrobeMobile001,
-    'Mann i marineblå Comfyrobe ved vannkanten.',
+    'comfyrobe-mobile-meta-1000x1500',
+    '/COMFY_META_1000x1500.webp',
+    'Marineblå Comfyrobe i portrettformat.',
     COMFYROBE_MOBILE_STILL_WIDTH,
     COMFYROBE_MOBILE_STILL_HEIGHT
   ),
