@@ -3,7 +3,7 @@
 import { runCartCommand } from '@/lib/actions/cart/runCartCommand'
 import { mapThrownErrorToActionResult } from '@/lib/errors/mapThrownErrorToActionResult'
 import type { CartActionsResult, CartCommand } from 'types/cart'
-import { getRedactedErrorSummary } from '@/lib/cart/getRedactedErrorSummary'
+import { logCartError } from '@/lib/cart/logCartError'
 
 export async function executeCartCommand(
   command: CartCommand
@@ -11,10 +11,7 @@ export async function executeCartCommand(
   try {
     return await runCartCommand(command)
   } catch (error) {
-    console.error(
-      `Cart command ${command.type} failed.`,
-      getRedactedErrorSummary(error)
-    )
+    logCartError(`Cart command ${command.type} failed.`, error)
     return mapThrownErrorToActionResult(error)
   }
 }
