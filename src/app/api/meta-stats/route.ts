@@ -25,8 +25,9 @@ export async function GET(request: NextRequest) {
     statsUrl.searchParams.append('end_time', endTime);
     statsUrl.searchParams.append('access_token', accessToken);
 
-    const qualityUrl = new URL(`https://graph.facebook.com/v26.0/${datasetId}`);
-    qualityUrl.searchParams.append('fields', 'emq_diagnostics,integration_quality');
+    const qualityUrl = new URL('https://graph.facebook.com/v26.0/dataset_quality');
+    qualityUrl.searchParams.append('dataset_id', datasetId);
+    qualityUrl.searchParams.append('fields', 'web{event_match_quality{diagnostics},event_name}');
     qualityUrl.searchParams.append('access_token', accessToken);
 
 
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
 
       deduplication_and_coverage: statsData.data, 
 
-      current_emq_and_freshness: qualityData 
+      current_emq_and_freshness: qualityData.web
     });
 
   } catch (error: any) {
