@@ -96,7 +96,8 @@ export function KlarnaIdentityButton({
     <div className='relative h-12 w-full' style={{ width }}>
       <div
         ref={containerRef}
-        className={`h-12 w-full ${status === 'ready' ? 'visible' : 'invisible'}`}
+        // The SDK's custom element defaults to 335px, wider than the mobile cart drawer.
+        className={`h-12 w-full [&>*]:w-full! ${status === 'ready' ? 'visible' : 'invisible'}`}
         aria-busy={status === 'loading'}
       />
 

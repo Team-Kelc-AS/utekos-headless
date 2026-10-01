@@ -17,7 +17,7 @@ const models = [
       '(UTSOLGT) - Alternativet for deg som ønsker dun.',
     icon: Feather,
     cardClass:
-      'border-border  bg-night  text-card-foreground  hover:bg-card-hover -hover',
+      'border-border bg-night  text-card-foreground  hover:bg-card-hover -hover',
     iconShellClass:
       'border-border  bg-primary text-primary-foreground',
     iconClass: 'text-primary-foreground',

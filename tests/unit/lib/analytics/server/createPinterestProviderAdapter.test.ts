@@ -69,25 +69,18 @@ test('projects Pinterest CAPI counts into the provider receipt', () => {
   )
 })
 
-test('layout loads the first-party Pinterest Tag behind the marketing script gate', () => {
-  const source = readFileSync(
-    path.join(process.cwd(), 'src/app/(store)/layout.tsx'),
-    'utf8'
-  )
+test('storefront layouts do not mount the unused browser pixels', () => {
+  const paths = [
+    'src/app/(store)/layout.tsx',
+    'src/app/skreddersy-varmen/components/LandingTelemetry.tsx',
+    'src/components/analytics/CanonicalBrowserProviderBridges.tsx'
+  ]
 
-  assert.match(source, /ConsentGrantedScript/)
-  assert.match(
-    source,
-    /id=['"]pinterest-tag-canonical-browser['"]/
-  )
-  assert.match(
-    source,
-    /src=['"]\/analytics\/pinterest-tag-canonical-v1\.js['"]/
-  )
-  assert.match(source, /data-tag-id=\{pinterestTagId\}/)
-  assert.match(
-    source,
-    /NEXT_PUBLIC_PINTEREST_TAG_ID/
-  )
-  assert.match(source, /shouldLoadMarketingScripts/)
+  for (const file of paths) {
+    const source = readFileSync(
+      path.join(process.cwd(), file),
+      'utf8'
+    )
+    assert.doesNotMatch(source, /pinterest|snapchat/i, file)
+  }
 })

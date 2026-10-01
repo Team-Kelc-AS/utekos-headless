@@ -2,12 +2,18 @@
 
 import Script from 'next/script'
 
-export function MetaBrowserTransportLoader() {
+export function MetaBrowserTransportLoader({
+  deferUntilIdle = false
+}: {
+  deferUntilIdle?: boolean
+}) {
   return (
     <Script
       id='meta-pixel-canonical-browser'
       src='/analytics/meta-pixel-canonical-v1.js'
-      strategy='afterInteractive'
+      strategy={
+        deferUntilIdle ? 'lazyOnload' : 'afterInteractive'
+      }
     />
   )
 }

@@ -14,7 +14,7 @@ const CANONICAL_ITEM_ID =
   'gid://shopify/ProductVariant/123456789'
 const PINTEREST_PRODUCT_ID = '123456789'
 
-function loadTag() {
+function loadTag(initialDataLayer: unknown[] = []) {
   const tracked: unknown[][] = []
   const pintrk = Object.assign(
     (...args: unknown[]) => {
@@ -37,7 +37,7 @@ function loadTag() {
   const window = {
     pintrk,
     crypto: webcrypto,
-    dataLayer: [] as unknown[],
+    dataLayer: initialDataLayer,
     addEventListener() {},
     document
   }
@@ -75,6 +75,24 @@ test('does not send canonical events without marketing granted', async () => {
   })
   await new Promise(resolve => setImmediate(resolve))
   assert.equal(harness.tracked.length, 0)
+})
+
+test('replays a queued event after deferred tag loading only once', async () => {
+  const event = canonicalPageView(true)
+  const harness = loadTag([
+    { event_id: event.event_id, canonical_event: event }
+  ])
+
+  await harness.processCanonicalEvent(event)
+
+  const views = harness.tracked.filter(
+    call => call[0] === 'track' && call[1] === 'ViewCategory'
+  )
+  assert.equal(views.length, 1)
+  assert.equal(
+    (views[0]?.[2] as { event_id?: string }).event_id,
+    event.event_id
+  )
 })
 
 test('Pinterest Tag sends matching product identity and Enhanced Match', async () => {

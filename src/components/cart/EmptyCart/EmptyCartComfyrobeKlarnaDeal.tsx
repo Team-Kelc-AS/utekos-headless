@@ -63,7 +63,7 @@ export function EmptyCartComfyrobeKlarnaDeal() {
   return (
     <section
       aria-labelledby='empty-cart-comfyrobe-deal-title'
-      className='mb-6 rounded-lg border border-border bg-card p-4'
+      className='mb-6 rounded-lg border border-border bg-background p-4'
     >
       <KlarnaOnSiteMessagingScript
         strategy='lazyOnload'

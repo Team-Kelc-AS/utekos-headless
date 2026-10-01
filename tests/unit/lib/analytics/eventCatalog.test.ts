@@ -220,11 +220,7 @@ test('routes correlated checkout progress only to its approved providers', () =>
   assert.ok(
     Object.entries(payment.providers).every(
       ([providerId, provider]) =>
-        (
-          providerId === 'google' ||
-          providerId === 'meta' ||
-          providerId === 'snapchat'
-        ) ?
+        (providerId === 'google' || providerId === 'meta') ?
           provider.serverOutbox === 'active'
         : provider.serverOutbox !== 'active'
     )
@@ -257,7 +253,8 @@ test('routes correlated checkout progress only to its approved providers', () =>
     payment.providers.snapchat.eventName,
     'ADD_BILLING'
   )
-  assert.equal(payment.providers.snapchat.serverOutbox, 'active')
+  assert.equal(payment.providers.snapchat.productionStatus, 'planned')
+  assert.equal(payment.providers.snapchat.serverOutbox, 'disabled')
   assert.equal(
     payment.providers.snapchat.transport.browser,
     'shopify_customer_events'
@@ -275,7 +272,7 @@ test('marks all non-blocked catalog events as active', () => {
   ])
 })
 
-test('keeps Purchase delivery active only for Google and Meta', () => {
+test('keeps provider outboxes limited to configured destinations', () => {
   const activeOutboxes = canonicalEventNames.flatMap(eventName =>
     providerIds.flatMap(providerId =>
       (
@@ -300,19 +297,9 @@ test('keeps Purchase delivery active only for Google and Meta', () => {
   assert.ok(
     activeOutboxes.includes('microsoft_uet:begin_checkout')
   )
-  assert.ok(activeOutboxes.includes('pinterest:view_item'))
-  assert.ok(activeOutboxes.includes('pinterest:add_to_cart'))
-  assert.ok(activeOutboxes.includes('pinterest:begin_checkout'))
+  assert.ok(!activeOutboxes.some(event => event.startsWith('pinterest:')))
   assert.ok(!activeOutboxes.includes('pinterest:purchase'))
-  assert.ok(activeOutboxes.includes('pinterest:search'))
-  assert.ok(activeOutboxes.includes('pinterest:view_category'))
-  assert.ok(activeOutboxes.includes('pinterest:add_to_wishlist'))
-  assert.ok(activeOutboxes.includes('pinterest:generate_lead'))
-  assert.ok(activeOutboxes.includes('snapchat:page_view'))
-  assert.ok(activeOutboxes.includes('snapchat:view_item'))
-  assert.ok(activeOutboxes.includes('snapchat:add_to_cart'))
-  assert.ok(activeOutboxes.includes('snapchat:begin_checkout'))
-  assert.ok(activeOutboxes.includes('snapchat:add_payment_info'))
+  assert.ok(!activeOutboxes.some(event => event.startsWith('snapchat:')))
   assert.ok(!activeOutboxes.includes('snapchat:purchase'))
   assert.equal(
     eventCatalog.page_view.providers.pinterest.support,
@@ -344,6 +331,15 @@ test('keeps Purchase delivery active only for Google and Meta', () => {
     eventCatalog.purchase.providers.snapchat.serverOutbox,
     'disabled'
   )
+  for (const eventName of canonicalEventNames) {
+    for (const providerId of ['pinterest', 'snapchat'] as const) {
+      const provider = eventCatalog[eventName].providers[providerId]
+      if (provider.support === 'supported' && eventName !== 'purchase') {
+        assert.equal(provider.productionStatus, 'planned')
+        assert.equal(provider.serverOutbox, 'disabled')
+      }
+    }
+  }
 })
 
 test('declares the Shopify App Web Pixel and Data Manager as the two Google purchase sources', () => {

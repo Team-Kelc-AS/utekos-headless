@@ -13,13 +13,14 @@ export function TechdownHeader() {
       <div className={styles.headerLeft}>
         <Link
           href='/'
+          prefetch={false}
           className={styles.brand}
           aria-label='Utekos – forsiden'
         >
           <Image
             src='/IconWhite.svg'
             alt=''
-            width={36}
+            width={37}
             height={32}
             unoptimized
             className='h-8 w-auto'
@@ -57,7 +58,11 @@ export function TechdownHeader() {
             className={styles.menuPanel}
           >
             {mainMenu.map(item => (
-              <Link key={item.url} href={item.url as Route}>
+              <Link
+                key={item.url}
+                href={item.url as Route}
+                prefetch={false}
+              >
                 {item.title}
               </Link>
             ))}

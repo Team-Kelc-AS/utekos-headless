@@ -1,0 +1,502 @@
+{
+  "new": [
+    {
+      "component": "ReceiptIcon",
+      "source_file": "Receipt.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteHeartIcon",
+      "source_file": "WhiteHeart.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteShareSocialIcon",
+      "source_file": "WhiteShareSocial.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "CashierIcon",
+      "source_file": "cashier.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteMoneyIcon",
+      "source_file": "WhiteMoney.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "DeliveryIcon",
+      "source_file": "Delivery.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteCashierIcon",
+      "source_file": "WhiteCashier.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteTruckIcon",
+      "source_file": "WhiteTruck.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "ClipboardIcon",
+      "source_file": "clipboard.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "EnvelopeIcon",
+      "source_file": "envelope.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "MerchantTruckIcon",
+      "source_file": "MerchantTruck.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteBulletIcon",
+      "source_file": "WhiteBullet.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WalletIcon",
+      "source_file": "Wallet.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "ChartClipboardIcon",
+      "source_file": "ChartClipboard.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "CaretRightIcon",
+      "source_file": "Caret-Right.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhitePaymentIcon",
+      "source_file": "WhitePayment.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteReceiptIcon",
+      "source_file": "WhiteReceipt.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteWalletIcon",
+      "source_file": "WhiteWallet.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhitePercentCouponIcon",
+      "source_file": "WhitePercentCoupon.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "CloseIcon",
+      "source_file": "Close.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteRequestIcon",
+      "source_file": "WhiteRequest.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "PercentCouponIcon",
+      "source_file": "PercentCoupon.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "RedHeartIcon",
+      "source_file": "RedHeart.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "LightBlueHeartIcon",
+      "source_file": "LightBlueHeart.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteMerchantTruckIcon",
+      "source_file": "WhiteMerchantTruck.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "Delivery1Icon",
+      "source_file": "Delivery (1).svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "OrangeHeartIcon",
+      "source_file": "OrangeHeart.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteCaretRightIcon",
+      "source_file": "WhiteCaret-Right.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "GroupOutlineIcon",
+      "source_file": "Group-Outline.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhitePaymentOutlineIcon",
+      "source_file": "WhitePayment-Outline.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "GreyBulletIcon",
+      "source_file": "GreyBullet.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteBagIcon",
+      "source_file": "WhiteBag.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "ShareSocialIcon",
+      "source_file": "ShareSocial.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "PumpkinBulletIcon",
+      "source_file": "PumpkinBullet.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "RequestIcon",
+      "source_file": "Request.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "WhiteGiftIcon",
+      "source_file": "WhiteGift.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "LightBlueBulletIcon",
+      "source_file": "LightBlueBullet.svg",
+      "source_archive": "svg.zip"
+    },
+    {
+      "component": "SearchIcon",
+      "source_file": "Search.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ListClipboardOutlineIcon",
+      "source_file": "ListClipboard-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "BoxOutlineIcon",
+      "source_file": "Box-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "MessageSpeechBubbleOutlineIcon",
+      "source_file": "MessageSpeechBubble-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "CashierMachineIcon",
+      "source_file": "CashierMachine.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PersonIcon",
+      "source_file": "Person.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PinOutlineIcon",
+      "source_file": "Pin-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ListClipboardIcon",
+      "source_file": "ListClipboard.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "CameraRollIcon",
+      "source_file": "CameraRoll.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ArrowDownRightIcon",
+      "source_file": "ArrowDownRight.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "TagIcon",
+      "source_file": "Tag.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "CashierAlt2Icon",
+      "source_file": "Cashier.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "LocationOutlineIcon",
+      "source_file": "Location-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "DotDotDotSpeechBubbleOutlineIcon",
+      "source_file": "DotDotDotSpeechBubble-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "MessageSpeechBubbleIcon",
+      "source_file": "MessageSpeechBubble.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "CameraSwitchIcon",
+      "source_file": "CameraSwitch.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "LinkIcon",
+      "source_file": "Link.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "InfoCircleIcon",
+      "source_file": "InfoCircle.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "TrayOutlineIcon",
+      "source_file": "Tray-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "RemoveOutlineIcon",
+      "source_file": "Remove-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PinIcon",
+      "source_file": "Pin.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ArrowUpLeftIcon",
+      "source_file": "ArrowUpLeft.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ExclamationMarkSpeechBubbleOutlineIcon",
+      "source_file": "ExclamationMarkSpeechBubble-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "WalletAlt2Icon",
+      "source_file": "Wallet.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "RefundIcon",
+      "source_file": "Refund.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ExclamationMarkSpeechBubbleIcon",
+      "source_file": "ExclamationMarkSpeechBubble.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "CaretLeftIcon",
+      "source_file": "CaretLeft.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ExclamationMarkCircleIcon",
+      "source_file": "ExclamationMarkCircle.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "NotificationsOutlineIcon",
+      "source_file": "Notifications-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "CashierMachineOutlineIcon",
+      "source_file": "CashierMachine-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "CameraOutlineIcon",
+      "source_file": "Camera-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ArrowsCollapseIcon",
+      "source_file": "ArrowsCollapse.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PaperclipIcon",
+      "source_file": "Paperclip.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "TrayIcon",
+      "source_file": "Tray.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "BoxIcon",
+      "source_file": "Box.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "TagOutlineIcon",
+      "source_file": "Tag-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "QuestionMarkSquareIcon",
+      "source_file": "QuestionMarkSquare.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PaymentHistoryIcon",
+      "source_file": "PaymentHistory.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "BagOutlineIcon",
+      "source_file": "Bag-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PencilIcon",
+      "source_file": "Pencil.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "DeleteOutlineAlt2Icon",
+      "source_file": "DeleteOutline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PlusSpeechBubbleIcon",
+      "source_file": "PlusSpeechBubble.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "DeleteIcon",
+      "source_file": "Delete.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ClockIcon",
+      "source_file": "Clock.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "CheckUncheckedIcon",
+      "source_file": "CheckUnchecked.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PercentSpeechBubbleIcon",
+      "source_file": "PercentSpeechBubble.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "LocationIcon",
+      "source_file": "Location.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "RemoveIcon",
+      "source_file": "Remove.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ArrowUpRightIcon",
+      "source_file": "ArrowUpRight.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "CashierOutlineIcon",
+      "source_file": "Cashier-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "RecurringIcon",
+      "source_file": "Recurring.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "DotDotDotSpeechBubbleIcon",
+      "source_file": "DotDotDotSpeechBubble.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PercentSpeechBubbleOutlineIcon",
+      "source_file": "PercentSpeechBubble-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ClockOutlineIcon",
+      "source_file": "Clock-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PhotoIcon",
+      "source_file": "Photo.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "ArrowDownLeftIcon",
+      "source_file": "ArrowDownLeft.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PlusSpeechBubbleOutlineIcon",
+      "source_file": "PlusSpeechBubble-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "PhotoOutlineIcon",
+      "source_file": "Photo-Outline.svg",
+      "source_archive": "icons_2.zip"
+    },
+    {
+      "component": "HeartIcon",
+      "source_file": "Heart.svg",
+      "source_archive": "icons_2.zip"
+    }
+  ],
+  "duplicates_skipped": [
+    {
+      "source": "icons_2.zip",
+      "name": "LogOut.svg"
+    },
+    {
+      "source": "icons_2.zip",
+      "name": "CaretRight.svg"
+    },
+    {
+      "source": "icons_2.zip",
+      "name": "Delete-Outline.svg"
+    },
+    {
+      "source": "icons_2.zip",
+      "name": "Heart-Outline.svg"
+    }
+  ]
+}

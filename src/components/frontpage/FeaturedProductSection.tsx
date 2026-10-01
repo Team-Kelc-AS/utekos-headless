@@ -24,7 +24,6 @@ export async function FeaturedProductsSection() {
             productCardClassName={
               'border border-foreground/12 bg-night '
             }
-            showExpressCheckout={false}
           />
         </div>
       </div>

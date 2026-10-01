@@ -6,10 +6,12 @@ import { STAPE_CUSTOM_LOADER } from './stapeCustomLoader'
 
 type GoogleTagManagerLoaderProps = {
   enabled: boolean
+  deferContainer?: boolean
 }
 
 export function GoogleTagManagerLoader({
-  enabled
+  enabled,
+  deferContainer = false
 }: GoogleTagManagerLoaderProps) {
   if (!enabled) {
     return null
@@ -21,17 +23,16 @@ export function GoogleTagManagerLoader({
         id='_next-gtm-consent-defaults'
         strategy='beforeInteractive'
         dangerouslySetInnerHTML={{
-          __html:
-            GOOGLE_TAG_MANAGER_BOOTSTRAP
+          __html: GOOGLE_TAG_MANAGER_BOOTSTRAP
         }}
       />
 
       <Script
         id='_next-stape-custom-loader'
-        strategy='beforeInteractive'
-        dangerouslySetInnerHTML={{
-          __html: STAPE_CUSTOM_LOADER
-        }}
+        strategy={
+          deferContainer ? 'lazyOnload' : 'beforeInteractive'
+        }
+        dangerouslySetInnerHTML={{ __html: STAPE_CUSTOM_LOADER }}
       />
     </>
   )

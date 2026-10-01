@@ -10,7 +10,7 @@ export function TechdownDocumentTelemetry() {
           process.env.VERCEL_ENV
         )}
       />
-      <LandingTelemetry />
+      <LandingTelemetry deferMarketingScripts />
     </>
   )
 }

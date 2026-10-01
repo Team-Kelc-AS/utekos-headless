@@ -86,10 +86,7 @@ test('projects Snap transport and VALID response evidence separately', () => {
     result: {
       acceptance: 'accepted_unverified',
       httpStatus: 200,
-      response: {
-        requestId: 'request-1',
-        status: 'VALID'
-      },
+      response: { requestId: 'request-1', status: 'VALID' },
       status: 'sent'
     }
   })
@@ -101,26 +98,22 @@ test('projects Snap transport and VALID response evidence separately', () => {
   })
 })
 
-test('registers Snapchat without exposing its token to browser code', async () => {
+test('retains server adapter without mounting the Snapchat browser pixel', async () => {
   assert.equal(adapter.provider, 'snapchat')
   assert.equal(adapter.key, 'snapchat:page_view')
 
   const layout = await readFile(
-    new URL('../../../app/(store)/layout.tsx', import.meta.url),
+    'src/app/(store)/layout.tsx',
     'utf8'
   )
   const bridge = await readFile(
-    new URL(
-      '../../../../public/analytics/snapchat-pixel-canonical-v1.js',
-      import.meta.url
-    ),
+    'public/analytics/snapchat-pixel-canonical-v1.js',
     'utf8'
   )
 
-  assert.match(layout, /SNAPCHAT_PIXEL_ENABLED/)
-  assert.match(layout, /NEXT_PUBLIC_SNAPCHAT_PIXEL_ID/)
-  assert.match(layout, /ConsentGrantedScript/)
-  assert.match(layout, /snapchat-pixel-canonical-v1\.js/)
+  assert.doesNotMatch(layout, /SNAPCHAT_PIXEL_ENABLED/)
+  assert.doesNotMatch(layout, /NEXT_PUBLIC_SNAPCHAT_PIXEL_ID/)
+  assert.doesNotMatch(layout, /snapchat-pixel-canonical-v1\.js/)
   assert.doesNotMatch(
     layout,
     /SNAPCHAT_CONVERSIONS_API_ACCESS_TOKEN/

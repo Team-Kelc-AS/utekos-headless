@@ -41,12 +41,6 @@ export default function RootLayout({
   const shouldLoadMarketingScripts = shouldLoadGoogleTagManager(
     process.env.VERCEL_ENV
   )
-  const pinterestTagId =
-    process.env.NEXT_PUBLIC_PINTEREST_TAG_ID?.trim()
-  const snapchatPixelEnabled =
-    process.env.SNAPCHAT_PIXEL_ENABLED === 'true'
-  const snapchatPixelId =
-    process.env.NEXT_PUBLIC_SNAPCHAT_PIXEL_ID?.trim()
   return (
     <html
       lang='no'
@@ -63,9 +57,6 @@ export default function RootLayout({
         />
         <CanonicalBrowserProviderBridges
           enabled={shouldLoadMarketingScripts}
-          pinterestTagId={pinterestTagId}
-          snapchatPixelEnabled={snapchatPixelEnabled}
-          snapchatPixelId={snapchatPixelId}
         />
 
         <Suspense fallback={null}>

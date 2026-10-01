@@ -1,0 +1,18 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function HandOutlineIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fillRule="evenodd" d="M11.5 1a2.5 2.5 0 0 0-2.461 2.058 2.5 2.5 0 0 0-3 2A2.5 2.5 0 0 0 3 7.5v7.157a8.343 8.343 0 0 0 15.496 4.293l3.399-5.664a2.152 2.152 0 0 0-3.454-2.537L17 12.369V5a2.5 2.5 0 0 0-3.17-2.41A2.501 2.501 0 0 0 11.5 1zM15 8V5a.5.5 0 0 0-1 0v6a1 1 0 1 1-2 0V3.5a.5.5 0 0 0-1 0V11a1 1 0 1 1-2 0V5.5a.5.5 0 0 0-1 0V12a1 1 0 1 1-2 0V7.5a.5.5 0 0 0-1 0v7.157a6.343 6.343 0 0 0 11.781 3.264l3.399-5.664a.152.152 0 0 0-.244-.18l-3.189 3.587A1 1 0 0 1 15 15V8z" clipRule="evenodd"/>
+    </svg>
+  )
+}

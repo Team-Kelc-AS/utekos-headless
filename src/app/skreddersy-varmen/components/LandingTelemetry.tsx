@@ -12,28 +12,25 @@ import { getTrackingEnvironment } from '@/lib/analytics/getTrackingEnvironment'
 import { shouldLoadGoogleTagManager } from '@/lib/analytics/shouldLoadGoogleTagManager'
 import { resolveShopifyCustomerPrivacyPublicToken } from '@/lib/consent/resolveShopifyCustomerPrivacyPublicToken'
 
-export function LandingTelemetry() {
+export function LandingTelemetry({
+  deferMarketingScripts = false
+}: {
+  deferMarketingScripts?: boolean
+}) {
   const shouldLoadMarketingScripts = shouldLoadGoogleTagManager(
     process.env.VERCEL_ENV
   )
-  const pinterestTagId =
-    process.env.NEXT_PUBLIC_PINTEREST_TAG_ID?.trim()
-  const snapchatPixelEnabled =
-    process.env.SNAPCHAT_PIXEL_ENABLED === 'true'
-  const snapchatPixelId =
-    process.env.NEXT_PUBLIC_SNAPCHAT_PIXEL_ID?.trim()
   const storefrontAccessToken =
     resolveShopifyCustomerPrivacyPublicToken(process.env)
   return (
     <>
       <GoogleTagManagerLoader
         enabled={shouldLoadMarketingScripts}
+        deferContainer={deferMarketingScripts}
       />
       <CanonicalBrowserProviderBridges
         enabled={shouldLoadMarketingScripts}
-        pinterestTagId={pinterestTagId}
-        snapchatPixelEnabled={snapchatPixelEnabled}
-        snapchatPixelId={snapchatPixelId}
+        deferUntilIdle={deferMarketingScripts}
       />
 
       <Suspense fallback={null}>

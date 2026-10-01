@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function LocationOutlineIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fillRule="evenodd" d="M5 10a7 7 0 0 1 14 0c0 2.161-1.22 4.442-2.804 6.459-1.53 1.95-3.285 3.506-4.196 4.261-.91-.755-2.665-2.311-4.196-4.261C6.22 14.442 5 12.16 5 10zm7-9a9 9 0 0 0-9 9c0 2.847 1.567 5.575 3.231 7.694 1.687 2.148 3.602 3.832 4.55 4.613a1.908 1.908 0 0 0 2.438 0c.948-.781 2.863-2.465 4.55-4.613C19.433 15.574 21 12.847 21 10a9 9 0 0 0-9-9zm0 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" clipRule="evenodd"/>
+    </svg>
+  )
+}

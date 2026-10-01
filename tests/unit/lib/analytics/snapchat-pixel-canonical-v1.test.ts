@@ -21,7 +21,7 @@ function memoryStorage(initial: Record<string, string> = {}) {
   }
 }
 
-function loadPixel() {
+function loadPixel(initialDataLayer: unknown[] = []) {
   const calls: unknown[][] = []
   const appendedScripts: Array<Record<string, unknown>> = []
   const snaptr = (...args: unknown[]) => calls.push(args)
@@ -39,7 +39,7 @@ function loadPixel() {
     }
   }
   const window = {
-    dataLayer: [] as unknown[],
+    dataLayer: initialDataLayer,
     document,
     localStorage: memoryStorage(),
     sessionStorage: memoryStorage(),
@@ -108,6 +108,25 @@ test('does not send dataLayer events without marketing granted', () => {
   assert.equal(harness.calls.length, 0)
 })
 
+test('replays an event queued before the deferred pixel loads only once', () => {
+  const event = canonicalEvent('page_view')
+  const harness = loadPixel([
+    { event_id: event.event_id, canonical_event: event }
+  ])
+
+  harness.processCanonicalEvent(event)
+
+  const pageViews = harness.calls.filter(
+    call => call[0] === 'track' && call[1] === 'PAGE_VIEW'
+  )
+  assert.equal(pageViews.length, 1)
+  assert.equal(
+    (pageViews[0]?.[2] as { client_dedup_id?: string })
+      .client_dedup_id,
+    event.event_id
+  )
+})
+
 test('maps the four headless events once with canonical dedupe ids', () => {
   const harness = loadPixel()
   const cases = [
@@ -171,7 +190,9 @@ test('ignores checkout-only and non-production events', () => {
 
 test('does not call Snapchat for events without marketing granted', () => {
   const harness = loadPixel()
-  harness.processCanonicalEvent(canonicalEvent('view_item', false))
+  harness.processCanonicalEvent(
+    canonicalEvent('view_item', false)
+  )
 
   assert.equal(harness.calls.length, 0)
 })

@@ -21,7 +21,7 @@ export async function HeroSection() {
         <div className='flex w-full flex-col items-center justify-center px-4 py-12 sm:px-0 sm:py-14 lg:py-16'>
           <h1
             id='hero-h1'
-            className='mx-auto max-w-3xl text-center text-3xl font-semibold text-balance text-foreground md:text-5xl'
+            className='mx-auto max-w-3xl text-center text-4xl font-semibold text-balance text-foreground sm:mb-8 sm:text-5xl lg:text-6xl'
           >
             {HERO_H1}
           </h1>

@@ -21,7 +21,10 @@ test('loads Meta Pixel through next/script', () => {
   assert.match(source, /^'use client'/)
   assert.match(source, /from 'next\/script'/)
   assert.match(source, /id='meta-pixel-canonical-browser'/)
-  assert.match(source, /strategy='afterInteractive'/)
+  assert.match(
+    source,
+    /strategy=\{\s*deferUntilIdle \? 'lazyOnload' : 'afterInteractive'\s*\}/
+  )
   assert.doesNotMatch(source, /signals-gateway-pixel-sdk/)
   assert.doesNotMatch(source, /signals\.utekos\.no/)
 })

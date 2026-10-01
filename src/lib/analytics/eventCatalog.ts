@@ -664,7 +664,7 @@ function activeEventProviders(
     pinterest:
       input.pinterest ?
         pinterestCatalogProvider(input.pinterest.eventName, {
-          active: true,
+          active: false,
           ...(input.pinterest.requiredParameters ?
             {
               requiredParameters:
@@ -678,7 +678,7 @@ function activeEventProviders(
     snapchat:
       input.snapchat ?
         snapchatCatalogProvider(input.snapchat.eventName, {
-          active: true,
+          active: false,
           browser: input.snapchat.browser ?? null,
           ...(input.snapchat.dedupeField ?
             { dedupeField: input.snapchat.dedupeField }
@@ -822,7 +822,7 @@ const pageViewProviders = {
     'Canonical page_view is not mapped to Pinterest PageVisit; product view_item owns PageVisit with catalog product IDs.'
   ),
   snapchat: snapchatCatalogProvider('PAGE_VIEW', {
-    active: true,
+    active: false,
     browser: 'snap_pixel'
   })
 } as const satisfies Readonly<
@@ -919,7 +919,7 @@ const viewItemProviders = {
     serverOutbox: 'blocked_no_worker'
   }),
   pinterest: pinterestCatalogProvider('page_visit', {
-    active: true,
+    active: false,
     requiredParameters: [
       'content_ids',
       'contents',
@@ -928,7 +928,7 @@ const viewItemProviders = {
     ]
   }),
   snapchat: snapchatCatalogProvider('VIEW_CONTENT', {
-    active: true,
+    active: false,
     browser: 'snap_pixel',
     requiredParameters: [
       'content_ids',
@@ -1033,7 +1033,7 @@ const addToCartProviders = {
   pinterest: pinterestCatalogProvider(
     PINTEREST_CANONICAL_EVENT_MAP.add_to_cart.api,
     {
-      active: true,
+      active: false,
       requiredParameters: [
         'content_ids',
         'contents',
@@ -1045,7 +1045,7 @@ const addToCartProviders = {
   snapchat: snapchatCatalogProvider(
     SNAPCHAT_CANONICAL_EVENT_MAP.add_to_cart,
     {
-      active: true,
+      active: false,
       browser: 'snap_pixel',
       requiredParameters: [
         'content_ids',
@@ -1149,7 +1149,7 @@ const beginCheckoutProviders = {
     serverOutbox: 'active'
   }),
   pinterest: pinterestCatalogProvider('initiate_checkout', {
-    active: true,
+    active: false,
     requiredParameters: [
       'content_ids',
       'contents',
@@ -1158,7 +1158,7 @@ const beginCheckoutProviders = {
     ]
   }),
   snapchat: snapchatCatalogProvider('START_CHECKOUT', {
-    active: true,
+    active: false,
     browser: 'snap_pixel',
     requiredParameters: [
       'content_ids',

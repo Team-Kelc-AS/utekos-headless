@@ -165,45 +165,40 @@ export function TechdownContent() {
         aria-labelledby='outcomes-heading'
       >
         <div className={styles.sectionHeading}>
-          <p className={styles.eyebrow}>
-            Skreddersy varmen
-          </p>
           <h2 id='outcomes-heading'>
-            Juster, form og nyt.
+            Skreddersy varmen
           </h2>
           <p>
-            Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen, mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt.
+            Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen, mens barnebarna utfolder seg på fotballbanen.
           </p>
         </div>
         <ul className={styles.benefits}>
           <li>
             <Feather aria-hidden='true' />
             <div>
-              <strong>43 ganger bedre enn dun</strong>
+              <strong>Juster, form og nyt</strong>
               <span>
-                Målinger av hydroskopiske egenskaper ved høy relativ
-                luftfuktighet dokumenterer at CloudWeave™ har over 43 ganger
-                bedre fuktmotstand enn tradisjonell dun.
+                 Vinterdress, kåpe, parkas eller jakke - du bestemmer. Juster lengde, tilpass passform og reguler ventilasjon etter behov.
               </span>
             </div>
           </li>
           <li>
             <PersonStanding aria-hidden='true' />
             <div>
-              <strong>Behold varmen når du beveger deg</strong>
+              <strong>Raffinerte løsninger</strong>
               <span>
-                Hev lengden eller bruk parkasmodus når du skal gå
-                uten å ta av plagget.
+                Raffinerte og gjennomtestede løsninger som snorstramminger, omvendt V-formet glidelåssystem og spesialutviklet materiale er gradvis utbedret og optimalisert over år med testing og erfaring.
               </span>
             </div>
           </li>
           <li>
             <SlidersHorizontal aria-hidden='true' />
             <div>
-              <strong>Juster plagget til kroppen</strong>
+              <strong>43 ganger bedre enn dun</strong>
               <span>
-                Innvendig og utvendig snorstramming i livet gjør passformen
-                justerbar.
+                Målinger av hydroskopiske egenskaper ved høy relativ
+                luftfuktighet dokumenterer at CloudWeave™ har over 43 ganger
+                bedre fuktmotstand enn tradisjonell dun.
               </span>
             </div>
           </li>

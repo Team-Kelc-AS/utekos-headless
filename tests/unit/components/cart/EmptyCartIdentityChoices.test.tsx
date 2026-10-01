@@ -15,7 +15,7 @@ test('renders separate official Vipps Login and Klarna Identity choices', () => 
   assert.match(markup, /<vipps-mobilepay-button/u)
   assert.match(markup, /brand="vipps"/u)
   assert.match(markup, /language="no"/u)
-  assert.match(markup, /variant="light"/u)
+  assert.match(markup, /variant="primary"/u)
   assert.match(markup, /verb="login"/u)
   assert.match(markup, /stretched="true"/u)
   assert.match(markup, /Laster Vipps/u)
@@ -53,4 +53,5 @@ test('two Klarna buttons do not emit a duplicated static DOM id', () => {
 
   assert.equal((markup.match(/\sid=/gu) ?? []).length, 0)
   assert.equal((markup.match(/Laster Klarna/gu) ?? []).length, 2)
+  assert.equal((markup.match(/w-full!/gu) ?? []).length, 2)
 })
