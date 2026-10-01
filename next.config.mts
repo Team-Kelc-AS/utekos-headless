@@ -118,7 +118,7 @@ const nextConfig: NextConfig = {
   ...(process.env.NODE_ENV === 'development' ?
     {
       logging: {
-        fetches: { fullUrl: true, hmrRefreshes: false }
+        fetches: { fullUrl: false, hmrRefreshes: false }
       }
     }
   : {}),
