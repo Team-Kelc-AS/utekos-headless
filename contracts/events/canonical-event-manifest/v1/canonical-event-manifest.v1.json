@@ -129,7 +129,7 @@
       },
       {
         "path": "src/lib/analytics/eventCatalog.ts",
-        "sha256": "063760f084c3804f5fbb3ff4b2bb22a36dfcd2f6b073b0cab7a0e1037ebe0b85"
+        "sha256": "f0e8e901414abb6d08012c8400e690ce23892fb2b6cf182c2d099815e7487d48"
       },
       {
         "path": "src/lib/analytics/eventCatalogSignalContracts.ts",
@@ -4267,9 +4267,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -4545,13 +4545,13 @@
         "snapchat": {
           "support": "supported",
           "eventName": "PAGE_VIEW",
-          "productionStatus": "planned",
-          "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "snap_pixel",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -4565,7 +4565,7 @@
           },
           "server": {
             "transport": "snap_conversions_api_v3",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -7441,9 +7441,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -7476,9 +7476,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -7760,13 +7760,13 @@
         "pinterest": {
           "support": "supported",
           "eventName": "page_visit",
-          "productionStatus": "planned",
-          "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "pinterest_tag",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [
                 "pinterestBrowser"
@@ -7785,7 +7785,7 @@
           },
           "server": {
             "transport": "pinterest_conversions_api",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [
                 "pinterestServer"
@@ -7806,13 +7806,13 @@
         "snapchat": {
           "support": "supported",
           "eventName": "VIEW_CONTENT",
-          "productionStatus": "planned",
-          "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "snap_pixel",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -7830,7 +7830,7 @@
           },
           "server": {
             "transport": "snap_conversions_api_v3",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -10867,9 +10867,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -10902,9 +10902,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -11185,13 +11185,13 @@
         "pinterest": {
           "support": "supported",
           "eventName": "add_to_cart",
-          "productionStatus": "planned",
-          "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "pinterest_tag",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [
                 "pinterestBrowser"
@@ -11210,7 +11210,7 @@
           },
           "server": {
             "transport": "pinterest_conversions_api",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [
                 "pinterestServer"
@@ -11231,13 +11231,13 @@
         "snapchat": {
           "support": "supported",
           "eventName": "ADD_CART",
-          "productionStatus": "planned",
-          "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "snap_pixel",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -11255,7 +11255,7 @@
           },
           "server": {
             "transport": "snap_conversions_api_v3",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -12911,6 +12911,32 @@
             "kind": "provider_dispatch",
             "event": "add_to_cart",
             "provider": "microsoft_uet",
+            "lifecycle": "active",
+            "support": "supported",
+            "consent_requirement": "marketing",
+            "production_status": "active",
+            "server_outbox": "active",
+            "source": "src/lib/analytics/eventCatalog.ts",
+            "source_symbol": "eventCatalog"
+          },
+          {
+            "id": "pinterest.add_to_cart.dispatch.v1",
+            "kind": "provider_dispatch",
+            "event": "add_to_cart",
+            "provider": "pinterest",
+            "lifecycle": "active",
+            "support": "supported",
+            "consent_requirement": "marketing",
+            "production_status": "active",
+            "server_outbox": "active",
+            "source": "src/lib/analytics/eventCatalog.ts",
+            "source_symbol": "eventCatalog"
+          },
+          {
+            "id": "snapchat.add_to_cart.dispatch.v1",
+            "kind": "provider_dispatch",
+            "event": "add_to_cart",
+            "provider": "snapchat",
             "lifecycle": "active",
             "support": "supported",
             "consent_requirement": "marketing",
@@ -15063,9 +15089,9 @@
             "dedupeField": "payment_revision",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -15293,13 +15319,13 @@
         "snapchat": {
           "support": "supported",
           "eventName": "ADD_BILLING",
-          "productionStatus": "planned",
-          "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "payment_revision",
           "browser": {
             "transport": "shopify_customer_events",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -15317,7 +15343,7 @@
           },
           "server": {
             "transport": "snap_conversions_api_v3",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -19934,9 +19960,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -19969,9 +19995,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -20253,13 +20279,13 @@
         "pinterest": {
           "support": "supported",
           "eventName": "initiate_checkout",
-          "productionStatus": "planned",
-          "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "pinterest_tag",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [
                 "pinterestBrowser"
@@ -20278,7 +20304,7 @@
           },
           "server": {
             "transport": "pinterest_conversions_api",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [
                 "pinterestServer"
@@ -20299,13 +20325,13 @@
         "snapchat": {
           "support": "supported",
           "eventName": "START_CHECKOUT",
-          "productionStatus": "planned",
-          "productionDetail": "Snapchat mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Utekos-owned Snap Pixel and Conversions API v3 outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "snap_pixel",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -20323,7 +20349,7 @@
           },
           "server": {
             "transport": "snap_conversions_api_v3",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [],
               "logicalRequiredParameters": [
@@ -35829,9 +35855,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -36134,13 +36160,13 @@
         "pinterest": {
           "support": "supported",
           "eventName": "add_to_wishlist",
-          "productionStatus": "planned",
-          "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "pinterest_tag",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [
                 "pinterestBrowser"
@@ -36159,7 +36185,7 @@
           },
           "server": {
             "transport": "pinterest_conversions_api",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [
                 "pinterestServer"
@@ -45370,9 +45396,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -45659,13 +45685,13 @@
         "pinterest": {
           "support": "supported",
           "eventName": "search",
-          "productionStatus": "planned",
-          "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "pinterest_tag",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [
                 "pinterestBrowser"
@@ -45681,7 +45707,7 @@
           },
           "server": {
             "transport": "pinterest_conversions_api",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [
                 "pinterestServer"
@@ -55396,9 +55422,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -55679,13 +55705,13 @@
         "pinterest": {
           "support": "supported",
           "eventName": "lead",
-          "productionStatus": "planned",
-          "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "pinterest_tag",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [
                 "pinterestBrowser"
@@ -55700,7 +55726,7 @@
           },
           "server": {
             "transport": "pinterest_conversions_api",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [
                 "pinterestServer"
@@ -76225,9 +76251,9 @@
             "dedupeField": "event_id",
             "consentRequirement": "marketing",
             "adapterVersion": 1,
-            "productionStatus": "planned",
-            "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
-            "serverOutbox": "disabled",
+            "productionStatus": "active",
+            "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
+            "serverOutbox": "active",
             "signalDelivery": {
               "event_source_url": "required",
               "client_ip_address": "send_when_available",
@@ -76502,13 +76528,13 @@
         "pinterest": {
           "support": "supported",
           "eventName": "view_category",
-          "productionStatus": "planned",
-          "productionDetail": "Pinterest mapping is specified but canonical routing is not active.",
+          "productionStatus": "active",
+          "productionDetail": "Pinterest Tag and Conversions API outbox are active.",
           "consentRequirement": "marketing",
           "dedupeField": "event_id",
           "browser": {
             "transport": "pinterest_tag",
-            "status": "disabled",
+            "status": "implemented",
             "parameterContract": {
               "parameterSets": [
                 "pinterestBrowser"
@@ -76524,7 +76550,7 @@
           },
           "server": {
             "transport": "pinterest_conversions_api",
-            "status": "disabled",
+            "status": "active",
             "parameterContract": {
               "parameterSets": [
                 "pinterestServer"
