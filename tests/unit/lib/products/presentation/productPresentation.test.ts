@@ -9,13 +9,45 @@ import {
 } from '@/lib/products/presentation/index'
 import { TECH_DOWN_PUBLIC_SIZE_DEFINITIONS } from '@/lib/products/techDownSizes'
 import { TECH_DOWN_PUBLIC_SIZES } from '@/lib/products/techDownSizes'
+import { buildProductPresentationLlmsProfiles } from '@/lib/products/presentation/buildProductPresentationLlmsContent'
 
-test('validates all five public Utekos product presentations', () => {
+test('maps the three verified Shopify Svale sizes without inventing product facts', () => {
+  const presentation = requireProductPresentation('utekos-svale')
+  assert.equal(presentation.displayName, 'Utekos Svale')
+  assert.equal(presentation.material, undefined)
+  assert.equal(presentation.audience, undefined)
+  for (const [size, slug] of [
+    ['Middels', 'middels'],
+    ['Stor', 'stor'],
+    ['Større', 'storre']
+  ]) {
+    const result = resolveCatalogVariantPresentation({
+      handle: 'utekos-svale',
+      selectedOptions: [{ name: 'Size', value: size! }]
+    })
+    assert.equal(result.status, 'included')
+    if (result.status !== 'included')
+      throw new Error('Expected Svale size to be included')
+    assert.deepEqual(result.options, { size })
+    assert.equal(
+      result.publicPath,
+      `/produkter/utekos-svale?storrelse=${slug}`
+    )
+  }
+  const profile = buildProductPresentationLlmsProfiles().split(
+    '### Utekos TechDown'
+  )[0]!
+  assert.match(profile, /Utekos Svale/)
+  assert.doesNotMatch(profile, /Materiale:|Målgruppe:|undefined/)
+})
+
+test('validates all public Utekos product presentations', () => {
   const presentations = getAllProductPresentations()
 
   assert.deepEqual(
     presentations.map(presentation => presentation.publicHandle),
     [
+      'utekos-svale',
       'utekos-techdown',
       'utekos-mikrofiber',
       'utekos-dun',

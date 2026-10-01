@@ -1,4 +1,5 @@
 export type ProductPageHandle =
+  | 'utekos-svale'
   | 'utekos-techdown'
   | 'utekos-mikrofiber'
   | 'utekos-dun'
@@ -45,6 +46,18 @@ export type ProductPageContent = {
 }
 
 export const PRODUCT_PAGE_CONTENT = {
+  'utekos-svale': {
+    description: {
+      title: 'Utekos Svale',
+      blocks: [
+        {
+          paragraphs: [
+            'Utekos Svale er yttertøy fra Utekos og finnes i størrelsene Middels, Stor og Større.'
+          ]
+        }
+      ]
+    }
+  },
   'utekos-techdown': {
     description: {
       title: 'Utekos TechDown™',
@@ -85,8 +98,14 @@ export const PRODUCT_PAGE_CONTENT = {
         groups: [
           {
             rows: [
-              { label: 'Ytterstoff', value: '100 % nylon, 38 g/m²' },
-              { label: 'Innerfôr', value: '100 % nylon, 38 g/m²' },
+              {
+                label: 'Ytterstoff',
+                value: '100 % nylon, 38 g/m²'
+              },
+              {
+                label: 'Innerfôr',
+                value: '100 % nylon, 38 g/m²'
+              },
               {
                 label: 'Isolasjonsfyll',
                 value: 'Hydrofobisk syntetisk dun'

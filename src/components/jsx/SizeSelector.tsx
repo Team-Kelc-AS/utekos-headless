@@ -21,7 +21,11 @@ export function SizeSelector({
     Array<HTMLButtonElement | null>
   >([])
 
-  const handlesToHideGuide = ['utekos-buff', 'utekos-stapper']
+  const handlesToHideGuide = [
+    'utekos-buff',
+    'utekos-stapper',
+    'utekos-svale'
+  ]
 
   return (
     <div className='space-y-3'>
@@ -246,7 +250,9 @@ export function SizeSelector({
           >
             <p className='text-xs text-card-foreground'>
               Se dimensjonene på Utekos-modellene{' '}
-              <ProductSizeGuideDialog productHandle={productHandle} />
+              <ProductSizeGuideDialog
+                productHandle={productHandle}
+              />
               .
             </p>
           </div>

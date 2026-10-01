@@ -9,7 +9,7 @@ dotenv.config({ path: '.env.local', quiet: true })
 
 const execFileAsync = promisify(execFile)
 
-const DEFAULT_PROJECT_ID = 'project-c683eb2c-20ae-4ec2-ac3'
+const DEFAULT_PROJECT_ID = 'project-d6c56fc9-c574-409f-8fe'
 const DEFAULT_DATASET_ID = 'analytics_489598217'
 const DEFAULT_PROPERTY_ID = '489598217'
 const PROJECT_ID_PATTERN = /^[a-z][a-z0-9-]{4,28}[a-z0-9]$/

@@ -21,10 +21,36 @@ const productPresentationDefinitionsSchema = array(
 export const productPresentationDefinitions =
   productPresentationDefinitionsSchema.parse([
     {
+      publicHandle: 'utekos-svale',
+      displayName: 'Utekos Svale',
+      description:
+        'Utekos Svale er yttertøy fra Utekos og finnes i størrelsene Middels, Stor og Større.',
+      options: [
+        {
+          key: 'size',
+          publicName: 'Størrelse',
+          publicParam: 'storrelse',
+          shopifyNames: ['Size', 'Størrelse'],
+          valueMap: {
+            middels: 'Middels',
+            stor: 'Stor',
+            større: 'Større',
+            storre: 'Større'
+          }
+        }
+      ],
+      hiddenOptionValues: {},
+      media: {
+        defaultAlt: 'Utekos Svale vist forfra.',
+        variantAltPrefix: 'Utekos Svale'
+      },
+      category: 'Yttertøy'
+    },
+    {
       publicHandle: 'utekos-techdown',
       displayName: 'Utekos TechDown™',
       description:
-      'Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt',
+        'Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt',
       options: [
         {
           key: 'color',

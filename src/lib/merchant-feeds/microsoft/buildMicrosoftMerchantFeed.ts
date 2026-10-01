@@ -305,7 +305,7 @@ function buildRow(
     age_group: 'adult',
     gender: buildGender(publicVariant.options.gender, offerId),
     material: sanitizeFeedValue(
-      publicVariant.presentation.material,
+      publicVariant.presentation.material ?? '',
       200
     ),
     pattern: getSelectedOption(variant, ['pattern', 'mønster']),

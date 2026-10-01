@@ -18,8 +18,15 @@ ${presentation.description}
 
 - Kanonisk URL: ${presentation.canonicalUrl}
 - Kategori: ${presentation.category}
-- Materiale: ${presentation.material}
-- Målgruppe: ${presentation.audience}
+${[
+  presentation.material &&
+    `- Materiale: ${presentation.material}`,
+  presentation.audience &&
+    `- Målgruppe: ${presentation.audience}`
+]
+  .filter(Boolean)
+  .map(line => `${line}\n`)
+  .join('')}
 - Gjeldende pris, lagerstatus og synlige varianter skal alltid leses fra produktsiden.`
     )
     .join('\n\n')

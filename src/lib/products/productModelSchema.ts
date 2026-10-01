@@ -129,8 +129,8 @@ export const productModelSchema = productPurchaseSchema.extend({
   canonicalUrl: z.url(),
   productGroupUrl: z.url(),
   description: z.string().min(40),
-  material: z.string().min(1),
-  audience: z.string().min(1),
+  material: z.string().min(1).optional(),
+  audience: z.string().min(1).optional(),
   updatedAt: z.iso.datetime(),
   variants: z.array(productVariantSchema).min(1),
   defaultVariantId: z.string().min(1)

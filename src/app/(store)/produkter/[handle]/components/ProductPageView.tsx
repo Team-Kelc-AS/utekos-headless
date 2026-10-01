@@ -97,9 +97,19 @@ export function ProductPageView({
 
   const isTechDownProduct =
     productData.handle === 'utekos-techdown'
+  const isSvaleProduct = productData.handle === 'utekos-svale'
   const useCompactGallery = galleryImages.length === 1
 
-  const galleryAspectRatio = 2 / 3
+  const firstGalleryImage = galleryImages[0]
+  const galleryAspectRatio =
+    (
+      isSvaleProduct &&
+      firstGalleryImage &&
+      firstGalleryImage.width > 0 &&
+      firstGalleryImage.height > 0
+    ) ?
+      firstGalleryImage.width / firstGalleryImage.height
+    : 2 / 3
 
   const galleryDesktopBleedClassName =
     'md:left-auto md:w-full md:translate-x-0 md:-ml-[calc((100vw-100cqw-4rem)/4)]'
@@ -160,14 +170,25 @@ export function ProductPageView({
 
         <ProductPageGrid>
           <GalleryColumn>
-            <div className={`relative ${galleryStickyClassName}`}>
+            <div
+              className={`relative ${galleryStickyClassName}`}
+            >
               <div className='hidden md:block'>
-                <ProductGallery
-                  title={title}
-                  images={galleryImages}
-                  imageLayout='cover-fill'
-                  framed
-                />
+                {isSvaleProduct ?
+                  <AspectRatio ratio={galleryAspectRatio}>
+                    <ProductGallery
+                      title={title}
+                      images={galleryImages}
+                      imageLayout='intrinsic'
+                    />
+                  </AspectRatio>
+                : <ProductGallery
+                    title={title}
+                    images={galleryImages}
+                    imageLayout='cover-fill'
+                    framed
+                  />
+                }
               </div>
 
               <div className='md:hidden'>
@@ -188,8 +209,14 @@ export function ProductPageView({
                       <ProductGallery
                         title={title}
                         images={mobileGalleryImages}
-                        imageLayout='cover-fill'
-                        {...(useCompactGallery ?
+                        imageLayout={
+                          isSvaleProduct ? 'intrinsic' : (
+                            'cover-fill'
+                          )
+                        }
+                        {...((
+                          useCompactGallery && !isSvaleProduct
+                        ) ?
                           {
                             imageBackgroundClassName:
                               'bg-transparent',
@@ -199,7 +226,8 @@ export function ProductPageView({
                         : {})}
                       />
                     </div>
-                  </AspectRatio>}
+                  </AspectRatio>
+                }
               </div>
             </div>
           </GalleryColumn>
@@ -271,9 +299,7 @@ export function ProductPageView({
       </div>
 
       <Suspense fallback={null}>
-        <AsyncRelatedProducts
-          handle={storefrontLookupHandle}
-        />
+        <AsyncRelatedProducts handle={storefrontLookupHandle} />
       </Suspense>
     </article>
   )

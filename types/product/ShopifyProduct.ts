@@ -1,5 +1,4 @@
 import type { ProductPurchaseModel } from './ProductPurchaseModel'
-// Path: types/product/ShopifyProduct.ts
 import type { Image, ShopifyImageConnection } from 'types/media'
 import type { Money } from 'types/commerce/Money'
 import type { Metafield } from './MetaField'

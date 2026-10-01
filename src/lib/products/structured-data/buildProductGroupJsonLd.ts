@@ -85,10 +85,15 @@ function buildVariantNode(
     ...(variant.options.color ?
       { color: variant.options.color }
     : {}),
-    'audience': {
-      '@type': 'PeopleAudience',
-      'suggestedGender': variant.options.gender ?? model.audience
-    },
+    ...(variant.options.gender || model.audience ?
+      {
+        audience: {
+          '@type': 'PeopleAudience',
+          'suggestedGender':
+            variant.options.gender ?? model.audience
+        }
+      }
+    : {}),
     ...(variant.sku ? { sku: variant.sku } : {}),
     ...(validGtin ?
       getSchemaOrgGtinData(variant.barcode || '')
@@ -117,7 +122,8 @@ function buildReviewMarkup(
 ) {
   if (reviews.length === 0 && !explicitAggregate) return {}
 
-  const aggregateRating = explicitAggregate ?
+  const aggregateRating =
+    explicitAggregate ?
       { '@type': 'AggregateRating', ...explicitAggregate }
     : (() => {
         const ratingValue =
@@ -180,14 +186,18 @@ export function buildProductGroupJsonLd(
     'url': model.canonicalUrl,
     'brand': { '@type': 'Brand', 'name': 'Utekos' },
     'category': model.productType,
-    'material': model.material,
+    ...(model.material ? { material: model.material } : {}),
     ...(colors.length === 1 ? { color: colors[0] }
     : colors.length > 1 ? { color: colors }
     : {}),
-    'audience': {
-      '@type': 'PeopleAudience',
-      'suggestedGender': model.audience
-    },
+    ...(model.audience ?
+      {
+        audience: {
+          '@type': 'PeopleAudience',
+          'suggestedGender': model.audience
+        }
+      }
+    : {}),
     'variesBy': ['https://schema.org/size'],
     'hasVariant': model.variants.map(variant =>
       buildVariantNode(model, variant)

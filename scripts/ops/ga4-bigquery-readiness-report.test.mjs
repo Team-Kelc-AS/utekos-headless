@@ -6,6 +6,17 @@ import {
   formatGa4BigQueryReadinessReport
 } from './ga4-bigquery-readiness-report.mjs'
 
+test('defaults to the current GA4 BigQuery export project', () => {
+  const report = buildGa4BigQueryReadinessReport({
+    dataset: null,
+    tables: []
+  })
+
+  assert.equal(report.projectId, 'project-d6c56fc9-c574-409f-8fe')
+  assert.equal(report.datasetId, 'analytics_489598217')
+  assert.equal(report.propertyId, '489598217')
+})
+
 test('reports missing GA4 BigQuery dataset as a read-only critical gate', () => {
   const report = buildGa4BigQueryReadinessReport(
     { dataset: null, tables: [] },
@@ -21,6 +32,7 @@ test('reports missing GA4 BigQuery dataset as a read-only critical gate', () => 
   assert.equal(report.mutationPerformed, false)
   assert.equal(report.ok, false)
   assert.equal(report.datasetExists, false)
+  assert.equal(report.projectId, 'project-c683eb2c-20ae-4ec2-ac3')
   assert.deepEqual(
     report.alerts.map(alert => alert.code),
     ['ga4_bigquery_dataset_missing']

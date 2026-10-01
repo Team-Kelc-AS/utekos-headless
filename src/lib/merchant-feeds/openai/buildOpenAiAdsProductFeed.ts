@@ -282,7 +282,10 @@ function buildRow(
     google_product_category: metadata.googleProductCategory,
     color: sanitize(presentation.options.color ?? '', 100),
     size: sanitize(presentation.options.size ?? '', 100),
-    material: sanitize(presentation.presentation.material, 200),
+    material: sanitize(
+      presentation.presentation.material ?? '',
+      200
+    ),
     pattern: selectedOption(variant, ['pattern', 'mønster']),
     age_group: 'adult',
     gender: buildGender(presentation.options.gender, itemId),

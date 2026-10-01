@@ -361,8 +361,6 @@ export function createVippsShopifyOrders(
       let draft = await read(id)
       assertDraft(draft, reference, amount)
       if (!draft.order) {
-        // No pending flag: the external capture has been verified BEFORE this operation.
-        // After an ambiguous timeout, retry by reading this SAME draft ID, never creating another.
         await graphql(vippsShopifyQueries.complete, { id })
         draft = await read(id)
       }

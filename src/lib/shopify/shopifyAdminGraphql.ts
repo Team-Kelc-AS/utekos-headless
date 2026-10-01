@@ -24,7 +24,7 @@ export async function shopifyAdminGraphql<TData>(
 ): Promise<TData> {
   if (!SHOPIFY_ADMIN_API_TOKEN || !STORE_DOMAIN) {
     throw new Error(
-      'Shopify Admin API credentials are not configured'
+      'VERCEL STOREFRONT credentials are not configured'
     )
   }
 

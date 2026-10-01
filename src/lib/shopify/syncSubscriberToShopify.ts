@@ -33,7 +33,7 @@ export async function syncSubscriberToShopify(email: string) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_API_TOKEN!
+          'X-Shopify-Access-Token': process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!
         },
         body: JSON.stringify({ query: mutation, variables })
       }

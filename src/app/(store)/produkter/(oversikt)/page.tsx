@@ -4,25 +4,25 @@ import { ProductsPageFooter } from '@/app/produkter/(oversikt)/components/Produc
 import { ProductsPageHeader } from '@/app/produkter/(oversikt)/components/ProductsPageHeader'
 import { LazyFeaturedProductCarousel } from '@/components/ProductCard/LazyFeaturedProductCarousel'
 import { ComfyrobeFeatureSection } from './components/ComfyrobeFeatureSection'
-import { VideoSkeleton } from './components/VideoSkeleton'
 import { Suspense } from 'react'
 import { StapperFeatureSection } from './components/StapperFeatureSection/StapperFeatureSection'
-import { ProductVideoSection } from './components/Video/ProductVideoSection'
 import { MikrofiberSection } from './components/MicrofiberSection/MikrofiberSection'
+import { SvaleFeatureSection } from './components/SvaleFeatureSection'
 
 const ProductsPage = async () => {
   return (
     <>
       <article className='container mx-auto px-4 pt-0 pb-16 sm:pb-24'>
         <ProductsPageHeader />
+        <Suspense fallback={null}>
+          <SvaleFeatureSection />
+        </Suspense>
         <HelpChooseSection />
 
         <ComparisonTeaser />
 
         <article className='mb-24'>
-          <LazyFeaturedProductCarousel
-            productHandleToMoveLast='utekos-techdown'
-          />
+          <LazyFeaturedProductCarousel productHandleToMoveLast='utekos-techdown' />
         </article>
 
         <ComfyrobeFeatureSection />
