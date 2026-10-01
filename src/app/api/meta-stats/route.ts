@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     qualityUrl.searchParams.append('dataset_id', datasetId);
     qualityUrl.searchParams.append(
       'fields',
-      'web{event_name,event_match_quality{composite_score,match_key_feedback,diagnostics},event_coverage,data_freshness,dedup_key_feedback}'
+      'web{event_name,event_match_quality{composite_score,match_key_feedback,diagnostics},event_coverage,data_freshness,dedupe_key_feedback}'
     );
     qualityUrl.searchParams.append('access_token', accessToken);
 
