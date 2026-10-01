@@ -301,7 +301,7 @@
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalPageView.ts",
-        "sha256": "12771985dde4f45e97e69a571c36529695bc744070fbc534e281fdafa1a38ed3"
+        "sha256": "77a39758de399fa71917e32f468f0ebb4f23ff40cc716d68279f3f1c6553d4d0"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalPurchase.ts",
