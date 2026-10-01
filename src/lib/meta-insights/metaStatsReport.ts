@@ -25,12 +25,19 @@ type MetaApiResponse = {
 const GRAPH_API_VERSION = 'v26.0'
 const MAX_STATS_PAGES = 20
 
-function formatGraphError(body: MetaApiResponse, status: number) {
+function formatGraphError(
+  body: MetaApiResponse,
+  status: number
+) {
   const message = body.error?.message
-  return typeof message === 'string' ? message : `Meta Graph API returned HTTP ${status}`
+  return typeof message === 'string' ? message : (
+      `Meta Graph API returned HTTP ${status}`
+    )
 }
 
-async function readMetaResponse(url: URL): Promise<MetaApiResponse> {
+async function readMetaResponse(
+  url: URL
+): Promise<MetaApiResponse> {
   const response = await fetch(url, { cache: 'no-store' })
   const body = (await response.json()) as MetaApiResponse
 
@@ -53,7 +60,9 @@ async function readPagedStats(
   let cursor: string | undefined
 
   for (let page = 0; page < MAX_STATS_PAGES; page += 1) {
-    const url = new URL(`https://graph.facebook.com/${GRAPH_API_VERSION}/${datasetId}/stats`)
+    const url = new URL(
+      `https://graph.facebook.com/${GRAPH_API_VERSION}/${datasetId}/stats`
+    )
     url.searchParams.set('aggregation', aggregation)
     url.searchParams.set('start_time', start)
     url.searchParams.set('end_time', end)
@@ -65,12 +74,37 @@ async function readPagedStats(
     if (Array.isArray(body.data)) rows.push(...body.data)
 
     const nextCursor = body.paging?.cursors?.after
-    if (typeof nextCursor !== 'string' || seenCursors.has(nextCursor)) break
+    if (
+      typeof nextCursor !== 'string' ||
+      seenCursors.has(nextCursor)
+    )
+      break
     seenCursors.add(nextCursor)
     cursor = nextCursor
   }
 
   return rows as MetaStatsBucket[]
+}
+
+async function readSpanTotalStats(
+  datasetId: string,
+  accessToken: string,
+  start: string,
+  end: string
+) {
+  const url = new URL(
+    `https://graph.facebook.com/${GRAPH_API_VERSION}/${datasetId}/stats`
+  )
+  url.searchParams.set('aggregation', 'event_total_counts')
+  url.searchParams.set('start_time', start)
+  url.searchParams.set('end_time', end)
+  url.searchParams.set('limit', '500')
+  url.searchParams.set('access_token', accessToken)
+
+  const body = await readMetaResponse(url)
+  return Array.isArray(body.data) ?
+      (body.data as MetaStatsBucket[])
+    : []
 }
 
 function countRows(buckets: MetaStatsBucket[]) {
@@ -89,9 +123,36 @@ function countRows(buckets: MetaStatsBucket[]) {
   return counts
 }
 
+function spanTotalBucket(buckets: MetaStatsBucket[]) {
+  if (buckets.length <= 1) return buckets
+
+  const dated = buckets
+    .map(bucket => ({
+      bucket,
+      timestamp: parseMetaTimestamp(bucket.start_time)
+    }))
+    .filter(
+      (
+        entry
+      ): entry is {
+        bucket: MetaStatsBucket
+        timestamp: number
+      } => entry.timestamp !== null
+    )
+
+  if (dated.length === 0) return buckets.slice(0, 1)
+
+  dated.sort((a, b) => a.timestamp - b.timestamp)
+  const earliest = dated[0]
+  return earliest ? [earliest.bucket] : buckets.slice(0, 1)
+}
+
 function parseMetaTimestamp(value: unknown) {
   if (typeof value !== 'string') return null
-  const normalized = value.replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
+  const normalized = value.replace(
+    /([+-]\d{2})(\d{2})$/,
+    '$1:$2'
+  )
   const timestamp = Date.parse(normalized)
   return Number.isFinite(timestamp) ? timestamp : null
 }
@@ -101,12 +162,20 @@ function latestEventBuckets(buckets: MetaStatsBucket[]) {
 
   for (const bucket of buckets) {
     const timestamp = parseMetaTimestamp(bucket.start_time)
-    if (timestamp === null || !Array.isArray(bucket.data)) continue
+    if (timestamp === null || !Array.isArray(bucket.data))
+      continue
 
     for (const row of bucket.data as MetaStatsRow[]) {
       if (typeof row.value !== 'string') continue
-      if (!Number.isFinite(Number(row.count)) || Number(row.count) <= 0) continue
-      latestByEvent.set(row.value, Math.max(latestByEvent.get(row.value) ?? 0, timestamp))
+      if (
+        !Number.isFinite(Number(row.count)) ||
+        Number(row.count) <= 0
+      )
+        continue
+      latestByEvent.set(
+        row.value,
+        Math.max(latestByEvent.get(row.value) ?? 0, timestamp)
+      )
     }
   }
 
@@ -118,7 +187,10 @@ export function buildMetaEventMetrics(
   hourlyBuckets: MetaStatsBucket[],
   now: Date
 ): MetaEventMetric[] {
-  const counts = countRows(countBuckets)
+  // Meta defines event_total_counts as the total for the whole requested
+  // interval. Cursor pages can repeat that aggregate as decreasing suffix
+  // totals, so summing pages inflates the result.
+  const counts = countRows(spanTotalBucket(countBuckets))
   const latestByEvent = latestEventBuckets(hourlyBuckets)
   const nowMs = now.getTime()
 
@@ -126,20 +198,28 @@ export function buildMetaEventMetrics(
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([event_name, count]) => {
       const lastEventMs = latestByEvent.get(event_name)
-      const isObserved = lastEventMs !== undefined && lastEventMs <= nowMs
+      const isObserved =
+        lastEventMs !== undefined && lastEventMs <= nowMs
 
       return {
         event_name,
         count,
-        last_event_at: isObserved ? new Date(lastEventMs).toISOString() : null,
-        minutes_since_last_event: isObserved
-          ? Math.floor((nowMs - lastEventMs) / 60_000)
+        last_event_at:
+          isObserved ?
+            new Date(lastEventMs).toISOString()
+          : null,
+        minutes_since_last_event:
+          isObserved ?
+            Math.floor((nowMs - lastEventMs) / 60_000)
           : null
       }
     })
 }
 
-export async function fetchMetaStatsReport(start: string, end: string): Promise<MetaStatsReport> {
+export async function fetchMetaStatsReport(
+  start: string,
+  end: string
+): Promise<MetaStatsReport> {
   const datasetId = process.env.NEXT_PUBLIC_META_PIXEL_ID
   const accessToken = process.env.META_ACCESS_TOKEN
 
@@ -147,7 +227,9 @@ export async function fetchMetaStatsReport(start: string, end: string): Promise<
     throw new Error('Mangler Meta Credentials i .env')
   }
 
-  const qualityUrl = new URL(`https://graph.facebook.com/${GRAPH_API_VERSION}/dataset_quality`)
+  const qualityUrl = new URL(
+    `https://graph.facebook.com/${GRAPH_API_VERSION}/dataset_quality`
+  )
   qualityUrl.searchParams.set('dataset_id', datasetId)
   qualityUrl.searchParams.set(
     'fields',
@@ -155,40 +237,69 @@ export async function fetchMetaStatsReport(start: string, end: string): Promise<
   )
   qualityUrl.searchParams.set('access_token', accessToken)
 
-  const [processingBuckets, countBuckets, hourlyBuckets, qualityBody] = await Promise.all([
-    readPagedStats(datasetId, accessToken, 'event_processing_results', start, end),
-    readPagedStats(datasetId, accessToken, 'event_total_counts', start, end),
+  const [
+    processingBuckets,
+    countBuckets,
+    hourlyBuckets,
+    qualityBody
+  ] = await Promise.all([
+    readPagedStats(
+      datasetId,
+      accessToken,
+      'event_processing_results',
+      start,
+      end
+    ),
+    readSpanTotalStats(datasetId, accessToken, start, end),
     readPagedStats(datasetId, accessToken, 'event', start, end),
     readMetaResponse(qualityUrl)
   ])
 
-  const eventCounts = buildMetaEventMetrics(countBuckets, hourlyBuckets, new Date())
-  const quality = qualityBody as MetaApiResponse & { web?: unknown }
+  const eventCounts = buildMetaEventMetrics(
+    countBuckets,
+    hourlyBuckets,
+    new Date()
+  )
+  const quality = qualityBody as MetaApiResponse & {
+    web?: unknown
+  }
 
   return {
     time_range: { start, end },
     generated_at: new Date().toISOString(),
-    total_event_count: eventCounts.reduce((total, event) => total + event.count, 0),
+    total_event_count: eventCounts.reduce(
+      (total, event) => total + event.count,
+      0
+    ),
     event_counts: eventCounts,
     deduplication_and_coverage: processingBuckets,
-    current_emq_and_freshness: Array.isArray(quality.web) ? quality.web : []
+    current_emq_and_freshness:
+      Array.isArray(quality.web) ? quality.web : []
   }
 }
 
 function escapeTableCell(value: unknown) {
-  return String(value ?? '–').replaceAll('|', '\\|').replaceAll('\n', ' ')
+  return String(value ?? '–')
+    .replaceAll('|', '\\|')
+    .replaceAll('\n', ' ')
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
-  return value && typeof value === 'object' ? (value as Record<string, unknown>) : {}
+  return value && typeof value === 'object' ?
+      (value as Record<string, unknown>)
+    : {}
 }
 
 function percentage(value: unknown) {
   const record = asRecord(value)
-  return typeof record.percentage === 'number' ? `${record.percentage}%` : '–'
+  return typeof record.percentage === 'number' ?
+      `${record.percentage}%`
+    : '–'
 }
 
-export function renderMetaStatsMarkdown(report: MetaStatsReport) {
+export function renderMetaStatsMarkdown(
+  report: MetaStatsReport
+) {
   const lines = [
     '# Meta-statistikk',
     '',
@@ -214,15 +325,27 @@ export function renderMetaStatsMarkdown(report: MetaStatsReport) {
     }
   }
 
-  lines.push('', '## Event-behandling per time', '', '| Time (UTC) | Events rapportert av Meta |', '| --- | --- |')
+  lines.push(
+    '',
+    '## Event-behandling per time',
+    '',
+    '| Time (UTC) | Events rapportert av Meta |',
+    '| --- | --- |'
+  )
   for (const item of report.deduplication_and_coverage) {
     const bucket = asRecord(item)
-    const names = Array.isArray(bucket.data)
-      ? bucket.data.map((row) => escapeTableCell(asRecord(row).event)).join(', ')
+    const names =
+      Array.isArray(bucket.data) ?
+        bucket.data
+          .map(row => escapeTableCell(asRecord(row).event))
+          .join(', ')
       : '–'
-    lines.push(`| ${escapeTableCell(bucket.start_time)} | ${names || '–'} |`)
+    lines.push(
+      `| ${escapeTableCell(bucket.start_time)} | ${names || '–'} |`
+    )
   }
-  if (report.deduplication_and_coverage.length === 0) lines.push('| – | Ingen data fra Meta i perioden |')
+  if (report.deduplication_and_coverage.length === 0)
+    lines.push('| – | Ingen data fra Meta i perioden |')
 
   lines.push(
     '',
@@ -239,7 +362,8 @@ export function renderMetaStatsMarkdown(report: MetaStatsReport) {
       `| ${escapeTableCell(event.event_name)} | ${escapeTableCell(matchQuality.composite_score)} | ${escapeTableCell(JSON.stringify(event.event_coverage))} | ${escapeTableCell(JSON.stringify(event.data_freshness))} |`
     )
   }
-  if (report.current_emq_and_freshness.length === 0) lines.push('| – | – | – | Ingen kvalitetsdata returnert |')
+  if (report.current_emq_and_freshness.length === 0)
+    lines.push('| – | – | – | Ingen kvalitetsdata returnert |')
 
   lines.push(
     '',
@@ -262,7 +386,10 @@ export function renderMetaStatsMarkdown(report: MetaStatsReport) {
       matchKeyRows += 1
     }
   }
-  if (matchKeyRows === 0) lines.push('| – | Ingen match key-feedback returnert | – | – |')
+  if (matchKeyRows === 0)
+    lines.push(
+      '| – | Ingen match key-feedback returnert | – | – |'
+    )
 
   lines.push(
     '',
@@ -284,18 +411,30 @@ export function renderMetaStatsMarkdown(report: MetaStatsReport) {
       dedupeRows += 1
     }
   }
-  if (dedupeRows === 0) lines.push('| – | Ingen dedupliserings-feedback returnert | – | – | – |')
+  if (dedupeRows === 0)
+    lines.push(
+      '| – | Ingen dedupliserings-feedback returnert | – | – | – |'
+    )
 
-  lines.push('', '### Diagnostics', '', '| Event | Diagnostics fra Meta |', '| --- | --- |')
+  lines.push(
+    '',
+    '### Diagnostics',
+    '',
+    '| Event | Diagnostics fra Meta |',
+    '| --- | --- |'
+  )
   let diagnosticsRows = 0
   for (const item of report.current_emq_and_freshness) {
     const event = asRecord(item)
     const quality = asRecord(event.event_match_quality)
     if (quality.diagnostics === undefined) continue
-    lines.push(`| ${escapeTableCell(event.event_name)} | ${escapeTableCell(JSON.stringify(quality.diagnostics))} |`)
+    lines.push(
+      `| ${escapeTableCell(event.event_name)} | ${escapeTableCell(JSON.stringify(quality.diagnostics))} |`
+    )
     diagnosticsRows += 1
   }
-  if (diagnosticsRows === 0) lines.push('| – | Ingen diagnostics returnert |')
+  if (diagnosticsRows === 0)
+    lines.push('| – | Ingen diagnostics returnert |')
 
   return `${lines.join('\n')}\n`
 }

@@ -28,7 +28,8 @@ test('reads required and optional Meta configuration without leaking values', ()
     }
   )
   assert.throws(
-    () => readMetaConversionsApiConfig({ META_PIXEL_ID: 'pixel' }),
+    () =>
+      readMetaConversionsApiConfig({ META_PIXEL_ID: 'pixel' }),
     /META_ACCESS_TOKEN/
   )
 })
@@ -53,10 +54,6 @@ test('configures one Meta request and projects its receipt', async () => {
       return request
     },
     setHttpService: () => request,
-    setPartnerAgent: value => {
-      calls.push(`partner:${value}`)
-      return request
-    },
     setTestEventCode: value => {
       calls.push(`test:${value}`)
       return request
@@ -89,7 +86,6 @@ test('configures one Meta request and projects its receipt', async () => {
   assert.deepEqual(calls, [
     'create:token:pixel',
     'events:1',
-    'partner:utekos-headless',
     'secret:secret',
     'test:test-code'
   ])
@@ -106,11 +102,18 @@ test('configures one Meta request and projects its receipt', async () => {
 test('rejects a provider response that did not accept exactly one event', async () => {
   const request = {
     execute: async () => ({ events_received: 0 }),
-    setAppSecret() { return this },
-    setEvents() { return this },
-    setHttpService() { return this },
-    setPartnerAgent() { return this },
-    setTestEventCode() { return this }
+    setAppSecret() {
+      return this
+    },
+    setEvents() {
+      return this
+    },
+    setHttpService() {
+      return this
+    },
+    setTestEventCode() {
+      return this
+    }
   } satisfies MetaEventRequest
 
   await assert.rejects(
@@ -132,25 +135,31 @@ test('sends a validated Meta event batch and requires full acceptance', async ()
   let eventCount = 0
   const request = {
     execute: async () => ({ events_received: 2 }),
-    setAppSecret() { return this },
+    setAppSecret() {
+      return this
+    },
     setEvents(events: ServerEvent[]) {
       eventCount = events.length
       return this
     },
-    setHttpService() { return this },
-    setPartnerAgent() { return this },
-    setTestEventCode() { return this }
+    setHttpService() {
+      return this
+    },
+    setTestEventCode() {
+      return this
+    }
   } satisfies MetaEventRequest
-  const events = ['Purchase', 'AppendClickAttribution'].map(name =>
-    new ServerEvent()
-      .setActionSource('website')
-      .setEventId(`${name}-id`)
-      .setEventName(name)
-      .setEventSourceUrl('https://utekos.no/')
-      .setEventTime(1_756_684_800)
-      .setUserData(
-        new UserData().setClientUserAgent('Mozilla/5.0')
-      )
+  const events = ['Purchase', 'AppendClickAttribution'].map(
+    name =>
+      new ServerEvent()
+        .setActionSource('website')
+        .setEventId(`${name}-id`)
+        .setEventName(name)
+        .setEventSourceUrl('https://utekos.no/')
+        .setEventTime(1_756_684_800)
+        .setUserData(
+          new UserData().setClientUserAgent('Mozilla/5.0')
+        )
   )
 
   const result = await sendMetaServerEvents(
@@ -247,24 +256,22 @@ test('uses the SDK HTTP override to send one validated request', async () => {
   let captured:
     | { body: string; method: string; url: string }
     | undefined
-  const service = createMetaHttpService(
-    async (url, init) => {
-      captured = {
-        body: String(init.body),
-        method: String(init.method),
-        url
-      }
-
-      return {
-        json: async () => ({
-          events_received: 1,
-          fbtrace_id: 'trace-1'
-        }),
-        ok: true,
-        status: 200
-      }
+  const service = createMetaHttpService(async (url, init) => {
+    captured = {
+      body: String(init.body),
+      method: String(init.method),
+      url
     }
-  )
+
+    return {
+      json: async () => ({
+        events_received: 1,
+        fbtrace_id: 'trace-1'
+      }),
+      ok: true,
+      status: 200
+    }
+  })
 
   const response = await service.executeRequest(
     'https://graph.facebook.com/v26.0/pixel/events',
@@ -294,7 +301,8 @@ test('aborts a Meta transport that exceeds its deadline', async () => {
       new Promise((_resolve, reject) => {
         init.signal?.addEventListener(
           'abort',
-          () => reject(new DOMException('Aborted', 'AbortError')),
+          () =>
+            reject(new DOMException('Aborted', 'AbortError')),
           { once: true }
         )
       }),
@@ -308,20 +316,14 @@ test('aborts a Meta transport that exceeds its deadline', async () => {
       { 'Content-Type': 'application/json' },
       { data: [] }
     ),
-    {
-      code: 'ETIMEDOUT',
-      name: 'MetaConversionsApiTimeoutError'
-    }
+    { code: 'ETIMEDOUT', name: 'MetaConversionsApiTimeoutError' }
   )
 })
 
 test('preserves retryable HTTP status and Meta error fields', async () => {
   const service = createMetaHttpService(async () => ({
     json: async () => ({
-      error: {
-        code: 2,
-        is_transient: true
-      }
+      error: { code: 2, is_transient: true }
     }),
     ok: false,
     status: 503
@@ -335,10 +337,7 @@ test('preserves retryable HTTP status and Meta error fields', async () => {
       { data: [] }
     ),
     error => {
-      assert.equal(
-        (error as { status?: number }).status,
-        503
-      )
+      assert.equal((error as { status?: number }).status, 503)
       assert.deepEqual(
         (error as { response?: unknown }).response,
         { code: 2, is_transient: true }

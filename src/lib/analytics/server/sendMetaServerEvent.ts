@@ -6,7 +6,6 @@ import {
 import { z } from 'zod'
 import { assertMetaServerEvent } from './assertMetaServerEvent'
 
-const META_PARTNER_AGENT = 'utekos-headless'
 const META_REQUEST_TIMEOUT_MS = 10_000
 
 type Environment = Readonly<Record<string, string | undefined>>
@@ -27,10 +26,7 @@ type MetaEventResponse = {
   num_processed_entries?: number
 }
 
-type MetaFetchResponse = Pick<
-  Response,
-  'json' | 'ok' | 'status'
->
+type MetaFetchResponse = Pick<Response, 'json' | 'ok' | 'status'>
 
 type MetaFetch = (
   input: string,
@@ -84,9 +80,7 @@ class MetaConversionsApiTimeoutError extends Error {
   readonly code = 'ETIMEDOUT'
 
   constructor(timeoutMs: number) {
-    super(
-      `Meta Conversions API request exceeded ${timeoutMs}ms`
-    )
+    super(`Meta Conversions API request exceeded ${timeoutMs}ms`)
     this.name = 'MetaConversionsApiTimeoutError'
   }
 }
@@ -98,7 +92,6 @@ export type MetaEventRequest = {
   setHttpService: (
     httpService: HttpServiceInterface
   ) => MetaEventRequest
-  setPartnerAgent: (partnerAgent: string) => MetaEventRequest
   setTestEventCode: (testEventCode: string) => MetaEventRequest
 }
 
@@ -261,7 +254,9 @@ export async function sendMetaServerEvents(
   dependencies: MetaSenderDependencies = defaultDependencies
 ): Promise<MetaSendResult> {
   if (events.length === 0) {
-    throw new Error('Meta Conversions API requires at least one event')
+    throw new Error(
+      'Meta Conversions API requires at least one event'
+    )
   }
 
   for (const event of events) assertMetaServerEvent(event)
@@ -269,7 +264,6 @@ export async function sendMetaServerEvents(
   const request = dependencies
     .createRequest(config.accessToken, config.pixelId)
     .setEvents([...events])
-    .setPartnerAgent(META_PARTNER_AGENT)
 
   if (config.appSecret) {
     request.setAppSecret(config.appSecret)

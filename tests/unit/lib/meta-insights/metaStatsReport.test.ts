@@ -45,9 +45,31 @@ test('buildMetaEventMetrics totals events and reports age from the newest active
   ])
 })
 
+test('buildMetaEventMetrics does not sum cumulative event_total_counts cursor pages', () => {
+  const metrics = buildMetaEventMetrics(
+    [
+      {
+        start_time: '2026-10-01T00:00:00+0000',
+        data: [{ value: 'PageView', count: 8 }]
+      },
+      {
+        start_time: '2026-10-01T01:00:00+0000',
+        data: [{ value: 'PageView', count: 6 }]
+      }
+    ],
+    [],
+    new Date('2026-10-01T02:00:00Z')
+  )
+
+  assert.equal(metrics[0]?.count, 8)
+})
+
 test('renderMetaStatsMarkdown retains quality and hourly coverage in readable tables', () => {
   const report: MetaStatsReport = {
-    time_range: { start: '2026-10-01T00:00:00Z', end: '2026-10-01T06:00:00Z' },
+    time_range: {
+      start: '2026-10-01T00:00:00Z',
+      end: '2026-10-01T06:00:00Z'
+    },
     generated_at: '2026-10-01T06:10:00.000Z',
     total_event_count: 8,
     event_counts: [
@@ -59,7 +81,10 @@ test('renderMetaStatsMarkdown retains quality and hourly coverage in readable ta
       }
     ],
     deduplication_and_coverage: [
-      { start_time: '2026-10-01T02:00:00+0000', data: [{ event: 'PageView' }] }
+      {
+        start_time: '2026-10-01T02:00:00+0000',
+        data: [{ event: 'PageView' }]
+      }
     ],
     current_emq_and_freshness: [
       {
@@ -82,7 +107,9 @@ test('renderMetaStatsMarkdown retains quality and hourly coverage in readable ta
             dedupe_key: 'event_id',
             browser_events_with_dedupe_key: { percentage: 100 },
             server_events_with_dedupe_key: { percentage: 95 },
-            overall_browser_coverage_from_dedupe_key: { percentage: 94 }
+            overall_browser_coverage_from_dedupe_key: {
+              percentage: 94
+            }
           }
         ]
       }
@@ -90,11 +117,26 @@ test('renderMetaStatsMarkdown retains quality and hourly coverage in readable ta
   }
 
   const markdown = renderMetaStatsMarkdown(report)
-  assert.match(markdown, /\| Event \| Antall \| Siste aktive timebøtte \(UTC\) \| Minutter siden/)
-  assert.match(markdown, /\| PageView \| 8 \| 2026-10-01T02:00:00.000Z \| 250 \|/)
+  assert.match(
+    markdown,
+    /\| Event \| Antall \| Siste aktive timebøtte \(UTC\) \| Minutter siden/
+  )
+  assert.match(
+    markdown,
+    /\| PageView \| 8 \| 2026-10-01T02:00:00.000Z \| 250 \|/
+  )
   assert.match(markdown, /Event-behandling per time/)
-  assert.match(markdown, /\| PageView \| 7\.2 \| \{"percentage":99\} \| \{"upload_frequency":"real_time"\} \|/)
+  assert.match(
+    markdown,
+    /\| PageView \| 7\.2 \| \{"percentage":99\} \| \{"upload_frequency":"real_time"\} \|/
+  )
   assert.match(markdown, /\| PageView \| email \| 85% \| 12% \|/)
-  assert.match(markdown, /\| PageView \| event_id \| 100% \| 95% \| 94% \|/)
-  assert.match(markdown, /\| PageView \| \[\{"name":"example"\}\] \|/)
+  assert.match(
+    markdown,
+    /\| PageView \| event_id \| 100% \| 95% \| 94% \|/
+  )
+  assert.match(
+    markdown,
+    /\| PageView \| \[\{"name":"example"\}\] \|/
+  )
 })
