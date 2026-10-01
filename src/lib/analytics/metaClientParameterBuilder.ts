@@ -5,12 +5,13 @@ import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { mapMetaClientParameterContext } from './mapMetaClientParameterContext'
 import { metaClientIpResponseSchema } from './metaClientIpContract'
 import { shouldCollectMetaClientIp } from './shouldCollectMetaClientIp'
+import { extractFbclidFromFbc } from './extractFbclidFromFbc'
 
 function marketingAllowed() {
   return typeof window !== 'undefined'
 }
 const META_CLIENT_IP_TIMEOUT_MS = 2500
-const completedPageUrls = new Set<string>()
+let completedPageUrl: string | undefined
 let contextSequence: Promise<void> = Promise.resolve()
 let hasCollectedClientIpForDocument = false
 
@@ -37,7 +38,7 @@ function enqueueContextRequest<T>(task: () => Promise<T>) {
 async function loadClientParamBuilder(): Promise<ClientParamBuilder> {
   const imported =
     await import('meta-capi-param-builder-clientjs')
-  return imported.default
+  return imported.default ?? (imported as unknown as ClientParamBuilder)
 }
 
 async function getConsentedClientIpAddress(
@@ -100,8 +101,16 @@ export async function ensureMetaClientParameterContext(
     const builder = await loadClientParamBuilder()
     if (!marketingAllowed()) return {}
 
-    if (completedPageUrls.has(input.pageUrl)) {
-      return readIdentifiers(builder)
+    const currentIdentifiers = readIdentifiers(builder)
+    const urlFbclid = new URL(input.pageUrl).searchParams.get('fbclid')
+    if (
+      completedPageUrl === input.pageUrl &&
+      currentIdentifiers.fbp &&
+      currentIdentifiers.fbc &&
+      (!urlFbclid ||
+        urlFbclid === extractFbclidFromFbc(currentIdentifiers.fbc))
+    ) {
+      return currentIdentifiers
     }
 
     const shouldCollectClientIp =
@@ -119,7 +128,7 @@ export async function ensureMetaClientParameterContext(
     )
     if (!marketingAllowed()) return {}
     if (parameters._fbi) hasCollectedClientIpForDocument = true
-    completedPageUrls.add(input.pageUrl)
+    completedPageUrl = input.pageUrl
 
     return mapMetaClientParameterContext(parameters)
   })

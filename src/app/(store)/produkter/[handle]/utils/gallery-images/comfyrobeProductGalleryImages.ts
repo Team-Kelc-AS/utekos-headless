@@ -55,6 +55,13 @@ export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
     COMFYROBE_MOBILE_STILL_HEIGHT
   ),
   productImage(
+    'comfyrobe-mobile-sherpa-hood',
+    '/Flytende_marineblue_parkas_med_sherpahette.webp',
+    'Marineblå Comfyrobe med sherpa-fôret hette.',
+    887,
+    1774
+  ),
+  productImage(
     'comfyrobe-mobile-still-002',
     comfyrobeMobile002,
     'Marineblå Comfyrobe i full lengde forfra med hette.',
