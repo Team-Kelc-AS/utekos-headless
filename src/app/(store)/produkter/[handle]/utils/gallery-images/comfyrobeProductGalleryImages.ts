@@ -1,6 +1,5 @@
 import { productImage } from '@/app/produkter/[handle]/utils/pruductImage'
 import type { Image } from 'types/media'
-import comfyrobeDesktop001 from '@/assets/images/comfyrobe/Comfyrobe-001.webp'
 import comfyrobeDesktop002 from '@/assets/images/comfyrobe/Comfyrobe-002.webp'
 import comfyrobeDesktop0003 from '@/assets/images/comfyrobe/Comfyrobe-0003.webp'
 import comfyrobeDesktop004 from '@/assets/images/comfyrobe/Comfyrobe-004.webp'
@@ -9,8 +8,6 @@ import comfyrobeMobile002 from '@/assets/images/comfyrobe/Comfyrobe-Mobile-002.w
 import comfyrobeMobile003 from '@/assets/images/comfyrobe/Comfyrobe-Mobile-003.webp'
 import comfyrobeMobile004 from '@/assets/images/comfyrobe/Comfyrobe-Mobile-004.webp'
 
-const COMFYROBE_DESKTOP_STILL_001_WIDTH = 1024
-const COMFYROBE_DESKTOP_STILL_001_HEIGHT = 1317
 const COMFYROBE_DESKTOP_STILL_WIDTH = 1400
 const COMFYROBE_DESKTOP_STILL_HEIGHT = 1800
 const COMFYROBE_SHERPA_STILL_WIDTH = 1666
@@ -19,13 +16,6 @@ const COMFYROBE_MOBILE_STILL_WIDTH = 1000
 const COMFYROBE_MOBILE_STILL_HEIGHT = 1500
 
 export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
-  productImage(
-    'comfyrobe-desktop-still-001',
-    comfyrobeDesktop001,
-    'Mann i marineblå Comfyrobe ved vannkanten.',
-    COMFYROBE_DESKTOP_STILL_001_WIDTH,
-    COMFYROBE_DESKTOP_STILL_001_HEIGHT
-  ),
   productImage(
     'comfyrobe-desktop-still-002',
     comfyrobeDesktop002,
