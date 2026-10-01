@@ -8,7 +8,7 @@ import {
   useRef,
   useState
 } from 'react'
-import { Check, Loader2, Mail, XIcon } from 'lucide-react'
+import { Check, Loader2, Mail, Sparkles, XIcon } from 'lucide-react'
 
 import {
   subscribeToNewsletter,
