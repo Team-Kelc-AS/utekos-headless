@@ -106,7 +106,7 @@ export function readLandingEdgeRequestId(
     currentUrl,
     navigationEntries
   )
-  const edgeTiming = navigation?.serverTiming.find(
+  const edgeTiming = navigation?.serverTiming?.find(
     entry => entry.name === LANDING_EDGE_SERVER_TIMING_NAME
   )
   const candidate = edgeTiming?.description.trim()
@@ -129,7 +129,7 @@ export function readLandingEdgeCorrelation(
     navigationEntries
   )
   const token = navigation?.serverTiming
-    .find(
+    ?.find(
       entry =>
         entry.name === LANDING_EDGE_AUTH_SERVER_TIMING_NAME
     )
