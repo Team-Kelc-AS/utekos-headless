@@ -27,7 +27,10 @@ export async function GET(request: NextRequest) {
 
     const qualityUrl = new URL('https://graph.facebook.com/v26.0/dataset_quality');
     qualityUrl.searchParams.append('dataset_id', datasetId);
-    qualityUrl.searchParams.append('fields', 'web{event_match_quality{diagnostics},event_name}');
+    qualityUrl.searchParams.append(
+      'fields',
+      'web{event_name,event_match_quality{composite_score,match_key_feedback,diagnostics},event_coverage,data_freshness,dedup_key_feedback}'
+    );
     qualityUrl.searchParams.append('access_token', accessToken);
 
 
@@ -52,10 +55,11 @@ export async function GET(request: NextRequest) {
       current_emq_and_freshness: qualityData.web
     });
 
-  } catch (error: any) {
-    console.error('Meta API Feil:', error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Ukjent Meta API-feil';
+    console.error('Meta API Feil:', message);
     return NextResponse.json(
-      { error: 'Kunne ikke hente Meta-data', details: error.message },
+      { error: 'Kunne ikke hente Meta-data', details: message },
       { status: 500 }
     );
   }
