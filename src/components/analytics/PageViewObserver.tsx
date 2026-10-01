@@ -3,7 +3,6 @@
 import { useEffect, useEffectEvent } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { readBrowserReporterContext } from '@/lib/analytics/browserReporterContext'
-import { emitCanonicalPageView } from '@/lib/analytics/emitCanonicalPageView'
 import { browserMicrosoftUetIdSyncEmitter } from '@/lib/analytics/emitMicrosoftUetIdSync'
 import { browserPageViewCollectorTransport } from '@/lib/analytics/pageViewCollectorTransport'
 import {
@@ -66,7 +65,8 @@ export function PageViewObserver({
           : {}),
           eventDeviceInfo: context.eventDeviceInfo
         })
-        emitCanonicalPageView(event, metaOnly)
+        // Reserve the navigation before asynchronous Parameter Builder work.
+        browserPageViewSession.recordEmitted(pageView)
         if (context.externalId && !metaOnly) {
           browserMicrosoftUetIdSyncEmitter.emit({
             externalId: context.externalId,
@@ -74,7 +74,11 @@ export function PageViewObserver({
             pageViewId: event.page_view_id
           })
         }
-        void browserPageViewCollectorTransport.queue(event)
+        void browserPageViewCollectorTransport.queue(
+          event,
+          undefined,
+          metaOnly
+        )
       }
       runConsentStep(observeConsent, 'consent_processing_failed')
     }

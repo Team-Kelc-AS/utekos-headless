@@ -226,7 +226,15 @@ test('keeps refreshed landing fbc identical in storage, Set-Cookie and Meta mapp
   )
   assert.equal(meta.user_data.fbc, event.browser_id?.fbc)
   assert.equal(meta.user_data.fbp, fbp)
-  assert.equal(meta.user_data.client_ip_address, '203.0.113.10')
+  assert.equal(
+    meta.user_data.client_ip_address,
+    event.browser_id?.fbi
+  )
+  assert.match(
+    event.browser_id?.fbi ?? '',
+    /^203\.0\.113\.10\.[A-Za-z0-9+/=]+$/
+  )
+  assert.equal(event.client_ip_address, '203.0.113.10')
   assert.equal(
     meta.user_data.client_user_agent,
     'test-browser-agent'

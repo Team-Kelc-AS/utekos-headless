@@ -12,9 +12,14 @@ import type { ProvisionalPageViewCaptureState } from './provisionalPageViewCaptu
 import { enrichCanonicalBrowserJourneyContext } from './internalJourneyContext'
 import { withoutTrackingQuery } from './withoutTrackingQuery'
 import { filterConsentedBrowserIds } from './filterConsentedBrowserIds'
+import { emitCanonicalPageView } from './emitCanonicalPageView'
 
 export type TrackingAuthorizationState = Record<string, never>
 type Dependencies = {
+  emitBrowser?: (
+    event: CanonicalPageView,
+    metaOnly: boolean
+  ) => void
   capture: (
     event: CanonicalPageView,
     state: ProvisionalPageViewCaptureState
@@ -56,7 +61,10 @@ export function prepareCanonicalPageViewForCollector(
       : ('denied' as const)
   }
   const next = { ...event, consent }
-  if (consent.analytics !== 'granted' || consent.marketing !== 'granted')
+  if (
+    consent.analytics !== 'granted' ||
+    consent.marketing !== 'granted'
+  )
     delete next.meta_audience
   delete next.edge_request_id
   delete next.browser_id
@@ -107,7 +115,11 @@ function permitsLiveEvent(
 export function createPageViewCollectorTransport(
   dependencies: Dependencies
 ) {
-  const pending = new Map<string, CanonicalPageView>()
+  const pending = new Map<
+    string,
+    { event: CanonicalPageView; metaOnly: boolean }
+  >()
+  const browserEmitted = new Set<string>()
   const inFlight = new Set<string>()
   const completed = new Set<string>()
   let generation = 0
@@ -115,6 +127,7 @@ export function createPageViewCollectorTransport(
     generation += 1
     pending.clear()
     completed.clear()
+    browserEmitted.clear()
   }
   function cookieHeader() {
     try {
@@ -124,7 +137,6 @@ export function createPageViewCollectorTransport(
     }
   }
   async function flush(): Promise<PageViewCollectorResult> {
-    const current = dependencies.getTrackingAuthorization()
     const live = getConsentSnapshot()
     if (
       live.analytics !== 'granted' &&
@@ -135,11 +147,12 @@ export function createPageViewCollectorTransport(
     }
     const version = generation
     let result: PageViewCollectorResult = 'skipped'
-    for (const [id, event] of pending) {
+    for (const [id, { event, metaOnly }] of pending) {
       if (inFlight.has(id)) continue
       inFlight.add(id)
       try {
-        const beforePrepare = dependencies.getTrackingAuthorization()
+        const beforePrepare =
+          dependencies.getTrackingAuthorization()
         if (!permitsLiveEvent(event, beforePrepare)) {
           pending.delete(id)
           continue
@@ -176,9 +189,18 @@ export function createPageViewCollectorTransport(
           clear()
           continue
         }
+        const browserKey = `${finalEvent.event_name}:${finalEvent.event_id}`
+        if (
+          !browserEmitted.has(browserKey) &&
+          dependencies.emitBrowser
+        ) {
+          dependencies.emitBrowser(finalEvent, metaOnly)
+          browserEmitted.add(browserKey)
+        }
         await dependencies.capture(finalEvent, 'granted')
         if (version !== generation) continue
-        const beforeSend = dependencies.getTrackingAuthorization()
+        const beforeSend =
+          dependencies.getTrackingAuthorization()
         if (!permitsLiveEvent(finalEvent, beforeSend)) {
           clear()
           continue
@@ -195,8 +217,11 @@ export function createPageViewCollectorTransport(
         await dependencies.send(sendEvent)
         pending.delete(id)
         completed.add(id)
-        if (completed.size > 128)
-          completed.delete(completed.values().next().value!)
+        if (completed.size > 128) {
+          const oldestId = completed.values().next().value!
+          completed.delete(oldestId)
+          browserEmitted.delete(`page_view:${oldestId}`)
+        }
         result = 'sent'
       } catch {
         result = 'failed'
@@ -208,7 +233,8 @@ export function createPageViewCollectorTransport(
   }
   async function queue(
     event: CanonicalPageView,
-    _correlation?: PageViewCollectorCorrelation
+    _correlation?: PageViewCollectorCorrelation,
+    metaOnly = false
   ) {
     const current = dependencies.getTrackingAuthorization()
     if (
@@ -222,7 +248,7 @@ export function createPageViewCollectorTransport(
       !completed.has(event.event_id) &&
       !pending.has(event.event_id)
     )
-      pending.set(event.event_id, event)
+      pending.set(event.event_id, { event, metaOnly })
     return flush()
   }
   return { clear, flush, queue }
@@ -243,6 +269,7 @@ async function post(endpoint: string, body: unknown) {
 }
 export const browserPageViewCollectorTransport =
   createPageViewCollectorTransport({
+    emitBrowser: emitCanonicalPageView,
     capture: (event, captureState) =>
       post('/api/events/page-view/capture', {
         capture_state: captureState,

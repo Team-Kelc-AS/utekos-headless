@@ -203,3 +203,22 @@ test('a persisted click alone does not overwrite an existing fbc', () => {
   assert.equal(result.browserId?.fbc, fbc)
   assert.deepEqual(result.cookiesToSet, [])
 })
+
+test('PageView resolves SDK-selected IPv6 even when matching browser cookies already exist', () => {
+  const fbp = 'fb.1.1784194900000.123456789.AQQCAQMB'
+  const fbc = 'fb.1.1784195000000.Same-Click.AQQCAQMB'
+  const result = ensureCanonicalMetaBrowserIds({
+    consent: marketingConsent,
+    cookieHeader: `_fbp=${fbp}; _fbc=${fbc}; _fbi=2606:4700:4700::1111.AQQCAQMB`,
+    clientIpAddress: '8.8.8.8',
+    pageUrl: 'https://utekos.no/?fbclid=Same-Click',
+    resolveClientIp: true
+  })
+  assert.equal(
+    result.clientIpAddress,
+    '2606:4700:4700::1111.AQQCAQMB'
+  )
+  assert.equal(result.browserId?.fbp, fbp)
+  assert.equal(result.browserId?.fbc, fbc)
+  assert.deepEqual(result.cookiesToSet, [])
+})

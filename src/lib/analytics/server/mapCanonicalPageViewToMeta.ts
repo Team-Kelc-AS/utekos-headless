@@ -1,7 +1,4 @@
-import {
-  CustomData,
-  ServerEvent
-} from 'facebook-nodejs-business-sdk'
+import { ServerEvent } from 'facebook-nodejs-business-sdk'
 import type { CanonicalPageView } from '../pageViewEvent'
 import { buildMetaUserData } from './buildMetaUserData'
 import { buildMetaRequestContext } from './buildMetaRequestContext'
@@ -27,9 +24,12 @@ export function mapCanonicalPageViewToMeta(
   serverEvent
     .setEventName('PageView')
     .setEventTime(eventTime)
-    .setUserData(buildMetaUserData(event))
-    .setCustomData(
-      new CustomData().setCustomProperties({ country: 'Norway' })
+    .setUserData(
+      buildMetaUserData({
+        ...event,
+        client_ip_address:
+          event.browser_id?.fbi ?? event.client_ip_address
+      })
     )
     .setActionSource('website')
     .setEventId(event.event_id)

@@ -28,8 +28,7 @@ function pageView(
     environment: 'test',
     page_url: 'https://utekos.no/',
     page_title: 'Utekos',
-    external_id:
-      'anon_5eb34f2b-4a49-4db0-956f-b9796d7cc0d5',
+    external_id: 'anon_5eb34f2b-4a49-4db0-956f-b9796d7cc0d5',
     consent: {
       analytics,
       marketing,
@@ -147,6 +146,40 @@ test('reports an idempotent duplicate returned by storage', async () => {
   )
 })
 
+test('preserves the canonical IP and retains the SDK-selected IP for Meta', async () => {
+  const payload = pageView('granted', 'granted')
+  let written:
+    | Parameters<CanonicalPageViewStore['accept']>[0]
+    | undefined
+  await acceptCanonicalPageView({
+    payload,
+    requestContext: {
+      clientIpAddress: '8.8.8.8',
+      userAgent: 'Mozilla/5.0',
+      cookieHeader:
+        '_fbp=fb.1.1784194900000.123456789.AQQCAQMB; _fbi=2606:4700:4700::1111.AQQCAQMB'
+    },
+    store: {
+      accept: async input => {
+        written = input
+        return insertedAcceptance
+      }
+    }
+  })
+  assert.equal(
+    written?.event.browser_id?.fbi,
+    '2606:4700:4700::1111.AQQCAQMB'
+  )
+  assert.equal(written?.event.client_ip_address, '8.8.8.8')
+  assert.equal(written?.event.event_name, payload.event_name)
+  assert.equal(written?.event.event_id, payload.event_id)
+  assert.equal(written?.event.event_time, payload.event_time)
+  assert.equal(
+    written?.event.browser_id?.fbp,
+    'fb.1.1784194900000.123456789.AQQCAQMB'
+  )
+})
+
 test('reports acceptance when an existing page view gains its first Meta attempt', async () => {
   const result = await acceptCanonicalPageView({
     payload: pageView('granted', 'granted'),
@@ -154,10 +187,12 @@ test('reports acceptance when an existing page view gains its first Meta attempt
     store: {
       accept: async () => ({
         status: 'duplicate',
-        createdDispatchAttempts: [{
-          adapterKey: 'meta:page_view',
-          attemptId: '00000000-0000-4000-8000-000000000001'
-        }]
+        createdDispatchAttempts: [
+          {
+            adapterKey: 'meta:page_view',
+            attemptId: '00000000-0000-4000-8000-000000000001'
+          }
+        ]
       })
     }
   })

@@ -31,6 +31,22 @@ function pageView(): CanonicalPageView {
   }
 }
 
+test('sends SDK-selected IPv6 to Meta without changing the shared canonical IP', () => {
+  const event = pageView()
+  event.browser_id = {
+    ...event.browser_id,
+    fbi: '2606:4700:4700::1111.AQQCAQMB'
+  }
+  const mapped = mapCanonicalPageViewToMeta(
+    event
+  ).normalize() as { user_data: { client_ip_address: string } }
+  assert.equal(
+    mapped.user_data.client_ip_address,
+    '2606:4700:4700::1111.AQQCAQMB'
+  )
+  assert.equal(event.client_ip_address, '203.0.113.8')
+})
+
 test('maps canonical page_view to a server-side Meta PageView', () => {
   const normalized = mapCanonicalPageViewToMeta(
     pageView()
@@ -39,16 +55,32 @@ test('maps canonical page_view to a server-side Meta PageView', () => {
     event_id: string
     event_name: string
     event_source_url: string
-    custom_data: { country: string }
-    user_data: { fbc: string; fbp: string }
+    event_time: number
+    custom_data?: unknown
+    user_data: {
+      fbc: string
+      fbp: string
+      client_ip_address: string
+      client_user_agent: string
+    }
   }
 
   assert.equal(normalized.event_name, 'PageView')
   assert.equal(normalized.action_source, 'website')
   assert.equal(normalized.event_id, pageView().event_id)
-  assert.deepEqual(normalized.custom_data, {
-    country: 'Norway'
-  })
+  assert.equal(
+    normalized.event_time,
+    Date.parse(pageView().event_time) / 1000
+  )
+  assert.equal(normalized.custom_data, undefined)
+  assert.equal(
+    normalized.user_data.client_ip_address,
+    pageView().client_ip_address
+  )
+  assert.equal(
+    normalized.user_data.client_user_agent,
+    pageView().event_device_info?.user_agent
+  )
   assert.equal(
     normalized.event_source_url,
     `${pageView().page_url}.AQQCAQMC`

@@ -36,8 +36,18 @@ function pageView(
 function harness() {
   let reads = 0
   const captures: CanonicalPageView[] = [],
-    sent: CanonicalPageView[] = []
+    sent: CanonicalPageView[] = [],
+    browser: Array<{
+      event: CanonicalPageView
+      metaOnly: boolean
+    }> = []
   const deps = {
+    emitBrowser: (
+      event: CanonicalPageView,
+      metaOnly: boolean
+    ) => {
+      browser.push({ event, metaOnly })
+    },
     capture: async (event: CanonicalPageView) => {
       captures.push(event)
     },
@@ -51,12 +61,7 @@ function harness() {
       sent.push(event)
     }
   }
-  return {
-    deps,
-    sent,
-    captures,
-    reads: () => reads
-  }
+  return { deps, sent, captures, browser, reads: () => reads }
 }
 
 test('denied events are not captured, retained, enriched or read from storage', async () => {
@@ -70,7 +75,9 @@ test('denied events are not captured, retained, enriched or read from storage', 
 })
 test('operator policy collects a marketing-granted event with original IDs', async () => {
   const h = harness()
-  await createPageViewCollectorTransport(h.deps).queue(pageView())
+  await createPageViewCollectorTransport(h.deps).queue(
+    pageView()
+  )
   assert.equal(h.sent.length, 1)
   assert(h.reads() > 0)
   assert.equal(h.sent[0]?.consent.source, 'cookiebot')
@@ -86,6 +93,8 @@ test('a fresh current-page event is captured and sent once with original IDs', a
   assert.equal(h.sent.length, 1)
   assert.equal(h.captures.length, 1)
   assert.equal(h.sent[0]?.event_id, event.event_id)
+  assert.equal(h.browser.length, 1)
+  assert.equal(h.browser[0]?.event.event_time, event.event_time)
   assert.equal(h.sent[0]?.page_view_id, event.page_view_id)
   assert.equal(h.sent[0]?.event_time, event.event_time)
   assert.equal(h.sent[0]?.click_id?.fbclid, 'private')
@@ -173,6 +182,7 @@ test('clearing the consented queue cancels a pending enrichment', async () => {
   resume()
   await pending
   assert.equal(h.sent.length, 0)
+  assert.equal(h.browser.length, 0)
 })
 test('distinct consented SPA views each dispatch once', async () => {
   const h = harness(),
@@ -182,4 +192,42 @@ test('distinct consented SPA views each dispatch once', async () => {
     pageView(undefined, '22222222-2222-4222-8222-222222222222')
   )
   assert.equal(h.sent.length, 2)
+})
+
+test('browser emission waits for SDK enrichment and shares event name, ID and occurrence time with server', async () => {
+  const h = harness()
+  const event = pageView()
+  const fbp = 'fb.1.1784194900000.123456789.AQQCAQMB'
+  const fbc = 'fb.1.1784195000000.private.AQQCAQMB'
+  let resume!: () => void
+  h.deps.enrich = input =>
+    new Promise(resolve => {
+      resume = () => {
+        h.deps.getCookieHeader = () => `_fbp=${fbp}; _fbc=${fbc}`
+        resolve({ ...input, browser_id: { fbp, fbc } })
+      }
+    })
+  const pending = createPageViewCollectorTransport(h.deps).queue(
+    event,
+    undefined,
+    true
+  )
+  assert.equal(h.browser.length, 0)
+  assert.equal(h.captures.length, 0)
+  assert.equal(h.sent.length, 0)
+  resume()
+  assert.equal(await pending, 'sent')
+  assert.equal(h.browser.length, 1)
+  assert.equal(h.browser[0]?.metaOnly, true)
+  for (const delivered of [
+    h.browser[0]!.event,
+    h.captures[0]!,
+    h.sent[0]!
+  ]) {
+    assert.equal(delivered.event_name, event.event_name)
+    assert.equal(delivered.event_id, event.event_id)
+    assert.equal(delivered.event_time, event.event_time)
+    assert.equal(delivered.browser_id?.fbp, fbp)
+    assert.equal(delivered.browser_id?.fbc, fbc)
+  }
 })

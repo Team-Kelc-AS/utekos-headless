@@ -304,7 +304,7 @@
     var customData = canonicalEvent.custom_data || {}
 
     if (eventName === 'page_view') {
-      return { country: 'Norway' }
+      return {}
     }
 
     if (
@@ -452,6 +452,7 @@
     )
       return
     if (entry.event_id !== canonicalEvent.event_id) return
+    if (entry.event !== canonicalEvent.event_name) return
 
     eventKey = metaEventName + ':' + entry.event_id
     if (state.sent[eventKey]) return

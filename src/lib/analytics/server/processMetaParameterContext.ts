@@ -20,6 +20,7 @@ export type ProcessMetaParameterContextInput = {
 }
 
 export type ProcessedMetaParameterContext = {
+  clientIpAddress?: string
   cookiesToSet: CookieSettings[]
   identifiers: MetaParameterContextResponse
 }
@@ -61,5 +62,10 @@ export function processMetaParameterContext(
     fbp: builder.getFbp()
   })
 
-  return { cookiesToSet, identifiers }
+  const clientIpAddress = builder.getClientIpAddress()
+  return {
+    ...(clientIpAddress ? { clientIpAddress } : {}),
+    cookiesToSet,
+    identifiers
+  }
 }

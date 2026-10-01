@@ -12,7 +12,6 @@ const loader = Module as typeof Module & {
 }
 const original = loader._load
 let gtmCalls = 0
-let recorded = 0
 loader._load = (request, parent, isMain) => {
   if (/sendCanonicalGTMEvent(?:\.ts)?$/.test(request))
     return {
@@ -24,19 +23,11 @@ loader._load = (request, parent, isMain) => {
     return {
       enrichBrowserMetaAudience: (event: unknown) => event
     }
-  if (/pageViewSession(?:\.ts)?$/.test(request))
-    return {
-      browserPageViewSession: {
-        recordEmitted: () => {
-          recorded++
-        }
-      }
-    }
   return original.call(Module, request, parent, isMain)
 }
 const require = createRequire(import.meta.url)
 const { emitCanonicalPageView } =
-  require('./emitCanonicalPageView.ts') as typeof import('@/lib/analytics/emitCanonicalPageView')
+  require('../../../../src/lib/analytics/emitCanonicalPageView.ts') as typeof import('@/lib/analytics/emitCanonicalPageView')
 loader._load = original
 
 test('Meta-only page view is buffered before the transport loads and never invokes GTM', () => {
@@ -71,7 +62,6 @@ test('Meta-only page view is buffered before the transport loads and never invok
     })
     emitCanonicalPageView(event, true)
     assert.equal(gtmCalls, 0)
-    assert.equal(recorded, 1)
     assert.equal(browser.dataLayer?.length, 1)
     assert.equal(
       browser.dataLayer?.[0]?.event_id,

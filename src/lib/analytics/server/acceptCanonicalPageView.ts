@@ -73,6 +73,7 @@ export async function acceptCanonicalPageView(
       { cookieHeader: input.requestContext.cookieHeader }
     : {}),
     pageUrl: normalized.page_url,
+    resolveClientIp: true,
     ...(input.requestContext.requestUrl ?
       { requestUrl: input.requestContext.requestUrl }
     : {})

@@ -12,9 +12,11 @@ export type EnsureCanonicalMetaBrowserIdsInput = {
   cookieHeader?: string | undefined
   pageUrl: string
   requestUrl?: string | undefined
+  resolveClientIp?: boolean
 }
 
 export type EnsureCanonicalMetaBrowserIdsResult = {
+  clientIpAddress?: string | undefined
   browserId?: Record<string, string> | undefined
   clickId?: CanonicalClickIds | undefined
   cookiesToSet: CookieSettings[]
@@ -105,6 +107,7 @@ export function ensureCanonicalMetaBrowserIds(
   let fbp = existingBrowserId?.fbp ?? cookies._fbp
   let fbc = existingBrowserId?.fbc ?? cookies._fbc
   let cookiesToSet: CookieSettings[] = []
+  let clientIpAddress: string | undefined
 
   const needsFbp = !fbp
   const needsFbc = Boolean(fbclid) && !fbc
@@ -113,7 +116,12 @@ export function ensureCanonicalMetaBrowserIds(
     Boolean(observedFbclid) &&
     observedFbclid !== extractFbclidFromFbc(fbc)
 
-  if (needsFbp || needsFbc || hasNewUrlClick) {
+  if (
+    needsFbp ||
+    needsFbc ||
+    hasNewUrlClick ||
+    input.resolveClientIp
+  ) {
     const derived = processMetaParameterContext({
       ...(input.clientIpAddress ?
         { clientIpAddress: input.clientIpAddress }
@@ -127,17 +135,20 @@ export function ensureCanonicalMetaBrowserIds(
     })
 
     cookiesToSet = derived.cookiesToSet
+    clientIpAddress = derived.clientIpAddress
     if (derived.identifiers.fbp) fbp = derived.identifiers.fbp
     if (derived.identifiers.fbc) fbc = derived.identifiers.fbc
   }
 
   const browserId = {
     ...(existingBrowserId ?? {}),
+    ...(clientIpAddress ? { fbi: clientIpAddress } : {}),
     ...(fbp ? { fbp } : {}),
     ...(fbc ? { fbc } : {})
   }
 
   return {
+    ...(clientIpAddress ? { clientIpAddress } : {}),
     ...(Object.keys(browserId).length > 0 ? { browserId } : {}),
     ...(clickId && Object.keys(clickId).length > 0 ?
       { clickId }

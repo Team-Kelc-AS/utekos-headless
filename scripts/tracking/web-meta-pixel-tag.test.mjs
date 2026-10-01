@@ -102,6 +102,34 @@ function queuedGatewayCalls(window) {
   )
 }
 
+test('rejects matching event IDs when canonical event names disagree', () => {
+  const runtime = createRuntime()
+  const event = canonicalEvent('page_view', 'mismatched-name')
+  event.canonical_event.event_name = 'view_item'
+  runtime.window.dataLayer.push(event)
+  vm.runInContext(script, runtime.context)
+  assert.equal(
+    queuedCalls(runtime.window).filter(
+      call => call[0] === 'trackSingle'
+    ).length,
+    0
+  )
+})
+
+test('PageView carries no invented country or commerce parameters', () => {
+  const runtime = createRuntime()
+  runtime.window.dataLayer.push(
+    canonicalEvent('page_view', 'minimal-page')
+  )
+  vm.runInContext(script, runtime.context)
+  const call = queuedCalls(runtime.window).find(
+    call => call[0] === 'trackSingle'
+  )
+  assert.equal(call[2], 'PageView')
+  assert.equal(call[4].eventID, 'minimal-page')
+  assert.deepEqual(call[3], {})
+})
+
 test('installs the pixel under the operator tracking policy', () => {
   const runtime = createRuntime()
   const listeners = []

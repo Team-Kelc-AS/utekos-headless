@@ -3,7 +3,6 @@ import {
   buildPageViewDataLayerEvent,
   type CanonicalPageView
 } from './pageViewEvent'
-import { browserPageViewSession } from './pageViewSession'
 import { enrichBrowserMetaAudience } from './browserMetaAudience'
 
 export function emitCanonicalPageView(
@@ -22,12 +21,4 @@ export function emitCanonicalPageView(
   } else {
     sendGTMEvent(data)
   }
-
-  browserPageViewSession.recordEmitted({
-    pageUrl: event.page_url,
-    pageViewId: event.page_view_id,
-    ...(event.referrer_url ?
-      { referrerUrl: event.referrer_url }
-    : {})
-  })
 }
