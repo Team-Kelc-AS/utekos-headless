@@ -7,8 +7,13 @@ import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { Button } from '@/components/ui/button'
 import { LazyComfyrobeImageCarousel } from '@/app/produkter/(oversikt)/components/LazyComfyrobeImageCarousel'
 import { ArrowRight, Wind } from 'lucide-react'
+import { buildComfyrobeOfferSummary } from '@/app/comfyrobe/lib/buildComfyrobeOfferSummary'
+import { getComfyrobeLandingProduct } from '@/app/comfyrobe/lib/getComfyrobeLandingProduct'
 
-export function ComfyrobeFeatureSection() {
+export async function ComfyrobeFeatureSection() {
+  const product = await getComfyrobeLandingProduct()
+  const offer = buildComfyrobeOfferSummary(product)
+
   return (
     <article
       aria-labelledby='comfyrobe-feature-heading'
@@ -94,9 +99,11 @@ export function ComfyrobeFeatureSection() {
                     delay='0.5s'
                   >
                     <div className='mt-8 flex w-full flex-col items-start gap-4 sm:flex-row sm:items-center'>
-                      <p className='font-google-sans shrink-0 font-sans text-4xl leading-none font-bold whitespace-nowrap text-foreground'>
-                        NOK 990,-
-                      </p>
+                      {offer ?
+                        <p className='font-google-sans shrink-0 font-sans text-4xl leading-none font-bold whitespace-nowrap text-foreground'>
+                          {offer.priceLabel}
+                        </p>
+                      : null}
 
                       <Button
                         asChild
