@@ -246,10 +246,11 @@ test('correlates a document request without logging its landing query', async ()
   }
 })
 
-test('forwards existing cookie and user-agent headers internally without exposing or reminting them', async () => {
+test('forwards existing cookie and user-agent headers internally without exposing or reminting Meta cookies', async () => {
   const { proxy } = await productionProxy
+  const existingUserId = '0123456789abcdef0123456789abcdef'
   const cookie =
-    '_fbp=fb.1.1784194900000.123456789; _fbc=fb.1.1784195000000.observed-click'
+    `_fbp=fb.1.1784194900000.123456789; _fbc=fb.1.1784195000000.observed-click; user_id=${existingUserId}`
   for (const pathname of [
     '/',
     '/produkter',
@@ -276,7 +277,12 @@ test('forwards existing cookie and user-agent headers internally without exposin
     )
     assert.equal(response.headers.get('cookie'), null)
     assert.equal(response.headers.get('user-agent'), null)
-    assert.equal(response.headers.get('set-cookie'), null)
+    assert.equal(response.cookies.get('_fbp'), undefined)
+    assert.equal(response.cookies.get('_fbc'), undefined)
+    assert.equal(
+      response.cookies.get('user_id')?.value,
+      existingUserId
+    )
     assert.equal(response.headers.get('location'), null)
   }
 })

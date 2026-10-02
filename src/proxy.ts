@@ -6,6 +6,7 @@ import { isKlarnaFeedHost } from '@/lib/merchant-feeds/klarna/klarnaFeedHost'
 import { filterRedirectSearch } from '@/lib/navigation/filterRedirectSearch'
 import { captureProxyMetaCookies } from '@/lib/analytics/server/captureProxyMetaCookies'
 import { applyProxyMetaCookies } from '@/lib/analytics/server/applyProxyMetaCookies'
+import { applyCookieKeeperUserIdCookie } from '@/lib/analytics/server/stapeCookieKeeperUserId'
 import { wantsMarkdown } from '@/lib/agents/markdownNegotiation'
 import {
   LANDING_EDGE_AUTH_SERVER_TIMING_NAME,
@@ -374,7 +375,15 @@ export async function proxy(request: NextRequest) {
     return applyProxyMetaCookies(agentMarkdownResponse, request, [])
   }
   const response = await routeRequest(request)
-  return applyProxyMetaCookies(response, request, cookies)
+  const withMetaCookies = applyProxyMetaCookies(
+    response,
+    request,
+    cookies
+  )
+  if (eligible && !synthetic) {
+    return applyCookieKeeperUserIdCookie(withMetaCookies, request)
+  }
+  return withMetaCookies
 }
 
 export const config = {

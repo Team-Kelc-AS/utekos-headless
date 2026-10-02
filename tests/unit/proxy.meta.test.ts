@@ -55,7 +55,9 @@ test('repeat document preserves identity and timestamp; a new click updates fbc 
       headers: { ...headers, cookie }
     })
   )
-  assert.equal(repeated.headers.get('set-cookie'), null)
+  assert.equal(repeated.cookies.get('_fbp'), undefined)
+  assert.equal(repeated.cookies.get('_fbc'), undefined)
+  assert.ok(repeated.cookies.get('user_id'))
   const changed = await proxy(
     new NextRequest(
       'https://utekos.no/produkter?fbclid=Second',
@@ -104,7 +106,12 @@ test('repeated URL click parameters use the first value and do not remint on rep
   const repeated = await proxy(
     new NextRequest(url, { headers: { ...headers, cookie } })
   )
-  assert.equal(repeated.headers.get('set-cookie'), null)
+  assert.equal(repeated.cookies.get('_fbp'), undefined)
+  assert.equal(repeated.cookies.get('_fbc'), undefined)
+  assert.equal(
+    repeated.cookies.get('user_id')?.value,
+    first.cookies.get('user_id')?.value
+  )
 })
 
 test('does not mint on API, feed, RSC, prefetch, assets or non-GET requests', async () => {
@@ -133,6 +140,7 @@ test('does not mint on API, feed, RSC, prefetch, assets or non-GET requests', as
     )
     assert.equal(response.cookies.get('_fbp'), undefined, url)
     assert.equal(response.cookies.get('_fbc'), undefined, url)
+    assert.equal(response.cookies.get('user_id'), undefined, url)
   }
 })
 
@@ -148,7 +156,9 @@ test('oversized input does not create oversized cookies or prevent navigation', 
     )
   )
   assert.equal(response.status, 200)
-  assert.equal(response.headers.get('set-cookie'), null)
+  assert.equal(response.cookies.get('_fbp'), undefined)
+  assert.equal(response.cookies.get('_fbc'), undefined)
+  assert.ok(response.cookies.get('user_id'))
   assert.deepEqual(warnings, [
     [
       '[tracking] proxy_meta_capture_skipped',

@@ -5,7 +5,8 @@ const STOREFRONT_ORIGINS = [
 
 const TAG_GATEWAY_ORIGINS = [
   'https://www.googletagmanager.com',
-  'https://edge.utekos.no'
+  'https://edge.utekos.no',
+  'https://load.edge.utekos.no'
 ] as const
 
 /* eslint-disable quotes -- CSP keywords require ASCII single quotes inside JavaScript string literals. */

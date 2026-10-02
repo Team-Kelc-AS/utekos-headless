@@ -26,7 +26,6 @@ export function LandingTelemetry({
     <>
       <GoogleTagManagerLoader
         enabled={shouldLoadMarketingScripts}
-        deferContainer={deferMarketingScripts}
       />
       <CanonicalBrowserProviderBridges
         enabled={shouldLoadMarketingScripts}

@@ -12,7 +12,7 @@ export function GoogleTagManagerNoScript({
   return (
     <noscript>
       <iframe
-        src='https://edge.utekos.no/ns.html?id=GTM-5TWMJQFP'
+        src='https://load.edge.utekos.no/ns.html?id=GTM-5TWMJQFP'
         height='0'
         width='0'
         style={{ display: 'none', visibility: 'hidden' }}

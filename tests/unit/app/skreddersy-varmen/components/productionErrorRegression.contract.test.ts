@@ -1,28 +1,42 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import test from 'node:test'
 
-const readSource = (path: string) =>
-  readFile(new URL(path, import.meta.url), 'utf8')
+const repoRoot = process.cwd()
 
-test('runs consent defaults before the exact Stape Custom Loader', async () => {
+const readSource = (relativePath: string) =>
+  readFile(join(repoRoot, relativePath), 'utf8')
+
+test('loads GTM consent defaults and Stape loader only after idle, behind marketing consent', async () => {
   const source = await readSource(
-    '../../../components/analytics/GoogleTagManagerLoader.tsx'
+    'src/components/analytics/GoogleTagManagerLoader.tsx'
   )
 
   assert.match(
     source,
-    /id='_next-gtm-consent-defaults'[\s\S]*?strategy='beforeInteractive'/
+    /resolveTrackingAuthorization\(\)\.marketing !== 'granted'/
+  )
+  assert.match(
+    source,
+    /id='_next-gtm-consent-defaults'[\s\S]*?strategy='lazyOnload'/
+  )
+  assert.match(
+    source,
+    /id='_next-stape-custom-loader'[\s\S]*?strategy='lazyOnload'/
   )
   assert.match(
     source,
     /id='_next-gtm-consent-defaults'[\s\S]*?GOOGLE_TAG_MANAGER_BOOTSTRAP[\s\S]*?id='_next-stape-custom-loader'[\s\S]*?STAPE_CUSTOM_LOADER/
   )
+  assert.doesNotMatch(source, /beforeInteractive/)
   assert.doesNotMatch(source, /GoogleTagManagerContainerScript/)
 })
 
 test('does not prefetch unrelated routes from end-of-page navigation', async () => {
-  const source = await readSource('./PreFooterNavigation.tsx')
+  const source = await readSource(
+    'src/app/skreddersy-varmen/components/PreFooterNavigation.tsx'
+  )
 
   assert.match(
     source,
@@ -32,8 +46,8 @@ test('does not prefetch unrelated routes from end-of-page navigation', async () 
 
 test('fetches featured handles through one exact aliased operation', async () => {
   const [querySource, loaderSource] = await Promise.all([
-    readSource('../../../api/graphql/queries/products/index.ts'),
-    readSource('../../../api/lib/products/getFeaturedProducts.ts')
+    readSource('src/api/graphql/queries/products/index.ts'),
+    readSource('src/api/lib/products/getFeaturedProducts.ts')
   ])
 
   assert.match(
@@ -46,9 +60,9 @@ test('fetches featured handles through one exact aliased operation', async () =>
 test('keeps healthy Shopify product reads webhook-driven', async () => {
   const [featuredSource, productSource, invalidationSource] =
     await Promise.all([
-      readSource('../../../api/lib/products/getFeaturedProducts.ts'),
-      readSource('../../../api/lib/products/getProduct.ts'),
-      readSource('../../../lib/cache/revalidateProductCatalog.ts')
+      readSource('src/api/lib/products/getFeaturedProducts.ts'),
+      readSource('src/api/lib/products/getProduct.ts'),
+      readSource('src/lib/cache/revalidateProductCatalog.ts')
     ])
 
   for (const source of [featuredSource, productSource]) {
