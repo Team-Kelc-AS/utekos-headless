@@ -95,6 +95,7 @@ const CLAIM_NEXT_QUERY = `
   returning
     attempt.id::text as attempt_id,
     attempt.attempt_count,
+    attempt.created_at,
     attempt.payload
 `
 
@@ -138,6 +139,7 @@ const CLAIM_BY_ID_QUERY = `
   returning
     attempt.id::text as attempt_id,
     attempt.attempt_count,
+    attempt.created_at,
     attempt.payload
 `
 
@@ -259,6 +261,26 @@ function assertCompleted(
   }
 }
 
+function parseCreatedAt(value: unknown): string {
+  if (value instanceof Date) {
+    const time = value.getTime()
+    if (!Number.isFinite(time)) {
+      throw new Error('Invalid provider outbox claim result')
+    }
+    return value.toISOString()
+  }
+
+  if (typeof value === 'string') {
+    const time = Date.parse(value)
+    if (!Number.isFinite(time)) {
+      throw new Error('Invalid provider outbox claim result')
+    }
+    return new Date(time).toISOString()
+  }
+
+  throw new Error('Invalid provider outbox claim result')
+}
+
 function parseClaimedRow(
   row: QueryRow | undefined
 ): RawProviderOutboxAttempt | null {
@@ -274,7 +296,12 @@ function parseClaimedRow(
     throw new Error('Invalid provider outbox claim result')
   }
 
-  return { attemptCount, attemptId, payload: row.payload }
+  return {
+    attemptCount,
+    attemptId,
+    createdAt: parseCreatedAt(row.created_at),
+    payload: row.payload
+  }
 }
 
 export function createPostgresProviderOutboxDatabase<

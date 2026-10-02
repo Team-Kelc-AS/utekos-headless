@@ -60,6 +60,15 @@ function createAdapter(
   }
 }
 
+function claimed(
+  attemptCount: number,
+  attemptId: string,
+  event: CanonicalPageView = pageView(),
+  createdAt = '2026-07-15T09:59:00.000Z'
+) {
+  return { attemptCount, attemptId, createdAt, event }
+}
+
 function clock(...values: number[]) {
   let index = 0
   return () => values[index++]!
@@ -76,7 +85,7 @@ test('dispatches the unchanged canonical event and records latency', async () =>
   })
 
   const outcome = await processProviderOutboxAttempt(
-    { attemptCount: 1, attemptId: 'attempt-1', event },
+    claimed(1, 'attempt-1', event),
     adapter,
     { now: clock(100, 145), random: () => 0 }
   )
@@ -101,7 +110,7 @@ test('schedules a retry without sampling randomness when jitter is disabled', as
   })
 
   const outcome = await processProviderOutboxAttempt(
-    { attemptCount: 1, attemptId: 'attempt-1', event: pageView() },
+    claimed(1, 'attempt-1'),
     adapter,
     {
       now: clock(1000, 1100),
@@ -136,12 +145,12 @@ test('clamps configured positive jitter to the interval zero through one', async
   })
 
   const upper = await processProviderOutboxAttempt(
-    { attemptCount: 1, attemptId: 'attempt-upper', event: pageView() },
+    claimed(1, 'attempt-upper'),
     adapter,
     { now: clock(1000, 1100), random: () => 8 }
   )
   const lower = await processProviderOutboxAttempt(
-    { attemptCount: 1, attemptId: 'attempt-lower', event: pageView() },
+    claimed(1, 'attempt-lower'),
     adapter,
     { now: clock(1000, 1100), random: () => -8 }
   )
@@ -164,7 +173,7 @@ test('dead-letters a non-retryable error using the adapter summary', async () =>
   })
 
   const outcome = await processProviderOutboxAttempt(
-    { attemptCount: 1, attemptId: 'attempt-1', event: pageView() },
+    claimed(1, 'attempt-1'),
     adapter,
     { now: clock(100, 120), random: () => 0 }
   )
@@ -188,7 +197,7 @@ test('dead-letters a retryable error after max attempts', async () => {
   })
 
   const outcome = await processProviderOutboxAttempt(
-    { attemptCount: 3, attemptId: 'attempt-3', event: pageView() },
+    claimed(3, 'attempt-3'),
     adapter,
     { now: clock(100, 130), random: () => 0 }
   )
@@ -216,10 +225,104 @@ test('rejects an incomplete retry policy before dispatch', async () => {
 
   await assert.rejects(
     processProviderOutboxAttempt(
-      { attemptCount: 1, attemptId: 'attempt-1', event: pageView() },
+      claimed(1, 'attempt-1'),
       adapter
     ),
     /retry delays must contain maxAttempts - 1 entries/
   )
   assert.equal(dispatches, 0)
+})
+
+test('measures Meta queue age from attempt createdAt, not event_time', async () => {
+  const metrics: Array<{
+    name: string
+    tags?: Record<string, string>
+    value: number
+  }> = []
+  const previousMetric = (
+    globalThis as {
+      [key: symbol]:
+        | { sendMetric?: typeof metrics.push }
+        | undefined
+    }
+  )[Symbol.for('@vercel/rusty-runtime-ipc')]
+  ;(
+    globalThis as {
+      [key: symbol]: { sendMetric: typeof metrics.push }
+    }
+  )[Symbol.for('@vercel/rusty-runtime-ipc')] = {
+    sendMetric: (name, value, tags) => {
+      metrics.push({ name, value, ...(tags ? { tags } : {}) })
+    }
+  }
+
+  try {
+    const createdAt = '2026-07-15T09:59:00.000Z'
+    const startedAt = Date.parse(createdAt) + 1500
+    await processProviderOutboxAttempt(
+      claimed(2, 'attempt-retry', pageView(), createdAt),
+      createAdapter(),
+      { now: clock(startedAt, startedAt + 10), random: () => 0 }
+    )
+
+    assert.deepEqual(
+      metrics.filter(entry => entry.name === 'meta.capi.queue_age_ms'),
+      [
+        {
+          name: 'meta.capi.queue_age_ms',
+          tags: {
+            attempt: 'retry',
+            event: 'page_view'
+          },
+          value: 1500
+        }
+      ]
+    )
+  } finally {
+    ;(
+      globalThis as {
+        [key: symbol]: typeof previousMetric
+      }
+    )[Symbol.for('@vercel/rusty-runtime-ipc')] = previousMetric
+  }
+})
+
+test('does not emit Meta queue age for non-Meta providers', async () => {
+  const metrics: Array<{ name: string }> = []
+  const ipcSymbol = Symbol.for('@vercel/rusty-runtime-ipc')
+  const previousMetric = (
+    globalThis as {
+      [key: symbol]:
+        | { sendMetric?: (name: string) => void }
+        | undefined
+    }
+  )[ipcSymbol]
+  ;(
+    globalThis as {
+      [key: symbol]: { sendMetric: (name: string) => void }
+    }
+  )[ipcSymbol] = {
+    sendMetric: name => {
+      metrics.push({ name })
+    }
+  }
+
+  try {
+    await processProviderOutboxAttempt(
+      claimed(1, 'attempt-1'),
+      createAdapter({
+        key: 'microsoft_uet:page_view',
+        provider: 'microsoft_uet'
+      }),
+      { now: clock(100, 110), random: () => 0 }
+    )
+
+    assert.deepEqual(metrics, [])
+  } finally {
+    ;(
+      globalThis as {
+        [key: symbol]: typeof previousMetric
+      }
+    )[ipcSymbol] = previousMetric
+  }
 })

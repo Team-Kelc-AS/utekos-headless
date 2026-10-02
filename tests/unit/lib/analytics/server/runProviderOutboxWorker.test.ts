@@ -66,6 +66,7 @@ function attempt(
   return {
     attemptCount,
     attemptId: `attempt-${attemptCount}`,
+    createdAt: '2026-07-15T09:59:00.000Z',
     event: pageView()
   }
 }
@@ -170,7 +171,12 @@ test('uses the generic processor when no override is supplied', async () => {
   const event = pageView()
   let dispatchedEvent: CanonicalPageView | undefined
   const fake = fakeStore([
-    { attemptCount: 1, attemptId: 'attempt-default', event }
+    {
+      attemptCount: 1,
+      attemptId: 'attempt-default',
+      createdAt: '2026-07-15T09:59:00.000Z',
+      event
+    }
   ])
   const dispatchingAdapter: ProviderAdapter<
     CanonicalPageView,

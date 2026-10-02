@@ -3,6 +3,7 @@ import type { CanonicalEvent } from '../canonicalEvent'
 export type RawProviderOutboxAttempt = {
   attemptCount: number
   attemptId: string
+  createdAt: string
   payload: unknown
 }
 
@@ -11,6 +12,7 @@ export type ClaimedProviderOutboxAttempt<
 > = {
   attemptCount: number
   attemptId: string
+  createdAt: string
   event: E
 }
 

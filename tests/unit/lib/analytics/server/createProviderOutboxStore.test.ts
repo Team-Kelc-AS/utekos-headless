@@ -64,7 +64,12 @@ function rawAttempt(
   attemptId: string,
   payload: unknown = pageView()
 ): RawProviderOutboxAttempt {
-  return { attemptCount: 1, attemptId, payload }
+  return {
+    attemptCount: 1,
+    attemptId,
+    createdAt: '2026-07-15T09:59:00.000Z',
+    payload
+  }
 }
 
 function fakeDatabase(attempts: RawProviderOutboxAttempt[]) {
@@ -154,6 +159,7 @@ test('dead-letters an invalid payload and continues to a valid row', async () =>
   assert.deepEqual(claimed, {
     attemptCount: 1,
     attemptId: 'attempt-valid',
+    createdAt: '2026-07-15T09:59:00.000Z',
     event: pageView()
   })
 })

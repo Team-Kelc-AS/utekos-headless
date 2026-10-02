@@ -91,6 +91,7 @@ test('atomically claims only the adapter provider and event', async () => {
       {
         attempt_count: 2,
         attempt_id: '7bcd24a4-190c-4eca-a834-5c9854bd54ea',
+        created_at: '2026-07-15T09:59:00.000Z',
         payload: { event_name: 'page_view' }
       }
     ]
@@ -105,6 +106,7 @@ test('atomically claims only the adapter provider and event', async () => {
   assert.deepEqual(claimed, {
     attemptCount: 2,
     attemptId: '7bcd24a4-190c-4eca-a834-5c9854bd54ea',
+    createdAt: '2026-07-15T09:59:00.000Z',
     payload: { event_name: 'page_view' }
   })
   assert.deepEqual(fake.calls[0]?.parameters, [
@@ -133,6 +135,10 @@ test('atomically claims only the adapter provider and event', async () => {
     fake.calls[0]?.query ?? '',
     /attempt_count = attempt\.attempt_count \+ 1/i
   )
+  assert.match(
+    fake.calls[0]?.query ?? '',
+    /attempt\.created_at/i
+  )
 })
 
 test('applies an adapter cutover without replaying older rows', async () => {
@@ -160,6 +166,7 @@ test('targeted claim includes the exact attempt primary key and cannot take anot
       {
         attempt_count: 1,
         attempt_id: '7bcd24a4-190c-4eca-a834-5c9854bd54ea',
+        created_at: new Date('2026-07-15T09:59:30.000Z'),
         payload: { event_name: 'page_view' }
       }
     ]
@@ -176,6 +183,11 @@ test('targeted claim includes the exact attempt primary key and cannot take anot
   assert.equal(
     claimed?.attemptId,
     '7bcd24a4-190c-4eca-a834-5c9854bd54ea'
+  )
+  assert.equal(claimed?.createdAt, '2026-07-15T09:59:30.000Z')
+  assert.match(
+    fake.calls[0]?.query ?? '',
+    /attempt\.created_at/i
   )
   assert.deepEqual(fake.calls[0]?.parameters, [
     '7bcd24a4-190c-4eca-a834-5c9854bd54ea',

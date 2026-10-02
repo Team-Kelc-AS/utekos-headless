@@ -66,6 +66,7 @@ export function createProviderOutboxStore<
       return {
         attemptCount: claimed.attemptCount,
         attemptId: claimed.attemptId,
+        createdAt: claimed.createdAt,
         event: parsed.data
       }
     }

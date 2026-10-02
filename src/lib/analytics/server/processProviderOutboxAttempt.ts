@@ -1,3 +1,4 @@
+import { metric } from '@vercel/functions'
 import type { CanonicalEvent } from '../canonicalEvent'
 import type { ProviderAdapter } from './providerAdapter'
 import type {
@@ -87,6 +88,22 @@ export async function processProviderOutboxAttempt<
   validateAttempt(attempt.attemptCount, adapter)
 
   const startedAt = dependencies.now()
+
+  if (adapter.provider === 'meta') {
+    try {
+      metric(
+        'meta.capi.queue_age_ms',
+        Math.max(0, startedAt - Date.parse(attempt.createdAt)),
+        {
+          event: adapter.eventName,
+          attempt:
+            attempt.attemptCount === 1 ? 'initial' : 'retry'
+        }
+      )
+    } catch {
+      // Metrics must not affect Meta dispatch.
+    }
+  }
 
   try {
     const receipt = await adapter.dispatch(attempt.event)
