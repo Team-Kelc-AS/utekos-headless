@@ -7,6 +7,7 @@
   },
   "x-utekos-contract-kind": "swaggerhub-domain",
   "x-utekos-characterized-against": "97a0a4538f9682a2b210e50b770ce59f826b42ac",
+  "paths": {},
   "components": {
     "schemas": {
       "CanonicalEventEnvelope": {

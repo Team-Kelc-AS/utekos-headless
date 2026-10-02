@@ -158,6 +158,7 @@ function buildDomain() {
     },
     'x-utekos-contract-kind': 'swaggerhub-domain',
     'x-utekos-characterized-against': characterizedCommit,
+    'paths': {},
     'components': {
       schemas: {
         CanonicalEventEnvelope: {
