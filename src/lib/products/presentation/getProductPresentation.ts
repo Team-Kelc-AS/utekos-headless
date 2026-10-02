@@ -49,3 +49,16 @@ export function requireProductPresentation(
 export function getAllProductPresentations(): ProductPresentation[] {
   return [...presentations]
 }
+
+export function getStorefrontProductPresentations(): ProductPresentation[] {
+  return presentations.filter(
+    presentation => presentation.storefrontVisible
+  )
+}
+
+export function isStorefrontVisibleProductHandle(
+  handle: string
+): boolean {
+  const presentation = getProductPresentation(handle)
+  return presentation?.storefrontVisible === true
+}

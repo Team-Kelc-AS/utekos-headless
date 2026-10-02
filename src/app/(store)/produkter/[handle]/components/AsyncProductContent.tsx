@@ -20,7 +20,7 @@ export async function AsyncProductContent({
 }: AsyncProductContentProps) {
   const presentation = getProductPresentation(handle)
 
-  if (!presentation) {
+  if (!presentation || !presentation.storefrontVisible) {
     notFound()
   }
 

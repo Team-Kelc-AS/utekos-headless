@@ -25,6 +25,7 @@ export const productPresentationDefinitions =
       displayName: 'Utekos Svale',
       description:
         'Utekos Svale er yttertøy fra Utekos og finnes i størrelsene Middels, Stor og Større.',
+      storefrontVisible: false,
       options: [
         {
           key: 'size',

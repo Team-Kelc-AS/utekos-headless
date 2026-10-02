@@ -1,6 +1,8 @@
 export {
   getAllProductPresentations,
   getProductPresentation,
+  getStorefrontProductPresentations,
+  isStorefrontVisibleProductHandle,
   requireProductPresentation
 } from './getProductPresentation'
 export type { ProductPresentation } from './getProductPresentation'

@@ -29,6 +29,7 @@ export const productPresentationDefinitionSchema = z
     publicHandle: z.string().check(z.regex(/^[a-z0-9-]+$/)),
     displayName: z.string().check(z.minLength(1)),
     description: z.string().check(z.minLength(40)),
+    storefrontVisible: z._default(z.boolean(), true),
     options: z
       .array(publicProductOptionSchema)
       .check(z.maxLength(3)),

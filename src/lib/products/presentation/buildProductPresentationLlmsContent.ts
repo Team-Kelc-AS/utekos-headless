@@ -1,7 +1,7 @@
-import { getAllProductPresentations } from './getProductPresentation'
+import { getStorefrontProductPresentations } from './getProductPresentation'
 
 export function buildProductPresentationLlmsIndex() {
-  return getAllProductPresentations()
+  return getStorefrontProductPresentations()
     .map(
       presentation =>
         `- [${presentation.displayName}](${presentation.canonicalUrl}): ${presentation.description}`
@@ -10,7 +10,7 @@ export function buildProductPresentationLlmsIndex() {
 }
 
 export function buildProductPresentationLlmsProfiles() {
-  return getAllProductPresentations()
+  return getStorefrontProductPresentations()
     .map(
       presentation => `### ${presentation.displayName}
 

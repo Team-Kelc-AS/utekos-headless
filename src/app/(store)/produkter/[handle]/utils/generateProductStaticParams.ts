@@ -1,7 +1,7 @@
 // src/app/(store)/produkter/[handle]/utils/generateProductStaticParams.ts
 
 import { getProducts } from '@/api/lib/products/getProducts'
-import { getAllProductPresentations } from '@/lib/products/presentation'
+import { getStorefrontProductPresentations } from '@/lib/products/presentation'
 
 export type ProductStaticParam = { handle: string }
 
@@ -10,7 +10,7 @@ type GenerateProductStaticParamsDependencies = {
 }
 
 function getPresentationParams(): ProductStaticParam[] {
-  return getAllProductPresentations().map(presentation => ({
+  return getStorefrontProductPresentations().map(presentation => ({
     handle: presentation.publicHandle
   }))
 }
@@ -55,7 +55,7 @@ export async function generateProductStaticParams(
       .map(product => product.handle?.trim())
       .filter((handle): handle is string => Boolean(handle))
   )
-  const params = getAllProductPresentations()
+  const params = getStorefrontProductPresentations()
     .filter(presentation =>
       liveLookupHandles.has(presentation.publicHandle)
     )

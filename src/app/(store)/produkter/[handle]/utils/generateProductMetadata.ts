@@ -54,7 +54,7 @@ export async function generateProductMetadata(
 ): Promise<Metadata> {
   const presentation = getProductPresentation(handle)
 
-  if (!presentation) {
+  if (!presentation || !presentation.storefrontVisible) {
     return buildMissingProductMetadata()
   }
 

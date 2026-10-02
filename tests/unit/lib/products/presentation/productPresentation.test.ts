@@ -11,9 +11,10 @@ import { TECH_DOWN_PUBLIC_SIZE_DEFINITIONS } from '@/lib/products/techDownSizes'
 import { TECH_DOWN_PUBLIC_SIZES } from '@/lib/products/techDownSizes'
 import { buildProductPresentationLlmsProfiles } from '@/lib/products/presentation/buildProductPresentationLlmsContent'
 
-test('maps the three verified Shopify Svale sizes without inventing product facts', () => {
+test('keeps Svale presentation internal while hiding it from the storefront', () => {
   const presentation = requireProductPresentation('utekos-svale')
   assert.equal(presentation.displayName, 'Utekos Svale')
+  assert.equal(presentation.storefrontVisible, false)
   assert.equal(presentation.material, undefined)
   assert.equal(presentation.audience, undefined)
   for (const [size, slug] of [
@@ -34,11 +35,9 @@ test('maps the three verified Shopify Svale sizes without inventing product fact
       `/produkter/utekos-svale?storrelse=${slug}`
     )
   }
-  const profile = buildProductPresentationLlmsProfiles().split(
-    '### Utekos TechDown'
-  )[0]!
-  assert.match(profile, /Utekos Svale/)
-  assert.doesNotMatch(profile, /Materiale:|Målgruppe:|undefined/)
+  const profile = buildProductPresentationLlmsProfiles()
+  assert.doesNotMatch(profile, /Utekos Svale/)
+  assert.doesNotMatch(profile, /undefined/)
 })
 
 test('validates all public Utekos product presentations', () => {
@@ -54,6 +53,19 @@ test('validates all public Utekos product presentations', () => {
       'utekos-stapper',
       'comfyrobe'
     ]
+  )
+  assert.equal(
+    presentations.find(
+      presentation => presentation.publicHandle === 'utekos-svale'
+    )?.storefrontVisible,
+    false
+  )
+  assert.ok(
+    presentations
+      .filter(
+        presentation => presentation.publicHandle !== 'utekos-svale'
+      )
+      .every(presentation => presentation.storefrontVisible)
   )
   assert.ok(
     presentations.every(
