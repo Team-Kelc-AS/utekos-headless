@@ -27,15 +27,47 @@ overrides:
   encoding-sniffer: ^1.0.2
   # Pin every Next copy to the app line so experimental 16.3 flags
   # (turbopackRustReactCompiler) cannot resolve against an older nested Next.
-  next: 16.3.1
+  next: 16.3.6
   # GHSA-fxqj-rqcc-2cmp (CVE-2026-69153): incomplete sourceMappingURL fix,
   # patched in 8.5.23. A looser ^8.5.12 override resolved next's exact
   # postcss@8.5.23 pin down to vulnerable 8.5.20.
   postcss: ^8.5.23
   rimraf: ^6.1.3
+  # Security floors apply only to vulnerable versions, preserving each major
+  # line (and each brace-expansion API) instead of refreshing unrelated packages.
+  '@ai-sdk/provider-utils@>=4.0.0 <4.0.33': 4.0.33
+  '@grpc/grpc-js@>=1.14.0 <1.14.5': 1.14.5
+  '@hono/node-server@<1.19.15': 1.19.15
+  '@opentelemetry/core@>=2.0.0 <2.8.0': 2.8.0
+  '@xhmikosr/decompress@>=11.0.0 <11.1.4': 11.1.4
+  'axios@>=1.0.0 <1.20.0': 1.20.0
+  'baseline-browser-mapping@>=2.0.0 <2.11.0': 2.11.0
+  'brace-expansion@>=1.0.0 <1.1.21': 1.1.21
+  'brace-expansion@>=2.0.0 <2.1.7': 2.1.7
+  'brace-expansion@>=5.0.0 <5.0.12': 5.0.12
+  'browserslist@>=4.0.0 <4.28.7': 4.28.7
+  'devalue@>=5.0.0 <5.9.3': 5.9.3
+  'engine.io@>=6.6.0 <6.6.10': 6.6.10
+  'fast-uri@>=3.0.0 <3.1.8': 3.1.8
+  'hono@>=4.0.0 <4.13.7': 4.13.7
+  'ip-address@>=10.0.0 <10.7.1': 10.7.1
+  'js-yaml@>=4.0.0 <4.3.2': 4.3.2
+  'nanoid@>=5.0.0 <5.1.16': 5.1.16
+  'path-to-regexp@>=6.0.0 <6.3.0': 6.3.0
+  'piscina@>=4.0.0 <4.9.4': 4.9.4
+  'protobufjs@>=7.0.0 <7.6.5': 7.6.5
+  'qs@>=6.0.0 <6.16.0': 6.16.0
+  'sharp@>=0.35.0 <0.35.4': 0.35.4
+  'smol-toml@>=1.0.0 <1.7.1': 1.7.1
+  'socket.io-parser@>=4.0.0 <4.2.7': 4.2.7
+  # remark-mdx-frontmatter uses the unchanged named parse() export. TOML 3 has
+  # no fixed release; TOML 4 also supports this application's Node 24 runtime.
+  'toml@3.0.0': 4.2.0
+  'undici@>=7.0.0 <7.29.1': 7.29.1
 
 patchedDependencies:
-  next@16.3.1: patches/next@16.3.1.patch
+  '@vercel/otel@2.1.3': patches/@vercel__otel@2.1.3.patch
+  next@16.3.6: patches/next@16.3.6.patch
   react-email@6.6.3: patches/react-email@6.6.3.patch
 
 peerDependencyRules:
