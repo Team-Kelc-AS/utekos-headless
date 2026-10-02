@@ -152,9 +152,9 @@ export const appLogEntryExtrasSchema = z.strictObject({
   consent: z
     .union([
       z.strictObject({
-        analytics: z.enum(['granted', 'granted']),
-        marketing: z.enum(['granted', 'granted']),
-        preferences: z.enum(['granted', 'granted']),
+        analytics: z.enum(['denied', 'granted']),
+        marketing: z.enum(['denied', 'granted']),
+        preferences: z.enum(['denied', 'granted']),
         source: z.enum(['cookiebot', 'operator_policy']),
         version: z.string().min(1).max(64)
       }),
@@ -207,10 +207,10 @@ export const appLogEntryExtrasSchema = z.strictObject({
         .optional()
     })
     .optional(),
-  eventId: z.string().uuid().optional(),
+  eventId: z.uuid().optional(),
   eventName: z.string().min(1).max(120).optional(),
   eventTime: z.string().min(1).max(64).optional(),
-  journeyId: z.string().uuid().optional(),
+  journeyId: z.uuid().optional(),
   pageTitle: z
     .string()
     .min(1)
@@ -223,7 +223,7 @@ export const appLogEntryExtrasSchema = z.strictObject({
     .max(2_048)
     .transform(sanitizeOperationalPathname)
     .optional(),
-  pageViewId: z.string().uuid().optional(),
+  pageViewId: z.uuid().optional(),
   referrerUrl: z
     .string()
     .min(1)

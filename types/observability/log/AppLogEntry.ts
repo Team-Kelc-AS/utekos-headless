@@ -16,10 +16,10 @@ export type AppLogJsonValue =
 
 export type AppLogConsentSnapshot =
   | {
-      analytics: 'granted' 
-      marketing: 'granted' 
-      preferences: 'granted'
-      source: 'operator_policy'
+      analytics: 'denied' | 'granted'
+      marketing: 'denied' | 'granted'
+      preferences: 'denied' | 'granted'
+      source: 'cookiebot' | 'operator_policy'
       version: string
     }
   | {

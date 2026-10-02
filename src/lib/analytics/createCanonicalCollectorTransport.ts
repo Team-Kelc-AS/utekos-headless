@@ -301,7 +301,7 @@ export async function collectCanonicalEventUntilAccepted<
       .__utekosConsentReloading ||
     !hasCollectionConsent(event)
   ) {
-    return false
+    return true
   }
 
   const current = resolveBrowserCollection(event)
@@ -309,12 +309,12 @@ export async function collectCanonicalEventUntilAccepted<
     !current.context.hasResponse ||
     !hasCollectionConsent(current.event)
   ) {
-    return false
+    return true
   }
 
   const status = await sendCanonicalCollectorEvent(
     { ...input, httpAckOnly: true },
     current.event
   )
-  return isCollectorAcceptStatus(status)
+  return !isCollectorAcceptStatus(status)
 }
