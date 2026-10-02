@@ -1,5 +1,6 @@
-import { PurchasesOutlineIcon } from '@/components/utekos-icons'
 'use client'
+
+import { PurchasesOutlineIcon } from '@/components/utekos-icons'
 
 export function LandingCartButton({
   className
