@@ -1,7 +1,7 @@
 export const getCartLineIdsQuery = /* GraphQL */ `
   query getCartLineIds($cartId: ID!) {
     cart(id: $cartId) {
-      lines(first: 250) {
+      lines(first: 30) {
         nodes {
           id
         }

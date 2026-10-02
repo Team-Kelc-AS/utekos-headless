@@ -3,7 +3,6 @@ import {
   TECH_DOWN_PUBLIC_SIZES,
   TECH_DOWN_HIDDEN_SIZES
 } from '@/lib/products/techDownSizes'
-// Path: src/api/constants/index.ts
 export type ModelKey = 'utekos-techdown' | 'utekos-mikrofiber'
 
 export { TAGS } from './cacheTags'
