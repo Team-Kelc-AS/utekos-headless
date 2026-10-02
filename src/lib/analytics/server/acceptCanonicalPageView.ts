@@ -1,4 +1,5 @@
 import type { CookieSettings } from 'capi-param-builder-nodejs'
+import { metric } from '@vercel/functions'
 import { ensureCanonicalMetaBrowserIds } from './ensureCanonicalMetaBrowserIds'
 import {
   normalizeCanonicalPageView,
@@ -99,6 +100,16 @@ export async function acceptCanonicalPageView(
     ) ?
       'accepted'
     : 'duplicate'
+
+  try {
+    metric('meta.page_view.fbc.count', 1, {
+      fbc: event.browser_id?.fbc ? 'present' : 'absent',
+      fbclid: event.click_id?.fbclid ? 'present' : 'absent',
+      status
+    })
+  } catch {
+    // Observability must never affect PageView accept flow.
+  }
 
   console.info(
     '[tracking] page_view store result',

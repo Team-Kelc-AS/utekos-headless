@@ -1,4 +1,5 @@
 import type { ServerEvent } from 'facebook-nodejs-business-sdk'
+import { metric } from '@vercel/functions'
 import {
   readMetaConversionsApiConfig,
   sendMetaServerEvent,
@@ -41,13 +42,63 @@ export function createCanonicalMetaDispatch<
   ): Promise<MetaDispatchReceipt<EventName>> {
     const metaEvent = dependencies.mapEvent(event)
     const config = dependencies.readConfig()
-    const result = await dependencies.sendEvent(metaEvent, config)
+    const startedAt = performance.now()
 
-    return {
-      eventId: event.event_id,
-      eventName: input.eventName,
-      provider: 'meta',
-      result
+    try {
+      const result = await dependencies.sendEvent(metaEvent, config)
+    
+      try {
+        metric(
+          'meta.capi.dispatch.duration_ms',
+          performance.now() - startedAt,
+          {
+            event: input.eventName,
+            outcome: 'success'
+          }
+        )
+      } catch {
+        // Metrics must not affect Meta dispatch.
+      }
+
+      try {
+        metric('meta.capi.dispatch.count', 1, {
+          event: input.eventName,
+          outcome: 'success'
+        })
+      } catch {
+        // Metrics must not affect Meta dispatch.
+      }
+
+      return {
+        eventId: event.event_id,
+        eventName: input.eventName,
+        provider: 'meta',
+        result
+      }
+    } catch (error) {
+      try {
+        metric(
+          'meta.capi.dispatch.duration_ms',
+          performance.now() - startedAt,
+          {
+            event: input.eventName,
+            outcome: 'error'
+          }
+        )
+      } catch {
+        // Metrics must not affect Meta dispatch.
+      }
+
+      try {
+        metric('meta.capi.dispatch.count', 1, {
+          event: input.eventName,
+          outcome: 'error'
+        })
+      } catch {
+        // Metrics must not affect Meta dispatch.
+      }
+
+      throw error
     }
   }
 }
