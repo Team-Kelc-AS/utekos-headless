@@ -2,7 +2,7 @@
   "manifest_version": "canonical-event-manifest.v1",
   "agent_contract": {
     "path": "contracts/events/canonical-event-manifest/v1/canonical-event-context.v2.schema.json",
-    "sha256": "5b0478ef6349082838f0313f3d8b233aa983ab97dd95e667ead561427d212b57"
+    "sha256": "78b1272e19d03fd6d8cddc95ce5f3c9eb7623363c6a7c9ae988bb699a9e1d734"
   },
   "source_of_truth": {
     "statement": "Manifestet er den offisielle Control Plane-outputen, men normative TypeScript/Zod-schemas, contracts og eksplisitte provider mappings forblir source of truth som manifestet genereres fra.",
@@ -57,7 +57,7 @@
       },
       {
         "path": "scripts/contracts/utekosEventDeliveryParameterCatalog.ts",
-        "sha256": "dc8e06515dbbb1a8a968f382088c2d4a62a2a20c450162a0ab30dbee99d6b962"
+        "sha256": "84ca051210b966674930fae1d04690b5688b466b9decbe5d4d87ad6ceadceddd"
       },
       {
         "path": "scripts/contracts/utekosEventsContractCatalog.ts",
@@ -109,15 +109,15 @@
       },
       {
         "path": "src/lib/analytics/canonicalEventEnvelope.ts",
-        "sha256": "39b735b0f1a7e7f84c437ab9094bd28e82d3f79651e6acfa70b3e02dadfe347b"
+        "sha256": "286ef2c50e67f35893ddb93ee5aaef6d443de9b5c21504d9a44b01b58dd2ce15"
       },
       {
         "path": "src/lib/analytics/canonicalSignalContract.ts",
-        "sha256": "f96ba21857bab7af275c5e9bdb065a26c1c98ee738c00cce5a1da4c040d7daf7"
+        "sha256": "41d9a157c44343c3865e897cea92fa2487087a4436cae350a87507027b1c5e18"
       },
       {
         "path": "src/lib/analytics/checkoutConsentSnapshot.ts",
-        "sha256": "6bfccc8376a005d9ea059cb24f5e643e09bd954e14c9a36ee72d41f757e79a1d"
+        "sha256": "1c7d397f4313d76c923a8fefafac9cdddd09c5337f341db9fae4b988591a6b08"
       },
       {
         "path": "src/lib/analytics/checkoutJourneyLinkReason.ts",
@@ -133,7 +133,7 @@
       },
       {
         "path": "src/lib/analytics/eventCatalogSignalContracts.ts",
-        "sha256": "943d5f470d721a9901d97b97106ee4b0971b7c46cc6d3eeec0801fd13f399039"
+        "sha256": "0a2c086d6cafa9c05bc20632e008683c7c127ad52a3f45505050e75ab3460c8f"
       },
       {
         "path": "src/lib/analytics/experimentAssignment.ts",
@@ -181,7 +181,7 @@
       },
       {
         "path": "src/lib/analytics/metaAudience.ts",
-        "sha256": "9c7761d41e80fc513caec441d8efba6d3a45178035df8e79777b9f94d59b6355"
+        "sha256": "24ec0a58603ca8988012cd88b4066bf7c4bbed325e29a164acdbec9f22ecbcc8"
       },
       {
         "path": "src/lib/analytics/metaCommerceEventMapping.ts",
@@ -193,7 +193,7 @@
       },
       {
         "path": "src/lib/analytics/metaNonWebCanonicalEvent.ts",
-        "sha256": "810806233d38f20f248766b923b3793df4b97b8e0f4a61b6f88c5d71a10d2d0f"
+        "sha256": "19871447d5ff7ab8c36279864a3ff39a1e0ac08ae66ea346daa376aedf3fd485"
       },
       {
         "path": "src/lib/analytics/metaNonWebEventContract.ts",
@@ -257,51 +257,51 @@
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalAddToCart.ts",
-        "sha256": "67371f63c22acdbce0d91e7ba4f2af26c9f5b3bb0682e0fa5c6053d36c5ea34f"
+        "sha256": "f4a4884dd78b9378a91b782654605fa8a4f6556936b71fce8621d5b16e7557a4"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalAddToWishlist.ts",
-        "sha256": "d518ee792b7aa9efb7720b5c3ebe150240e0c76a9edd600f1f54f9c946478f0f"
+        "sha256": "787ebe267d42f0738546d1bbf8f4a54dd259b0c934118eb8f14596b5d896e271"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalBeginCheckout.ts",
-        "sha256": "8aa3734722fbffcc74665a5b026682a8900762d4f3e487eaf03a9d38bd6c660c"
+        "sha256": "cdd909cc003e1270a54f4eff06056344a36b4550f13d8bd0c96019c58de736b2"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalFilterApply.ts",
-        "sha256": "8cf8e726931bebe9fba727be7b245bbf600d2fa1054050eb66fbc23eb87c83d4"
+        "sha256": "738c47bd63a6feba0bd0721ff4c4c574435ffaeca14459daee54cac48684a6ec"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalFormError.ts",
-        "sha256": "25607a8b4846fcd3272ff9d831f55c7007e6dc7534d41b12528c5197e6d0c388"
+        "sha256": "8997e334b67fc4cec0da1f9cf8d63e13e130ede3be0ad1a48f08834e202e654a"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalFormStart.ts",
-        "sha256": "4ce556d7ba2da6ad8003f7430f54150aadb0edf921c2a5197b6189062a6c968b"
+        "sha256": "da1090297e06c79b437f1f25e6bf903a1c9ec04f820a7659edeab7b834642b8b"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalFormSubmit.ts",
-        "sha256": "175665525a00448eb8c9e883b7fa7f7cd1cfb2751226925fdf1315870ac55974"
+        "sha256": "ea04231bbc0069b272072710360c2bc777e5036f033da238d1b98851fe8aa1a6"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalGenerateLead.ts",
-        "sha256": "6d332c952453c74334a3261ff5938b38a6cf5effd7abec3cff62b9d134e13c36"
+        "sha256": "3e12365d2a19529d783f7cf57a742840afc3259b8f17c0f512680971ab3ca141"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalHeroInteract.ts",
-        "sha256": "b1685e59c21c3089da3df941433b9aeb26634130819ef4e61537852502db48f6"
+        "sha256": "70681d49dddb2025ed44a3b9cf32d91f0995bfabc05258aacd4e92b95c7893ec"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalInteractWithAccordion.ts",
-        "sha256": "8d2f5899bfe615f4038531cdbf0abdd26f327ecbe100fbcf8d0beb2a64066762"
+        "sha256": "582e9166ee7ac8089e973ddefc458a23ee3e8e66dd01e4475de51f121e9ddf6e"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalOpenQuickView.ts",
-        "sha256": "a88627b687127a87cbabc70b9ecbf7c0eef781e3d2f4df4686033bf0b0c53335"
+        "sha256": "595652cd30ead2db04b0d846da2ecc6b721863b82f6157fe75c126258dc48567"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalPageView.ts",
-        "sha256": "407b17ff2827f13df82fa3584f8154c6abdd816eec402cb4676367414c1311a8"
+        "sha256": "0edec04bbb34fb1d313911a31a0de87a3b172c91d6d0ce5f046dd849a51758aa"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalPurchase.ts",
@@ -309,63 +309,63 @@
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalRemoveFromCart.ts",
-        "sha256": "6fc504aa66ed2d87c43dc14c885dff463f10e1d4e207f91a87abffcde7a6a70d"
+        "sha256": "0a129424a4ff6f7a1950ed9ca04336fbbd60a7bc2536d58d6efc97aeb1a88dfc"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalScrollDepth.ts",
-        "sha256": "c1ea00dc66d6a47fe973aacf03a598481fab7f8b480572112422da7ab813d254"
+        "sha256": "136565b6e5e984f4b66dbc7cd87a3acabce6fa30133d90eca9f8d0687ebfa9a5"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalSearch.ts",
-        "sha256": "48172da123f6b38072aadb9eecffbd87e109c21522e8a8ff40b4adc548edef52"
+        "sha256": "47ae68a51b2890980d37ee757aa49f4757038259b2d9928cbacf040f23307661"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalSelectItem.ts",
-        "sha256": "7c5c4a8378fbfd4ae73dc5e1dd0fb6a7bb5b3166aef83454bc27102d213a6a42"
+        "sha256": "308aaabf6fa5a6413d00d76dfc272aa0dff6ca0e50c84a918859a7d4ecc53c58"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalSelectPromotion.ts",
-        "sha256": "9adfda7d01e50081ac2ac0301e7cee8df3e445ec1280885868c36a285024231d"
+        "sha256": "0ed04b01e3db4552a85295ac91b3a8c4e56f4d28dfc30fd3cb8b8fcedc5c6a65"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalSizeGuideView.ts",
-        "sha256": "c9329e2a001d68cdd55b80593d8395595c0aa9e07e12abf14b929c012f113133"
+        "sha256": "3ffa9184e9906c9df4956b0ab67ad8b567a24884981e705b0a23a82a6c654ea6"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalSortApply.ts",
-        "sha256": "88358808e2fc38e144df7ead96818369ae45ee72e7bb9e442ffc587ebd7fe14b"
+        "sha256": "68059897930e35dea73a0cafd8871a873c60979c5bbd9dc6786efcf8bef1e2ed"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalVariantSelect.ts",
-        "sha256": "a11f3aa7bddf2739d00bcd102c9a77ada47884925d28f51f708a7487d776c368"
+        "sha256": "aa5e470542c80e54b86ef508e712359f3eeff7d3f15c4cd2487acb71197fc488"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalVideoProgress.ts",
-        "sha256": "7cfb1a48b6ffb9e35beb40061890738afe21297d260b42f1274a6fb5286d2ca8"
+        "sha256": "b4bacc0b7c2e0479797b72222ac9d4435f363344e4ce90238467236d4b7d2449"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewCart.ts",
-        "sha256": "3baff1d1db6ed27e45a1feffe17e8a4f1997efc34c44b6aae6b7059b76de2adb"
+        "sha256": "6b5e74676d5161e4390ecfeed836472f05d5eb3ca6a04a75cef2b445cd1b8fc5"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewCategory.ts",
-        "sha256": "767519a875901e1d8be07b2f12f6686a6de9a51fb64a9cfe58d12d1a049e179a"
+        "sha256": "6a37746f19f48c6483c481d55d4e928201a312f04a3436fe2e7607ba147d14f8"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewItem.ts",
-        "sha256": "0ae00b6252497769ca773780bd7896626e1b7089a6c65cc8dd060bb38afc7d15"
+        "sha256": "e98f3519f959875dd6fffb6f43844c9b892f58c76f10be79c07782a45cd5cc2d"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewItemList.ts",
-        "sha256": "751160a6d1da35a6c22bb6af2a924aa0f3a33601dc6a974195c7e5c9c3ef6ff5"
+        "sha256": "e74a8566595870fd084c423c0ca6cad9cd63e8297befe5b60a5594840efd90d1"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewPromotion.ts",
-        "sha256": "cc2b168163f9f7e70377674513c6a27826fa5aa78520c90969296d9053d89302"
+        "sha256": "0b9c0fd8b19702ccb67236482d53f33f1264b77cefe88d3be0507d38c89d3cb8"
       },
       {
         "path": "src/lib/analytics/server/acceptCanonicalViewSearchResults.ts",
-        "sha256": "34ed0e0464ffb993293db6cbb56b4a9935fe37d2357ce6c470447b68dddebb6d"
+        "sha256": "79779d7360bba8bc32b2babf2feb1ca85fb2e61432bbafe2fa0dab6dccbe8a82"
       },
       {
         "path": "src/lib/analytics/server/canonicalProviderDispatchQueue.ts",
@@ -1157,7 +1157,7 @@
       },
       {
         "path": "src/lib/canonical-control/catalogPolicySchema.ts",
-        "sha256": "9db7cd04a5481d402720862f72dab907ae1669b28f7d70b4fb220fe5855f3829"
+        "sha256": "77d3b45eb9725cc642cbd8e0c2901a279339aa645b13c453181f660a3a35326d"
       },
       {
         "path": "src/lib/canonical-control/controlDefinition.ts",
@@ -1427,6 +1427,7 @@
               "vercel_request_context"
             ],
             "allowedUnavailableReasons": [
+              "consent_granted",
               "not_observed",
               "expired"
             ]
@@ -1438,6 +1439,7 @@
               "vercel_request_context"
             ],
             "allowedUnavailableReasons": [
+              "consent_granted",
               "not_observed",
               "expired"
             ]
@@ -1449,6 +1451,7 @@
               "checkout_attribution_snapshot"
             ],
             "allowedUnavailableReasons": [
+              "consent_granted",
               "not_observed",
               "expired"
             ]
@@ -1461,6 +1464,7 @@
               "checkout_attribution_snapshot"
             ],
             "allowedUnavailableReasons": [
+              "consent_granted",
               "no_applicable_click",
               "not_observed",
               "expired"
@@ -1474,6 +1478,7 @@
               "checkout_attribution_snapshot"
             ],
             "allowedUnavailableReasons": [
+              "consent_granted",
               "no_applicable_click",
               "not_observed",
               "expired"
@@ -1487,6 +1492,7 @@
               "checkout_attribution_snapshot"
             ],
             "allowedUnavailableReasons": [
+              "consent_granted",
               "no_applicable_click",
               "not_observed",
               "expired"
@@ -1500,6 +1506,7 @@
               "checkout_attribution_snapshot"
             ],
             "allowedUnavailableReasons": [
+              "consent_granted",
               "not_observed",
               "expired"
             ]
@@ -4778,7 +4785,7 @@
           "runtime_rule_id": null,
           "source": "consent.marketing",
           "requirement": "required",
-          "rule": "Mapped to granted."
+          "rule": "Mapped to granted or granted."
         },
         {
           "provider": "google",
@@ -4788,7 +4795,7 @@
           "runtime_rule_id": null,
           "source": "consent.marketing",
           "requirement": "required",
-          "rule": "Mapped to granted."
+          "rule": "Mapped to granted or granted."
         },
         {
           "provider": "google",
@@ -8044,7 +8051,7 @@
           "runtime_rule_id": null,
           "source": "consent.marketing",
           "requirement": "required",
-          "rule": "Mapped to granted."
+          "rule": "Mapped to granted or granted."
         },
         {
           "provider": "google",
@@ -8054,7 +8061,7 @@
           "runtime_rule_id": null,
           "source": "consent.marketing",
           "requirement": "required",
-          "rule": "Mapped to granted."
+          "rule": "Mapped to granted or granted."
         },
         {
           "provider": "google",
@@ -9415,21 +9422,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -13619,21 +13623,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -16266,21 +16267,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -18494,21 +18492,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -22884,21 +22879,18 @@
                     "analytics": {
                       "type": "string",
                       "enum": [
-                        "granted",
                         "granted"
                       ]
                     },
                     "marketing": {
                       "type": "string",
                       "enum": [
-                        "granted",
                         "granted"
                       ]
                     },
                     "preferences": {
                       "type": "string",
                       "enum": [
-                        "granted",
                         "granted"
                       ]
                     },
@@ -26798,21 +26790,18 @@
                     "analytics": {
                       "type": "string",
                       "enum": [
-                        "granted",
                         "granted"
                       ]
                     },
                     "marketing": {
                       "type": "string",
                       "enum": [
-                        "granted",
                         "granted"
                       ]
                     },
                     "preferences": {
                       "type": "string",
                       "enum": [
-                        "granted",
                         "granted"
                       ]
                     },
@@ -28027,21 +28016,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -34410,21 +34396,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -37779,21 +37762,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -40961,21 +40941,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -44157,21 +44134,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -47297,21 +47271,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -49457,21 +49428,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -51822,21 +51790,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -54185,21 +54150,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -57316,21 +57278,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -59471,21 +59430,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -61625,21 +61581,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -63779,21 +63732,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -65946,21 +65896,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -68105,21 +68052,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -70279,21 +70223,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -72431,21 +72372,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -75000,21 +74938,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -77761,21 +77696,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -80321,21 +80253,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -83533,21 +83462,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -86734,21 +86660,18 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "marketing": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -89886,7 +89809,6 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -89897,7 +89819,6 @@
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -92304,7 +92225,6 @@
                 "analytics": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
@@ -92315,7 +92235,6 @@
                 "preferences": {
                   "type": "string",
                   "enum": [
-                    "granted",
                     "granted"
                   ]
                 },
