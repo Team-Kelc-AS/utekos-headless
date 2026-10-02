@@ -28,7 +28,7 @@ const payload = {
   consent: {
     analytics: 'granted',
     marketing: 'granted',
-    preferences: 'denied',
+    preferences: 'granted',
     source: 'app',
     version: 'app-consent-v1'
   },

@@ -54,9 +54,9 @@ test('does not expose browser identifiers without matching consent', () => {
 
   assert.equal(
     extractBrowserIds(cookie, {
-      analytics: 'denied',
-      marketing: 'denied',
-      preferences: 'denied',
+      analytics: 'granted',
+      marketing: 'granted',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     }),
@@ -72,7 +72,7 @@ test('reads only consented browser identifiers from existing cookies', () => {
     extractBrowserIds(cookie, {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     }),

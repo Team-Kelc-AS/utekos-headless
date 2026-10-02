@@ -3,7 +3,7 @@ import { canonicalPageViewSchema } from './pageViewEvent'
 
 export const provisionalPageViewCaptureStateSchema = z.enum([
   'pending',
-  'denied',
+  'granted',
   'granted'
 ])
 

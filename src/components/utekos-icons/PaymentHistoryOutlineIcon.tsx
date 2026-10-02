@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function PaymentHistoryOutlineIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M4.5 2A3.5 3.5 0 0 0 1 5.5V7a1 1 0 0 0 1 1v10.5A3.5 3.5 0 0 0 5.5 22h13a3.5 3.5 0 0 0 3.5-3.5V8a1 1 0 0 0 1-1V5.5A3.5 3.5 0 0 0 19.5 2zM20 8H4v10.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5zm1-2v-.5A1.5 1.5 0 0 0 19.5 4h-15A1.5 1.5 0 0 0 3 5.5V6zM7.887 10.785a1 1 0 0 1 1.26.642 3 3 0 0 0 5.706 0 1 1 0 1 1 1.902.618 5 5 0 0 1-9.51 0 1 1 0 0 1 .642-1.26" clip-rule="evenodd"/>
+    </svg>
+  )
+}

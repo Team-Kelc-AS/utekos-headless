@@ -300,11 +300,11 @@ test('does not send canonical events without marketing granted', () => {
 
   vm.runInContext(publicScript, runtime.context)
   runtime.window.dataLayer.push({
-    ...canonicalEvent('page_view', 'denied-event'),
+    ...canonicalEvent('page_view', 'granted-event'),
     canonical_event: {
-      ...canonicalEvent('page_view', 'denied-event')
+      ...canonicalEvent('page_view', 'granted-event')
         .canonical_event,
-      consent: { marketing: 'denied' }
+      consent: { marketing: 'granted' }
     }
   })
   runtime.intervals[0]()

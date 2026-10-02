@@ -39,7 +39,7 @@ korrekt:
 - Google-taggen samler automatisk rå brukeroppgitt e-post og
   sender den som URL-parameter til Cloud Run. Request-logger har
   lagret slike verdier også med `gcs=G100`, `npa=1` og
-  denied/default-mønstre i `gcd`. Dette er et P0 personvern- og
+  granted/default-mønstre i `gcd`. Dette er et P0 personvern- og
   datastyringsavvik; full consenttolkning skal bekreftes i Tag
   Assistant fordi kodingen kan endres.
 - `page_view` har tre aktive produsenter. En konservativ
@@ -84,7 +84,7 @@ workspace `106` venter på publisering, eller at server-versjon
 
 ```mermaid
 flowchart TD
-  visitor[Besøkende] --> defaults[Consent defaults: denied]
+  visitor[Besøkende] --> defaults[Consent defaults: granted]
   defaults --> cmp[Cookiebot]
 
   visitor --> loader[cloud.server.utekos.no/gtm.js]
@@ -269,7 +269,7 @@ Navnet «fallback» er derfor misvisende.
 
 ## Consent-flyten
 
-1. `CookieScript` setter Google og Microsoft defaults til denied
+1. `CookieScript` setter Google og Microsoft defaults til granted
    før CMP.
 2. Cookiebot lastes.
 3. `CookiebotConsentProvider` oppdaterer Google Consent Mode v2,
@@ -284,7 +284,7 @@ Navnet «fallback» er derfor misvisende.
 Dette er ikke det samme som at hele flyten er fail-closed.
 Produksjonslogger har vist rå `ep.user_data.email` sammen med
 flere Consent Mode-mønstre, inkludert `G100`/`npa=1` og
-denied/default-lignende `gcd`. Automatisk user-provided data
+granted/default-lignende `gcd`. Automatisk user-provided data
 collection må derfor anses som ukontrollert frem til den er
 deaktivert og re-verifisert i Tag Assistant.
 
@@ -329,7 +329,7 @@ eventflyt.
 - Hendelsene omfattet `page_view`, `scroll`, `form_start`,
   `add_to_cart` og `begin_checkout`. 20 requests hadde
   `gcs=G100`/`npa=1`, mens 33 hadde `gcs=G111`/`npa=0`; flere
-  hadde denied/default-mønster i `gcd`. Dette beviser rå e-post
+  hadde granted/default-mønster i `gcd`. Dette beviser rå e-post
   under ulike storage-/ad-personalization-signaler. Definitiv
   per-hit consenttolkning må gjøres i Tag Assistant fordi
   kodingen kan endres.
@@ -424,7 +424,7 @@ server dersom de skal måles.
 
 | Prioritet | Gap                                                                                                       | Konsekvens                                                                                               | Lukkekriterium                                                                                                    |
 | --------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| P0        | Automatisk UPD sender rå e-post i `/g/collect` og Cloud Logging                                           | Personvern-, policy- og incident-risk; også observert med `G100`/`npa=1` og denied/default-`gcd`-mønster | Auto-UPD av, email redaction på, ingen rå email i granted/denied smoke, retention/deletion besluttet av ansvarlig |
+| P0        | Automatisk UPD sender rå e-post i `/g/collect` og Cloud Logging                                           | Personvern-, policy- og incident-risk; også observert med `G100`/`npa=1` og granted/default-`gcd`-mønster | Auto-UPD av, email redaction på, ingen rå email i granted/granted smoke, retention/deletion besluttet av ansvarlig |
 | P0        | Tre `page_view`-produsenter                                                                               | Oppblåste sesjoner/pageviews og feil beslutningsgrunnlag                                                 | Én eier; ingen mer enn én GA4 pageview per logisk navigation                                                      |
 | P0        | Browser commerce via både sGTM og direkte MP                                                              | Dobbelttelling i GA4 og Ads-importer                                                                     | Browser-events har én transport; direkte MP brukes bare for særskilt server-event                                 |
 | P0        | `add_to_cart` har en tredje direkte MP-produsent uten eksplisitt consent-gate, `event_id` eller audit     | Oppblåst funnel, svakt samtykkebevis og ingen korrelasjon                                                | Server action sender ikke samme event som browser-path; valgt eier har consent, event-ID og audit                 |
@@ -470,7 +470,7 @@ operatørgodkjenning etter [DEPLOYMENT.md](../../DEPLOYMENT.md).
    Legg deretter en server transformation som ekskluderer disse
    fra alle server-tags inntil en eksplisitt, consent-gatet og
    hashet UPD-design er godkjent.
-4. Verifiser både denied og granted state uten å bruke en reell
+4. Verifiser både granted og granted state uten å bruke en reell
    e-postadresse.
 5. Behandle eksisterende Cloud Run request logs som et privacy
    incident. Avklar tilgang, retention og eventuell sletting med

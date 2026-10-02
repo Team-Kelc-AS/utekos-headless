@@ -15,7 +15,7 @@ type AcceptCanonicalSearchInput = {
 
 export type AcceptCanonicalSearchResult =
   | { event_id: string; status: 'accepted' | 'duplicate' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 export async function acceptCanonicalSearch(
   input: AcceptCanonicalSearchInput
@@ -29,7 +29,7 @@ export async function acceptCanonicalSearch(
     event.consent.marketing === 'granted'
 
   if (!hasPermittedPurpose) {
-    return { reason: 'consent_denied', status: 'rejected' }
+    return { reason: 'consent_granted', status: 'rejected' }
   }
 
   const result = await input.store.accept({

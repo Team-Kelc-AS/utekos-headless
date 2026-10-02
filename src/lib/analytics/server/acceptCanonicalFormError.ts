@@ -15,7 +15,7 @@ type AcceptCanonicalFormErrorInput = {
 
 export type AcceptCanonicalFormErrorResult =
   | { event_id: string; status: 'accepted' | 'duplicate' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 export async function acceptCanonicalFormError(
   input: AcceptCanonicalFormErrorInput
@@ -28,7 +28,7 @@ export async function acceptCanonicalFormError(
     event.consent.analytics === 'granted'
 
   if (!hasPermittedPurpose) {
-    return { reason: 'consent_denied', status: 'rejected' }
+    return { reason: 'consent_granted', status: 'rejected' }
   }
 
   const result = await input.store.accept({

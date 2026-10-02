@@ -48,7 +48,7 @@ test('createCanonicalSelectItem accepts full commerce select payload', () => {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },

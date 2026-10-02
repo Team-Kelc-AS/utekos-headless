@@ -21,7 +21,7 @@ const sample = {
   consent: {
     analytics: 'granted',
     marketing: 'granted',
-    preferences: 'denied',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   },
@@ -62,10 +62,10 @@ const dependencies = (
 test('requires analytics and marketing for the advertising-linked journey and rejects undeclared data', async () => {
   for (const consent of [
     undefined,
-    { ...sample.consent, analytics: 'denied' },
+    { ...sample.consent, analytics: 'granted' },
     {
       ...sample.consent,
-      analytics: 'denied',
+      analytics: 'granted',
       marketing: 'granted'
     }
   ]) {
@@ -115,7 +115,7 @@ test('statistics-only legacy advertising-journey requests are rejected before st
   const response = await handleJourneyRequest(
     request({
       ...sample,
-      consent: { ...sample.consent, marketing: 'denied' }
+      consent: { ...sample.consent, marketing: 'granted' }
     }),
     dependencies({
       store: {

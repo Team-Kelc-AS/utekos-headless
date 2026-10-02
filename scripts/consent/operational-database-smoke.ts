@@ -162,7 +162,7 @@ async function setting(name: 'listen_addresses' | 'cron.launch_active_jobs') {
   return row.value
 }
 
-async function denied(
+async function granted(
   run: () => Promise<unknown>,
   code: string
 ) {
@@ -314,7 +314,7 @@ async function main() {
   await check(
     'migration_rolls_back_wholly_on_transaction_failure',
     async () => {
-      await denied(
+      await granted(
         () =>
           asRole('postgres', async connection => {
             await connection.unsafe(migration).simple()
@@ -347,7 +347,7 @@ async function main() {
   await check(
     'reapplying_migration_fails_without_partially_changing_state',
     async () => {
-      await denied(
+      await granted(
         () =>
           asRole('postgres', async connection => {
             await connection.unsafe(migration).simple()
@@ -398,12 +398,12 @@ async function main() {
   await check(
     'approval_required_and_service_role_cannot_self_approve',
     async () => {
-      await denied(
+      await granted(
         () =>
           sql`update ops.operational_statistics_control set enabled=true`,
         '23514'
       )
-      await denied(
+      await granted(
         () =>
           asRole('service_role', async connection => {
             await connection`update ops.operational_statistics_control set enabled=true, approved_at=now(), approved_by='synthetic'`
@@ -416,14 +416,14 @@ async function main() {
     'all_new_tables_and_functions_have_restricted_access',
     async () => {
       for (const role of ['anon', 'authenticated'] as const) {
-        await denied(
+        await granted(
           () =>
             asRole(role, async connection => {
               await connection`select * from ops.daily_operational_traffic`
             }),
           '42501'
         )
-        await denied(
+        await granted(
           () =>
             asRole(role, async connection => {
               await connection`select ops.purge_operational_v1()`
@@ -431,14 +431,14 @@ async function main() {
           '42501'
         )
       }
-      await denied(
+      await granted(
         () =>
           asRole('service_role', async connection => {
             await connection`select * from ops.operational_statistics_control`
           }),
         '42501'
       )
-      await denied(
+      await granted(
         () =>
           asRole('service_role', async connection => {
             await connection`delete from ops.daily_operational_traffic`
@@ -490,7 +490,7 @@ async function main() {
     await check(
       `rejects_operational_ad_or_browser_field_${field}`,
       async () => {
-        await denied(
+        await granted(
           () => insert(`invalid-${field}`, { [field]: value }),
           '23514'
         )
@@ -500,14 +500,14 @@ async function main() {
   await check(
     'rejects_query_strings_and_invalid_policy',
     async () => {
-      await denied(
+      await granted(
         () =>
           insert('invalid-query', {
             route_pathname: '/?fbclid=synthetic'
           }),
         '23514'
       )
-      await denied(
+      await granted(
         () =>
           insert('invalid-policy', {
             data_policy: 'unrecognized'
@@ -552,7 +552,7 @@ async function main() {
   await check(
     'failed_batch_rolls_back_rows_and_aggregate',
     async () => {
-      await denied(
+      await granted(
         () =>
           asRole('service_role', async connection => {
             await insert('batch-valid', {}, connection)

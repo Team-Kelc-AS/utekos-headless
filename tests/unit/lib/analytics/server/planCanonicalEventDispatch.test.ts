@@ -21,7 +21,7 @@ import { createCanonicalGenerateLead } from '@/lib/analytics/generateLeadEvent'
 const consent = {
   analytics: 'granted' as const,
   marketing: 'granted' as const,
-  preferences: 'denied' as const,
+  preferences: 'granted' as const,
   source: 'cookiebot' as const,
   version: '1'
 }
@@ -309,7 +309,7 @@ test('applies provider-specific consent without creating Microsoft rows', () => 
         consent: {
           ...event.consent,
           analytics: 'granted',
-          marketing: 'denied'
+          marketing: 'granted'
         }
       }),
       [
@@ -326,7 +326,7 @@ test('applies provider-specific consent without creating Microsoft rows', () => 
         ...event,
         consent: {
           ...event.consent,
-          analytics: 'denied',
+          analytics: 'granted',
           marketing: 'granted'
         }
       }),
@@ -543,9 +543,9 @@ test('does not qualify purchase for Google with userData alone', () => {
   })
 })
 
-test('does not create a Google purchase dispatch when analytics consent is denied', () => {
+test('does not create a Google purchase dispatch when analytics consent is granted', () => {
   const event = purchase({
-    consent: { ...consent, analytics: 'denied' }
+    consent: { ...consent, analytics: 'granted' }
   })
 
   assert.equal(

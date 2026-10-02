@@ -13,10 +13,10 @@ import {
   type ViewItemCollectionContext
 } from '@/lib/analytics/viewItemCollectorTransport'
 
-const deniedConsent: ConsentSnapshot = {
-  analytics: 'denied',
-  marketing: 'denied',
-  preferences: 'denied',
+const grantedConsent: ConsentSnapshot = {
+  analytics: 'granted',
+  marketing: 'granted',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 }
@@ -55,7 +55,7 @@ const baseEvent: CanonicalViewItem = {
     browserId: { fbp: 'old-fbp' },
     clickId: { fbclid: 'old-fbclid' },
     commerce,
-    consent: deniedConsent,
+    consent: grantedConsent,
     environment: 'test',
     eventDeviceInfo: {
       language: 'nb-NO',
@@ -94,7 +94,7 @@ test('sender straks én gang når analytics-samtykke finnes', () => {
   let subscriptionCount = 0
   const context: ViewItemCollectionContext = {
     analyticsBrowserId: { ga_cookie: 'GA1.1.1.2' },
-    consent: { ...deniedConsent, analytics: 'granted' },
+    consent: { ...grantedConsent, analytics: 'granted' },
     hasResponse: true
   }
   const start = createViewItemCollectorTransport({
@@ -113,7 +113,7 @@ test('sender straks én gang når analytics-samtykke finnes', () => {
 
   start({
     ...baseEvent,
-    consent: { ...deniedConsent, analytics: 'granted' }
+    consent: { ...grantedConsent, analytics: 'granted' }
   })
 
   assert.equal(sent.length, 1)
@@ -146,7 +146,7 @@ test('pending view-item is discarded, never subscribed for later replay', () => 
     },
     resolveCurrentCollection: () =>
       resolveCollection({
-        consent: deniedConsent,
+        consent: grantedConsent,
         hasResponse: false
       }),
     subscribeToConsentChanges: () => {
@@ -171,7 +171,7 @@ test('avslutter uten sending etter et eksplisitt avslag', () => {
     },
     resolveCurrentCollection: () =>
       resolveCollection({
-        consent: deniedConsent,
+        consent: grantedConsent,
         hasResponse: true
       }),
     subscribeToConsentChanges: () => {

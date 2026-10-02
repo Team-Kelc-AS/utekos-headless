@@ -17,8 +17,8 @@ const duplicateAcceptance = {
 }
 
 function pageView(
-  analytics: 'denied' | 'granted' = 'granted',
-  marketing: 'denied' | 'granted' = 'denied'
+  analytics: 'granted' | 'granted' = 'granted',
+  marketing: 'granted' | 'granted' = 'granted'
 ) {
   return {
     schema_version: 1,
@@ -33,7 +33,7 @@ function pageView(
     consent: {
       analytics,
       marketing,
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     }
@@ -133,10 +133,10 @@ test('returns and warning-logs a validation error for a non-canonical event', as
   assert.equal(warnings.length, 1)
 })
 
-test('does not persist a fully denied event', async () => {
+test('does not persist a fully granted event', async () => {
   let writes = 0
   const response = await handleCanonicalPageViewRequest(
-    request(JSON.stringify(pageView('denied', 'denied'))),
+    request(JSON.stringify(pageView('granted', 'granted'))),
     dependencies(async () => {
       writes += 1
       return insertedAcceptance
@@ -261,10 +261,10 @@ test('releases the provisional row only after canonical acceptance', async () =>
   ])
 })
 
-test('keeps a denied provisional row for bounded diagnostics', async () => {
+test('keeps a granted provisional row for bounded diagnostics', async () => {
   let releases = 0
   const response = await handleCanonicalPageViewRequest(
-    request(JSON.stringify(pageView('denied', 'denied'))),
+    request(JSON.stringify(pageView('granted', 'granted'))),
     {
       ...dependencies(),
       provisionalStore: {

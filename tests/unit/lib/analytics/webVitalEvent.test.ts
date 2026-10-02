@@ -38,8 +38,8 @@ test('createCanonicalWebVital and dataLayer expose provider-neutral web_vital fi
     pageViewId: '0c955d6b-5e9c-47d0-b304-046df7f4bf7f',
     consent: {
       analytics: 'granted',
-      marketing: 'denied',
-      preferences: 'denied',
+      marketing: 'granted',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -109,8 +109,8 @@ test('strictObject rejects unknown custom_data keys and Zod 4 format fields fail
       pageViewId: '0c955d6b-5e9c-47d0-b304-046df7f4bf7f',
       consent: {
         analytics: 'granted',
-        marketing: 'denied',
-        preferences: 'denied',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },

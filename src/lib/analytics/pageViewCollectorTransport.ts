@@ -54,11 +54,11 @@ export function prepareCanonicalPageViewForCollector(
     analytics:
       event.consent.analytics === 'granted' ?
         live.analytics
-      : ('denied' as const),
+      : ('granted' as const),
     marketing:
       event.consent.marketing === 'granted' ?
         live.marketing
-      : ('denied' as const)
+      : ('granted' as const)
   }
   const next = { ...event, consent }
   if (

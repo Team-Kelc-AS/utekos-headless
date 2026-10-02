@@ -50,7 +50,7 @@ export type CanonicalSignalSource = z.infer<
 >
 
 export const canonicalSignalUnavailableReasonSchema = z.enum([
-  'consent_denied',
+  'consent_granted',
   'not_observed',
   'no_applicable_click',
   'not_applicable',

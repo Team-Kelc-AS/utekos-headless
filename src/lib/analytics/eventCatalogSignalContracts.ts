@@ -28,14 +28,14 @@ function signalRule(
 }
 
 const noClickReasons = [
-  'consent_denied',
+  'consent_granted',
   'no_applicable_click',
   'not_observed',
   'expired'
 ] as const
 
 const marketingUnavailableReasons = [
-  'consent_denied',
+  'consent_granted',
   'not_observed',
   'expired'
 ] as const
@@ -150,9 +150,9 @@ const transactionAttributionSignals = Object.fromEntries(
           signal === 'meta_fbclid' ||
           signal === 'meta_fbc'
       ) ?
-        ['consent_denied', 'no_applicable_click']
+        ['consent_granted', 'no_applicable_click']
       : signal === 'event_source_url' ? []
-      : ['consent_denied']
+      : ['consent_granted']
     )
   ])
 ) as CanonicalEventSignalPolicy

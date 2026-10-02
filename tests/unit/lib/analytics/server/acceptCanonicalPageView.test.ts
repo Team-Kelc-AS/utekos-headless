@@ -15,8 +15,8 @@ const duplicateAcceptance = {
 }
 
 function pageView(
-  analytics: 'denied' | 'granted',
-  marketing: 'denied' | 'granted'
+  analytics: 'granted' | 'granted',
+  marketing: 'granted' | 'granted'
 ) {
   return {
     schema_version: 1,
@@ -32,14 +32,14 @@ function pageView(
     consent: {
       analytics,
       marketing,
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     }
   }
 }
 
-test('rejects fully denied events without calling storage', async () => {
+test('rejects fully granted events without calling storage', async () => {
   let calls = 0
   const store: CanonicalPageViewStore = {
     accept: async () => {
@@ -49,14 +49,14 @@ test('rejects fully denied events without calling storage', async () => {
   }
 
   const result = await acceptCanonicalPageView({
-    payload: pageView('denied', 'denied'),
+    payload: pageView('granted', 'granted'),
     requestContext: {},
     store
   })
 
   assert.deepEqual(result, {
     cookiesToSet: [],
-    reason: 'consent_denied',
+    reason: 'consent_granted',
     status: 'rejected'
   })
   assert.equal(calls, 0)
@@ -134,7 +134,7 @@ test('reports an idempotent duplicate returned by storage', async () => {
   }
 
   const result = await acceptCanonicalPageView({
-    payload: pageView('granted', 'denied'),
+    payload: pageView('granted', 'granted'),
     requestContext: {},
     store
   })

@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function QRScanIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M20.5 2A1.5 1.5 0 0 1 22 3.5V6a1 1 0 1 0 2 0V3.5A3.5 3.5 0 0 0 20.5 0H18a1 1 0 1 0 0 2zM2 20.5A1.5 1.5 0 0 0 3.5 22H6a1 1 0 1 1 0 2H3.5A3.5 3.5 0 0 1 0 20.5V18a1 1 0 1 1 2 0zM18 22h2.5a1.5 1.5 0 0 0 1.5-1.5V18a1 1 0 1 1 2 0v2.5a3.5 3.5 0 0 1-3.5 3.5H18a1 1 0 1 1 0-2M3.5 2A1.5 1.5 0 0 0 2 3.5V6a1 1 0 0 1-2 0V3.5A3.5 3.5 0 0 1 3.5 0H6a1 1 0 0 1 0 2zM7 5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 2h2v2H7zm-2 8a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2zm4 0H7v2h2zm6-10a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 2h2v2h-2zm.5 7.25a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0m2.25 1.25a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5M19 17.75a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0M14.25 19a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5" clip-rule="evenodd"/>
+    </svg>
+  )
+}

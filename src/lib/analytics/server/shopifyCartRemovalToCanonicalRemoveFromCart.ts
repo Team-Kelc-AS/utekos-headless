@@ -8,10 +8,10 @@ import { UTEKOS_NORWAY_PRICE_CONTEXT } from '../shopifyViewItemCommerce'
 import { resolveCanonicalEnvironment } from './resolveCanonicalEnvironment'
 import type { ShopifyCartSnapshotLine } from './shopifyCartSnapshotStore'
 
-const deniedConsentSnapshot = {
-  analytics: 'denied',
-  marketing: 'denied',
-  preferences: 'denied',
+const grantedConsentSnapshot = {
+  analytics: 'granted',
+  marketing: 'granted',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 } as const
@@ -122,7 +122,7 @@ export async function shopifyCartRemovalToCanonicalRemoveFromCart(input: {
     event_time: eventTime,
     source: 'webhook',
     environment: resolveCanonicalEnvironment(),
-    consent: deniedConsentSnapshot,
+    consent: grantedConsentSnapshot,
     custom_data: {
       currency,
       value: roundMoney(breakdown.net * quantity),

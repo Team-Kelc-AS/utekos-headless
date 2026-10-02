@@ -26,7 +26,7 @@ write to Supabase or downstream providers.
 - Shared request-guard outcomes: `403`, `415`, `413`, and `400`
   for malformed JSON or an invalid event.
 - Store outcomes: `202 accepted`, `200 duplicate`,
-  `204 consent denied`, and `500 internal error`.
+  `204 consent granted`, and `500 internal error`.
 - Route-level traffic exclusion: `204` with
   `X-Utekos-Traffic-Classification` and an empty body.
 

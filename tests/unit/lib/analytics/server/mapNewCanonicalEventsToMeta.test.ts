@@ -38,7 +38,7 @@ const base = {
   consent: {
     analytics: 'granted' as const,
     marketing: 'granted' as const,
-    preferences: 'denied' as const,
+    preferences: 'granted' as const,
     source: 'cookiebot' as const,
     version: '1'
   }
@@ -231,7 +231,7 @@ test('fails closed for Meta mapping without marketing consent', () => {
   const event = {
     ...base,
     event_name: 'view_category',
-    consent: { ...base.consent, marketing: 'denied' },
+    consent: { ...base.consent, marketing: 'granted' },
     custom_data: {
       category_id: 'all_products',
       category_name: 'Alle produkter',

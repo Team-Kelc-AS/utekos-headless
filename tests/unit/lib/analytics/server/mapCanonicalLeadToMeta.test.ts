@@ -17,7 +17,7 @@ function lead(): CanonicalGenerateLead {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -103,7 +103,7 @@ test('omits a legacy non-positive lead value from Meta', () => {
 
 test('fails closed without marketing consent', () => {
   const event = lead()
-  event.consent.marketing = 'denied'
+  event.consent.marketing = 'granted'
 
   assert.throws(
     () => mapCanonicalLeadToMeta(event),

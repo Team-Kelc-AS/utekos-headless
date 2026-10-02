@@ -202,13 +202,13 @@ const googleServer = [
     'consent.adUserData',
     'required',
     'consent.marketing',
-    'Mapped to granted or denied.'
+    'Mapped to granted or granted.'
   ),
   parameter(
     'consent.adPersonalization',
     'required',
     'consent.marketing',
-    'Mapped to granted or denied.'
+    'Mapped to granted or granted.'
   ),
   parameter(
     'userData.userIdentifiers[].hashedEmail',

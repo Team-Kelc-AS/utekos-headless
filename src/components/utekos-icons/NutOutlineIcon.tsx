@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function NutOutlineIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M1.423 11a2 2 0 0 0 0 2l4.422 7.66a2 2 0 0 0 1.732 1h8.846a2 2 0 0 0 1.732-1L22.577 13a2 2 0 0 0 0-2l-4.422-7.66a2 2 0 0 0-1.732-1H7.577a2 2 0 0 0-1.732 1zm1.732 1 4.422-7.66h8.846L20.845 12l-4.422 7.66H7.577zM9 12a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-5a5 5 0 1 0 0 10 5 5 0 0 0 0-10" clip-rule="evenodd"/>
+    </svg>
+  )
+}

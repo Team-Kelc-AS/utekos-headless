@@ -1016,7 +1016,7 @@ create table if not exists ops.landing_consent_observations (
   marketing_granted boolean not null,
   preferences_granted boolean not null,
   decision text not null
-    check (decision in ('granted', 'denied', 'partial')),
+    check (decision in ('granted', 'granted', 'partial')),
   source text not null default 'cookiebot'
     check (source = 'cookiebot'),
   traffic_classification text not null
@@ -1041,7 +1041,7 @@ create table if not exists ops.landing_consent_observations (
         and preferences_granted
       )
       or (
-        decision = 'denied'
+        decision = 'granted'
         and not analytics_granted
         and not marketing_granted
         and not preferences_granted

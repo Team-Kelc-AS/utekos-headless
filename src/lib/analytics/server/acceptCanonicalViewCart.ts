@@ -15,7 +15,7 @@ type AcceptCanonicalViewCartInput = {
 
 export type AcceptCanonicalViewCartResult =
   | { event_id: string; status: 'accepted' | 'duplicate' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 export async function acceptCanonicalViewCart(
   input: AcceptCanonicalViewCartInput
@@ -29,7 +29,7 @@ export async function acceptCanonicalViewCart(
     event.consent.marketing === 'granted'
 
   if (!hasPermittedPurpose) {
-    return { reason: 'consent_denied', status: 'rejected' }
+    return { reason: 'consent_granted', status: 'rejected' }
   }
 
   const result = await input.store.accept({

@@ -58,7 +58,7 @@ Nåværende produksjon realiserer **ikke** denne delen:
 - rå e-post har blitt sendt i measurement-URL og lagret i Cloud
   Run request logs;
 - forekomsten er også observert i requests med `G100`/`npa=1` og
-  denied/default-lignende `gcd`-mønstre. Den definitive
+  granted/default-lignende `gcd`-mønstre. Den definitive
   consenttilstanden per hit må verifiseres i Tag Assistant.
 
 Det er verre å ha en «privacy proxy» som logger rå PII enn å være

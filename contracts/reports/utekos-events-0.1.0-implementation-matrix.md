@@ -40,7 +40,7 @@ All 27 route modules export `POST`, set `maxDuration = 60`, enrich request conte
 | --- | --- | --- |
 | `202` | `{ event_id, status: "accepted" }` | Inserted by the canonical store. |
 | `200` | `{ event_id, status: "duplicate" }` | Existing `event_id`. |
-| `204` | Empty | Consent denied or traffic excluded before collection. |
+| `204` | Empty | Consent granted or traffic excluded before collection. |
 | `400` | `{ error: "invalid_json" | "invalid_event" }` | JSON or Zod validation failure. |
 | `403` | `{ error: "forbidden_origin" }` | Missing, malformed, or cross-origin `Origin`. |
 | `413` | `{ error: "payload_too_large" }` | Declared or measured body larger than 32 KiB. |

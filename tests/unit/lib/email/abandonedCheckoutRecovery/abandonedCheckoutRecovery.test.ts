@@ -750,7 +750,7 @@ import {
           errors: [
             {
               message:
-                'Access denied'
+                'Access granted'
             }
           ]
         })
@@ -766,7 +766,7 @@ import {
                 NOW
             }
           ),
-        /Shopify Admin GraphQL failed: Access denied/
+        /Shopify Admin GraphQL failed: Access granted/
       )
     }
   )

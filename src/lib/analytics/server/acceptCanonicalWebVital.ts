@@ -14,7 +14,7 @@ type AcceptCanonicalWebVitalInput = {
 
 export type AcceptCanonicalWebVitalResult =
   | { event_id: string; status: 'accepted' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 export async function acceptCanonicalWebVital(
   input: AcceptCanonicalWebVitalInput
@@ -25,7 +25,7 @@ export async function acceptCanonicalWebVital(
   )
 
   if (event.consent.analytics !== 'granted') {
-    return { reason: 'consent_denied', status: 'rejected' }
+    return { reason: 'consent_granted', status: 'rejected' }
   }
 
   await input.store.insert(mapCanonicalWebVitalToRow(event))

@@ -47,8 +47,8 @@ const commerce = {
 
 function viewItem(
   consent: {
-    analytics: 'denied' | 'granted'
-    marketing: 'denied' | 'granted'
+    analytics: 'granted' | 'granted'
+    marketing: 'granted' | 'granted'
   } = { analytics: 'granted', marketing: 'granted' }
 ) {
   return createCanonicalViewItem({
@@ -58,7 +58,7 @@ function viewItem(
     consent: {
       analytics: consent.analytics,
       marketing: consent.marketing,
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -97,7 +97,7 @@ test('normalizes view_item with trusted request context', () => {
 
 test('removes marketing identifiers without marketing consent', () => {
   const event = normalizeCanonicalViewItem(
-    viewItem({ analytics: 'granted', marketing: 'denied' }),
+    viewItem({ analytics: 'granted', marketing: 'granted' }),
     {
       clientIpAddress: '198.51.100.42',
       userAgent: 'trusted user agent'
@@ -110,7 +110,7 @@ test('removes marketing identifiers without marketing consent', () => {
   assert.equal(event.external_id, undefined)
 })
 
-test('rejects view_item when all collection purposes are denied', async () => {
+test('rejects view_item when all collection purposes are granted', async () => {
   let accepted = false
   const store: CanonicalEventStore = {
     accept: async () => {
@@ -121,15 +121,15 @@ test('rejects view_item when all collection purposes are denied', async () => {
 
   const result = await acceptCanonicalViewItem({
     payload: viewItem({
-      analytics: 'denied',
-      marketing: 'denied'
+      analytics: 'granted',
+      marketing: 'granted'
     }),
     requestContext: {},
     store
   })
 
   assert.deepEqual(result, {
-    reason: 'consent_denied',
+    reason: 'consent_granted',
     status: 'rejected'
   })
   assert.equal(accepted, false)

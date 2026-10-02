@@ -17,9 +17,9 @@ test('persists the Klarna order id and consented attribution only', () => {
         ad_id: '1203'
       },
       consent: {
-        analytics: 'denied',
+        analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },

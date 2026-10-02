@@ -10,9 +10,9 @@ const envelope = {
   source: 'web' as const,
   environment: 'test' as const,
   consent: {
-    analytics: 'denied' as const,
-    marketing: 'denied' as const,
-    preferences: 'denied' as const,
+    analytics: 'granted' as const,
+    marketing: 'granted' as const,
+    preferences: 'granted' as const,
     source: 'cookiebot' as const,
     version: '1'
   }

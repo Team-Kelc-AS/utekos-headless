@@ -4,9 +4,9 @@ import { NextRequest } from 'next/server'
 import { POST } from '@/app/api/meta/parameter-context/route'
 
 const consent = {
-  analytics: 'denied',
+  analytics: 'granted',
   marketing: 'granted',
-  preferences: 'denied',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 } as const
@@ -108,13 +108,13 @@ test('rejects cross-origin and non-consented parameter requests', async () => {
       'https://attacker.example'
     )
   )
-  const denied = await POST(
+  const granted = await POST(
     request({
-      consent: { ...consent, marketing: 'denied' },
+      consent: { ...consent, marketing: 'granted' },
       page_url: 'http://localhost:3000/'
     })
   )
 
   assert.equal(crossOrigin.status, 403)
-  assert.equal(denied.status, 400)
+  assert.equal(granted.status, 400)
 })

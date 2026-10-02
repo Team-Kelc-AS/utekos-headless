@@ -32,14 +32,14 @@ test('granted consent gates navigation, delayed events and checkout', () => {
   const consent = {
     analytics: 'granted',
     marketing: 'granted',
-    preferences: 'denied',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   } as const
-  const denied = {
+  const granted = {
     ...consent,
-    analytics: 'denied' as const,
-    marketing: 'denied' as const
+    analytics: 'granted' as const,
+    marketing: 'granted' as const
   }
   Object.defineProperty(globalThis, 'window', {
     value: host,
@@ -79,7 +79,7 @@ test('granted consent gates navigation, delayed events and checkout', () => {
       undefined
     )
     assert.equal(
-      enrichBrowserMetaAudience({ consent: denied })
+      enrichBrowserMetaAudience({ consent: granted })
         .meta_audience,
       undefined
     )
@@ -105,23 +105,23 @@ test('PageView final preparation removes a segment after either purpose is withd
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     }
   })
   for (const consent of [
     {
-      analytics: 'denied' as const,
+      analytics: 'granted' as const,
       marketing: 'granted' as const,
-      preferences: 'denied' as const,
+      preferences: 'granted' as const,
       source: 'cookiebot' as const,
       version: '1'
     },
     {
       analytics: 'granted' as const,
-      marketing: 'denied' as const,
-      preferences: 'denied' as const,
+      marketing: 'granted' as const,
+      preferences: 'granted' as const,
       source: 'cookiebot' as const,
       version: '1'
     }

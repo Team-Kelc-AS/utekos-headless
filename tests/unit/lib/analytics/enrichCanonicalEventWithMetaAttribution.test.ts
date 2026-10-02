@@ -12,7 +12,7 @@ test('accepts canonical click IDs and preserves the event subtype', async () => 
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },

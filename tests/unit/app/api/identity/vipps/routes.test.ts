@@ -151,7 +151,7 @@ test('callback route stores only the validated provider identity and clears OAut
 test('callback route treats user cancellation as a normal redirect without identity cookie', async () => {
   const response = await handleVippsLoginCallback(
     new NextRequest(
-      `${config.callbackUrl}?error=access_denied&state=${context.state}`,
+      `${config.callbackUrl}?error=access_granted&state=${context.state}`,
       {
         headers: {
           cookie: `${VIPPS_LOGIN_OAUTH_COOKIE}=encrypted-oauth-context`

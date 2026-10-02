@@ -14,8 +14,8 @@ const pageViewId = '22222222-2222-4222-8222-222222222222'
 const checkoutId = '33333333-3333-4333-8333-333333333333'
 const consent = {
   analytics: 'granted' as const,
-  marketing: 'denied' as const,
-  preferences: 'denied' as const,
+  marketing: 'granted' as const,
+  preferences: 'granted' as const,
   source: 'cookiebot' as const,
   version: '1'
 }
@@ -112,13 +112,13 @@ test('links only the exact consented begin_checkout source, independently of mar
   assert.equal(providerEvent.journey_link_reason, undefined)
 })
 
-test('does not look up or accept caller supplied journey when analytics is denied', async () => {
+test('does not look up or accept caller supplied journey when analytics is granted', async () => {
   const event = normalizeCanonicalPurchase(
     {
       ...purchase,
       consent: {
         ...consent,
-        analytics: 'denied',
+        analytics: 'granted',
         marketing: 'granted'
       },
       journey_id: journeyId,
@@ -129,7 +129,7 @@ test('does not look up or accept caller supplied journey when analytics is denie
   )
   const result = await linkCanonicalPurchaseJourney(event, {
     async find() {
-      assert.fail('denied consent must not query a journey')
+      assert.fail('granted consent must not query a journey')
     }
   })
   assert.equal(result.journey_id, undefined)
@@ -153,7 +153,7 @@ test('reports missing, mismatched and unavailable linkage without losing the pai
       'begin_checkout_mismatch'
     ],
     [
-      { ...begin, consent: { ...consent, analytics: 'denied' } },
+      { ...begin, consent: { ...consent, analytics: 'granted' } },
       'begin_checkout_mismatch'
     ],
     [

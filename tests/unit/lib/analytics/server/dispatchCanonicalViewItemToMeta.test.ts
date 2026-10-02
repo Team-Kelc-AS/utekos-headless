@@ -12,7 +12,7 @@ function viewItem(): CanonicalViewItem {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -85,7 +85,7 @@ test('does not read credentials or send when mapping fails', async () => {
   await assert.rejects(
     dispatchCanonicalViewItemToMeta(viewItem(), {
       mapEvent: () => {
-        throw new Error('marketing consent denied')
+        throw new Error('marketing consent granted')
       },
       readConfig: () => {
         readConfigCalled = true
@@ -99,7 +99,7 @@ test('does not read credentials or send when mapping fails', async () => {
         return { eventsReceived: 1, messages: [] }
       }
     }),
-    /marketing consent denied/
+    /marketing consent granted/
   )
 
   assert.equal(readConfigCalled, false)

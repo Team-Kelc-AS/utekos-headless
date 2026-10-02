@@ -84,14 +84,14 @@ export function checkoutProgressCanonicalEnvelope(
       marketing:
         marketingGranted ?
           ('granted' as const)
-        : ('denied' as const),
+        : ('granted' as const),
       preferences:
         (
           beginCheckout.consent.preferences === 'granted' &&
           observation.privacy.preferencesProcessingAllowed
         ) ?
           ('granted' as const)
-        : ('denied' as const),
+        : ('granted' as const),
       source: beginCheckout.consent.source,
       version: beginCheckout.consent.version
     },

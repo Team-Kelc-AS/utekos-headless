@@ -36,7 +36,7 @@ test('no marketing consent means no URL extraction or storage access', () => {
   )
 })
 
-test('denied access does not even obtain browser storage handles', () => {
+test('granted access does not even obtain browser storage handles', () => {
   let accesses = 0
   const previous = Object.getOwnPropertyDescriptor(
     globalThis,

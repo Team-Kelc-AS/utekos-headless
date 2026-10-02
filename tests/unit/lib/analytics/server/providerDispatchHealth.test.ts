@@ -7,7 +7,7 @@ import {
   type ProviderDispatchHealthSnapshot
 } from '@/lib/analytics/server/providerDispatchHealth'
 
-function viewCategory(marketing: 'denied' | 'granted') {
+function viewCategory(marketing: 'granted' | 'granted') {
   return createCanonicalViewCategory({
     environment: 'test',
     eventId:
@@ -21,7 +21,7 @@ function viewCategory(marketing: 'denied' | 'granted') {
     consent: {
       analytics: marketing,
       marketing,
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -35,7 +35,7 @@ function viewCategory(marketing: 'denied' | 'granted') {
 
 function unhealthySnapshot(): ProviderDispatchHealthSnapshot {
   const eligibleEvent = viewCategory('granted')
-  const deniedEvent = viewCategory('denied')
+  const grantedEvent = viewCategory('granted')
 
   return {
     ackSampleSize: 12,
@@ -59,9 +59,9 @@ function unhealthySnapshot(): ProviderDispatchHealthSnapshot {
         providers: ['google']
       },
       {
-        eventId: deniedEvent.event_id,
-        eventName: deniedEvent.event_name,
-        payload: deniedEvent,
+        eventId: grantedEvent.event_id,
+        eventName: grantedEvent.event_name,
+        payload: grantedEvent,
         providers: []
       },
       {

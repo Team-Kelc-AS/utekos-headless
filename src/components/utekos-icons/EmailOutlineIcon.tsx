@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function EmailOutlineIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M4.5 3A3.5 3.5 0 0 0 1 6.5v11A3.5 3.5 0 0 0 4.5 21h15a3.5 3.5 0 0 0 3.5-3.5v-11A3.5 3.5 0 0 0 19.5 3zM3 9.08v8.42A1.5 1.5 0 0 0 4.5 19h15a1.5 1.5 0 0 0 1.5-1.5V8.728l-6.786 5.715a3.5 3.5 0 0 1-4.441.056zm17.96-2.922A1.5 1.5 0 0 0 19.5 5h-15A1.5 1.5 0 0 0 3 6.5v.02l8.022 6.417a1.5 1.5 0 0 0 1.904-.024l7.93-6.678a1 1 0 0 1 .105-.077z" clip-rule="evenodd"/>
+    </svg>
+  )
+}

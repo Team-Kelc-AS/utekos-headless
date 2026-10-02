@@ -3,10 +3,10 @@ import test from 'node:test'
 import { applyCanonicalCollectionContext } from '@/lib/analytics/applyCanonicalCollectionContext'
 import { sendCanonicalCollectorEvent } from '@/lib/analytics/createCanonicalCollectorTransport'
 
-const deniedConsent = {
-  analytics: 'denied' as const,
-  marketing: 'denied' as const,
-  preferences: 'denied' as const,
+const grantedConsent = {
+  analytics: 'granted' as const,
+  marketing: 'granted' as const,
+  preferences: 'granted' as const,
   source: 'cookiebot' as const,
   version: '1'
 }
@@ -18,24 +18,24 @@ const experiment = {
 
 test('adds the experiment only to analytics-consented collection', () => {
   const event = {
-    consent: deniedConsent,
+    consent: grantedConsent,
     event_name: 'add_to_cart',
     experiment
   }
 
   const granted = applyCanonicalCollectionContext(event, {
-    consent: { ...deniedConsent, analytics: 'granted' },
+    consent: { ...grantedConsent, analytics: 'granted' },
     experiment,
     hasResponse: true
   })
-  const denied = applyCanonicalCollectionContext(event, {
-    consent: deniedConsent,
+  const granted = applyCanonicalCollectionContext(event, {
+    consent: grantedConsent,
     experiment,
     hasResponse: true
   })
 
   assert.deepEqual(granted.experiment, experiment)
-  assert.equal(denied.experiment, undefined)
+  assert.equal(granted.experiment, undefined)
 })
 
 test('uses a neutral fallback after a network-level collector failure', async () => {
@@ -61,7 +61,7 @@ test('uses a neutral fallback after a network-level collector failure', async ()
       },
       {
         consent: {
-          ...deniedConsent,
+          ...grantedConsent,
           analytics: 'granted' as const
         }
       }
@@ -113,7 +113,7 @@ test('queues web vitals on the neutral beacon endpoint when available', async ()
       },
       {
         consent: {
-          ...deniedConsent,
+          ...grantedConsent,
           analytics: 'granted' as const
         },
         event_name: 'web_vital'
@@ -140,7 +140,7 @@ test('queues web vitals on the neutral beacon endpoint when available', async ()
     JSON.parse((await beacons[0]?.body.text()) ?? '{}'),
     {
       consent: {
-        ...deniedConsent,
+        ...grantedConsent,
         analytics: 'granted' as const
       },
       event_name: 'web_vital'
@@ -179,7 +179,7 @@ test('http ack collection skips sendBeacon and returns the collector status', as
       },
       {
         consent: {
-          ...deniedConsent,
+          ...grantedConsent,
           analytics: 'granted' as const
         }
       }
@@ -228,7 +228,7 @@ test('falls back to fetch when the beacon cannot queue the event', async () => {
       },
       {
         consent: {
-          ...deniedConsent,
+          ...grantedConsent,
           analytics: 'granted' as const
         },
         event_name: 'web_vital'
@@ -279,7 +279,7 @@ test('escapes a saturated keepalive queue while the page is visible without chan
     }
   )
   const event = {
-    consent: { ...deniedConsent, analytics: 'granted' as const },
+    consent: { ...grantedConsent, analytics: 'granted' as const },
     event_id: 'same-event',
     page_url: 'https://utekos.no/skreddersy-varmen'
   }
@@ -343,7 +343,7 @@ test('keeps unload protection for retries in a hidden page and reports safe fail
       },
       {
         consent: {
-          ...deniedConsent,
+          ...grantedConsent,
           analytics: 'granted' as const
         }
       }
@@ -381,7 +381,7 @@ test('distinguishes preparation failures from requests without sending the event
       },
       {
         consent: {
-          ...deniedConsent,
+          ...grantedConsent,
           analytics: 'granted' as const
         }
       }
@@ -405,7 +405,7 @@ test('does not retry a rejected event contract', async t => {
       },
       {
         consent: {
-          ...deniedConsent,
+          ...grantedConsent,
           analytics: 'granted' as const
         }
       }
@@ -434,7 +434,7 @@ test('preserves keepalive on a retryable HTTP response and stops after success',
     },
     {
       consent: {
-        ...deniedConsent,
+        ...grantedConsent,
         analytics: 'granted' as const
       }
     }
@@ -501,7 +501,7 @@ test('recovers a rejected web vital beacon when the shared keepalive budget is f
     },
     {
       consent: {
-        ...deniedConsent,
+        ...grantedConsent,
         analytics: 'granted' as const
       },
       event_id: 'same-web-vital'
@@ -517,7 +517,7 @@ test('recovers a rejected web vital beacon when the shared keepalive budget is f
 
 test('measures UTF-8 bytes and avoids keepalive for a body above 64 KiB', async t => {
   const event = {
-    consent: { ...deniedConsent, analytics: 'granted' as const },
+    consent: { ...grantedConsent, analytics: 'granted' as const },
     data: 'å'.repeat(33_000)
   }
   let attempts = 0

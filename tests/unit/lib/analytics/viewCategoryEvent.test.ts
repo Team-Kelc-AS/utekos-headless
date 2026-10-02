@@ -26,7 +26,7 @@ test('createCanonicalViewCategory accepts category payload', () => {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -61,7 +61,7 @@ test('createCanonicalViewCategory accepts catalog content_ids', () => {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },

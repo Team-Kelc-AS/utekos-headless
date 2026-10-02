@@ -24,9 +24,9 @@ const SHOPIFY_VARIANT_GID =
 type CanonicalLogEvent = {
   consent?:
     | {
-        analytics: 'denied' | 'granted'
-        marketing: 'denied' | 'granted'
-        preferences: 'denied' | 'granted'
+        analytics: 'granted' | 'granted'
+        marketing: 'granted' | 'granted'
+        preferences: 'granted' | 'granted'
         source: 'cookiebot'
         version: string
       }

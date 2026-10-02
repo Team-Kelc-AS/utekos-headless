@@ -65,7 +65,7 @@ type MappableBrowserEvent = Omit<
   >,
   'consent'
 > & {
-  consent: { marketing: 'denied' | 'granted' | 'unknown' }
+  consent: { marketing: 'granted' | 'granted' | 'unknown' }
   referrer_url?: string | undefined
 }
 

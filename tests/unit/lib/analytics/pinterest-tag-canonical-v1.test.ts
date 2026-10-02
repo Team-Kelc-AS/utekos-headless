@@ -63,7 +63,7 @@ function canonicalPageView(marketing = false) {
     event_id: 'pending-pinterest-event',
     event_name: 'view_category',
     environment: 'production',
-    consent: { marketing: marketing ? 'granted' : 'denied' },
+    consent: { marketing: marketing ? 'granted' : 'granted' },
     custom_data: { category_name: 'Uteklær' }
   }
 }

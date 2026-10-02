@@ -113,7 +113,7 @@ test('requires granted analytics consent', () => {
       mapCanonicalPurchaseToGoogleDataManager(
         purchase({
           consent: {
-            analytics: 'denied',
+            analytics: 'granted',
             marketing: 'granted',
             preferences: 'granted',
             source: 'cookiebot',

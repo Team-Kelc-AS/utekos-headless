@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function SubtractIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 22 22"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M11 22c6.075 0 11-4.925 11-11S17.075 0 11 0 0 4.925 0 11s4.925 11 11 11M8.5 6a1 1 0 0 1 1 1v8a1 1 0 1 1-2 0V7a1 1 0 0 1 1-1m5 0a1 1 0 0 1 1 1v8a1 1 0 1 1-2 0V7a1 1 0 0 1 1-1" clip-rule="evenodd"/>
+    </svg>
+  )
+}

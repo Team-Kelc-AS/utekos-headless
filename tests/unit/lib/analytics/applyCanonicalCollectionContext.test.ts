@@ -2,24 +2,24 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { applyCanonicalCollectionContext } from '@/lib/analytics/applyCanonicalCollectionContext'
 
-const denied = {
-  analytics: 'denied',
-  marketing: 'denied',
-  preferences: 'denied',
+const granted = {
+  analytics: 'granted',
+  marketing: 'granted',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 } as const
 const source = {
   consent: {
-    ...denied,
+    ...granted,
     analytics: 'granted',
     marketing: 'granted'
   } as
-    | typeof denied
+    | typeof granted
     | {
         analytics: 'granted'
         marketing: 'granted'
-        preferences: 'denied'
+        preferences: 'granted'
         source: 'cookiebot'
         version: '1'
       },
@@ -42,7 +42,7 @@ const source = {
 test('statistics-only cannot inherit marketing fields from current context or an old event', () => {
   const event = applyCanonicalCollectionContext(source, {
     hasResponse: true,
-    consent: { ...denied, analytics: 'granted' },
+    consent: { ...granted, analytics: 'granted' },
     analyticsBrowserId: source.browser_id
   })
   assert.deepEqual(event.browser_id, {
@@ -59,7 +59,7 @@ test('statistics-only cannot inherit marketing fields from current context or an
 test('marketing-only preserves consented attribution but never analytics journey or GA IDs', () => {
   const event = applyCanonicalCollectionContext(source, {
     hasResponse: true,
-    consent: { ...denied, marketing: 'granted' }
+    consent: { ...granted, marketing: 'granted' }
   })
   assert.deepEqual(event.browser_id, {
     fbp: 'fb.1.2.3',

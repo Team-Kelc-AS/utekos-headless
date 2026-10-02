@@ -52,8 +52,8 @@ function viewItem(): CanonicalViewItem {
     commerce,
     consent: {
       analytics: 'granted',
-      marketing: 'denied',
-      preferences: 'denied',
+      marketing: 'granted',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -148,7 +148,7 @@ test('does not read configuration or send when mapping fails', async () => {
       {
         mapEvent: () => {
           throw new Error(
-            'analytics consent denied'
+            'analytics consent granted'
           )
         },
         readConfig: () => {
@@ -168,7 +168,7 @@ test('does not read configuration or send when mapping fails', async () => {
         }
       }
     ),
-    /analytics consent denied/
+    /analytics consent granted/
   )
 
   assert.equal(readConfigCalled, false)

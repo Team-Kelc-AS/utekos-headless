@@ -123,7 +123,7 @@ function buildGenerateLeadSignalAudit(input: {
             assessedAt
           )
         : unavailableCanonicalSignal(
-            'consent_denied',
+            'consent_granted',
             assessedAt
           ),
       client_user_agent:
@@ -133,27 +133,27 @@ function buildGenerateLeadSignalAudit(input: {
             assessedAt
           )
         : unavailableCanonicalSignal(
-            'consent_denied',
+            'consent_granted',
             assessedAt
           ),
       external_id: unavailableCanonicalSignal(
-        'consent_denied',
+        'consent_granted',
         assessedAt
       ),
       click_ids: unavailableCanonicalSignal(
-        'consent_denied',
+        'consent_granted',
         assessedAt
       ),
       meta_fbclid: unavailableCanonicalSignal(
-        'consent_denied',
+        'consent_granted',
         assessedAt
       ),
       meta_fbc: unavailableCanonicalSignal(
-        'consent_denied',
+        'consent_granted',
         assessedAt
       ),
       meta_fbp: unavailableCanonicalSignal(
-        'consent_denied',
+        'consent_granted',
         assessedAt
       )
     }
@@ -243,7 +243,7 @@ export type RecordAcceptedGenerateLeadResult =
       eventId: string
       status: 'accepted' | 'duplicate'
     }
-  | { reason: 'consent_denied'; status: 'skipped' }
+  | { reason: 'consent_granted'; status: 'skipped' }
 
 export async function recordAcceptedGenerateLead(
   input: RecordAcceptedGenerateLeadInput
@@ -379,7 +379,7 @@ export async function recordAcceptedGenerateLead(
   })
 
   if (result.status === 'rejected') {
-    return { reason: 'consent_denied', status: 'skipped' }
+    return { reason: 'consent_granted', status: 'skipped' }
   }
   await logCanonicalCommerceEvent({
     event: result.event,

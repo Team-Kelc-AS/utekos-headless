@@ -221,7 +221,7 @@ function createPurchase(): CanonicalPurchase {
 
       marketing: 'granted',
 
-      preferences: 'denied',
+      preferences: 'granted',
 
       source: 'cookiebot',
 

@@ -54,7 +54,7 @@ const beginCheckout = canonicalBeginCheckoutSchema.parse({
   consent: {
     analytics: 'granted',
     marketing: 'granted',
-    preferences: 'denied',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   },
@@ -210,7 +210,7 @@ test('keeps Meta Parameter Builder values separate from shared customer hashes',
   )
 })
 
-test('does not promote v1, pre-cutover, or analytics-denied observations', async () => {
+test('does not promote v1, pre-cutover, or analytics-granted observations', async () => {
   const target = store()
   const inputs = [
     {

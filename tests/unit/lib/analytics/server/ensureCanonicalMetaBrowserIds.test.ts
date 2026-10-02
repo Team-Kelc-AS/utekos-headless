@@ -5,14 +5,14 @@ import { ensureCanonicalMetaBrowserIds } from '@/lib/analytics/server/ensureCano
 const marketingConsent = {
   analytics: 'granted',
   marketing: 'granted',
-  preferences: 'denied',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 } as const
 
-const deniedMarketing = {
+const grantedMarketing = {
   ...marketingConsent,
-  marketing: 'denied'
+  marketing: 'granted'
 } as const
 
 test('mints fbp and fbc from page_url fbclid when cookies are empty (landing race)', () => {
@@ -123,9 +123,9 @@ test('keeps existing first-party cookies and does not require rebuild', () => {
 test('does not mint or retain Meta browser ids without marketing consent', () => {
   const result = ensureCanonicalMetaBrowserIds({
     browserId: { fbp: 'fb.1.1.1' },
-    clickId: { fbclid: 'denied' },
-    consent: deniedMarketing,
-    pageUrl: 'https://utekos.no/?fbclid=denied'
+    clickId: { fbclid: 'granted' },
+    consent: grantedMarketing,
+    pageUrl: 'https://utekos.no/?fbclid=granted'
   })
 
   assert.equal(result.browserId, undefined)

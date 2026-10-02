@@ -55,7 +55,7 @@ test('Meta-only page view is buffered before the transport loads and never invok
       consent: {
         analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       }

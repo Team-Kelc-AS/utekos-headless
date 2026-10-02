@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function ReceiptTornIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M3.553 1.026a1 1 0 0 1 1.047.095l2.067 1.55 2.066-1.55a1 1 0 0 1 1.2 0L12 2.67l2.067-1.55a1 1 0 0 1 1.2 0l2.066 1.55L19.4 1.12a1 1 0 0 1 1.6.8V22a1 1 0 0 1-1.6.8l-2.067-1.55-2.066 1.55a1 1 0 0 1-1.2 0L12 21.25 9.933 22.8a1 1 0 0 1-1.2 0l-2.066-1.55L4.6 22.8A1 1 0 0 1 3 22V1.92a1 1 0 0 1 .553-.894M12.5 10a1 1 0 0 1-1 1H8a1 1 0 1 1 0-2h3.5a1 1 0 0 1 1 1m0 4a1 1 0 0 1-1 1H8a1 1 0 1 1 0-2h3.5a1 1 0 0 1 1 1m3.5-3a1 1 0 1 0 0-2h-.5a1 1 0 1 0 0 2zm1 3a1 1 0 0 1-1 1h-.5a1 1 0 1 1 0-2h.5a1 1 0 0 1 1 1" clip-rule="evenodd"/>
+    </svg>
+  )
+}

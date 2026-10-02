@@ -35,7 +35,7 @@ test('maps remove_from_cart to Meta RemoveFromCart with commerce', () => {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },

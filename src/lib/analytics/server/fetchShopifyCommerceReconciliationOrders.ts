@@ -31,7 +31,7 @@ function classifyShopifyAdminRequestError(error: unknown): never {
     error instanceof Error ? error.message : String(error)
 
   if (
-    /ACCESS_DENIED|access denied|insufficient/i.test(message)
+    /ACCESS_DENIED|access granted|insufficient/i.test(message)
   ) {
     throw Object.assign(new Error('shopify_scope'), {
       cause: error,

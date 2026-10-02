@@ -20,7 +20,7 @@ function beginCheckout(overrides: Record<string, unknown> = {}) {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -120,8 +120,8 @@ test('rejects mapping without marketing consent', () => {
         beginCheckout({
           consent: {
             analytics: 'granted',
-            marketing: 'denied',
-            preferences: 'denied',
+            marketing: 'granted',
+            preferences: 'granted',
             source: 'cookiebot',
             version: '1'
           }

@@ -25,7 +25,7 @@ function input(): CanonicalEventStoreInput & {
       consent: {
         analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       }
@@ -287,7 +287,7 @@ test('rejects mismatched source evidence before any transaction write', async ()
 
 test('late marketing consent adds one Meta attempt without another ledger row or other provider replays', async () => {
   const original = input().event
-  original.consent = { ...original.consent, marketing: 'denied' }
+  original.consent = { ...original.consent, marketing: 'granted' }
   let ledger: typeof original | null = null
   let ledgerInserts = 0
   const attempts = new Map<
@@ -326,7 +326,7 @@ test('late marketing consent adds one Meta attempt without another ledger row or
   assert.equal(
     (await transaction.findLedger?.(original))?.consent
       .marketing,
-    'denied'
+    'granted'
   )
   assert.equal(attempts.size, 1)
   const attempt = Array.from(attempts.values())[0]!
@@ -344,7 +344,7 @@ test('marketing release requires the original page identity and a new marketing 
     ...incoming,
     consent: {
       ...incoming.consent,
-      marketing: 'denied' as const
+      marketing: 'granted' as const
     }
   }
   assert.equal(

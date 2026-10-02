@@ -29,7 +29,7 @@ test('migrates scoped legacy keys to public cart identities and removes secrets'
   const prefix = 'utekos:checkout_consent:'
   const fullId = 'gid://shopify/Cart/opaque?key=legacy-secret'
   const storage = createStorage([
-    [`${prefix}${fullId}`, '{"analytics":"denied"}'],
+    [`${prefix}${fullId}`, '{"analytics":"granted"}'],
     ['unrelated:key?key=keep', 'untouched']
   ])
 
@@ -38,7 +38,7 @@ test('migrates scoped legacy keys to public cart identities and removes secrets'
   assert.equal(storage.getItem(`${prefix}${fullId}`), null)
   assert.equal(
     storage.getItem(`${prefix}gid://shopify/Cart/opaque`),
-    '{"analytics":"denied"}'
+    '{"analytics":"granted"}'
   )
   assert.equal(
     storage.getItem('unrelated:key?key=keep'),

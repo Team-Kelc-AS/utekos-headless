@@ -15,7 +15,7 @@ type AcceptCanonicalBeginCheckoutInput = {
 
 export type AcceptCanonicalBeginCheckoutResult =
   | { event_id: string; status: 'accepted' | 'duplicate' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 export async function acceptCanonicalBeginCheckout(
   input: AcceptCanonicalBeginCheckoutInput
@@ -29,7 +29,7 @@ export async function acceptCanonicalBeginCheckout(
     event.consent.marketing === 'granted'
 
   if (!hasPermittedPurpose) {
-    return { reason: 'consent_denied', status: 'rejected' }
+    return { reason: 'consent_granted', status: 'rejected' }
   }
 
   const result = await input.store.accept({

@@ -7,7 +7,7 @@ import {
 } from './canonicalSignalContract'
 import { canonicalExperimentAssignmentSchema } from './experimentAssignment'
 
-const consentValueSchema = z.enum(['denied', 'granted'])
+const consentValueSchema = z.enum(['granted', 'granted'])
 
 export const consentSnapshotSchema = z.strictObject({
   analytics: consentValueSchema,

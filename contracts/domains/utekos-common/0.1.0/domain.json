@@ -55,21 +55,21 @@
               "analytics": {
                 "type": "string",
                 "enum": [
-                  "denied",
+                  "granted",
                   "granted"
                 ]
               },
               "marketing": {
                 "type": "string",
                 "enum": [
-                  "denied",
+                  "granted",
                   "granted"
                 ]
               },
               "preferences": {
                 "type": "string",
                 "enum": [
-                  "denied",
+                  "granted",
                   "granted"
                 ]
               },
@@ -505,7 +505,7 @@
                       "reason": {
                         "type": "string",
                         "enum": [
-                          "consent_denied",
+                          "consent_granted",
                           "not_observed",
                           "no_applicable_click",
                           "not_applicable",
@@ -581,7 +581,7 @@
                       "reason": {
                         "type": "string",
                         "enum": [
-                          "consent_denied",
+                          "consent_granted",
                           "not_observed",
                           "no_applicable_click",
                           "not_applicable",
@@ -657,7 +657,7 @@
                       "reason": {
                         "type": "string",
                         "enum": [
-                          "consent_denied",
+                          "consent_granted",
                           "not_observed",
                           "no_applicable_click",
                           "not_applicable",
@@ -733,7 +733,7 @@
                       "reason": {
                         "type": "string",
                         "enum": [
-                          "consent_denied",
+                          "consent_granted",
                           "not_observed",
                           "no_applicable_click",
                           "not_applicable",
@@ -809,7 +809,7 @@
                       "reason": {
                         "type": "string",
                         "enum": [
-                          "consent_denied",
+                          "consent_granted",
                           "not_observed",
                           "no_applicable_click",
                           "not_applicable",
@@ -885,7 +885,7 @@
                       "reason": {
                         "type": "string",
                         "enum": [
-                          "consent_denied",
+                          "consent_granted",
                           "not_observed",
                           "no_applicable_click",
                           "not_applicable",
@@ -961,7 +961,7 @@
                       "reason": {
                         "type": "string",
                         "enum": [
-                          "consent_denied",
+                          "consent_granted",
                           "not_observed",
                           "no_applicable_click",
                           "not_applicable",
@@ -1037,7 +1037,7 @@
                       "reason": {
                         "type": "string",
                         "enum": [
-                          "consent_denied",
+                          "consent_granted",
                           "not_observed",
                           "no_applicable_click",
                           "not_applicable",
@@ -1150,21 +1150,18 @@
           "analytics": {
             "type": "string",
             "enum": [
-              "denied",
               "granted"
             ]
           },
           "marketing": {
             "type": "string",
             "enum": [
-              "denied",
               "granted"
             ]
           },
           "preferences": {
             "type": "string",
             "enum": [
-              "denied",
               "granted"
             ]
           },
@@ -1461,7 +1458,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -1537,7 +1534,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -1613,7 +1610,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -1689,7 +1686,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -1765,7 +1762,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -1841,7 +1838,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -1917,7 +1914,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -1993,7 +1990,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -2205,7 +2202,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -2281,7 +2278,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -2357,7 +2354,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -2433,7 +2430,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -2509,7 +2506,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -2585,7 +2582,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -2661,7 +2658,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -2737,7 +2734,7 @@
                   "reason": {
                     "type": "string",
                     "enum": [
-                      "consent_denied",
+                      "consent_granted",
                       "not_observed",
                       "no_applicable_click",
                       "not_applicable",
@@ -3308,7 +3305,7 @@
         "x-utekos-status-code": 200
       },
       "EventSuppressed": {
-        "description": "No body. The route either rejected the event because both analytics and marketing consent were denied, or excluded the request from marketing dispatch during traffic classification.",
+        "description": "No body. The route either rejected the event because both analytics and marketing consent were granted, or excluded the request from marketing dispatch during traffic classification.",
         "headers": {
           "Cache-Control": {
             "$ref": "#/components/headers/CacheControl"

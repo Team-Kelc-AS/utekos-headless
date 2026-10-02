@@ -44,8 +44,8 @@ const journeyId = identifier(1000)
 const otherJourneyId = identifier(1001)
 const consent = {
   analytics: 'granted' as const,
-  marketing: 'denied' as const,
-  preferences: 'denied' as const,
+  marketing: 'granted' as const,
+  preferences: 'granted' as const,
   source: 'cookiebot' as const,
   version: '1'
 }
@@ -397,7 +397,7 @@ async function main() {
           { source: 'cookiebot' },
           { analytics: 'granted' },
           { ...consent, analytics: null },
-          { ...consent, analytics: 'denied' }
+          { ...consent, analytics: 'granted' }
         ]) {
           const row = observation(20)
           await rejectSql(
@@ -620,7 +620,7 @@ async function main() {
             event: 'purchase',
             journey: journeyId,
             reason: 'analytics_consent_not_granted',
-            analytics: 'denied'
+            analytics: 'granted'
           },
           {
             id: 44,

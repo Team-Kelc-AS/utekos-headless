@@ -90,7 +90,7 @@ const signalRule = z.strictObject({
   ),
   allowedUnavailableReasons: z.array(
     z.enum([
-      'consent_denied',
+      'consent_granted',
       'not_observed',
       'no_applicable_click',
       'not_applicable',

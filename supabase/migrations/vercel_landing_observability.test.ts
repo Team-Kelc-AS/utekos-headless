@@ -49,7 +49,7 @@ test('landing consent stores only terminal decisions without a drain-order FK', 
   assert.match(tableDefinition, /page_view_id uuid not null/i)
   assert.match(
     tableDefinition,
-    /decision in \('granted', 'denied', 'partial'\)/i
+    /decision in \('granted', 'granted', 'partial'\)/i
   )
   assert.match(tableDefinition, /source = 'cookiebot'/i)
   assert.match(

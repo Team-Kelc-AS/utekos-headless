@@ -8,9 +8,9 @@ import { buildMetaRequestContext } from '@/lib/analytics/server/buildMetaRequest
 import { metaMarketingRequestContextPreference } from '@/lib/analytics/server/metaMarketingRequestContextPreference'
 
 const consent = {
-  analytics: 'denied',
+  analytics: 'granted',
   marketing: 'granted',
-  preferences: 'denied',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 } as const

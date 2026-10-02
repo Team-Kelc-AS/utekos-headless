@@ -267,7 +267,7 @@ function buildDomain() {
         EventDuplicate: receiptResponse('duplicate', 200),
         EventSuppressed: {
           description:
-            'No body. The route either rejected the event because both analytics and marketing consent were denied, or excluded the request from marketing dispatch during traffic classification.',
+            'No body. The route either rejected the event because both analytics and marketing consent were granted, or excluded the request from marketing dispatch during traffic classification.',
           headers: {
             'Cache-Control': {
               $ref: '#/components/headers/CacheControl'
@@ -877,7 +877,7 @@ function buildReadyApiCases() {
     controlledCases: [
       { id: 'accepted', expectStatus: 202 },
       { id: 'duplicate-event-id', expectStatus: 200 },
-      { id: 'consent-denied', expectStatus: 204 },
+      { id: 'consent-granted', expectStatus: 204 },
       {
         id: 'traffic-excluded',
         expectStatus: 204,
@@ -927,7 +927,7 @@ ${rows.join('\n')}
 | --- | --- | --- |
 | \`202\` | \`{ event_id, status: "accepted" }\` | Inserted by the canonical store. |
 | \`200\` | \`{ event_id, status: "duplicate" }\` | Existing \`event_id\`. |
-| \`204\` | Empty | Consent denied or traffic excluded before collection. |
+| \`204\` | Empty | Consent granted or traffic excluded before collection. |
 | \`400\` | \`{ error: "invalid_json" | "invalid_event" }\` | JSON or Zod validation failure. |
 | \`403\` | \`{ error: "forbidden_origin" }\` | Missing, malformed, or cross-origin \`Origin\`. |
 | \`413\` | \`{ error: "payload_too_large" }\` | Declared or measured body larger than 32 KiB. |

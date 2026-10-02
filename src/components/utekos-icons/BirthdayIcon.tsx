@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function BirthdayIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M12 6a2 2 0 0 0 2-2c0-.38-.1-.73-.29-1.03L12.433.753a.5.5 0 0 0-.866 0L10.29 2.97c-.19.3-.29.65-.29 1.03 0 1.1.9 2 2 2M3 16.032v2.54a3.5 3.5 0 0 0 3.5 3.5h11a3.5 3.5 0 0 0 3.5-3.5v-2.54a4.5 4.5 0 0 1-2 .468 4.5 4.5 0 0 1-3.5-1.671A4.5 4.5 0 0 1 12 16.5a4.5 4.5 0 0 1-3.5-1.671A4.5 4.5 0 0 1 5 16.5a4.5 4.5 0 0 1-2-.468M3 13.5v-1.07a3.5 3.5 0 0 1 3.5-3.5H11V7.5a1 1 0 1 1 2 0v1.43h4.5a3.5 3.5 0 0 1 3.5 3.5v1.07a2.498 2.498 0 0 1-4.146-.218A1.59 1.59 0 0 0 15.5 12.5c-.609 0-1.095.352-1.354.783A2.5 2.5 0 0 1 12 14.5c-.91 0-1.708-.486-2.146-1.217A1.59 1.59 0 0 0 8.5 12.5c-.609 0-1.095.352-1.354.783A2.498 2.498 0 0 1 3 13.5" clip-rule="evenodd"/>
+    </svg>
+  )
+}

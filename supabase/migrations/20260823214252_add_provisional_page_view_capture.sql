@@ -5,7 +5,7 @@ create table if not exists marketing.provisional_page_view_captures (
   page_view_id uuid not null,
   edge_request_id uuid,
   capture_state text not null
-    check (capture_state in ('pending', 'denied', 'granted')),
+    check (capture_state in ('pending', 'granted', 'granted')),
   payload jsonb not null,
   occurred_at timestamptz not null,
   capture_count integer not null default 1
@@ -35,7 +35,7 @@ create table if not exists marketing.provisional_page_view_captures (
 comment on table marketing.provisional_page_view_captures is
   'Server-only, 24-hour consent buffer for canonical page_view capture. It may temporarily contain source URLs and advertising click identifiers, but it never creates provider dispatch attempts and is deleted immediately after canonical consented acceptance.';
 comment on column marketing.provisional_page_view_captures.capture_state is
-  'Cookiebot decision state observed by the browser. pending and denied rows remain provider-ineligible; granted rows are released after canonical acceptance.';
+  'Cookiebot decision state observed by the browser. pending and granted rows remain provider-ineligible; granted rows are released after canonical acceptance.';
 
 create index if not exists provisional_page_view_captures_state_idx
   on marketing.provisional_page_view_captures (

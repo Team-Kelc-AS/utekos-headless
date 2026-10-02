@@ -250,7 +250,7 @@ export function validateVippsLoginCallback(input: {
   if (providerError) {
     return {
       kind:
-        providerError === 'access_denied' ?
+        providerError === 'access_granted' ?
           ('cancelled' as const)
         : ('provider_error' as const)
     }

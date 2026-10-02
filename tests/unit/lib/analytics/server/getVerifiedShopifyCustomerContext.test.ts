@@ -18,7 +18,7 @@ test('uses verified Shopify customer context instead of webhook-request geolocat
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },

@@ -221,7 +221,7 @@ test('handles provider cancellation and rejects external return URLs', () => {
     state: 's'.repeat(32)
   }
   const callbackUrl = new URL(config.callbackUrl)
-  callbackUrl.searchParams.set('error', 'access_denied')
+  callbackUrl.searchParams.set('error', 'access_granted')
   callbackUrl.searchParams.set('state', context.state)
 
   assert.deepEqual(

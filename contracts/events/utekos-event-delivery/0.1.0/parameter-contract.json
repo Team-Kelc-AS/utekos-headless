@@ -286,13 +286,13 @@
         "path": "consent.adUserData",
         "requirement": "required",
         "source": "consent.marketing",
-        "rule": "Mapped to granted or denied."
+        "rule": "Mapped to granted or granted."
       },
       {
         "path": "consent.adPersonalization",
         "requirement": "required",
         "source": "consent.marketing",
-        "rule": "Mapped to granted or denied."
+        "rule": "Mapped to granted or granted."
       },
       {
         "path": "userData.userIdentifiers[].hashedEmail",

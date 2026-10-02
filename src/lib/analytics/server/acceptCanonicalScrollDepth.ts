@@ -15,7 +15,7 @@ type AcceptCanonicalScrollDepthInput = {
 
 export type AcceptCanonicalScrollDepthResult =
   | { event_id: string; status: 'accepted' | 'duplicate' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 export async function acceptCanonicalScrollDepth(
   input: AcceptCanonicalScrollDepthInput
@@ -29,7 +29,7 @@ export async function acceptCanonicalScrollDepth(
     event.consent.marketing === 'granted'
 
   if (!hasPermittedPurpose) {
-    return { reason: 'consent_denied', status: 'rejected' }
+    return { reason: 'consent_granted', status: 'rejected' }
   }
 
   const result = await input.store.accept({

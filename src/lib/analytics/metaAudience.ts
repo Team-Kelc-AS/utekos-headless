@@ -10,8 +10,8 @@ export type MetaAudience = z.infer<typeof metaAudienceSchema>
 
 export function consentedMetaAudience(event: {
   consent: {
-    analytics: 'granted' | 'denied' | 'unknown'
-    marketing: 'granted' | 'denied' | 'unknown'
+    analytics: 'granted' | 'granted' | 'unknown'
+    marketing: 'granted' | 'granted' | 'unknown'
   }
   meta_audience?: unknown
 }): MetaAudience | undefined {

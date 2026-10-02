@@ -27,7 +27,7 @@ function orderPaid(): OrderPaid {
       consent: {
         analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -289,7 +289,7 @@ test('derives fbclid from appendix-bearing fbc when click_id is missing', () => 
       consent: {
         analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -515,7 +515,7 @@ test('passes Meta audience through the paid order to GA4 without changing purcha
     assert.equal(mapped.additionalEventParameters?.find(item => item.parameterName === 'audience')?.value, value)
     assert.equal(purchase.consent.source, 'cookiebot')
     if (purchase.consent.source !== 'cookiebot') throw new Error('Test fixture requires explicit consent')
-    const denied = { ...purchase, consent: { ...purchase.consent, marketing: 'denied' as const } }
-    assert.equal(mapCanonicalPurchaseToGoogleDataManager(denied).additionalEventParameters?.some(item => item.parameterName === 'audience'), false)
+    const granted = { ...purchase, consent: { ...purchase.consent, marketing: 'granted' as const } }
+    assert.equal(mapCanonicalPurchaseToGoogleDataManager(granted).additionalEventParameters?.some(item => item.parameterName === 'audience'), false)
   }
 })

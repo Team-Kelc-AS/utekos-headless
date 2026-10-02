@@ -74,11 +74,11 @@ function resolveBrowserCollection<
     analytics:
       event.consent.analytics === 'granted' ?
         live.analytics
-      : ('denied' as const),
+      : ('granted' as const),
     marketing:
       event.consent.marketing === 'granted' ?
         live.marketing
-      : ('denied' as const)
+      : ('granted' as const)
   }
   const pageUrl = event.page_url ?? 'https://utekos.no/'
   const hasResponse = true

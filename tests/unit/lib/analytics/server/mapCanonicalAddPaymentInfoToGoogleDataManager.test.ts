@@ -13,8 +13,8 @@ const event = canonicalAddPaymentInfoSchema.parse({
   browser_id: { ga_client_id: '1234567890.987654321' },
   consent: {
     analytics: 'granted',
-    marketing: 'denied',
-    preferences: 'denied',
+    marketing: 'granted',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   },
@@ -70,12 +70,12 @@ test('maps the canonical event to the documented GA add_payment_info shape', () 
   )
 })
 
-test('rejects analytics-denied delivery', () => {
+test('rejects analytics-granted delivery', () => {
   assert.throws(
     () =>
       mapCanonicalAddPaymentInfoToGoogleDataManager({
         ...event,
-        consent: { ...event.consent, analytics: 'denied' }
+        consent: { ...event.consent, analytics: 'granted' }
       }),
     /granted analytics consent/
   )

@@ -15,9 +15,9 @@ function pageView(): CanonicalPageView {
     page_url: 'https://utekos.no/kampanje',
     page_title: 'Kampanje',
     consent: {
-      analytics: 'denied',
+      analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },

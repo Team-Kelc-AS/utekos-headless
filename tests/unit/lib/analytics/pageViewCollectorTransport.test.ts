@@ -6,16 +6,16 @@ import {
   type CanonicalPageView
 } from '@/lib/analytics/pageViewEvent'
 
-const denied = {
-  analytics: 'denied',
-  marketing: 'denied',
-  preferences: 'denied',
+const granted = {
+  analytics: 'granted',
+  marketing: 'granted',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 } as const
 function pageView(
   consent: CanonicalPageView['consent'] = {
-    ...denied,
+    ...granted,
     marketing: 'granted'
   },
   id = '11111111-1111-4111-8111-111111111111'
@@ -64,10 +64,10 @@ function harness() {
   return { deps, sent, captures, browser, reads: () => reads }
 }
 
-test('denied events are not captured, retained, enriched or read from storage', async () => {
+test('granted events are not captured, retained, enriched or read from storage', async () => {
   const h = harness(),
     t = createPageViewCollectorTransport(h.deps)
-  assert.equal(await t.queue(pageView(denied)), 'skipped')
+  assert.equal(await t.queue(pageView(granted)), 'skipped')
   await t.flush()
   assert.equal(h.reads(), 0)
   assert.equal(h.captures.length, 0)
@@ -102,7 +102,7 @@ test('a fresh current-page event is captured and sent once with original IDs', a
 test('analytics-only strips click IDs, marketing cookies and URL queries', async () => {
   const h = harness()
   await createPageViewCollectorTransport(h.deps).queue(
-    pageView({ ...denied, analytics: 'granted' })
+    pageView({ ...granted, analytics: 'granted' })
   )
   const event = h.sent[0]!
   assert.equal(event.click_id, undefined)

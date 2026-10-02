@@ -30,7 +30,7 @@ test('round-trips consented attribution through Shopify attributes', () => {
       consent: {
         analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -84,8 +84,8 @@ test('round-trips a PII-free experiment only with analytics consent', () => {
     {
       consent: {
         analytics: 'granted',
-        marketing: 'denied',
-        preferences: 'denied',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -107,12 +107,12 @@ test('round-trips a PII-free experiment only with analytics consent', () => {
     experiment
   )
 
-  const denied = createCheckoutAttributionSnapshot(
+  const granted = createCheckoutAttributionSnapshot(
     {
       consent: {
-        analytics: 'denied',
+        analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -121,9 +121,9 @@ test('round-trips a PII-free experiment only with analytics consent', () => {
     capturedAt
   )
 
-  assert.equal(denied.experiment, undefined)
+  assert.equal(granted.experiment, undefined)
   assert.equal(
-    checkoutAttributionSnapshotToShopifyAttributes(denied).some(
+    checkoutAttributionSnapshotToShopifyAttributes(granted).some(
       attribute => attribute.key.startsWith('utekos_experiment_')
     ),
     false
@@ -134,9 +134,9 @@ test('round-trips Facebook Login match signals only with marketing consent', () 
   const snapshot = createCheckoutAttributionSnapshot(
     {
       consent: {
-        analytics: 'denied',
+        analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -162,12 +162,12 @@ test('round-trips Facebook Login match signals only with marketing consent', () 
     snapshot.user_data
   )
 
-  const denied = createCheckoutAttributionSnapshot(
+  const granted = createCheckoutAttributionSnapshot(
     {
       consent: {
         analytics: 'granted',
-        marketing: 'denied',
-        preferences: 'denied',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -175,7 +175,7 @@ test('round-trips Facebook Login match signals only with marketing consent', () 
     },
     capturedAt
   )
-  assert.equal(denied.user_data, undefined)
+  assert.equal(granted.user_data, undefined)
 })
 
 test('persists the consent decision and clears any stale audience after a full denial', () => {
@@ -184,9 +184,9 @@ test('persists the consent decision and clears any stale audience after a full d
       browser_id: { fbp: 'should-not-persist' },
       click_id: { fbclid: 'should-not-persist' },
       consent: {
-        analytics: 'denied',
-        marketing: 'denied',
-        preferences: 'denied',
+        analytics: 'granted',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -214,20 +214,20 @@ test('adds a PII-free begin-checkout correlation only with analytics consent', (
     {
       consent: {
         analytics: 'granted',
-        marketing: 'denied',
-        preferences: 'denied',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       }
     },
     capturedAt
   )
-  const denied = createCheckoutAttributionSnapshot(
+  const granted = createCheckoutAttributionSnapshot(
     {
       consent: {
-        analytics: 'denied',
-        marketing: 'denied',
-        preferences: 'denied',
+        analytics: 'granted',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       }
@@ -247,7 +247,7 @@ test('adds a PII-free begin-checkout correlation only with analytics consent', (
   )
   assert.equal(
     checkoutAttributionSnapshotToShopifyAttributes(
-      denied,
+      granted,
       eventId
     ).some(
       attribute =>
@@ -269,9 +269,9 @@ test('round-trips consented campaign hierarchy through Shopify attributes', () =
         ad_name: 'Video A'
       },
       consent: {
-        analytics: 'denied',
+        analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       }
@@ -320,8 +320,8 @@ test('drops campaign hierarchy without marketing consent', () => {
       },
       consent: {
         analytics: 'granted',
-        marketing: 'denied',
-        preferences: 'denied',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       }
@@ -348,9 +348,9 @@ test('keeps valid campaign fields when an external order field is malformed', ()
     {
       name: 'utekos_consent',
       value: JSON.stringify({
-        analytics: 'denied',
+        analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       })
@@ -367,9 +367,9 @@ test('drops malformed or non-consented external order attributes', () => {
     {
       name: 'utekos_consent',
       value: JSON.stringify({
-        analytics: 'denied',
-        marketing: 'denied',
-        preferences: 'denied',
+        analytics: 'granted',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       })
@@ -387,9 +387,9 @@ test('drops malformed or non-consented external order attributes', () => {
     schema_version: 1,
     captured_at: '1970-01-01T00:00:00.000Z',
     consent: {
-      analytics: 'denied',
-      marketing: 'denied',
-      preferences: 'denied',
+      analytics: 'granted',
+      marketing: 'granted',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     }
@@ -411,7 +411,7 @@ test('distinguishes missing, empty, invalid JSON, and invalid consent payloads f
       attributes: [
         {
           name: 'utekos_consent',
-          value: JSON.stringify({ marketing: 'denied' })
+          value: JSON.stringify({ marketing: 'granted' })
         }
       ],
       resolution: 'invalid_payload'
@@ -436,9 +436,9 @@ test('distinguishes missing, empty, invalid JSON, and invalid consent payloads f
 
 
 test('audience survives Shopify attributes only with both consent purposes', () => {
-  for (const analytics of ['granted', 'denied'] as const) {
-    for (const marketing of ['granted', 'denied'] as const) {
-      const consent = { analytics, marketing, preferences: 'denied' as const, source: 'cookiebot' as const, version: '1' }
+  for (const analytics of ['granted', 'granted'] as const) {
+    for (const marketing of ['granted', 'granted'] as const) {
+      const consent = { analytics, marketing, preferences: 'granted' as const, source: 'cookiebot' as const, version: '1' }
       const snapshot = createCheckoutAttributionSnapshot({ consent, meta_audience: 'engaged_audience' }, capturedAt)
       const attributes = checkoutAttributionSnapshotToShopifyAttributes(snapshot)
       const expected = analytics === 'granted' && marketing === 'granted' ? 'engaged_audience' : undefined

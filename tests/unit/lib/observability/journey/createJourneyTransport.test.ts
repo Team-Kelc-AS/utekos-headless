@@ -12,8 +12,8 @@ const event: JourneyEvent = {
   page_path: '/skreddersy-varmen',
   consent: {
     analytics: 'granted',
-    marketing: 'denied',
-    preferences: 'denied',
+    marketing: 'granted',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   },

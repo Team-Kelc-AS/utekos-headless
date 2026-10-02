@@ -3,9 +3,9 @@ import test from 'node:test'
 import { processMetaParameterContext } from '@/lib/analytics/server/processMetaParameterContext'
 
 const consent = {
-  analytics: 'denied',
+  analytics: 'granted',
   marketing: 'granted',
-  preferences: 'denied',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 } as const

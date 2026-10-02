@@ -55,7 +55,7 @@ test('createCanonicalGenerateLead includes form metadata and hashed user_data', 
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -97,15 +97,15 @@ test('createCanonicalGenerateLead includes form metadata and hashed user_data', 
     '11111111-1111-4111-8111-111111111111'
   )
   assert.equal(dataLayer.canonical_event.journey_id, undefined)
-  const denied = normalizeCanonicalGenerateLead(
+  const granted = normalizeCanonicalGenerateLead(
     {
       ...event,
-      consent: { ...event.consent, analytics: 'denied' }
+      consent: { ...event.consent, analytics: 'granted' }
     },
     {}
   )
-  assert.equal(denied.journey_id, undefined)
-  assert.equal(denied.page_view_id, undefined)
+  assert.equal(granted.journey_id, undefined)
+  assert.equal(granted.page_view_id, undefined)
 })
 
 test('lead value must be a positive currency-value pair', () => {
@@ -113,7 +113,7 @@ test('lead value must be a positive currency-value pair', () => {
     consent: {
       analytics: 'granted' as const,
       marketing: 'granted' as const,
-      preferences: 'denied' as const,
+      preferences: 'granted' as const,
       source: 'cookiebot' as const,
       version: '1'
     },
@@ -180,7 +180,7 @@ test('parseLeadFormTrackingContext accepts valid payload and rejects invalid', (
       consent: {
         analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -212,9 +212,9 @@ test('lead context drops linked identifiers without analytics even when marketin
   const context = parseLeadFormTrackingContext(
     JSON.stringify({
       consent: {
-        analytics: 'denied',
+        analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },

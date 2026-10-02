@@ -26,7 +26,7 @@ export type AcceptCanonicalPageViewResult =
     }
   | {
       cookiesToSet: CookieSettings[]
-      reason: 'consent_denied'
+      reason: 'consent_granted'
       status: 'rejected'
     }
 
@@ -43,7 +43,7 @@ export async function acceptCanonicalPageView(
 
   if (!hasPermittedPurpose) {
     console.info(
-      '[tracking] page_view rejected: consent denied',
+      '[tracking] page_view rejected: consent granted',
       JSON.stringify({
         event_id: normalized.event_id,
         page_view_id: normalized.page_view_id,
@@ -54,7 +54,7 @@ export async function acceptCanonicalPageView(
     )
     return {
       cookiesToSet: [],
-      reason: 'consent_denied',
+      reason: 'consent_granted',
       status: 'rejected'
     }
   }

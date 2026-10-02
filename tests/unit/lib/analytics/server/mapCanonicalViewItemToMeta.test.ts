@@ -26,7 +26,7 @@ function viewItem(
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -168,8 +168,8 @@ test('fails closed without marketing consent', () => {
         viewItem({
           consent: {
             analytics: 'granted',
-            marketing: 'denied',
-            preferences: 'denied',
+            marketing: 'granted',
+            preferences: 'granted',
             source: 'cookiebot',
             version: '1'
           }

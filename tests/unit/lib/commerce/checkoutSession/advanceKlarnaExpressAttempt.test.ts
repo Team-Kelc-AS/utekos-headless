@@ -572,7 +572,7 @@ function createCanonicalEvent() {
         'granted' as const,
 
       preferences:
-        'denied' as const,
+        'granted' as const,
 
       source:
         'cookiebot' as const,

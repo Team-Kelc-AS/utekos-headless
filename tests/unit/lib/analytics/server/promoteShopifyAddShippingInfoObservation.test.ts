@@ -52,7 +52,7 @@ const beginCheckout = canonicalBeginCheckoutSchema.parse({
   consent: {
     analytics: 'granted',
     marketing: 'granted',
-    preferences: 'denied',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   },
@@ -197,7 +197,7 @@ test('adds consented Shopify checkout customer hashes to the Meta event', async 
   })
 })
 
-test('wrong source event and denied analytics never persist or log completed shipping', async t => {
+test('wrong source event and granted analytics never persist or log completed shipping', async t => {
   const logs: unknown[] = []
   for (const method of ['log', 'warn', 'error'] as const) {
     t.mock.method(console, method, (...values: unknown[]) => {

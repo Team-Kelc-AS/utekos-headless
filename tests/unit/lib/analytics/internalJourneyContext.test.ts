@@ -4,8 +4,8 @@ import { createInternalJourneyContextEnricher } from '@/lib/analytics/internalJo
 
 const grantedConsent = {
   analytics: 'granted' as const,
-  marketing: 'denied' as const,
-  preferences: 'denied' as const,
+  marketing: 'granted' as const,
+  preferences: 'granted' as const,
   source: 'cookiebot' as const,
   version: '1'
 }
@@ -83,14 +83,14 @@ test('does not access existing journey storage without analytics consent', () =>
     }
   })
 
-  const denied = enrich({
-    consent: { ...grantedConsent, analytics: 'denied' as const },
+  const granted = enrich({
+    consent: { ...grantedConsent, analytics: 'granted' as const },
     journey_id: journeyId,
     previous_page_view_id: '22222222-2222-4222-8222-222222222222'
   })
 
-  assert.equal(denied.journey_id, undefined)
-  assert.equal(denied.previous_page_view_id, undefined)
+  assert.equal(granted.journey_id, undefined)
+  assert.equal(granted.previous_page_view_id, undefined)
   assert.equal(creates, 0)
   assert.equal(storage.values.size, 1)
 })

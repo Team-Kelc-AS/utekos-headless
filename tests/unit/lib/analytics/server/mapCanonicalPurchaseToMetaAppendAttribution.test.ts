@@ -22,7 +22,7 @@ function purchase(overrides: Record<string, unknown> = {}) {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -114,8 +114,8 @@ test('fails closed without consent, exact ad identity, or send window', () => {
       purchase({
         consent: {
           analytics: 'granted',
-          marketing: 'denied',
-          preferences: 'denied',
+          marketing: 'granted',
+          preferences: 'granted',
           source: 'cookiebot',
           version: '1'
         },

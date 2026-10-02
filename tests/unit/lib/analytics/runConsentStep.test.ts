@@ -23,7 +23,7 @@ test('blocked storage does not escape the optional consent step or manufacture a
       store.getOrCreate({
         analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       })

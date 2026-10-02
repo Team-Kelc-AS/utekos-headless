@@ -318,7 +318,7 @@ test('shared request handler characterizes common HTTP outcomes', async () => {
       if (outcome === 'error')
         throw new Error('store unavailable')
       if (outcome === 'rejected') {
-        return { reason: 'consent_denied', status: 'rejected' }
+        return { reason: 'consent_granted', status: 'rejected' }
       }
 
       return {

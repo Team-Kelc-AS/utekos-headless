@@ -16,7 +16,7 @@ function beginCheckout(): CanonicalBeginCheckout {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },

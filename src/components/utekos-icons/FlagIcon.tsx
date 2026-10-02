@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function FlagIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M11.638 14.94A15 15 0 0 0 5 14.796V21a1 1 0 1 1-2 0V3.673c0-.854.582-1.6 1.41-1.806a14.8 14.8 0 0 1 7.18 0l.772.193a15 15 0 0 0 7.276 0l.12-.03A1 1 0 0 1 21 3v10.066a2.196 2.196 0 0 1-1.663 2.13 13.75 13.75 0 0 1-6.674 0z" clip-rule="evenodd"/>
+    </svg>
+  )
+}

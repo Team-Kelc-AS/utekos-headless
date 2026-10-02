@@ -684,7 +684,7 @@ type AcceptCanonical${Pascal}Input = {
 
 export type AcceptCanonical${Pascal}Result =
   | { event_id: string; status: 'accepted' | 'duplicate' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 export async function acceptCanonical${Pascal}(
   input: AcceptCanonical${Pascal}Input
@@ -696,7 +696,7 @@ export async function acceptCanonical${Pascal}(
   ${consentCheck}
 
   if (!hasPermittedPurpose) {
-    return { reason: 'consent_denied', status: 'rejected' }
+    return { reason: 'consent_granted', status: 'rejected' }
   }
 
   const result = await input.store.accept({

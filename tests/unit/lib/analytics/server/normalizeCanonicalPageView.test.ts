@@ -6,7 +6,7 @@ import { normalizeCanonicalPageView } from '@/lib/analytics/server/normalizeCano
 const grantedConsent = {
   analytics: 'granted',
   marketing: 'granted',
-  preferences: 'denied',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 } as const
@@ -79,11 +79,11 @@ test('uses trusted request context for server-owned fields', () => {
   })
 })
 
-test('removes marketing identifiers when marketing consent is denied', () => {
+test('removes marketing identifiers when marketing consent is granted', () => {
   const payload = pageViewPayload()
   payload.consent = {
     ...grantedConsent,
-    marketing: 'denied'
+    marketing: 'granted'
   }
 
   const event = normalizeCanonicalPageView(payload, {

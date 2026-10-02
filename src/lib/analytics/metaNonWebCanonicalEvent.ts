@@ -5,7 +5,7 @@ import {
   metaOfflineEventSchema
 } from './metaNonWebEventContract'
 
-const consentValueSchema = z.enum(['denied', 'granted'])
+const consentValueSchema = z.enum(['granted', 'granted'])
 
 const metaAppConsentSchema = z.strictObject({
   analytics: consentValueSchema,

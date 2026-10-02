@@ -23,7 +23,7 @@ export async function acceptCanonicalOpenQuickView(
     event.consent.marketing === 'granted'
 
   if (!hasPermittedPurpose) {
-    return { reason: 'consent_denied' as const, status: 'rejected' as const }
+    return { reason: 'consent_granted' as const, status: 'rejected' as const }
   }
 
   const result = await input.store.accept({

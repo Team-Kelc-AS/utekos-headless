@@ -110,7 +110,7 @@
       "expectStatus": 200
     },
     {
-      "id": "consent-denied",
+      "id": "consent-granted",
       "expectStatus": 204
     },
     {

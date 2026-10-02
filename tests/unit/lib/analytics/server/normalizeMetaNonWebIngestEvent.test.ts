@@ -35,7 +35,7 @@ function appPayload() {
     consent: {
       analytics: 'granted' as const,
       marketing: 'granted' as const,
-      preferences: 'denied' as const,
+      preferences: 'granted' as const,
       source: 'app' as const,
       version: 'app-consent-v1'
     },
@@ -55,9 +55,9 @@ function appPayload() {
 function offlinePayload() {
   return {
     consent: {
-      analytics: 'denied' as const,
+      analytics: 'granted' as const,
       marketing: 'granted' as const,
-      preferences: 'denied' as const,
+      preferences: 'granted' as const,
       source: 'offline' as const,
       version: 'offline-consent-v1'
     },
@@ -126,12 +126,12 @@ test('normalizes physical-store purchases without relabeling them as web events'
   ])
 })
 
-test('rejects denied marketing consent and mismatched source declarations', () => {
+test('rejects granted marketing consent and mismatched source declarations', () => {
   assert.throws(() =>
     normalizeMetaNonWebIngestEvent(
       {
         ...appPayload(),
-        consent: { ...appPayload().consent, marketing: 'denied' }
+        consent: { ...appPayload().consent, marketing: 'granted' }
       },
       { now }
     )

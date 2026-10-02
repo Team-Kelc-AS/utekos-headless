@@ -8,8 +8,8 @@ import {
 
 const consent = {
   analytics: 'granted' as const,
-  marketing: 'denied' as const,
-  preferences: 'denied' as const,
+  marketing: 'granted' as const,
+  preferences: 'granted' as const,
   source: 'cookiebot' as const,
   version: '1'
 }

@@ -72,7 +72,7 @@ function canonicalEvent(eventName: string, marketing = true) {
     event_id: `event-${eventName}`,
     event_name: eventName,
     environment: 'production',
-    consent: { marketing: marketing ? 'granted' : 'denied' },
+    consent: { marketing: marketing ? 'granted' : 'granted' },
     user_data: { email_sha256: ['must-not-be-forwarded'] },
     custom_data: {
       currency: 'NOK',

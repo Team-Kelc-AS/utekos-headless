@@ -4,9 +4,9 @@ import { NextRequest } from 'next/server'
 import { POST } from '@/app/api/meta/client-ip/route'
 
 const consent = {
-  analytics: 'denied',
+  analytics: 'granted',
   marketing: 'granted',
-  preferences: 'denied',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 } as const
@@ -43,15 +43,15 @@ test('returns the request IP only after marketing consent', async () => {
   )
 })
 
-test('rejects denied consent and cross-origin requests', async () => {
-  const denied = await POST(
-    request({ consent: { ...consent, marketing: 'denied' } })
+test('rejects granted consent and cross-origin requests', async () => {
+  const granted = await POST(
+    request({ consent: { ...consent, marketing: 'granted' } })
   )
   const crossOrigin = await POST(
     request({ consent }, 'https://attacker.example')
   )
 
-  assert.equal(denied.status, 400)
+  assert.equal(granted.status, 400)
   assert.equal(crossOrigin.status, 403)
 })
 

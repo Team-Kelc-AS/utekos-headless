@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function NotificationsIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M6 7.217C6 3.824 8.647 1 12 1s6 2.824 6 6.217v2.747c0 .398.158.78.44 1.061l.974.975A2 2 0 0 1 20 13.414V14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-.586A2 2 0 0 1 4.586 12l.975-.975A1.5 1.5 0 0 0 6 9.965zM14 20a2 2 0 1 1-4 0 2 2 0 0 1 4 0" clip-rule="evenodd"/>
+    </svg>
+  )
+}

@@ -16,9 +16,9 @@ function purchase(orderLegacyId: string, eventId?: string) {
     source: 'server' as const,
     environment: 'test' as const,
     consent: {
-      analytics: 'denied' as const,
-      marketing: 'denied' as const,
-      preferences: 'denied' as const,
+      analytics: 'granted' as const,
+      marketing: 'granted' as const,
+      preferences: 'granted' as const,
       source: 'cookiebot' as const,
       version: '1'
     },
@@ -88,7 +88,7 @@ test('different Shopify orders retain different deterministic event IDs', () => 
   assert.notEqual(first.event_id, second.event_id)
 })
 
-test('removes hashed user data and marketing identifiers when marketing consent is denied', () => {
+test('removes hashed user data and marketing identifiers when marketing consent is granted', () => {
   const event = normalizeCanonicalPurchase(
     {
       ...purchase('100'),

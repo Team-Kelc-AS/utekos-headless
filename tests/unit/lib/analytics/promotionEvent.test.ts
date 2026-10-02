@@ -13,8 +13,8 @@ import {
 
 const consent = {
   analytics: 'granted',
-  marketing: 'denied',
-  preferences: 'denied',
+  marketing: 'granted',
+  preferences: 'granted',
   source: 'cookiebot',
   version: 'test'
 } as const

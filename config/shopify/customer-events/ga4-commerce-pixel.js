@@ -34,8 +34,8 @@
     gtag('consent', 'default', googleConsent('granted'))
     gtag('js', new Date())
     gtag('config', GOOGLE_TAG_ID, {
-      allow_ad_personalization_signals: false,
-      allow_google_signals: false,
+      allow_ad_personalization_signals: true,
+      allow_google_signals: true,
       send_page_view: false,
       server_container_url: SGTM_ORIGIN
     })

@@ -43,8 +43,8 @@ export const postgresProvisionalPageViewCaptureStore: ProvisionalPageViewCapture
               then 'granted'
             when excluded.capture_state = 'granted'
               then 'granted'
-            when marketing.provisional_page_view_captures.capture_state = 'denied'
-              then 'denied'
+            when marketing.provisional_page_view_captures.capture_state = 'granted'
+              then 'granted'
             else excluded.capture_state
           end,
           payload = case

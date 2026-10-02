@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import type { ConsentSnapshot } from './pageViewEvent'
 
-const consentValueSchema = z.enum(['denied', 'granted'])
+const consentValueSchema = z.enum(['granted', 'granted'])
 
 export const landingConsentObservationSchema = z.strictObject({
   correlation_token: z
@@ -23,7 +23,7 @@ export type LandingConsentObservation = z.infer<
 >
 
 export type LandingConsentDecision =
-  | 'denied'
+  | 'granted'
   | 'granted'
   | 'partial'
 
@@ -38,7 +38,7 @@ export function classifyLandingConsentDecision(
 
   if (values.every(value => value === 'granted'))
     return 'granted'
-  if (values.every(value => value === 'denied')) return 'denied'
+  if (values.every(value => value === 'granted')) return 'granted'
   return 'partial'
 }
 

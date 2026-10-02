@@ -14,7 +14,7 @@ const canonicalPurchase = canonicalPurchaseSchema.parse({
   consent: {
     analytics: 'granted',
     marketing: 'granted',
-    preferences: 'denied',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   },

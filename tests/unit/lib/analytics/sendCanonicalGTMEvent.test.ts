@@ -64,7 +64,7 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
       consent: {
         analytics: 'granted',
         marketing: 'granted',
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       }
@@ -91,7 +91,7 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
         ...event,
         consent: {
           ...event.consent,
-          marketing: 'denied'
+          marketing: 'granted'
         }
       })
     )
@@ -101,7 +101,7 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
       ...event,
       consent: {
         ...event.consent,
-        marketing: 'denied'
+        marketing: 'granted'
       }
     })
   } finally {

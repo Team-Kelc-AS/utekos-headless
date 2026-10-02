@@ -637,7 +637,7 @@
                           "items": {
                             "type": "string",
                             "enum": [
-                              "consent_denied",
+                              "consent_granted",
                               "not_observed",
                               "no_applicable_click",
                               "not_applicable",

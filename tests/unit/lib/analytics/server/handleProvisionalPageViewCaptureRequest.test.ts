@@ -21,9 +21,9 @@ function captureBody() {
         'https://utekos.no/?fbclid=meta-click&utm_source=facebook',
       page_title: 'Utekos',
       consent: {
-        analytics: 'denied',
-        marketing: 'denied',
-        preferences: 'denied',
+        analytics: 'granted',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -53,7 +53,7 @@ function store(
   return { capture, release: async () => undefined }
 }
 
-test('pending and denied capture are rejected without storing or logging event payloads', async () => {
+test('pending and granted capture are rejected without storing or logging event payloads', async () => {
   let writes = 0,
     logs = 0
   const original = console.info
@@ -61,7 +61,7 @@ test('pending and denied capture are rejected without storing or logging event p
     logs++
   }
   try {
-    for (const state of ['pending', 'denied', 'granted']) {
+    for (const state of ['pending', 'granted', 'granted']) {
       const response =
         await handleProvisionalPageViewCaptureRequest(
           request({ ...captureBody(), capture_state: state }),

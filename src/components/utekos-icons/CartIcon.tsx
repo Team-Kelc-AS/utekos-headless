@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function CartIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M0 4a1 1 0 0 1 1-1h1.531a2 2 0 0 1 1.953 1.566L4.802 6h13.951a2 2 0 0 1 1.953 2.434l-1.295 5.825A3.5 3.5 0 0 1 15.995 17h-7.99a3.5 3.5 0 0 1-3.416-2.74L3.024 7.216 2.53 5H1a1 1 0 0 1-1-1m7.5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m9 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" clip-rule="evenodd"/>
+    </svg>
+  )
+}

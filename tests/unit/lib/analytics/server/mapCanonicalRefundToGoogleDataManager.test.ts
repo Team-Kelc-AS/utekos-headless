@@ -15,8 +15,8 @@ function itemlessRefund(): CanonicalRefund {
     browser_id: { ga_client_id: '123456789.1784201643' },
     consent: {
       analytics: 'granted',
-      marketing: 'denied',
-      preferences: 'denied',
+      marketing: 'granted',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },

@@ -14,7 +14,7 @@ const observation: LandingConsentObservation = {
   consent: {
     analytics: 'granted',
     marketing: 'granted',
-    preferences: 'denied',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   }
@@ -44,10 +44,10 @@ test('classifies resolved consent decisions without a pending guess', () => {
   assert.equal(
     classifyLandingConsentDecision({
       ...observation.consent,
-      analytics: 'denied',
-      marketing: 'denied'
+      analytics: 'granted',
+      marketing: 'granted'
     }),
-    'denied'
+    'granted'
   )
 })
 
@@ -87,26 +87,26 @@ test('serializes a newer consent state behind retries for the same landing', asy
   const retryGate = new Promise<void>(resolve => {
     releaseRetry = resolve
   })
-  let deniedAttempts = 0
+  let grantedAttempts = 0
   const transport = createLandingConsentTransport(
     async value => {
       calls.push(value.consent.marketing)
       if (
-        value.consent.marketing === 'denied' &&
-        deniedAttempts++ === 0
+        value.consent.marketing === 'granted' &&
+        grantedAttempts++ === 0
       ) {
         throw new Error('temporary failure')
       }
     },
     { waitBeforeRetry: () => retryGate }
   )
-  const denied = {
+  const granted = {
     ...observation,
     consent: {
       ...observation.consent,
-      analytics: 'denied' as const,
-      marketing: 'denied' as const,
-      preferences: 'denied' as const
+      analytics: 'granted' as const,
+      marketing: 'granted' as const,
+      preferences: 'granted' as const
     }
   }
   const granted = {
@@ -119,15 +119,15 @@ test('serializes a newer consent state behind retries for the same landing', asy
     }
   }
 
-  const deniedResult = transport.observe(denied)
+  const grantedResult = transport.observe(granted)
   await Promise.resolve()
   const grantedResult = transport.observe(granted)
   await Promise.resolve()
-  assert.deepEqual(calls, ['denied'])
+  assert.deepEqual(calls, ['granted'])
 
   releaseRetry?.()
 
-  assert.equal(await deniedResult, 'sent')
   assert.equal(await grantedResult, 'sent')
-  assert.deepEqual(calls, ['denied', 'denied', 'granted'])
+  assert.equal(await grantedResult, 'sent')
+  assert.deepEqual(calls, ['granted', 'granted', 'granted'])
 })

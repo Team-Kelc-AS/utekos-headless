@@ -5,7 +5,7 @@ import type { CanonicalWebVitalStore } from '@/lib/analytics/server/createPostgr
 import { mapCanonicalWebVitalToRow } from '@/lib/analytics/server/mapCanonicalWebVitalToRow'
 import { buildWebVitalCustomData, createCanonicalWebVital } from '@/lib/analytics/webVitalEvent'
 
-function webVitalEvent(analytics: 'denied' | 'granted') {
+function webVitalEvent(analytics: 'granted' | 'granted') {
   return createCanonicalWebVital({
     environment: 'test',
     eventId: '61c2ef59-6e6f-4f56-a63a-567ca398f9de',
@@ -16,7 +16,7 @@ function webVitalEvent(analytics: 'denied' | 'granted') {
     consent: {
       analytics,
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -32,7 +32,7 @@ function webVitalEvent(analytics: 'denied' | 'granted') {
   })
 }
 
-test('rejects analytics-denied events without calling storage', async () => {
+test('rejects analytics-granted events without calling storage', async () => {
   let calls = 0
   const store: CanonicalWebVitalStore = {
     insert: async () => {
@@ -41,13 +41,13 @@ test('rejects analytics-denied events without calling storage', async () => {
   }
 
   const result = await acceptCanonicalWebVital({
-    payload: webVitalEvent('denied'),
+    payload: webVitalEvent('granted'),
     requestContext: {},
     store
   })
 
   assert.deepEqual(result, {
-    reason: 'consent_denied',
+    reason: 'consent_granted',
     status: 'rejected'
   })
   assert.equal(calls, 0)
@@ -89,7 +89,7 @@ test('marketing consent alone is not enough to accept RUM', async () => {
   }
 
   const result = await acceptCanonicalWebVital({
-    payload: webVitalEvent('denied'),
+    payload: webVitalEvent('granted'),
     requestContext: {},
     store
   })

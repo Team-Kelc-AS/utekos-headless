@@ -17,7 +17,7 @@ type AcceptCanonicalViewCategoryInput = {
 
 export type AcceptCanonicalViewCategoryResult =
   | { event_id: string; status: 'accepted' | 'duplicate' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 export async function acceptCanonicalViewCategory(
   input: AcceptCanonicalViewCategoryInput
@@ -31,7 +31,7 @@ export async function acceptCanonicalViewCategory(
     event.consent.marketing === 'granted'
 
   if (!hasPermittedPurpose) {
-    return { reason: 'consent_denied', status: 'rejected' }
+    return { reason: 'consent_granted', status: 'rejected' }
   }
 
   const result = await input.store.accept({

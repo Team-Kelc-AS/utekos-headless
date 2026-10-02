@@ -77,7 +77,7 @@ test('enriches a consented event at the server boundary', () => {
 })
 
 test('does not attach Facebook identity without marketing consent', () => {
-  const payload = { consent: { marketing: 'denied' } }
+  const payload = { consent: { marketing: 'granted' } }
   assert.equal(
     enrichCanonicalPayloadWithFacebookLogin(
       payload,

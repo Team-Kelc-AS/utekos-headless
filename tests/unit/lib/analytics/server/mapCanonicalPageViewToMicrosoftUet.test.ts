@@ -21,7 +21,7 @@ function pageView(overrides: Record<string, unknown> = {}) {
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },
@@ -64,8 +64,8 @@ test('rejects pageLoad mapping without marketing consent', () => {
         pageView({
           consent: {
             analytics: 'granted',
-            marketing: 'denied',
-            preferences: 'denied',
+            marketing: 'granted',
+            preferences: 'granted',
             source: 'cookiebot',
             version: '1'
           }

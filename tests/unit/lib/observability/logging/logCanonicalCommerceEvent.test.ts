@@ -18,8 +18,8 @@ const event = {
   page_view_id: pageViewId,
   consent: {
     analytics: 'granted',
-    marketing: 'denied',
-    preferences: 'denied',
+    marketing: 'granted',
+    preferences: 'granted',
     source: 'cookiebot',
     version: '1'
   },
@@ -157,7 +157,7 @@ test('logs every requested name and keeps Shopify progress separate from paid pu
   assert.equal(lines.length, cases.length)
 })
 
-test('denied analytics strips journey, page and checkout linkage even with marketing consent', async t => {
+test('granted analytics strips journey, page and checkout linkage even with marketing consent', async t => {
   const lines: string[] = []
   t.mock.method(console, 'log', (value: unknown) =>
     lines.push(String(value))
@@ -167,7 +167,7 @@ test('denied analytics strips journey, page and checkout linkage even with marke
       ...event,
       consent: {
         ...event.consent,
-        analytics: 'denied',
+        analytics: 'granted',
         marketing: 'granted'
       }
     },

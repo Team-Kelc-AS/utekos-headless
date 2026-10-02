@@ -13,7 +13,7 @@ const NO_STORE_HEADERS = {
 
 type AcceptResult =
   | { event_id: string; status: 'accepted' | 'duplicate' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 type AcceptFn<TStore> = (input: {
   payload: unknown

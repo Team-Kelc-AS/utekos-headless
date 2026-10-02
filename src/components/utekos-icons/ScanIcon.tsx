@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function ScanIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M20 5.5A1.5 1.5 0 0 0 18.5 4H16a1 1 0 1 1 0-2h2.5A3.5 3.5 0 0 1 22 5.5V8a1 1 0 1 1-2 0zM6 12a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1m-2 6.5A1.5 1.5 0 0 0 5.5 20H8a1 1 0 1 1 0 2H5.5A3.5 3.5 0 0 1 2 18.5V16a1 1 0 1 1 2 0zM18.5 20H16a1 1 0 1 0 0 2h2.5a3.5 3.5 0 0 0 3.5-3.5V16a1 1 0 1 0-2 0v2.5a1.5 1.5 0 0 1-1.5 1.5M4 5.5A1.5 1.5 0 0 1 5.5 4H8a1 1 0 1 0 0-2H5.5A3.5 3.5 0 0 0 2 5.5V8a1 1 0 1 0 2 0z" clip-rule="evenodd"/>
+    </svg>
+  )
+}

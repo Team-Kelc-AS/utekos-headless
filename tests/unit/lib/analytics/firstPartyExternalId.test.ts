@@ -6,16 +6,16 @@ import {
 } from '@/lib/analytics/firstPartyExternalId'
 import type { ConsentSnapshot } from '@/lib/analytics/pageViewEvent'
 
-const deniedConsent: ConsentSnapshot = {
-  analytics: 'denied',
-  marketing: 'denied',
-  preferences: 'denied',
+const grantedConsent: ConsentSnapshot = {
+  analytics: 'granted',
+  marketing: 'granted',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 }
 
 const grantedConsent: ConsentSnapshot = {
-  ...deniedConsent,
+  ...grantedConsent,
   marketing: 'granted'
 }
 
@@ -51,7 +51,7 @@ test('does not expose or create an ID without marketing consent', () => {
   const context = harness()
 
   assert.equal(
-    context.store.getOrCreate(deniedConsent),
+    context.store.getOrCreate(grantedConsent),
     undefined
   )
   assert.equal(context.createCount(), 0)

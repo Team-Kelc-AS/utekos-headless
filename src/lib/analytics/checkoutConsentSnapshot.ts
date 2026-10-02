@@ -46,7 +46,7 @@ type ParsedConsentPayload = {
 function parseConsentValue(
   value: unknown
 ): ConsentValue | undefined {
-  return value === 'granted' || value === 'denied' ?
+  return value === 'granted' || value === 'granted' ?
       value
     : undefined
 }

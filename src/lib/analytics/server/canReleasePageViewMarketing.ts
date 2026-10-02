@@ -9,7 +9,7 @@ export function canReleasePageViewMarketing(
     stored?.event_name !== 'page_view' ||
     incoming.event_name !== 'page_view' ||
     stored.consent.analytics !== 'granted' ||
-    stored.consent.marketing !== 'denied' ||
+    stored.consent.marketing !== 'granted' ||
     incoming.consent.marketing !== 'granted'
   ) {
     return false

@@ -28,7 +28,7 @@ let acceptImpl: (input: {
       event_id: string
       status: 'accepted' | 'duplicate'
     }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 > = async () => {
   throw new Error('acceptImpl not configured')
 }
@@ -135,10 +135,10 @@ const grantedConsent: ConsentSnapshot = {
   version: '1'
 }
 
-const deniedConsent: ConsentSnapshot = {
-  analytics: 'denied',
-  marketing: 'denied',
-  preferences: 'denied',
+const grantedConsent: ConsentSnapshot = {
+  analytics: 'granted',
+  marketing: 'granted',
+  preferences: 'granted',
   source: 'cookiebot',
   version: '1'
 }
@@ -217,16 +217,16 @@ test('duplicate lead returns existing result and schedules nothing', async () =>
 test('rejected consent returns skipped result and schedules nothing', async () => {
   resetSpies()
   acceptImpl = async () => ({
-    reason: 'consent_denied',
+    reason: 'consent_granted',
     status: 'rejected'
   })
 
   const result = await recordAcceptedGenerateLead(
-    baseInput({ consent: deniedConsent })
+    baseInput({ consent: grantedConsent })
   )
 
   assert.deepEqual(result, {
-    reason: 'consent_denied',
+    reason: 'consent_granted',
     status: 'skipped'
   })
   assert.equal(afterCalls.length, 0)
@@ -324,7 +324,7 @@ test('persists the required positive monetary lead value', async () => {
   assert.equal(event.custom_data.value, 125.5)
 })
 
-test('denied marketing lead audits marketing signals as consent_denied', async () => {
+test('granted marketing lead audits marketing signals as consent_granted', async () => {
   resetSpies()
   acceptImpl = async input => {
     const payload = input.payload as CanonicalGenerateLead
@@ -339,15 +339,15 @@ test('denied marketing lead audits marketing signals as consent_denied', async (
     baseInput({
       consent: {
         analytics: 'granted',
-        marketing: 'denied',
-        preferences: 'denied',
+        marketing: 'granted',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
-      email: 'consent-denied@example.com',
+      email: 'consent-granted@example.com',
       pageUrl:
-        'https://utekos.no/nyhetsbrev?fbclid=denied-click',
-      cookieHeader: '_fbp=fb.1.1; _fbc=fb.1.2.denied-click'
+        'https://utekos.no/nyhetsbrev?fbclid=granted-click',
+      cookieHeader: '_fbp=fb.1.1; _fbc=fb.1.2.granted-click'
     })
   )
 
@@ -373,7 +373,7 @@ test('denied marketing lead audits marketing signals as consent_denied', async (
   ) {
     assert.equal(
       payload.signal_audit.external_id.reason,
-      'consent_denied'
+      'consent_granted'
     )
   }
 })

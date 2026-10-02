@@ -1,0 +1,19 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function KeyIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" fill-rule="evenodd" d="M7 18a6 6 0 0 0 5.659-4H17v2h4v-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-9.341A6 6 0 1 0 7 18m0-3a3 3 0 1 0 0-6 3 3 0 0 0 0 6" clip-rule="evenodd"/>
+    </svg>
+  )
+}

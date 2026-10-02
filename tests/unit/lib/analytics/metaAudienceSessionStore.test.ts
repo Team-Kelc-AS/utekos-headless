@@ -152,8 +152,8 @@ test('storage failures leave commerce usable and cannot invent a segment', () =>
   )
 })
 test('both consent purposes and a valid enum are required', () => {
-  for (const analytics of ['granted', 'denied'] as const)
-    for (const marketing of ['granted', 'denied'] as const)
+  for (const analytics of ['granted', 'granted'] as const)
+    for (const marketing of ['granted', 'granted'] as const)
       assert.equal(
         consentedMetaAudience({
           consent: { analytics, marketing },

@@ -49,7 +49,7 @@ test('createCanonicalAddToWishlist accepts full commerce wishlist payload', () =
     consent: {
       analytics: 'granted',
       marketing: 'granted',
-      preferences: 'denied',
+      preferences: 'granted',
       source: 'cookiebot',
       version: '1'
     },

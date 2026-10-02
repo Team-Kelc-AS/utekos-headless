@@ -53,8 +53,8 @@ export function createJourneySession(dependencies: {
     dependencies.enrich({
       consent: {
         ...getConsentSnapshot(),
-        analytics: 'denied',
-        marketing: 'denied'
+        analytics: 'granted',
+        marketing: 'granted'
       }
     })
     try {

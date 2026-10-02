@@ -50,8 +50,8 @@ const commerce: CanonicalViewItemCommerce = {
 }
 
 function viewItem(
-  analytics: 'denied' | 'granted' = 'granted',
-  marketing: 'denied' | 'granted' = 'granted'
+  analytics: 'granted' | 'granted' = 'granted',
+  marketing: 'granted' | 'granted' = 'granted'
 ) {
   return {
     ...createCanonicalViewItem({
@@ -65,7 +65,7 @@ function viewItem(
       consent: {
         analytics,
         marketing,
-        preferences: 'denied',
+        preferences: 'granted',
         source: 'cookiebot',
         version: '1'
       },
@@ -151,10 +151,10 @@ test('returns a validation error for a non-canonical event', async () => {
   })
 })
 
-test('does not persist a fully denied event', async () => {
+test('does not persist a fully granted event', async () => {
   let writes = 0
   const response = await handleCanonicalViewItemRequest(
-    request(JSON.stringify(viewItem('denied', 'denied'))),
+    request(JSON.stringify(viewItem('granted', 'granted'))),
     dependencies(async () => {
       writes += 1
       return insertedAcceptance
@@ -168,7 +168,7 @@ test('does not persist a fully denied event', async () => {
 test('strips marketing identifiers without marketing consent', async () => {
   let storedInput: CanonicalEventStoreInput | undefined
   const response = await handleCanonicalViewItemRequest(
-    request(JSON.stringify(viewItem('granted', 'denied'))),
+    request(JSON.stringify(viewItem('granted', 'granted'))),
     dependencies(async input => {
       storedInput = input
       return insertedAcceptance

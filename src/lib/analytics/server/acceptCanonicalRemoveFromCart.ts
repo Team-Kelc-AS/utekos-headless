@@ -17,7 +17,7 @@ type AcceptCanonicalRemoveFromCartInput = {
 
 export type AcceptCanonicalRemoveFromCartResult =
   | { event_id: string; status: 'accepted' | 'duplicate' }
-  | { reason: 'consent_denied'; status: 'rejected' }
+  | { reason: 'consent_granted'; status: 'rejected' }
 
 export async function acceptCanonicalRemoveFromCart(
   input: AcceptCanonicalRemoveFromCartInput
@@ -34,7 +34,7 @@ export async function acceptCanonicalRemoveFromCart(
   // Browser path stays consent-gated. Webhook ledger writes are
   // operational; provider outbox still respects consent + matrix.
   if (!isWebhookSource && !hasPermittedPurpose) {
-    return { reason: 'consent_denied', status: 'rejected' }
+    return { reason: 'consent_granted', status: 'rejected' }
   }
 
   const result = await input.store.accept({
