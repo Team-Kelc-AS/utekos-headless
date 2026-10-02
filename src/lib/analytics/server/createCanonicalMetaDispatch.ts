@@ -65,8 +65,12 @@ export function createCanonicalMetaDispatch<
           event: input.eventName,
           outcome: 'success'
         })
-      } catch {
-        // Metrics must not affect Meta dispatch.
+      } catch (error) {
+        // Temporary: diagnose empty Vercel Custom Metrics via Runtime Logs.
+        console.warn(
+          'metric emission failed',
+          error instanceof Error ? error.name : typeof error
+        )
       }
 
       return {
