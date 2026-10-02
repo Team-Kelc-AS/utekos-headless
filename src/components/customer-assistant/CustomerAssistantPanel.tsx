@@ -5,7 +5,6 @@ import type {
   AssistantUIMessage
 } from '@/lib/customer-assistant/assistantProtocol'
 import wordmarkWhite from '@/assets/images/brand/WordmarkWhite.svg'
-import { SendIcon, XIcon } from 'lucide-react'
 import Image from 'next/image'
 import type { KeyboardEvent, RefObject } from 'react'
 import { AssistantHandoff } from './AssistantHandoff'
@@ -20,6 +19,7 @@ import {
   type AssistantFeedbackValue,
   type AssistantHandoffRow
 } from './assistantViewModel'
+import { CloseIcon, SendIcon } from '@/components/utekos-icons'
 
 const errorHandoff: AssistantHandoffRow['handoff'] = {
   contactPath: '/kontaktskjema',
@@ -134,7 +134,7 @@ export function CustomerAssistantPanel({
           onClick={onClose}
           className='inline-flex size-11 shrink-0 items-center justify-center rounded-xl transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
         >
-          <XIcon className='size-5' aria-hidden='true' />
+          <CloseIcon tone="orange" className='size-5' aria-hidden='true' />
         </button>
       </header>
 
@@ -216,7 +216,7 @@ export function CustomerAssistantPanel({
             disabled={!canSubmit}
             className='hover:bg-primary-hover inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
           >
-            <SendIcon className='size-5' aria-hidden='true' />
+            <SendIcon tone="orange" className='size-5' aria-hidden='true' />
             <span className='sr-only'>Send spørsmål</span>
           </button>
         </div>

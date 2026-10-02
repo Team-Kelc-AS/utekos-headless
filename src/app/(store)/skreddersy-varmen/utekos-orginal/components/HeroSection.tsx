@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Star, ChevronDown, Check } from 'lucide-react'
+import { Star } from 'lucide-react'
 import CinemaOne from '@/assets/images/campaign/cinema-twilight.webp'
 import MobileOne from '@/assets/images/campaign/skreddersy-varmen-hero-mobile.webp'
 import { ScrollToButton } from './ScrollToButton'
@@ -7,6 +7,7 @@ import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/Kl
 import { KlarnaOnSiteMessagingScript } from '@/components/klarna/components/KlarnaOnSiteMessagingScript'
 import { getKlarnaMinorUnitAmount } from '@/components/klarna/utils/getKlarnaMinorUnitAmount'
 import { productConfig } from '@/app/skreddersy-varmen/utekos-orginal/utils/productConfig'
+import { CaretDownIcon, CheckMarkIcon } from '@/components/utekos-icons'
 
 const klarnaPurchaseAmount = getKlarnaMinorUnitAmount({
   amount: String(productConfig.price),
@@ -74,7 +75,7 @@ export function HeroSection() {
             </p>
             <div className='flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm font-medium tracking-[-0.01em] text-[#F4F1EA]/90'>
               <span className='flex items-center gap-1.5'>
-                <Check
+                <CheckMarkIcon tone="orange"
                   size={14}
                   className='shrink-0 text-primary'
                   aria-hidden
@@ -82,7 +83,7 @@ export function HeroSection() {
                 Gratis frakt
               </span>
               <span className='flex items-center gap-1.5'>
-                <Check
+                <CheckMarkIcon tone="orange"
                   size={14}
                   className='shrink-0 text-primary'
                   aria-hidden
@@ -108,7 +109,7 @@ export function HeroSection() {
       </div>
 
       <div className='absolute bottom-8 z-20 hidden animate-bounce text-[#F4F1EA]/50 md:block'>
-        <ChevronDown size={32} />
+        <CaretDownIcon tone="orange" size={32} />
       </div>
 
       <KlarnaOnSiteMessagingScript />

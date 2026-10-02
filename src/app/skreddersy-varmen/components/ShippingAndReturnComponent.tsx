@@ -3,13 +3,9 @@
 
 import Link from 'next/link'
 import type { Route } from 'next'
-import {
-  Truck,
-  RefreshCcw,
-  CreditCard,
-  ArrowRight
-} from 'lucide-react'
+import { RefreshCcw, ArrowRight } from 'lucide-react'
 import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
+import { MerchantTruckIcon, PaymentOutlineIcon } from '@/components/utekos-icons'
 
 const pointIconClass = 'shrink-0 text-primary drop-shadow-sm'
 
@@ -19,7 +15,7 @@ export function ShippingAndReturnComponent() {
       <div className='overflow-hidden rounded-xl border border-foreground/10 bg-jungle text-foreground shadow-sm min-[900px]:bg-background'>
         <div className='grid grid-cols-1 divide-y divide-foreground/10 min-[1280px]:grid-cols-3 min-[1280px]:divide-x min-[1280px]:divide-y-0'>
           <div className='flex items-center gap-3 bg-jungle p-4'>
-            <Truck
+            <MerchantTruckIcon tone="orange"
               size={22}
               className={pointIconClass}
               aria-hidden
@@ -45,7 +41,7 @@ export function ShippingAndReturnComponent() {
           </div>
 
           <div className='flex items-center gap-3 bg-jungle p-4'>
-            <CreditCard
+            <PaymentOutlineIcon tone="orange"
               size={22}
               className={pointIconClass}
               aria-hidden

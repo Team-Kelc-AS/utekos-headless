@@ -1,6 +1,6 @@
-import { ChevronDown, ChevronUp } from 'lucide-react'
 import { AccordionContentRenderer } from './AccordionContentRenderer'
 import type { AccordionSectionData } from '@types'
+import { CaretDownIcon, CaretUpIcon } from '@/components/utekos-icons'
 
 export function ProductDetailsAccordionSection({
   sectionData
@@ -33,11 +33,11 @@ export function ProductDetailsAccordionSection({
             {title}
           </span>
         </span>
-        <ChevronDown
+        <CaretDownIcon tone="orange"
           className='size-4 shrink-0 text-card-foreground/70 group-open:hidden'
           aria-hidden='true'
         />
-        <ChevronUp
+        <CaretUpIcon tone="orange"
           className='hidden size-4 shrink-0 text-card-foreground/70 group-open:block'
           aria-hidden='true'
         />

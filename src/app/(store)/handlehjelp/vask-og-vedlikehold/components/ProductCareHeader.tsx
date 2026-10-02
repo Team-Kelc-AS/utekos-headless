@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { ChevronRight } from 'lucide-react'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
+import { CaretRightIcon } from '@/components/utekos-icons'
 
 export function ProductCareHeader() {
   return (
@@ -16,7 +16,7 @@ export function ProductCareHeader() {
             </Link>
           </li>
           <li aria-hidden='true'>
-            <ChevronRight className='size-4' />
+            <CaretRightIcon tone="orange" className='size-4' />
           </li>
           <li>
             <Link
@@ -27,7 +27,7 @@ export function ProductCareHeader() {
             </Link>
           </li>
           <li aria-hidden='true'>
-            <ChevronRight className='size-4' />
+            <CaretRightIcon tone="orange" className='size-4' />
           </li>
           <li aria-current='page' className='text-foreground'>
             Vask og vedlikehold

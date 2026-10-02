@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, useReducedMotion } from 'motion/react'
 import * as m from 'motion/react-m'
-import { ArrowDown, X } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
 import { reportCanonicalViewPromotion } from '@/lib/analytics/viewPromotionReporter'
 import { scrollToElement } from '@/lib/motion/scrollToElement'
 import { reportComfyrobePurchaseSelection } from '../lib/reportComfyrobePurchaseSelection'
 import type { ComfyrobeOfferSummary } from '../lib/buildComfyrobeOfferSummary'
+import { CloseIcon } from '@/components/utekos-icons'
 
 const DISMISS_KEY = 'utekos:comfyrobe-sticky-dismissed'
 const IMPRESSION_DWELL_MS = 1000
@@ -168,7 +169,7 @@ export function ComfyrobeStickyPurchase({
               onClick={handleDismiss}
               className='flex size-11 shrink-0 items-center justify-center rounded-full text-foreground/65 transition-colors hover:bg-foreground/8 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
             >
-              <X className='size-4' aria-hidden />
+              <CloseIcon tone="orange" className='size-4' aria-hidden />
             </button>
 
             <button

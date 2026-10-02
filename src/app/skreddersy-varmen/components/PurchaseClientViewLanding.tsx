@@ -2,13 +2,7 @@
 
 import { TECH_DOWN_PUBLIC_SIZE_DEFINITIONS } from '@/lib/products/techDownSizes'
 
-import {
-  Minus,
-  Plus,
-  Loader2,
-  Ruler,
-  ShoppingCart
-} from 'lucide-react'
+import { Loader2, Ruler } from 'lucide-react'
 import { cn } from '@/lib/utils/className'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
@@ -27,6 +21,7 @@ import type {
   ProductCartModel,
   ProductPurchaseVariant
 } from 'types/product/ProductPurchaseModel'
+import { MinusIcon, PlusIcon, PurchasesOutlineIcon } from '@/components/utekos-icons'
 
 const KlarnaLandingExpressCheckout = dynamic(
   () =>
@@ -251,7 +246,7 @@ export function PurchaseClientViewLanding({
                         )}
                         aria-label='Reduser antall'
                       >
-                        <Minus size={17} aria-hidden />
+                        <MinusIcon tone="orange" size={17} aria-hidden />
                       </button>
                       <span
                         className='w-9 text-center font-sans font-semibold text-base text-background tabular-nums'
@@ -269,7 +264,7 @@ export function PurchaseClientViewLanding({
                         )}
                         aria-label='Øk antall'
                       >
-                        <Plus size={17} aria-hidden />
+                        <PlusIcon tone="orange" size={17} aria-hidden />
                       </button>
                     </div>
                   </div>
@@ -315,7 +310,7 @@ export function PurchaseClientViewLanding({
                       className='size-5 animate-spin'
                       aria-hidden
                     />
-                  : <ShoppingCart
+                  : <PurchasesOutlineIcon tone="orange"
                       className='size-5 shrink-0'
                       aria-hidden
                     />

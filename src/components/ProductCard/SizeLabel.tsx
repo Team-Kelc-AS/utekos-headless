@@ -7,11 +7,12 @@ import {
   HoverCardTrigger
 } from '@/components/ui/hover-card'
 import { cn } from '@/lib/utils/className'
-import { ArrowUpRight, Ruler } from 'lucide-react'
+import { Ruler } from 'lucide-react'
 import type { SizeLabelProps } from '@types'
 import { H3 } from '@/components/typography/TypographyH3'
 import { InlineText } from '@/components/typography/TypographyInlineText'
 import { P } from '@/components/typography/TypographyP'
+import { ArrowUpRightIcon } from '@/components/utekos-icons'
 
 export function SizeLabel({
   className = '',
@@ -30,7 +31,7 @@ export function SizeLabel({
         )}
       >
         <InlineText>{label}</InlineText>
-        <ArrowUpRight
+        <ArrowUpRightIcon tone="orange"
           className='size-3.5 shrink-0 text-current'
           aria-hidden='true'
         />

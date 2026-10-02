@@ -1,11 +1,7 @@
-import {
-  BadgeCheck,
-  Mail,
-  Package,
-  ShieldCheck
-} from 'lucide-react'
+import { ShieldCheck } from 'lucide-react'
 import { returnPolicy } from '@/lib/policies/returnPolicy'
 import Link from 'next/link'
+import { BoxOutlineIcon, EnvelopeIcon, SealIcon } from '@/components/utekos-icons'
 
 const guaranteeIconClassName =
   'flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground'
@@ -42,7 +38,7 @@ export function InfoSidebar() {
 
             <li className='flex items-start gap-4'>
               <div className={guaranteeIconClassName}>
-                <Package
+                <BoxOutlineIcon tone="orange"
                   className='size-5'
                   strokeWidth={1.8}
                   aria-hidden='true'
@@ -60,7 +56,7 @@ export function InfoSidebar() {
 
             <li className='flex items-start gap-4'>
               <div className={guaranteeIconClassName}>
-                <BadgeCheck
+                <SealIcon tone="orange"
                   className='size-5'
                   strokeWidth={1.8}
                   aria-hidden='true'
@@ -100,7 +96,7 @@ export function InfoSidebar() {
               data-track='ShippingReturnsContactClick'
               className='hover:bg-primary-hover flex min-h-12 w-full items-center justify-center gap-2 rounded-3xl border border-secondary/30 bg-primary px-6 py-3 font-sans font-semibold text-base font-bold text-secondary-foreground shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card focus-visible:outline-none'
             >
-              <Mail className='size-5' aria-hidden='true' />
+              <EnvelopeIcon tone="orange" className='size-5' aria-hidden='true' />
               Kontakt oss
             </Link>
           </div>

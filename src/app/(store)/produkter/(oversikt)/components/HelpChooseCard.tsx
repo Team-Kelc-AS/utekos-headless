@@ -7,7 +7,7 @@ import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductLi
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
 import { cn } from '@/lib/utils/className'
 import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
-import { Loader2, ShoppingBag } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import type { Route } from 'next'
 import Image from 'next/image'
@@ -18,6 +18,7 @@ import type {
   ShopifyProductVariant
 } from 'types/product'
 import styles from './HelpChooseCard.module.css'
+import { BagOutlineIcon } from '@/components/utekos-icons'
 
 interface HelpChooseCardProps {
   product: ShopifyProduct
@@ -212,7 +213,7 @@ export function HelpChooseCard({
             >
               {isPending ?
                 <Loader2 className='size-4 shrink-0 motion-safe:animate-spin' />
-              : <ShoppingBag className='size-4 shrink-0 sm:hidden xl:block' />
+              : <BagOutlineIcon tone="orange" className='size-4 shrink-0 sm:hidden xl:block' />
               }
               <span>
                 {isAvailable ? 'Legg i handlekurv' : 'Utsolgt'}

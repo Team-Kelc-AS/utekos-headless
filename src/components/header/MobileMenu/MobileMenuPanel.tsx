@@ -16,12 +16,12 @@ import type { MenuItem } from '@types'
 import { HeaderLogo } from '../HeaderLogo'
 import { Accordion } from '@/components/ui/accordion'
 import { useLayoutEffect, useRef } from 'react'
-import { MenuIcon } from 'lucide-react'
 import {
   stagger,
   useAnimate,
   useReducedMotion
 } from 'motion/react'
+import { LineHorizontal3Icon } from '@/components/utekos-icons'
 
 function nextFrame() {
   return new Promise<void>(resolve =>
@@ -154,7 +154,7 @@ export function MobileMenuPanel({
             />
           }
         >
-          <MenuIcon className='size-4' />
+          <LineHorizontal3Icon tone="orange" className='size-4' />
           {iconOnly ? null : <span className='hidden md:inline'>Meny</span>}
         </SheetTrigger>
       </div>

@@ -1,11 +1,10 @@
 import Image from 'next/image'
-import { MapPin } from 'lucide-react'
 import { AboutBadge } from './AboutBadge'
 import erlingMesse from '@/assets/images/about/erling-messe.webp'
 import messe1 from '@/assets/images/campaign/messe-1.webp'
 import messe2 from '@/assets/images/campaign/messe-2.webp'
 import messe3 from '@/assets/images/campaign/messe-3.webp'
-
+import { LocationIcon } from '@/components/utekos-icons'
 
 const pastEvents = [
   {
@@ -54,7 +53,7 @@ export function AboutEvents() {
                 className='flex gap-4'
               >
                 <div className='flex size-11 shrink-0 items-center justify-center rounded-md bg-jungle text-ceramic'>
-                  <MapPin
+                  <LocationIcon tone="orange"
                     aria-hidden='true'
                     className='size-5'
                   />

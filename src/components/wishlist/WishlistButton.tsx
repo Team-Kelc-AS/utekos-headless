@@ -12,7 +12,6 @@ import { persistAndReportAddToWishlist } from '@/lib/analytics/persistAndReportA
 import { hasWishlistVariant } from '@/lib/wishlist/wishlistStore'
 import { cn } from '@/lib/utils/className'
 import UtekosLogo from '@public/icon.png'
-import { Heart } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -21,6 +20,7 @@ import type {
   ProductCartModel,
   ProductPurchaseVariant
 } from 'types/product/ProductPurchaseModel'
+import { HeartIcon, HeartOutlineIcon } from '@/components/utekos-icons'
 
 const WishlistAccountForm = dynamic(
   () =>
@@ -125,18 +125,23 @@ export function WishlistButton({
           className
         )}
       >
-        <Heart
-          className={cn(
-            'size-5 stroke-[2.25]',
-            surface === 'plain' ?
-              cn(
-                'fill-transparent stroke-foreground text-foreground transition-colors group-hover/button:fill-heart group-hover/button:stroke-heart group-hover/button:text-heart',
-                isWished && 'fill-heart stroke-heart text-heart'
-              )
-            : 'fill-primary stroke-primary text-primary'
-          )}
-          aria-hidden='true'
-        />
+        {isWished ?
+          <HeartIcon
+            tone='orange'
+            className='size-5'
+            aria-hidden='true'
+          />
+        : <HeartOutlineIcon
+            tone='orange'
+            className={cn(
+              'size-5',
+              surface === 'plain' ?
+                'text-foreground transition-colors group-hover/button:text-heart'
+              : 'text-primary'
+            )}
+            aria-hidden='true'
+          />
+        }
         {isLabelled ?
           <span>
             {isWished ? 'I ønskelisten' : 'Ønskeliste'}
@@ -169,8 +174,9 @@ export function WishlistButton({
                   className='size-full rounded-full object-cover'
                 />
                 <span className='absolute -right-1 -bottom-1 flex size-7 items-center justify-center rounded-full border-2 border-jungle bg-primary text-primary-foreground'>
-                  <Heart
-                    className='size-3.5 fill-current stroke-[2.25]'
+                  <HeartIcon
+                    tone='light'
+                    className='size-3.5'
                     aria-hidden='true'
                   />
                 </span>

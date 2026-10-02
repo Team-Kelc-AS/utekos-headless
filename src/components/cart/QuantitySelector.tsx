@@ -2,13 +2,13 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { MinusIcon, PlusIcon } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import { cn } from '@/lib/utils/className'
 import type {
   AddToCartFormValues,
   AddToCartSurface
 } from 'types/cart'
+import { MinusIcon, PlusIcon } from '@/components/utekos-icons'
 
 export function QuantitySelector({
   surface = 'default'
@@ -47,7 +47,7 @@ export function QuantitySelector({
         onClick={() => updateQuantity(quantity - 1)}
         disabled={quantity <= 1}
       >
-        <MinusIcon className='size-4' />
+        <MinusIcon tone="orange" className='size-4' />
         <span className='sr-only font-sans font-semibold'>
           Reduser antall
         </span>
@@ -77,7 +77,7 @@ export function QuantitySelector({
         )}
         onClick={() => updateQuantity(quantity + 1)}
       >
-        <PlusIcon className='size-4' />
+        <PlusIcon tone="orange" className='size-4' />
         <span className='sr-only'>Øk antall</span>
       </Button>
     </div>

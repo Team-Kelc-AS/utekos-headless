@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDown, X } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
 import { cn } from '@/lib/utils/className'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { scrollToLandingSize } from './scrollToLandingSize'
@@ -12,6 +12,7 @@ import { browserPageViewSession } from '@/lib/analytics/pageViewSession'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import type { Money } from 'types/commerce/Money'
 import styles from './MobileLandingNavigation.module.css'
+import { CloseIcon } from '@/components/utekos-icons'
 
 const DISMISS_KEY = 'utekos:sticky-mobile-dismissed'
 const IMPRESSION_DWELL_MS = 1000
@@ -174,8 +175,8 @@ export function StickyMobileAction({
                   focusRing
                 )}
               >
-                <X size={14} aria-hidden className='sm:hidden' />
-                <X
+                <CloseIcon tone="orange" size={14} aria-hidden className='sm:hidden' />
+                <CloseIcon tone="orange"
                   size={16}
                   aria-hidden
                   className='hidden sm:block'

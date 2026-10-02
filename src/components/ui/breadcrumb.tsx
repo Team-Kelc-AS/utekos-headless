@@ -2,10 +2,7 @@ import type { HTMLAttributes } from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
 import { cn } from '@/lib/utils/className'
-import {
-  ChevronRightIcon,
-  MoreHorizontalIcon
-} from 'lucide-react'
+import { CaretRightIcon, DotDotDotIcon } from '@/components/utekos-icons'
 
 function Breadcrumb({
   className,
@@ -105,7 +102,7 @@ function BreadcrumbSeparator({
       className={cn('[&>svg]:size-3.5', className)}
       {...props}
     >
-      {children ?? <ChevronRightIcon />}
+      {children ?? <CaretRightIcon tone="orange" />}
     </li>
   )
 }
@@ -125,7 +122,7 @@ function BreadcrumbEllipsis({
       )}
       {...props}
     >
-      <MoreHorizontalIcon />
+      <DotDotDotIcon tone="orange" />
       <span className='sr-only'>More</span>
     </span>
   )

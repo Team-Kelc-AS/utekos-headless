@@ -3,7 +3,6 @@
 'use client'
 
 import Image from 'next/image'
-import { Camera } from 'lucide-react'
 import * as React from 'react'
 import Autoplay from 'embla-carousel-autoplay'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
@@ -21,6 +20,7 @@ import { CAROUSEL_SSR } from '@/components/ui/carousel-ssr'
 import { cn } from '@/lib/utils/className'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { H2 } from '@/components/typography/TypographyH2'
+import { CameraOutlineIcon } from '@/components/utekos-icons'
 
 export function TerrasseCarousel() {
   const [api, setApi] = React.useState<CarouselApi>()
@@ -105,7 +105,7 @@ export function TerrasseCarousel() {
             textColor='var(--foreground)'
             className='mb-4 gap-2 border border-[var(--terrace-line-dark)] px-4 py-2 font-sans text-sm leading-4 shadow-none'
           >
-            <Camera className='size-4' aria-hidden='true' />
+            <CameraOutlineIcon tone="orange" className='size-4' aria-hidden='true' />
             <span className='inline-flex items-baseline gap-[0.28em] leading-none'>
               <span className='text-[0.95em]'>
                 Terrasselivet med

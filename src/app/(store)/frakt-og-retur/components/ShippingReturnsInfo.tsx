@@ -11,14 +11,8 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion'
-import {
-  Clock,
-  Mail,
-  PackageCheck,
-  ShieldCheck,
-  Truck,
-  Undo2
-} from 'lucide-react'
+import { ShieldCheck, Undo2 } from 'lucide-react'
+import { BoxIcon, ClockOutlineIcon, EnvelopeIcon, MerchantTruckIcon } from '@/components/utekos-icons'
 
 export function ShippingReturnsInfo() {
   const address = returnPolicy.returnAddress
@@ -34,7 +28,7 @@ export function ShippingReturnsInfo() {
             <div className='flex h-full flex-col items-start rounded-xl bg-jungle p-6 shadow-sm ring-1 ring-border sm:p-8'>
               <header className='mb-4 flex flex-col items-start gap-4'>
                 <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground ring-1 ring-border/50'>
-                  <Truck
+                  <MerchantTruckIcon tone="orange"
                     className='size-6'
                     strokeWidth={1.8}
                     aria-hidden='true'
@@ -51,7 +45,7 @@ export function ShippingReturnsInfo() {
               </p>
               <ul className='mt-auto flex w-full flex-col gap-4 text-left'>
                 <li className='flex items-start gap-3'>
-                  <Clock
+                  <ClockOutlineIcon tone="orange"
                     className='mt-1 size-5 shrink-0 text-foreground'
                     aria-hidden='true'
                   />
@@ -60,7 +54,7 @@ export function ShippingReturnsInfo() {
                   </span>
                 </li>
                 <li className='flex items-start gap-3'>
-                  <Mail
+                  <EnvelopeIcon tone="orange"
                     className='mt-1 size-5 shrink-0 text-foreground'
                     aria-hidden='true'
                   />
@@ -107,7 +101,7 @@ export function ShippingReturnsInfo() {
                   </span>
                 </li>
                 <li className='flex items-start gap-3'>
-                  <PackageCheck
+                  <BoxIcon tone="orange"
                     className='mt-1 size-5 shrink-0 text-foreground'
                     aria-hidden='true'
                   />

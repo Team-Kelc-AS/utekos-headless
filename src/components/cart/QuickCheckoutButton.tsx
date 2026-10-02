@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils/className'
-import { CreditCard } from 'lucide-react'
+import { PaymentOutlineIcon } from '@/components/utekos-icons'
 
 interface QuickCheckoutButtonProps {
   isPending: boolean
@@ -28,7 +28,7 @@ export function QuickCheckoutButton({
         className
       )}
     >
-      <CreditCard
+      <PaymentOutlineIcon tone="orange"
         className='size-5 shrink-0 text-foreground'
         aria-hidden='true'
       />

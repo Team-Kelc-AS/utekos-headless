@@ -1,7 +1,7 @@
-import { ChevronDown } from 'lucide-react'
 import { TECH_MODES_SECTION_ID } from '@/app/handlehjelp/teknologi-materialer/constants'
 import styles from './TechHero.module.css'
 import Link from 'next/link'
+import { CaretDownIcon } from '@/components/utekos-icons'
 
 export function TechHeroScrollInvite() {
   return (
@@ -12,7 +12,7 @@ export function TechHeroScrollInvite() {
       data-track='TechHeroScrollInvite'
     >
       <span className={styles.inviteMotion}>
-        <ChevronDown
+        <CaretDownIcon tone="orange"
           className={styles.inviteIcon}
           strokeWidth={1.5}
           aria-hidden

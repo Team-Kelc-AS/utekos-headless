@@ -7,13 +7,13 @@ import {
   type ComponentType,
   type ReactNode
 } from 'react'
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { cn } from '@/lib/utils/className'
 import { focusRing } from '../utils/constants'
 import {
   landingGalleryButtonClassName,
   type LandingPurchaseGalleryCarouselProps
 } from './landingGalleryShared'
+import { CaretLeftIcon, CaretRightIcon } from '@/components/utekos-icons'
 
 export function LandingPurchaseGallery({
   slides
@@ -133,7 +133,7 @@ export function LandingPurchaseGallery({
                   focusRing
                 )}
               >
-                <ChevronLeftIcon className='size-4' />
+                <CaretLeftIcon tone="orange" className='size-4' />
               </button>
               <button
                 type='button'
@@ -145,7 +145,7 @@ export function LandingPurchaseGallery({
                   focusRing
                 )}
               >
-                <ChevronRightIcon className='size-4' />
+                <CaretRightIcon tone="orange" className='size-4' />
               </button>
             </>
           )}

@@ -1,9 +1,10 @@
 import { cn } from '@/lib/utils/className'
-import { ArrowRight, Check, Shield } from 'lucide-react'
+import { ArrowRight, Shield } from 'lucide-react'
 import type { MDXComponents } from 'mdx/types'
 import type { Route } from 'next'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
+import { CheckMarkIcon } from '@/components/utekos-icons'
 
 export const comfyrobeMdxComponents = {
   blockquote: ({
@@ -80,7 +81,7 @@ export const comfyrobeMdxComponents = {
       {...props}
     >
       <span className='mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground'>
-        <Check aria-hidden='true' className='size-3.5' />
+        <CheckMarkIcon tone="orange" aria-hidden='true' className='size-3.5' />
       </span>
       <span>{children}</span>
     </li>

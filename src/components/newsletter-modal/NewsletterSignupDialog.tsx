@@ -8,7 +8,7 @@ import {
   useRef,
   useState
 } from 'react'
-import { Check, Loader2, Mail, XIcon } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 import {
   subscribeToNewsletter,
@@ -35,7 +35,7 @@ import {
 } from './newsletterModalRuntime'
 import newsletterImageComfyKlarna from '@/assets/images/partners/newsletter-image-comfy-klarna.png'
 import newsletterImageComfyKlarna2 from '@/assets/images/partners/newsletter-image-comfy-klarna.webp'
-
+import { CheckMarkIcon, CloseIcon, EnvelopeIcon } from '@/components/utekos-icons'
 
 const initialState: ActionState = { status: 'idle', message: '' }
 
@@ -201,7 +201,7 @@ export function NewsletterSignupDialog() {
                 />
               }
             >
-              <XIcon aria-hidden='true' />
+              <CloseIcon tone="orange" aria-hidden='true' />
 
               <span className='sr-only'>
                 Lukk nyhetsbrevmodalen
@@ -212,7 +212,7 @@ export function NewsletterSignupDialog() {
               aria-hidden='true'
               className='mx-auto mb-5 flex size-16 items-center justify-center rounded-full bg-secondary text-secondary-foreground'
             >
-              <Check className='size-8' />
+              <CheckMarkIcon tone="orange" className='size-8' />
             </span>
 
             <DialogHeader className='items-center'>
@@ -287,7 +287,7 @@ export function NewsletterSignupDialog() {
                   />
                 }
               >
-                <XIcon aria-hidden='true' />
+                <CloseIcon tone="orange" aria-hidden='true' />
 
                 <span className='sr-only'>
                   Lukk nyhetsbrevmodalen
@@ -327,7 +327,7 @@ export function NewsletterSignupDialog() {
                   </label>
 
                   <div className='relative'>
-                    <Mail
+                    <EnvelopeIcon tone="orange"
                       aria-hidden='true'
                       className='pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground'
                     />

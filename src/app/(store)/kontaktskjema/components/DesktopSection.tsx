@@ -1,7 +1,8 @@
 // Path: src/app/(store)/kontaktskjema/sections/DesktopSection.tsx
-import { HelpCircle, Leaf, Package } from 'lucide-react'
+import { Leaf } from 'lucide-react'
 import { SupportForm } from '@/components/form/components/SupportForm'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
+import { BoxOutlineIcon, QuestionMarkSquareIcon } from '@/components/utekos-icons'
 
 export function DesktopSection() {
   return (
@@ -21,7 +22,7 @@ export function DesktopSection() {
 
           <ul className='mt-8 space-y-8'>
             <li className='flex items-start gap-4'>
-              <HelpCircle className='shrink-0-ancient-water h-6 w-6' />
+              <QuestionMarkSquareIcon tone="orange" className='shrink-0-ancient-water h-6 w-6' />
               <div>
                 <h3 className='leading-tighttracking-normal font-sans font-semibold text-foreground'>
                   Få personlig veiledning
@@ -33,7 +34,7 @@ export function DesktopSection() {
               </div>
             </li>
             <li className='flex items-start gap-4'>
-              <Package className='shrink-0-ancient-water h-6 w-6' />
+              <BoxOutlineIcon tone="orange" className='shrink-0-ancient-water h-6 w-6' />
               <div>
                 <h3 className='font-sans font-semibold leading-tight tracking-normal text-foreground'>
                   Hjelp med din bestilling

@@ -1,4 +1,4 @@
-import { SearchIcon } from 'lucide-react'
+import { SearchIcon } from '@/components/utekos-icons'
 
 export function HeaderSearchInputField({
   showShortcut = true
@@ -7,7 +7,7 @@ export function HeaderSearchInputField({
 }) {
   return (
     <>
-      <SearchIcon className='size-4 opacity-90' />
+      <SearchIcon tone="orange" className='size-4 opacity-90' />
       <span>Søk</span>
       {showShortcut ?
         <kbd

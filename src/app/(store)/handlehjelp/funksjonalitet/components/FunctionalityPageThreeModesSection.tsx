@@ -1,5 +1,6 @@
 // Path: src/app/(store)/handlehjelp/funksjonalitet/components/FunctionalityPageThreeModesSection.tsx
-import { Coffee, Maximize2, Move } from 'lucide-react'
+import { Coffee, Move } from 'lucide-react'
+import { ArrowsExpandIcon } from '@/components/utekos-icons'
 
 const modeCardClassName =
   'group relative overflow-hidden rounded-2xl border border-foreground/12 bg-card  p-8 ring-1 ring-foreground/12 transition-all hover:shadow-lg'
@@ -19,7 +20,7 @@ export function FunctionalityPageThreeModesSection() {
             className={`${modeCardClassName} hover:border-ceramic/40`}
           >
             <div className='mb-6 inline-flex size-12 items-center justify-center rounded-full bg-jungle/30 text-foreground'>
-              <Maximize2 className='size-6' aria-hidden />
+              <ArrowsExpandIcon tone="orange" className='size-6' aria-hidden />
             </div>
             <h3 className='font-google-sans mb-3 text-xl font-bold text-foreground'>
               1. Fullengdemodus

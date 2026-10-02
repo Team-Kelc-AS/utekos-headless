@@ -5,7 +5,8 @@ import Image from 'next/image'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { UserPlusIcon, EllipsisIcon, BadgeCheck, Heart, MessageCircleIcon, RepeatIcon, SendIcon } from 'lucide-react'
+import { UserPlusIcon, RepeatIcon } from 'lucide-react'
+import { DotDotDotIcon, HeartOutlineIcon, MessageSpeechBubbleOutlineIcon, SealIcon, SendIcon } from '@/components/utekos-icons'
 
 export const CardTweetDemo = () => {
   const [liked, setLiked] = useState<boolean>(true)
@@ -20,7 +21,7 @@ export const CardTweetDemo = () => {
           </Avatar>
           <div className='flex flex-col gap-0.5'>
             <CardTitle className='flex items-center gap-1 text-sm'>
-              Philip George <BadgeCheck className='text-background size-4 fill-ceramic ' />
+              Philip George <SealIcon tone="orange" className='text-background size-4 fill-ceramic ' />
             </CardTitle>
             <CardDescription>@philip20</CardDescription>
           </div>
@@ -31,7 +32,7 @@ export const CardTweetDemo = () => {
             Follow
           </Button>
           <Button variant='ghost' size='icon' aria-label='Toggle menu'>
-            <EllipsisIcon />
+            <DotDotDotIcon tone="orange" />
           </Button>
         </div>
       </CardHeader>
@@ -64,11 +65,11 @@ export const CardTweetDemo = () => {
           className='hover:bg-primary/10'
           onClick={() => setLiked(!liked)}
         >
-          {liked ? <Heart className='fill-destructive stroke-destructive ' /> : <Heart />}
+          {liked ? <HeartOutlineIcon tone="orange" className='fill-destructive stroke-destructive ' /> : <HeartOutlineIcon tone="orange" />}
           2.1K
         </Button>
         <Button variant='ghost' size='sm' className='hover:bg-primary/10'>
-          <MessageCircleIcon />
+          <MessageSpeechBubbleOutlineIcon tone="orange" />
           1.4K
         </Button>
         <Button variant='ghost' size='sm' className='hover:bg-primary/10'>
@@ -76,7 +77,7 @@ export const CardTweetDemo = () => {
           669
         </Button>
         <Button variant='ghost' size='sm' className='hover:bg-primary/10'>
-          <SendIcon />
+          <SendIcon tone="orange" />
           1.1K
         </Button>
       </CardFooter>

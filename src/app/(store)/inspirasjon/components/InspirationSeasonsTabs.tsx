@@ -1,22 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Anchor,
-  Check,
-  CloudRain,
-  Fish,
-  Flame,
-  GlassWater,
-  Leaf,
-  LifeBuoy,
-  Mountain,
-  Snowflake,
-  Sun,
-  Sunrise,
-  Wind,
-  type LucideIcon
-} from 'lucide-react'
+import { Anchor, CloudRain, Fish, Flame, GlassWater, Leaf, LifeBuoy, Mountain, Snowflake, Sun, Sunrise, Wind, type LucideIcon } from 'lucide-react'
 import {
   Tabs,
   TabsContent,
@@ -32,6 +17,7 @@ import type {
   InspirationSeasonDefinition,
   InspirationSeasonIconName
 } from '../theme/seasons'
+import { CheckMarkIcon } from '@/components/utekos-icons'
 
 const inspirationSeasonIcons = {
   Anchor,
@@ -273,7 +259,7 @@ export function InspirationSeasonsTabs({
                           }}
                         >
                           <div className='mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-foreground/18 bg-background'>
-                            <Check
+                            <CheckMarkIcon tone="orange"
                               className={`size-4 ${season.iconColor}`}
                             />
                           </div>

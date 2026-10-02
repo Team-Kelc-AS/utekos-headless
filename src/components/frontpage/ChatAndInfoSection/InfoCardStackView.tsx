@@ -1,6 +1,6 @@
 'use client'
 
-import { Lock, ShoppingBag } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { motion, type Variants } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -10,6 +10,7 @@ import { H3 } from '@/components/typography/TypographyH3'
 import { InlineText } from '@/components/typography/TypographyInlineText'
 import { P } from '@/components/typography/TypographyP'
 import { cn } from '@/lib/utils/className'
+import { BagOutlineIcon } from '@/components/utekos-icons'
 
 const TrafficLights = ({
   variant = 'back'
@@ -132,7 +133,7 @@ export function InfoCardStackView() {
 
         <div className={cardContentRowClasses}>
           <div className={backCardIconClassName}>
-            <ShoppingBag className='size-[1.12em] stroke-[1.7]' />
+            <BagOutlineIcon tone="orange" className='size-[1.12em] stroke-[1.7]' />
           </div>
 
           <div className='min-w-0'>

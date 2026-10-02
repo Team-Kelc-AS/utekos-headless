@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { INTERSPORT_LAKSEVAG_MAPS_URL } from '@/constants/maps'
 import IntersportLogo from '@/assets/images/partners/Intersport_logo.svg'
-import { MapPin } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { AboutBadge } from './AboutBadge'
+import { LocationIcon } from '@/components/utekos-icons'
 
 export function AboutRetailer() {
   return (
@@ -46,7 +46,7 @@ export function AboutRetailer() {
                 rel='noreferrer'
               >
                 Få veibeskrivelse
-                <MapPin aria-hidden='true' className='size-5' />
+                <LocationIcon tone="orange" aria-hidden='true' className='size-5' />
               </Link>
             </Button>
           </div>

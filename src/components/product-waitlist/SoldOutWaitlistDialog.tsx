@@ -16,10 +16,11 @@ import {
 } from '@/lib/actions/submitProductWaitlist'
 import { appendLeadTrackingContext } from '@/lib/analytics/collectLeadFormTrackingContext'
 import { pushGenerateLeadToDataLayer } from '@/lib/analytics/pushGenerateLeadToDataLayer'
-import { Check, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useActionState, useEffect, useId, useState } from 'react'
+import { CheckMarkIcon } from '@/components/utekos-icons'
 
 const initialState: ProductWaitlistActionState = {
   status: 'idle',
@@ -140,7 +141,7 @@ export function SoldOutWaitlistDialog({
           >
             <div className='flex max-w-sm flex-col items-center gap-3'>
               <span className='flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground'>
-                <Check
+                <CheckMarkIcon tone="orange"
                   className='size-6'
                   aria-hidden='true'
                 />

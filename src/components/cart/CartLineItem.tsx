@@ -20,7 +20,6 @@ import { createMutationPromise } from '@/lib/utils/createMutationPromise'
 import { cn } from '@/lib/utils/className'
 import { formatNOK } from '@/lib/utils/formatters/formatNOK'
 import { useQueryClient } from '@tanstack/react-query'
-import { Minus, Plus, Trash2 } from 'lucide-react'
 import type { Route } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -33,6 +32,7 @@ import { resolveImageSrc } from '@/lib/media/resolveImageSrc'
 import type { Cart } from 'types/cart'
 import { AlertDialogTitle } from './AlertDialogen'
 import { Activity } from 'react'
+import { DeleteIcon, MinusIcon, PlusIcon } from '@/components/utekos-icons'
 
 interface CartLineItemProps {
   lineId: string
@@ -324,7 +324,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
                   'size-6 p-0'
                 )}
               >
-                <Trash2 className='size-4 text-destructive' />
+                <DeleteIcon tone="orange" className='size-4 text-destructive' />
               </AlertDialogTrigger>
 
               <AlertDialogContent>
@@ -377,7 +377,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
                 }
                 aria-label={`Reduser antall for ${productTitle}`}
               >
-                <Minus className='size-3' />
+                <MinusIcon tone="orange" className='size-3' />
               </Button>
             </Activity>
             <span className='min-w-7 text-center text-sm font-medium text-foreground tabular-nums transition-all duration-100'>
@@ -398,7 +398,7 @@ export const CartLineItem = ({ lineId }: CartLineItemProps) => {
                 }
                 aria-label={`Øk antall for ${productTitle}`}
               >
-                <Plus className='size-3' />
+                <PlusIcon tone="orange" className='size-3' />
               </Button>
             </Activity>
           </div>

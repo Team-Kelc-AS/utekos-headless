@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { PackageCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -13,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import { BoxIcon } from '@/components/utekos-icons'
 
 export function ComfyrobeShippingReturnsDialog({
   triggerClassName
@@ -30,7 +30,7 @@ export function ComfyrobeShippingReturnsDialog({
           />
         }
       >
-        <PackageCheck className='size-4' aria-hidden />
+        <BoxIcon tone="orange" className='size-4' aria-hidden />
         Frakt og retur
       </DialogTrigger>
 

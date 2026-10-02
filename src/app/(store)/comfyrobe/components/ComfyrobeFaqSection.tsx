@@ -1,5 +1,5 @@
-import { ChevronDown } from 'lucide-react'
 import { COMFYROBE_LANDING_FAQ } from '../data/comfyrobeLandingSeo'
+import { CaretDownIcon } from '@/components/utekos-icons'
 
 export function ComfyrobeFaqSection() {
   return (
@@ -31,7 +31,7 @@ export function ComfyrobeFaqSection() {
               <summary className='flex min-h-11 cursor-pointer list-none items-center rounded-lg py-5 font-sans text-lg text-pretty touch-manipulation [-webkit-tap-highlight-color:transparent] marker:content-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary [&::-webkit-details-marker]:hidden'>
                 <span className='flex w-full items-center justify-between gap-4'>
                   {item.question}
-                  <ChevronDown
+                  <CaretDownIcon tone="orange"
                     className='size-5 shrink-0 text-primary transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-open:rotate-180 motion-reduce:transition-none'
                     aria-hidden
                   />

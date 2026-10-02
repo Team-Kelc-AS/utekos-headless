@@ -8,7 +8,8 @@ import { cacheLife, cacheTag } from 'next/cache'
 import { SpecRow } from './SpecRow'
 import { DetailBlock } from './DetailBlock'
 import { UsageGroup } from './UsageGroup'
-import { Leaf, ShieldCheck, Waves, Info } from 'lucide-react'
+import { Leaf, ShieldCheck, Waves } from 'lucide-react'
+import { InfoCircleOutlineIcon } from '@/components/utekos-icons'
 
 const triggerClassName =
   'font-sans text-left text-lg font-sans font-semibold text-foreground [&>svg]:text-foreground hover:text-foreground hover:no-underline md:text-xl'
@@ -248,7 +249,7 @@ export async function ProductDetailsAccordion() {
                 </ul>
 
                 <div className='mt-4 flex gap-3 rounded-2xl border-l-4 border-primary bg-card p-4 text-foreground'>
-                  <Info className='shrink-0 text-primary' />
+                  <InfoCircleOutlineIcon tone="orange" className='shrink-0 text-primary' />
                   <div className='leading-text-paragraph text-sm'>
                     <span className='font-google-sans mb-1 block font-bold'>
                       Viktig om oppbevaring

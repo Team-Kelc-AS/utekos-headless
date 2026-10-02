@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { normalizeShopifyUrl } from '@/lib/helpers/normalizers/normalizeShopifyUrl'
 import type { MenuItem } from '@types'
 import type { Route } from 'next'
-import { ChevronRight } from 'lucide-react'
+import { CaretRightIcon } from '@/components/utekos-icons'
 
 export function SubMenuItem({ item }: { item: MenuItem }) {
   return (
@@ -20,7 +20,7 @@ export function SubMenuItem({ item }: { item: MenuItem }) {
         </span>
       </div>
 
-      <ChevronRight className='/58 size-4 text-foreground/58 transition-transform duration-200 group-active:translate-x-0.5' />
+      <CaretRightIcon tone="orange" className='/58 size-4 text-foreground/58 transition-transform duration-200 group-active:translate-x-0.5' />
     </Link>
   )
 }

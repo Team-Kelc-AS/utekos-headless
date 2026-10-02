@@ -1,11 +1,4 @@
-import {
-  Check,
-  Truck,
-  ShieldCheck,
-  ShoppingCart,
-  Loader2,
-  Zap
-} from 'lucide-react'
+import { ShieldCheck, Loader2, Zap } from 'lucide-react'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { productConfig } from '@/app/skreddersy-varmen/utekos-orginal/utils/productConfig'
@@ -16,6 +9,7 @@ import type {
   MicrofiberColor,
   MicrofiberSize
 } from 'types/product/'
+import { CheckMarkIcon, MerchantTruckIcon, PurchasesOutlineIcon } from '@/components/utekos-icons'
 
 export function MicrofiberView({
   color,
@@ -86,7 +80,7 @@ export function MicrofiberView({
                       />
                       {color === c.id && (
                         <span className='absolute inset-0 flex items-center justify-center text-white drop-shadow-md'>
-                          <Check size={20} strokeWidth={3} />
+                          <CheckMarkIcon tone="orange" size={20} strokeWidth={3} />
                         </span>
                       )}
                     </button>
@@ -150,7 +144,7 @@ export function MicrofiberView({
                       til...
                     </>
                   : <>
-                      <ShoppingCart size={20} /> Legg i handlekurv
+                      <PurchasesOutlineIcon tone="orange" size={20} /> Legg i handlekurv
                     </>
                   }
                 </button>
@@ -165,7 +159,7 @@ export function MicrofiberView({
 
               <div className='mt-6 grid grid-cols-3 gap-2 text-xs text-foreground md:mt-8 md:gap-4 md:text-sm'>
                 <div className='flex items-center gap-2'>
-                  <Truck size={16} className='shrink-0 text-[#E07A5F]' />
+                  <MerchantTruckIcon tone="orange" size={16} className='shrink-0 text-[#E07A5F]' />
                   <span>Gratis frakt</span>
                 </div>
                 <div className='flex items-center gap-2'>

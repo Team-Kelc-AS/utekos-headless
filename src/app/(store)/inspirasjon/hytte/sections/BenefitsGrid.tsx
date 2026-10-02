@@ -1,11 +1,7 @@
 import { AnimatedBlock } from '@/components/AnimatedBlock'
-import {
-  Settings2,
-  HeartHandshake,
-  MapPinIcon,
-  Thermometer
-} from 'lucide-react'
+import { HeartHandshake, Thermometer } from 'lucide-react'
 import type { Benefit } from '../types'
+import { LocationIcon, SettingsIcon } from '@/components/utekos-icons'
 
 const benefitIconSurface = 'bg-dark-teal'
 const benefitIconColor = 'text-sidebar-foreground'
@@ -21,7 +17,7 @@ export const benefitsData: Benefit[] = [
     iconColor: benefitIconColor
   },
   {
-    icon: Settings2,
+    icon: SettingsIcon,
     title: 'Praktisk design',
     description:
       'Tar minimalt med plass og er enkel å ta med seg.',
@@ -37,7 +33,7 @@ export const benefitsData: Benefit[] = [
     iconColor: benefitIconColor
   },
   {
-    icon: MapPinIcon,
+    icon: LocationIcon,
     title: 'En del av hytten',
     description:
       'Blir like selvsagt å ta på seg som tøflene inne.',

@@ -2,15 +2,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import {
-  ArrowRight,
-  Gift,
-  Calendar,
-  ShieldCheck,
-  Truck,
-  Car,
-  CreditCard
-} from 'lucide-react'
+import { ArrowRight, Gift, Calendar, ShieldCheck, Car } from 'lucide-react'
 import { SantaHat } from '@/components/ui/santahat'
 import { connection } from 'next/server'
 import { KampanjeJulegaverBreadcrumbs } from '../components/KampanjeJulegaverBreadcrumbs'
@@ -18,6 +10,7 @@ import comfyFrontUBakgrunn1080 from '@/assets/images/comfyrobe/comfy-front-u-bak
 import dunFrontHvitBakgrunn1080 from '@/assets/images/magazine/dun-front-hvit-bakgrunn-1080.png'
 import mikroFront1080 from '@/assets/images/mikrofiber/mikro-front-1080.png'
 import techdown1080 from '@/assets/images/techdown/techdown-1080.png'
+import { MerchantTruckIcon, PaymentOutlineIcon } from '@/components/utekos-icons'
 
 export const metadata: Metadata = {
   title:
@@ -137,7 +130,7 @@ export default async function ChristmasLocalDelivery() {
 
             <div className='flex flex-col items-center gap-3'>
               <div className='flex h-12 w-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10'>
-                <CreditCard className='h-6 w-6 text-campaign' />
+                <PaymentOutlineIcon tone="orange" className='h-6 w-6 text-campaign' />
               </div>
               <div>
                 <h3 className='font-sans font-semibold text-foreground'>
@@ -422,7 +415,7 @@ export default async function ChristmasLocalDelivery() {
             className='group hover:bg-card-hover -hover flex flex-col items-center rounded-xl bg-card p-8 text-center text-card-foreground transition-colors'
           >
             <div className='mb-4 rounded-full bg-havdyp/20 p-4 transition-transform group-hover:scale-110'>
-              <Truck className='h-8 w-8 text-ancient-water' />
+              <MerchantTruckIcon tone="orange" className='h-8 w-8 text-ancient-water' />
             </div>
             <h3 className='font-sans font-semibold text-lg'>
               Spørsmål om levering?

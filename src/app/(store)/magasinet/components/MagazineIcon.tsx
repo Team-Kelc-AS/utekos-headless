@@ -1,28 +1,7 @@
-import {
-  Anchor,
-  BadgeCheck,
-  BusFront,
-  Check,
-  Coffee,
-  Compass,
-  Feather,
-  Flame,
-  Heart,
-  Home,
-  Layers,
-  Leaf,
-  Lightbulb,
-  Map,
-  Mountain,
-  Package,
-  Shield,
-  Sparkles,
-  Sun,
-  Thermometer,
-  Waves
-} from 'lucide-react'
+import { Anchor, BusFront, Coffee, Compass, Feather, Flame, Home, Layers, Leaf, Lightbulb, Map, Mountain, Shield, Sparkles, Sun, Thermometer, Waves } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { MagazineBlock } from '../types'
+import { BoxOutlineIcon, CheckMarkIcon, HeartOutlineIcon, SealIcon } from '@/components/utekos-icons'
 
 type MagazineIconName = NonNullable<
   Extract<MagazineBlock, { type: 'featureGrid' }>['items'][number]['icon']
@@ -35,21 +14,21 @@ type MagazineIconProps = {
 
 const iconByName = {
   anchor: Anchor,
-  badgeCheck: BadgeCheck,
+  badgeCheck: SealIcon,
   bus: BusFront,
-  check: Check,
+  check: CheckMarkIcon,
   coffee: Coffee,
   compass: Compass,
   feather: Feather,
   flame: Flame,
-  heart: Heart,
+  heart: HeartOutlineIcon,
   home: Home,
   layers: Layers,
   leaf: Leaf,
   lightbulb: Lightbulb,
   map: Map,
   mountain: Mountain,
-  package: Package,
+  package: BoxOutlineIcon,
   shield: Shield,
   sparkles: Sparkles,
   sun: Sun,

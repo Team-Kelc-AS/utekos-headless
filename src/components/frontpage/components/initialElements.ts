@@ -1,13 +1,14 @@
-import { Check, Feather, Heart, Moon } from 'lucide-react'
+import { Feather, Moon } from 'lucide-react'
 import type { EdgeData, NodeData } from 'types/flow.types'
+import { CheckMarkIcon, HeartOutlineIcon } from '@/components/utekos-icons'
 
 export type IconName = keyof typeof iconMap
 
 export const iconMap = {
   moon: Moon,
   feather: Feather,
-  heart: Heart,
-  check: Check
+  heart: HeartOutlineIcon,
+  check: CheckMarkIcon
 }
 
 const centerX = 260

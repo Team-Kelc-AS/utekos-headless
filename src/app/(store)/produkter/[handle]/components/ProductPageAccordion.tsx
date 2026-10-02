@@ -1,12 +1,4 @@
-import {
-  Activity,
-  Info,
-  Layers3,
-  Ruler,
-  TableProperties,
-  WashingMachine,
-  Waypoints
-} from 'lucide-react'
+import { Activity, Layers3, Ruler, TableProperties, WashingMachine, Waypoints } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
@@ -20,6 +12,7 @@ import type {
 } from '@/db/data/products/product-page-content'
 import { ProductDetailsAccordionSection } from './ProductDetailsAccordionSection'
 import { ProductAccordionInteractionReporter } from './ProductAccordionInteractionReporter'
+import { InfoCircleOutlineIcon } from '@/components/utekos-icons'
 
 const sectionIcons = {
   materialer: Layers3,
@@ -164,7 +157,7 @@ export function ProductPageAccordion({
             tone='neutral'
             className='gap-2 bg-jungle text-left'
           >
-            <Info className='size-5' aria-hidden='true' />
+            <InfoCircleOutlineIcon tone="orange" className='size-5' aria-hidden='true' />
             <h2
               id='product-details-heading'
               className='text-lg leading-[1.2] tracking-normal'

@@ -1,9 +1,10 @@
 import { KlarnaLogo } from '@/components/payments/KlarnaLogo'
 import { VippsLogo } from '@/components/payments/VippsLogo'
-import { ArrowRight, Check } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { AboutBadge } from './AboutBadge'
 import type { Route } from 'next'
+import { CheckMarkIcon } from '@/components/utekos-icons'
 
 const reassuranceItems = [
   'Skapt for norske forhold',
@@ -45,7 +46,7 @@ export function AboutCta() {
                 key={item}
                 className='inline-flex items-center gap-2'
               >
-                <Check
+                <CheckMarkIcon tone="orange"
                   aria-hidden='true'
                   className='size-4 text-current'
                 />

@@ -1,4 +1,3 @@
-import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { PromotionImpression } from '@/components/analytics/PromotionImpression'
 import { KlarnaCreditPromotionAutoSize } from '@/components/klarna/components/KlarnaCreditPromotionAutoSize'
@@ -15,6 +14,7 @@ import { ComfyrobeHeroActions } from './ComfyrobeHeroActions'
 import { ComfyrobeHeroImageCarousel } from './ComfyrobeHeroImageCarousel'
 import { ComfyrobePurchaseLinks } from './ComfyrobePurchaseLinks'
 import type { ShopifyProduct } from 'types/product'
+import { CaretLeftIcon } from '@/components/utekos-icons'
 
 type ComfyrobeHeroProps = {
   offer: ComfyrobeOfferSummary | null
@@ -102,7 +102,7 @@ export function ComfyrobeHero({
                   href='/produkter/utekos-techdown?farge=havdyp&storrelse=stor&kjonn=unisex'
                   className='mb-4 inline-flex min-h-11 items-center font-sans text-sm text-white/82 underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'
                 >
-                  <ChevronLeft
+                  <CaretLeftIcon tone="orange"
                     strokeWidth={2.5}
                     className='size-4'
                     aria-hidden

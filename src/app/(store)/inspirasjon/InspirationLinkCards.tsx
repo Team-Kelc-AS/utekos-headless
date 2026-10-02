@@ -1,11 +1,11 @@
 import Link from 'next/link'
-import { ArrowUpRight } from 'lucide-react'
 import {
   Card,
   CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { ArrowUpRightIcon } from '@/components/utekos-icons'
 
 const inspirationPages = [
   { href: '/inspirasjon/hytte', title: 'Hytteliv' },
@@ -41,7 +41,7 @@ export function InspirationLinkCards() {
                 <span className='font-sans font-semibold text-lg'>
                   Utforsk
                 </span>
-                <ArrowUpRight
+                <ArrowUpRightIcon tone="orange"
                   aria-hidden
                   className='size-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none'
                 />

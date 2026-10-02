@@ -3,12 +3,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Route } from 'next'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
-import { PackageCheck } from 'lucide-react'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { IconRenderer } from './IconRenderer'
 import { stapperFeatures } from './stapperFeatures'
+import { BoxIcon } from '@/components/utekos-icons'
 
 export function StapperFeatureSection() {
   const imagePanel = (
@@ -86,7 +86,7 @@ export function StapperFeatureSection() {
                   data-track='StapperFeatureSectionDiscoverClick'
                 >
                   Oppdag Stapper™
-                  <PackageCheck className='ml-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12' />
+                  <BoxIcon tone="orange" className='ml-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12' />
                 </Link>
               </BrandBadge>
             </AnimatedBlock>

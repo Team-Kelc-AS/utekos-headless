@@ -1,5 +1,5 @@
-import { ChevronDown } from 'lucide-react'
 import styles from './article.module.css'
+import { CaretDownIcon } from '@/components/utekos-icons'
 
 export type ArticleTocEntry = {
   id: string
@@ -21,7 +21,7 @@ export function ArticleTableOfContents({
       <details className={styles.tocDisclosure}>
         <summary id={id} className={styles.tocSummary}>
           <span>{title}</span>
-          <ChevronDown
+          <CaretDownIcon tone="orange"
             aria-hidden='true'
             className={styles.tocChevron}
           />

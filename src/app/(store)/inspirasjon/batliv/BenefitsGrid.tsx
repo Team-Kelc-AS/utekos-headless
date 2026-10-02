@@ -1,6 +1,7 @@
 'use client'
 
-import { Sparkles, Thermometer, Users, Wind } from 'lucide-react'
+import { Sparkles, Thermometer, Wind } from 'lucide-react'
+import { GroupOutlineIcon } from '@/components/utekos-icons'
 const benefitsData = [
   {
     icon: Thermometer,
@@ -24,7 +25,7 @@ const benefitsData = [
     color: 'text-primary'
   },
   {
-    icon: Users,
+    icon: GroupOutlineIcon,
     title: 'Sosial magnet',
     description:
       'Gjør din båt til det naturlige samlingspunktet i havna.',

@@ -7,8 +7,9 @@ import { useCanonicalAddToCart } from '@/hooks/useCanonicalAddToCart'
 import { cn } from '@/lib/utils/className'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import type { UpsellItemProps } from 'types/cart'
-import { ArrowRightIcon, PercentIcon } from 'lucide-react'
+import { ArrowRightIcon } from 'lucide-react'
 import Image from 'next/image'
+import { PercentCouponIcon } from '@/components/utekos-icons'
 
 export function UpsellItem({
   product,
@@ -104,7 +105,7 @@ export function UpsellItem({
 
       {showDiscountHint && (
         <div className='flex items-center justify-center border-t border-secondary/20 pt-2 font-sans font-semibold text-xs text-light-teal'>
-          <PercentIcon
+          <PercentCouponIcon tone="orange"
             className='mr-1.5 h-3 w-3'
             aria-hidden='true'
           />

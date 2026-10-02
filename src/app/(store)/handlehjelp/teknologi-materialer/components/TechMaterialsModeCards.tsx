@@ -1,5 +1,6 @@
-import { Coffee, Maximize2, Move } from 'lucide-react'
+import { Coffee, Move } from 'lucide-react'
 import { TECH_MODES_SECTION_ID } from '@/app/handlehjelp/teknologi-materialer/constants'
+import { ArrowsExpandIcon } from '@/components/utekos-icons'
 
 const modeCardClassName =
   'group relative overflow-hidden rounded-3xl border border-card-foreground/10 bg-jungle p-8 text-card-foreground ring-1 ring-card-foreground/12 backdrop-blur-xl transition-all duration-500 hover:border-foreground/20 hover:shadow-2xl'
@@ -30,7 +31,7 @@ export function TechMaterialsModeCards() {
           <div className='relative z-10'>
             <div className={modeCardHeadingClassName}>
               <div className={modeIconClassName}>
-                <Maximize2 className='h-6 w-6' aria-hidden />
+                <ArrowsExpandIcon tone="orange" className='h-6 w-6' aria-hidden />
               </div>
               <h3 className='font-google-sans text-xl font-bold text-card-foreground'>
                 1. Fullengdemodus

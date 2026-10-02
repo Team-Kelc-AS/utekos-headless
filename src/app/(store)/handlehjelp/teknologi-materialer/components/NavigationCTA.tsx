@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { BookOpen, ShoppingBag } from 'lucide-react'
+import { BookOpen } from 'lucide-react'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { cn } from '@/lib/utils/className'
 
 import type { Route } from 'next'
+import { BagOutlineIcon, type AppIcon } from '@/components/utekos-icons'
 
 const ctaCardClassName =
   'group relative flex flex-col items-center justify-center rounded-3xl border border-card-foreground/10 bg-jungle p-12 text-center text-card-foreground transition-all duration-500 hover:border-secondary/40 hover:bg-secondary hover:text-secondary-foreground hover:shadow-2xl'
@@ -13,7 +14,7 @@ const ctaIconClassName =
 
 type NavigationCtaCardProps = {
   href: Route
-  icon: typeof ShoppingBag
+  icon: AppIcon
   title: string
   description: string
   badgeLabel: string
@@ -55,7 +56,7 @@ export function NavigationCTA() {
         <div className='grid gap-8 md:grid-cols-2'>
           <NavigationCtaCard
             href='/produkter'
-            icon={ShoppingBag}
+            icon={BagOutlineIcon}
             title='Utforsk kolleksjonen'
             description='Klar for å oppleve Utekos®? Se vårt utvalg.'
             badgeLabel='Gå til butikken'

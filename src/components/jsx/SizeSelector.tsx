@@ -1,10 +1,10 @@
-import { Check } from 'lucide-react'
 import { useRef, useState } from 'react'
 
 import { ProductSizeGuideDialog } from '@/components/size-guide/ProductSizeGuideDialog'
 import { safeJsonParse } from '@/lib/utils/safeJsonParse'
 
 import type { Dimension, SizeSelectorProps } from '@types'
+import { CheckMarkIcon } from '@/components/utekos-icons'
 
 export function SizeSelector({
   optionName,
@@ -188,7 +188,7 @@ export function SizeSelector({
                   </span>
                 : null}
                 {isSelected ?
-                  <Check
+                  <CheckMarkIcon tone="orange"
                     className='size-4 shrink-0'
                     strokeWidth={2.5}
                     aria-hidden='true'

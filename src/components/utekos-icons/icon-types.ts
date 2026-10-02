@@ -1,4 +1,4 @@
-import type { SVGProps } from 'react'
+import type { ComponentType, SVGProps } from 'react'
 
 export const ICON_COLORS = {
   orange: '#b44701',
@@ -15,3 +15,17 @@ export type IconProps = Omit<SVGProps<SVGSVGElement>, 'color' | 'width' | 'heigh
   /** Optional accessible title. Decorative icons are aria-hidden by default. */
   title?: string
 }
+
+/**
+ * Shared icon component type during Lucide → utekos-icons migration.
+ * Accepts both Lucide and Utekos icon components.
+ */
+export type AppIcon = ComponentType<
+  {
+    className?: string
+    size?: number | string
+    tone?: IconTone
+    title?: string
+    'aria-hidden'?: boolean | 'true' | 'false'
+  } & SVGProps<SVGSVGElement>
+>

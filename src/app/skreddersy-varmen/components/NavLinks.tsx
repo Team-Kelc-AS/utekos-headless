@@ -1,6 +1,7 @@
 import type { NavLink } from '@types'
-import { Home, Box, Layers, MapPin, Truck, Ruler, BookOpen } from 'lucide-react'
+import { Home, Layers, Ruler, BookOpen } from 'lucide-react'
 import type { Route } from 'next'
+import { BoxOutlineIcon, LocationIcon, MerchantTruckIcon } from '@/components/utekos-icons'
 export const NavLinks: NavLink[] = [
   {
     label: 'Forsiden',
@@ -11,7 +12,7 @@ export const NavLinks: NavLink[] = [
   {
     label: 'Se alle produkter',
     href: '/produkter' as Route,
-    icon: <Box className='w-6 h-6' />,
+    icon: <BoxOutlineIcon tone="orange" className='w-6 h-6' />,
     description: 'Utforsk kolleksjonen'
   },
   {
@@ -23,13 +24,13 @@ export const NavLinks: NavLink[] = [
   {
     label: 'Vår historie',
     href: '/om-oss' as Route,
-    icon: <MapPin className='w-6 h-6' />,
+    icon: <LocationIcon tone="orange" className='w-6 h-6' />,
     description: 'Om Utekos'
   },
   {
     label: 'Frakt og retur',
     href: '/frakt-og-retur' as Route,
-    icon: <Truck className='w-6 h-6' />,
+    icon: <MerchantTruckIcon tone="orange" className='w-6 h-6' />,
     description: 'Trygg handel'
   },
   {

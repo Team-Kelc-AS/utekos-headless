@@ -1,9 +1,10 @@
 // Path: src/app/skreddersy-varmen/components/ReviewCard.tsx
 
-import { Star, MapPin } from 'lucide-react'
+import { Star } from 'lucide-react'
 import { cn } from '@/lib/utils/className'
 import type { Review } from '../data/reviews'
 import { initialsFrom } from '@/app/skreddersy-varmen/utils/initialsFrom'
+import { LocationIcon } from '@/components/utekos-icons'
 
 export function ReviewCard({ review }: { review: Review }) {
   return (
@@ -67,7 +68,7 @@ export function ReviewCard({ review }: { review: Review }) {
               )}
               {review.location && (
                 <>
-                  <MapPin size={10} aria-hidden />
+                  <LocationIcon tone="orange" size={10} aria-hidden />
                   <span className='truncate'>
                     {review.location}
                   </span>

@@ -1,4 +1,4 @@
-import { Check, Minus } from 'lucide-react'
+import { CheckMarkIcon, MinusIcon } from '@/components/utekos-icons'
 
 export const variantStyles = {
   do: {
@@ -6,13 +6,13 @@ export const variantStyles = {
       'border-primary/24 bg-card',
     iconWrap:
       'border-primary/30 bg-primary text-foreground',
-    Icon: Check
+    Icon: CheckMarkIcon
   },
   dont: {
     container:
       'border-foreground/12 bg-night/40',
     iconWrap:
       'border-foreground/18 bg-card  text-foreground',
-    Icon: Minus
+    Icon: MinusIcon
   }
 } as const

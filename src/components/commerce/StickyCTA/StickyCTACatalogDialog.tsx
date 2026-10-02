@@ -7,10 +7,10 @@ import {
   type RefObject
 } from 'react'
 import { createPortal } from 'react-dom'
-import { Check, X } from 'lucide-react'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import type { StickyCatalogProduct } from './techdownPurchaseData'
 import styles from './StickyCTA.module.css'
+import { CheckMarkIcon, CloseIcon } from '@/components/utekos-icons'
 
 export default function StickyCTACatalogDialog({
   anchor,
@@ -110,7 +110,7 @@ export default function StickyCTACatalogDialog({
             aria-label='Lukk produktvalg'
             onClick={onClose}
           >
-            <X size={20} aria-hidden />
+            <CloseIcon tone="orange" size={20} aria-hidden />
           </button>
         </div>
         <div className={styles.catalog}>
@@ -145,7 +145,7 @@ export default function StickyCTACatalogDialog({
                       </span>
                     </span>
                     {selectedVariantId === variant.id && (
-                      <Check
+                      <CheckMarkIcon tone="orange"
                         size={20}
                         aria-hidden
                         className={styles.check}

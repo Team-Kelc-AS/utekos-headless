@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
 import { io } from 'next/cache'
-import { CircleCheck } from 'lucide-react'
 import {
   techDownReviewBundle,
   type ProductReviewItem
@@ -8,6 +7,7 @@ import {
 import { ReviewAgeLabel } from './ReviewAgeLabel'
 import { TechdownRatingStars } from './TechdownRatingStars'
 import styles from './TechdownContent.module.css'
+import { CheckCheckedIcon } from '@/components/utekos-icons'
 
 const IMPORT_OBSERVED_AT = '2026-09-23T12:00:00+02:00'
 const { ratingValue, reviewCount } =
@@ -39,7 +39,7 @@ function ReviewCard({
       <footer className={styles.reviewFooter}>
         <div className={styles.reviewerLine}>
           <strong>{review.author}</strong>
-          <CircleCheck size={18} aria-hidden='true' />
+          <CheckCheckedIcon tone="orange" size={18} aria-hidden='true' />
           <span>Verifisert kjøper</span>
           <span className='sr-only'> gjennom Judge.me</span>
         </div>

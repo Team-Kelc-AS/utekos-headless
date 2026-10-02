@@ -4,10 +4,11 @@
 
 import { scrollToLandingReviews } from './scrollToLandingReviews'
 import { scrollToLandingSize } from './scrollToLandingSize'
-import { ArrowRight, ChevronDown } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
 import { scrollToElement } from '@/lib/motion/scrollToElement'
 import { reportLandingSelectPromotion } from '@/app/skreddersy-varmen/utils/reportLandingSelectPromotion'
+import { CaretDownIcon } from '@/components/utekos-icons'
 
 const SCROLL_TARGETS = {
   purchase: 'purchase-section',
@@ -88,7 +89,7 @@ export function HeroActions() {
             <span className='block leading-none'>
               Se tilbakemeldingene
             </span>
-            <ChevronDown
+            <CaretDownIcon tone="orange"
               className='size-4 shrink-0'
               aria-hidden
             />
@@ -117,7 +118,7 @@ export function HeroActions() {
         <span className='font-sans font-semibold text-[10px] tracking-normal'>
           Bla videre
         </span>
-        <ChevronDown
+        <CaretDownIcon tone="orange"
           size={20}
           className='animate-bounce motion-reduce:animate-none'
           aria-hidden

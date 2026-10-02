@@ -1,16 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { normalizeCustomerReturnTo } from '@/lib/shopify/customer-account/customerAccountAuth'
-import {
-  ArrowLeft,
-  ArrowRight,
-  Heart,
-  LockKeyhole
-} from 'lucide-react'
+import { ArrowLeft, ArrowRight, LockKeyhole } from 'lucide-react'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
 import Link from 'next/link'
 import { z } from 'zod'
+import { HeartOutlineIcon } from '@/components/utekos-icons'
 
 export const metadata: Metadata = {
   title: 'Logg inn',
@@ -71,7 +67,7 @@ export default async function CustomerAccountLoginPage({
             className='absolute -top-16 -right-16 -z-10 size-64 rounded-full border-42 border-white/10'
           />
           <div className='flex size-20 items-center justify-center rounded-[1.35rem] bg-ancient-water text-[#172744] shadow-xl shadow-black/20'>
-            <Heart
+            <HeartOutlineIcon tone="orange"
               className='size-10 fill-current stroke-[2.25]'
               aria-hidden='true'
             />
@@ -90,7 +86,7 @@ export default async function CustomerAccountLoginPage({
         <section className='bg-popover px-6 py-9 text-popover-foreground sm:px-10 sm:py-12 lg:px-14'>
           <div className='mx-auto max-w-md'>
             <div className='mb-7 flex size-14 items-center justify-center rounded-2xl bg-ancient-water text-[#172744] lg:hidden'>
-              <Heart
+              <HeartOutlineIcon tone="orange"
                 className='size-7 fill-current stroke-[2.25]'
                 aria-hidden='true'
               />

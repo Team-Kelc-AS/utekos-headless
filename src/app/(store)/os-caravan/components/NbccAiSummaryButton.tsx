@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  Brain as BrainIcon,
-  BrainCircuitIcon,
-  ChevronDownIcon,
-  SparklesIcon
-} from 'lucide-react'
+import { Brain as BrainIcon, BrainCircuitIcon, SparklesIcon } from 'lucide-react'
 import Link from 'next/link'
 import type { Route } from 'next'
 import { useEffect, useId, useRef, useState } from 'react'
@@ -23,6 +18,7 @@ import type {
 } from '../types'
 import { LinkedSectionBody } from './LinkedSectionBody'
 import { renderSectionItems } from '../utils/renderSectionItems'
+import { CaretDownIcon } from '@/components/utekos-icons'
 
 export function NbccAiSummaryButton({
   intent,
@@ -158,7 +154,7 @@ export function NbccAiSummaryButton({
         : <BrainIcon className='size-4.5 shrink-0' aria-hidden />}
         <span className='truncate'>{buttonLabel}</span>
         {isCompleted ?
-          <ChevronDownIcon
+          <CaretDownIcon tone="orange"
             className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
             aria-hidden
           />

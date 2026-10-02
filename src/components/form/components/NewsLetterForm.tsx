@@ -11,11 +11,12 @@ import { appendLeadTrackingContext } from '@/lib/analytics/collectLeadFormTracki
 import { pushGenerateLeadToDataLayer } from '@/lib/analytics/pushGenerateLeadToDataLayer'
 import { Input } from '@/components/ui/input'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
-import { ArrowRight, Mail } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 import { P } from '@/components/typography/TypographyP'
 import { Button } from '@/components/ui/button'
 import { NewsletterFormFeedback } from '@/components/form/components/NewsletterFormFeedback'
+import { EnvelopeIcon } from '@/components/utekos-icons'
 const initialState: ActionState = { status: 'idle', message: '' }
 
 export function NewsletterForm() {
@@ -55,7 +56,7 @@ export function NewsletterForm() {
                 aria-hidden='true'
                 className='flex size-12 shrink-0 items-center justify-center rounded-full bg-white/14 text-white'
               >
-                <Mail className='size-6' />
+                <EnvelopeIcon tone="orange" className='size-6' />
               </span>
 
               <h2

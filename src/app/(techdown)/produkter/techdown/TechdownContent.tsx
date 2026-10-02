@@ -1,12 +1,6 @@
 import Image from 'next/image'
 import { Suspense } from 'react'
-import {
-  ArrowLeftRight,
-  Feather,
-  PersonStanding,
-  SlidersHorizontal,
-  Truck
-} from 'lucide-react'
+import { Feather, PersonStanding, SlidersHorizontal } from 'lucide-react'
 import { techDownReviewBundle } from '@/db/data/reviews/productReviews'
 import { TechdownRatingStars } from './TechdownRatingStars'
 import {
@@ -18,6 +12,7 @@ import {
   TechdownSpecsAccordionFallback
 } from './TechdownSpecsAccordion'
 import styles from './TechdownContent.module.css'
+import { MerchantTruckIcon, ReturnsOutlineIcon } from '@/components/utekos-icons'
 
 const { ratingValue, reviewCount } =
   techDownReviewBundle.aggregateRating
@@ -90,7 +85,7 @@ export function TechdownContent() {
               className={styles.exchangeIcon}
               aria-hidden='true'
             >
-              <ArrowLeftRight />
+              <ReturnsOutlineIcon tone="orange" />
             </span>
             <h3>Gratis bytte</h3>
           </div>
@@ -99,7 +94,7 @@ export function TechdownContent() {
               className={styles.exchangeIcon}
               aria-hidden='true'
             >
-              <Truck />
+              <MerchantTruckIcon tone="orange" />
             </span>
             <h3>
               Sendes samme dag

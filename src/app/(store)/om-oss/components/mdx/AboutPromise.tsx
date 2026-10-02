@@ -1,9 +1,10 @@
-import { Heart, ShieldCheck } from 'lucide-react'
+import { ShieldCheck } from 'lucide-react'
 import { AboutBadge } from './AboutBadge'
+import { HeartOutlineIcon } from '@/components/utekos-icons'
 
 const promises = [
   {
-    icon: Heart,
+    icon: HeartOutlineIcon,
     title: 'Mer enn et plagg',
     text: 'Vi lover deg følelsen av umiddelbar varme og velvære. En garanti for at du kan nyte øyeblikket lenger, uten å fryse.'
   },

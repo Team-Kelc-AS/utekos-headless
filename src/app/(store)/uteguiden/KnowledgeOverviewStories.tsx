@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Route } from 'next'
-import { ArrowUpRight, Layers, Thermometer } from 'lucide-react'
+import { Layers, Thermometer } from 'lucide-react'
 import { JsonLdScript } from '@/lib/seo/jsonLd/JsonLdScript'
 import {
   buildKnowledgeOverviewBreadcrumbJsonLd,
@@ -13,6 +13,7 @@ import {
   type KnowledgeArticle
 } from '@/lib/knowledge/knowledgeArticles'
 import styles from './knowledgeOverview.module.css'
+import { ArrowUpRightIcon } from '@/components/utekos-icons'
 
 const topics = [
   ...new Set(
@@ -147,7 +148,7 @@ export function KnowledgeFeaturedStories() {
             </p>
             <span className={styles.readMore}>
               Les artikkelen{' '}
-              <ArrowUpRight aria-hidden='true' size={20} />
+              <ArrowUpRightIcon tone="orange" aria-hidden='true' size={20} />
             </span>
           </div>
         </Link>
@@ -167,7 +168,7 @@ export function KnowledgeFeaturedStories() {
               <div className={styles.storyText}>
                 <ArticleMeta article={article} />
                 <h4>{article.title.replace(' – ', ': ')}</h4>
-                <ArrowUpRight
+                <ArrowUpRightIcon tone="orange"
                   className={styles.storyArrow}
                   aria-hidden='true'
                   size={22}
@@ -191,7 +192,7 @@ export function KnowledgeTopicLibrary() {
         {topics.map(topic => (
           <a href={`#${topicId(topic)}`} key={topic}>
             {topic}
-            <ArrowUpRight size={18} aria-hidden='true' />
+            <ArrowUpRightIcon tone="orange" size={18} aria-hidden='true' />
           </a>
         ))}
       </nav>
@@ -218,7 +219,7 @@ export function KnowledgeTopicLibrary() {
                     <h4>{article.title.replace(' – ', ': ')}</h4>
                     <span className={styles.readMore}>
                       Les artikkelen
-                      <ArrowUpRight
+                      <ArrowUpRightIcon tone="orange"
                         size={20}
                         aria-hidden='true'
                       />

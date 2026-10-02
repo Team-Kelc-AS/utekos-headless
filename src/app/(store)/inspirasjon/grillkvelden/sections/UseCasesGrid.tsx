@@ -1,10 +1,11 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
-import { Flame, Moon, Users } from 'lucide-react'
+import { Flame, Moon } from 'lucide-react'
 import type { UseCase } from '../types'
 import { H2 } from '@/components/typography/TypographyH2'
 import { Lead } from '@/components/typography/Lead'
 import { SectionBox } from '@/components/layout/SectionBox'
+import { GroupOutlineIcon } from '@/components/utekos-icons'
 
 export const useCasesData: UseCase[] = [
   {
@@ -18,7 +19,7 @@ export const useCasesData: UseCase[] = [
     iconBackground: 'bg-primary'
   },
   {
-    icon: Users,
+    icon: GroupOutlineIcon,
     time: 'Etter maten',
     title: 'Rundt bordet',
     description:

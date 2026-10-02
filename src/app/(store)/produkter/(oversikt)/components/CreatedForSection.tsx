@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Heart } from 'lucide-react'
 import { animate, inView, stagger } from 'motion'
+import { HeartOutlineIcon } from '@/components/utekos-icons'
 
 export function CreatedForSection() {
   const container = useRef<HTMLDivElement>(null)
@@ -175,7 +175,7 @@ export function CreatedForSection() {
       <div className='relative z-10 container mx-auto flex flex-col items-center px-4'>
         <div className='motion-icon-wrapper mb-10 will-change-transform'>
           <div className='motion-icon-glow bg-bleached-mauve/80 flex h-16 w-16 items-center justify-center rounded-full border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] backdrop-blur-sm'>
-            <Heart className='text-bleached-mauve fill-bleached-mauve size-7' />
+            <HeartOutlineIcon tone="orange" className='text-bleached-mauve fill-bleached-mauve size-7' />
           </div>
         </div>
 

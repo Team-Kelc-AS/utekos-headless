@@ -2,8 +2,8 @@
 
 'use client'
 
-import { Check } from 'lucide-react'
 import type { CSSProperties } from 'react'
+import { CheckMarkIcon } from '@/components/utekos-icons'
 
 type BenefitSurface = 'dazzle' | 'orange' | 'dazzleagain'
 
@@ -86,7 +86,7 @@ export function BenefitCard({
             background: 'var(--sidebar-primary)'
           }}
         >
-          <Check
+          <CheckMarkIcon tone="orange"
             className='size-5'
             style={{
               color:

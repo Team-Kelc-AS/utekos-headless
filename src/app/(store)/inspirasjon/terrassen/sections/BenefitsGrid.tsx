@@ -1,15 +1,15 @@
 // Path: src/app/(store)/inspirasjon/terrassen/sections/BenefitsGrid.tsx
 
-import { Home, Sparkles, Thermometer, Users } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import { Home, Sparkles, Thermometer } from 'lucide-react'
 import { H2 } from '@/components/typography/TypographyH2'
 import { H3 } from '@/components/typography/TypographyH3'
 import { Lead } from '@/components/typography/Lead'
 import { P } from '@/components/typography/TypographyP'
 import { MotionCard, MotionReveal } from './TerraceMotion'
+import { GroupOutlineIcon, type AppIcon } from '@/components/utekos-icons'
 
 type Benefit = {
-  icon: LucideIcon
+  icon: AppIcon
   title: string
   description: string
 }
@@ -33,7 +33,7 @@ export const benefitsData: Benefit[] = [
       'Lett å ta frem, lett å rydde vekk. Alltid klar for en kosestund.'
   },
   {
-    icon: Users,
+    icon: GroupOutlineIcon,
     title: 'Inviterer til samvær',
     description:
       'Skap en innbydende atmosfære som gjestene dine vil elske.'

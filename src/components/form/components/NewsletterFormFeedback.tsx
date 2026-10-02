@@ -1,6 +1,6 @@
-import { CheckCircle2 } from 'lucide-react'
 
 import type { ActionState } from '@/lib/actions/subscribeToNewsLetters'
+import { CheckCheckedIcon } from '@/components/utekos-icons'
 
 type NewsletterFormFeedbackProps = { state: ActionState }
 
@@ -18,7 +18,7 @@ export function NewsletterFormFeedback({
           role='status'
           className='flex items-start gap-2 text-sm leading-6 font-medium text-white sm:text-base'
         >
-          <CheckCircle2
+          <CheckCheckedIcon tone="orange"
             aria-hidden='true'
             className='mt-0.5 size-5 shrink-0'
           />

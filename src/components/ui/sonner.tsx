@@ -2,7 +2,8 @@
 
 import { useTheme } from 'next-themes'
 import { Toaster as Sonner, type ToasterProps } from 'sonner'
-import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from 'lucide-react'
+import { TriangleAlertIcon, OctagonXIcon, Loader2Icon } from 'lucide-react'
+import { CheckCheckedIcon, InfoCircleOutlineIcon } from '@/components/utekos-icons'
 
 type SonnerTheme = NonNullable<ToasterProps['theme']>
 
@@ -24,8 +25,8 @@ const Toaster = ({ theme: themeProp, ...props }: ToasterProps) => {
       theme={resolvedTheme}
       className='toaster group'
       icons={{
-        success: <CircleCheckIcon className='size-4' />,
-        info: <InfoIcon className='size-4' />,
+        success: <CheckCheckedIcon tone="orange" className='size-4' />,
+        info: <InfoCircleOutlineIcon tone="orange" className='size-4' />,
         warning: <TriangleAlertIcon className='size-4' />,
         error: <OctagonXIcon className='size-4' />,
         loading: <Loader2Icon className='size-4 animate-spin' />

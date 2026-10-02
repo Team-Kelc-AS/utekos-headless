@@ -1,10 +1,11 @@
 import Image from 'next/image'
-import { CalendarDays, Clock, PencilLine } from 'lucide-react'
+import { CalendarDays } from 'lucide-react'
 import type { MagazineArticle } from '../types'
 import { formatMagazineArticleDate } from '../utils/formatMagazineArticleDate'
 import { MagazineHeroViewTransition } from './MagazineHeroViewTransition'
 import techdown1600x1000 from '@/assets/images/techdown/TechDown-1600x1000.webp'
 import utekostechdownmobile from '@/assets/images/techdown/UtekosTechDownMobile.png'
+import { ClockOutlineIcon, PencilIcon } from '@/components/utekos-icons'
 
 type MagazineArticleHeaderProps = { article: MagazineArticle }
 
@@ -72,7 +73,7 @@ export function MagazineArticleHeader({
           </span>
           {updatedDate && (
             <span className='inline-flex items-center gap-2'>
-              <PencilLine className='size-4' aria-hidden />
+              <PencilIcon tone="orange" className='size-4' aria-hidden />
               <span>
                 Oppdatert{' '}
                 <time dateTime={article.updatedAt}>
@@ -83,7 +84,7 @@ export function MagazineArticleHeader({
           )}
           {article.readingTimeMinutes && (
             <span className='inline-flex items-center gap-2'>
-              <Clock className='size-4' aria-hidden />
+              <ClockOutlineIcon tone="orange" className='size-4' aria-hidden />
               <span>
                 {article.readingTimeMinutes} min lesing
               </span>

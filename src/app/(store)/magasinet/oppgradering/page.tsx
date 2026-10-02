@@ -2,14 +2,10 @@
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import {
-  ArrowRight,
-  BookOpen,
-  Home,
-  ShoppingBag
-} from 'lucide-react'
+import { ArrowRight, BookOpen, Home } from 'lucide-react'
 import type { Route } from 'next'
 import { UtekosBreadcrumbBar } from '@/components/navigation/UtekosBreadcrumbBar'
+import { BagOutlineIcon } from '@/components/utekos-icons'
 export const metadata: Metadata = {
   title: 'Utekos Magasinet er under oppgradering | Utekos',
   description:
@@ -23,7 +19,7 @@ const links = [
     label: 'Se produktene',
     description:
       'Utforsk Utekos-plagg, tilbehør og varme løsninger.',
-    icon: ShoppingBag
+    icon: BagOutlineIcon
   },
   {
     href: '/uteguiden',

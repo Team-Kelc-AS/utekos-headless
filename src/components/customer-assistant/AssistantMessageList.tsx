@@ -1,7 +1,6 @@
 'use client'
 
 import type { AssistantUIMessage } from '@/lib/customer-assistant/assistantProtocol'
-import { ExternalLinkIcon } from 'lucide-react'
 import { AssistantFeedback } from './AssistantFeedback'
 import { AssistantHandoff } from './AssistantHandoff'
 import { AssistantProductRecommendation } from './AssistantProductRecommendation'
@@ -12,6 +11,7 @@ import {
   type AssistantFeedbackState,
   type AssistantFeedbackValue
 } from './assistantViewModel'
+import { LinkIcon } from '@/components/utekos-icons'
 
 export type { AssistantChatStatus } from './assistantViewModel'
 
@@ -120,7 +120,7 @@ export function AssistantMessageList({
                       className='inline-flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium underline underline-offset-4 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
                     >
                       Kilde: {row.source.title}
-                      <ExternalLinkIcon
+                      <LinkIcon tone="orange"
                         className='size-4'
                         aria-hidden='true'
                       />

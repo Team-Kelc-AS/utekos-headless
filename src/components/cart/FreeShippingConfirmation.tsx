@@ -1,4 +1,4 @@
-import { CheckCircleIcon } from 'lucide-react'
+import { CheckCheckedIcon } from '@/components/utekos-icons'
 
 export function FreeShippingConfirmation() {
   return (
@@ -7,7 +7,7 @@ export function FreeShippingConfirmation() {
       style={{ animationDuration: '0.5s' }}
     >
       <div className='flex items-center justify-center gap-3 rounded-lg border border-light-teal/30 bg-night px-4 py-3 text-foreground'>
-        <CheckCircleIcon
+        <CheckCheckedIcon tone="orange"
           className='h-5 w-5 text-light-teal'
           aria-hidden='true'
         />

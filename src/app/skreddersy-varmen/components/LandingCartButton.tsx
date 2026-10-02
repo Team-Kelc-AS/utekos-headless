@@ -1,6 +1,5 @@
+import { PurchasesOutlineIcon } from '@/components/utekos-icons'
 'use client'
-
-import { ShoppingCartIcon } from 'lucide-react'
 
 export function LandingCartButton({
   className
@@ -16,7 +15,7 @@ export function LandingCartButton({
       }
       className={className}
     >
-      <ShoppingCartIcon className='size-5' aria-hidden />
+      <PurchasesOutlineIcon tone="orange" className='size-5' aria-hidden />
       <span className='sr-only'>Åpne handlekurven</span>
     </button>
   )

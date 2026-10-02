@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import { AnimatedBlock } from '@/components/AnimatedBlock'
-import { MapPinIcon } from 'lucide-react'
+import { LocationIcon } from '@/components/utekos-icons'
 
 interface Destination {
   name: string
@@ -63,7 +63,7 @@ export function PopularDestinations({
                     <h3 className='font-sans font-semibold text-lg'>
                       {destination.name}
                     </h3>
-                    <MapPinIcon
+                    <LocationIcon tone="orange"
                       className={`h-5 w-5 ${destination.color}`}
                     />
                   </div>

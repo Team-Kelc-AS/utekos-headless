@@ -2,15 +2,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import {
-  ArrowRight,
-  Gift,
-  Calendar,
-  ShieldCheck,
-  Truck,
-  CreditCard,
-  MapPin
-} from 'lucide-react'
+import { ArrowRight, Gift, Calendar, ShieldCheck } from 'lucide-react'
 import { SantaHat } from '@/components/ui/santahat'
 import { connection } from 'next/server'
 import { KampanjeJulegaverBreadcrumbs } from '../components/KampanjeJulegaverBreadcrumbs'
@@ -18,7 +10,7 @@ import comfyFrontUBakgrunn1080 from '@/assets/images/comfyrobe/comfy-front-u-bak
 import dunFrontHvitBakgrunn1080 from '@/assets/images/magazine/dun-front-hvit-bakgrunn-1080.png'
 import mikroFront1080 from '@/assets/images/mikrofiber/mikro-front-1080.png'
 import techdown1080 from '@/assets/images/techdown/techdown-1080.png'
-
+import { LocationIcon, MerchantTruckIcon, PaymentOutlineIcon } from '@/components/utekos-icons'
 
 export const metadata: Metadata = {
   title: 'Julegavetips',
@@ -85,7 +77,7 @@ export default async function ChristmasCampaign() {
               <ArrowRight className='ml-2 h-4 w-4' />
             </Link>
             <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-              <Truck className='h-4 w-4' />
+              <MerchantTruckIcon tone="orange" className='h-4 w-4' />
               <span>Fri frakt over 999kr</span>
             </div>
           </div>
@@ -98,7 +90,7 @@ export default async function ChristmasCampaign() {
             {/* 1. Lager/Logistikk - Erstatter "Bestill innen..." */}
             <div className='flex flex-col items-center gap-3'>
               <div className='flex h-12 w-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10'>
-                <MapPin className='h-6 w-6 text-campaign' />{' '}
+                <LocationIcon tone="orange" className='h-6 w-6 text-campaign' />{' '}
               </div>
               <div>
                 <h3 className='font-sans font-semibold text-foreground'>
@@ -128,7 +120,7 @@ export default async function ChristmasCampaign() {
 
             <div className='flex flex-col items-center gap-3'>
               <div className='flex h-12 w-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10'>
-                <CreditCard className='h-6 w-6 text-campaign' />
+                <PaymentOutlineIcon tone="orange" className='h-6 w-6 text-campaign' />
               </div>
               <div>
                 <h3 className='font-sans font-semibold text-foreground'>

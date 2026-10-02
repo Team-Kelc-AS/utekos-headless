@@ -1,16 +1,11 @@
 'use client'
 
 import type { AssistantHandoffRow } from './assistantViewModel'
-import {
-  CheckIcon,
-  ClipboardIcon,
-  MailIcon,
-  MessageSquareTextIcon,
-  PhoneIcon
-} from 'lucide-react'
+import { MessageSquareTextIcon, PhoneIcon } from 'lucide-react'
 import type { Route } from 'next'
 import Link from 'next/link'
 import { useId, useState } from 'react'
+import { CheckMarkIcon, ClipboardIcon, EnvelopeIcon } from '@/components/utekos-icons'
 
 type AssistantHandoffProps = {
   handoff: AssistantHandoffRow['handoff']
@@ -67,7 +62,7 @@ export function AssistantHandoff({
           href={handoff.emailHref}
           className='inline-flex min-h-11 items-center gap-3 rounded-xl border border-border bg-popover px-4 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
         >
-          <MailIcon className='size-4' aria-hidden='true' />
+          <EnvelopeIcon tone="orange" className='size-4' aria-hidden='true' />
           {handoff.emailLabel}
         </a>
         <a
@@ -100,8 +95,8 @@ export function AssistantHandoff({
             className='mt-2 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-border bg-popover px-4 py-2.5 font-sans font-semibold text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none'
           >
             {copyStatus === 'copied' ?
-              <CheckIcon className='size-4' aria-hidden='true' />
-            : <ClipboardIcon
+              <CheckMarkIcon tone="orange" className='size-4' aria-hidden='true' />
+            : <ClipboardIcon tone="orange"
                 className='size-4'
                 aria-hidden='true'
               />

@@ -1,7 +1,8 @@
 // Path: src/app/(store)/kontaktskjema/sections/MobileSection.tsx
-import { HelpCircle, Leaf, Package } from 'lucide-react'
+import { Leaf } from 'lucide-react'
 import { SupportForm } from '@/components/form/components/SupportForm'
 import BrandBadge from '@/components/BrandComponents/utils/BrandBadge'
+import { BoxOutlineIcon, QuestionMarkSquareIcon } from '@/components/utekos-icons'
 
 export function MobileSection() {
   return (
@@ -20,7 +21,7 @@ export function MobileSection() {
 
         <ul className='mt-6 space-y-6'>
           <li className='flex items-start gap-3'>
-            <HelpCircle className='h-5 w-5 shrink-0 text-ancient-water' />
+            <QuestionMarkSquareIcon tone="orange" className='h-5 w-5 shrink-0 text-ancient-water' />
             <div>
               <h3 className='font-sans font-semibold text-sm leading-[1.3] tracking-normal text-foreground'>
                 Få personlig veiledning
@@ -32,7 +33,7 @@ export function MobileSection() {
             </div>
           </li>
           <li className='flex items-start gap-3'>
-            <Package className='h-5 w-5 shrink-0 text-ancient-water' />
+            <BoxOutlineIcon tone="orange" className='h-5 w-5 shrink-0 text-ancient-water' />
             <div>
               <h3 className='font-sans font-semibold text-sm leading-[1.3] tracking-normal text-foreground'>
                 Hjelp med din bestilling

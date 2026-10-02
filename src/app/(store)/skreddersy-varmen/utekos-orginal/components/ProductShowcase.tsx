@@ -1,12 +1,7 @@
 import Image from 'next/image'
-import {
-  Check,
-  ShieldCheck,
-  Feather,
-  CloudRain,
-  type LucideIcon
-} from 'lucide-react'
+import { ShieldCheck, Feather, CloudRain } from 'lucide-react'
 import ProductMain from '@/assets/images/mikrofiber/MikroWall-4-5.webp'
+import { CheckMarkIcon, type AppIcon } from '@/components/utekos-icons'
 
 export function ProductShowcase() {
   return (
@@ -50,7 +45,7 @@ export function ProductShowcase() {
                 desc='Syntetisk hulfiber. Ingen animalske produkter.'
               />
               <FeatureItem
-                icon={Check}
+                icon={CheckMarkIcon}
                 title='DuraLite™ Nylon'
                 desc='Vindtett og slitesterkt 20D/380T materiale.'
               />
@@ -76,7 +71,7 @@ function FeatureItem({
   title,
   desc
 }: {
-  icon: LucideIcon
+  icon: AppIcon
   title: string
   desc: string
 }) {

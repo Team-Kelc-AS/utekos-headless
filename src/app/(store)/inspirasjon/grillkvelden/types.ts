@@ -1,7 +1,7 @@
-import type { LucideIcon } from 'lucide-react'
+import type { AppIcon } from '@/components/utekos-icons'
 
 export interface UseCase {
-  icon: LucideIcon
+  icon: AppIcon
   time: string
   title: string
   description: string
@@ -11,7 +11,7 @@ export interface UseCase {
 }
 
 export interface Benefit {
-  icon: LucideIcon
+  icon: AppIcon
   title: string
   description: string
   iconBackground: string
@@ -20,5 +20,5 @@ export interface Benefit {
 export interface HostTip {
   name: string
   highlight: string
-  icon: LucideIcon
+  icon: AppIcon
 }

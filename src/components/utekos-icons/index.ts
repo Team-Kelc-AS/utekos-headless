@@ -1,4 +1,9 @@
-export { ICON_COLORS, type IconProps, type IconTone } from './icon-types'
+export {
+  ICON_COLORS,
+  type AppIcon,
+  type IconProps,
+  type IconTone,
+} from './icon-types'
 export { AddIcon } from './AddIcon'
 export { AddOutlineIcon } from './AddOutlineIcon'
 export { ArrowDownLeftIcon } from './ArrowDownLeftIcon'

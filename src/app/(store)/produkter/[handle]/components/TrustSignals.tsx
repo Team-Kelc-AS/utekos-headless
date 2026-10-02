@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeftRight, Truck } from 'lucide-react'
+import { MerchantTruckIcon, ReturnsOutlineIcon } from '@/components/utekos-icons'
 
 export function TrustSignals() {
   return (
@@ -36,7 +36,7 @@ export function TrustSignals() {
               className='flex size-[30px] items-center justify-center text-foreground'
               aria-hidden='true'
             >
-              <ArrowLeftRight className='size-[30px]' strokeWidth={1.75} />
+              <ReturnsOutlineIcon tone="orange" className='size-[30px]' strokeWidth={1.75} />
             </span>
             <p className='m-0 font-sans text-[13px] font-extrabold leading-snug text-foreground'>
               Gratis bytte
@@ -48,7 +48,7 @@ export function TrustSignals() {
               className='flex size-[30px] items-center justify-center text-foreground'
               aria-hidden='true'
             >
-              <Truck className='size-[30px]' strokeWidth={1.75} />
+              <MerchantTruckIcon tone="orange" className='size-[30px]' strokeWidth={1.75} />
             </span>
             <p className='m-0 font-sans text-[13px] font-extrabold leading-snug text-foreground'>
               Sendes samme dag

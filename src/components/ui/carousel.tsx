@@ -10,8 +10,8 @@ import Ssr, { type SsrOptionsType } from 'embla-carousel-ssr'
 
 import { cn } from '@/lib/utils/className'
 import { Button } from '@/components/ui/button'
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { resolveCarouselSsrOptions } from '@/components/ui/carousel-ssr'
+import { CaretLeftIcon, CaretRightIcon } from '@/components/utekos-icons'
 
 type CarouselApi = UseEmblaCarouselType[1]
 type ResolvedCarouselApi = NonNullable<CarouselApi> & {
@@ -311,7 +311,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <ChevronLeftIcon />
+      <CaretLeftIcon tone="orange" />
       <span className='sr-only'>Previous slide</span>
     </Button>
   )
@@ -347,7 +347,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <ChevronRightIcon />
+      <CaretRightIcon tone="orange" />
       <span className='sr-only'>Next slide</span>
     </Button>
   )

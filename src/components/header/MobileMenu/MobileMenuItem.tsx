@@ -9,8 +9,8 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion'
-import { ChevronRight } from 'lucide-react'
 import { SubMenuItem } from '@/components/header/MobileMenu/SubMenuItem'
+import { CaretRightIcon } from '@/components/utekos-icons'
 
 export function MobileMenuItem({ item }: { item: MenuItem }) {
   const hasSubMenu = item.items && item.items.length > 0
@@ -28,7 +28,7 @@ export function MobileMenuItem({ item }: { item: MenuItem }) {
           </span>
         </div>
 
-        <ChevronRight className='/60 relative size-5 text-foreground/60 transition-transform duration-200 group-active:translate-x-0.5' />
+        <CaretRightIcon tone="orange" className='/60 relative size-5 text-foreground/60 transition-transform duration-200 group-active:translate-x-0.5' />
       </Link>
     )
   }

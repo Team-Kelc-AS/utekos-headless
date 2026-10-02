@@ -1,5 +1,5 @@
-import { MessageCircleIcon } from 'lucide-react'
 import type { RefObject } from 'react'
+import { MessageSpeechBubbleOutlineIcon } from '@/components/utekos-icons'
 
 type CustomerAssistantLauncherProps = {
   busy?: boolean
@@ -26,7 +26,7 @@ export function CustomerAssistantLauncher({
       onClick={onClick}
       className='fixed right-4 bottom-4 z-40 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-5 font-sans font-semibold text-sm text-primary-foreground shadow-lg transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transform-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:right-6 sm:bottom-6'
     >
-      <MessageCircleIcon className='size-5' aria-hidden='true' />
+      <MessageSpeechBubbleOutlineIcon tone="orange" className='size-5' aria-hidden='true' />
       <span>Kjøpshjelp</span>
     </button>
   )
