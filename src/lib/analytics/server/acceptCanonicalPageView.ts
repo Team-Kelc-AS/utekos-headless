@@ -107,8 +107,12 @@ export async function acceptCanonicalPageView(
       fbclid: event.click_id?.fbclid ? 'present' : 'absent',
       status
     })
-  } catch {
-    // Observability must never affect PageView accept flow.
+  } catch (error) {
+    console.warn('[observability] custom metric emission failed', {
+      name: error instanceof Error ? error.name : 'unknown',
+      message:
+        error instanceof Error ? error.message : String(error)
+    })
   }
 
   console.info(
