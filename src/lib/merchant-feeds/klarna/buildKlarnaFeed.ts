@@ -6,6 +6,7 @@ import type {
 import { isValidGtin } from '@/lib/gtin/isValidGtin'
 import { normalizeGtin } from '@/lib/gtin/normalizeGtin'
 import { MERCHANT_FEED_SITE_URL } from '@/lib/merchant-feeds/merchantFeedSiteUrl'
+import { isStorefrontVisibleProductHandle } from '@/lib/products/presentation'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 import { getKlarnaFeedCategory } from './getKlarnaFeedCategory'
@@ -510,6 +511,7 @@ export function buildKlarnaFeedDocument(
     .filter(
       product =>
         product.status === 'ACTIVE' &&
+        isStorefrontVisibleProductHandle(product.handle) &&
         !KLARNA_EXCLUDED_PRODUCT_HANDLES.has(product.handle)
     )
     .flatMap(product =>

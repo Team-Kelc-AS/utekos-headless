@@ -100,7 +100,7 @@ test('builds a rich OpenAI Ads CSV from the curated Utekos variant', () => {
     row.title,
     'Utekos TechDown™ / Havdyp / Stor / Unisex'
   )
-  assert.match(row.description ?? '', /CloudWeave™-isolasjon/)
+  assert.match(row.description ?? '', /nordiske utetiden/)
   assert.match(
     row.url ?? '',
     /^https:\/\/utekos\.no\/produkter\/utekos-techdown\?/
@@ -160,6 +160,37 @@ test('is deterministic and fails closed without active publishable offers', () =
       ]),
     /contains no active offers/
   )
+})
+
+test('excludes products hidden from the storefront', () => {
+  const hiddenProduct: CatalogSyncProduct = {
+    ...product,
+    id: 'gid://shopify/Product/300',
+    handle: 'utekos-svale',
+    variants: {
+      edges: [
+        {
+          node: {
+            ...product.variants.edges[0]!.node,
+            id: 'gid://shopify/ProductVariant/301',
+            selectedOptions: [
+              { name: 'Størrelse', value: 'Middels' }
+            ]
+          }
+        }
+      ]
+    }
+  }
+
+  const lines = buildOpenAiAdsProductFeed([
+    hiddenProduct,
+    product
+  ])
+    .trimEnd()
+    .split('\r\n')
+
+  assert.equal(lines.length, 2)
+  assert.match(lines[1] ?? '', /^200,/)
 })
 
 test('fails closed on invalid public media and price data', () => {

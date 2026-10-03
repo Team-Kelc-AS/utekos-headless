@@ -2,7 +2,10 @@ import type {
   CatalogSyncProduct,
   CatalogSyncVariant
 } from '@/lib/catalog-sync/types'
-import { resolveCatalogVariantPresentation } from '@/lib/products/presentation'
+import {
+  isStorefrontVisibleProductHandle,
+  resolveCatalogVariantPresentation
+} from '@/lib/products/presentation'
 
 const EXCLUDED_PRODUCT_HANDLES = new Set([
   'utekos-buff',
@@ -28,6 +31,11 @@ export function isMicrosoftMerchantOfferIncluded(
   variant: CatalogSyncVariant
 ) {
   const handle = product.handle.trim().toLowerCase()
+
+  if (!isStorefrontVisibleProductHandle(handle)) {
+    return false
+  }
+
   const publicVariant = resolveCatalogVariantPresentation({
     handle,
     selectedOptions: variant.selectedOptions

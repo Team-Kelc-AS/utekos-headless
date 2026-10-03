@@ -4,7 +4,10 @@ import type {
 } from '@/lib/catalog-sync/types'
 import { isValidGtin } from '@/lib/gtin/isValidGtin'
 import { normalizeGtin } from '@/lib/gtin/normalizeGtin'
-import { resolveCatalogVariantPresentation } from '@/lib/products/presentation'
+import {
+  isStorefrontVisibleProductHandle,
+  resolveCatalogVariantPresentation
+} from '@/lib/products/presentation'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 import { getSnapchatCatalogProductMetadata } from './snapchatCatalogProductMetadata'
@@ -326,6 +329,9 @@ export function buildSnapchatCatalogFeedDocument(
 ): SnapchatCatalogFeedDocument {
   const offers = products
     .filter(product => product.status === 'ACTIVE')
+    .filter(product =>
+      isStorefrontVisibleProductHandle(product.handle)
+    )
     .flatMap(product =>
       product.variants.edges
         .map(({ node }) => node)

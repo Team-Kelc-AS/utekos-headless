@@ -127,10 +127,10 @@ test('builds an in-stock Snapchat variant feed from curated Utekos presentation 
   assert.equal(rows[0]?.size_type, 'regular')
   assert.equal(rows[0]?.adult, 'no')
   assert.equal(rows[0]?.condition, 'new')
-  assert.equal(rows[0]?.google_product_category, '203')
+  assert.equal(rows[0]?.google_product_category, '5598')
   assert.equal(
     rows[0]?.product_type,
-    'Apparel & Accessories > Clothing > Outerwear'
+    'Apparel & Accessories > Clothing > Outerwear > Coats & Jackets'
   )
   assert.equal(
     rows[0]?.image_link,
@@ -156,6 +156,33 @@ test('uses only included offer timestamps for Last-Modified', () => {
     document.lastModified,
     'Sun, 23 Aug 2026 09:00:00 GMT'
   )
+})
+
+test('excludes products hidden from the storefront', () => {
+  const hiddenProduct: CatalogSyncProduct = {
+    ...product,
+    id: 'gid://shopify/Product/300',
+    handle: 'utekos-svale',
+    variants: {
+      edges: [
+        {
+          node: {
+            ...product.variants.edges[0]!.node,
+            id: 'gid://shopify/ProductVariant/301',
+            selectedOptions: [
+              { name: 'Størrelse', value: 'Middels' }
+            ]
+          }
+        }
+      ]
+    }
+  }
+
+  const rows = parseFeedRows(
+    buildSnapchatCatalogFeed([hiddenProduct, product])
+  )
+
+  assert.deepEqual(rows.map(row => row.id), ['200'])
 })
 
 test('fails closed when no active in-stock variants remain', () => {

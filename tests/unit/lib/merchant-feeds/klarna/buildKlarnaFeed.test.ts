@@ -291,6 +291,34 @@ test('excludes Stapper from the Klarna assortment', () => {
   assert.doesNotMatch(feed, /UTEKOS-STAPPER-UNISEX-SVART/)
 })
 
+test('excludes products hidden from the storefront', () => {
+  const feed = buildKlarnaFeed([
+    {
+      ...product,
+      id: 'gid://shopify/Product/300',
+      handle: 'utekos-svale',
+      title: 'Utekos Svale',
+      variants: {
+        edges: [
+          {
+            node: {
+              ...product.variants.edges[0]!.node,
+              id: 'gid://shopify/ProductVariant/301',
+              sku: 'UTEKOS-SVALE-MIDDELS',
+              selectedOptions: [
+                { name: 'Størrelse', value: 'Middels' }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    product
+  ])
+
+  assert.doesNotMatch(feed, /UTEKOS-SVALE-MIDDELS/)
+})
+
 test('fails closed when an included offer has fewer than four unique images', () => {
   assert.throws(
     () =>
