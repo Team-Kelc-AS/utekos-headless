@@ -145,7 +145,7 @@ test('builds a Microsoft Merchant TSV from the Utekos presentation contract', ()
   )
   assert.equal(
     rows[0]?.description,
-    'Utekos TechDown™ er et varmt og allsidig 3-i-1-plagg med Luméa™-ytterstoff og CloudWeave™-isolasjon for terrasse, hytte, båt og bobil.'
+    'Sømløs balanse mellom teknisk raffinement og uanstrengt komfort løfter Utekos TechDown™ den nordiske utetiden. Fra hytte- og terrasseliv til bobil- og campingglede eller kalde høstkvelder på sidelinjen mens barnebarna utfolder seg på fotballbanen. Juster, form og nyt'
   )
   assert.equal(
     rows[0]?.link,
@@ -212,6 +212,9 @@ test('includes only the approved Microsoft Merchant assortment', () => {
     ]),
     createProduct('comfyrobe', 'Comfyrobe', [
       { id: '307', color: 'Fjellnatt' }
+    ]),
+    createProduct('utekos-svale', 'Utekos Svale', [
+      { id: '308', color: 'Havdyp' }
     ])
   ])
   const rows = parseFeedRows(feed)

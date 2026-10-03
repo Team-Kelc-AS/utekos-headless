@@ -7,7 +7,10 @@ import { normalizeGtin } from '@/lib/gtin/normalizeGtin'
 import { getCatalogProductMetadata } from '@/lib/merchant-feeds/catalogProductMetadata'
 import { MERCHANT_FEED_SITE_URL } from '@/lib/merchant-feeds/merchantFeedSiteUrl'
 import { returnPolicy } from '@/lib/policies/returnPolicy'
-import { resolveCatalogVariantPresentation } from '@/lib/products/presentation'
+import {
+  isStorefrontVisibleProductHandle,
+  resolveCatalogVariantPresentation
+} from '@/lib/products/presentation'
 import { cleanShopifyId } from '@/lib/utils/cleanShopifyId'
 
 export const OPENAI_ADS_PRODUCT_FEED_COLUMNS = [
@@ -325,6 +328,9 @@ export function buildOpenAiAdsProductFeed(
 ) {
   const rows = products
     .filter(product => product.status === 'ACTIVE')
+    .filter(product =>
+      isStorefrontVisibleProductHandle(product.handle)
+    )
     .flatMap(product =>
       product.variants.edges.map(({ node }) =>
         buildRow(product, node)
