@@ -150,6 +150,7 @@ test('one canonical event_id creates one row and one stable provider dedupe key 
           if (accepted || processing) return null
           processing = true
           return {
+            createdAt: event.event_time,
             attemptCount: 1,
             attemptId:
               provider === 'google' ?

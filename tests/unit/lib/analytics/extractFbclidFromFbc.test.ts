@@ -66,7 +66,7 @@ test('ensureFbcFromFbclid synthesizes fbc from a genuine fbclid', () => {
   assert.equal(
     ensureFbcFromFbclid({
       fbclid: 'IwY2xjawExample',
-      nowMs: 1789797150590
+      firstObservedMs: 1789797150590
     }),
     'fb.1.1789797150590.IwY2xjawExample'
   )
@@ -84,7 +84,25 @@ test('ensureFbcFromFbclid rejects missing or malformed input', () => {
     undefined
   )
   assert.equal(
-    ensureFbcFromFbclid({ fbclid: 'ok-click', nowMs: NaN }),
+    ensureFbcFromFbclid({
+      fbclid: 'ok-click',
+      firstObservedMs: NaN
+    }),
     undefined
   )
+  for (const firstObservedMs of [
+    undefined,
+    0,
+    -1,
+    Infinity,
+    1.5
+  ]) {
+    assert.equal(
+      ensureFbcFromFbclid({
+        fbclid: 'ok-click',
+        firstObservedMs
+      }),
+      undefined
+    )
+  }
 })

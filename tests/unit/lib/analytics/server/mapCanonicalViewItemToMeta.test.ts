@@ -168,7 +168,7 @@ test('fails closed without marketing consent', () => {
         viewItem({
           consent: {
             analytics: 'granted',
-            marketing: 'granted',
+            marketing: 'denied',
             preferences: 'granted',
             source: 'cookiebot',
             version: '1'

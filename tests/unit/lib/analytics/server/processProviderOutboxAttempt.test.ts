@@ -239,16 +239,17 @@ test('measures Meta queue age from attempt createdAt, not event_time', async () 
     tags?: Record<string, string>
     value: number
   }> = []
+  type SendMetric = (name: string, value: number, tags?: Record<string, string>) => void
   const previousMetric = (
     globalThis as {
       [key: symbol]:
-        | { sendMetric?: typeof metrics.push }
+        | { sendMetric?: SendMetric }
         | undefined
     }
   )[Symbol.for('@vercel/rusty-runtime-ipc')]
   ;(
     globalThis as {
-      [key: symbol]: { sendMetric: typeof metrics.push }
+      [key: symbol]: { sendMetric: SendMetric }
     }
   )[Symbol.for('@vercel/rusty-runtime-ipc')] = {
     sendMetric: (name, value, tags) => {

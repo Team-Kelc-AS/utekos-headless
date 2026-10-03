@@ -11,8 +11,8 @@ type GoogleTagManagerLoaderProps = {
 
 /**
  * Loads GTM only when marketing consent is granted, and only after the page
- * is interactive (next/script `lazyOnload`) so the container does not compete
- * with LCP.
+ * is interactive. Cookie Keeper must start before the first Pixel dispatch
+ * finishes its bounded cookie-restoration wait.
  */
 export function GoogleTagManagerLoader({
   enabled
@@ -29,7 +29,7 @@ export function GoogleTagManagerLoader({
     <>
       <Script
         id='_next-gtm-consent-defaults'
-        strategy='lazyOnload'
+        strategy='afterInteractive'
         dangerouslySetInnerHTML={{
           __html: GOOGLE_TAG_MANAGER_BOOTSTRAP
         }}
@@ -37,7 +37,7 @@ export function GoogleTagManagerLoader({
 
       <Script
         id='_next-stape-custom-loader'
-        strategy='lazyOnload'
+        strategy='afterInteractive'
         dangerouslySetInnerHTML={{ __html: STAPE_CUSTOM_LOADER }}
       />
     </>

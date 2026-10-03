@@ -15,6 +15,7 @@ type MetaUserDataEvent = Pick<
   | 'external_id'
   | 'location'
   | 'meta_parameter_builder'
+  | 'signal_audit'
   | 'user_data'
 >
 
@@ -65,15 +66,23 @@ export function buildMetaUserData(event: MetaUserDataEvent) {
   const clientUserAgent = event.event_device_info?.user_agent
   const fbc = event.browser_id?.fbc
   const fbp = event.browser_id?.fbp
-  // Landing race: the fbclid was captured but the _fbc cookie never
-  // formed before the event fired. Serialize the genuine click instead
-  // of dropping the match key. Callers guarantee marketing consent.
+  // Only a captured request-URL click supplies an observation timestamp.
+  // A persisted click without its original fbc must not be dated at dispatch.
+  const clickObservation = event.signal_audit?.meta_fbclid
+  const firstObservedMs =
+    (
+      clickObservation?.state === 'present' &&
+      clickObservation.source === 'browser_request_url'
+    ) ?
+      Date.parse(clickObservation.captured_at)
+    : undefined
   const resolvedFbc =
     ensureFbcFromFbclid({
       ...(fbc ? { fbc } : {}),
       ...(event.click_id?.fbclid ?
         { fbclid: event.click_id.fbclid }
-      : {})
+      : {}),
+      firstObservedMs
     }) ?? fbc
   const location = event.location
   // Only customer-provided address belongs in Meta ct/zp/st/country.

@@ -92,10 +92,10 @@ test('Parameter Builder refreshes revisited landings and retries missing native 
     assert.equal(extractFbclidFromFbc(context.fbc), nativeClickId)
   })
 
-  await t.test('granted marketing collection cannot write or expose identifiers', async () => {
+  await t.test('denied marketing collection cannot write or expose identifiers', async () => {
     const before = writes
     assert.deepEqual(await ensureMetaClientParameterContext({
-      consent: { ...consent, marketing: 'granted' },
+      consent: { ...consent, marketing: 'denied' },
       pageUrl: browser.location.href
     }), {})
     assert.equal(writes, before)

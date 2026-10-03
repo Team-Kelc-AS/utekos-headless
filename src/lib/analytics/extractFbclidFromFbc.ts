@@ -13,7 +13,10 @@ export function extractFbclidFromFbc(
   if (!fbc) return undefined
 
   const segments = fbc.split('.')
-  if (segments.length < 4 || segments[0] !== META_COOKIE_PREFIX) {
+  if (
+    segments.length < 4 ||
+    segments[0] !== META_COOKIE_PREFIX
+  ) {
     return undefined
   }
 
@@ -43,10 +46,7 @@ export function ensureFbclidFromFbc(input: {
   const derived = extractFbclidFromFbc(input.browser_id?.fbc)
   if (!derived) return existing
 
-  return {
-    ...existing,
-    fbclid: derived
-  }
+  return { ...existing, fbclid: derived }
 }
 
 const SYNTHESIZED_FBC_CLICK_ID_PATTERN = /^[A-Za-z0-9_-]+$/
@@ -63,14 +63,24 @@ const SYNTHESIZED_FBC_CLICK_ID_PATTERN = /^[A-Za-z0-9_-]+$/
 export function ensureFbcFromFbclid(input: {
   fbc?: string | undefined
   fbclid?: string | undefined
-  nowMs?: number | undefined
+  firstObservedMs?: number | undefined
 }): string | undefined {
   if (input.fbc) return input.fbc
   const fbclid = input.fbclid?.trim()
-  if (!fbclid || !SYNTHESIZED_FBC_CLICK_ID_PATTERN.test(fbclid)) {
+  if (
+    !fbclid ||
+    !SYNTHESIZED_FBC_CLICK_ID_PATTERN.test(fbclid)
+  ) {
     return undefined
   }
-  const nowMs = input.nowMs ?? Date.now()
-  if (!Number.isFinite(nowMs) || nowMs <= 0) return undefined
-  return `fb.1.${Math.floor(nowMs)}.${fbclid}`
+  // Dispatch/retry time is not click observation time. Never invent a new
+  // timestamp for an older click whose original observation was not retained.
+  const firstObservedMs = input.firstObservedMs
+  if (
+    firstObservedMs === undefined ||
+    !Number.isSafeInteger(firstObservedMs) ||
+    firstObservedMs <= 0
+  )
+    return undefined
+  return `fb.1.${firstObservedMs}.${fbclid}`
 }

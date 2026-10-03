@@ -14,9 +14,9 @@ const grantedConsent: ConsentSnapshot = {
   version: '1'
 }
 
-const grantedConsent: ConsentSnapshot = {
+const deniedConsent: ConsentSnapshot = {
   ...grantedConsent,
-  marketing: 'granted'
+  marketing: 'denied'
 }
 
 const generatedUuid = '11111111-1111-4111-8111-111111111111'
@@ -51,7 +51,7 @@ test('does not expose or create an ID without marketing consent', () => {
   const context = harness()
 
   assert.equal(
-    context.store.getOrCreate(grantedConsent),
+    context.store.getOrCreate(deniedConsent),
     undefined
   )
   assert.equal(context.createCount(), 0)

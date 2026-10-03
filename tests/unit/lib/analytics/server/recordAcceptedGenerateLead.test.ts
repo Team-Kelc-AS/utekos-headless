@@ -110,13 +110,13 @@ moduleWithLoad._load = (request, parent, isMain) => {
 
 const require = createRequire(import.meta.url)
 const { recordAcceptedGenerateLead } =
-  require('./recordAcceptedGenerateLead.ts') as {
+  require('@/lib/analytics/server/recordAcceptedGenerateLead.ts') as {
     recordAcceptedGenerateLead: (
       input: RecordAcceptedGenerateLeadInput
     ) => Promise<RecordAcceptedGenerateLeadResult>
   }
 const { normalizeCanonicalGenerateLead } = require(
-  './normalizeCanonicalGenerateLead.ts'
+  '@/lib/analytics/server/normalizeCanonicalGenerateLead.ts'
 ) as {
   normalizeCanonicalGenerateLead: (
     payload: unknown,
@@ -135,10 +135,10 @@ const grantedConsent: ConsentSnapshot = {
   version: '1'
 }
 
-const grantedConsent: ConsentSnapshot = {
-  analytics: 'granted',
-  marketing: 'granted',
-  preferences: 'granted',
+const deniedConsent: ConsentSnapshot = {
+  analytics: 'denied',
+  marketing: 'denied',
+  preferences: 'denied',
   source: 'cookiebot',
   version: '1'
 }
@@ -222,7 +222,7 @@ test('rejected consent returns skipped result and schedules nothing', async () =
   })
 
   const result = await recordAcceptedGenerateLead(
-    baseInput({ consent: grantedConsent })
+    baseInput({ consent: deniedConsent })
   )
 
   assert.deepEqual(result, {
@@ -324,7 +324,7 @@ test('persists the required positive monetary lead value', async () => {
   assert.equal(event.custom_data.value, 125.5)
 })
 
-test('granted marketing lead audits marketing signals as consent_granted', async () => {
+test('denied marketing lead audits marketing signals as consent_granted', async () => {
   resetSpies()
   acceptImpl = async input => {
     const payload = input.payload as CanonicalGenerateLead
@@ -339,7 +339,7 @@ test('granted marketing lead audits marketing signals as consent_granted', async
     baseInput({
       consent: {
         analytics: 'granted',
-        marketing: 'granted',
+        marketing: 'denied',
         preferences: 'granted',
         source: 'cookiebot',
         version: '1'

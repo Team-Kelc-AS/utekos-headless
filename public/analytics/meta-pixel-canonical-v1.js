@@ -69,6 +69,30 @@
 
   w.__utekosMetaPixelState = state
 
+  var pendingFbcEvents = {}
+  var fbcWaitStartedAt = null
+  var fbcPagehideListening = false
+
+  function shouldWaitForFbc() {
+    if (readCookie('_fbc')) return false
+    var hasClick = /(?:^|[?&])fbclid=[^&]+/.test(
+      w.location.search || ''
+    )
+    // Match the eligibility of the generated Stape Cookie Keeper loader.
+    var safari = /Version\/([0-9._]+)(.*Mobile)?.*Safari.*/.exec(
+      (w.navigator && w.navigator.userAgent) || ''
+    )
+    var canRestore =
+      safari &&
+      parseFloat(safari[1]) >= 16.4 &&
+      readCookie('user_id')
+    if (!hasClick && !canRestore) return false
+    if (fbcWaitStartedAt === null) fbcWaitStartedAt = Date.now()
+    // Organic Safari visits may have no previous Meta click. Never fabricate
+    // fbc or prevent delivery indefinitely when restoration is unavailable.
+    return Date.now() - fbcWaitStartedAt < 3000
+  }
+
   function readCookie(name) {
     var prefix = name + '='
     var parts = d.cookie ? d.cookie.split(';') : []
@@ -437,7 +461,7 @@
     return entry ? EVENT_NAMES[entry.event] : null
   }
 
-  function dispatch(entry) {
+  function dispatch(entry, finishWaiting) {
     var canonicalEvent = entry.canonical_event
     var metaEventName = metaEventNameForEntry(entry)
     var eventKey
@@ -456,6 +480,21 @@
 
     eventKey = metaEventName + ':' + entry.event_id
     if (state.sent[eventKey]) return
+
+    if (!finishWaiting && shouldWaitForFbc()) {
+      pendingFbcEvents[eventKey] = entry
+      if (!fbcPagehideListening) {
+        fbcPagehideListening = true
+        // Release queued events if the visitor leaves before restoration.
+        w.addEventListener('pagehide', function () {
+          Object.keys(pendingFbcEvents).forEach(function (key) {
+            dispatch(pendingFbcEvents[key], true)
+          })
+        })
+      }
+      return
+    }
+    delete pendingFbcEvents[eventKey]
 
     data = eventData(entry.event, canonicalEvent)
     if (data === null) return
@@ -523,7 +562,7 @@
     var retry = function () {
       syncPixelConsent()
       if (hasMarketingConsent()) {
-        run(0)
+        run()
       } else {
         discardPendingEvents()
       }
@@ -532,7 +571,7 @@
     retry()
   }
 
-  function run(attempt) {
+  function run() {
     state.timer = null
     syncPixelConsent()
     if (!hasMarketingConsent()) {
@@ -543,24 +582,15 @@
 
     var externalId =
       readCookie(EXTERNAL_ID_COOKIE) || ensureExternalId()
-    var needsFbc = /(?:^|[?&])fbclid=/.test(
-      w.location.search || ''
-    )
-    var fbc = readCookie('_fbc')
-
     // Install as soon as marketing is granted. Do not wait for _fbp —
     // fbevents.js creates it. Waiting blocked SPA clicks / returning visits.
     if (!state.initialized) installPixel(externalId)
     syncPixelConsent()
 
-    if (attempt < 30 && needsFbc && !fbc) {
-      state.timer = w.setTimeout(function () {
-        run(attempt + 1)
-      }, 100)
-      // Still scan now; fbc retry re-scans when the cookie appears.
-    }
-
     scanDataLayer()
+    Object.keys(pendingFbcEvents).forEach(function (key) {
+      dispatch(pendingFbcEvents[key])
+    })
   }
 
   function startPolling() {
@@ -569,7 +599,7 @@
     state.poller = w.setInterval(function () {
       syncPixelConsent()
       if (hasMarketingConsent()) {
-        run(0)
+        run()
       } else {
         // Only events observed with marketing consent are eligible.
         discardPendingEvents()
@@ -578,7 +608,7 @@
   }
 
   scheduleConsentRetry()
-  if (state.timer === null) run(0)
+  if (state.timer === null) run()
   listenForCanonicalEvents()
   startPolling()
 })(window, document)

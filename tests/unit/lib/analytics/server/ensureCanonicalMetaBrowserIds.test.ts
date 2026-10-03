@@ -10,9 +10,9 @@ const marketingConsent = {
   version: '1'
 } as const
 
-const grantedMarketing = {
+const deniedMarketing = {
   ...marketingConsent,
-  marketing: 'granted'
+  marketing: 'denied'
 } as const
 
 test('mints fbp and fbc from page_url fbclid when cookies are empty (landing race)', () => {
@@ -123,9 +123,9 @@ test('keeps existing first-party cookies and does not require rebuild', () => {
 test('does not mint or retain Meta browser ids without marketing consent', () => {
   const result = ensureCanonicalMetaBrowserIds({
     browserId: { fbp: 'fb.1.1.1' },
-    clickId: { fbclid: 'granted' },
-    consent: grantedMarketing,
-    pageUrl: 'https://utekos.no/?fbclid=granted'
+    clickId: { fbclid: 'denied-click' },
+    consent: deniedMarketing,
+    pageUrl: 'https://utekos.no/?fbclid=denied-click'
   })
 
   assert.equal(result.browserId, undefined)

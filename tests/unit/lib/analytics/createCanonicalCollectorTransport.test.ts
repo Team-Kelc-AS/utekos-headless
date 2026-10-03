@@ -23,8 +23,8 @@ test('adds the experiment only to analytics-consented collection', () => {
     experiment
   }
 
-  const granted = applyCanonicalCollectionContext(event, {
-    consent: { ...grantedConsent, analytics: 'granted' },
+  const denied = applyCanonicalCollectionContext(event, {
+    consent: { ...grantedConsent, analytics: 'denied' },
     experiment,
     hasResponse: true
   })
@@ -35,7 +35,7 @@ test('adds the experiment only to analytics-consented collection', () => {
   })
 
   assert.deepEqual(granted.experiment, experiment)
-  assert.equal(granted.experiment, undefined)
+  assert.equal(denied.experiment, undefined)
 })
 
 test('uses a neutral fallback after a network-level collector failure', async () => {

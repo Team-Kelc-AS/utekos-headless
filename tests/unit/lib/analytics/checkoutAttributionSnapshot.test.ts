@@ -107,10 +107,10 @@ test('round-trips a PII-free experiment only with analytics consent', () => {
     experiment
   )
 
-  const granted = createCheckoutAttributionSnapshot(
+  const denied = createCheckoutAttributionSnapshot(
     {
       consent: {
-        analytics: 'granted',
+        analytics: 'denied',
         marketing: 'granted',
         preferences: 'granted',
         source: 'cookiebot',
@@ -121,9 +121,9 @@ test('round-trips a PII-free experiment only with analytics consent', () => {
     capturedAt
   )
 
-  assert.equal(granted.experiment, undefined)
+  assert.equal(denied.experiment, undefined)
   assert.equal(
-    checkoutAttributionSnapshotToShopifyAttributes(granted).some(
+    checkoutAttributionSnapshotToShopifyAttributes(denied).some(
       attribute => attribute.key.startsWith('utekos_experiment_')
     ),
     false
@@ -162,11 +162,11 @@ test('round-trips Facebook Login match signals only with marketing consent', () 
     snapshot.user_data
   )
 
-  const granted = createCheckoutAttributionSnapshot(
+  const denied = createCheckoutAttributionSnapshot(
     {
       consent: {
         analytics: 'granted',
-        marketing: 'granted',
+        marketing: 'denied',
         preferences: 'granted',
         source: 'cookiebot',
         version: '1'
@@ -175,7 +175,7 @@ test('round-trips Facebook Login match signals only with marketing consent', () 
     },
     capturedAt
   )
-  assert.equal(granted.user_data, undefined)
+  assert.equal(denied.user_data, undefined)
 })
 
 test('persists the consent decision and clears any stale audience after a full denial', () => {
@@ -184,9 +184,9 @@ test('persists the consent decision and clears any stale audience after a full d
       browser_id: { fbp: 'should-not-persist' },
       click_id: { fbclid: 'should-not-persist' },
       consent: {
-        analytics: 'granted',
-        marketing: 'granted',
-        preferences: 'granted',
+        analytics: 'denied',
+        marketing: 'denied',
+        preferences: 'denied',
         source: 'cookiebot',
         version: '1'
       },
@@ -222,10 +222,10 @@ test('adds a PII-free begin-checkout correlation only with analytics consent', (
     },
     capturedAt
   )
-  const granted = createCheckoutAttributionSnapshot(
+  const denied = createCheckoutAttributionSnapshot(
     {
       consent: {
-        analytics: 'granted',
+        analytics: 'denied',
         marketing: 'granted',
         preferences: 'granted',
         source: 'cookiebot',
@@ -247,7 +247,7 @@ test('adds a PII-free begin-checkout correlation only with analytics consent', (
   )
   assert.equal(
     checkoutAttributionSnapshotToShopifyAttributes(
-      granted,
+      denied,
       eventId
     ).some(
       attribute =>
@@ -320,7 +320,7 @@ test('drops campaign hierarchy without marketing consent', () => {
       },
       consent: {
         analytics: 'granted',
-        marketing: 'granted',
+        marketing: 'denied',
         preferences: 'granted',
         source: 'cookiebot',
         version: '1'
@@ -362,14 +362,14 @@ test('keeps valid campaign fields when an external order field is malformed', ()
   assert.deepEqual(parsed.campaign, { campaign_id: '1201' })
 })
 
-test('drops malformed or non-consented external order attributes', () => {
+test('drops malformed attributes when the external consent payload is unsupported', () => {
   const parsed = parseOrderAttributionFromNoteAttributes([
     {
       name: 'utekos_consent',
       value: JSON.stringify({
-        analytics: 'granted',
-        marketing: 'granted',
-        preferences: 'granted',
+        analytics: 'denied',
+        marketing: 'denied',
+        preferences: 'denied',
         source: 'cookiebot',
         version: '1'
       })
@@ -387,10 +387,11 @@ test('drops malformed or non-consented external order attributes', () => {
     schema_version: 1,
     captured_at: '1970-01-01T00:00:00.000Z',
     consent: {
-      analytics: 'granted',
-      marketing: 'granted',
-      preferences: 'granted',
-      source: 'cookiebot',
+      analytics: 'unknown',
+      marketing: 'unknown',
+      preferences: 'unknown',
+      source: 'shopify_order_attribute',
+      resolution: 'invalid_payload',
       version: '1'
     }
   })

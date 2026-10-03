@@ -103,7 +103,7 @@ test('omits a legacy non-positive lead value from Meta', () => {
 
 test('fails closed without marketing consent', () => {
   const event = lead()
-  event.consent.marketing = 'granted'
+  event.consent.marketing = 'denied'
 
   assert.throws(
     () => mapCanonicalLeadToMeta(event),

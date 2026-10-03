@@ -39,7 +39,7 @@ test('a later reconciliation can recover after a failed burst without unlimited 
 test('classifies resolved consent decisions without a pending guess', () => {
   assert.equal(
     classifyLandingConsentDecision(observation.consent),
-    'partial'
+    'granted'
   )
   assert.equal(
     classifyLandingConsentDecision({
@@ -81,7 +81,7 @@ test('bounds retries across repeated consent events', async () => {
   assert.equal(attempts, 2)
 })
 
-test('serializes a newer consent state behind retries for the same landing', async () => {
+test('deduplicates the same granted state while the first observation retries', async () => {
   const calls: string[] = []
   let releaseRetry: (() => void) | undefined
   const retryGate = new Promise<void>(resolve => {
@@ -109,7 +109,7 @@ test('serializes a newer consent state behind retries for the same landing', asy
       preferences: 'granted' as const
     }
   }
-  const granted = {
+  const repeated = {
     ...observation,
     consent: {
       ...observation.consent,
@@ -121,13 +121,13 @@ test('serializes a newer consent state behind retries for the same landing', asy
 
   const grantedResult = transport.observe(granted)
   await Promise.resolve()
-  const grantedResult = transport.observe(granted)
+  const repeatedResult = transport.observe(repeated)
   await Promise.resolve()
   assert.deepEqual(calls, ['granted'])
 
   releaseRetry?.()
 
   assert.equal(await grantedResult, 'sent')
-  assert.equal(await grantedResult, 'sent')
-  assert.deepEqual(calls, ['granted', 'granted', 'granted'])
+  assert.equal(await repeatedResult, 'skipped')
+  assert.deepEqual(calls, ['granted', 'granted'])
 })
