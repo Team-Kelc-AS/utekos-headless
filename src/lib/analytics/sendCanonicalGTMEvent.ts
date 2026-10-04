@@ -1,13 +1,15 @@
 import { sendGTMEvent } from '@next/third-parties/google'
+import { enrichCanonicalEventWithGoogleAnalyticsIds } from './googleAnalyticsBrowserIds'
 import { enrichBrowserMetaAudience } from './browserMetaAudience'
 import type { CanonicalEventEnvelope } from './canonicalEventEnvelope'
 
 export const META_CANONICAL_BROWSER_EVENT =
   'utekos:meta-canonical-browser-event'
 
-// Keep the existing GTM sender; only attach validated metadata to canonical events.
-export function sendCanonicalGTMEvent(
-  data: Record<string, unknown>
+// Preserve synchronous Meta delivery; enrich GA4 identity before Data Tag runs.
+export async function sendCanonicalGTMEvent(
+  data: Record<string, unknown>,
+  enrichGoogleIds = enrichCanonicalEventWithGoogleAnalyticsIds
 ) {
   const canonical = data.canonical_event as
     | CanonicalEventEnvelope
@@ -16,14 +18,12 @@ export function sendCanonicalGTMEvent(
     sendGTMEvent(data)
     return
   }
-  const enriched = enrichBrowserMetaAudience(canonical)
-  const enrichedData = {
+  const audienceEnriched = enrichBrowserMetaAudience(canonical)
+  const browserData = {
     ...data,
-    canonical_event: enriched,
-    meta_audience: enriched.meta_audience ?? null
+    canonical_event: audienceEnriched,
+    meta_audience: audienceEnriched.meta_audience ?? null
   }
-
-  sendGTMEvent(enrichedData)
 
   if (
     typeof window !== 'undefined' &&
@@ -32,8 +32,14 @@ export function sendCanonicalGTMEvent(
   ) {
     window.dispatchEvent(
       new CustomEvent(META_CANONICAL_BROWSER_EVENT, {
-        detail: enrichedData
+        detail: browserData
       })
     )
   }
+
+  const enriched =
+    canonical.browser_id?.ga_client_id && canonical.browser_id?.ga_session_id ?
+      audienceEnriched
+    : await enrichGoogleIds(audienceEnriched)
+  sendGTMEvent({ ...browserData, canonical_event: enriched })
 }

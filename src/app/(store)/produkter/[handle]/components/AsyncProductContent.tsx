@@ -6,7 +6,10 @@ import {
   buildProductModel,
   resolveCommerceVariantFromSearchParams
 } from '@/lib/products/commerce'
-import { getProductPresentation } from '@/lib/products/presentation'
+import {
+  getProductPresentation,
+  isProductPageRequestAllowed
+} from '@/lib/products/presentation'
 import type { SearchParamsPromise } from '../types'
 
 type AsyncProductContentProps = {
@@ -20,7 +23,10 @@ export async function AsyncProductContent({
 }: AsyncProductContentProps) {
   const presentation = getProductPresentation(handle)
 
-  if (!presentation || !presentation.storefrontVisible) {
+  if (
+    !presentation ||
+    !isProductPageRequestAllowed(handle, process.env.NODE_ENV)
+  ) {
     notFound()
   }
 

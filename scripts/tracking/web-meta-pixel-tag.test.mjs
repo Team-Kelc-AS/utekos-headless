@@ -294,20 +294,26 @@ test('does not dispatch browser events to Signals Gateway', () => {
   assert.deepEqual(queuedGatewayCalls(runtime.window), [])
 })
 
-test('does not send canonical events without marketing granted', () => {
+test('blocks denied marketing events and sends subsequent granted events', () => {
   const runtime = createRuntime()
   runtime.window.addEventListener = () => {}
 
   vm.runInContext(publicScript, runtime.context)
   runtime.window.dataLayer.push({
-    ...canonicalEvent('page_view', 'granted-event'),
+    ...canonicalEvent('page_view', 'denied-event'),
     canonical_event: {
-      ...canonicalEvent('page_view', 'granted-event')
+      ...canonicalEvent('page_view', 'denied-event')
         .canonical_event,
-      consent: { marketing: 'granted' }
+      consent: { marketing: 'denied' }
     }
   })
   runtime.intervals[0]()
+  assert.equal(
+    queuedCalls(runtime.window).filter(
+      call => call[0] === 'trackSingle'
+    ).length,
+    0
+  )
   runtime.window.dataLayer.push(
     canonicalEvent('page_view', 'after-consent')
   )

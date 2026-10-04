@@ -1,3 +1,4 @@
+import { calculatePurchaseProfit } from './calculatePurchaseProfit'
 import { consentedMetaAudience } from '../metaAudience'
 import { protos } from '@google-ads/datamanager'
 import type { CanonicalPurchase } from '../purchaseEvent'
@@ -43,6 +44,7 @@ function mapPurchaseItem(
 
 function mapPurchaseEventParameters(event: CanonicalPurchase) {
   return compactGoogleDataManagerParameters([
+    googleDataManagerParameter('profit', calculatePurchaseProfit(event.custom_data)),
     googleDataManagerParameter(
       'audience',
       consentedMetaAudience(event)

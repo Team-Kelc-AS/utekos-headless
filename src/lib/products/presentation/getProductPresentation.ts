@@ -62,3 +62,16 @@ export function isStorefrontVisibleProductHandle(
   const presentation = getProductPresentation(handle)
   return presentation?.storefrontVisible === true
 }
+
+export function isProductPageRequestAllowed(
+  handle: string,
+  nodeEnvironment: string | undefined
+): boolean {
+  const presentation = getProductPresentation(handle)
+
+  return (
+    presentation !== null &&
+    (presentation.storefrontVisible ||
+      nodeEnvironment === 'development')
+  )
+}

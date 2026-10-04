@@ -23,6 +23,8 @@ export function ProductGallerySlideImage({
   const className = cn(
     'pointer-events-none select-none',
     imageLayout === 'cover-fill' && 'object-cover object-top',
+    imageLayout === 'contain-fill' &&
+      'object-contain object-center',
     imageLayout === 'intrinsic' &&
       'object-contain object-center',
     imageClassName
@@ -30,6 +32,7 @@ export function ProductGallerySlideImage({
 
   switch (imageLayout) {
     case 'cover-fill':
+    case 'contain-fill':
       return (
         <Image
           src={image.url}

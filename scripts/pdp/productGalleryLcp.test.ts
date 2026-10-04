@@ -158,8 +158,8 @@ test('TechDown mobile gallery uses 910:1450 product stills with overlays', async
 
   assert.match(
     pageSource,
-    /const galleryAspectRatio = 2 \/ 3/,
-    'Other mobile galleries must keep aspect-ratio 2:3'
+    /isSvaleProduct &&[\s\S]*firstMobileGalleryImage\.width\s*\/\s*firstMobileGalleryImage\.height[\s\S]*: 2 \/ 3/,
+    'Svale must preserve its source ratio while other mobile galleries keep 2:3'
   )
 
   assert.match(
@@ -461,14 +461,14 @@ test('Comfyrobe gallery replaces product stills and splits desktop / mobile by v
 
   assert.match(
     mobileBody,
-    /comfyrobeMobile001,/,
-    'Comfyrobe mobile gallery must start with Comfyrobe-Mobile-001.webp'
+    /\/COMFY_META_1000x1500\.webp/,
+    'Comfyrobe mobile gallery must include the current portrait hero'
   )
 
   assert.match(
     desktopBody,
-    /comfyrobeDesktop001,/,
-    'Comfyrobe desktop gallery must start with Comfyrobe-001.webp'
+    /comfyrobeDesktop002,/,
+    'Comfyrobe desktop gallery must include the current Comfyrobe-002.webp hero'
   )
 
   assert.doesNotMatch(
@@ -484,7 +484,6 @@ test('Comfyrobe gallery replaces product stills and splits desktop / mobile by v
   )
 
   const desktopStills = [
-    ['Comfyrobe-001.webp', 'comfyrobeDesktop001'],
     ['Comfyrobe-002.webp', 'comfyrobeDesktop002'],
     ['Comfyrobe-0003.webp', 'comfyrobeDesktop0003'],
     ['Comfyrobe-004.webp', 'comfyrobeDesktop004']
@@ -509,7 +508,6 @@ test('Comfyrobe gallery replaces product stills and splits desktop / mobile by v
   }
 
   const mobileStills = [
-    ['Comfyrobe-Mobile-001.webp', 'comfyrobeMobile001'],
     ['Comfyrobe-Mobile-002.webp', 'comfyrobeMobile002'],
     ['Comfyrobe-Mobile-003.webp', 'comfyrobeMobile003'],
     ['Comfyrobe-Mobile-004.webp', 'comfyrobeMobile004']

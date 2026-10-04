@@ -24,11 +24,17 @@ export type TechdownPurchasePayload = {
   variants: ProductPurchaseVariant[]
 }
 
-export function TechdownPurchaseActions({
-  payload
-}: {
+type ProductLandingPurchaseActionsProps = {
   payload: TechdownPurchasePayload
-}) {
+  trackingEventName?: string
+  trackingSurface?: string
+}
+
+export function TechdownPurchaseActions({
+  payload,
+  trackingEventName = 'TechDownAddToCartClick',
+  trackingSurface = 'techdown'
+}: ProductLandingPurchaseActionsProps) {
   const [canLoadKlarna, setCanLoadKlarna] = useState(false)
 
   useEffect(() => {
@@ -94,7 +100,7 @@ export function TechdownPurchaseActions({
   }
 
   const addToCartTrackData = {
-    page: 'techdown',
+    page: trackingSurface,
     section: 'purchase',
     target: 'add-to-cart',
     product_handle: payload.product.handle,
@@ -111,7 +117,7 @@ export function TechdownPurchaseActions({
       <button
         type='button'
         className={styles.addToCart}
-        data-track='TechDownAddToCartClick'
+        data-track={trackingEventName}
         data-track-data={JSON.stringify(addToCartTrackData)}
         disabled={!canBuy || busy}
         aria-busy={isPending}

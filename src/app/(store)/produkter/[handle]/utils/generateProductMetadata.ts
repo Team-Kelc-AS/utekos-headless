@@ -4,7 +4,10 @@ import { buildProductMetadata } from './buildProductMetadata'
 import { getCachedProductForMetadata } from './getCachedProductForMetadata'
 import { SITE_URL } from './siteUrl'
 import { toAbsoluteUrl } from './toAbsoluteUrl'
-import { getProductPresentation } from '@/lib/products/presentation'
+import {
+  getProductPresentation,
+  isProductPageRequestAllowed
+} from '@/lib/products/presentation'
 import type { ProductPresentation } from '@/lib/products/presentation'
 
 function buildProductPresentationMetadata(
@@ -54,7 +57,10 @@ export async function generateProductMetadata(
 ): Promise<Metadata> {
   const presentation = getProductPresentation(handle)
 
-  if (!presentation || !presentation.storefrontVisible) {
+  if (
+    !presentation ||
+    !isProductPageRequestAllowed(handle, process.env.NODE_ENV)
+  ) {
     return buildMissingProductMetadata()
   }
 

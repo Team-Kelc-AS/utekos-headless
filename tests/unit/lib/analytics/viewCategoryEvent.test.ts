@@ -3,6 +3,7 @@ import test from 'node:test'
 import {
   buildViewCategoryDataLayerEvent,
   canonicalViewCategoryCustomDataSchema,
+  canonicalViewCategorySchema,
   createCanonicalViewCategory
 } from '@/lib/analytics/viewCategoryEvent'
 
@@ -15,6 +16,37 @@ test('custom_data requires category_id, category_name, view_sequence', () => {
   )
 })
 
+test('canonical schema rejects unknown top-level fields', () => {
+  const event = createCanonicalViewCategory({
+    environment: 'test',
+    eventId: '72b6c4d3-cf47-493b-844c-147e237fcf45',
+    eventTime: '2026-07-24T00:00:00.000Z',
+    pageUrl: 'https://utekos.no/produkter',
+    pageTitle: 'Kolleksjonen',
+    pageViewId: '0c955d6b-5e9c-47d0-b304-046df7f4bf7f',
+    consent: {
+      analytics: 'granted',
+      marketing: 'granted',
+      preferences: 'granted',
+      source: 'cookiebot',
+      version: '1'
+    },
+    customData: {
+      category_id: 'produkter',
+      category_name: 'Kolleksjonen',
+      view_sequence: 1
+    }
+  })
+
+  assert.equal(
+    canonicalViewCategorySchema.safeParse({
+      ...event,
+      unexpected: true
+    }).success,
+    false
+  )
+})
+
 test('createCanonicalViewCategory accepts category payload', () => {
   const event = createCanonicalViewCategory({
     environment: 'production',
@@ -23,6 +55,7 @@ test('createCanonicalViewCategory accepts category payload', () => {
     pageUrl: 'https://utekos.no/produkter',
     pageTitle: 'Kolleksjonen for kompromissløs komfort | Utekos',
     pageViewId: '0c955d6b-5e9c-47d0-b304-046df7f4bf7f',
+    referrerUrl: 'https://utekos.no/',
     consent: {
       analytics: 'granted',
       marketing: 'granted',
@@ -47,6 +80,10 @@ test('createCanonicalViewCategory accepts category payload', () => {
   const dataLayer = buildViewCategoryDataLayerEvent(event)
   assert.equal(dataLayer.event, 'view_category')
   assert.equal(dataLayer.event_id, event.event_id)
+  assert.equal(dataLayer.page_url, event.page_url)
+  assert.equal(dataLayer.page_view_id, event.page_view_id)
+  assert.equal(dataLayer.page_title, event.page_title)
+  assert.equal(dataLayer.referrer_url, event.referrer_url)
   assert.equal(dataLayer.custom_data.category_id, 'produkter')
 })
 

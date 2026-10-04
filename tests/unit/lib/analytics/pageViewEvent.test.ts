@@ -178,7 +178,7 @@ test('only releases a page_view that was captured before marketing consent', () 
     eventTime: '2026-07-15T12:34:56.789Z',
     pageUrl: 'https://utekos.no/',
     pageTitle: 'Utekos',
-    consent
+    consent: { ...consent, marketing: 'denied' }
   })
   const grantedConsent = {
     ...consent,

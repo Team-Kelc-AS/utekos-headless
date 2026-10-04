@@ -1,0 +1,12 @@
+:global(body[data-svale-cart]) {
+  --svale-cart-background: #010b0a;
+}
+
+:global(body[data-svale-cart] [data-slot='drawer-content']),
+:global(
+  body[data-svale-cart]
+    [data-slot='drawer-content']
+    .bg-background
+) {
+  background-color: var(--svale-cart-background);
+}

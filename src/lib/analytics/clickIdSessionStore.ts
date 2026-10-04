@@ -3,16 +3,12 @@ const CLICK_ID_LOCAL_KEY = 'utekos_click_ids_v1'
 const CLICK_ID_LOCAL_TTL_MS = 90 * 24 * 60 * 60 * 1000
 
 export const CLICK_ID_PARAMETERS = [
-  'dclid',
   'epik',
   'fbclid',
-  'gbraid',
-  'gclid',
   'msclkid',
   'sc_click_id',
   'ttclid',
   'twclid',
-  'wbraid'
 ] as const
 
 export const SNAPCHAT_CLICK_ID_QUERY_PARAMETER = 'ScCid'
@@ -37,6 +33,13 @@ function readClickIdsFromSearchParams(
     if (parameter === 'sc_click_id') continue
     const value = searchParams.get(parameter)?.trim()
     if (value) identifiers[parameter] = value
+  }
+
+  if (!identifiers.msclkid) {
+    const backup = searchParams.get('backup_msclkid')?.trim()
+    if (backup && /^[a-fA-F0-9]{32}$/.test(backup.replace(/-/g, ''))) {
+      identifiers.msclkid = backup
+    }
   }
 
   const snapchatClickId = searchParams.get(

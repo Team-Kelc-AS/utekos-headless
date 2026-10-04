@@ -22,7 +22,9 @@ import styles from './TechdownContent.module.css'
 function SpecGroup({ group }: { group: ProductAccordionGroup }) {
   return (
     <div className={styles.specGroup}>
-      {group.title ? <h3>{group.title}</h3> : null}
+      {group.title ?
+        <h3>{group.title}</h3>
+      : null}
 
       {group.rows && group.rows.length > 0 ?
         <dl className={styles.specRows}>
@@ -73,6 +75,7 @@ function reportOpenedSection(input: {
   accordionTitle: string
   interactionSequence: number
   product: ProductCommerceModel
+  trackingSurface: string
   variant: ProductPurchaseVariant
 }) {
   void Promise.all([
@@ -99,7 +102,7 @@ function reportOpenedSection(input: {
     .catch(error => {
       reportDeferredTrackingError(
         error,
-        'techdown.specs_accordion.interact_import'
+        `${input.trackingSurface}.specs_accordion.interact_import`
       )
     })
 }
@@ -108,12 +111,16 @@ export function TechdownSpecsAccordionClient({
   sections,
   product,
   variants,
-  initialVariantId
+  initialVariantId,
+  headingId = 'techdown-specs-heading',
+  trackingSurface = 'techdown'
 }: {
   sections: readonly ProductAccordionSection[]
   product?: ProductCommerceModel
   variants?: readonly ProductPurchaseVariant[]
   initialVariantId?: string
+  headingId?: string
+  trackingSurface?: string
 }) {
   const [openValues, setOpenValues] = useState<string[]>([])
   const openValuesRef = useRef<string[]>([])
@@ -122,16 +129,18 @@ export function TechdownSpecsAccordionClient({
     useStickyCTASelection()?.selectedVariantId ??
     initialVariantId
   const selectedVariant =
-    variants?.find(variant => variant.id === selectedVariantId) ??
+    variants?.find(
+      variant => variant.id === selectedVariantId
+    ) ??
     variants?.[0] ??
     null
 
   return (
     <section
       className={styles.specs}
-      aria-labelledby='techdown-specs-heading'
+      aria-labelledby={headingId}
     >
-      <h2 id='techdown-specs-heading'>Produktspesifikasjoner</h2>
+      <h2 id={headingId}>Produktspesifikasjoner</h2>
       <Accordion
         multiple={false}
         value={openValues}
@@ -143,7 +152,11 @@ export function TechdownSpecsAccordionClient({
           openValuesRef.current = nextValues
           setOpenValues(nextValues)
 
-          if (!product || !selectedVariant || newlyOpened.length === 0) {
+          if (
+            !product ||
+            !selectedVariant ||
+            newlyOpened.length === 0
+          ) {
             return
           }
 
@@ -159,6 +172,7 @@ export function TechdownSpecsAccordionClient({
               accordionTitle: section.title,
               interactionSequence: interactionSequence.current,
               product,
+              trackingSurface,
               variant: selectedVariant
             })
           }

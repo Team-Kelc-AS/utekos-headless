@@ -1,3 +1,4 @@
+import { calculatePurchaseProfit } from './calculatePurchaseProfit'
 import {
   Content,
   CustomData,
@@ -39,12 +40,13 @@ function buildPurchaseCustomData(event: CanonicalPurchase) {
     customData.setContentName(primaryItem.item_name)
   }
 
-  if (event.custom_data.customer_segmentation) {
-    customData.setCustomProperties({
-      customer_segmentation:
-        event.custom_data.customer_segmentation
-    })
-  }
+  const profit = calculatePurchaseProfit(event.custom_data)
+  customData.setCustomProperties({
+    ...(profit === undefined ? {} : { profit }),
+    ...(event.custom_data.customer_segmentation ? {
+      customer_segmentation: event.custom_data.customer_segmentation
+    } : {})
+  })
 
   return customData
 }

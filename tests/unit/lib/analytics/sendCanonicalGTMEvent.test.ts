@@ -6,7 +6,7 @@ import {
   createCanonicalPageView
 } from '@/lib/analytics/pageViewEvent'
 
-test('GTM receives the same canonical ID and explicit null after audience withdrawal', () => {
+test('GTM receives the same canonical ID and explicit null after audience withdrawal', async () => {
   const previous = Object.getOwnPropertyDescriptor(
     globalThis,
     'window'
@@ -69,7 +69,7 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
         version: '1'
       }
     })
-    sendCanonicalGTMEvent(buildPageViewDataLayerEvent(event))
+    await sendCanonicalGTMEvent(buildPageViewDataLayerEvent(event), async value => value)
     assert.equal(host.dataLayer.length, 1)
     assert.equal(
       host.dataLayer[0]?.meta_audience,
@@ -86,14 +86,15 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
     )
     assert.deepEqual(dispatched[0]?.detail, host.dataLayer[0])
     assert.equal(event.meta_audience, undefined)
-    sendCanonicalGTMEvent(
+    await sendCanonicalGTMEvent(
       buildPageViewDataLayerEvent({
         ...event,
         consent: {
           ...event.consent,
-          marketing: 'granted'
+          marketing: 'denied'
         }
-      })
+      }),
+      async value => value
     )
     assert.equal(host.dataLayer.length, 2)
     assert.equal(host.dataLayer[1]?.meta_audience, null)
@@ -101,9 +102,20 @@ test('GTM receives the same canonical ID and explicit null after audience withdr
       ...event,
       consent: {
         ...event.consent,
-        marketing: 'granted'
+        marketing: 'denied'
       }
     })
+    const sending = sendCanonicalGTMEvent(
+      buildPageViewDataLayerEvent(event),
+      async value => ({ ...value, browser_id: { ga_client_id: '123.456', ga_session_id: '456' } })
+    )
+    assert.equal(dispatched.length, 3, 'Meta dispatch must precede async GA ID lookup')
+    assert.equal(host.dataLayer.length, 2)
+    await sending
+    assert.deepEqual((host.dataLayer[2]?.canonical_event as typeof event).browser_id, {
+      ga_client_id: '123.456', ga_session_id: '456'
+    })
+    assert.equal(host.dataLayer[2]?.event_id, event.event_id)
   } finally {
     if (previous)
       Object.defineProperty(globalThis, 'window', previous)

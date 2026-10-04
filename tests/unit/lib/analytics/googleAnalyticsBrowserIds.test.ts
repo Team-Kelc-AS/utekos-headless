@@ -42,7 +42,7 @@ const commerce = {
 } satisfies CanonicalViewItemCommerce
 
 function viewItem(
-  analytics: 'granted' | 'granted'
+  analytics: 'granted' | 'denied'
 ): CanonicalViewItem {
   return createCanonicalViewItem({
     browserId: {
@@ -126,7 +126,7 @@ test('adds client_id and ga_session_id after analytics consent', async () => {
 })
 
 test('does not query Google before analytics consent', async () => {
-  const event = viewItem('granted')
+  const event = viewItem('denied')
   let queryCount = 0
 
   const enriched =

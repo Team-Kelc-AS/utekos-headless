@@ -93,3 +93,12 @@ test('maps the verified customer segment inside custom_data', () => {
     'existing_customer_to_business'
   )
 })
+
+
+test('forwards actual profit and preserves the standard purchase value and event ID', () => {
+  const event = purchase()
+  const mapped = mapCanonicalPurchaseToMeta(event).normalize()
+  assert.equal(mapped.custom_data.profit, -50)
+  assert.equal(mapped.custom_data.value, 0)
+  assert.equal(mapped.event_id, event.event_id)
+})

@@ -4,6 +4,7 @@ import {
   buildPublicVariantUrl,
   getAllProductPresentations,
   getProductPresentation,
+  isProductPageRequestAllowed,
   requireProductPresentation,
   resolveCatalogVariantPresentation
 } from '@/lib/products/presentation/index'
@@ -38,6 +39,32 @@ test('keeps Svale presentation internal while hiding it from the storefront', ()
   const profile = buildProductPresentationLlmsProfiles()
   assert.doesNotMatch(profile, /Utekos Svale/)
   assert.doesNotMatch(profile, /undefined/)
+})
+
+test('allows a hidden Svale product page only in local development', () => {
+  assert.equal(
+    isProductPageRequestAllowed('utekos-svale', 'development'),
+    true
+  )
+  assert.equal(
+    isProductPageRequestAllowed('utekos-svale', 'production'),
+    false
+  )
+  assert.equal(
+    isProductPageRequestAllowed('utekos-svale', 'test'),
+    false
+  )
+  assert.equal(
+    isProductPageRequestAllowed('utekos-techdown', 'production'),
+    true
+  )
+  assert.equal(
+    isProductPageRequestAllowed(
+      'unknown-product',
+      'development'
+    ),
+    false
+  )
 })
 
 test('validates all public Utekos product presentations', () => {

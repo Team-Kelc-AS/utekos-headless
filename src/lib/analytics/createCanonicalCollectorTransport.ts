@@ -99,7 +99,6 @@ function resolveBrowserCollection<
         marketingBrowserId: compactRecord([
           ['fbp', readCookie('_fbp')],
           ['fbc', readCookie('_fbc')],
-          ['gcl_au', readCookie('_gcl_au')],
           ['uet_msclkid', readCookie('_uetmsclkid')],
           ['uet_sid', readCookie('_uetsid')],
           ['uet_vid', readCookie('_uetvid')],

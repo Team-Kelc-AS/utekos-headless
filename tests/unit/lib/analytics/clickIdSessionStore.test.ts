@@ -33,7 +33,7 @@ test('resolveClickIds reads click identifiers from the URL', () => {
       createMemoryStorage(),
       createMemoryStorage()
     ),
-    { epik: 'pinterest-1', gclid: 'google-1', fbclid: 'meta-1' }
+    { epik: 'pinterest-1', fbclid: 'meta-1' }
   )
 })
 
@@ -87,13 +87,12 @@ test('resolveClickIds merges durable local click IDs when URL and session are em
       local,
       Date.parse('2026-07-20T12:00:00.000Z')
     ),
-    { fbclid: 'meta-local', gclid: 'google-local' }
+    { fbclid: 'meta-local' }
   )
   assert.equal(
     session.getItem(CLICK_ID_SESSION_KEY),
     JSON.stringify({
-      fbclid: 'meta-local',
-      gclid: 'google-local'
+      fbclid: 'meta-local'
     })
   )
 })
@@ -140,7 +139,6 @@ test('resolveClickIds lets fresh URL values win over session and local', () => {
     ),
     {
       fbclid: 'new-meta',
-      gclid: 'keep-google',
       msclkid: 'bing-1'
     }
   )
@@ -241,13 +239,13 @@ test('does not retain or replay a Snapchat click observed before marketing conse
 test('removes only Snapchat attribution after consent withdrawal', () => {
   const session = createMemoryStorage({
     [CLICK_ID_SESSION_KEY]: JSON.stringify({
-      gclid: 'google-1',
+      msclkid: 'microsoft-1',
       sc_click_id: 'snap-1'
     })
   })
   const local = createMemoryStorage({
     [CLICK_ID_LOCAL_KEY]: JSON.stringify({
-      identifiers: { gclid: 'google-1', sc_click_id: 'snap-1' },
+      identifiers: { msclkid: 'microsoft-1', sc_click_id: 'snap-1' },
       updatedAt: '2026-08-23T10:00:00.000Z'
     })
   })
@@ -256,13 +254,21 @@ test('removes only Snapchat attribution after consent withdrawal', () => {
 
   assert.deepEqual(
     JSON.parse(session.getItem(CLICK_ID_SESSION_KEY)!),
-    { gclid: 'google-1' }
+    { msclkid: 'microsoft-1' }
   )
   assert.deepEqual(
     JSON.parse(local.getItem(CLICK_ID_LOCAL_KEY)!),
     {
-      identifiers: { gclid: 'google-1' },
+      identifiers: { msclkid: 'microsoft-1' },
       updatedAt: '2026-08-23T10:00:00.000Z'
     }
   )
+})
+
+
+test('restores Microsoft backup only when the native click ID is absent', () => {
+  const id = '1234567890abcdef1234567890abcdef'
+  assert.equal(resolveClickIds(`https://utekos.no/?backup_msclkid=${id}`, createMemoryStorage(), createMemoryStorage())?.msclkid, id)
+  assert.equal(resolveClickIds(`https://utekos.no/?msclkid=native&backup_msclkid=${id}`, createMemoryStorage(), createMemoryStorage())?.msclkid, 'native')
+  assert.equal(resolveClickIds('https://utekos.no/?backup_msclkid={msclkid}', createMemoryStorage(), createMemoryStorage())?.msclkid, undefined)
 })

@@ -11,13 +11,7 @@ export const MARKETING_CONFIG = {
   fbclid_param: 'fbclid',
   fbc_param: 'fbc',
   email_param: 'email',
-  additional_params: [
-    'gclid',
-    'msclkid',
-    'gbraid',
-    'wbraid',
-    'dclid'
-  ],
+  additional_params: ['msclkid', 'backup_msclkid'],
   cookie_max_age: 30 * 24 * 60 * 60,
   cookie_path: '/',
   cookie_domain: process.env.COOKIE_DOMAIN,

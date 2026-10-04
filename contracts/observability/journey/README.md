@@ -50,7 +50,7 @@ roboter merkes separat fra `human_or_unknown`. Serverens
 Vercel-miljø, deploy-ID og SHA eier runtimefeltene.
 
 | Logg/event                                               | Handling og bekreftelse                                                    |
-| -------------------------------------------------------- | -------------------------------------------------------------------------- |
+| ----------------------------------------------------------| ----------------------------------------------------------------------------|
 | `commerce.event` / `add_to_cart` / AddToCart             | Nettleserrapport etter vellykket Shopify-handlekurvhandling                |
 | `commerce.event` / `begin_checkout` / InitiateCheckout   | Nettleserrapport om startet checkout-overlevering                          |
 | `commerce.event` / `add_shipping_info` / AddShippingInfo | Shopify-kildehendelse for valgt fraktrate                                  |

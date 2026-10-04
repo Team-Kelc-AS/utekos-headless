@@ -32,6 +32,7 @@ import { computeVariantImages } from '@/lib/utils/computeVariantImages'
 import { COMFYROBE_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/comfyrobeProductGalleryImages'
 import { TECHDOWN_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/techdown/productGalleryImages'
 import { MICROFIBER_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/mikrofiber/mikrofiberProductGalleryImages'
+import { SVALE_MOBILE_GALLERY_IMAGES } from '../utils/gallery-images/svale/svaleProductGalleryImages'
 
 type ProductPageViewProps = {
   productData: ProductPurchaseModel
@@ -93,22 +94,41 @@ export function ProductPageView({
       TECHDOWN_MOBILE_GALLERY_IMAGES
     : productData.handle === 'utekos-mikrofiber' ?
       MICROFIBER_MOBILE_GALLERY_IMAGES
+    : productData.handle === 'utekos-svale' ?
+      SVALE_MOBILE_GALLERY_IMAGES
     : galleryImages
 
   const isTechDownProduct =
     productData.handle === 'utekos-techdown'
   const isSvaleProduct = productData.handle === 'utekos-svale'
+  const productDescription =
+    isSvaleProduct && productPageContent ?
+      { ...productPageContent.description, title }
+    : productPageContent?.description
   const useCompactGallery = galleryImages.length === 1
 
-  const firstGalleryImage = galleryImages[0]
-  const galleryAspectRatio =
+  const firstDesktopGalleryImage = galleryImages[0]
+  const desktopGalleryAspectRatio =
     (
       isSvaleProduct &&
-      firstGalleryImage &&
-      firstGalleryImage.width > 0 &&
-      firstGalleryImage.height > 0
+      firstDesktopGalleryImage &&
+      firstDesktopGalleryImage.width > 0 &&
+      firstDesktopGalleryImage.height > 0
     ) ?
-      firstGalleryImage.width / firstGalleryImage.height
+      firstDesktopGalleryImage.width /
+      firstDesktopGalleryImage.height
+    : 2 / 3
+
+  const firstMobileGalleryImage = mobileGalleryImages[0]
+  const mobileGalleryAspectRatio =
+    (
+      isSvaleProduct &&
+      firstMobileGalleryImage &&
+      firstMobileGalleryImage.width > 0 &&
+      firstMobileGalleryImage.height > 0
+    ) ?
+      firstMobileGalleryImage.width /
+      firstMobileGalleryImage.height
     : 2 / 3
 
   const galleryDesktopBleedClassName =
@@ -175,11 +195,15 @@ export function ProductPageView({
             >
               <div className='hidden md:block'>
                 {isSvaleProduct ?
-                  <AspectRatio ratio={galleryAspectRatio}>
+                  <AspectRatio
+                    ratio={desktopGalleryAspectRatio}
+                    className='overflow-hidden rounded-xl bg-moonstruck'
+                  >
                     <ProductGallery
                       title={title}
                       images={galleryImages}
-                      imageLayout='intrinsic'
+                      imageLayout='contain-fill'
+                      imageBackgroundClassName='bg-moonstruck'
                     />
                   </AspectRatio>
                 : <ProductGallery
@@ -202,7 +226,7 @@ export function ProductPageView({
                     />
                   </TechDownMobileGalleryFrame>
                 : <AspectRatio
-                    ratio={galleryAspectRatio}
+                    ratio={mobileGalleryAspectRatio}
                     className='w-full'
                   >
                     <div className='relative isolate size-full overflow-hidden'>
@@ -286,7 +310,7 @@ export function ProductPageView({
             </Suspense>
 
             <ProductDescription
-              description={productPageContent?.description}
+              description={productDescription}
             />
           </OptionsColumn>
 

@@ -902,10 +902,24 @@ export const PRODUCT_PAGE_CONTENT = {
   ProductPageContent
 >
 
+const SVALE_PRODUCT_PAGE_CONTENT: ProductPageContent = {
+  description: {
+    ...PRODUCT_PAGE_CONTENT['utekos-techdown'].description,
+    title: 'Utekos Svale'
+  },
+  accordion: PRODUCT_PAGE_CONTENT['utekos-techdown'].accordion
+}
+
 export function getProductPageContent(
   handle: string | null | undefined
 ): ProductPageContent | undefined {
   if (!handle) return undefined
+
+  // Pre-launch: keep the approved TechDown copy and information unchanged
+  // while Svale's Shopify-backed title, price and sizes remain independent.
+  if (handle === 'utekos-svale') {
+    return SVALE_PRODUCT_PAGE_CONTENT
+  }
 
   return PRODUCT_PAGE_CONTENT[handle as ProductPageHandle]
 }

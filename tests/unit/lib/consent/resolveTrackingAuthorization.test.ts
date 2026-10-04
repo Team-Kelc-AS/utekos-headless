@@ -10,7 +10,7 @@ test('operator policy grants all tracking categories without a CMP', () => {
     analytics: 'granted',
     marketing: 'granted',
     preferences: 'granted',
-    source: 'cookiebot',
+    source: 'operator_policy',
     version: '1'
   })
   assert.deepEqual(

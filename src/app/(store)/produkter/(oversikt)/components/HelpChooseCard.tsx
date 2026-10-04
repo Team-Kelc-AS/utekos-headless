@@ -1,22 +1,20 @@
 'use client'
 
 import { KlarnaProductExpressCheckout } from '@/components/klarna/components/KlarnaProductExpressCheckout'
+import { SoldOutWaitlistDialog } from '@/components/product-waitlist/SoldOutWaitlistDialog'
 import { WishlistButton } from '@/components/wishlist/WishlistButton'
 import { useAddToCartAction } from '@/hooks/useAddToCartAction'
 import { useCanonicalProductListVisibility } from '@/hooks/useCanonicalProductListVisibility'
 import { reportProductListSelectItem } from '@/lib/analytics/reportProductListSelectItem'
 import { cn } from '@/lib/utils/className'
-import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import { Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import type { Route } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRef } from 'react'
-import type {
-  ShopifyProduct,
-  ShopifyProductVariant
-} from 'types/product'
+import { useRef, useState } from 'react'
+import type { ShopifyProduct } from 'types/product'
+import { normalizeHelpChooseVariants } from '@/app/produkter/(oversikt)/utils/findHelpChooseVariant'
 import styles from './HelpChooseCard.module.css'
 import { BagOutlineIcon } from '@/components/utekos-icons'
 
@@ -24,81 +22,36 @@ interface HelpChooseCardProps {
   product: ShopifyProduct
   displayTitle: string
   imageSrc: string
-  sizeLabel: string
+  imageAlt: string
+  backgroundClassName?: string
+  variantId: string
   index: number
   glowColor: string
   totalItemCount: number
-}
-
-type ProductVariantsShape =
-  | ShopifyProductVariant[]
-  | {
-      nodes?: ShopifyProductVariant[]
-      edges?: Array<{ node: ShopifyProductVariant }>
-    }
-
-function normalizeVariants(
-  product: ShopifyProduct
-): ShopifyProductVariant[] {
-  const variants = product.variants as ProductVariantsShape
-  if (Array.isArray(variants)) return variants
-  if (variants?.nodes) {
-    return flattenConnection({ nodes: variants.nodes })
-  }
-  if (variants?.edges) {
-    return flattenConnection({ edges: variants.edges })
-  }
-  return []
-}
-
-function getOptionValue(
-  variant: ShopifyProductVariant,
-  optionNames: readonly string[]
-) {
-  return variant.selectedOptions.find(option =>
-    optionNames.includes(option.name)
-  )?.value
-}
-
-function findCardVariant(
-  variants: ShopifyProductVariant[],
-  sizeLabel: string
-) {
-  const preferredColor = variants
-    .filter(variant => variant.availableForSale)
-    .map(variant => getOptionValue(variant, ['Color', 'Farge']))
-    .find(Boolean)
-
-  return (
-    variants.find(
-      variant =>
-        getOptionValue(variant, ['Size', 'Størrelse']) ===
-          sizeLabel &&
-        (!preferredColor ||
-          getOptionValue(variant, ['Color', 'Farge']) ===
-            preferredColor)
-    ) ??
-    variants.find(
-      variant =>
-        getOptionValue(variant, ['Size', 'Størrelse']) ===
-        sizeLabel
-    ) ??
-    null
-  )
+  action: 'purchase' | 'waitlist'
+  itemListId: string
+  itemListName: string
 }
 
 export function HelpChooseCard({
   product,
   displayTitle,
   imageSrc,
-  sizeLabel,
+  imageAlt,
+  backgroundClassName,
+  variantId,
   index,
   glowColor,
-  totalItemCount
+  totalItemCount,
+  action,
+  itemListId,
+  itemListName
 }: HelpChooseCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const variants = normalizeVariants(product)
-  const selectedVariant = findCardVariant(variants, sizeLabel)
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false)
+  const variants = normalizeHelpChooseVariants(product)
+  const selectedVariant =
+    variants.find(variant => variant.id === variantId) ?? null
   const isAvailable = selectedVariant?.availableForSale === true
   const variantQuery =
     selectedVariant ?
@@ -121,8 +74,8 @@ export function HelpChooseCard({
 
   useCanonicalProductListVisibility({
     elementRef: cardRef,
-    itemListId: 'help_choose_carousel',
-    itemListName: 'Hjelp meg å velge',
+    itemListId,
+    itemListName,
     product,
     totalItemCount,
     variant: selectedVariant
@@ -137,7 +90,7 @@ export function HelpChooseCard({
     reportProductListSelectItem({
       product,
       variant: selectedVariant,
-      itemListId: 'help_choose_carousel',
+      itemListId,
       destinationUrl
     })
   }
@@ -163,7 +116,8 @@ export function HelpChooseCard({
       <div
         className={cn(
           'relative flex aspect-2/3 h-full flex-col overflow-hidden rounded-3xl border border-white/5 bg-card shadow-2xl transition-transform duration-300 md:hover:-translate-y-1',
-          styles.brandFontVariant
+          styles.brandFontVariant,
+          backgroundClassName
         )}
       >
         <Link
@@ -175,10 +129,10 @@ export function HelpChooseCard({
         >
           <Image
             src={imageSrc}
-            alt={`${displayTitle} i Havdyp`}
+            alt={imageAlt}
             fill
             quality={95}
-            sizes='(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 33vw'
+            sizes='(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 67vw'
             loading='lazy'
             fetchPriority='low'
             className='object-contain'
@@ -203,53 +157,63 @@ export function HelpChooseCard({
           </div>
 
           <div className='pointer-events-auto grid w-full grid-cols-1 gap-2 sm:grid-cols-2'>
-            <button
-              type='button'
-              onClick={handleAddToCart}
-              disabled={!isAvailable || isPending}
-              data-track='HelpChooseCardAddToCartClick'
-              aria-busy={isPending}
-              className='flex h-11 min-w-0 items-center justify-center gap-2 rounded-full bg-white/10 px-2 font-google-sans text-xs font-medium whitespace-nowrap text-white backdrop-blur-md transition-colors duration-300 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-60'
-            >
-              {isPending ?
-                <Loader2 className='size-4 shrink-0 motion-safe:animate-spin' />
-              : <BagOutlineIcon tone="orange" className='size-4 shrink-0 sm:hidden xl:block' />
-              }
-              <span>
-                {isAvailable ? 'Legg i handlekurv' : 'Utsolgt'}
-              </span>
-            </button>
-
-            {isAvailable && selectedVariant ?
-              <div
-                className='flex h-11 min-w-0 items-stretch overflow-hidden rounded-full'
-                aria-label={`Betal ${displayTitle} med Klarna`}
-              >
-                <KlarnaProductExpressCheckout
-                  product={product}
-                  selectedVariant={selectedVariant}
-                  quantity={1}
-                  disabled={isPending}
-                  theme='default'
-                  className='h-full min-h-0 w-full min-w-0'
-                  buttonContainerClassName='h-11! min-h-11! border-none ring-0'
-                  loadingFallback={
-                    <span
-                      className='flex h-11 w-full items-center justify-center rounded-full bg-white px-2 font-google-sans text-xs font-medium text-black'
-                      role='status'
-                    >
-                      Laster Klarna…
-                    </span>
-                  }
-                />
-              </div>
-            : <button
+            {action === 'waitlist' ?
+              <button
                 type='button'
-                disabled
-                className='h-11 rounded-full bg-white px-3 font-google-sans text-xs font-medium text-black opacity-60'
+                onClick={() => setIsWaitlistOpen(true)}
+                data-track='HelpChooseCardWaitlistClick'
+                className='col-span-full flex h-11 min-w-0 items-center justify-center rounded-full bg-white px-3 font-google-sans text-xs font-medium text-black transition-colors duration-300 hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white'
               >
-                Utsolgt
+                Meld på venteliste
               </button>
+            : <>
+                <button
+                  type='button'
+                  onClick={handleAddToCart}
+                  disabled={!isAvailable || isPending}
+                  data-track='HelpChooseCardAddToCartClick'
+                  aria-busy={isPending}
+                  className='flex h-11 min-w-0 items-center justify-center gap-2 rounded-full bg-primary px-2 font-google-sans text-xs font-medium whitespace-nowrap text-foreground transition-colors duration-300 hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-60'
+                >
+                  {isPending ?
+                    <Loader2 className='size-4 shrink-0 motion-safe:animate-spin' />
+                  : <BagOutlineIcon
+                      tone='light'
+                      className='size-4 shrink-0 sm:hidden xl:block'
+                    />
+                  }
+                  <span>
+                    {isAvailable ?
+                      'Legg i handlekurv'
+                    : 'Utsolgt'}
+                  </span>
+                </button>
+
+                {isAvailable && selectedVariant ?
+                  <div
+                    className='flex h-11 min-w-0 items-stretch overflow-hidden rounded-full'
+                    aria-label={`Betal ${displayTitle} med Klarna`}
+                  >
+                    <KlarnaProductExpressCheckout
+                      product={product}
+                      selectedVariant={selectedVariant}
+                      quantity={1}
+                      disabled={isPending}
+                      theme='default'
+                      className='h-full min-h-0 w-full min-w-0'
+                      buttonContainerClassName='h-11! min-h-11! border-none ring-0'
+                      loadingFallback={
+                        <span
+                          className='flex h-11 w-full items-center justify-center rounded-full bg-white px-2 font-google-sans text-xs font-medium text-black'
+                          role='status'
+                        >
+                          Laster Klarna…
+                        </span>
+                      }
+                    />
+                  </div>
+                : null}
+              </>
             }
           </div>
         </div>
@@ -262,6 +226,15 @@ export function HelpChooseCard({
           }}
         />
       </div>
+
+      {action === 'waitlist' ?
+        <SoldOutWaitlistDialog
+          open={isWaitlistOpen}
+          onOpenChange={setIsWaitlistOpen}
+          autoOpenDelayMs={null}
+          entryPoint='product_card'
+        />
+      : null}
 
       <WishlistButton
         product={product}

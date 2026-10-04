@@ -8,6 +8,7 @@
   --color-black: #000;
   --color-transparent: transparent;
   --color-current: currentColor;
+  --color-moonstruck: oklch(0.8025 0.012 84.58);
 }
 
 @theme inline {
@@ -39,6 +40,7 @@
   --color-magazine-article-card-pill: var(
     --magazine-article-card-pill
   );
+  --color-moonstruck: var(--moonstruck);
   --color-magazine-header: var(--magazine-header);
   --color-havdyp: var(--havdyp);
   --color-overcast: var(--overcast);
@@ -110,6 +112,7 @@
   --ceramic: oklch(0.6678 0.1141 194.02);
   --white-sand: oklch(0.8767 0.0086 56.3);
   --card-foreground: oklch(0.985 0 0);
+  --moonstruck: oklch(0.8025 0.012 84.58);
   --popover: oklch(0.205 0.028 194.77);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.537541 0.156162 44.0778);

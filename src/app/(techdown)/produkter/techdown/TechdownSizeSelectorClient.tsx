@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type KeyboardEvent } from 'react'
 import { useStickyCTASelection } from '@/components/commerce/StickyCTA/StickyCTASelectionContext'
+import { formatPrice } from '@/lib/utils/formatPrice'
 import type { TechdownSizeSelectorModel } from './techdownSizeSelectorModel'
 import styles from './TechdownContent.module.css'
 
@@ -37,9 +38,15 @@ function replaceVariantUrl(href: string) {
 }
 
 export function TechdownSizeSelectorClient({
-  model
+  model,
+  showSelectedPrice = false,
+  trackingLabel = 'TechDown',
+  trackingSurface = 'techdown'
 }: {
   model: TechdownSizeSelectorModel
+  showSelectedPrice?: boolean
+  trackingLabel?: string
+  trackingSurface?: string
 }) {
   const selectionContext = useStickyCTASelection()
   const selectedVariantId =
@@ -75,7 +82,7 @@ export function TechdownSizeSelectorClient({
       .catch(error => {
         reportDeferredTrackingError(
           error,
-          'techdown.initial_view_item_tracking_import'
+          `${trackingSurface}.initial_view_item_tracking_import`
         )
       })
 
@@ -83,7 +90,7 @@ export function TechdownSizeSelectorClient({
       cancelled = true
       cleanup()
     }
-  }, [model])
+  }, [model, trackingSurface])
 
   function selectChoice(
     choice: TechdownSizeSelectorModel['choices'][number]
@@ -117,7 +124,7 @@ export function TechdownSizeSelectorClient({
       .catch(error => {
         reportDeferredTrackingError(
           error,
-          'techdown.size_selector.canonical_tracking_import'
+          `${trackingSurface}.size_selector.canonical_tracking_import`
         )
       })
 
@@ -126,7 +133,7 @@ export function TechdownSizeSelectorClient({
         const item = customData.items[0]
         if (!item) return
 
-        track('TechDown size selected', {
+        track(`${trackingLabel} size selected`, {
           event_id: eventId,
           interaction_id: interactionId,
           item_list_id: customData.item_list_id,
@@ -142,7 +149,7 @@ export function TechdownSizeSelectorClient({
       .catch(error => {
         reportDeferredTrackingError(
           error,
-          'techdown.size_selector.vercel_tracking_import'
+          `${trackingSurface}.size_selector.vercel_tracking_import`
         )
       })
   }
@@ -183,10 +190,21 @@ export function TechdownSizeSelectorClient({
   return (
     <section
       className={styles.sizeSelector}
-      aria-labelledby='techdown-size-heading'
+      aria-labelledby={`${trackingSurface}-size-heading`}
     >
       <div className={styles.sizeSelectorHeading}>
-        <h3 id='techdown-size-heading'>Velg størrelse</h3>
+        <h3 id={`${trackingSurface}-size-heading`}>
+          Velg størrelse
+        </h3>
+        {showSelectedPrice && selectedChoice ?
+          <strong
+            className={styles.sizePrice}
+            data-product-price
+            aria-live='polite'
+          >
+            {formatPrice(selectedChoice.variant.price)}
+          </strong>
+        : null}
       </div>
       <div
         className={styles.sizeOptions}

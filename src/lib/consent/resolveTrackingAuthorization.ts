@@ -8,7 +8,7 @@ export const OPERATOR_TRACKING_AUTHORIZATION = {
   analytics: 'granted',
   marketing: 'granted',
   preferences: 'granted',
-  source: 'cookiebot',
+  source: 'operator_policy',
   version: OPERATOR_TRACKING_POLICY_VERSION
 } as const satisfies ConsentSnapshot
 

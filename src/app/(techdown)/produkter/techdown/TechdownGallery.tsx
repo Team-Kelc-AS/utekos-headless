@@ -6,11 +6,15 @@ import {
   useEffect,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent,
   type PointerEvent as ReactPointerEvent,
   type RefObject
 } from 'react'
-import { techdownImages as images } from './techdownImages'
+import {
+  techdownImages,
+  type ProductLandingGalleryImage
+} from './techdownImages'
 import styles from './TechdownGallery.module.css'
 
 const AXIS_LOCK_PX = 10
@@ -35,9 +39,7 @@ function useHorizontalSwipe(
       const scroller = scrollerRef.current
       if (!state || state.pointerId !== event.pointerId) return
 
-      if (
-        scroller?.hasPointerCapture(event.pointerId)
-      ) {
+      if (scroller?.hasPointerCapture(event.pointerId)) {
         scroller.releasePointerCapture(event.pointerId)
       }
 
@@ -70,7 +72,11 @@ function useHorizontalSwipe(
     onPointerMove(event: ReactPointerEvent<HTMLElement>) {
       const state = drag.current
       const scroller = scrollerRef.current
-      if (!state || state.pointerId !== event.pointerId || !scroller) {
+      if (
+        !state ||
+        state.pointerId !== event.pointerId ||
+        !scroller
+      ) {
         return
       }
 
@@ -106,7 +112,19 @@ function useHorizontalSwipe(
   }
 }
 
-export function TechdownGallery() {
+type ProductLandingGalleryProps = {
+  galleryId?: string
+  imageAspectRatio?: number
+  images?: readonly ProductLandingGalleryImage[]
+  productName?: string
+}
+
+export function TechdownGallery({
+  galleryId = 'techdown-gallery-slides',
+  imageAspectRatio = 1,
+  images = techdownImages,
+  productName = 'Utekos TechDown™'
+}: ProductLandingGalleryProps = {}) {
   const [active, setActive] = useState(0)
   const [requested, setRequested] = useState(() => new Set([0]))
   const [failed, setFailed] = useState(() => new Set<number>())
@@ -118,12 +136,17 @@ export function TechdownGallery() {
   const activeIndex = useRef(0)
   const loaded = useRef(new Set<number>())
 
-  const request = useCallback((index: number) => {
-    if (index < 0 || index >= images.length) return
-    setRequested(current =>
-      current.has(index) ? current : new Set(current).add(index)
-    )
-  }, [])
+  const request = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= images.length) return
+      setRequested(current =>
+        current.has(index) ? current : (
+          new Set(current).add(index)
+        )
+      )
+    },
+    [images.length]
+  )
 
   const select = useCallback(
     (index: number, jump = false) => {
@@ -159,7 +182,7 @@ export function TechdownGallery() {
         }
       }
     },
-    [request]
+    [images.length, request]
   )
 
   const commitViewportSwipe = useCallback(
@@ -171,7 +194,7 @@ export function TechdownGallery() {
         true
       )
     },
-    [select]
+    [images.length, select]
   )
 
   const viewportSwipe = useHorizontalSwipe(
@@ -242,14 +265,15 @@ export function TechdownGallery() {
 
   return (
     <section
-      aria-label='Produktbilder av Utekos TechDown™'
+      aria-label={`Produktbilder av ${productName}`}
       aria-roledescription='karusell'
       className={styles.gallery}
     >
       <div
         ref={viewport}
-        id='techdown-gallery-slides'
+        id={galleryId}
         className={`${styles.viewport} rounded-lg`}
+        style={{ aspectRatio: imageAspectRatio }}
         tabIndex={0}
         role='group'
         aria-label='Hovedbilder. Sveip horisontalt eller bruk piltastene for å bytte bilde.'
@@ -264,7 +288,7 @@ export function TechdownGallery() {
             data-image-id={image.id}
             role='group'
             aria-roledescription='bilde'
-            aria-label={`${image.id} av ${images.length}`}
+            aria-label={`${index + 1} av ${images.length}`}
             aria-hidden={active !== index}
           >
             {requested.has(index) && !failed.has(index) && (
@@ -326,6 +350,12 @@ export function TechdownGallery() {
       <div
         ref={thumbnails}
         className={styles.thumbnails}
+        style={
+          {
+            '--thumbnail-width': '64px',
+            '--thumbnail-height': `${64 / imageAspectRatio}px`
+          } as CSSProperties
+        }
         role='group'
         aria-label='Velg produktbilde'
         onKeyDown={event => navigate(event, true)}
@@ -338,7 +368,7 @@ export function TechdownGallery() {
             className={`${styles.thumbnail} rounded-lg`}
             aria-label={`Vis bilde ${image.id}: ${image.alt}`}
             aria-pressed={active === index}
-            aria-controls='techdown-gallery-slides'
+            aria-controls={galleryId}
             onClick={() => select(index, true)}
           >
             <Image
@@ -349,7 +379,7 @@ export function TechdownGallery() {
               sizes='64px'
               quality={75}
               placeholder='empty'
-              loading='lazy'
+              loading={index === 0 ? 'eager' : 'lazy'}
               draggable={false}
             />
           </button>

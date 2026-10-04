@@ -54,6 +54,21 @@ export const CAROUSEL_SSR = {
     }
   }),
 
+  /**
+   * Help-choose rows: `basis-2/3` (1.5) → `md:basis-1/3` → `xl:basis-1/4`.
+   */
+  helpChoosePeek: (slideCount: number): SsrOptionsType => ({
+    slideSizes: fillSlideSizes(slideCount, 200 / 3),
+    breakpoints: {
+      '(min-width: 768px)': {
+        slideSizes: fillSlideSizes(slideCount, 100 / 3)
+      },
+      '(min-width: 1280px)': {
+        slideSizes: fillSlideSizes(slideCount, 25)
+      }
+    }
+  }),
+
   /** Product carousel: `72%` → `sm:1/2` → `md:38%` → `xl:1/3` */
   mobilePeekHalvesAndThirds: (
     slideCount: number

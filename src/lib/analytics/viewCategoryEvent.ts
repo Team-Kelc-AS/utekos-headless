@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   canonicalEventEnvelopeSchema,
   type CanonicalEventEnvelope,
@@ -10,30 +10,35 @@ export const VIEW_CATEGORY_MAX_CONTENT_IDS = 10
 
 export const canonicalViewCategoryCustomDataSchema =
   z.strictObject({
-    category_id: z.string().min(1),
-    category_name: z.string().min(1),
-    content_ids: z
-      .array(z.string().regex(/^\d+$/))
-      .min(1)
-      .max(VIEW_CATEGORY_MAX_CONTENT_IDS)
-      .optional(),
-    view_sequence: z.number().int().positive()
+    category_id: z.string().check(z.minLength(1)),
+    category_name: z.string().check(z.minLength(1)),
+    content_ids: z.optional(
+      z
+        .array(z.string().check(z.regex(/^\d+$/)))
+        .check(
+          z.minLength(1),
+          z.maxLength(VIEW_CATEGORY_MAX_CONTENT_IDS)
+        )
+    ),
+    view_sequence: z.number().check(z.int(), z.gt(0))
   })
 
 export type CanonicalViewCategoryCustomData = z.infer<
   typeof canonicalViewCategoryCustomDataSchema
 >
 
-export const canonicalViewCategorySchema = z.strictObject({
-  ...canonicalEventEnvelopeSchema.shape,
-  event_name: z.literal('view_category'),
-  source: z.literal('web'),
-  page_url: z.string().url(),
-  referrer_url: z.string().url().optional(),
-  page_title: z.string().min(1),
-  page_view_id: z.string().uuid(),
-  custom_data: canonicalViewCategoryCustomDataSchema
-})
+export const canonicalViewCategorySchema = z.extend(
+  canonicalEventEnvelopeSchema,
+  {
+    event_name: z.literal('view_category'),
+    source: z.literal('web'),
+    page_url: z.url(),
+    referrer_url: z.optional(z.url()),
+    page_title: z.string().check(z.minLength(1)),
+    page_view_id: z.uuid(),
+    custom_data: canonicalViewCategoryCustomDataSchema
+  }
+)
 
 export type CanonicalViewCategory = z.infer<
   typeof canonicalViewCategorySchema
@@ -50,9 +55,9 @@ type CreateCanonicalViewCategoryInput = {
   eventTime: string
   externalId?: string
   impressionId?: string
-  pageTitle?: string
-  pageUrl?: string
-  pageViewId?: string
+  pageTitle: string
+  pageUrl: string
+  pageViewId: string
   referrerUrl?: string
 }
 
@@ -61,7 +66,10 @@ export type ViewCategoryDataLayerEvent = {
   event_id: string
   event_time: string
   source: 'web'
-  page_view_id?: string
+  page_url: string
+  page_view_id: string
+  page_title: string
+  referrer_url?: string
   custom_data: CanonicalViewCategoryCustomData
   canonical_event: CanonicalViewCategory
 }
@@ -80,14 +88,12 @@ export function createCanonicalViewCategory(
     event_time: input.eventTime,
     source: 'web',
     environment: input.environment,
-    ...(input.pageUrl ? { page_url: input.pageUrl } : {}),
-    ...(input.pageViewId ?
-      { page_view_id: input.pageViewId }
-    : {}),
+    page_url: input.pageUrl,
+    page_view_id: input.pageViewId,
     ...(input.referrerUrl ?
       { referrer_url: input.referrerUrl }
     : {}),
-    ...(input.pageTitle ? { page_title: input.pageTitle } : {}),
+    page_title: input.pageTitle,
     consent: input.consent,
     custom_data: input.customData,
     ...(input.browserId ? { browser_id: input.browserId } : {}),
@@ -112,8 +118,11 @@ export function buildViewCategoryDataLayerEvent(
     event_id: event.event_id,
     event_time: event.event_time,
     source: event.source,
-    ...(event.page_view_id ?
-      { page_view_id: event.page_view_id }
+    page_url: event.page_url,
+    page_view_id: event.page_view_id,
+    page_title: event.page_title,
+    ...(event.referrer_url ?
+      { referrer_url: event.referrer_url }
     : {}),
     custom_data: event.custom_data,
     canonical_event: event

@@ -3,7 +3,6 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { TAGS } from '@/api/constants'
 import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
-import { flattenConnection } from '@shopify/hydrogen-react/flatten-connection'
 import type { Connection, ShopifyOperation } from '@types'
 import type { Money } from 'types/commerce/Money'
 import type { Image } from 'types/media'
@@ -61,15 +60,12 @@ type RawHelpChooseProduct = {
 }
 
 type HelpChooseProductsOperation = ShopifyOperation<
-  { products: Connection<RawHelpChooseProduct> },
-  { first: number }
+  Record<string, RawHelpChooseProduct | null>,
+  Record<string, string>
 >
 
-const helpChooseProductsQuery = /* GraphQL */ `
-  query helpChooseProducts($first: Int!) {
-    products(first: $first) {
-      edges {
-        node {
+const helpChooseProductFields = /* GraphQL */ `
+  fragment helpChooseProductFields on Product {
           id
           title
           handle
@@ -112,7 +108,7 @@ const helpChooseProductsQuery = /* GraphQL */ `
               name
             }
           }
-          variants(first: 20) {
+          variants(first: 100) {
             edges {
               node {
                 id
@@ -145,14 +141,38 @@ const helpChooseProductsQuery = /* GraphQL */ `
               }
             }
           }
-          seo {
-            title
-            description
-          }
-        }
-      }
+  seo {
+    title
+    description
+  }
+}
+`
+
+const helpChooseProductsQuery = /* GraphQL */ `
+  query helpChooseProducts(
+    $svale: String!
+    $techdown: String!
+    $dun: String!
+    $mikrofiber: String!
+    $comfyrobe: String!
+  ) {
+    svale: product(handle: $svale) {
+      ...helpChooseProductFields
+    }
+    techdown: product(handle: $techdown) {
+      ...helpChooseProductFields
+    }
+    dun: product(handle: $dun) {
+      ...helpChooseProductFields
+    }
+    mikrofiber: product(handle: $mikrofiber) {
+      ...helpChooseProductFields
+    }
+    comfyrobe: product(handle: $comfyrobe) {
+      ...helpChooseProductFields
     }
   }
+  ${helpChooseProductFields}
 `
 
 function normalizeVariantImage(image: HelpChooseImage | null): Image | null {
@@ -221,14 +241,20 @@ export async function getHelpChooseProducts() {
 
   const response = await storefrontGateway.catalogQuery<HelpChooseProductsOperation>({
     query: helpChooseProductsQuery,
-    variables: { first: 12 }
+    variables: {
+      svale: 'utekos-svale',
+      techdown: 'utekos-techdown',
+      dun: 'utekos-dun',
+      mikrofiber: 'utekos-mikrofiber',
+      comfyrobe: 'comfyrobe'
+    }
   })
 
   if (!response.success) {
     return []
   }
 
-  return flattenConnection(response.body.products).map(
-    normalizeHelpChooseProduct
+  return Object.values(response.body).flatMap(product =>
+    product ? [normalizeHelpChooseProduct(product)] : []
   )
 }

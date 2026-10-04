@@ -113,7 +113,7 @@ test('requires granted analytics consent', () => {
       mapCanonicalPurchaseToGoogleDataManager(
         purchase({
           consent: {
-            analytics: 'granted',
+            analytics: 'denied',
             marketing: 'granted',
             preferences: 'granted',
             source: 'cookiebot',
@@ -220,4 +220,14 @@ test('maps documented cart discounts, coupon and item revenue', () => {
       { parameterName: 'discount', value: '1592' }
     ]
   )
+})
+
+
+test('forwards net product profit without changing purchase value or transaction identity', () => {
+  const event = purchase()
+  event.custom_data.item_revenue = 800
+  const mapped = normalize(mapCanonicalPurchaseToGoogleDataManager(event))
+  assert.equal(mapped.additionalEventParameters?.find((value: { parameterName: string; value: string }) => value.parameterName === 'profit')?.value, '460')
+  assert.equal(mapped.conversionValue, 800)
+  assert.equal(mapped.transactionId, event.custom_data.transaction_id)
 })

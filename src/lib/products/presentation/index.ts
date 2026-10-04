@@ -2,6 +2,7 @@ export {
   getAllProductPresentations,
   getProductPresentation,
   getStorefrontProductPresentations,
+  isProductPageRequestAllowed,
   isStorefrontVisibleProductHandle,
   requireProductPresentation
 } from './getProductPresentation'

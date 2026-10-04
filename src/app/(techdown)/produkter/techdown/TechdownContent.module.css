@@ -129,7 +129,7 @@
 }
 
 .trustRef::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: -14px -16px;
 }
@@ -281,6 +281,13 @@
   margin: 0;
   font-size: 14px;
   font-weight: 500;
+  line-height: 1.25;
+}
+
+.sizePrice {
+  color: #f0eee9;
+  font-size: 16px;
+  font-weight: 800;
   line-height: 1.25;
 }
 
@@ -497,7 +504,9 @@
 .specs {
   display: grid;
   gap: 12px;
-  scroll-margin-block-end: calc(var(--sticky-cta-offset, 132px) + 24px);
+  scroll-margin-block-end: calc(
+    var(--sticky-cta-offset, 132px) + 24px
+  );
 }
 
 .specs h2 {
@@ -514,7 +523,9 @@
 
 .specsItem {
   border-color: rgb(240 238 233 / 14%);
-  scroll-margin-block-end: calc(var(--sticky-cta-offset, 132px) + 24px);
+  scroll-margin-block-end: calc(
+    var(--sticky-cta-offset, 132px) + 24px
+  );
 }
 
 .specsTrigger {
@@ -756,7 +767,8 @@
   );
 }
 
-.siteChrome :global(section[aria-labelledby='newsletter-heading']) {
+.siteChrome
+  :global(section[aria-labelledby='newsletter-heading']) {
   background-color: transparent;
 }
 

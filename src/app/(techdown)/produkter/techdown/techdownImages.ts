@@ -1,4 +1,4 @@
-type TechdownImage = {
+export type ProductLandingGalleryImage = {
   alt: string
   height: number
   id: number
@@ -9,7 +9,10 @@ type TechdownImage = {
 
 const SQUARE_IMAGE_SIZE = 1080
 
-function image(id: number, alt: string): TechdownImage {
+function image(
+  id: number,
+  alt: string
+): ProductLandingGalleryImage {
   const src = `/${id}.webp`
 
   return {

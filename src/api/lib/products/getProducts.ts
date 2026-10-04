@@ -43,13 +43,15 @@ export async function getProducts(
   'use cache'
 
   cacheTag(TAGS.products)
-  cacheLife('collections')
 
   try {
     const products = await fetchProducts(params)
 
+    cacheLife('collections')
     return { success: true, status: 200, body: products }
   } catch (error) {
+    // Transient failures must expire before the overview retries.
+    cacheLife({ stale: 0, revalidate: 0, expire: 1 })
     return {
       success: false,
       status: 500,

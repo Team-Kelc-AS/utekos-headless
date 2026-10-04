@@ -64,6 +64,7 @@ export type AccordionSectionData = {
 
 export type ProductGalleryImageLayout =
   | 'cover-fill'
+  | 'contain-fill'
   | 'intrinsic'
 
 export type ProductGalleryProps = {
