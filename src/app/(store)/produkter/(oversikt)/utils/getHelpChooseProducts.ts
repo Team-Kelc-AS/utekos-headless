@@ -2,7 +2,12 @@ import 'server-only'
 
 import { cacheLife, cacheTag } from 'next/cache'
 import { TAGS } from '@/api/constants'
+import { fetchShopifyCatalogWithRetry } from '@/api/lib/products/fetchShopifyCatalogWithRetry'
+import { isRetryableShopifyCatalogError } from '@/api/lib/products/isRetryableShopifyCatalogError'
+import { ShopifyCatalogGraphQLError } from '@/api/lib/products/ShopifyCatalogGraphQLError'
+import { getShopifyGraphQLErrorMetadata } from '@/api/shopify/request/shopifyRequestObservability'
 import { storefrontGateway } from '@/api/shopify/storefront/storefrontGateway.server'
+import { unstable_rethrow } from 'next/navigation'
 import type { Connection, ShopifyOperation } from '@types'
 import type { Money } from 'types/commerce/Money'
 import type { Image } from 'types/media'
@@ -237,24 +242,53 @@ export async function getHelpChooseProducts() {
   'use cache'
 
   cacheTag(TAGS.products)
-  cacheLife('collections')
 
-  const response = await storefrontGateway.catalogQuery<HelpChooseProductsOperation>({
-    query: helpChooseProductsQuery,
-    variables: {
-      svale: 'utekos-svale',
-      techdown: 'utekos-techdown',
-      dun: 'utekos-dun',
-      mikrofiber: 'utekos-mikrofiber',
-      comfyrobe: 'comfyrobe'
+  try {
+    const body = await fetchShopifyCatalogWithRetry({
+      attempt: async ({ timeoutMs, signal }) => {
+        const response =
+          await storefrontGateway.catalogQuery<HelpChooseProductsOperation>({
+            query: helpChooseProductsQuery,
+            timeoutMs,
+            signal,
+            variables: {
+              svale: 'utekos-svale',
+              techdown: 'utekos-techdown',
+              dun: 'utekos-dun',
+              mikrofiber: 'utekos-mikrofiber',
+              comfyrobe: 'comfyrobe'
+            }
+          })
+
+        if (!response.success) {
+          const graphqlError = getShopifyGraphQLErrorMetadata(
+            response.error
+          )
+          throw new ShopifyCatalogGraphQLError(
+            response.error.errors[0]?.message ??
+              'Failed to fetch help-choose products',
+            graphqlError.code ?? null
+          )
+        }
+
+        return response.body
+      }
+    })
+
+    cacheLife('collections')
+    return Object.values(body).flatMap(product =>
+      product ? [normalizeHelpChooseProduct(product)] : []
+    )
+  } catch (error) {
+    unstable_rethrow(error)
+
+    if (!isRetryableShopifyCatalogError(error)) {
+      throw error
     }
-  })
 
-  if (!response.success) {
+    // This carousel is optional. Keep the product overview available while
+    // Shopify recovers, and retry the cache entry almost immediately.
+    cacheLife({ stale: 0, revalidate: 0, expire: 1 })
     return []
   }
-
-  return Object.values(response.body).flatMap(product =>
-    product ? [normalizeHelpChooseProduct(product)] : []
-  )
 }
